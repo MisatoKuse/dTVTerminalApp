@@ -191,6 +191,20 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         super.onPause();
         if(RecordedListActivity.RLA_FragmentName_All.equals(mFragmentName) && null != mDlDataProvider){
             mDlDataProvider.setUiRunning(false);
+            if (mDlDataProvider.getIsRegistered()) {
+                try {
+                    mDlDataProvider.endProvider();
+                } catch (Exception e){
+                    DTVTLogger.debug(e);
+                }
+            }
+            if (0 == que.size()) {
+                if(!mDlDataProvider.isDownloading()){
+                    mDlDataProvider.stopService();
+                }
+            } else {
+                mDlDataProvider.setQue(que);
+            }
         }
     }
 
@@ -705,30 +719,6 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             }
         } catch (Exception e){
             DTVTLogger.debug(e);
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if(RecordedListActivity.RLA_FragmentName_All.equals(mFragmentName)) {
-            if (mDlDataProvider != null) {
-                mDlDataProvider.setUiRunning(false);
-                if (mDlDataProvider.getIsRegistered()) {
-                    try {
-                        mDlDataProvider.endProvider();
-                    } catch (Exception e){
-                        DTVTLogger.debug(e);
-                    }
-                }
-                if (0 == que.size()) {
-                    if(!mDlDataProvider.isDownloading()){
-                        mDlDataProvider.stopService();
-                    }
-                } else {
-                    mDlDataProvider.setQue(que);
-                }
-            }
         }
     }
 
