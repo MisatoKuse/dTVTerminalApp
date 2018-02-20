@@ -39,15 +39,15 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
 import com.nttdocomo.android.tvterminalapp.jni.download.DlnaProvDownload;
-import com.nttdocomo.android.tvterminalapp.service.download.DownloadListener;
-import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
+import com.nttdocomo.android.tvterminalapp.service.download.DownloadListener;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
 import java.io.File;
 import java.text.ParseException;
@@ -90,14 +90,18 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
+
+        registReceiver();
+        initView();
+        initTabVIew();
+        setPagerAdapter();
+
         DTVTLogger.end();
     }
 
     private void initDl() {
         boolean isRunning= isDownloadServiceRunning();
-        if(isRunning){
-            
-        }else {
+        if(!isRunning){
             boolean res = DlnaProvDownload.initGlobalDl(DownloaderBase.getDownloadPath(this));
             if(!res){
                 DTVTLogger.debug("initGlobalDl failed");
@@ -181,7 +185,12 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         progressBar.setVisibility(View.VISIBLE);
         switch (mViewPager.getCurrentItem()) {
             case 0:
-                getData();
+                if(isInJapan()) {
+                    getData();
+                } else {
+                    clearAllFrame();
+                    setProgressBarGone();
+                }
                 break;
             case 1:
                 setRecordedTakeOutContents();
@@ -262,29 +271,24 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * DMSデバイスを取り始める
      */
     private void getData() {
-        if(isInJapan()) {
-            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-            // 未ペアリング時
-            if (dlnaDmsItem.mControlUrl.isEmpty()) {
-                Toast.makeText(this, getString(R.string.main_setting_not_paring), Toast.LENGTH_SHORT).show();
-                setProgressBarGone();
-            } else {
-                if (mDlnaProvRecVideo == null) {
-                    mDlnaProvRecVideo = new DlnaProvRecVideo();
-                }
-                if (mDlnaProvRecVideo.start(dlnaDmsItem, this)) {
-                    clearFragment(0);
-                    boolean res = mDlnaProvRecVideo.browseRecVideoDms();
-                    if (!res) {
-                        DTVTLogger.debug("browseRecVideoDms false");
-                    }
-                } else {
-                    setProgressBarGone();
-                }
-            }
-        } else {
-            DlDataProvider.cancelAll();
+        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+        // 未ペアリング時
+        if (dlnaDmsItem.mControlUrl.isEmpty()) {
+            Toast.makeText(this, getString(R.string.main_setting_not_paring), Toast.LENGTH_SHORT).show();
             setProgressBarGone();
+        } else {
+            if (mDlnaProvRecVideo == null) {
+                mDlnaProvRecVideo = new DlnaProvRecVideo();
+            }
+            if (mDlnaProvRecVideo.start(dlnaDmsItem, this)) {
+                clearFragment(0);
+                boolean res = mDlnaProvRecVideo.browseRecVideoDms();
+                if (!res) {
+                    DTVTLogger.debug("browseRecVideoDms false");
+                }
+            } else {
+                setProgressBarGone();
+            }
         }
     }
 
@@ -519,20 +523,33 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             if(null!=l){
                 l.add(contentsData);
             }
-        } else {
-            // NOP
         }
     }
 
     @Override
-    protected void onResume() {
+    protected void onResume(){
         super.onResume();
-        registReceiver();
+        if(!isInJapan()) {
+            clearAllFrame();
+            setProgressBarGone();
+            DlDataProvider.cancelAll();
+        }
+    }
+
+    private void clearAllFrame(){
+        RecordedBaseFragment baseFragment = mRecordedFragmentFactory.createFragment(0, this);
+        if(null != baseFragment){
+            baseFragment.clear();
+            baseFragment.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onStartCommunication() {
+        super.onStartCommunication();
+        progressBar.setVisibility(View.VISIBLE);
         initDl();
-        initView();
         getData();
-        initTabVIew();
-        setPagerAdapter();
     }
 
     @Override
@@ -622,7 +639,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     /**
      * showMessage
-     * @param msg
+     * @param msg msg
      */
     private void showMessage(String msg) {
         DTVTLogger.start();
@@ -731,8 +748,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     /**
      *
-     * @param dlPaht
-     * @param thiz
+     * @param dlPaht dlPaht
+     * @param thiz thiz
      */
     public void onNoticeActDel(String dlPaht, RecordedBaseFragment thiz) {
         if(null == mRecordedFragmentFactory){
