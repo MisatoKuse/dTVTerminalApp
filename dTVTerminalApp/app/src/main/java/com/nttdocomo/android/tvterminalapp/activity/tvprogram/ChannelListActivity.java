@@ -164,6 +164,8 @@ public class ChannelListActivity extends BaseActivity implements
                     break;
                 case CH_LIST_DATA_TYPE_INVALID:
                     break;
+                default:
+                    break;
             }
         }
         DTVTLogger.end();

@@ -192,11 +192,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         if(RecordedListActivity.RLA_FragmentName_All.equals(mFragmentName) && null != mDlDataProvider){
             mDlDataProvider.setUiRunning(false);
             if (mDlDataProvider.getIsRegistered()) {
-                try {
-                    mDlDataProvider.endProvider();
-                } catch (Exception e){
-                    DTVTLogger.debug(e);
-                }
+                mDlDataProvider.endProvider();
             }
             if (0 == que.size()) {
                 if(!mDlDataProvider.isDownloading()){
