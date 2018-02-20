@@ -69,7 +69,6 @@ public class ProgramDataManager {
 
         //ホーム画面用データ取得
         list = channelListDao.findByService(columns, service);
-        database.close();
         DataBaseManager.getInstance().closeDatabase();
         return list;
     }
@@ -108,7 +107,6 @@ public class ProgramDataManager {
 
         //ホーム画面用データ取得
         list = tvScheduleListDao.findByTypeAndDate(columns, display_type, update);
-        database.close();
         DataBaseManager.getInstance().closeDatabase();
         return list;
     }

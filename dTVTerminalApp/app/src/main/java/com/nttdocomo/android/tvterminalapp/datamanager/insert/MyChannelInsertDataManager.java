@@ -56,7 +56,6 @@ public class MyChannelInsertDataManager {
             values.put(INDEX_MY_CHANNEL_LIST,myChannelMetaData.getIndex());
             myChannelListDao.insert(values);
         }
-        database.close();
         DataBaseManager.getInstance().closeDatabase();
     }
 
@@ -72,7 +71,6 @@ public class MyChannelInsertDataManager {
                 JsonConstants.META_RESPONSE_INDEX};
         //My番組表画面用データ取得
         List<Map<String, String>> list = myChannelListDao.findById(columns);
-        database.close();
         DataBaseManager.getInstance().closeDatabase();
         return list;
     }

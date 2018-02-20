@@ -11,6 +11,7 @@ import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WatchListenVideoListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.DataBaseManager;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
 import java.util.List;
@@ -60,14 +61,14 @@ public class WatchListenVideoListDataManager {
                 JsonConstants.META_RESPONSE_DTV_TYPE};
 
         //Daoクラス使用準備
-        DBHelper homeDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = homeDBHelper.getWritableDatabase();
-        WatchListenVideoListDao watchListenVideoListDao = new WatchListenVideoListDao(db);
+        DBHelper DbHelper = new DBHelper(mContext);
+        DataBaseManager.initializeInstance(DbHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        WatchListenVideoListDao watchListenVideoListDao = new WatchListenVideoListDao(database);
 
         //ホーム画面用データ取得
         list = watchListenVideoListDao.findById(columns);
-        db.close();
-        homeDBHelper.close();
+        DataBaseManager.getInstance().closeDatabase();
         return list;
     }
 }

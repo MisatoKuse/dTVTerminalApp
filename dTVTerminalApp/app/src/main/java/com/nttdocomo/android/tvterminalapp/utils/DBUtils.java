@@ -6,11 +6,13 @@ package com.nttdocomo.android.tvterminalapp.utils;
 
 import android.content.Context;
 import android.database.DatabaseUtils;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.DataBaseManager;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 
 import java.util.Arrays;
@@ -187,8 +189,12 @@ public class DBUtils {
      * @return データ存在チェック結果
      */
     public static boolean isCachingRecord(final Context context, final String tableName) {
-        DBHelper dBHelper = new DBHelper(context);
-        long recordCount = DatabaseUtils.queryNumEntries(dBHelper.getWritableDatabase(), tableName);
+        DBHelper DbHelper = new DBHelper(context);
+        DataBaseManager.initializeInstance(DbHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+
+        long recordCount = DatabaseUtils.queryNumEntries(database, tableName);
+        DataBaseManager.getInstance().closeDatabase();
         if (recordCount > 0) {
             return true;
         }
@@ -206,8 +212,11 @@ public class DBUtils {
      */
     public static boolean isCachingRecord(
             final Context context, final String tableName, final String selection, final String[] args) {
-        DBHelper dBHelper = new DBHelper(context);
-        long recordCount = DatabaseUtils.queryNumEntries(dBHelper.getWritableDatabase(), tableName, selection, args);
+        DBHelper DbHelper = new DBHelper(context);
+        DataBaseManager.initializeInstance(DbHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        long recordCount = DatabaseUtils.queryNumEntries(database, tableName, selection, args);
+        DataBaseManager.getInstance().closeDatabase();
         if (recordCount > 0) {
             return true;
         }

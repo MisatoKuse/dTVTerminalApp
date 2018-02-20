@@ -150,6 +150,7 @@ public class RecommendListDataManager {
             contentsData.setRecommendMethodId(map.get(RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID));
             recommendContentInfoList.add(contentsData);
         }
+        mDb.close();
         return recommendContentInfoList;
     }
 }
