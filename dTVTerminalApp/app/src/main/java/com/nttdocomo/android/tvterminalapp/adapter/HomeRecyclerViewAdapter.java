@@ -104,6 +104,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      */
     private final static int HOME_CONTENTS_SORT_TODAY = HOME_CONTENTS_SORT_CHANNEL + 3;
     /**
+     * カテゴリ ビデオランキング(ホーム).
+     */
+    private final static int HOME_CONTENTS_SORT_VIDEO = HOME_CONTENTS_SORT_CHANNEL + 4;
+    /**
      * カテゴリ 今日のテレビランキング(ランキングトップ画面).
      */
     private final static int RANKING_CONTENTES_TODAY_SORT = 20;
@@ -111,6 +115,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      * カテゴリ 週間テレビランキング(ランキングトップ画面).
      */
     private final static int RANKING_CONTENTES_WEEK_SORT = RANKING_CONTENTES_TODAY_SORT + 1;
+    /**
+     * カテゴリ ビデオテレビランキング(ランキングトップ画面).
+     */
+    private final static int RANKING_CONTENTES_VIDEO_SORT = RANKING_CONTENTES_TODAY_SORT + 2;
 
     /**
      * ランキング 1位.
@@ -597,12 +605,21 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      * @return 配信開始から1週間以内かどうか
      */
     private boolean newContentsCheck(final String startDate) {
-        // 現在時刻
-        long nowTimeEpoch = DateUtils.getNowTimeFormatEpoch();
-        long startTime = DateUtils.getSecondEpochTime(startDate);
-        // 現在時刻 - 開始日時
-        long differenceTime = nowTimeEpoch - startTime;
-        return differenceTime <= DateUtils.EPOCH_TIME_ONE_WEEK;
+        switch (mIndex){
+            case HOME_CONTENTS_SORT_TODAY:
+            case HOME_CONTENTS_SORT_VIDEO:
+            case RANKING_CONTENTES_TODAY_SORT:
+            case RANKING_CONTENTES_WEEK_SORT:
+            case RANKING_CONTENTES_VIDEO_SORT:
+                return false;
+            default:
+                // 現在時刻
+                long nowTimeEpoch = DateUtils.getNowTimeFormatEpoch();
+                long startTime = DateUtils.getSecondEpochTime(startDate);
+                // 現在時刻 - 開始日時
+                long differenceTime = nowTimeEpoch - startTime;
+                return differenceTime <= DateUtils.EPOCH_TIME_ONE_WEEK;
+        }
     }
 
     /**
