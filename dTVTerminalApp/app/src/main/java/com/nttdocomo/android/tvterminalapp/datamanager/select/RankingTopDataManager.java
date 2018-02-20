@@ -50,7 +50,8 @@ public class RankingTopDataManager {
                 JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_EVENT_ID,
                 JsonConstants.META_RESPONSE_TITLE_ID, JsonConstants.META_RESPONSE_R_VALUE,
                 JsonConstants.META_RESPONSE_DTV, JsonConstants.META_RESPONSE_TV_SERVICE,
-                JsonConstants.META_RESPONSE_DTV_TYPE, JsonConstants.META_RESPONSE_CID};
+                JsonConstants.META_RESPONSE_DTV_TYPE, JsonConstants.META_RESPONSE_CID,
+                JsonConstants.META_RESPONSE_AVAIL_START_DATE};
 
         //Daoクラス使用準備
         DBHelper videoRankListDBHelper = new DBHelper(mContext);

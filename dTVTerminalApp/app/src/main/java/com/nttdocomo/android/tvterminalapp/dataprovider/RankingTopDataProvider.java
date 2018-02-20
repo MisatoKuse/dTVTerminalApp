@@ -471,6 +471,8 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             rankingContentInfo.setDispType(dispType);
             rankingContentInfo.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
             rankingContentInfo.setContentsId(map.get(JsonConstants.META_RESPONSE_CID));
+            rankingContentInfo.setLinearStartDate(map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE));
+            rankingContentInfo.setLinearEndDate(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE));
 
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
