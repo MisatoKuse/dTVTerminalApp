@@ -190,7 +190,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     private static final String RESERVED4_TYPE4 = "4";
     private static final String RESERVED4_TYPE7 = "7";
     private static final String RESERVED4_TYPE8 = "8";
-    private static final String GOOGLEPLAY_DOWNLOAD_URL = "http://play.google.com/store/apps/details?id=jp.co.nttdocomo.dtv";
+    private static final String GOOGLEPLAY_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=jp.co.nttdocomo.dtv";
     private static final String DTV_PACKAGE_NAME = "jp.co.nttdocomo.dtv";
     private static final String SUPER_SPEED_START_TYPE = "dmktvideosc:///openLiveTitle?deliveryTitleId=";
     private static final String WORK_START_TYPE = "dmktvideosc:///openEpisode?episodeId=";
