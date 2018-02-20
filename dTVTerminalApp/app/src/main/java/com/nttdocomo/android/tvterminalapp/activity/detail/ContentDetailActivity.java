@@ -1479,7 +1479,12 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 loadHandler.postDelayed(loadRunnable, 1200);
             }
         });
-        viewRefresher.sendEmptyMessage(REFRESH_VIDEO_VIEW);
+        //レコメンド（serviceId 44）若しくはぷららの場合
+        if(!mIsOtherService){
+            viewRefresher.sendEmptyMessage(REFRESH_VIDEO_VIEW);
+        } else {
+            showProsessBar(false);
+        }
     }
 
    private Handler loadHandler = new Handler();
@@ -1499,7 +1504,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      */
     private void initPlayerView() {
         DTVTLogger.start();
-        RelativeLayout videoCtrlRootView = null;
         RelativeLayout playerViewLayout;
         playerViewLayout = findViewById(R.id.dtv_contents_detail_main_layout_player_rl);
         playerViewLayout.setVisibility(View.VISIBLE);
@@ -1868,87 +1872,85 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 detailFragment.changeVisiblityRecordingReservationIcon(View.INVISIBLE);
                 detailFragment.setRecordingReservationIconListener(null);
             }
-            if (!mIsOtherService) {
-                DTVTLogger.debug("mIsOtherService:false");
-                detailFragment.mOtherContentsDetailData.setTitle(mDetailFullData.getTitle());
-                setTitleAndThumbnail(mDetailFullData.getTitle(), mDetailFullData.getmDtv_thumb_448_252());
-                detailFragment.mOtherContentsDetailData.setVodMetaFullData(contentsDetailInfo.get(FIRST_VOD_META_DATA));
-                detailFragment.mOtherContentsDetailData.setDetail(mDetailFullData.getSynop());
-                // コンテンツ状態を反映
-                detailFragment.mOtherContentsDetailData.setClipStatus(clipStatus);
-                detailFragment.mOtherContentsDetailData.setDispType(mDetailFullData.getDisp_type());
-                detailFragment.mOtherContentsDetailData.setSearchOk(mDetailFullData.getmSearch_ok());
-                detailFragment.mOtherContentsDetailData.setDtv(mDetailFullData.getDtv());
-                detailFragment.mOtherContentsDetailData.setDtvType(mDetailFullData.getDtvType());
+            DTVTLogger.debug("mIsOtherService:false");
+            detailFragment.mOtherContentsDetailData.setTitle(mDetailFullData.getTitle());
+            setTitleAndThumbnail(mDetailFullData.getTitle(), mDetailFullData.getmDtv_thumb_448_252());
+            detailFragment.mOtherContentsDetailData.setVodMetaFullData(contentsDetailInfo.get(FIRST_VOD_META_DATA));
+            detailFragment.mOtherContentsDetailData.setDetail(mDetailFullData.getSynop());
+            // コンテンツ状態を反映
+            detailFragment.mOtherContentsDetailData.setClipStatus(clipStatus);
+            detailFragment.mOtherContentsDetailData.setDispType(mDetailFullData.getDisp_type());
+            detailFragment.mOtherContentsDetailData.setSearchOk(mDetailFullData.getmSearch_ok());
+            detailFragment.mOtherContentsDetailData.setDtv(mDetailFullData.getDtv());
+            detailFragment.mOtherContentsDetailData.setDtvType(mDetailFullData.getDtvType());
 
-                detailFragment.noticeRefresh();
-                String[] credit_array = mDetailFullData.getmCredit_array();
-                if (credit_array != null && credit_array.length > 0) {
-                    mDetailDataProvider.getRoleListData();
+            detailFragment.noticeRefresh();
+            String[] credit_array = mDetailFullData.getmCredit_array();
+            if (credit_array != null && credit_array.length > 0) {
+                mDetailDataProvider.getRoleListData();
+            }
+            if (!TextUtils.isEmpty(mDetailFullData.getmService_id())) {
+                if(mScaledDownProgramListDataProvider == null){
+                    mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
                 }
-                if (!TextUtils.isEmpty(mDetailFullData.getmService_id())) {
-                    if(mScaledDownProgramListDataProvider == null){
-                        mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
-                    }
-                    mScaledDownProgramListDataProvider.getChannelList(0, 0, "", 1);
+                mScaledDownProgramListDataProvider.getChannelList(0, 0, "", 1);
+            }
+            //ログイン状態でしか送信しない
+            if (!TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(this))) {
+                if (mSendOperateLog == null) {
+                    mSendOperateLog = new SendOperateLog(getApplicationContext());
                 }
-                //ログイン状態でしか送信しない
-                if (!TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(this))) {
-                    if (mSendOperateLog == null) {
-                        mSendOperateLog = new SendOperateLog(getApplicationContext());
-                    }
-                    mSendOperateLog.sendOpeLog(mDetailData, mDetailFullData);
-                }
-                if (mDetailData == null) {
-                    mDetailData = mIntent.getParcelableExtra(PLALA_INFO_BUNDLE_KEY);
+                mSendOperateLog.sendOpeLog(mDetailData, mDetailFullData);
+            }
+            if (mDetailData == null) {
+                mDetailData = mIntent.getParcelableExtra(PLALA_INFO_BUNDLE_KEY);
+            } else {
+                //「mobileViewingFlg」が「0」の場合モバイル視聴不可
+                if (MOBILEVIEWINGFLG_FLAG_ZERO.equals(mDetailData.getMobileViewingFlg())) {
+                    setThumbnailText(getResources().getString(R.string.contents_detail_thumbnail_text));
+                    mThumbnailBtn.setEnabled(false);
                 } else {
-                    //「mobileViewingFlg」が「0」の場合モバイル視聴不可
-                    if (MOBILEVIEWINGFLG_FLAG_ZERO.equals(mDetailData.getMobileViewingFlg())) {
-                        setThumbnailText(getResources().getString(R.string.contents_detail_thumbnail_text));
-                        mThumbnailBtn.setEnabled(false);
-                    } else {
-                        if (mDetailData.getServiceId() == DTV_HIKARI_CONTENTS_SERVICE_ID) {
-                            String mDispType = mDetailData.getDispType();
-                            for (int i = 0; i < mDispTypes.length; i++) {
-                                if (mDispTypes[i].equals(mDispType)) {
-                                    //ひかりTV中にDTVの場合
-                                    if (METARESPONSE1.equals(mDetailFullData.getDtv())) {
-                                        setThumbnailText(getResources().getString(R.string.dtv_content_service_start_text));
-                                    }
+                    if (mDetailData.getServiceId() == DTV_HIKARI_CONTENTS_SERVICE_ID) {
+                        String mDispType = mDetailData.getDispType();
+                        for (int i = 0; i < mDispTypes.length; i++) {
+                            if (mDispTypes[i].equals(mDispType)) {
+                                //ひかりTV中にDTVの場合
+                                if (METARESPONSE1.equals(mDetailFullData.getDtv())) {
+                                    setThumbnailText(getResources().getString(R.string.dtv_content_service_start_text));
                                 }
                             }
-                            UserInfoInsertDataManager dataManager = new UserInfoInsertDataManager(this);
-                            dataManager.readUserInfoInsertList();
-                            String contractInfo = UserInfoUtils.getUserContractInfo(dataManager.getmUserData());
-                            //ひかりTV未契約の場合
-                            if (contractInfo == null || contractInfo.isEmpty() || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo)) {
-                                DTVTLogger.debug("contractInfo:---" + contractInfo);
-                                leadingContract();
-                            } else { //ひかりTV契約者の場合,ひかりTV中にdtvチャンネルの場合
-                                if (TV_PROGRAM.equals(mDetailData.getDispType())) {
-                                    if (H4D_CATEGORY_DTV_CHANNEL_RELATION.equals(mDetailData.getCategoryId())
-                                            || H4D_CATEGORY_DTV_CHANNEL_BROADCAST.equals(mDetailData.getCategoryId())
-                                            || H4D_CATEGORY_DTV_CHANNEL_MISSED.equals(mDetailData.getCategoryId())) {
-                                        setThumbnailText(getResources().getString(R.string.dtv_channel_service_start_text));
-                                    }
-                                }
-                            }
-                            //ｄアニメストアの場合
-                        } else if (mDetailData.getServiceId() == D_ANIMATION_CONTENTS_SERVICE_ID) {
-                            setThumbnailText(getResources().getString(R.string.d_anime_store_content_service_start_text));
-                            //ｄTVの場合
-                        } else if (mDetailData.getServiceId() == DTV_CONTENTS_SERVICE_ID) {
-                            //DTVコンテンツ　「reserved2」が「1」　Androidのモバイル視聴不可
-                            if (CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved2())) {
-                                setThumbnailText(getResources().getString(R.string.contents_detail_thumbnail_text));
-                                mThumbnailBtn.setEnabled(false);
-                            } else {
-                                setThumbnailText(getResources().getString(R.string.dtv_content_service_start_text));
-                            }
-                            //dtvチャンネルの場合
-                        } else if (mDetailData.getServiceId() == DTV_CHANNEL_CONTENTS_SERVICE_ID) {
-                            setThumbnailText(getResources().getString(R.string.dtv_channel_service_start_text));
                         }
+                        UserInfoInsertDataManager dataManager = new UserInfoInsertDataManager(this);
+                        dataManager.readUserInfoInsertList();
+                        String contractInfo = UserInfoUtils.getUserContractInfo(dataManager.getmUserData());
+                        //ひかりTV未契約の場合
+                        if (contractInfo == null || contractInfo.isEmpty() || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo)) {
+                            DTVTLogger.debug("contractInfo:---" + contractInfo);
+                            leadingContract();
+                        } else { //ひかりTV契約者の場合,ひかりTV中にdtvチャンネルの場合
+                            if (TV_PROGRAM.equals(mDetailData.getDispType())) {
+                                if (H4D_CATEGORY_DTV_CHANNEL_RELATION.equals(mDetailData.getCategoryId())
+                                        || H4D_CATEGORY_DTV_CHANNEL_BROADCAST.equals(mDetailData.getCategoryId())
+                                        || H4D_CATEGORY_DTV_CHANNEL_MISSED.equals(mDetailData.getCategoryId())) {
+                                    setThumbnailText(getResources().getString(R.string.dtv_channel_service_start_text));
+                                }
+                            }
+                        }
+                        //ｄアニメストアの場合
+                    } else if (mDetailData.getServiceId() == D_ANIMATION_CONTENTS_SERVICE_ID) {
+                        setThumbnailText(getResources().getString(R.string.d_anime_store_content_service_start_text));
+                        //ｄTVの場合
+                    } else if (mDetailData.getServiceId() == DTV_CONTENTS_SERVICE_ID) {
+                        //DTVコンテンツ　「reserved2」が「1」　Androidのモバイル視聴不可
+                        if (CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved2())) {
+                            setThumbnailText(getResources().getString(R.string.contents_detail_thumbnail_text));
+                            mThumbnailBtn.setEnabled(false);
+                        } else {
+                            setThumbnailText(getResources().getString(R.string.dtv_content_service_start_text));
+                        }
+                        //dtvチャンネルの場合
+                    } else if (mDetailData.getServiceId() == DTV_CHANNEL_CONTENTS_SERVICE_ID) {
+                        setThumbnailText(getResources().getString(R.string.dtv_channel_service_start_text));
                     }
                 }
             }
