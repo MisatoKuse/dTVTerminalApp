@@ -1850,29 +1850,43 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         }
     }
 
+    /**
+     * 録画予約情報を設定.
+     *
+     * @param detailFragment フラグメント
+     */
+    private void setRecordingData(DtvContentsDetailFragment detailFragment){
+        // リモート録画予約情報を生成
+        mRecordingReservationContentsDetailInfo = new RecordingReservationContentsDetailInfo(
+                mDetailFullData.getmService_id(),
+                mDetailFullData.getTitle(),
+                mDetailFullData.getAvail_start_date(),
+                mDetailFullData.getDur(),
+                mDetailFullData.getR_value());
+        mRecordingReservationContentsDetailInfo.setEventId(mDetailFullData.getmEvent_id());
+        detailFragment.changeVisiblityRecordingReservationIcon(View.VISIBLE);
+        detailFragment.setRecordingReservationIconListener(this);
+    }
+
     @Override
     public void onContentsDetailInfoCallback(ArrayList<VodMetaFullData> contentsDetailInfo, boolean clipStatus) {
         //詳細情報取得して、更新する
-        if (contentsDetailInfo != null) {
+        if (contentsDetailInfo != null && contentsDetailInfo.size() > 0) {
             DtvContentsDetailFragment detailFragment = getDetailFragment();
             mDetailFullData = contentsDetailInfo.get(0);
-            // TODO ぷららサーバからmDetailDataを受け取った場合の処理を修正する可能性あり（画面間の受け渡しデータの値が検レコサーバと異なる場合など）
-            // リモート録画予約情報を生成
-            mRecordingReservationContentsDetailInfo = new RecordingReservationContentsDetailInfo(
-                    mDetailFullData.getmService_id(),
-                    mDetailFullData.getTitle(),
-                    mDetailFullData.getAvail_start_date(),
-                    mDetailFullData.getDur(),
-                    mDetailFullData.getR_value());
-            mRecordingReservationContentsDetailInfo.setEventId(mDetailFullData.getmEvent_id());
-            if (comparisonStartTime()) {
-                detailFragment.changeVisiblityRecordingReservationIcon(View.VISIBLE);
-                detailFragment.setRecordingReservationIconListener(this);
-            } else {
-                detailFragment.changeVisiblityRecordingReservationIcon(View.INVISIBLE);
-                detailFragment.setRecordingReservationIconListener(null);
+            if(TV_PROGRAM.equals(mDetailFullData.getDisp_type())){//tv_programの場合
+                if(TV_SERVICE_FLAG_ZERO.equals(mDetailFullData.getmTv_service())){//tv_serviceは0の場合
+                    setRecordingData(detailFragment);
+                } else if(TV_SERVICE_FLAG_ONE.equals(mDetailFullData.getmTv_service())){//tv_serviceは1の場合
+                    if(CONTENT_TYPE_FLAG_ONE.equals(mDetailFullData.getmContent_type()) || CONTENT_TYPE_FLAG_TWO.equals(mDetailFullData.getmContent_type())){//contents_typeは1又は2の場合
+                        if (comparisonStartTime()) {//VOD配信日時(vod_start_date) > 現在時刻
+                            setRecordingData(detailFragment);
+                        }
+                    } else {//contents_typeは0又は未設定の場合
+                        setRecordingData(detailFragment);
+                    }
+                }
             }
-            DTVTLogger.debug("mIsOtherService:false");
             detailFragment.mOtherContentsDetailData.setTitle(mDetailFullData.getTitle());
             setTitleAndThumbnail(mDetailFullData.getTitle(), mDetailFullData.getmDtv_thumb_448_252());
             detailFragment.mOtherContentsDetailData.setVodMetaFullData(contentsDetailInfo.get(FIRST_VOD_META_DATA));

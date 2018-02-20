@@ -34,16 +34,49 @@ import java.util.List;
 
 public class DtvContentsChannelFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener{
 
+    /**
+     * チャンネルリスト親ビュー.
+     */
     private View mView = null;
+    /**
+     * チャンネルリストビュー.
+     */
     private ListView mChannelListView = null;
+    /**
+     * チャンネルリストアダプター.
+     */
     private ContentsAdapter mContentsAdapter = null;
+    /**
+     * チャンネルリストデータ.
+     */
     public List<ContentsData> mContentsData;
+    /**
+     * Activity.
+     */
     private Activity mActivity;
+    /**
+     * チャンネルアイコン.
+     */
     private ImageView mChannelImg;
+    /**
+     * チャンネル名.
+     */
     private TextView mChannelTxt;
+    /**
+     * 通信フラグ.
+     */
     private boolean mIsLoading;
+    /**
+     * コールバックリスナー.
+     */
     private ChangedScrollLoadListener mChangedScrollLoadListener;
+    /**
+     * ヘッダービュー.
+     */
     private View mHeaderView;
+    /**
+     * フッタービュー.
+     */
     private View mFootView;
 
 
@@ -63,6 +96,11 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
         void onUserVisibleHint();
     }
 
+    /**
+     * コールバックリスナー設定.
+     *
+     * @param mChangedScrollLoadListener コンテナ
+     */
     public void setScrollCallBack(ChangedScrollLoadListener mChangedScrollLoadListener){
         this.mChangedScrollLoadListener = mChangedScrollLoadListener;
     }
@@ -111,6 +149,10 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
         return mView;
     }
 
+    /**
+     * チャンネルアイコン取得.
+     * @param info チャンネル情報
+     */
     public void setChannelDataChanged(ChannelInfo info){
         if(!TextUtils.isEmpty(info.getTitle())){
             mChannelTxt.setText(info.getTitle());
@@ -125,22 +167,34 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
         }
     }
 
+    /**
+     * データ更新.
+     */
     public void setNotifyDataChanged(){
         mContentsAdapter.notifyDataSetChanged();
         loadComplete();
     }
 
+    /**
+     * 一覧更新して、フッタービューの非表示.
+     */
     public void loadComplete() {
         mChannelListView.setVisibility(View.VISIBLE);
         mChannelListView.removeFooterView(mFootView);
         mIsLoading = false;
     }
 
+    /**
+     * ビュー初期化.
+     */
     public void initLoad() {
         mChannelListView.setVisibility(View.GONE);
         mChannelListView.setSelection(0);
     }
 
+    /**
+     * ローディング開始.
+     */
     private void loadStart() {
         mChannelListView.addFooterView(mFootView);
         mChannelListView.setSelection(mChannelListView.getMaxScrollAmount());
