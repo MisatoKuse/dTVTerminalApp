@@ -170,8 +170,8 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         DTVTLogger.start("view_event:" + event.getAction());
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                //システム時間を取得する
-                mSysTime = System.currentTimeMillis();
+                //イベント時間を取得する
+                mSysTime = event.getEventTime();
                 //タッチされたY座標とビューTOPの距離を取得する
                 mDownY = (int) event.getY();
                 //子ビュー以外の部分がタップされた場合Touchイベントを走らせない
@@ -218,7 +218,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                 break;
             case MotionEvent.ACTION_UP:
                 //指が離すときの時間差を計算する
-                Long curTime = System.currentTimeMillis();
+                Long curTime = event.getEventTime();
                 Long diff = curTime - mSysTime;
                 //クリックなのかを判断する
                 if (diff < CLICK_MAX_TIME) {
