@@ -14,6 +14,7 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.Recomme
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,29 +47,33 @@ public class RecommendWebXmlParser extends AsyncTask<Object, Object, Object> {
     public static final String RECOMMENDCHANNEL_LIST_GROUPID = "groupId";
     public static final String RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID = "recommendMethodId";
 
-    public RecommendWebXmlParser(RecommendWebClient.RecommendCallback mRecommendCallback) {
+    /**
+     * コンテキスト.
+     *
+     * @param mRecommendCallback コールバック
+     */
+    public RecommendWebXmlParser(final RecommendWebClient.RecommendCallback mRecommendCallback) {
         this.mRecommendCallback = mRecommendCallback;
     }
 
     @Override
-    protected void onPostExecute(Object s) {
-        mRecommendCallback.RecommendCallback((RecommendChList) s);
+    protected void onPostExecute(final Object s) {
+        mRecommendCallback.recommendCallback((RecommendChList) s);
     }
 
     @Override
-    protected Object doInBackground(Object... strings) {
+    protected Object doInBackground(final Object... strings) {
         String result = (String) strings[0];
-        RecommendChList resultList = getRecommendWebList(result);
-        return resultList;
+        return getRecommendWebList(result);
     }
 
     /**
-     * 受け取ったレスポンスデータからXMLをパースする
+     * 受け取ったレスポンスデータからXMLをパースする.
      *
      * @param responseData レスポンスデータ
      * @return パース後のデータ
      */
-    public RecommendChList getRecommendWebList(String responseData) {
+    private RecommendChList getRecommendWebList(final String responseData) {
         DTVTLogger.debugHttp(responseData);
         RecommendChList redChContents = null;
         List<Map<String, String>> redChContentList = null;
@@ -164,9 +169,7 @@ public class RecommendWebXmlParser extends AsyncTask<Object, Object, Object> {
                 }
                 eventType = parser.next();
             }
-        } catch (XmlPullParserException e) {
-            DTVTLogger.debug(e);
-        } catch (Exception e) {
+        } catch (XmlPullParserException | IOException | NullPointerException e) {
             DTVTLogger.debug(e);
         }
         return redChContents;

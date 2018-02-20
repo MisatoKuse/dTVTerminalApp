@@ -12,19 +12,33 @@ import java.util.ArrayList;
  */
 public class ChannelInfo {
 
-    //Scheduleの配列を保存
+    /**
+     * Scheduleの配列を保存.
+     */
     private ArrayList<ScheduleInfo> schedules = null;
-    //チャンネルのタイトル
+    /**
+     * チャンネルのタイトル.
+     */
     private String title;
-    //チャンネルのチャンネルID
-    private int chNo;
-    //チャンネルのサービスID
+    /**
+     * チャンネルのチャンネルID.
+     */
+    private int chNo = -1;
+    /**
+     * チャンネルのサービスID.
+     */
     private String serviceId;
-    //チャンネルの開始時間
+    /**
+     * チャンネルの開始時間.
+     */
     private String startDate;
-    //チャンネルの終了時間
+    /**
+     * チャンネルの開始時間.
+     */
     private String endDate;
-    //チャンネルのアイコン
+    /**
+     * チャンネルのアイコン.
+     */
     private String thumbnail;
     /**
      * チャンネルのタイプ.

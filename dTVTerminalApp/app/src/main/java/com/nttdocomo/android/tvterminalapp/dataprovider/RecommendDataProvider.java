@@ -59,46 +59,46 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * テレビカテゴリー一覧（dTVチャンネル　VOD（見逃し）が無くなった等の新情報を反映）.
      */
     private final String[] RECOMMEND_CATEGORY_ID_TELEVI = {
-            recommendRequestId.DTVCHANNEL_BLOADCAST.getRequestSCId(),
-            recommendRequestId.HIKARITV_DOCOMO_IPTV.getRequestSCId(),
-            recommendRequestId.HIKARITV_DOCOMO_DTV_BLOADCAST.getRequestSCId(),
+            RecommendRequestId.DTVCHANNEL_BLOADCAST.getRequestSCId(),
+            RecommendRequestId.HIKARITV_DOCOMO_IPTV.getRequestSCId(),
+            RecommendRequestId.HIKARITV_DOCOMO_DTV_BLOADCAST.getRequestSCId(),
     };
 
     /**
      * ビデオカテゴリー一覧（dTVチャンネル　VOD（見逃し）が追加された等の新情報を反映）.
      */
     private final String[] RECOMMEND_CATEGORY_ID_VIDEO = {
-            recommendRequestId.HIKARITV_DOCOMO_DTV_MISS.getRequestSCId(),
-            recommendRequestId.HIKARITV_DOCOMO_DTV_RELATION.getRequestSCId(),
-            recommendRequestId.HIKARITV_DOCOMO_HIKARITV_VOD.getRequestSCId(),
-            recommendRequestId.HIKARITV_DOCOMO_DTV_SVOD.getRequestSCId(),
-            recommendRequestId.DTV_SVOD.getRequestSCId(),
-            recommendRequestId.DTV_TVOD.getRequestSCId(),
-            recommendRequestId.DTVCHANNEL_MISS.getRequestSCId(),
-            recommendRequestId.DTVCHANNEL_RELATION.getRequestSCId(),
-            recommendRequestId.DANIME.getRequestSCId(),
+            RecommendRequestId.HIKARITV_DOCOMO_DTV_MISS.getRequestSCId(),
+            RecommendRequestId.HIKARITV_DOCOMO_DTV_RELATION.getRequestSCId(),
+            RecommendRequestId.HIKARITV_DOCOMO_HIKARITV_VOD.getRequestSCId(),
+            RecommendRequestId.HIKARITV_DOCOMO_DTV_SVOD.getRequestSCId(),
+            RecommendRequestId.DTV_SVOD.getRequestSCId(),
+            RecommendRequestId.DTV_TVOD.getRequestSCId(),
+            RecommendRequestId.DTVCHANNEL_MISS.getRequestSCId(),
+            RecommendRequestId.DTVCHANNEL_RELATION.getRequestSCId(),
+            RecommendRequestId.DANIME.getRequestSCId(),
     };
 
     /**
      * dTVカテゴリー一覧.
      */
     private final String[] RECOMMEND_CATEGORY_ID_DTV = {
-            recommendRequestId.DTV_SVOD.getRequestSCId(),
-            recommendRequestId.DTV_TVOD.getRequestSCId(),
+            RecommendRequestId.DTV_SVOD.getRequestSCId(),
+            RecommendRequestId.DTV_TVOD.getRequestSCId(),
     };
 
     /**
      * dTVチャンネルカテゴリー一覧.
      */
     private final String[] RECOMMEND_CATEGORY_ID_DTV_CHANNEL = {
-            recommendRequestId.DTVCHANNEL_BLOADCAST.getRequestSCId(),
-            recommendRequestId.DTVCHANNEL_MISS.getRequestSCId(),
-            recommendRequestId.DTVCHANNEL_RELATION.getRequestSCId(),
+            RecommendRequestId.DTVCHANNEL_BLOADCAST.getRequestSCId(),
+            RecommendRequestId.DTVCHANNEL_MISS.getRequestSCId(),
+            RecommendRequestId.DTVCHANNEL_RELATION.getRequestSCId(),
     };
     /**
      * 取得対象サービスID:カテゴリーID.
      */
-    public enum recommendRequestId {
+    public enum RecommendRequestId {
         DTV_SVOD("15", "01"),
         DTV_TVOD("15", "02"),
         DANIME("17", "01"),
@@ -115,27 +115,35 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         private final String categoryId;
 
         /**
-         * 定数をENUMで蓄積するメソッド
+         * 定数をENUMで蓄積するメソッド.
          *
          * @param serviceIdSource  元になるサービスID
          * @param categoryIdSource 元になるカテゴリーID
          */
-        recommendRequestId(final String serviceIdSource, final String categoryIdSource) {
+        RecommendRequestId(final String serviceIdSource, final String categoryIdSource) {
             this.serviceId = serviceIdSource;
             this.categoryId = categoryIdSource;
         }
 
-        // サービスIDとカテゴリーIDのゲッター
+        /**
+         * サービスIDのゲッター.
+         * @return サービスID
+         */
         public String getServiceId() {
             return this.serviceId;
         }
-
+        /**
+         * カテゴリーIDのゲッター.
+         * @return カテゴリーID
+         */
         public String getCategoryId() {
             return this.categoryId;
         }
 
         /**
-         * "サービスID:カテゴリID"の形式の文字列を返す
+         * "サービスID:カテゴリID"の形式の文字列を返す.
+         *
+         * @return 文字列
          */
         public String getRequestSCId() {
             StringBuilder stringBuilder = new StringBuilder();
@@ -147,14 +155,14 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     }
 
     @Override
-    public void RecommendCallback(RecommendChList mRecommendChList) {
-        if (mRecommendChList != null &&
-                mRecommendChList.getmRcList() != null &&
-                mRecommendChList.getmRcList().size() > 0) {
+    public void recommendCallback(final RecommendChList mRecommendChList) {
+        if (mRecommendChList != null
+                && mRecommendChList.getmRcList() != null
+                && mRecommendChList.getmRcList().size() > 0) {
             sendRecommendChListData(mRecommendChList);
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
-            mApiDataProviderCallback.RecommendNGCallback();
+            mApiDataProviderCallback.recommendNGCallback();
         }
     }
 
@@ -168,40 +176,40 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
          *
          * @param recommendContentInfoList コンテンツ情報リスト
          */
-        void RecommendChannelCallback(List<ContentsData> recommendContentInfoList);
+        void recommendChannelCallback(List<ContentsData> recommendContentInfoList);
 
         /**
          * おすすめビデオ用コールバック.
          *
          * @param recommendContentInfoList コンテンツ情報リスト
          */
-        void RecommendVideoCallback(List<ContentsData> recommendContentInfoList);
+        void recommendVideoCallback(List<ContentsData> recommendContentInfoList);
 
         /**
          * おすすめdTV用コールバック.
          *
          * @param recommendContentInfoList コンテンツ情報リスト
          */
-        void RecommendDTVCallback(List<ContentsData> recommendContentInfoList);
+        void recommendDTVCallback(List<ContentsData> recommendContentInfoList);
 
         /**
          * おすすめdアニメ用コールバック.
          *
          * @param recommendContentInfoList コンテンツ情報リスト
          */
-        void RecommendDAnimeCallback(List<ContentsData> recommendContentInfoList);
+        void recommendDAnimeCallback(List<ContentsData> recommendContentInfoList);
 
         /**
          * おすすめdチャンネル用コールバック.
          *
          * @param recommendContentInfoList コンテンツ情報リスト
          */
-        void RecommendDChannelCallback(List<ContentsData> recommendContentInfoList);
+        void recommendDChannelCallback(List<ContentsData> recommendContentInfoList);
 
         /**
          * 0件取得時のコールバック.
          */
-        void RecommendNGCallback();
+        void recommendNGCallback();
     }
 
     /**
@@ -214,6 +222,9 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         this.mApiDataProviderCallback = (RecommendApiDataProviderCallback) mContext;
     }
 
+    /**
+     * コンストラクタ.
+     */
     public RecommendDataProvider() {
     }
 
@@ -293,7 +304,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         // RequestDataのインスタンス生成
         RecommendRequestData requestData = new RecommendRequestData();
 
-        List<ContentsData> resultList = null;
+        List<ContentsData> resultList;
         switch (requestPageNo) {
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV: //テレビ
                 resultList = getRecommendListDataCache(
@@ -303,7 +314,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 } else {
                     //戻り値を使用する指定が無い場合は、コールバックに値を渡す
                     if (!hasReturnValue) {
-                        mApiDataProviderCallback.RecommendChannelCallback(resultList);
+                        mApiDataProviderCallback.recommendChannelCallback(resultList);
                     }
                     return resultList;
                 }
@@ -316,7 +327,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 } else {
                     //戻り値を使用する指定が無い場合は、コールバックに値を渡す
                     if (!hasReturnValue) {
-                        mApiDataProviderCallback.RecommendVideoCallback(resultList);
+                        mApiDataProviderCallback.recommendVideoCallback(resultList);
                     }
                     return resultList;
                 }
@@ -329,7 +340,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 } else {
                     //戻り値を使用する指定が無い場合は、コールバックに値を渡す
                     if (!hasReturnValue) {
-                        mApiDataProviderCallback.RecommendDChannelCallback(resultList);
+                        mApiDataProviderCallback.recommendDChannelCallback(resultList);
                     }
                     return resultList;
                 }
@@ -343,7 +354,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 } else {
                     //戻り値を使用する指定が無い場合は、コールバックに値を渡す
                     if (!hasReturnValue) {
-                        mApiDataProviderCallback.RecommendDTVCallback(resultList);
+                        mApiDataProviderCallback.recommendDTVCallback(resultList);
                     }
                     return resultList;
                 }
@@ -356,7 +367,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 } else {
                     //戻り値を使用する指定が無い場合は、コールバックに値を渡す
                     if (!hasReturnValue) {
-                        mApiDataProviderCallback.RecommendDAnimeCallback(resultList);
+                        mApiDataProviderCallback.recommendDAnimeCallback(resultList);
                     }
                     return resultList;
                 }
@@ -396,32 +407,32 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 //テレビ用データ
                 setStructDB(recChList, DateUtils.RECOMMEND_CH_LAST_INSERT,
                         SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV);
-                mApiDataProviderCallback.RecommendChannelCallback(recommendContentInfoList);
+                mApiDataProviderCallback.recommendChannelCallback(recommendContentInfoList);
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO:
                 //ビデオ用データ
                 setStructDB(recChList, DateUtils.RECOMMEND_VD_LAST_INSERT,
                         SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO);
-                mApiDataProviderCallback.RecommendVideoCallback(recommendContentInfoList);
+                mApiDataProviderCallback.recommendVideoCallback(recommendContentInfoList);
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL:
                 //Dチャンネル用データ
                 setStructDB(recChList, DateUtils.RECOMMEND_DCHANNEL_LAST_INSERT,
                         SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL);
-                mApiDataProviderCallback.RecommendDChannelCallback(recommendContentInfoList);
+                mApiDataProviderCallback.recommendDChannelCallback(recommendContentInfoList);
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV:
                 //dTV用データ
                 setStructDB(recChList, DateUtils.RECOMMEND_DTV_LAST_INSERT,
                         SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV);
-                mApiDataProviderCallback.RecommendDTVCallback(recommendContentInfoList);
+                mApiDataProviderCallback.recommendDTVCallback(recommendContentInfoList);
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME:
             default:
                 //dアニメ用データ
                 setStructDB(recChList, DateUtils.RECOMMEND_DANIME_LAST_INSERT,
                         SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME);
-                mApiDataProviderCallback.RecommendDAnimeCallback(recommendContentInfoList);
+                mApiDataProviderCallback.recommendDAnimeCallback(recommendContentInfoList);
         }
     }
 
@@ -586,7 +597,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      */
     private String getDAnimeRequestSCIdStr() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(recommendRequestId.DANIME.getRequestSCId());
+        stringBuilder.append(RecommendRequestId.DANIME.getRequestSCId());
 
         return stringBuilder.toString();
     }

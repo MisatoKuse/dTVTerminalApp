@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.struct;
 
+import android.text.TextUtils;
+
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
@@ -67,7 +69,7 @@ public class ScheduleInfo {
     /*
      * タイトルを設定する
      */
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         this.title = title;
     }
 
@@ -81,7 +83,7 @@ public class ScheduleInfo {
     /*
      * 詳細を設定する
      */
-    public void setDetail(String detail) {
+    public void setDetail(final String detail) {
         this.detail = detail;
     }
 
@@ -95,7 +97,7 @@ public class ScheduleInfo {
     /*
      * 開始時間を設定する
      */
-    public void setStartTime(String startTime) {
+    public void setStartTime(final String startTime) {
         this.startTime = startTime;
     }
 
@@ -109,7 +111,7 @@ public class ScheduleInfo {
     /*
      * 終了時間を設定する
      */
-    public void setEndTime(String endTime) {
+    public void setEndTime(final String endTime) {
         this.endTime = endTime;
     }
 
@@ -123,7 +125,7 @@ public class ScheduleInfo {
     /*
      * Thumbnailを設定する
      */
-    public void setImageUrl(String imageUrl) {
+    public void setImageUrl(final String imageUrl) {
         this.imageUrl = imageUrl;
     }
 
@@ -137,7 +139,7 @@ public class ScheduleInfo {
     /*
      * チャンネルNOを設定する
      */
-    public void setChNo(String chNo) {
+    public void setChNo(final String chNo) {
         this.chNo = chNo;
     }
 
@@ -145,7 +147,7 @@ public class ScheduleInfo {
         return mClipRequestData;
     }
 
-    public void setClipRequestData(ClipRequestData mClipRequestData) {
+    public void setClipRequestData(final ClipRequestData mClipRequestData) {
         this.mClipRequestData = mClipRequestData;
     }
 
@@ -153,7 +155,7 @@ public class ScheduleInfo {
         return mRValue;
     }
 
-    public void setRValue(String mRValue) {
+    public void setRValue(final String mRValue) {
         this.mRValue = mRValue;
     }
 
@@ -161,7 +163,7 @@ public class ScheduleInfo {
         return mDispType;
     }
 
-    public void setDispType(String mDispType) {
+    public void setDispType(final String mDispType) {
         this.mDispType = mDispType;
     }
 
@@ -169,7 +171,7 @@ public class ScheduleInfo {
         return mSearchOk;
     }
 
-    public void setSearchOk(String mSearchOk) {
+    public void setSearchOk(final String mSearchOk) {
         this.mSearchOk = mSearchOk;
     }
 
@@ -177,7 +179,7 @@ public class ScheduleInfo {
         return mDtv;
     }
 
-    public void setDtv(String mDtv) {
+    public void setDtv(final String mDtv) {
         this.mDtv = mDtv;
     }
 
@@ -185,7 +187,7 @@ public class ScheduleInfo {
         return mDtvType;
     }
 
-    public void setDtvType(String mDtvType) {
+    public void setDtvType(final String mDtvType) {
         this.mDtvType = mDtvType;
     }
 
@@ -193,7 +195,7 @@ public class ScheduleInfo {
         return mClipExec;
     }
 
-    public void setClipExec(boolean mClipExec) {
+    public void setClipExec(final boolean mClipExec) {
         this.mClipExec = mClipExec;
     }
 
@@ -201,7 +203,7 @@ public class ScheduleInfo {
         return mContentType;
     }
 
-    public void setContentType(String mContentType) {
+    public void setContentType(final String mContentType) {
         this.mContentType = mContentType;
     }
 
@@ -213,16 +215,16 @@ public class ScheduleInfo {
         return mContentsId;
     }
 
-    public void setContentsId(String mContentsId) {
+    public void setContentsId(final String mContentsId) {
         this.mContentsId = mContentsId;
     }
 
-    public void setClipStatus(boolean mClipStatus) {
+    public void setClipStatus(final boolean mClipStatus) {
         this.mClipStatus = mClipStatus;
     }
 
     /**
-     * 開始時間よりmarginの取得
+     * 開始時間よりmarginの取得.
      *
      * @return 前の間隔
      */
@@ -231,13 +233,14 @@ public class ScheduleInfo {
         float diffHours = 0;
         if (startTime != null) {
             String curStartDay = startTime.substring(0, 10);
-            int hour = Integer.parseInt(startTime.substring(11,13));
-            if( hour>=0 && hour < 4){
+            int hour = Integer.parseInt(startTime.substring(11, 13));
+            if (hour >= 0 && hour < 4) {
                 SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYYMMDD, Locale.JAPAN);
                 Date date = new Date();
                 try {
-                    date=sdf.parse(curStartDay);
-                }catch (ParseException e){
+                    curStartDay = curStartDay.replace("/", "-");
+                    date = sdf.parse(curStartDay);
+                } catch (ParseException e) {
                     DTVTLogger.debug(e);
                 }
                 Calendar calendar = Calendar.getInstance();
@@ -261,15 +264,17 @@ public class ScheduleInfo {
     }
 
     /**
-     * StringをDateに変換
+     * StringをDateに変換.
      *
+     * @param strDate 日付
      * @return date
      */
-    private Date stringToDate(String strDate) {
+    private Date stringToDate(final String strDate) {
         SimpleDateFormat format = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);  //2017-10-12T08:00:00+09:00
         Date date = null;
         try {
-            date = format.parse(strDate);
+            String replaceString = strDate.replace("-", "/");
+            date = format.parse(replaceString);
         } catch (Exception e) {
             DTVTLogger.debug(e);
         }
@@ -277,22 +282,29 @@ public class ScheduleInfo {
     }
 
     /**
-     * Stringを切り取る
+     * Stringを切り取る.
      *
+     * @param date 日付.
      * @return 変換後のデータ
      */
-    private String getFormatDate(String date) {
+    private String getFormatDate(final String date) {
+        if (TextUtils.isEmpty(date)) {
+            return "";
+        }
         return date.substring(0, 10) + date.substring(11, 19);
     }
 
     /**
-     * 番組高さ取得
+     * 番組高さ取得.
      *
      * @return 高さ
      */
     public float getMyHeight() {
         Date startTime = stringToDate(getFormatDate(this.startTime));
         Date endTime = stringToDate(getFormatDate(this.endTime));
+        if (startTime == null || endTime == null) {
+            return 0L;
+        }
         float diffHours = (endTime.getTime() - startTime.getTime()) / FORMAT;
         if (diffHours < 0) {
             diffHours = 0;

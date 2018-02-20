@@ -38,12 +38,15 @@ import java.io.File;
 import java.util.List;
 
 
+/**
+ * コンテンツ詳細画面表示用Fragment.
+ */
 public class DtvContentsDetailFragment extends Fragment {
 
     /**
      * コンテクスト.
      */
-    public Context mActivity = null;
+    private Context mActivity = null;
     /**
      * フラグメントビュー.
      */
@@ -129,9 +132,12 @@ public class DtvContentsDetailFragment extends Fragment {
      */
     private final static String DTV_FLG = "1";
     /**
-     * display type.
+     * display type(video_program).
      */
     private static final String VIDEO_PROGRAM = "video_program";
+    /**
+     * display type(video_series).
+     */
     private static final String VIDEO_SERIES = "video_series";
 
     @Override
@@ -178,7 +184,7 @@ public class DtvContentsDetailFragment extends Fragment {
         mStaffLayout = mView.findViewById(R.id.dtv_contents_detail_fragment_staff);
         mTxtMoreText.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 //moreボタン押下で、全文表示に切り替える
                 mIsAllText = true;
                 mTxtTitleShortDetail.setVisibility(View.GONE);
@@ -221,7 +227,7 @@ public class DtvContentsDetailFragment extends Fragment {
 
         clipButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 //クリップボタンイベント
                 if (mIsContract) {
                     ClipRequestData data = setClipData(mOtherContentsDetailData.getVodMetaFullData());
@@ -273,26 +279,26 @@ public class DtvContentsDetailFragment extends Fragment {
         //タイトル
         mTextHeader.setText(mOtherContentsDetailData.getTitle());
         //サブタイトル
-        if(!TextUtils.isEmpty(mOtherContentsDetailData.getEpititle())){
+        if (!TextUtils.isEmpty(mOtherContentsDetailData.getEpititle())) {
             mTextSubHeader.setText(mOtherContentsDetailData.getEpititle());
         } else {
             mTextSubHeader.setVisibility(View.GONE);
         }
         //画面表示
-        StringUtils util = new StringUtils(getContext());
+        StringUtils util = new StringUtils();
         //サービスアイコン
         int serviceIcon = util.getContentsServiceName(mOtherContentsDetailData.getServiceId());
         mImgServiceIcon.setImageResource(serviceIcon);
         String dtv = mOtherContentsDetailData.getDtv();
         //dtvの場合
-        if(DTV_FLG.equals(dtv)){
+        if (DTV_FLG.equals(dtv)) {
             mImgServiceIconDtv.setVisibility(View.VISIBLE);
             mImgServiceIconDtv.setImageResource(R.mipmap.label_service_dtv_white);
             mRatingBar.setVisibility(View.GONE);
         } else {
             //VODの場合
-            if(mOtherContentsDetailData.getServiceId() == 0 && (VIDEO_SERIES.equals(mOtherContentsDetailData.getDispType())
-                    || VIDEO_PROGRAM.equals(mOtherContentsDetailData.getDispType()))){
+            if (mOtherContentsDetailData.getServiceId() == 0 && (VIDEO_SERIES.equals(mOtherContentsDetailData.getDispType())
+                    || VIDEO_PROGRAM.equals(mOtherContentsDetailData.getDispType()))) {
                 //評価
                 mRatingBar.setMiniFlg(false);
                 mRatingBar.setRating((float) mOtherContentsDetailData.getRating());
@@ -328,6 +334,9 @@ public class DtvContentsDetailFragment extends Fragment {
         setClipButton(mClipButton);
     }
 
+    /**
+     * ラベルを設定する.
+     */
     private void setLabelStatus() {
         LinearLayout labelStatus = mView.findViewById(R.id.dtv_contents_detail_fragment_label_status_ll);
         labelStatus.removeAllViews();
@@ -339,8 +348,10 @@ public class DtvContentsDetailFragment extends Fragment {
                     LinearLayout.LayoutParams.WRAP_CONTENT);
             if (i != 0) {
                 if (isAdded()) {
-                    imageParams.setMargins((int) getResources().getDimension(R.dimen.contents_detail_clip_margin), (int) getResources().getDimension(R.dimen.contents_tab_top_margin),
-                            (int) getResources().getDimension(R.dimen.contents_tab_top_margin), (int) getResources().getDimension(R.dimen.contents_tab_top_margin));
+                    imageParams.setMargins((int) getResources().getDimension(R.dimen.contents_detail_clip_margin),
+                            (int) getResources().getDimension(R.dimen.contents_tab_top_margin),
+                            (int) getResources().getDimension(R.dimen.contents_tab_top_margin),
+                            (int) getResources().getDimension(R.dimen.contents_tab_top_margin));
                 }
             }
             Context context = getContext();
@@ -371,7 +382,8 @@ public class DtvContentsDetailFragment extends Fragment {
                 tabTextView.setGravity(Gravity.CENTER_VERTICAL);
                 tabTextView.setTextColor(ContextCompat.getColor(context, R.color.contents_detail_schedule_detail_sub_title));
                 tabTextView.setLineSpacing(getResources().getDimension(R.dimen.contents_detail_content_line_space), 1);
-                contentParams.setMargins(STAFF_MARGIN_0, (int) getResources().getDimension(R.dimen.contents_detail_staff_margin_top), STAFF_MARGIN_0, STAFF_MARGIN_0);
+                contentParams.setMargins(STAFF_MARGIN_0, (int) getResources().getDimension(
+                        R.dimen.contents_detail_staff_margin_top), STAFF_MARGIN_0, STAFF_MARGIN_0);
                 if (text.contains(File.separator)) {
                     tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_12);
                     tabTextView.setText(text.substring(0, text.length() - 1));
@@ -470,7 +482,7 @@ public class DtvContentsDetailFragment extends Fragment {
      *
      * @param visibility 表示/非表示の指定
      */
-    public void changeVisiblityRecordingReservationIcon(final int visibility) {
+    public void changeVisibilityRecordingReservationIcon(final int visibility) {
         DTVTLogger.start("setVisibility:" + visibility);
         mView.findViewById(R.id.dtv_contents_detail_fragment_rec_iv).setVisibility(visibility);
         DTVTLogger.end();
@@ -488,7 +500,7 @@ public class DtvContentsDetailFragment extends Fragment {
             mIconClickListener = listener;
             mView.findViewById(R.id.dtv_contents_detail_fragment_rec_iv).setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(final View v) {
                     DTVTLogger.debug("onClick RecordingReservationIcon");
                     // onClickをActivityに通知
                     mIconClickListener.onClickRecordingReservationIcon(v);

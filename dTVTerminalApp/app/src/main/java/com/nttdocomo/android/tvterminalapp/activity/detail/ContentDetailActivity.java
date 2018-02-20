@@ -61,7 +61,6 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDat
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentDetailDataConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopScaledProListDataConnect;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsChannelFragment;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.struct.CalendarComparator;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
@@ -178,7 +177,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     private static final String CONTENTS_DETAIL_RESERVEDID = "1";
     private static final String MOBILEVIEWINGFLG_FLAG_ZERO = "0";
     private int mDateIndex = 0;
-    private String dateList[] = null;
+    private String[] dateList = null;
     private boolean isVod = false;
 
     /* コンテンツ詳細 end */
@@ -389,7 +388,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     /* player end */
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(R.style.AppThemeBlack);
         setContentView(R.layout.dtv_contents_detail_main_layout);
@@ -419,21 +418,21 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     public void onStartCommunication() {
         DTVTLogger.start();
         super.onStartCommunication();
-        if(!mIsPlayer){
-            if(mDetailDataProvider != null){
+        if (!mIsPlayer) {
+            if (mDetailDataProvider != null) {
                 mDetailDataProvider.enableConnect();
             }
-            if(mScaledDownProgramListDataProvider != null){
+            if (mScaledDownProgramListDataProvider != null) {
                 mScaledDownProgramListDataProvider.enableConnect();
             }
-            if (mSendOperateLog != null){
+            if (mSendOperateLog != null) {
                 mSendOperateLog.enableConnection();
             }
             enableThumbnailConnect();
             //FragmentにContentsAdapterの通信を止めるように通知する
             Fragment fragment = getCurrentFragment(1);
-            if(fragment != null){
-                DtvContentsChannelFragment channelFragment = (DtvContentsChannelFragment)fragment;
+            if (fragment != null) {
+                DtvContentsChannelFragment channelFragment = (DtvContentsChannelFragment) fragment;
                 channelFragment.enableContentsAdapterCommunication();
             }
         }
@@ -485,7 +484,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      */
     private Handler viewRefresher = new Handler() {
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(final Message msg) {
             DTVTLogger.start();
             super.handleMessage(msg);
             if (null == mPlayerController) {
@@ -517,7 +516,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      * @param textView textView
      * @param millisecond ミリ秒
      */
-    private void time2TextViewFormat(TextView textView, int millisecond) {
+    private void time2TextViewFormat(final TextView textView, final int millisecond) {
         DTVTLogger.start();
         int second = millisecond / 1000;
         int hh = second / 3600;
@@ -547,7 +546,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         try {
             //実機でandroid 5.xとandroid4.xの場合は「mPlayerController.setWakeMode(this, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);」失敗したので、
             //バージョンチェックする
-            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M ) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                 mPlayerController.setWakeMode(this, PowerManager.FULL_WAKE_LOCK);
             } else {
                 mPlayerController.setWakeMode(this, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -603,7 +602,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         DTVTLogger.start();
         mActivationHandler = new Handler();
         mDeviceKey = EnvironmentUtil.getPrivateDataHome(ContentDetailActivity.this, EnvironmentUtil.ACTIVATE_DATA_HOME.PLAYER);
-        if (TextUtils.isEmpty(mDeviceKey)){
+        if (TextUtils.isEmpty(mDeviceKey)) {
             return;
         }
         mActivationHelper = new ActivationHelper(this, mDeviceKey);
@@ -612,7 +611,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
 		customDialog.setTitle(getResources().getString(R.string.activation_confirm_dialog_title));
 		customDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
 			@Override
-			public void onOKCallback(boolean isOK) {
+			public void onOKCallback(final boolean isOK) {
 				if (isOK) {
 					runActivation();
 				}
@@ -625,23 +624,25 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     /**
      * アクティベーションThread.
      */
-    class ActivationThread extends Thread {
-        public void start(){
+    private class ActivationThread extends Thread {
+        @Override
+        public void start() {
             super.start();
         }
 
+        @Override
         public void run() {
             int ret = RESULT_FIRST_USER + 2;
-            if (ContentDetailActivity.this.mActivationHelper != null){
+            if (ContentDetailActivity.this.mActivationHelper != null) {
                 ret = ContentDetailActivity.this.mActivationHelper.activation(ContentDetailActivity.this.mDeviceKey);
             }
             final int result = ret;
-            if (ContentDetailActivity.this.mActivationHandler == null){
+            if (ContentDetailActivity.this.mActivationHandler == null) {
                 return;
             }
-            ContentDetailActivity.this.mActivationHandler.post(new Runnable(){
+            ContentDetailActivity.this.mActivationHandler.post(new Runnable() {
                 @Override
-                public void run(){
+                public void run() {
                     ContentDetailActivity.this.onThreadFinish(result);
                 }
             });
@@ -653,8 +654,9 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      */
     private void runActivation() {
         showProsessBar(true);
-        if (mActivationThread != null)
+        if (mActivationThread != null) {
             mActivationThread.start();
+        }
     }
 
     /**
@@ -662,11 +664,10 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      *
      * @param result 処理結果
      */
-    private void onThreadFinish(int result){
+    private void onThreadFinish(final int result) {
         showProsessBar(false);
-        if (result == ActivationHelper.ACTC_OK){
+        if (result == ActivationHelper.ACTC_OK) {
             onResume();
-            return;
         } else {
             showErrorDialog(getResources().getString(R.string.activation_failed_error));
         }
@@ -762,7 +763,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         }
         mRecordCtrlView.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
+            public boolean onTouch(final View view, final MotionEvent motionEvent) {
                 DTVTLogger.start();
                 if (mVideoPlayPause.getVisibility() == View.VISIBLE) {
                     mGestureDetector.onTouchEvent(motionEvent);
@@ -797,7 +798,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      *
      * @param invisible 表示/非表示の設定値
      */
-    private void hideCtrlView(int invisible) {
+    private void hideCtrlView(final int invisible) {
         DTVTLogger.start();
         mVideoPlayPause.setVisibility(invisible);
         mVideoRewind10.setVisibility(invisible);
@@ -837,7 +838,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         }
         mGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
-            public boolean onSingleTapUp(MotionEvent e) {
+            public boolean onSingleTapUp(final MotionEvent e) {
                 DTVTLogger.start();
                 if (e.getY() > (float) mRecordCtrlView.getHeight() / 3
                         && e.getY() < mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight() / 3) {
@@ -871,7 +872,8 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             }
 
             @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            public boolean onFling(final MotionEvent e1, final MotionEvent e2,
+                                   final float velocityX, final float velocityY) {
                 DTVTLogger.start();
                 if (e1.getY() > (float) mRecordCtrlView.getHeight() / 3
                         && e2.getY() > (float) mRecordCtrlView.getHeight() / 3
@@ -1064,8 +1066,12 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         return true;
     }
 
-    //TODO: 削除予定(テスト用処理)
-    public String ReadFile(File file) {
+    /**
+     * TODO: 削除予定(テスト用処理).
+     * @param file file
+     * @return data
+     */
+    public String ReadFile(final File file) {
         FileInputStream inStream = null;
         ByteArrayOutputStream outStream = null;
         byte[] data;
@@ -1099,7 +1105,13 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     }
     //test e
 
-    private static long getFileSize(File file) {
+    /**
+     * ファイルサイズ取得.
+     *
+     * @param file file
+     * @return ファイルサイズ
+     */
+    private static long getFileSize(final File file) {
         if (file == null) {
             return 0;
         }
@@ -1109,7 +1121,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             try {
                 fis = new FileInputStream(file);
                 size = fis.available();
-            } catch (Exception e) {
+            } catch (IOException e) {
                 DTVTLogger.debug(e);
                 return 0;
             }
@@ -1130,24 +1142,20 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         String[] strs1 = durationStr.split(":");
         String[] strs2;
         if (3 == strs1.length) {
-            try {
-                ret = 60 * 60 * 1000 * Integer.parseInt(strs1[0]) + 60 * 1000 * Integer.parseInt(strs1[1]);
-                String ss = strs1[2];
-                int i = ss.indexOf('.');
-                if (i <= 0) {
-                    ret += 1000L * Integer.parseInt(ss);
-                } else {
-                    String ss1 = ss.substring(0, i);
-                    String ss2 = ss.substring(i + 1, ss.length());
-                    ret += 1000L * Integer.parseInt(ss1);
-                    try {
-                        ret += Integer.parseInt(ss2);
-                    } catch (Exception e2) {
-                        DTVTLogger.debug("TvPlayerActivity::getDuration(), skip ms");
-                    }
+            ret = 60 * 60 * 1000 * Integer.parseInt(strs1[0]) + 60 * 1000 * Integer.parseInt(strs1[1]);
+            String ss = strs1[2];
+            int i = ss.indexOf('.');
+            if (i <= 0) {
+                ret += 1000L * Integer.parseInt(ss);
+            } else {
+                String ss1 = ss.substring(0, i);
+                String ss2 = ss.substring(i + 1, ss.length());
+                ret += 1000L * Integer.parseInt(ss1);
+                try {
+                    ret += Integer.parseInt(ss2);
+                } catch (Exception e2) {
+                    DTVTLogger.debug("TvPlayerActivity::getDuration(), skip ms");
                 }
-            } catch (Exception e) {
-                ok = false;
             }
         }
         if (!ok) {
@@ -1162,7 +1170,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      *
      * @param msg エラーダイアログに表示する文言
      */
-    private void showMessage(String msg) {
+    private void showMessage(final String msg) {
         DTVTLogger.start();
         CustomDialog customDialog = new CustomDialog(getApplicationContext(), CustomDialog.DialogType.ERROR);
         customDialog.setContent(msg);
@@ -1186,7 +1194,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      *
      * @param state state
      */
-    private void setCanPlay(boolean state) {
+    private void setCanPlay(final boolean state) {
         DTVTLogger.start();
         synchronized (this) {
             mCanPlay = state;
@@ -1215,12 +1223,15 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     }
 
     /**
-     * フラグメント生成
+     * フラグメント生成.
+     *
+     * @param position ポジション
+     * @return fragment
      */
-    private Fragment getCurrentFragment(int ...position) {
+    private Fragment getCurrentFragment(final int...position) {
         DTVTLogger.start();
         int tabIndex;
-        if(position != null && position.length > 0){
+        if (position != null && position.length > 0) {
             tabIndex = position[0];
         } else {
             tabIndex = mViewPager.getCurrentItem();
@@ -1233,16 +1244,16 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      */
     public void getChannelDetailData() {
         Fragment fragment = getCurrentFragment();
-        DtvContentsChannelFragment channelFragment = (DtvContentsChannelFragment)fragment;
+        DtvContentsChannelFragment channelFragment = (DtvContentsChannelFragment) fragment;
         channelFragment.loadComplete();
         //TODO テストのため一時表示 start
-        if(mChannel == null){
+        if (mChannel == null) {
             mChannel = new ChannelInfo();
             mChannel.setChNo(1);
             mChannel.setTitle("FOX HD");
         }
         //TODO テストのため一時表示 end
-        if(mChannel != null) {
+        if (mChannel != null) {
             channelFragment.setChannelDataChanged(mChannel);
             mDateIndex = 0;
             getChannelDetailByPageNo();
@@ -1250,19 +1261,19 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     }
 
     /**
-     * ページングでチャンネルデータ取得
+     * ページングでチャンネルデータ取得.
      */
-    private void getChannelDetailByPageNo(){
-        if(mScaledDownProgramListDataProvider == null){
+    private void getChannelDetailByPageNo() {
+        if (mScaledDownProgramListDataProvider == null) {
             mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
         }
-        int channelNos[] = new int[mChannel.getChNo()];
+        int[] channelNos = new int[mChannel.getChNo()];
         dateList = null;
-        if(mDateIndex <= 6){//一週間以内
+        if (mDateIndex <= 6) { //一週間以内
             dateList = new String[1];
         }
-        if(dateList != null){
-            try{
+        if (dateList != null) {
+            try {
                 Calendar calendar = Calendar.getInstance();
                 SimpleDateFormat todaySdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DD, Locale.JAPAN);
                 String today = todaySdf.format(calendar.getTime()) + DateUtils.DATE_STANDARD_START;
@@ -1270,19 +1281,24 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 Date date = sdf.parse(today);
                 //AM4:00以前の場合 日付-1
                 boolean is4HourPre = false;
-                if(calendar.getTime().compareTo(date) == -1){
+                if (calendar.getTime().compareTo(date) == -1) {
                     is4HourPre = true;
                 }
-                if(is4HourPre){
-                    calendar.add(Calendar.DAY_OF_MONTH, mDateIndex-1);
+                if (is4HourPre) {
+                    calendar.add(Calendar.DAY_OF_MONTH, mDateIndex - 1);
                 } else {
                     calendar.add(Calendar.DAY_OF_MONTH, mDateIndex);
                 }
                 dateList[0] = sdf.format(calendar.getTime());
                 mDateIndex++;
-            } catch (ParseException e){
+            } catch (ParseException e) {
                 channelLoadCompleted();
                 DTVTLogger.debug(e);
+            }
+            if (channelNos.length == 0 || channelNos[0] == -1) {
+                //TODO channelNoが未指定の場合、チャンネル番号として仮の値を入れている.
+                channelNos = new int[1];
+                channelNos[0] = 151;
             }
             mScaledDownProgramListDataProvider.getProgram(channelNos, dateList, 1);
         } else {
@@ -1290,7 +1306,10 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         }
     }
 
-    private void channelLoadCompleted(){
+    /**
+     * チャンネルロード完了.
+     */
+    private void channelLoadCompleted() {
         Fragment fragment = getCurrentFragment(1);
         DtvContentsChannelFragment channelFragment = (DtvContentsChannelFragment) fragment;
         channelFragment.loadComplete();
@@ -1303,7 +1322,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
 
     @Override
     public void onUserVisibleHint() {
-        if(loadHandler != null){
+        if (loadHandler != null) {
             loadHandler.removeCallbacks(loadRunnable);
         }
     }
@@ -1327,15 +1346,15 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      * @param title タイトル
      * @param url URL
      */
-    private void setTitleAndThumbnail(String title, String url) {
+    private void setTitleAndThumbnail(final String title, final String url) {
         if (!TextUtils.isEmpty(title)) {
             setTitleText(title);
         }
         if (!TextUtils.isEmpty(url)) {
-            if(mThumbnailProvider == null){
+            if (mThumbnailProvider == null) {
                 mThumbnailProvider = new ThumbnailProvider(this);
             }
-            if(!isDownloadStop){
+            if (!isDownloadStop) {
                 mThumbnail.setTag(url);
                 setThumbnail();
                 Bitmap bitmap = mThumbnailProvider.getThumbnailImage(mThumbnail, url);
@@ -1399,7 +1418,8 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                     } else if (serviceId == DTV_CHANNEL_CONTENTS_SERVICE_ID) {
                         createRemoteControllerView(true);
                         mIsControllerVisible = true;
-                        mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
+                        mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
+                                R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
                         setStartRemoteControllerUIListener(this);
                     }
                 }
@@ -1438,8 +1458,8 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             // コンテンツ詳細(他サービスの時は、タブ一つに設定する)
             mTabNames = getResources().getStringArray(R.array.other_service_contents_detail_tabs);
         } else {
-            if(mDetailData != null && DTV_FLAG_ONE.equals(mDetailData.getDtv())){
-                if(VIDEO_SERIES.equals(mDetailData.getDispType()) || VIDEO_PROGRAM.equals(mDetailData.getDispType())){
+            if (mDetailData != null && DTV_FLAG_ONE.equals(mDetailData.getDtv())) {
+                if (VIDEO_SERIES.equals(mDetailData.getDispType()) || VIDEO_PROGRAM.equals(mDetailData.getDispType())) {
                     // VOD
                     isVod = true;
                     mTabNames = getResources().getStringArray(R.array.video_contents_detail_tabs);
@@ -1460,32 +1480,38 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         mViewPager.addOnPageChangeListener(new ViewPager
                 .SimpleOnPageChangeListener() {
             @Override
-            public void onPageSelected(int position) {
+            public void onPageSelected(final int position) {
                 // スクロールによるタブ切り替え
                 super.onPageSelected(position);
                 mTabLayout.setTab(position);
-                if(position == 1){
-                    if(isVod){
+                if (position == 1) {
+                    if (isVod) {
                         return;
                     }
-                    ((DtvContentsChannelFragment)getCurrentFragment(1)).initLoad();
+                    ((DtvContentsChannelFragment) getCurrentFragment(1)).initLoad();
                 }
                 loadHandler.postDelayed(loadRunnable, 1200);
             }
         });
         //レコメンド（serviceId 44）若しくはぷららの場合
-        if(!mIsOtherService){
+        if (!mIsOtherService) {
             viewRefresher.sendEmptyMessage(REFRESH_VIDEO_VIEW);
         } else {
             showProsessBar(false);
         }
     }
 
-   private Handler loadHandler = new Handler();
-   private Runnable loadRunnable = new Runnable() {
+    /**
+     * ハンドラー.
+     */
+    private Handler loadHandler = new Handler();
+    /**
+     * データ取得用Runnable.
+     */
+    private Runnable loadRunnable = new Runnable() {
         @Override
         public void run() {
-            if(mViewPager.getCurrentItem() == 0){
+            if (mViewPager.getCurrentItem() == 0) {
                 getScheduleDetailData();
             } else {
                 getChannelDetailData();
@@ -1544,7 +1570,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      *
      * @param url URL
      */
-    private void setPlayerLogoThumbnail(String url) {
+    private void setPlayerLogoThumbnail(final String url) {
         if (!TextUtils.isEmpty(url)) {
             ThumbnailProvider mThumbnailProvider = new ThumbnailProvider(this);
             mTvLogo.setImageResource(R.drawable.test_image);
@@ -1562,7 +1588,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      * @param mIsLandscape 端末の縦横判定
      * @param playerParams LayoutParams
      */
-    private void setScreenSize(boolean mIsLandscape, LinearLayout.LayoutParams playerParams) {
+    private void setScreenSize(final boolean mIsLandscape, final LinearLayout.LayoutParams playerParams) {
         DTVTLogger.start();
         if (mIsLandscape) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -1606,7 +1632,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      *
      * @param isLandscape 端末の縦横判定
      */
-    private void setPlayerProgressView(boolean isLandscape) {
+    private void setPlayerProgressView(final boolean isLandscape) {
         RelativeLayout progressLayout = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_progress_ll);
         if (isLandscape) {
             //端末横向き
@@ -1670,7 +1696,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      * @param isHeight 端末が縦向きかどうか
      * @return true:表示されている false:表示されていない
      */
-    private boolean isNavigationBarShow(boolean isHeight) {
+    private boolean isNavigationBarShow(final boolean isHeight) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             Display display = getWindowManager().getDefaultDisplay();
             Point size = new Point();
@@ -1689,7 +1715,13 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         }
     }
 
-    private int getNavigationBarHeight(boolean isHeight) {
+    /**
+     * ナビゲーションバーの高さを取得.
+     *
+     * @param isHeight ナビゲーションバーを表示するかどうか
+     * @return 高さ.
+     */
+    private int getNavigationBarHeight(final boolean isHeight) {
         if (!isNavigationBarShow(isHeight)) {
             return 0;
         }
@@ -1704,10 +1736,20 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         return getResources().getDimensionPixelSize(resourceId);
     }
 
+    /**
+     * スクリーンのHeightを取得.
+     *
+     * @return Height
+     */
     private int getScreenHeight() {
         return getHeightDensity() + getNavigationBarHeight(true);
     }
 
+    /**
+     * スクリーンのWidthを取得.
+     *
+     * @return Width
+     */
     private int getScreenWidth() {
         return getWidthDensity() + getNavigationBarHeight(false);
     }
@@ -1718,25 +1760,25 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      *
      * @param seekBar シークバー
      */
-    private void setSeekBarListener(SeekBar seekBar) {
+    private void setSeekBarListener(final SeekBar seekBar) {
         DTVTLogger.start();
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+            public void onProgressChanged(final SeekBar seekBar, final int i, final boolean b) {
                 DTVTLogger.start();
                 time2TextViewFormat(mVideoCurTime, i);
                 DTVTLogger.end();
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            public void onStartTrackingTouch(final SeekBar seekBar) {
                 DTVTLogger.start();
                 viewRefresher.removeMessages(REFRESH_VIDEO_VIEW);
                 DTVTLogger.end();
             }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+            public void onStopTrackingTouch(final SeekBar seekBar) {
                 DTVTLogger.start();
                 int progress = seekBar.getProgress();
                 mPlayerController.seekTo(progress);
@@ -1803,7 +1845,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     }
 
     @Override
-    public void onClickTab(int position) {
+    public void onClickTab(final int position) {
         DTVTLogger.start("position = " + position);
         if (null != mViewPager) {
             DTVTLogger.debug("viewpager not null");
@@ -1816,18 +1858,23 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      * コンテンツ詳細用ページャアダプター.
      */
     private class ContentsDetailPagerAdapter extends FragmentStatePagerAdapter {
-        ContentsDetailPagerAdapter(FragmentManager fm) {
+        /**
+         * コンストラクタ.
+         *
+         * @param fm FragmentManager
+         */
+        ContentsDetailPagerAdapter(final FragmentManager fm) {
             super(fm);
         }
 
         @Override
-        public Fragment getItem(int position) {
+        public Fragment getItem(final int position) {
             Fragment fragment = mFragmentFactory.createFragment(position);
             //Fragmentへデータを渡す
             Bundle args = new Bundle();
             args.putParcelable(RECOMMEND_INFO_BUNDLE_KEY, mDetailData);
-            if(position == 1){
-                ((DtvContentsChannelFragment)fragment).setScrollCallBack(ContentDetailActivity.this);
+            if (position == 1) {
+                ((DtvContentsChannelFragment) fragment).setScrollCallBack(ContentDetailActivity.this);
             }
             fragment.setArguments(args);
             return fragment;
@@ -1839,7 +1886,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         }
 
         @Override
-        public CharSequence getPageTitle(int position) {
+        public CharSequence getPageTitle(final int position) {
             return mTabNames[position];
         }
     }
@@ -1849,7 +1896,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      *
      * @param detailFragment フラグメント
      */
-    private void setRecordingData(DtvContentsDetailFragment detailFragment){
+    private void setRecordingData(final DtvContentsDetailFragment detailFragment) {
         // リモート録画予約情報を生成
         mRecordingReservationContentsDetailInfo = new RecordingReservationContentsDetailInfo(
                 mDetailFullData.getmService_id(),
@@ -1858,25 +1905,32 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 mDetailFullData.getDur(),
                 mDetailFullData.getR_value());
         mRecordingReservationContentsDetailInfo.setEventId(mDetailFullData.getmEvent_id());
-        detailFragment.changeVisiblityRecordingReservationIcon(View.VISIBLE);
+        detailFragment.changeVisibilityRecordingReservationIcon(View.VISIBLE);
         detailFragment.setRecordingReservationIconListener(this);
     }
 
     @Override
-    public void onContentsDetailInfoCallback(ArrayList<VodMetaFullData> contentsDetailInfo, boolean clipStatus) {
+    public void onContentsDetailInfoCallback(final ArrayList<VodMetaFullData> contentsDetailInfo, final boolean clipStatus) {
         //詳細情報取得して、更新する
         if (contentsDetailInfo != null && contentsDetailInfo.size() > 0) {
             DtvContentsDetailFragment detailFragment = getDetailFragment();
             mDetailFullData = contentsDetailInfo.get(0);
-            if(TV_PROGRAM.equals(mDetailFullData.getDisp_type())){//tv_programの場合
-                if(TV_SERVICE_FLAG_ZERO.equals(mDetailFullData.getmTv_service())){//tv_serviceは0の場合
+            if (TV_PROGRAM.equals(mDetailFullData.getDisp_type())) {
+                //tv_programの場合
+                if (TV_SERVICE_FLAG_ZERO.equals(mDetailFullData.getmTv_service())) {
+                    //tv_serviceは0の場合
                     setRecordingData(detailFragment);
-                } else if(TV_SERVICE_FLAG_ONE.equals(mDetailFullData.getmTv_service())){//tv_serviceは1の場合
-                    if(CONTENT_TYPE_FLAG_ONE.equals(mDetailFullData.getmContent_type()) || CONTENT_TYPE_FLAG_TWO.equals(mDetailFullData.getmContent_type())){//contents_typeは1又は2の場合
-                        if (comparisonStartTime()) {//VOD配信日時(vod_start_date) > 現在時刻
+                } else if (TV_SERVICE_FLAG_ONE.equals(mDetailFullData.getmTv_service())) {
+                    //tv_serviceは1の場合
+                    if (CONTENT_TYPE_FLAG_ONE.equals(mDetailFullData.getmContent_type())
+                            || CONTENT_TYPE_FLAG_TWO.equals(mDetailFullData.getmContent_type())) {
+                        //contents_typeは1又は2の場合
+                        if (comparisonStartTime()) {
+                            //VOD配信日時(vod_start_date) > 現在時刻
                             setRecordingData(detailFragment);
                         }
-                    } else {//contents_typeは0又は未設定の場合
+                    } else {
+                        //contents_typeは0又は未設定の場合
                         setRecordingData(detailFragment);
                     }
                 }
@@ -1898,7 +1952,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 mDetailDataProvider.getRoleListData();
             }
             if (!TextUtils.isEmpty(mDetailFullData.getmService_id())) {
-                if(mScaledDownProgramListDataProvider == null){
+                if (mScaledDownProgramListDataProvider == null) {
                     mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
                 }
                 mScaledDownProgramListDataProvider.getChannelList(0, 0, "", 1);
@@ -1914,7 +1968,8 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 if (getStbStatus()) {
                     createRemoteControllerView(true);
                     mIsControllerVisible = true;
-                    mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
+                    mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
+                            R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
                     setStartRemoteControllerUIListener(this);
                 } else {
                     createRemoteControllerView(false);
@@ -1935,7 +1990,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                     contractLeadingButton.setText(getResources().getString(R.string.contents_detail_contract_leading_button));
                     contractLeadingButton.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(View view) {
+                        public void onClick(final View view) {
                             onStartRemoteControl(true);
                         }
                     });
@@ -1976,7 +2031,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     }
 
     @Override
-    public void onRoleListCallback(ArrayList<RoleListMetaData> roleListInfo) {
+    public void onRoleListCallback(final ArrayList<RoleListMetaData> roleListInfo) {
         //スタッフ情報取得して、更新する
         if (roleListInfo != null) {
             DtvContentsDetailFragment detailFragment = getDetailFragment();
@@ -1998,7 +2053,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      * @param roleListInfo ロールリスト情報
      * @return ロールリスト
      */
-    private List<String> getRoleList(String[] credit_array, ArrayList<RoleListMetaData> roleListInfo) {
+    private List<String> getRoleList(final String[] credit_array, final ArrayList<RoleListMetaData> roleListInfo) {
         List<String> staffList = new ArrayList<>();
         StringBuilder ids = new StringBuilder();
         for (String aCredit_array : credit_array) {
@@ -2033,7 +2088,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     }
 
     @Override
-    public void channelListCallback(ArrayList<ChannelInfo> channels) {
+    public void channelListCallback(final ArrayList<ChannelInfo> channels) {
         if (channels != null) {
             //チャンネル情報取得して、更新する
             if (!TextUtils.isEmpty(mDetailFullData.getmService_id())) {
@@ -2062,31 +2117,32 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     }
 
     @Override
-    public void channelInfoCallback(ChannelInfoList channelsInfo) {
+    public void channelInfoCallback(final ChannelInfoList channelsInfo) {
         if (channelsInfo != null && channelsInfo.getChannels() != null) {
             ArrayList<ChannelInfo> channels = channelsInfo.getChannels();
             sort(channels);
-            if(channels.size() > 0){
-                if(mViewPager.getCurrentItem() == 1){
+            if (channels.size() > 0) {
+                if (mViewPager.getCurrentItem() == 1) {
                     Fragment fragment = getCurrentFragment();
-                    DtvContentsChannelFragment channelFragment = (DtvContentsChannelFragment)fragment;
+                    DtvContentsChannelFragment channelFragment = (DtvContentsChannelFragment) fragment;
                     ChannelInfo channelInfo = channels.get(0);
                     ArrayList<ScheduleInfo> scheduleInfos = channelInfo.getSchedules();
-                    if(mDateIndex == 1 && channelFragment.mContentsData != null){
+                    if (mDateIndex == 1 && channelFragment.mContentsData != null) {
                         channelFragment.mContentsData.clear();
                     }
                     boolean isFirst = false;
-                    for(ScheduleInfo scheduleInfo : scheduleInfos){
+                    for (ScheduleInfo scheduleInfo : scheduleInfos) {
                         String endTime = scheduleInfo.getEndTime();
                         String startTime = scheduleInfo.getStartTime();
                         String start = startTime.substring(0, 10) + startTime.substring(11, 19);
                         String end = endTime.substring(0, 10) + endTime.substring(11, 19);
-                        if(!isLastDate(end)){
-                            if(dateList != null){
+                        if (!isLastDate(end)) {
+                            if (dateList != null) {
                                 ContentsData contentsData = new ContentsData();
-                                if(!isFirst){
-                                    if(mDateIndex == 1){
-                                        if(isNowOnAir(start, end)){//NOW ON AIR の判断
+                                if (!isFirst) {
+                                    if (mDateIndex == 1) {
+                                        if (isNowOnAir(start, end)) {
+                                            //NOW ON AIR の判断
                                             contentsData.setChannelName(getString(R.string.home_label_now_on_air));
                                         }
                                     }
@@ -2096,13 +2152,13 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                                 contentsData.setTitle(scheduleInfo.getTitle());
                                 contentsData.setRequestData(scheduleInfo.getClipRequestData());
                                 contentsData.setThumURL(scheduleInfo.getImageUrl());
-                                contentsData.setTime(scheduleInfo.getStartTime().substring(11,16));
+                                contentsData.setTime(scheduleInfo.getStartTime().substring(11, 16));
                                 contentsData.setClipExec(scheduleInfo.isClipExec());
                                 channelFragment.mContentsData.add(contentsData);
                             }
                         }
                     }
-                    if(mDateIndex == 1){
+                    if (mDateIndex == 1) {
                         getChannelDetailByPageNo();
                     } else {
                         channelFragment.setNotifyDataChanged();
@@ -2113,7 +2169,12 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         }
     }
 
-    private String getDate(){
+    /**
+     * 日付を取得.
+     *
+     * @return 日付
+     */
+    private String getDate() {
         String subTitle = null;
         SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
         try {
@@ -2123,14 +2184,21 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             int day = calendar.get(Calendar.DAY_OF_MONTH);
             int week = calendar.get(Calendar.DAY_OF_WEEK);
             subTitle = (month + 1) + "/" + day + "（" +
-                    DateUtils.STRING_DAY_OF_WEEK[week]+"）";
-        } catch (ParseException e){
+                    DateUtils.STRING_DAY_OF_WEEK[week] + "）";
+        } catch (ParseException e) {
             DTVTLogger.debug(e);
         }
         return subTitle;
     }
 
-    private boolean isNowOnAir(String startTime, String endTime){
+    /**
+     * NowOnAir判定.
+     *
+     * @param startTime 開始時刻
+     * @param endTime 終了時刻
+     * @return 現在放送しているかどうか
+     */
+    private boolean isNowOnAir(final String startTime, final String endTime) {
         boolean isNow = false;
         Date startDate = new Date();
         Date endDate = new Date();
@@ -2149,12 +2217,12 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     }
 
     /**
-     * ソートを行う
+     * ソートを行う.
      *
-     *  @param endTime　終了時刻
+     *  @param endTime 終了時刻
      *  @return 過去の番組
      */
-    private boolean isLastDate(String endTime){
+    private boolean isLastDate(final String endTime) {
         Date endDate = new Date();
         Date now = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
@@ -2170,9 +2238,11 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     }
 
     /**
-     * ソートを行う
+     * ソートを行う.
+     *
+     * @param channels チャンネル
      */
-    private void sort(ArrayList<ChannelInfo> channels) {
+    private void sort(final ArrayList<ChannelInfo> channels) {
         for (ChannelInfo channel : channels) {
             Collections.sort(channel.getSchedules(), new CalendarComparator());
         }
@@ -2185,18 +2255,18 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      * @param end   　終了時刻
      * @return データ整形
      */
-    private String getDateFormat(String start, String end) {
+    private String getDateFormat(final String start, final String end) {
         String channelDate = "";
         if (!TextUtils.isEmpty(start)) {
-            start = start.replaceAll("-", "/");
+            String replaceStart = start.replaceAll("-", "/");
             SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
             StringBuilder startBuilder = new StringBuilder();
-            startBuilder.append(start.substring(0, 10));
-            startBuilder.append(start.substring(11, 19));
+            startBuilder.append(replaceStart.substring(0, 10));
+            startBuilder.append(replaceStart.substring(11, 19));
             try {
                 Calendar calendar = Calendar.getInstance(Locale.JAPAN);
                 calendar.setTime(sdf.parse(startBuilder.toString()));
-                StringUtils util = new StringUtils(this);
+                StringUtils util = new StringUtils();
                 String[] strings = {String.valueOf(calendar.get(Calendar.MONTH)), "/",
                         String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)), " (",
                         DateUtils.STRING_DAY_OF_WEEK[calendar.get(Calendar.DAY_OF_WEEK)], ") ",
@@ -2221,7 +2291,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(final View v) {
         DTVTLogger.start();
         switch (v.getId()) {
             case R.id.tv_player_ctrl_video_record_player_pause_fl:
@@ -2263,7 +2333,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                     startAppDialog.setContent(getResources().getString(R.string.dtv_content_service_start_dialog));
                     startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                         @Override
-                        public void onOKCallback(boolean isOK) {
+                        public void onOKCallback(final boolean isOK) {
                             int localVersionCode = getVersionCode(DTV_PACKAGE_NAME);
                             //端末にDTVアプリはすでに存在した場合
                             if (isAppInstalled(ContentDetailActivity.this, DTV_PACKAGE_NAME)) {
@@ -2298,7 +2368,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                     startAppDialog.setTitle(getResources().getString(R.string.d_anime_store_content_service_start_dialog));
                     startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                         @Override
-                        public void onOKCallback(boolean isOK) {
+                        public void onOKCallback(final boolean isOK) {
                             int localVersionCode = getVersionCode(DANIMESTORE_PACKAGE_NAME);
                             //端末にdアニメストアアプリはすでに存在した場合
                             if (isAppInstalled(ContentDetailActivity.this, DANIMESTORE_PACKAGE_NAME)) {
@@ -2321,7 +2391,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                     startAppDialog.setTitle(getResources().getString(R.string.dtv_channel_service_start_dialog));
                     startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                         @Override
-                        public void onOKCallback(boolean isOK) {
+                        public void onOKCallback(final boolean isOK) {
                             int localVersionCode = getVersionCode(DTVCHANNEL_PACKAGE_NAME);
                             if (isAppInstalled(ContentDetailActivity.this, DTVCHANNEL_PACKAGE_NAME)) {
                                 // TODO: 現時点では仮値として5(step1.1ver。現時点の最新) 最低バージョンコードの決定が現時点でできない状態です。
@@ -2390,7 +2460,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      *
      * @param url URL
      */
-    private void startApp(String url) {
+    private void startApp(final String url) {
         Uri uri = Uri.parse(url);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -2404,7 +2474,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      * @param packageName 中継アプリのパッケージ名
      * @return 中継アプリがインストールされているか
      */
-    private boolean isAppInstalled(Context context, String packageName) {
+    private boolean isAppInstalled(final Context context, final String packageName) {
         final PackageManager packageManager = context.getPackageManager();
         List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);
         List<String> pName = new ArrayList<>();
@@ -2423,7 +2493,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      * @param packageName 中継アプリのパッケージ名
      * @return 中継アプリのパージョン情報
      */
-    private int getVersionCode(String packageName) {
+    private int getVersionCode(final String packageName) {
         PackageManager packageManager = getPackageManager();
         try {
             PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
@@ -2435,7 +2505,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     }
 
     @Override
-    public void onStartRemoteControl(boolean isFromHeader) {
+    public void onStartRemoteControl(final boolean isFromHeader) {
         DTVTLogger.start();
         // サービスIDにより起動するアプリを変更する
         if (mDetailData != null) {
@@ -2460,19 +2530,19 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                         setRemoteProgressVisible(View.VISIBLE);
                     }
                     //番組の場合
-                    if (DTV_CHANNEL_CATEGORY_BROADCAST.equals(mDetailData.getCategoryId())){
+                    if (DTV_CHANNEL_CATEGORY_BROADCAST.equals(mDetailData.getCategoryId())) {
                         requestStartApplicationDtvChannel(
                                 RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL,
                                 RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_BROADCAST,
                                 mDetailData.getContentId(), mDetailData.getChannelId());
                         //VOD(見逃し)の場合
-                    }else if(DTV_CHANNEL_CATEGORY_MISSED.equals(mDetailData.getCategoryId())){
+                    } else if (DTV_CHANNEL_CATEGORY_MISSED.equals(mDetailData.getCategoryId())) {
                         requestStartApplicationDtvChannel(
                                 RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL,
                                 RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_MISSED,
                                 mDetailData.getContentId(), mDetailData.getChannelId());
                         //VOD(関連)の場合
-                    }else if (DTV_CHANNEL_CATEGORY_RELATION.equals(mDetailData.getCategoryId())){
+                    } else if (DTV_CHANNEL_CATEGORY_RELATION.equals(mDetailData.getCategoryId())) {
                         requestStartApplicationDtvChannel(
                                 RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL,
                                 RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_RELATION,
@@ -2577,7 +2647,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      * @param arg arg
      */
     @Override
-    public void onPlayerEvent(MediaPlayerController mediaPlayerController, int event, long arg) {
+    public void onPlayerEvent(final MediaPlayerController mediaPlayerController, final int event, final long arg) {
         DTVTLogger.start();
         switch (event) {
             case MediaPlayerDefinitions.PE_OPENED:
@@ -2620,7 +2690,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      * @param i                     i
      */
     @Override
-    public void onStateChanged(MediaPlayerController mediaPlayerController, int i) {
+    public void onStateChanged(final MediaPlayerController mediaPlayerController, final int i) {
         DTVTLogger.start();
         DTVTLogger.end();
     }
@@ -2631,7 +2701,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      * @param mediaPlayerController controller
      */
     @Override
-    public void onFormatChanged(MediaPlayerController mediaPlayerController) {
+    public void onFormatChanged(final MediaPlayerController mediaPlayerController) {
         DTVTLogger.start();
         //パレンタルチェック
         if (mAge < mediaPlayerController.getParentalRating()) {
@@ -2660,7 +2730,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         closeDialog.setContent(getApplicationContext().getString(R.string.contents_detail_parental_check_fail));
         closeDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
-            public void onOKCallback(boolean isOK) {
+            public void onOKCallback(final boolean isOK) {
                 contentsDetailCloseKey(null);
             }
         });
@@ -2676,7 +2746,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      * @param l                     l
      */
     @Override
-    public void onError(MediaPlayerController mediaPlayerController, int i, long l) {
+    public void onError(final MediaPlayerController mediaPlayerController, final int i, final long l) {
         DTVTLogger.start();
     }
 
@@ -2687,7 +2757,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      * @param captionDrawCommands キャプション描画コマンド
      */
     @Override
-    public void onCaptionData(MediaPlayerController mediaPlayerController, CaptionDrawCommands captionDrawCommands) {
+    public void onCaptionData(final MediaPlayerController mediaPlayerController, final CaptionDrawCommands captionDrawCommands) {
         DTVTLogger.start();
         DTVTLogger.end();
     }
@@ -2699,7 +2769,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      * @param captionDrawCommands   commands
      */
     @Override
-    public void onSuperData(MediaPlayerController mediaPlayerController, CaptionDrawCommands captionDrawCommands) {
+    public void onSuperData(final MediaPlayerController mediaPlayerController, final CaptionDrawCommands captionDrawCommands) {
         DTVTLogger.start();
         DTVTLogger.end();
     }
@@ -2724,24 +2794,24 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             mExternalDisplayHelper.onPause();
         }
         finishPlayer();
-        if(!mIsPlayer){
+        if (!mIsPlayer) {
             //通信を止める
-            if(mDetailDataProvider != null){
+            if (mDetailDataProvider != null) {
                 StopContentDetailDataConnect stopContentDetailDataConnect = new StopContentDetailDataConnect();
                 stopContentDetailDataConnect.execute(mDetailDataProvider);
             }
-            if(mScaledDownProgramListDataProvider != null){
+            if (mScaledDownProgramListDataProvider != null) {
                 StopScaledProListDataConnect stopScaledProListDataConnect = new StopScaledProListDataConnect();
                 stopScaledProListDataConnect.execute(mScaledDownProgramListDataProvider);
             }
-            if (mSendOperateLog != null){
+            if (mSendOperateLog != null) {
                 mSendOperateLog.stopConnection();
             }
             stopThumbnailConnect();
             //FragmentにContentsAdapterの通信を止めるように通知する
             Fragment fragment = getCurrentFragment(1);
-            if(fragment != null){
-                DtvContentsChannelFragment channelFragment = (DtvContentsChannelFragment)fragment;
+            if (fragment != null) {
+                DtvContentsChannelFragment channelFragment = (DtvContentsChannelFragment) fragment;
                 channelFragment.stopContentsAdapterCommunication();
             }
         }
@@ -2770,7 +2840,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     }
 
     @Override
-    public void recordingReservationResult(RemoteRecordingReservationResultResponse response) {
+    public void recordingReservationResult(final RemoteRecordingReservationResultResponse response) {
         DTVTLogger.start();
         if (response != null) {
             if (RemoteRecordingReservationResultResponse
@@ -2903,7 +2973,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      */
     private CustomDialog.ApiItemSelectCallback mItemSelectCallback = new CustomDialog.ApiItemSelectCallback() {
         @Override
-        public void onItemSelectCallback(AlertDialog dialog, int position) {
+        public void onItemSelectCallback(final AlertDialog dialog, final int position) {
             // リスト選択時の処理
             //TODO 定期予約実装時 1 は "繰り返し録画予約する"になる
             switch (position) {
@@ -2937,7 +3007,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         recordingReservationConfirmDialog.setCancelable(false);
         recordingReservationConfirmDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
-            public void onOKCallback(boolean isOK) {
+            public void onOKCallback(final boolean isOK) {
                 DTVTLogger.debug("Request RecordingReservation");
                 DTVTLogger.debug(mRecordingReservationContentsDetailInfo.toString());
                 mDetailDataProvider.requestRecordingReservation(mRecordingReservationContentsDetailInfo);
@@ -3459,7 +3529,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 detailFragment.changeClipButtonVisibility(false);
 
                 //録画予約ボタンを非表示
-                detailFragment.changeVisiblityRecordingReservationIcon(View.INVISIBLE);
+                detailFragment.changeVisibilityRecordingReservationIcon(View.INVISIBLE);
 
                 //サムネイル上のdTVで視聴、dアニメストアで視聴を非表示
                 if (mThumbnailBtn != null) {
@@ -3516,9 +3586,9 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     /**
      * プロセスバーを表示する.
      *
-     * @param showProsessBar
+     * @param showProsessBar プロセスバーを表示するかどうか
      */
-    private void showProsessBar(boolean showProsessBar) {
+    private void showProsessBar(final boolean showProsessBar) {
         if (showProsessBar) {
             findViewById(R.id.contents_detail_scroll_layout).setVisibility(View.INVISIBLE);
             setRemoteProgressVisible(View.VISIBLE);
@@ -3565,7 +3635,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     }
 
     /**
-     * 外部出力イベントリスナー
+     * 外部出力イベントリスナー.
      *
      * @return イベントリスナー
      */
@@ -3574,7 +3644,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         return new ExternalDisplayHelper.OnPresentationEventListener() {
 
             @Override
-            public Presentation onCreatePresentation(Display presentationDisplay) {
+            public Presentation onCreatePresentation(final Display presentationDisplay) {
                 if (!mExternalDisplayFlg) {
                     mExternalDisplayFlg = true;
                     showErrorDialog(getResources().getString(R.string.contents_detail_external_display_dialog_msg));
@@ -3587,7 +3657,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             }
 
             @Override
-            public void onDismissPresentation(Presentation presentation) {
+            public void onDismissPresentation(final Presentation presentation) {
 
             }
 

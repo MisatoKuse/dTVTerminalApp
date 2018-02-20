@@ -26,7 +26,10 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -40,34 +43,57 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class StringUtils {
 
+    /**
+     * タイプ.
+     */
     private static String type;
-    private final Context mContext;
 
-    //データがないときのDefault値(PG12制限)
+    /**
+     * データがないときのDefault値(PG12制限).
+     */
     public static final int DEFAULT_USER_AGE_REQ = 8;
-    //データがないときのDefault値(無制限)
+    /**
+     * データがないときのDefault値(無制限).
+     */
     public static final int DEFAULT_R_VALUE = 0;
-    //年齢制限値=PG12
+    /**
+     * 年齢制限値=PG12.
+     */
     public static final int USER_AGE_REQ_PG12 = 9;
-    //年齢制限値=R15
+    /**
+     * 年齢制限値=R15.
+     */
     public static final int USER_AGE_REQ_R15 = 12;
-    //年齢制限値=R18
+    /**
+     * 年齢制限値=R18.
+     */
     public static final int USER_AGE_REQ_R18 = 15;
-    //年齢制限値=R20
+    /**
+     * 年齢制限値=R20.
+     */
     public static final int USER_AGE_REQ_R20 = 17;
-
-    //カンマ
+    /**
+     * カンマ.
+     */
     private static final String COMMA_SEPARATOR = ",";
 
-    //暗号化方法
+    /**
+     * 暗号化方法(AES).
+     */
     private static String CIPHER_TYPE = "AES";
+    /**
+     * 暗号化方法(AES/ECB/PKCS5Padding).
+     */
     private static String CIPHER_DATA = "AES/ECB/PKCS5Padding";
-
-    //暗号化キーの長さ
+    /**
+     * 暗号化キーの長さ.
+     */
     private static int CIPHER_KEY_LENGTH = 16;
 
-    public StringUtils(final Context context) {
-        mContext = context;
+    /**
+     * コンストラクタ.
+     */
+    public StringUtils() {
     }
 
     /**
@@ -413,7 +439,7 @@ public class StringUtils {
      * @param source 暗号文字列
      * @return 元の文字列
      */
-    public static String getClearString(Context context, String source) {
+    public static String getClearString(final Context context, final String source) {
         if (TextUtils.isEmpty(source)) {
             //元データが空ならば何もできないので、空文字を返す
             return "";
@@ -421,8 +447,7 @@ public class StringUtils {
 
         try {
             // 元文字列をバイト配列へ変換
-            byte[] byteSource = new byte[0];
-            byteSource = source.getBytes(StandardCharsets.UTF_8.name());
+            byte[] byteSource = source.getBytes(StandardCharsets.UTF_8.name());
 
             //base64デコード
             byte[] decodeSource = Base64.decode(byteSource, Base64.DEFAULT);
@@ -441,22 +466,10 @@ public class StringUtils {
             // 暗号化の結果格納
             byte[] byteResult = cipher.doFinal(decodeSource);
 
-            //文字列に変換する
-            String stringResult = new String(byteResult,StandardCharsets.UTF_8);
+            return new String(byteResult, StandardCharsets.UTF_8);
 
-            return stringResult;
-
-        } catch (UnsupportedEncodingException e) {
-            DTVTLogger.debug(e);
-        } catch (NoSuchAlgorithmException e) {
-            DTVTLogger.debug(e);
-        } catch (InvalidKeyException e) {
-            DTVTLogger.debug(e);
-        } catch (NoSuchPaddingException e) {
-            DTVTLogger.debug(e);
-        } catch (BadPaddingException e) {
-            DTVTLogger.debug(e);
-        } catch (IllegalBlockSizeException e) {
+        } catch (UnsupportedEncodingException | NoSuchAlgorithmException | InvalidKeyException
+                | NoSuchPaddingException | BadPaddingException | IllegalBlockSizeException e) {
             DTVTLogger.debug(e);
         }
 
@@ -468,10 +481,11 @@ public class StringUtils {
      * 平文のままでは抵抗がある文字列を暗号化する.
      * （ただし、暗号化強度を高める設定は何もしていないので、本当に重要な情報には使用不可）
      *
+     * @param context コンテキスト
      * @param source 元の文字列
      * @return 暗号化後文字列
      */
-    public static String getCipherString(Context context, String source) {
+    public static String getCipherString(final Context context, final String source) {
         if (TextUtils.isEmpty(source)) {
             //元データが空ならば何もできないので、空文字を返す
             return "";
@@ -479,8 +493,7 @@ public class StringUtils {
 
         try {
             // 元文字列をバイト配列へ変換
-            byte[] byteSource = new byte[0];
-            byteSource = source.getBytes(StandardCharsets.UTF_8.name());
+            byte[] byteSource = source.getBytes(StandardCharsets.UTF_8.name());
 
             //暗号化キーの取得
             String cipherKey = (String) context.getText(R.string.save_token);
@@ -499,21 +512,10 @@ public class StringUtils {
             byte[] byteResult = cipher.doFinal(byteSource);
 
             // Base64エンコード
-            String stringResult = Base64.encodeToString(byteResult,Base64.DEFAULT);
+            return Base64.encodeToString(byteResult, Base64.DEFAULT);
 
-            return stringResult;
-
-        } catch (UnsupportedEncodingException e) {
-            DTVTLogger.debug(e);
-        } catch (NoSuchAlgorithmException e) {
-            DTVTLogger.debug(e);
-        } catch (InvalidKeyException e) {
-            DTVTLogger.debug(e);
-        } catch (NoSuchPaddingException e) {
-            DTVTLogger.debug(e);
-        } catch (BadPaddingException e) {
-            DTVTLogger.debug(e);
-        } catch (IllegalBlockSizeException e) {
+        } catch (UnsupportedEncodingException | NoSuchAlgorithmException | InvalidKeyException
+                | NoSuchPaddingException | BadPaddingException | IllegalBlockSizeException e) {
             DTVTLogger.debug(e);
         }
 
@@ -547,5 +549,25 @@ public class StringUtils {
             strRatStar = RAT_EXCEPTION_VALUE;
         }
         return strRatStar;
+    }
+
+    /**
+     * 取得したチャンネル詳細情報の日付データを返却する.
+     *
+     * @param str データ取得を行った日付文字列.
+     * @return 日付データ.
+     */
+    public static String getChDateInfo(final String str) {
+        String chInfoDate;
+        if (str.equals(WebApiBasePlala.DATE_NOW)) {
+            //取得日時が"now"であれば今日の日付を取得.
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat todaySdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DD, Locale.JAPAN);
+            chInfoDate = todaySdf.format(calendar.getTime());
+            chInfoDate = chInfoDate.replace("/", "");
+        } else {
+            chInfoDate = str;
+        }
+        return chInfoDate;
     }
 }

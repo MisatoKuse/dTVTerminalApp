@@ -15,14 +15,22 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendWebXm
 
 import java.util.LinkedHashMap;
 
+/**
+ * レコメンド情報取得用Webクライアント.
+ */
 public class RecommendWebClient extends WebApiBase implements WebApiCallback {
 
-    //コンテキスト
+    /**
+     * コンテキスト.
+     */
     private Context mContext = null;
-
-    //先頭スイッチ
+    /**
+     * 先頭スイッチ.
+     */
     private boolean mfirstParmater = false;
-
+    /**
+     * コールバック.
+     */
     private final RecommendCallback mRecommendCallback;
 
     // 汎用レコメンド情報取得API
@@ -73,15 +81,16 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
     private boolean mIsCancel = false;
 
     public interface RecommendCallback {
-        void RecommendCallback(RecommendChList mRecommendChList);
+        void recommendCallback(RecommendChList mRecommendChList);
     }
 
     /**
      * 処理終了後のコールバックの設定.
      *
      * @param mRecommendCallback コールバックの指定
+     * @param context コンテキスト
      */
-    public RecommendWebClient(RecommendCallback mRecommendCallback, Context context) {
+    public RecommendWebClient(final RecommendCallback mRecommendCallback, final Context context) {
         this.mRecommendCallback = mRecommendCallback;
 
         //コンテキストの退避
@@ -93,7 +102,7 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
      *
      * @param recommendRequestData レコメンド情報取得用パラメータ
      */
-    public void getRecommendApi(RecommendRequestData recommendRequestData) {
+    public void getRecommendApi(final RecommendRequestData recommendRequestData) {
 
         DTVTLogger.debug("getRecommendApi");
 
@@ -122,7 +131,7 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
         } else {
             //パラメータに誤りがあったので、ヌルを返却する
             if (mRecommendCallback != null) {
-                mRecommendCallback.RecommendCallback(null);
+                mRecommendCallback.recommendCallback(null);
             }
         }
     }
@@ -134,7 +143,7 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
      * @param keyname   キー名
      * @param parameter パラメータ
      */
-    private void itemAdder(LinkedHashMap items, String keyname, String parameter) {
+    private void itemAdder(final LinkedHashMap items, String keyname, final String parameter) {
         //引数にヌルがあれば何もしない
         if (items == null || keyname == null || parameter == null) {
             return;
@@ -153,7 +162,7 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
             mfirstParmater = false;
         } else {
             //2番目以降ならば前に&を付加
-            keyname = StringUtils.getConnectStrings("&" ,keyname);
+            keyname = StringUtils.getConnectStrings("&", keyname);
         }
 
         //テーブルに蓄積
@@ -166,7 +175,7 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
      * @param responseData 通信レスポンス
      */
     @Override
-    public void onFinish(String responseData) {
+    public void onFinish(final String responseData) {
         //得られたXMLのパースを行って、データを返す
         new RecommendWebXmlParser(mRecommendCallback).execute(responseData);
     }

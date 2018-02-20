@@ -12,6 +12,7 @@ import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelperChannel;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DataBaseManager;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 
@@ -28,7 +29,9 @@ public class DBUtils {
      */
     private final static String NUMERICAL_DECISION = "^[0-9]*$";
 
-    //日付用パラメータの識別用
+    /**
+     * 日付用パラメータの識別用.
+     */
     private static final String[] DATE_PARA = {
             JsonConstants.META_RESPONSE_DISPLAY_START_DATE,
             JsonConstants.META_RESPONSE_DISPLAY_END_DATE,
@@ -189,16 +192,31 @@ public class DBUtils {
      * @return データ存在チェック結果
      */
     public static boolean isCachingRecord(final Context context, final String tableName) {
-        DBHelper DbHelper = new DBHelper(context);
-        DataBaseManager.initializeInstance(DbHelper);
+        DBHelper dBHelper = new DBHelper(context);
+        DataBaseManager.initializeInstance(dBHelper);
         SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-
         long recordCount = DatabaseUtils.queryNumEntries(database, tableName);
+        database.close();
         DataBaseManager.getInstance().closeDatabase();
-        if (recordCount > 0) {
-            return true;
-        }
-        return false;
+        return recordCount > 0;
+    }
+
+    /**
+     * 引数指定されたテーブルにレコードが存在するかを返す(番組詳細情報用).
+     *
+     * @param context コンテキスト
+     * @param tableName テーブル名
+     * @param chNo チャンネル番号
+     * @return データ存在チェック結果
+     */
+    public static boolean isChCachingRecord(final Context context, final String tableName,
+                                            final String chNo) {
+        DBHelperChannel dbHelperChannel = new DBHelperChannel(context, chNo);
+        DataBaseManager.initializeInstance(dbHelperChannel);
+        SQLiteDatabase database = DataBaseManager.getChInstance().openChDatabase();
+        long recordCount = DatabaseUtils.queryNumEntries(database, tableName);
+        database.close();
+        return recordCount > 0;
     }
 
     /**
@@ -212,15 +230,12 @@ public class DBUtils {
      */
     public static boolean isCachingRecord(
             final Context context, final String tableName, final String selection, final String[] args) {
-        DBHelper DbHelper = new DBHelper(context);
-        DataBaseManager.initializeInstance(DbHelper);
+        DBHelper dBHelper = new DBHelper(context);
+        DataBaseManager.initializeInstance(dBHelper);
         SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
         long recordCount = DatabaseUtils.queryNumEntries(database, tableName, selection, args);
         DataBaseManager.getInstance().closeDatabase();
-        if (recordCount > 0) {
-            return true;
-        }
-        return false;
+        return recordCount > 0;
     }
 
     /**

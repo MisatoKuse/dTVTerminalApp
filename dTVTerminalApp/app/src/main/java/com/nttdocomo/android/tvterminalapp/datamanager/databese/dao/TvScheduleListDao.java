@@ -17,26 +17,31 @@ import java.util.Map;
 
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.TV_SCHEDULE_LIST_TABLE_NAME;
 
+/**
+ * 番組情報取得用Dao.
+ */
 public class TvScheduleListDao {
-    // SQLiteDatabase
+    /**
+     * SQLiteDatabase.
+     */
     private SQLiteDatabase db;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
-     * @param db
+     * @param db SQLiteDatabase
      */
-    public TvScheduleListDao(SQLiteDatabase db) {
+    public TvScheduleListDao(final SQLiteDatabase db) {
         this.db = db;
     }
 
     /**
-     * 配列で指定した列データをすべて取得
+     * 配列で指定した列データをすべて取得.
      *
-     * @param strings
-     * @return
+     * @param strings 指定列
+     * @return 取得データ
      */
-    public List<Map<String, String>> findById(String[] strings) {
+    public List<Map<String, String>> findById(final String[] strings) {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
         Cursor cursor = db.query(
@@ -54,8 +59,8 @@ public class TvScheduleListDao {
         //データを一行ずつ格納する
         while (isEof) {
             HashMap<String, String> map = new HashMap<>();
-            for (int i = 0; i < strings.length; i++) {
-                map.put(strings[i], cursor.getString(cursor.getColumnIndex(strings[i])));
+            for (String string : strings) {
+                map.put(string, cursor.getString(cursor.getColumnIndex(string)));
             }
             list.add(map);
 
@@ -67,41 +72,30 @@ public class TvScheduleListDao {
     }
 
     /**
-     * 配列で指定した列データをすべて取得
+     * 配列で指定した列データをすべて取得.
      *
-     * @param colomuStr
-     * @return
+     * @param columnStr 指定列
+     * @return 取得データ
      */
-    public List<Map<String, String>> findByTypeAndDate(String[] colomuStr, String type, String date) {
+    public List<Map<String, String>> findByTypeAndDate(final String[] columnStr) {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
-        //TODO DB日付検索条件除く、将来は対応必要
-        /*StringBuilder selection = new StringBuilder();
-        selection.append(JsonConstants.META_RESPONSE_DISP_TYPE);
-        selection.append("=? AND ");
-        selection.append(UPDATE_DATE);
-        selection.append("=? AND ");
-        selection.append(DATE_TYPE);
-        selection.append("=? ");*/
         Cursor cursor = db.query(
                 TV_SCHEDULE_LIST_TABLE_NAME,
-                colomuStr,
-//                selection.toString(),
+                columnStr,
                 null,
-//                new String[]{type, date, "program"},
                 null,
                 null,
                 null,
                 null);
-        //TODO DB日付検索条件除く、将来は対応必要
         //参照先を一番始めに
         boolean isEof = cursor.moveToFirst();
 
         //データを一行ずつ格納する
         while (isEof) {
             HashMap<String, String> map = new HashMap<>();
-            for (int i = 0; i < colomuStr.length; i++) {
-                map.put(colomuStr[i], cursor.getString(cursor.getColumnIndex(colomuStr[i])));
+            for (String aColumnStr : columnStr) {
+                map.put(aColumnStr, cursor.getString(cursor.getColumnIndex(aColumnStr)));
             }
             list.add(map);
 
@@ -112,35 +106,41 @@ public class TvScheduleListDao {
     }
 
     /**
-     * データの登録
+     * データの登録.
      *
-     * @param values
-     * @return
+     * @param values 保存する値
+     * @return 保存結果
      */
-    public long insert(ContentValues values) {
+    public long insert(final ContentValues values) {
         return db.insert(TV_SCHEDULE_LIST_TABLE_NAME, null, values);
     }
 
+    /**
+     * update.
+     *
+     * @return update結果(0)
+     */
     public int update() {
         //基本的にデータの更新はしない予定
         return 0;
     }
 
     /**
-     * データの削除
+     * データの削除.
      *
-     * @return
+     * @return 削除結果.
      */
     public int delete() {
         return db.delete(TV_SCHEDULE_LIST_TABLE_NAME, null, null);
     }
 
     /**
-     * データの削除
+     * データの削除.
      *
-     * @return
+     * @param type 削除するデータタイプ
+     * @return 削除結果
      */
-    public int deleteByType(String type) {
+    public int deleteByType(final String type) {
         StringBuilder deleteSelection = new StringBuilder();
         deleteSelection.append(JsonConstants.META_RESPONSE_DISP_TYPE);
         deleteSelection.append("=? ");

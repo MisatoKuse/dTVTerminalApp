@@ -13,7 +13,6 @@ import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvScheduleInsertDataManager;
-import com.nttdocomo.android.tvterminalapp.datamanager.select.HomeDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.ProgramDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
@@ -27,47 +26,90 @@ import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClient;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
  * 縮小番組表用データプロバイダークラス
  * 機能：　縮小番組表画面で使うデータを提供するクラスである.
  */
-public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider implements DbThread.DbOperation,
+public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider implements
         ChannelWebClient.ChannelJsonParserCallback,
         TvScheduleWebClient.TvScheduleJsonParserCallback {
-
+    /**
+     * データ取得結果コールバック.
+     */
     private ApiDataProviderCallback mApiDataProviderCallback = null;
+    /**
+     * コンテキスト.
+     */
     private Context mContext = null;
-
+    /**
+     * チャンネルデータ.
+     */
     private ChannelList mChannelList = null;
+    /**
+     * 番組データ.
+     */
     private TvScheduleList mTvScheduleList = null;
+    /**
+     * チャンネル番号で仕分けした番組データ.
+     */
+    private ChannelInfoList mChannelsInfoList = null;
+    /**
+     * チャンネルタイプ(dチャンネル、ひかりTV多ch、全て).
+     */
     private String mChannelDisplayType = "";
-    private int mProgramDisplayType = 0;
+    /**
+     * 取得要求日付.
+     */
     private String mProgramSelectDate = null;
 
     //共通スレッド使う
-    private static final int CHANNEL_UPDATE = 1;//チャンネル更新
-    private static final int SCHEDULE_UPDATE = 2;//番組更新
-    private static final int CHANNEL_SELECT = 3;//チャンネル検索
-    private static final int SCHEDULE_SELECT = 4;//番組検索
-
+    /**
+     * チャンネル更新.
+     */
+    private static final int CHANNEL_UPDATE = 1;
+    /**
+     * 番組更新.
+     */
+    private static final int SCHEDULE_UPDATE = 2;
+    /**
+     * チャンネル検索.
+     */
+    private static final int CHANNEL_SELECT = 3;
+    /**
+     * 番組検索.
+     */
+    private static final int SCHEDULE_SELECT = 4;
+    /**
+     * 日付フォーマット.
+     */
     private static final String DATE_FORMAT = "yyyyMMdd";
-    private static final String SELECT_TIME_FORMAT = "yyyy-MM-ddHH:mm:ss";
 
     //CH毎番組取得のフィルター
+    /**
+     * release.
+     */
     private static final String PROGRAM_LIST_CHANNEL_PROGRAM_FILTER_RELEASE = "release";
+    /**
+     * testa.
+     */
     private static final String PROGRAM_LIST_CHANNEL_PROGRAM_FILTER_TESTA = "testa";
+    /**
+     * demo.
+     */
     private static final String PROGRAM_LIST_CHANNEL_PROGRAM_FILTER_DEMO = "demo";
 
-    // クリップキーリスト取得済み判定
+    /**
+     * tvコンテンツのクリップキーリスト取得済み判定.
+     */
     private boolean tvClipKeyListResponse = false;
+    /**
+     * vodコンテンツのクリップキーリスト取得済み判定.
+     */
     private boolean vodClipKeyListResponse = false;
     /**
      * 通信禁止判定フラグ.
@@ -81,20 +123,34 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      * 番組リスト取得WebClient.
      */
     private TvScheduleWebClient mTvScheduleWebClient = null;
+    /**
+     * 取得するチャンネル情報のチャンネル番号.
+     */
+    private List<String> mChNo = new ArrayList<>();
+    /**
+     * DBから取得するチャンネル番号を格納するリスト.
+     */
+    private List<String> mFromDB = new ArrayList<>();
+    /**
+     * DBから取得した複数チャンネルの情報を格納するリスト.
+     */
+    private List<List<Map<String, String>>> mResultSets = null;
 
     /**
      * コンストラクタ.
      *
      * @param mContext TvProgramListActivity
      */
-    public ScaledDownProgramListDataProvider(Context mContext) {
+    public ScaledDownProgramListDataProvider(final Context mContext) {
         super(mContext);
         this.mContext = mContext;
         this.mApiDataProviderCallback = (ApiDataProviderCallback) mContext;
     }
 
     @Override
-    public void onDbOperationFinished(boolean isSuccessful, List<Map<String, String>> resultSet, int operationId) {
+    public void onDbOperationFinished(final boolean isSuccessful,
+                                      final List<Map<String, String>> resultSet,
+                                      final int operationId) {
         if (isSuccessful) {
             switch (operationId) {
                 case CHANNEL_SELECT:
@@ -122,6 +178,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                         mSchedule.setChNo(chNo);
                         mSchedule.setContentType(hashMap.get(JsonConstants.META_RESPONSE_CONTENT_TYPE));
                         mSchedule.setDtv(dtv);
+                        mSchedule.setRValue(rValue);
                         mSchedule.setDispType(dispType);
                         mSchedule.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
                         mSchedule.setClipRequestData(setClipData((HashMap<String, String>) hashMap));
@@ -144,16 +201,18 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                     }
                     break;
                 case SCHEDULE_SELECT:
-                    ChannelInfoList channelsInfo = null;
-                    if (resultSet != null && resultSet.size() > 0) {
-                        channelsInfo = new ChannelInfoList();
-                        for (int i = 0; i < resultSet.size(); i++) {//CH毎番組データ取得して、整形する
-                            HashMap<String, String> hashMap =  (HashMap<String, String>)resultSet.get(i);
-                            setScheduleInfo(hashMap, channelsInfo);
+                    for (List<Map<String, String>> channelInfos : mResultSets) {
+                        ChannelInfoList channelsInfo;
+                        if (channelInfos != null && channelInfos.size() > 0) {
+                            channelsInfo = new ChannelInfoList();
+                            for (int i = 0; i < channelInfos.size(); i++) { //CH毎番組データ取得して、整形する
+                                HashMap<String, String> hashMap =  (HashMap<String, String>) channelInfos.get(i);
+                                setScheduleInfo(hashMap, channelsInfo);
+                            }
+                            if (null != mApiDataProviderCallback) {
+                                mApiDataProviderCallback.channelInfoCallback(channelsInfo);
+                            }
                         }
-                    }
-                    if (null != mApiDataProviderCallback) {
-                        mApiDataProviderCallback.channelInfoCallback(channelsInfo);
                     }
                     break;
                 default:
@@ -163,7 +222,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     }
 
     @Override
-    public List<Map<String, String>> dbOperation(int mOperationId) throws Exception {
+    public List<Map<String, String>> dbOperation(final int mOperationId) throws Exception {
         List<Map<String, String>> resultSet = null;
         switch (mOperationId) {
             case CHANNEL_UPDATE://サーバーから取得したチャンネルデータをDBに保存する
@@ -172,7 +231,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 break;
             case SCHEDULE_UPDATE://サーバーから取得した番組データをDBに保存する
                 TvScheduleInsertDataManager scheduleInsertDataManager = new TvScheduleInsertDataManager(mContext);
-                scheduleInsertDataManager.insertTvScheduleInsertList(mTvScheduleList, "");
+                scheduleInsertDataManager.insertTvScheduleInsertList(mChannelsInfoList, mProgramSelectDate);
                 break;
             case CHANNEL_SELECT://DBからチャンネルデータを取得して、画面に返却する
                 ProgramDataManager channelDataManager = new ProgramDataManager(mContext);
@@ -180,7 +239,9 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 break;
             case SCHEDULE_SELECT://DBから番組データを取得して、画面に返却する
                 ProgramDataManager scheduleDataManager = new ProgramDataManager(mContext);
-                resultSet = scheduleDataManager.selectTvScheduleListProgramData("", mProgramSelectDate);
+                mResultSets = scheduleDataManager.selectTvScheduleListProgramData(mFromDB, mProgramSelectDate);
+                mFromDB = new ArrayList<>();
+                resultSet = new ArrayList<>();
                 break;
             default:
                 break;
@@ -189,23 +250,27 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     }
 
     @Override
-    public void onChannelJsonParsed(List<ChannelList> channelLists) {
+    public void onChannelJsonParsed(final List<ChannelList> channelLists) {
         ArrayList<ChannelInfo> channels = null;
         if (channelLists != null) {
             DateUtils dateUtils = new DateUtils(mContext);
             dateUtils.addLastProgramDate(DateUtils.TVSCHEDULE_LAST_UPDATE);
             mChannelList = channelLists.get(0);
             List<HashMap<String, String>> channelList = mChannelList.getChannelList();
-            if (channelList != null) {
-                channels = new ArrayList<>();
-                setChannelData(channels, channelList);
-                Handler handler = new Handler();//チャンネル情報更新
-                try {
-                    DbThread t = new DbThread(handler, this, CHANNEL_UPDATE);
-                    t.start();
-                } catch (Exception e) {
-                    DTVTLogger.debug(e);
-                }
+
+            //チャンネル番号を保存する.
+            for (HashMap<String, String> hashMap : channelList) {
+                mChNo.add(hashMap.get(JsonConstants.META_RESPONSE_CHNO));
+            }
+
+            channels = new ArrayList<>();
+            setChannelData(channels, channelList);
+            Handler handler = new Handler(); //チャンネル情報更新
+            try {
+                DbThread t = new DbThread(handler, this, CHANNEL_UPDATE);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
             }
         }
 
@@ -215,10 +280,8 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     }
 
     @Override
-    public void onTvScheduleJsonParsed(List<TvScheduleList> tvScheduleList) {
+    public void onTvScheduleJsonParsed(final List<TvScheduleList> tvScheduleList) {
         if (tvScheduleList != null) {
-            DateUtils dateUtils = new DateUtils(mContext);
-            dateUtils.addLastProgramDate(DateUtils.CHANNEL_LAST_UPDATE);
             //チャンネルデータ
             mTvScheduleList = tvScheduleList.get(0);
             if (mRequiredClipKeyList) {
@@ -233,16 +296,18 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             }
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
-            List<Map<String, String>> scheduleList = new ArrayList<>();
-            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-            scheduleList = homeDataManager.selectTvScheduleListHomeData();
+            List<List<Map<String, String>>> scheduleList;
+            ProgramDataManager programDataManager = new ProgramDataManager(mContext);
+            scheduleList = programDataManager.selectTvScheduleListProgramData(mChNo, mProgramSelectDate);
+            if (mTvScheduleList == null) {
+                mTvScheduleList = new TvScheduleList();
+            }
             mTvScheduleList.setTvsList(scheduleList);
         }
-
     }
 
     @Override
-    public void onTvClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+    public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         super.onTvClipKeyListJsonParsed(clipKeyListResponse);
         if (vodClipKeyListResponse) {
             if (null != mApiDataProviderCallback) {
@@ -254,7 +319,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     }
 
     @Override
-    public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
         if (tvClipKeyListResponse) {
             if (null != mApiDataProviderCallback) {
@@ -266,12 +331,15 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     }
 
     /**
-     * 番組表をチャンネルに入れる
+     * 番組表をチャンネルに入れる.
+     *
+     * @param hashMap 番組情報
+     * @param channelsInfo チャンネル情報
      */
-    private void setScheduleInfo(HashMap<String, String> hashMap, ChannelInfoList channelsInfo){
+    private void setScheduleInfo(final HashMap<String, String> hashMap, final ChannelInfoList channelsInfo) {
         ScheduleInfo mSchedule = new ScheduleInfo();
-        String startDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE);
-        String endDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE);
+        String startDate = hashMap.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE);
+        String endDate = hashMap.get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE);
         String thumb = hashMap.get(JsonConstants.META_RESPONSE_THUMB_448);
         String title = hashMap.get(JsonConstants.META_RESPONSE_TITLE);
         String detail = hashMap.get(JsonConstants.META_RESPONSE_EPITITLE);
@@ -301,13 +369,13 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 hashMap.get(JsonConstants.META_RESPONSE_TITLE_ID)));
         mSchedule.setContentsId(hashMap.get(JsonConstants.META_RESPONSE_CID));
 
-        if (!TextUtils.isEmpty(chNo)) {//CH毎番組データ取得して、整形する
+        if (!TextUtils.isEmpty(chNo)) { //CH毎番組データ取得して、整形する
             ArrayList<ChannelInfo> oldChannelList = channelsInfo.getChannels();
             boolean isExist = false;
-            if (oldChannelList.size() > 0) {//番組ID存在するのをチェックする
+            if (oldChannelList.size() > 0) { //番組ID存在するのをチェックする
                 for (int j = 0; j < oldChannelList.size(); j++) {
                     ChannelInfo oldChannel = oldChannelList.get(j);
-                    if (oldChannel.getChNo() == Integer.valueOf(chNo)) {//番組ID存在する場合
+                    if (oldChannel.getChNo() == Integer.parseInt(chNo)) { //番組ID存在する場合
                         ArrayList<ScheduleInfo> oldSchedule = oldChannel.getSchedules();
                         oldSchedule.add(mSchedule);
                         isExist = true;
@@ -315,11 +383,11 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                     }
                 }
             }
-            if (!isExist) {//番組ID存在しない場合
+            if (!isExist) { //番組ID存在しない場合
                 ArrayList<ScheduleInfo> mScheduleList = new ArrayList<>();
                 mScheduleList.add(mSchedule);
                 ChannelInfo channel = new ChannelInfo();
-                channel.setChNo(Integer.valueOf(chNo));
+                channel.setChNo(Integer.parseInt(chNo));
                 channel.setTitle(title);
                 channel.setSchedules(mScheduleList);
                 channelsInfo.addChannel(channel);
@@ -329,18 +397,20 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
 
     /**
      * 番組表用に番組のメタデータを整形.
+     *
+     * @return 番組情報
      */
     private ChannelInfoList setProgramListContentData() {
         ChannelInfoList channelsInfo = null;
         List<HashMap<String, String>> mChannelProgramList = mTvScheduleList.geTvsList();
         if (mChannelProgramList != null) {
             channelsInfo = new ChannelInfoList();
-            ArrayList<ScheduleInfo> mScheduleList = null;
             for (int i = 0; i < mChannelProgramList.size(); i++) {
                 //CH毎番組データ取得して、整形する
                 HashMap<String, String> hashMap = mChannelProgramList.get(i);
                 setScheduleInfo(hashMap, channelsInfo);
             }
+            mChannelsInfoList = channelsInfo;
             Handler handler = new Handler();
             //番組情報更新
             try {
@@ -468,7 +538,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 DTVTLogger.debug(e);
             }
         } else {
-            if(!isStop){
+            if (!isStop) {
                 mChannelWebClient = new ChannelWebClient(mContext);
                 mChannelWebClient.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], this);
             } else {
@@ -497,13 +567,24 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      * @param type displayType
      */
     private void getProgram(final int[] chList, final String[] dateList, final String filter, final int type) {
-        this.mProgramDisplayType = type;
         DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(DateUtils.TVSCHEDULE_LAST_UPDATE);
+        //dateListのサイズは1.
         mProgramSelectDate = dateList[0];
-        String[] list = dateList;
-        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
-            //データをDBから取得する
+        //前回のデータ取得日時を取得
+        String[] lastDate = dateUtils.getChLastDate(chList, mProgramSelectDate);
+        //DBから取得するチャンネル情報とWebAPiから取得するチャンネル番号を分ける.
+        List<Integer> fromWebAPI = new ArrayList<>();
+
+        for (int i = 0; i < lastDate.length; i++) {
+            if (dateUtils.isBeforeLimitChDate(lastDate[i])) {
+                fromWebAPI.add(chList[i]);
+            } else {
+                mFromDB.add(String.valueOf(chList[i]));
+            }
+        }
+
+        //データをDBから取得する
+        if (mFromDB.size() > 0) {
             Handler handler = new Handler();
             //チャンネル情報更新
             try {
@@ -512,31 +593,18 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             } catch (Exception e) {
                 DTVTLogger.debug(e);
             }
+        }
+
+        //データをWebAPIから取得する
+        if (!isStop) {
+            mTvScheduleWebClient = new TvScheduleWebClient(mContext);
+            int[] chNos = new int[fromWebAPI.size()];
+            for (int i = 0; i < fromWebAPI.size(); i++) {
+                chNos[i] = fromWebAPI.get(i);
+            }
+            mTvScheduleWebClient.getTvScheduleApi(chNos, dateList, filter, this);
         } else {
-            //日付の比較
-            int startPosition;
-            if (type == 2) {
-                startPosition = -7;
-                list = new String[15];
-            } else {
-                startPosition = 0;
-                list = new String[8];
-            }
-            int j = 0;
-            SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.JAPAN);
-            //取得日付範囲を作る
-            for (int i = startPosition; i < 8; i++) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.add(Calendar.DAY_OF_MONTH, i);
-                list[j] = sdf.format(calendar.getTime());
-                j++;
-            }
-            if(!isStop){
-                mTvScheduleWebClient = new TvScheduleWebClient(mContext);
-                mTvScheduleWebClient.getTvScheduleApi(chList, list, filter, this);
-            } else {
-                DTVTLogger.error("ScaledDownProgramListDataProvider is stopping connect");
-            }
+            DTVTLogger.error("ScaledDownProgramListDataProvider is stopping connect");
         }
     }
 

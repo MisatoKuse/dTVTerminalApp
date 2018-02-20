@@ -6,9 +6,11 @@ package com.nttdocomo.android.tvterminalapp.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -299,7 +301,6 @@ public class DateUtils {
         c.add(Calendar.HOUR_OF_DAY, LIMIT_HOUR);
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
         saveDataToSharePre(key, sdf.format(c.getTime()));
-
     }
 
     /**
@@ -343,6 +344,47 @@ public class DateUtils {
     }
 
     /**
+     * chNoの対象日付データの前回取得日時をエポック秒で返す.
+     *
+     * @param chNos ChNo
+     * @param date 取得対象の日付
+     * @return 前回取得日時
+     */
+    public String[] getChLastDate(final int[] chNos, final String date) {
+        DTVTLogger.start();
+        String chDate = date.replace("-", "");
+        String[] chLastDates = new String[chNos.length];
+        //引数データが不正であれば帰る
+        if (chNos.length == 0 || TextUtils.isEmpty(chDate)) {
+            return chLastDates;
+        }
+
+        String chInfoGetDate = StringUtils.getChDateInfo(chDate);
+
+        //チャンネル情報取得日のDBフォルダが作成されているか確認する
+        String filesDir = mContext.getFilesDir().getAbsolutePath();
+        String dbChannelDir = StringUtils.getConnectStrings(filesDir, "/../databases/channel");
+        String dbDir = StringUtils.getConnectStrings(dbChannelDir, "/", chInfoGetDate);
+        File fileDir = new File(dbDir);
+        if (!fileDir.isDirectory()) {
+            //情報取得日のフォルダが作成されていないので、前回取得していない.
+            return chLastDates;
+        }
+
+        //チャンネル番号のチャンネル情報(DB)が作成されているか確認する.
+        for (int i = 0; i < chNos.length; i++) {
+            File dbFile = new File(StringUtils.getConnectStrings(dbDir, "/", String.valueOf(chNos[i])));
+            if (dbFile.isFile()) {
+                //DBファイルが存在するので最終更新日時(DBファイルのタイムスタンプ)を取得する.
+                Long lastModified = dbFile.lastModified() / 1000L;
+                chLastDates[i] = String.valueOf(lastModified);
+            }
+        }
+
+        return chLastDates;
+    }
+
+    /**
      * 日付が期限内か判定.
      *
      * @param str チェック日付
@@ -371,6 +413,26 @@ public class DateUtils {
             }
             return isExpired;
         }
+    }
+
+    /**
+     * chNoの対象日付データの取得日時が、前回取得日時から24H経過しているか.
+     *
+     * @param lastDate chNoの対象日付データの取得日時(エポック秒)
+     * @return true:経過している(データ取得を行う) false:経過していない(キャッシュを利用)
+     */
+    public boolean isBeforeLimitChDate(final String lastDate) {
+        DTVTLogger.start();
+
+        if (TextUtils.isEmpty(lastDate)) {
+            //無効データ渡しされた場合は取得すべきとして期限切れ判定.
+            return true;
+        }
+        //現在の日時を用意する.
+        long nowTime = getNowTimeFormatEpoch();
+
+        Long cacheLimitDate = Long.parseLong(lastDate) + EPOCH_TIME_ONE_DAY;
+        return nowTime > cacheLimitDate;
     }
 
     /**
@@ -613,8 +675,7 @@ public class DateUtils {
      * @return エポック秒　ミリ秒→秒単位に変換後の値
      */
     public static long getSecondEpochTime(final String strDate) {
-        long epochTime = (getEpochTime(strDate)) / 1000;
-        return epochTime;
+        return (getEpochTime(strDate)) / 1000;
     }
 
     /**

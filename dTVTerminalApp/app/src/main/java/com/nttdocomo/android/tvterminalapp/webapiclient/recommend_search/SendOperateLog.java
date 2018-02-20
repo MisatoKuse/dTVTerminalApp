@@ -16,12 +16,22 @@ import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
 
+/**
+ * ログ送信クラス.
+ */
 public class SendOperateLog extends WebApiBase {
 
+    /**
+     * Url.
+     */
     private StringBuffer mUrl = new StringBuffer("https://ve.m.service.smt.docomo.ne.jp/srermd/operateLog/index.do");
+    /**
+     * カテゴリID.
+     */
     private String mCategoryId = "";
-
-    //SSLチェック用コンテキスト
+    /**
+     * SSLチェック用コンテキスト.
+     */
     private Context mContext;
     /**
      * 通信禁止判定フラグ.
@@ -33,16 +43,22 @@ public class SendOperateLog extends WebApiBase {
     private HttpThread mHttpThread = null;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
      * @param context コンテキスト
      */
-    public SendOperateLog(Context context) {
+    public SendOperateLog(final Context context) {
         //コンテキストの退避
         mContext = context;
     }
 
-    public void sendOpeLog(final OtherContentsDetailData mDetailData, VodMetaFullData mDetailFullData) {
+    /**
+     * ログの送信.
+     *
+     * @param mDetailData コンテンツ詳細データ
+     * @param mDetailFullData コンテンツフルデータ
+     */
+    public void sendOpeLog(final OtherContentsDetailData mDetailData, final VodMetaFullData mDetailFullData) {
         if (!mIsCancel && mDetailData != null) {
             if (OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
                 mCategoryId = getCategoryId(mDetailFullData);
@@ -54,10 +70,10 @@ public class SendOperateLog extends WebApiBase {
                 DaccountGetOTT getOtt = new DaccountGetOTT();
                 getOtt.execDaccountGetOTT(mContext, new DaccountGetOTT.DaccountGetOttCallBack() {
                     @Override
-                    public void getOttCallBack(int result, String id, String oneTimePassword) {
+                    public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
                         //ワンタイムパスワードの取得後に呼び出す
                         mHttpThread = new HttpThread(getUrl(mDetailData), null,
-                                mContext,oneTimePassword);
+                                mContext, oneTimePassword);
                         mHttpThread.start();
                     }
                 });
@@ -67,8 +83,11 @@ public class SendOperateLog extends WebApiBase {
 
     /**
      * Urlを設定.
+     *
+     * @param mDetailData 詳細データ
+     * @return Url
      */
-    private String getUrl(OtherContentsDetailData mDetailData) {
+    private String getUrl(final OtherContentsDetailData mDetailData) {
         mUrl.append("?serviceId=");
         mUrl.append(String.valueOf(mDetailData.getServiceId()));
         mUrl.append("&categoryId=");
@@ -108,23 +127,26 @@ public class SendOperateLog extends WebApiBase {
 
     /**
      * カテゴリーIDを設定.
+     *
+     * @param mDetailFullData 詳細フルデータ
+     * @return ID
      */
-    private String getCategoryId(VodMetaFullData mDetailFullData) {
+    private String getCategoryId(final VodMetaFullData mDetailFullData) {
         if (mDetailFullData != null) {
             switch (mDetailFullData.getDisp_type()) {
                 case "tv_program":
                     switch (mDetailFullData.getmTv_service()) {
                         case "0":
-                            return RecommendDataProvider.recommendRequestId.HIKARITV_DOCOMO_IPTV.getCategoryId();
+                            return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_IPTV.getCategoryId();
                         case "1":
                             switch (mDetailFullData.getmContent_type()) {
                                 case "0":
-                                    return RecommendDataProvider.recommendRequestId.HIKARITV_DOCOMO_DTV_BLOADCAST.getCategoryId();
+                                    return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_DTV_BLOADCAST.getCategoryId();
                                 case "1":
                                 case "2":
-                                    return RecommendDataProvider.recommendRequestId.HIKARITV_DOCOMO_DTV_MISS.getCategoryId();
+                                    return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_DTV_MISS.getCategoryId();
                                 case "3":
-                                    return RecommendDataProvider.recommendRequestId.HIKARITV_DOCOMO_DTV_RELATION.getCategoryId();
+                                    return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_DTV_RELATION.getCategoryId();
                                 default:
                                     break;
                             }
@@ -134,9 +156,9 @@ public class SendOperateLog extends WebApiBase {
                 default:
                     switch (mDetailFullData.getDtv()) {
                         case "0":
-                            return RecommendDataProvider.recommendRequestId.HIKARITV_DOCOMO_HIKARITV_VOD.getCategoryId();
+                            return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_HIKARITV_VOD.getCategoryId();
                         case "1":
-                            return RecommendDataProvider.recommendRequestId.HIKARITV_DOCOMO_DTV_SVOD.getCategoryId();
+                            return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_DTV_SVOD.getCategoryId();
                         default:
                             break;
                     }

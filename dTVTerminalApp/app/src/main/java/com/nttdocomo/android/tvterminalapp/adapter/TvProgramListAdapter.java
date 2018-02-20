@@ -61,26 +61,54 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private static final String MISS_COMPLETE = "2";
     private static final String MISS_VOD = "3";
     private TvProgramListActivity mContext = null;
-    //ディスプレイ幅さ
+    /**
+     * ディスプレイ幅.
+     */
     private int mScreenWidth = 0;
-    //サムネイル取得プロバイダー
+    /**
+     * サムネイル取得プロバイダー.
+     */
     private ThumbnailProvider mThumbnailProvider = null;
-    //現在時刻
+    /**
+     * 現在時刻.
+     */
     private String mCurDate = null;
 
-    //年齢パレンタル情報
+    /**
+     * 年齢パレンタル情報.
+     */
     private int mAgeReq = 8;
-    //現在時刻フォマード
+    /**
+     * 現在時刻フォマード.
+     */
     private static final String CUR_TIME_FORMAT = "yyyy-MM-ddHH:mm:ss";
+    /**
+     * アイテムの配列.
+     */
     private List<ItemViewHolder> mItemViews = new ArrayList<>();
-    //番組データ
+    /**
+     * 番組データ.
+     */
     private List<ChannelInfo> mProgramList = null;
-    //サムネイルとエピソードタイトルを含むスペース
+    /**
+     * サムネイルとエピソードタイトルを含むスペース.
+     */
     private int mThumbEpiSpace;
-    //エピソードタイトルを含むスペース
+    /**
+     * エピソードタイトルを含むスペース.
+     */
     private int mEpiSpace;
+    /**
+     * サムネイルを表示するかどうか.
+     */
     private boolean isShowThumb;
+    /**
+     * クリップボタンサイズ.
+     */
     private int CLIP_BUTTON_SIZE = 32;
+    /**
+     * チャンネルのWIDTH.
+     */
     private int CHANNEL_WIDTH = 720;
     /**
      * ダウンロード禁止判定フラグ.
@@ -128,6 +156,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     /**
      * 機能
      * 同じビュー重複利用しないよう.
+     *
+     * @return view
      */
     private ItemViewHolder getUnused() {
         for (ItemViewHolder view : mItemViews) {
@@ -182,7 +212,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             mClipButton = mView.findViewById(R.id.tv_program_item_panel_clip_iv);
             mClipButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
+                public void onClick(final View view) {
                     //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、画像比較でクリップ済/未を判定する
                     Bitmap clipButtonBitmap = ((BitmapDrawable) mClipButton.getBackground()).getBitmap();
                     Bitmap activeClipBitmap = ((BitmapDrawable) ResourcesCompat.getDrawable(mContext.getResources(),
@@ -200,20 +230,20 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MyViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.tv_program_item, parent, false);
         MyViewHolder holder = new MyViewHolder(view);
         holder.layout = (RelativeLayout) view;
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout
-                .LayoutParams((mScreenWidth - mContext.dip2px(TIME_LINE_WIDTH)) / 2
-                ,mContext.dip2px(ONE_HOUR_UNIT) * 24);
+                .LayoutParams((mScreenWidth - mContext.dip2px(TIME_LINE_WIDTH)) / 2,
+                mContext.dip2px(ONE_HOUR_UNIT) * 24);
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
         holder.layout.setLayoutParams(layoutParams);
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(final MyViewHolder holder, final int position) {
         ChannelInfo itemChannel = mProgramList.get(position);
 
         if (holder.layout != null) {
@@ -313,7 +343,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             title = itemSchedule.getTitle();
             itemViewHolder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
+                public void onClick(final View view) {
                     if ((int) view.getTag() == 1) {
                         Intent intent = new Intent();
                         intent.setClass(mContext, ContentDetailActivity.class);
@@ -332,17 +362,17 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     }
 
     /**
-     * 視聴できるかのを判定する
+     * 視聴できるかのを判定する.
      *
-     * @param itemViewHolder
-     * @param contentType
+     * @param itemViewHolder ViewHolder
+     * @param contentType コンテンツタイプ
      */
     private void watchByContentType(final ItemViewHolder itemViewHolder, final String contentType) {
         //見逃し(あり)
         if (MISS_CUT_OUT.equals(contentType) || MISS_COMPLETE.equals(contentType)) {
             itemViewHolder.mView.setBackgroundResource(R.drawable.program_start_gray);
             itemViewHolder.mView.setTag(1);
-        }else {
+        } else {
         //関連VOD(なし)
             itemViewHolder.mView.setBackgroundResource(R.drawable.program_end_gray);
             itemViewHolder.mStartM.setTextColor(ContextCompat.getColor(mContext, R.color.tv_program_miss_vod));
@@ -354,11 +384,15 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     }
 
     /**
-     * タイムの形で"/"から"-"に変更する
-     * @param time
-     * @return
+     * タイムの形で"/"から"-"に変更する.
+     *
+     * @param time 時間
+     * @return 整形後の時間
      */
-    private String slash2Hyphen(String time) {
+    private String slash2Hyphen(final String time) {
+        if (TextUtils.isEmpty(time)) {
+            return "";
+        }
         return time.substring(0, 4) + HYPHEN + time.substring(5, 7) + HYPHEN
                 + time.substring(8, 10) + time.substring(11, 19);
     }
@@ -368,8 +402,11 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      *
      * @param itemViewHolder ビューホルダー
      * @param isParental 年齢制限フラグ
+     * @param isClipHide クリップの表示判定
+     * @param isClipStatus クリップの状態
      */
-    private void changeProgramInfoInOrderToShow(final ItemViewHolder itemViewHolder, final boolean isParental, final boolean isClipHide, final boolean isClipStatus) {
+    private void changeProgramInfoInOrderToShow(final ItemViewHolder itemViewHolder, final boolean isParental,
+                                                final boolean isClipHide, final boolean isClipStatus) {
         itemViewHolder.mContent.getViewTreeObserver()//タイトル
                 .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                     @Override
@@ -437,6 +474,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      *
      * @param itemViewHolder ビューホルダー
      * @param isParental     年齢制限フラグ
+     * @param isClipStatus   クリップ状態
      */
     private void displayProgramClip(final ItemViewHolder itemViewHolder, final boolean isParental, final boolean isClipStatus) {
         int clipHeight = itemViewHolder.mClipButton.getHeight();
@@ -526,6 +564,21 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         return mProgramList.size();
     }
 
+    /**
+     * 番組表情報を取得する.
+     *
+     * @return 番組表情報
+     */
+    public List<ChannelInfo> getProgramList() {
+        if (mProgramList != null) {
+            return mProgramList;
+        }
+        return null;
+    }
+
+    /**
+     * ViewHolder.
+     */
     static class MyViewHolder extends RecyclerView.ViewHolder {
 
         /**
@@ -536,6 +589,9 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             super(view);
         }
 
+        /**
+         * RelativeLayout.
+         */
         RelativeLayout layout;
     }
 
@@ -546,7 +602,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * @param recommendFlg レコメンドフラグ
      * @return コンテンツ情報
      */
-    public static OtherContentsDetailData getOtherContentsDetailData(ScheduleInfo itemSchedule, String recommendFlg) {
+    private static OtherContentsDetailData getOtherContentsDetailData(final ScheduleInfo itemSchedule, final String recommendFlg) {
         OtherContentsDetailData detailData = new OtherContentsDetailData();
 
         //コンテンツIDの受け渡しを追加

@@ -7,45 +7,145 @@ package com.nttdocomo.android.tvterminalapp.datamanager.insert;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelperChannel;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * DataBaseManager.
+ */
 public class DataBaseManager {
-
+    /**
+     * DBの開閉回数を記録.
+     */
     private AtomicInteger mOpenCounter = new AtomicInteger();
-
-    private static DataBaseManager instance;
-    private static DBHelper mDatabaseHelper;
+    /**
+     * DBの開閉回数を記録(番組情報用).
+     */
+    private AtomicInteger mOpenCounterCh = new AtomicInteger();
+    /**
+     * DBManager.
+     */
+    private static DataBaseManager sInstance;
+    /**
+     * DBManage(番組情報用).
+     */
+    private static DataBaseManager sInstanceCh;
+    /**
+     * DBHelper.
+     */
+    private static DBHelper sDatabaseHelper;
+    /**
+     * DBHelper(番組情報用).
+     */
+    private static DBHelperChannel sDatabaseChannelHelper;
+    /**
+     * Database.
+     */
     private SQLiteDatabase mDatabase;
 
-    public static synchronized void initializeInstance(DBHelper helper) {
-        if (instance == null) {
-            instance = new DataBaseManager();
-            mDatabaseHelper = helper;
+    /**
+     * 初期化処理.
+     *
+     * @param helper DBHelper
+     */
+    public static synchronized void initializeInstance(final DBHelper helper) {
+        if (sInstance == null) {
+            sInstance = new DataBaseManager();
+            sDatabaseHelper = helper;
         }
     }
 
+    /**
+     * 初期化処理(番組情報用).
+     *
+     * @param helper DBHelper
+     */
+    public static synchronized void initializeInstance(final DBHelperChannel helper) {
+        if (sInstanceCh == null) {
+            sInstanceCh = new DataBaseManager();
+            sDatabaseChannelHelper = helper;
+        }
+    }
+
+    /**
+     * DataBaseManagerを取得.
+     *
+     * @return DataBaseManager
+     */
     public static synchronized DataBaseManager getInstance() {
-        if (instance == null) {
-            throw new IllegalStateException(DataBaseManager.class.getSimpleName() +
-                    " is not initialized, call initializeInstance(..) method first.");
+        if (sInstance == null) {
+            throw new IllegalStateException(DataBaseManager.class.getSimpleName()
+                    + " is not initialized, call initializeInstance(..) method first.");
         }
-
-        return instance;
+        return sInstance;
     }
 
+    /**
+     * DataBaseManagerを取得(番組情報用).
+     *
+     * @return DataBaseManager
+     */
+    public static synchronized DataBaseManager getChInstance() {
+        if (sInstanceCh == null) {
+            throw new IllegalStateException(DataBaseManager.class.getSimpleName()
+                    + " is not initialized, call initializeInstance(..) method first.");
+        }
+        return sInstanceCh;
+    }
+
+    /**
+     * Databaseを開く.
+     *
+     * @return Database
+     */
     public synchronized SQLiteDatabase openDatabase() {
-        if(mOpenCounter.incrementAndGet() == 1) {
+        if (mOpenCounter.incrementAndGet() == 1) {
             // Opening new database
-            mDatabase = mDatabaseHelper.getWritableDatabase();
+            mDatabase = sDatabaseHelper.getWritableDatabase();
         }
         return mDatabase;
     }
 
+    /**
+     * Databaseを開く(番組情報用).
+     *
+     * @return Database
+     */
+    public synchronized SQLiteDatabase openChDatabase() {
+        if (mOpenCounterCh.incrementAndGet() == 1) {
+            // Opening new database
+            mDatabase = sDatabaseChannelHelper.getWritableDatabase();
+        }
+        return mDatabase;
+    }
+
+    /**
+     * Databaseを閉じる.
+     */
     public synchronized void closeDatabase() {
-        if(mOpenCounter.decrementAndGet() == 0) {
+        if (mOpenCounter.decrementAndGet() == 0) {
             // Closing database
             mDatabase.close();
 
         }
-    }}
+    }
+
+    /**
+     * Databaseを閉じる(番組情報用).
+     */
+    public synchronized void closeChDatabase() {
+        if (mOpenCounterCh.decrementAndGet() == 0) {
+            // Closing database
+            mDatabase.close();
+        }
+    }
+
+    /**
+     * 情報を削除する.
+     */
+    public static void clearChInfo() {
+        sInstanceCh = null;
+        sDatabaseChannelHelper = null;
+    }
+}

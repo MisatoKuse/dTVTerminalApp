@@ -89,6 +89,10 @@ public class ContentsData {
 
     // チャンネルID
     private String mChannelId = null;
+    /**
+     * チャンネルNo
+     */
+    private String mChannelNo = null;
     // おすすめ順
     private String mRecommendOrder = null;
     // 画面ID
@@ -394,6 +398,24 @@ public class ContentsData {
 
     public void setChannelId(String mChannelId) {
         this.mChannelId = mChannelId;
+    }
+
+    /**
+     * チャンネルNoを取得.
+     *
+     * @return チャンネルNo
+     */
+    public String getChannelNo() {
+        return mChannelNo;
+    }
+
+    /**
+     * チャンネルNoを設定.
+     *
+     * @param channelNo チャンネルNo
+     */
+    public void setChannelNo(final String channelNo) {
+        this.mChannelNo = channelNo;
     }
 
     public String getRecommendOrder() {

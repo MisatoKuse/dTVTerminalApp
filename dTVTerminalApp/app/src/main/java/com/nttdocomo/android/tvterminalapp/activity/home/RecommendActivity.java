@@ -78,14 +78,14 @@ public class RecommendActivity extends BaseActivity implements
     // 表示中の最後の行を保持(staticにしないと前回の値が維持され、データの更新に失敗する場合がある)
     private static int sSearchLastItem = 0;
     // ページングの回数(staticにしないと前回の値が維持され、データの更新に失敗する場合がある)
-    private static int sCntPageing = 0;
+    private static int sCntPaging = 0;
     // ページング判定
     private boolean mIsPaging = false;
     //アクティビティ初回起動フラグ
     private boolean mIsFirst = false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recommend_main_layout);
 
@@ -112,7 +112,7 @@ public class RecommendActivity extends BaseActivity implements
     }
 
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
+    public void onWindowFocusChanged(final boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
 
         //フォーカスを得て、初回起動だった場合の判定
@@ -155,11 +155,11 @@ public class RecommendActivity extends BaseActivity implements
     /**
      * 検索中フラグの変更.
      *
-     * @param seachingFlag 検索中フラグ
+     * @param searchingFlag 検索中フラグ
      */
-    private void setSearchStart(boolean seachingFlag) {
+    private void setSearchStart(final boolean searchingFlag) {
         synchronized (this) {
-            mIsSearching = seachingFlag;
+            mIsSearching = searchingFlag;
         }
     }
 
@@ -196,7 +196,7 @@ public class RecommendActivity extends BaseActivity implements
      */
     private void initRecommendListView() {
         //ページカウンターの初期化が必要になった
-        sCntPageing = 0;
+        sCntPaging = 0;
 
         if (null != sRecommendViewPager) {
             return;
@@ -204,18 +204,18 @@ public class RecommendActivity extends BaseActivity implements
         sRecommendViewPager = findViewById(R.id.vp_recommend_list_items);
         initTabVIew();
 
-        sRecommendViewPager.setAdapter(new TabAdpater(getSupportFragmentManager(), this));
+        sRecommendViewPager.setAdapter(new TabAdapter(getSupportFragmentManager(), this));
         // フリックによるtab切り替え
         sRecommendViewPager.addOnPageChangeListener(new ViewPager
                 .SimpleOnPageChangeListener() {
             @Override
-            public void onPageSelected(int position) {
+            public void onPageSelected(final int position) {
                 super.onPageSelected(position);
                 mTabLayout.setTab(position);
                 clearAllFragment();
                 setPagingStatus(false);
                 sShowListSize = 0;
-                sCntPageing = 0;
+                sCntPaging = 0;
                 sSearchLastItem = 0;
                 //ここでフラグをクリアしないと、以後の更新が行われなくなる場合がある
                 setSearchStart(false);
@@ -243,7 +243,7 @@ public class RecommendActivity extends BaseActivity implements
     }
 
     @Override
-    public void onClickTab(int position) {
+    public void onClickTab(final int position) {
         DTVTLogger.start("position = " + position);
         if (null != sRecommendViewPager) {
             DTVTLogger.debug("viewpager not null");
@@ -259,8 +259,7 @@ public class RecommendActivity extends BaseActivity implements
      */
     private RecommendBaseFragment getCurrentRecommendBaseFragment() {
         int currentPageNo = sRecommendViewPager.getCurrentItem();
-        RecommendBaseFragment baseFragment = RecommendFragmentFactory.createFragment(currentPageNo, this);
-        return baseFragment;
+        return RecommendFragmentFactory.createFragment(currentPageNo, this);
     }
 
     /**
@@ -268,7 +267,7 @@ public class RecommendActivity extends BaseActivity implements
      *
      * @param resultInfoList レコメンド情報
      */
-    public void recommendDataProviderSuccess(List<ContentsData> resultInfoList) {
+    public void recommendDataProviderSuccess(final List<ContentsData> resultInfoList) {
         RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
 
         synchronized (this) {
@@ -306,7 +305,7 @@ public class RecommendActivity extends BaseActivity implements
     }
 
     /**
-     * フラグメントクリア
+     * フラグメントクリア.
      */
     public void clearAllFragment() {
 
@@ -320,9 +319,9 @@ public class RecommendActivity extends BaseActivity implements
     }
 
     /**
-     * データ取得失敗時の処理
+     * データ取得失敗時の処理.
      */
-    public void recommendDataProviderFinishNg() {
+    private void recommendDataProviderFinishNg() {
         RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
         synchronized (this) {
             // ページング処理判定
@@ -343,14 +342,14 @@ public class RecommendActivity extends BaseActivity implements
      *
      * @param bool ページングの有無
      */
-    private void setPagingStatus(boolean bool) {
+    private void setPagingStatus(final boolean bool) {
         synchronized (this) {
             mIsPaging = bool;
         }
     }
 
     @Override
-    public void channelInfoCallback(ChannelInfoList channelsInfo) {
+    public void channelInfoCallback(final ChannelInfoList channelsInfo) {
         //チャンネル情報取得後のコールバック
         try {
             mChannelMap = mHikariTvChDataProvider.dbOperation(SEARCH_CHANNEL);
@@ -363,7 +362,7 @@ public class RecommendActivity extends BaseActivity implements
     }
 
     @Override
-    public void channelListCallback(ArrayList<ChannelInfo> channels) {
+    public void channelListCallback(final ArrayList<ChannelInfo> channels) {
         //チャンネル情報取得後のコールバック
         try {
             mChannelMap = mHikariTvChDataProvider.dbOperation(SEARCH_CHANNEL);
@@ -375,18 +374,28 @@ public class RecommendActivity extends BaseActivity implements
         }
     }
 
-    /*タブ専用アダプター*/
-    private class TabAdpater extends FragmentStatePagerAdapter {
-
+    /**
+     * タブ専用アダプター.
+     */
+    private class TabAdapter extends FragmentStatePagerAdapter {
+        /**
+         * RecommendActivity.
+         */
         private RecommendActivity mRecommendActivity = null;
 
-        TabAdpater(FragmentManager fm, RecommendActivity top) {
+        /**
+         * コンストラクタ.
+         *
+         * @param fm FragmentManager
+         * @param top RecommendActivity
+         */
+        TabAdapter(final FragmentManager fm, final RecommendActivity top) {
             super(fm);
             mRecommendActivity = top;
         }
 
         @Override
-        public Fragment getItem(int position) {
+        public Fragment getItem(final int position) {
             synchronized (this) {
                 return RecommendFragmentFactory.createFragment(position, mRecommendActivity);
             }
@@ -398,23 +407,24 @@ public class RecommendActivity extends BaseActivity implements
         }
 
         @Override
-        public CharSequence getPageTitle(int position) {
+        public CharSequence getPageTitle(final int position) {
             return mTabNames[position];
         }
     }
 
     @Override
-    public void onScroll(RecommendBaseFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+    public void onScroll(final RecommendBaseFragment fragment, final AbsListView absListView,
+                         final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
         sSearchLastItem = firstVisibleItem + visibleItemCount - 1;
 
-        int pageMax = (sCntPageing + 1) * SearchConstants.RecommendList.requestMaxCount_Recommend;
-        DTVTLogger.debug("onScroll.first:" + firstVisibleItem +
-                " .visible:" + visibleItemCount + " .total:" + totalItemCount +
-                " dataSize:" + fragment.mData.size());
+        int pageMax = (sCntPaging + 1) * SearchConstants.RecommendList.requestMaxCount_Recommend;
+        DTVTLogger.debug("onScroll.first:" + firstVisibleItem
+                + " .visible:" + visibleItemCount + " .total:" + totalItemCount
+                + " dataSize:" + fragment.mData.size());
         if (MAX_SHOW_LIST_SIZE > fragment.mData.size() && // システム制約最大値 100件
                 fragment.mData.size() != 0 && // 取得結果0件以外
                 firstVisibleItem + visibleItemCount >= pageMax) { // 表示中の最下まで行ったかの判定
-            sCntPageing += 1;
+            sCntPaging += 1;
             setPagingStatus(true);
             fragment.displayLoadMore(true);
 
@@ -434,7 +444,7 @@ public class RecommendActivity extends BaseActivity implements
      * @param recommendContentInfoList テレビタブ用情報
      */
     @Override
-    public void RecommendChannelCallback(List<ContentsData> recommendContentInfoList) {
+    public void recommendChannelCallback(final List<ContentsData> recommendContentInfoList) {
         DTVTLogger.debug("Chan Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + sRecommendViewPager.getCurrentItem());
         if (sRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV) {
             recommendDataProviderSuccess(recommendContentInfoList);
@@ -447,7 +457,7 @@ public class RecommendActivity extends BaseActivity implements
      * @param recommendContentInfoList ビデオタブ用情報
      */
     @Override
-    public void RecommendVideoCallback(List<ContentsData> recommendContentInfoList) {
+    public void recommendVideoCallback(final List<ContentsData> recommendContentInfoList) {
         DTVTLogger.debug("vid Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + sRecommendViewPager.getCurrentItem());
         if (sRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO) {
             recommendDataProviderSuccess(recommendContentInfoList);
@@ -460,7 +470,7 @@ public class RecommendActivity extends BaseActivity implements
      * @param recommendContentInfoList dTV用情報
      */
     @Override
-    public void RecommendDTVCallback(List<ContentsData> recommendContentInfoList) {
+    public void recommendDTVCallback(final List<ContentsData> recommendContentInfoList) {
         DTVTLogger.debug("dtv Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + sRecommendViewPager.getCurrentItem());
         if (sRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV) {
             recommendDataProviderSuccess(recommendContentInfoList);
@@ -474,7 +484,7 @@ public class RecommendActivity extends BaseActivity implements
      * @param recommendContentInfoList dアニメ用情報
      */
     @Override
-    public void RecommendDAnimeCallback(List<ContentsData> recommendContentInfoList) {
+    public void recommendDAnimeCallback(final List<ContentsData> recommendContentInfoList) {
         DTVTLogger.debug("ani Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + sRecommendViewPager.getCurrentItem());
         if (sRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME) {
             recommendDataProviderSuccess(recommendContentInfoList);
@@ -487,7 +497,7 @@ public class RecommendActivity extends BaseActivity implements
      * @param recommendContentInfoList dTVチャンネル用情報
      */
     @Override
-    public void RecommendDChannelCallback(List<ContentsData> recommendContentInfoList) {
+    public void recommendDChannelCallback(final List<ContentsData> recommendContentInfoList) {
         DTVTLogger.debug("dCH Callback DataSize:"
                 + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + sRecommendViewPager.getCurrentItem());
         if (sRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL) {
@@ -499,12 +509,12 @@ public class RecommendActivity extends BaseActivity implements
      * 0件コールバック.
      */
     @Override
-    public void RecommendNGCallback() {
+    public void recommendNGCallback() {
         recommendDataProviderFinishNg();
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         DTVTLogger.start();
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:

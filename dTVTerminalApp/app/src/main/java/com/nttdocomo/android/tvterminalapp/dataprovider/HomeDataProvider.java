@@ -76,7 +76,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         ChannelWebClient.ChannelJsonParserCallback,
         RoleListWebClient.RoleListJsonParserCallback,
         GenreListWebClient.GenreListJsonParserCallback,
-        DbThread.DbOperation,
         RecommendDataProvider.RecommendApiDataProviderCallback {
 
     /**
@@ -354,14 +353,16 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     @Override
     public void onChannelJsonParsed(final List<ChannelList> channelLists) {
         if (channelLists != null && channelLists.size() > 0) {
+            DateUtils dateUtils = new DateUtils(mContext);
+            dateUtils.addLastDate(DateUtils.CHANNEL_LAST_UPDATE);
             ChannelList list = channelLists.get(0);
             setStructDB(list);
-            sendTvScheduleListData(setChannelName(mTvScheduleContentsList,list));
+            sendTvScheduleListData(setChannelName(mTvScheduleContentsList, list));
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
             List<Map<String, String>> channelList = homeDataManager.selectChannelListHomeData();
-            sendTvScheduleListData(setChannelName(mTvScheduleContentsList,setHomeChannelData(channelList)));
+            sendTvScheduleListData(setChannelName(mTvScheduleContentsList, setHomeChannelData(channelList)));
         }
     }
 
@@ -369,6 +370,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * コンテンツのServiceIDとServiceIDが一致するチャンネル名を追加する.
      *
      * @param scheduleList 番組表コンテンツリスト
+     * @param channelList チャンネルリスト
      * @return チャンネル名
      */
     private List<ContentsData> setChannelName(final List<ContentsData> scheduleList, final ChannelList channelList) {
@@ -510,7 +512,10 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         @Override
         protected Void doInBackground(final Void... voids) {
             //NOW ON AIR
-            List<Map<String, String>> tvScheduleListData = getTvScheduleListData();
+            //TODO チャンネル一覧取得結果よりCHNO(チャンネル一覧)を先に取得する必要がある.
+            //TODO 仮のチャンネル番号で取得要求を行っている.
+            String[] chNos = new String[]{"101", "260", "261", "280", "3101", "3811", "500", "991"};
+            List<Map<String, String>> tvScheduleListData = getTvScheduleListData(chNos);
             if (tvScheduleListData != null && tvScheduleListData.size() > 0) {
                 mTvScheduleContentsList = setHomeContentData(tvScheduleListData, false);
             }
@@ -645,15 +650,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     /**
-     * チャンネル一覧をHomeActivtyに送る.
-     *
-     * @param list チャンネル一覧
-     */
-    private void sendChannelListData(final List<Map<String, String>> list) {
-        mApiDataProviderCallback.channelListCallback(setHomeChannelData(list));
-    }
-
-    /**
      * 取得したリストマップをContentsDataクラスへ入れる.
      *
      * @param mapList  コンテンツリストデータ
@@ -677,6 +673,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             contentInfo.setLinearStartDate(mapList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_START_DATE));
             contentInfo.setLinearEndDate(mapList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_END_DATE));
             contentInfo.setServiceId(mapList.get(i).get(JsonConstants.META_RESPONSE_SERVICE_ID));
+            contentInfo.setChannelNo(mapList.get(i).get(JsonConstants.META_RESPONSE_CHNO));
             String thumbUrl = contentInfo.getThumURL();
             String title = contentInfo.getTitle();
             if (title == null || title.length() < 1) {
@@ -716,15 +713,16 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     /**
      * NOW ON AIR 情報取得.
      *
+     * @param chNo チャンネル番号
      * @return 番組情報
      */
-    private List<Map<String, String>> getTvScheduleListData() {
+    private List<Map<String, String>> getTvScheduleListData(final String[] chNo) {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.TV_SCHEDULE_LAST_INSERT);
 
         List<Map<String, String>> list = new ArrayList<>();
         //NO ON AIR一覧のDB保存履歴と、有効期間を確認
-        if ((lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate))
+        if ((lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate))
                 || !NetWorkUtils.isOnline(mContext)) {
             //データをDBから取得する
             //TODO データがDBに無い場合や壊れていた場合の処理が必要
@@ -734,11 +732,13 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             if (!mIsStop) {
                 //通信クラスにデータ取得要求を出す
                 TvScheduleWebClient webClient = new TvScheduleWebClient(mContext);
-                int[] ageReq = {1};
-                String[] upperPageLimit = {WebApiBasePlala.DATE_NOW};
+                int[] chNos = new int[chNo.length];
+                for (int i = 0; i < chNo.length; i++) {
+                    chNos[i] = Integer.parseInt(chNo[i]);
+                }
+                String[] channelInfoDate = new String[] {WebApiBasePlala.DATE_NOW};
                 String lowerPageLimit = "";
-                webClient.getTvScheduleApi(ageReq, upperPageLimit,
-                        lowerPageLimit, this);
+                webClient.getTvScheduleApi(chNos, channelInfoDate, lowerPageLimit, this);
             } else {
                 DTVTLogger.error("TvScheduleWebClient is stopping connect");
             }
@@ -930,7 +930,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param filter release、testa、demo ※指定なしの場合release
      * @param type   dch：dチャンネル, hikaritv：ひかりTVの多ch, 指定なしの場合：すべて
      */
-    public void getChannelList(final int limit, final int offset, final String filter, final int type) {
+    private void getChannelList(final int limit, final int offset, final String filter, final int type) {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.CHANNEL_LAST_UPDATE);
         if ((!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate))
@@ -941,7 +941,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             sendTvScheduleListData(setChannelName(mTvScheduleContentsList, setHomeChannelData(channelList)));
         } else {
             //通信クラスにデータ取得要求を出す
-            dateUtils.addLastProgramDate(DateUtils.CHANNEL_LAST_UPDATE);
             ChannelWebClient mChannelList = new ChannelWebClient(mContext);
             mChannelList.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], this);
         }
@@ -981,10 +980,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             }
         } else {
             //キャッシュ期限内ならDBから取得
-            List<Map<String, String>> watchListenList = new ArrayList<>();
             HomeDataManager watchListenVideoDataManager = new HomeDataManager(mContext);
-            watchListenList = watchListenVideoDataManager.selectWatchingVideoHomeData();
-            sendWatchingVideoListData(watchListenList);
+            sendWatchingVideoListData(watchListenVideoDataManager.selectWatchingVideoHomeData());
         }
     }
 
@@ -1249,7 +1246,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param recommendContentInfoList テレビレコメンド情報
      */
     @Override
-    public void RecommendChannelCallback(final List<ContentsData> recommendContentInfoList) {
+    public void recommendChannelCallback(final List<ContentsData> recommendContentInfoList) {
         if (recommendContentInfoList != null && recommendContentInfoList.size() > 0) {
             //送られてきたデータをアクティビティに渡す
             sendRecommendChListData(recommendContentInfoList);
@@ -1279,7 +1276,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param recommendContentInfoList ビデオレコメンド情報
      */
     @Override
-    public void RecommendVideoCallback(final List<ContentsData> recommendContentInfoList) {
+    public void recommendVideoCallback(final List<ContentsData> recommendContentInfoList) {
         if (recommendContentInfoList != null && recommendContentInfoList.size() > 0) {
             //送られてきたデータをアクティビティに渡す
             sendRecommendVdListData(recommendContentInfoList);
@@ -1301,7 +1298,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param recommendContentInfoList DTVレコメンド情報
      */
     @Override
-    public void RecommendDTVCallback(final List<ContentsData> recommendContentInfoList) {
+    public void recommendDTVCallback(final List<ContentsData> recommendContentInfoList) {
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
@@ -1311,7 +1308,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param recommendContentInfoList dアニメレコメンド情報
      */
     @Override
-    public void RecommendDAnimeCallback(final List<ContentsData> recommendContentInfoList) {
+    public void recommendDAnimeCallback(final List<ContentsData> recommendContentInfoList) {
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
@@ -1321,7 +1318,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param recommendContentInfoList Dチャンネルのレコメンド情報
      */
     @Override
-    public void RecommendDChannelCallback(final List<ContentsData> recommendContentInfoList) {
+    public void recommendDChannelCallback(final List<ContentsData> recommendContentInfoList) {
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
@@ -1329,7 +1326,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * レコメンドのエラーのコールバック.
      */
     @Override
-    public void RecommendNGCallback() {
+    public void recommendNGCallback() {
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
@@ -1424,7 +1421,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if (mGenreListWebClient != null) {
             mGenreListWebClient.stopConnect();
         }
-        if(mRecommendDataProvider != null){
+        if (mRecommendDataProvider != null) {
             mRecommendDataProvider.stopConnect();
         }
         if (mRoleListWebClient != null) {
@@ -1469,7 +1466,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if (mGenreListWebClient != null) {
             mGenreListWebClient.enableConnect();
         }
-        if(mRecommendDataProvider != null){
+        if (mRecommendDataProvider != null) {
             mRecommendDataProvider.enableConnect();
         }
         if (mRoleListWebClient != null) {
