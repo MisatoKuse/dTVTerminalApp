@@ -30,6 +30,8 @@ public class WatchListenVideoListJsonParser {
             JsonConstants.META_RESPONSE_COUNT};
 
     public List<WatchListenVideoList> watchListenVideoListSender(String jsonStr) {
+
+        DTVTLogger.debugHttp(jsonStr);
         mWatchListenVideoList = new WatchListenVideoList();
 
         try {

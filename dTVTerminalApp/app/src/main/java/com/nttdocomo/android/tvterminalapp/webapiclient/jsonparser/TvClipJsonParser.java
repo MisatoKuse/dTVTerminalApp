@@ -30,6 +30,8 @@ public class TvClipJsonParser {
             JsonConstants.META_RESPONSE_COUNT};
 
     public List<TvClipList> tvClipListSender(String jsonStr) {
+
+        DTVTLogger.debugHttp(jsonStr);
         mTvClipList = new TvClipList();
 
         try {

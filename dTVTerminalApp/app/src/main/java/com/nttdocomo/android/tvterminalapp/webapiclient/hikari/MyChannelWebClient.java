@@ -68,10 +68,8 @@ public class MyChannelWebClient
 
     /**
      * マイチャンネル一覧取得.
-     *
-     * @param myChannelListJsonParserCallback コールバックTODO:
-     * 本WebAPIには通常のパラメータが無く、基底クラスで追加するサービストークンのみとなる。）
-     * TODO: 仕様確定後に基底クラスへサービストークンの処理の追加が必要
+     * 本WebAPIには通常のパラメータが無く、基底クラスで追加するサービストークンのみとなる
+     * @param myChannelListJsonParserCallback
      * @return パラメータエラー等が発生した場合はfalse
      */
     public boolean getMyChanelListApi(MyChannelListJsonParserCallback myChannelListJsonParserCallback) {

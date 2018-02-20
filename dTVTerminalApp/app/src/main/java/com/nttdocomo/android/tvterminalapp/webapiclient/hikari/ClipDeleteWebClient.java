@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -182,6 +183,7 @@ public class ClipDeleteWebClient
             answerText = "";
         }
 
+        DTVTLogger.debugHttp(answerText);
         return answerText;
     }
 }

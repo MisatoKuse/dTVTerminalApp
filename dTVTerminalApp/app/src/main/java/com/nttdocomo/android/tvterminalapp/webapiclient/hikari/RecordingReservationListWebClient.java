@@ -189,6 +189,7 @@ public class RecordingReservationListWebClient
             answerText = "";
         }
 
+        DTVTLogger.debugHttp(answerText);
         return answerText;
     }
 

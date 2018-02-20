@@ -63,6 +63,7 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
      */
     public RecordingReservationListResponse recordingReservationListSender(String jsonStr) {
 
+        DTVTLogger.debugHttp(jsonStr);
         mRecordingReservationListResponse = new RecordingReservationListResponse();
 
         try {

@@ -78,7 +78,6 @@ public class RemoteRecordingReservationListWebClient
      * リモート録画予約一覧取得.
      *
      * @param remoteRecordingReservationListJsonParserCallback コールバック
-     * TODO:本WebAPIには通常のパラメータが無く、基底クラスで追加するサービストークンのみとなる。）
      * @return パラメータエラー等が発生した場合はfalse
      */
     public boolean getRemoteRecordingReservationListApi(

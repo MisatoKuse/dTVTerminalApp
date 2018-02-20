@@ -63,6 +63,7 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
      */
     public ContentsDetailGetResponse contentsDetailSender(String jsonStr) {
 
+        DTVTLogger.debugHttp(jsonStr);
         mContentsDetailGetResponse = new ContentsDetailGetResponse();
 
         try {

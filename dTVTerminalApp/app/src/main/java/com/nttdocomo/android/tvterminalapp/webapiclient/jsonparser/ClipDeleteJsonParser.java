@@ -28,6 +28,8 @@ public class ClipDeleteJsonParser extends AsyncTask<Object, Object, String> {
      * @return リスト化データ
      */
     private String getClipStatus(String jsonStr) {
+
+        DTVTLogger.debugHttp(jsonStr);
         String status = "";
         try {
             JSONObject jsonObj = new JSONObject(jsonStr);

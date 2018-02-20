@@ -59,6 +59,7 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
      */
     public List<TvScheduleList> TvScheduleListListSender(String jsonStr) {
 
+        DTVTLogger.debugHttp(jsonStr);
         mTvScheduleList = new TvScheduleList();
 
         try {

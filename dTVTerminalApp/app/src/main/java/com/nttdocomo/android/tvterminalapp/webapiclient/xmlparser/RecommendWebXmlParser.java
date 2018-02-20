@@ -69,6 +69,7 @@ public class RecommendWebXmlParser extends AsyncTask<Object, Object, Object> {
      * @return パース後のデータ
      */
     public RecommendChList getRecommendWebList(String responseData) {
+        DTVTLogger.debugHttp(responseData);
         RecommendChList redChContents = null;
         List<Map<String, String>> redChContentList = null;
         HashMap<String, String> redChHashMap = null;

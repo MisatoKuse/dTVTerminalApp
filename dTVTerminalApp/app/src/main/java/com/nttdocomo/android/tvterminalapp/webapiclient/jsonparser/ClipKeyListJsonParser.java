@@ -26,6 +26,8 @@ public class ClipKeyListJsonParser {
             JsonConstants.META_RESPONSE_TYPE, JsonConstants.META_RESPONSE_TITLE_ID};
 
     public ClipKeyListResponse clipKeyListSender(String jsonStr) {
+
+        DTVTLogger.debugHttp(jsonStr);
         mClipKeyListResponse = new ClipKeyListResponse();
 
         try {

@@ -63,6 +63,7 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
      */
     public PurchasedVodListResponse PurchasedVodListSender(String jsonStr) {
 
+        DTVTLogger.debugHttp(jsonStr);
         mPurchasedVodListResponse = new PurchasedVodListResponse();
 
         try {

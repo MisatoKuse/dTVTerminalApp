@@ -71,6 +71,7 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
      */
     public RemoteRecordingReservationListResponse remoteRecordingReservationListSender(String jsonStr) {
 
+        DTVTLogger.debugHttp(jsonStr);
         mRemoteRecordingReservationListResponse = new RemoteRecordingReservationListResponse();
 
         try {

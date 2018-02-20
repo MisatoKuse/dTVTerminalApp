@@ -130,6 +130,7 @@ public class MyChannelDeleteWebClient
             answerText = "";
         }
 
+        DTVTLogger.debugHttp(answerText);
         return answerText;
     }
 

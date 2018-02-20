@@ -202,6 +202,7 @@ public class ContentsDetailGetWebClient
             answerText = "";
         }
 
+        DTVTLogger.debugHttp(answerText);
         return answerText;
     }
 

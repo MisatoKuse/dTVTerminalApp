@@ -223,6 +223,7 @@ public class WeeklyRankWebClient
             answerText = "";
         }
 
+        DTVTLogger.debugHttp(answerText);
         return answerText;
     }
 

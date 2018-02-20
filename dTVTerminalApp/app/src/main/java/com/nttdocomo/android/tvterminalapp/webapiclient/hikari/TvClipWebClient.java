@@ -209,6 +209,7 @@ public class TvClipWebClient
             answerText = "";
         }
 
+        DTVTLogger.debugHttp(answerText);
         return answerText;
     }
 

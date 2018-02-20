@@ -70,6 +70,7 @@ public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
      */
     private List<UserInfoList> userInfoListSender(String jsonStr) {
 
+        DTVTLogger.debugHttp(jsonStr);
         // オブジェクトクラスの定義
         UserInfoList infoList;
 

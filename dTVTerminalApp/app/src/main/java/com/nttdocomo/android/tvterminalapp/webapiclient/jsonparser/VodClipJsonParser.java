@@ -31,6 +31,7 @@ public class VodClipJsonParser {
 
     public List<VodClipList> VodClipListSender(String jsonStr) {
 
+        DTVTLogger.debugHttp(jsonStr);
         mVodClipList = new VodClipList();
 
         try {

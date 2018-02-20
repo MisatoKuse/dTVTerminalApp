@@ -211,6 +211,7 @@ public class WatchListenVideoWebClient
             answerText = "";
         }
 
+        DTVTLogger.debugHttp(answerText);
         return answerText;
     }
 

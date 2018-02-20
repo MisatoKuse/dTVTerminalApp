@@ -59,6 +59,8 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
      * @return パース後のJSONデータ
      */
     private List<DailyRankList> dailyRankListSender(String jsonStr) {
+
+        DTVTLogger.debugHttp(jsonStr);
         mDailyRankList = new DailyRankList();
 
         try {

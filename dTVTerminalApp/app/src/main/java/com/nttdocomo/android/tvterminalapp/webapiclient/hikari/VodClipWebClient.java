@@ -222,6 +222,7 @@ public class VodClipWebClient
             answerText = "";
         }
 
+        DTVTLogger.debugHttp(answerText);
         return answerText;
     }
 

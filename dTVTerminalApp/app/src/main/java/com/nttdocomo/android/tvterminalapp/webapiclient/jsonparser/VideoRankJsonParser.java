@@ -87,6 +87,7 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
      */
     public List<VideoRankList> VideoRankListSender(String jsonStr) {
 
+        DTVTLogger.debugHttp(jsonStr);
         mVideoRankList = new VideoRankList();
 
         try {

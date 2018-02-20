@@ -218,6 +218,7 @@ public class ClipKeyListWebClient
             answerText = "";
         }
 
+        DTVTLogger.debugHttp(answerText);
         return answerText;
     }
 

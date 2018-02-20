@@ -259,6 +259,7 @@ public class ContentsListPerGenreWebClient
             answerText = "";
         }
 
+        DTVTLogger.debugHttp(answerText);
         return answerText;
     }
 

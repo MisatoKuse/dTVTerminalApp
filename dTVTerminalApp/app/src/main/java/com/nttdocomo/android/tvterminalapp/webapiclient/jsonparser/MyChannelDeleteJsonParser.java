@@ -58,6 +58,7 @@ public class MyChannelDeleteJsonParser extends AsyncTask<Object, Object, Object>
      */
     private MyChannelDeleteResponse myChannelDeleteSender(String jsonStr) {
 
+        DTVTLogger.debugHttp(jsonStr);
         myChannelDeleteResponse = new MyChannelDeleteResponse();
 
         try {

@@ -29,6 +29,7 @@ public class ClipRegistJsonParser extends AsyncTask<Object, Object, String> {
      */
     private String getClipStatus(String jsonStr) {
 
+        DTVTLogger.debugHttp(jsonStr);
         String status = "";
 
         try {

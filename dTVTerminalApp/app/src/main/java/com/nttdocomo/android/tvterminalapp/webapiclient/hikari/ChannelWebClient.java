@@ -204,7 +204,7 @@ public class ChannelWebClient
             //JSONの作成に失敗したので空文字とする
             answerText = "";
         }
-
+        DTVTLogger.debugHttp(answerText);
         return answerText;
     }
 

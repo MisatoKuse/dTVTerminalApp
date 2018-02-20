@@ -65,6 +65,7 @@ public class GenreCountGetJsonParser extends AsyncTask<Object, Object, Object> {
      */
     public GenreCountGetResponse genreCountGetSender(String jsonStr) {
 
+        DTVTLogger.debugHttp(jsonStr);
         mGenreCountGetResponse = new GenreCountGetResponse();
 
         try {

@@ -69,6 +69,7 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
      */
     private PurchasedChListResponse channelListSender(final String jsonStr) {
 
+        DTVTLogger.debugHttp(jsonStr);
         mPurchasedChListResponse = new PurchasedChListResponse();
 
         try {

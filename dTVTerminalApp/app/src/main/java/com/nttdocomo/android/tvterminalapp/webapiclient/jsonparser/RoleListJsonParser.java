@@ -61,6 +61,8 @@ public class RoleListJsonParser extends AsyncTask<Object, Object, Object> {
      * @return ジャンル一覧取得：正常時レスポンスデータ
      */
     public RoleListResponse roleListSender(String jsonStr) {
+
+        DTVTLogger.debugHttp(jsonStr);
         mRoleListResponse = new RoleListResponse();
         try {
             if (jsonStr != null) {

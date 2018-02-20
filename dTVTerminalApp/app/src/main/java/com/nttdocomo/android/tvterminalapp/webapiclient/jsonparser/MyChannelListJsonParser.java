@@ -64,6 +64,7 @@ public class MyChannelListJsonParser extends AsyncTask<Object, Object, Object> {
      */
     private MyChannelListResponse myChannelListSender(String jsonStr) {
 
+        DTVTLogger.debugHttp(jsonStr);
         myChannelListResponse = new MyChannelListResponse();
 
         try {

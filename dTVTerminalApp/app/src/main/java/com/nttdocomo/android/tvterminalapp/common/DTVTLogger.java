@@ -74,6 +74,16 @@ public class DTVTLogger {
     }
 
     /**
+     * ログ出力（debugレベル 通信）.開発時に動作を確認したい処理に利用する事.※リリース版では無効とする.
+     * @param msg ログ出力文字列
+     */
+    public static void debugHttp(String msg) {
+        if (ENABLE_LOG_DEBUG) {
+            Log.d(PACKAGE_TAG, getClassName() + getFunctionName() + ": " + nonNull(msg));
+        }
+    }
+
+    /**
      * ログ出力 (debugレベル 文字列あり/例外発生).開発時に動作を確認したい処理に利用する事.※リリース版では無効とする.
      * @param msg ログ出力文字列
      * @param e Exception

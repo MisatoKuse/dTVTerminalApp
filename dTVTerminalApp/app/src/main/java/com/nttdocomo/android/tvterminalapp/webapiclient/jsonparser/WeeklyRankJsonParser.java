@@ -87,6 +87,8 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
      * @return List<WeeklyRankList> ObjectクラスをList形式で返却
      */
     private List<WeeklyRankList> weeklyRankListSender(String jsonStr) {
+
+        DTVTLogger.debugHttp(jsonStr);
         mWeeklyRankList = new WeeklyRankList();
         try {
             JSONObject jsonObj = new JSONObject(jsonStr);

@@ -201,6 +201,7 @@ public class DailyRankWebClient
             answerText = "";
         }
 
+        DTVTLogger.debugHttp(answerText);
         return answerText;
     }
 

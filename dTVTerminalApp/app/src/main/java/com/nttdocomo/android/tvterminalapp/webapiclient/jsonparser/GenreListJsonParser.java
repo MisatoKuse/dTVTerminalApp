@@ -64,6 +64,8 @@ public class GenreListJsonParser extends AsyncTask<Object, Object, Object> {
      * @return ジャンル一覧取得：正常時レスポンスデータ
      */
     public GenreListResponse genreListSender(String jsonStr) {
+
+        DTVTLogger.debugHttp(jsonStr);
         mGenreListResponse = new GenreListResponse();
         try {
             if (jsonStr != null) {

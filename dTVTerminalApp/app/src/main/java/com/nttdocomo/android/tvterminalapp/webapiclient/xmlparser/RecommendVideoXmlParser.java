@@ -69,6 +69,7 @@ public class RecommendVideoXmlParser extends AsyncTask<Object, Object, Object> {
      * @return パース後のデータ
      */
     public RecommendVdList getRecommendVideoList(String responseData) {
+        DTVTLogger.debugHttp(responseData);
         RecommendVdList redVdContents = null;
         List<Map<String, String>> redVdContentList = null;
         HashMap<String, String> redVdHashMap = null;

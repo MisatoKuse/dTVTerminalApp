@@ -248,6 +248,7 @@ public class GenreCountGetWebClient
             answerText = "";
         }
 
+        DTVTLogger.debugHttp(answerText);
         return answerText;
     }
 
