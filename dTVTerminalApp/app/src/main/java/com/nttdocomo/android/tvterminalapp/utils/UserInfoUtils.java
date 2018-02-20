@@ -65,7 +65,7 @@ public class UserInfoUtils {
 
         //TODO:dアカログイン状態はdアカ情報で判断するようにする
         //ログインユーザ情報がないときは契約情報は無し
-        if (mLoggedInAccountList == null || userInfoList.size() < 1) {
+        if (mLoggedInAccountList == null || mLoggedInAccountList.size() < 1 || userInfoList.size() < 1) {
             return CONTRACT_INFO_NONE;
         }
 
