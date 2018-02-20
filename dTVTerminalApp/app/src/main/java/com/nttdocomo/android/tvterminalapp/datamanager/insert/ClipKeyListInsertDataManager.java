@@ -50,9 +50,11 @@ public class ClipKeyListInsertDataManager {
     public void insertClipKeyListInsert(final ClipKeyListDao.TABLE_TYPE type, final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
         //各種オブジェクト作成
-        DBHelper ClipKeyListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = ClipKeyListDBHelper.getWritableDatabase();
-        ClipKeyListDao ClipKeyListDao = new ClipKeyListDao(db);
+        DBHelper DbHelper = new DBHelper(mContext);
+        DataBaseManager.initializeInstance(DbHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+
+        ClipKeyListDao ClipKeyListDao = new ClipKeyListDao(database);
         List<HashMap<String, String>> hashMaps = clipKeyListResponse.getCkList();
 
         //DB保存前に前回取得したデータを消去する
@@ -74,7 +76,7 @@ public class ClipKeyListInsertDataManager {
             }
             ClipKeyListDao.insert(type, values);
         }
-        db.close();
+        DataBaseManager.getInstance().closeDatabase();
         DTVTLogger.end();
     }
 

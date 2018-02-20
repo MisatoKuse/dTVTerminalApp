@@ -20,6 +20,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VodClipListD
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WatchListenVideoListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WeeklyRankListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.DataBaseManager;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideoXmlParser;
 
@@ -67,14 +68,14 @@ public class HomeDataManager {
                 JsonConstants.META_RESPONSE_DISP_TYPE};
 
         //Daoクラス使用準備
-        DBHelper watchingVideodBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = watchingVideodBHelper.getWritableDatabase();
-        WatchListenVideoListDao watchListenVideoListDao = new WatchListenVideoListDao(db);
+        DBHelper DbHelper = new DBHelper(mContext);
+        DataBaseManager.initializeInstance(DbHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        WatchListenVideoListDao watchListenVideoListDao = new WatchListenVideoListDao(database);
 
         //ホーム画面用データ取得
         list = watchListenVideoListDao.findById(columns);
-        db.close();
-        watchingVideodBHelper.close();
+        DataBaseManager.getInstance().closeDatabase();
         return list;
     }
 
@@ -99,14 +100,15 @@ public class HomeDataManager {
                 JsonConstants.META_RESPONSE_DISP_TYPE};
 
         //Daoクラス使用準備
-        DBHelper tvClipListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = tvClipListDBHelper.getWritableDatabase();
-        TvClipListDao tvClipListDao = new TvClipListDao(db);
+        DBHelper DbHelper = new DBHelper(mContext);
+        DataBaseManager.initializeInstance(DbHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+
+        TvClipListDao tvClipListDao = new TvClipListDao(database);
 
         //ホーム画面用データ取得
         list = tvClipListDao.findById(columns);
-        db.close();
-        tvClipListDBHelper.close();
+        DataBaseManager.getInstance().closeDatabase();
         return list;
     }
 
@@ -131,14 +133,15 @@ public class HomeDataManager {
                 JsonConstants.META_RESPONSE_DISP_TYPE};
 
         //Daoクラス使用準備
-        DBHelper vodClipListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = vodClipListDBHelper.getWritableDatabase();
-        VodClipListDao vodClipListDao = new VodClipListDao(db);
+        DBHelper DbHelper = new DBHelper(mContext);
+        DataBaseManager.initializeInstance(DbHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+
+        VodClipListDao vodClipListDao = new VodClipListDao(database);
 
         //ホーム画面用データ取得
         list = vodClipListDao.findById(columns);
-        db.close();
-        vodClipListDBHelper.close();
+        DataBaseManager.getInstance().closeDatabase();
         return list;
     }
 
@@ -163,14 +166,15 @@ public class HomeDataManager {
                 JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_CID};
 
         //Daoクラス使用準備
-        DBHelper channelListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = channelListDBHelper.getWritableDatabase();
-        ChannelListDao channelListDao = new ChannelListDao(db);
+        DBHelper DbHelper = new DBHelper(mContext);
+        DataBaseManager.initializeInstance(DbHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+
+        ChannelListDao channelListDao = new ChannelListDao(database);
 
         //ホーム画面用データ取得
         list = channelListDao.findById(columns);
-        db.close();
-        channelListDBHelper.close();
+        DataBaseManager.getInstance().closeDatabase();
         return list;
     }
 
@@ -193,14 +197,15 @@ public class HomeDataManager {
                 RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CTPICURL1};
 
         //Daoクラス使用準備
-        DBHelper recommendChListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = recommendChListDBHelper.getWritableDatabase();
-        RecommendChannelListDao recommendChannelListDao = new RecommendChannelListDao(db);
+        DBHelper DbHelper = new DBHelper(mContext);
+        DataBaseManager.initializeInstance(DbHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+
+        RecommendChannelListDao recommendChannelListDao = new RecommendChannelListDao(database);
 
         //ホーム画面用データ取得
         list = recommendChannelListDao.findById(columns);
-        db.close();
-        recommendChListDBHelper.close();
+        DataBaseManager.getInstance().closeDatabase();
         return list;
     }
 
@@ -223,14 +228,14 @@ public class HomeDataManager {
                 RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CTPICURL1};
 
         //Daoクラス使用準備
-        DBHelper recommendVdListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = recommendVdListDBHelper.getWritableDatabase();
-        RecommendVideolListDao recommendVdListDao = new RecommendVideolListDao(db);
+        DBHelper DbHelper = new DBHelper(mContext);
+        DataBaseManager.initializeInstance(DbHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        RecommendVideolListDao recommendVdListDao = new RecommendVideolListDao(database);
 
         //ホーム画面用データ取得
         list = recommendVdListDao.findById(columns);
-        db.close();
-        recommendVdListDBHelper.close();
+        DataBaseManager.getInstance().closeDatabase();
         return list;
     }
 
@@ -259,14 +264,15 @@ public class HomeDataManager {
                 JsonConstants.META_RESPONSE_DTV_TYPE, JsonConstants.META_RESPONSE_CID};
 
         //Daoクラス使用準備
-        DBHelper dailyRankListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = dailyRankListDBHelper.getWritableDatabase();
-        DailyRankListDao dailyRankListDao = new DailyRankListDao(db);
+        DBHelper DbHelper = new DBHelper(mContext);
+        DataBaseManager.initializeInstance(DbHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+
+        DailyRankListDao dailyRankListDao = new DailyRankListDao(database);
 
         //ホーム画面用データ取得
         list = dailyRankListDao.findById(columns);
-        db.close();
-        dailyRankListDBHelper.close();
+        DataBaseManager.getInstance().closeDatabase();
         return list;
     }
 
@@ -290,14 +296,15 @@ public class HomeDataManager {
                 JsonConstants.META_RESPONSE_CID, JsonConstants.META_RESPONSE_SERVICE_ID};
 
         //Daoクラス使用準備
-        DBHelper tvScheduleListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = tvScheduleListDBHelper.getWritableDatabase();
-        TvScheduleListDao tvScheduleListDao = new TvScheduleListDao(db);
+        DBHelper DbHelper = new DBHelper(mContext);
+        DataBaseManager.initializeInstance(DbHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+
+        TvScheduleListDao tvScheduleListDao = new TvScheduleListDao(database);
 
         //ホーム画面用データ取得
         list = tvScheduleListDao.findById(columns);
-        db.close();
-        tvScheduleListDBHelper.close();
+        DataBaseManager.getInstance().closeDatabase();
         return list;
     }
 
@@ -326,14 +333,15 @@ public class HomeDataManager {
                 JsonConstants.META_RESPONSE_TV_SERVICE, JsonConstants.META_RESPONSE_CID};
 
         //Daoクラス使用準備
-        DBHelper weeklyRankListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = weeklyRankListDBHelper.getWritableDatabase();
-        WeeklyRankListDao weeklyRankListDao = new WeeklyRankListDao(db);
+        DBHelper DbHelper = new DBHelper(mContext);
+        DataBaseManager.initializeInstance(DbHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+
+        WeeklyRankListDao weeklyRankListDao = new WeeklyRankListDao(database);
 
         //ホーム画面用データ取得
         list = weeklyRankListDao.findById(columns);
-        db.close();
-        weeklyRankListDBHelper.close();
+        DataBaseManager.getInstance().closeDatabase();
         return list;
     }
 
@@ -354,14 +362,15 @@ public class HomeDataManager {
         String[] columns = {JsonConstants.META_RESPONSE_CONTENTS_ID, JsonConstants.META_RESPONSE_CONTENTS_NAME};
 
         //Daoクラス使用準備
-        DBHelper roleListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = roleListDBHelper.getWritableDatabase();
-        RoleListDao roleListDao = new RoleListDao(db);
+        DBHelper DbHelper = new DBHelper(mContext);
+        DataBaseManager.initializeInstance(DbHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+
+        RoleListDao roleListDao = new RoleListDao(database);
 
         //ホーム画面用データ取得
         list = roleListDao.findById(columns);
-        db.close();
-        roleListDBHelper.close();
+        DataBaseManager.getInstance().closeDatabase();
         return list;
     }
 }
