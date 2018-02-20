@@ -326,6 +326,12 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
         if (mMyChannelDataProvider != null) {
             mMyChannelDataProvider.enableConnect();
         }
+        if (mEditListView != null) {
+            mEditListView.invalidateViews();
+        }
+        if (mEditList == null || mEditList.size() == 0) {
+            loadData();
+        }
     }
 
     @Override
