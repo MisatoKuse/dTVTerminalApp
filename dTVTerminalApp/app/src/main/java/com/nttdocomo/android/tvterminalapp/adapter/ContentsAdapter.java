@@ -35,6 +35,7 @@ import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.RatingBarLayout;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter.ActivityTypeItem.TYPE_RECORDING_RESERVATION_LIST;
 
@@ -364,12 +365,9 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             clipButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(final View view) {
-                    //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、画像比較でクリップ済/未を判定する
-                    Bitmap clipButtonBitmap = ((BitmapDrawable) clipButton.getBackground()).getBitmap();
-                    Bitmap activeClipBitmap = ((BitmapDrawable) ResourcesCompat.getDrawable(mContext.getResources(),
-                            R.mipmap.icon_circle_active_clip, null)).getBitmap();
-                    Object str = clipButton.getTag();
-                    if (str.equals(BaseActivity.CLIP_ACTIVE_STATUS)) {
+                    //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、タグでクリップ済/未を判定する
+                    Object clipTag = clipButton.getTag();
+                    if (clipTag.equals(BaseActivity.CLIP_ACTIVE_STATUS)) {
                         requestData.setClipStatus(true);
                     } else {
                         requestData.setClipStatus(false);
@@ -1077,6 +1075,15 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST)) {
                     //クリップ状態が1以外の時は、非活性クリップボタンを表示
                     if (listContentInfo.isClipExec()) {
+                        //クリップ操作後のボタン状態に応じてクリップのステータスを変更し、リスト再利用時のボタン書き換えを回避する
+                        Object clipButtonTag = holder.tv_clip.getTag();
+                        if (clipButtonTag != null) {
+                            if (clipButtonTag.equals(BaseActivity.CLIP_ACTIVE_STATUS)) {
+                                listContentInfo.setClipStatus(true);
+                            } else {
+                                listContentInfo.setClipStatus(false);
+                            }
+                        }
                         if (listContentInfo.isClipStatus()) {
                             holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_clip);
                             holder.tv_clip.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
