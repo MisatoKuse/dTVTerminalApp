@@ -24,7 +24,7 @@ import java.util.HashMap;
 /**
  * 機能：For Dlna Remote
  */
-public class DlnaInterfaceRI {
+class DlnaInterfaceRI {
     //private Handler mHandler= new Handler();
 
     //Download
@@ -51,39 +51,42 @@ public class DlnaInterfaceRI {
         return sConFileDirName;
     }
 
-    public static final String getDestConfPathDir(Context context){
+    private static String getDestConfPathDir(Context context){
         if(null==context){
             return null;
         }
         return context.getFilesDir().getAbsolutePath() + File.separator + sConFileDirName;
     }
 
-    public static void deleteFolderFile(String filePath, boolean deleteThisPath) {
+    private static void deleteFolderFile(String filePath, boolean deleteThisPath) {
         if (!TextUtils.isEmpty(filePath)) {
-            try {
-                File file = new File(filePath);
-                if (file.isDirectory()) {
+            File file = new File(filePath);
+            if(null == file){
+                return;
+            }
+            if (file.isDirectory()) {
+                File files[] = file.listFiles();
+                for (int i = 0; i < files.length; i++) {
+                    deleteFolderFile(files[i].getAbsolutePath(), true);
+                }
+            }
+            if (deleteThisPath) {
+                if (!file.isDirectory()) {
+                    file.delete();
+                } else {
                     File files[] = file.listFiles();
-                    for (int i = 0; i < files.length; i++) {
-                        deleteFolderFile(files[i].getAbsolutePath(), true);
+                    if(null == files){
+                        return;
                     }
-                }
-                if (deleteThisPath) {
-                    if (!file.isDirectory()) {
+                    if (files.length == 0) {
                         file.delete();
-                    } else {
-                        if (file.listFiles().length == 0) {
-                            file.delete();
-                        }
                     }
                 }
-            } catch (Exception e) {
-                DTVTLogger.debug(e);
             }
         }
     }
 
-    public static long getFileSize(String path) {
+    static long getFileSize(String path) {
         long size = 0;
         File file=new File(path);
         if (file.exists()) {
@@ -112,18 +115,19 @@ public class DlnaInterfaceRI {
      * @param forceUpdate 「true」の場合、毎回assetsからコピー
      * @return conf path:    Conf path is not null, error return null
      */
-    public static boolean copyConfFiles(Context context, String assetsConfPath, String destPath, boolean forceUpdate){
+    private static boolean copyConfFiles(Context context, String assetsConfPath, String destPath, boolean forceUpdate){
 
         if (TextUtils.isEmpty(assetsConfPath) || TextUtils.isEmpty(destPath)) {
             return false;
         }
-        String separator = File.separator;
+        //String separator = File.separator;
         boolean r=true;
         String[] fileNames=null;
         try {
             fileNames = context.getResources().getAssets().list(assetsConfPath);
         } catch (Exception e) {
             DTVTLogger.debug(e);
+            return false;
         }
         if (fileNames.length > 0) {
             File file = new File(destPath);
@@ -230,6 +234,10 @@ public class DlnaInterfaceRI {
             DTVTLogger.debug(e);
         }
 
+        if(null == temp){
+            return ret;
+        }
+
         try {
             ret = StringToInputStream(temp);
         } catch (Exception e) {
@@ -251,7 +259,6 @@ public class DlnaInterfaceRI {
         while ((count = in.read(data, 0, sBufSize)) != -1){
             outStream.write(data, 0, count);
         }
-        data = null;
         return new String(outStream.toByteArray(), "UTF-8");
     }
 
