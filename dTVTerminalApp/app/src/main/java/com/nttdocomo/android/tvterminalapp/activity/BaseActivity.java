@@ -56,6 +56,7 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
+import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.RuntimePermissionUtils;
@@ -209,10 +210,6 @@ public class BaseActivity extends FragmentActivity implements
      * dアカウント関連処理の必要有無判定.
      */
     private boolean mNecessaryDaccountRegistService = true;
-    /**
-     * 国内通信Flg
-     */
-    private boolean mIsInJapan = true;
 
     /**
      * クリップ状態.
@@ -1832,6 +1829,8 @@ public class BaseActivity extends FragmentActivity implements
         dialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
             @Override
             public void onCancelCallback() {
+                //Serviceでダウンロード中のタスクもキャンセル
+                DlDataProvider.cancelAll();
                 mShowDialog = createPermissionDeniedDialog();
                 mShowDialog.showDialog();
             }
@@ -1903,11 +1902,9 @@ public class BaseActivity extends FragmentActivity implements
             if (intMcc == DOMESTIC_COMMUNICATION_MCC_1
                     || intMcc == DOMESTIC_COMMUNICATION_MCC_2) {
                 // 国内通信
-                mIsInJapan = true;
                 onReStartCommunication();
             } else {
                 // 海外通信
-                mIsInJapan = false;
                 showTransoceanicCommunicationDialog();
                 mShowDialog = createTransoceanicCommunicationDialog();
                 mShowDialog.showDialog();
@@ -1997,14 +1994,6 @@ public class BaseActivity extends FragmentActivity implements
             DTVTLogger.debug("BaseActivity.onResume, dlnaOnResume failed");
         }
         onStartCommunication();
-    }
-
-    /**
-     * 持ち出しダウンロード中判定用
-     * @return mIsInJapan mIsInJapan
-     */
-    protected boolean isInJapan(){
-        return mIsInJapan;
     }
 
     /**
