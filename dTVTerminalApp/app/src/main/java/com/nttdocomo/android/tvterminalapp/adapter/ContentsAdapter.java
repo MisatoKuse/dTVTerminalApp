@@ -700,10 +700,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 //現在時刻が開始と終了の間ならば、"Now On Air"と表示する
                 if (DateUtils.isBetweenNowTime(startDate, endDate)) {
                     //収まっていたので、Now On Airを表示
-                    holder.tv_channel_name.setText(R.string.now_on_air);
-                    //文字をNow On Airの色にする
-                    holder.tv_channel_name.setTextColor(
-                            ContextCompat.getColor(mContext, R.color.recommend_list_now_on_air));
+                    if (holder.tv_channel_name != null) {
+                        holder.tv_channel_name.setText(R.string.now_on_air);
+                        //文字をNow On Airの色にする
+                        holder.tv_channel_name.setTextColor(
+                                ContextCompat.getColor(mContext, R.color.recommend_list_now_on_air));
+                    }
                 }
                 break;
             case TAB_VIDEO:
