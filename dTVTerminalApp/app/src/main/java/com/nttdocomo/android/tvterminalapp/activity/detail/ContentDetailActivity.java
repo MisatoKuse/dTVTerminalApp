@@ -158,7 +158,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     private  PurchasedVodListResponse response = null;
 
     private String[] mTabNames = null;
-    private String[] mDispTypes = {"video_program", "series", "wizard", "video_package", "subscription_package", "series_svod"};
     private boolean mIsPlayer = false;
     private boolean mIsControllerVisible = false;
     private Intent mIntent = null;
@@ -1376,18 +1375,17 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 // 他サービス(dtv/dtvチャンネル/dアニメ)フラグを立てる
                 mIsOtherService = true;
             }
-            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
 //            STBに接続している　「テレビで視聴」が表示
-            if (null != dlnaDmsItem && null != dlnaDmsItem.mUdn && !dlnaDmsItem.mUdn.isEmpty()) {
+            if (getStbStatus()) {
                 if (mIsOtherService) {
-                    if (serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID) {
+                    if (serviceId == D_ANIMATION_CONTENTS_SERVICE_ID) {
                         // リモコンUIのリスナーを設定
                         createRemoteControllerView(true);
                         mIsControllerVisible = true;
                         mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner_d_anime, null));
                         setStartRemoteControllerUIListener(this);
                         //「serviceId」が「15」(dTVコンテンツ)の場合
-                    } else if (serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID) {
+                    } else if (serviceId == DTV_CONTENTS_SERVICE_ID) {
                         // 「reserved1」が「1」STB視聴不可
                         if (CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved1())) {
                             createRemoteControllerView(false);
@@ -1398,15 +1396,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                             mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner_dtv, null));
                             setStartRemoteControllerUIListener(this);
                         }
-                    } else {
-                        createRemoteControllerView(true);
-                        mIsControllerVisible = true;
-                        mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
-                        setStartRemoteControllerUIListener(this);
-                    }
-                } else if (serviceId == OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID) {
-                    if (METARESPONSE_DISP_TYPE_TV_PROGRAM.equals(mDetailData.getDispType())
-                            && DTV_CHANNEL_TV_SERVICE_FLAG_ONE.equals(mDetailFullData.getmTv_service())) {
+                    } else if (serviceId == DTV_CHANNEL_CONTENTS_SERVICE_ID) {
                         createRemoteControllerView(true);
                         mIsControllerVisible = true;
                         mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
@@ -1418,27 +1408,29 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 mIsControllerVisible = false;
             }
 
-            String categoryId = mDetailData.getCategoryId();
-            if (mDetailData.getServiceId() == OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID) {
-                if (OtherContentsDetailData.HIKARI_CONTENTS_CATEGORY_ID_DTB.equals(categoryId)
-                        || OtherContentsDetailData.HIKARI_CONTENTS_CATEGORY_ID_BS.equals(categoryId)
-                        || OtherContentsDetailData.HIKARI_CONTENTS_CATEGORY_ID_IPTV.equals(categoryId)) {
-                    //TODO  放送中の場合
+            //「mobileViewingFlg」が「0」の場合モバイル視聴不可
+            if (MOBILEVIEWINGFLG_FLAG_ZERO.equals(mDetailData.getMobileViewingFlg())) {
+                setThumbnailText(getResources().getString(R.string.contents_detail_thumbnail_text));
+                mThumbnailBtn.setEnabled(false);
+            } else {
+                //  dアニメの場合
+                if (serviceId == D_ANIMATION_CONTENTS_SERVICE_ID) {
+                    setThumbnailText(getResources().getString(R.string.d_anime_store_content_service_start_text));
+                    //ｄTVの場合
+                } else if (serviceId == DTV_CONTENTS_SERVICE_ID) {
+                    //DTVコンテンツ　「reserved2」が「1」　Androidのモバイル視聴不可
+                    if (CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved2())) {
+                        setThumbnailText(getResources().getString(R.string.contents_detail_thumbnail_text));
+                        mThumbnailBtn.setEnabled(false);
+                    } else {
+                        setThumbnailText(getResources().getString(R.string.dtv_content_service_start_text));
+                    }
+                    //dtvチャンネルの場合
+                } else if (mDetailData.getServiceId() == DTV_CHANNEL_CONTENTS_SERVICE_ID) {
+                    setThumbnailText(getResources().getString(R.string.dtv_channel_service_start_text));
                 }
             }
             setTitleAndThumbnail(mDetailData.getTitle(), mDetailData.getThumb());
-        } else {
-            mDetailData = mIntent.getParcelableExtra(PLALA_INFO_BUNDLE_KEY);
-            if (mDetailData != null) {
-                String displayType = mDetailData.getDisplayType();
-                String contentsType = mDetailData.getContentsType();
-                if ("tv_program".equals(displayType)) {
-                    if (!"1".equals(contentsType) && !"2".equals(contentsType)
-                            && !"3".equals(contentsType)) {
-                        //TODO  放送中の場合
-                    }
-                }
-            }
         }
         if (mIsOtherService) {
             // コンテンツ詳細(他サービスの時は、タブ一つに設定する)
@@ -1916,55 +1908,38 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 }
                 mSendOperateLog.sendOpeLog(mDetailData, mDetailFullData);
             }
-            if (mDetailData == null) {
-                mDetailData = mIntent.getParcelableExtra(PLALA_INFO_BUNDLE_KEY);
-            } else {
-                //「mobileViewingFlg」が「0」の場合モバイル視聴不可
-                if (MOBILEVIEWINGFLG_FLAG_ZERO.equals(mDetailData.getMobileViewingFlg())) {
-                    setThumbnailText(getResources().getString(R.string.contents_detail_thumbnail_text));
-                    mThumbnailBtn.setEnabled(false);
+            if (DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
+                if (getStbStatus()) {
+                    createRemoteControllerView(true);
+                    mIsControllerVisible = true;
+                    mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
+                    setStartRemoteControllerUIListener(this);
                 } else {
-                    if (mDetailData.getServiceId() == DTV_HIKARI_CONTENTS_SERVICE_ID) {
-                        String mDispType = mDetailData.getDispType();
-                        for (int i = 0; i < mDispTypes.length; i++) {
-                            if (mDispTypes[i].equals(mDispType)) {
-                                //ひかりTV中にDTVの場合
-                                if (METARESPONSE1.equals(mDetailFullData.getDtv())) {
-                                    setThumbnailText(getResources().getString(R.string.dtv_content_service_start_text));
-                                }
-                            }
-                        }
-                        UserInfoInsertDataManager dataManager = new UserInfoInsertDataManager(this);
-                        dataManager.readUserInfoInsertList();
-                        String contractInfo = UserInfoUtils.getUserContractInfo(dataManager.getmUserData());
-                        //ひかりTV未契約の場合
-                        if (contractInfo == null || contractInfo.isEmpty() || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo)) {
-                            DTVTLogger.debug("contractInfo:---" + contractInfo);
-                            leadingContract();
-                        } else { //ひかりTV契約者の場合,ひかりTV中にdtvチャンネルの場合
-                            if (TV_PROGRAM.equals(mDetailData.getDispType())) {
-                                if (H4D_CATEGORY_DTV_CHANNEL_RELATION.equals(mDetailData.getCategoryId())
-                                        || H4D_CATEGORY_DTV_CHANNEL_BROADCAST.equals(mDetailData.getCategoryId())
-                                        || H4D_CATEGORY_DTV_CHANNEL_MISSED.equals(mDetailData.getCategoryId())) {
-                                    setThumbnailText(getResources().getString(R.string.dtv_channel_service_start_text));
-                                }
-                            }
-                        }
-                        //ｄアニメストアの場合
-                    } else if (mDetailData.getServiceId() == D_ANIMATION_CONTENTS_SERVICE_ID) {
-                        setThumbnailText(getResources().getString(R.string.d_anime_store_content_service_start_text));
-                        //ｄTVの場合
-                    } else if (mDetailData.getServiceId() == DTV_CONTENTS_SERVICE_ID) {
-                        //DTVコンテンツ　「reserved2」が「1」　Androidのモバイル視聴不可
-                        if (CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved2())) {
-                            setThumbnailText(getResources().getString(R.string.contents_detail_thumbnail_text));
-                            mThumbnailBtn.setEnabled(false);
-                        } else {
+                    createRemoteControllerView(false);
+                    mIsControllerVisible = false;
+                }
+                UserInfoInsertDataManager dataManager = new UserInfoInsertDataManager(this);
+                dataManager.readUserInfoInsertList();
+                String contractInfo = UserInfoUtils.getUserContractInfo(dataManager.getmUserData());
+                //ひかりTV未契約の場合
+                if (contractInfo == null || contractInfo.isEmpty() || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo)) {
+                    DTVTLogger.debug("contractInfo:---" + contractInfo);
+                    leadingContract();
+                } else { //ひかりTV契約者の場合
+                    //ひかりTV中にDTVの場合
+                    if (VIDEO_PROGRAM.equals(mDetailData.getDispType())
+                            || VIDEO_SERIES.equals(mDetailData.getDispType())) {
+                        if (METARESPONSE1.equals(mDetailFullData.getDtv())) {
                             setThumbnailText(getResources().getString(R.string.dtv_content_service_start_text));
                         }
-                        //dtvチャンネルの場合
-                    } else if (mDetailData.getServiceId() == DTV_CHANNEL_CONTENTS_SERVICE_ID) {
-                        setThumbnailText(getResources().getString(R.string.dtv_channel_service_start_text));
+                    }
+                    //ひかりTV中にdtvチャンネルの場合
+                    if (TV_PROGRAM.equals(mDetailData.getDispType())) {
+                        if (H4D_CATEGORY_DTV_CHANNEL_RELATION.equals(mDetailData.getCategoryId())
+                                || H4D_CATEGORY_DTV_CHANNEL_BROADCAST.equals(mDetailData.getCategoryId())
+                                || H4D_CATEGORY_DTV_CHANNEL_MISSED.equals(mDetailData.getCategoryId())) {
+                            setThumbnailText(getResources().getString(R.string.dtv_channel_service_start_text));
+                        }
                     }
                 }
             }
@@ -2363,7 +2338,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                     //ひかりTV内DTVチャンネル
                     // テレビ再生「disp_type」が「tv_program」
                     if (TV_PROGRAM.equals(mDetailData.getDispType())) {
-                        if (TV_SERVICE_FLAG_ONE.equals(mDetailFullData.getmTv_service())) {
+                        if (TV_SERVICE_FLAG_ONE.equals(mDetailData.getTvService())) {
                             //「contents_type」が「0」または未設定
                             if (CONTENT_TYPE_FLAG_ZERO.equals(mDetailData.getContentsType())
                                     || null == mDetailData.getContentsType()) {
@@ -3411,12 +3386,16 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 LinearLayout vodLayout = findViewById(R.id.contract_leading_view);
                 TextView vodTextView = findViewById(R.id.contract_leading_text);
                 Button vodButton = findViewById(R.id.contract_leading_button);
-
-                vodLayout.setVisibility(View.VISIBLE);
-                vodTextView.setText(getString(R.string.contents_detail_contract_text_vod));
-                vodButton.setText(getString(R.string.contents_detail_contract_button_vod));
-                vodButton.setAllCaps(false);
-
+                // 宅内の場合契約導線表示
+                if (getStbStatus()) {
+                    vodLayout.setVisibility(View.VISIBLE);
+                    vodTextView.setText(getString(R.string.contents_detail_contract_text_vod));
+                    vodButton.setText(getString(R.string.contents_detail_contract_button_vod));
+                    vodButton.setAllCaps(false);
+                } else {
+                    //宅外の場合は契約ボタンを表示しない
+                    vodButton.setVisibility(View.GONE);
+                }
                 //サムネイルにシャドウをかける
                 setThumbnailShadow();
 
@@ -3430,12 +3409,16 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 LinearLayout chLayout = findViewById(R.id.contract_leading_view);
                 TextView chTextView = findViewById(R.id.contract_leading_text);
                 Button chButton = findViewById(R.id.contract_leading_button);
-
-                chLayout.setVisibility(View.VISIBLE);
-                chTextView.setText(getString(R.string.contents_detail_contract_text_ch));
-                chButton.setText(getString(R.string.contents_detail_contract_button_ch));
-                chButton.setAllCaps(false);
-
+                // 宅内の場合契約導線表示
+                if (getStbStatus()) {
+                    chLayout.setVisibility(View.VISIBLE);
+                    chTextView.setText(getString(R.string.contents_detail_contract_text_ch));
+                    chButton.setText(getString(R.string.contents_detail_contract_button_ch));
+                    chButton.setAllCaps(false);
+                } else {
+                    //宅外の場合は契約ボタンを表示しない
+                    chButton.setVisibility(View.GONE);
+                }
                 //サムネイルにシャドウをかける
                 setThumbnailShadow();
 
