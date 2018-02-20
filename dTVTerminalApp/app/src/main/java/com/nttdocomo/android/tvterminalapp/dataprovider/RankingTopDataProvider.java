@@ -507,7 +507,6 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
 
             rankingContentInfo.setRequestData(requestData);
             rankingContentsDataList.add(rankingContentInfo);
-            DTVTLogger.info("RankingContentInfo " + rankingContentInfo.getRank());
         }
         DTVTLogger.end();
         return rankingContentsDataList;
