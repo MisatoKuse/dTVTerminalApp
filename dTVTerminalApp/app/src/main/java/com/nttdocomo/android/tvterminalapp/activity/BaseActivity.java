@@ -619,7 +619,10 @@ public class BaseActivity extends FragmentActivity implements
         } else {
             // 通常のライフサイクル
             showTransoceanicCommunicationFlag = false;
-            this.onStartCommunication();
+            if (mNecessaryDaccountRegistService) {
+                setDaccountControl();
+            }
+            onStartCommunication();
         }
 
         DTVTLogger.end();
@@ -653,6 +656,12 @@ public class BaseActivity extends FragmentActivity implements
         super.onStop();
         DTVTLogger.start();
         resetRelayClientHandler(true);
+        TvtApplication app = (TvtApplication) getApplication();
+        if (app.getIsChangeApplicationInvisible()) {
+            // FG → BG になったためDlnaをstopする
+            DlnaInterface.dlnaOnStop();
+            DTVTLogger.debug("do dlnaOnStop");
+        }
         DTVTLogger.end();
     }
 
@@ -1229,9 +1238,6 @@ public class BaseActivity extends FragmentActivity implements
             remoteControllerView.closeRemoteControllerUI();
         }
         dismissDialog();
-        if (!mShowPermissionDialogFlag) {
-        	DlnaInterface.dlnaOnStop();
-        }
         super.onPause();
     }
 
@@ -1937,7 +1943,6 @@ public class BaseActivity extends FragmentActivity implements
         showTransoceanicCommunicationFlag = true;
         resetRelayClientHandler(true);
         unregisterDevListDlna();
-//        DlnaInterface.dlnaOnStop();
         // dアカウント通信を止める
         if (mDaccountControl != null) {
             mDaccountControl.stopCommunication();
@@ -1953,9 +1958,6 @@ public class BaseActivity extends FragmentActivity implements
      */
     public void onStartCommunication() {
         DTVTLogger.start();
-        if (mNecessaryDaccountRegistService) {
-            setDaccountControl();
-        }
         registerDevListDlna();
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
         if (null == dlnaDmsItem) {
@@ -1987,13 +1989,18 @@ public class BaseActivity extends FragmentActivity implements
      * アプリがBGからFGに遷移した際のResume処理.
      */
     private void onReStartCommunication() {
+        DTVTLogger.start();
         setRelayClientHandler();
-        checkDAccountOnRestart();
         boolean r = DlnaInterface.dlnaOnResume();
         if (!r) {
             DTVTLogger.debug("BaseActivity.onResume, dlnaOnResume failed");
         }
+        if (mNecessaryDaccountRegistService) {
+            setDaccountControl();
+        }
+        checkDAccountOnRestart();
         onStartCommunication();
+        DTVTLogger.end();
     }
 
     /**

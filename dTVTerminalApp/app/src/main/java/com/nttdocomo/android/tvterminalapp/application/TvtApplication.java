@@ -92,6 +92,7 @@ public class TvtApplication extends Application implements Application.ActivityL
     @Override
     public void onActivityStopped(final Activity activity) {
         DTVTLogger.start("ActivityLocalClassName : " + activity.getLocalClassName());
+        // Startedのカウントを減らす
         mOnStartedCounter--;
 
         DTVTLogger.debug("Started : " + mOnStartedCounter);
@@ -107,4 +108,12 @@ public class TvtApplication extends Application implements Application.ActivityL
         return !(mTmpStartedCounter > 0);
     }
 
+    /**
+     * アプリケーションが非表示に変わったかどうかを判定.
+     *
+     * @return 判定結果
+     */
+    public boolean getIsChangeApplicationInvisible() {
+        return (mTmpStartedCounter <= 0);
+    }
 }
