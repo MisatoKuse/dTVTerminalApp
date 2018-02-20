@@ -1737,8 +1737,6 @@ public class BaseActivity extends FragmentActivity implements
         detailData.setTitle(info.getTitle());
         detailData.setThumb(info.getThumURL());
         detailData.setDetail(info.getSynop());
-        detailData.setComment(info.getComment());
-        detailData.setHighlight(info.getHighlight());
         if (ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY.equals(recommendFlg)) {
             detailData.setServiceId(Integer.parseInt(info.getServiceId()));
         }

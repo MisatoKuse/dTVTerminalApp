@@ -228,8 +228,6 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         detailData.setTitle(info.getTitle());
         detailData.setThumb(info.getThumURL());
         detailData.setDetail(info.getSynop());
-        detailData.setComment(info.getComment());
-        detailData.setHighlight(info.getHighlight());
         detailData.setServiceId(Integer.parseInt(info.getServiceId()));
         detailData.setMobileViewingFlg(info.getMobileViewingFlg());
 
