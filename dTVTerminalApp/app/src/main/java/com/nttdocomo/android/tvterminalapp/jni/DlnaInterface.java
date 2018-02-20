@@ -12,7 +12,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import java.util.ArrayList;
 
 /**
- * 機能：Singletonで実現され、Dlnaに関する機能を纏めるベースクラス
+ * 機能：Singletonで実現され、Dlnaに関する機能を纏めるベースクラス.
  */
 public class DlnaInterface {
 
@@ -50,6 +50,12 @@ public class DlnaInterface {
     private long mNativeDlna = 0;
     private DlnaDmsItem mCurrentDmsItem;
 
+    private final String sErrorMsgDMS="DMS Error";
+    private final String sErrorMsgRecordVideo="録画一覧データ取得に失敗しました";
+    private final String sErrorMsgTerChannelList="地上波チャンネルリスト取得に失敗しました";
+    private final String sErrorMsgBsChannelList="BSチャンネルリスト取得に失敗しました";
+    private final String sErrorMsgHikariChannelList="ひかりチャンネルリスト取得に失敗しました";
+
     //Dlna info
     private DlnaBsChListInfo mDlnaBsChListInfo;
     private DlnaTerChListInfo mDlnaTerChListInfo;
@@ -58,13 +64,13 @@ public class DlnaInterface {
     private AribExternalCharConverter mAribExternalCharConverter = AribExternalCharConverter.getInstance();
 
     /**
-     * 機能：デフォールト構造を禁止
+     * 機能：デフォールト構造を禁止.
      */
     private DlnaInterface() {
     }
 
     /**
-     * 機能：インスタンスを戻す
+     * 機能：インスタンスを戻す.
      *
      * @return インスタンス
      */
@@ -73,7 +79,7 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：指定するudnのdmsが存在しるか
+     * 機能：指定するudnのdmsが存在しるか.
      * @param udn udn
      * @return 存在しるか
      */
@@ -82,7 +88,7 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：Listenerを設定
+     * 機能：Listenerを設定.
      *
      * @param lis listener
      */
@@ -93,7 +99,7 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：Listenerを設定
+     * 機能：Listenerを設定.
      *
      * @param lis listener
      */
@@ -104,7 +110,7 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：Listenerを設定
+     * 機能：Listenerを設定.
      *
      * @param lis listener
      */
@@ -115,7 +121,7 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：Listenerを設定
+     * 機能：Listenerを設定.
      *
      * @param lis listener
      */
@@ -126,7 +132,7 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：カレントDMSInfoを戻す
+     * 機能：カレントDMSInfoを戻す.
      * @return カレントDMSInfo
      */
     public DlnaDMSInfo getDlnaDMSInfo() {
@@ -134,7 +140,7 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：DlnaListenerを設定
+     * 機能：DlnaListenerを設定.
      *
      * @param lis listener
      */
@@ -145,7 +151,7 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：Dlna機能を開始
+     * 機能：Dlna機能を開始.
      *
      * @return boolean
      */
@@ -169,7 +175,7 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：Dlna機能を停止
+     * 機能：Dlna機能を停止.
      */
     public void stopDlna() {
         synchronized (this) {
@@ -184,10 +190,8 @@ public class DlnaInterface {
         }
     }
 
-    private final int DLNA_IF_THREAD_DELAY=200;
-
     /**
-     * 機能：録画ヴィデオ一覧を発見
+     * 機能：録画ヴィデオ一覧を発見.
      *
      * @return 成功:true 失敗: false
      */
@@ -204,7 +208,7 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：BSデジタルに関して、チャンネルリストを発見
+     * 機能：BSデジタルに関して、チャンネルリストを発見.
      *
      * @return 成功:true 失敗: false
      */
@@ -221,7 +225,7 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：dmsが存在すると、画面に通知する
+     * 機能：dmsが存在すると、画面に通知する.
      * @param content content
      * @param item dms item
      */
@@ -239,7 +243,7 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：地上波に関して、チャンネルリストを発見
+     * 機能：地上波に関して、チャンネルリストを発見.
      *
      * @return 成功:true 失敗: false
      */
@@ -255,21 +259,8 @@ public class DlnaInterface {
         return ret;
     }
 
-//    /**
-//     * 機能：ひかりTVに関して、チャンネルリストを発見
-//     *
-//     * @return 成功:true 失敗: false
-//     */
-//    public boolean browseHikariChListDms() {
-//        //return browseHikariChListDms(mNativeDlna, ctl);
-//        if(null== mCurrentDmsItem || null== mCurrentDmsItem.mControlUrl || 1> mCurrentDmsItem.mControlUrl.length()){
-//            return false;
-//        }
-//        return browseHikariChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
-//    }
-
     /**
-     * 機能：jni c/c++からの通知を処理
+     * 機能：jni c/c++からの通知を処理.
      * @param msg msg
      * @param content content
      */
@@ -285,7 +276,7 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：jni c/c++からのobj通知を処理
+     * 機能：jni c/c++からのobj通知を処理.
      * @param msg msg
      * @param content content
      */
@@ -318,12 +309,6 @@ public class DlnaInterface {
                 break;
         }
     }
-
-    private final String sErrorMsgDMS="DMS Error";
-    private final String sErrorMsgRecordVideo="録画一覧データ取得に失敗しました";
-    private final String sErrorMsgTerChannelList="地上波チャンネルリスト取得に失敗しました";
-    private final String sErrorMsgBsChannelList="BSチャンネルリスト取得に失敗しました";
-    private final String sErrorMsgHikariChannelList="ひかりチャンネルリスト取得に失敗しました";
 
     private boolean onError(int msg, ArrayList<Object> content){
         boolean ret=false;
@@ -398,7 +383,7 @@ public class DlnaInterface {
     }
 
     /**
-     * ARIB変換
+     * ARIB変換.
      * @param info info
      */
     private void aribConvertBs(DlnaBsChListInfo info){
@@ -417,7 +402,7 @@ public class DlnaInterface {
     }
 
     /**
-     * ARIB変換
+     * ARIB変換.
      * @param info info
      */
     private void aribConvertTer(DlnaTerChListInfo info){
@@ -436,7 +421,7 @@ public class DlnaInterface {
     }
 
     /**
-     * ARIB変換
+     * ARIB変換.
      * @param info info
      */
     private void aribConvertHikari(DlnaHikariChListInfo info){
@@ -455,7 +440,7 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：jni c/c++からのチャンネルを処理
+     * 機能：jni c/c++からのチャンネルを処理.
      * @param content content
      */
     private void onBsChList(ArrayList<Object> content) {
@@ -469,7 +454,7 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：jni c/c++からのチャンネルを処理
+     * 機能：jni c/c++からのチャンネルを処理.
      * @param content content
      */
     private void onTerChList(ArrayList<Object> content) {
@@ -483,7 +468,7 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：jni c/c++からのチャンネルを処理
+     * 機能：jni c/c++からのチャンネルを処理.
      * @param content content
      */
     private void onHikariChList(ArrayList<Object> content) {
@@ -497,7 +482,7 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：jni c/c++からの新しいdms加入を処理
+     * 機能：jni c/c++からの新しいdms加入を処理.
      * @param content content
      */
     private void onDeviceJoin(ArrayList<Object> content) {
@@ -525,7 +510,7 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：dmsを削除
+     * 機能：dmsを削除.
      * @param content content to remove
      */
     private void removeDms(String content) {
@@ -536,7 +521,7 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：使用しているDmsをDlaninterfaceクラスに通知し、
+     * 機能：使用しているDmsをDlaninterfaceクラスに通知し、.
      * 　　　Dlaninterfaceクラスはそのdms以外のdms変動情報をDlnaProviderRecoredVideoに通知しない
      *
      * @param item 使用しているDlnaDmsItem
@@ -550,7 +535,7 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：dlna statusを設定する
+     * 機能：dlna statusを設定する.
      * @param status　status
      */
     private synchronized void setDlnaStatus(boolean status) {
@@ -558,56 +543,56 @@ public class DlnaInterface {
     }
 
     /*
-     * 機能：libをロードする
+     * 機能：libをロードする.
      */
     static {
         System.loadLibrary("dtvtlib");
     }
 
     /**
-     * 機能：jni関数
+     * 機能：jni関数.
      * @return c++ dlna object
      */
     private native long nativeCreateDlnaObject();
 
     /**
-     * 機能：jni関数
+     * 機能：jni関数.
      * @return 操作結果
      */
     private native boolean nativeStartDlna(long prt);
 
     /**
-     * 機能：jni関数
+     * 機能：jni関数.
      * @return 操作結果
      */
     private native boolean nativeStopDlna(long prt);
 
     /**
-     * 機能：jni関数
+     * 機能：jni関数.
      * @return 操作結果
      */
     private native boolean browseRecVideoDms(long prt, String ctl);
 
     /**
-     * 機能：jni関数
+     * 機能：jni関数.
      * @return 操作結果
      */
     private native boolean browseBsChListDms(long prt, String ctl);
 
     /**
-     * 機能：jni関数
+     * 機能：jni関数.
      * @return 操作結果
      */
     private native boolean browseTerChListDms(long prt, String ctl);
 
     /**
-     * 機能：jni関数
+     * 機能：jni関数.
      * @return 操作結果
      */
     private native boolean browseHikariChListDms(long prt, String ctl);
 
     /**
-     * 機能：カレントDMSを削除
+     * 機能：カレントDMSを削除.
      */
     public void dmsRemove(){
         if(null!=mDlnaDevListListener){
@@ -621,7 +606,7 @@ public class DlnaInterface {
     }
 
     /**
-     * todo: WiFiは切ると、対応する
+     * todo: WiFiは切ると、対応する.
      */
     public void toDoWithWiFiLost(){
 

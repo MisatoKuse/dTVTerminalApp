@@ -289,6 +289,8 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             case HOME_CONTENTS_SORT_RECOMMEND_PROGRAM:
                 //おすすめ番組 (1行目:タイトル 2行目:放送時間)
                 setRecommendInfo(contentsData, viewHolder);
+                setRecommendServiceIcon(contentsData, viewHolder);
+                break;
             case HOME_CONTENTS_SORT_RECOMMEND_VOD:
                 setRecommendServiceIcon(contentsData, viewHolder);
                 break;

@@ -40,11 +40,11 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     private RecommendBaseFragmentScrollListener mRecommendBaseFragmentScrollListener = null;
     //チャンネルデータ
     private List<Map<String, String>> mChannelMap;
-    private final int POSITION_TV =0;
-    private final int POSITION_VIDEO = POSITION_TV + 1;
-    private final int POSITION_D_TV = POSITION_TV + 2;
-    private final int POSITION_D_CHANNEL = POSITION_TV + 3;
-    private final int POSITION_D_ANIMATION = POSITION_TV + 4;
+    private static final int POSITION_TV =0;
+    private static final int POSITION_VIDEO = POSITION_TV + 1;
+    private static final int POSITION_D_TV = POSITION_TV + 2;
+    private static final int POSITION_D_CHANNEL = POSITION_TV + 3;
+    private static final int POSITION_D_ANIMATION = POSITION_TV + 4;
 
 
     public void setRecommendBaseFragmentScrollListener(RecommendBaseFragmentScrollListener lis) {
