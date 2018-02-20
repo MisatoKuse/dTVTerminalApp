@@ -52,37 +52,125 @@ import java.util.Locale;
 public class TvProgramListActivity extends BaseActivity implements View.OnClickListener,ScaledDownProgramListDataProvider.ApiDataProviderCallback,
         ProgramScrollView.OnScrollOffsetListener, MyChannelDataProvider.ApiDataProviderCallback, TabItemLayout.OnClickTabTextListener {
 
+    /**
+     * hikariタブインデックス
+     */
     private static final int INDEX_TAB_HIKARI = 1;
+    /**
+     * マイチャンネルタブインデックス
+     */
     private static final int INDEX_TAB_MY_CHANNEL = 0;
+    /**
+     * 番組パネルリサイクルビュー
+     */
     private ProgramRecyclerView mProgramRecyclerView = null;
+    /**
+     * メニュー起動
+     */
     private Boolean mIsMenuLaunch = false;
+    /**
+     * 左側タイムスクロール
+     */
     private ProgramScrollView mTimeScrollView = null;
+    /**
+     * チャンネルリサイクルビュー
+     */
     private RecyclerView mChannelRecyclerView = null;
+    /**
+     * 共通タブレイアウト
+     */
     private TabItemLayout mTabLayout = null;
+    /**
+     * "現在カレンダーボタン"
+     */
     private ImageView mTagImageView = null;
+    /**
+     * 最初時
+     */
     private static final int START_TIME = 4;
+    /**
+     * 標準時間
+     */
     private static final int STANDARD_TIME = 24;
+    /**
+     * タイムライン幅
+     */
     private static final int TIME_LINE_WIDTH = 44;
+    /**
+     * 1時間帯基準値
+     */
     private static final int ONE_HOUR_UNIT = 180;
+    /**
+     * 選択中日付
+     */
     private String mSelectDateStr = null;
+    /**
+     * today
+     */
     private String mToDay = null;
+    /**
+     * 時間軸
+     */
     private LinearLayout mLinearLayout = null;
+    /**
+     * チャンネルタブネーム
+     */
     private String mProgramTabNames[] = null;
+    /**
+     * EXPIRE_DATE
+     */
     private static final int EXPIRE_DATE = 7;
+    /**
+     * タブインデックス
+     */
     private int mTabIndex = 0;
+    /**
+     * 番組表中身アダプター
+     */
     private TvProgramListAdapter mTvProgramListAdapter = null;
+    /**
+     * チャンネルアダプター
+     */
     private ProgramChannelAdapter mProgramChannelAdapter = null;
+    /**
+     * チャンネルインフォリスト
+     */
     private ArrayList<ChannelInfo> mChannelInfo = new ArrayList<>();
+    /**
+     * チャンネルインフォリスト
+     */
     private ArrayList<ChannelInfo> mChannels = new ArrayList<>();
+    /**
+     * バックフラグから
+     */
     private boolean mIsFromBackFlag = false;
+    /**
+     * ひかりチャンネルリスト
+     */
     private ArrayList<ChannelInfo> hikariChannels;
+    /**
+     * マイ番組表にマッピングされたデータ
+     */
     private ArrayList<ChannelInfo> mappedMyChannelList;
+    /**
+     * マイ番組表データ
+     */
     private ArrayList<MyChannelMetaData> myChannelDataList;
+    /**
+     * レッドタイムライン
+     */
     private RelativeLayout mTimeLine;
+    /**
+     * NOW
+     */
     private ImageView mNowImage;
+    /**
+     * DAY_PRE0
+     */
     private static final String DAY_PRE0 = "0";
-    private static final String WEEK_LEFT = " (";
-    private static final String WEEK_RIGHT = ")";
+    /**
+     * DATE_LINE
+     */
     private static final String DATE_LINE = "-";
     /**
      * マイ番組表データプロバイダー
@@ -108,7 +196,6 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
-
         initView();
         syncScroll(mChannelRecyclerView, mProgramRecyclerView);
         //タイトル矢印表示
@@ -119,8 +206,6 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         setTagView();
         //時間帯設定
         setLeftTimeContentsView();
-        //チャンネルデータ取得
-        getChannelData();
     }
 
     /**
@@ -205,7 +290,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         //日付の選択できる範囲を設定
         DatePicker datePicker = datePickerDialog.getDatePicker();
         GregorianCalendar gc = new GregorianCalendar();
-        if(isLastDay()){
+        if (isLastDay()) {
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_MONTH, -1);
             gc.setTime(calendar.getTime());
@@ -235,9 +320,8 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
      */
     private void setSelectedDate(int year, int monthOfYear, int dayOfMonth) {
         Calendar calendar = Calendar.getInstance(Locale.JAPAN);
-        StringBuilder selectDate = new StringBuilder();
+        StringBuilder selectDate;
         calendar.set(year, monthOfYear, dayOfMonth);
-        int week = calendar.get(Calendar.DAY_OF_WEEK);
         monthOfYear++;
         StringBuilder month = new StringBuilder();
         StringBuilder day = new StringBuilder();
@@ -264,7 +348,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
             setTitleText(newDate.substring(5));
             SimpleDateFormat formatDialog = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DD_J, Locale.JAPAN);
             mToDay = formatDialog.format(date.getTime());
-        } catch (ParseException e){
+        } catch (ParseException e) {
             DTVTLogger.debug(e);
         }
     }
@@ -273,7 +357,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
      * 機能
      * 昨日の日付であるかどうか
      */
-    private boolean isLastDay(){
+    private boolean isLastDay() {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat todaySdf = new SimpleDateFormat(DateUtils.DATE_HHMMSS, Locale.JAPAN);
         int hour = Integer.parseInt(todaySdf.format(calendar.getTime()).substring(0,2));
@@ -286,23 +370,23 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
      * @param selectDay チェする日付する、ない場合システム日付
      * @return formatDay チェックした時刻を返却
      */
-    private String getSystemTimeAndCheckHour(String selectDay){
+    private String getSystemTimeAndCheckHour(String selectDay) {
         String formatDay;
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYYMMDD, Locale.JAPAN);
         try {
-            if(selectDay != null){
+            if(selectDay != null) {
                 formatDay = selectDay;
             } else {
                 formatDay = sdf.format(calendar.getTime());
             }
-            if(isLastDay()){
+            if(isLastDay()) {
                 calendar.setTime(sdf.parse(formatDay));
                 calendar.add(Calendar.DAY_OF_MONTH, -1);
                 formatDay = sdf.format(calendar.getTime());
             }
             return formatDay;
-        } catch (ParseException e){
+        } catch (ParseException e) {
             DTVTLogger.debug(e);
         }
         return sdf.format(calendar.getTime());
@@ -316,7 +400,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         //フォーマットパターンを指定して表示する
         Calendar c = Calendar.getInstance();
         Locale.setDefault(Locale.JAPAN);
-        if(isLastDay()){
+        if(isLastDay()) {
             c.add(Calendar.DAY_OF_MONTH, -1);
         }
         SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYYMMDDE, Locale.JAPAN);
@@ -449,10 +533,12 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
      * チャンネルデータ取得
      */
     private void getChannelData() {
-        if(mTabIndex != INDEX_TAB_MY_CHANNEL){//ひかり、dTVチャンネル
+        if (mTabIndex != INDEX_TAB_MY_CHANNEL) {
+            //ひかり、dTVチャンネル
             mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
             mScaledDownProgramListDataProvider.getChannelList(0, 0, "", mTabIndex);
-        } else {//MY番組表
+        } else {
+            //MY番組表
             mMyChannelDataProvider = new MyChannelDataProvider(this);
             mMyChannelDataProvider.getMyChannelList(R.layout.tv_program_list_main_layout);
         }
@@ -559,13 +645,15 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
             ArrayList<ChannelInfo> channels = channelsInfo.getChannels();
             sort(channels);
             mChannelInfo = channels;
-            if(mTabIndex !=0 ){
+            if(mTabIndex !=0 ) {
                 setProgramRecyclerView(mChannelInfo);
-            }else {//マイ番組表
+            } else {
+                //マイ番組表
                 ArrayList<ChannelInfo> myChannels = new ArrayList<>();
-                for(int i = 0; i< mappedMyChannelList.size(); i++){
-                    for (int j=0;j<mChannelInfo.size();j++){
-                        if(mappedMyChannelList.get(i).getChNo() == mChannelInfo.get(j).getChNo()){//チャンネル番号でマッピング
+                for (int i = 0; i < mappedMyChannelList.size(); i++) {
+                    for (int j = 0; j < mChannelInfo.size(); j++) {
+                        if (mappedMyChannelList.get(i).getChNo() == mChannelInfo.get(j).getChNo()) {
+                            //チャンネル番号でマッピング
                             myChannels.add(mChannelInfo.get(j));
                         }
                     }
@@ -579,12 +667,14 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
     public void channelListCallback(ArrayList<ChannelInfo> channels) {
         if (channels != null) {
             showMyChannelNoItem(false);
-            if(mTabIndex == INDEX_TAB_MY_CHANNEL){//MY番組表
+            if(mTabIndex == INDEX_TAB_MY_CHANNEL) {
+                //MY番組表
                 this.hikariChannels = channels;
                 mappedMyChannelList = executeMapping();
                 setChannelContentsView(mappedMyChannelList);
                 loadMyChannel();
-            }else {//ひかり、dTVチャンネル
+            } else {
+                //ひかり、dTVチャンネル
                 this.mChannels = channels;
                 setChannelContentsView(mChannels);
                 ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
@@ -607,10 +697,12 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         for (int i = 0; i < mappedMyChannelList.size(); i++) {
             channelNos[i] = mappedMyChannelList.get(i).getChNo();
         }
-        if(channelNos.length != 0){//マイ番組表設定されていない場合、通信しない
+        if(channelNos.length != 0) {
+            //マイ番組表設定されていない場合、通信しない
             String dateList[] = {mSelectDateStr};
             scaledDownProgramListDataProvider.getProgram(channelNos, dateList, 1);
-        }else {//「マイ番組が設定されていません」と表示される
+        } else {
+            //「マイ番組が設定されていません」と表示される
             showMyChannelNoItem(true);
         }
     }
@@ -620,12 +712,12 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
      * @param isShowFlag
      */
     private void showMyChannelNoItem(boolean isShowFlag) {
-        if(isShowFlag){
+        if (isShowFlag) {
             findViewById(R.id.tv_program_list_main_layout_time_sl).setVisibility(View.INVISIBLE);
             findViewById(R.id.tv_program_list_main_layout_curtime_iv).setVisibility(View.INVISIBLE);
             findViewById(R.id.tv_program_list_main_layout_time_line).setVisibility(View.INVISIBLE);
             findViewById(R.id.tv_program_list_main_layout_tip_tv).setVisibility(View.VISIBLE);
-        }else {
+        } else {
             findViewById(R.id.tv_program_list_main_layout_time_sl).setVisibility(View.VISIBLE);
             findViewById(R.id.tv_program_list_main_layout_curtime_iv).setVisibility(View.VISIBLE);
             findViewById(R.id.tv_program_list_main_layout_time_line).setVisibility(View.VISIBLE);
@@ -639,11 +731,11 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
      */
     private ArrayList<ChannelInfo> executeMapping() {
         ArrayList<ChannelInfo> myChannels = new ArrayList<>();
-        if(myChannelDataList != null){
-            for(int i = 0; i< myChannelDataList.size(); i++){
-                for(int j=0;j<hikariChannels.size();j++){
+        if (myChannelDataList != null) {
+            for (int i = 0; i < myChannelDataList.size(); i++) {
+                for (int j = 0; j < hikariChannels.size(); j++) {
                     //サービスIDでマッピング
-                    if(myChannelDataList.get(i).getServiceId().equals(hikariChannels.get(j).getServiceId())){
+                    if (myChannelDataList.get(i).getServiceId().equals(hikariChannels.get(j).getServiceId())) {
                         myChannels.add(hikariChannels.get(j));
                     }
                 }
@@ -676,8 +768,10 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         if (myChannelMetaData != null && myChannelMetaData.size() > 0) {
             this.myChannelDataList = myChannelMetaData;
             ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
-            scaledDownProgramListDataProvider.getChannelList(0, 0, "", INDEX_TAB_HIKARI);//ひかりリストからチャンネル選択
-        }else {//MY番組表情報がなければMY番組表を設定していないとする
+            scaledDownProgramListDataProvider.getChannelList(0, 0, "", INDEX_TAB_HIKARI);
+            //ひかりリストからチャンネル選択
+        } else {
+            //MY番組表情報がなければMY番組表を設定していないとする
             showMyChannelNoItem(true);
         }
     }
@@ -727,22 +821,25 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         int curSec = Integer.parseInt(curTime.substring(4, 6));
         float channelRvHeight = (float) mChannelRecyclerView.getHeight();
         float timeLinePosition = 0;
-        if(mTimeScrollView.getHeight() /dip2px(ONE_HOUR_UNIT) >= 3){//タブレット(将来さらにチェック)
+        if (mTimeScrollView.getHeight() / dip2px(ONE_HOUR_UNIT) >= 3) {
+            //タブレット(将来さらにチェック)
             if (START_TIME <= curClock && curClock < STANDARD_TIME) {
                 timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) * minSec2Hour(curMin, curSec) + channelRvHeight;
             } else {
-                if (0 <= curClock && curClock <= 3) {//底から完全に見える"1時間単位"をマーナイスする
+                if (0 <= curClock && curClock <= 3) {
+                    //底から完全に見える"1時間単位"をマーナイスする
                     timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) * minSec2Hour(curMin, curSec)
-                            + channelRvHeight+(mTimeScrollView.getHeight()-(START_TIME-curClock)*dip2px(ONE_HOUR_UNIT));
+                            + channelRvHeight + (mTimeScrollView.getHeight() - (START_TIME - curClock) * dip2px(ONE_HOUR_UNIT));
                 }
             }
-        }else {
+        } else {
             if (START_TIME <= curClock && curClock < STANDARD_TIME || curClock == 0 || curClock == 1) {
                 timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) * minSec2Hour(curMin, curSec) + channelRvHeight;
             } else {
-                if (2 <= curClock && curClock <= 3) {//底から完全に見える"1時間単位"をマーナイスする
+                if (2 <= curClock && curClock <= 3) {
+                    //底から完全に見える"1時間単位"をマーナイスする
                     timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) * minSec2Hour(curMin, curSec)
-                            + channelRvHeight+(mTimeScrollView.getHeight()-(START_TIME-curClock)*dip2px(ONE_HOUR_UNIT));
+                            + channelRvHeight + (mTimeScrollView.getHeight() - (START_TIME - curClock) * dip2px(ONE_HOUR_UNIT));
                 }
             }
         }
