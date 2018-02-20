@@ -185,12 +185,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         progressBar.setVisibility(View.VISIBLE);
         switch (mViewPager.getCurrentItem()) {
             case 0:
-                if(isInJapan()) {
-                    getData();
-                } else {
-                    clearAllFrame();
-                    setProgressBarGone();
-                }
+                getData();
                 break;
             case 1:
                 setRecordedTakeOutContents();
@@ -523,16 +518,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             if(null!=l){
                 l.add(contentsData);
             }
-        }
-    }
-
-    @Override
-    protected void onResume(){
-        super.onResume();
-        if(!isInJapan()) {
-            clearAllFrame();
-            setProgressBarGone();
-            DlDataProvider.cancelAll();
         }
     }
 

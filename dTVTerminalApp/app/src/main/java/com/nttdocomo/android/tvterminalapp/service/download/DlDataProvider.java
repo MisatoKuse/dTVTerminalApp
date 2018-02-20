@@ -553,6 +553,22 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     /**
+     * DlDataからfullpathを戻す
+     * @param data data
+     * @return fullpath fullpath
+     */
+    private static String getCurrentDlFullPath(DlData data){
+        if(null==data ){
+            return null;
+        }
+        StringBuilder path=new StringBuilder();
+        path.append(data.getSaveFile());
+        path.append(File.separator);
+        path.append(data.getItemId());
+        return path.toString();
+    }
+
+    /**
      * 機能：海外になる時、すべてのDLをキャンセル
      */
     public static synchronized void cancelAll() {
@@ -563,6 +579,18 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         if (null != ds) {
             if(ds.isUiRunning()){
                 sDlDataProvider.sendBroadcast(DownloadService.DONWLOAD_OnCancelAll);
+            } else {
+                List<DlData> dlDataQue = ds.getDlDataQue();
+                for(DlData d : dlDataQue){
+                    String path = getCurrentDlFullPath(d);
+                    if(null != path){
+                        sDlDataProvider.cancelDownLoadStatus(path);
+                    }
+                }
+                for(int i = dlDataQue.size() - 1; i > -1; --i){
+                    dlDataQue.remove(i);
+                }
+                ds.cancel();
             }
         }
     }
