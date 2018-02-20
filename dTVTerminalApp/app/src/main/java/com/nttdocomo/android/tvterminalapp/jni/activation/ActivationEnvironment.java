@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.digion.dixim.android.util.EnvironmentUtil;
@@ -96,12 +97,13 @@ public class ActivationEnvironment {
 			return;
 		}
 
-		InputStream is = context.getResources().openRawResource(resId);
+		InputStream is = null;
 		FileOutputStream out = null;
 		byte[] buf = new byte[65536];
 		int size;
 
 		try {
+			is = context.getResources().openRawResource(resId);
 			out = new FileOutputStream(pathname);
 			while ((size = is.read(buf)) != -1) {
 				out.write(buf, 0, size);
@@ -109,8 +111,19 @@ public class ActivationEnvironment {
 			out.flush();
 			out.getFD().sync();
 		} finally {
-			if (out != null) {
-				out.close();
+			try {
+				if (is != null) {
+					is.close();
+				}
+			} catch (IOException e) {
+				DTVTLogger.debug("InputStream close Error", e);
+			}
+			try {
+				if (out != null) {
+					out.close();
+				}
+			} catch (IOException e) {
+				DTVTLogger.debug("FileOutputStream close Error", e);
 			}
 			if (!pemFile.exists()) {
 				DTVTLogger.error("can't writeOut : " + pathname);
@@ -135,7 +148,7 @@ public class ActivationEnvironment {
 			}
 		}
 
-		byte[] seedBytes = seed.getBytes();
+		byte[] seedBytes = seed.getBytes(StandardCharsets.UTF_8.name());
 		FileInputStream inFile = null;
 		FileOutputStream outFile = null;
 		try {
@@ -155,11 +168,15 @@ public class ActivationEnvironment {
 				if (inFile != null) {
 					inFile.close();
 				}
+			} catch (IOException e) {
+				DTVTLogger.debug("FileInputStream close Error", e);
+			}
+			try {
 				if (outFile != null) {
 					outFile.close();
 				}
 			} catch (IOException e) {
-				DTVTLogger.debug("File close Error", e);
+				DTVTLogger.debug("FileOutputStream close Error", e);
 			}
 			if (!destFile.exists()) {
 				throw new IOException();
