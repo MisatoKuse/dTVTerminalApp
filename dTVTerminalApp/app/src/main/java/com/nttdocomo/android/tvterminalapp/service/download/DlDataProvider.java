@@ -50,7 +50,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         return sDlDataProvider;
     }
 
-    public static void releaseInstance() {
+    static void releaseInstance() {
         if(null == sDlDataProvider) {
             return;
         }
@@ -82,7 +82,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     /**
      * サービス起動する
      */
-    public void startService() {
+    private void startService() {
         if(DownloadService.isDownloadServiceRunning()) {
             return;
         }
@@ -216,6 +216,9 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         int paramInt = error.ordinal();
         sendBroadcast(DownloadService.DONWLOAD_OnFail, DownloadService.DONWLOAD_ParamString, savePath, DownloadService.DONWLOAD_ParamInt, paramInt);
         DownloadService ds = getDownloadService();
+        if(null == ds){
+            return;
+        }
         if(!ds.isUiRunning()){
             setNextDownLoad();
         }
@@ -263,7 +266,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
     }
 
-    static final String sSeparator = File.separator + "";
+    private static final String sSeparator = File.separator + "";
 
     @Override
     public void onSuccess(String fullPath) {
@@ -279,6 +282,9 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
         sendBroadcast(DownloadService.DONWLOAD_OnSuccess, DownloadService.DONWLOAD_ParamString, fullPath);
         DownloadService ds = getDownloadService();
+        if(null == ds) {
+            return;
+        }
         if(!ds.isUiRunning()){
             setNextDownLoad();
         }
@@ -334,6 +340,9 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     public void onCancel(final String filePath) {
         sendBroadcast(DownloadService.DONWLOAD_OnCancel, DownloadService.DONWLOAD_ParamString, filePath);
         DownloadService ds = getDownloadService();
+        if(null == ds) {
+            return;
+        }
         if(!ds.isUiRunning()){
             setNextDownLoad();
         }
@@ -343,6 +352,9 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     public void onLowStorageSpace(final String fullPath) {
         sendBroadcast(DownloadService.DONWLOAD_OnLowStorageSpace, DownloadService.DONWLOAD_ParamString, fullPath);
         DownloadService ds = getDownloadService();
+        if(null == ds) {
+            return;
+        }
         if(!ds.isUiRunning()){
             setNextDownLoad();
         }
@@ -476,7 +488,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                             DTVTLogger.debug("delete download file fail ");
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        DTVTLogger.debug(e);
                     }
                 } else {
                     if (f.exists()) {
@@ -526,7 +538,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
             DbThread t = new DbThread(handler, this, operationId);
             t.start();
         } catch (Exception e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
     }
 
