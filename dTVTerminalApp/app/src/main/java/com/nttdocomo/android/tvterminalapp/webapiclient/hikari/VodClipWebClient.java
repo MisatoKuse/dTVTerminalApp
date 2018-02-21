@@ -6,11 +6,13 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
 import android.os.Handler;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
+import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.JsonParserThread;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser;
 
@@ -20,7 +22,8 @@ import org.json.JSONObject;
 import java.util.List;
 
 public class VodClipWebClient
-        extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback, JsonParserThread.JsonParser {
+        extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback,
+        JsonParserThread.JsonParser {
 
     /**
      * 通信禁止判定フラグ.
@@ -39,8 +42,8 @@ public class VodClipWebClient
     @Override
     public void onParserFinished(Object parsedData) {
         //パース後のデータを返す
-        if(null!=mVodClipJsonParserCallback){
-            mVodClipJsonParserCallback.onVodClipJsonParsed((List<VodClipList>)parsedData);
+        if (null != mVodClipJsonParserCallback && parsedData instanceof List) {
+            mVodClipJsonParserCallback.onVodClipJsonParsed((List<VodClipList>) parsedData);
         }
     }
 
@@ -57,7 +60,8 @@ public class VodClipWebClient
      */
     public interface VodClipJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
+         *
          * @param vodClipLists JSONパース後のデータ
          */
         void onVodClipJsonParsed(List<VodClipList> vodClipLists);
@@ -84,7 +88,7 @@ public class VodClipWebClient
         //パース後のデータを返す
         mVodClipJsonParserCallback.onVodClipJsonParsed(pursedData);
         */
-        Handler handler =new Handler();
+        Handler handler = new Handler();
         try {
             JsonParserThread t = new JsonParserThread(returnCode.bodyData, handler, this);
             t.start();
@@ -109,15 +113,15 @@ public class VodClipWebClient
     /**
      * VODクリップ取得.
      *
-     * @param ageReq                         視聴年齢制限値（1から17までの値）
-     * @param upperPagetLimit               結果の最大件数（1以上）
-     * @param lowerPagetLimit　             結果の最小件数（1以上）
-     * @param pagerOffset                    取得位置
-     * @param  pagerDirection               取得方向
-     * @param vodClipJsonParserCallback    コールバック
+     * @param ageReq                    視聴年齢制限値（1から17までの値）
+     * @param upperPagetLimit           結果の最大件数（1以上）
+     * @param lowerPagetLimit           結果の最小件数（1以上）
+     * @param pagerOffset               取得位置
+     * @param pagerDirection            取得方向（prev|next）
+     * @param vodClipJsonParserCallback コールバック
      * @return パラメータ等に問題があった場合はfalse
      */
-    public boolean getVodClipApi(int ageReq,int upperPagetLimit,int lowerPagetLimit,
+    public boolean getVodClipApi(int ageReq, int upperPagetLimit, int lowerPagetLimit,
                                  int pagerOffset, String pagerDirection,
                                  VodClipJsonParserCallback vodClipJsonParserCallback) {
         if (mIsCancel) {
@@ -125,7 +129,7 @@ public class VodClipWebClient
             return false;
         }
         //パラメーターのチェック
-        if(!checkNormalParameter(ageReq, upperPagetLimit, lowerPagetLimit,
+        if (!checkNormalParameter(ageReq, upperPagetLimit, lowerPagetLimit,
                 pagerOffset, pagerDirection, vodClipJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、ヌルで帰る
             return false;
@@ -135,10 +139,11 @@ public class VodClipWebClient
         mVodClipJsonParserCallback = vodClipJsonParserCallback;
 
         //送信用パラメータの作成
-        String sendParameter = makeSendParameter(ageReq, upperPagetLimit, lowerPagetLimit, pagerOffset, pagerDirection);
+        String sendParameter = makeSendParameter(ageReq, upperPagetLimit, lowerPagetLimit,
+                pagerOffset, pagerDirection);
 
         //JSONの組み立てに失敗していれば、ヌルで帰る
-        if(sendParameter.isEmpty()) {
+        if (sendParameter.isEmpty()) {
             return false;
         }
 
@@ -153,35 +158,44 @@ public class VodClipWebClient
     /**
      * 指定されたパラメータがおかしいかどうかのチェック.
      *
-     * @param ageReq                        視聴年齢制限値
-     * @param upperPagetLimit              結果の最大件数
-     * @param lowerPagetLimit　            結果の最小件数
-     * @param pagerOffset                   取得位置
-     * @param pagerDirection               取得方向
-     * @param vodClipJsonParserCallback   コールバック
+     * @param ageReq                    視聴年齢制限値
+     * @param upperPagetLimit           結果の最大件数
+     * @param lowerPagetLimit           　            結果の最小件数
+     * @param pagerOffset               取得位置
+     * @param pagerDirection            取得方向
+     * @param vodClipJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(int ageReq,int upperPagetLimit,int lowerPagetLimit,
+    private boolean checkNormalParameter(int ageReq, int upperPagetLimit, int lowerPagetLimit,
                                          int pagerOffset, String pagerDirection,
                                          VodClipJsonParserCallback vodClipJsonParserCallback) {
-        if(!(ageReq >= 1 && ageReq <= 17)) {
+        if (!(ageReq >= AGE_LOW_VALUE && ageReq <= AGE_HIGH_VALUE)) {
             //ageReqが1から17ではないならばfalse
             return false;
         }
 
         // 各値が下限以下ならばfalse
-        if(upperPagetLimit < 1) {
+        if (upperPagetLimit < 1) {
             return false;
         }
-        if(lowerPagetLimit < 1) {
+        if (lowerPagetLimit < 1) {
             return false;
         }
-        if(pagerOffset < 0) {
+        if (pagerOffset < 0) {
+            return false;
+        }
+
+        //固定値をひとまとめにする
+        List<String> typeList = makeStringArry(
+                ClipUtils.DIRECTION_PREV, ClipUtils.DIRECTION_NEXT, "");
+
+        if (typeList.indexOf(pagerDirection) == -1) {
+            //含まれていないならばfalse
             return false;
         }
 
         //コールバックが含まれていないならばエラー
-        if(vodClipJsonParserCallback == null) {
+        if (vodClipJsonParserCallback == null) {
             return false;
         }
 
@@ -192,14 +206,14 @@ public class VodClipWebClient
     /**
      * 指定されたパラメータをJSONで組み立てて文字列にする.
      *
-     * @param ageReq            視聴年齢制限値
-     * @param upperPagetLimit  結果の最大件数
-     * @param lowerPagetLimit　結果の最小件数
-     * @param pagerOffset      取得位置
-     * @param pagerDirection   取得方向
+     * @param ageReq          視聴年齢制限値
+     * @param upperPagetLimit 結果の最大件数
+     * @param lowerPagetLimit 　結果の最小件数
+     * @param pagerOffset     取得位置
+     * @param pagerDirection  取得方向
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(int ageReq,int upperPagetLimit,int lowerPagetLimit,
+    private String makeSendParameter(int ageReq, int upperPagetLimit, int lowerPagetLimit,
                                      int pagerOffset, String pagerDirection) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
@@ -211,9 +225,15 @@ public class VodClipWebClient
             jsonPagerObject.put(JsonConstants.META_RESPONSE_UPPER_LIMIT, upperPagetLimit);
             jsonPagerObject.put(JsonConstants.META_RESPONSE_LOWER_LIMIT, lowerPagetLimit);
             jsonPagerObject.put(JsonConstants.META_RESPONSE_OFFSET, pagerOffset);
+
+            //取得方向は中身も必須なので、省略されていた場合はprevを指定する
+            if (TextUtils.isEmpty(pagerDirection)) {
+                pagerDirection = ClipUtils.DIRECTION_PREV;
+            }
+
             jsonPagerObject.put(JsonConstants.META_RESPONSE_DIRECTION, pagerDirection);
 
-            jsonObject.put(JsonConstants.META_RESPONSE_PAGER,jsonPagerObject);
+            jsonObject.put(JsonConstants.META_RESPONSE_PAGER, jsonPagerObject);
 
             answerText = jsonObject.toString();
 

@@ -25,6 +25,16 @@ public class ClipUtils {
     private static final int DTV_CLIP_KEY = 2;
 
     /**
+     * TVクリップとVODクリップの取得方向（逆順）.
+     */
+    public static final String DIRECTION_PREV = "prev";
+
+    /**
+     * TVクリップとVODクリップの取得方向（整順）.
+     */
+    public static final String DIRECTION_NEXT = "next";
+
+    /**
      * クリップ可否フラグを返却する.
      *
      * @param dispType 表示タイプ
