@@ -24,7 +24,6 @@ public class BaseUrlConstants {
      */
     public static final String ONE_TIME_PASSWORD_AUTH_URL =
             "https://ve.m.cfg.smt.docomo.ne.jp/auth/cgi/aplpwdauth";
-    //"https://ve.m.service.smt.docomo.ne.jp/auth/cgi/aplpwdauth";
 
     /**
      * ぷららサーバーAPIアクセス用のベースURL.
