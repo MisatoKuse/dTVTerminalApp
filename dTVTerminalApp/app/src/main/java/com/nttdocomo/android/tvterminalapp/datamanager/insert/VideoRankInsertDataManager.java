@@ -38,8 +38,9 @@ public class VideoRankInsertDataManager {
 
         //各種オブジェクト作成
         DBHelper videoRankListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = videoRankListDBHelper.getWritableDatabase();
-        VideoRankListDao weeklyRankListDao = new VideoRankListDao(db);
+        DataBaseManager.initializeInstance(videoRankListDBHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        VideoRankListDao weeklyRankListDao = new VideoRankListDao(database);
         List<HashMap<String, String>> hashMaps = videoRankList.getVrList();
 
         //DB保存前に前回取得したデータは全消去する
@@ -57,6 +58,6 @@ public class VideoRankInsertDataManager {
             }
             weeklyRankListDao.insert(values);
         }
-        db.close();
+        DataBaseManager.getInstance().closeDatabase();
     }
 }

@@ -40,8 +40,9 @@ public class VodClipInsertDataManager {
 
         //各種オブジェクト作成
         DBHelper vodClipListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = vodClipListDBHelper.getWritableDatabase();
-        VodClipListDao vodClipListDao = new VodClipListDao(db);
+        DataBaseManager.initializeInstance(vodClipListDBHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        VodClipListDao vodClipListDao = new VodClipListDao(database);
         List<HashMap<String,String>> hashMaps = vodClipList.getVcList();
 
         //DB保存前に前回取得したデータは全消去する
@@ -59,6 +60,6 @@ public class VodClipInsertDataManager {
             }
             vodClipListDao.insert(values);
         }
-        db.close();
+        DataBaseManager.getInstance().closeDatabase();
     }
 }

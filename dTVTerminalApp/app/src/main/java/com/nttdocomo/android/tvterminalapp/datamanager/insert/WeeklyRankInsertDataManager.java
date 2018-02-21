@@ -38,8 +38,9 @@ public class WeeklyRankInsertDataManager {
 
         //各種オブジェクト作成
         DBHelper weeklyRankListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = weeklyRankListDBHelper.getWritableDatabase();
-        WeeklyRankListDao weeklyRankListDao = new WeeklyRankListDao(db);
+        DataBaseManager.initializeInstance(weeklyRankListDBHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        WeeklyRankListDao weeklyRankListDao = new WeeklyRankListDao(database);
         List<HashMap<String, String>> hashMaps = weeklyRankList.getWrList();
 
         //DB保存前に前回取得したデータは全消去する
@@ -57,6 +58,6 @@ public class WeeklyRankInsertDataManager {
             }
             weeklyRankListDao.insert(values);
         }
-        db.close();
+        DataBaseManager.getInstance().closeDatabase();
     }
 }

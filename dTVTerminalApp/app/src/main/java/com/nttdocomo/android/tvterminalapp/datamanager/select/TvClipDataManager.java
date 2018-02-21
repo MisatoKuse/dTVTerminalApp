@@ -11,6 +11,7 @@ import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvClipListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.DataBaseManager;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
 import java.util.ArrayList;
@@ -56,14 +57,13 @@ public class TvClipDataManager {
 
         //Daoクラス使用準備
         DBHelper homeDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = homeDBHelper.getWritableDatabase();
-        TvClipListDao tvClipListDao = new TvClipListDao(db);
+        DataBaseManager.initializeInstance(homeDBHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        TvClipListDao tvClipListDao = new TvClipListDao(database);
 
         //ホーム画面用データ取得
         list = tvClipListDao.findById(columns);
-        db.close();
-        homeDBHelper.close();
+        DataBaseManager.getInstance().closeDatabase();
         return list;
     }
-    
 }

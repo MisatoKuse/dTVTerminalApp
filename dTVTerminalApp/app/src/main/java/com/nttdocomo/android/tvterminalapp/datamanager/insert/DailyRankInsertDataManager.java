@@ -38,8 +38,9 @@ public class DailyRankInsertDataManager {
 
         //各種オブジェクト作成
         DBHelper dailyRankListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = dailyRankListDBHelper.getWritableDatabase();
-        DailyRankListDao dailyRankListDao = new DailyRankListDao(db);
+        DataBaseManager.initializeInstance(dailyRankListDBHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        DailyRankListDao dailyRankListDao = new DailyRankListDao(database);
         List<HashMap<String, String>> hashMaps = dailyRankList.getDrList();
 
         //DB保存前に前回取得したデータは全消去する
@@ -57,6 +58,6 @@ public class DailyRankInsertDataManager {
             }
             dailyRankListDao.insert(values);
         }
-        db.close();
+        DataBaseManager.getInstance().closeDatabase();
     }
 }

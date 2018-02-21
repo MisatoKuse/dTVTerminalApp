@@ -42,8 +42,9 @@ public class WatchListenVideoDataManager {
 
         //各種オブジェクト作成
         DBHelper watchListenVideoDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = watchListenVideoDBHelper.getWritableDatabase();
-        WatchListenVideoListDao watchListenVideoListDao = new WatchListenVideoListDao(db);
+        DataBaseManager.initializeInstance(watchListenVideoDBHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        WatchListenVideoListDao watchListenVideoListDao = new WatchListenVideoListDao(database);
 
         List<HashMap<String, String>> hashMaps = watchListenVideoList.getVcList();
 
@@ -62,6 +63,6 @@ public class WatchListenVideoDataManager {
             }
             watchListenVideoListDao.insert(values);
         }
-        db.close();
+        DataBaseManager.getInstance().closeDatabase();
     }
 }

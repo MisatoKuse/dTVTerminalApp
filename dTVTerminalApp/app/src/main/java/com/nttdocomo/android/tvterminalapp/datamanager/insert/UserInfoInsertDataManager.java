@@ -73,7 +73,7 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
     /**
      * UserinfoAPIの解析結果をDBに格納する.
      */
-    private void insertUserInfoInsertList(List<UserInfoList> userInfoList) {
+    private synchronized void insertUserInfoInsertList(List<UserInfoList> userInfoList) {
         DTVTLogger.start();
 
         //各種オブジェクト作成
@@ -154,7 +154,7 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
     /**
      * データを読み込んでくる.
      */
-    public void readUserInfoInsertList() {
+    public synchronized void readUserInfoInsertList() {
         DTVTLogger.start();
 
         //各種オブジェクト作成

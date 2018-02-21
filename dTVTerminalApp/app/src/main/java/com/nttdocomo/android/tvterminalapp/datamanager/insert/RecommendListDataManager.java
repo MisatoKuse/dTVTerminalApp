@@ -8,6 +8,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendChannelListDao;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
@@ -38,9 +39,6 @@ import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.Recomme
 public class RecommendListDataManager {
 
     private Context mContext;
-    private DBHelper mRecommendListDBHelper = null;
-    private SQLiteDatabase mDb = null;
-    private RecommendListDao mRecommendListDao = null;
 
     /**
      * コンストラクタ.
@@ -49,9 +47,6 @@ public class RecommendListDataManager {
      */
     public RecommendListDataManager(Context context) {
         mContext = context;
-        mRecommendListDBHelper = new DBHelper(mContext);
-        mDb = mRecommendListDBHelper.getWritableDatabase();
-        mRecommendListDao = new RecommendListDao(mDb);
 
     }
 
@@ -64,24 +59,28 @@ public class RecommendListDataManager {
 
         //各種オブジェクト作成
         List<Map<String, String>> hashMaps = redChList.getmRcList();
+        DBHelper deHelper = new DBHelper(mContext);
+        DataBaseManager.initializeInstance(deHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        RecommendListDao redListDao = new RecommendListDao(database);
 
         //DB保存前に前回取得したデータは全消去する
         if (!addFlag) { // ページングの場合、削除しない
             switch (tagPageNo) {
                 case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV:
-                    mRecommendListDao.delete(tagPageNo);
+                    redListDao.delete(tagPageNo);
                     break;
                 case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO:
-                    mRecommendListDao.delete(tagPageNo);
+                    redListDao.delete(tagPageNo);
                     break;
                 case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL:
-                    mRecommendListDao.delete(tagPageNo);
+                    redListDao.delete(tagPageNo);
                     break;
                 case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV:
-                    mRecommendListDao.delete(tagPageNo);
+                    redListDao.delete(tagPageNo);
                     break;
                 case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME:
-                    mRecommendListDao.delete(tagPageNo);
+                    redListDao.delete(tagPageNo);
                     break;
                 default:
                     break;
@@ -98,16 +97,20 @@ public class RecommendListDataManager {
                 String valName = (String) entry.getValue();
                 values.put(keyName, valName);
             }
-            mRecommendListDao.insert(values, tagPageNo);
+            redListDao.insert(values, tagPageNo);
         }
-        mDb.close();
-        mRecommendListDBHelper.close();
+        DataBaseManager.getInstance().closeDatabase();
     }
 
     /**
      * キャッシュからリストデータを表示件数分取得する.
      */
     public List<ContentsData> selectRecommendList(int tagPageNo, int startIndex, int maxResult) {
+
+        DBHelper deHelper = new DBHelper(mContext);
+        DataBaseManager.initializeInstance(deHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        RecommendListDao redListDao = new RecommendListDao(database);
 
         String[] columns = {
                 RECOMMENDCHANNEL_LIST_CONTENTSID,
@@ -125,7 +128,7 @@ public class RecommendListDataManager {
         };
         int maxResultData = startIndex + maxResult - 1;
         List<Map<String, String>> resultList
-                = mRecommendListDao.findById(columns, tagPageNo, String.valueOf(maxResultData));
+                = redListDao.findById(columns, tagPageNo, String.valueOf(maxResultData));
         List<ContentsData> recommendContentInfoList = new ArrayList<>();
         if(resultList.size() == 0) {
             return recommendContentInfoList;
@@ -150,7 +153,7 @@ public class RecommendListDataManager {
             contentsData.setRecommendMethodId(map.get(RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID));
             recommendContentInfoList.add(contentsData);
         }
-        mDb.close();
+        DataBaseManager.getInstance().closeDatabase();
         return recommendContentInfoList;
     }
 }

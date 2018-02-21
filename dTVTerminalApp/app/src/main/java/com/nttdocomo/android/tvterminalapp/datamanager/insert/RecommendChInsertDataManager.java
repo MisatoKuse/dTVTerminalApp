@@ -38,8 +38,9 @@ public class RecommendChInsertDataManager {
 
         //各種オブジェクト作成
         DBHelper recommemdChListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = recommemdChListDBHelper.getWritableDatabase();
-        RecommendChannelListDao redChListDao = new RecommendChannelListDao(db);
+        DataBaseManager.initializeInstance(recommemdChListDBHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        RecommendChannelListDao redChListDao = new RecommendChannelListDao(database);
         List<Map<String,String>> hashMaps = redChList.getmRcList();
 
         //DB保存前に前回取得したデータは全消去する
@@ -57,7 +58,6 @@ public class RecommendChInsertDataManager {
             }
             redChListDao.insert(values);
         }
-        db.close();
-        recommemdChListDBHelper.close();
+        DataBaseManager.getInstance().closeDatabase();
     }
 }

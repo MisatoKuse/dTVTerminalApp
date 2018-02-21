@@ -13,7 +13,6 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelperChannel;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.DataBaseManager;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 
 import java.util.Arrays;
@@ -191,13 +190,11 @@ public class DBUtils {
      * @param tableName テーブル名
      * @return データ存在チェック結果
      */
-    public static boolean isCachingRecord(final Context context, final String tableName) {
+    public static synchronized boolean isCachingRecord(final Context context, final String tableName) {
         DBHelper dBHelper = new DBHelper(context);
-        DataBaseManager.initializeInstance(dBHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        SQLiteDatabase database = dBHelper.getWritableDatabase();
         long recordCount = DatabaseUtils.queryNumEntries(database, tableName);
         database.close();
-        DataBaseManager.getInstance().closeDatabase();
         return recordCount > 0;
     }
 
@@ -209,15 +206,12 @@ public class DBUtils {
      * @param chNo チャンネル番号
      * @return データ存在チェック結果
      */
-    public static boolean isChCachingRecord(final Context context, final String tableName,
+    public static synchronized boolean isChCachingRecord(final Context context, final String tableName,
                                             final String chNo) {
-        DataBaseManager.clearChInfo();
         DBHelperChannel dbHelperChannel = new DBHelperChannel(context, chNo);
-        DataBaseManager.initializeInstance(dbHelperChannel);
-        SQLiteDatabase database = DataBaseManager.getChInstance().openChDatabase();
+        SQLiteDatabase database = dbHelperChannel.getWritableDatabase();
         long recordCount = DatabaseUtils.queryNumEntries(database, tableName);
         database.close();
-        DataBaseManager.getChInstance().closeChDatabase();
         return recordCount > 0;
     }
 
@@ -230,13 +224,12 @@ public class DBUtils {
      * @param args      selectionに"?" が入っている場合のパラメータ
      * @return データ存在チェック結果
      */
-    public static boolean isCachingRecord(
+    public static synchronized boolean isCachingRecord(
             final Context context, final String tableName, final String selection, final String[] args) {
         DBHelper dBHelper = new DBHelper(context);
-        DataBaseManager.initializeInstance(dBHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        SQLiteDatabase database = dBHelper.getWritableDatabase();
         long recordCount = DatabaseUtils.queryNumEntries(database, tableName, selection, args);
-        DataBaseManager.getInstance().closeDatabase();
+        database.close();
         return recordCount > 0;
     }
 

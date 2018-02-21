@@ -62,8 +62,9 @@ public class RentalListInsertDataManager {
 
         //各種オブジェクト作成
         DBHelper rentalListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = rentalListDBHelper.getWritableDatabase();
-        RentalListDao rentalListDao = new RentalListDao(db);
+        DataBaseManager.initializeInstance(rentalListDBHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        RentalListDao rentalListDao = new RentalListDao(database);
         ArrayList<VodMetaFullData> vodMetaFullDataList = rentalList.getVodMetaFullData();
         ArrayList<ActiveData> activeDataList = rentalList.getVodActiveData();
 
@@ -104,7 +105,7 @@ public class RentalListInsertDataManager {
 
             rentalListDao.insertActiveList(activeValues);
         }
-        db.close();
+        DataBaseManager.getInstance().closeDatabase();
     }
 
     /**
@@ -115,8 +116,9 @@ public class RentalListInsertDataManager {
     public void insertChRentalListInsertList(final PurchasedChListResponse rentalChList) {
         //各種オブジェクト作成
         DBHelper rentalListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = rentalListDBHelper.getWritableDatabase();
-        RentalListDao rentalListDao = new RentalListDao(db);
+        DataBaseManager.initializeInstance(rentalListDBHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        RentalListDao rentalListDao = new RentalListDao(database);
         List<HashMap<String, String>> clList = rentalChList.getChannelListData().getChannelList();
         ArrayList<ActiveData> activeDataList = rentalChList.getChActiveData();
 
@@ -162,6 +164,6 @@ public class RentalListInsertDataManager {
 
             rentalListDao.insertChActiveList(activeValues);
         }
-        db.close();
+        DataBaseManager.getInstance().closeDatabase();
     }
  }

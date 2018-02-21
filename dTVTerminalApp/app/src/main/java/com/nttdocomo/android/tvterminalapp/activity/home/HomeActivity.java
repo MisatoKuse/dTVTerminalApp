@@ -235,7 +235,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mUserInfoDataProvider = new UserInfoDataProvider(this, this);
         //アプリ起動時のデータ取得ユーザ情報未取得又は時間切れ又はonCreateから開始した場合はユーザ情報取得から
         if (mUserInfoDataProvider.isUserInfoTimeOut()) {
-            getUserInfo();
+            if (networkCheck()) {
+                getUserInfo();
+            } else {
+                //起動時はプログレスダイアログを表示
+                requestHomeData();
+            }
         } else {
             //起動時はプログレスダイアログを表示
             requestHomeData();
@@ -273,7 +278,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * ホーム画面用データ取得開始.
      */
     private void requestHomeData() {
-        networkCheck();
         //Home画面用データを取得
         mHomeDataProvider = new HomeDataProvider(this);
         mHomeDataProvider.getHomeData();
@@ -652,7 +656,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * ユーザ情報取得処理.
      */
     private void getUserInfo() {
-        networkCheck();
         //ユーザー情報の変更検知
         mUserInfoDataProvider.getUserInfo();
     }
@@ -661,37 +664,43 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * 契約情報取得失敗ダイアログ.
      */
     private void getUserInfoErrorDialog() {
-        CustomDialog failedRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-        failedRecordingReservationDialog.setContent(getResources().getString(R.string.get_user_info_error_message));
-        failedRecordingReservationDialog.setCancelText(R.string.common_text_close);
-        // Cancelable
-        failedRecordingReservationDialog.setConfirmText(R.string.common_text_retry);
-        failedRecordingReservationDialog.showDialog();
-        failedRecordingReservationDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-            @Override
-            public void onOKCallback(final boolean isOK) {
-                //リトライ
-                initData();
-                getUserInfo();
-            }
-        });
+        if (!mIsCloseDialog) {
+            mIsCloseDialog = true;
+            CustomDialog failedRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+            failedRecordingReservationDialog.setContent(getResources().getString(R.string.get_user_info_error_message));
+            failedRecordingReservationDialog.setCancelText(R.string.common_text_close);
+            // Cancelable
+            failedRecordingReservationDialog.setConfirmText(R.string.common_text_retry);
+            failedRecordingReservationDialog.showDialog();
+            failedRecordingReservationDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                @Override
+                public void onOKCallback(final boolean isOK) {
+                    //リトライ
+                    mIsCloseDialog = false;
+                    initData();
+                    getUserInfo();
+                }
+            });
 
-        failedRecordingReservationDialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
-            @Override
-            public void onCancelCallback() {
-                //ユーザ情報なし(未契約表示)
-                requestHomeData();
-            }
-        });
+            failedRecordingReservationDialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
+                @Override
+                public void onCancelCallback() {
+                    //ユーザ情報なし(未契約表示)
+                    mIsCloseDialog = false;
+                    requestHomeData();
+                }
+            });
 
-        failedRecordingReservationDialog.setDialogDismissCallback(new CustomDialog.DialogDismissCallback() {
-            @Override
-            public void onDialogDismissCallback() {
-                //ボタンタップ以外でダイアログが閉じた場合は閉じる選択と想定
-                //ユーザ情報なし(未契約表示)
-                requestHomeData();
-            }
-        });
+            failedRecordingReservationDialog.setDialogDismissCallback(new CustomDialog.DialogDismissCallback() {
+                @Override
+                public void onDialogDismissCallback() {
+                    //ボタンタップ以外でダイアログが閉じた場合は閉じる選択と想定
+                    //ユーザ情報なし(未契約表示)
+                    mIsCloseDialog = false;
+                    requestHomeData();
+                }
+            });
+        }
     }
 
     /**
@@ -713,12 +722,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     /**
      * network状態確認.
+     *
+     * @return ネットワーク状態フラグ
      */
-    private void networkCheck() {
+    private boolean networkCheck() {
         if (!NetWorkUtils.isOnline(this)) {
             initData();
             String message = getResources().getString(R.string.activity_start_network_error_message);
             errorDialog(message, R.string.custom_dialog_ok);
+            return false;
+        } else {
+            return true;
         }
     }
 

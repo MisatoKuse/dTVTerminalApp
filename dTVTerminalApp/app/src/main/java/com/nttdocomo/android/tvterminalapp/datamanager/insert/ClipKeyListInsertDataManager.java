@@ -95,8 +95,9 @@ public class ClipKeyListInsertDataManager {
         DTVTLogger.start();
         //各種オブジェクト作成
         DBHelper ClipKeyListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = ClipKeyListDBHelper.getWritableDatabase();
-        ClipKeyListDao clipKeyListDao = new ClipKeyListDao(db);
+        DataBaseManager.initializeInstance(ClipKeyListDBHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
 
         //コンテンツデータ作成
         ContentValues values = new ContentValues();
@@ -106,7 +107,7 @@ public class ClipKeyListInsertDataManager {
         values.put(JsonConstants.META_RESPONSE_TYPE, ClipKeyListDataProvider.CLIP_KEY_LIST_TYPE_OTHER_CHANNEL);
         values.put(JsonConstants.META_RESPONSE_TITLE_ID, titleId);
         clipKeyListDao.insert(tableType, values);
-        db.close();
+        DataBaseManager.getInstance().closeDatabase();
         DTVTLogger.end();
     }
 
@@ -124,9 +125,10 @@ public class ClipKeyListInsertDataManager {
             final String eventId, final String titleId) {
         DTVTLogger.start();
         //各種オブジェクト作成
-        DBHelper ClipKeyListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = ClipKeyListDBHelper.getWritableDatabase();
-        ClipKeyListDao clipKeyListDao = new ClipKeyListDao(db);
+        DBHelper clipKeyListDBHelper = new DBHelper(mContext);
+        DataBaseManager.initializeInstance(clipKeyListDBHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
 
         String query = StringUtils.getConnectStrings(JsonConstants.META_RESPONSE_CRID, "=? OR ",
                 JsonConstants.META_RESPONSE_SERVICE_ID, "=? AND ",
@@ -136,7 +138,7 @@ public class ClipKeyListInsertDataManager {
 
         String[] columns = {crId, serviceId, eventId, ClipKeyListDataProvider.CLIP_KEY_LIST_TYPE_OTHER_CHANNEL, titleId};
         clipKeyListDao.deleteRowData(tableType, query, columns);
-        db.close();
+        DataBaseManager.getInstance().closeDatabase();
         DTVTLogger.end();
     }
 }

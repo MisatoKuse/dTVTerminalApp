@@ -47,14 +47,15 @@ public class TvClipInsertDataManager {
 
         //各種オブジェクト作成
         DBHelper tvClipListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = tvClipListDBHelper.getWritableDatabase();
-        TvClipListDao tvClipListDao = new TvClipListDao(db);
-        List<HashMap<String,String>> hashMaps = tvClipList.getVcList();
+        DataBaseManager.initializeInstance(tvClipListDBHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        TvClipListDao tvClipListDao = new TvClipListDao(database);
+        List<HashMap<String, String>> hashMaps = tvClipList.getVcList();
 
         //DB保存前に前回取得したデータは全消去する
-        try{
+        try {
             tvClipListDao.delete();
-        }catch (Exception e){
+        } catch (Exception e) {
             DTVTLogger.debug("TvClipInsertDataManager::insertTvClipInsertList, e.cause=" + e.getCause());
         }
 
@@ -70,6 +71,6 @@ public class TvClipInsertDataManager {
             }
             tvClipListDao.insert(values);
         }
-        db.close();
+        DataBaseManager.getInstance().closeDatabase();
     }
 }

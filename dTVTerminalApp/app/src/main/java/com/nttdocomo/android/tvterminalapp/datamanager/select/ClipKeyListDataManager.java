@@ -11,6 +11,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.DataBaseManager;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
 import java.util.ArrayList;
@@ -61,14 +62,13 @@ public class ClipKeyListDataManager {
 
         //Daoクラス使用準備
         DBHelper dBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = dBHelper.getWritableDatabase();
-        ClipKeyListDao clipKeyListDao = new ClipKeyListDao(db);
+        DataBaseManager.initializeInstance(dBHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
 
         //データ取得
         list = clipKeyListDao.findById(columns, type, selection, args);
-        db.close();
-        dBHelper.close();
-
+        DataBaseManager.getInstance().closeDatabase();
         DTVTLogger.end();
         return list;
     }

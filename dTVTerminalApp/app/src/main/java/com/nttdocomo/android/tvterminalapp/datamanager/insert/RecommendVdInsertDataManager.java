@@ -38,8 +38,9 @@ public class RecommendVdInsertDataManager {
 
         //各種オブジェクト作成
         DBHelper redVdListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = redVdListDBHelper.getWritableDatabase();
-        RecommendVideolListDao redVdListDao = new RecommendVideolListDao(db);
+        DataBaseManager.initializeInstance(redVdListDBHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        RecommendVideolListDao redVdListDao = new RecommendVideolListDao(database);
         List<Map<String,String>> hashMaps = redVdList.getmRvList();
 
         //DB保存前に前回取得したデータは全消去する
@@ -57,7 +58,6 @@ public class RecommendVdInsertDataManager {
             }
             redVdListDao.insert(values);
         }
-        db.close();
-        redVdListDBHelper.close();
+        DataBaseManager.getInstance().closeDatabase();
     }
 }

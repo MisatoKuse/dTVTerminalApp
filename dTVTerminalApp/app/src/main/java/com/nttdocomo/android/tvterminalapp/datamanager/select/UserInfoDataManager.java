@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.UserInfoListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.DataBaseManager;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
 
@@ -52,13 +53,13 @@ public class UserInfoDataManager {
 
         //Daoクラス使用準備
         DBHelper homeDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = homeDBHelper.getWritableDatabase();
-        UserInfoListDao userInfoListDao = new UserInfoListDao(db);
+        DataBaseManager.initializeInstance(homeDBHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        UserInfoListDao userInfoListDao = new UserInfoListDao(database);
 
         //ホーム画面用データ取得
         list = userInfoListDao.findById(columns);
-        db.close();
-        homeDBHelper.close();
+        DataBaseManager.getInstance().closeDatabase();
 
         return list;
     }

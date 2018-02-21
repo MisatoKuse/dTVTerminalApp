@@ -11,6 +11,7 @@ import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VideoRankListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.DataBaseManager;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
 import java.util.ArrayList;
@@ -55,13 +56,13 @@ public class RankingTopDataManager {
 
         //Daoクラス使用準備
         DBHelper videoRankListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = videoRankListDBHelper.getWritableDatabase();
-        VideoRankListDao videoRankListDao = new VideoRankListDao(db);
+        DataBaseManager.initializeInstance(videoRankListDBHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        VideoRankListDao videoRankListDao = new VideoRankListDao(database);
 
         //ビデオランクデータ取得
         list = videoRankListDao.findById(columns);
-        db.close();
-        videoRankListDBHelper.close();
+        DataBaseManager.getInstance().closeDatabase();
         return list;
     }
 }
