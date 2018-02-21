@@ -358,10 +358,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
         //各コンテンツのビューを作成する
         for (int i = HOME_CONTENTS_LIST_START_INDEX; i < HOME_CONTENTS_LIST_COUNT + HOME_CONTENTS_LIST_START_INDEX; i++) {
-            View view = LayoutInflater.from(this).inflate(R.layout.home_main_layout_item, null, false);
-            view.setTag(i);
-            view.setVisibility(View.GONE);
-            mLinearLayout.addView(view);
+            mLinearLayout.addView(setContentsView(i));
         }
     }
 
@@ -375,7 +372,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private void setRecyclerView(final List<ContentsData> contentsDataList, final int tag) {
         DTVTLogger.start();
         String typeContentName = getContentTypeName(tag);
-        String resultCount = String.valueOf(contentsDataList.size());
         View view = mLinearLayout.getChildAt(tag);
         view.setVisibility(View.VISIBLE);
         TextView typeTextView = view.findViewById(R.id.home_main_item_type_tx);

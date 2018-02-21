@@ -125,11 +125,6 @@ public class DateUtils {
     public static final String TVSCHEDULE_LAST_UPDATE = "TvScheduleLastUpdate";
 
     /**
-     * レンタル一覧取得日付キー.
-     */
-    public static final String RENTAL_LIST_LAST_INSERT = "RentalListLastInsert";
-
-    /**
      * SharedPreferences用データ.
      */
     private static final String DATA_SAVE = "DataSave";
