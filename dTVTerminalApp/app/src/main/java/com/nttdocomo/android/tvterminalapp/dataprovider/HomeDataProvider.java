@@ -22,6 +22,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.insert.VideoRankInsertDat
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.WatchListenVideoDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.HomeDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.RankingTopDataManager;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
@@ -34,6 +35,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvClipList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
@@ -155,16 +157,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     private WatchListenVideoList mWatchListenVideoList = null;
 
     /**
-     * クリップ(ビデオ)Listクラス.
-     */
-    private VodClipList mVodClipList = null;
-
-    /**
-     * クリップ(テレビ)Listクラス.
-     */
-    private TvClipList mTvClipList = null;
-
-    /**
      * チャンネルリストListクラス.
      */
     private ChannelList mChannelList = null;
@@ -243,6 +235,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * 通信禁止判定フラグ.
      */
     private boolean mIsStop = false;
+
     @Override
     public void onTvClipJsonParsed(final List<TvClipList> tvClipLists) {
         if (tvClipLists != null && tvClipLists.size() > 0) {
@@ -370,7 +363,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * コンテンツのServiceIDとServiceIDが一致するチャンネル名を追加する.
      *
      * @param scheduleList 番組表コンテンツリスト
-     * @param channelList チャンネルリスト
+     * @param channelList  チャンネルリスト
      * @return チャンネル名
      */
     private List<ContentsData> setChannelName(final List<ContentsData> scheduleList, final ChannelList channelList) {
@@ -736,7 +729,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 for (int i = 0; i < chNo.length; i++) {
                     chNos[i] = Integer.parseInt(chNo[i]);
                 }
-                String[] channelInfoDate = new String[] {WebApiBasePlala.DATE_NOW};
+                String[] channelInfoDate = new String[]{WebApiBasePlala.DATE_NOW};
                 String lowerPageLimit = "";
                 webClient.getTvScheduleApi(chNos, channelInfoDate, lowerPageLimit, this);
             } else {
@@ -1071,13 +1064,15 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private void setStructDB(final TvScheduleList tvScheduleList) {
         mTvScheduleList = tvScheduleList;
-        //DB保存
-        Handler handler = new Handler();
-        try {
-            DbThread t = new DbThread(handler, this, TV_SCHEDULE_LIST);
-            t.start();
-        } catch (Exception e) {
-            DTVTLogger.debug(e);
+        if (mTvScheduleList.geTvsList() != null && !mTvScheduleList.geTvsList().isEmpty()) {
+            //DB保存
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, TV_SCHEDULE_LIST);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         }
     }
 
@@ -1088,14 +1083,17 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private void setStructDB(final DailyRankList dailyRankList) {
         mDailyRankList = dailyRankList;
-        sendDailyRankListData(mDailyRankList.getDrList());
-        //DB保存
-        Handler handler = new Handler();
-        try {
-            DbThread t = new DbThread(handler, this, DAILY_RANK_LIST);
-            t.start();
-        } catch (Exception e) {
-            DTVTLogger.debug(e);
+        List<Map<String, String>> drList = mDailyRankList.getDrList();
+        sendDailyRankListData(drList);
+        if (drList != null && !drList.isEmpty()) {
+            //DB保存
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, DAILY_RANK_LIST);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         }
     }
 
@@ -1106,14 +1104,17 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private void setStructDB(final VideoRankList videoRankList) {
         mVideoRankList = videoRankList;
-        sendVideoRankListData(mVideoRankList.getVrList());
-        //DB保存
-        Handler handler = new Handler();
-        try {
-            DbThread t = new DbThread(handler, this, VIDEO_RANK_LIST);
-            t.start();
-        } catch (Exception e) {
-            DTVTLogger.debug(e);
+        List<Map<String, String>> vrList = mVideoRankList.getVrList();
+        sendVideoRankListData(vrList);
+        if (vrList != null && !vrList.isEmpty()) {
+            //DB保存
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, VIDEO_RANK_LIST);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         }
     }
 
@@ -1124,13 +1125,16 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private void setStructDB(final ChannelList channelList) {
         mChannelList = channelList;
-        //DB保存
-        Handler handler = new Handler();
-        try {
-            DbThread t = new DbThread(handler, this, CHANNEL_LIST);
-            t.start();
-        } catch (Exception e) {
-            DTVTLogger.debug(e);
+        List<HashMap<String, String>> chList = mChannelList.getChannelList();
+        if (chList != null && !chList.isEmpty()) {
+            //DB保存
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, CHANNEL_LIST);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         }
     }
 
@@ -1140,16 +1144,18 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param tvClipList クリップ[テレビ]一覧データ
      */
     private void setStructDB(final TvClipList tvClipList) {
-        mTvClipList = tvClipList;
+        List<Map<String, String>> vcList = tvClipList.getVcList();
         //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
-        sendTvClipListData(mTvClipList.getVcList());
-        //DB保存
-//        Handler handler = new Handler();
-//        try {
-//            DbThread t = new DbThread(handler, this, TV_CLIP_LIST);
-//            t.start();
-//        } catch (Exception e) {
-//            DTVTLogger.debug(e);
+        sendTvClipListData(vcList);
+//        if (vcList != null && !vcList.isEmpty()) {
+//            //DB保存
+//            Handler handler = new Handler();
+//            try {
+//                DbThread t = new DbThread(handler, this, TV_CLIP_LIST);
+//                t.start();
+//            } catch (Exception e) {
+//                DTVTLogger.debug(e);
+//            }
 //        }
     }
 
@@ -1160,15 +1166,17 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private void setStructDB(final VodClipList vodClipList) {
         //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
-        mVodClipList = vodClipList;
-        sendVodClipListData(mVodClipList.getVcList());
-        //DB保存
-//        Handler handler = new Handler();
-//        try {
-//            DbThread t = new DbThread(handler, this, VOD_CLIP_LIST);
-//            t.start();
-//        } catch (Exception e) {
-//            DTVTLogger.debug(e);
+        List<Map<String, String>> vcList = vodClipList.getVcList();
+        sendVodClipListData(vcList);
+//        if (vcList != null && !vcList.isEmpty()) {
+//            //DB保存
+//            Handler handler = new Handler();
+//            try {
+//                DbThread t = new DbThread(handler, this, VOD_CLIP_LIST);
+//                t.start();
+//            } catch (Exception e) {
+//                DTVTLogger.debug(e);
+//            }
 //        }
     }
 
@@ -1179,13 +1187,16 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private void setStructDB(final WatchListenVideoList watchListenVideoList) {
         mWatchListenVideoList = watchListenVideoList;
-        //DB保存
-        Handler handler = new Handler();
-        try {
-            DbThread t = new DbThread(handler, this, WATCH_LISTEN_VIDEO_LIST);
-            t.start();
-        } catch (Exception e) {
-            DTVTLogger.debug(e);
+        List<HashMap<String, String>> vcList = mWatchListenVideoList.getVcList();
+        if (vcList != null && !vcList.isEmpty()) {
+            //DB保存
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, WATCH_LISTEN_VIDEO_LIST);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         }
     }
 
@@ -1195,14 +1206,20 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param purchasedVodListResponse 視聴中ビデオ一覧用データ
      */
     private void setStructDB(final PurchasedVodListResponse purchasedVodListResponse) {
-        mPurchasedVodListResponse = purchasedVodListResponse;
-        //DB保存
-        Handler handler = new Handler();
-        try {
-            DbThread t = new DbThread(handler, this, RENTAL_VOD_LIST);
-            t.start();
-        } catch (Exception e) {
-            DTVTLogger.debug(e);
+        if (purchasedVodListResponse != null) {
+            mPurchasedVodListResponse = purchasedVodListResponse;
+            ArrayList<ActiveData> actionData = mPurchasedVodListResponse.getVodActiveData();
+            ArrayList<VodMetaFullData> metaData = mPurchasedVodListResponse.getVodMetaFullData();
+            if (actionData != null && actionData.size() > 0 && metaData != null && metaData.size() > 0) {
+                //DB保存
+                Handler handler = new Handler();
+                try {
+                    DbThread t = new DbThread(handler, this, RENTAL_VOD_LIST);
+                    t.start();
+                } catch (Exception e) {
+                    DTVTLogger.debug(e);
+                }
+            }
         }
     }
 
@@ -1212,14 +1229,20 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param purchasedChListResponse 視聴中ビデオ一覧用データ
      */
     private void setStructDB(final PurchasedChListResponse purchasedChListResponse) {
-        mPurchasedChListResponse = purchasedChListResponse;
-        //DB保存
-        Handler handler = new Handler();
-        try {
-            DbThread t = new DbThread(handler, this, RENTAL_CH_LIST);
-            t.start();
-        } catch (Exception e) {
-            DTVTLogger.debug(e);
+        if (purchasedChListResponse != null) {
+            mPurchasedChListResponse = purchasedChListResponse;
+            ArrayList<ActiveData> actionData = mPurchasedChListResponse.getChActiveData();
+            List<HashMap<String, String>> channelList = mPurchasedChListResponse.getChannelListData().getChannelList();
+            if (actionData != null && actionData.size() > 0 && channelList != null && !channelList.isEmpty()) {
+                //DB保存
+                Handler handler = new Handler();
+                try {
+                    DbThread t = new DbThread(handler, this, RENTAL_CH_LIST);
+                    t.start();
+                } catch (Exception e) {
+                    DTVTLogger.debug(e);
+                }
+            }
         }
     }
 
@@ -1230,13 +1253,15 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private void setStructDB(final RoleListResponse roleListResponse) {
         mRoleListMetaDataList = roleListResponse.getRoleList();
-        //DB保存
-        Handler handler = new Handler();
-        try {
-            DbThread t = new DbThread(handler, this, ROLE_ID_LIST);
-            t.start();
-        } catch (Exception e) {
-            DTVTLogger.debug(e);
+        if (mRoleListMetaDataList != null && mRoleListMetaDataList.size() > 0) {
+            //DB保存
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, ROLE_ID_LIST);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         }
     }
 

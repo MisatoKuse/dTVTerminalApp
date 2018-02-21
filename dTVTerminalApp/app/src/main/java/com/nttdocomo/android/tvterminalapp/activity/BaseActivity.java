@@ -19,6 +19,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -759,6 +760,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param msg 応答メッセージ
      */
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     protected void onStbClientResponse(final Message msg) {
         RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES requestCommand
                 = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getRequestCommandTypes();
@@ -870,6 +872,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param resultCode 実行コード
      * @param appId      アプリID
      */
+    @SuppressWarnings({"OverlyLongMethod", "OverlyComplexMethod"})
     private void startApplicationErrorHandler(final int resultCode, final RemoteControlRelayClient.STB_APPLICATION_TYPES appId) {
         String message;
         switch (resultCode) {
@@ -2014,5 +2017,18 @@ public class BaseActivity extends FragmentActivity implements
     protected void setUnnecessaryDaccountRegistService() {
         // STBSelectActivity以前のActivityが対象
         mNecessaryDAccountRegistService = false;
+    }
+
+    /**
+     * HomeとRankingTopのコンテンツビュー作成.
+     *
+     * @param contentsCount ContentsPosition
+     * @return ContentView
+     */
+    public View setContentsView(final int contentsCount) {
+        View view = LayoutInflater.from(this).inflate(R.layout.home_main_layout_item, null, false);
+        view.setTag(contentsCount);
+        view.setVisibility(View.GONE);
+        return view;
     }
 }

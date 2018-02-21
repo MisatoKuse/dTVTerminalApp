@@ -299,7 +299,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
     private void setStructDB(final PurchasedVodListResponse response) {
         if (mSetDB) {
             DateUtils dateUtils = new DateUtils(mContext);
-            dateUtils.addLastDate(DateUtils.RENTAL_LIST_LAST_INSERT);
+            dateUtils.addLastDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
             RentalListInsertDataManager dataManager = new RentalListInsertDataManager(mContext);
             dataManager.insertRentalListInsertList(response);
             sendRentalListData(response);
