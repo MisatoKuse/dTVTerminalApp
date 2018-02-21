@@ -82,7 +82,7 @@ namespace dtvt {
                             //v1.push_back((char*)xmlGetProp(xmlChildNode, (const xmlChar*)BsXmlParser_Field_Bitrate));
                             tmpP = (char*)xmlGetProp(xmlChildNode, (const xmlChar*)BsXmlParser_Field_Bitrate);
                             if(NULL==tmpP){
-                                v1.push_back("");
+                                v1.push_back("0");
                             } else {
                                 v1.push_back(tmpP);
                             }

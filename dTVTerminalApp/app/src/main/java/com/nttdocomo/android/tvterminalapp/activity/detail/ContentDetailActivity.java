@@ -939,7 +939,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             return false;
         }
         long size = Integer.parseInt(datas.getSize());
-
         String durationStr = datas.getDuration();
         long duration = getDuration(durationStr);
 
@@ -972,9 +971,9 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             mCurrentMediaInfo = new MediaVideoInfo(
                     uri,           //uri
                     type2,         //"application/x-dtcp1", "video/mp4", RESOURCE_MIMETYPE
-                    0,             //SIZE
+                    size,          //SIZE
                     duration,      //DURATION
-                    0,             //BITRATE
+                    bitRate,       //BITRATE
                     true,         //IS_SUPPORTED_BYTE_SEEK
                     true,         //IS_SUPPORTED_TIME_SEEK
                     true,         //IS_AVAILABLE_CONNECTION_STALLING
@@ -1033,18 +1032,16 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             mCurrentMediaInfo = new MediaVideoInfo(
                     uri,           //uri
                     type2,         //"application/x-dtcp1", "video/mp4", RESOURCE_MIMETYPE
-                    0,             //SIZE
-                    //fSize, //test
+                    size,          //SIZE
                     duration,      //DURATION
-                    0,             //BITRATE
+                    bitRate,       //BITRATE
                     true,         //IS_SUPPORTED_BYTE_SEEK
                     true,         //IS_SUPPORTED_TIME_SEEK
                     false,         //IS_AVAILABLE_CONNECTION_STALLING
                     false,         //IS_LIVE_MODE
                     false,        //IS_REMOTE
                     title,         //TITLE
-                    contentFormat //本番
-                    //"" 3002;     //"CONTENTFORMAT=\"video/vnd.dlna.mpeg-tts\""   3002;   //"application/x-dtcp1;CONTENTFORMAT=\"video/vnd.dlna.mpeg-tts\""  3002  //test
+                    contentFormat
             );
         }
 
