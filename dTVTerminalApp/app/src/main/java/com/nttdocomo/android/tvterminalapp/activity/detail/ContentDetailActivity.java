@@ -1246,13 +1246,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         Fragment fragment = getCurrentFragment();
         DtvContentsChannelFragment channelFragment = (DtvContentsChannelFragment) fragment;
         channelFragment.loadComplete();
-        //TODO テストのため一時表示 start
-        if (mChannel == null) {
-            mChannel = new ChannelInfo();
-            mChannel.setChNo(1);
-            mChannel.setTitle("FOX HD");
-        }
-        //TODO テストのため一時表示 end
         if (mChannel != null) {
             channelFragment.setChannelDataChanged(mChannel);
             mDateIndex = 0;
@@ -2199,7 +2192,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      * @return 現在放送しているかどうか
      */
     private boolean isNowOnAir(final String startTime, final String endTime) {
-        boolean isNow = false;
         Date startDate = new Date();
         Date endDate = new Date();
         Date nowDate = new Date();
@@ -2209,11 +2201,10 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             startDate = format.parse(startTime);
             endDate = format.parse(endTime);
             nowDate = c.getTime();
-        } catch (Exception e) {
+        } catch (ParseException e) {
             DTVTLogger.debug(e);
         }
-        //return (nowDate.compareTo(startDate) != -1 && nowDate.compareTo(endDate) != 1);TODO データを表示させるため、一時コメントアウトします
-        return true;
+        return (nowDate.compareTo(startDate) != -1 && nowDate.compareTo(endDate) != 1);
     }
 
     /**
@@ -2230,11 +2221,10 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         try {
             endDate = sdf.parse(endTime);
             now = c.getTime();
-        } catch (Exception e) {
+        } catch (ParseException e) {
             DTVTLogger.debug(e);
         }
-//        return (date1.compareTo(now) == -1);TODO データを表示させるため、一時コメントアウトします
-        return false;
+        return (endDate.compareTo(now) == -1);
     }
 
     /**
