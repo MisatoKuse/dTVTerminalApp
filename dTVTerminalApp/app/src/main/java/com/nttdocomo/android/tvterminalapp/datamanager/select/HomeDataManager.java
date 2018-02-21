@@ -20,7 +20,6 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VodClipListD
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WatchListenVideoListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WeeklyRankListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.DataBaseManager;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideoXmlParser;
 
@@ -52,7 +51,7 @@ public class HomeDataManager {
      *
      * @return list
      */
-    public List<Map<String, String>> selectWatchingVideoHomeData() {
+    public synchronized List<Map<String, String>> selectWatchingVideoHomeData() {
 
         List<Map<String, String>> list = new ArrayList<>();
         //データ存在チェック
@@ -69,13 +68,12 @@ public class HomeDataManager {
 
         //Daoクラス使用準備
         DBHelper DbHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(DbHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        SQLiteDatabase database = DbHelper.getWritableDatabase();
         WatchListenVideoListDao watchListenVideoListDao = new WatchListenVideoListDao(database);
 
         //ホーム画面用データ取得
         list = watchListenVideoListDao.findById(columns);
-        DataBaseManager.getInstance().closeDatabase();
+        database.close();
         return list;
     }
 
@@ -84,7 +82,7 @@ public class HomeDataManager {
      *
      * @return list
      */
-    public List<Map<String, String>> selectTvClipHomeData() {
+    public synchronized List<Map<String, String>> selectTvClipHomeData() {
 
         List<Map<String, String>> list = new ArrayList<>();
         //データ存在チェック
@@ -100,15 +98,14 @@ public class HomeDataManager {
                 JsonConstants.META_RESPONSE_DISP_TYPE};
 
         //Daoクラス使用準備
-        DBHelper DbHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(DbHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        DBHelper dbHelper = new DBHelper(mContext);
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         TvClipListDao tvClipListDao = new TvClipListDao(database);
 
         //ホーム画面用データ取得
         list = tvClipListDao.findById(columns);
-        DataBaseManager.getInstance().closeDatabase();
+        database.close();
         return list;
     }
 
@@ -117,7 +114,7 @@ public class HomeDataManager {
      *
      * @return list
      */
-    public List<Map<String, String>> selectVodClipHomeData() {
+    public synchronized List<Map<String, String>> selectVodClipHomeData() {
 
         List<Map<String, String>> list = new ArrayList<>();
         //データ存在チェック
@@ -133,15 +130,14 @@ public class HomeDataManager {
                 JsonConstants.META_RESPONSE_DISP_TYPE};
 
         //Daoクラス使用準備
-        DBHelper DbHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(DbHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        DBHelper dbHelper = new DBHelper(mContext);
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         VodClipListDao vodClipListDao = new VodClipListDao(database);
 
         //ホーム画面用データ取得
         list = vodClipListDao.findById(columns);
-        DataBaseManager.getInstance().closeDatabase();
+        database.close();
         return list;
     }
 
@@ -151,7 +147,7 @@ public class HomeDataManager {
      *
      * @return list
      */
-    public List<Map<String, String>> selectChannelListHomeData() {
+    public synchronized List<Map<String, String>> selectChannelListHomeData() {
 
         List<Map<String, String>> list = new ArrayList<>();
         //データ存在チェック
@@ -166,15 +162,14 @@ public class HomeDataManager {
                 JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_CID};
 
         //Daoクラス使用準備
-        DBHelper DbHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(DbHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        DBHelper dbHelper = new DBHelper(mContext);
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         ChannelListDao channelListDao = new ChannelListDao(database);
 
         //ホーム画面用データ取得
         list = channelListDao.findById(columns);
-        DataBaseManager.getInstance().closeDatabase();
+        database.close();
         return list;
     }
 
@@ -183,7 +178,7 @@ public class HomeDataManager {
      *
      * @return list
      */
-    public List<Map<String, String>> selectRecommendChListHomeData() {
+    public synchronized List<Map<String, String>> selectRecommendChListHomeData() {
 
         List<Map<String, String>> list = new ArrayList<>();
         //データ存在チェック
@@ -197,15 +192,14 @@ public class HomeDataManager {
                 RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CTPICURL1};
 
         //Daoクラス使用準備
-        DBHelper DbHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(DbHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        DBHelper dbHelper = new DBHelper(mContext);
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         RecommendChannelListDao recommendChannelListDao = new RecommendChannelListDao(database);
 
         //ホーム画面用データ取得
         list = recommendChannelListDao.findById(columns);
-        DataBaseManager.getInstance().closeDatabase();
+        database.close();
         return list;
     }
 
@@ -214,7 +208,7 @@ public class HomeDataManager {
      *
      * @return list
      */
-    public List<Map<String, String>> selectRecommendVdListHomeData() {
+    public synchronized List<Map<String, String>> selectRecommendVdListHomeData() {
 
         List<Map<String, String>> list = new ArrayList<>();
         //データ存在チェック
@@ -228,14 +222,13 @@ public class HomeDataManager {
                 RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CTPICURL1};
 
         //Daoクラス使用準備
-        DBHelper DbHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(DbHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        DBHelper dbHelper = new DBHelper(mContext);
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
         RecommendVideoListDao recommendVdListDao = new RecommendVideoListDao(database);
 
         //ホーム画面用データ取得
         list = recommendVdListDao.findById(columns);
-        DataBaseManager.getInstance().closeDatabase();
+        database.close();
         return list;
     }
 
@@ -244,7 +237,7 @@ public class HomeDataManager {
      *
      * @return list
      */
-    public List<Map<String, String>> selectDailyRankListHomeData() {
+    public synchronized List<Map<String, String>> selectDailyRankListHomeData() {
 
         List<Map<String, String>> list = new ArrayList<>();
         //データ存在チェック
@@ -265,14 +258,13 @@ public class HomeDataManager {
 
         //Daoクラス使用準備
         DBHelper DbHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(DbHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        SQLiteDatabase database = DbHelper.getWritableDatabase();
 
         DailyRankListDao dailyRankListDao = new DailyRankListDao(database);
 
         //ホーム画面用データ取得
         list = dailyRankListDao.findById(columns);
-        DataBaseManager.getInstance().closeDatabase();
+        database.close();
         return list;
     }
 
@@ -281,7 +273,7 @@ public class HomeDataManager {
      *
      * @return list Now On Air データ
      */
-    public List<Map<String, String>> selectTvScheduleListHomeData() {
+    public synchronized List<Map<String, String>> selectTvScheduleListHomeData() {
 
         List<Map<String, String>> list = new ArrayList<>();
         //DBデータ存在チェック
@@ -297,14 +289,13 @@ public class HomeDataManager {
 
         //Daoクラス使用準備
         DBHelper DbHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(DbHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        SQLiteDatabase database = DbHelper.getWritableDatabase();
 
         TvScheduleListDao tvScheduleListDao = new TvScheduleListDao(database);
 
         //ホーム画面用データ取得
         list = tvScheduleListDao.findById(columns);
-        DataBaseManager.getInstance().closeDatabase();
+        database.close();
         return list;
     }
 
@@ -313,7 +304,7 @@ public class HomeDataManager {
      *
      * @return list
      */
-    public List<Map<String, String>> selectWeeklyRankListHomeData() {
+    public synchronized List<Map<String, String>> selectWeeklyRankListHomeData() {
 
         List<Map<String, String>> list = new ArrayList<>();
         //データ存在チェック
@@ -333,15 +324,14 @@ public class HomeDataManager {
                 JsonConstants.META_RESPONSE_TV_SERVICE, JsonConstants.META_RESPONSE_CID};
 
         //Daoクラス使用準備
-        DBHelper DbHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(DbHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        DBHelper dbHelper = new DBHelper(mContext);
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         WeeklyRankListDao weeklyRankListDao = new WeeklyRankListDao(database);
 
         //ホーム画面用データ取得
         list = weeklyRankListDao.findById(columns);
-        DataBaseManager.getInstance().closeDatabase();
+        database.close();
         return list;
     }
 
@@ -350,7 +340,7 @@ public class HomeDataManager {
      *
      * @return list ロールリスト
      */
-    public List<Map<String, String>> selectRoleListData() {
+    public synchronized List<Map<String, String>> selectRoleListData() {
 
         List<Map<String, String>> list = new ArrayList<>();
         //データ存在チェック
@@ -362,15 +352,14 @@ public class HomeDataManager {
         String[] columns = {JsonConstants.META_RESPONSE_CONTENTS_ID, JsonConstants.META_RESPONSE_CONTENTS_NAME};
 
         //Daoクラス使用準備
-        DBHelper DbHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(DbHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        DBHelper dbHelper = new DBHelper(mContext);
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
 
         RoleListDao roleListDao = new RoleListDao(database);
 
         //ホーム画面用データ取得
         list = roleListDao.findById(columns);
-        DataBaseManager.getInstance().closeDatabase();
+        database.close();
         return list;
     }
 }

@@ -8,7 +8,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendChannelListDao;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
@@ -55,13 +54,12 @@ public class RecommendListDataManager {
      *
      * @return
      */
-    public void insertRecommendInsertList(RecommendChList redChList, boolean addFlag, int tagPageNo) {
+    public synchronized void insertRecommendInsertList(RecommendChList redChList, boolean addFlag, int tagPageNo) {
 
         //各種オブジェクト作成
         List<Map<String, String>> hashMaps = redChList.getmRcList();
         DBHelper deHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(deHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        SQLiteDatabase database = deHelper.getWritableDatabase();
         RecommendListDao redListDao = new RecommendListDao(database);
 
         //DB保存前に前回取得したデータは全消去する
@@ -99,17 +97,16 @@ public class RecommendListDataManager {
             }
             redListDao.insert(values, tagPageNo);
         }
-        DataBaseManager.getInstance().closeDatabase();
+        database.close();
     }
 
     /**
      * キャッシュからリストデータを表示件数分取得する.
      */
-    public List<ContentsData> selectRecommendList(int tagPageNo, int startIndex, int maxResult) {
+    public synchronized List<ContentsData> selectRecommendList(int tagPageNo, int startIndex, int maxResult) {
 
         DBHelper deHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(deHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        SQLiteDatabase database = deHelper.getWritableDatabase();
         RecommendListDao redListDao = new RecommendListDao(database);
 
         String[] columns = {
@@ -153,7 +150,7 @@ public class RecommendListDataManager {
             contentsData.setRecommendMethodId(map.get(RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID));
             recommendContentInfoList.add(contentsData);
         }
-        DataBaseManager.getInstance().closeDatabase();
+        database.close();
         return recommendContentInfoList;
     }
 }

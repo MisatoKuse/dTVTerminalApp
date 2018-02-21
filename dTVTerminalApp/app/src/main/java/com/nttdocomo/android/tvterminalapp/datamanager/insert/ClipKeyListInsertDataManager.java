@@ -47,12 +47,11 @@ public class ClipKeyListInsertDataManager {
      * @param type                テーブル種別
      * @param clipKeyListResponse クリップキー一覧 レスポンスデータ
      */
-    public void insertClipKeyListInsert(final ClipKeyListDao.TABLE_TYPE type, final ClipKeyListResponse clipKeyListResponse) {
+    public synchronized void insertClipKeyListInsert(final ClipKeyListDao.TABLE_TYPE type, final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
         //各種オブジェクト作成
         DBHelper DbHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(DbHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        SQLiteDatabase database = DbHelper.getWritableDatabase();
 
         ClipKeyListDao ClipKeyListDao = new ClipKeyListDao(database);
         List<HashMap<String, String>> hashMaps = clipKeyListResponse.getCkList();
@@ -76,7 +75,7 @@ public class ClipKeyListInsertDataManager {
             }
             ClipKeyListDao.insert(type, values);
         }
-        DataBaseManager.getInstance().closeDatabase();
+        database.close();
         DTVTLogger.end();
     }
 

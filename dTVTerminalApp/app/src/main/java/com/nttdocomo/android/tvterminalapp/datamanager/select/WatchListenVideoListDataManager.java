@@ -11,7 +11,6 @@ import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WatchListenVideoListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.DataBaseManager;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
 import java.util.List;
@@ -41,7 +40,7 @@ public class WatchListenVideoListDataManager {
      *
      * @return クリップ一覧画面用クリップデータ
      */
-    public List<Map<String, String>> selectWatchListenVideoData() {
+    public synchronized List<Map<String, String>> selectWatchListenVideoData() {
 
         //データ存在チェック
         List<Map<String, String>> list;
@@ -61,14 +60,13 @@ public class WatchListenVideoListDataManager {
                 JsonConstants.META_RESPONSE_DTV_TYPE};
 
         //Daoクラス使用準備
-        DBHelper DbHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(DbHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        DBHelper dbHelper = new DBHelper(mContext);
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
         WatchListenVideoListDao watchListenVideoListDao = new WatchListenVideoListDao(database);
 
         //ホーム画面用データ取得
         list = watchListenVideoListDao.findById(columns);
-        DataBaseManager.getInstance().closeDatabase();
+        database.close();
         return list;
     }
 }

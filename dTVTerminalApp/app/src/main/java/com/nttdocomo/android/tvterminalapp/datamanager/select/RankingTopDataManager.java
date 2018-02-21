@@ -35,7 +35,7 @@ public class RankingTopDataManager {
      *
      * @return ランキングデータ
      */
-    public List<Map<String, String>> selectVideoRankListData() {
+    public synchronized List<Map<String, String>> selectVideoRankListData() {
 
         List<Map<String, String>> list = new ArrayList<>();
         //データ存在チェック
@@ -56,13 +56,12 @@ public class RankingTopDataManager {
 
         //Daoクラス使用準備
         DBHelper videoRankListDBHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(videoRankListDBHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        SQLiteDatabase database = videoRankListDBHelper.getWritableDatabase();
         VideoRankListDao videoRankListDao = new VideoRankListDao(database);
 
         //ビデオランクデータ取得
         list = videoRankListDao.findById(columns);
-        DataBaseManager.getInstance().closeDatabase();
+        database.close();
         return list;
     }
 }

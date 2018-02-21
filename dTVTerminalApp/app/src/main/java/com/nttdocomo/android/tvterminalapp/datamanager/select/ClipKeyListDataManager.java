@@ -11,7 +11,6 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.DataBaseManager;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
 import java.util.ArrayList;
@@ -43,7 +42,7 @@ public class ClipKeyListDataManager {
      * @param args param値(serviceId,eventId,type)
      * @return クリップキーリスト
      */
-    private List<Map<String, String>> selectClipKeyListData(
+    private synchronized List<Map<String, String>> selectClipKeyListData(
             final ClipKeyListDao.TABLE_TYPE type, final String selection, final String[] args) {
         DTVTLogger.start();
 
@@ -61,14 +60,13 @@ public class ClipKeyListDataManager {
                 JsonConstants.META_RESPONSE_TITLE_ID};
 
         //Daoクラス使用準備
-        DBHelper dBHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(dBHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        DBHelper dbHelper = new DBHelper(mContext);
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
         ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
 
         //データ取得
         list = clipKeyListDao.findById(columns, type, selection, args);
-        DataBaseManager.getInstance().closeDatabase();
+        database.close();
         DTVTLogger.end();
         return list;
     }

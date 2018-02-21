@@ -11,7 +11,6 @@ import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VodClipListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.DataBaseManager;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
 import java.util.ArrayList;
@@ -36,7 +35,7 @@ public class VodClipDataManager {
      *
      * @return クリップ一覧画面用クリップデータ
      */
-    public List<Map<String, String>> selectVodClipData() {
+    public synchronized List<Map<String, String>> selectVodClipData() {
 
         //データ存在チェック
         List<Map<String, String>> list = new ArrayList<>();
@@ -58,14 +57,13 @@ public class VodClipDataManager {
                 JsonConstants.META_RESPONSE_DTV_TYPE};
 
         //Daoクラス使用準備
-        DBHelper dbHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(dbHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        DBHelper videoRankListDBHelper = new DBHelper(mContext);
+        SQLiteDatabase database = videoRankListDBHelper.getWritableDatabase();
         VodClipListDao vodClipListDao = new VodClipListDao(database);
 
         //ホーム画面用データ取得
         list = vodClipListDao.findById(columns);
-        DataBaseManager.getInstance().closeDatabase();
+        database.close();
         return list;
     }
     
