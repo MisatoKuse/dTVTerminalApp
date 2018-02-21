@@ -15,26 +15,31 @@ import java.util.Map;
 
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.USER_INFO_LIST_TABLE_NAME;
 
+/**
+ * ユーザー情報リスト Data Access Object.
+ */
 public class UserInfoListDao {
-    // SQLiteDatabase
-    private SQLiteDatabase db;
+    /**
+     * SQLiteDatabase.
+     */
+    private final SQLiteDatabase db;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
      * @param db データベース
      */
-    public UserInfoListDao(SQLiteDatabase db) {
+    public UserInfoListDao(final SQLiteDatabase db) {
         this.db = db;
     }
 
     /**
-     * 配列で指定した列データをすべて取得
+     * 配列で指定した列データをすべて取得.
      *
      * @param strings 列データ名
      * @return 取得データ
      */
-    public List<Map<String, String>> findById(String[] strings) {
+    public List<Map<String, String>> findById(final String[] strings) {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
 
@@ -53,8 +58,8 @@ public class UserInfoListDao {
         //データを一行ずつ格納する
         while (isEof) {
             HashMap<String, String> map = new HashMap<>();
-            for (int i = 0; i < strings.length; i++) {
-                map.put(strings[i], cursor.getString(cursor.getColumnIndex(strings[i])));
+            for (String string : strings) {
+                map.put(string, cursor.getString(cursor.getColumnIndex(string)));
             }
             list.add(map);
 
@@ -66,35 +71,42 @@ public class UserInfoListDao {
     }
 
     /**
-     * データの登録・集合
+     * データの登録・集合.
      *
      * @param values 値の集合
      * @return 書き込み位置
      */
-    public long insert(ContentValues values) {
+    public long insert(final ContentValues values) {
         return db.insert(USER_INFO_LIST_TABLE_NAME, null, values);
     }
 
     /**
-     * データの登録・単独
+     * データの登録・単独.
      *
      * @param key   　書き込みキー名
      * @param value 書き込み位置
      * @return 書き込み位置
      */
-    public long insert(String key, String value) {
+    @SuppressWarnings("unused")
+    public long insert(final String key, final String value) {
         ContentValues values = new ContentValues();
         values.put(key, value);
         return db.insert(USER_INFO_LIST_TABLE_NAME, null, values);
     }
 
+    /**
+     * データの更新.
+     *
+     * @return 更新リターン
+     */
+    @SuppressWarnings({"SameReturnValue", "unused"})
     public int update() {
         //基本的にデータの更新はしない予定
         return 0;
     }
 
     /**
-     * データの削除
+     * データの削除.
      *
      * @return 削除行数
      */

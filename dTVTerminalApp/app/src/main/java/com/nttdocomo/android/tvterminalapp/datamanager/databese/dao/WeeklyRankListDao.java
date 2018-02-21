@@ -15,26 +15,31 @@ import java.util.Map;
 
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.WEEKLYRANK_LIST_TABLE_NAME;
 
+/**
+ * 週間ランキング Data Access Object.
+ */
 public class WeeklyRankListDao {
-    // SQLiteDatabase
+    /**
+     * SQLiteDatabase.
+     */
     private final SQLiteDatabase db;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
      * @param db データベース
      */
-    public WeeklyRankListDao(SQLiteDatabase db) {
+    public WeeklyRankListDao(final SQLiteDatabase db) {
         this.db = db;
     }
 
     /**
-     * 配列で指定した列データをすべて取得
+     * 配列で指定した列データをすべて取得.
      *
      * @param strings 欲しい列データの名前
      * @return 列データ結果
      */
-    public List<Map<String, String>> findById(String[] strings) {
+    public List<Map<String, String>> findById(final String[] strings) {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
 
@@ -66,22 +71,28 @@ public class WeeklyRankListDao {
     }
 
     /**
-     * データの登録
+     * データの登録.
      *
      * @param values 格納するデータ
      * @return 挿入データID
      */
-    public long insert(ContentValues values) {
+    public long insert(final ContentValues values) {
         return db.insert(WEEKLYRANK_LIST_TABLE_NAME, null, values);
     }
 
+    /**
+     * データの更新.
+     *
+     * @return 更新リターン
+     */
+    @SuppressWarnings({"SameReturnValue", "unused"})
     public int update() {
         //基本的にデータの更新はしない予定
         return 0;
     }
 
     /**
-     * データの削除
+     * データの削除.
      *
      * @return deleteの第2パラメータがヌルなのでゼロとなる
      */

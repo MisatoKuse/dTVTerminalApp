@@ -21,6 +21,9 @@ import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstan
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RENTAL_LIST_TABLE_NAME;
 
 
+/**
+ * レンタルビデオData Access Object.
+ */
 public class RentalListDao {
 
     /**
@@ -86,7 +89,7 @@ public class RentalListDao {
      * @param strings columns
      * @return 取得結果
      */
-    public List<Map<String, String>> activeListfindById(final String[] strings) {
+    public List<Map<String, String>> activeListFindById(final String[] strings) {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
 
@@ -172,7 +175,7 @@ public class RentalListDao {
      * @param strings columns
      * @return 取得結果
      */
-    public List<Map<String, String>> chActiveListfindById(final String[] strings) {
+    public List<Map<String, String>> chActiveListFindById(final String[] strings) {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
 
@@ -255,6 +258,7 @@ public class RentalListDao {
      *
      * @return 結果
      */
+    @SuppressWarnings({"SameReturnValue", "unused"})
     public int update() {
         //基本的にデータの更新はしない予定
         return 0;
@@ -274,6 +278,7 @@ public class RentalListDao {
      *
      * @return 結果
      */
+    @SuppressWarnings("unused")
     public int deleteActiveList() {
         return mSQLiteDatabase.delete(RENTAL_ACTIVE_LIST_TABLE_NAME, null, null);
     }
@@ -292,6 +297,7 @@ public class RentalListDao {
      *
      * @return 結果
      */
+    @SuppressWarnings("unused")
     public int deleteChActiveList() {
         return mSQLiteDatabase.delete(RENTAL_CHANNEL_ACTIVE_LIST_TABLE_NAME, null, null);
     }

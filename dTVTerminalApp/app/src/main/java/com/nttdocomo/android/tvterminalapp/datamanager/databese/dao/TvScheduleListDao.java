@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +25,7 @@ public class TvScheduleListDao {
     /**
      * SQLiteDatabase.
      */
-    private SQLiteDatabase db;
+    private final SQLiteDatabase db;
 
     /**
      * コンストラクタ.
@@ -120,6 +121,7 @@ public class TvScheduleListDao {
      *
      * @return update結果(0)
      */
+    @SuppressWarnings({"SameReturnValue", "unused"})
     public int update() {
         //基本的にデータの更新はしない予定
         return 0;
@@ -140,11 +142,10 @@ public class TvScheduleListDao {
      * @param type 削除するデータタイプ
      * @return 削除結果
      */
+    @SuppressWarnings("unused")
     public int deleteByType(final String type) {
-        StringBuilder deleteSelection = new StringBuilder();
-        deleteSelection.append(JsonConstants.META_RESPONSE_DISP_TYPE);
-        deleteSelection.append("=? ");
-        return db.delete(TV_SCHEDULE_LIST_TABLE_NAME, deleteSelection.toString(), new String[]{type});
+        String deleteSelection = StringUtils.getConnectStrings(JsonConstants.META_RESPONSE_DISP_TYPE, "=? ");
+        return db.delete(TV_SCHEDULE_LIST_TABLE_NAME, deleteSelection, new String[]{type});
     }
 }
 

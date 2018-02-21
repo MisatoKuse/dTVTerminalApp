@@ -15,9 +15,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 視聴中ビデオ Data Access Object.
+ */
 public class WatchListenVideoListDao {
 
-    // SQLiteDatabase
+    /**
+     * SQLiteDatabase.
+     */
     private final SQLiteDatabase db;
 
     /**
@@ -60,7 +65,9 @@ public class WatchListenVideoListDao {
             if (map.isEmpty()) {
                 list = null;
             } else {
-                list.add(map);
+                if (list != null) {
+                    list.add(map);
+                }
             }
             isEof = cursor.moveToNext();
         }

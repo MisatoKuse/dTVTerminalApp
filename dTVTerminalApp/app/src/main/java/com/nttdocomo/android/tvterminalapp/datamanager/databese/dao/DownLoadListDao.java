@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,26 +19,31 @@ import java.util.Map;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DOWNLOAD_LIST_TABLE_NAME;
 
 
+/**
+ * ダウンロードData Access Object.
+ */
 public class DownLoadListDao {
-    // SQLiteDatabase
-    private SQLiteDatabase db;
+    /**
+     * SQLiteDatabase.
+     */
+    private final SQLiteDatabase db;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
-     * @param db
+     * @param db SQLiteDatabase
      */
-    public DownLoadListDao(SQLiteDatabase db) {
+    public DownLoadListDao(final SQLiteDatabase db) {
         this.db = db;
     }
 
     /**
-     * 配列で指定した列データをすべて取得
+     * 配列で指定した列データをすべて取得.
      *
-     * @param strings
+     * @param strings 指定列
      * @return リスト
      */
-    public List<Map<String, String>> findDownLoadList(String[] strings) {
+    public List<Map<String, String>> findDownLoadList(final String[] strings) {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
 
@@ -56,8 +62,8 @@ public class DownLoadListDao {
         //データを一行ずつ格納する
         while (isEof) {
             HashMap<String, String> map = new HashMap<>();
-            for (int i = 0; i < strings.length; i++) {
-                map.put(strings[i], cursor.getString(cursor.getColumnIndex(strings[i])));
+            for (String string : strings) {
+                map.put(string, cursor.getString(cursor.getColumnIndex(string)));
             }
             list.add(map);
 
@@ -68,12 +74,12 @@ public class DownLoadListDao {
     }
 
     /**
-     * 配列で指定した列データをすべて取得
+     * 配列で指定した列データをすべて取得.
      *
-     * @param strings
+     * @param strings 指定列
      * @return ダウンロードリスト
      */
-    public List<Map<String, String>> findAllDowloadList(String[] strings) {
+    public List<Map<String, String>> findAllDownloadList(final String[] strings) {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
         Cursor cursor = db.query(
@@ -91,8 +97,8 @@ public class DownLoadListDao {
         //データを一行ずつ格納する
         while (isEof) {
             HashMap<String, String> map = new HashMap<>();
-            for (int i = 0; i < strings.length; i++) {
-                map.put(strings[i], cursor.getString(cursor.getColumnIndex(strings[i])));
+            for (String string : strings) {
+                map.put(string, cursor.getString(cursor.getColumnIndex(string)));
             }
             list.add(map);
 
@@ -103,25 +109,22 @@ public class DownLoadListDao {
     }
 
     /**
-     * 配列で指定した列データをすべて取得
+     * 配列で指定した列データをすべて取得.
      *
      * @param itemId 項目ID
      * @return リスト
      */
-    public List<Map<String, String>> findByItemId(String itemId) {
+    public List<Map<String, String>> findByItemId(final String itemId) {
         //特定IDのデータ取得はしない方針
-        String []selections = {DBConstants.DOWNLOAD_LIST_COLUM_URL};
+        String[] selections = {DBConstants.DOWNLOAD_LIST_COLUM_URL};
         List<Map<String, String>> list = new ArrayList<>();
-        StringBuilder selectSelection = new StringBuilder();
-        /*selectSelection.append(DBConstants.DOWNLOAD_LIST_COLUM_USER_ID);
-        selectSelection.append("=? AND ");*/
-        selectSelection.append(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
-        selectSelection.append("=? ");
+        String selectSelection = StringUtils.getConnectStrings(
+                DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID, "=? ");
 
         Cursor cursor = db.query(
                 DOWNLOAD_LIST_TABLE_NAME,
                 selections,
-                selectSelection.toString(),
+                selectSelection,
                 new String[]{itemId},
                 null,
                 null,
@@ -143,32 +146,31 @@ public class DownLoadListDao {
     }
 
     /**
-     * データの登録
+     * データの登録.
      *
-     * @param values
+     * @param values 登録するデータ
      * @return 挿入リターン
      */
-    public long insert(ContentValues values) {
+    public long insert(final ContentValues values) {
         return db.insert(DOWNLOAD_LIST_TABLE_NAME, null, values);
     }
 
     /**
-     * データの登録
+     * データの登録.
      *
-     * @param contentValues 更新colum
+     * @param contentValues 更新column
      * @param itemId 更新条件
      * @return 更新リターン
      */
-    public int updatebyItemId(ContentValues contentValues, String itemId) {
+    public int updateByItemId(final ContentValues contentValues, final String itemId) {
         //基本的にデータの更新はしない予定
-        StringBuilder updateSelection = new StringBuilder();
-        updateSelection.append(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
-        updateSelection.append("=? ");
-        return db.update(DOWNLOAD_LIST_TABLE_NAME, contentValues , updateSelection.toString(), new String[]{itemId});
+        String updateSelection = StringUtils.getConnectStrings(
+                DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID, "=? ");
+        return db.update(DOWNLOAD_LIST_TABLE_NAME, contentValues, updateSelection, new String[]{itemId});
     }
 
     /**
-     * データの削除
+     * データの削除.
      *
      * @return 削除リターン
      */
@@ -177,14 +179,14 @@ public class DownLoadListDao {
     }
 
     /**
-     * データの削除by itemId
+     * データの削除by itemId.
      *
+     * @param itemId itemId
      * @return 削除リターン
      */
-    public int deleteByItemId(String itemId) {
-        StringBuilder deleteSelection = new StringBuilder();
-        deleteSelection.append(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
-        deleteSelection.append("=? ");
-        return db.delete(DOWNLOAD_LIST_TABLE_NAME, deleteSelection.toString(), new String[]{itemId});
+    public int deleteByItemId(final String itemId) {
+        String deleteSelection = StringUtils.getConnectStrings(
+                DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID, "=? ");
+        return db.delete(DOWNLOAD_LIST_TABLE_NAME, deleteSelection, new String[]{itemId});
     }
 }

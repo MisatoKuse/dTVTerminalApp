@@ -109,7 +109,7 @@ public class DownLoadListDataManager {
         //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
         ContentValues values = new ContentValues();
         values.put(DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS, DOWNLOAD_OK);
-        downloadListDao.updatebyItemId(values, itemId);
+        downloadListDao.updateByItemId(values, itemId);
         DataBaseManager.getInstance().closeDatabase();
     }
 
@@ -161,7 +161,7 @@ public class DownLoadListDataManager {
         DownLoadListDao downLoadListDao = new DownLoadListDao(database);
 
         //持ち出し画面用データ取得
-        List<Map<String, String>> list = downLoadListDao.findAllDowloadList(columns);
+        List<Map<String, String>> list = downLoadListDao.findAllDownloadList(columns);
         DataBaseManager.getInstance().closeDatabase();
         return list;
     }

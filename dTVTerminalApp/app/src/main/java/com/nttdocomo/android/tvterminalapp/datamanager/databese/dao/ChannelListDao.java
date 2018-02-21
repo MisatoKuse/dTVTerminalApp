@@ -133,7 +133,7 @@ public class ChannelListDao {
      * データの更新.
      * @return 常に0.
      */
-    @SuppressWarnings("SameReturnValue")
+    @SuppressWarnings({"SameReturnValue", "unused"})
     public int update() {
         //基本的にデータの更新はしない(取得したデータで全て置き換え)
         return 0;

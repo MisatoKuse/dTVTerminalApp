@@ -15,27 +15,31 @@ import java.util.Map;
 
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RECOMMEND_CHANNEL_LIST_TABLE_NAME;
 
-
+/**
+ * おすすめ番組Data Access Object.
+ */
 public class RecommendChannelListDao {
-    // SQLiteDatabase
-    private SQLiteDatabase db;
+    /**
+     * SQLiteDatabase.
+     */
+    private final SQLiteDatabase db;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
-     * @param db
+     * @param db SQLiteDatabase
      */
-    public RecommendChannelListDao(SQLiteDatabase db) {
+    public RecommendChannelListDao(final SQLiteDatabase db) {
         this.db = db;
     }
 
     /**
-     * 配列で指定した列データをすべて取得
+     * 配列で指定した列データをすべて取得.
      *
-     * @param strings
-     * @return
+     * @param strings 指定列
+     * @return データ
      */
-    public List<Map<String, String>> findById(String[] strings) {
+    public List<Map<String, String>> findById(final String[] strings) {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
 
@@ -54,8 +58,8 @@ public class RecommendChannelListDao {
         //データを一行ずつ格納する
         while (isEof) {
             HashMap<String, String> map = new HashMap<>();
-            for (int i = 0; i < strings.length; i++) {
-                map.put(strings[i], cursor.getString(cursor.getColumnIndex(strings[i])));
+            for (String string : strings) {
+                map.put(string, cursor.getString(cursor.getColumnIndex(string)));
             }
             list.add(map);
 
@@ -67,23 +71,30 @@ public class RecommendChannelListDao {
     }
 
     /**
-     * データの登録
+     * データの登録.
      *
-     * @return
+     * @param values 登録するデータ.
+     * @return 成功時:row ID 失敗時:-1
      */
-    public long insert(ContentValues values) {
+    public long insert(final ContentValues values) {
         return db.insert(RECOMMEND_CHANNEL_LIST_TABLE_NAME, null, values);
     }
 
+    /**
+     * データの更新.
+     *
+     * @return 更新リターン
+     */
+    @SuppressWarnings({"SameReturnValue", "unused"})
     public int update() {
         //基本的にデータの更新はしない予定
         return 0;
     }
 
     /**
-     * データの削除
+     * データの削除.
      *
-     * @return
+     * @return return値
      */
     public int delete() {
         return db.delete(RECOMMEND_CHANNEL_LIST_TABLE_NAME, null, null);

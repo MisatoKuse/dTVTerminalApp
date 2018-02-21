@@ -12,7 +12,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ChannelListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.DailyRankListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendChannelListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendVideolListDao;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendVideoListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RoleListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvClipListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvScheduleListDao;
@@ -231,7 +231,7 @@ public class HomeDataManager {
         DBHelper DbHelper = new DBHelper(mContext);
         DataBaseManager.initializeInstance(DbHelper);
         SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-        RecommendVideolListDao recommendVdListDao = new RecommendVideolListDao(database);
+        RecommendVideoListDao recommendVdListDao = new RecommendVideoListDao(database);
 
         //ホーム画面用データ取得
         list = recommendVdListDao.findById(columns);

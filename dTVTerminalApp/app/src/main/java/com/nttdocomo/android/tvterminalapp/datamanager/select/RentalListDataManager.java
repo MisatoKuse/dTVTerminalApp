@@ -93,7 +93,7 @@ public class RentalListDataManager {
         RentalListDao rentalListDao = new RentalListDao(database);
 
         //データ取得
-        List<Map<String, String>> list = rentalListDao.activeListfindById(activeColumns);
+        List<Map<String, String>> list = rentalListDao.activeListFindById(activeColumns);
         DataBaseManager.getInstance().closeDatabase();
         return list;
     }
@@ -141,7 +141,7 @@ public class RentalListDataManager {
         RentalListDao rentalListDao = new RentalListDao(database);
 
         //データ取得
-        List<Map<String, String>> list = rentalListDao.chActiveListfindById(activeColumns);
+        List<Map<String, String>> list = rentalListDao.chActiveListFindById(activeColumns);
         DataBaseManager.getInstance().closeDatabase();
         return list;
     }

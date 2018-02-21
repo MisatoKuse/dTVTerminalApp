@@ -9,40 +9,40 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RECOMMEND_CHANNEL_LIST_TABLE_NAME;
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RECOMMEND_LIST_DANIME_TABLE_NAME;
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RECOMMEND_LIST_DCHANNEL_TABLE_NAME;
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RECOMMEND_LIST_DTV_TABLE_NAME;
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RECOMMEND_VIDEO_LIST_TABLE_NAME;
-
-
+/**
+ * おすすめリストData Access Object.
+ */
 public class RecommendListDao {
-    // SQLiteDatabase
-    private SQLiteDatabase db;
+    /**
+     * SQLiteDatabase.
+     */
+    private final SQLiteDatabase db;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
-     * @param db
+     * @param db SQLiteDatabase
      */
-    public RecommendListDao(SQLiteDatabase db) {
+    public RecommendListDao(final SQLiteDatabase db) {
         this.db = db;
     }
 
     /**
-     * 配列で指定した列データをすべて取得
+     * 配列で指定した列データをすべて取得.
      *
      * @param strings カラム
-     * @return
+     * @param tagPageNo タブ名のタグ番号
+     * @param limitData 取得件数の最大数
+     * @return 取得データ
      */
-    public List<Map<String, String>> findById(String[] strings, int tagPageNo, String limitData) {
+    public List<Map<String, String>> findById(final String[] strings,
+                                              final int tagPageNo, final String limitData) {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
         String tableName = DBUtils.getRecommendTableName(tagPageNo);
@@ -64,8 +64,8 @@ public class RecommendListDao {
         //データを一行ずつ格納する
         while (isEof) {
             HashMap<String, String> map = new HashMap<>();
-            for (int i = 0; i < strings.length; i++) {
-                map.put(strings[i], cursor.getString(cursor.getColumnIndex(strings[i])));
+            for (String string : strings) {
+                map.put(string, cursor.getString(cursor.getColumnIndex(string)));
             }
             list.add(map);
 
@@ -77,26 +77,35 @@ public class RecommendListDao {
     }
 
     /**
-     * データの登録
+     * データの登録.
      *
-     * @return
+     * @param values 登録するデータ
+     * @param tagPageNo タブ名のタグ番号
+     * @return 成功時:row ID 失敗時:-1
      */
-    public long insert(ContentValues values, int tagPageNo) {
+    public long insert(final ContentValues values, final int tagPageNo) {
         String tableName = DBUtils.getRecommendTableName(tagPageNo);
         return db.insert(tableName, "", values);
     }
 
+    /**
+     * データの更新.
+     *
+     * @return 更新リターン
+     */
+    @SuppressWarnings({"SameReturnValue", "unused"})
     public int update() {
         //基本的にデータの更新はしない予定
         return 0;
     }
 
     /**
-     * データの削除
+     * データの削除.
      *
-     * @return
+     * @param tagPageNo タブ名のタグ番号
+     * @return リターン値
      */
-    public int delete(int tagPageNo) {
+    public int delete(final int tagPageNo) {
         String tableName = DBUtils.getRecommendTableName(tagPageNo);
         return db.delete(tableName, null, null);
     }

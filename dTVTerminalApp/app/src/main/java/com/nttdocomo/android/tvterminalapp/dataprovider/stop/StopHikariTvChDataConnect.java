@@ -14,7 +14,9 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.HikariTvChDataProvider;
  */
 
 public class StopHikariTvChDataConnect extends AsyncTask<HikariTvChDataProvider, Void, Void> {
-
+    /**
+     * コンストラクタ.
+     */
     public StopHikariTvChDataConnect() {
         DTVTLogger.start();
     }
