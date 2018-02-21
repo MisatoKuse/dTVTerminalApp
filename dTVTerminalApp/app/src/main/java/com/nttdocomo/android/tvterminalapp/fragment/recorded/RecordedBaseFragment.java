@@ -61,7 +61,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     private DownloadParam downloadParam;
     public List<DlData> que = new ArrayList<>();
     public List<Integer> queIndex = new ArrayList<>();
-    private Handler mHandler;
+    //private Handler mHandler;
     private final int mPercentToUpdateUi = 1;
     private Activity activity;
     private String mProgress;
@@ -80,11 +80,11 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     public View onCreateView(LayoutInflater inflater
             , ViewGroup container, Bundle savedInstanceState) {
         DTVTLogger.start();
-        try{
-            mHandler=new Handler();
-        } catch (Exception e){
-            DTVTLogger.debug(e);
-        }
+//        try{
+//            mHandler=new Handler();
+//        } catch (Exception e){
+//            DTVTLogger.debug(e);
+//        }
         initData();
         return initView();
     }

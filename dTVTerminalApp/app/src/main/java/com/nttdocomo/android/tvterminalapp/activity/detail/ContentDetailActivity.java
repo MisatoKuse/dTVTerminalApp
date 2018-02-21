@@ -543,17 +543,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         mPlayerController.setOnFormatChangeListener(this);
         mPlayerController.setOnPlayerEventListener(this);
         mPlayerController.setOnErrorListener(this);
-        try {
-            //実機でandroid 5.xとandroid4.xの場合は「mPlayerController.setWakeMode(this, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);」失敗したので、
-            //バージョンチェックする
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                mPlayerController.setWakeMode(this, PowerManager.FULL_WAKE_LOCK);
-            } else {
-                mPlayerController.setWakeMode(this, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            }
-        } catch (Exception e) {
-            DTVTLogger.debug(e);
-        }
         mPlayerController.setCaptionDataListener(this);
         mPlayerController.setCurrentCaption(0); // start caption.
         boolean ret = isActivited();
@@ -957,9 +946,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         String type = datas.getVideoType();
 
         int bitRate = Integer.parseInt(datas.getBitrate());
-        if (0 == size) {
-            size = duration * bitRate;
-        }
         String title = datas.getTitle();
         setTitleText(title);
         Uri uri = Uri.parse(url);
@@ -1066,68 +1052,68 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         return true;
     }
 
-    /**
-     * TODO: 削除予定(テスト用処理).
-     * @param file file
-     * @return data
-     */
-    public String ReadFile(final File file) {
-        FileInputStream inStream = null;
-        ByteArrayOutputStream outStream = null;
-        byte[] data;
-        try {
-            inStream = new FileInputStream(file);
-            byte[] buffer = new byte[1024];
-            int len;
-            outStream = new ByteArrayOutputStream();
-            while ((len = inStream.read(buffer)) != -1) {
-                outStream.write(buffer, 0, len);
-            }
+//    /**
+//     * TODO: 削除予定(テスト用処理).
+//     * @param file file
+//     * @return data
+//     */
+//    public String ReadFile(final File file) {
+//        FileInputStream inStream = null;
+//        ByteArrayOutputStream outStream = null;
+//        byte[] data;
+//        try {
+//            inStream = new FileInputStream(file);
+//            byte[] buffer = new byte[1024];
+//            int len;
+//            outStream = new ByteArrayOutputStream();
+//            while ((len = inStream.read(buffer)) != -1) {
+//                outStream.write(buffer, 0, len);
+//            }
+//
+//            data = outStream.toByteArray();
+//        } catch (Exception e) {
+//            DTVTLogger.debug(e);
+//            return null;
+//        } finally {
+//            try {
+//                if (outStream != null) {
+//                    outStream.close();
+//                }
+//                if (inStream != null) {
+//                    inStream.close();
+//                }
+//            } catch (IOException e) {
+//                DTVTLogger.debug(e);
+//            }
+//        }
+//
+//        return new String(data);
+//    }
+//    //test e
 
-            data = outStream.toByteArray();
-        } catch (Exception e) {
-            DTVTLogger.debug(e);
-            return null;
-        } finally {
-            try {
-                if (outStream != null) {
-                    outStream.close();
-                }
-                if (inStream != null) {
-                    inStream.close();
-                }
-            } catch (IOException e) {
-                DTVTLogger.debug(e);
-            }
-        }
-
-        return new String(data);
-    }
-    //test e
-
-    /**
-     * ファイルサイズ取得.
-     *
-     * @param file file
-     * @return ファイルサイズ
-     */
-    private static long getFileSize(final File file) {
-        if (file == null) {
-            return 0;
-        }
-        long size = 0;
-        if (file.exists()) {
-            FileInputStream fis;
-            try {
-                fis = new FileInputStream(file);
-                size = fis.available();
-            } catch (IOException e) {
-                DTVTLogger.debug(e);
-                return 0;
-            }
-        }
-        return size;
-    }
+//    /**
+//     * ファイルサイズ取得.
+//     *
+//     * @param file file
+//     * @return ファイルサイズ
+//     */
+//    private static long getFileSize(final File file) {
+//        if (file == null) {
+//            return 0;
+//        }
+//        long size = 0;
+//        if (file.exists()) {
+//            FileInputStream fis;
+//            try {
+//                fis = new FileInputStream(file);
+//                size = fis.available();
+//            } catch (IOException e) {
+//                DTVTLogger.debug(e);
+//                return 0;
+//            }
+//        }
+//        return size;
+//    }
 
     /**
      * 機能：「duration="0:00:42.000"」/「duration="0:00:42"」からmsへ変換.
@@ -1521,6 +1507,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         playerViewLayout = findViewById(R.id.dtv_contents_detail_main_layout_player_rl);
         playerViewLayout.setVisibility(View.VISIBLE);
         playerViewLayout.removeView(mRecordCtrlView);
+        playerViewLayout.getKeepScreenOn();
         mRecordCtrlView = (RelativeLayout) LayoutInflater.from(this)
                 .inflate(R.layout.tv_player_ctrl_video_record, null, false);
         mVideoPlayPause = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_player_pause_fl);
