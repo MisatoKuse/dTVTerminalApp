@@ -5,9 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
-import android.util.SparseArray;
 
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
@@ -15,6 +13,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservatio
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationMetaData;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RecordingReservationListWebClient;
@@ -57,9 +56,9 @@ public class RecordingReservationListDataProvider implements
      */
     private RemoteRecordingReservationListResponse mStbResponse = null;
     /**
-     * レスポンス突合後リストマップ.
+     * レスポンス突合後リスト.
      */
-    private SparseArray<List<RecordingReservationContentInfo>> mBuffMatchListMap = null;
+    private List<RecordingReservationContentInfo> mBuffMatchList = null;
     /**
      * チャンネル一覧.
      */
@@ -145,7 +144,7 @@ public class RecordingReservationListDataProvider implements
      */
     private static final int RECORD_RESERVATION_LOOP_TYPE_NUM_EV_MONTH = 13;
 
-    // 現在時刻と比較した次回録画予約日時の定数
+    // 現在時刻と比較した次回録画予約日時の定数(MapのKey値)
     /**
      * 0日後.
      */
@@ -178,6 +177,10 @@ public class RecordingReservationListDataProvider implements
      * 7日後.
      */
     private static final int RECORD_RESERVATION_MAP_INDEX_SEVEN_DAY_LATER = 7;
+    /**
+     * 単発予約格納用Key.
+     */
+    private static final int RECORD_RESERVATION_MAP_INDEX_SINGLE_RECORD = 8;
     /**
      * 通信禁止判定フラグ.
      */
@@ -259,7 +262,7 @@ public class RecordingReservationListDataProvider implements
         /**
          * コンストラクタ.
          *
-         * @param id ID
+         * @param id      ID
          * @param dRemote 予約タイプ
          */
         ReservationType(final int id, final String dRemote) {
@@ -297,7 +300,7 @@ public class RecordingReservationListDataProvider implements
             }
         } else {
             DTVTLogger.error("response is null");
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            //TODO WEBAPIを取得できなかった時の処理を記載予定
         }
         DTVTLogger.end();
     }
@@ -318,7 +321,7 @@ public class RecordingReservationListDataProvider implements
             }
         } else {
             DTVTLogger.error("response is null");
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            //TODO WEBAPIを取得できなかった時の処理を記載予定
         }
         DTVTLogger.end();
     }
@@ -337,7 +340,7 @@ public class RecordingReservationListDataProvider implements
             }
         } else {
             DTVTLogger.error("response is null");
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            //TODO WEBAPIを取得できなかった時の処理を記載予定
         }
         DTVTLogger.end();
     }
@@ -400,7 +403,7 @@ public class RecordingReservationListDataProvider implements
         mDRemoteResponse = null;
         mTvScheduleList = null;
         mRecordingReservationList = null;
-        mBuffMatchListMap = null;
+        mBuffMatchList = null;
     }
 
     /**
@@ -458,7 +461,7 @@ public class RecordingReservationListDataProvider implements
     private void buttRecordingReservationListData() {
         DTVTLogger.start();
         DTVTLogger.debug("start buff");
-        mBuffMatchListMap = new SparseArray<>();
+        mBuffMatchList = new ArrayList<>();
         List<RemoteRecordingReservationMetaData> stbList = mStbResponse.getRemoteRecordingReservationMetaData();
         List<RecordingReservationMetaData> dRemoteList = mDRemoteResponse.getRecordingReservationMetaData();
         for (RemoteRecordingReservationMetaData stbData : stbList) {
@@ -472,23 +475,18 @@ public class RecordingReservationListDataProvider implements
             }
         }
         DTVTLogger.debug("end buff");
-        SparseArray<List<RecordingReservationContentInfo>> sparseArray = mBuffMatchListMap.clone();
-        DTVTLogger.debug("sparseArray.size() = " + sparseArray.size());
+        List<RecordingReservationContentInfo> tmpBuffMatchArray = mBuffMatchList;
+        DTVTLogger.debug("tmpBuffMatchArray.size() = " + tmpBuffMatchArray.size());
         boolean matchFlag;
         // STB側データを格納
         for (RemoteRecordingReservationMetaData stbData : stbList) {
             matchFlag = false;
-            for (int i = 0; i < sparseArray.size(); i++) {
-                int key = sparseArray.keyAt(i);
-                List<RecordingReservationContentInfo> list = sparseArray.get(key, new ArrayList<RecordingReservationContentInfo>());
-                DTVTLogger.debug("sparseArray.get(" + i + ").size =" + list.size());
-                for (RecordingReservationContentInfo info : list) {
-                    if (stbData.getServiceId().equals(info.getServiceId())
-                            && stbData.getEventId().equals(info.getEventId())) {
-                        matchFlag = true;
-                        DTVTLogger.debug("Match Data");
-                        break;
-                    }
+            for (RecordingReservationContentInfo info : tmpBuffMatchArray) {
+                if (stbData.getServiceId().equals(info.getServiceId())
+                        && stbData.getEventId().equals(info.getEventId())) {
+                    matchFlag = true;
+                    DTVTLogger.debug("Match Data");
+                    break;
                 }
             }
             if (!matchFlag) {
@@ -498,15 +496,11 @@ public class RecordingReservationListDataProvider implements
         // dリモート側データを格納
         for (RecordingReservationMetaData dRemoteData : dRemoteList) {
             matchFlag = false;
-            for (int i = 0; i < sparseArray.size(); i++) {
-                int key = sparseArray.keyAt(i);
-                List<RecordingReservationContentInfo> list = sparseArray.get(key, new ArrayList<RecordingReservationContentInfo>());
-                for (RecordingReservationContentInfo info : list) {
-                    if (dRemoteData.getServiceId().equals(info.getServiceId())
-                            && dRemoteData.getEventId().equals(info.getEventId())) {
-                        matchFlag = true;
-                        DTVTLogger.debug("Match Data");
-                    }
+            for (RecordingReservationContentInfo info : tmpBuffMatchArray) {
+                if (dRemoteData.getServiceId().equals(info.getServiceId())
+                        && dRemoteData.getEventId().equals(info.getEventId())) {
+                    matchFlag = true;
+                    DTVTLogger.debug("Match Data");
                 }
             }
             if (!matchFlag) {
@@ -566,30 +560,18 @@ public class RecordingReservationListDataProvider implements
      */
     private void putBuffMatchListMapSingle(final long startTime, final RecordingReservationContentInfo info) {
         DTVTLogger.start();
-        // 本日の曜日
-        int todayDayOfWeek = DateUtils.getTodayDayOfWeek();
-        // レスポンスデータの曜日
-        int dataDayOfWeek = DateUtils.getDayOfWeek(startTime);
-        // mBuffMatchListMapのkey値
-        int key;
-        // 曜日比較
-        if (todayDayOfWeek == dataDayOfWeek) {
+
+        // 現在時刻
+        Long nowTime = DateUtils.getNowTimeFormatEpoch();
+
+        if (nowTime > startTime) {
             // 時間比較：現在日時より値が小さい場合リストには表示しない
-            if (DateUtils.getNowTimeFormatEpoch() > startTime) {
-                return;
-            }
+            return;
         }
-        // mBuffMatchListMapのkey値を算出
-        if (todayDayOfWeek > dataDayOfWeek) {
-            key = (dataDayOfWeek + 7) - todayDayOfWeek;
-        } else {
-            key = dataDayOfWeek - todayDayOfWeek;
-        }
+
         info.setStartTimeEpoch(startTime);
-        List<RecordingReservationContentInfo> infoList = getRecordingReservationContentInfoList(key);
-        infoList.add(info);
-        mBuffMatchListMap.put(key, infoList);
-        DTVTLogger.end("key = " + key);
+        mBuffMatchList.add(info);
+        DTVTLogger.end();
     }
 
     /**
@@ -610,76 +592,83 @@ public class RecordingReservationListDataProvider implements
         long nowTimeEpoch = DateUtils.getNowTimeFormatEpoch();
         // レスポンスデータの日時（エポック秒：秒単位）
         long dataTimeEpoch = DateUtils.getTodayStartTimeFormatEpoch() + startTime;
-        int key = 99;
+        int dayLater = 99;
         DTVTLogger.debug("toDayOfWeek = " + todayDayOfWeek);
         switch (loopTypeNum) {
             case RECORD_RESERVATION_LOOP_TYPE_NUM_EV_MONDAY: // 毎週月曜日
                 DTVTLogger.debug("case 1:dayOfWeek 2");
+                //0時0分0秒からの通算秒かどうかを判定
                 if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_MONDAY) {
                     if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
-                        key = RECORD_RESERVATION_MAP_INDEX_SEVEN_DAY_LATER;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_SEVEN_DAY_LATER;
                     } else {
-                        key = RECORD_RESERVATION_MAP_INDEX_TODAY;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_TODAY;
                     }
                 }
                 break;
             case RECORD_RESERVATION_LOOP_TYPE_NUM_EV_TUESDAY: // 毎週火曜日
                 DTVTLogger.debug("case 2:dayOfWeek 3");
+                //0時0分0秒からの通算秒かどうかを判定
                 if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_TUESDAY) {
                     if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
-                        key = RECORD_RESERVATION_MAP_INDEX_SEVEN_DAY_LATER;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_SEVEN_DAY_LATER;
                     } else {
-                        key = RECORD_RESERVATION_MAP_INDEX_TODAY;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_TODAY;
                     }
                 }
                 break;
             case RECORD_RESERVATION_LOOP_TYPE_NUM_EV_WEDNESDAY: // 毎週水曜日
                 DTVTLogger.debug("case 3:dayOfWeek 4");
+                //0時0分0秒からの通算秒かどうかを判定
                 if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_WEDNESDAY) {
                     if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
-                        key = RECORD_RESERVATION_MAP_INDEX_SEVEN_DAY_LATER;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_SEVEN_DAY_LATER;
                     } else {
-                        key = RECORD_RESERVATION_MAP_INDEX_TODAY;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_TODAY;
                     }
                 }
                 break;
             case RECORD_RESERVATION_LOOP_TYPE_NUM_EV_THURSDAY: // 毎週木曜日
                 DTVTLogger.debug("case 4:dayOfWeek 5");
+                //0時0分0秒からの通算秒かどうかを判定
                 if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_THURSDAY) {
                     if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
-                        key = RECORD_RESERVATION_MAP_INDEX_SEVEN_DAY_LATER;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_SEVEN_DAY_LATER;
                     } else {
-                        key = RECORD_RESERVATION_MAP_INDEX_TODAY;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_TODAY;
                     }
                 }
                 break;
             case RECORD_RESERVATION_LOOP_TYPE_NUM_EV_FRIDAY: // 毎週金曜日
                 DTVTLogger.debug("case 5:dayOfWeek 6");
+                //0時0分0秒からの通算秒かどうかを判定
                 if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_FRIDAY) {
                     if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
-                        key = RECORD_RESERVATION_MAP_INDEX_SEVEN_DAY_LATER;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_SEVEN_DAY_LATER;
                     } else {
-                        key = RECORD_RESERVATION_MAP_INDEX_TODAY;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_TODAY;
                     }
                 }
                 break;
             case RECORD_RESERVATION_LOOP_TYPE_NUM_EV_SATURDAY: // 毎週土曜日
                 DTVTLogger.debug("case 6:dayOfWeek 7");
+                //0時0分0秒からの通算秒かどうかを判定
                 if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_SATURDAY) {
                     if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
-                        key = RECORD_RESERVATION_MAP_INDEX_SEVEN_DAY_LATER;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_SEVEN_DAY_LATER;
                     } else {
-                        key = RECORD_RESERVATION_MAP_INDEX_TODAY;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_TODAY;
                     }
                 }
                 break;
             case RECORD_RESERVATION_LOOP_TYPE_NUM_EV_SUNDAY: // 毎週日曜日
                 DTVTLogger.debug("case 7:dayOfWeek 1");
+                //0時0分0秒からの通算秒かどうかを判定
                 if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_SUNDAY) {
                     if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
-                        key = RECORD_RESERVATION_MAP_INDEX_SEVEN_DAY_LATER;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_SEVEN_DAY_LATER;
                     } else {
-                        key = RECORD_RESERVATION_MAP_INDEX_TODAY;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_TODAY;
                     }
                 }
                 break;
@@ -687,18 +676,18 @@ public class RecordingReservationListDataProvider implements
                 DTVTLogger.debug("case 8");
                 if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_FRIDAY) {
                     if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
-                        key = RECORD_RESERVATION_MAP_INDEX_THREE_DAY_LATER;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_THREE_DAY_LATER;
                     } else {
-                        key = RECORD_RESERVATION_MAP_INDEX_TODAY;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_TODAY;
                     }
                 } else if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_SATURDAY
                         || todayDayOfWeek == DateUtils.DAY_OF_WEEK_SUNDAY) {
-                    key = DateUtils.getNumberOfDaysUntilMonday(todayDayOfWeek);
+                    dayLater = DateUtils.getNumberOfDaysUntilMonday(todayDayOfWeek);
                 } else {
                     if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
-                        key = RECORD_RESERVATION_MAP_INDEX_ONE_DAY_LATER;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_ONE_DAY_LATER;
                     } else {
-                        key = RECORD_RESERVATION_MAP_INDEX_TODAY;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_TODAY;
                     }
                 }
                 break;
@@ -706,44 +695,44 @@ public class RecordingReservationListDataProvider implements
                 DTVTLogger.debug("case 9");
                 if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_SATURDAY) {
                     if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
-                        key = RECORD_RESERVATION_MAP_INDEX_THREE_DAY_LATER;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_THREE_DAY_LATER;
                     } else {
-                        key = RECORD_RESERVATION_MAP_INDEX_TODAY;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_TODAY;
                     }
                 } else if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_SUNDAY) {
-                    key = DateUtils.getNumberOfDaysUntilMonday(todayDayOfWeek);
+                    dayLater = DateUtils.getNumberOfDaysUntilMonday(todayDayOfWeek);
                 } else {
                     if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
-                        key = RECORD_RESERVATION_MAP_INDEX_ONE_DAY_LATER;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_ONE_DAY_LATER;
                     } else {
-                        key = RECORD_RESERVATION_MAP_INDEX_TODAY;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_TODAY;
                     }
                 }
                 break;
             case RECORD_RESERVATION_LOOP_TYPE_NUM_EVERYDAY: // 毎日
                 DTVTLogger.debug("case 10");
                 if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
-                    key = RECORD_RESERVATION_MAP_INDEX_ONE_DAY_LATER;
+                    dayLater = RECORD_RESERVATION_MAP_INDEX_ONE_DAY_LATER;
                 } else {
-                    key = RECORD_RESERVATION_MAP_INDEX_TODAY;
+                    dayLater = RECORD_RESERVATION_MAP_INDEX_TODAY;
                 }
                 break;
             case RECORD_RESERVATION_LOOP_TYPE_NUM_SUN_THU: // 日曜日～木曜日
                 DTVTLogger.debug("case 11");
                 if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_THURSDAY) {
                     if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
-                        key = RECORD_RESERVATION_MAP_INDEX_THREE_DAY_LATER;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_THREE_DAY_LATER;
                     } else {
-                        key = RECORD_RESERVATION_MAP_INDEX_TODAY;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_TODAY;
                     }
                 } else if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_FRIDAY
                         || todayDayOfWeek == DateUtils.DAY_OF_WEEK_SATURDAY) {
-                    key = DateUtils.getNumberOfDaysUntilSunday(todayDayOfWeek);
+                    dayLater = DateUtils.getNumberOfDaysUntilSunday(todayDayOfWeek);
                 } else {
                     if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
-                        key = RECORD_RESERVATION_MAP_INDEX_ONE_DAY_LATER;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_ONE_DAY_LATER;
                     } else {
-                        key = RECORD_RESERVATION_MAP_INDEX_TODAY;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_TODAY;
                     }
                 }
                 break;
@@ -751,17 +740,17 @@ public class RecordingReservationListDataProvider implements
                 DTVTLogger.debug("case 12");
                 if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_FRIDAY) {
                     if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
-                        key = RECORD_RESERVATION_MAP_INDEX_TWO_DAY_LATER;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_TWO_DAY_LATER;
                     } else {
-                        key = RECORD_RESERVATION_MAP_INDEX_TODAY;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_TODAY;
                     }
                 } else if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_SATURDAY) {
-                    key = DateUtils.getNumberOfDaysUntilSunday(todayDayOfWeek);
+                    dayLater = DateUtils.getNumberOfDaysUntilSunday(todayDayOfWeek);
                 } else {
                     if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
-                        key = RECORD_RESERVATION_MAP_INDEX_ONE_DAY_LATER;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_ONE_DAY_LATER;
                     } else {
-                        key = RECORD_RESERVATION_MAP_INDEX_TODAY;
+                        dayLater = RECORD_RESERVATION_MAP_INDEX_TODAY;
                     }
                 }
                 break;
@@ -773,33 +762,21 @@ public class RecordingReservationListDataProvider implements
                 DTVTLogger.debug("default");
                 return;
         }
-        if (key == 99) {
+        if (dayLater == 99) {
             int dataDayOfWeek = loopTypeNum + 1;
             DTVTLogger.debug("dataDayOfWeek = " + dataDayOfWeek);
             if (todayDayOfWeek < dataDayOfWeek) {
-                key = dataDayOfWeek - todayDayOfWeek;
+                dayLater = dataDayOfWeek - todayDayOfWeek;
             } else {
-                key = (dataDayOfWeek + 7) - todayDayOfWeek;
+                dayLater = (dataDayOfWeek + 7) - todayDayOfWeek;
             }
         }
 
-        dataTimeEpoch = dataTimeEpoch + (CONVERSION_ONE_DAY_TO_SEC * key);
+        dataTimeEpoch = dataTimeEpoch + (CONVERSION_ONE_DAY_TO_SEC * dayLater);
         info.setStartTimeEpoch(dataTimeEpoch);
-        List<RecordingReservationContentInfo> infoList = getRecordingReservationContentInfoList(key);
-        infoList.add(info);
-        mBuffMatchListMap.put(key, infoList);
-        DTVTLogger.end("key = " + key + " todayDayOfWeek = " + todayDayOfWeek + "表示:"
-                + DateUtils.getRecordShowListItem(info.getStartTimeEpoch()) + "mBuffMatchListMap.size() = " + mBuffMatchListMap.size());
-    }
-
-    /**
-     * key値を元にSparseArrayからリストデータを取得.
-     *
-     * @param key Mapのkey値
-     * @return keyの値で格納したRecordingReservationContentInfoリスト
-     */
-    private List<RecordingReservationContentInfo> getRecordingReservationContentInfoList(final int key) {
-        return mBuffMatchListMap.get(key, new ArrayList<RecordingReservationContentInfo>());
+        mBuffMatchList.add(info);
+        DTVTLogger.end("dayLater = " + dayLater + " todayDayOfWeek = " + todayDayOfWeek + "表示:"
+                + DateUtils.getRecordShowListItem(info.getStartTimeEpoch()) + "mBuffMatchList.size() = " + mBuffMatchList.size());
     }
 
     /**
@@ -819,14 +796,11 @@ public class RecordingReservationListDataProvider implements
     private void sortRecordingReservationListData() {
         DTVTLogger.start();
         mRecordingReservationList = new ArrayList<>();
-        for (int i = 0; i < mBuffMatchListMap.size(); i++) {
-            int key = mBuffMatchListMap.keyAt(i);
-            List<RecordingReservationContentInfo> infoList = getRecordingReservationContentInfoList(key);
-            Collections.sort(infoList, new ContentInfoComparator());
-            for (int j = 0; j < infoList.size(); j++) {
-                mRecordingReservationList.add(infoList.get(j).returnContentsData());
-            }
+        Collections.sort(mBuffMatchList, new ContentInfoComparator());
+        for (int i = 0; i < mBuffMatchList.size(); i++) {
+            mRecordingReservationList.add(mBuffMatchList.get(i).returnContentsData());
         }
+
         DTVTLogger.end("mRecordingReservationList.size() = " + mRecordingReservationList.size());
     }
 
