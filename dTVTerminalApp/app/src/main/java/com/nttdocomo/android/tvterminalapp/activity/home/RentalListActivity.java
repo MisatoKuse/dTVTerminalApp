@@ -176,8 +176,10 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
             resetPaging();
             resetCommunication();
             RentalDataProvider dataProvider = new RentalDataProvider(this, RentalDataProvider.RentalType.RENTAL_LIST);
-            dataProvider.getDbRentalList();
-            return;
+            mContentsList = dataProvider.getDbRentalList();
+            if (mContentsList != null || mContentsList.size() < 1) {
+                return;
+            }
         }
 
         if (0 == dataList.size()) {

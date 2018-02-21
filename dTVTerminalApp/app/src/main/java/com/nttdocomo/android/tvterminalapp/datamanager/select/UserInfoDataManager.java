@@ -10,7 +10,6 @@ import android.database.sqlite.SQLiteDatabase;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.UserInfoListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.DataBaseManager;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
 
@@ -36,7 +35,7 @@ public class UserInfoDataManager {
      *
      * @return ユーザ年齢情報
      */
-    public List<Map<String, String>> selectUserAgeInfo() {
+    public synchronized List<Map<String, String>> selectUserAgeInfo() {
 
         //データ存在チェック
         List<Map<String, String>> list = new ArrayList<>();
@@ -53,13 +52,12 @@ public class UserInfoDataManager {
 
         //Daoクラス使用準備
         DBHelper homeDBHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(homeDBHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        SQLiteDatabase database = homeDBHelper.getWritableDatabase();
         UserInfoListDao userInfoListDao = new UserInfoListDao(database);
 
         //ホーム画面用データ取得
         list = userInfoListDao.findById(columns);
-        DataBaseManager.getInstance().closeDatabase();
+        database.close();
 
         return list;
     }

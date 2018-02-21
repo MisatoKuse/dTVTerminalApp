@@ -63,7 +63,7 @@ public class ProgramDataManager {
      * @param service チャンネルメタのservice.ひかり or dch or 全て
      * @return list チャンネルデータ
      */
-    public List<Map<String, String>> selectChannelListProgramData(final int service) {
+    public synchronized List<Map<String, String>> selectChannelListProgramData(final int service) {
 
         //データ存在チェック
         List<Map<String, String>> list = new ArrayList<>();
@@ -82,8 +82,7 @@ public class ProgramDataManager {
 
         //Daoクラス使用準備
         DBHelper channelListDBHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(channelListDBHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        SQLiteDatabase database = channelListDBHelper.getWritableDatabase();
         ChannelListDao channelListDao = new ChannelListDao(database);
 
         if (service == JsonConstants.CH_SERVICE_TYPE_INDEX_ALL) {
