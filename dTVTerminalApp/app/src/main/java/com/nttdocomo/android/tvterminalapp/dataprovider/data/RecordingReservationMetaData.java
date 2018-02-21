@@ -28,11 +28,11 @@ public class RecordingReservationMetaData implements Serializable {
     private String mTitle = null;
     private int mParentalAgeAttributeOfProgram = 0;
 
-    public static final String[] mPagerPara = {JsonConstants.META_RESPONSE_PAGER_LIMIT,
+    private static final String[] mPagerPara = {JsonConstants.META_RESPONSE_PAGER_LIMIT,
             JsonConstants.META_RESPONSE_OFFSET, JsonConstants.META_RESPONSE_COUNT,
             JsonConstants.META_RESPONSE_TOTAL};
 
-    public static final String[] mReservationListPara = {JsonConstants.META_RESPONSE_PRIORITY,
+    private static final String[] mReservationListPara = {JsonConstants.META_RESPONSE_PRIORITY,
             JsonConstants.META_RESPONSE_PLATFORM_TYPE, JsonConstants.META_RESPONSE_DAY_OF_THE_WEEK,
             JsonConstants.META_RESPONSE_ADULT_ATTRIBUTE_OF_CHANNEL, JsonConstants.META_RESPONSE_SERVICE_ID,
             JsonConstants.META_RESPONSE_START_SCHEDULE_TIME, JsonConstants.META_RESPONSE_END_SCHEDULE_TIME,
@@ -122,11 +122,11 @@ public class RecordingReservationMetaData implements Serializable {
     }
 
     public static String[] getPagerPara() {
-        return mPagerPara;
+        return mPagerPara.clone();
     }
 
     public static String[] getReservationListPara() {
-        return mReservationListPara;
+        return mReservationListPara.clone();
     }
 
     public int getPriority() {

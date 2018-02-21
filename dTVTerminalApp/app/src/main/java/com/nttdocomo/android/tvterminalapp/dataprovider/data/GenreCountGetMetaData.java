@@ -22,7 +22,7 @@ public class GenreCountGetMetaData implements Serializable {
 
     public static final String GENRE_COUNT_GET_META_DATA_GENRE_ID = "genre_id";
     public static final String GENRE_COUNT_GET_META_DATA_COUNT = "count";
-    public static final String[] mRootPara = {GENRE_COUNT_GET_META_DATA_GENRE_ID, GENRE_COUNT_GET_META_DATA_COUNT};
+    private static final String[] mRootPara = {GENRE_COUNT_GET_META_DATA_GENRE_ID, GENRE_COUNT_GET_META_DATA_COUNT};
 
     public String getGenreId() {
         return mGenreId;

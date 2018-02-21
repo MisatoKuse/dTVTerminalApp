@@ -167,11 +167,11 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
     }
 
     public String[] getRoleList() {
-        return roleList;
+        return roleList.clone();
     }
 
     public void setRoleList(String[] roleList) {
-        this.roleList = roleList;
+        this.roleList = roleList.clone();
     }
 
     public String getAvailStartDate() {

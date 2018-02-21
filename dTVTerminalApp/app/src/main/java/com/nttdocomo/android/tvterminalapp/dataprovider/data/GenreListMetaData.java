@@ -65,7 +65,7 @@ public class GenreListMetaData implements Serializable {
     public static final String GENRE_LIST_META_DATA_R_VALUE = "r_value";
     public static final String GENRE_LIST_META_DATA_SUB = "sub";
     //サブコンテンツキー名
-    public static final String mCommonData[] = {GENRE_LIST_META_DATA_ID,
+    private static final String mCommonData[] = {GENRE_LIST_META_DATA_ID,
             GENRE_LIST_META_DATA_TITLE, GENRE_LIST_META_DATA_R_VALUE};
 
     /**

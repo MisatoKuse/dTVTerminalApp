@@ -56,6 +56,7 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
+import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessage;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
@@ -763,10 +764,10 @@ public class BaseActivity extends FragmentActivity implements
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     protected void onStbClientResponse(final Message msg) {
         RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES requestCommand
-                = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getRequestCommandTypes();
+                = ((RelayServiceResponseMessage) msg.obj).getRequestCommandTypes();
         DTVTLogger.debug(String.format("msg.what:%s requestCommand:%s", msg.what, requestCommand));
         switch (msg.what) {
-            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_OK:
+            case RelayServiceResponseMessage.RELAY_RESULT_OK:
                 switch (requestCommand) {
                     case START_APPLICATION:
                     case TITLE_DETAIL:
@@ -787,8 +788,8 @@ public class BaseActivity extends FragmentActivity implements
                         break;
                 }
                 break;
-            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_ERROR:
-                int resultCode = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getResultCode();
+            case RelayServiceResponseMessage.RELAY_RESULT_ERROR:
+                int resultCode = ((RelayServiceResponseMessage) msg.obj).getResultCode();
                 DTVTLogger.debug(String.format("resultCode:%s", resultCode));
                 switch (requestCommand) {
                     case KEYEVENT_KEYCODE_POWER:
@@ -798,22 +799,22 @@ public class BaseActivity extends FragmentActivity implements
                     case START_APPLICATION:
                     case TITLE_DETAIL:
                         RemoteControlRelayClient.STB_APPLICATION_TYPES appId
-                                = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getApplicationTypes();
+                                = ((RelayServiceResponseMessage) msg.obj).getApplicationTypes();
                         startApplicationErrorHandler(resultCode, appId);
                         break;
                     case IS_USER_ACCOUNT_EXIST:
                     case SET_DEFAULT_USER_ACCOUNT:
                         switch (resultCode) {
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
+                            case RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
                                 //サーバエラー
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE:
+                            case RelayServiceResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE:
                                 //ユーザアカウントチェックサービス未登録
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY:
+                            case RelayServiceResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY:
                                 //中継アプリからの応答待ち中に新しい要求を行った場合
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_CONNECTION_TIMEOUT:
+                            case RelayServiceResponseMessage.RELAY_RESULT_CONNECTION_TIMEOUT:
                                 //STBの中継アプリ~応答が無かった場合(要求はできたのでSTBとの通信はOK)
                                 break;
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
+                            case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
                                 // チェック処理の状態で処理を分岐する
                                 SharedPreferencesUtils.resetSharedPreferencesStbInfo(getApplicationContext());
                                 // TODO アプリのキャッシュをきれいにクリアする処理が必要
@@ -827,7 +828,7 @@ public class BaseActivity extends FragmentActivity implements
                         break;
                     case CHECK_APPLICATION_VERSION_COMPATIBILITY:
                         switch (resultCode) {
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE:
+                            case RelayServiceResponseMessage.RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE:
                                 CustomDialog dTVTUpDateDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
                                 dTVTUpDateDialog.setContent(getResources().getString(R.string.d_tv_terminal_application_version_update_dialog));
                                 dTVTUpDateDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
@@ -838,7 +839,7 @@ public class BaseActivity extends FragmentActivity implements
                                 });
                                 dTVTUpDateDialog.showDialog();
                                 break;
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE:
+                            case RelayServiceResponseMessage.RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE:
                                 showErrorDialog(getResources().getString(R.string.stb_application_version_update));
                                 break;
                             default:
@@ -847,7 +848,7 @@ public class BaseActivity extends FragmentActivity implements
                         break;
                     case COMMAND_UNKNOWN:
                         switch (resultCode) {
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
+                            case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
                                 if (getStbStatus()) {
                                     showErrorDialog(getResources().getString(R.string.main_setting_connect_error_message));
                                     //ペアリングアイコンをOFFにする
@@ -876,7 +877,7 @@ public class BaseActivity extends FragmentActivity implements
     private void startApplicationErrorHandler(final int resultCode, final RemoteControlRelayClient.STB_APPLICATION_TYPES appId) {
         String message;
         switch (resultCode) {
-            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_NOT_INSTALL:
+            case RelayServiceResponseMessage.RELAY_RESULT_APPLICATION_NOT_INSTALL:
                 switch (appId) {
                     case DTV:
                         message = getResources().getString(R.string.main_setting_dtv_uninstall_message);
@@ -904,13 +905,13 @@ public class BaseActivity extends FragmentActivity implements
                         break;
                 }
                 break;
-            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_ID_NOTEXIST:
-            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_START_FAILED:
-            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
+            case RelayServiceResponseMessage.RELAY_RESULT_APPLICATION_ID_NOTEXIST:
+            case RelayServiceResponseMessage.RELAY_RESULT_APPLICATION_START_FAILED:
+            case RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
                 message = getResources().getString(R.string.main_setting_stb_application_launch_fail);
                 showErrorDialog(message);
                 break;
-            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_VERSION_CODE_INCOMPATIBLE:
+            case RelayServiceResponseMessage.RELAY_RESULT_VERSION_CODE_INCOMPATIBLE:
                 switch (appId) {
                     case DTV:
                         message = getResources().getString(R.string.main_setting_dtv_update_message);
@@ -938,14 +939,14 @@ public class BaseActivity extends FragmentActivity implements
                         break;
                 }
                 break;
-            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_CONNECTION_TIMEOUT:
+            case RelayServiceResponseMessage.RELAY_RESULT_CONNECTION_TIMEOUT:
                 //dTV アプリが STBの中継アプリに接続できない場合
                 setStbStatus(false);
                 break;
-            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY:
+            case RelayServiceResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY:
                 //中継アプリからの応答待ち中に新しい要求を行った場合
                 break;
-            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
+            case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
             default:
                 message = getResources().getString(R.string.main_setting_stb_application_launch_fail);
                 showErrorDialog(message);
