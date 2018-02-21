@@ -160,7 +160,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             if(que != null && que.size() > 0){
                 showMessage("ダウンロード中のため、再生できません");
             } else {
-                if(activity != null){
+                if(activity != null && null != mContentsList){
                     Intent intent = new Intent(mActivity, ContentDetailActivity.class);
                     intent.putExtra(DTVTConstants.SOURCE_SCREEN, activity.getComponentName().getClassName());
                     intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, mContentsList.get(i));
@@ -237,8 +237,9 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     }
 
     private void setSuccessStatus(String fullPath){
-        if(queIndex.size() > 0){
-            View view = mRecordedListview.getChildAt(queIndex.get(0)-mRecordedListview.getFirstVisiblePosition());
+        if(queIndex.size() > 0 && null != mRecordedListview){
+            int idx0 = queIndex.get(0) - mRecordedListview.getFirstVisiblePosition();
+            View view = mRecordedListview.getChildAt(idx0);
             if (view != null) {
                 view.findViewById(R.id.item_common_result_clip_tv).setBackgroundResource(R.mipmap.icon_circle_normal_download_check);
                 setDownloadStatusClear(view.findViewById(R.id.item_common_result_clip_tv));
@@ -294,9 +295,17 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         View view = null;
         int idx = queIndex.get(index);
         try {
-            view = mRecordedListview.getChildAt(idx - mRecordedListview.getFirstVisiblePosition());
-            view.findViewById(R.id.item_common_result_clip_tv).setBackgroundResource(R.mipmap.icon_circle_normal_download);
-            setDownloadStatusClear(view.findViewById(R.id.item_common_result_clip_tv));
+            if(null == mRecordedListview){
+                return;
+            } else {
+                idx = idx - mRecordedListview.getFirstVisiblePosition();
+            }
+            view = mRecordedListview.getChildAt(idx);
+            View tvView = view.findViewById(R.id.item_common_result_clip_tv);
+            if(null != tvView){
+                tvView.setBackgroundResource(R.mipmap.icon_circle_normal_download);
+                setDownloadStatusClear(tvView);
+            }
             restoreChannelAndTime();
             mContentsData.get(idx).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_ALLOW);
             mContentsData.get(idx).setDownloadStatus("");
@@ -351,10 +360,16 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     }
 
     private void setDownloadStatus(int index, int progress){
-        if(index>=mContentsData.size()){
+        if(index>=mContentsData.size() || null == mRecordedListview){
             return;
         }
-        View view = mRecordedListview.getChildAt(index-mRecordedListview.getFirstVisiblePosition());
+        int idx = 0;
+        if(null != mRecordedListview){
+            idx = index - mRecordedListview.getFirstVisiblePosition();
+        } else {
+            return;
+        }
+        View view = mRecordedListview.getChildAt(idx);
         TextView textView = null;
         if (view != null) {
             textView = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
