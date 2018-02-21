@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class DlnaHikariChListInfo {
+class DlnaHikariChListInfo {
 
-    private ArrayList<DlnaHikariChListItem> mLists = new ArrayList();
+    private ArrayList<DlnaHikariChListItem> mLists = new ArrayList<>();
 
-    public void addItem(DlnaHikariChListItem item){
+    private void addItem(DlnaHikariChListItem item){
         mLists.add(item);
     }
 
@@ -39,18 +39,7 @@ public class DlnaHikariChListInfo {
         return mLists.get(index);
     }
 
-    public void sortByTimeDesc(){
-        Collections.sort(mLists, new Comparator() {
-            @Override
-            public int compare(Object o1, Object o2) {
-                DlnaHikariChListItem r1=(DlnaHikariChListItem)o1;
-                DlnaHikariChListItem r2=(DlnaHikariChListItem)o2;
-                return r2.mDate.compareTo(r1.mDate);
-            }
-        });
-    }
-
-    public static DlnaHikariChListInfo fromArrayList(ArrayList<Object> content){
+    static DlnaHikariChListInfo fromArrayList(ArrayList<Object> content){
         if(null==content){
             return null;
         }
@@ -62,7 +51,7 @@ public class DlnaHikariChListInfo {
         return info;
     }
 
-    public ArrayList<DlnaHikariChListItem> getHikariChLists() {
+    ArrayList<DlnaHikariChListItem> getHikariChLists() {
         return mLists;
     }
 }

@@ -15,14 +15,14 @@ public  class FileListAll {
 
     public HashMap<String, String> getList(File file) {
 
-        HashMap<String, String> fileList = new HashMap<String, String>();
+        HashMap<String, String> fileList = new HashMap<>();
         getFileList(file, fileList);
         return fileList;
     }
 
     /**
-     * @param path
-     * @param fileList
+     * @param path path
+     * @param fileList fileList
      */
     private void getFileList(File path, HashMap<String, String> fileList){
         if(path.isDirectory()){
@@ -30,14 +30,12 @@ public  class FileListAll {
             if(null == files) {
                 return;
             }
-            for(int i = 0; i < files.length; i++){
-                getFileList(files[i], fileList);
+            for(File file: files){
+                getFileList(file, fileList);
             }
         }else{
             String filePath = path.getAbsolutePath();
-
             String fileName = filePath.substring(filePath.lastIndexOf("/")+1);
-            File file=new File(fileName);
             fileList.put(fileName, filePath + " size=" + DlnaInterfaceRI.getFileSize(filePath));
         }
     }

@@ -10,8 +10,6 @@ package com.nttdocomo.android.tvterminalapp.jni;
  */
 public class DlnaProvBsChList {
 
-    private String mCurrentDmsUdn;
-
     /**
      * 機能：DlnaProvRecVideoを構造
      */
@@ -57,9 +55,10 @@ public class DlnaProvBsChList {
      */
     public boolean browseChListDms(){
         DlnaInterface di= DlnaInterface.getInstance();
-        if(null==di){
-            return false;
-        }
-        return di.browseBsChListDms();
+//        if(null != di){
+//            return di.browseBsChListDms();
+//        }
+//        return false;
+        return null != di && di.browseBsChListDms();
     }
 }

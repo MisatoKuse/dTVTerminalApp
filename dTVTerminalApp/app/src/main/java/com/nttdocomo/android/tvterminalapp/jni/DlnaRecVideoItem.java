@@ -38,26 +38,13 @@ public class DlnaRecVideoItem {
     public int mAllowedUse = 0;
     public String mVideoType="";
     public String mClearTextSize="";
-    public String mChannelName;    //upnp:channelName
+    public String mChannelName="";    //upnp:channelName
 
     /**
      * 機能：DlnaRecVideoItem情報クラスを構造
      */
     public DlnaRecVideoItem(){
 
-    }
-
-    /**
-     * 機能：等しいか判断
-     * @param item2
-     * @return
-     */
-    public boolean equalTo(DlnaRecVideoItem item2){
-        if (null==this || null==item2 || null==this.mTitle || null==item2.mTitle || null==this.mResUrl || null==item2.mResUrl) {
-            return false;
-        }
-        boolean ret= (this.mTitle.equals(item2.mTitle) && this.mResUrl.equals(item2.mResUrl));
-        return ret;
     }
 
     /**
@@ -70,12 +57,9 @@ public class DlnaRecVideoItem {
         }
         String duration = mDuration.trim();
         if(8 == duration.length()) {
-            String hour = duration.substring(0, 2);
-            String min = duration.substring(3, 5);
-            if(null == hour || null == min){
-                return null;
-            }
             try {
+                String hour = duration.substring(0, 2);
+                String min = duration.substring(3, 5);
                 int h = Integer.parseInt(hour);
                 int m = Integer.parseInt(min);
                 return String.valueOf(60 * h + m);

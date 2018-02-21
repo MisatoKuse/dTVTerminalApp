@@ -10,8 +10,6 @@ package com.nttdocomo.android.tvterminalapp.jni;
  */
 public class DlnaProvRecVideo {
 
-    private String mCurrentDmsUdn;
-
     /**
      * 機能：DlnaProvRecVideoを構造
      */
@@ -57,13 +55,19 @@ public class DlnaProvRecVideo {
      */
     public boolean browseRecVideoDms(){
         DlnaInterface di= DlnaInterface.getInstance();
-        if(null==di){
-            return false;
-        }
-        return di.browseRecVideoDms();
+//        if(null!=di){
+//            return di.browseRecVideoDms();
+//        }
+//        return false;
+        return null!=di && di.browseRecVideoDms();
     }
 
-    public boolean isDlnaProRecVideoAvailable(){
-        return DlnaInterface.isDlnaRunning();
+    private boolean isDlnaProRecVideoAvailable(){
+        DlnaInterface di= DlnaInterface.getInstance();
+//        if(null!=di){
+//            return di.isDlnaRunning();
+//        }
+//        return false;
+        return null!=di && di.isDlnaRunning();
     }
 }

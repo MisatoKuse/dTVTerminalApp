@@ -10,9 +10,9 @@ import java.util.Comparator;
 
 public class DlnaRecVideoInfo {
 
-    private ArrayList<DlnaRecVideoItem> mRecordVideoLists = new ArrayList();
+    private ArrayList<DlnaRecVideoItem> mRecordVideoLists = new ArrayList<>();
 
-    public void addItem(DlnaRecVideoItem item){
+    private void addItem(DlnaRecVideoItem item){
         mRecordVideoLists.add(item);
     }
 
@@ -55,18 +55,7 @@ public class DlnaRecVideoInfo {
         return mRecordVideoLists.get(index);
     }
 
-    public void sortByTimeDesc(){
-        Collections.sort(mRecordVideoLists, new Comparator() {
-            @Override
-            public int compare(Object o1, Object o2) {
-                DlnaRecVideoItem r1=(DlnaRecVideoItem)o1;
-                DlnaRecVideoItem r2=(DlnaRecVideoItem)o2;
-                return r2.mDate.compareTo(r1.mDate);
-            }
-        });
-    }
-
-    public static DlnaRecVideoInfo fromArrayList(ArrayList<Object> content){
+    static DlnaRecVideoInfo fromArrayList(ArrayList<Object> content){
         if(null==content){
             return null;
         }
@@ -78,8 +67,8 @@ public class DlnaRecVideoInfo {
         return info;
     }
 
-    public static final ArrayList<Object> toArrayList(DlnaRecVideoInfo info){
-        ArrayList<Object> ret=new ArrayList();
+    public static ArrayList<Object> toArrayList(DlnaRecVideoInfo info){
+        ArrayList<Object> ret=new ArrayList<>();
         if(null==info || 0==info.size()){
             return ret;
         }
