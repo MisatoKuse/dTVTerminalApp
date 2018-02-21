@@ -43,14 +43,13 @@ public class DlnaBsChListItem {
 
     /**
      * 機能：等しいか判断
-     * @param item2
-     * @return
+     * @param item2 item2
+     * @return yes or no
      */
     public boolean equalTo(DlnaBsChListItem item2){
-        if (null==this || null==item2 || null==this.mTitle || null==item2.mTitle || null==this.mResUrl || null==item2.mResUrl) {
+        if (null==item2 || null==this.mTitle || null==item2.mTitle || null==this.mResUrl || null==item2.mResUrl) {
             return false;
         }
-        boolean ret= (this.mTitle.equals(item2.mTitle) && this.mResUrl.equals(item2.mResUrl));
-        return ret;
+        return this.mTitle.equals(item2.mTitle) && this.mResUrl.equals(item2.mResUrl);
     }
 }

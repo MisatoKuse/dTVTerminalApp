@@ -10,9 +10,9 @@ import java.util.Comparator;
 
 public class DlnaTerChListInfo {
 
-    private ArrayList<DlnaTerChListItem> mLists = new ArrayList();
+    private ArrayList<DlnaTerChListItem> mLists = new ArrayList<>();
 
-    public void addItem(DlnaTerChListItem item){
+    private void addItem(DlnaTerChListItem item){
         mLists.add(item);
     }
 
@@ -39,18 +39,7 @@ public class DlnaTerChListInfo {
         return mLists.get(index);
     }
 
-    public void sortByTimeDesc(){
-        Collections.sort(mLists, new Comparator() {
-            @Override
-            public int compare(Object o1, Object o2) {
-                DlnaTerChListItem r1=(DlnaTerChListItem)o1;
-                DlnaTerChListItem r2=(DlnaTerChListItem)o2;
-                return r2.mDate.compareTo(r1.mDate);
-            }
-        });
-    }
-
-    public static DlnaTerChListInfo fromArrayList(ArrayList<Object> content){
+    static DlnaTerChListInfo fromArrayList(ArrayList<Object> content){
         if(null==content){
             return null;
         }
@@ -62,8 +51,8 @@ public class DlnaTerChListInfo {
         return info;
     }
 
-    public static final ArrayList<Object> toArrayList(DlnaTerChListInfo info){
-        ArrayList<Object> ret=new ArrayList();
+    public static ArrayList<Object> toArrayList(DlnaTerChListInfo info){
+        ArrayList<Object> ret=new ArrayList<>();
         if(null==info || 0==info.size()){
             return ret;
         }
@@ -73,7 +62,7 @@ public class DlnaTerChListInfo {
         return ret;
     }
 
-    public ArrayList<DlnaTerChListItem> getTerChLists() {
+    ArrayList<DlnaTerChListItem> getTerChLists() {
         return mLists;
     }
 }

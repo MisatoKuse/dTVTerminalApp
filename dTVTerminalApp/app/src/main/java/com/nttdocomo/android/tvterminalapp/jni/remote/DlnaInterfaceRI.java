@@ -5,6 +5,8 @@
 package com.nttdocomo.android.tvterminalapp.jni.remote;
 
 import android.content.Context;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -55,36 +57,38 @@ class DlnaInterfaceRI {
         if(null==context){
             return null;
         }
-        return context.getFilesDir().getAbsolutePath() + File.separator + sConFileDirName;
+        File f = context.getFilesDir();
+        return f.getAbsolutePath() + File.separator + sConFileDirName;
     }
 
-    private static void deleteFolderFile(String filePath, boolean deleteThisPath) {
-        if (!TextUtils.isEmpty(filePath)) {
-            File file = new File(filePath);
-            if(null == file){
-                return;
-            }
-            if (file.isDirectory()) {
-                File files[] = file.listFiles();
-                for (int i = 0; i < files.length; i++) {
-                    deleteFolderFile(files[i].getAbsolutePath(), true);
-                }
-            }
-            if (deleteThisPath) {
-                if (!file.isDirectory()) {
-                    file.delete();
-                } else {
-                    File files[] = file.listFiles();
-                    if(null == files){
-                        return;
-                    }
-                    if (files.length == 0) {
-                        file.delete();
-                    }
-                }
-            }
-        }
-    }
+//    //Debugで利用可能の関数
+//    private static void deleteFolderFile(String filePath, boolean deleteThisPath) {
+//        if (!TextUtils.isEmpty(filePath)) {
+//            File file = new File(filePath);
+//            if(null == file){
+//                return;
+//            }
+//            if (file.isDirectory()) {
+//                File files[] = file.listFiles();
+//                for (int i = 0; i < files.length; i++) {
+//                    deleteFolderFile(files[i].getAbsolutePath(), true);
+//                }
+//            }
+//            if (deleteThisPath) {
+//                if (!file.isDirectory()) {
+//                    file.delete();
+//                } else {
+//                    File files[] = file.listFiles();
+//                    if(null == files){
+//                        return;
+//                    }
+//                    if (files.length == 0) {
+//                        file.delete();
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     static long getFileSize(String path) {
         long size = 0;
@@ -96,16 +100,25 @@ class DlnaInterfaceRI {
                 size = fis.available();
             } catch (Exception e) {
                 DTVTLogger.debug(e);
+            } finally {
+                try {
+                    if(null != fis){
+                        fis.close();
+                    }
+                } catch (IOException e) {
+                    DTVTLogger.debug(e);
+                }
             }
         }
         return size;
     }
 
-    public static void listAllConfFilesCopied(String path){
-        FileListAll fs=new FileListAll();
-        File file= new File(path);
-        HashMap<String, String> hm= fs.getList(file);
-    }
+//    //Debugで利用
+//    public static void listAllConfFilesCopied(String path){
+//        FileListAll fs=new FileListAll();
+//        File file= new File(path);
+//        HashMap<String, String> hm= fs.getList(file);
+//    }
 
     /**
      * copy conf files to app
@@ -122,9 +135,11 @@ class DlnaInterfaceRI {
         }
         //String separator = File.separator;
         boolean r=true;
-        String[] fileNames=null;
+        String[] fileNames;
         try {
-            fileNames = context.getResources().getAssets().list(assetsConfPath);
+            Resources res = context.getResources();
+            AssetManager am = res.getAssets();
+            fileNames = am.list(assetsConfPath);
         } catch (Exception e) {
             DTVTLogger.debug(e);
             return false;
@@ -132,8 +147,8 @@ class DlnaInterfaceRI {
         if (fileNames.length > 0) {
             File file = new File(destPath);
 
-            FileListAll fs = new FileListAll();
-            HashMap<String, String> hm = fs.getList(file);
+            //FileListAll fs = new FileListAll();   //for test
+            //HashMap<String, String> hm = fs.getList(file);    //for test
 
             if (!file.exists()) {
                 if (!file.mkdirs()) {
@@ -153,16 +168,16 @@ class DlnaInterfaceRI {
         return r;
     }
 
-    private static String getFileName(String path) {
-        if(null==path){
-            return path;
-        }
-        int p=path.lastIndexOf(File.separator);
-        if(p<0){
-            return path;
-        }
-        return path.substring(p, path.length());
-    }
+//    private static String getFileName(String path) {
+//        if(null==path){
+//            return path;
+//        }
+//        int p=path.lastIndexOf(File.separator);
+//        if(p<0){
+//            return path;
+//        }
+//        return path.substring(p, path.length());
+//    }
 
     private static final String sConFileDirName="drm/conf";
 
@@ -194,14 +209,21 @@ class DlnaInterfaceRI {
         OutputStream out = null;
         InputStream in2=null;
         try {
-            in = new BufferedInputStream(context.getAssets().open(oldPath));
+            AssetManager am = context.getAssets();
+            in = new BufferedInputStream(am.open(oldPath));
             in2= filterSpecial(in, sWhatToReplace, conDir);
             out = new BufferedOutputStream(new FileOutputStream(dest));
             byte[] buffer = new byte[sBufSize];
-            int length = 0;
+            int length;
             while ((length = in2.read(buffer)) >0) {
                 out.write(buffer, 0, length);
             }
+        } catch (NullPointerException e) {
+            DTVTLogger.debug("copyConfFile NullPointerException");
+            ret=false;
+        } catch (IOException e) {
+            DTVTLogger.debug(e.getMessage());
+            ret=false;
         } catch (Exception e) {
             DTVTLogger.debug(e);
             ret=false;
@@ -225,21 +247,22 @@ class DlnaInterfaceRI {
     }
 
     private static InputStream filterSpecial(InputStream is, final String whatToReplace, final String replace){
-        String temp = null;
-        InputStream ret=null;
+        String temp;
+        InputStream ret;
         try {
-            temp = InputStreamToString(is, "UTF-8");
+            temp = inputStreamToString(is, "UTF-8");
             temp = temp.replace(whatToReplace, replace);
         } catch (Exception e) {
             DTVTLogger.debug(e);
+            return null;
         }
 
         if(null == temp){
-            return ret;
+            return null;
         }
 
         try {
-            ret = StringToInputStream(temp);
+            ret = stringToInputStream(temp);
         } catch (Exception e) {
             DTVTLogger.debug(e);
             ret=null;
@@ -247,15 +270,14 @@ class DlnaInterfaceRI {
         return ret;
     }
 
-    private static InputStream StringToInputStream(String in) throws Exception {
-        ByteArrayInputStream is = new ByteArrayInputStream(in.getBytes("UTF-8"));
-        return is;
+    private static InputStream stringToInputStream(String in) throws Exception {
+        return new ByteArrayInputStream(in.getBytes("UTF-8"));
     }
 
-    private static String InputStreamToString(InputStream in, String encoding) throws Exception {
+    private static String inputStreamToString(InputStream in, String encoding) throws Exception {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         byte[] data = new byte[sBufSize];
-        int count = -1;
+        int count;
         while ((count = in.read(data, 0, sBufSize)) != -1){
             outStream.write(data, 0, count);
         }

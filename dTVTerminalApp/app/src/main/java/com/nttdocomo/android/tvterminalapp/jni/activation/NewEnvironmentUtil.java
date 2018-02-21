@@ -17,7 +17,7 @@ import java.util.List;
 public class NewEnvironmentUtil extends EnvironmentUtil{
 
     private static String getDataApkCmWorkName(EnvironmentUtil.ACTIVATE_DATA_HOME dataHome) {
-        String cmWorkName = null;
+        String cmWorkName;
         switch(dataHome) {
             case DMP:
                 cmWorkName = "cm_work_dmp";
@@ -28,6 +28,7 @@ public class NewEnvironmentUtil extends EnvironmentUtil{
             case PLAYER:
                 cmWorkName = "cm_work_player";
                 break;
+            case NONE:
             default:
                 throw new IllegalArgumentException("invalid ACTIVATE_DATA_HOME.");
         }
@@ -35,43 +36,43 @@ public class NewEnvironmentUtil extends EnvironmentUtil{
         return cmWorkName;
     }
 
-    public static String getPrivateDataHome(String destDataHomeDir, EnvironmentUtil.ACTIVATE_DATA_HOME dataHomeEnum) {
-        try {
-            File e = new File(destDataHomeDir, getDataApkCmWorkName(dataHomeEnum));
-            if(!e.exists()) {
-                e.mkdirs();
+    private static String getPrivateDataHome(String destDataHomeDir, EnvironmentUtil.ACTIVATE_DATA_HOME dataHomeEnum) {
+        File f = new File(destDataHomeDir, getDataApkCmWorkName(dataHomeEnum));
+        if(!f.exists()) {
+            boolean r = f.mkdirs();
+            if(!r){
+                return null;
             }
-
-            return e.getAbsolutePath();
-        } catch (Exception e) {
-            DTVTLogger.debug(e);
-            return null;
         }
+        return f.getAbsolutePath();
     }
 
     /**
      * copy Device Key From Other CM Work
-     * @param context
-     * @param destDataHomeDir
-     * @param dataHomeEnum
+     * @param context context
+     * @param destDataHomeDir destDataHomeDir
+     * @param dataHomeEnum dataHomeEnum
      * @return 3: 成功   1: 既にある  0: 失敗
      */
     public static int copyDeviceKeyFromOtherCMWork(Context context, String destDataHomeDir, EnvironmentUtil.ACTIVATE_DATA_HOME dataHomeEnum) {
-        File currentCMWorkDir = null;
-
+        File currentCMWorkDir;
         File currentDeviceKeyFile;
-        try {
-            currentCMWorkDir = new File(getPrivateDataHome(destDataHomeDir, dataHomeEnum));
-            currentDeviceKeyFile = new File(currentCMWorkDir, "db_post");
-            if(currentDeviceKeyFile.exists()) {
-                return 1;
-            }
-        } catch (Exception var9) {
+
+        String pdhHome = getPrivateDataHome(destDataHomeDir, dataHomeEnum);
+        if(null == pdhHome){
             return 0;
+        }
+        currentCMWorkDir = new File(pdhHome);
+        currentDeviceKeyFile = new File(currentCMWorkDir, "db_post");
+        if(currentDeviceKeyFile.exists()) {
+            return 1;
         }
 
         List allDirs = getPrivateDataHomeAllDir(context);
         Iterator var5 = allDirs.iterator();
+
+        String absPath;
+        String absPath2;
 
         File foundDeviceKey;
         do {
@@ -84,13 +85,19 @@ public class NewEnvironmentUtil extends EnvironmentUtil{
 
                     String dir = (String)var5.next();
                     otherCMWorkDir = new File(dir);
-                } while(otherCMWorkDir.getAbsolutePath().equals(currentCMWorkDir.getAbsolutePath()));
+
+                    absPath = otherCMWorkDir.getAbsolutePath();
+                    absPath2 = currentCMWorkDir.getAbsolutePath();
+                } while(absPath.equals(absPath2));
 
                 if(otherCMWorkDir.exists()) {
                     break;
                 }
 
-                otherCMWorkDir.mkdirs();
+                boolean r = otherCMWorkDir.mkdirs();
+                if(!r) {
+                    DTVTLogger.debug("mkdir failed");
+                }
             } while(!otherCMWorkDir.exists());
 
             foundDeviceKey = new File(otherCMWorkDir, "db_post");
