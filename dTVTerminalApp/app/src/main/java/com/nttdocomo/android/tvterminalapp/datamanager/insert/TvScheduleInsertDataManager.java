@@ -19,13 +19,19 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.UPDATE_DATE;
@@ -82,6 +88,7 @@ public class TvScheduleInsertDataManager {
             }
             tvScheduleListDao.insert(values);
         }
+        database.close();
         DataBaseManager.getInstance().closeDatabase();
     }
 
@@ -94,6 +101,7 @@ public class TvScheduleInsertDataManager {
     public synchronized void insertTvScheduleInsertList(final ChannelInfoList channelInfoList, final String chInfoDate) {
         DTVTLogger.start();
         if (channelInfoList.getChannels().size() == 0) {
+            //保存するチャンネル情報が無いため保存せず戻る
             return;
         }
         String chInfoGetDate = StringUtils.getChDateInfo(chInfoDate);
@@ -132,61 +140,139 @@ public class TvScheduleInsertDataManager {
             TvScheduleListDao tvScheduleListDao = new TvScheduleListDao(database);
 
             //ContentValuesに変換してDBに保存する.
-            //TODO パラメータ要確認
             ArrayList<ScheduleInfo> scheduleInfos = channelInfo.getSchedules();
             for (ScheduleInfo scheduleInfo : scheduleInfos) {
-                ContentValues values = new ContentValues();
-                values.put(JsonConstants.META_RESPONSE_THUMB_448, ""); //imageURL?
-                values.put(JsonConstants.META_RESPONSE_TITLE, scheduleInfo.getTitle());
-                values.put(JsonConstants.META_RESPONSE_PUBLISH_START_DATE, scheduleInfo.getStartTime());
-                values.put(JsonConstants.META_RESPONSE_PUBLISH_END_DATE, scheduleInfo.getEndTime());
-                values.put(JsonConstants.META_RESPONSE_CHNO, scheduleInfo.getChNo());
-                values.put(JsonConstants.META_RESPONSE_DISP_TYPE, scheduleInfo.getDispType());
-                values.put(JsonConstants.META_RESPONSE_SEARCH_OK, scheduleInfo.getSearchOk());
-                values.put(JsonConstants.META_RESPONSE_CRID, "");
-                values.put(JsonConstants.META_RESPONSE_SERVICE_ID, "");
-                values.put(JsonConstants.META_RESPONSE_EVENT_ID, "");
-                values.put(JsonConstants.META_RESPONSE_TITLE_ID, "");
-                values.put(JsonConstants.META_RESPONSE_R_VALUE, scheduleInfo.getRValue());
-                values.put(JsonConstants.META_RESPONSE_CONTENT_TYPE, scheduleInfo.getContentType());
-                values.put(JsonConstants.META_RESPONSE_DTV, scheduleInfo.getDtv());
-                values.put(JsonConstants.META_RESPONSE_TV_SERVICE, "");
-                values.put(JsonConstants.META_RESPONSE_DTV_TYPE, scheduleInfo.getDtvType());
-                values.put(JsonConstants.META_RESPONSE_EPITITLE, "");
-                values.put(JsonConstants.META_RESPONSE_CID, "");
+                ContentValues values = convertScheduleInfoToContentValues(scheduleInfo);
                 tvScheduleListDao.insert(values);
             }
             database.close();
             DataBaseManager.getChInstance().closeChDatabase();
 
-            //保存したDBを所定の場所へ移動する
+            //保存したDBを所定の場所へ移動する( HOME/database/channel/yyyyMMdd/ )
             String channelFilePath = StringUtils.getConnectStrings(filesDir, "/../databases/", chNo);
             File channelFile = new File(channelFilePath);
             File movedFile = new File(StringUtils.getConnectStrings(dbDir, "/", chNo));
             if (channelFile.isFile()) {
                 try {
-                    boolean isMovedChannelFile = channelFile.renameTo(movedFile);
-                    if (!isMovedChannelFile) {
+                    if (!channelFile.renameTo(movedFile)) {
                         DTVTLogger.error("Failed to move DB file");
+                        //移動に失敗したため元ファイルを削除する
+                        if (!channelFile.delete()) {
+                            DTVTLogger.error("Failed to remove DB file");
+                        }
                     }
                 } catch (SecurityException | NullPointerException e) {
                     DTVTLogger.error(e.toString());
                 }
             }
+
             //journalファイルも同じ場所へ移動させる.
             String journalFilePath = StringUtils.getConnectStrings(filesDir, "/../databases/", chNo, "-journal");
             File journalFile = new File(journalFilePath);
             File movedJournalFile = new File(StringUtils.getConnectStrings(dbDir, "/", chNo, "-journal"));
             if (journalFile.isFile()) {
                 try {
-                    boolean isMovedJournalFile = journalFile.renameTo(movedJournalFile);
-                    if (!isMovedJournalFile) {
+                    if (!journalFile.renameTo(movedJournalFile)) {
                         DTVTLogger.error("Failed to move journal file");
+                        //移動に失敗したため元ファイルを削除する
+                        if (!journalFile.delete()) {
+                            DTVTLogger.error("Failed to remove journal file");
+                        }
                     }
                 } catch (SecurityException | NullPointerException e) {
                     DTVTLogger.error(e.toString());
                 }
             }
         }
+
+        //古いDBファイルを削除するため、日付フォルダ一覧を取得
+        File[] files = new File(dbChannelDir).listFiles();
+        //前後一週間を超えるDBフォルダは無条件で削除する.
+        if (files != null) {
+            for (File folder : files) {
+                if (folder.isDirectory()) {
+                    Date folderDate;
+                    try {
+                        String folderName = StringUtils.getConnectStrings(folder.getName(), "000000");
+                        SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DD_HH_MM_SS, Locale.JAPAN);
+                        folderDate = sdf.parse(folderName);
+                    } catch (ParseException e) {
+                        DTVTLogger.error(e.toString());
+                        continue;
+                    }
+                    Calendar folderCalendar = Calendar.getInstance();
+                    folderCalendar.setTime(folderDate);
+
+                    Date nowDate = new Date();
+                    Calendar afterEightDay = Calendar.getInstance();
+                    Calendar beforeEightDay = Calendar.getInstance();
+                    afterEightDay.setTime(nowDate);
+                    beforeEightDay.setTime(nowDate);
+                    afterEightDay.add(Calendar.DAY_OF_MONTH, 8);
+                    beforeEightDay.add(Calendar.DAY_OF_MONTH, -8);
+
+                    if (folderCalendar.compareTo(afterEightDay) > 0
+                            || folderCalendar.compareTo(beforeEightDay) < 0) {
+                        //キャッシュ期限範囲外の日付のフォルダなので削除する.
+                        recursiveDeleteFile(folder);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * フォルダを中身ごと削除する.
+     *
+     * @param file 削除対象フォルダ
+     */
+    private static void recursiveDeleteFile(final File file) {
+        // 存在しない場合は処理終了
+        if (!file.exists()) {
+            return;
+        }
+        // 対象がディレクトリの場合は再帰処理
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (File child : files) {
+                    recursiveDeleteFile(child);
+                }
+            }
+        }
+        // 対象がファイルもしくは配下が空のディレクトリの場合は削除する
+        if (!file.delete()) {
+            DTVTLogger.error("Failed to delete folder or file");
+        }
+    }
+
+    /**
+     * ContentValuesに変換する.
+     * //TODO パラメータ要確認
+     *
+     * @param scheduleInfo ScheduleInfo
+     * @return ContentValues
+     */
+    private ContentValues convertScheduleInfoToContentValues(final ScheduleInfo scheduleInfo) {
+        ContentValues values = new ContentValues();
+        values.put(JsonConstants.META_RESPONSE_THUMB_448, ""); //imageURL?
+        values.put(JsonConstants.META_RESPONSE_TITLE, scheduleInfo.getTitle());
+        values.put(JsonConstants.META_RESPONSE_PUBLISH_START_DATE, scheduleInfo.getStartTime());
+        values.put(JsonConstants.META_RESPONSE_PUBLISH_END_DATE, scheduleInfo.getEndTime());
+        values.put(JsonConstants.META_RESPONSE_CHNO, scheduleInfo.getChNo());
+        values.put(JsonConstants.META_RESPONSE_DISP_TYPE, scheduleInfo.getDispType());
+        values.put(JsonConstants.META_RESPONSE_SEARCH_OK, scheduleInfo.getSearchOk());
+        values.put(JsonConstants.META_RESPONSE_CRID, "");
+        values.put(JsonConstants.META_RESPONSE_SERVICE_ID, "");
+        values.put(JsonConstants.META_RESPONSE_EVENT_ID, "");
+        values.put(JsonConstants.META_RESPONSE_TITLE_ID, "");
+        values.put(JsonConstants.META_RESPONSE_R_VALUE, scheduleInfo.getRValue());
+        values.put(JsonConstants.META_RESPONSE_CONTENT_TYPE, scheduleInfo.getContentType());
+        values.put(JsonConstants.META_RESPONSE_DTV, scheduleInfo.getDtv());
+        values.put(JsonConstants.META_RESPONSE_TV_SERVICE, "");
+        values.put(JsonConstants.META_RESPONSE_DTV_TYPE, scheduleInfo.getDtvType());
+        values.put(JsonConstants.META_RESPONSE_EPITITLE, "");
+        values.put(JsonConstants.META_RESPONSE_CID, "");
+        return values;
     }
 }

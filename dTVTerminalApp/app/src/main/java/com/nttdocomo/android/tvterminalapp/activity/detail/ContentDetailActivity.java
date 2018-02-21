@@ -44,6 +44,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.digion.dixim.android.activation.helper.ActivationHelper;
 import com.digion.dixim.android.secureplayer.MediaPlayerController;
@@ -1272,9 +1273,10 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 DTVTLogger.debug(e);
             }
             if (channelNos.length == 0 || channelNos[0] == -1) {
-                //TODO channelNoが未指定の場合、チャンネル番号として仮の値を入れている.
-                channelNos = new int[1];
-                channelNos[0] = 151;
+                //TODO channelNoが未指定の場合。エラー定義未決定のため一旦エラーを表示して戻る
+                DTVTLogger.error("No channel number");
+                Toast.makeText(this, "No channel number", Toast.LENGTH_SHORT).show();
+                return;
             }
             mScaledDownProgramListDataProvider.getProgram(channelNos, dateList, 1);
         } else {

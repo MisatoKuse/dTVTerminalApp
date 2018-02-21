@@ -78,6 +78,7 @@ public class ProgramDataManager {
         //ホーム画面用データ取得
         list = channelListDao.findByService(columns, service);
         DataBaseManager.getInstance().closeDatabase();
+        database.close();
         return list;
     }
 
@@ -95,10 +96,9 @@ public class ProgramDataManager {
 
         List<List<Map<String, String>>> lists = new ArrayList<>();
         for (String chNo : chNos) {
-            DTVTLogger.debug("selectTvSchedule:chNo" + chNo);
             //データ存在チェック
             //ファイルのタイムスタンプより取得日時を取得済みのため、既に要求日付のフォルダは作成してある.
-            String filesDir = mContext.getFilesDir().getAbsolutePath();
+            String filesDir = mContext.getFilesDir().getPath();
             String databasePath = StringUtils.getConnectStrings(filesDir, "/../databases");
             String dbFilePath = StringUtils.getConnectStrings(databasePath, "/channel/", chInfoGetDate, "/", chNo);
             File dbFile = new File(dbFilePath);
@@ -124,6 +124,10 @@ public class ProgramDataManager {
             //テーブルの存在チェック.
             List<Map<String, String>> list;
             if (!DBUtils.isChCachingRecord(mContext, DBConstants.TV_SCHEDULE_LIST_TABLE_NAME, chNo)) {
+                //databaseフォルダにコピーしたファイルを削除
+                if (!databaseFile.delete()) {
+                    DTVTLogger.error("Failed to delete copy DB file");
+                }
                 continue;
             }
 

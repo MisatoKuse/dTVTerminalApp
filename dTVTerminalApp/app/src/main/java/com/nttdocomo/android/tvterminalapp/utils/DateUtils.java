@@ -147,7 +147,7 @@ public class DateUtils {
     /**
      * 日付フォーマット.
      */
-    private static final String DATE_YYYY_MM_DD_HH_MM_SS = "yyyyMMddHHmmss";
+    public static final String DATE_YYYY_MM_DD_HH_MM_SS = "yyyyMMddHHmmss";
 
     /**
      * 日付フォーマット.
@@ -162,7 +162,7 @@ public class DateUtils {
     /**
      * 日付フォーマット.
      */
-    public static final String DATE_MDE = "M/d (E)";
+    private static final String DATE_MDE = "M/d (E)";
 
     /**
      * 日付フォーマット.
@@ -620,20 +620,22 @@ public class DateUtils {
      * @return エポック秒
      */
     public static long getEpochTime(final String strDate) {
+        if (TextUtils.isEmpty(strDate)) {
+            return 0L;
+        }
         long epochTime = 0;
-        if (null != strDate) {
-            SimpleDateFormat formatter = new SimpleDateFormat(DATE_PATTERN);
-            //APIレスポンスの値がJSTとのこと
-            formatter.setTimeZone(TimeZone.getTimeZone("JST"));
-            Date gmt = null;
-            try {
-                gmt = formatter.parse(strDate);
-            } catch (ParseException e) {
-                DTVTLogger.debug(e);
-            }
-            if (gmt != null) {
-                epochTime = gmt.getTime();
-            }
+
+        SimpleDateFormat formatter = new SimpleDateFormat(DATE_PATTERN, Locale.JAPAN);
+        //APIレスポンスの値がJSTとのこと
+        formatter.setTimeZone(TimeZone.getTimeZone("JST"));
+        Date gmt = null;
+        try {
+            gmt = formatter.parse(strDate);
+        } catch (ParseException e) {
+            DTVTLogger.debug(e);
+        }
+        if (gmt != null) {
+            epochTime = gmt.getTime();
         }
         return epochTime;
     }
@@ -703,7 +705,7 @@ public class DateUtils {
      * @param timeArray 検査したい日時
      * @return 開始と終了の間の時間に現在の日時が収まってればtrue
      */
-    public static boolean isBetweenNowTime(long... timeArray) {
+    public static boolean isBetweenNowTime(final long... timeArray) {
         //パラメータが一つしかないなら即座に帰る
         if (timeArray.length <= 1) {
             return false;

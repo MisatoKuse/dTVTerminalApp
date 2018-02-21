@@ -683,27 +683,31 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void channelListCallback(final ArrayList<ChannelInfo> channels) {
-        if (channels != null) {
-            showMyChannelNoItem(false);
-            if (channels.size() > 0) {
+        if (mTabIndex == INDEX_TAB_MY_CHANNEL) {
+            //MY番組表
+            if (channels != null && channels.size() > 0) {
                 if (mTabIndex == INDEX_TAB_MY_CHANNEL) { //MY番組表
                     this.hikariChannels = channels;
                     mappedMyChannelList = executeMapping();
                     setChannelContentsView(mappedMyChannelList);
                     loadMyChannel();
-                } else { //ひかり、dTVチャンネル
-                    this.mChannels = channels;
-                    setChannelContentsView(mChannels);
-                    ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
-                    int[] channelNos = new int[channels.size()];
-                    for (int i = 0; i < channels.size(); i++) {
-                        channelNos[i] = channels.get(i).getChNo();
-                    }
-                    String dateStr = mSelectDateStr.replace("-", "");
-                    String[] dateList = {dateStr};
-                    //TODO 現状一括でリクエストしているため修正予定.
-                    scaledDownProgramListDataProvider.getProgram(channelNos, dateList, mTabIndex);
                 }
+            }
+        } else {
+            //ひかり、dTVチャンネル
+            showMyChannelNoItem(false);
+            if (channels != null && channels.size() > 0) {
+                this.mChannels = channels;
+                setChannelContentsView(mChannels);
+                ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
+                int[] channelNos = new int[channels.size()];
+                for (int i = 0; i < channels.size(); i++) {
+                    channelNos[i] = channels.get(i).getChNo();
+                }
+                String dateStr = mSelectDateStr.replace("-", "");
+                String[] dateList = {dateStr};
+                //TODO 現状一括でリクエストしているため修正予定.
+                scaledDownProgramListDataProvider.getProgram(channelNos, dateList, mTabIndex);
             }
         }
     }

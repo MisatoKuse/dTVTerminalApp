@@ -211,11 +211,13 @@ public class DBUtils {
      */
     public static boolean isChCachingRecord(final Context context, final String tableName,
                                             final String chNo) {
+        DataBaseManager.clearChInfo();
         DBHelperChannel dbHelperChannel = new DBHelperChannel(context, chNo);
         DataBaseManager.initializeInstance(dbHelperChannel);
         SQLiteDatabase database = DataBaseManager.getChInstance().openChDatabase();
         long recordCount = DatabaseUtils.queryNumEntries(database, tableName);
         database.close();
+        DataBaseManager.getChInstance().closeChDatabase();
         return recordCount > 0;
     }
 
