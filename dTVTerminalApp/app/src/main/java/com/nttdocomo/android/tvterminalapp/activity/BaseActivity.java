@@ -74,26 +74,51 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClie
  * プロジェクトにて、すべての「Activity」のベースクラスである
  * 「Activity」全体にとって、共通の機能があれば、追加すること.
  */
-
 public class BaseActivity extends FragmentActivity implements
         DlnaDevListListener, View.OnClickListener, RemoteControllerView.OnStartRemoteControllerUIListener,
         ClipRegistWebClient.ClipRegistJsonParserCallback, ClipDeleteWebClient.ClipDeleteJsonParserCallback,
         DaccountControl.DaccountControlCallBack {
 
+    /**
+     * ヘッダーBaseレイアウト.
+     */
     private LinearLayout mBaseLinearLayout = null;
+    /**
+     * ヘッダーレイアウト.
+     */
     private RelativeLayout mHeaderLayout = null;
+    /**
+     * ヘッダータイトル.
+     */
     protected TextView mTitleTextView = null;
+    /**
+     * ヘッダーロゴ用ImageView.
+     */
     private ImageView mTitleImageView = null;
+    /**
+     * 番組表タイトル横矢印.
+     */
     protected ImageView mTitleArrowImage = null;
+    /**
+     * ヘッダーの戻るボタン.
+     */
     private ImageView mHeaderBackIcon = null;
+    /**
+     * ペアリングアイコン.
+     */
     private ImageView mStbStatusIcon = null;
+    /**
+     * DLNA一覧提供クラス.
+     */
     private DlnaProvDevList mDlnaProvDevListForBase = null;
-
+    /**
+     * メニューアイコン.
+     */
     private ImageView mMenuImageViewForBase = null;
     /**
      * リモコンレイアウト.
      */
-    private RemoteControllerView remoteControllerView = null;
+    private RemoteControllerView mRemoteControllerView = null;
     /**
      * Activityのコンテキスト.
      */
@@ -106,13 +131,21 @@ public class BaseActivity extends FragmentActivity implements
      * 中継アプリ連携クライアント.
      */
     protected RemoteControlRelayClient mRemoteControlRelayClient = null;
-    private UserState mUserState = UserState.LOGIN_NG;
-
+    /**
+     * ダブルクリック防止用.
+     */
     private long mLastClickTime = 0;
-
+    /**
+     * クリップボタン.
+     */
     private ImageView mClipButton = null;
+    /**
+     * クリップリクエスト用データ.
+     */
     private ClipRequestData mClipRequestData = null;
-
+    /**
+     * クリップ実行中フラグ.
+     */
     private boolean mClipRunTime = false;
     /**
      * クリップ対象.
@@ -132,26 +165,21 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * タイムアウト時間.
      */
-    public static final int LOAD_PAGE_DELAY_TIME = 1000;
+    protected static final int LOAD_PAGE_DELAY_TIME = 1000;
     /**
      * ダブルクリック抑止用 DELAY.
      */
     private static final int MIN_CLICK_DELAY_TIME = 1000;
 
     /**
-     * クリップ未登録状態.
-     */
-    private static final String CLIP_RESULT_STATUS = "1";
-
-    /**
      * dアカウント設定アプリ登録処理.
      */
-    private DaccountControl mDaccountControl = null;
+    private DaccountControl mDAccountControl = null;
 
     /**
      * 詳細画面起動元Classを保存.
      */
-    private static String mSourceScreenClass = "";
+    private static String sSourceScreenClass = "";
 
     /**
      * ヘッダーに表示されているアイコンがメニューアイコンか×ボタンアイコンかを判別するタグ(menu).
@@ -161,6 +189,35 @@ public class BaseActivity extends FragmentActivity implements
      * ヘッダーに表示されているアイコンがメニューアイコンか×ボタンアイコンかを判別するタグ(close).
      */
     private static final String HEADER_ICON_CLOSE = "close";
+    /**
+     * requestPermissions()表示によるonPauseを判断するためのフラグ.
+     */
+    private boolean mShowPermissionDialogFlag = false;
+    /**
+     * 表示中ダイアログ.
+     */
+    private CustomDialog mShowDialog = null;
+    /**
+     * 国内通信 MCC (440 Japan).
+     */
+    private static final int DOMESTIC_COMMUNICATION_MCC_1 = 440;
+    /**
+     * 国内通信 MCC (441 Japan).
+     */
+    private static final int DOMESTIC_COMMUNICATION_MCC_2 = 441;
+    /**
+     * dアカウント関連処理の必要有無判定.
+     */
+    private boolean mNecessaryDAccountRegistService = true;
+
+    /**
+     * クリップ状態.
+     */
+    public static final String CLIP_ACTIVE_STATUS = "active";
+    /**
+     * 未クリップ状態.
+     */
+    public static final String CLIP_OPACITY_STATUS = "opacity";
 
     /**
      * 関数機能：
@@ -186,47 +243,13 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     /**
-     * 海外通信ダイアログ表示中フラグ.
-     * このフラグが true の時、全通信を止めるor通信処理を実行しない
-     */
-    protected boolean showTransoceanicCommunicationFlag = false;
-    /**
-     * requestPermissions()表示によるonPauseを判断するためのフラグ.
-     */
-    private boolean mShowPermissionDialogFlag = false;
-    /**
-     * 表示中ダイアログ.
-     */
-    private CustomDialog mShowDialog = null;
-    /**
-     * 国内通信 MCC (440 Japan).
-     */
-    private static final int DOMESTIC_COMMUNICATION_MCC_1 = 440;
-    /**
-     * 国内通信 MCC (441 Japan).
-     */
-    private static final int DOMESTIC_COMMUNICATION_MCC_2 = 441;
-    /**
-     * dアカウント関連処理の必要有無判定.
-     */
-    private boolean mNecessaryDaccountRegistService = true;
-
-    /**
-     * クリップ状態.
-     */
-    public static final String CLIP_ACTIVE_STATUS = "active";
-    /**
-     * 未クリップ状態.
-     */
-    public static final String CLIP_OPACITY_STATUS = "opacity";
-    /**
      * 関数機能：
      * Activityを起動する.
      *
      * @param clz    起動するアクティビティ
      * @param bundle 受け渡すパラメータ
      */
-    public void startActivity(final Class<?> clz, final Bundle bundle) {
+    protected void startActivity(final Class<?> clz, final Bundle bundle) {
         Intent intent = new Intent(this, clz);
         if (bundle != null) {
             intent.putExtras(bundle);
@@ -423,24 +446,20 @@ public class BaseActivity extends FragmentActivity implements
             mStbStatusIcon.post(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        synchronized (this) {
-                            if (isOn) {
-                                DTVTLogger.debug("STB icon ON");
-                                mStbStatusIcon.setImageResource(R.mipmap.header_material_icon_tv);
-                                //ペアリングアイコンがOFF→ON(点灯)になった際にdアカチェックを行う
-                                if (!mIsStbStatusOn) {
-                                    checkDAccountOnRestart();
-                                }
-
-                            } else {
-                                DTVTLogger.debug("STB icon OFF");
-                                mStbStatusIcon.setImageResource(R.mipmap.header_material_icon_tv_active);
+                    synchronized (this) {
+                        if (isOn) {
+                            DTVTLogger.debug("STB icon ON");
+                            mStbStatusIcon.setImageResource(R.mipmap.header_material_icon_tv);
+                            //ペアリングアイコンがOFF→ON(点灯)になった際にdアカチェックを行う
+                            if (!mIsStbStatusOn) {
+                                checkDAccountOnRestart();
                             }
-                            mIsStbStatusOn = isOn;
+
+                        } else {
+                            DTVTLogger.debug("STB icon OFF");
+                            mStbStatusIcon.setImageResource(R.mipmap.header_material_icon_tv_active);
                         }
-                    } catch (Exception e) {
-                        DTVTLogger.debug("BaseActivity::setStbStatus, stb status png file not found");
+                        mIsStbStatusOn = isOn;
                     }
                 }
             });
@@ -527,7 +546,7 @@ public class BaseActivity extends FragmentActivity implements
      * グローバルメニュー表示.
      */
     protected void displayGlobalMenu() {
-        UserState param = UserState.LOGIN_NG;
+        UserState param;
 
         // dアカログイン状態取得
         String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(this);
@@ -618,8 +637,7 @@ public class BaseActivity extends FragmentActivity implements
             permissionCheckExec();
         } else {
             // 通常のライフサイクル
-            showTransoceanicCommunicationFlag = false;
-            if (mNecessaryDaccountRegistService) {
+            if (mNecessaryDAccountRegistService) {
                 setDaccountControl();
             }
             onStartCommunication();
@@ -700,7 +718,7 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * STB送信ハンドラ.
      */
-    public Handler mRelayClientHandler = new Handler() {
+    private final Handler mRelayClientHandler = new Handler() {
         @Override
         public void handleMessage(final Message msg) {
             DTVTLogger.debug(String.format("msg:%s", msg));
@@ -716,9 +734,9 @@ public class BaseActivity extends FragmentActivity implements
      * @param isTopRemoteControllerUI 応答ハンドラの解除条件 false:リモコンが表示されていない／true:無条件で解除
      */
     private void resetRelayClientHandler(final boolean isTopRemoteControllerUI) {
-        if (null != remoteControllerView) {
+        if (null != mRemoteControllerView) {
             // ※リモコンの電源ON/OFF操作中の応答時にリモコンが表示されている間は解除しない
-            if ((isTopRemoteControllerUI == remoteControllerView.isTopRemoteControllerUI())
+            if ((isTopRemoteControllerUI == mRemoteControllerView.isTopRemoteControllerUI())
                     || isTopRemoteControllerUI) {
                 mRemoteControlRelayClient.resetHandler();
             }
@@ -730,9 +748,9 @@ public class BaseActivity extends FragmentActivity implements
      */
     private void showRemoteControllerView() {
         // グローバルメニューまたはコンテンツ詳細からのサービスアプリ連携の正常応答時にリモコンが表示されてない場合のみ表示する.
-        if ((null != remoteControllerView && !remoteControllerView.isTopRemoteControllerUI())
-                || null == remoteControllerView) {
-                menuRemoteController();
+        if ((null != mRemoteControllerView && !mRemoteControllerView.isTopRemoteControllerUI())
+                || null == mRemoteControllerView) {
+            menuRemoteController();
         }
     }
 
@@ -852,7 +870,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param resultCode 実行コード
      * @param appId      アプリID
      */
-    protected void startApplicationErrorHandler(final int resultCode, final RemoteControlRelayClient.STB_APPLICATION_TYPES appId) {
+    private void startApplicationErrorHandler(final int resultCode, final RemoteControlRelayClient.STB_APPLICATION_TYPES appId) {
         String message;
         switch (resultCode) {
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_NOT_INSTALL:
@@ -1051,16 +1069,8 @@ public class BaseActivity extends FragmentActivity implements
      * @return カレントユーザ名
      */
     public String getUserName() {
+        //TODO:実装中のため仮の値を返却
         return "Test User";
-    }
-
-    /**
-     * ユーザステータスの取得.
-     *
-     * @return ユーザステータス
-     */
-    public UserState getUserState() {
-        return mUserState;
     }
 
     /**
@@ -1068,7 +1078,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param userState ユーザ状態(ペアリング・契約・ログイン)
      */
-    public void setUserState(final UserState userState) {
+    private void setUserState(final UserState userState) {
         synchronized (this) {
             MenuDisplay menu = MenuDisplay.getInstance();
             try {
@@ -1084,12 +1094,8 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * ユーザ状態毎の表示.
      */
-    public void displayMenu() {
-        try {
-            MenuDisplay.getInstance().display();
-        } catch (Exception e) {
-            DTVTLogger.debug(e);
-        }
+    private void displayMenu() {
+        MenuDisplay.getInstance().display();
     }
 
     /**
@@ -1121,7 +1127,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param view クローズボタンのビュー
      */
-    public void contentsDetailCloseKey(final View view) {
+    protected void contentsDetailCloseKey(final View view) {
         //コンテンツ詳細画面をクローズする処理
         try {
             Class sourceClass = Class.forName(getSourceScreenClass());
@@ -1132,17 +1138,6 @@ public class BaseActivity extends FragmentActivity implements
         } catch (ClassNotFoundException e) {
             DTVTLogger.debug(e);
         }
-    }
-
-    /**
-     * 録画コンテンツダウンロード済みかどうか.
-     *
-     * @return DL済み true
-     */
-    public Boolean getDownloadContentsFalag() {
-        // TODO DL済み/未　判定
-        // 現時点データが取得できない為、固定でfalseを返却
-        return false;
     }
 
     /**
@@ -1221,21 +1216,21 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param isFirstVisible 表示状態
      */
-    public void createRemoteControllerView(final Boolean isFirstVisible) {
+    protected void createRemoteControllerView(final Boolean isFirstVisible) {
         DTVTLogger.debug("CreateRemoteControllerView");
         RelativeLayout layout = findViewById(R.id.base_remote_controller_rl);
-        remoteControllerView = layout.findViewById(R.id.remote_control_view);
-        remoteControllerView.init(this);
-        remoteControllerView.setIsFirstVisible(isFirstVisible);
-        remoteControllerView.setOnStartRemoteControllerUI(this);
+        mRemoteControllerView = layout.findViewById(R.id.remote_control_view);
+        mRemoteControllerView.init(this);
+        mRemoteControllerView.setIsFirstVisible(isFirstVisible);
+        mRemoteControllerView.setOnStartRemoteControllerUI(this);
         layout.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void onPause() {
-        if (remoteControllerView != null && remoteControllerView.isTopRemoteControllerUI()) {
+        if (mRemoteControllerView != null && mRemoteControllerView.isTopRemoteControllerUI()) {
             // onPause時にリモコンUIを閉じる
-            remoteControllerView.closeRemoteControllerUI();
+            mRemoteControllerView.closeRemoteControllerUI();
         }
         dismissDialog();
         super.onPause();
@@ -1247,7 +1242,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param listener リスナー
      */
     protected void setStartRemoteControllerUIListener(final RemoteControllerView.OnStartRemoteControllerUIListener listener) {
-        remoteControllerView.setOnStartRemoteControllerUI(listener);
+        mRemoteControllerView.setOnStartRemoteControllerUI(listener);
     }
 
     /**
@@ -1259,7 +1254,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param contentsId コンテンツID
      */
     protected void requestStartApplication(final RemoteControlRelayClient.STB_APPLICATION_TYPES type, final String contentsId) {
-        remoteControllerView.sendStartApplicationRequest(type, contentsId);
+        mRemoteControllerView.sendStartApplicationRequest(type, contentsId);
     }
 
     /**
@@ -1274,7 +1269,7 @@ public class BaseActivity extends FragmentActivity implements
     protected void requestStartApplicationDtvChannel(final RemoteControlRelayClient.STB_APPLICATION_TYPES type,
                                                      final RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES serviceCategoryType,
                                                      final String crid, final String chno) {
-        remoteControllerView.sendStartApplicationDtvChannelRequest(type, serviceCategoryType, crid, chno);
+        mRemoteControllerView.sendStartApplicationDtvChannelRequest(type, serviceCategoryType, crid, chno);
     }
 
     /**
@@ -1287,7 +1282,7 @@ public class BaseActivity extends FragmentActivity implements
      */
     protected void requestStartApplicationHikariTvCategoryHikaritvVod(final String licenseId,
                                                                       final String cid, final String crid) {
-        remoteControllerView.sendStartApplicationHikariTvCategoryHikaritvVodRequest(licenseId, cid, crid);
+        mRemoteControllerView.sendStartApplicationHikariTvCategoryHikaritvVodRequest(licenseId, cid, crid);
     }
 
     /**
@@ -1297,7 +1292,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param episodeId エピソードID
      */
     protected void requestStartApplicationHikariTvCategoryDtvVod(final String episodeId) {
-        remoteControllerView.sendStartApplicationHikariTvCategoryDtvVodRequest(episodeId);
+        mRemoteControllerView.sendStartApplicationHikariTvCategoryDtvVodRequest(episodeId);
     }
 
     /**
@@ -1307,7 +1302,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param crid crid
      */
     protected void requestStartApplicationHikariTvCategoryDtvSvod(final String crid) {
-        remoteControllerView.sendStartApplicationHikariTvCategoryDtvSvodRequest(crid);
+        mRemoteControllerView.sendStartApplicationHikariTvCategoryDtvSvodRequest(crid);
     }
 
     /**
@@ -1318,7 +1313,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param chno チャンネル番号
      */
     protected void requestStartApplicationHikariTvCategoryDtvchannelBroadcast(final String chno) {
-        remoteControllerView.sendStartApplicationHikariTvCategoryDtvchannelBroadcastRequest(chno);
+        mRemoteControllerView.sendStartApplicationHikariTvCategoryDtvchannelBroadcastRequest(chno);
     }
 
     /**
@@ -1328,7 +1323,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param tvCid コンテンツID
      */
     protected void requestStartApplicationHikariTvCategoryDtvchannelMissed(final String tvCid) {
-        remoteControllerView.sendStartApplicationHikariTvCategoryDtvchannelMissedRequest(tvCid);
+        mRemoteControllerView.sendStartApplicationHikariTvCategoryDtvchannelMissedRequest(tvCid);
     }
 
     /**
@@ -1338,7 +1333,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param tvCid コンテンツID
      */
     protected void requestStartApplicationHikariTvCategoryDtvchannelRelation(final String tvCid) {
-        remoteControllerView.sendStartApplicationHikariTvCategoryDtvchannelRelationRequest(tvCid);
+        mRemoteControllerView.sendStartApplicationHikariTvCategoryDtvchannelRelationRequest(tvCid);
     }
 
     /**
@@ -1348,7 +1343,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param chno チャンネル番号
      */
     protected void requestStartApplicationHikariTvCategoryTerrestrialDigital(final String chno) {
-        remoteControllerView.sendStartApplicationHikariTvCategoryTerrestrialDigitalRequest(chno);
+        mRemoteControllerView.sendStartApplicationHikariTvCategoryTerrestrialDigitalRequest(chno);
     }
 
     /**
@@ -1358,7 +1353,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param chno チャンネル番号
      */
     protected void requestStartApplicationHikariTvCategorySatelliteBs(final String chno) {
-        remoteControllerView.sendStartApplicationHikariTvCategorySatelliteBsRequest(chno);
+        mRemoteControllerView.sendStartApplicationHikariTvCategorySatelliteBsRequest(chno);
     }
 
     /**
@@ -1368,7 +1363,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param chno チャンネル番号
      */
     protected void requestStartApplicationHikariTvCategoryIptv(final String chno) {
-        remoteControllerView.sendStartApplicationHikariTvCategoryIptvRequest(chno);
+        mRemoteControllerView.sendStartApplicationHikariTvCategoryIptvRequest(chno);
     }
 
     /**
@@ -1376,8 +1371,8 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @return RemoteControllerView
      */
-    protected RemoteControllerView getRemoteControllerView() {
-        return remoteControllerView;
+    private RemoteControllerView getRemoteControllerView() {
+        return mRemoteControllerView;
     }
 
     /**
@@ -1436,7 +1431,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param visibility 表示非表示指定
      */
     protected void setRemoteControllerViewVisibility(final int visibility) {
-        if (remoteControllerView != null) {
+        if (mRemoteControllerView != null) {
             findViewById(R.id.base_remote_controller_rl).setVisibility(visibility);
         }
     }
@@ -1444,7 +1439,7 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * グローバルメニューからのリモコン表示.
      */
-    public void menuRemoteController() {
+    private void menuRemoteController() {
         if (getStbStatus()) {
             DTVTLogger.debug("Start RemoteControl");
             createRemoteControllerView(false);
@@ -1560,8 +1555,8 @@ public class BaseActivity extends FragmentActivity implements
      */
     protected void setDaccountControl() {
         //dアカウント関連の処理を依頼する
-        mDaccountControl = new DaccountControl();
-        mDaccountControl.registService(getApplicationContext(), this);
+        mDAccountControl = new DaccountControl();
+        mDAccountControl.registService(getApplicationContext(), this);
     }
 
     @Override
@@ -1574,7 +1569,7 @@ public class BaseActivity extends FragmentActivity implements
             return;
         }
 
-        if (mDaccountControl == null) {
+        if (mDAccountControl == null) {
             //処理には失敗したが、動作の続行ができないので、ここで終わらせる。ただ、このコールバックを受けている以上、ヌルになることありえないはず
             CustomDialog errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
             errorDialog.setContent(getString(R.string.d_account_regist_error));
@@ -1583,7 +1578,7 @@ public class BaseActivity extends FragmentActivity implements
             return;
         }
 
-        if (mDaccountControl.isOneTimePass() || mDaccountControl.isCheckService()) {
+        if (mDAccountControl.isOneTimePass() || mDAccountControl.isCheckService()) {
             //エラーが発生したのはワンタイムパスワード取得かチェックサービスとなる。dアカウント未認証なので、本処理ではなにもしない
             DTVTLogger.end("d account not regist");
             return;
@@ -1656,8 +1651,8 @@ public class BaseActivity extends FragmentActivity implements
      * @return true:リモコン表示、リモコンを閉じる false:リモコン非表示
      */
     protected Boolean checkRemoteControllerView() {
-        if (remoteControllerView != null && remoteControllerView.isTopRemoteControllerUI()) {
-            remoteControllerView.closeRemoteControllerUI();
+        if (mRemoteControllerView != null && mRemoteControllerView.isTopRemoteControllerUI()) {
+            mRemoteControllerView.closeRemoteControllerUI();
             return true;
         }
         return false;
@@ -1668,8 +1663,8 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param className コンテンツ詳細画面起動元のクラス名
      */
-    public synchronized static void setSourceScreen(final String className) {
-        BaseActivity.mSourceScreenClass = className;
+    private synchronized static void setSourceScreen(final String className) {
+        BaseActivity.sSourceScreenClass = className;
     }
 
     /**
@@ -1677,7 +1672,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param className クラス名
      */
-    public void setSourceScreenClass(final String className) {
+    protected void setSourceScreenClass(final String className) {
         setSourceScreen(className);
     }
 
@@ -1686,8 +1681,8 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @return クラス名
      */
-    public String getSourceScreenClass() {
-        return mSourceScreenClass;
+    private String getSourceScreenClass() {
+        return sSourceScreenClass;
     }
 
     /**
@@ -1770,7 +1765,7 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * SIM情報取得permission取得 / 海外通信判定実行.
      */
-    public void permissionCheckExec() {
+    private void permissionCheckExec() {
         DTVTLogger.start();
         if (!mShowPermissionDialogFlag) {
             // 許可されているかを判定
@@ -1949,13 +1944,12 @@ public class BaseActivity extends FragmentActivity implements
      */
     private void showTransoceanicCommunicationDialog() {
         DTVTLogger.start();
-        showTransoceanicCommunicationFlag = true;
         resetRelayClientHandler(true);
         mRemoteControlRelayClient.stopConnect();
         unregisterDevListDlna();
         // dアカウント通信を止める
-        if (mDaccountControl != null) {
-            mDaccountControl.stopCommunication();
+        if (mDAccountControl != null) {
+            mDAccountControl.stopCommunication();
         }
         DTVTLogger.end();
     }
@@ -1966,7 +1960,7 @@ public class BaseActivity extends FragmentActivity implements
      * TODO 各ActivityはこのメソッドをOverrideしてResume処理を行う.
      * TODO ※必ずBaseActivityのメソッドを呼び出してから各ActivityのResume処理を行う
      */
-    public void onStartCommunication() {
+    protected void onStartCommunication() {
         DTVTLogger.start();
         registerDevListDlna();
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
@@ -2006,7 +2000,7 @@ public class BaseActivity extends FragmentActivity implements
         if (!r) {
             DTVTLogger.debug("BaseActivity.onResume, dlnaOnResume failed");
         }
-        if (mNecessaryDaccountRegistService) {
+        if (mNecessaryDAccountRegistService) {
             setDaccountControl();
         }
         checkDAccountOnRestart();
@@ -2019,6 +2013,6 @@ public class BaseActivity extends FragmentActivity implements
      */
     protected void setUnnecessaryDaccountRegistService() {
         // STBSelectActivity以前のActivityが対象
-        mNecessaryDaccountRegistService = false;
+        mNecessaryDAccountRegistService = false;
     }
 }

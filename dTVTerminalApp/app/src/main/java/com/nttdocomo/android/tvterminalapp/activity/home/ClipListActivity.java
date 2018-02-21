@@ -13,9 +13,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
 import android.widget.AbsListView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -52,11 +50,6 @@ public class ClipListActivity extends BaseActivity implements
      * 接続中フラグ.
      */
     private boolean mIsCommunicating = false;
-
-    /**
-     * レイアウト.
-     */
-    private LinearLayout mLinearLayout = null;
     /**
      * タブアイテムレイアウト.
      */
@@ -69,6 +62,10 @@ public class ClipListActivity extends BaseActivity implements
      * メニュー表示フラグ.
      */
     private Boolean mIsMenuLaunch = false;
+    /**
+     * 開始ページ.
+     */
+    private int mStartPageNo = 0;
 
     /**
      * VodClipデータプロバイダ.
@@ -99,10 +96,6 @@ public class ClipListActivity extends BaseActivity implements
      * 表示開始タブ指定キー.
      */
     public static final String CLIP_LIST_START_PAGE = "clipListStartPage";
-    /**
-     * 開始ページ.
-     */
-    int mStartPageNo = 0;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -217,12 +210,8 @@ public class ClipListActivity extends BaseActivity implements
      * @return 判定結果
      */
     private boolean isContentEqual(final ContentsData item1, final ContentsData item2) {
-        if (null == item1 || null == item2) {
-            return false;
-        }
-        return item1.getThumURL().equals(item2.getThumURL())
-                && item1.getRatStar().equals(item2.getRatStar())
-                && item1.getTitle().equals(item2.getTitle());
+        return !(null == item1 || null == item2) && item1.getThumURL().equals(item2.getThumURL())
+                && item1.getRatStar().equals(item2.getRatStar()) && item1.getTitle().equals(item2.getTitle());
     }
 
     /**
@@ -242,9 +231,9 @@ public class ClipListActivity extends BaseActivity implements
         if (null != mViewPager) {
             int sum = mClipListFragmentFactory.getFragmentCount();
             for (int i = 0; i < sum; ++i) {
-                ClipListBaseFragment b = mClipListFragmentFactory.createFragment(i, this);
-                if (null != b) {
-                    b.mClipListData.clear();
+                ClipListBaseFragment baseFragment = mClipListFragmentFactory.createFragment(i, this);
+                if (null != baseFragment) {
+                    baseFragment.mClipListData.clear();
                 }
             }
         }
@@ -256,7 +245,7 @@ public class ClipListActivity extends BaseActivity implements
             //通信とJSON Parseに関してerror処理
             DTVTLogger.debug("ClipListActivity::TvClipListCallback, get data failed.");
             // TODO:エラーメッセージ表示はリスト画面上に表示する
-            Toast.makeText(this, "クリップデータ取得失敗", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.clip_data_get_error_message), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -292,7 +281,7 @@ public class ClipListActivity extends BaseActivity implements
             //通信とJSON Parseに関してerror処理
             DTVTLogger.debug("ClipListActivity::VodClipListCallback, get data failed");
             // TODO:エラーメッセージ表示はリスト画面上に表示する
-            Toast.makeText(this, "クリップデータ取得失敗", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.clip_data_get_error_message), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -467,11 +456,11 @@ public class ClipListActivity extends BaseActivity implements
                 resetPaging();
 
                 switch (mViewPager.getCurrentItem()) {
-                    case 0:
+                    case CLIP_LIST_PAGE_NO_OF_TV:
                         mStartPageNo = CLIP_LIST_PAGE_NO_OF_TV;
                         setTv();
                         break;
-                    case 1:
+                    case CLIP_LIST_PAGE_NO_OF_VOD:
                         mStartPageNo = CLIP_LIST_PAGE_NO_OF_VOD;
                         setVod();
                         break;
@@ -533,25 +522,6 @@ public class ClipListActivity extends BaseActivity implements
             mViewPager.setCurrentItem(position);
         }
         DTVTLogger.end();
-    }
-
-    /**
-     * インジケーター設置.
-     *
-     * @param position インジケータ位置
-     */
-    public void setTab(final int position) {
-        //mCurrentPageNum = position;
-        if (mLinearLayout != null) {
-            for (int i = 0; i < mTabNames.length; i++) {
-                TextView mTextView = (TextView) mLinearLayout.getChildAt(i);
-                if (position == i) {
-                    mTextView.setBackgroundResource(R.drawable.indicating_common);
-                } else {
-                    mTextView.setBackgroundResource(R.drawable.indicating_no_common);
-                }
-            }
-        }
     }
 
     /**
