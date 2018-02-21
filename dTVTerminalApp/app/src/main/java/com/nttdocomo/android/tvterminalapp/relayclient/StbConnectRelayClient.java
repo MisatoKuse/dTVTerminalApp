@@ -117,7 +117,7 @@ public class StbConnectRelayClient {
                 if (mRemoteIp == null) {
                     return;
                 }
-                byte[] buff = data.getBytes();
+                byte[] buff = data.getBytes(java.nio.charset.StandardCharsets.UTF_8.toString());
                 DatagramPacket packet = new DatagramPacket(buff, buff.length, new InetSocketAddress(mRemoteIp, mRemoteDatagramPort));
                 dataSocket = new DatagramSocket();
                 dataSocket.send(packet);

@@ -32,7 +32,7 @@ public class RemoteRecordingReservationMetaData implements Serializable {
     private int mSyncErrorReason;
 
     public static String[] getRootPara() {
-        return mRootPara;
+        return mRootPara.clone();
     }
 
     public String getResvId() {
@@ -145,7 +145,7 @@ public class RemoteRecordingReservationMetaData implements Serializable {
     public static final String REMOTE_RECORDING_RESERVATION_META_DATA_SYNC_ERROR_REASON = "sync_error_reason"; //同期失敗理由
 
 
-    public static final String[] mRootPara = {REMOTE_RECORDING_RESERVATION_META_DATA_RESV_ID,
+    private static final String[] mRootPara = {REMOTE_RECORDING_RESERVATION_META_DATA_RESV_ID,
             REMOTE_RECORDING_RESERVATION_META_DATA_RESV_TYPE, REMOTE_RECORDING_RESERVATION_META_DATA_RESV_PLATFORM_TYPE,
             REMOTE_RECORDING_RESERVATION_META_DATA_SERVICE_ID, REMOTE_RECORDING_RESERVATION_META_DATA_EVENT_ID,
             REMOTE_RECORDING_RESERVATION_META_DATA_TITLE, REMOTE_RECORDING_RESERVATION_META_DATA_START_TIME,

@@ -18,6 +18,7 @@ import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -254,23 +255,23 @@ public class RemoteControlRelayClient {
     // ハッシュアルゴリズム指定
     private static final String HASH_ALGORITHME = "SHA-256";
     // アプリ起動要求に対応するアプリ名
-    private static final String STB_APPLICATION_DTV = "dTV";  // dTV
-    private static final String STB_APPLICATION_DANIMESTORE = "dANIMESTORE";  // dアニメストア
-    private static final String STB_APPLICATION_DTVCHANNEL = "dTVCHANNEL";  // dTVチャンネル
-    private static final String STB_APPLICATION_HIKARITV = "HIKARITV";  // ひかりTV
-    private static final String STB_APPLICATION_DAZN = "DAZN";  // ダ・ゾーン
+    static final String STB_APPLICATION_DTV = "dTV";  // dTV
+    static final String STB_APPLICATION_DANIMESTORE = "dANIMESTORE";  // dアニメストア
+    static final String STB_APPLICATION_DTVCHANNEL = "dTVCHANNEL";  // dTVチャンネル
+    static final String STB_APPLICATION_HIKARITV = "HIKARITV";  // ひかりTV
+    static final String STB_APPLICATION_DAZN = "DAZN";  // ダ・ゾーン
     // 中継アプリクライアントが送信するアプリ起動要求のメッセージ定数
     private static final String RELAY_COMMAND = "COMMAND";
-    private static final String RELAY_COMMAND_TITLE_DETAIL = "TITLE_DETAIL";
-    private static final String RELAY_COMMAND_START_APPLICATION = "START_APPLICATION";
-    private static final String RELAY_COMMAND_IS_USER_ACCOUNT_EXIST = "IS_USER_ACCOUNT_EXIST";
-    private static final String RELAY_COMMAND_KEYEVENT_KEYCODE_POWER = "KEYEVENT_KEYCODE_POWER";
+    static final String RELAY_COMMAND_TITLE_DETAIL = "TITLE_DETAIL";
+    static final String RELAY_COMMAND_START_APPLICATION = "START_APPLICATION";
+    static final String RELAY_COMMAND_IS_USER_ACCOUNT_EXIST = "IS_USER_ACCOUNT_EXIST";
+    static final String RELAY_COMMAND_KEYEVENT_KEYCODE_POWER = "KEYEVENT_KEYCODE_POWER";
     // コマンド実行時のユーザーアカウント切り替えとアプリケーションバージョンコードチェックでエラー応答として REQUEST_COMMAND で返却されるコマンド
-    private static final String RELAY_COMMAND_SET_DEFAULT_USER_ACCOUNT = "SET_DEFAULT_USER_ACCOUNT";
-    private static final String RELAY_COMMAND_CHECK_APPLICATION_VERSION_COMPATIBILITY = "CHECK_APPLICATION_VERSION_COMPATIBILITY";
+    static final String RELAY_COMMAND_SET_DEFAULT_USER_ACCOUNT = "SET_DEFAULT_USER_ACCOUNT";
+    static final String RELAY_COMMAND_CHECK_APPLICATION_VERSION_COMPATIBILITY = "CHECK_APPLICATION_VERSION_COMPATIBILITY";
     // コマンドのパラメータ
     private static final String RELAY_COMMAND_REQUEST_COMMAND = "REQUEST_COMMAND";
-    private static final String RELAY_COMMAND_UNKNOWN = "COMMAND_UNKNOWN";
+    static final String RELAY_COMMAND_UNKNOWN = "COMMAND_UNKNOWN";
     private static final String RELAY_COMMAND_ARGUMENT_USER_ID = "USER_ID";
     private static final String RELAY_COMMAND_ARGUMENT_APPLICATION_ID = "APP_ID";
     private static final String RELAY_COMMAND_ARGUMENT_CONTENTS_ID = "CONTENTS_ID";
@@ -303,22 +304,22 @@ public class RemoteControlRelayClient {
     private static final String RELAY_COMMAND_ARGUMENT_ARIB_SERVICE_REF = "arib://7780.%04x.%04x"; // ひかりTVの番組の chno を SERVICE_REF への変換
     //
     private static final String RELAY_RESULT = "RESULT";
-    private static final String RELAY_RESULT_OK = "OK";
-    private static final String RELAY_RESULT_ERROR = "ERROR";
+    static final String RELAY_RESULT_OK = "OK";
+    static final String RELAY_RESULT_ERROR = "ERROR";
     // dTVチャンネル・カテゴリー分類に対応するカテゴリー・シンボル名
-    private static final String STB_APPLICATION_DTVCHANNEL_CATEGORY_BROADCAST = "DTVCHANNEL_CATEGORY_BROADCAST";
-    private static final String STB_APPLICATION_DTVCHANNEL_CATEGORY_MISSED = "DTVCHANNEL_CATEGORY_MISSED";
-    private static final String STB_APPLICATION_DTVCHANNEL_CATEGORY_RELATION = "DTVCHANNEL_CATEGORY_RELATION";
+    static final String STB_APPLICATION_DTVCHANNEL_CATEGORY_BROADCAST = "DTVCHANNEL_CATEGORY_BROADCAST";
+    static final String STB_APPLICATION_DTVCHANNEL_CATEGORY_MISSED = "DTVCHANNEL_CATEGORY_MISSED";
+    static final String STB_APPLICATION_DTVCHANNEL_CATEGORY_RELATION = "DTVCHANNEL_CATEGORY_RELATION";
     // ひかりTV for docomo・カテゴリー分類
-    private static final String STB_APPLICATION_H4D_CATEGORY_TERRESTRIAL_DIGITAL = "H4D_CATEGORY_TERRESTRIAL_DIGITAL"; // ひかりTVの番組（地デジ）
-    private static final String STB_APPLICATION_H4D_CATEGORY_SATELLITE_BS = "H4D_CATEGORY_SATELLITE_BS"; // ひかりTVの番組（BS）
-    private static final String STB_APPLICATION_H4D_CATEGORY_IPTV = "H4D_CATEGORY_IPTV"; // ひかりTVの番組（IPTV）
-    private static final String STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_BROADCAST = "H4D_CATEGORY_DTVCHANNEL_BROADCAST"; // ひかりTV内 dTVチャンネルの番組
-    private static final String STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_MISSED = "H4D_CATEGORY_DTVCHANNEL_MISSED"; //  ひかりTV内 dTVチャンネル VOD（見逃し）
-    private static final String STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_RELATION = "H4D_CATEGORY_DTVCHANNEL_RELATION"; // ひかりTV内 dTVチャンネル VOD（関連番組）
-    private static final String STB_APPLICATION_H4D_CATEGORY_HIKARITV_VOD = "H4D_CATEGORY_HIKARITV_VOD"; // ひかりTVのVOD
-    private static final String STB_APPLICATION_H4D_CATEGORY_DTV_VOD = "H4D_CATEGORY_DTV_VOD"; // ひかりTV内 dTVのVOD
-    private static final String STB_APPLICATION_H4D_CATEGORY_DTV_SVOD = "H4D_CATEGORY_DTV_SVOD"; // ひかりTV内VOD(dTV含む)のシリーズ
+    static final String STB_APPLICATION_H4D_CATEGORY_TERRESTRIAL_DIGITAL = "H4D_CATEGORY_TERRESTRIAL_DIGITAL"; // ひかりTVの番組（地デジ）
+    static final String STB_APPLICATION_H4D_CATEGORY_SATELLITE_BS = "H4D_CATEGORY_SATELLITE_BS"; // ひかりTVの番組（BS）
+    static final String STB_APPLICATION_H4D_CATEGORY_IPTV = "H4D_CATEGORY_IPTV"; // ひかりTVの番組（IPTV）
+    static final String STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_BROADCAST = "H4D_CATEGORY_DTVCHANNEL_BROADCAST"; // ひかりTV内 dTVチャンネルの番組
+    static final String STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_MISSED = "H4D_CATEGORY_DTVCHANNEL_MISSED"; //  ひかりTV内 dTVチャンネル VOD（見逃し）
+    static final String STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_RELATION = "H4D_CATEGORY_DTVCHANNEL_RELATION"; // ひかりTV内 dTVチャンネル VOD（関連番組）
+    static final String STB_APPLICATION_H4D_CATEGORY_HIKARITV_VOD = "H4D_CATEGORY_HIKARITV_VOD"; // ひかりTVのVOD
+    static final String STB_APPLICATION_H4D_CATEGORY_DTV_VOD = "H4D_CATEGORY_DTV_VOD"; // ひかりTV内 dTVのVOD
+    static final String STB_APPLICATION_H4D_CATEGORY_DTV_SVOD = "H4D_CATEGORY_DTV_SVOD"; // ひかりTV内VOD(dTV含む)のシリーズ
     // dTVTアプリバージョンコード（Android, iOSで共通）
     private static final int DTVT_APPLICATION_VERSION_CODE = 1;
     // STBのバージョンコード β版、プレリリース版... と 1つずつ上がる
@@ -331,24 +332,24 @@ public class RemoteControlRelayClient {
     private static final String RELAY_KEYEVENT_ACTION_CANCELED = "CANCELED";
     private static final String RELAY_KEYEVENT_ACTION_CANCELED_TRUE = "TRUE";
     // 中継アプリのエラーコード定数
-    private static final String RELAY_RESULT_ERROR_CODE = "ERROR_CODE";
-    private static final String RELAY_RESULT_INTERNAL_ERROR = "INTERNAL_ERROR";
-    private static final String RELAY_RESULT_APPLICATION_NOT_INSTALL = "APPLICATION_NOT_INSTALL";
-    private static final String RELAY_RESULT_APPLICATION_ID_NOTEXIST = "APPLICATION_ID_NOTEXIST";
-    private static final String RELAY_RESULT_APPLICATION_START_FAILED = "APPLICATION_START_FAILED";
-    private static final String RELAY_RESULT_VERSION_CODE_INCOMPATIBLE = "VERSION_CODE_INCOMPATIBLE"; // STBサービスアプリのバージョンコード不適合
-    private static final String RELAY_RESULT_CONTENTS_ID_NOTEXIST = "CONTENTS_ID_NOTEXIST";
-    private static final String RELAY_RESULT_CRID_NOTEXIST = "CRID_NOTEXIST";
-    private static final String RELAY_RESULT_CHNO_NOTEXIST = "CHNO_NOTEXIST";
-    private static final String RELAY_RESULT_COMMAND_ARGUMENT_NOTEXIST = "COMMAND_ARGUMENT_NOTEXIST";
-    private static final String RELAY_RESULT_SERVICE_CATEGORY_TYPE_NOTEXIST = "SERVICE_CATEGORY_TYPE_NOTEXIST";
-    private static final String RELAY_RESULT_NOT_REGISTERED_SERVICE = "NOT_REGISTERED_SERVICE";
-    private static final String RELAY_RESULT_UNREGISTERED_USER_ID = "UNREGISTERED_USER_ID";
-    private static final String RELAY_RESULT_CONNECTION_TIMEOUT = "CONNECTION_TIMEOUT";
-    private static final String RELAY_RESULT_RELAY_SERVICE_BUSY = "SERVICE_BUSY";
-    private static final String RELAY_RESULT_USER_INVALID_STATE = "USER_INVALID_STATE";
-    private static final String RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE = "dTVT_APPLICATION_VERSION_INCOMPATIBLE"; // dTVTアプリのバージョンコード不適合
-    private static final String RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE = "STB_RELAY_SERVICE_VERSION_INCOMPATIBLE"; // 中継アプリのバージョンコード不適合
+    static final String RELAY_RESULT_ERROR_CODE = "ERROR_CODE";
+    static final String RELAY_RESULT_INTERNAL_ERROR = "INTERNAL_ERROR";
+    static final String RELAY_RESULT_APPLICATION_NOT_INSTALL = "APPLICATION_NOT_INSTALL";
+    static final String RELAY_RESULT_APPLICATION_ID_NOTEXIST = "APPLICATION_ID_NOTEXIST";
+    static final String RELAY_RESULT_APPLICATION_START_FAILED = "APPLICATION_START_FAILED";
+    static final String RELAY_RESULT_VERSION_CODE_INCOMPATIBLE = "VERSION_CODE_INCOMPATIBLE"; // STBサービスアプリのバージョンコード不適合
+    static final String RELAY_RESULT_CONTENTS_ID_NOTEXIST = "CONTENTS_ID_NOTEXIST";
+    static final String RELAY_RESULT_CRID_NOTEXIST = "CRID_NOTEXIST";
+    static final String RELAY_RESULT_CHNO_NOTEXIST = "CHNO_NOTEXIST";
+    static final String RELAY_RESULT_COMMAND_ARGUMENT_NOTEXIST = "COMMAND_ARGUMENT_NOTEXIST";
+    static final String RELAY_RESULT_SERVICE_CATEGORY_TYPE_NOTEXIST = "SERVICE_CATEGORY_TYPE_NOTEXIST";
+    static final String RELAY_RESULT_NOT_REGISTERED_SERVICE = "NOT_REGISTERED_SERVICE";
+    static final String RELAY_RESULT_UNREGISTERED_USER_ID = "UNREGISTERED_USER_ID";
+    static final String RELAY_RESULT_CONNECTION_TIMEOUT = "CONNECTION_TIMEOUT";
+    static final String RELAY_RESULT_RELAY_SERVICE_BUSY = "SERVICE_BUSY";
+    static final String RELAY_RESULT_USER_INVALID_STATE = "USER_INVALID_STATE";
+    static final String RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE = "dTVT_APPLICATION_VERSION_INCOMPATIBLE"; // dTVTアプリのバージョンコード不適合
+    static final String RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE = "STB_RELAY_SERVICE_VERSION_INCOMPATIBLE"; // 中継アプリのバージョンコード不適合
     // URLエンコード対応文字
     private static final String URL_ENCODED_ASTERISK = "%2a";
     private static final String URL_ENCODED_HYPHEN = "%2d";
@@ -567,274 +568,6 @@ public class RemoteControlRelayClient {
             }
             // キーコード送信スレッドを開始
             new Thread(new KeycodeRerayTask(keycode, action, canceled)).start();
-        }
-    }
-
-    /**
-     * 処理結果応答を通知する情報.
-     */
-    public class ResponseMessage {
-        public static final int RELAY_RESULT_OK = 0;
-        public static final int RELAY_RESULT_ERROR = 1;
-        public static final int RELAY_RESULT_SUCCESS = 0;
-        public static final int RELAY_RESULT_INTERNAL_ERROR = 11;
-        public static final int RELAY_RESULT_APPLICATION_NOT_INSTALL = 12;
-        public static final int RELAY_RESULT_APPLICATION_ID_NOTEXIST = 13;
-        public static final int RELAY_RESULT_APPLICATION_START_FAILED = 14;
-        public static final int RELAY_RESULT_VERSION_CODE_INCOMPATIBLE = 15;
-        public static final int RELAY_RESULT_CONTENTS_ID_NOTEXIST = 16;
-        public static final int RELAY_RESULT_CRID_NOTEXIST = 17;
-        public static final int RELAY_RESULT_CHNO_NOTEXIST = 18;
-        public static final int RELAY_RESULT_COMMAND_ARGUMENT_NOTEXIST = 19;
-
-        public static final int RELAY_RESULT_NOT_REGISTERED_SERVICE = 21;
-        public static final int RELAY_RESULT_UNREGISTERED_USER_ID = 22;
-        public static final int RELAY_RESULT_CONNECTION_TIMEOUT = 23;
-        public static final int RELAY_RESULT_RELAY_SERVICE_BUSY = 24;
-        public static final int RELAY_RESULT_USER_INVALID_STATE = 25;
-        public static final int RELAY_RESULT_DISTINATION_UNREACHABLE = 26;
-        public static final int RELAY_RESULT_SERVICE_CATEGORY_TYPE_NOTEXIST = 27;
-        public static final int RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE = 28;
-        public static final int RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE = 29;
-
-        private int mResult = RELAY_RESULT_OK;
-        private int mResultCode = RELAY_RESULT_SUCCESS;
-        private STB_APPLICATION_TYPES mApplicationTypes = STB_APPLICATION_TYPES.UNKNOWN;
-        private STB_REQUEST_COMMAND_TYPES mRequestCommandTypes = STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN;
-        private DTVCHANNEL_SERVICE_CATEGORY_TYPES mDtvChannelServiceCategoryTypes = DTVCHANNEL_SERVICE_CATEGORY_TYPES.UNKNOWN;
-        private H4D_SERVICE_CATEGORY_TYPES mHikariTvServiceCategoryTypes = H4D_SERVICE_CATEGORY_TYPES.UNKNOWN;
-
-        /**
-         * 応答結果の変換.
-         */
-        final Map<String, Integer> mResultMap = new HashMap<String, Integer>() {
-            {
-                put(RemoteControlRelayClient.RELAY_RESULT_OK, RELAY_RESULT_OK);
-                put(RemoteControlRelayClient.RELAY_RESULT_ERROR, RELAY_RESULT_ERROR);
-            }
-        };
-
-        /**
-         * 応答結果コードの変換.
-         */
-        final Map<String, Integer> mResultCodeMap = new HashMap<String, Integer>() {
-            {
-                put(RemoteControlRelayClient.RELAY_RESULT_INTERNAL_ERROR, RELAY_RESULT_INTERNAL_ERROR);
-                put(RemoteControlRelayClient.RELAY_RESULT_APPLICATION_NOT_INSTALL, RELAY_RESULT_APPLICATION_NOT_INSTALL);
-                put(RemoteControlRelayClient.RELAY_RESULT_APPLICATION_ID_NOTEXIST, RELAY_RESULT_APPLICATION_ID_NOTEXIST);
-                put(RemoteControlRelayClient.RELAY_RESULT_CONTENTS_ID_NOTEXIST, RELAY_RESULT_CONTENTS_ID_NOTEXIST);
-                put(RemoteControlRelayClient.RELAY_RESULT_CRID_NOTEXIST, RELAY_RESULT_CRID_NOTEXIST);
-                put(RemoteControlRelayClient.RELAY_RESULT_CHNO_NOTEXIST, RELAY_RESULT_CHNO_NOTEXIST);
-                put(RemoteControlRelayClient.RELAY_RESULT_COMMAND_ARGUMENT_NOTEXIST, RELAY_RESULT_COMMAND_ARGUMENT_NOTEXIST);
-                put(RemoteControlRelayClient.RELAY_RESULT_APPLICATION_START_FAILED, RELAY_RESULT_APPLICATION_START_FAILED);
-                put(RemoteControlRelayClient.RELAY_RESULT_VERSION_CODE_INCOMPATIBLE, RELAY_RESULT_VERSION_CODE_INCOMPATIBLE);
-                put(RemoteControlRelayClient.RELAY_RESULT_NOT_REGISTERED_SERVICE, RELAY_RESULT_NOT_REGISTERED_SERVICE);
-                put(RemoteControlRelayClient.RELAY_RESULT_UNREGISTERED_USER_ID, RELAY_RESULT_UNREGISTERED_USER_ID);
-                put(RemoteControlRelayClient.RELAY_RESULT_CONNECTION_TIMEOUT, RELAY_RESULT_CONNECTION_TIMEOUT);
-                put(RemoteControlRelayClient.RELAY_RESULT_RELAY_SERVICE_BUSY, RELAY_RESULT_RELAY_SERVICE_BUSY);
-                put(RemoteControlRelayClient.RELAY_RESULT_USER_INVALID_STATE, RELAY_RESULT_USER_INVALID_STATE);
-                put(RemoteControlRelayClient.RELAY_RESULT_SERVICE_CATEGORY_TYPE_NOTEXIST, RELAY_RESULT_SERVICE_CATEGORY_TYPE_NOTEXIST);
-                put(RemoteControlRelayClient.RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE, RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE);
-                put(RemoteControlRelayClient.RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE, RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE);
-            }
-        };
-        /**
-         * リクエストコマンド応答結果コードの変換.
-         */
-        final Map<String, STB_REQUEST_COMMAND_TYPES> mRequestCommandMap = new HashMap<String, STB_REQUEST_COMMAND_TYPES>() {
-            {
-                put(RemoteControlRelayClient.RELAY_COMMAND_UNKNOWN, STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
-                put(RemoteControlRelayClient.RELAY_COMMAND_KEYEVENT_KEYCODE_POWER, STB_REQUEST_COMMAND_TYPES.KEYEVENT_KEYCODE_POWER);
-                put(RemoteControlRelayClient.RELAY_COMMAND_IS_USER_ACCOUNT_EXIST, STB_REQUEST_COMMAND_TYPES.IS_USER_ACCOUNT_EXIST);
-                put(RemoteControlRelayClient.RELAY_COMMAND_SET_DEFAULT_USER_ACCOUNT, STB_REQUEST_COMMAND_TYPES.SET_DEFAULT_USER_ACCOUNT); // エラー応答時
-                put(RemoteControlRelayClient.RELAY_COMMAND_CHECK_APPLICATION_VERSION_COMPATIBILITY,
-                        STB_REQUEST_COMMAND_TYPES.CHECK_APPLICATION_VERSION_COMPATIBILITY); // エラー応答時
-                put(RemoteControlRelayClient.RELAY_COMMAND_TITLE_DETAIL, STB_REQUEST_COMMAND_TYPES.TITLE_DETAIL);
-                put(RemoteControlRelayClient.RELAY_COMMAND_START_APPLICATION, STB_REQUEST_COMMAND_TYPES.START_APPLICATION);
-            }
-        };
-
-        /**
-         * アプリ名シンボルに対するアプリ起動要求種別.
-         */
-        private final Map<String, STB_APPLICATION_TYPES> mStbApplicationEnumMap = new HashMap<String, STB_APPLICATION_TYPES>() {
-            {
-                put(STB_APPLICATION_DTV, STB_APPLICATION_TYPES.DTV);    // dTV
-                put(STB_APPLICATION_DANIMESTORE, STB_APPLICATION_TYPES.DANIMESTORE);    // dアニメストア
-                put(STB_APPLICATION_DTVCHANNEL, STB_APPLICATION_TYPES.DTVCHANNEL);  // dTVチャンネル
-                put(STB_APPLICATION_HIKARITV, STB_APPLICATION_TYPES.HIKARITV);    // ひかりTV
-                put(STB_APPLICATION_DAZN, STB_APPLICATION_TYPES.DAZN);    // ダ・ゾーン
-            }
-        };
-
-        /**
-         * dTVチャンネル：サービス・カテゴリー分類シンボルに対するサービス・カテゴリー分類.
-         */
-        private final Map<String, DTVCHANNEL_SERVICE_CATEGORY_TYPES>
-                mDtvChannelServiceCategoryTypesMap = new HashMap<String, DTVCHANNEL_SERVICE_CATEGORY_TYPES>() {
-            {
-                // dTVチャンネル・放送
-                put(STB_APPLICATION_DTVCHANNEL_CATEGORY_BROADCAST, DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_BROADCAST);
-                // dTVチャンネル・VOD（見逃し）
-                put(STB_APPLICATION_DTVCHANNEL_CATEGORY_MISSED, DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_MISSED);
-                // dTVチャンネル・VOD（関連番組）
-                put(STB_APPLICATION_DTVCHANNEL_CATEGORY_RELATION, DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_RELATION);
-            }
-        };
-
-        /**
-         * ひかりTV：サービス・カテゴリー分類シンボルに対するサービス・カテゴリー分類.
-         */
-
-        private final Map<String, H4D_SERVICE_CATEGORY_TYPES> mHikariTvServiceCategoryTypesMap = new HashMap<String, H4D_SERVICE_CATEGORY_TYPES>() {
-            {
-                // ひかりTVの番組（地デジ）
-                put(STB_APPLICATION_H4D_CATEGORY_TERRESTRIAL_DIGITAL, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_TERRESTRIAL_DIGITAL);
-                // ひかりTVの番組（BS）
-                put(STB_APPLICATION_H4D_CATEGORY_SATELLITE_BS, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_SATELLITE_BS);
-                // ひかりTVの番組（IPTV）
-                put(STB_APPLICATION_H4D_CATEGORY_IPTV, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_IPTV);
-                // ひかりTV内 dTVチャンネルの番組
-                put(STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_BROADCAST, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_BROADCAST);
-                // ひかりTV内 dTVチャンネル VOD（見逃し）
-                put(STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_MISSED, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_MISSED);
-                // ひかりTV内 dTVチャンネル VOD（関連番組）
-                put(STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_RELATION, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_RELATION);
-                // ひかりTVのVOD
-                put(STB_APPLICATION_H4D_CATEGORY_HIKARITV_VOD, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_HIKARITV_VOD);
-                // ひかりTV内 dTVのVOD
-                put(STB_APPLICATION_H4D_CATEGORY_DTV_VOD, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_VOD);
-                // ひかりTV内VOD(dTV含む)のシリーズ
-                put(STB_APPLICATION_H4D_CATEGORY_DTV_SVOD, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_SVOD);
-            }
-        };
-
-        /**
-         * 応答メッセージ.
-         */
-        ResponseMessage() {
-            mResult = RELAY_RESULT_OK;
-            mResultCode = RELAY_RESULT_SUCCESS;
-        }
-
-        /**
-         * 応答メッセージ.
-         *
-         * @param result     応答結果
-         * @param resultCode 応答結果コード
-         * @param message    メッセージ
-         */
-        public ResponseMessage(final int result, final int resultCode, final String message) {
-            mResult = result;
-            mResultCode = resultCode;
-        }
-
-        /**
-         * 応答結果を取得.
-         *
-         * @return 応答結果
-         */
-        public int getResult() {
-            return mResult;
-        }
-
-        /**
-         * 応答結果を設定.
-         *
-         * @param result 応答結果
-         */
-        public void setResult(final int result) {
-            mResult = result;
-        }
-
-        /**
-         * 応答結果コードを設定.
-         *
-         * @param resultCode 応答結果コード
-         */
-        void setResultCode(final int resultCode) {
-            mResultCode = resultCode;
-        }
-
-        /**
-         * 応答結果コードを取得.
-         *
-         * @return 応答結果コード
-         */
-        public int getResultCode() {
-            return mResultCode;
-        }
-
-        /**
-         * 起動アプリケーション種別を取得.
-         *
-         * @return アプリケーション種別
-         */
-        public STB_APPLICATION_TYPES getApplicationTypes() {
-            return mApplicationTypes;
-        }
-
-        /**
-         * 起動アプリケーション種別を設定.
-         *
-         * @param applicationTypes 起動アプリケーション種別
-         */
-        void setApplicationTypes(final STB_APPLICATION_TYPES applicationTypes) {
-            mApplicationTypes = applicationTypes;
-        }
-
-        /**
-         * リクエストコマンド種別を設定.
-         *
-         * @param requestCommandTypes リクエストコマンド種別
-         */
-        void setRequestCommandTypes(final STB_REQUEST_COMMAND_TYPES requestCommandTypes) {
-            mRequestCommandTypes = requestCommandTypes;
-        }
-
-        /**
-         * dTVチャンネルカテゴリ種別を取得.
-         *
-         * @return dTVチャンネルカテゴリ種別
-         */
-        DTVCHANNEL_SERVICE_CATEGORY_TYPES getDtvChannelServiceCategoryTypes() {
-            return mDtvChannelServiceCategoryTypes;
-        }
-
-        /**
-         * dTVチャンネルカテゴリ種別を設定.
-         *
-         * @param dtvChannelServiceCategoryTypes dTVチャンネルカテゴリ種別
-         */
-        void setDtvChannelServiceCategoryTypes(final DTVCHANNEL_SERVICE_CATEGORY_TYPES dtvChannelServiceCategoryTypes) {
-            mDtvChannelServiceCategoryTypes = dtvChannelServiceCategoryTypes;
-        }
-
-        /**
-         * ひかりTVカテゴリ種別を取得.
-         *
-         * @return ひかりTVカテゴリ種別
-         */
-        H4D_SERVICE_CATEGORY_TYPES getHikariTvServiceCategoryTypes() {
-            return mHikariTvServiceCategoryTypes;
-        }
-
-        /**
-         * ひかりTVカテゴリ種別を設定.
-         *
-         * @param hikariTvServiceCategoryTypes ひかりTVカテゴリ種別
-         */
-        void setHikariTvServiceCategoryTypes(final H4D_SERVICE_CATEGORY_TYPES hikariTvServiceCategoryTypes) {
-            mHikariTvServiceCategoryTypes = hikariTvServiceCategoryTypes;
-        }
-
-        /**
-         * リクエスト種別を取得.
-         *
-         * @return リクエスト種別
-         */
-        public STB_REQUEST_COMMAND_TYPES getRequestCommandTypes() {
-            return mRequestCommandTypes;
         }
     }
 
@@ -1318,7 +1051,7 @@ public class RemoteControlRelayClient {
         public void run() {
             StbConnectRelayClient stbConnection = StbConnectRelayClient.getInstance();  // Socket通信
             String recvData;
-            ResponseMessage response = new ResponseMessage();
+            RelayServiceResponseMessage response = new RelayServiceResponseMessage();
 
             if (mRequestParam != null) {
                 stbConnection.setRemoteIp(mRemoteHost);
@@ -1332,8 +1065,8 @@ public class RemoteControlRelayClient {
                     stbConnection.disconnect();
                 } else {
                     DTVTLogger.debug("failed to connect to the STB");
-                    response.setResult(ResponseMessage.RELAY_RESULT_ERROR);
-                    response.setResultCode(ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE);
+                    response.setResult(RelayServiceResponseMessage.RELAY_RESULT_ERROR);
+                    response.setResultCode(RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE);
                     response.setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
                 }
                 sendResponseMessage(response);
@@ -1345,7 +1078,7 @@ public class RemoteControlRelayClient {
          *
          * @param response 処理結果の応答値
          */
-        private void sendResponseMessage(final ResponseMessage response) {
+        private void sendResponseMessage(final RelayServiceResponseMessage response) {
             resetRequestStbElapsedTime();
             if (mHandler != null) {
                 mHandler.sendMessage(mHandler.obtainMessage(response.getResult(), response));
@@ -1358,16 +1091,16 @@ public class RemoteControlRelayClient {
          * @param recvResult 返還前応答メッセージ
          * @return 応答メッセージ
          */
-        private ResponseMessage setResponse(final String recvResult) {
+        private RelayServiceResponseMessage setResponse(final String recvResult) {
             JSONObject recvJson = new JSONObject();
             int resultErrorCode;
             STB_REQUEST_COMMAND_TYPES requestCommand = STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN;
 
-            ResponseMessage response = new ResponseMessage();
+            RelayServiceResponseMessage response = new RelayServiceResponseMessage();
             try {
                 // 初期化
-                response.setResult(ResponseMessage.RELAY_RESULT_ERROR);
-                response.setResultCode(ResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
+                response.setResult(RelayServiceResponseMessage.RELAY_RESULT_ERROR);
+                response.setResultCode(RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
                 response.setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
                 if (null == recvResult) {
                     return response;
@@ -1376,9 +1109,9 @@ public class RemoteControlRelayClient {
                 int result = response.mResultMap.get(recvJson.get(RELAY_RESULT).toString());
                 response.setResult(result);
                 switch (result) {
-                    case ResponseMessage.RELAY_RESULT_OK:
+                    case RelayServiceResponseMessage.RELAY_RESULT_OK:
                         break;
-                    case ResponseMessage.RELAY_RESULT_ERROR:
+                    case RelayServiceResponseMessage.RELAY_RESULT_ERROR:
                         // エラー応答の場合、応答結果コードをエラーコード値に変換
                         if (recvJson.has(RELAY_RESULT_ERROR_CODE)) {
                             String errorCodeStr = recvJson.get(RELAY_RESULT_ERROR_CODE).toString();
@@ -1449,8 +1182,8 @@ public class RemoteControlRelayClient {
                 }
             } catch (JSONException e) {
                 DTVTLogger.debug(e);
-                response.setResult(ResponseMessage.RELAY_RESULT_ERROR);
-                response.setResultCode(ResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
+                response.setResult(RelayServiceResponseMessage.RELAY_RESULT_ERROR);
+                response.setResultCode(RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
                 response.setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
             }
             return response;
@@ -1734,13 +1467,13 @@ public class RemoteControlRelayClient {
         MessageDigest digest;
 
         if (salt == null) {
-            return null;
+            return (byte[]) null;
         }
         try {
             digest = MessageDigest.getInstance(HASH_ALGORITHME);
         } catch (NoSuchAlgorithmException e) {
             DTVTLogger.debug(e);
-            return null;
+            return (byte[]) null;
         }
         digest.update(salt.getBytes(StandardCharsets.UTF_8));
         return digest.digest();

@@ -32,6 +32,7 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
+import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessage;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -895,10 +896,10 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     @Override
     protected void onStbClientResponse(final Message msg){
         RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES requestCommand
-                = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getRequestCommandTypes();
+                = ((RelayServiceResponseMessage) msg.obj).getRequestCommandTypes();
         DTVTLogger.debug(String.format("msg.what:%s requestCommand:%s", msg.what, requestCommand));
         switch (msg.what) {
-            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_OK:
+            case RelayServiceResponseMessage.RELAY_RESULT_OK:
                 switch (requestCommand) {
                     case START_APPLICATION:
                     case TITLE_DETAIL:
@@ -923,8 +924,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                         break;
                 }
                 break;
-            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_ERROR:
-                int resultcode = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getResultCode();
+            case RelayServiceResponseMessage.RELAY_RESULT_ERROR:
+                int resultcode = ((RelayServiceResponseMessage) msg.obj).getResultCode();
                 DTVTLogger.debug("resultcode: " + resultcode);
                 switch (requestCommand) {
                     case KEYEVENT_KEYCODE_POWER:
@@ -937,20 +938,20 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                         break;
                     case IS_USER_ACCOUNT_EXIST:
                         switch (resultcode) {
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_INTERNAL_ERROR://サーバエラー
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE://ユーザアカウントチェックサービス未登録
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY:// //中継アプリからの応答待ち中に新しい要求を行った場合
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_CONNECTION_TIMEOUT: //STBの中継アプリ~応答が無かった場合(要求はできたのでSTBとの通信はOK)
+                            case RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR://サーバエラー
+                            case RelayServiceResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE://ユーザアカウントチェックサービス未登録
+                            case RelayServiceResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY:// //中継アプリからの応答待ち中に新しい要求を行った場合
+                            case RelayServiceResponseMessage.RELAY_RESULT_CONNECTION_TIMEOUT: //STBの中継アプリ~応答が無かった場合(要求はできたのでSTBとの通信はOK)
                                 createErrorDialog();
                                 break;
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
+                            case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
                                 // チェック処理の状態で処理を分岐する
                                 SharedPreferencesUtils.resetSharedPreferencesStbInfo(getApplicationContext());
                                 Intent intent = new Intent(this, DAccountReSettingActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
                                 break;
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
+                            case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
                                 // TODO STBと接続しないとHOMEにいけない為、本体側のSTB機能が搭載されるまでは一旦ホームに遷移させておく.
                                 Intent homeintent = new Intent(this, HomeActivity.class);
                                 homeintent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -965,7 +966,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                         break;
                     case CHECK_APPLICATION_VERSION_COMPATIBILITY:
                         switch (resultcode) {
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE:
+                            case RelayServiceResponseMessage.RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE:
                                 CustomDialog dTVTUpDateDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
                                 dTVTUpDateDialog.setContent(getResources().getString(R.string.d_tv_terminal_application_version_update_dialog));
                                 dTVTUpDateDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
@@ -976,7 +977,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                                 });
                                 dTVTUpDateDialog.showDialog();
                                 break;
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE:
+                            case RelayServiceResponseMessage.RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE:
                                 showErrorDialog(getResources().getString(R.string.stb_application_version_update));
                                 break;
                             default:
@@ -985,7 +986,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                         break;
                     case COMMAND_UNKNOWN:
                         switch (resultcode) {
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
+                            case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
                                 // TODO STBと接続しないとHOMEにいけない為、本体側のSTB機能が搭載されるまでは一旦ホームに遷移させておく.
                                 createUnKnownDialog();
                                 break;
