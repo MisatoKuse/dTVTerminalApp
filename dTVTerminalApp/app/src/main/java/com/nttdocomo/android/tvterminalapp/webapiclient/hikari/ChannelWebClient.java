@@ -196,7 +196,8 @@ public class ChannelWebClient
 
             //その他
             jsonObject.put(JsonConstants.META_RESPONSE_FILTER, filter);
-            jsonObject.put(JsonConstants.META_RESPONSE_TYPE, type);
+            //typeは無視する(ひかり、DTVともに必ず取得しキャッシュ)
+//            jsonObject.put(JsonConstants.META_RESPONSE_TYPE, type);
 
             answerText = jsonObject.toString();
 

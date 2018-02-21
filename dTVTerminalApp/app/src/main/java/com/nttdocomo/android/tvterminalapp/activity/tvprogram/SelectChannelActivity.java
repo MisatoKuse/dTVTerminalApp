@@ -14,7 +14,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.HikariTvChDataProvider;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopScaledProListDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
@@ -66,7 +66,7 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
     /**
      * ひかりTVチャンネルデータプロバイダー
      */
-    private HikariTvChDataProvider mHikariTvChDataProvider;
+    private ScaledDownProgramListDataProvider mScaledDownProgramListDataProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,8 +89,8 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
      */
     private void loadData() {
         mServiceIds = getIntent().getStringArrayExtra(SERVICE_IDS);
-        mHikariTvChDataProvider = new HikariTvChDataProvider(this);
-        mHikariTvChDataProvider.getChannelList(0, 0, "");
+        mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
+        mScaledDownProgramListDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_ALL);
     }
 
     /**
@@ -163,8 +163,8 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
     public void onStartCommunication() {
         super.onStartCommunication();
         //チャンネルリスト通信許可
-        if (mHikariTvChDataProvider != null) {
-            mHikariTvChDataProvider.enableConnect();
+        if (mScaledDownProgramListDataProvider != null) {
+            mScaledDownProgramListDataProvider.enableConnect();
         }
         if (mSelectListView != null) {
             mSelectListView.invalidateViews();
@@ -180,6 +180,6 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
         DTVTLogger.start();
         //チャンネルリスト通信を止める
         StopScaledProListDataConnect stopTvConnect = new StopScaledProListDataConnect();
-        stopTvConnect.execute(mHikariTvChDataProvider);
+        stopTvConnect.execute(mScaledDownProgramListDataProvider);
     }
 }

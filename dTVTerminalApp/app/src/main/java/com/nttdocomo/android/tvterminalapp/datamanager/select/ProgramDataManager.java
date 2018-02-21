@@ -37,6 +37,17 @@ public class ProgramDataManager {
      */
     private final Context mContext;
 
+
+    /**
+     * チャンネルメタ service値（ひかり）.
+     */
+    public static final String CH_SERVICE_HIKARI = "1";
+
+    /**
+     * チャンネルメタ service値（dCH）.
+     */
+    public static final String CH_SERVICE_DCH = "2";
+
     /**
      * コンストラクタ.
      *
@@ -49,10 +60,10 @@ public class ProgramDataManager {
     /**
      * CH一覧データを返却する.
      *
-     * @param service チャンネルメタのservice.ひかり or dch(空文字の場合は両方)
+     * @param service チャンネルメタのservice.ひかり or dch or 全て
      * @return list チャンネルデータ
      */
-    public List<Map<String, String>> selectChannelListProgramData(final String service) {
+    public List<Map<String, String>> selectChannelListProgramData(final int service) {
 
         //データ存在チェック
         List<Map<String, String>> list = new ArrayList<>();
@@ -75,8 +86,19 @@ public class ProgramDataManager {
         SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
         ChannelListDao channelListDao = new ChannelListDao(database);
 
-        //ホーム画面用データ取得
-        list = channelListDao.findByService(columns, service);
+        if (service == JsonConstants.CH_SERVICE_TYPE_INDEX_ALL) {
+            // ひかり・DTV
+            list = channelListDao.findById(columns);
+        } else if(service == JsonConstants.CH_SERVICE_TYPE_INDEX_HIKARI) {
+            // ひかりのみ
+            list = channelListDao.findByService(columns, CH_SERVICE_HIKARI);
+        } else if(service == JsonConstants.CH_SERVICE_TYPE_INDEX_DCH) {
+            // DCHのみ
+            list = channelListDao.findByService(columns, CH_SERVICE_DCH);
+        } else {
+            DTVTLogger.error("CH_SERVICE_TYPE is incorrect!");
+            return null;
+        }
         DataBaseManager.getInstance().closeDatabase();
         database.close();
         return list;

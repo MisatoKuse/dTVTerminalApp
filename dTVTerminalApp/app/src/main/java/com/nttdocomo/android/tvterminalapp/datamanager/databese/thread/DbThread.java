@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.datamanager.databese.thread;
 
 import android.os.Handler;
+import android.support.annotation.NonNull;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
@@ -38,21 +39,16 @@ public class DbThread extends Thread {
          * DB操作をThread中で実行、操作内容はクラス外で決める(e.g. "select * from xxx where yy=zz ...,   delete from xxx")
          *
          * @return
-         * @throws Exception
          */
-        List<Map<String, String>> dbOperation(int operationId) throws Exception;
+        List<Map<String, String>> dbOperation(int operationId);
     }
 
     /**
      * @param handle      非同期処理ハンドラー
      * @param lis         　操作
      * @param operationId 多Threadオブジェクトを使用する時、Threadオブジェクトを区別する
-     * @throws Exception
      */
-    public DbThread(Handler handle, DbOperation lis, int operationId) throws Exception {
-        if (null == handle) {
-            throw new Exception("DbOperationFinishThread Exception, cause=(null==handle)");
-        }
+    public DbThread(@NonNull Handler handle, DbOperation lis, int operationId) {
 
         mHandle = handle;
         mDbOperationFinish = lis;

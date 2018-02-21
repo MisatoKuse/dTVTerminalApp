@@ -47,7 +47,7 @@ import java.util.Map;
 /**
  * コンテンツ詳細画面のDataProvider.
  */
-public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider implements ContentsDetailGetWebClient.ContentsDetailJsonParserCallback,
+public class ContentsDetailDataProvider extends ClipKeyListDataProvider implements ContentsDetailGetWebClient.ContentsDetailJsonParserCallback,
         RoleListWebClient.RoleListJsonParserCallback, DbThread.DbOperation, RemoteRecordingReservationWebClient.RemoteRecordingReservationJsonParserCallback,
         RentalVodListWebClient.RentalVodListJsonParserCallback, RentalChListWebClient.RentalChListJsonParserCallback {
 
@@ -140,7 +140,7 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
      *
      * @param context TvProgramListActivity
      */
-    public DtvContentsDetailDataProvider(final Context context) {
+    public ContentsDetailDataProvider(final Context context) {
         super(context);
         this.mContext = context;
         this.mApiDataProviderCallback = (ApiDataProviderCallback) context;
@@ -331,7 +331,7 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
     }
 
     @Override
-    public List<Map<String, String>> dbOperation(final int operationId) throws Exception {
+    public List<Map<String, String>> dbOperation(final int operationId) {
         List<Map<String, String>> resultSet = null;
         switch (operationId) {
             case ROLELIST_UPDATE: //サーバーから取得したロールリストデータをDBに保存する
@@ -344,7 +344,7 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                 break;
             case CHANNEL_SELECT: //DBからチャンネルデータを取得して、画面に返却する
                 ProgramDataManager channelDataManager = new ProgramDataManager(mContext);
-                resultSet = channelDataManager.selectChannelListProgramData("");
+                resultSet = channelDataManager.selectChannelListProgramData(JsonConstants.CH_SERVICE_TYPE_INDEX_ALL);
                 break;
             case RENTAL_VOD_UPDATE: //サーバーから取得した購入済みVODデータをDBに保存する
                 RentalListInsertDataManager rentalListInsertDataManager = new RentalListInsertDataManager(mContext);
@@ -461,11 +461,11 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
      * @param ageReq dch：dチャンネル, hikaritv：ひかりTVの多ch, 指定なしの場合：すべて
      */
     public void getContentsDetailData(final String[] crid, final String filter, final int ageReq) {
-        if(!isStop){
+        if (!isStop) {
             mDetailGetWebClient = new ContentsDetailGetWebClient(mContext);
             mDetailGetWebClient.getContentsDetailApi(crid, filter, ageReq, this);
         } else {
-            DTVTLogger.error("DtvContentsDetailDataProvider is stopping connect");
+            DTVTLogger.error("ContentsDetailDataProvider is stopping connect");
         }
     }
 
@@ -485,11 +485,11 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                 DTVTLogger.debug(e);
             }
         } else {
-            if(!isStop){
+            if (!isStop) {
                 mRentalVodListWebClient = new RentalVodListWebClient(mContext);
                 mRentalVodListWebClient.getRentalVodListApi(this);
             } else {
-                DTVTLogger.error("DtvContentsDetailDataProvider is stopping connect");
+                DTVTLogger.error("ContentsDetailDataProvider is stopping connect");
             }
         }
     }
@@ -520,11 +520,11 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                 DTVTLogger.debug(e);
             }
         } else {
-            if(!isStop){
+            if (!isStop) {
                 mRentalChListWebClient = new RentalChListWebClient(mContext);
                 mRentalChListWebClient.getRentalChListApi(this);
             } else {
-                DTVTLogger.error("DtvContentsDetailDataProvider is stopping connect");
+                DTVTLogger.error("ContentsDetailDataProvider is stopping connect");
             }
         }
     }
@@ -555,11 +555,11 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                 DTVTLogger.debug(e);
             }
         } else {
-            if(!isStop){
+            if (!isStop) {
                 mRoleListWebClient = new RoleListWebClient(mContext);
                 mRoleListWebClient.getRoleListApi(this);
             } else {
-                DTVTLogger.error("DtvContentsDetailDataProvider is stopping connect");
+                DTVTLogger.error("ContentsDetailDataProvider is stopping connect");
             }
         }
     }

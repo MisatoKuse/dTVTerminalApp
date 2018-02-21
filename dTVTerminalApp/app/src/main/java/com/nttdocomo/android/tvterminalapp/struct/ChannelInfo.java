@@ -60,7 +60,10 @@ public class ChannelInfo {
      * チャンネルパックのサブパーチャスID.
      */
     private String chPackSubPuId;
-
+    /**
+     * チャンネルのサービス識別子.
+     */
+    private String service;
     /**
      * Channelタイトルを取得.
      * @return title タイトル
@@ -238,6 +241,20 @@ public class ChannelInfo {
         this.schedules = schedules;
     }
 
+    /**
+     * サービス識別子を取得.
+     * @return service　ひかり"1" or dCH"2"
+     */
+    public String getService() {
+        return service;
+    }
+    /**
+     * サービス識別子を設定.
+     * @param service ひかり"1" or dCH"2"
+     */
+    public void setService(final String service) {
+        this.service = service;
+    }
     /**
      * チャンネルを比較.
      * @param ch2 比較対象チャンネル

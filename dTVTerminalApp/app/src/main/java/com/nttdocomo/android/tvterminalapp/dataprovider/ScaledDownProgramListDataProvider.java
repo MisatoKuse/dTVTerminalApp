@@ -61,7 +61,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     /**
      * チャンネルタイプ(dチャンネル、ひかりTV多ch、全て).
      */
-    private String mChannelDisplayType = "";
+    private int mChannelServiceType = JsonConstants.CH_SERVICE_TYPE_INDEX_ALL;
     /**
      * 取得要求日付.
      */
@@ -225,7 +225,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     }
 
     @Override
-    public List<Map<String, String>> dbOperation(final int mOperationId) throws Exception {
+    public List<Map<String, String>> dbOperation(final int mOperationId) {
         List<Map<String, String>> resultSet = null;
         switch (mOperationId) {
             case CHANNEL_UPDATE://サーバーから取得したチャンネルデータをDBに保存する
@@ -238,7 +238,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 break;
             case CHANNEL_SELECT://DBからチャンネルデータを取得して、画面に返却する
                 ProgramDataManager channelDataManager = new ProgramDataManager(mContext);
-                resultSet = channelDataManager.selectChannelListProgramData(mChannelDisplayType);
+                resultSet = channelDataManager.selectChannelListProgramData(mChannelServiceType);
                 break;
             case SCHEDULE_SELECT://DBから番組データを取得して、画面に返却する
                 ProgramDataManager scheduleDataManager = new ProgramDataManager(mContext);
@@ -267,13 +267,41 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             try {
                 DbThread t = new DbThread(handler, this, CHANNEL_UPDATE);
                 t.start();
-            } catch (Exception e) {
+            } catch (IllegalThreadStateException e) {
                 DTVTLogger.debug(e);
+                channels = null;
+            }
+        }
+
+        //WebApi上は必ずひかり・dCH共に取得するが、呼び出し元によってはどちらか一方のみ用いるのでフィルタ.
+        //せいぜい250チャンネル程度であれば高負荷にならないのでmain スレッドで回す.
+        ArrayList<ChannelInfo> dstChannels = null;
+        if (channels != null) {
+            dstChannels = new ArrayList<>();
+            if (mChannelServiceType == JsonConstants.CH_SERVICE_TYPE_INDEX_DCH) {
+                // DCHのみ
+                for (int i = 0; i < channels.size(); ++i) {
+                    String service = channels.get(i).getService();
+                    if (service != null && service.equals(ProgramDataManager.CH_SERVICE_DCH)) {
+                        dstChannels.add(channels.get(i));
+                    }
+                }
+            } else if (mChannelServiceType == JsonConstants.CH_SERVICE_TYPE_INDEX_HIKARI) {
+                // ひかりのみ
+                for (int i = 0; i < channels.size(); ++i) {
+                    String service = channels.get(i).getService();
+                    if (service != null && service.equals(ProgramDataManager.CH_SERVICE_HIKARI)) {
+                        dstChannels.add(channels.get(i));
+                    }
+                }
+            } else {
+                // どちらも
+                dstChannels = channels;
             }
         }
 
         if (null != mApiDataProviderCallback) {
-            mApiDataProviderCallback.channelListCallback(channels);
+            mApiDataProviderCallback.channelListCallback(dstChannels);
         }
     }
 
@@ -474,6 +502,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             String chType = hashMap.get(JsonConstants.META_RESPONSE_CH_TYPE);
             String puId = hashMap.get(JsonConstants.META_RESPONSE_PUID);
             String subPuId = hashMap.get(JsonConstants.META_RESPONSE_SUB_PUID);
+            String service = hashMap.get(JsonConstants.META_RESPONSE_SERVICE);
             String chPackPuId = hashMap.get(JsonConstants.META_RESPONSE_CHPACK
                     + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_PUID);
             String chPackSubPuId = hashMap.get(JsonConstants.META_RESPONSE_CHPACK
@@ -489,6 +518,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 channel.setSubPuId(subPuId);
                 channel.setChPackPuId(chPackPuId);
                 channel.setChPackSubPuId(chPackSubPuId);
+                channel.setService(service);
                 channels.add(channel);
             }
         }
@@ -523,13 +553,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      * @param type   dch：dチャンネル, hikaritv：ひかりTVの多ch, 指定なしの場合：すべて
      */
     public void getChannelList(final int limit, final int offset, final String filter, final int type) {
-        if (type == JsonConstants.DISPLAY_TYPE_INDEX_ALL) {
-            mChannelDisplayType = "";
-        } else if (type == JsonConstants.DISPLAY_TYPE_INDEX_DCH) {
-            mChannelDisplayType = "1";
-        } else {
-            mChannelDisplayType = "0";
-        }
+        mChannelServiceType = type;
 
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.CHANNEL_LAST_UPDATE);
@@ -540,8 +564,9 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             try {
                 DbThread t = new DbThread(handler, this, CHANNEL_SELECT);
                 t.start();
-            } catch (Exception e) {
+            } catch (IllegalThreadStateException e) {
                 DTVTLogger.debug(e);
+                //TODO:エラー返却した上でUI上に通知が必要
             }
         } else {
             if (!isStop) {

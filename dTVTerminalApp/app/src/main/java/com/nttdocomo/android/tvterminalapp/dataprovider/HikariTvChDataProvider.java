@@ -7,6 +7,8 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+
 public class HikariTvChDataProvider extends ScaledDownProgramListDataProvider {
     /**
      * コンストラクタ
@@ -24,7 +26,7 @@ public class HikariTvChDataProvider extends ScaledDownProgramListDataProvider {
      * @param offset 取得位置(1～)
      * @param filter release、testa、demo ※指定なしの場合release
      */
-    public void getChannelList(int limit, int offset, String filter){
-        super.getChannelList(limit, offset, filter, 1);
+    public void getChannelList(final int limit, final int offset, final String filter){
+        super.getChannelList(limit, offset, filter, JsonConstants.CH_SERVICE_TYPE_INDEX_HIKARI);
     }
 }

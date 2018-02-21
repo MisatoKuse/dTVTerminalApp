@@ -37,7 +37,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
-import com.nttdocomo.android.tvterminalapp.dataprovider.DtvContentsDetailDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ContentsDetailDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.HomeDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RentalDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
@@ -65,7 +65,7 @@ import java.util.Map;
 public class HomeActivity extends BaseActivity implements View.OnClickListener,
         VideoGenreProvider.apiGenreListDataProviderCallback,
         VideoGenreProvider.GenreListMapCallback,
-        DtvContentsDetailDataProvider.ApiDataProviderCallback,
+        ContentsDetailDataProvider.ApiDataProviderCallback,
         WatchListenVideoListDataProvider.WatchListenVideoListProviderCallback,
         RentalChListWebClient.RentalChListJsonParserCallback,
         RentalDataProvider.ApiDataProviderCallback,

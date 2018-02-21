@@ -397,7 +397,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     @Override
-    public List<Map<String, String>> dbOperation(int operationId) throws Exception {
+    public List<Map<String, String>> dbOperation(int operationId) {
         List<Map<String, String>> resultSet = null;
         DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
         switch (operationId) {

@@ -147,7 +147,9 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
 //        mRecommendListBaseAdapter.setChannel(mChannelMap);
 
         //リストにチャンネル情報を反映させる為に再描画する
-        mRecommendListBaseAdapter.notifyDataSetChanged();
+        if (mRecommendListBaseAdapter != null) {
+            mRecommendListBaseAdapter.notifyDataSetChanged();
+        }
     }
 
     /**

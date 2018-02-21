@@ -1356,7 +1356,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public List<Map<String, String>> dbOperation(final int operationId) throws Exception {
+    public List<Map<String, String>> dbOperation(final int operationId) {
         DateUtils dateUtils = new DateUtils(mContext);
         switch (operationId) {
             case ROLE_ID_LIST:

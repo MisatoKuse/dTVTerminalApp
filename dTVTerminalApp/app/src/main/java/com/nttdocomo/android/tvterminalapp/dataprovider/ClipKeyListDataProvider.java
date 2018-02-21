@@ -357,7 +357,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     }
 
     @Override
-    public List<Map<String, String>> dbOperation(final int operationId) throws Exception {
+    public List<Map<String, String>> dbOperation(final int operationId) {
         ClipKeyListInsertDataManager dataManager = new ClipKeyListInsertDataManager(mContext);
         String crid = mClipRequestData.getCrid();
         String dispType = mClipRequestData.getDispType();

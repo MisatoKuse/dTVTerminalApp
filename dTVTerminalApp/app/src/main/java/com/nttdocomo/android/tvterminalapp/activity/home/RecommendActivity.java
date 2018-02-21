@@ -143,13 +143,12 @@ public class RecommendActivity extends BaseActivity implements
         //チャンネルリストプロバイダーでデータを取得する
         mHikariTvChDataProvider = new HikariTvChDataProvider(this);
         mHikariTvChDataProvider.getChannelList(0, 0, "");
-
         try {
             mChannelMap = mHikariTvChDataProvider.dbOperation(SEARCH_CHANNEL);
-        } catch (Exception e) {
-            //発生する例外がExceptionのみの模様
-            mChannelMap = new ArrayList();
+        } catch (IllegalStateException e) {
+            DTVTLogger.debug(e);
         }
+
     }
 
     /**
@@ -351,27 +350,17 @@ public class RecommendActivity extends BaseActivity implements
     @Override
     public void channelInfoCallback(final ChannelInfoList channelsInfo) {
         //チャンネル情報取得後のコールバック
-        try {
-            mChannelMap = mHikariTvChDataProvider.dbOperation(SEARCH_CHANNEL);
+        mChannelMap = mHikariTvChDataProvider.dbOperation(SEARCH_CHANNEL);
+        getCurrentRecommendBaseFragment().setChannelData(mChannelMap);
 
-            getCurrentRecommendBaseFragment().setChannelData(mChannelMap);
-        } catch (Exception e) {
-            //一般例外しか出ない模様となる
-            DTVTLogger.debug(e);
-        }
     }
 
     @Override
     public void channelListCallback(final ArrayList<ChannelInfo> channels) {
         //チャンネル情報取得後のコールバック
-        try {
-            mChannelMap = mHikariTvChDataProvider.dbOperation(SEARCH_CHANNEL);
+        mChannelMap = mHikariTvChDataProvider.dbOperation(SEARCH_CHANNEL);
+        getCurrentRecommendBaseFragment().setChannelData(mChannelMap);
 
-            getCurrentRecommendBaseFragment().setChannelData(mChannelMap);
-        } catch (Exception e) {
-            //一般例外しか出ない模様となる
-            DTVTLogger.debug(e);
-        }
     }
 
     /**

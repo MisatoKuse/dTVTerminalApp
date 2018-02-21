@@ -7,12 +7,12 @@ package com.nttdocomo.android.tvterminalapp.dataprovider.stop;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.DtvContentsDetailDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ContentsDetailDataProvider;
 
 /**
  * コンテンツ詳細取得で行っている通信を止める.
  */
-public class StopContentDetailDataConnect extends AsyncTask<DtvContentsDetailDataProvider, Void, Void> {
+public class StopContentDetailDataConnect extends AsyncTask<ContentsDetailDataProvider, Void, Void> {
     /**
      * コンストラクタ.
      */
@@ -21,11 +21,11 @@ public class StopContentDetailDataConnect extends AsyncTask<DtvContentsDetailDat
     }
 
     @Override
-    protected Void doInBackground(final DtvContentsDetailDataProvider... dataProviders) {
+    protected Void doInBackground(final ContentsDetailDataProvider... dataProviders) {
         DTVTLogger.start();
         //通信を行っている処理を止める
         if (dataProviders != null) {
-            for (DtvContentsDetailDataProvider contentsDetailDataProvider : dataProviders) {
+            for (ContentsDetailDataProvider contentsDetailDataProvider : dataProviders) {
                 if (contentsDetailDataProvider != null) {
                     contentsDetailDataProvider.stopConnect();
                 }

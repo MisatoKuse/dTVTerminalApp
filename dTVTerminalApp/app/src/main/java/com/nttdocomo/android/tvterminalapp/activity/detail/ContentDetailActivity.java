@@ -70,7 +70,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.UserInfoInsertDataManager;
-import com.nttdocomo.android.tvterminalapp.dataprovider.DtvContentsDetailDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ContentsDetailDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
@@ -113,7 +113,7 @@ import java.util.regex.Pattern;
  * 視聴・録画再生も含めて全てのコンテンツはこのActivityで表示を行う.
  * クラス名のRename禁止(dCHアプリを起動するコンポーネントは、dCHアプリ側でホワイトリスト化するとのこと)
  */
-public class ContentDetailActivity extends BaseActivity implements DtvContentsDetailDataProvider.ApiDataProviderCallback,
+public class ContentDetailActivity extends BaseActivity implements ContentsDetailDataProvider.ApiDataProviderCallback,
         View.OnClickListener, MediaPlayerController.OnStateChangeListener, MediaPlayerController.OnFormatChangeListener,
         MediaPlayerController.OnPlayerEventListener, MediaPlayerController.OnErrorListener, MediaPlayerController.OnCaptionDataListener,
         RemoteControllerView.OnStartRemoteControllerUIListener, DtvContentsDetailFragment.RecordingReservationIconListener,
@@ -146,7 +146,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     private ViewPager mViewPager = null;
     private OtherContentsDetailData mDetailData = null;
     private VodMetaFullData mDetailFullData = null;
-    private DtvContentsDetailDataProvider mDetailDataProvider = null;
+    private ContentsDetailDataProvider mDetailDataProvider = null;
     private ScaledDownProgramListDataProvider mScaledDownProgramListDataProvider = null;
     private ThumbnailProvider mThumbnailProvider = null;
     private boolean isDownloadStop = false;
@@ -1162,7 +1162,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      * コンテンツ詳細データ取得.
      */
     private void getScheduleDetailData() {
-        mDetailDataProvider = new DtvContentsDetailDataProvider(this);
+        mDetailDataProvider = new ContentsDetailDataProvider(this);
         String[] cRid;
         if (mDetailData != null) {
             DTVTLogger.debug("contentId:" + mDetailData.getContentId());

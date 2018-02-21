@@ -385,19 +385,19 @@ public class JsonConstants {
     /**
      * チャンネル一覧取得タイプ.
      */
-    public static final String DISPLAY_TYPE[] = {"", "hikaritv", "dch"};
+    public static final String[] DISPLAY_TYPE = {"", "hikaritv", "dch"};
     /**
      * チャンネル一覧取得タイプindex(全て).
      */
-    public static final int DISPLAY_TYPE_INDEX_ALL = 0;
+    public static final int CH_SERVICE_TYPE_INDEX_ALL = 0;
     /**
      * チャンネル一覧取得タイプindex(ひかり).
      */
-    public static final int DISPLAY_TYPE_INDEX_HIKARI = 1;
+    public static final int CH_SERVICE_TYPE_INDEX_HIKARI = 1;
     /**
      * チャンネル一覧取得タイプindex(dCh).
      */
-    public static final int DISPLAY_TYPE_INDEX_DCH = 2;
+    public static final int CH_SERVICE_TYPE_INDEX_DCH = 2;
     /**
      * ジャンル毎コンテンツ一覧(ビデオランキング)ソートタイプ.
      * titleruby_asc：タイトルルビ昇順
