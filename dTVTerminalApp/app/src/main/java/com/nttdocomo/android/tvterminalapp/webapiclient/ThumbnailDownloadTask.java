@@ -201,7 +201,7 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
                      stopConnection.disconnect();
                  }
              });
-             thread.run();
+             thread.start();
 
              //止めた物は消す
              iterator.remove();

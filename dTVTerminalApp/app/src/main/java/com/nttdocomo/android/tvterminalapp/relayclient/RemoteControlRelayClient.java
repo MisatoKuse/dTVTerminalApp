@@ -29,7 +29,6 @@ import java.util.Map;
 
 /**
  * キーコードをSTBへ送信する.
- *
  */
 public class RemoteControlRelayClient {
 
@@ -72,7 +71,9 @@ public class RemoteControlRelayClient {
     private static final String KEYCODE_POWER = "KEYCODE_POWER";
     private static final String KEYCODE_REC_LIST = "KEYCODE_REC_LIST";
 
-    // 受信キーコード名に対応する STBキーコード
+    /**
+     * 受信キーコード名に対応する STBキーコード.
+     */
     private static final Map<Integer, String> keyCodeNameMap = new HashMap<Integer, String>() {
         {
             put(R.id.remote_controller_bt_up, KEYCODE_DPAD_UP); // カーソル (上下左右)
@@ -113,24 +114,38 @@ public class RemoteControlRelayClient {
         }
     };
 
-    // シングルトン
+    /**
+     * シングルトン.
+     */
     private static RemoteControlRelayClient mInstance = new RemoteControlRelayClient();
 
     /**
      * アプリ起動要求種別.
      */
     public enum STB_APPLICATION_TYPES {
-        // 初期値
+        /**
+         * 初期値.
+         */
         UNKNOWN,
-        // dTV
+        /**
+         * dTV.
+         */
         DTV,
-        // dアニメストア
+        /**
+         * dアニメストア.
+         */
         DANIMESTORE,
-        // dTVチャンネル
+        /**
+         * dTVチャンネル.
+         */
         DTVCHANNEL,
-        // ひかりTV
+        /**
+         * ひかりTV.
+         */
         HIKARITV,
-        // ダ・ゾーン
+        /**
+         * ダ・ゾーン.
+         */
         DAZN
     }
 
@@ -138,58 +153,101 @@ public class RemoteControlRelayClient {
      * dTVチャンネル：サービス・カテゴリー分類.
      */
     public enum DTVCHANNEL_SERVICE_CATEGORY_TYPES {
-        // 初期値
+        /**
+         * 初期値.
+         */
         UNKNOWN,
-        // 放送
+        /**
+         * 放送.
+         */
         DTVCHANNEL_CATEGORY_BROADCAST,
-        // VOD（見逃し）
+        /**
+         * VOD（見逃し）.
+         */
         DTVCHANNEL_CATEGORY_MISSED,
-        // VOD（関連番組）
+        /**
+         * VOD（関連番組）.
+         */
         DTVCHANNEL_CATEGORY_RELATION
     }
 
     /**
      * ひかりTV：サービス・カテゴリー分類.
-     *
      */
     public enum H4D_SERVICE_CATEGORY_TYPES {
-        // 初期値
+        /**
+         * 初期値.
+         */
         UNKNOWN,
-        // ひかりTVの番組
-        H4D_CATEGORY_TERRESTRIAL_DIGITAL, // ひかりTVの番組（地デジ）
-        H4D_CATEGORY_SATELLITE_BS, // ひかりTVの番組（BS）
-        H4D_CATEGORY_IPTV, // ひかりTVの番組（IPTV）
-        // ひかりTV内 dTVチャンネルの番組
+        /**
+         * ひかりTVの番組（地デジ）.
+         */
+        H4D_CATEGORY_TERRESTRIAL_DIGITAL,
+        /**
+         * ひかりTVの番組（BS）.
+         */
+        H4D_CATEGORY_SATELLITE_BS,
+        /**
+         * ひかりTVの番組（IPTV）.
+         */
+        H4D_CATEGORY_IPTV,
+        /**
+         * ひかりTV内 dTVチャンネルの番組.
+         */
         H4D_CATEGORY_DTVCHANNEL_BROADCAST,
-        // ひかりTV内 dTVチャンネルの見逃し、関連VOD
-        H4D_CATEGORY_DTVCHANNEL_MISSED, // ひかりTV内 dTVチャンネル VOD（見逃し）
-        H4D_CATEGORY_DTVCHANNEL_RELATION, // ひかりTV内 dTVチャンネル VOD（関連番組）
-        // ひかりTVのVOD
+        /**
+         * ひかりTV内 dTVチャンネル VOD（見逃し）.
+         */
+        H4D_CATEGORY_DTVCHANNEL_MISSED, //
+        /**
+         * ひかりTV内 dTVチャンネル VOD（関連番組）.
+         */
+        H4D_CATEGORY_DTVCHANNEL_RELATION,
+        /**
+         * ひかりTVのVOD.
+         */
         H4D_CATEGORY_HIKARITV_VOD,
-        // ひかりTV内 dTVのVOD
+        /**
+         * ひかりTV内 dTVのVOD.
+         */
         H4D_CATEGORY_DTV_VOD,
-        // ひかりTV内VOD(dTV含む)のシリーズ
+        /**
+         * ひかりTV内VOD(dTV含む)のシリーズ.
+         */
         H4D_CATEGORY_DTV_SVOD
     }
 
     /**
      * リクエストコマンド種別.
-     *
      */
     public enum STB_REQUEST_COMMAND_TYPES {
-        // 受信タイムアウト時
+        /**
+         * 受信タイムアウト時.
+         */
         COMMAND_UNKNOWN,
-        // 電源ON/OFF要求
+        /**
+         * 電源ON/OFF要求.
+         */
         KEYEVENT_KEYCODE_POWER,
-        // ユーザ登録チェック
+        /**
+         * ユーザ登録チェック.
+         */
         IS_USER_ACCOUNT_EXIST,
-        // ユーザーアカウント切り替え（エラー応答時）
+        /**
+         * ユーザーアカウント切り替え（エラー応答時）.
+         */
         SET_DEFAULT_USER_ACCOUNT,
-        // アプリケーションバージョンチェック（エラー応答時）
+        /**
+         * アプリケーションバージョンチェック（エラー応答時）.
+         */
         CHECK_APPLICATION_VERSION_COMPATIBILITY,
-        // サービスアプリ：タイトル詳細表示起動要求
+        /**
+         * サービスアプリ：タイトル詳細表示起動要求.
+         */
         TITLE_DETAIL,
-        // サービスアプリ：起動要求
+        /**
+         * サービスアプリ：起動要求.
+         */
         START_APPLICATION
     }
 
@@ -297,7 +355,9 @@ public class RemoteControlRelayClient {
     private static final String URL_ENCODED_PERIOD = "%2e";
     private static final String URL_ENCODED_SPACE = "%20";
 
-    // アプリ起動要求種別に対応するアプリ名シンボル
+    /**
+     * アプリ起動要求種別に対応するアプリ名シンボル.
+     */
     private static final Map<STB_APPLICATION_TYPES, String> mStbApplicationSymbolMap = new HashMap<STB_APPLICATION_TYPES, String>() {
         {
             put(STB_APPLICATION_TYPES.DTV, STB_APPLICATION_DTV);    // dTV
@@ -308,8 +368,11 @@ public class RemoteControlRelayClient {
         }
     };
 
-    // dTVチャンネル・カテゴリー分類に対応するカテゴリー・シンボル名
-    private static final Map<DTVCHANNEL_SERVICE_CATEGORY_TYPES, String> mDtvChannelServiceCategorySymbolMap = new HashMap<DTVCHANNEL_SERVICE_CATEGORY_TYPES, String>() {
+    /**
+     * dTVチャンネル・カテゴリー分類に対応するカテゴリー・シンボル名.
+     */
+    private static final Map<DTVCHANNEL_SERVICE_CATEGORY_TYPES, String>
+            mDtvChannelServiceCategorySymbolMap = new HashMap<DTVCHANNEL_SERVICE_CATEGORY_TYPES, String>() {
         {
             put(DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_BROADCAST, STB_APPLICATION_DTVCHANNEL_CATEGORY_BROADCAST);    // dTVチャンネル・放送
             put(DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_MISSED, STB_APPLICATION_DTVCHANNEL_CATEGORY_MISSED);    // dTVチャンネル・VOD（見逃し）
@@ -317,22 +380,35 @@ public class RemoteControlRelayClient {
         }
     };
 
-    // ひかりTV・カテゴリー分類に対応するカテゴリー・シンボル名
+    /**
+     * ひかりTV・カテゴリー分類に対応するカテゴリー・シンボル名.
+     */
     private static final Map<H4D_SERVICE_CATEGORY_TYPES, String> mHikariTvServiceCategoryTypeSymbolMap = new HashMap<H4D_SERVICE_CATEGORY_TYPES, String>() {
         {
-            put(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_TERRESTRIAL_DIGITAL, STB_APPLICATION_H4D_CATEGORY_TERRESTRIAL_DIGITAL); // ひかりTVの番組（地デジ）
-            put(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_SATELLITE_BS, STB_APPLICATION_H4D_CATEGORY_SATELLITE_BS); // ひかりTVの番組（BS）
-            put(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_IPTV, STB_APPLICATION_H4D_CATEGORY_IPTV); // ひかりTVの番組（IPTV）
-            put(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_BROADCAST, STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_BROADCAST); // ひかりTV内 dTVチャンネルの番組
-            put(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_MISSED, STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_MISSED); // ひかりTV内 dTVチャンネル VOD（見逃し）
-            put(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_RELATION, STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_RELATION); // ひかりTV内 dTVチャンネル VOD（関連番組）
-            put(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_HIKARITV_VOD, STB_APPLICATION_H4D_CATEGORY_HIKARITV_VOD); // ひかりTVのVOD
-            put(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_VOD, STB_APPLICATION_H4D_CATEGORY_DTV_VOD); // ひかりTV内 dTVのVOD
-            put(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_SVOD, STB_APPLICATION_H4D_CATEGORY_DTV_SVOD); // ひかりTV内VOD(dTV含む)のシリーズ
+            // ひかりTVの番組（地デジ）
+            put(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_TERRESTRIAL_DIGITAL, STB_APPLICATION_H4D_CATEGORY_TERRESTRIAL_DIGITAL);
+            // ひかりTVの番組（BS）
+            put(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_SATELLITE_BS, STB_APPLICATION_H4D_CATEGORY_SATELLITE_BS);
+            // ひかりTVの番組（IPTV）
+            put(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_IPTV, STB_APPLICATION_H4D_CATEGORY_IPTV);
+            // ひかりTV内 dTVチャンネルの番組
+            put(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_BROADCAST, STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_BROADCAST);
+            // ひかりTV内 dTVチャンネル VOD（見逃し）
+            put(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_MISSED, STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_MISSED);
+            // ひかりTV内 dTVチャンネル VOD（関連番組）
+            put(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_RELATION, STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_RELATION);
+            // ひかりTVのVOD
+            put(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_HIKARITV_VOD, STB_APPLICATION_H4D_CATEGORY_HIKARITV_VOD);
+            // ひかりTV内 dTVのVOD
+            put(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_VOD, STB_APPLICATION_H4D_CATEGORY_DTV_VOD);
+            // ひかりTV内VOD(dTV含む)のシリーズ
+            put(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_SVOD, STB_APPLICATION_H4D_CATEGORY_DTV_SVOD);
         }
     };
 
-    // キーイベントアクション
+    /**
+     * キーイベントアクション.
+     */
     private static final Map<Integer, String> mKeyeventActionMap = new HashMap<Integer, String>() {
         {
             put(KeyEvent.ACTION_DOWN, RELAY_KEYEVENT_ACTION_DOWN);
@@ -340,15 +416,24 @@ public class RemoteControlRelayClient {
         }
     };
 
-    // 処理結果応答を通知するハンドラー
+    /**
+     * 処理結果応答を通知するハンドラー.
+     */
     private Handler mHandler = null;
-
-    // 最後にSTBへアプリケーション要求したシステム時刻からの経過時間
-    private long mRequestStbElapsedTime = 0;
 
     /**
      * 最後にSTBへアプリケーション要求したシステム時刻からの経過時間.
-     * @return
+     */
+    private long mRequestStbElapsedTime = 0;
+    /**
+     * 通信停止判定.
+     */
+    private boolean mIsCancel = false;
+
+    /**
+     * 最後にSTBへアプリケーション要求したシステム時刻からの経過時間.
+     *
+     * @return 経過時間
      */
     private long getRequestStbElapsedTime() {
         return SystemClock.elapsedRealtime() - mRequestStbElapsedTime;
@@ -356,7 +441,8 @@ public class RemoteControlRelayClient {
 
     /**
      * 最後にSTBへアプリケーション要求したシステム時刻からの経過時間.
-     * @return
+     *
+     * @return true タイムアウト時間を超過
      */
     private boolean isRequestStbElapsedTime() {
         if (getRequestStbElapsedTime() > TcpClient.SEND_RECV_TIMEOUT) {
@@ -375,7 +461,7 @@ public class RemoteControlRelayClient {
     }
 
     /**
-     * 最後にSTBへアプリケーション要求した時刻のリセット
+     * 最後にSTBへアプリケーション要求した時刻のリセット.
      */
     private void resetRequestStbElapsedTime() {
         mRequestStbElapsedTime = 0;
@@ -400,9 +486,9 @@ public class RemoteControlRelayClient {
     /**
      * 処理結果応答を通知するハンドラーの設定.
      *
-     * @param handler
+     * @param handler handler
      */
-    public void setHandler(Handler handler) {
+    public void setHandler(final Handler handler) {
         mHandler = handler;
     }
 
@@ -419,7 +505,7 @@ public class RemoteControlRelayClient {
      * @param keycodeRid キーコードR.id
      * @return キーコード名（キーコードがない場合は null）
      */
-    private String convertKeycode(int keycodeRid) {
+    private String convertKeycode(final int keycodeRid) {
         String keyCodeName = null;
         if (keyCodeNameMap.containsKey(keycodeRid)) {
             keyCodeName = keyCodeNameMap.get(keycodeRid);
@@ -430,11 +516,18 @@ public class RemoteControlRelayClient {
     /**
      * STB電源ON/OFF要求をSTBへ送信する.
      *
+     * @param keycode  キーコード
+     * @param action   Key Up or Down
+     * @param canceled キャンセル判定
+     * @param context  コンテキスト
      * @return true 電源キーの場合
      */
-    private boolean switchStbPowerRequest(String keycode, int action, boolean canceled, Context context) {
+    private boolean switchStbPowerRequest(final String keycode, final int action,
+                                          final boolean canceled, final Context context) {
+        if (mIsCancel) {
+            return false;
+        }
         String requestParam;
-
         // 電源キーをフックする
         if (KEYCODE_POWER.equals(keycode)) {
             DTVTLogger.debug(String.format(Locale.getDefault(), "KEYCODE_POWER, action:[%d] canceled:[%s]", action, canceled));
@@ -458,9 +551,15 @@ public class RemoteControlRelayClient {
     /**
      * キーコードをSTBへ送信する.
      *
-     * @param keycodeRid
+     * @param keycodeRid キーコードID
+     * @param action     Key Up or Down
+     * @param canceled   キャンセル判定
+     * @param context    コンテキスト
      */
-    public void sendKeycode(int keycodeRid, int action, boolean canceled, Context context) {
+    public void sendKeycode(final int keycodeRid, final int action, final boolean canceled, final Context context) {
+        if (mIsCancel) {
+            return;
+        }
         String keycode = convertKeycode(keycodeRid);
         if (keycode != null && mKeyeventActionMap.containsKey(action)) {
             if (switchStbPowerRequest(keycode, action, canceled, context)) {
@@ -505,16 +604,20 @@ public class RemoteControlRelayClient {
         private DTVCHANNEL_SERVICE_CATEGORY_TYPES mDtvChannelServiceCategoryTypes = DTVCHANNEL_SERVICE_CATEGORY_TYPES.UNKNOWN;
         private H4D_SERVICE_CATEGORY_TYPES mHikariTvServiceCategoryTypes = H4D_SERVICE_CATEGORY_TYPES.UNKNOWN;
 
-        // 応答結果の変換
-        public final Map<String, Integer> mResultMap = new HashMap<String, Integer>() {
+        /**
+         * 応答結果の変換.
+         */
+        final Map<String, Integer> mResultMap = new HashMap<String, Integer>() {
             {
                 put(RemoteControlRelayClient.RELAY_RESULT_OK, RELAY_RESULT_OK);
                 put(RemoteControlRelayClient.RELAY_RESULT_ERROR, RELAY_RESULT_ERROR);
             }
         };
 
-        // 応答結果コードの変換
-        public final Map<String, Integer> mResultCodeMap = new HashMap<String, Integer>() {
+        /**
+         * 応答結果コードの変換.
+         */
+        final Map<String, Integer> mResultCodeMap = new HashMap<String, Integer>() {
             {
                 put(RemoteControlRelayClient.RELAY_RESULT_INTERNAL_ERROR, RELAY_RESULT_INTERNAL_ERROR);
                 put(RemoteControlRelayClient.RELAY_RESULT_APPLICATION_NOT_INSTALL, RELAY_RESULT_APPLICATION_NOT_INSTALL);
@@ -535,20 +638,25 @@ public class RemoteControlRelayClient {
                 put(RemoteControlRelayClient.RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE, RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE);
             }
         };
-        // リクエストコマンド応答結果コードの変換
-        public final Map<String, STB_REQUEST_COMMAND_TYPES> mRequestCommandMap = new HashMap<String, STB_REQUEST_COMMAND_TYPES>() {
+        /**
+         * リクエストコマンド応答結果コードの変換.
+         */
+        final Map<String, STB_REQUEST_COMMAND_TYPES> mRequestCommandMap = new HashMap<String, STB_REQUEST_COMMAND_TYPES>() {
             {
                 put(RemoteControlRelayClient.RELAY_COMMAND_UNKNOWN, STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
                 put(RemoteControlRelayClient.RELAY_COMMAND_KEYEVENT_KEYCODE_POWER, STB_REQUEST_COMMAND_TYPES.KEYEVENT_KEYCODE_POWER);
                 put(RemoteControlRelayClient.RELAY_COMMAND_IS_USER_ACCOUNT_EXIST, STB_REQUEST_COMMAND_TYPES.IS_USER_ACCOUNT_EXIST);
                 put(RemoteControlRelayClient.RELAY_COMMAND_SET_DEFAULT_USER_ACCOUNT, STB_REQUEST_COMMAND_TYPES.SET_DEFAULT_USER_ACCOUNT); // エラー応答時
-                put(RemoteControlRelayClient.RELAY_COMMAND_CHECK_APPLICATION_VERSION_COMPATIBILITY, STB_REQUEST_COMMAND_TYPES.CHECK_APPLICATION_VERSION_COMPATIBILITY); // エラー応答時
+                put(RemoteControlRelayClient.RELAY_COMMAND_CHECK_APPLICATION_VERSION_COMPATIBILITY,
+                        STB_REQUEST_COMMAND_TYPES.CHECK_APPLICATION_VERSION_COMPATIBILITY); // エラー応答時
                 put(RemoteControlRelayClient.RELAY_COMMAND_TITLE_DETAIL, STB_REQUEST_COMMAND_TYPES.TITLE_DETAIL);
                 put(RemoteControlRelayClient.RELAY_COMMAND_START_APPLICATION, STB_REQUEST_COMMAND_TYPES.START_APPLICATION);
             }
         };
 
-        // アプリ名シンボルに対するアプリ起動要求種別
+        /**
+         * アプリ名シンボルに対するアプリ起動要求種別.
+         */
         private final Map<String, STB_APPLICATION_TYPES> mStbApplicationEnumMap = new HashMap<String, STB_APPLICATION_TYPES>() {
             {
                 put(STB_APPLICATION_DTV, STB_APPLICATION_TYPES.DTV);    // dTV
@@ -559,84 +667,172 @@ public class RemoteControlRelayClient {
             }
         };
 
-        // dTVチャンネル：サービス・カテゴリー分類シンボルに対するサービス・カテゴリー分類
-        private final Map<String, DTVCHANNEL_SERVICE_CATEGORY_TYPES> mDtvChannelServiceCategoryTypesMap = new HashMap<String, DTVCHANNEL_SERVICE_CATEGORY_TYPES>() {
+        /**
+         * dTVチャンネル：サービス・カテゴリー分類シンボルに対するサービス・カテゴリー分類.
+         */
+        private final Map<String, DTVCHANNEL_SERVICE_CATEGORY_TYPES>
+                mDtvChannelServiceCategoryTypesMap = new HashMap<String, DTVCHANNEL_SERVICE_CATEGORY_TYPES>() {
             {
-                put(STB_APPLICATION_DTVCHANNEL_CATEGORY_BROADCAST, DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_BROADCAST); // dTVチャンネル・放送
-                put(STB_APPLICATION_DTVCHANNEL_CATEGORY_MISSED, DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_MISSED); // dTVチャンネル・VOD（見逃し）
-                put(STB_APPLICATION_DTVCHANNEL_CATEGORY_RELATION, DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_RELATION); // dTVチャンネル・VOD（関連番組）
+                // dTVチャンネル・放送
+                put(STB_APPLICATION_DTVCHANNEL_CATEGORY_BROADCAST, DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_BROADCAST);
+                // dTVチャンネル・VOD（見逃し）
+                put(STB_APPLICATION_DTVCHANNEL_CATEGORY_MISSED, DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_MISSED);
+                // dTVチャンネル・VOD（関連番組）
+                put(STB_APPLICATION_DTVCHANNEL_CATEGORY_RELATION, DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_RELATION);
             }
         };
 
-        // ひかりTV：サービス・カテゴリー分類シンボルに対するサービス・カテゴリー分類
+        /**
+         * ひかりTV：サービス・カテゴリー分類シンボルに対するサービス・カテゴリー分類.
+         */
+
         private final Map<String, H4D_SERVICE_CATEGORY_TYPES> mHikariTvServiceCategoryTypesMap = new HashMap<String, H4D_SERVICE_CATEGORY_TYPES>() {
             {
-                put(STB_APPLICATION_H4D_CATEGORY_TERRESTRIAL_DIGITAL, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_TERRESTRIAL_DIGITAL); // ひかりTVの番組（地デジ）
-                put(STB_APPLICATION_H4D_CATEGORY_SATELLITE_BS, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_SATELLITE_BS); // ひかりTVの番組（BS）
-                put(STB_APPLICATION_H4D_CATEGORY_IPTV, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_IPTV); // ひかりTVの番組（IPTV）
-                put(STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_BROADCAST, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_BROADCAST); // ひかりTV内 dTVチャンネルの番組
-                put(STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_MISSED, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_MISSED); // ひかりTV内 dTVチャンネル VOD（見逃し）
-                put(STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_RELATION, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_RELATION); // ひかりTV内 dTVチャンネル VOD（関連番組）
-                put(STB_APPLICATION_H4D_CATEGORY_HIKARITV_VOD, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_HIKARITV_VOD); // ひかりTVのVOD
-                put(STB_APPLICATION_H4D_CATEGORY_DTV_VOD, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_VOD); // ひかりTV内 dTVのVOD
-                put(STB_APPLICATION_H4D_CATEGORY_DTV_SVOD, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_SVOD); // ひかりTV内VOD(dTV含む)のシリーズ
+                // ひかりTVの番組（地デジ）
+                put(STB_APPLICATION_H4D_CATEGORY_TERRESTRIAL_DIGITAL, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_TERRESTRIAL_DIGITAL);
+                // ひかりTVの番組（BS）
+                put(STB_APPLICATION_H4D_CATEGORY_SATELLITE_BS, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_SATELLITE_BS);
+                // ひかりTVの番組（IPTV）
+                put(STB_APPLICATION_H4D_CATEGORY_IPTV, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_IPTV);
+                // ひかりTV内 dTVチャンネルの番組
+                put(STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_BROADCAST, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_BROADCAST);
+                // ひかりTV内 dTVチャンネル VOD（見逃し）
+                put(STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_MISSED, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_MISSED);
+                // ひかりTV内 dTVチャンネル VOD（関連番組）
+                put(STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_RELATION, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_RELATION);
+                // ひかりTVのVOD
+                put(STB_APPLICATION_H4D_CATEGORY_HIKARITV_VOD, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_HIKARITV_VOD);
+                // ひかりTV内 dTVのVOD
+                put(STB_APPLICATION_H4D_CATEGORY_DTV_VOD, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_VOD);
+                // ひかりTV内VOD(dTV含む)のシリーズ
+                put(STB_APPLICATION_H4D_CATEGORY_DTV_SVOD, H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_SVOD);
             }
         };
 
-        public ResponseMessage() {
+        /**
+         * 応答メッセージ.
+         */
+        ResponseMessage() {
             mResult = RELAY_RESULT_OK;
             mResultCode = RELAY_RESULT_SUCCESS;
         }
 
-        public ResponseMessage(int result, int resultCode, String message) {
+        /**
+         * 応答メッセージ.
+         *
+         * @param result     応答結果
+         * @param resultCode 応答結果コード
+         * @param message    メッセージ
+         */
+        public ResponseMessage(final int result, final int resultCode, final String message) {
             mResult = result;
             mResultCode = resultCode;
         }
 
+        /**
+         * 応答結果を取得.
+         *
+         * @return 応答結果
+         */
         public int getResult() {
             return mResult;
         }
 
-        public void setResult(int result) {
+        /**
+         * 応答結果を設定.
+         *
+         * @param result 応答結果
+         */
+        public void setResult(final int result) {
             mResult = result;
         }
 
-        public void setResultCode(int resultCode) {
+        /**
+         * 応答結果コードを設定.
+         *
+         * @param resultCode 応答結果コード
+         */
+        void setResultCode(final int resultCode) {
             mResultCode = resultCode;
         }
 
+        /**
+         * 応答結果コードを取得.
+         *
+         * @return 応答結果コード
+         */
         public int getResultCode() {
             return mResultCode;
         }
 
+        /**
+         * 起動アプリケーション種別を取得.
+         *
+         * @return アプリケーション種別
+         */
         public STB_APPLICATION_TYPES getApplicationTypes() {
             return mApplicationTypes;
         }
 
-        public void setApplicationTypes(STB_APPLICATION_TYPES applicationTypes) {
+        /**
+         * 起動アプリケーション種別を設定.
+         *
+         * @param applicationTypes 起動アプリケーション種別
+         */
+        void setApplicationTypes(final STB_APPLICATION_TYPES applicationTypes) {
             mApplicationTypes = applicationTypes;
         }
 
-        public void setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES requestCommandTypes) {
+        /**
+         * リクエストコマンド種別を設定.
+         *
+         * @param requestCommandTypes リクエストコマンド種別
+         */
+        void setRequestCommandTypes(final STB_REQUEST_COMMAND_TYPES requestCommandTypes) {
             mRequestCommandTypes = requestCommandTypes;
         }
 
-        public DTVCHANNEL_SERVICE_CATEGORY_TYPES getDtvChannelServiceCategoryTypes() {
+        /**
+         * dTVチャンネルカテゴリ種別を取得.
+         *
+         * @return dTVチャンネルカテゴリ種別
+         */
+        DTVCHANNEL_SERVICE_CATEGORY_TYPES getDtvChannelServiceCategoryTypes() {
             return mDtvChannelServiceCategoryTypes;
         }
 
-        public void setDtvChannelServiceCategoryTypes(DTVCHANNEL_SERVICE_CATEGORY_TYPES dtvChannelServiceCategoryTypes) {
+        /**
+         * dTVチャンネルカテゴリ種別を設定.
+         *
+         * @param dtvChannelServiceCategoryTypes dTVチャンネルカテゴリ種別
+         */
+        void setDtvChannelServiceCategoryTypes(final DTVCHANNEL_SERVICE_CATEGORY_TYPES dtvChannelServiceCategoryTypes) {
             mDtvChannelServiceCategoryTypes = dtvChannelServiceCategoryTypes;
         }
 
-        public H4D_SERVICE_CATEGORY_TYPES getHikariTvServiceCategoryTypes() {
+        /**
+         * ひかりTVカテゴリ種別を取得.
+         *
+         * @return ひかりTVカテゴリ種別
+         */
+        H4D_SERVICE_CATEGORY_TYPES getHikariTvServiceCategoryTypes() {
             return mHikariTvServiceCategoryTypes;
         }
 
-        public void setHikariTvServiceCategoryTypes(H4D_SERVICE_CATEGORY_TYPES hikariTvServiceCategoryTypes) {
+        /**
+         * ひかりTVカテゴリ種別を設定.
+         *
+         * @param hikariTvServiceCategoryTypes ひかりTVカテゴリ種別
+         */
+        void setHikariTvServiceCategoryTypes(final H4D_SERVICE_CATEGORY_TYPES hikariTvServiceCategoryTypes) {
             mHikariTvServiceCategoryTypes = hikariTvServiceCategoryTypes;
         }
 
+        /**
+         * リクエスト種別を取得.
+         *
+         * @return リクエスト種別
+         */
         public STB_REQUEST_COMMAND_TYPES getRequestCommandTypes() {
             return mRequestCommandTypes;
         }
@@ -646,9 +842,19 @@ public class RemoteControlRelayClient {
      * キーコードをSTBへ送信するスレッド.
      */
     private class KeycodeRerayTask implements Runnable {
+        /**
+         * キーコードリクエスト値.
+         */
         private String mKeycodeRequest;
 
-        public KeycodeRerayTask(String keycode, int action, boolean canceled) {
+        /**
+         * コンストラクタ.
+         *
+         * @param keycode  キーコード
+         * @param action   Key UPorDOWN
+         * @param canceled キャンセルか否か
+         */
+        KeycodeRerayTask(final String keycode, final int action, final boolean canceled) {
             mKeycodeRequest = setKeyeventRequest(keycode, action, canceled);
         }
 
@@ -668,10 +874,14 @@ public class RemoteControlRelayClient {
     /**
      * アプリ起動要求を受信してアプリ起動リクエストをSTBへ送信する.
      *
-     * @param applicationType
-     * @return
+     * @param applicationType 起動アプリケーションタイプ
+     * @param context         コンテキスト
+     * @return リクエスト成否
      */
-    public boolean startApplicationRequest(STB_APPLICATION_TYPES applicationType, Context context) {
+    public boolean startApplicationRequest(final STB_APPLICATION_TYPES applicationType, final Context context) {
+        if (mIsCancel) {
+            return false;
+        }
         String applicationId = getApplicationId(applicationType);
         String requestParam;
         //ユーザID取得
@@ -690,14 +900,19 @@ public class RemoteControlRelayClient {
 
     /**
      * アプリ起動要求を受信してタイトル詳細表示のリクエストをSTBへ送信する.
-     *　・dTV
-     *　・dアニメストア
+     * 　・dTV
+     * 　・dアニメストア
      *
-     * @param applicationType
+     * @param applicationType 起動アプリケーションタイプ
      * @param contentsId      コンテンツID
-     * @return
+     * @param context         コンテキスト
+     * @return リクエスト成否
      */
-    public boolean startApplicationRequest(STB_APPLICATION_TYPES applicationType, String contentsId, Context context) {
+    public boolean startApplicationRequest(final STB_APPLICATION_TYPES applicationType,
+                                           final String contentsId, final Context context) {
+        if (mIsCancel) {
+            return false;
+        }
         String applicationId = getApplicationId(applicationType);
         String requestParam;
 
@@ -723,16 +938,20 @@ public class RemoteControlRelayClient {
      * アプリ起動要求を受信してタイトル詳細表示のリクエストをSTBへ送信する.
      * ・dTVチャンネル・カテゴリー分類に対応
      *
-     * @param applicationType
-     * @param serviceCategoryType  カテゴリー分類
-     * @param crid
-     * @param chno チャンネル番号
-     * @param context
-     * @return
+     * @param applicationType     起動アプリケーションタイプ
+     * @param serviceCategoryType カテゴリー分類
+     * @param crid                crid
+     * @param chno                チャンネル番号
+     * @param context             コンテキスト
+     * @return リクエスト成否
      */
     public boolean startApplicationDtvChannelRequest(final STB_APPLICATION_TYPES applicationType,
                                                      final DTVCHANNEL_SERVICE_CATEGORY_TYPES serviceCategoryType,
-                                                     final String crid, final String chno, Context context) {
+                                                     final String crid, final String chno, final Context context) {
+        if (mIsCancel) {
+            ((BaseActivity) context).setRemoteProgressVisible(View.GONE);
+            return false;
+        }
         String applicationId = getApplicationId(applicationType);
         String requestParam;
 
@@ -759,14 +978,14 @@ public class RemoteControlRelayClient {
      * ・ひかりTV・カテゴリー分類
      * 　ひかりTVの番組（地デジ）
      *
-     * @param chno
-     * @param context
-     * @return
+     * @param chno    チャンネル番号
+     * @param context コンテキスト
+     * @return リクエスト成否
      */
     public boolean startApplicationHikariTvCategoryTerrestrialDigitalRequest(final String chno,
                                                                              final Context context) {
-        return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_TERRESTRIAL_DIGITAL,
-                context, setCommandArgumentServiceRef(chno));
+        return mIsCancel && startApplicationHikariTvCategoryRequest(
+                H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_TERRESTRIAL_DIGITAL, context, setCommandArgumentServiceRef(chno));
     }
 
     /**
@@ -774,13 +993,13 @@ public class RemoteControlRelayClient {
      * ・ひかりTV・カテゴリー分類
      * 　ひかりTVの番組（BS）
      *
-     * @param chno
-     * @param context
-     * @return
+     * @param chno    チャンネル番号
+     * @param context コンテキスト
+     * @return リクエスト成否
      */
     public boolean startApplicationHikariTvCategorySatelliteBsRequest(final String chno,
                                                                       final Context context) {
-        return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_SATELLITE_BS,
+        return mIsCancel && startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_SATELLITE_BS,
                 context, setCommandArgumentServiceRef(chno));
     }
 
@@ -789,23 +1008,23 @@ public class RemoteControlRelayClient {
      * ・ひかりTV・カテゴリー分類
      * 　ひかりTVの番組（IPTV）
      *
-     * @param chno
-     * @param context
-     * @return
+     * @param chno    チャンネル番号
+     * @param context コンテキスト
+     * @return リクエスト成否
      */
     public boolean startApplicationHikariTvCategoryIptvRequest(final String chno,
                                                                final Context context) {
-        return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_IPTV,
-                context, setCommandArgumentServiceRef(chno));
+        return mIsCancel && startApplicationHikariTvCategoryRequest(
+                H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_IPTV, context, setCommandArgumentServiceRef(chno));
     }
 
     /**
      * ひかりTVの番組の chno の SERVICE_REF への変換.
      *
-     * @param chno
-     * @return
+     * @param chno チャンネル
+     * @return 変換後 SERVICE_REF値
      */
-    private String setCommandArgumentServiceRef(String chno) {
+    private String setCommandArgumentServiceRef(final String chno) {
         int iChno = Integer.parseInt(chno);
         return rfc3986UrlEncode(String.format(RELAY_COMMAND_ARGUMENT_ARIB_SERVICE_REF, iChno, iChno));
     }
@@ -816,15 +1035,16 @@ public class RemoteControlRelayClient {
      * 　ひかりTVのVOD
      *
      * @param licenseId ビデオ視聴可能商品ID
-     * @param cid コンテンツID
-     * @param crid CRID
-     * @param context
-     * @return
+     * @param cid       コンテンツID
+     * @param crid      CRID
+     * @param context   コンテキスト
+     * @return リクエスト成否
      */
     public boolean startApplicationHikariTvCategoryHikaritvVodRequest(final String licenseId,
                                                                       final String cid, final String crid,
                                                                       final Context context) {
-        return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_HIKARITV_VOD,
+        return mIsCancel && startApplicationHikariTvCategoryRequest(
+                H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_HIKARITV_VOD,
                 context, rfc3986UrlEncode(licenseId), rfc3986UrlEncode(cid), rfc3986UrlEncode(crid));
     }
 
@@ -833,13 +1053,13 @@ public class RemoteControlRelayClient {
      * ・ひかりTV・カテゴリー分類
      * 　ひかりTV内 dTVチャンネルの番組
      *
-     * @param chno
-     * @param context
-     * @return
+     * @param chno    チャンネル番号
+     * @param context コンテキスト
+     * @return リクエスト成否
      */
     public boolean startApplicationHikariTvCategoryDtvchannelBroadcastRequest(final String chno,
                                                                               final Context context) {
-        return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_BROADCAST,
+        return mIsCancel && startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_BROADCAST,
                 context, chno);
     }
 
@@ -848,14 +1068,14 @@ public class RemoteControlRelayClient {
      * ・ひかりTV・カテゴリー分類
      * 　ひかりTV内 dTVチャンネル VOD（見逃し）
      *
-     * @param tvCid
-     * @param context
-     * @return
+     * @param tvCid   コンテンツID
+     * @param context コンテキスト
+     * @return リクエスト成否
      */
     public boolean startApplicationHikariTvCategoryDtvchannelMissedRequest(final String tvCid,
                                                                            final Context context) {
-        return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_MISSED,
-                context, rfc3986UrlEncode(tvCid));
+        return mIsCancel && startApplicationHikariTvCategoryRequest(
+                H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_MISSED, context, rfc3986UrlEncode(tvCid));
     }
 
     /**
@@ -863,14 +1083,14 @@ public class RemoteControlRelayClient {
      * ・ひかりTV・カテゴリー分類
      * 　ひかりTV内 dTVチャンネル VOD（関連番組）
      *
-     * @param tvCid
-     * @param context
-     * @return
+     * @param tvCid   コンテンツID
+     * @param context コンテキスト
+     * @return リクエスト成否
      */
     public boolean startApplicationHikariTvCategoryDtvchannelRelationRequest(final String tvCid,
                                                                              final Context context) {
-        return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_RELATION,
-                context, rfc3986UrlEncode(tvCid));
+        return mIsCancel && startApplicationHikariTvCategoryRequest(
+                H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_RELATION, context, rfc3986UrlEncode(tvCid));
     }
 
     /**
@@ -878,13 +1098,13 @@ public class RemoteControlRelayClient {
      * ・ひかりTV・カテゴリー分類
      * 　ひかりTV内 dTVのVOD
      *
-     * @param episodeId
-     * @param context
-     * @return
+     * @param episodeId エピソードID
+     * @param context   コンテキスト
+     * @return リクエスト成否
      */
     public boolean startApplicationHikariTvCategoryDtvVodRequest(final String episodeId, final Context context) {
-        return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_VOD,
-                context, rfc3986UrlEncode(episodeId));
+        return mIsCancel && startApplicationHikariTvCategoryRequest(
+                H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_VOD, context, rfc3986UrlEncode(episodeId));
     }
 
     /**
@@ -892,18 +1112,19 @@ public class RemoteControlRelayClient {
      * ・ひかりTV・カテゴリー分類
      * 　ひかりTV内VOD(dTV含む)のシリーズ
      *
-     * @param crid
-     * @param context
-     * @return
+     * @param crid    crid
+     * @param context コンテキスト
+     * @return リクエスト成否
      */
     public boolean startApplicationHikariTvCategoryDtvSvodRequest(final String crid, final Context context) {
-        return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_SVOD,
-                context, rfc3986UrlEncode(crid));
+        return mIsCancel && startApplicationHikariTvCategoryRequest(
+                H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_SVOD, context, rfc3986UrlEncode(crid));
     }
 
     /**
-     * URLエンコード
+     * URLエンコード.
      *
+     * @param url URL
      * @return URLエンコード文字列
      */
     private String rfc3986UrlEncode(final String url) {
@@ -916,9 +1137,7 @@ public class RemoteControlRelayClient {
             encodeUrl = encodeUrl.replace(".", URL_ENCODED_PERIOD);
             // URLEncoder.encode が変換した空白コードを再エンコードする
             encodeUrl = encodeUrl.replace("+", URL_ENCODED_SPACE);
-        } catch (UnsupportedEncodingException e) {
-            DTVTLogger.debug(e);
-        } catch (NumberFormatException e) {
+        } catch (UnsupportedEncodingException | NumberFormatException e) {
             DTVTLogger.debug(e);
         }
         return encodeUrl;
@@ -930,17 +1149,21 @@ public class RemoteControlRelayClient {
      * 　ひかりTVの番組（地デジ）
      * 　ひかりTVの番組（BS）
      * 　ひかりTVの番組（IPTV）
-     *   ひかりTV内 dTVチャンネル VOD（見逃し）
-     *   ひかりTV内 dTVチャンネル VOD（関連番組）
-     *   ひかりTV内 dTVのVOD
-     *   ひかりTV内VOD(dTV含む)のシリーズ
+     * ひかりTV内 dTVチャンネル VOD（見逃し）
+     * ひかりTV内 dTVチャンネル VOD（関連番組）
+     * ひかりTV内 dTVのVOD
+     * ひかりTV内VOD(dTV含む)のシリーズ
      *
-     * @param args
-     * @param context
-     * @return
+     * @param serviceCategoryTypes カテゴリ分類
+     * @param context              コンテキスト
+     * @param args                 可変長
+     * @return リクエスト成否
      */
-    private boolean startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES serviceCategoryTypes,
-                                                            Context context, String ...args) {
+    private boolean startApplicationHikariTvCategoryRequest(final H4D_SERVICE_CATEGORY_TYPES serviceCategoryTypes,
+                                                            final Context context, final String... args) {
+        if (mIsCancel) {
+            return false;
+        }
         String requestParam;
 
         //ユーザID取得
@@ -964,10 +1187,12 @@ public class RemoteControlRelayClient {
     /**
      * dアカチェック要求を受信してdアカチェックリクエストをSTBへ送信する.
      *
-     * @param context
-     * @return
+     * @param context コンテキスト
      */
-    public void isUserAccountExistRequest(Context context) {
+    public void isUserAccountExistRequest(final Context context) {
+        if (mIsCancel) {
+            return;
+        }
         DTVTLogger.start();
         String requestParam;
 
@@ -1003,10 +1228,10 @@ public class RemoteControlRelayClient {
     /**
      * 電源ON/OFF要求のメッセージ（JSON形式）を作成する.
      *
-     * @param userId
+     * @param userId ユーザID
      * @return request JSON形式
      */
-    private String setSwitchStbPowerRequest(String userId) {
+    private String setSwitchStbPowerRequest(final String userId) {
         JSONObject requestJson = new JSONObject();
         String request = null;
         try {
@@ -1023,10 +1248,10 @@ public class RemoteControlRelayClient {
     /**
      * dアカチェック要求のメッセージ（JSON形式）を作成する.
      *
-     * @param userId
-     * @return
+     * @param userId ユーザID
+     * @return リクエストメッセージ
      */
-    private String setAccountCheckRequest(String userId) {
+    private String setAccountCheckRequest(final String userId) {
         JSONObject requestJson = new JSONObject();
         String request = null;
         try {
@@ -1043,10 +1268,10 @@ public class RemoteControlRelayClient {
     /**
      * アプリ起動要求種別に対応するアプリID.
      *
-     * @param applicationType
+     * @param applicationType 起動要求種別
      * @return アプリ起動要求種別に対応するアプリID（アプリ起動要求種別が不明の場合は null）
      */
-    private String getApplicationId(STB_APPLICATION_TYPES applicationType) {
+    private String getApplicationId(final STB_APPLICATION_TYPES applicationType) {
         String applicationId = null;
         if (mStbApplicationSymbolMap.containsKey(applicationType)) {
             applicationId = mStbApplicationSymbolMap.get(applicationType);
@@ -1057,10 +1282,10 @@ public class RemoteControlRelayClient {
     /**
      * dTVチャンネル・カテゴリー分類に対応するカテゴリー・シンボル名.
      *
-     * @param serviceCategoryType
-     * @return  dTVチャンネル・カテゴリー分類に対応するカテゴリー・シンボル名
+     * @param serviceCategoryType カテゴリ分類
+     * @return dTVチャンネル・カテゴリー分類に対応するカテゴリー・シンボル名
      */
-    private String getDtvChannelServiceCategorySymbol(DTVCHANNEL_SERVICE_CATEGORY_TYPES serviceCategoryType) {
+    private String getDtvChannelServiceCategorySymbol(final DTVCHANNEL_SERVICE_CATEGORY_TYPES serviceCategoryType) {
         String serviceCategorySymbol = "";
         if (mDtvChannelServiceCategorySymbolMap.containsKey(serviceCategoryType)) {
             serviceCategorySymbol = mDtvChannelServiceCategorySymbolMap.get(serviceCategoryType);
@@ -1072,10 +1297,17 @@ public class RemoteControlRelayClient {
      * アプリ起動要求をSTBへ送信するスレッド.
      */
     private class StartApplicationRequestTask implements Runnable {
-
+        /**
+         * リクエストパラメータ.
+         */
         private String mRequestParam;
 
-        public StartApplicationRequestTask(String requestParam) {
+        /**
+         * コンストラクタ.
+         *
+         * @param requestParam リクエストパラメータ
+         */
+        StartApplicationRequestTask(final String requestParam) {
             mRequestParam = requestParam;
         }
 
@@ -1111,9 +1343,9 @@ public class RemoteControlRelayClient {
         /**
          * 処理結果応答をハンドラーへ通知する.
          *
-         * @param response
+         * @param response 処理結果の応答値
          */
-        private void sendResponseMessage(ResponseMessage response) {
+        private void sendResponseMessage(final ResponseMessage response) {
             resetRequestStbElapsedTime();
             if (mHandler != null) {
                 mHandler.sendMessage(mHandler.obtainMessage(response.getResult(), response));
@@ -1123,10 +1355,10 @@ public class RemoteControlRelayClient {
         /**
          * 中継アプリの応答をメッセージ形式に変換する.
          *
-         * @param recvResult
-         * @return
+         * @param recvResult 返還前応答メッセージ
+         * @return 応答メッセージ
          */
-        private ResponseMessage setResponse(String recvResult) {
+        private ResponseMessage setResponse(final String recvResult) {
             JSONObject recvJson = new JSONObject();
             int resultErrorCode;
             STB_REQUEST_COMMAND_TYPES requestCommand = STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN;
@@ -1143,7 +1375,7 @@ public class RemoteControlRelayClient {
                 recvJson = new JSONObject(recvResult);
                 int result = response.mResultMap.get(recvJson.get(RELAY_RESULT).toString());
                 response.setResult(result);
-                switch(result) {
+                switch (result) {
                     case ResponseMessage.RELAY_RESULT_OK:
                         break;
                     case ResponseMessage.RELAY_RESULT_ERROR:
@@ -1174,7 +1406,7 @@ public class RemoteControlRelayClient {
                     return response;
                 }
                 // リクエストコマンド種別の応答
-                switch(requestCommand) {
+                switch (requestCommand) {
                     // 正常応答（エラー応答含む）のコマンド要求種別
                     case KEYEVENT_KEYCODE_POWER:
                     case IS_USER_ACCOUNT_EXIST:
@@ -1227,25 +1459,26 @@ public class RemoteControlRelayClient {
 
     /**
      * アプリ起動要求送信スレッドを開始.
+     *
+     * @param requestParam リクエストパラメータ
      */
-    private void sendStartApplicationRequest(String requestParam) {
+    private void sendStartApplicationRequest(final String requestParam) {
         if (!isRequestStbElapsedTime()) {
             return;
         }
         setRequestStbElapsedTime();
-
         Thread mThread = new Thread(new StartApplicationRequestTask(requestParam));
         mThread.start();
-//        new Thread(new StartApplicationRequestTask(requestParam)).start();
     }
 
     /**
      * アプリ起動要求のメッセージ（JSON形式）を作成する.
      *
-     * @param applicationId
-     * @return
+     * @param applicationId アプリケーションID
+     * @param userId        ユーザID
+     * @return リクエストメッセージ
      */
-    private String setApplicationStartRequest(String applicationId, String userId) {
+    private String setApplicationStartRequest(final String applicationId, final String userId) {
         JSONObject requestJson = new JSONObject();
         String request = null;
         try {
@@ -1266,11 +1499,12 @@ public class RemoteControlRelayClient {
      * ・dTV に対応
      * ・dアニメストア に対応
      *
-     * @param applicationId  アプリケーションID
-     * @param contentsId      コンテンツID
+     * @param applicationId アプリケーションID
+     * @param contentsId    コンテンツID
+     * @param userId        ユーザID
      * @return アプリ起動要求メッセージ（JSON形式）
      */
-    private String setTitleDetailRequest(String applicationId, String contentsId, String userId) {
+    private String setTitleDetailRequest(final String applicationId, final String contentsId, final String userId) {
         JSONObject requestJson = new JSONObject();
         String request = null;
         try {
@@ -1291,16 +1525,16 @@ public class RemoteControlRelayClient {
      * タイトル詳細表示のリクエスト
      * ・dTVチャンネル・カテゴリー分類に対応
      *
-     * @param applicationId  アプリケーションID
-     * @param serviceCategoryType  カテゴリー分類
-     * @param crid
-     * @param chno チャンネル番号
-     * @param userId ユーザID
+     * @param applicationId       アプリケーションID
+     * @param serviceCategoryType カテゴリー分類
+     * @param crid                crid
+     * @param chno                チャンネル番号
+     * @param userId              ユーザID
      * @return アプリ起動要求メッセージ（JSON形式）
      */
-    private String setTitleDetailDtvChannelRequest(String applicationId,
-                                                   DTVCHANNEL_SERVICE_CATEGORY_TYPES serviceCategoryType,
-                                                   String crid, String chno, String userId) {
+    private String setTitleDetailDtvChannelRequest(final String applicationId,
+                                                   final DTVCHANNEL_SERVICE_CATEGORY_TYPES serviceCategoryType,
+                                                   final String crid, final String chno, final String userId) {
 
         JSONObject requestJson = new JSONObject();
         String request = null;
@@ -1326,12 +1560,12 @@ public class RemoteControlRelayClient {
      * ・ひかりTV・カテゴリー分類に対応
      *
      * @param serviceCategoryType カテゴリー分類
-     * @param userId ユーザID
-     * @param args 可変長
+     * @param userId              ユーザID
+     * @param args                可変長
      * @return アプリ起動要求メッセージ（JSON形式）
      */
-    private String setTitleDetailHikariTvRequest(H4D_SERVICE_CATEGORY_TYPES serviceCategoryType,
-                                                 String userId, String... args) {
+    private String setTitleDetailHikariTvRequest(final H4D_SERVICE_CATEGORY_TYPES serviceCategoryType,
+                                                 final String userId, final String... args) {
 
         JSONObject requestJson = new JSONObject();
         String request = null;
@@ -1340,14 +1574,14 @@ public class RemoteControlRelayClient {
         String tvCid = "";
         String crid = "";
         String serviceRef = "";
-        String licenseId = "";
+        String licenseId;
         String episodeId = "";
 
         try {
             requestJson.put(RELAY_COMMAND, RELAY_COMMAND_TITLE_DETAIL);
             requestJson.put(RELAY_COMMAND_ARGUMENT_APPLICATION_ID_HIKARITV, STB_APPLICATION_HIKARITV);
             requestJson.put(RELAY_COMMAND_ARGUMENT_SERVICE_CATEGORY_TYPE_HIKARITV, serviceCategoryType);
-            switch(serviceCategoryType) {
+            switch (serviceCategoryType) {
                 case H4D_CATEGORY_TERRESTRIAL_DIGITAL: // ひかりTVの番組（地デジ）
                 case H4D_CATEGORY_SATELLITE_BS: // ひかりTVの番組（BS）
                 case H4D_CATEGORY_IPTV: // ひかりTVの番組（IPTV）
@@ -1405,12 +1639,12 @@ public class RemoteControlRelayClient {
     /**
      * キーイベント送信要求のメッセージ（JSON形式）を作成する.
      *
-     * @param keycode
-     * @param action
-     * @param canceled
-     * @return
+     * @param keycode  キーコード
+     * @param action   Key UPorDown
+     * @param canceled Keyキャンセル処理かどうか
+     * @return リクエストメッセージ
      */
-    private static String setKeyeventRequest(String keycode, int action, boolean canceled) {
+    private static String setKeyeventRequest(final String keycode, final int action, final boolean canceled) {
         JSONObject requestJson = new JSONObject();
         String jsonStr = null;
         try {
@@ -1428,15 +1662,14 @@ public class RemoteControlRelayClient {
      * サービスアプリ：タイトル詳細表示 RELAY_COMMAND_TITLE_DETAIL 起動要求に対応するアプリケーション名を取得する.
      *
      * @param request タイトル詳細表示 RELAY_COMMAND_TITLE_DETAIL 起動要求
-     * @return
-     * 電文パラメータに RELAY_COMMAND_ARGUMENT_APPLICATION_ID がある場合
-     *   STB_APPLICATION_APP_ID_DTV
-     *   STB_APPLICATION_APP_ID_DANIMESTORE
-     *   STB_APPLICATION_APP_ID_DTVCHANNEL
-     *   STB_APPLICATION_APP_ID_DAZN
-     *
+     * @return 電文パラメータに RELAY_COMMAND_ARGUMENT_APPLICATION_ID がある場合
+     * STB_APPLICATION_APP_ID_DTV
+     * STB_APPLICATION_APP_ID_DANIMESTORE
+     * STB_APPLICATION_APP_ID_DTVCHANNEL
+     * STB_APPLICATION_APP_ID_DAZN
+     * <p>
      * 電文パラメータに RELAY_COMMAND_ARGUMENT_APPLICATION_ID_HIKARITV がある場合
-     *   STB_APPLICATION_APP_ID_HIKARITV
+     * STB_APPLICATION_APP_ID_HIKARITV
      */
     private String getAppIdApplicationRequest(final JSONObject request) {
         try {
@@ -1460,21 +1693,22 @@ public class RemoteControlRelayClient {
 
     /**
      * Socket通信／データグラム送信の送信先のIPアドレスを設定.
-     * TODO: デバッグ用
+     * TODO デバッグ用
      *
-     * @param remoteIp
+     * @param remoteIp IPアドレス
      */
-    public void setRemoteIp(String remoteIp) {
+    public void setRemoteIp(final String remoteIp) {
         mRemoteHost = remoteIp;
     }
 
     /**
      * 文字列から ハッシュ値を取得する.
      *
+     * @param value 文字列
      * @return ハッシュ値
      */
-    public String toHashValue(String value) {
-        byte[] hashValue = {};
+    private String toHashValue(final String value) {
+        byte[] hashValue;
         StringBuilder sb = new StringBuilder();
 
         hashValue = toHashBytes(value);
@@ -1496,7 +1730,7 @@ public class RemoteControlRelayClient {
      * @param salt ソルト
      * @return ハッシュ化したバイト配列
      */
-    private static byte[] toHashBytes(String salt) {
+    private static byte[] toHashBytes(final String salt) {
         MessageDigest digest;
 
         if (salt == null) {
@@ -1510,5 +1744,21 @@ public class RemoteControlRelayClient {
         }
         digest.update(salt.getBytes(StandardCharsets.UTF_8));
         return digest.digest();
+    }
+
+    /**
+     * 通信を停止する.
+     */
+    public void stopConnect() {
+        mIsCancel = true;
+        StbConnectRelayClient client = StbConnectRelayClient.getInstance();
+        client.disconnect();
+    }
+
+    /**
+     * mIsCancelを戻し、通信可能にする.
+     */
+    public void resetIsCancel() {
+        mIsCancel = false;
     }
 }

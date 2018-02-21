@@ -182,7 +182,9 @@ class DaccountRegistService {
      * dアカウントアプリを切り離す.
      */
     void daccountServiceEnd() {
-        mContext.unbindService(mServiceConnection);
+        if (mServiceCustom != null) {
+            mContext.unbindService(mServiceConnection);
+            mServiceCustom = null;
+        }
     }
-
 }

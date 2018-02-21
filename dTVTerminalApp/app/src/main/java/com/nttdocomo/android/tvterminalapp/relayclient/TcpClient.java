@@ -134,9 +134,8 @@ public class TcpClient {
                 data.append(String.valueOf(line));
                 break;
             }
-        } catch (IOException e) {
-            DTVTLogger.debug(String.format("??? :%s", e.getMessage()));
-        } catch (Exception e) {
+        }  catch (NullPointerException | IOException e) {
+            // SocketException はIOExceptionに含まれる
             DTVTLogger.debug(String.format("??? :%s", e.getMessage()));
         } finally {
             if (data != null && data.length() != 0) {

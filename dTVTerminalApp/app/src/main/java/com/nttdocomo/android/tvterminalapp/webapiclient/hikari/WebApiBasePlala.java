@@ -430,7 +430,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                     stopConnection.disconnect();
                 }
             });
-            thread.run();
+            thread.start();
 
             //止めた物は消す
             iterator.remove();

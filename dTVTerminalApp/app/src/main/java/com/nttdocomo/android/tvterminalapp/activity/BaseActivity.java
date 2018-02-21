@@ -1951,6 +1951,7 @@ public class BaseActivity extends FragmentActivity implements
         DTVTLogger.start();
         showTransoceanicCommunicationFlag = true;
         resetRelayClientHandler(true);
+        mRemoteControlRelayClient.stopConnect();
         unregisterDevListDlna();
         // dアカウント通信を止める
         if (mDaccountControl != null) {
@@ -2000,6 +2001,7 @@ public class BaseActivity extends FragmentActivity implements
     private void onReStartCommunication() {
         DTVTLogger.start();
         setRelayClientHandler();
+        mRemoteControlRelayClient.resetIsCancel();
         boolean r = DlnaInterface.dlnaOnResume();
         if (!r) {
             DTVTLogger.debug("BaseActivity.onResume, dlnaOnResume failed");

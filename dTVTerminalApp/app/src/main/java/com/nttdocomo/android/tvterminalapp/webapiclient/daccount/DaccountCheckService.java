@@ -179,6 +179,9 @@ class DaccountCheckService {
      * dアカウントアプリを切り離す.
      */
     void daccountServiceEnd() {
-        mContext.unbindService(mServiceConnection);
+        if (mService != null) {
+            mContext.unbindService(mServiceConnection);
+            mService = null;
+        }
     }
 }
