@@ -1456,7 +1456,7 @@ public class BaseActivity extends FragmentActivity implements
      */
     public void contentDetailRemoteController() {
         DTVTLogger.debug("Start RemoteControl");
-        createRemoteControllerView(false);
+        createRemoteControllerView(true);
         getRemoteControllerView().startRemoteUI(false);
     }
 

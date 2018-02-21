@@ -66,7 +66,7 @@ public class DBConstants {
     public static final String CHANNEL_LIST_TABLE_NAME = "channel_list";
     private static final String ID_COLUMN = "row_id";
     public static final String UPDATE_DATE = "update_date";
-    public static final String DATE_TYPE = "date_type";
+    private static final String DATE_TYPE = "date_type";
 
     //SQL共通項目
     private static final String CREATE_TABLE_TEXT = "create table ";
@@ -817,7 +817,7 @@ public class DBConstants {
     public static final String DOWNLOAD_LIST_COLUM_TITLE = "title";
     public static final String DOWNLOAD_LIST_COLUM_CONTENTFORMAT = "contentFormat";
     public static final String DOWNLOAD_LIST_TABLE_NAME = "download_list";
-    public static final String[] CREATE_TABLE_DOWNLOAD_LIST_SQL_NAMES = {
+    private static final String[] CREATE_TABLE_DOWNLOAD_LIST_SQL_NAMES = {
             CREATE_TABLE_TEXT,
             DOWNLOAD_LIST_TABLE_NAME,
             OPEN_BRACKETS_TEXT,

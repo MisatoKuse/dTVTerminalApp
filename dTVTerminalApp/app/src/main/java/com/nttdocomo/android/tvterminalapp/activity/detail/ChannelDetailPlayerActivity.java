@@ -6,7 +6,6 @@ package com.nttdocomo.android.tvterminalapp.activity.detail;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.MyChannelEditActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.WeekTvProgramListActivity;
@@ -23,10 +22,8 @@ public class ChannelDetailPlayerActivity extends BaseActivity {
 
     /**
      * 選局ボタン
-     *
-     * @param view
      */
-    public void selectChannelButton(View view) {
+    public void selectChannelButton() {
         Intent intent = new Intent(this, ContentDetailActivity.class);
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
         startActivity(intent);
@@ -34,28 +31,22 @@ public class ChannelDetailPlayerActivity extends BaseActivity {
 
     /**
      * 週間番組表
-     *
-     * @param view
      */
-    public void weeklyTvGuideButton(View view) {
+    public void weeklyTvGuideButton() {
         startActivity(WeekTvProgramListActivity.class, null);
     }
 
     /**
      * 番組表設定
-     *
-     * @param view
      */
-    public void tvGuideSetting(View view) {
+    public void tvGuideSetting() {
         startActivity(MyChannelEditActivity.class, null);
     }
 
     /**
      * 放送プログラム
-     *
-     * @param view
      */
-    public void tvProgramButton(View view) {
+    public void tvProgramButton() {
         Intent intent = new Intent(this, ContentDetailActivity.class);
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
         startActivity(intent);
