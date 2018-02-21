@@ -1402,7 +1402,7 @@ public class BaseActivity extends FragmentActivity implements
                             // コンテンツ詳細画面以外の場合
                             createRemoteControllerView(false);
                         }
-                        getRemoteControllerView().startRemoteUI();
+                        getRemoteControllerView().startRemoteUI(true);
                     }
                     break;
                 default:
@@ -1448,8 +1448,17 @@ public class BaseActivity extends FragmentActivity implements
         if (getStbStatus()) {
             DTVTLogger.debug("Start RemoteControl");
             createRemoteControllerView(false);
-            getRemoteControllerView().startRemoteUI();
+            getRemoteControllerView().startRemoteUI(true);
         }
+    }
+
+    /**
+     * コンテンツ詳細画面から契約するのリモコン表示.
+     */
+    public void contentDetailRemoteController() {
+        DTVTLogger.debug("Start RemoteControl");
+        createRemoteControllerView(false);
+        getRemoteControllerView().startRemoteUI(false);
     }
 
     /**

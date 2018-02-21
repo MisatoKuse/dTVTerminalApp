@@ -472,7 +472,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         return mIsTop;
     }
 
-    public void startRemoteUI() {
+    public void startRemoteUI(boolean isHeader) {
         //viewPagerを初期化する
         if (mViewList.size() == 0) {
             setPager();
@@ -485,7 +485,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
             mScroller.startScroll(0, 0, 0, (int) (mScrollHeight + mVisibilityHeight));
         }
         invalidate();
-        setHeaderContent(true);
+        setHeaderContent(isHeader);
     }
 
     /**

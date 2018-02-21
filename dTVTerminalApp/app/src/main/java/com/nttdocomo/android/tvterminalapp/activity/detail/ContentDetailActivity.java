@@ -1984,7 +1984,11 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                     contractLeadingButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(final View view) {
-                            onStartRemoteControl(true);
+                            if (getStbStatus()) {
+                                contentDetailRemoteController();
+                            } else {
+                                showErrorDialog(getResources().getString(R.string.main_setting_connect_error_message));
+                            }
                         }
                     });
                 } else { //ひかりTV契約者の場合
