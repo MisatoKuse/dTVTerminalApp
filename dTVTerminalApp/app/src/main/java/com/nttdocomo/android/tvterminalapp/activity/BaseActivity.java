@@ -617,10 +617,14 @@ public class BaseActivity extends FragmentActivity implements
 
         //dアカウントの検知処理を追加する
         setRelayClientHandler();
-        //ユーザー情報の変更検知
-        // TODO 検討中
-//        UserInfoDataProvider dataProvider = new UserInfoDataProvider(getApplicationContext(), this);
-//        dataProvider.getUserInfo();
+
+        //STB接続状態を反映.
+        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+        if (null != dlnaDmsItem) {
+            // 未ペアリング時はそもそも状態反映しない.
+            mDlnaProvDevListForBase = new DlnaProvDevList();
+            mIsStbStatusOn = mDlnaProvDevListForBase.isDmsAvailable(dlnaDmsItem.mUdn);
+        }
 
         DTVTLogger.end();
     }
