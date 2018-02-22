@@ -18,10 +18,10 @@ import java.net.SocketException;
  */
 
 public class StbConnectRelayClient {
-    private Socket mSocket = null;
     private String mRemoteIp;
     private static final int REMOTE_SOCKET_PORT = 1025;
     private static final int REMOTE_DATAGRAM_PORT = 1026;
+    private static final String CHARSET_UTF8 = "UTF-8";
     private int mRemoteSocketPort = REMOTE_SOCKET_PORT;
     private int mRemoteDatagramPort = REMOTE_DATAGRAM_PORT;
     private TcpClient mTcpClient;
@@ -117,7 +117,7 @@ public class StbConnectRelayClient {
                 if (mRemoteIp == null) {
                     return;
                 }
-                byte[] buff = data.getBytes(java.nio.charset.StandardCharsets.UTF_8.toString());
+                byte[] buff = data.getBytes(CHARSET_UTF8);
                 DatagramPacket packet = new DatagramPacket(buff, buff.length, new InetSocketAddress(mRemoteIp, mRemoteDatagramPort));
                 dataSocket = new DatagramSocket();
                 dataSocket.send(packet);
