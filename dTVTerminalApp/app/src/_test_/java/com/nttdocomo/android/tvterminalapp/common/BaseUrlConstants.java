@@ -20,7 +20,7 @@ public class BaseUrlConstants {
             "https://ve.m.support2.smt.docomo.ne.jp/srermd/recommend/index.do";
 
     /**
-     * ワンタイムパスワードでレコメンドサーバーを認証するURL.
+     * レコメンドサーバー用のCIRCUS認証URL.
      */
     public static final String ONE_TIME_PASSWORD_AUTH_URL =
             "https://ve.m.cfg.smt.docomo.ne.jp/auth/cgi/aplpwdauth";
@@ -34,7 +34,7 @@ public class BaseUrlConstants {
     public static final String PLALA_BASE_URL = "https://tif.hikaritv-docomo.jp/";
 
     /**
-     * APIアクセスプロキシパス・現在のところPLALA_AUTHを使用する物は無いが、将来の為に残しておく.
+     * APIアクセスプロキシパス.
      */
     public static final String PLALA_C_CLIENT = PLALA_BASE_URL + "dtt/c_client/";
     public static final String PLALA_AUTH = PLALA_BASE_URL + "dtt/auth/";

@@ -24,7 +24,6 @@ public class BaseUrlConstants {
      */
     public static final String ONE_TIME_PASSWORD_AUTH_URL =
             "https://ve.m.cfg.smt.docomo.ne.jp/auth/cgi/aplpwdauth";
-    //"https://ve.m.service.smt.docomo.ne.jp/auth/cgi/aplpwdauth";
 
     /**
      * ぷららサーバーAPIアクセス用のベースURL.
@@ -33,7 +32,7 @@ public class BaseUrlConstants {
     public static final String PLALA_BASE_URL = "http://192.168.2.3/";
 
     /**
-     * APIアクセスプロキシパス・現在のところPLALA_AUTHを使用する物は無いが、将来の為に残しておく.
+     * APIアクセスプロキシパス.
      */
     public static final String PLALA_C_CLIENT = PLALA_BASE_URL + "dtt_stub_mix/c_client/";
     public static final String PLALA_AUTH = PLALA_BASE_URL + "dtt_stub_mix/auth/";

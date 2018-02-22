@@ -11,7 +11,7 @@ import android.text.TextUtils;
 import com.nttdocomo.android.ocsplib.OcspURLConnection;
 import com.nttdocomo.android.ocsplib.OcspUtil;
 import com.nttdocomo.android.ocsplib.exception.OcspParameterException;
-import com.nttdocomo.android.tvterminalapp.common.BaseUrlConstants;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
@@ -290,7 +290,7 @@ public class HttpThread extends Thread {
             StringBuilder queryItems = new StringBuilder();
 
             //呼び出し先を認証サイトにする
-            queryItems.append(BaseUrlConstants.ONE_TIME_PASSWORD_AUTH_URL);
+            queryItems.append(UrlConstants.WebApiUrl.ONE_TIME_PASSWORD_AUTH_URL);
 
             //本来の呼び出し先はリダイレクト先に設定する為、URLエンコードを行う
             String encodedUrl;

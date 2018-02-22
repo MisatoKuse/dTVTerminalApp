@@ -23,19 +23,15 @@ public class UrlConstants {
         public static final String RECOMMEND_LIST_GET_URL = BaseUrlConstants.RECOMMEND_LIST_GET_URL;
 
         /**
-         * ワンタイムパスワードでレコメンドサーバーを認証するURL.
+         * レコメンドサーバー用のCIRCUS認証URL.
          */
         public static final String ONE_TIME_PASSWORD_AUTH_URL = BaseUrlConstants.ONE_TIME_PASSWORD_AUTH_URL;
-        //"https://ve.m.service.smt.docomo.ne.jp/auth/cgi/aplpwdauth";
 
         /**
-         * ワンタイムパスワードでサービストークンを取得する認証するURL.
-         * TODO: 内容が固まるまでは、BaseUrlConstsへの記載は取りやめ。
+         * ひかりサーバ サービストークン取得URL.
          */
         public static final String ONE_TIME_TOKEN_GET_URL =
-                "https://tif.hikaritv-docomo.jp/dtt_stub_mix/auth/daccount/authorization";
-                //"https://tif.hikaritv-docomo.jp/dtt_stub_mix/auth/daccount/authentication";
-                //BaseUrlConstants.ONE_TIME_TOKEN_GET_URL;
+                BaseUrlConstants.PLALA_AUTH + "daccount/authorization";
 
         /**
          * VODクリップ一覧の呼び出し先.

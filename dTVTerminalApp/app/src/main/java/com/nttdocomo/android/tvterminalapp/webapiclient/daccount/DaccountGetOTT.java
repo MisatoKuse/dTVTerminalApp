@@ -129,7 +129,7 @@ public class DaccountGetOTT {
             int appReqId = 0;
 
             //呼び出し用のパラメータの設定
-            String serviceKey = DaccountConstants.SERVICE_KEY;
+            String serviceKey = DaccountConstants.getDaccountServiceKey();
             //自動再認証OFFの設定
             int option = IDimDefines.CertOption.RESERVE;
             String appCheckKey = "";

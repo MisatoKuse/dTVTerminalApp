@@ -9,8 +9,8 @@ android {
         applicationId "com.nttdocomo.android.tvterminalapp"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 3            //★バージョンコード. リリース毎に更新する事
-        versionName "90.20."    //★メジャーバージョン.マイナーバージョン. リリース毎に更新する事
+        versionCode 4            //★バージョンコード. リリース毎に更新する事
+        versionName "10.00."    //★メジャーバージョン.マイナーバージョン. リリース毎に更新する事
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
