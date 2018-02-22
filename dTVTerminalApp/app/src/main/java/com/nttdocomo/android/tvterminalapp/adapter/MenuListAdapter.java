@@ -19,7 +19,6 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
-import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 import java.util.List;
 

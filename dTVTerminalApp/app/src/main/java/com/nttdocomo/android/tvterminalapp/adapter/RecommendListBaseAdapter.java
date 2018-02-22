@@ -107,7 +107,7 @@ public class RecommendListBaseAdapter extends BaseAdapter {
      * @param context コンテキスト
      * @param data    コンテンツデータ
      */
-    public RecommendListBaseAdapter(Context context, List data) {
+    public RecommendListBaseAdapter(Context context, List<ContentsData> data) {
         this.mContext = context;
         this.mData = data;
         mThumbnailProvider = new ThumbnailProvider(mContext);
@@ -189,8 +189,8 @@ public class RecommendListBaseAdapter extends BaseAdapter {
             //TODO:クリップボタン状態変更
         }
         //サムネイル取得までは画像の表示を行わないため透明画像をセットしておく
-        holder.iv_thumbnail.setImageResource(R.drawable.transparent);
         if (null != holder.iv_thumbnail) {
+            holder.iv_thumbnail.setImageResource(R.drawable.transparent);
             String thumbUrl = recommendContentInfo.getThumURL();
             holder.iv_thumbnail.setTag(thumbUrl);
             Bitmap bp = mThumbnailProvider.getThumbnailImage(holder.iv_thumbnail, thumbUrl);
@@ -329,10 +329,10 @@ public class RecommendListBaseAdapter extends BaseAdapter {
             //チャンネル名検索
             for (Map<String, String> channel : mChannelMap) {
                 //キーを見つける
-                String key = (String) channel.get(JsonConstants.META_RESPONSE_SERVICE_ID);
+                String key = channel.get(JsonConstants.META_RESPONSE_SERVICE_ID);
                 if (key.equals(channelId)) {
                     //キーを見つけた
-                    channelName = (String) channel.get(JsonConstants.META_RESPONSE_TITLE);
+                    channelName = channel.get(JsonConstants.META_RESPONSE_TITLE);
                     break;
                 }
             }

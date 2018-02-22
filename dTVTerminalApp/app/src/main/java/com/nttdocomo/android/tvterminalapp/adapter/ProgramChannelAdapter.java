@@ -22,8 +22,8 @@ import java.util.ArrayList;
 public class ProgramChannelAdapter extends
         RecyclerView.Adapter<ProgramChannelAdapter.ViewHolder> {
     private final TvProgramListActivity mContext;
-    private LayoutInflater mInflater;
-    private ArrayList<ChannelInfo> channelList;
+    private final LayoutInflater mInflater;
+    private final ArrayList<ChannelInfo> channelList;
     private int screenWidth = 0;
     private static final int TIME_LINE_WIDTH = 44;
 
@@ -56,7 +56,9 @@ public class ProgramChannelAdapter extends
 
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final int i) {
-        viewHolder.channelText.setText(channelList.get(i).getTitle());
+        if (viewHolder.channelText != null) {
+            viewHolder.channelText.setText(channelList.get(i).getTitle());
+        }
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

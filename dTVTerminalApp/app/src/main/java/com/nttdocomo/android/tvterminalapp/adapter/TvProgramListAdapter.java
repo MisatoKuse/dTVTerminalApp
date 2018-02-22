@@ -105,11 +105,11 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     /**
      * クリップボタンサイズ.
      */
-    private int CLIP_BUTTON_SIZE = 32;
+    private final int CLIP_BUTTON_SIZE = 32;
     /**
      * チャンネルのWIDTH.
      */
-    private int CHANNEL_WIDTH = 720;
+    private final int CHANNEL_WIDTH = 720;
     /**
      * ダウンロード禁止判定フラグ.
      */

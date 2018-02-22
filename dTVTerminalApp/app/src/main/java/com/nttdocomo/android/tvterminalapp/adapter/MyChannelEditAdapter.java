@@ -26,35 +26,35 @@ import java.util.ArrayList;
 public class MyChannelEditAdapter extends BaseAdapter implements View.OnClickListener {
 
     /**
-     * コンマ
+     * コンマ.
      */
     public static final String COMMA = "," ;
     /**
-     * サービスIDキー
+     * サービスIDキー.
      */
     public static final String SERVICE_ID_MY_CHANNEL_LIST = "service_id";
     /**
-     *ポジション
+     *ポジション.
      */
     private static final String POSITION_MY_CHANNEL_LIST = "position";
     /**
-     * インデックス
+     * インデックス.
      */
     private static final String INDEX_MY_CHANNEL_LIST = "index";
     /**
-     * タイトル
+     * タイトル.
      */
     private static final String TITLE_MY_CHANNEL_LIST = "title";
     /**
-     * マイ番組表設定アクティビティ
+     * マイ番組表設定アクティビティ.
      */
     private final MyChannelEditActivity mContext;
     /**
-     * マイ番組表設定Itemのコレクション
+     * マイ番組表設定Itemのコレクション.
      */
     private final ArrayList<MyChannelMetaData> mData;
     /**
-     * 編集ボタンをタップすると"MY編集画面"に情報を反映されるインターフェース
+     * 編集ボタンをタップすると"MY編集画面"に情報を反映されるインターフェース.
      */
     private final EditMyChannelItemImpl mEditMyChannelItemImpl;
 
@@ -126,16 +126,17 @@ public class MyChannelEditAdapter extends BaseAdapter implements View.OnClickLis
     }
 
     /**
-     * 編集ボタンをタップすると"MY編集画面"に情報を反映されるインターフェース
+     * 編集ボタンをタップすると"MY編集画面"に情報を反映されるインターフェース.
      */
     public interface EditMyChannelItemImpl {
         /**
-         *登録際、画面遷移用
+         *登録際、画面遷移用.
          */
         void onAddChannelItem();
         /**
-         * 解除際、ダイアログを呼び出す
-         * @param bundle
+         * 解除際、ダイアログを呼び出す.
+         *
+         * @param bundle Bundle
          */
         void onRemoveChannelItem(Bundle bundle);
     }

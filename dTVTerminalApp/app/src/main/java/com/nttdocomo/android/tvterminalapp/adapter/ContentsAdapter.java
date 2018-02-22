@@ -6,9 +6,7 @@ package com.nttdocomo.android.tvterminalapp.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -24,7 +22,6 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.SearchServiceType;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RentalDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
@@ -35,7 +32,6 @@ import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.RatingBarLayout;
 
 import java.util.List;
-import java.util.Objects;
 
 import static com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter.ActivityTypeItem.TYPE_RECORDING_RESERVATION_LIST;
 
@@ -63,7 +59,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     /**
      * ビューの生成.
      */
-    private LayoutInflater mInflater;
+    private final LayoutInflater mInflater;
     /**
      * タブのタイプ.
      */
@@ -788,10 +784,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                     break;
                 case RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_ALREADY_REFLECT:
                     // 受信完了
-                    holder.tv_recording_reservation.setVisibility(View.GONE);
-                    holder.tv_recording_reservation.setBackgroundColor(
-                            ContextCompat.getColor(mContext, R.color.recording_reservation_status_background_black));
-                    break;
                 default:
                     holder.tv_recording_reservation.setVisibility(View.GONE);
                     holder.tv_recording_reservation.setBackgroundColor(
@@ -1194,7 +1186,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         /**
          * チャンネル名.
          */
-        TextView tv_channel_name = null;
+        final TextView tv_channel_name = null;
         /**
          * ハイフン.
          */
