@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VideoGenreList implements Serializable {
+
+    private static final long serialVersionUID = -9201423763597476237L;
     private String mGenreId; // ジャンルID
     private String mTitle; // タイトル
     private String mRValue; // パレンタル設定値

@@ -11,6 +11,7 @@ import java.util.List;
 
 public class TvClipList implements Serializable {
 
+    private static final long serialVersionUID = 3389140211376432479L;
     private HashMap<String, String> mTcMap = new HashMap<>();
     private List<HashMap<String, String>> mTcList = new ArrayList<>();
 

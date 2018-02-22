@@ -11,6 +11,7 @@ import java.util.List;
 
 public class DailyRankList implements Serializable {
 
+    private static final long serialVersionUID = -6794322997308686784L;
     private HashMap<String, String> mDrMap = new HashMap<String, String>();
     private List<HashMap<String, String>> mDrList = new ArrayList<>();
 
