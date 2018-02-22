@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.detail;
 
-import android.app.AlertDialog;
 import android.app.Presentation;
 import android.content.Context;
 import android.content.Intent;
@@ -265,8 +264,8 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
     private boolean mIsOncreateOk = false;
     private RecordingReservationContentsDetailInfo mRecordingReservationContentsDetailInfo = null;
     private CustomDialog mRecordingReservationCustomtDialog = null;
-    private static final int RECORDING_RESERVATION_DIALOG_INDEX_0 = 0; // 予約録画する
-    private static final int RECORDING_RESERVATION_DIALOG_INDEX_1 = 1; // キャンセル
+    /*private static final int RECORDING_RESERVATION_DIALOG_INDEX_0 = 0; // 予約録画する
+    private static final int RECORDING_RESERVATION_DIALOG_INDEX_1 = 1; // キャンセル*/
     /**
      * プレイヤー横画面時のシークバーの下マージン.
      */
@@ -2900,9 +2899,9 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
         return failedRecordingReservationDialog;
     }
 
-    /**
-     * 繰り返し録画予約ダイアログの項目選択時のコールバック.
-     */
+//    /**
+//     * 繰り返し録画予約ダイアログの項目選択時のコールバック.
+//     */
 //    private CustomDialog.ApiItemSelectCallback mItemSelectCallback = new CustomDialog.ApiItemSelectCallback() {
 //        @Override
 //        public void onItemSelectCallback(final AlertDialog dialog, final int position) {
