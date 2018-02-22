@@ -188,7 +188,7 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
                 // スクロールによるタブ切り替え
                 super.onPageSelected(position);
                 resetPaging();
-                setTab(position);
+                mTabLayout.setTab(position);
                 getGenreData();
             }
         });
@@ -341,15 +341,6 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
                 }, LOAD_PAGE_DELAY_TIME);
             }
         }
-    }
-
-    /**
-     * インジケーター設置.
-     *
-     * @param position タブ位置
-     */
-    private void setTab(final int position) {
-        mTabLayout.setTab(position);
     }
 
     /**

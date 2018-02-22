@@ -199,7 +199,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
                 // スクロールによるタブ切り替え
                 super.onPageSelected(position);
                 resetPaging();
-                setTab(position);
+                mTabLayout.setTab(position);
                 getGenreData();
             }
         });
@@ -362,16 +362,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
             }
         }
 
-    }
-
-    /**
-     * インジケーター設置.
-     *
-     * @param position タブの位置
-     */
-    private void setTab(final int position) {
-        mTabLayout.setTab(position);
-//        progressBar.setVisibility(View.VISIBLE);
     }
 
     /**
