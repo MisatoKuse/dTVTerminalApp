@@ -154,8 +154,6 @@
 
 
         <!-- ====================================== Player グループ Begin ====================================== -->
-        <activity android:name=".activity.detail.ChannelDetailPlayerActivity"
-            android:exported="false" />
         <activity
             android:name=".activity.detail.ContentDetailActivity"
             android:configChanges="keyboardHidden|keyboard|orientation|screenSize"
