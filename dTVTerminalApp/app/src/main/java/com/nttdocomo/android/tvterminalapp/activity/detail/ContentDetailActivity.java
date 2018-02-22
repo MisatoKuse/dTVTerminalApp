@@ -2903,27 +2903,27 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
     /**
      * 繰り返し録画予約ダイアログの項目選択時のコールバック.
      */
-    private CustomDialog.ApiItemSelectCallback mItemSelectCallback = new CustomDialog.ApiItemSelectCallback() {
-        @Override
-        public void onItemSelectCallback(final AlertDialog dialog, final int position) {
-            // リスト選択時の処理
-            //TODO 定期予約実装時 1 は "繰り返し録画予約する"になる
-            switch (position) {
-                case RECORDING_RESERVATION_DIALOG_INDEX_0: // 録画予約するをタップ
-                    mRecordingReservationContentsDetailInfo.setLoopTypeNum(
-                            RecordingReservationContentsDetailInfo.REMOTE_RECORDING_RESERVATION_LOOP_TYPE_NUM_0);
-                    createRecordingReservationConfirmDialog();
-                    dialog.dismiss();
-                    break;
-                case RECORDING_RESERVATION_DIALOG_INDEX_1: // キャンセルをタップ
-                    DTVTLogger.debug("Cancel RecordingReservation");
-                    dialog.dismiss();
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
+//    private CustomDialog.ApiItemSelectCallback mItemSelectCallback = new CustomDialog.ApiItemSelectCallback() {
+//        @Override
+//        public void onItemSelectCallback(final AlertDialog dialog, final int position) {
+//            // リスト選択時の処理
+//            //TODO 定期予約実装時 1 は "繰り返し録画予約する"になる
+//            switch (position) {
+//                case RECORDING_RESERVATION_DIALOG_INDEX_0: // 録画予約するをタップ
+//                    mRecordingReservationContentsDetailInfo.setLoopTypeNum(
+//                            RecordingReservationContentsDetailInfo.REMOTE_RECORDING_RESERVATION_LOOP_TYPE_NUM_0);
+//                    createRecordingReservationConfirmDialog();
+//                    dialog.dismiss();
+//                    break;
+//                case RECORDING_RESERVATION_DIALOG_INDEX_1: // キャンセルをタップ
+//                    DTVTLogger.debug("Cancel RecordingReservation");
+//                    dialog.dismiss();
+//                    break;
+//                default:
+//                    break;
+//            }
+//        }
+//    };
 
     /**
      * 録画予約確認ダイアログを表示.

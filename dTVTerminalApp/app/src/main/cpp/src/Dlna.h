@@ -165,7 +165,7 @@ namespace dtvt {
 
         bool initDevEnv();
 
-        bool sendSoap(std::string controlUrl, std::string objectId="0", const int startingIndex=0, const int requestCount=0, std::string browseFlag="BrowseDirectChildren");
+        bool sendSoap(std::string controlUrl, std::string objectId="0", const int startingIndex=0, const int requestCount=30, std::string browseFlag="BrowseDirectChildren");
 
         void notify(int msg, std::string content);
         //void notifyDuChar(int msg, du_uchar* content);
