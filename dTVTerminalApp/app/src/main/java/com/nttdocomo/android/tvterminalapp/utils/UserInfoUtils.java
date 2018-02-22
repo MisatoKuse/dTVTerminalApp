@@ -9,6 +9,7 @@ import android.content.Context;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.UserInfoInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist.AccountList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
 
 import java.util.ArrayList;
@@ -61,7 +62,7 @@ public class UserInfoUtils {
             return CONTRACT_INFO_NONE;
         }
 
-        List<UserInfoList.AccountList> mLoggedInAccountList = infoList.getLoggedinAccount();
+        List<AccountList> mLoggedInAccountList = infoList.getLoggedinAccount();
 
         //TODO:dアカログイン状態はdアカ情報で判断するようにする
         //ログインユーザ情報がないときは契約情報は無し
@@ -69,7 +70,7 @@ public class UserInfoUtils {
             return CONTRACT_INFO_NONE;
         }
 
-        UserInfoList.AccountList mLoggedInAccount = mLoggedInAccountList.get(INT_LIST_HEAD);
+        AccountList mLoggedInAccount = mLoggedInAccountList.get(INT_LIST_HEAD);
 
         //ユーザ情報がないときは契約情報は無し
         if (mLoggedInAccount == null) {
@@ -116,11 +117,11 @@ public class UserInfoUtils {
      * @return マップ化契約情報
      */
     private static Map<String, String> getAccountList(
-            final List<UserInfoList.AccountList> accountBuffers) {
+            final List<AccountList> accountBuffers) {
         Map<String, String> buffer = new HashMap<>();
 
         //契約情報の数だけ回ってマップに変換する
-        for (UserInfoList.AccountList accountBuffer : accountBuffers) {
+        for (AccountList accountBuffer : accountBuffers) {
             buffer.put(UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ,
                     accountBuffer.getDchAgeReq());
             buffer.put(UserInfoJsonParser.USER_INFO_LIST_H4D_AGE_REQ,

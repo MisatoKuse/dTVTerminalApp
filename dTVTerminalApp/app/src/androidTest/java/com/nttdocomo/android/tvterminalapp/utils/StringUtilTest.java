@@ -9,6 +9,7 @@ import android.support.test.InstrumentationRegistry;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist.AccountList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
 
 import org.junit.After;
@@ -60,11 +61,11 @@ public class StringUtilTest {
         String h4dAgeReq[] =      {H4D_018, BLANK,   BLANK,    BLANK,   NULL_VL, H4D_018, BLANK,   BLANK,    NULL_VL, H4D_018, H4D_018, H4D_018, BLANK};
         String answer[] =         {H4D_018, DCH_015, DFT_008, DFT_008, DFT_008, DCH_015, DFT_008, DFT_008, DFT_008, DFT_008, DFT_008, DFT_008, DFT_008};
         for (int i = 0; i < contractStatus.length; i++) {
-            UserInfoList.AccountList infoList = new UserInfoList.AccountList();
+            AccountList infoList = new AccountList();
             infoList.setContractStatus(contractStatus[i]);
             infoList.setDchAgeReq(dchAgeReq[i]);
             infoList.setH4dAgeReq(h4dAgeReq[i]);
-            List<UserInfoList.AccountList> mLoggedinAccount = new ArrayList<>();
+            List<AccountList> mLoggedinAccount = new ArrayList<>();
             mLoggedinAccount.add(infoList);
             Map<String, String> userInfoMap = new HashMap<>();
             userInfoMap.put(UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS, contractStatus[i]);
