@@ -85,15 +85,11 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     /**
      * アイテムの配列.
      */
-    private List<ItemViewHolder> mItemViews = new ArrayList<>();
+    private final List<ItemViewHolder> mItemViews = new ArrayList<>();
     /**
      * 番組データ.
      */
     private List<ChannelInfo> mProgramList = null;
-    /**
-     * サムネイルとエピソードタイトルを含むスペース.
-     */
-    private int mThumbEpiSpace;
     /**
      * エピソードタイトルを含むスペース.
      */
@@ -105,11 +101,11 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     /**
      * クリップボタンサイズ.
      */
-    private final int CLIP_BUTTON_SIZE = 32;
+    private final static int CLIP_BUTTON_SIZE = 32;
     /**
      * チャンネルのWIDTH.
      */
-    private final int CHANNEL_WIDTH = 720;
+    private final static int CHANNEL_WIDTH = 720;
     /**
      * ダウンロード禁止判定フラグ.
      */
@@ -215,8 +211,12 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 public void onClick(final View view) {
                     //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、画像比較でクリップ済/未を判定する
                     Bitmap clipButtonBitmap = ((BitmapDrawable) mClipButton.getBackground()).getBitmap();
-                    Bitmap activeClipBitmap = ((BitmapDrawable) ResourcesCompat.getDrawable(mContext.getResources(),
-                            R.mipmap.icon_circle_active_clip, null)).getBitmap();
+                    Bitmap activeClipBitmap = null;
+                    BitmapDrawable activeClipBitmapDrawable = (BitmapDrawable) ResourcesCompat.getDrawable(mContext.getResources(),
+                            R.mipmap.icon_circle_active_clip, null);
+                    if (activeClipBitmapDrawable != null) {
+                        activeClipBitmap = activeClipBitmapDrawable.getBitmap();
+                    }
                     if (clipButtonBitmap.equals(activeClipBitmap)) {
                         schedule.getClipRequestData().setClipStatus(true);
                     } else {
@@ -532,7 +532,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 if (availableSpace - titleSpace - mContext
                         .dip2px(THUMB_MARGIN_TOP_TITLE) >= thumbnailHeight && !isParental) {
                     //サムネイル表示
-                    mThumbEpiSpace = availableSpace - titleSpace - mContext.dip2px(THUMB_MARGIN_TOP_TITLE);
+                    int mThumbEpiSpace = availableSpace - titleSpace - mContext.dip2px(THUMB_MARGIN_TOP_TITLE);
                     mEpiSpace = mThumbEpiSpace - thumbnailHeight;
                     isShowThumb = true;
                 } else {
