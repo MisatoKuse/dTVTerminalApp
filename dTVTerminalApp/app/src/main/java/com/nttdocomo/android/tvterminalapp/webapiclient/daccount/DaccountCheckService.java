@@ -182,6 +182,7 @@ class DaccountCheckService {
         if (mService != null) {
             mContext.unbindService(mServiceConnection);
             mService = null;
+            DTVTLogger.debug("DaccountCheckServiceUnbind");
         }
     }
 }

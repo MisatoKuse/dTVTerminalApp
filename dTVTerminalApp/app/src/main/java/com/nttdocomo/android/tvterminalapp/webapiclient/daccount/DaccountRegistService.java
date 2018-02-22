@@ -185,6 +185,7 @@ class DaccountRegistService {
         if (mServiceCustom != null) {
             mContext.unbindService(mServiceConnection);
             mServiceCustom = null;
+            DTVTLogger.debug("DaccountRegistServiceUnbind");
         }
     }
 }
