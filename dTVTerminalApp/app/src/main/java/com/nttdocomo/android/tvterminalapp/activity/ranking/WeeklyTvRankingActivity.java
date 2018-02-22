@@ -6,9 +6,6 @@ package com.nttdocomo.android.tvterminalapp.activity.ranking;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,6 +17,7 @@ import android.widget.Toast;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
+import com.nttdocomo.android.tvterminalapp.adapter.RankingPagerAdapter;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRankingTopDataConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopVideoGenreConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
@@ -190,7 +188,11 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         if (mRankingFragmentFactory == null) {
             mRankingFragmentFactory = new RankingFragmentFactory();
         }
-        RankingPagerAdapter rankingPagerAdapter = new RankingPagerAdapter(getSupportFragmentManager());
+        RankingPagerAdapter rankingPagerAdapter = new RankingPagerAdapter(getSupportFragmentManager(),
+                ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK);
+        rankingPagerAdapter.setRankingFragmentScrollListener(this);
+        rankingPagerAdapter.setTabNames(mTabNames);
+        rankingPagerAdapter.setRankingFragmentFactory(mRankingFragmentFactory);
         mViewPager.setAdapter(rankingPagerAdapter);
         mViewPager.addOnPageChangeListener(new ViewPager
                 .SimpleOnPageChangeListener() {
@@ -416,37 +418,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
                     Toast.makeText(WeeklyTvRankingActivity.this, "ジャンルデータ取得失敗しました", Toast.LENGTH_SHORT).show();
                 }
             });
-        }
-    }
-
-    /**
-     * 検索結果タブ専用アダプター.
-     */
-    private class RankingPagerAdapter extends FragmentStatePagerAdapter {
-        /**
-         * コンストラクタ.
-         *
-         * @param fm FragmentManager
-         */
-        private RankingPagerAdapter(final FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(final int position) {
-            return mRankingFragmentFactory.createFragment(
-                    ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK,
-                    position, getWeeklyTvRankingActivity());
-        }
-
-        @Override
-        public int getCount() {
-            return mTabNames.length;
-        }
-
-        @Override
-        public CharSequence getPageTitle(final int position) {
-            return mTabNames[position];
         }
     }
 
