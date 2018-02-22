@@ -108,7 +108,7 @@ class DaccountRegistService {
 
             //呼び出し用のパラメータの設定
             DTVTLogger.debug("compName=" + name);
-            String serviceKey = DaccountConstants.SERVICE_KEY;
+            String serviceKey = DaccountConstants.getDaccountServiceKey();
 
             //各ブロードキャストレシーバーの名前を指定する
             String setDefIdReceiver = DaccountConstants.SET_ID_RECEIVER;

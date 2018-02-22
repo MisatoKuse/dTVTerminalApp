@@ -111,7 +111,7 @@ class DaccountCheckService {
             int appReqId = 0;
 
             //呼び出し用のパラメータの設定
-            String serviceKey = DaccountConstants.SERVICE_KEY;
+            String serviceKey = DaccountConstants.getDaccountServiceKey();
 
             DTVTLogger.debug("compName=" + name);
 
