@@ -200,7 +200,7 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
 
     /*dTVチャンネル起動*/
     private static final String DTVCHANNEL_PACKAGE_NAME = "com.nttdocomo.dch";
-    private static final int DTVCHANNEL_VERSION_STANDARD = 5;
+    private static final int DTVCHANNEL_VERSION_STANDARD = 15;
     private static final String DTVCHANNEL_TELEVISION_START_URL = "dch://android.dch.nttdocomo.com/viewing?chno=";
     private static final String DTVCHANNEL_VIDEO_START_URL = "dch://android.dch.nttdocomo.com/viewing_video?crid=";
     private static final String DTVCHANNEL_GOOGLEPLAY_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=com.nttdocomo.dch";
@@ -229,6 +229,7 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
     private static final String CONTENT_TYPE_FLAG_ONE = "1";
     private static final String CONTENT_TYPE_FLAG_TWO = "2";
     private static final String CONTENT_TYPE_FLAG_THREE = "3";
+    private static final int FLAG_ZERO = 0;
     /*ひかりTV起動*/
 
     /* player start */
@@ -2285,7 +2286,7 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                     break;
                 } else if (mDetailData != null && mDetailData.getServiceId() == D_ANIMATION_CONTENTS_SERVICE_ID) {
                     CustomDialog startAppDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-                    startAppDialog.setTitle(getResources().getString(R.string.d_anime_store_content_service_start_dialog));
+                    startAppDialog.setContent(getResources().getString(R.string.d_anime_store_content_service_start_dialog));
                     startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                         @Override
                         public void onOKCallback(final boolean isOK) {
@@ -2308,13 +2309,13 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                     break;
                 } else if (mDetailData != null && mDetailData.getServiceId() == DTV_CHANNEL_CONTENTS_SERVICE_ID) {
                     final CustomDialog startAppDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-                    startAppDialog.setTitle(getResources().getString(R.string.dtv_channel_service_start_dialog));
+                    startAppDialog.setContent(getResources().getString(R.string.dtv_channel_service_start_dialog));
                     startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                         @Override
                         public void onOKCallback(final boolean isOK) {
                             int localVersionCode = getVersionCode(DTVCHANNEL_PACKAGE_NAME);
                             if (isAppInstalled(ContentDetailActivity.this, DTVCHANNEL_PACKAGE_NAME)) {
-                                // TODO: 現時点では仮値として5(step1.1ver。現時点の最新) 最低バージョンコードの決定が現時点でできない状態です。
+                                //バージョンコードは15
                                 if (localVersionCode < DTVCHANNEL_VERSION_STANDARD) {
                                     errorMessage = getResources().getString(R.string.dtv_channel_service_update_dialog);
                                     showErrorDialog(errorMessage);
@@ -2479,7 +2480,8 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                         setRemoteProgressVisible(View.VISIBLE);
                     }
                     if (VIDEO_PROGRAM.equals(mDetailData.getDispType())) {
-                        if (DTV_FLAG_ZERO.equals(mDetailData.getDtv()) || null == mDetailData.getDtv()) {
+                        if (DTV_FLAG_ZERO.equals(mDetailData.getDtv()) || TextUtils.isEmpty(mDetailData.getDtv())
+                                || FLAG_ZERO == mDetailData.getDtv().trim().length()) {
                             if (BVFLG_FLAG_ONE.equals(mDetailFullData.getBvflg())) {
                                 requestStartApplicationHikariTvCategoryHikaritvVod(mDetailFullData.getPuid(),
                                         mDetailFullData.getCid(), mDetailFullData.getCrid());
@@ -2497,8 +2499,15 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                                         if (licenseId.equals(column[0]) || licenseId.equals(puid)) {
                                             //一致した「active_list」の「valid_end_date」> 現在時刻の場合
                                             if (activeData.getValidEndDate() > DateUtils.getNowTimeFormatEpoch()) {
-                                                // TODO: 2018/02/08  license_idが複数ある場合は「valid_end_date」が一番長い「license_id」を指定する
-                                                requestStartApplicationHikariTvCategoryHikaritvVod(activeData.getLicenseId(),
+                                                // license_idが複数ある場合は「valid_end_date」が一番長い「license_id」を指定する
+                                                long longestDate = activeData.getValidEndDate();
+                                                for (ActiveData activeDataEndDate : activeDatas) {
+                                                    if (longestDate < activeDataEndDate.getValidEndDate()) {
+                                                        longestDate = activeDataEndDate.getValidEndDate();
+                                                        licenseId = activeDataEndDate.getLicenseId();
+                                                    }
+                                                }
+                                                requestStartApplicationHikariTvCategoryHikaritvVod(licenseId,
                                                         mDetailFullData.getCid(), mDetailFullData.getCrid());
                                             }
                                         }
