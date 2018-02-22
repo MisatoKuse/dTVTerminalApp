@@ -25,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -89,6 +90,10 @@ public class StringUtils {
      * 暗号化キーの長さ.
      */
     private static int CIPHER_KEY_LENGTH = 16;
+    /**
+     * ハッシュアルゴリズム指定.
+     */
+    private static final String HASH_ALGORITHME = "SHA-256";
 
     /**
      * コンストラクタ.
@@ -569,5 +574,50 @@ public class StringUtils {
             chInfoDate = str;
         }
         return chInfoDate;
+    }
+
+    /**
+     * 文字列から ハッシュ値を取得する.
+     *
+     * @param value 文字列
+     * @return ハッシュ値
+     */
+    public static String toHashValue(final String value) {
+        byte[] hashValue;
+        StringBuilder sb = new StringBuilder();
+
+        hashValue = toHashBytes(value);
+        if (hashValue == null) {
+            DTVTLogger.debug("hash value is null");
+            return null;
+        }
+        for (byte hb : hashValue) {
+            String hex = String.format("%02x", hb);
+            sb.append(hex);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * ハッシュ化したソルトを取得.
+     * ※ハッシュアルゴリズム：SHA-256
+     *
+     * @param salt ソルト
+     * @return ハッシュ化したバイト配列
+     */
+    private static byte[] toHashBytes(final String salt) {
+        MessageDigest digest;
+
+        if (salt == null) {
+            return (byte[]) null;
+        }
+        try {
+            digest = MessageDigest.getInstance(HASH_ALGORITHME);
+        } catch (NoSuchAlgorithmException e) {
+            DTVTLogger.debug(e);
+            return (byte[]) null;
+        }
+        digest.update(salt.getBytes(StandardCharsets.UTF_8));
+        return digest.digest();
     }
 }

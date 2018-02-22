@@ -14,16 +14,13 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -252,8 +249,6 @@ public class RemoteControlRelayClient {
         START_APPLICATION
     }
 
-    // ハッシュアルゴリズム指定
-    private static final String HASH_ALGORITHME = "SHA-256";
     // アプリ起動要求に対応するアプリ名
     static final String STB_APPLICATION_DTV = "dTV";  // dTV
     static final String STB_APPLICATION_DANIMESTORE = "dANIMESTORE";  // dアニメストア
@@ -970,7 +965,7 @@ public class RemoteControlRelayClient {
         try {
             requestJson.put(RELAY_COMMAND, RELAY_COMMAND_KEYEVENT_KEYCODE_POWER);
             requestJson.put(RELAY_COMMAND_ARGUMENT_APPLICATION_VERSION_COMPATIBILITY, getApplicationVersionCompatibilityRequest());
-            requestJson.put(RELAY_COMMAND_ARGUMENT_USER_ID, toHashValue(userId));
+            requestJson.put(RELAY_COMMAND_ARGUMENT_USER_ID, StringUtils.toHashValue(userId));
             request = requestJson.toString();
         } catch (JSONException e) {
             DTVTLogger.debug(e);
@@ -990,7 +985,7 @@ public class RemoteControlRelayClient {
         try {
             requestJson.put(RELAY_COMMAND, RELAY_COMMAND_IS_USER_ACCOUNT_EXIST);
             requestJson.put(RELAY_COMMAND_ARGUMENT_APPLICATION_VERSION_COMPATIBILITY, getApplicationVersionCompatibilityRequest());
-            requestJson.put(RELAY_COMMAND_ARGUMENT_USER_ID, toHashValue(userId));
+            requestJson.put(RELAY_COMMAND_ARGUMENT_USER_ID, StringUtils.toHashValue(userId));
             request = requestJson.toString();
         } catch (JSONException e) {
             DTVTLogger.debug(e);
@@ -1218,7 +1213,7 @@ public class RemoteControlRelayClient {
             requestJson.put(RELAY_COMMAND, RELAY_COMMAND_START_APPLICATION);
             requestJson.put(RELAY_COMMAND_ARGUMENT_APPLICATION_ID, applicationId);
             requestJson.put(RELAY_COMMAND_ARGUMENT_APPLICATION_VERSION_COMPATIBILITY, getApplicationVersionCompatibilityRequest());
-            requestJson.put(RELAY_COMMAND_ARGUMENT_USER_ID, toHashValue(userId));
+            requestJson.put(RELAY_COMMAND_ARGUMENT_USER_ID, StringUtils.toHashValue(userId));
             request = requestJson.toString();
         } catch (JSONException e) {
             DTVTLogger.debug(e);
@@ -1245,7 +1240,7 @@ public class RemoteControlRelayClient {
             requestJson.put(RELAY_COMMAND_ARGUMENT_APPLICATION_ID, applicationId);
             requestJson.put(RELAY_COMMAND_ARGUMENT_CONTENTS_ID, contentsId);
             requestJson.put(RELAY_COMMAND_ARGUMENT_APPLICATION_VERSION_COMPATIBILITY, getApplicationVersionCompatibilityRequest());
-            requestJson.put(RELAY_COMMAND_ARGUMENT_USER_ID, toHashValue(userId));
+            requestJson.put(RELAY_COMMAND_ARGUMENT_USER_ID, StringUtils.toHashValue(userId));
             request = requestJson.toString();
         } catch (JSONException e) {
             DTVTLogger.debug(e);
@@ -1279,7 +1274,7 @@ public class RemoteControlRelayClient {
             requestJson.put(RELAY_COMMAND_ARGUMENT_CRID_DTVCHANNEL, crid);
             requestJson.put(RELAY_COMMAND_ARGUMENT_CHNO_DTVCHANNEL, chno);
             requestJson.put(RELAY_COMMAND_ARGUMENT_APPLICATION_VERSION_COMPATIBILITY, getApplicationVersionCompatibilityRequest());
-            requestJson.put(RELAY_COMMAND_ARGUMENT_USER_ID, toHashValue(userId));
+            requestJson.put(RELAY_COMMAND_ARGUMENT_USER_ID, StringUtils.toHashValue(userId));
             request = requestJson.toString();
         } catch (JSONException e) {
             DTVTLogger.debug(e);
@@ -1358,7 +1353,7 @@ public class RemoteControlRelayClient {
                     return null;
             }
             requestJson.put(RELAY_COMMAND_ARGUMENT_APPLICATION_VERSION_COMPATIBILITY, getApplicationVersionCompatibilityRequest());
-            requestJson.put(RELAY_COMMAND_ARGUMENT_USER_ID, toHashValue(userId));
+            requestJson.put(RELAY_COMMAND_ARGUMENT_USER_ID, StringUtils.toHashValue(userId));
             request = requestJson.toString();
         } catch (JSONException e) {
             DTVTLogger.debug(e);
@@ -1432,51 +1427,6 @@ public class RemoteControlRelayClient {
      */
     public void setRemoteIp(final String remoteIp) {
         mRemoteHost = remoteIp;
-    }
-
-    /**
-     * 文字列から ハッシュ値を取得する.
-     *
-     * @param value 文字列
-     * @return ハッシュ値
-     */
-    private String toHashValue(final String value) {
-        byte[] hashValue;
-        StringBuilder sb = new StringBuilder();
-
-        hashValue = toHashBytes(value);
-        if (hashValue == null) {
-            DTVTLogger.debug("hash value is null");
-            return null;
-        }
-        for (byte hb : hashValue) {
-            String hex = String.format("%02x", hb);
-            sb.append(hex);
-        }
-        return sb.toString();
-    }
-
-    /**
-     * ハッシュ化したソルトを取得.
-     * ※ハッシュアルゴリズム：SHA-256
-     *
-     * @param salt ソルト
-     * @return ハッシュ化したバイト配列
-     */
-    private static byte[] toHashBytes(final String salt) {
-        MessageDigest digest;
-
-        if (salt == null) {
-            return (byte[]) null;
-        }
-        try {
-            digest = MessageDigest.getInstance(HASH_ALGORITHME);
-        } catch (NoSuchAlgorithmException e) {
-            DTVTLogger.debug(e);
-            return (byte[]) null;
-        }
-        digest.update(salt.getBytes(StandardCharsets.UTF_8));
-        return digest.digest();
     }
 
     /**
