@@ -13,6 +13,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.UserInfoListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist.AccountList;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
@@ -112,12 +113,12 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
         for (UserInfoList userInfo : userInfoList) {
 
             //リクエストユーザデータの蓄積
-            List<UserInfoList.AccountList> list1 = userInfo.getLoggedinAccount();
+            List<AccountList> list1 = userInfo.getLoggedinAccount();
 
             makeRecord(userInfoListDao, list1, "");
 
             //H4D契約ユーザデータの蓄積（データは横並びで記録するが、ステータスに接頭語を付けて区別を行う）
-            List<UserInfoList.AccountList> list2 = userInfo.getH4dContractedAccount();
+            List<AccountList> list2 = userInfo.getH4dContractedAccount();
 
             makeRecord(userInfoListDao, list2, H4D_HEADER);
         }
@@ -133,7 +134,7 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
      * @param header          分離時識別用データ
      */
     private void makeRecord(final UserInfoListDao userInfoListDao,
-                            final List<UserInfoList.AccountList> userInfoList,
+                            final List<AccountList> userInfoList,
                             final String header) {
         //蓄積バッファ
         StringBuilder statusBuffer = new StringBuilder();
@@ -142,7 +143,7 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
 
         int counter = userInfoList.size();
         //後で分離できるように蓄積する
-        for (UserInfoList.AccountList loggedInAccount : userInfoList) {
+        for (AccountList loggedInAccount : userInfoList) {
             statusBuffer.append(loggedInAccount.getContractStatus());
             dchAgeBuffer.append(loggedInAccount.getDchAgeReq());
             h4dAgeBuffer.append(loggedInAccount.getH4dAgeReq());
@@ -231,9 +232,9 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
 
 
         //個々の情報を一つにする
-        List<UserInfoList.AccountList> lineBuffer;
+        List<AccountList> lineBuffer;
         lineBuffer = makeLine(mStatus, mDchAge, mH4dAge);
-        List<UserInfoList.AccountList> lineBufferH4d;
+        List<AccountList> lineBufferH4d;
         lineBufferH4d = makeLine(mH4dStatus, mH4dDchAge, mH4dH4dAge);
 
         //統合して蓄積する
@@ -309,7 +310,7 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
      * @param h4dAgeList ひかりTV for docomo視聴年齢のリスト
      * @return 配列をまとめた情報
      */
-    private ArrayList<UserInfoList.AccountList> makeLine(final List<String> statusList, final List<String> dchAgeList,
+    private ArrayList<AccountList> makeLine(final List<String> statusList, final List<String> dchAgeList,
                                                          final List<String> h4dAgeList) {
         //リストを配列にする
         String[] status = statusList.toArray(new String[0]);
@@ -317,11 +318,11 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
         String[] h4dAge = h4dAgeList.toArray(new String[0]);
 
         //結果用バッファ
-        ArrayList<UserInfoList.AccountList> lineBuffer = new ArrayList<>();
+        ArrayList<AccountList> lineBuffer = new ArrayList<>();
 
         //最大値を求める
         int maxLine = maxSize(status.length, dchAge.length, h4dAge.length);
-        UserInfoList.AccountList account = new UserInfoList.AccountList();
+        AccountList account = new AccountList();
 
         //最大値の数だけ回る
         for (int i = 0; i < maxLine; i++) {

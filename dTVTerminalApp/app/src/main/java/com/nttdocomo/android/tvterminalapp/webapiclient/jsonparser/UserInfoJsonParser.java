@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist.AccountList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.UserInfoWebClient;
 
 import org.json.JSONArray;
@@ -87,7 +88,7 @@ public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
                 }
 
                 //リクエストユーザデータの取得
-                ArrayList<UserInfoList.AccountList> loggedinAccount = new ArrayList<>();
+                ArrayList<AccountList> loggedinAccount = new ArrayList<>();
 
                 if (!jsonObj.isNull(USER_INFO_LIST_LOGGEDIN_ACCOUNT)) {
                     Object arryCheck = jsonObj.getJSONObject(USER_INFO_LIST_LOGGEDIN_ACCOUNT);
@@ -111,7 +112,7 @@ public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
                 infoList.setLoggedinAccount(loggedinAccount);
 
                 //H4D契約ユーザデータの取得
-                ArrayList<UserInfoList.AccountList> h4dContractedAccount = new ArrayList<>();
+                ArrayList<AccountList> h4dContractedAccount = new ArrayList<>();
 
                 if (!jsonObj.isNull(USER_INFO_LIST_H4D_CONTRACTED_ACCOUNT)) {
                     Object arryCheck = jsonObj.getJSONObject(
@@ -161,9 +162,9 @@ public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
      * @param loggedinAccount 蓄積用データリスト
      * @param loggedinArray   蓄積対象のリクエストユーザデータ又はH4D契約ユーザデータ
      */
-    private void getDataArray(List<UserInfoList.AccountList> loggedinAccount, JSONArray loggedinArray) {
+    private void getDataArray(List<AccountList> loggedinAccount, JSONArray loggedinArray) {
 
-        UserInfoList.AccountList tempList = new UserInfoList.AccountList();
+        AccountList tempList = new AccountList();
         String temp;
         for (int count = 0; count < loggedinArray.length(); count++) {
             try {
