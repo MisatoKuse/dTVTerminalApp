@@ -147,10 +147,6 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
      */
     private ArrayList<ChannelInfo> mChannels = new ArrayList<>();
     /**
-     * バックフラグから.
-     */
-    private boolean mIsFromBackFlag = false;
-    /**
      * ひかりチャンネルリスト.
      */
     private ArrayList<ChannelInfo> hikariChannels;
@@ -212,8 +208,10 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         setTagView();
         //時間帯設定
         setLeftTimeContentsView();
+        //タイトル設定
+        setTitle();
         //チャンネルデータ取得
-//        getChannelData();
+        getChannelData();
     }
 
     /**
@@ -248,21 +246,6 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
                 return false;
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (!mIsFromBackFlag) {
-            //タイトル設定
-            setTitle();
-        } else {
-            mIsFromBackFlag = false;
-        }
-        clearData();
-        getChannelData();
-        scrollToCurTime();
-        refreshTimeLine();
     }
 
     /**
@@ -768,12 +751,6 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
             }
         }
         return myChannels;
-    }
-
-    @Override
-    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        mIsFromBackFlag = true;
     }
 
     /**
