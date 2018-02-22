@@ -19,75 +19,77 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+/**
+ * 番組表情報JsonParser.
+ */
 public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
-
-    private TvScheduleWebClient.TvScheduleJsonParserCallback mTvScheduleJsonParserCallback;
-
-    // オブジェクトクラスの定義
+    /**
+     * パース結果を伝えるコールバック.
+     */
+    private final TvScheduleWebClient.TvScheduleJsonParserCallback mTvScheduleJsonParserCallback;
+    /**
+     * オブジェクトクラスの定義.
+     */
     private TvScheduleList mTvScheduleList;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
      * @param mTvScheduleJsonParserCallback コールバック
      */
-    public TvScheduleJsonParser(TvScheduleWebClient.TvScheduleJsonParserCallback mTvScheduleJsonParserCallback) {
+    public TvScheduleJsonParser(final TvScheduleWebClient.TvScheduleJsonParserCallback mTvScheduleJsonParserCallback) {
         this.mTvScheduleJsonParserCallback = mTvScheduleJsonParserCallback;
     }
 
     @Override
-    protected void onPostExecute(Object s) {
+    @SuppressWarnings("unchecked")
+    protected void onPostExecute(final Object s) {
         mTvScheduleJsonParserCallback.onTvScheduleJsonParsed((List<TvScheduleList>) s);
     }
 
     @Override
-    protected Object doInBackground(Object... strings) {
+    protected Object doInBackground(final Object... strings) {
         String result = (String) strings[0];
-        List<TvScheduleList> resultList = TvScheduleListListSender(result);
-        return resultList;
+        return tvScheduleListListSender(result);
     }
 
     /**
-     * CH毎番組Jsonデータを解析する
+     * CH毎番組Jsonデータを解析する.
      *
      * @param jsonStr 元のJSONデータ
      * @return パース後のJSONデータ
      */
-    public List<TvScheduleList> TvScheduleListListSender(String jsonStr) {
+    private List<TvScheduleList> tvScheduleListListSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         mTvScheduleList = new TvScheduleList();
 
         try {
             JSONObject jsonObj = new JSONObject(jsonStr);
-            if (jsonObj != null) {
-                sendStatus(jsonObj);
+            sendStatus(jsonObj);
 
-                if (!jsonObj.isNull(JsonConstants.META_RESPONSE_LIST)) {
-                    JSONArray arrayList = jsonObj.getJSONArray(JsonConstants.META_RESPONSE_LIST);
-                    sendTsList(arrayList);
-                }
-                List<TvScheduleList> tvScheduleList = Arrays.asList(mTvScheduleList);
-                return tvScheduleList;
+            if (!jsonObj.isNull(JsonConstants.META_RESPONSE_LIST)) {
+                JSONArray arrayList = jsonObj.getJSONArray(JsonConstants.META_RESPONSE_LIST);
+                sendTsList(arrayList);
             }
+            return Collections.singletonList(mTvScheduleList);
         } catch (JSONException e) {
-            DTVTLogger.debug(e);
-        } catch (Exception e) {
             DTVTLogger.debug(e);
         }
         return null;
     }
 
     /**
-     * statsの値をMapでオブジェクトクラスに渡す
+     * statsの値をMapでオブジェクトクラスに渡す.
      *
      * @param jsonObj 元のJSONデータ
      */
-    public void sendStatus(JSONObject jsonObj) {
+    private void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
             HashMap<String, String> map = new HashMap<>();
@@ -95,7 +97,9 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
                 String status = jsonObj.getString(JsonConstants.META_RESPONSE_STATUS);
                 map.put(JsonConstants.META_RESPONSE_STATUS, status);
             }
-            mTvScheduleList.setTvsMap(map);
+            if (mTvScheduleList != null) {
+                mTvScheduleList.setTvsMap(map);
+            }
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
@@ -104,13 +108,13 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     /**
-     * コンテンツのList<HashMap>をオブジェクトクラスに格納
+     * コンテンツのList<HashMap>をオブジェクトクラスに格納.
      *
      * @param arrayList 元のJSONデータ
      */
-    public void sendTsList(JSONArray arrayList) {
+    private void sendTsList(final JSONArray arrayList) {
         try {
-            List<HashMap<String, String>> tsList = new ArrayList<>();
+            List<Map<String, String>> tsList = new ArrayList<>();
             for (int i = 0; i < arrayList.length(); i++) {
                 HashMap<String, String> tsListMap = new HashMap<>();
                 JSONObject jsonObject = arrayList.getJSONObject(i);

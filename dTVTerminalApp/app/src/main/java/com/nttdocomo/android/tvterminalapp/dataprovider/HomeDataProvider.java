@@ -350,12 +350,14 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             dateUtils.addLastDate(DateUtils.CHANNEL_LAST_UPDATE);
             ChannelList list = channelLists.get(0);
             setStructDB(list);
-            sendTvScheduleListData(setChannelName(mTvScheduleContentsList, list));
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
             List<Map<String, String>> channelList = homeDataManager.selectChannelListHomeData();
-            sendTvScheduleListData(setChannelName(mTvScheduleContentsList, setHomeChannelData(channelList)));
+            ChannelList chList = setHomeChannelData(channelList);
+            //チャンネル情報を元にNowOnAir情報の取得を行う.
+            mChannelList = chList;
+            getTvScheduleFromChInfo(chList);
         }
     }
 
@@ -470,13 +472,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
          * @param recVdList おすすめビデオリスト
          */
         void recommendVideoCallback(List<ContentsData> recVdList);
-
-        /**
-         * NOW ON AIR用チャンネル一覧コールバック.
-         *
-         * @param channelList チャンネル一覧
-         */
-        void channelListCallback(ChannelList channelList);
     }
 
     /**
@@ -504,14 +499,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     private AsyncTask<Void, Void, Void> homeDataDownloadTask = new AsyncTask<Void, Void, Void>() {
         @Override
         protected Void doInBackground(final Void... voids) {
-            //NOW ON AIR
-            //TODO チャンネル一覧取得結果よりCHNO(チャンネル一覧)を先に取得する必要がある.
-            //TODO 仮のチャンネル番号で取得要求を行っている.
-            String[] chNos = new String[]{"101", "260", "261", "280", "3101", "3811", "500", "991"};
-            List<Map<String, String>> tvScheduleListData = getTvScheduleListData(chNos);
-            if (tvScheduleListData != null && tvScheduleListData.size() > 0) {
-                mTvScheduleContentsList = setHomeContentData(tvScheduleListData, false);
-            }
+            //NOW ON AIRを取得するためにまずはチャンネルリスト取得
+            getChannelList(0, 0, "", DEFAULT_CHANNEL_DISPLAY_TYPE);
+
             //おすすめ番組・レコメンド情報は最初からContentsDataのリストなので、そのまま使用する
             List<ContentsData> recommendChListData = getRecommendChListData();
             if (recommendChListData != null && recommendChListData.size() > 0) {
@@ -538,9 +528,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
 
             //ロールID一覧取得
             getRoleListData();
-
-            //チャンネルリスト取得
-            getChannelList(0, 0, "", DEFAULT_CHANNEL_DISPLAY_TYPE);
 
             if (userInfoDataProvider.isH4dUser()) {
                 //H4dユーザに必要なデータ取得開始
@@ -692,7 +679,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @return ChannelListデータ
      */
     private ChannelList setHomeChannelData(final List<Map<String, String>> list) {
-        List<HashMap<String, String>> hashMapList = new ArrayList<>();
+        List<Map<String, String>> hashMapList = new ArrayList<>();
         for (Map<String, String> map : list) {
             HashMap<String, String> hashMap = new HashMap<>();
             hashMap.putAll(map);
@@ -701,6 +688,31 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         ChannelList channelList = new ChannelList();
         channelList.setChannelList(hashMapList);
         return channelList;
+    }
+
+    /**
+     * チャンネル情報を元にNowOnAir情報の取得を行う.
+     *
+     * @param channelList チャンネル情報
+     */
+    private void getTvScheduleFromChInfo(final ChannelList channelList) {
+        List<HashMap<String, String>> channelInfoList = channelList.getChannelList();
+        List<String> chNoList = new ArrayList<>();
+        for (HashMap<String, String> hashMap : channelInfoList) {
+            String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
+            if (!TextUtils.isEmpty(chNo)) {
+                chNoList.add(chNo);
+            }
+        }
+        String[] chNos = new String[chNoList.size()];
+        for (int i = 0; i < chNoList.size(); i++) {
+            chNos[i] = chNoList.get(i);
+        }
+        List<Map<String, String>> tvScheduleListData = getTvScheduleListData(chNos);
+        if (tvScheduleListData != null && tvScheduleListData.size() > 0) {
+            mTvScheduleContentsList = setHomeContentData(tvScheduleListData, false);
+            sendTvScheduleListData(setChannelName(mTvScheduleContentsList, mChannelList));
+        }
     }
 
     /**
@@ -931,7 +943,10 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             //データをDBから取得する
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
             List<Map<String, String>> channelList = homeDataManager.selectChannelListHomeData();
-            sendTvScheduleListData(setChannelName(mTvScheduleContentsList, setHomeChannelData(channelList)));
+            //チャンネル情報を元にNowOnAir情報の取得を行う.
+            ChannelList chList = new ChannelList();
+            chList.setChannelList(channelList);
+            getTvScheduleFromChInfo(chList);
         } else {
             //通信クラスにデータ取得要求を出す
             ChannelWebClient mChannelList = new ChannelWebClient(mContext);
@@ -1065,6 +1080,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     private void setStructDB(final TvScheduleList tvScheduleList) {
         mTvScheduleList = tvScheduleList;
         if (mTvScheduleList.geTvsList() != null && !mTvScheduleList.geTvsList().isEmpty()) {
+            List<Map<String, String>> map = tvScheduleList.geTvsList();
+            List<ContentsData> contentsData = setHomeContentData(map, false);
+            sendTvScheduleListData(setChannelName(contentsData, mChannelList));
             //DB保存
             Handler handler = new Handler();
             try {
@@ -1084,8 +1102,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     private void setStructDB(final DailyRankList dailyRankList) {
         mDailyRankList = dailyRankList;
         List<Map<String, String>> drList = mDailyRankList.getDrList();
-        sendDailyRankListData(drList);
         if (drList != null && !drList.isEmpty()) {
+            sendDailyRankListData(drList);
             //DB保存
             Handler handler = new Handler();
             try {
@@ -1105,8 +1123,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     private void setStructDB(final VideoRankList videoRankList) {
         mVideoRankList = videoRankList;
         List<Map<String, String>> vrList = mVideoRankList.getVrList();
-        sendVideoRankListData(vrList);
         if (vrList != null && !vrList.isEmpty()) {
+            sendVideoRankListData(vrList);
             //DB保存
             Handler handler = new Handler();
             try {
@@ -1136,6 +1154,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 DTVTLogger.debug(e);
             }
         }
+        //チャンネル情報を元にNowOnAir情報の取得を行う.
+        getTvScheduleFromChInfo(mChannelList);
     }
 
     /**

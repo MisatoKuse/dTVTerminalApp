@@ -136,10 +136,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private final static int HOME_CONTENTS_SORT_VOD_CLIP = HOME_CONTENTS_LIST_START_INDEX + 7;
     /**
-     * Handler用の識別値(チャンネル一覧).
-     */
-    private final static int HOME_CONTENTS_CHANNEL_LIST = HOME_CONTENTS_LIST_COUNT + 2;
-    /**
      * アダプタ内でのリスト識別用定数.
      */
     private final static int HOME_CONTENTS_DISTINCTION_ADAPTER = 10;
@@ -406,32 +402,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     /**
-     * Now On Air行の情報描画のためアダプタにチャンネル一覧情報を渡す.
-     *
-     * @param channelList チャンネル一覧情報
-     */
-    private void setChannelData(final ChannelList channelList) {
-        View view = mLinearLayout.getChildAt(HOME_CONTENTS_SORT_CHANNEL);
-        if (channelList != null) {
-            if (view != null) {
-                //既にNow On Air行が描画されている場合はアダプタにチャンネルデータを渡して再描画する.
-                RecyclerView recyclerView = view.findViewById(R.id.home_main_item_recyclerview);
-                HomeRecyclerViewAdapter adapter = (HomeRecyclerViewAdapter) recyclerView.getAdapter();
-                if (adapter != null) {
-                    adapter.setCHannnelList(channelList);
-                    adapter.notifyDataSetChanged();
-                } else {
-                    //データを渡すのに失敗した場合はHomeActivityでチャンネルデータを保持する.
-                    mChannelList = channelList;
-                }
-            } else {
-                //まだNow On Air行が描画されていない場合はHomeActivityでチャンネルデータを保持する.
-                mChannelList = channelList;
-            }
-        }
-    }
-
-    /**
      * 機能
      * コンテンツ一覧タイトル取得.
      *
@@ -553,11 +523,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(final Message msg) {
-            if (msg.what == HOME_CONTENTS_CHANNEL_LIST) {
-                setChannelData((ChannelList) msg.obj);
-            } else {
-                setRecyclerView((List) msg.obj, msg.what);
-            }
+            setRecyclerView((List) msg.obj, msg.what);
             showMainLayout();
         }
     };
@@ -636,16 +602,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public void recommendVideoCallback(final List<ContentsData> redVdList) {
         if (redVdList != null && redVdList.size() > 0) {
             Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RECOMMEND_VOD, redVdList);
-            mHandler.sendMessage(msg);
-        } else {
-            showGetDataFailedDialog();
-        }
-    }
-
-    @Override
-    public void channelListCallback(final ChannelList channelList) {
-        if (channelList != null) {
-            Message msg = Message.obtain(mHandler, HOME_CONTENTS_CHANNEL_LIST, channelList);
             mHandler.sendMessage(msg);
         } else {
             showGetDataFailedDialog();
