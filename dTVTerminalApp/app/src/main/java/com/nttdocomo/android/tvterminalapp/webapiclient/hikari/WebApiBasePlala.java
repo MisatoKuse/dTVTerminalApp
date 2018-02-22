@@ -401,6 +401,10 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      * TODO:実装予定のすべての通信を遮断するAPIで使用の予定
      */
     synchronized void stopAllConnections() {
+        DTVTLogger.start();
+        if (mIsStopAllConnections) {
+            return;
+        }
         //各通信タスクにキャンセルを通知する
         mIsStop = true;
         if (mCommunicationTaskAPI != null) {
@@ -1149,6 +1153,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          */
         @Override
         protected ReturnCode doInBackground(final Object... strings) {
+            DTVTLogger.start();
             if (isCancelled() || mIsStop) {
                 return null;
             }
@@ -1227,6 +1232,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                 mUrlConnection = null;
             }
 
+            DTVTLogger.end();
             return mReturnCode;
         }
 
@@ -1237,6 +1243,11 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          */
         @Override
         protected void onPostExecute(final ReturnCode returnCode) {
+            DTVTLogger.start();
+            if (returnCode == null || isCancelled()) {
+                return;
+            }
+
             //拡張情報があればそれも伝える
             if (mExtraData != null) {
                 returnCode.extraData = mExtraData;
@@ -1270,6 +1281,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                     mWebApiBasePlalaCallback.onError(returnCode);
                     break;
             }
+            DTVTLogger.end();
         }
 
         /**

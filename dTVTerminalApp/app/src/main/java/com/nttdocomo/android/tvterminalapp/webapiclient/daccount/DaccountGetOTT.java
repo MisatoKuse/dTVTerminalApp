@@ -202,6 +202,7 @@ public class DaccountGetOTT {
         if (mService != null) {
             mContext.unbindService(mServiceConnection);
             mService = null;
+            DTVTLogger.debug("DaccountGetOTTUnbind");
         }
     }
 }

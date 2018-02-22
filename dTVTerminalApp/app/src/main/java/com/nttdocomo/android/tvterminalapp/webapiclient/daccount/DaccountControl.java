@@ -418,9 +418,18 @@ public class DaccountControl implements
      * 通信停止処理実行.
      */
     private void stopConnect() {
-        mDaccountCheckService.daccountServiceEnd();
-        mDaccountGetOTT.daccountServiceEnd();
-        mDaccountRegistService.daccountServiceEnd();
+        if(mDaccountCheckService != null) {
+            mDaccountCheckService.daccountServiceEnd();
+            DTVTLogger.debug("DaccountCheckServiceStop");
+        }
+        if(mDaccountGetOTT != null) {
+            mDaccountGetOTT.daccountServiceEnd();
+            DTVTLogger.debug("DaccountGetOTTStop");
+        }
+        if(mDaccountRegistService != null) {
+            mDaccountRegistService.daccountServiceEnd();
+            DTVTLogger.debug("DaccountRegistServiceStop");
+        }
     }
 
     /**
