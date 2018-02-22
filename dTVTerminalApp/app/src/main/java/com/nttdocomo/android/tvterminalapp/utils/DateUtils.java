@@ -626,8 +626,6 @@ public class DateUtils {
         long epochTime = 0;
 
         SimpleDateFormat formatter = new SimpleDateFormat(DATE_PATTERN, Locale.JAPAN);
-        //APIレスポンスの値がJSTとのこと
-        formatter.setTimeZone(TimeZone.getTimeZone("JST"));
         Date gmt = null;
         try {
             gmt = formatter.parse(strDate);

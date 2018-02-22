@@ -444,8 +444,8 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      * @param viewHolder ViewHolder
      */
     private void setNowOnAirInfo(final ContentsData contentsData, final ViewHolder viewHolder) {
-        String startTime = contentsData.getLinearStartDate();
-        String endTime = contentsData.getLinearEndDate();
+        String startTime = String.valueOf(DateUtils.getEpochTime(contentsData.getLinearStartDate()) / 1000);
+        String endTime = String.valueOf(DateUtils.getEpochTime(contentsData.getLinearEndDate()) / 1000);
         String channelName = contentsData.getChannelName();
         if (TextUtils.isEmpty(startTime) || !DBUtils.isNumber(startTime)) {
             //TODO 放送開始時間が取得できなかった場合の仕様は現在未決定のため仮の時間を設定する.

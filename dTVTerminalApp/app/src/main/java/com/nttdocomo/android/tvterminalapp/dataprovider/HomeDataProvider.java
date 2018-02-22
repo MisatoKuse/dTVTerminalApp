@@ -647,11 +647,19 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             if (rankFlag) {
                 contentInfo.setRank(String.valueOf(i + 1));
             }
+            if (TextUtils.isEmpty(mapList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_START_DATE))) {
+                contentInfo.setLinearStartDate(mapList.get(i).get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE));
+            } else {
+                contentInfo.setLinearStartDate(mapList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_START_DATE));
+            }
+            if (TextUtils.isEmpty(mapList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_END_DATE))) {
+                contentInfo.setLinearEndDate(mapList.get(i).get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE));
+            } else {
+                contentInfo.setLinearEndDate(mapList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_END_DATE));
+            }
             contentInfo.setTime(mapList.get(i).get(JsonConstants.META_RESPONSE_DISPLAY_START_DATE));
             contentInfo.setTitle(mapList.get(i).get(JsonConstants.META_RESPONSE_TITLE));
             contentInfo.setThumURL(mapList.get(i).get(JsonConstants.META_RESPONSE_THUMB_448));
-            contentInfo.setLinearStartDate(mapList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_START_DATE));
-            contentInfo.setLinearEndDate(mapList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_END_DATE));
             contentInfo.setServiceId(mapList.get(i).get(JsonConstants.META_RESPONSE_SERVICE_ID));
             contentInfo.setChannelNo(mapList.get(i).get(JsonConstants.META_RESPONSE_CHNO));
             String thumbUrl = contentInfo.getThumURL();
@@ -946,6 +954,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             //チャンネル情報を元にNowOnAir情報の取得を行う.
             ChannelList chList = new ChannelList();
             chList.setChannelList(channelList);
+            mChannelList = chList;
             getTvScheduleFromChInfo(chList);
         } else {
             //通信クラスにデータ取得要求を出す
