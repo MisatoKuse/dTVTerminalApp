@@ -11,6 +11,7 @@ import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RentalListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
@@ -26,8 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.UPDATE_DATE;
-
 /**
  * レンタル一覧：データ管理.
  */
@@ -42,12 +41,12 @@ public class RentalListInsertDataManager {
     /**
      * コンテキスト.
      */
-    private Context mContext;
+    private  final Context mContext;
 
     /**
      * コンストラクタ.
      *
-     * @param context コンテキスト
+     * @param context Activity
      */
     public RentalListInsertDataManager(final Context context) {
         mContext = context;
@@ -140,7 +139,7 @@ public class RentalListInsertDataManager {
                 String keyName = (String) entry.getKey();
                 String valName = (String) entry.getValue();
                 if (JsonConstants.META_RESPONSE_AVAIL_START_DATE.equals(keyName)) {
-                    values.put(UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
+                    values.put(DBConstants.UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
                 }
                 chValues.put(DBUtils.fourKFlgConversion(keyName), valName);
             }

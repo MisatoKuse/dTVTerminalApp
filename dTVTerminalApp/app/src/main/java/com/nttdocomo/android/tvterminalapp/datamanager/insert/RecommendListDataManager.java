@@ -8,53 +8,45 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
+import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_GROUPID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_PAGEID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED1;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED2;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID;
-
+/**
+ * レコメンドリストDataManager.
+ */
 public class RecommendListDataManager {
+    /**
+     * コンテキスト.
+     */
 
-    private Context mContext;
+    private final Context mContext;
 
     /**
      * コンストラクタ.
      *
-     * @param context
+     * @param context Activity
      */
-    public RecommendListDataManager(Context context) {
+    public RecommendListDataManager(final Context context) {
         mContext = context;
 
     }
 
     /**
      * VodClipAPIの解析結果をDBに格納する.
-     *
-     * @return
+     * @param redChList レコメンド(TV)データ
+     * @param addFlag ページングフラグ
+     * @param tagPageNo ページ番号
      */
-    public synchronized void insertRecommendInsertList(RecommendChList redChList, boolean addFlag, int tagPageNo) {
+    public void insertRecommendInsertList(final RecommendChList redChList, final boolean addFlag, final int tagPageNo) {
 
         //各種オブジェクト作成
         List<Map<String, String>> hashMaps = redChList.getmRcList();
@@ -66,17 +58,9 @@ public class RecommendListDataManager {
         if (!addFlag) { // ページングの場合、削除しない
             switch (tagPageNo) {
                 case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV:
-                    redListDao.delete(tagPageNo);
-                    break;
                 case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO:
-                    redListDao.delete(tagPageNo);
-                    break;
                 case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL:
-                    redListDao.delete(tagPageNo);
-                    break;
                 case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV:
-                    redListDao.delete(tagPageNo);
-                    break;
                 case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME:
                     redListDao.delete(tagPageNo);
                     break;
@@ -102,52 +86,56 @@ public class RecommendListDataManager {
 
     /**
      * キャッシュからリストデータを表示件数分取得する.
+     * @param tagPageNo タブNo
+     * @param startIndex 取得開始位置
+     * @param maxResult 最大取得件数
+     * @return recommendContentInfoList
      */
-    public synchronized List<ContentsData> selectRecommendList(int tagPageNo, int startIndex, int maxResult) {
+    public synchronized List<ContentsData> selectRecommendList(final int tagPageNo, final int startIndex, final int maxResult) {
 
         DBHelper deHelper = new DBHelper(mContext);
         SQLiteDatabase database = deHelper.getWritableDatabase();
         RecommendListDao redListDao = new RecommendListDao(database);
 
         String[] columns = {
-                RECOMMENDCHANNEL_LIST_CONTENTSID,
-                RECOMMENDCHANNEL_LIST_CATEGORYID,
-                RECOMMENDCHANNEL_LIST_SERVICEID,
-                RECOMMENDCHANNEL_LIST_CTPICURL1,
-                RECOMMENDCHANNEL_LIST_TITLE,
-                RECOMMENDCHANNEL_LIST_STARTVIEWING,
-                RECOMMENDCHANNEL_LIST_ENDVIEWING,
-                RECOMMENDCHANNEL_LIST_CHANNELID,
-                RECOMMENDCHANNEL_LIST_RECOMMENDORDER,
-                RECOMMENDCHANNEL_LIST_PAGEID,
-                RECOMMENDCHANNEL_LIST_GROUPID,
-                RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID
+                RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID,
+                RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID,
+                RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID,
+                RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1,
+                RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE,
+                RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING,
+                RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING,
+                RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID,
+                RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER,
+                RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_PAGEID,
+                RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_GROUPID,
+                RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID
         };
         int maxResultData = startIndex + maxResult - 1;
         List<Map<String, String>> resultList
                 = redListDao.findById(columns, tagPageNo, String.valueOf(maxResultData));
         List<ContentsData> recommendContentInfoList = new ArrayList<>();
-        if(resultList.size() == 0) {
+        if (resultList.size() == 0) {
             return recommendContentInfoList;
         }
-        for (int i = startIndex - 1; i <= resultList.size()-1; i++) {
+        for (int i = startIndex - 1; i <= resultList.size() - 1; i++) {
             Map<String, String> map = resultList.get(i);
             ContentsData contentsData = new ContentsData();
-            contentsData.setContentsId(map.get(RECOMMENDCHANNEL_LIST_CONTENTSID));
-            contentsData.setCategoryId(map.get(RECOMMENDCHANNEL_LIST_CATEGORYID));
-            contentsData.setServiceId(map.get(RECOMMENDCHANNEL_LIST_SERVICEID));
-            contentsData.setThumURL(map.get(RECOMMENDCHANNEL_LIST_CTPICURL1));
-            contentsData.setTitle(map.get(RECOMMENDCHANNEL_LIST_TITLE));
-            contentsData.setStartViewing(map.get(RECOMMENDCHANNEL_LIST_STARTVIEWING));
-            contentsData.setEndViewing(map.get(RECOMMENDCHANNEL_LIST_ENDVIEWING));
-            contentsData.setReserved1(map.get(RECOMMENDCHANNEL_LIST_RESERVED1));
-            contentsData.setReserved2(map.get(RECOMMENDCHANNEL_LIST_RESERVED2));
-            contentsData.setReserved4(map.get(RECOMMENDCHANNEL_LIST_RESERVED4));
-            contentsData.setChannelId(map.get(RECOMMENDCHANNEL_LIST_CHANNELID));
-            contentsData.setRecommendOrder(map.get(RECOMMENDCHANNEL_LIST_RECOMMENDORDER));
-            contentsData.setPageId(map.get(RECOMMENDCHANNEL_LIST_PAGEID));
-            contentsData.setGroupId(map.get(RECOMMENDCHANNEL_LIST_GROUPID));
-            contentsData.setRecommendMethodId(map.get(RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID));
+            contentsData.setContentsId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID));
+            contentsData.setCategoryId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID));
+            contentsData.setServiceId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID));
+            contentsData.setThumURL(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1));
+            contentsData.setTitle(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE));
+            contentsData.setStartViewing(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING));
+            contentsData.setEndViewing(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING));
+            contentsData.setReserved1(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED1));
+            contentsData.setReserved2(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED2));
+            contentsData.setReserved4(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4));
+            contentsData.setChannelId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID));
+            contentsData.setRecommendOrder(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER));
+            contentsData.setPageId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_PAGEID));
+            contentsData.setGroupId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_GROUPID));
+            contentsData.setRecommendMethodId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID));
             recommendContentInfoList.add(contentsData);
         }
         database.close();

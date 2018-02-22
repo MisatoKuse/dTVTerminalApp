@@ -18,29 +18,36 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * ビデオランキングInsertDataManager.
+ */
 public class VideoRankInsertDataManager {
-
-    final private Context mContext;
+    /**
+     * コンテキスト.
+     */
+     private final Context mContext;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
-     * @param context コンテキスト
+     * @param context Activity
      */
-    public VideoRankInsertDataManager(Context context) {
+    public VideoRankInsertDataManager(final Context context) {
         mContext = context;
     }
 
     /**
-     * WeeklyRankAPIの解析結果をDBに格納する。
+     * WeeklyRankAPIの解析結果をDBに格納する.
+     * @param videoRankList ビデオランキングリスト
      */
-    public void insertVideoRankInsertList(VideoRankList videoRankList) {
+    public void insertVideoRankInsertList(final VideoRankList videoRankList) {
 
         //各種オブジェクト作成
         DBHelper videoRankListDBHelper = new DBHelper(mContext);
         DataBaseManager.initializeInstance(videoRankListDBHelper);
         SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
         VideoRankListDao weeklyRankListDao = new VideoRankListDao(database);
+        @SuppressWarnings("unchecked")
         List<HashMap<String, String>> hashMaps = videoRankList.getVrList();
 
         //DB保存前に前回取得したデータは全消去する

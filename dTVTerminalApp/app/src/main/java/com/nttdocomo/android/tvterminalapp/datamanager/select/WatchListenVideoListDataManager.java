@@ -24,7 +24,7 @@ public class WatchListenVideoListDataManager {
     /**
      * コンテキストファイル.
      */
-    private Context mContext;
+    private final Context mContext;
 
     /**
      * コンストラクタ.

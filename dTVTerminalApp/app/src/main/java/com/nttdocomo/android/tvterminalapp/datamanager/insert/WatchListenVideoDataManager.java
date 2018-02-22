@@ -22,12 +22,16 @@ import java.util.Map;
  * 視聴中ビデオ一覧情報をDB保存するクラス.
  */
 public class WatchListenVideoDataManager {
+
+    /**
+     * コンテキスト.
+     */
     private Context mContext = null;
 
     /**
      * コンストラクタ.
      *
-     * @param mContext コンテキストファイル
+     * @param mContext Activity
      */
     public WatchListenVideoDataManager(final Context mContext) {
         this.mContext = mContext;
@@ -45,7 +49,7 @@ public class WatchListenVideoDataManager {
         DataBaseManager.initializeInstance(watchListenVideoDBHelper);
         SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
         WatchListenVideoListDao watchListenVideoListDao = new WatchListenVideoListDao(database);
-
+        @SuppressWarnings("unchecked")
         List<HashMap<String, String>> hashMaps = watchListenVideoList.getVcList();
 
         //DB保存前に前回取得したデータは全消去する

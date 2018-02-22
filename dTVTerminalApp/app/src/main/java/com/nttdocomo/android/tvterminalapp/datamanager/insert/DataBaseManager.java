@@ -18,11 +18,11 @@ public class DataBaseManager {
     /**
      * DBの開閉回数を記録.
      */
-    private AtomicInteger mOpenCounter = new AtomicInteger();
+    private final AtomicInteger mOpenCounter = new AtomicInteger();
     /**
      * DBの開閉回数を記録(番組情報用).
      */
-    private AtomicInteger mOpenCounterCh = new AtomicInteger();
+    private final AtomicInteger mOpenCounterCh = new AtomicInteger();
     /**
      * DBManager.
      */
