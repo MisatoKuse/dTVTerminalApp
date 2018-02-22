@@ -42,23 +42,23 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     /**
      * Inflater.
      */
-    private LayoutInflater mInflater;
+    private final LayoutInflater mInflater;
     /**
      * ホーム画面に表示するコンテンツデータのリスト.
      */
-    private List<ContentsData> mContentList;
+    private final List<ContentsData> mContentList;
     /**
      * コンテキスト.
      */
-    private Activity mContext;
+    private final Activity mContext;
     /**
      * サムネイル取得プロバイダー.
      */
-    private ThumbnailProvider mThumbnailProvider;
+    private final ThumbnailProvider mThumbnailProvider;
     /**
      * コンテンツ種別を判別するためのインデックス.
      */
-    private int mIndex;
+    private final int mIndex;
     /**
      * もっと見るフッター.
      */
@@ -274,7 +274,6 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             return;
         }
         ContentsData contentsData = mContentList.get(i);
-        String date = contentsData.getTime();
         String title = contentsData.getTitle();
         String rankNum = contentsData.getRank();
         String startTime = contentsData.getLinearStartDate();

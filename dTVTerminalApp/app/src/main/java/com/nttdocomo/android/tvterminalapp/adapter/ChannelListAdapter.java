@@ -57,23 +57,23 @@ public class ChannelListAdapter extends BaseAdapter {
     /**
      * コンテキスト.
      */
-    private Context mContext;
+    private final Context mContext;
     /**
      * 表示するデータのリスト.
      */
-    private List mData;
+    private final List mData;
     /**
      * 表示するレイアウトのリソースID.
      */
-    private int mLayoutId;
+    private final int mLayoutId;
     /**
      * サムネイル取得用プロパイダー.
      */
-    private ThumbnailProvider mThumbnailProvider;
+    private final ThumbnailProvider mThumbnailProvider;
     /**
      * データタイプ.
      */
-    private ChListDataType mChListDataType;
+    private ChListDataType mChListDataType = ChListDataType.CH_LIST_DATA_TYPE_INVALID;
 
     /**
      * テキストの高さ.
@@ -142,8 +142,8 @@ public class ChannelListAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, final  ViewGroup parent) {
-        View view = null;
-        ViewHolder holder = null;
+        View view;
+        ViewHolder holder;
         if (convertView == null) {
             holder = new ViewHolder();
             view = View.inflate(mContext, mLayoutId, null);
@@ -258,7 +258,7 @@ public class ChannelListAdapter extends BaseAdapter {
     /**
      * ViewHolder.
      */
-    class ViewHolder {
+    static class ViewHolder {
         /**
          * サムネイル.
          */
