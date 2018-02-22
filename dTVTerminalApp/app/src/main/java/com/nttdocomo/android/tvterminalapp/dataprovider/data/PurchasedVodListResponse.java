@@ -10,7 +10,7 @@ import java.util.ArrayList;
 /**
  * 購入済みVOD一覧取得：正常時レスポンスデータ
  */
-public class PurchasedVodListResponse implements Serializable {
+public class PurchasedVodListResponse {
     // status
     private String mStatus = null;
     // 購入済みVOD一覧リスト

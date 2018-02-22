@@ -11,6 +11,7 @@ import java.util.List;
 
 public class VodClipList implements Serializable {
 
+    private static final long serialVersionUID = -1638810113668563728L;
     private HashMap<String, String> mVcMap = new HashMap<String, String>();
     private List<HashMap<String, String>> mVcList = new ArrayList<>();
 
