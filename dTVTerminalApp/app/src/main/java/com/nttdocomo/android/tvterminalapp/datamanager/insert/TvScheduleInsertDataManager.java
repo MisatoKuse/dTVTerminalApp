@@ -29,7 +29,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -67,7 +66,7 @@ public class TvScheduleInsertDataManager {
         SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
         TvScheduleListDao tvScheduleListDao = new TvScheduleListDao(database);
         @SuppressWarnings("unchecked")
-        List<HashMap<String, String>> hashMaps = tvScheduleList.geTvsList();
+        List<Map<String, String>> hashMaps = tvScheduleList.geTvsList();
 
         //DB保存前に前回取得したデータは全消去する
         tvScheduleListDao.delete();

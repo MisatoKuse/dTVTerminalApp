@@ -38,7 +38,7 @@ public class ChannelList {
      * WebAPIレスポンス情報(チャンネルリスト情報以外)設定.
      * @param responseInfoMap  レスポンス情報
      */
-    public void setResponseInfoMap(HashMap<String, String> responseInfoMap) {
+    public void setResponseInfoMap(final HashMap<String, String> responseInfoMap) {
         this.mResponseInfoMap = responseInfoMap;
     }
 
@@ -54,9 +54,7 @@ public class ChannelList {
      * チャンネルリスト情報設定.
      * @param clList  チャンネルリスト情報
      */
-    public void setChannelList(List<HashMap<String, String>> clList) {
-
+    public void setChannelList(final List clList) {
         this.mChannelList = clList;
     }
-
 }
