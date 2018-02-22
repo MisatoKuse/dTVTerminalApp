@@ -22,6 +22,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * ユーザ情報InsertDataManager.
+ */
 public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Void, Void> {
 
     /**
@@ -33,13 +36,9 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
      * 複数データが来た場合の分割用.
      */
     private final static String SPLITTER = ",";
-
     /**
-     * DB書き込み日時.
+     * DB読み込み用項目名一覧.
      */
-    private final static String OTT_MAKE_TIME = "ottMakeTime";
-
-    //DB読み込み用項目名一覧
     private final static String[] DATA_COLUMNS = {
             UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS,
             UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ,
@@ -47,33 +46,56 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
             UserInfoJsonParser.USER_INFO_LIST_UPDATE_TIME,
     };
 
-    //コンテキスト
+    /**
+     * コンテキスト.
+     */
     private final Context mContext;
 
-    //ユーザーデータ
+    /**
+     * ユーザーデータ.
+     */
     private List<UserInfoList> mUserData;
 
-    //各項目のバッファ
+    /**
+     * statusバッファ.
+     */
     private ArrayList<String> mStatus = new ArrayList<>();
+    /**
+     * DchAgeバッファ.
+     */
     private ArrayList<String> mDchAge = new ArrayList<>();
+    /**
+     * H4dAgeバッファ.
+     */
     private ArrayList<String> mH4dAge = new ArrayList<>();
+    /**
+     * H4dStatusバッファ.
+     */
     private ArrayList<String> mH4dStatus = new ArrayList<>();
+    /**
+     * H4dDchAgeバッファ.
+     */
     private ArrayList<String> mH4dDchAge = new ArrayList<>();
+    /**
+     * H4dH4dAgeバッファ.
+     */
     private ArrayList<String> mH4dH4dAge = new ArrayList<>();
 
     /**
      * コンストラクタ.
      *
-     * @param context コンテキスト
+     * @param context Activity
      */
-    public UserInfoInsertDataManager(Context context) {
+    public UserInfoInsertDataManager(final Context context) {
         mContext = context;
     }
 
     /**
-     * UserinfoAPIの解析結果をDBに格納する.
+     * UserInfoAPIの解析結果をDBに格納する.
+     *
+     * @param userInfoList ユーザー情報リスト
      */
-    private synchronized void insertUserInfoInsertList(List<UserInfoList> userInfoList) {
+    private void insertUserInfoInsertList(final List<UserInfoList> userInfoList) {
         DTVTLogger.start();
 
         //各種オブジェクト作成
@@ -110,9 +132,9 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
      * @param userInfoList    元データ
      * @param header          分離時識別用データ
      */
-    private void makeRecord(UserInfoListDao userInfoListDao,
-                            List<UserInfoList.AccountList> userInfoList,
-                            String header) {
+    private void makeRecord(final UserInfoListDao userInfoListDao,
+                            final List<UserInfoList.AccountList> userInfoList,
+                            final String header) {
         //蓄積バッファ
         StringBuilder statusBuffer = new StringBuilder();
         StringBuilder dchAgeBuffer = new StringBuilder();
@@ -120,10 +142,10 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
 
         int counter = userInfoList.size();
         //後で分離できるように蓄積する
-        for (UserInfoList.AccountList loggedinAccount : userInfoList) {
-            statusBuffer.append(loggedinAccount.getContractStatus());
-            dchAgeBuffer.append(loggedinAccount.getDchAgeReq());
-            h4dAgeBuffer.append(loggedinAccount.getH4dAgeReq());
+        for (UserInfoList.AccountList loggedInAccount : userInfoList) {
+            statusBuffer.append(loggedInAccount.getContractStatus());
+            dchAgeBuffer.append(loggedInAccount.getDchAgeReq());
+            h4dAgeBuffer.append(loggedInAccount.getH4dAgeReq());
 
             //最後以外ならば分離用文字列を挿入する
             counter--;
@@ -147,6 +169,11 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
         userInfoListDao.insert(values);
     }
 
+    /**
+     * ユーザデータゲッター.
+     *
+     * @return mUserData
+     */
     public List<UserInfoList> getmUserData() {
         return mUserData;
     }
@@ -178,7 +205,7 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
      * @param dataList DBから読んだデータ
      * @return ユーザー情報構造体
      */
-    private List<UserInfoList> decodeData(List<Map<String, String>> dataList) {
+    private List<UserInfoList> decodeData(final List<Map<String, String>> dataList) {
         List<UserInfoList> dataBuffer = new ArrayList<>();
 
         boolean h4dFlag;
@@ -225,7 +252,7 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
      * @param value     値
      * @param h4dFlag   H4D側のリストならばTRUE
      */
-    private void makeUserInfo(String keyBuffer, String value, boolean h4dFlag) {
+    private void makeUserInfo(final String keyBuffer, final String value, final boolean h4dFlag) {
         //値がヌルならば帰る
         if (value == null) {
             return;
@@ -269,6 +296,8 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
                     mH4dAge = bufferArray;
                 }
                 break;
+            default:
+                break;
         }
     }
 
@@ -280,8 +309,8 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
      * @param h4dAgeList ひかりTV for docomo視聴年齢のリスト
      * @return 配列をまとめた情報
      */
-    private ArrayList<UserInfoList.AccountList> makeLine(List<String> statusList, List<String> dchAgeList,
-                                                         List<String> h4dAgeList) {
+    private ArrayList<UserInfoList.AccountList> makeLine(final List<String> statusList, final List<String> dchAgeList,
+                                                         final List<String> h4dAgeList) {
         //リストを配列にする
         String[] status = statusList.toArray(new String[0]);
         String[] dchAge = dchAgeList.toArray(new String[0]);
@@ -320,7 +349,7 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
      * @param value 複数指定数字
      * @return 指定された数字の中で最大
      */
-    private int maxSize(int... value) {
+    private int maxSize(final int... value) {
         int max = 0;
 
         //総当たりで数字を比べる
@@ -333,7 +362,7 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
     }
 
     @Override
-    protected Void doInBackground(List<UserInfoList>[] lists) {
+    protected Void doInBackground(final List<UserInfoList>[] lists) {
         DTVTLogger.start();
 
         //書き込みと読み込みの切り替えを行う

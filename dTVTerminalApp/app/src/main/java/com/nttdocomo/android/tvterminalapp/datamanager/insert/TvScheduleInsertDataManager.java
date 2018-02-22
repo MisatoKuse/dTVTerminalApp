@@ -11,6 +11,7 @@ import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvScheduleListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelperChannel;
@@ -33,8 +34,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.UPDATE_DATE;
 
 /**
  * 番組情報保存用DataManager.
@@ -67,7 +66,7 @@ public class TvScheduleInsertDataManager {
         DataBaseManager.initializeInstance(channelListDBHelper);
         SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
         TvScheduleListDao tvScheduleListDao = new TvScheduleListDao(database);
-
+        @SuppressWarnings("unchecked")
         List<HashMap<String, String>> hashMaps = tvScheduleList.geTvsList();
 
         //DB保存前に前回取得したデータは全消去する
@@ -82,7 +81,7 @@ public class TvScheduleInsertDataManager {
                 String keyName = (String) entry.getKey();
                 String valName = (String) entry.getValue();
                 if (JsonConstants.META_RESPONSE_AVAIL_START_DATE.equals(keyName)) {
-                    values.put(UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
+                    values.put(DBConstants.UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
                 }
                 values.put(DBUtils.fourKFlgConversion(keyName), valName);
             }
@@ -127,8 +126,8 @@ public class TvScheduleInsertDataManager {
             }
         }
 
-        ArrayList<ChannelInfo> channelInfos = channelInfoList.getChannels();
-        for (ChannelInfo channelInfo : channelInfos) {
+        ArrayList<ChannelInfo> channelInformation = channelInfoList.getChannels();
+        for (ChannelInfo channelInfo : channelInformation) {
             //DB名としてチャンネル番号を取得.
             String chNo = String.valueOf(channelInfo.getChNo());
 
@@ -140,8 +139,8 @@ public class TvScheduleInsertDataManager {
             TvScheduleListDao tvScheduleListDao = new TvScheduleListDao(database);
 
             //ContentValuesに変換してDBに保存する.
-            ArrayList<ScheduleInfo> scheduleInfos = channelInfo.getSchedules();
-            for (ScheduleInfo scheduleInfo : scheduleInfos) {
+            ArrayList<ScheduleInfo> scheduleInformation = channelInfo.getSchedules();
+            for (ScheduleInfo scheduleInfo : scheduleInformation) {
                 ContentValues values = convertScheduleInfoToContentValues(scheduleInfo);
                 tvScheduleListDao.insert(values);
             }

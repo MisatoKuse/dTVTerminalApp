@@ -15,23 +15,30 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 
 import java.util.List;
 
+/**
+ * RoleListDataManager.
+ */
 public class RoleListInsertDataManager {
 
-    private Context mContext;
+    /**
+     * コンテキスト.
+     */
+    private final Context mContext;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
-     * @param context
+     * @param context Activity
      */
-    public RoleListInsertDataManager(Context context) {
+    public RoleListInsertDataManager(final Context context) {
         mContext = context;
     }
 
     /**
-     * ChannelAPIの解析結果をDBに格納する。
+     * ChannelAPIの解析結果をDBに格納する.
+     * @param roleList ロールリスト
      */
-    public void insertRoleList(List<RoleListMetaData> roleList) {
+    public void insertRoleList(final List<RoleListMetaData> roleList) {
 
         //各種オブジェクト作成
         DBHelper channelListDBHelper = new DBHelper(mContext);

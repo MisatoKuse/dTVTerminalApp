@@ -28,16 +28,16 @@ import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstan
 public class ChannelInsertDataManager {
 
     /**
-     * 利用元コンテキスト.
+     * コンテキスト.
      */
     private final Context mContext;
 
     /**
      * コンストラクタ.
      *
-     * @param context  利用元コンテキスト
+     * @param context Activity
      */
-    public ChannelInsertDataManager(Context context) {
+    public ChannelInsertDataManager(final Context context) {
         mContext = context;
     }
 
@@ -45,7 +45,7 @@ public class ChannelInsertDataManager {
      * チャンネル一覧の情報をDBに格納する.
      * @param channelList  チャンネルリスト情報
      */
-    public void insertChannelInsertList(ChannelList channelList) {
+    public void insertChannelInsertList(final  ChannelList channelList) {
 
         //各種オブジェクト作成
         DBHelper channelListDBHelper = new DBHelper(mContext);
@@ -56,7 +56,7 @@ public class ChannelInsertDataManager {
         List<HashMap<String, String>> hashMaps = channelList.getChannelList();
 
         //DB保存前に前回取得したデータは全消去する
-        //TODO:日付とチャンネルを管理し、それらが一致するデータだけを消す事.またキャッシュ期限もその単位で管理する必要があるのでDB再設計が必要
+        //TODO 日付とチャンネルを管理し、それらが一致するデータだけを消す事.またキャッシュ期限もその単位で管理する必要があるのでDB再設計が必要
         channelListDao.delete();
 
         //HashMapの要素とキーを一行ずつ取り出し、DBに格納する

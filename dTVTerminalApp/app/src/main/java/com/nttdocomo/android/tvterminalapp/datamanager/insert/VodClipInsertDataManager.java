@@ -18,32 +18,39 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class VodClipInsertDataManager {
-
-    private Context mContext;
+/**
+ * VodClipInsertDataManager.
+ */
+ public class VodClipInsertDataManager {
 
     /**
-     * コンストラクタ
-     *
-     * @param context
+     * コンテキスト.
      */
-    public VodClipInsertDataManager(Context context) {
+    private final Context mContext;
+
+    /**
+     * コンストラクタ.
+     *
+     * @param context Activity
+     */
+   public VodClipInsertDataManager(final Context context) {
         mContext = context;
     }
 
     /**
-     * VodClipAPIの解析結果をDBに格納する。
+     * VodClipAPIの解析結果をDBに格納する.
      *
-     * @return
+     * @param vodClipList Vodクリップリスト
      */
-    public void insertVodClipInsertList(VodClipList vodClipList) {
+    public void insertVodClipInsertList(final VodClipList vodClipList) {
 
         //各種オブジェクト作成
         DBHelper vodClipListDBHelper = new DBHelper(mContext);
         DataBaseManager.initializeInstance(vodClipListDBHelper);
         SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
         VodClipListDao vodClipListDao = new VodClipListDao(database);
-        List<HashMap<String,String>> hashMaps = vodClipList.getVcList();
+        @SuppressWarnings("unchecked")
+        List<HashMap<String, String>> hashMaps = vodClipList.getVcList();
 
         //DB保存前に前回取得したデータは全消去する
         vodClipListDao.delete();

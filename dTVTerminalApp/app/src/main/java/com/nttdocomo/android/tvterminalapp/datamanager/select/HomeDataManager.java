@@ -35,7 +35,7 @@ public class HomeDataManager {
     /**
      * コンテキスト.
      */
-    private Context mContext;
+    private final Context mContext;
 
     /**
      * コンストラクタ.
@@ -49,7 +49,7 @@ public class HomeDataManager {
     /**
      * ホーム画面用視聴中ビデオデータを返却する.
      *
-     * @return list
+     * @return list 視聴中ビデオデータリスト
      */
     public synchronized List<Map<String, String>> selectWatchingVideoHomeData() {
 
@@ -80,7 +80,7 @@ public class HomeDataManager {
     /**
      * ホーム画面用クリップ[テレビ]データを返却する.
      *
-     * @return list
+     * @return list クリップ[テレビ]データリスト
      */
     public synchronized List<Map<String, String>> selectTvClipHomeData() {
 
@@ -112,7 +112,7 @@ public class HomeDataManager {
     /**
      * ホーム画面用クリップ[ビデオ]データを返却する.
      *
-     * @return list
+     * @return list　クリップ[ビデオ]データリスト
      */
     public synchronized List<Map<String, String>> selectVodClipHomeData() {
 
@@ -143,9 +143,9 @@ public class HomeDataManager {
 
     /**
      * ホーム画面用CH一覧データを返却する.
-     * TODO:NOW ON AIRでチャンネル名表示するために必要.ただしHOME画面に特化した物は不要.削除する事
+     * TODO NOW ON AIRでチャンネル名表示するために必要.ただしHOME画面に特化した物は不要.削除する事
      *
-     * @return list
+     * @return list CH一覧データリスト
      */
     public synchronized List<Map<String, String>> selectChannelListHomeData() {
 
@@ -176,7 +176,7 @@ public class HomeDataManager {
     /**
      * ホーム画面用おすすめ番組一覧データを返却する.
      *
-     * @return list
+     * @return list おすすめ番組一覧データリスト
      */
     public synchronized List<Map<String, String>> selectRecommendChListHomeData() {
 
@@ -206,7 +206,7 @@ public class HomeDataManager {
     /**
      * ホーム画面用おすすめビデオ一覧データを返却する.
      *
-     * @return list
+     * @return list おすすめビデオ一覧データ
      */
     public synchronized List<Map<String, String>> selectRecommendVdListHomeData() {
 
@@ -235,7 +235,7 @@ public class HomeDataManager {
     /**
      * ホーム画面用今日のランキング一覧データを返却する.
      *
-     * @return list
+     * @return list 今日のランキング一覧データリスト
      */
     public synchronized List<Map<String, String>> selectDailyRankListHomeData() {
 
@@ -302,7 +302,7 @@ public class HomeDataManager {
     /**
      * ホーム画面用週間ランキングデータを返却する.
      *
-     * @return list
+     * @return list 週間ランキングデータ
      */
     public synchronized List<Map<String, String>> selectWeeklyRankListHomeData() {
 

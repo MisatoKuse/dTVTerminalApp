@@ -28,14 +28,14 @@ import java.util.Map;
 public class ClipKeyListInsertDataManager {
 
     /**
-     * コンテキストファイル.
+     * コンテキスト.
      */
-    private Context mContext;
+    private final  Context mContext;
 
     /**
      * コンストラクタ.
      *
-     * @param context コンテキストファイル
+     * @param context Activity
      */
     public ClipKeyListInsertDataManager(final Context context) {
         mContext = context;
@@ -50,15 +50,16 @@ public class ClipKeyListInsertDataManager {
     public synchronized void insertClipKeyListInsert(final ClipKeyListDao.TABLE_TYPE type, final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
         //各種オブジェクト作成
-        DBHelper DbHelper = new DBHelper(mContext);
-        SQLiteDatabase database = DbHelper.getWritableDatabase();
+        DBHelper dbHelper = new DBHelper(mContext);
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
 
-        ClipKeyListDao ClipKeyListDao = new ClipKeyListDao(database);
+        ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
+        @SuppressWarnings("unchecked")
         List<HashMap<String, String>> hashMaps = clipKeyListResponse.getCkList();
 
         //DB保存前に前回取得したデータを消去する
         try {
-            ClipKeyListDao.delete(type);
+            clipKeyListDao.delete(type);
         } catch (Exception e) {
             DTVTLogger.debug("ClipKeyListInsertDataManager::insertClipKeyListInsert, e.cause=" + e.getCause());
         }
@@ -73,7 +74,7 @@ public class ClipKeyListInsertDataManager {
                 String valName = (String) entry.getValue();
                 values.put(DBUtils.fourKFlgConversion(keyName), valName);
             }
-            ClipKeyListDao.insert(type, values);
+            clipKeyListDao.insert(type, values);
         }
         database.close();
         DTVTLogger.end();
@@ -93,8 +94,8 @@ public class ClipKeyListInsertDataManager {
             final String eventId, final String titleId) {
         DTVTLogger.start();
         //各種オブジェクト作成
-        DBHelper ClipKeyListDBHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(ClipKeyListDBHelper);
+        DBHelper clipKeyListDBHelper = new DBHelper(mContext);
+        DataBaseManager.initializeInstance(clipKeyListDBHelper);
         SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
         ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
 

@@ -19,6 +19,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * TvClipInsertDataManager.
+ */
 public class TvClipInsertDataManager {
 
     /*
@@ -27,29 +30,33 @@ public class TvClipInsertDataManager {
     }
     */
 
-    private Context mContext;
+    /**
+     * コンテキスト.
+     */
+    private final Context mContext;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
-     * @param context
+     * @param context Activity
      */
-    public TvClipInsertDataManager(Context context) {
+    public TvClipInsertDataManager(final Context context) {
         mContext = context;
     }
 
     /**
-     * TvClipAPIの解析結果をDBに格納する。
+     * TvClipAPIの解析結果をDBに格納する.
      *
-     * @return
+     * @param tvClipList TVクリップリスト
      */
-    public void insertTvClipInsertList(TvClipList tvClipList) {
+    public void insertTvClipInsertList(final TvClipList tvClipList) {
 
         //各種オブジェクト作成
         DBHelper tvClipListDBHelper = new DBHelper(mContext);
         DataBaseManager.initializeInstance(tvClipListDBHelper);
         SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
         TvClipListDao tvClipListDao = new TvClipListDao(database);
+        @SuppressWarnings("unchecked")
         List<HashMap<String, String>> hashMaps = tvClipList.getVcList();
 
         //DB保存前に前回取得したデータは全消去する

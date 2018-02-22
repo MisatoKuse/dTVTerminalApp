@@ -18,29 +18,37 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * WeeklyRankInsertDataManager.
+ */
 public class WeeklyRankInsertDataManager {
 
+    /**
+     * コンテキスト.
+     */
     final private Context mContext;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
-     * @param context コンテキスト
+     * @param context Activity
      */
-    public WeeklyRankInsertDataManager(Context context) {
+    public WeeklyRankInsertDataManager(final Context context) {
         mContext = context;
     }
 
     /**
-     * WeeklyRankAPIの解析結果をDBに格納する。
+     * WeeklyRankAPIの解析結果をDBに格納する.
+     * @param weeklyRankList  週間ランキングリスト
      */
-    public void insertWeeklyRankInsertList(WeeklyRankList weeklyRankList) {
+    public void insertWeeklyRankInsertList(final WeeklyRankList weeklyRankList) {
 
         //各種オブジェクト作成
         DBHelper weeklyRankListDBHelper = new DBHelper(mContext);
         DataBaseManager.initializeInstance(weeklyRankListDBHelper);
         SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
         WeeklyRankListDao weeklyRankListDao = new WeeklyRankListDao(database);
+        @SuppressWarnings("unchecked")
         List<HashMap<String, String>> hashMaps = weeklyRankList.getWrList();
 
         //DB保存前に前回取得したデータは全消去する

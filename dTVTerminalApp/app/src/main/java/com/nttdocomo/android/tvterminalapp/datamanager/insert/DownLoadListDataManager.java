@@ -16,26 +16,33 @@ import com.nttdocomo.android.tvterminalapp.service.download.DlData;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * DownLoadListDataManager.
+ */
 public class DownLoadListDataManager {
-
-    private Context mContext;
-
+    /**
+     * コンテキスト.
+     */
+    private final Context mContext;
+    /**
+     * ダウンロードOK.
+     */
     private final static String DOWNLOAD_OK = "OK";
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
-     * @param context
+     * @param context Activity
      */
-    public DownLoadListDataManager(Context context) {
+    public DownLoadListDataManager(final Context context) {
         mContext = context;
     }
 
     /**
-     * 持ち出しのダウンロード情報をDBに格納する。
-     *
+     * 持ち出しのダウンロード情報をDBに格納する.
+     * @param dlData ダウンロード情報
      */
-    public void insertDownload(DlData dlDatas) {
+    public void insertDownload(final DlData dlData) {
 
         //各種オブジェクト作成
         DBHelper downLoadListDBHelper = new DBHelper(mContext);
@@ -44,26 +51,26 @@ public class DownLoadListDataManager {
         DownLoadListDao downloadListDao = new DownLoadListDao(database);
 
         //DB保存前に前回取得したデータは全消去する
-        downloadListDao.deleteByItemId(dlDatas.getItemId());
+        downloadListDao.deleteByItemId(dlData.getItemId());
 
         //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
         ContentValues values = new ContentValues();
-        values.put(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID, dlDatas.getItemId());
-        values.put(DBConstants.DOWNLOAD_LIST_COLUM_URL, dlDatas.getUrl());
-        values.put(DBConstants.DOWNLOAD_LIST_COLUM_TITLE, dlDatas.getTitle());
-        values.put(DBConstants.DOWNLOAD_LIST_COLUM_SIZE, dlDatas.getTotalSize());
-        values.put(DBConstants.DOWNLOAD_LIST_COLUM_DURATION, dlDatas.getDuration());
-        values.put(DBConstants.DOWNLOAD_LIST_COLUM_RESOLUTION, dlDatas.getResolution());
-        values.put(DBConstants.DOWNLOAD_LIST_COLUM_BITRATE, dlDatas.getBitrate());
-        values.put(DBConstants.DOWNLOAD_LIST_COLUM_UPNP_ICON, dlDatas.getUpnpIcon());
-        values.put(DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL, dlDatas.getSaveFile());
-        values.put(DBConstants.DOWNLOAD_LIST_COLUM_TYPE, dlDatas.getVideoType());
+        values.put(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID, dlData.getItemId());
+        values.put(DBConstants.DOWNLOAD_LIST_COLUM_URL, dlData.getUrl());
+        values.put(DBConstants.DOWNLOAD_LIST_COLUM_TITLE, dlData.getTitle());
+        values.put(DBConstants.DOWNLOAD_LIST_COLUM_SIZE, dlData.getTotalSize());
+        values.put(DBConstants.DOWNLOAD_LIST_COLUM_DURATION, dlData.getDuration());
+        values.put(DBConstants.DOWNLOAD_LIST_COLUM_RESOLUTION, dlData.getResolution());
+        values.put(DBConstants.DOWNLOAD_LIST_COLUM_BITRATE, dlData.getBitrate());
+        values.put(DBConstants.DOWNLOAD_LIST_COLUM_UPNP_ICON, dlData.getUpnpIcon());
+        values.put(DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL, dlData.getSaveFile());
+        values.put(DBConstants.DOWNLOAD_LIST_COLUM_TYPE, dlData.getVideoType());
         downloadListDao.insert(values);
         DataBaseManager.getInstance().closeDatabase();
     }
 
     /**
-     * 持ち出しのダウンロード情報をDBから削除する。
+     * 持ち出しのダウンロード情報をDBから削除する.
      *
      */
     public void deleteDownloadAllContents() {
@@ -79,10 +86,10 @@ public class DownLoadListDataManager {
     }
 
     /**
-     * 持ち出しのダウンロード情報をDBに格納する。
-     *
+     * 持ち出しのダウンロード情報をDBに格納する.
+     * @param itemId  アイテムID.
      */
-    public void deleteDownloadContentByItemId(String itemId) {
+    public void deleteDownloadContentByItemId(final String itemId) {
 
         //各種オブジェクト作成
         DBHelper downLoadListDBHelper = new DBHelper(mContext);
@@ -95,10 +102,10 @@ public class DownLoadListDataManager {
     }
 
     /**
-     * 持ち出しのダウンロード情報をDBに更新する。
-     *
+     * 持ち出しのダウンロード情報をDBに更新する.
+     * @param itemId アイテムID.
      */
-    public void updateDownloadByItemId(String itemId) {
+    public void updateDownloadByItemId(final String itemId) {
 
         //各種オブジェクト作成
         DBHelper downLoadListDBHelper = new DBHelper(mContext);
@@ -114,9 +121,9 @@ public class DownLoadListDataManager {
     }
 
     /**
-     * 録画一覧データを返却する
+     * 録画一覧データを返却する.
      *
-     * @return list ダウンロードしたデータ状態
+     * @return list ダウンロードしたデータ状態.
      */
     public List<Map<String, String>> selectDownLoadListVideoData() {
         //ホーム画面に必要な列を列挙する
@@ -136,9 +143,9 @@ public class DownLoadListDataManager {
     }
 
     /**
-     * 録画一覧データを返却する
+     * 録画一覧データを返却する.
      *
-     * @return list ダウンロードしたデータ状態
+     * @return list ダウンロードしたデータ状態.
      */
     public List<Map<String, String>> selectDownLoadList() {
         //ホーム画面に必要な列を列挙する
@@ -167,11 +174,10 @@ public class DownLoadListDataManager {
     }
 
     /**
-     *
-     * @param itemId 項目ID
-     * @return list ダウンロードしたデータ状態
+     * @param itemId 項目ID.
+     * @return list ダウンロードしたデータ状態.
      */
-    public List<Map<String, String>> selectDownLoadByItemId(String itemId) {
+    public List<Map<String, String>> selectDownLoadByItemId(final String itemId) {
 
         //Daoクラス使用準備
         DBHelper downLoadListDBHelper = new DBHelper(mContext);

@@ -8,43 +8,48 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendVideoListDao;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendChannelListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendVdList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class RecommendVdInsertDataManager {
-
-    private Context mContext;
+/**
+ * RecommendChannelInsertDataManager.
+ */
+public class RecommendChannelInsertDataManager {
 
     /**
-     * コンストラクタ
-     *
-     * @param context
+     * コンテキスト.
      */
-    public RecommendVdInsertDataManager(Context context) {
+    private final Context mContext;
+
+    /**
+     * コンストラクタ.
+     *
+     * @param context Activity
+     */
+    public RecommendChannelInsertDataManager(final Context context) {
         mContext = context;
     }
 
     /**
-     * VodClipAPIの解析結果をDBに格納する。
-     *
-     * @return
+     * VodClipAPIの解析結果をDBに格納する.
+     * @param redChList レコメンドチャンネルリスト
      */
-    public void insertRecommendVdInsertList(RecommendVdList redVdList) {
+    public void insertRecommendChInsertList(final RecommendChList redChList) {
 
         //各種オブジェクト作成
-        DBHelper redVdListDBHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(redVdListDBHelper);
+        DBHelper recommendChListDBHelper = new DBHelper(mContext);
+        DataBaseManager.initializeInstance(recommendChListDBHelper);
         SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-        RecommendVideoListDao redVdListDao = new RecommendVideoListDao(database);
-        List<Map<String,String>> hashMaps = redVdList.getmRvList();
+        RecommendChannelListDao redChListDao = new RecommendChannelListDao(database);
+        List<Map<String, String>> hashMaps = redChList.getmRcList();
 
         //DB保存前に前回取得したデータは全消去する
-        redVdListDao.delete();
+        redChListDao.delete();
 
         //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
         for (int i = 0; i < hashMaps.size(); i++) {
@@ -56,7 +61,7 @@ public class RecommendVdInsertDataManager {
                 String valName = (String) entry.getValue();
                 values.put(keyName, valName);
             }
-            redVdListDao.insert(values);
+            redChListDao.insert(values);
         }
         DataBaseManager.getInstance().closeDatabase();
     }

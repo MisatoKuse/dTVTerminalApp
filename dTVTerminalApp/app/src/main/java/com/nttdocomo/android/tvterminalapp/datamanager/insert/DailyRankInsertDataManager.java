@@ -18,29 +18,35 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 週間ランキング用InsertDataManager.
+ */
 public class DailyRankInsertDataManager {
-
-    final private Context mContext;
-
     /**
-     * コンストラクタ
-     *
-     * @param context コンテキスト
+     * コンテキスト.
      */
-    public DailyRankInsertDataManager(Context context) {
+    private final  Context mContext;
+    /**
+     * コンストラクタ.
+     *
+     * @param context Activity
+     */
+    public DailyRankInsertDataManager(final Context context) {
         mContext = context;
     }
 
     /**
-     * DailyRankAPIの解析結果をDBに格納する。
+     * DailyRankAPIの解析結果をDBに格納する.
+     * @param dailyRankList 週間ランキングリスト.
      */
-    public void insertDailyRankInsertList(DailyRankList dailyRankList) {
+    public void insertDailyRankInsertList(final DailyRankList dailyRankList) {
 
         //各種オブジェクト作成
         DBHelper dailyRankListDBHelper = new DBHelper(mContext);
         DataBaseManager.initializeInstance(dailyRankListDBHelper);
         SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
         DailyRankListDao dailyRankListDao = new DailyRankListDao(database);
+        @SuppressWarnings("unchecked")
         List<HashMap<String, String>> hashMaps = dailyRankList.getDrList();
 
         //DB保存前に前回取得したデータは全消去する
