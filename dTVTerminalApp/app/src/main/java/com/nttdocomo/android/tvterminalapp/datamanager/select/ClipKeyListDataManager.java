@@ -21,8 +21,10 @@ import java.util.Map;
  * クリップキーリスト用DataManager.
  */
 public class ClipKeyListDataManager {
-
-    private Context mContext;
+    /**
+     * コンテキスト.
+     */
+    private final Context mContext;
 
 
     /**

@@ -88,10 +88,10 @@ public class ProgramDataManager {
         if (service == JsonConstants.CH_SERVICE_TYPE_INDEX_ALL) {
             // ひかり・DTV
             list = channelListDao.findById(columns);
-        } else if(service == JsonConstants.CH_SERVICE_TYPE_INDEX_HIKARI) {
+        } else if (service == JsonConstants.CH_SERVICE_TYPE_INDEX_HIKARI) {
             // ひかりのみ
             list = channelListDao.findByService(columns, CH_SERVICE_HIKARI);
-        } else if(service == JsonConstants.CH_SERVICE_TYPE_INDEX_DCH) {
+        } else if (service == JsonConstants.CH_SERVICE_TYPE_INDEX_DCH) {
             // DCHのみ
             list = channelListDao.findByService(columns, CH_SERVICE_DCH);
         } else {

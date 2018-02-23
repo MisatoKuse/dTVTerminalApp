@@ -400,16 +400,16 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         String serviceId = contentsData.getServiceId();
         viewHolder.mServiceIconFirst.setVisibility(View.GONE);
         viewHolder.mServiceIconSecond.setVisibility(View.GONE);
-        if(!TextUtils.isEmpty(serviceId) && DBUtils.isNumber(serviceId)){
+        if (!TextUtils.isEmpty(serviceId) && DBUtils.isNumber(serviceId)) {
             String categoryId = contentsData.getCategoryId();
-            switch (Integer.parseInt(serviceId)){
+            switch (Integer.parseInt(serviceId)) {
                 //ひかりTV
                 case OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID:
                     List<String> list = Arrays.asList(categoryId_Hikari);
-                    if(list.contains(categoryId)){
+                    if (list.contains(categoryId)) {
                         viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
                         viewHolder.mServiceIconFirst.setImageResource(R.mipmap.label_service_hikari);
-                    } else if(categoryId_Hikari_dtv.equals(categoryId)){
+                    } else if (categoryId_Hikari_dtv.equals(categoryId)) {
                         viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
                         viewHolder.mServiceIconSecond.setVisibility(View.VISIBLE);
                         viewHolder.mServiceIconSecond.setImageResource(R.mipmap.label_service_hikari);
@@ -604,7 +604,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      * @return 配信開始から1週間以内かどうか
      */
     private boolean newContentsCheck(final String startDate) {
-        switch (mIndex){
+        switch (mIndex) {
             case HOME_CONTENTS_SORT_TODAY:
             case HOME_CONTENTS_SORT_VIDEO:
             case RANKING_CONTENTES_TODAY_SORT:

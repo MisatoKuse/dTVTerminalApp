@@ -26,7 +26,7 @@ public class RentalListDataManager {
     /**
      * コンテキスト.
      */
-    private Context mContext;
+    private final Context mContext;
 
     /**
      * コンストラクタ.
