@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class RecordedFragmentFactory {
 
-    private Map<Integer, RecordedBaseFragment> mFragments = new HashMap<Integer, RecordedBaseFragment>();
+    private final Map<Integer, RecordedBaseFragment> mFragments = new HashMap<>();
 
     public RecordedFragmentFactory() {
 
@@ -19,7 +19,7 @@ public class RecordedFragmentFactory {
 
     public synchronized RecordedBaseFragment createFragment(int position, RecordedBaseFragmentScrollListener lis) {
         DTVTLogger.start();
-        RecordedBaseFragment fragment = null;
+        RecordedBaseFragment fragment;
         fragment = mFragments.get(position);
 
         if (null == fragment) {
@@ -30,12 +30,4 @@ public class RecordedFragmentFactory {
         return fragment;
     }
 
-    public synchronized int getFragmentCount() {
-        DTVTLogger.start();
-        if (null != mFragments) {
-            return mFragments.size();
-        }
-
-        return 0;
-    }
 }

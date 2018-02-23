@@ -62,7 +62,7 @@
                 android:layout_marginTop="@dimen/contents_detail_contents_text_size">
 
                 <LinearLayout
-                    android:id="@+id/dtv_content_detial_fragment_detail_area"
+                    android:id="@+id/dtv_content_detail_fragment_detail_area"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"

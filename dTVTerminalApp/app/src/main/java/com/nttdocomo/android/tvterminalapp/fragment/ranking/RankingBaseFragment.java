@@ -98,7 +98,7 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
         //initData();//一時使うデータ
         DTVTLogger.debug("onCreateView");
 
-        return initView();
+        return initView(container);
     }
 
     /**
@@ -106,7 +106,7 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
      *
      * @return 各タブ画面
      */
-    private View initView() {
+    private View initView(ViewGroup container) {
         if (mData == null) {
             mData = new ArrayList<>();
         }
@@ -121,8 +121,8 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
             //スクロールの上下方向検知用のリスナーを設定
             mRankingListView.setOnTouchListener(this);
         }
-        mLoadMoreView = LayoutInflater.from(getActivity()).inflate(R.layout.search_load_more,
-                null);
+        mLoadMoreView = LayoutInflater.from(getActivity()).inflate(R.layout.search_load_more, container,
+                false);
         if (mContentsAdapter == null) {
             initRankingView();
         }

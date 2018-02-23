@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.fragment.cliplist;
 import android.widget.AbsListView;
 
 public interface ClipListBaseFragmentScrollListener {
-    public void onScroll(ClipListBaseFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount);
-    public void onScrollStateChanged(ClipListBaseFragment fragment, AbsListView absListView, int scrollState);
+    void onScroll(ClipListBaseFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount);
+
+    void onScrollStateChanged(ClipListBaseFragment fragment, AbsListView absListView, int scrollState);
 }

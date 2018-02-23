@@ -9,10 +9,10 @@ import java.util.Map;
 
 public class RecommendFragmentFactory {
 
-    private static Map<Integer, RecommendBaseFragment> mFragments = new HashMap<Integer, RecommendBaseFragment>();
+    private static final Map<Integer, RecommendBaseFragment> mFragments = new HashMap<>();
 
     public static synchronized RecommendBaseFragment createFragment(int position, RecommendBaseFragmentScrollListener lis) {
-        RecommendBaseFragment fragment = null;
+        RecommendBaseFragment fragment;
         fragment = mFragments.get(position);
 
         if (null == fragment) {

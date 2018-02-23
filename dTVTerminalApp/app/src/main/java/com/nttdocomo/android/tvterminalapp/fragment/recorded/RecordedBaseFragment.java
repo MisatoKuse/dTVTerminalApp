@@ -8,7 +8,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
@@ -52,19 +51,18 @@ import static com.nttdocomo.android.tvterminalapp.view.CustomDialog.DialogType.C
 public class RecordedBaseFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener,
         ContentsAdapter.DownloadCallback {
 
-    public Context mActivity;
-    public List<ContentsData> mContentsData;
+    private Context mActivity;
+    private List<ContentsData> mContentsData;
     public List<RecordedContentsDetailData> mContentsList;
     private View mLoadMoreView;
     private ContentsAdapter mContentsAdapter = null;
-    public DlDataProvider mDlDataProvider = null;
+    private DlDataProvider mDlDataProvider = null;
     private DownloadParam downloadParam;
-    public List<DlData> que = new ArrayList<>();
+    private final List<DlData> que = new ArrayList<>();
     public List<Integer> queIndex = new ArrayList<>();
     //private Handler mHandler;
     private final int mPercentToUpdateUi = 1;
     private Activity activity;
-    private String mProgress;
 	private Set<String> mChannelNameCache;
     private boolean mCanBeCanceled = false;
     private String mFragmentName = null;
@@ -86,7 +84,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
 //            DTVTLogger.debug(e);
 //        }
         initData();
-        return initView();
+        return initView(container);
     }
 
     //モックデータ
@@ -97,25 +95,26 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     }
 
     private View mRecordedFragmentView;
-    private ListView mRecordedListview;
+    private ListView mRecordedListView;
 
-    public View initView() {
+    private View initView(ViewGroup container) {
+
         DTVTLogger.start();
         if (null == mRecordedFragmentView) {
             mRecordedFragmentView = View.inflate(getActivity()
                     , R.layout.record_contents_list_layout, null);
-            mRecordedListview = mRecordedFragmentView.findViewById(R.id.recorded_contents_result);
+            mRecordedListView = mRecordedFragmentView.findViewById(R.id.recorded_contents_result);
 
-            mRecordedListview.setOnScrollListener(this);
-            mRecordedListview.setOnItemClickListener(this);
+            mRecordedListView.setOnScrollListener(this);
+            mRecordedListView.setOnItemClickListener(this);
 
             getContext();
-            mLoadMoreView = LayoutInflater.from(mActivity).inflate(R.layout.search_load_more, null);
+            mLoadMoreView = LayoutInflater.from(mActivity).inflate(R.layout.search_load_more, container, false);
         }
 
         mContentsAdapter = new ContentsAdapter(getContext(),
                 mContentsData, ContentsAdapter.ActivityTypeItem.TYPE_RECORDED_LIST, this);
-        mRecordedListview.setAdapter(mContentsAdapter);
+        mRecordedListView.setAdapter(mContentsAdapter);
 
         return mRecordedFragmentView;
     }
@@ -129,8 +128,8 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
 
     public void setSelection(int itemNo) {
         DTVTLogger.start();
-        if (null != mRecordedListview) {
-            mRecordedListview.setSelection(itemNo);
+        if (null != mRecordedListView) {
+            mRecordedListView.setSelection(itemNo);
         }
     }
 
@@ -232,14 +231,14 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     }
 
     public void onCancelAll(final String fullPath) {
-        unqueueAllExceptForFirst();
+        unQueueAllExceptForFirst();
         onCancelByBg(fullPath);
     }
 
     private void setSuccessStatus(String fullPath){
-        if(queIndex.size() > 0 && null != mRecordedListview){
-            int idx0 = queIndex.get(0) - mRecordedListview.getFirstVisiblePosition();
-            View view = mRecordedListview.getChildAt(idx0);
+        if(queIndex.size() > 0 && null != mRecordedListView){
+            int idx0 = queIndex.get(0) - mRecordedListView.getFirstVisiblePosition();
+            View view = mRecordedListView.getChildAt(idx0);
             if (view != null) {
                 view.findViewById(R.id.item_common_result_clip_tv).setBackgroundResource(R.mipmap.icon_circle_normal_download_check);
                 setDownloadStatusClear(view.findViewById(R.id.item_common_result_clip_tv));
@@ -263,14 +262,14 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     }
 
 	private void restoreChannelAndTime(){
-        if(null == queIndex || 0==queIndex.size() || null==mRecordedListview){
+        if(null == queIndex || 0==queIndex.size() || null== mRecordedListView){
             return;
         }
-        int idx = queIndex.get(0)-mRecordedListview.getFirstVisiblePosition();
-        if(idx < 0 || idx >= mRecordedListview.getChildCount()){
+        int idx = queIndex.get(0)- mRecordedListView.getFirstVisiblePosition();
+        if(idx < 0 || idx >= mRecordedListView.getChildCount()){
             return;
         }
-        View view = mRecordedListview.getChildAt(idx);
+        View view = mRecordedListView.getChildAt(idx);
         if(null==view){
             return;
         }
@@ -292,15 +291,15 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         if(null == queIndex || -1 < index - queIndex.size()) {
             return;
         }
-        View view = null;
+        View view;
         int idx = queIndex.get(index);
         try {
-            if(null == mRecordedListview){
+            if(null == mRecordedListView){
                 return;
             } else {
-                idx = idx - mRecordedListview.getFirstVisiblePosition();
+                idx = idx - mRecordedListView.getFirstVisiblePosition();
             }
-            view = mRecordedListview.getChildAt(idx);
+            view = mRecordedListView.getChildAt(idx);
             View tvView = view.findViewById(R.id.item_common_result_clip_tv);
             if(null != tvView){
                 tvView.setBackgroundResource(R.mipmap.icon_circle_normal_download);
@@ -317,7 +316,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     }
 
     private void setNextDownLoad(){
-        unqueue(0);
+        unQueue(0);
         if(que.size() > 0){
             boolean isOk = prepareDownLoad(queIndex.get(0));
             if(!isOk){
@@ -360,16 +359,17 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     }
 
     private void setDownloadStatus(int index, int progress){
-        if(index>=mContentsData.size() || null == mRecordedListview){
+        String mProgress;
+        if(index>=mContentsData.size() || null == mRecordedListView){
             return;
         }
-        int idx = 0;
-        if(null != mRecordedListview){
-            idx = index - mRecordedListview.getFirstVisiblePosition();
+        int idx;
+        if(null != mRecordedListView){
+            idx = index - mRecordedListView.getFirstVisiblePosition();
         } else {
             return;
         }
-        View view = mRecordedListview.getChildAt(idx);
+        View view = mRecordedListView.getChildAt(idx);
         TextView textView = null;
         if (view != null) {
             textView = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
@@ -565,7 +565,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         return true;
     }
 
-    public void bindServiceFromBackgroud(boolean serviceIsRun){
+    public void bindServiceFromBackground(boolean serviceIsRun){
         if(null == activity){
             activity = getActivity();
         }
@@ -583,19 +583,19 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         }
     }
 
-    public void onDownladProgressByBg(int percent){
+    public void onDownloadProgressByBg(int percent){
         if(queIndex.size() > 0){
             mCanBeCanceled = true;
             setDownloadStatus(queIndex.get(0), percent);
         }
     }
 
-    public void onDownladSuccessByBg(String fullPath){
+    public void onDownloadSuccessByBg(String fullPath){
         mCanBeCanceled = false;
         setSuccessStatus(fullPath);
     }
 
-    public void onDownladFailByBg(String fullPath, final DownloadListener.DLError error){
+    public void onDownloadFailByBg(String fullPath, final DownloadListener.DLError error){
         mCanBeCanceled = false;
         if(mDlDataProvider != null){
             mDlDataProvider.cancelDownLoadStatus(fullPath);
@@ -653,7 +653,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                                     if(num == queIndex.get(i)){
                                         String path = getCurrentDlFullPath(i);
                                         mDlDataProvider.cancelDownLoadStatus(path);
-                                        unqueue(i);
+                                        unQueue(i);
                                         break;
                                     }
                                 }
@@ -747,10 +747,10 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     }
 
     /**
-     * unqueue
+     * unQueue
      * @param index index
      */
-    private void unqueue(int index){
+    private void unQueue(int index){
         if(null != que && index < que.size() && -1< index){
             que.remove(index);
         }
@@ -760,9 +760,9 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     }
 
     /**
-     * unqueueAllExceptForFirst
+     * unQueueAllExceptForFirst
      */
-    private void unqueueAllExceptForFirst(){
+    private void unQueueAllExceptForFirst(){
         if(null == que || null == activity || null == mDlDataProvider){
             return;
         }
@@ -774,7 +774,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                String fullPath = null;
+                String fullPath;
                 try {
                     for (int i = 0; i < que.size(); ++i) {
                         fullPath = getCurrentDlFullPath(i);
@@ -801,26 +801,26 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
 
     /**
      * 「持ち出し」タッブに使われる
-     * @param fullPaht fullPaht
+     * @param fullPath fullPath
      */
-    private void noticeActDel(String fullPaht) {
+    private void noticeActDel(String fullPath) {
         if(null != activity) {
-            ((RecordedListActivity)activity).onNoticeActDel(fullPaht, this);
+            ((RecordedListActivity)activity).onNoticeActDel(fullPath, this);
         }
     }
 
     /**
      * delItemData
-     * @param fullPaht fullPaht
+     * @param fullPath fullPath
      */
-    public void delItemData(String fullPaht) {
-        if(null == fullPaht || fullPaht.isEmpty()) {
+    public void delItemData(String fullPath) {
+        if(null == fullPath || fullPath.isEmpty()) {
             return;
         }
         if(null != mContentsData){
             for(int i=0;i<mContentsData.size();++i) {
                 ContentsData cd=mContentsData.get(i);
-                if(fullPaht.equals(cd.getDlFileFullPath())) {
+                if(fullPath.equals(cd.getDlFileFullPath())) {
                     cd.setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_ALLOW);
                     break;
                 }
@@ -829,7 +829,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         if(null != mContentsList){
             for(int i=0;i<mContentsList.size();++i) {
                 RecordedContentsDetailData rcd = mContentsList.get(i);
-                if(fullPaht.equals(rcd.getDlFileFullPath())) {
+                if(fullPath.equals(rcd.getDlFileFullPath())) {
                     rcd.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_ALLOW);
                     break;
                 }

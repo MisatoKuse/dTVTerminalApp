@@ -40,18 +40,18 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         /**
          * スクロール時のコールバック.
          *
-         * @param fragment fragment
-         * @param absListView absListView
+         * @param fragment         fragment
+         * @param absListView      absListView
          * @param firstVisibleItem firstVisibleItem
          * @param visibleItemCount visibleItemCount
-         * @param totalItemCount totalItemCount
+         * @param totalItemCount   totalItemCount
          */
         void onScroll(ChannelListFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount);
 
         /**
          * スクロール状態が変化した時のコールバック.
          *
-         * @param fragment fragment
+         * @param fragment    fragment
          * @param absListView absListView
          * @param scrollState スクロール状態
          */
@@ -61,7 +61,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
          * 表示状態/非表示状態の変化時のコールバック.
          *
          * @param isVisibleToUser true:表示 false:非表示
-         * @param fragment fragment
+         * @param fragment        fragment
          */
         void setUserVisibleHint(boolean isVisibleToUser, ChannelListFragment fragment);
     }
@@ -74,10 +74,6 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
      * 表示するデータ.
      */
     private List mData = null;
-    /**
-     * rootView.
-     */
-    private View mRootView;
     /**
      * 表示するListView自体.
      */
@@ -131,14 +127,15 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+        View mRootView;
         if (mData == null) {
             mData = new ArrayList();
         }
         mRootView = View.inflate(getActivity(), R.layout.channel_list_content, null);
 
-        mLoadMoreView = LayoutInflater.from(getActivity()).inflate(R.layout.search_load_more, null);
+        mLoadMoreView = LayoutInflater.from(getActivity()).inflate(R.layout.search_load_more, container, false);
 
-        initContentListView();
+        initContentListView(mRootView);
         return mRootView;
     }
 
@@ -175,7 +172,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
     /**
      * Viewの初期化処理.
      */
-    private void initContentListView() {
+    private void initContentListView(View mRootView) {
         mListview = mRootView.findViewById(R.id.channel_list_content_body_lv);
 
         mListview.setOnScrollListener(this);
@@ -254,52 +251,54 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
             return false;
         }
         boolean ret = false;
-        switch (mChListDataType) {
-            case CH_LIST_DATA_TYPE_BS:
-                if (item instanceof  DlnaBsChListItem) {
-                    DlnaBsChListItem bs2 = (DlnaBsChListItem) item;
-                    for (Object obj : mData) {
-                        if (obj instanceof DlnaBsChListItem) {
-                            DlnaBsChListItem bs1 = (DlnaBsChListItem) obj;
-                            ret = bs1.equalTo(bs2);
-                            if (ret) {
-                                break;
+        if (mChListDataType != null) {
+            switch (mChListDataType) {
+                case CH_LIST_DATA_TYPE_BS:
+                    if (item instanceof DlnaBsChListItem) {
+                        DlnaBsChListItem bs2 = (DlnaBsChListItem) item;
+                        for (Object obj : mData) {
+                            if (obj instanceof DlnaBsChListItem) {
+                                DlnaBsChListItem bs1 = (DlnaBsChListItem) obj;
+                                ret = bs1.equalTo(bs2);
+                                if (ret) {
+                                    break;
+                                }
                             }
                         }
                     }
-                }
-                break;
-            case CH_LIST_DATA_TYPE_TER:
-                if (item instanceof DlnaTerChListItem) {
-                    DlnaTerChListItem ter2 = (DlnaTerChListItem) item;
-                    for (Object obj : mData) {
-                        if (obj instanceof DlnaTerChListItem) {
-                            DlnaTerChListItem ter1 = (DlnaTerChListItem) obj;
-                            ret = ter1.equalTo(ter2);
-                            if (ret) {
-                                break;
+                    break;
+                case CH_LIST_DATA_TYPE_TER:
+                    if (item instanceof DlnaTerChListItem) {
+                        DlnaTerChListItem ter2 = (DlnaTerChListItem) item;
+                        for (Object obj : mData) {
+                            if (obj instanceof DlnaTerChListItem) {
+                                DlnaTerChListItem ter1 = (DlnaTerChListItem) obj;
+                                ret = ter1.equalTo(ter2);
+                                if (ret) {
+                                    break;
+                                }
                             }
                         }
                     }
-                }
-                break;
-            case CH_LIST_DATA_TYPE_HIKARI:
-            case CH_LIST_DATA_TYPE_DTV:
-                if (item instanceof ChannelInfo) {
-                    ChannelInfo ch2 = (ChannelInfo) item;
-                    for (Object obj : mData) {
-                        if (obj instanceof  ChannelInfo) {
-                            ChannelInfo ch1 = (ChannelInfo) obj;
-                            ret = ch1.equalTo(ch2);
-                            if (ret) {
-                                break;
+                    break;
+                case CH_LIST_DATA_TYPE_HIKARI:
+                case CH_LIST_DATA_TYPE_DTV:
+                    if (item instanceof ChannelInfo) {
+                        ChannelInfo ch2 = (ChannelInfo) item;
+                        for (Object obj : mData) {
+                            if (obj instanceof ChannelInfo) {
+                                ChannelInfo ch1 = (ChannelInfo) obj;
+                                ret = ch1.equalTo(ch2);
+                                if (ret) {
+                                    break;
+                                }
                             }
                         }
                     }
-                }
-                break;
-            case CH_LIST_DATA_TYPE_INVALID:
-                return true;    //データを追加しない
+                    break;
+                case CH_LIST_DATA_TYPE_INVALID:
+                    return true;    //データを追加しない
+            }
         }
         return ret;
     }
@@ -333,14 +332,16 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         if (mLoadMoreView == view) {
             return;
         }
-        switch (mChListDataType) {
-            case CH_LIST_DATA_TYPE_HIKARI:
-            case CH_LIST_DATA_TYPE_DTV:
-                return;
-            case CH_LIST_DATA_TYPE_BS:
-            case CH_LIST_DATA_TYPE_TER:
-            case CH_LIST_DATA_TYPE_INVALID:
-                break;
+        if (mChListDataType != null) {
+            switch (mChListDataType) {
+                case CH_LIST_DATA_TYPE_HIKARI:
+                case CH_LIST_DATA_TYPE_DTV:
+                    return;
+                case CH_LIST_DATA_TYPE_BS:
+                case CH_LIST_DATA_TYPE_TER:
+                case CH_LIST_DATA_TYPE_INVALID:
+                    break;
+            }
         }
         RecordedContentsDetailData datas = getParcleData(i);
         if (null == datas) {
@@ -362,36 +363,38 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
      */
     private RecordedContentsDetailData getParcleData(final int i) {
         RecordedContentsDetailData ret = new RecordedContentsDetailData();
-        switch (mChListDataType) {
-            case CH_LIST_DATA_TYPE_HIKARI:
-            case CH_LIST_DATA_TYPE_DTV:
-                return null;
-            case CH_LIST_DATA_TYPE_BS:
-                DlnaBsChListItem bsI = (DlnaBsChListItem) mData.get(i);
-                ret.setUpnpIcon(null);
-                ret.setSize(bsI.mSize);
-                ret.setResUrl(bsI.mResUrl);
-                ret.setResolution(bsI.mResolution);
-                ret.setBitrate(bsI.mBitrate);
-                ret.setDuration(bsI.mDuration);
-                ret.setTitle(bsI.mTitle);
-                ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabBs);
-                ret.setVideoType(bsI.mVideoType);
-                break;
-            case CH_LIST_DATA_TYPE_TER:
-                DlnaTerChListItem bsT = (DlnaTerChListItem) mData.get(i);
-                ret.setUpnpIcon(null);
-                ret.setSize(bsT.mSize);
-                ret.setResUrl(bsT.mResUrl);
-                ret.setResolution(bsT.mResolution);
-                ret.setBitrate(bsT.mBitrate);
-                ret.setDuration(bsT.mDuration);
-                ret.setTitle(bsT.mTitle);
-                ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabTer);
-                ret.setVideoType(bsT.mVideoType);
-                break;
-            case CH_LIST_DATA_TYPE_INVALID:
-                return null;
+        if (mChListDataType != null) {
+            switch (mChListDataType) {
+                case CH_LIST_DATA_TYPE_HIKARI:
+                case CH_LIST_DATA_TYPE_DTV:
+                    return null;
+                case CH_LIST_DATA_TYPE_BS:
+                    DlnaBsChListItem bsI = (DlnaBsChListItem) mData.get(i);
+                    ret.setUpnpIcon(null);
+                    ret.setSize(bsI.mSize);
+                    ret.setResUrl(bsI.mResUrl);
+                    ret.setResolution(bsI.mResolution);
+                    ret.setBitrate(bsI.mBitrate);
+                    ret.setDuration(bsI.mDuration);
+                    ret.setTitle(bsI.mTitle);
+                    ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabBs);
+                    ret.setVideoType(bsI.mVideoType);
+                    break;
+                case CH_LIST_DATA_TYPE_TER:
+                    DlnaTerChListItem bsT = (DlnaTerChListItem) mData.get(i);
+                    ret.setUpnpIcon(null);
+                    ret.setSize(bsT.mSize);
+                    ret.setResUrl(bsT.mResUrl);
+                    ret.setResolution(bsT.mResolution);
+                    ret.setBitrate(bsT.mBitrate);
+                    ret.setDuration(bsT.mDuration);
+                    ret.setTitle(bsT.mTitle);
+                    ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabTer);
+                    ret.setVideoType(bsT.mVideoType);
+                    break;
+                case CH_LIST_DATA_TYPE_INVALID:
+                    return null;
+            }
         }
         return ret;
     }

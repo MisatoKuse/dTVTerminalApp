@@ -206,6 +206,7 @@ public class DtvContentsDetailFragment extends Fragment {
 
     /**
      * クリップボタンの表示/非表示を.
+     *
      * @param clipButton クリップボタン
      */
     private void setClipButton(final ImageView clipButton) {

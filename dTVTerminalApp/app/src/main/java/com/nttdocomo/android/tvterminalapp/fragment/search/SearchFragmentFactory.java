@@ -14,7 +14,7 @@ public class SearchFragmentFactory {
     /**
      * Fragmentを保持するArray.
      */
-    private SparseArray<SearchBaseFragment> mFragments = new SparseArray<>();
+    private final SparseArray<SearchBaseFragment> mFragments = new SparseArray<>();
 
     /**
      * コンストラクタ.

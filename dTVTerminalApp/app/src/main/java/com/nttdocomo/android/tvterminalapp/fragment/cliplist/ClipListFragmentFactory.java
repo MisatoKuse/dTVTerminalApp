@@ -15,7 +15,7 @@ public class ClipListFragmentFactory {
     /**
      * Fragment格納Map.
      */
-    private Map<Integer, ClipListBaseFragment> mFragments = new HashMap<>();
+    private final Map<Integer, ClipListBaseFragment> mFragments = new HashMap<>();
 
     /**
      * Fragment生成.
@@ -47,9 +47,7 @@ public class ClipListFragmentFactory {
      * @return fragmentCount
      */
     public synchronized int getFragmentCount() {
-        if (null != mFragments) {
-            return mFragments.size();
-        }
-        return 0;
+
+        return mFragments.size();
     }
 }

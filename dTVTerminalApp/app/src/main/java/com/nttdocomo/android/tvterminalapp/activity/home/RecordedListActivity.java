@@ -483,7 +483,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             public void run() {
                 baseFragment.notifyDataSetChanged();
                 if (baseFragment.queIndex.size() > 0) {
-                    baseFragment.bindServiceFromBackgroud(isDownloadServiceRunning());
+                    baseFragment.bindServiceFromBackground(isDownloadServiceRunning());
                 }
             }
         });
@@ -599,16 +599,16 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             if (DownloadService.DONWLOAD_OnProgress.equals(intent.getAction())) {
                 int progress = intent.getIntExtra(DownloadService.DONWLOAD_ParamInt, 0);
                 RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
-                baseFragment.onDownladProgressByBg(progress);
+                baseFragment.onDownloadProgressByBg(progress);
             } else if (DownloadService.DONWLOAD_OnSuccess.equals(intent.getAction())) {
                 RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
                 String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);
-                baseFragment.onDownladSuccessByBg(fullPath);
+                baseFragment.onDownloadSuccessByBg(fullPath);
             } else if (DownloadService.DONWLOAD_OnFail.equals(intent.getAction())) {
                 RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
                 String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);
                 int error = intent.getIntExtra(DownloadService.DONWLOAD_ParamInt, DownloadListener.DLError.DLError_NoError.ordinal());
-                baseFragment.onDownladFailByBg(fullPath, DownloadListener.DLError.values()[error]);
+                baseFragment.onDownloadFailByBg(fullPath, DownloadListener.DLError.values()[error]);
             } else if (DownloadService.DONWLOAD_OnLowStorageSpace.equals(intent.getAction())) {
                 RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
                 String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);

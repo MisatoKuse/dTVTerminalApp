@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class RankingFragmentFactory {
 
-    private Map<Integer, RankingBaseFragment> mFragments = new HashMap<Integer, RankingBaseFragment>();
+    private final Map<Integer, RankingBaseFragment> mFragments = new HashMap<>();
 
     /**
      * フラグメントクラスの生成、取得
@@ -21,7 +21,7 @@ public class RankingFragmentFactory {
      * @return
      */
     public RankingBaseFragment createFragment(ContentsAdapter.ActivityTypeItem mode, int position, RankingFragmentScrollListener lis) {
-        RankingBaseFragment fragment = null;
+        RankingBaseFragment fragment;
         fragment = mFragments.get(position);
         if (fragment == null) {
             fragment = new RankingBaseFragment();
