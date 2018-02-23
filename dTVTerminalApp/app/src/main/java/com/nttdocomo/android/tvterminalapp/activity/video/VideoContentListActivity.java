@@ -7,7 +7,6 @@ package com.nttdocomo.android.tvterminalapp.activity.video;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
@@ -35,45 +34,75 @@ import java.util.Map;
 
 
 /**
- * ビデオコンテンツ一覧画面
+ * ビデオコンテンツ一覧画面.
  */
 public class VideoContentListActivity extends BaseActivity implements View.OnClickListener,
         VideoContentProvider.apiVideoContentDataProviderCallback,
         AbsListView.OnScrollListener, AdapterView.OnItemClickListener,
         AbsListView.OnTouchListener {
 
-    // 最大表示件数
+    /**
+     * 最大表示件数.
+     */
     private final static int NUM_PER_PAGE = 999;
-
+    /**
+     * メニュー.
+     */
     private ImageView mMenuImageView;
+    /**
+     * ビデオコンテンツ一覧用ビデオコンテンツプロバイダー.
+     */
     private VideoContentProvider mVideoContentProvider;
+    /**
+     * ビデオコンテンツ一覧用アダプター.
+     */
     private ContentsAdapter mContentsAdapter;
-
+    /**
+     * 検索プログレスバー.
+     */
     private View mLoadMoreView;
+    /**
+     * ビデオコンテンツリストを表示するリスト.
+     */
     private ListView mListView;
+    /**
+     * コンテンツデータ一覧のリスト.
+     */
     private List<ContentsData> mContentsList;
-
+    /**
+     * データの追加読み込み状態の識別フラグ.
+     */
     private boolean mIsCommunicating = false;
-
+    /**
+     * ジャンルID.
+     */
     String mGenreId;
 
-    //スクロール位置の記録
+    /**
+     * スクロール位置の記録.
+     */
     private int mFirstVisibleItem = 0;
 
-    //最後のスクロール方向が上ならばtrue
+    /**
+     * 最後のスクロール方向が上ならばtrue.
+     */
     private boolean mLastScrollUp = false;
 
-    //指を置いたY座標
+    /**
+     * 指を置いたY座標.
+     */
     private float mStartY = 0;
 
-    // ビデオ一覧（コンテンツツリー）からののIntent KEY
+    /**
+     * ビデオ一覧（コンテンツツリー）からののIntent KEY.
+     */
     public static final String VIDEO_CONTENTS_BUNDLE_KEY = "videoContentKey";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.daily_tv_ranking_main_layout);
-        mContentsList = new ArrayList();
+        mContentsList = new ArrayList<>();
         mMenuImageView = findViewById(R.id.header_layout_menu);
         mMenuImageView.setVisibility(View.VISIBLE);
         mMenuImageView.setOnClickListener(this);
@@ -94,13 +123,13 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     }
 
     /**
-     * ListViewの表示
+     * ListViewの表示.
      */
     private void initView() {
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         if (mContentsList == null) {
-            mContentsList = new ArrayList();
+            mContentsList = new ArrayList<>();
         }
         mListView = findViewById(R.id.tv_rank_list);
         mListView.setOnItemClickListener(this);
@@ -114,11 +143,11 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
                 ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_CONTENT_LIST
         );
         mListView.setAdapter(mContentsAdapter);
-        mLoadMoreView = LayoutInflater.from(this).inflate(R.layout.search_load_more, null);
+        mLoadMoreView = View.inflate(this, R.layout.search_load_more, null);
     }
 
     /**
-     * 再読み込み時の処理
+     * 再読み込み時の処理.
      */
     private void resetCommunication() {
         displayMoreData(false);
@@ -126,11 +155,11 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     }
 
     /**
-     * 読み込み表示を行う
+     * 読み込み表示を行う.
      *
      * @param bool 読み込み表示フラグ
      */
-    private void displayMoreData(boolean bool) {
+    private void displayMoreData(final boolean bool) {
         if (null != mListView) {
             if (bool) {
                 mListView.addFooterView(mLoadMoreView);
@@ -163,7 +192,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
      *
      * @param bool 読み込み表示フラグ
      */
-    private void setCommunicatingStatus(boolean bool) {
+    private void setCommunicatingStatus(final boolean bool) {
         synchronized (this) {
             mIsCommunicating = bool;
         }
@@ -184,8 +213,8 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     }
 
     @Override
-    public void onScroll(AbsListView absListView, int firstVisibleItem,
-                         int visibleItemCount, int totalItemCount) {
+    public void onScroll(final AbsListView absListView, final int firstVisibleItem,
+                         final int visibleItemCount, final int totalItemCount) {
         synchronized (this) {
             if (null == mContentsAdapter) {
                 return;
@@ -204,13 +233,13 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     }
 
     @Override
-    public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+    public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
         synchronized (this) {
             if (null == mContentsAdapter) {
                 return;
             }
-            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE &&
-                    absListView.getLastVisiblePosition() == mContentsAdapter.getCount() - 1) {
+            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
+                    && absListView.getLastVisiblePosition() == mContentsAdapter.getCount() - 1) {
                 if (mIsCommunicating) {
                     return;
                 }
@@ -239,7 +268,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
         if (mLoadMoreView == view) {
             return;
         }
@@ -251,9 +280,10 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     }
 
     /**
-     * 取得結果の設定・表示
+     * 取得結果の設定・表示.
+     * @param videoContentInfo  ビデオコンテンツ情報
      */
-    private void setShowVideoContent(List<ContentsData> videoContentInfo) {
+    private void setShowVideoContent(final List<ContentsData> videoContentInfo) {
         if (null == videoContentInfo || 0 == videoContentInfo.size()) {
             return;
         }
@@ -282,8 +312,8 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
      * @param videoContentMapList コンテンツリストデータ
      * @return dataList 読み込み表示フラグ
      */
-    private List<ContentsData> setVideoContentData(
-            List<Map<String, String>> videoContentMapList) {
+    private  List<ContentsData> setVideoContentData(
+           final List<Map<String, String>> videoContentMapList) {
         List<ContentsData> videoContentsDataList = new ArrayList<>();
 
         ContentsData contentsData;
@@ -301,12 +331,12 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     }
 
     @Override
-    public void videoContentCallback(List<ContentsData> videoHashMap) {
+    public void videoContentCallback(final List<ContentsData> videoHashMap) {
         setShowVideoContent(videoHashMap);
     }
 
     @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
+    public boolean onTouch(final View view, final MotionEvent motionEvent) {
         if (!(view instanceof ListView)) {
             //今回はリストビューの事しか考えないので、他のビューならば帰る
             return false;

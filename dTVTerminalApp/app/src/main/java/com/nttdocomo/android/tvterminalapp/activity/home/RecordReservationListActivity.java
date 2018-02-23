@@ -70,11 +70,6 @@ public class RecordReservationListActivity extends BaseActivity
      * グローバルメニューからの起動かどうか.
      */
     private Boolean mIsMenuLaunch = false;
-    /**
-     * 1ページ当たりの表示件数.
-     */
-    private final int NUM_PER_PAGE = 20;
-
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {

@@ -79,10 +79,6 @@ public class ClipListActivity extends BaseActivity implements
      * FragmentFactory.
      */
     private ClipListFragmentFactory mClipListFragmentFactory = null;
-    /**
-     * ページング単位設定値.
-     */
-    private final int NUM_PER_PAGE = 20;
 
     /**
      * タブポジション(Tv).

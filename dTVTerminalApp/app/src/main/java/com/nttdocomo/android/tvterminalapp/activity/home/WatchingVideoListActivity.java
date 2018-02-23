@@ -102,11 +102,6 @@ public class WatchingVideoListActivity extends BaseActivity implements
      */
     private static final float RANGE_MAGNIFICATION = 3;
 
-    /**
-     * ページング単位.
-     */
-    private final int NUM_PER_PAGE = 20;
-
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

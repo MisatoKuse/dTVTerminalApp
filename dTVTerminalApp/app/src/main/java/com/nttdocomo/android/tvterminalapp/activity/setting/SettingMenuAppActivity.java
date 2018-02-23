@@ -28,10 +28,6 @@ public class SettingMenuAppActivity extends BaseActivity {
      */
     private int mProgress = 0;
     /**
-     * webViewの読み込み完了値.
-     */
-    private final static int PROGRESS_FINISH = 100;
-    /**
      * TODO 仮のURL.
      */
     private final static String SETTING_MENU_APP_URL = "https://www.nttdocomo.co.jp/";

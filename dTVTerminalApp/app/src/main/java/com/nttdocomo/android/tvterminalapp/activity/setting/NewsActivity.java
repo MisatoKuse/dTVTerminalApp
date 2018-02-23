@@ -29,10 +29,6 @@ public class NewsActivity extends BaseActivity implements View.OnClickListener {
      */
     private int mProgress = 0;
     /**
-     * webViewの読み込み完了値.
-     */
-    private final static int PROGRESS_FINISH = 100;
-    /**
      * 表示するWebPageのURL.
      * TODO 仮のHTMLファイル
      */

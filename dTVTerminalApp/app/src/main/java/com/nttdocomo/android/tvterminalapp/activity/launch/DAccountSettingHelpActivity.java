@@ -28,10 +28,6 @@ public class DAccountSettingHelpActivity extends BaseActivity {
      * webViewの読み込み進行度.
      */
     private int mProgress = 0;
-    /**
-     * webViewの読み込み完了値.
-     */
-    private final static int PROGRESS_FINISH = 100;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
