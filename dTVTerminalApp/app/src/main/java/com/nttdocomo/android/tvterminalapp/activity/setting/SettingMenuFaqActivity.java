@@ -13,6 +13,7 @@ import android.webkit.WebViewClient;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 
 /**
  * FAQ画面.
@@ -27,10 +28,6 @@ public class SettingMenuFaqActivity extends BaseActivity {
      * webViewの読み込み進行度.
      */
     private int mProgress = 0;
-    /**
-     * TODO 仮のURL.
-     */
-    private final static String SETTING_MENU_FAQ_URL = "https://www.nttdocomo.co.jp/";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -41,7 +38,7 @@ public class SettingMenuFaqActivity extends BaseActivity {
         mFaqWebView.setWebViewClient(new WebViewClient());
         mFaqWebView.getSettings().setJavaScriptEnabled(false);
         mFaqWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
-        mFaqWebView.loadUrl(SETTING_MENU_FAQ_URL);
+        mFaqWebView.loadUrl(UrlConstants.WebUrl.SETTING_MENU_FAQ_URL);
 
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);

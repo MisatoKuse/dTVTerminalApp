@@ -13,6 +13,7 @@ import android.webkit.WebViewClient;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 
 /**
  * 利用規約.
@@ -23,11 +24,6 @@ public class SettingMenuTermsOfServiceActivity extends BaseActivity {
      * WebView.
      */
     private WebView mTermsOfServiceWebView = null;
-
-    /**
-     * TODO のHTMLファイル.
-     */
-    private final static String SETTING_MENU_TERMS_OF_SERVICE_HTML = "file:///android_asset/terms_of_service.html";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -40,7 +36,7 @@ public class SettingMenuTermsOfServiceActivity extends BaseActivity {
         WebSettings webSettings = mTermsOfServiceWebView.getSettings();
         webSettings.setJavaScriptEnabled(false);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
-        mTermsOfServiceWebView.loadUrl(SETTING_MENU_TERMS_OF_SERVICE_HTML);
+        mTermsOfServiceWebView.loadUrl(UrlConstants.WebUrl.SETTING_MENU_TERMS_OF_SERVICE_HTML);
 
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);

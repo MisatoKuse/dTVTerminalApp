@@ -14,6 +14,7 @@ import android.webkit.WebViewClient;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 
 /**
  * 初回起動ペアリング(ヘルプページ) 画面.
@@ -26,28 +27,26 @@ public class PairingHelpActivity extends BaseActivity {
     private WebView mFirstPairingHelpWebView = null;
 
     /**
-     * TODO 仮のHTMLファイル.
+     * 起動元判定キー.
      */
-    private final static String SETTING_MENU_LICENSE_URL = "file:///android_asset/first_pairing_help.html";
-    /**
-     *ペアリングヘルプHTTP URL
-     */
-    private final static String SETTING_HTTP_LICENSE_URL = "https://apl.d.dmkt-sp.jp/dtv2/tvt_sp/support/pairing.html";
-
     public static final String START_WHERE = "START_WHERE";
+
     /**
-     *ペアリングヘルプ画面起動識別子
+     *ペアリングヘルプ画面起動識別子.
      */
     public enum ParingHelpFromMode {
         /**
-         * ランチャーから起動
+         * ランチャーから起動.
          */
         ParingHelpFromMode_Launch,
         /**
-         * 設定から起動
+         * 設定から起動.
          */
         ParingHelpFromMode_Setting,
     }
+    /**
+     * 起動元判定モード.
+     */
     private int mFromMode = 0;
 
     @Override
@@ -66,11 +65,11 @@ public class PairingHelpActivity extends BaseActivity {
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
         mFirstPairingHelpWebView.setBackgroundColor(Color.TRANSPARENT);
         if (mFromMode == ParingHelpFromMode.ParingHelpFromMode_Launch.ordinal()) {
-            mFirstPairingHelpWebView.loadUrl(SETTING_MENU_LICENSE_URL);
+            mFirstPairingHelpWebView.loadUrl(UrlConstants.WebUrl.SETTING_HELP_PAIRING_URL);
         } else if (mFromMode == ParingHelpFromMode.ParingHelpFromMode_Setting.ordinal()) {
             webSettings.setAllowUniversalAccessFromFileURLs(false);
             webSettings.setAllowFileAccessFromFileURLs(false);
-            mFirstPairingHelpWebView.loadUrl(SETTING_HTTP_LICENSE_URL);
+            mFirstPairingHelpWebView.loadUrl(UrlConstants.WebUrl.SETTING_SUPPORT_PAIRING_URL);
         }
         mFirstPairingHelpWebView.setWebViewClient(new WebViewClient());
 
