@@ -669,12 +669,10 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         if (mTabIndex == INDEX_TAB_MY_CHANNEL) {
             //MY番組表
             if (channels != null && channels.size() > 0) {
-                if (mTabIndex == INDEX_TAB_MY_CHANNEL) { //MY番組表
-                    this.hikariChannels = channels;
-                    mappedMyChannelList = executeMapping();
-                    setChannelContentsView(mappedMyChannelList);
-                    loadMyChannel();
-                }
+                this.hikariChannels = channels;
+                mappedMyChannelList = executeMapping();
+                setChannelContentsView(mappedMyChannelList);
+                loadMyChannel();
             }
         } else {
             //ひかり、dTVチャンネル
@@ -761,9 +759,9 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
     private void sort(final ArrayList<ChannelInfo> channels) {
         for (ChannelInfo channel : channels) {
 
-            ArrayList<ScheduleInfo> scheduleInfos = channel.getSchedules();
+            ArrayList<ScheduleInfo> scheduleInfo = channel.getSchedules();
             boolean isContinue = false;
-            for (ScheduleInfo info : scheduleInfos) {
+            for (ScheduleInfo info : scheduleInfo) {
                 if (TextUtils.isEmpty(info.getStartTime())) {
                     DTVTLogger.debug("getStartTime() : null");
                     isContinue = true;
