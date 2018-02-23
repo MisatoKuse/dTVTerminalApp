@@ -39,10 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.DAILY_RANK_LAST_INSERT;
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.VIDEO_RANK_LAST_INSERT;
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.WEEKLY_RANK_LAST_INSERT;
-
 /**
  * ランキングTop画面用データプロバイダ.
  */
@@ -54,7 +50,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
     /**
      * コンテキスト.
      */
-    private Context mContext;
+    private final Context mContext;
     /**
      * RakingTop画面用コールバック.
      */
@@ -516,7 +512,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
      */
     private void getDailyRankListData() {
         DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(DAILY_RANK_LAST_INSERT);
+        String lastDate = dateUtils.getLastDate(DateUtils.DAILY_RANK_LAST_INSERT);
         mDailyRankList = null;
         // クリップキー一覧取得
         if (mRequiredClipKeyList) {
@@ -554,7 +550,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
      */
     private void getWeeklyRankListData(final String genreId) {
         DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(WEEKLY_RANK_LAST_INSERT);
+        String lastDate = dateUtils.getLastDate(DateUtils.WEEKLY_RANK_LAST_INSERT);
 
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
         if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate)) {
@@ -587,7 +583,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
      */
     private void getVideoRankListData(final String genreId) {
         DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(VIDEO_RANK_LAST_INSERT);
+        String lastDate = dateUtils.getLastDate(DateUtils.VIDEO_RANK_LAST_INSERT);
 
         List<Map<String, String>> list = new ArrayList<>();
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認

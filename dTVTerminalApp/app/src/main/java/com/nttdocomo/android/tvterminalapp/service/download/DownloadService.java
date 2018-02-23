@@ -111,7 +111,7 @@ public class DownloadService extends Service implements DownloadListener {
     /**
      * ダウンロードエラー発生の時、コールされる
      */
-    public DownloadListener.DLError isError(){
+    public DLError isError(){
         if(null!=mDownloaderBase){
             return mDownloaderBase.isError();
         }
@@ -180,12 +180,11 @@ public class DownloadService extends Service implements DownloadListener {
     }
 
     /**
-     * DownloadParam設定
+     * DownloadParam設定.
      * @param param param
-     * @throws Exception Exception
      */
-    public void setDlParam(DownloadParam param) throws Exception{
-        if(null==mDownloaderBase){
+    public void setDlParam(final DownloadParam param) {
+        if (null == mDownloaderBase) {
             mDownloaderBase = new DtcpDownloader(param, this);
         } else {
             mDownloaderBase.reset(param);

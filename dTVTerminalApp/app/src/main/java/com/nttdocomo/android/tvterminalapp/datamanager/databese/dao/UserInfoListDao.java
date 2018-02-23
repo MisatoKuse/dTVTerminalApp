@@ -8,12 +8,12 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.USER_INFO_LIST_TABLE_NAME;
 
 /**
  * ユーザー情報リスト Data Access Object.
@@ -44,7 +44,7 @@ public class UserInfoListDao {
         List<Map<String, String>> list = new ArrayList<>();
 
         Cursor cursor = db.query(
-                USER_INFO_LIST_TABLE_NAME,
+                DBConstants.USER_INFO_LIST_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -77,7 +77,7 @@ public class UserInfoListDao {
      * @return 書き込み位置
      */
     public long insert(final ContentValues values) {
-        return db.insert(USER_INFO_LIST_TABLE_NAME, null, values);
+        return db.insert(DBConstants.USER_INFO_LIST_TABLE_NAME, null, values);
     }
 
     /**
@@ -91,7 +91,7 @@ public class UserInfoListDao {
     public long insert(final String key, final String value) {
         ContentValues values = new ContentValues();
         values.put(key, value);
-        return db.insert(USER_INFO_LIST_TABLE_NAME, null, values);
+        return db.insert(DBConstants.USER_INFO_LIST_TABLE_NAME, null, values);
     }
 
     /**
@@ -111,6 +111,6 @@ public class UserInfoListDao {
      * @return 削除行数
      */
     public int delete() {
-        return db.delete(USER_INFO_LIST_TABLE_NAME, null, null);
+        return db.delete(DBConstants.USER_INFO_LIST_TABLE_NAME, null, null);
     }
 }

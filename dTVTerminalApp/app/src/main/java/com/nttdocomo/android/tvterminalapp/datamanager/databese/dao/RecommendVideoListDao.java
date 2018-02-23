@@ -8,12 +8,12 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RECOMMEND_VIDEO_LIST_TABLE_NAME;
 
 /**
  * おすすめビデオData Access Object.
@@ -44,7 +44,7 @@ public class RecommendVideoListDao {
         List<Map<String, String>> list = new ArrayList<>();
 
         Cursor cursor = db.query(
-                RECOMMEND_VIDEO_LIST_TABLE_NAME,
+                DBConstants.RECOMMEND_VIDEO_LIST_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -77,7 +77,7 @@ public class RecommendVideoListDao {
      * @return 成功時:row ID 失敗時:-1
      */
     public long insert(final ContentValues values) {
-        return db.insert(RECOMMEND_VIDEO_LIST_TABLE_NAME, null, values);
+        return db.insert(DBConstants.RECOMMEND_VIDEO_LIST_TABLE_NAME, null, values);
     }
 
     /**
@@ -97,6 +97,6 @@ public class RecommendVideoListDao {
      * @return リターン値
      */
     public int delete() {
-        return db.delete(RECOMMEND_VIDEO_LIST_TABLE_NAME, null, null);
+        return db.delete(DBConstants.RECOMMEND_VIDEO_LIST_TABLE_NAME, null, null);
     }
 }

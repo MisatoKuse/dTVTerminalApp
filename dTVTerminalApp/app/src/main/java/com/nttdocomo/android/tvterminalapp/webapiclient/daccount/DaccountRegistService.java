@@ -16,8 +16,6 @@ import com.nttdocomo.android.idmanager.IDimServiceAppServiceCustom;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DaccountConstants;
 
-import static android.content.Context.BIND_AUTO_CREATE;
-
 /**
  * dアカウント連携・サービス登録.
  */
@@ -169,7 +167,7 @@ class DaccountRegistService {
                 DaccountConstants.D_ACCOUNT_ID_MANAGER,
                 DaccountConstants.D_ACCOUNT_SERVICE);
         intent.setAction(DaccountConstants.REGIST_SERVICE_ACTION);
-        boolean ans = mContext.bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
+        boolean ans = mContext.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
         if (!ans && mDaccountRegistServiceCallBack != null) {
             //正常以外の結果ならば、コールバックを呼んで終わらせる

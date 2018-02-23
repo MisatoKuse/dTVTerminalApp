@@ -17,11 +17,13 @@ public class DlnaProvDownload {
     DlnaInterfaceDl mDlnaInterfaceDl;
 
     /**
-     * 機能：DlnaProvRecVideoを構造
+     * 機能：DlnaProvRecVideoを構造.
+     *
+     * @param savePath 保存パス
      */
-    public DlnaProvDownload(String savePath) throws Exception{
+    public DlnaProvDownload(final String savePath) {
         DTVTLogger.start();
-        mDlnaInterfaceDl=new DlnaInterfaceDl(savePath);
+        mDlnaInterfaceDl = new DlnaInterfaceDl(savePath);
         DTVTLogger.end();
     }
 

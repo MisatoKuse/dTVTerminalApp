@@ -14,20 +14,16 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.MyChannelEditAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.MyChannelDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopMyProgramListDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import java.util.ArrayList;
-
-import static com.nttdocomo.android.tvterminalapp.adapter.MyChannelEditAdapter.SERVICE_ID_MY_CHANNEL_LIST;
-import static com.nttdocomo.android.tvterminalapp.common.JsonConstants.META_RESPONSE_STATUS_OK;
-import static com.nttdocomo.android.tvterminalapp.view.CustomDialog.DialogType.CONFIRM;
-import static com.nttdocomo.android.tvterminalapp.view.CustomDialog.DialogType.ERROR;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala.MY_CHANNEL_MAX_INDEX;
 
 /**
  * マイ番組表設定.
@@ -39,7 +35,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     /**
      * マイ番組表数.
      */
-    private static final int EDIT_CHANNEL_LIST_COUNT = MY_CHANNEL_MAX_INDEX;
+    private static final int EDIT_CHANNEL_LIST_COUNT = WebApiBasePlala.MY_CHANNEL_MAX_INDEX;
     /**
      * マイ番組表データプロバイダー.
      */
@@ -168,7 +164,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     @Override
     public void onMyChannelRegisterCallback(final String result) {
         switch (result) {
-            case META_RESPONSE_STATUS_OK:
+            case JsonConstants.META_RESPONSE_STATUS_OK:
                 //そのまま通信してデータ取得
                 loadData();
                 break;
@@ -182,10 +178,10 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     /**
      * 動作失敗ダイアログ.
      *
-     * @param content 動作失敗文言
+     * @param content コンテキスト
      */
     private void showFailedDialog(final String content) {
-        CustomDialog customDialog = new CustomDialog(this, ERROR);
+        CustomDialog customDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
         customDialog.setContent(content);
         customDialog.showDialog();
     }
@@ -198,7 +194,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     @Override
     public void onMyChannelDeleteCallback(final String result) {
         switch (result) {
-            case META_RESPONSE_STATUS_OK:
+            case JsonConstants.META_RESPONSE_STATUS_OK:
                 //そのまま通信してデータ取得
                 loadData();
                 break;
@@ -213,7 +209,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      * マイ番組表設定登録.
      *
      * @param position ポジション
-     * @param channel  　チャンネル情報
+     * @param channel チャンネル情報
      */
     private void executeMyChannelListRegister(final int position, final ChannelInfo channel) {
         mMyChannelDataProvider = new MyChannelDataProvider(this);
@@ -271,14 +267,13 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      * @return  マイ番組表サービスIDリスト
      */
     private String[] getServiceIds() {
-        StringBuilder sb = new StringBuilder();
+        String str = "";
         for (MyChannelMetaData myChannelData : mEditList) {
             if (myChannelData.getServiceId() != null) {
-                sb.append(myChannelData.getServiceId());
-                sb.append(COMMA);
+                str = StringUtils.getConnectStrings(myChannelData.getServiceId(), COMMA);
             }
         }
-        return sb.toString().split(MyChannelEditAdapter.COMMA);
+        return str.split(MyChannelEditAdapter.COMMA);
     }
 
     /**
@@ -287,7 +282,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      * @param bundle 　削除する情報
      */
     private void showDialogToConfirmUnRegistration(final Bundle bundle) {
-        CustomDialog customDialog = new CustomDialog(this, CONFIRM);
+        CustomDialog customDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
         customDialog.setContent(this.getResources().getString(R.string.my_channel_list_setting_dialog_content_unregister));
         customDialog.setConfirmText(R.string.positive_response);
         customDialog.setCancelText(R.string.negative_response);
@@ -296,7 +291,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
             public void onOKCallback(final boolean isOK) {
                 if (isOK && bundle != null) {
                     //解除通信
-                    mMyChannelDataProvider.getMyChannelDeleteStatus(bundle.getString(SERVICE_ID_MY_CHANNEL_LIST));
+                    mMyChannelDataProvider.getMyChannelDeleteStatus(bundle.getString(MyChannelEditAdapter.SERVICE_ID_MY_CHANNEL_LIST));
                 }
             }
         });

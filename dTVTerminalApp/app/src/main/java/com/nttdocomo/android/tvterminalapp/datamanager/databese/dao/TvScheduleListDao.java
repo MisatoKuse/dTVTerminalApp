@@ -9,14 +9,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.TV_SCHEDULE_LIST_TABLE_NAME;
 
 /**
  * 番組情報取得用Dao.
@@ -46,7 +45,7 @@ public class TvScheduleListDao {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
         Cursor cursor = db.query(
-                TV_SCHEDULE_LIST_TABLE_NAME,
+                DBConstants.TV_SCHEDULE_LIST_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -82,7 +81,7 @@ public class TvScheduleListDao {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
         Cursor cursor = db.query(
-                TV_SCHEDULE_LIST_TABLE_NAME,
+                DBConstants.TV_SCHEDULE_LIST_TABLE_NAME,
                 columnStr,
                 null,
                 null,
@@ -113,7 +112,7 @@ public class TvScheduleListDao {
      * @return 保存結果
      */
     public long insert(final ContentValues values) {
-        return db.insert(TV_SCHEDULE_LIST_TABLE_NAME, null, values);
+        return db.insert(DBConstants.TV_SCHEDULE_LIST_TABLE_NAME, null, values);
     }
 
     /**
@@ -133,7 +132,7 @@ public class TvScheduleListDao {
      * @return 削除結果.
      */
     public int delete() {
-        return db.delete(TV_SCHEDULE_LIST_TABLE_NAME, null, null);
+        return db.delete(DBConstants.TV_SCHEDULE_LIST_TABLE_NAME, null, null);
     }
 
     /**
@@ -145,7 +144,7 @@ public class TvScheduleListDao {
     @SuppressWarnings("unused")
     public int deleteByType(final String type) {
         String deleteSelection = StringUtils.getConnectStrings(JsonConstants.META_RESPONSE_DISP_TYPE, "=? ");
-        return db.delete(TV_SCHEDULE_LIST_TABLE_NAME, deleteSelection, new String[]{type});
+        return db.delete(DBConstants.TV_SCHEDULE_LIST_TABLE_NAME, deleteSelection, new String[]{type});
     }
 }
 

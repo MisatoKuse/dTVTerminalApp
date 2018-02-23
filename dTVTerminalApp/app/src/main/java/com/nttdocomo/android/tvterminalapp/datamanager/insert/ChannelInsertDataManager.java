@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ChannelListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
@@ -20,8 +21,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.UPDATE_DATE;
 
 /**
  * チャンネルリストデータ管理.
@@ -75,7 +74,7 @@ public class ChannelInsertDataManager {
                 String keyName = (String) entry.getKey();
                 String valName = (String) entry.getValue();
                 if (JsonConstants.META_RESPONSE_AVAIL_START_DATE.equals(keyName)) {
-                    values.put(UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
+                    values.put(DBConstants.UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
                 }
                 values.put(DBUtils.fourKFlgConversion(keyName), valName);
             }

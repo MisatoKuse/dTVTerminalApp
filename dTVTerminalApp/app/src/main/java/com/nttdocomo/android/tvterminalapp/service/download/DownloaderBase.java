@@ -33,13 +33,14 @@ public abstract class DownloaderBase {
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param param param
-     * @throws Exception Exception
+     * @param downloadListener リスナー
      */
-    DownloaderBase(DownloadParam param, DownloadListener downloadListener) throws Exception{
-        if(null==param){
-            throw new Exception("DownloaderBase.DownloaderBase, param is null");
+    DownloaderBase(final DownloadParam param, final DownloadListener downloadListener) {
+        if (null == param) {
+            DTVTLogger.error("DownloaderBase.DownloaderBase, param is null");
+            return;
         }
         mDownloadParam = param;
         mDownloadListener = downloadListener;
@@ -47,13 +48,13 @@ public abstract class DownloaderBase {
     }
 
     /**
-     * 新しいダウンロードする場合、使用する
+     * 新しいダウンロードする場合、使用する.
      * @param param param
-     * @throws Exception Exception
      */
-    public void reset(DownloadParam param)throws Exception{
-        if(null==param){
-            throw new Exception("DownloaderBase.reset, param is null");
+    public void reset(final DownloadParam param) {
+        if (null == param) {
+            DTVTLogger.error("DownloaderBase.reset, param is null");
+            return;
         }
         mDownloadParam = param;
         reset();

@@ -10,6 +10,9 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonP
 import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser;
 import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideoXmlParser;
 
+/**
+ * DB定数定義クラス.
+ */
 public class DBConstants {
 
     /**
@@ -18,23 +21,56 @@ public class DBConstants {
     public static final String DATABASE_NAME = "db_data";
 
     /**
-     * Jsonのキー名が数字から始まってる時の対策用定数.
+     * 4kflg.
      */
     public static final String FOUR_K_FLG = "4kflg";
+    /**
+     * Jsonのキー名が数字から始まってる時の対策用定数.
+     */
     public static final String UNDER_BAR_FOUR_K_FLG = "_4kflg";
 
     //Homeキャッシュデータ格納用テーブル
+    /**
+     * channel list.
+     */
     public static final String CHANNEL_LIST_TABLE_NAME = "channel_list";
+    /**
+     * row id.
+     */
     private static final String ID_COLUMN = "row_id";
+    /**
+     * update date.
+     */
     public static final String UPDATE_DATE = "update_date";
+    /**
+     * date type.
+     */
     private static final String DATE_TYPE = "date_type";
 
     //SQL共通項目
+    /**
+     * create table.
+     */
     private static final String CREATE_TABLE_TEXT = "create table ";
+    /**
+     * table primary text.
+     */
     private static final String CREATE_TABLE_PRIMARY_TEXT = " integer primary key autoincrement,";
+    /**
+     * text with comma.
+     */
     private static final String TEXT_WITH_COMMA_TEXT = " text, ";
+    /**
+     * text without comma.
+     */
     private static final String TEXT_WITHOUT_COMMA_TEXT = " text ";
+    /**
+     * brackets.
+     */
     private static final String OPEN_BRACKETS_TEXT = " (";
+    /**
+     * closing brackets.
+     */
     private static final String CLOSE_BRACKETS_TEXT = ")";
 
     /**
@@ -268,8 +304,13 @@ public class DBConstants {
             UPDATE_DATE, TEXT_WITHOUT_COMMA_TEXT,
             CLOSE_BRACKETS_TEXT);
 
-    //Homeキャッシュデータ格納用テーブル
+    /**
+     * ユーザー情報格納用テーブル.
+     */
     public static final String USER_INFO_LIST_TABLE_NAME = "user_info_list";
+    /**
+     * ユーザー情報取得テーブル作成SQL.
+     */
     public static final String CREATE_TABLE_USER_INFO_SQL = StringUtils.getConnectStrings(
             "create table ", USER_INFO_LIST_TABLE_NAME, " (",
             ID_COLUMN, " integer primary key autoincrement, ",
@@ -449,8 +490,13 @@ public class DBConstants {
             JsonConstants.META_RESPONSE_RELATIONAL_ID_ARRAY, TEXT_WITHOUT_COMMA_TEXT,
             CLOSE_BRACKETS_TEXT);
 
-    //Homeキャッシュデータ格納用テーブル
+    /**
+     * おすすめチャンネルデータ格納用テーブル.
+     */
     public static final String RECOMMEND_CHANNEL_LIST_TABLE_NAME = "recommend_channel_list";
+    /**
+     * おすすめチャンネル情報テーブル作成SQL文.
+     */
     public static final String CREATE_TABLE_RECOMMEND_CHANNEL_SQL = ""
             + "create table " + RECOMMEND_CHANNEL_LIST_TABLE_NAME + " ("
             + ID_COLUMN + " integer primary key autoincrement, "
@@ -476,8 +522,13 @@ public class DBConstants {
             + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID + " text "
             + ")";
 
-    //Homeキャッシュデータ格納用テーブル
+    /**
+     * おすすめビデオデータ格納用テーブル.
+     */
     public static final String RECOMMEND_VIDEO_LIST_TABLE_NAME = "recommend_video_list";
+    /**
+     * おすすめビデオ情報テーブル作成SQL文.
+     */
     public static final String CREATE_TABLE_RECOMMEND_VIDEO_SQL = ""
             + "create table " + RECOMMEND_VIDEO_LIST_TABLE_NAME + " ("
             + ID_COLUMN + " integer primary key autoincrement, "
@@ -588,8 +639,13 @@ public class DBConstants {
             JsonConstants.META_RESPONSE_RELATIONAL_ID_ARRAY, TEXT_WITHOUT_COMMA_TEXT,
             CLOSE_BRACKETS_TEXT);
 
-    // レコメンド（dTV）データ格納用テーブル
+    /**
+     * レコメンド（dTV）データ格納用テーブル.
+     */
     public static final String RECOMMEND_LIST_DTV_TABLE_NAME = "recommend_dtv_list";
+    /**
+     * レコメンド（dTV）テーブル作成SQL文.
+     */
     public static final String CREATE_TABLE_RECOMMEND_DTV_SQL = ""
             + "create table " + RECOMMEND_LIST_DTV_TABLE_NAME + " ("
             + ID_COLUMN + " integer primary key autoincrement, "
@@ -615,8 +671,13 @@ public class DBConstants {
             + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID + " text "
             + ")";
 
-    // レコメンド（dチャンネル）データ格納用テーブル
+    /**
+     * レコメンド（dチャンネル）データ格納用テーブル.
+     */
     public static final String RECOMMEND_LIST_DCHANNEL_TABLE_NAME = "recommend_list_dchannel";
+    /**
+     * レコメンド（dチャンネル）テーブル作成SQL文.
+     */
     public static final String CREATE_TABLE_RECOMMEND_DCHANNEL_SQL = ""
             + "create table " + RECOMMEND_LIST_DCHANNEL_TABLE_NAME + " ("
             + ID_COLUMN + " integer primary key autoincrement, "
@@ -643,8 +704,13 @@ public class DBConstants {
             + ")";
 
 
-    // レコメンド（dアニメ）データ格納用テーブル
+    /**
+     * レコメンド（dアニメ）データ格納用テーブル.
+     */
     public static final String RECOMMEND_LIST_DANIME_TABLE_NAME = "recommend_danime_list";
+    /**
+     * レコメンド（dアニメ）テーブル作成SQL文.
+     */
     public static final String CREATE_TABLE_RECOMMEND_DANIME_SQL = ""
             + "create table " + RECOMMEND_LIST_DANIME_TABLE_NAME + " ("
             + ID_COLUMN + " integer primary key autoincrement, "
@@ -756,28 +822,97 @@ public class DBConstants {
             CLOSE_BRACKETS_TEXT);
 
     // TABLE、録画持ち出しリスト用
+    /**
+     * item id.
+     */
     public static final String DOWNLOAD_LIST_COLUM_ITEM_ID = "item_id";
+    /**
+     * url.
+     */
     public static final String DOWNLOAD_LIST_COLUM_URL = "url";
+    /**
+     * didl.
+     */
     public static final String DOWNLOAD_LIST_COLUM_SAVE_DIDL = "didl";
+    /**
+     * host.
+     */
     public static final String DOWNLOAD_LIST_COLUM_SAVE_HOST = "host";
+    /**
+     * host.
+     */
     public static final String DOWNLOAD_LIST_COLUM_SAVE_PORT = "port";
+    /**
+     * save file.
+     */
     public static final String DOWNLOAD_LIST_COLUM_SAVE_URL = "save_file";
+    /**
+     * mimetype.
+     */
     public static final String DOWNLOAD_LIST_COLUM_TYPE = "mimetype";
+    /**
+     * download size.
+     */
     public static final String DOWNLOAD_LIST_COLUM_DOWNLOAD_SIZE = "download_size";
+    /**
+     * download status.
+     */
     public static final String DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS = "download_status";
+    /**
+     * total size.
+     */
     public static final String DOWNLOAD_LIST_COLUM_SIZE = "total_size";
+    /**
+     * duration.
+     */
     public static final String DOWNLOAD_LIST_COLUM_DURATION = "duration";
+    /**
+     * resolution.
+     */
     public static final String DOWNLOAD_LIST_COLUM_RESOLUTION = "resolution";
+    /**
+     * upnp icon.
+     */
     public static final String DOWNLOAD_LIST_COLUM_UPNP_ICON = "upnp_icon";
+    /**
+     * bitrate.
+     */
     public static final String DOWNLOAD_LIST_COLUM_BITRATE = "bitrate";
+    /**
+     * is supported byte seek.
+     */
     public static final String DOWNLOAD_LIST_COLUM_IS_SUPPORTED_BYTE_SEEK = "is_supported_byte_seek";
+    /**
+     * is supported time seek.
+     */
     public static final String DOWNLOAD_LIST_COLUM_IS_SUPPORTED_TIME_SEEK = "is_supported_time_seek";
+    /**
+     * is available connection stalling.
+     */
     public static final String DOWNLOAD_LIST_COLUM_IS_AVAILABLE_CONNECTION_STALLING = "is_available_connection_stalling";
+    /**
+     * is live mode.
+     */
     public static final String DOWNLOAD_LIST_COLUM_IS_LIVE_MODE = "is_live_mode";
+    /**
+     * is remote.
+     */
     public static final String DOWNLOAD_LIST_COLUM_IS_REMOTE = "is_remote";
+    /**
+     * title.
+     */
     public static final String DOWNLOAD_LIST_COLUM_TITLE = "title";
+    /**
+     * contentFormat.
+     */
     public static final String DOWNLOAD_LIST_COLUM_CONTENTFORMAT = "contentFormat";
+    /**
+     * download list.
+     */
     public static final String DOWNLOAD_LIST_TABLE_NAME = "download_list";
+    /**
+     * ダウンロードリストテーブル作成SQL.
+     */
     private static final String[] CREATE_TABLE_DOWNLOAD_LIST_SQL_NAMES = {
             CREATE_TABLE_TEXT,
             DOWNLOAD_LIST_TABLE_NAME,
@@ -1008,21 +1143,11 @@ public class DBConstants {
             JsonConstants.META_RESPONSE_CONTENTS_ID, TEXT_WITH_COMMA_TEXT,
             JsonConstants.META_RESPONSE_CONTENTS_NAME, TEXT_WITHOUT_COMMA_TEXT,
             CLOSE_BRACKETS_TEXT);
+    /**
+     * ロールリストテーブル作成SQL文.
+     */
     public static final String CREATE_TABLE_DOWNLOAD_LIST_SQL = StringUtils.getConnectString(
             CREATE_TABLE_DOWNLOAD_LIST_SQL_NAMES);
-
-    //My番組表キャッシュデータ格納用テーブル
-    public static final String MY_CHANNEL_LIST_TABLE_NAME = "my_channel_list";
-    public static final String CREATE_TABLE_MY_CHANNEL_SQL = ""
-            + "create table " + MY_CHANNEL_LIST_TABLE_NAME + " ("
-            + ID_COLUMN + " integer primary key autoincrement, "
-            + JsonConstants.META_RESPONSE_CRID + " text, "
-            + JsonConstants.META_RESPONSE_SERVICE_ID + " text, "
-            + JsonConstants.META_RESPONSE_TITLE + " text, "
-            + JsonConstants.META_RESPONSE_R_VALUE + " text, "
-            + JsonConstants.META_RESPONSE_ADULT_TYPE + " text, "
-            + JsonConstants.META_RESPONSE_INDEX + " text "
-            + ")";
 
     /**
      * クリップキー一覧 キャッシュデータ格納用テーブル.
@@ -1044,11 +1169,14 @@ public class DBConstants {
             JsonConstants.META_RESPONSE_TITLE_ID, TEXT_WITHOUT_COMMA_TEXT,
             CLOSE_BRACKETS_TEXT
     };
+    /**
+     * クリップキー一覧テーブル作成SQL文.
+     */
     public static final String CREATE_TABLE_TV_CLIP_KEY_LIST_SQL = StringUtils.getConnectString(
             CREATE_TABLE_TV_CLIP_KEY_LIST_SQL_NAMES);
 
     /**
-     *  クリップキー一覧 キャッシュデータ格納用テーブル.
+     * クリップキー一覧 キャッシュデータ格納用テーブル.
      */
     public static final String VOD_CLIP_KEY_LIST_TABLE_NAME = "vod_clip_key_list";
     /**
@@ -1067,6 +1195,9 @@ public class DBConstants {
             JsonConstants.META_RESPONSE_TITLE_ID, TEXT_WITHOUT_COMMA_TEXT,
             CLOSE_BRACKETS_TEXT
     };
+    /**
+     * VODクリップ一覧テーブル作成用SQL文.
+     */
     public static final String CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL = StringUtils.getConnectString(
             CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL_NAMES);
 

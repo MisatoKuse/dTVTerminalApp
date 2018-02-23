@@ -18,10 +18,16 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
 
     private DlnaProvDownload mDlnaProvDownload;
 
-    public DtcpDownloader(DownloadParam param, DownloadListener downloadListener)throws Exception{
+    /**
+     * Dtcpダウンローダー.
+     *
+     * @param param ダウンロードパラメータ
+     * @param downloadListener リスナー
+     */
+    DtcpDownloader(final DownloadParam param, final DownloadListener downloadListener) {
         super(param, downloadListener);
         DtcpDownloadParam p = (DtcpDownloadParam) param;
-        mDlnaProvDownload=new DlnaProvDownload(p.getSavePath());
+        mDlnaProvDownload = new DlnaProvDownload(p.getSavePath());
     }
 
     @Override

@@ -16,9 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DOWNLOAD_LIST_TABLE_NAME;
-
-
 /**
  * ダウンロードData Access Object.
  */
@@ -48,7 +45,7 @@ public class DownLoadListDao {
         List<Map<String, String>> list = new ArrayList<>();
 
         Cursor cursor = db.query(
-                DOWNLOAD_LIST_TABLE_NAME,
+                DBConstants.DOWNLOAD_LIST_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -83,7 +80,7 @@ public class DownLoadListDao {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
         Cursor cursor = db.query(
-                DOWNLOAD_LIST_TABLE_NAME,
+                DBConstants.DOWNLOAD_LIST_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -122,7 +119,7 @@ public class DownLoadListDao {
                 DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID, "=? ");
 
         Cursor cursor = db.query(
-                DOWNLOAD_LIST_TABLE_NAME,
+                DBConstants.DOWNLOAD_LIST_TABLE_NAME,
                 selections,
                 selectSelection,
                 new String[]{itemId},
@@ -152,7 +149,7 @@ public class DownLoadListDao {
      * @return 挿入リターン
      */
     public long insert(final ContentValues values) {
-        return db.insert(DOWNLOAD_LIST_TABLE_NAME, null, values);
+        return db.insert(DBConstants.DOWNLOAD_LIST_TABLE_NAME, null, values);
     }
 
     /**
@@ -166,7 +163,7 @@ public class DownLoadListDao {
         //基本的にデータの更新はしない予定
         String updateSelection = StringUtils.getConnectStrings(
                 DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID, "=? ");
-        return db.update(DOWNLOAD_LIST_TABLE_NAME, contentValues, updateSelection, new String[]{itemId});
+        return db.update(DBConstants.DOWNLOAD_LIST_TABLE_NAME, contentValues, updateSelection, new String[]{itemId});
     }
 
     /**
@@ -175,7 +172,7 @@ public class DownLoadListDao {
      * @return 削除リターン
      */
     public int delete() {
-        return db.delete(DOWNLOAD_LIST_TABLE_NAME, null, null);
+        return db.delete(DBConstants.DOWNLOAD_LIST_TABLE_NAME, null, null);
     }
 
     /**
@@ -187,6 +184,6 @@ public class DownLoadListDao {
     public int deleteByItemId(final String itemId) {
         String deleteSelection = StringUtils.getConnectStrings(
                 DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID, "=? ");
-        return db.delete(DOWNLOAD_LIST_TABLE_NAME, deleteSelection, new String[]{itemId});
+        return db.delete(DBConstants.DOWNLOAD_LIST_TABLE_NAME, deleteSelection, new String[]{itemId});
     }
 }

@@ -9,17 +9,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RENTAL_ACTIVE_LIST_TABLE_NAME;
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RENTAL_CHANNEL_ACTIVE_LIST_TABLE_NAME;
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RENTAL_CHANNEL_LIST_TABLE_NAME;
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RENTAL_LIST_TABLE_NAME;
-
 
 /**
  * レンタルビデオData Access Object.
@@ -53,7 +48,7 @@ public class RentalListDao {
         Cursor cursor;
         try {
             cursor = mSQLiteDatabase.query(
-                    RENTAL_LIST_TABLE_NAME,
+                    DBConstants.RENTAL_LIST_TABLE_NAME,
                     strings,
                     null,
                     null,
@@ -96,7 +91,7 @@ public class RentalListDao {
         Cursor cursor;
         try {
             cursor = mSQLiteDatabase.query(
-                    RENTAL_ACTIVE_LIST_TABLE_NAME,
+                    DBConstants.RENTAL_ACTIVE_LIST_TABLE_NAME,
                     strings,
                     null,
                     null,
@@ -139,7 +134,7 @@ public class RentalListDao {
         Cursor cursor;
         try {
             cursor = mSQLiteDatabase.query(
-                    RENTAL_CHANNEL_LIST_TABLE_NAME,
+                    DBConstants.RENTAL_CHANNEL_LIST_TABLE_NAME,
                     strings,
                     null,
                     null,
@@ -182,7 +177,7 @@ public class RentalListDao {
         Cursor cursor;
         try {
             cursor = mSQLiteDatabase.query(
-                    RENTAL_CHANNEL_ACTIVE_LIST_TABLE_NAME,
+                    DBConstants.RENTAL_CHANNEL_ACTIVE_LIST_TABLE_NAME,
                     strings,
                     null,
                     null,
@@ -219,7 +214,7 @@ public class RentalListDao {
      * @return 結果
      */
     public long insert(final ContentValues values) {
-        return mSQLiteDatabase.insert(RENTAL_LIST_TABLE_NAME, null, values);
+        return mSQLiteDatabase.insert(DBConstants.RENTAL_LIST_TABLE_NAME, null, values);
     }
 
     /**
@@ -229,7 +224,7 @@ public class RentalListDao {
      * @return 結果
      */
     public long insertActiveList(final ContentValues values) {
-        return mSQLiteDatabase.insert(RENTAL_ACTIVE_LIST_TABLE_NAME, null, values);
+        return mSQLiteDatabase.insert(DBConstants.RENTAL_ACTIVE_LIST_TABLE_NAME, null, values);
     }
 
 
@@ -240,7 +235,7 @@ public class RentalListDao {
      * @return 結果
      */
     public long insertCh(final ContentValues values) {
-        return mSQLiteDatabase.insert(RENTAL_CHANNEL_LIST_TABLE_NAME, null, values);
+        return mSQLiteDatabase.insert(DBConstants.RENTAL_CHANNEL_LIST_TABLE_NAME, null, values);
     }
 
     /**
@@ -250,7 +245,7 @@ public class RentalListDao {
      * @return 結果
      */
     public long insertChActiveList(final ContentValues values) {
-        return mSQLiteDatabase.insert(RENTAL_CHANNEL_ACTIVE_LIST_TABLE_NAME, null, values);
+        return mSQLiteDatabase.insert(DBConstants.RENTAL_CHANNEL_ACTIVE_LIST_TABLE_NAME, null, values);
     }
 
     /**
@@ -270,7 +265,7 @@ public class RentalListDao {
      * @return 結果
      */
     public int delete() {
-        return mSQLiteDatabase.delete(RENTAL_LIST_TABLE_NAME, null, null);
+        return mSQLiteDatabase.delete(DBConstants.RENTAL_LIST_TABLE_NAME, null, null);
     }
 
     /**
@@ -280,7 +275,7 @@ public class RentalListDao {
      */
     @SuppressWarnings("unused")
     public int deleteActiveList() {
-        return mSQLiteDatabase.delete(RENTAL_ACTIVE_LIST_TABLE_NAME, null, null);
+        return mSQLiteDatabase.delete(DBConstants.RENTAL_ACTIVE_LIST_TABLE_NAME, null, null);
     }
 
     /**
@@ -289,7 +284,7 @@ public class RentalListDao {
      * @return 結果
      */
     public int deleteCh() {
-        return mSQLiteDatabase.delete(RENTAL_CHANNEL_LIST_TABLE_NAME, null, null);
+        return mSQLiteDatabase.delete(DBConstants.RENTAL_CHANNEL_LIST_TABLE_NAME, null, null);
     }
 
     /**
@@ -299,6 +294,6 @@ public class RentalListDao {
      */
     @SuppressWarnings("unused")
     public int deleteChActiveList() {
-        return mSQLiteDatabase.delete(RENTAL_CHANNEL_ACTIVE_LIST_TABLE_NAME, null, null);
+        return mSQLiteDatabase.delete(DBConstants.RENTAL_CHANNEL_ACTIVE_LIST_TABLE_NAME, null, null);
     }
 }

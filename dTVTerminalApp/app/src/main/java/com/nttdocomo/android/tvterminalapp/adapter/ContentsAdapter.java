@@ -33,8 +33,6 @@ import com.nttdocomo.android.tvterminalapp.view.RatingBarLayout;
 
 import java.util.List;
 
-import static com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter.ActivityTypeItem.TYPE_RECORDING_RESERVATION_LIST;
-
 /**
  * コンテンツ一覧系共通リストアダプター.
  */
@@ -66,18 +64,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     private TabTypeItem mTabType;
 
     /**
-     * 評価基準値.
-     */
-    private final static int NUM_STARS_TOTAL = 5;
-    /**
-     * サムネイル幅さ display3分の1.
-     */
-    private final static int THUMBNAIL_WIDTH = 3;
-    /**
-     * サムネイル高さ サムネイル幅さ2分の1.
-     */
-    private final static int THUMBNAIL_HEIGHT = 2;
-    /**
      * サムネイルmarginleft.
      */
     private final static int THUMBNAIL_MARGINLEFT = 16;
@@ -85,10 +71,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * サムネイルmargintop.
      */
     private final static int THUMBNAIL_MARGINEND = 10;
-    /**
-     * サムネイルmarginright.
-     */
-    private final static int THUMBNAIL_MARGINRIGHT = 16;
     /**
      * サムネイルmarginbottom.
      */
@@ -130,10 +112,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      */
     private final static int THUMBNAIL_MARGIN0 = 0;
     /**
-     * ライン高さ.
-     */
-    private final static int LINE_HEIGHT = 1;
-    /**
      * コピー残り回数.
      */
     private final static int ALLOWED_USE = 0;
@@ -142,17 +120,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * 受付アイコンマージン.
      */
     private final static int RECEPTION_MARGINTOP30 = 30;
-
-    /**
-     * クリップ登録済み判定用.
-     */
-    private final static String ACTIVE_CLIP_DISPLAY = "1";
-
-    /**
-     * クリップ未登録判定用.
-     */
-    private final static String OPACITY_CLIP_DISPLAY = "0";
-
     /**
      * ダウンロードStatus種別.
      */
@@ -296,6 +263,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         mThumbnailProvider = new ThumbnailProvider(mContext);
     }
 
+    /**
+     * タブ種別設定.
+     *
+     * @param tabTypeItem タブ種別
+     */
     public void setTabTypeItem(final TabTypeItem tabTypeItem) {
         this.mTabType = tabTypeItem;
     }
@@ -444,6 +416,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         return contentView;
     }
 
+    /**
+     * タブのマージン設定.
+     *
+     * @param holder holder
+     * @param contentView contentView
+     */
     private void setTabContentMargin(final ViewHolder holder, final View contentView) {
         int textMargin;
         int clipMargin;
@@ -578,8 +556,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         }
     }
 
-    private void setTabContentLayout(ViewHolder holder) {
-
+    /**
+     * タブレイアウト設定.
+     *
+     * @param holder holder
+     */
+    private void setTabContentLayout(final ViewHolder holder) {
         switch (mTabType) {
             case TAB_TV:
                 holder.tv_rank.setVisibility(View.GONE);
@@ -600,7 +582,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             default:
                 break;
         }
-
     }
 
     /**
@@ -679,7 +660,13 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         }
     }
 
-    private void setTabTimeData(ViewHolder holder, final ContentsData listContentInfo) {
+    /**
+     * タブの日付データ設定.
+     *
+     * @param holder holder
+     * @param listContentInfo コンテンツ情報
+     */
+    private void setTabTimeData(final ViewHolder holder, final ContentsData listContentInfo) {
         switch (mTabType) {
             case TAB_TV:
                 holder.tv_time.setVisibility(View.VISIBLE);
@@ -687,7 +674,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 long startDate = DateUtils.getEpochTimeLink(listContentInfo.getStartViewing());
                 long endDate = DateUtils.getEpochTimeLink(listContentInfo.getEndViewing());
 
-//                日付の表示
+                //日付の表示
                 String answerText = StringUtils.getConnectStrings(
                         DateUtils.getRecordShowListItem(startDate));
                 holder.tv_time.setText(answerText);
@@ -803,7 +790,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     private void setRecordedDownloadIcon(final ViewHolder holder, final ContentsData listContentInfo) {
         DTVTLogger.start();
         //TODO:録画予約一覧等、クリップボタンを表示しない画面はここで外す
-        if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST)) {
+        if (!mType.equals(ActivityTypeItem.TYPE_RECORDING_RESERVATION_LIST)) {
             if (holder.tv_clip != null) {
                 int downloadFlg = listContentInfo.getDownloadFlg();
                 if (downloadFlg != -1) {
@@ -873,7 +860,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         }
     }
 
-    private void setTabHyphenVisibility(ViewHolder holder) {
+    /**
+     * ハイフンの可視設定.
+     *
+     * @param holder holder
+     */
+    private void setTabHyphenVisibility(final ViewHolder holder) {
         switch (mTabType) {
             case TAB_TV:
                 holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
@@ -975,6 +967,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         return viewHolder;
     }
 
+    /**
+     * コンテンツのハイフン設定.
+     *
+     * @param holder holder
+     * @param view view
+     */
     private void setTabContentHyphen(final ViewHolder holder, final View view) {
         switch (mTabType) {
             case TAB_TV:
@@ -1064,7 +1062,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             //ひかりコンテンツ判定
             if (StringUtils.isHikariContents(clipType) || StringUtils.isHikariInDtvContents(clipType)) {
                 //TODO:録画予約一覧等、クリップボタンを表示しない画面はここで外す
-                if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST)) {
+                if (!mType.equals(ActivityTypeItem.TYPE_RECORDING_RESERVATION_LIST)) {
                     //クリップ状態が1以外の時は、非活性クリップボタンを表示
                     if (listContentInfo.isClipExec()) {
                         //クリップ操作後のボタン状態に応じてクリップのステータスを変更し、リスト再利用時のボタン書き換えを回避する
@@ -1196,7 +1194,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
          */
         TextView tv_recorded_ch_name;
         /**
-         * サブタイトル
+         * サブタイトル.
          */
         TextView tv_sub_title = null;
     }

@@ -8,12 +8,12 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.ROLE_LIST_TABLE_NAME;
 
 /**
  * Role List Data Access Object.
@@ -44,7 +44,7 @@ public class RoleListDao {
         List<Map<String, String>> list = new ArrayList<>();
 
         Cursor cursor = db.query(
-                ROLE_LIST_TABLE_NAME,
+                DBConstants.ROLE_LIST_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -81,7 +81,7 @@ public class RoleListDao {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
         Cursor cursor = db.query(
-                ROLE_LIST_TABLE_NAME,
+                DBConstants.ROLE_LIST_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -113,7 +113,7 @@ public class RoleListDao {
      * @return 成功時:row ID 失敗時:-1
      */
     public long insert(final ContentValues values) {
-        return db.insert(ROLE_LIST_TABLE_NAME, null, values);
+        return db.insert(DBConstants.ROLE_LIST_TABLE_NAME, null, values);
     }
 
     /**
@@ -133,6 +133,6 @@ public class RoleListDao {
      * @return リターン値
      */
     public int delete() {
-        return db.delete(ROLE_LIST_TABLE_NAME, null, null);
+        return db.delete(DBConstants.ROLE_LIST_TABLE_NAME, null, null);
     }
 }

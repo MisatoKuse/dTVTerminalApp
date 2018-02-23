@@ -8,12 +8,12 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RANKING_VIDEO_LIST_TABLE_NAME;
 
 /**
  * ビデオランキング Data Access Object.
@@ -44,7 +44,7 @@ public class VideoRankListDao {
         List<Map<String, String>> list = new ArrayList<>();
 
         Cursor cursor = db.query(
-                RANKING_VIDEO_LIST_TABLE_NAME,
+                DBConstants.RANKING_VIDEO_LIST_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -77,7 +77,7 @@ public class VideoRankListDao {
      * @return 挿入データID
      */
     public long insert(final ContentValues values) {
-        return db.insert(RANKING_VIDEO_LIST_TABLE_NAME, null, values);
+        return db.insert(DBConstants.RANKING_VIDEO_LIST_TABLE_NAME, null, values);
     }
 
     /**
@@ -97,7 +97,7 @@ public class VideoRankListDao {
      * @return deleteの第2パラメータがヌルなのでゼロとなる
      */
     public int delete() {
-        return db.delete(RANKING_VIDEO_LIST_TABLE_NAME, null, null);
+        return db.delete(DBConstants.RANKING_VIDEO_LIST_TABLE_NAME, null, null);
     }
 }
 

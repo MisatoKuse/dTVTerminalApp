@@ -39,8 +39,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import static android.widget.ImageView.ScaleType.FIT_XY;
-
 /**
  * 番組表アダプター.
  */
@@ -59,7 +57,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private static final String HYPHEN = "-";
     private static final String MISS_CUT_OUT = "1";
     private static final String MISS_COMPLETE = "2";
-    private static final String MISS_VOD = "3";
     private TvProgramListActivity mContext = null;
     /**
      * ディスプレイ幅.
@@ -272,7 +269,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                             bitmap.setWidth(thumbnailWidth);
                             bitmap.setHeight(thumbnailHeight);
                         }
-                        itemViewHolder.mThumbnail.setScaleType(FIT_XY);
+                        itemViewHolder.mThumbnail.setScaleType(ImageView.ScaleType.FIT_XY);
                         itemViewHolder.mThumbnail.setImageBitmap(bitmap);
                     }
                 }

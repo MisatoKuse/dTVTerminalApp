@@ -39,9 +39,16 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 
     }
 
-    public static DlDataProvider getInstance(Activity activity) throws Exception {
+    /**
+     * コンストラクタ.
+     *
+     * @param activity アクティビティ
+     * @return dlDataProvider
+     */
+    public static DlDataProvider getInstance(final Activity activity) {
         if (null == activity) {
-            throw new Exception("DlDataProvider.DlDataProvider, null activity");
+            DTVTLogger.error("DlDataProvider.DlDataProvider, null activity");
+            return null;
         }
         if (null == sDlDataProvider) {
             sDlDataProvider = new DlDataProvider();
@@ -51,7 +58,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     static void releaseInstance() {
-        if (null == sDlDataProvider) {
+        if(null == sDlDataProvider) {
             return;
         }
         sDlDataProvider = null;
@@ -107,7 +114,12 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
     }
 
-    public void setDlParam(DownloadParam param) throws Exception {
+    /**
+     * ダウンロードパラメータ設定.
+     *
+     * @param param パラメータ
+     */
+    public void setDlParam(final DownloadParam param) {
         DownloadService ds = getDownloadService();
         if (null != ds) {
             ds.setDlParam(param);
@@ -167,12 +179,12 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     /**
      * ダウンロードエラー発生の時、コールされる
      */
-    public DownloadListener.DLError isError() {
+    public DLError isError() {
         DownloadService ds = getDownloadService();
         if (null != ds) {
             return ds.isError();
         }
-        return DownloadListener.DLError.DLError_NoError;
+        return DLError.DLError_NoError;
     }
 
     /**
@@ -506,13 +518,14 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
     }
 
-    public void setDlData(DlData dlData) throws Exception {
-        try {
-            this.dlData = dlData;
-            dbOperationByThread(DOWNLOAD_INSERT);
-        } catch (Exception e) {
-            throw new Exception("DlDataProvider.DlDataProvider, DB insert Fail ");
-        }
+    /**
+     * DLデータ設定.
+     *
+     * @param dlData DLデータ
+     */
+    public void setDlData(final DlData dlData) {
+        this.dlData = dlData;
+        dbOperationByThread(DOWNLOAD_INSERT);
     }
 
     private void updateDownloadStatusToDb() {
@@ -532,14 +545,15 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         DownloadService.setDlDataQue(dlData);
     }
 
-    private void dbOperationByThread(int operationId) {
+    /**
+     * ThreadによるDB操作.
+     *
+     * @param operationId 操作ID
+     */
+    private void dbOperationByThread(final int operationId) {
         Handler handler = new Handler();
-        try {
-            DbThread t = new DbThread(handler, this, operationId);
-            t.start();
-        } catch (Exception e) {
-            DTVTLogger.debug(e);
-        }
+        DbThread t = new DbThread(handler, this, operationId);
+        t.start();
     }
 
     /**
