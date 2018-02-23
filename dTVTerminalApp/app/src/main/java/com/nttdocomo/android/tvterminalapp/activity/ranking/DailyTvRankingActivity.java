@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
@@ -83,6 +82,9 @@ public class DailyTvRankingActivity extends BaseActivity implements
      * 指を置いたY座標.
      */
     private float mStartY = 0;
+    /**
+     * ProgressBar.
+     */
     private RelativeLayout mRelativeLayout = null;
 
     @Override
@@ -122,13 +124,10 @@ public class DailyTvRankingActivity extends BaseActivity implements
         mListView.setOnTouchListener(this);
 
         mRelativeLayout = findViewById(R.id.tv_rank_progress);
-        //アナライズの警告対応のsynchronized
-        synchronized (this) {
-            mContentsAdapter = new ContentsAdapter(this, mContentsList,
-                    ContentsAdapter.ActivityTypeItem.TYPE_DAILY_RANK);
-            mListView.setAdapter(mContentsAdapter);
-        }
-        mLoadMoreView = LayoutInflater.from(this).inflate(R.layout.search_load_more, null);
+        mContentsAdapter = new ContentsAdapter(this, mContentsList,
+                ContentsAdapter.ActivityTypeItem.TYPE_DAILY_RANK);
+        mListView.setAdapter(mContentsAdapter);
+        mLoadMoreView = View.inflate(this, R.layout.search_load_more, null);
     }
 
     /**
@@ -328,9 +327,7 @@ public class DailyTvRankingActivity extends BaseActivity implements
                 mContentsList.add(contentsDataList.get(i));
             }
             resetCommunication();
-            synchronized (this) {
-                mContentsAdapter.notifyDataSetChanged();
-            }
+            mContentsAdapter.notifyDataSetChanged();
         }
     }
 
@@ -347,10 +344,7 @@ public class DailyTvRankingActivity extends BaseActivity implements
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         DTVTLogger.start();
-        if (checkRemoteControllerView()) {
-            return false;
-        }
-        return super.onKeyDown(keyCode, event);
+        return !checkRemoteControllerView() && super.onKeyDown(keyCode, event);
     }
 
     @Override

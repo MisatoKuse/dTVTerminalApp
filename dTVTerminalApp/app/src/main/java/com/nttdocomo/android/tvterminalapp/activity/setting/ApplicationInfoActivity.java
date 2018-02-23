@@ -7,7 +7,6 @@ package com.nttdocomo.android.tvterminalapp.activity.setting;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.ImageView;
@@ -17,19 +16,34 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
+/**
+ * アプリケーション情報.
+ */
 public class ApplicationInfoActivity extends BaseActivity {
 
     /**
      * 画質の設定値.
      */
     private ImageView mAppIcon;
+    /**
+     * アプリネーム.
+     */
     private TextView mAppName;
+    /**
+     * アプリバージョン.
+     */
     private TextView mAppVersion;
+    /**
+     * パケージネーム.
+     */
     private String mPackageName;
+    /**
+     * パケージマネージャー.
+     */
     private PackageManager mPackageManager;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         DTVTLogger.start();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.application_info_main_layout);
@@ -47,7 +61,7 @@ public class ApplicationInfoActivity extends BaseActivity {
     }
 
     /**
-     * ビューに値に設置する
+     * ビューに値に設置する.
      */
     private void settingView() {
         mPackageName = getPackageName();
@@ -67,7 +81,7 @@ public class ApplicationInfoActivity extends BaseActivity {
     }
 
     /**
-     * コンポネント初期化
+     * コンポネント初期化.
      */
     private void initView() {
         mAppIcon = findViewById(R.id.application_info_main_layout_icon);
@@ -76,11 +90,11 @@ public class ApplicationInfoActivity extends BaseActivity {
     }
 
     /**
-     * アプリケーション名を取得する
+     * アプリケーション名を取得する.
      *
      * @return String
      */
-    public String getAppName() {
+    private String getAppName() {
         try {
             ApplicationInfo info = mPackageManager.getApplicationInfo(mPackageName, 0);
             return info.loadLabel(mPackageManager).toString();
@@ -91,11 +105,11 @@ public class ApplicationInfoActivity extends BaseActivity {
     }
 
     /**
-     * アプリケーションバージョンを取得する
+     * アプリケーションバージョンを取得する.
      *
      * @return String
      */
-    public String getAppVersion() {
+    private String getAppVersion() {
         try {
             PackageInfo info = mPackageManager.getPackageInfo(mPackageName, 0);
             return info.versionName;

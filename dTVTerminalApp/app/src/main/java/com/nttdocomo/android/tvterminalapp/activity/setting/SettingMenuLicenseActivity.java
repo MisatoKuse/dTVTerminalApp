@@ -14,20 +14,23 @@ import android.webkit.WebViewClient;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 
+/**
+ * ライセンス.
+ */
 public class SettingMenuLicenseActivity extends BaseActivity {
 
     /**
      * WebView.
      */
-    WebView mLicenseWebView = null;
+    private WebView mLicenseWebView = null;
 
     /**
-     * TODO 仮のHTMLファイル
+     * TODO 仮のHTMLファイル.
      */
     private final static String SETTING_MENU_LICENSE_URL = "file:///android_asset/osslicense.html";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.setting_menu_item_main_view);
 
@@ -51,9 +54,9 @@ public class SettingMenuLicenseActivity extends BaseActivity {
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK){
-            if(mLicenseWebView.canGoBack() ) {
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (mLicenseWebView.canGoBack()) {
                 mLicenseWebView.goBack();
                 return false;
             }
