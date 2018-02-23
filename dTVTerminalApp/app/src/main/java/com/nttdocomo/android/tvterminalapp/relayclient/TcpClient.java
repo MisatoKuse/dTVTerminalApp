@@ -16,6 +16,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
 /**
  * TCPクライアント.
@@ -126,7 +127,7 @@ public class TcpClient {
                 if (inputStream.available() == 0) {
                     continue;
                 }
-                DTVTLogger.debug(String.format("streamReader.read(%d)", inputStream.available()));
+                DTVTLogger.debug(String.format(Locale.getDefault(), "streamReader.read(%d)", inputStream.available()));
                 char[] line = new char[inputStream.available()];
                 if (streamReader.read(line) == -1) {
                     continue;

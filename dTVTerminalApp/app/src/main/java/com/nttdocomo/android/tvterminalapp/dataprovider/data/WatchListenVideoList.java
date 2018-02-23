@@ -20,7 +20,7 @@ public class WatchListenVideoList implements Serializable {
         return mVcMap;
     }
 
-    public void setVcMap(HashMap vcMap) {
+    public void setVcMap(HashMap<String, String> vcMap) {
         this.mVcMap = vcMap;
     }
 
@@ -28,7 +28,7 @@ public class WatchListenVideoList implements Serializable {
         return mVcList;
     }
 
-    public void setVcList(List vcList) {
+    public void setVcList(List<HashMap<String, String>> vcList) {
         this.mVcList = vcList;
     }
 }

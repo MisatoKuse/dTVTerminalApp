@@ -43,7 +43,7 @@ public class ClipKeyListResponse {
         return mCkList;
     }
 
-    public void setCkList(List list) {
+    public void setCkList(List<HashMap<String, String>> list) {
         this.mCkList = list;
     }
 

@@ -23,7 +23,7 @@ public class VideoRankList {
         return mVrMap;
     }
 
-    public void setVrMap(HashMap vrMap) {
+    public void setVrMap(HashMap<String, String> vrMap) {
         this.mVrMap = vrMap;
     }
 
