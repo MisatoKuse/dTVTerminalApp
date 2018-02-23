@@ -157,7 +157,7 @@ public class RecordedContentsDetailData implements Parcelable {
     public RecordedContentsDetailData() {
     }
 
-    protected RecordedContentsDetailData(Parcel in) {
+    RecordedContentsDetailData(Parcel in) {
         this.mItemId = in.readString();
         this.mSize = in.readString();
         this.mDuration = in.readString();

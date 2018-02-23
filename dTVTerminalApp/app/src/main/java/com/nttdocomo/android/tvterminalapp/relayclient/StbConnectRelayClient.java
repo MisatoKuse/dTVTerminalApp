@@ -27,7 +27,7 @@ public class StbConnectRelayClient {
     private TcpClient mTcpClient;
 
     // シングルトン
-    private static StbConnectRelayClient mInstance = new StbConnectRelayClient();
+    private static final StbConnectRelayClient mInstance = new StbConnectRelayClient();
 
     /**
      * シングルトン.

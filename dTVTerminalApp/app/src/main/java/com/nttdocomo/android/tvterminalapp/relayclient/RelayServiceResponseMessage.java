@@ -187,9 +187,8 @@ public class RelayServiceResponseMessage implements Serializable {
      *
      * @param result     応答結果
      * @param resultCode 応答結果コード
-     * @param message    メッセージ
      */
-    public RelayServiceResponseMessage(final int result, final int resultCode, final String message) {
+    public RelayServiceResponseMessage(final int result, final int resultCode) {
         mResult = result;
         mResultCode = resultCode;
     }

@@ -415,7 +415,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
     public OtherContentsDetailData() {
     }
 
-    protected OtherContentsDetailData(Parcel in) {
+    private OtherContentsDetailData(Parcel in) {
         super(in);
         this.mThumb = in.readString();
         this.mChannelDate = in.readString();

@@ -15,7 +15,7 @@ public class GenreCountGetResponse implements Serializable {
     private ArrayList<GenreCountGetMetaData> mGenreCountGetMetaData; //ジャンル毎コンテンツ数取得メタデータ
     public static final String GENRE_COUNT_GET_RESPONSE_STATUS = "status";
     public static final String GENRE_COUNT_GET_RESPONSE_LIST = "list";
-    public static final String RECORDING_RESERVATION_FIXED = "";
+    private static final String RECORDING_RESERVATION_FIXED = "";
 
     public String getStatus() {
         return mStatus;
