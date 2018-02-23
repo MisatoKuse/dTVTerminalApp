@@ -20,18 +20,20 @@ public class UrlConstants {
         /**
          * レコメンド情報取得APIのURL.
          */
-        public static final String RECOMMEND_LIST_GET_URL = BaseUrlConstants.RECOMMEND_LIST_GET_URL;
+        public static final String RECOMMEND_LIST_GET_URL =
+                BaseUrlConstants.RECOMMEND_LIST_GET_URL;
 
         /**
          * レコメンドサーバー用のCIRCUS認証URL.
          */
-        public static final String ONE_TIME_PASSWORD_AUTH_URL = BaseUrlConstants.ONE_TIME_PASSWORD_AUTH_URL;
+        public static final String ONE_TIME_PASSWORD_AUTH_URL =
+                BaseUrlConstants.ONE_TIME_PASSWORD_AUTH_URL;
 
         /**
          * ひかりサーバ サービストークン取得URL.
          */
         public static final String ONE_TIME_TOKEN_GET_URL =
-                BaseUrlConstants.PLALA_AUTH + "daccount/authorization";
+                BaseUrlConstants.PLALA_AUTH + "daccount/authentication";
 
         /**
          * VODクリップ一覧の呼び出し先.
