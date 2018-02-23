@@ -17,21 +17,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class UserInfoDataManager {
+/**
+ * ユーザー情報DataManager.
+ */
 
-    private Context mContext;
+public class UserInfoDataManager {
+    /**
+     *
+     * コンテキスト.
+     */
+    private final  Context mContext;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
      * @param mContext コンテキスト
      */
-    public UserInfoDataManager(Context mContext) {
+    public UserInfoDataManager(final Context mContext) {
         this.mContext = mContext;
     }
 
     /**
-     * ユーザ情報取得
+     * ユーザ情報取得.
      *
      * @return ユーザ年齢情報
      */

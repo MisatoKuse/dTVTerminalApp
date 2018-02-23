@@ -17,23 +17,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class TvClipDataManager {
+/**
+ * TvClipDataManager.
+ */
 
-    private Context mContext;
+public class TvClipDataManager {
+    /**
+     * コンテキスト.
+     */
+    private final  Context mContext;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
-     * @param mContext
+     * @param mContext Activity
      */
-    public TvClipDataManager(Context mContext) {
+    public TvClipDataManager(final Context mContext) {
         this.mContext = mContext;
     }
 
     /**
-     * クリップ一覧画面用クリップデータを返却する
+     * クリップ一覧画面用クリップデータを返却する.
      *
-     * @return
+     * @return クリップ一覧
      */
     public synchronized List<Map<String, String>> selectTvClipData() {
 
