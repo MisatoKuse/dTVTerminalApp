@@ -14,20 +14,23 @@ import android.webkit.WebViewClient;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 
+/**
+ * 利用規約.
+ */
 public class SettingMenuTermsOfServiceActivity extends BaseActivity {
 
     /**
      * WebView.
      */
-    WebView mTermsOfServiceWebView = null;
+    private WebView mTermsOfServiceWebView = null;
 
     /**
-     * TODO のHTMLファイル
+     * TODO のHTMLファイル.
      */
     private final static String SETTING_MENU_TERMS_OF_SERVICE_HTML = "file:///android_asset/terms_of_service.html";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.setting_menu_item_main_view);
 
@@ -51,9 +54,9 @@ public class SettingMenuTermsOfServiceActivity extends BaseActivity {
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK){
-            if(mTermsOfServiceWebView.canGoBack() ) {
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (mTermsOfServiceWebView.canGoBack()) {
                 mTermsOfServiceWebView.goBack();
                 return false;
             }

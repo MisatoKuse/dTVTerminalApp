@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.setting;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -12,9 +11,8 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 /**
@@ -56,7 +54,6 @@ public class NewsActivity extends BaseActivity implements View.OnClickListener {
 
         //Headerの設定
         setTitleText(getString(R.string.information_title));
-        Intent intent = getIntent();
         enableHeaderBackIcon(false);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);

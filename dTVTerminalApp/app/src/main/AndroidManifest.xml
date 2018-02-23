@@ -114,43 +114,48 @@
         <activity
             android:name=".activity.setting.NewsActivity"
             android:screenOrientation="portrait"
-            android:exported="false" />
-        <activity
-            android:name=".activity.setting.NewsDetailActivity"
-            android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+            android:hardwareAccelerated="false"/>
         <activity
             android:name=".activity.setting.SettingActivity"
             android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+	        android:hardwareAccelerated="false"/>
         <activity
             android:name=".activity.setting.SettingImageQualityActivity"
             android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+	        android:hardwareAccelerated="false"/>
         <activity
             android:name=".activity.setting.ApplicationInfoActivity"
             android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+            android:hardwareAccelerated="false"/>
         <activity
             android:name=".activity.setting.SettingMenuAppActivity"
             android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+	        android:hardwareAccelerated="false"/>
         <activity
             android:name=".activity.setting.SettingMenuFaqActivity"
             android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+	        android:hardwareAccelerated="false"/>
         <activity
             android:name=".activity.setting.SettingMenuLicenseActivity"
             android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+	        android:hardwareAccelerated="false"/>
         <activity
             android:name=".activity.setting.SettingMenuPrivacyPolicyActivity"
             android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+	        android:hardwareAccelerated="false"/>
         <activity
             android:name=".activity.setting.SettingMenuTermsOfServiceActivity"
             android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+	        android:hardwareAccelerated="false"/>
         <!-- ======================================  Other グループ End ====================================== -->
 
 

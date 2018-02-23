@@ -108,7 +108,7 @@ public class RankingTopActivity extends BaseActivity implements RankingTopDataPr
         mLinearLayout = findViewById(R.id.ranking_top_main_layout_linearLayout);
         //各ランキングリストのUIをあらかじめ用意する
         for (int i = 0; i < CONTENT_LIST_COUNT; i++) {
-            View view = LayoutInflater.from(this).inflate(R.layout.home_main_layout_item, null, false);
+            View view = View.inflate(this, R.layout.home_main_layout_item, null);
             view.setTag(i);
             view.setVisibility(View.GONE);
             mLinearLayout.addView(view);

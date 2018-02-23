@@ -407,10 +407,7 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         DTVTLogger.start();
-        if (checkRemoteControllerView()) {
-            return false;
-        }
-        return super.onKeyDown(keyCode, event);
+        return !checkRemoteControllerView() && super.onKeyDown(keyCode, event);
     }
 
     @Override
