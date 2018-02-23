@@ -296,15 +296,27 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     private void initMenuListData() {
         mMenuItemTitles = new ArrayList();
         mMenuItemCount = new ArrayList();
-        if (UserState.LOGIN_NG == mUserState) {     //メニュー(未加入)
-            setMenuItemLogoff();
-            removeFooterView(); //未加入だけ場合は表示されない
-        } else if (UserState.LOGIN_OK_CONTRACT_NG == mUserState) {  //メニュー(未契約ログイン)
-            setMenuItemUnsignedLogin();
-        } else if (UserState.CONTRACT_OK_PAIRING_NG == mUserState) { //メニュー(契約・ペアリング未)
-            setMenuItemSignedUnpaired();
-        } else if (UserState.CONTRACT_OK_PARING_OK == mUserState) { //メニュー(契約・ペアリング済み)
-            setMenuItemSignedPairing();
+        switch (mUserState) {
+            //メニュー(未加入)
+            case LOGIN_NG:
+                setMenuItemLogoff();
+                //未加入だけ場合は表示されない
+                removeFooterView();
+                break;
+            //メニュー(未契約ログイン)
+            case LOGIN_OK_CONTRACT_NG:
+                setMenuItemUnsignedLogin();
+                break;
+            //メニュー(契約・ペアリング未)
+            case CONTRACT_OK_PAIRING_NG:
+                setMenuItemSignedUnpaired();
+                break;
+            //メニュー(契約・ペアリング済み)
+            case CONTRACT_OK_PARING_OK:
+                setMenuItemSignedPairing();
+                break;
+            default:
+                break;
         }
     }
 
