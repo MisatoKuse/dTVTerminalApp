@@ -5,7 +5,6 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.text.TextUtils;
 
@@ -116,13 +115,13 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private static final int VIDEO_RANK_LIST = 4;
     /**
-     * クリップ(テレビ)リストID.
+     * 番組表取得.
      */
-    private static final int TV_CLIP_LIST = 5;
+    private static final int SELECT_TV_SCHEDULE_LIST = 5;
     /**
-     * クリップ(ビデオ)リストID.
+     * デイリーランク取得.
      */
-    private static final int VOD_CLIP_LIST = 6;
+    private static final int SELECT_DAILY_RANK_LIST = 6;
     /**
      * 視聴中ビデオ一覧ID.
      */
@@ -135,6 +134,18 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * 購入済みVod一覧ID.
      */
     private static final int RENTAL_VOD_LIST = 9;
+    /**
+     * ビデオランク取得.
+     */
+    private static final int SELECT_VIDEO_RANK_LIST = 10;
+    /**
+     * チャンネル一覧取得.
+     */
+    private static final int SELECT_CHANNEL_LIST = 11;
+    /**
+     * 視聴中ビデオ一覧取得.
+     */
+    private static final int SELECT_WATCH_LISTEN_VIDEO_LIST = 12;
 
     /**
      * 購入済みCh一覧取得クラス.
@@ -241,13 +252,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if (tvClipLists != null && tvClipLists.size() > 0) {
             TvClipList list = tvClipLists.get(0);
             setStructDB(list);
-        } else {
-            //TODO:Sprint10でDB使用を一時停止
-            //WEBAPIを取得できなかった時はDBのデータを使用
-//            List<Map<String, String>> tvClipList = new ArrayList<>();
-//            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-//            tvClipList = homeDataManager.selectTvClipHomeData();
-//            sendTvClipListData(tvClipList);
         }
     }
 
@@ -256,13 +260,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if (vodClipLists != null && vodClipLists.size() > 0) {
             VodClipList list = vodClipLists.get(0);
             setStructDB(list);
-        } else {
-            //TODO:Sprint10でDB使用を一時停止
-            //WEBAPIを取得できなかった時はDBのデータを使用
-//            List<Map<String, String>> vodClipList = new ArrayList<>();
-//            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-//            vodClipList = homeDataManager.selectVodClipHomeData();
-//            sendVodClipListData(vodClipList);
         }
     }
 
@@ -274,10 +271,13 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             setStructDB(list);
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
-            List<Map<String, String>> scheduleList;
-            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-            scheduleList = homeDataManager.selectTvScheduleListHomeData();
-            mTvScheduleContentsList = setHomeContentData(scheduleList, false);
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, SELECT_TV_SCHEDULE_LIST);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         }
     }
 
@@ -288,10 +288,13 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             setStructDB(list);
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
-            List<Map<String, String>> dailyRankList;
-            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-            dailyRankList = homeDataManager.selectDailyRankListHomeData();
-            sendDailyRankListData(dailyRankList);
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, SELECT_DAILY_RANK_LIST);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         }
     }
 
@@ -302,10 +305,13 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             setStructDB(list);
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
-            List<Map<String, String>> videoRankList;
-            RankingTopDataManager rankingTopDataManager = new RankingTopDataManager(mContext);
-            videoRankList = rankingTopDataManager.selectVideoRankListData();
-            sendVideoRankListData(videoRankList);
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, SELECT_VIDEO_RANK_LIST);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         }
     }
 
@@ -352,12 +358,14 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             setStructDB(list);
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
-            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-            List<Map<String, String>> channelList = homeDataManager.selectChannelListHomeData();
-            ChannelList chList = setHomeChannelData(channelList);
-            //チャンネル情報を元にNowOnAir情報の取得を行う.
-            mChannelList = chList;
-            getTvScheduleFromChInfo(chList);
+            //DB保存
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, SELECT_CHANNEL_LIST);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         }
     }
 
@@ -489,73 +497,56 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * Activityからのデータ取得要求受付.
      */
     public void getHomeData() {
-        //非同期処理でデータの取得を行う
-        homeDataDownloadTask.execute();
-    }
+        //NOW ON AIRを取得するためにまずはチャンネルリスト取得
+        getChannelList(0, 0, "", DEFAULT_CHANNEL_DISPLAY_TYPE);
 
-    /**
-     * 非同期処理でHOME画面に表示するデータの取得を行う.
-     */
-    private AsyncTask<Void, Void, Void> homeDataDownloadTask = new AsyncTask<Void, Void, Void>() {
-        @Override
-        protected Void doInBackground(final Void... voids) {
-            //NOW ON AIRを取得するためにまずはチャンネルリスト取得
-            getChannelList(0, 0, "", DEFAULT_CHANNEL_DISPLAY_TYPE);
-
-            //おすすめ番組・レコメンド情報は最初からContentsDataのリストなので、そのまま使用する
-            List<ContentsData> recommendChListData = getRecommendChListData();
-            if (recommendChListData != null && recommendChListData.size() > 0) {
-                sendRecommendChListData(recommendChListData);
-            }
-            //今日のテレビランキング
-            List<Map<String, String>> dailyRankList = getDailyRankListData();
-            if (dailyRankList != null && dailyRankList.size() > 0) {
-                sendDailyRankListData(dailyRankList);
-            }
-
-            UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
-
-            //ビデオランキング
-            int ageReq = userInfoDataProvider.getUserAge();
-            List<Map<String, String>> VideoRankList = getVideoRankListData(100, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, "",
-                    JsonConstants.GENRE_PER_CONTENTS_SORT_PLAY_COUNT_DESC);
-            if (VideoRankList != null && VideoRankList.size() > 0) {
-                sendVideoRankListData(VideoRankList);
-            }
-            //TODO:生データ保存のみ(DB保存までの処理を新設するか検討中)
-            //ジャンルID(ビデオ一覧)一覧取得
-            getGenreListDataRequest();
-
-            //ロールID一覧取得
-            getRoleListData();
-
-            if (userInfoDataProvider.isH4dUser()) {
-                //H4dユーザに必要なデータ取得開始
-                //クリップキー一覧(今日のテレビランキングにまとめられてるので省略するか検討中)
-                //TVクリップ一覧
-                List<Map<String, String>> tvClipList = getTvClipListData();
-                if (tvClipList.size() > 0) {
-                    sendTvClipListData(tvClipList);
-                }
-
-                //VODクリップ一覧
-                List<Map<String, String>> vodClipList = getVodClipListData();
-                if (vodClipList.size() > 0) {
-                    sendVodClipListData(vodClipList);
-                }
-
-                //視聴中ビデオ一覧
-                getWatchListenVideoData(WatchListenVideoListDataProvider.DEFAULT_PAGE_OFFSET);
-
-                //購入済チャンネル一覧(レンタルCh)
-                getChListData();
-
-                //購入済VOD一覧
-                getRentalData();
-            }
-            return null;
+        //おすすめ番組・レコメンド情報は最初からContentsDataのリストなので、そのまま使用する
+        List<ContentsData> recommendChListData = getRecommendChListData();
+        if (recommendChListData != null && recommendChListData.size() > 0) {
+            sendRecommendChListData(recommendChListData);
         }
-    };
+        //今日のテレビランキング
+        getDailyRankListData();
+
+        UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
+
+        //ビデオランキング
+        int ageReq = userInfoDataProvider.getUserAge();
+        getVideoRankListData(100, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, "",
+                JsonConstants.GENRE_PER_CONTENTS_SORT_PLAY_COUNT_DESC);
+
+        //TODO:生データ保存のみ(DB保存までの処理を新設するか検討中)
+        //ジャンルID(ビデオ一覧)一覧取得
+        getGenreListDataRequest();
+
+        //ロールID一覧取得
+        getRoleListData();
+
+        if (userInfoDataProvider.isH4dUser()) {
+            //H4dユーザに必要なデータ取得開始
+            //クリップキー一覧(今日のテレビランキングにまとめられてるので省略するか検討中)
+            //TVクリップ一覧
+            List<Map<String, String>> tvClipList = getTvClipListData();
+            if (tvClipList.size() > 0) {
+                sendTvClipListData(tvClipList);
+            }
+
+            //VODクリップ一覧
+            List<Map<String, String>> vodClipList = getVodClipListData();
+            if (vodClipList.size() > 0) {
+                sendVodClipListData(vodClipList);
+            }
+
+            //視聴中ビデオ一覧
+            getWatchListenVideoData(WatchListenVideoListDataProvider.DEFAULT_PAGE_OFFSET);
+
+            //購入済チャンネル一覧(レンタルCh)
+            getChListData();
+
+            //購入済VOD一覧
+            getRentalData();
+        }
+    }
 
     /**
      * NOW ON AIRをHomeActivityに送る.
@@ -660,6 +651,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             contentInfo.setTime(mapList.get(i).get(JsonConstants.META_RESPONSE_DISPLAY_START_DATE));
             contentInfo.setTitle(mapList.get(i).get(JsonConstants.META_RESPONSE_TITLE));
             contentInfo.setThumURL(mapList.get(i).get(JsonConstants.META_RESPONSE_THUMB_448));
+            contentInfo.setLinearStartDate(mapList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_START_DATE));
+            contentInfo.setLinearEndDate(mapList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_END_DATE));
             contentInfo.setServiceId(mapList.get(i).get(JsonConstants.META_RESPONSE_SERVICE_ID));
             contentInfo.setChannelNo(mapList.get(i).get(JsonConstants.META_RESPONSE_CHNO));
             String thumbUrl = contentInfo.getThumURL();
@@ -716,20 +709,15 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         for (int i = 0; i < chNoList.size(); i++) {
             chNos[i] = chNoList.get(i);
         }
-        List<Map<String, String>> tvScheduleListData = getTvScheduleListData(chNos);
-        if (tvScheduleListData != null && tvScheduleListData.size() > 0) {
-            mTvScheduleContentsList = setHomeContentData(tvScheduleListData, false);
-            sendTvScheduleListData(setChannelName(mTvScheduleContentsList, mChannelList));
-        }
+        getTvScheduleListData(chNos);
     }
 
     /**
      * NOW ON AIR 情報取得.
      *
      * @param chNo チャンネル番号
-     * @return 番組情報
      */
-    private List<Map<String, String>> getTvScheduleListData(final String[] chNo) {
+    private void getTvScheduleListData(final String[] chNo) {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.TV_SCHEDULE_LAST_INSERT);
 
@@ -739,8 +727,13 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 || !NetWorkUtils.isOnline(mContext)) {
             //データをDBから取得する
             //TODO データがDBに無い場合や壊れていた場合の処理が必要
-            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-            list = homeDataManager.selectTvScheduleListHomeData();
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, SELECT_TV_SCHEDULE_LIST);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         } else {
             if (!mIsStop) {
                 //通信クラスにデータ取得要求を出す
@@ -756,7 +749,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 DTVTLogger.error("TvScheduleWebClient is stopping connect");
             }
         }
-        return list;
     }
 
     /**
@@ -808,14 +800,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.TV_LAST_INSERT);
         List<Map<String, String>> list = new ArrayList<>();
-        //クリップ[テレビ]一覧のDB保存履歴と、有効期間を確認
-//        if ((lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate))
-//                || !NetWorkUtils.isOnline(mContext)) {
-        //TODO:Sprint10でDB使用を一時停止
-        //データをDBから取得する
-//            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-//            list = homeDataManager.selectTvClipHomeData();
-//        } else {
         if (!mIsStop) {
             //通信クラスにデータ取得要求を出す
             TvClipWebClient webClient = new TvClipWebClient(mContext);
@@ -843,14 +827,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.VOD_LAST_INSERT);
         List<Map<String, String>> list = new ArrayList<>();
-        //クリップ[ビデオ]一覧のDB保存履歴と、有効期間を確認
-//        if ((lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate))) {
-//                || !NetWorkUtils.isOnline(mContext)) {
-        //TODO:Sprint10でDB使用を一時停止
-        //データをDBから取得する
-//            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-//            list = homeDataManager.selectVodClipHomeData();
-//        } else {
         if (!mIsStop) {
             //通信クラスにデータ取得要求を出す
             VodClipWebClient webClient = new VodClipWebClient(mContext);
@@ -871,19 +847,22 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
 
     /**
      * 今日のテレビランキング情報取得.
-     *
-     * @return 今日のテレビランキング
      */
-    private List<Map<String, String>> getDailyRankListData() {
+    private void getDailyRankListData() {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.DAILY_RANK_LAST_INSERT);
-        List<Map<String, String>> list = new ArrayList<>();
         //今日のテレビランキング一覧のDB保存履歴と、有効期間を確認
         if ((lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate))
                 || !NetWorkUtils.isOnline(mContext)) {
             //データをDBから取得する
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
-            list = homeDataManager.selectDailyRankListHomeData();
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, SELECT_DAILY_RANK_LIST);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         } else {
             if (!mIsStop) {
                 //通信クラスにデータ取得要求を出す
@@ -897,7 +876,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 DTVTLogger.error("DailyRankWebClient is stopping connect");
             }
         }
-        return list;
     }
 
     /**
@@ -909,9 +887,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param ageReq  年齢設定値
      * @param genreId ジャンルID
      * @param sort    ソート指定
-     * @return ビデオランキング情報
      */
-    private List<Map<String, String>> getVideoRankListData(
+    private void getVideoRankListData(
             final int limit, final int offset, final String filter, final int ageReq,
             final String genreId, final String sort) {
         DateUtils dateUtils = new DateUtils(mContext);
@@ -921,8 +898,13 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if ((!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate))
                 || !NetWorkUtils.isOnline(mContext)) {
             //データをDBから取得する
-            RankingTopDataManager rankingTopDataManager = new RankingTopDataManager(mContext);
-            list = rankingTopDataManager.selectVideoRankListData();
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, SELECT_VIDEO_RANK_LIST);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         } else {
             if (!mIsStop) {
                 //通信クラスにデータ取得要求を出す
@@ -932,7 +914,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 DTVTLogger.error("ContentsListPerGenreWebClient is stopping connect");
             }
         }
-        return list;
     }
 
     /**
@@ -949,13 +930,13 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if ((!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate))
                 || !NetWorkUtils.isOnline(mContext)) {
             //データをDBから取得する
-            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-            List<Map<String, String>> channelList = homeDataManager.selectChannelListHomeData();
-            //チャンネル情報を元にNowOnAir情報の取得を行う.
-            ChannelList chList = new ChannelList();
-            chList.setChannelList(channelList);
-            mChannelList = chList;
-            getTvScheduleFromChInfo(chList);
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, SELECT_CHANNEL_LIST);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         } else {
             //通信クラスにデータ取得要求を出す
             ChannelWebClient mChannelList = new ChannelWebClient(mContext);
@@ -997,8 +978,13 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             }
         } else {
             //キャッシュ期限内ならDBから取得
-            HomeDataManager watchListenVideoDataManager = new HomeDataManager(mContext);
-            sendWatchingVideoListData(watchListenVideoDataManager.selectWatchingVideoHomeData());
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, SELECT_WATCH_LISTEN_VIDEO_LIST);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         }
     }
 
@@ -1174,18 +1160,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private void setStructDB(final TvClipList tvClipList) {
         List<Map<String, String>> vcList = tvClipList.getVcList();
-        //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
         sendTvClipListData(vcList);
-//        if (vcList != null && !vcList.isEmpty()) {
-//            //DB保存
-//            Handler handler = new Handler();
-//            try {
-//                DbThread t = new DbThread(handler, this, TV_CLIP_LIST);
-//                t.start();
-//            } catch (Exception e) {
-//                DTVTLogger.debug(e);
-//            }
-//        }
     }
 
     /**
@@ -1194,19 +1169,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param vodClipList クリップ[ビデオ]一覧データ
      */
     private void setStructDB(final VodClipList vodClipList) {
-        //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
         List<Map<String, String>> vcList = vodClipList.getVcList();
         sendVodClipListData(vcList);
-//        if (vcList != null && !vcList.isEmpty()) {
-//            //DB保存
-//            Handler handler = new Handler();
-//            try {
-//                DbThread t = new DbThread(handler, this, VOD_CLIP_LIST);
-//                t.start();
-//            } catch (Exception e) {
-//                DTVTLogger.debug(e);
-//            }
-//        }
     }
 
     /**
@@ -1384,59 +1348,72 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
+    @SuppressWarnings("OverlyLongMethod") //switch-case処理のみのためメソッド内に60行以上の処理としています
     @Override
     public List<Map<String, String>> dbOperation(final int operationId) {
-        DateUtils dateUtils = new DateUtils(mContext);
+        HomeDataManager homeDataManager;
         switch (operationId) {
             case ROLE_ID_LIST:
-                dateUtils.addLastDate(DateUtils.ROLELIST_LAST_UPDATE);
                 RoleListInsertDataManager roleListInsertDataManager = new RoleListInsertDataManager(mContext);
                 roleListInsertDataManager.insertRoleList(mRoleListMetaDataList);
                 break;
             case CHANNEL_LIST:
-                dateUtils.addLastDate(DateUtils.CHANNEL_LAST_UPDATE);
                 ChannelInsertDataManager channelInsertDataManager = new ChannelInsertDataManager(mContext);
                 channelInsertDataManager.insertChannelInsertList(mChannelList);
                 break;
             case TV_SCHEDULE_LIST:
-                dateUtils.addLastDate(DateUtils.TV_SCHEDULE_LAST_INSERT);
                 TvScheduleInsertDataManager tvScheduleInsertDataManager = new TvScheduleInsertDataManager(mContext);
                 tvScheduleInsertDataManager.insertTvScheduleInsertList(mTvScheduleList);
                 break;
             case DAILY_RANK_LIST:
-                dateUtils.addLastDate(DateUtils.DAILY_RANK_LAST_INSERT);
                 DailyRankInsertDataManager dailyRankInsertDataManager = new DailyRankInsertDataManager(mContext);
                 dailyRankInsertDataManager.insertDailyRankInsertList(mDailyRankList);
                 break;
             case VIDEO_RANK_LIST:
-                dateUtils.addLastDate(DateUtils.VIDEO_RANK_LAST_INSERT);
                 VideoRankInsertDataManager videoRankInsertDataManager = new VideoRankInsertDataManager(mContext);
                 videoRankInsertDataManager.insertVideoRankInsertList(mVideoRankList);
                 break;
-            case TV_CLIP_LIST:
-//                dateUtils.addLastDate(DateUtils.TV_LAST_INSERT);
-//                TvClipInsertDataManager tvClipInsertDataManager = new TvClipInsertDataManager(mContext);
-//                tvClipInsertDataManager.insertTvClipInsertList(tvClipList);
-                break;
-            case VOD_CLIP_LIST:
-//                dateUtils.addLastDate(DateUtils.VOD_LAST_INSERT);
-//                VodClipInsertDataManager vodClipInsertDataManager = new VodClipInsertDataManager(mContext);
-//                vodClipInsertDataManager.insertVodClipInsertList(mVodClipList);
-                break;
             case WATCH_LISTEN_VIDEO_LIST:
-                dateUtils.addLastDate(DateUtils.WATCHING_VIDEO_LIST_LAST_INSERT);
                 WatchListenVideoDataManager watchListenVideoDataManager = new WatchListenVideoDataManager(mContext);
                 watchListenVideoDataManager.insertWatchListenVideoInsertList(mWatchListenVideoList);
                 break;
             case RENTAL_CH_LIST:
-                dateUtils.addLastDate(DateUtils.RENTAL_CHANNEL_LAST_UPDATE);
                 RentalListInsertDataManager rentalChListInsertDataManager = new RentalListInsertDataManager(mContext);
                 rentalChListInsertDataManager.insertChRentalListInsertList(mPurchasedChListResponse);
                 break;
             case RENTAL_VOD_LIST:
-                dateUtils.addLastDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
                 RentalListInsertDataManager rentalListInsertDataManager = new RentalListInsertDataManager(mContext);
                 rentalListInsertDataManager.insertRentalListInsertList(mPurchasedVodListResponse);
+                break;
+            case SELECT_TV_SCHEDULE_LIST:
+                List<Map<String, String>> scheduleList;
+                homeDataManager = new HomeDataManager(mContext);
+                scheduleList = homeDataManager.selectTvScheduleListHomeData();
+                mTvScheduleContentsList = setHomeContentData(scheduleList, false);
+                break;
+            case SELECT_DAILY_RANK_LIST:
+                List<Map<String, String>> dailyRankList;
+                homeDataManager = new HomeDataManager(mContext);
+                dailyRankList = homeDataManager.selectDailyRankListHomeData();
+                sendDailyRankListData(dailyRankList);
+                break;
+            case SELECT_VIDEO_RANK_LIST:
+                List<Map<String, String>> videoRankList;
+                RankingTopDataManager rankingTopDataManager = new RankingTopDataManager(mContext);
+                videoRankList = rankingTopDataManager.selectVideoRankListData();
+                sendVideoRankListData(videoRankList);
+                break;
+            case SELECT_CHANNEL_LIST:
+                homeDataManager = new HomeDataManager(mContext);
+                List<Map<String, String>> channelList = homeDataManager.selectChannelListHomeData();
+                ChannelList chList = setHomeChannelData(channelList);
+                //チャンネル情報を元にNowOnAir情報の取得を行う.
+                mChannelList = chList;
+                getTvScheduleFromChInfo(chList);
+                break;
+            case SELECT_WATCH_LISTEN_VIDEO_LIST:
+                homeDataManager = new HomeDataManager(mContext);
+                sendWatchingVideoListData(homeDataManager.selectWatchingVideoHomeData());
                 break;
             default:
                 break;

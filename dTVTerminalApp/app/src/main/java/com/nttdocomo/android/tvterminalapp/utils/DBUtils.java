@@ -199,6 +199,18 @@ public class DBUtils {
     }
 
     /**
+     * 引数指定されたテーブルにレコードが存在するかを返す.
+     *
+     * @param database  データベース
+     * @param tableName テーブル名
+     * @return データ存在チェック結果
+     */
+    public static boolean isCachingRecord(final SQLiteDatabase database, final String tableName) {
+        long recordCount = DatabaseUtils.queryNumEntries(database, tableName);
+        return recordCount > 0;
+    }
+
+    /**
      * 引数指定されたテーブルにレコードが存在するかを返す(番組詳細情報用).
      *
      * @param context コンテキスト
@@ -207,7 +219,7 @@ public class DBUtils {
      * @return データ存在チェック結果
      */
     public static synchronized boolean isChCachingRecord(final Context context, final String tableName,
-                                            final String chNo) {
+                                                         final String chNo) {
         DBHelperChannel dbHelperChannel = new DBHelperChannel(context, chNo);
         SQLiteDatabase database = dbHelperChannel.getWritableDatabase();
         long recordCount = DatabaseUtils.queryNumEntries(database, tableName);

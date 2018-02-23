@@ -19,6 +19,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChListResp
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -31,12 +32,6 @@ import java.util.Map;
  * レンタル一覧：データ管理.
  */
 public class RentalListInsertDataManager {
-
-    /*
-    public boolean insertRentalList(){
-        return false;
-    }
-    */
 
     /**
      * コンテキスト.
@@ -58,6 +53,11 @@ public class RentalListInsertDataManager {
      * @param rentalList 購入済みVOD一覧
      */
     public void insertRentalListInsertList(final PurchasedVodListResponse rentalList) {
+
+        //有効期限判定
+        if (!DateUtils.getLastDate(mContext, DateUtils.RENTAL_CHANNEL_LAST_UPDATE)) {
+            return;
+        }
 
         //各種オブジェクト作成
         DBHelper rentalListDBHelper = new DBHelper(mContext);
@@ -104,6 +104,10 @@ public class RentalListInsertDataManager {
 
             rentalListDao.insertActiveList(activeValues);
         }
+        //データ保存日時を格納
+        DateUtils dateUtils = new DateUtils(mContext);
+        dateUtils.addLastDate(DateUtils.RENTAL_CHANNEL_LAST_UPDATE);
+
         DataBaseManager.getInstance().closeDatabase();
     }
 
@@ -165,4 +169,4 @@ public class RentalListInsertDataManager {
         }
         DataBaseManager.getInstance().closeDatabase();
     }
- }
+}

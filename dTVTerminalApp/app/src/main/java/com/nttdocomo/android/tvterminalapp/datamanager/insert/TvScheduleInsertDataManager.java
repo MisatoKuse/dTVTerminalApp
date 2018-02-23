@@ -60,6 +60,11 @@ public class TvScheduleInsertDataManager {
      */
     public void insertTvScheduleInsertList(final TvScheduleList tvScheduleList) {
 
+        //有効期限判定
+        if (!DateUtils.getLastDate(mContext, DateUtils.TV_SCHEDULE_LAST_INSERT)) {
+            return;
+        }
+
         //各種オブジェクト作成
         DBHelper channelListDBHelper = new DBHelper(mContext);
         DataBaseManager.initializeInstance(channelListDBHelper);
@@ -86,7 +91,10 @@ public class TvScheduleInsertDataManager {
             }
             tvScheduleListDao.insert(values);
         }
-        database.close();
+        //データ保存日時を格納
+        DateUtils dateUtils = new DateUtils(mContext);
+        dateUtils.addLastDate(DateUtils.TV_SCHEDULE_LAST_INSERT);
+
         DataBaseManager.getInstance().closeDatabase();
     }
 

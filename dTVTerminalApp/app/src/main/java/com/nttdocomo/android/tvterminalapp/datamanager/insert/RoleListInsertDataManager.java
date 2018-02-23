@@ -12,6 +12,7 @@ import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RoleListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
 import java.util.List;
 
@@ -40,6 +41,11 @@ public class RoleListInsertDataManager {
      */
     public void insertRoleList(final List<RoleListMetaData> roleList) {
 
+        //有効期限判定
+        if (!DateUtils.getLastDate(mContext, DateUtils.ROLELIST_LAST_UPDATE)) {
+            return;
+        }
+
         //各種オブジェクト作成
         DBHelper channelListDBHelper = new DBHelper(mContext);
         DataBaseManager.initializeInstance(channelListDBHelper);
@@ -57,6 +63,10 @@ public class RoleListInsertDataManager {
             values.put(JsonConstants.META_RESPONSE_CONTENTS_NAME, roleData.getName());
             roleListDao.insert(values);
         }
+        //データ保存日時を格納
+        DateUtils dateUtils = new DateUtils(mContext);
+        dateUtils.addLastDate(DateUtils.ROLELIST_LAST_UPDATE);
+
         DataBaseManager.getInstance().closeDatabase();
     }
 }

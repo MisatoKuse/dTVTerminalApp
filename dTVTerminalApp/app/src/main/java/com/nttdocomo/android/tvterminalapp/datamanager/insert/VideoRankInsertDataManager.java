@@ -12,11 +12,14 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VideoRankLis
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.VIDEO_RANK_LAST_INSERT;
 
 /**
  * ビデオランキングInsertDataManager.
@@ -25,7 +28,7 @@ public class VideoRankInsertDataManager {
     /**
      * コンテキスト.
      */
-     private final Context mContext;
+    private final Context mContext;
 
     /**
      * コンストラクタ.
@@ -42,16 +45,21 @@ public class VideoRankInsertDataManager {
      */
     public void insertVideoRankInsertList(final VideoRankList videoRankList) {
 
+        //有効期限判定
+        if (!DateUtils.getLastDate(mContext, DateUtils.VIDEO_RANK_LAST_INSERT)) {
+            return;
+        }
+
         //各種オブジェクト作成
         DBHelper videoRankListDBHelper = new DBHelper(mContext);
         DataBaseManager.initializeInstance(videoRankListDBHelper);
         SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-        VideoRankListDao weeklyRankListDao = new VideoRankListDao(database);
+        VideoRankListDao videoRankListDao = new VideoRankListDao(database);
         @SuppressWarnings("unchecked")
         List<HashMap<String, String>> hashMaps = videoRankList.getVrList();
 
         //DB保存前に前回取得したデータは全消去する
-        weeklyRankListDao.delete();
+        videoRankListDao.delete();
 
         //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
         for (int i = 0; i < hashMaps.size(); i++) {
@@ -63,8 +71,12 @@ public class VideoRankInsertDataManager {
                 String valName = (String) entry.getValue();
                 values.put(DBUtils.fourKFlgConversion(keyName), valName);
             }
-            weeklyRankListDao.insert(values);
+            videoRankListDao.insert(values);
         }
+        //DB保存日時格納
+        DateUtils dateUtils = new DateUtils(mContext);
+        dateUtils.addLastDate(VIDEO_RANK_LAST_INSERT);
+
         DataBaseManager.getInstance().closeDatabase();
     }
 }

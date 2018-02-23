@@ -12,11 +12,14 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.DailyRankLis
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.DAILY_RANK_LAST_INSERT;
 
 /**
  * 週間ランキング用InsertDataManager.
@@ -41,6 +44,11 @@ public class DailyRankInsertDataManager {
      */
     public void insertDailyRankInsertList(final DailyRankList dailyRankList) {
 
+        //有効期限判定
+        if (!DateUtils.getLastDate(mContext, DateUtils.DAILY_RANK_LAST_INSERT)) {
+            return;
+        }
+
         //各種オブジェクト作成
         DBHelper dailyRankListDBHelper = new DBHelper(mContext);
         DataBaseManager.initializeInstance(dailyRankListDBHelper);
@@ -64,6 +72,11 @@ public class DailyRankInsertDataManager {
             }
             dailyRankListDao.insert(values);
         }
+
+        //DB保存日時格納
+        DateUtils dateUtils = new DateUtils(mContext);
+        dateUtils.addLastDate(DAILY_RANK_LAST_INSERT);
+
         DataBaseManager.getInstance().closeDatabase();
     }
 }

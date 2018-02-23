@@ -12,6 +12,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WatchListenV
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoList;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,6 +45,11 @@ public class WatchListenVideoDataManager {
      */
     public void insertWatchListenVideoInsertList(final WatchListenVideoList watchListenVideoList) {
 
+        //有効期限判定
+        if (!DateUtils.getLastDate(mContext, DateUtils.WATCHING_VIDEO_LIST_LAST_INSERT)) {
+            return;
+        }
+
         //各種オブジェクト作成
         DBHelper watchListenVideoDBHelper = new DBHelper(mContext);
         DataBaseManager.initializeInstance(watchListenVideoDBHelper);
@@ -67,6 +73,10 @@ public class WatchListenVideoDataManager {
             }
             watchListenVideoListDao.insert(values);
         }
+        //データ保存日時を格納
+        DateUtils dateUtils = new DateUtils(mContext);
+        dateUtils.addLastDate(DateUtils.WATCHING_VIDEO_LIST_LAST_INSERT);
+
         DataBaseManager.getInstance().closeDatabase();
     }
 }

@@ -11,6 +11,7 @@ import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VideoRankListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.DataBaseManager;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
 import java.util.ArrayList;
@@ -41,13 +42,9 @@ public class RankingTopDataManager {
      *
      * @return ランキングデータ
      */
-    public synchronized List<Map<String, String>> selectVideoRankListData() {
+    public List<Map<String, String>> selectVideoRankListData() {
 
         List<Map<String, String>> list = new ArrayList<>();
-        //データ存在チェック
-        if (!DBUtils.isCachingRecord(mContext, DBConstants.RANKING_VIDEO_LIST_TABLE_NAME)) {
-            return list;
-        }
 
         //ホーム画面に必要な列を列挙する
         String[] columns = {JsonConstants.META_RESPONSE_THUMB_448, JsonConstants.META_RESPONSE_TITLE,
@@ -62,12 +59,20 @@ public class RankingTopDataManager {
 
         //Daoクラス使用準備
         DBHelper videoRankListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase database = videoRankListDBHelper.getWritableDatabase();
+        DataBaseManager.initializeInstance(videoRankListDBHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+
+        //データ存在チェック
+        if (!DBUtils.isCachingRecord(database, DBConstants.RANKING_VIDEO_LIST_TABLE_NAME)) {
+            DataBaseManager.getInstance().closeDatabase();
+            return list;
+        }
+
         VideoRankListDao videoRankListDao = new VideoRankListDao(database);
 
         //ビデオランクデータ取得
         list = videoRankListDao.findById(columns);
-        database.close();
+        DataBaseManager.getInstance().closeDatabase();
         return list;
     }
 }

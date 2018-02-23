@@ -339,6 +339,36 @@ public class DateUtils {
     }
 
     /**
+     * 日付比較結果を返却する.
+     *
+     * @param context 　コンテキスト
+     * @param key     SharedPreferencesキー
+     * @return 期限切れ日付判定結果
+     */
+    public static boolean getLastDate(final Context context, final String key) {
+        SharedPreferences data = context.getSharedPreferences(DATA_SAVE, Context.MODE_PRIVATE);
+        String lastStr = data.getString(key, "");
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DD);
+        //日付の比較
+        Calendar calendar = Calendar.getInstance();
+        String nowStr = sdf.format(calendar.getTime());
+        Date lastDate = new Date();
+        Date nowDate = new Date();
+        try {
+            lastDate = sdf.parse(lastStr);
+            nowDate = sdf.parse(nowStr);
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
+        boolean isExpired = false;
+        if (lastDate.compareTo(nowDate) < 0) {
+            isExpired = true;
+        }
+
+        return TextUtils.isEmpty(lastStr) || isExpired;
+//        return !TextUtils.isEmpty(lastStr) && !isExpired;
+    }
+    /**
      * chNoの対象日付データの前回取得日時をエポック秒で返す.
      *
      * @param chNos ChNo
@@ -626,6 +656,8 @@ public class DateUtils {
         long epochTime = 0;
 
         SimpleDateFormat formatter = new SimpleDateFormat(DATE_PATTERN, Locale.JAPAN);
+        //APIレスポンスの値がJSTとのこと
+        formatter.setTimeZone(TimeZone.getTimeZone("JST"));
         Date gmt = null;
         try {
             gmt = formatter.parse(strDate);
@@ -648,8 +680,6 @@ public class DateUtils {
         long epochTime = 0;
         if (null != strDate) {
             SimpleDateFormat formatter = new SimpleDateFormat(DATE_YYYY_MM_DD_HH_MM_SS);
-            //APIレスポンスの値がJSTとのこと
-            formatter.setTimeZone(TimeZone.getTimeZone("JST"));
             Date gmt = null;
             try {
                 gmt = formatter.parse(strDate);

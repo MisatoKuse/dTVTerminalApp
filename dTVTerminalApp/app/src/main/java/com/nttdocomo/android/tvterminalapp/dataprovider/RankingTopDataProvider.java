@@ -5,7 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
-import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivity;
@@ -14,6 +14,7 @@ import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActiv
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.VideoRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.WeeklyRankInsertDataManager;
@@ -94,6 +95,30 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
      * ビデオランキング取得用Webクライアント.
      */
     private ContentsListPerGenreWebClient mContentsListPerGenreWebClient = null;
+    /**
+     * DailyRankingDBThread判定用(insert).
+     */
+    private static final int INSERT_DAILY_RANKING_DATA = 0;
+    /**
+     * WeeklyRankingDBThread判定用(insert).
+     */
+    private static final int INSERT_WEEKLY_RANKING_DATA = 1;
+    /**
+     * VideoRankingDBThread判定用(insert).
+     */
+    private static final int INSERT_VIDEO_RANKING_DATA = 2;
+    /**
+     * DailyRankingDBThread判定用(select).
+     */
+    private static final int SELECT_DAILY_RANKING_DATA = 3;
+    /**
+     * WeeklyRankingDBThread判定用(select).
+     */
+    private static final int SELECT_WEEKLY_RANKING_DATA = 4;
+    /**
+     * VideoRankingDBThread判定用(select).
+     */
+    private static final int SELECT_VIDEO_RANKING_DATA = 5;
 
     @Override
     public void onDailyRankJsonParsed(final List<DailyRankList> dailyRankLists) {
@@ -107,9 +132,13 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             }
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
-            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-            List<Map<String, String>> dailyRankList = homeDataManager.selectDailyRankListHomeData();
-            sendDailyRankListData(dailyRankList);
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, SELECT_DAILY_RANKING_DATA);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         }
     }
 
@@ -123,20 +152,17 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             setStructDB(list);
             // コールバック判定
             if (!mRequiredClipKeyList || mResponseEndFlag) {
-                if (mApiDataProviderCallback != null) {
-                    DTVTLogger.debug("WeeklyRankList Callback");
-                    sendWeeklyRankListData(list.getWrList());
-                } else {
-                    sendWeeklyGenreRankListData(setRankingContentData(list.getWrList()));
-                }
-            } else {
-                mWeeklyRankList = list;
+                sendWeeklyRankList(list);
             }
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
-            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-            List<Map<String, String>> weeklyRankList = homeDataManager.selectWeeklyRankListHomeData();
-            sendWeeklyRankListData(weeklyRankList);
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, SELECT_WEEKLY_RANKING_DATA);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         }
         DTVTLogger.end();
     }
@@ -147,16 +173,17 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             VideoRankList list = contentsListPerGenre.get(0);
             setStructDB(list);
             if (!mRequiredClipKeyList || mResponseEndFlag) {
-                sendVideoRankListData(list.getVrList());
-            } else {
-                mVideoRankList = list;
+                sendVideoRankList(list);
             }
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
-            List<Map<String, String>> videoRankList;
-            RankingTopDataManager rankingTopDataManager = new RankingTopDataManager(mContext);
-            videoRankList = rankingTopDataManager.selectVideoRankListData();
-            sendVideoRankListData(videoRankList);
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, SELECT_VIDEO_RANKING_DATA);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         }
     }
 
@@ -174,27 +201,59 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         // 週間テレビランキング
         if (mContext instanceof WeeklyTvRankingActivity) {
             if (mWeeklyRankList != null) {
-                if (mApiDataProviderCallback != null) {
-                    DTVTLogger.debug("WeeklyRankList Callback");
-                    sendWeeklyRankListData(mWeeklyRankList.getWrList());
-                } else {
-                    sendWeeklyGenreRankListData(setRankingContentData(mWeeklyRankList.getWrList()));
-                }
+                sendWeeklyRankList(mWeeklyRankList);
             }
         }
         // ビデオランキング
         if (mContext instanceof VideoRankingActivity) {
-            if (mVideoRankList != null) {
-                if (mApiDataProviderCallback != null) {
-                    DTVTLogger.debug("WeeklyRankList Callback");
-                    sendVideoRankListData(mVideoRankList.getVrList());
-                } else {
-                    sendVideoGenreRankListData(setRankingContentData(mVideoRankList.getVrList()));
-                }
-            }
+            sendVideoRankList(mVideoRankList);
         }
 
         DTVTLogger.end();
+    }
+
+    /**
+     * 週間ランクリストをActivityに送る.
+     *
+     * @param weeklyRankList 週間ランクリスト
+     */
+    private void sendWeeklyRankList(final WeeklyRankList weeklyRankList) {
+        DTVTLogger.start();
+        if (weeklyRankList != null) {
+            List<ContentsData> contentsDataList = setRankingContentData(weeklyRankList.getWrList());
+            if (mApiDataProviderCallback != null) {
+                if (mApiDataProviderCallback != null) {
+                    mApiDataProviderCallback.weeklyRankCallback(contentsDataList);
+                }
+            } else {
+                if (mWeeklyRankingApiCallback != null) {
+                    mWeeklyRankingApiCallback.onWeeklyRankListCallback(contentsDataList);
+                }
+                DTVTLogger.end();
+            }
+        }
+    }
+
+    /**
+     * ビデオランクリストをActivityに送る.
+     *
+     * @param videoRankList ビデオランクリスト
+     */
+    private void sendVideoRankList(final VideoRankList videoRankList) {
+        DTVTLogger.start();
+        if (videoRankList != null) {
+            List<ContentsData> contentsDataList = setRankingContentData(videoRankList.getVrList());
+            if (mApiDataProviderCallback != null) {
+                if (mApiDataProviderCallback != null) {
+                    mApiDataProviderCallback.videoRankCallback(contentsDataList);
+                }
+            } else {
+                if (mVideoRankingApiDataProviderCallback != null) {
+                    mVideoRankingApiDataProviderCallback.onVideoRankListCallback(contentsDataList);
+                }
+                DTVTLogger.end();
+            }
+        }
     }
 
     @Override
@@ -210,23 +269,11 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         }
         // 週間テレビランキング
         if (mWeeklyRankList != null) {
-            if (mApiDataProviderCallback != null) {
-                DTVTLogger.debug("WeeklyRankList Callback");
-                sendWeeklyRankListData(mWeeklyRankList.getWrList());
-            } else {
-                sendWeeklyGenreRankListData(setRankingContentData(mWeeklyRankList.getWrList()));
-            }
+            sendWeeklyRankList(mWeeklyRankList);
         }
         // ビデオランキング
         if (mContext instanceof VideoRankingActivity) {
-            if (mVideoRankList != null) {
-                if (mApiDataProviderCallback != null) {
-                    DTVTLogger.debug("VideoRankList Callback");
-                    sendVideoRankListData(mVideoRankList.getVrList());
-                } else {
-                    sendVideoGenreRankListData(setRankingContentData(mVideoRankList.getVrList()));
-                }
-            }
+            sendVideoRankList(mVideoRankList);
         }
         DTVTLogger.end();
     }
@@ -305,16 +352,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             //今日のランキング
             getDailyRankList();
             //週刊のランキング
-            List<Map<String, String>> weeklyRankList = getWeeklyRankListData("");
-            if (weeklyRankList != null && weeklyRankList.size() > 0) {
-                // 週間テレビランキング取得
-                sendWeeklyRankListData(weeklyRankList);
-            }
+            getWeeklyRankListData("");
             //ビデオのランキング
-            List<Map<String, String>> videoRankList = getVideoRankListData("");
-            if (videoRankList != null && videoRankList.size() > 0) {
-                sendVideoRankListData(videoRankList);
-            }
+            getVideoRankListData("");
         } else {
             DTVTLogger.error("RankingTopDataProvider is stopping connect");
         }
@@ -326,15 +366,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
     public void getDailyRankList() {
         if (!mIsCancel) {
             //今日のランキング
-            List<Map<String, String>> dailyRankList = getDailyRankListData();
-            if (dailyRankList != null && dailyRankList.size() > 0) {
-                if (!mRequiredClipKeyList || mResponseEndFlag) {
-                    sendDailyRankListData(dailyRankList);
-                } else {
-                    mDailyRankList = new DailyRankList();
-                    mDailyRankList.setDrList(dailyRankList);
-                }
-            }
+            getDailyRankListData();
         } else {
             DTVTLogger.error("RankingTopDataProvider is stopping connect");
             mApiDataProviderCallback.dailyRankListCallback(null);
@@ -352,20 +384,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             // クリップキー一覧取得
             getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.TV));
             // データを取得
-            List<Map<String, String>> weeklyRankList = getWeeklyRankListData(genreId);
-
-            if (weeklyRankList != null && weeklyRankList.size() > 0) {
-                if (!mRequiredClipKeyList || mResponseEndFlag) {
-                    List<ContentsData> contentsDataList = setRankingContentData(weeklyRankList);
-                    sendWeeklyGenreRankListData(contentsDataList);
-                } else {
-                    mWeeklyRankList = new WeeklyRankList();
-                    Bundle bundle = new Bundle();
-                    bundle.putString(WeeklyRankWebClient.WEEKLY_RANK_CLIENT_BUNDLE_KEY, genreId);
-                    mWeeklyRankList.setExtraData(bundle);
-                    mWeeklyRankList.setWrList(weeklyRankList);
-                }
-            }
+            getWeeklyRankListData(genreId);
         } else {
             DTVTLogger.error("RankingTopDataProvider is stopping connect");
         }
@@ -377,26 +396,14 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
      * @param genreId ジャンルID
      */
     public void getVideoRankingData(final String genreId) {
-    	if (!mIsCancel) {
+        if (!mIsCancel) {
             mVideoRankList = null;
             // クリップキー一覧取得
             if (mRequiredClipKeyList) {
                 getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
             }
 
-            List<Map<String, String>> videoRankList = getVideoRankListData(genreId);
-            if (videoRankList != null && videoRankList.size() > 0) {
-                if (!mRequiredClipKeyList || mResponseEndFlag) {
-                    List<ContentsData> contentsDataList = setRankingContentData(videoRankList);
-                    sendVideoGenreRankListData(contentsDataList);
-                } else {
-                    mVideoRankList = new VideoRankList();
-                    Bundle bundle = new Bundle();
-                    bundle.putString(WeeklyRankWebClient.WEEKLY_RANK_CLIENT_BUNDLE_KEY, genreId);
-                    mVideoRankList.setExtraData(bundle);
-                    mVideoRankList.setVrList(videoRankList);
-                }
-            }
+            getVideoRankListData(genreId);
         } else {
             DTVTLogger.error("RankingTopDataProvider is stopping connect");
         }
@@ -413,33 +420,13 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
     }
 
     /**
-     * 週間ランキングリストをRankingTopActivityに送る.
-     *
-     * @param list 週間ランキング
-     */
-    private void sendWeeklyRankListData(final List<Map<String, String>> list) {
-        List<ContentsData> contentsDataList = setRankingContentData(list);
-        mApiDataProviderCallback.weeklyRankCallback(contentsDataList);
-    }
-
-    /**
-     * ビデオランキングリストをRankingTopActivityに送る.
-     *
-     * @param list ビデオランキング
-     */
-    private void sendVideoRankListData(final List<Map<String, String>> list) {
-        List<ContentsData> contentsDataList = setRankingContentData(list);
-        if (mApiDataProviderCallback != null) {
-            mApiDataProviderCallback.videoRankCallback(contentsDataList);
-        }
-    }
-
-    /**
      * 取得したリストマップをContentsDataクラスへ入れる.
+     * データ作成処理に行数が必要なため SuppressWarnings しています。
      *
      * @param dailyRankMapList コンテンツリストデータ
      * @return ListView表示用データ
      */
+    @SuppressWarnings("OverlyLongMethod")
     private List<ContentsData> setRankingContentData(final List<Map<String, String>> dailyRankMapList) {
         DTVTLogger.start();
         List<ContentsData> rankingContentsDataList = new ArrayList<>();
@@ -524,23 +511,10 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
     }
 
     /**
-     * ビデオランキングリストをVideoRankingActivityに送る.
-     *
-     * @param list ビデオランキングリスト
-     */
-    private void sendVideoGenreRankListData(final List<ContentsData> list) {
-        if (list != null) {
-            mVideoRankingApiDataProviderCallback.onVideoRankListCallback(list);
-        }
-        DTVTLogger.end();
-    }
-
-    /**
      * 今日のランキングデータを取得する.
      *
-     * @return 今日のランキングデータ
      */
-    private List<Map<String, String>> getDailyRankListData() {
+    private void getDailyRankListData() {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DAILY_RANK_LAST_INSERT);
         mDailyRankList = null;
@@ -549,12 +523,16 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.TV));
         }
 
-        List<Map<String, String>> list = new ArrayList<>();
         //今日のランキング一覧のDB保存履歴と、有効期間を確認
         if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate)) {
             //データをDBから取得する
-            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-            list = homeDataManager.selectDailyRankListHomeData();
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, SELECT_DAILY_RANKING_DATA);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         } else {
             if (!mIsCancel) {
                 //通信クラスにデータ取得要求を出す
@@ -567,25 +545,27 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 DTVTLogger.error("RankingTopDataProvider is stopping connect");
             }
         }
-        return list;
     }
 
     /**
      * 週間ランキングのデータ取得要求を行う.
      *
      * @param genreId ジャンルID
-     * @return 週間ランキングリスト
      */
-    private List<Map<String, String>> getWeeklyRankListData(final String genreId) {
+    private void getWeeklyRankListData(final String genreId) {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(WEEKLY_RANK_LAST_INSERT);
 
-        List<Map<String, String>> list = new ArrayList<>();
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
         if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate)) {
             //データをDBから取得する
-            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-            list = homeDataManager.selectWeeklyRankListHomeData();
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, SELECT_WEEKLY_RANKING_DATA);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         } else {
             if (!mIsCancel) {
                 //通信クラスにデータ取得要求を出す
@@ -598,16 +578,14 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 DTVTLogger.error("RankingTopDataProvider is stopping connect");
             }
         }
-        return list;
     }
 
     /**
      * ビデオランキングのデータ取得要求を行う.
      *
      * @param genreId ジャンルID
-     * @return ビデオランキングリスト
      */
-    private List<Map<String, String>> getVideoRankListData(final String genreId) {
+    private void getVideoRankListData(final String genreId) {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(VIDEO_RANK_LAST_INSERT);
 
@@ -615,8 +593,13 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
         if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate)) {
             //データをDBから取得する
-            RankingTopDataManager rankingTopDataManager = new RankingTopDataManager(mContext);
-            list = rankingTopDataManager.selectVideoRankListData();
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, SELECT_VIDEO_RANKING_DATA);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         } else {
             if (!mIsCancel) {
                 //通信クラスにデータ取得要求を出す
@@ -633,7 +616,6 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 DTVTLogger.error("RankingTopDataProvider is stopping connect");
             }
         }
-        return list;
     }
 
     /**
@@ -642,34 +624,49 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
      * @param dailyRankList デイリーランキングデータ
      */
     private void setStructDB(final DailyRankList dailyRankList) {
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(DAILY_RANK_LAST_INSERT);
-        DailyRankInsertDataManager dataManager = new DailyRankInsertDataManager(mContext);
-        dataManager.insertDailyRankInsertList(dailyRankList);
+        mDailyRankList = dailyRankList;
+        //DB保存
+        Handler handler = new Handler();
+        try {
+            DbThread t = new DbThread(handler, this, INSERT_DAILY_RANKING_DATA);
+            t.start();
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
     }
 
     /**
      * 週間ランキングリストをDBに格納する.
+     *
      * @param weeklyRankList 週間ランキングリスト
      */
     private void setStructDB(final WeeklyRankList weeklyRankList) {
-        // TODO ジャンル毎のキャッシュ登録について検討
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(WEEKLY_RANK_LAST_INSERT);
-        WeeklyRankInsertDataManager dataManager = new WeeklyRankInsertDataManager(mContext);
-        dataManager.insertWeeklyRankInsertList(weeklyRankList);
+        mWeeklyRankList = weeklyRankList;
+        //DB保存
+        Handler handler = new Handler();
+        try {
+            DbThread t = new DbThread(handler, this, INSERT_WEEKLY_RANKING_DATA);
+            t.start();
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
     }
 
     /**
      * ビデオランキングリストをDBに格納する.
+     *
      * @param videoRankList ビデオランキングリスト
      */
     private void setStructDB(final VideoRankList videoRankList) {
-        // TODO ジャンル毎のキャッシュ登録について検討
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(VIDEO_RANK_LAST_INSERT);
-        VideoRankInsertDataManager dataManager = new VideoRankInsertDataManager(mContext);
-        dataManager.insertVideoRankInsertList(videoRankList);
+        mVideoRankList = videoRankList;
+        //DB保存
+        Handler handler = new Handler();
+        try {
+            DbThread t = new DbThread(handler, this, INSERT_VIDEO_RANKING_DATA);
+            t.start();
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
     }
 
     /**
@@ -706,5 +703,48 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         if (mContentsListPerGenreWebClient != null) {
             mContentsListPerGenreWebClient.enableConnect();
         }
+    }
+
+    @Override
+    public List<Map<String, String>> dbOperation(final int operationId) {
+        HomeDataManager homeDataManager;
+        switch (operationId) {
+            case INSERT_DAILY_RANKING_DATA:
+                DailyRankInsertDataManager dailyRankInsertDataManager = new DailyRankInsertDataManager(mContext);
+                dailyRankInsertDataManager.insertDailyRankInsertList(mDailyRankList);
+                break;
+            case INSERT_WEEKLY_RANKING_DATA:
+                // TODO ジャンル毎のキャッシュ登録について検討
+                WeeklyRankInsertDataManager dataManager = new WeeklyRankInsertDataManager(mContext);
+                dataManager.insertWeeklyRankInsertList(mWeeklyRankList);
+                break;
+            case INSERT_VIDEO_RANKING_DATA:
+                // TODO ジャンル毎のキャッシュ登録について検討
+                VideoRankInsertDataManager videoRankInsertDataManager = new VideoRankInsertDataManager(mContext);
+                videoRankInsertDataManager.insertVideoRankInsertList(mVideoRankList);
+                break;
+            case SELECT_DAILY_RANKING_DATA:
+                homeDataManager = new HomeDataManager(mContext);
+                List<Map<String, String>> dailyRankList = homeDataManager.selectDailyRankListHomeData();
+                sendDailyRankListData(dailyRankList);
+                break;
+            case SELECT_WEEKLY_RANKING_DATA:
+                homeDataManager = new HomeDataManager(mContext);
+                List<Map<String, String>> weeklyRankList = homeDataManager.selectWeeklyRankListHomeData();
+                mWeeklyRankList = new WeeklyRankList();
+                mWeeklyRankList.setWrList(weeklyRankList);
+                sendWeeklyRankList(mWeeklyRankList);
+                break;
+            case SELECT_VIDEO_RANKING_DATA:
+                RankingTopDataManager rankingTopDataManager = new RankingTopDataManager(mContext);
+                List<Map<String, String>> videoRankList = rankingTopDataManager.selectVideoRankListData();
+                mVideoRankList = new VideoRankList();
+                mVideoRankList.setVrList(videoRankList);
+                sendVideoRankList(mVideoRankList);
+                break;
+            default:
+                break;
+        }
+        return null;
     }
 }

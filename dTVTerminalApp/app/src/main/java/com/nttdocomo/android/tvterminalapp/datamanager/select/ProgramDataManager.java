@@ -63,13 +63,9 @@ public class ProgramDataManager {
      * @param service チャンネルメタのservice.ひかり or dch or 全て
      * @return list チャンネルデータ
      */
-    public synchronized List<Map<String, String>> selectChannelListProgramData(final int service) {
+    public List<Map<String, String>> selectChannelListProgramData(final int service) {
 
-        //データ存在チェック
         List<Map<String, String>> list = new ArrayList<>();
-        if (!DBUtils.isCachingRecord(mContext, DBConstants.CHANNEL_LIST_TABLE_NAME)) {
-            return list;
-        }
 
         //ホーム画面に必要な列を列挙する
         String[] columns = {JsonConstants.META_RESPONSE_CHNO, JsonConstants.META_RESPONSE_DEFAULT_THUMB, JsonConstants.META_RESPONSE_TITLE,
@@ -82,16 +78,24 @@ public class ProgramDataManager {
 
         //Daoクラス使用準備
         DBHelper channelListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase database = channelListDBHelper.getWritableDatabase();
+        DataBaseManager.initializeInstance(channelListDBHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+
+        //データ存在チェック
+        if (!DBUtils.isCachingRecord(database, DBConstants.CHANNEL_LIST_TABLE_NAME)) {
+            DataBaseManager.getInstance().closeDatabase();
+            return list;
+        }
+
         ChannelListDao channelListDao = new ChannelListDao(database);
 
         if (service == JsonConstants.CH_SERVICE_TYPE_INDEX_ALL) {
             // ひかり・DTV
             list = channelListDao.findById(columns);
-        } else if (service == JsonConstants.CH_SERVICE_TYPE_INDEX_HIKARI) {
+        } else if(service == JsonConstants.CH_SERVICE_TYPE_INDEX_HIKARI) {
             // ひかりのみ
             list = channelListDao.findByService(columns, CH_SERVICE_HIKARI);
-        } else if (service == JsonConstants.CH_SERVICE_TYPE_INDEX_DCH) {
+        } else if(service == JsonConstants.CH_SERVICE_TYPE_INDEX_DCH) {
             // DCHのみ
             list = channelListDao.findByService(columns, CH_SERVICE_DCH);
         } else {
@@ -99,7 +103,6 @@ public class ProgramDataManager {
             return null;
         }
         DataBaseManager.getInstance().closeDatabase();
-        database.close();
         return list;
     }
 

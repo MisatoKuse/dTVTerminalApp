@@ -14,12 +14,11 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.DailyRankLis
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendChannelListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendVideoListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RoleListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvClipListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvScheduleListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VodClipListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WatchListenVideoListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WeeklyRankListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.DataBaseManager;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideoXmlParser;
 
@@ -51,13 +50,9 @@ public class HomeDataManager {
      *
      * @return list 視聴中ビデオデータリスト
      */
-    public synchronized List<Map<String, String>> selectWatchingVideoHomeData() {
+    public List<Map<String, String>> selectWatchingVideoHomeData() {
 
         List<Map<String, String>> list = new ArrayList<>();
-        //データ存在チェック
-        if (!DBUtils.isCachingRecord(mContext, DBConstants.WATCH_LISTEN_VIDEO_TABLE_NAME)) {
-            return list;
-        }
 
         //ホーム画面に必要な列を列挙する
         String[] columns = {JsonConstants.META_RESPONSE_THUMB_448,
@@ -67,77 +62,21 @@ public class HomeDataManager {
                 JsonConstants.META_RESPONSE_DISP_TYPE};
 
         //Daoクラス使用準備
-        DBHelper DbHelper = new DBHelper(mContext);
-        SQLiteDatabase database = DbHelper.getWritableDatabase();
+        DBHelper dbHelper = new DBHelper(mContext);
+        DataBaseManager.initializeInstance(dbHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+
+        //データ存在チェック
+        if (!DBUtils.isCachingRecord(database, DBConstants.WATCH_LISTEN_VIDEO_TABLE_NAME)) {
+            DataBaseManager.getInstance().closeDatabase();
+            return list;
+        }
+
         WatchListenVideoListDao watchListenVideoListDao = new WatchListenVideoListDao(database);
 
         //ホーム画面用データ取得
         list = watchListenVideoListDao.findById(columns);
-        database.close();
-        return list;
-    }
-
-    /**
-     * ホーム画面用クリップ[テレビ]データを返却する.
-     *
-     * @return list クリップ[テレビ]データリスト
-     */
-    public synchronized List<Map<String, String>> selectTvClipHomeData() {
-
-        List<Map<String, String>> list = new ArrayList<>();
-        //データ存在チェック
-        if (!DBUtils.isCachingRecord(mContext, DBConstants.TVCLIP_LIST_TABLE_NAME)) {
-            return list;
-        }
-
-        //ホーム画面に必要な列を列挙する
-        String[] columns = {JsonConstants.META_RESPONSE_THUMB_448,
-                JsonConstants.META_RESPONSE_AVAIL_START_DATE,
-                JsonConstants.META_RESPONSE_AVAIL_END_DATE,
-                JsonConstants.META_RESPONSE_TITLE,
-                JsonConstants.META_RESPONSE_DISP_TYPE};
-
-        //Daoクラス使用準備
-        DBHelper dbHelper = new DBHelper(mContext);
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
-
-        TvClipListDao tvClipListDao = new TvClipListDao(database);
-
-        //ホーム画面用データ取得
-        list = tvClipListDao.findById(columns);
-        database.close();
-        return list;
-    }
-
-    /**
-     * ホーム画面用クリップ[ビデオ]データを返却する.
-     *
-     * @return list　クリップ[ビデオ]データリスト
-     */
-    public synchronized List<Map<String, String>> selectVodClipHomeData() {
-
-        List<Map<String, String>> list = new ArrayList<>();
-        //データ存在チェック
-        if (!DBUtils.isCachingRecord(mContext, DBConstants.VODCLIP_LIST_TABLE_NAME)) {
-            return list;
-        }
-
-        //ホーム画面に必要な列を列挙する
-        String[] columns = {JsonConstants.META_RESPONSE_THUMB_448,
-                JsonConstants.META_RESPONSE_AVAIL_START_DATE,
-                JsonConstants.META_RESPONSE_AVAIL_END_DATE,
-                JsonConstants.META_RESPONSE_TITLE,
-                JsonConstants.META_RESPONSE_DISP_TYPE};
-
-        //Daoクラス使用準備
-        DBHelper dbHelper = new DBHelper(mContext);
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
-
-        VodClipListDao vodClipListDao = new VodClipListDao(database);
-
-        //ホーム画面用データ取得
-        list = vodClipListDao.findById(columns);
-        database.close();
+        DataBaseManager.getInstance().closeDatabase();
         return list;
     }
 
@@ -147,13 +86,9 @@ public class HomeDataManager {
      *
      * @return list CH一覧データリスト
      */
-    public synchronized List<Map<String, String>> selectChannelListHomeData() {
+    public List<Map<String, String>> selectChannelListHomeData() {
 
         List<Map<String, String>> list = new ArrayList<>();
-        //データ存在チェック
-        if (!DBUtils.isCachingRecord(mContext, DBConstants.CHANNEL_LIST_TABLE_NAME)) {
-            return list;
-        }
 
         //ホーム画面に必要な列を列挙する
         String[] columns = {JsonConstants.META_RESPONSE_CHNO, JsonConstants.META_RESPONSE_DEFAULT_THUMB,
@@ -163,13 +98,20 @@ public class HomeDataManager {
 
         //Daoクラス使用準備
         DBHelper dbHelper = new DBHelper(mContext);
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        DataBaseManager.initializeInstance(dbHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+
+        //データ存在チェック
+        if (!DBUtils.isCachingRecord(database, DBConstants.CHANNEL_LIST_TABLE_NAME)) {
+            DataBaseManager.getInstance().closeDatabase();
+            return list;
+        }
 
         ChannelListDao channelListDao = new ChannelListDao(database);
 
         //ホーム画面用データ取得
         list = channelListDao.findById(columns);
-        database.close();
+        DataBaseManager.getInstance().closeDatabase();
         return list;
     }
 
@@ -237,13 +179,9 @@ public class HomeDataManager {
      *
      * @return list 今日のランキング一覧データリスト
      */
-    public synchronized List<Map<String, String>> selectDailyRankListHomeData() {
+    public List<Map<String, String>> selectDailyRankListHomeData() {
 
         List<Map<String, String>> list = new ArrayList<>();
-        //データ存在チェック
-        if (!DBUtils.isCachingRecord(mContext, DBConstants.DAILYRANK_LIST_TABLE_NAME)) {
-            return list;
-        }
 
         //ホーム画面に必要な列を列挙する
         String[] columns = {JsonConstants.META_RESPONSE_THUMB_448, JsonConstants.META_RESPONSE_TITLE,
@@ -258,13 +196,20 @@ public class HomeDataManager {
 
         //Daoクラス使用準備
         DBHelper DbHelper = new DBHelper(mContext);
-        SQLiteDatabase database = DbHelper.getWritableDatabase();
+        DataBaseManager.initializeInstance(DbHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+
+        //データ存在チェック
+        if (!DBUtils.isCachingRecord(database, DBConstants.DAILYRANK_LIST_TABLE_NAME)) {
+            DataBaseManager.getInstance().closeDatabase();
+            return list;
+        }
 
         DailyRankListDao dailyRankListDao = new DailyRankListDao(database);
 
         //ホーム画面用データ取得
         list = dailyRankListDao.findById(columns);
-        database.close();
+        DataBaseManager.getInstance().closeDatabase();
         return list;
     }
 
@@ -276,27 +221,29 @@ public class HomeDataManager {
     public synchronized List<Map<String, String>> selectTvScheduleListHomeData() {
 
         List<Map<String, String>> list = new ArrayList<>();
-        //DBデータ存在チェック
-        if (!DBUtils.isCachingRecord(mContext, DBConstants.TV_SCHEDULE_LIST_TABLE_NAME)) {
-            return list;
-        }
 
         //ホーム画面に必要な列を列挙する
         String[] columns = {JsonConstants.META_RESPONSE_THUMB_448, JsonConstants.META_RESPONSE_TITLE,
                 JsonConstants.META_RESPONSE_AVAIL_START_DATE, JsonConstants.META_RESPONSE_AVAIL_END_DATE,
-                JsonConstants.META_RESPONSE_PUBLISH_START_DATE, JsonConstants.META_RESPONSE_PUBLISH_END_DATE,
                 JsonConstants.META_RESPONSE_DISP_TYPE, JsonConstants.META_RESPONSE_CONTENT_TYPE,
                 JsonConstants.META_RESPONSE_CID, JsonConstants.META_RESPONSE_SERVICE_ID};
 
         //Daoクラス使用準備
-        DBHelper DbHelper = new DBHelper(mContext);
-        SQLiteDatabase database = DbHelper.getWritableDatabase();
+        DBHelper dbHelper = new DBHelper(mContext);
+        DataBaseManager.initializeInstance(dbHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+
+        //データ存在チェック
+        if (!DBUtils.isCachingRecord(database, DBConstants.TV_SCHEDULE_LIST_TABLE_NAME)) {
+            DataBaseManager.getInstance().closeDatabase();
+            return list;
+        }
 
         TvScheduleListDao tvScheduleListDao = new TvScheduleListDao(database);
 
         //ホーム画面用データ取得
         list = tvScheduleListDao.findById(columns);
-        database.close();
+        DataBaseManager.getInstance().closeDatabase();
         return list;
     }
 
@@ -305,13 +252,9 @@ public class HomeDataManager {
      *
      * @return list 週間ランキングデータ
      */
-    public synchronized List<Map<String, String>> selectWeeklyRankListHomeData() {
+    public List<Map<String, String>> selectWeeklyRankListHomeData() {
 
         List<Map<String, String>> list = new ArrayList<>();
-        //データ存在チェック
-        if (!DBUtils.isCachingRecord(mContext, DBConstants.WEEKLYRANK_LIST_TABLE_NAME)) {
-            return list;
-        }
 
         //ホーム画面に必要な列を列挙する
         String[] columns = {JsonConstants.META_RESPONSE_THUMB_448, JsonConstants.META_RESPONSE_TITLE,
@@ -326,13 +269,20 @@ public class HomeDataManager {
 
         //Daoクラス使用準備
         DBHelper dbHelper = new DBHelper(mContext);
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        DataBaseManager.initializeInstance(dbHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+
+        //データ存在チェック
+        if (!DBUtils.isCachingRecord(database, DBConstants.WEEKLYRANK_LIST_TABLE_NAME)) {
+            DataBaseManager.getInstance().closeDatabase();
+            return list;
+        }
 
         WeeklyRankListDao weeklyRankListDao = new WeeklyRankListDao(database);
 
         //ホーム画面用データ取得
         list = weeklyRankListDao.findById(columns);
-        database.close();
+        DataBaseManager.getInstance().closeDatabase();
         return list;
     }
 
@@ -341,26 +291,29 @@ public class HomeDataManager {
      *
      * @return list ロールリスト
      */
-    public synchronized List<Map<String, String>> selectRoleListData() {
+    public List<Map<String, String>> selectRoleListData() {
 
         List<Map<String, String>> list = new ArrayList<>();
-        //データ存在チェック
-        if (!DBUtils.isCachingRecord(mContext, DBConstants.ROLE_LIST_TABLE_NAME)) {
-            return list;
-        }
 
         //ホーム画面に必要な列を列挙する
         String[] columns = {JsonConstants.META_RESPONSE_CONTENTS_ID, JsonConstants.META_RESPONSE_CONTENTS_NAME};
 
         //Daoクラス使用準備
         DBHelper dbHelper = new DBHelper(mContext);
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        DataBaseManager.initializeInstance(dbHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+
+        //データ存在チェック
+        if (!DBUtils.isCachingRecord(database, DBConstants.ROLE_LIST_TABLE_NAME)) {
+            DataBaseManager.getInstance().closeDatabase();
+            return list;
+        }
 
         RoleListDao roleListDao = new RoleListDao(database);
 
         //ホーム画面用データ取得
         list = roleListDao.findById(columns);
-        database.close();
+        DataBaseManager.getInstance().closeDatabase();
         return list;
     }
 }

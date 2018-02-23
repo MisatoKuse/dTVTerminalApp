@@ -31,7 +31,8 @@ import java.util.List;
 /**
  * ランキングトップ画面.
  */
-public class RankingTopActivity extends BaseActivity implements RankingTopDataProvider.ApiDataProviderCallback {
+public class RankingTopActivity extends BaseActivity
+        implements RankingTopDataProvider.ApiDataProviderCallback {
 
     /**
      * ランキングトップ画面の主View.

@@ -14,6 +14,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ChannelListD
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,7 +46,12 @@ public class ChannelInsertDataManager {
      * チャンネル一覧の情報をDBに格納する.
      * @param channelList  チャンネルリスト情報
      */
-    public void insertChannelInsertList(final  ChannelList channelList) {
+    public void insertChannelInsertList(final ChannelList channelList) {
+
+        //有効期限判定
+        if (!DateUtils.getLastDate(mContext, DateUtils.CHANNEL_LAST_UPDATE)) {
+            return;
+        }
 
         //各種オブジェクト作成
         DBHelper channelListDBHelper = new DBHelper(mContext);
@@ -75,6 +81,10 @@ public class ChannelInsertDataManager {
             }
             channelListDao.insert(values);
         }
+        //データ保存日時を格納
+        DateUtils dateUtils = new DateUtils(mContext);
+        dateUtils.addLastDate(DateUtils.CHANNEL_LAST_UPDATE);
+
         dbm.closeDatabase();
     }
 }
