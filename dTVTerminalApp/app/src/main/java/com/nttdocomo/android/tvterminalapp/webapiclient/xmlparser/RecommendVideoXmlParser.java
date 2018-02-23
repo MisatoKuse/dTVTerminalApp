@@ -85,78 +85,146 @@ public class RecommendVideoXmlParser extends AsyncTask<Object, Object, Object> {
                         redVdContentList = new ArrayList<>();
                         break;
                     case XmlPullParser.START_TAG:
-                        if (RECOMMENDVIDEO_LIST_RECOMMENDCONTENT.equals(parser.getName())) {
-                            redVdHashMap = new HashMap<>();
-                        } else if (RECOMMENDVIDEO_LIST_RECOMMENDORDER.equals(parser.getName())) {
-                            eventType = parser.next();
-                            redVdHashMap.put(RECOMMENDVIDEO_LIST_RECOMMENDORDER, parser.getText());
-                        } else if (RECOMMENDVIDEO_LIST_SERVICEID.equals(parser.getName())) {
-                            eventType = parser.next();
-                            redVdHashMap.put(RECOMMENDVIDEO_LIST_SERVICEID, parser.getText());
-                        } else if (RECOMMENDVIDEO_LIST_CATEGORYID.equals(parser.getName())) {
-                            eventType = parser.next();
-                            redVdHashMap.put(RECOMMENDVIDEO_LIST_CATEGORYID, parser.getText());
-                        } else if (RECOMMENDVIDEO_LIST_CHANNELID.equals(parser.getName())) {
-                            eventType = parser.next();
-                            redVdHashMap.put(RECOMMENDVIDEO_LIST_CHANNELID, parser.getText());
-                        } else if (RECOMMENDVIDEO_LIST_CONTENTSID.equals(parser.getName())) {
-                            eventType = parser.next();
-                            redVdHashMap.put(RECOMMENDVIDEO_LIST_CONTENTSID, parser.getText());
-                        } else if (RECOMMENDVIDEO_LIST_TITLE.equals(parser.getName())) {
-                            eventType = parser.next();
-                            redVdHashMap.put(RECOMMENDVIDEO_LIST_TITLE, parser.getText());
-                        } else if (RECOMMENDVIDEO_LIST_CTPICURL1.equals(parser.getName())) {
-                            eventType = parser.next();
-                            redVdHashMap.put(RECOMMENDVIDEO_LIST_CTPICURL1, parser.getText());
-                        } else if (RECOMMENDVIDEO_LIST_CTPICURL2.equals(parser.getName())) {
-                            eventType = parser.next();
-                            redVdHashMap.put(RECOMMENDVIDEO_LIST_CTPICURL2, parser.getText());
-                        } else if (RECOMMENDVIDEO_LIST_STARTVIEWING.equals(parser.getName())) {
-                            eventType = parser.next();
-                            redVdHashMap.put(RECOMMENDVIDEO_LIST_STARTVIEWING, parser.getText());
-                        } else if (RECOMMENDVIDEO_LIST_ENDVIEWING.equals(parser.getName())) {
-                            eventType = parser.next();
-                            redVdHashMap.put(RECOMMENDVIDEO_LIST_ENDVIEWING, parser.getText());
-                        } else if (RECOMMENDVIDEO_LIST_RESERVED1.equals(parser.getName())) {
-                            eventType = parser.next();
-                            redVdHashMap.put(RECOMMENDVIDEO_LIST_RESERVED1, parser.getText());
-                        } else if (RECOMMENDVIDEO_LIST_RESERVED2.equals(parser.getName())) {
-                            eventType = parser.next();
-                            redVdHashMap.put(RECOMMENDVIDEO_LIST_RESERVED2, parser.getText());
-                        } else if (RECOMMENDVIDEO_LIST_RESERVED3.equals(parser.getName())) {
-                            eventType = parser.next();
-                            redVdHashMap.put(RECOMMENDVIDEO_LIST_RESERVED3, parser.getText());
-                        } else if (RECOMMENDVIDEO_LIST_RESERVED4.equals(parser.getName())) {
-                            eventType = parser.next();
-                            redVdHashMap.put(RECOMMENDVIDEO_LIST_RESERVED4, parser.getText());
-                        } else if (RECOMMENDVIDEO_LIST_RESERVED5.equals(parser.getName())) {
-                            eventType = parser.next();
-                            redVdHashMap.put(RECOMMENDVIDEO_LIST_RESERVED5, parser.getText());
-                        } else if (RECOMMENDVIDEO_LIST_AGREEMENT.equals(parser.getName())) {
-                            eventType = parser.next();
-                            redVdHashMap.put(RECOMMENDVIDEO_LIST_AGREEMENT, parser.getText());
-                        } else if (RECOMMENDVIDEO_LIST_VIEWABLE.equals(parser.getName())) {
-                            eventType = parser.next();
-                            redVdHashMap.put(RECOMMENDVIDEO_LIST_VIEWABLE, parser.getText());
-                        } else if (RECOMMENDVIDEO_LIST_PAGEID.equals(parser.getName())) {
-                            eventType = parser.next();
-                            redVdHashMap.put(RECOMMENDVIDEO_LIST_PAGEID, parser.getText());
-                        } else if (RECOMMENDVIDEO_LIST_GROUPID.equals(parser.getName())) {
-                            eventType = parser.next();
-                            redVdHashMap.put(RECOMMENDVIDEO_LIST_GROUPID, parser.getText());
-                        } else if (RECOMMENDVIDEO_LIST_RECOMMENDMETHODID.equals(parser.getName())) {
-                            eventType = parser.next();
-                            redVdHashMap.put(RECOMMENDVIDEO_LIST_RECOMMENDMETHODID, parser.getText());
+                        switch (parser.getName()) {
+                            case RECOMMENDVIDEO_LIST_RECOMMENDCONTENT:
+                                redVdHashMap = new HashMap<>();
+                                break;
+                            case RECOMMENDVIDEO_LIST_RECOMMENDORDER:
+                                parser.next();
+                                if (null != redVdHashMap) {
+                                    redVdHashMap.put(RECOMMENDVIDEO_LIST_RECOMMENDORDER, parser.getText());
+                                }
+                                break;
+                            case RECOMMENDVIDEO_LIST_SERVICEID:
+                                parser.next();
+                                if (null != redVdHashMap) {
+                                    redVdHashMap.put(RECOMMENDVIDEO_LIST_SERVICEID, parser.getText());
+                                }
+                                break;
+                            case RECOMMENDVIDEO_LIST_CATEGORYID:
+                                parser.next();
+                                if (null != redVdHashMap) {
+                                    redVdHashMap.put(RECOMMENDVIDEO_LIST_CATEGORYID, parser.getText());
+                                }
+                                break;
+                            case RECOMMENDVIDEO_LIST_CHANNELID:
+                                parser.next();
+                                if (null != redVdHashMap) {
+                                    redVdHashMap.put(RECOMMENDVIDEO_LIST_CHANNELID, parser.getText());
+                                }
+                                break;
+                            case RECOMMENDVIDEO_LIST_CONTENTSID:
+                                parser.next();
+                                if (null != redVdHashMap) {
+                                    redVdHashMap.put(RECOMMENDVIDEO_LIST_CONTENTSID, parser.getText());
+                                }
+                                break;
+                            case RECOMMENDVIDEO_LIST_TITLE:
+                                parser.next();
+                                if (null != redVdHashMap) {
+                                    redVdHashMap.put(RECOMMENDVIDEO_LIST_TITLE, parser.getText());
+                                }
+                                break;
+                            case RECOMMENDVIDEO_LIST_CTPICURL1:
+                                parser.next();
+                                if (null != redVdHashMap) {
+                                    redVdHashMap.put(RECOMMENDVIDEO_LIST_CTPICURL1, parser.getText());
+                                }
+                                break;
+                            case RECOMMENDVIDEO_LIST_CTPICURL2:
+                                parser.next();
+                                if (null != redVdHashMap) {
+                                    redVdHashMap.put(RECOMMENDVIDEO_LIST_CTPICURL2, parser.getText());
+                                }
+                                break;
+                            case RECOMMENDVIDEO_LIST_STARTVIEWING:
+                                parser.next();
+                                if (null != redVdHashMap) {
+                                    redVdHashMap.put(RECOMMENDVIDEO_LIST_STARTVIEWING, parser.getText());
+                                }
+                                break;
+                            case RECOMMENDVIDEO_LIST_ENDVIEWING:
+                                parser.next();
+                                if (null != redVdHashMap) {
+                                    redVdHashMap.put(RECOMMENDVIDEO_LIST_ENDVIEWING, parser.getText());
+                                }
+                                break;
+                            case RECOMMENDVIDEO_LIST_RESERVED1:
+                                parser.next();
+                                if (null != redVdHashMap) {
+                                    redVdHashMap.put(RECOMMENDVIDEO_LIST_RESERVED1, parser.getText());
+                                }
+                                break;
+                            case RECOMMENDVIDEO_LIST_RESERVED2:
+                                parser.next();
+                                if (null != redVdHashMap) {
+                                    redVdHashMap.put(RECOMMENDVIDEO_LIST_RESERVED2, parser.getText());
+                                }
+                                break;
+                            case RECOMMENDVIDEO_LIST_RESERVED3:
+                                parser.next();
+                                if (null != redVdHashMap) {
+                                    redVdHashMap.put(RECOMMENDVIDEO_LIST_RESERVED3, parser.getText());
+                                }
+                                break;
+                            case RECOMMENDVIDEO_LIST_RESERVED4:
+                                parser.next();
+                                if (null != redVdHashMap) {
+                                    redVdHashMap.put(RECOMMENDVIDEO_LIST_RESERVED4, parser.getText());
+                                }
+                                break;
+                            case RECOMMENDVIDEO_LIST_RESERVED5:
+                                parser.next();
+                                if (null != redVdHashMap) {
+                                    redVdHashMap.put(RECOMMENDVIDEO_LIST_RESERVED5, parser.getText());
+                                }
+                                break;
+                            case RECOMMENDVIDEO_LIST_AGREEMENT:
+                                parser.next();
+                                if (null != redVdHashMap) {
+                                    redVdHashMap.put(RECOMMENDVIDEO_LIST_AGREEMENT, parser.getText());
+                                }
+                                break;
+                            case RECOMMENDVIDEO_LIST_VIEWABLE:
+                                parser.next();
+                                if (null != redVdHashMap) {
+                                    redVdHashMap.put(RECOMMENDVIDEO_LIST_VIEWABLE, parser.getText());
+                                }
+                                break;
+                            case RECOMMENDVIDEO_LIST_PAGEID:
+                                parser.next();
+                                if (null != redVdHashMap) {
+                                    redVdHashMap.put(RECOMMENDVIDEO_LIST_PAGEID, parser.getText());
+                                }
+                                break;
+                            case RECOMMENDVIDEO_LIST_GROUPID:
+                                parser.next();
+                                if (null != redVdHashMap) {
+                                    redVdHashMap.put(RECOMMENDVIDEO_LIST_GROUPID, parser.getText());
+                                }
+                                break;
+                            case RECOMMENDVIDEO_LIST_RECOMMENDMETHODID:
+                                parser.next();
+                                if (null != redVdHashMap) {
+                                    redVdHashMap.put(RECOMMENDVIDEO_LIST_RECOMMENDMETHODID, parser.getText());
+                                }
+                                break;
+                            default:
+                                break;
                         }
                         break;
                     case XmlPullParser.END_TAG:
                         if (RECOMMENDVIDEO_LIST_RECOMMENDCONTENT.equals(parser.getName())) {
-                            redVdContentList.add(redVdHashMap);
+                            if (null != redVdContentList) {
+                                redVdContentList.add(redVdHashMap);
+                            }
                             redVdHashMap = null;
                         }
                         break;
                     case XmlPullParser.END_DOCUMENT:
-                        redVdContents.setmRvList(redVdContentList);
+                        if (null != redVdContents) {
+                            redVdContents.setmRvList(redVdContentList);
+                        }
                         endFlg = true;
                         break;
                     default:
