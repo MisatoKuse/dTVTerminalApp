@@ -25,51 +25,50 @@ import java.util.ArrayList;
 import static com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI;
 
 /**
- * チャンネルを選択するリスト画面
+ * チャンネルを選択するリスト画面.
  */
 public class SelectChannelActivity extends BaseActivity implements ScaledDownProgramListDataProvider
-        .ApiDataProviderCallback
-        , AdapterView.OnItemClickListener {
+        .ApiDataProviderCallback, AdapterView.OnItemClickListener {
 
     /**
-     * チャンネル情報キー
+     * チャンネル情報キー.
      */
-    private static final String CHANNEL_INFOS = "channel_info";
+    private static final String CHANNEL_INFO = "channel_info";
     /**
-     * 選択中チャンネルポジション
+     * 選択中チャンネルポジション.
      */
     private static final String POSITION = "position";
     /**
-     * チャンネルサービスID
+     * チャンネルサービスID.
      */
     private static final String SERVICE_ID = "service_id";
     /**
-     * チャンネルタイトル
+     * チャンネルタイトル.
      */
     private static final String TITLE = "title";
     /**
-     * チャンネルリスト選択リスト
+     * チャンネルリスト選択リスト.
      */
     private ListView mSelectListView;
     /**
-     * チャンネルリストコレクション
+     * チャンネルリストコレクション.
      */
     private ArrayList<ChannelInfo> mSelectList;
     /**
-     * マイ番組表サービスID
+     * マイ番組表サービスID.
      */
     private String[] mServiceIds = null;
     /**
-     * マイ番組表サービスIDキー
+     * マイ番組表サービスIDキー.
      */
     private static final String SERVICE_IDS = "service_ids";
     /**
-     * ひかりTVチャンネルデータプロバイダー
+     * ひかりTVチャンネルデータプロバイダー.
      */
     private ScaledDownProgramListDataProvider mScaledDownProgramListDataProvider;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         setTheme(R.style.AppThemeBlack);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_channel_main_layout);
@@ -85,16 +84,17 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
     }
 
     /**
-     * データ初期化
+     * データ初期化.
      */
     private void loadData() {
+        mSelectList = new ArrayList<>();
         mServiceIds = getIntent().getStringArrayExtra(SERVICE_IDS);
         mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
         mScaledDownProgramListDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_ALL);
     }
 
     /**
-     * view 初期化
+     * view 初期化.
      */
     private void initView() {
         mSelectListView = findViewById(R.id.select_channel_main_layout_edit_lv);
@@ -102,24 +102,24 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
     }
 
     @Override
-    public void onClick(View view) {
+    public void onClick(final View view) {
         if (view.getId() == R.id.header_layout_menu) {
             finish();
         }
     }
 
     @Override
-    public void channelInfoCallback(ChannelInfoList channelsInfo) {
+    public void channelInfoCallback(final ChannelInfoList channelsInfo) {
         //何もしない
     }
 
     /**
-     * チャンネルリストデータ取得
+     * チャンネルリストデータ取得.
      *
      * @param channels 　画面に渡すチャンネル情報
      */
     @Override
-    public void channelListCallback(ArrayList<ChannelInfo> channels) {
+    public void channelListCallback(final ArrayList<ChannelInfo> channels) {
         if (channels != null) {
             if (mSelectList == null) {
                 mSelectList = new ArrayList<>();
@@ -147,13 +147,13 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
     }
 
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+    public void onItemClick(final AdapterView<?> adapterView, final View view, final int position, final long l) {
         ChannelInfo channel = mSelectList.get(position);
         Intent intent = new Intent();
         Bundle info = new Bundle();
         info.putString(SERVICE_ID, channel.getServiceId());
         info.putString(TITLE, channel.getTitle());
-        intent.putExtra(CHANNEL_INFOS, info);
+        intent.putExtra(CHANNEL_INFO, info);
         intent.putExtra(POSITION, position);
         SelectChannelActivity.this.setResult(RESULT_OK, intent);
         SelectChannelActivity.this.finish();
