@@ -656,8 +656,6 @@ public class DateUtils {
         long epochTime = 0;
 
         SimpleDateFormat formatter = new SimpleDateFormat(DATE_PATTERN, Locale.JAPAN);
-        //APIレスポンスの値がJSTとのこと
-        formatter.setTimeZone(TimeZone.getTimeZone("JST"));
         Date gmt = null;
         try {
             gmt = formatter.parse(strDate);
@@ -680,6 +678,8 @@ public class DateUtils {
         long epochTime = 0;
         if (null != strDate) {
             SimpleDateFormat formatter = new SimpleDateFormat(DATE_YYYY_MM_DD_HH_MM_SS);
+            //APIレスポンスの値がJSTとのこと
+            formatter.setTimeZone(TimeZone.getTimeZone("JST"));
             Date gmt = null;
             try {
                 gmt = formatter.parse(strDate);
