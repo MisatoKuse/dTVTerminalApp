@@ -539,7 +539,6 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         try {
             clearTextSizeInt = Integer.parseInt(clearTextSize);
         } catch (Exception e) {
-            e.printStackTrace();
             showMessage("DlDataProvider初期化失敗しまして、ダウンロードできません。");
             return false;
         }
