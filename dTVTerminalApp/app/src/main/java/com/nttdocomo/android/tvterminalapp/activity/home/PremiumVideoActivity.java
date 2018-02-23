@@ -66,14 +66,6 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
      */
     private ContentsAdapter mContentsAdapter;
     /**
-     * ページ当たりの取得件数.
-     */
-    private static final int NUM_PER_PAGE = 20;
-    /**
-     * データの追加読み込みディレイ時間.
-     */
-    private static final int LOAD_PAGE_TIME_DELAY = 1000;
-    /**
      * スクロール位置の記録.
      */
     private int mFirstVisibleItem = 0;
@@ -279,7 +271,7 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
                     public void run() {
                         mRentalDataProvider.getRentalData(false);
                     }
-                }, LOAD_PAGE_TIME_DELAY);
+                }, LOAD_PAGE_DELAY_TIME);
             }
         }
     }

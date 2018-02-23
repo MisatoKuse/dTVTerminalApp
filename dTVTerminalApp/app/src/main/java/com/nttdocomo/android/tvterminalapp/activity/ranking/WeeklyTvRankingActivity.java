@@ -45,10 +45,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
      */
     private boolean mIsCommunicating = false;
     /**
-     * ページング単位.
-     */
-    private static final int NUM_PER_PAGE = 20;
-    /**
      * タブ名.
      */
     private String[] mTabNames;

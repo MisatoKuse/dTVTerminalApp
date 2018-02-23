@@ -42,10 +42,6 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
      */
     private boolean mIsCommunicating = false;
     /**
-     * ページング単位.
-     */
-    private final int NUM_PER_PAGE = 20;
-    /**
      * タブ名.
      */
     private String[] mTabNames;

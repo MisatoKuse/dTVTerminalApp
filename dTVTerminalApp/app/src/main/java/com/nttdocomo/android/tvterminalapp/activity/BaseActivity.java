@@ -168,6 +168,17 @@ public class BaseActivity extends FragmentActivity implements
      * タイムアウト時間.
      */
     protected static final int LOAD_PAGE_DELAY_TIME = 1000;
+
+    /**
+     * ページング単位.
+     */
+    protected static final int NUM_PER_PAGE = 20;
+
+    /**
+     * webViewの読み込み完了値.
+     */
+    protected final static int PROGRESS_FINISH = 100;
+
     /**
      * ダブルクリック抑止用 DELAY.
      */

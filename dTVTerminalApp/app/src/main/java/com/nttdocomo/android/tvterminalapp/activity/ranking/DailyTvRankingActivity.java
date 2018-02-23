@@ -39,14 +39,6 @@ public class DailyTvRankingActivity extends BaseActivity implements
         AbsListView.OnTouchListener {
 
     /**
-     * 最大表示件数.
-     */
-    private final static int NUM_PER_PAGE = 20;
-    /**
-     * タイムアウト時間.
-     */
-    private final static int LOAD_PAGE_DELAY_TIME = 1000;
-    /**
      * ランキングデータ取得用プロパイダ.
      */
     private RankingTopDataProvider mRankingTopDataProvider;
