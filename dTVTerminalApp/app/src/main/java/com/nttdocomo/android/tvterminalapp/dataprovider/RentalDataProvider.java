@@ -320,7 +320,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
         if (metaFullData.size() != activeDataList.size()) {
             return list;
         }
-        for (int i = 0; i < response.getVodMetaFullData().size(); i++) {
+        for (int i = 0; i < metaFullData.size(); i++) {//indexをactiveDataListで使うため、foreachを使いません
             VodMetaFullData vodMetaFullData = metaFullData.get(i);
             if (displayFlg(vodMetaFullData)) {
                 ContentsData data = new ContentsData();

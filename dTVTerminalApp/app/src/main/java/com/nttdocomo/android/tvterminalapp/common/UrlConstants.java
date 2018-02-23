@@ -11,6 +11,46 @@ package com.nttdocomo.android.tvterminalapp.common;
  */
 public class UrlConstants {
 
+    public class WebUrl{
+
+        /**
+         * 外部ブラウザー遷移先URL.
+         */
+        public static final String PR_URL = "https://www.hikaritv.net/video";
+
+        /**
+         * 表示するWebPageのURL.
+         * TODO 仮のHTMLファイル
+         */
+        public static final String STB_REGIST_D_ACCOUNT_URL = "file:///android_asset/first_pairing_d_account_help.html";
+
+        /**
+         * DTV起動URL.
+         */
+        public static final String GOOGLEPLAY_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=jp.co.nttdocomo.dtv";
+        public static final String SUPER_SPEED_START_TYPE = "dmktvideosc:///openLiveTitle?deliveryTitleId=";
+        public static final String WORK_START_TYPE = "dmktvideosc:///openEpisode?episodeId=";
+        public static final String TITTLE_START_TYPE = "dmktvideosc:///openTitle?titleId=";
+
+        /**
+         * dアニメストア起動用URL.
+         */
+        public static final String DANIMESTORE_GOOGLEPLAY_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=com.nttdocomo.android.danimeapp";
+        public static final String DANIMESTORE_START_URL = "danimestore://openWebView?url=[URL]";
+
+        /**
+         * dTVチャンネル起動用URL.
+         */
+        public static final String DTVCHANNEL_TELEVISION_START_URL = "dch://android.dch.nttdocomo.com/viewing?chno=";
+        public static final String DTVCHANNEL_VIDEO_START_URL = "dch://android.dch.nttdocomo.com/viewing_video?crid=";
+        public static final String DTVCHANNEL_GOOGLEPLAY_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=com.nttdocomo.dch";
+
+        /**
+         * ログ送信用URL.
+         */
+        public static final String SEND_OPERATE_LOG_URL = "https://ve.m.service.smt.docomo.ne.jp/srermd/operateLog/index.do";
+    }
+
     public class WebApiUrl {
         /**
          * 検索サーバAPIのURL.

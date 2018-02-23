@@ -9,6 +9,7 @@ import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecommendDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
@@ -24,7 +25,7 @@ public class SendOperateLog extends WebApiBase {
     /**
      * Url.
      */
-    private StringBuffer mUrl = new StringBuffer("https://ve.m.service.smt.docomo.ne.jp/srermd/operateLog/index.do");
+    private StringBuffer mUrl = new StringBuffer(UrlConstants.WebUrl.SEND_OPERATE_LOG_URL);
     /**
      * カテゴリID.
      */

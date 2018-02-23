@@ -41,15 +41,15 @@ public class ClipRequestData {
     // クリップ未/済
     private boolean mClipStatus = false;
     //EPG判定用
-    private String TV_PROGRAM_CHECK = "tv_program";
+    private static final String TV_PROGRAM_CHECK = "tv_program";
     //h4d_iptv
-    private String H4D_IPTV_SERVICE_CONTENTS = "0";
+    private static final String H4D_IPTV_SERVICE_CONTENTS = "0";
     //dch
-    private String DCH_SERVICE_CONTENTS = "1";
+    private static final String DCH_SERVICE_CONTENTS = "1";
     //h4d_vod
     private String DTV_SERVICE_CONTENTS_FALSE = "0";
     //dtv_vod
-    private String DTV_SERVICE_CONTENTS_TRUE = "1";
+    private static final String DTV_SERVICE_CONTENTS_TRUE = "1";
 
     public String getTitle() {
         return mTitle;

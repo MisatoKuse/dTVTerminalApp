@@ -55,6 +55,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentDetailDataConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopScaledProListDataConnect;
@@ -182,27 +183,18 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
     private static final String RESERVED4_TYPE4 = "4";
     private static final String RESERVED4_TYPE7 = "7";
     private static final String RESERVED4_TYPE8 = "8";
-    private static final String GOOGLEPLAY_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=jp.co.nttdocomo.dtv";
     private static final String DTV_PACKAGE_NAME = "jp.co.nttdocomo.dtv";
-    private static final String SUPER_SPEED_START_TYPE = "dmktvideosc:///openLiveTitle?deliveryTitleId=";
-    private static final String WORK_START_TYPE = "dmktvideosc:///openEpisode?episodeId=";
-    private static final String TITTLE_START_TYPE = "dmktvideosc:///openTitle?titleId=";
     private String errorMessage;
     /*DTV起動*/
 
     /*dアニメストア起動*/
     private static final String DANIMESTORE_PACKAGE_NAME = "com.nttdocomo.android.danimeapp";
-    private static final String DANIMESTORE_GOOGLEPLAY_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=com.nttdocomo.android.danimeapp";
-    private static final String DANIMESTORE_START_URL = "danimestore://openWebView?url=[URL]";
     private static final int DANIMESTORE_VERSION_STANDARD = 132;
     /*dアニメストア起動*/
 
     /*dTVチャンネル起動*/
     private static final String DTVCHANNEL_PACKAGE_NAME = "com.nttdocomo.dch";
     private static final int DTVCHANNEL_VERSION_STANDARD = 15;
-    private static final String DTVCHANNEL_TELEVISION_START_URL = "dch://android.dch.nttdocomo.com/viewing?chno=";
-    private static final String DTVCHANNEL_VIDEO_START_URL = "dch://android.dch.nttdocomo.com/viewing_video?crid=";
-    private static final String DTVCHANNEL_GOOGLEPLAY_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=com.nttdocomo.dch";
     private static final String DTV_CHANNEL_CATEGORY_BROADCAST = "01";
     private static final String DTV_CHANNEL_CATEGORY_MISSED = "02";
     private static final String DTV_CHANNEL_CATEGORY_RELATION = "03";
@@ -2264,19 +2256,19 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                                 } else {
                                     //RESERVED4は4の場合
                                     if (RESERVED4_TYPE4.equals(mDetailData.getReserved4())) {
-                                        startApp(WORK_START_TYPE + mDetailData.getContentId());
+                                        startApp(UrlConstants.WebUrl.WORK_START_TYPE + mDetailData.getContentId());
                                         //RESERVED4は7,8の場合
                                     } else if (RESERVED4_TYPE7.equals(mDetailData.getReserved4())
                                             || RESERVED4_TYPE8.equals(mDetailData.getReserved4())) {
-                                        startApp(SUPER_SPEED_START_TYPE + mDetailData.getContentId());
+                                        startApp(UrlConstants.WebUrl.SUPER_SPEED_START_TYPE + mDetailData.getContentId());
                                         //その他の場合
                                     } else {
-                                        startApp(TITTLE_START_TYPE + mDetailData.getContentId());
+                                        startApp(UrlConstants.WebUrl.TITTLE_START_TYPE + mDetailData.getContentId());
                                     }
                                 }
                                 //DTVアプリ存在しない場合
                             } else {
-                                toGooglePlay(GOOGLEPLAY_DOWNLOAD_URL);
+                                toGooglePlay(UrlConstants.WebUrl.GOOGLEPLAY_DOWNLOAD_URL);
                             }
                         }
                     });
@@ -2297,10 +2289,10 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                                     errorMessage = getResources().getString(R.string.d_anime_store_content_service_update_dialog);
                                     showErrorDialog(errorMessage);
                                 } else {
-                                    startApp(DANIMESTORE_START_URL);
+                                    startApp(UrlConstants.WebUrl.DANIMESTORE_START_URL);
                                 }
                             } else {
-                                toGooglePlay(DANIMESTORE_GOOGLEPLAY_DOWNLOAD_URL);
+                                toGooglePlay(UrlConstants.WebUrl.DANIMESTORE_GOOGLEPLAY_DOWNLOAD_URL);
                             }
                         }
                     });
@@ -2320,17 +2312,17 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                                     showErrorDialog(errorMessage);
                                 } else {    //テレビ再生  「categoryId」が「01」の場合
                                     if (DTV_CHANNEL_CATEGORY_BROADCAST.equals(mDetailData.getCategoryId())) {
-                                        startApp(DTVCHANNEL_TELEVISION_START_URL + mDetailData.getChannelId());
+                                        startApp(UrlConstants.WebUrl.DTVCHANNEL_TELEVISION_START_URL + mDetailData.getChannelId());
                                         DTVTLogger.debug("channelId :----" + mDetailData.getChannelId());
                                         //ビデオ再生  「categoryId」が「02」または「03」の場合
                                     } else if (DTV_CHANNEL_CATEGORY_MISSED.equals(mDetailData.getCategoryId())
                                             || DTV_CHANNEL_CATEGORY_RELATION.equals(mDetailData.getCategoryId())) {
-                                        startApp(DTVCHANNEL_VIDEO_START_URL + mDetailData.getContentId());
+                                        startApp(UrlConstants.WebUrl.DTVCHANNEL_VIDEO_START_URL + mDetailData.getContentId());
                                         DTVTLogger.debug("ContentId :----" + mDetailData.getContentId());
                                     }
                                 }
                             } else {
-                                toGooglePlay(DTVCHANNEL_GOOGLEPLAY_DOWNLOAD_URL);
+                                toGooglePlay(UrlConstants.WebUrl.DTVCHANNEL_GOOGLEPLAY_DOWNLOAD_URL);
                             }
                         }
                     });
@@ -2341,11 +2333,11 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                     if (METARESPONSE1.equals(mDetailFullData.getDtv())) {
                         String dtvType = mDetailFullData.getDtvType();
                         if (dtvType != null && dtvType.equals(METARESPONSE1)) {
-                            startApp(WORK_START_TYPE + mDetailFullData.getTitle_id());
+                            startApp(UrlConstants.WebUrl.WORK_START_TYPE + mDetailFullData.getTitle_id());
                         } else if (dtvType != null && dtvType.equals(METARESPONSE2)) {
-                            startApp(SUPER_SPEED_START_TYPE + mDetailFullData.getTitle_id());
+                            startApp(UrlConstants.WebUrl.SUPER_SPEED_START_TYPE + mDetailFullData.getTitle_id());
                         } else {
-                            startApp(TITTLE_START_TYPE + mDetailFullData.getTitle_id());
+                            startApp(UrlConstants.WebUrl.TITTLE_START_TYPE + mDetailFullData.getTitle_id());
                         }
                     }
                     //ひかりTV内DTVチャンネル
@@ -2356,13 +2348,13 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                             if (CONTENT_TYPE_FLAG_ZERO.equals(mDetailData.getContentsType())
                                     || null == mDetailData.getContentsType()) {
                                 DTVTLogger.debug("contentsType :----" + mDetailData.getContentsType());
-                                startApp(DTVCHANNEL_TELEVISION_START_URL + mDetailFullData.getmChno());
+                                startApp(UrlConstants.WebUrl.DTVCHANNEL_TELEVISION_START_URL + mDetailFullData.getmChno());
                                 DTVTLogger.debug("chno :----" + mDetailFullData.getmChno());
                                 //ビデオ再生 「disp_type」が「tv_program」かつ「contents_type」が「1」または「2」または「3」
                             } else if (CONTENT_TYPE_FLAG_ONE.equals(mDetailData.getContentsType())
                                     || CONTENT_TYPE_FLAG_TWO.equals(mDetailData.getContentsType())
                                     || CONTENT_TYPE_FLAG_THREE.equals(mDetailData.getContentsType())) {
-                                startApp(DTVCHANNEL_VIDEO_START_URL + mDetailFullData.getCrid());
+                                startApp(UrlConstants.WebUrl.DTVCHANNEL_VIDEO_START_URL + mDetailFullData.getCrid());
                                 DTVTLogger.debug("crid :----" + mDetailFullData.getCrid());
                             }
                         }
