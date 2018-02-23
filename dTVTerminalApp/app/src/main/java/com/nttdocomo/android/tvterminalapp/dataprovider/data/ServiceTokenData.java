@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * サービストークン情報.
  */
-public class ServiceTokenData {
+class ServiceTokenData {
     /**
      * WebAPIレスポンス情報.
      */

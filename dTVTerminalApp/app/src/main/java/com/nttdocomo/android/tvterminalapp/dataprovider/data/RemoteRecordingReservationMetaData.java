@@ -131,18 +131,18 @@ public class RemoteRecordingReservationMetaData implements Serializable {
         this.mSyncErrorReason = mSyncErrorReason;
     }
 
-    public static final String REMOTE_RECORDING_RESERVATION_META_DATA_RESV_ID = "resv_id"; //予約ID
-    public static final String REMOTE_RECORDING_RESERVATION_META_DATA_RESV_TYPE = "resv_type"; //１：番組指定予約
-    public static final String REMOTE_RECORDING_RESERVATION_META_DATA_RESV_PLATFORM_TYPE = "platform_type"; //プラットフォームタイプ
-    public static final String REMOTE_RECORDING_RESERVATION_META_DATA_SERVICE_ID = "service_id"; //サービスID
-    public static final String REMOTE_RECORDING_RESERVATION_META_DATA_EVENT_ID = "event_id"; //イベントID
-    public static final String REMOTE_RECORDING_RESERVATION_META_DATA_TITLE = "title"; //番組名
-    public static final String REMOTE_RECORDING_RESERVATION_META_DATA_START_TIME = "start_time"; //開始予定エポック秒
-    public static final String REMOTE_RECORDING_RESERVATION_META_DATA_DURATION = "duration"; // 予約時間の長さ（秒）
-    public static final String REMOTE_RECORDING_RESERVATION_META_DATA_LOOP_TYPE_NUM = "loop_type_num"; //定期予約指定値、0~10
-    public static final String REMOTE_RECORDING_RESERVATION_META_DATA_R_VALUE = "r_value"; //番組のパレンタル設定値
-    public static final String REMOTE_RECORDING_RESERVATION_META_DATA_SYNC_STATUS = "sync_status"; //同期状態
-    public static final String REMOTE_RECORDING_RESERVATION_META_DATA_SYNC_ERROR_REASON = "sync_error_reason"; //同期失敗理由
+    private static final String REMOTE_RECORDING_RESERVATION_META_DATA_RESV_ID = "resv_id"; //予約ID
+    private static final String REMOTE_RECORDING_RESERVATION_META_DATA_RESV_TYPE = "resv_type"; //１：番組指定予約
+    private static final String REMOTE_RECORDING_RESERVATION_META_DATA_RESV_PLATFORM_TYPE = "platform_type"; //プラットフォームタイプ
+    private static final String REMOTE_RECORDING_RESERVATION_META_DATA_SERVICE_ID = "service_id"; //サービスID
+    private static final String REMOTE_RECORDING_RESERVATION_META_DATA_EVENT_ID = "event_id"; //イベントID
+    private static final String REMOTE_RECORDING_RESERVATION_META_DATA_TITLE = "title"; //番組名
+    private static final String REMOTE_RECORDING_RESERVATION_META_DATA_START_TIME = "start_time"; //開始予定エポック秒
+    private static final String REMOTE_RECORDING_RESERVATION_META_DATA_DURATION = "duration"; // 予約時間の長さ（秒）
+    private static final String REMOTE_RECORDING_RESERVATION_META_DATA_LOOP_TYPE_NUM = "loop_type_num"; //定期予約指定値、0~10
+    private static final String REMOTE_RECORDING_RESERVATION_META_DATA_R_VALUE = "r_value"; //番組のパレンタル設定値
+    private static final String REMOTE_RECORDING_RESERVATION_META_DATA_SYNC_STATUS = "sync_status"; //同期状態
+    private static final String REMOTE_RECORDING_RESERVATION_META_DATA_SYNC_ERROR_REASON = "sync_error_reason"; //同期失敗理由
 
 
     private static final String[] mRootPara = {REMOTE_RECORDING_RESERVATION_META_DATA_RESV_ID,

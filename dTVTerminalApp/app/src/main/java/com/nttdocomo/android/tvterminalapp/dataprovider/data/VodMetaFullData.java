@@ -635,7 +635,7 @@ public class VodMetaFullData implements Serializable {
         return mClipExec;
     }
 
-    public void setClipExec(boolean mClipExec) {
+    private void setClipExec(boolean mClipExec) {
         this.mClipExec = mClipExec;
     }
 

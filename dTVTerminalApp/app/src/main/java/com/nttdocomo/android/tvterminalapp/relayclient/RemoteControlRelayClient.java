@@ -115,7 +115,7 @@ public class RemoteControlRelayClient {
     /**
      * シングルトン.
      */
-    private static RemoteControlRelayClient mInstance = new RemoteControlRelayClient();
+    private static final RemoteControlRelayClient mInstance = new RemoteControlRelayClient();
 
     /**
      * アプリ起動要求種別.
@@ -574,7 +574,7 @@ public class RemoteControlRelayClient {
         /**
          * キーコードリクエスト値.
          */
-        private String mKeycodeRequest;
+        private final String mKeycodeRequest;
 
         /**
          * コンストラクタ.
@@ -1029,7 +1029,7 @@ public class RemoteControlRelayClient {
         /**
          * リクエストパラメータ.
          */
-        private String mRequestParam;
+        private final String mRequestParam;
 
         /**
          * コンストラクタ.

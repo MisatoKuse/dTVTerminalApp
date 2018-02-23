@@ -60,10 +60,10 @@ public class GenreListMetaData implements Serializable {
         mSubContent.addAll(metaDataList);
     }
 
-    public static final String GENRE_LIST_META_DATA_ID = "id";
-    public static final String GENRE_LIST_META_DATA_TITLE = "title";
-    public static final String GENRE_LIST_META_DATA_R_VALUE = "r_value";
-    public static final String GENRE_LIST_META_DATA_SUB = "sub";
+    private static final String GENRE_LIST_META_DATA_ID = "id";
+    private static final String GENRE_LIST_META_DATA_TITLE = "title";
+    private static final String GENRE_LIST_META_DATA_R_VALUE = "r_value";
+    private static final String GENRE_LIST_META_DATA_SUB = "sub";
     //サブコンテンツキー名
     private static final String mCommonData[] = {GENRE_LIST_META_DATA_ID,
             GENRE_LIST_META_DATA_TITLE, GENRE_LIST_META_DATA_R_VALUE};
