@@ -1089,12 +1089,7 @@ public class BaseActivity extends FragmentActivity implements
     private void setUserState(final UserState userState) {
         synchronized (this) {
             MenuDisplay menu = MenuDisplay.getInstance();
-            try {
-                menu.setActivityAndListener(this, this);
-            } catch (Exception e) {
-                DTVTLogger.debug(e);
-                return;
-            }
+            menu.setActivityAndListener(this, this);
             menu.changeUserState(userState);
         }
     }

@@ -380,13 +380,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      */
     private List<Map<String, String>> getDownloadListFromDb() {
         DlDataProvider dlDataProvider = new DlDataProvider(this);
-        List<Map<String, String>> resultList = null;
-        try {
-            resultList = dlDataProvider.getDownloadListData();
-        } catch (Exception e) {
-            DTVTLogger.debug(e);
-        }
-        return resultList;
+        return dlDataProvider.getDownloadListData();
     }
 
     /**

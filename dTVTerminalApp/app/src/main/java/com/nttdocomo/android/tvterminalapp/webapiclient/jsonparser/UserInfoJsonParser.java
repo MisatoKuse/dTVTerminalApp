@@ -186,6 +186,7 @@ public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
                 loggedinAccount.add(tempList);
             } catch (JSONException e) {
                 //パースに失敗した場合は次のデータに行くので何もしない
+                DTVTLogger.debug(e);
             }
         }
     }
