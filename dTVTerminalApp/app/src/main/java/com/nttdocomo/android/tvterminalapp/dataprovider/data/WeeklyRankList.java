@@ -23,7 +23,7 @@ public class WeeklyRankList {
         return mWrMap;
     }
 
-    public void setWrMap(HashMap wrMap) {
+    public void setWrMap(HashMap<String, String> wrMap) {
         this.mWrMap = wrMap;
     }
 

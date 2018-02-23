@@ -19,7 +19,7 @@ public class DailyRankList implements Serializable {
         return mDrMap;
     }
 
-    public void setDrMap(HashMap drMap) {
+    public void setDrMap(HashMap<String, String> drMap) {
         this.mDrMap = drMap;
     }
 
