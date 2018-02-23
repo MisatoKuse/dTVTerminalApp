@@ -14,6 +14,7 @@ import android.webkit.WebViewClient;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 
 /**
  * お知らせ画面.
@@ -28,11 +29,6 @@ public class NewsActivity extends BaseActivity implements View.OnClickListener {
      * webViewの読み込み進行度.
      */
     private int mProgress = 0;
-    /**
-     * 表示するWebPageのURL.
-     * TODO 仮のHTMLファイル
-     */
-    private final static String NEWS_URL = "https://www.nttdocomo.co.jp/";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -46,7 +42,7 @@ public class NewsActivity extends BaseActivity implements View.OnClickListener {
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
         webSettings.setAllowUniversalAccessFromFileURLs(false);
         webSettings.setAllowFileAccessFromFileURLs(false);
-        mNewsWebView.loadUrl(NEWS_URL);
+        mNewsWebView.loadUrl(UrlConstants.WebUrl.NEWS_URL);
 
         //Headerの設定
         setTitleText(getString(R.string.information_title));

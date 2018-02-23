@@ -13,6 +13,7 @@ import android.webkit.WebViewClient;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 
 /**
  * ライセンス.
@@ -24,11 +25,6 @@ public class SettingMenuLicenseActivity extends BaseActivity {
      */
     private WebView mLicenseWebView = null;
 
-    /**
-     * TODO 仮のHTMLファイル.
-     */
-    private final static String SETTING_MENU_LICENSE_URL = "file:///android_asset/osslicense.html";
-
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +33,7 @@ public class SettingMenuLicenseActivity extends BaseActivity {
         mLicenseWebView = findViewById(R.id.setting_menu_main_webview);
         mLicenseWebView.setWebViewClient(new WebViewClient());
         mLicenseWebView.setBackgroundColor(Color.TRANSPARENT);
-        mLicenseWebView.loadUrl(SETTING_MENU_LICENSE_URL);
+        mLicenseWebView.loadUrl(UrlConstants.WebUrl.SETTING_MENU_LICENSE_URL);
         WebSettings webSettings = mLicenseWebView.getSettings();
         webSettings.setJavaScriptEnabled(false);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);

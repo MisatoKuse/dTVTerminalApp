@@ -11,7 +11,7 @@ package com.nttdocomo.android.tvterminalapp.common;
  */
 public class UrlConstants {
 
-    public class WebUrl{
+    public class WebUrl {
 
         /**
          * 外部ブラウザー遷移先URL.
@@ -25,30 +25,89 @@ public class UrlConstants {
         public static final String STB_REGIST_D_ACCOUNT_URL = "file:///android_asset/first_pairing_d_account_help.html";
 
         /**
-         * DTV起動URL.
+         * DTVグーグルショップ起動URL.
          */
         public static final String GOOGLEPLAY_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=jp.co.nttdocomo.dtv";
+        /**
+         * DTV起動URL.
+         */
         public static final String SUPER_SPEED_START_TYPE = "dmktvideosc:///openLiveTitle?deliveryTitleId=";
+        /**
+         * DTV起動URL.
+         */
         public static final String WORK_START_TYPE = "dmktvideosc:///openEpisode?episodeId=";
+        /**
+         * DTV起動URL.
+         */
         public static final String TITTLE_START_TYPE = "dmktvideosc:///openTitle?titleId=";
 
         /**
-         * dアニメストア起動用URL.
+         * dアニメストアグーグルショップ起動用URL.
          */
         public static final String DANIMESTORE_GOOGLEPLAY_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=com.nttdocomo.android.danimeapp";
+        /**
+         * dアニメストア起動用URL.
+         */
         public static final String DANIMESTORE_START_URL = "danimestore://openWebView?url=[URL]";
 
         /**
-         * dTVチャンネル起動用URL.
+         * dTVチャンネル起動用URL(テレビ).
          */
         public static final String DTVCHANNEL_TELEVISION_START_URL = "dch://android.dch.nttdocomo.com/viewing?chno=";
+        /**
+         * dTVチャンネル起動用URL(ビデオ).
+         */
         public static final String DTVCHANNEL_VIDEO_START_URL = "dch://android.dch.nttdocomo.com/viewing_video?crid=";
+        /**
+         * dTVチャンネルグーグルショップ起動用URL.
+         */
         public static final String DTVCHANNEL_GOOGLEPLAY_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=com.nttdocomo.dch";
 
         /**
          * ログ送信用URL.
          */
         public static final String SEND_OPERATE_LOG_URL = "https://ve.m.service.smt.docomo.ne.jp/srermd/operateLog/index.do";
+
+        /**
+         * 設定画面 プライバシーポリシー URL TODO 仮のURL.
+         */
+        public final static String SETTING_MENU_PRIVACY_POLICY_URL = "https://www.nttdocomo.co.jp/";
+
+        /**
+         * 利用規約 URL TODO のHTMLファイル.
+         */
+        public final static String SETTING_MENU_TERMS_OF_SERVICE_HTML = "file:///android_asset/terms_of_service.html";
+
+        /**
+         * ライセンス URL TODO 仮のHTMLファイル.
+         */
+        public final static String SETTING_MENU_LICENSE_URL = "file:///android_asset/osslicense.html";
+
+        /**
+         * FAQ画面 TODO 仮のURL.
+         */
+        public final static String SETTING_MENU_FAQ_URL = "https://www.nttdocomo.co.jp/";
+
+        /**
+         * APP画面 TODO 仮のURL.
+         */
+        public final static String SETTING_MENU_APP_URL = "https://www.nttdocomo.co.jp/";
+
+        /**
+         * お知らせ画面.
+         * TODO 仮のHTMLファイル
+         */
+        public final static String NEWS_URL = "https://www.nttdocomo.co.jp/";
+
+        /**
+         * 初回起動ペアリング(ヘルプページ) TODO 仮のHTMLファイル.
+         */
+        public final static String SETTING_HELP_PAIRING_URL = "file:///android_asset/first_pairing_help.html";
+
+        /**
+         * ペアリングヘルプHTTP URL.
+         */
+        public final static String SETTING_SUPPORT_PAIRING_URL = "https://apl.d.dmkt-sp.jp/dtv2/tvt_sp/support/pairing.html";
     }
 
     public class WebApiUrl {

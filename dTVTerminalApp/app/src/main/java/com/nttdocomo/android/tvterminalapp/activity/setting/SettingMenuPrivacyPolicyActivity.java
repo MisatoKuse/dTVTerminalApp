@@ -13,6 +13,7 @@ import android.webkit.WebViewClient;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 
 /**
  * 設定画面 プライバシーポリシー.
@@ -27,10 +28,6 @@ public class SettingMenuPrivacyPolicyActivity extends BaseActivity {
      * webViewの読み込み進行度.
      */
     private int mProgress = 0;
-    /**
-     * TODO 仮のURL.
-     */
-    private final static String SETTING_MENU_PRIVACY_POLICY_URL = "https://www.nttdocomo.co.jp/";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -44,7 +41,7 @@ public class SettingMenuPrivacyPolicyActivity extends BaseActivity {
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
         webSettings.setAllowUniversalAccessFromFileURLs(false);
         webSettings.setAllowFileAccessFromFileURLs(false);
-        mPrivacyPolicyWebView.loadUrl(SETTING_MENU_PRIVACY_POLICY_URL);
+        mPrivacyPolicyWebView.loadUrl(UrlConstants.WebUrl.SETTING_MENU_PRIVACY_POLICY_URL);
 
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
