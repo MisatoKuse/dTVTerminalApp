@@ -7,13 +7,13 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 public class DtvContentsDetailFragmentFactory {
 
-    private Fragment[] mFragments = new Fragment[2];
+    private final Fragment[] mFragments = new Fragment[2];
 
     /**
      * フラグメントクラスの生成、取得
      *
-     * @param position
-     * @return
+     * @param position position
+     * @return fragment
      */
     public Fragment createFragment(int position) {
         DTVTLogger.start();

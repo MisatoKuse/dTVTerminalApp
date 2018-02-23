@@ -97,7 +97,7 @@ public class ClipListBaseFragment extends Fragment
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
         //initData();//一時使うデータ
-        return initView();
+        return initView(container);
     }
 
     /**
@@ -112,13 +112,13 @@ public class ClipListBaseFragment extends Fragment
     /**
      * 各タブ画面は別々に実現して表示されること.
      */
-    private View initView() {
+    private View initView(ViewGroup container) {
         if (mClipListData == null) {
             mClipListData = new ArrayList();
         }
         mTvFragmentView = View.inflate(getActivity(), R.layout.fragment_clip_list_item_content, null);
 
-        mLoadMoreView = LayoutInflater.from(getActivity()).inflate(R.layout.search_load_more, null);
+        mLoadMoreView = LayoutInflater.from(getActivity()).inflate(R.layout.search_load_more, container, false);
 
         initContentListView();
         return mTvFragmentView;

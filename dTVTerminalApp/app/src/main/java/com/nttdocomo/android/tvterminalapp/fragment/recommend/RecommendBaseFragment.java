@@ -31,7 +31,7 @@ import java.util.Map;
 public class RecommendBaseFragment extends Fragment implements AbsListView.OnScrollListener,
         AdapterView.OnItemClickListener {
 
-    public Context mActivity = null;
+    private Context mActivity = null;
     public List<ContentsData> mData = null;
     private View mLoadMoreView = null;
     private View mRecommendFragmentView = null;
@@ -61,7 +61,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     public View onCreateView(LayoutInflater inflater
             , ViewGroup container, Bundle savedInstanceState) {
         initData();
-        return initView();
+        return initView(container);
     }
 
     //モックデータ
@@ -74,7 +74,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      *
      * @return この行のビュー
      */
-    public View initView() {
+    private View initView(ViewGroup container) {
         if (null == mRecommendFragmentView) {
             mRecommendFragmentView = View.inflate(getActivity(),
                     R.layout.fragment_recommend_content, null);
@@ -85,7 +85,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
 
             getContext();
             mLoadMoreView = LayoutInflater.from(mActivity).inflate(
-                    R.layout.search_load_more, null);
+                    R.layout.search_load_more, container, false);
         }
 
         if (getContext() != null) {
@@ -205,7 +205,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      * @param info レコメンド情報
      * @return コンテンツ情報
      */
-    public OtherContentsDetailData getOtherContentsDetailData(ContentsData info) {
+    private OtherContentsDetailData getOtherContentsDetailData(ContentsData info) {
         OtherContentsDetailData detailData = new OtherContentsDetailData();
         detailData.setTitle(info.getTitle());
         detailData.setThumb(info.getThumURL());

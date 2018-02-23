@@ -7,5 +7,5 @@ package com.nttdocomo.android.tvterminalapp.fragment.recommend;
 import android.widget.AbsListView;
 
 public interface RecommendBaseFragmentScrollListener {
-    public void onScroll(RecommendBaseFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount);
+     void onScroll(RecommendBaseFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount);
 }

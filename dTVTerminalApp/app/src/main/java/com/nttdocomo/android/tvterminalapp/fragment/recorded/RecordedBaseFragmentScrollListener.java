@@ -8,5 +8,5 @@ import android.widget.AbsListView;
 
 public interface RecordedBaseFragmentScrollListener {
     //public void onScrollStateChanged(SearchBaseFragment fragment, AbsListView absListView, int scrollState);
-    public void onScroll(RecordedBaseFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount);
+    void onScroll(RecordedBaseFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount);
 }

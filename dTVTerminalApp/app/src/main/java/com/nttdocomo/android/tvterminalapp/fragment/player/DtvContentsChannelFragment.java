@@ -32,7 +32,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DtvContentsChannelFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener{
+public class DtvContentsChannelFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
 
     /**
      * チャンネルリスト親ビュー.
@@ -101,7 +101,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
      *
      * @param mChangedScrollLoadListener コンテナ
      */
-    public void setScrollCallBack(ChangedScrollLoadListener mChangedScrollLoadListener){
+    public void setScrollCallBack(ChangedScrollLoadListener mChangedScrollLoadListener) {
         this.mChangedScrollLoadListener = mChangedScrollLoadListener;
     }
 
@@ -127,7 +127,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
         if (null == mView) {
             mView = LayoutInflater.from(getContext()).inflate(R.layout.dtv_contents_channel_fragment, container, false);
         }
-        if(mContentsData == null){
+        if (mContentsData == null) {
             mContentsData = new ArrayList<>();
         }
         mChannelListView = mView.findViewById(R.id.dtv_contents_channel_list);
@@ -136,7 +136,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
         if (null == mFootView) {
             mFootView = View.inflate(getContext(), R.layout.search_load_more, null);
         }
-        if(null == mHeaderView){
+        if (null == mHeaderView) {
             mHeaderView = View.inflate(getContext(), R.layout.dtv_contents_channel_fragment_header, null);
             mHeaderView.setOnClickListener(null);
         }
@@ -151,10 +151,11 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
 
     /**
      * チャンネルアイコン取得.
+     *
      * @param info チャンネル情報
      */
-    public void setChannelDataChanged(ChannelInfo info){
-        if(!TextUtils.isEmpty(info.getTitle())){
+    public void setChannelDataChanged(ChannelInfo info) {
+        if (!TextUtils.isEmpty(info.getTitle())) {
             mChannelTxt.setText(info.getTitle());
         }
         if (!TextUtils.isEmpty(info.getThumbnail())) {
@@ -170,7 +171,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
     /**
      * データ更新.
      */
-    public void setNotifyDataChanged(){
+    public void setNotifyDataChanged() {
         mContentsAdapter.notifyDataSetChanged();
         loadComplete();
     }
@@ -200,7 +201,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
         mChannelListView.setSelection(mChannelListView.getMaxScrollAmount());
         mFootView.setVisibility(View.VISIBLE);
         mIsLoading = true;
-        if(mChangedScrollLoadListener != null){
+        if (mChangedScrollLoadListener != null) {
             mChangedScrollLoadListener.onChannelLoadMore();
         }
     }
@@ -209,7 +210,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         DTVTLogger.start();
-        if(!isVisibleToUser){
+        if (!isVisibleToUser && mChangedScrollLoadListener != null) {
             mChangedScrollLoadListener.onUserVisibleHint();
         }
         DTVTLogger.end();

@@ -11,18 +11,16 @@ import java.util.Map;
 
 public class ChannelListFragmentFactory {
 
-    private  Map<Integer, ChannelListFragment> mFragments = new HashMap<Integer, ChannelListFragment>();
+    private final Map<Integer, ChannelListFragment> mFragments = new HashMap<>();
 
     public ChannelListFragment createFragment(int position, ChannelListFragment.ChannelListFragmentListener lis, ChannelListAdapter.ChListDataType type) {
-        ChannelListFragment fragment = null;
+        ChannelListFragment fragment;
         fragment = mFragments.get(position);
         if (fragment == null) {
             fragment = new ChannelListFragment();
-            if (fragment != null) {
-                fragment.setScrollListener(lis);
-                fragment.setChListDataType(type);
-                mFragments.put(position, fragment);
-            }
+            fragment.setScrollListener(lis);
+            fragment.setChListDataType(type);
+            mFragments.put(position, fragment);
         }
         return fragment;
     }
