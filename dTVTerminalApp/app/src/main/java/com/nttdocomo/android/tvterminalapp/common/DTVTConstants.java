@@ -7,10 +7,9 @@ package com.nttdocomo.android.tvterminalapp.common;
 
 
 /**
+ * クラス機能：.
  *
- * クラス機能：
- *      プロジェクトにて共通データを定義するクラスである
- *
+ * プロジェクトにて共通データを定義するクラスである
  */
 public class DTVTConstants {
     //=================================== 定数定義 Begin ==================================
@@ -20,43 +19,48 @@ public class DTVTConstants {
     public static final String SEARCH_ERROR_PARAM_NULL_REQ = "リクエストエラー(リクエストは空である)";
     public static final String GLOBAL_MENU_LAUNCH = "global_menu_launch";
     public static final String SOURCE_SCREEN = "source_screen";
+
+    public static final String REQUEST_METHOD_GET = "GET";
+    public static final String ACCEPT_CHARSET = "Accept-Charset";
+    public static final String CONTENT_TYPE = "contentType";
+    public static final String LOCATION_KEY = "Location";
     //==================================== 定数定義 End ===================================
 
     /**
-     * 通信時エラー情報（WebAPI及びデータプロバイダー等で使用）
+     * 通信時エラー情報（WebAPI及びデータプロバイダー等で使用）.
      */
     public enum ERROR_TYPE {
         /**
-         * 通信成功
+         * 通信成功.
          */
         SUCCESS,
 
         /**
-         * HTTPエラー
+         * HTTPエラー.
          */
         HTTP_ERROR,
 
         /**
-         * その他通信エラー
+         * その他通信エラー.
          */
         COMMUNICATION_ERROR,
         /**
-         * 証明書の問題等、SSLのエラー
+         * 証明書の問題等、SSLのエラー.
          */
         SSL_ERROR,
 
         /**
-         * データなし
+         * データなし.
          */
         NO_DATA,
 
         /**
-         * レスポンス解析エラー
+         * レスポンス解析エラー.
          */
         ANALYSIS_ERROR,
 
         /**
-         * その他エラー
+         * その他エラー.
          */
         OTHER_ERROR,
     }

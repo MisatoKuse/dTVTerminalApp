@@ -90,11 +90,11 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      */
     private CookieManager mCookieManager;
     /**
-     * リクエスト種別・基本はPOST.
+     * リクエスト種別・基本はPOST・子クラスで使われるのでプロテクテッド.
      */
     protected static final String REQUEST_METHOD = "POST";
     /**
-     * リダイレクト処理用にGETも定義.
+     * リダイレクト処理用にGETも定義・子クラスで使われるのでプロテクテッド.
      */
     protected static final String REQUEST_METHOD_GET = "GET";
     /**
@@ -428,6 +428,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         Iterator<HttpURLConnection> iterator = mUrlConnections.iterator();
         while (iterator.hasNext()) {
             final HttpURLConnection stopConnection = iterator.next();
+            //findBugsは別クラスに分離せよと言うが、見通しが悪化するので対応しない。
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -700,11 +701,12 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
 
     /**
      * ステータスが300番台かどうかのチェック.
+     * (リダイレクト判定がレコメンドの認証にも必要になったので流用)
      *
      * @param status HTTPステータス
      * @return 300番台ならばtrue
      */
-    private boolean isRedirectCode(int status) {
+    public static boolean isRedirectCode(int status) {
         switch (status) {
             case HttpURLConnection.HTTP_MULT_CHOICE:
             case HttpURLConnection.HTTP_MOVED_PERM:
@@ -773,7 +775,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                 if (newUrl.contains(ServiceTokenClient.getOkUrlString()) ||
                         newUrl.contains(ServiceTokenClient.getNgUrlString())) {
                     //リダイレクトで、ロケーションがOKかNGに指定したURLならば、サービストークン取得処理へ遷移
-                    getServiceToken(newUrl, httpsConnection);
+                    getServiceToken(newUrl);
                     //コネクションを閉じる
                     httpsConnection.disconnect();
                     return;
@@ -806,6 +808,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
             if (httpsConnection != null) {
                 httpsConnection.disconnect();
             }
+            //ヌルを入れてガベージコレクションの動作を助ける
             httpsConnection = null;
         }
     }
@@ -844,7 +847,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      *
      * @param location 取得したロケーション
      */
-    private void getServiceToken(String location, HttpsURLConnection httpsConnection) {
+    private void getServiceToken(String location) {
         //クッキー情報のバッファ
         String serviceToken = "";
         long serviceTokenMaxAge = 0;
@@ -853,7 +856,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         boolean locationCheck = location.contains(ServiceTokenClient.getOkUrlString());
 
         //OK URLが含まれているかどうか
-        if (locationCheck) {
+        if (locationCheck && mCookieManager != null) {
             //正常にサービストークンが取得できた場合はクッキーを取得
             CookieStore cookieStore = mCookieManager.getCookieStore();
             List<HttpCookie> cookies = cookieStore.getCookies();
