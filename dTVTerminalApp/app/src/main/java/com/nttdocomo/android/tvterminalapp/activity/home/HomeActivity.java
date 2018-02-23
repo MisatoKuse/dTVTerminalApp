@@ -30,6 +30,7 @@ import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewAdapter;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopHomeDataConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopUserInfoDataConnect;
@@ -91,10 +92,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * NOW ON AIR用チャンネル一覧.
      */
     private ChannelList mChannelList = null;
-    /**
-     * 外部ブラウザー遷移先URL.
-     */
-    private final static String PR_URL = "https://www.hikaritv.net/video";
     /**
      * コンテンツ一覧数.
      */
@@ -317,7 +314,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private void startBrowser() {
         Intent intent = new Intent();
         intent.setAction("android.intent.action.VIEW");
-        Uri content_url = Uri.parse(PR_URL);
+        Uri content_url = Uri.parse(UrlConstants.WebUrl.PR_URL);
         intent.setData(content_url);
         startActivity(intent);
     }

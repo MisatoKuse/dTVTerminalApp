@@ -105,7 +105,7 @@ public class MenuListAdapter extends BaseAdapter {
         } else {
             holder = (ProgramViewHolder) view.getTag();
         }
-        String title = (String) mData.get(i);
+        String title = String.valueOf(mData.get(i));
         holder.tv_title.setText(title);
         setTextView(title, holder.tv_title);
         setImageView(title, holder.tv_arrow);

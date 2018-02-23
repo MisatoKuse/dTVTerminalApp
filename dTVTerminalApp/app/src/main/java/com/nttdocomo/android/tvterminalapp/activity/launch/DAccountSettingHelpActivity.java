@@ -13,6 +13,7 @@ import android.webkit.WebViewClient;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 
 /**
  * ドコモテレビターミナルにdアカウントを登録するには 画面.
@@ -31,11 +32,6 @@ public class DAccountSettingHelpActivity extends BaseActivity {
      * webViewの読み込み完了値.
      */
     private final static int PROGRESS_FINISH = 100;
-    /**
-     * 表示するWebPageのURL.
-     * TODO 仮のHTMLファイル
-     */
-    private final static String STB_REGIST_D_ACCOUNT_URL = "file:///android_asset/first_pairing_d_account_help.html";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -47,7 +43,7 @@ public class DAccountSettingHelpActivity extends BaseActivity {
         WebSettings webSettings = dAccountHelpPageWebView.getSettings();
         webSettings.setJavaScriptEnabled(false);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
-        dAccountHelpPageWebView.loadUrl(STB_REGIST_D_ACCOUNT_URL);
+        dAccountHelpPageWebView.loadUrl(UrlConstants.WebUrl.STB_REGIST_D_ACCOUNT_URL);
 
         //Headerの設定
         //TODO ヘッダーのタイトル名変更対応(BaseActivity側で変更予定のため仮)
