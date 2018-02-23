@@ -14,13 +14,13 @@ import java.util.ArrayList;
 public class ChannelInfoList {
 
     //チャンネルの配列
-    private ArrayList<ChannelInfo> mChannels=null;
+    private ArrayList<ChannelInfo> mChannels = null;
 
     /**
      * クラス構造
      */
-    public ChannelInfoList(){
-        mChannels=new ArrayList<>();
+    public ChannelInfoList() {
+        mChannels = new ArrayList<>();
     }
 
     /**
@@ -35,7 +35,7 @@ public class ChannelInfoList {
      * チャンネルを追加
      * @param ch チャンネル
      */
-    public void addChannel(ChannelInfo ch){
+    public void addChannel(ChannelInfo ch) {
         mChannels.add(ch);
     }
 }

@@ -442,7 +442,8 @@ public class RemoteControlRelayClient {
      */
     private boolean isRequestStbElapsedTime() {
         if (getRequestStbElapsedTime() > TcpClient.SEND_RECV_TIMEOUT) {
-            DTVTLogger.debug(String.format(Locale.getDefault(), "RequestStbElapsedTime [%d] exceeded TCP timeout :[%d]", getRequestStbElapsedTime(), TcpClient.SEND_RECV_TIMEOUT));
+            DTVTLogger.debug(String.format(Locale.getDefault(), "RequestStbElapsedTime [%d] exceeded TCP timeout :[%d]",
+                    getRequestStbElapsedTime(), TcpClient.SEND_RECV_TIMEOUT));
             return true;
         }
         return false;

@@ -39,10 +39,14 @@ public class RelayServiceResponseMessage implements Serializable {
 
     private int mResult = RELAY_RESULT_OK;
     private int mResultCode = RELAY_RESULT_SUCCESS;
-    private RemoteControlRelayClient.STB_APPLICATION_TYPES mApplicationTypes = RemoteControlRelayClient.STB_APPLICATION_TYPES.UNKNOWN;
-    private RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES mRequestCommandTypes = RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN;
-    private RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES mDtvChannelServiceCategoryTypes = RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES.UNKNOWN;
-    private RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES mHikariTvServiceCategoryTypes = RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES.UNKNOWN;
+    private RemoteControlRelayClient.STB_APPLICATION_TYPES mApplicationTypes =
+            RemoteControlRelayClient.STB_APPLICATION_TYPES.UNKNOWN;
+    private RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES mRequestCommandTypes =
+            RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN;
+    private RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES mDtvChannelServiceCategoryTypes =
+            RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES.UNKNOWN;
+    private RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES mHikariTvServiceCategoryTypes =
+            RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES.UNKNOWN;
 
     /**
      * 応答結果の変換.
@@ -81,23 +85,31 @@ public class RelayServiceResponseMessage implements Serializable {
     /**
      * リクエストコマンド応答結果コードの変換.
      */
-    final Map<String, RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES> mRequestCommandMap = new HashMap<String, RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES>() {
+    final Map<String, RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES> mRequestCommandMap
+            = new HashMap<String, RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES>() {
         {
-            put(RemoteControlRelayClient.RELAY_COMMAND_UNKNOWN, RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
-            put(RemoteControlRelayClient.RELAY_COMMAND_KEYEVENT_KEYCODE_POWER, RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.KEYEVENT_KEYCODE_POWER);
-            put(RemoteControlRelayClient.RELAY_COMMAND_IS_USER_ACCOUNT_EXIST, RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.IS_USER_ACCOUNT_EXIST);
-            put(RemoteControlRelayClient.RELAY_COMMAND_SET_DEFAULT_USER_ACCOUNT, RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.SET_DEFAULT_USER_ACCOUNT); // エラー応答時
+            put(RemoteControlRelayClient.RELAY_COMMAND_UNKNOWN,
+                    RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
+            put(RemoteControlRelayClient.RELAY_COMMAND_KEYEVENT_KEYCODE_POWER,
+                    RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.KEYEVENT_KEYCODE_POWER);
+            put(RemoteControlRelayClient.RELAY_COMMAND_IS_USER_ACCOUNT_EXIST,
+                    RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.IS_USER_ACCOUNT_EXIST);
+            put(RemoteControlRelayClient.RELAY_COMMAND_SET_DEFAULT_USER_ACCOUNT,
+                    RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.SET_DEFAULT_USER_ACCOUNT); // エラー応答時
             put(RemoteControlRelayClient.RELAY_COMMAND_CHECK_APPLICATION_VERSION_COMPATIBILITY,
                     RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.CHECK_APPLICATION_VERSION_COMPATIBILITY); // エラー応答時
-            put(RemoteControlRelayClient.RELAY_COMMAND_TITLE_DETAIL, RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.TITLE_DETAIL);
-            put(RemoteControlRelayClient.RELAY_COMMAND_START_APPLICATION, RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.START_APPLICATION);
+            put(RemoteControlRelayClient.RELAY_COMMAND_TITLE_DETAIL,
+                    RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.TITLE_DETAIL);
+            put(RemoteControlRelayClient.RELAY_COMMAND_START_APPLICATION,
+                    RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.START_APPLICATION);
         }
     };
 
     /**
      * アプリ名シンボルに対するアプリ起動要求種別.
      */
-    public final Map<String, RemoteControlRelayClient.STB_APPLICATION_TYPES> mStbApplicationEnumMap = new HashMap<String, RemoteControlRelayClient.STB_APPLICATION_TYPES>() {
+    public final Map<String, RemoteControlRelayClient.STB_APPLICATION_TYPES> mStbApplicationEnumMap
+            = new HashMap<String, RemoteControlRelayClient.STB_APPLICATION_TYPES>() {
         {
             put(RemoteControlRelayClient.STB_APPLICATION_DTV, RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV);    // dTV
             put(RemoteControlRelayClient.STB_APPLICATION_DANIMESTORE, RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE);    // dアニメストア
@@ -114,11 +126,14 @@ public class RelayServiceResponseMessage implements Serializable {
             mDtvChannelServiceCategoryTypesMap = new HashMap<String, RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES>() {
         {
             // dTVチャンネル・放送
-            put(RemoteControlRelayClient.STB_APPLICATION_DTVCHANNEL_CATEGORY_BROADCAST, RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_BROADCAST);
+            put(RemoteControlRelayClient.STB_APPLICATION_DTVCHANNEL_CATEGORY_BROADCAST,
+                    RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_BROADCAST);
             // dTVチャンネル・VOD（見逃し）
-            put(RemoteControlRelayClient.STB_APPLICATION_DTVCHANNEL_CATEGORY_MISSED, RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_MISSED);
+            put(RemoteControlRelayClient.STB_APPLICATION_DTVCHANNEL_CATEGORY_MISSED,
+                    RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_MISSED);
             // dTVチャンネル・VOD（関連番組）
-            put(RemoteControlRelayClient.STB_APPLICATION_DTVCHANNEL_CATEGORY_RELATION, RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_RELATION);
+            put(RemoteControlRelayClient.STB_APPLICATION_DTVCHANNEL_CATEGORY_RELATION,
+                    RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_RELATION);
         }
     };
 
@@ -130,23 +145,32 @@ public class RelayServiceResponseMessage implements Serializable {
             mHikariTvServiceCategoryTypesMap = new HashMap<String, RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES>() {
         {
             // ひかりTVの番組（地デジ）
-            put(RemoteControlRelayClient.STB_APPLICATION_H4D_CATEGORY_TERRESTRIAL_DIGITAL, RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_TERRESTRIAL_DIGITAL);
+            put(RemoteControlRelayClient.STB_APPLICATION_H4D_CATEGORY_TERRESTRIAL_DIGITAL,
+                    RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_TERRESTRIAL_DIGITAL);
             // ひかりTVの番組（BS）
-            put(RemoteControlRelayClient.STB_APPLICATION_H4D_CATEGORY_SATELLITE_BS, RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_SATELLITE_BS);
+            put(RemoteControlRelayClient.STB_APPLICATION_H4D_CATEGORY_SATELLITE_BS,
+                    RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_SATELLITE_BS);
             // ひかりTVの番組（IPTV）
-            put(RemoteControlRelayClient.STB_APPLICATION_H4D_CATEGORY_IPTV, RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_IPTV);
+            put(RemoteControlRelayClient.STB_APPLICATION_H4D_CATEGORY_IPTV,
+                    RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_IPTV);
             // ひかりTV内 dTVチャンネルの番組
-            put(RemoteControlRelayClient.STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_BROADCAST, RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_BROADCAST);
+            put(RemoteControlRelayClient.STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_BROADCAST,
+                    RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_BROADCAST);
             // ひかりTV内 dTVチャンネル VOD（見逃し）
-            put(RemoteControlRelayClient.STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_MISSED, RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_MISSED);
+            put(RemoteControlRelayClient.STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_MISSED,
+                    RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_MISSED);
             // ひかりTV内 dTVチャンネル VOD（関連番組）
-            put(RemoteControlRelayClient.STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_RELATION, RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_RELATION);
+            put(RemoteControlRelayClient.STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_RELATION,
+                    RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_RELATION);
             // ひかりTVのVOD
-            put(RemoteControlRelayClient.STB_APPLICATION_H4D_CATEGORY_HIKARITV_VOD, RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_HIKARITV_VOD);
+            put(RemoteControlRelayClient.STB_APPLICATION_H4D_CATEGORY_HIKARITV_VOD,
+                    RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_HIKARITV_VOD);
             // ひかりTV内 dTVのVOD
-            put(RemoteControlRelayClient.STB_APPLICATION_H4D_CATEGORY_DTV_VOD, RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_VOD);
+            put(RemoteControlRelayClient.STB_APPLICATION_H4D_CATEGORY_DTV_VOD,
+                    RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_VOD);
             // ひかりTV内VOD(dTV含む)のシリーズ
-            put(RemoteControlRelayClient.STB_APPLICATION_H4D_CATEGORY_DTV_SVOD, RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_SVOD);
+            put(RemoteControlRelayClient.STB_APPLICATION_H4D_CATEGORY_DTV_SVOD,
+                    RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_SVOD);
         }
     };
 

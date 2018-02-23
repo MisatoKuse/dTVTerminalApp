@@ -2,7 +2,9 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 package com.nttdocomo.android.tvterminalapp.fragment.player;
+
 import android.support.v4.app.Fragment;
+
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 public class DtvContentsDetailFragmentFactory {

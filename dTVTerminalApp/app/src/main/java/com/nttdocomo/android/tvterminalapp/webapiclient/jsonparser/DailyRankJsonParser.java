@@ -36,12 +36,12 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
      *
      * @param mDailyRankJsonParserCallback コールバック
      */
-    public DailyRankJsonParser(DailyRankWebClient.DailyRankJsonParserCallback mDailyRankJsonParserCallback) {
+    public DailyRankJsonParser(final DailyRankWebClient.DailyRankJsonParserCallback mDailyRankJsonParserCallback) {
         this.mDailyRankJsonParserCallback = mDailyRankJsonParserCallback;
     }
 
     @Override
-    protected void onPostExecute(Object dailyLankListData) {
+    protected void onPostExecute(final Object dailyLankListData) {
         mDailyRankJsonParserCallback.onDailyRankJsonParsed((List<DailyRankList>) dailyLankListData);
     }
 

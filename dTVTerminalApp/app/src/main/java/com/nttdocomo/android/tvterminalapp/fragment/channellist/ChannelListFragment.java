@@ -325,7 +325,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
     }
 
     @Override
-    public void onItemClick(final AdapterView<?> adapterView, View view, final int i, final long l) {
+    public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         if (null == mData || i < 0) {
             return;
         }

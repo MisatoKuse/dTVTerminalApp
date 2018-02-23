@@ -214,11 +214,11 @@ public class DlData {
         this.mPercentToNotify = mPercentToNotify;
     }
 
-    public void setXmlToDl(String xml){
-        mXmlToDl=xml;
+    public void setXmlToDl(String xml) {
+        mXmlToDl = xml;
     }
 
-    public String getXmlToDl(){
+    public String getXmlToDl() {
         return mXmlToDl;
     }
 }

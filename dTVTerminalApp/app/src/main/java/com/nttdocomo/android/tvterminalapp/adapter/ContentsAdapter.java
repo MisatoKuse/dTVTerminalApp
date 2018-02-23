@@ -573,12 +573,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         setRecodingReservationStatusData(holder, listContentInfo);
         setChannelName(holder, listContentInfo);
         setRecordedDownloadIcon(holder, listContentInfo);
-        if(ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST.equals(mType)){
+        if (ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST.equals(mType)) {
             setSubTitle(holder, listContentInfo);
         }
     }
 
-    private void setTabContentLayout( ViewHolder holder) {
+    private void setTabContentLayout(ViewHolder holder) {
 
         switch (mTabType) {
             case TAB_TV:
@@ -679,7 +679,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         }
     }
 
-    private void setTabTimeData(ViewHolder holder,final ContentsData listContentInfo) {
+    private void setTabTimeData(ViewHolder holder, final ContentsData listContentInfo) {
         switch (mTabType) {
             case TAB_TV:
                 holder.tv_time.setVisibility(View.VISIBLE);
@@ -851,7 +851,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
             holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
             holder.tv_recorded_ch_name.setText(listContentInfo.getChannelName());
-            if(mType == ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST){
+            if (mType == ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST) {
                 holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.record_download_status_color));
             }
         } else {
@@ -874,7 +874,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     private void setTabHyphenVisibility(ViewHolder holder) {
-        switch (mTabType){
+        switch (mTabType) {
             case TAB_TV:
                 holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
                 holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
@@ -898,7 +898,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * @param listContentInfo ContentsData
      */
     private void setSubTitle(final ViewHolder holder, final ContentsData listContentInfo) {
-        if(!TextUtils.isEmpty(listContentInfo.getSubTitle())) {
+        if (!TextUtils.isEmpty(listContentInfo.getSubTitle())) {
             holder.tv_sub_title.setVisibility(View.VISIBLE);
             holder.tv_sub_title.setText(listContentInfo.getSubTitle());
             holder.tv_sub_title.setOnClickListener(null);

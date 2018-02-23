@@ -502,7 +502,7 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
         int ss = second % 60;
         String str;
         if (hh != 0) {
-            str = String.format(Locale.getDefault(),"%02d:%02d:%02d", hh, mm, ss);
+            str = String.format(Locale.getDefault(), "%02d:%02d:%02d", hh, mm, ss);
         } else {
             str = String.format(Locale.getDefault(), "%02d:%02d", mm, ss);
         }
@@ -2462,7 +2462,7 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                     }
                     break;
                 case OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID://ひかりTV
-                   if(mDetailFullData == null){
+                   if (mDetailFullData == null) {
                         break;
                     }
                     String[] liinfArray = mDetailFullData.getmLiinf_array();
@@ -2478,7 +2478,7 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                                         mDetailFullData.getCid(), mDetailFullData.getCrid());
                             } else if (BVFLG_FLAG_ZERO.equals(mDetailFullData.getBvflg()) || null == mDetailFullData.getBvflg()) {
                                 //liinfを"|"区切りで分解する
-                                if(response == null){
+                                if (response == null) {
                                     break;
                                 }
                                 ArrayList<ActiveData> activeDatas = response.getVodActiveData();
@@ -2486,7 +2486,8 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                                     String[] column = liinf.split(Pattern.quote("|"), 0);
                                     for (ActiveData activeData : activeDatas) {
                                         String licenseId = activeData.getLicenseId();
-                                        //メタレスポンスのpuid、liinf_arrayのライセンスID（パイプ区切り）と購入済みＶＯＤ一覧取得IF「active_list」の「license_id」と比較して一致した場合
+                                        //メタレスポンスのpuid、liinf_arrayのライセンスID（パイプ区切り）と
+                                        // 購入済みＶＯＤ一覧取得IF「active_list」の「license_id」と比較して一致した場合
                                         if (licenseId.equals(column[0]) || licenseId.equals(puid)) {
                                             //一致した「active_list」の「valid_end_date」> 現在時刻の場合
                                             if (activeData.getValidEndDate() > DateUtils.getNowTimeFormatEpoch()) {
@@ -2598,14 +2599,17 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
 
     @Override
     public void onEndRemoteControl() {
-        if(mDetailData != null){
+        if (mDetailData != null) {
             if (DTV_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
-                mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner_dtv, null));
+                mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
+                        R.drawable.remote_watch_by_tv_bottom_corner_dtv, null));
             } else if (D_ANIMATION_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
-                mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner_d_anime, null));
+                mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
+                        R.drawable.remote_watch_by_tv_bottom_corner_d_anime, null));
             } else if (DTV_CHANNEL_CONTENTS_SERVICE_ID == mDetailData.getServiceId()
                     || DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
-                mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
+                mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
+                        R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
             }
         }
         super.onEndRemoteControl();

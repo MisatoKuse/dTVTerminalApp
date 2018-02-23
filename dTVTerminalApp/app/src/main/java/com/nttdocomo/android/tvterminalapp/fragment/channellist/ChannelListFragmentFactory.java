@@ -13,7 +13,7 @@ public class ChannelListFragmentFactory {
 
     private final Map<Integer, ChannelListFragment> mFragments = new HashMap<>();
 
-    public ChannelListFragment createFragment(int position, ChannelListFragment.ChannelListFragmentListener lis, ChannelListAdapter.ChListDataType type) {
+    public ChannelListFragment createFragment(final int position, final ChannelListFragment.ChannelListFragmentListener lis, final ChannelListAdapter.ChListDataType type) {
         ChannelListFragment fragment;
         fragment = mFragments.get(position);
         if (fragment == null) {

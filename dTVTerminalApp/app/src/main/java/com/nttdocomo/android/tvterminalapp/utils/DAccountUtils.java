@@ -34,7 +34,7 @@ public class DAccountUtils {
      *
      * @param activity アクティビティ
      */
-    public static void reStartApplication(Activity activity) {
+    public static void reStartApplication(final Activity activity) {
         DTVTLogger.start();
 
         //再起動処理を行う

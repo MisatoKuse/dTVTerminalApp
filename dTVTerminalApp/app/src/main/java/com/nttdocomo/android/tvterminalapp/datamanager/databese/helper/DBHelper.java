@@ -144,7 +144,8 @@ public class DBHelper extends SQLiteOpenHelper {
         try {
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_RENTAL_CHANNEL_ACTIVE_LIST_SQL);   //購入済みCHのactive_lis一覧用
         } catch (Exception e) {
-            DTVTLogger.debug("HomeDBHelper::onCreate, create " + DBConstants.CREATE_TABLE_RENTAL_CHANNEL_ACTIVE_LIST_SQL + " table failed, cause=" + e.getCause());
+            DTVTLogger.debug("HomeDBHelper::onCreate, create " + DBConstants.CREATE_TABLE_RENTAL_CHANNEL_ACTIVE_LIST_SQL
+                    + " table failed, cause=" + e.getCause());
         }
         try {
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_TV_CLIP_KEY_LIST_SQL); // クリップキー一覧(TV)

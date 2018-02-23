@@ -30,10 +30,10 @@ public class DaccountReceiver extends BroadcastReceiver {
         //現在日時取得
         long nowTime = System.currentTimeMillis();
 
-        DTVTLogger.debug("receive time:" + nowTime + " before time:" + sBeforeReceiveTime +
-                " difference:" + (nowTime - sBeforeReceiveTime) +
-                " INTERVAL:" + REPEAT_RECIEVE_TIME +
-                " answer:" + (sBeforeReceiveTime + REPEAT_RECIEVE_TIME > nowTime));
+        DTVTLogger.debug("receive time:" + nowTime + " before time:" + sBeforeReceiveTime
+                + " difference:" + (nowTime - sBeforeReceiveTime)
+                + " INTERVAL:" + REPEAT_RECIEVE_TIME
+                + " answer:" + (sBeforeReceiveTime + REPEAT_RECIEVE_TIME > nowTime));
 
         if (sBeforeReceiveTime + REPEAT_RECIEVE_TIME > nowTime) {
             // 前回のdアカウント設定アプリからの通知から極端に短い時間で再通知を受けた場合は、ユーザー切り替えとなる。

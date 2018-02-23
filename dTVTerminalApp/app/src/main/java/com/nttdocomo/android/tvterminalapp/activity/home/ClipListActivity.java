@@ -339,7 +339,8 @@ public class ClipListActivity extends BaseActivity implements
             if (firstVisibleItem + visibleItemCount == totalItemCount
                     && 0 != totalItemCount
                     ) {
-                DTVTLogger.debug("ClipListActivity::onScroll, paging, firstVisibleItem=" + firstVisibleItem + ", totalItemCount=" + totalItemCount + ", visibleItemCount=" + visibleItemCount);
+                DTVTLogger.debug("ClipListActivity::onScroll, paging, firstVisibleItem="
+                        + firstVisibleItem + ", totalItemCount=" + totalItemCount + ", visibleItemCount=" + visibleItemCount);
             }
         }
     }

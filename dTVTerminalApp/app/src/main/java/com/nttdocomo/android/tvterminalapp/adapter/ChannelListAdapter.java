@@ -155,7 +155,8 @@ public class ChannelListAdapter extends BaseAdapter {
                     holder.mThumbnail.setVisibility(View.GONE);
                     DisplayMetrics DisplayMetrics = mContext.getResources().getDisplayMetrics();
                     float density = DisplayMetrics.density;
-                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, TEXT_HEIGHT * (int) density);
+                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                            RelativeLayout.LayoutParams.MATCH_PARENT, TEXT_HEIGHT * (int) density);
                     layoutParams.setMarginStart(TEXT_MARGIN_START * (int) density);
                     layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
                     layoutParams.setMarginEnd(TEXT_MARGIN_END * (int) density);

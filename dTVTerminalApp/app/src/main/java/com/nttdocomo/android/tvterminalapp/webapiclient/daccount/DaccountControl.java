@@ -179,7 +179,7 @@ public class DaccountControl implements
 
     @Override
     public void checkServiceCallBack(final int result) {
-        if(mIsCancel) {
+        if (mIsCancel) {
             //次回実行する為にフラグをリセット
             mOnceControl.setExecOnce(false);
             return;
@@ -237,7 +237,7 @@ public class DaccountControl implements
 
     @Override
     public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
-        if(mIsCancel) {
+        if (mIsCancel) {
             return;
         }
         //戻り値を控える
@@ -418,15 +418,15 @@ public class DaccountControl implements
      * 通信停止処理実行.
      */
     private void stopConnect() {
-        if(mDaccountCheckService != null) {
+        if (mDaccountCheckService != null) {
             mDaccountCheckService.daccountServiceEnd();
             DTVTLogger.debug("DaccountCheckServiceStop");
         }
-        if(mDaccountGetOTT != null) {
+        if (mDaccountGetOTT != null) {
             mDaccountGetOTT.daccountServiceEnd();
             DTVTLogger.debug("DaccountGetOTTStop");
         }
-        if(mDaccountRegistService != null) {
+        if (mDaccountRegistService != null) {
             mDaccountRegistService.daccountServiceEnd();
             DTVTLogger.debug("DaccountRegistServiceStop");
         }

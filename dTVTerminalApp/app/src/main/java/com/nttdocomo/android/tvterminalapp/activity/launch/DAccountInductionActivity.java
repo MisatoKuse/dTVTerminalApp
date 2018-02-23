@@ -65,7 +65,7 @@ public class DAccountInductionActivity extends BaseActivity {
             dAccountInstallDialog.setContent(getResources().getString(R.string.main_setting_d_account_message));
             dAccountInstallDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                 @Override
-                public void onOKCallback(boolean isOK) {
+                public void onOKCallback(final boolean isOK) {
                     Uri uri = Uri.parse(D_ACCOUNT_APP_URI);
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                     startActivity(intent);

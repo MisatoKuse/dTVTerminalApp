@@ -1269,9 +1269,10 @@ public class BaseActivity extends FragmentActivity implements
      * @param chno                チャンネル番号
      * @param serviceCategoryType サービス形態
      */
-    protected void requestStartApplicationDtvChannel(final RemoteControlRelayClient.STB_APPLICATION_TYPES type,
-                                                     final RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES serviceCategoryType,
-                                                     final String crid, final String chno) {
+    protected void requestStartApplicationDtvChannel(
+            final RemoteControlRelayClient.STB_APPLICATION_TYPES type,
+            final RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES serviceCategoryType,
+            final String crid, final String chno) {
         mRemoteControllerView.sendStartApplicationDtvChannelRequest(type, serviceCategoryType, crid, chno);
     }
 
@@ -1283,8 +1284,8 @@ public class BaseActivity extends FragmentActivity implements
      * @param cid       コンテンツID
      * @param crid      crid
      */
-    protected void requestStartApplicationHikariTvCategoryHikaritvVod(final String licenseId,
-                                                                      final String cid, final String crid) {
+    protected void requestStartApplicationHikariTvCategoryHikaritvVod(
+            final String licenseId, final String cid, final String crid) {
         mRemoteControllerView.sendStartApplicationHikariTvCategoryHikaritvVodRequest(licenseId, cid, crid);
     }
 
@@ -1485,14 +1486,13 @@ public class BaseActivity extends FragmentActivity implements
 
             //クリップ状態によりクリップ登録/削除実行
             if (data.isClipStatus()) {
-                ClipDeleteWebClient deleteWebClient =
-                        new ClipDeleteWebClient(getApplicationContext());
+                ClipDeleteWebClient deleteWebClient = new ClipDeleteWebClient(getApplicationContext());
                 isParamCheck = deleteWebClient.getClipDeleteApi(data.getType(), data.getCrid(),
                         data.getTitle(), this);
             } else {
-                ClipRegistWebClient registWebClient =
-                        new ClipRegistWebClient(getApplicationContext());
-                isParamCheck = registWebClient.getClipRegistApi(data.getType(), data.getCrid(),
+                ClipRegistWebClient registWebClient = new ClipRegistWebClient(getApplicationContext());
+                isParamCheck = registWebClient.getClipRegistApi(
+                        data.getType(), data.getCrid(),
                         data.getServiceId(), data.getEventId(), data.getTitleId(), data.getTitle(),
                         data.getRValue(), data.getLinearStartDate(), data.getLinearEndDate(),
                         data.getIsNotify(), this);

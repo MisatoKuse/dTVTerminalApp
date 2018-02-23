@@ -408,12 +408,20 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
         switch (mActivityType) {
             case RENTAL_LIST:
                 //「estflg」が「0」または未設定かつ「disp_type」が「video_program」または「video_package」
-                return (vodMetaFullData.getEstFlag() == null || vodMetaFullData.getEstFlag().length() == 0 || vodMetaFullData.getEstFlag().equals(EST_FLAG_FALSE))
-                        && (vodMetaFullData.getDisp_type() != null && (vodMetaFullData.getDisp_type().equals(DISP_TYPE_VIDEO_PROGRAM) || vodMetaFullData.getDisp_type().equals(DISP_TYPE_VIDEO_PACKAGE)));
+                return (vodMetaFullData.getEstFlag() == null
+                        || vodMetaFullData.getEstFlag().length() == 0
+                        || vodMetaFullData.getEstFlag().equals(EST_FLAG_FALSE))
+                        && (vodMetaFullData.getDisp_type() != null
+                        && (vodMetaFullData.getDisp_type().equals(DISP_TYPE_VIDEO_PROGRAM)
+                        || vodMetaFullData.getDisp_type().equals(DISP_TYPE_VIDEO_PACKAGE)));
             case PREMIUM_VIDEO:
                 //「chsvod」が「0」または未設定かつ「disp_type」が「subscription_package」または「series_svod」のコンテンツ
-                return (vodMetaFullData.getmChsvod() == null || vodMetaFullData.getmChsvod().length() == 0 || vodMetaFullData.getmChsvod().equals(CHSVOD_FLAG_FALSE))
-                        && (vodMetaFullData.getDisp_type() != null && (vodMetaFullData.getDisp_type().equals(DISP_TYPE_SUBSCRIPTION_PACKAGE) || vodMetaFullData.getDisp_type().equals(DISP_TYPE_SERIES_SVOD)));
+                return (vodMetaFullData.getmChsvod() == null
+                        || vodMetaFullData.getmChsvod().length() == 0
+                        || vodMetaFullData.getmChsvod().equals(CHSVOD_FLAG_FALSE))
+                        && (vodMetaFullData.getDisp_type() != null
+                        && (vodMetaFullData.getDisp_type().equals(DISP_TYPE_SUBSCRIPTION_PACKAGE)
+                        || vodMetaFullData.getDisp_type().equals(DISP_TYPE_SERIES_SVOD)));
             default:
                 return false;
         }
