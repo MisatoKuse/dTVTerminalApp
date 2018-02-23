@@ -214,7 +214,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
             requestData.setContentType(contentsType);
             contentInfo.setRequestData(requestData);
 
-            DTVTLogger.info("RankingContentInfo " + contentInfo.getRank());
+            DTVTLogger.debug("RankingContentInfo " + contentInfo.getRank());
 
             if (mRequiredClipKeyList) {
                 // クリップ状態をコンテンツリストに格納

@@ -227,7 +227,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
             }
 
             rankingContentsDataList.add(contentInfo);
-            DTVTLogger.info("RankingContentInfo " + contentInfo.getRank());
+            DTVTLogger.debug("RankingContentInfo " + contentInfo.getRank());
         }
 
         mApiDataProviderCallback.watchListenVideoListCallback(rankingContentsDataList);

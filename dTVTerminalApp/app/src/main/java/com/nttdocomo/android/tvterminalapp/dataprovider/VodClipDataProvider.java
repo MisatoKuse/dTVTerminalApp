@@ -220,7 +220,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
             }
 
             clipDataList.add(clipContentInfo);
-            DTVTLogger.info("RankingContentInfo " + clipContentInfo.getRank());
+            DTVTLogger.debug("RankingContentInfo " + clipContentInfo.getRank());
         }
 
         return clipDataList;
