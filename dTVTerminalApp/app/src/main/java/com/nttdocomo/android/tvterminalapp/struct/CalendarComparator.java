@@ -14,13 +14,13 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * ソート処理
+ * ソート処理.
  */
 public class CalendarComparator implements Comparator<ScheduleInfo>, Serializable {
     private static final long serialVersionUID = -1L;
 
     @Override
-    public int compare(ScheduleInfo s1, ScheduleInfo s2) {
+    public int compare(final ScheduleInfo s1, final ScheduleInfo s2) {
         StringBuilder time1 = new StringBuilder();
         time1.append(s1.getStartTime().substring(0, 10));
         time1.append(s1.getStartTime().substring(11, 19));
