@@ -57,17 +57,12 @@ public class STBConnectActivity extends BaseActivity {
         @Override
         public void run() {
             DTVTLogger.start();
-            try {
-                if (!isStbConnected) {
-                    SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
-                            mContext, true);
-                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                DTVTLogger.error(DTVT);
+            if (!isStbConnected) {
+                SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
+                        mContext, true);
+                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }
             DTVTLogger.end();
         }

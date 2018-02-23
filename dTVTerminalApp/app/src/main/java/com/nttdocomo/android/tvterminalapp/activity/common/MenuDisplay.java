@@ -76,11 +76,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         return sMenuDisplay;
     }
 
-    public void setActivityAndListener(BaseActivity activity, Context context) throws Exception {
-        if (null == activity) {
-            throw new Exception("MenuDisplay::setActivityAndListener() --> Param activity can not be null");
-        }
-
+    public void setActivityAndListener(BaseActivity activity, Context context){
         synchronized (MenuDisplay.class) {
             mContext = context;
             mActivity = activity;

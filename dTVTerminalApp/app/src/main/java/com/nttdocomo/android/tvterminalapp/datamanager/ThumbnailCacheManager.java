@@ -239,6 +239,7 @@ public class ThumbnailCacheManager {
                 }
             } catch(SecurityException e) {
                 //削除が行えなくても、特に対策は無いので次へ進む
+                DTVTLogger.debug(e);
             }
         }
     }
