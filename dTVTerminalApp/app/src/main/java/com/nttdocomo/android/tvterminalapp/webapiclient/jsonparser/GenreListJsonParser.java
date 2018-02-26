@@ -32,25 +32,24 @@ public class GenreListJsonParser extends AsyncTask<Object, Object, Object> {
     private GenreListResponse mGenreListResponse;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      * <p>
      * //     * @param genreListJsonParserCallback
      */
-    public GenreListJsonParser(GenreListWebClient.
-                                       GenreListJsonParserCallback genreListJsonParserCallback) {
+    public GenreListJsonParser(GenreListWebClient.GenreListJsonParserCallback genreListJsonParserCallback) {
         mGenreListJsonParserCallback =
                 genreListJsonParserCallback;
         mGenreListResponse = new GenreListResponse();
     }
 
     @Override
-    protected void onPostExecute(Object s) {
+    protected void onPostExecute(final Object s) {
         mGenreListJsonParserCallback.
                 onGenreListJsonParsed(mGenreListResponse);
     }
 
     @Override
-    protected Object doInBackground(Object... strings) {
+    protected Object doInBackground(final Object... strings) {
         String result = (String) strings[0];
         GenreListResponse response = genreListSender(result);
         return response;
@@ -58,12 +57,12 @@ public class GenreListJsonParser extends AsyncTask<Object, Object, Object> {
 
 
     /**
-     * ジャンル一覧Jsonデータを解析する
+     * ジャンル一覧Jsonデータを解析する.
      *
      * @param jsonStr ジジャンル一覧Jsonデータ
      * @return ジャンル一覧取得：正常時レスポンスデータ
      */
-    public GenreListResponse genreListSender(String jsonStr) {
+    public GenreListResponse genreListSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         mGenreListResponse = new GenreListResponse();
@@ -86,11 +85,11 @@ public class GenreListJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     /**
-     * UpdateDateの値をジャンルコンテンツ数取得：正常時レスポンスデータオブジェクトに格納
+     * UpdateDateの値をジャンルコンテンツ数取得：正常時レスポンスデータオブジェクトに格納.
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendUpdateDate(JSONObject jsonObj) {
+    public void sendUpdateDate(final JSONObject jsonObj) {
         try {
             // UpdateDateの値を取得しセットする
             if (!jsonObj.isNull(GenreListResponse.GENRE_LIST_RESPONSE_UPDATE_DATE)) {
@@ -110,11 +109,11 @@ public class GenreListJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     /**
-     * ジャンル一覧のデータをジャンル一覧取得：正常時レスポンスデータオブジェクトに格納
+     * ジャンル一覧のデータをジャンル一覧取得：正常時レスポンスデータオブジェクトに格納.
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendGenreListResponse(JSONObject jsonObj) {
+    public void sendGenreListResponse(final JSONObject jsonObj) {
         try {
             ArrayList<GenreListMetaData> genreListMetaDataList;
             Iterator<String> iterator_key = jsonObj.keys();

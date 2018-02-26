@@ -7,14 +7,14 @@ package com.nttdocomo.android.tvterminalapp.jni.download;
 
 public interface DlnaDlListener {
     /**
-     * 機能：団ロード進捗のコールバック
+     * 機能：団ロード進捗のコールバック.
      * @param sizeFinished
      */
-    void dlProgress(int sizeFinished);
+    void dlProgress(final int sizeFinished);
 
     /**
-     * 機能：団ロードステータスのコールバック
+     * 機能：団ロードステータスのコールバック.
      * @param status status
      */
-    void dlStatus(DlnaDlStatus status);
+    void dlStatus(final DlnaDlStatus status);
 }

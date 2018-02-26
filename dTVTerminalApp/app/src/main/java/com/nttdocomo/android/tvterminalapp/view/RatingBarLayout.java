@@ -25,60 +25,60 @@ import java.text.DecimalFormat;
 public class RatingBarLayout extends LinearLayout {
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      */
     private Context mContext = null;
     /**
-     * 最大評価値
+     * 最大評価値.
      */
     private final static int numStars = 5;
     /**
-     * 評価最小基準値
+     * 評価最小基準値.
      */
     private final static float BASE_VALUE = 0.1f;
     /**
-     * フォーマット
+     * フォーマット.
      */
     private final static String FORMAT = "0.0";
     /**
-     * The x coordinate of the first pixel in source
+     * The x coordinate of the first pixel in source.
      */
     private final static int PIXEL0 = 0;
     /**
-     * フォーマット(number = 0)
+     * フォーマット(number = 0).
      */
     private final static String FORMAT_NUMBER_0 = "-";
     /**
-     * 区別フラグ（一覧と詳細）
+     * 区別フラグ（一覧と詳細）.
      */
     private boolean isMini = true;
     /**
-     * 一覧画面のナンバーのテキストサイズ
+     * 一覧画面のナンバーのテキストサイズ.
      */
     private static final int MINI_NUMBER_TEXT_SIZE = 12;
     /**
-     * コンテンツ詳細画面のナンバーのテキストサイズ
+     * コンテンツ詳細画面のナンバーのテキストサイズ.
      */
     private static final int NUMBER_TEXT_SIZE = 14;
     /**
-     * 開始index
+     * 開始index.
      */
     private static final int START_NUMBER_START_INDEX = 1;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
      * @param context コンテクスト
      */
-    public RatingBarLayout(Context context) {
+    public RatingBarLayout(final Context context) {
         this(context, null);
     }
 
-    public RatingBarLayout(Context context, AttributeSet attrs) {
+    public RatingBarLayout(final Context context, final AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public RatingBarLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public RatingBarLayout(final Context context, final AttributeSet attrs, final int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mContext = context;
     }
@@ -108,15 +108,15 @@ public class RatingBarLayout extends LinearLayout {
      *
      * @param progress stars進捗.
      */
-    private synchronized void setProgress(float progress){
+    private synchronized void setProgress(final float progress) {
         int fullStar = (int) (progress);
         float dec = Float.parseFloat(new DecimalFormat(FORMAT).format(progress - fullStar));
-        if(fullStar == 0 && dec < BASE_VALUE){
+        if (fullStar == 0 && dec < BASE_VALUE) {
             setProgressNumbers(FORMAT_NUMBER_0);
             return;
         }
-        for(int i = START_NUMBER_START_INDEX ;i <= numStars; i++){
-            if(i == fullStar + START_NUMBER_START_INDEX && dec >= BASE_VALUE){
+        for (int i = START_NUMBER_START_INDEX; i <= numStars; i++) {
+            if (i == fullStar + START_NUMBER_START_INDEX && dec >= BASE_VALUE) {
                 setProgressStars(dec);
             } else {
                 setFullStars(i <= fullStar);
@@ -126,11 +126,11 @@ public class RatingBarLayout extends LinearLayout {
     }
 
     /**
-     * 進捗ナンバーを設定
+     * 進捗ナンバーを設定.
      *
      * @param progressNumbers 進捗ナンバー
      */
-    private void setProgressNumbers(String progressNumbers){
+    private void setProgressNumbers(final String progressNumbers) {
         TextView textView = new TextView(mContext);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 getNumWidth(),
@@ -146,26 +146,26 @@ public class RatingBarLayout extends LinearLayout {
     }
 
     /**
-     * 全starを設定
+     * 全starを設定.
      *
      * @param progressStars 進捗パーセント
      */
-    private void setProgressStars(float progressStars){
+    private void setProgressStars(final float progressStars) {
         RelativeLayout mRelativeLayout = new RelativeLayout(mContext);
         mRelativeLayout.addView(getFullStarsIcon());
-        int percentWidth = (int)(getStarHeightWidth() * progressStars);
+        int percentWidth = (int) (getStarHeightWidth() * progressStars);
         mRelativeLayout.addView(getProgressStarIcon(percentWidth));
         this.addView(mRelativeLayout);
     }
 
     /**
-     * 全starを設定
+     * 全starを設定.
      *
      * @param isBackground 背景フラグ
      */
-    private void setFullStars(boolean isBackground){
+    private void setFullStars(final boolean isBackground) {
         ImageView imageView = getFullStarsIcon();
-        if(isBackground){
+        if (isBackground) {
             imageView.setImageResource(R.mipmap.rate_star_active);
         } else {
             imageView.setImageResource(R.mipmap.rate_star_normal);
@@ -174,10 +174,10 @@ public class RatingBarLayout extends LinearLayout {
     }
 
     /**
-     * starの高さ、幅さ取得
+     * starの高さ、幅さ取得.
      */
-    private float getStarHeightWidth(){
-        if(isMini){
+    private float getStarHeightWidth() {
+        if (isMini) {
             return getResources().getDimension(R.dimen.rating_star_mini_width_height);
         } else {
             return getResources().getDimension(R.dimen.rating_star_width_height);
@@ -185,10 +185,10 @@ public class RatingBarLayout extends LinearLayout {
     }
 
     /**
-     * numberの幅さ取得
+     * numberの幅さ取得.
      */
-    private int getNumWidth(){
-        if(isMini){
+    private int getNumWidth() {
+        if (isMini) {
             return (int) getResources().getDimension(R.dimen.rating_star_mini_numbers_width);
         } else {
             return (int) getResources().getDimension(R.dimen.rating_star_numbers_width);
@@ -198,11 +198,11 @@ public class RatingBarLayout extends LinearLayout {
     /**
      * 全starのIcon取得
      */
-    private ImageView getFullStarsIcon(){
+    private ImageView getFullStarsIcon() {
         ImageView imageView = new ImageView(mContext);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                (int)getStarHeightWidth(),
-                (int)getStarHeightWidth()
+                (int) getStarHeightWidth(),
+                (int) getStarHeightWidth()
         );
         imageView.setLayoutParams(layoutParams);
         imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
@@ -211,15 +211,15 @@ public class RatingBarLayout extends LinearLayout {
     }
 
     /**
-     * 進捗starのIcon取得
+     * 進捗starのIcon取得.
      *
      * @param progressStarWidth 進捗star幅さ
      */
-    private ImageView getProgressStarIcon(int progressStarWidth){
+    private ImageView getProgressStarIcon(final int progressStarWidth) {
         ImageView imageView = new ImageView(mContext);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                 progressStarWidth,
-                (int)getStarHeightWidth()
+                (int) getStarHeightWidth()
         );
         imageView.setLayoutParams(layoutParams);
         imageView.setScaleType(ImageView.ScaleType.MATRIX);

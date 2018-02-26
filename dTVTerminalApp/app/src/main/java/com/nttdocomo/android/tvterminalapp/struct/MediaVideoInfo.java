@@ -9,7 +9,7 @@ import android.net.Uri;
 import com.digion.dixim.android.secureplayer.MediaInfo;
 
 /**
- * 機能：再生するヴィデオ属性クラス
+ * 機能：再生するビデオ属性クラス.
  */
 public class MediaVideoInfo implements MediaInfo {
 
@@ -27,7 +27,7 @@ public class MediaVideoInfo implements MediaInfo {
 	private final String mTitle;
 
 	/**
-	 * 機能：コンストラクタ
+	 * 機能：コンストラクタ.
 	 * @param uri メディアのURI
 	 * @param mimeType メディアのMimeType
 	 * @param size メディアのサイズ(Byte)
@@ -41,17 +41,17 @@ public class MediaVideoInfo implements MediaInfo {
 	 * @param title メディアのタイトル
 	 * @param contentFormat DIDLのres protocolInfoの3番目のフィールド
 	 */
-	public MediaVideoInfo(Uri uri,
-                          String mimeType,
-                          long size,
-                          long durationMs,
-                          int bytesPerSec,
-                          boolean isSupportedByteSeek,
-                          boolean isSupportedTimeSeek,
-                          boolean isAvailableConnectionStalling,
-                          boolean isVideoBroadcast,
-                          boolean isRemote, String title,
-                          String contentFormat) {
+	public MediaVideoInfo(final Uri uri,
+						  final String mimeType,
+						  final long size,
+						  final long durationMs,
+						  final int bytesPerSec,
+						  final boolean isSupportedByteSeek,
+						  final boolean isSupportedTimeSeek,
+						  final boolean isAvailableConnectionStalling,
+						  final boolean isVideoBroadcast,
+						  final boolean isRemote, String title,
+						  final String contentFormat) {
 		this.mUri = uri;
 		this.mMimeType = mimeType;
 		this.mSize = size;
@@ -71,7 +71,7 @@ public class MediaVideoInfo implements MediaInfo {
 	}
 
 	/**
-	 * 機能：「mUri」を戻す
+	 * 機能：「mUri」を戻す.
 	 * @return mUri
 	 */
 	@Override
@@ -80,7 +80,7 @@ public class MediaVideoInfo implements MediaInfo {
 	}
 
 	/**
-	 * 機能：「mMimeType」を戻す
+	 * 機能：「mMimeType」を戻す.
 	 * @return mMimeType
 	 */
 	@Override
@@ -89,7 +89,7 @@ public class MediaVideoInfo implements MediaInfo {
 	}
 
 	/**
-	 * 機能：「mSize」を戻す
+	 * 機能：「mSize」を戻す.
 	 * @return mSize
 	 */
 	@Override
@@ -98,7 +98,7 @@ public class MediaVideoInfo implements MediaInfo {
 	}
 
 	/**
-	 * 機能：「mDurationMs」を戻す
+	 * 機能：「mDurationMs」を戻す.
 	 * @return mDurationMs
 	 */
 	@Override
@@ -107,7 +107,7 @@ public class MediaVideoInfo implements MediaInfo {
 	}
 
 	/**
-	 * 機能：「mBytesPerSec」を戻す
+	 * 機能：「mBytesPerSec」を戻す.
 	 * @return mBytesPerSec
 	 */
 	@Override
@@ -116,7 +116,7 @@ public class MediaVideoInfo implements MediaInfo {
 	}
 
 	/**
-	 * 機能：「mIsSupportedByteSeek」を戻す
+	 * 機能：「mIsSupportedByteSeek」を戻す.
 	 * @return mIsSupportedByteSeek
 	 */
 	@Override
@@ -125,7 +125,7 @@ public class MediaVideoInfo implements MediaInfo {
 	}
 
 	/**
-	 * 機能：「mIsSupportedTimeSeek」を戻す
+	 * 機能：「mIsSupportedTimeSeek」を戻す.
 	 * @return mIsSupportedTimeSeek
 	 */
 	@Override
@@ -134,7 +134,7 @@ public class MediaVideoInfo implements MediaInfo {
 	}
 
 	/**
-	 * 機能：「mIsAvailableConnectionStalling」を戻す
+	 * 機能：「mIsAvailableConnectionStalling」を戻す.
 	 * @return mIsAvailableConnectionStalling
 	 */
 	@Override
@@ -143,7 +143,7 @@ public class MediaVideoInfo implements MediaInfo {
 	}
 
 	/**
-	 * 機能：「mContentFormat」を戻す
+	 * 機能：「mContentFormat」を戻す.
 	 * @return mContentFormat
 	 */
 	@Override
@@ -152,7 +152,7 @@ public class MediaVideoInfo implements MediaInfo {
 	}
 
 	/**
-	 * 機能：「mIsVideoBroadcast」を戻す
+	 * 機能：「mIsVideoBroadcast」を戻す.
 	 * @return mIsVideoBroadcast
 	 */
 	@Override
@@ -161,7 +161,7 @@ public class MediaVideoInfo implements MediaInfo {
 	}
 
 	/**
-	 * 機能：「mIsRemote」を戻す
+	 * 機能：「mIsRemote」を戻す.
 	 * @return mIsRemote
 	 */
 	@Override
@@ -170,7 +170,7 @@ public class MediaVideoInfo implements MediaInfo {
 	}
 
 	/**
-	 * 機能：「mTitle」を戻す
+	 * 機能：「mTitle」を戻す.
 	 * @return mTitle
 	 */
 	@Override

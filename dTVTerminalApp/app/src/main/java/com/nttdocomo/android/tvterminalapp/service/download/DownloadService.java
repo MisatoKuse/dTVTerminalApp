@@ -43,18 +43,18 @@ public class DownloadService extends Service implements DownloadListener {
     public static final String DONWLOAD_ParamString = "paramString";
 
 
-    public synchronized static void setDlDataQue(List<DlData> dlDataQue){
+    public synchronized static void setDlDataQue(final List<DlData> dlDataQue) {
         sDlDataQue = dlDataQue;
     }
 
-    public synchronized static void setDlDataQueClear(){
-        if(null != sDlDataQue){
+    public synchronized static void setDlDataQueClear() {
+        if (null != sDlDataQue) {
             sDlDataQue.clear();
         }
     }
 
-    public synchronized static void setDlDataQueRemove0(){
-        if(null != sDlDataQue){
+    public synchronized static void setDlDataQueRemove0() {
+        if (null != sDlDataQue) {
             sDlDataQue.remove(0);
         }
     }
@@ -63,12 +63,12 @@ public class DownloadService extends Service implements DownloadListener {
         return sDlDataQue;
     }
 
-    public static synchronized boolean isDownloadServiceRunning(){
-        return (null != sDlDataQue ) && 0 < sDlDataQue.size();
+    public static synchronized boolean isDownloadServiceRunning() {
+        return (null != sDlDataQue) && 0 < sDlDataQue.size();
     }
 
-    public void setDownloadServiceListener(DownloadServiceListener dlServiceListener){
-        mDownloadServiceListener=dlServiceListener;
+    public void setDownloadServiceListener(final DownloadServiceListener dlServiceListener) {
+        mDownloadServiceListener = dlServiceListener;
     }
 
     /**
@@ -82,47 +82,47 @@ public class DownloadService extends Service implements DownloadListener {
     /**
      * ダウンロード開始
      */
-    public void start(){
-        if(null!=mDownloaderBase){
+    public void start() {
+        if (null != mDownloaderBase) {
             mDownloaderBase.start();
         }
     }
 
     /**
-     * ダウンロード進捗通知
+     * ダウンロード進捗通知.
      */
-    public int getProgressBytes(){
-        if(null!=mDownloaderBase){
+    public int getProgressBytes() {
+        if (null != mDownloaderBase) {
             return mDownloaderBase.getProgressBytes();
         }
         return 0;
     }
 
     /**
-     * ダウンロード進捗通知
+     * ダウンロード進捗通知.
      */
-    public float getProgressPercent(){
-        if(null!=mDownloaderBase){
+    public float getProgressPercent() {
+        if (null != mDownloaderBase) {
             return mDownloaderBase.getProgressPercent();
         }
         return 0.0f;
     }
 
     /**
-     * ダウンロードエラー発生の時、コールされる
+     * ダウンロードエラー発生の時、コールされる.
      */
-    public DLError isError(){
-        if(null!=mDownloaderBase){
+    public DLError isError() {
+        if (null != mDownloaderBase) {
             return mDownloaderBase.isError();
         }
         return DLError.DLError_NoError;
     }
 
     /**
-     * ダウンロードキャンセル
+     * ダウンロードキャンセル.
      */
-    public void cancel(){
-        if(null!=mDownloaderBase){
+    public void cancel() {
+        if (null != mDownloaderBase) {
             mDownloaderBase.cancel();
         }
     }
@@ -143,16 +143,16 @@ public class DownloadService extends Service implements DownloadListener {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public int onStartCommand(final Intent intent, final int flags, final int startId) {
         startService();
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public void startService(){
-        startForeground(DOWNLOAD_SERVICE_ID ,getNotification(getResources().getString(R.string.record_download_notification), 0));
+    public void startService() {
+        startForeground(DOWNLOAD_SERVICE_ID, getNotification(getResources().getString(R.string.record_download_notification), 0));
     }
 
-    private Notification getNotification(String title, int progress) {
+    private Notification getNotification(final String title, final int progress) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "");
         builder.setSmallIcon(R.mipmap.icd_app_tvterminal);
         builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.icd_app_tvterminal));
@@ -165,17 +165,17 @@ public class DownloadService extends Service implements DownloadListener {
         return builder.build();
     }
 
-    public void stopService(){
+    public void stopService() {
         stopForeground(true);
         stopSelf();
-        boolean isUiRunning=isUiRunning();
-        if(!isUiRunning) {
+        boolean isUiRunning = isUiRunning();
+        if (!isUiRunning) {
             DlnaProvDownload.uninitGlobalDl();
             DlDataProvider.releaseInstance();
         }
     }
 
-    public boolean isUiRunning(){
+    public boolean isUiRunning() {
         return mIsUiRunning;
     }
 
@@ -192,7 +192,7 @@ public class DownloadService extends Service implements DownloadListener {
     }
 
     /**
-     * onDestroy処理
+     * onDestroy処理.
      */
     @Override
     public void onDestroy() {
@@ -200,88 +200,88 @@ public class DownloadService extends Service implements DownloadListener {
     }
 
     /**
-     * コールバック
+     * コールバック.
      * @param totalFileByteSize totalFileByteSize
      */
     @Override
-    public void onStart(int totalFileByteSize) {
-        if(null!=mDownloadServiceListener){
+    public void onStart(final int totalFileByteSize) {
+        if (null != mDownloadServiceListener) {
             mDownloadServiceListener.onStart(totalFileByteSize);
         }
     }
 
     /**
-     * コールバック
+     * コールバック.
      * @param receivedBytes receivedBytes
      * @param percent 0-100
      */
     @Override
-    public void onProgress(int receivedBytes, int percent) {
-        if(null!=mDownloadServiceListener){
+    public void onProgress(final int receivedBytes, final int percent) {
+        if (null != mDownloadServiceListener) {
             mDownloadServiceListener.onProgress(receivedBytes, percent);
         }
     }
 
     /**
-     * コールバック
+     * コールバック.
      * @param error　error
      */
     @Override
-    public void onFail(DLError error, final String savePath) {
-        if(null!=mDownloadServiceListener){
+    public void onFail(final DLError error, final String savePath) {
+        if (null != mDownloadServiceListener) {
             mDownloadServiceListener.onFail(error, savePath);
         }
     }
 
     /**
-     * コールバック
+     * コールバック.
      * @param fullPath　fullPath
      */
     @Override
-    public void onSuccess(String fullPath) {
-        if(null!=mDownloadServiceListener){
+    public void onSuccess(final String fullPath) {
+        if (null != mDownloadServiceListener) {
             mDownloadServiceListener.onSuccess(fullPath);
         }
     }
 
     /**
-     * コールバック
+     * コールバック.
      */
     @Override
     public void onCancel(final String filePath) {
-        if(null!=mDownloadServiceListener){
+        if (null != mDownloadServiceListener) {
             mDownloadServiceListener.onCancel(filePath);
         }
     }
 
     /**
-     * コールバック
+     * コールバック.
      */
     @Override
     public void onLowStorageSpace(final String fullPath) {
-        if(null!=mDownloadServiceListener){
+        if (null != mDownloadServiceListener) {
             mDownloadServiceListener.onLowStorageSpace(fullPath);
         }
     }
 
     /**
-     * Binderクラス
+     * Binderクラス.
      */
-    public class Binder extends android.os.Binder{
-        public void setData(String data){
+    public class Binder extends android.os.Binder {
+        public void setData(final String data) {
             DownloadService.this.mData = data;
         }
-        public DownloadService getDownloadService(){
+        public DownloadService getDownloadService() {
             return DownloadService.this;
         }
     }
 
     /**
-     * 機能：
+     * 機能：.
      *      １．Download Uiがなくなる場合、且サービスにqueueはない場合、必ずこれをコールする
      *      ２．Download Uiがない場合、Serviceは閉じる時、必ずこれをコールする
      */
-    public void stop(){
+    public void stop() {
         if (null == mDownloaderBase) {
             return;
         }
@@ -289,13 +289,13 @@ public class DownloadService extends Service implements DownloadListener {
     }
 
     /**
-     * Ui runningを設定
+     * Ui runningを設定.
      */
-    public void setUiRunning(boolean yn){
+    public void setUiRunning(final boolean yn) {
         mIsUiRunning = yn;
     }
 
-    public synchronized boolean isDownloading(){
+    public synchronized boolean isDownloading() {
         if (null == mDownloaderBase) {
             return false;
         }

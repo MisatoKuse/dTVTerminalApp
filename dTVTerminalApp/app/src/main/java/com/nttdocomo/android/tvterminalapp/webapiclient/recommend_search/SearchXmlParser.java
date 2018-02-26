@@ -141,7 +141,7 @@ public class SearchXmlParser extends AsyncTask<String, Integer, String> {
      */
     private static final String kCondition = "condition";
     /**
-     *kMobileViewingFlg
+     * kMobileViewingFlg.
      */
     private static final String kMobileViewingFlg = "mobileViewingFlg";
 

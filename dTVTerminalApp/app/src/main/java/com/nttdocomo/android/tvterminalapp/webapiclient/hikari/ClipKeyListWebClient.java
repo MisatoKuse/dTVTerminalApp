@@ -68,7 +68,7 @@ public class ClipKeyListWebClient
          *
          * @param clipKeyListResponse JSONパース後のデータ
          */
-        void onTvClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse);
+        void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse);
     }
 
     /**

@@ -5,40 +5,40 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
 /**
- * レコメンド取得用パラメータ
+ * レコメンド取得用パラメータ.
  */
 public class RecommendRequestData {
     /**
-     * 取得対象サービスID
+     * 取得対象サービスID.
      */
     public String serviceId;
     /**
-     * 取得対象サービスID:カテゴリーID
+     * 取得対象サービスID:カテゴリーID.
      */
     public String serviceCategoryId;
     /**
-     * レコメンド取得ページ
+     * レコメンド取得ページ.
      */
     public String getPage;
     /**
-     * レコメンド取得開始位置
+     * レコメンド取得開始位置.
      */
     public String startIndex;
     /**
-     * レコメンド取得最大件数
+     * レコメンド取得最大件数.
      */
     public String maxResult;
     /**
-     * 画面ID
+     * 画面ID.
      */
     public String pageId;
     /**
-     * 放送時間考慮
+     * 放送時間考慮.
      */
     public String airtime;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      */
     public RecommendRequestData() {
         //初期化

@@ -16,19 +16,19 @@ import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 
 /**
- * Dアカウント誘導Activity
+ * Dアカウント誘導Activity.
  */
 public class DAccountInductionActivity extends BaseActivity {
     /**
-     *Dアカウントダウンロードボタン
+     *Dアカウントダウンロードボタン.
      */
     private TextView mDownLoadTextView;
     /**
-     *ログインしないで利用するボタン
+     *ログインしないで利用するボタン.
      */
     private TextView mUseWithoutLogIn;
     /**
-     *DアカウントアプリURI
+     *DアカウントアプリURI.
      */
     private static final String D_ACCOUNT_APP_URI = "market://details?id=com.nttdocomo.android.idmanager";
     @Override
@@ -39,7 +39,7 @@ public class DAccountInductionActivity extends BaseActivity {
     }
 
     /**
-     *画面っ上に表示するコンテンツをセット
+     *画面っ上に表示するコンテンツをセット.
      */
     private void setContents() {
         setTitleText(getString(R.string.str_app_title));
@@ -54,7 +54,7 @@ public class DAccountInductionActivity extends BaseActivity {
     }
 
     /**
-     * ボタンタップされた時
+     * ボタンタップされた時.
      * @param view ボタンのビュー
      */
     @Override

@@ -10,15 +10,15 @@ import android.view.MotionEvent;
 import android.widget.RelativeLayout;
 
 public class ChangeModeActionButton extends RelativeLayout {
-    public ChangeModeActionButton(Context context) {
+    public ChangeModeActionButton(final Context context) {
         super(context);
     }
 
-    public ChangeModeActionButton(Context context, AttributeSet attrs) {
+    public ChangeModeActionButton(final Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public ChangeModeActionButton(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ChangeModeActionButton(final Context context, final AttributeSet attrs, final int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 

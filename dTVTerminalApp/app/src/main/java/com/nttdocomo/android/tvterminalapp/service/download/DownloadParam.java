@@ -7,7 +7,7 @@ package com.nttdocomo.android.tvterminalapp.service.download;
 import android.content.Context;
 
 /**
- * このクラスから継承して、DownloaderBaseおよびSubClass用パラメータクラウスである
+ * このクラスから継承して、DownloaderBaseおよびSubClass用パラメータクラウスである.
  */
 public abstract class DownloadParam {
     private Context mContext;
@@ -16,16 +16,16 @@ public abstract class DownloadParam {
     //通知の頻度
     private int mPercentToNotify;
 
-    public void setPercentToNotify(int mPercentToNotify) {
+    public void setPercentToNotify(final int mPercentToNotify) {
         this.mPercentToNotify = mPercentToNotify;
     }
 
-    public int getPercentToNotity(){
+    public int getPercentToNotity() {
         return mPercentToNotify;
     }
 
     /**
-     * Getter
+     * Getter.
      * @return mContext
      */
     public Context getContext() {
@@ -33,15 +33,15 @@ public abstract class DownloadParam {
     }
 
     /**
-     * Setter
+     * Setter.
      * @param context context
      */
-    public void setContext(Context context) {
+    public void setContext(final Context context) {
         this.mContext = context;
     }
 
     /**
-     * Getter
+     * Getter.
      * @return mSavePath
      */
     public String getSavePath() {
@@ -49,15 +49,15 @@ public abstract class DownloadParam {
     }
 
     /**
-     * Setter
+     * Setter.
      * @param savePath savePath
      */
-    public void setSavePath(String savePath) {
+    public void setSavePath(final String savePath) {
         this.mSavePath = savePath;
     }
 
     /**
-     * Getter
+     * Getter.
      * @return mSaveFileName
      */
     public String getSaveFileName() {
@@ -65,26 +65,26 @@ public abstract class DownloadParam {
     }
 
     /**
-     * Setter
+     * Setter.
      * @param saveFileName saveFileName
      */
-    public void setSaveFileName(String saveFileName) {
+    public void setSaveFileName(final String saveFileName) {
         this.mSaveFileName = saveFileName;
     }
 
     /**
-     * 機能：Sub Classで実現し、パラメーター有効かを戻す
+     * 機能：Sub Classで実現し、パラメーター有効かを戻す.
      * @return
      */
-    public boolean isParamValid(){
-        if(null==mContext || null==mSavePath || 1>mSavePath.length() || null==mSaveFileName || 1>mSaveFileName.length()) {
+    public boolean isParamValid() {
+        if (null == mContext || null == mSavePath || 1 > mSavePath.length() || null == mSaveFileName || 1 > mSaveFileName.length()) {
             return false;
         }
         return true;
     }
 
     /**
-     * Sub classesで実現し、DLサイズを戻す
+     * Sub classesで実現し、DLサイズを戻す.
      * @return dl size
      */
     public abstract int getTotalSizeToDl();

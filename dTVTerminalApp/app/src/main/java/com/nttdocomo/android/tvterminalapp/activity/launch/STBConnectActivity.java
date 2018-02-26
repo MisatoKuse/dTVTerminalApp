@@ -25,7 +25,7 @@ public class STBConnectActivity extends BaseActivity {
     private Context mContext = null;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stb_connect_main_layout);
         mContext = this;
@@ -35,7 +35,7 @@ public class STBConnectActivity extends BaseActivity {
     }
 
     /**
-     * 画面上の表示をセットする
+     * 画面上の表示をセットする.
      */
     private void setContents() {
         DTVTLogger.start();
@@ -50,7 +50,7 @@ public class STBConnectActivity extends BaseActivity {
     }
 
     /**
-     * STB接続できたら、ホーム画面に自動遷移する
+     * STB接続できたら、ホーム画面に自動遷移する.
      */
     private Handler handler = new Handler();
     private Runnable runnable = new Runnable() {

@@ -50,16 +50,17 @@ public class DlnaInterface {
     private long mNativeDlna = 0;
     private DlnaDmsItem mCurrentDmsItem;
 
-    private static final String sErrorMsgDMS="DMS Error";
-    private static final String sErrorMsgRecordVideo="録画一覧データ取得に失敗しました";
-    private static final String sErrorMsgTerChannelList="地上波チャンネルリスト取得に失敗しました";
-    private static final String sErrorMsgBsChannelList="BSチャンネルリスト取得に失敗しました";
-    private static final String sErrorMsgHikariChannelList="ひかりチャンネルリスト取得に失敗しました";
+    // TODO:エラー表示仕様によって削除（コード上に文字列定義しない）
+    private static final String sErrorMsgDMS = "DMS Error";
+    private static final String sErrorMsgRecordVideo = "録画一覧データ取得に失敗しました";
+    private static final String sErrorMsgTerChannelList = "地上波チャンネルリスト取得に失敗しました";
+    private static final String sErrorMsgBsChannelList = "BSチャンネルリスト取得に失敗しました";
+    private static final String sErrorMsgHikariChannelList = "ひかりチャンネルリスト取得に失敗しました";
 
     //Dlna info
     private DlnaBsChListInfo mDlnaBsChListInfo;
     private DlnaTerChListInfo mDlnaTerChListInfo;
-    private Handler mHandler= new Handler();
+    private Handler mHandler = new Handler();
 
     /**
      * 機能：デフォールト構造を禁止.
@@ -81,7 +82,7 @@ public class DlnaInterface {
      * @param udn udn
      * @return 存在しるか
      */
-    boolean isDmsAvailable(String udn) {
+    boolean isDmsAvailable(final String udn) {
         return mDMSInfo.exists(udn);
     }
 
@@ -90,7 +91,7 @@ public class DlnaInterface {
      *
      * @param lis listener
      */
-    void setDlnaDevListListener(DlnaDevListListener lis) {
+    void setDlnaDevListListener(final DlnaDevListListener lis) {
         synchronized (this) {
             mDlnaDevListListener = lis;
         }
@@ -101,7 +102,7 @@ public class DlnaInterface {
      *
      * @param lis listener
      */
-    void setDlnaBsChListListener(DlnaBsChListListener lis) {
+    void setDlnaBsChListListener(final DlnaBsChListListener lis) {
         synchronized (this) {
             mDlnaBsChListListener = lis;
         }
@@ -112,7 +113,7 @@ public class DlnaInterface {
      *
      * @param lis listener
      */
-    void setDlnaTerChListListener(DlnaTerChListListener lis) {
+    void setDlnaTerChListListener(final DlnaTerChListListener lis) {
         synchronized (this) {
             mDlnaTerChListListener = lis;
         }
@@ -123,7 +124,7 @@ public class DlnaInterface {
      *
      * @param lis listener
      */
-    public void setDlnaHikariChListListener(DlnaHikariChListListener lis) {
+    public void setDlnaHikariChListListener(final DlnaHikariChListListener lis) {
         synchronized (this) {
             mDlnaHikariChListListener = lis;
         }
@@ -142,7 +143,7 @@ public class DlnaInterface {
      *
      * @param lis listener
      */
-    void setDlnaRecVideoBaseListener(DlnaRecVideoListener lis) {
+    void setDlnaRecVideoBaseListener(final DlnaRecVideoListener lis) {
         synchronized (this) {
             mDlnaRecVideoListener = lis;
         }
@@ -189,17 +190,17 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：録画ヴィデオ一覧を発見.
+     * 機能：録画ビデオ一覧を発見.
      *
      * @return 成功:true 失敗: false
      */
     boolean browseRecVideoDms() {
         DTVTLogger.start();
-        if(null== mCurrentDmsItem || null== mCurrentDmsItem.mControlUrl || 1> mCurrentDmsItem.mControlUrl.length()){
+        if (null == mCurrentDmsItem || null == mCurrentDmsItem.mControlUrl || 1 > mCurrentDmsItem.mControlUrl.length()) {
             return false;
         }
         synchronized (this) {
-            boolean ret= browseRecVideoDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
+            boolean ret = browseRecVideoDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
             DTVTLogger.debug("call c++ browseRecVideoDms");
             DTVTLogger.end();
             return ret;
@@ -213,11 +214,11 @@ public class DlnaInterface {
      */
     boolean browseBsChListDms() {
         //boolean ret= browseBsChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
-        if(null== mCurrentDmsItem || null== mCurrentDmsItem.mControlUrl || 1> mCurrentDmsItem.mControlUrl.length()){
+        if (null == mCurrentDmsItem || null == mCurrentDmsItem.mControlUrl || 1 > mCurrentDmsItem.mControlUrl.length()) {
             return false;
         }
         synchronized (this) {
-            boolean ret= browseBsChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
+            boolean ret = browseBsChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
             DTVTLogger.debug("call c++ browseBsChListDms");
             DTVTLogger.end();
             return ret;
@@ -229,14 +230,14 @@ public class DlnaInterface {
      * @param content content
      * @param item dms item
      */
-    private void notifyDeviceJoinInv(ArrayList<Object> content, DlnaDmsItem item){
-        if(null==content || 0==content.size() || null==item || null==item.mUdn || 1>item.mUdn.length()){
+    private void notifyDeviceJoinInv(final ArrayList<Object> content, final DlnaDmsItem item) {
+        if (null == content || 0 == content.size() || null == item || null == item.mUdn || 1 > item.mUdn.length()) {
             return;
         }
-        boolean has= mDMSInfo.exists(item.mUdn);
-        if(!has){
+        boolean has = mDMSInfo.exists(item.mUdn);
+        if (!has) {
             mDMSInfo.add(item);
-            ArrayList<Object> dmss=new ArrayList<>();
+            ArrayList<Object> dmss = new ArrayList<>();
             dmss.add(item);
             onDeviceJoin(dmss);
         }
@@ -249,11 +250,11 @@ public class DlnaInterface {
      */
     boolean browseTerChListDms() {
         //return browseTerChListDms(mNativeDlna, ctl);
-        if(null== mCurrentDmsItem || null== mCurrentDmsItem.mControlUrl || 1> mCurrentDmsItem.mControlUrl.length()){
+        if (null == mCurrentDmsItem || null == mCurrentDmsItem.mControlUrl || 1 > mCurrentDmsItem.mControlUrl.length()) {
             return false;
         }
         synchronized (this) {
-            boolean ret= browseTerChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
+            boolean ret = browseTerChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
             DTVTLogger.debug("call c++ browseTerChListDms");
             DTVTLogger.end();
 
@@ -266,7 +267,7 @@ public class DlnaInterface {
      * @param msg msg
      * @param content content
      */
-    public void notifyFromNative(int msg, String content) {
+    public void notifyFromNative(final int msg, final String content) {
         DTVTLogger.debug("msg=" + msg + ", content=" + content);
         switch (msg) {
             case DLNA_MSG_ID_DEV_DISP_LEAVE:
@@ -282,9 +283,9 @@ public class DlnaInterface {
      * @param msg msg
      * @param content content
      */
-    public void notifyObjFromNative(int msg, ArrayList<Object> content) {
+    public void notifyObjFromNative(final int msg, final ArrayList<Object> content) {
         DTVTLogger.debug("msg=" + msg + ", content=" + content);
-        if(onError(msg, content)){
+        if (onError(msg, content)) {
             return;
         }
         switch (msg) {
@@ -312,40 +313,40 @@ public class DlnaInterface {
         }
     }
 
-    private boolean onError(int msg, ArrayList<Object> content){
-        boolean ret=false;
-        if(null!=content && 0!=content.size()){
+    private boolean onError(final int msg, final ArrayList<Object> content) {
+        boolean ret = false;
+        if (null != content && 0 != content.size()) {
             return false;
         }
         switch (msg) {
             case DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST:
-                if(null!=mDlnaRecVideoListener){
+                if (null != mDlnaRecVideoListener) {
                     mDlnaRecVideoListener.onError(sErrorMsgRecordVideo);
-                    ret=true;
+                    ret = true;
                 }
                 break;
             case DLNA_MSG_ID_DEV_DISP_JOIN:
-                if(null!=mDlnaDevListListener){
+                if (null != mDlnaDevListListener) {
                     mDlnaDevListListener.onError(sErrorMsgDMS);
-                    ret=true;
+                    ret = true;
                 }
                 break;
             case DLNA_MSG_ID_BS_CHANNEL_LIST:
-                if(null!=mDlnaBsChListListener){
+                if (null != mDlnaBsChListListener) {
                     mDlnaBsChListListener.onError(sErrorMsgBsChannelList);
-                    ret=true;
+                    ret = true;
                 }
                 break;
             case DLNA_MSG_ID_TER_CHANNEL_LIST:
-                if(null!=mDlnaTerChListListener){
+                if (null != mDlnaTerChListListener) {
                     mDlnaTerChListListener.onError(sErrorMsgTerChannelList);
-                    ret=true;
+                    ret = true;
                 }
                 break;
             case DLNA_MSG_ID_HIKARI_CHANNEL_LIST:
-                if(null!=mDlnaHikariChListListener){
+                if (null != mDlnaHikariChListListener) {
                     mDlnaHikariChListListener.onError(sErrorMsgHikariChannelList);
-                    ret=true;
+                    ret = true;
                 }
                 break;
             default:
@@ -355,10 +356,10 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：jni c/c++からの録画情報を処理
+     * 機能：jni c/c++からの録画情報を処理.
      * @param content content
      */
-    private void onRecVideo(ArrayList<Object> content) {
+    private void onRecVideo(final ArrayList<Object> content) {
         if (null != mDlnaRecVideoListener) {
             DlnaRecVideoInfo info = DlnaRecVideoInfo.fromArrayList(content);
             if (null != info) {
@@ -369,21 +370,21 @@ public class DlnaInterface {
     }
 
     /**
-     * ARIB変換
+     * ARIB変換.
      * @param info info
      */
-    private void aribConvertRecorded(DlnaRecVideoInfo info){
+    private void aribConvertRecorded(final DlnaRecVideoInfo info) {
         AribExternalCharConverter aribExternalCharConverter = AribExternalCharConverter.getInstance();
-        if(null == aribExternalCharConverter){
+        if (null == aribExternalCharConverter) {
             DTVTLogger.debug("get AribExternalCharConverter instance failed");
             return;
         }
-        if(null == info || 0 == info.size()){
+        if (null == info || 0 == info.size()) {
             return;
         }
 
-        for(DlnaRecVideoItem item: info.getRecordVideoLists()){
-            if(null!=item){
+        for (DlnaRecVideoItem item: info.getRecordVideoLists()) {
+            if (null != item) {
                 item.mTitle = aribExternalCharConverter.getConverted(item.mTitle);
             }
         }
@@ -393,19 +394,19 @@ public class DlnaInterface {
      * ARIB変換.
      * @param info info
      */
-    private void aribConvertBs(DlnaBsChListInfo info){
+    private void aribConvertBs(final DlnaBsChListInfo info) {
         AribExternalCharConverter aribExternalCharConverter = AribExternalCharConverter.getInstance();
-        if(null == aribExternalCharConverter){
+        if (null == aribExternalCharConverter) {
             DTVTLogger.debug("get AribExternalCharConverter instance failed");
             return;
         }
-        if(null == info || 0 == info.size()){
+        if (null == info || 0 == info.size()) {
             return;
         }
 
-        for(DlnaBsChListItem item: info.getBsChLists()){
-            if(null!=item){
-                item.mTitle = aribExternalCharConverter.getConverted(item.mTitle);
+        for (DlnaBsChListItem item: info.getBsChLists()) {
+            if (null != item) {
+                item.mTitle = AribExternalCharConverter.getConverted(item.mTitle);
             }
         }
     }
@@ -414,19 +415,19 @@ public class DlnaInterface {
      * ARIB変換.
      * @param info info
      */
-    private void aribConvertTer(DlnaTerChListInfo info){
+    private void aribConvertTer(final DlnaTerChListInfo info) {
         AribExternalCharConverter aribExternalCharConverter = AribExternalCharConverter.getInstance();
-        if(null == aribExternalCharConverter){
+        if (null == aribExternalCharConverter) {
             DTVTLogger.debug("get AribExternalCharConverter instance failed");
             return;
         }
-        if(null == info || 0 == info.size()){
+        if (null == info || 0 == info.size()) {
             return;
         }
 
-        for(DlnaTerChListItem item: info.getTerChLists()){
-            if(null!=item){
-                item.mTitle = aribExternalCharConverter.getConverted(item.mTitle);
+        for (DlnaTerChListItem item: info.getTerChLists()) {
+            if (null != item) {
+                item.mTitle = AribExternalCharConverter.getConverted(item.mTitle);
             }
         }
     }
@@ -435,19 +436,19 @@ public class DlnaInterface {
      * ARIB変換.
      * @param info info
      */
-    private void aribConvertHikari(DlnaHikariChListInfo info){
+    private void aribConvertHikari(final DlnaHikariChListInfo info) {
         AribExternalCharConverter aribExternalCharConverter = AribExternalCharConverter.getInstance();
-        if(null == aribExternalCharConverter){
+        if (null == aribExternalCharConverter) {
             DTVTLogger.debug("get AribExternalCharConverter instance failed");
             return;
         }
-        if(null == info || 0 == info.size()){
+        if (null == info || 0 == info.size()) {
             return;
         }
 
-        for(DlnaHikariChListItem item: info.getHikariChLists()){
-            if(null!=item){
-                item.mTitle = aribExternalCharConverter.getConverted(item.mTitle);
+        for (DlnaHikariChListItem item: info.getHikariChLists()) {
+            if (null != item) {
+                item.mTitle = AribExternalCharConverter.getConverted(item.mTitle);
             }
         }
     }
@@ -456,7 +457,7 @@ public class DlnaInterface {
      * 機能：jni c/c++からのチャンネルを処理.
      * @param content content
      */
-    private void onBsChList(ArrayList<Object> content) {
+    private void onBsChList(final ArrayList<Object> content) {
         if (null != mDlnaBsChListListener) {
             DlnaBsChListInfo info = DlnaBsChListInfo.fromArrayList(content);
             if (null != info) {
@@ -498,9 +499,9 @@ public class DlnaInterface {
      * 機能：jni c/c++からの新しいdms加入を処理.
      * @param content content
      */
-    private void onDeviceJoin(ArrayList<Object> content) {
+    private void onDeviceJoin(final ArrayList<Object> content) {
         if (null == content || 0 == content.size()) {
-            if(null!=mDlnaDevListListener ){
+            if (null != mDlnaDevListListener) {
                 mDlnaDevListListener.onError(sErrorMsgDMS);
             }
             return;
@@ -508,7 +509,7 @@ public class DlnaInterface {
 
         DlnaDmsItem item = (DlnaDmsItem) content.get(0);
         //if(null==item || null==item.mUdn){
-        if(!DlnaDmsItem.isDmsItemValid(item)){
+        if (!DlnaDmsItem.isDmsItemValid(item)) {
             DTVTLogger.debug("onDeviceJoin(), DlnaDmsItem invallid so skip");
             return;
         }
@@ -517,8 +518,8 @@ public class DlnaInterface {
         if (null != mDlnaDevListListener) {
             mDlnaDevListListener.onDeviceJoin(mDMSInfo, item);
         }
-        if(null!=mCurrentDmsItem && null!=mCurrentDmsItem.mUdn && mCurrentDmsItem.mUdn.equals(item.mUdn)){
-            mCurrentDmsItem=item;
+        if (null != mCurrentDmsItem && null != mCurrentDmsItem.mUdn && mCurrentDmsItem.mUdn.equals(item.mUdn)) {
+            mCurrentDmsItem = item;
         }
     }
 
@@ -526,7 +527,7 @@ public class DlnaInterface {
      * 機能：dmsを削除.
      * @param content content to remove
      */
-    private void removeDms(String content) {
+    private void removeDms(final String content) {
         mDMSInfo.remove(content);
         if (null != mDlnaDevListListener) {
             mDlnaDevListListener.onDeviceLeave(mDMSInfo, content);
@@ -539,8 +540,8 @@ public class DlnaInterface {
      *
      * @param item 使用しているDlnaDmsItem
      */
-    boolean registerCurrentDms(DlnaDmsItem item) {
-        if (null != mDMSInfo && DlnaDmsItem.isDmsItemValid(item) ) {
+    boolean registerCurrentDms(final DlnaDmsItem item) {
+        if (null != mDMSInfo && DlnaDmsItem.isDmsItemValid(item)) {
             mCurrentDmsItem = item;
             return true;
         }
@@ -551,7 +552,7 @@ public class DlnaInterface {
      * 機能：dlna statusを設定する.
      * @param status　status
      */
-    private synchronized void setDlnaStatus(boolean status) {
+    private synchronized void setDlnaStatus(final boolean status) {
         mIsDlnaRunning = status;
     }
 
@@ -601,21 +602,21 @@ public class DlnaInterface {
     /**
      * 機能：カレントDMSを削除.
      */
-    void dmsRemove(){
-        if(null!=mDlnaDevListListener){
-            String udn="";
-            if(null!=mCurrentDmsItem){
-                udn= mCurrentDmsItem.mUdn;
+    void dmsRemove() {
+        if (null != mDlnaDevListListener) {
+            String udn = "";
+            if (null != mCurrentDmsItem) {
+                udn = mCurrentDmsItem.mUdn;
             }
             mDlnaDevListListener.onDeviceLeave(mDMSInfo, udn);
         }
-        mCurrentDmsItem=null;
+        mCurrentDmsItem = null;
     }
 
     /**
      * todo: WiFiは切ると、対応する.
      */
-    public void toDoWithWiFiLost(){
+    public void toDoWithWiFiLost() {
 
     }
 
@@ -634,25 +635,25 @@ public class DlnaInterface {
 
     private native String getDlParam(long prt, String itemId);
 
-    public static String getXmlToDl(String itemId){
-        if(null==sDlnaInterface || null==itemId || itemId.isEmpty()) {
+    public static String getXmlToDl(final String itemId) {
+        if (null == sDlnaInterface || null == itemId || itemId.isEmpty()) {
             return null;
         }
 
         return sDlnaInterface.getDlParam(itemId);
     }
 
-    public static boolean dlnaOnResume(){
+    public static boolean dlnaOnResume() {
 //        if(null==sDlnaInterface){
 //            return false;
 //        }
 //
 //        return sDlnaInterface.startDlna();
-        return null!=sDlnaInterface && sDlnaInterface.startDlna();
+        return null != sDlnaInterface && sDlnaInterface.startDlna();
     }
 
-    public static void dlnaOnStop(){
-        if(null==sDlnaInterface){
+    public static void dlnaOnStop() {
+        if (null == sDlnaInterface) {
             return;
         }
 
@@ -666,7 +667,7 @@ public class DlnaInterface {
         }
     }
 
-    boolean isDlnaRunning(){
+    boolean isDlnaRunning() {
         if (null == sDlnaInterface) {
             return false;
         }

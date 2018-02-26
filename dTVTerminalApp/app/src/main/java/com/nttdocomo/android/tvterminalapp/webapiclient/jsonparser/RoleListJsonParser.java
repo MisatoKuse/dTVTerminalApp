@@ -31,23 +31,23 @@ public class RoleListJsonParser extends AsyncTask<Object, Object, Object> {
     private RoleListResponse mRoleListResponse;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      * <p>
      * //     * @param genreListJsonParserCallback
      */
-    public RoleListJsonParser(RoleListWebClient.RoleListJsonParserCallback roleListJsonParserCallback) {
+    public RoleListJsonParser(final RoleListWebClient.RoleListJsonParserCallback roleListJsonParserCallback) {
         mRoleListJsonParserCallback = roleListJsonParserCallback;
         mRoleListResponse = new RoleListResponse();
     }
 
     @Override
-    protected void onPostExecute(Object s) {
+    protected void onPostExecute(final Object s) {
         mRoleListJsonParserCallback.
                 onRoleListJsonParsed(mRoleListResponse);
     }
 
     @Override
-    protected Object doInBackground(Object... strings) {
+    protected Object doInBackground(final Object... strings) {
         String result = (String) strings[0];
         RoleListResponse response = roleListSender(result);
         return response;
@@ -55,12 +55,12 @@ public class RoleListJsonParser extends AsyncTask<Object, Object, Object> {
 
 
     /**
-     * ジャンル一覧Jsonデータを解析する
+     * ジャンル一覧Jsonデータを解析する.
      *
      * @param jsonStr ジジャンル一覧Jsonデータ
      * @return ジャンル一覧取得：正常時レスポンスデータ
      */
-    public RoleListResponse roleListSender(String jsonStr) {
+    public RoleListResponse roleListSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         mRoleListResponse = new RoleListResponse();
@@ -83,11 +83,11 @@ public class RoleListJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     /**
-     * ジャンル一覧のデータをジャンル一覧取得：正常時レスポンスデータオブジェクトに格納
+     * ジャンル一覧のデータをジャンル一覧取得：正常時レスポンスデータオブジェクトに格納.
      *
      * @param jsonArray APIレスポンス Jsonデータ
      */
-    public void sendRoleListResponse(JSONArray jsonArray) {
+    public void sendRoleListResponse(final JSONArray jsonArray) {
         String id = "";
         String name = "";
         try {

@@ -27,7 +27,7 @@ public class MyChannelMetaData implements Serializable {
         return mServiceId;
     }
 
-    public void setServiceId(String mServiceId) {
+    public void setServiceId(final String mServiceId) {
         this.mServiceId = mServiceId;
     }
 
@@ -35,7 +35,7 @@ public class MyChannelMetaData implements Serializable {
         return mTitle;
     }
 
-    public void setTitle(String mTitle) {
+    public void setTitle(final String mTitle) {
         this.mTitle = mTitle;
     }
 
@@ -43,7 +43,7 @@ public class MyChannelMetaData implements Serializable {
         return mRValue;
     }
 
-    public void setRValue(String mRValue) {
+    public void setRValue(final String mRValue) {
         this.mRValue = mRValue;
     }
 
@@ -51,7 +51,7 @@ public class MyChannelMetaData implements Serializable {
         return mAdultType;
     }
 
-    public void setAdultType(String mAdultType) {
+    public void setAdultType(final String mAdultType) {
         this.mAdultType = mAdultType;
     }
 
@@ -59,7 +59,7 @@ public class MyChannelMetaData implements Serializable {
         return mIndex;
     }
 
-    public void setIndex(String mIndex) {
+    public void setIndex(final String mIndex) {
         this.mIndex = mIndex;
     }
 
@@ -74,12 +74,12 @@ public class MyChannelMetaData implements Serializable {
             MY_CHANNEL_META_DATA_ADULT_TYPE, MY_CHANNEL_META_DATA_ADULT_INDEX};
 
     /**
-     * キーとキーの値をメンバーにセットする
+     * キーとキーの値をメンバーにセットする.
      *
      * @param key  キー
      * @param data キーの値
      */
-    private void setMember(String key, Object data) {
+    private void setMember(final String key, final Object data) {
         if (!key.isEmpty()) {
             switch (key) {
                 case MY_CHANNEL_META_DATA_SERVICE_ID:
@@ -104,11 +104,11 @@ public class MyChannelMetaData implements Serializable {
     }
 
     /**
-     * キーの値を取得する
+     * キーの値を取得する.
      *
      * @param key キー
      */
-    public Object getMember(String key) {
+    public Object getMember(final String key) {
         if (key.isEmpty()) {
             return "";
         } else {
@@ -130,11 +130,11 @@ public class MyChannelMetaData implements Serializable {
     }
 
     /**
-     * サーバから取得したデータをセット
+     * サーバから取得したデータをセット.
      *
      * @param jsonObj Jsonオブジェクト
      */
-    public void setData(JSONObject jsonObj) {
+    public void setData(final JSONObject jsonObj) {
         if (jsonObj != null) {
             // 単一データ
             for (String item : mRootPara) {

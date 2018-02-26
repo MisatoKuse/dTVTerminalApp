@@ -10,67 +10,67 @@ public class DlnaRecVideoInfo {
 
     private ArrayList<DlnaRecVideoItem> mRecordVideoLists = new ArrayList<>();
 
-    private void addItem(DlnaRecVideoItem item){
+    private void addItem(final DlnaRecVideoItem item) {
         mRecordVideoLists.add(item);
     }
 
-    public void addItemByValue(DlnaRecVideoItem item){
+    public void addItemByValue(final DlnaRecVideoItem item) {
         DlnaRecVideoItem newItem= new DlnaRecVideoItem();
-        newItem.mTitle=item.mTitle;
-        newItem.mDate=item.mDate;
-        newItem.mAllowedUse=item.mAllowedUse;
-        newItem.mBitrate=item.mBitrate;
-        newItem.mDuration=item.mDuration;
-        newItem.mResolution=item.mResolution;
-        newItem.mResUrl=item.mResUrl;
-        newItem.mSize=item.mSize;
-        newItem.mUpnpIcon=item.mUpnpIcon;
-        newItem.mVideoType=item.mVideoType;
+        newItem.mTitle = item.mTitle;
+        newItem.mDate = item.mDate;
+        newItem.mAllowedUse = item.mAllowedUse;
+        newItem.mBitrate = item.mBitrate;
+        newItem.mDuration = item.mDuration;
+        newItem.mResolution = item.mResolution;
+        newItem.mResUrl = item.mResUrl;
+        newItem.mSize = item.mSize;
+        newItem.mUpnpIcon = item.mUpnpIcon;
+        newItem.mVideoType = item.mVideoType;
 
         mRecordVideoLists.add(newItem);
     }
 
-    public void clearAll(){
+    public void clearAll() {
         mRecordVideoLists.clear();
     }
 
-    public int size(){
-        if(null!=mRecordVideoLists){
+    public int size() {
+        if (null != mRecordVideoLists) {
             return mRecordVideoLists.size();
         }
 
         return 0;
     }
 
-    public DlnaRecVideoItem get(int index){
-        if(index<0){
-            index=0;
+    public DlnaRecVideoItem get(int index) {
+        if (index < 0) {
+            index = 0;
         }
-        if(null==mRecordVideoLists || 0==mRecordVideoLists.size()){
+        if (null == mRecordVideoLists || 0 == mRecordVideoLists.size()) {
             return null;
         }
 
         return mRecordVideoLists.get(index);
     }
 
-    static DlnaRecVideoInfo fromArrayList(ArrayList<Object> content){
-        if(null==content){
+    static DlnaRecVideoInfo fromArrayList(final ArrayList<Object> content) {
+        if (null == content) {
             return null;
         }
-        DlnaRecVideoInfo info=new DlnaRecVideoInfo();
-        for(Object o: content){
-            info.addItem((DlnaRecVideoItem)o);
+        DlnaRecVideoInfo info = new DlnaRecVideoInfo();
+        for (Object o: content) {
+            info.addItem((DlnaRecVideoItem) o);
         }
 
         return info;
     }
 
-    public static ArrayList<Object> toArrayList(DlnaRecVideoInfo info){
-        ArrayList<Object> ret=new ArrayList<>();
-        if(null==info || 0==info.size()){
+    public static ArrayList<Object> toArrayList(final DlnaRecVideoInfo info) {
+        ArrayList<Object> ret = new ArrayList<>();
+        if (null == info || 0 == info.size()) {
             return ret;
         }
-        for(int i=0;i<info.size();++i){
+        for (int i = 0; i < info.size(); ++i) {
             ret.add(info.get(i));
         }
         return ret;

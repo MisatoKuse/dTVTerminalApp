@@ -55,7 +55,7 @@ public class ClipRequestData {
         return mTitle;
     }
 
-    public void setTitle(String mTitle) {
+    public void setTitle(final String mTitle) {
         this.mTitle = mTitle;
     }
 
@@ -67,7 +67,7 @@ public class ClipRequestData {
         return mCrid;
     }
 
-    public void setCrid(String mCrid) {
+    public void setCrid(final String mCrid) {
         this.mCrid = mCrid;
     }
 
@@ -169,7 +169,7 @@ public class ClipRequestData {
         return mClipStatus;
     }
 
-    public void setClipStatus(boolean mClipStatus) {
+    public void setClipStatus(final boolean mClipStatus) {
         this.mClipStatus = mClipStatus;
     }
     /**

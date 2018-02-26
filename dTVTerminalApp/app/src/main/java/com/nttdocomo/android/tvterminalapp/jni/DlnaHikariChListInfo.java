@@ -10,40 +10,40 @@ class DlnaHikariChListInfo {
 
     private ArrayList<DlnaHikariChListItem> mLists = new ArrayList<>();
 
-    private void addItem(DlnaHikariChListItem item){
+    private void addItem(final DlnaHikariChListItem item) {
         mLists.add(item);
     }
 
-    public void clearAll(){
+    public void clearAll() {
         mLists.clear();
     }
 
-    public int size(){
-        if(null!=mLists){
+    public int size() {
+        if (null != mLists) {
             return mLists.size();
         }
 
         return 0;
     }
 
-    public DlnaHikariChListItem get(int index){
-        if(index<0){
-            index=0;
+    public DlnaHikariChListItem get(int index) {
+        if (index < 0) {
+            index = 0;
         }
-        if(null==mLists || 0==mLists.size()){
+        if (null == mLists || 0 == mLists.size()) {
             return null;
         }
 
         return mLists.get(index);
     }
 
-    static DlnaHikariChListInfo fromArrayList(ArrayList<Object> content){
-        if(null==content){
+    static DlnaHikariChListInfo fromArrayList(final ArrayList<Object> content) {
+        if (null == content) {
             return null;
         }
-        DlnaHikariChListInfo info=new DlnaHikariChListInfo();
-        for(Object o: content){
-            info.addItem((DlnaHikariChListItem)o);
+        DlnaHikariChListInfo info = new DlnaHikariChListInfo();
+        for (Object o: content) {
+            info.addItem((DlnaHikariChListItem) o);
         }
 
         return info;

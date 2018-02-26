@@ -9,7 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 /**
- * 機能
+ * 機能.
  * 横リサイクルビューの間隔を設定
  */
 public class SpaceItemDecoration extends RecyclerView.ItemDecoration {
@@ -17,14 +17,14 @@ public class SpaceItemDecoration extends RecyclerView.ItemDecoration {
     int mSpace = 0;
 
     @Override
-    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+    public void getItemOffsets(final Rect outRect, final View view, final RecyclerView parent, final RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
         if (parent.getChildAdapterPosition(view) != 0) {
             outRect.left = mSpace;
         }
     }
 
-    public SpaceItemDecoration(int space) {
+    public SpaceItemDecoration(final int space) {
         this.mSpace = space;
     }
 }

@@ -45,7 +45,7 @@ public class ContentsDetailGetWebClient
      *
      * @param context コンテキスト
      */
-    public ContentsDetailGetWebClient(Context context) {
+    public ContentsDetailGetWebClient(final Context context) {
         super(context);
     }
 
@@ -55,7 +55,7 @@ public class ContentsDetailGetWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onAnswer(ReturnCode returnCode) {
+    public void onAnswer(final ReturnCode returnCode) {
         //JSONをパースして、データを返す
         if (mContentsDetailJsonParserCallback != null) {
             new ContentsDetailJsonParser(mContentsDetailJsonParserCallback).
@@ -69,7 +69,7 @@ public class ContentsDetailGetWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
+    public void onError(final ReturnCode returnCode) {
         //エラーが発生したのでヌルを返す
         if (mContentsDetailJsonParserCallback != null) {
             mContentsDetailJsonParserCallback.onContentsDetailJsonParsed(null);
@@ -85,8 +85,8 @@ public class ContentsDetailGetWebClient
      * @param contentsDetailJsonParserCallback コールバック
      * @return パラメータエラー等が発生した場合はfalse
      */
-    public boolean getContentsDetailApi(String[] crid, String filter, int ageReq,
-                                        ContentsDetailJsonParserCallback
+    public boolean getContentsDetailApi(final String[] crid, final String filter, final int ageReq,
+                                        final ContentsDetailJsonParserCallback
                                                 contentsDetailJsonParserCallback) {
         if (mIsCancel) {
             DTVTLogger.error("ContentsDetailGetWebClient is stopping connection");
@@ -125,8 +125,8 @@ public class ContentsDetailGetWebClient
      * @param contentsDetailJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(String[] crid, String filter,
-                                         ContentsDetailJsonParserCallback
+    private boolean checkNormalParameter(final String[] crid, final String filter,
+                                         final ContentsDetailJsonParserCallback
                                                  contentsDetailJsonParserCallback) {
 
         //配列にデータが格納されていなければエラー
@@ -162,7 +162,7 @@ public class ContentsDetailGetWebClient
      * @param ageReq 年齢制限の値 1から17を指定。範囲外の値は1(全年齢)とする
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(String[] crids, String filter, int ageReq) {
+    private String makeSendParameter(final String[] crids, final String filter, final int ageReq) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
@@ -178,19 +178,24 @@ public class ContentsDetailGetWebClient
 
             //フィルターの指定が省略されていた場合は、リリースにする
             if (filter == null || filter.isEmpty()) {
-                filter = FILTER_RELEASE;
+                //フィルターの作成
+                jsonObject.put(FILTER_PARAM, FILTER_RELEASE);
+            } else {
+                //フィルターの作成
+                jsonObject.put(FILTER_PARAM, filter);
+
             }
 
-            //フィルターの作成
-            jsonObject.put(FILTER_PARAM, filter);
 
             //年齢の値が範囲外ならば、1にする
             if (ageReq < AGE_LOW_VALUE || ageReq > AGE_HIGH_VALUE) {
-                ageReq = AGE_LOW_VALUE;
+                //年齢制限値の追加
+                jsonObject.put(AGE_REQ_STRING, AGE_LOW_VALUE);
+            } else {
+                //年齢制限値の追加
+                jsonObject.put(AGE_REQ_STRING, ageReq);
             }
 
-            //年齢制限値の追加
-            jsonObject.put(AGE_REQ_STRING, ageReq);
 
             answerText = jsonObject.toString();
 

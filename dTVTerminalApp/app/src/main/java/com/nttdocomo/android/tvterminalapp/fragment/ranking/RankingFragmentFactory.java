@@ -14,13 +14,13 @@ public class RankingFragmentFactory {
     private final Map<Integer, RankingBaseFragment> mFragments = new HashMap<>();
 
     /**
-     * フラグメントクラスの生成、取得
+     * フラグメントクラスの生成、取得.
      *
      * @param position
      * @param lis
      * @return
      */
-    public RankingBaseFragment createFragment(ContentsAdapter.ActivityTypeItem mode, int position, RankingFragmentScrollListener lis) {
+    public RankingBaseFragment createFragment(final ContentsAdapter.ActivityTypeItem mode, final int position, final RankingFragmentScrollListener lis) {
         RankingBaseFragment fragment;
         fragment = mFragments.get(position);
         if (fragment == null) {

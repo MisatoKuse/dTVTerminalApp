@@ -11,7 +11,7 @@ public class RecommendFragmentFactory {
 
     private static final Map<Integer, RecommendBaseFragment> mFragments = new HashMap<>();
 
-    public static synchronized RecommendBaseFragment createFragment(int position, RecommendBaseFragmentScrollListener lis) {
+    public static synchronized RecommendBaseFragment createFragment(final int position, final RecommendBaseFragmentScrollListener lis) {
         RecommendBaseFragment fragment;
         fragment = mFragments.get(position);
 

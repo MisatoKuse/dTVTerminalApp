@@ -24,8 +24,8 @@ public abstract class DownloaderBase {
     public static final String sDlPrefix = "d_";
     private boolean mIsDownloading = false;
 
-    protected void setDownloadedBytes(int bytesDone){
-        mDownloadedBytes=bytesDone;
+    protected void setDownloadedBytes(final int bytesDone) {
+        mDownloadedBytes = bytesDone;
     }
 
     public DownloadParam getDownloadParam() {
@@ -61,12 +61,12 @@ public abstract class DownloaderBase {
     }
 
     /**
-     * ダウンロードステータスをリセット
+     * ダウンロードステータスをリセット.
      */
-    protected void reset(){
-        mDownloadedBytes=0;
-        mTotalBytes=0;
-        mError= DownloadListener.DLError.DLError_NoError;
+    protected void reset() {
+        mDownloadedBytes = 0;
+        mTotalBytes = 0;
+        mError = DownloadListener.DLError.DLError_NoError;
         setDownloading(false);
     }
 
@@ -79,13 +79,13 @@ public abstract class DownloaderBase {
     /**
      * ダウンロード開始
      */
-    public void start(){
+    public void start() {
         mTotalBytes = calculateTotalBytes();
-        if(isStorageSpaceLow()){
+        if (isStorageSpaceLow()) {
             setLowStorageSpace();
             return;
         }
-        if(!isDownloading()) {
+        if (!isDownloading()) {
             if (null != mDownloadListener) {
                 mDownloadListener.onStart(mTotalBytes);
             }
@@ -93,7 +93,7 @@ public abstract class DownloaderBase {
         }
     }
 
-    private void newDl(){
+    private void newDl() {
         try {
             DownLoadThread dt = new DownLoadThread();
             dt.start();
@@ -103,39 +103,39 @@ public abstract class DownloaderBase {
     }
 
     /**
-     * 実際のダウンロードを実現
+     * 実際のダウンロードを実現.
      */
     protected abstract void download();
 
-    /* Build.VERSION.SDK_INT >= 26の時、この関数を実現
+    /* Build.VERSION.SDK_INT >= 26の時、この関数を実現.
      * ref: https://developer.android.com/reference/android/content/Context.html#getCacheDir()
      *      getCacheQuotaBytes(java.util.UUID)
      */
     protected abstract boolean isStorageSpaceLow();
 
     /**
-     * Sub Classでダウンロード成功したとき、この関数をコール
+     * Sub Classでダウンロード成功したとき、この関数をコール.
      */
     protected void onSuccess() {
-        if(null!=mDownloadListener){
-            String path=getFullFilePath();
+        if (null != mDownloadListener) {
+            String path = getFullFilePath();
             mDownloadListener.onSuccess(path);
         }
     }
 
-    protected void onProgress(int everyTimeBytes){
-        mDownloadedBytes+=everyTimeBytes;
-        if(null!=mDownloadListener && null != mDownloadParam){
+    protected void onProgress(final int everyTimeBytes) {
+        mDownloadedBytes += everyTimeBytes;
+        if (null != mDownloadListener && null != mDownloadParam) {
             int total = mDownloadParam.getTotalSizeToDl();
-            if(0==total){
+            if (0 == total) {
                 return;
             }
-            int ff = (int)( ( (float)mDownloadedBytes)/((float) total) * 100 );
-            if(100<ff){
+            int ff = (int) (((float) mDownloadedBytes) / ((float) total) * 100);
+            if (100 < ff) {
                 ff = 100;
             }
-            if(ff<0){
-                ff=0;
+            if (ff < 0) {
+                ff = 0;
             }
             mDownloadListener.onProgress(mDownloadedBytes, ff);
         }
@@ -151,33 +151,33 @@ public abstract class DownloaderBase {
     }
 
     /**
-     * ダウンロード進捗通知
+     * ダウンロード進捗通知.
      */
-    int getProgressBytes(){
+    int getProgressBytes() {
         return mDownloadedBytes;
     }
 
     /**
-     * ダウンロード進捗通知
+     * ダウンロード進捗通知.
      */
-    float getProgressPercent(){
-        if(0==mTotalBytes){
+    float getProgressPercent() {
+        if (0 == mTotalBytes) {
             return 0.0f;
         }
-        return ((float)mDownloadedBytes)/((float)mTotalBytes);
+        return ((float) mDownloadedBytes) / ((float) mTotalBytes);
     }
 
     /**
      * ダウンロードエラー発生の時、コールされる
      */
-    DownloadListener.DLError isError(){
+    DownloadListener.DLError isError() {
         return mError;
     }
 
     /**
-     * ダウンロードキャンセル
+     * ダウンロードキャンセル.
      */
-    void cancel(){
+    void cancel() {
         synchronized (this) {
             cancelImpl();
         }

@@ -17,7 +17,7 @@ public class RecommendChList {
         return mRcMap;
     }
 
-    public void setmRcMap(HashMap<String, String> mRcMap) {
+    public void setmRcMap(final HashMap<String, String> mRcMap) {
         this.mRcMap = mRcMap;
     }
 
@@ -25,7 +25,7 @@ public class RecommendChList {
         return mRcList;
     }
 
-    public void setmRcList(List<Map<String, String>> mRcList) {
+    public void setmRcList(final List<Map<String, String>> mRcList) {
         this.mRcList = mRcList;
     }
 

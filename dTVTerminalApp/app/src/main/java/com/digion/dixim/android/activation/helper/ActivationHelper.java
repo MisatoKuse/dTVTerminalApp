@@ -45,7 +45,7 @@ public class ActivationHelper {
 
 	public ActivationHelper(final Context context, final String deviceKeyPath) {
 		this.context = context;
-		if (DeveloperOption.permission(DeveloperOptionDefinitions.Option.NATIVE)){
+		if (DeveloperOption.permission(DeveloperOptionDefinitions.Option.NATIVE)) {
 			setLogLevel(DeveloperOptionDefinitions.DU_LOG_LEVEL_DEBUG);
 		}
 		if (!ActivationEnvironment.prepareActivation(context, deviceKeyPath)) {

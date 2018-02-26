@@ -5,7 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.jni.download;
 
 /**
- * C側の「DownloaderStatus」と対応する
+ * C側の「DownloaderStatus」と対応する.
  */
 public enum DlnaDlStatus {
     DOWNLOADER_STATUS_UNKNOWN,

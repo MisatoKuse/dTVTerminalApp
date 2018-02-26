@@ -32,38 +32,36 @@ public class GenreCountGetJsonParser extends AsyncTask<Object, Object, Object> {
 
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      * <p>
      * //     * @param genreCountGetJsonParserCallback
      */
-    public GenreCountGetJsonParser(GenreCountGetWebClient.
-                                           GenreCountGetJsonParserCallback
-                                           genreCountGetJsonParserCallback) {
+    public GenreCountGetJsonParser(final GenreCountGetWebClient.GenreCountGetJsonParserCallback genreCountGetJsonParserCallback) {
         mGenreCountGetJsonParserCallback =
                 genreCountGetJsonParserCallback;
         mGenreCountGetResponse = new GenreCountGetResponse();
     }
 
     @Override
-    protected void onPostExecute(Object s) {
+    protected void onPostExecute(final Object s) {
         mGenreCountGetJsonParserCallback.
                 onGenreCountGetJsonParsed(mGenreCountGetResponse);
     }
 
     @Override
-    protected Object doInBackground(Object... strings) {
+    protected Object doInBackground(final Object... strings) {
         String result = (String) strings[0];
         GenreCountGetResponse response = genreCountGetSender(result);
         return response;
     }
 
     /**
-     * ジャンル毎コンテンツ数取得一覧Jsonデータを解析する
+     * ジャンル毎コンテンツ数取得一覧Jsonデータを解析する.
      *
      * @param jsonStr ジャンル毎コンテンツ数取得一覧Jsonデータ
      * @return ジャンル毎コンテンツ数取得一覧取得：正常時レスポンスデータ
      */
-    public GenreCountGetResponse genreCountGetSender(String jsonStr) {
+    public GenreCountGetResponse genreCountGetSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         mGenreCountGetResponse = new GenreCountGetResponse();
@@ -87,11 +85,11 @@ public class GenreCountGetJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     /**
-     * statusの値をジャンルコンテンツ数取得：正常時レスポンスデータオブジェクトに格納
+     * statusの値をジャンルコンテンツ数取得：正常時レスポンスデータオブジェクトに格納.
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendStatus(JSONObject jsonObj) {
+    public void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得しセットする
             if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {
@@ -109,11 +107,11 @@ public class GenreCountGetJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     /**
-     * ジャンルコンテンツ数のListをジャンルコンテンツ数取得：正常時レスポンスデータオブジェクトに格納
+     * ジャンルコンテンツ数のListをジャンルコンテンツ数取得：正常時レスポンスデータオブジェクトに格納.
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendGenreCountGetResponse(JSONObject jsonObj) {
+    public void sendGenreCountGetResponse(final JSONObject jsonObj) {
         try {
             ArrayList<GenreCountGetMetaData> genreCountGetMetaDataList =
                     new ArrayList<GenreCountGetMetaData>();

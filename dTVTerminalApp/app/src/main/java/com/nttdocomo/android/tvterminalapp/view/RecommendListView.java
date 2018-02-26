@@ -12,21 +12,21 @@ import android.widget.ListView;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 /**
- * おすすめ画像・ビデオ画面用リストビュー
+ * おすすめ画像・ビデオ画面用リストビュー.
  */
 public class RecommendListView extends ListView {
     /**
-     * XMLのレイアウト定義から呼ばれるコンストラクタ
+     * XMLのレイアウト定義から呼ばれるコンストラクタ.
      *
      * @param context コンテキスト
      * @param attrs   XMLレイアウトの情報
      */
-    public RecommendListView(Context context, AttributeSet attrs) {
+    public RecommendListView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
-    protected void dispatchDraw(Canvas canvas) {
+    protected void dispatchDraw(final Canvas canvas) {
         try {
             // タブ切り替え時のタイミングによっては、リストビュー側の準備完了前にリストの描画を
             // 開始しようとする場合がある。その場合は処理をスキップすることで、例外を回避する

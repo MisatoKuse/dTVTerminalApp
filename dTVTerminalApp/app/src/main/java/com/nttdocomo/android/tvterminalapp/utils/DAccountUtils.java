@@ -12,12 +12,12 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DaccountConstants;
 
 /**
- * DAccountに関する共通処理を記載する
+ * DAccountに関する共通処理を記載する.
  */
 public class DAccountUtils {
 
     /**
-     * Dアカウント設定アプリがインストールされているか判定を行う
+     * Dアカウント設定アプリがインストールされているか判定を行う.
      *
      * @return intent:インストールされている null:インストールされていない
      */
@@ -30,7 +30,7 @@ public class DAccountUtils {
     }
 
     /**
-     * dアカウントの削除や変更後に、自アプリがフォアグラウンドならば、アプリの再起動を行う
+     * dアカウントの削除や変更後に、自アプリがフォアグラウンドならば、アプリの再起動を行う.
      *
      * @param activity アクティビティ
      */

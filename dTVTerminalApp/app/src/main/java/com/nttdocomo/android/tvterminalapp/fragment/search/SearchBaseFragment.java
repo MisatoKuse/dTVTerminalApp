@@ -104,7 +104,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
      *
      * @return View
      */
-    private View initView(ViewGroup container) {
+    private View initView(final ViewGroup container) {
         if (null == mTvFragmentView) {
             mTvFragmentView = View.inflate(getActivity(), R.layout.fragment_televi_content, null);
             mTvListView = mTvFragmentView.findViewById(R.id.lv_searched_result);

@@ -5,7 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.service.download;
 
 /**
- * todo 作成中
+ * todo 作成中.
  */
 public class DtcpDownloadParam extends DownloadParam {
     private String mItemId;
@@ -19,7 +19,7 @@ public class DtcpDownloadParam extends DownloadParam {
         return mDtcp1host;
     }
 
-    public void setDtcp1host(String mDtcp1host) {
+    public void setDtcp1host(final String mDtcp1host) {
         this.mDtcp1host = mDtcp1host;
     }
 
@@ -27,7 +27,7 @@ public class DtcpDownloadParam extends DownloadParam {
         return mItemId;
     }
 
-    public void setItemId(String itemId) {
+    public void setItemId(final String itemId) {
         this.mItemId = itemId;
     }
 
@@ -35,7 +35,7 @@ public class DtcpDownloadParam extends DownloadParam {
         return mDtcp1port;
     }
 
-    public void setDtcp1port(int mDtcp1port) {
+    public void setDtcp1port(final int mDtcp1port) {
         this.mDtcp1port = mDtcp1port;
     }
 
@@ -43,7 +43,7 @@ public class DtcpDownloadParam extends DownloadParam {
         return mUrl;
     }
 
-    public void setUrl(String mUrl) {
+    public void setUrl(final String mUrl) {
         this.mUrl = mUrl;
     }
 
@@ -51,35 +51,35 @@ public class DtcpDownloadParam extends DownloadParam {
         return mCleartextSize;
     }
 
-    public void setCleartextSize(int mCleartextSize) {
+    public void setCleartextSize(final int mCleartextSize) {
         this.mCleartextSize = mCleartextSize;
     }
 
     @Override
-    public boolean isParamValid(){
-        if(null==mDtcp1host || 7>mDtcp1host.length()
-                || 0==mDtcp1port
-                || null==mUrl || 1>mUrl.length()
-                || null==mXmlToDl || mXmlToDl.isEmpty()){
+    public boolean isParamValid() {
+        if (null == mDtcp1host || 7 > mDtcp1host.length()
+                || 0 == mDtcp1port
+                || null == mUrl || 1 > mUrl.length()
+                || null == mXmlToDl || mXmlToDl.isEmpty()) {
             return false;
         }
         return super.isParamValid();
     }
 
-    public String getXmlToDl(){
+    public String getXmlToDl() {
         return mXmlToDl;
     }
 
-    public void setXmlToDl(String xmlToDl){
-        mXmlToDl=xmlToDl;
+    public void setXmlToDl(final String xmlToDl) {
+        mXmlToDl = xmlToDl;
     }
 
     /**
-     * DLサイズを戻す
+     * DLサイズを戻す.
      * @return dl size
      */
     @Override
-    public int getTotalSizeToDl(){
+    public int getTotalSizeToDl() {
         return getCleartextSize();
     }
 }

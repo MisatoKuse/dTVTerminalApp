@@ -385,7 +385,7 @@ public class DaccountControl implements
         }
 
         @Override
-        protected void onPostExecute(final Void aVoid) {
+        protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             DTVTLogger.start();
 

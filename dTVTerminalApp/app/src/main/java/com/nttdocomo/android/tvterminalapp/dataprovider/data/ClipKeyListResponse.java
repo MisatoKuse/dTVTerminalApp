@@ -11,19 +11,19 @@ import java.util.List;
 public class ClipKeyListResponse {
 
     /**
-     * response body
+     * response body.
      */
     private String mStatus = null;
     private boolean mIsUpdate = false;
     /**
-     * response body list
+     * response body list.
      */
     private List<HashMap<String, String>> mCkList = new ArrayList<>();
 
     public ClipKeyListResponse() {
     }
 
-    public void setStatus(String status) {
+    public void setStatus(final String status) {
         mStatus = status;
     }
 
@@ -31,7 +31,7 @@ public class ClipKeyListResponse {
         return mStatus;
     }
 
-    public void setIsUpdate(boolean isUpdate) {
+    public void setIsUpdate(final boolean isUpdate) {
         mIsUpdate = isUpdate;
     }
 
@@ -43,7 +43,7 @@ public class ClipKeyListResponse {
         return mCkList;
     }
 
-    public void setCkList(List<HashMap<String, String>> list) {
+    public void setCkList(final List<HashMap<String, String>> list) {
         this.mCkList = list;
     }
 

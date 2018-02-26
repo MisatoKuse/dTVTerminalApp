@@ -101,7 +101,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
      *
      * @param mChangedScrollLoadListener コンテナ
      */
-    public void setScrollCallBack(ChangedScrollLoadListener mChangedScrollLoadListener) {
+    public void setScrollCallBack(final ChangedScrollLoadListener mChangedScrollLoadListener) {
         this.mChangedScrollLoadListener = mChangedScrollLoadListener;
     }
 
@@ -112,7 +112,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         return initView(container);
     }
 
@@ -154,7 +154,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
      *
      * @param info チャンネル情報
      */
-    public void setChannelDataChanged(ChannelInfo info) {
+    public void setChannelDataChanged(final ChannelInfo info) {
         if (!TextUtils.isEmpty(info.getTitle())) {
             mChannelTxt.setText(info.getTitle());
         }
@@ -207,7 +207,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
     }
 
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
+    public void setUserVisibleHint(final boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         DTVTLogger.start();
         if (!isVisibleToUser && mChangedScrollLoadListener != null) {
@@ -217,19 +217,19 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
     }
 
     @Override
-    public void onScrollStateChanged(AbsListView absListView, int scrollState) {
-        if (!mIsLoading && scrollState == SCROLL_STATE_IDLE && absListView.getLastVisiblePosition() ==
-                mChannelListView.getAdapter().getCount() - 1) {
+    public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
+        if (!mIsLoading && scrollState == SCROLL_STATE_IDLE && absListView.getLastVisiblePosition()
+                == mChannelListView.getAdapter().getCount() - 1) {
             loadStart();
         }
     }
 
     @Override
-    public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+    public void onScroll(final AbsListView absListView, final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
     }
 
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+    public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         Intent intent = new Intent();
         intent.setClass(mActivity, ContentDetailActivity.class);
         startActivity(intent);

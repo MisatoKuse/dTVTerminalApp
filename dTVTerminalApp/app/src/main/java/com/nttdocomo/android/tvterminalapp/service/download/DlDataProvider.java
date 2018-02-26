@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * ダウンロードデータプロバイダー
+ * ダウンロードデータプロバイダー.
  * Activityからこのクラスを利用する
  */
 public class DlDataProvider implements ServiceConnection, DownloadServiceListener, DbThread.DbOperation {
@@ -58,24 +58,24 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     static void releaseInstance() {
-        if(null == sDlDataProvider) {
+        if (null == sDlDataProvider) {
             return;
         }
         sDlDataProvider = null;
     }
 
-    public boolean getIsRegistered(){
+    public boolean getIsRegistered() {
         return isRegistered;
     }
 
-    public DlDataProvider(Activity activity){
+    public DlDataProvider(final Activity activity) {
         this.mActivity = activity;
     }
 
     /**
-     * DlDataProvider機能を有効
+     * DlDataProvider機能を有効.
      */
-    public void beginProvider(Activity act) {
+    public void beginProvider(final Activity act) {
         if (null == act) {
             start();
             return;
@@ -87,7 +87,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     /**
-     * サービス起動する
+     * サービス起動する.
      */
     private void startService() {
         if (DownloadService.isDownloadServiceRunning()) {
@@ -101,7 +101,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     /**
-     * DlDataProvider機能を無効
+     * DlDataProvider機能を無効.
      */
     public void endProvider() {
         if (null == mActivity) {
@@ -134,7 +134,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     /**
-     * ダウンロード開始
+     * ダウンロード開始.
      */
     public void start() {
         DownloadService ds = getDownloadService();
@@ -144,7 +144,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     /**
-     * ダウンロード停止
+     * ダウンロード停止.
      */
     public void stopService() {
         DownloadService ds = getDownloadService();
@@ -155,7 +155,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     /**
-     * ダウンロード進捗通知
+     * ダウンロード進捗通知.
      */
     public int getProgressBytes() {
         DownloadService ds = getDownloadService();
@@ -166,7 +166,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     /**
-     * ダウンロード進捗通知
+     * ダウンロード進捗通知.
      */
     public float getProgressPercent() {
         DownloadService ds = getDownloadService();
@@ -177,7 +177,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     /**
-     * ダウンロードエラー発生の時、コールされる
+     * ダウンロードエラー発生の時、コールされる.
      */
     public DLError isError() {
         DownloadService ds = getDownloadService();
@@ -188,7 +188,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     /**
-     * ダウンロードキャンセル
+     * ダウンロードキャンセル.
      */
     public void cancel() {
         DownloadService ds = getDownloadService();
@@ -198,7 +198,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     @Override
-    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+    public void onServiceConnected(final ComponentName componentName, final IBinder iBinder) {
         mBinder = (DownloadService.Binder) iBinder;
         DownloadService ds = getDownloadService();
         if (null != ds) {
@@ -208,18 +208,18 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     @Override
-    public void onServiceDisconnected(ComponentName componentName) {
+    public void onServiceDisconnected(final ComponentName componentName) {
         mBinder = null;
         sendBroadcast(DownloadService.DONWLOAD_DlDataProviderUnavailable);
     }
 
     @Override
-    public void onStart(int totalFileByteSize) {
+    public void onStart(final int totalFileByteSize) {
         sendBroadcast(DownloadService.DONWLOAD_OnStart, DownloadService.DONWLOAD_ParamInt, totalFileByteSize);
     }
 
     @Override
-    public void onProgress(int receivedBytes, int percent) {
+    public void onProgress(final int receivedBytes, final int percent) {
         sendBroadcast(DownloadService.DONWLOAD_OnProgress, DownloadService.DONWLOAD_ParamInt, percent);
     }
 
@@ -236,7 +236,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
     }
 
-    private void sendBroadcast(String broad, String paramName, String param) {
+    private void sendBroadcast(final String broad, final String paramName, final String param) {
         DownloadService ds = getDownloadService();
         if (null != ds) {
             Intent intent = new Intent();
@@ -246,7 +246,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
     }
 
-    private void sendBroadcast(String broad, String paramName, String param, String paramName2, int intParam){
+    private void sendBroadcast(final String broad, final String paramName, final String param, final String paramName2, final int intParam) {
         DownloadService ds = getDownloadService();
         if (null != ds) {
             Intent intent = new Intent();
@@ -259,7 +259,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 
 
 
-    private void sendBroadcast(String broad) {
+    private void sendBroadcast(final String broad) {
         DownloadService ds = getDownloadService();
         if (null != ds) {
             Intent intent = new Intent();
@@ -268,7 +268,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
     }
 
-    private void sendBroadcast(String broad, String paramName, int param) {
+    private void sendBroadcast(final String broad, final String paramName, final int param) {
         DownloadService ds = getDownloadService();
         if (null != ds) {
             Intent intent = new Intent();
@@ -281,11 +281,11 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     private static final String sSeparator = File.separator + "";
 
     @Override
-    public void onSuccess(String fullPath) {
+    public void onSuccess(final String fullPath) {
         if (!TextUtils.isEmpty(fullPath)) {
             if (fullPath.contains(sSeparator)) {
-                String paths[] = fullPath.split(sSeparator);
-                String ids[] = fullPath.split(sSeparator);
+                String[] paths = fullPath.split(sSeparator);
+                String[] ids = fullPath.split(sSeparator);
                 itemId = ids[paths.length - 1];
                 if (!TextUtils.isEmpty(itemId)) {
                     updateDownloadStatusToDb();
@@ -324,7 +324,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
     }
 
-    private DownloadParam getDownLoadParam(){
+    private DownloadParam getDownLoadParam() {
         DownloadParam downloadParam = null;
         if (DownloadService.getDlDataQue() != null && DownloadService.getDlDataQue().size() > 0) {
             DlData item = DownloadService.getDlDataQue().get(0);
@@ -383,7 +383,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     @Override
-    public void onDbOperationFinished(boolean isSuccessful, List<Map<String, String>> resultSet, int operationId) {
+    public void onDbOperationFinished(final boolean isSuccessful, final List<Map<String, String>> resultSet, final int operationId) {
         if (isSuccessful) {
             switch (operationId) {
                 case DOWNLOAD_STATUS_SELECT:
@@ -409,7 +409,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     @Override
-    public List<Map<String, String>> dbOperation(int operationId) {
+    public List<Map<String, String>> dbOperation(final int operationId) {
         List<Map<String, String>> resultSet = null;
         DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
         switch (operationId) {
@@ -435,13 +435,13 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         return resultSet;
     }
 
-    public void cancelDownLoadStatus(String path) {
-        if(null == path || path.isEmpty()){
+    public void cancelDownLoadStatus(final String path) {
+        if (null == path || path.isEmpty()) {
             return;
         }
         if (!TextUtils.isEmpty(path) && path.contains(sSeparator)) {
-            String paths[] = path.split(sSeparator);
-            String ids[] = path.split(sSeparator);
+            String[] paths = path.split(sSeparator);
+            String[] ids = path.split(sSeparator);
             String itemId = ids[paths.length - 1];
             if (!TextUtils.isEmpty(itemId)) {
                 DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
@@ -449,8 +449,8 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                 //ディスクからコンテンツを削除する
                 File file = new File(path);
                 if (file.exists()) {
-                    File files[] = file.listFiles();
-                    if(null != files) {
+                    File[] files = file.listFiles();
+                    if (null != files) {
                         for (File file1 : files) {
                             if (null != file1) {
                                 if (!file1.delete()) {
@@ -460,7 +460,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                         }
                     }
                     if (file.exists()) {
-                        if(!file.delete()) {
+                        if (!file.delete()) {
                             DTVTLogger.debug("delete cacel directory fail path:" + path);
                         }
                     }
@@ -489,8 +489,8 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
     }
 
-    private void deleteAllFiles(File root) {
-        File files[] = root.listFiles();
+    private void deleteAllFiles(final File root) {
+        File[] files = root.listFiles();
         if (files != null) {
             for (File f : files) {
                 if (f.isDirectory()) {
@@ -538,7 +538,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         DTVTLogger.end();
     }
 
-    public void setQue(List<DlData> dlData) {
+    public void setQue(final List<DlData> dlData) {
         if (DownloadService.getDlDataQue() != null && DownloadService.getDlDataQue().size() > 0) {
             DownloadService.setDlDataQueClear();
         }
@@ -557,9 +557,9 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     /**
-     * Ui runningを設定
+     * Ui runningを設定.
      */
-    public void setUiRunning(boolean yn) {
+    public void setUiRunning(final boolean yn) {
         DownloadService ds = getDownloadService();
         if (null != ds) {
             ds.setUiRunning(yn);
@@ -567,15 +567,15 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     /**
-     * DlDataからfullpathを戻す
+     * DlDataからfullpathを戻す.
      * @param data data
      * @return fullpath fullpath
      */
-    private static String getCurrentDlFullPath(DlData data) {
+    private static String getCurrentDlFullPath(final DlData data) {
         if (null == data) {
             return null;
         }
-        StringBuilder path=new StringBuilder();
+        StringBuilder path = new StringBuilder();
         path.append(data.getSaveFile());
         path.append(File.separator);
         path.append(data.getItemId());
@@ -583,7 +583,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     /**
-     * 機能：海外になる時、すべてのDLをキャンセル
+     * 機能：海外になる時、すべてのDLをキャンセル.
      */
     public static synchronized void cancelAll() {
         if (null == sDlDataProvider) {
@@ -595,13 +595,13 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                 sDlDataProvider.sendBroadcast(DownloadService.DONWLOAD_OnCancelAll);
             } else {
                 List<DlData> dlDataQue = ds.getDlDataQue();
-                for (DlData d : dlDataQue){
+                for (DlData d : dlDataQue) {
                     String path = getCurrentDlFullPath(d);
-                    if(null != path){
+                    if (null != path) {
                         sDlDataProvider.cancelDownLoadStatus(path);
                     }
                 }
-                for(int i = dlDataQue.size() - 1; i > -1; --i){
+                for (int i = dlDataQue.size() - 1; i > -1; --i) {
                     dlDataQue.remove(i);
                 }
                 ds.cancel();
@@ -609,7 +609,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
     }
 
-    public synchronized boolean isDownloading(){
+    public synchronized boolean isDownloading() {
         DownloadService ds = getDownloadService();
         if (null != ds) {
             return ds.isDownloading();

@@ -23,7 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * 機能：For Dlna Remote
+ * 機能：For Dlna Remote.
  */
 class DlnaInterfaceRI {
     //private Handler mHandler= new Handler();
@@ -32,28 +32,28 @@ class DlnaInterfaceRI {
 //    private DlnaDlListener mDlnaDlListener;
 //    private Context mContext;
     private long mNativeDlna = 0;
-    private static final int sBufSize=1024;
-    private static final String sWhatToReplace="[CONFDIR]";
+    private static final int sBufSize = 1024;
+    private static final String sWhatToReplace = "[CONFDIR]";
 
     /*
-     * 機能：libをロードする
+     * 機能：libをロードする.
      */
     static {
         System.loadLibrary("dtvtlibdrm");
     }
 
     /**
-     * get Drm configure dir
+     * get Drm configure dir.
      * @param context context
      * @return dir
      */
-    public static String getSrcConPathDir(Context context) {
+    public static String getSrcConPathDir(final Context context) {
         //return "file:///android_asset/drm/conf";
         return sConFileDirName;
     }
 
-    private static String getDestConfPathDir(Context context){
-        if(null==context){
+    private static String getDestConfPathDir(final Context context){
+        if (null == context) {
             return null;
         }
         File f = context.getFilesDir();
@@ -89,9 +89,9 @@ class DlnaInterfaceRI {
 //        }
 //    }
 
-    static long getFileSize(String path) {
+    static long getFileSize(final String path) {
         long size = 0;
-        File file=new File(path);
+        File file = new File(path);
         if (file.exists()) {
             FileInputStream fis = null;
             try {
@@ -101,7 +101,7 @@ class DlnaInterfaceRI {
                 DTVTLogger.debug(e);
             } finally {
                 try {
-                    if(null != fis){
+                    if (null != fis) {
                         fis.close();
                     }
                 } catch (IOException e) {
@@ -120,20 +120,20 @@ class DlnaInterfaceRI {
 //    }
 
     /**
-     * copy conf files to app
+     * copy conf files to app.
      * @param context context
      * @param assetsConfPath assetsConfPath
      * @param destPath destPath
      * @param forceUpdate 「true」の場合、毎回assetsからコピー
      * @return conf path:    Conf path is not null, error return null
      */
-    private static boolean copyConfFiles(Context context, String assetsConfPath, String destPath, boolean forceUpdate){
+    private static boolean copyConfFiles(final Context context, final String assetsConfPath, final String destPath, final boolean forceUpdate) {
 
         if (TextUtils.isEmpty(assetsConfPath) || TextUtils.isEmpty(destPath)) {
             return false;
         }
         //String separator = File.separator;
-        boolean r=true;
+        boolean r = true;
         String[] fileNames;
         try {
             Resources res = context.getResources();
@@ -155,13 +155,13 @@ class DlnaInterfaceRI {
                 }
             }
             for (String fileName : fileNames) {
-                r=copyConfFiles(context, assetsConfPath + File.separator + fileName, destPath + File.separator + fileName, forceUpdate);
-                if(!r){
+                r = copyConfFiles(context, assetsConfPath + File.separator + fileName, destPath + File.separator + fileName, forceUpdate);
+                if (!r) {
                     return false;
                 }
             }
         } else {
-            r=copyConfFile(context, assetsConfPath, destPath);
+            r = copyConfFile(context, assetsConfPath, destPath);
         }
 
         return r;
@@ -178,74 +178,74 @@ class DlnaInterfaceRI {
 //        return path.substring(p, path.length());
 //    }
 
-    private static final String sConFileDirName="drm/conf";
+    private static final String sConFileDirName = "drm/conf";
 
     /**
-     * Copy one file
+     * Copy one file.
      * @param context context
      * @param oldPath oldPath
      * @param newPath newPath
      * @return  true: ok    false: ng
      */
-    private static boolean copyConfFile(Context context, String oldPath, String newPath){
+    private static boolean copyConfFile(final Context context, final String oldPath, final String newPath) {
         if (TextUtils.isEmpty(oldPath) || TextUtils.isEmpty(newPath)) {
             return false;
         }
-        boolean ret=true;
-        String conDir= getDestConfPathDir(context);
-        if(null==conDir){
+        boolean ret = true;
+        String conDir = getDestConfPathDir(context);
+        if (null == conDir) {
             return false;
         }
         File dest = new File(newPath);
-        File parent=dest.getParentFile();
-        if(null!=parent && !parent.exists()){
-            boolean r=parent.mkdirs();
-            if(!r){
+        File parent = dest.getParentFile();
+        if (null != parent && !parent.exists()) {
+            boolean r = parent.mkdirs();
+            if (!r) {
                 return false;
             }
         }
         InputStream in = null;
         OutputStream out = null;
-        InputStream in2=null;
+        InputStream in2 = null;
         try {
             AssetManager am = context.getAssets();
             in = new BufferedInputStream(am.open(oldPath));
-            in2= filterSpecial(in, sWhatToReplace, conDir);
+            in2 = filterSpecial(in, sWhatToReplace, conDir);
             out = new BufferedOutputStream(new FileOutputStream(dest));
             byte[] buffer = new byte[sBufSize];
             int length;
-            while ((length = in2.read(buffer)) >0) {
+            while ((length = in2.read(buffer)) > 0) {
                 out.write(buffer, 0, length);
             }
         } catch (NullPointerException e) {
             DTVTLogger.debug("copyConfFile NullPointerException");
-            ret=false;
+            ret = false;
         } catch (IOException e) {
             DTVTLogger.debug(e.getMessage());
-            ret=false;
+            ret = false;
         } catch (Exception e) {
             DTVTLogger.debug(e);
-            ret=false;
+            ret = false;
         } finally {
             try {
-                if(null!=out) {
+                if (null != out) {
                     out.close();
                 }
-                if(null!=in){
+                if (null != in) {
                     in.close();
                 }
-                if(null!=in2){
+                if (null != in2) {
                     in2.close();
                 }
             } catch (IOException e) {
                 DTVTLogger.debug(e);
-                ret=false;
+                ret = false;
             }
         }
         return ret;
     }
 
-    private static InputStream filterSpecial(InputStream is, final String whatToReplace, final String replace){
+    private static InputStream filterSpecial(final InputStream is, final String whatToReplace, final String replace) {
         String temp;
         InputStream ret;
         try {
@@ -256,7 +256,7 @@ class DlnaInterfaceRI {
             return null;
         }
 
-        if(null == temp){
+        if (null == temp) {
             return null;
         }
 
@@ -264,49 +264,51 @@ class DlnaInterfaceRI {
             ret = stringToInputStream(temp);
         } catch (Exception e) {
             DTVTLogger.debug(e);
-            ret=null;
+            ret = null;
         }
         return ret;
     }
 
-    private static InputStream stringToInputStream(String in) throws Exception {
+    //TODO:汎用例外をthrowしないこと
+    private static InputStream stringToInputStream(final String in) throws Exception {
         return new ByteArrayInputStream(in.getBytes("UTF-8"));
     }
 
-    private static String inputStreamToString(InputStream in, String encoding) throws Exception {
+    //TODO:汎用例外をthrowしないこと
+    private static String inputStreamToString(final InputStream in, final String encoding) throws Exception {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         byte[] data = new byte[sBufSize];
         int count;
-        while ((count = in.read(data, 0, sBufSize)) != -1){
+        while ((count = in.read(data, 0, sBufSize)) != -1) {
             outStream.write(data, 0, count);
         }
         return new String(outStream.toByteArray(), "UTF-8");
     }
 
     /**
-     * 機能：デフォールト構造
+     * 機能：デフォールト構造.
      */
     public DlnaInterfaceRI() {
     }
 
     /**
-     * 機能：Dlna機能を開始。「stopDtcpDl」とPairで使用しなければならない
+     * 機能：Dlna機能を開始。「stopDtcpDl」とPairで使用しなければならない.
      *
      * @return DlnaRemoteRet
      */
-    public DlnaRemoteRet startDlnaRI(String confPath){
-        if(null==confPath || confPath.isEmpty()){
+    public DlnaRemoteRet startDlnaRI(final String confPath) {
+        if (null == confPath || confPath.isEmpty()) {
             return DlnaRemoteRet.DlnaRemoteRet_ParamError;
         }
         if (0 == mNativeDlna) {
             mNativeDlna = nativeCreateDlnaRmObject();
         }
-        if(0==mNativeDlna){
+        if (0 == mNativeDlna) {
             return DlnaRemoteRet.DlnaRemoteRet_Init;
         }
 
-        boolean r= nativeStartDlnaRm(mNativeDlna, confPath);
-        if(!r){
+        boolean r = nativeStartDlnaRm(mNativeDlna, confPath);
+        if (!r) {
             return DlnaRemoteRet.DlnaRemoteRet_Init;
         }
 
@@ -314,20 +316,20 @@ class DlnaInterfaceRI {
     }
 
 //    /**
-//     * 機能：Dlna機能を停止。「startDtcpRI」とPairで使用しなければならない
+//     * 機能：Dlna機能を停止。「startDtcpRI」とPairで使用しなければならない.
 //     */
 //    public void stopDtcpDl(){
 //        nativeStopDlna(mNativeDlna);
 //    }
 
     /**
-     * 機能：jni関数
+     * 機能：jni関数.
      * @return c++ dlna object
      */
     private native long nativeCreateDlnaRmObject();
 
 //    /**
-//     * 機能：jni c/c++からの通知を処理
+//     * 機能：jni c/c++からの通知を処理.
 //     * @param msg msg
 //     * @param content content
 //     */
@@ -347,7 +349,7 @@ class DlnaInterfaceRI {
 //
 //
 //    /**
-//     * todo: WiFiは切ると、対応する
+//     * todo: WiFiは切ると、対応する.
 //     */
 //    public void toDoWithWiFiLost(){
 //
@@ -365,18 +367,18 @@ class DlnaInterfaceRI {
 
 
     /**
-     * 機能：jni関数
+     * 機能：jni関数.
      * @return 操作結果
      */
     private native boolean nativeStartDlnaRm(long prt, String confPath);
 
 //    /**
-//     * 機能：jni関数
+//     * 機能：jni関数.
 //     */
 //    private native void nativeStopDlna(long prt);
 //
 ////    /**
-////     * 機能：jni関数
+////     * 機能：jni関数.
 ////     * @return 操作結果
 ////     */
 ////    private native boolean nativeStop(long prt);

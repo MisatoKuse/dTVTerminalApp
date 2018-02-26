@@ -47,45 +47,45 @@ public class TabItemLayout extends HorizontalScrollView {
     }
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
      * @param context
      */
-    public TabItemLayout(Context context) {
+    public TabItemLayout(final Context context) {
         this(context, null);
     }
 
-    public TabItemLayout(Context context, AttributeSet attrs) {
+    public TabItemLayout(final Context context, final AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public TabItemLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public TabItemLayout(final Context context, final AttributeSet attrs, final int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mContext = context;
     }
 
     /**
-     * タブ押下通知リスナーIF
+     * タブ押下通知リスナーIF.
      */
     public interface OnClickTabTextListener {
         void onClickTab(int position);
     }
 
     /**
-     * タブ押下時のリスナーを設定
+     * タブ押下時のリスナーを設定.
      *
      * @param listener
      */
-    public void setTabClickListener(OnClickTabTextListener listener) {
+    public void setTabClickListener(final OnClickTabTextListener listener) {
         mOnClickTabTextListener = listener;
     }
 
     /**
-     * tabの初期設定
+     * tabの初期設定.
      *
      * @param tabNames
      */
-    public void initTabView(String[] tabNames, ActivityType type) {
+    public void initTabView(final String[] tabNames, final ActivityType type) {
         setActivityType(type);
         addTabInnerView();
         getParameters();
@@ -93,7 +93,7 @@ public class TabItemLayout extends HorizontalScrollView {
     }
 
     /**
-     * tabのパラメータを取得
+     * tabのパラメータを取得.
      */
     private void getParameters() {
         mTabTextViewLayoutParams = getTabTextViewParameter(false);
@@ -102,7 +102,7 @@ public class TabItemLayout extends HorizontalScrollView {
     }
 
     /**
-     * タブの横幅を取得するためのリスナー
+     * タブの横幅を取得するためのリスナー.
      */
     ViewTreeObserver.OnGlobalLayoutListener mViewTreeListener = new ViewTreeObserver.OnGlobalLayoutListener() {
         @Override
@@ -123,9 +123,9 @@ public class TabItemLayout extends HorizontalScrollView {
     };
 
     /**
-     * tabに関連するViewの初期化
+     * tabに関連するViewの初期化.
      */
-    public void resetTabView(String[] tabNames) {
+    public void resetTabView(final String[] tabNames) {
         DTVTLogger.start("tabNames.length = " + tabNames.length);
         mLinearLayout.removeAllViews();
         mTabWidth = 0;
@@ -172,11 +172,11 @@ public class TabItemLayout extends HorizontalScrollView {
     }
 
     /**
-     * インジケーター設置
+     * インジケーター設置.
      *
      * @param position
      */
-    public void setTab(int position) {
+    public void setTab(final int position) {
         DTVTLogger.start();
         if (mLinearLayout != null) {
             for (int i = 0; i < mTabNames.length; i++) {
@@ -195,11 +195,11 @@ public class TabItemLayout extends HorizontalScrollView {
     }
 
     /**
-     * 選択したタブを画面サイズに合わせて中央寄せに持ってくる
+     * 選択したタブを画面サイズに合わせて中央寄せに持ってくる.
      *
      * @param textView
      */
-    private void scrollOffsetCheck(TextView textView) {
+    private void scrollOffsetCheck(final TextView textView) {
         int widthDensity = (int) mContext.getResources().getDisplayMetrics().widthPixels;
         int left = textView.getLeft();
         int width = textView.getMeasuredWidth();
@@ -207,16 +207,16 @@ public class TabItemLayout extends HorizontalScrollView {
         this.smoothScrollTo(toX, 0);
     }
 
-    public void setActivityType(ActivityType activityType) {
+    public void setActivityType(final ActivityType activityType) {
         mActivityType = activityType;
     }
 
     /**
-     * 画面毎のTabのTextViewのレイアウトパラメータを設定する
+     * 画面毎のTabのTextViewのレイアウトパラメータを設定する.
      *
      * @param lastData True:最後のView false:その他
      */
-    public LinearLayout.LayoutParams getTabTextViewParameter(boolean lastData) {
+    public LinearLayout.LayoutParams getTabTextViewParameter(final boolean lastData) {
         LinearLayout.LayoutParams params = null;
         params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -238,7 +238,7 @@ public class TabItemLayout extends HorizontalScrollView {
     }
 
     /**
-     * テキストサイズを取得
+     * テキストサイズを取得.
      *
      * @return
      */
@@ -267,7 +267,7 @@ public class TabItemLayout extends HorizontalScrollView {
     }
 
     /**
-     * タブ領域のパラメータを設定
+     * タブ領域のパラメータを設定.
      */
     private void addTabInnerView() {
         int density = (int) mContext.getResources().getDisplayMetrics().density;
@@ -332,9 +332,9 @@ public class TabItemLayout extends HorizontalScrollView {
     }
 
     /**
-     * 設定するインジケータの取得
+     * 設定するインジケータの取得.
      */
-    private int setBackgroundResourceIndicating(boolean isFocus) {
+    private int setBackgroundResourceIndicating(final boolean isFocus) {
         int resId = 0;
         switch (mActivityType) {
             case CHANNEL_LIST_ACTIVITY:

@@ -7,7 +7,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 import java.util.ArrayList;
 
 /**
- * 購入済みVOD一覧取得：正常時レスポンスデータ
+ * 購入済みVOD一覧取得：正常時レスポンスデータ.
  */
 public class PurchasedVodListResponse {
     // status
@@ -21,7 +21,7 @@ public class PurchasedVodListResponse {
         return mStatus;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(final String status) {
         mStatus = status;
     }
 
@@ -29,7 +29,7 @@ public class PurchasedVodListResponse {
         return mVodMetaFullData;
     }
 
-    public void setVodMetaFullData(ArrayList<VodMetaFullData> vodMetaFullData) {
+    public void setVodMetaFullData(final ArrayList<VodMetaFullData> vodMetaFullData) {
         mVodMetaFullData = vodMetaFullData;
     }
 
@@ -37,7 +37,7 @@ public class PurchasedVodListResponse {
         return mActiveData;
     }
 
-    public void setVodActiveData(ArrayList<ActiveData> vodActiveData) {
+    public void setVodActiveData(final ArrayList<ActiveData> vodActiveData) {
         mActiveData = vodActiveData;
     }
 

@@ -35,7 +35,7 @@ class ServiceTokenData {
      *
      * @param responseInfoMap レスポンス情報
      */
-    public void setResponseInfoMap(HashMap<String, String> responseInfoMap) {
+    public void setResponseInfoMap(final HashMap<String, String> responseInfoMap) {
         this.mResponseInfoMap = responseInfoMap;
     }
 
@@ -53,7 +53,7 @@ class ServiceTokenData {
      *
      * @param tokenData トークンリスト情報
      */
-    public void setToken(List<HashMap<String, String>> tokenData) {
+    public void setToken(final List<HashMap<String, String>> tokenData) {
         mToken = tokenData;
     }
 }

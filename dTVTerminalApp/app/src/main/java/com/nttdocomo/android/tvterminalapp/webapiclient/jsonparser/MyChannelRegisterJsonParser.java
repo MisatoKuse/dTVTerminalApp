@@ -27,35 +27,33 @@ public class MyChannelRegisterJsonParser extends AsyncTask<Object, Object, Objec
     private MyChannelRegisterResponse myChannelRegisterResponse;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      * <p>
      * //     * @param myChannelRegisterJsonParserCallback
      */
-    public MyChannelRegisterJsonParser(MyChannelRegisterWebClient.MyChannelRegisterJsonParserCallback
-                                               myChannelRegisterJsonParserCallback) {
+    public MyChannelRegisterJsonParser(final MyChannelRegisterWebClient.MyChannelRegisterJsonParserCallback myChannelRegisterJsonParserCallback) {
         this.myChannelRegisterJsonParserCallback = myChannelRegisterJsonParserCallback;
         myChannelRegisterResponse = new MyChannelRegisterResponse();
     }
 
     @Override
-    protected void onPostExecute(Object s) {
+    protected void onPostExecute(final Object s) {
         myChannelRegisterJsonParserCallback.onMyChannelRegisterJsonParsed(myChannelRegisterResponse);
     }
     @Override
-    protected Object doInBackground(Object... strings) {
+    protected Object doInBackground(final Object... strings) {
         String result = (String) strings[0];
-        MyChannelRegisterResponse response =
-                myChannelRegisterSender(result);
+        MyChannelRegisterResponse response = myChannelRegisterSender(result);
         return response;
     }
 
     /**
-     * マイチャンネル登録Jsonデータを解析する
+     * マイチャンネル登録Jsonデータを解析する.
      *
      * @param jsonStr マイチャンネル登録Jsonデータ
      * @return マイチャンネル登録取得：正常時レスポンスデータ
      */
-    private MyChannelRegisterResponse myChannelRegisterSender(String jsonStr) {
+    private MyChannelRegisterResponse myChannelRegisterSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         myChannelRegisterResponse = new MyChannelRegisterResponse();
@@ -76,11 +74,11 @@ public class MyChannelRegisterJsonParser extends AsyncTask<Object, Object, Objec
     }
 
     /**
-     * statusの値をマイチャンネル登録取得：正常時レスポンスデータオブジェクトに格納
+     * statusの値をマイチャンネル登録取得：正常時レスポンスデータオブジェクトに格納.
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    private void sendStatus(JSONObject jsonObj) {
+    private void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得しセットする
             if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {

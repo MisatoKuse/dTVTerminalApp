@@ -5,7 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.service.download;
 
 /**
- * DlDataProviderListener用Listenerである
+ * DlDataProviderListener用Listenerである.
  * DownloadServiceからの通知を処理
  */
 interface DownloadServiceListener extends DownloadListener {

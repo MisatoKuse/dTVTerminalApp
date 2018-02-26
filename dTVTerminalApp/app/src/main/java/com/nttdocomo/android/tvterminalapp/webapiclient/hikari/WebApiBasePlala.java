@@ -163,14 +163,14 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          *
          * @param returnCode 値を返す構造体
          */
-        void onAnswer(ReturnCode returnCode);
+        void onAnswer(final ReturnCode returnCode);
 
         /**
          * 通信失敗時のコールバック.
          *
          * @param returnCode 値を返す構造体
          */
-        void onError(ReturnCode returnCode);
+        void onError(final ReturnCode returnCode);
     }
 
     //指定文字列パラメータ群

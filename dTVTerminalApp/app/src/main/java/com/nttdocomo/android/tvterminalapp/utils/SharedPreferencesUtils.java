@@ -656,13 +656,13 @@ public class SharedPreferencesUtils {
      * @param context   コンテキスト
      * @param tokenData 書き込むワンタイムトークン
      */
-    public static void setOneTimeTokenData(Context context, OneTimeTokenData tokenData) {
+    public static void setOneTimeTokenData(final Context context, final OneTimeTokenData tokenData) {
         DTVTLogger.start();
         //書き込み用の文字列を作成する
         String buffer = tokenData.makeOneTimeTokenString();
 
         //暗号化
-        String afterBuffer = StringUtils.getCipherString(context,buffer);
+        String afterBuffer = StringUtils.getCipherString(context, buffer);
 
         //書き込む
         SharedPreferences data = context.getSharedPreferences(
@@ -678,7 +678,7 @@ public class SharedPreferencesUtils {
      *
      * @param context コンテキスト
      */
-    public static void deleteOneTimeTokenData(Context context) {
+    public static void deleteOneTimeTokenData(final Context context) {
         DTVTLogger.start();
         SharedPreferences deleteData = context.getSharedPreferences(
                 ONE_TIME_TOKEN, Context.MODE_PRIVATE);

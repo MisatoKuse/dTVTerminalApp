@@ -9,7 +9,7 @@ import android.os.Parcelable;
 
 public class RecordedContentsDetailData implements Parcelable {
 
-    public enum DetailParamFromWhere{
+    public enum DetailParamFromWhere {
         DetailParamFromWhere_ChList_TabTer,
         DetailParamFromWhere_ChList_TabBs,
         DetailParamFromWhere_Other,
@@ -22,14 +22,14 @@ public class RecordedContentsDetailData implements Parcelable {
     private String mResUrl;
     private String mUpnpIcon;
     private String mTitle;
-    private DetailParamFromWhere mDetailParamFromWhere= DetailParamFromWhere.DetailParamFromWhere_Other;
+    private DetailParamFromWhere mDetailParamFromWhere = DetailParamFromWhere.DetailParamFromWhere_Other;
     private String mVideoType;
     private String mClearTextSize;
     private int mDownLoadStatus;
     private String mDlFileFullPath;
 
-    public void setDetailParamFromWhere(DetailParamFromWhere from){
-        mDetailParamFromWhere=from;
+    public void setDetailParamFromWhere(final DetailParamFromWhere from) {
+        mDetailParamFromWhere = from;
     }
 
     public DetailParamFromWhere getDetailParamFromWhere(){
@@ -40,7 +40,7 @@ public class RecordedContentsDetailData implements Parcelable {
         return mItemId;
     }
 
-    public void setItemId(String mItemId) {
+    public void setItemId(final String mItemId) {
         this.mItemId = mItemId;
     }
 
@@ -48,11 +48,11 @@ public class RecordedContentsDetailData implements Parcelable {
         return mTitle;
     }
 
-    public void setTitle(String mTitle) {
+    public void setTitle(final String mTitle) {
         this.mTitle = mTitle;
     }
 
-    public void setSize(String mSize) {
+    public void setSize(final String mSize) {
         this.mSize = mSize;
     }
 
@@ -60,7 +60,7 @@ public class RecordedContentsDetailData implements Parcelable {
         return mSize;
     }
 
-    public void setDuration(String mDuration) {
+    public void setDuration(final String mDuration) {
         this.mDuration = mDuration;
     }
 
@@ -68,7 +68,7 @@ public class RecordedContentsDetailData implements Parcelable {
         return mDuration;
     }
 
-    public void setResolution(String mResolution) {
+    public void setResolution(final String mResolution) {
         this.mResolution = mResolution;
     }
 
@@ -76,7 +76,7 @@ public class RecordedContentsDetailData implements Parcelable {
         return mResolution;
     }
 
-    public void setBitrate(String mBitrate) {
+    public void setBitrate(final String mBitrate) {
         this.mBitrate = mBitrate;
     }
 
@@ -88,7 +88,7 @@ public class RecordedContentsDetailData implements Parcelable {
         return mResUrl;
     }
 
-    public void setResUrl(String mResUrl) {
+    public void setResUrl(final String mResUrl) {
         this.mResUrl = mResUrl;
     }
 
@@ -96,7 +96,7 @@ public class RecordedContentsDetailData implements Parcelable {
         return mUpnpIcon;
     }
 
-    public void setUpnpIcon(String mUpnpIcon) {
+    public void setUpnpIcon(final String mUpnpIcon) {
         this.mUpnpIcon = mUpnpIcon;
     }
 
@@ -104,7 +104,7 @@ public class RecordedContentsDetailData implements Parcelable {
         return mVideoType;
     }
 
-    public void setVideoType(String type) {
+    public void setVideoType(final String type) {
         this.mVideoType = type;
     }
 
@@ -112,7 +112,7 @@ public class RecordedContentsDetailData implements Parcelable {
         return mClearTextSize;
     }
 
-    public void setClearTextSize(String clearTextSize) {
+    public void setClearTextSize(final String clearTextSize) {
         this.mClearTextSize = clearTextSize;
     }
 
@@ -120,7 +120,7 @@ public class RecordedContentsDetailData implements Parcelable {
         return mDownLoadStatus;
     }
 
-    public void setDownLoadStatus(int mDownLoadStatus) {
+    public void setDownLoadStatus(final int mDownLoadStatus) {
         this.mDownLoadStatus = mDownLoadStatus;
     }
 
@@ -128,7 +128,7 @@ public class RecordedContentsDetailData implements Parcelable {
         return mDlFileFullPath;
     }
 
-    public void setDlFileFullPath(String dlFileFullPath) {
+    public void setDlFileFullPath(final String dlFileFullPath) {
         this.mDlFileFullPath = dlFileFullPath;
     }
 
@@ -138,7 +138,7 @@ public class RecordedContentsDetailData implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    public void writeToParcel(final Parcel dest, final int flags) {
         dest.writeString(this.mItemId);
         dest.writeString(this.mSize);
         dest.writeString(this.mDuration);
@@ -157,7 +157,7 @@ public class RecordedContentsDetailData implements Parcelable {
     public RecordedContentsDetailData() {
     }
 
-    RecordedContentsDetailData(Parcel in) {
+    RecordedContentsDetailData(final Parcel in) {
         this.mItemId = in.readString();
         this.mSize = in.readString();
         this.mDuration = in.readString();
@@ -176,12 +176,12 @@ public class RecordedContentsDetailData implements Parcelable {
 
     public static final Creator<RecordedContentsDetailData> CREATOR = new Creator<RecordedContentsDetailData>() {
         @Override
-        public RecordedContentsDetailData createFromParcel(Parcel source) {
+        public RecordedContentsDetailData createFromParcel(final Parcel source) {
             return new RecordedContentsDetailData(source);
         }
 
         @Override
-        public RecordedContentsDetailData[] newArray(int size) {
+        public RecordedContentsDetailData[] newArray(final int size) {
             return new RecordedContentsDetailData[size];
         }
     };

@@ -16,14 +16,14 @@ public class RoleListMetaData implements Serializable {
         return mId;
     }
 
-    public void setId(String mId) {
+    public void setId(final String mId) {
         this.mId = mId;
     }
 
     public String getName() {
         return mName;
     }
-    public void setName(String mName) {
+    public void setName(final String mName) {
         this.mName = mName;
     }
 }

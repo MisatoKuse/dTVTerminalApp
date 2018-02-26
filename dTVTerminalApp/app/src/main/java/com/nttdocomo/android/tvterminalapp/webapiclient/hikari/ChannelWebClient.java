@@ -45,7 +45,7 @@ public class ChannelWebClient
      *
      * @param context コンテキスト
      */
-    public ChannelWebClient(Context context) {
+    public ChannelWebClient(final Context context) {
         super(context);
     }
 
@@ -81,9 +81,9 @@ public class ChannelWebClient
      * @param channelJsonParserCallback コールバック
      * @return パラメータエラー等が発生した場合はfalse
      */
-    public boolean getChannelApi(int pagetLimit, int pagerOffset,
-                                 String filter, String type,
-                                 ChannelJsonParserCallback channelJsonParserCallback) {
+    public boolean getChannelApi(final int pagetLimit, final int pagerOffset,
+                                 final String filter, final String type,
+                                 final ChannelJsonParserCallback channelJsonParserCallback) {
 
         if (mIsCancel) {
             DTVTLogger.error("ChannelWebClient is stopping connection");
@@ -181,7 +181,7 @@ public class ChannelWebClient
      * @param type        タイプ　dch：dチャンネル・hikaritv：ひかりTVの多ch・指定なし：全て
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(int pagetLimit, int pagerOffset, String filter, String type) {
+    private String makeSendParameter(final int pagetLimit, final int pagerOffset, final String filter, final String type) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {

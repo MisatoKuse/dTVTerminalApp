@@ -25,7 +25,7 @@ public class ClipKeyListJsonParser {
             JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_EVENT_ID,
             JsonConstants.META_RESPONSE_TYPE, JsonConstants.META_RESPONSE_TITLE_ID};
 
-    public ClipKeyListResponse clipKeyListSender(String jsonStr) {
+    public ClipKeyListResponse clipKeyListSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         mClipKeyListResponse = new ClipKeyListResponse();
@@ -48,7 +48,7 @@ public class ClipKeyListJsonParser {
         return null;
     }
 
-    public void sendStatus(JSONObject jsonObj) {
+    public void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
             if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {
@@ -68,9 +68,9 @@ public class ClipKeyListJsonParser {
     }
 
     /**
-     * コンテンツのList<HashMap>をオブジェクトクラスに格納
+     * コンテンツのList<HashMap>をオブジェクトクラスに格納.
      */
-    public void sendVcList(JSONArray arrayList) {
+    public void sendVcList(final JSONArray arrayList) {
         try {
             List<HashMap<String, String>> list = new ArrayList<>();
             for (int i = 0; i < arrayList.length(); i++) {

@@ -39,12 +39,12 @@ public class RoleListWebClient
      *
      * @param context コンテキスト
      */
-    public RoleListWebClient(Context context) {
+    public RoleListWebClient(final Context context) {
         super(context);
     }
 
     @Override
-    public void onAnswer(ReturnCode returnCode) {
+    public void onAnswer(final ReturnCode returnCode) {
         if (mRoleListJsonParserCallback != null) {
             //JSONをパースして、データを返す
             new RoleListJsonParser(mRoleListJsonParserCallback)
@@ -58,7 +58,7 @@ public class RoleListWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
+    public void onError(final ReturnCode returnCode) {
         if (mRoleListJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             mRoleListJsonParserCallback.onRoleListJsonParsed(null);
@@ -71,7 +71,7 @@ public class RoleListWebClient
      * @param roleListJsonParserCallback コールバック
      * @return パラメータエラー等が発生した場合はfalse
      */
-    public boolean getRoleListApi(RoleListJsonParserCallback roleListJsonParserCallback) {
+    public boolean getRoleListApi(final RoleListJsonParserCallback roleListJsonParserCallback) {
         DTVTLogger.start();
 
         if (mIsCancel) {
@@ -103,7 +103,7 @@ public class RoleListWebClient
      * @param roleListJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(RoleListJsonParserCallback
+    private boolean checkNormalParameter(final RoleListJsonParserCallback
                                                  roleListJsonParserCallback) {
         //コールバックが指定されていないならばfalse
         if (roleListJsonParserCallback == null) {

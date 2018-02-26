@@ -185,11 +185,11 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      */
     private final static String ZERO = "0";
     /**
-     * サービスアイコン　カテゴリーID判定条件(ひかりTVのみ)
+     * サービスアイコン　カテゴリーID判定条件(ひかりTVのみ).
      */
-    private final static String categoryId_Hikari[] = {"01", "02", "03", "04", "05", "06", "07", "08"};
+    private final static String[] categoryId_Hikari = {"01", "02", "03", "04", "05", "06", "07", "08"};
     /**
-     * サービスアイコン　カテゴリーID判定条件(ひかりTV、dTV)
+     * サービスアイコン　カテゴリーID判定条件(ひかりTV、dTV).
      */
     private final static String categoryId_Hikari_dtv = "10";
 
@@ -391,7 +391,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     }
 
     /**
-     * レコメンドしているコンテンツに対してサービスアイコンを表示する
+     * レコメンドしているコンテンツに対してサービスアイコンを表示する.
      *
      * @param contentsData コンテンツデータ
      * @param viewHolder ViewHolder

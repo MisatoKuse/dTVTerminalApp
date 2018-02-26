@@ -12,16 +12,16 @@ public class DtvContentsDetailFragmentFactory {
     private final Fragment[] mFragments = new Fragment[2];
 
     /**
-     * フラグメントクラスの生成、取得
+     * フラグメントクラスの生成、取得.
      *
      * @param position position
      * @return fragment
      */
-    public Fragment createFragment(int position) {
+    public Fragment createFragment(final int position) {
         DTVTLogger.start();
         Fragment fragment = mFragments[position];
         if (fragment == null) {
-            if(position == 0){
+            if (position == 0) {
                 fragment = new DtvContentsDetailFragment();
             } else {
                 fragment = new DtvContentsChannelFragment();

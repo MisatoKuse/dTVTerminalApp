@@ -12,19 +12,19 @@ import android.os.Build;
 public class RuntimePermissionUtils {
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      */
     private RuntimePermissionUtils() {
     }
 
     /**
-     * Permissionが与えられているか確認を行うクラス
+     * Permissionが与えられているか確認を行うクラス.
      *
      * @param context コンテキスト
      * @param permissions 確認するPermission
      * @return Permissionが与えられていればtrue、そうでなければfalse
      */
-    public static boolean hasSelfPermissions(Context context, String... permissions) {
+    public static boolean hasSelfPermissions(final Context context, final String... permissions) {
         //Android6.0未満ではtrueを返す
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
@@ -39,12 +39,12 @@ public class RuntimePermissionUtils {
     }
 
     /**
-     * Permission要求後、Permissionが付与されたかどうかを確認する
+     * Permission要求後、Permissionが付与されたかどうかを確認する.
      *
      * @param grantResults Permission要求後の返り値
      * @return Permissionが与えられていればtrue、そうでなければfalse
      */
-    public static boolean checkGrantResults(int... grantResults) {
+    public static boolean checkGrantResults(final int... grantResults) {
         //引数が0個の場合はfalseを返す
         if (grantResults.length == 0) {
             return false;
@@ -58,13 +58,13 @@ public class RuntimePermissionUtils {
     }
 
     /**
-     * 「今後は確認しない」にチェックが入っているかどうかを確認する
+     * 「今後は確認しない」にチェックが入っているかどうかを確認する.
      *
      * @param activity アクティビティ
      * @param permission 確認対象のPermission
      * @return falseであれば「今後は確認しない」にチェックが入っている
      */
-    public static boolean shouldShowRequestPermissionRationale(Activity activity, String permission) {
+    public static boolean shouldShowRequestPermissionRationale(final Activity activity, final String permission) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return activity.shouldShowRequestPermissionRationale(permission);
         }

@@ -72,7 +72,7 @@ public class ServiceTokenClient
      *
      * @param context コンテキスト
      */
-    public ServiceTokenClient(Context context) {
+    public ServiceTokenClient(final Context context) {
         super(context);
     }
 
@@ -110,7 +110,7 @@ public class ServiceTokenClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onAnswer(ReturnCode returnCode) {
+    public void onAnswer(final ReturnCode returnCode) {
         //取得に成功したので、trueを返す
         mTokenGetCallback.onTokenGot(true);
     }
@@ -121,7 +121,7 @@ public class ServiceTokenClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
+    public void onError(final ReturnCode returnCode) {
         //エラーが発生したのでfalseを返す
         mTokenGetCallback.onTokenGot(false);
     }
@@ -133,8 +133,8 @@ public class ServiceTokenClient
      * @param tokenGetCallback コールバック
      * @return パラメータエラー等が発生した場合はfalse
      */
-    public boolean getServiceTokenApi(String oneTimePass,
-                                      TokenGetCallback tokenGetCallback) {
+    public boolean getServiceTokenApi(final String oneTimePass,
+                                      final TokenGetCallback tokenGetCallback) {
         //パラメーターのチェック
         if (!checkNormalParameter(oneTimePass, tokenGetCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
@@ -166,8 +166,8 @@ public class ServiceTokenClient
      * @param channelJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(String oneTimePass,
-                                         TokenGetCallback channelJsonParserCallback) {
+    private boolean checkNormalParameter(final String oneTimePass,
+                                         final TokenGetCallback channelJsonParserCallback) {
         if (TextUtils.isEmpty(oneTimePass)) {
             //ワンタイムパスワードがヌルや空文字ならばエラー
             return false;
@@ -188,7 +188,7 @@ public class ServiceTokenClient
      * @param oneTimePass ワンタイムパスワード
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(String oneTimePass) {
+    private String makeSendParameter(final String oneTimePass) {
         String answerText = null;
 
         //送信パラメータの作成

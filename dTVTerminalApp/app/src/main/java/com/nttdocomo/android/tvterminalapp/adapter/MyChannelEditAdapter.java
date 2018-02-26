@@ -21,14 +21,14 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
 import java.util.ArrayList;
 
 /**
- * マイ番組表設定アクティビティ
+ * マイ番組表設定アクティビティ.
  */
 public class MyChannelEditAdapter extends BaseAdapter implements View.OnClickListener {
 
     /**
      * コンマ.
      */
-    public static final String COMMA = "," ;
+    public static final String COMMA = ",";
     /**
      * サービスIDキー.
      */
@@ -58,7 +58,7 @@ public class MyChannelEditAdapter extends BaseAdapter implements View.OnClickLis
      */
     private final EditMyChannelItemImpl mEditMyChannelItemImpl;
 
-    public MyChannelEditAdapter(MyChannelEditActivity context, ArrayList<MyChannelMetaData> list) {
+    public MyChannelEditAdapter(final MyChannelEditActivity context, final ArrayList<MyChannelMetaData> list) {
         this.mContext = context;
         this.mData = list;
         this.mEditMyChannelItemImpl = context;
@@ -70,17 +70,17 @@ public class MyChannelEditAdapter extends BaseAdapter implements View.OnClickLis
     }
 
     @Override
-    public Object getItem(int i) {
+    public Object getItem(final int i) {
         return mData.get(i);
     }
 
     @Override
-    public long getItemId(int i) {
+    public long getItemId(final int i) {
         return i;
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
+    public View getView(final int i, final View view, final ViewGroup viewGroup) {
         View inflate = LayoutInflater.from(mContext).inflate(R.layout.edit_my_channel_list_item, null);
         MyChannelMetaData channel = mData.get(i);
         TextView noTv = inflate.findViewById(R.id.edit_my_channel_list_item_no_tv);
@@ -88,18 +88,18 @@ public class MyChannelEditAdapter extends BaseAdapter implements View.OnClickLis
         TextView titleTv = inflate.findViewById(R.id.edit_my_channel_list_item_channel_name_tv);
         Bundle bundle = new Bundle();
         bundle.putInt(POSITION_MY_CHANNEL_LIST, i);
-        bundle.putString(SERVICE_ID_MY_CHANNEL_LIST,channel.getServiceId());
-        bundle.putString(INDEX_MY_CHANNEL_LIST,channel.getIndex());
+        bundle.putString(SERVICE_ID_MY_CHANNEL_LIST, channel.getServiceId());
+        bundle.putString(INDEX_MY_CHANNEL_LIST, channel.getIndex());
         bundle.putString(TITLE_MY_CHANNEL_LIST, channel.getTitle());
         editBt.setTag(bundle);
         editBt.setOnClickListener(this);
         titleTv.setText(channel.getTitle());
         noTv.setText(channel.getIndex());
-        if(!TextUtils.isEmpty(channel.getServiceId())){//登録
+        if (!TextUtils.isEmpty(channel.getServiceId())) { //登録
             noTv.setTextColor(ContextCompat.getColor(mContext, R.color.item_num_black));
             noTv.setBackgroundResource(R.mipmap.channel_num_active);
             editBt.setBackgroundResource(R.mipmap.icon_circle_normal_minus);
-        }else {//解除
+        } else { //解除
             noTv.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
             noTv.setBackgroundResource(R.mipmap.channel_num_normal);
             editBt.setBackgroundResource(R.drawable.selector_my_ch_btn);
@@ -108,7 +108,7 @@ public class MyChannelEditAdapter extends BaseAdapter implements View.OnClickLis
     }
 
     @Override
-    public void onClick(View view) {
+    public void onClick(final View view) {
         switch (view.getId()) {
             case R.id.edit_my_channel_list_item_edit_bt:
                 Bundle bundle = (Bundle) view.getTag();

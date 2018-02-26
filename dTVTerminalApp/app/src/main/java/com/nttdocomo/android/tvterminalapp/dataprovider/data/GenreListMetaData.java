@@ -19,9 +19,9 @@ public class GenreListMetaData implements Serializable {
     public static final String VIDEO_LIST_GENRE_ID_NOD = "genre_id_nod";
     public static final String VIDEO_LIST_GENRE_ID_ALL_CONTENTS = "genre_id_all_contents";
 
-    private String mId;//id
-    private String mTitle;//title
-    private String mRValue;//r_value
+    private String mId; //id
+    private String mTitle; //title
+    private String mRValue; //r_value
     private ArrayList<GenreListMetaData> mSubContent = null;
 
     public GenreListMetaData() {
@@ -32,7 +32,7 @@ public class GenreListMetaData implements Serializable {
         return mId;
     }
 
-    public void setId(String mId) {
+    public void setId(final String mId) {
         this.mId = mId;
     }
 
@@ -40,7 +40,7 @@ public class GenreListMetaData implements Serializable {
         return mTitle;
     }
 
-    public void setTitle(String mTitle) {
+    public void setTitle(final String mTitle) {
         this.mTitle = mTitle;
     }
 
@@ -48,7 +48,7 @@ public class GenreListMetaData implements Serializable {
         return mRValue;
     }
 
-    public void setRValue(String mRValue) {
+    public void setRValue(final String mRValue) {
         this.mRValue = mRValue;
     }
 
@@ -56,7 +56,7 @@ public class GenreListMetaData implements Serializable {
         return this.mSubContent;
     }
 
-    public void setSubContentAll(ArrayList<GenreListMetaData> metaDataList) {
+    public void setSubContentAll(final ArrayList<GenreListMetaData> metaDataList) {
         mSubContent.addAll(metaDataList);
     }
 
@@ -65,16 +65,16 @@ public class GenreListMetaData implements Serializable {
     private static final String GENRE_LIST_META_DATA_R_VALUE = "r_value";
     private static final String GENRE_LIST_META_DATA_SUB = "sub";
     //サブコンテンツキー名
-    private static final String mCommonData[] = {GENRE_LIST_META_DATA_ID,
+    private static final String[] mCommonData = {GENRE_LIST_META_DATA_ID,
             GENRE_LIST_META_DATA_TITLE, GENRE_LIST_META_DATA_R_VALUE};
 
     /**
-     * キーとキーの値をメンバーにセットする
+     * キーとキーの値をメンバーにセットする.
      *
      * @param key  キー
      * @param data キーの値
      */
-    private void setMember(String key, Object data) {
+    private void setMember(final String key, final Object data) {
         if (!key.isEmpty()) {
             switch (key) {
                 case GENRE_LIST_META_DATA_ID:
@@ -92,11 +92,11 @@ public class GenreListMetaData implements Serializable {
     }
 
     /**
-     * キーの値を取得する
+     * キーの値を取得する.
      *
      * @param key キー
      */
-    public Object getMember(String key) {
+    public Object getMember(final String key) {
         if (key.isEmpty()) {
             return "";
         } else {
@@ -114,11 +114,11 @@ public class GenreListMetaData implements Serializable {
     }
 
     /**
-     * サーバから取得したデータをセット
+     * サーバから取得したデータをセット.
      *
      * @param jsonObj Jsonオブジェクト
      */
-    public void setData(JSONObject jsonObj) {
+    public void setData(final JSONObject jsonObj) {
         GenreListMetaData metaData;
         try {
             if (jsonObj != null) {

@@ -106,7 +106,7 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
      *
      * @return 各タブ画面
      */
-    private View initView(ViewGroup container) {
+    private View initView(final ViewGroup container) {
         if (mData == null) {
             mData = new ArrayList<>();
         }

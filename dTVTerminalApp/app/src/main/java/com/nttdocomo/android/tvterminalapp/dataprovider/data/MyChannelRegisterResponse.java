@@ -7,12 +7,12 @@ package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 import java.io.Serializable;
 
 /**
- * マイチャンネル登録取得：正常時レスポンスデータ
+ * マイチャンネル登録取得：正常時レスポンスデータ.
  */
 public class MyChannelRegisterResponse implements Serializable {
     private static final long serialVersionUID = -171253737402592759L;
 
-    private String mStatus;// status
+    private String mStatus; // status
 
     private static final String MY_CHANNEL_FIXED_STATUS = "";
 
@@ -20,12 +20,12 @@ public class MyChannelRegisterResponse implements Serializable {
         return mStatus;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(final String status) {
         mStatus = status;
     }
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      */
     public MyChannelRegisterResponse() {
         mStatus = MY_CHANNEL_FIXED_STATUS;     // OK 固定値

@@ -34,35 +34,33 @@ public class MyChannelListJsonParser extends AsyncTask<Object, Object, Object> {
     private MyChannelListResponse myChannelListResponse;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      * <p>
      * //     * @param myChannelListJsonParserCallback
      */
-    public MyChannelListJsonParser(MyChannelWebClient.MyChannelListJsonParserCallback
-                                           myChannelListJsonParserCallback) {
+    public MyChannelListJsonParser(final MyChannelWebClient.MyChannelListJsonParserCallback myChannelListJsonParserCallback) {
         this.myChannelListJsonParserCallback = myChannelListJsonParserCallback;
         myChannelListResponse = new MyChannelListResponse();
     }
 
     @Override
-    protected void onPostExecute(Object s) {
+    protected void onPostExecute(final Object s) {
         myChannelListJsonParserCallback.onMyChannelListJsonParsed(myChannelListResponse);
     }
     @Override
-    protected Object doInBackground(Object... strings) {
+    protected Object doInBackground(final Object... strings) {
         String result = (String) strings[0];
-        MyChannelListResponse response =
-                myChannelListSender(result);
+        MyChannelListResponse response = myChannelListSender(result);
         return response;
     }
 
     /**
-     * マイチャンネル一覧Jsonデータを解析する
+     * マイチャンネル一覧Jsonデータを解析する.
      *
      * @param jsonStr マイチャンネル一覧Jsonデータ
      * @return マイチャンネル一覧取得：正常時レスポンスデータ
      */
-    private MyChannelListResponse myChannelListSender(String jsonStr) {
+    private MyChannelListResponse myChannelListSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         myChannelListResponse = new MyChannelListResponse();
@@ -84,11 +82,11 @@ public class MyChannelListJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     /**
-     * statusとcountの値をマイチャンネル一覧取得：正常時レスポンスデータオブジェクトに格納
+     * statusとcountの値をマイチャンネル一覧取得：正常時レスポンスデータオブジェクトに格納.
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    private void sendStatus(JSONObject jsonObj) {
+    private void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得しセットする
             if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {
@@ -103,7 +101,7 @@ public class MyChannelListJsonParser extends AsyncTask<Object, Object, Object> {
                 try {
                     //数字の場合のみ、値を採用する
                     String stringBuffer = jsonObj.getString(JsonConstants.META_RESPONSE_COUNT);
-                    if(DBUtils.isNumber(stringBuffer)) {
+                    if (DBUtils.isNumber(stringBuffer)) {
                         count = Integer.parseInt(stringBuffer);
                     } else {
                         throw new NumberFormatException();
@@ -124,11 +122,11 @@ public class MyChannelListJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     /**
-     * マイチャンネル一覧コンテンツのListをマイチャンネル一覧取得：正常時レスポンスデータオブジェクトに格納
+     * マイチャンネル一覧コンテンツのListをマイチャンネル一覧取得：正常時レスポンスデータオブジェクトに格納.
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    private void sendMyChannelListResponse(JSONObject jsonObj) {
+    private void sendMyChannelListResponse(final JSONObject jsonObj) {
         try {
             ArrayList<MyChannelMetaData> myChannelMetaDataList = new ArrayList<>();
             if (!jsonObj.isNull(JsonConstants.META_RESPONSE_LIST)) {

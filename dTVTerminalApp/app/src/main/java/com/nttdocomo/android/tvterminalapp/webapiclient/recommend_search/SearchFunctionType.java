@@ -10,11 +10,11 @@ public enum SearchFunctionType {
 
     private final int value;
 
-    private SearchFunctionType(int value) {
+    private SearchFunctionType(final int value) {
         this.value = value;
     }
 
-    public SearchFunctionType valueOf(int value) {
+    public SearchFunctionType valueOf(final int value) {
         switch (value) {
             case 1:
                 return SearchFunctionType.none;

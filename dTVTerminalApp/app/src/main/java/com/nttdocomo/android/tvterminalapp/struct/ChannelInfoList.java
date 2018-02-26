@@ -17,14 +17,14 @@ public class ChannelInfoList {
     private ArrayList<ChannelInfo> mChannels = null;
 
     /**
-     * クラス構造
+     * クラス構造.
      */
     public ChannelInfoList() {
         mChannels = new ArrayList<>();
     }
 
     /**
-     * チャンネルの配列を取得
+     * チャンネルの配列を取得.
      * @return mChannels
      */
     public ArrayList<ChannelInfo> getChannels() {
@@ -32,10 +32,10 @@ public class ChannelInfoList {
     }
 
     /**
-     * チャンネルを追加
+     * チャンネルを追加.
      * @param ch チャンネル
      */
-    public void addChannel(ChannelInfo ch) {
+    public void addChannel(final ChannelInfo ch) {
         mChannels.add(ch);
     }
 }

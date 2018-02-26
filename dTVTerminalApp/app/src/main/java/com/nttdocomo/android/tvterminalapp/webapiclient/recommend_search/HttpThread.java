@@ -53,7 +53,7 @@ public class HttpThread extends Thread {
     static private final String AUTH_OTP_NAME = "&AuthOtp=";
 
     /**
-     * 例外用メッセージ
+     * 例外用メッセージ.
      */
     static private final String ERROR_MESSAGE_INPUT_STREAM_NULL =
             "HttpThread::run, inputStream==null";
@@ -93,7 +93,7 @@ public class HttpThread extends Thread {
      */
     private HttpsURLConnection mHttpUrlConn;
     /**
-     * ワンタイムパスワード
+     * ワンタイムパスワード.
      */
     private String mOneTimePassword;
 
@@ -318,7 +318,7 @@ public class HttpThread extends Thread {
      * @param srcUrl 元のURL
      * @return ワンタイムパスワードの認証付加後のURL
      */
-    private String addUrlPassword(String srcUrl) {
+    private String addUrlPassword(final String srcUrl) {
         //クッキーが設定済みならばリダイレクトの処理となる。情報の付加は無用なので、こちらでは何もせずに帰る
         if (mCookies != null) {
             return srcUrl;

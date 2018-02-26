@@ -76,14 +76,14 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         return sMenuDisplay;
     }
 
-    public void setActivityAndListener(BaseActivity activity, Context context){
+    public void setActivityAndListener(final BaseActivity activity, final Context context) {
         synchronized (MenuDisplay.class) {
             mContext = context;
             mActivity = activity;
         }
     }
 
-    public void changeUserState(UserState userState) {
+    public void changeUserState(final UserState userState) {
         mUserState = userState;
     }
 
@@ -117,7 +117,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+    public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
 
         TextView title = view.findViewById(R.id.tv_title);
         if (null != title) {
@@ -275,13 +275,13 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         }
     }
 
-    private void backgroundAlpha(float bgAlpha) {
+    private void backgroundAlpha(final float bgAlpha) {
         WindowManager.LayoutParams lp = mActivity.getWindow().getAttributes();
         lp.alpha = bgAlpha; //0.0-1.0
         mActivity.getWindow().setAttributes(lp);
     }
 
-    private void loadMenuList(View popupWindowView) {
+    private void loadMenuList(final View popupWindowView) {
 
         mGlobalMenuListView = popupWindowView.findViewById(R.id.menu_list);
 //        addFooterView(mGlobalMenuListView); //アカウント名アイテム追加
@@ -320,7 +320,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         }
     }
 
-    private void addFooterView(ListView mGlobalMenuListView) {
+    private void addFooterView(final ListView mGlobalMenuListView) {
         if (mAccountName == null) {
             mAccountName = View.inflate(mActivity, R.layout.menu_login_foot, null);
         }

@@ -90,7 +90,7 @@ public class MenuListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
+    public View getView(final int i, View view, final ViewGroup viewGroup) {
         View itemProgramVIew;
         ProgramViewHolder holder;
         if (view == null) {
