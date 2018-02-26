@@ -361,6 +361,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
     /**
      * 機能.
      * システム時間取得して、日付(hour)チェックを行う、1時～4時の場合は日付-1
+     *
      * @param selectDay チェする日付する、ない場合システム日付
      * @return formatDay チェックした時刻を返却
      */
@@ -632,6 +633,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
 
     /**
      * 分、秒を時に転換する.
+     *
      * @param curMin 分
      * @param curSec 秒
      * @return 時
@@ -651,15 +653,19 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
                 setProgramRecyclerView(mChannelInfo);
             } else { //マイ番組表
                 ArrayList<ChannelInfo> myChannels = new ArrayList<>();
-                for (int i = 0; i < mappedMyChannelList.size(); i++) {
-                    for (int j = 0; j < mChannelInfo.size(); j++) {
-                        if (mappedMyChannelList.get(i).getChNo() == mChannelInfo.get(j).getChNo()) {
-                            //チャンネル番号でマッピング
-                            myChannels.add(mChannelInfo.get(j));
+                try {
+                    for (int i = 0; i < mappedMyChannelList.size(); i++) {
+                        for (int j = 0; j < mChannelInfo.size(); j++) {
+                            if (mappedMyChannelList.get(i).getChNo() == mChannelInfo.get(j).getChNo()) {
+                                //チャンネル番号でマッピング
+                                myChannels.add(mChannelInfo.get(j));
+                            }
                         }
                     }
+                    setProgramRecyclerView(myChannels);
+                } catch (NullPointerException e) {
+                    DTVTLogger.debug("mappedMyChannelList NullPointerException");
                 }
-                setProgramRecyclerView(myChannels);
             }
         }
     }
@@ -715,6 +721,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
 
     /**
      * マイ番組表Noチャンネル表示.
+     *
      * @param isShowFlag マイ番組表の要素表示フラグ.
      */
     private void showMyChannelNoItem(final boolean isShowFlag) {
