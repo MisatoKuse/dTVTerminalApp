@@ -388,7 +388,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
                     // クリップ状態をコンテンツリストに格納
                     data.setClipStatus(getClipStatus(dispType, contentsType, dTv,
                             requestData.getCrid(), requestData.getServiceId(),
-                            requestData.getEventId(), requestData.getTitleId()));
+                            requestData.getEventId(), requestData.getTitleId(), tvService));
                 }
 
                 list.add(data);

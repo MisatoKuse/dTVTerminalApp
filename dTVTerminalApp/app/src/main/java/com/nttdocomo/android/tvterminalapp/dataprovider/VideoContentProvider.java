@@ -190,7 +190,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
                 // クリップ状態をコンテンツリストに格納
                 contentsData.setClipStatus(getClipStatus(dispType, contentsType, dTv,
                         requestData.getCrid(), requestData.getServiceId(),
-                        requestData.getEventId(), requestData.getTitleId()));
+                        requestData.getEventId(), requestData.getTitleId(), tvService));
             }
 
             videoContentsDataList.add(contentsData);

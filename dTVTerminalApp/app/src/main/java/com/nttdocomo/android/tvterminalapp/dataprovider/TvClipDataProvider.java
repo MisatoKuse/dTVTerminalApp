@@ -220,7 +220,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
                 // クリップ状態をコンテンツリストに格納
                 contentInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv,
                         requestData.getCrid(), requestData.getServiceId(),
-                        requestData.getEventId(), requestData.getTitleId()));
+                        requestData.getEventId(), requestData.getTitleId(), tvService));
             }
             //生成した contentInfo をリストに格納する
             contentsDataList.add(contentInfo);

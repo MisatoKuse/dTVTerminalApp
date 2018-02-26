@@ -34,10 +34,6 @@ public class ClipKeyListDao {
      * dtvフラグ値(FALSE=DTVコンテンツではない).
      */
     public static final String META_DTV_FLAG_FALSE = "0";
-    /**
-     * dtvフラグ値(TRUE=DTVコンテンツ).
-     */
-    public static final String META_DTV_FLAG_TRUE = "1";
 
     /**
      * コンテンツの種類.それぞれでキーになる情報が異なる.

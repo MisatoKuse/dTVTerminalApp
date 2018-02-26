@@ -587,7 +587,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                 metaFullData.getCrid(),
                 metaFullData.getmService_id(),
                 metaFullData.getmEvent_id(),
-                metaFullData.getTitle_id());
+                metaFullData.getTitle_id(), metaFullData.getmTv_service());
     }
 
     /**

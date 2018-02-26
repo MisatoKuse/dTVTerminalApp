@@ -216,7 +216,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
                 // クリップ状態をコンテンツリストに格納
                 clipContentInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv,
                         requestData.getCrid(), requestData.getServiceId(),
-                        requestData.getEventId(), requestData.getTitleId()));
+                        requestData.getEventId(), requestData.getTitleId(), tvService));
             }
 
             clipDataList.add(clipContentInfo);
