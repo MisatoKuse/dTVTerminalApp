@@ -11,8 +11,10 @@ import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WatchListenVideoListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.DataBaseManager;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -42,11 +44,7 @@ public class WatchListenVideoListDataManager {
      */
     public synchronized List<Map<String, String>> selectWatchListenVideoData() {
 
-        //データ存在チェック
-        List<Map<String, String>> list;
-        if (!DBUtils.isCachingRecord(mContext, DBConstants.WATCH_LISTEN_VIDEO_TABLE_NAME)) {
-            return null;
-        }
+        List<Map<String, String>> list = new ArrayList<>();
 
         //ホーム画面に必要な列を列挙する
         String[] columns = {JsonConstants.META_RESPONSE_THUMB_448, JsonConstants.META_RESPONSE_TITLE,
@@ -61,12 +59,20 @@ public class WatchListenVideoListDataManager {
 
         //Daoクラス使用準備
         DBHelper dbHelper = new DBHelper(mContext);
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        DataBaseManager.initializeInstance(dbHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+
+        //データ存在チェック
+        if (!DBUtils.isCachingRecord(database, DBConstants.WATCH_LISTEN_VIDEO_TABLE_NAME)) {
+            DataBaseManager.getInstance().closeDatabase();
+            return list;
+        }
+
         WatchListenVideoListDao watchListenVideoListDao = new WatchListenVideoListDao(database);
 
         //ホーム画面用データ取得
         list = watchListenVideoListDao.findById(columns);
-        database.close();
+        DataBaseManager.getInstance().closeDatabase();
         return list;
     }
 }

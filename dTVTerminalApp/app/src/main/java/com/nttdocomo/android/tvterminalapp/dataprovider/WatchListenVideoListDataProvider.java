@@ -5,9 +5,11 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
+import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.WatchListenVideoDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.WatchListenVideoListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
@@ -39,11 +41,6 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     private WatchListenVideoList mWatchListenVideoList = null;
 
     /**
-     * デフォルトのページ取得位置.
-     */
-    public static final int DEFAULT_PAGE_OFFSET = 1;
-
-    /**
      * callback.
      */
     private WatchListenVideoListProviderCallback mApiDataProviderCallback;
@@ -61,6 +58,21 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
      */
     private ClipKeyListDataProvider mClipKeyListDataProvider = null;
 
+    /**
+     * デフォルトのページ取得位置.
+     */
+    public static final int DEFAULT_PAGE_OFFSET = 1;
+
+    /**
+     * 視聴中ビデオ一覧保存.
+     */
+    private static final int WATCH_LISTEN_VIDEO_INSERT = 0;
+
+    /**
+     * 視聴中ビデオ一覧取得.
+     */
+    private static final int WATCH_LISTEN_VIDEO_SELECT = 1;
+
     @Override
     public void onWatchListenVideoJsonParsed(final List<WatchListenVideoList> watchListenVideoList) {
         WatchListenVideoListDataManager videoListDataManager = new WatchListenVideoListDataManager(mContext);
@@ -74,7 +86,13 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
                     sendWatchListenVideoListData(list.getVcList());
                 } else {
                     //通信でデータ取得できないときはDBから取得
-                    sendWatchListenVideoListData(videoListDataManager.selectWatchListenVideoData());
+                    Handler handler = new Handler();
+                    try {
+                        DbThread t = new DbThread(handler, this, WATCH_LISTEN_VIDEO_SELECT);
+                        t.start();
+                    } catch (Exception e) {
+                        DTVTLogger.debug(e);
+                    }
                 }
             } else {
                 mWatchListenVideoList = list;
@@ -82,7 +100,13 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
         } else {
             if (null != mApiDataProviderCallback) {
                 //通信でデータ取得できないときはDBから取得
-                sendWatchListenVideoListData(videoListDataManager.selectWatchListenVideoData());
+                Handler handler = new Handler();
+                try {
+                    DbThread t = new DbThread(handler, this, WATCH_LISTEN_VIDEO_SELECT);
+                    t.start();
+                } catch (Exception e) {
+                    DTVTLogger.debug(e);
+                }
             }
         }
     }
@@ -150,18 +174,23 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
                     lowerPageLimit, pagerOffset, pagerDirection, this);
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
-            List<Map<String, String>> watchListenList = new ArrayList<>();
-            WatchListenVideoListDataManager watchListenVideoDataManager = new WatchListenVideoListDataManager(mContext);
-            watchListenList = watchListenVideoDataManager.selectWatchListenVideoData();
-            sendWatchListenVideoListData(watchListenList);
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, WATCH_LISTEN_VIDEO_SELECT);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         }
     }
 
     /**
      * 取得したリストマップをContentsDataクラスへ入れる.
+     * コンテンツデータ作成のみのメソッドのため、行数超過を許容
      *
      * @param mapList コンテンツリストデータ
      */
+    @SuppressWarnings("OverlyLongMethod")
     private void sendWatchListenVideoListData(final List<Map<String, String>> mapList) {
         //情報が取得できなかった時はActivityにnullを返却
         if (mapList == null || mapList.size() < 1 || mapList.get(0).isEmpty()) {
@@ -216,7 +245,6 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
             requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
             requestData.setDispType(dispType);
             requestData.setContentType(contentsType);
-//            requestData.setTableType(decisionTableType(contentsType, contentsType));
             contentInfo.setRequestData(requestData);
 
             if (mRequiredClipKeyList) {
@@ -269,9 +297,31 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     private void setStructDB(final WatchListenVideoList watchListenVideoList) {
         mWatchListenVideoList = watchListenVideoList;
         //DB保存
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(DateUtils.WATCHING_VIDEO_LIST_LAST_INSERT);
-        WatchListenVideoDataManager watchListenVideoDataManager = new WatchListenVideoDataManager(mContext);
-        watchListenVideoDataManager.insertWatchListenVideoInsertList(mWatchListenVideoList);
+        Handler handler = new Handler();
+        try {
+            DbThread t = new DbThread(handler, this, WATCH_LISTEN_VIDEO_INSERT);
+            t.start();
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
+    }
+
+    @Override
+    public List<Map<String, String>> dbOperation(final int operationId) {
+        switch (operationId) {
+            case WATCH_LISTEN_VIDEO_INSERT:
+                DateUtils dateUtils = new DateUtils(mContext);
+                dateUtils.addLastDate(DateUtils.WATCHING_VIDEO_LIST_LAST_INSERT);
+                WatchListenVideoDataManager watchListenVideoDataManager = new WatchListenVideoDataManager(mContext);
+                watchListenVideoDataManager.insertWatchListenVideoInsertList(mWatchListenVideoList);
+                break;
+            case WATCH_LISTEN_VIDEO_SELECT:
+                WatchListenVideoListDataManager videoListDataManager = new WatchListenVideoListDataManager(mContext);
+                sendWatchListenVideoListData(videoListDataManager.selectWatchListenVideoData());
+                break;
+            default:
+                break;
+        }
+        return null;
     }
 }
