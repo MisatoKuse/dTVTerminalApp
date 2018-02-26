@@ -57,6 +57,11 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
             if (mApiDataProviderCallback != null) {
                 mApiDataProviderCallback.onMyChannelListCallback(mMyChannelMetaDataList);
             }
+        } else {
+            //エラーの場合
+            if (mApiDataProviderCallback != null) {
+                mApiDataProviderCallback.onMyChannelListCallback(null);
+            }
         }
     }
 

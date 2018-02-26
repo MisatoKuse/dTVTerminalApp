@@ -103,6 +103,10 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
      */
     private static final int TIME_LINE_WIDTH = 44;
     /**
+     * チャンネルリサイクルビュー丈.
+     */
+    private static final int CH_VIEW_HEIGHT = 44;
+    /**
      * 1時間帯基準値.
      */
     private static final int ONE_HOUR_UNIT = 180;
@@ -157,7 +161,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
     /**
      * マイ番組表データ.
      */
-    private ArrayList<MyChannelMetaData> myChannelDataList;
+    private ArrayList<MyChannelMetaData> myChannelDataList = new ArrayList<>();
     /**
      * レッドタイムライン.
      */
@@ -695,6 +699,9 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
                 String[] dateList = {dateStr};
                 //TODO 現状一括でリクエストしているため修正予定.
                 scaledDownProgramListDataProvider.getProgram(channelNos, dateList, mTabIndex);
+            } else {
+                scrollToCurTime();
+                refreshTimeLine();
             }
         }
     }
@@ -792,11 +799,11 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
     public void onMyChannelListCallback(final ArrayList<MyChannelMetaData> myChannelMetaData) {
         if (myChannelMetaData != null && myChannelMetaData.size() > 0) {
             this.myChannelDataList = myChannelMetaData;
+            //ひかりリストからチャンネル探すため
             ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
             scaledDownProgramListDataProvider.getChannelList(0, 0, "", INDEX_TAB_HIKARI);
-            //ひかりリストからチャンネル選択
         } else {
-            //MY番組表情報がなければMY番組表を設定していないとする
+            //MY番組表情報がなければMY番組表を設定していないとする(データないので、特にタイムライン表示必要がない)
             showMyChannelNoItem(true);
         }
     }
@@ -845,7 +852,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         int curClock = Integer.parseInt(curTime.substring(0, 2));
         int curMin = Integer.parseInt(curTime.substring(2, 4));
         int curSec = Integer.parseInt(curTime.substring(4, 6));
-        float channelRvHeight = (float) mChannelRecyclerView.getHeight();
+        float channelRvHeight = (float) dip2px(CH_VIEW_HEIGHT);
         float timeLinePosition = 0;
         if (mTimeScrollView.getHeight() / dip2px(ONE_HOUR_UNIT) >= 3) {
             //タブレット(将来さらにチェック)
