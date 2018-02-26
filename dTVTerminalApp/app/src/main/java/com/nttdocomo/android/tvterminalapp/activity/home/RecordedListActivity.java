@@ -58,28 +58,57 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * 録画番組.
+ */
 public class RecordedListActivity extends BaseActivity implements View.OnClickListener,
         RecordedBaseFragmentScrollListener, DlnaRecVideoListener, TabItemLayout.OnClickTabTextListener {
 
+    /**
+     * タブ名.
+     */
     private String[] mTabNames = null;
+    /**
+     * タブレイアウト.
+     */
     private TabItemLayout mTabLayout = null;
+    /**
+     * viewpager.
+     */
     private ViewPager mViewPager = null;
+    /**
+     * 進捗バー.
+     */
     private ProgressBar progressBar;
+    /**
+     * 遷移先（メニュー）.
+     */
     private Boolean mIsMenuLaunch = false;
+    /**
+     * DLNA 関連クラス.
+     */
     private DlnaProvRecVideo mDlnaProvRecVideo = null;
+    /**
+     * Fragment作成クラス.
+     */
     private RecordedFragmentFactory mRecordedFragmentFactory = null;
+    /**
+     * 値渡すキー.
+     */
     public static final String RECORD_LIST_KEY = "recordListKey";
+    /**
+     * 日付フォーマット.
+     */
     public static final String sMinus = "-";
+    /**
+     * タブ名.
+     */
 	public static final String RLA_FragmentName_All = "all";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DTVTLogger.start();
-        //test beging
-//        DownLoadListDataManager ddd = new DownLoadListDataManager(this);
-//        ddd.deleteDownloadAllContents();
-        //test end
         setContentView(R.layout.record_list_main_layout);
         setTitleText(getString(R.string.nav_menu_item_recorder_program));
         Intent intent = getIntent();
@@ -117,9 +146,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      */
     private void initView() {
         DTVTLogger.start();
-//        if (null != mViewPager) {
-//            return;
-//        }
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         mViewPager = findViewById(R.id.record_list_main_layout_viewpagger);
@@ -212,8 +238,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             list.clear();
             List<Map<String, String>> resultList = getDownloadListFromDb();
             if (resultList != null && resultList.size() > 0) {
-                for (int i = 0; i < resultList.size(); i++) {
-                    Map<String, String> hashMap = resultList.get(i);
+                for (Map<String, String> hashMap : resultList) {
                     String downloadStatus = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
                     if (!TextUtils.isEmpty(downloadStatus)) {
                         String path = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
@@ -393,8 +418,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private void setDownLoadQue(final RecordedBaseFragment baseFragment,
                                 final ArrayList<DlnaRecVideoItem> dlnaRecVideoItems, final List<Map<String, String>> resultList) {
         if (resultList != null) {
-            for (int k = 0; k < resultList.size(); k++) {
-                Map<String, String> hashMap = resultList.get(k);
+            for (Map<String, String> hashMap : resultList) {
                 String itemId = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
                 for (int t = 0; t < dlnaRecVideoItems.size(); t++) {
                     String allItemId = dlnaRecVideoItems.get(t).mItemId;
@@ -447,8 +471,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             detailData.setVideoType(itemData.mVideoType);
             detailData.setClearTextSize(itemData.mClearTextSize);
             if (resultList != null && resultList.size() > 0) {
-                for (int j = 0; j < resultList.size(); j++) {
-                    Map<String, String> hashMap = resultList.get(j);
+                for (Map<String, String> hashMap : resultList) {
                     String itemId = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
                     String path = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
                     String fullPath = path + File.separator + itemId;
@@ -515,7 +538,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                     int mon = Integer.parseInt(strings[0]);
                     ++mon;
                     strings[0] = String.valueOf(mon);
-                    selectDate = util.getConnectString(strings);
+                    selectDate = StringUtils.getConnectString(strings);
                 } catch (ParseException e) {
                     DTVTLogger.debug(e);
                 }
@@ -719,13 +742,12 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             allList = new ArrayList<>();
         }
         if (takeoutList != null) {
-            for (int i = 0; i < takeoutList.size(); i++) {
-                Map<String, String> hashMap = takeoutList.get(i);
+            for (Map<String, String> hashMap : takeoutList) {
                 String itemId = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
                 boolean isExist = false;
                 if (!TextUtils.isEmpty(itemId)) {
-                    for (int j = 0; j < allList.size(); j++) {
-                        String allItemId = DownloaderBase.getFileNameById(allList.get(j).mItemId);
+                    for (DlnaRecVideoItem dlnaRecVideoItem : allList) {
+                        String allItemId = DownloaderBase.getFileNameById(dlnaRecVideoItem.mItemId);
                         if (itemId.equals(allItemId)) {
                             isExist = true;
                             break;

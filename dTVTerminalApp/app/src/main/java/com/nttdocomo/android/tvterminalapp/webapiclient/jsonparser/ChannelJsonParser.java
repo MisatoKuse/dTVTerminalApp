@@ -141,27 +141,26 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
 
                     // i番目のJSONArrayをJSONObjectに変換する
                     JSONObject jsonObject = jsonArr.getJSONObject(i);
-
-                    for (int j = 0; j < JsonConstants.METADATA_LIST_PARA.length; j++) {
-                        if (!jsonObject.isNull(JsonConstants.METADATA_LIST_PARA[j])) {
-                            if (JsonConstants.METADATA_LIST_PARA[j].equals(JsonConstants.META_RESPONSE_GENRE_ARRAY)) {
-                                JSONArray para = jsonObject.getJSONArray(JsonConstants.METADATA_LIST_PARA[j]);
-                                vcListMap.put(JsonConstants.METADATA_LIST_PARA[j], para.toString());
-                            } else if (JsonConstants.METADATA_LIST_PARA[j].equals(JsonConstants.META_RESPONSE_CHPACK)) {
-                                JSONArray jsonArrayCHPACK = jsonObject.getJSONArray(JsonConstants.METADATA_LIST_PARA[j]);
+                    for (String strings : JsonConstants.METADATA_LIST_PARA) {
+                        if (!jsonObject.isNull(strings)) {
+                            if (strings.equals(JsonConstants.META_RESPONSE_GENRE_ARRAY)) {
+                                JSONArray para = jsonObject.getJSONArray(strings);
+                                vcListMap.put(strings, para.toString());
+                            } else if (strings.equals(JsonConstants.META_RESPONSE_CHPACK)) {
+                                JSONArray jsonArrayCHPACK = jsonObject.getJSONArray(strings);
                                 for (int k = 0; k < jsonArrayCHPACK.length(); k++) {
                                     JSONObject jsonObjectChPack = jsonArrayCHPACK.getJSONObject(k);
-                                    for (int c = 0; c < JsonConstants.CHPACK_PARA.length; c++) {
-                                        if (!jsonObjectChPack.isNull(JsonConstants.CHPACK_PARA[c])) {
-                                            String value = jsonObjectChPack.getString(JsonConstants.CHPACK_PARA[c]);
+                                    for (String chpackPara : JsonConstants.CHPACK_PARA) {
+                                        if (!jsonObjectChPack.isNull(chpackPara)) {
+                                            String value = jsonObjectChPack.getString(chpackPara);
                                             //書き込み用項目名の作成
                                             StringBuilder stringBuffer = new StringBuilder();
-                                            stringBuffer.append(JsonConstants.METADATA_LIST_PARA[j]);
+                                            stringBuffer.append(strings);
                                             stringBuffer.append(JsonConstants.UNDER_LINE);
-                                            stringBuffer.append(JsonConstants.CHPACK_PARA[c]);
+                                            stringBuffer.append(chpackPara);
 
                                             //日付項目チェック
-                                            if (DBUtils.isDateItem(JsonConstants.CHPACK_PARA[c])) {
+                                            if (DBUtils.isDateItem(chpackPara)) {
                                                 //日付なので変換して格納する
                                                 String dateBuffer = DateUtils.formatEpochToString(
                                                         StringUtils.changeString2Long(value));
@@ -173,15 +172,15 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
                                         }
                                     }
                                 }
-                            } else if (DBUtils.isDateItem(JsonConstants.METADATA_LIST_PARA[j])) {
+                            } else if (DBUtils.isDateItem(strings)) {
                                 // DATE_PARAに含まれるのは日付なので、エポック秒となる。変換して格納する
                                 String dateBuffer = DateUtils.formatEpochToString(
                                         StringUtils.changeString2Long(jsonObject.getString(
-                                                JsonConstants.METADATA_LIST_PARA[j])));
-                                vcListMap.put(JsonConstants.METADATA_LIST_PARA[j], dateBuffer);
+                                                strings)));
+                                vcListMap.put(strings, dateBuffer);
                             } else {
-                                String para = jsonObject.getString(JsonConstants.METADATA_LIST_PARA[j]);
-                                vcListMap.put(JsonConstants.METADATA_LIST_PARA[j], para);
+                                String para = jsonObject.getString(strings);
+                                vcListMap.put(strings, para);
                             }
                         }
                     }
