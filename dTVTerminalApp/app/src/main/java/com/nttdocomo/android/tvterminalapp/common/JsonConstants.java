@@ -94,13 +94,6 @@ public class JsonConstants {
             JsonConstants.META_RESPONSE_CHSVOD, JsonConstants.META_RESPONSE_PRICE,
             JsonConstants.META_RESPONSE_QUNIT, JsonConstants.META_RESPONSE_QRANGE,
             JsonConstants.META_RESPONSE_PU_START_DATE, JsonConstants.META_RESPONSE_PU_END_DATE};
-
-    /**
-     * 1：番組指定予約.
-     * 3：日時指定予約
-     * 4：日時指定定期予約
-     */
-    public static final String META_RESPONSE_RESV_TYPE = "resv_type";
     /**
      * 開始予定エポック秒.
      * loop_type_numが
@@ -115,25 +108,6 @@ public class JsonConstants {
      * 毎週月～金：8、 毎週月～土：9、 毎日：10
      */
     public static final String META_RESPONSE_LOOP_TYPE_NUM = "loop_type_num";
-    /**
-     * 同期状態.
-     * 1：チューナー反映待ち
-     * 2：チューナー反映中
-     * 3：チューナー反映済み
-     * 4：チューナー反映失敗
-     */
-    public static final String META_RESPONSE_SYNC_STATUS = "sync_status";
-    /**
-     * 同期失敗理由.
-     * 1：ネットワークエラー
-     * 2：パラメータエラー
-     * 3：最大予約件数超過
-     * 4：重複した予約
-     * 5：予約時間異常
-     * 6：予約チャンネル異常
-     * 9：その他のエラー
-     */
-    public static final String META_RESPONSE_ = "sync_error_reason";
     /**
      * titleruby_asc：タイトルルビ昇順.
      * avail_s_asc：配信開始日昇順
@@ -152,234 +126,438 @@ public class JsonConstants {
      * ※指定なしの場合release
      */
     public static final String META_RESPONSE_FILTER = "filter";
-    // 予約時間の長さ（秒）
+    /**
+     * 予約時間の長さ（秒）.
+     */
     public static final String META_RESPONSE_DURATION = "duration";
-    // プラットフォームタイプ
+    /**
+     * プラットフォームタイプ.
+     */
     public static final String META_RESPONSE_PLATFORM_TYPE = "platform_type";
-    // レジューム位置
-    public static final String META_RESPONSE_STOP_POSITION = "stopposition";
-    // レジュームメタ情報
+    /**
+     * レジュームメタ情報.
+     */
     public static final String META_RESPONSE_METADATE_LIST = "metadata_list";
-    // レジューム位置情報
-    public static final String META_RESPONSE_RESUME_LIST = "resume_list";
-    // ch_list
+    /**
+     * ch_list.
+     */
     public static final String META_RESPONSE_CH_LIST = "ch_list";
-    // date_list
+    /**
+     * date_list.
+     */
     public static final String META_RESPONSE_DATE_LIST = "date_list";
-    // 日付、now
-    public static final String META_RESPONSE_DATE = "date";
-    // 取得方向
+    /**
+     * 取得方向.
+     */
     public static final String META_RESPONSE_DIRECTION = "direction";
-    // 年齢設定値
+    /**
+     * 年齢設定値.
+     */
     public static final String META_RESPONSE_AGE_REQ = "age_req";
-    // ジャンルID
+    /**
+     * ジャンルID.
+     */
     public static final String META_RESPONSE_GENRE_ID = "genre_id";
-    // 有効期限一覧
+    /**
+     * 有効期限一覧.
+     */
     public static final String META_RESPONSE_ACTIVE_LIST = "active_list";
-    // ライセンスID
+    /**
+     * ライセンスID.
+     */
     public static final String META_RESPONSE_LICENSE_ID = "license_id";
-    // 有効期限
+    /**
+     * 有効期限.
+     */
     public static final String META_RESPONSE_VAILD_END_DATE = "valid_end_date";
-    // 予約ID
-    public static final String META_RESPONSE_RESV_ID = "resv_id";
-    // OK
+    /**
+     * OK.
+     */
     public static final String META_RESPONSE_STATUS = "status";
-    // OK
+    /**
+     * OK.
+     */
     public static final String META_RESPONSE_STATUS_OK = "OK";
-    // NG
+    /**
+     * NG.
+     */
     public static final String META_RESPONSE_STATUS_NG = "NG";
-    // コンテンツ配列
+    /**
+     * コンテンツ配列.
+     */
     public static final String META_RESPONSE_LIST = "list";
-    // ページャ
+    /**
+     * ページャ.
+     */
     public static final String META_RESPONSE_PAGER = "pager";
-    // レスポンスの最大件数
+    /**
+     * レスポンスの最大件数.
+     */
     public static final String META_RESPONSE_PAGER_LIMIT = "limit";
-    // レスポンスの最大件数
+    /**
+     * レスポンスの最大件数.
+     */
     public static final String META_RESPONSE_UPPER_LIMIT = "upper_limit";
-    // レスポンスの最小件数
+    /**
+     * レスポンスの最小件数.
+     */
     public static final String META_RESPONSE_LOWER_LIMIT = "lower_limit";
-    // 取得位置(1～)
+    /**
+     * 取得位置(1～).
+     */
     public static final String META_RESPONSE_OFFSET = "offset";
-    // レスポンス(list)件数
+    /**
+     * レスポンス(list)件数.
+     */
     public static final String META_RESPONSE_COUNT = "count";
-    // 全体の件数
+    /**
+     * 全体の件数.
+     */
     public static final String META_RESPONSE_TOTAL = "total";
-    // crid
+    /**
+     * crid.
+     */
     public static final String META_RESPONSE_CRID = "crid";
-    // コンテンツID
+    /**
+     * コンテンツID.
+     */
     public static final String META_RESPONSE_CONTENTS_ID = "id";
-    // コンテンツNAME
+    /**
+     * コンテンツNAME.
+     */
     public static final String META_RESPONSE_CONTENTS_NAME = "name";
-    // サービスID
+    /**
+     * サービスID.
+     */
     public static final String META_RESPONSE_SERVICE_ID = "service_id";
-    // チャンネル番号
+    /**
+     * チャンネル番号.
+     */
     public static final String META_RESPONSE_CHNO = "chno";
-    // タイトル
+    /**
+     * タイトル.
+     */
     public static final String META_RESPONSE_TITLE = "title";
-    // タイトルルビ
+    /**
+     * タイトルルビ.
+     */
     public static final String META_RESPONSE_TITLERUBY = "titleruby";
-    // index
+    /**
+     * index.
+     */
     public static final String META_RESPONSE_INDEX = "index_no";
-    // 表示タイプ
+    /**
+     * 表示タイプ.
+     */
     public static final String META_RESPONSE_DISP_TYPE = "disp_type";
-    // サービス
+    /**
+     * サービス.
+     */
     public static final String META_RESPONSE_SERVICE = "service";
-    // チャンネルタイプ
+    /**
+     * チャンネルタイプ.
+     */
     public static final String META_RESPONSE_CH_TYPE = "ch_type";
-    // 有効開始日時
+    /**
+     * 有効開始日時.
+     */
     public static final String META_RESPONSE_AVAIL_START_DATE = "avail_start_date";
-    // 有効期限日時
+    /**
+     * 有効期限日時.
+     */
     public static final String META_RESPONSE_AVAIL_END_DATE = "avail_end_date";
-    // サムネイル(
+    /**
+     * サムネイル(.
+     */
     public static final String META_RESPONSE_DEFAULT_THUMB = "thumb";
-    // サムネイル（640＊360）
+    /**
+     * サムネイル（640＊360）.
+     */
     public static final String META_RESPONSE_THUMB_640 = "thumb_640_360";
-    // サムネイル（448＊252）
+    /**
+     * サムネイル（448＊252）.
+     */
     public static final String META_RESPONSE_THUMB_448 = "thumb_448_252";
-    // dtvサムネイル（640＊360）
+    /**
+     * dtvサムネイル（640＊360）.
+     */
     public static final String META_RESPONSE_DTV_THUMB_640 = "dtv_thumb_640_360";
-    // dtvサムネイル（448＊252）
+    /**
+     * dtvサムネイル（448＊252）.
+     */
     public static final String META_RESPONSE_DTV_THUMB_448 = "dtv_thumb_448_252";
-    // デモフラグ
+    /**
+     * デモフラグ.
+     */
     public static final String META_RESPONSE_DEMONG = "demong";
-    // 4Kフラグ
+    /**
+     * 4Kフラグ.
+     */
     public static final String META_RESPONSE_4KFLG = "4kflg";
-    // 配信ステータス(チャンネルメタレスポンス)
+    /**
+     * 配信ステータス(チャンネルメタレスポンス).
+     */
     public static final String META_RESPONSE_AVAIL_STATUS = "avail_status";
-    // 配信ステータス
+    /**
+     * 配信ステータス.
+     */
     public static final String META_RESPONSE_DELIVERY = "delivery";
-    // パレンタル情報
+    /**
+     * パレンタル情報.
+     */
     public static final String META_RESPONSE_R_VALUE = "r_value";
-    // アダルトフラグ
+    /**
+     * アダルトフラグ.
+     */
     public static final String META_RESPONSE_ADULT = "adult";
-    // アダルトタイプ
-    public static final String META_RESPONSE_ADULT_TYPE = "adult_type";
-    // NGファンク
+    /**
+     * NGファンク.
+     */
     public static final String META_RESPONSE_NG_FUNC = "ng_func";
-    // ジャンル（ARIB）
+    /**
+     * ジャンル（ARIB）.
+     */
     public static final String META_RESPONSE_GENRE_ARRAY = "genre_array";
-    // あらすじ（long）
+    /**
+     * あらすじ（long）.
+     */
     public static final String META_RESPONSE_SYNOP = "synop";
-    // あらすじ（short）
+    /**
+     * あらすじ（short）.
+     */
     public static final String META_RESPONSE_SYNOP_SHORT = "synop_short";
-    // パーチャスID
+    /**
+     * パーチャスID.
+     */
     public static final String META_RESPONSE_PUID = "puid";
-    // サブパーチャスID
+    /**
+     * サブパーチャスID.
+     */
     public static final String META_RESPONSE_SUB_PUID = "sub_puid";
-    // 価格(税込)
+    /**
+     * 価格(税込).
+     */
     public static final String META_RESPONSE_PRICE = "price";
-    // 購入単位の期間(3日の3)
+    /**
+     * 購入単位の期間(3日の3).
+     */
     public static final String META_RESPONSE_QRANGE = "qrange";
-    // 購入単位の単位(3日の「日」)
+    /**
+     * 購入単位の単位(3日の「日」).
+     */
     public static final String META_RESPONSE_QUNIT = "qunit";
-    // 販売開始日時
+    /**
+     * 販売開始日時.
+     */
     public static final String META_RESPONSE_PU_START_DATE = "pu_start_date";
-    // 販売終了日時
+    /**
+     * 販売終了日時.
+     */
     public static final String META_RESPONSE_PU_END_DATE = "pu_end_date";
-    // チャンネルパック情報
+    /**
+     * チャンネルパック情報.
+     */
     public static final String META_RESPONSE_CHPACK = "CHPACK";
-    // コンテンツID
+    /**
+     * コンテンツID.
+     */
     public static final String META_RESPONSE_CID = "cid";
-    // タイトルID（dTV）
+    /**
+     * タイトルID（dTV）.
+     */
     public static final String META_RESPONSE_TITLE_ID = "title_id";
-    // エピソードID（dTV）
+    /**
+     * エピソードID（dTV）.
+     */
     public static final String META_RESPONSE_EPISODE_ID = "episode_id";
-    // エピソードタイトル
+    /**
+     * エピソードタイトル.
+     */
     public static final String META_RESPONSE_EPITITLE = "epititle";
-    // 表示開始日時
+    /**
+     * 表示開始日時.
+     */
     public static final String META_RESPONSE_DISPLAY_START_DATE = "display_start_date";
-    // 表示終了日時
+    /**
+     * 表示終了日時.
+     */
     public static final String META_RESPONSE_DISPLAY_END_DATE = "display_end_date";
-    // 有効開始日時
+    /**
+     * 有効開始日時.
+     */
     public static final String META_RESPONSE_PUBLISH_START_DATE = "publish_start_date";
-    // 有効期限日時
+    /**
+     * 有効期限日時.
+     */
     public static final String META_RESPONSE_PUBLISH_END_DATE = "publish_end_date";
-    // 新着期間開始
+    /**
+     * 新着期間開始.
+     */
     public static final String META_RESPONSE_NEWA_START_DATE = "newa_start_date";
-    // 新着期間終了
+    /**
+     * 新着期間終了.
+     */
     public static final String META_RESPONSE_NEWA_END_DATE = "newa_end_date";
-    // コピーライト
+    /**
+     * コピーライト.
+     */
     public static final String META_RESPONSE_COPYRIGHT = "copyright";
-    // 尺長
+    /**
+     * 尺長.
+     */
     public static final String META_RESPONSE_DUR = "dur";
-    // 見放題フラグ
+    /**
+     * 見放題フラグ.
+     */
     public static final String META_RESPONSE_BVFLG = "bvflg";
-    // HDRフラグ
+    /**
+     * HDRフラグ.
+     */
     public static final String META_RESPONSE_HDRFLG = "hdrflg";
-    // 出演者情報（ロール|出演者名）
+    /**
+     * 出演者情報（ロール|出演者名）.
+     */
     public static final String META_RESPONSE_CREDIT_ARRAY = "credit_array";
-    // レーティング値
+    /**
+     * レーティング値.
+     */
     public static final String META_RESPONSE_RATING = "rating";
-    // dTVフラグ
+    /**
+     * dTVフラグ.
+     */
     public static final String META_RESPONSE_DTV = "dtv";
-    // CHSVOD
+    /**
+     * CHSVOD.
+     */
     public static final String META_RESPONSE_CHSVOD = "chsvod";
-    // クリップ判定に利用
+    /**
+     * クリップ判定に利用.
+     */
     public static final String META_RESPONSE_SEARCH_OK = "search_ok";
-    // ライセンス情報リスト
+    /**
+     * ライセンス情報リスト.
+     */
     public static final String META_RESPONSE_LIINF_ARRAY = "liinf_array";
-    // 販売情報リスト
+    /**
+     * 販売情報リスト.
+     */
     public static final String META_RESPONSE_PUINF = "PUINF";
-    // 字幕
+    /**
+     * 字幕.
+     */
     public static final String META_RESPONSE_CAPL = "capl";
-    // 二ヶ国語
+    /**
+     * 二ヶ国語.
+     */
     public static final String META_RESPONSE_BILINGAL = "bilingal";
-    // コンテンツID（見逃し、関連VOD用）
+    /**
+     * コンテンツID（見逃し、関連VOD用）.
+     */
     public static final String META_RESPONSE_TV_CID = "tv_cid";
-    // イベントID
+    /**
+     * イベントID.
+     */
     public static final String META_RESPONSE_EVENT_ID = "event_id";
-    // 放送種別
+    /**
+     * 放送種別.
+     */
     public static final String META_RESPONSE_TV_SERVICE = "tv_service";
-    // 見逃しタイプ
+    /**
+     * 見逃しタイプ.
+     */
     public static final String META_RESPONSE_CONTENT_TYPE = "content_type";
-    // VOD配信開始日時
+    /**
+     * VOD配信開始日時.
+     */
     public static final String META_RESPONSE_VOD_START_DATE = "vod_start_date";
-    // VOD配信終了日時
+    /**
+     * VOD配信終了日時.
+     */
     public static final String META_RESPONSE_VOD_END_DATE = "vod_end_date";
-    // 主ジャンル（ARIB）
+    /**
+     * 主ジャンル（ARIB）.
+     */
     public static final String META_RESPONSE_MAIN_GENRE = "main_genre";
-    // 副ジャンル（ARIB）
+    /**
+     * 副ジャンル（ARIB）.
+     */
     public static final String META_RESPONSE_SECOND_GENRE_ARRAY = "second_genre_array";
-    // コピー制御
+    /**
+     * コピー制御.
+     */
     public static final String META_RESPONSE_COPY = "copy";
-    // 音声情報
+    /**
+     * 音声情報.
+     */
     public static final String META_RESPONSE_ADINFO_ARRAY = "adinfo_array";
-    // 関連VODのcrid
+    /**
+     * 関連VODのcrid.
+     */
     public static final String META_RESPONSE_RELATIONAL_ID_ARRAY = "relational_id_array";
-    // 放送開始日時
+    /**
+     * 放送開始日時.
+     */
     public static final String META_RESPONSE_LINEAR_START_DATE = "linear_start_date";
-    // 放送終了日時
+    /**
+     * 放送終了日時.
+     */
     public static final String META_RESPONSE_LINEAR_END_DATE = "linear_end_date";
-    // 視聴通知するか否か
+    /**
+     * 視聴通知するか否か.
+     */
     public static final String META_RESPONSE_IS_NOTIFY = "is_notify";
-    // エラー番号
+    /**
+     * エラー番号.
+     */
     public static final String META_RESPONSE_NG_ERROR_NO = "errorno";
-    // 録画予約情報受信時刻
+    /**
+     * 録画予約情報受信時刻.
+     */
     public static final String META_RESPONSE_RESERVATION = "reservation_date";
-    // 録画予約一覧
+    /**
+     * 録画予約一覧.
+     */
     public static final String META_RESPONSE_RESERVATION_LIST = "reservation_list";
-    // 予約情報の優先度
+    /**
+     * 予約情報の優先度.
+     */
     public static final String META_RESPONSE_PRIORITY = "priority";
-    // 予約日時タイプ
+    /**
+     * 予約日時タイプ.
+     */
     public static final String META_RESPONSE_DAY_OF_THE_WEEK = "day_of_the_week";
-    // アダルトタイプ
+    /**
+     * アダルトタイプ.
+     */
     public static final String META_RESPONSE_ADULT_ATTRIBUTE_OF_CHANNEL = "adult_attribute_of_channel";
-    // 予約の録画開始予定時刻
+    /**
+     * 予約の録画開始予定時刻.
+     */
     public static final String META_RESPONSE_START_SCHEDULE_TIME = "start_schedule_time";
-    // 予約の録画終了予定時刻
+    /**
+     * 予約の録画終了予定時刻.
+     */
     public static final String META_RESPONSE_END_SCHEDULE_TIME = "end_schedule_time";
-    // 番組のPG値
+    /**
+     * 番組のPG値.
+     */
     public static final String META_RESPONSE_PARENTAL_AGE_ATTRIBUTE_OF_PROGRAM = "parental_age_attribute_of_program";
-    // ESTフラグ
+    /**
+     * ESTフラグ.
+     */
     public static final String META_RESPONSE_EST_FLAG = "estflg";
 
     /**
      * dTVタイプ.
      */
     public static final String META_RESPONSE_DTV_TYPE = "dtv_type";
-    // アップデート要否
+    /**
+     * アップデート要否.
+     */
     public static final String META_RESPONSE_IS_UPDATE = "is_update";
-    // 初回取得（必ずリストがほしい場合 true）
+    /**
+     * 初回取得（必ずリストがほしい場合 true）.
+     */
     public static final String META_RESPONSE_IS_FORCE = "is_force";
 
     /**
@@ -398,24 +576,6 @@ public class JsonConstants {
      * チャンネル一覧取得タイプindex(dCh).
      */
     public static final int CH_SERVICE_TYPE_INDEX_DCH = 2;
-    /**
-     * ジャンル毎コンテンツ一覧(ビデオランキング)ソートタイプ.
-     * titleruby_asc：タイトルルビ昇順
-     */
-    public static final String GENRE_PER_CONTENTS_SORT_TITLERUBY_ASC = "titleruby_asc";
-
-    /**
-     * ジャンル毎コンテンツ一覧(ビデオランキング)ソートタイプ.
-     * avail_s_asc：配信開始日昇順
-     */
-    public static final String GENRE_PER_CONTENTS_SORT_AVAIL_S_ASC = "avail_s_asc";
-
-    /**
-     * ジャンル毎コンテンツ一覧(ビデオランキング)ソートタイプ.
-     * avail_e_desc：配信終了日降順
-     */
-    public static final String GENRE_PER_CONTENTS_SORT_AVAIL_E_DESC = "avail_e_desc";
-
     /**
      * ジャンル毎コンテンツ一覧(ビデオランキング)ソートタイプ.
      * play_count_desc：人気順（前日の視聴回数数降順）

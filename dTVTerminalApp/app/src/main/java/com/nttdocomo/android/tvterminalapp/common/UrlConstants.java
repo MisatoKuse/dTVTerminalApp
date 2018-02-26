@@ -11,7 +11,10 @@ package com.nttdocomo.android.tvterminalapp.common;
  */
 public class UrlConstants {
 
-    public class WebUrl {
+    /**
+     * ウェブUrl.
+     */
+    public static class WebUrl {
 
         /**
          * 外部ブラウザー遷移先URL.
@@ -110,7 +113,10 @@ public class UrlConstants {
         public final static String SETTING_SUPPORT_PAIRING_URL = "https://apl.d.dmkt-sp.jp/dtv2/tvt_sp/support/pairing.html";
     }
 
-    public class WebApiUrl {
+    /**
+     * ウェブApiUrl.
+     */
+    public static class WebApiUrl {
         /**
          * 検索サーバAPIのURL.
          */
@@ -176,12 +182,6 @@ public class UrlConstants {
          */
         public static final String WEEKLY_RANK_LIST =
                 BaseUrlConstants.PLALA_CLIENT + "meta/weeklyranking";
-
-        /**
-         * ジャンル毎コンテンツ数.
-         */
-        public static final String CONTENTS_NUMBER_PER_GENRE_WEB_CLIENT =
-                BaseUrlConstants.PLALA_CLIENT + "meta/genrecontents/count";
 
         /**
          * ジャンル毎コンテンツ一覧.
@@ -255,7 +255,6 @@ public class UrlConstants {
          * コンテンツ詳細取得.
          */
         public static final String CONTENTS_DETAIL_GET_WEB_CLIENT =
-                //PLALA_CLIENT + "meta/contentsdetail";
                 BaseUrlConstants.PLALA_CLIENT + "meta/contentsdetail";
 
         /**
