@@ -166,18 +166,15 @@ public class ContentsDetailGetWebClient
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
-            JSONArray jsonCridDataObject = new JSONArray();
+            JSONArray jsonListObject = new JSONArray();
 
             //コンテンツ識別子配列をJsonArrayにする
             for (String crid : crids) {
-                jsonCridDataObject.put(crid);
+                jsonListObject.put(crid);
             }
 
-            JSONObject jsonCridObject = new JSONObject();
-            jsonCridObject.put(CRID_STRING, jsonCridDataObject);
-
             //配列をリストと言う名前で追加
-            jsonObject.put(LIST_STRING, jsonCridObject);
+            jsonObject.put(LIST_STRING, jsonListObject);
 
             //フィルターの指定が省略されていた場合は、リリースにする
             if (filter == null || filter.isEmpty()) {

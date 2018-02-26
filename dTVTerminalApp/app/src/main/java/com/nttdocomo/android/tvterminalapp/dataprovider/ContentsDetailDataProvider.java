@@ -158,6 +158,9 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                         mVodMetaFullDataList = detailListInfo;
                         if (detailListInfo.size() > 0) {
                             requestGetClipKeyList(detailListInfo.get(0));
+                        } else {
+                            //結果がOKでも0件ならば、エラー扱いとする
+                            mApiDataProviderCallback.onContentsDetailInfoCallback(null, false);
                         }
                     }
                 }
@@ -606,6 +609,9 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                     getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
                     break;
             }
+        } else {
+            //データの読み込みが行われても、テーブルタイプがヌルならば、エラー扱いとする
+            mApiDataProviderCallback.onContentsDetailInfoCallback(null, false);
         }
     }
 
