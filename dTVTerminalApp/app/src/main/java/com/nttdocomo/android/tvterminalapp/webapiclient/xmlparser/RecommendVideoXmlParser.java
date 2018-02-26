@@ -14,14 +14,21 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.Recomme
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * おすすめビデオパーサー.
+ */
 public class RecommendVideoXmlParser extends AsyncTask<Object, Object, Object> {
 
+    /**
+     * おすすめビデオパーサーコールバック.
+     */
     private RecommendVdWebClient.RecommendVideoCallback mRecommendVideoCallback;
 
     public static final String RECOMMENDVIDEO_LIST_RECOMMENDCONTENT = "RecommendContent";
@@ -46,29 +53,33 @@ public class RecommendVideoXmlParser extends AsyncTask<Object, Object, Object> {
     public static final String RECOMMENDVIDEO_LIST_GROUPID = "groupId";
     public static final String RECOMMENDVIDEO_LIST_RECOMMENDMETHODID = "recommendMethodId";
 
-    public RecommendVideoXmlParser(RecommendVdWebClient.RecommendVideoCallback mRecommendVideoCallback) {
+    /**
+     * コンテキスト.
+     *
+     * @param mRecommendVideoCallback コールバック
+     */
+    public RecommendVideoXmlParser(final RecommendVdWebClient.RecommendVideoCallback mRecommendVideoCallback) {
         this.mRecommendVideoCallback = mRecommendVideoCallback;
     }
 
     @Override
-    protected void onPostExecute(Object s) {
+    protected void onPostExecute(final Object s) {
         mRecommendVideoCallback.RecommendVideoCallback((RecommendVdList) s);
     }
 
     @Override
-    protected Object doInBackground(Object... strings) {
-        String result = (String) strings[0];
-        RecommendVdList resultList = getRecommendVideoList(result);
-        return resultList;
+    protected Object doInBackground(final Object... strings) {
+        String result = String.valueOf(strings[0]);
+        return getRecommendVideoList(result);
     }
 
     /**
-     * 受け取ったレスポンスデータからXMLをパースする
+     * 受け取ったレスポンスデータからXMLをパースする.
      *
      * @param responseData レスポンスデータ
      * @return パース後のデータ
      */
-    public RecommendVdList getRecommendVideoList(String responseData) {
+    private RecommendVdList getRecommendVideoList(final String responseData) {
         DTVTLogger.debugHttp(responseData);
         RecommendVdList redVdContents = null;
         List<Map<String, String>> redVdContentList = null;
@@ -232,9 +243,7 @@ public class RecommendVideoXmlParser extends AsyncTask<Object, Object, Object> {
                 }
                 eventType = parser.next();
             }
-        } catch (XmlPullParserException e) {
-            DTVTLogger.debug(e);
-        } catch (Exception e) {
+        } catch (XmlPullParserException | IOException | NullPointerException e) {
             DTVTLogger.debug(e);
         }
         return redVdContents;

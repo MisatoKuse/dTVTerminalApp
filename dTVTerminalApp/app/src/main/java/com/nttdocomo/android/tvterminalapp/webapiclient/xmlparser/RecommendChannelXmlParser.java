@@ -14,14 +14,21 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.Recomme
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * おすすめ番組パーサー.
+ */
 public class RecommendChannelXmlParser extends AsyncTask<Object, Object, Object> {
 
+    /**
+     * おすすめ番組パーサーコールバック.
+     */
     private RecommendChWebClient.RecommendChannelCallback mRecommendChannelCallback;
     public static final String RECOMMENDCHANNEL_LIST_RECOMMENDCONTENT = "RecommendContent";
     public static final String RECOMMENDCHANNEL_LIST_RECOMMENDORDER = "recommendOrder";
@@ -45,28 +52,32 @@ public class RecommendChannelXmlParser extends AsyncTask<Object, Object, Object>
     public static final String RECOMMENDCHANNEL_LIST_GROUPID = "groupId";
     public static final String RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID = "recommendMethodId";
 
-    public RecommendChannelXmlParser(RecommendChWebClient.RecommendChannelCallback mRecommendChannelCallback){
+    /**
+     * コンテキスト.
+     *
+     * @param mRecommendChannelCallback コールバック
+     */
+    public RecommendChannelXmlParser(final RecommendChWebClient.RecommendChannelCallback mRecommendChannelCallback) {
         this.mRecommendChannelCallback = mRecommendChannelCallback;
     }
 
     @Override
-    protected void onPostExecute(Object s) {
+    protected void onPostExecute(final Object s) {
         mRecommendChannelCallback.RecommendChannelCallback((RecommendChList)s);
     }
 
     @Override
-    protected Object doInBackground(Object... strings) {
-        String result = (String)strings[0];
-        RecommendChList resultList = getRecommendChannelList(result);
-        return resultList;
+    protected Object doInBackground(final Object... strings) {
+        String result = String.valueOf(strings[0]);
+        return getRecommendChannelList(result);
     }
 
     /**
-     * 受け取ったレスポンスデータからXMLをパースする
+     * 受け取ったレスポンスデータからXMLをパースする.
      * @param responseData レスポンスデータ
      * @return パース後のデータ
      */
-    public RecommendChList getRecommendChannelList(String responseData) {
+    private RecommendChList getRecommendChannelList(final String responseData) {
         DTVTLogger.debugHttp(responseData);
         RecommendChList redChContents = null;
         List<Map<String, String>> redChContentList = null;
@@ -230,9 +241,7 @@ public class RecommendChannelXmlParser extends AsyncTask<Object, Object, Object>
                 }
                 eventType = parser.next();
             }
-        } catch (XmlPullParserException e) {
-            DTVTLogger.debug(e);
-        } catch (Exception e) {
+        } catch (XmlPullParserException | IOException | NullPointerException e) {
             DTVTLogger.debug(e);
         }
         return redChContents;
