@@ -47,9 +47,7 @@ public class GenreCountGetMetaData implements Serializable {
      * @param data キーの値
      */
     private void setMember(String key, Object data) {
-        if (key.isEmpty()) {
-            return;
-        } else {
+        if (!key.isEmpty()) {
             switch (key) {
                 case GENRE_COUNT_GET_META_DATA_GENRE_ID:
                     mGenreId = (String) data;

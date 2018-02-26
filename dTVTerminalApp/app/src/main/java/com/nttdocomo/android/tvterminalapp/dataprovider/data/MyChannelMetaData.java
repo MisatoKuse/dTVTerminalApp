@@ -80,9 +80,7 @@ public class MyChannelMetaData implements Serializable {
      * @param data キーの値
      */
     private void setMember(String key, Object data) {
-        if (key.isEmpty()) {
-            return;
-        } else {
+        if (!key.isEmpty()) {
             switch (key) {
                 case MY_CHANNEL_META_DATA_SERVICE_ID:
                     mServiceId = String.valueOf(data);             //service_id

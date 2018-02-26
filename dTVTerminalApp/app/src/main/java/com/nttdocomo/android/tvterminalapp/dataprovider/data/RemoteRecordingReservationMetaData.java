@@ -160,9 +160,7 @@ public class RemoteRecordingReservationMetaData implements Serializable {
      * @param data キーの値
      */
     private void setMember(String key, Object data) {
-        if (key.isEmpty()) {
-            return;
-        } else {
+        if (!key.isEmpty()) {
             switch (key) {
                 case REMOTE_RECORDING_RESERVATION_META_DATA_RESV_ID:
                     mResvId = (String) data;                //resv_id

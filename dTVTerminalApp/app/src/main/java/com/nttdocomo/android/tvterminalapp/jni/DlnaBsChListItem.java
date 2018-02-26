@@ -16,8 +16,6 @@ public class DlnaBsChListItem {
      * ２．フィールドは追加すると、setとget方法をjavaとc側両方で増やさないよう
      */
 
-    //mItemId
-    public String mChannelNo = "";
     //チャンネルタイトル
     public String mTitle = "";
     //protocolInfo start
@@ -26,13 +24,9 @@ public class DlnaBsChListItem {
     public String mResolution = "";
     public String mBitrate = "";
     public String mResUrl = "";
-    //public String mThumbnail="";
     //protocolInfo end
-    //日付
-    public String mDate = "";
-    public String mVideoType = "";
 
-    //to do: 使用する必要があれば、新しいフィールドをここで追加
+    public String mVideoType = "";
 
     /**
      * 機能：DlnaBsChListItem情報クラスを構造

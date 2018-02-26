@@ -352,6 +352,12 @@ public class TabItemLayout extends HorizontalScrollView {
                     resId = R.drawable.indicating_no_background_brack;
                 }
                 break;
+            case SEARCH_ACTIVITY:
+            case CLIP_LIST_ACTIVITY:
+            case RECORDED_LIST_ACTIVITY:
+            case VIDEO_RANKING_ACTIVITY:
+            case WEEKLY_RANKING_ACTIVITY:
+            case RECOMMEND_LIST_ACTIVITY:
             default:
                 if (isFocus) {
                     resId = R.drawable.indicating_common;

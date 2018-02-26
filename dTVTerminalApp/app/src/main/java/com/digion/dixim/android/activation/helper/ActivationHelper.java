@@ -43,7 +43,7 @@ public class ActivationHelper {
 	private native final boolean activationInit();
 	private native final void activationTerm();
 
-	public ActivationHelper(Context context, String deviceKeyPath) {
+	public ActivationHelper(final Context context, final String deviceKeyPath) {
 		this.context = context;
 		if (DeveloperOption.permission(DeveloperOptionDefinitions.Option.NATIVE)){
 			setLogLevel(DeveloperOptionDefinitions.DU_LOG_LEVEL_DEBUG);
@@ -63,7 +63,7 @@ public class ActivationHelper {
 	public String getMacAddress() {
 		String id = EnvironmentUtil.getCalculatedUniqueId(context,
 				ACTIVATE_DATA_HOME.DMP);
-		DTVTLogger.debug("getCalculatedUniqueId = "+id);
+		DTVTLogger.debug("getCalculatedUniqueId = " + id);
 		return id;
 	}
 }

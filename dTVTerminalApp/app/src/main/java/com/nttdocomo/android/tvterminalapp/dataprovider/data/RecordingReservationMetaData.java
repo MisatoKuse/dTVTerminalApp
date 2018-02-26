@@ -46,9 +46,7 @@ public class RecordingReservationMetaData implements Serializable {
      * @param data キーの値
      */
     private void setMember(String key, Object data) {
-        if (key.isEmpty()) {
-            return;
-        } else {
+        if (!key.isEmpty()) {
             switch (key) {
                 case JsonConstants.META_RESPONSE_PRIORITY:
                     mPriority = DBUtils.getNumeric(data);        //priority

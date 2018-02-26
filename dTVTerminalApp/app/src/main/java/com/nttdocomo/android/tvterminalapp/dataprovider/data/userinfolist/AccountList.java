@@ -34,7 +34,7 @@ public class AccountList {
         return mContractStatus;
     }
 
-    public void setContractStatus(String contractStatus) {
+    public void setContractStatus(final String contractStatus) {
         if (contractStatus != null) {
             this.mContractStatus = contractStatus;
         }
@@ -44,7 +44,7 @@ public class AccountList {
         return mDchAgeReq;
     }
 
-    public void setDchAgeReq(String dchAgeReq) {
+    public void setDchAgeReq(final String dchAgeReq) {
         if (dchAgeReq != null) {
             this.mDchAgeReq = dchAgeReq;
         }
@@ -54,7 +54,7 @@ public class AccountList {
         return mH4dAgeReq;
     }
 
-    public void setH4dAgeReq(String h4dAgeReq) {
+    public void setH4dAgeReq(final String h4dAgeReq) {
         if (h4dAgeReq != null) {
             this.mH4dAgeReq = h4dAgeReq;
         }
