@@ -527,9 +527,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void tvScheduleListCallback(final List<ContentsData> channelList) {
-        if (channelList != null && channelList.size() > 0) {
-            Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_CHANNEL, channelList);
-            mHandler.sendMessage(msg);
+        if (channelList != null) {
+            if (channelList.size() > 0) {
+                Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_CHANNEL, channelList);
+                mHandler.sendMessage(msg);
+            }
         } else {
             showGetDataFailedDialog();
         }
@@ -537,9 +539,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void dailyRankListCallback(final List<ContentsData> dailyRankList) {
-        if (dailyRankList != null && dailyRankList.size() > 0) {
-            Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_TODAY, dailyRankList);
-            mHandler.sendMessage(msg);
+        if (dailyRankList != null) {
+            if (dailyRankList.size() > 0) {
+                Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_TODAY, dailyRankList);
+                mHandler.sendMessage(msg);
+            }
         } else {
             showGetDataFailedDialog();
         }
@@ -547,9 +551,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void tvClipListCallback(final List<ContentsData> tvClipList) {
-        if (tvClipList != null && tvClipList.size() > 0) {
-            Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_TV_CLIP, tvClipList);
-            mHandler.sendMessage(msg);
+        if (tvClipList != null) {
+            if (tvClipList.size() > 0) {
+                Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_TV_CLIP, tvClipList);
+                mHandler.sendMessage(msg);
+            }
         } else {
             showGetDataFailedDialog();
         }
@@ -557,9 +563,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void vodClipListCallback(final List<ContentsData> vodClipList) {
-        if (vodClipList != null && vodClipList.size() > 0) {
-            Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_VOD_CLIP, vodClipList);
-            mHandler.sendMessage(msg);
+        if (vodClipList != null) {
+            if (vodClipList.size() > 0) {
+                Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_VOD_CLIP, vodClipList);
+                mHandler.sendMessage(msg);
+            }
         } else {
             showGetDataFailedDialog();
         }
@@ -567,9 +575,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void videoRankCallback(final List<ContentsData> videoRankList) {
-        if (videoRankList != null && videoRankList.size() > 0) {
-            Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_VIDEO, videoRankList);
-            mHandler.sendMessage(msg);
+        if (videoRankList != null) {
+            if (videoRankList.size() > 0) {
+                Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_VIDEO, videoRankList);
+                mHandler.sendMessage(msg);
+            }
         } else {
             showGetDataFailedDialog();
         }
@@ -577,9 +587,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void watchingVideoCallback(final List<ContentsData> watchingVideoList) {
-        if (watchingVideoList != null && watchingVideoList.size() > 0) {
-            Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_WATCHING_VIDEO, watchingVideoList);
-            mHandler.sendMessage(msg);
+        if (watchingVideoList != null) {
+            if (watchingVideoList.size() > 0) {
+                Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_WATCHING_VIDEO, watchingVideoList);
+                mHandler.sendMessage(msg);
+            }
         } else {
             showGetDataFailedDialog();
         }
@@ -587,9 +599,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void recommendChannelCallback(final List<ContentsData> redChList) {
-        if (redChList != null && redChList.size() > 0) {
-            Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RECOMMEND_PROGRAM, redChList);
-            mHandler.sendMessage(msg);
+        if (redChList != null) {
+            if (redChList.size() > 0) {
+                Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RECOMMEND_PROGRAM, redChList);
+                mHandler.sendMessage(msg);
+            }
         } else {
             showGetDataFailedDialog();
         }
@@ -597,9 +611,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void recommendVideoCallback(final List<ContentsData> redVdList) {
-        if (redVdList != null && redVdList.size() > 0) {
-            Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RECOMMEND_VOD, redVdList);
-            mHandler.sendMessage(msg);
+        if (redVdList != null) {
+            if (redVdList.size() > 0) {
+                Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RECOMMEND_VOD, redVdList);
+                mHandler.sendMessage(msg);
+            }
         } else {
             showGetDataFailedDialog();
         }

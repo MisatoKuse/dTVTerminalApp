@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
@@ -26,7 +27,7 @@ import java.util.Map;
 /**
  * レコメンド用データプロバイダ
  */
-public class RecommendDataProvider implements RecommendWebClient.RecommendCallback {
+public class RecommendDataProvider implements RecommendWebClient.RecommendCallback, DbThread.DbOperation {
 
     private Context mContext = null;
     private static final String COMMA = ",";
@@ -621,5 +622,15 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         if (mRecommendWebClient != null) {
             mRecommendWebClient.enableConnection();
         }
+    }
+
+    @Override
+    public void onDbOperationFinished(final boolean isSuccessful, final List<Map<String, String>> resultSet, final int operationId) {
+        //強制オーバーライド
+    }
+
+    @Override
+    public List<Map<String, String>> dbOperation(final int operationId) {
+        return null;
     }
 }
