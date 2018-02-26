@@ -526,16 +526,10 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             //H4dユーザに必要なデータ取得開始
             //クリップキー一覧(今日のテレビランキングにまとめられてるので省略するか検討中)
             //TVクリップ一覧
-            List<Map<String, String>> tvClipList = getTvClipListData();
-            if (tvClipList.size() > 0) {
-                sendTvClipListData(tvClipList);
-            }
+            getTvClipListData();
 
             //VODクリップ一覧
-            List<Map<String, String>> vodClipList = getVodClipListData();
-            if (vodClipList.size() > 0) {
-                sendVodClipListData(vodClipList);
-            }
+            getVodClipListData();
 
             //視聴中ビデオ一覧
             getWatchListenVideoData(WatchListenVideoListDataProvider.DEFAULT_PAGE_OFFSET);
@@ -793,13 +787,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
 
     /**
      * クリップ[テレビ]リストデータ取得開始.
-     *
-     * @return クリップ[テレビ]リスト
      */
-    private List<Map<String, String>> getTvClipListData() {
-        DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(DateUtils.TV_LAST_INSERT);
-        List<Map<String, String>> list = new ArrayList<>();
+    private void getTvClipListData() {
         if (!mIsStop) {
             //通信クラスにデータ取得要求を出す
             TvClipWebClient webClient = new TvClipWebClient(mContext);
@@ -814,19 +803,12 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         } else {
             DTVTLogger.error("TvClipWebClient is stopping connect");
         }
-//        }
-        return list;
     }
 
     /**
      * クリップ[ビデオ]リストデータ取得開始.
-     *
-     * @return クリップ[ビデオ]リスト
      */
-    private List<Map<String, String>> getVodClipListData() {
-        DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(DateUtils.VOD_LAST_INSERT);
-        List<Map<String, String>> list = new ArrayList<>();
+    private void getVodClipListData() {
         if (!mIsStop) {
             //通信クラスにデータ取得要求を出す
             VodClipWebClient webClient = new VodClipWebClient(mContext);
@@ -841,8 +823,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         } else {
             DTVTLogger.error("VodClipWebClient is stopping connect");
         }
-//        }
-        return list;
     }
 
     /**
