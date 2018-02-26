@@ -55,7 +55,7 @@ public class RentalListInsertDataManager {
     public void insertRentalListInsertList(final PurchasedVodListResponse rentalList) {
 
         //有効期限判定
-        if (!DateUtils.getLastDate(mContext, DateUtils.RENTAL_CHANNEL_LAST_UPDATE)) {
+        if (!DateUtils.getLastDate(mContext, DateUtils.RENTAL_VOD_LAST_UPDATE)) {
             return;
         }
 
@@ -106,7 +106,7 @@ public class RentalListInsertDataManager {
         }
         //データ保存日時を格納
         DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(DateUtils.RENTAL_CHANNEL_LAST_UPDATE);
+        dateUtils.addLastDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
 
         DataBaseManager.getInstance().closeDatabase();
     }

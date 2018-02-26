@@ -5,10 +5,12 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
+import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RentalListInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.RentalListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
@@ -100,6 +102,14 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
      * プレミアムビデオコンテンツ判定(series_svod).
      */
     private static final String DISP_TYPE_SERIES_SVOD = "series_svod";
+    /**
+     * レンタルデータInsert判定.
+     */
+    private static final int RENTAL_VIDEO_LIST_INSERT = 0;
+    /**
+     * レンタルデータSelect判定.
+     */
+    private static final int RENTAL_VIDEO_LIST_SELECT = 1;
 
     /**
      * Activity指定.
@@ -219,7 +229,13 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
         boolean fromDb = lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate);
         if (fromDb) {
             //レンタル一覧を送る
-            mApiDataProviderCallback.rentalListCallback(getDbRentalList());
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, RENTAL_VIDEO_LIST_SELECT);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         } else {
             //通信クラスにデータ取得要求を出す
             mWebClient = new RentalVodListWebClient(mContext);
@@ -232,13 +248,14 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
      *
      * @return レンタル一覧データ.
      */
-    public List<ContentsData> getDbRentalList() {
-        List<Map<String, String>> vodMetaList;
-        List<Map<String, String>> activeList;
-        RentalListDataManager rentalListDataManager = new RentalListDataManager(mContext);
-        vodMetaList = rentalListDataManager.selectRentalListData();
-        activeList = rentalListDataManager.selectRentalActiveListData();
-        return makeContentsData(makeVodMetaData(vodMetaList, activeList));
+    public void getDbRentalList() {
+        Handler handler = new Handler();
+        try {
+            DbThread t = new DbThread(handler, this, RENTAL_VIDEO_LIST_SELECT);
+            t.start();
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
     }
 
     /**
@@ -297,21 +314,26 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
      * @param response 購入済みVOD一覧データ
      */
     private void setStructDB(final PurchasedVodListResponse response) {
+        mPurchasedVodListResponse = response;
         if (mSetDB) {
-            DateUtils dateUtils = new DateUtils(mContext);
-            dateUtils.addLastDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
-            RentalListInsertDataManager dataManager = new RentalListInsertDataManager(mContext);
-            dataManager.insertRentalListInsertList(response);
-            sendRentalListData(response);
+            Handler handler = new Handler();
+            try {
+                DbThread t = new DbThread(handler, this, RENTAL_VIDEO_LIST_INSERT);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         }
     }
 
     /**
      * ContentsData生成.
+     * コンテンツデータ作成用メソッドのため行数超過を許容
      *
      * @param response 購入済みVOD一覧データ
      * @return コンテンツリスト
      */
+    @SuppressWarnings("OverlyLongMethod")
     private List<ContentsData> makeContentsData(final PurchasedVodListResponse response) {
         List<ContentsData> list = new ArrayList<>();
         ArrayList<VodMetaFullData> metaFullData = response.getVodMetaFullData();
@@ -479,5 +501,28 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
         if (mWebClient != null) {
             mWebClient.enableConnection();
         }
+    }
+
+    @Override
+    public List<Map<String, String>> dbOperation(final int operationId) {
+        switch (operationId) {
+            case RENTAL_VIDEO_LIST_INSERT:
+            RentalListInsertDataManager dataManager = new RentalListInsertDataManager(mContext);
+            dataManager.insertRentalListInsertList(mPurchasedVodListResponse);
+            sendRentalListData(mPurchasedVodListResponse);
+                break;
+            case RENTAL_VIDEO_LIST_SELECT:
+                List<Map<String, String>> vodMetaList;
+                List<Map<String, String>> activeList;
+                RentalListDataManager rentalListDataManager = new RentalListDataManager(mContext);
+                vodMetaList = rentalListDataManager.selectRentalListData();
+                activeList = rentalListDataManager.selectRentalActiveListData();
+                PurchasedVodListResponse purchasedVodListResponse = makeVodMetaData(vodMetaList, activeList);
+                sendRentalListData(purchasedVodListResponse);
+                break;
+            default:
+                break;
+        }
+        return null;
     }
 }
