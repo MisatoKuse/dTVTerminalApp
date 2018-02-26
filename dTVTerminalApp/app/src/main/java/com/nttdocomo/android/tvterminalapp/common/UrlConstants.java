@@ -138,7 +138,9 @@ public class UrlConstants {
          * ひかりサーバ サービストークン取得URL.
          */
         public static final String ONE_TIME_TOKEN_GET_URL =
-                BaseUrlConstants.PLALA_AUTH + "daccount/authentication";
+                //TODO: authenticationが動作するようになるまでは、authorizationを指定する。
+                //BaseUrlConstants.PLALA_AUTH + "daccount/authentication";
+                BaseUrlConstants.PLALA_AUTH + "daccount/authorization";
 
         /**
          * VODクリップ一覧の呼び出し先.
