@@ -38,11 +38,6 @@ public class ThumbnailCacheManager {
     private LruCache<String, Bitmap> mMemCache = null;
 
     /**
-     * メモリサイズ 5MB.
-     */
-    private static final int MEM_CACHE_DEFAULT_SIZE = 5 * 1024 * 1024;
-
-    /**
      * ディスクキャッシュ件数.
      */
     private final static int THUMBNAIL_FILE_CACHE_LIMIT = 100;
@@ -65,8 +60,10 @@ public class ThumbnailCacheManager {
      * メモリキャッシュ初期化.
      */
     public void initMemCache() {
+        int maxMemory = (int) Runtime.getRuntime().maxMemory();
+        int cacheSize = maxMemory / 8;
         //メモリキャッシュサイズ
-        mMemCache = new LruCache<String, Bitmap>(MEM_CACHE_DEFAULT_SIZE) {
+        mMemCache = new LruCache<String, Bitmap>(cacheSize) {
             @Override
             protected int sizeOf(final String key, final Bitmap bitmap) {
                 return bitmap.getByteCount();

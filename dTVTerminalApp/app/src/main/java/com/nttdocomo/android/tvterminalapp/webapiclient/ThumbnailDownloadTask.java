@@ -83,10 +83,17 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
         HttpURLConnection urlConnection = null;
         BufferedInputStream in = null;
         try {
+            imageUrl = params[0];
+            Bitmap bitmap = thumbnailProvider.mThumbnailCacheManager.getBitmapFromDisk(imageUrl);
+            if (bitmap != null) {
+                DTVTLogger.debug("image exists in file");
+                thumbnailProvider.mThumbnailCacheManager.putBitmapToMem(imageUrl, bitmap);
+                return bitmap;
+            }
             if (isCancelled() || mIsStop) {
                 return null;
             }
-            imageUrl = params[0];
+            DTVTLogger.debug("download start..... url=" + imageUrl);
             URL url = new URL(imageUrl);
             urlConnection = (HttpURLConnection) url.openConnection();
 
@@ -109,7 +116,7 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
             }
 
             in = new BufferedInputStream(urlConnection.getInputStream(), 8 * 1024);
-            Bitmap bitmap = BitmapFactory.decodeStream(in);
+            bitmap = BitmapFactory.decodeStream(in);
             // ディスクに保存する
             thumbnailProvider.mThumbnailCacheManager.saveBitmapToDisk(imageUrl, bitmap);
             if (bitmap != null) {
