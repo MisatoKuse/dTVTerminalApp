@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -76,6 +77,7 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClie
  * プロジェクトにて、すべての「Activity」のベースクラスである
  * 「Activity」全体にとって、共通の機能があれば、追加すること.
  */
+@SuppressLint("Registered")
 public class BaseActivity extends FragmentActivity implements
         DlnaDevListListener, View.OnClickListener, RemoteControllerView.OnStartRemoteControllerUIListener,
         ClipRegistWebClient.ClipRegistJsonParserCallback, ClipDeleteWebClient.ClipDeleteJsonParserCallback,

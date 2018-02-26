@@ -5,8 +5,6 @@
 package com.nttdocomo.android.tvterminalapp.jni;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 class DlnaHikariChListInfo {
 
