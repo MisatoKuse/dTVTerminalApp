@@ -44,12 +44,6 @@ public class RentalListDataManager {
      */
     public List<Map<String, String>> selectRentalListData() {
 
-        //データ存在チェック
-        List<Map<String, String>> list = new ArrayList<>();
-        if (!DBUtils.isCachingRecord(mContext, DBConstants.RENTAL_LIST_TABLE_NAME)) {
-            return list;
-        }
-
         //ホーム画面に必要な列を列挙する
         String[] columns = {JsonConstants.META_RESPONSE_THUMB_448, JsonConstants.META_RESPONSE_TITLE,
                 JsonConstants.META_RESPONSE_PUBLISH_END_DATE, JsonConstants.META_RESPONSE_DISP_TYPE,
@@ -67,6 +61,13 @@ public class RentalListDataManager {
         DBHelper homeDBHelper = new DBHelper(mContext);
         DataBaseManager.initializeInstance(homeDBHelper);
         SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+
+        //データ存在チェック
+        List<Map<String, String>> list = new ArrayList<>();
+        if (!DBUtils.isCachingRecord(database, DBConstants.RENTAL_LIST_TABLE_NAME)) {
+            return list;
+        }
+
         RentalListDao rentalListDao = new RentalListDao(database);
 
         //ホーム画面用データ取得

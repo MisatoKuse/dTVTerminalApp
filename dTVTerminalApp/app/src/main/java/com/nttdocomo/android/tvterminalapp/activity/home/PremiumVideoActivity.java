@@ -169,10 +169,6 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
             resetCommunication();
             RentalDataProvider dataProvider = new RentalDataProvider(this, RentalDataProvider.RentalType.PREMIUM_VIDEO);
             dataProvider.getDbRentalList();
-            mContentsList = dataProvider.getDbRentalList();
-            if (mContentsList != null || mContentsList.size() < 1) {
-                return;
-            }
         }
 
         if (0 == dataList.size()) {
