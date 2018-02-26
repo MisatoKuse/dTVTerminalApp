@@ -35,6 +35,7 @@ import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessa
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 
 import java.util.ArrayList;
@@ -707,6 +708,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
             DTVTLogger.debug("ContentsList.size = " + info.get(i).mFriendlyName);
             DTVTLogger.debug("DlnaDMSInfo.mIPAddress = " + info.get(i).mIPAddress);
+            DTVTLogger.debug("DlnaDMSInfo.mUdn = " + info.get(i).mUdn);
             boolean flag = false;
             if (dlnaDmsItem != null && !TextUtils.isEmpty(dlnaDmsItem.mUdn)) {
                 if (dlnaDmsItem.mUdn.equals(info.get(i).mUdn)) {
@@ -715,7 +717,9 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             }
             if (!flag) {
                 HashMap<String, String> hashMap = new HashMap<>();
-                hashMap.put(DEVICE_NAME_KEY, info.get(i).mFriendlyName);
+                // Todo: 試験のために以下のように一時的に変更する。試験後はコメントアウトした内容に戻すこと
+                hashMap.put(DEVICE_NAME_KEY, StringUtils.getConnectString(new String[] {info.get(i).mFriendlyName, "_", info.get(i).mIPAddress}));
+//                hashMap.put(DEVICE_NAME_KEY, info.get(i).mFriendlyName);
                 hashMap.put(info.get(i).mUdn, info.get(i).mUdn);
                 if (mContentsList.size() > 0) {
                     //0以上の場合重複チェック
