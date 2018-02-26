@@ -424,7 +424,8 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 map.get(JsonConstants.META_RESPONSE_CRID),
                 map.get(JsonConstants.META_RESPONSE_SERVICE_ID),
                 map.get(JsonConstants.META_RESPONSE_EVENT_ID),
-                map.get(JsonConstants.META_RESPONSE_TITLE_ID)));
+                map.get(JsonConstants.META_RESPONSE_TITLE_ID),
+                map.get(JsonConstants.META_RESPONSE_TV_SERVICE)));
         mSchedule.setContentsId(map.get(JsonConstants.META_RESPONSE_CID));
         return mSchedule;
     }

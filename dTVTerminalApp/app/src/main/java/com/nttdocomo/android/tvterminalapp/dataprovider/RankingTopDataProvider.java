@@ -483,7 +483,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 // クリップ状態をコンテンツリストに格納
                 clipStatus = getClipStatus(dispType, contentsType, dTv,
                         requestData.getCrid(), requestData.getServiceId(),
-                        requestData.getEventId(), requestData.getTitleId());
+                        requestData.getEventId(), requestData.getTitleId(), tvService);
                 rankingContentInfo.setClipStatus(clipStatus);
                 requestData.setClipStatus(clipStatus);
             }

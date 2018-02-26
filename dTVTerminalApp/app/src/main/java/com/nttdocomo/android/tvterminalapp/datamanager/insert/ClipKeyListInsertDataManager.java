@@ -51,7 +51,8 @@ public class ClipKeyListInsertDataManager {
         DTVTLogger.start();
         //各種オブジェクト作成
         DBHelper dbHelper = new DBHelper(mContext);
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        DataBaseManager.initializeInstance(dbHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
 
         ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
         @SuppressWarnings("unchecked")
@@ -76,7 +77,7 @@ public class ClipKeyListInsertDataManager {
             }
             clipKeyListDao.insert(type, values);
         }
-        database.close();
+        DataBaseManager.getInstance().closeDatabase();
         DTVTLogger.end();
     }
 
