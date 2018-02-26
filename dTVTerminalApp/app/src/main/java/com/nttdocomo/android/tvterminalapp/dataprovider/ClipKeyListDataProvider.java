@@ -17,7 +17,6 @@ import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity
 import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.video.VideoContentListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.video.VideoPurchListActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
@@ -179,8 +178,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
                 || context instanceof WatchingVideoListActivity
                 || context instanceof ContentDetailActivity
                 || context instanceof TvProgramListActivity
-                || context instanceof VideoContentListActivity
-                || context instanceof VideoPurchListActivity) {
+                || context instanceof VideoContentListActivity) {
             DTVTLogger.debug("Need Getting ClipKeyList");
             return true;
         }

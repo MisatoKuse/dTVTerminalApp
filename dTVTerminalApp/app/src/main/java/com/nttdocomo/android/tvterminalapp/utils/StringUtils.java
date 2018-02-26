@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.utils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -509,8 +510,8 @@ public class StringUtils {
             // 暗号化キー生成
             SecretKeySpec key = new SecretKeySpec(byteKey, 0, CIPHER_KEY_LENGTH, CIPHER_TYPE);
 
-            // 暗号化クラスの初期化
-            Cipher cipher = Cipher.getInstance(CIPHER_DATA);
+            // 暗号化クラスの初期化（敢えてECB利用しているためSuppress）
+            @SuppressLint("GetInstance") Cipher cipher = Cipher.getInstance(CIPHER_DATA);
             cipher.init(Cipher.ENCRYPT_MODE, key);
 
             // 暗号化の結果格納
