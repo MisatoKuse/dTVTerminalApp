@@ -98,6 +98,8 @@ public class RelayServiceResponseMessage implements Serializable {
                     RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.SET_DEFAULT_USER_ACCOUNT); // エラー応答時
             put(RemoteControlRelayClient.RELAY_COMMAND_CHECK_APPLICATION_VERSION_COMPATIBILITY,
                     RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.CHECK_APPLICATION_VERSION_COMPATIBILITY); // エラー応答時
+            put(RemoteControlRelayClient.RELAY_COMMAND_CHECK_APPLICATION_REQUEST_PROCESSING,
+                    RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.CHECK_APPLICATION_REQUEST_PROCESSING); // エラー応答時
             put(RemoteControlRelayClient.RELAY_COMMAND_TITLE_DETAIL,
                     RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.TITLE_DETAIL);
             put(RemoteControlRelayClient.RELAY_COMMAND_START_APPLICATION,
