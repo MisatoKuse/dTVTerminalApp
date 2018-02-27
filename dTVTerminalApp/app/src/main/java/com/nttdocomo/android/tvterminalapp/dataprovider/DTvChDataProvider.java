@@ -12,22 +12,22 @@ import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 
 public class DTvChDataProvider extends ScaledDownProgramListDataProvider {
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
      * @param mContext TvProgramListActivity
      */
-    public DTvChDataProvider(Context mContext) {
+    public DTvChDataProvider(final Context mContext) {
         super(mContext);
     }
 
     /**
-     * CH一覧取得
+     * CH一覧取得.
      *
      * @param limit  レスポンスの最大件数
      * @param offset 取得位置(1～)
      * @param filter release、testa、demo ※指定なしの場合release
      */
-    public void getChannelList(final int limit, final int offset, final String filter){
+    public void getChannelList(final int limit, final int offset, final String filter) {
         super.getChannelList(limit, offset, filter, JsonConstants.CH_SERVICE_TYPE_INDEX_DCH);
     }
 }

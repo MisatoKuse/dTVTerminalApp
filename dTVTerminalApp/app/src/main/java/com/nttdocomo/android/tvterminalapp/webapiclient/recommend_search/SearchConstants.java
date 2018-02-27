@@ -36,21 +36,21 @@ public class SearchConstants {
     }
 
     public static class RecommendTabPageNo {
-        /** テレビ */
+        /** テレビ. */
         public static final int RECOMMEND_PAGE_NO_OF_SERVICE_TV = 0;
-        /** ビデオ */
+        /** ビデオ. */
         public static final int RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO =
                 RECOMMEND_PAGE_NO_OF_SERVICE_TV + 1;
-        /** dTV */
+        /** dTV. */
         public static final int RECOMMEND_PAGE_NO_OF_SERVICE_DTV =
                 RECOMMEND_PAGE_NO_OF_SERVICE_TV + 2;
-        /** dチャンネル */
+        /** dチャンネル. */
         public static final int RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL =
                 RECOMMEND_PAGE_NO_OF_SERVICE_TV + 3;
-        /**  dアニメ */
+        /**  dアニメ. */
         public static final int RECOMMEND_PAGE_NO_OF_SERVICE_DANIME =
                 RECOMMEND_PAGE_NO_OF_SERVICE_TV + 4;
-        /** その他 */
+        /** その他. */
         public static final int RECOMMEND_PAGE_NO_OF_SERVICE_UNKNOWN =
                 RECOMMEND_PAGE_NO_OF_SERVICE_TV + 99;
     }

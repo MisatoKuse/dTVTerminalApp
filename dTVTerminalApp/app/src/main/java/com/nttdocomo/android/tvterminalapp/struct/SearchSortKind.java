@@ -11,7 +11,7 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchS
 public class SearchSortKind {
 
 
-    public enum SearchSortKindEnum{
+    public enum SearchSortKindEnum {
         none,
         popularity,
         newArrivalOrder;
@@ -19,13 +19,13 @@ public class SearchSortKind {
 
     private SearchSortKindEnum mSearchSortKindEnum;
 
-    public SearchSortKind(String name){
-        if("SearchSortKindNone".equals(name)){
-            mSearchSortKindEnum=SearchSortKindEnum.none;
-        } else if("SearchSortKindPopularity".equals(name)){
-            mSearchSortKindEnum=SearchSortKindEnum.popularity;
-        } else if("SearchSortKindNewArrivalOrder".equals(name)){
-            mSearchSortKindEnum=SearchSortKindEnum.newArrivalOrder;
+    public SearchSortKind(final String name) {
+        if ("SearchSortKindNone".equals(name)) {
+            mSearchSortKindEnum = SearchSortKindEnum.none;
+        } else if ("SearchSortKindPopularity".equals(name)) {
+            mSearchSortKindEnum = SearchSortKindEnum.popularity;
+        } else if ("SearchSortKindNewArrivalOrder".equals(name)) {
+            mSearchSortKindEnum = SearchSortKindEnum.newArrivalOrder;
         }
         /*
         switch name {

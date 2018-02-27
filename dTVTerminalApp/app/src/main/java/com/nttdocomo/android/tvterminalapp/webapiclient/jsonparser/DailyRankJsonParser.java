@@ -46,19 +46,19 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     @Override
-    protected Object doInBackground(Object... strings) {
+    protected Object doInBackground(final Object... strings) {
         String result = (String) strings[0];
         List<DailyRankList> resultList = dailyRankListSender(result);
         return resultList;
     }
 
     /**
-     * デイリーランキングJsonデータを解析する
+     * デイリーランキングJsonデータを解析する.
      *
      * @param jsonStr JSONデータ文字列
      * @return パース後のJSONデータ
      */
-    private List<DailyRankList> dailyRankListSender(String jsonStr) {
+    private List<DailyRankList> dailyRankListSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         mDailyRankList = new DailyRankList();
@@ -83,7 +83,7 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     /**
-     * statusの値をMapでオブジェクトクラスに渡す
+     * statusの値をMapでオブジェクトクラスに渡す.
      *
      * @param jsonObj 解析前ステータス
      */
@@ -120,11 +120,11 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     /**
-     * コンテンツのList<HashMap>をオブジェクトクラスに格納
+     * コンテンツのList<HashMap>をオブジェクトクラスに格納.
      *
      * @param arrayList JSONArray
      */
-    private void sendDrList(JSONArray arrayList) {
+    private void sendDrList(final JSONArray arrayList) {
         try {
             List<HashMap<String, String>> drList = new ArrayList<>();
             for (int i = 0; i < arrayList.length(); i++) {

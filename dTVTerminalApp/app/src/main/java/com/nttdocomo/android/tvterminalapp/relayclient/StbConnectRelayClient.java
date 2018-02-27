@@ -76,7 +76,7 @@ public class StbConnectRelayClient {
      * @param data
      * @return
      */
-    public boolean send(String data) {
+    public boolean send(final String data) {
         boolean ret;
         if (mTcpClient == null) {
             DTVTLogger.debug("mTcpClient is null!");
@@ -109,7 +109,7 @@ public class StbConnectRelayClient {
      * @param data
      * @return
      */
-    public void sendDatagram(String data) {
+    public void sendDatagram(final String data) {
         DatagramSocket dataSocket = null;
         try {
             if (data != null) {

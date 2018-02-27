@@ -216,7 +216,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      * @param context    コンテキスト
      * @param dialogType ダイアログタイプ
      */
-    public CustomDialog(Context context, DialogType dialogType) {
+    public CustomDialog(final Context context, final DialogType dialogType) {
         this.mContext = context;
         this.dialogType = dialogType;
     }
@@ -226,7 +226,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      *
      * @param title タイトル
      */
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         this.title = title;
     }
 
@@ -235,7 +235,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      *
      * @param content 本文
      */
-    public void setContent(String content) {
+    public void setContent(final String content) {
         this.content = content;
     }
 
@@ -244,7 +244,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      *
      * @param list リスト
      */
-    public void setSelectData(List<String> list) {
+    public void setSelectData(final List<String> list) {
         this.list = list;
     }
 
@@ -346,7 +346,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     }
 
     @Override
-    public void onClick(DialogInterface dialog, int which) {
+    public void onClick(final DialogInterface dialog, final int which) {
         switch (which) {
             case AlertDialog.BUTTON_POSITIVE:
                 dismissDialog();
@@ -368,7 +368,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
         if (apiSelectCallback != null) {
             apiSelectCallback.onSelectCallback(position);
         }
@@ -382,7 +382,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      */
     private static OnKeyListener keyListener = new OnKeyListener() {
         @Override
-        public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+        public boolean onKey(final DialogInterface dialog, final int keyCode, final KeyEvent event) {
             if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0
                     && event.getAction() != KeyEvent.ACTION_UP) {
                 dialog.dismiss();
@@ -473,7 +473,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     }
 
     /**
-     * 画面外タップのキャンセル処理の可/不可を
+     * 画面外タップのキャンセル処理の可/不可を.
      * @param cancelable
      */
     public void setOnTouchOutside(boolean cancelable) {

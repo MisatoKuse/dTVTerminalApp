@@ -11,17 +11,17 @@ import android.view.MotionEvent;
 
 public class ProgramRecyclerView extends RecyclerView {
 
-    public ProgramRecyclerView(Context context) {
+    public ProgramRecyclerView(final Context context) {
         super(context);
         initView();
     }
 
-    public ProgramRecyclerView(Context context, AttributeSet attrs) {
+    public ProgramRecyclerView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
         initView();
     }
 
-    public ProgramRecyclerView(Context context, AttributeSet attrs, int defStyle) {
+    public ProgramRecyclerView(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
         initView();
     }
@@ -30,12 +30,12 @@ public class ProgramRecyclerView extends RecyclerView {
         //何もしない
     }
 
-    public boolean forceToDispatchTouchEvent(MotionEvent ev) {
+    public boolean forceToDispatchTouchEvent(final MotionEvent ev) {
         return super.dispatchTouchEvent(ev);
     }
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
+    public boolean dispatchTouchEvent(final MotionEvent ev) {
         getParent().requestDisallowInterceptTouchEvent(false);
         return super.dispatchTouchEvent(ev);
     }

@@ -21,17 +21,17 @@ public class GenreListResponse implements Serializable {
         return mTypeList;
     }
 
-    public void setTypeList(Map<String, ArrayList<GenreListMetaData>> typeList) {
+    public void setTypeList(final Map<String, ArrayList<GenreListMetaData>> typeList) {
         mTypeList = typeList;
     }
 
     /**
-     * 種別リストに今の種別配列を追加する
+     * 種別リストに今の種別配列を追加する.
      *
      * @param itemName リスト名
      * @param typeList リスト情報
      */
-    public void addTypeList(String itemName, ArrayList<GenreListMetaData> typeList) {
+    public void addTypeList(final String itemName, final ArrayList<GenreListMetaData> typeList) {
         mTypeList.put(itemName, typeList);
     }
 
@@ -41,7 +41,7 @@ public class GenreListResponse implements Serializable {
         return mUpdateDate;
     }
 
-    public void setUpdateDate(String UpdateDate) {
+    public void setUpdateDate(final String UpdateDate) {
         mUpdateDate = UpdateDate;
     }
 

@@ -45,12 +45,12 @@ public class MyChannelDeleteWebClient
      *
      * @param context コンテキスト
      */
-    public MyChannelDeleteWebClient(Context context) {
+    public MyChannelDeleteWebClient(final Context context) {
         super(context);
     }
 
     @Override
-    public void onAnswer(ReturnCode returnCode) {
+    public void onAnswer(final ReturnCode returnCode) {
         if (myChannelDeleteJsonParserCallback != null) {
             //JSONをパースして、データを返す
             new MyChannelDeleteJsonParser(myChannelDeleteJsonParserCallback)
@@ -64,7 +64,7 @@ public class MyChannelDeleteWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
+    public void onError(final ReturnCode returnCode) {
         if (myChannelDeleteJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             myChannelDeleteJsonParserCallback.onMyChannelDeleteJsonParsed(null);
@@ -74,12 +74,12 @@ public class MyChannelDeleteWebClient
     /**
      * マイチャンネル解除取得.
      *
-     * @param myChannelDeleteJsonParserCallback コールバックTODO:
-     *                                          本WebAPIには通常のパラメータが無く、基底クラスで追加するサービストークンのみとなる。）
+     * @param myChannelDeleteJsonParserCallback コールバック
+     *   TODO:本WebAPIには通常のパラメータが無く、基底クラスで追加するサービストークンのみとなる。
      *
      * @return パラメータエラー等が発生した場合はfalse
      */
-    public boolean getMyChanelDeleteApi(String serviceId, MyChannelDeleteJsonParserCallback myChannelDeleteJsonParserCallback) {
+    public boolean getMyChanelDeleteApi(final String serviceId, final MyChannelDeleteJsonParserCallback myChannelDeleteJsonParserCallback) {
         if (mIsCancel) {
             DTVTLogger.error("MyChannelDeleteWebClient is stopping connection");
             return false;
@@ -116,7 +116,7 @@ public class MyChannelDeleteWebClient
      * @param serviceId サービスID
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(String serviceId) {
+    private String makeSendParameter(final String serviceId) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
@@ -141,7 +141,7 @@ public class MyChannelDeleteWebClient
      * @param myChannelDeleteJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(String serviceId, MyChannelDeleteJsonParserCallback
+    private boolean checkNormalParameter(final String serviceId, final MyChannelDeleteJsonParserCallback
             myChannelDeleteJsonParserCallback) {
 
         //serviceIdが指定されていないならばfalse

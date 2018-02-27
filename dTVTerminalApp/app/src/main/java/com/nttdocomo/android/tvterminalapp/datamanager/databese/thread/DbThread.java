@@ -27,7 +27,7 @@ public class DbThread extends Thread {
 
     public interface DbOperation {
         /**
-         * DB操作完了する時実行される
+         * DB操作完了する時実行される.
          *
          * @param isSuccessful DB操作結果
          * @param resultSet    ResultSetがある場合、ResultSetを戻す。ResultSetはない場合、nullを戻す
@@ -36,7 +36,7 @@ public class DbThread extends Thread {
         void onDbOperationFinished(boolean isSuccessful, final List<Map<String, String>> resultSet, int operationId);
 
         /**
-         * DB操作をThread中で実行、操作内容はクラス外で決める(e.g. "select * from xxx where yy=zz ...,   delete from xxx")
+         * DB操作をThread中で実行、操作内容はクラス外で決める(e.g. "select * from xxx where yy=zz ...,   delete from xxx").
          *
          * @return
          */
@@ -44,11 +44,11 @@ public class DbThread extends Thread {
     }
 
     /**
-     * @param handle      非同期処理ハンドラー
+     * @param handle      非同期処理ハンドラー.
      * @param lis         　操作
      * @param operationId 多Threadオブジェクトを使用する時、Threadオブジェクトを区別する
      */
-    public DbThread(@NonNull Handler handle, DbOperation lis, int operationId) {
+    public DbThread(@NonNull final Handler handle, final DbOperation lis, final int operationId) {
 
         mHandle = handle;
         mDbOperationFinish = lis;

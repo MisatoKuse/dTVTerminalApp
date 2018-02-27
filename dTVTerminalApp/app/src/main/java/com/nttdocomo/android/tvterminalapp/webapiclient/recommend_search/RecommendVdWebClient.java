@@ -17,7 +17,7 @@ import java.util.LinkedHashMap;
 public class RecommendVdWebClient extends WebApiBase implements WebApiCallback {
 
     /**
-     * 種別・ビデオ
+     * 種別・ビデオ.
      */
     private static final String VIDEO_CATEGORY =
             //ホーム画面におすすめビデオを表示する為のカテゴリー（仮の値から実際の値に昇格）
@@ -32,7 +32,7 @@ public class RecommendVdWebClient extends WebApiBase implements WebApiCallback {
         void RecommendVideoCallback(RecommendVdList mRecommendVdList);
     }
 
-    public RecommendVdWebClient(RecommendVideoCallback mRecommendVideoCallback, Context context) {
+    public RecommendVdWebClient(final RecommendVideoCallback mRecommendVideoCallback, final Context context) {
         this.mRecommendVideoCallback = mRecommendVideoCallback;
 
         //コンテキストの退避
@@ -70,7 +70,7 @@ public class RecommendVdWebClient extends WebApiBase implements WebApiCallback {
     }
 
     @Override
-    public void onFinish(String responseData) {
+    public void onFinish(final String responseData) {
         //得られたXMLのパースを行って、データを返す
         new RecommendVideoXmlParser(mRecommendVideoCallback).execute(responseData);
     }

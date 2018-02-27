@@ -49,7 +49,7 @@ public class SearchContentInfo {
      */
     public String rank;
     /**
-     *  mobileViewingFlg　
+     *  mobileViewingFlg.
      */
     public String  mobileViewingFlg;
 
@@ -66,7 +66,7 @@ public class SearchContentInfo {
      */
     public SearchContentInfo(final boolean clipFlag, final String contentId, final int serviceId,
                              final String contentPictureUrl1, final String contentPictureUrl2,
-                             final String title, final int rank, final String  mobileViewingFlg) {
+                             final String title, final int rank, final String mobileViewingFlg) {
         this.clipFlag = clipFlag;
         this.contentId = contentId;
         this.serviceId = serviceId;

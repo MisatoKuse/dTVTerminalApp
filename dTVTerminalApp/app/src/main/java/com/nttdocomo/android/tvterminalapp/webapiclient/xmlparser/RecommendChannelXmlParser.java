@@ -63,7 +63,7 @@ public class RecommendChannelXmlParser extends AsyncTask<Object, Object, Object>
 
     @Override
     protected void onPostExecute(final Object s) {
-        mRecommendChannelCallback.RecommendChannelCallback((RecommendChList)s);
+        mRecommendChannelCallback.RecommendChannelCallback((RecommendChList) s);
     }
 
     @Override

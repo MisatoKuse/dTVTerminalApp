@@ -41,7 +41,7 @@ public class RankingPagerAdapter extends FragmentStatePagerAdapter {
      *
      * @param fm FragmentManager
      */
-    public RankingPagerAdapter(final FragmentManager fm, ContentsAdapter.ActivityTypeItem mType) {
+    public RankingPagerAdapter(final FragmentManager fm, final ContentsAdapter.ActivityTypeItem mType) {
         super(fm);
         this.mType = mType;
     }
@@ -49,21 +49,21 @@ public class RankingPagerAdapter extends FragmentStatePagerAdapter {
     /**
      * リスナーを設定.
      */
-    public void setRankingFragmentScrollListener(RankingFragmentScrollListener lis){
+    public void setRankingFragmentScrollListener(final RankingFragmentScrollListener lis) {
         this.mRankingFragmentScrollListener = lis;
     }
 
     /**
      * リスナーを設定.
      */
-    public void setTabNames(String[] mTabNames){
+    public void setTabNames(String[] mTabNames) {
         this.mTabNames = mTabNames;
     }
 
     /**
      * フラグメントを設定.
      */
-    public void setRankingFragmentFactory(RankingFragmentFactory mRankingFragmentFactory){
+    public void setRankingFragmentFactory(final RankingFragmentFactory mRankingFragmentFactory) {
         this.mRankingFragmentFactory = mRankingFragmentFactory;
     }
 

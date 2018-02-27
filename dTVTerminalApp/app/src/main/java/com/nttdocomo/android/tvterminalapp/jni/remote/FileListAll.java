@@ -8,12 +8,12 @@ import java.io.File;
 import java.util.HashMap;
 
 /**
- * todo 開発中ツールとして使う
+ * todo 開発中ツールとして使う.
  *       リリース時、削除
  */
 public  class FileListAll {
 
-    public HashMap<String, String> getList(File file) {
+    public HashMap<String, String> getList(final File file) {
 
         HashMap<String, String> fileList = new HashMap<>();
         getFileList(file, fileList);
@@ -24,18 +24,18 @@ public  class FileListAll {
      * @param path path
      * @param fileList fileList
      */
-    private void getFileList(File path, HashMap<String, String> fileList){
-        if(path.isDirectory()){
+    private void getFileList(final File path, final HashMap<String, String> fileList) {
+        if (path.isDirectory()) {
             File[] files = path.listFiles();
-            if(null == files) {
+            if (null == files) {
                 return;
             }
-            for(File file: files){
+            for (File file: files) {
                 getFileList(file, fileList);
             }
-        }else{
+        } else {
             String filePath = path.getAbsolutePath();
-            String fileName = filePath.substring(filePath.lastIndexOf("/")+1);
+            String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
             fileList.put(fileName, filePath + " size=" + DlnaInterfaceRI.getFileSize(filePath));
         }
     }

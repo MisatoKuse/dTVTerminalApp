@@ -30,7 +30,7 @@ public class OneTimeTokenData {
     private long mOneTimeTokenTime;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      */
     public OneTimeTokenData() {
         //初期化を行う
@@ -38,9 +38,9 @@ public class OneTimeTokenData {
     }
 
     /**
-     * 初期データ付きコンストラクタ
+     * 初期データ付きコンストラクタ.
      */
-    public OneTimeTokenData(String source) {
+    public OneTimeTokenData(final String source) {
         //初期化を行う
         initData();
 
@@ -52,7 +52,7 @@ public class OneTimeTokenData {
         return mOneTimeToken;
     }
 
-    public void setOneTimeToken(String oneTimeToken) {
+    public void setOneTimeToken(final String oneTimeToken) {
         mOneTimeToken = oneTimeToken;
     }
 
@@ -65,7 +65,7 @@ public class OneTimeTokenData {
         return mOneTimeTokenTime;
     }
 
-    public void setOneTimeTokenGetTime(long oneTimeTokenGetTime) {
+    public void setOneTimeTokenGetTime(final long oneTimeTokenGetTime) {
         mOneTimeTokenTime = oneTimeTokenGetTime;
     }
 
@@ -83,7 +83,7 @@ public class OneTimeTokenData {
      *
      * @param source 元になる文字列
      */
-    private void analyzeOneTimeTokenString(String source) {
+    private void analyzeOneTimeTokenString(final String source) {
         //値が空か、分割できないならば初期化して帰る
         if (TextUtils.isEmpty(source) || !source.contains(ONE_TIME_TOKEN_SPLITTER)) {
             initData();
@@ -108,7 +108,7 @@ public class OneTimeTokenData {
     }
 
     /**
-     * プリファレンス書き込み用文字列の作成
+     * プリファレンス書き込み用文字列の作成.
      *
      * @return 整形後のトークン情報
      */

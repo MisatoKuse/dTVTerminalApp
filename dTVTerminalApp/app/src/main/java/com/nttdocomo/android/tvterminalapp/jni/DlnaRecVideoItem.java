@@ -8,55 +8,55 @@ package com.nttdocomo.android.tvterminalapp.jni;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 /**
- * 機能：録画情報を表示するクラス
+ * 機能：録画情報を表示するクラス.
  */
 public class DlnaRecVideoItem {
 
     /**
-     * このクラスにて、フィールドは「public」に設定している理由は、
+     * このクラスにて、フィールドは「public」に設定している理由は、.
      * １．JNIのC側で操作便利
      * ２．フィールドは追加すると、setとget方法をjavaとc側両方で増やさないよう
      */
 
     //mItemId
-    public String mItemId="";
+    public String mItemId = "";
     //録画のタイトル
-    public String mTitle="";
+    public String mTitle = "";
     //protocolInfo start
-    public String mSize="";
-    public String mDuration="";     //e.g.  "00:26:54"
-    public String mResolution="";
-    public String mBitrate="";
-    public String mResUrl="";
-    public String mUpnpIcon="";
+    public String mSize = "";
+    public String mDuration = "";     //e.g.  "00:26:54"
+    public String mResolution = "";
+    public String mBitrate = "";
+    public String mResUrl = "";
+    public String mUpnpIcon = "";
     //protocolInfo end
     //録画の日付
-    public String mDate="";
+    public String mDate = "";
 
     //to do: 使用する必要があれば、新しいフィールドをここで追加
     //TODO コピー残り回数（まだ取得できない為ダミー）
     public int mAllowedUse = 0;
-    public String mVideoType="";
-    public String mClearTextSize="";
-    public String mChannelName="";    //upnp:channelName
+    public String mVideoType = "";
+    public String mClearTextSize = "";
+    public String mChannelName = "";    //upnp:channelName
 
     /**
-     * 機能：DlnaRecVideoItem情報クラスを構造
+     * 機能：DlnaRecVideoItem情報クラスを構造.
      */
-    public DlnaRecVideoItem(){
+    public DlnaRecVideoItem() {
 
     }
 
     /**
-     * 「"00:26:54"」から分に変換
+     * 「"00:26:54"」から分に変換.
      * @return String str
      */
-    public String getDurationInMinutes(){
-        if(null == mDuration) {
+    public String getDurationInMinutes() {
+        if (null == mDuration) {
             return null;
         }
         String duration = mDuration.trim();
-        if(8 == duration.length()) {
+        if (8 == duration.length()) {
             try {
                 String hour = duration.substring(0, 2);
                 String min = duration.substring(3, 5);

@@ -5,24 +5,24 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist;
 
 /**
- * 契約情報構造体
+ * 契約情報構造体.
  */
 public class AccountList {
     /**
-     * 契約状態
+     * 契約状態.
      */
     private String mContractStatus;
     /**
-     * dTVチャンネル視聴年齢値
+     * dTVチャンネル視聴年齢値.
      */
     private String mDchAgeReq;
     /**
-     * ひかりTVfordocomo視聴年齢値
+     * ひかりTVfordocomo視聴年齢値.
      */
     private String mH4dAgeReq;
 
     /**
-     * 初期化用コンストラクタ
+     * 初期化用コンストラクタ.
      */
     public AccountList() {
         this.mContractStatus = "";

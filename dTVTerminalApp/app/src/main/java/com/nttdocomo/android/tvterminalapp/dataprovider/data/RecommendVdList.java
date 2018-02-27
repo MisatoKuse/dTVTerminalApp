@@ -17,7 +17,7 @@ public class RecommendVdList {
         return mRvMap;
     }
 
-    public void setmRvMap(HashMap<String, String> mRvMap) {
+    public void setmRvMap(final HashMap<String, String> mRvMap) {
         this.mRvMap = mRvMap;
     }
 
@@ -25,7 +25,7 @@ public class RecommendVdList {
         return mRvList;
     }
 
-    public void setmRvList(List<Map<String, String>> mRvList) {
+    public void setmRvList(final List<Map<String, String>> mRvList) {
         this.mRvList = mRvList;
     }
 }

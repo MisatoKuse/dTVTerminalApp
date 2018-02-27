@@ -40,14 +40,14 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     private RecommendBaseFragmentScrollListener mRecommendBaseFragmentScrollListener = null;
     //チャンネルデータ
     private List<Map<String, String>> mChannelMap;
-    private static final int POSITION_TV =0;
+    private static final int POSITION_TV = 0;
     private static final int POSITION_VIDEO = POSITION_TV + 1;
     private static final int POSITION_D_TV = POSITION_TV + 2;
     private static final int POSITION_D_CHANNEL = POSITION_TV + 3;
     private static final int POSITION_D_ANIMATION = POSITION_TV + 4;
 
 
-    public void setRecommendBaseFragmentScrollListener(RecommendBaseFragmentScrollListener lis) {
+    public void setRecommendBaseFragmentScrollListener(final RecommendBaseFragmentScrollListener lis) {
         mRecommendBaseFragmentScrollListener = lis;
     }
 
@@ -58,8 +58,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater
-            , ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         initData();
         return initView(container);
     }
@@ -74,7 +73,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      *
      * @return この行のビュー
      */
-    private View initView(ViewGroup container) {
+    private View initView(final ViewGroup container) {
         if (null == mRecommendFragmentView) {
             mRecommendFragmentView = View.inflate(getActivity(),
                     R.layout.fragment_recommend_content, null);
@@ -98,9 +97,9 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     }
 
     /**
-     * データの更新
+     * データの更新.
      */
-    public void notifyDataSetChanged(int tabPosition) {
+    public void notifyDataSetChanged(final int tabPosition) {
         if (null != mRecommendListBaseAdapter) {
             if (tabPosition == POSITION_TV) {
                 mRecommendListBaseAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_TV);
@@ -123,7 +122,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      *
      * @param itemNo アイテム番号
      */
-    public void setSelection(int itemNo) {
+    public void setSelection(final int itemNo) {
         if (null != mRecommendListview) {
             mRecommendListview.setSelection(itemNo);
         }
@@ -134,7 +133,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      *
      * @param channelData チャンネル情報
      */
-    public void setChannelData(List<Map<String, String>> channelData) {
+    public void setChannelData(final List<Map<String, String>> channelData) {
         if (channelData == null || channelData.size() <= 0) {
             //データが無いならば即座に帰る
             return;
@@ -157,7 +156,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      *
      * @param loadFlag ロード中フラグ
      */
-    public void displayLoadMore(boolean loadFlag) {
+    public void displayLoadMore(final boolean loadFlag) {
         if (null != mRecommendListview && null != mLoadMoreView) {
             if (loadFlag) {
                 mRecommendListview.addFooterView(mLoadMoreView);
@@ -177,12 +176,12 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     }
 
     @Override
-    public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+    public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
     }
 
     @Override
-    public void onScroll(AbsListView absListView,
-                         int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+    public void onScroll(final AbsListView absListView,
+                         final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
         if (null != mRecommendBaseFragmentScrollListener) {
             mRecommendBaseFragmentScrollListener.onScroll(this, absListView,
                     firstVisibleItem, visibleItemCount, totalItemCount);
@@ -190,7 +189,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     }
 
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+    public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         ContentsData info = mData.get(i);
         Intent intent = new Intent(mActivity, ContentDetailActivity.class);
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
@@ -205,7 +204,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      * @param info レコメンド情報
      * @return コンテンツ情報
      */
-    private OtherContentsDetailData getOtherContentsDetailData(ContentsData info) {
+    private OtherContentsDetailData getOtherContentsDetailData(final ContentsData info) {
         OtherContentsDetailData detailData = new OtherContentsDetailData();
         detailData.setTitle(info.getTitle());
         detailData.setThumb(info.getThumURL());

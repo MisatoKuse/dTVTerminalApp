@@ -31,7 +31,7 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
 
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      * <p>
      * //     * @param genreCountGetJsonParserCallback
      */
@@ -56,12 +56,12 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
     }
 
     /**
-     * ジャンル毎コンテンツ数取得一覧Jsonデータを解析する
+     * ジャンル毎コンテンツ数取得一覧Jsonデータを解析する.
      *
      * @param jsonStr ジャンル毎コンテンツ数取得一覧Jsonデータ
      * @return ジャンル毎コンテンツ数取得一覧取得：正常時レスポンスデータ
      */
-    public ContentsDetailGetResponse contentsDetailSender(String jsonStr) {
+    public ContentsDetailGetResponse contentsDetailSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         mContentsDetailGetResponse = new ContentsDetailGetResponse();
@@ -80,11 +80,11 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
     }
 
     /**
-     * statusの値をジャンルコンテンツ数取得：正常時レスポンスデータオブジェクトに格納
+     * statusの値をジャンルコンテンツ数取得：正常時レスポンスデータオブジェクトに格納.
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendStatus(JSONObject jsonObj) {
+    public void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得しセットする
             if (!jsonObj.isNull(ContentsDetailGetResponse.GENRE_COUNT_GET_RESPONSE_STATUS)) {
@@ -100,11 +100,11 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
     }
 
     /**
-     * ジャンルコンテンツ数のListをジャンルコンテンツ数取得：正常時レスポンスデータオブジェクトに格納
+     * ジャンルコンテンツ数のListをジャンルコンテンツ数取得：正常時レスポンスデータオブジェクトに格納.
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    private void sendContentsDetailGetResponse(JSONObject jsonObj) {
+    private void sendContentsDetailGetResponse(final JSONObject jsonObj) {
         try {
             ArrayList<VodMetaFullData> vodMetaFullDataArrayList =
                     new ArrayList<>();

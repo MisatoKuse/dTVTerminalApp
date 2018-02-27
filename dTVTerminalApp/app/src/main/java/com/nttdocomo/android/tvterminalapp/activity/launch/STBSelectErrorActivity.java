@@ -33,7 +33,7 @@ public class STBSelectErrorActivity extends BaseActivity {
     }
 
     /**
-     * 画面上に表示するコンテンツを設定する
+     * 画面上に表示するコンテンツを設定する.
      */
     private void setContents() {
         setTitleText(getString(R.string.str_app_title));
@@ -52,7 +52,7 @@ public class STBSelectErrorActivity extends BaseActivity {
 
         mErrorCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            public void onCheckedChanged(final CompoundButton compoundButton, final boolean b) {
                 if (mErrorCheckBox.isChecked()) {
                     mErrorCheckBox.setBackgroundResource(R.drawable.
                             ic_check_box_white_24dp);

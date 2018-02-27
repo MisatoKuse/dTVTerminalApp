@@ -15,7 +15,7 @@ import com.nttdocomo.android.tvterminalapp.common.DaccountConstants;
 import java.util.Set;
 
 /**
- * dアカウントで状況の変化が発生した場合の通知を受け取るレシーバー
+ * dアカウントで状況の変化が発生した場合の通知を受け取るレシーバー.
  */
 public class DaccountReceiver extends BroadcastReceiver {
     //前回受信時間
@@ -25,7 +25,7 @@ public class DaccountReceiver extends BroadcastReceiver {
     static final long REPEAT_RECIEVE_TIME = 5000L;
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(final Context context, final Intent intent) {
         DTVTLogger.start();
         //現在日時取得
         long nowTime = System.currentTimeMillis();

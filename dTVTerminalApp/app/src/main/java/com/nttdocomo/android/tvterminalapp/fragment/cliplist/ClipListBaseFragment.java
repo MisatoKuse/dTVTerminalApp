@@ -112,7 +112,7 @@ public class ClipListBaseFragment extends Fragment
     /**
      * 各タブ画面は別々に実現して表示されること.
      */
-    private View initView(ViewGroup container) {
+    private View initView(final ViewGroup container) {
         if (mClipListData == null) {
             mClipListData = new ArrayList();
         }

@@ -46,7 +46,7 @@ public class ClipDeleteWebClient
      *
      * @param context コンテキスト
      */
-    public ClipDeleteWebClient(Context context) {
+    public ClipDeleteWebClient(final Context context) {
         super(context);
     }
 
@@ -56,7 +56,7 @@ public class ClipDeleteWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onAnswer(ReturnCode returnCode) {
+    public void onAnswer(final ReturnCode returnCode) {
         //JSONをパースして、データを返す
         new ClipDeleteJsonParser(mClipDeleteJsonParserCallback).execute(returnCode.bodyData);
     }
@@ -67,7 +67,7 @@ public class ClipDeleteWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
+    public void onError(final ReturnCode returnCode) {
         //エラーが発生したのでヌルを返す
         mClipDeleteJsonParserCallback.onClipDeleteFailure();
     }

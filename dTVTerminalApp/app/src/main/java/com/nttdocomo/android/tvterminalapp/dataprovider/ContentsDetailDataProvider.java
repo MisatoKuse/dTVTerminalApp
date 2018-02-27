@@ -175,14 +175,14 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     }
 
     @Override
-    public void onTvClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+    public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         super.onTvClipKeyListJsonParsed(clipKeyListResponse);
         mApiDataProviderCallback.onContentsDetailInfoCallback(
                 mVodMetaFullDataList, getContentsDetailClipStatus(mVodMetaFullDataList.get(0)));
     }
 
     @Override
-    public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
         mApiDataProviderCallback.onContentsDetailInfoCallback(
                 mVodMetaFullDataList, getContentsDetailClipStatus(mVodMetaFullDataList.get(0)));

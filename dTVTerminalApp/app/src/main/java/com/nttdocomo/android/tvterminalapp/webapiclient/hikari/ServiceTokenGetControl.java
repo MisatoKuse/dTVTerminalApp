@@ -27,7 +27,7 @@ public class ServiceTokenGetControl {
     /**
      * コンストラクタ.
      */
-    public ServiceTokenGetControl(Context context) {
+    public ServiceTokenGetControl(final Context context) {
         mContext = context;
     }
 
@@ -36,7 +36,7 @@ public class ServiceTokenGetControl {
      *
      * @param nextProcess 次に実行する処理のコールバック
      */
-    public void getToken(NextProcessInterface nextProcess) {
+    public void getToken(final NextProcessInterface nextProcess) {
         //コールバックのセット
         mNextProcess = nextProcess;
 
@@ -62,13 +62,13 @@ public class ServiceTokenGetControl {
     }
 
     /**
-     * パスワードの取得後の処理
+     * パスワードの取得後の処理.
      *
      * @param result          結果コード
      * @param id              dアカウント
      * @param oneTimePassword パスワード
      */
-    private void gotOtt(int result, String id, String oneTimePassword) {
+    private void gotOtt(final int result, final String id, final String oneTimePassword) {
         if (result != 0) {
             //パスワードの取得に失敗したので、サービストークンは取得できない。次に進む
             nextProcess();
@@ -91,7 +91,7 @@ public class ServiceTokenGetControl {
     }
 
     /**
-     * 次の処理を呼び出す
+     * 次の処理を呼び出す.
      */
     private void nextProcess() {
         //コールバックがヌルではないならば呼び出す
@@ -101,7 +101,7 @@ public class ServiceTokenGetControl {
     }
 
     /**
-     * 終了した場合に呼ばれるコールバックのインターフェース
+     * 終了した場合に呼ばれるコールバックのインターフェース.
      */
     public interface NextProcessInterface {
         /**

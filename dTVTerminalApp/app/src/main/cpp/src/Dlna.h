@@ -79,7 +79,7 @@ namespace dtvt {
         void stop();
 
         /**
-         * 機能：録画ヴィデオ一覧を発見
+         * 機能：録画ビデオ一覧を発見
          * @param controlUrl
          * @return true: 成功 false: 失敗
          */

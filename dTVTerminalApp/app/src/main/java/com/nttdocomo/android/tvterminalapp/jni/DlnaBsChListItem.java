@@ -6,12 +6,12 @@ package com.nttdocomo.android.tvterminalapp.jni;
 
 
 /**
- * 機能：BSデジタルに関して、チャンネルリストを表示するクラス
+ * 機能：BSデジタルに関して、チャンネルリストを表示するクラス.
  */
 public class DlnaBsChListItem {
 
     /**
-     * このクラスにて、フィールドは「public」に設定している理由は、
+     * このクラスにて、フィールドは「public」に設定している理由は、.
      * １．JNIのC側で操作便利
      * ２．フィールドは追加すると、setとget方法をjavaとc側両方で増やさないよう
      */
@@ -29,18 +29,18 @@ public class DlnaBsChListItem {
     public String mVideoType = "";
 
     /**
-     * 機能：DlnaBsChListItem情報クラスを構造
+     * 機能：DlnaBsChListItem情報クラスを構造.
      */
     public DlnaBsChListItem() {
 
     }
 
     /**
-     * 機能：等しいか判断
+     * 機能：等しいか判断.
      * @param item2 item2
      * @return yes or no
      */
-    public boolean equalTo(DlnaBsChListItem item2) {
+    public boolean equalTo(final DlnaBsChListItem item2) {
         if (null == item2 || null == this.mTitle || null == item2.mTitle || null == this.mResUrl || null == item2.mResUrl) {
             return false;
         }

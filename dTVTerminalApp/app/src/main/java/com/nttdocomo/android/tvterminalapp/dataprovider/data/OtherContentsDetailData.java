@@ -82,7 +82,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mChannelDate;
     }
 
-    public void setChannelDate(String mChannelDate) {
+    public void setChannelDate(final String mChannelDate) {
         this.mChannelDate = mChannelDate;
     }
 
@@ -90,7 +90,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mChannelName;
     }
 
-    public void setChannelName(String mChannelName) {
+    public void setChannelName(final String mChannelName) {
         this.mChannelName = mChannelName;
     }
 
@@ -98,7 +98,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mThumb;
     }
 
-    public void setThumb(String mThumb) {
+    public void setThumb(final String mThumb) {
         this.mThumb = mThumb;
     }
 
@@ -106,7 +106,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mServiceId;
     }
 
-    public void setServiceId(int serviceId) {
+    public void setServiceId(final int serviceId) {
         this.mServiceId = serviceId;
     }
 
@@ -114,7 +114,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mobileViewingFlg;
     }
 
-    public void setMobileViewingFlg(String mobileViewingFlg) {
+    public void setMobileViewingFlg(final String mobileViewingFlg) {
         this.mobileViewingFlg = mobileViewingFlg;
     }
 
@@ -122,7 +122,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mDetail;
     }
 
-    public void setDetail(String detail) {
+    public void setDetail(final String detail) {
         this.mDetail = detail;
     }
 
@@ -130,7 +130,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mComment;
     }
 
-    public void setComment(String mComment) {
+    public void setComment(final String mComment) {
         this.mComment = mComment;
     }
 
@@ -138,7 +138,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mHighlight;
     }
 
-    public void setHighlight(String mHighlight) {
+    public void setHighlight(final String mHighlight) {
         this.mHighlight = mHighlight;
     }
 
@@ -146,7 +146,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mContentsType;
     }
 
-    public void setContentsType(String mContentsType) {
+    public void setContentsType(final String mContentsType) {
         this.mContentsType = mContentsType;
     }
 
@@ -154,7 +154,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mAge;
     }
 
-    public void setAge(int Age) {
+    public void setAge(final int Age) {
         this.mAge = Age;
     }
 
@@ -162,7 +162,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return staffList;
     }
 
-    public void setStaffList(List<String> staffList) {
+    public void setStaffList(final List<String> staffList) {
         this.staffList = staffList;
     }
 
@@ -170,7 +170,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return roleList.clone();
     }
 
-    public void setRoleList(String[] roleList) {
+    public void setRoleList(final String[] roleList) {
         this.roleList = roleList.clone();
     }
 
@@ -178,7 +178,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return availStartDate;
     }
 
-    public void setAvailStartDate(String availStartDate) {
+    public void setAvailStartDate(final String availStartDate) {
         this.availStartDate = availStartDate;
     }
 
@@ -186,7 +186,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return availEndDate;
     }
 
-    public void setAvailEndDate(String availEndDate) {
+    public void setAvailEndDate(final String availEndDate) {
         this.availEndDate = availEndDate;
     }
 
@@ -194,7 +194,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return displayType;
     }
 
-    public void setDisplayType(String displayType) {
+    public void setDisplayType(final String displayType) {
         this.displayType = displayType;
     }
 
@@ -202,7 +202,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return categoryId;
     }
 
-    public void setCategoryId(String categoryId) {
+    public void setCategoryId(final String categoryId) {
         this.categoryId = categoryId;
     }
 
@@ -210,7 +210,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mContentId;
     }
 
-    public void setContentId(String mContentId) {
+    public void setContentId(final String mContentId) {
         this.mContentId = mContentId;
     }
 
@@ -218,7 +218,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return reserved1;
     }
 
-    public void setReserved1(String reserved1) {
+    public void setReserved1(final String reserved1) {
         this.reserved1 = reserved1;
     }
 
@@ -226,7 +226,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return reserved2;
     }
 
-    public void setReserved2(String reserved2) {
+    public void setReserved2(final String reserved2) {
         this.reserved2 = reserved2;
     }
 
@@ -234,7 +234,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return reserved4;
     }
 
-    public void setReserved4(String reserved4) {
+    public void setReserved4(final String reserved4) {
         this.reserved4 = reserved4;
     }
 
@@ -242,7 +242,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mVodMetaFullData;
     }
 
-    public void setVodMetaFullData(VodMetaFullData mVodMetaFullData) {
+    public void setVodMetaFullData(final VodMetaFullData mVodMetaFullData) {
         this.mVodMetaFullData = mVodMetaFullData;
     }
 
@@ -250,7 +250,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mChannelId;
     }
 
-    public void setChannelId(String mChannelId) {
+    public void setChannelId(final String mChannelId) {
         this.mChannelId = mChannelId;
     }
 
@@ -258,7 +258,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mRecommendOrder;
     }
 
-    public void setRecommendOrder(String mRecommendOrder) {
+    public void setRecommendOrder(final String mRecommendOrder) {
         this.mRecommendOrder = mRecommendOrder;
     }
 
@@ -266,7 +266,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mPageId;
     }
 
-    public void setPageId(String mPageId) {
+    public void setPageId(final String mPageId) {
         this.mPageId = mPageId;
     }
 
@@ -274,7 +274,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mGroupId;
     }
 
-    public void setGroupId(String mGroupId) {
+    public void setGroupId(final String mGroupId) {
         this.mGroupId = mGroupId;
     }
 
@@ -282,7 +282,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mRecommendMethodId;
     }
 
-    public void setRecommendMethodId(String mRecommendMethodId) {
+    public void setRecommendMethodId(final String mRecommendMethodId) {
         this.mRecommendMethodId = mRecommendMethodId;
     }
 
@@ -290,7 +290,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mRecommendFlg;
     }
 
-    public void setRecommendFlg(String mRecommendFlg) {
+    public void setRecommendFlg(final String mRecommendFlg) {
         this.mRecommendFlg = mRecommendFlg;
     }
 
@@ -298,7 +298,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mDispType;
     }
 
-    public void setDispType(String mDispType) {
+    public void setDispType(final String mDispType) {
         this.mDispType = mDispType;
     }
 
@@ -306,7 +306,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mSearchOk;
     }
 
-    public void setSearchOk(String mSearchOk) {
+    public void setSearchOk(final String mSearchOk) {
         this.mSearchOk = mSearchOk;
     }
 
@@ -314,7 +314,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mDtv;
     }
 
-    public void setDtv(String mDtv) {
+    public void setDtv(final String mDtv) {
         this.mDtv = mDtv;
     }
 
@@ -322,7 +322,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mDtvType;
     }
 
-    public void setDtvType(String mDtvType) {
+    public void setDtvType(final String mDtvType) {
         this.mDtvType = mDtvType;
     }
 
@@ -330,7 +330,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return ClipUtils.isCanClip(mDispType, mSearchOk, mDtv, mDtvType);
     }
 
-    public void setClipExec(boolean mClipExec) {
+    public void setClipExec(final boolean mClipExec) {
         this.mClipExec = mClipExec;
     }
 
@@ -338,7 +338,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mClipStatus;
     }
 
-    public void setClipStatus(boolean mClipStatus) {
+    public void setClipStatus(final boolean mClipStatus) {
         this.mClipStatus = mClipStatus;
     }
 
@@ -346,7 +346,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mRating;
     }
 
-    public void setRating(double mRating) {
+    public void setRating(final double mRating) {
         this.mRating = mRating;
     }
 
@@ -354,7 +354,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mEpititle;
     }
 
-    public void setEpititle(String mEpititle) {
+    public void setEpititle(final String mEpititle) {
         this.mEpititle = mEpititle;
     }
 
@@ -362,7 +362,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mTvService;
     }
 
-    public void setTvService(String mTvService) {
+    public void setTvService(final String mTvService) {
         this.mTvService = mTvService;
     }
 
@@ -372,7 +372,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    public void writeToParcel(final Parcel dest, final int flags) {
         super.writeToParcel(dest, flags);
         dest.writeString(this.mThumb);
         dest.writeString(this.mChannelDate);
@@ -415,7 +415,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
     public OtherContentsDetailData() {
     }
 
-    private OtherContentsDetailData(Parcel in) {
+    private OtherContentsDetailData(final Parcel in) {
         super(in);
         this.mThumb = in.readString();
         this.mChannelDate = in.readString();
@@ -457,12 +457,12 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
 
     public static final Creator<OtherContentsDetailData> CREATOR = new Creator<OtherContentsDetailData>() {
         @Override
-        public OtherContentsDetailData createFromParcel(Parcel source) {
+        public OtherContentsDetailData createFromParcel(final Parcel source) {
             return new OtherContentsDetailData(source);
         }
 
         @Override
-        public OtherContentsDetailData[] newArray(int size) {
+        public OtherContentsDetailData[] newArray(final int size) {
             return new OtherContentsDetailData[size];
         }
     };

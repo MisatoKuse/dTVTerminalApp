@@ -96,12 +96,12 @@ public class DBHelper extends SQLiteOpenHelper {
      *
      * @param context コンテキスト
      */
-    public DBHelper(Context context) {
+    public DBHelper(final Context context) {
         super(context, DBConstants.DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
-    public void onCreate(SQLiteDatabase sqLiteDatabase) {
+    public void onCreate(final SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_CHANNEL_SQL);
         sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_DAILY_RANK_SQL);
         sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_TV_SCHEDULE_SQL);
@@ -161,7 +161,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+    public void onUpgrade(final SQLiteDatabase sqLiteDatabase, final int oldVersion, final int newVersion) {
         if (oldVersion < newVersion) {
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_CHANNEL_SQL);
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_DAILY_RANK_SQL);

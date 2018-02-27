@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * レコメンド用データプロバイダ
+ * レコメンド用データプロバイダ.
  */
 public class RecommendDataProvider implements RecommendWebClient.RecommendCallback, DbThread.DbOperation {
 

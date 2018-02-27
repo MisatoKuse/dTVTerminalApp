@@ -31,7 +31,7 @@ public class MyChannelRegisterWebClient
      */
     public interface MyChannelRegisterJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param myChannelRegisterResponse JSONパース後のデータ
          */
@@ -47,12 +47,12 @@ public class MyChannelRegisterWebClient
      *
      * @param context コンテキスト
      */
-    public MyChannelRegisterWebClient(Context context) {
+    public MyChannelRegisterWebClient(final Context context) {
         super(context);
     }
 
     @Override
-    public void onAnswer(ReturnCode returnCode) {
+    public void onAnswer(final ReturnCode returnCode) {
         if (myChannelRegisterJsonParserCallback != null) {
             //JSONをパースして、データを返す
             new MyChannelRegisterJsonParser(myChannelRegisterJsonParserCallback)
@@ -66,7 +66,7 @@ public class MyChannelRegisterWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
+    public void onError(final ReturnCode returnCode) {
         if (myChannelRegisterJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             myChannelRegisterJsonParserCallback.onMyChannelRegisterJsonParsed(null);
@@ -86,8 +86,8 @@ public class MyChannelRegisterWebClient
      *                                            TODO: 仕様確定後に基底クラスへサービストークンの処理の追加が必要
      * @return パラメータエラー等が発生した場合はfalse
      */
-    public boolean getMyChanelRegisterApi(String serviceId, String title, String rValue, String adultType, int index,
-                                          MyChannelRegisterJsonParserCallback myChannelRegisterJsonParserCallback) {
+    public boolean getMyChanelRegisterApi(final String serviceId, final String title, final String rValue, final String adultType, final int index,
+                                          final MyChannelRegisterJsonParserCallback myChannelRegisterJsonParserCallback) {
         if (mIsCancel) {
             DTVTLogger.error("MyChannelRegisterWebClient is stopping connection");
             return false;
@@ -124,7 +124,7 @@ public class MyChannelRegisterWebClient
      * @param serviceId サービスID
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(String serviceId, String title, String rValue, String adultType, int index) {
+    private String makeSendParameter(final String serviceId, final String title, final String rValue, final String adultType, final int index) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
@@ -152,8 +152,8 @@ public class MyChannelRegisterWebClient
      * @param myChannelRegisterJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(String serviceId, String title, String rValue, String adultType, int index,
-                                         MyChannelRegisterJsonParserCallback myChannelRegisterJsonParserCallback) {
+    private boolean checkNormalParameter(final String serviceId, final String title, final String rValue, final String adultType, final int index,
+                                         final MyChannelRegisterJsonParserCallback myChannelRegisterJsonParserCallback) {
 
         //serviceIdが指定されていないならばfalse
         if (TextUtils.isEmpty(serviceId)) {

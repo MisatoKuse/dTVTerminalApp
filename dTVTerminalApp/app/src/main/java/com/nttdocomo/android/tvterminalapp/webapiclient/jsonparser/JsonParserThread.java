@@ -20,7 +20,7 @@ public class JsonParserThread extends Thread {
         Object parse(String body) throws Exception;
     }
 
-    public JsonParserThread(String json, Handler handle, JsonParser lis) throws Exception {
+    public JsonParserThread(final String json, final Handler handle, final JsonParser lis) throws Exception {
         if (null == json || 0 == json.length() || null == handle) {
             throw new Exception("JsonParserThread Exception, cause=(null==json || 0==json.length() || null==handle)");
         }

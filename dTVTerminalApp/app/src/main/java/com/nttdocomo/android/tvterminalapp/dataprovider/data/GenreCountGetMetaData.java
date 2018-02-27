@@ -17,8 +17,8 @@ public class GenreCountGetMetaData implements Serializable {
     private static final long serialVersionUID = -2522621200651636807L;
     private final String CLASS_NAME = getClass().getSimpleName();
     private static final String SET_DATA = ".setData";
-    private String mGenreId;//ジャンルID
-    private int mCount;//コンテンツ数
+    private String mGenreId; //ジャンルID
+    private int mCount; //コンテンツ数
 
     private static final String GENRE_COUNT_GET_META_DATA_GENRE_ID = "genre_id";
     private static final String GENRE_COUNT_GET_META_DATA_COUNT = "count";
@@ -28,7 +28,7 @@ public class GenreCountGetMetaData implements Serializable {
         return mGenreId;
     }
 
-    public void setGenreId(String mGenreId) {
+    public void setGenreId(final String mGenreId) {
         this.mGenreId = mGenreId;
     }
 
@@ -36,17 +36,17 @@ public class GenreCountGetMetaData implements Serializable {
         return mCount;
     }
 
-    public void setCount(int mCount) {
+    public void setCount(final int mCount) {
         this.mCount = mCount;
     }
 
     /**
-     * キーとキーの値をメンバーにセットする
+     * キーとキーの値をメンバーにセットする.
      *
      * @param key  キー
      * @param data キーの値
      */
-    private void setMember(String key, Object data) {
+    private void setMember(final String key, final Object data) {
         if (!key.isEmpty()) {
             switch (key) {
                 case GENRE_COUNT_GET_META_DATA_GENRE_ID:
@@ -61,11 +61,11 @@ public class GenreCountGetMetaData implements Serializable {
     }
 
     /**
-     * キーの値を取得する
+     * キーの値を取得する.
      *
      * @param key キー
      */
-    public Object getMember(String key) {
+    public Object getMember(final String key) {
         if (key.isEmpty()) {
             return "";
         } else {
@@ -81,11 +81,11 @@ public class GenreCountGetMetaData implements Serializable {
     }
 
     /**
-     * サーバから取得したデータをセット
+     * サーバから取得したデータをセット.
      *
      * @param jsonObj Jsonオブジェクト
      */
-    public void setData(JSONObject jsonObj) {
+    public void setData(final JSONObject jsonObj) {
         if (jsonObj != null) {
             //ジャンル毎コンテンツ数
             for (String item : mRootPara) {

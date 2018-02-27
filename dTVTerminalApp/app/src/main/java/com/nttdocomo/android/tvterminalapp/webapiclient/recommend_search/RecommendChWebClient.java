@@ -16,7 +16,7 @@ import java.util.LinkedHashMap;
 
 public class RecommendChWebClient extends WebApiBase implements WebApiCallback {
     /**
-     * 種別・チャンネル
+     * 種別・チャンネル.
      */
     //ホーム画面におすすめ番組を表示する為のカテゴリー（仮の値から実際の値に昇格）
     private static final String CHANNEL_CATEGORY = "43:01,44:03,44:04&";
@@ -30,8 +30,8 @@ public class RecommendChWebClient extends WebApiBase implements WebApiCallback {
         void RecommendChannelCallback(RecommendChList mRecommendChList);
     }
 
-    public RecommendChWebClient(RecommendChannelCallback mRecommendChannelCallback,
-                                Context context) {
+    public RecommendChWebClient(final RecommendChannelCallback mRecommendChannelCallback,
+                                final Context context) {
         this.mRecommendChannelCallback = mRecommendChannelCallback;
 
         //コンテキストの退避
@@ -69,12 +69,12 @@ public class RecommendChWebClient extends WebApiBase implements WebApiCallback {
     }
 
     /**
-     * 通信終了後に呼ばれるコールバック
+     * 通信終了後に呼ばれるコールバック.
      *
      * @param responseData
      */
     @Override
-    public void onFinish(String responseData) {
+    public void onFinish(final String responseData) {
         //得られたXMLのパースを行って、データを返す
         new RecommendChannelXmlParser(mRecommendChannelCallback).execute(responseData);
     }

@@ -42,7 +42,7 @@ public class TcpClient {
      * @param remotePort
      * @return
      */
-    public boolean connect(String remoteIp, int remotePort) {
+    public boolean connect(final String remoteIp, final int remotePort) {
         mRemoteIp = remoteIp;
         mRemotePort = remotePort;
         DTVTLogger.debug("mRemoteIp:" + mRemoteIp);
@@ -152,7 +152,7 @@ public class TcpClient {
      * @param data
      * @return true 送信した場合
      */
-    public boolean send(String data) {
+    public boolean send(final String data) {
 
         OutputStreamWriter out = null;
         if (mSocket == null) {

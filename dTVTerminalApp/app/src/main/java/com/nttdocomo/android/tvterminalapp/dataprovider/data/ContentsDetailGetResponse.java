@@ -13,12 +13,12 @@ public class ContentsDetailGetResponse implements Serializable {
     private static final long serialVersionUID = 5073727609109258522L;
 
     /**
-     * ステータス
+     * ステータス.
      */
     private String mStatus;
 
     /**
-     * VOD＆番組マージメタデータ（フル版）
+     * VOD＆番組マージメタデータ（フル版）.
      */
     private ArrayList<VodMetaFullData> mVodProgramMetaData;
 
@@ -30,7 +30,7 @@ public class ContentsDetailGetResponse implements Serializable {
         return mStatus;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(final String status) {
         mStatus = status;
     }
 
@@ -38,12 +38,12 @@ public class ContentsDetailGetResponse implements Serializable {
         return mVodProgramMetaData;
     }
 
-    public void setVodMetaFullData(ArrayList<VodMetaFullData> vodMetaData) {
+    public void setVodMetaFullData(final ArrayList<VodMetaFullData> vodMetaData) {
         this.mVodProgramMetaData = vodMetaData;
     }
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      */
     public ContentsDetailGetResponse() {
         // 空文字で初期化

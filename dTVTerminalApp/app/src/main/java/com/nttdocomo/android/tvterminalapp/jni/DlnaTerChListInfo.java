@@ -10,51 +10,51 @@ public class DlnaTerChListInfo {
 
     private ArrayList<DlnaTerChListItem> mLists = new ArrayList<>();
 
-    private void addItem(DlnaTerChListItem item){
+    private void addItem(final DlnaTerChListItem item) {
         mLists.add(item);
     }
 
-    public void clearAll(){
+    public void clearAll() {
         mLists.clear();
     }
 
-    public int size(){
-        if(null!=mLists){
+    public int size() {
+        if (null != mLists) {
             return mLists.size();
         }
 
         return 0;
     }
 
-    public DlnaTerChListItem get(int index){
-        if(index<0){
-            index=0;
+    public DlnaTerChListItem get(int index) {
+        if (index < 0) {
+            index = 0;
         }
-        if(null==mLists || 0==mLists.size()){
+        if (null == mLists || 0 == mLists.size()) {
             return null;
         }
 
         return mLists.get(index);
     }
 
-    static DlnaTerChListInfo fromArrayList(ArrayList<Object> content){
-        if(null==content){
+    static DlnaTerChListInfo fromArrayList(final ArrayList<Object> content) {
+        if (null == content) {
             return null;
         }
-        DlnaTerChListInfo info=new DlnaTerChListInfo();
-        for(Object o: content){
-            info.addItem((DlnaTerChListItem)o);
+        DlnaTerChListInfo info = new DlnaTerChListInfo();
+        for (Object o: content) {
+            info.addItem((DlnaTerChListItem) o);
         }
 
         return info;
     }
 
-    public static ArrayList<Object> toArrayList(DlnaTerChListInfo info){
-        ArrayList<Object> ret=new ArrayList<>();
-        if(null==info || 0==info.size()){
+    public static ArrayList<Object> toArrayList(final DlnaTerChListInfo info) {
+        ArrayList<Object> ret = new ArrayList<>();
+        if (null == info || 0 == info.size()) {
             return ret;
         }
-        for(int i=0;i<info.size();++i){
+        for (int i = 0; i < info.size(); ++i) {
             ret.add(info.get(i));
         }
         return ret;

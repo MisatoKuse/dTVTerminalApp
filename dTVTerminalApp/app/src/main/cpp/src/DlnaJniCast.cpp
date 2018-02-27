@@ -54,7 +54,7 @@ namespace dtvt {
     }
 
     /**
-     * 機能：録画ヴィデオ一覧を発見
+     * 機能：録画ビデオ一覧を発見
      */
     extern "C" jboolean JNICALL
     Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterface_browseRecVideoDms(JNIEnv *env, jobject instance,

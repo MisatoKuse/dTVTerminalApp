@@ -34,7 +34,7 @@ public class DlData {
         return mItemId;
     }
 
-    public void setItemId(String mItemId) {
+    public void setItemId(final String mItemId) {
         this.mItemId = mItemId;
     }
 
@@ -42,7 +42,7 @@ public class DlData {
         return mUrl;
     }
 
-    public void setUrl(String mUrl) {
+    public void setUrl(final String mUrl) {
         this.mUrl = mUrl;
     }
 
@@ -50,7 +50,7 @@ public class DlData {
         return mDidl;
     }
 
-    public void setDidl(String mDidl) {
+    public void setDidl(final String mDidl) {
         this.mDidl = mDidl;
     }
 
@@ -58,7 +58,7 @@ public class DlData {
         return mHost;
     }
 
-    public void setHost(String mHost) {
+    public void setHost(final String mHost) {
         this.mHost = mHost;
     }
 
@@ -66,7 +66,7 @@ public class DlData {
         return mPort;
     }
 
-    public void setPort(String mPort) {
+    public void setPort(final String mPort) {
         this.mPort = mPort;
     }
 
@@ -74,7 +74,7 @@ public class DlData {
         return mSaveFile;
     }
 
-    public void setSaveFile(String mSaveFile) {
+    public void setSaveFile(final String mSaveFile) {
         this.mSaveFile = mSaveFile;
     }
 
@@ -82,7 +82,7 @@ public class DlData {
         return mMimeType;
     }
 
-    public void setMimeType(String mMimeType) {
+    public void setMimeType(final String mMimeType) {
         this.mMimeType = mMimeType;
     }
 
@@ -90,7 +90,7 @@ public class DlData {
         return mDownLoadSize;
     }
 
-    public void setDownLoadSize(String mDownLoadSize) {
+    public void setDownLoadSize(final String mDownLoadSize) {
         this.mDownLoadSize = mDownLoadSize;
     }
 
@@ -98,7 +98,7 @@ public class DlData {
         return mDownLoadStatus;
     }
 
-    public void setDownLoadStatus(String mDownLoadStatus) {
+    public void setDownLoadStatus(final String mDownLoadStatus) {
         this.mDownLoadStatus = mDownLoadStatus;
     }
 
@@ -106,7 +106,7 @@ public class DlData {
         return mTotalSize;
     }
 
-    public void setTotalSize(String mTotalSize) {
+    public void setTotalSize(final String mTotalSize) {
         this.mTotalSize = mTotalSize;
     }
 
@@ -114,7 +114,7 @@ public class DlData {
         return mDuration;
     }
 
-    public void setDuration(String mDuration) {
+    public void setDuration(final String mDuration) {
         this.mDuration = mDuration;
     }
 
@@ -122,7 +122,7 @@ public class DlData {
         return mResolution;
     }
 
-    public void setResolution(String mResolution) {
+    public void setResolution(final String mResolution) {
         this.mResolution = mResolution;
     }
 
@@ -130,7 +130,7 @@ public class DlData {
         return mUpnpIcon;
     }
 
-    public void setUpnpIcon(String mUpnpIcon) {
+    public void setUpnpIcon(final String mUpnpIcon) {
         this.mUpnpIcon = mUpnpIcon;
     }
 
@@ -138,7 +138,7 @@ public class DlData {
         return mBitrate;
     }
 
-    public void setBitrate(String mBitrate) {
+    public void setBitrate(final String mBitrate) {
         this.mBitrate = mBitrate;
     }
 
@@ -146,7 +146,7 @@ public class DlData {
         return mIsSupportedByteSeek;
     }
 
-    public void setIsSupportedByteSeek(String mIsSupportedByteSeek) {
+    public void setIsSupportedByteSeek(final String mIsSupportedByteSeek) {
         this.mIsSupportedByteSeek = mIsSupportedByteSeek;
     }
 
@@ -154,7 +154,7 @@ public class DlData {
         return mIsSupportedTimeSeek;
     }
 
-    public void setIsSupportedTimeSeek(String mIsSupportedTimeSeek) {
+    public void setIsSupportedTimeSeek(final String mIsSupportedTimeSeek) {
         this.mIsSupportedTimeSeek = mIsSupportedTimeSeek;
     }
 
@@ -162,7 +162,7 @@ public class DlData {
         return mIsAvailableConnectionStalling;
     }
 
-    public void setIsAvailableConnectionStalling(String mIsAvailableConnectionStalling) {
+    public void setIsAvailableConnectionStalling(final String mIsAvailableConnectionStalling) {
         this.mIsAvailableConnectionStalling = mIsAvailableConnectionStalling;
     }
 
@@ -170,7 +170,7 @@ public class DlData {
         return mIsLiveMode;
     }
 
-    public void setIsLiveMode(String mIsLiveMode) {
+    public void setIsLiveMode(final String mIsLiveMode) {
         this.mIsLiveMode = mIsLiveMode;
     }
 
@@ -178,7 +178,7 @@ public class DlData {
         return mIsRemote;
     }
 
-    public void setIsRemote(String mIsRemote) {
+    public void setIsRemote(final String mIsRemote) {
         this.mIsRemote = mIsRemote;
     }
 
@@ -186,7 +186,7 @@ public class DlData {
         return mTitle;
     }
 
-    public void setTitle(String mTitle) {
+    public void setTitle(final String mTitle) {
         this.mTitle = mTitle;
     }
 
@@ -194,7 +194,7 @@ public class DlData {
         return mContentFormat;
     }
 
-    public void setContentFormat(String mContentFormat) {
+    public void setContentFormat(final String mContentFormat) {
         this.mContentFormat = mContentFormat;
     }
 
@@ -202,7 +202,7 @@ public class DlData {
         return mVideoType;
     }
 
-    public void setVideoType(String mVideoType) {
+    public void setVideoType(final String mVideoType) {
         this.mVideoType = mVideoType;
     }
 
@@ -210,11 +210,11 @@ public class DlData {
         return mPercentToNotify;
     }
 
-    public void setPercentToNotify(String mPercentToNotify) {
+    public void setPercentToNotify(final String mPercentToNotify) {
         this.mPercentToNotify = mPercentToNotify;
     }
 
-    public void setXmlToDl(String xml) {
+    public void setXmlToDl(final String xml) {
         mXmlToDl = xml;
     }
 

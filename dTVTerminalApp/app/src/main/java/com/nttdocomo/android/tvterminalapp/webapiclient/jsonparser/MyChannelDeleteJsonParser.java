@@ -28,25 +28,23 @@ public class MyChannelDeleteJsonParser extends AsyncTask<Object, Object, Object>
     private MyChannelDeleteResponse myChannelDeleteResponse;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      * <p>
      * //     * @param myChannelDeleteJsonParserCallback
      */
-    public MyChannelDeleteJsonParser(MyChannelDeleteWebClient.MyChannelDeleteJsonParserCallback
-                                             myChannelDeleteJsonParserCallback) {
+    public MyChannelDeleteJsonParser(final MyChannelDeleteWebClient.MyChannelDeleteJsonParserCallback myChannelDeleteJsonParserCallback) {
         this.myChannelDeleteJsonParserCallback = myChannelDeleteJsonParserCallback;
         myChannelDeleteResponse = new MyChannelDeleteResponse();
     }
 
     @Override
-    protected void onPostExecute(Object s) {
+    protected void onPostExecute(final Object s) {
         myChannelDeleteJsonParserCallback.onMyChannelDeleteJsonParsed(myChannelDeleteResponse);
     }
     @Override
-    protected Object doInBackground(Object... strings) {
+    protected Object doInBackground(final Object... strings) {
         String result = (String) strings[0];
-        MyChannelDeleteResponse response =
-                myChannelDeleteSender(result);
+        MyChannelDeleteResponse response = myChannelDeleteSender(result);
         return response;
     }
 
@@ -56,7 +54,7 @@ public class MyChannelDeleteJsonParser extends AsyncTask<Object, Object, Object>
      * @param jsonStr マイチャンネル解除Jsonデータ
      * @return マイチャンネル解除取得：正常時レスポンスデータ
      */
-    private MyChannelDeleteResponse myChannelDeleteSender(String jsonStr) {
+    private MyChannelDeleteResponse myChannelDeleteSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         myChannelDeleteResponse = new MyChannelDeleteResponse();
@@ -81,7 +79,7 @@ public class MyChannelDeleteJsonParser extends AsyncTask<Object, Object, Object>
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    private void sendStatus(JSONObject jsonObj) {
+    private void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得しセットする
             if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {

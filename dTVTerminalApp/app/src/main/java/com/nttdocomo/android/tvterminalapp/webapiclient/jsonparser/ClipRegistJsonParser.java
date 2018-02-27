@@ -27,7 +27,7 @@ public class ClipRegistJsonParser extends AsyncTask<Object, Object, String> {
      * @param jsonStr 元のJSONデータ
      * @return リスト化データ
      */
-    private String getClipStatus(String jsonStr) {
+    private String getClipStatus(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         String status = "";
@@ -51,11 +51,11 @@ public class ClipRegistJsonParser extends AsyncTask<Object, Object, String> {
     }
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
      * @param mClipJsonParserCallback コールバック
      */
-    public ClipRegistJsonParser(ClipRegistWebClient.ClipRegistJsonParserCallback mClipJsonParserCallback) {
+    public ClipRegistJsonParser(final ClipRegistWebClient.ClipRegistJsonParserCallback mClipJsonParserCallback) {
         this.mClipJsonParserCallback = mClipJsonParserCallback;
     }
 

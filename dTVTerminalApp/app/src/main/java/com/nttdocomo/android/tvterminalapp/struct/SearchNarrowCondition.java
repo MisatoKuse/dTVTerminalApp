@@ -21,13 +21,13 @@ public class SearchNarrowCondition {
 
     ArrayList<SearchFilterTypeMappable> conditionArray;
 
-    public SearchNarrowCondition(ArrayList<SearchFilterTypeMappable> conditionArray){
-        this.conditionArray= conditionArray;
+    public SearchNarrowCondition(final ArrayList<SearchFilterTypeMappable> conditionArray) {
+        this.conditionArray = conditionArray;
     }
 
     public ArrayList<SearchFilterType> searchFilterList() {
-        ArrayList<SearchFilterType> ret=new ArrayList<SearchFilterType>();
-        for(SearchFilterTypeMappable map:conditionArray){
+        ArrayList<SearchFilterType> ret = new ArrayList<SearchFilterType>();
+        for (SearchFilterTypeMappable map: conditionArray) {
             ret.add(map.searchFilterType());
         }
         return ret;

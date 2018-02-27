@@ -6,19 +6,19 @@ package com.nttdocomo.android.tvterminalapp.jni;
 
 
 /**
- * 機能：DlnaからActivityにDmsデバイス一覧を提供するクラス
+ * 機能：DlnaからActivityにDmsデバイス一覧を提供するクラス.
  */
 public class DlnaProvDevList {
 
     /**
-     * 機能：DlnaProvDevListのコンストラクタ
+     * 機能：DlnaProvDevListのコンストラクタ.
      */
     public DlnaProvDevList() {
 
     }
 
     /**
-     * 機能：Listenを停止
+     * 機能：Listenを停止.
      */
     public void stopListen() {
         DlnaInterface di = DlnaInterface.getInstance();
@@ -29,11 +29,11 @@ public class DlnaProvDevList {
     }
 
     /**
-     * 機能：指定するudnのdmsが存在するか
+     * 機能：指定するudnのdmsが存在するか.
      * @param udn udn
      * @return 存在しるか
      */
-    public boolean isDmsAvailable(String udn) {
+    public boolean isDmsAvailable(final String udn) {
         DlnaInterface di = DlnaInterface.getInstance();
         if (null == di) {
             return false;
@@ -42,7 +42,7 @@ public class DlnaProvDevList {
     }
 
     /**
-     * 機能：カレントDMSInfoを戻す
+     * 機能：カレントDMSInfoを戻す.
      * @return カレントDMSInfo
      */
     public DlnaDMSInfo getDlnaDMSInfo() {
@@ -54,12 +54,12 @@ public class DlnaProvDevList {
     }
 
     /**
-     * 機能：DMSデバイスを取り始める
+     * 機能：DMSデバイスを取り始める.
      *
      * @param lis listener
      * @return 成功 true
      */
-    public boolean start(DlnaDevListListener lis) {
+    public boolean start(final DlnaDevListListener lis) {
         DlnaInterface di = DlnaInterface.getInstance();
         if (null == di) {
             return false;
@@ -72,9 +72,9 @@ public class DlnaProvDevList {
     }
 
     /**
-     * 機能：カレントDMSを削除
+     * 機能：カレントDMSを削除.
      */
-    public void dmsRemove(){
+    public void dmsRemove() {
         DlnaInterface di = DlnaInterface.getInstance();
         if (null == di) {
             return;

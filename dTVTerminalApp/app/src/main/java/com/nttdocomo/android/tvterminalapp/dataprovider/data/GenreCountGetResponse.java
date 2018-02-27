@@ -21,7 +21,7 @@ public class GenreCountGetResponse implements Serializable {
         return mStatus;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(final String status) {
         mStatus = status;
     }
 
@@ -29,7 +29,7 @@ public class GenreCountGetResponse implements Serializable {
         return mGenreCountGetMetaData;
     }
 
-    public void setGenreCountGetMetaData(ArrayList<GenreCountGetMetaData> mGenreCountGetMetaData) {
+    public void setGenreCountGetMetaData(final ArrayList<GenreCountGetMetaData> mGenreCountGetMetaData) {
         this.mGenreCountGetMetaData = mGenreCountGetMetaData;
     }
 

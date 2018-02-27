@@ -48,7 +48,7 @@ public class ClipRegistWebClient
      *
      * @param context コンテキスト
      */
-    public ClipRegistWebClient(Context context) {
+    public ClipRegistWebClient(final Context context) {
         super(context);
     }
 
@@ -58,7 +58,7 @@ public class ClipRegistWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onAnswer(ReturnCode returnCode) {
+    public void onAnswer(final ReturnCode returnCode) {
         //JSONをパースして、データを返す
         new ClipRegistJsonParser(mClipRegistJsonParserCallback).execute(returnCode.bodyData);
     }
@@ -69,7 +69,7 @@ public class ClipRegistWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
+    public void onError(final ReturnCode returnCode) {
         //エラーが発生したのでヌルを返す
         mClipRegistJsonParserCallback.onClipRegistFailure();
     }

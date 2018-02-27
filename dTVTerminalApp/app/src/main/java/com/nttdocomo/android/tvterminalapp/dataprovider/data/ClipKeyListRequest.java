@@ -23,7 +23,7 @@ public class ClipKeyListRequest {
         VOD,
     }
 
-    public ClipKeyListRequest(REQUEST_PARAM_TYPE type) {
+    public ClipKeyListRequest(final REQUEST_PARAM_TYPE type) {
         switch (type) {
             case TV:
                 mType = CLIP_KEY_LIST_REQUEST_TYPE_TV;
@@ -41,7 +41,7 @@ public class ClipKeyListRequest {
         return mType;
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
         mType = type;
     }
 
@@ -49,7 +49,7 @@ public class ClipKeyListRequest {
         return mIsForce;
     }
 
-    public void setIsForce(boolean isForce) {
+    public void setIsForce(final boolean isForce) {
         mIsForce = isForce;
     }
 
@@ -57,7 +57,7 @@ public class ClipKeyListRequest {
         return mCrid;
     }
 
-    public void setCrid(String mCrid) {
+    public void setCrid(final String mCrid) {
         this.mCrid = mCrid;
     }
 
@@ -65,7 +65,7 @@ public class ClipKeyListRequest {
         return mServiceId;
     }
 
-    public void setServiceId(String serviceId) {
+    public void setServiceId(final String serviceId) {
         mServiceId = serviceId;
     }
 
@@ -73,7 +73,7 @@ public class ClipKeyListRequest {
         return mEventId;
     }
 
-    public void setEventId(String eventId) {
+    public void setEventId(final String eventId) {
         mEventId = eventId;
     }
 
@@ -81,7 +81,7 @@ public class ClipKeyListRequest {
         return mContentsType;
     }
 
-    public void setContentsType(String contentsType) {
+    public void setContentsType(final String contentsType) {
         mContentsType = contentsType;
     }
 
@@ -89,7 +89,7 @@ public class ClipKeyListRequest {
         return mTitleId;
     }
 
-    public void setTitleId(String titleId) {
+    public void setTitleId(final String titleId) {
         mTitleId = titleId;
     }
 }

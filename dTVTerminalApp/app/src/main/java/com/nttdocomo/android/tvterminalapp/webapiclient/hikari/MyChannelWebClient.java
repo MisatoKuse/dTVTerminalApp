@@ -40,12 +40,12 @@ public class MyChannelWebClient
      *
      * @param context コンテキスト
      */
-    public MyChannelWebClient(Context context) {
+    public MyChannelWebClient(final Context context) {
         super(context);
     }
 
     @Override
-    public void onAnswer(ReturnCode returnCode) {
+    public void onAnswer(final ReturnCode returnCode) {
         if (myChannelListJsonParserCallback != null) {
             //JSONをパースして、データを返す
             new MyChannelListJsonParser(myChannelListJsonParserCallback)
@@ -59,7 +59,7 @@ public class MyChannelWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
+    public void onError(final ReturnCode returnCode) {
         if (myChannelListJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             myChannelListJsonParserCallback.onMyChannelListJsonParsed(null);
@@ -72,7 +72,7 @@ public class MyChannelWebClient
      * @param myChannelListJsonParserCallback
      * @return パラメータエラー等が発生した場合はfalse
      */
-    public boolean getMyChanelListApi(MyChannelListJsonParserCallback myChannelListJsonParserCallback) {
+    public boolean getMyChanelListApi(final MyChannelListJsonParserCallback myChannelListJsonParserCallback) {
         if (mIsCancel) {
             DTVTLogger.error("MyChannelWebClient is stopping connection");
             return false;
@@ -100,7 +100,7 @@ public class MyChannelWebClient
      * @param myChannelListJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(MyChannelListJsonParserCallback
+    private boolean checkNormalParameter(final MyChannelListJsonParserCallback
                                                  myChannelListJsonParserCallback) {
         //コールバックが指定されていないならばfalse
         if (myChannelListJsonParserCallback == null) {

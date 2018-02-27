@@ -14,7 +14,7 @@ import org.json.JSONObject;
 import java.io.Serializable;
 
 /**
- * VOD&番組メタレスポンス（フル版）
+ * VOD&番組メタレスポンス（フル版）.
  * 販売情報リストの内容
  */
 public class Puinf implements Serializable {
@@ -48,7 +48,7 @@ public class Puinf implements Serializable {
         return mPuid;
     }
 
-    public void setmPuid(String mPuid) {
+    public void setmPuid(final String mPuid) {
         this.mPuid = mPuid;
     }
 
@@ -56,7 +56,7 @@ public class Puinf implements Serializable {
         return mCrid;
     }
 
-    public void setmCrid(String mCrid) {
+    public void setmCrid(final String mCrid) {
         this.mCrid = mCrid;
     }
 
@@ -64,7 +64,7 @@ public class Puinf implements Serializable {
         return mTitle;
     }
 
-    public void setmTitle(String mTitle) {
+    public void setmTitle(final String mTitle) {
         this.mTitle = mTitle;
     }
 
@@ -72,7 +72,7 @@ public class Puinf implements Serializable {
         return mEpititle;
     }
 
-    public void setmEpititle(String mEpititle) {
+    public void setmEpititle(final String mEpititle) {
         this.mEpititle = mEpititle;
     }
 
@@ -80,7 +80,7 @@ public class Puinf implements Serializable {
         return mDisp_type;
     }
 
-    public void setmDisp_type(String mDisp_typ) {
+    public void setmDisp_type(final String mDisp_typ) {
         this.mDisp_type = mDisp_typ;
     }
 
@@ -88,7 +88,7 @@ public class Puinf implements Serializable {
         return mChsvod;
     }
 
-    public void setmChsvod(String mChsvod) {
+    public void setmChsvod(final String mChsvod) {
         this.mChsvod = mChsvod;
     }
 
@@ -96,7 +96,7 @@ public class Puinf implements Serializable {
         return mPrice;
     }
 
-    public void setmPrice(String mPrice) {
+    public void setmPrice(final String mPrice) {
         this.mPrice = mPrice;
     }
 
@@ -104,7 +104,7 @@ public class Puinf implements Serializable {
         return mQunit;
     }
 
-    public void setmQunit(String mQunit) {
+    public void setmQunit(final String mQunit) {
         this.mQunit = mQunit;
     }
 
@@ -120,7 +120,7 @@ public class Puinf implements Serializable {
         return mPu_start_date;
     }
 
-    public void setmPu_start_date(long mPu_start_date) {
+    public void setmPu_start_date(final long mPu_start_date) {
         this.mPu_start_date = mPu_start_date;
     }
 
@@ -128,7 +128,7 @@ public class Puinf implements Serializable {
         return mPu_end_date;
     }
 
-    public void setmPu_end_date(long mPu_end_date) {
+    public void setmPu_end_date(final long mPu_end_date) {
         this.mPu_end_date = mPu_end_date;
     }
 
@@ -143,11 +143,11 @@ public class Puinf implements Serializable {
     };
 
     /**
-     * PUINFの値をメンバーにセットする
+     * PUINFの値をメンバーにセットする.
      *
      * @param puInf PUINFの値(JSONObject)
      */
-    public void setPuinfData(JSONObject puInf) {
+    public void setPuinfData(final JSONObject puInf) {
         try {
             if (puInf != null) {
                 //項目の数だけ回り、データを蓄積する

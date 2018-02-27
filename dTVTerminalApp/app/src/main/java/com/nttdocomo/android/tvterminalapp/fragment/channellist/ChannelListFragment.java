@@ -172,7 +172,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
     /**
      * Viewの初期化処理.
      */
-    private void initContentListView(View mRootView) {
+    private void initContentListView(final View mRootView) {
         mListview = mRootView.findViewById(R.id.channel_list_content_body_lv);
 
         mListview.setOnScrollListener(this);

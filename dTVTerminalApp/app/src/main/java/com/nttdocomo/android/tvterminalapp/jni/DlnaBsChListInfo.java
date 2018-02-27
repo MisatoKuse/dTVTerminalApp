@@ -19,7 +19,7 @@ public class DlnaBsChListInfo {
     }
 
     public int size() {
-        if(null!=mLists){
+        if (null != mLists) {
             return mLists.size();
         }
 
@@ -27,34 +27,34 @@ public class DlnaBsChListInfo {
     }
 
     public DlnaBsChListItem get(int index) {
-        if(index < 0){
+        if (index < 0) {
             index = 0;
         }
-        if(null == mLists || 0 == mLists.size()) {
+        if (null == mLists || 0 == mLists.size()) {
             return null;
         }
 
         return mLists.get(index);
     }
 
-    static DlnaBsChListInfo fromArrayList(ArrayList<Object> content) {
-        if(null==content){
+    static DlnaBsChListInfo fromArrayList(final ArrayList<Object> content) {
+        if (null == content) {
             return null;
         }
-        DlnaBsChListInfo info=new DlnaBsChListInfo();
-        for(Object o: content){
-            info.addItem((DlnaBsChListItem)o);
+        DlnaBsChListInfo info = new DlnaBsChListInfo();
+        for (Object o: content) {
+            info.addItem((DlnaBsChListItem) o);
         }
 
         return info;
     }
 
-    public static ArrayList<Object> toArrayList(DlnaBsChListInfo info) {
-        ArrayList<Object> ret=new ArrayList<>();
+    public static ArrayList<Object> toArrayList(final DlnaBsChListInfo info) {
+        ArrayList<Object> ret = new ArrayList<>();
         if (null == info || 0 == info.size()) {
             return ret;
         }
-        for (int i=0;i<info.size();++i) {
+        for (int i = 0; i < info.size(); ++i) {
             ret.add(info.get(i));
         }
         return ret;

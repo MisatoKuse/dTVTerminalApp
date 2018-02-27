@@ -18,7 +18,7 @@ public class RoleListResponse implements Serializable {
         return mRoleList;
     }
 
-    public void setRoleList(ArrayList<RoleListMetaData> mRoleList) {
+    public void setRoleList(final ArrayList<RoleListMetaData> mRoleList) {
         this.mRoleList = mRoleList;
     }
 }
