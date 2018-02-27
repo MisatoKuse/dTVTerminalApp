@@ -83,10 +83,8 @@ public class ServiceTokenGetControl {
                     public void onTokenGot(boolean success) {
                         //成功していれば、トークンはプリファレンスに入っているので読み込む・失敗でも空文字なので、先の判定で弾かれる
                         mOneTimeTokenData = SharedPreferencesUtils.getOneTimeTokenData(mContext);
-
                         //次へ進む
                         nextProcess();
-                        return;
                     }
                 }
         );

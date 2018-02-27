@@ -32,8 +32,8 @@ public class RemoteControllerSendKeyAction {
     private RemoteControllerPlayerViewHolder mPlayerViewHolder = null;
     private View mView;
 
-    private final int SEND_KEYCODE_PARAM_ACTION_UP = 1;
-    private final int SEND_KEYCODE_PARAM_ACTION_DOWN = 0;
+    private static final int SEND_KEYCODE_PARAM_ACTION_UP = 1;
+    private static final int SEND_KEYCODE_PARAM_ACTION_DOWN = 0;
 
     private enum RepeatTaskStatus {
         REPEAT_STATUS_DEFAULT,// 初期状態

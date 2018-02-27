@@ -61,7 +61,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     private final List<DlData> que = new ArrayList<>();
     public List<Integer> queIndex = new ArrayList<>();
     //private Handler mHandler;
-    private final int mPercentToUpdateUi = 1;
+    private static final int mPercentToUpdateUi = 1;
     private Activity activity;
 	private Set<String> mChannelNameCache;
     private boolean mCanBeCanceled = false;

@@ -778,12 +778,10 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                     getServiceToken(newUrl);
                     //コネクションを閉じる
                     httpsConnection.disconnect();
-                    return;
                 } else {
                     //リダイレクトかつ、OKとNGのURLではないならば、取得したURLで再度呼び出し
                     gotoRedirect(newUrl, "");
                     httpsConnection.disconnect();
-                    return;
                 }
             }
 

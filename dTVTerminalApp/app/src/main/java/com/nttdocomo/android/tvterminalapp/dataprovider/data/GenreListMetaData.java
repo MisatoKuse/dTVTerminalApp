@@ -75,9 +75,7 @@ public class GenreListMetaData implements Serializable {
      * @param data キーの値
      */
     private void setMember(String key, Object data) {
-        if (key.isEmpty()) {
-            return;
-        } else {
+        if (!key.isEmpty()) {
             switch (key) {
                 case GENRE_LIST_META_DATA_ID:
                     mId = (String) data;
