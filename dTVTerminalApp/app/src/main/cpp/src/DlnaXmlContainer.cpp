@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include "DlnaXmlContainer.h"
+#include "Dlna.h"
 
 namespace dtvt {
 
@@ -16,17 +17,22 @@ namespace dtvt {
     }
 
     void DlnaXmlContainer::uninit(){
-        std::map<std::string, du_uchar*>::iterator it = mXmls.begin();
+        std::vector<du_uchar*>::iterator it = mXmls.begin();
         for(; it != mXmls.begin(); ++it){
-            du_uchar* uc = it->second;
+            du_uchar* uc = *it;
             DelIfNotNull(uc);
         }
 
     }
 
-    void DlnaXmlContainer::addXml(std::string itemId, du_uchar* xml) {
-        if(0 < itemId.length() && NULL != xml){
-            mXmls.insert(std::pair<std::string, du_uchar*>(itemId, xml));
+    void DlnaXmlContainer::addXml(du_uchar* xml, size_t size) {
+        if(NULL != xml && 0 < size){
+            du_uchar* tXml=new du_uchar[size + 1];
+            if(tXml){
+                memset(tXml, 0x00, size * sizeof(du_uchar));
+                memcpy((void *) tXml, xml, size * sizeof(du_uchar));
+                mXmls.push_back(tXml);
+            }
         }
     }
 
@@ -41,11 +47,14 @@ namespace dtvt {
         if(0 == itemId.size() || NULL == *outXml || NULL == **outXml || 0 == mXmls.size()){
             return false;
         }
-        std::map<std::string, du_uchar*>::iterator it = mXmls.begin();
+        std::vector<du_uchar*>::iterator it = mXmls.begin();
         for(; it != mXmls.end(); ++it){
-            if(itemId.compare(it->first)){
-                *outXml = it->second;
-                return true;
+            du_uchar* xml = *it;
+            if(xml){
+                bool found = Dlna::getItemStringByItemId(xml, itemId, outXml);
+                if(found){
+                    return true;
+                }
             }
         }
         return false;
@@ -53,8 +62,8 @@ namespace dtvt {
 
     void DlnaXmlContainer::cleanAll(){
         mVVectorString.clear();
-        for(std::map<std::string, du_uchar*>::iterator i = mXmls.begin(); i != mXmls.end(); ++i){
-            du_uchar* xml = i->second;
+        for(std::vector<du_uchar*>::iterator i = mXmls.begin(); i != mXmls.end(); ++i){
+            du_uchar* xml = *i;
             DelIfNotNull(xml);
         }
     }

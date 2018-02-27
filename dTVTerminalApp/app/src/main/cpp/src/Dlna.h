@@ -152,6 +152,10 @@ namespace dtvt {
          */
         static void browseDirectChildrenResponseHandler(dupnp_http_response *response, void *arg);
 
+        static bool getItemStringByItemId(du_uchar* allRecordedVideoXml, std::string itemId, du_uchar** outXmlStr);
+        static void getDidlLiteDocHead(du_uchar* allRecordedVideoXml, std::string& outStr);
+        static void getDidlLiteDocTail(du_uchar* allRecordedVideoXml, std::string& outStr);
+
     private:
         bool init();
 
@@ -174,10 +178,6 @@ namespace dtvt {
         void notifyObject(DLNA_MSG_ID msg, vector<VectorString> & vecContents);
 
         void getRecordedVideoXml(DlnaXmlParserBase* parser, dupnp_http_response *response);
-
-        bool getItemStringByItemId(du_uchar* allRecordedVideoXml, std::string itemId, du_uchar** outXmlStr);
-        void getDidlLiteDocHead(du_uchar* allRecordedVideoXml, std::string& outStr);
-        void getDidlLiteDocTail(du_uchar* allRecordedVideoXml, std::string& outStr);
     };
 
 } //namespace dtvt

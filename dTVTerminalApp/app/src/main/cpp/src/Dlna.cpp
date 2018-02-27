@@ -1364,23 +1364,6 @@ namespace dtvt {
         memcpy(outXmlStrRef, tagBegin.c_str(), len2);
         memcpy(&outXmlStrRef[len2], retBegin, lenXml);
         memcpy(&outXmlStrRef[len2 + lenXml], tagEnd.c_str(), tagEnd.length());
-
-//        string xml((char*)allRecordedVideoXml);
-//        int posBegin = xml.find(begin);
-//        if(1>posBegin){
-//            return false;
-//        }
-//
-//        int posEng=xml.find(end, posBegin + begin.length());
-//        if(1>posEng){
-//            return false;
-//        }
-//
-//        int len= posEng - posBegin + end.length();
-//        outStr = tagBegin + xml.substr(posBegin, posEng) + tagEnd;
-
-        //int jj= outStr.find("</DIDL-Lite>");
-
         return ret;
     }
 

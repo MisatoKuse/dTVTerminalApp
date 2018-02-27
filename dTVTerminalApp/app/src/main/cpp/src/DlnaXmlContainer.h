@@ -29,7 +29,7 @@ extern "C" {
             inline void setMsgId(DLNA_MSG_ID id) { mDLNA_MSG_ID = id;  }
             inline const DLNA_MSG_ID getMsgId() { return mDLNA_MSG_ID; }
 
-            void addXml(std::string itemId, du_uchar* xml);
+            void addXml(du_uchar* xml, size_t size);
             void addVVectorString(VVectorString & vs);
 
             inline const VVectorString& getAllVVectorString() {  return mVVectorString; }
@@ -44,7 +44,7 @@ extern "C" {
         private:
             DLNA_MSG_ID mDLNA_MSG_ID;
             VVectorString mVVectorString;
-            std::map<std::string, du_uchar*> mXmls;
+            std::vector<du_uchar*> mXmls;
         };
 
     } //namespace dtvt
