@@ -683,6 +683,10 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
                 mappedMyChannelList = executeMapping();
                 setChannelContentsView(mappedMyChannelList);
                 loadMyChannel();
+            } else {
+                //ひかりTVデータなしの場合
+                scrollToCurTime();
+                refreshTimeLine();
             }
         } else {
             //ひかり、dTVチャンネル
