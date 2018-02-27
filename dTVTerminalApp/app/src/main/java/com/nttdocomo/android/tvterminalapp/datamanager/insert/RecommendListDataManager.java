@@ -51,7 +51,8 @@ public class RecommendListDataManager {
         //各種オブジェクト作成
         List<Map<String, String>> hashMaps = redChList.getmRcList();
         DBHelper deHelper = new DBHelper(mContext);
-        SQLiteDatabase database = deHelper.getWritableDatabase();
+        DataBaseManager.initializeInstance(deHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
         RecommendListDao redListDao = new RecommendListDao(database);
 
         //DB保存前に前回取得したデータは全消去する
@@ -81,7 +82,7 @@ public class RecommendListDataManager {
             }
             redListDao.insert(values, tagPageNo);
         }
-        database.close();
+        DataBaseManager.getInstance().closeDatabase();
     }
 
     /**
@@ -91,10 +92,11 @@ public class RecommendListDataManager {
      * @param maxResult 最大取得件数
      * @return recommendContentInfoList
      */
-    public synchronized List<ContentsData> selectRecommendList(final int tagPageNo, final int startIndex, final int maxResult) {
+    public List<ContentsData> selectRecommendList(final int tagPageNo, final int startIndex, final int maxResult) {
 
         DBHelper deHelper = new DBHelper(mContext);
-        SQLiteDatabase database = deHelper.getWritableDatabase();
+        DataBaseManager.initializeInstance(deHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
         RecommendListDao redListDao = new RecommendListDao(database);
 
         String[] columns = {
@@ -138,7 +140,7 @@ public class RecommendListDataManager {
             contentsData.setRecommendMethodId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID));
             recommendContentInfoList.add(contentsData);
         }
-        database.close();
+        DataBaseManager.getInstance().closeDatabase();
         return recommendContentInfoList;
     }
 }
