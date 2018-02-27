@@ -36,11 +36,18 @@ public class ActivationHelper {
 		setAndroidLogHandler();
 	}
 
+	// DiXiM SDK内の soファイル内に実装されているため警告が出るが、supressする
+	@SuppressWarnings("JniMissingFunction")
 	public native final int activation(String private_data_home);
+	@SuppressWarnings("JniMissingFunction")
 	public native final boolean activationState(String private_data_home);
+	@SuppressWarnings("JniMissingFunction")
 	public native static boolean setAndroidLogHandler();
+	@SuppressWarnings("JniMissingFunction")
 	public native static final void setLogLevel(int level);
+	@SuppressWarnings("JniMissingFunction")
 	private native final boolean activationInit();
+	@SuppressWarnings("JniMissingFunction")
 	private native final void activationTerm();
 
 	public ActivationHelper(final Context context, final String deviceKeyPath) {
