@@ -38,11 +38,9 @@ public class RecommendListDao {
      *
      * @param strings カラム
      * @param tagPageNo タブ名のタグ番号
-     * @param limitData 取得件数の最大数
      * @return 取得データ
      */
-    public List<Map<String, String>> findById(final String[] strings,
-                                              final int tagPageNo, final String limitData) {
+    public List<Map<String, String>> findById(final String[] strings, final int tagPageNo) {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
         String tableName = DBUtils.getRecommendTableName(tagPageNo);
@@ -54,8 +52,7 @@ public class RecommendListDao {
                 null,
                 null,
                 null,
-                null,
-                limitData);
+                null);
 
 
         //参照先を一番始めに

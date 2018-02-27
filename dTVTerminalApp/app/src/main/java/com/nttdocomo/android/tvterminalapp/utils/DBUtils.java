@@ -201,21 +201,6 @@ public class DBUtils {
     /**
      * 引数指定されたテーブルにレコードが存在するかを返す.
      *
-     * @param context   コンテキストファイル
-     * @param tableName テーブル名
-     * @return データ存在チェック結果
-     */
-    public static synchronized long isCachingCount(final Context context, final String tableName) {
-        DBHelper dBHelper = new DBHelper(context);
-        SQLiteDatabase database = dBHelper.getWritableDatabase();
-        long recordCount = DatabaseUtils.queryNumEntries(database, tableName);
-        database.close();
-        return recordCount;
-    }
-
-    /**
-     * 引数指定されたテーブルにレコードが存在するかを返す.
-     *
      * @param database  データベース
      * @param tableName テーブル名
      * @return データ存在チェック結果

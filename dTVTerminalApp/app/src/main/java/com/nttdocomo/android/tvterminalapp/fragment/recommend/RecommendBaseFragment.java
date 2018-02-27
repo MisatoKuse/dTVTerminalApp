@@ -113,7 +113,6 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
                 mRecommendListBaseAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_VIDEO);
             }
             mRecommendListBaseAdapter.notifyDataSetChanged();
-//            mRecommendListBaseAdapter.setSelectedTab(tabPosition);
         }
     }
 

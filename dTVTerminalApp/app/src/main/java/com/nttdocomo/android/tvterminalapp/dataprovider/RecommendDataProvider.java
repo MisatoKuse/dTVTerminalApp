@@ -106,6 +106,10 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * Dアニメデータキャッシュ取得用.
      */
     private static final int SELECT_RECOMMEND_D_ANIMATION_LIST = 5;
+    /**
+     * レコメンドコンテンツ最大件数（システム制約）.
+     */
+    public static final int MAX_SHOW_LIST_SIZE = 50;
 
     /**
      * RecommendWebClient.
@@ -305,12 +309,6 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
 
     /**
      * コンストラクタ.
-     */
-    RecommendDataProvider() {
-    }
-
-    /**
-     * コンストラクタ.
      *
      * @param mContext コンテキスト
      */
@@ -331,52 +329,18 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     }
 
     /**
-     * キャッシュからデータを取得.
-     *
-     * @param cacheDateKey  日付キー
-     * @param requestPageNo タブNo
-     * @param startIndex    取得開始位置
-     * @param maxResult     最大取得件数
-     * @return レコメンドデータ
-     */
-    private List<ContentsData> getRecommendListDataCache(
-            final String cacheDateKey, final int requestPageNo, final int startIndex, final int maxResult) {
-
-        List<ContentsData> resultList = new ArrayList<>();
-
-        //データ存在チェック
-        if (!DBUtils.isCachingRecord(mContext, DBUtils.getRecommendTableName(requestPageNo))) {
-            return resultList;
-        }
-
-        DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(cacheDateKey);
-
-        //Vodクリップ一覧のDB保存履歴と、有効期間を確認
-        if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
-            //データをDBから取得する
-            RecommendListDataManager recommendDataManager = new RecommendListDataManager(mContext);
-            resultList = recommendDataManager.selectRecommendList(requestPageNo, startIndex, maxResult);
-        }
-        return resultList;
-    }
-
-    /**
      * おすすめテレビ取得.
      *
      * @param startIndex 取得開始位置
-     * @param maxResult  最大取得数
-     * @param requestPageNo リクエストを送るタブの番号
      */
-    void getTvRecommend(final int startIndex, final int maxResult, final int requestPageNo) {
-        long cachingCount = DBUtils.isCachingCount(mContext, DBUtils.getRecommendTableName(requestPageNo));
-        if (cachingCount < maxResult && DateUtils.getLastDate(mContext, DateUtils.RECOMMEND_CH_LAST_INSERT)
+    void getTvRecommend(final int startIndex) {
+        if (DateUtils.getLastDate(mContext, DateUtils.RECOMMEND_CH_LAST_INSERT)
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
                 // RequestDataのインスタンス生成
                 RecommendRequestData requestData = new RecommendRequestData();
                 requestData.startIndex = String.valueOf(startIndex);
-                requestData.maxResult = String.valueOf(maxResult);
+                requestData.maxResult = String.valueOf(MAX_SHOW_LIST_SIZE);
                 requestData.serviceCategoryId = getTerebiRequestSCIdStr();
                 // サーバへリクエストを送信
                 mRecommendWebClient = new RecommendWebClient(this, mContext);
@@ -387,10 +351,11 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         } else {
             //DBキャッシュ取得
             mStartIndex = startIndex;
-            mMaxResult = maxResult;
             Handler handler = new Handler(Looper.getMainLooper());
             DbThread t = new DbThread(handler, this, SELECT_RECOMMEND_CHANNEL_LIST);
             t.start();
+            //キャッシュ取得時はおすすめビデオ取得が呼び出されないため、ここで呼び出す
+            getVodRecommend(SearchConstants.RecommendList.FIRST_POSITION);
         }
     }
 
@@ -398,18 +363,15 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * おすすめビデオ取得.
      *
      * @param startIndex 取得開始位置
-     * @param maxResult  最大取得数
-     * @param requestPageNo リクエストを送るタブの番号
      */
-    public void getVodRecommend(final int startIndex, final int maxResult, final int requestPageNo) {
-        long cachingCount = DBUtils.isCachingCount(mContext, DBUtils.getRecommendTableName(requestPageNo));
-        if (cachingCount < maxResult && DateUtils.getLastDate(mContext, DateUtils.RECOMMEND_VD_LAST_INSERT)
+    void getVodRecommend(final int startIndex) {
+        if (DateUtils.getLastDate(mContext, DateUtils.RECOMMEND_VD_LAST_INSERT)
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
                 // RequestDataのインスタンス生成
                 RecommendRequestData requestData = new RecommendRequestData();
                 requestData.startIndex = String.valueOf(startIndex);
-                requestData.maxResult = String.valueOf(maxResult);
+                requestData.maxResult = String.valueOf(MAX_SHOW_LIST_SIZE);
                 requestData.serviceCategoryId = getVideoRequestSCIdStr();
                 // サーバへリクエストを送信
                 mRecommendWebClient = new RecommendWebClient(this, mContext);
@@ -420,7 +382,6 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         } else {
             //DBキャッシュ取得
             mStartIndex = startIndex;
-            mMaxResult = maxResult;
             Handler handler = new Handler(Looper.getMainLooper());
             DbThread t = new DbThread(handler, this, SELECT_RECOMMEND_VOD_LIST);
             t.start();
@@ -431,18 +392,15 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * おすすめDTVチャンネル取得.
      *
      * @param startIndex 取得開始位置
-     * @param maxResult  最大取得数
-     * @param requestPageNo リクエストを送るタブの番号
      */
-    private void getDtvChRecommend(final int startIndex, final int maxResult, final int requestPageNo) {
-        long cachingCount = DBUtils.isCachingCount(mContext, DBUtils.getRecommendTableName(requestPageNo));
-        if (cachingCount < maxResult && DateUtils.getLastDate(mContext, DateUtils.RECOMMEND_DCHANNEL_LAST_INSERT)
+    private void getDtvChRecommend(final int startIndex) {
+        if (DateUtils.getLastDate(mContext, DateUtils.RECOMMEND_DCHANNEL_LAST_INSERT)
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
                 // RequestDataのインスタンス生成
                 RecommendRequestData requestData = new RecommendRequestData();
                 requestData.startIndex = String.valueOf(startIndex);
-                requestData.maxResult = String.valueOf(maxResult);
+                requestData.maxResult = String.valueOf(MAX_SHOW_LIST_SIZE);
                 requestData.serviceCategoryId = getDCHRequestSCIdStr();
                 // サーバへリクエストを送信
                 mRecommendWebClient = new RecommendWebClient(this, mContext);
@@ -453,7 +411,6 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         } else {
             //DBキャッシュ取得
             mStartIndex = startIndex;
-            mMaxResult = maxResult;
             Handler handler = new Handler(Looper.getMainLooper());
             DbThread t = new DbThread(handler, this, SELECT_RECOMMEND_DTV_CHANNEL_LIST);
             t.start();
@@ -464,18 +421,15 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * おすすめDTV取得.
      *
      * @param startIndex 取得開始位置
-     * @param maxResult  最大取得数
-     * @param requestPageNo リクエストを送るタブの番号
      */
-    private void getDtvRecommend(final int startIndex, final int maxResult, final int requestPageNo) {
-        long cachingCount = DBUtils.isCachingCount(mContext, DBUtils.getRecommendTableName(requestPageNo));
-        if (cachingCount < maxResult && DateUtils.getLastDate(mContext, DateUtils.RECOMMEND_DTV_LAST_INSERT)
+    private void getDtvRecommend(final int startIndex) {
+        if (DateUtils.getLastDate(mContext, DateUtils.RECOMMEND_DTV_LAST_INSERT)
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
                 // RequestDataのインスタンス生成
                 RecommendRequestData requestData = new RecommendRequestData();
                 requestData.startIndex = String.valueOf(startIndex);
-                requestData.maxResult = String.valueOf(maxResult);
+                requestData.maxResult = String.valueOf(MAX_SHOW_LIST_SIZE);
                 requestData.serviceCategoryId = getDTVRequestSCIdStr();
                 // サーバへリクエストを送信
                 mRecommendWebClient = new RecommendWebClient(this, mContext);
@@ -486,7 +440,6 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         } else {
             //DBキャッシュ取得
             mStartIndex = startIndex;
-            mMaxResult = maxResult;
             Handler handler = new Handler(Looper.getMainLooper());
             DbThread t = new DbThread(handler, this, SELECT_RECOMMEND_DTV_LIST);
             t.start();
@@ -497,18 +450,15 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * おすすめDアニメ取得.
      *
      * @param startIndex 取得開始位置
-     * @param maxResult  最大取得数
-     * @param requestPageNo リクエストを送るタブの番号
      */
-    private void getDAnimationRecommend(final int startIndex, final int maxResult, final int requestPageNo) {
-        long cachingCount = DBUtils.isCachingCount(mContext, DBUtils.getRecommendTableName(requestPageNo));
-        if (cachingCount < maxResult && DateUtils.getLastDate(mContext, DateUtils.RECOMMEND_DANIME_LAST_INSERT)
+    private void getDAnimationRecommend(final int startIndex) {
+        if (DateUtils.getLastDate(mContext, DateUtils.RECOMMEND_DANIME_LAST_INSERT)
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
                 // RequestDataのインスタンス生成
                 RecommendRequestData requestData = new RecommendRequestData();
                 requestData.startIndex = String.valueOf(startIndex);
-                requestData.maxResult = String.valueOf(maxResult);
+                requestData.maxResult = String.valueOf(MAX_SHOW_LIST_SIZE);
                 requestData.serviceCategoryId = getDAnimeRequestSCIdStr();
                 // サーバへリクエストを送信
                 mRecommendWebClient = new RecommendWebClient(this, mContext);
@@ -519,7 +469,6 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         } else {
             //DBキャッシュ取得
             mStartIndex = startIndex;
-            mMaxResult = maxResult;
             Handler handler = new Handler(Looper.getMainLooper());
             DbThread t = new DbThread(handler, this, SELECT_RECOMMEND_D_ANIMATION_LIST);
             t.start();
@@ -533,33 +482,30 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * @param startIndex     読み込み初期位置
      * @param maxResult      読み込み最大件数
      * @param hasReturnValue DBにデータがある場合それをすぐ使用するならばtrue。データは常にコールバック経由ならばfalse
-     * @return hasReturnValueがtrueでDBにデータがあるならばそれを返す。それ以外はヌルとなる
      */
-    public List<ContentsData> startGetRecommendData(final int requestPageNo, final int startIndex,
+    public void startGetRecommendData(final int requestPageNo, final int startIndex,
                                                     final int maxResult, final boolean hasReturnValue) {
         DTVTLogger.debug("requestPageNo:" + requestPageNo);
 
         switch (requestPageNo) {
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV: //テレビ
-                getTvRecommend(startIndex, maxResult, requestPageNo);
+                getTvRecommend(startIndex);
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO: //ビデオ
-                getVodRecommend(startIndex, maxResult, requestPageNo);
+                getVodRecommend(startIndex);
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL: //dTVチャンネル
-                getDtvChRecommend(startIndex, maxResult, requestPageNo);
+                getDtvChRecommend(startIndex);
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV: //dTV
-                getDtvRecommend(startIndex, maxResult, requestPageNo);
+                getDtvRecommend(startIndex);
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME: //dアニメ
-                getDAnimationRecommend(startIndex, maxResult, requestPageNo);
+                getDAnimationRecommend(startIndex);
                 break;
             default:
                 break;
         }
-        //戻り値はコールバック任せとなるので、こちらはヌルを返す
-        return null;
     }
 
     /**
@@ -853,7 +799,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     @Override
     public List<Map<String, String>> dbOperation(final int operationId) {
         RecommendListDataManager recommendDataManager;
-        List<ContentsData> resultList = new ArrayList<>();
+        List<ContentsData> resultList;
         switch (operationId) {
             case HOME_RECOMMEND_DATA_INSERT:
                 //TODO 検討中
@@ -865,35 +811,35 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 recommendDataManager = new RecommendListDataManager(mContext);
                 resultList = recommendDataManager.selectRecommendList(
                         SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV,
-                        mStartIndex, mMaxResult);
+                        mStartIndex);
                 mApiDataProviderCallback.recommendChannelCallback(resultList);
                 break;
             case SELECT_RECOMMEND_VOD_LIST:
                 recommendDataManager = new RecommendListDataManager(mContext);
                 resultList = recommendDataManager.selectRecommendList(
                         SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO,
-                        mStartIndex, mMaxResult);
+                        mStartIndex);
                 mApiDataProviderCallback.recommendVideoCallback(resultList);
                 break;
             case SELECT_RECOMMEND_DTV_CHANNEL_LIST:
                 recommendDataManager = new RecommendListDataManager(mContext);
                 resultList = recommendDataManager.selectRecommendList(
                         SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL,
-                        mStartIndex, mMaxResult);
+                        mStartIndex);
                 mApiDataProviderCallback.recommendDChannelCallback(resultList);
                 break;
             case SELECT_RECOMMEND_DTV_LIST:
                 recommendDataManager = new RecommendListDataManager(mContext);
                 resultList = recommendDataManager.selectRecommendList(
                         SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV,
-                        mStartIndex, mMaxResult);
+                        mStartIndex);
                 mApiDataProviderCallback.recommendDTVCallback(resultList);
                 break;
             case SELECT_RECOMMEND_D_ANIMATION_LIST:
                 recommendDataManager = new RecommendListDataManager(mContext);
                 resultList = recommendDataManager.selectRecommendList(
                         SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME,
-                        mStartIndex, mMaxResult);
+                        mStartIndex);
                 mApiDataProviderCallback.recommendDAnimeCallback(resultList);
                 break;
             default:

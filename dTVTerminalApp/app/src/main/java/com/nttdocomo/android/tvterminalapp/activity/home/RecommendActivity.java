@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 
 public class RecommendActivity extends BaseActivity implements
-        RecommendBaseFragmentScrollListener,
         RecommendDataProvider.RecommendApiDataProviderCallback,
         HikariTvChDataProvider.ApiDataProviderCallback,
         TabItemLayout.OnClickTabTextListener {
@@ -71,8 +70,6 @@ public class RecommendActivity extends BaseActivity implements
 
     private final static int TEXT_SIZE = 15;
 
-    // レコメンドコンテンツ最大件数（システム制約）
-    private final int MAX_SHOW_LIST_SIZE = 100;
     // 表示中レコメンドコンテンツ件数(staticにしないと前回の値が維持され、データの更新に失敗する場合がある)
     private static int sShowListSize = 0;
     // 表示中の最後の行を保持(staticにしないと前回の値が維持され、データの更新に失敗する場合がある)
@@ -278,7 +275,7 @@ public class RecommendActivity extends BaseActivity implements
     private RecommendBaseFragment getCurrentRecommendBaseFragment() {
         if (sRecommendViewPager != null) {
             int currentPageNo = sRecommendViewPager.getCurrentItem();
-            return RecommendFragmentFactory.createFragment(currentPageNo, this);
+            return RecommendFragmentFactory.createFragment(currentPageNo);
         }
         return null;
     }
@@ -336,7 +333,7 @@ public class RecommendActivity extends BaseActivity implements
         if (null != sRecommendViewPager) {
             int sum = RecommendFragmentFactory.getFragmentCount();
             for (int i = 0; i < sum; ++i) {
-                RecommendBaseFragment baseFragment = RecommendFragmentFactory.createFragment(i, this);
+                RecommendBaseFragment baseFragment = RecommendFragmentFactory.createFragment(i);
                 baseFragment.clear();
             }
         }
@@ -419,7 +416,7 @@ public class RecommendActivity extends BaseActivity implements
         @Override
         public Fragment getItem(final int position) {
             synchronized (this) {
-                return RecommendFragmentFactory.createFragment(position, mRecommendActivity);
+                return RecommendFragmentFactory.createFragment(position);
             }
         }
 
@@ -434,32 +431,6 @@ public class RecommendActivity extends BaseActivity implements
         }
     }
 
-    @Override
-    public void onScroll(final RecommendBaseFragment fragment, final AbsListView absListView,
-                         final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
-        sSearchLastItem = firstVisibleItem + visibleItemCount - 1;
-
-        int pageMax = (sCntPaging + 1) * SearchConstants.RecommendList.requestMaxCount_Recommend;
-        DTVTLogger.debug("onScroll.first:" + firstVisibleItem
-                + " .visible:" + visibleItemCount + " .total:" + totalItemCount
-                + " dataSize:" + fragment.mData.size());
-        if (MAX_SHOW_LIST_SIZE > fragment.mData.size() && // システム制約最大値 100件
-                fragment.mData.size() != 0 && // 取得結果0件以外
-                firstVisibleItem + visibleItemCount >= pageMax) { // 表示中の最下まで行ったかの判定
-            sCntPaging += 1;
-            setPagingStatus(true);
-            fragment.displayLoadMore(true);
-
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    requestRecommendData();
-                }
-            }, LOAD_PAGE_DELAY_TIME);
-        }
-    }
-
     /**
      * おすすめテレビ用コールバック.
      *
@@ -467,12 +438,18 @@ public class RecommendActivity extends BaseActivity implements
      */
     @Override
     public void recommendChannelCallback(final List<ContentsData> recommendContentInfoList) {
-        if (sRecommendViewPager != null && recommendContentInfoList != null && recommendContentInfoList.size() > 0) {
-            DTVTLogger.debug("Chan Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + sRecommendViewPager.getCurrentItem());
-            if (sRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV) {
-                recommendDataProviderSuccess(recommendContentInfoList);
+        //DbThreadからのコールバックの場合UIスレッド扱いにならないときがある
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                    if (sRecommendViewPager != null && recommendContentInfoList != null && recommendContentInfoList.size() > 0) {
+                        DTVTLogger.debug("Chan Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + sRecommendViewPager.getCurrentItem());
+                        if (sRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV) {
+                            recommendDataProviderSuccess(recommendContentInfoList);
+                        }
+                }
             }
-        }
+        });
     }
 
     /**
@@ -482,12 +459,18 @@ public class RecommendActivity extends BaseActivity implements
      */
     @Override
     public void recommendVideoCallback(final List<ContentsData> recommendContentInfoList) {
-        if (sRecommendViewPager != null && recommendContentInfoList != null && recommendContentInfoList.size() > 0) {
-            DTVTLogger.debug("vid Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + sRecommendViewPager.getCurrentItem());
-            if (sRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO) {
-                recommendDataProviderSuccess(recommendContentInfoList);
+        //DbThreadからのコールバックの場合UIスレッド扱いにならないときがある
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (sRecommendViewPager != null && recommendContentInfoList != null && recommendContentInfoList.size() > 0) {
+                    DTVTLogger.debug("vid Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + sRecommendViewPager.getCurrentItem());
+                    if (sRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO) {
+                        recommendDataProviderSuccess(recommendContentInfoList);
+                    }
+                }
             }
-        }
+        });
     }
 
     /**
@@ -497,12 +480,18 @@ public class RecommendActivity extends BaseActivity implements
      */
     @Override
     public void recommendDTVCallback(final List<ContentsData> recommendContentInfoList) {
-        if (sRecommendViewPager != null && recommendContentInfoList != null && recommendContentInfoList.size() > 0) {
-            DTVTLogger.debug("dtv Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + sRecommendViewPager.getCurrentItem());
-            if (sRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV) {
-                recommendDataProviderSuccess(recommendContentInfoList);
+        //DbThreadからのコールバックの場合UIスレッド扱いにならないときがある
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (sRecommendViewPager != null && recommendContentInfoList != null && recommendContentInfoList.size() > 0) {
+                    DTVTLogger.debug("dtv Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + sRecommendViewPager.getCurrentItem());
+                    if (sRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV) {
+                        recommendDataProviderSuccess(recommendContentInfoList);
+                    }
+                }
             }
-        }
+        });
     }
 
     /**
@@ -512,12 +501,18 @@ public class RecommendActivity extends BaseActivity implements
      */
     @Override
     public void recommendDAnimeCallback(final List<ContentsData> recommendContentInfoList) {
-        if (sRecommendViewPager != null && recommendContentInfoList != null && recommendContentInfoList.size() > 0) {
-            DTVTLogger.debug("ani Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + sRecommendViewPager.getCurrentItem());
-            if (sRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME) {
-                recommendDataProviderSuccess(recommendContentInfoList);
+        //DbThreadからのコールバックの場合UIスレッド扱いにならないときがある
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (sRecommendViewPager != null && recommendContentInfoList != null && recommendContentInfoList.size() > 0) {
+                    DTVTLogger.debug("ani Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + sRecommendViewPager.getCurrentItem());
+                    if (sRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME) {
+                        recommendDataProviderSuccess(recommendContentInfoList);
+                    }
+                }
             }
-        }
+        });
     }
 
     /**
@@ -527,13 +522,19 @@ public class RecommendActivity extends BaseActivity implements
      */
     @Override
     public void recommendDChannelCallback(final List<ContentsData> recommendContentInfoList) {
-        if (sRecommendViewPager != null && recommendContentInfoList != null && recommendContentInfoList.size() > 0) {
-            DTVTLogger.debug("dCH Callback DataSize:"
-                    + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + sRecommendViewPager.getCurrentItem());
-            if (sRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL) {
-                recommendDataProviderSuccess(recommendContentInfoList);
+        //DbThreadからのコールバックの場合UIスレッド扱いにならないときがある
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (sRecommendViewPager != null && recommendContentInfoList != null && recommendContentInfoList.size() > 0) {
+                    DTVTLogger.debug("dCH Callback DataSize:"
+                            + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + sRecommendViewPager.getCurrentItem());
+                    if (sRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL) {
+                        recommendDataProviderSuccess(recommendContentInfoList);
+                    }
+                }
             }
-        }
+        });
     }
 
     /**

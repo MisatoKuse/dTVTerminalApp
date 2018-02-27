@@ -752,8 +752,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         mRecommendDataProvider = new RecommendDataProvider(
                 mContext.getApplicationContext(), this);
 
-        mRecommendDataProvider.getTvRecommend(SearchConstants.RecommendList.FIRST_POSITION,
-                SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT, SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV);
+        mRecommendDataProvider.getTvRecommend(SearchConstants.RecommendList.FIRST_POSITION);
         DTVTLogger.end();
     }
 
@@ -765,8 +764,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         DTVTLogger.start();
         RecommendDataProvider recommendDataProvider = new RecommendDataProvider(
                 mContext.getApplicationContext(), this);
-        recommendDataProvider.getVodRecommend(SearchConstants.RecommendList.FIRST_POSITION,
-                SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT, SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO);
+        recommendDataProvider.getVodRecommend(SearchConstants.RecommendList.FIRST_POSITION);
         DTVTLogger.end();
     }
 
@@ -1359,15 +1357,13 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             case SELECT_RECOMMEND_CHANNEL_LIST:
                 recommendDataManager = new RecommendListDataManager(mContext);
                 resultList = recommendDataManager.selectRecommendList(
-                        RecommendDataProvider.TV_NO, SearchConstants.RecommendList.FIRST_POSITION,
-                        SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT);
+                        RecommendDataProvider.TV_NO, SearchConstants.RecommendList.FIRST_POSITION);
                 mApiDataProviderCallback.recommendChannelCallback(resultList);;
                 break;
             case SELECT_RECOMMEND_VOD_LIST:
                 recommendDataManager = new RecommendListDataManager(mContext);
                 resultList = recommendDataManager.selectRecommendList(
-                        RecommendDataProvider.VIDEO_NO, SearchConstants.RecommendList.FIRST_POSITION,
-                        SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT);
+                        RecommendDataProvider.VIDEO_NO, SearchConstants.RecommendList.FIRST_POSITION);
                 mApiDataProviderCallback.recommendVideoCallback(resultList);
                 break;
             default:

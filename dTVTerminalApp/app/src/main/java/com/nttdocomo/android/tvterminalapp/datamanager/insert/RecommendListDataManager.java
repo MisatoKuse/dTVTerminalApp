@@ -89,10 +89,9 @@ public class RecommendListDataManager {
      * キャッシュからリストデータを表示件数分取得する.
      * @param tagPageNo タブNo
      * @param startIndex 取得開始位置
-     * @param maxResult 最大取得件数
      * @return recommendContentInfoList
      */
-    public List<ContentsData> selectRecommendList(final int tagPageNo, final int startIndex, final int maxResult) {
+    public List<ContentsData> selectRecommendList(final int tagPageNo, final int startIndex) {
 
         DBHelper deHelper = new DBHelper(mContext);
         DataBaseManager.initializeInstance(deHelper);
@@ -113,9 +112,8 @@ public class RecommendListDataManager {
                 RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_GROUPID,
                 RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID
         };
-        int maxResultData = startIndex + maxResult - 1;
         List<Map<String, String>> resultList
-                = redListDao.findById(columns, tagPageNo, String.valueOf(maxResultData));
+                = redListDao.findById(columns, tagPageNo);
         List<ContentsData> recommendContentInfoList = new ArrayList<>();
         if (resultList.size() == 0) {
             return recommendContentInfoList;
