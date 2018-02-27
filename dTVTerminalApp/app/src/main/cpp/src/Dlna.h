@@ -11,6 +11,7 @@
 #include "Common.h"
 #include "DlnaDevXmlParser.h"
 #include "DlnaRecVideoXmlParser.h"
+#include "DlnaXmlContainer.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -57,6 +58,7 @@ namespace dtvt {
         DlnaXmlParserBase* mTerChXmlParser;
         DlnaXmlParserBase* mHikariChXmlParser;
         du_uchar* mRecordedVideoXml;
+        DlnaXmlContainer mDlnaXmlContainer;
 
     public:
         /**
@@ -79,7 +81,7 @@ namespace dtvt {
         void stop();
 
         /**
-         * 機能：録画ビデオ一覧を発見
+         * 機能：録画ヴィデオ一覧を発見
          * @param controlUrl
          * @return true: 成功 false: 失敗
          */
@@ -165,11 +167,11 @@ namespace dtvt {
 
         bool initDevEnv();
 
-        bool sendSoap(std::string controlUrl, std::string objectId="0", const int startingIndex=0, const int requestCount=30, std::string browseFlag="BrowseDirectChildren");
+        bool sendSoap(std::string controlUrl, std::string objectId="0", const int startingIndex=0, const int requestCount=0, std::string browseFlag="BrowseDirectChildren", const int pageCount=30);
 
         void notify(int msg, std::string content);
         //void notifyDuChar(int msg, du_uchar* content);
-        void notifyObject(DLNA_MSG_ID msg, vector<StringVector> & vecContents);
+        void notifyObject(DLNA_MSG_ID msg, vector<VectorString> & vecContents);
 
         void getRecordedVideoXml(DlnaXmlParserBase* parser, dupnp_http_response *response);
 

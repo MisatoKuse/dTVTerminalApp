@@ -26,11 +26,11 @@ namespace dtvt {
          * 機能：Dlnaのxml parserライブラリを使って、コンテンツ一覧を解析して、値を戻す
          * @return
          */
-        void parse(void *fileStr, vector<StringVector>& out);
+        void parse(void *fileStr, vector<VectorString>& out);
 
-        void parseXmlNode(const xmlNodePtr & xmlRootNode, vector<StringVector>& out, StringVector& v1, std::string &containerId, std::string &isContainerId);
+        void parseXmlNode(const xmlNodePtr & xmlRootNode, vector<VectorString>& out, VectorString& v1, std::string &containerId, std::string &isContainerId);
 
-        //void parseXml(void *fileStr, vector<StringVector>& out, std::string &containerId, std::string &isContainerId);
+        //void parseXml(void *fileStr, vector<VectorString>& out, std::string &containerId, std::string &isContainerId);
 
         virtual ~DlnaRecVideoXmlParser();
     };

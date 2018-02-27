@@ -15,7 +15,7 @@ namespace dtvt {
         return mDlnaMsgIdD;
     }
 
-    void DlnaXmlParserBase::parse(void *response, vector<StringVector>& out, std::string &containerId, std::string &isContainerId){
+    void DlnaXmlParserBase::parse(void *response, vector<VectorString>& out, std::string &containerId, std::string &isContainerId){
         //XMLパーサー
         IfNullReturn(response);
         dupnp_http_response *newRes = ((dupnp_http_response *) response);
@@ -57,7 +57,7 @@ namespace dtvt {
         xmlFreeDoc(didl_doc);
     }
 
-    void DlnaXmlParserBase::setXmlItemValues(StringVector& out, const int key, XmlItemMap& itemMap){
+    void DlnaXmlParserBase::setXmlItemValues(VectorString& out, const int key, XmlItemMap& itemMap){
         XmlItemMap::iterator i = itemMap.find(key);
         if(i==itemMap.end()){
             out.push_back("");

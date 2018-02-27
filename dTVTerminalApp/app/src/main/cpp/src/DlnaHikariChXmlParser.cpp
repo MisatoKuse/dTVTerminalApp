@@ -11,12 +11,12 @@ namespace dtvt {
 
     }
 
-    void DlnaHikariChXmlParser::parse(void *fileStr, vector<StringVector>& out){
+    void DlnaHikariChXmlParser::parse(void *fileStr, vector<VectorString>& out){
 
     }
 
     static bool isVideo = false;
-    void DlnaHikariChXmlParser::parseXmlNode(const xmlNodePtr & xmlRootNode, vector<StringVector>& out, StringVector& v1, std::string &containerId, std::string &isContainerId)
+    void DlnaHikariChXmlParser::parseXmlNode(const xmlNodePtr & xmlRootNode, vector<VectorString>& out, VectorString& v1, std::string &containerId, std::string &isContainerId)
     {
         xmlNodePtr xmlChildNode = xmlRootNode->xmlChildrenNode;
         while(NULL != xmlChildNode)

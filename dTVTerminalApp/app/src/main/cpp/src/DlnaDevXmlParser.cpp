@@ -57,7 +57,7 @@ namespace dtvt {
      * @param info
      * @param out
      */
-    void DlnaDevXmlParser::parse(void *info, vector<StringVector>& out){
+    void DlnaDevXmlParser::parse(void *info, vector<VectorString>& out){
         du_uchar ipaddress[DU_IP_STR_SIZE] = {'\0'};    // IP アドレス
         //to do: Device information の device->user_data を解析
         IfNullReturn(info);

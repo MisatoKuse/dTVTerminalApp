@@ -31,7 +31,8 @@ namespace dtvt {
         soap soap; // SOAP information.
     } dmp;
 
-    typedef std::vector<std::string> StringVector;
+    typedef std::vector<std::string> VectorString;
+    typedef std::vector<VectorString> VVectorString;
     typedef std::map<int, std::string> XmlItemMap;
     typedef std::vector<XmlItemMap> MapVector;
 

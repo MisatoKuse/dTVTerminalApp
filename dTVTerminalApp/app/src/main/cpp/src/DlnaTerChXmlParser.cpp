@@ -10,12 +10,12 @@ namespace dtvt {
     DlnaTerChXmlParser::DlnaTerChXmlParser(): DlnaXmlParserBase(DLNA_MSG_ID_TER_CHANNEL_LIST){
 
     }
-    void DlnaTerChXmlParser::parse(void *fileStr, vector<StringVector>& out){}
+    void DlnaTerChXmlParser::parse(void *fileStr, vector<VectorString>& out){}
 
     static bool isVideo = false;
 
 #if defined(DLNA_KARI_DMS_UNIVERSAL)
-    void DlnaTerChXmlParser::parseXmlNode(const xmlNodePtr & xmlRootNode, vector<StringVector>& out, StringVector& v1, std::string &containerId, std::string &isContainerId)
+    void DlnaTerChXmlParser::parseXmlNode(const xmlNodePtr & xmlRootNode, vector<VectorString>& out, VectorString& v1, std::string &containerId, std::string &isContainerId)
         {
             xmlNodePtr xmlChildNode = xmlRootNode->xmlChildrenNode;
             while(NULL != xmlChildNode)
@@ -124,7 +124,7 @@ namespace dtvt {
             return ;
         }
 #elif defined(DLNA_KARI_DMS_NAS)
-//    void DlnaTerChXmlParser::parseXmlNode(const xmlNodePtr & xmlRootNode, vector<StringVector>& out, StringVector& v1, std::string &containerId, std::string &isContainerId)
+//    void DlnaTerChXmlParser::parseXmlNode(const xmlNodePtr & xmlRootNode, vector<VectorString>& out, VectorString& v1, std::string &containerId, std::string &isContainerId)
 //        {
 //            xmlNodePtr xmlChildNode = xmlRootNode->xmlChildrenNode;
 //            XmlItemMap itemXmlItemMap;
@@ -244,7 +244,7 @@ namespace dtvt {
 //                }   //end of item
 //
 //                if(isItVideo && 0<itemXmlItemMap.size()){
-//                    StringVector tmpStringVector;
+//                    VectorString tmpStringVector;
 //                    setXmlItemValues(tmpStringVector, Xml_Item_Id, itemXmlItemMap);
 //                    setXmlItemValues(tmpStringVector, Xml_Item_Title, itemXmlItemMap);
 //                    setXmlItemValues(tmpStringVector, Xml_Item_Size, itemXmlItemMap);
@@ -264,7 +264,7 @@ namespace dtvt {
 //            }
 //            return ;
 //        }
-            void DlnaTerChXmlParser::parseXmlNode(const xmlNodePtr & xmlRootNode, vector<StringVector>& out, StringVector& v1, std::string &containerId, std::string &isContainerId)
+            void DlnaTerChXmlParser::parseXmlNode(const xmlNodePtr & xmlRootNode, vector<VectorString>& out, VectorString& v1, std::string &containerId, std::string &isContainerId)
             {
                 xmlNodePtr xmlChildNode = xmlRootNode->xmlChildrenNode;
                 XmlItemMap itemXmlItemMap;
@@ -392,7 +392,7 @@ namespace dtvt {
                     }
 
                     if(isItVideo && 0<itemXmlItemMap.size()){
-                        StringVector tmpStringVector;
+                        VectorString tmpStringVector;
 
                         if(!hasXmlItemMapKey(itemXmlItemMap, Xml_Item_ResUrl) ||
                            !hasXmlItemMapKey(itemXmlItemMap, Xml_Item_VideoType) ||
@@ -424,7 +424,7 @@ namespace dtvt {
             }
 
 #elif defined(DLNA_KARI_DMS_RELEASE)
-    void DlnaTerChXmlParser::parseXmlNode(const xmlNodePtr & xmlRootNode, vector<StringVector>& out, StringVector& v1, std::string &containerId, std::string &isContainerId)
+    void DlnaTerChXmlParser::parseXmlNode(const xmlNodePtr & xmlRootNode, vector<VectorString>& out, VectorString& v1, std::string &containerId, std::string &isContainerId)
     {
         xmlNodePtr xmlChildNode = xmlRootNode->xmlChildrenNode;
         XmlItemMap itemXmlItemMap;
@@ -552,7 +552,7 @@ namespace dtvt {
             }
 
             if(isItVideo && 0<itemXmlItemMap.size()){
-                StringVector tmpStringVector;
+                VectorString tmpStringVector;
 
                 if(!hasXmlItemMapKey(itemXmlItemMap, Xml_Item_ResUrl) ||
                         !hasXmlItemMapKey(itemXmlItemMap, Xml_Item_VideoType) ||

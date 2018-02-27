@@ -43,6 +43,7 @@ namespace dtvt {
 
     void Dlna::uninit() {
         soapUninit();
+        mDlnaXmlContainer.cleanAll();
 
         if (NULL != mDMP.upnp._impl) {
             dupnp_free(&mDMP.upnp);
@@ -409,7 +410,7 @@ namespace dtvt {
         IfNullReturn(thiz);
         IfNullReturn(thiz->mRecursionXmlParser);
 
-        std::vector<std::vector<std::string> > vv;
+        VVectorString vv;
         dmp *d = &thiz->mDMP;
 
         du_mutex_lock(&d->soap.mutex);
@@ -522,8 +523,8 @@ namespace dtvt {
         du_str_array_free(&param_array);
     }
 
-    //bool Dlna::sendSoap(std::string controlUrl, std::string objectId="0", const int startingIndex=0, const int requestCount=0, std::string browseFlag="BrowseDirectChildren"){
-    bool Dlna::sendSoap(std::string controlUrl, std::string objectId, const int startingIndex, const int requestCount, std::string browseFlag){
+    //bool Dlna::sendSoap(std::string controlUrl, std::string objectId="0", const int startingIndex=0, const int requestCount=0, std::string browseFlag="BrowseDirectChildren", const int pageCount=30){
+    bool Dlna::sendSoap(std::string controlUrl, std::string objectId, const int startingIndex, const int requestCount, std::string browseFlag, const int pageCount){
         if (0 == controlUrl.length() || 0==browseFlag.length() || 0==objectId.length()) {
             return false;
         }
@@ -617,8 +618,8 @@ namespace dtvt {
         return true;
     }
 
-    bool addDmsInfo(JNIEnv *env, jclass cl, jmethodID cons, StringVector& datas, jobject objOut) {
-        StringVector::iterator i=datas.begin();
+    bool addDmsInfo(JNIEnv *env, jclass cl, jmethodID cons, VectorString& datas, jobject objOut) {
+        VectorString::iterator i=datas.begin();
 
         //mUdn
         bool ret= setJavaObjectField(env, cl, DmsItem_Field_mUdn,Dlna_Java_String_Path,  *i++, objOut);
@@ -653,8 +654,8 @@ namespace dtvt {
         return true;
     }
 
-    bool addRecVideoItem(JNIEnv *env, jclass cl, jmethodID cons, StringVector& datas, jobject objOut, jobject listObj, jmethodID listAddId) {
-        StringVector::iterator i=datas.begin();
+    bool addRecVideoItem(JNIEnv *env, jclass cl, jmethodID cons, VectorString& datas, jobject objOut, jobject listObj, jmethodID listAddId) {
+        VectorString::iterator i=datas.begin();
 
         //mItemId
         bool ret= setJavaObjectField(env, cl, RecVideoItem_Field_mItemId, Dlna_Java_String_Path,  *i++, objOut);
@@ -711,8 +712,8 @@ namespace dtvt {
         return ret;
     }
 
-    bool addBsChListItem(JNIEnv *env, jclass cl, jmethodID cons, StringVector& datas, jobject objOut, jobject listObj, jmethodID listAddId) {
-        StringVector::iterator i=datas.begin();
+    bool addBsChListItem(JNIEnv *env, jclass cl, jmethodID cons, VectorString& datas, jobject objOut, jobject listObj, jmethodID listAddId) {
+        VectorString::iterator i=datas.begin();
 
         //DlnaBsChListItem_Field_mChannelNo
         bool ret= setJavaObjectField(env, cl, DlnaBsChListItem_Field_mChannelNo, Dlna_Java_String_Path,  *i++, objOut);
@@ -779,8 +780,8 @@ namespace dtvt {
         return ret;
     }
 
-    bool addTerChListItem(JNIEnv *env, jclass cl, jmethodID cons, StringVector& datas, jobject objOut, jobject listObj, jmethodID listAddId) {
-        StringVector::iterator i=datas.begin();
+    bool addTerChListItem(JNIEnv *env, jclass cl, jmethodID cons, VectorString& datas, jobject objOut, jobject listObj, jmethodID listAddId) {
+        VectorString::iterator i=datas.begin();
 
         //DlnaTerChListItem_Field_mChannelNo
         bool ret= setJavaObjectField(env, cl, DlnaTerChListItem_Field_mChannelNo, Dlna_Java_String_Path,  *i++, objOut);
@@ -847,8 +848,8 @@ namespace dtvt {
         return ret;
     }
 
-    bool addHikariChListItem(JNIEnv *env, jclass cl, jmethodID cons, StringVector& datas, jobject objOut, jobject listObj, jmethodID listAddId) {
-        StringVector::iterator i=datas.begin();
+    bool addHikariChListItem(JNIEnv *env, jclass cl, jmethodID cons, VectorString& datas, jobject objOut, jobject listObj, jmethodID listAddId) {
+        VectorString::iterator i=datas.begin();
 
         //DlnaHikariChListItem_Field_mChannelNo
         bool ret= setJavaObjectField(env, cl, DlnaHikariChListItem_Field_mChannelNo, Dlna_Java_String_Path,  *i++, objOut);
@@ -917,11 +918,11 @@ namespace dtvt {
     }
 
     bool addListItems(DLNA_MSG_ID msg, JNIEnv *env, jclass cl, jmethodID cons,
-                      vector<StringVector> &datas, jobject listObj, jmethodID listAddId,
+                      vector<VectorString> &datas, jobject listObj, jmethodID listAddId,
                       jclass recVideoItemClass, jmethodID recVideoItemConstructor) {
         bool ret=true;
 
-        for(vector<StringVector>::iterator i=datas.begin(); i!=datas.end(); ++i){
+        for(vector<VectorString>::iterator i=datas.begin(); i!=datas.end(); ++i){
             jobject objOut= env->NewObject(recVideoItemClass , recVideoItemConstructor);
             if(NULL==objOut){
                 return false;
@@ -970,10 +971,10 @@ namespace dtvt {
     }
 
 
-    void Dlna::notifyObject(DLNA_MSG_ID msg, vector<StringVector> & vecContents) {
+    void Dlna::notifyObject(DLNA_MSG_ID msg, vector<VectorString> & vecContents) {
         JNIEnv *env = NULL;
         jobject itemObj = NULL;
-        StringVector datas;
+        VectorString datas;
         jclass listActivityClazz = NULL;
         jmethodID method = NULL;
         jmethodID itemCostruct = NULL;
@@ -1165,6 +1166,9 @@ namespace dtvt {
         }
         mRecursionXmlParser=mDlnaRecVideoXmlParser;
 
+        mDlnaXmlContainer.cleanAll();
+        mDlnaXmlContainer.setMsgId(DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST);
+
         #if defined(DLNA_KARI_DMS_UNIVERSAL)
             return sendSoap(controlUrl, "0");
         #elif defined(DLNA_KARI_DMS_NAS)
@@ -1228,7 +1232,6 @@ namespace dtvt {
         #endif
     }
 
-    //実装中
     du_uchar* Dlna::dtcpDownloadParam(std::string itemId){
         bool retTmp=true;
 

@@ -257,6 +257,7 @@ add_library(
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/DlnaDownload.cpp
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/DlnaJniCastDl.cpp
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/android_log_handler.c
+     ${CMAKE_SOURCE_DIR}/src/main/cpp/src//DlnaXmlContainer.cpp
      )
 
 # 目標ライブラリをリンク
