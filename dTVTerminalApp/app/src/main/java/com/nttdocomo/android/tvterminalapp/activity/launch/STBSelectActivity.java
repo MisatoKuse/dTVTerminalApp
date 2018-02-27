@@ -101,11 +101,11 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     /**
      * チェックボックス.
      */
-    private CheckBox mCheckBoxSTBSelectActivity = null;
+    private CheckBox mCheckBox = null;
     /**
      * ペアリングしないでアプリを利用するTextView.
      */
-    private TextView mUseWithoutPairingSTBParingInvitationTextView = null;
+    private TextView mParingTextView = null;
     /**
      * ペアリングされたデバイス名を表示するためのTextView.
      */
@@ -241,10 +241,10 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         mDeviceListView.setAdapter(mDeviceAdapter);
         mDeviceListView.setOnItemClickListener(this);
         mLoadMoreView = findViewById(R.id.stb_device_setting_progressbar);
-        mUseWithoutPairingSTBParingInvitationTextView = findViewById(R.id.use_without_paring_setting);
+        mParingTextView = findViewById(R.id.use_without_paring_setting);
         mPairingImage = findViewById(R.id.paring_search_image_setting);
-        mUseWithoutPairingSTBParingInvitationTextView.setVisibility(View.VISIBLE);
-        mUseWithoutPairingSTBParingInvitationTextView.setOnClickListener(this);
+        mParingTextView.setVisibility(View.VISIBLE);
+        mParingTextView.setOnClickListener(this);
 
         mTextDivider1 = findViewById(R.id.paring_device_select_setting_divider1);
         mTextDivider2 = findViewById(R.id.paring_device_select_setting_divider2);
@@ -264,29 +264,30 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         mDeviceListView.setOnItemClickListener(this);
         mDeviceListView.setVisibility(View.VISIBLE);
         mLoadMoreView = findViewById(R.id.stb_device_progress);
-        mCheckBoxSTBSelectActivity = findViewById(R.id.checkBoxSTBSelectActivity);
+        mCheckBox = findViewById(R.id.checkBoxSTBSelectActivity);
         mCheckboxText = findViewById(R.id.launch_select_check_box_text);
-        mCheckBoxSTBSelectActivity.setVisibility(View.VISIBLE);
+        mCheckBox.setVisibility(View.VISIBLE);
         mCheckboxText.setVisibility(View.VISIBLE);
-        mCheckBoxSTBSelectActivity.setOnClickListener(this);
+        mCheckBox.setOnClickListener(this);
         mCheckboxText.setOnClickListener(this);
-        mCheckBoxSTBSelectActivity.setChecked(false);
-        mCheckBoxSTBSelectActivity.setOnCheckedChangeListener(
+        mCheckBox.setChecked(false);
+        mCheckBox.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
                     @Override
-                    public void onCheckedChanged(final CompoundButton compoundButton, final boolean b) {
-                        if (mCheckBoxSTBSelectActivity.isChecked()) {
-                            mCheckBoxSTBSelectActivity.setBackgroundResource(R.drawable.
-                                    ic_check_box_outline_blank_white_24dp);
-                        } else {
-                            mCheckBoxSTBSelectActivity.setBackgroundResource(R.drawable.
+                    public void onCheckedChanged(final CompoundButton compoundButton, final boolean isChecked) {
+                        mIsNextTimeHide = isChecked;
+                        if (isChecked) {
+                            mCheckBox.setBackgroundResource(R.drawable.
                                     ic_check_box_white_24dp);
+                        } else {
+                            mCheckBox.setBackgroundResource(R.drawable.
+                                    ic_check_box_outline_blank_white_24dp);
                         }
                     }
                 });
-        mUseWithoutPairingSTBParingInvitationTextView = findViewById(
+        mParingTextView = findViewById(
                 R.id.useWithoutPairingSTBParingInvitation);
-        mUseWithoutPairingSTBParingInvitationTextView.setOnClickListener(this);
+        mParingTextView.setOnClickListener(this);
     }
 
     @Override
@@ -352,8 +353,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                     mParingDevice.setVisibility(View.VISIBLE);
                     mCheckMark.setVisibility(View.VISIBLE);
                     mParingDevice.setTextColor(Color.WHITE);
-                    mUseWithoutPairingSTBParingInvitationTextView.setVisibility(View.VISIBLE);
-                    mUseWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_paring_cancel_text);
+                    mParingTextView.setVisibility(View.VISIBLE);
+                    mParingTextView.setText(R.string.str_stb_paring_cancel_text);
                 }
             }
         } else {
@@ -388,10 +389,10 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 TextView statusTextView = findViewById(R.id.stb_select_status_text);
                 mPairingImage.setImageResource(R.mipmap.startup_icon_01);
                 statusTextView.setText(R.string.str_stb_select_result_text_search);
-                mCheckBoxSTBSelectActivity.setVisibility(View.VISIBLE);
+                mCheckBox.setVisibility(View.VISIBLE);
                 mCheckboxText.setVisibility(View.VISIBLE);
                 mDeviceListView.setVisibility(View.VISIBLE);
-                mUseWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_no_pair_use_text);
+                mParingTextView.setText(R.string.str_stb_no_pair_use_text);
             } else {
                 RelativeLayout relativeLayout = findViewById(R.id.stb_icon_relative_layout_setting);
                 relativeLayout.setVisibility(View.GONE);
@@ -513,7 +514,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             TextView statusTextView = findViewById(R.id.stb_select_status_text);
             statusTextView.setText(R.string.str_stb_pairing);
 
-            mCheckBoxSTBSelectActivity.setVisibility(View.GONE);
+            mCheckBox.setVisibility(View.GONE);
             mCheckboxText.setVisibility(View.GONE);
         } else if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal()) {
 
@@ -543,7 +544,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 newLayout.addView(mLoadMoreView);
             }
         }
-        mUseWithoutPairingSTBParingInvitationTextView.setVisibility(View.INVISIBLE);
+        mParingTextView.setVisibility(View.INVISIBLE);
         mDeviceListView.setVisibility(View.GONE);
         mLoadMoreView.setVisibility(View.VISIBLE);
         DTVTLogger.end();
@@ -557,22 +558,18 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onClick(final View v) {
         DTVTLogger.start();
-        if (v.equals(mUseWithoutPairingSTBParingInvitationTextView)) {
-            if (mUseWithoutPairingSTBParingInvitationTextView.getText().equals(
+        if (v.equals(mParingTextView)) {
+            if (mParingTextView.getText().equals(
                     getString(R.string.str_stb_no_pair_use_text))
-                    || mUseWithoutPairingSTBParingInvitationTextView.getText().equals(
+                    || mParingTextView.getText().equals(
                     getString(R.string.str_stb_paring_cancel_text))) {
                 onUseWithoutPairingButton();
             }
-        } else if (v.equals(mCheckBoxSTBSelectActivity)) {
-            mIsNextTimeHide = mCheckBoxSTBSelectActivity.isChecked();
         } else if (v.getId() == R.id.launch_select_check_box_text) {
-            if (!mCheckBoxSTBSelectActivity.isChecked()) {
-                mCheckBoxSTBSelectActivity.setChecked(true);
+            if (!mCheckBox.isChecked()) {
+                mCheckBox.setChecked(true);
             } else {
-                if (mCheckBoxSTBSelectActivity.isChecked()) {
-                    mCheckBoxSTBSelectActivity.setChecked(false);
-                }
+                mCheckBox.setChecked(false);
             }
         } else if (v.getId() == R.id.stb_paring_failed_red_help) {
             // ペアリングヘルプ画面へ遷移
@@ -822,7 +819,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             mDeviceListView.setVisibility(View.GONE);
             if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal()
                     && !mParingDevice.getText().toString().isEmpty()) {
-                mUseWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_paring_cancel_text);
+                mParingTextView.setText(R.string.str_stb_paring_cancel_text);
             }
             // STB検索タイムアウト文言表示
             TextView stbSearchFailed = findViewById(R.id.stb_device_search_result);
