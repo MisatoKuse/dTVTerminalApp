@@ -10,7 +10,7 @@ public class DlnaBsChListInfo {
 
     private ArrayList<DlnaBsChListItem> mLists = new ArrayList<>();
 
-    private void addItem(DlnaBsChListItem item) {
+    private void addItem(final DlnaBsChListItem item) {
         mLists.add(item);
     }
 
@@ -26,15 +26,16 @@ public class DlnaBsChListInfo {
         return 0;
     }
 
-    public DlnaBsChListItem get(int index) {
+    public DlnaBsChListItem get(final int index) {
+        int destIndex = index;
         if (index < 0) {
-            index = 0;
+            destIndex = 0;
         }
         if (null == mLists || 0 == mLists.size()) {
             return null;
         }
 
-        return mLists.get(index);
+        return mLists.get(destIndex);
     }
 
     static DlnaBsChListInfo fromArrayList(final ArrayList<Object> content) {

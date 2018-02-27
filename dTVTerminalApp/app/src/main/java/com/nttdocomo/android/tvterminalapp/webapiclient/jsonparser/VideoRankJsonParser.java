@@ -34,33 +34,33 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
             JsonConstants.META_RESPONSE_COUNT, JsonConstants.META_RESPONSE_TOTAL};
 
     /**
-     * 拡張情報
+     * 拡張情報.
      **/
-    Bundle mExtraData = null;
+    private Bundle mExtraData = null;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
      * @param mContentsListPerGenreJsonParserCallback
      */
-    public VideoRankJsonParser(ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback mContentsListPerGenreJsonParserCallback) {
+    public VideoRankJsonParser(final ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback mContentsListPerGenreJsonParserCallback) {
         this.mContentsListPerGenreJsonParserCallback = mContentsListPerGenreJsonParserCallback;
     }
 
     /**
-     * 拡張情報付きコンストラクタ
+     * 拡張情報付きコンストラクタ.
      * @param contentsListPerGenreJsonParserCallback コールバック用
      * @param extraDataSrc                           拡張情報
      */
-    public VideoRankJsonParser(ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback
-                                       contentsListPerGenreJsonParserCallback, Bundle extraDataSrc) {
+    public VideoRankJsonParser(final ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback
+                                       contentsListPerGenreJsonParserCallback, final Bundle extraDataSrc) {
         this.mContentsListPerGenreJsonParserCallback = contentsListPerGenreJsonParserCallback;
         //拡張情報の追加
         mExtraData = extraDataSrc;
     }
 
     @Override
-    protected void onPostExecute(Object object) {
+    protected void onPostExecute(final Object object) {
         //拡張情報が存在すれば、入れ込む
         List<VideoRankList> rankLists = (List<VideoRankList>) object;
         if (mExtraData != null) {
@@ -73,19 +73,19 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     @Override
-    protected Object doInBackground(Object... strings) {
+    protected Object doInBackground(final Object... strings) {
         String result = (String) strings[0];
         List<VideoRankList> resultList = VideoRankListSender(result);
         return resultList;
     }
 
     /**
-     * ジャンル毎一覧Jsonデータを解析する
+     * ジャンル毎一覧Jsonデータを解析する.
      *
      * @param jsonStr 　String形式のJSONデータ
      * @return List<VideoRankList> ObjectクラスをList形式で返却
      */
-    public List<VideoRankList> VideoRankListSender(String jsonStr) {
+    public List<VideoRankList> VideoRankListSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         mVideoRankList = new VideoRankList();
@@ -110,11 +110,11 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     /**
-     * statusの値をMapでオブジェクトクラスに格納
+     * statusの値をMapでオブジェクトクラスに格納.
      *
      * @param jsonObj ステータスを含んだJSONオブジェクト
      */
-    private void sendStatus(JSONObject jsonObj) {
+    private void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
             HashMap<String, String> map = new HashMap<>();
@@ -147,11 +147,11 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     /**
-     * コンテンツリストをList<HashMap>の形式でObjectクラスへ格納する
+     * コンテンツリストをList<HashMap>の形式でObjectクラスへ格納する.
      *
      * @param arrayList
      */
-    public void sendVrList(JSONArray arrayList) {
+    public void sendVrList(final JSONArray arrayList) {
         try {
             List<HashMap<String, String>> vrList = new ArrayList<>();
             for (int i = 0; i < arrayList.length(); i++) {

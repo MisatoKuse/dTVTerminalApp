@@ -138,7 +138,7 @@ public class StbConnectRelayClient {
      *
      * @param remoteIp
      */
-    public void setRemoteIp(String remoteIp) {
+    public void setRemoteIp(final String remoteIp) {
         mRemoteIp = remoteIp;
     }
 
@@ -147,7 +147,7 @@ public class StbConnectRelayClient {
      *
      * @param remoteSocketPort
      */
-    public void setRemoteSocketPort(int remoteSocketPort) {
+    public void setRemoteSocketPort(final int remoteSocketPort) {
         mRemoteSocketPort = remoteSocketPort;
     }
 
@@ -156,7 +156,7 @@ public class StbConnectRelayClient {
      *
      * @param remoteDatagramPort
      */
-    public void setRemoteDatagramPort(int remoteDatagramPort) {
+    public void setRemoteDatagramPort(final int remoteDatagramPort) {
         mRemoteDatagramPort = remoteDatagramPort;
     }
 

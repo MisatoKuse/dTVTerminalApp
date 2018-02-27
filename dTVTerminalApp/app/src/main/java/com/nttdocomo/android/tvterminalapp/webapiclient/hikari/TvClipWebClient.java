@@ -34,12 +34,12 @@ public class TvClipWebClient
      *
      * @param context コンテキスト
      */
-    public TvClipWebClient(Context context) {
+    public TvClipWebClient(final Context context) {
         super(context);
     }
 
     @Override
-    public void onParserFinished(Object parsedData) {
+    public void onParserFinished(final Object parsedData) {
         //パース後のデータを返す
         if (null != mTvClipJsonParserCallback && parsedData instanceof List) {
             mTvClipJsonParserCallback.onTvClipJsonParsed((List<TvClipList>) parsedData);
@@ -47,7 +47,7 @@ public class TvClipWebClient
     }
 
     @Override
-    public Object parse(String body) {
+    public Object parse(final String body) {
         TvClipJsonParser tvClipJsonParser = new TvClipJsonParser();
         List<TvClipList> pursedData;
         pursedData = tvClipJsonParser.tvClipListSender(body);
@@ -75,7 +75,7 @@ public class TvClipWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onAnswer(ReturnCode returnCode) {
+    public void onAnswer(final ReturnCode returnCode) {
         Handler handler = new Handler();
         try {
             JsonParserThread thread = new JsonParserThread(returnCode.bodyData, handler, this);
@@ -92,7 +92,7 @@ public class TvClipWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
+    public void onError(final ReturnCode returnCode) {
         //エラーが発生したのでヌルを返す
         mTvClipJsonParserCallback.onTvClipJsonParsed(null);
 
@@ -109,9 +109,9 @@ public class TvClipWebClient
      * @param tvClipJsonParserCallback コールバック
      * @return パラメータ等に問題があった場合はfalse
      */
-    public boolean getTvClipApi(int ageReq, int upperPagetLimit, int lowerPagetLimit,
-                                int pagerOffset, String pagerDirection,
-                                TvClipJsonParserCallback tvClipJsonParserCallback) {
+    public boolean getTvClipApi(final int ageReq, final int upperPagetLimit, final int lowerPagetLimit,
+                                final int pagerOffset, final String pagerDirection,
+                                final TvClipJsonParserCallback tvClipJsonParserCallback) {
         if (mIsCancel) {
             DTVTLogger.error("TvClipWebClient is stopping connection");
             return false;
@@ -155,9 +155,9 @@ public class TvClipWebClient
      * @param tvClipJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(int ageReq, int upperPagetLimit, int lowerPagetLimit,
-                                         int pagerOffset, String pagerDirection,
-                                         TvClipJsonParserCallback tvClipJsonParserCallback) {
+    private boolean checkNormalParameter(final int ageReq, final int upperPagetLimit, final int lowerPagetLimit,
+                                         final int pagerOffset, final String pagerDirection,
+                                         final TvClipJsonParserCallback tvClipJsonParserCallback) {
         if (!(ageReq >= AGE_LOW_VALUE && ageReq <= AGE_HIGH_VALUE)) {
             //ageReqが1から17ではないならばfalse
             return false;
@@ -202,8 +202,8 @@ public class TvClipWebClient
      * @param pagerDirection  取得方向
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(int ageReq, int upperPagetLimit, int lowerPagetLimit,
-                                     int pagerOffset, String pagerDirection) {
+    private String makeSendParameter(final int ageReq, final int upperPagetLimit, final int lowerPagetLimit,
+                                     final int pagerOffset, final String pagerDirection) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
@@ -217,10 +217,11 @@ public class TvClipWebClient
 
             //取得方向は中身も必須なので、省略されていた場合はprevを指定する
             if (TextUtils.isEmpty(pagerDirection)) {
-                pagerDirection = ClipUtils.DIRECTION_PREV;
+                jsonPagerObject.put(JsonConstants.META_RESPONSE_DIRECTION, ClipUtils.DIRECTION_PREV);
+            } else {
+                jsonPagerObject.put(JsonConstants.META_RESPONSE_DIRECTION, pagerDirection);
             }
 
-            jsonPagerObject.put(JsonConstants.META_RESPONSE_DIRECTION, pagerDirection);
 
             jsonObject.put(JsonConstants.META_RESPONSE_PAGER, jsonPagerObject);
 

@@ -49,7 +49,7 @@ public class MyChannelDeleteJsonParser extends AsyncTask<Object, Object, Object>
     }
 
     /**
-     * マイチャンネル解除Jsonデータを解析する
+     * マイチャンネル解除Jsonデータを解析する.
      *
      * @param jsonStr マイチャンネル解除Jsonデータ
      * @return マイチャンネル解除取得：正常時レスポンスデータ
@@ -75,7 +75,7 @@ public class MyChannelDeleteJsonParser extends AsyncTask<Object, Object, Object>
     }
 
     /**
-     * statusの値をマイチャンネル解除取得：正常時レスポンスデータオブジェクトに格納
+     * statusの値をマイチャンネル解除取得：正常時レスポンスデータオブジェクトに格納.
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */

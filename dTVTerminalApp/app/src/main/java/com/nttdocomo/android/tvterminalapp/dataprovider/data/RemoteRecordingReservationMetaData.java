@@ -39,7 +39,7 @@ public class RemoteRecordingReservationMetaData implements Serializable {
         return mResvId;
     }
 
-    public void setResvId(String mResvId) {
+    public void setResvId(final String mResvId) {
         this.mResvId = mResvId;
     }
 
@@ -47,7 +47,7 @@ public class RemoteRecordingReservationMetaData implements Serializable {
         return mResvType;
     }
 
-    public void setResvType(int mResvType) {
+    public void setResvType(final int mResvType) {
         this.mResvType = mResvType;
     }
 
@@ -55,7 +55,7 @@ public class RemoteRecordingReservationMetaData implements Serializable {
         return mPlatformType;
     }
 
-    public void setPlatformType(int mPlatformType) {
+    public void setPlatformType(final int mPlatformType) {
         this.mPlatformType = mPlatformType;
     }
 
@@ -63,7 +63,7 @@ public class RemoteRecordingReservationMetaData implements Serializable {
         return mServiceId;
     }
 
-    public void setServiceId(String mServiceId) {
+    public void setServiceId(final String mServiceId) {
         this.mServiceId = mServiceId;
     }
 
@@ -71,7 +71,7 @@ public class RemoteRecordingReservationMetaData implements Serializable {
         return mEventId;
     }
 
-    public void setEventId(String mEventId) {
+    public void setEventId(final String mEventId) {
         this.mEventId = mEventId;
     }
 
@@ -79,7 +79,7 @@ public class RemoteRecordingReservationMetaData implements Serializable {
         return mTitle;
     }
 
-    public void setTitle(String mTitle) {
+    public void setTitle(final String mTitle) {
         this.mTitle = mTitle;
     }
 
@@ -87,7 +87,7 @@ public class RemoteRecordingReservationMetaData implements Serializable {
         return mStartTime;
     }
 
-    public void setStartTime(int mStartTime) {
+    public void setStartTime(final int mStartTime) {
         this.mStartTime = mStartTime;
     }
 
@@ -95,7 +95,7 @@ public class RemoteRecordingReservationMetaData implements Serializable {
         return mDuration;
     }
 
-    public void setDuration(int mDuration) {
+    public void setDuration(final int mDuration) {
         this.mDuration = mDuration;
     }
 
@@ -103,7 +103,7 @@ public class RemoteRecordingReservationMetaData implements Serializable {
         return mLoopTypeNum;
     }
 
-    public void setLoopTypeNum(int mLoopTypeNum) {
+    public void setLoopTypeNum(final int mLoopTypeNum) {
         this.mLoopTypeNum = mLoopTypeNum;
     }
 
@@ -111,7 +111,7 @@ public class RemoteRecordingReservationMetaData implements Serializable {
         return mRValue;
     }
 
-    public void setRValue(int mRValue) {
+    public void setRValue(final int mRValue) {
         this.mRValue = mRValue;
     }
 
@@ -119,7 +119,7 @@ public class RemoteRecordingReservationMetaData implements Serializable {
         return mSyncStatus;
     }
 
-    public void setSyncStatus(int mSyncStatus) {
+    public void setSyncStatus(final int mSyncStatus) {
         this.mSyncStatus = mSyncStatus;
     }
 
@@ -127,7 +127,7 @@ public class RemoteRecordingReservationMetaData implements Serializable {
         return mSyncErrorReason;
     }
 
-    public void setSyncErrorReason(int mSyncErrorReason) {
+    public void setSyncErrorReason(final int mSyncErrorReason) {
         this.mSyncErrorReason = mSyncErrorReason;
     }
 
@@ -154,12 +154,12 @@ public class RemoteRecordingReservationMetaData implements Serializable {
             REMOTE_RECORDING_RESERVATION_META_DATA_SYNC_ERROR_REASON};
 
     /**
-     * キーとキーの値をメンバーにセットする
+     * キーとキーの値をメンバーにセットする.
      *
      * @param key  キー
      * @param data キーの値
      */
-    private void setMember(String key, Object data) {
+    private void setMember(final String key, final Object data) {
         if (!key.isEmpty()) {
             switch (key) {
                 case REMOTE_RECORDING_RESERVATION_META_DATA_RESV_ID:
@@ -205,11 +205,11 @@ public class RemoteRecordingReservationMetaData implements Serializable {
     }
 
     /**
-     * キーの値を取得する
+     * キーの値を取得する.
      *
      * @param key キー
      */
-    public Object getMember(String key) {
+    public Object getMember(final String key) {
         if (key.isEmpty()) {
             return "";
         } else {
@@ -245,11 +245,11 @@ public class RemoteRecordingReservationMetaData implements Serializable {
     }
 
     /**
-     * サーバから取得したデータをセット
+     * サーバから取得したデータをセット.
      *
      * @param jsonObj Jsonオブジェクト
      */
-    public void setData(JSONObject jsonObj) {
+    public void setData(final JSONObject jsonObj) {
         if (jsonObj != null) {
             // 単一データ
             for (String item : mRootPara) {

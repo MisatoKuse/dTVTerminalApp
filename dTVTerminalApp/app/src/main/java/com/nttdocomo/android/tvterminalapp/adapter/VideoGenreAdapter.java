@@ -22,7 +22,7 @@ public class VideoGenreAdapter extends BaseAdapter implements AbsListView.OnScro
     private Context mContext = null;
     public List mData = null;
 
-    public VideoGenreAdapter(Context context, List data) {
+    public VideoGenreAdapter(final Context context, final List data) {
         this.mContext = context;
         this.mData = data;
     }
@@ -33,17 +33,17 @@ public class VideoGenreAdapter extends BaseAdapter implements AbsListView.OnScro
     }
 
     @Override
-    public Object getItem(int i) {
+    public Object getItem(final int i) {
         return mData.get(i);
     }
 
     @Override
-    public long getItemId(int i) {
+    public long getItemId(final int i) {
         return i;
     }
 
     @Override
-    public View getView(int position, View view, ViewGroup parent) {
+    public View getView(final int position, View view, final ViewGroup parent) {
         DTVTLogger.start();
         VideoGenreList videoGenreList = (VideoGenreList) mData.get(position);
         ViewHolder holder;
@@ -69,12 +69,12 @@ public class VideoGenreAdapter extends BaseAdapter implements AbsListView.OnScro
     }
 
     @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
+    public void onScrollStateChanged(final AbsListView view, final int scrollState) {
         // NOP
     }
 
     @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+    public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
         // NOP
     }
 

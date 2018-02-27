@@ -29,15 +29,15 @@ public class RecordingReservationListResponse {
         return mPager;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(final String status) {
         mStatus = status;
     }
 
-    public void setReservation(String reservation) {
+    public void setReservation(final String reservation) {
         mReservation = reservation;
     }
 
-    public void setPager(JSONObject pager) {
+    public void setPager(final JSONObject pager) {
         mPager = pager.toString();
     }
 
@@ -46,16 +46,16 @@ public class RecordingReservationListResponse {
     }
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
      * @param recordingReservationMetaData 　録画予約メタデータ
      */
-    public void setRecordingReservationMetaData(ArrayList<RecordingReservationMetaData> recordingReservationMetaData) {
+    public void setRecordingReservationMetaData(final ArrayList<RecordingReservationMetaData> recordingReservationMetaData) {
         mRecordingReservationMetaData = recordingReservationMetaData;
     }
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      */
     public RecordingReservationListResponse() {
         // OK 固定値

@@ -15,7 +15,7 @@ public class VideoRankList {
     private List<HashMap<String, String>> mVrList = new ArrayList<>();
 
     /**
-     * 拡張情報
+     * 拡張情報.
      **/
     private Bundle mExtraData = null;
 
@@ -23,7 +23,7 @@ public class VideoRankList {
         return mVrMap;
     }
 
-    public void setVrMap(HashMap<String, String> vrMap) {
+    public void setVrMap(final HashMap<String, String> vrMap) {
         this.mVrMap = vrMap;
     }
 
@@ -31,21 +31,21 @@ public class VideoRankList {
         return mVrList;
     }
 
-    public void setVrList(List vrList) {
+    public void setVrList(final List vrList) {
         this.mVrList = vrList;
     }
 
     /**
-     * 拡張情報のセッター
+     * 拡張情報のセッター.
      *
      * @param extraDataSrc 代入する拡張情報
      */
-    public void setExtraData(Bundle extraDataSrc) {
+    public void setExtraData(final Bundle extraDataSrc) {
         mExtraData = extraDataSrc;
     }
 
     /**
-     * 拡張情報のゲッター
+     * 拡張情報のゲッター.
      *
      * @return 拡張情報
      */

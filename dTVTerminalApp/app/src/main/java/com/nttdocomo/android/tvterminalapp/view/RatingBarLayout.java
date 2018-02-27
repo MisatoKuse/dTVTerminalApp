@@ -136,10 +136,10 @@ public class RatingBarLayout extends LinearLayout {
                 getNumWidth(),
                 LayoutParams.WRAP_CONTENT
         );
-        layoutParams.setMargins((int)getResources().getDimension(R.dimen.rating_star_numbers_margin), PIXEL0, PIXEL0, PIXEL0);
+        layoutParams.setMargins((int) getResources().getDimension(R.dimen.rating_star_numbers_margin), PIXEL0, PIXEL0, PIXEL0);
         textView.setText(progressNumbers);
         textView.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, isMini ? MINI_NUMBER_TEXT_SIZE :NUMBER_TEXT_SIZE);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, isMini ? MINI_NUMBER_TEXT_SIZE : NUMBER_TEXT_SIZE);
         textView.setLayoutParams(layoutParams);
         textView.setGravity(Gravity.TOP);
         this.addView(textView);
@@ -196,7 +196,7 @@ public class RatingBarLayout extends LinearLayout {
     }
 
     /**
-     * 全starのIcon取得
+     * 全starのIcon取得.
      */
     private ImageView getFullStarsIcon() {
         ImageView imageView = new ImageView(mContext);

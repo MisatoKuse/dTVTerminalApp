@@ -8,13 +8,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * リモート録画予約一覧取得：正常時レスポンスデータ
+ * リモート録画予約一覧取得：正常時レスポンスデータ.
  */
 public class RemoteRecordingReservationListResponse implements Serializable {
     private static final long serialVersionUID = -171253737402592759L;
 
-    private String mStatus;// status
-    private int mCount;//count
+    private String mStatus; // status
+    private int mCount; //count
     private ArrayList<RemoteRecordingReservationMetaData> mRemoteRecordingReservationMetaData;  // リモート録画予約一覧リスト
 
     public static final String REMOTE_RECORDING_RESERVATION_META_RESPONSE_STATUS = "status";
@@ -31,11 +31,11 @@ public class RemoteRecordingReservationListResponse implements Serializable {
         return mCount;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(final String status) {
         mStatus = status;
     }
 
-    public void setCount(int count) {
+    public void setCount(final int count) {
         mCount = count;
     }
 
@@ -44,15 +44,15 @@ public class RemoteRecordingReservationListResponse implements Serializable {
     }
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      * @param remoteRecordingReservationMetaData リモート録画予約一覧メタデータ
      */
-    public void setRemoteRecordingReservationMetaData(ArrayList<RemoteRecordingReservationMetaData> remoteRecordingReservationMetaData) {
+    public void setRemoteRecordingReservationMetaData(final ArrayList<RemoteRecordingReservationMetaData> remoteRecordingReservationMetaData) {
         mRemoteRecordingReservationMetaData = remoteRecordingReservationMetaData;
     }
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      */
     public RemoteRecordingReservationListResponse() {
         mStatus = REMOTE_RECORDING_RESERVATION_FIXED_STATUS;     // OK 固定値

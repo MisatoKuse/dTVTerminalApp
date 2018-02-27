@@ -48,7 +48,7 @@ public class ProgramScrollView extends ScrollView {
     }
 
     /**
-     * スクロールされた距離リスナー
+     * スクロールされた距離リスナー.
      */
     public interface OnScrollOffsetListener {
         void onScrollOffset(int offset);

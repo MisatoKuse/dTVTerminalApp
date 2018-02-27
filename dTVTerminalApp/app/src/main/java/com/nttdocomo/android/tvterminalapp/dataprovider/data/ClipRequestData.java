@@ -75,7 +75,7 @@ public class ClipRequestData {
         return mServiceId;
     }
 
-    public void setServiceId(String mServiceId) {
+    public void setServiceId(final String mServiceId) {
         this.mServiceId = mServiceId;
     }
 
@@ -83,7 +83,7 @@ public class ClipRequestData {
         return mEventId;
     }
 
-    public void setEventId(String mEventId) {
+    public void setEventId(final String mEventId) {
         this.mEventId = mEventId;
     }
 
@@ -91,7 +91,7 @@ public class ClipRequestData {
         return mTitleId;
     }
 
-    public void setTitleId(String mTitleId) {
+    public void setTitleId(final String mTitleId) {
         this.mTitleId = mTitleId;
     }
 
@@ -99,7 +99,7 @@ public class ClipRequestData {
         return mRValue;
     }
 
-    public void setRValue(String mRValue) {
+    public void setRValue(final String mRValue) {
         this.mRValue = mRValue;
     }
 
@@ -108,11 +108,11 @@ public class ClipRequestData {
     }
 
     /**
-     * 仕様により avail_start_date を設定する
+     * 仕様により avail_start_date を設定する.
      *
      * @param mLinearStartDate 番組開始時間
      */
-    public void setLinearStartDate(String mLinearStartDate) {
+    public void setLinearStartDate(final String mLinearStartDate) {
         this.mLinearStartDate = mLinearStartDate;
     }
 
@@ -121,11 +121,11 @@ public class ClipRequestData {
     }
 
     /**
-     * 仕様により avail_end_date を設定する
+     * 仕様により avail_end_date を設定する.
      *
      * @param mLinearEndDate 番組終了時間
      */
-    public void setLinearEndDate(String mLinearEndDate) {
+    public void setLinearEndDate(final String mLinearEndDate) {
         this.mLinearEndDate = mLinearEndDate;
     }
 
@@ -133,7 +133,7 @@ public class ClipRequestData {
         return mSearchOk;
     }
 
-    public void setSearchOk(String mSearchOk) {
+    public void setSearchOk(final String mSearchOk) {
         this.mSearchOk = mSearchOk;
     }
 
@@ -145,7 +145,7 @@ public class ClipRequestData {
         return mDispType;
     }
 
-    public void setDispType(String mDispType) {
+    public void setDispType(final String mDispType) {
         this.mDispType = mDispType;
     }
 
@@ -153,7 +153,7 @@ public class ClipRequestData {
         return mContentType;
     }
 
-    public void setContentType(String mContentType) {
+    public void setContentType(final String mContentType) {
         this.mContentType = mContentType;
     }
 
@@ -161,7 +161,7 @@ public class ClipRequestData {
         return mTableType;
     }
 
-    public void setTableType(ClipKeyListDao.TABLE_TYPE mTableType) {
+    public void setTableType(final ClipKeyListDao.TABLE_TYPE mTableType) {
         this.mTableType = mTableType;
     }
 

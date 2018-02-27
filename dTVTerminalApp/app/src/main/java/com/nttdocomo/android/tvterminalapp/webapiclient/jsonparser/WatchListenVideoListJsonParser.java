@@ -29,7 +29,7 @@ public class WatchListenVideoListJsonParser {
             JsonConstants.META_RESPONSE_LOWER_LIMIT, JsonConstants.META_RESPONSE_OFFSET,
             JsonConstants.META_RESPONSE_COUNT};
 
-    public List<WatchListenVideoList> watchListenVideoListSender(String jsonStr) {
+    public List<WatchListenVideoList> watchListenVideoListSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         mWatchListenVideoList = new WatchListenVideoList();
@@ -52,7 +52,7 @@ public class WatchListenVideoListJsonParser {
         return null;
     }
 
-    public void sendStatus(JSONObject jsonObj) {
+    public void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
             HashMap<String, String> map = new HashMap<>();
@@ -83,9 +83,9 @@ public class WatchListenVideoListJsonParser {
     }
 
     /*
-    * コンテンツのList<HashMap>をオブジェクトクラスに格納
+    * コンテンツのList<HashMap>をオブジェクトクラスに格納.
      */
-    public void sendVcList(JSONArray arrayList) {
+    public void sendVcList(final JSONArray arrayList) {
         try {
             List<HashMap<String, String>> vcList = new ArrayList<>();
             // リストの数だけまわす

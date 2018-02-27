@@ -312,11 +312,11 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                 return;
             }
             try {
-                Thread.sleep(1000*1);
+                Thread.sleep(1000 * 1);
                 DTVTLogger.debug(">>>>>>>>>>>>>>>>>> new dl");
                 setDlParam(getDownLoadParam());
                 start();
-            } catch (Exception e){
+            } catch (Exception e) {
                 DTVTLogger.debug(e);
             }
         } else {

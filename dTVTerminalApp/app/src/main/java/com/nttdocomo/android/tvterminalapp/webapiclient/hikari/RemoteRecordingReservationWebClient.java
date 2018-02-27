@@ -41,12 +41,12 @@ public class RemoteRecordingReservationWebClient
      *
      * @param context コンテキスト
      */
-    public RemoteRecordingReservationWebClient(Context context) {
+    public RemoteRecordingReservationWebClient(final Context context) {
         super(context);
     }
 
     @Override
-    public void onAnswer(ReturnCode returnCode) {
+    public void onAnswer(final ReturnCode returnCode) {
         DTVTLogger.debug("Client onAnswer");
         if (mRemoteRecordingReservationJsonParserCallback != null) {
             //JSONをパースして、データを返す
@@ -62,7 +62,7 @@ public class RemoteRecordingReservationWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
+    public void onError(final ReturnCode returnCode) {
         DTVTLogger.debug("Client onError");
         if (mRemoteRecordingReservationJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
@@ -78,8 +78,8 @@ public class RemoteRecordingReservationWebClient
      * @param remoteRecordingReservationJsonParserCallback コールバック
      * @return パラメータエラーの場合はfalse
      */
-    public boolean getRemoteRecordingReservationApi(RecordingReservationContentsDetailInfo contentsDetailInfo,
-                                                    RemoteRecordingReservationJsonParserCallback
+    public boolean getRemoteRecordingReservationApi(final RecordingReservationContentsDetailInfo contentsDetailInfo,
+                                                    final RemoteRecordingReservationJsonParserCallback
                                                             remoteRecordingReservationJsonParserCallback) {
         //パラメーターのチェック
         if (!checkNormalParameter(contentsDetailInfo, remoteRecordingReservationJsonParserCallback)) {
@@ -110,8 +110,8 @@ public class RemoteRecordingReservationWebClient
      * @param remoteRecordingReservationJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(RecordingReservationContentsDetailInfo contentsDetailInfo,
-                                         RemoteRecordingReservationJsonParserCallback
+    private boolean checkNormalParameter(final RecordingReservationContentsDetailInfo contentsDetailInfo,
+                                         final RemoteRecordingReservationJsonParserCallback
                                                  remoteRecordingReservationJsonParserCallback) {
         // 放送種別が 1 以外ならばfalse
         if (contentsDetailInfo.getPlatformType() != 1) {
@@ -166,7 +166,7 @@ public class RemoteRecordingReservationWebClient
      * @param contentsDetailInfo リモート録画予約送信用パラメータ
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(RecordingReservationContentsDetailInfo contentsDetailInfo) {
+    private String makeSendParameter(final RecordingReservationContentsDetailInfo contentsDetailInfo) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {

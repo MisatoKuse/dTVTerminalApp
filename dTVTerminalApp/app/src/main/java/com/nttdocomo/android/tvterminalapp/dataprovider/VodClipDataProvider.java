@@ -57,7 +57,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
     public void onVodClipJsonParsed(final List<VodClipList> vodClipLists) {
         if (vodClipLists != null && vodClipLists.size() > 0) {
             List vclist = vodClipLists.get(0).getVcList();
-            if(vclist != null && vclist.size() > 0) {
+            if (vclist != null && vclist.size() > 0) {
                 HashMap hashMap = (HashMap) vclist.get(0);
                 if (!hashMap.isEmpty()) {
                     VodClipList list = vodClipLists.get(0);

@@ -103,7 +103,7 @@ public class HttpThread extends Thread {
     private CookieManager mCookieManager;
 
     /**
-     * クッキー退避領域
+     * クッキー退避領域.
      */
     private List<HttpCookie> mCookies;
 

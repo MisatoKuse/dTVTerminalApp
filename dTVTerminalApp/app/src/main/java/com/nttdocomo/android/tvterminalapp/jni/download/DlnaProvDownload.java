@@ -94,7 +94,7 @@ public class DlnaProvDownload {
         return DlnaInterfaceDl.initGlobalDl(saveDir);
     }
 
-    public static void uninitGlobalDl(){
+    public static void uninitGlobalDl() {
         DlnaInterfaceDl.uninitGlobalDl();
     }
 }

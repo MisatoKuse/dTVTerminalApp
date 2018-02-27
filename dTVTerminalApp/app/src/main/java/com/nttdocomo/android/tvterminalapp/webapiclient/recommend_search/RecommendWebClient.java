@@ -143,7 +143,7 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
      * @param keyname   キー名
      * @param parameter パラメータ
      */
-    private void itemAdder(final LinkedHashMap items, String keyname, final String parameter) {
+    private void itemAdder(final LinkedHashMap items, final String keyname, final String parameter) {
         //引数にヌルがあれば何もしない
         if (items == null || keyname == null || parameter == null) {
             return;
@@ -154,19 +154,20 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
             return;
         }
 
+        String destKeyname;
         if (mfirstParmater) {
             //先頭ならば前に？を付加
-            keyname = StringUtils.getConnectStrings("?", keyname);
+            destKeyname = StringUtils.getConnectStrings("?", keyname);
 
             //先頭0は終わるのでフラグを更新
             mfirstParmater = false;
         } else {
             //2番目以降ならば前に&を付加
-            keyname = StringUtils.getConnectStrings("&", keyname);
+            destKeyname = StringUtils.getConnectStrings("&", keyname);
         }
 
         //テーブルに蓄積
-        items.put(keyname, parameter);
+        items.put(destKeyname, parameter);
     }
 
     /**

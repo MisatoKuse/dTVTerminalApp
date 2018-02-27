@@ -71,13 +71,13 @@ public abstract class DownloaderBase {
     }
 
     /**
-     * Totalダウンロードサイズを戻す
+     * Totalダウンロードサイズを戻す.
      * @return int
      */
     protected abstract int calculateTotalBytes();
 
     /**
-     * ダウンロード開始
+     * ダウンロード開始.
      */
     public void start() {
         mTotalBytes = calculateTotalBytes();
@@ -168,7 +168,7 @@ public abstract class DownloaderBase {
     }
 
     /**
-     * ダウンロードエラー発生の時、コールされる
+     * ダウンロードエラー発生の時、コールされる.
      */
     DownloadListener.DLError isError() {
         return mError;
@@ -185,10 +185,10 @@ public abstract class DownloaderBase {
 
     private String getFullFilePath() {
         if (null != mDownloadParam) {
-            StringBuilder sb=new StringBuilder();
-            String path=mDownloadParam.getSavePath();
-            String name=mDownloadParam.getSaveFileName();
-            if(null==path || null==name){
+            StringBuilder sb = new StringBuilder();
+            String path = mDownloadParam.getSavePath();
+            String name = mDownloadParam.getSaveFileName();
+            if (null == path || null == name) {
                 return null;
             }
             sb.append(path);
@@ -201,18 +201,18 @@ public abstract class DownloaderBase {
 
 
     /**
-     * Sub Classでダウンロード成功したとき、この関数をコール
+     * Sub Classでダウンロード成功したとき、この関数をコール.
      */
     protected abstract void cancelImpl();
 
     /**
-     * ダウンロード容量不足
+     * ダウンロード容量不足.
      */
-    void setLowStorageSpace(){
-        if(null!=mDownloadListener){
-            if(null!=mDownloadParam){
-                String path=getFullFilePath();
-                if(null!=path){
+    void setLowStorageSpace() {
+        if (null != mDownloadListener) {
+            if (null != mDownloadParam) {
+                String path = getFullFilePath();
+                if (null != path) {
                     mDownloadListener.onLowStorageSpace(path);
                 }
             }
@@ -220,19 +220,19 @@ public abstract class DownloaderBase {
     }
 
     /**
-     * @return MB
+     * @return MB.
      */
     long getInnerStorageSafeSpaceMB(){
         return 300;
     }
 
     /**
-     * Sub Classでダウンロード成功したとき、この関数をコール
+     * Sub Classでダウンロード成功したとき、この関数をコール.
      */
-    protected void onFail(DownloadListener.DLError error) {
+    protected void onFail(final DownloadListener.DLError error) {
         setDownloading(false);
-        if(null!=mDownloadListener && null!=mDownloadParam){
-            final String savePath= mDownloadParam.getSavePath() + File.separator + mDownloadParam.getSaveFileName();
+        if (null != mDownloadListener && null != mDownloadParam) {
+            final String savePath = mDownloadParam.getSavePath() + File.separator + mDownloadParam.getSaveFileName();
             mDownloadListener.onFail(error, savePath);
         }
     }
@@ -240,44 +240,44 @@ public abstract class DownloaderBase {
     /**
      *
      */
-    protected void onCancel(){
+    protected void onCancel() {
         setDownloading(false);
-        if(null!=mDownloadListener && null!=mDownloadParam){
-            final String savePath= mDownloadParam.getSavePath() + File.separator + mDownloadParam.getSaveFileName();
+        if (null != mDownloadListener && null != mDownloadParam) {
+            final String savePath = mDownloadParam.getSavePath() + File.separator + mDownloadParam.getSaveFileName();
             mDownloadListener.onCancel(savePath);
         }
     }
 
     /**
-     * 機能：xml item idからストレージ名を戻す
+     * 機能：xml item idからストレージ名を戻す.
      * @param id xml item id
      * @return ret ret
      */
-    public static String getFileNameById(String id) {
-        String ret=id;
-        ret=ret.replaceAll("[^a-z^A-Z^0-9]", "_");
+    public static String getFileNameById(final String id) {
+        String ret = id;
+        ret = ret.replaceAll("[^a-z^A-Z^0-9]", "_");
         return sDlPrefix + (new StringBuilder(ret)).toString();
     }
 
     /**
-     * 機能：
+     * 機能：.
      *      １．Download Uiがなくなる場合、且サービスにqueueはない場合、必ずこれをコールする
      *      ２．Download Uiがない場合、Serviceは閉じる時、必ずこれをコールする
      */
     public abstract void stop();
 
     /**
-     * Get save path
+     * Get save path.
      * @return
      */
-    public static String getDownloadPath(Context context){
+    public static String getDownloadPath(final Context context) {
         String downLoadPath = null;
-        if(null == context){
+        if (null == context) {
             return null;
         }
 
-        String dmp=getDmpFolderName(context);
-        if(null==dmp || dmp.isEmpty()){
+        String dmp = getDmpFolderName(context);
+        if (null == dmp || dmp.isEmpty()) {
             downLoadPath = NewEnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
         } else {
             File[] files = ContextCompat.getExternalFilesDirs(context, null);
@@ -288,9 +288,9 @@ public abstract class DownloaderBase {
                         if (file != null) {
                             downLoadPath = file.getAbsolutePath() + File.separator + dmp;
                             File dmpFile = new File(downLoadPath);
-                            if(!dmpFile.exists()){
+                            if (!dmpFile.exists()) {
                                 boolean r = dmpFile.mkdirs();
-                                if(r){
+                                if (r) {
                                     break;
                                 } else {
                                     downLoadPath = null;
@@ -306,25 +306,25 @@ public abstract class DownloaderBase {
         return downLoadPath;
     }
 
-    public static String getDmpFolderName(final Context context){
-        if(null==context){
+    public static String getDmpFolderName(final Context context) {
+        if (null == context) {
             return null;
         }
-        String ret= EnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
-        String sp= File.separator;
-        int i= ret.lastIndexOf(sp);
-        int l=ret.length();
-        if(0>i || i>=l){
+        String ret = EnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
+        String sp = File.separator;
+        int i = ret.lastIndexOf(sp);
+        int l = ret.length();
+        if (0 > i || i >= l) {
             return "";
         }
-        return ret.substring(i+1, l);
+        return ret.substring(i + 1, l);
     }
 
-    private synchronized void setDownloading(boolean yn){
+    private synchronized void setDownloading(final boolean yn) {
         mIsDownloading = yn;
     }
 
-    public synchronized boolean isDownloading(){
+    public synchronized boolean isDownloading() {
         return mIsDownloading;
     }
 }

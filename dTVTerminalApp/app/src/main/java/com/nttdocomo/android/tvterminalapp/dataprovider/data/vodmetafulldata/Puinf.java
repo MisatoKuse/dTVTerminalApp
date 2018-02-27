@@ -169,7 +169,7 @@ public class Puinf implements Serializable {
      * @param key  キー
      * @param data キーの値
      */
-    private void setMember(String key, Object data) {
+    private void setMember(final String key, final Object data) {
         //キーに値があれば、それを元に値を格納する
         if (key != null && !key.isEmpty()) {
             switch (key) {
@@ -224,11 +224,11 @@ public class Puinf implements Serializable {
     }
 
     /**
-     * キーの値を取得する
+     * キーの値を取得する.
      *
      * @param key 取得したい値のキー
      */
-    public Object getMember(String key) {
+    public Object getMember(final String key) {
 
         if (key == null || key.isEmpty()) {
             //キーが無いので、空文字を返す

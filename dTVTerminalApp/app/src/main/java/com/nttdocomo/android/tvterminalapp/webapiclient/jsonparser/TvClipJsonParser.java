@@ -29,7 +29,7 @@ public class TvClipJsonParser {
             JsonConstants.META_RESPONSE_LOWER_LIMIT, JsonConstants.META_RESPONSE_OFFSET,
             JsonConstants.META_RESPONSE_COUNT};
 
-    public List<TvClipList> tvClipListSender(String jsonStr) {
+    public List<TvClipList> tvClipListSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         mTvClipList = new TvClipList();
@@ -53,7 +53,7 @@ public class TvClipJsonParser {
         return null;
     }
 
-    public void sendStatus(JSONObject jsonObj) {
+    public void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
             HashMap<String, String> map = new HashMap<String, String>();
@@ -81,9 +81,9 @@ public class TvClipJsonParser {
     }
 
     /**
-     * コンテンツのList<HashMap>をオブジェクトクラスに格納
+     * コンテンツのList<HashMap>をオブジェクトクラスに格納.
      */
-    public void sendVcList(JSONArray arrayList) {
+    public void sendVcList(final JSONArray arrayList) {
         try {
             List<HashMap<String, String>> tcList = new ArrayList<>();
             for (int i = 0; i < arrayList.length(); i++) {

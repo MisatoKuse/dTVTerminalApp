@@ -26,15 +26,16 @@ class DlnaHikariChListInfo {
         return 0;
     }
 
-    public DlnaHikariChListItem get(int index) {
+    public DlnaHikariChListItem get(final int index) {
+        int destIndex = index;
         if (index < 0) {
-            index = 0;
+            destIndex = 0;
         }
         if (null == mLists || 0 == mLists.size()) {
             return null;
         }
 
-        return mLists.get(index);
+        return mLists.get(destIndex);
     }
 
     static DlnaHikariChListInfo fromArrayList(final ArrayList<Object> content) {

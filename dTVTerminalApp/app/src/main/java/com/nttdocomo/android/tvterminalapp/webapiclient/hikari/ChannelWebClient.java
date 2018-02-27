@@ -55,7 +55,7 @@ public class ChannelWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onAnswer(ReturnCode returnCode) {
+    public void onAnswer(final ReturnCode returnCode) {
         //JSONをパースして、データを返す
         new ChannelJsonParser(mChannelJsonParserCallback).execute(returnCode.bodyData);
     }
@@ -66,7 +66,7 @@ public class ChannelWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
+    public void onError(final ReturnCode returnCode) {
         //エラーが発生したのでヌルを返す
         mChannelJsonParserCallback.onChannelJsonParsed(null);
     }
@@ -124,9 +124,9 @@ public class ChannelWebClient
      * @param channelJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(int pagetLimit, int pagerOffset,
-                                         String filter, String type,
-                                         ChannelJsonParserCallback channelJsonParserCallback) {
+    private boolean checkNormalParameter(final int pagetLimit, final int pagerOffset,
+                                         final String filter, final String type,
+                                         final ChannelJsonParserCallback channelJsonParserCallback) {
         // 各値が下限以下ならばfalse
         if (pagetLimit < 0) {
             return false;
@@ -186,7 +186,6 @@ public class ChannelWebClient
         String answerText;
         try {
             //ページャー部の作成
-            //TODO:ページング指定を外してもぷららサーバ側からMax10件しか取得できない(実際にはレスポンスのtotal件数は200件以上になっている)
             if (pagetLimit > 0 && pagerOffset > 0) {
                 JSONObject jsonPagerObject = new JSONObject();
                 jsonPagerObject.put(JsonConstants.META_RESPONSE_PAGER_LIMIT, pagetLimit);

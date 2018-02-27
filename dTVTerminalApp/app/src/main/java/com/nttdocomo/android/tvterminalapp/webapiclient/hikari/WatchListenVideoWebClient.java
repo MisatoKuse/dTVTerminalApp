@@ -57,7 +57,7 @@ public class WatchListenVideoWebClient
      */
     public interface WatchListenVideoJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param watchListenVideoList JSONパース後のデータ
          */
@@ -73,7 +73,7 @@ public class WatchListenVideoWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onAnswer(ReturnCode returnCode) {
+    public void onAnswer(final ReturnCode returnCode) {
         Handler handler = new Handler();
         try {
             JsonParserThread thread = new JsonParserThread(returnCode.bodyData, handler, this);
@@ -90,7 +90,7 @@ public class WatchListenVideoWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
+    public void onError(final ReturnCode returnCode) {
         //エラーが発生したのでヌルを返す
         mWatchListenVideoJsonParserCallback.onWatchListenVideoJsonParsed(null);
 
@@ -106,9 +106,9 @@ public class WatchListenVideoWebClient
      * @param watchListenVideoJsonParserCallback コールバック
      * @return パラメータ等に問題があった場合はfalse
      */
-    public boolean getWatchListenVideoApi(int ageReq, int upperPagetLimit, int lowerPagetLimit,
-                                          int pagerOffset, String pagerDirection,
-                                          WatchListenVideoJsonParserCallback watchListenVideoJsonParserCallback) {
+    public boolean getWatchListenVideoApi(final int ageReq, final int upperPagetLimit, final int lowerPagetLimit,
+                                          final int pagerOffset, final String pagerDirection,
+                                          final WatchListenVideoJsonParserCallback watchListenVideoJsonParserCallback) {
         if (mIsCancel) {
             DTVTLogger.error("WatchListenVideoWebClient is stopping connection");
             return false;
@@ -150,9 +150,9 @@ public class WatchListenVideoWebClient
      * @param watchListenVideoJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(int ageReq, int upperPagetLimit, int lowerPagetLimit,
-                                         int pagerOffset, String pagerDirection,
-                                         WatchListenVideoJsonParserCallback watchListenVideoJsonParserCallback) {
+    private boolean checkNormalParameter(final int ageReq, final int upperPagetLimit, final int lowerPagetLimit,
+                                         final int pagerOffset, final String pagerDirection,
+                                         final WatchListenVideoJsonParserCallback watchListenVideoJsonParserCallback) {
         if (!(ageReq >= 1 && ageReq <= 17)) {
             //ageReqが1から17ではないならばfalse
             return false;
@@ -188,8 +188,8 @@ public class WatchListenVideoWebClient
      * @param pagerDirection    取得方向
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(int ageReq, int upperPagetLimit, int lowerPagetLimit,
-                                     int pagerOffset, String pagerDirection) {
+    private String makeSendParameter(final int ageReq, final int upperPagetLimit, final int lowerPagetLimit,
+                                     final int pagerOffset, final String pagerDirection) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {

@@ -67,7 +67,7 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
         DaccountGetOTT getOtt = new DaccountGetOTT();
         getOtt.execDaccountGetOTT(context, new DaccountGetOTT.DaccountGetOttCallBack() {
             @Override
-            public void getOttCallBack(int result, String id, String oneTimePassword) {
+            public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
                 //ワンタイムパスワードの取得後に呼び出す
                 mHttpThread = new HttpThread(url, webApiBase, context, oneTimePassword);
                 mHttpThread.start();

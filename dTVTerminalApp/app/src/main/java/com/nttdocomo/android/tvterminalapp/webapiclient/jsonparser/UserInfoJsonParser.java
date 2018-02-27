@@ -37,15 +37,15 @@ public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
     private List<UserInfoList> mUserInfoListResponse;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      */
-    public UserInfoJsonParser(UserInfoWebClient.UserInfoJsonParserCallback userInfoJsonParserCallback) {
+    public UserInfoJsonParser(final UserInfoWebClient.UserInfoJsonParserCallback userInfoJsonParserCallback) {
         mUserInfoJsonParserCallback = userInfoJsonParserCallback;
         mUserInfoListResponse = new ArrayList<>();
     }
 
     @Override
-    protected void onPostExecute(Object userInfoList) {
+    protected void onPostExecute(final Object userInfoList) {
         if (userInfoList != null && userInfoList instanceof List) {
             mUserInfoListResponse = (List<UserInfoList>) userInfoList;
             mUserInfoJsonParserCallback.onUserInfoJsonParsed(
@@ -57,19 +57,19 @@ public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     @Override
-    protected Object doInBackground(Object... strings) {
+    protected Object doInBackground(final Object... strings) {
         String result = (String) strings[0];
 
         return userInfoListSender(result);
     }
 
     /**
-     * ユーザ情報Jsonデータ解析
+     * ユーザ情報Jsonデータ解析.
      *
      * @param jsonStr ユーザ情報情報一覧
      * @return userInfoList
      */
-    private List<UserInfoList> userInfoListSender(String jsonStr) {
+    private List<UserInfoList> userInfoListSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         // オブジェクトクラスの定義
@@ -141,12 +141,12 @@ public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     /**
-     * JSONの前後に括弧を配置して配列に変換する
+     * JSONの前後に括弧を配置して配列に変換する.
      *
      * @param source 元のJSON
      * @return 変換後のJSON
      */
-    private String makeJsonArray(Object source) {
+    private String makeJsonArray(final Object source) {
         //インスペクターはStringBuilderではなく+演算子での文字結合を推奨してくるが、禁止である。
         StringBuilder tempBuffer = new StringBuilder();
         tempBuffer.append(BRACKET_LEFT);
@@ -157,12 +157,12 @@ public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     /**
-     * 取得した契約情報を蓄積する
+     * 取得した契約情報を蓄積する.
      *
      * @param loggedinAccount 蓄積用データリスト
      * @param loggedinArray   蓄積対象のリクエストユーザデータ又はH4D契約ユーザデータ
      */
-    private void getDataArray(List<AccountList> loggedinAccount, JSONArray loggedinArray) {
+    private void getDataArray(final List<AccountList> loggedinAccount, final JSONArray loggedinArray) {
 
         AccountList tempList = new AccountList();
         String temp;

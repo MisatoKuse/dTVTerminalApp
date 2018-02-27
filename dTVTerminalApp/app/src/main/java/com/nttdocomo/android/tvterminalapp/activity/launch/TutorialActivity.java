@@ -16,10 +16,10 @@ import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 public class TutorialActivity extends BaseActivity implements View.OnClickListener {
 
-    private Button mSkipOrFinishTutorialAcivity=null;
+    private Button mSkipOrFinishTutorialAcivity = null;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tutorial_main_layout);
 
@@ -30,10 +30,10 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
 
     private void setContents() {
 
-        TextView title= (TextView)findViewById(R.id.titleTutorialActivity);
+        TextView title = (TextView) findViewById(R.id.titleTutorialActivity);
         title.setText(getScreenTitle());
 
-        mSkipOrFinishTutorialAcivity=(Button)findViewById(R.id.skipOrFinishTutorialAcivity);
+        mSkipOrFinishTutorialAcivity = (Button) findViewById(R.id.skipOrFinishTutorialAcivity);
         mSkipOrFinishTutorialAcivity.setOnClickListener(this);
     }
 
@@ -48,8 +48,8 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
     }
 
     @Override
-    public void onClick(View v) {
-        if(v.equals(mSkipOrFinishTutorialAcivity)){
+    public void onClick(final View v) {
+        if (v.equals(mSkipOrFinishTutorialAcivity)) {
             onSkipOrFinish();
         }
     }
@@ -60,7 +60,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void onSkipOrFinish() {
-        SharedPreferencesUtils.setSharedPreferencesIsDisplayedTutorial(this,true);
+        SharedPreferencesUtils.setSharedPreferencesIsDisplayedTutorial(this, true);
         startActivity(LaunchActivity.class, null);;
         finish();
     }

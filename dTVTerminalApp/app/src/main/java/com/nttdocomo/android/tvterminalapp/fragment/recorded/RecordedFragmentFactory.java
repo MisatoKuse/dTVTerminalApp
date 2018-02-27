@@ -17,7 +17,7 @@ public class RecordedFragmentFactory {
 
     }
 
-    public synchronized RecordedBaseFragment createFragment(int position, RecordedBaseFragmentScrollListener lis) {
+    public synchronized RecordedBaseFragment createFragment(final int position, final RecordedBaseFragmentScrollListener lis) {
         DTVTLogger.start();
         RecordedBaseFragment fragment;
         fragment = mFragments.get(position);

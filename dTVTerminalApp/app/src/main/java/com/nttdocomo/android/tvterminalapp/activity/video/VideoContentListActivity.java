@@ -99,7 +99,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     public static final String VIDEO_CONTENTS_BUNDLE_KEY = "videoContentKey";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.daily_tv_ranking_main_layout);
         mContentsList = new ArrayList<>();
@@ -172,7 +172,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     }
 
     /**
-     * ページングリセット
+     * ページングリセット.
      */
     private void resetPaging() {
         synchronized (this) {
@@ -188,7 +188,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     }
 
     /**
-     * 再読み込み実施フラグ設定
+     * 再読み込み実施フラグ設定.
      *
      * @param bool 読み込み表示フラグ
      */
@@ -199,7 +199,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     }
 
     /**
-     * ページングを行った回数を取得
+     * ページングを行った回数を取得.
      *
      * @return ページング回数
      */
@@ -307,7 +307,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     }
 
     /**
-     * 取得したリストマップをContentsDataクラスへ入れる
+     * 取得したリストマップをContentsDataクラスへ入れる.
      *
      * @param videoContentMapList コンテンツリストデータ
      * @return dataList 読み込み表示フラグ

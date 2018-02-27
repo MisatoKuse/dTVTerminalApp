@@ -40,12 +40,12 @@ public class RecordingReservationMetaData implements Serializable {
             JsonConstants.META_RESPONSE_PARENTAL_AGE_ATTRIBUTE_OF_PROGRAM};
 
     /**
-     * キーとキーの値をメンバーにセットする
+     * キーとキーの値をメンバーにセットする.
      *
      * @param key  キー
      * @param data キーの値
      */
-    private void setMember(String key, Object data) {
+    private void setMember(final String key, final Object data) {
         if (!key.isEmpty()) {
             switch (key) {
                 case JsonConstants.META_RESPONSE_PRIORITY:
@@ -58,7 +58,7 @@ public class RecordingReservationMetaData implements Serializable {
                     mDayOfTheWeek = (String) data;        //day_of_the_week
                     break;
                 case JsonConstants.META_RESPONSE_ADULT_ATTRIBUTE_OF_CHANNEL:
-                    mAdultAttributeOfChannel = (String) data;//adult_attribute_of_channel
+                    mAdultAttributeOfChannel = (String) data; //adult_attribute_of_channel
                     break;
                 case JsonConstants.META_RESPONSE_SERVICE_ID:
                     mServiceId = (String) data;           //service_id
@@ -84,11 +84,11 @@ public class RecordingReservationMetaData implements Serializable {
     }
 
     /**
-     * キーの値を取得する
+     * キーの値を取得する.
      *
      * @param key キー
      */
-    public Object getMember(String key) {
+    public Object getMember(final String key) {
         if (key.isEmpty()) {
             return "";
         } else {
@@ -100,7 +100,7 @@ public class RecordingReservationMetaData implements Serializable {
                 case JsonConstants.META_RESPONSE_DAY_OF_THE_WEEK:
                     return mDayOfTheWeek;        //day_of_the_week
                 case JsonConstants.META_RESPONSE_ADULT_ATTRIBUTE_OF_CHANNEL:
-                    return mAdultAttributeOfChannel;//adult_attribute_of_channel
+                    return mAdultAttributeOfChannel; //adult_attribute_of_channel
                 case JsonConstants.META_RESPONSE_SERVICE_ID:
                     return mServiceId;           //service_id
                 case JsonConstants.META_RESPONSE_START_SCHEDULE_TIME:
@@ -131,7 +131,7 @@ public class RecordingReservationMetaData implements Serializable {
         return mPriority;
     }
 
-    public void setPriority(int mPriority) {
+    public void setPriority(final int mPriority) {
         this.mPriority = mPriority;
     }
 
@@ -139,7 +139,7 @@ public class RecordingReservationMetaData implements Serializable {
         return mPlatformType;
     }
 
-    public void setPlatformType(String mPlatformType) {
+    public void setPlatformType(final String mPlatformType) {
         this.mPlatformType = mPlatformType;
     }
 
@@ -147,7 +147,7 @@ public class RecordingReservationMetaData implements Serializable {
         return mDayOfTheWeek;
     }
 
-    public void setDayOfTheWeek(String mDayOfTheWeek) {
+    public void setDayOfTheWeek(final String mDayOfTheWeek) {
         this.mDayOfTheWeek = mDayOfTheWeek;
     }
 
@@ -155,7 +155,7 @@ public class RecordingReservationMetaData implements Serializable {
         return mAdultAttributeOfChannel;
     }
 
-    public void setAdultAttributeOfChannel(String mAdultAttributeOfChannel) {
+    public void setAdultAttributeOfChannel(final String mAdultAttributeOfChannel) {
         this.mAdultAttributeOfChannel = mAdultAttributeOfChannel;
     }
 
@@ -163,7 +163,7 @@ public class RecordingReservationMetaData implements Serializable {
         return mServiceId;
     }
 
-    public void setServiceId(String mServiceId) {
+    public void setServiceId(final String mServiceId) {
         this.mServiceId = mServiceId;
     }
 
@@ -171,7 +171,7 @@ public class RecordingReservationMetaData implements Serializable {
         return mStartScheduleTime;
     }
 
-    public void setStartScheduleTime(int mStartScheduleTime) {
+    public void setStartScheduleTime(final int mStartScheduleTime) {
         this.mStartScheduleTime = mStartScheduleTime;
     }
 
@@ -179,7 +179,7 @@ public class RecordingReservationMetaData implements Serializable {
         return mEndScheduleTime;
     }
 
-    public void setEndScheduleTime(int mEndScheduleTime) {
+    public void setEndScheduleTime(final int mEndScheduleTime) {
         this.mEndScheduleTime = mEndScheduleTime;
     }
 
@@ -187,7 +187,7 @@ public class RecordingReservationMetaData implements Serializable {
         return mEventId;
     }
 
-    public void setEventId(String mEventId) {
+    public void setEventId(final String mEventId) {
         this.mEventId = mEventId;
     }
 
@@ -195,7 +195,7 @@ public class RecordingReservationMetaData implements Serializable {
         return mTitle;
     }
 
-    public void setTitle(String mTitle) {
+    public void setTitle(final String mTitle) {
         this.mTitle = mTitle;
     }
 
@@ -203,16 +203,16 @@ public class RecordingReservationMetaData implements Serializable {
         return mParentalAgeAttributeOfProgram;
     }
 
-    public void setParentalAgeAttributeOfProgram(int mParentalAgeAttributeOfProgram) {
+    public void setParentalAgeAttributeOfProgram(final int mParentalAgeAttributeOfProgram) {
         this.mParentalAgeAttributeOfProgram = mParentalAgeAttributeOfProgram;
     }
 
     /**
-     * サーバから取得したデータをセット
+     * サーバから取得したデータをセット.
      *
      * @param jsonObj Jsonオブジェクト
      */
-    public void setData(JSONObject jsonObj) {
+    public void setData(final JSONObject jsonObj) {
         if (jsonObj != null) {
             //録画予約一覧データ
             for (String item : mReservationListPara) {

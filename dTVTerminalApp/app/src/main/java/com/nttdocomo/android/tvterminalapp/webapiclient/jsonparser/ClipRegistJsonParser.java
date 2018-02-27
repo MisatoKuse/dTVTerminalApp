@@ -22,7 +22,7 @@ public class ClipRegistJsonParser extends AsyncTask<Object, Object, String> {
     private static final String CLIP_RESULT_STATUS_OK = "OK";
 
     /**
-     * CH一覧Jsonデータを解析する
+     * CH一覧Jsonデータを解析する.
      *
      * @param jsonStr 元のJSONデータ
      * @return リスト化データ
@@ -60,7 +60,7 @@ public class ClipRegistJsonParser extends AsyncTask<Object, Object, String> {
     }
 
     @Override
-    protected void onPostExecute(String status) {
+    protected void onPostExecute(final String status) {
         if (status != null && status.equals(CLIP_RESULT_STATUS_OK)) {
             //成功時のcallback
             mClipJsonParserCallback.onClipRegistResult();
@@ -71,7 +71,7 @@ public class ClipRegistJsonParser extends AsyncTask<Object, Object, String> {
     }
 
     @Override
-    protected String doInBackground(Object... strings) {
+    protected String doInBackground(final Object... strings) {
         String result = (String) strings[0];
         return getClipStatus(result);
     }

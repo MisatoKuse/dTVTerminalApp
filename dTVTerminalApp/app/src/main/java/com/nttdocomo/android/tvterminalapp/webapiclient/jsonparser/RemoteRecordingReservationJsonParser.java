@@ -27,7 +27,7 @@ public class RemoteRecordingReservationJsonParser extends AsyncTask<Object, Obje
     private RemoteRecordingReservationResultResponse mRemoteRecordingReservationResultResponse;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      */
     public RemoteRecordingReservationJsonParser(RemoteRecordingReservationWebClient.
                                                         RemoteRecordingReservationJsonParserCallback recordingReservationListJsonParserCallback) {
@@ -37,25 +37,25 @@ public class RemoteRecordingReservationJsonParser extends AsyncTask<Object, Obje
     }
 
     @Override
-    protected void onPostExecute(Object s) {
+    protected void onPostExecute(final Object s) {
         mRemoteRecordingReservationJsonParserCallback.
                 onRemoteRecordingReservationJsonParsed(mRemoteRecordingReservationResultResponse);
     }
 
     @Override
-    protected Object doInBackground(Object... strings) {
+    protected Object doInBackground(final Object... strings) {
         String result = (String) strings[0];
         RemoteRecordingReservationResultResponse response = remoteRecordingReservationResultSender(result);
         return response;
     }
 
     /**
-     * 録画予約一覧Jsonデータを解析する
+     * 録画予約一覧Jsonデータを解析する.
      *
      * @param jsonStr 録画予約一覧Jsonデータ
      * @return 録画予約一覧取得：正常時レスポンスデータ
      */
-    public RemoteRecordingReservationResultResponse remoteRecordingReservationResultSender(String jsonStr) {
+    public RemoteRecordingReservationResultResponse remoteRecordingReservationResultSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         mRemoteRecordingReservationResultResponse = null;
@@ -78,11 +78,11 @@ public class RemoteRecordingReservationJsonParser extends AsyncTask<Object, Obje
     }
 
     /**
-     * statusとerrornoの値をリモート録画予約：レスポンスデータオブジェクトに格納
+     * statusとerrornoの値をリモート録画予約：レスポンスデータオブジェクトに格納.
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendStatus(JSONObject jsonObj) {
+    public void sendStatus(final JSONObject jsonObj) {
         try {
             String status = null;
             String errorNo = null;
@@ -102,6 +102,7 @@ public class RemoteRecordingReservationJsonParser extends AsyncTask<Object, Obje
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
+            //TODO:汎用例外はcatchしない
             DTVTLogger.debug(CLASS_NAME + SEND_STATUS, e);
         }
     }
