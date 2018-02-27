@@ -477,15 +477,20 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * @param index 遷移先
      */
     private void startTo(final int index) {
+        Bundle bundle;
         switch (index) {
             case HOME_CONTENTS_SORT_CHANNEL:
                 //チャンネルリスト一覧へ遷移
                 startActivity(ChannelListActivity.class, null);
                 break;
             case HOME_CONTENTS_SORT_RECOMMEND_PROGRAM:
+                startActivity(RecommendActivity.class, null);
+                break;
             case HOME_CONTENTS_SORT_RECOMMEND_VOD:
                 //おすすめへ遷移
-                startActivity(RecommendActivity.class, null);
+                bundle = new Bundle();
+                bundle.putInt(RecommendActivity.RECOMMEND_LIST_START_PAGE, RecommendActivity.RECOMMEND_LIST_PAGE_NO_OF_VOD);
+                startActivity(RecommendActivity.class, bundle);
                 break;
             case HOME_CONTENTS_SORT_TODAY:
                 //今日のテレビランキングへ遷移
@@ -505,7 +510,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 break;
             case HOME_CONTENTS_SORT_VOD_CLIP:
                 //クリップ一覧へ遷移
-                final Bundle bundle = new Bundle();
+                bundle = new Bundle();
                 bundle.putInt(ClipListActivity.CLIP_LIST_START_PAGE, ClipListActivity.CLIP_LIST_PAGE_NO_OF_VOD);
                 startActivity(ClipListActivity.class, bundle);
                 break;

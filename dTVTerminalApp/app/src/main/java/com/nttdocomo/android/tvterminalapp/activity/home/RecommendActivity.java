@@ -83,6 +83,22 @@ public class RecommendActivity extends BaseActivity implements
     private boolean mIsPaging = false;
     //アクティビティ初回起動フラグ
     private boolean mIsFirst = false;
+    /**
+     * タブポジション(テレビ).
+     */
+    private static final int RECOMMEND_LIST_PAGE_NO_OF_TV = 0;
+    /**
+     * タブポジション(ビデオ).
+     */
+    public static final int RECOMMEND_LIST_PAGE_NO_OF_VOD = 1;
+    /**
+     * 表示開始タブ指定キー.
+     */
+    public static final String RECOMMEND_LIST_START_PAGE = "recommendListStartPage";
+    /**
+     * 開始ページ.
+     */
+    private int mStartPageNo = 0;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -95,6 +111,7 @@ public class RecommendActivity extends BaseActivity implements
         //Headerの設定
         setTitleText(getString(R.string.recommend_list_title));
         Intent intent = getIntent();
+        mStartPageNo = intent.getIntExtra(RECOMMEND_LIST_START_PAGE, RECOMMEND_LIST_PAGE_NO_OF_TV);
         mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
         if (mIsMenuLaunch) {
             enableHeaderBackIcon(false);
@@ -109,6 +126,9 @@ public class RecommendActivity extends BaseActivity implements
 
         //初回起動フラグをONにする
         mIsFirst = true;
+        //初回表示のみ前画面からのタブ指定を反映する
+        sRecommendViewPager.setCurrentItem(mStartPageNo);
+        mTabLayout.setTab(mStartPageNo);
     }
 
     @Override
