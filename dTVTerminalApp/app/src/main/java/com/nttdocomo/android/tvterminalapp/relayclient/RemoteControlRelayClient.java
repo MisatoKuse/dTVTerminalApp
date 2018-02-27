@@ -240,6 +240,10 @@ public class RemoteControlRelayClient {
          */
         CHECK_APPLICATION_VERSION_COMPATIBILITY,
         /**
+         * アプリケーション要求処理中チェック（エラー応答時）.
+         */
+        CHECK_APPLICATION_REQUEST_PROCESSING,
+        /**
          * サービスアプリ：タイトル詳細表示起動要求.
          */
         TITLE_DETAIL,
@@ -264,6 +268,7 @@ public class RemoteControlRelayClient {
     // コマンド実行時のユーザーアカウント切り替えとアプリケーションバージョンコードチェックでエラー応答として REQUEST_COMMAND で返却されるコマンド
     static final String RELAY_COMMAND_SET_DEFAULT_USER_ACCOUNT = "SET_DEFAULT_USER_ACCOUNT";
     static final String RELAY_COMMAND_CHECK_APPLICATION_VERSION_COMPATIBILITY = "CHECK_APPLICATION_VERSION_COMPATIBILITY";
+    static final String RELAY_COMMAND_CHECK_APPLICATION_REQUEST_PROCESSING = "CHECK_APPLICATION_REQUEST_PROCESSING";
     // コマンドのパラメータ
     private static final String RELAY_COMMAND_REQUEST_COMMAND = "REQUEST_COMMAND";
     static final String RELAY_COMMAND_UNKNOWN = "COMMAND_UNKNOWN";
@@ -1172,6 +1177,7 @@ public class RemoteControlRelayClient {
                     // コマンド要求時以外のエラー応答のリクエストコマンド種別
                     case CHECK_APPLICATION_VERSION_COMPATIBILITY:
                     case SET_DEFAULT_USER_ACCOUNT:
+                    case CHECK_APPLICATION_REQUEST_PROCESSING:
                     case COMMAND_UNKNOWN:
                     default:
                         break;

@@ -795,8 +795,10 @@ public class BaseActivity extends FragmentActivity implements
                         break;
                     case SET_DEFAULT_USER_ACCOUNT:
                     case CHECK_APPLICATION_VERSION_COMPATIBILITY:
+                    case CHECK_APPLICATION_REQUEST_PROCESSING:
                         // STB_REQUEST_COMMAND_TYPES misses case 抑制.
-                        // ※RELAY_RESULT_OK 応答時は requestCommand に SET_DEFAULT_USER_ACCOUNT/CHECK_APPLICATION_VERSION_COMPATIBILITY は設定されない
+                        // ※RELAY_RESULT_OK 応答時は requestCommand に SET_DEFAULT_USER_ACCOUNT
+                        //   /CHECK_APPLICATION_VERSION_COMPATIBILITY /CHECK_APPLICATION_REQUEST_PROCESSING は設定されない
                     case KEYEVENT_KEYCODE_POWER:
                     case COMMAND_UNKNOWN:
                         // 処理なし
@@ -826,8 +828,6 @@ public class BaseActivity extends FragmentActivity implements
                                 //サーバエラー
                             case RelayServiceResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE:
                                 //ユーザアカウントチェックサービス未登録
-                            case RelayServiceResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY:
-                                //中継アプリからの応答待ち中に新しい要求を行った場合
                             case RelayServiceResponseMessage.RELAY_RESULT_CONNECTION_TIMEOUT:
                                 //STBの中継アプリ~応答が無かった場合(要求はできたのでSTBとの通信はOK)
                                 break;
@@ -863,6 +863,8 @@ public class BaseActivity extends FragmentActivity implements
                                 break;
                         }
                         break;
+                    case CHECK_APPLICATION_REQUEST_PROCESSING:
+                        //中継アプリからの応答待ち中に新しい要求を行った場合
                     case COMMAND_UNKNOWN:
                         switch (resultCode) {
                             case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
@@ -871,6 +873,10 @@ public class BaseActivity extends FragmentActivity implements
                                     //ペアリングアイコンをOFFにする
                                     setStbStatus(false);
                                 }
+                                break;
+                            case RelayServiceResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY: // 他の端末の要求処理中
+                                //中継アプリからの応答待ち中に新しい要求を行った場合
+                                showErrorDialog(getResources().getString(R.string.main_setting_stb_busy_error_message));
                                 break;
                             default:
                                 break;
@@ -959,9 +965,6 @@ public class BaseActivity extends FragmentActivity implements
             case RelayServiceResponseMessage.RELAY_RESULT_CONNECTION_TIMEOUT:
                 //dTV アプリが STBの中継アプリに接続できない場合
                 setStbStatus(false);
-                break;
-            case RelayServiceResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY:
-                //中継アプリからの応答待ち中に新しい要求を行った場合
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
             default:

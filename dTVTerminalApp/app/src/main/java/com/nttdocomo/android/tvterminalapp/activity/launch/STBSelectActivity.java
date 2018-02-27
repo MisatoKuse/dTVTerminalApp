@@ -1001,11 +1001,12 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                         break;
                     case SET_DEFAULT_USER_ACCOUNT:
                     case CHECK_APPLICATION_VERSION_COMPATIBILITY:
+                    case CHECK_APPLICATION_REQUEST_PROCESSING:
                     case KEYEVENT_KEYCODE_POWER:
                     case COMMAND_UNKNOWN:
                         // STB_REQUEST_COMMAND_TYPES misses case 抑制.
                         // ※RELAY_RESULT_OK 応答時は requestCommand に SET_DEFAULT_USER_ACCOUNT/CHECK_APPLICATION_VERSION_COMPATIBILITY
-                        // KEYEVENT_KEYCODE_POWER/COMMAND_UNKNOWNは設定されない
+                        // /CHECK_APPLICATION_REQUEST_PROCESSING/KEYEVENT_KEYCODE_POWER/COMMAND_UNKNOWNは設定されない
                     default:
                         break;
                 }
@@ -1070,9 +1071,12 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                                 break;
                         }
                         break;
+                    case CHECK_APPLICATION_REQUEST_PROCESSING:
+                        //中継アプリからの応答待ち中に新しい要求を行った場合
                     case COMMAND_UNKNOWN:
                         switch (resultCode) {
                             case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
+                            case RelayServiceResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY: // 他の端末の要求処理中
                                 // TODO STBと接続しないとHOMEにいけない為、本体側のSTB機能が搭載されるまでは一旦ホームに遷移させておく.
                                 createUnKnownDialog();
                                 break;
