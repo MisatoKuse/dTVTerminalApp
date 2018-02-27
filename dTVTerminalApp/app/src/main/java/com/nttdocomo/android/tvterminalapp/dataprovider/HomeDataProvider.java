@@ -753,7 +753,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 mContext.getApplicationContext(), this);
 
         mRecommendDataProvider.getTvRecommend(SearchConstants.RecommendList.FIRST_POSITION,
-                SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT);
+                SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT, SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV);
         DTVTLogger.end();
     }
 
@@ -766,7 +766,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         RecommendDataProvider recommendDataProvider = new RecommendDataProvider(
                 mContext.getApplicationContext(), this);
         recommendDataProvider.getVodRecommend(SearchConstants.RecommendList.FIRST_POSITION,
-                SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT);
+                SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT, SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO);
         DTVTLogger.end();
     }
 

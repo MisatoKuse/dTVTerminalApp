@@ -17,6 +17,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendRequestData;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
@@ -47,12 +48,12 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     /**
      * テレビのレコメンド情報のタブ番号.
      */
-    public static final int TV_NO = 0;
+    static final int TV_NO = 0;
 
     /**
      * ビデオのレコメンド情報のタブ番号.
      */
-    public static final int VIDEO_NO = 1;
+    static final int VIDEO_NO = 1;
 
     /**
      * ページング判定.
@@ -67,12 +68,6 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * 通信禁止判定フラグ.
      */
     private boolean mIsStop = false;
-
-    /**
-     * タブ番号の控え.
-     */
-    private int mRequestPageNo;
-
     /**
      * 取得開始位置.
      */
@@ -82,7 +77,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      */
     private int mMaxResult = -1;
 
-    //TODO：検討中
+    //TODO 検討中
 //    private String mCacheDateKey = null;
 //    private int mTagPageNo = -1;
 //    private RecommendChList mRecommendChList = null;
@@ -120,7 +115,6 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * テレビカテゴリー一覧（dTVチャンネル　VOD（見逃し）が無くなった等の新情報を反映）.
      */
     private final String[] RECOMMEND_CATEGORY_ID_TELEVI = {
-            RecommendRequestId.DTVCHANNEL_BLOADCAST.getRequestSCId(),
             RecommendRequestId.HIKARITV_DOCOMO_IPTV.getRequestSCId(),
             RecommendRequestId.HIKARITV_DOCOMO_DTV_BLOADCAST.getRequestSCId(),
     };
@@ -133,11 +127,6 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
             RecommendRequestId.HIKARITV_DOCOMO_DTV_RELATION.getRequestSCId(),
             RecommendRequestId.HIKARITV_DOCOMO_HIKARITV_VOD.getRequestSCId(),
             RecommendRequestId.HIKARITV_DOCOMO_DTV_SVOD.getRequestSCId(),
-            RecommendRequestId.DTV_SVOD.getRequestSCId(),
-            RecommendRequestId.DTV_TVOD.getRequestSCId(),
-            RecommendRequestId.DTVCHANNEL_MISS.getRequestSCId(),
-            RecommendRequestId.DTVCHANNEL_RELATION.getRequestSCId(),
-            RecommendRequestId.DANIME.getRequestSCId(),
     };
 
     /**
@@ -211,12 +200,39 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
          * @return 文字列
          */
         public String getRequestSCId() {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(this.serviceId)
-                    .append(SEPARATOR)
-                    .append(this.categoryId);
-            return stringBuilder.toString();
+            return StringUtils.getConnectString(new String[] {this.serviceId, SEPARATOR, this.categoryId});
         }
+    }
+
+    /**
+     * 検レコ取得パラメータ サービス分類.
+     */
+    private enum RESP_DATA_SERVICE_TYPE {
+        /**
+         * ひかりTV_テレビ.
+         */
+        HIKARI_TV,
+        /**
+         * ひかりTV_ビデオ.
+         */
+        HIKARI_VOD,
+        /**
+         * dTV.
+         */
+        DTV,
+        /**
+         * dチャンネル.
+         */
+        DCHANNEL,
+        /**
+         * dアニメ.
+         */
+        DANIME,
+        /**
+         * 判別不能.
+         * ひかりTV_テレビ と dチャンネル は一部同じリクエストを送信するため判定できない
+         */
+        UNKNOWN,
     }
 
     @Override
@@ -226,7 +242,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 && mRecommendChList.getmRcList().size() > 0) {
             sendRecommendChListData(mRecommendChList);
         } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            //TODO WEBAPIを取得できなかった時の処理を記載予定
             mApiDataProviderCallback.recommendNGCallback();
         }
     }
@@ -290,7 +306,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     /**
      * コンストラクタ.
      */
-    public RecommendDataProvider() {
+    RecommendDataProvider() {
     }
 
     /**
@@ -326,9 +342,6 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     private List<ContentsData> getRecommendListDataCache(
             final String cacheDateKey, final int requestPageNo, final int startIndex, final int maxResult) {
 
-        //データ側の情報だけでは、どのタブ向きのデータ化判別しにくくなったので、控えておく
-        mRequestPageNo = requestPageNo;
-
         List<ContentsData> resultList = new ArrayList<>();
 
         //データ存在チェック
@@ -353,10 +366,10 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      *
      * @param startIndex 取得開始位置
      * @param maxResult  最大取得数
+     * @param requestPageNo リクエストを送るタブの番号
      */
-    public void getTvRecommend(final int startIndex, final int maxResult) {
-        mRequestPageNo = SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV;
-        long cachingCount = DBUtils.isCachingCount(mContext, DBUtils.getRecommendTableName(mRequestPageNo));
+    void getTvRecommend(final int startIndex, final int maxResult, final int requestPageNo) {
+        long cachingCount = DBUtils.isCachingCount(mContext, DBUtils.getRecommendTableName(requestPageNo));
         if (cachingCount < maxResult && DateUtils.getLastDate(mContext, DateUtils.RECOMMEND_CH_LAST_INSERT)
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
@@ -386,10 +399,10 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      *
      * @param startIndex 取得開始位置
      * @param maxResult  最大取得数
+     * @param requestPageNo リクエストを送るタブの番号
      */
-    public void getVodRecommend(final int startIndex, final int maxResult) {
-        mRequestPageNo = SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO;
-        long cachingCount = DBUtils.isCachingCount(mContext, DBUtils.getRecommendTableName(mRequestPageNo));
+    public void getVodRecommend(final int startIndex, final int maxResult, final int requestPageNo) {
+        long cachingCount = DBUtils.isCachingCount(mContext, DBUtils.getRecommendTableName(requestPageNo));
         if (cachingCount < maxResult && DateUtils.getLastDate(mContext, DateUtils.RECOMMEND_VD_LAST_INSERT)
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
@@ -419,10 +432,10 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      *
      * @param startIndex 取得開始位置
      * @param maxResult  最大取得数
+     * @param requestPageNo リクエストを送るタブの番号
      */
-    private void getDtvChRecommend(final int startIndex, final int maxResult) {
-        mRequestPageNo = SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL;
-        long cachingCount = DBUtils.isCachingCount(mContext, DBUtils.getRecommendTableName(mRequestPageNo));
+    private void getDtvChRecommend(final int startIndex, final int maxResult, final int requestPageNo) {
+        long cachingCount = DBUtils.isCachingCount(mContext, DBUtils.getRecommendTableName(requestPageNo));
         if (cachingCount < maxResult && DateUtils.getLastDate(mContext, DateUtils.RECOMMEND_DCHANNEL_LAST_INSERT)
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
@@ -452,10 +465,10 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      *
      * @param startIndex 取得開始位置
      * @param maxResult  最大取得数
+     * @param requestPageNo リクエストを送るタブの番号
      */
-    private void getDtvRecommend(final int startIndex, final int maxResult) {
-        mRequestPageNo = SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV;
-        long cachingCount = DBUtils.isCachingCount(mContext, DBUtils.getRecommendTableName(mRequestPageNo));
+    private void getDtvRecommend(final int startIndex, final int maxResult, final int requestPageNo) {
+        long cachingCount = DBUtils.isCachingCount(mContext, DBUtils.getRecommendTableName(requestPageNo));
         if (cachingCount < maxResult && DateUtils.getLastDate(mContext, DateUtils.RECOMMEND_DTV_LAST_INSERT)
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
@@ -485,10 +498,10 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      *
      * @param startIndex 取得開始位置
      * @param maxResult  最大取得数
+     * @param requestPageNo リクエストを送るタブの番号
      */
-    private void getDAnimationRecommend(final int startIndex, final int maxResult) {
-        mRequestPageNo = SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME;
-        long cachingCount = DBUtils.isCachingCount(mContext, DBUtils.getRecommendTableName(mRequestPageNo));
+    private void getDAnimationRecommend(final int startIndex, final int maxResult, final int requestPageNo) {
+        long cachingCount = DBUtils.isCachingCount(mContext, DBUtils.getRecommendTableName(requestPageNo));
         if (cachingCount < maxResult && DateUtils.getLastDate(mContext, DateUtils.RECOMMEND_DANIME_LAST_INSERT)
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
@@ -526,28 +539,21 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                                                     final int maxResult, final boolean hasReturnValue) {
         DTVTLogger.debug("requestPageNo:" + requestPageNo);
 
-        //データ側の情報だけでは、どのタブ向きのデータ化判別しにくくなったので、控えておく
-        mRequestPageNo = requestPageNo;
-
-        // RequestDataのインスタンス生成
-        RecommendRequestData requestData = new RecommendRequestData();
-
-        List<ContentsData> resultList;
         switch (requestPageNo) {
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV: //テレビ
-                getTvRecommend(startIndex, maxResult);
+                getTvRecommend(startIndex, maxResult, requestPageNo);
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO: //ビデオ
-                getVodRecommend(startIndex, maxResult);
+                getVodRecommend(startIndex, maxResult, requestPageNo);
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL: //dTVチャンネル
-                getDtvChRecommend(startIndex, maxResult);
+                getDtvChRecommend(startIndex, maxResult, requestPageNo);
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV: //dTV
-                getDtvRecommend(startIndex, maxResult);
+                getDtvRecommend(startIndex, maxResult, requestPageNo);
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME: //dアニメ
-                getDAnimationRecommend(startIndex, maxResult);
+                getDAnimationRecommend(startIndex, maxResult, requestPageNo);
                 break;
             default:
                 break;
@@ -564,43 +570,52 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     private void sendRecommendChListData(final RecommendChList recChList) {
         List<Map<String, String>> recList = recChList.getmRcList();
         List<ContentsData> recommendContentInfoList = new ArrayList<>();
+        RESP_DATA_SERVICE_TYPE respDataServiceType = RESP_DATA_SERVICE_TYPE.UNKNOWN;
 
         for (Map<String, String> map : recList) {
-            recommendContentInfoList.add(setContentsData(map));
+            ContentsData data;
+            data = setContentsData(map);
+            recommendContentInfoList.add(data);
+            if (respDataServiceType == RESP_DATA_SERVICE_TYPE.UNKNOWN) {
+                // レスポンスデータのサービスが確定するまで判定を続ける
+                respDataServiceType = decisionResponseDataType(data.getServiceId(), data.getCategoryId());
+            }
         }
 
-        //タブ番号を判定して処理を分ける（ビデオカテゴリーの数が一気に増加したので、データのカテゴリー情報などでは判別しにくくなった）
-        switch (mRequestPageNo) {
-            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV:
+        switch (respDataServiceType) {
+            case HIKARI_TV:
                 //テレビ用データ
                 setStructDB(recChList, DateUtils.RECOMMEND_CH_LAST_INSERT,
                         SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV);
                 mApiDataProviderCallback.recommendChannelCallback(recommendContentInfoList);
                 break;
-            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO:
+            case HIKARI_VOD:
                 //ビデオ用データ
                 setStructDB(recChList, DateUtils.RECOMMEND_VD_LAST_INSERT,
                         SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO);
                 mApiDataProviderCallback.recommendVideoCallback(recommendContentInfoList);
                 break;
-            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL:
+            case DCHANNEL:
                 //Dチャンネル用データ
                 setStructDB(recChList, DateUtils.RECOMMEND_DCHANNEL_LAST_INSERT,
                         SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL);
                 mApiDataProviderCallback.recommendDChannelCallback(recommendContentInfoList);
                 break;
-            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV:
+            case DTV:
                 //dTV用データ
                 setStructDB(recChList, DateUtils.RECOMMEND_DTV_LAST_INSERT,
                         SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV);
                 mApiDataProviderCallback.recommendDTVCallback(recommendContentInfoList);
                 break;
-            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME:
-            default:
+            case DANIME:
                 //dアニメ用データ
                 setStructDB(recChList, DateUtils.RECOMMEND_DANIME_LAST_INSERT,
                         SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME);
                 mApiDataProviderCallback.recommendDAnimeCallback(recommendContentInfoList);
+                break;
+            default:
+                // 判定不能データ
+                mApiDataProviderCallback.recommendNGCallback();
         }
     }
 
@@ -644,7 +659,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         String title = map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE);
 
         //クリップ用データ設定
-        //TODO:レスポンスがないため、ダミーデータを設定
+        //TODO レスポンスがないため、ダミーデータを設定
         requestData.setCrid("672017101601");
         requestData.setServiceId("672017101601");
         requestData.setEventId("14c2");
@@ -658,6 +673,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 "1513306982", "tv_service", "dtv");
         return requestData;
     }
+
     /**
      * おすすめ番組をDBに保存する.
      *
@@ -666,7 +682,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * @param tagPageNo       ページ番号
      */
     private void setStructDB(final RecommendChList recommendChList, final String cacheDateKey, final int tagPageNo) {
-        //TODO:検討中
+        //TODO 検討中
 //        mCacheDateKey = cacheDateKey;
 //        mTagPageNo = tagPageNo;
 //        mRecommendChList = recommendChList;
@@ -767,10 +783,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * @return 取得対象サービスID:カテゴリーID文字列
      */
     private String getDAnimeRequestSCIdStr() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(RecommendRequestId.DANIME.getRequestSCId());
-
-        return stringBuilder.toString();
+        return RecommendRequestId.DANIME.getRequestSCId();
     }
 
     /**
@@ -795,6 +808,43 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         }
     }
 
+    /**
+     * レスポンスデータからサービスの種別を取得する.
+     * @param serviceId サービスID
+     * @param categoryId カテゴリID
+     * @return サービス種別
+     */
+    private RESP_DATA_SERVICE_TYPE decisionResponseDataType(final String serviceId, final String categoryId) {
+        DTVTLogger.start("ServiceId : " + serviceId + " CategoryId : " + categoryId);
+        RESP_DATA_SERVICE_TYPE result;
+
+        if (RecommendRequestId.HIKARITV_DOCOMO_IPTV.getServiceId().equals(serviceId)) {
+            // ServiceId == 44
+            if (RecommendRequestId.HIKARITV_DOCOMO_IPTV.getCategoryId().equals(categoryId)
+                    || RecommendRequestId.HIKARITV_DOCOMO_DTV_BLOADCAST.getCategoryId().equals(categoryId)) {
+                // CategoryId == 03 or 04
+                result = RESP_DATA_SERVICE_TYPE.HIKARI_TV;
+            } else {
+                result = RESP_DATA_SERVICE_TYPE.HIKARI_VOD;
+            }
+        } else if (RecommendRequestId.DANIME.getServiceId().equals(serviceId)) {
+            // ServiceId == 17
+            result = RESP_DATA_SERVICE_TYPE.DANIME;
+        } else if (RecommendRequestId.DTV_SVOD.getServiceId().equals(serviceId)) {
+            // ServiceId == 15
+            result = RESP_DATA_SERVICE_TYPE.DTV;
+        } else if (RecommendRequestId.DTVCHANNEL_RELATION.getServiceId().equals(serviceId)) {
+            // ServiceId == 43
+            result = RESP_DATA_SERVICE_TYPE.DCHANNEL;
+        } else {
+            // DAZNの判定を行う予定
+            result = RESP_DATA_SERVICE_TYPE.UNKNOWN;
+        }
+
+        DTVTLogger.end();
+        return result;
+    }
+
     @Override
     public void onDbOperationFinished(final boolean isSuccessful, final List<Map<String, String>> resultSet, final int operationId) {
         //強制オーバーライド
@@ -806,7 +856,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         List<ContentsData> resultList = new ArrayList<>();
         switch (operationId) {
             case HOME_RECOMMEND_DATA_INSERT:
-                //TODO:検討中
+                //TODO 検討中
 //                resultList = new ArrayList<>();
 //                recommendDataManager = new RecommendListDataManager(mContext);
 //                resultList = recommendDataManager.selectRecommendList(mRequestPageNo, mStartIndex, mMaxResult);
