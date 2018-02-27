@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
