@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * ビデオ＞ジャンル/サブジャンル一覧 Activityクラス
+ * ビデオ＞ジャンル/サブジャンル一覧 Activityクラス.
  */
 public class VideoTopActivity extends BaseActivity implements VideoGenreProvider.apiGenreListDataProviderCallback,
         AbsListView.OnScrollListener, AdapterView.OnItemClickListener, VideoGenreProvider.GenreListMapCallback {
@@ -49,7 +49,7 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
     private static final String VIDEO_GENRE_ID_BUNDLE_KEY = "videoContentKey";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.video_genre_main_layout);
         mMenuImageView = findViewById(R.id.header_layout_menu);
@@ -65,7 +65,7 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
     }
 
     /**
-     * レイアウト初期化
+     * レイアウト初期化.
      */
     private void initView() {
         //テレビアイコンをタップされたらリモコンを起動する
@@ -84,9 +84,9 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
     }
 
     /**
-     * List更新処理
+     * List更新処理.
      */
-    private void noticeRefresh(List<VideoGenreList> list) {
+    private void noticeRefresh(final List<VideoGenreList> list) {
         DTVTLogger.start("list size : " + list.size());
         if (null != mVideoGenreAdapter) {
             DTVTLogger.debug("Notify Data Set Change");
@@ -98,7 +98,7 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
         Bundle bundle = new Bundle();
         VideoGenreList videoGenreList = (VideoGenreList) mContentsList.get(position);
 
@@ -116,8 +116,8 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
         bundle.putParcelable(VIDEO_GENRE_ID_BUNDLE_KEY, info);
 
         // サブジャンル最終階層の場合は、コンテンツ一覧画面に遷移
-        if (videoGenreList.getSubGenre() == null ||
-                videoGenreList.getSubGenre().size() == 0) {
+        if (videoGenreList.getSubGenre() == null
+                || videoGenreList.getSubGenre().size() == 0) {
             // サブジャンルがなければコンテンツ一覧を表示する
             startActivity(VideoContentListActivity.class, bundle);
         } else {
@@ -127,17 +127,17 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
     }
 
     @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
+    public void onScrollStateChanged(final AbsListView view, final int scrollState) {
         // NOP
     }
 
     @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+    public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
         // NOP
     }
 
     @Override
-    public void genreListCallback(List<GenreCountGetMetaData> genreList) {
+    public void genreListCallback(final List<GenreCountGetMetaData> genreList) {
         DTVTLogger.start();
         if (genreList != null) {
             DTVTLogger.debug("Contents Count request is Success");
@@ -200,7 +200,7 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
     }
 
     @Override
-    public void genreListMapCallback(Map<String, VideoGenreList> listMap, List<String> firstGenreIdList) {
+    public void genreListMapCallback(final Map<String, VideoGenreList> listMap, final List<String> firstGenreIdList) {
         if (listMap != null && firstGenreIdList != null) {
             DTVTLogger.start("ListMap.size() :" + listMap.size());
             List<String> requestGenreIdList = new ArrayList<String>();
@@ -225,7 +225,7 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         DTVTLogger.start();
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:

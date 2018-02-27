@@ -36,12 +36,11 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
             = new RemoteRecordingReservationListResponse();
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      * <p>
      * //     * @param remoteRecordingReservationListJsonParserCallback
      */
-    public RemoteRecordingReservationListJsonParser(RemoteRecordingReservationListWebClient.
-                                                            RemoteRecordingReservationListJsonParserCallback
+    public RemoteRecordingReservationListJsonParser(final RemoteRecordingReservationListWebClient.RemoteRecordingReservationListJsonParserCallback
                                                             remoteRecordingReservationListJsonParserCallback) {
         mRemoteRecordingReservationListJsonParserCallback =
                 remoteRecordingReservationListJsonParserCallback;
@@ -49,14 +48,14 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
     }
 
     @Override
-    protected void onPostExecute(Object s) {
+    protected void onPostExecute(final Object s) {
         mRemoteRecordingReservationListJsonParserCallback
                 .onRemoteRecordingReservationListJsonParsed(
                         mRemoteRecordingReservationListResponse);
     }
 
     @Override
-    protected Object doInBackground(Object... strings) {
+    protected Object doInBackground(final Object... strings) {
         String result = (String) strings[0];
         RemoteRecordingReservationListResponse response =
                 remoteRecordingReservationListSender(result);
@@ -64,12 +63,12 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
     }
 
     /**
-     * リモート録画予約一覧Jsonデータを解析する
+     * リモート録画予約一覧Jsonデータを解析する.
      *
      * @param jsonStr リモート録画予約一覧Jsonデータ
      * @return リモート録画予約一覧取得：正常時レスポンスデータ
      */
-    public RemoteRecordingReservationListResponse remoteRecordingReservationListSender(String jsonStr) {
+    public RemoteRecordingReservationListResponse remoteRecordingReservationListSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         mRemoteRecordingReservationListResponse = new RemoteRecordingReservationListResponse();
@@ -94,11 +93,11 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
     }
 
     /**
-     * statusとcountの値をリモート録画予約一覧取得：正常時レスポンスデータオブジェクトに格納
+     * statusとcountの値をリモート録画予約一覧取得：正常時レスポンスデータオブジェクトに格納.
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendStatus(JSONObject jsonObj) {
+    public void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得しセットする
             if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {
@@ -134,11 +133,11 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
     }
 
     /**
-     * リモート録画予約一覧コンテンツのListをリモート録画予約一覧取得：正常時レスポンスデータオブジェクトに格納
+     * リモート録画予約一覧コンテンツのListをリモート録画予約一覧取得：正常時レスポンスデータオブジェクトに格納.
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendRemoteRecordingReservationListResponse(JSONObject jsonObj) {
+    public void sendRemoteRecordingReservationListResponse(final JSONObject jsonObj) {
         try {
             ArrayList<RemoteRecordingReservationMetaData> remoteRecordingReservationMetaDataList = new ArrayList<RemoteRecordingReservationMetaData>();
             if (!jsonObj.isNull(JsonConstants.META_RESPONSE_LIST)) {

@@ -19,7 +19,7 @@ public class TvClipList implements Serializable {
         return mTcMap;
     }
 
-    public void setVcMap(HashMap<String, String> tcMap) {
+    public void setVcMap(final HashMap<String, String> tcMap) {
         this.mTcMap = tcMap;
     }
 
@@ -27,7 +27,7 @@ public class TvClipList implements Serializable {
         return mTcList;
     }
 
-    public void setVcList(List<HashMap<String, String>> tcList) {
+    public void setVcList(final List<HashMap<String, String>> tcList) {
         this.mTcList = tcList;
     }
 }

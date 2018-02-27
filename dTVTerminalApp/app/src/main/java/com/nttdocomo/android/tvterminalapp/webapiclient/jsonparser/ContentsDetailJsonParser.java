@@ -35,7 +35,7 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
      * <p>
      * //     * @param genreCountGetJsonParserCallback
      */
-    public ContentsDetailJsonParser(ContentsDetailGetWebClient.
+    public ContentsDetailJsonParser(final ContentsDetailGetWebClient.
                                             ContentsDetailJsonParserCallback
                                             contentsDetailJsonParserCallback) {
         mContentsDetailJsonParserCallback =
@@ -44,13 +44,13 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
     }
 
     @Override
-    protected void onPostExecute(Object s) {
+    protected void onPostExecute(final Object s) {
         mContentsDetailJsonParserCallback.onContentsDetailJsonParsed(
                 (mContentsDetailGetResponse));
     }
 
     @Override
-    protected Object doInBackground(Object... strings) {
+    protected Object doInBackground(final Object... strings) {
         String result = (String) strings[0];
         return contentsDetailSender(result);
     }

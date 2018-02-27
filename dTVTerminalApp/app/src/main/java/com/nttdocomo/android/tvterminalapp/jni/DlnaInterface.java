@@ -471,7 +471,7 @@ public class DlnaInterface {
      * 機能：jni c/c++からのチャンネルを処理.
      * @param content content
      */
-    private void onTerChList(ArrayList<Object> content) {
+    private void onTerChList(final ArrayList<Object> content) {
         if (null != mDlnaTerChListListener) {
             DlnaTerChListInfo info = DlnaTerChListInfo.fromArrayList(content);
             if (null != info) {
@@ -485,7 +485,7 @@ public class DlnaInterface {
      * 機能：jni c/c++からのチャンネルを処理.
      * @param content content
      */
-    private void onHikariChList(ArrayList<Object> content) {
+    private void onHikariChList(final ArrayList<Object> content) {
         if (null != mDlnaHikariChListListener) {
             DlnaHikariChListInfo info = DlnaHikariChListInfo.fromArrayList(content);
             if (null != info) {
@@ -621,7 +621,7 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：download
+     * 機能：download.
      * @param itemId itemId
      * @return xmlToDl xmlToDl
      */

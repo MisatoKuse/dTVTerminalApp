@@ -11,7 +11,7 @@ import java.util.List;
 
 public class UserInfoList {
     /**
-     * コンストラクタ
+     * コンストラクタ.
      */
     public UserInfoList() {
         //ステータスはOKで初期化
@@ -21,17 +21,17 @@ public class UserInfoList {
     }
 
     /**
-     * ステータス
+     * ステータス.
      */
     private String mStatus;
 
     /**
-     * リクエストユーザデータのマップ
+     * リクエストユーザデータのマップ.
      */
     private List<AccountList> mLoggedinAccount;
 
     /**
-     * リクエストユーザがH4Dサブアカウントである場合のH4D契約ユーザデータ
+     * リクエストユーザがH4Dサブアカウントである場合のH4D契約ユーザデータ.
      */
     private List<AccountList> mH4dContractedAccount;
 
@@ -39,7 +39,7 @@ public class UserInfoList {
         return mStatus;
     }
 
-    public void setStatus(String mStatus) {
+    public void setStatus(final String mStatus) {
         this.mStatus = mStatus;
     }
 
@@ -48,7 +48,7 @@ public class UserInfoList {
         return mLoggedinAccount;
     }
 
-    public void setLoggedinAccount(List<AccountList> mLoggedinAccount) {
+    public void setLoggedinAccount(final List<AccountList> mLoggedinAccount) {
         //リクエストユーザデータのセット
         this.mLoggedinAccount = mLoggedinAccount;
     }
@@ -58,7 +58,7 @@ public class UserInfoList {
         return mH4dContractedAccount;
     }
 
-    public void setH4dContractedAccount(List<AccountList> mH4dContractedAccount) {
+    public void setH4dContractedAccount(final List<AccountList> mH4dContractedAccount) {
         //H4D契約ユーザデータのセット
         this.mH4dContractedAccount = mH4dContractedAccount;
     }

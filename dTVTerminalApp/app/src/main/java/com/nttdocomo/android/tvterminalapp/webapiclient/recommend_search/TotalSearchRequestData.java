@@ -25,7 +25,7 @@ public class TotalSearchRequestData {
     //ソート指定
     public int sortKind = 0;
 
-    public ArrayList<SearchFilterType> filterTypeList=new ArrayList<SearchFilterType>();
+    public ArrayList<SearchFilterType> filterTypeList = new ArrayList<SearchFilterType>();
 
     //取得対象サービスID
     public String serviceId = null;

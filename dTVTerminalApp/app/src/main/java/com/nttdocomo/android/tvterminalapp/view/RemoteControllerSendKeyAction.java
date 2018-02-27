@@ -35,28 +35,28 @@ public class RemoteControllerSendKeyAction {
     private static final int SEND_KEYCODE_PARAM_ACTION_DOWN = 0;
 
     private enum RepeatTaskStatus {
-        REPEAT_STATUS_DEFAULT,// 初期状態
+        REPEAT_STATUS_DEFAULT, // 初期状態
         REPEAT_STATUS_STAND_BY, // 実行待ち
         REPEAT_STATUS_DURING_STARTUP, // 起動中（初回起動待ち）
         REPEAT_STATUS_EXECUTION, // リピート処理実行
     }
 
-    public RemoteControllerSendKeyAction(Context context) {
+    public RemoteControllerSendKeyAction(final Context context) {
         mContext = context;
         mRemoteControlRelayClient = RemoteControlRelayClient.getInstance();
     }
 
-    public void initRemoteControllerPlayerView(View view) {
+    public void initRemoteControllerPlayerView(final View view) {
         mView = view;
         mPlayerViewHolder = setPlayerViewHolder(new RemoteControllerPlayerViewHolder(), view);
     }
 
-    public void initRemoteControllerChannelView(View view) {
+    public void initRemoteControllerChannelView(final View view) {
         mChannelViewHolder = setChannelViewHolder(new RemoteControllerChannelViewHolder(), view);
     }
 
 
-    private RemoteControllerChannelViewHolder setChannelViewHolder(RemoteControllerChannelViewHolder cViewHolder, View view) {
+    private RemoteControllerChannelViewHolder setChannelViewHolder(RemoteControllerChannelViewHolder cViewHolder, final View view) {
         DTVTLogger.start();
         cViewHolder.remote_controller_iv_power = view.findViewById(R.id.remote_controller_iv_power);
         cViewHolder.remote_controller_bt_degital = view.findViewById(R.id.remote_controller_bt_degital);
@@ -85,7 +85,7 @@ public class RemoteControllerSendKeyAction {
         return cViewHolder;
     }
 
-    private RemoteControllerPlayerViewHolder setPlayerViewHolder(RemoteControllerPlayerViewHolder pViewHolder, View view) {
+    private RemoteControllerPlayerViewHolder setPlayerViewHolder(RemoteControllerPlayerViewHolder pViewHolder, final View view) {
         DTVTLogger.start("" + view.getId());
         pViewHolder.remote_controller_bt_record_list = view.findViewById(R.id.remote_controller_bt_record_list);
         pViewHolder.remote_controller_bt_tvprogram = view.findViewById(R.id.remote_controller_bt_tv_program);
@@ -109,7 +109,7 @@ public class RemoteControllerSendKeyAction {
     }
 
     /**
-     * ビュー管理クラス
+     * ビュー管理クラス.
      */
     // プレイヤー操作UI
     private static class RemoteControllerPlayerViewHolder {
@@ -154,7 +154,7 @@ public class RemoteControllerSendKeyAction {
     }
 
     /**
-     * リモコンUI（プレイヤー操作）の各ボタンにリスナーを設定
+     * リモコンUI（プレイヤー操作）の各ボタンにリスナーを設定.
      *
      * @param pViewHolder
      * @return
@@ -181,12 +181,12 @@ public class RemoteControllerSendKeyAction {
     }
 
     /**
-     * リモコンUI（チャンネル操作）の各ボタンにリスナーを設定
+     * リモコンUI（チャンネル操作）の各ボタンにリスナーを設定.
      *
      * @param cViewHolder
      * @return
      */
-    private RemoteControllerChannelViewHolder setRemoteControllerChannelViewHolderListener(RemoteControllerChannelViewHolder cViewHolder) {
+    private RemoteControllerChannelViewHolder setRemoteControllerChannelViewHolderListener(final RemoteControllerChannelViewHolder cViewHolder) {
         DTVTLogger.start();
         cViewHolder.remote_controller_iv_power.setOnTouchListener(mListener);
         cViewHolder.remote_controller_bt_degital.setOnTouchListener(mListener);
@@ -216,7 +216,7 @@ public class RemoteControllerSendKeyAction {
     // OnTouchListener
     private View.OnTouchListener mListener = new View.OnTouchListener() {
         @Override
-        public boolean onTouch(View v, MotionEvent event) {
+        public boolean onTouch(final View v, final MotionEvent event) {
             DTVTLogger.start();
             switch (event.getAction()) {
                 case MotionEvent.ACTION_UP:
@@ -224,12 +224,12 @@ public class RemoteControllerSendKeyAction {
                     DTVTLogger.debug("MotionEvemt ACTION_UP");
                     if (mRepeatStateManagement.mStatus == RepeatTaskStatus.REPEAT_STATUS_EXECUTION) {
                         // リピート実行中の場合
-                        sendKeyCode(v.getId(),SEND_KEYCODE_PARAM_ACTION_UP,true, mContext);
+                        sendKeyCode(v.getId(), SEND_KEYCODE_PARAM_ACTION_UP, true, mContext);
                         mRepeatStateManagement.repeatCancel();
                         mRepeatStateManagement.setRepeatTaskStatus(RepeatTaskStatus.REPEAT_STATUS_STAND_BY);
                     } else if (mRepeatStateManagement.mStatus == RepeatTaskStatus.REPEAT_STATUS_DURING_STARTUP) {
                         // リピート処理を1度も行っていない場合
-                        sendKeyCode(v.getId(),SEND_KEYCODE_PARAM_ACTION_UP,false, mContext);
+                        sendKeyCode(v.getId(), SEND_KEYCODE_PARAM_ACTION_UP, false, mContext);
                         mRepeatStateManagement.repeatCancel();
                         mRepeatStateManagement.setRepeatTaskStatus(RepeatTaskStatus.REPEAT_STATUS_STAND_BY);
                         DTVTLogger.debug("sendKeyCode");
@@ -239,7 +239,7 @@ public class RemoteControllerSendKeyAction {
                     break;
                 case MotionEvent.ACTION_DOWN:
                     setTouchSelector(v.getId(), true);
-                    sendKeyCode(v.getId(),SEND_KEYCODE_PARAM_ACTION_DOWN,false, mContext);
+                    sendKeyCode(v.getId(), SEND_KEYCODE_PARAM_ACTION_DOWN, false, mContext);
                     DTVTLogger.debug("MotionEvemt ACTION_DOWN");
                     if (mRepeatStateManagement == null) {
                         mRepeatStateManagement = new RepeatStateManagement(mHandler, v.getId());
@@ -253,7 +253,7 @@ public class RemoteControllerSendKeyAction {
                     break;
                 case MotionEvent.ACTION_CANCEL:
                     setTouchSelector(v.getId(), false);
-                    sendKeyCode(v.getId(),SEND_KEYCODE_PARAM_ACTION_UP,true, mContext);
+                    sendKeyCode(v.getId(), SEND_KEYCODE_PARAM_ACTION_UP, true, mContext);
                     DTVTLogger.debug("MotionEvemt ACTION_CANCEL");
                     if (null != mRepeatStateManagement) {
                         mRepeatStateManagement.repeatCancel();
@@ -336,7 +336,7 @@ public class RemoteControllerSendKeyAction {
             put(R.id.remote_controller_iv_red,
                     new int[]{R.mipmap.remote_player_color_btn_red_btn, R.mipmap.remote_tap_player_color_btn_red_btn}); // カラー (赤)/巻き戻し
             put(R.id.remote_controller_iv_green,
-                    new int[]{R.mipmap.remote_player_color_btn_green_btn, R.mipmap.remote_tap_player_color_btn_green_btn});// カラー (緑)/早送り
+                    new int[]{R.mipmap.remote_player_color_btn_green_btn, R.mipmap.remote_tap_player_color_btn_green_btn}); // カラー (緑)/早送り
             put(R.id.remote_controller_iv_yellow,
                     new int[]{R.mipmap.remote_player_color_btn_yellow_btn, R.mipmap.remote_tap_player_color_btn_yellow_btn}); // カラー (黄)/30秒送り
             put(R.id.remote_controller_bt_channel_plus,
@@ -352,34 +352,34 @@ public class RemoteControllerSendKeyAction {
         }
     };
 
-    private void setTouchSelector(int viewId, boolean isDown){
-        int selectorPics[] = null;
+    private void setTouchSelector(final int viewId, final boolean isDown) {
+        int[] selectorPics = null;
         if (keyDownUpSelector.containsKey(viewId)) {
             selectorPics = keyDownUpSelector.get(viewId);
         }
-        if(selectorPics != null && selectorPics.length > 1){
-            if(mView.findViewById(viewId) instanceof Button){
+        if (selectorPics != null && selectorPics.length > 1) {
+            if (mView.findViewById(viewId) instanceof Button) {
                 Button button = mView.findViewById(viewId);
-                if(isDown){
-                    if(R.id.remote_controller_bt_channel_plus == viewId
-                            || R.id.remote_controller_bt_channel_minus == viewId){
+                if (isDown) {
+                    if (R.id.remote_controller_bt_channel_plus == viewId
+                            || R.id.remote_controller_bt_channel_minus == viewId) {
                         ImageView imageView = mView.findViewById(R.id.remote_controller_tv_channel);
                         imageView.setImageResource(selectorPics[1]);
-                    }else{
+                    } else {
                         button.setBackgroundResource(selectorPics[1]);
                     }
                 } else {
-                    if(R.id.remote_controller_bt_channel_plus == viewId
-                            || R.id.remote_controller_bt_channel_minus == viewId){
+                    if (R.id.remote_controller_bt_channel_plus == viewId
+                            || R.id.remote_controller_bt_channel_minus == viewId) {
                         ImageView imageView = mView.findViewById(R.id.remote_controller_tv_channel);
                         imageView.setImageResource(selectorPics[0]);
-                    }else{
+                    } else {
                         button.setBackgroundResource(selectorPics[0]);
                     }
                 }
-            } else if(mView.findViewById(viewId) instanceof ImageView){
+            } else if (mView.findViewById(viewId) instanceof ImageView) {
                 ImageView imageView = mView.findViewById(viewId);
-                if(isDown){
+                if (isDown) {
                     imageView.setImageResource(selectorPics[1]);
                 } else {
                     imageView.setImageResource(selectorPics[0]);
@@ -389,16 +389,16 @@ public class RemoteControllerSendKeyAction {
     }
 
     /**
-     * キーコードを送信する
+     * キーコードを送信する.
      * @param viewId
      */
-    private void sendKeyCode(int viewId,int action,boolean isCancelFlg, Context context) {
+    private void sendKeyCode(final int viewId, final int action, final boolean isCancelFlg, final Context context) {
         mRemoteControlRelayClient.sendKeycode(viewId, action, isCancelFlg, context);
     }
 
 
     /**
-     * 連続送信タイマークラス
+     * 連続送信タイマークラス.
      */
     private class RepeatStateManagement extends Timer {
         private Handler mHandler = null;
@@ -414,22 +414,22 @@ public class RemoteControllerSendKeyAction {
         private long DELAY_TIME = 500;
 
 
-        RepeatStateManagement(Handler handler, int buttonId) {
+        RepeatStateManagement(final Handler handler, final int buttonId) {
             mHandler = handler;
             mRepeatButtonId = buttonId;
         }
 
         /**
-         * タイマータスクの状態を設定
+         * タイマータスクの状態を設定.
          *
          * @param status
          */
-        private void setRepeatTaskStatus(RepeatTaskStatus status) {
+        private void setRepeatTaskStatus(final RepeatTaskStatus status) {
             mStatus = status;
         }
 
         /**
-         * TimerTask実行予約処理
+         * TimerTask実行予約処理.
          */
         private void executeTimerTask() {
             DTVTLogger.start();
@@ -440,7 +440,7 @@ public class RemoteControllerSendKeyAction {
         }
 
         /**
-         * TimerTask処理の設定
+         * TimerTask処理の設定.
          */
         private void setTimerTask() {
             mTimerTask = new TimerTask() {
@@ -454,7 +454,7 @@ public class RemoteControllerSendKeyAction {
                         mStatus = RepeatTaskStatus.REPEAT_STATUS_EXECUTION;
                     }
                     // クリック処理を実行する
-                    sendKeyCode(mRepeatButtonId,SEND_KEYCODE_PARAM_ACTION_DOWN,false, mContext);
+                    sendKeyCode(mRepeatButtonId, SEND_KEYCODE_PARAM_ACTION_DOWN, false, mContext);
                     DTVTLogger.debug("sendKeyCode");
 
                     DTVTLogger.end();
@@ -463,17 +463,17 @@ public class RemoteControllerSendKeyAction {
         }
 
         /**
-         * ボタンのViewIdを設定
+         * ボタンのViewIdを設定.
          */
-        private void setRepeatButtonId(int viewId) {
+        private void setRepeatButtonId(final int viewId) {
             mRepeatButtonId = viewId;
         }
 
         /**
-         * リピート処理の終了
+         * リピート処理の終了.
          */
         public void repeatCancel() {
-            if(mTimerTask != null) {
+            if (mTimerTask != null) {
                 mTimerTask.cancel();
                 mTimerTask = null;
             }
@@ -481,17 +481,17 @@ public class RemoteControllerSendKeyAction {
     }
 
     /**
-     * UI画面が閉じられた際タイマーをキャンセルする
+     * UI画面が閉じられた際タイマーをキャンセルする.
      */
     public void cancelTimer() {
-        if(mRepeatStateManagement != null) {
+        if (mRepeatStateManagement != null) {
             mRepeatStateManagement.repeatCancel();
             mRepeatStateManagement = null;
         }
     }
 
     /**
-     * RelayClientを取得する
+     * RelayClientを取得する.
      * @return RemoteControlRelayClient
      */
     public RemoteControlRelayClient getRelayClient() {

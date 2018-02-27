@@ -29,7 +29,7 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
     private WeeklyRankList mWeeklyRankList;
 
     /**
-     * 拡張情報
+     * 拡張情報.
      **/
     Bundle mExtraData = null;
 
@@ -39,22 +39,22 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
             JsonConstants.META_RESPONSE_TOTAL};
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
      * @param mWeeklyRankJsonParserCallback 値を返すコールバック
      */
-    public WeeklyRankJsonParser(WeeklyRankWebClient.WeeklyRankJsonParserCallback mWeeklyRankJsonParserCallback) {
+    public WeeklyRankJsonParser(final WeeklyRankWebClient.WeeklyRankJsonParserCallback mWeeklyRankJsonParserCallback) {
         this.mWeeklyRankJsonParserCallback = mWeeklyRankJsonParserCallback;
     }
 
     /**
-     * 拡張情報付きコンストラクタ
+     * 拡張情報付きコンストラクタ.
      *
      * @param mWeeklyRankJsonParserCallback コールバック用
      * @param extraDataSrc                  拡張情報
      */
-    public WeeklyRankJsonParser(WeeklyRankWebClient.WeeklyRankJsonParserCallback
-                                        mWeeklyRankJsonParserCallback, Bundle extraDataSrc) {
+    public WeeklyRankJsonParser(final WeeklyRankWebClient.WeeklyRankJsonParserCallback
+                                        mWeeklyRankJsonParserCallback, final Bundle extraDataSrc) {
         this.mWeeklyRankJsonParserCallback = mWeeklyRankJsonParserCallback;
 
         //拡張情報の追加
@@ -62,7 +62,7 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     @Override
-    protected void onPostExecute(Object object) {
+    protected void onPostExecute(final Object object) {
         //拡張情報が存在すれば、入れ込む
         List<WeeklyRankList> rankLists = (List<WeeklyRankList>) object;
         if (mExtraData != null) {
@@ -74,19 +74,19 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     @Override
-    protected Object doInBackground(Object... strings) {
+    protected Object doInBackground(final Object... strings) {
         String result = (String) strings[0];
         List<WeeklyRankList> resultList = weeklyRankListSender(result);
         return resultList;
     }
 
     /**
-     * 週間ランキングJsonデータを解析する
+     * 週間ランキングJsonデータを解析する.
      *
      * @param jsonStr String形式のJSONデータ
      * @return List<WeeklyRankList> ObjectクラスをList形式で返却
      */
-    private List<WeeklyRankList> weeklyRankListSender(String jsonStr) {
+    private List<WeeklyRankList> weeklyRankListSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         mWeeklyRankList = new WeeklyRankList();
@@ -110,11 +110,11 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     /**
-     * statusの値をMapでオブジェクトクラスに格納
+     * statusの値をMapでオブジェクトクラスに格納.
      *
      * @param jsonObj ステータスを含んだJSONオブジェクト
      */
-    private void sendStatus(JSONObject jsonObj) {
+    private void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
             HashMap<String, String> map = new HashMap<>();
@@ -145,11 +145,11 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     /**
-     * コンテンツリストをList<HashMap>の形式でObjectクラスへ格納する
+     * コンテンツリストをList<HashMap>の形式でObjectクラスへ格納する.
      *
      * @param arrayList JSONArray
      */
-    private void sendWrList(JSONArray arrayList) {
+    private void sendWrList(final JSONArray arrayList) {
         try {
             List<HashMap<String, String>> wrList = new ArrayList<>();
             for (int i = 0; i < arrayList.length(); i++) {

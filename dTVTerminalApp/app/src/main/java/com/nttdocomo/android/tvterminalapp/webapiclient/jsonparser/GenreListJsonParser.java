@@ -36,7 +36,7 @@ public class GenreListJsonParser extends AsyncTask<Object, Object, Object> {
      * <p>
      * //     * @param genreListJsonParserCallback
      */
-    public GenreListJsonParser(GenreListWebClient.GenreListJsonParserCallback genreListJsonParserCallback) {
+    public GenreListJsonParser(final GenreListWebClient.GenreListJsonParserCallback genreListJsonParserCallback) {
         mGenreListJsonParserCallback =
                 genreListJsonParserCallback;
         mGenreListResponse = new GenreListResponse();

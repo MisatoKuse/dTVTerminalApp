@@ -56,7 +56,7 @@ public class RankingPagerAdapter extends FragmentStatePagerAdapter {
     /**
      * リスナーを設定.
      */
-    public void setTabNames(String[] mTabNames) {
+    public void setTabNames(final String[] mTabNames) {
         this.mTabNames = mTabNames;
     }
 

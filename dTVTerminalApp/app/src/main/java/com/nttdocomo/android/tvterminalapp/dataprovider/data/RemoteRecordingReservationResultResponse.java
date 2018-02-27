@@ -5,7 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 /**
- * リモート録画予約一覧取得：レスポンスデータ
+ * リモート録画予約一覧取得：レスポンスデータ.
  */
 public class RemoteRecordingReservationResultResponse {
 
@@ -21,7 +21,7 @@ public class RemoteRecordingReservationResultResponse {
         return mStatus;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(final String status) {
         mStatus = status;
     }
 
@@ -29,14 +29,14 @@ public class RemoteRecordingReservationResultResponse {
         return mErrorNo;
     }
 
-    public void setErrorNo(String errorNo) {
+    public void setErrorNo(final String errorNo) {
         mErrorNo = errorNo;
     }
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      */
-    public RemoteRecordingReservationResultResponse(String result, String errorNo) {
+    public RemoteRecordingReservationResultResponse(final String result, final String errorNo) {
         mStatus = result;
         mErrorNo = errorNo;
     }

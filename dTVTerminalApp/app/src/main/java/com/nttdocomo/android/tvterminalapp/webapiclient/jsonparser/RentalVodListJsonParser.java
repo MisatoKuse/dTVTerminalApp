@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 
 /**
- * レンタル一覧（Jsonパーサー）
+ * レンタル一覧（Jsonパーサー）.
  */
 public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
 
@@ -33,22 +33,22 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
     private PurchasedVodListResponse mPurchasedVodListResponse = null;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
      * @param rentalVodListJsonParserCallback コールバックの飛び先
      */
-    public RentalVodListJsonParser(RentalVodListWebClient.RentalVodListJsonParserCallback rentalVodListJsonParserCallback) {
+    public RentalVodListJsonParser(final RentalVodListWebClient.RentalVodListJsonParserCallback rentalVodListJsonParserCallback) {
         mRentalVodListJsonParserCallback = rentalVodListJsonParserCallback;
         mPurchasedVodListResponse = new PurchasedVodListResponse();
     }
 
     @Override
-    protected void onPostExecute(Object s) {
+    protected void onPostExecute(final Object s) {
         mRentalVodListJsonParserCallback.onRentalVodListJsonParsed(mPurchasedVodListResponse);
     }
 
     @Override
-    protected Object doInBackground(Object... strings) {
+    protected Object doInBackground(final Object... strings) {
         String result = (String) strings[0];
         PurchasedVodListResponse response = PurchasedVodListSender(result);
         return response;
@@ -60,7 +60,7 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
      * @param jsonStr レンタル一覧Jsonデータ
      * @return 購入済みVOD一覧取得：正常時レスポンスデータ
      */
-    public PurchasedVodListResponse PurchasedVodListSender(String jsonStr) {
+    public PurchasedVodListResponse PurchasedVodListSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         mPurchasedVodListResponse = new PurchasedVodListResponse();
@@ -85,11 +85,11 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     /**
-     * statusの値を購入済みVOD一覧取得：正常時レスポンスデータオブジェクトに格納
+     * statusの値を購入済みVOD一覧取得：正常時レスポンスデータオブジェクトに格納.
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendStatus(JSONObject jsonObj) {
+    public void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得しセットする
             if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {
@@ -103,11 +103,11 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     /**
-     * レンタル一覧コンテンツのListを購入済みVOD一覧取得：正常時レスポンスデータオブジェクトに格納
+     * レンタル一覧コンテンツのListを購入済みVOD一覧取得：正常時レスポンスデータオブジェクトに格納.
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendPurchasedVodListResponse(JSONObject jsonObj) {
+    public void sendPurchasedVodListResponse(final JSONObject jsonObj) {
         try {
             ArrayList<VodMetaFullData> vodMetaFullDataList = new ArrayList<VodMetaFullData>();
             if (!jsonObj.isNull(JsonConstants.META_RESPONSE_METADATE_LIST)) {
@@ -132,11 +132,11 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     /**
-     * 有効期限一覧の取得：正常時レスポンスデータオブジェクトに格納
+     * 有効期限一覧の取得：正常時レスポンスデータオブジェクトに格納.
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendActiveListResponse(JSONObject jsonObj) {
+    public void sendActiveListResponse(final JSONObject jsonObj) {
         try {
             ArrayList<ActiveData> vodActiveDataList =
                     new ArrayList<ActiveData>();

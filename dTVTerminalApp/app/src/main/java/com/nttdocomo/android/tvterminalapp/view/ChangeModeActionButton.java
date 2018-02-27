@@ -14,7 +14,7 @@ public class ChangeModeActionButton extends RelativeLayout {
         super(context);
     }
 
-    public ChangeModeActionButton(final Context context, AttributeSet attrs) {
+    public ChangeModeActionButton(final Context context, final AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -23,7 +23,7 @@ public class ChangeModeActionButton extends RelativeLayout {
     }
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
+    public boolean dispatchTouchEvent(final MotionEvent ev) {
         getParent().requestDisallowInterceptTouchEvent(true);
         return super.dispatchTouchEvent(ev);
     }

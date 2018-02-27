@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * VOD&番組メタレスポンス（フル版）
+ * VOD&番組メタレスポンス（フル版）.
  */
 public class VodMetaFullData implements Serializable {
 
@@ -161,7 +161,7 @@ public class VodMetaFullData implements Serializable {
         return mCrid;
     }
 
-    public void setCrid(String crid) {
+    public void setCrid(final String crid) {
         mCrid = crid;
     }
 
@@ -169,7 +169,7 @@ public class VodMetaFullData implements Serializable {
         return mCid;
     }
 
-    public void setCid(String cid) {
+    public void setCid(final String cid) {
         mCid = cid;
     }
 
@@ -177,7 +177,7 @@ public class VodMetaFullData implements Serializable {
         return mTitle_id;
     }
 
-    public void setTitle_id(String title_id) {
+    public void setTitle_id(final String title_id) {
         mTitle_id = title_id;
     }
 
@@ -185,7 +185,7 @@ public class VodMetaFullData implements Serializable {
         return mEpisode_id;
     }
 
-    public void setEpisode_id(String episode_id) {
+    public void setEpisode_id(final String episode_id) {
         mEpisode_id = episode_id;
     }
 
@@ -193,7 +193,7 @@ public class VodMetaFullData implements Serializable {
         return mTitle;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         mTitle = title;
     }
 
@@ -201,7 +201,7 @@ public class VodMetaFullData implements Serializable {
         return mEpititle;
     }
 
-    public void setEpititle(String epititle) {
+    public void setEpititle(final String epititle) {
         mEpititle = epititle;
     }
 
@@ -209,7 +209,7 @@ public class VodMetaFullData implements Serializable {
         return mTitleruby;
     }
 
-    public void setTitleruby(String titleruby) {
+    public void setTitleruby(final String titleruby) {
         mTitleruby = titleruby;
     }
 
@@ -217,7 +217,7 @@ public class VodMetaFullData implements Serializable {
         return mDisp_type;
     }
 
-    public void setDisp_type(String disp_type) {
+    public void setDisp_type(final String disp_type) {
         mDisp_type = disp_type;
     }
 
@@ -225,7 +225,7 @@ public class VodMetaFullData implements Serializable {
         return mDisplay_start_date;
     }
 
-    public void setDisplay_start_date(long display_start_date) {
+    public void setDisplay_start_date(final long display_start_date) {
         mDisplay_start_date = display_start_date;
     }
 
@@ -233,7 +233,7 @@ public class VodMetaFullData implements Serializable {
         return mDisplay_end_date;
     }
 
-    public void setDisplay_end_date(long display_end_date) {
+    public void setDisplay_end_date(final long display_end_date) {
         mDisplay_end_date = display_end_date;
     }
 
@@ -241,7 +241,7 @@ public class VodMetaFullData implements Serializable {
         return mAvail_start_date;
     }
 
-    public void setAvail_start_date(long avail_start_date) {
+    public void setAvail_start_date(final long avail_start_date) {
         mAvail_start_date = avail_start_date;
     }
 
@@ -249,7 +249,7 @@ public class VodMetaFullData implements Serializable {
         return mAvail_end_date;
     }
 
-    public void setAvail_end_date(long avail_end_date) {
+    public void setAvail_end_date(final long avail_end_date) {
         mAvail_end_date = avail_end_date;
     }
 
@@ -257,7 +257,7 @@ public class VodMetaFullData implements Serializable {
         return mPublish_start_date;
     }
 
-    public void setPublish_start_date(long publish_start_date) {
+    public void setPublish_start_date(final long publish_start_date) {
         mPublish_start_date = publish_start_date;
     }
 
@@ -265,7 +265,7 @@ public class VodMetaFullData implements Serializable {
         return mPublish_end_date;
     }
 
-    public void setPublish_end_date(long publish_end_date) {
+    public void setPublish_end_date(final long publish_end_date) {
         mPublish_end_date = publish_end_date;
     }
 
@@ -273,7 +273,7 @@ public class VodMetaFullData implements Serializable {
         return mNewa_start_date;
     }
 
-    public void setNewa_start_date(long newa_start_date) {
+    public void setNewa_start_date(final long newa_start_date) {
         mNewa_start_date = newa_start_date;
     }
 
@@ -281,7 +281,7 @@ public class VodMetaFullData implements Serializable {
         return mNewa_end_date;
     }
 
-    public void setNewa_end_date(long newa_end_date) {
+    public void setNewa_end_date(final long newa_end_date) {
         mNewa_end_date = newa_end_date;
     }
 
@@ -289,7 +289,7 @@ public class VodMetaFullData implements Serializable {
         return mThumb_640_360;
     }
 
-    public void setmThumb_640_360(String mThumb_640_360) {
+    public void setmThumb_640_360(final String mThumb_640_360) {
         this.mThumb_640_360 = mThumb_640_360;
     }
 
@@ -297,7 +297,7 @@ public class VodMetaFullData implements Serializable {
         return mThumb_448_252;
     }
 
-    public void setmThumb_448_252(String mThumb_448_252) {
+    public void setmThumb_448_252(final String mThumb_448_252) {
         this.mThumb_448_252 = mThumb_448_252;
     }
 
@@ -305,7 +305,7 @@ public class VodMetaFullData implements Serializable {
         return mDtv_thumb_640_360;
     }
 
-    public void setmDtv_thumb_640_360(String mDtv_thumb_640_360) {
+    public void setmDtv_thumb_640_360(final String mDtv_thumb_640_360) {
         this.mDtv_thumb_640_360 = mDtv_thumb_640_360;
     }
 
@@ -313,7 +313,7 @@ public class VodMetaFullData implements Serializable {
         return mDtv_thumb_448_252;
     }
 
-    public void setmDtv_thumb_448_252(String mDtv_thumb_448_252) {
+    public void setmDtv_thumb_448_252(final String mDtv_thumb_448_252) {
         this.mDtv_thumb_448_252 = mDtv_thumb_448_252;
     }
 
@@ -321,7 +321,7 @@ public class VodMetaFullData implements Serializable {
         return mCopyright;
     }
 
-    public void setCopyright(String copyright) {
+    public void setCopyright(final String copyright) {
         mCopyright = copyright;
     }
 
@@ -329,7 +329,7 @@ public class VodMetaFullData implements Serializable {
         return mDur;
     }
 
-    public void setDur(int dur) {
+    public void setDur(final int dur) {
         mDur = dur;
     }
 
@@ -337,7 +337,7 @@ public class VodMetaFullData implements Serializable {
         return mDemong;
     }
 
-    public void setDemong(String demong) {
+    public void setDemong(final String demong) {
         mDemong = demong;
     }
 
@@ -345,7 +345,7 @@ public class VodMetaFullData implements Serializable {
         return mBvflg;
     }
 
-    public void setBvflg(String bvflg) {
+    public void setBvflg(final String bvflg) {
         mBvflg = bvflg;
     }
 
@@ -353,7 +353,7 @@ public class VodMetaFullData implements Serializable {
         return m4kflg;
     }
 
-    public void setM4kflg(int m4kflg) {
+    public void setM4kflg(final int m4kflg) {
         this.m4kflg = m4kflg;
     }
 
@@ -361,7 +361,7 @@ public class VodMetaFullData implements Serializable {
         return mHdrflg;
     }
 
-    public void setHdrflg(String hdrflg) {
+    public void setHdrflg(final String hdrflg) {
         mHdrflg = hdrflg;
     }
 
@@ -369,7 +369,7 @@ public class VodMetaFullData implements Serializable {
         return mDelivery;
     }
 
-    public void setDelivery(String delivery) {
+    public void setDelivery(final String delivery) {
         mDelivery = delivery;
     }
 
@@ -377,7 +377,7 @@ public class VodMetaFullData implements Serializable {
         return mR_value;
     }
 
-    public void setR_value(String r_value) {
+    public void setR_value(final String r_value) {
         mR_value = r_value;
     }
 
@@ -385,7 +385,7 @@ public class VodMetaFullData implements Serializable {
         return mAdult;
     }
 
-    public void setAdult(int adult) {
+    public void setAdult(final int adult) {
         mAdult = adult;
     }
 
@@ -393,7 +393,7 @@ public class VodMetaFullData implements Serializable {
         return mGenre_array.clone();
     }
 
-    public void setGenre_array(String[] genre_array) {
+    public void setGenre_array(final String[] genre_array) {
         mGenre_array = genre_array.clone();
     }
 
@@ -401,7 +401,7 @@ public class VodMetaFullData implements Serializable {
         return mSynop;
     }
 
-    public void setSynop(String synop) {
+    public void setSynop(final String synop) {
         mSynop = synop;
     }
 
@@ -409,7 +409,7 @@ public class VodMetaFullData implements Serializable {
         return mPuid;
     }
 
-    public void setPuid(String puid) {
+    public void setPuid(final String puid) {
         mPuid = puid;
     }
 
@@ -417,7 +417,7 @@ public class VodMetaFullData implements Serializable {
         return mPrice;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(final String price) {
         mPrice = price;
     }
 
@@ -425,7 +425,7 @@ public class VodMetaFullData implements Serializable {
         return mQrange;
     }
 
-    public void setQrange(String qrange) {
+    public void setQrange(final String qrange) {
         mQrange = qrange;
     }
 
@@ -433,7 +433,7 @@ public class VodMetaFullData implements Serializable {
         return mQunit;
     }
 
-    public void setQunit(String qunit) {
+    public void setQunit(final String qunit) {
         mQunit = qunit;
     }
 
@@ -441,7 +441,7 @@ public class VodMetaFullData implements Serializable {
         return mPu_start_date;
     }
 
-    public void setmPu_start_date(long mPu_start_date) {
+    public void setmPu_start_date(final long mPu_start_date) {
         this.mPu_start_date = mPu_start_date;
     }
 
@@ -449,7 +449,7 @@ public class VodMetaFullData implements Serializable {
         return mPu_end_date;
     }
 
-    public void setmPu_end_date(long mPu_end_date) {
+    public void setmPu_end_date(final long mPu_end_date) {
         this.mPu_end_date = mPu_end_date;
     }
 
@@ -458,7 +458,7 @@ public class VodMetaFullData implements Serializable {
         return mCredit_array.clone();
     }
 
-    public void setmCredit_array(String[] credit_array) {
+    public void setmCredit_array(final String[] credit_array) {
         //コピーして蓄積する
         this.mCredit_array = credit_array.clone();
     }
@@ -467,7 +467,7 @@ public class VodMetaFullData implements Serializable {
         return mRating;
     }
 
-    public void setRating(double rating) {
+    public void setRating(final double rating) {
         mRating = rating;
     }
 
@@ -475,7 +475,7 @@ public class VodMetaFullData implements Serializable {
         return mDtv;
     }
 
-    public void setDtv(String dtv) {
+    public void setDtv(final String dtv) {
         mDtv = dtv;
     }
 
@@ -483,7 +483,7 @@ public class VodMetaFullData implements Serializable {
         return mChsvod;
     }
 
-    public void setmChsvod(String mChsvod) {
+    public void setmChsvod(final String mChsvod) {
         this.mChsvod = mChsvod;
     }
 
@@ -491,7 +491,7 @@ public class VodMetaFullData implements Serializable {
         return mSearch_ok;
     }
 
-    public void setmSearch_ok(String mSearch_ok) {
+    public void setmSearch_ok(final String mSearch_ok) {
         this.mSearch_ok = mSearch_ok;
     }
 
@@ -499,7 +499,7 @@ public class VodMetaFullData implements Serializable {
         return mLiinf_array.clone();
     }
 
-    public void setmLiinf_array(String[] liinfArray) {
+    public void setmLiinf_array(final String[] liinfArray) {
         this.mLiinf_array = liinfArray.clone();
     }
 
@@ -507,7 +507,7 @@ public class VodMetaFullData implements Serializable {
         return mPUINF;
     }
 
-    public void setmPUINF(List<Puinf> mPUINF) {
+    public void setmPUINF(final List<Puinf> mPUINF) {
         this.mPUINF = mPUINF;
     }
 
@@ -515,7 +515,7 @@ public class VodMetaFullData implements Serializable {
         return mCapl;
     }
 
-    public void setmCapl(String mCapl) {
+    public void setmCapl(final String mCapl) {
         this.mCapl = mCapl;
     }
 
@@ -523,7 +523,7 @@ public class VodMetaFullData implements Serializable {
         return mBilingal;
     }
 
-    public void setmBilingal(String mBilingal) {
+    public void setmBilingal(final String mBilingal) {
         this.mBilingal = mBilingal;
     }
 
@@ -531,7 +531,7 @@ public class VodMetaFullData implements Serializable {
         return mTv_cid;
     }
 
-    public void setmTv_cid(String mTv_cid) {
+    public void setmTv_cid(final String mTv_cid) {
         this.mTv_cid = mTv_cid;
     }
 
@@ -539,7 +539,7 @@ public class VodMetaFullData implements Serializable {
         return mService_id;
     }
 
-    public void setmService_id(String mService_id) {
+    public void setmService_id(final String mService_id) {
         this.mService_id = mService_id;
     }
 
@@ -547,7 +547,7 @@ public class VodMetaFullData implements Serializable {
         return mEvent_id;
     }
 
-    public void setmEvent_id(String mEvent_id) {
+    public void setmEvent_id(final String mEvent_id) {
         this.mEvent_id = mEvent_id;
     }
 
@@ -555,7 +555,7 @@ public class VodMetaFullData implements Serializable {
         return mChno;
     }
 
-    public void setmChno(String mChno) {
+    public void setmChno(final String mChno) {
         this.mChno = mChno;
     }
 
@@ -563,7 +563,7 @@ public class VodMetaFullData implements Serializable {
         return mTv_service;
     }
 
-    public void setmTv_service(String mTv_service) {
+    public void setmTv_service(final String mTv_service) {
         this.mTv_service = mTv_service;
     }
 
@@ -571,7 +571,7 @@ public class VodMetaFullData implements Serializable {
         return mContent_type;
     }
 
-    public void setmContent_type(String mContent_type) {
+    public void setmContent_type(final String mContent_type) {
         this.mContent_type = mContent_type;
     }
 
@@ -579,7 +579,7 @@ public class VodMetaFullData implements Serializable {
         return mVod_start_date;
     }
 
-    public void setmVod_start_date(long mVod_start_date) {
+    public void setmVod_start_date(final long mVod_start_date) {
         this.mVod_start_date = mVod_start_date;
     }
 
@@ -587,7 +587,7 @@ public class VodMetaFullData implements Serializable {
         return mVod_end_date;
     }
 
-    public void setmVod_end_date(long mVod_end_date) {
+    public void setmVod_end_date(final long mVod_end_date) {
         this.mVod_end_date = mVod_end_date;
     }
 
@@ -595,7 +595,7 @@ public class VodMetaFullData implements Serializable {
         return mMain_genre;
     }
 
-    public void setmMain_genre(String mMain_genre) {
+    public void setmMain_genre(final String mMain_genre) {
         this.mMain_genre = mMain_genre;
     }
 
@@ -603,7 +603,7 @@ public class VodMetaFullData implements Serializable {
         return mSecond_genre_array.clone();
     }
 
-    public void setmSecond_genre_array(String[] mSecond_genre_array) {
+    public void setmSecond_genre_array(final String[] mSecond_genre_array) {
         this.mSecond_genre_array = mSecond_genre_array.clone();
     }
 
@@ -611,7 +611,7 @@ public class VodMetaFullData implements Serializable {
         return mCopy;
     }
 
-    public void setmCopy(String mCopy) {
+    public void setmCopy(final String mCopy) {
         this.mCopy = mCopy;
     }
 
@@ -619,7 +619,7 @@ public class VodMetaFullData implements Serializable {
         return mAdinfo_array.clone();
     }
 
-    public void setmAdinfo_array(String[] adinfo_array) {
+    public void setmAdinfo_array(final String[] adinfo_array) {
         this.mAdinfo_array = adinfo_array.clone();
     }
 
@@ -627,7 +627,7 @@ public class VodMetaFullData implements Serializable {
         return mRelational_id_array.clone();
     }
 
-    public void setmRelational_id_array(String[] mRelational_id_array) {
+    public void setmRelational_id_array(final String[] mRelational_id_array) {
         this.mRelational_id_array = mRelational_id_array.clone();
     }
 
@@ -635,7 +635,7 @@ public class VodMetaFullData implements Serializable {
         return mClipExec;
     }
 
-    private void setClipExec(boolean mClipExec) {
+    private void setClipExec(final boolean mClipExec) {
         this.mClipExec = mClipExec;
     }
 
@@ -643,7 +643,7 @@ public class VodMetaFullData implements Serializable {
         return mClipStatus;
     }
 
-    public void setClipStatus(boolean mClipStatus) {
+    public void setClipStatus(final boolean mClipStatus) {
         this.mClipStatus = mClipStatus;
     }
 
@@ -695,7 +695,7 @@ public class VodMetaFullData implements Serializable {
     };
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      */
     public VodMetaFullData() {
         //各配列の初期化
@@ -711,11 +711,11 @@ public class VodMetaFullData implements Serializable {
     }
 
     /**
-     * VOD&番組メタレスポンス（フル版）の json データをデータオブジェクトに変換
+     * VOD&番組メタレスポンス（フル版）の json データをデータオブジェクトに変換.
      *
      * @param jsonObj 　json データ
      */
-    public void setData(JSONObject jsonObj) {
+    public void setData(final JSONObject jsonObj) {
         // ライセンス/販売情報リスト
         Puinf puinf;
         try {
@@ -754,13 +754,13 @@ public class VodMetaFullData implements Serializable {
     }
 
     /**
-     * キーとキーの値をメンバーにセットする
+     * キーとキーの値をメンバーにセットする.
      * (メソッドが長くて複雑と警告が出るが、分割するとむしろわかりにくくなるのでこのままとする)
      *
      * @param key  キー
      * @param data キーの値
      */
-    private void setMember(String key, Object data) {
+    private void setMember(final String key, final Object data) {
         //キーに値があれば、それを元に値を格納する
         if (key != null && !key.isEmpty()) {
             switch (key) {
@@ -1009,12 +1009,12 @@ public class VodMetaFullData implements Serializable {
     }
 
     /**
-     * キーの値を取得する
+     * キーの値を取得する.
      * (メソッドが長くて複雑と警告が出るが、分割するとむしろわかりにくくなるのでこのままとする)
      *
      * @param key 取得したい値のキー
      */
-    public Object getMember(String key) {
+    public Object getMember(final String key) {
         if (key == null || key.isEmpty()) {
             //キーが無いので、空文字を返す
             return "";
@@ -1207,7 +1207,7 @@ public class VodMetaFullData implements Serializable {
         return mDtvType;
     }
 
-    public void setDtvType(String mDtvType) {
+    public void setDtvType(final String mDtvType) {
         this.mDtvType = mDtvType;
     }
 
@@ -1215,7 +1215,7 @@ public class VodMetaFullData implements Serializable {
         return mEstFlag;
     }
 
-    public void setEstFlag(String mEstFlag) {
+    public void setEstFlag(final String mEstFlag) {
         this.mEstFlag = mEstFlag;
     }
 }

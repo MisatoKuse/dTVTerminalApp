@@ -44,7 +44,7 @@ public class RentalChListWebClient
      *
      * @param context コンテキスト
      */
-    public RentalChListWebClient(Context context) {
+    public RentalChListWebClient(final Context context) {
         super(context);
     }
 
@@ -63,7 +63,7 @@ public class RentalChListWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
+    public void onError(final ReturnCode returnCode) {
         if (mRentalChListJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             mRentalChListJsonParserCallback.onRentalChListJsonParsed(null);

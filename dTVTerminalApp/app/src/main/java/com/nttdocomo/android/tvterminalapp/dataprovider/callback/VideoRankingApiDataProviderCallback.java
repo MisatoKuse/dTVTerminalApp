@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface VideoRankingApiDataProviderCallback {
     /**
-     * ジャンル系のコールバック
+     * ジャンル系のコールバック.
      *
      * @param videoRankList アダプターで使うデータ
      */

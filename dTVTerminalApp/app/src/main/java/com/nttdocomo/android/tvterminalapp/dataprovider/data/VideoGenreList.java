@@ -22,7 +22,7 @@ public class VideoGenreList implements Serializable {
         return mGenreId;
     }
 
-    public void setGenreId(String genreId) {
+    public void setGenreId(final String genreId) {
         this.mGenreId = genreId;
     }
 
@@ -30,7 +30,7 @@ public class VideoGenreList implements Serializable {
         return mTitle;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         this.mTitle = title;
     }
 
@@ -38,7 +38,7 @@ public class VideoGenreList implements Serializable {
         return mContentCount;
     }
 
-    public void setContentCount(String contentCount) {
+    public void setContentCount(final String contentCount) {
         this.mContentCount = contentCount;
     }
 
@@ -46,11 +46,11 @@ public class VideoGenreList implements Serializable {
         return mRValue;
     }
 
-    public void setRValue(String rValue) {
+    public void setRValue(final String rValue) {
         this.mRValue = rValue;
     }
 
-    public void addSubGenreList(String subGenreId) {
+    public void addSubGenreList(final String subGenreId) {
         if (mSubGenreIdList == null) {
             mSubGenreIdList = new ArrayList<String>();
         }

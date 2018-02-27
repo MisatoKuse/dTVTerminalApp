@@ -22,16 +22,16 @@ public class UserInfoUtils {
     public static final String CONTRACT_INFO_H4D = "002";
 
     /**
-     * レコメンドサーバ用に、ユーザ年齢情報を＋3して返却する
+     * レコメンドサーバ用に、ユーザ年齢情報を＋3して返却する.
      *
      * @param userAge
      * @return
      */
-    public static String getRecommendUserAge(int userAge) {
+    public static String getRecommendUserAge(final int userAge) {
         final int RECOMMEND_AGE_MARGIN = 3;
         if (userAge >= 0) {
-            userAge = userAge + RECOMMEND_AGE_MARGIN;
-            return String.valueOf(userAge);
+            int destUserAge = userAge + RECOMMEND_AGE_MARGIN;
+            return String.valueOf(destUserAge);
         } else {
             return null;
         }

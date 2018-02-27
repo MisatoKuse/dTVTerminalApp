@@ -15,7 +15,7 @@ public class DlnaRecVideoInfo {
     }
 
     public void addItemByValue(final DlnaRecVideoItem item) {
-        DlnaRecVideoItem newItem= new DlnaRecVideoItem();
+        DlnaRecVideoItem newItem = new DlnaRecVideoItem();
         newItem.mTitle = item.mTitle;
         newItem.mDate = item.mDate;
         newItem.mAllowedUse = item.mAllowedUse;
@@ -42,15 +42,16 @@ public class DlnaRecVideoInfo {
         return 0;
     }
 
-    public DlnaRecVideoItem get(int index) {
+    public DlnaRecVideoItem get(final int index) {
+        int destIndex = index;
         if (index < 0) {
-            index = 0;
+            destIndex = 0;
         }
         if (null == mRecordVideoLists || 0 == mRecordVideoLists.size()) {
             return null;
         }
 
-        return mRecordVideoLists.get(index);
+        return mRecordVideoLists.get(destIndex);
     }
 
     static DlnaRecVideoInfo fromArrayList(final ArrayList<Object> content) {

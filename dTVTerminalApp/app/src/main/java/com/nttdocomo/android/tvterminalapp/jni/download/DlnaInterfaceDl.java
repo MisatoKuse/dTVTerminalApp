@@ -28,7 +28,7 @@ public class DlnaInterfaceDl {
     /**
      * 機能：デフォールト構造.
      */
-    public DlnaInterfaceDl(String savePath)/* throws Exception*/ {
+    public DlnaInterfaceDl(final String savePath)/* throws Exception*/ {
 //        if(!startDtcpDl(savePath)){
 //            throw new Exception("DlnaInterfaceDl.DlnaInterfaceDl() constructor failed");
 //        }
@@ -104,7 +104,7 @@ public class DlnaInterfaceDl {
     /**
      * 機能：Dlna機能を停止。「startDtcpDl」とPairで使用しなければならない.
      */
-    public void stopDtcpDl(){
+    public void stopDtcpDl() {
         nativeStopDlna(mNativeDlna);
     }
 
@@ -143,7 +143,7 @@ public class DlnaInterfaceDl {
     /**
      * todo: WiFiは切ると、対応する.
      */
-    public void toDoWithWiFiLost(){
+    public void toDoWithWiFiLost() {
 
     }
 
@@ -256,7 +256,7 @@ public class DlnaInterfaceDl {
         return f.getParent();
     }
 
-    public void downloadCancel(){
+    public void downloadCancel() {
         downloadCancel(mNativeDlna);
     }
 

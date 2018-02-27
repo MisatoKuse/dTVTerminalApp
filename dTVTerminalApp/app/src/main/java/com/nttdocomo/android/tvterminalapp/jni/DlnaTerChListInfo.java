@@ -27,14 +27,15 @@ public class DlnaTerChListInfo {
     }
 
     public DlnaTerChListItem get(int index) {
+        int destIndex = index;
         if (index < 0) {
-            index = 0;
+            destIndex = 0;
         }
         if (null == mLists || 0 == mLists.size()) {
             return null;
         }
 
-        return mLists.get(index);
+        return mLists.get(destIndex);
     }
 
     static DlnaTerChListInfo fromArrayList(final ArrayList<Object> content) {

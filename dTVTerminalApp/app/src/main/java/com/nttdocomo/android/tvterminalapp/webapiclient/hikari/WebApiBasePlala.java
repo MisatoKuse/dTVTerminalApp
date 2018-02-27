@@ -530,8 +530,8 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         mOneTimeTokenData = SharedPreferencesUtils.getOneTimeTokenData(mContext);
 
         //ワンタイムトークンの期限切れ確認
-        if (mOneTimeTokenData.getOneTimeTokenGetTime() <
-                DateUtils.getNowTimeFormatEpoch()) {
+        if (mOneTimeTokenData.getOneTimeTokenGetTime()
+                < DateUtils.getNowTimeFormatEpoch()) {
             //期限切れなので、ワンタイムパスワードの取得を起動
             getOneTimePassword(mContext);
         } else {
@@ -550,7 +550,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      * @param webApiBasePlalaCallback コールバック
      */
     public void openOneTimeTokenGetUrl(final String receivedParameters,
-                                       WebApiBasePlalaCallback webApiBasePlalaCallback) {
+                                       final WebApiBasePlalaCallback webApiBasePlalaCallback) {
         CommunicationTask communicationTask = new CommunicationTask(receivedParameters);
 
         //コールバックの準備
@@ -612,7 +612,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         boolean answer = tokenClient.getServiceTokenApi(oneTimePassword,
                 new ServiceTokenClient.TokenGetCallback() {
                     @Override
-                    public void onTokenGot(boolean successFlag) {
+                    public void onTokenGot(final boolean successFlag) {
                         //結果に値があるかを確認
                         if (successFlag) {
                             //値があったので、セット
@@ -646,7 +646,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      * @param statusCode コネクションの際のステータス
      * @return 読み込んだボディ部
      */
-    private String readConnectionBody(int statusCode) {
+    private String readConnectionBody(final int statusCode) {
         if (statusCode != HttpURLConnection.HTTP_OK) {
             //HTTP通信エラーとして元に返す
             mReturnCode.errorType = DTVTConstants.ERROR_TYPE.HTTP_ERROR;
@@ -706,7 +706,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      * @param status HTTPステータス
      * @return 300番台ならばtrue
      */
-    public static boolean isRedirectCode(int status) {
+    public static boolean isRedirectCode(final int status) {
         switch (status) {
             case HttpURLConnection.HTTP_MULT_CHOICE:
             case HttpURLConnection.HTTP_MOVED_PERM:
@@ -726,7 +726,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      * @param newUrlString 飛び先URL
      * @param parameter    使用するパラメータ・使用しない場合はヌルか空文字
      */
-    private void gotoRedirect(String newUrlString, String parameter) {
+    private void gotoRedirect(final String newUrlString, final String parameter) {
         DTVTLogger.start();
 
         HttpsURLConnection httpsConnection = null;
@@ -772,8 +772,8 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
 
             //リダイレクトのステータスを判定
             if (isRedirectCode(status)) {
-                if (newUrl.contains(ServiceTokenClient.getOkUrlString()) ||
-                        newUrl.contains(ServiceTokenClient.getNgUrlString())) {
+                if (newUrl.contains(ServiceTokenClient.getOkUrlString())
+                        || newUrl.contains(ServiceTokenClient.getNgUrlString())) {
                     //リダイレクトで、ロケーションがOKかNGに指定したURLならば、サービストークン取得処理へ遷移
                     getServiceToken(newUrl);
                     //コネクションを閉じる
@@ -818,7 +818,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      * @throws OcspParameterException SSL証明書失効例外
      * @throws IOException            IO例外
      */
-    private void checkSsl(HttpsURLConnection httpsConnection) throws OcspParameterException, IOException {
+    private void checkSsl(final HttpsURLConnection httpsConnection) throws OcspParameterException, IOException {
         //コンテキストがあればSSL証明書失効チェックを行う
         if (mContext != null) {
             DTVTLogger.debug(httpsConnection.getURL().toString());
@@ -845,7 +845,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      *
      * @param location 取得したロケーション
      */
-    private void getServiceToken(String location) {
+    private void getServiceToken(final String location) {
         //クッキー情報のバッファ
         String serviceToken = "";
         long serviceTokenMaxAge = 0;
@@ -870,8 +870,8 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                     serviceTokenMaxAge = cookie.getMaxAge();
 
                     //取得した時間は生存秒数なので、ミリ秒の無効化予定時間を算出する
-                    serviceTokenMaxAge = (serviceTokenMaxAge * 1000) +
-                            DateUtils.getNowTimeFormatEpoch();
+                    serviceTokenMaxAge = (serviceTokenMaxAge * 1000)
+                            + DateUtils.getNowTimeFormatEpoch();
 
                     oneTimeTokenData.setOneTimeToken(serviceToken);
                     oneTimeTokenData.setOneTimeTokenGetTime(serviceTokenMaxAge);
@@ -901,7 +901,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      * @param connection HTTPSのコネクション
      * @return 取得したレスポンス
      */
-    private String getAnswer(HttpsURLConnection connection) {
+    private String getAnswer(final HttpsURLConnection connection) {
         InputStream stream = null;
         StringBuilder stringBuilder = new StringBuilder();
         BufferedReader bufferedReader = null;
@@ -941,7 +941,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      *
      * @param urlConnection 書き込み対象のコネクション
      */
-    private void setHttpsPostData(HttpsURLConnection urlConnection, String sendData) {
+    private void setHttpsPostData(final HttpsURLConnection urlConnection, final String sendData) {
         if (urlConnection == null) {
             return;
         }
@@ -1043,7 +1043,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          */
         private String mOneTimeToken = "";
         /**
-         * ワンタイムトークン取得のスイッチ
+         * ワンタイムトークン取得のスイッチ.
          */
         private boolean oneTimeTokenGetSwitch = false;
         /**
@@ -1133,7 +1133,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          *
          * @param receivedParameters ワンタイムパスワードを含むパラメータ
          */
-        CommunicationTask(String receivedParameters) {
+        CommunicationTask(final String receivedParameters) {
             mSourceUrl = UrlConstants.WebApiUrl.ONE_TIME_TOKEN_GET_URL;
             mSendParameter = receivedParameters;
 

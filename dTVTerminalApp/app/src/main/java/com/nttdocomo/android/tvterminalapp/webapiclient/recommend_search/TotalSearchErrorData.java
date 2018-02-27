@@ -21,9 +21,9 @@ public class TotalSearchErrorData {
         error = new ErrorResultData();
     }
 
-    public TotalSearchErrorData(String id, String param) {
+    public TotalSearchErrorData(final String id, final String param) {
         error = new ErrorResultData();
-        error.id= id;
+        error.id = id;
         error.param = param;
         status = DTVTConstants.SEARCH_STATUS_NG;
     }

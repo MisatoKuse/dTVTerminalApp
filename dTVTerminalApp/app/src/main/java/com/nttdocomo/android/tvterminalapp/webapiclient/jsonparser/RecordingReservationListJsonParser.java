@@ -31,37 +31,36 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
     private RecordingReservationListResponse mRecordingReservationListResponse;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      * <p>
      * //     * @param recordingReservationListJsonParserCallback
      */
-    public RecordingReservationListJsonParser(RecordingReservationListWebClient.
-        RecordingReservationListJsonParserCallback recordingReservationListJsonParserCallback) {
+    public RecordingReservationListJsonParser(final RecordingReservationListWebClient.RecordingReservationListJsonParserCallback recordingReservationListJsonParserCallback) {
         mRecordingReservationListJsonParserCallback =
                 recordingReservationListJsonParserCallback;
         mRecordingReservationListResponse = new RecordingReservationListResponse();
     }
 
     @Override
-    protected void onPostExecute(Object s) {
+    protected void onPostExecute(final Object s) {
         mRecordingReservationListJsonParserCallback.
             onRecordingReservationListJsonParsed(mRecordingReservationListResponse);
     }
 
     @Override
-    protected Object doInBackground(Object... strings) {
+    protected Object doInBackground(final Object... strings) {
         String result = (String) strings[0];
         RecordingReservationListResponse response = recordingReservationListSender(result);
         return response;
     }
 
     /**
-     * 録画予約一覧Jsonデータを解析する
+     * 録画予約一覧Jsonデータを解析する.
      *
      * @param jsonStr 録画予約一覧Jsonデータ
      * @return 録画予約一覧取得：正常時レスポンスデータ
      */
-    public RecordingReservationListResponse recordingReservationListSender(String jsonStr) {
+    public RecordingReservationListResponse recordingReservationListSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         mRecordingReservationListResponse = new RecordingReservationListResponse();
@@ -85,11 +84,11 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
     }
 
     /**
-     * statusとpagerの値を録画予約一覧取得：正常時レスポンスデータオブジェクトに格納
+     * statusとpagerの値を録画予約一覧取得：正常時レスポンスデータオブジェクトに格納.
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendStatus(JSONObject jsonObj) {
+    public void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得しセットする
             if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {
@@ -122,11 +121,11 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
     }
 
     /**
-     * 録画予約一覧コンテンツのListを録画予約一覧取得：正常時レスポンスデータオブジェクトに格納
+     * 録画予約一覧コンテンツのListを録画予約一覧取得：正常時レスポンスデータオブジェクトに格納.
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendRecordingReservationListResponse(JSONObject jsonObj) {
+    public void sendRecordingReservationListResponse(final JSONObject jsonObj) {
         try {
             ArrayList<RecordingReservationMetaData> recordingReservationMetaDataList =
                     new ArrayList<RecordingReservationMetaData>();

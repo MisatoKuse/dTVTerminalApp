@@ -11,7 +11,7 @@ public class SearchChargeType extends SearchFilterTypeMappable {
     public final int free = SearchNarrowCondition.getNextOrdinal();
     public final int rental = SearchNarrowCondition.getNextOrdinal();
 
-    private int self=SearchNarrowCondition.sEnumOrdinalNil;
+    private int self = SearchNarrowCondition.sEnumOrdinalNil;
 
     public SearchChargeType(final String name) {
         if ("SearchChargeTypeFree".equals(name)) {

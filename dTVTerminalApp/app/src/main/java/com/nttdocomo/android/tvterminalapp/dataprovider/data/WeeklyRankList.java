@@ -15,7 +15,7 @@ public class WeeklyRankList {
     private List<HashMap<String, String>> mWrList = new ArrayList<>();
 
     /**
-     * 拡張情報
+     * 拡張情報.
      **/
     private Bundle extraData = null;
 
@@ -23,7 +23,7 @@ public class WeeklyRankList {
         return mWrMap;
     }
 
-    public void setWrMap(HashMap<String, String> wrMap) {
+    public void setWrMap(final HashMap<String, String> wrMap) {
         this.mWrMap = wrMap;
     }
 
@@ -31,21 +31,21 @@ public class WeeklyRankList {
         return mWrList;
     }
 
-    public void setWrList(List wrList) {
+    public void setWrList(final List wrList) {
         this.mWrList = wrList;
     }
 
     /**
-     * 拡張情報のセッター
+     * 拡張情報のセッター.
      *
      * @param extraDataSrc 代入する拡張情報
      */
-    public void setExtraData(Bundle extraDataSrc) {
+    public void setExtraData(final Bundle extraDataSrc) {
         extraData = extraDataSrc;
     }
 
     /**
-     * 拡張情報のセッター
+     * 拡張情報のセッター.
      *
      * @return 拡張情報
      */

@@ -59,7 +59,7 @@ public class DownloadService extends Service implements DownloadListener {
         }
     }
 
-    public synchronized static  List<DlData> getDlDataQue(){
+    public synchronized static  List<DlData> getDlDataQue() {
         return sDlDataQue;
     }
 
@@ -72,7 +72,7 @@ public class DownloadService extends Service implements DownloadListener {
     }
 
     /**
-     * Create
+     * Create.
      */
     @Override
     public void onCreate() {
@@ -80,7 +80,7 @@ public class DownloadService extends Service implements DownloadListener {
     }
 
     /**
-     * ダウンロード開始
+     * ダウンロード開始.
      */
     public void start() {
         if (null != mDownloaderBase) {
@@ -128,17 +128,17 @@ public class DownloadService extends Service implements DownloadListener {
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
+    public IBinder onBind(final Intent intent) {
         return new Binder();
     }
 
     @Override
-    public boolean onUnbind(Intent intent) {
+    public boolean onUnbind(final Intent intent) {
         return true;
     }
 
     @Override
-    public void onRebind(Intent intent) {
+    public void onRebind(final Intent intent) {
         super.onRebind(intent);
     }
 

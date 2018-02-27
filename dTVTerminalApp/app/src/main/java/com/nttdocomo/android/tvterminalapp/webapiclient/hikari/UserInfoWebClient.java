@@ -22,11 +22,11 @@ public class UserInfoWebClient
     private boolean mIsCancel = false;
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface UserInfoJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param userInfoLists JSONパース後のデータ
          */
@@ -37,16 +37,16 @@ public class UserInfoWebClient
     private UserInfoJsonParserCallback mUserInfoJsonParserCallback;
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
-    public UserInfoWebClient(Context context) {
+    public UserInfoWebClient(final Context context) {
         super(context);
     }
 
     @Override
-    public void onAnswer(ReturnCode returnCode) {
+    public void onAnswer(final ReturnCode returnCode) {
         //JSONをパースして、データを返す
         new UserInfoJsonParser(mUserInfoJsonParserCallback).execute(returnCode.bodyData);
     }
@@ -57,7 +57,7 @@ public class UserInfoWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
+    public void onError(final ReturnCode returnCode) {
         if (mUserInfoJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             mUserInfoJsonParserCallback.onUserInfoJsonParsed(null);
@@ -65,12 +65,12 @@ public class UserInfoWebClient
     }
 
     /**
-     * 契約情報取得
+     * 契約情報取得.
      *
      * @param userInfoJsonParserCallback コールバック
      * @return パラメータエラー等が発生した場合はfalse
      */
-    public boolean getUserInfoApi(UserInfoJsonParserCallback userInfoJsonParserCallback) {
+    public boolean getUserInfoApi(final UserInfoJsonParserCallback userInfoJsonParserCallback) {
         if (mIsCancel) {
             DTVTLogger.error("UserInfoWebClient is stopping connection");
             return false;
@@ -93,12 +93,12 @@ public class UserInfoWebClient
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param userInfoJsonParserCallback コールバック
      * @return おかしい値があるならばfalse
      */
-    private boolean checkNormalParameter(UserInfoJsonParserCallback userInfoJsonParserCallback) {
+    private boolean checkNormalParameter(final UserInfoJsonParserCallback userInfoJsonParserCallback) {
 
         //コールバックが指定されていないならばfalse
         if (userInfoJsonParserCallback == null) {

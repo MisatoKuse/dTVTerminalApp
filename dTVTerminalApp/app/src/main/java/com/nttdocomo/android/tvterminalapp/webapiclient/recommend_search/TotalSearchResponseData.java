@@ -57,7 +57,7 @@ public class TotalSearchResponseData {
          */
         String title;
         /**
-         * mobileViewingFlg モバイル視聴可否フラグ
+         * mobileViewingFlg モバイル視聴可否フラグ.
          */
         String  mobileViewingFlg;
         //String person;    //iosソースより、保留

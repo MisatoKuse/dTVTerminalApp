@@ -156,7 +156,7 @@ public class TabItemLayout extends HorizontalScrollView {
             }
             tabTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
+                public void onClick(final View view) {
                     int position = (int) view.getTag();
                     setTab(position);
                     if (mOnClickTabTextListener != null) {

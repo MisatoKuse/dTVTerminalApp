@@ -7,49 +7,49 @@ package com.nttdocomo.android.tvterminalapp.struct;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
 /*
- * 録画予約コンテンツ詳細クラス
+ * 録画予約コンテンツ詳細クラス.
  * 　　機能： コンテンツ詳細を管理するクラスである
  */
 public class RecordingReservationContentsDetailInfo {
     /**
-     * 放送種別 1:多チャンネル放送
+     * 放送種別 1:多チャンネル放送.
      */
     private int mPlatformType = 1;
     /**
-     * サービスID
+     * サービスID.
      */
     private String mServiceId;
     /**
-     * イベントID(番組指定予約の場合必須)
+     * イベントID(番組指定予約の場合必須).
      */
     private String mEventId = null;
     /**
-     * 番組タイトル（STB予約リストに表示するタイトル）
+     * 番組タイトル（STB予約リストに表示するタイトル）.
      */
     private String mTitle;
     /**
-     * 録画予約開始時間
+     * 録画予約開始時間.
      */
     private long mStartTime;
     /**
-     * 予約時間の長さ
+     * 予約時間の長さ.
      */
     private long mDuration;
     /**
-     * 定期予約指定値:0～10（イベントIDありの場合0固定）
+     * 定期予約指定値:0～10（イベントIDありの場合0固定）.
      */
     private int mLoopTypeNum = 0;
     /**
-     * パレンタル設定値
+     * パレンタル設定値.
      */
     private String mRValue;
 
     public RecordingReservationContentsDetailInfo(
-            String serviceId,
-            String title,
-            long startTime,
-            int duration,
-            String rValue) {
+            final String serviceId,
+            final String title,
+            final long startTime,
+            final int duration,
+            final String rValue) {
         mServiceId = serviceId;
         mTitle = title;
         mStartTime = startTime;
@@ -58,11 +58,11 @@ public class RecordingReservationContentsDetailInfo {
 
     }
 
-    public void setEventId(String eventId) {
+    public void setEventId(final String eventId) {
         mEventId = eventId;
     }
 
-    public void setLoopTypeNum(int loopTypeNum) {
+    public void setLoopTypeNum(final int loopTypeNum) {
         // 0以外の場合、開始時間は0時00分00秒からの時間となる
         if (loopTypeNum != 0) {
             DateUtils.getCalculationRecordingReservationStartTime(mStartTime);
@@ -105,7 +105,7 @@ public class RecordingReservationContentsDetailInfo {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("plat:" + getPlatformType())
-                .append(" sId:"+ getServiceId())
+                .append(" sId:" + getServiceId())
                 .append(" eId:" + getEventId())
                 .append(" title:" + getTitle())
                 .append(" start:" + getStartTime())

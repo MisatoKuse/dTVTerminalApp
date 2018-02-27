@@ -48,7 +48,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
     private boolean mIsStop = false;
 
     @Override
-    public void onUserInfoJsonParsed(List<UserInfoList> userInfoLists) {
+    public void onUserInfoJsonParsed(final List<UserInfoList> userInfoLists) {
         DTVTLogger.start();
 
         if (userInfoLists != null && mDataManager != null) {
@@ -79,7 +79,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
          *
          * @param list コンテンツリスト
          */
-        void userInfoListCallback(boolean isDataChange, List<UserInfoList> list);
+        void userInfoListCallback(final boolean isDataChange, final List<UserInfoList> list);
     }
 
     /**
@@ -87,7 +87,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
      *
      * @param mContext コンテキストファイル
      */
-    public UserInfoDataProvider(Context mContext) {
+    public UserInfoDataProvider(final Context mContext) {
         this.mContext = mContext;
     }
 
@@ -96,7 +96,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
      *
      * @param context コンテキスト
      */
-    public UserInfoDataProvider(Context context, UserDataProviderCallback userDataProviderCallback) {
+    public UserInfoDataProvider(final Context context, final UserDataProviderCallback userDataProviderCallback) {
         DTVTLogger.start();
 
         mContext = context;
@@ -153,7 +153,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
      * @param context コンテキスト
      * @return 通信可能ならばtrue
      */
-    private static boolean isOnline(Context context) {
+    private static boolean isOnline(final Context context) {
         DTVTLogger.start();
 
         //システムのネットワーク情報を取得する

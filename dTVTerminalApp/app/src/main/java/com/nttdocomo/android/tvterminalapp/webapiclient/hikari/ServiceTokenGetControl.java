@@ -53,7 +53,7 @@ public class ServiceTokenGetControl {
         DaccountGetOTT getOtt = new DaccountGetOTT();
         getOtt.execDaccountGetOTT(mContext, new DaccountGetOTT.DaccountGetOttCallBack() {
             @Override
-            public void getOttCallBack(int result, String id, String oneTimePassword) {
+            public void getOttCallBack(int result, final String id, final String oneTimePassword) {
                 gotOtt(result, id, oneTimePassword);
             }
         });

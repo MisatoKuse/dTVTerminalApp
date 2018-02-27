@@ -314,17 +314,18 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
      * @param monthOfYear 月
      * @param dayOfMonth  日
      */
-    private void setSelectedDate(final int year, int monthOfYear, final int dayOfMonth) {
+    private void setSelectedDate(final int year, final int monthOfYear, final int dayOfMonth) {
         Calendar calendar = Calendar.getInstance(Locale.JAPAN);
         StringBuilder selectDate;
         calendar.set(year, monthOfYear, dayOfMonth);
-        monthOfYear++;
+        int destMonthOfYear = monthOfYear;
+        destMonthOfYear++;
         StringBuilder month = new StringBuilder();
         StringBuilder day = new StringBuilder();
-        if (monthOfYear < 10) {
+        if (destMonthOfYear < 10) {
             month.append(DAY_PRE0);
         }
-        month.append(monthOfYear);
+        month.append(destMonthOfYear);
         if (dayOfMonth < 10) {
             day.append(DAY_PRE0);
         }

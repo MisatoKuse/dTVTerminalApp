@@ -32,7 +32,7 @@ public class RecordedContentsDetailData implements Parcelable {
         mDetailParamFromWhere = from;
     }
 
-    public DetailParamFromWhere getDetailParamFromWhere(){
+    public DetailParamFromWhere getDetailParamFromWhere() {
         return mDetailParamFromWhere;
     }
 

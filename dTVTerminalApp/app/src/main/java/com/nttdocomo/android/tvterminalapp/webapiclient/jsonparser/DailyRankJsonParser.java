@@ -32,7 +32,7 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
             JsonConstants.META_RESPONSE_TOTAL};
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
      * @param mDailyRankJsonParserCallback コールバック
      */
@@ -87,7 +87,7 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
      *
      * @param jsonObj 解析前ステータス
      */
-    private void sendStatus(JSONObject jsonObj) {
+    private void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
             HashMap<String, String> map = new HashMap<>();

@@ -29,7 +29,7 @@ public class VodClipJsonParser {
             JsonConstants.META_RESPONSE_LOWER_LIMIT, JsonConstants.META_RESPONSE_OFFSET,
             JsonConstants.META_RESPONSE_COUNT};
 
-    public List<VodClipList> VodClipListSender(String jsonStr) {
+    public List<VodClipList> VodClipListSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         mVodClipList = new VodClipList();
@@ -53,7 +53,7 @@ public class VodClipJsonParser {
         return null;
     }
 
-    public void sendStatus(JSONObject jsonObj) {
+    public void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
             HashMap<String, String> map = new HashMap<>();
@@ -84,9 +84,9 @@ public class VodClipJsonParser {
     }
 
     /**
-     * コンテンツのList<HashMap>をオブジェクトクラスに格納
+     * コンテンツのList<HashMap>をオブジェクトクラスに格納.
      */
-    public void sendVcList(JSONArray arrayList) {
+    public void sendVcList(final JSONArray arrayList) {
         try {
             List<HashMap<String, String>> vcList = new ArrayList<>();
             // リストの数だけまわす

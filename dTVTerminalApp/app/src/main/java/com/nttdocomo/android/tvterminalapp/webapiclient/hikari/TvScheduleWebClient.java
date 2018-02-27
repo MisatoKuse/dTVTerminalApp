@@ -31,7 +31,7 @@ public class TvScheduleWebClient
      *
      * @param context コンテキスト
      */
-    public TvScheduleWebClient(Context context) {
+    public TvScheduleWebClient(final Context context) {
         super(context);
     }
 
@@ -40,11 +40,11 @@ public class TvScheduleWebClient
      */
     public interface TvScheduleJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param tvScheduleList JSONパース後のデータ
          */
-        void onTvScheduleJsonParsed(List<TvScheduleList> tvScheduleList);
+        void onTvScheduleJsonParsed(final List<TvScheduleList> tvScheduleList);
     }
 
     //コールバックのインスタンス
@@ -56,7 +56,7 @@ public class TvScheduleWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onAnswer(ReturnCode returnCode) {
+    public void onAnswer(final ReturnCode returnCode) {
         //JSONをパースして、データを返す
         new TvScheduleJsonParser(mTvScheduleJsonParserCallback).execute(returnCode.bodyData);
     }
@@ -67,7 +67,7 @@ public class TvScheduleWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
+    public void onError(final ReturnCode returnCode) {
         //エラーが発生したのでヌルを返す
         mTvScheduleJsonParserCallback.onTvScheduleJsonParsed(null);
     }
@@ -80,8 +80,8 @@ public class TvScheduleWebClient
      * @param filter フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
      * @return パラメータエラーならばfalse
      */
-    public boolean getTvScheduleApi(int[] chno, String[] date, String filter,
-                                    TvScheduleJsonParserCallback tvScheduleJsonParserCallback) {
+    public boolean getTvScheduleApi(final int[] chno, final String[] date, final String filter,
+                                    final TvScheduleJsonParserCallback tvScheduleJsonParserCallback) {
 
         if (mIsCancel) {
             DTVTLogger.error("TvScheduleWebClient is stopping connection");
@@ -119,8 +119,8 @@ public class TvScheduleWebClient
      * @param tvScheduleJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(int[] chno, String[] date, String filter,
-                                         TvScheduleJsonParserCallback tvScheduleJsonParserCallback) {
+    private boolean checkNormalParameter(final int[] chno, final String[] date, final String filter,
+                                         final TvScheduleJsonParserCallback tvScheduleJsonParserCallback) {
         //パラメーターのチェック
         if (chno.length == 0) {
             //データが一つもなければエラー
@@ -169,7 +169,7 @@ public class TvScheduleWebClient
      * @param filter フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(int[] chno, String[] date, String filter) {
+    private String makeSendParameter(final int[] chno, final String[] date, final String filter) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {

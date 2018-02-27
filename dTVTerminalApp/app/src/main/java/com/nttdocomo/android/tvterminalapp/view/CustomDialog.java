@@ -104,7 +104,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     private boolean mIsButtonTap = false;
 
     /**
-     * 画面外タップによるキャンセル判定値
+     * 画面外タップによるキャンセル判定値.
      */
     private boolean mCancelableOutside = true;
 
@@ -463,7 +463,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     }
 
     @Override
-    public void onDismiss(DialogInterface dialogInterface) {
+    public void onDismiss(final DialogInterface dialogInterface) {
         //ボタンタップ時は動作させない
         if (mDialogDismissCallback != null && !mIsButtonTap) {
             //ボタンタップ以外でダイアログが閉じた場合
@@ -476,7 +476,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      * 画面外タップのキャンセル処理の可/不可を.
      * @param cancelable
      */
-    public void setOnTouchOutside(boolean cancelable) {
+    public void setOnTouchOutside(final boolean cancelable) {
         mCancelableOutside = cancelable;
     }
 }

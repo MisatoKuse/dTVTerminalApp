@@ -19,7 +19,7 @@ public class VodClipList implements Serializable {
         return mVcMap;
     }
 
-    public void setVcMap(HashMap<String, String> vcMap) {
+    public void setVcMap(final HashMap<String, String> vcMap) {
         this.mVcMap = vcMap;
     }
 
@@ -27,7 +27,7 @@ public class VodClipList implements Serializable {
         return mVcList;
     }
 
-    public void setVcList(List<HashMap<String, String>> vcList) {
+    public void setVcList(final List<HashMap<String, String>> vcList) {
         this.mVcList = vcList;
     }
 }

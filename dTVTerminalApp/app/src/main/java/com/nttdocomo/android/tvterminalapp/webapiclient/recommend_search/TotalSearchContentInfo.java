@@ -20,21 +20,21 @@ public class TotalSearchContentInfo {
 
     private List<ContentsData> mContentsDataList = new ArrayList<>();
 
-    public void init(int totalCount, ArrayList<SearchContentInfo> searchContentInfo){
-        this.totalCount=totalCount;
+    public void init(final int totalCount, final ArrayList<SearchContentInfo> searchContentInfo) {
+        this.totalCount = totalCount;
         this.searchContentInfo = searchContentInfo;
     }
 
 
-    public void init(ResultType resultType) {
-        mResultType=resultType;
+    public void init(final ResultType resultType) {
+        mResultType = resultType;
     }
 
     public List<ContentsData> getContentsDataList() {
         return mContentsDataList;
     }
 
-    public void setContentsDataList(List<ContentsData> mContentsDataList) {
+    public void setContentsDataList(final List<ContentsData> mContentsDataList) {
         this.mContentsDataList = mContentsDataList;
     }
 }

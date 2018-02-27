@@ -52,7 +52,7 @@ class DlnaInterfaceRI {
         return sConFileDirName;
     }
 
-    private static String getDestConfPathDir(final Context context){
+    private static String getDestConfPathDir(final Context context) {
         if (null == context) {
             return null;
         }
