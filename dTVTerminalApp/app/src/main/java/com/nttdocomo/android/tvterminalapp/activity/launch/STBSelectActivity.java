@@ -309,6 +309,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             enableGlobalMenuIcon(false);
             return;
         } else if (mStartMode == (STBSelectFromMode.STBSelectFromMode_Setting.ordinal())) {
+            mParingTextView.setVisibility(View.VISIBLE);
             mLoadMoreView = findViewById(R.id.stb_device_setting_progressbar);
 //            //設定画面からの遷移
             enableHeaderBackIcon(true);
@@ -353,7 +354,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                     mParingDevice.setVisibility(View.VISIBLE);
                     mCheckMark.setVisibility(View.VISIBLE);
                     mParingDevice.setTextColor(Color.WHITE);
-                    mParingTextView.setVisibility(View.VISIBLE);
                     mParingTextView.setText(R.string.str_stb_paring_cancel_text);
                 }
             }
@@ -1034,9 +1034,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                             case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
                                 // チェック処理の状態で処理を分岐する
                                 SharedPreferencesUtils.resetSharedPreferencesStbInfo(getApplicationContext());
-                                Intent intent = new Intent(this, DAccountReSettingActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
+                                startActivity(DAccountReSettingActivity.class, null);
+                                mParingTextView.setText(R.string.str_stb_no_pair_use_text);
                                 break;
                             case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
                                 // TODO STBと接続しないとHOMEにいけない為、本体側のSTB機能が搭載されるまでは一旦ホームに遷移させておく.

@@ -58,7 +58,7 @@ public class DAccountReSettingActivity extends BaseActivity implements View.OnCl
 
         //Headerの設定
         setTitleText("");
-        enableHeaderBackIcon(true);
+        enableHeaderBackIcon(false);
         enableStbStatusIcon(false);
         enableGlobalMenuIcon(false);
         setStatusBarColor(true);
@@ -80,6 +80,7 @@ public class DAccountReSettingActivity extends BaseActivity implements View.OnCl
      * 各クリックリスナーを登録する.
      */
     private void setContents() {
+
         mDAccountRegistrationhelp = findViewById(R.id.d_account_registration_help);
         mDAccountRegistrationhelp.setOnClickListener(this);
 
@@ -114,9 +115,7 @@ public class DAccountReSettingActivity extends BaseActivity implements View.OnCl
      * ペアリングの再実行を行う.
      */
     private void onReturnButton() {
-        Intent intent = new Intent(getApplicationContext(), STBSelectActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        finish();
     }
 
     /**
