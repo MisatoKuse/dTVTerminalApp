@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 import android.os.Handler;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.activity.home.ClipListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
@@ -322,11 +323,11 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      */
     ClipKeyListDao.TABLE_TYPE decisionTableType(
             final String dispType, final String contentType) {
-        if (dispType == null || contentType == null) {
+        if (dispType == null) {
             return null;
         }
-        if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
-                && contentType.length() < 1) {
+        if (TextUtils.isEmpty(contentType)
+                && ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)) {
             return ClipKeyListDao.TABLE_TYPE.TV;
         }
         return ClipKeyListDao.TABLE_TYPE.VOD;
