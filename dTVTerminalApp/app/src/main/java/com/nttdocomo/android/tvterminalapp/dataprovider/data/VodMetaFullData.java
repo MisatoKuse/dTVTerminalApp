@@ -766,34 +766,34 @@ public class VodMetaFullData implements Serializable {
             switch (key) {
                 case JsonConstants.META_RESPONSE_CRID:
                     // crid
-                    mCrid = (String) data;
+                    mCrid = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_CID:
                     // コンテンツID
-                    mCid = (String) data;
+                    mCid = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_TITLE_ID:
                     // タイトルID（dTV）
-                    mTitle_id = (String) data;
+                    mTitle_id = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_EPISODE_ID:
                     // エピソードID（dTV）
-                    mEpisode_id = (String) data;
+                    mEpisode_id = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_TITLE:
                     // タイトル
-                    mTitle = (String) data;
+                    mTitle = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_EPITITLE:
                     // エピソードタイトル
-                    mEpititle = (String) data;
+                    mEpititle = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_TITLERUBY:
-                    mTitleruby = (String) data;           // タイトルルビ
+                    mTitleruby = String.valueOf(data);           // タイトルルビ
                     break;
                 case JsonConstants.META_RESPONSE_DISP_TYPE:
                     // 表示タイプ
-                    mDisp_type = (String) data;
+                    mDisp_type = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_DISPLAY_START_DATE:
                     // 表示開始日時
@@ -829,23 +829,23 @@ public class VodMetaFullData implements Serializable {
                     break;
                 case JsonConstants.META_RESPONSE_THUMB_640:
                     //サムネイル（640＊360）
-                    mThumb_640_360 = (String) data;
+                    mThumb_640_360 = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_THUMB_448:
                     //サムネイル（448＊252）
-                    mThumb_448_252 = (String) data;
+                    mThumb_448_252 = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_DTV_THUMB_640:
                     //dtvサムネイル（640＊360）
-                    mDtv_thumb_640_360 = (String) data;
+                    mDtv_thumb_640_360 = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_DTV_THUMB_448:
                     //dtvサムネイル（448＊252）
-                    mDtv_thumb_448_252 = (String) data;
+                    mDtv_thumb_448_252 = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_COPYRIGHT:
                     // コピーライト
-                    mCopyright = (String) data;
+                    mCopyright = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_DUR:
                     // 尺長
@@ -853,11 +853,11 @@ public class VodMetaFullData implements Serializable {
                     break;
                 case JsonConstants.META_RESPONSE_DEMONG:
                     // デモフラグ
-                    mDemong = (String) data;
+                    mDemong = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_BVFLG:
                     // 見放題フラグ
-                    mBvflg = (String) data;
+                    mBvflg = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_4KFLG:
                     // ４Kフラグ
@@ -865,15 +865,15 @@ public class VodMetaFullData implements Serializable {
                     break;
                 case JsonConstants.META_RESPONSE_HDRFLG:
                     // HDRフラグ
-                    mHdrflg = (String) data;
+                    mHdrflg = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_DELIVERY:
                     // 配信ステータス
-                    mDelivery = (String) data;
+                    mDelivery = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_R_VALUE:
                     // パレンタル情報
-                    mR_value = (String) data;
+                    mR_value = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_ADULT:
                     // アダルトフラグ
@@ -885,23 +885,23 @@ public class VodMetaFullData implements Serializable {
                     break;
                 case JsonConstants.META_RESPONSE_SYNOP:
                     // あらすじ
-                    mSynop = (String) data;
+                    mSynop = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_PUID:
                     // パーチャスID
-                    mPuid = (String) data;
+                    mPuid = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_PRICE:
                     // 価格(税込)
-                    mPrice = (String) data;
+                    mPrice = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_QRANGE:
                     // 購入単位の期間(3日の3)
-                    mQrange = (String) data;
+                    mQrange = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_QUNIT:
                     // 購入単位の単位(3日の「日」)
-                    mQunit = (String) data;
+                    mQunit = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_PU_START_DATE:
                     // 販売開始日時
@@ -921,23 +921,23 @@ public class VodMetaFullData implements Serializable {
                     break;
                 case JsonConstants.META_RESPONSE_DTV:
                     // dTVフラグ
-                    mDtv = (String) data;
+                    mDtv = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_DTV_TYPE:
                     // dTVフラグ
-                    mDtvType = (String) data;
+                    mDtvType = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_EST_FLAG:
                     // ESTフラグ
-                    mEstFlag = (String) data;
+                    mEstFlag = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_CHSVOD:
                     //CHSVOD
-                    mChsvod = (String) data;
+                    mChsvod = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_SEARCH_OK:
                     //クリップ判定に利用
-                    mSearch_ok = (String) data;
+                    mSearch_ok = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_LIINF_ARRAY:
                     //ライセンス情報リスト
@@ -945,35 +945,35 @@ public class VodMetaFullData implements Serializable {
                     break;
                 case JsonConstants.META_RESPONSE_CAPL:
                     //字幕
-                    mCapl = (String) data;
+                    mCapl = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_BILINGAL:
                     //二ヶ国語
-                    mBilingal = (String) data;
+                    mBilingal = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_TV_CID:
                     //コンテンツID（見逃し、関連VOD用）
-                    mTv_cid = (String) data;
+                    mTv_cid = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_SERVICE_ID:
                     //サービスID
-                    mService_id = (String) data;
+                    mService_id = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_EVENT_ID:
                     //イベントID
-                    mEvent_id = (String) data;
+                    mEvent_id = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_CHNO:
                     //チャンネル番号
-                    mChno = (String) data;
+                    mChno = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_TV_SERVICE:
                     //放送種別（多ch、dch）
-                    mTv_service = (String) data;
+                    mTv_service = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_CONTENT_TYPE:
                     //見逃しタイプ
-                    mContent_type = (String) data;
+                    mContent_type = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_VOD_START_DATE:
                     //VOD配信開始日時
@@ -985,7 +985,7 @@ public class VodMetaFullData implements Serializable {
                     break;
                 case JsonConstants.META_RESPONSE_MAIN_GENRE:
                     //主ジャンル（ARIB）
-                    mMain_genre = (String) data;
+                    mMain_genre = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_SECOND_GENRE_ARRAY:
                     //副ジャンル（ARIB）
@@ -993,7 +993,7 @@ public class VodMetaFullData implements Serializable {
                     break;
                 case JsonConstants.META_RESPONSE_COPY:
                     //コピー制御
-                    mCopy = (String) data;
+                    mCopy = String.valueOf(data);
                     break;
                 case JsonConstants.META_RESPONSE_ADINFO_ARRAY:
                     //音声情報

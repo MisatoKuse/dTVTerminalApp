@@ -412,8 +412,8 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
                     } else if (categoryId_Hikari_dtv.equals(categoryId)) {
                         viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
                         viewHolder.mServiceIconSecond.setVisibility(View.VISIBLE);
-                        viewHolder.mServiceIconSecond.setImageResource(R.mipmap.label_service_hikari);
-                        viewHolder.mServiceIconFirst.setImageResource(R.mipmap.label_service_dtv_white);
+                        viewHolder.mServiceIconSecond.setImageResource(R.mipmap.label_service_dtv_white);
+                        viewHolder.mServiceIconFirst.setImageResource(R.mipmap.label_service_hikari);
                     }
                     break;
                 //dTV
