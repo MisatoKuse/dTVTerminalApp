@@ -89,7 +89,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
         initData();
-        return initView(container);
+        return initView();
     }
 
     /**
@@ -104,7 +104,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
      *
      * @return View
      */
-    private View initView(final ViewGroup container) {
+    private View initView() {
         if (null == mTvFragmentView) {
             mTvFragmentView = View.inflate(getActivity(), R.layout.fragment_televi_content, null);
             mTvListView = mTvFragmentView.findViewById(R.id.lv_searched_result);
@@ -113,7 +113,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
             mTvListView.setOnItemClickListener(this);
 
             getContext();
-            mLoadMoreView = LayoutInflater.from(mContext).inflate(R.layout.search_load_more, container, false);
+            mLoadMoreView = LayoutInflater.from(mContext).inflate(R.layout.search_load_more, mTvListView, false);
         }
 
         if (getContext() != null) {
