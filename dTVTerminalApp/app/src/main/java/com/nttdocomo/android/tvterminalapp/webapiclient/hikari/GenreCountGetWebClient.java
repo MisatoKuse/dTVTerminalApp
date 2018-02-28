@@ -229,9 +229,7 @@ public class GenreCountGetWebClient
             //ジャンルIDはリストの中に入れなければならない
             JSONArray array = new JSONArray();
             for (int i = 0; i < genreId.size(); i++) {
-                JSONObject genreJson = new JSONObject();
-                genreJson.put(GENRE_ID_STR, genreId.get(i));
-                array.put(genreJson);
+                array.put(genreId.get(i));
             }
             jsonObject.put(LIST_STR, array);
 
