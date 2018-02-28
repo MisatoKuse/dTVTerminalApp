@@ -44,7 +44,7 @@ namespace dtvt {
 
 
     bool DlnaXmlContainer::getXml(std::string itemId, du_uchar** outXml){
-        if(0 == itemId.size() || NULL == *outXml || NULL == **outXml || 0 == mXmls.size()){
+        if(0 == itemId.size() || NULL == outXml || 0 == mXmls.size()){
             return false;
         }
         std::vector<du_uchar*>::iterator it = mXmls.begin();

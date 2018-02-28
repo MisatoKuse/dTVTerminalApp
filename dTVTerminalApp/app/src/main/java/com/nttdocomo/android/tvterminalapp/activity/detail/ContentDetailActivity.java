@@ -524,6 +524,7 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
         mPlayerController.setCaptionDataListener(this);
         mPlayerController.setCurrentCaption(0); // start caption.
         boolean ret = isActivited();
+        showProgressBar(false);
         if (!ret) {
             DTVTLogger.debug("TvPlayerActivity::initSecurePlayer(), return false"); //SP_SECUREPLAYER_NEED_ACTIVATION_ERROR = 1001;
             DTVTLogger.end();
@@ -557,7 +558,6 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
         } else {
             activate();
         }
-        showProgressBar(false);
         DTVTLogger.end();
         return false;
     }
@@ -1163,13 +1163,13 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
             int ageReq = mDetailData.getAge();
             mDetailDataProvider.getContentsDetailData(cRid, "", ageReq);
         } else {
-            // TODO Home画面から受け取れるようになったら消す
-            cRid = new String[1];
-            cRid[cRid.length - 1] = "682017101601";
-            mDetailDataProvider.getContentsDetailData(cRid, "", 1);
+            DTVTLogger.debug("contentId取得失敗しました。");
         }
     }
 
+    /**
+     * チャンネルフラグメント取得.
+     */
     private DtvContentsChannelFragment getChannelFragment() {
         Fragment currentFragment = mFragmentFactory.createFragment(1);
         return (DtvContentsChannelFragment) currentFragment;

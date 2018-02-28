@@ -443,8 +443,17 @@ namespace dtvt {
                 du_sync_notify(&d->soap.sync);
                 du_mutex_unlock(&d->soap.mutex);
                 return;
+            } else if(vv.size() < PAGE_COUNT) {
+                if(thiz->getDlnaXmlContainer().getAllVVectorString().size() > 0){
+                    VVectorString totalVv = thiz->getDlnaXmlContainer().getAllVVectorString();
+                    thiz->notifyObject(parser->getMsgId(), totalVv);
+                } else {
+                    thiz->notifyObject(parser->getMsgId(), vv);
+                }
+            } else {
+                thiz->getDlnaXmlContainer().addVVectorString(vv);
+                thiz->sendSoap((char*)response->url, DLNA_DMS_ROOT, thiz->getDlnaXmlContainer().getAllVVectorString().size());
             }
-            thiz->notifyObject(parser->getMsgId(), vv);
         #elif defined(DLNA_KARI_DMS_RELEASE)
             if(0==vv.size()){
                 du_sync_notify(&d->soap.sync);
@@ -514,11 +523,12 @@ namespace dtvt {
                 return;
             }
             DelIfNotNullArray(mRecordedVideoXml);
-            mRecordedVideoXml=new du_uchar[size];
-            if(mRecordedVideoXml){
-                memset(mRecordedVideoXml, 0x00, size*sizeof(du_uchar));
-                memcpy((void *) mRecordedVideoXml, result, (size - 1)*sizeof(du_uchar));
-            }
+            getDlnaXmlContainer().addXml((du_uchar*)result, size);
+//            mRecordedVideoXml=new du_uchar[size];
+//            if(mRecordedVideoXml){
+//                memset(mRecordedVideoXml, 0x00, size*sizeof(du_uchar));
+//                memcpy((void *) mRecordedVideoXml, result, (size - 1)*sizeof(du_uchar));
+//            }
         }
         du_str_array_free(&param_array);
     }
@@ -530,6 +540,9 @@ namespace dtvt {
         }
         int index=max(startingIndex, 0);
         int count=max(requestCount, 0);
+        if (count == 0) {
+            count=max(pageCount, 0);
+        }
         du_uchar_array request_body;
         du_uchar_array_init(&request_body);
         du_mutex_lock(&mDMP.soap.mutex);
@@ -1236,7 +1249,8 @@ namespace dtvt {
         bool retTmp=true;
 
         du_uchar* xmlStrDu=NULL;
-        retTmp = getItemStringByItemId(mRecordedVideoXml, itemId, &xmlStrDu);
+//        retTmp = getItemStringByItemId(mRecordedVideoXml, itemId, &xmlStrDu);
+        retTmp = getDlnaXmlContainer().getXml(itemId, &xmlStrDu);
         if(!retTmp){
             DelIfNotNullArray(xmlStrDu);
             return NULL;

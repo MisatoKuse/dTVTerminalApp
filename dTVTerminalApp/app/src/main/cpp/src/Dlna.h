@@ -155,7 +155,7 @@ namespace dtvt {
         static bool getItemStringByItemId(du_uchar* allRecordedVideoXml, std::string itemId, du_uchar** outXmlStr);
         static void getDidlLiteDocHead(du_uchar* allRecordedVideoXml, std::string& outStr);
         static void getDidlLiteDocTail(du_uchar* allRecordedVideoXml, std::string& outStr);
-
+        inline DlnaXmlContainer& getDlnaXmlContainer() { return mDlnaXmlContainer;  }
     private:
         bool init();
 
@@ -171,7 +171,7 @@ namespace dtvt {
 
         bool initDevEnv();
 
-        bool sendSoap(std::string controlUrl, std::string objectId="0", const int startingIndex=0, const int requestCount=0, std::string browseFlag="BrowseDirectChildren", const int pageCount=30);
+        bool sendSoap(std::string controlUrl, std::string objectId="0", const int startingIndex=0, const int requestCount=0, std::string browseFlag="BrowseDirectChildren", const int pageCount=PAGE_COUNT);
 
         void notify(int msg, std::string content);
         //void notifyDuChar(int msg, du_uchar* content);

@@ -173,6 +173,7 @@ namespace dtvt {
         const char* const DLNA_DMS_ROOT = "0";
     #elif defined(DLNA_KARI_DMS_NAS)
         const char* const DLNA_DMS_ROOT = "0/video/all";
+        const int const PAGE_COUNT = 30;
     #elif defined(DLNA_KARI_DMS_RELEASE)
         //チューナールート/スマホ向け/録画一覧
         //const char* const DLNA_DMS_RECORD_LIST = "0/smartphone/rec/all"; //本番
