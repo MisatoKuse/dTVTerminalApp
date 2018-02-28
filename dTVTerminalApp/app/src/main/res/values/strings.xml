@@ -157,10 +157,8 @@
     <string-array name="tab_names">
         <item>テレビ</item>
         <item>ビデオ</item>
-        <!-- <item>録画</item> -->
-        <!-- <item>人物</item> -->
-        <item>dTVチャンネル</item>
         <item>dTV</item>
+        <item>dTVチャンネル</item>
         <item>dアニメ</item>
     </string-array>
 

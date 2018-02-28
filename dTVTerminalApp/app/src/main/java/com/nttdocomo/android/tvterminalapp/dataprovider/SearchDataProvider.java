@@ -64,13 +64,13 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
      */
     private static final int PAGE_NO_OF_SERVICE_VIDEO = PAGE_NO_OF_SERVICE_TELEVISION + 1;
     /**
-     * dTVチャンネルtab.
-     */
-    private static final int PAGE_NO_OF_SERVICE_DTV_CHANNEL = PAGE_NO_OF_SERVICE_TELEVISION + 2;
-    /**
      * dTVtab.
      */
-    private static final int PAGE_NO_OF_SERVICE_DTV = PAGE_NO_OF_SERVICE_TELEVISION + 3;
+    private static final int PAGE_NO_OF_SERVICE_DTV = PAGE_NO_OF_SERVICE_TELEVISION + 2;
+    /**
+     * dTVチャンネルtab.
+     */
+    private static final int PAGE_NO_OF_SERVICE_DTV_CHANNEL = PAGE_NO_OF_SERVICE_TELEVISION + 3;
     /**
      * dアニメtab.
      */
