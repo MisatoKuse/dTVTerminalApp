@@ -240,6 +240,7 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
      * @param videoRankMapList ビデオランク情報
      */
     private void setShowVideoRanking(final List<ContentsData> videoRankMapList) {
+        DTVTLogger.start();
         if (null == videoRankMapList || 0 == videoRankMapList.size()) {
             //通信とJSON Parseに関してerror処理
             //TODO: エラー表示は検討の必要あり
@@ -258,6 +259,7 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
         }
 
         int pageNumber = getCurrentNumber();
+        resetCommunication();
         for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE
                 && i < videoRankMapList.size(); ++i) {
             DTVTLogger.debug("i = " + i);
@@ -268,9 +270,8 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
         if (fragment.mData != null) {
             DTVTLogger.debug("Fragment.mData.size :" + String.valueOf(fragment.mData.size()));
         }
-        resetCommunication();
         fragment.noticeRefresh();
-
+        DTVTLogger.end();
     }
 
     /**
@@ -356,16 +357,6 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
     }
 
     /**
-     * VideoRankingActivity取得.
-     *
-     * @return VideoRankingActivity
-     */
-    private VideoRankingActivity getVideoRankingActivity() {
-        return this;
-    }
-
-
-    /**
      * 取得条件"総合"用コールバック.
      * TODO:正規のジャンルで動的に処理するようにしないといけない
      *
@@ -373,8 +364,14 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
      */
     @Override
     public void onVideoRankListCallback(final List<ContentsData> videoRankList) {
-        DTVTLogger.start("ResponseDataSize :" + videoRankList.size());
-        setShowVideoRanking(videoRankList);
+        DTVTLogger.start();
+        if (videoRankList.size() > 0) {
+            DTVTLogger.debug("ResponseDataSize :" + videoRankList.size());
+            setShowVideoRanking(videoRankList);
+            DTVTLogger.end();
+        } else {
+            DTVTLogger.debug("ResponseDataSize :0");
+        }
         DTVTLogger.end();
     }
 

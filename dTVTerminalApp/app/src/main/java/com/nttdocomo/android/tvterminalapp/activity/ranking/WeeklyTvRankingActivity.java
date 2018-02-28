@@ -93,16 +93,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         setStatusBarColor(true);
 
         initView();
-        getGenreTabData();
         resetPaging();
-    }
-
-    /**
-     * ジャンル一覧を取得する.
-     */
-    private void getGenreTabData() {
-        mVideoGenreProvider = new VideoGenreProvider(this, this, ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK);
-        mVideoGenreProvider.getGenreListDataRequest();
     }
 
     /**
@@ -251,6 +242,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
      * @param contentsDataList コンテンツデータ詳細.
      */
     private void setShowWeeklyRanking(final List<ContentsData> contentsDataList) {
+        DTVTLogger.start();
         if (null == contentsDataList || 0 == contentsDataList.size()) {
             //通信とJSON Parseに関してerror処理
             //TODO: メッセージは仕様検討の必要あり
@@ -268,6 +260,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         }
 
         int pageNumber = getCurrentNumber();
+        resetCommunication();
         for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE
                 && i < contentsDataList.size(); ++i) {
             if (null != fragment.mData) {
@@ -277,20 +270,19 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         if (fragment.mData != null) {
             DTVTLogger.end("Fragment.mData.size :" + String.valueOf(fragment.mData.size()));
         }
-        resetCommunication();
         fragment.noticeRefresh();
+        DTVTLogger.end();
     }
-
 
     /**
      * 読み込み中表示を非表示に変更.
      */
     private void resetCommunication() {
-        RankingBaseFragment b = getCurrentFragment();
-        if (null == b) {
+        RankingBaseFragment baseFragment = getCurrentFragment();
+        if (null == baseFragment) {
             return;
         }
-        b.displayMoreData(false);
+        baseFragment.displayMoreData(false);
         setCommunicatingStatus(false);
     }
 
@@ -374,15 +366,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
             return mRankingFragmentFactory.createFragment(ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK, i, this);
         }
         return null;
-    }
-
-    /**
-     * Activityを返却する.
-     *
-     * @return Activity
-     */
-    private WeeklyTvRankingActivity getWeeklyTvRankingActivity() {
-        return this;
     }
 
     /**
