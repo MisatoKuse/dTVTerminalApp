@@ -13,6 +13,14 @@ cmake_minimum_required(VERSION 3.4.1)
 
 # ヘッダファイrうライブラリを指定
 include_directories( ${CMAKE_SOURCE_DIR}/src/main/cpp/include/dixim)
+include_directories( ${CMAKE_SOURCE_DIR}/src/main/cpp/include/dixim/drag_include)
+include_directories( ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/ddps)
+include_directories( ${CMAKE_SOURCE_DIR}/src/main/cpp/include/openssl/include)
+include_directories( ${CMAKE_SOURCE_DIR}/src/main/cpp/include/curl/include)
+
+set(CMAKE_VERBOSE_MAKEFILE on)
+#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16")
+#set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-dynamic-linker=/system/bin/linker -Wl,-rpath=/system/lib")
 
 # ライブラリを使う
 add_library(libcunit STATIC IMPORTED)
@@ -61,8 +69,6 @@ add_library(libdixim_printer STATIC IMPORTED)
 set_target_properties(libdixim_printer
   PROPERTIES IMPORTED_LOCATION
   ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/libdixim_printer.a)
-
-
 
 # ライブラリを使う
 add_library(libonig STATIC IMPORTED)
@@ -129,11 +135,6 @@ set_target_properties(libdixim_dtcp_sink
   PROPERTIES IMPORTED_LOCATION
   ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/libdixim_dtcp_sink.a)
 
-#add_library(libdixim_dtcp_util STATIC IMPORTED)
-#set_target_properties(libdixim_dtcp_util
-#  PROPERTIES IMPORTED_LOCATION
-#  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/libdixim_dtcp_util.a)
-
 add_library(libdixim_dtcp_private_data_io STATIC IMPORTED)
 set_target_properties(libdixim_dtcp_private_data_io
   PROPERTIES IMPORTED_LOCATION
@@ -189,8 +190,6 @@ set_target_properties(libtommath
   PROPERTIES IMPORTED_LOCATION
   ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/libtommath.a)
 
-
-
 add_library(libsecure_io STATIC IMPORTED)
 set_target_properties(libsecure_io
   PROPERTIES IMPORTED_LOCATION
@@ -238,74 +237,6 @@ find_library( # Defines the name of the path variable that stores the
               # CMake needs to locate.
               log )
 
-# ライブラリを使う
-add_library(
-     dtvtlib # dynamic lib name
-     SHARED  # share
-     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaBSDigitalXmlParser.cpp
-     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaTerChXmlParser.cpp
-     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaHikariChXmlParser.cpp
-     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaJniCast.cpp
-     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/Dlna.cpp
-     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaXmlParserBase.cpp
-     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaDevXmlParser.cpp
-     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaRecVideoXmlParser.cpp
-     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DmsInfo.c
-     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaBSDigitalXmlParser.cpp
-     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/downloader.cc
-     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/dmspu_cipher_file.cc
-     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/DlnaDownload.cpp
-     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/DlnaJniCastDl.cpp
-     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/android_log_handler.c
-     ${CMAKE_SOURCE_DIR}/src/main/cpp/src//DlnaXmlContainer.cpp
-     )
-
-# 目標ライブラリをリンク
-target_link_libraries(
-    dtvtlib
-    libcunit
-    libdixim_char_util
-    libdixim_hdrl
-    libdixim_igd
-    libdixim_low_power
-    libdixim_media_detector
-    libdixim_mrd
-    libdixim_printer
-    libonig
-    libuchardet
-    libdixim_dtcp_bridge
-    #libdixim_dtcp_util_ttl_no_check
-    libnmcc_db
-    libts2tts
-    libcheck_wlan_wep
-    libcheck_wlan_wep_no_check
-    libmedia_dtcp
-    libdixim_dtcp_source
-    libdixim_dtcp_sink
-    libdixim_dtcp
-    libdixim_dtcp_private_data_io
-    libactc #from drm lib
-    libdixim_hwif #from drm lib
-    libcipher_file
-    libmedia_mpeg
-    libdixim_dtcp_crypto_aes
-    libdixim_dtcp_crypto_ecc
-    libdixim_dtcp_crypto_rng
-    libdixim_dtcp_crypto_sha
-    libtomcrypt
-    libtommath
-    #libdixim_dtcp_util
-    libdixim_dtcp_util_ttl_no_check
-    libsecure_io
-    libchunked_file
-    libdixim_av
-    libdixim_upnp
-    libexpat
-    libdixim_util
-    libxml2
-    ${log-lib}
-    )
-
 #===================== drm begin =====================#
 add_library(libactc_drm STATIC IMPORTED)
 set_target_properties(libactc_drm
@@ -325,7 +256,7 @@ set_target_properties(libactc_is_done_drm
 add_library(libchunked_file_drm STATIC IMPORTED)
 set_target_properties(libchunked_file_drm
   PROPERTIES IMPORTED_LOCATION
-  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/libchunked_file.a)
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drm/libchunked_file.a)
 
 add_library(libsecure_io_drm STATIC IMPORTED)
 set_target_properties(libsecure_io_drm
@@ -337,30 +268,186 @@ set_target_properties(libdixim_dtcp_private_data_io_drm
   PROPERTIES IMPORTED_LOCATION
   ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drm/libdixim_dtcp_private_data_io.a)
 
-#add_library(
-#     dtvtlibdrm # dynamic lib name
-#     SHARED  # share
-#     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/DlnaRemote.cpp
-#     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/DlnaJniCastRm.cpp
-#     )
+add_library(libdrag_cp_android STATIC IMPORTED)
+set_target_properties(libdrag_cp_android
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drag/libdrag_cp_android.a)
+
+add_library(libra-arm-unknown-linux-androideabi STATIC IMPORTED)
+set_target_properties(libra-arm-unknown-linux-androideabi
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drag/libra-arm-unknown-linux-androideabi.a)
+
+add_library(libralib-util-arm-unknown-linux-androideabi STATIC IMPORTED)
+set_target_properties(libralib-util-arm-unknown-linux-androideabi
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drag/libralib-util-arm-unknown-linux-androideabi.a)
+
+add_library(libramedia-arm-unknown-linux-androideabi STATIC IMPORTED)
+set_target_properties(libramedia-arm-unknown-linux-androideabi
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drag/libramedia-arm-unknown-linux-androideabi.a)
+
+add_library(libranatt-arm-unknown-linux-androideabi STATIC IMPORTED)
+set_target_properties(libranatt-arm-unknown-linux-androideabi
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drag/libranatt-arm-unknown-linux-androideabi.a)
+
+add_library(librasdp-arm-unknown-linux-androideabi STATIC IMPORTED)
+set_target_properties(librasdp-arm-unknown-linux-androideabi
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drag/librasdp-arm-unknown-linux-androideabi.a)
+
+add_library(librasip-arm-unknown-linux-androideabi STATIC IMPORTED)
+set_target_properties(librasip-arm-unknown-linux-androideabi
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drag/librasip-arm-unknown-linux-androideabi.a)
+
+add_library(librasip-simple-arm-unknown-linux-androideabi STATIC IMPORTED)
+set_target_properties(librasip-simple-arm-unknown-linux-androideabi
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drag/librasip-simple-arm-unknown-linux-androideabi.a)
+
+add_library(librasip-ua-arm-unknown-linux-androideabi STATIC IMPORTED)
+set_target_properties(librasip-ua-arm-unknown-linux-androideabi
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drag/librasip-ua-arm-unknown-linux-androideabi.a)
+
+add_library(librasua-arm-unknown-linux-androideabi STATIC IMPORTED)
+set_target_properties(librasua-arm-unknown-linux-androideabi
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drag/librasua-arm-unknown-linux-androideabi.a)
+
+add_library(libratun-arm-unknown-linux-androideabi STATIC IMPORTED)
+set_target_properties(libratun-arm-unknown-linux-androideabi
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drag/libratun-arm-unknown-linux-androideabi.a)
+
+add_library(libcurl STATIC IMPORTED)
+set_target_properties(libcurl
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/curl/libcurl.a)
+
+add_library(libcurlla STATIC IMPORTED)
+set_target_properties(libcurlla
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/curl/libcurl.la)
+
+add_library(libcrypto STATIC IMPORTED)
+set_target_properties(libcrypto
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/openssl/libcrypto.a)
+
+add_library(libssl STATIC IMPORTED)
+set_target_properties(libssl
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/openssl/libssl.a)
 
 # ライブラリを使う
 add_library(
-     dtvtlibdrm # dynamic lib name
-     SHARED  # share
-     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/DlnaRemote.cpp
-     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/DlnaJniCastRm.cpp
+    dtvtlib # dynamic lib name
+    SHARED  # share
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaBSDigitalXmlParser.cpp
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaTerChXmlParser.cpp
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaHikariChXmlParser.cpp
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaJniCast.cpp
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/Dlna.cpp
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaXmlParserBase.cpp
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaDevXmlParser.cpp
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaRecVideoXmlParser.cpp
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DmsInfo.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaBSDigitalXmlParser.cpp
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/downloader.cc
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/dmspu_cipher_file.cc
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/DlnaDownload.cpp
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/DlnaJniCastDl.cpp
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/android_log_handler.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/DlnaRemote.cpp
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/DlnaJniCastRm.cpp
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dmp_conf.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dmp_event_adapter.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dmp_ui.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/player.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dvcdsc_service.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dvcdsc_device_array.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dvcdsc_parser.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dmp_ui_dms_view.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dmp_ui_browse_view.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dmp_ui_metadata_view.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/local_registration.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dmp_ui_player_view.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/ddps/ddps.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/cds_browser.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dvcdsc_device.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/player_media_info.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dvcdsc_icon.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dmp.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/android_log_handler.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaXmlContainer.cpp
      )
 
 target_link_libraries(
-    dtvtlibdrm
-    libactc_drm
-    libactc_is_done_drm
-    libdixim_hwif_drm
-    libcipher_file
-    libchunked_file_drm
-    libsecure_io_drm
-    libmedia_mpeg
-    ${log-lib}
-    )
+			dtvtlib
+		#drag begin
+		    libdrag_cp_android
+            libratun-arm-unknown-linux-androideabi
+            librasua-arm-unknown-linux-androideabi
+            libranatt-arm-unknown-linux-androideabi
+            libramedia-arm-unknown-linux-androideabi
+            librasip-arm-unknown-linux-androideabi
+            librasip-simple-arm-unknown-linux-androideabi
+			libralib-util-arm-unknown-linux-androideabi
+            librasip-ua-arm-unknown-linux-androideabi
+            libra-arm-unknown-linux-androideabi
+            librasdp-arm-unknown-linux-androideabi
+			libcurl
+			libssl
+			libcrypto
+		#drag end
+		#other lib degin
+			libcunit
+			libdixim_char_util
+			libdixim_hdrl
+			libdixim_low_power
+			libdixim_media_detector
+			libdixim_mrd
+			libdixim_printer
+			libonig
+			libuchardet
+			libdixim_dtcp_bridge
+			libnmcc_db
+			libts2tts
+			libcheck_wlan_wep
+			libcheck_wlan_wep_no_check
+			libmedia_dtcp
+			libdixim_dtcp_source
+			libdixim_dtcp_sink
+			libdixim_dtcp
+            libdixim_dtcp_private_data_io_drm
+            libdixim_hwif_drm
+            libcipher_file
+            libsecure_io_drm
+			libmedia_mpeg
+			libdixim_dtcp_crypto_aes
+			libdixim_dtcp_crypto_ecc
+			libdixim_dtcp_crypto_rng
+			libdixim_dtcp_crypto_sha
+			libtomcrypt
+			libtommath
+			#libdixim_dtcp_util  #libdixim_dtcp_util.a はリンクせず libdixim_dtcp_util_ttl_no_check を使う指摘より
+			libdixim_dtcp_util_ttl_no_check
+			libchunked_file
+			libdixim_av
+			libdixim_upnp
+			libexpat
+			libdixim_util
+			libxml2
+		#other lib end
+		#drm lib degin
+			libactc_drm
+			libactc_is_done_drm
+			libdixim_igd
+			libdrag_cp_android
+			${log-lib}
+		)
 #====================== drm end ======================#

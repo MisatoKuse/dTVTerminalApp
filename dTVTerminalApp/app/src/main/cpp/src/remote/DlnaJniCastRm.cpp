@@ -5,8 +5,11 @@
 #include <jni.h>
 #include <string>
 
+#include <cipher_file_context_global.h>
+#include <secure_io_global.h>
 #include "DlnaRemote.h"
 #include "../DTVTLogger.h"
+#include "../android_log_handler.h"
 
 /**
  * 機能： JNI cast
@@ -19,7 +22,7 @@ namespace dtvt {
     /**
      * 機能：DlnaRemote objectを作成
      */
-    extern "C" jlong
+    extern "C" jlong JNICALL
     Java_com_nttdocomo_android_tvterminalapp_jni_remote_DlnaInterfaceRI_nativeCreateDlnaRmObject(JNIEnv *env, jobject obj) {
         jlong result;
         result = (jlong) new DlnaRemote();
@@ -32,7 +35,7 @@ namespace dtvt {
     extern "C" jboolean JNICALL
     Java_com_nttdocomo_android_tvterminalapp_jni_remote_DlnaInterfaceRI_nativeStartDlnaRm(JNIEnv *env, jobject obj, jlong thiz, jstring confPath_) {
         unsigned char ret = 0;
-        if (0 == thiz) {
+        if (NULL == thiz) {
             DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_remote_DlnaInterfaceRI_nativeStartDlnaRm exit, 0==thiz");
             return (jboolean) ret;
         }
@@ -52,9 +55,9 @@ namespace dtvt {
         }
 
         bool ret2 = DlnaRemotePtr->start(env, obj, confPath);
-        ret = (unsigned char)(true == ret2 ? 1 : 0);
+        ret = (true == ret2 ? 1 : 0);
 
-        env->ReleaseStringUTFChars(confPath_, confPath);
+        env->ReleaseStringUTFChars(confPath_, (const char *) confPath);
 
         return (jboolean) ret;
     }

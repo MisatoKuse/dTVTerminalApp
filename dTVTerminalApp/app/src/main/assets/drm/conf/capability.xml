@@ -1,0 +1,282 @@
+<?xml version="1.0"?>
+<capability>
+    <unsupported>
+        <profile>MPEG_TS_SD_KO,MPEG_TS_SD_KO_T,MPEG_TS_SD_KO_ISO,MPEG_TS_SD_KO_XAC3,MPEG_TS_SD_KO_XAC3_T,MPEG_TS_SD_KO_XAC3_ISO,MPEG_TS_HD_KO,MPEG_TS_HD_KO_T,MPEG_TS_HD_KO_ISO,MPEG_TS_HD_KO_XAC3,MPEG_TS_HD_KO_XAC3_T,MPEG_TS_HD_KO_XAC3_ISO</profile>
+    </unsupported>
+    <video>
+        <priority>
+            <consistency />
+            <originality />
+            <resolution algorithm="largest" />
+            <operability />
+            <bitrate />
+        </priority>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>video/mpeg,application/octet-stream</mimeType>
+            <supportedParam>
+                <pn>MPEG1,MPEG_PS_NTSC,MPEG_PS_NTSC_XAC3,MPEG_PS_PAL,MPEG_PS_PAL_XAC3,MPEG_TS_SD_NA_ISO,MPEG_TS_HD_NA_ISO,MPEG_TS_SD_EU_ISO,MPEG_TS_HD_NA_XAC3_ISO,MPEG_TS_SD_NA_XAC3_ISO</pn>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>video/vnd.dlna.mpeg-tts</mimeType>
+            <supportedParam>
+                <pn>MPEG_TS_JP_T,MPEG_TS_SD_NA,MPEG_TS_SD_NA_T,MPEG_TS_HD_NA,MPEG_TS_HD_NA_T,MPEG_TS_SD_EU,MPEG_TS_SD_EU_T,MPEG_TS_HD_NA_XAC3,MPEG_TS_HD_NA_XAC3_T,MPEG_TS_SD_NA_XAC3,MPEG_TS_SD_NA_XAC3_T</pn>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>video/mp4</mimeType>
+            <supportedParam>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>application/dtcp</mimeType>
+            <supportedParam>
+                <pn>DTCP_MPEG_TS_JP_T,DTCP_MPEG_TS_SD_JP_MPEG1_L2_T,DTCP_AVC_TS_JP_AAC_T</pn>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>video/x-ms-asf</mimeType>
+            <supportedParam>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>video/x-ms-wmv</mimeType>
+            <supportedParam>
+                <pn>WMVHIGH_FULL,WMVHIGH_PRO,WMVMED_FULL,WMVMED_PRO,WMVMED_BASE</pn>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>video/avi</mimeType>
+            <supportedParam>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+    </video>
+    <audio>
+        <priority>
+            <operability />
+            <originality />
+            <sampleFrequency />
+            <bitsPerSample />
+            <nrAudioChannels />
+        </priority>
+        <format nonDlnaContentsSupport="0">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>audio/L16</mimeType>
+            <supportedParam>
+                <pn>LPCM</pn>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+            <limit>
+                <name>nrAudioChannels</name>
+                <value>1,2</value>
+            </limit>
+            <limit>
+                <name>sampleFrequency</name>
+                <value>44100,48000</value>
+            </limit>
+        </format>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>audio/mpeg</mimeType>
+            <supportedParam>
+                <pn>MP3,MP3X</pn>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>audio/x-ms-asf</mimeType>
+            <supportedParam>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>audio/x-ms-wma</mimeType>
+            <supportedParam>
+                <pn>WMABASE,WMAFULL,WMAPRO</pn>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>audio/wav</mimeType>
+            <supportedParam>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>audio/mp4,audio/3gpp</mimeType>
+            <supportedParam>
+                <pn>AAC_ISO,AAC_ISO_320</pn>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>audio/vnd.dlna.adts</mimeType>
+            <supportedParam>
+                <pn>AAC_ADTS,AAC_ADTS_320</pn>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>application/ogg</mimeType>
+            <supportedParam>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+    </audio>
+    <image>
+        <priority>
+            <resolution algorithm="larger nearest" />
+            <originality />
+        </priority>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>image/jpeg</mimeType>
+            <supportedParam>
+                <pn>JPEG_SM,JPEG_MED,JPEG_LRG</pn>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>image/png</mimeType>
+            <supportedParam>
+                <pn>PNG_LRG</pn>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>image/bmp</mimeType>
+            <supportedParam>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>image/tiff</mimeType>
+            <supportedParam>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>image/gif</mimeType>
+            <supportedParam>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+    </image>
+    <thumbnail>
+        <priority>
+            <resolution algorithm="nearest" />
+            <originality />
+        </priority>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>image/jpeg</mimeType>
+            <supportedParam>
+                <pn>JPEG_TN</pn>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>image/png</mimeType>
+            <supportedParam>
+                <pn>PNG_TN</pn>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>image/bmp</mimeType>
+            <supportedParam>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>image/tiff</mimeType>
+            <supportedParam>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
+            <mimeType>image/gif</mimeType>
+            <supportedParam>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+    </thumbnail>
+</capability>

@@ -8,6 +8,7 @@ package com.nttdocomo.android.tvterminalapp.jni.remote;
 public enum DlnaRemoteRet {
     DlnaRemoteRet_Succeed,
     DlnaRemoteRet_Init,
+    DlnaRemoteRet_CopyDrmConfFile,
     DlnaRemoteRet_ParamError,
     DlnaRemoteRet_OtherError,
 }

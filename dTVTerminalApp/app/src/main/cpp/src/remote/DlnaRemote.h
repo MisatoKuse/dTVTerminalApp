@@ -11,6 +11,7 @@
 
 #include "../Common.h"
 #include "CommonRm.h"
+#include "dmp.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,15 +56,22 @@ namespace dtvt {
 
 
     private:
-        bool startDlEnv(JNIEnv *env, jobject obj, std::string& confDir);
+        //bool startDlEnv(JNIEnv *env, jobject obj, std::string& confDir);
 
         void notify(int msg, std::string content);
         bool isStarted();
 
+        du_bool dmp_init(DmpRm* d, const du_uchar* conf_path);
+        du_bool dmp_cp_init(DmpRm* d);
+        du_bool capability_init(DmpRm* p, const du_uchar* cap_path);
+        du_bool dmp_start(DmpRm* d);
+        void dmp_free(DmpRm* d);
+
     private:
         Event mEvent;
-        void* mDtcp;
+        DmpRm* mDmpRm;
         std::string mConfDir;
+        connect_status_arg_s m_connect_status_arg;
     };
 
 } //namespace dtvt
