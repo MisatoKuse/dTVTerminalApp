@@ -321,6 +321,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         for (int i = 0; i < videoContentMapList.size(); i++) {
             contentsData = new ContentsData();
             contentsData.setThumURL(videoContentMapList.get(i).get(JsonConstants.META_RESPONSE_THUMB_448));
+            contentsData.setThumDetailURL(videoContentMapList.get(i).get(JsonConstants.META_RESPONSE_THUMB_640));
             contentsData.setTitle(videoContentMapList.get(i).get(JsonConstants.META_RESPONSE_TITLE));
             contentsData.setRatStar(videoContentMapList.get(i).get(JsonConstants.META_RESPONSE_RATING));
 

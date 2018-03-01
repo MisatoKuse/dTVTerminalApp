@@ -273,7 +273,8 @@ public class TvScheduleInsertDataManager {
      */
     private ContentValues convertScheduleInfoToContentValues(final ScheduleInfo scheduleInfo) {
         ContentValues values = new ContentValues();
-        values.put(JsonConstants.META_RESPONSE_THUMB_448, ""); //imageURL?
+        values.put(JsonConstants.META_RESPONSE_THUMB_448, scheduleInfo.getImageUrl());
+        values.put(JsonConstants.META_RESPONSE_THUMB_640, scheduleInfo.getImageDetailUrl());
         values.put(JsonConstants.META_RESPONSE_TITLE, scheduleInfo.getTitle());
         values.put(JsonConstants.META_RESPONSE_PUBLISH_START_DATE, scheduleInfo.getStartTime());
         values.put(JsonConstants.META_RESPONSE_PUBLISH_END_DATE, scheduleInfo.getEndTime());

@@ -57,7 +57,7 @@ public class WatchListenVideoListDataManager {
                 JsonConstants.META_RESPONSE_AVAIL_START_DATE, JsonConstants.META_RESPONSE_AVAIL_END_DATE,
                 JsonConstants.META_RESPONSE_DISP_TYPE, JsonConstants.META_RESPONSE_CONTENT_TYPE,
                 JsonConstants.META_RESPONSE_DTV, JsonConstants.META_RESPONSE_TV_SERVICE,
-                JsonConstants.META_RESPONSE_DTV_TYPE};
+                JsonConstants.META_RESPONSE_DTV_TYPE, JsonConstants.META_RESPONSE_THUMB_640};
 
         try {
             //Daoクラス使用準備
