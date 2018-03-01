@@ -156,22 +156,6 @@ public class ChannelListActivity extends BaseActivity implements
         setContentView(R.layout.channel_list_main_layout);
         initView();
         initData();
-        firstMore();
-        DTVTLogger.end();
-    }
-
-    /**
-     * 初回の場合、Loading...を表示.
-     */
-    private void firstMore() {
-        DTVTLogger.start();
-        Handler h = new Handler();
-        h.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                displayMore(true, CHANNEL_LIST_TAB_HIKARI, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI);
-            }
-        }, 200);
         DTVTLogger.end();
     }
 
@@ -262,10 +246,6 @@ public class ChannelListActivity extends BaseActivity implements
         mHandle.removeCallbacks(mRunnableDtv);
         mHandle.removeCallbacks(mRunnableTer);
         mHandle.removeCallbacks(mRunnableHikari);
-        displayMore(false, CHANNEL_LIST_TAB_DTV, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV);
-        displayMore(false, CHANNEL_LIST_TAB_TER, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER);
-        displayMore(false, CHANNEL_LIST_TAB_BS, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS);
-        displayMore(false, CHANNEL_LIST_TAB_HIKARI, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI);
         clearAllFrames();
         DTVTLogger.end();
     }
@@ -326,20 +306,6 @@ public class ChannelListActivity extends BaseActivity implements
     }
 
     /**
-     * Loading...を表示.
-     *
-     * @param isShow 表示するかどうか
-     * @param tabNo  タブ番号
-     * @param type   タイプ
-     */
-     private void displayMore(final boolean isShow, final int tabNo, final ChannelListAdapter.ChListDataType type) {
-        DTVTLogger.start();
-        final ChannelListFragment fragment = mFactory.createFragment(tabNo, this, type);
-        fragment.displayMoreData(isShow);
-        DTVTLogger.end();
-    }
-
-    /**
      * Bsデータスレッド.
      */
     private final Runnable mRunnableBs = new Runnable() {
@@ -364,7 +330,6 @@ public class ChannelListActivity extends BaseActivity implements
      */
     private void getBsData() {
         DTVTLogger.start();
-        displayMore(true, CHANNEL_LIST_TAB_BS, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS);
         mHandle.postDelayed(mRunnableBs, CHANNEL_LIST_TAB_DELAY_TIME);
         DTVTLogger.end();
     }
@@ -394,7 +359,6 @@ public class ChannelListActivity extends BaseActivity implements
      */
     private void getTerData() {
         DTVTLogger.start();
-        displayMore(true, CHANNEL_LIST_TAB_TER, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER);
         mHandle.postDelayed(mRunnableTer, CHANNEL_LIST_TAB_DELAY_TIME);
         DTVTLogger.end();
     }
@@ -404,9 +368,6 @@ public class ChannelListActivity extends BaseActivity implements
      */
     private void getHikariData() {
         DTVTLogger.start();
-        //test b
-        displayMore(true, CHANNEL_LIST_TAB_HIKARI, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI);
-        //test e
         mHandle.postDelayed(mRunnableHikari, CHANNEL_LIST_TAB_DELAY_TIME);
         DTVTLogger.end();
     }
@@ -440,7 +401,6 @@ public class ChannelListActivity extends BaseActivity implements
      */
     private void getDtvData() {
         DTVTLogger.start();
-        displayMore(true, CHANNEL_LIST_TAB_DTV, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV);
         mHandle.postDelayed(mRunnableDtv, CHANNEL_LIST_TAB_DELAY_TIME);
         DTVTLogger.end();
     }
@@ -473,33 +433,21 @@ public class ChannelListActivity extends BaseActivity implements
                 mHandle.removeCallbacks(mRunnableBs);
                 mHandle.removeCallbacks(mRunnableDtv);
                 mHandle.removeCallbacks(mRunnableTer);
-                displayMore(false, CHANNEL_LIST_TAB_DTV, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV);
-                displayMore(false, CHANNEL_LIST_TAB_TER, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER);
-                displayMore(false, CHANNEL_LIST_TAB_BS, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS);
                 break;
             case CHANNEL_LIST_TAB_DTV:
                 mHandle.removeCallbacks(mRunnableBs);
                 mHandle.removeCallbacks(mRunnableHikari);
                 mHandle.removeCallbacks(mRunnableTer);
-                displayMore(false, CHANNEL_LIST_TAB_HIKARI, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI);
-                displayMore(false, CHANNEL_LIST_TAB_TER, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER);
-                displayMore(false, CHANNEL_LIST_TAB_BS, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS);
                 break;
             case CHANNEL_LIST_TAB_TER:
                 mHandle.removeCallbacks(mRunnableBs);
                 mHandle.removeCallbacks(mRunnableDtv);
                 mHandle.removeCallbacks(mRunnableHikari);
-                displayMore(false, CHANNEL_LIST_TAB_HIKARI, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI);
-                displayMore(false, CHANNEL_LIST_TAB_DTV, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV);
-                displayMore(false, CHANNEL_LIST_TAB_BS, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS);
                 break;
             case CHANNEL_LIST_TAB_BS:
                 mHandle.removeCallbacks(mRunnableDtv);
                 mHandle.removeCallbacks(mRunnableHikari);
                 mHandle.removeCallbacks(mRunnableTer);
-                displayMore(false, CHANNEL_LIST_TAB_HIKARI, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI);
-                displayMore(false, CHANNEL_LIST_TAB_DTV, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV);
-                displayMore(false, CHANNEL_LIST_TAB_TER, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER);
                 break;
             default:
                 break;
@@ -676,7 +624,6 @@ public class ChannelListActivity extends BaseActivity implements
             @Override
             public void run() {
                 fragment.noticeRefresh();
-                fragment.displayMoreData(false);
             }
         });
     }
@@ -915,11 +862,9 @@ public class ChannelListActivity extends BaseActivity implements
                 int tab = mViewPager.getCurrentItem();
                 switch (tab) {
                     case CHANNEL_LIST_TAB_BS:
-                        displayMore(false, CHANNEL_LIST_TAB_BS, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS);
                         showMessage("BSチャンネル取得できませんでした");
                         break;
                     case CHANNEL_LIST_TAB_TER:
-                        displayMore(false, CHANNEL_LIST_TAB_TER, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER);
                         showMessage("地上波チャンネル取得できませんでした");
                         break;
                     default:
