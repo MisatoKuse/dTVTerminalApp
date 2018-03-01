@@ -7,9 +7,7 @@ package com.nttdocomo.android.tvterminalapp.adapter;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -21,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
@@ -206,15 +205,9 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             mClipButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View view) {
-                    //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、画像比較でクリップ済/未を判定する
-                    Bitmap clipButtonBitmap = ((BitmapDrawable) mClipButton.getBackground()).getBitmap();
-                    Bitmap activeClipBitmap = null;
-                    BitmapDrawable activeClipBitmapDrawable = (BitmapDrawable) ResourcesCompat.getDrawable(mContext.getResources(),
-                            R.mipmap.icon_circle_active_clip, null);
-                    if (activeClipBitmapDrawable != null) {
-                        activeClipBitmap = activeClipBitmapDrawable.getBitmap();
-                    }
-                    if (clipButtonBitmap.equals(activeClipBitmap)) {
+                    //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、タグでクリップ済/未を判定する
+                    Object clipTag = mClipButton.getTag();
+                    if (clipTag.equals(BaseActivity.CLIP_ACTIVE_STATUS)) {
                         schedule.getClipRequestData().setClipStatus(true);
                     } else {
                         schedule.getClipRequestData().setClipStatus(false);
@@ -482,8 +475,10 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
 
                 if (isClipStatus) {
                     itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
+                    itemViewHolder.mClipButton.setTag(BaseActivity.CLIP_OPACITY_STATUS);
                 } else {
                     itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                    itemViewHolder.mClipButton.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
                 }
             }
         } else {
