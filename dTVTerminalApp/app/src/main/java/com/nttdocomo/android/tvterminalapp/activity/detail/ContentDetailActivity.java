@@ -161,7 +161,6 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
     private LinearLayout mThumbnailBtn = null;
     private RelativeLayout mThumbnailRelativeLayout = null;
     private ImageView mThumbnail = null;
-    private ImageView mThumbnailShadow = null;
 
     public static final String RECOMMEND_INFO_BUNDLE_KEY = "recommendInfoKey";
     public static final String PLALA_INFO_BUNDLE_KEY = "plalaInfoKey";
@@ -336,6 +335,10 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
      * 視聴可能かどうか.
      */
     private int mIsEnableWatch = ENABLE_WATCH_NO_DEFINE;
+    /**
+     * サムネイルにかけるシャドウのアルファ値.
+     */
+    private static final float THUMBNAIL_SHADOW_ALPHA = 0.5f;
     /**
      * 外部出力制御.
      */
@@ -678,9 +681,7 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
         DTVTLogger.start();
         synchronized (this) {
             if (mCanPlay) {
-                playButton();
-                mSecureVideoPlayer.setBackgroundResource(0);
-                mThumbnailShadow.setVisibility(View.GONE);
+                playButton(true);
                 mPlayerController.start();
             }
         }
@@ -694,24 +695,10 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
         DTVTLogger.start();
         synchronized (this) {
             if (mCanPlay) {
-                pauseButton();
+                playButton(false);
                 mPlayerController.pause();
-                mSecureVideoPlayer.setBackgroundResource(R.mipmap.thumb_material_mask_overlay_gradation);
             }
         }
-        DTVTLogger.end();
-    }
-
-    /**
-     * pause button function.
-     */
-    private void pauseButton() {
-        DTVTLogger.start();
-        if (null == mVideoPlayPause) {
-            return;
-        }
-        mVideoPlayPause.getChildAt(0).setVisibility(View.VISIBLE);
-        mVideoPlayPause.getChildAt(1).setVisibility(View.GONE);
         DTVTLogger.end();
     }
 
@@ -745,6 +732,7 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                             mTvTitle.setVisibility(View.VISIBLE);
                             mTvLogo.setVisibility(View.VISIBLE);
                         }
+                        mSecureVideoPlayer.setBackgroundResource(R.mipmap.thumb_material_mask_overlay_gradation);
                         //setPlayEvent();
                     }
                     hideCtrlViewAfterOperate();
@@ -767,6 +755,7 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
         mVideoCtrlBar.setVisibility(View.INVISIBLE);
         mTvTitle.setVisibility(View.INVISIBLE);
         mTvLogo.setVisibility(View.INVISIBLE);
+        mSecureVideoPlayer.setBackgroundResource(0);
         DTVTLogger.end();
     }
 
@@ -867,25 +856,27 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
     private void setProgress0() {
         DTVTLogger.start();
         mVideoSeekBar.setProgress(0);
-        playButton();
+        playButton(true);
         DTVTLogger.end();
     }
 
     /**
      * play button function.
+     * @param isPlay 再生(一時停止)ボタン
      */
-    private void playButton() {
+    private void playButton(final boolean isPlay) {
         DTVTLogger.start();
         if (null == mVideoPlayPause) {
             return;
         }
         View child0 = mVideoPlayPause.getChildAt(0);
         View child1 = mVideoPlayPause.getChildAt(1);
-        if (null != child0) {
+        if (isPlay) {
             child0.setVisibility(View.GONE);
-        }
-        if (null != child1) {
             child1.setVisibility(View.VISIBLE);
+        } else {
+            child0.setVisibility(View.VISIBLE);
+            child1.setVisibility(View.GONE);
         }
         DTVTLogger.end();
     }
@@ -1260,7 +1251,7 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
      */
     private void setThumbnailText(final String content) {
         mThumbnailBtn.setVisibility(View.VISIBLE);
-        setThumbnailShadow();
+        setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
         TextView startAppIcon = findViewById(R.id.view_contents_button_text);
         startAppIcon.setVisibility(View.VISIBLE);
         startAppIcon.setText(content);
@@ -1300,8 +1291,6 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                 getWidthDensity(), getWidthDensity() / SCREEN_RATIO_WIDTH_16 * SCREEN_RATIO_HEIGHT_9);
         Bitmap bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.error_movie);
         mThumbnail.setLayoutParams(layoutParams);
-        mThumbnailShadow.setLayoutParams(layoutParams);
-        mThumbnailShadow.setVisibility(View.VISIBLE);
         mThumbnail.setImageBitmap(bitmap);
     }
 
@@ -1485,14 +1474,15 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
     }
 
     /**
-     * set thumbnail.
+     * set thumbnail(player).
      *
      * @param url URL
      */
     private void setPlayerLogoThumbnail(final String url) {
         if (!TextUtils.isEmpty(url)) {
-            ThumbnailProvider mThumbnailProvider = new ThumbnailProvider(this);
-            mTvLogo.setImageResource(R.drawable.error_list);
+            if (mThumbnailProvider == null) {
+                mThumbnailProvider = new ThumbnailProvider(this);
+            }
             mTvLogo.setTag(url);
             Bitmap bitmap = mThumbnailProvider.getThumbnailImage(mTvLogo, url);
             if (bitmap != null) {
@@ -1714,7 +1704,6 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
     private void initContentsView() {
         //サムネイル取得
         mThumbnail = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail);
-        mThumbnailShadow = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail_shadow);
         mThumbnailBtn = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail_btn);
         mThumbnailBtn.setOnClickListener(this);
         if (mIsPlayer) {
@@ -1900,6 +1889,7 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                     mThumbnailBtn.setVisibility(View.GONE);
                     LinearLayout contractLeadingView = findViewById(R.id.contract_leading_view);
                     contractLeadingView.setVisibility(View.VISIBLE);
+                    setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
                     TextView contractLeadingText = findViewById(R.id.contract_leading_text);
                     contractLeadingText.setText(getResources().getString(R.string.contents_detail_contract_text));
                     Button contractLeadingButton = findViewById(R.id.contract_leading_button);
@@ -2578,10 +2568,10 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
         DTVTLogger.start();
         switch (event) {
             case MediaPlayerDefinitions.PE_OPENED:
-                playButton();
+                playButton(true);
                 break;
             case MediaPlayerDefinitions.PE_COMPLETED:
-                pauseButton();
+                playButton(false);
                 break;
             case MediaPlayerDefinitions.PE_START_NETWORK_CONNECTION:
             case MediaPlayerDefinitions.PE_START_AUTHENTICATION:
@@ -3412,12 +3402,12 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                     vodTextView.setText(getString(R.string.contents_detail_contract_text_vod));
                     vodButton.setText(getString(R.string.contents_detail_contract_button_vod));
                     vodButton.setAllCaps(false);
+                    //サムネイルにシャドウをかける
+                    setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
                 } else {
                     //宅外の場合は契約ボタンを表示しない
                     vodButton.setVisibility(View.GONE);
                 }
-                //サムネイルにシャドウをかける
-                setThumbnailShadow();
 
                 //サムネイル上のdTVで視聴、dアニメストアで視聴を非表示
                 if (mThumbnailBtn != null) {
@@ -3435,12 +3425,12 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                     chTextView.setText(getString(R.string.contents_detail_contract_text_ch));
                     chButton.setText(getString(R.string.contents_detail_contract_button_ch));
                     chButton.setAllCaps(false);
+                    //サムネイルにシャドウをかける
+                    setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
                 } else {
                     //宅外の場合は契約ボタンを表示しない
                     chButton.setVisibility(View.GONE);
                 }
-                //サムネイルにシャドウをかける
-                setThumbnailShadow();
 
                 //サムネイル上のdTVで視聴、dアニメストアで視聴を非表示
                 if (mThumbnailBtn != null) {
@@ -3503,10 +3493,11 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
 
     /**
      * サムネイル画像にシャドウをかける(アルファをかける).
+     * @param alpha アルファ値
      */
-    private void setThumbnailShadow() {
+    private void setThumbnailShadow(final float alpha) {
         if (mThumbnail != null) {
-            mThumbnailShadow.setVisibility(View.VISIBLE);
+            mThumbnail.setAlpha(alpha);
         }
     }
 

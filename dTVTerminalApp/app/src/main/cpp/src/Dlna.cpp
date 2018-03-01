@@ -439,28 +439,37 @@ namespace dtvt {
                 //du_sync_notify(&d->soap.sync);
             }
         #elif defined(DLNA_KARI_DMS_NAS)
-            if(0==vv.size()){
+            if (0 == vv.size()) {
                 du_sync_notify(&d->soap.sync);
                 du_mutex_unlock(&d->soap.mutex);
                 return;
             } else if(vv.size() < PAGE_COUNT) {
-                if(thiz->getDlnaXmlContainer().getAllVVectorString().size() > 0){
-                    VVectorString totalVv = thiz->getDlnaXmlContainer().getAllVVectorString();
-                    thiz->notifyObject(parser->getMsgId(), totalVv);
-                } else {
+                VVectorString totalVv = thiz->getDlnaXmlContainer().getAllVVectorString();
+                if (totalVv.empty() || totalVv.size() == 0) {
                     thiz->notifyObject(parser->getMsgId(), vv);
+                } else {
+                    thiz->notifyObject(parser->getMsgId(), totalVv);
                 }
             } else {
                 thiz->getDlnaXmlContainer().addVVectorString(vv);
                 thiz->sendSoap((char*)response->url, DLNA_DMS_ROOT, thiz->getDlnaXmlContainer().getAllVVectorString().size());
             }
         #elif defined(DLNA_KARI_DMS_RELEASE)
-            if(0==vv.size()){
+            if (0 == vv.size()) {
                 du_sync_notify(&d->soap.sync);
                 du_mutex_unlock(&d->soap.mutex);
                 return;
+            } else if(vv.size() < PAGE_COUNT) {
+                VVectorString totalVv = thiz->getDlnaXmlContainer().getAllVVectorString();
+                if (totalVv.empty() || totalVv.size() == 0) {
+                    thiz->notifyObject(parser->getMsgId(), vv);
+                } else {
+                    thiz->notifyObject(parser->getMsgId(), totalVv);
+                }
+            } else {
+                thiz->getDlnaXmlContainer().addVVectorString(vv);
+                thiz->sendSoap((char*)response->url, DLNA_DMS_ROOT, thiz->getDlnaXmlContainer().getAllVVectorString().size());
             }
-            thiz->notifyObject(parser->getMsgId(), vv);
         #endif
 
         du_sync_notify(&d->soap.sync);
@@ -506,7 +515,7 @@ namespace dtvt {
         du_uint32 number_returned;
         du_uint32 total_matches;
         du_uint32 update_id;
-        int size=0;
+        size_t size = 0;
         std::vector<std::string> recordVectorTmp;
         du_str_array_init(&param_array);
         if(dav_cds_parse_browse_response(
