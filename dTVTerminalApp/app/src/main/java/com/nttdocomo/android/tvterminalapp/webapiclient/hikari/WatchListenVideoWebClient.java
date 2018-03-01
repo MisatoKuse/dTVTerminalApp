@@ -99,7 +99,7 @@ public class WatchListenVideoWebClient
     /**
      * 視聴中ビデオ一覧取得.
      *
-     * @param ageReq                             視聴年齢制限値（1から17までの値）
+     * @param ageReq                             年齢制限の値 1から17を指定。範囲外の値は1or17に丸める
      * @param upperPagetLimit                    結果の最大件数（1以上）
      * @param lowerPagetLimit                    　             結果の最小件数（1以上）
      * @param pagerOffset                        取得位置
@@ -142,7 +142,7 @@ public class WatchListenVideoWebClient
     /**
      * 指定されたパラメータがおかしいかどうかのチェック.
      *
-     * @param ageReq                             視聴年齢制限値
+     * @param ageReq                             年齢制限の値 1から17を指定。範囲外の値は1or17に丸めるのでチェックしない
      * @param upperPagetLimit                    結果の最大件数
      * @param lowerPagetLimit                    　            結果の最小件数
      * @param pagerOffset                        取得位置
@@ -153,10 +153,6 @@ public class WatchListenVideoWebClient
     private boolean checkNormalParameter(final int ageReq, final int upperPagetLimit, final int lowerPagetLimit,
                                          final int pagerOffset, final String pagerDirection,
                                          final WatchListenVideoJsonParserCallback watchListenVideoJsonParserCallback) {
-        if (!(ageReq >= 1 && ageReq <= 17)) {
-            //ageReqが1から17ではないならばfalse
-            return false;
-        }
 
         // 各値が下限以下ならばfalse
         if (upperPagetLimit < 1) {
@@ -181,7 +177,7 @@ public class WatchListenVideoWebClient
     /**
      * 指定されたパラメータをJSONで組み立てて文字列にする.
      *
-     * @param ageReq          視聴年齢制限値
+     * @param ageReq          年齢制限の値 1から17を指定。範囲外の値は1or17に丸める
      * @param upperPagetLimit 結果の最大件数
      * @param lowerPagetLimit 　結果の最小件数
      * @param pagerOffset     取得位置
@@ -193,7 +189,14 @@ public class WatchListenVideoWebClient
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
-            jsonObject.put(JsonConstants.META_RESPONSE_AGE_REQ, ageReq);
+            int intAge = ageReq;
+            //数字がゼロの場合は無指定と判断して1にする.また17より大きい場合は17に丸める.
+            if (ageReq < WebApiBasePlala.AGE_LOW_VALUE) {
+                intAge = 1;
+            } else if (ageReq > WebApiBasePlala.AGE_HIGH_VALUE) {
+                intAge = 17;
+            }
+            jsonObject.put(JsonConstants.META_RESPONSE_AGE_REQ, intAge);
 
             JSONObject jsonPagerObject = new JSONObject();
 

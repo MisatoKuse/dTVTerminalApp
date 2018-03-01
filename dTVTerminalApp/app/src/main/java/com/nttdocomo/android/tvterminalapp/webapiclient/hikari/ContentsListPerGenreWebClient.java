@@ -89,7 +89,7 @@ public class ContentsListPerGenreWebClient
      * @param limit                                  取得する最大件数(値は1以上)
      * @param offset                                 取得位置(値は1以上)
      * @param filter                                 フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
-     * @param ageReq                                 年齢設定値1-17（ゼロの場合は1扱い）
+     * @param ageReq                                 年齢制限の値 1から17を指定。範囲外の値は1or17に丸める
      * @param genreId                                ジャンルID（ヌルや空文字ならば出力されず、無指定となる）
      * @param sort                                   ソート指定（titleruby_asc/avail_s_asc/avail_e_desc/play_count_desc
      * @param contentsListPerGenreJsonParserCallback コールバック
@@ -143,7 +143,7 @@ public class ContentsListPerGenreWebClient
      * @param limit                                  取得する最大件数(値は1以上)
      * @param offset                                 取得位置(値は1以上)
      * @param filter                                 フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
-     * @param ageReq                                 年齢設定値1-17（ゼロの場合は1扱い）
+     * @param ageReq                                 年齢制限の値 1から17を指定。範囲外の値は1or17に丸めるのでチェックしない
      * @param genreId                                ジャンルID（ヌルや空文字ならば出力されず、無指定となる）
      * @param sort                                   ソート指定（titleruby_asc/avail_s_asc/avail_e_desc/play_count_desc
      * @param contentsListPerGenreJsonParserCallback コールバック
@@ -170,11 +170,6 @@ public class ContentsListPerGenreWebClient
             if (!filter.isEmpty()) {
                 return false;
             }
-        }
-
-        //年齢情報の件0から17までの間以外はエラー
-        if (ageReq < 1 || ageReq > 17) {
-            return false;
         }
 
         //タイプ用の固定値をひとまとめにする
@@ -208,7 +203,7 @@ public class ContentsListPerGenreWebClient
      * @param limit   取得する最大件数(値は1以上)
      * @param offset  取得位置(値は1以上)
      * @param filter  フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
-     * @param ageReq  年齢設定値1-17（ゼロの場合は1扱い）
+     * @param ageReq  年齢制限の値 1から17を指定。範囲外の値は1or17に丸める
      * @param genreId ジャンルID
      * @param type    タイプ（hikaritv_vod/dtv_vod/hikaritv_and_dtv_vod/指定なしはすべてのVOD）
      * @param sort    ソート指定（titleruby_asc/avail_s_asc/avail_e_desc/play_count_desc
@@ -230,9 +225,11 @@ public class ContentsListPerGenreWebClient
             //その他
             jsonObject.put(JsonConstants.META_RESPONSE_FILTER, filter);
 
-            //数字がゼロの場合は無指定と判断して1にする
-            if (intAgeReq == 0) {
+            //数字がゼロの場合は無指定と判断して1にする.また17より大きい場合は17に丸める.
+            if (intAgeReq < WebApiBasePlala.AGE_LOW_VALUE) {
                 intAgeReq = 1;
+            } else if (intAgeReq > WebApiBasePlala.AGE_HIGH_VALUE) {
+                intAgeReq = 17;
             }
 
             jsonObject.put(JsonConstants.META_RESPONSE_AGE_REQ, intAgeReq);

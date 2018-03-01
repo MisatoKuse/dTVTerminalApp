@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ContentsDetailGetResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ContentsDetailJsonParser;
@@ -81,7 +82,7 @@ public class ContentsDetailGetWebClient
      *
      * @param crid                             取得したい情報のコンテンツ識別ID(crid)の配列
      * @param filter                           フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
-     * @param ageReq                           年齢制限の値 1から17を指定。範囲外の値は1(全年齢)とする
+     * @param ageReq                           年齢制限の値 1から17を指定。範囲外の値は1or17に丸める
      * @param contentsDetailJsonParserCallback コールバック
      * @return パラメータエラー等が発生した場合はfalse
      */
@@ -93,7 +94,7 @@ public class ContentsDetailGetWebClient
             return false;
         }
 
-        //パラメーターのチェック（ageReqは範囲外が全部1になるので、チェックは行わない）
+        //パラメーターのチェック
         if (!checkNormalParameter(crid, filter, contentsDetailJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
             return false;
@@ -159,7 +160,7 @@ public class ContentsDetailGetWebClient
      *
      * @param crids  取得したい情報のコンテンツ識別ID(crid)の配列
      * @param filter フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
-     * @param ageReq 年齢制限の値 1から17を指定。範囲外の値は1(全年齢)とする
+     * @param ageReq 年齢制限の値 1から17を指定。範囲外の値は1or17に丸める
      * @return 組み立て後の文字列
      */
     private String makeSendParameter(final String[] crids, final String filter, final int ageReq) {
@@ -186,16 +187,14 @@ public class ContentsDetailGetWebClient
 
             }
 
-
-            //年齢の値が範囲外ならば、1にする
-            if (ageReq < AGE_LOW_VALUE || ageReq > AGE_HIGH_VALUE) {
-                //年齢制限値の追加
-                jsonObject.put(AGE_REQ_STRING, AGE_LOW_VALUE);
-            } else {
-                //年齢制限値の追加
-                jsonObject.put(AGE_REQ_STRING, ageReq);
+            int intAge = ageReq;
+            //数字がゼロの場合は無指定と判断して1にする.また17より大きい場合は17に丸める.
+            if (intAge < WebApiBasePlala.AGE_LOW_VALUE) {
+                intAge = 1;
+            } else if (intAge > WebApiBasePlala.AGE_HIGH_VALUE) {
+                intAge = 17;
             }
-
+            jsonObject.put(JsonConstants.META_RESPONSE_AGE_REQ, intAge);
 
             answerText = jsonObject.toString();
 

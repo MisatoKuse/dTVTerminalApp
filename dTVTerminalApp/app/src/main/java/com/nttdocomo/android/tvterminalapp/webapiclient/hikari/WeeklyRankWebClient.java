@@ -87,7 +87,7 @@ public class WeeklyRankWebClient
      * @param limit                        取得する最大件数(値は1以上)
      * @param offset                       　取得位置(値は1以上)
      * @param filter                       フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
-     * @param ageReq                       年齢設定値（ゼロの場合は1扱い）
+     * @param ageReq                       年齢制限の値 1から17を指定。範囲外の値は1or17に丸める
      * @param genreId                      ジャンルID
      * @param weeklyRankJsonParserCallback コールバック
      * @return パラメータエラー等ならばfalse
@@ -135,7 +135,7 @@ public class WeeklyRankWebClient
      * @param limit  取得する最大件数(値は1以上)
      * @param offset 取得位置(値は1以上)
      * @param filter フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
-     * @param ageReq 年齢設定値（ゼロの場合は1扱い）
+     * @param ageReq 年齢制限の値 1から17を指定。範囲外の値は1or17に丸めるのでチェックしない
      * @param weeklyRankJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
@@ -165,11 +165,6 @@ public class WeeklyRankWebClient
             }
         }
 
-        //年齢情報の件0から17までの間以外はエラー
-        if (ageReq < 1 || ageReq > 17) {
-            return false;
-        }
-
         //コールバックがヌルならばエラー
         if (weeklyRankJsonParserCallback == null) {
             return false;
@@ -185,7 +180,7 @@ public class WeeklyRankWebClient
      * @param limit   取得する最大件数(値は1以上)
      * @param offset  取得位置(値は1以上)
      * @param filter  フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
-     * @param ageReq  年齢設定値（ゼロの場合は1扱い）
+     * @param ageReq  年齢制限の値 1から17を指定。範囲外の値は1or17に丸める
      * @param genreId ジャンルID
      * @return 組み立て後の文字列
      */
@@ -203,13 +198,14 @@ public class WeeklyRankWebClient
             //その他
             jsonObject.put(JsonConstants.META_RESPONSE_FILTER, filter);
 
-            int age = ageReq;
-            //数字がゼロの場合は無指定と判断して1にする
-            if (ageReq == 0) {
-                age = 1;
+            int intAge = ageReq;
+            //数字がゼロの場合は無指定と判断して1にする.また17より大きい場合は17に丸める.
+            if (intAge < WebApiBasePlala.AGE_LOW_VALUE) {
+                intAge = 1;
+            } else if (intAge > WebApiBasePlala.AGE_HIGH_VALUE) {
+                intAge = 17;
             }
-
-            jsonObject.put(JsonConstants.META_RESPONSE_AGE_REQ, age);
+            jsonObject.put(JsonConstants.META_RESPONSE_AGE_REQ, intAge);
 
             //ヌルや空文字ではないならば、値を出力する
             if (genreId != null && !genreId.isEmpty()) {

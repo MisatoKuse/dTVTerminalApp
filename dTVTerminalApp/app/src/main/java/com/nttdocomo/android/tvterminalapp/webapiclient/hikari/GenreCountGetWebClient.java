@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.GenreCountGetJsonParser;
@@ -105,7 +106,7 @@ public class GenreCountGetWebClient
      * (パラメータ名は元仕様に準拠）.
      *
      * @param filter                          フィルター（release/testa/demoの何れかを指定可能。ヌルや空文字の場合はreleaseとなる）
-     * @param ageReq                          年齢設定値（1から17を指定。それ以外を指定した場合1(全年齢)となる）
+     * @param ageReq                          年齢制限の値 1から17を指定。範囲外の値は1or17に丸めるのでチェックしない
      * @param genreId                         ジャンルID
      * @param genreCountGetJsonParserCallback コールバック
      * @return パラメータエラーの場合はfalse
@@ -156,7 +157,7 @@ public class GenreCountGetWebClient
      * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param filter         フィルター（release/testa/demoの何れかを指定可能。ヌルや空文字の場合はreleaseとなる）
-     * @param ageReq         年齢設定値（1から17を指定。それ以外を指定した場合1(全年齢)となる）
+     * @param ageReq         年齢制限の値 1から17を指定。範囲外の値は1or17に丸めるのでチェックしない
      * @param genreId        ジャンルID
      * @param parserCallback コールバック
      * @return 値がおかしいならばfalse
@@ -172,11 +173,6 @@ public class GenreCountGetWebClient
             if (filterList.indexOf(filter) == -1) {
                 return false;
             }
-        }
-
-        //年齢設定値が負数か上限越えならばfalse
-        if (ageReq < 0 || ageReq > WebApiBasePlala.AGE_HIGH_VALUE) {
-            return false;
         }
 
         //ジャンルIDはヌルや空文字はエラー
@@ -198,7 +194,7 @@ public class GenreCountGetWebClient
      * 指定されたパラメータをJSONで組み立てて文字列にする.
      *
      * @param filter  フィルター（release/testa/demoの何れかを指定可能。ヌルや空文字の場合はreleaseとなる）
-     * @param ageReq  年齢設定値（1から17を指定。それ以外を指定した場合1(全年齢)となる）
+     * @param ageReq  年齢制限の値 1から17を指定。範囲外の値は1or17に丸める
      * @param genreId ジャンルID
      * @param type    タイプ（hikaritv_vod/dtv_vod/hikaritv_and_dtv_vodのいずれかを指定。ヌルや空文字の場合は全てのVODとなる）
      * @return 組み立て後の文字列
@@ -208,7 +204,6 @@ public class GenreCountGetWebClient
         JSONObject jsonObject = new JSONObject();
         String answerText;
         String strFilter = filter;
-        int intAge = ageReq;
         try {
             //フィルターがヌルや空文字だった場合は"release"とする
             if (strFilter == null || strFilter.isEmpty()) {
@@ -218,13 +213,16 @@ public class GenreCountGetWebClient
             //フィルターの設定
             jsonObject.put(FILTER_STR, strFilter);
 
-            //年齢設定値がゼロの場合は1になる
-            if (intAge < WebApiBasePlala.AGE_LOW_VALUE) {
-                intAge = WebApiBasePlala.AGE_LOW_VALUE;
+            int intAge = ageReq;
+            //数字がゼロの場合は無指定と判断して1にする.また17より大きい場合は17に丸める.
+            if (ageReq < WebApiBasePlala.AGE_LOW_VALUE) {
+                intAge = 1;
+            } else if (ageReq > WebApiBasePlala.AGE_HIGH_VALUE) {
+                intAge = 17;
             }
 
             //年齢設定の設定
-            jsonObject.put(AGE_REQ_STR, intAge);
+            jsonObject.put(JsonConstants.META_RESPONSE_AGE_REQ, intAge);
 
             //ジャンルIDはリストの中に入れなければならない
             JSONArray array = new JSONArray();

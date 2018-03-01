@@ -41,7 +41,7 @@ public class ChannelWebClient
     private ChannelJsonParserCallback mChannelJsonParserCallback;
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
