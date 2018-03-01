@@ -182,6 +182,10 @@ public class RecordingReservationListDataProvider implements
      */
     private static final int RECORD_RESERVATION_MAP_INDEX_SINGLE_RECORD = 8;
     /**
+     * 多チャンネル放送の区分.
+     */
+    private static final int RECORD_RESERVATION_MULTI_CHANNEL = 1;
+    /**
      * 通信禁止判定フラグ.
      */
     private boolean mIsCancel = false;
@@ -376,9 +380,10 @@ public class RecordingReservationListDataProvider implements
         initDataList();
 
         if (!mIsCancel) {
-            // STB側録画予約一覧取得要求
+            // STB側録画予約一覧取得要求 現状プラットフォームタイプのパラメータは仕様書には1のみ記載
             mStbWebClient = new RemoteRecordingReservationListWebClient(mContext);
-            mStbWebClient.getRemoteRecordingReservationListApi(this);
+            mStbWebClient.getRemoteRecordingReservationListApi(
+                    RECORD_RESERVATION_MULTI_CHANNEL, this);
 
             // dリモート側録画予約一覧取得要求
             mDRemoteWebClient = new RecordingReservationListWebClient(mContext);

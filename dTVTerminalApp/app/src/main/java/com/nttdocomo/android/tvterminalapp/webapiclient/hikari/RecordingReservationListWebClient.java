@@ -181,7 +181,7 @@ public class RecordingReservationListWebClient
                 jsonObject.put(JsonConstants.META_RESPONSE_PAGER, pager);
                 answerText = jsonObject.toString();
             } else {
-                answerText = "";
+                answerText = "{}";
             }
 
         } catch (JSONException e) {

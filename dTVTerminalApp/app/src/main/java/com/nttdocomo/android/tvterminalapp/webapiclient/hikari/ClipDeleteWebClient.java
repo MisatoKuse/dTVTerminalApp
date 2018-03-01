@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
@@ -73,7 +74,7 @@ public class ClipDeleteWebClient
     }
 
     /**
-     * チャンネル一覧取得.
+     * クリップ削除.
      *
      * @param type                         タイプ　h4d_iptv：多チャンネル、h4d_vod：ビデオ、dch：dTVチャンネル、dtv_vod：dTV
      * @param crid                         コンテンツ識別子
@@ -162,21 +163,20 @@ public class ClipDeleteWebClient
         String answerText;
         try {
             //リクエストパラメータ(Json)作成
-            if (StringUtils.isHikariContents(type)) {
-                //ひかりコンテンツ(dCh含む)
-                jsonObject.put(JsonConstants.META_RESPONSE_CRID, crid);
-            } else if (StringUtils.isHikariInDtvContents(type)) {
-                //ひかり内dTVコンテンツ(VODメタのdTVフラグが1)
-                jsonObject.put(JsonConstants.META_RESPONSE_CRID, crid);
-                jsonObject.put(JsonConstants.META_RESPONSE_TITLE_ID, titleId);
-            } else {
-                //その他
-                jsonObject.put(JsonConstants.META_RESPONSE_TYPE, type);
-                jsonObject.put(JsonConstants.META_RESPONSE_CRID, crid);
+
+            //タイプとコンテンツ識別子は常に必須
+            jsonObject.put(JsonConstants.META_RESPONSE_TYPE, type);
+            jsonObject.put(JsonConstants.META_RESPONSE_CRID, crid);
+
+            //タイトルIDはdtv_vodの時のみ必須。dtv_vodで空文字の場合は既にエラーになっているので、ここでは空文字判定だけで良い
+            if(!TextUtils.isEmpty(titleId)) {
                 jsonObject.put(JsonConstants.META_RESPONSE_TITLE_ID, titleId);
             }
 
-            answerText = jsonObject.toString();
+            //統合して文字列化する
+            JSONObject jsonListObject = new JSONObject();
+            jsonListObject.put(JsonConstants.META_RESPONSE_LIST,jsonObject);
+            answerText = jsonListObject.toString();
 
         } catch (JSONException e) {
             //JSONの作成に失敗したので空文字とする

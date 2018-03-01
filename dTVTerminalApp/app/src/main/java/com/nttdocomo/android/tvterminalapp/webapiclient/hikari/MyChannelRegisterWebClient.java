@@ -78,23 +78,25 @@ public class MyChannelRegisterWebClient
      *
      * @param serviceId                           サービスID
      * @param title                               　チャンネル名
-     * @param rValue                              　チャンネルのパレンタル設定値
-     * @param adultType                           　チャンネルのアダルトタイプ
-     * @param index                               　マイチャンネル登録位置
+     * @param rValue                              　チャンネルのパレンタル設定値(G/PG-12/R-15/R-18/R-20のどれか)
+     * @param adultType                           　チャンネルのアダルトタイプ(adultか空文字)
+     * @param index                               　マイチャンネル登録位置（1以上16以下）
      * @param myChannelRegisterJsonParserCallback コールバック
-     *                                            本WebAPIには通常のパラメータが無く、基底クラスで追加するサービストークンのみとなる。）
-     *                                            TODO: 仕様確定後に基底クラスへサービストークンの処理の追加が必要
      * @return パラメータエラー等が発生した場合はfalse
      */
-    public boolean getMyChanelRegisterApi(final String serviceId, final String title, final String rValue, final String adultType, final int index,
-                                          final MyChannelRegisterJsonParserCallback myChannelRegisterJsonParserCallback) {
+    public boolean getMyChanelRegisterApi(final String serviceId, final String title,
+                                          final String rValue, final String adultType,
+                                          final int index,
+                                          final MyChannelRegisterJsonParserCallback
+                                                  myChannelRegisterJsonParserCallback) {
         if (mIsCancel) {
             DTVTLogger.error("MyChannelRegisterWebClient is stopping connection");
             return false;
         }
 
         //パラメーターのチェック
-        if (!checkNormalParameter(serviceId, title, rValue, adultType, index, myChannelRegisterJsonParserCallback)) {
+        if (!checkNormalParameter(serviceId, title, rValue, adultType,
+                index, myChannelRegisterJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
             return false;
         }
@@ -121,10 +123,16 @@ public class MyChannelRegisterWebClient
     /**
      * 指定されたパラメータをJSONで組み立てて文字列にする.
      *
-     * @param serviceId サービスID
+     * @param serviceId サービスID.
+     * @param title     　チャンネル名
+     * @param rValue    　チャンネルのパレンタル設定値
+     * @param adultType 　チャンネルのアダルトタイプ(adultか空文字)
+     * @param index     　マイチャンネル登録位置（1以上16以下）
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(final String serviceId, final String title, final String rValue, final String adultType, final int index) {
+    private String makeSendParameter(final String serviceId, final String title,
+                                     final String rValue, final String adultType,
+                                     final int index) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
@@ -132,7 +140,7 @@ public class MyChannelRegisterWebClient
             jsonObject.put(JsonConstants.META_RESPONSE_SERVICE_ID, serviceId);
             jsonObject.put(JsonConstants.META_RESPONSE_TITLE, title);
             jsonObject.put(JsonConstants.META_RESPONSE_R_VALUE, rValue);
-            jsonObject.put(JsonConstants.META_RESPONSE_ADULT, adultType);
+            jsonObject.put(JsonConstants.META_RESPONSE_ADULT_TYPE, adultType);
             jsonObject.put(JsonConstants.META_RESPONSE_INDEX, index);
 
             answerText = jsonObject.toString();
@@ -184,8 +192,8 @@ public class MyChannelRegisterWebClient
             return false;
         }
 
-        ////index範囲は0 < index ≦　MAX_INDEXが指定されていないならばfalse
-        if (index > MY_CHANNEL_MAX_INDEX || index <= 0) {
+        ////index範囲は0 < index ≦　MAX_INDEXなので、範囲外ならばfalse
+        if (index > MY_CHANNEL_MAX_INDEX && index <= 0) {
             return false;
         }
 

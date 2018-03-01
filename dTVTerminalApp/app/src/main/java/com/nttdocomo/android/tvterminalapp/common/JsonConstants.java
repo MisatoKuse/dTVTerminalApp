@@ -245,7 +245,7 @@ public class JsonConstants {
     /**
      * index.
      */
-    public static final String META_RESPONSE_INDEX = "index_no";
+    public static final String META_RESPONSE_INDEX = "index";
     /**
      * 表示タイプ.
      */
@@ -310,6 +310,10 @@ public class JsonConstants {
      * アダルトフラグ.
      */
     public static final String META_RESPONSE_ADULT = "adult";
+    /**
+     * アダルトタイプフラグ.
+     */
+    public static final String META_RESPONSE_ADULT_TYPE = "adult_type";
     /**
      * NGファンク.
      */
