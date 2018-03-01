@@ -133,7 +133,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         }
         mRootView = View.inflate(getActivity(), R.layout.channel_list_content, null);
 
-        mLoadMoreView = LayoutInflater.from(getActivity()).inflate(R.layout.search_load_more, container, false);
+        mLoadMoreView = View.inflate(getActivity(), R.layout.search_load_more, null);
 
         initContentListView(mRootView);
         return mRootView;
@@ -171,6 +171,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
 
     /**
      * Viewの初期化処理.
+     * @param mRootView parentView
      */
     private void initContentListView(final View mRootView) {
         mListview = mRootView.findViewById(R.id.channel_list_content_body_lv);
