@@ -121,21 +121,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         }
     }
 
-    /**
-     * ページングを行った回数を取得.
-     *
-     * @return ページング回数
-     */
-    private int getCurrentNumber() {
-        RankingBaseFragment baseFragment = getCurrentFragment();
-        if (null == baseFragment || null == baseFragment.mData || 0 == baseFragment.mData.size()) {
-            return 0;
-        } else if (baseFragment.mData.size() < NUM_PER_PAGE) {
-            return 1;
-        }
-        return baseFragment.mData.size() / NUM_PER_PAGE;
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -255,16 +240,12 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
 
         //既に元のデータ以上の件数があれば足す物は無いので、更新せずに帰る
         if (null != fragment.mData && fragment.mData.size() >= contentsDataList.size()) {
-            fragment.displayMoreData(false);
             return;
         }
 
-        int pageNumber = getCurrentNumber();
-        resetCommunication();
-        for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE
-                && i < contentsDataList.size(); ++i) {
+        for (ContentsData info : contentsDataList) {
             if (null != fragment.mData) {
-                fragment.mData.add(contentsDataList.get(i));
+                fragment.mData.add(info);
             }
         }
         if (fragment.mData != null) {
@@ -272,18 +253,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         }
         fragment.noticeRefresh();
         DTVTLogger.end();
-    }
-
-    /**
-     * 読み込み中表示を非表示に変更.
-     */
-    private void resetCommunication() {
-        RankingBaseFragment baseFragment = getCurrentFragment();
-        if (null == baseFragment) {
-            return;
-        }
-        baseFragment.displayMoreData(false);
-        setCommunicatingStatus(false);
     }
 
     /**
@@ -320,38 +289,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
     @Override
     public void onScrollStateChanged(final RankingBaseFragment fragment,
                                      final AbsListView absListView, final int scrollState) {
-        synchronized (this) {
-
-            RankingBaseFragment baseFragment = getCurrentFragment();
-            if (null == baseFragment || null == fragment.getRankingAdapter()) {
-                return;
-            }
-            if (!fragment.equals(baseFragment)) {
-                return;
-            }
-
-            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
-                    && absListView.getLastVisiblePosition() == fragment.getRankingAdapter().getCount() - 1) {
-
-                if (mIsCommunicating) {
-                    return;
-                }
-
-                DTVTLogger.debug("onScrollStateChanged, do paging");
-
-                fragment.displayMoreData(true);
-                setCommunicatingStatus(true);
-
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        getGenreData();
-                    }
-                }, LOAD_PAGE_DELAY_TIME);
-            }
-        }
-
     }
 
     /**
@@ -463,7 +400,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
                 baseFragment.enableContentsAdapterCommunication();
                 baseFragment.noticeRefresh();
                 baseFragment.changeLastScrollUp(false);
-                baseFragment.displayMoreData(false);
             }
         }
     }

@@ -38,10 +38,6 @@ import java.util.List;
 public class VideoRankingActivity extends BaseActivity implements VideoRankingApiDataProviderCallback, RankingFragmentScrollListener,
         VideoGenreProvider.RankGenreListCallback, TabItemLayout.OnClickTabTextListener {
     /**
-     * 通信中フラグ.
-     */
-    private boolean mIsCommunicating = false;
-    /**
      * タブ名.
      */
     private String[] mTabNames;
@@ -97,39 +93,12 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
      */
     private void resetPaging() {
         synchronized (this) {
-            setCommunicatingStatus(false);
             RankingBaseFragment baseFragment = getCurrentFragment();
             if (null != baseFragment && null != baseFragment.mData) {
                 baseFragment.mData.clear();
                 baseFragment.noticeRefresh();
             }
         }
-    }
-
-    /**
-     * mIsCommunicationを変更.
-     *
-     * @param bool 通信状況
-     */
-    private void setCommunicatingStatus(final boolean bool) {
-        synchronized (this) {
-            mIsCommunicating = bool;
-        }
-    }
-
-    /**
-     * ページングを行った回数を取得.
-     *
-     * @return ページング回数
-     */
-    private int getCurrentNumber() {
-        RankingBaseFragment baseFragment = getCurrentFragment();
-        if (null == baseFragment || null == baseFragment.mData || 0 == baseFragment.mData.size()) {
-            return 0;
-        } else if (baseFragment.mData.size() < NUM_PER_PAGE) {
-            return 1;
-        }
-        return baseFragment.mData.size() / NUM_PER_PAGE;
     }
 
     @Override
@@ -254,36 +223,17 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
 
         //既に元のデータ以上の件数があれば足す物は無いので、更新せずに帰る
         if (null != fragment.mData && fragment.mData.size() >= videoRankMapList.size()) {
-            fragment.displayMoreData(false);
             return;
         }
 
-        int pageNumber = getCurrentNumber();
-        resetCommunication();
-        for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE
-                && i < videoRankMapList.size(); ++i) {
-            DTVTLogger.debug("i = " + i);
-            if (null != fragment.mData) {
-                fragment.mData.add(videoRankMapList.get(i));
-            }
+        for (ContentsData videoRankData : videoRankMapList) {
+            fragment.mData.add(videoRankData);
         }
         if (fragment.mData != null) {
             DTVTLogger.debug("Fragment.mData.size :" + String.valueOf(fragment.mData.size()));
         }
         fragment.noticeRefresh();
         DTVTLogger.end();
-    }
-
-    /**
-     * 読み込み中表示を非表示に変更.
-     */
-    private void resetCommunication() {
-        RankingBaseFragment baseFragment = getCurrentFragment();
-        if (null == baseFragment) {
-            return;
-        }
-        baseFragment.displayMoreData(false);
-        setCommunicatingStatus(false);
     }
 
     @Override
@@ -310,36 +260,6 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
     @Override
     public void onScrollStateChanged(
             final RankingBaseFragment fragment, final AbsListView absListView, final int scrollState) {
-        synchronized (this) {
-            RankingBaseFragment baseFragment = getCurrentFragment();
-            if (null == baseFragment || null == fragment.getRankingAdapter()) {
-                return;
-            }
-            if (!fragment.equals(baseFragment)) {
-                return;
-            }
-
-            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
-                    && absListView.getLastVisiblePosition() == fragment.getRankingAdapter().getCount() - 1) {
-
-                if (mIsCommunicating) {
-                    return;
-                }
-
-                DTVTLogger.debug("onScrollStateChanged, do paging");
-
-                fragment.displayMoreData(true);
-                setCommunicatingStatus(true);
-
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        getGenreData();
-                    }
-                }, LOAD_PAGE_DELAY_TIME);
-            }
-        }
     }
 
     /**
@@ -459,7 +379,6 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
                 baseFragment.enableContentsAdapterCommunication();
                 baseFragment.noticeRefresh();
                 baseFragment.changeLastScrollUp(false);
-                baseFragment.displayMoreData(false);
             }
         }
     }

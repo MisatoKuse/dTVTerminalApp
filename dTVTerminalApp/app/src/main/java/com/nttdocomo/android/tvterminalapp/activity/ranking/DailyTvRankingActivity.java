@@ -59,10 +59,6 @@ public class DailyTvRankingActivity extends BaseActivity implements
      */
     private List<ContentsData> mContentsList;
     /**
-     * データの追加読み込み状態の識別フラグ.
-     */
-    private boolean mIsCommunicating = false;
-    /**
      * スクロール位置の記録.
      */
     private int mFirstVisibleItem = 0;
@@ -97,7 +93,6 @@ public class DailyTvRankingActivity extends BaseActivity implements
         mListView.setVisibility(View.GONE);
         mRelativeLayout.setVisibility(View.VISIBLE);
         mRankingTopDataProvider = new RankingTopDataProvider(this);
-        mRankingTopDataProvider.getDailyRankList();
     }
 
     /**
@@ -123,38 +118,10 @@ public class DailyTvRankingActivity extends BaseActivity implements
     }
 
     /**
-     * 再読み込み時の処理.
-     */
-    private void resetCommunication() {
-        displayMoreData(false);
-        setCommunicatingStatus(false);
-    }
-
-    /**
-     * 読み込み表示を行う.
-     *
-     * @param bool 読み込み表示フラグ
-     */
-    private void displayMoreData(final boolean bool) {
-        if (null != mListView) {
-            if (bool) {
-                mListView.addFooterView(mLoadMoreView);
-
-                //スクロール位置を最下段にすることで、追加した更新フッターを画面内に入れる
-                mListView.setSelection(mListView.getMaxScrollAmount());
-
-            } else {
-                mListView.removeFooterView(mLoadMoreView);
-            }
-        }
-    }
-
-    /**
      * ページングリセット.
      */
     private void resetPaging() {
         synchronized (this) {
-            setCommunicatingStatus(false);
             if (0 != getCurrentNumber() && null != mContentsList) {
                 mContentsList.clear();
                 if (null != mContentsAdapter) {
@@ -163,17 +130,6 @@ public class DailyTvRankingActivity extends BaseActivity implements
             }
         }
 
-    }
-
-    /**
-     * 再読み込み実施フラグ設定.
-     *
-     * @param bool 読み込み表示フラグ
-     */
-    private void setCommunicatingStatus(final boolean bool) {
-        synchronized (this) {
-            mIsCommunicating = bool;
-        }
     }
 
     /**
@@ -246,33 +202,6 @@ public class DailyTvRankingActivity extends BaseActivity implements
 
     @Override
     public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
-        synchronized (this) {
-            if (null == mContentsAdapter) {
-                return;
-            }
-            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
-                    && absListView.getLastVisiblePosition() == mContentsAdapter.getCount() - 1) {
-                if (mIsCommunicating) {
-                    return;
-                }
-
-                //スクロール位置がリストの先頭で上スクロールだった場合は、更新をせずに帰る
-                if (mFirstVisibleItem == 0 && mLastScrollUp) {
-                    return;
-                }
-
-                DTVTLogger.debug("onScrollStateChanged, do paging");
-                displayMoreData(true);
-                setCommunicatingStatus(true);
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRankingTopDataProvider.getDailyRankList();
-                    }
-                }, LOAD_PAGE_DELAY_TIME);
-            }
-        }
     }
 
     @Override
@@ -307,24 +236,18 @@ public class DailyTvRankingActivity extends BaseActivity implements
      */
     private void setShowDailyRanking(final List<ContentsData> contentsDataList) {
         if (null == contentsDataList || 0 == contentsDataList.size()) {
-            resetCommunication();
             return;
         }
 
         //既に元のデータ以上の件数があれば足す物は無いので、更新せずに帰る
         if (null != mContentsList && mContentsList.size() >= contentsDataList.size()) {
-            displayMoreData(false);
             return;
         }
 
-        int pageNumber = getCurrentNumber();
-        for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1)
-                * NUM_PER_PAGE && i < contentsDataList.size(); ++i) {
-            DTVTLogger.debug("i = " + i);
+        for (ContentsData info : contentsDataList) {
             if (null != mContentsList) {
-                mContentsList.add(contentsDataList.get(i));
+                mContentsList.add(info);
             }
-            resetCommunication();
             mContentsAdapter.notifyDataSetChanged();
         }
     }

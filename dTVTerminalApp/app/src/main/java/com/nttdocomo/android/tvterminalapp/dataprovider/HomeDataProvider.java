@@ -64,6 +64,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider.UPPER_PAGE_LIMIT;
+
 /**
  * ホーム画面用データプロバイダ.
  */
@@ -512,7 +514,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
 
         //ビデオランキング
         int ageReq = userInfoDataProvider.getUserAge();
-        getVideoRankListData(100, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, "",
+        getVideoRankListData(UPPER_PAGE_LIMIT, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, "",
                 JsonConstants.GENRE_PER_CONTENTS_SORT_PLAY_COUNT_DESC);
 
         //TODO:生データ保存のみ(DB保存までの処理を新設するか検討中)
@@ -830,8 +832,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 // 年齢情報取得(取得済み情報より)
                 UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
                 int ageReq = userInfoDataProvider.getUserAge();
-                int upperPageLimit = 100;
-                webClient.getDailyRankApi(upperPageLimit, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, this);
+                webClient.getDailyRankApi(UPPER_PAGE_LIMIT, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, this);
             } else {
                 DTVTLogger.error("DailyRankWebClient is stopping connect");
             }
