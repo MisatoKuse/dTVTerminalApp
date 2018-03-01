@@ -519,6 +519,7 @@ public class SearchTopActivity extends BaseActivity
             DTVTLogger.debug("onSearchDataProviderFinishNg");
         }
         mIsScroll = false;
+        setSearchStart(false);
     }
 
     /**
