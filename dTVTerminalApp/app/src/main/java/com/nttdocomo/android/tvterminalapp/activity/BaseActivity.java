@@ -1761,10 +1761,12 @@ public class BaseActivity extends FragmentActivity implements
     public static OtherContentsDetailData getOtherContentsDetailData(final ContentsData info, final String recommendFlg) {
         OtherContentsDetailData detailData = new OtherContentsDetailData();
         detailData.setTitle(info.getTitle());
-        detailData.setThumb(info.getThumURL());
         detailData.setDetail(info.getSynop());
         if (ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY.equals(recommendFlg)) {
             detailData.setServiceId(Integer.parseInt(info.getServiceId()));
+            detailData.setThumb(info.getThumURL());
+        } else {
+            detailData.setThumb(info.getThumDetailURL());
         }
         detailData.setReserved4(info.getReserved4());
         detailData.setContentId(info.getContentsId());

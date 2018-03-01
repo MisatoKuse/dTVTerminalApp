@@ -399,6 +399,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         String startDate = map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE);
         String endDate = map.get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE);
         String thumb = map.get(JsonConstants.META_RESPONSE_THUMB_448);
+        String thumbDetail = map.get(JsonConstants.META_RESPONSE_THUMB_640);
         String title = map.get(JsonConstants.META_RESPONSE_TITLE);
         String detail = map.get(JsonConstants.META_RESPONSE_EPITITLE);
         String chNo = map.get(JsonConstants.META_RESPONSE_CHNO);
@@ -411,6 +412,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         mSchedule.setStartTime(startDate);
         mSchedule.setEndTime(endDate);
         mSchedule.setImageUrl(thumb);
+        mSchedule.setImageDetailUrl(thumbDetail);
         mSchedule.setTitle(title);
         mSchedule.setDetail(detail);
         mSchedule.setChNo(chNo);

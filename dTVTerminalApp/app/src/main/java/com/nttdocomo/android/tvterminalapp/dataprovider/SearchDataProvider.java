@@ -214,11 +214,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             //画面表示用データ設定
             contentsData.setContentsId(ci.contentId);
             contentsData.setServiceId(String.valueOf(ci.serviceId));
-            if (!TextUtils.isEmpty(ci.contentPictureUrl1)) {
-                contentsData.setThumURL(ci.contentPictureUrl1);
-            } else {
-                contentsData.setThumURL(ci.contentPictureUrl2);
-            }
+            contentsData.setThumURL(ci.contentPictureUrl1);
             contentsData.setTitle(ci.title);
             contentsData.setRecommendOrder(ci.rank);
             contentsData.setMobileViewingFlg(ci.mobileViewingFlg);

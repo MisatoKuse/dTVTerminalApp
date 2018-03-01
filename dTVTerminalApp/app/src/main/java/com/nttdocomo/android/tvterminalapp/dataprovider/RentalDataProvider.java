@@ -274,6 +274,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
             String estFlg = vodMetaList.get(i).get(JsonConstants.META_RESPONSE_EST_FLAG);
             vodMetaFullData.setTitle(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_TITLE));
             vodMetaFullData.setmThumb_448_252(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_THUMB_448));
+            vodMetaFullData.setmThumb_640_360(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_THUMB_640));
             vodMetaFullData.setAvail_start_date(Long.parseLong(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
             vodMetaFullData.setAvail_end_date(Long.parseLong(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
             vodMetaFullData.setDisp_type(dispType);
@@ -374,6 +375,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
                 //エポック秒から文字に変換
                 data.setRatStar(String.valueOf(vodMetaFullData.getRating()));
                 data.setThumURL(vodMetaFullData.getmThumb_448_252());
+                data.setThumDetailURL(vodMetaFullData.getmThumb_640_360());
                 data.setSearchOk(searchOk);
                 data.setContentsType(vodMetaFullData.getmContent_type());
                 data.setDtv(dtv);

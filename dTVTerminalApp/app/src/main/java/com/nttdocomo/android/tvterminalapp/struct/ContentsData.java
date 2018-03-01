@@ -14,14 +14,16 @@ public class ContentsData {
 
     //ランキング順位
     private String mRank = null;
-    //サブタイトル
+    //時間
     private String mTime = null;
     //メインタイトル
     private String mTitle = null;
     //評価ポイント
     private String mRatStar = null;
-    //サムネイルURL
-    private String mThumURL = null;
+    //サムネイルURL(リスト)
+    private String mThumListURL = null;
+    //サムネイルURL(詳細画面)
+    private String mThumDetailURL = null;
     // 録画予約ステータス
     private int mRecordingReservationStatus = RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_ALREADY_REFLECT;
     // チャンネル名
@@ -152,11 +154,19 @@ public class ContentsData {
     }
 
     public String getThumURL() {
-        return mThumURL;
+        return mThumListURL;
     }
 
     public void setThumURL(String thumURL) {
-        this.mThumURL = thumURL;
+        this.mThumListURL = thumURL;
+    }
+
+    public String getThumDetailURL() {
+        return mThumDetailURL;
+    }
+
+    public void setThumDetailURL(String mThumDetailURL) {
+        this.mThumDetailURL = mThumDetailURL;
     }
 
     public void setRecordingReservationStatus(int status) {

@@ -19,8 +19,8 @@ import java.util.Locale;
 
 /* 作成中 */
 /*
- * 番組クラス
- * 　　機能： 番組の属性を纏めるクラスである
+ * 番組クラス.
+ * 　　機能： 番組の属性を纏めるクラスである.
  */
 public class ScheduleInfo {
 
@@ -34,20 +34,22 @@ public class ScheduleInfo {
     private String endTime;
     //サムネイル url
     private String imageUrl;
+    //サムネイル url(詳細画面用)
+    private String imageDetailUrl;
     //チャンネル ID
     private String chNo;
     //パレンタル情報
-    private  String mRValue = null;
+    private String mRValue = null;
     //表示タイプ
-    private  String mDispType = null;
+    private String mDispType = null;
     //クリップ判定情報
-    private  String mSearchOk = null;
+    private String mSearchOk = null;
     //dTVフラグ
-    private  String mDtv = null;
+    private String mDtv = null;
     //dTVタイプ
-    private  String mDtvType = null;
+    private String mDtvType = null;
     //コンテンツタイプ
-    private  String mContentType = null;
+    private String mContentType = null;
     //クリップリクエスト用データ
     private ClipRequestData mClipRequestData = null;
     //時間単価換算
@@ -57,24 +59,24 @@ public class ScheduleInfo {
     // クリップ未/済
     private boolean mClipStatus = false;
     //コンテンツID
-    private  String mContentsId = null;
+    private String mContentsId = null;
 
     /*
-     * タイトルを取得する
+     * タイトルを取得する.
      */
     public String getTitle() {
         return title;
     }
 
     /*
-     * タイトルを設定する
+     * タイトルを設定する.
      */
     public void setTitle(final String title) {
         this.title = title;
     }
 
     /*
-     * 詳細を取得する
+     * 詳細を取得する.
      */
     public String getDetail() {
         return detail;
@@ -127,6 +129,20 @@ public class ScheduleInfo {
      */
     public void setImageUrl(final String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    /*
+     * Thumbnailを設定する(詳細画面用)
+     */
+    public String getImageDetailUrl() {
+        return imageDetailUrl;
+    }
+
+    /*
+     * Thumbnailを設定する(詳細画面用)
+     */
+    public void setImageDetailUrl(final String imageDetailUrl) {
+        this.imageDetailUrl = imageDetailUrl;
     }
 
     /*

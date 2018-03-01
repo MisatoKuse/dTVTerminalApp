@@ -602,6 +602,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         detailData.setDispType(itemSchedule.getDispType());
         detailData.setContentsType(itemSchedule.getContentType());
         detailData.setRecommendFlg(recommendFlg);
+        detailData.setThumb(itemSchedule.getImageDetailUrl());
 
         return detailData;
     }
