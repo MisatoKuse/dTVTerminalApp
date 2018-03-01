@@ -205,7 +205,9 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
              Thread thread = new Thread(new Runnable() {
                  @Override
                  public void run() {
-                     stopConnection.disconnect();
+                     if (stopConnection != null) {
+                         stopConnection.disconnect();
+                     }
                  }
              });
              thread.start();
