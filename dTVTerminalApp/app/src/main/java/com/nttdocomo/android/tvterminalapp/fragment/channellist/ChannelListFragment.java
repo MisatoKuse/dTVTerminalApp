@@ -79,10 +79,6 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
      */
     private ListView mListview;
     /**
-     * データ読み込み中のView.
-     */
-    private View mLoadMoreView;
-    /**
      * Listにセットするアダプタ.
      */
     private ChannelListAdapter mChannelListAdapter;
@@ -132,9 +128,6 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
             mData = new ArrayList();
         }
         mRootView = View.inflate(getActivity(), R.layout.channel_list_content, null);
-
-        mLoadMoreView = View.inflate(getActivity(), R.layout.search_load_more, null);
-
         initContentListView(mRootView);
         return mRootView;
     }
@@ -190,21 +183,6 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         if (null != mChannelListAdapter) {
             mChannelListAdapter.setChListDataType(mChListDataType);
             mChannelListAdapter.notifyDataSetChanged();
-        }
-    }
-
-    /**
-     * 追加読み込みViewの表示/非表示を行う.
-     *
-     * @param b true:表示する false:非表示にする
-     */
-    public void displayMoreData(final boolean b) {
-        if (null != mListview) {
-            if (b) {
-                mListview.addFooterView(mLoadMoreView);
-            } else {
-                mListview.removeFooterView(mLoadMoreView);
-            }
         }
     }
 
@@ -328,9 +306,6 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         if (null == mData || i < 0) {
-            return;
-        }
-        if (mLoadMoreView == view) {
             return;
         }
         if (mChListDataType != null) {
