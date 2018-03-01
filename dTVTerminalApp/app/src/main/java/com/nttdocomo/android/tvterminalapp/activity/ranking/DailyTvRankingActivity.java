@@ -289,9 +289,15 @@ public class DailyTvRankingActivity extends BaseActivity implements
 
     @Override
     public void dailyRankListCallback(final List<ContentsData> contentsDataList) {
-        mListView.setVisibility(View.VISIBLE);
-        mRelativeLayout.setVisibility(View.GONE);
-        setShowDailyRanking(contentsDataList);
+        //DbThreadからのコールバックではUIスレッドとして扱われないため
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mListView.setVisibility(View.VISIBLE);
+                mRelativeLayout.setVisibility(View.GONE);
+                setShowDailyRanking(contentsDataList);
+            }
+        });
     }
 
     /**

@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.datamanager.insert;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -65,45 +66,51 @@ public class TvScheduleInsertDataManager {
             return;
         }
 
-        //各種オブジェクト作成
-        DBHelper channelListDBHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(channelListDBHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-        TvScheduleListDao tvScheduleListDao = new TvScheduleListDao(database);
-        @SuppressWarnings("unchecked")
-        List<Map<String, String>> hashMaps = tvScheduleList.geTvsList();
+        try {
+            //各種オブジェクト作成
+            DBHelper channelListDBHelper = new DBHelper(mContext);
+            DataBaseManager.initializeInstance(channelListDBHelper);
+            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+            database.acquireReference();
+            TvScheduleListDao tvScheduleListDao = new TvScheduleListDao(database);
+            @SuppressWarnings("unchecked")
+            List<Map<String, String>> hashMaps = tvScheduleList.geTvsList();
 
-        //DB保存前に前回取得したデータは全消去する
-        tvScheduleListDao.delete();
+            //DB保存前に前回取得したデータは全消去する
+            tvScheduleListDao.delete();
 
-        //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
-        for (int i = 0; i < hashMaps.size(); i++) {
-            Iterator entries = hashMaps.get(i).entrySet().iterator();
-            ContentValues values = new ContentValues();
-            while (entries.hasNext()) {
-                Map.Entry entry = (Map.Entry) entries.next();
-                String keyName = (String) entry.getKey();
-                String valName = (String) entry.getValue();
-                if (JsonConstants.META_RESPONSE_AVAIL_START_DATE.equals(keyName)) {
-                    values.put(DBConstants.UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
+            //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
+            for (int i = 0; i < hashMaps.size(); i++) {
+                Iterator entries = hashMaps.get(i).entrySet().iterator();
+                ContentValues values = new ContentValues();
+                while (entries.hasNext()) {
+                    Map.Entry entry = (Map.Entry) entries.next();
+                    String keyName = (String) entry.getKey();
+                    String valName = (String) entry.getValue();
+                    if (JsonConstants.META_RESPONSE_AVAIL_START_DATE.equals(keyName)) {
+                        values.put(DBConstants.UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
+                    }
+                    values.put(DBUtils.fourKFlgConversion(keyName), valName);
                 }
-                values.put(DBUtils.fourKFlgConversion(keyName), valName);
+                tvScheduleListDao.insert(values);
             }
-            tvScheduleListDao.insert(values);
+            //データ保存日時を格納
+            DateUtils dateUtils = new DateUtils(mContext);
+            dateUtils.addLastDate(DateUtils.TV_SCHEDULE_LAST_INSERT);
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("TvScheduleInsertDataManager::insertTvScheduleInsertList, e.cause=" + e.getCause());
+        } finally {
+            DataBaseManager.getInstance().closeDatabase();
         }
-        //データ保存日時を格納
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(DateUtils.TV_SCHEDULE_LAST_INSERT);
-
-        DataBaseManager.getInstance().closeDatabase();
     }
 
     /**
      * TvScheduleAPIの解析結果をDBに格納する(番組表用).
      *
      * @param channelInfoList チャンネル詳細情報
-     * @param chInfoDate チャンネル情報取得日付
+     * @param chInfoDate      チャンネル情報取得日付
      */
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     public synchronized void insertTvScheduleInsertList(final ChannelInfoList channelInfoList, final String chInfoDate) {
         DTVTLogger.start();
         if (channelInfoList.getChannels().size() == 0) {
@@ -133,62 +140,67 @@ public class TvScheduleInsertDataManager {
             }
         }
 
-        ArrayList<ChannelInfo> channelInformation = channelInfoList.getChannels();
-        for (ChannelInfo channelInfo : channelInformation) {
-            //DB名としてチャンネル番号を取得.
-            String chNo = String.valueOf(channelInfo.getChNo());
+        try {
+            ArrayList<ChannelInfo> channelInformation = channelInfoList.getChannels();
+            for (ChannelInfo channelInfo : channelInformation) {
+                //DB名としてチャンネル番号を取得.
+                String chNo = String.valueOf(channelInfo.getChNo());
 
-            //各種オブジェクト作成
-            DBHelperChannel tvScheduleListDBHelper = new DBHelperChannel(mContext, chNo);
-            DataBaseManager.clearChInfo();
-            DataBaseManager.initializeInstance(tvScheduleListDBHelper);
-            SQLiteDatabase database = DataBaseManager.getChInstance().openChDatabase();
-            TvScheduleListDao tvScheduleListDao = new TvScheduleListDao(database);
+                //各種オブジェクト作成
+                DBHelperChannel tvScheduleListDBHelper = new DBHelperChannel(mContext, chNo);
+                DataBaseManager.clearChInfo();
+                DataBaseManager.initializeInstance(tvScheduleListDBHelper);
+                SQLiteDatabase database = DataBaseManager.getChInstance().openChDatabase();
+                database.acquireReference();
+                TvScheduleListDao tvScheduleListDao = new TvScheduleListDao(database);
 
-            //ContentValuesに変換してDBに保存する.
-            ArrayList<ScheduleInfo> scheduleInformation = channelInfo.getSchedules();
-            for (ScheduleInfo scheduleInfo : scheduleInformation) {
-                ContentValues values = convertScheduleInfoToContentValues(scheduleInfo);
-                tvScheduleListDao.insert(values);
-            }
-            database.close();
-            DataBaseManager.getChInstance().closeChDatabase();
+                //ContentValuesに変換してDBに保存する.
+                ArrayList<ScheduleInfo> scheduleInformation = channelInfo.getSchedules();
+                for (ScheduleInfo scheduleInfo : scheduleInformation) {
+                    ContentValues values = convertScheduleInfoToContentValues(scheduleInfo);
+                    tvScheduleListDao.insert(values);
+                }
 
-            //保存したDBを所定の場所へ移動する( HOME/database/channel/yyyyMMdd/ )
-            String channelFilePath = StringUtils.getConnectStrings(filesDir, "/../databases/", chNo);
-            File channelFile = new File(channelFilePath);
-            File movedFile = new File(StringUtils.getConnectStrings(dbDir, "/", chNo));
-            if (channelFile.isFile()) {
-                try {
-                    if (!channelFile.renameTo(movedFile)) {
-                        DTVTLogger.error("Failed to move DB file");
-                        //移動に失敗したため元ファイルを削除する
-                        if (!channelFile.delete()) {
-                            DTVTLogger.error("Failed to remove DB file");
+                //保存したDBを所定の場所へ移動する( HOME/database/channel/yyyyMMdd/ )
+                String channelFilePath = StringUtils.getConnectStrings(filesDir, "/../databases/", chNo);
+                File channelFile = new File(channelFilePath);
+                File movedFile = new File(StringUtils.getConnectStrings(dbDir, "/", chNo));
+                if (channelFile.isFile()) {
+                    try {
+                        if (!channelFile.renameTo(movedFile)) {
+                            DTVTLogger.error("Failed to move DB file");
+                            //移動に失敗したため元ファイルを削除する
+                            if (!channelFile.delete()) {
+                                DTVTLogger.error("Failed to remove DB file");
+                            }
                         }
+                    } catch (SecurityException | NullPointerException e) {
+                        DTVTLogger.error(e.toString());
                     }
-                } catch (SecurityException | NullPointerException e) {
-                    DTVTLogger.error(e.toString());
+                }
+
+                //journalファイルも同じ場所へ移動させる.
+                String journalFilePath = StringUtils.getConnectStrings(filesDir, "/../databases/", chNo, "-journal");
+                File journalFile = new File(journalFilePath);
+                File movedJournalFile = new File(StringUtils.getConnectStrings(dbDir, "/", chNo, "-journal"));
+                if (journalFile.isFile()) {
+                    try {
+                        if (!journalFile.renameTo(movedJournalFile)) {
+                            DTVTLogger.error("Failed to move journal file");
+                            //移動に失敗したため元ファイルを削除する
+                            if (!journalFile.delete()) {
+                                DTVTLogger.error("Failed to remove journal file");
+                            }
+                        }
+                    } catch (SecurityException | NullPointerException e) {
+                        DTVTLogger.error(e.toString());
+                    }
                 }
             }
-
-            //journalファイルも同じ場所へ移動させる.
-            String journalFilePath = StringUtils.getConnectStrings(filesDir, "/../databases/", chNo, "-journal");
-            File journalFile = new File(journalFilePath);
-            File movedJournalFile = new File(StringUtils.getConnectStrings(dbDir, "/", chNo, "-journal"));
-            if (journalFile.isFile()) {
-                try {
-                    if (!journalFile.renameTo(movedJournalFile)) {
-                        DTVTLogger.error("Failed to move journal file");
-                        //移動に失敗したため元ファイルを削除する
-                        if (!journalFile.delete()) {
-                            DTVTLogger.error("Failed to remove journal file");
-                        }
-                    }
-                } catch (SecurityException | NullPointerException e) {
-                    DTVTLogger.error(e.toString());
-                }
-            }
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("ProgramDataManager::insertTvScheduleInsertList, e.cause=" + e.getCause());
+        } finally {
+            DataBaseManager.getInstance().closeDatabase();
         }
 
         //古いDBファイルを削除するため、日付フォルダ一覧を取得

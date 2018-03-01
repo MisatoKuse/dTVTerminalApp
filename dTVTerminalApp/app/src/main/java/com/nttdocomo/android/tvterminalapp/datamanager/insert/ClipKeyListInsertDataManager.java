@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.datamanager.insert;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
@@ -49,35 +50,41 @@ public class ClipKeyListInsertDataManager {
      */
     public synchronized void insertClipKeyListInsert(final ClipKeyListDao.TABLE_TYPE type, final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
-        //各種オブジェクト作成
-        DBHelper dbHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(dbHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-
-        ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
-        @SuppressWarnings("unchecked")
-        List<HashMap<String, String>> hashMaps = clipKeyListResponse.getCkList();
-
-        //DB保存前に前回取得したデータを消去する
         try {
-            clipKeyListDao.delete(type);
-        } catch (Exception e) {
-            DTVTLogger.debug("ClipKeyListInsertDataManager::insertClipKeyListInsert, e.cause=" + e.getCause());
-        }
+            //各種オブジェクト作成
+            DBHelper dbHelper = new DBHelper(mContext);
+            DataBaseManager.initializeInstance(dbHelper);
+            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+            database.acquireReference();
 
-        //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
-        for (int i = 0; i < hashMaps.size(); i++) {
-            Iterator entries = hashMaps.get(i).entrySet().iterator();
-            ContentValues values = new ContentValues();
-            while (entries.hasNext()) {
-                Map.Entry entry = (Map.Entry) entries.next();
-                String keyName = (String) entry.getKey();
-                String valName = (String) entry.getValue();
-                values.put(DBUtils.fourKFlgConversion(keyName), valName);
+            ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
+            @SuppressWarnings("unchecked")
+            List<HashMap<String, String>> hashMaps = clipKeyListResponse.getCkList();
+
+            //DB保存前に前回取得したデータを消去する
+            try {
+                clipKeyListDao.delete(type);
+            } catch (Exception e) {
+                DTVTLogger.debug("ClipKeyListInsertDataManager::insertClipKeyListInsert, e.cause=" + e.getCause());
             }
-            clipKeyListDao.insert(type, values);
+
+            //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
+            for (int i = 0; i < hashMaps.size(); i++) {
+                Iterator entries = hashMaps.get(i).entrySet().iterator();
+                ContentValues values = new ContentValues();
+                while (entries.hasNext()) {
+                    Map.Entry entry = (Map.Entry) entries.next();
+                    String keyName = (String) entry.getKey();
+                    String valName = (String) entry.getValue();
+                    values.put(DBUtils.fourKFlgConversion(keyName), valName);
+                }
+                clipKeyListDao.insert(type, values);
+            }
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("ClipKeyListInsertDataManager::insertClipKeyListInsert, e.cause=" + e.getCause());
+        } finally {
+            DataBaseManager.getInstance().closeDatabase();
         }
-        DataBaseManager.getInstance().closeDatabase();
         DTVTLogger.end();
     }
 
@@ -94,21 +101,27 @@ public class ClipKeyListInsertDataManager {
             final ClipKeyListDao.TABLE_TYPE tableType, final String crId, final String serviceId,
             final String eventId, final String titleId) {
         DTVTLogger.start();
-        //各種オブジェクト作成
-        DBHelper clipKeyListDBHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(clipKeyListDBHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-        ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
+        try {
+            //各種オブジェクト作成
+            DBHelper clipKeyListDBHelper = new DBHelper(mContext);
+            DataBaseManager.initializeInstance(clipKeyListDBHelper);
+            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+            database.acquireReference();
+            ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
 
-        //コンテンツデータ作成
-        ContentValues values = new ContentValues();
-        values.put(JsonConstants.META_RESPONSE_CRID, crId);
-        values.put(JsonConstants.META_RESPONSE_SERVICE_ID, serviceId);
-        values.put(JsonConstants.META_RESPONSE_EVENT_ID, eventId);
-        values.put(JsonConstants.META_RESPONSE_TYPE, ClipKeyListDataProvider.CLIP_KEY_LIST_TYPE_OTHER_CHANNEL);
-        values.put(JsonConstants.META_RESPONSE_TITLE_ID, titleId);
-        clipKeyListDao.insert(tableType, values);
-        DataBaseManager.getInstance().closeDatabase();
+            //コンテンツデータ作成
+            ContentValues values = new ContentValues();
+            values.put(JsonConstants.META_RESPONSE_CRID, crId);
+            values.put(JsonConstants.META_RESPONSE_SERVICE_ID, serviceId);
+            values.put(JsonConstants.META_RESPONSE_EVENT_ID, eventId);
+            values.put(JsonConstants.META_RESPONSE_TYPE, ClipKeyListDataProvider.CLIP_KEY_LIST_TYPE_OTHER_CHANNEL);
+            values.put(JsonConstants.META_RESPONSE_TITLE_ID, titleId);
+            clipKeyListDao.insert(tableType, values);
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("ClipKeyListInsertDataManager::insertRowSqlStart, e.cause=" + e.getCause());
+        } finally {
+            DataBaseManager.getInstance().closeDatabase();
+        }
         DTVTLogger.end();
     }
 
@@ -125,21 +138,27 @@ public class ClipKeyListInsertDataManager {
             final ClipKeyListDao.TABLE_TYPE tableType, final String crId, final String serviceId,
             final String eventId, final String titleId) {
         DTVTLogger.start();
-        //各種オブジェクト作成
-        DBHelper clipKeyListDBHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(clipKeyListDBHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-        ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
+        try {
+            //各種オブジェクト作成
+            DBHelper clipKeyListDBHelper = new DBHelper(mContext);
+            DataBaseManager.initializeInstance(clipKeyListDBHelper);
+            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+            database.acquireReference();
+            ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
 
-        String query = StringUtils.getConnectStrings(JsonConstants.META_RESPONSE_CRID, "=? OR ",
-                JsonConstants.META_RESPONSE_SERVICE_ID, "=? AND ",
-                JsonConstants.META_RESPONSE_EVENT_ID, "=? AND ",
-                JsonConstants.META_RESPONSE_TYPE, "=? OR ",
-                JsonConstants.META_RESPONSE_TITLE_ID, "=?");
+            String query = StringUtils.getConnectStrings(JsonConstants.META_RESPONSE_CRID, "=? OR ",
+                    JsonConstants.META_RESPONSE_SERVICE_ID, "=? AND ",
+                    JsonConstants.META_RESPONSE_EVENT_ID, "=? AND ",
+                    JsonConstants.META_RESPONSE_TYPE, "=? OR ",
+                    JsonConstants.META_RESPONSE_TITLE_ID, "=?");
 
-        String[] columns = {crId, serviceId, eventId, ClipKeyListDataProvider.CLIP_KEY_LIST_TYPE_OTHER_CHANNEL, titleId};
-        clipKeyListDao.deleteRowData(tableType, query, columns);
-        DataBaseManager.getInstance().closeDatabase();
+            String[] columns = {crId, serviceId, eventId, ClipKeyListDataProvider.CLIP_KEY_LIST_TYPE_OTHER_CHANNEL, titleId};
+            clipKeyListDao.deleteRowData(tableType, query, columns);
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("ClipKeyListInsertDataManager::deleteRowSqlStart, e.cause=" + e.getCause());
+        } finally {
+            DataBaseManager.getInstance().closeDatabase();
+        }
         DTVTLogger.end();
     }
 }

@@ -7,24 +7,33 @@ package com.nttdocomo.android.tvterminalapp.datamanager.databese.thread;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 
-import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-
 import java.util.List;
 import java.util.Map;
 
-/*
- *  DbThreadクラス
- *      機能： DB操作は時間かかる操作なので、UI Thread以外の新しいThreadで実行するクラスである
- *
- *      注意点: 一つのDB操作は一つのDbThreadオブジェクトを使うこと推薦
+/**
+ * DbThreadクラス
+ * 機能： DB操作は時間かかる操作なので、UI Thread以外の新しいThreadで実行するクラスである.
+ * <p>
+ * 注意点: 一つのDB操作は一つのDbThreadオブジェクトを使うこと推薦.
  */
 public class DbThread extends Thread {
 
+    /**
+     * ハンドラ.
+     */
     private Handler mHandle = null;
+    /**
+     * callbackInterface.
+     */
     private DbOperation mDbOperationFinish = null;
-    private boolean mError = false;
+    /**
+     * OperationId.
+     */
     private int mOperationId = 0;
 
+    /**
+     * callbackInterface.
+     */
     public interface DbOperation {
         /**
          * DB操作完了する時実行される.
@@ -38,9 +47,10 @@ public class DbThread extends Thread {
         /**
          * DB操作をThread中で実行、操作内容はクラス外で決める(e.g. "select * from xxx where yy=zz ...,   delete from xxx").
          *
-         * @return
+         * @param operationId operationId
+         * @return DB取得結果
          */
-        List<Map<String, String>> dbOperation(int operationId);
+        List<Map<String, String>> dbOperation(final int operationId);
     }
 
     /**
@@ -57,16 +67,10 @@ public class DbThread extends Thread {
 
     @Override
     public void run() {
-        mError = false;
         List<Map<String, String>> ret = null;
 
         if (null != mDbOperationFinish) {
-            try {
-                ret = mDbOperationFinish.dbOperation(mOperationId);
-            } catch (Exception e) {
-                DTVTLogger.debug(e);
-                mError = true;
-            }
+            ret = mDbOperationFinish.dbOperation(mOperationId);
         }
 
         final List<Map<String, String>> finalRet = ret;
@@ -75,7 +79,7 @@ public class DbThread extends Thread {
             @Override
             public void run() {
                 if (null != mDbOperationFinish) {
-                    if (mError) {
+                    if (finalRet == null || finalRet.size() < 1 || finalRet.get(0).isEmpty()) {
                         mDbOperationFinish.onDbOperationFinished(false, null, mOperationId);
                     } else {
                         mDbOperationFinish.onDbOperationFinished(true, finalRet, mOperationId);

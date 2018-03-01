@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.datamanager.insert;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -59,56 +60,57 @@ public class RentalListInsertDataManager {
             return;
         }
 
-        //各種オブジェクト作成
-        DBHelper rentalListDBHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(rentalListDBHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-        RentalListDao rentalListDao = new RentalListDao(database);
-        ArrayList<VodMetaFullData> vodMetaFullDataList = rentalList.getVodMetaFullData();
-        ArrayList<ActiveData> activeDataList = rentalList.getVodActiveData();
-
-        //DB保存前に前回取得したデータは全消去する
         try {
+            //各種オブジェクト作成
+            DBHelper rentalListDBHelper = new DBHelper(mContext);
+            DataBaseManager.initializeInstance(rentalListDBHelper);
+            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+            database.acquireReference();
+            RentalListDao rentalListDao = new RentalListDao(database);
+            ArrayList<VodMetaFullData> vodMetaFullDataList = rentalList.getVodMetaFullData();
+            ArrayList<ActiveData> activeDataList = rentalList.getVodActiveData();
+
+            //DB保存前に前回取得したデータは全消去する
             rentalListDao.delete();
-        } catch (Exception e) {
-            DTVTLogger.debug("RentalListInsertDataManager::insertRentalListInsertList, e.cause=" + e.getCause());
-        }
 
-        ContentValues values = new ContentValues();
+            ContentValues values = new ContentValues();
 
-        //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
-        for (int i = 0; i < vodMetaFullDataList.size(); i++) {
-            VodMetaFullData vodMetaFullData = vodMetaFullDataList.get(i);
+            //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
+            for (int i = 0; i < vodMetaFullDataList.size(); i++) {
+                VodMetaFullData vodMetaFullData = vodMetaFullDataList.get(i);
 
-            for (String item:vodMetaFullData.getRootPara()) {
-                //データがString型だけではなくなったので、変換を行ってから蓄積する
-                String valName = StringUtils.changeObject2String(vodMetaFullData.getMember(item));
-                values.put(DBUtils.fourKFlgConversion(item), valName);
+                for (String item:vodMetaFullData.getRootPara()) {
+                    //データがString型だけではなくなったので、変換を行ってから蓄積する
+                    String valName = StringUtils.changeObject2String(vodMetaFullData.getMember(item));
+                    values.put(DBUtils.fourKFlgConversion(item), valName);
+                }
+                rentalListDao.insert(values);
             }
-            rentalListDao.insert(values);
+
+            for (int i = 0; i <  activeDataList.size(); i++) {
+                ActiveData activeData = activeDataList.get(i);
+                ContentValues activeValues = new ContentValues();
+
+                String keyName = JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE
+                        + JsonConstants.META_RESPONSE_LICENSE_ID;
+                String valName = StringUtils.changeObject2String(activeData.getLicenseId());
+                activeValues.put(DBUtils.fourKFlgConversion(keyName), valName);
+
+                String keyName2 = JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE
+                        + JsonConstants.META_RESPONSE_VAILD_END_DATE;
+                String valName2 = StringUtils.changeObject2String(activeData.getValidEndDate());
+                activeValues.put(DBUtils.fourKFlgConversion(keyName2), valName2);
+
+                rentalListDao.insertActiveList(activeValues);
+            }
+            //データ保存日時を格納
+            DateUtils dateUtils = new DateUtils(mContext);
+            dateUtils.addLastDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("RentalListInsertDataManager::insertRentalListInsertList, e.cause=" + e.getCause());
+        } finally {
+            DataBaseManager.getInstance().closeDatabase();
         }
-
-        for (int i = 0; i <  activeDataList.size(); i++) {
-            ActiveData activeData = activeDataList.get(i);
-            ContentValues activeValues = new ContentValues();
-
-            String keyName = JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE
-                    + JsonConstants.META_RESPONSE_LICENSE_ID;
-            String valName = StringUtils.changeObject2String(activeData.getLicenseId());
-            activeValues.put(DBUtils.fourKFlgConversion(keyName), valName);
-
-            String keyName2 = JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE
-                    + JsonConstants.META_RESPONSE_VAILD_END_DATE;
-            String valName2 = StringUtils.changeObject2String(activeData.getValidEndDate());
-            activeValues.put(DBUtils.fourKFlgConversion(keyName2), valName2);
-
-            rentalListDao.insertActiveList(activeValues);
-        }
-        //データ保存日時を格納
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
-
-        DataBaseManager.getInstance().closeDatabase();
     }
 
     /**
@@ -116,57 +118,67 @@ public class RentalListInsertDataManager {
      *
      * @param rentalChList 購入済みCH一覧
      */
+    @SuppressWarnings("OverlyLongMethod")
     public void insertChRentalListInsertList(final PurchasedChListResponse rentalChList) {
-        //各種オブジェクト作成
-        DBHelper rentalListDBHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(rentalListDBHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-        RentalListDao rentalListDao = new RentalListDao(database);
-        List<HashMap<String, String>> clList = rentalChList.getChannelListData().getChannelList();
-        ArrayList<ActiveData> activeDataList = rentalChList.getChActiveData();
-
-        //DB保存前に前回取得したデータは全消去する
         try {
-            rentalListDao.deleteCh();
-        } catch (Exception e) {
-            DTVTLogger.debug(e.toString());
-        }
+            //各種オブジェクト作成
+            DBHelper rentalListDBHelper = new DBHelper(mContext);
+            DataBaseManager.initializeInstance(rentalListDBHelper);
+            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+            database.acquireReference();
+            RentalListDao rentalListDao = new RentalListDao(database);
+            List<HashMap<String, String>> clList = rentalChList.getChannelListData().getChannelList();
+            ArrayList<ActiveData> activeDataList = rentalChList.getChActiveData();
 
-        ContentValues values = new ContentValues();
-
-        //チャンネルメタデータの保存
-        for (int i = 0; i < clList.size(); i++) {
-            Iterator entries = clList.get(i).entrySet().iterator();
-            ContentValues chValues = new ContentValues();
-            while (entries.hasNext()) {
-                Map.Entry entry = (Map.Entry) entries.next();
-                String keyName = (String) entry.getKey();
-                String valName = (String) entry.getValue();
-                if (JsonConstants.META_RESPONSE_AVAIL_START_DATE.equals(keyName)) {
-                    values.put(DBConstants.UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
-                }
-                chValues.put(DBUtils.fourKFlgConversion(keyName), valName);
+            //DB保存前に前回取得したデータは全消去する
+            try {
+                rentalListDao.deleteCh();
+            } catch (SQLiteException e) {
+                DTVTLogger.debug(e.toString());
             }
-            rentalListDao.insertCh(chValues);
+
+            ContentValues values = new ContentValues();
+
+            //チャンネルメタデータの保存
+            for (int i = 0; i < clList.size(); i++) {
+                Iterator entries = clList.get(i).entrySet().iterator();
+                ContentValues chValues = new ContentValues();
+                while (entries.hasNext()) {
+                    Map.Entry entry = (Map.Entry) entries.next();
+                    String keyName = (String) entry.getKey();
+                    String valName = (String) entry.getValue();
+                    if (JsonConstants.META_RESPONSE_AVAIL_START_DATE.equals(keyName)) {
+                        values.put(DBConstants.UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
+                    }
+                    chValues.put(DBUtils.fourKFlgConversion(keyName), valName);
+                }
+                rentalListDao.insertCh(chValues);
+            }
+
+            //active_listの保存
+            for (int i = 0; i <  activeDataList.size(); i++) {
+                ActiveData activeData = activeDataList.get(i);
+                ContentValues activeValues = new ContentValues();
+
+                String keyName = JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE
+                        + JsonConstants.META_RESPONSE_LICENSE_ID;
+                String valName = StringUtils.changeObject2String(activeData.getLicenseId());
+                activeValues.put(DBUtils.fourKFlgConversion(keyName), valName);
+
+                String keyName2 = JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE
+                        + JsonConstants.META_RESPONSE_VAILD_END_DATE;
+                String valName2 = StringUtils.changeObject2String(activeData.getValidEndDate());
+                activeValues.put(DBUtils.fourKFlgConversion(keyName2), valName2);
+
+                rentalListDao.insertChActiveList(activeValues);
+            }
+            //データ保存日時を格納
+            DateUtils dateUtils = new DateUtils(mContext);
+            dateUtils.addLastDate(DateUtils.RENTAL_CHANNEL_LAST_UPDATE);
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("RentalListInsertDataManager::insertChRentalListInsertList, e.cause=" + e.getCause());
+        } finally {
+            DataBaseManager.getInstance().closeDatabase();
         }
-
-        //active_listの保存
-        for (int i = 0; i <  activeDataList.size(); i++) {
-            ActiveData activeData = activeDataList.get(i);
-            ContentValues activeValues = new ContentValues();
-
-            String keyName = JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE
-                    + JsonConstants.META_RESPONSE_LICENSE_ID;
-            String valName = StringUtils.changeObject2String(activeData.getLicenseId());
-            activeValues.put(DBUtils.fourKFlgConversion(keyName), valName);
-
-            String keyName2 = JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE
-                    + JsonConstants.META_RESPONSE_VAILD_END_DATE;
-            String valName2 = StringUtils.changeObject2String(activeData.getValidEndDate());
-            activeValues.put(DBUtils.fourKFlgConversion(keyName2), valName2);
-
-            rentalListDao.insertChActiveList(activeValues);
-        }
-        DataBaseManager.getInstance().closeDatabase();
     }
 }

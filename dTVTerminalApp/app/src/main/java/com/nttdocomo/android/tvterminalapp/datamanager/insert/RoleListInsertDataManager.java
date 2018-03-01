@@ -7,7 +7,9 @@ package com.nttdocomo.android.tvterminalapp.datamanager.insert;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RoleListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
@@ -46,27 +48,32 @@ public class RoleListInsertDataManager {
             return;
         }
 
-        //各種オブジェクト作成
-        DBHelper channelListDBHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(channelListDBHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-        RoleListDao roleListDao = new RoleListDao(database);
+        try {
+            //各種オブジェクト作成
+            DBHelper channelListDBHelper = new DBHelper(mContext);
+            DataBaseManager.initializeInstance(channelListDBHelper);
+            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+            database.acquireReference();
+            RoleListDao roleListDao = new RoleListDao(database);
 
-        //DB保存前に前回取得したデータは全消去する
-        roleListDao.delete();
+            //DB保存前に前回取得したデータは全消去する
+            roleListDao.delete();
 
-        //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
-        for (int i = 0; i < roleList.size(); i++) {
-            RoleListMetaData roleData = roleList.get(i);
-            ContentValues values = new ContentValues();
-            values.put(JsonConstants.META_RESPONSE_CONTENTS_ID, roleData.getId());
-            values.put(JsonConstants.META_RESPONSE_CONTENTS_NAME, roleData.getName());
-            roleListDao.insert(values);
+            //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
+            for (int i = 0; i < roleList.size(); i++) {
+                RoleListMetaData roleData = roleList.get(i);
+                ContentValues values = new ContentValues();
+                values.put(JsonConstants.META_RESPONSE_CONTENTS_ID, roleData.getId());
+                values.put(JsonConstants.META_RESPONSE_CONTENTS_NAME, roleData.getName());
+                roleListDao.insert(values);
+            }
+            //データ保存日時を格納
+            DateUtils dateUtils = new DateUtils(mContext);
+            dateUtils.addLastDate(DateUtils.ROLELIST_LAST_UPDATE);
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("RoleListInsertDataManager::insertRoleList, e.cause=" + e.getCause());
+        } finally {
+            DataBaseManager.getInstance().closeDatabase();
         }
-        //データ保存日時を格納
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(DateUtils.ROLELIST_LAST_UPDATE);
-
-        DataBaseManager.getInstance().closeDatabase();
     }
 }

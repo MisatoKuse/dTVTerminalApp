@@ -103,13 +103,13 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
      */
     private static final String DISP_TYPE_SERIES_SVOD = "series_svod";
     /**
-     * レンタルデータInsert判定.
+     * レンタルデータInsert判定(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
      */
-    private static final int RENTAL_VIDEO_LIST_INSERT = 0;
+    private static final int RENTAL_VIDEO_LIST_INSERT = 3;
     /**
-     * レンタルデータSelect判定.
+     * レンタルデータSelect判定(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
      */
-    private static final int RENTAL_VIDEO_LIST_SELECT = 1;
+    private static final int RENTAL_VIDEO_LIST_SELECT = 4;
 
     /**
      * Activity指定.

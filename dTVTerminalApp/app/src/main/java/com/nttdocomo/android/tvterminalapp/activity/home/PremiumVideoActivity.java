@@ -162,33 +162,39 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
 
     @Override
     public void rentalListCallback(final List<ContentsData> dataList) {
-        mRelativeLayout.setVisibility(View.GONE);
-        mListView.setVisibility(View.VISIBLE);
-        if (null == dataList) {
-            resetPaging();
-            resetCommunication();
-            RentalDataProvider dataProvider = new RentalDataProvider(this, RentalDataProvider.RentalType.PREMIUM_VIDEO);
-            dataProvider.getDbRentalList();
-        }
+        final RentalDataProvider dataProvider = new RentalDataProvider(this, RentalDataProvider.RentalType.PREMIUM_VIDEO);
+        //DbThreadからのコールバックではUIスレッドとして扱われないため
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mRelativeLayout.setVisibility(View.GONE);
+                mListView.setVisibility(View.VISIBLE);
+                if (null == dataList) {
+                    resetPaging();
+                    resetCommunication();
+                    dataProvider.getDbRentalList();
+                }
 
-        if (0 == dataList.size()) {
-            resetCommunication();
-            return;
-        }
+                if (0 == dataList.size()) {
+                    resetCommunication();
+                    return;
+                }
 
-        int pageNumber = getCurrentNumber();
-        //現在表示しているコンテンツ数よりもデータ取得件数が上回っている時のみ更新する
-        if (mContentsList.size() < dataList.size()) {
-            for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE
-                    && i < dataList.size(); i++) { //mPageNumber
-                mContentsList.add(dataList.get(i));
+                int pageNumber = getCurrentNumber();
+                //現在表示しているコンテンツ数よりもデータ取得件数が上回っている時のみ更新する
+                if (mContentsList.size() < dataList.size()) {
+                    for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE
+                            && i < dataList.size(); i++) { //mPageNumber
+                        mContentsList.add(dataList.get(i));
+                    }
+                }
+
+                DTVTLogger.debug("rentalListCallback, mData.size==" + mContentsList.size());
+
+                resetCommunication();
+                mContentsAdapter.notifyDataSetChanged();
             }
-        }
-
-        DTVTLogger.debug("rentalListCallback, mData.size==" + mContentsList.size());
-
-        resetCommunication();
-        mContentsAdapter.notifyDataSetChanged();
+        });
     }
 
     @Override

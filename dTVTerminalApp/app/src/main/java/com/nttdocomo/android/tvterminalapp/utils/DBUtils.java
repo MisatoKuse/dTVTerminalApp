@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.utils;
 import android.content.Context;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
@@ -191,10 +192,13 @@ public class DBUtils {
      * @return データ存在チェック結果
      */
     public static synchronized boolean isCachingRecord(final Context context, final String tableName) {
+        long recordCount = 0;
         DBHelper dBHelper = new DBHelper(context);
-        SQLiteDatabase database = dBHelper.getWritableDatabase();
-        long recordCount = DatabaseUtils.queryNumEntries(database, tableName);
-        database.close();
+        try (SQLiteDatabase database = dBHelper.getWritableDatabase()) {
+            recordCount = DatabaseUtils.queryNumEntries(database, tableName);
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        }
         return recordCount > 0;
     }
 

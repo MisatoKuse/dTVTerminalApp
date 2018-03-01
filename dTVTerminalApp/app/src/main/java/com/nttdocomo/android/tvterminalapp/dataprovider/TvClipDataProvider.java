@@ -74,12 +74,6 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
                 }
             }
         } else {
-            //TODO:Sprint10でDB使用を一時停止
-            //WEBAPIを取得できなかった時はDBのデータを使用
-//            List<Map<String, String>> tvClipList = new ArrayList<>();
-//            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-//            tvClipList = homeDataManager.selectTvClipHomeData();
-//            sendTvClipListData(tvClipList);
             if (null != apiDataProviderCallback) {
                 apiDataProviderCallback.tvClipListCallback(null);
             }
@@ -133,13 +127,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
                 mClipKeyListDataProvider = new ClipKeyListDataProvider(mContext);
                 mClipKeyListDataProvider.getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.TV));
             }
-            //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
-//        List<Map<String, String>> tvClipList = getTvClipListData(pagerOffset);
-        getTvClipListData(pagerOffset);
-
-//        if (tvClipList != null && tvClipList.size() > 0) {
-//            sendTvClipListData(tvClipList);
-//        }
+            getTvClipListData(pagerOffset);
         } else {
             DTVTLogger.error("TvClipDataProvider is stopping connection");
             if (null != apiDataProviderCallback) {
@@ -163,6 +151,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
      * @param clipMapList コンテンツリストデータ
      * @return ListView表示用データ
      */
+    @SuppressWarnings("OverlyLongMethod")
     private List<ContentsData> setClipContentData(final List<Map<String, String>> clipMapList) {
         List<ContentsData> contentsDataList = new ArrayList<>();
 
@@ -235,25 +224,6 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
      * @param pagerOffset ページオフセット
      */
     private void getTvClipListData(final int pagerOffset) {
-        //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
-//    private List<Map<String, String>> getTvClipListData(int pagerOffset) {
-//        DateUtils dateUtils = new DateUtils(mContext);
-//        String lastDate = dateUtils.getLastDate(TV_LAST_INSERT);
-
-        //List<Map<String, String>> list = new ArrayList<>();
-        //Vodクリップ一覧のDB保存履歴と、有効期間を確認
-        //if (true) { //test
-/*        boolean fromDb = lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate);
-        if (fromDb) {
-            //データをDBから取得する
-            TvClipDataManager tvClipDataManager = new TvClipDataManager(mContext);
-            list = tvClipDataManager.selectTvClipData();
-            if (null == list || 0 == list.size()) {
-                fromDb = false;
-            }
-        }*/
-
-//        if (!fromDb) {
         if (!mIsCancel) {
             //通信クラスにデータ取得要求を出す
             mWebClient = new TvClipWebClient(mContext);
@@ -270,22 +240,8 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
                 apiDataProviderCallback.tvClipListCallback(null);
             }
         }
-//        }
-//        return list;
     }
 
-    /**
-     * TVクリップ一覧データをDBに格納する.
-     *
-     * @param tvClipList TVクリップ一覧データ
-     */
-    private void setStructDB(final TvClipList tvClipList) {
-        //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
-//        DateUtils dateUtils = new DateUtils(mContext);
-//        dateUtils.addLastDate(TV_LAST_INSERT);
-//        TvClipInsertDataManager dataManager = new TvClipInsertDataManager(mContext);
-//        dataManager.insertTvClipInsertList(tvClipList);
-    }
     /**
      * 通信を止める.
      */

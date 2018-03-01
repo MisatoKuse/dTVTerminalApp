@@ -7,8 +7,10 @@ package com.nttdocomo.android.tvterminalapp.datamanager.insert;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.text.TextUtils;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ChannelListDao;
@@ -47,43 +49,46 @@ public class ChannelInsertDataManager {
      */
     public void insertChannelInsertList(final ChannelList channelList) {
 
-        //有効期限判定
-        if (!DateUtils.getLastDate(mContext, DateUtils.CHANNEL_LAST_UPDATE)) {
-            return;
-        }
+        DTVTLogger.start();
 
-        //各種オブジェクト作成
-        DBHelper channelListDBHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(channelListDBHelper);
-        DataBaseManager dbm = DataBaseManager.getInstance();
-        SQLiteDatabase database = dbm.openDatabase();
-        ChannelListDao channelListDao = new ChannelListDao(database);
-        List<HashMap<String, String>> hashMaps = channelList.getChannelList();
+        try {
+            //各種オブジェクト作成
+            DBHelper channelListDBHelper = new DBHelper(mContext);
+            DataBaseManager.initializeInstance(channelListDBHelper);
+            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+            database.acquireReference();
+            ChannelListDao channelListDao = new ChannelListDao(database);
+            List<HashMap<String, String>> hashMaps = channelList.getChannelList();
 
-        //DB保存前に前回取得したデータは全消去する
-        //TODO 日付とチャンネルを管理し、それらが一致するデータだけを消す事.またキャッシュ期限もその単位で管理する必要があるのでDB再設計が必要
-        channelListDao.delete();
+            //DB保存前に前回取得したデータは全消去する
+            //TODO 日付とチャンネルを管理し、それらが一致するデータだけを消す事.またキャッシュ期限もその単位で管理する必要があるのでDB再設計が必要
+            channelListDao.delete();
 
-        //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
-        for (int i = 0; i < hashMaps.size(); i++) {
-            Iterator entries = hashMaps.get(i).entrySet().iterator();
+            //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
+            for (int i = 0; i < hashMaps.size(); i++) {
+                Iterator entries = hashMaps.get(i).entrySet().iterator();
 
-            ContentValues values = new ContentValues();
-            while (entries.hasNext()) {
-                Map.Entry entry = (Map.Entry) entries.next();
-                String keyName = (String) entry.getKey();
-                String valName = (String) entry.getValue();
-                if (JsonConstants.META_RESPONSE_AVAIL_START_DATE.equals(keyName)) {
-                    values.put(DBConstants.UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
+                ContentValues values = new ContentValues();
+                while (entries.hasNext()) {
+                    Map.Entry entry = (Map.Entry) entries.next();
+                    String keyName = (String) entry.getKey();
+                    String valName = (String) entry.getValue();
+                    if (JsonConstants.META_RESPONSE_AVAIL_START_DATE.equals(keyName)) {
+                        values.put(DBConstants.UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
+                    }
+                    values.put(DBUtils.fourKFlgConversion(keyName), valName);
                 }
-                values.put(DBUtils.fourKFlgConversion(keyName), valName);
+                channelListDao.insert(values);
             }
-            channelListDao.insert(values);
-        }
-        //データ保存日時を格納
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(DateUtils.CHANNEL_LAST_UPDATE);
+            //データ保存日時を格納
+            DateUtils dateUtils = new DateUtils(mContext);
+            dateUtils.addLastDate(DateUtils.CHANNEL_LAST_UPDATE);
 
-        dbm.closeDatabase();
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("ChannelInsertDataManager::insertChannelInsertList, e.cause=" + e.getCause());
+        } finally {
+            DataBaseManager.getInstance().closeDatabase();
+        }
+        DTVTLogger.end();
     }
 }

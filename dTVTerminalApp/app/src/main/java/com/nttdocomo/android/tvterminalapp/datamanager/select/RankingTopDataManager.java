@@ -6,7 +6,9 @@ package com.nttdocomo.android.tvterminalapp.datamanager.select;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VideoRankListDao;
@@ -57,22 +59,28 @@ public class RankingTopDataManager {
                 JsonConstants.META_RESPONSE_DTV_TYPE, JsonConstants.META_RESPONSE_CID,
                 JsonConstants.META_RESPONSE_AVAIL_START_DATE};
 
-        //Daoクラス使用準備
-        DBHelper videoRankListDBHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(videoRankListDBHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        try {
+            //Daoクラス使用準備
+            DBHelper videoRankListDBHelper = new DBHelper(mContext);
+            DataBaseManager.initializeInstance(videoRankListDBHelper);
+            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+            database.acquireReference();
 
-        //データ存在チェック
-        if (!DBUtils.isCachingRecord(database, DBConstants.RANKING_VIDEO_LIST_TABLE_NAME)) {
+            //データ存在チェック
+            if (!DBUtils.isCachingRecord(database, DBConstants.RANKING_VIDEO_LIST_TABLE_NAME)) {
+                DataBaseManager.getInstance().closeDatabase();
+                return list;
+            }
+
+            VideoRankListDao videoRankListDao = new VideoRankListDao(database);
+
+            //ビデオランクデータ取得
+            list = videoRankListDao.findById(columns);
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("RankingTopDataManager::selectVideoRankListData, e.cause=" + e.getCause());
+        } finally {
             DataBaseManager.getInstance().closeDatabase();
-            return list;
         }
-
-        VideoRankListDao videoRankListDao = new VideoRankListDao(database);
-
-        //ビデオランクデータ取得
-        list = videoRankListDao.findById(columns);
-        DataBaseManager.getInstance().closeDatabase();
         return list;
     }
 }

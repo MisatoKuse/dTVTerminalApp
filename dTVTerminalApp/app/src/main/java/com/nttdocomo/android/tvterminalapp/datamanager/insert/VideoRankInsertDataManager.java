@@ -7,7 +7,9 @@ package com.nttdocomo.android.tvterminalapp.datamanager.insert;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VideoRankListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
@@ -50,33 +52,38 @@ public class VideoRankInsertDataManager {
             return;
         }
 
-        //各種オブジェクト作成
-        DBHelper videoRankListDBHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(videoRankListDBHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-        VideoRankListDao videoRankListDao = new VideoRankListDao(database);
-        @SuppressWarnings("unchecked")
-        List<HashMap<String, String>> hashMaps = videoRankList.getVrList();
+        try {
+            //各種オブジェクト作成
+            DBHelper videoRankListDBHelper = new DBHelper(mContext);
+            DataBaseManager.initializeInstance(videoRankListDBHelper);
+            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+            database.acquireReference();
+            VideoRankListDao videoRankListDao = new VideoRankListDao(database);
+            @SuppressWarnings("unchecked")
+            List<HashMap<String, String>> hashMaps = videoRankList.getVrList();
 
-        //DB保存前に前回取得したデータは全消去する
-        videoRankListDao.delete();
+            //DB保存前に前回取得したデータは全消去する
+            videoRankListDao.delete();
 
-        //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
-        for (int i = 0; i < hashMaps.size(); i++) {
-            Iterator entries = hashMaps.get(i).entrySet().iterator();
-            ContentValues values = new ContentValues();
-            while (entries.hasNext()) {
-                Map.Entry entry = (Map.Entry) entries.next();
-                String keyName = (String) entry.getKey();
-                String valName = (String) entry.getValue();
-                values.put(DBUtils.fourKFlgConversion(keyName), valName);
+            //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
+            for (int i = 0; i < hashMaps.size(); i++) {
+                Iterator entries = hashMaps.get(i).entrySet().iterator();
+                ContentValues values = new ContentValues();
+                while (entries.hasNext()) {
+                    Map.Entry entry = (Map.Entry) entries.next();
+                    String keyName = (String) entry.getKey();
+                    String valName = (String) entry.getValue();
+                    values.put(DBUtils.fourKFlgConversion(keyName), valName);
+                }
+                videoRankListDao.insert(values);
             }
-            videoRankListDao.insert(values);
+            //DB保存日時格納
+            DateUtils dateUtils = new DateUtils(mContext);
+            dateUtils.addLastDate(VIDEO_RANK_LAST_INSERT);
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("VideoRankInsertDataManager::insertVideoRankInsertList, e.cause=" + e.getCause());
+        } finally {
+            DataBaseManager.getInstance().closeDatabase();
         }
-        //DB保存日時格納
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(VIDEO_RANK_LAST_INSERT);
-
-        DataBaseManager.getInstance().closeDatabase();
     }
 }

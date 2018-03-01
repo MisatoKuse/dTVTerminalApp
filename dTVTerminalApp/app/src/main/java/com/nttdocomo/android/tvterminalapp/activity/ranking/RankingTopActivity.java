@@ -19,12 +19,12 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewAdapter;
-import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopHomeRecyclerViewAdapterConnect;
-import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRankingTopDataConnect;
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopHomeRecyclerViewAdapterConnect;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRankingTopDataConnect;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 
 import java.util.List;
 
@@ -119,8 +119,9 @@ public class RankingTopActivity extends BaseActivity
     /**
      * 機能.
      * コンテンツ一覧ビューを設定
+     *
      * @param contentsDataList コンテンツ一覧
-     * @param tag ランキング種別
+     * @param tag              ランキング種別
      */
     private void setRecyclerView(final List<ContentsData> contentsDataList, final int tag) {
         String typeContentName = getContentTypeName(tag);
@@ -146,9 +147,10 @@ public class RankingTopActivity extends BaseActivity
     /**
      * 機能.
      * コンテンツ一覧データを設定
-     * @param recyclerView リサイクルビュー
+     *
+     * @param recyclerView     リサイクルビュー
      * @param contentsDataList コンテンツ一覧
-     * @param index ランキング種別
+     * @param index            ランキング種別
      */
     private void setRecyclerViewData(final RecyclerView recyclerView, final List<ContentsData> contentsDataList, final int index) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -205,6 +207,7 @@ public class RankingTopActivity extends BaseActivity
     /**
      * 機能.
      * コンテンツ一覧タイトル取得
+     *
      * @param tag 機能.
      * @return コンテンツ一覧タイトル
      */
@@ -228,23 +231,39 @@ public class RankingTopActivity extends BaseActivity
 
     @Override
     public void dailyRankListCallback(final List<ContentsData> contentsDataList) {
-        if (contentsDataList != null && contentsDataList.size() > 0) {
-            setRecyclerView(contentsDataList, TODAY_SORT);
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (contentsDataList != null && contentsDataList.size() > 0) {
+                    setRecyclerView(contentsDataList, TODAY_SORT);
+                }
+            }
+        });
     }
 
     @Override
     public void weeklyRankCallback(final List<ContentsData> contentsDataList) {
-        if (contentsDataList != null && contentsDataList.size() > 0) {
-            setRecyclerView(contentsDataList, WEEK_SORT);
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (contentsDataList != null && contentsDataList.size() > 0) {
+                    setRecyclerView(contentsDataList, WEEK_SORT);
+                }
+            }
+        });
     }
 
     @Override
     public void videoRankCallback(final List<ContentsData> contentsDataList) {
-        if (contentsDataList != null && contentsDataList.size() > 0) {
-            setRecyclerView(contentsDataList, VIDEO_SORT);
-        }
+        //DBスレッドからのコールバックではUIスレッド扱いされないことがある
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (contentsDataList != null && contentsDataList.size() > 0) {
+                    setRecyclerView(contentsDataList, VIDEO_SORT);
+                }
+            }
+        });
     }
 
     @Override
