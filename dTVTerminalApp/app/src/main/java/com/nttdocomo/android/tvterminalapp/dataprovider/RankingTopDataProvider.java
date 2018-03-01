@@ -115,6 +115,10 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
      * VideoRankingDBThread判定用(select).
      */
     private static final int SELECT_VIDEO_RANKING_DATA = 5;
+    /**
+     * 最大取得件数.
+     */
+    public static final int UPPER_PAGE_LIMIT = 50;
 
     @Override
     public void onDailyRankJsonParsed(final List<DailyRankList> dailyRankLists) {
@@ -535,8 +539,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 mDailyRankWebClient = new DailyRankWebClient(mContext);
                 UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
                 int ageReq = userInfoDataProvider.getUserAge();
-                int upperPageLimit = 100;
-                mDailyRankWebClient.getDailyRankApi(upperPageLimit, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, this);
+                mDailyRankWebClient.getDailyRankApi(UPPER_PAGE_LIMIT, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, this);
             } else {
                 DTVTLogger.error("RankingTopDataProvider is stopping connect");
             }
@@ -566,10 +569,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             if (!mIsCancel) {
                 //通信クラスにデータ取得要求を出す
                 mWeeklyRankWebClient = new WeeklyRankWebClient(mContext);
-                int upperPageLimit = 100;
                 UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
                 int ageReq = userInfoDataProvider.getUserAge();
-                mWeeklyRankWebClient.getWeeklyRankApi(upperPageLimit, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, genreId, this);
+                mWeeklyRankWebClient.getWeeklyRankApi(UPPER_PAGE_LIMIT, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, genreId, this);
             } else {
                 DTVTLogger.error("RankingTopDataProvider is stopping connect");
             }
@@ -600,14 +602,12 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             if (!mIsCancel) {
                 //通信クラスにデータ取得要求を出す
                 mContentsListPerGenreWebClient = new ContentsListPerGenreWebClient(mContext);
-
-                int upperPageLimit = 100;
                 UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
                 int ageReq = userInfoDataProvider.getUserAge();
                 //人気順でソートする
                 String sort = JsonConstants.GENRE_PER_CONTENTS_SORT_PLAY_COUNT_DESC;
                 mContentsListPerGenreWebClient.getContentsListPerGenreApi(
-                        upperPageLimit, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, genreId, sort, this);
+                        UPPER_PAGE_LIMIT, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, genreId, sort, this);
             } else {
                 DTVTLogger.error("RankingTopDataProvider is stopping connect");
             }

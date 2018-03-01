@@ -59,10 +59,6 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
      */
     private RankingFragmentScrollListener mRankingBaseFragmentScrollListener = null;
     /**
-     * データの追加読み込み時に表示するView.
-     */
-    private View mLoadMoreView;
-    /**
      * ランキング種別.
      */
     private ContentsAdapter.ActivityTypeItem mRankingMode;
@@ -121,8 +117,6 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
             //スクロールの上下方向検知用のリスナーを設定
             mRankingListView.setOnTouchListener(this);
         }
-        mLoadMoreView = LayoutInflater.from(getActivity()).inflate(R.layout.search_load_more, container,
-                false);
         if (mContentsAdapter == null) {
             initRankingView();
         }
@@ -203,24 +197,6 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
         }
     }
 
-    /**
-     * 読み込み表示を行う.
-     *
-     * @param bool フッターを表示するかどうか
-     */
-    public void displayMoreData(final boolean bool) {
-        if (null != mRankingListView) {
-            if (bool) {
-                mRankingListView.addFooterView(mLoadMoreView);
-
-                //スクロール位置を最下段にすることで、追加した更新フッターを画面内に入れる
-                mRankingListView.setSelection(mRankingListView.getMaxScrollAmount());
-            } else {
-                mRankingListView.removeFooterView(mLoadMoreView);
-            }
-        }
-    }
-
     @Override
     public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
         //スクロール位置がリストの先頭で上スクロールだった場合は、更新をせずに帰る
@@ -249,9 +225,6 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view,
                             final int position, final long l) {
-        if (mLoadMoreView.equals(view) || mContext == null) {
-            return;
-        }
         Intent intent = new Intent(mContext, ContentDetailActivity.class);
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
         OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(mData.get(position), ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
