@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
@@ -102,8 +103,12 @@ public class ClipRegistWebClient
             return false;
         }
 
+        String strStartDate = linearStartDate;
         String strEndDate = linearEndDate;
-        //パラメータチェック終了後にlinearEndDateをyyyy/MM/dd HH:mm:ss形式に変換する
+        //パラメータチェック終了後に日付をyyyy/MM/dd HH:mm:ss形式に変換する
+        if (strStartDate != null && DBUtils.isNumber(strStartDate)) {
+            strStartDate = DateUtils.formatEpochToString(Long.parseLong(strStartDate));
+        }
         if (strEndDate != null && DBUtils.isNumber(strEndDate)) {
             strEndDate = DateUtils.formatEpochToString(Long.parseLong(strEndDate));
         }
@@ -113,7 +118,7 @@ public class ClipRegistWebClient
 
         //送信用パラメータの作成
         String sendParameter = makeSendParameter(type, crid, serviceId, eventId, titleId, title, r_value,
-                linearStartDate, strEndDate, isNotify);
+                strStartDate, strEndDate, isNotify);
 
         //JSONの組み立てに失敗していれば、falseで帰る
         if (sendParameter.isEmpty()) {
@@ -153,6 +158,7 @@ public class ClipRegistWebClient
         if (type == null) {
             return false;
         }
+        //crIdは必須
         if (crid == null) {
             return false;
         }
@@ -213,10 +219,6 @@ public class ClipRegistWebClient
             return false;
         }
 
-        //タイプ用の固定値をひとまとめにする
-        List<String> typeList = makeStringArry(CLIP_TYPE_H4D_IPTV, CLIP_TYPE_H4D_VOD,
-                CLIP_TYPE_DCH, CLIP_TYPE_DTV_VOD);
-
         if (clipRegistJsonParserCallback == null) {
             //コールバックがヌルならばfalse
             return false;
@@ -247,29 +249,20 @@ public class ClipRegistWebClient
                                      final String linearEndDate, final boolean isNotify) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
+        //リクエストパラメータ(Json)作成
         try {
+            putSelect(jsonObject,JsonConstants.META_RESPONSE_CRID,crid);
+            putSelect(jsonObject,JsonConstants.META_RESPONSE_SERVICE_ID, serviceId);
+            putSelect(jsonObject,JsonConstants.META_RESPONSE_TITLE_ID,titleId);
+            putSelect(jsonObject,JsonConstants.META_RESPONSE_TITLE, title);
+            putSelect(jsonObject,JsonConstants.META_RESPONSE_TYPE,type);
+            putSelect(jsonObject,JsonConstants.META_RESPONSE_EVENT_ID, eventId);
+            putSelect(jsonObject,JsonConstants.META_RESPONSE_R_VALUE, r_value);
+            //isNotifyは事実上無いことが無い
+            jsonObject.put(JsonConstants.META_RESPONSE_IS_NOTIFY, isNotify);
+            putSelect(jsonObject,JsonConstants.META_RESPONSE_LINEAR_START_DATE, linearStartDate);
+            putSelect(jsonObject,JsonConstants.META_RESPONSE_LINEAR_END_DATE, linearEndDate);
 
-            //リクエストパラメータ(Json)作成
-            if (StringUtils.isHikariContents(type)) {
-                //ひかりコンテンツ(dCh含む)
-                jsonObject.put(JsonConstants.META_RESPONSE_CRID, crid);
-            } else if (StringUtils.isHikariInDtvContents(type)) {
-                //ひかり内dTVコンテンツ(VODメタのdTVフラグが1)
-                jsonObject.put(JsonConstants.META_RESPONSE_CRID, crid);
-                jsonObject.put(JsonConstants.META_RESPONSE_TITLE_ID, titleId);
-            } else {
-                //その他
-                jsonObject.put(JsonConstants.META_RESPONSE_TYPE, type);
-                jsonObject.put(JsonConstants.META_RESPONSE_CRID, crid);
-                jsonObject.put(JsonConstants.META_RESPONSE_SERVICE_ID, serviceId);
-                jsonObject.put(JsonConstants.META_RESPONSE_EVENT_ID, eventId);
-                jsonObject.put(JsonConstants.META_RESPONSE_TITLE_ID, titleId);
-                jsonObject.put(JsonConstants.META_RESPONSE_TITLE, title);
-                jsonObject.put(JsonConstants.META_RESPONSE_R_VALUE, r_value);
-                jsonObject.put(JsonConstants.META_RESPONSE_LINEAR_START_DATE, linearStartDate);
-                jsonObject.put(JsonConstants.META_RESPONSE_LINEAR_END_DATE, linearEndDate);
-                jsonObject.put(JsonConstants.META_RESPONSE_IS_NOTIFY, isNotify);
-            }
             answerText = jsonObject.toString();
 
         } catch (JSONException e) {
@@ -279,5 +272,23 @@ public class ClipRegistWebClient
 
         DTVTLogger.debugHttp(answerText);
         return answerText;
+    }
+
+    /**
+     * 値があれば追加を行う.
+     *
+     * 各項目の必須項目の有無はチェック済みで、各項目の必須ではない項目は指定不能とは書いていない。
+     * その為、ここで空の項目の追加スキップを行えば済む
+     * @param jsonObject 追記対象のjsonObject
+     * @param keyString 追記キー
+     * @param stringValue 追記内容
+     * @throws JSONException JSONのエラーは呼び出し元で処理をする
+     */
+    private void putSelect(JSONObject jsonObject,
+                           final String keyString,final String stringValue) throws JSONException {
+        if(!TextUtils.isEmpty(stringValue)) {
+            //値があればjsonObjectに追加する
+            jsonObject.put(keyString,stringValue);
+        }
     }
 }

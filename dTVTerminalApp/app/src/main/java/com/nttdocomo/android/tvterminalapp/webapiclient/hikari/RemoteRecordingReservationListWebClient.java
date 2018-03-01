@@ -7,9 +7,13 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationListResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.RemoteRecordingReservationListJsonParser;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Remoteの録画予約リスト取得Webクライアント.
@@ -77,10 +81,12 @@ public class RemoteRecordingReservationListWebClient
     /**
      * リモート録画予約一覧取得.
      *
+     * @param platFormType                                     プラットフォームタイプ
      * @param remoteRecordingReservationListJsonParserCallback コールバック
      * @return パラメータエラー等が発生した場合はfalse
      */
     public boolean getRemoteRecordingReservationListApi(
+            final int platFormType,
             final RemoteRecordingReservationListJsonParserCallback
                     remoteRecordingReservationListJsonParserCallback) {
 
@@ -90,7 +96,7 @@ public class RemoteRecordingReservationListWebClient
             return false;
         }
 
-        //パラメーターのチェック
+        //パラメーターのチェック(platFormタイプは数値であり、省略不能なのでチェックはひとまず行わない)
         if (!checkNormalParameter(remoteRecordingReservationListJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
             return false;
@@ -100,9 +106,20 @@ public class RemoteRecordingReservationListWebClient
         mRemoteRecordingReservationListJsonParserCallback =
                 remoteRecordingReservationListJsonParserCallback;
 
+        //パラメータの作成
+        String parameterBuffer;
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(JsonConstants.META_RESPONSE_PLATFORM_TYPE,platFormType);
+            parameterBuffer = jsonObject.toString();
+        } catch (JSONException e) {
+            //パラメータは一つしかないので、例外の場合はエラーで帰る
+            return false;
+        }
+
         //リモート録画一覧の情報を読み込むため、リモート録画一覧を呼び出す
         openUrlAddOtt(UrlConstants.WebApiUrl.REMOTE_RECORDING_RESERVATION_LIST_WEB_CLIENT,
-                "", this, null);
+                parameterBuffer , this, null);
 
         //今のところ失敗していないので、trueを返す
         return true;

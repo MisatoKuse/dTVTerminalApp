@@ -74,12 +74,13 @@ public class MyChannelDeleteWebClient
     /**
      * マイチャンネル解除取得.
      *
+     * @param serviceId                         サービスID
      * @param myChannelDeleteJsonParserCallback コールバック
-     *   TODO:本WebAPIには通常のパラメータが無く、基底クラスで追加するサービストークンのみとなる。
-     *
      * @return パラメータエラー等が発生した場合はfalse
      */
-    public boolean getMyChanelDeleteApi(final String serviceId, final MyChannelDeleteJsonParserCallback myChannelDeleteJsonParserCallback) {
+    public boolean getMyChanelDeleteApi(
+            final String serviceId,
+            final MyChannelDeleteJsonParserCallback myChannelDeleteJsonParserCallback) {
         if (mIsCancel) {
             DTVTLogger.error("MyChannelDeleteWebClient is stopping connection");
             return false;
