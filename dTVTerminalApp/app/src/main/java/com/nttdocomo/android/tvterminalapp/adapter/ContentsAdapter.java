@@ -570,6 +570,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TAB_VIDEO:
                 holder.tv_rank.setVisibility(View.GONE);
                 holder.tv_time.setVisibility(View.GONE);
+                holder.ll_rating.setVisibility(View.GONE);
                 break;
             case TAB_D_CHANNEL:
             case TAB_D_ANIMATE:
