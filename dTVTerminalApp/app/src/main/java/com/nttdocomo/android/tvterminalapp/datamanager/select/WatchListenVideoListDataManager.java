@@ -6,7 +6,9 @@ package com.nttdocomo.android.tvterminalapp.datamanager.select;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WatchListenVideoListDao;
@@ -57,22 +59,28 @@ public class WatchListenVideoListDataManager {
                 JsonConstants.META_RESPONSE_DTV, JsonConstants.META_RESPONSE_TV_SERVICE,
                 JsonConstants.META_RESPONSE_DTV_TYPE};
 
-        //Daoクラス使用準備
-        DBHelper dbHelper = new DBHelper(mContext);
-        DataBaseManager.initializeInstance(dbHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        try {
+            //Daoクラス使用準備
+            DBHelper dbHelper = new DBHelper(mContext);
+            DataBaseManager.initializeInstance(dbHelper);
+            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+            database.acquireReference();
 
-        //データ存在チェック
-        if (!DBUtils.isCachingRecord(database, DBConstants.WATCH_LISTEN_VIDEO_TABLE_NAME)) {
+            //データ存在チェック
+            if (!DBUtils.isCachingRecord(database, DBConstants.WATCH_LISTEN_VIDEO_TABLE_NAME)) {
+                DataBaseManager.getInstance().closeDatabase();
+                return list;
+            }
+
+            WatchListenVideoListDao watchListenVideoListDao = new WatchListenVideoListDao(database);
+
+            //ホーム画面用データ取得
+            list = watchListenVideoListDao.findById(columns);
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("WatchListenVideoListDataManager::selectWatchListenVideoData, e.cause=" + e.getCause());
+        } finally {
             DataBaseManager.getInstance().closeDatabase();
-            return list;
         }
-
-        WatchListenVideoListDao watchListenVideoListDao = new WatchListenVideoListDao(database);
-
-        //ホーム画面用データ取得
-        list = watchListenVideoListDao.findById(columns);
-        DataBaseManager.getInstance().closeDatabase();
         return list;
     }
 }

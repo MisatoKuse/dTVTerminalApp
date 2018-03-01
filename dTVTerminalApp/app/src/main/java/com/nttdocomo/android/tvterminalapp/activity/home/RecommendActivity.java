@@ -70,8 +70,6 @@ public class RecommendActivity extends BaseActivity implements
 
     private final static int TEXT_SIZE = 15;
 
-    // 表示中レコメンドコンテンツ件数(staticにしないと前回の値が維持され、データの更新に失敗する場合がある)
-    private static int sShowListSize = 0;
     // 表示中の最後の行を保持(staticにしないと前回の値が維持され、データの更新に失敗する場合がある)
     private static int sSearchLastItem = 0;
     // ページングの回数(staticにしないと前回の値が維持され、データの更新に失敗する場合がある)
@@ -198,12 +196,9 @@ public class RecommendActivity extends BaseActivity implements
         }
 
         int requestService = sRecommendViewPager.getCurrentItem();
-        int startIndex = sShowListSize + 1;
 
         //戻り値を使用せず、データは必ずコールバック経由なので、falseを指定する
-        mRecommendDataProvider.startGetRecommendData(
-                requestService, startIndex,
-                SearchConstants.RecommendList.requestMaxCount_Recommend, false);
+        mRecommendDataProvider.startGetRecommendData(requestService);
     }
 
     /**
@@ -229,7 +224,6 @@ public class RecommendActivity extends BaseActivity implements
                 mTabLayout.setTab(position);
                 clearAllFragment();
                 setPagingStatus(false);
-                sShowListSize = 0;
                 sCntPaging = 0;
                 sSearchLastItem = 0;
                 //ここでフラグをクリアしないと、以後の更新が行われなくなる場合がある
@@ -303,7 +297,6 @@ public class RecommendActivity extends BaseActivity implements
         if (0 < resultInfoList.size()) {
             for (ContentsData info : resultInfoList) {
                 baseFragment.mData.add(info);
-                sShowListSize += 1;
             }
 
             DTVTLogger.debug("baseFragment.mData.size = " + baseFragment.mData.size());
@@ -439,7 +432,7 @@ public class RecommendActivity extends BaseActivity implements
     @Override
     public void recommendChannelCallback(final List<ContentsData> recommendContentInfoList) {
         //DbThreadからのコールバックの場合UIスレッド扱いにならないときがある
-        this.runOnUiThread(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                     if (sRecommendViewPager != null && recommendContentInfoList != null && recommendContentInfoList.size() > 0) {
@@ -460,7 +453,7 @@ public class RecommendActivity extends BaseActivity implements
     @Override
     public void recommendVideoCallback(final List<ContentsData> recommendContentInfoList) {
         //DbThreadからのコールバックの場合UIスレッド扱いにならないときがある
-        this.runOnUiThread(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (sRecommendViewPager != null && recommendContentInfoList != null && recommendContentInfoList.size() > 0) {
@@ -481,7 +474,7 @@ public class RecommendActivity extends BaseActivity implements
     @Override
     public void recommendDTVCallback(final List<ContentsData> recommendContentInfoList) {
         //DbThreadからのコールバックの場合UIスレッド扱いにならないときがある
-        this.runOnUiThread(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (sRecommendViewPager != null && recommendContentInfoList != null && recommendContentInfoList.size() > 0) {
@@ -502,7 +495,7 @@ public class RecommendActivity extends BaseActivity implements
     @Override
     public void recommendDAnimeCallback(final List<ContentsData> recommendContentInfoList) {
         //DbThreadからのコールバックの場合UIスレッド扱いにならないときがある
-        this.runOnUiThread(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (sRecommendViewPager != null && recommendContentInfoList != null && recommendContentInfoList.size() > 0) {
@@ -523,7 +516,7 @@ public class RecommendActivity extends BaseActivity implements
     @Override
     public void recommendDChannelCallback(final List<ContentsData> recommendContentInfoList) {
         //DbThreadからのコールバックの場合UIスレッド扱いにならないときがある
-        this.runOnUiThread(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (sRecommendViewPager != null && recommendContentInfoList != null && recommendContentInfoList.size() > 0) {

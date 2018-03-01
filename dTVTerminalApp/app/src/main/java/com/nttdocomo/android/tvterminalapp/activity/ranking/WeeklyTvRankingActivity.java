@@ -374,9 +374,14 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
      */
     @Override
     public void onWeeklyRankListCallback(final List<ContentsData> contentsDataList) {
-//        progressBar.setVisibility(View.GONE);
-        DTVTLogger.start("ResponseDataSize :" + contentsDataList.size());
-        setShowWeeklyRanking(contentsDataList);
+        //DbThreadからのコールバックではUIスレッドとして扱われないため
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                DTVTLogger.start("ResponseDataSize :" + contentsDataList.size());
+                setShowWeeklyRanking(contentsDataList);
+            }
+        });
     }
 
     @Override

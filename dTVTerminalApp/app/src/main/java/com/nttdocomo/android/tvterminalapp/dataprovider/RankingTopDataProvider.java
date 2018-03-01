@@ -92,17 +92,17 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
      */
     private ContentsListPerGenreWebClient mContentsListPerGenreWebClient = null;
     /**
-     * DailyRankingDBThread判定用(insert).
+     * DailyRankingDBThread判定用(insert)(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
      */
-    private static final int INSERT_DAILY_RANKING_DATA = 0;
+    private static final int INSERT_DAILY_RANKING_DATA = 6;
     /**
-     * WeeklyRankingDBThread判定用(insert).
+     * WeeklyRankingDBThread判定用(insert)(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
      */
-    private static final int INSERT_WEEKLY_RANKING_DATA = 1;
+    private static final int INSERT_WEEKLY_RANKING_DATA = 7;
     /**
-     * VideoRankingDBThread判定用(insert).
+     * VideoRankingDBThread判定用(insert)(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
      */
-    private static final int INSERT_VIDEO_RANKING_DATA = 2;
+    private static final int INSERT_VIDEO_RANKING_DATA = 8;
     /**
      * DailyRankingDBThread判定用(select).
      */

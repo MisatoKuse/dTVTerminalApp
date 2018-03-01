@@ -365,13 +365,19 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
     @Override
     public void onVideoRankListCallback(final List<ContentsData> videoRankList) {
         DTVTLogger.start();
-        if (videoRankList.size() > 0) {
-            DTVTLogger.debug("ResponseDataSize :" + videoRankList.size());
-            setShowVideoRanking(videoRankList);
-            DTVTLogger.end();
-        } else {
-            DTVTLogger.debug("ResponseDataSize :0");
-        }
+        //DbThreadからのコールバックではUIスレッドとして扱われないため
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (videoRankList.size() > 0) {
+                    DTVTLogger.debug("ResponseDataSize :" + videoRankList.size());
+                    setShowVideoRanking(videoRankList);
+                    DTVTLogger.end();
+                } else {
+                    DTVTLogger.debug("ResponseDataSize :0");
+                }
+            }
+        });
         DTVTLogger.end();
     }
 

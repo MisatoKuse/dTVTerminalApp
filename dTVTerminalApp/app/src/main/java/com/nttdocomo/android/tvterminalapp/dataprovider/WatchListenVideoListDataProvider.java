@@ -64,14 +64,14 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     public static final int DEFAULT_PAGE_OFFSET = 1;
 
     /**
-     * 視聴中ビデオ一覧保存.
+     * 視聴中ビデオ一覧保存(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
      */
-    private static final int WATCH_LISTEN_VIDEO_INSERT = 0;
+    private static final int WATCH_LISTEN_VIDEO_INSERT = 3;
 
     /**
-     * 視聴中ビデオ一覧取得.
+     * 視聴中ビデオ一覧取得(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
      */
-    private static final int WATCH_LISTEN_VIDEO_SELECT = 1;
+    private static final int WATCH_LISTEN_VIDEO_SELECT = 4;
 
     @Override
     public void onWatchListenVideoJsonParsed(final List<WatchListenVideoList> watchListenVideoList) {
@@ -87,26 +87,20 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
                 } else {
                     //通信でデータ取得できないときはDBから取得
                     Handler handler = new Handler();
-                    try {
-                        DbThread t = new DbThread(handler, this, WATCH_LISTEN_VIDEO_SELECT);
-                        t.start();
-                    } catch (Exception e) {
-                        DTVTLogger.debug(e);
-                    }
+                    DbThread t = new DbThread(handler, this, WATCH_LISTEN_VIDEO_SELECT);
+                    t.start();
                 }
             } else {
                 mWatchListenVideoList = list;
+                //クリップ未取得の際は何もしないが、ダイアログを非表示にするため、コールバックを返す
+                mApiDataProviderCallback.watchListenVideoListCallback(null);
             }
         } else {
             if (null != mApiDataProviderCallback) {
                 //通信でデータ取得できないときはDBから取得
                 Handler handler = new Handler();
-                try {
-                    DbThread t = new DbThread(handler, this, WATCH_LISTEN_VIDEO_SELECT);
-                    t.start();
-                } catch (Exception e) {
-                    DTVTLogger.debug(e);
-                }
+                DbThread t = new DbThread(handler, this, WATCH_LISTEN_VIDEO_SELECT);
+                t.start();
             }
         }
     }
@@ -175,12 +169,8 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
             Handler handler = new Handler();
-            try {
-                DbThread t = new DbThread(handler, this, WATCH_LISTEN_VIDEO_SELECT);
-                t.start();
-            } catch (Exception e) {
-                DTVTLogger.debug(e);
-            }
+            DbThread t = new DbThread(handler, this, WATCH_LISTEN_VIDEO_SELECT);
+            t.start();
         }
     }
 

@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.datamanager.select;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
@@ -63,12 +64,14 @@ public class ClipKeyListDataManager {
 
         //Daoクラス使用準備
         DBHelper dbHelper = new DBHelper(mContext);
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
-        ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
+        try (SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+            ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
 
-        //データ取得
-        list = clipKeyListDao.findById(columns, type, selection, args);
-        database.close();
+            //データ取得
+            list = clipKeyListDao.findById(columns, type, selection, args);
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("ClipKeyListDataManager::selectClipKeyListData, e.cause=" + e.getCause());
+        }
         DTVTLogger.end();
         return list;
     }

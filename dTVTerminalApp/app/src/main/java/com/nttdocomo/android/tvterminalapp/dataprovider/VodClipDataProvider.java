@@ -75,12 +75,6 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
                 }
             }
         } else {
-            //TODO:Sprint10でDB使用を一時停止
-            //WEBAPIを取得できなかった時はDBのデータを使用
-//            List<Map<String, String>> vodClipList = new ArrayList<>();
-//            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-//            vodClipList = homeDataManager.selectVodClipHomeData();
-//            sendVodClipListData(vodClipList);
             if (null != apiDataProviderCallback) {
                 apiDataProviderCallback.vodClipListCallback(null);
             }
@@ -134,12 +128,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
                 mClipKeyListDataProvider = new ClipKeyListDataProvider(mContext);
                 mClipKeyListDataProvider.getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
             }
-            //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
-//        List<Map<String, String>> vodClipList = getVodClipListData(pagerOffset);
-        getVodClipListData(pagerOffset);
-//        if(vodClipList != null && vodClipList.size() > 0){
-//            sendVodClipListData(vodClipList);
-//        }
+            getVodClipListData(pagerOffset);
         } else {
             DTVTLogger.error("VodClipDataProvider is stopping connection");
             if (null != apiDataProviderCallback) {
@@ -154,7 +143,6 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
      * @param list Vodクリップリスト
      */
     private void sendVodClipListData(final List<Map<String, String>> list) {
-        //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
         apiDataProviderCallback.vodClipListCallback(setVodClipContentData(list));
     }
 
@@ -164,6 +152,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
      * @param clipMapList コンテンツリストデータ
      * @return ListView表示用データ
      */
+    @SuppressWarnings("OverlyLongMethod")
     private List<ContentsData> setVodClipContentData(final List<Map<String, String>> clipMapList) {
         List<ContentsData> clipDataList = new ArrayList<>();
 
@@ -232,24 +221,6 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
      * @param pagerOffset ページオフセット
      */
     private void getVodClipListData(final int pagerOffset) {
-        //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
-//    private List<Map<String, String>> getVodClipListData(int pagerOffset) {
-/*        DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(VOD_LAST_INSERT);
-
-        List<Map<String, String>> list = new ArrayList<>();
-        //Vodクリップ一覧のDB保存履歴と、有効期間を確認
-        boolean fromDb = lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate);
-        if (fromDb) {
-            //データをDBから取得する
-            VodClipDataManager vodClipDataManager = new VodClipDataManager(mContext);
-            list = vodClipDataManager.selectVodClipData();
-            if (null == list || 0 == list.size()) {
-                fromDb = false;
-            }
-        }
-*/
-//        if(!fromDb){
         if (!mIsCancel) {
             //通信クラスにデータ取得要求を出す
             mWebClient = new VodClipWebClient(mContext);
@@ -267,21 +238,6 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
                 apiDataProviderCallback.vodClipListCallback(null);
             }
         }
-//        }
-//        return list;
-    }
-
-    /**
-     * Vodクリップ一覧データをDBに格納する.
-     *
-     * @param vodClipList Vodクリップ一覧データ
-     */
-    private void setStructDB(final VodClipList vodClipList) {
-        //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
-//        DateUtils dateUtils = new DateUtils(mContext);
-//        dateUtils.addLastDate(VOD_LAST_INSERT);
-//        VodClipInsertDataManager dataManager = new VodClipInsertDataManager(mContext);
-//        dataManager.insertVodClipInsertList(vodClipList);
     }
 
     /**

@@ -6,7 +6,9 @@ package com.nttdocomo.android.tvterminalapp.datamanager.select;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.UserInfoListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
@@ -59,13 +61,14 @@ public class UserInfoDataManager {
 
         //Daoクラス使用準備
         DBHelper homeDBHelper = new DBHelper(mContext);
-        SQLiteDatabase database = homeDBHelper.getWritableDatabase();
-        UserInfoListDao userInfoListDao = new UserInfoListDao(database);
+        try (SQLiteDatabase database = homeDBHelper.getWritableDatabase()) {
+            UserInfoListDao userInfoListDao = new UserInfoListDao(database);
 
-        //ホーム画面用データ取得
-        list = userInfoListDao.findById(columns);
-        database.close();
-
+            //ホーム画面用データ取得
+            list = userInfoListDao.findById(columns);
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("UserInfoDataManager::selectUserAgeInfo, e.cause=" + e.getCause());
+        }
         return list;
     }
 }

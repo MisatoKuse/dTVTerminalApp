@@ -80,13 +80,9 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     private ArrayList<RoleListMetaData> mRoleListInfo = null;
 
     /**
-     * チャンネル更新.
+     * チャンネル検索(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
      */
-    private static final int CHANNEL_UPDATE = 1;
-    /**
-     * チャンネル検索.
-     */
-    private static final int CHANNEL_SELECT = 2;
+    private static final int CHANNEL_SELECT = 9;
     /**
      * ロールリスト更新.
      */

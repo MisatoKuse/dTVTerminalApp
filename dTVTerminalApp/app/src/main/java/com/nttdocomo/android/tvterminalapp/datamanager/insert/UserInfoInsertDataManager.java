@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.datamanager.insert;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -101,28 +102,30 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
 
         //各種オブジェクト作成
         DBHelper userInfoListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = userInfoListDBHelper.getWritableDatabase();
-        UserInfoListDao userInfoListDao = new UserInfoListDao(db);
+        try (SQLiteDatabase db = userInfoListDBHelper.getWritableDatabase()) {
+            UserInfoListDao userInfoListDao = new UserInfoListDao(db);
 
-        //読み出し用にコピー
-        mUserData = userInfoList;
+            //読み出し用にコピー
+            mUserData = userInfoList;
 
-        //DB保存前に前回取得したデータは全消去する
-        userInfoListDao.delete();
+            //DB保存前に前回取得したデータは全消去する
+            userInfoListDao.delete();
 
-        for (UserInfoList userInfo : userInfoList) {
+            for (UserInfoList userInfo : userInfoList) {
 
-            //リクエストユーザデータの蓄積
-            List<AccountList> list1 = userInfo.getLoggedinAccount();
+                //リクエストユーザデータの蓄積
+                List<AccountList> list1 = userInfo.getLoggedinAccount();
 
-            makeRecord(userInfoListDao, list1, "");
+                makeRecord(userInfoListDao, list1, "");
 
-            //H4D契約ユーザデータの蓄積（データは横並びで記録するが、ステータスに接頭語を付けて区別を行う）
-            List<AccountList> list2 = userInfo.getH4dContractedAccount();
+                //H4D契約ユーザデータの蓄積（データは横並びで記録するが、ステータスに接頭語を付けて区別を行う）
+                List<AccountList> list2 = userInfo.getH4dContractedAccount();
 
-            makeRecord(userInfoListDao, list2, H4D_HEADER);
+                makeRecord(userInfoListDao, list2, H4D_HEADER);
+            }
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("UserInfoInsertDataManager::insertUserInfoInsertList, e.cause=" + e.getCause());
         }
-        db.close();
         DTVTLogger.end();
     }
 
@@ -184,16 +187,19 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
      */
     public synchronized void readUserInfoInsertList() {
         DTVTLogger.start();
+        List<Map<String, String>> readMap = null;
 
         //各種オブジェクト作成
         DBHelper userInfoListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = userInfoListDBHelper.getWritableDatabase();
-        UserInfoListDao userInfoListDao = new UserInfoListDao(db);
+        try (SQLiteDatabase db = userInfoListDBHelper.getWritableDatabase()) {
+            UserInfoListDao userInfoListDao = new UserInfoListDao(db);
 
-        //データを読み込む
-        List<Map<String, String>> readMap = userInfoListDao.findById(DATA_COLUMNS);
+            //データを読み込む
+            readMap = userInfoListDao.findById(DATA_COLUMNS);
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("UserInfoInsertDataManager::readUserInfoInsertList, e.cause=" + e.getCause());
+        }
 
-        db.close();
         //データを戻す
         mUserData = decodeData(readMap);
 
@@ -311,7 +317,7 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
      * @return 配列をまとめた情報
      */
     private ArrayList<AccountList> makeLine(final List<String> statusList, final List<String> dchAgeList,
-                                                         final List<String> h4dAgeList) {
+                                            final List<String> h4dAgeList) {
         //リストを配列にする
         String[] status = statusList.toArray(new String[0]);
         String[] dchAge = dchAgeList.toArray(new String[0]);

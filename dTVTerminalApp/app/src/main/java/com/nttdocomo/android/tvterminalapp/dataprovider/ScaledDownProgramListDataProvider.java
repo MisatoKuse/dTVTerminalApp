@@ -69,13 +69,13 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
 
     //共通スレッド使う
     /**
-     * チャンネル更新.
+     * チャンネル更新(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
      */
-    private static final int CHANNEL_UPDATE = 1;
+    private static final int CHANNEL_UPDATE = 5;
     /**
-     * 番組更新.
+     * 番組更新(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
      */
-    private static final int SCHEDULE_UPDATE = 2;
+    private static final int SCHEDULE_UPDATE = 6;
     /**
      * チャンネル検索.
      */

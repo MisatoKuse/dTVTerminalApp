@@ -532,26 +532,38 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void tvScheduleListCallback(final List<ContentsData> channelList) {
-        if (channelList != null) {
-            if (channelList.size() > 0) {
-                Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_CHANNEL, channelList);
-                mHandler.sendMessage(msg);
+        //DbThreadからのコールバックではUIスレッドとして扱われないため
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (channelList != null) {
+                    if (channelList.size() > 0) {
+                        Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_CHANNEL, channelList);
+                        mHandler.sendMessage(msg);
+                    }
+                } else {
+                    showGetDataFailedDialog();
+                }
             }
-        } else {
-            showGetDataFailedDialog();
-        }
+        });
     }
 
     @Override
     public void dailyRankListCallback(final List<ContentsData> dailyRankList) {
-        if (dailyRankList != null) {
-            if (dailyRankList.size() > 0) {
-                Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_TODAY, dailyRankList);
-                mHandler.sendMessage(msg);
+        //DbThreadからのコールバックではUIスレッドとして扱われないため
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (dailyRankList != null) {
+                    if (dailyRankList.size() > 0) {
+                        Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_TODAY, dailyRankList);
+                        mHandler.sendMessage(msg);
+                    }
+                } else {
+                    showGetDataFailedDialog();
+                }
             }
-        } else {
-            showGetDataFailedDialog();
-        }
+        });
     }
 
     @Override
@@ -580,50 +592,74 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void videoRankCallback(final List<ContentsData> videoRankList) {
-        if (videoRankList != null) {
-            if (videoRankList.size() > 0) {
-                Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_VIDEO, videoRankList);
-                mHandler.sendMessage(msg);
+        //DbThreadからのコールバックではUIスレッドとして扱われないため
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (videoRankList != null) {
+                    if (videoRankList.size() > 0) {
+                        Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_VIDEO, videoRankList);
+                        mHandler.sendMessage(msg);
+                    }
+                } else {
+                    showGetDataFailedDialog();
+                }
             }
-        } else {
-            showGetDataFailedDialog();
-        }
+        });
     }
 
     @Override
     public void watchingVideoCallback(final List<ContentsData> watchingVideoList) {
-        if (watchingVideoList != null) {
-            if (watchingVideoList.size() > 0) {
-                Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_WATCHING_VIDEO, watchingVideoList);
-                mHandler.sendMessage(msg);
+        //DbThreadからのコールバックではUIスレッドとして扱われないため
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (watchingVideoList != null) {
+                    if (watchingVideoList.size() > 0) {
+                        Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_WATCHING_VIDEO, watchingVideoList);
+                        mHandler.sendMessage(msg);
+                    }
+                } else {
+                    showGetDataFailedDialog();
+                }
             }
-        } else {
-            showGetDataFailedDialog();
-        }
+        });
     }
 
     @Override
     public void recommendChannelCallback(final List<ContentsData> redChList) {
-        if (redChList != null) {
-            if (redChList.size() > 0) {
-                Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RECOMMEND_PROGRAM, redChList);
-                mHandler.sendMessage(msg);
+        //DbThreadからのコールバックではUIスレッドとして扱われないため
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (redChList != null) {
+                    if (redChList.size() > 0) {
+                        Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RECOMMEND_PROGRAM, redChList);
+                        mHandler.sendMessage(msg);
+                    }
+                } else {
+                    showGetDataFailedDialog();
+                }
             }
-        } else {
-            showGetDataFailedDialog();
-        }
+        });
     }
 
     @Override
     public void recommendVideoCallback(final List<ContentsData> redVdList) {
-        if (redVdList != null) {
-            if (redVdList.size() > 0) {
-                Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RECOMMEND_VOD, redVdList);
-                mHandler.sendMessage(msg);
+        //DbThreadからのコールバックではUIスレッドとして扱われないため
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (redVdList != null) {
+                    if (redVdList.size() > 0) {
+                        Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RECOMMEND_VOD, redVdList);
+                        mHandler.sendMessage(msg);
+                    }
+                } else {
+                    showGetDataFailedDialog();
+                }
             }
-        } else {
-            showGetDataFailedDialog();
-        }
+        });
     }
 
     /**

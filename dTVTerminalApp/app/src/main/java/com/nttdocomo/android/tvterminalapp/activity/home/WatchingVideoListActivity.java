@@ -213,37 +213,41 @@ public class WatchingVideoListActivity extends BaseActivity implements
 
     @Override
     public void watchListenVideoListCallback(final List<ContentsData> watchListenVideoContentInfo) {
-        mListView.setVisibility(View.VISIBLE);
-        mRelativeLayout.setVisibility(View.GONE);
-        if (null == watchListenVideoContentInfo) {
-            //通信とJSON Parseに関してerror処理
-            DTVTLogger.debug("ClipListActivity::VodClipListCallback, get data failed.");
-            // TODO:エラーメッセージ表示はリスト画面上に表示する
-            Toast.makeText(this, "視聴中ビデオデータ取得失敗", Toast.LENGTH_SHORT).show();
-            resetPaging();
-            resetCommunication();
-            return;
-        }
+        //DbThreadからのコールバックではUIスレッドとして扱われないため
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mListView.setVisibility(View.VISIBLE);
+                mRelativeLayout.setVisibility(View.GONE);
+                if (null == watchListenVideoContentInfo) {
+                    //通信とJSON Parseに関してerror処理
+                    DTVTLogger.debug("ClipListActivity::VodClipListCallback, get data failed.");
+                    resetPaging();
+                    resetCommunication();
+                    return;
+                }
 
-        if (0 == watchListenVideoContentInfo.size()) {
-            //doing
-            resetCommunication();
-            return;
-        }
+                if (0 == watchListenVideoContentInfo.size()) {
+                    //doing
+                    resetCommunication();
+                    return;
+                }
 
-        int pageNumber = getCurrentNumber();
-        for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE
-                && i < watchListenVideoContentInfo.size(); ++i) { //mPageNumber
-            mWatchingVideoListData.add(watchListenVideoContentInfo.get(i));
-        }
+                int pageNumber = getCurrentNumber();
+                for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE
+                        && i < watchListenVideoContentInfo.size(); ++i) { //mPageNumber
+                    mWatchingVideoListData.add(watchListenVideoContentInfo.get(i));
+                }
 
-        //アナライザーの指摘によるヌルチェック
-        if (mWatchingVideoListData != null) {
-            DTVTLogger.debug("WatchListenVideoCallback, mWatchingVideoListData.size==" + mWatchingVideoListData.size());
-        }
+                //アナライザーの指摘によるヌルチェック
+                if (mWatchingVideoListData != null) {
+                    DTVTLogger.debug("WatchListenVideoCallback, mWatchingVideoListData.size==" + mWatchingVideoListData.size());
+                }
 
-        resetCommunication();
-        mWatchListenVideoBaseAdapter.notifyDataSetChanged();
+                resetCommunication();
+                mWatchListenVideoBaseAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     /**
