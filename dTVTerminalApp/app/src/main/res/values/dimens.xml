@@ -296,6 +296,7 @@
     <dimen name="tv_program_list_main_layout_calendar_arrow_height">24dp</dimen>
     <dimen name="tv_program_item_panel_clip_width">15dp</dimen>
     <dimen name="tv_program_item_panel_clip_side">30dp</dimen>
+    <dimen name="tv_program_channel_height">44dp</dimen>
 
     <!--アプリケーション情報-->
     <dimen name="application_info_image_width">128dp</dimen>
