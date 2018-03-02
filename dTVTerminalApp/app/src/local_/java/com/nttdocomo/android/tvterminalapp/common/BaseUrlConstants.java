@@ -14,10 +14,10 @@ public class BaseUrlConstants {
             "https://sea2.stg.dtv.dmkt-sp.jp/irengine/search/index.do";
 
     /**
-     * レコメンド情報取得APIのURL.
+     * レコメンドサーバAPIのベースURL.
      */
-    public static final String RECOMMEND_LIST_GET_URL =
-            "https://ve.m.support2.smt.docomo.ne.jp/srermd/recommend/index.do";
+    public static final String RECOMMEND_BASE_URL =
+            "https://ve.m.service.smt.docomo.ne.jp/srermd/";
 
     /**
      * ワンタイムパスワードでレコメンドサーバーを認証するURL.

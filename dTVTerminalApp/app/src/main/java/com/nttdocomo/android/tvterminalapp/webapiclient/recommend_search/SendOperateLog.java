@@ -25,7 +25,7 @@ public class SendOperateLog extends WebApiBase {
     /**
      * Url.
      */
-    private StringBuffer mUrl = new StringBuffer(UrlConstants.WebUrl.SEND_OPERATE_LOG_URL);
+    private StringBuffer mUrl = new StringBuffer(UrlConstants.WebApiUrl.RECOMMEND_SEND_OPERATE_LOG_URL);
     /**
      * カテゴリID.
      */
