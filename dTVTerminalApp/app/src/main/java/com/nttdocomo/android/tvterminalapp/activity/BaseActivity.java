@@ -23,6 +23,7 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -87,6 +88,14 @@ public class BaseActivity extends FragmentActivity implements
      * ヘッダーBaseレイアウト.
      */
     private LinearLayout mBaseLinearLayout = null;
+    /**
+     *　ステータスレイアウト.
+     */
+    private   LinearLayout mStatusLinearLayout = null;
+    /**
+     *　タイトルレイアウト.
+     */
+    private  RelativeLayout mHeaderTitleLayout = null;
     /**
      * ヘッダーレイアウト.
      */
@@ -295,6 +304,8 @@ public class BaseActivity extends FragmentActivity implements
     private void initView() {
         DTVTLogger.start();
         mBaseLinearLayout = findViewById(R.id.base_ll);
+        mStatusLinearLayout = findViewById(R.id.header_status_linear);
+        mHeaderTitleLayout = findViewById(R.id.header_title_relative_layout);
         mHeaderLayout = findViewById(R.id.base_title);
         mTitleTextView = findViewById(R.id.header_layout_text);
         mTitleImageView = findViewById(R.id.header_layout_title_image);
@@ -515,18 +526,89 @@ public class BaseActivity extends FragmentActivity implements
     protected void setTitleText(final CharSequence text) {
         if (this instanceof LaunchActivity || this instanceof STBConnectActivity
                 || (this instanceof STBSelectActivity && text.equals(getString(R.string.str_app_title))
-                || this instanceof STBSelectErrorActivity || this instanceof PairingHelpActivity
-                || this instanceof DAccountInductionActivity || this instanceof HomeActivity
-                || this instanceof DAccountReSettingActivity || this instanceof DAccountSettingHelpActivity)) {
+                || this instanceof STBSelectErrorActivity || this instanceof PairingHelpActivity || this instanceof HomeActivity
+                || this instanceof DAccountInductionActivity || this instanceof DAccountReSettingActivity
+                || this instanceof DAccountSettingHelpActivity)) {
             if (mTitleImageView != null) {
                 //ヘッダーに「ドコモテレビターミナル」画像を表示する対応
                 mTitleTextView.setVisibility(View.GONE);
                 mTitleImageView.setVisibility(View.VISIBLE);
             }
+            if (this instanceof HomeActivity) {
+                changeTitlePosition(mTitleImageView, mStatusLinearLayout);
+            }
         } else if (mTitleTextView != null) {
             mTitleTextView.setVisibility(View.VISIBLE);
             mTitleImageView.setVisibility(View.GONE);
             mTitleTextView.setText(text);
+            changeTitleLayout(mHeaderTitleLayout, mStatusLinearLayout);
+        }
+    }
+
+    /**
+     *　タイトルの描画を監視する.
+     * @param mHeaderTitleLayout タイトルレイアウト
+     * @param mStatusLinearLayout　ステータスアイコンレイアウト
+     */
+
+    private void changeTitleLayout(final RelativeLayout mHeaderTitleLayout, final LinearLayout mStatusLinearLayout) {
+
+        mStatusLinearLayout.getViewTreeObserver()
+                .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                    @Override
+                    public boolean onPreDraw() {
+                        mStatusLinearLayout.getViewTreeObserver().removeOnPreDrawListener(this);
+                        displayTitleLayout(mHeaderTitleLayout, mStatusLinearLayout);
+                        return true;
+                    }
+                });
+    }
+
+    /**
+     * タイトルのレイアウトを変える.
+     * @param mHeaderTitleLayout　タイトルレイアウト
+     * @param statusIcon　ステータスアイコンレイアウト
+     */
+
+    private void displayTitleLayout(final RelativeLayout mHeaderTitleLayout, final LinearLayout statusIcon) {
+        if (statusIcon.getVisibility() == View.VISIBLE && mHeaderTitleLayout.getX() + mHeaderTitleLayout.
+                getMeasuredWidth() > statusIcon.getX()) {
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                    RelativeLayout.MarginLayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            layoutParams.addRule(RelativeLayout.LEFT_OF, R.id.header_status_linear);
+            mHeaderTitleLayout.setLayoutParams(layoutParams);
+        }
+    }
+
+
+    /**
+     *　タイトルの描画を監視する.
+     * @param mTitleImageView タイトルレイアウト
+     * @param mStatusLinearLayout　ステータスアイコンレイアウト
+     */
+    private void changeTitlePosition(final ImageView mTitleImageView, final LinearLayout mStatusLinearLayout) {
+        mStatusLinearLayout.getViewTreeObserver()
+                .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                    @Override
+                    public boolean onPreDraw() {
+                        mStatusLinearLayout.getViewTreeObserver().removeOnPreDrawListener(this);
+                        displayTitlePosition(mTitleImageView, mStatusLinearLayout);
+                        return true;
+                    }
+                });
+    }
+
+    /**
+     * タイトルのレイアウトを変える.
+     * @param mTitleImageView　タイトルレイアウト
+     * @param statusIcon　ステータスアイコンレイアウト
+     */
+    private void displayTitlePosition(final ImageView mTitleImageView, final LinearLayout statusIcon) {
+        if (mTitleImageView.getX() + mTitleImageView.getMeasuredWidth() > statusIcon.getX()) {
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                    RelativeLayout.MarginLayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            layoutParams.addRule(RelativeLayout.LEFT_OF, R.id.header_status_linear);
+            mTitleImageView.setLayoutParams(layoutParams);
         }
     }
 

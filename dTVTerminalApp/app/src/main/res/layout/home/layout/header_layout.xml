@@ -14,6 +14,7 @@
         android:src="@mipmap/header_material_icon_arrow_left" />
 
     <LinearLayout
+        android:id="@+id/header_status_linear"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
@@ -36,7 +37,8 @@
     </LinearLayout>
 
     <RelativeLayout
-        android:layout_width="@dimen/main_header_title_text_width"
+        android:id="@+id/header_title_relative_layout"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
         android:gravity="center">
