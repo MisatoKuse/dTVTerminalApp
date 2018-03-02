@@ -128,6 +128,15 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     }
 
     /**
+     * リストの表示を更新する.
+     */
+    public void invalidateViews() {
+        if (null != mRecommendListview) {
+            mRecommendListview.invalidateViews();
+        }
+    }
+
+    /**
      * チャンネルリストを受け取り、アダプターに渡す.
      *
      * @param channelData チャンネル情報

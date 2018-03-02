@@ -591,6 +591,7 @@ public class RecommendActivity extends BaseActivity implements
         if (baseFragment != null) {
             baseFragment.enableContentsAdapterCommunication();
             baseFragment.displayLoadMore(false);
+            baseFragment.invalidateViews();
         }
     }
 
