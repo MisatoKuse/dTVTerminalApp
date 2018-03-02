@@ -62,6 +62,18 @@ public class TotalSearchResponseData {
         String  mobileViewingFlg;
         //String person;    //iosソースより、保留
         //int titleKind;    //iosソースより、保留
+        /**
+         *  開始時刻.
+         */
+        public String startViewing;
+        /**
+         *  終了時刻.
+         */
+        public String endViewing;
+        /**
+         *  チャンネル名.
+         */
+        public String channelName;
     }
 
     /**
@@ -115,7 +127,8 @@ public class TotalSearchResponseData {
         }
         for (Content content: contentList) {
             SearchContentInfo info = new SearchContentInfo(false, content.ctId, content.serviceId,
-                    content.ctPicURL1, content.ctPicURL2, content.title, content.rank, content.mobileViewingFlg);
+                    content.ctPicURL1, content.ctPicURL2, content.title, content.rank, content.mobileViewingFlg,
+                    content.startViewing, content.endViewing, content.channelName);
             searchContentInfoArray.add(info);
         }
     }

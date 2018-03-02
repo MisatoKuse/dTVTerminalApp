@@ -144,6 +144,18 @@ public class SearchXmlParser extends AsyncTask<String, Integer, String> {
      * kMobileViewingFlg.
      */
     private static final String kMobileViewingFlg = "mobileViewingFlg";
+    /**
+     * 開始時刻.
+     */
+    private static final String kStartViewing = "startViewing";
+    /**
+     * 終了時刻.
+     */
+    private static final String kEndViewing = "endViewing";
+    /**
+     * チャンネル名.
+     */
+    private static final String kChannelName = "channelName";
 
     /**
      * Parserのリスナー.
@@ -410,6 +422,18 @@ public class SearchXmlParser extends AsyncTask<String, Integer, String> {
             int currentContentListIndex = searchResponse.contentList.size() - 1;
             TotalSearchResponseData.Content content = searchResponse.contentList.get(currentContentListIndex);
             content.mobileViewingFlg = value;
+        } else if (kStartViewing.equals(tagName)) {
+            int currentContentListIndex = searchResponse.contentList.size() - 1;
+            TotalSearchResponseData.Content content = searchResponse.contentList.get(currentContentListIndex);
+            content.startViewing = value;
+        } else if (kEndViewing.equals(tagName)) {
+            int currentContentListIndex = searchResponse.contentList.size() - 1;
+            TotalSearchResponseData.Content content = searchResponse.contentList.get(currentContentListIndex);
+            content.endViewing = value;
+        } else if (kChannelName.equals(tagName)) {
+            int currentContentListIndex = searchResponse.contentList.size() - 1;
+            TotalSearchResponseData.Content content = searchResponse.contentList.get(currentContentListIndex);
+            content.channelName = value;
         } else if (kId.equals(tagName)) {
             ifNullCreate();
             searchError.error.id = value;

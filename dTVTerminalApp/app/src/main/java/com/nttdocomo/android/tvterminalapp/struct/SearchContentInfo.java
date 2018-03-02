@@ -51,7 +51,19 @@ public class SearchContentInfo {
     /**
      *  mobileViewingFlg.
      */
-    public String  mobileViewingFlg;
+    public String mobileViewingFlg;
+    /**
+     *  開始時刻.
+     */
+    public String startViewing;
+    /**
+     *  終了時刻.
+     */
+    public String endViewing;
+    /**
+     *  チャンネル名.
+     */
+    public String channelName;
 
     /**
      * コンストラクタ.
@@ -66,7 +78,8 @@ public class SearchContentInfo {
      */
     public SearchContentInfo(final boolean clipFlag, final String contentId, final int serviceId,
                              final String contentPictureUrl1, final String contentPictureUrl2,
-                             final String title, final int rank, final String mobileViewingFlg) {
+                             final String title, final int rank, final String mobileViewingFlg,
+                             final String startViewing, final String endViewing, final String channelName) {
         this.clipFlag = clipFlag;
         this.contentId = contentId;
         this.serviceId = serviceId;
@@ -75,6 +88,9 @@ public class SearchContentInfo {
         this.title = title;
         this.rank = String.valueOf(rank);
         this.mobileViewingFlg = mobileViewingFlg;
+        this.startViewing = startViewing;
+        this.endViewing = endViewing;
+        this.channelName = channelName;
         //TODO:↓レコメンドサーバからコンテンツ詳細情報が取得できるようになったら、synop、comment、highlight取得に関する一連の処理を追加する
         this.synop = "";
         this.comment = "※解説(ダミー)【吹替版】" +

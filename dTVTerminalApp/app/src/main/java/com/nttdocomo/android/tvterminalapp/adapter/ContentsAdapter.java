@@ -246,6 +246,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
          * dアニメ.
          */
         TAB_D_ANIMATE,
+        /**
+         * デフォルト.
+         */
+        TAB_DEFAULT,
     }
 
     /**
@@ -355,7 +359,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_DAILY_RANK:
             case TYPE_WEEKLY_RANK:
             case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
-            case TYPE_SEARCH_LIST:
             case TYPE_CONTENT_DETAIL_CHANNEL_LIST:
                 textMargin = STATUS_MARGINTOP17;
                 clipMargin = CLIP_MARGINTOP35;
@@ -392,6 +395,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_RECORDED_LIST:
                 break;
             case TYPE_RECOMMEND_LIST://おすすめ番組・ビデオ
+            case TYPE_SEARCH_LIST://検索
                 setTabContentMargin(holder, contentView);
                 break;
             default:
@@ -447,6 +451,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 setTextMargin(textMargin, holder, contentView);
                 setClipMargin(clipMargin, contentView);
                 break;
+            case TAB_DEFAULT:
             default:
                 break;
         }
@@ -580,6 +585,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.ll_rating.setVisibility(View.GONE);
                 holder.tv_clip.setVisibility(View.GONE);
                 break;
+            case TAB_DEFAULT:
             default:
                 break;
         }
@@ -621,6 +627,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         if (!TextUtils.isEmpty(listContentInfo.getTime()) || !TextUtils.isEmpty(listContentInfo.getStartViewing())) { //時間
             switch (mType) {
                 case TYPE_RECOMMEND_LIST://おすすめ番組・ビデオ
+                case TYPE_SEARCH_LIST://検索
                     setTabTimeData(holder, listContentInfo);
                     break;
                 case TYPE_DAILY_RANK: // 今日のテレビランキング
@@ -651,7 +658,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 case TYPE_RECORDED_LIST: // 録画番組一覧
                 case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
                 case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
-                case TYPE_SEARCH_LIST:
                 case TYPE_CONTENT_DETAIL_CHANNEL_LIST: // コンテンツ詳細チャンネル一覧
                     holder.tv_time.setText(listContentInfo.getTime());
                     break;
@@ -696,6 +702,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TAB_D_ANIMATE:
                 holder.tv_time.setVisibility(View.GONE);
                 break;
+            case TAB_DEFAULT:
             default:
                 break;
         }
@@ -855,7 +862,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_recorded_hyphen.setVisibility(View.GONE);
                 holder.tv_recorded_ch_name.setVisibility(View.GONE);
             }
-            if (mType == ActivityTypeItem.TYPE_RECOMMEND_LIST) {
+            if (mType == ActivityTypeItem.TYPE_RECOMMEND_LIST || mType == ActivityTypeItem.TYPE_SEARCH_LIST) {
                 setTabHyphenVisibility(holder);
             }
         }
@@ -878,6 +885,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TAB_D_TV:
             case TAB_VIDEO:
                 break;
+            case TAB_DEFAULT:
             default:
                 break;
 
@@ -934,6 +942,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         viewHolder = setCommonListItem(viewHolder, view);
         switch (mType) {
             case TYPE_RECOMMEND_LIST://おすすめ番組・ビデオ
+            case TYPE_SEARCH_LIST://検索
                 setTabContentHyphen(holder, view);
                 break;
             case TYPE_VIDEO_RANK: // ビデオランキング
@@ -942,7 +951,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
             case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
             case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
-            case TYPE_SEARCH_LIST:
                 break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 viewHolder.tv_recording_reservation =
@@ -977,6 +985,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     private void setTabContentHyphen(final ViewHolder holder, final View view) {
         switch (mTabType) {
             case TAB_TV:
+            case TAB_DEFAULT:
                 holder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
                 holder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
                 break;

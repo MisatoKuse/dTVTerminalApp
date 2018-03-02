@@ -28,6 +28,9 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetail
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity.PAGE_NO_OF_SERVICE_CLEAR;
+import static com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity.PAGE_NO_OF_SERVICE_TELEVISION;
+
 /**
  * 検索結果画面を表示する.
  */
@@ -133,8 +136,13 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
      *
      * @param count 検索結果件数
      */
-    public void notifyDataSetChanged(final String count) {
+    public void notifyDataSetChanged(final String count, final int tabPosition) {
         if (null != mContentsAdapter) {
+            if (tabPosition == PAGE_NO_OF_SERVICE_TELEVISION) {
+                mContentsAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_TV);
+            } else {
+                mContentsAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_DEFAULT);
+            }
             mContentsAdapter.notifyDataSetChanged();
         }
         if (null != mCountText) {
@@ -188,7 +196,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         if (null != mData) {
             mData.clear();
         }
-        notifyDataSetChanged(SearchCountDefault);
+        notifyDataSetChanged(SearchCountDefault, PAGE_NO_OF_SERVICE_CLEAR);
     }
 
     @Override
