@@ -67,6 +67,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
                         sendVodClipListData(list.getVcList());
                     } else {
                         mClipList = list;
+                        sendVodClipListData(list.getVcList());
                     }
                 } else {
                     if (null != apiDataProviderCallback) {

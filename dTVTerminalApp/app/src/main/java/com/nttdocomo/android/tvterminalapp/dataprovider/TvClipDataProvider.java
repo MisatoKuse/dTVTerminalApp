@@ -66,6 +66,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
                         sendTvClipListData(list.getVcList());
                     } else {
                         mClipList = list;
+                        sendTvClipListData(list.getVcList());
                     }
                 } else {
                     if (null != apiDataProviderCallback) {

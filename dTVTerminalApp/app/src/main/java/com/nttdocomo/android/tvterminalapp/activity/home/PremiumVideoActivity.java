@@ -58,6 +58,10 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
      */
     private boolean mIsCommunicating = false;
     /**
+     * コンテンツ詳細表示フラグ.
+     */
+    private boolean mContentsDetailDisplay = false;
+    /**
      * グローバルメニューからの起動かどうか.
      */
     private Boolean mIsMenuLaunch = false;
@@ -101,6 +105,23 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
 
         resetPaging();
         initView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DTVTLogger.start();
+        //コンテンツ詳細から戻ってきたときのみクリップ状態をチェックする
+        if (mContentsDetailDisplay) {
+            mContentsDetailDisplay = false;
+            if (null != mContentsAdapter) {
+                List<ContentsData> list = mRentalDataProvider.checkClipStatus(mContentsList);
+                mContentsAdapter.setListData(list);
+                mContentsAdapter.notifyDataSetChanged();
+                DTVTLogger.debug("PremiumVideoActivity::Clip Status Update");
+            }
+        }
+        DTVTLogger.end();
     }
 
     /**
@@ -242,6 +263,7 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
         OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(mContentsList.get(i), ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
         intent.putExtra(detailData.getRecommendFlg(), detailData);
+        mContentsDetailDisplay = true;
         startActivity(intent);
     }
 

@@ -66,43 +66,43 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     /**
      * サムネイルmarginleft.
      */
-    private final static int THUMBNAIL_MARGINLEFT = 16;
+    private final static int THUMBNAIL_MARGIN_LEFT = 16;
     /**
      * サムネイルmargintop.
      */
-    private final static int THUMBNAIL_MARGINEND = 10;
+    private final static int THUMBNAIL_MARGIN_END = 10;
     /**
      * サムネイルmarginbottom.
      */
-    private final static int THUMBNAIL_MARGINBOTTOM = 10;
+    private final static int THUMBNAIL_MARGIN_BOTTOM = 10;
     /**
      * status　margintop.
      */
-    private final static int STATUS_MARGINTOP17 = 17;
+    private final static int STATUS_MARGIN_TOP17 = 17;
     /**
      * status　margintop.
      */
-    private final static int STATUS_MARGINTOP10 = 10;
+    private final static int STATUS_MARGIN_TOP10 = 10;
 
     /**
      * 番組タイトル margintop.
      */
-    private final static int TITLE_MARGINTOP17 = 17;
+    private final static int TITLE_MARGIN_TOP17 = 17;
 
     /**
      * 番組タイトル margintop.
      */
-    private final static int TITLE_MARGINTOP20 = 20;
+    private final static int TITLE_MARGIN_TOP20 = 20;
 
     /**
      * 番組タイトル margintop.
      */
-    private final static int TITLE_MARGINTOP30 = 30;
+    private final static int TITLE_MARGIN_TOP30 = 30;
 
     /**
      * クリップアイコンmargintop.
      */
-    private final static int CLIP_MARGINTOP35 = 35;
+    private final static int CLIP_MARGIN_TOP35 = 35;
     /**
      * 時刻テキストサイズ.
      */
@@ -119,7 +119,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     /**
      * 受付アイコンマージン.
      */
-    private final static int RECEPTION_MARGINTOP30 = 30;
+    private final static int RECEPTION_MARGIN_TOP30 = 30;
     /**
      * ダウンロードStatus種別.
      */
@@ -220,7 +220,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         TYPE_RECOMMEND_LIST
     }
 
-
     /**
      * 機能
      * 共通タブーを使う.
@@ -309,6 +308,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         return position;
     }
 
+    @SuppressWarnings("OverlyLongMethod")
     @Override
     public View getView(final int position, final View view, final ViewGroup parent) {
         ViewHolder holder;
@@ -360,8 +360,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_WEEKLY_RANK:
             case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
             case TYPE_CONTENT_DETAIL_CHANNEL_LIST:
-                textMargin = STATUS_MARGINTOP17;
-                clipMargin = CLIP_MARGINTOP35;
+                textMargin = STATUS_MARGIN_TOP17;
+                clipMargin = CLIP_MARGIN_TOP35;
                 setTextMargin(textMargin, holder, contentView);
                 setClipMargin(clipMargin, contentView);
                 break;
@@ -369,7 +369,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_VIDEO_CONTENT_LIST:
             case TYPE_WATCHING_VIDEO_LIST:
             case TYPE_CLIP_LIST_MODE_VIDEO:
-                textMargin = TITLE_MARGINTOP17;
+                textMargin = TITLE_MARGIN_TOP17;
                 setTextMargin(textMargin, holder, contentView);
                 layoutParamsClip.addRule(RelativeLayout.ALIGN_PARENT_END, R.id.parent_relative_layout);
                 layoutParamsClip.addRule(RelativeLayout.CENTER_VERTICAL);
@@ -377,7 +377,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 break;
             case TYPE_RENTAL_RANK:
             case TYPE_PREMIUM_VIDEO_LIST: //プレミアムビデオ
-                textMargin = STATUS_MARGINTOP10;
+                textMargin = STATUS_MARGIN_TOP10;
                 setTextMargin(textMargin, holder, contentView);
                 layoutParamsClip.addRule(RelativeLayout.ALIGN_PARENT_END, R.id.parent_relative_layout);
                 layoutParamsClip.addRule(RelativeLayout.CENTER_VERTICAL);
@@ -385,10 +385,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 break;
             case TYPE_RECORDING_RESERVATION_LIST:
                 //録画予約一覧用余白設定
-                textMargin = STATUS_MARGINTOP17;
-                setTextAllMargin(THUMBNAIL_MARGINLEFT, textMargin, THUMBNAIL_MARGINBOTTOM,
+                textMargin = STATUS_MARGIN_TOP17;
+                setTextAllMargin(THUMBNAIL_MARGIN_LEFT, textMargin, THUMBNAIL_MARGIN_BOTTOM,
                         textMargin, holder, contentView);
-                clipMargin = RECEPTION_MARGINTOP30;
+                clipMargin = RECEPTION_MARGIN_TOP30;
                 setClipMargin(clipMargin, contentView);
                 break;
             //ENUMの値をswitch分岐すると、全ての値を書かないとアナライザーがエラーを出すので、caseを追加
@@ -431,14 +431,14 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         int clipMargin;
         switch (mTabType) {
             case TAB_TV:
-                textMargin = STATUS_MARGINTOP10;
-                clipMargin = CLIP_MARGINTOP35;
+                textMargin = STATUS_MARGIN_TOP10;
+                clipMargin = CLIP_MARGIN_TOP35;
                 setTextMargin(textMargin, holder, contentView);
                 setClipMargin(clipMargin, contentView);
                 break;
             case TAB_VIDEO:
-                textMargin = TITLE_MARGINTOP20;
-                clipMargin = CLIP_MARGINTOP35;
+                textMargin = TITLE_MARGIN_TOP20;
+                clipMargin = CLIP_MARGIN_TOP35;
                 setTextMargin(textMargin, holder, contentView);
                 setClipMargin(clipMargin, contentView);
                 break;
@@ -446,8 +446,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TAB_D_ANIMATE:
             case TAB_D_CHANNEL:
             case TAB_D_TV:
-                textMargin = TITLE_MARGINTOP30;
-                clipMargin = CLIP_MARGINTOP35;
+                textMargin = TITLE_MARGIN_TOP30;
+                clipMargin = CLIP_MARGIN_TOP35;
                 setTextMargin(textMargin, holder, contentView);
                 setClipMargin(clipMargin, contentView);
                 break;
@@ -489,11 +489,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
         layoutParams.setMargins(THUMBNAIL_MARGIN0 * (int) density, textMargin * (int) density,
                 THUMBNAIL_MARGIN0 * (int) density, THUMBNAIL_MARGIN0 * (int) density);
-        layoutParams.setMarginStart(THUMBNAIL_MARGINLEFT * (int) density);
+        layoutParams.setMarginStart(THUMBNAIL_MARGIN_LEFT * (int) density);
         layoutParams.addRule(RelativeLayout.START_OF, R.id.item_common_result_show_status_area);
         layoutParams.addRule(RelativeLayout.END_OF, R.id.item_common_result_thumbnail_rl);
         if (holder.tv_clip.getVisibility() == View.GONE) {
-            layoutParams.setMarginEnd(THUMBNAIL_MARGINEND * (int) density);
+            layoutParams.setMarginEnd(THUMBNAIL_MARGIN_END * (int) density);
         } else {
             layoutParams.setMarginEnd(THUMBNAIL_MARGIN0 * (int) density);
         }
@@ -1004,6 +1004,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      *
      * @param holder 設定済みViewHolder
      */
+    @SuppressWarnings("OverlyLongMethod")
     private void setShowDataVisibility(final ViewHolder holder) {
         switch (mType) {
             case TYPE_RECOMMEND_LIST://おすすめ番組・ビデオ
@@ -1071,17 +1072,20 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             String clipType = listContentInfo.getRequestData().getType();
             //ひかりコンテンツ判定
             if (StringUtils.isHikariContents(clipType) || StringUtils.isHikariInDtvContents(clipType)) {
-                //TODO:録画予約一覧等、クリップボタンを表示しない画面はここで外す
+                //クリップボタン表示設定
                 if (!mType.equals(ActivityTypeItem.TYPE_RECORDING_RESERVATION_LIST)) {
                     //クリップ状態が1以外の時は、非活性クリップボタンを表示
                     if (listContentInfo.isClipExec()) {
-                        //クリップ操作後のボタン状態に応じてクリップのステータスを変更し、リスト再利用時のボタン書き換えを回避する
-                        Object clipButtonTag = holder.tv_clip.getTag();
-                        if (clipButtonTag != null) {
-                            if (clipButtonTag.equals(BaseActivity.CLIP_ACTIVE_STATUS)) {
-                                listContentInfo.setClipStatus(true);
-                            } else {
-                                listContentInfo.setClipStatus(false);
+                        //クリップ状態が再取得された場合はタグでの判定を使用しない
+                        if (!listContentInfo.isClipStatusUpdate()) {
+                            //クリップ操作後のボタン状態に応じてクリップのステータスを変更し、リスト再利用時のボタン書き換えを回避する
+                            Object clipButtonTag = holder.tv_clip.getTag();
+                            if (clipButtonTag != null) {
+                                if (clipButtonTag.equals(BaseActivity.CLIP_ACTIVE_STATUS)) {
+                                    listContentInfo.setClipStatus(true);
+                                } else {
+                                    listContentInfo.setClipStatus(false);
+                                }
                             }
                         }
                         if (listContentInfo.isClipStatus()) {
@@ -1094,6 +1098,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                     } else {
                         holder.tv_clip.setVisibility(View.GONE);
                     }
+                    //クリップ状態判定後は更新フラグをfalseに戻す
+                    listContentInfo.setClipStatusUpdate(false);
                 }
             }
         }
@@ -1245,6 +1251,21 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         isDownloadStop = false;
         if (mThumbnailProvider != null) {
             mThumbnailProvider.enableConnect();
+        }
+    }
+
+    /**
+     * 外部からリストを更新するときに使用する.
+     *
+     * @param contentsDataList コンテンツデータ
+     */
+    public void setListData(final List<ContentsData> contentsDataList) {
+        this.mListData = contentsDataList;
+        //コンテンツデータにクリップ状態更新フラグ追加
+        if (mListData != null && mListData.size() > 0) {
+            for (int i = 0; i < mListData.size(); i++) {
+                mListData.get(i).setClipStatusUpdate(true);
+            }
         }
     }
 }

@@ -53,7 +53,7 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     /**
      * リスト表示用アダプタ.
      */
-    private ContentsAdapter mContentsAdapter;
+    public ContentsAdapter mContentsAdapter;
     /**
      * リストのスクロール状態をコールバックするリスナー.
      */
@@ -70,6 +70,10 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
      * 最後のスクロール方向が上ならばtrue.
      */
     private boolean mLastScrollUp = false;
+    /**
+     * コンテンツ詳細表示フラグ.
+     */
+    public boolean mContentsDetailDisplay = false;
     /**
      * 指を置いたY座標.
      */
@@ -229,6 +233,7 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
         OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(mData.get(position), ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
         intent.putExtra(detailData.getRecommendFlg(), detailData);
+        mContentsDetailDisplay = true;
         startActivity(intent);
     }
 
@@ -294,5 +299,15 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
         if (mContentsAdapter != null) {
             mContentsAdapter.enableConnect();
         }
+    }
+
+    /**
+     * Fragment経由でContentsAdapterを更新する.
+     *
+     * @param contentsDataList コンテンツリスト
+     */
+    public void updateContentsList(final List<ContentsData> contentsDataList) {
+        mContentsAdapter.setListData(contentsDataList);
+        noticeRefresh();
     }
 }

@@ -109,6 +109,8 @@ public class ContentsData {
     private boolean mClipExec = false;
     // クリップ未/済
     private boolean mClipStatus = false;
+    //クリップ状態に変更があった場合に真
+    private boolean mIsClipStatusUpdate = false;
     // サブタイトル
     private String mSubTitle = null;
 
@@ -498,5 +500,13 @@ public class ContentsData {
 
     public void setMobileViewingFlg(String mobileViewingFlg) {
         this.mobileViewingFlg = mobileViewingFlg;
+    }
+
+    public boolean isClipStatusUpdate() {
+        return mIsClipStatusUpdate;
+    }
+
+    public void setClipStatusUpdate(boolean mClipStatusUpdate) {
+        this.mIsClipStatusUpdate = mClipStatusUpdate;
     }
 }

@@ -60,7 +60,7 @@ public class ClipListBaseFragment extends Fragment
     /**
      * コンテンツリストアダプター.
      */
-    private ContentsAdapter mClipMainAdapter = null;
+    public ContentsAdapter mClipMainAdapter = null;
 
     /**
      * スクロール位置の記録.
@@ -70,6 +70,10 @@ public class ClipListBaseFragment extends Fragment
      * 最後のスクロール方向が上ならばtrue.
      */
     private boolean mLastScrollUp = false;
+    /**
+     * コンテンツ詳細表示フラグ.
+     */
+    public boolean mContentsDetailDisplay = false;
     /**
      * 指を置いたY座標.
      */
@@ -249,6 +253,7 @@ public class ClipListBaseFragment extends Fragment
         }
 
         if (mActivity != null) {
+            mContentsDetailDisplay = true;
             Intent intent = new Intent(mActivity, ContentDetailActivity.class);
             intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
             OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(mClipListData.get(i), ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
@@ -257,6 +262,9 @@ public class ClipListBaseFragment extends Fragment
         }
     }
 
+    /**
+     * 通信を再開する.
+     */
     public void enableContentsAdapterConnect() {
         if (mClipMainAdapter != null) {
             mClipMainAdapter.enableConnect();
@@ -266,8 +274,21 @@ public class ClipListBaseFragment extends Fragment
         }
     }
 
+    /**
+     * 通信を停止する.
+     */
     public void stopContentsAdapterConnect() {
         StopContentsAdapterConnect stopAdapterConnect = new StopContentsAdapterConnect();
         stopAdapterConnect.execute(mClipMainAdapter);
+    }
+
+    /**
+     * Fragment経由でContentsAdapterを更新する.
+     *
+     * @param contentsDataList コンテンツリスト
+     */
+    public void updateContentsList(final List<ContentsData> contentsDataList) {
+        mClipMainAdapter.setListData(contentsDataList);
+        noticeRefresh();
     }
 }

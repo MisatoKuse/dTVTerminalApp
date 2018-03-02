@@ -74,6 +74,10 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
      */
     private boolean mLastScrollUp = false;
     /**
+     * コンテンツ詳細表示フラグ.
+     */
+    private boolean mContentsDetailDisplay = false;
+    /**
      * 指を置いたY座標.
      */
     private float mStartY = 0;
@@ -101,6 +105,23 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
 
         resetPaging();
         initView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DTVTLogger.start();
+        //コンテンツ詳細から戻ってきたときのみクリップ状態をチェックする
+        if (mContentsDetailDisplay) {
+            mContentsDetailDisplay = false;
+            if (null != mContentsAdapter) {
+                List<ContentsData> list = mRentalDataProvider.checkClipStatus(mContentsList);
+                mContentsAdapter.setListData(list);
+                mContentsAdapter.notifyDataSetChanged();
+                DTVTLogger.debug("RentalListActivity::Clip Status Update");
+            }
+        }
+        DTVTLogger.end();
     }
 
     /**
@@ -242,6 +263,7 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
         OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(mContentsList.get(i), ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
         intent.putExtra(detailData.getRecommendFlg(), detailData);
+        mContentsDetailDisplay = true;
         startActivity(intent);
     }
 

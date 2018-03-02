@@ -60,6 +60,10 @@ public class WatchingVideoListActivity extends BaseActivity implements
      * 最後のスクロール方向が上ならばtrue.
      */
     private boolean mLastScrollUp = false;
+    /**
+     * コンテンツ詳細表示フラグ.
+     */
+    private boolean mContentsDetailDisplay = false;
 
     /**
      * ContentsDataList.
@@ -125,6 +129,23 @@ public class WatchingVideoListActivity extends BaseActivity implements
 
         //スクロールの上下方向検知用のリスナーを設定
         mListView.setOnTouchListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DTVTLogger.start();
+        //コンテンツ詳細から戻ってきたときのみクリップ状態をチェックする
+        if (mContentsDetailDisplay) {
+            mContentsDetailDisplay = false;
+            if (null != mWatchListenVideoBaseAdapter) {
+                List<ContentsData> list = mWatchListenVideoListDataProvider.checkClipStatus(mWatchingVideoListData);
+                mWatchListenVideoBaseAdapter.setListData(list);
+                mWatchListenVideoBaseAdapter.notifyDataSetChanged();
+                DTVTLogger.debug("PremiumVideoActivity::Clip Status Update");
+            }
+        }
+        DTVTLogger.end();
     }
 
     /**
@@ -265,6 +286,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
         OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(
                 mWatchingVideoListData.get(i), ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
         intent.putExtra(detailData.getRecommendFlg(), detailData);
+        mContentsDetailDisplay = true;
         startActivity(intent);
     }
 

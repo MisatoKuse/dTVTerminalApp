@@ -27,9 +27,11 @@ import com.nttdocomo.android.tvterminalapp.datamanager.select.ClipKeyListDataMan
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipKeyListWebClient;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -426,27 +428,29 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     @Override
     public List<Map<String, String>> dbOperation(final int operationId) {
         ClipKeyListInsertDataManager dataManager = new ClipKeyListInsertDataManager(mContext);
-        String crid = mClipRequestData.getCrid();
-        String dispType = mClipRequestData.getDispType();
-        String contentType = mClipRequestData.getContentType();
-        String serviceId = mClipRequestData.getServiceId();
-        String eventId = mClipRequestData.getEventId();
-        String titleId = mClipRequestData.getTitleId();
-        ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(dispType, contentType);
+        if (mClipRequestData != null) {
+            String crid = mClipRequestData.getCrid();
+            String dispType = mClipRequestData.getDispType();
+            String contentType = mClipRequestData.getContentType();
+            String serviceId = mClipRequestData.getServiceId();
+            String eventId = mClipRequestData.getEventId();
+            String titleId = mClipRequestData.getTitleId();
+            ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(dispType, contentType);
 
-        if (tableType != null) {
-            switch (operationId) {
-                case CLIP_ROW_DELETE:
-                    dataManager.deleteRowSqlStart(tableType, crid, serviceId, eventId, titleId);
-                    break;
-                case CLIP_ROW_INSERT:
-                    dataManager.insertRowSqlStart(tableType, crid, serviceId, eventId, titleId);
-                    break;
-                case CLIP_ALL_INSERT:
-                    dataManager.insertClipKeyListInsert(mTableType, mClipKeyListResponse);
-                    break;
-                default:
-                    break;
+            if (tableType != null) {
+                switch (operationId) {
+                    case CLIP_ROW_DELETE:
+                        dataManager.deleteRowSqlStart(tableType, crid, serviceId, eventId, titleId);
+                        break;
+                    case CLIP_ROW_INSERT:
+                        dataManager.insertRowSqlStart(tableType, crid, serviceId, eventId, titleId);
+                        break;
+                    case CLIP_ALL_INSERT:
+                        dataManager.insertClipKeyListInsert(mTableType, mClipKeyListResponse);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
         return null;
@@ -490,6 +494,41 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         }
         DTVTLogger.end();
         return clipStatus;
+    }
+
+    /**
+     * ClipStatus チェック.
+     *
+     * @param contentsDataList コンテンツデータリスト
+     * @return Status変更済みコンテンツデータリスト
+     */
+    public List<ContentsData> checkClipStatus(final List<ContentsData> contentsDataList) {
+        DTVTLogger.start();
+        List<ContentsData> list = new ArrayList<>();
+
+        //Nullチェック
+        if (contentsDataList == null || contentsDataList.size() < 1) {
+            return contentsDataList;
+        }
+
+        for (int i = 0; i < contentsDataList.size(); i++) {
+            ContentsData contentsData = contentsDataList.get(i);
+            //使用データ抽出
+            String dispType = contentsData.getDispType();
+            String contentsType = contentsData.getContentsType();
+            String dTv = contentsData.getDtv();
+            String tvService = contentsData.getTvService();
+            String serviceId = contentsData.getServiceId();
+            String eventId = contentsData.getEventId();
+            String crid = contentsData.getCrid();
+            String titleId = contentsData.getTitleId();
+
+            //判定はgetClipStatusに一任
+            contentsData.setClipStatus(getClipStatus(dispType, contentsType, dTv, crid, serviceId, eventId, titleId, tvService));
+            list.add(contentsData);
+        }
+        DTVTLogger.end();
+        return list;
     }
 
     /**

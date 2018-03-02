@@ -88,6 +88,24 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
         resetPaging();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DTVTLogger.start();
+        //コンテンツ詳細から戻ってきたときのみクリップ状態をチェックする
+        RankingBaseFragment baseFragment = getCurrentFragment();
+        if (baseFragment != null && baseFragment.mContentsDetailDisplay) {
+            baseFragment.mContentsDetailDisplay = false;
+            if (null != baseFragment.mContentsAdapter) {
+                List<ContentsData> list;
+                list = mRankingDataProvider.checkClipStatus(baseFragment.mData);
+                baseFragment.updateContentsList(list);
+                DTVTLogger.debug("VideoRankingActivity::Clip Status Update");
+            }
+        }
+        DTVTLogger.end();
+    }
+
     /**
      * ページのリセット.
      */
