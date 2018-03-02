@@ -8,11 +8,13 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -55,7 +57,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private List<DlnaDmsItem> mDlnaDmsItemList;
     /**
-     *プログレスバー.
+     * プログレスバー.
      */
     private ProgressBar mLoadMoreView = null;
     /**
@@ -69,7 +71,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     /**
      * DMS一覧リスト.
      */
-    private final List<HashMap<String, String>>  mContentsList = new ArrayList<>();
+    private final List<HashMap<String, String>> mContentsList = new ArrayList<>();
     /**
      * 起動モード初期値.
      */
@@ -130,6 +132,16 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      * TextView.
      */
     private TextView mDeviceSelectText;
+
+    /**
+     * ステータス表示の高さの初期値.
+     */
+    private int mFirstStatusHeight = 0;
+
+    /**
+     * ステータス表示の高さの補正値
+     */
+    private final double ANDROID_4_4_FIX_SIZE = 1.2;
     /**
      * 起動モードキー名.
      */
@@ -168,7 +180,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private static final String DEVICE_NAME_KEY = "DEVICE_NAME_KEY";
 
     /**
-     *デバイスを選択してDアカウントを登録フラグ.
+     * デバイスを選択してDアカウントを登録フラグ.
      */
     private boolean mDaccountFlag = false;
 
@@ -195,7 +207,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     }
 
     /**
-     *起動モード.
+     * 起動モード.
      */
     public enum STBSelectFromMode {
         /**
@@ -362,6 +374,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         }
         DTVTLogger.end();
     }
+
     /**
      * デバイスListenerを設定する.
      */
@@ -374,6 +387,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         updateDeviceList(mDlnaProvDevList.getDlnaDMSInfo());
         DTVTLogger.end();
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -387,6 +401,10 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             if (mStartMode == STBSelectFromMode.STBSelectFromMode_Launch.ordinal()) {
 
                 TextView statusTextView = findViewById(R.id.stb_select_status_text);
+
+                //Android5.0未満の表示問題対策
+                fixStatusTextView(statusTextView);
+
                 mPairingImage.setImageResource(R.mipmap.startup_icon_01);
                 statusTextView.setText(R.string.str_stb_select_result_text_search);
                 mCheckBox.setVisibility(View.VISIBLE);
@@ -455,6 +473,10 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         // STB検索中文言表示
         if (mStartMode == STBSelectFromMode.STBSelectFromMode_Launch.ordinal()) {
             TextView statusTextView = findViewById(R.id.stb_select_status_text);
+
+            //Android5.0未満の表示問題対策
+            fixStatusTextView(statusTextView);
+
             statusTextView.setText(R.string.str_stb_select_result_text_search);
 
             // STBが見つかるまで非表示
@@ -485,6 +507,10 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         // STB検索中文言表示
         if (mStartMode == STBSelectFromMode.STBSelectFromMode_Launch.ordinal()) {
             TextView statusTextView = findViewById(R.id.stb_select_status_text);
+
+            //Android5.0未満の表示問題対策
+            fixStatusTextView(statusTextView);
+
             statusTextView.setText(R.string.str_stb_select_result_text);
 
             // STBが見つかったため表示する
@@ -506,6 +532,33 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     }
 
     /**
+     * Android5.0未満で発生する文字表示欠けを予防する.
+     *
+     * @param statusTextView 文字の欠けるテキストビュー
+     */
+    private void fixStatusTextView(TextView statusTextView) {
+        //ヌルかAndroid5.0以上ならば帰る
+        if (statusTextView == null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return;
+        }
+
+        //現在の縦サイズを取得する
+        ViewGroup.LayoutParams layoutParams = statusTextView.getLayoutParams();
+
+        //既に補正済みならば帰る
+        if (mFirstStatusHeight != 0 && mFirstStatusHeight != layoutParams.height) {
+            return;
+        }
+
+        //Android5.0未満の場合、行間を1.5倍にする設定の悪影響で一部文字表示が欠けるので、
+        //防止用に現在の縦サイズを取得して、1.2倍に拡大する
+        mFirstStatusHeight = layoutParams.height;
+        layoutParams.height = (int) (mFirstStatusHeight * ANDROID_4_4_FIX_SIZE);
+        statusTextView.setLayoutParams(layoutParams);
+        statusTextView.requestLayout();
+    }
+
+    /**
      * ペアリング中画面表示を設定.
      */
     private void showPairingeView() {
@@ -523,6 +576,10 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 mParingDevice.setVisibility(View.GONE);
             }
             TextView statusSetting = findViewById(R.id.stb_select_status_text_setting);
+
+            //Android5.0未満の表示問題対策
+            fixStatusTextView(statusSetting);
+
             statusSetting.setVisibility(View.VISIBLE);
             RelativeLayout relativeLayout = findViewById(R.id.stb_icon_relative_layout_setting);
             relativeLayout.setVisibility(View.VISIBLE);
@@ -582,7 +639,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     }
 
     /**
-     *ペアリングしないでアプリを利用するボタンタップ.
+     * ペアリングしないでアプリを利用するボタンタップ.
      */
     private void onUseWithoutPairingButton() {
         DTVTLogger.start();
@@ -604,7 +661,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 startActivity(intent);
             } else {
                 //ペアリングししないで利用する場合、設定画面に戻る
-               finish();
+                finish();
             }
         }
         DTVTLogger.end();
@@ -614,7 +671,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      * STB選択画面でデバイス名Itemがタップされた時に画面遷移する.
      */
     @Override
-    public void onItemClick(final AdapterView<?> adapterView, final  View view, final int i, final long l) {
+    public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         DTVTLogger.start();
         //選択されたSTB番号を保持
         mSelectDevice = i;
@@ -628,6 +685,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
     /**
      * 選択されたSTBを保存して画面遷移を行う.
+     *
      * @param selectDevice 選択されたSTB
      */
     private void storeSTBData(final int selectDevice) {
@@ -693,6 +751,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
     /**
      * デバイスリスト情報を更新する.
+     *
      * @param info デバイスリスト情報
      */
     private void updateDeviceList(final DlnaDMSInfo info) {
@@ -715,7 +774,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             if (!flag) {
                 HashMap<String, String> hashMap = new HashMap<>();
                 // Todo: 試験のために以下のように一時的に変更する。試験後はコメントアウトした内容に戻すこと
-                hashMap.put(DEVICE_NAME_KEY, StringUtils.getConnectString(new String[] {info.get(i).mFriendlyName, "_", info.get(i).mIPAddress}));
+                hashMap.put(DEVICE_NAME_KEY, StringUtils.getConnectString(new String[]{info.get(i).mFriendlyName, "_", info.get(i).mIPAddress}));
 //                hashMap.put(DEVICE_NAME_KEY, info.get(i).mFriendlyName);
                 hashMap.put(info.get(i).mUdn, info.get(i).mUdn);
                 if (mContentsList.size() > 0) {
@@ -769,6 +828,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
     /**
      * 再読み込み時のダイアログ表示処理.
+     *
      * @param b 再読み込みフラグ.
      */
     private void displayMoreData(final boolean b) {
@@ -854,6 +914,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
         /**
          * STB情報取得のタイムアウト時間コールバック.
+         *
          * @param handler ハンドラ
          */
         private StbInfoCallBackTimer(final Handler handler) {
@@ -924,6 +985,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
     /**
      * dアカウントの登録状態を確認する.
+     *
      * @return flag
      */
     private boolean checkDAccountLogin() {
