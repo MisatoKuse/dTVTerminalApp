@@ -114,7 +114,7 @@ public class SearchTopActivity extends BaseActivity
     /**
      * テレビ.
      */
-    private static final int PAGE_NO_OF_SERVICE_TELEVISION = 0;
+    public static final int PAGE_NO_OF_SERVICE_TELEVISION = 0;
     /**
      * ビデオ.
      */
@@ -131,6 +131,10 @@ public class SearchTopActivity extends BaseActivity
      * dアニメ.
      */
     private static final int PAGE_NO_OF_SERVICE_DANIME = PAGE_NO_OF_SERVICE_TELEVISION + 4;
+    /**
+     * クリア用.
+     */
+    public static final int PAGE_NO_OF_SERVICE_CLEAR = PAGE_NO_OF_SERVICE_TELEVISION - 1;
     /**
      * 検索インターバル.
      */
@@ -359,7 +363,7 @@ public class SearchTopActivity extends BaseActivity
                 baseFragment.clear();
                 //連続検索を行うと一瞬0件と表示される対策として、前回の検索結果件数を持たせる
                 String totalCountText = getResultString();
-                baseFragment.notifyDataSetChanged(totalCountText);
+                baseFragment.notifyDataSetChanged(totalCountText, mSearchViewPager.getCurrentItem());
                 setPageNumber(0);
                 setPagingStatus(false);
             }
@@ -485,11 +489,11 @@ public class SearchTopActivity extends BaseActivity
 
             DTVTLogger.debug("baseFragment.mData.size = " + baseFragment.mData.size());
 
-            baseFragment.notifyDataSetChanged(getResultString());
+            baseFragment.notifyDataSetChanged(getResultString(), mSearchViewPager.getCurrentItem());
             baseFragment.invalidateViews();
         } else {
             //表示件数0件の場合は"タブ名+検索結果:0件"を表示する
-            baseFragment.notifyDataSetChanged(getResultString());
+            baseFragment.notifyDataSetChanged(getResultString(), mSearchViewPager.getCurrentItem());
         }
         baseFragment.displayLoadMore(false);
         setSearchStart(false);
