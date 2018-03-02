@@ -431,10 +431,12 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
     @Override
     public void onClickTab(final int position) {
         DTVTLogger.start("position = " + position);
-        mTabIndex = position;
-        clearData();
-        getChannelData();
-        DTVTLogger.end();
+        if (mTabIndex != position) {
+            mTabIndex = position;
+            clearData();
+            getChannelData();
+            DTVTLogger.end();
+        }
     }
 
     /**
