@@ -27,6 +27,11 @@ public class DaccountGetOTT {
     private Context mContext = null;
 
     /**
+     * 実行待ちキュー.
+     */
+    final private OttGetQueue mOttGetQueue;
+
+    /**
      * コールバックの控え.
      */
     private DaccountGetOttCallBack mDaccountGetOttCallBack = null;
@@ -156,16 +161,36 @@ public class DaccountGetOTT {
      * コンストラクタ.
      */
     public DaccountGetOTT() {
+        //重複OTT取得防止処理の設定
+        mOttGetQueue = OttGetQueue.getInstance();
     }
+
 
     /**
      * OTT取得処理を開始する.
      *
+     * (OTT取得処理重複実行防止付き)
      * @param context                コンテキスト
      * @param daccountGetOttCallBack 結果を返すコールバック
      */
-    public synchronized void execDaccountGetOTT(final Context context,
-                                                final DaccountGetOttCallBack daccountGetOttCallBack) {
+    public synchronized void execDaccountGetOTT(
+            final Context context,
+            final DaccountGetOttCallBack daccountGetOttCallBack) {
+        DTVTLogger.start();
+        //同時に複数個実行されないようにする
+        mOttGetQueue.getOttAddOrExec(context,daccountGetOttCallBack);
+        DTVTLogger.end();
+    }
+
+    /**
+     * OTT取得処理開始の実処理.
+     *
+     * @param context                コンテキスト
+     * @param daccountGetOttCallBack 結果を返すコールバック
+     */
+    synchronized void execDaccountGetOttReal(
+            final Context context,
+            final DaccountGetOttCallBack daccountGetOttCallBack) {
         DTVTLogger.start();
 
         //コンテキストとコールバックの取得
@@ -185,6 +210,13 @@ public class DaccountGetOTT {
         intent.setClassName(
                 DaccountConstants.D_ACCOUNT_ID_MANAGER,
                 DaccountConstants.D_ACCOUNT_SERVICE);
+
+        //パラメータにヌルがあるならばエラーとする
+        if(mContext == null || mServiceConnection == null) {
+            mDaccountGetOttCallBack.getOttCallBack(IDimDefines.RESULT_INTERNAL_ERROR, "", "");
+            return;
+        }
+
         boolean ans = mContext.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
         if (!ans && mDaccountGetOttCallBack != null) {
@@ -202,5 +234,13 @@ public class DaccountGetOTT {
             mService = null;
             DTVTLogger.debug("DaccountGetOTTUnbind");
         }
+    }
+
+    /**
+     * 取得したOTTが使い終わった場合に呼び、次のOTT取得を許可する
+     */
+    public void allowNext(Context context) {
+        //次の処理のウェイトを解除する
+        mOttGetQueue.allowNext(context);
     }
 }

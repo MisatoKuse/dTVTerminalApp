@@ -86,6 +86,10 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      */
     private OneTimeTokenData mOneTimeTokenData = null;
     /**
+     * ワンタイムトークン取得クラス.
+     */
+    private DaccountGetOTT mGetOtt = null;
+    /**
      * クッキーマネージャー.
      */
     private CookieManager mCookieManager;
@@ -570,8 +574,8 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      */
     private void getOneTimePassword(final Context context) {
         //ワンタイムパスワードの取得
-        DaccountGetOTT getOtt = new DaccountGetOTT();
-        getOtt.execDaccountGetOTT(context, this);
+        mGetOtt = new DaccountGetOTT();
+        mGetOtt.execDaccountGetOTT(context, this);
     }
 
     @Override
@@ -1282,6 +1286,12 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                     mWebApiBasePlalaCallback.onError(returnCode);
                     break;
             }
+
+            //次のワンタイムトークンの取得を許可する
+            if(mGetOtt != null) {
+                mGetOtt.allowNext(mContext);
+            }
+
             DTVTLogger.end();
         }
 

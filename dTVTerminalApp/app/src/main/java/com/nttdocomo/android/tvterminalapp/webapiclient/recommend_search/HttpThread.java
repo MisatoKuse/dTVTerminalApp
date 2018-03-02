@@ -15,6 +15,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import java.io.BufferedReader;
@@ -96,7 +97,12 @@ public class HttpThread extends Thread {
      * ワンタイムパスワード.
      */
     private String mOneTimePassword;
-
+    /**
+     * ワンタイムパスワード制御クラス.
+     *
+     * 次のワンタイムパスワードの取得を許可するのに使用する
+     */
+    private DaccountGetOTT mGetOtt = null;
     /**
      * クッキーマネージャー.
      */
@@ -167,11 +173,16 @@ public class HttpThread extends Thread {
      * @param httpThreadFinish 終了コールバック
      * @param context          コンテキスト
      * @param oneTimePassword  ワンタイムパスワード
+     * @param getOtt           ワンタイムパスワード制御クラス
      */
     public HttpThread(final String url, final HttpThreadFinish httpThreadFinish,
-                      final Context context, final String oneTimePassword) {
+                      final Context context, final String oneTimePassword,
+                      final DaccountGetOTT getOtt) {
         //ワンタイムパスワードのセット
         mOneTimePassword = oneTimePassword;
+
+        //ワンタイムパスワードの制御クラスのセット
+        mGetOtt = getOtt;
 
         //コンストラクターの共通処理
         commonContractor(url, httpThreadFinish, context);
@@ -186,12 +197,16 @@ public class HttpThread extends Thread {
      * @param httpThreadFinish 終了コールバック
      * @param context          コンテキスト
      * @param oneTimePassword  ワンタイムパスワード
+     * @param getOtt           ワンタイムパスワード制御クラス
      */
     public HttpThread(final String url, final Handler handler,
                       final HttpThreadFinish httpThreadFinish, final Context context,
-                      final String oneTimePassword) {
+                      final String oneTimePassword, final DaccountGetOTT getOtt) {
         //ワンタイムパスワードのセット
         mOneTimePassword = oneTimePassword;
+
+        //ワンタイムパスワードの制御クラスのセット
+        mGetOtt = getOtt;
 
         //コンストラクターの共通処理
         commonContractor(url, httpThreadFinish, context);
@@ -396,6 +411,11 @@ public class HttpThread extends Thread {
                     stringBuffer.append(buffer);
                 }
             } finally {
+                //次回のワンタイムパスワードの取得の許可
+                if (mGetOtt != null) {
+                    mGetOtt.allowNext(mContext);
+                }
+
                 if (bufferedReader != null) {
                     try {
                         bufferedReader.close();

@@ -15,14 +15,25 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
  * サービストークン取得クラス.
  */
 public class ServiceTokenGetControl {
-    //コンテキスト
+    /**
+     * コンテキスト.
+     */
     private final Context mContext;
 
-    //トークンデータ
+    /**
+     * トークンデータ.
+     */
     private OneTimeTokenData mOneTimeTokenData;
 
-    //コールバック
+    /**
+     * コールバック.
+     */
     private NextProcessInterface mNextProcess;
+
+    /**
+     * OTT取得クラス.
+     */
+    private DaccountGetOTT mGetOtt;
 
     /**
      * コンストラクタ.
@@ -50,8 +61,8 @@ public class ServiceTokenGetControl {
         }
 
         //dアカウントのワンタイムパスワードの取得を行う
-        DaccountGetOTT getOtt = new DaccountGetOTT();
-        getOtt.execDaccountGetOTT(mContext, new DaccountGetOTT.DaccountGetOttCallBack() {
+        mGetOtt = new DaccountGetOTT();
+        mGetOtt.execDaccountGetOTT(mContext, new DaccountGetOTT.DaccountGetOttCallBack() {
             @Override
             public void getOttCallBack(int result, final String id, final String oneTimePassword) {
                 gotOtt(result, id, oneTimePassword);
@@ -94,6 +105,11 @@ public class ServiceTokenGetControl {
      * 次の処理を呼び出す.
      */
     private void nextProcess() {
+        //次のワンタイムパスワードの取得を許可する
+        if(mGetOtt != null) {
+            mGetOtt.allowNext(mContext);
+        }
+
         //コールバックがヌルではないならば呼び出す
         if (mNextProcess != null) {
             mNextProcess.onTokenGot();

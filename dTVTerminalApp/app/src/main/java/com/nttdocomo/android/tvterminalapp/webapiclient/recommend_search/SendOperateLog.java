@@ -33,7 +33,7 @@ public class SendOperateLog extends WebApiBase {
     /**
      * SSLチェック用コンテキスト.
      */
-    private Context mContext;
+    final private Context mContext;
     /**
      * 通信禁止判定フラグ.
      */
@@ -42,6 +42,11 @@ public class SendOperateLog extends WebApiBase {
      * HTTP通信スレッド.
      */
     private HttpThread mHttpThread = null;
+
+    /**
+     * OTT取得クラス.
+     */
+    private DaccountGetOTT mGetOtt;
 
     /**
      * コンストラクタ.
@@ -56,7 +61,7 @@ public class SendOperateLog extends WebApiBase {
     /**
      * ログの送信.
      *
-     * @param mDetailData コンテンツ詳細データ
+     * @param mDetailData     コンテンツ詳細データ
      * @param mDetailFullData コンテンツフルデータ
      */
     public void sendOpeLog(final OtherContentsDetailData mDetailData, final VodMetaFullData mDetailFullData) {
@@ -68,13 +73,13 @@ public class SendOperateLog extends WebApiBase {
             }
             if (!TextUtils.isEmpty(mCategoryId)) {
                 //dアカウントのワンタイムパスワードの取得を行う
-                DaccountGetOTT getOtt = new DaccountGetOTT();
-                getOtt.execDaccountGetOTT(mContext, new DaccountGetOTT.DaccountGetOttCallBack() {
+                mGetOtt = new DaccountGetOTT();
+                mGetOtt.execDaccountGetOTT(mContext, new DaccountGetOTT.DaccountGetOttCallBack() {
                     @Override
                     public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
                         //ワンタイムパスワードの取得後に呼び出す
                         mHttpThread = new HttpThread(getUrl(mDetailData), null,
-                                mContext, oneTimePassword);
+                                mContext, oneTimePassword, mGetOtt);
                         mHttpThread.start();
                     }
                 });
