@@ -86,7 +86,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     /**
      * レコメンドコンテンツ最大件数（システム制約）.
      */
-    private static final int MAX_SHOW_LIST_SIZE = 50;
+    private static final int MAX_SHOW_LIST_SIZE = 100;
     /**
      * レコメンドコンテンツ取得位置（システム制約）.
      */
