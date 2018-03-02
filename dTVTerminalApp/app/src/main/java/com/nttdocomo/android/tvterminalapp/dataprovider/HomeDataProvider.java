@@ -507,6 +507,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         //おすすめ番組・レコメンド情報は最初からContentsDataのリストなので、そのまま使用する
         getRecommendChListData();
 
+        //おすすめビデオ・ワンタイムパスワードの取得で重複しないようにしたので、連続呼び出しが可能になった
+        getRecommendVdListData();
+
         //今日のテレビランキング
         getDailyRankListData();
 
@@ -1221,9 +1224,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             t.start();
         }
 
-        //おすすめビデオ・レコメンド情報は最初からContentsDataのリストなので、そのまま使用する
-        //ワンタイムパスワードが競合しないように、おすすめ番組取得後に動作を開始する
-        getRecommendVdListData();
         DTVTLogger.end();
     }
 
@@ -1366,7 +1366,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 recommendDataManager = new RecommendListDataManager(mContext);
                 resultList = recommendDataManager.selectRecommendList(
                         SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV);
-                mApiDataProviderCallback.recommendChannelCallback(resultList);;
+                mApiDataProviderCallback.recommendChannelCallback(resultList);
                 break;
             case SELECT_RECOMMEND_VOD_LIST:
                 recommendDataManager = new RecommendListDataManager(mContext);

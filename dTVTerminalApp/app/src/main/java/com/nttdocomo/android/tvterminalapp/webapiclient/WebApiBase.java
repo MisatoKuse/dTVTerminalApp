@@ -45,7 +45,7 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
         final WebApiBase webApiBase = this;
 
         //ワンタイムパスワード無しで呼び出す
-        mHttpThread = new HttpThread(url, handler, webApiBase, context, "");
+        mHttpThread = new HttpThread(url, handler, webApiBase, context, "", null);
         mHttpThread.start();
     }
 
@@ -64,12 +64,12 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
         final WebApiBase webApiBase = this;
         //Log.d(DCommon.LOG_DEF_TAG, "WebApiBase::get, url= " + url);
         //dアカウントのワンタイムパスワードの取得を行う
-        DaccountGetOTT getOtt = new DaccountGetOTT();
+        final DaccountGetOTT getOtt = new DaccountGetOTT();
         getOtt.execDaccountGetOTT(context, new DaccountGetOTT.DaccountGetOttCallBack() {
             @Override
             public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
                 //ワンタイムパスワードの取得後に呼び出す
-                mHttpThread = new HttpThread(url, webApiBase, context, oneTimePassword);
+                mHttpThread = new HttpThread(url, webApiBase, context, oneTimePassword, getOtt);
                 mHttpThread.start();
             }
         });
