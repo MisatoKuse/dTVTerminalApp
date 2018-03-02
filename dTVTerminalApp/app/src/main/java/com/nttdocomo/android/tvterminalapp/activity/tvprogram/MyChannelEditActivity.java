@@ -44,14 +44,21 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      * コンマ.
      */
     private static final String COMMA = ",";
+
+    /**
+     * bracket left.
+     */
+    private static final String BRACKET_LEFT = "[";
+
+    /**
+     * bracket right.
+     */
+    private static final String BRACKET_RIGHT = "]";
+
     /**
      * チャンネル情報キー.
      */
     private static final String CHANNEL_INFO = "channel_info";
-    /**
-     * 選択中チャンネルポジション.
-     */
-    private static final String POSITION = "position";
     /**
      * チャンネルサービスID.
      */
@@ -72,6 +79,14 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      * マイ番組表データコレクション.
      */
     private ArrayList<MyChannelMetaData> mEditList;
+    /**
+     * 追加ポジション.
+     */
+    private int mAddPosition = 0;
+    /**
+     * 削除ポジション.
+     */
+    private int mDeletePosition = 0;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -248,12 +263,11 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
             case 0:
                 DTVTLogger.start();
                 Bundle info = data.getBundleExtra(CHANNEL_INFO);
-                int position = data.getExtras().getInt(POSITION);
                 ChannelInfo channel = new ChannelInfo();
                 channel.setServiceId(info.getString(SERVICE_ID));
                 channel.setTitle(info.getString(TITLE));
                 //MYチャンネル登録実行
-                executeMyChannelListRegister(position, channel);
+                executeMyChannelListRegister(mAddPosition, channel);
                 DTVTLogger.end();
                 break;
             default:
@@ -283,7 +297,8 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      */
     private void showDialogToConfirmUnRegistration(final Bundle bundle) {
         CustomDialog customDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-        customDialog.setContent(this.getResources().getString(R.string.my_channel_list_setting_dialog_content_unregister));
+        customDialog.setContent(BRACKET_LEFT + mEditList.get(mDeletePosition).getTitle() + BRACKET_RIGHT
+                + getResources().getString(R.string.my_channel_list_setting_dialog_content_unregister));
         customDialog.setConfirmText(R.string.positive_response);
         customDialog.setCancelText(R.string.negative_response);
         customDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
@@ -299,8 +314,9 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     }
 
     @Override
-    public void onAddChannelItem() {
+    public void onAddChannelItem(final int position) {
         //画面遷移
+        mAddPosition = position;
         Intent intent = new Intent(this, SelectChannelActivity.class);
         intent.putExtra(SERVICE_IDS, getServiceIds());
         startActivityForResult(intent, 0);
@@ -312,7 +328,8 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      * @param bundle 削除する情報
      */
     @Override
-    public void onRemoveChannelItem(final Bundle bundle) {
+    public void onRemoveChannelItem(final Bundle bundle, final int position) {
+        mDeletePosition = position;
         showDialogToConfirmUnRegistration(bundle);
     }
 
