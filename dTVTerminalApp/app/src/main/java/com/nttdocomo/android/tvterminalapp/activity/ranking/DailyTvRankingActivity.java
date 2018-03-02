@@ -74,6 +74,10 @@ public class DailyTvRankingActivity extends BaseActivity implements
      * ProgressBar.
      */
     private RelativeLayout mRelativeLayout = null;
+    /**
+     * コンテンツ詳細表示フラグ.
+     */
+    private boolean mContentsDetailDisplay = false;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -93,6 +97,23 @@ public class DailyTvRankingActivity extends BaseActivity implements
         mListView.setVisibility(View.GONE);
         mRelativeLayout.setVisibility(View.VISIBLE);
         mRankingTopDataProvider = new RankingTopDataProvider(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DTVTLogger.start();
+        //コンテンツ詳細から戻ってきたときのみクリップ状態をチェックする
+        if (mContentsDetailDisplay) {
+            mContentsDetailDisplay = false;
+            if (null != mContentsAdapter) {
+                List<ContentsData> list = mRankingTopDataProvider.checkClipStatus(mContentsList);
+                mContentsAdapter.setListData(list);
+                mContentsAdapter.notifyDataSetChanged();
+                DTVTLogger.debug("DailyTvRankingActivity::Clip Status Update");
+            }
+        }
+        DTVTLogger.end();
     }
 
     /**
@@ -213,6 +234,8 @@ public class DailyTvRankingActivity extends BaseActivity implements
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
         OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(mContentsList.get(position), ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
         intent.putExtra(detailData.getRecommendFlg(), detailData);
+        //コンテンツ詳細表示フラグを有効にする
+        mContentsDetailDisplay = true;
         startActivity(intent);
     }
 

@@ -116,6 +116,28 @@ public class ClipListActivity extends BaseActivity implements
         //初回表示のみ前画面からのタブ指定を反映する
         mViewPager.setCurrentItem(mStartPageNo);
         mTabLayout.setTab(mStartPageNo);
+        //開始位置がTVタブの時は onPageSelected() が効かないため、ここでデータ取得する
+        if (mStartPageNo == CLIP_LIST_PAGE_NO_OF_TV) {
+            setTv();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DTVTLogger.start();
+        //コンテンツ詳細から戻ってきたときのみクリップ状態をチェックする
+        ClipListBaseFragment baseFragment = getCurrentFragment();
+        if (baseFragment != null && baseFragment.mContentsDetailDisplay) {
+            baseFragment.mContentsDetailDisplay = false;
+            if (null != baseFragment.mClipMainAdapter) {
+                List<ContentsData> list;
+                list = mTvClipDataProvider.checkClipStatus(baseFragment.mClipListData);
+                baseFragment.updateContentsList(list);
+                DTVTLogger.debug("ClipListActivity::Clip Status Update");
+            }
+        }
+        DTVTLogger.end();
     }
 
     /**
@@ -473,7 +495,6 @@ public class ClipListActivity extends BaseActivity implements
      * クリップ(ビデオ)画面設定.
      */
     private void setVod() {
-
         ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
         fragment.enableContentsAdapterConnect();
         //スワイプ時にページング中のプログレスバーを非表示にする
@@ -553,15 +574,19 @@ public class ClipListActivity extends BaseActivity implements
         super.onStartCommunication();
         DTVTLogger.start();
         if (mVodClipDataProvider != null) {
+            ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
+            fragment.enableContentsAdapterConnect();
             mVodClipDataProvider.enableConnect();
+        } else {
+            //現在表示中のTabのデータ取得を行う
+            setVod();
         }
         if (mTvClipDataProvider != null) {
+            ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
+            fragment.enableContentsAdapterConnect();
             mTvClipDataProvider.enableConnect();
-        }
-        //前画面からのタブ指定起動反映
-        if (mStartPageNo == CLIP_LIST_PAGE_NO_OF_VOD) {
-            setVod();
         } else {
+            //現在表示中のTabのデータ取得を行う
             setTv();
         }
     }
