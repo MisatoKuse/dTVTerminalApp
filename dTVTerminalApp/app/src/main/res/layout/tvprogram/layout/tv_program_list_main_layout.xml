@@ -38,7 +38,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/tv_program_list_main_layout_channel_rv"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/tv_program_channel_height"
             android:layout_toEndOf="@id/tv_program_list_main_layout_curtime_iv"
             android:scrollbars="none" />
 
