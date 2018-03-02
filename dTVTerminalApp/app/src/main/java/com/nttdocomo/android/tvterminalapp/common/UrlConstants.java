@@ -67,11 +67,6 @@ public class UrlConstants {
         public static final String DTVCHANNEL_GOOGLEPLAY_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=com.nttdocomo.dch";
 
         /**
-         * ログ送信用URL.
-         */
-        public static final String SEND_OPERATE_LOG_URL = "https://ve.m.service.smt.docomo.ne.jp/srermd/operateLog/index.do";
-
-        /**
          * 設定画面 プライバシーポリシー URL TODO 仮のURL.
          */
         public final static String SETTING_MENU_PRIVACY_POLICY_URL = "https://www.nttdocomo.co.jp/";
@@ -126,7 +121,13 @@ public class UrlConstants {
          * レコメンド情報取得APIのURL.
          */
         public static final String RECOMMEND_LIST_GET_URL =
-                BaseUrlConstants.RECOMMEND_LIST_GET_URL;
+                BaseUrlConstants.RECOMMEND_BASE_URL + "recommend/index.do";
+
+        /**
+         * ログ送信用URL.
+         */
+        public static final String RECOMMEND_SEND_OPERATE_LOG_URL =
+                BaseUrlConstants.RECOMMEND_BASE_URL + "operateLog/index.do";
 
         /**
          * レコメンドサーバー用のCIRCUS認証URL.
