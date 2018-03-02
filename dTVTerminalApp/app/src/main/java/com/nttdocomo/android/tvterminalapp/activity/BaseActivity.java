@@ -174,7 +174,7 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * ページング単位.
      */
-    protected static final int NUM_PER_PAGE = 20;
+    protected static final int NUM_PER_PAGE = 50;
 
     /**
      * webViewの読み込み完了値.

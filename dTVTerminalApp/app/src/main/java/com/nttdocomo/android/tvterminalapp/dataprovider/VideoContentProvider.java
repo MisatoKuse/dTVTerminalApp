@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider.UPPER_PAGE_LIMIT;
+
 /**
  * ビデオ一覧専用DPクラス.
  */
@@ -86,8 +88,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
         mVideoRankList = null;
         if (!mIsCancel) {
             if (mRequiredClipKeyList) {
-                mClipKeyListDataProvider = new ClipKeyListDataProvider(mContext);
-                mClipKeyListDataProvider.getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+                getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
             }
             // コンテンツ数
             getVideoContentListData(genreId, offset);
@@ -107,13 +108,12 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
         //通信クラスにデータ取得要求を出す
         mGenreListWebClient = new ContentsListPerGenreWebClient(mContext);
         if (!mIsCancel) {
-            int upperPageLimit = 20;
             UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
             int ageReq = userInfoDataProvider.getUserAge();
             //TODO：暫定的に人気順でソートする
             String sort = JsonConstants.GENRE_PER_CONTENTS_SORT_PLAY_COUNT_DESC;
 
-            mGenreListWebClient.getContentsListPerGenreApi(upperPageLimit, offset, WebApiBasePlala.FILTER_RELEASE, ageReq, genreId, sort, this);
+            mGenreListWebClient.getContentsListPerGenreApi(UPPER_PAGE_LIMIT, offset, WebApiBasePlala.FILTER_RELEASE, ageReq, genreId, sort, this);
         } else {
             DTVTLogger.error("VideoContentProvider is stopping connection");
             if (null != mApiVideoContentDataProviderCallback) {

@@ -927,11 +927,10 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
 
                 UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
                 int ageReq = userInfoDataProvider.getUserAge();
-                int upperPageLimit = 20;
                 int lowerPageLimit = 1;
                 String pagerDirection = "next";
 
-                webClient.getWatchListenVideoApi(ageReq, upperPageLimit,
+                webClient.getWatchListenVideoApi(ageReq, UPPER_PAGE_LIMIT,
                         lowerPageLimit, pagerOffset, pagerDirection, this);
             } else {
                 DTVTLogger.error("WatchListenVideoWebClient is stopping connect");

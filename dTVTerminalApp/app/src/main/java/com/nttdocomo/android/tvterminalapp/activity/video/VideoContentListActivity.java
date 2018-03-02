@@ -285,6 +285,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
      */
     private void setShowVideoContent(final List<ContentsData> videoContentInfo) {
         if (null == videoContentInfo || 0 == videoContentInfo.size()) {
+            displayMoreData(false);
             return;
         }
 

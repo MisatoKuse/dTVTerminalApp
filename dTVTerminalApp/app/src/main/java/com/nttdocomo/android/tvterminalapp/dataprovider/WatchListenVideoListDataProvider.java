@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider.UPPER_PAGE_LIMIT;
+
 /**
  * 視聴中ビデオ一覧.
  */
@@ -150,8 +152,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
 
         // クリップキー一覧を取得
         if (!mIsCancel && mRequiredClipKeyList) {
-                mClipKeyListDataProvider = new ClipKeyListDataProvider(mContext);
-                mClipKeyListDataProvider.getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
         }
 
         //視聴中ビデオ一覧のDB保存履歴と、有効期間を確認
@@ -160,11 +161,10 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
 
             UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
             int ageReq = userInfoDataProvider.getUserAge();
-            int upperPageLimit = 20;
             int lowerPageLimit = 1;
             String pagerDirection = "next";
 
-            mWebClient.getWatchListenVideoApi(ageReq, upperPageLimit,
+            mWebClient.getWatchListenVideoApi(ageReq, UPPER_PAGE_LIMIT,
                     lowerPageLimit, pagerOffset, pagerDirection, this);
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
