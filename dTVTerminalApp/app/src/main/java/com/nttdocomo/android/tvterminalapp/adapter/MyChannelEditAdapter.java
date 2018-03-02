@@ -36,7 +36,7 @@ public class MyChannelEditAdapter extends BaseAdapter implements View.OnClickLis
     /**
      *ポジション.
      */
-    private static final String POSITION_MY_CHANNEL_LIST = "position";
+    private final String POSITION_MY_CHANNEL_LIST = "position";
     /**
      * インデックス.
      */
@@ -57,6 +57,12 @@ public class MyChannelEditAdapter extends BaseAdapter implements View.OnClickLis
      * 編集ボタンをタップすると"MY編集画面"に情報を反映されるインターフェース.
      */
     private final EditMyChannelItemImpl mEditMyChannelItemImpl;
+
+    /**
+     * マイ番組表編集アダプター.
+     * @param context Activity
+     * @param list チャンネルリスト
+     */
 
     public MyChannelEditAdapter(final MyChannelEditActivity context, final ArrayList<MyChannelMetaData> list) {
         this.mContext = context;
@@ -114,10 +120,10 @@ public class MyChannelEditAdapter extends BaseAdapter implements View.OnClickLis
                 Bundle bundle = (Bundle) view.getTag();
                 //登録
                 if (TextUtils.isEmpty(bundle.getString(SERVICE_ID_MY_CHANNEL_LIST))) {
-                    mEditMyChannelItemImpl.onAddChannelItem();
+                    mEditMyChannelItemImpl.onAddChannelItem(bundle.getInt(POSITION_MY_CHANNEL_LIST));
                     //解除
                 } else {
-                    mEditMyChannelItemImpl.onRemoveChannelItem(bundle);
+                    mEditMyChannelItemImpl.onRemoveChannelItem(bundle, bundle.getInt(POSITION_MY_CHANNEL_LIST));
                 }
                 break;
             default:
@@ -131,13 +137,16 @@ public class MyChannelEditAdapter extends BaseAdapter implements View.OnClickLis
     public interface EditMyChannelItemImpl {
         /**
          *登録際、画面遷移用.
+         *
+         * @param position 追加ポジション
          */
-        void onAddChannelItem();
+        void onAddChannelItem(final int position);
         /**
          * 解除際、ダイアログを呼び出す.
          *
          * @param bundle Bundle
+         * @param position 削除ポジション
          */
-        void onRemoveChannelItem(Bundle bundle);
+        void onRemoveChannelItem(Bundle bundle, final int position);
     }
 }
