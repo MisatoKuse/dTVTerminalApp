@@ -451,7 +451,8 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
             @Override
             public void onScrolled(final RecyclerView recyclerView, final int dx, final int dy) {
                 if (recyclerView.getScrollState() != RecyclerView.SCROLL_STATE_IDLE) {
-                    programList.scrollBy(dx, dy);
+                        programList.stopScroll();
+                        programList.scrollBy(dx, dy);
                 }
             }
         });
@@ -460,7 +461,8 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
             @Override
             public void onScrolled(final RecyclerView recyclerView, final int dx, final int dy) {
                 if (recyclerView.getScrollState() != RecyclerView.SCROLL_STATE_IDLE) {
-                    channelList.scrollBy(dx, dy);
+                        channelList.stopScroll();
+                        channelList.scrollBy(dx, dy);
                 }
             }
         });
