@@ -47,11 +47,6 @@ public class WatchListenVideoDataManager {
      */
     public void insertWatchListenVideoInsertList(final WatchListenVideoList watchListenVideoList) {
 
-        //有効期限判定
-        if (!DateUtils.getLastDate(mContext, DateUtils.WATCHING_VIDEO_LIST_LAST_INSERT)) {
-            return;
-        }
-
         //取得データが空の場合は更新しないで、有効期限をクリアする
         if (watchListenVideoList == null || watchListenVideoList.getVcList() == null
                 || watchListenVideoList.getVcList().size() < 1) {

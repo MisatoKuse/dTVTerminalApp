@@ -48,11 +48,6 @@ public class WeeklyRankInsertDataManager {
      */
     public void insertWeeklyRankInsertList(final WeeklyRankList weeklyRankList) {
 
-        //有効期限判定
-        if (!DateUtils.getLastDate(mContext, DateUtils.WEEKLY_RANK_LAST_INSERT)) {
-            return;
-        }
-
         //取得データが空の場合は更新しないで、有効期限をクリアする
         if (weeklyRankList == null || weeklyRankList.getWrList() == null
                 || weeklyRankList.getWrList().size() < 1) {

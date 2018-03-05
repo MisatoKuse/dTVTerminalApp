@@ -363,41 +363,6 @@ public class DateUtils {
     }
 
     /**
-     * 日付比較結果を返却する.
-     *
-     * @param context 　コンテキスト
-     * @param key     SharedPreferencesキー
-     * @return 期限切れ日付判定結果
-     */
-    public static boolean getLastDate(final Context context, final String key) {
-        SharedPreferences data = context.getSharedPreferences(DATA_SAVE, Context.MODE_PRIVATE);
-        String lastStr = data.getString(key, "");
-
-        if (lastStr.isEmpty()) {
-            return false;
-        }
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DD);
-        //日付の比較
-        Calendar calendar = Calendar.getInstance();
-        String nowStr = sdf.format(calendar.getTime());
-        Date lastDate = new Date();
-        Date nowDate = new Date();
-        try {
-            lastDate = sdf.parse(lastStr);
-            nowDate = sdf.parse(nowStr);
-        } catch (ParseException e) {
-            DTVTLogger.debug(e);
-            return false;
-        }
-        boolean isExpired = false;
-        if (lastDate.compareTo(nowDate) < 0) {
-            isExpired = true;
-        }
-
-        return TextUtils.isEmpty(lastStr) || isExpired;
-//        return !TextUtils.isEmpty(lastStr) && !isExpired;
-    }
-    /**
      * chNoの対象日付データの前回取得日時をエポック秒で返す.
      *
      * @param chNos ChNo

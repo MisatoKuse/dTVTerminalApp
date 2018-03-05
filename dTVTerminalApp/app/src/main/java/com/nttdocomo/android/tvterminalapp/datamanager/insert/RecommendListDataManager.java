@@ -56,11 +56,6 @@ public class RecommendListDataManager {
             final RecommendChList redChList, final boolean addFlag, final int tagPageNo,
             final String cacheDateKey) {
 
-        //有効期限判定
-        if (!DateUtils.getLastDate(mContext, cacheDateKey)) {
-            return;
-        }
-
         //取得データが空の場合は更新しないで、有効期限をクリアする
         if (redChList == null || redChList.getmRcList().size() < 1
                 || redChList.getmRcList().get(0).isEmpty()) {

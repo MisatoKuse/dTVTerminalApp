@@ -46,12 +46,6 @@ public class VideoRankInsertDataManager {
      * @param videoRankList ビデオランキングリスト
      */
     public void insertVideoRankInsertList(final VideoRankList videoRankList) {
-
-        //有効期限判定
-        if (!DateUtils.getLastDate(mContext, DateUtils.VIDEO_RANK_LAST_INSERT)) {
-            return;
-        }
-
         //取得データが空の場合は更新しないで、有効期限をクリアする
         if (videoRankList == null || videoRankList.getVrList() == null
                 || videoRankList.getVrList().size() < 1) {

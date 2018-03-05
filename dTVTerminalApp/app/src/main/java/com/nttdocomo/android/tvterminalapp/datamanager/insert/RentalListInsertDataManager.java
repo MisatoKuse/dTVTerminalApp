@@ -55,11 +55,6 @@ public class RentalListInsertDataManager {
      */
     public void insertRentalListInsertList(final PurchasedVodListResponse rentalList) {
 
-        //有効期限判定
-        if (!DateUtils.getLastDate(mContext, DateUtils.RENTAL_VOD_LAST_UPDATE)) {
-            return;
-        }
-
         //取得データが空の場合は更新しないで、有効期限をクリアする
         if (rentalList == null || rentalList.getVodActiveData() == null || rentalList.getVodActiveData().size() < 1
                 || rentalList.getVodMetaFullData() == null || rentalList.getVodMetaFullData().size() < 1) {
