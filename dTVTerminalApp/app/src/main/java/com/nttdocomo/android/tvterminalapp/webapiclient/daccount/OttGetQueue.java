@@ -31,7 +31,11 @@ enum OttGetQueue {
      */
     DaccountGetOTT mDaccountGetOTT = null;
 
-    //
+    /**
+     * 通信中止フラグ.
+     */
+    private boolean mDisconnectionFlag = false;
+
     /**
      * 前回実行時の時間を実行するか否かの基準にする
      */
@@ -75,6 +79,16 @@ enum OttGetQueue {
             mTaskQueue = new ArrayDeque<>();
             mDaccountGetOTT = new DaccountGetOTT();
             mTaskExecFlag = 0;
+            mDisconnectionFlag = false;
+        }
+
+        //通信切断フラグの検査
+        if (mDisconnectionFlag) {
+            //通信切断指令が出ているので、残った通信タスクをクリアして終了する
+            mTaskQueue = new ArrayDeque<>();
+            mTaskExecFlag = 0;
+            DTVTLogger.end("force disconnect");
+            return;
         }
 
         //現在時刻の方が過大ならば、実行する
@@ -140,6 +154,16 @@ enum OttGetQueue {
     private void execOtt(final Context context) {
         DTVTLogger.start();
         DTVTLogger.debug("Queue size = " + mTaskQueue.size());
+
+        //通信切断フラグの検査
+        if (mDisconnectionFlag) {
+            //通信切断指令が出ているので、残った通信タスクをクリアして終了する
+            mTaskQueue = new ArrayDeque<>();
+            mTaskExecFlag = 0;
+            DTVTLogger.end("force disconnect");
+            return;
+        }
+
         //現在時刻の方が過大ならば、実行する
         // (ただし通常は、時間経過ではなくallowNextメソッドでmTaskExecFlagをゼロにすることで動く)
         if (mTaskExecFlag + MAX_WAIT_TIME <= System.currentTimeMillis()) {
@@ -154,6 +178,18 @@ enum OttGetQueue {
                 mTaskExecFlag = System.currentTimeMillis();
             }
         }
+        DTVTLogger.end();
+    }
+
+    /**
+     * 通信切断フラグのセット.
+     *
+     * @param disconnectionFlag trueならば通信切断
+     */
+    protected void setmDisconnectionFlag(boolean disconnectionFlag) {
+        DTVTLogger.start();
+        mDisconnectionFlag = disconnectionFlag;
+        DTVTLogger.debug("disconnect flag = " + mDisconnectionFlag);
         DTVTLogger.end();
     }
 }

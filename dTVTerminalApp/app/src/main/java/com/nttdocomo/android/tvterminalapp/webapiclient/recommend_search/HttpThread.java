@@ -52,6 +52,10 @@ public class HttpThread extends Thread {
      * 2番目のパラメータなので&を付ける
      */
     static private final String AUTH_OTP_NAME = "&AuthOtp=";
+    /**
+     * リダイレクトの戻り値を無視する為の文字列.
+     */
+    static private final String REDIRECT_SKIP = "redirect skip";
 
     /**
      * 例外用メッセージ.
@@ -445,6 +449,10 @@ public class HttpThread extends Thread {
             throw new IOException(errMessage);
         }
 
+        //リダイレクトの際は結果は無用なのでダミーデータを入れる
+        if(WebApiBasePlala.isRedirectCode(status)) {
+            stringBuffer.append(REDIRECT_SKIP);
+        }
         //結果を返す
         return stringBuffer;
     }
@@ -473,6 +481,12 @@ public class HttpThread extends Thread {
      * @param stringBuffer 読み込みデータ
      */
     private synchronized void finishSelect(final StringBuffer stringBuffer) {
+        if(stringBuffer.toString().equals(REDIRECT_SKIP)) {
+            //リダイレクトの分の処理は飛ばす
+            DTVTLogger.debug("redirect skip");
+            return;
+        }
+
         if (mHandler != null) {
             mHandler.post(new Runnable() {
                 @Override

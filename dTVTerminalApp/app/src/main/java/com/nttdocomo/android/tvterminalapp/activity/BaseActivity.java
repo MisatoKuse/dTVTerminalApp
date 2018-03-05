@@ -70,6 +70,7 @@ import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipDeleteWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClient;
 
@@ -2054,6 +2055,13 @@ public class BaseActivity extends FragmentActivity implements
         if (mDAccountControl != null) {
             mDAccountControl.stopCommunication();
         }
+
+        //ワンタイムトークンに通信停止を通知する
+        final DaccountGetOTT getOtt = new DaccountGetOTT();
+        if (getOtt != null) {
+            getOtt.setmDisconnectionFlag(true);
+        }
+
         DTVTLogger.end();
     }
 
@@ -2108,6 +2116,14 @@ public class BaseActivity extends FragmentActivity implements
         }
         checkDAccountOnRestart();
         onStartCommunication();
+
+        //ワンタイムトークンに通信再開を通知する
+        final DaccountGetOTT getOtt = new DaccountGetOTT();
+        if (getOtt != null) {
+            //通信切断フラグをfalseにセット
+            getOtt.setmDisconnectionFlag(false);
+        }
+
         DTVTLogger.end();
     }
 
