@@ -115,12 +115,14 @@
             android:name=".activity.setting.NewsActivity"
             android:screenOrientation="portrait"
             android:exported="false"
-            android:hardwareAccelerated="false"/>
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTask"/>
         <activity
             android:name=".activity.setting.SettingActivity"
             android:screenOrientation="portrait"
             android:exported="false"
-	        android:hardwareAccelerated="false"/>
+	        android:hardwareAccelerated="false"
+            android:launchMode="singleTask"/>
         <activity
             android:name=".activity.setting.SettingImageQualityActivity"
             android:screenOrientation="portrait"
