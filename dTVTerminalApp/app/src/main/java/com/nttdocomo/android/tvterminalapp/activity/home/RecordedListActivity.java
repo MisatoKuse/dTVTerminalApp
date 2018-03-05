@@ -357,6 +357,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         if (null != mViewPager) {
             RecordedBaseFragment baseFragment = mRecordedFragmentFactory.createFragment(tabNo, this);
             baseFragment.clear();
+            baseFragment.notifyDataSetChanged();
         }
     }
 
@@ -575,7 +576,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onStartCommunication() {
         super.onStartCommunication();
-        progressBar.setVisibility(View.VISIBLE);
+        if (progressBar != null) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
         initDl();
         getData();
     }

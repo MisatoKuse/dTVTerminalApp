@@ -19,37 +19,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ProgressBar
-            android:id="@+id/record_list_main_layout_progress"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
-
         <android.support.v4.view.ViewPager
             android:id="@+id/record_list_main_layout_viewpagger"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true" />
-
-        <!-- 仕様通りに表示させるため、一時↓のように構成
-        <com.nttdocomo.android.tvterminalapp.view.ChangeModeActionButton
-            android:id="@+id/recorded_List_filtering_layout_button"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="bottom|end">
-
-            <ImageView
-                android:id="@+id/recorded_List_filtering_layout_image"
-                android:layout_width="@dimen/recorded_filtering_icon_width"
-                android:layout_height="@dimen/recorded_filtering_icon_height"
-                android:layout_marginBottom="@dimen/recorded_filtering_icon_margin_bottom"
-                android:layout_marginEnd="@dimen/recorded_filtering_icon_margin_end"
-                android:contentDescription="@null"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/ic_fiber_manual_record_white_24dp"/>
-
-        </com.nttdocomo.android.tvterminalapp.view.ChangeModeActionButton>-->
+        <ProgressBar
+            android:id="@+id/record_list_main_layout_progress"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
     </RelativeLayout>
 </LinearLayout>
