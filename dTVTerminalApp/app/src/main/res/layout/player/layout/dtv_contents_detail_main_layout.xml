@@ -32,7 +32,8 @@
                     android:id="@+id/dtv_contents_detail_main_layout_player_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_centerHorizontal="true" />
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerInParent="true"/>
 
                 <TextView
                     android:id="@+id/tv_player_main_layout_video_ctrl_player_title"

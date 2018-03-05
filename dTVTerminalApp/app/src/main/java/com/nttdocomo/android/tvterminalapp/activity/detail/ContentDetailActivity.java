@@ -1514,6 +1514,14 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                     playerParams.width = getScreenWidth();
                 }
             }
+            if (playerParams.height > playerParams.width) {
+                playerParams.height = getWidthDensity();
+                if (mPlayerController != null) {
+                    int widthRatio = mPlayerController.getVideoAspectRatioWidth();
+                    int heightRatio = mPlayerController.getVideoAspectRatioHeight();
+                    playerParams.width = getWidthDensity() / heightRatio * widthRatio;
+                }
+            }
             mScreenWidth = playerParams.width;
             setPlayerProgressView(true);
             setRemoteControllerViewVisibility(View.GONE);
@@ -1526,6 +1534,14 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                     playerParams.height = (getWidthDensity() * SCREEN_RATIO_HEIGHT_3 / SCREEN_RATIO_WIDTH_4);
                 } else {
                     playerParams.height = (getWidthDensity() * SCREEN_RATIO_HEIGHT_9 / SCREEN_RATIO_WIDTH_16);
+                }
+            }
+            if (getHeightDensity() < getWidthDensity()) {
+                playerParams.width = getHeightDensity();
+                if (mPlayerController != null) {
+                    int widthRatio = mPlayerController.getVideoAspectRatioWidth();
+                    int heightRatio = mPlayerController.getVideoAspectRatioHeight();
+                    playerParams.height = getHeightDensity() / widthRatio * heightRatio;
                 }
             }
             setTitleVisibility(true);
@@ -2214,13 +2230,11 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
             case R.id.tv_player_ctrl_now_on_air_full_screen_iv:
                 if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                    initPlayerView();
-                    setPlayerEvent();
                 } else {
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                    initPlayerView();
-                    setPlayerEvent();
                 }
+                initPlayerView();
+                setPlayerEvent();
                 hideCtrlViewAfterOperate();
                 break;
             case R.id.dtv_contents_detail_main_layout_thumbnail_btn:
