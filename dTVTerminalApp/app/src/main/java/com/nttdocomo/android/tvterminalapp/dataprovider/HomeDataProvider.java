@@ -23,6 +23,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.insert.VideoRankInsertDat
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.WatchListenVideoDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.HomeDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.RankingTopDataManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.select.RentalListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
@@ -99,18 +100,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     private static final int DEFAULT_CHANNEL_DISPLAY_TYPE = 0;
 
     /**
-     * ロールリストID(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
-     */
-    private static final int ROLE_ID_LIST = 17;
-    /**
-     * チャンネルリストID(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
-     */
-    private static final int CHANNEL_LIST = 15;
-    /**
-     * 番組一覧ID(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
-     */
-    private static final int TV_SCHEDULE_LIST = 16;
-    /**
      * 今日のテレビランキングリストID.
      */
     private static final int DAILY_RANK_LIST = 3;
@@ -158,6 +147,26 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * おすすめVod一覧取得.
      */
     private static final int SELECT_RECOMMEND_VOD_LIST = 14;
+    /**
+     * チャンネルリストID(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
+     */
+    private static final int CHANNEL_LIST = 15;
+    /**
+     * 番組一覧ID(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
+     */
+    private static final int TV_SCHEDULE_LIST = 16;
+    /**
+     * ロールリストID(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
+     */
+    private static final int ROLE_ID_LIST = 17;
+    /**
+     * レンタル一覧取得.
+     */
+    private static final int SELECT_RENTAL_VIDEO_LIST = 18;
+    /**
+     * レンタル、プレミアムビデオ一覧取得.
+     */
+    private static final int SELECT_PREMIUM_VIDEO_LIST = 1;
 
     /**
      * 購入済みCh一覧取得クラス.
@@ -329,9 +338,10 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             List<Map<String, String>> vcList = list.getVcList();
             sendWatchingVideoListData(vcList);
         } else {
-            if (null != mApiDataProviderCallback) {
-                mApiDataProviderCallback.watchingVideoCallback(null);
-            }
+            //WEBAPIを取得できなかった時はDBのデータを使用
+            Handler handler = new Handler(Looper.getMainLooper());
+            DbThread t = new DbThread(handler, this, SELECT_WATCH_LISTEN_VIDEO_LIST);
+            t.start();
         }
     }
 
@@ -339,9 +349,16 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     public void onRentalVodListJsonParsed(final PurchasedVodListResponse RentalVodListResponse) {
         if (RentalVodListResponse != null) {
             setStructDB(RentalVodListResponse);
-            //TODO:取得したデータをHome画面で使用する場合はここに記載
+            sendRentalListData(RentalVodListResponse);
+            sendPremiumListData(RentalVodListResponse);
         } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定(不要な場合は削除)
+            //WEBAPIを取得できなかった時はDBのデータを使用
+            Handler rentalHandler = new Handler(Looper.getMainLooper());
+            DbThread rentalThread = new DbThread(rentalHandler, this, SELECT_RENTAL_VIDEO_LIST);
+            rentalThread.start();
+            Handler premiumHandler = new Handler(Looper.getMainLooper());
+            DbThread premiumThread = new DbThread(premiumHandler, this, SELECT_PREMIUM_VIDEO_LIST);
+            premiumThread.start();
         }
     }
 
@@ -349,9 +366,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     public void onRentalChListJsonParsed(final PurchasedChListResponse RentalChListResponse) {
         if (RentalChListResponse != null) {
             setStructDB(RentalChListResponse);
-            //TODO:取得したデータをHome画面で使用する場合はここに記載
-        } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定(不要な場合は削除)
         }
     }
 
@@ -472,6 +486,20 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
          * @param watchingVideoList 視聴中ビデオリスト
          */
         void watchingVideoCallback(List<ContentsData> watchingVideoList);
+
+        /**
+         * レンタルリスト用コールバック.
+         *
+         * @param rentalList 視聴中ビデオリスト
+         */
+        void rentalListCallback(List<ContentsData> rentalList);
+
+        /**
+         * レンタルリスト用コールバック.
+         *
+         * @param premiumVideoList 視聴中ビデオリスト
+         */
+        void premiumListCallback(List<ContentsData> premiumVideoList);
 
         /**
          * おすすめ番組用コールバック.
@@ -603,6 +631,36 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private void sendWatchingVideoListData(final List<Map<String, String>> list) {
         mApiDataProviderCallback.watchingVideoCallback(setHomeContentData(list, false));
+    }
+
+    /**
+     * レンタル一覧データをRentalListActivityに送る.
+     *
+     * @param response レンタル一覧データ
+     */
+    private void sendRentalListData(final PurchasedVodListResponse response) {
+
+        RentalDataProvider rentalDataProvider = new RentalDataProvider(mContext, RentalDataProvider.RentalType.RENTAL_LIST);
+        //ContentsList生成
+        List<ContentsData> list = rentalDataProvider.makeContentsData(response);
+
+        //レンタル一覧を送る
+        mApiDataProviderCallback.rentalListCallback(list);
+    }
+
+    /**
+     * レンタル一覧データをRentalListActivityに送る.
+     *
+     * @param response レンタル一覧データ
+     */
+    private void sendPremiumListData(final PurchasedVodListResponse response) {
+
+        RentalDataProvider rentalDataProvider = new RentalDataProvider(mContext, RentalDataProvider.RentalType.PREMIUM_VIDEO);
+        //ContentsList生成
+        List<ContentsData> list = rentalDataProvider.makeContentsData(response);
+
+        //レンタル一覧を送る
+        mApiDataProviderCallback.premiumListCallback(list);
     }
 
     /**
@@ -969,8 +1027,14 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             } else {
                 DTVTLogger.error("RentalVodListWebClient is stopping connect");
             }
+        } else {
+            Handler rentalHandler = new Handler(Looper.getMainLooper());
+            DbThread rentalThread = new DbThread(rentalHandler, this, SELECT_RENTAL_VIDEO_LIST);
+            rentalThread.start();
+            Handler premiumHandler = new Handler(Looper.getMainLooper());
+            DbThread premiumThread = new DbThread(premiumHandler, this, SELECT_PREMIUM_VIDEO_LIST);
+            premiumThread.start();
         }
-        //TODO:Homeでこのデータを使用する場合はオフライン時等にキャッシュ取得等の対応が必要
     }
 
     /**
@@ -1152,7 +1216,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     /**
      * 購入済みVod一覧データをDBに格納する.
      *
-     * @param purchasedVodListResponse 視聴中ビデオ一覧用データ
+     * @param purchasedVodListResponse 購入済みVod一覧データ一覧用データ
      */
     private void setStructDB(final PurchasedVodListResponse purchasedVodListResponse) {
         DTVTLogger.start();
@@ -1173,7 +1237,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     /**
      * 購入済みCh一覧データをDBに格納する.
      *
-     * @param purchasedChListResponse 視聴中ビデオ一覧用データ
+     * @param purchasedChListResponse 購入済みCh一覧用データ
      */
     private void setStructDB(final PurchasedChListResponse purchasedChListResponse) {
         DTVTLogger.start();
@@ -1300,6 +1364,11 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         HomeDataManager homeDataManager;
         List<ContentsData> resultList;
         RecommendListDataManager recommendDataManager;
+        RentalDataProvider rentalDataProvider;
+        List<Map<String, String>> vodMetaList;
+        List<Map<String, String>> activeList;
+        RentalListDataManager rentalListDataManager;
+        PurchasedVodListResponse purchasedVodListResponse;
         switch (operationId) {
             case ROLE_ID_LIST:
                 RoleListInsertDataManager roleListInsertDataManager = new RoleListInsertDataManager(mContext);
@@ -1375,6 +1444,22 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 resultList = recommendDataManager.selectRecommendList(
                         SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO);
                 mApiDataProviderCallback.recommendVideoCallback(resultList);
+                break;
+            case SELECT_RENTAL_VIDEO_LIST:
+                rentalDataProvider = new RentalDataProvider(mContext, RentalDataProvider.RentalType.RENTAL_LIST);
+                rentalListDataManager = new RentalListDataManager(mContext);
+                vodMetaList = rentalListDataManager.selectRentalListData();
+                activeList = rentalListDataManager.selectRentalActiveListData();
+                purchasedVodListResponse = rentalDataProvider.makeVodMetaData(vodMetaList, activeList);
+                sendRentalListData(purchasedVodListResponse);
+                break;
+            case SELECT_PREMIUM_VIDEO_LIST:
+                rentalDataProvider = new RentalDataProvider(mContext, RentalDataProvider.RentalType.PREMIUM_VIDEO);
+                rentalListDataManager = new RentalListDataManager(mContext);
+                vodMetaList = rentalListDataManager.selectRentalListData();
+                activeList = rentalListDataManager.selectRentalActiveListData();
+                purchasedVodListResponse = rentalDataProvider.makeVodMetaData(vodMetaList, activeList);
+                sendPremiumListData(purchasedVodListResponse);
                 break;
             default:
                 break;

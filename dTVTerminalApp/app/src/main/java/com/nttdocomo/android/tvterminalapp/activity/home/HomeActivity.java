@@ -95,7 +95,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     /**
      * コンテンツ一覧数.
      */
-    private final static int HOME_CONTENTS_LIST_COUNT = 8;
+    private final static int HOME_CONTENTS_LIST_COUNT = 10;
     /**
      * ヘッダのmargin.
      */
@@ -132,6 +132,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * UIの上下表示順(クリップ[ビデオ]).
      */
     private final static int HOME_CONTENTS_SORT_VOD_CLIP = HOME_CONTENTS_LIST_START_INDEX + 7;
+    /**
+     * UIの上下表示順(プレミアム).
+     */
+    private final static int HOME_CONTENTS_SORT_PREMIUM = HOME_CONTENTS_LIST_START_INDEX + 8;
+    /**
+     * UIの上下表示順(レンタル).
+     */
+    private final static int HOME_CONTENTS_SORT_RENTAL = HOME_CONTENTS_LIST_START_INDEX + 9;
     /**
      * アダプタ内でのリスト識別用定数.
      */
@@ -432,6 +440,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             case HOME_CONTENTS_SORT_VOD_CLIP:
                 typeName = getResources().getString(R.string.nav_menu_item_vod_clip);
                 break;
+            case HOME_CONTENTS_SORT_PREMIUM:
+                typeName = getResources().getString(R.string.nav_menu_item_premium_video);
+                break;
+            case HOME_CONTENTS_SORT_RENTAL:
+                typeName = getResources().getString(R.string.rental_title);
+                break;
             default:
                 break;
         }
@@ -513,6 +527,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 bundle = new Bundle();
                 bundle.putInt(ClipListActivity.CLIP_LIST_START_PAGE, ClipListActivity.CLIP_LIST_PAGE_NO_OF_VOD);
                 startActivity(ClipListActivity.class, bundle);
+                break;
+            case HOME_CONTENTS_SORT_PREMIUM:
+                //プレミアムビデオ一覧へ遷移
+                startActivity(PremiumVideoActivity.class, null);
+                break;
+            case HOME_CONTENTS_SORT_RENTAL:
+                //レンタル一覧へ遷移
+                startActivity(RentalListActivity.class, null);
                 break;
             default:
                 break;
@@ -773,8 +795,39 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void rentalListCallback(final List<ContentsData> list) {
-        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+    public void rentalListCallback(final List<ContentsData> rentalList) {
+        //DbThreadからのコールバックではUIスレッドとして扱われないため
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (rentalList != null) {
+                    if (rentalList.size() > 0) {
+                        Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RENTAL, rentalList);
+                        mHandler.sendMessage(msg);
+                    }
+                } else {
+                    showGetDataFailedDialog();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void premiumListCallback(final List<ContentsData> premiumVideoList) {
+        //DbThreadからのコールバックではUIスレッドとして扱われないため
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (premiumVideoList != null) {
+                    if (premiumVideoList.size() > 0) {
+                        Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_PREMIUM, premiumVideoList);
+                        mHandler.sendMessage(msg);
+                    }
+                } else {
+                    showGetDataFailedDialog();
+                }
+            }
+        });
     }
 
     @Override
