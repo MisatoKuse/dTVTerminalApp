@@ -43,6 +43,7 @@ import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * チャンネルリスト.
@@ -751,7 +752,7 @@ public class ChannelListActivity extends BaseActivity implements
             DTVTLogger.end();
             return;
         }
-        ArrayList<ChannelInfo> channels = channelsInfo.getChannels();
+        List<ChannelInfo> channels = channelsInfo.getChannels();
         if (0 == channels.size()) {
             return;
         }

@@ -2050,7 +2050,7 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
     @Override
     public void channelInfoCallback(final ChannelInfoList channelsInfo) {
         if (channelsInfo != null && channelsInfo.getChannels() != null) {
-            ArrayList<ChannelInfo> channels = channelsInfo.getChannels();
+            List<ChannelInfo> channels = channelsInfo.getChannels();
             sort(channels);
             if (channels.size() > 0) {
                 if (mViewPager.getCurrentItem() == 1) {
@@ -2169,7 +2169,7 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
      *
      * @param channels チャンネル
      */
-    private void sort(final ArrayList<ChannelInfo> channels) {
+    private void sort(final List<ChannelInfo> channels) {
         for (ChannelInfo channel : channels) {
             Collections.sort(channel.getSchedules(), new CalendarComparator());
         }

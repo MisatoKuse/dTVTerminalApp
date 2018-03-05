@@ -363,7 +363,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         ScheduleInfo mSchedule = convertScheduleInfo(hashMap);
 
         if (!TextUtils.isEmpty(mSchedule.getChNo())) { //CH毎番組データ取得して、整形する
-            ArrayList<ChannelInfo> oldChannelList = channelsInfo.getChannels();
+            List<ChannelInfo> oldChannelList = channelsInfo.getChannels();
             boolean isExist = false;
             if (oldChannelList.size() > 0) { //番組ID存在するのをチェックする
                 for (int j = 0; j < oldChannelList.size(); j++) {

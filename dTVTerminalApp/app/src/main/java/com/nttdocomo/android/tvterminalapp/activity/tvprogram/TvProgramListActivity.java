@@ -145,7 +145,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
     /**
      * チャンネルインフォリスト.
      */
-    private ArrayList<ChannelInfo> mChannelInfo = new ArrayList<>();
+    private List<ChannelInfo> mChannelInfo = new ArrayList<>();
     /**
      * チャンネルインフォリスト.
      */
@@ -581,7 +581,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
      *
      * @param channelInfo 番組表情報.
      */
-    private void setProgramRecyclerView(final ArrayList<ChannelInfo> channelInfo) {
+    private void setProgramRecyclerView(final List<ChannelInfo> channelInfo) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mProgramRecyclerView.setLayoutManager(linearLayoutManager);
@@ -664,7 +664,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
     @Override
     public void channelInfoCallback(final ChannelInfoList channelsInfo) {
         if (channelsInfo != null && channelsInfo.getChannels() != null) {
-            ArrayList<ChannelInfo> channels = channelsInfo.getChannels();
+            List<ChannelInfo> channels = channelsInfo.getChannels();
             sort(channels);
             mChannelInfo = channels;
             if (mTabIndex != 0) {
@@ -794,7 +794,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
      *
      * @param channels チャンネル情報リスト
      */
-    private void sort(final ArrayList<ChannelInfo> channels) {
+    private void sort(final List<ChannelInfo> channels) {
         for (ChannelInfo channel : channels) {
 
             ArrayList<ScheduleInfo> scheduleInfo = channel.getSchedules();

@@ -143,59 +143,61 @@ public class TvScheduleInsertDataManager {
         }
 
         try {
-            ArrayList<ChannelInfo> channelInformation = channelInfoList.getChannels();
-            for (ChannelInfo channelInfo : channelInformation) {
-                //DB名としてチャンネル番号を取得.
-                String chNo = String.valueOf(channelInfo.getChNo());
+            List<ChannelInfo> channelInformation = channelInfoList.getChannels();
+            synchronized (channelInformation) {
+                for (ChannelInfo channelInfo : channelInformation) {
+                    //DB名としてチャンネル番号を取得.
+                    String chNo = String.valueOf(channelInfo.getChNo());
 
-                //各種オブジェクト作成
-                DBHelperChannel tvScheduleListDBHelper = new DBHelperChannel(mContext, chNo);
-                DataBaseManager.clearChInfo();
-                DataBaseManager.initializeInstance(tvScheduleListDBHelper);
-                SQLiteDatabase database = DataBaseManager.getChInstance().openChDatabase();
-                database.acquireReference();
-                TvScheduleListDao tvScheduleListDao = new TvScheduleListDao(database);
+                    //各種オブジェクト作成
+                    DBHelperChannel tvScheduleListDBHelper = new DBHelperChannel(mContext, chNo);
+                    DataBaseManager.clearChInfo();
+                    DataBaseManager.initializeInstance(tvScheduleListDBHelper);
+                    SQLiteDatabase database = DataBaseManager.getChInstance().openChDatabase();
+                    database.acquireReference();
+                    TvScheduleListDao tvScheduleListDao = new TvScheduleListDao(database);
 
-                //ContentValuesに変換してDBに保存する.
-                ArrayList<ScheduleInfo> scheduleInformation = channelInfo.getSchedules();
-                for (ScheduleInfo scheduleInfo : scheduleInformation) {
-                    ContentValues values = convertScheduleInfoToContentValues(scheduleInfo);
-                    tvScheduleListDao.insert(values);
-                }
-
-                //保存したDBを所定の場所へ移動する( HOME/database/channel/yyyyMMdd/ )
-                String channelFilePath = StringUtils.getConnectStrings(filesDir, "/../databases/", chNo);
-                File channelFile = new File(channelFilePath);
-                File movedFile = new File(StringUtils.getConnectStrings(dbDir, "/", chNo));
-                if (channelFile.isFile()) {
-                    try {
-                        if (!channelFile.renameTo(movedFile)) {
-                            DTVTLogger.error("Failed to move DB file");
-                            //移動に失敗したため元ファイルを削除する
-                            if (!channelFile.delete()) {
-                                DTVTLogger.error("Failed to remove DB file");
-                            }
-                        }
-                    } catch (SecurityException | NullPointerException e) {
-                        DTVTLogger.error(e.toString());
+                    //ContentValuesに変換してDBに保存する.
+                    ArrayList<ScheduleInfo> scheduleInformation = channelInfo.getSchedules();
+                    for (ScheduleInfo scheduleInfo : scheduleInformation) {
+                        ContentValues values = convertScheduleInfoToContentValues(scheduleInfo);
+                        tvScheduleListDao.insert(values);
                     }
-                }
 
-                //journalファイルも同じ場所へ移動させる.
-                String journalFilePath = StringUtils.getConnectStrings(filesDir, "/../databases/", chNo, "-journal");
-                File journalFile = new File(journalFilePath);
-                File movedJournalFile = new File(StringUtils.getConnectStrings(dbDir, "/", chNo, "-journal"));
-                if (journalFile.isFile()) {
-                    try {
-                        if (!journalFile.renameTo(movedJournalFile)) {
-                            DTVTLogger.error("Failed to move journal file");
-                            //移動に失敗したため元ファイルを削除する
-                            if (!journalFile.delete()) {
-                                DTVTLogger.error("Failed to remove journal file");
+                    //保存したDBを所定の場所へ移動する( HOME/database/channel/yyyyMMdd/ )
+                    String channelFilePath = StringUtils.getConnectStrings(filesDir, "/../databases/", chNo);
+                    File channelFile = new File(channelFilePath);
+                    File movedFile = new File(StringUtils.getConnectStrings(dbDir, "/", chNo));
+                    if (channelFile.isFile()) {
+                        try {
+                            if (!channelFile.renameTo(movedFile)) {
+                                DTVTLogger.error("Failed to move DB file");
+                                //移動に失敗したため元ファイルを削除する
+                                if (!channelFile.delete()) {
+                                    DTVTLogger.error("Failed to remove DB file");
+                                }
                             }
+                        } catch (SecurityException | NullPointerException e) {
+                            DTVTLogger.error(e.toString());
                         }
-                    } catch (SecurityException | NullPointerException e) {
-                        DTVTLogger.error(e.toString());
+                    }
+
+                    //journalファイルも同じ場所へ移動させる.
+                    String journalFilePath = StringUtils.getConnectStrings(filesDir, "/../databases/", chNo, "-journal");
+                    File journalFile = new File(journalFilePath);
+                    File movedJournalFile = new File(StringUtils.getConnectStrings(dbDir, "/", chNo, "-journal"));
+                    if (journalFile.isFile()) {
+                        try {
+                            if (!journalFile.renameTo(movedJournalFile)) {
+                                DTVTLogger.error("Failed to move journal file");
+                                //移動に失敗したため元ファイルを削除する
+                                if (!journalFile.delete()) {
+                                    DTVTLogger.error("Failed to remove journal file");
+                                }
+                            }
+                        } catch (SecurityException | NullPointerException e) {
+                            DTVTLogger.error(e.toString());
+                        }
                     }
                 }
             }

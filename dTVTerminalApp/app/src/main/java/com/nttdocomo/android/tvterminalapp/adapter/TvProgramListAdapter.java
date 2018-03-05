@@ -113,7 +113,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * @param mContext     コンテクスト
      * @param mProgramList 番組表リスト
      */
-    public TvProgramListAdapter(final Activity mContext, final ArrayList<ChannelInfo> mProgramList) {
+    public TvProgramListAdapter(final Activity mContext, final List<ChannelInfo> mProgramList) {
         this.mProgramList = mProgramList;
         this.mContext = (TvProgramListActivity) mContext;
         mScreenWidth = mContext.getResources().getDisplayMetrics().widthPixels;

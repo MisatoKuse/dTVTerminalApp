@@ -6,6 +6,8 @@ package com.nttdocomo.android.tvterminalapp.struct;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /*
  * 複数チャンネルクラス
@@ -14,20 +16,20 @@ import java.util.ArrayList;
 public class ChannelInfoList {
 
     //チャンネルの配列
-    private ArrayList<ChannelInfo> mChannels = null;
+    private List<ChannelInfo> mChannels = null;
 
     /**
      * クラス構造.
      */
     public ChannelInfoList() {
-        mChannels = new ArrayList<>();
+        mChannels = Collections.synchronizedList(new ArrayList<ChannelInfo>());
     }
 
     /**
      * チャンネルの配列を取得.
      * @return mChannels
      */
-    public ArrayList<ChannelInfo> getChannels() {
+    public List<ChannelInfo> getChannels() {
         return mChannels;
     }
 
