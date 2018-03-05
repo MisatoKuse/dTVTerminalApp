@@ -171,6 +171,10 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
      */
     private ImageView mNowImage;
     /**
+     * 毎チャンネルエラーメッセージ.
+     */
+    private TextView mMyChannelNoDataTxT;
+    /**
      * DAY_PRE0.
      */
     private static final String DAY_PRE0 = "0";
@@ -232,6 +236,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         mTagImageView = findViewById(R.id.tv_program_list_main_layout_curtime_iv);
         mTimeLine = findViewById(R.id.tv_program_list_main_layout_time_line);
         mNowImage = findViewById(R.id.tv_program_list_main_layout_time_line_now);
+        mMyChannelNoDataTxT = findViewById(R.id.tv_program_list_main_layout_tip_tv);
 
         mChannelRecyclerView.bringToFront();
         mTagImageView.bringToFront();
@@ -604,6 +609,10 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
     private void clearData() {
         mChannelRecyclerView.removeAllViews();
         mProgramRecyclerView.removeAllViews();
+        mMyChannelNoDataTxT.setVisibility(View.INVISIBLE);
+        mTimeLine.setVisibility(View.INVISIBLE);
+        mTimeScrollView.setVisibility(View.INVISIBLE);
+        mTagImageView.setVisibility(View.INVISIBLE);
         if (mChannels != null) {
             mChannels.clear();
         }
@@ -699,7 +708,9 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
             if (channels != null && channels.size() > 0) {
                 this.mChannels = channels;
                 setChannelContentsView(mChannels);
-                ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
+                if (mScaledDownProgramListDataProvider == null) {
+                    mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
+                }
                 int[] channelNos = new int[channels.size()];
                 for (int i = 0; i < channels.size(); i++) {
                     channelNos[i] = channels.get(i).getChNo();
@@ -707,7 +718,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
                 String dateStr = mSelectDateStr.replace("-", "");
                 String[] dateList = {dateStr};
                 //TODO 現状一括でリクエストしているため修正予定.
-                scaledDownProgramListDataProvider.getProgram(channelNos, dateList, mTabIndex);
+                mScaledDownProgramListDataProvider.getProgram(channelNos, dateList, mTabIndex);
             } else {
                 scrollToCurTime();
                 refreshTimeLine();
@@ -719,7 +730,9 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
      * My番組表ロード.
      */
     private void loadMyChannel() {
-        ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
+        if (mScaledDownProgramListDataProvider == null) {
+            mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
+        }
         int[] channelNos = new int[mappedMyChannelList.size()];
         for (int i = 0; i < mappedMyChannelList.size(); i++) {
             channelNos[i] = mappedMyChannelList.get(i).getChNo();
@@ -728,10 +741,12 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         	//マイ番組表設定されていない場合、通信しない
             String dateStr = mSelectDateStr.replace("-", "");
             String[] dateList = {dateStr};
-            scaledDownProgramListDataProvider.getProgram(channelNos, dateList, 1);
+            mScaledDownProgramListDataProvider.getProgram(channelNos, dateList, 1);
         } else {
             //「マイ番組が設定されていません」と表示される
-            showMyChannelNoItem(true);
+            if (mTabIndex == INDEX_TAB_MY_CHANNEL) {
+                showMyChannelNoItem(true);
+            }
         }
     }
 
@@ -742,15 +757,15 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
      */
     private void showMyChannelNoItem(final boolean isShowFlag) {
         if (isShowFlag) {
-            findViewById(R.id.tv_program_list_main_layout_time_sl).setVisibility(View.INVISIBLE);
-            findViewById(R.id.tv_program_list_main_layout_curtime_iv).setVisibility(View.INVISIBLE);
-            findViewById(R.id.tv_program_list_main_layout_time_line).setVisibility(View.INVISIBLE);
-            findViewById(R.id.tv_program_list_main_layout_tip_tv).setVisibility(View.VISIBLE);
+            mTimeScrollView.setVisibility(View.INVISIBLE);
+            mTagImageView.setVisibility(View.INVISIBLE);
+            mTimeLine.setVisibility(View.INVISIBLE);
+            mMyChannelNoDataTxT.setVisibility(View.VISIBLE);
         } else {
-            findViewById(R.id.tv_program_list_main_layout_time_sl).setVisibility(View.VISIBLE);
-            findViewById(R.id.tv_program_list_main_layout_curtime_iv).setVisibility(View.VISIBLE);
-            findViewById(R.id.tv_program_list_main_layout_time_line).setVisibility(View.VISIBLE);
-            findViewById(R.id.tv_program_list_main_layout_tip_tv).setVisibility(View.INVISIBLE);
+            mTimeScrollView.setVisibility(View.VISIBLE);
+            mTagImageView.setVisibility(View.VISIBLE);
+            mTimeLine.setVisibility(View.VISIBLE);
+            mMyChannelNoDataTxT.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -809,11 +824,15 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         if (myChannelMetaData != null && myChannelMetaData.size() > 0) {
             this.myChannelDataList = myChannelMetaData;
             //ひかりリストからチャンネル探すため
-            ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
-            scaledDownProgramListDataProvider.getChannelList(0, 0, "", INDEX_TAB_HIKARI);
+            if (mScaledDownProgramListDataProvider == null) {
+                mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
+            }
+            mScaledDownProgramListDataProvider.getChannelList(0, 0, "", INDEX_TAB_HIKARI);
         } else {
             //MY番組表情報がなければMY番組表を設定していないとする(データないので、特にタイムライン表示必要がない)
-            showMyChannelNoItem(true);
+            if (mTabIndex == INDEX_TAB_MY_CHANNEL) {
+                showMyChannelNoItem(true);
+            }
         }
     }
 
