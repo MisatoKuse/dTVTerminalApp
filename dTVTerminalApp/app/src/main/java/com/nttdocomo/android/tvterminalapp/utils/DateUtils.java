@@ -348,6 +348,10 @@ public class DateUtils {
     public static boolean getLastDate(final Context context, final String key) {
         SharedPreferences data = context.getSharedPreferences(DATA_SAVE, Context.MODE_PRIVATE);
         String lastStr = data.getString(key, "");
+
+        if (lastStr.isEmpty()) {
+            return false;
+        }
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DD);
         //日付の比較
         Calendar calendar = Calendar.getInstance();
@@ -357,8 +361,9 @@ public class DateUtils {
         try {
             lastDate = sdf.parse(lastStr);
             nowDate = sdf.parse(nowStr);
-        } catch (Exception e) {
+        } catch (ParseException e) {
             DTVTLogger.debug(e);
+            return false;
         }
         boolean isExpired = false;
         if (lastDate.compareTo(nowDate) < 0) {
@@ -650,6 +655,9 @@ public class DateUtils {
      * @return エポック秒
      */
     public static long getEpochTime(final String strDate) {
+        if (strDate == null) {
+            return 0L;
+        }
         if (TextUtils.isEmpty(strDate)) {
             return 0L;
         }
