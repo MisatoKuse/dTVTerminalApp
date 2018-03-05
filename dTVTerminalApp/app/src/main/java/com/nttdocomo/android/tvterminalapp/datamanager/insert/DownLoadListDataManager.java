@@ -12,8 +12,7 @@ import android.database.sqlite.SQLiteException;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.DownLoadListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DownloadDBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelperDownload;
 import com.nttdocomo.android.tvterminalapp.service.download.DlData;
 
 import java.util.List;
@@ -49,7 +48,7 @@ public class DownLoadListDataManager {
 
         try {
             //各種オブジェクト作成
-            DownloadDBHelper downLoadListDBHelper = new DownloadDBHelper(mContext);
+            DBHelperDownload downLoadListDBHelper = new DBHelperDownload(mContext);
             DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDownloadDatabase();
@@ -87,7 +86,7 @@ public class DownLoadListDataManager {
 
         try {
             //各種オブジェクト作成
-            DBHelper downLoadListDBHelper = new DBHelper(mContext);
+            DBHelperDownload downLoadListDBHelper = new DBHelperDownload(mContext);
             DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDownloadDatabase();
@@ -110,7 +109,7 @@ public class DownLoadListDataManager {
 
         try {
             //各種オブジェクト作成
-            DBHelper downLoadListDBHelper = new DBHelper(mContext);
+            DBHelperDownload downLoadListDBHelper = new DBHelperDownload(mContext);
             DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDownloadDatabase();
@@ -133,7 +132,7 @@ public class DownLoadListDataManager {
 
         try {
             //各種オブジェクト作成
-            DBHelper downLoadListDBHelper = new DBHelper(mContext);
+            DBHelperDownload downLoadListDBHelper = new DBHelperDownload(mContext);
             DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDownloadDatabase();
@@ -164,7 +163,7 @@ public class DownLoadListDataManager {
             DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL, DBConstants.DOWNLOAD_LIST_COLUM_TITLE};
 
             //Daoクラス使用準備
-            DBHelper downLoadListDBHelper = new DBHelper(mContext);
+            DBHelperDownload downLoadListDBHelper = new DBHelperDownload(mContext);
             DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDownloadDatabase();
@@ -203,7 +202,7 @@ public class DownLoadListDataManager {
                     DBConstants.DOWNLOAD_LIST_COLUM_CONTENTFORMAT};
 
             //Daoクラス使用準備
-            DBHelper downLoadListDBHelper = new DBHelper(mContext);
+            DBHelperDownload downLoadListDBHelper = new DBHelperDownload(mContext);
             DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDownloadDatabase();

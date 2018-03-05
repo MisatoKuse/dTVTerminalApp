@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelperChannel;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DownloadDBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelperDownload;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -43,7 +43,7 @@ public class DataBaseManager {
     /**
      * DBHelper(録画リスト用).
      */
-    private static DownloadDBHelper sDatabaseDownloadHelper;
+    private static DBHelperDownload sDatabaseDownloadHelper;
     /**
      * Database.
      */
@@ -78,7 +78,7 @@ public class DataBaseManager {
      *
      * @param helper DBHelper
      */
-    public static synchronized void initializeInstance(final DownloadDBHelper helper) {
+    public static synchronized void initializeInstance(final DBHelperDownload helper) {
         if (sInstance == null) {
             sInstance = new DataBaseManager();
             sDatabaseDownloadHelper = helper;
