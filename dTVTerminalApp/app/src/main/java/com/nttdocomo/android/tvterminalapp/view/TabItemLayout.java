@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.view;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -49,7 +50,7 @@ public class TabItemLayout extends HorizontalScrollView {
     /**
      * コンストラクタ.
      *
-     * @param context
+     * @param context Context
      */
     public TabItemLayout(final Context context) {
         this(context, null);
@@ -74,7 +75,7 @@ public class TabItemLayout extends HorizontalScrollView {
     /**
      * タブ押下時のリスナーを設定.
      *
-     * @param listener
+     * @param listener OnClickTabTextListener
      */
     public void setTabClickListener(final OnClickTabTextListener listener) {
         mOnClickTabTextListener = listener;
@@ -83,7 +84,8 @@ public class TabItemLayout extends HorizontalScrollView {
     /**
      * tabの初期設定.
      *
-     * @param tabNames
+     * @param tabNames タブ名
+     * @param type ActivityType
      */
     public void initTabView(final String[] tabNames, final ActivityType type) {
         setActivityType(type);
@@ -104,7 +106,7 @@ public class TabItemLayout extends HorizontalScrollView {
     /**
      * タブの横幅を取得するためのリスナー.
      */
-    ViewTreeObserver.OnGlobalLayoutListener mViewTreeListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+    private final ViewTreeObserver.OnGlobalLayoutListener mViewTreeListener = new ViewTreeObserver.OnGlobalLayoutListener() {
         @Override
         public void onGlobalLayout() {
             mTabWidth = mLinearLayout.getWidth();
@@ -145,7 +147,11 @@ public class TabItemLayout extends HorizontalScrollView {
             tabTextView.setText(mTabNames[i]);
             tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mTabTextSize);
 
-            tabTextView.setGravity(Gravity.TOP | Gravity.CENTER);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                tabTextView.setGravity(Gravity.TOP | Gravity.CENTER);
+            } else {
+                tabTextView.setGravity(Gravity.CENTER);
+            }
             tabTextView.setTag(i);
             if (i == 0) {
                 tabTextView.setTextColor(ContextCompat.getColor(mContext, R.color.common_tab_select_text_color));
@@ -174,7 +180,7 @@ public class TabItemLayout extends HorizontalScrollView {
     /**
      * インジケーター設置.
      *
-     * @param position
+     * @param position タブ番号
      */
     public void setTab(final int position) {
         DTVTLogger.start();
@@ -197,17 +203,17 @@ public class TabItemLayout extends HorizontalScrollView {
     /**
      * 選択したタブを画面サイズに合わせて中央寄せに持ってくる.
      *
-     * @param textView
+     * @param textView TextView
      */
     private void scrollOffsetCheck(final TextView textView) {
-        int widthDensity = (int) mContext.getResources().getDisplayMetrics().widthPixels;
+        int widthDensity = mContext.getResources().getDisplayMetrics().widthPixels;
         int left = textView.getLeft();
         int width = textView.getMeasuredWidth();
         int toX = left + width / 2 - widthDensity / 2;
         this.smoothScrollTo(toX, 0);
     }
 
-    public void setActivityType(final ActivityType activityType) {
+    private void setActivityType(final ActivityType activityType) {
         mActivityType = activityType;
     }
 
@@ -216,8 +222,8 @@ public class TabItemLayout extends HorizontalScrollView {
      *
      * @param lastData True:最後のView false:その他
      */
-    public LinearLayout.LayoutParams getTabTextViewParameter(final boolean lastData) {
-        LinearLayout.LayoutParams params = null;
+    private LinearLayout.LayoutParams getTabTextViewParameter(final boolean lastData) {
+        LinearLayout.LayoutParams params;
         params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);
@@ -240,11 +246,11 @@ public class TabItemLayout extends HorizontalScrollView {
     /**
      * テキストサイズを取得.
      *
-     * @return
+     * @return テキストサイズ
      */
     private float getTextSizeParam() {
         float density = mContext.getResources().getDisplayMetrics().density;
-        float reternTextSize = 0;
+        float returnTextSize = 0;
         switch (mActivityType) {
             case SEARCH_ACTIVITY:
             case CLIP_LIST_ACTIVITY:
@@ -253,24 +259,23 @@ public class TabItemLayout extends HorizontalScrollView {
             case RECOMMEND_LIST_ACTIVITY:
             case RECORDED_LIST_ACTIVITY:
             case DTV_CONTENTS_DETAIL_ACTIVITY:
-                reternTextSize = mContext.getResources().getDimension(R.dimen.tab_text_size_15dp) / density;
+                returnTextSize = mContext.getResources().getDimension(R.dimen.tab_text_size_15dp) / density;
                 break;
             case CHANNEL_LIST_ACTIVITY:
             case PROGRAM_LIST_ACTIVITY:
-                reternTextSize = mContext.getResources().getDimension(R.dimen.tab_text_size_14dp) / density;
+                returnTextSize = mContext.getResources().getDimension(R.dimen.tab_text_size_14dp) / density;
                 break;
             default:
                 break;
         }
 
-        return reternTextSize;
+        return returnTextSize;
     }
 
     /**
      * タブ領域のパラメータを設定.
      */
     private void addTabInnerView() {
-        int density = (int) mContext.getResources().getDisplayMetrics().density;
         mLinearLayout = new LinearLayout(mContext);
         LinearLayout.LayoutParams layoutParams = null;
         switch (mActivityType) {
@@ -324,7 +329,6 @@ public class TabItemLayout extends HorizontalScrollView {
                 // nop
                 break;
         }
-        ;
         mLinearLayout.setLayoutParams(layoutParams);
         mLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
         mLinearLayout.setGravity(Gravity.CENTER);
@@ -335,7 +339,7 @@ public class TabItemLayout extends HorizontalScrollView {
      * 設定するインジケータの取得.
      */
     private int setBackgroundResourceIndicating(final boolean isFocus) {
-        int resId = 0;
+        int resId;
         switch (mActivityType) {
             case CHANNEL_LIST_ACTIVITY:
                 if (isFocus) {
