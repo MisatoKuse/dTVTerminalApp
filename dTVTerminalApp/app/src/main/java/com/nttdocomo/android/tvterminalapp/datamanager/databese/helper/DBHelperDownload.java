@@ -16,7 +16,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
  * 持ち出しリスト用データキャッシュ保存用DB.
  * ※持ち出しリストはローカルでの管理しかできないため、基本的にDBの更新は行わない.
  */
-public class DownloadDBHelper extends SQLiteOpenHelper {
+public class DBHelperDownload extends SQLiteOpenHelper {
 
     /**
      * DBVersion.
@@ -28,7 +28,7 @@ public class DownloadDBHelper extends SQLiteOpenHelper {
      *
      * @param context コンテキスト
      */
-    public DownloadDBHelper(final Context context) {
+    public DBHelperDownload(final Context context) {
         super(context, DBConstants.DOWNLOAD_DATABASE_NAME, null, DOWNLOAD_DATABASE_VERSION);
     }
 
@@ -37,7 +37,7 @@ public class DownloadDBHelper extends SQLiteOpenHelper {
         try {
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_DOWNLOAD_LIST_SQL);
         } catch (SQLiteException e) {
-            DTVTLogger.debug("DownloadDBHelper::onCreate, create " + DBConstants.CREATE_TABLE_DOWNLOAD_LIST_SQL + " table failed, cause=" + e.getCause());
+            DTVTLogger.debug("DBHelperDownload::onCreate, create " + DBConstants.CREATE_TABLE_DOWNLOAD_LIST_SQL + " table failed, cause=" + e.getCause());
         }
     }
 
