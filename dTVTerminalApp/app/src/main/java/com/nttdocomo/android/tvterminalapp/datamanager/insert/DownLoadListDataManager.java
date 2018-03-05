@@ -51,7 +51,7 @@ public class DownLoadListDataManager {
             DBHelperDownload downLoadListDBHelper = new DBHelperDownload(mContext);
             DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDownloadDatabase();
+            SQLiteDatabase database = DataBaseManager.getDownloadInstance().openDownloadDatabase();
             database.acquireReference();
             DownLoadListDao downloadListDao = new DownLoadListDao(database);
 
@@ -89,7 +89,7 @@ public class DownLoadListDataManager {
             DBHelperDownload downLoadListDBHelper = new DBHelperDownload(mContext);
             DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDownloadDatabase();
+            SQLiteDatabase database = DataBaseManager.getDownloadInstance().openDownloadDatabase();
             database.acquireReference();
             DownLoadListDao downloadListDao = new DownLoadListDao(database);
 
@@ -112,7 +112,7 @@ public class DownLoadListDataManager {
             DBHelperDownload downLoadListDBHelper = new DBHelperDownload(mContext);
             DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDownloadDatabase();
+            SQLiteDatabase database = DataBaseManager.getDownloadInstance().openDownloadDatabase();
             database.acquireReference();
             DownLoadListDao downloadListDao = new DownLoadListDao(database);
 
@@ -135,7 +135,7 @@ public class DownLoadListDataManager {
             DBHelperDownload downLoadListDBHelper = new DBHelperDownload(mContext);
             DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDownloadDatabase();
+            SQLiteDatabase database = DataBaseManager.getDownloadInstance().openDownloadDatabase();
             database.acquireReference();
             DownLoadListDao downloadListDao = new DownLoadListDao(database);
 
@@ -166,7 +166,7 @@ public class DownLoadListDataManager {
             DBHelperDownload downLoadListDBHelper = new DBHelperDownload(mContext);
             DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDownloadDatabase();
+            SQLiteDatabase database = DataBaseManager.getDownloadInstance().openDownloadDatabase();
             database.acquireReference();
             DownLoadListDao downLoadListDao = new DownLoadListDao(database);
 
@@ -205,7 +205,7 @@ public class DownLoadListDataManager {
             DBHelperDownload downLoadListDBHelper = new DBHelperDownload(mContext);
             DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDownloadDatabase();
+            SQLiteDatabase database = DataBaseManager.getDownloadInstance().openDownloadDatabase();
             database.acquireReference();
             DownLoadListDao downLoadListDao = new DownLoadListDao(database);
 

@@ -25,6 +25,10 @@ public class DataBaseManager {
      */
     private final AtomicInteger mOpenCounterCh = new AtomicInteger();
     /**
+     * DBの開閉回数を記録(番組情報用).
+     */
+    private final AtomicInteger mOpenCounterDownload = new AtomicInteger();
+    /**
      * DBManager.
      */
     private static DataBaseManager sInstance;
@@ -32,6 +36,10 @@ public class DataBaseManager {
      * DBManage(番組情報用).
      */
     private static DataBaseManager sInstanceCh;
+    /**
+     * DBManage(持ち出し用).
+     */
+    private static DataBaseManager sInstanceDownLoad;
     /**
      * DBHelper.
      */
@@ -79,8 +87,8 @@ public class DataBaseManager {
      * @param helper DBHelper
      */
     public static synchronized void initializeInstance(final DBHelperDownload helper) {
-        if (sInstance == null) {
-            sInstance = new DataBaseManager();
+        if (sInstanceDownLoad == null) {
+            sInstanceDownLoad = new DataBaseManager();
             sDatabaseDownloadHelper = helper;
         }
     }
@@ -109,6 +117,19 @@ public class DataBaseManager {
                     + " is not initialized, call initializeInstance(..) method first.");
         }
         return sInstanceCh;
+    }
+
+    /**
+     * DataBaseManagerを取得(持ち出し情報用).
+     *
+     * @return DataBaseManager
+     */
+    public static synchronized DataBaseManager getDownloadInstance() {
+        if (sInstanceDownLoad == null) {
+            throw new IllegalStateException(DataBaseManager.class.getSimpleName()
+                    + " is not initialized, call initializeInstance(..) method first.");
+        }
+        return sInstanceDownLoad;
     }
 
     /**
@@ -143,7 +164,7 @@ public class DataBaseManager {
      * @return Database
      */
     public synchronized SQLiteDatabase openDownloadDatabase() {
-        if (mOpenCounterCh.incrementAndGet() == 1) {
+        if (mOpenCounterDownload.incrementAndGet() == 1) {
             // Opening new database
             mDatabase = sDatabaseDownloadHelper.getWritableDatabase();
         }
@@ -175,7 +196,7 @@ public class DataBaseManager {
      * Databaseを閉じる(ダウンロードコンテンツ情報用).
      */
     public synchronized void closeDownloadDatabase() {
-        if (mOpenCounterCh.decrementAndGet() == 0) {
+        if (mOpenCounterDownload.decrementAndGet() == 0) {
             // Closing database
             mDatabase.close();
         }
@@ -193,7 +214,7 @@ public class DataBaseManager {
      * 情報を削除する(ダウンロードコンテンツ情報用).
      */
     public static void clearDownloadInfo() {
-        sInstanceCh = null;
+        sInstanceDownLoad = null;
         sDatabaseDownloadHelper = null;
     }
 }
