@@ -1914,7 +1914,7 @@ public class BaseActivity extends FragmentActivity implements
             @Override
             public void onOKCallback(final boolean isOK) {
                 mShowDialog = null;
-                finish();
+                finishAffinity();
             }
         });
         DTVTLogger.end();
