@@ -201,7 +201,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onContentsListPerGenreJsonParsed(final List<VideoRankList> contentsListPerGenre) {
+    public void onContentsListPerGenreJsonParsed(final List<VideoRankList> contentsListPerGenre, final String genreId) {
         if (contentsListPerGenre != null && contentsListPerGenre.size() > 0) {
             VideoRankList list = contentsListPerGenre.get(0);
             if (!mRequiredClipKeyList

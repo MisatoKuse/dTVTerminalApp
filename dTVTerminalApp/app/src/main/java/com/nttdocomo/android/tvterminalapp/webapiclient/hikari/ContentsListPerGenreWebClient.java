@@ -32,8 +32,9 @@ public class ContentsListPerGenreWebClient
          * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param contentsListPerGenre JSONパース後のデータ
+         * @param genreId リクエストしたジャンルID
          */
-        void onContentsListPerGenreJsonParsed(List<VideoRankList> contentsListPerGenre);
+        void onContentsListPerGenreJsonParsed(List<VideoRankList> contentsListPerGenre, String genreId);
     }
 
     /**
@@ -44,7 +45,10 @@ public class ContentsListPerGenreWebClient
      * 通信禁止判定フラグ.
      */
     private boolean mIsCancel = false;
-
+    /**
+     * リクエストジャンル.
+     */
+    private String mGenreId = "";
     /**
      * コンテキストを継承元のコンストラクタに送る.
      *
@@ -63,7 +67,7 @@ public class ContentsListPerGenreWebClient
     public void onAnswer(final ReturnCode returnCode) {
         //拡張情報付きでパースを行う
         VideoRankJsonParser videoRankJsonParser = new VideoRankJsonParser(
-                mContentsListPerGenreJsonParserCallback, returnCode.extraData);
+                mContentsListPerGenreJsonParserCallback, returnCode.extraData, mGenreId);
 
         //JSONをパースして、データを返す
         videoRankJsonParser.execute(returnCode.bodyData);
@@ -78,10 +82,9 @@ public class ContentsListPerGenreWebClient
     public void onError(final ReturnCode returnCode) {
         //エラーが発生したのでヌルを返す
         if (mContentsListPerGenreJsonParserCallback != null) {
-            mContentsListPerGenreJsonParserCallback.onContentsListPerGenreJsonParsed(null);
+            mContentsListPerGenreJsonParserCallback.onContentsListPerGenreJsonParsed(null, mGenreId);
         }
     }
-
 
     /**
      * ジャンル毎コンテンツ一覧取得.
@@ -104,6 +107,8 @@ public class ContentsListPerGenreWebClient
             DTVTLogger.error("ContentsListPerGenreWebClient is stopping connection");
             return false;
         }
+        // リクエストしたジャンルIDを保持.
+        mGenreId = genreId;
 
         //パラメーターのチェック(genreIdはヌルを受け付けるので、チェックしない)
         if (!checkNormalParameter(limit, offset, filter, ageReq, genreId, sort,
