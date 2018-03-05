@@ -80,19 +80,24 @@ public class VideoGenreProvider implements
     @Override
     public void onGenreListJsonParsed(final GenreListResponse genreListResponse) {
 
-        //取得した情報を保存する
-        DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
-        if (TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate)) {
-            dateUtils.addLastDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
-            dateUtils.addLastProgramDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
-            SharedPreferencesUtils.setSharedPreferencesVideoGenreData(mContext,
-                    StringUtils.toGenreListResponseBase64(genreListResponse));
+        GenreListResponse response = genreListResponse;
+        if (genreListResponse != null && !genreListResponse.getTypeList().isEmpty()) {
+            //取得した情報を保存する
+            DateUtils dateUtils = new DateUtils(mContext);
+            String lastDate = dateUtils.getLastDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
+            if (TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate)) {
+                dateUtils.addLastDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
+                dateUtils.addLastProgramDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
+                SharedPreferencesUtils.setSharedPreferencesVideoGenreData(mContext,
+                        StringUtils.toGenreListResponseBase64(genreListResponse));
+            }
+        } else {
+            response = StringUtils.toGenreListResponse(SharedPreferencesUtils.getSharedPreferencesVideoGenreData(mContext));
         }
         if (mRankGenreListCallback != null) {
-            setRankGenreListData(genreListResponse);
+            setRankGenreListData(response);
         } else {
-            getGenreList(genreListResponse);
+            getGenreList(response);
         }
     }
 

@@ -21,6 +21,11 @@ public class DBConstants {
     public static final String DATABASE_NAME = "db_data";
 
     /**
+     * DB名.
+     */
+    public static final String DOWNLOAD_DATABASE_NAME = "download_db_data";
+
+    /**
      * 4kflg.
      */
     public static final String FOUR_K_FLG = "4kflg";
@@ -322,89 +327,6 @@ public class DBConstants {
             ")");
 
     //Homeキャッシュデータ格納用テーブル
-    /**
-     * クリップリスト表示テーブル.
-     */
-    public static final String VODCLIP_LIST_TABLE_NAME = "vod_clip_list";
-
-    /**
-     * クリップリスト表示テーブル作成SQL.
-     */
-    public static final String CREATE_TABLE_VODCLIP_LIST_SQL = StringUtils.getConnectStrings(
-            CREATE_TABLE_TEXT, VODCLIP_LIST_TABLE_NAME, OPEN_BRACKETS_TEXT,
-            ID_COLUMN, CREATE_TABLE_PRIMARY_TEXT,
-            JsonConstants.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_CID, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_TITLE_ID, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_EPISODE_ID, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_TITLE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_EPITITLE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_TITLERUBY, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_DISP_TYPE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_DISPLAY_START_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_DISPLAY_END_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_AVAIL_START_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_AVAIL_END_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUBLISH_START_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUBLISH_END_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_NEWA_START_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_NEWA_END_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_THUMB_640, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_THUMB_448, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_DTV_THUMB_640, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_DTV_THUMB_448, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_COPYRIGHT, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_DUR, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_DEMONG, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_BVFLG, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_DTV_TYPE, TEXT_WITH_COMMA_TEXT,
-            UNDER_BAR_FOUR_K_FLG, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_HDRFLG, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_DELIVERY, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_R_VALUE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_ADULT, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_GENRE_ARRAY, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_SYNOP, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_SYNOP_SHORT, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUID, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PRICE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_QRANGE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_QUNIT, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PU_START_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PU_END_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_CREDIT_ARRAY, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_RATING, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_DTV, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_CHSVOD, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_SEARCH_OK, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_LIINF_ARRAY, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUINF, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_PUID, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUINF, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUINF, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_TITLE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUINF, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_EPITITLE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUINF, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_DISP_TYPE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUINF, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_CHSVOD, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUINF, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_PRICE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUINF, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_QUNIT, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUINF, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_QRANGE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUINF, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_PU_START_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUINF, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_PU_END_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_CAPL, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_BILINGAL, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_TV_CID, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_SERVICE_ID, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_EVENT_ID, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_CHNO, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_TV_SERVICE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_CONTENT_TYPE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_VOD_START_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_VOD_END_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_MAIN_GENRE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_SECOND_GENRE_ARRAY, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_COPY, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_ADINFO_ARRAY, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_RELATIONAL_ID_ARRAY, TEXT_WITHOUT_COMMA_TEXT,
-            CLOSE_BRACKETS_TEXT);
 
     /**
      * 週間ランキングリストテーブル名.
@@ -735,91 +657,6 @@ public class DBConstants {
             + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_GROUPID + " text, "
             + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID + " text "
             + ")";
-
-    //TV CLIP TABLE、クリップ一覧用
-    /**
-     * TVクリップ一覧テーブル.
-     */
-    public static final String TVCLIP_LIST_TABLE_NAME = "tv_clip_list";
-
-    /**
-     * TVクリップ一覧テーブル作成SQL.
-     */
-    public static final String CREATE_TABLE_TVCLIP_LIST_SQL = StringUtils.getConnectStrings(
-            CREATE_TABLE_TEXT, TVCLIP_LIST_TABLE_NAME, OPEN_BRACKETS_TEXT,
-            ID_COLUMN, CREATE_TABLE_PRIMARY_TEXT,
-            JsonConstants.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_CID, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_TITLE_ID, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_EPISODE_ID, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_TITLE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_EPITITLE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_TITLERUBY, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_DISP_TYPE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_DISPLAY_START_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_DISPLAY_END_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_AVAIL_START_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_AVAIL_END_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUBLISH_START_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUBLISH_END_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_NEWA_START_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_NEWA_END_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_THUMB_640, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_THUMB_448, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_DTV_THUMB_640, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_DTV_THUMB_448, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_COPYRIGHT, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_DUR, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_DEMONG, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_BVFLG, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_DTV_TYPE, TEXT_WITH_COMMA_TEXT,
-            UNDER_BAR_FOUR_K_FLG, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_HDRFLG, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_DELIVERY, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_R_VALUE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_ADULT, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_GENRE_ARRAY, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_SYNOP, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_SYNOP_SHORT, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUID, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PRICE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_QRANGE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_QUNIT, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PU_START_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PU_END_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_CREDIT_ARRAY, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_RATING, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_DTV, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_CHSVOD, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_SEARCH_OK, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_LIINF_ARRAY, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUINF, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_PUID, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUINF, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUINF, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_TITLE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUINF, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_EPITITLE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUINF, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_DISP_TYPE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUINF, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_CHSVOD, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUINF, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_PRICE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUINF, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_QUNIT, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUINF, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_QRANGE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUINF, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_PU_START_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_PUINF, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_PU_END_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_CAPL, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_BILINGAL, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_TV_CID, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_SERVICE_ID, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_EVENT_ID, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_CHNO, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_TV_SERVICE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_CONTENT_TYPE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_VOD_START_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_VOD_END_DATE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_MAIN_GENRE, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_SECOND_GENRE_ARRAY, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_COPY, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_ADINFO_ARRAY, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_RELATIONAL_ID_ARRAY, TEXT_WITHOUT_COMMA_TEXT,
-            CLOSE_BRACKETS_TEXT);
 
     // TABLE、録画持ち出しリスト用
     /**

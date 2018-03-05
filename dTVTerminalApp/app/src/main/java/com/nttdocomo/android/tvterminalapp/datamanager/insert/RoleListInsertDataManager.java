@@ -48,6 +48,12 @@ public class RoleListInsertDataManager {
             return;
         }
 
+        //取得データが空の場合は更新しないで、有効期限をクリアする
+        if (roleList == null || roleList.size() < 1) {
+            DateUtils.clearLastProgramDate(mContext, DateUtils.ROLELIST_LAST_UPDATE);
+            return;
+        }
+
         try {
             //各種オブジェクト作成
             DBHelper channelListDBHelper = new DBHelper(mContext);

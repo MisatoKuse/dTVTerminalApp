@@ -50,8 +50,23 @@ public class RecommendListDataManager {
      * @param redChList レコメンド(TV)データ
      * @param addFlag ページングフラグ
      * @param tagPageNo ページ番号
+     * @param cacheDateKey キャッシュ対象ごとのキー
      */
-    public void insertRecommendInsertList(final RecommendChList redChList, final boolean addFlag, final int tagPageNo) {
+    public void insertRecommendInsertList(
+            final RecommendChList redChList, final boolean addFlag, final int tagPageNo,
+            final String cacheDateKey) {
+
+        //有効期限判定
+        if (!DateUtils.getLastDate(mContext, cacheDateKey)) {
+            return;
+        }
+
+        //取得データが空の場合は更新しないで、有効期限をクリアする
+        if (redChList == null || redChList.getmRcList().size() < 1
+                || redChList.getmRcList().get(0).isEmpty()) {
+            DateUtils.clearLastProgramDate(mContext, cacheDateKey);
+            return;
+        }
 
         try {
             //各種オブジェクト作成
@@ -89,6 +104,8 @@ public class RecommendListDataManager {
                 }
                 redListDao.insert(values, tagPageNo);
             }
+            DateUtils dateUtils = new DateUtils(mContext);
+            dateUtils.addLastDate(cacheDateKey);
         } catch (SQLiteException e) {
             DTVTLogger.debug("RecommendListDataManager::insertRecommendInsertList, e.cause=" + e.getCause());
         } finally {

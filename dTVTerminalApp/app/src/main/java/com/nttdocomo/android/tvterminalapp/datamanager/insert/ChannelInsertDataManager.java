@@ -51,6 +51,17 @@ public class ChannelInsertDataManager {
 
         DTVTLogger.start();
 
+        //有効期限判定
+        if (!DateUtils.getLastDate(mContext, DateUtils.CHANNEL_LAST_UPDATE)) {
+            return;
+        }
+
+        //取得データが空の場合は更新しないで、有効期限をクリアする
+        if (channelList == null || channelList.getChannelList().isEmpty()) {
+            DateUtils.clearLastProgramDate(mContext, DateUtils.CHANNEL_LAST_UPDATE);
+            return;
+        }
+
         try {
             //各種オブジェクト作成
             DBHelper channelListDBHelper = new DBHelper(mContext);

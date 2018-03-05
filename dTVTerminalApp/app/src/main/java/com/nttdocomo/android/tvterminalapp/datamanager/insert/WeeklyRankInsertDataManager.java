@@ -53,6 +53,20 @@ public class WeeklyRankInsertDataManager {
             return;
         }
 
+        //取得データが空の場合は更新しないで、有効期限をクリアする
+        if (weeklyRankList == null || weeklyRankList.getWrList() == null
+                || weeklyRankList.getWrList().size() < 1) {
+            DateUtils.clearLastProgramDate(mContext, DateUtils.WEEKLY_RANK_LAST_INSERT);
+            return;
+        } else {
+            //HashMapが空の時も有効期限をクリアして何もしない
+            HashMap<String, String> hashMap = (HashMap<String, String>) weeklyRankList.getWrList().get(0);
+            if (hashMap.isEmpty()) {
+                DateUtils.clearLastProgramDate(mContext, DateUtils.WEEKLY_RANK_LAST_INSERT);
+                return;
+            }
+        }
+
         try {
             //各種オブジェクト作成
             DBHelper weeklyRankListDBHelper = new DBHelper(mContext);

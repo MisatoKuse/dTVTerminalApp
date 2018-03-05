@@ -10,6 +10,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.dataprovider.HomeDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 public class DBHelper extends SQLiteOpenHelper {
@@ -20,6 +24,11 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     private static final String DROP_TABLE_IF_EXISTS = "drop table if exists ";
+
+    /**
+     * コンテキストファイル.
+     */
+    private Context mContext = null;
 
     /**
      * 「channel_list」テーブルの削除用SQL.
@@ -36,8 +45,6 @@ public class DBHelper extends SQLiteOpenHelper {
             DROP_TABLE_IF_EXISTS, DBConstants.TV_SCHEDULE_LIST_TABLE_NAME);
     private static final String USER_INFO_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.USER_INFO_LIST_TABLE_NAME);
-    private static final String DROP_VODCLIP_TABLE_SQL = StringUtils.getConnectStrings(
-            DROP_TABLE_IF_EXISTS, DBConstants.VODCLIP_LIST_TABLE_NAME);
     private static final String DROP_WEEKLYRANK_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.WEEKLYRANK_LIST_TABLE_NAME);
     private static final String DROP_VIDEORANK_TABLE_SQL = StringUtils.getConnectStrings(
@@ -52,11 +59,6 @@ public class DBHelper extends SQLiteOpenHelper {
             DROP_TABLE_IF_EXISTS, DBConstants.DOWNLOAD_LIST_TABLE_NAME);
     private static final String DROP_RECOMMEND_DANIME_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.RECOMMEND_LIST_DANIME_TABLE_NAME);
-    /**
-     * 「tv clip list」テーブルの削除用SQL.
-     */
-    private static final String DROP_TVCLIP_TABLE_SQL = StringUtils.getConnectStrings(
-            DROP_TABLE_IF_EXISTS, DBConstants.TVCLIP_LIST_TABLE_NAME);
     /**
      * 「レンタル一覧」テーブルの削除用SQL.
      */
@@ -98,6 +100,7 @@ public class DBHelper extends SQLiteOpenHelper {
      */
     public DBHelper(final Context context) {
         super(context, DBConstants.DATABASE_NAME, null, DATABASE_VERSION);
+        mContext = context;
     }
 
     @Override
@@ -109,22 +112,15 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_WEEKLYRANK_SQL);
         sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_RECOMMEND_CHANNEL_SQL);
         sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_RECOMMEND_VIDEO_SQL);
-        sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_VODCLIP_LIST_SQL);
         sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_RANKING_VIDEO_SQL);
         sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_RECOMMEND_DCHANNEL_SQL);
         sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_RECOMMEND_DTV_SQL);
         sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_RECOMMEND_DANIME_SQL);
         sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_ROLE_LIST_SQL);
-        sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_DOWNLOAD_LIST_SQL);
         try {
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_WATCH_LISTEN_VIDEO_SQL);   //クリップ一覧画面用
         } catch (Exception e) {
             DTVTLogger.debug("HomeDBHelper::onCreate, create " + DBConstants.CREATE_TABLE_WATCH_LISTEN_VIDEO_SQL + " table failed, cause=" + e.getCause());
-        }
-        try {
-            sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_TVCLIP_LIST_SQL);   //クリップ一覧画面用
-        } catch (Exception e) {
-            DTVTLogger.debug("HomeDBHelper::onCreate, create " + DBConstants.CREATE_TABLE_TVCLIP_LIST_SQL + " table failed, cause=" + e.getCause());
         }
         try {
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_RENTAL_LIST_SQL);   //レンタル一覧画面用
@@ -162,22 +158,21 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(final SQLiteDatabase sqLiteDatabase, final int oldVersion, final int newVersion) {
+        //DB更新時に
         if (oldVersion < newVersion) {
+            DateUtils.clearLastDate(mContext);
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_CHANNEL_SQL);
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_DAILY_RANK_SQL);
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_RECOMMEND_CHANNEL_SQL);
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_RECOMMEND_VIDEO_SQL);
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_TV_SCHEDULE_SQL);
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_USER_INFO_SQL);
-            sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_VODCLIP_LIST_SQL);
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_WEEKLYRANK_SQL);
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_RANKING_VIDEO_SQL);
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_RECOMMEND_DCHANNEL_SQL);
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_RECOMMEND_DTV_SQL);
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_RECOMMEND_DANIME_SQL);
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_ROLE_LIST_SQL);
-            sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_DOWNLOAD_LIST_SQL);
-            sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_TVCLIP_LIST_SQL);  //クリップ一覧画面用
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_RENTAL_LIST_SQL);  //レンタル一覧画面用
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_RENTAL_ACTIVE_LIST_SQL);  //レンタル一覧のactive_list用
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_RENTAL_CHANNEL_LIST_SQL);  //購入済みCH一覧用
@@ -185,6 +180,16 @@ public class DBHelper extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_TV_CLIP_KEY_LIST_SQL); // クリップキー一覧(TV)
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL); // クリップキー一覧(VOD)
             sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_WATCH_LISTEN_VIDEO_SQL); // 視聴中ビデオ一覧(VOD)
+
+            //Upgrade時にUserInfoデータを再取得する
+            UserInfoDataProvider infoDataProvider = new UserInfoDataProvider(mContext);
+            infoDataProvider.getUserInfo();
+            //Upgrade時にHome画面用データを再取得する
+            HomeDataProvider homeDataProvider = new HomeDataProvider(mContext);
+            homeDataProvider.getHomeData();
+            //Upgrade時にWeeklyRanking画面用データを再取得する
+            RankingTopDataProvider rankingTopDataProvider = new RankingTopDataProvider(mContext);
+            rankingTopDataProvider.getWeeklyRankingData("");
         }
     }
 }
