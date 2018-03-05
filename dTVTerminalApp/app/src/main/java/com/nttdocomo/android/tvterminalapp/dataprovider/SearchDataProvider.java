@@ -145,7 +145,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
             request.serviceId = StringUtils.setCommaSeparator(getCurrentSearchServiceTypeArray(pageIndex));
             request.categoryId = StringUtils.setCommaSeparator(getCurrentSearchCategoryTypeArray(pageIndex));
-            request.sortKind = sortKind.searchWebSortType().ordinal();
+            request.sortKind = sortKind.searchWebSortType().ordinal() + 1;  // サーバAPI上は１～なのでenumのordinal+1
             request.filterTypeList = condition.searchFilterList();
             request.maxResult = SearchConstants.Search.requestMaxResultCount;
             request.startIndex = pageNumber * SearchConstants.Search.requestMaxResultCount + 1;

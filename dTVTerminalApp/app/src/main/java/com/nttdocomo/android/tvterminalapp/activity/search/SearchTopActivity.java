@@ -105,7 +105,7 @@ public class SearchTopActivity extends BaseActivity
     /**
      * 検索時のソート種別.
      */
-    private SearchSortKind mSearchSortKind = new SearchSortKind("SearchSortKindNone");
+    private SearchSortKind mSearchSortKind = new SearchSortKind(SearchSortKind.SearchSortKindEnum.SEARCH_SORT_KIND_NONE);
     /**
      * fragment factory.
      */
