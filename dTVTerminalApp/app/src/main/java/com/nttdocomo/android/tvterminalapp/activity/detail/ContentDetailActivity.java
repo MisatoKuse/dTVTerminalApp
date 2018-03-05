@@ -200,25 +200,76 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
     /*dTVチャンネル起動*/
 
     /*ひかりTV起動*/
+    /**
+     * カテゴリID(01).
+     */
     private static final String H4D_CATEGORY_TERRESTRIAL_DIGITAL = "01";
+    /**
+     * カテゴリID(02).
+     */
     private static final String H4D_CATEGORY_SATELLITE_BS = "02";
-    private static final String H4D_CATEGORY_IPTV = "03";
-    private static final String H4D_CATEGORY_DTV_CHANNEL_BROADCAST = "04";
+    /**
+     * カテゴリID(03).
+     */
+    public static final String H4D_CATEGORY_IPTV = "03";
+    /**
+     * カテゴリID(04).
+     */
+    public static final String H4D_CATEGORY_DTV_CHANNEL_BROADCAST = "04";
+    /**
+     * カテゴリID(05).
+     */
     private static final String H4D_CATEGORY_DTV_CHANNEL_MISSED = "05";
+    /**
+     * カテゴリID(06).
+     */
     private static final String H4D_CATEGORY_DTV_CHANNEL_RELATION = "06";
-    private static final String TV_PROGRAM = "tv_program";
+    /**
+     * disp_type(tv_program).
+     */
+    public static final String TV_PROGRAM = "tv_program";
+    /**
+     * disp_type(video_program).
+     */
     private static final String VIDEO_PROGRAM = "video_program";
+    /**
+     * disp_type(video_series).
+     */
     private static final String VIDEO_SERIES = "video_series";
+    /**
+     * dtv(1).
+     */
     private static final String DTV_FLAG_ONE = "1";
+    /**
+     * dtv(0).
+     */
     private static final String DTV_FLAG_ZERO = "0";
     private static final String BVFLG_FLAG_ONE = "1";
     private static final String BVFLG_FLAG_ZERO = "0";
-    private static final String TV_SERVICE_FLAG_ZERO = "0";
-    private static final String TV_SERVICE_FLAG_ONE = "1";
+    /**
+     * tv_service(0).
+     */
+    public static final String TV_SERVICE_FLAG_ZERO = "0";
+    /**
+     * tv_service(1).
+     */
+    public static final String TV_SERVICE_FLAG_ONE = "1";
+    /**
+     * contents_type(0).
+     */
     private static final String CONTENT_TYPE_FLAG_ZERO = "0";
-    private static final String CONTENT_TYPE_FLAG_ONE = "1";
-    private static final String CONTENT_TYPE_FLAG_TWO = "2";
-    private static final String CONTENT_TYPE_FLAG_THREE = "3";
+    /**
+     * contents_type(1).
+     */
+    public static final String CONTENT_TYPE_FLAG_ONE = "1";
+    /**
+     * contents_type(2).
+     */
+    public static final String CONTENT_TYPE_FLAG_TWO = "2";
+    /**
+     * contents_type(3).
+     */
+    public static final String CONTENT_TYPE_FLAG_THREE = "3";
     private static final int FLAG_ZERO = 0;
     /*ひかりTV起動*/
 
