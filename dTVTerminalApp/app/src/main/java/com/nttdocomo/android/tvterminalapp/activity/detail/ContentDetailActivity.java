@@ -397,6 +397,11 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
             setPlayerEvent();
             setUserAgeInfo();
         }
+        //BG復帰時にクリップボタンの更新を行う
+        DtvContentsDetailFragment dtvContentsDetailFragment = getDetailFragment();
+        ContentsDetailDataProvider contentsDetailDataProvider = new ContentsDetailDataProvider(this);
+        dtvContentsDetailFragment.mOtherContentsDetailData = contentsDetailDataProvider.checkClipStatus(dtvContentsDetailFragment.mOtherContentsDetailData);
+        dtvContentsDetailFragment.resumeClipButton();
         DTVTLogger.end();
     }
 
@@ -1869,6 +1874,9 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
             detailFragment.mOtherContentsDetailData.setSearchOk(mDetailFullData.getmSearch_ok());
             detailFragment.mOtherContentsDetailData.setDtv(mDetailFullData.getDtv());
             detailFragment.mOtherContentsDetailData.setDtvType(mDetailFullData.getDtvType());
+            detailFragment.mOtherContentsDetailData.setCrId(mDetailFullData.getCrid());
+            detailFragment.mOtherContentsDetailData.setEventId(mDetailFullData.getmEvent_id());
+            detailFragment.mOtherContentsDetailData.setTitleId(mDetailFullData.getTitle_id());
 
             detailFragment.noticeRefresh();
             String[] credit_array = mDetailFullData.getmCredit_array();

@@ -27,6 +27,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.select.ClipKeyListDataMan
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipKeyListWebClient;
@@ -494,6 +495,38 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         }
         DTVTLogger.end();
         return clipStatus;
+    }
+
+    /**
+     * ClipStatus チェック.
+     *
+     * @param contentsDetailData コンテンツデータリスト
+     * @return Status変更済みコンテンツデータリスト
+     */
+    public OtherContentsDetailData checkClipStatus(final OtherContentsDetailData contentsDetailData) {
+        DTVTLogger.start();
+        List<ContentsData> list = new ArrayList<>();
+
+        OtherContentsDetailData otherContentsDetailData = new OtherContentsDetailData();
+        //Nullチェック
+        if (contentsDetailData == null) {
+            return otherContentsDetailData;
+        }
+
+        //使用データ抽出
+        String dispType = otherContentsDetailData.getDispType();
+        String contentsType = otherContentsDetailData.getContentsType();
+        String dTv = otherContentsDetailData.getDtv();
+        String tvService = otherContentsDetailData.getTvService();
+        String serviceId = String.valueOf(otherContentsDetailData.getServiceId());
+        String eventId = otherContentsDetailData.getEventId();
+        String crid = otherContentsDetailData.getCrId();
+        String titleId = otherContentsDetailData.getTitleId();
+
+        //判定はgetClipStatusに一任
+        otherContentsDetailData.setClipStatus(getClipStatus(dispType, contentsType, dTv, crid, serviceId, eventId, titleId, tvService));
+        DTVTLogger.end();
+        return otherContentsDetailData;
     }
 
     /**
