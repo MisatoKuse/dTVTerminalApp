@@ -245,8 +245,6 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
 
     /**
      * DBからレンタル一覧を取得する.
-     *
-     * @return レンタル一覧データ.
      */
     public void getDbRentalList() {
         Handler handler = new Handler();
@@ -265,7 +263,8 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
      * @param activeList  購入済VOD一覧ActiveList
      * @return PurchasedVodListResponse
      */
-    private PurchasedVodListResponse makeVodMetaData(final List<Map<String, String>> vodMetaList, final List<Map<String, String>> activeList) {
+    @SuppressWarnings("OverlyLongMethod")
+    PurchasedVodListResponse makeVodMetaData(final List<Map<String, String>> vodMetaList, final List<Map<String, String>> activeList) {
         PurchasedVodListResponse response = new PurchasedVodListResponse();
         ArrayList<VodMetaFullData> vodMetaFullDataList = new ArrayList<>();
         for (int i = 0; i < vodMetaList.size(); i++) {
@@ -335,7 +334,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
      * @return コンテンツリスト
      */
     @SuppressWarnings("OverlyLongMethod")
-    private List<ContentsData> makeContentsData(final PurchasedVodListResponse response) {
+    List<ContentsData> makeContentsData(final PurchasedVodListResponse response) {
         List<ContentsData> list = new ArrayList<>();
         ArrayList<VodMetaFullData> metaFullData = response.getVodMetaFullData();
         ArrayList<ActiveData> activeDataList = response.getVodActiveData();
