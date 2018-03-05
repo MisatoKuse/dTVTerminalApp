@@ -152,7 +152,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         mTabNames = getResources().getStringArray(R.array.record_list_tab_names);
         mRecordedFragmentFactory = new RecordedFragmentFactory();
         progressBar = findViewById(R.id.record_list_main_layout_progress);
-        mViewPager.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -194,8 +193,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         if (null != mViewPager) {
             DTVTLogger.debug("viewpager not null");
             DTVTLogger.start("position = " + position);
-            mViewPager.setVisibility(View.INVISIBLE);
-            progressBar.setVisibility(View.VISIBLE);
             mViewPager.setCurrentItem(position);
         }
         DTVTLogger.end();
@@ -212,7 +209,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         if (mTabLayout != null) {
             mTabLayout.setTab(position);
         }
-        mViewPager.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.VISIBLE);
         switch (mViewPager.getCurrentItem()) {
             case 0:
@@ -281,7 +277,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             baseFragment.notifyDataSetChanged();
         }
         progressBar.setVisibility(View.GONE);
-        mViewPager.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -384,7 +379,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             public void run() {
                 if (progressBar != null) {
                     progressBar.setVisibility(View.GONE);
-                    mViewPager.setVisibility(View.VISIBLE);
                 }
             }
         });
