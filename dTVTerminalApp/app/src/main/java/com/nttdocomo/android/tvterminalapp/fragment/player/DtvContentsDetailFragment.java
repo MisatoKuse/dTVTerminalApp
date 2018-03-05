@@ -202,6 +202,16 @@ public class DtvContentsDetailFragment extends Fragment {
     }
 
     /**
+     * バックグラウンド復帰時にクリップボタンを更新する.
+     */
+    public void resumeClipButton() {
+        //画面生成時は mClipButton が null のため実行されない(BG 復帰時のみ実行される)
+        if (mClipButton != null) {
+            setClipButton(mClipButton);
+        }
+    }
+
+    /**
      * クリップボタンの表示/非表示を.
      *
      * @param clipButton クリップボタン
@@ -213,10 +223,10 @@ public class DtvContentsDetailFragment extends Fragment {
             if (mOtherContentsDetailData.isClipExec()) {
                 if (mOtherContentsDetailData.isClipStatus()) {
                     clipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
-                    mClipButton.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
+                    clipButton.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
                 } else {
                     clipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
-                    mClipButton.setTag(BaseActivity.CLIP_OPACITY_STATUS);
+                    clipButton.setTag(BaseActivity.CLIP_OPACITY_STATUS);
                 }
             } else {
                 clipButton.setVisibility(View.GONE);

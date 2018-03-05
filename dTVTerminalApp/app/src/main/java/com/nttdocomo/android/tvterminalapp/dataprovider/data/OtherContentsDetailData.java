@@ -78,6 +78,19 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
     // Tvサービス
     private String mTvService = "";
 
+    /**
+     * crId.
+     */
+    private String mCrId = null;
+    /**
+     * イベントID.
+     */
+    private String mEventId = null;
+    /**
+     * タイトルID.
+     */
+    private String mTitleId = null;
+
     public String getChannelDate() {
         return mChannelDate;
     }
@@ -366,6 +379,30 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         this.mTvService = mTvService;
     }
 
+    public String getCrId() {
+        return mCrId;
+    }
+
+    public void setCrId(String mCrId) {
+        this.mCrId = mCrId;
+    }
+
+    public String getEventId() {
+        return mEventId;
+    }
+
+    public void setEventId(String mEventId) {
+        this.mEventId = mEventId;
+    }
+
+    public String getTitleId() {
+        return mTitleId;
+    }
+
+    public void setTitleId(String mTitleId) {
+        this.mTitleId = mTitleId;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -405,17 +442,20 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         dest.writeString(this.mSearchOk);
         dest.writeString(this.mDtv);
         dest.writeString(this.mDtvType);
+        dest.writeByte(this.mClipExec ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.mClipStatus ? (byte) 1 : (byte) 0);
         dest.writeDouble(this.mRating);
         dest.writeString(this.mEpititle);
         dest.writeString(this.mTvService);
-        dest.writeByte(this.mClipExec ? (byte) 1 : (byte) 0);
-        dest.writeByte(this.mClipStatus ? (byte) 1 : (byte) 0);
+        dest.writeString(this.mCrId);
+        dest.writeString(this.mEventId);
+        dest.writeString(this.mTitleId);
     }
 
     public OtherContentsDetailData() {
     }
 
-    private OtherContentsDetailData(final Parcel in) {
+    protected OtherContentsDetailData(Parcel in) {
         super(in);
         this.mThumb = in.readString();
         this.mChannelDate = in.readString();
@@ -448,23 +488,25 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         this.mSearchOk = in.readString();
         this.mDtv = in.readString();
         this.mDtvType = in.readString();
+        this.mClipExec = in.readByte() != 0;
+        this.mClipStatus = in.readByte() != 0;
         this.mRating = in.readDouble();
         this.mEpititle = in.readString();
         this.mTvService = in.readString();
-        this.mClipExec = in.readByte() != 0;
-        this.mClipStatus = in.readByte() != 0;
+        this.mCrId = in.readString();
+        this.mEventId = in.readString();
+        this.mTitleId = in.readString();
     }
 
     public static final Creator<OtherContentsDetailData> CREATOR = new Creator<OtherContentsDetailData>() {
         @Override
-        public OtherContentsDetailData createFromParcel(final Parcel source) {
+        public OtherContentsDetailData createFromParcel(Parcel source) {
             return new OtherContentsDetailData(source);
         }
 
         @Override
-        public OtherContentsDetailData[] newArray(final int size) {
+        public OtherContentsDetailData[] newArray(int size) {
             return new OtherContentsDetailData[size];
         }
     };
-
 }
