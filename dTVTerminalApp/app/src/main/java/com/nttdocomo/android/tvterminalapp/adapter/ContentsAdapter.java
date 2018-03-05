@@ -700,9 +700,9 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TAB_D_TV:
             case TAB_D_CHANNEL:
             case TAB_D_ANIMATE:
+            case TAB_DEFAULT:
                 holder.tv_time.setVisibility(View.GONE);
                 break;
-            case TAB_DEFAULT:
             default:
                 break;
         }
@@ -842,7 +842,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      */
     private void setChannelName(final ViewHolder holder, final ContentsData listContentInfo) {
         DTVTLogger.start();
-        if (!TextUtils.isEmpty(listContentInfo.getChannelName())) { //ランク
+        if (!TextUtils.isEmpty(listContentInfo.getChannelName()) && mTabType != TabTypeItem.TAB_DEFAULT) { //ランク
             holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
             holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
             holder.tv_recorded_ch_name.setText(listContentInfo.getChannelName());
@@ -886,6 +886,9 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TAB_VIDEO:
                 break;
             case TAB_DEFAULT:
+                holder.tv_recorded_hyphen.setVisibility(View.GONE);
+                holder.tv_recorded_ch_name.setVisibility(View.GONE);
+                break;
             default:
                 break;
 
