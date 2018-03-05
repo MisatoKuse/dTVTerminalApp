@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
@@ -313,7 +314,10 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * おすすめテレビ取得.
      */
     void getHomeTvRecommend() {
-        if (DateUtils.getLastDate(mContext, DateUtils.RECOMMEND_CH_LAST_INSERT)
+        //DB保存履歴と、有効期間を確認
+        DateUtils dateUtils = new DateUtils(mContext);
+        String lastDate = dateUtils.getLastDate(DateUtils.RECOMMEND_CH_LAST_INSERT);
+        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeLimitDate(lastDate))
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
                 // RequestDataのインスタンス生成
@@ -341,7 +345,10 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * おすすめテレビ取得.
      */
     private void getTvRecommend() {
-        if (DateUtils.getLastDate(mContext, DateUtils.RECOMMEND_CH_LAST_INSERT)
+        //DB保存履歴と、有効期間を確認
+        DateUtils dateUtils = new DateUtils(mContext);
+        String lastDate = dateUtils.getLastDate(DateUtils.RECOMMEND_CH_LAST_INSERT);
+        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeLimitDate(lastDate))
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
                 // RequestDataのインスタンス生成
@@ -368,7 +375,10 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * おすすめビデオ取得.
      */
     void getVodRecommend() {
-        if (DateUtils.getLastDate(mContext, DateUtils.RECOMMEND_VD_LAST_INSERT)
+        //DB保存履歴と、有効期間を確認
+        DateUtils dateUtils = new DateUtils(mContext);
+        String lastDate = dateUtils.getLastDate(DateUtils.RECOMMEND_VD_LAST_INSERT);
+        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeLimitDate(lastDate))
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
                 // RequestDataのインスタンス生成
@@ -394,7 +404,10 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * おすすめDTVチャンネル取得.
      */
     void getDtvChRecommend() {
-        if (DateUtils.getLastDate(mContext, DateUtils.RECOMMEND_DCHANNEL_LAST_INSERT)
+        //DB保存履歴と、有効期間を確認
+        DateUtils dateUtils = new DateUtils(mContext);
+        String lastDate = dateUtils.getLastDate(DateUtils.RECOMMEND_DCHANNEL_LAST_INSERT);
+        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeLimitDate(lastDate))
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
                 // RequestDataのインスタンス生成
@@ -420,7 +433,11 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * おすすめDTV取得.
      */
     void getDtvRecommend() {
-        if (DateUtils.getLastDate(mContext, DateUtils.RECOMMEND_DTV_LAST_INSERT)
+
+        //DB保存履歴と、有効期間を確認
+        DateUtils dateUtils = new DateUtils(mContext);
+        String lastDate = dateUtils.getLastDate(DateUtils.RECOMMEND_DTV_LAST_INSERT);
+        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeLimitDate(lastDate))
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
                 // RequestDataのインスタンス生成
@@ -446,7 +463,10 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * おすすめDアニメ取得.
      */
     void getDAnimationRecommend() {
-        if (DateUtils.getLastDate(mContext, DateUtils.RECOMMEND_DANIME_LAST_INSERT)
+        //DB保存履歴と、有効期間を確認
+        DateUtils dateUtils = new DateUtils(mContext);
+        String lastDate = dateUtils.getLastDate(DateUtils.RECOMMEND_DANIME_LAST_INSERT);
+        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeLimitDate(lastDate))
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
                 // RequestDataのインスタンス生成

@@ -46,10 +46,6 @@ public class DailyRankInsertDataManager {
      */
     public void insertDailyRankInsertList(final DailyRankList dailyRankList) {
 
-        //有効期限判定
-        if (!DateUtils.getLastDate(mContext, DateUtils.DAILY_RANK_LAST_INSERT)) {
-            return;
-        }
         //取得データが空の場合は更新しないで、有効期限をクリアする
         if (dailyRankList == null || dailyRankList.getDrList() == null
                 || dailyRankList.getDrList().size() < 1) {

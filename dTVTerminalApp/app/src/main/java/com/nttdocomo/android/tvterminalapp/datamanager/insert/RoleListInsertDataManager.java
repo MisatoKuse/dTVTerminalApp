@@ -43,11 +43,6 @@ public class RoleListInsertDataManager {
      */
     public void insertRoleList(final List<RoleListMetaData> roleList) {
 
-        //有効期限判定
-        if (!DateUtils.getLastDate(mContext, DateUtils.ROLELIST_LAST_UPDATE)) {
-            return;
-        }
-
         //取得データが空の場合は更新しないで、有効期限をクリアする
         if (roleList == null || roleList.size() < 1) {
             DateUtils.clearLastProgramDate(mContext, DateUtils.ROLELIST_LAST_UPDATE);

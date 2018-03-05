@@ -61,11 +61,6 @@ public class TvScheduleInsertDataManager {
      */
     public void insertTvScheduleInsertList(final TvScheduleList tvScheduleList) {
 
-        //有効期限判定
-        if (!DateUtils.getLastDate(mContext, DateUtils.TV_SCHEDULE_LAST_INSERT)) {
-            return;
-        }
-
         //取得データが空の場合は更新しないで、有効期限をクリアする
         if (tvScheduleList == null || tvScheduleList.geTvsList() == null
                 || tvScheduleList.geTvsList().size() < 1 || tvScheduleList.geTvsList().get(0).isEmpty()) {
