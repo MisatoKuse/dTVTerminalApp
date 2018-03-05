@@ -21,12 +21,15 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RentalDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.RatingBarLayout;
@@ -327,7 +330,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         //各アイテムデータを取得
         final ContentsData listContentInfo = mListData.get(position);
         // アイテムデータを設定する
-        setContentsData(holder, listContentInfo);
+        setContentsData(holder, listContentInfo, contentView);
 
         if (!ActivityTypeItem.TYPE_RECORDED_LIST.equals(mType)) {
             //クリップボタン処理を設定する
@@ -545,8 +548,9 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      *
      * @param holder          ビューの集合
      * @param listContentInfo 行データー
+     * @param contentView contentView
      */
-    private void setContentsData(final ViewHolder holder, final ContentsData listContentInfo) {
+    private void setContentsData(final ViewHolder holder, final ContentsData listContentInfo, final View contentView) {
         DTVTLogger.start();
         setRankData(holder, listContentInfo);
         setTitleData(holder, listContentInfo);
@@ -556,8 +560,102 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         setRecodingReservationStatusData(holder, listContentInfo);
         setChannelName(holder, listContentInfo);
         setRecordedDownloadIcon(holder, listContentInfo);
+        setNowOnAirData(holder, listContentInfo, contentView);
         if (ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST.equals(mType)) {
             setSubTitle(holder, listContentInfo);
+        }
+    }
+
+    /**
+     * NOW ON AIR を設定.
+     *
+     * @param holder          ビューの集合
+     * @param listContentInfo 行データー
+     * @param contentView contentView
+     */
+    private void setNowOnAirData(final ViewHolder holder, final ContentsData listContentInfo, final View contentView) {
+        switch (mType) {
+            case TYPE_RECOMMEND_LIST://おすすめ番組・ビデオ
+            case TYPE_SEARCH_LIST://検索
+                switch (mTabType) {
+                    case TAB_TV:
+                        checkNowOnAir(holder, listContentInfo, contentView, false);
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case TYPE_DAILY_RANK: // 今日のテレビランキング
+            case TYPE_WEEKLY_RANK: // 週間ランキング
+                checkNowOnAir(holder, listContentInfo, contentView, true);
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 放送コンテンツかどうか.
+     *
+     * @param holder ViewHolder
+     * @param listContentInfo ContentsData
+     * @param isPlala   true:ぷらら false:レコメンド
+     * @param contentView   contentView
+     */
+    private void checkNowOnAir(final ViewHolder holder, final ContentsData listContentInfo, final View contentView, final boolean isPlala) {
+        boolean result = false;
+        if (isPlala) {
+            if (ContentDetailActivity.TV_PROGRAM.equals(listContentInfo.getDispType())) {
+                if (ContentDetailActivity.TV_SERVICE_FLAG_ONE.equals(listContentInfo.getTvService())) {
+                    if (ContentDetailActivity.CONTENT_TYPE_FLAG_THREE.equals(listContentInfo.getContentsType())) {
+                        result = true;
+                    } else if (ContentDetailActivity.CONTENT_TYPE_FLAG_ONE.equals(listContentInfo.getContentsType())
+                            || ContentDetailActivity.CONTENT_TYPE_FLAG_TWO.equals(listContentInfo.getContentsType())) {
+                        long startDate = DateUtils.getEpochTimeLink(listContentInfo.getLinearStartDate());
+                        long endDate = DateUtils.getEpochTimeLink(listContentInfo.getLinearEndDate());
+                        if (DateUtils.isBetweenNowTime(startDate, endDate)) {
+                            result = true;
+                        }
+                    } else {
+                        result = true;
+                    }
+                } else if (ContentDetailActivity.TV_SERVICE_FLAG_ZERO.equals(listContentInfo.getTvService())) {
+                    result = true;
+                }
+            }
+        } else {
+            if (!TextUtils.isEmpty(listContentInfo.getServiceId()) && DBUtils.isNumber(listContentInfo.getServiceId())) {
+                int serviceId = Integer.parseInt(listContentInfo.getServiceId());
+                String categoryId = listContentInfo.getServiceId();
+                if (OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID == serviceId
+                        && (ContentDetailActivity.H4D_CATEGORY_IPTV.equals(categoryId)
+                        || ContentDetailActivity.H4D_CATEGORY_DTV_CHANNEL_BROADCAST.equals(categoryId))) {
+                    long startDate = DateUtils.getEpochTimeLink(listContentInfo.getStartViewing());
+                    long endDate = DateUtils.getEpochTimeLink(listContentInfo.getEndViewing());
+                    if (DateUtils.isBetweenNowTime(startDate, endDate)) {
+                        result = true;
+                    }
+                }
+                //TODO dTVチャンネル　放送の場合は一応保留
+                /*else if (OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID == serviceId
+                        && ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(categoryId)) {
+                    result = true;
+                }*/
+            }
+        }
+        if (result) {
+            if (holder.tv_recorded_ch_name == null) {
+                holder.tv_recorded_ch_name = contentView.findViewById(R.id.item_common_result_recorded_content_channel_name);
+            }
+            if (holder.tv_time != null && !TextUtils.isEmpty(holder.tv_time.getText())) {
+                holder.tv_recorded_hyphen = contentView.findViewById(R.id.item_common_result_recorded_content_hyphen);
+                holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
+            }
+            holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
+            holder.tv_recorded_ch_name.setText(R.string.now_on_air);
+            //文字をNow On Airの色にする
+            holder.tv_recorded_ch_name.setTextColor(
+                    ContextCompat.getColor(mContext, R.color.recommend_list_now_on_air));
         }
     }
 
@@ -679,22 +777,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_time.setVisibility(View.VISIBLE);
                 //開始・終了日付の取得
                 long startDate = DateUtils.getEpochTimeLink(listContentInfo.getStartViewing());
-                long endDate = DateUtils.getEpochTimeLink(listContentInfo.getEndViewing());
 
                 //日付の表示
                 String answerText = StringUtils.getConnectStrings(
                         DateUtils.getRecordShowListItem(startDate));
                 holder.tv_time.setText(answerText);
-                //現在時刻が開始と終了の間ならば、"Now On Air"と表示する
-                if (DateUtils.isBetweenNowTime(startDate, endDate)) {
-                    //収まっていたので、Now On Airを表示
-                    if (holder.tv_channel_name != null) {
-                        holder.tv_channel_name.setText(R.string.now_on_air);
-                        //文字をNow On Airの色にする
-                        holder.tv_channel_name.setTextColor(
-                                ContextCompat.getColor(mContext, R.color.recommend_list_now_on_air));
-                    }
-                }
                 break;
             case TAB_VIDEO:
             case TAB_D_TV:
