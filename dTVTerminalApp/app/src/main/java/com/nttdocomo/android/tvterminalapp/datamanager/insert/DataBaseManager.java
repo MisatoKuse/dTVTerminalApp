@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelperChannel;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DownloadDBHelper;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -40,6 +41,10 @@ public class DataBaseManager {
      */
     private static DBHelperChannel sDatabaseChannelHelper;
     /**
+     * DBHelper(録画リスト用).
+     */
+    private static DownloadDBHelper sDatabaseDownloadHelper;
+    /**
      * Database.
      */
     private SQLiteDatabase mDatabase;
@@ -65,6 +70,18 @@ public class DataBaseManager {
         if (sInstanceCh == null) {
             sInstanceCh = new DataBaseManager();
             sDatabaseChannelHelper = helper;
+        }
+    }
+
+    /**
+     * 初期化処理(ダウンロードコンテンツ情報用).
+     *
+     * @param helper DBHelper
+     */
+    public static synchronized void initializeInstance(final DownloadDBHelper helper) {
+        if (sInstance == null) {
+            sInstance = new DataBaseManager();
+            sDatabaseDownloadHelper = helper;
         }
     }
 
@@ -121,6 +138,19 @@ public class DataBaseManager {
     }
 
     /**
+     * Databaseを開く(ダウンロードコンテンツ情報用).
+     *
+     * @return Database
+     */
+    public synchronized SQLiteDatabase openDownloadDatabase() {
+        if (mOpenCounterCh.incrementAndGet() == 1) {
+            // Opening new database
+            mDatabase = sDatabaseDownloadHelper.getWritableDatabase();
+        }
+        return mDatabase;
+    }
+
+    /**
      * Databaseを閉じる.
      */
     public synchronized void closeDatabase() {
@@ -142,10 +172,28 @@ public class DataBaseManager {
     }
 
     /**
+     * Databaseを閉じる(ダウンロードコンテンツ情報用).
+     */
+    public synchronized void closeDownloadDatabase() {
+        if (mOpenCounterCh.decrementAndGet() == 0) {
+            // Closing database
+            mDatabase.close();
+        }
+    }
+
+    /**
      * 情報を削除する.
      */
     public static void clearChInfo() {
         sInstanceCh = null;
         sDatabaseChannelHelper = null;
+    }
+
+    /**
+     * 情報を削除する(ダウンロードコンテンツ情報用).
+     */
+    public static void clearDownloadInfo() {
+        sInstanceCh = null;
+        sDatabaseDownloadHelper = null;
     }
 }

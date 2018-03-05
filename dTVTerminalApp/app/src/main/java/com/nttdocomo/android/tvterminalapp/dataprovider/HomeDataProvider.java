@@ -411,7 +411,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
 
     @Override
     public void onGenreListJsonParsed(final GenreListResponse genreListResponse) {
-        if (genreListResponse != null) {
+        if (genreListResponse != null && !genreListResponse.getTypeList().isEmpty()) {
             //取得した情報を保存する
             DateUtils dateUtils = new DateUtils(mContext);
             String lastDate = dateUtils.getLastDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
@@ -421,6 +421,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 SharedPreferencesUtils.setSharedPreferencesVideoGenreData(mContext,
                         StringUtils.toGenreListResponseBase64(genreListResponse));
             }
+        } else {
+            //取得したデータが空の場合は保存しないで取得日付をクリアする
+            DateUtils.clearLastProgramDate(mContext, DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
         }
     }
 

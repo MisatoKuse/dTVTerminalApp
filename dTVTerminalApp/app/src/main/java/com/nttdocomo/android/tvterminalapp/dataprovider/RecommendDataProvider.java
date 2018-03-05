@@ -618,10 +618,8 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * @param tagPageNo       ページ番号
      */
     private void setStructDB(final RecommendChList recommendChList, final String cacheDateKey, final int tagPageNo) {
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(cacheDateKey);
         RecommendListDataManager dataManager = new RecommendListDataManager(mContext);
-        dataManager.insertRecommendInsertList(recommendChList, mIsPaging, tagPageNo);
+        dataManager.insertRecommendInsertList(recommendChList, mIsPaging, tagPageNo, cacheDateKey);
     }
 
     /**

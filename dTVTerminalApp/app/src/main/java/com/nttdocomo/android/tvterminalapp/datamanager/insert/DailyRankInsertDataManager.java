@@ -46,6 +46,24 @@ public class DailyRankInsertDataManager {
      */
     public void insertDailyRankInsertList(final DailyRankList dailyRankList) {
 
+        //有効期限判定
+        if (!DateUtils.getLastDate(mContext, DateUtils.DAILY_RANK_LAST_INSERT)) {
+            return;
+        }
+        //取得データが空の場合は更新しないで、有効期限をクリアする
+        if (dailyRankList == null || dailyRankList.getDrList() == null
+                || dailyRankList.getDrList().size() < 1) {
+            DateUtils.clearLastProgramDate(mContext, DateUtils.DAILY_RANK_LAST_INSERT);
+            return;
+        } else {
+            //HashMapが空の時も有効期限をクリアして何もしない
+            HashMap<String, String> hashMap = (HashMap<String, String>) dailyRankList.getDrList().get(0);
+            if (hashMap.isEmpty()) {
+                DateUtils.clearLastProgramDate(mContext, DateUtils.DAILY_RANK_LAST_INSERT);
+                return;
+            }
+        }
+
         try {
             //各種オブジェクト作成
             DBHelper dailyRankListDBHelper = new DBHelper(mContext);

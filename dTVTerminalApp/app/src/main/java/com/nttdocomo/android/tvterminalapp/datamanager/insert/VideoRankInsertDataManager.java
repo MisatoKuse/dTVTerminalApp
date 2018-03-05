@@ -52,6 +52,20 @@ public class VideoRankInsertDataManager {
             return;
         }
 
+        //取得データが空の場合は更新しないで、有効期限をクリアする
+        if (videoRankList == null || videoRankList.getVrList() == null
+                || videoRankList.getVrList().size() < 1) {
+            DateUtils.clearLastProgramDate(mContext, DateUtils.VIDEO_RANK_LAST_INSERT);
+            return;
+        } else {
+            //HashMapが空の時も有効期限をクリアして何もしない
+            HashMap<String, String> hashMap = (HashMap<String, String>) videoRankList.getVrList().get(0);
+            if (hashMap.isEmpty()) {
+                DateUtils.clearLastProgramDate(mContext, DateUtils.VIDEO_RANK_LAST_INSERT);
+                return;
+            }
+        }
+
         try {
             //各種オブジェクト作成
             DBHelper videoRankListDBHelper = new DBHelper(mContext);

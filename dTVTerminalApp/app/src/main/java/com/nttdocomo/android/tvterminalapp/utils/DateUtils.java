@@ -290,7 +290,6 @@ public class DateUtils {
     public void addLastDate(final String key) {
 
         // TODO:DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
-        // TODO:UTCタイムスタンプで良い.無駄に複雑化させているだけ.
         //現在日時を取得
         Calendar c = Calendar.getInstance();
         c.add(Calendar.HOUR_OF_DAY, LIMIT_HOUR);
@@ -320,11 +319,36 @@ public class DateUtils {
     public void addLastProgramDate(final String key) {
 
         // TODO:DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
-        // TODO:文字列でなくUTCのタイムスタンプでよい.無駄に複雑にしている.
         //現在日時を取得
         Calendar c = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DD, Locale.JAPAN);
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DD);
         saveDataToSharePre(key, sdf.format(c.getTime()));
+    }
+
+    /**
+     * DB更新時にすべてのデータ取得日付をクリアする.
+     * @param context コンテキストファイル
+     */
+    public static void clearLastDate(final Context context) {
+        //データ全クリア
+        SharedPreferences data = context.getSharedPreferences(DATA_SAVE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.clear().commit();
+        editor.apply();
+    }
+
+    /**
+     * データ取得日付をクリアする.
+     *
+     * @param context コンテクストファイル
+     * @param key     キー
+     */
+    public static void clearLastProgramDate(final Context context, final String key) {
+        //データクリア
+        SharedPreferences data = context.getSharedPreferences(DATA_SAVE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.remove(key).commit();
+        editor.apply();
     }
 
     /**

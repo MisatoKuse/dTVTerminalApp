@@ -52,6 +52,20 @@ public class WatchListenVideoDataManager {
             return;
         }
 
+        //取得データが空の場合は更新しないで、有効期限をクリアする
+        if (watchListenVideoList == null || watchListenVideoList.getVcList() == null
+                || watchListenVideoList.getVcList().size() < 1) {
+            DateUtils.clearLastProgramDate(mContext, DateUtils.WATCHING_VIDEO_LIST_LAST_INSERT);
+            return;
+        } else {
+            //HashMapが空の時も有効期限をクリアして何もしない
+            HashMap<String, String> hashMap = (HashMap<String, String>) watchListenVideoList.getVcList().get(0);
+            if (hashMap.isEmpty()) {
+                DateUtils.clearLastProgramDate(mContext, DateUtils.WATCHING_VIDEO_LIST_LAST_INSERT);
+                return;
+            }
+        }
+
         try {
             //各種オブジェクト作成
             DBHelper watchListenVideoDBHelper = new DBHelper(mContext);

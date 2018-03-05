@@ -60,6 +60,13 @@ public class RentalListInsertDataManager {
             return;
         }
 
+        //取得データが空の場合は更新しないで、有効期限をクリアする
+        if (rentalList == null || rentalList.getVodActiveData() == null || rentalList.getVodActiveData().size() < 1
+                || rentalList.getVodMetaFullData() == null || rentalList.getVodMetaFullData().size() < 1) {
+            DateUtils.clearLastProgramDate(mContext, DateUtils.RENTAL_VOD_LAST_UPDATE);
+            return;
+        }
+
         try {
             //各種オブジェクト作成
             DBHelper rentalListDBHelper = new DBHelper(mContext);

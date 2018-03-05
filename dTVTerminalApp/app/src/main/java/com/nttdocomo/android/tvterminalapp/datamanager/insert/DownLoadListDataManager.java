@@ -13,6 +13,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.DownLoadListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DownloadDBHelper;
 import com.nttdocomo.android.tvterminalapp.service.download.DlData;
 
 import java.util.List;
@@ -48,9 +49,10 @@ public class DownLoadListDataManager {
 
         try {
             //各種オブジェクト作成
-            DBHelper downLoadListDBHelper = new DBHelper(mContext);
+            DownloadDBHelper downLoadListDBHelper = new DownloadDBHelper(mContext);
+            DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+            SQLiteDatabase database = DataBaseManager.getInstance().openDownloadDatabase();
             database.acquireReference();
             DownLoadListDao downloadListDao = new DownLoadListDao(database);
 
@@ -73,7 +75,7 @@ public class DownLoadListDataManager {
         } catch (SQLiteException e) {
             DTVTLogger.debug("DownLoadListDataManager::insertDownload, e.cause=" + e.getCause());
         } finally {
-            DataBaseManager.getInstance().closeDatabase();
+            DataBaseManager.getInstance().closeDownloadDatabase();
         }
     }
 
@@ -86,8 +88,9 @@ public class DownLoadListDataManager {
         try {
             //各種オブジェクト作成
             DBHelper downLoadListDBHelper = new DBHelper(mContext);
+            DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+            SQLiteDatabase database = DataBaseManager.getInstance().openDownloadDatabase();
             database.acquireReference();
             DownLoadListDao downloadListDao = new DownLoadListDao(database);
 
@@ -95,7 +98,7 @@ public class DownLoadListDataManager {
         } catch (SQLiteException e) {
             DTVTLogger.debug("DownLoadListDataManager::deleteDownloadAllContents, e.cause=" + e.getCause());
         } finally {
-            DataBaseManager.getInstance().closeDatabase();
+            DataBaseManager.getInstance().closeDownloadDatabase();
         }
     }
 
@@ -108,8 +111,9 @@ public class DownLoadListDataManager {
         try {
             //各種オブジェクト作成
             DBHelper downLoadListDBHelper = new DBHelper(mContext);
+            DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+            SQLiteDatabase database = DataBaseManager.getInstance().openDownloadDatabase();
             database.acquireReference();
             DownLoadListDao downloadListDao = new DownLoadListDao(database);
 
@@ -117,7 +121,7 @@ public class DownLoadListDataManager {
         } catch (SQLiteException e) {
             DTVTLogger.debug("DownLoadListDataManager::deleteDownloadContentByItemId, e.cause=" + e.getCause());
         } finally {
-            DataBaseManager.getInstance().closeDatabase();
+            DataBaseManager.getInstance().closeDownloadDatabase();
         }
     }
 
@@ -130,8 +134,9 @@ public class DownLoadListDataManager {
         try {
             //各種オブジェクト作成
             DBHelper downLoadListDBHelper = new DBHelper(mContext);
+            DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+            SQLiteDatabase database = DataBaseManager.getInstance().openDownloadDatabase();
             database.acquireReference();
             DownLoadListDao downloadListDao = new DownLoadListDao(database);
 
@@ -142,7 +147,7 @@ public class DownLoadListDataManager {
         } catch (SQLiteException e) {
             DTVTLogger.debug("DownLoadListDataManager::updateDownloadByItemId, e.cause=" + e.getCause());
         } finally {
-            DataBaseManager.getInstance().closeDatabase();
+            DataBaseManager.getInstance().closeDownloadDatabase();
         }
     }
 
@@ -160,8 +165,9 @@ public class DownLoadListDataManager {
 
             //Daoクラス使用準備
             DBHelper downLoadListDBHelper = new DBHelper(mContext);
+            DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+            SQLiteDatabase database = DataBaseManager.getInstance().openDownloadDatabase();
             database.acquireReference();
             DownLoadListDao downLoadListDao = new DownLoadListDao(database);
 
@@ -170,7 +176,7 @@ public class DownLoadListDataManager {
         } catch (SQLiteException e) {
             DTVTLogger.debug("DownLoadListDataManager::selectDownLoadListVideoData, e.cause=" + e.getCause());
         } finally {
-            DataBaseManager.getInstance().closeDatabase();
+            DataBaseManager.getInstance().closeDownloadDatabase();
         }
         return list;
     }
@@ -198,8 +204,9 @@ public class DownLoadListDataManager {
 
             //Daoクラス使用準備
             DBHelper downLoadListDBHelper = new DBHelper(mContext);
+            DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+            SQLiteDatabase database = DataBaseManager.getInstance().openDownloadDatabase();
             database.acquireReference();
             DownLoadListDao downLoadListDao = new DownLoadListDao(database);
 
@@ -208,7 +215,7 @@ public class DownLoadListDataManager {
         } catch (SQLiteException e) {
             DTVTLogger.debug("DownLoadListDataManager::selectDownLoadList, e.cause=" + e.getCause());
         } finally {
-            DataBaseManager.getInstance().closeDatabase();
+            DataBaseManager.getInstance().closeDownloadDatabase();
         }
         return list;
     }

@@ -66,6 +66,13 @@ public class TvScheduleInsertDataManager {
             return;
         }
 
+        //取得データが空の場合は更新しないで、有効期限をクリアする
+        if (tvScheduleList == null || tvScheduleList.geTvsList() == null
+                || tvScheduleList.geTvsList().size() < 1 || tvScheduleList.geTvsList().get(0).isEmpty()) {
+            DateUtils.clearLastProgramDate(mContext, DateUtils.TV_SCHEDULE_LAST_INSERT);
+            return;
+        }
+
         try {
             //各種オブジェクト作成
             DBHelper channelListDBHelper = new DBHelper(mContext);
