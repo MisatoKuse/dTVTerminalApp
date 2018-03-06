@@ -716,10 +716,11 @@ public class BaseActivity extends FragmentActivity implements
 
         //STB接続状態を反映.
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-        if (null != dlnaDmsItem) {
+        if (null != dlnaDmsItem && !dlnaDmsItem.mIPAddress.isEmpty()) {
             // 未ペアリング時はそもそも状態反映しない.
             mDlnaProvDevListForBase = new DlnaProvDevList();
             mIsStbStatusOn = mDlnaProvDevListForBase.isDmsAvailable(dlnaDmsItem.mUdn);
+            mRemoteControlRelayClient.setRemoteIp(dlnaDmsItem.mIPAddress);
         }
 
         DTVTLogger.end();
