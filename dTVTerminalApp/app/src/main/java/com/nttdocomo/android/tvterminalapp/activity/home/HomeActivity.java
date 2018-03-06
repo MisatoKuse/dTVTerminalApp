@@ -32,11 +32,13 @@ import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivi
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopHomeDataConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopUserInfoDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
@@ -82,6 +84,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * 表示するコンテンツを内包するLinearLayout.
      */
     private RelativeLayout mRelativeLayout = null;
+    /**
+     * 未契約者導線.
+     */
+    private LinearLayout mAgreementRl = null;
+    /**
+     * PR枠画像.
+     */
+    private ImageView mPrImageView = null;
     /**
      * エラーダイアログが表示されているかのフラグ.
      */
@@ -283,8 +293,30 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private void requestHomeData() {
         //Home画面用データを取得
         showProgessBar(true);
+        showHomeBanner();
         mHomeDataProvider = new HomeDataProvider(this);
         mHomeDataProvider.getHomeData();
+    }
+
+    /**
+     * PR画像、契約導線表示切替.
+     */
+    private void showHomeBanner() {
+        UserState userState = UserInfoUtils.getUserState(this);
+        switch (userState) {
+            case LOGIN_OK_CONTRACT_NG:
+                mAgreementRl.setVisibility(View.VISIBLE);
+                mPrImageView.setVisibility(View.VISIBLE);
+                break;
+            case LOGIN_NG:
+                mPrImageView.setVisibility(View.VISIBLE);
+                break;
+            case CONTRACT_OK_PAIRING_NG:
+            case CONTRACT_OK_PARING_OK:
+                mAgreementRl.setVisibility(View.GONE);
+                mPrImageView.setVisibility(View.GONE);
+                break;
+        }
     }
 
     @Override
@@ -342,14 +374,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mLinearLayout = findViewById(R.id.home_main_layout_linearLayout);
         mLinearLayout.setVisibility(View.GONE);
         TextView agreementTextView = findViewById(R.id.home_main_layout_kytv);
-        LinearLayout agreementRl = findViewById(R.id.home_main_layout_kyrl);
-        ImageView prImageView = findViewById(R.id.home_main_layout_pr);
-        //TODO:契約状態取得が実装されるまで未契約メッセージは暫定的に非表示とする
-        agreementRl.setVisibility(View.GONE);
-        //TODO:契約状態取得が実装されるまでバナーは暫定的に非表示とする
-        prImageView.setVisibility(View.GONE);
+        mAgreementRl = findViewById(R.id.home_main_layout_kyrl);
+        mPrImageView = findViewById(R.id.home_main_layout_pr);
+        mAgreementRl.setVisibility(View.GONE);
+        mPrImageView.setVisibility(View.GONE);
         agreementTextView.setOnClickListener(this);
-        prImageView.setOnClickListener(this);
+        mPrImageView.setOnClickListener(this);
 
         //縦横比を維持したまま幅100%に拡大縮小
         Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.home_pr);
@@ -362,7 +392,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         LinearLayout.LayoutParams imgIp = new LinearLayout.LayoutParams(
                 displaymetrics.widthPixels,
                 (int) (drawable.getIntrinsicHeight() * ratio));
-        prImageView.setLayoutParams(imgIp);
+        mPrImageView.setLayoutParams(imgIp);
 
         //各コンテンツのビューを作成する
         for (int i = HOME_CONTENTS_LIST_START_INDEX; i < HOME_CONTENTS_LIST_COUNT + HOME_CONTENTS_LIST_START_INDEX; i++) {
