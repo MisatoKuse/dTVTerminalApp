@@ -96,7 +96,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      */
     private static final String MISS_COMPLETE = "2";
     /**
-     *
+     * コンテキスト.
      */
     private Context mContext = null;
     /**
@@ -156,6 +156,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * @param mProgramList 番組表リスト
      */
     public TvProgramListAdapter(final Context mContext, final List<ChannelInfo> mProgramList) {
+        DTVTLogger.start();
         this.mProgramList = mProgramList;
         this.mContext = mContext;
         mScreenWidth = mContext.getResources().getDisplayMetrics().widthPixels;
@@ -165,16 +166,23 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         getCurTime();
         for (int i = 0; i < mProgramList.size(); i++) {
             ChannelInfo itemChannel = mProgramList.get(i);
-            if (itemChannel != null && itemChannel.getSchedules() != null) {
+            if (itemChannel != null ) {
                 ArrayList<ScheduleInfo> itemSchedules = itemChannel.getSchedules();
-                for (int j = 0; j < itemSchedules.size(); j++) {
-                    ScheduleInfo itemSchedule = itemSchedules.get(j);
-                    ItemViewHolder itemViewHolder = new ItemViewHolder(itemSchedules.get(j));
-                    setView(itemViewHolder, itemSchedule);
+                if (itemSchedules == null || itemSchedules.size() == 0) {
+                    // 空のView(背景のみ)を追加
+                    ItemViewHolder itemViewHolder = new ItemViewHolder(null);
                     mItemViews.add(itemViewHolder);
+                } else {
+                    for (int j = 0; j < itemSchedules.size(); j++) {
+                        ScheduleInfo itemSchedule = itemSchedules.get(j);
+                        ItemViewHolder itemViewHolder = new ItemViewHolder(itemSchedules.get(j));
+                        setView(itemViewHolder, itemSchedule);
+                        mItemViews.add(itemViewHolder);
+                    }
                 }
             }
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -309,6 +317,12 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     }
                 }
             }
+        } else {
+            // 空のView(背景のみ)を追加
+            ItemViewHolder itemViewHolder = getUnused();
+            itemViewHolder = new ItemViewHolder(null);
+            itemViewHolder.setUsing();
+            holder.layout.addView(itemViewHolder.mView);
         }
     }
 
