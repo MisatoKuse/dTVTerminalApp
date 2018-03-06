@@ -89,7 +89,8 @@ public class RoleListWebClient
         //コールバックのセット
         mRoleListJsonParserCallback = roleListJsonParserCallback;
 
-        //ジャンル一覧ファイルを読み込む
+        //ロール一覧ファイルを読み込む
+        DTVTLogger.debug("Get lole list file");
         openUrl(UrlConstants.WebApiUrl.ROLE_LIST_FILE, "", this);
 
         DTVTLogger.end();

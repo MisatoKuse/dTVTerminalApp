@@ -96,7 +96,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
     /**
      * リクエスト種別・基本はPOST・子クラスで使われるのでプロテクテッド.
      */
-    protected static final String REQUEST_METHOD = "POST";
+    protected static final String REQUEST_METHOD_POST = "POST";
     /**
      * リダイレクト処理用にGETも定義・子クラスで使われるのでプロテクテッド.
      */
@@ -653,6 +653,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         if (statusCode != HttpURLConnection.HTTP_OK) {
             //HTTP通信エラーとして元に返す
             mReturnCode.errorType = DTVTConstants.ERROR_TYPE.HTTP_ERROR;
+            DTVTLogger.debug(String.format("statusCode[%s]", statusCode));
             return "";
         }
 
@@ -698,7 +699,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         if (stringBuilder != null) {
             bodyData = stringBuilder.toString();
         }
-
+        DTVTLogger.debug(String.format("bodyData[%s]", bodyData));
         return bodyData;
     }
 
@@ -1018,7 +1019,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      * @return メソッド名
      */
     protected String getRequestMethod() {
-        return REQUEST_METHOD;
+        return REQUEST_METHOD_POST;
     }
 
     /**
@@ -1052,7 +1053,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         /**
          * リクエストに利用するHTTPメソッド.
          */
-        private String mRequestMethod = REQUEST_METHOD;
+        private String mRequestMethod = REQUEST_METHOD_POST;
 
         /**
          * ワンタイムトークンの値を設定する.
@@ -1146,7 +1147,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
 
             //ワンタイムトークン取得時スイッチをONにする
             oneTimeTokenGetSwitch = true;
-            mRequestMethod = REQUEST_METHOD;
+            mRequestMethod = REQUEST_METHOD_POST;
         }
 
         /**
@@ -1203,8 +1204,9 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                 }
 
                 //パラメータを渡す
-                setPostData(mUrlConnection);
-
+                if (mRequestMethod.equals(REQUEST_METHOD_POST)) {
+                    setPostData(mUrlConnection);
+                }
                 //結果を読み込む
                 int statusCode = mUrlConnection.getResponseCode();
                 mAnswerBuffer = readConnectionBody(statusCode);
@@ -1318,7 +1320,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
             //ジャンルID、ロールIDはファイルDLのためGETメソッドリクエストする
             //POSTでJSONを送ることを宣言
             urlConnection.setRequestMethod(mRequestMethod);
-            if (mRequestMethod.equals(REQUEST_METHOD)) {
+            if (mRequestMethod.equals(REQUEST_METHOD_POST)) {
                 urlConnection.setDoOutput(true);
             }
             urlConnection.setDoInput(true);
@@ -1338,9 +1340,9 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
             DataOutputStream dataOutputStream = null;
             try {
                 dataOutputStream = new DataOutputStream(urlConnection.getOutputStream());
+                DTVTLogger.debug(String.format("RequestMethod[%s] mSendParameter[%s] size[%s]", urlConnection.getRequestMethod(), mSendParameter, mSendParameter.length()));
                 dataOutputStream.write(mSendParameter.getBytes(UTF8_CHARACTER_SET));
                 dataOutputStream.flush();
-
             } catch (IOException e) {
                 // POST送信エラー
                 DTVTLogger.debug(e);

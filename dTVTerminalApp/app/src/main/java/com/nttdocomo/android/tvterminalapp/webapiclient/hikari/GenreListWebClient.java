@@ -94,6 +94,7 @@ public class GenreListWebClient extends WebApiBasePlala
                 genreListJsonParserCallback;
 
         //ジャンル一覧ファイルを読み込む
+        DTVTLogger.debug("Get genre list file");
         openUrl(UrlConstants.WebApiUrl.GENRE_LIST_FILE, "", this);
 
         DTVTLogger.end();
