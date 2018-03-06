@@ -13,6 +13,7 @@ import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -35,6 +36,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopHomeDataConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopUserInfoDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
@@ -152,6 +154,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * UserInfoDataProvider.
      */
     private UserInfoDataProvider mUserInfoDataProvider = null;
+    /**
+     * 検索完了フラグ.
+     */
+    private boolean mIsSearchDone = false;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -161,8 +167,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         setTitleText(getString(R.string.str_app_title));
         enableHeaderBackIcon(false);
         enableStbStatusIcon(true);
-        enableGlobalMenuIcon(true);
         setStatusBarColor(true);
+        initView();
     }
 
     /**
@@ -186,7 +192,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 @Override
                 public void onOKCallback(final boolean isOK) {
                     //OKボタン押下
-                    showMainLayout();
+                    showProgessBar(false);
                     mIsCloseDialog = false;
                 }
             });
@@ -195,7 +201,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 @Override
                 public void onDialogDismissCallback() {
                     //ボタンタップ以外でダイアログが閉じた場合
-                    showMainLayout();
+                    showProgessBar(false);
                     mIsCloseDialog = false;
                 }
             });
@@ -203,26 +209,20 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     /**
-     * プログレスバー表示.
+     * プロセスバーを表示する.
+     *
+     * @param showProgessBar プロセスバーを表示するかどうか
      */
-    private void initData() {
-        //プログレスダイアログを表示する
+    private void showProgessBar(final boolean showProgessBar) {
+        mIsSearchDone = !showProgessBar;
+        enableGlobalMenuIcon(!showProgessBar);
         mLinearLayout = findViewById(R.id.home_main_layout_linearLayout);
-        mLinearLayout.setVisibility(View.GONE);
         mRelativeLayout = findViewById(R.id.home_main_layout_progress_bar_Layout);
-        mRelativeLayout.setVisibility(View.VISIBLE);
-    }
-
-    /**
-     * コンテンツ表示用レイアウトを表示する.
-     */
-    private void showMainLayout() {
-        mLinearLayout = findViewById(R.id.home_main_layout_linearLayout);
-        if (mLinearLayout.getVisibility() != View.VISIBLE) {
+        if (showProgessBar) {
+            mLinearLayout.setVisibility(View.GONE);
+            mRelativeLayout.setVisibility(View.VISIBLE);
+        } else {
             mLinearLayout.setVisibility(View.VISIBLE);
-        }
-        mRelativeLayout = findViewById(R.id.home_main_layout_progress_bar_Layout);
-        if (mRelativeLayout.getVisibility() != View.GONE) {
             mRelativeLayout.setVisibility(View.GONE);
         }
     }
@@ -231,20 +231,22 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     protected void onResume() {
         super.onResume();
         mIsGetContentsInfoFailed = false;
-        initData();
-        initView();
         mUserInfoDataProvider = new UserInfoDataProvider(this, this);
         //アプリ起動時のデータ取得ユーザ情報未取得又は時間切れ又はonCreateから開始した場合はユーザ情報取得から
-        if (mUserInfoDataProvider.isUserInfoTimeOut()) {
+        if (mUserInfoDataProvider.isUserInfoTimeOut() && !TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(this))) {
             if (networkCheck()) {
                 getUserInfo();
             } else {
+                if (!mIsSearchDone) {
+                    //起動時はプログレスダイアログを表示
+                    requestHomeData();
+                }
+            }
+        } else {
+            if (!mIsSearchDone) {
                 //起動時はプログレスダイアログを表示
                 requestHomeData();
             }
-        } else {
-            //起動時はプログレスダイアログを表示
-            requestHomeData();
         }
     }
 
@@ -280,6 +282,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private void requestHomeData() {
         //Home画面用データを取得
+        showProgessBar(true);
         mHomeDataProvider = new HomeDataProvider(this);
         mHomeDataProvider.getHomeData();
     }
@@ -548,7 +551,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         @Override
         public void handleMessage(final Message msg) {
             setRecyclerView((List) msg.obj, msg.what);
-            showMainLayout();
+            showProgessBar(false);
         }
     };
 
@@ -689,6 +692,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private void getUserInfo() {
         //ユーザー情報の変更検知
+        showProgessBar(true);
         mUserInfoDataProvider.getUserInfo();
     }
 
@@ -709,7 +713,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 public void onOKCallback(final boolean isOK) {
                     //リトライ
                     mIsCloseDialog = false;
-                    initData();
                     getUserInfo();
                 }
             });
@@ -759,7 +762,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private boolean networkCheck() {
         if (!NetWorkUtils.isOnline(this)) {
-            initData();
             String message = getResources().getString(R.string.activity_start_network_error_message);
             errorDialog(message, R.string.custom_dialog_ok);
             return false;
@@ -777,7 +779,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 // H4d契約情報取得に失敗した場合は「ひかりTV for docomoの契約情報取得に失敗しました。」
                 // エラーダイアログ、「閉じる」「リトライ」ボタンを表示すること。
                 //契約情報取得失敗
-                initData();
                 getUserInfoErrorDialog();
             } else {
                 //契約情報取得成功
