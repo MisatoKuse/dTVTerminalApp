@@ -29,6 +29,11 @@ public class WeeklyRankWebClient
     public static final String WEEKLY_RANK_CLIENT_BUNDLE_KEY = "genreId";
 
     /**
+     * リクエストジャンル.
+     */
+    private String mGenreId = "";
+
+    /**
      * コールバック.
      */
     public interface WeeklyRankJsonParserCallback {
@@ -36,8 +41,9 @@ public class WeeklyRankWebClient
          * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param weeklyRankLists JSONパース後のデータ
+         * @param genreId リクエストしたジャンルID
          */
-        void onWeeklyRankJsonParsed(List<WeeklyRankList> weeklyRankLists);
+        void onWeeklyRankJsonParsed(List<WeeklyRankList> weeklyRankLists, final String genreId);
     }
 
     /**
@@ -61,7 +67,7 @@ public class WeeklyRankWebClient
     public void onAnswer(final ReturnCode returnCode) {
         //拡張情報付きでパースを行う
         WeeklyRankJsonParser weeklyRankJsonParser = new WeeklyRankJsonParser(
-                mWeeklyRankJsonParserCallback, returnCode.extraData);
+                mWeeklyRankJsonParserCallback, returnCode.extraData, mGenreId);
 
         //JSONをパースして、データを返す
         weeklyRankJsonParser.execute(returnCode.bodyData);
@@ -76,7 +82,7 @@ public class WeeklyRankWebClient
     public void onError(final ReturnCode returnCode) {
         if (mWeeklyRankJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
-            mWeeklyRankJsonParserCallback.onWeeklyRankJsonParsed(null);
+            mWeeklyRankJsonParserCallback.onWeeklyRankJsonParsed(null, mGenreId);
         }
     }
 
@@ -106,6 +112,8 @@ public class WeeklyRankWebClient
             //パラメーターがおかしければ通信不能なので、falseで帰る
             return false;
         }
+
+        mGenreId = genreId;
 
         //コールバックを呼べるようにする
         mWeeklyRankJsonParserCallback = weeklyRankJsonParserCallback;

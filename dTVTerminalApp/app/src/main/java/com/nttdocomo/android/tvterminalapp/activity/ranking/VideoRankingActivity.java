@@ -296,7 +296,6 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
 
     /**
      * 取得条件"総合"用コールバック.
-     * TODO:正規のジャンルで動的に処理するようにしないといけない
      *
      * @param videoRankList ビデオランクリスト
      */

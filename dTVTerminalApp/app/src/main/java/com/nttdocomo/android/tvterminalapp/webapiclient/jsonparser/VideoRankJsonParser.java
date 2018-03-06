@@ -39,6 +39,11 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
     private Bundle mExtraData = null;
 
     /**
+     * リクエストジャンル.
+     */
+    private String mGenreId = "";
+
+    /**
      * コンストラクタ.
      *
      * @param mContentsListPerGenreJsonParserCallback
@@ -51,12 +56,14 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
      * 拡張情報付きコンストラクタ.
      * @param contentsListPerGenreJsonParserCallback コールバック用
      * @param extraDataSrc                           拡張情報
+     * @param genreId リクエストしたジャンルID
      */
     public VideoRankJsonParser(final ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback
-                                       contentsListPerGenreJsonParserCallback, final Bundle extraDataSrc) {
+                                       contentsListPerGenreJsonParserCallback, final Bundle extraDataSrc, String genreId) {
         this.mContentsListPerGenreJsonParserCallback = contentsListPerGenreJsonParserCallback;
         //拡張情報の追加
         mExtraData = extraDataSrc;
+        mGenreId = genreId;
     }
 
     @Override
@@ -69,7 +76,7 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
             }
         }
 
-        mContentsListPerGenreJsonParserCallback.onContentsListPerGenreJsonParsed((List<VideoRankList>) object);
+        mContentsListPerGenreJsonParserCallback.onContentsListPerGenreJsonParsed((List<VideoRankList>) object, mGenreId);
     }
 
     @Override

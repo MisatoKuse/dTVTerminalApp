@@ -144,12 +144,14 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
 
 
     @Override
-    public void onWeeklyRankJsonParsed(final List<WeeklyRankList> weeklyRankLists) {
+    public void onWeeklyRankJsonParsed(final List<WeeklyRankList> weeklyRankLists, final String genreId) {
         DTVTLogger.start();
         if (weeklyRankLists != null && weeklyRankLists.size() > 0) {
             WeeklyRankList list = weeklyRankLists.get(0);
-
-            setStructDB(list);
+            // ジャンル指定無しの場合のみキャッシュする.
+            if (genreId == null || genreId.isEmpty()) {
+                setStructDB(list);
+            }
             // コールバック判定
             if (!mRequiredClipKeyList || mResponseEndFlag) {
                 sendWeeklyRankList(list);
@@ -168,10 +170,13 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onContentsListPerGenreJsonParsed(final List<VideoRankList> contentsListPerGenre) {
+    public void onContentsListPerGenreJsonParsed(final List<VideoRankList> contentsListPerGenre, final String genreId) {
         if (contentsListPerGenre != null && contentsListPerGenre.size() > 0) {
             VideoRankList list = contentsListPerGenre.get(0);
-            setStructDB(list);
+            // ジャンル指定無しの場合のみキャッシュする.
+            if (genreId == null || genreId.isEmpty()) {
+                setStructDB(list);
+            }
             if (!mRequiredClipKeyList || mResponseEndFlag) {
                 sendVideoRankList(list);
             }
@@ -557,7 +562,8 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         String lastDate = dateUtils.getLastDate(DateUtils.WEEKLY_RANK_LAST_INSERT);
 
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
-        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate)) {
+        //ジャンル指定ありの場合は必ずWeb取得（キャッシュしない）
+        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate) && (genreId == null || genreId.isEmpty())) {
             //データをDBから取得する
             Handler handler = new Handler();
             try {
@@ -590,7 +596,8 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
 
         List<Map<String, String>> list = new ArrayList<>();
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
-        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate)) {
+        //ジャンル指定ありの場合は必ずWeb取得（キャッシュしない）
+        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate) && (genreId == null || genreId.isEmpty())) {
             //データをDBから取得する
             Handler handler = new Handler();
             try {

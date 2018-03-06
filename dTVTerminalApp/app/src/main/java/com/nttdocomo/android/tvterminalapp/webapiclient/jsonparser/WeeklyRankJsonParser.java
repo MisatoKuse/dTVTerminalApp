@@ -33,6 +33,11 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
      **/
     Bundle mExtraData = null;
 
+    /**
+     * リクエストジャンル.
+     */
+    private String mGenreId = "";
+
     // **FindBugs** Bad practice FindBugは、"PAGER_PARAMETERS"と"CONTENT_META_PARAMETERS"はpublicを外せと言うが、対外的なパラメータなので、対応は行わない。
     public static final String[] PAGER_PARA = {JsonConstants.META_RESPONSE_PAGER_LIMIT,
             JsonConstants.META_RESPONSE_OFFSET, JsonConstants.META_RESPONSE_COUNT,
@@ -52,13 +57,15 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
      *
      * @param mWeeklyRankJsonParserCallback コールバック用
      * @param extraDataSrc                  拡張情報
+     * @param genreId リクエストしたジャンルID
      */
     public WeeklyRankJsonParser(final WeeklyRankWebClient.WeeklyRankJsonParserCallback
-                                        mWeeklyRankJsonParserCallback, final Bundle extraDataSrc) {
+                                        mWeeklyRankJsonParserCallback, final Bundle extraDataSrc, final String genreId) {
         this.mWeeklyRankJsonParserCallback = mWeeklyRankJsonParserCallback;
 
         //拡張情報の追加
         mExtraData = extraDataSrc;
+        mGenreId = genreId;
     }
 
     @Override
@@ -70,7 +77,7 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
                 rankList.setExtraData(mExtraData);
             }
         }
-        mWeeklyRankJsonParserCallback.onWeeklyRankJsonParsed(rankLists);
+        mWeeklyRankJsonParserCallback.onWeeklyRankJsonParsed(rankLists, mGenreId);
     }
 
     @Override
