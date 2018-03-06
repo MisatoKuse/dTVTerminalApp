@@ -47,6 +47,7 @@ public class ClipUtils {
                                     final String dtv, final String dtvType) {
 
         //クリップ可否判定用
+        final String DISP_TYPE_BLANK = "";
         final String DISP_TYPE_TV_PROGRAM = "tv_program";
         final String DISP_TYPE_VIDEO_PROGRAM = "video_program";
         final String DISP_TYPE_VIDEO_SERIES = "video_series";
@@ -64,33 +65,21 @@ public class ClipUtils {
         final String DTV_TYPE_TWO = "2";
         final String DTV_TYPE_THREE = "3";
 
-        if (dispType == null || searchOk == null || dtv == null || dtvType == null) {
-            return false;
-        }
-
-        switch (dispType) {
+        switch (dispType == null ? "" : dispType) {
             case DISP_TYPE_TV_PROGRAM:
-                //tv_program の時は searchOk の値によってクリップ可否判定をする
-                switch (searchOk) {
-                    case SEARCH_OK_FLAG_BLANK:
-                    case SEARCH_OK_FLAG_ZERO:
-                        return false;
-                    case SEARCH_OK_FLAG_ONE:
-                        return true;
-                    default:
-                        return false;
-                }
+                //tv_program の時クリップ可
+                return true;
             case DISP_TYPE_VIDEO_PROGRAM:
             case DISP_TYPE_VIDEO_SERIES:
             case DISP_TYPE_VIDEO_PACKAGE:
             case DISP_TYPE_SUBSCRIPTION_PACKAGE:
             case DISP_TYPE_SERIES_SVOD:
                 //tv_program 以外の時は dtv、dtvType、searchOk の各値を元に判定する
-                switch (dtv) {
+                switch (dtv == null ? "" : dtv) {
                     case DTV_FLAG_BLANK:
                     case DTV_FLAG_ZERO:
                         //dTVフラグ "0" の時は searchOk の値によってクリップ可否判定をする
-                        switch (searchOk) {
+                        switch (searchOk == null ? "" : searchOk) {
                             case SEARCH_OK_FLAG_ZERO:
                             case SEARCH_OK_FLAG_BLANK:
                                 return false;
@@ -101,12 +90,12 @@ public class ClipUtils {
                         }
                     case DTV_FLAG_ONE:
                         //dTVフラグ "1" の時は searchOk と dtvType の値によってクリップ可否判定をする
-                        switch (searchOk) {
+                        switch (searchOk == null ? "" : searchOk) {
                             case SEARCH_OK_FLAG_ZERO:
                             case SEARCH_OK_FLAG_BLANK:
                                 return false;
                             case SEARCH_OK_FLAG_ONE:
-                                switch (dtvType) {
+                                switch (dtvType == null ? "" : dtvType) {
                                     case DTV_TYPE_ONE:
                                     case DTV_TYPE_TWO:
                                     case DTV_TYPE_THREE:
@@ -114,14 +103,14 @@ public class ClipUtils {
                                         return false;
                                     case DTV_TYPE_BLANK:
                                         //dtvType"未設定はクリップ可
-                                        return true;
                                     default:
-                                        return false;
+                                        return true;
                                 }
                             default:
                                 return false;
                         }
                 }
+            case DISP_TYPE_BLANK:
             default:
                 return false;
         }
