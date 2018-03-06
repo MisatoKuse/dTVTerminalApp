@@ -136,7 +136,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
     /**
      * ワンタイムトークンの取得コールバックからのタスク呼び出し用.
      */
-    private CommunicationTask mCommunicationTask = null;
+    private CommunicationTask mCommunicationTaskOtt = null;
     /**
      * 通信停止用フラグ.
      */
@@ -416,8 +416,8 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         if (mCommunicationTaskExtra != null) {
             mCommunicationTaskExtra.cancel(true);
         }
-        if (mCommunicationTask != null) {
-            mCommunicationTask.cancel(true);
+        if (mCommunicationTaskOtt != null) {
+            mCommunicationTaskOtt.cancel(true);
         }
 
         if (mUrlConnections == null) {
@@ -521,7 +521,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                               final WebApiBasePlalaCallback webApiBasePlalaCallback,
                               final Bundle extraDataSrc) {
         //タスクを作成する
-        mCommunicationTask = new CommunicationTask(sourceUrl, receivedParameters,
+        mCommunicationTaskOtt = new CommunicationTask(sourceUrl, receivedParameters,
                 extraDataSrc, true, getRequestMethod());
 
         //呼び出し元に戻るコールバックの準備
@@ -539,9 +539,10 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
             getOneTimePassword(mContext);
         } else {
             //有効なワンタイムトークンなので、そのまま使用して処理を呼び出す
-            mCommunicationTask.setOneTimeToken(mOneTimeTokenData.getOneTimeToken());
+            mCommunicationTaskOtt.setOneTimeToken(mOneTimeTokenData.getOneTimeToken());
             ReturnCode returnCode = new ReturnCode();
-            mCommunicationTask.execute(returnCode);
+            DTVTLogger.debug("******mCommunicationTaskOtt.execute at openUrlAddOtt");
+            mCommunicationTaskOtt.execute(returnCode);
         }
     }
 
@@ -554,6 +555,8 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      */
     public void openOneTimeTokenGetUrl(final String receivedParameters,
                                        final WebApiBasePlalaCallback webApiBasePlalaCallback) {
+        DTVTLogger.start();
+
         CommunicationTask communicationTask = new CommunicationTask(receivedParameters);
 
         //コールバックの準備
@@ -564,6 +567,8 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
 
         //通信本体の開始
         communicationTask.execute(returnCode);
+
+        DTVTLogger.end();
     }
 
     /**
@@ -585,18 +590,19 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         //期限内ならば、そのまま使用する
         if (tokenData.getOneTimeTokenGetTime() > DateUtils.getNowTimeFormatEpoch()) {
             //取得済みのトークンを使用する
-            mCommunicationTask.setOneTimeToken(tokenData.getOneTimeToken());
+            mCommunicationTaskOtt.setOneTimeToken(tokenData.getOneTimeToken());
 
             //結果格納構造体の作成
             ReturnCode returnCode = new ReturnCode();
 
             //ワンタイムトークンの取得結果を元にして、通信を開始する
-            mCommunicationTask.execute(returnCode);
+            DTVTLogger.debug("******mCommunicationTaskOtt.execute at getOttCallBack");
+            mCommunicationTaskOtt.execute(returnCode);
             return;
         }
 
         //ワンタイムトークンの取得を行う
-        getServiceToken(mContext, mCommunicationTask, oneTimePassword);
+        getServiceToken(mContext, mCommunicationTaskOtt, oneTimePassword);
     }
 
     /**
@@ -620,7 +626,8 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                         if (successFlag) {
                             //値があったので、セット
                             communicationTask.setOneTimeToken(
-                                    SharedPreferencesUtils.getOneTimeTokenData(context).getOneTimeToken());
+                                    SharedPreferencesUtils.
+                                            getOneTimeTokenData(context).getOneTimeToken());
                         } else {
                             //値が無いのでリセット
                             communicationTask.setOneTimeToken("");
@@ -629,14 +636,27 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                         //結果格納構造体の作成
                         ReturnCode returnCode = new ReturnCode();
 
-                        //ワンタイムトークンの取得結果を元にして、通信を開始する
-                        communicationTask.execute(returnCode);
+                        DTVTLogger.debug("communicationTask = " + communicationTask);
+
+                        //既に実行されたかどうかの判定
+                        if(!communicationTask.getStatus().equals(AsyncTask.Status.RUNNING)) {
+                            //実行されていないので、ワンタイムトークンの取得結果を元にして、通信を開始する
+                            communicationTask.execute(returnCode);
+                        } else {
+                            //既に実行されていたので、処理をスキップ
+                            DTVTLogger.debug("communicationTask already exec");
+                        }
                     }
-                });
+                }
+        );
+
+        DTVTLogger.debug("getServiceToken answer = " + answer);
 
         if (!answer) {
             //結果格納構造体の作成
             ReturnCode returnCode = new ReturnCode();
+
+            DTVTLogger.debug("communicationTask answer false = " + communicationTask);
 
             //ワンタイムトークンは取得できなかったので、そのまま通信を開始する
             communicationTask.execute(returnCode);
@@ -721,181 +741,6 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         }
 
         return false;
-    }
-
-    /**
-     * サービストークン取得用のリダイレクト処理.
-     *
-     * @param newUrlString 飛び先URL
-     * @param parameter    使用するパラメータ・使用しない場合はヌルか空文字
-     */
-    private void gotoRedirect(final String newUrlString, final String parameter) {
-        DTVTLogger.start();
-
-        HttpsURLConnection httpsConnection = null;
-        try {
-            //指定された名前であらたなコネクションを開く
-            httpsConnection = (HttpsURLConnection) new URL(newUrlString).openConnection();
-            httpsConnection.setDoInput(true);
-
-            //DTVTLogger.debug("newHeader=" + httpsConnection.getHeaderFields().toString());
-            //コンテントタイプの設定
-            httpsConnection.setRequestProperty(CONTENT_TYPE_KEY_TEXT,
-                    ONE_TIME_TOKEN_GET_CONTENT_TYPE);
-            if (TextUtils.isEmpty(parameter)) {
-                //パラメータをgetで送る
-                httpsConnection.setRequestMethod(REQUEST_METHOD_GET);
-            } else {
-                httpsConnection.setDoOutput(true);
-                //送る文字列長の算出
-                byte[] sendParameterByte = parameter.getBytes(StandardCharsets.UTF_8);
-                int sendParameterLength = sendParameterByte.length;
-                httpsConnection.setFixedLengthStreamingMode(sendParameterLength);
-
-                //パラメータをpostで送る
-                setHttpsPostData(httpsConnection, parameter);
-                httpsConnection.setRequestMethod(getRequestMethod());
-            }
-
-            //自動リダイレクトを有効化する
-            HttpsURLConnection.setDefaultAllowUserInteraction(true);
-            httpsConnection.setInstanceFollowRedirects(true);
-
-            //SSL失効チェック
-            checkSsl(httpsConnection);
-
-            //ステータスを取得する
-            int status = httpsConnection.getResponseCode();
-            DTVTLogger.debug("status=" + status);
-
-            //新たな飛び先を取得する
-            String newUrl = httpsConnection.getHeaderField(REDIRECT_JUMP_URL_GET);
-
-            DTVTLogger.debug("newUrl=" + newUrl);
-
-            //リダイレクトのステータスを判定
-            if (isRedirectCode(status)) {
-                if (newUrl.contains(ServiceTokenClient.getOkUrlString())
-                        || newUrl.contains(ServiceTokenClient.getNgUrlString())) {
-                    //リダイレクトで、ロケーションがOKかNGに指定したURLならば、サービストークン取得処理へ遷移
-                    getServiceToken(newUrl);
-                    //コネクションを閉じる
-                    httpsConnection.disconnect();
-                } else {
-                    //リダイレクトかつ、OKとNGのURLではないならば、取得したURLで再度呼び出し
-                    gotoRedirect(newUrl, "");
-                    httpsConnection.disconnect();
-                }
-            }
-
-        } catch (SSLHandshakeException e) {
-            //SSL証明書が失効している
-            mReturnCode.errorType = DTVTConstants.ERROR_TYPE.SSL_ERROR;
-            DTVTLogger.debug(e);
-        } catch (SSLPeerUnverifiedException e) {
-            //SSLチェックライブラリの初期化が行われていない
-            mReturnCode.errorType = DTVTConstants.ERROR_TYPE.SSL_ERROR;
-            DTVTLogger.debug(e);
-        } catch (IOException e) {
-            DTVTLogger.debug(e);
-            //エラーコードを設定
-            mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
-        } catch (OcspParameterException e) {
-            //SSLチェックの初期化に失敗している・通常は発生しないとの事
-            mReturnCode.errorType = DTVTConstants.ERROR_TYPE.SSL_ERROR;
-            DTVTLogger.debug(e);
-        } finally {
-            //通信の切断処理
-            if (httpsConnection != null) {
-                httpsConnection.disconnect();
-            }
-            //ヌルを入れてガベージコレクションの動作を助ける
-            httpsConnection = null;
-        }
-    }
-
-    /**
-     * SSL失効チェック.
-     *
-     * @param httpsConnection HTTPSコネクション
-     * @throws OcspParameterException SSL証明書失効例外
-     * @throws IOException            IO例外
-     */
-    private void checkSsl(final HttpsURLConnection httpsConnection) throws OcspParameterException, IOException {
-        //コンテキストがあればSSL証明書失効チェックを行う
-        if (mContext != null) {
-            DTVTLogger.debug(httpsConnection.getURL().toString());
-            //SSL証明書失効チェックライブラリの初期化を行う
-            OcspUtil.init(mContext);
-
-            //通信開始時にSSL証明書失効チェックを併せて行う
-            OcspURLConnection ocspURLConnection = new OcspURLConnection(httpsConnection);
-            ocspURLConnection.connect();
-            DTVTLogger.debug("SSL checked");
-        } else {
-            //既にSSL専用なので、コンテキストが無くて証明書チェックが行えないならばエラーとする
-            //SSLチェック初期化失敗の例外を投げる
-            DTVTLogger.debug("SSL NO CONTEXT ERROR");
-            throw new SSLPeerUnverifiedException(NO_CONTEXT_ERROR);
-        }
-
-        DTVTLogger.debug("header=" + httpsConnection.getHeaderFields().toString());
-
-    }
-
-    /**
-     * 返ってきたロケーションが最初にこちらで指定したURLだった場合の処理.
-     *
-     * @param location 取得したロケーション
-     */
-    private void getServiceToken(final String location) {
-        //クッキー情報のバッファ
-        String serviceToken = "";
-        long serviceTokenMaxAge = 0;
-
-        //事前に判定しないと、なぜかfalse時の動作が不正だった
-        boolean locationCheck = location.contains(ServiceTokenClient.getOkUrlString());
-
-        //OK URLが含まれているかどうか
-        if (locationCheck && mCookieManager != null) {
-            //正常にサービストークンが取得できた場合はクッキーを取得
-            CookieStore cookieStore = mCookieManager.getCookieStore();
-            List<HttpCookie> cookies = cookieStore.getCookies();
-
-            //取得したクッキーの数だけ回る
-            for (HttpCookie cookie : cookies) {
-                //サービストークンを見つける
-                if (cookie.getName().equals(SERVICE_TOKEN_KEY_NAME)) {
-                    OneTimeTokenData oneTimeTokenData = new OneTimeTokenData();
-
-                    //見つけたので蓄積
-                    serviceToken = cookie.getValue();
-                    serviceTokenMaxAge = cookie.getMaxAge();
-
-                    //取得した時間は生存秒数なので、ミリ秒の無効化予定時間を算出する
-                    serviceTokenMaxAge = (serviceTokenMaxAge * 1000)
-                            + DateUtils.getNowTimeFormatEpoch();
-
-                    oneTimeTokenData.setOneTimeToken(serviceToken);
-                    oneTimeTokenData.setOneTimeTokenGetTime(serviceTokenMaxAge);
-
-                    //プリファレンスに書き込み
-                    SharedPreferencesUtils.setOneTimeTokenData(mContext, oneTimeTokenData);
-                    break;
-                }
-            }
-
-            if (TextUtils.isEmpty(serviceToken)) {
-                //サービストークンは見つからなかったので、エラーコードを設定する
-                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
-            } else {
-                //サービストークン取得では使用しないが、データを格納しなければエラー扱いになるので、トークンを入れておく
-                mAnswerBuffer = serviceToken;
-            }
-        } else {
-            //なんらかの異常があった場合はエラーコードを設定
-            mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
-        }
     }
 
     /**
@@ -1194,9 +1039,9 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                     //通信開始時にSSL証明書失効チェックを併せて行う
                     OcspURLConnection ocspURLConnection = new OcspURLConnection(mUrlConnection);
                     ocspURLConnection.connect();
-                    DTVTLogger.debug("redirect SSL checked");
+                    DTVTLogger.debug("SSL check OK");
                 } else {
-                    DTVTLogger.debug("redirect SSL check error");
+                    DTVTLogger.debug("SSL check error");
                     //将来はSSL専用になるので、コンテキストが無くて証明書チェックが行えないならばエラーとする
                     //SSLチェック初期化失敗の例外を投げる
                     throw new SSLPeerUnverifiedException(NO_CONTEXT_ERROR);
@@ -1268,6 +1113,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                         // **FindBugs** Bad practice FindBugsは不使用なのでbodyDataは消せと警告するが、
                         // コールバック先では使用するため対応しない
                         returnCode.bodyData = mAnswerBuffer;
+                        DTVTLogger.debug("onPostExecute answer = " + returnCode);
                         mWebApiBasePlalaCallback.onAnswer(returnCode);
                     }
                     break;
@@ -1353,6 +1199,181 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                         DTVTLogger.debug(e1);
                     }
                 }
+            }
+        }
+
+        /**
+         * サービストークン取得用のリダイレクト処理.
+         *
+         * @param newUrlString 飛び先URL
+         * @param parameter    使用するパラメータ・使用しない場合はヌルか空文字
+         */
+        private void gotoRedirect(final String newUrlString, final String parameter) {
+            DTVTLogger.start();
+
+            HttpsURLConnection httpsConnection = null;
+            try {
+                //指定された名前であらたなコネクションを開く
+                httpsConnection = (HttpsURLConnection) new URL(newUrlString).openConnection();
+                httpsConnection.setDoInput(true);
+
+                //DTVTLogger.debug("newHeader=" + httpsConnection.getHeaderFields().toString());
+                //コンテントタイプの設定
+                httpsConnection.setRequestProperty(CONTENT_TYPE_KEY_TEXT,
+                        ONE_TIME_TOKEN_GET_CONTENT_TYPE);
+                if (TextUtils.isEmpty(parameter)) {
+                    //パラメータをgetで送る
+                    httpsConnection.setRequestMethod(REQUEST_METHOD_GET);
+                } else {
+                    httpsConnection.setDoOutput(true);
+                    //送る文字列長の算出
+                    byte[] sendParameterByte = parameter.getBytes(StandardCharsets.UTF_8);
+                    int sendParameterLength = sendParameterByte.length;
+                    httpsConnection.setFixedLengthStreamingMode(sendParameterLength);
+
+                    //パラメータをpostで送る
+                    setHttpsPostData(httpsConnection, parameter);
+                    httpsConnection.setRequestMethod(getRequestMethod());
+                }
+
+                //自動リダイレクトを有効化する
+                HttpsURLConnection.setDefaultAllowUserInteraction(true);
+                httpsConnection.setInstanceFollowRedirects(true);
+
+                //SSL失効チェック
+                checkSsl(httpsConnection);
+
+                //ステータスを取得する
+                int status = httpsConnection.getResponseCode();
+                DTVTLogger.debug("status=" + status);
+
+                //新たな飛び先を取得する
+                String newUrl = httpsConnection.getHeaderField(REDIRECT_JUMP_URL_GET);
+
+                DTVTLogger.debug("newUrl=" + newUrl);
+
+                //リダイレクトのステータスを判定
+                if (isRedirectCode(status)) {
+                    if (newUrl.contains(ServiceTokenClient.getOkUrlString())
+                            || newUrl.contains(ServiceTokenClient.getNgUrlString())) {
+                        //リダイレクトで、ロケーションがOKかNGに指定したURLならば、サービストークン取得処理へ遷移
+                        getServiceTokenAnswer(newUrl);
+                        //コネクションを閉じる
+                        httpsConnection.disconnect();
+                    } else {
+                        //リダイレクトかつ、OKとNGのURLではないならば、取得したURLで再度呼び出し
+                        gotoRedirect(newUrl, "");
+                        httpsConnection.disconnect();
+                    }
+                }
+
+            } catch (SSLHandshakeException e) {
+                //SSL証明書が失効している
+                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.SSL_ERROR;
+                DTVTLogger.debug(e);
+            } catch (SSLPeerUnverifiedException e) {
+                //SSLチェックライブラリの初期化が行われていない
+                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.SSL_ERROR;
+                DTVTLogger.debug(e);
+            } catch (IOException e) {
+                DTVTLogger.debug(e);
+                //エラーコードを設定
+                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
+            } catch (OcspParameterException e) {
+                //SSLチェックの初期化に失敗している・通常は発生しないとの事
+                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.SSL_ERROR;
+                DTVTLogger.debug(e);
+            } finally {
+                //通信の切断処理
+                if (httpsConnection != null) {
+                    httpsConnection.disconnect();
+                }
+                //ヌルを入れてガベージコレクションの動作を助ける
+                httpsConnection = null;
+            }
+        }
+
+        /**
+         * SSL失効チェック.
+         *
+         * @param httpsConnection HTTPSコネクション
+         * @throws OcspParameterException SSL証明書失効例外
+         * @throws IOException            IO例外
+         */
+        private void checkSsl(final HttpsURLConnection httpsConnection) throws OcspParameterException, IOException {
+            //コンテキストがあればSSL証明書失効チェックを行う
+            if (mContext != null) {
+                DTVTLogger.debug(httpsConnection.getURL().toString());
+                //SSL証明書失効チェックライブラリの初期化を行う
+                OcspUtil.init(mContext);
+
+                //通信開始時にSSL証明書失効チェックを併せて行う
+                OcspURLConnection ocspURLConnection = new OcspURLConnection(httpsConnection);
+                ocspURLConnection.connect();
+                DTVTLogger.debug("SSL checked");
+            } else {
+                //既にSSL専用なので、コンテキストが無くて証明書チェックが行えないならばエラーとする
+                //SSLチェック初期化失敗の例外を投げる
+                DTVTLogger.debug("SSL NO CONTEXT ERROR");
+                throw new SSLPeerUnverifiedException(NO_CONTEXT_ERROR);
+            }
+
+            DTVTLogger.debug("header=" + httpsConnection.getHeaderFields().toString());
+
+        }
+
+        /**
+         * 返ってきたロケーションが最初にこちらで指定したURLだった場合の処理.
+         *
+         * @param location 取得したロケーション
+         */
+        private void getServiceTokenAnswer(final String location) {
+            //クッキー情報のバッファ
+            String serviceToken = "";
+            long serviceTokenMaxAge = 0;
+
+            //事前に判定しないと、なぜかfalse時の動作が不正だった
+            boolean locationCheck = location.contains(ServiceTokenClient.getOkUrlString());
+
+            //OK URLが含まれているかどうか
+            if (locationCheck && mCookieManager != null) {
+                //正常にサービストークンが取得できた場合はクッキーを取得
+                CookieStore cookieStore = mCookieManager.getCookieStore();
+                List<HttpCookie> cookies = cookieStore.getCookies();
+
+                //取得したクッキーの数だけ回る
+                for (HttpCookie cookie : cookies) {
+                    //サービストークンを見つける
+                    if (cookie.getName().equals(SERVICE_TOKEN_KEY_NAME)) {
+                        OneTimeTokenData oneTimeTokenData = new OneTimeTokenData();
+
+                        //見つけたので蓄積
+                        serviceToken = cookie.getValue();
+                        serviceTokenMaxAge = cookie.getMaxAge();
+
+                        //取得した時間は生存秒数なので、ミリ秒の無効化予定時間を算出する
+                        serviceTokenMaxAge = (serviceTokenMaxAge * 1000)
+                                + DateUtils.getNowTimeFormatEpoch();
+
+                        oneTimeTokenData.setOneTimeToken(serviceToken);
+                        oneTimeTokenData.setOneTimeTokenGetTime(serviceTokenMaxAge);
+
+                        //プリファレンスに書き込み
+                        SharedPreferencesUtils.setOneTimeTokenData(mContext, oneTimeTokenData);
+                        break;
+                    }
+                }
+
+                if (TextUtils.isEmpty(serviceToken)) {
+                    //サービストークンは見つからなかったので、エラーコードを設定する
+                    mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
+                } else {
+                    //サービストークン取得では使用しないが、データを格納しなければエラー扱いになるので、トークンを入れておく
+                    mAnswerBuffer = serviceToken;
+                }
+            } else {
+                //なんらかの異常があった場合はエラーコードを設定
+                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
             }
         }
     }
