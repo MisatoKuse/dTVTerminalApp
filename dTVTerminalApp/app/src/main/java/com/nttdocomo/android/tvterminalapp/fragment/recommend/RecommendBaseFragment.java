@@ -28,25 +28,71 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * おすすめ番組・ビデオ（タブフラグメントクラス）.
+ */
 public class RecommendBaseFragment extends Fragment implements AbsListView.OnScrollListener,
         AdapterView.OnItemClickListener {
 
+    /**
+     * コンテスト.
+     */
     private Context mActivity = null;
+    /**
+     * リストデータ.
+     */
     public List<ContentsData> mData = null;
+    /**
+     * リストフッタービュー.
+     */
     private View mLoadMoreView = null;
+    /**
+     * フラグメントビュー.
+     */
     private View mRecommendFragmentView = null;
-    private RecommendListView mRecommendListview = null;
+    /**
+     * リストビュー.
+     */
+    private RecommendListView mRecommendListView = null;
+    /**
+     * アダプター.
+     */
     private ContentsAdapter mRecommendListBaseAdapter = null;
+    /**
+     * スクロールコールバック.
+     */
     private RecommendBaseFragmentScrollListener mRecommendBaseFragmentScrollListener = null;
-    //チャンネルデータ
+    /**
+     * チャンネルデータ.
+     */
     private List<Map<String, String>> mChannelMap;
+    /**
+     * テレビ（タブインデックス）.
+     */
     private static final int POSITION_TV = 0;
+    /**
+     * ビデオ（タブインデックス）.
+     */
     private static final int POSITION_VIDEO = POSITION_TV + 1;
+    /**
+     * dTV（タブインデックス）.
+     */
     private static final int POSITION_D_TV = POSITION_TV + 2;
+    /**
+     * dTVチャンネル（タブインデックス）.
+     */
     private static final int POSITION_D_CHANNEL = POSITION_TV + 3;
+    /**
+     * dアニメ（タブインデックス）.
+     */
     private static final int POSITION_D_ANIMATION = POSITION_TV + 4;
 
 
+    /**
+     * リスナーを設定.
+     *
+     * @param lis スクロールリスナー
+     */
     public void setRecommendBaseFragmentScrollListener(final RecommendBaseFragmentScrollListener lis) {
         mRecommendBaseFragmentScrollListener = lis;
     }
@@ -63,24 +109,27 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
         return initView(container);
     }
 
-    //モックデータ
+    /**
+     * リストを初期化.
+     */
     private void initData() {
-        mData = new ArrayList();
+        mData = new ArrayList<>();
     }
 
     /**
      * Viewの初期設定.
      *
+     * @param container 親ビュー
      * @return この行のビュー
      */
     private View initView(final ViewGroup container) {
         if (null == mRecommendFragmentView) {
             mRecommendFragmentView = View.inflate(getActivity(),
                     R.layout.fragment_recommend_content, null);
-            mRecommendListview = mRecommendFragmentView.findViewById(R.id.lv_recommend_list);
+            mRecommendListView = mRecommendFragmentView.findViewById(R.id.lv_recommend_list);
 
-            mRecommendListview.setOnScrollListener(this);
-            mRecommendListview.setOnItemClickListener(this);
+            mRecommendListView.setOnScrollListener(this);
+            mRecommendListView.setOnItemClickListener(this);
 
             getContext();
             mLoadMoreView = LayoutInflater.from(mActivity).inflate(
@@ -91,26 +140,36 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
             mRecommendListBaseAdapter = new ContentsAdapter(getContext(), mData,
                     ContentsAdapter.ActivityTypeItem.TYPE_RECOMMEND_LIST);
         }
-        mRecommendListview.setAdapter(mRecommendListBaseAdapter);
+        mRecommendListView.setAdapter(mRecommendListBaseAdapter);
 
         return mRecommendFragmentView;
     }
 
     /**
      * データの更新.
+     *
+     * @param tabPosition タブインデックス
      */
     public void notifyDataSetChanged(final int tabPosition) {
         if (null != mRecommendListBaseAdapter) {
-            if (tabPosition == POSITION_TV) {
-                mRecommendListBaseAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_TV);
-            } else if (tabPosition == POSITION_D_TV) {
-                mRecommendListBaseAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_D_TV);
-            } else if (tabPosition == POSITION_D_ANIMATION) {
-                mRecommendListBaseAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_D_ANIMATE);
-            } else if (tabPosition == POSITION_D_CHANNEL) {
-                mRecommendListBaseAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_D_CHANNEL);
-            } else if (tabPosition == POSITION_VIDEO) {
-                mRecommendListBaseAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_VIDEO);
+            switch (tabPosition) {
+                case POSITION_TV:
+                    mRecommendListBaseAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_TV);
+                    break;
+                case POSITION_D_TV:
+                    mRecommendListBaseAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_D_TV);
+                    break;
+                case POSITION_D_ANIMATION:
+                    mRecommendListBaseAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_D_ANIMATE);
+                    break;
+                case POSITION_D_CHANNEL:
+                    mRecommendListBaseAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_D_CHANNEL);
+                    break;
+                case POSITION_VIDEO:
+                    mRecommendListBaseAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_VIDEO);
+                    break;
+                default:
+                    break;
             }
             mRecommendListBaseAdapter.notifyDataSetChanged();
         }
@@ -122,8 +181,8 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      * @param itemNo アイテム番号
      */
     public void setSelection(final int itemNo) {
-        if (null != mRecommendListview) {
-            mRecommendListview.setSelection(itemNo);
+        if (null != mRecommendListView) {
+            mRecommendListView.setSelection(itemNo);
         }
     }
 
@@ -131,8 +190,8 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      * リストの表示を更新する.
      */
     public void invalidateViews() {
-        if (null != mRecommendListview) {
-            mRecommendListview.invalidateViews();
+        if (null != mRecommendListView) {
+            mRecommendListView.invalidateViews();
         }
     }
 
@@ -165,15 +224,18 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      * @param loadFlag ロード中フラグ
      */
     public void displayLoadMore(final boolean loadFlag) {
-        if (null != mRecommendListview && null != mLoadMoreView) {
+        if (null != mRecommendListView && null != mLoadMoreView) {
             if (loadFlag) {
-                mRecommendListview.addFooterView(mLoadMoreView);
+                mRecommendListView.addFooterView(mLoadMoreView);
             } else {
-                mRecommendListview.removeFooterView(mLoadMoreView);
+                mRecommendListView.removeFooterView(mLoadMoreView);
             }
         }
     }
 
+    /**
+     * リストのクリアを行う.
+     */
     public void clear() {
         //データがヌルなら初期化する
         if (mData == null) {
@@ -181,6 +243,9 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
         }
 
         mData.clear();
+        if (mRecommendListBaseAdapter != null) {
+            mRecommendListBaseAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
