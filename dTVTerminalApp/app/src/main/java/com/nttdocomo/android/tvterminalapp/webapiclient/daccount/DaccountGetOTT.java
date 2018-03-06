@@ -243,4 +243,16 @@ public class DaccountGetOTT {
         //次の処理のウェイトを解除する
         mOttGetQueue.allowNext(context);
     }
+
+    /**
+     * 通信切断フラグのセット.
+     *
+     * @param disconnectionFlag trueならば通信切断
+     */
+    public void setmDisconnectionFlag(boolean disconnectionFlag) {
+        if (mOttGetQueue != null) {
+            //キュークラスに丸投げ
+            mOttGetQueue.setmDisconnectionFlag(disconnectionFlag);
+        }
+    }
 }

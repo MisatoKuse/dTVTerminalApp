@@ -402,7 +402,6 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
 
     /**
      * 全ての通信を遮断する.
-     * TODO:実装予定のすべての通信を遮断するAPIで使用の予定
      */
     synchronized void stopAllConnections() {
         DTVTLogger.start();

@@ -1302,7 +1302,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     public void recommendVideoCallback(final List<ContentsData> recommendContentInfoList) {
         DTVTLogger.start();
         //ワンタイムパスワードが競合しないように、おすすめVOD取得後に動作を開始する
-        mRecommendDataProvider.getDtvRecommend();
+        //TODO:　競合は解消したので、ここでの動作は必要なくなった。最終的には上記コメントとログ出力も消去する
+        DTVTLogger.debug("mRecommendDataProvider.getDtvRecommend() executed before");
+
         if (recommendContentInfoList != null && recommendContentInfoList.size() > 0) {
             //送られてきたデータをアクティビティに渡す
             sendRecommendVdListData(recommendContentInfoList);
@@ -1323,7 +1325,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     @Override
     public void recommendDTVCallback(final List<ContentsData> recommendContentInfoList) {
         //ワンタイムパスワードが競合しないように、おすすめDTV取得後に動作を開始する
-        mRecommendDataProvider.getDtvChRecommend();
+        //TODO:　競合は解消したので、ここでの動作は必要なくなった。最終的には上記コメントとログ出力も消去する
+        DTVTLogger.debug("mRecommendDataProvider.getDtvChRecommend() executed before");
+
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
@@ -1345,7 +1349,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     @Override
     public void recommendDChannelCallback(final List<ContentsData> recommendContentInfoList) {
         //ワンタイムパスワードが競合しないように、おすすめDチャンネル取得後に動作を開始する
-        mRecommendDataProvider.getDAnimationRecommend();
+        //TODO:　競合は解消したので、ここでの動作は必要なくなった。最終的には上記コメントとログ出力も消去する
+        DTVTLogger.debug("mRecommendDataProvider.getDAnimationRecommend() executed before");
+
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
