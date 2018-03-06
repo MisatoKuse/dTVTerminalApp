@@ -130,7 +130,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
     /**
      * ランクマップリスト.
      */
-    private List<Map<String, String>> rankMapList = null;
+    private List<Map<String, String>> mRankMapList = null;
     /**
      * ランクタイプ（今日）.
      */
@@ -142,7 +142,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
     /**
      * ランクタイプ.
      */
-    private int rankType = 0;
+    private int mRankType = 0;
 
     @Override
     public void onDailyRankJsonParsed(final List<DailyRankList> dailyRankLists) {
@@ -257,8 +257,8 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                         mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(mContext, this);
                     }
                     mScaledDownProgramListDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_ALL);
-                    rankMapList = weeklyRankList.getWrList();
-                    rankType = WEEKLY_RANK;
+                    mRankMapList = weeklyRankList.getWrList();
+                    mRankType = WEEKLY_RANK;
                 } else {
                     List<ContentsData> contentsDataList = setRankingContentData(weeklyRankList.getWrList(), null);
                     if (mApiDataProviderCallback != null) {
@@ -339,10 +339,10 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
 
     @Override
     public void channelListCallback(final ArrayList<ChannelInfo> channels) {
-        List<ContentsData> contentsDataList = setRankingContentData(rankMapList, channels);
-        if (rankType == DAILY_RANK) {
+        List<ContentsData> contentsDataList = setRankingContentData(mRankMapList, channels);
+        if (mRankType == DAILY_RANK) {
             mApiDataProviderCallback.dailyRankListCallback(contentsDataList);
-        } else if (rankType == WEEKLY_RANK) {
+        } else if (mRankType == WEEKLY_RANK) {
             if (mApiDataProviderCallback != null) {
                 mApiDataProviderCallback.weeklyRankCallback(contentsDataList);
             } else {
@@ -498,8 +498,8 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                     mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(mContext, this);
                 }
                 mScaledDownProgramListDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_ALL);
-                rankMapList = list;
-                rankType = DAILY_RANK;
+                mRankMapList = list;
+                mRankType = DAILY_RANK;
             } else {
                 List<ContentsData> contentsDataList = setRankingContentData(list, null);
                 mApiDataProviderCallback.dailyRankListCallback(contentsDataList);
