@@ -937,14 +937,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.record_download_status_color));
             }
         } else {
-            //TODO: 仕様不定の為仮実装
-            //TODO:チャンネル名の出所が不明なので、ダミー値を指定
-            if (mType == ActivityTypeItem.TYPE_DAILY_RANK || mType == ActivityTypeItem.TYPE_WEEKLY_RANK
-                    || mType == ActivityTypeItem.TYPE_CLIP_LIST_MODE_TV) {
-                holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
-                holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
-                holder.tv_recorded_ch_name.setText("ダミー");
-            }
             if (mType == ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST) {
                 holder.tv_recorded_hyphen.setVisibility(View.GONE);
                 holder.tv_recorded_ch_name.setVisibility(View.GONE);

@@ -143,6 +143,18 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         this.mApiDataProviderCallback = (ApiDataProviderCallback) mContext;
     }
 
+    /**
+     * コンストラクタ.
+     *
+     * @param mContext コンテスト
+     * @param mApiDataProviderCallback リスナー
+     */
+    public ScaledDownProgramListDataProvider(final Context mContext, final ApiDataProviderCallback mApiDataProviderCallback) {
+        super(mContext);
+        this.mContext = mContext;
+        this.mApiDataProviderCallback = mApiDataProviderCallback;
+    }
+
     @SuppressWarnings("OverlyLongMethod")
     @Override
     public void onDbOperationFinished(final boolean isSuccessful,
@@ -573,7 +585,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         String lastDate = dateUtils.getLastDate(DateUtils.CHANNEL_LAST_UPDATE);
         if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
             //データをDBから取得する
-            Handler handler = new Handler();
+            Handler handler = new Handler(mContext.getMainLooper());
             //チャンネル情報更新
             try {
                 DbThread t = new DbThread(handler, this, CHANNEL_SELECT);
