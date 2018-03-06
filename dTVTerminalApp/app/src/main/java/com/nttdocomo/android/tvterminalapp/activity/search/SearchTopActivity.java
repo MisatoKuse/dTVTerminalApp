@@ -278,6 +278,8 @@ public class SearchTopActivity extends BaseActivity
                                 mSearchView.setSubmitButtonEnabled(false);
                                 //検索文字が1文字以上から0文字になった場合、Tabを非表示にする
                                 mSearchViewPager = null;
+                                //前回と同一文字を入力しても検索実行するために前回キーワードを消去
+                                mBeforeText = null;
                                 findViewById(R.id.fl_search_result).setVisibility(View.GONE);
                                 // tabViewの非表示
                                 findViewById(R.id.rl_search_tab).setVisibility(View.GONE);
