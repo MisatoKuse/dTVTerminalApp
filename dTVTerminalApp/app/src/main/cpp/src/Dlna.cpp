@@ -440,32 +440,36 @@ namespace dtvt {
             }
         #elif defined(DLNA_KARI_DMS_NAS)
             if (0 == vv.size()) {
-                du_sync_notify(&d->soap.sync);
-                du_mutex_unlock(&d->soap.mutex);
-                return;
-            } else if(vv.size() < PAGE_COUNT) {
                 VVectorString totalVv = thiz->getDlnaXmlContainer().getAllVVectorString();
                 if (totalVv.empty() || totalVv.size() == 0) {
-                    thiz->notifyObject(parser->getMsgId(), vv);
+                    du_sync_notify(&d->soap.sync);
+                    du_mutex_unlock(&d->soap.mutex);
+                    return;
                 } else {
                     thiz->notifyObject(parser->getMsgId(), totalVv);
                 }
+            } else if(vv.size() < PAGE_COUNT) {
+                thiz->getDlnaXmlContainer().addVVectorString(vv);
+                VVectorString totalVv = thiz->getDlnaXmlContainer().getAllVVectorString();
+                thiz->notifyObject(parser->getMsgId(), totalVv);
             } else {
                 thiz->getDlnaXmlContainer().addVVectorString(vv);
                 thiz->sendSoap((char*)response->url, DLNA_DMS_ROOT, thiz->getDlnaXmlContainer().getAllVVectorString().size());
             }
         #elif defined(DLNA_KARI_DMS_RELEASE)
             if (0 == vv.size()) {
-                du_sync_notify(&d->soap.sync);
-                du_mutex_unlock(&d->soap.mutex);
-                return;
-            } else if(vv.size() < PAGE_COUNT) {
                 VVectorString totalVv = thiz->getDlnaXmlContainer().getAllVVectorString();
                 if (totalVv.empty() || totalVv.size() == 0) {
-                    thiz->notifyObject(parser->getMsgId(), vv);
+                    du_sync_notify(&d->soap.sync);
+                    du_mutex_unlock(&d->soap.mutex);
+                    return;
                 } else {
                     thiz->notifyObject(parser->getMsgId(), totalVv);
                 }
+            } else if(vv.size() < PAGE_COUNT) {
+                thiz->getDlnaXmlContainer().addVVectorString(vv);
+                VVectorString totalVv = thiz->getDlnaXmlContainer().getAllVVectorString();
+                thiz->notifyObject(parser->getMsgId(), totalVv);
             } else {
                 thiz->getDlnaXmlContainer().addVVectorString(vv);
                 thiz->sendSoap((char*)response->url, DLNA_DMS_ROOT, thiz->getDlnaXmlContainer().getAllVVectorString().size());

@@ -447,12 +447,13 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
             initSecurePlayer();
             setPlayerEvent();
             setUserAgeInfo();
+        } else {
+            //BG復帰時にクリップボタンの更新を行う
+            DtvContentsDetailFragment dtvContentsDetailFragment = getDetailFragment();
+            ContentsDetailDataProvider contentsDetailDataProvider = new ContentsDetailDataProvider(this);
+            dtvContentsDetailFragment.mOtherContentsDetailData = contentsDetailDataProvider.checkClipStatus(dtvContentsDetailFragment.mOtherContentsDetailData);
+            dtvContentsDetailFragment.resumeClipButton();
         }
-        //BG復帰時にクリップボタンの更新を行う
-        DtvContentsDetailFragment dtvContentsDetailFragment = getDetailFragment();
-        ContentsDetailDataProvider contentsDetailDataProvider = new ContentsDetailDataProvider(this);
-        dtvContentsDetailFragment.mOtherContentsDetailData = contentsDetailDataProvider.checkClipStatus(dtvContentsDetailFragment.mOtherContentsDetailData);
-        dtvContentsDetailFragment.resumeClipButton();
         DTVTLogger.end();
     }
 
