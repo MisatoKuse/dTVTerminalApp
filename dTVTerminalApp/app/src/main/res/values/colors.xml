@@ -44,9 +44,12 @@
     <color name="global_menu_popup_window_background_color">#ffffff</color>
     <color name="stb_start_title">#888888</color>
     <!-- キーワード検索 -->
-    <color name="keyword_search_background">#EEEEEE</color>
-    <color name="keyword_search_hint">#666666</color>
-    <color name="keyword_search_text">#888888</color>
+    <color name="keyword_search_background_color">#1d1d1d</color>
+    <color name="keyword_search_background_focus">#EEEEEE</color>
+    <color name="keyword_search_background_unfocus">#666666</color>
+    <color name="keyword_search_text_focus">#333333</color>
+    <color name="keyword_search_text_unfocus">#CCCCCC</color>
+    <color name="keyword_search_count_text">#FFFFFF</color>
     <color name="keyword_search_header_background">#000000</color>
     <!-- おすすめ一覧 -->
     <color name="recommend_list_background">#222222</color>

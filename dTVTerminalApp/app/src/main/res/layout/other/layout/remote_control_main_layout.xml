@@ -49,7 +49,7 @@
                             android:layout_marginStart="16dp"
                             android:layout_centerVertical="true"
                             android:contentDescription="@null"
-                            android:src="@mipmap/ic_remote_tv_play" />
+                            android:src="@mipmap/tv" />
 
                         <TextView
                             android:id="@+id/watch_by_tv"
