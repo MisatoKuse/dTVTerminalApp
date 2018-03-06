@@ -693,6 +693,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         if (mTabIndex == INDEX_TAB_MY_CHANNEL) {
             //MY番組表
             if (channels != null && channels.size() > 0) {
+                showMyChannelNoItem(false);
                 this.hikariChannels = channels;
                 mappedMyChannelList = executeMapping();
                 setChannelContentsView(mappedMyChannelList);
@@ -704,8 +705,8 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
             }
         } else {
             //ひかり、dTVチャンネル
-            showMyChannelNoItem(false);
             if (channels != null && channels.size() > 0) {
+                showMyChannelNoItem(false);
                 this.mChannels = channels;
                 setChannelContentsView(mChannels);
                 if (mScaledDownProgramListDataProvider == null) {

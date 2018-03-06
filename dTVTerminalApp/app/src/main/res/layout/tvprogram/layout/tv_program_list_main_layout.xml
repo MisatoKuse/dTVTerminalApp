@@ -26,14 +26,16 @@
             android:background="@color/tv_program_list_cur_time_btn_bg"
             android:contentDescription="@null"
             android:padding="@dimen/tv_program_list_cur_time_padding"
-            android:scaleType="fitCenter" />
+            android:scaleType="fitCenter"
+			android:visibility="invisible"/>
 
         <com.nttdocomo.android.tvterminalapp.view.ProgramScrollView
             android:id="@+id/tv_program_list_main_layout_time_sl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_program_list_main_layout_curtime_iv"
-            android:scrollbars="none" />
+            android:scrollbars="none"
+			android:visibility="invisible"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/tv_program_list_main_layout_channel_rv"
@@ -63,7 +65,8 @@
 		    android:id="@+id/tv_program_list_main_layout_time_line"
 		    android:layout_width="match_parent"
 		    android:layout_height="wrap_content"
-		    android:layout_below="@id/tv_program_list_main_layout_channel_rv">
+		    android:layout_below="@id/tv_program_list_main_layout_channel_rv"
+			android:visibility="invisible">
 		    <View
 			    android:layout_width="match_parent"
 			    android:layout_height="@dimen/tv_program_list_cur_time_height"
