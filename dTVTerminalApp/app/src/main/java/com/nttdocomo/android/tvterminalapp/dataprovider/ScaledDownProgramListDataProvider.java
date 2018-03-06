@@ -143,6 +143,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         this.mApiDataProviderCallback = (ApiDataProviderCallback) mContext;
     }
 
+    @SuppressWarnings("OverlyLongMethod")
     @Override
     public void onDbOperationFinished(final boolean isSuccessful,
                                       final List<Map<String, String>> resultSet,
@@ -179,6 +180,11 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                         mSchedule.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
                         mSchedule.setClipRequestData(setClipData(map));
                         mSchedule.setContentsId(map.get(JsonConstants.META_RESPONSE_CID));
+                        mSchedule.setTvService(map.get(JsonConstants.META_RESPONSE_TV_SERVICE));
+                        mSchedule.setEventId(map.get(JsonConstants.META_RESPONSE_EVENT_ID));
+                        mSchedule.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
+                        mSchedule.setTitleId(map.get(JsonConstants.META_RESPONSE_TITLE_ID));
+                        mSchedule.setCrId(map.get(JsonConstants.META_RESPONSE_CRID));
 
                         if (!TextUtils.isEmpty(chNo)) {
                             ChannelInfo channel = new ChannelInfo();
@@ -420,6 +426,11 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         mSchedule.setContentType(map.get(JsonConstants.META_RESPONSE_CONTENT_TYPE));
         mSchedule.setDtv(dtv);
         mSchedule.setDispType(dispType);
+        mSchedule.setContentsId(map.get(JsonConstants.META_RESPONSE_CID));
+        mSchedule.setTvService(map.get(JsonConstants.META_RESPONSE_TV_SERVICE));
+        mSchedule.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
+        mSchedule.setTitleId(map.get(JsonConstants.META_RESPONSE_TITLE_ID));
+        mSchedule.setCrId(map.get(JsonConstants.META_RESPONSE_CRID));
         mSchedule.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
         mSchedule.setClipRequestData(setClipData(map));
         mSchedule.setClipStatus(getClipStatus(dispType, contentType, dtv,

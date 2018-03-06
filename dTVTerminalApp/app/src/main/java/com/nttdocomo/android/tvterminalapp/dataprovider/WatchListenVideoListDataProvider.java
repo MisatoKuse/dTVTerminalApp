@@ -84,7 +84,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
             if (!mRequiredClipKeyList
                     || mResponseEndFlag) {
                 List<HashMap<String, String>> vcList = list.getVcList();
-                if (vcList != null && vcList.get(0).size() > 0 && !vcList.get(0).isEmpty()) {
+                if (vcList != null && vcList.size() > 0 && !vcList.get(0).isEmpty()) {
                     sendWatchListenVideoListData(list.getVcList());
                 } else {
                     //通信でデータ取得できないときはDBから取得

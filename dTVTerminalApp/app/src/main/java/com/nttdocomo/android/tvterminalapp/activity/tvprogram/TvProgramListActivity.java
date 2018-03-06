@@ -222,6 +222,21 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         getChannelData();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //BG→FG復帰時に各アイテムのクリップ状態が変更されている可能性があるためonResumeのタイミングでチェックする
+        if (mTvProgramListAdapter != null) {
+            List<ChannelInfo> infoList = mTvProgramListAdapter.getProgramList();
+            if (infoList != null) {
+                List<ChannelInfo> list;
+                list = mScaledDownProgramListDataProvider.checkTvProgramClipStatus(infoList);
+                mTvProgramListAdapter.setProgramList(list);
+                mTvProgramListAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
     /**
      * 機能
      * ビューの初期化.

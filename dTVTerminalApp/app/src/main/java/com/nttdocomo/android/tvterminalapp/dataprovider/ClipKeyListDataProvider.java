@@ -28,7 +28,9 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipKeyListWebClient;
 
@@ -495,6 +497,46 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         }
         DTVTLogger.end();
         return clipStatus;
+    }
+
+    /**
+     * ClipStatus チェック.
+     *
+     * @param channelInfoList コンテンツデータリスト
+     * @return Status変更済みコンテンツデータリスト
+     */
+    public List<ChannelInfo> checkTvProgramClipStatus(final List<ChannelInfo> channelInfoList) {
+        DTVTLogger.start();
+        List<ChannelInfo> resultList = channelInfoList;
+
+        //Nullチェック
+        if (resultList == null || resultList.size() < 1) {
+            return resultList;
+        }
+
+        for (int i = 0; i < channelInfoList.size(); i++) {
+            ArrayList<ScheduleInfo> scheduleInfoList = channelInfoList.get(i).getSchedules();
+            ArrayList<ScheduleInfo> scheduleInfoArrayList = new ArrayList<>();
+            for (int j = 0; j < scheduleInfoList.size(); j++) {
+                ScheduleInfo scheduleInfo = scheduleInfoList.get(j);
+                //使用データ抽出
+                String dispType = scheduleInfo.getDispType();
+                String contentsType = scheduleInfo.getContentType();
+                String dTv = scheduleInfo.getDtv();
+                String tvService = scheduleInfo.getTvService();
+                String serviceId = scheduleInfo.getServiceId();
+                String eventId = scheduleInfo.getEventId();
+                String crid = scheduleInfo.getCrId();
+                String titleId = scheduleInfo.getTitleId();
+
+                //判定はgetClipStatusに一任
+                scheduleInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv, crid, serviceId, eventId, titleId, tvService));
+                scheduleInfoArrayList.add(scheduleInfo);
+            }
+            resultList.get(i).setSchedules(scheduleInfoArrayList);
+        }
+        DTVTLogger.end();
+        return resultList;
     }
 
     /**

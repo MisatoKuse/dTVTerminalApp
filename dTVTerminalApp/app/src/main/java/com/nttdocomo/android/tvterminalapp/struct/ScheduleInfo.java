@@ -50,6 +50,16 @@ public class ScheduleInfo {
     private String mDtvType = null;
     //コンテンツタイプ
     private String mContentType = null;
+    //TVサービス種別
+    private String mTvService = null;
+    //サービスID
+    private String mServiceId = null;
+    //イベントID
+    private String mEventId = null;
+    //タイトルID
+    private String mTitleId = null;
+    //crid
+    private String mCrId = null;
     //クリップリクエスト用データ
     private ClipRequestData mClipRequestData = null;
     //時間単価換算
@@ -237,6 +247,46 @@ public class ScheduleInfo {
 
     public void setClipStatus(final boolean mClipStatus) {
         this.mClipStatus = mClipStatus;
+    }
+
+    public String getTvService() {
+        return mTvService;
+    }
+
+    public void setTvService(final String mTvService) {
+        this.mTvService = mTvService;
+    }
+
+    public String getServiceId() {
+        return mServiceId;
+    }
+
+    public void setServiceId(final String mServiceId) {
+        this.mServiceId = mServiceId;
+    }
+
+    public String getEventId() {
+        return mEventId;
+    }
+
+    public void setEventId(final String mEventId) {
+        this.mEventId = mEventId;
+    }
+
+    public String getTitleId() {
+        return mTitleId;
+    }
+
+    public void setTitleId(final String mTitleId) {
+        this.mTitleId = mTitleId;
+    }
+
+    public String getCrId() {
+        return mCrId;
+    }
+
+    public void setCrId(final String mCrId) {
+        this.mCrId = mCrId;
     }
 
     /**
