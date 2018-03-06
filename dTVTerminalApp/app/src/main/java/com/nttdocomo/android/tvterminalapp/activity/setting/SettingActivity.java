@@ -18,6 +18,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.MyChannelEditActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.MainSettingListAdapter;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
@@ -263,7 +264,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
      */
     private void checkIsPairing() {
         String isParing = mResources.getString(R.string.main_setting_pairing);
-        if (!isPairing()) {
+        if (!UserInfoUtils.isPairing(this)) {
             // 未ペアリング時
             isParing = mResources.getString(R.string.main_setting_not_paring);
         }

@@ -4,9 +4,15 @@
 
 package com.nttdocomo.android.tvterminalapp.utils;
 
+import android.content.Context;
+
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.UserInfoInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist.AccountList;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
 
 import java.util.ArrayList;
@@ -191,5 +197,71 @@ public class UserInfoUtils {
             intAge = Integer.parseInt(age);
         }
         return intAge;
+    }
+
+    /**
+     * ユーザ状態取得.
+     *
+     * @param context コンテキストファイル
+     * @return ユーザ状態
+     */
+    public static UserState getUserState(final Context context) {
+        DTVTLogger.start();
+        UserState param;
+        // dアカログイン状態取得
+        String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(context);
+        if (userId == null || userId.isEmpty()) {
+            // dアカ未ログイン
+            param = UserState.LOGIN_NG;
+        } else {
+            // dアカログイン状態なら契約状態判断.
+            //DBに保存されているUserInfoから契約情報を確認する
+            UserInfoInsertDataManager dataManager = new UserInfoInsertDataManager(context);
+            dataManager.readUserInfoInsertList();
+            String contractInfo = UserInfoUtils.getUserContractInfo(dataManager.getmUserData());
+            DTVTLogger.debug("contractInfo: " + contractInfo);
+            //契約なし、またはDTVのみ契約の時は未契約扱い.
+            if (contractInfo == null
+                    || contractInfo.isEmpty()
+                    || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo)
+                    || UserInfoUtils.CONTRACT_INFO_DTV.equals(contractInfo)) {
+                param = UserState.LOGIN_OK_CONTRACT_NG;
+                // 契約済の場合はペアリング状態によって変わる
+            } else {
+                // ペアリング済みかどうか.
+                if (isPairing(context)) {
+                    //契約済みかつペアリング済み
+                    param = UserState.CONTRACT_OK_PARING_OK;
+                } else {
+                    //契約済みかつ未ペアリング
+                    param = UserState.CONTRACT_OK_PAIRING_NG;
+                }
+            }
+        }
+        DTVTLogger.end();
+        return param;
+    }
+
+    /**
+     * ペアリング済みかどうか判定.
+     *
+     * @param context コンテキストファイル
+     * @return ペアリング済みかどうか(true ペアリング済み, false 未ペアリング)
+     */
+    public static boolean isPairing(final Context context) {
+        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(context);
+        return !(dlnaDmsItem == null || dlnaDmsItem.mControlUrl.isEmpty());
+    }
+
+    /**
+     * 契約有無を返却.
+     *
+     * @param context コンテキストファイル
+     * @return 契約あり true || 契約なし false
+     */
+    public static boolean isContract(final Context context) {
+        //契約ありの場合のみ「NOW ON AIR」を表示する ※番組表表示のためデータ取得の必要があるため
+        UserState userState = getUserState(context);
+        return userState != null && (userState.equals(UserState.CONTRACT_OK_PAIRING_NG) || userState.equals(UserState.CONTRACT_OK_PARING_OK));
     }
 }

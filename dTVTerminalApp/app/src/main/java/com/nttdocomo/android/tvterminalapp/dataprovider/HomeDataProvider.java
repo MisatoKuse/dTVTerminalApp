@@ -11,6 +11,7 @@ import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
@@ -45,6 +46,7 @@ import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
@@ -416,10 +418,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     @Override
     public void onRoleListJsonParsed(final RoleListResponse roleListResponse) {
         if (roleListResponse != null) {
+            //Homeではデータを使用しないためDB保存処理のみ実施
             setStructDB(roleListResponse);
-            //TODO:取得したデータをHome画面で使用する場合はここに記載
-        } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定(不要な場合は削除)
         }
     }
 
@@ -585,7 +585,10 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param list 番組リスト
      */
     private void sendTvScheduleListData(final List<ContentsData> list) {
-        mApiDataProviderCallback.tvScheduleListCallback(list);
+        //契約ありの場合のみ「NOW ON AIR」を表示する(番組表表示のためデータをDB保存する必要があるためActivityへのデータ送信抑制のみ実施)
+        if (UserInfoUtils.isContract(mContext)) {
+            mApiDataProviderCallback.tvScheduleListCallback(list);
+        }
     }
 
     /**

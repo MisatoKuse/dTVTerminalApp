@@ -644,51 +644,10 @@ public class BaseActivity extends FragmentActivity implements
      * グローバルメニュー表示.
      */
     protected void displayGlobalMenu() {
-        UserState param;
-
-        // dアカログイン状態取得
-        String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(this);
-        if (userId == null || userId.isEmpty()) {
-            // dアカ未ログイン
-            param = UserState.LOGIN_NG;
-        } else {
-            // dアカログイン状態なら契約状態判断.
-            //DBに保存されているUserInfoから契約情報を確認する
-            UserInfoInsertDataManager dataManager = new UserInfoInsertDataManager(this);
-            dataManager.readUserInfoInsertList();
-            String contractInfo = UserInfoUtils.getUserContractInfo(dataManager.getmUserData());
-            DTVTLogger.debug("contractInfo: " + contractInfo);
-            //契約なし、またはDTVのみ契約の時は未契約扱い.
-            if (contractInfo == null
-                    || contractInfo.isEmpty()
-                    || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo)
-                    || UserInfoUtils.CONTRACT_INFO_DTV.equals(contractInfo)) {
-                param = UserState.LOGIN_OK_CONTRACT_NG;
-                // 契約済の場合はペアリング状態によって変わる
-            } else {
-                // ペアリング済みかどうか.
-                if (isPairing()) {
-                    //契約済みかつペアリング済み
-                    param = UserState.CONTRACT_OK_PARING_OK;
-                } else {
-                    //契約済みかつ未ペアリング
-                    param = UserState.CONTRACT_OK_PAIRING_NG;
-                }
-            }
-        }
+        UserState param = UserInfoUtils.getUserState(this);
         DTVTLogger.debug("displayGlobalMenu userState=" + param);
         setUserState(param);
         displayMenu();
-    }
-
-    /**
-     * ペアリング済みかどうか判定.
-     *
-     * @return ペアリング済みかどうか(true ペアリング済み, false 未ペアリング)
-     */
-    public boolean isPairing() {
-        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-        return !(dlnaDmsItem == null || dlnaDmsItem.mControlUrl.isEmpty());
     }
 
     /**
