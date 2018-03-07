@@ -124,13 +124,15 @@ public class RecommendListDataManager {
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
 
-            //データ存在チェック
-            if (!DBUtils.isCachingRecord(database, DBConstants.RECOMMEND_CHANNEL_LIST_TABLE_NAME)) {
+            //データテーブル存在チェック
+            if (!DBUtils.isCachingRecord(database, DBUtils.getRecommendTableName(tagPageNo))) {
+                DTVTLogger.debug(String.format("Database table [%s] data not exist", DBUtils.getRecommendTableName(tagPageNo)));
                 DataBaseManager.getInstance().closeDatabase();
                 return recommendContentInfoList;
             }
             RecommendListDao redListDao = new RecommendListDao(database);
 
+            //データテーブルに依らずカラム名は同一
             String[] columns = {
                     RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID,
                     RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID,
@@ -149,8 +151,10 @@ public class RecommendListDataManager {
                     = redListDao.findById(columns, tagPageNo);
             recommendContentInfoList = new ArrayList<>();
             if (resultList.size() == 0) {
+                DTVTLogger.debug(String.format("Database table [%s] data size 0", DBUtils.getRecommendTableName(tagPageNo)));
                 return recommendContentInfoList;
             }
+            DTVTLogger.debug(String.format("Database table [%s] resultList size[%s]", DBUtils.getRecommendTableName(tagPageNo), resultList.size()));
             for (int i = 0; i <= resultList.size() - 1; i++) {
                 Map<String, String> map = resultList.get(i);
                 ContentsData contentsData = new ContentsData();
