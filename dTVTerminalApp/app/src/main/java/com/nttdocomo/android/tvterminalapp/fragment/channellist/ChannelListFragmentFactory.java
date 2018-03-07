@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.fragment.channellist;
 
+import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter;
 
 import java.util.HashMap;
@@ -13,7 +14,7 @@ public class ChannelListFragmentFactory {
 
     private final Map<Integer, ChannelListFragment> mFragments = new HashMap<>();
 
-    public ChannelListFragment createFragment(final int position, final ChannelListFragment.ChannelListFragmentListener lis, final ChannelListAdapter.ChListDataType type) {
+    public ChannelListFragment createFragment(final int position, final ChannelListFragment.ChannelListFragmentListener lis, final ChannelListActivity.ChListDataType type) {
         ChannelListFragment fragment;
         fragment = mFragments.get(position);
         if (fragment == null) {

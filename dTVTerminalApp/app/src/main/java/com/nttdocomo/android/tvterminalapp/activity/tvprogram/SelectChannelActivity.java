@@ -22,7 +22,6 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 
 import java.util.ArrayList;
 
-import static com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI;
 
 /**
  * チャンネルを選択するリスト画面.
@@ -140,7 +139,7 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
             mSelectList.addAll(channels);
             ChannelListAdapter mChannelListAdapter = new ChannelListAdapter(
                     this, mSelectList, R.layout.channel_list_item);
-            mChannelListAdapter.setChListDataType(CH_LIST_DATA_TYPE_HIKARI);
+            mChannelListAdapter.setChListDataType(ChannelListActivity.ChListDataType.CH_LIST_DATA_TYPE_HIKARI);
             mSelectListView.setAdapter(mChannelListAdapter);
             mChannelListAdapter.notifyDataSetChanged();
         }
