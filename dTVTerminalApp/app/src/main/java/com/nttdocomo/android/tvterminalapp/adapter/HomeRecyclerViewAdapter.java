@@ -108,6 +108,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      */
     private final static int HOME_CONTENTS_SORT_VIDEO = HOME_CONTENTS_SORT_CHANNEL + 4;
     /**
+     * カテゴリ クリップ[テレビ](ホーム).
+     */
+    private final static int HOME_CONTENTS_SORT_TV_CLIP = HOME_CONTENTS_SORT_CHANNEL + 6;
+    /**
      * カテゴリ 今日のテレビランキング(ランキングトップ画面).
      */
     private final static int RANKING_CONTENTES_TODAY_SORT = 20;
@@ -605,8 +609,11 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      */
     private boolean newContentsCheck(final String startDate) {
         switch (mIndex) {
+            case HOME_CONTENTS_SORT_CHANNEL:
+            case HOME_CONTENTS_SORT_RECOMMEND_PROGRAM:
             case HOME_CONTENTS_SORT_TODAY:
             case HOME_CONTENTS_SORT_VIDEO:
+            case HOME_CONTENTS_SORT_TV_CLIP:
             case RANKING_CONTENTES_TODAY_SORT:
             case RANKING_CONTENTES_WEEK_SORT:
             case RANKING_CONTENTES_VIDEO_SORT:
