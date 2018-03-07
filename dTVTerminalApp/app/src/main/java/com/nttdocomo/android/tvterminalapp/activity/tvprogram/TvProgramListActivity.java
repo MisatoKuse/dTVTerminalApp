@@ -27,6 +27,7 @@ import com.nttdocomo.android.tvterminalapp.adapter.ProgramChannelAdapter;
 import com.nttdocomo.android.tvterminalapp.adapter.TvProgramListAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.MyChannelDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
@@ -41,6 +42,7 @@ import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.view.ProgramRecyclerView;
 import com.nttdocomo.android.tvterminalapp.view.ProgramScrollView;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -837,13 +839,30 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
      */
     @Override
     public void onMyChannelListCallback(final ArrayList<MyChannelMetaData> myChannelMetaData) {
+        this.myChannelDataList.clear();
         if (myChannelMetaData != null && myChannelMetaData.size() > 0) {
-            this.myChannelDataList = myChannelMetaData;
+            // アプリとして編集が可能な index16 までで絞る(サーバからはindex順でレスポンスが来ているのでソートはしない)
+            for (int j = 0; j < myChannelMetaData.size(); j++) {
+                String index = myChannelMetaData.get(j).getIndex();
+                if (index != null && !index.isEmpty()) {
+                    int indexNum = 0;
+                    try {
+                        indexNum = Integer.parseInt(index);
+                    } catch (NumberFormatException e) {
+                        DTVTLogger.debug("MyChannel index is incorrect");
+                        DTVTLogger.debug(e);
+                        continue;
+                    }
+                    if (1 <= indexNum && indexNum <= WebApiBasePlala.MY_CHANNEL_MAX_INDEX ){
+                        this.myChannelDataList.add(myChannelMetaData.get(j));
+                    }
+                }
+            }
             //ひかりリストからチャンネル探すため
             if (mScaledDownProgramListDataProvider == null) {
                 mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
             }
-            mScaledDownProgramListDataProvider.getChannelList(0, 0, "", INDEX_TAB_HIKARI);
+            mScaledDownProgramListDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_ALL);
         } else {
             //MY番組表情報がなければMY番組表を設定していないとする(データないので、特にタイムライン表示必要がない)
             if (mTabIndex == INDEX_TAB_MY_CHANNEL) {
