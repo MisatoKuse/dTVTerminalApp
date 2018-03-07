@@ -191,7 +191,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                         mSchedule.setDispType(dispType);
                         mSchedule.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
                         mSchedule.setClipRequestData(setClipData(map));
-                        mSchedule.setContentsId(map.get(JsonConstants.META_RESPONSE_CID));
+                        mSchedule.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
                         mSchedule.setTvService(map.get(JsonConstants.META_RESPONSE_TV_SERVICE));
                         mSchedule.setEventId(map.get(JsonConstants.META_RESPONSE_EVENT_ID));
                         mSchedule.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
@@ -438,7 +438,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         mSchedule.setContentType(map.get(JsonConstants.META_RESPONSE_CONTENT_TYPE));
         mSchedule.setDtv(dtv);
         mSchedule.setDispType(dispType);
-        mSchedule.setContentsId(map.get(JsonConstants.META_RESPONSE_CID));
+        mSchedule.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
         mSchedule.setTvService(map.get(JsonConstants.META_RESPONSE_TV_SERVICE));
         mSchedule.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
         mSchedule.setTitleId(map.get(JsonConstants.META_RESPONSE_TITLE_ID));
@@ -451,7 +451,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 map.get(JsonConstants.META_RESPONSE_EVENT_ID),
                 map.get(JsonConstants.META_RESPONSE_TITLE_ID),
                 map.get(JsonConstants.META_RESPONSE_TV_SERVICE)));
-        mSchedule.setContentsId(map.get(JsonConstants.META_RESPONSE_CID));
+        mSchedule.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
         return mSchedule;
     }
 

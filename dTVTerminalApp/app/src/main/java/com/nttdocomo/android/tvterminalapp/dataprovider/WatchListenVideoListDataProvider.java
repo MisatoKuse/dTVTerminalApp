@@ -216,7 +216,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
             contentInfo.setDtvType(dtvType);
             contentInfo.setDispType(dispType);
             contentInfo.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
-            contentInfo.setContentsId(map.get(JsonConstants.META_RESPONSE_CONTENTS_ID));
+            contentInfo.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
             requestData.setCrid(map.get(JsonConstants.META_RESPONSE_CRID));

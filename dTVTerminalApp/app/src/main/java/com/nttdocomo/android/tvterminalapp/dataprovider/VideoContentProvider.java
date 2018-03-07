@@ -163,7 +163,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
             contentsData.setDtvType(dtvType);
             contentsData.setDispType(dispType);
             contentsData.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
-            contentsData.setContentsId(map.get(JsonConstants.META_RESPONSE_CONTENTS_ID));
+            contentsData.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
 

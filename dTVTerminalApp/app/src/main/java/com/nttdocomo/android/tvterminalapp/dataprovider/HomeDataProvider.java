@@ -702,36 +702,23 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             if (rankFlag) {
                 contentInfo.setRank(String.valueOf(i + 1));
             }
-            if (TextUtils.isEmpty(mapList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_START_DATE))) {
-                contentInfo.setLinearStartDate(mapList.get(i).get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE));
-            } else {
-                contentInfo.setLinearStartDate(mapList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_START_DATE));
-            }
-            if (TextUtils.isEmpty(mapList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_END_DATE))) {
-                contentInfo.setLinearEndDate(mapList.get(i).get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE));
-            } else {
-                contentInfo.setLinearEndDate(mapList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_END_DATE));
-            }
             contentInfo.setTime(mapList.get(i).get(JsonConstants.META_RESPONSE_DISPLAY_START_DATE));
             contentInfo.setTitle(mapList.get(i).get(JsonConstants.META_RESPONSE_TITLE));
             contentInfo.setThumURL(mapList.get(i).get(JsonConstants.META_RESPONSE_THUMB_448));
             contentInfo.setThumDetailURL(mapList.get(i).get(JsonConstants.META_RESPONSE_THUMB_640));
-            contentInfo.setLinearStartDate(mapList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_START_DATE));
-            contentInfo.setLinearEndDate(mapList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_END_DATE));
+            contentInfo.setLinearStartDate(mapList.get(i).get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE));
+            contentInfo.setLinearEndDate(mapList.get(i).get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE));
             contentInfo.setServiceId(mapList.get(i).get(JsonConstants.META_RESPONSE_SERVICE_ID));
+            contentInfo.setTvService(mapList.get(i).get(JsonConstants.META_RESPONSE_TV_SERVICE));
             contentInfo.setChannelNo(mapList.get(i).get(JsonConstants.META_RESPONSE_CHNO));
-            String thumbUrl = contentInfo.getThumURL();
-            String title = contentInfo.getTitle();
-            if (title == null || title.length() < 1) {
-                contentInfo.setTitle(mapList.get(i).get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE));
-            }
-            if (thumbUrl == null || thumbUrl.length() < 1) {
-                //レコメンドからのデータはキーが違うため再取得する
-                contentInfo.setThumURL(mapList.get(i).get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1));
-            }
+            contentInfo.setRValue(mapList.get(i).get(JsonConstants.META_RESPONSE_R_VALUE));
             contentInfo.setDispType(mapList.get(i).get(JsonConstants.META_RESPONSE_DISP_TYPE));
             contentInfo.setContentsType(mapList.get(i).get(JsonConstants.META_RESPONSE_CONTENT_TYPE));
-            contentInfo.setContentsId(mapList.get(i).get(JsonConstants.META_RESPONSE_CID));
+            contentInfo.setContentsId(mapList.get(i).get(JsonConstants.META_RESPONSE_CRID));
+            contentInfo.setCrid(mapList.get(i).get(JsonConstants.META_RESPONSE_CRID));
+            contentInfo.setRatStar(mapList.get(i).get(JsonConstants.META_RESPONSE_RATING));
+            contentInfo.setSynop(mapList.get(i).get(JsonConstants.META_RESPONSE_SYNOP));
+            contentInfo.setEventId(mapList.get(i).get(JsonConstants.META_RESPONSE_EVENT_ID));
             contentsDataList.add(contentInfo);
         }
 
