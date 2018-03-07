@@ -8,6 +8,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
 import java.util.ArrayList;
@@ -104,6 +105,7 @@ public class RecommendListDao {
      */
     public int delete(final int tagPageNo) {
         String tableName = DBUtils.getRecommendTableName(tagPageNo);
+        DTVTLogger.debug(String.format("RecommendListDao.delete [%s]", tableName));
         return db.delete(tableName, null, null);
     }
 }
