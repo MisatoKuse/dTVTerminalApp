@@ -372,6 +372,9 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         if (mVideoContentProvider != null) {
             mVideoContentProvider.enableConnect();
         }
+        if (mContentsAdapter != null) {
+            mContentsAdapter.enableConnect();
+        }
         if (mListView != null) {
             mListView.invalidateViews();
         }
