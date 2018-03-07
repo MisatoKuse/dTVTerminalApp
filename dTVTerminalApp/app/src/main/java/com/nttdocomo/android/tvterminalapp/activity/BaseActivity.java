@@ -49,7 +49,6 @@ import com.nttdocomo.android.tvterminalapp.activity.setting.SettingActivity;
 import com.nttdocomo.android.tvterminalapp.application.TvtApplication;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.UserInfoInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
@@ -675,13 +674,14 @@ public class BaseActivity extends FragmentActivity implements
 
         //STB接続状態を反映.
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-        if (null != dlnaDmsItem && !dlnaDmsItem.mIPAddress.isEmpty()) {
+        if (null != dlnaDmsItem) {
             // 未ペアリング時はそもそも状態反映しない.
             mDlnaProvDevListForBase = new DlnaProvDevList();
             mIsStbStatusOn = mDlnaProvDevListForBase.isDmsAvailable(dlnaDmsItem.mUdn);
+        }
+        if (null != dlnaDmsItem && dlnaDmsItem.mIPAddress != null && dlnaDmsItem.mIPAddress.length() > 0) {
             mRemoteControlRelayClient.setRemoteIp(dlnaDmsItem.mIPAddress);
         }
-
         DTVTLogger.end();
     }
 
