@@ -12,8 +12,7 @@
 		android:layout_marginBottom="@dimen/search_form_margin_bottom"
 		android:layout_marginEnd="@dimen/search_form_margin_right"
 		android:layout_marginStart="@dimen/search_form_margin_left"
-		android:layout_marginTop="@dimen/search_form_margin_top"
-		android:background="@color/keyword_search_background" />
+		android:layout_marginTop="@dimen/search_form_margin_top"/>
 
 	<RelativeLayout
 		android:id="@+id/rl_search_tab"

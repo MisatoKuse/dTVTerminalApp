@@ -15,6 +15,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -142,7 +143,7 @@ public class SearchTopActivity extends BaseActivity
     /**
      * 検索窓内の文字の大きさ.
      */
-    private static final int TEXT_SIZE = 15;
+    private static final int TEXT_SIZE = 14;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -199,9 +200,9 @@ public class SearchTopActivity extends BaseActivity
             public void onFocusChange(final View view, final boolean isFocus) {
                 if (isFocus) {
                     DTVTLogger.debug("SearchView Focus");
+                    setEditTextFocus();
                     // フォーカスが当たった時
                     mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-
                         private Handler mHandler = new Handler();
                         // 次回検索日時
                         long mSearchTime = 0;
@@ -230,6 +231,7 @@ public class SearchTopActivity extends BaseActivity
                         @Override
                         public boolean onQueryTextChange(final String searchText) {
                             // 検索フォームに文字が入力された時
+                            setEditTextUnFocus();
                             // 空白でインクリメンタル検索を行うと、以後の検索で0件と表示され続けるため除外
                             if (searchText.trim().length() == 0 && searchText.length() > 0) {
                                 return false;
@@ -295,15 +297,57 @@ public class SearchTopActivity extends BaseActivity
                         mTimer = null;
                     }
                     // フォーカスが外れた時
+                    setEditTextUnFocus();
                     mSearchView.clearFocus();
                 }
             }
         });
         mSearchView.setFocusable(false);
-        searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.keyword_search_text));
-        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.keyword_search_hint));
+        setEditTextUnFocus();
         searchAutoComplete.setHint(R.string.keyword_search_hint);
         searchAutoComplete.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
+    }
+
+    /**
+     * 入力エリア非Focus設定.
+     */
+    private void setEditTextUnFocus() {
+        SearchView.SearchAutoComplete searchAutoComplete
+                = findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        ImageView searchIcon = findViewById(android.support.v7.appcompat.R.id.search_button);
+        CharSequence query = mSearchView.getQuery();
+        DTVTLogger.debug("" + searchAutoComplete.isFocused());
+        // 入力文字があれば白背景基調、またはテキスト入力にFocusがあれば白背景基調
+        if ((query != null && query.length() > 0) || searchAutoComplete.isFocused()) {
+            searchIcon.setImageResource(R.mipmap.icon_graylight_search);
+            mSearchView.setBackgroundColor(ContextCompat.getColor(this, R.color.keyword_search_background_focus));
+            searchAutoComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.keyword_search_background_focus));
+            searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.keyword_search_text_focus));
+            searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.keyword_search_text_focus));
+        } else {
+            // 入力文字がなければグレー背景基調
+            searchIcon.setImageResource(R.mipmap.icon_normal_search);
+            mSearchView.setBackgroundColor(ContextCompat.getColor(this, R.color.keyword_search_background_unfocus));
+            searchAutoComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.keyword_search_background_unfocus));
+            searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.keyword_search_text_unfocus));
+            searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.keyword_search_text_unfocus));
+        }
+    }
+
+    /**
+     * 入力エリアFocus設定.
+     */
+    private void setEditTextFocus() {
+        SearchView.SearchAutoComplete searchAutoComplete
+                = findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        ImageView searchIcon = findViewById(android.support.v7.appcompat.R.id.search_button);
+
+        // Focus時は固定で白背景基調
+        searchIcon.setImageResource(R.mipmap.icon_graylight_search);
+        mSearchView.setBackgroundColor(ContextCompat.getColor(this, R.color.keyword_search_background_focus));
+        searchAutoComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.keyword_search_background_focus));
+        searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.keyword_search_text_focus));
+        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.keyword_search_text_focus));
     }
 
     /**

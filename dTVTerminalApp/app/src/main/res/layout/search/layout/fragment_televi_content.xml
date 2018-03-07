@@ -22,7 +22,7 @@
 		android:layout_below="@+id/tv_searched_result"
 		android:layout_marginLeft="16dp"
 		android:layout_marginRight="16dp"
-		android:background="@color/keyword_search_hint"/>
+		android:background="@color/keyword_search_background_color"/>
 
 	<ListView
 		android:id="@+id/lv_searched_result"
