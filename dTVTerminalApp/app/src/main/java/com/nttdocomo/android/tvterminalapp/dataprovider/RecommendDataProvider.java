@@ -229,7 +229,9 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
             sendRecommendChListData(mRecommendChList);
         } else {
             //TODO WEBAPIを取得できなかった時の処理を記載予定
-            mApiDataProviderCallback.recommendNGCallback();
+            if (!mIsStop) {
+                mApiDataProviderCallback.recommendNGCallback();
+            }
         }
     }
 
@@ -571,7 +573,9 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 break;
             default:
                 // 判定不能データ
-                mApiDataProviderCallback.recommendNGCallback();
+                if (!mIsStop) {
+                    mApiDataProviderCallback.recommendNGCallback();
+                }
         }
     }
 
