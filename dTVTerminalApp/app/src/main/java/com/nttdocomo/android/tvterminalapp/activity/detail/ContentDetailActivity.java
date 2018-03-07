@@ -239,11 +239,11 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
     /**
      * dtv(1).
      */
-    private static final String DTV_FLAG_ONE = "1";
+    public static final String DTV_FLAG_ONE = "1";
     /**
      * dtv(0).
      */
-    private static final String DTV_FLAG_ZERO = "0";
+    public static final String DTV_FLAG_ZERO = "0";
     private static final String BVFLG_FLAG_ONE = "1";
     private static final String BVFLG_FLAG_ZERO = "0";
     /**
@@ -257,7 +257,7 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
     /**
      * contents_type(0).
      */
-    private static final String CONTENT_TYPE_FLAG_ZERO = "0";
+    public static final String CONTENT_TYPE_FLAG_ZERO = "0";
     /**
      * contents_type(1).
      */
@@ -1463,6 +1463,7 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
         if (!mIsOtherService) {
             viewRefresher.sendEmptyMessage(REFRESH_VIDEO_VIEW);
         } else {
+            sendOperateLog();
             showProgressBar(false);
         }
     }
@@ -1941,13 +1942,6 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                 }
                 mScaledDownProgramListDataProvider.getChannelList(0, 0, "", 1);
             }
-            //ログイン状態でしか送信しない
-            if (!TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(this))) {
-                if (mSendOperateLog == null) {
-                    mSendOperateLog = new SendOperateLog(getApplicationContext());
-                }
-                mSendOperateLog.sendOpeLog(mDetailData, mDetailFullData);
-            }
             if (DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
                 if (getStbStatus()) {
                     createRemoteControllerView(true);
@@ -2010,6 +2004,7 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                 setThumbnail();
             }
         }
+        sendOperateLog();
         showProgressBar(false);
     }
 
@@ -3670,5 +3665,17 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
         //外部出力制御
         mExternalDisplayHelper = null;
         super.onDestroy();
+    }
+
+    /**
+     * ユーザ操作履歴送信.
+     *
+     * ログイン状態でしか送信しない
+     */
+    private void sendOperateLog() {
+        if (!TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(this)) && mSendOperateLog == null) {
+                mSendOperateLog = new SendOperateLog(getApplicationContext());
+                mSendOperateLog.sendOpeLog(mDetailData, mDetailFullData);
+        }
     }
 }
