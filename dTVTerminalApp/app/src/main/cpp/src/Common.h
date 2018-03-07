@@ -107,6 +107,7 @@ namespace dtvt {
     //const char * const DlnaBsChListItem_Field_mThumbnail =  "mThumbnail";
     const char * const DlnaBsChListItem_Field_mDate =  "mDate";
     const char * const DlnaBsChListItem_Field_mVideoType       ="mVideoType";
+    const char * const DlnaBsChListItem_Field_mChannelName   ="mChannelName";
 
     //DlnaTerChListItem フィールド定義
     const char * const DlnaTerChListItem_Field_mChannelNo ="mChannelNo";
@@ -119,6 +120,7 @@ namespace dtvt {
     //const char * const DlnaTerChListItem_Field_mThumbnail =  "mThumbnail";
     const char * const DlnaTerChListItem_Field_mDate =  "mDate";
     const char * const DlnaTerChListItem_Field_mVideoType       ="mVideoType";
+    const char * const DlnaTerChListItem_Field_mChannelName   ="mChannelName";
 
     //DlnaHikariChListItem フィールド定義
     const char * const DlnaHikariChListItem_Field_mChannelNo ="mChannelNo";

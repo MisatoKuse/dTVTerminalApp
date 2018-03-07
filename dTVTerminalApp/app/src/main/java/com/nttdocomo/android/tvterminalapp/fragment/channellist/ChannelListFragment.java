@@ -343,7 +343,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
                     ret.setResolution(bsI.mResolution);
                     ret.setBitrate(bsI.mBitrate);
                     ret.setDuration(bsI.mDuration);
-                    ret.setTitle(bsI.mTitle);
+                    ret.setTitle(bsI.mChannelName);
                     ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabBs);
                     ret.setVideoType(bsI.mVideoType);
                     break;
@@ -355,7 +355,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
                     ret.setResolution(bsT.mResolution);
                     ret.setBitrate(bsT.mBitrate);
                     ret.setDuration(bsT.mDuration);
-                    ret.setTitle(bsT.mTitle);
+                    ret.setTitle(bsT.mChannelName);
                     ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabTer);
                     ret.setVideoType(bsT.mVideoType);
                     break;

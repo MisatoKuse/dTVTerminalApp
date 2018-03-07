@@ -189,7 +189,7 @@ public class ChannelListAdapter extends BaseAdapter {
                     if (mData.get(position) instanceof  DlnaBsChListItem) {
                         DlnaBsChListItem bsItem = (DlnaBsChListItem) mData.get(position);
                         if (null != bsItem) {
-                            chName = bsItem.mTitle;
+                            chName = bsItem.mChannelName;
                             thumbnail = null;
                         }
                     }
@@ -198,7 +198,7 @@ public class ChannelListAdapter extends BaseAdapter {
                     if (mData.get(position) instanceof DlnaTerChListItem) {
                         DlnaTerChListItem terItem = (DlnaTerChListItem) mData.get(position);
                         if (null != terItem) {
-                            chName = terItem.mTitle;
+                            chName = terItem.mChannelName;
                             thumbnail = null;
                         }
                     }

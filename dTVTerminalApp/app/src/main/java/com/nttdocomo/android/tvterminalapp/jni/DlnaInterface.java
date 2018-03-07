@@ -406,7 +406,7 @@ public class DlnaInterface {
 
         for (DlnaBsChListItem item: info.getBsChLists()) {
             if (null != item) {
-                item.mTitle = AribExternalCharConverter.getConverted(item.mTitle);
+                item.mChannelName = AribExternalCharConverter.getConverted(item.mChannelName);
             }
         }
     }
@@ -427,7 +427,7 @@ public class DlnaInterface {
 
         for (DlnaTerChListItem item: info.getTerChLists()) {
             if (null != item) {
-                item.mTitle = AribExternalCharConverter.getConverted(item.mTitle);
+                item.mChannelName = AribExternalCharConverter.getConverted(item.mChannelName);
             }
         }
     }

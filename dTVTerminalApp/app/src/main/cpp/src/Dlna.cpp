@@ -796,7 +796,13 @@ namespace dtvt {
         }
 
         //DlnaBsChListItem_Field_mVideoType
-        ret= setJavaObjectField(env, cl, DlnaBsChListItem_Field_mVideoType, Dlna_Java_String_Path,  *i, objOut);
+        ret= setJavaObjectField(env, cl, DlnaBsChListItem_Field_mVideoType, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //mChannelName
+        ret= setJavaObjectField(env, cl, DlnaBsChListItem_Field_mChannelName, Dlna_Java_String_Path,  *i, objOut);
         if(!ret){
             return false;
         }
@@ -864,7 +870,13 @@ namespace dtvt {
         }
 
         //DlnaTerChListItem_Field_mVideoType
-        ret= setJavaObjectField(env, cl, DlnaTerChListItem_Field_mVideoType, Dlna_Java_String_Path,  *i, objOut);
+        ret= setJavaObjectField(env, cl, DlnaTerChListItem_Field_mVideoType, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //mChannelName
+        ret= setJavaObjectField(env, cl, DlnaTerChListItem_Field_mChannelName, Dlna_Java_String_Path,  *i, objOut);
         if(!ret){
             return false;
         }

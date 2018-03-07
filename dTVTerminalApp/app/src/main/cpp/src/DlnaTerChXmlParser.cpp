@@ -381,6 +381,14 @@ namespace dtvt {
                                         isItVideo = false;
                                     }
                                 }
+                                if (0== xmlStrcmp(child->name, (const xmlChar *) TerChXmlParser_Field_ChannelName)) {
+                                    char* tmpP= (char *) xmlNodeGetContent(child);
+                                    if(NULL!=tmpP){
+                                        itemXmlItemMap[Xml_Item_ChannelName] = tmpP;
+                                    } else {
+                                        itemXmlItemMap[Xml_Item_ChannelName] = "";
+                                    }
+                                }
                                 if(child){
                                     child = child->next;
                                 }
@@ -415,6 +423,7 @@ namespace dtvt {
                             setXmlItemValues(tmpStringVector, Xml_Item_ResUrl, itemXmlItemMap);
                             setXmlItemValues(tmpStringVector, Xml_Item_Date, itemXmlItemMap);
                             setXmlItemValues(tmpStringVector, Xml_Item_VideoType, itemXmlItemMap);
+                            setXmlItemValues(tmpStringVector, Xml_Item_ChannelName, itemXmlItemMap);
                             out.push_back(tmpStringVector);
                         }
                     }

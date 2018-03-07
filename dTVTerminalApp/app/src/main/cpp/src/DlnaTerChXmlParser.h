@@ -58,6 +58,7 @@ namespace dtvt {
     const char * const TerChXmlParser_Field_Class        ="class";
     const char * const TerChXmlParser_Field_VideoItem    ="object.item.videoItem";
     const char * const TerChXmlParser_Field_Videos       ="Videos";
+    const char * const TerChXmlParser_Field_ChannelName  ="channelName";
     #if defined(DLNA_KARI_DMS_UNIVERSAL)
         const char * const TerChXmlParser_Field_Title        ="title";
     #elif defined(DLNA_KARI_DMS_NAS)

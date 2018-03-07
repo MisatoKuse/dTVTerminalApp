@@ -31,7 +31,7 @@ public class DlnaTerChListItem {
     //日付
     public String mDate = "";
     public String mVideoType = "";
-
+    public String mChannelName = "";
     //to do: 使用する必要があれば、新しいフィールドをここで追加
 
     /**
@@ -47,9 +47,9 @@ public class DlnaTerChListItem {
      * @return yes or no
      */
     public boolean equalTo(final DlnaTerChListItem item2) {
-        if (null == item2 || null == this.mTitle || null == item2.mTitle || null == this.mResUrl || null == item2.mResUrl) {
+        if (null == item2 || null == this.mChannelName || null == item2.mChannelName || null == this.mResUrl || null == item2.mResUrl) {
             return false;
         }
-        return this.mTitle.equals(item2.mTitle) && this.mResUrl.equals(item2.mResUrl);
+        return this.mChannelName.equals(item2.mChannelName) && this.mResUrl.equals(item2.mResUrl);
     }
 }
