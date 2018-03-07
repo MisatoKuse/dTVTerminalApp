@@ -21,7 +21,6 @@ import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.DTvChDataProvider;
@@ -106,21 +105,42 @@ public class ChannelListActivity extends BaseActivity implements
      */
     private DTvChDataProvider mDTvChDataProvider = null;
     /**
-     * hikari.
+     * チャンネルリストのタイプ.
      */
-    private final int CHANNEL_LIST_TAB_HIKARI = 0;
+    public enum ChListDataType {
+        /**
+         * タイプ:ひかりTV.
+         */
+        CH_LIST_DATA_TYPE_HIKARI,
+        /**
+         * タイプ:地上波.
+         */
+        CH_LIST_DATA_TYPE_TDB,
+        /**
+         * タイプ:BS.
+         */
+        CH_LIST_DATA_TYPE_BS,
+        /**
+         * タイプ:dTVチャンネル.
+         */
+        CH_LIST_DATA_TYPE_DCH
+    }
+
     /**
-     * 地上波.
+     *　STB接続時タブリスト.
      */
-    private final int CHANNEL_LIST_TAB_TER = 1;
+    private static final ChListDataType[] CHANNEL_LIST_TAB_NO_STB_LIST
+            = {ChListDataType.CH_LIST_DATA_TYPE_HIKARI,
+                 ChListDataType.CH_LIST_DATA_TYPE_DCH};
     /**
-     *　BS.
+     *　STB未接続時タブリスト.
      */
-    private final int CHANNEL_LIST_TAB_BS = 2;
-    /**
-     *　ｄTV.
-     */
-    private final int CHANNEL_LIST_TAB_DTV = 3;
+    private static final ChListDataType[] CHANNEL_LIST_TAB_CONNECT_STB_LIST
+            = {ChListDataType.CH_LIST_DATA_TYPE_HIKARI,
+                  ChListDataType.CH_LIST_DATA_TYPE_TDB,
+                  ChListDataType.CH_LIST_DATA_TYPE_BS,
+                 ChListDataType.CH_LIST_DATA_TYPE_DCH};
+
     /**
      *　タブ延長タイム.
      */
@@ -128,12 +148,15 @@ public class ChannelListActivity extends BaseActivity implements
     /**
      *　現在タイプ.
      */
-    private ChannelListAdapter.ChListDataType mCurrentType = ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_INVALID;
+    private ChListDataType mCurrentType = ChListDataType.CH_LIST_DATA_TYPE_HIKARI;
     /**
      * ハンドラー.
      */
     private Handler mHandle = new Handler();
-
+    /**
+     *　画面表示時のSTB接続状態.
+     */
+    private boolean mIsStbConnected;
     /**
      * コンストラクタ.
      *
@@ -153,8 +176,9 @@ public class ChannelListActivity extends BaseActivity implements
         }
         enableGlobalMenuIcon(true);
         enableStbStatusIcon(true);
-
         setContentView(R.layout.channel_list_main_layout);
+
+        mIsStbConnected = getStbStatus();
         initView();
         initData();
         DTVTLogger.end();
@@ -207,16 +231,14 @@ public class ChannelListActivity extends BaseActivity implements
             case CH_LIST_DATA_TYPE_BS:
                 getBsData();
                 break;
-            case CH_LIST_DATA_TYPE_TER:
+            case CH_LIST_DATA_TYPE_TDB:
                 getTerData();
                 break;
             case CH_LIST_DATA_TYPE_HIKARI:
                 getHikariData();
                 break;
-            case CH_LIST_DATA_TYPE_DTV:
+            case CH_LIST_DATA_TYPE_DCH:
                 getDtvData();
-                break;
-            case CH_LIST_DATA_TYPE_INVALID:
                 break;
             default:
                 break;
@@ -259,8 +281,7 @@ public class ChannelListActivity extends BaseActivity implements
             return;
         }
         for (int i = 0; i < mTabNames.length; ++i) {
-            ChannelListAdapter.ChListDataType type = ChannelListAdapter
-                    .ChListDataType.values()[ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_INVALID.ordinal() + i];
+            ChListDataType type = ChListDataType.values()[i];
             ChannelListFragment fragment = mFactory.createFragment(i, this, type);
             if (null == fragment) {
                 continue;
@@ -313,7 +334,6 @@ public class ChannelListActivity extends BaseActivity implements
         @Override
         public void run() {
             DTVTLogger.start();
-            //STBにチャンネル機能を提供していないで、仮データを使うために、本番ソースを一時コメントしている。
             //本番ソース begin
             DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
             if (mDlnaProvBsChList.start(dlnaDmsItem, getActivity())) {
@@ -342,7 +362,6 @@ public class ChannelListActivity extends BaseActivity implements
         @Override
         public void run() {
             DTVTLogger.start();
-            //STBにチャンネル機能を提供していないで、仮データを使うために、本番ソースを一時コメントしている。
             //本番ソース begin
             DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
             if (mDlnaProvTerChList.start(dlnaDmsItem, getActivity())) {
@@ -409,11 +428,11 @@ public class ChannelListActivity extends BaseActivity implements
     /**
      * Paging処理.
      *
-     * @param tabPosition tabPosition
+     * @param chType チャンネル種別
      */
-    private void onPageChange(final int tabPosition) {
+    private void onPageChange(final ChListDataType chType) {
         DTVTLogger.start();
-        clearOthers(tabPosition);
+        clearOthers(chType);
         mLastY = 0;
         mIsScrollUp = false;
         DTVTLogger.end();
@@ -422,30 +441,30 @@ public class ChannelListActivity extends BaseActivity implements
     /**
      * 内容削除処理.
      *
-     * @param tabPosition tabPosition
+     * @param chType チャンネル種別
      */
-    private void clearOthers(final int tabPosition) {
+    private void clearOthers(final ChListDataType chType) {
         DTVTLogger.start();
         if (null == mHandle) {
             return;
         }
-        switch (tabPosition) {
-            case CHANNEL_LIST_TAB_HIKARI:
+        switch (chType) {
+            case CH_LIST_DATA_TYPE_HIKARI:
                 mHandle.removeCallbacks(mRunnableBs);
                 mHandle.removeCallbacks(mRunnableDtv);
                 mHandle.removeCallbacks(mRunnableTer);
                 break;
-            case CHANNEL_LIST_TAB_DTV:
+            case CH_LIST_DATA_TYPE_DCH:
                 mHandle.removeCallbacks(mRunnableBs);
                 mHandle.removeCallbacks(mRunnableHikari);
                 mHandle.removeCallbacks(mRunnableTer);
                 break;
-            case CHANNEL_LIST_TAB_TER:
+            case CH_LIST_DATA_TYPE_TDB:
                 mHandle.removeCallbacks(mRunnableBs);
                 mHandle.removeCallbacks(mRunnableDtv);
                 mHandle.removeCallbacks(mRunnableHikari);
                 break;
-            case CHANNEL_LIST_TAB_BS:
+            case CH_LIST_DATA_TYPE_BS:
                 mHandle.removeCallbacks(mRunnableDtv);
                 mHandle.removeCallbacks(mRunnableHikari);
                 mHandle.removeCallbacks(mRunnableTer);
@@ -461,7 +480,12 @@ public class ChannelListActivity extends BaseActivity implements
      */
     private void initChannelListTab() {
         Resources res = getResources();
-        mTabNames = res.getStringArray(R.array.channel_list_tab_names);
+        if (mIsStbConnected) {
+            mTabNames = res.getStringArray(R.array.channel_list_tab_names);
+        } else {
+            //未ペアリングの場合 BSと地上波は表示しない
+            mTabNames = res.getStringArray(R.array.channel_list_tab_names_no_paring);
+        }
         if (mTabLayout == null) {
             mTabLayout = new TabItemLayout(this);
             mTabLayout.setTabClickListener(this);
@@ -554,16 +578,16 @@ public class ChannelListActivity extends BaseActivity implements
                             case CH_LIST_DATA_TYPE_BS:
                                 getBsData();
                                 break;
-                            case CH_LIST_DATA_TYPE_TER:
+                            case CH_LIST_DATA_TYPE_TDB:
                                 getTerData();
                                 break;
                             case CH_LIST_DATA_TYPE_HIKARI:
                                 getHikariData();
                                 break;
-                            case CH_LIST_DATA_TYPE_DTV:
+                            case CH_LIST_DATA_TYPE_DCH:
                                 getDtvData();
                                 break;
-                            case CH_LIST_DATA_TYPE_INVALID:
+                            default:
                                 break;
                         }
                     }
@@ -590,26 +614,26 @@ public class ChannelListActivity extends BaseActivity implements
             return;
         }
 
-        ChannelListAdapter.ChListDataType type = fragment.getChListDataType();
+        ChListDataType type = fragment.getChListDataType();
         setCurrentType(type);
         switch (type) {
             case CH_LIST_DATA_TYPE_BS:
                 getBsData();
-                onPageChange(CHANNEL_LIST_TAB_BS);
+                onPageChange(type);
                 break;
-            case CH_LIST_DATA_TYPE_TER:
+            case CH_LIST_DATA_TYPE_TDB:
                 getTerData();
-                onPageChange(CHANNEL_LIST_TAB_TER);
+                onPageChange(type);
                 break;
             case CH_LIST_DATA_TYPE_HIKARI:
                 getHikariData();
-                onPageChange(CHANNEL_LIST_TAB_HIKARI);
+                onPageChange(type);
                 break;
-            case CH_LIST_DATA_TYPE_DTV:
+            case CH_LIST_DATA_TYPE_DCH:
                 getDtvData();
-                onPageChange(CHANNEL_LIST_TAB_DTV);
+                onPageChange(type);
                 break;
-            case CH_LIST_DATA_TYPE_INVALID:
+            default:
                 break;
         }
         DTVTLogger.end();
@@ -638,7 +662,7 @@ public class ChannelListActivity extends BaseActivity implements
     public void onListUpdate(final DlnaTerChListInfo curInfo) {
         DTVTLogger.start();
         int pos = mViewPager.getCurrentItem();
-        final ChannelListFragment fragment = mFactory.createFragment(pos, this, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER);
+        final ChannelListFragment fragment = mFactory.createFragment(pos, this, ChListDataType.CH_LIST_DATA_TYPE_TDB);
         ArrayList<Object> tmp = new ArrayList<>();
         for (int i = 0; i < curInfo.size(); ++i) {
             Object item = curInfo.get(i);
@@ -658,7 +682,7 @@ public class ChannelListActivity extends BaseActivity implements
     public void onListUpdate(final DlnaBsChListInfo curInfo) {
         DTVTLogger.start();
         int pos = mViewPager.getCurrentItem();
-        final ChannelListFragment fragment = mFactory.createFragment(pos, this, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS);
+        final ChannelListFragment fragment = mFactory.createFragment(pos, this, ChListDataType.CH_LIST_DATA_TYPE_BS);
         ArrayList<Object> tmp = new ArrayList<>();
         for (int i = 0; i < curInfo.size(); ++i) {
             Object item = curInfo.get(i);
@@ -685,24 +709,13 @@ public class ChannelListActivity extends BaseActivity implements
      * @param viewPagerIndex viewPagerIndex
      * @return ChListDataType
      */
-    private ChannelListAdapter.ChListDataType getTypeFromViewPagerIndex(final int viewPagerIndex) {
+    private ChListDataType getTypeFromViewPagerIndex(final int viewPagerIndex) {
         DTVTLogger.start();
-        ChannelListAdapter.ChListDataType ret = ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_INVALID;
-        switch (viewPagerIndex) {
-            case 0:
-                ret = ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI;
-                break;
-            case 1:
-                ret = ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER;
-                break;
-            case 2:
-                ret = ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS;
-                break;
-            case 3:
-                ret = ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV;
-                break;
-            default:
-                break;
+        ChListDataType ret;
+        if (mIsStbConnected) {
+            ret = CHANNEL_LIST_TAB_CONNECT_STB_LIST[viewPagerIndex];
+        } else {
+            ret = CHANNEL_LIST_TAB_NO_STB_LIST[viewPagerIndex];
         }
         DTVTLogger.end();
         return ret;
@@ -776,14 +789,15 @@ public class ChannelListActivity extends BaseActivity implements
             return;
         }
         int pos = mViewPager.getCurrentItem();
+        ChListDataType chType = getTypeFromViewPagerIndex(pos);
         ChannelListFragment fragment = null;
-        switch (pos) {
-            case CHANNEL_LIST_TAB_HIKARI:
-                fragment = mFactory.createFragment(pos, this, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI);
+        switch (chType) {
+            case CH_LIST_DATA_TYPE_HIKARI:
+            case CH_LIST_DATA_TYPE_DCH:
+                fragment = mFactory.createFragment(pos, this, chType);
                 break;
-            case CHANNEL_LIST_TAB_DTV:
-                fragment = mFactory.createFragment(pos, this, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV);
-                break;
+            case CH_LIST_DATA_TYPE_TDB:
+            case CH_LIST_DATA_TYPE_BS:
             default:
                 break;
         }
@@ -857,22 +871,22 @@ public class ChannelListActivity extends BaseActivity implements
             DTVTLogger.end();
             return;
         }
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                int tab = mViewPager.getCurrentItem();
-                switch (tab) {
-                    case CHANNEL_LIST_TAB_BS:
-                        showMessage("BSチャンネル取得できませんでした");
-                        break;
-                    case CHANNEL_LIST_TAB_TER:
-                        showMessage("地上波チャンネル取得できませんでした");
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
+//        mHandler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                int tab = mViewPager.getCurrentItem();
+//                switch (tab) {
+//                    case CHANNEL_LIST_TAB_BS:
+//                        showMessage("BSチャンネル取得できませんでした");
+//                        break;
+//                    case CHANNEL_LIST_TAB_TER:
+//                        showMessage("地上波チャンネル取得できませんでした");
+//                        break;
+//                    default:
+//                        break;
+//                }
+//            }
+//        });
         DTVTLogger.end();
     }
 
@@ -909,7 +923,7 @@ public class ChannelListActivity extends BaseActivity implements
      *
      * @param type type
      */
-    private synchronized void setCurrentType(final ChannelListAdapter.ChListDataType type) {
+    private synchronized void setCurrentType(final ChListDataType type) {
         mCurrentType = type;
     }
 }

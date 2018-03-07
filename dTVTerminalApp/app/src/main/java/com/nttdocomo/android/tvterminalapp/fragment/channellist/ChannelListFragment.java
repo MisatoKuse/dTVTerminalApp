@@ -18,6 +18,7 @@ import android.widget.ListView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
+import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
@@ -89,7 +90,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
     /**
      * データタイプ.
      */
-    private ChannelListAdapter.ChListDataType mChListDataType;
+    private ChannelListActivity.ChListDataType mChListDataType;
 
     /**
      * コンストラクタ.
@@ -103,7 +104,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
      *
      * @param type データタイプ
      */
-    public void setChListDataType(final ChannelListAdapter.ChListDataType type) {
+    public void setChListDataType(final ChannelListActivity.ChListDataType type) {
         mChListDataType = type;
     }
 
@@ -112,7 +113,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
      *
      * @return データタイプ
      */
-    public ChannelListAdapter.ChListDataType getChListDataType() {
+    public ChannelListActivity.ChListDataType getChListDataType() {
         return mChListDataType;
     }
 
@@ -246,7 +247,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
                         }
                     }
                     break;
-                case CH_LIST_DATA_TYPE_TER:
+                case CH_LIST_DATA_TYPE_TDB:
                     if (item instanceof DlnaTerChListItem) {
                         DlnaTerChListItem ter2 = (DlnaTerChListItem) item;
                         for (Object obj : mData) {
@@ -261,7 +262,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
                     }
                     break;
                 case CH_LIST_DATA_TYPE_HIKARI:
-                case CH_LIST_DATA_TYPE_DTV:
+                case CH_LIST_DATA_TYPE_DCH:
                     if (item instanceof ChannelInfo) {
                         ChannelInfo ch2 = (ChannelInfo) item;
                         for (Object obj : mData) {
@@ -275,7 +276,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
                         }
                     }
                     break;
-                case CH_LIST_DATA_TYPE_INVALID:
+                default:
                     return true;    //データを追加しない
             }
         }
@@ -308,17 +309,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         if (null == mData || i < 0) {
             return;
         }
-        if (mChListDataType != null) {
-            switch (mChListDataType) {
-                case CH_LIST_DATA_TYPE_HIKARI:
-                case CH_LIST_DATA_TYPE_DTV:
-                    return;
-                case CH_LIST_DATA_TYPE_BS:
-                case CH_LIST_DATA_TYPE_TER:
-                case CH_LIST_DATA_TYPE_INVALID:
-                    break;
-            }
-        }
+
         RecordedContentsDetailData datas = getParcleData(i);
         if (null == datas) {
             return;
@@ -342,7 +333,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         if (mChListDataType != null) {
             switch (mChListDataType) {
                 case CH_LIST_DATA_TYPE_HIKARI:
-                case CH_LIST_DATA_TYPE_DTV:
+                case CH_LIST_DATA_TYPE_DCH:
                     return null;
                 case CH_LIST_DATA_TYPE_BS:
                     DlnaBsChListItem bsI = (DlnaBsChListItem) mData.get(i);
@@ -356,7 +347,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
                     ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabBs);
                     ret.setVideoType(bsI.mVideoType);
                     break;
-                case CH_LIST_DATA_TYPE_TER:
+                case CH_LIST_DATA_TYPE_TDB:
                     DlnaTerChListItem bsT = (DlnaTerChListItem) mData.get(i);
                     ret.setUpnpIcon(null);
                     ret.setSize(bsT.mSize);
@@ -368,7 +359,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
                     ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabTer);
                     ret.setVideoType(bsT.mVideoType);
                     break;
-                case CH_LIST_DATA_TYPE_INVALID:
+                default:
                     return null;
             }
         }

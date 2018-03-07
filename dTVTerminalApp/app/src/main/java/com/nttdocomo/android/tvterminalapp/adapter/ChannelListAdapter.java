@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListItem;
@@ -27,32 +28,6 @@ import java.util.List;
  * チャンネルリストのアダプタ.
  */
 public class ChannelListAdapter extends BaseAdapter {
-
-    /**
-     * チャンネルリストのタイプ.
-     */
-    public enum ChListDataType {
-        /**
-         * タイプ:未定.
-         */
-        CH_LIST_DATA_TYPE_INVALID,
-        /**
-         * タイプ:BS.
-         */
-        CH_LIST_DATA_TYPE_BS,
-        /**
-         * タイプ:地上波.
-         */
-        CH_LIST_DATA_TYPE_TER,
-        /**
-         * タイプ:ひかりTV.
-         */
-        CH_LIST_DATA_TYPE_HIKARI,
-        /**
-         * タイプ:dTVチャンネル.
-         */
-        CH_LIST_DATA_TYPE_DTV,
-    }
 
     /**
      * コンテキスト.
@@ -73,7 +48,7 @@ public class ChannelListAdapter extends BaseAdapter {
     /**
      * データタイプ.
      */
-    private ChListDataType mChListDataType = ChListDataType.CH_LIST_DATA_TYPE_INVALID;
+    private ChannelListActivity.ChListDataType mChListDataType = ChannelListActivity.ChListDataType.CH_LIST_DATA_TYPE_HIKARI;
 
     /**
      * テキストの高さ.
@@ -115,7 +90,7 @@ public class ChannelListAdapter extends BaseAdapter {
      *
      * @param type データタイプ
      */
-    public void setChListDataType(final ChListDataType type) {
+    public void setChListDataType(final ChannelListActivity.ChListDataType type) {
         mChListDataType = type;
     }
 
@@ -151,7 +126,7 @@ public class ChannelListAdapter extends BaseAdapter {
             holder.mChannelName = view.findViewById(R.id.channel_list_item_title_tv);
             switch (mChListDataType) {
                 case CH_LIST_DATA_TYPE_BS:
-                case CH_LIST_DATA_TYPE_TER:
+                case CH_LIST_DATA_TYPE_TDB:
                     holder.mThumbnail.setVisibility(View.GONE);
                     DisplayMetrics DisplayMetrics = mContext.getResources().getDisplayMetrics();
                     float density = DisplayMetrics.density;
@@ -163,10 +138,8 @@ public class ChannelListAdapter extends BaseAdapter {
                     view.findViewById(R.id.channel_list_item_title_tv).setLayoutParams(layoutParams);
                     break;
                 case CH_LIST_DATA_TYPE_HIKARI:
-                case CH_LIST_DATA_TYPE_DTV:
+                case CH_LIST_DATA_TYPE_DCH:
                     holder.mThumbnail.setVisibility(View.VISIBLE);
-                    break;
-                case CH_LIST_DATA_TYPE_INVALID:
                     break;
                 default:
                     break;
@@ -192,10 +165,10 @@ public class ChannelListAdapter extends BaseAdapter {
             if (null != bp) {
                 holder.mThumbnail.setImageBitmap(bp);
             } else {
-                //TODO URLがない場合はサムネイル取得失敗の画像を表示
-                // チャンネルエラーlogoを差し替え
-                holder.mThumbnail.setImageResource(R.drawable.error_list);
+                holder.mThumbnail.setImageResource(R.mipmap.error_ch_mini);
             }
+        } else if (null != holder.mThumbnail && thumbnail == null) {
+            holder.mThumbnail.setImageResource(R.mipmap.error_ch_mini);
         }
 
         return convertView;
@@ -210,7 +183,7 @@ public class ChannelListAdapter extends BaseAdapter {
     private void getDatas(final ArrayList<String> nameThumbnailOut, final int position) {
         String chName = null;
         String thumbnail = null;
-        if (null != mData) {
+        if (null != mData && mData.size() > 0) {
             switch (mChListDataType) {
                 case CH_LIST_DATA_TYPE_BS:
                     if (mData.get(position) instanceof  DlnaBsChListItem) {
@@ -221,7 +194,7 @@ public class ChannelListAdapter extends BaseAdapter {
                         }
                     }
                     break;
-                case CH_LIST_DATA_TYPE_TER:
+                case CH_LIST_DATA_TYPE_TDB:
                     if (mData.get(position) instanceof DlnaTerChListItem) {
                         DlnaTerChListItem terItem = (DlnaTerChListItem) mData.get(position);
                         if (null != terItem) {
@@ -239,7 +212,7 @@ public class ChannelListAdapter extends BaseAdapter {
                         }
                     }
                     break;
-                case CH_LIST_DATA_TYPE_DTV:
+                case CH_LIST_DATA_TYPE_DCH:
                     if (mData.get(position) instanceof ChannelInfo) {
                         ChannelInfo ch2 = (ChannelInfo) mData.get(position);
                         if (null != ch2) {
@@ -248,7 +221,7 @@ public class ChannelListAdapter extends BaseAdapter {
                         }
                     }
                     break;
-                case CH_LIST_DATA_TYPE_INVALID:
+                default:
                     break;
             }
         }
