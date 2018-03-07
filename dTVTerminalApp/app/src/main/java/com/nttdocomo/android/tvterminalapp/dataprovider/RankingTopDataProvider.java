@@ -549,7 +549,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             rankingContentInfo.setDtvType(dtvType);
             rankingContentInfo.setDispType(dispType);
             rankingContentInfo.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
-            rankingContentInfo.setContentsId(map.get(JsonConstants.META_RESPONSE_CID));
+            rankingContentInfo.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
             rankingContentInfo.setLinearStartDate(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE));
             rankingContentInfo.setLinearEndDate(map.get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE));
             rankingContentInfo.setTime(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE));

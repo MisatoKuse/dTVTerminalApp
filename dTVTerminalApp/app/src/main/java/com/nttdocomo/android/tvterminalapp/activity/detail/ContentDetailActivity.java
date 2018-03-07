@@ -1324,13 +1324,13 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
         if (!TextUtils.isEmpty(title)) {
             setTitleText(title);
         }
+        setThumbnail();
         if (!TextUtils.isEmpty(url)) {
             if (mThumbnailProvider == null) {
                 mThumbnailProvider = new ThumbnailProvider(this);
             }
             if (!isDownloadStop) {
                 mThumbnail.setTag(url);
-                setThumbnail();
                 Bitmap bitmap = mThumbnailProvider.getThumbnailImage(mThumbnail, url);
                 if (bitmap != null) {
                     //サムネイル取得失敗時は取得失敗画像をセットする
