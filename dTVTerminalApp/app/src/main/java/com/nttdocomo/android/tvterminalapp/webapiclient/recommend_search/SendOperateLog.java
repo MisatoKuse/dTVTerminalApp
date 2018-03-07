@@ -25,7 +25,7 @@ public class SendOperateLog extends WebApiBase {
     /**
      * Url.
      */
-    private StringBuffer mUrl = new StringBuffer(UrlConstants.WebApiUrl.RECOMMEND_SEND_OPERATE_LOG_URL);
+    private final StringBuffer mUrl = new StringBuffer(UrlConstants.WebApiUrl.RECOMMEND_SEND_OPERATE_LOG_URL);
     /**
      * カテゴリID.
      */
@@ -49,6 +49,55 @@ public class SendOperateLog extends WebApiBase {
     private DaccountGetOTT mGetOtt;
 
     /**
+     * サービスID.
+     */
+    private static final String URL_TEXT_SERVICE_ID = "?serviceId=";
+    /**
+     * カテゴリーID.
+     */
+    private static final String URL_TEXT_CATEGORY_ID = "&categoryId=";
+    /**
+     * チャンネルID.
+     */
+    private static final String URL_TEXT_CHANNEL_ID = "&channelId=";
+    /**
+     * コンテンツID.
+     */
+    private static final String URL_TEXT_CID = "&cid=";
+    /**
+     * 操作種別.
+     */
+    private static final String URL_TEXT_OPERATE_KIND = "&operateKind=";
+    /**
+     * 操作種別ページ訪問（レコメンド）.
+     */
+    private static final String URL_TEXT_OPERATE_KIND_RECOMMEND = "412";
+    /**
+     * ページ訪問（非レコメンド）.
+     */
+    private static final String URL_TEXT_OPERATE_KIND_OTHERS = "411";
+    /**
+     * 操作日時.
+     */
+    private static final String URL_TEXT_OPERATE_DATE = "&operateDate=";
+    /**
+     * おすすめ順.
+     */
+    private static final String URL_TEXT_RANK = "&rank=";
+    /**
+     * 画面ID.
+     */
+    private static final String URL_TEXT_PAGE_ID = "&pageId=";
+    /**
+     * ユーザグループID.
+     */
+    private static final String URL_TEXT_GROUP_ID = "&groupId=";
+    /**
+     * レコメンド手法ID.
+     */
+    private static final String URL_TEXT_RECOMMEND_METHOD_ID = "&recommendMethodId=";
+
+    /**
      * コンストラクタ.
      *
      * @param context コンテキスト
@@ -65,6 +114,7 @@ public class SendOperateLog extends WebApiBase {
      * @param mDetailFullData コンテンツフルデータ
      */
     public void sendOpeLog(final OtherContentsDetailData mDetailData, final VodMetaFullData mDetailFullData) {
+        DTVTLogger.start();
         if (!mIsCancel && mDetailData != null) {
             if (OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
                 mCategoryId = getCategoryId(mDetailFullData);
@@ -83,8 +133,10 @@ public class SendOperateLog extends WebApiBase {
                         mHttpThread.start();
                     }
                 });
+                DTVTLogger.debug("send operate log:    url=" + mUrl);
             }
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -94,38 +146,38 @@ public class SendOperateLog extends WebApiBase {
      * @return Url
      */
     private String getUrl(final OtherContentsDetailData mDetailData) {
-        mUrl.append("?serviceId=");
+        mUrl.append(URL_TEXT_SERVICE_ID);
         mUrl.append(String.valueOf(mDetailData.getServiceId()));
-        mUrl.append("&categoryId=");
+        mUrl.append(URL_TEXT_CATEGORY_ID);
         mUrl.append(mCategoryId);
         if (!TextUtils.isEmpty(mDetailData.getChannelId())) {
-            mUrl.append("&channelId=");
+            mUrl.append(URL_TEXT_CHANNEL_ID);
             mUrl.append(mDetailData.getChannelId());
         }
-        mUrl.append("&cid=");
+        mUrl.append(URL_TEXT_CID);
         mUrl.append(mDetailData.getContentId());
-        mUrl.append("&operateKind=");
+        mUrl.append(URL_TEXT_OPERATE_KIND);
         if (ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY.equals(mDetailData.getRecommendFlg())) {
-            mUrl.append("412");
+            mUrl.append(URL_TEXT_OPERATE_KIND_RECOMMEND);
         } else {
-            mUrl.append("411");
+            mUrl.append(URL_TEXT_OPERATE_KIND_OTHERS);
         }
-        mUrl.append("&operateDate=");
+        mUrl.append(URL_TEXT_OPERATE_DATE);
         mUrl.append(DateUtils.formatEpochToStringOpeLog(DateUtils.getNowTimeFormatEpoch()));
         if (!TextUtils.isEmpty(mDetailData.getRecommendOrder())) {
-            mUrl.append("&rank=");
+            mUrl.append(URL_TEXT_RANK);
             mUrl.append(mDetailData.getRecommendOrder());
         }
         if (!TextUtils.isEmpty(mDetailData.getPageId())) {
-            mUrl.append("&pageId=");
+            mUrl.append(URL_TEXT_PAGE_ID);
             mUrl.append(mDetailData.getPageId());
         }
         if (!TextUtils.isEmpty(mDetailData.getGroupId())) {
-            mUrl.append("&groupId=");
+            mUrl.append(URL_TEXT_GROUP_ID);
             mUrl.append(mDetailData.getGroupId());
         }
         if (!TextUtils.isEmpty(mDetailData.getRecommendMethodId())) {
-            mUrl.append("&recommendMethodId=");
+            mUrl.append(URL_TEXT_RECOMMEND_METHOD_ID);
             mUrl.append(mDetailData.getRecommendMethodId());
         }
         return mUrl.toString();
@@ -138,20 +190,22 @@ public class SendOperateLog extends WebApiBase {
      * @return ID
      */
     private String getCategoryId(final VodMetaFullData mDetailFullData) {
+        final String valueBlank = "";
         if (mDetailFullData != null) {
-            switch (mDetailFullData.getDisp_type()) {
-                case "tv_program":
-                    switch (mDetailFullData.getmTv_service()) {
-                        case "0":
+            switch (mDetailFullData.getDisp_type() == null ? valueBlank : mDetailFullData.getDisp_type()) {
+                case ContentDetailActivity.TV_PROGRAM:
+                    switch (mDetailFullData.getmTv_service() == null ? valueBlank : mDetailFullData.getmTv_service()) {
+                        case ContentDetailActivity.TV_SERVICE_FLAG_ZERO:
                             return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_IPTV.getCategoryId();
-                        case "1":
-                            switch (mDetailFullData.getmContent_type()) {
-                                case "0":
+                        case ContentDetailActivity.TV_SERVICE_FLAG_ONE:
+                            switch (mDetailFullData.getmContent_type() == null ? valueBlank : mDetailFullData.getmContent_type()) {
+                                case valueBlank:
+                                case ContentDetailActivity.CONTENT_TYPE_FLAG_ZERO:
                                     return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_DTV_BLOADCAST.getCategoryId();
-                                case "1":
-                                case "2":
+                                case ContentDetailActivity.CONTENT_TYPE_FLAG_ONE:
+                                case ContentDetailActivity.CONTENT_TYPE_FLAG_TWO:
                                     return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_DTV_MISS.getCategoryId();
-                                case "3":
+                                case ContentDetailActivity.CONTENT_TYPE_FLAG_THREE:
                                     return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_DTV_RELATION.getCategoryId();
                                 default:
                                     break;
@@ -160,10 +214,11 @@ public class SendOperateLog extends WebApiBase {
                             break;
                     }
                 default:
-                    switch (mDetailFullData.getDtv()) {
-                        case "0":
+                    switch (mDetailFullData.getDtv() == null ? valueBlank : mDetailFullData.getDtv()) {
+                        case valueBlank:
+                        case ContentDetailActivity.DTV_FLAG_ZERO:
                             return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_HIKARITV_VOD.getCategoryId();
-                        case "1":
+                        case ContentDetailActivity.DTV_FLAG_ONE:
                             return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_DTV_SVOD.getCategoryId();
                         default:
                             break;
