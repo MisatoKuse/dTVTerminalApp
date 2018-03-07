@@ -314,7 +314,7 @@ public class SearchTopActivity extends BaseActivity
     private void setEditTextUnFocus() {
         SearchView.SearchAutoComplete searchAutoComplete
                 = findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        ImageView searchIcon = findViewById(android.support.v7.appcompat.R.id.search_button);
+        ImageView searchIcon = findViewById(android.support.v7.appcompat.R.id.search_mag_icon);
         CharSequence query = mSearchView.getQuery();
         DTVTLogger.debug("" + searchAutoComplete.isFocused());
         // 入力文字があれば白背景基調、またはテキスト入力にFocusがあれば白背景基調
@@ -340,7 +340,7 @@ public class SearchTopActivity extends BaseActivity
     private void setEditTextFocus() {
         SearchView.SearchAutoComplete searchAutoComplete
                 = findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        ImageView searchIcon = findViewById(android.support.v7.appcompat.R.id.search_button);
+        ImageView searchIcon = findViewById(android.support.v7.appcompat.R.id.search_mag_icon);
 
         // Focus時は固定で白背景基調
         searchIcon.setImageResource(R.mipmap.icon_graylight_search);
