@@ -263,6 +263,10 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 mResultSets = scheduleDataManager.selectTvScheduleListProgramData(mFromDB, mProgramSelectDate);
                 mFromDB = new ArrayList<>();
                 resultSet = new ArrayList<>();
+                // 番組データがある場合はダミーで1件の結果セットを返す
+                if (mResultSets != null && mResultSets.size() > 0) {
+                    resultSet.add(new HashMap<String, String>(){{put("","");}});
+                }
                 break;
             default:
                 break;
