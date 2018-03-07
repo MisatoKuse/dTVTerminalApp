@@ -107,13 +107,20 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
         // 次画面遷移用データを設定
         VideoGenreListDataInfo info = new VideoGenreListDataInfo();
         // "すべて"をタップ
-        if (videoGenreList.getGenreId().equals(GenreListMetaData.VIDEO_LIST_GENRE_ID_ALL_CONTENTS)) {
+        if (GenreListMetaData.VIDEO_LIST_GENRE_ID_ALL_CONTENTS.equals(videoGenreList.getGenreId())) {
             DTVTLogger.debug("Select Genre ALL Contents");
             info.setGenreId(null);
         } else {
             info.setGenreId(videoGenreList.getGenreId());
         }
-        info.setSubGenre(mVideoGenreListDataInfo.getSubGenre());
+        //ジャンルのすべてをタップ
+        if (getString(R.string.video_list_genre_all).equals(videoGenreList.getTitle())
+                && mVideoGenreListDataInfo.getGenreId() != null) {
+            info.setSubGenre(null);
+            info.setGenreId(videoGenreList.getGenreId());
+        } else {
+            info.setSubGenre(mVideoGenreListDataInfo.getSubGenre());
+        }
 
         bundle.putParcelable(VIDEO_GENRE_ID_BUNDLE_KEY, info);
 
@@ -209,6 +216,14 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
             DTVTLogger.debug("Contents Count request is faild");
         }
         // ジャンル情報取得後はリストを更新
+        if (mVideoGenreListDataInfo != null && mVideoGenreListDataInfo.getGenreId() != null
+                && !GenreListMetaData.VIDEO_LIST_GENRE_ID_NOD.equals(mVideoGenreListDataInfo.getGenreId())) {
+            VideoGenreList videoGenreList = new VideoGenreList();
+            videoGenreList.setTitle(this.getResources().getString(R.string.video_list_genre_all));
+            videoGenreList.setContentCount(mVideoGenreListDataInfo.getVideoGenreListShowData().getContentCount());
+            videoGenreList.setGenreId(mVideoGenreListDataInfo.getGenreId());
+            mShowContentsList.add(0, videoGenreList);
+        }
         noticeRefresh(mShowContentsList);
         DTVTLogger.end();
     }
