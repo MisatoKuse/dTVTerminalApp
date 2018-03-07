@@ -37,6 +37,12 @@ enum OttGetQueue {
     private boolean mDisconnectionFlag = false;
 
     /**
+     * 通信スレッド
+     */
+    Thread mOttGetThread;
+    Runnable mOttGetRunnable;
+
+    /**
      * 前回実行時の時間を実行するか否かの基準にする
      */
     long mTaskExecFlag = 0;
@@ -75,7 +81,7 @@ enum OttGetQueue {
                                 final DaccountGetOTT.DaccountGetOttCallBack nextTask) {
         DTVTLogger.start();
         //初回ならば各種初期化
-        if (mTaskQueue == null) {
+        if (mDaccountGetOTT == null) {
             mTaskQueue = new ArrayDeque<>();
             mDaccountGetOTT = new DaccountGetOTT();
             mTaskExecFlag = 0;
@@ -84,9 +90,7 @@ enum OttGetQueue {
 
         //通信切断フラグの検査
         if (mDisconnectionFlag) {
-            //通信切断指令が出ているので、残った通信タスクをクリアして終了する
-            mTaskQueue = new ArrayDeque<>();
-            mTaskExecFlag = 0;
+            cancelConnection();
             DTVTLogger.end("force disconnect");
             return;
         }
@@ -114,7 +118,7 @@ enum OttGetQueue {
      */
     private void waitTask(final Context context) {
         //Handlerの場合、呼び出された場所によっては例外が発生するので、threadを使用する
-        Thread ottGetThread = new Thread(new Runnable() {
+        mOttGetThread = new Thread(mOttGetRunnable = new Runnable() {
             @Override
             public void run() {
                 DTVTLogger.start();
@@ -122,8 +126,9 @@ enum OttGetQueue {
                     //待ち時間の分だけウェイトを入れる
                     Thread.sleep(MAX_WAIT_TIME);
                 } catch (InterruptedException e) {
-                    //失敗しても特に何もしない
-                    DTVTLogger.debug("sleep failed");
+                    //割り込みを受けた場合はすぐに終了する
+                    DTVTLogger.debug("Interrupted END");
+                    return;
                 }
                 DTVTLogger.debug("exec ott get");
                 //指定時間が経過したので、OTT取得処理を実行する
@@ -132,7 +137,7 @@ enum OttGetQueue {
             }
         });
         //定義したスレッドを実行する
-        ottGetThread.start();
+        mOttGetThread.start();
     }
 
     /**
@@ -158,8 +163,7 @@ enum OttGetQueue {
         //通信切断フラグの検査
         if (mDisconnectionFlag) {
             //通信切断指令が出ているので、残った通信タスクをクリアして終了する
-            mTaskQueue = new ArrayDeque<>();
-            mTaskExecFlag = 0;
+            cancelConnection();
             DTVTLogger.end("force disconnect");
             return;
         }
@@ -186,10 +190,35 @@ enum OttGetQueue {
      *
      * @param disconnectionFlag trueならば通信切断
      */
-    protected void setmDisconnectionFlag(boolean disconnectionFlag) {
+    protected void setDisconnectionFlag(boolean disconnectionFlag) {
         DTVTLogger.start();
         mDisconnectionFlag = disconnectionFlag;
         DTVTLogger.debug("disconnect flag = " + mDisconnectionFlag);
+
+        //スレッドが作成されていれて、フラグが停止ならば、それを伝える
+        if(mOttGetThread != null && disconnectionFlag) {
+            mOttGetThread.interrupt();
+        }
+
         DTVTLogger.end();
     }
+
+    /**
+     * 今あるワンタイムトークン取得タスクは停止する
+     */
+    protected void cancelConnection() {
+        if(mDaccountGetOTT == null) {
+            //まだクラスの準備ができていない
+            return;
+        }
+
+        //スレッドが作成されていれて、フラグが停止ならば、それを伝える
+        if(mOttGetThread != null) {
+            mOttGetThread.interrupt();
+        }
+        //残った通信タスクをクリアする
+        mTaskQueue = new ArrayDeque<>();
+        mTaskExecFlag = 0;
+    }
+
 }

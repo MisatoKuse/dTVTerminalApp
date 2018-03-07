@@ -1296,6 +1296,9 @@ public class BaseActivity extends FragmentActivity implements
         }
         dismissDialog();
         super.onPause();
+
+        //ワンタイムトークン取得のキャンセル
+        cancelOttConnection();
     }
 
     /**
@@ -2017,10 +2020,7 @@ public class BaseActivity extends FragmentActivity implements
         }
 
         //ワンタイムトークンに通信停止を通知する
-        final DaccountGetOTT getOtt = new DaccountGetOTT();
-        if (getOtt != null) {
-            getOtt.setmDisconnectionFlag(true);
-        }
+        setOttDisconnectionFlag(true);
 
         DTVTLogger.end();
     }
@@ -2057,6 +2057,9 @@ public class BaseActivity extends FragmentActivity implements
         DTVTLogger.debug("RestartFlag false "
                 + SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext()));
 
+        //ワンタイムトークンに通信可能を通知する
+        setOttDisconnectionFlag(false);
+
         DTVTLogger.end();
     }
 
@@ -2077,13 +2080,38 @@ public class BaseActivity extends FragmentActivity implements
         checkDAccountOnRestart();
         onStartCommunication();
 
-        //ワンタイムトークンに通信再開を通知する
+        //ワンタイムトークンに通信再開可能を通知する
+        setOttDisconnectionFlag(false);
+
+        DTVTLogger.end();
+    }
+
+    /**
+     * ワンタイムトークン取得完全停止.
+     *
+     * @param disconnectionFlag 通信を止めるならばtrue
+     */
+    private void setOttDisconnectionFlag(boolean disconnectionFlag) {
+        DTVTLogger.start();
         final DaccountGetOTT getOtt = new DaccountGetOTT();
         if (getOtt != null) {
-            //通信切断フラグをfalseにセット
-            getOtt.setmDisconnectionFlag(false);
+            DTVTLogger.debug("setDisconnectionFlag = " + disconnectionFlag);
+            //通信切断フラグを指定された値にセット
+            getOtt.setDisconnectionFlag(disconnectionFlag);
         }
+        DTVTLogger.end();
+    }
 
+    /**
+     * 現在のワンタイムトークン取得のキャンセル.
+     */
+    private void cancelOttConnection() {
+        DTVTLogger.start();
+        final DaccountGetOTT getOtt = new DaccountGetOTT();
+        if (getOtt != null) {
+            //通信キャンセル呼び出し
+            getOtt.cancelConnection();
+        }
         DTVTLogger.end();
     }
 

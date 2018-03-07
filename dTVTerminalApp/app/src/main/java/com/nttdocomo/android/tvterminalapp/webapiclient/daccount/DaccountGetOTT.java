@@ -249,10 +249,20 @@ public class DaccountGetOTT {
      *
      * @param disconnectionFlag trueならば通信切断
      */
-    public void setmDisconnectionFlag(boolean disconnectionFlag) {
+    public void setDisconnectionFlag(boolean disconnectionFlag) {
         if (mOttGetQueue != null) {
             //キュークラスに丸投げ
-            mOttGetQueue.setmDisconnectionFlag(disconnectionFlag);
+            mOttGetQueue.setDisconnectionFlag(disconnectionFlag);
+        }
+    }
+
+    /**
+     * 今ある通信タスクをキャンセルする.
+     */
+    public void cancelConnection() {
+        if (mOttGetQueue != null) {
+            //キュークラスに丸投げ
+            mOttGetQueue.cancelConnection();
         }
     }
 }
