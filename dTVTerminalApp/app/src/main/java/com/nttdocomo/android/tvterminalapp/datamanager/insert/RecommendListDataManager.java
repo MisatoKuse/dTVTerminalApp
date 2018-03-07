@@ -99,6 +99,7 @@ public class RecommendListDataManager {
                 }
                 redListDao.insert(values, tagPageNo);
             }
+            DTVTLogger.debug(String.format("RecommendListDao.insert [%s] size[%s]", DBUtils.getRecommendTableName(tagPageNo), hashMaps.size()));
             DateUtils dateUtils = new DateUtils(mContext);
             dateUtils.addLastDate(cacheDateKey);
         } catch (SQLiteException e) {
