@@ -8,8 +8,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist.SerializablePreferencesData;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.struct.OneTimeTokenData;
+
+import java.util.List;
 
 /**
  * ユーザ情報やペアリング情報等の保存/取得を管理するクラス.
@@ -109,6 +113,10 @@ public class SharedPreferencesUtils {
      * ワンタイムトークン.
      */
     private static final String ONE_TIME_TOKEN = "ONE_TIME_TOKEN";
+    /**
+     * ユーザ情報永続化キー.
+     */
+    public static final String USER_INFO_SERIALIZABLE_DATA_KEY = "user_info_serializable_data_key";
 
     /**
      * 独自の削除メソッドがある接続済みSTB情報以外の、dアカウントユーザー切り替え時の削除対象
@@ -684,5 +692,46 @@ public class SharedPreferencesUtils {
                 ONE_TIME_TOKEN, Context.MODE_PRIVATE);
         deleteData.edit().clear().apply();
         DTVTLogger.end();
+    }
+
+    /**
+     * ユーザ情報永続化.
+     *
+     * @param context                     コンテキスト
+     * @param serializablePreferencesData ユーザ情報
+     */
+    public static void setSharedPreferencesSerializableData(
+            final Context context,
+            final SerializablePreferencesData serializablePreferencesData) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                USER_INFO_SERIALIZABLE_DATA_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        String preferencesData = StringUtils.toPreferencesDataBase64(serializablePreferencesData);
+        editor.putString(USER_INFO_SERIALIZABLE_DATA_KEY, preferencesData);
+        editor.apply();
+        //今の日時を取得日時とする
+        SharedPreferencesUtils.setSharedPreferencesUserInfoDate(context, System.currentTimeMillis());
+        DTVTLogger.end();
+    }
+
+    /**
+     * 永続化ユーザ情報取得.
+     *
+     * @param context コンテキスト
+     * @return ユーザ情報
+     */
+    public static List<UserInfoList> getSharedPreferencesUserInfo(final Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                USER_INFO_SERIALIZABLE_DATA_KEY, Context.MODE_PRIVATE);
+
+        SerializablePreferencesData preferencesData
+                = StringUtils.toPreferencesData(data.getString(USER_INFO_SERIALIZABLE_DATA_KEY, null));
+        if (preferencesData == null) {
+            return null;
+        }
+        //保存したひかりTVfordocomo視聴年齢値が無いときはnullを返却
+        return preferencesData.getUserInfoList();
     }
 }

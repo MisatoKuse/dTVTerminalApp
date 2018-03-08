@@ -308,13 +308,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 mAgreementRl.setVisibility(View.VISIBLE);
                 mPrImageView.setVisibility(View.VISIBLE);
                 break;
-            case LOGIN_NG:
-                mPrImageView.setVisibility(View.VISIBLE);
-                break;
             case CONTRACT_OK_PAIRING_NG:
             case CONTRACT_OK_PARING_OK:
                 mAgreementRl.setVisibility(View.GONE);
                 mPrImageView.setVisibility(View.GONE);
+                break;
+            case LOGIN_NG:
+            default:
+                mPrImageView.setVisibility(View.VISIBLE);
                 break;
         }
     }

@@ -220,7 +220,7 @@ public class DtvContentsDetailFragment extends Fragment {
 
         //他サービスならクリップボタン非表示
         if (mOtherContentsDetailData != null) {
-            if (mOtherContentsDetailData.isClipExec()) {
+            if (mOtherContentsDetailData.getVodMetaFullData() != null && mOtherContentsDetailData.isClipExec()) {
                 if (mOtherContentsDetailData.isClipStatus()) {
                     clipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
                     clipButton.setTag(BaseActivity.CLIP_ACTIVE_STATUS);

@@ -69,7 +69,6 @@ import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.UserInfoInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ContentsDetailDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
@@ -1958,9 +1957,7 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                             R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
                     setStartRemoteControllerUIListener(this);
                 }
-                UserInfoInsertDataManager dataManager = new UserInfoInsertDataManager(this);
-                dataManager.readUserInfoInsertList();
-                String contractInfo = UserInfoUtils.getUserContractInfo(dataManager.getmUserData());
+                String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(this));
                 //ひかりTV未契約の場合
                 if (contractInfo == null || contractInfo.isEmpty() || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo)) {
                     DTVTLogger.debug("contractInfo:---" + contractInfo);
@@ -2724,9 +2721,7 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
      * ユーザ年齢をセット.
      */
     private void setUserAgeInfo() {
-        UserInfoInsertDataManager dataManager = new UserInfoInsertDataManager(this);
-        dataManager.readUserInfoInsertList();
-        mAge = UserInfoUtils.getUserAgeInfoWrapper(dataManager.getmUserData());
+        mAge = UserInfoUtils.getUserAgeInfoWrapper(SharedPreferencesUtils.getSharedPreferencesUserInfo(this));
     }
 
     /**
@@ -3038,9 +3033,7 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
         mIsEnableWatch = ENABLE_WATCH_NO_DEFINE;
 
         //DBに保存されているUserInfoから契約情報を確認する
-        UserInfoInsertDataManager dataManager = new UserInfoInsertDataManager(this);
-        dataManager.readUserInfoInsertList();
-        String contractInfo = UserInfoUtils.getUserContractInfo(dataManager.getmUserData());
+        String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(this));
         DTVTLogger.debug("contractInfo: " + contractInfo);
 
         if (contractInfo == null || contractInfo.isEmpty() || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo)) {

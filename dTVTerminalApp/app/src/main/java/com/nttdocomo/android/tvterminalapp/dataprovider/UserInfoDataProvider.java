@@ -9,34 +9,43 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.UserInfoInsertDataManager;
-import com.nttdocomo.android.tvterminalapp.datamanager.select.UserInfoDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist.AccountList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist.SerializablePreferencesData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.UserInfoWebClient;
-import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
 
 import java.util.List;
-import java.util.Map;
 
+/**
+ * ユーザ情報DataProvider.
+ */
 public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParserCallback {
 
+    /**
+     * コンテキストファイル.
+     */
     private Context mContext = null;
 
-    //データを返すコールバック
+    /**
+     * データを返すコールバック.
+     */
     private UserDataProviderCallback mUserDataProviderCallback;
 
-    //データーマネージャー
-    private UserInfoInsertDataManager mDataManager = null;
-
-    //前回の日時
+    /**
+     * 前回の日時.
+     */
     private long beforeDate = 0;
 
-    public static final String CONTRACT_STATUS_NONE = "none";
+    /**
+     * dTV契約ステータス.
+     */
     public static final String CONTRACT_STATUS_DTV = "001";
+    /**
+     * H4D契約ステータス.
+     */
     public static final String CONTRACT_STATUS_H4D = "002";
     /**
      * UserInfoWebClient.
@@ -51,13 +60,13 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
     public void onUserInfoJsonParsed(final List<UserInfoList> userInfoLists) {
         DTVTLogger.start();
 
-        if (userInfoLists != null && mDataManager != null) {
-            //取得したデータが返ってきたので、DBに格納する
-            mDataManager.execute(userInfoLists);
+        if (userInfoLists != null) {
+            //取得したデータが返ってきたので、格納する
+            SerializablePreferencesData preferencesData = new SerializablePreferencesData();
+            preferencesData.setUserInfoList(userInfoLists);
 
-            //今の日時を取得日時とする
-            SharedPreferencesUtils.setSharedPreferencesUserInfoDate(mContext,
-                    System.currentTimeMillis());
+            DTVTLogger.debug("UserInfoDataProvider::onUserInfoJsonParsed setUserInfo");
+            SharedPreferencesUtils.setSharedPreferencesSerializableData(mContext, preferencesData);
 
             //後処理を行う
             afterProcess(userInfoLists);
@@ -100,9 +109,6 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
         DTVTLogger.start();
 
         mContext = context;
-
-        //データマネージャーの初期化
-        mDataManager = new UserInfoInsertDataManager(mContext);
 
         //コールバックの定義
         mUserDataProviderCallback = userDataProviderCallback;
@@ -215,13 +221,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
         if (userInfoLists == null) {
             DTVTLogger.debug("no user data");
             // データ指定がヌルなので、前回の値を指定する。
-            // データマネージャーの取得に失敗していた場合は、以前の値を読めないので、リストはヌルのまま
-            if (mDataManager != null) {
-                DTVTLogger.debug("no data manager");
-                // DBから契約情報を取得する
-                mDataManager.readUserInfoInsertList();
-                userInfoLists = mDataManager.getmUserData();
-            }
+            userInfoLists = SharedPreferencesUtils.getSharedPreferencesUserInfo(mContext);
         } else if (userInfoLists.get(0).getLoggedinAccount().size() == 0) {
             //契約情報がゼロ件の場合、情報取得に失敗するので、userInfoListsをヌルにして、異常データであることを明示する
             userInfoLists = null;
@@ -260,14 +260,11 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
     public int getUserAge() {
 
         //ユーザ情報をDBから取得する
-        int userAgeReq = StringUtils.DEFAULT_USER_AGE_REQ;
-        UserInfoDataManager userInfoDataManager = new UserInfoDataManager(mContext);
-        List<Map<String, String>> list = userInfoDataManager.selectUserAgeInfo();
+        int userAgeReq;
+        List<UserInfoList> userInfoList = SharedPreferencesUtils.getSharedPreferencesUserInfo(mContext);
 
         //取得したユーザ情報から、年齢情報を抽出する
-        if (list != null && list.size() > 0) {
-            userAgeReq = UserInfoUtils.getUserAgeInfo(list);
-        }
+        userAgeReq = UserInfoUtils.getUserAgeInfoWrapper(userInfoList);
 
         return userAgeReq;
     }
@@ -279,14 +276,14 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
      * @return h4dユーザフラグ
      */
     public boolean isH4dUser() {
-        UserInfoDataManager userInfoDataManager = new UserInfoDataManager(mContext);
-        List<Map<String, String>> list = userInfoDataManager.selectUserAgeInfo();
+        List<UserInfoList> userInfoList = SharedPreferencesUtils.getSharedPreferencesUserInfo(mContext);
         //loggedin_account が0番目 h4d_contracted_account が1番目に来ることを想定
         final int LOGGEDIN_ACCOUNT = 0;
 
         boolean isH4dUser = false;
-        if (list != null && list.size() > 0) {
-            String contractStatus = list.get(LOGGEDIN_ACCOUNT).get(UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS);
+        if (userInfoList != null && userInfoList.size() > 0) {
+            List<AccountList> loggedinAccount = userInfoList.get(LOGGEDIN_ACCOUNT).getLoggedinAccount();
+            String contractStatus = loggedinAccount.get(LOGGEDIN_ACCOUNT).getContractStatus();
             if (contractStatus.equals(CONTRACT_STATUS_H4D)) {
                 isH4dUser = true;
             }

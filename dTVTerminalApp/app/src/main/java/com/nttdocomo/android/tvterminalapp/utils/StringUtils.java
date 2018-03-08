@@ -13,6 +13,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist.SerializablePreferencesData;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import org.json.JSONArray;
@@ -442,7 +443,7 @@ public class StringUtils {
      * 暗号化した文字列を復号する.
      *
      * @param context コンテキスト
-     * @param source 暗号文字列
+     * @param source  暗号文字列
      * @return 元の文字列
      */
     public static String getClearString(final Context context, final String source) {
@@ -488,7 +489,7 @@ public class StringUtils {
      * （ただし、暗号化強度を高める設定は何もしていないので、本当に重要な情報には使用不可）
      *
      * @param context コンテキスト
-     * @param source 元の文字列
+     * @param source  元の文字列
      * @return 暗号化後文字列
      */
     public static String getCipherString(final Context context, final String source) {
@@ -620,5 +621,89 @@ public class StringUtils {
         }
         digest.update(salt.getBytes(StandardCharsets.UTF_8));
         return digest.digest();
+    }
+
+    /**
+     * 構造体をSharedPreferences保存するためにエンコードする.
+     *
+     * @param serializablePreferencesData ビデオジャンル一覧
+     * @return エンコードデータ
+     */
+    public static String toPreferencesDataBase64(final SerializablePreferencesData serializablePreferencesData) {
+
+        ByteArrayOutputStream byteArrayOutputStream = null;
+        ObjectOutputStream objectOutputStream = null;
+
+        try {
+            byteArrayOutputStream = new ByteArrayOutputStream();
+            objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+            objectOutputStream.writeObject(serializablePreferencesData);
+
+            byte[] bytes = byteArrayOutputStream.toByteArray();
+            byte[] base64 = Base64.encode(bytes, Base64.NO_WRAP);
+
+            return new String(base64);
+        } catch (IOException e) {
+            DTVTLogger.debug(e);
+        } finally {
+            try {
+                if (objectOutputStream != null) {
+                    objectOutputStream.close();
+                }
+            } catch (IOException e) {
+                DTVTLogger.debug(e);
+            }
+            try {
+                if (byteArrayOutputStream != null) {
+                    byteArrayOutputStream.close();
+                }
+            } catch (IOException e) {
+                DTVTLogger.debug(e);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * SharedPreferencesにエンコード保存した構造体をデコードする.
+     *
+     * @param base64 エンコードデータ
+     * @return デコードデータ
+     */
+    public static SerializablePreferencesData toPreferencesData(final String base64) {
+
+        if (base64 == null) {
+            return null;
+        }
+
+        ByteArrayInputStream byteArrayInputStream = null;
+        ObjectInputStream objectInputStream = null;
+
+        byte[] bytes = Base64.decode(base64.getBytes(), Base64.NO_WRAP);
+
+        try {
+            byteArrayInputStream = new ByteArrayInputStream(bytes);
+            objectInputStream = new ObjectInputStream(byteArrayInputStream);
+            return (SerializablePreferencesData) objectInputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            DTVTLogger.debug(e);
+        } finally {
+            try {
+                if (objectInputStream != null) {
+                    objectInputStream.close();
+                }
+            } catch (IOException e) {
+                DTVTLogger.debug(e);
+            }
+            try {
+                if (byteArrayInputStream != null) {
+                    byteArrayInputStream.close();
+                }
+            } catch (IOException e) {
+                DTVTLogger.debug(e);
+            }
+        }
+        return null;
     }
 }

@@ -8,7 +8,6 @@ import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.UserInfoInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist.AccountList;
@@ -211,14 +210,13 @@ public class UserInfoUtils {
         // dアカログイン状態取得
         String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(context);
         if (userId == null || userId.isEmpty()) {
+            DTVTLogger.debug("HomeActivity::showHomeBanner::isEmpty");
             // dアカ未ログイン
             param = UserState.LOGIN_NG;
         } else {
             // dアカログイン状態なら契約状態判断.
-            //DBに保存されているUserInfoから契約情報を確認する
-            UserInfoInsertDataManager dataManager = new UserInfoInsertDataManager(context);
-            dataManager.readUserInfoInsertList();
-            String contractInfo = UserInfoUtils.getUserContractInfo(dataManager.getmUserData());
+            //保存されているUserInfoから契約情報を確認する
+            String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(context));
             DTVTLogger.debug("contractInfo: " + contractInfo);
             //契約なし、またはDTVのみ契約の時は未契約扱い.
             if (contractInfo == null

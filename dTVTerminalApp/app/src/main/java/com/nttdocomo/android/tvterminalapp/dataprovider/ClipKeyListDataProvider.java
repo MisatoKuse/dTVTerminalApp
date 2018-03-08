@@ -547,9 +547,8 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      */
     public OtherContentsDetailData checkClipStatus(final OtherContentsDetailData contentsDetailData) {
         DTVTLogger.start();
-        List<ContentsData> list = new ArrayList<>();
 
-        OtherContentsDetailData otherContentsDetailData = new OtherContentsDetailData();
+        OtherContentsDetailData otherContentsDetailData = contentsDetailData;
         //Nullチェック
         if (contentsDetailData == null) {
             return otherContentsDetailData;
