@@ -116,7 +116,7 @@ public class SendOperateLog extends WebApiBase {
     public void sendOpeLog(final OtherContentsDetailData mDetailData, final VodMetaFullData mDetailFullData) {
         DTVTLogger.start();
         if (!mIsCancel && mDetailData != null) {
-            if (OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
+            if (OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId() || mDetailFullData != null) {
                 mCategoryId = getCategoryId(mDetailFullData);
             } else {
                 mCategoryId = mDetailData.getCategoryId();
@@ -133,7 +133,6 @@ public class SendOperateLog extends WebApiBase {
                         mHttpThread.start();
                     }
                 });
-                DTVTLogger.debug("send operate log:    url=" + mUrl);
             }
         }
         DTVTLogger.end();
@@ -225,7 +224,7 @@ public class SendOperateLog extends WebApiBase {
                     }
             }
         }
-        return "";
+        return valueBlank;
     }
 
     /**
