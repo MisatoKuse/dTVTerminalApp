@@ -6,6 +6,8 @@ package com.nttdocomo.android.tvterminalapp.fragment.search;
 
 import android.util.SparseArray;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+
 /**
  * 検索用Fragment作成クラス.
  */
@@ -31,9 +33,11 @@ public class SearchFragmentFactory {
      */
     public synchronized SearchBaseFragment createFragment(final int position,
                                                           final SearchBaseFragmentScrollListener listener) {
+        DTVTLogger.start("position:" + position);
         SearchBaseFragment fragment = mFragments.get(position);
 
         if (null == fragment) {
+            DTVTLogger.start("SearchBaseFragment new");
             fragment = new SearchBaseFragment();
             mFragments.put(position, fragment);
             fragment.setSearchBaseFragmentScrollListener(listener);
