@@ -165,6 +165,8 @@ public class SharedPreferencesUtils {
             VIDEO_GENRE_LIST_DATA,
             // ワンタイムトークン
             ONE_TIME_TOKEN,
+            //ユーザ情報
+            USER_INFO_SERIALIZABLE_DATA_KEY
     };
 
 
