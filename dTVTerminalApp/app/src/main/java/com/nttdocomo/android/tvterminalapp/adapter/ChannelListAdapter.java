@@ -164,8 +164,6 @@ public class ChannelListAdapter extends BaseAdapter {
             Bitmap bp = mThumbnailProvider.getThumbnailImage(holder.mThumbnail, thumbnail);
             if (null != bp) {
                 holder.mThumbnail.setImageBitmap(bp);
-            } else {
-                holder.mThumbnail.setImageResource(R.mipmap.error_ch_mini);
             }
         } else if (null != holder.mThumbnail && thumbnail == null) {
             holder.mThumbnail.setImageResource(R.mipmap.error_ch_mini);

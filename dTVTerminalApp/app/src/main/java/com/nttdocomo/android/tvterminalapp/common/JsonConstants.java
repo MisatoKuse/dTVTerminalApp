@@ -23,7 +23,7 @@ public class JsonConstants {
             JsonConstants.META_RESPONSE_TITLE, JsonConstants.META_RESPONSE_TITLERUBY,
             JsonConstants.META_RESPONSE_DISP_TYPE, JsonConstants.META_RESPONSE_SERVICE,
             JsonConstants.META_RESPONSE_CH_TYPE, JsonConstants.META_RESPONSE_AVAIL_START_DATE,
-            JsonConstants.META_RESPONSE_AVAIL_END_DATE, JsonConstants.META_RESPONSE_DEFAULT_THUMB,
+            JsonConstants.META_RESPONSE_AVAIL_END_DATE,
             JsonConstants.META_RESPONSE_THUMB_640, JsonConstants.META_RESPONSE_THUMB_448,
             JsonConstants.META_RESPONSE_DEMONG, JsonConstants.META_RESPONSE_4KFLG,
             JsonConstants.META_RESPONSE_AVAIL_STATUS, JsonConstants.META_RESPONSE_DELIVERY,
@@ -266,10 +266,6 @@ public class JsonConstants {
      * 有効期限日時.
      */
     public static final String META_RESPONSE_AVAIL_END_DATE = "avail_end_date";
-    /**
-     * サムネイル(.
-     */
-    public static final String META_RESPONSE_DEFAULT_THUMB = "thumb";
     /**
      * サムネイル（640＊360）.
      */
