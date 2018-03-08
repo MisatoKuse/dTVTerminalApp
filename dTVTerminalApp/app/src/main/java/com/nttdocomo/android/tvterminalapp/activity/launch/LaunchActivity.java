@@ -5,6 +5,8 @@
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -61,8 +63,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
              */
         }
         setContents();
-        // dアカウントチェック処理は不要
-        setUnnecessaryDaccountRegistService();
     }
 
     /**
@@ -74,6 +74,11 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
         mFirstLaunchLaunchNoActivity = findViewById(R.id.firstLanchLanchNoActivity);
         mFirstLaunchLaunchNoActivity.setOnClickListener(this);
+
+        mFirstLaunchLaunchYesActivity.setEnabled(false);
+        mFirstLaunchLaunchYesActivity.getBackground().setColorFilter(Color.DKGRAY, PorterDuff.Mode.MULTIPLY);
+        mFirstLaunchLaunchNoActivity.setEnabled(false);
+        mFirstLaunchLaunchNoActivity.getBackground().setColorFilter(Color.DKGRAY, PorterDuff.Mode.MULTIPLY);
         // TODO チュートリアル実装時にコメントアウトを外す
 //        if(SharedPreferencesUtils.getSharedPreferencesIsDisplayedTutorial(this)) {
 //            doScreenTransition();
@@ -141,6 +146,21 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         startActivity(TutorialActivity.class, null);
     }
 
+    @Override
+    protected void onDaccountOttGetComplete() {
+        super.onDaccountOttGetComplete();
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // アプリの起動時はdアカOTTが取得できるまで待つ。他画面には遷移させない。
+                mFirstLaunchLaunchYesActivity.setEnabled(true);
+                mFirstLaunchLaunchYesActivity.getBackground().setColorFilter(Color.LTGRAY, PorterDuff.Mode.MULTIPLY);
+                mFirstLaunchLaunchNoActivity.setEnabled(true);
+                mFirstLaunchLaunchNoActivity.getBackground().setColorFilter(Color.LTGRAY, PorterDuff.Mode.MULTIPLY);
+            }
+        });
+    }
+
     /**
      * 次画面遷移.
      */
@@ -189,5 +209,10 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     @Override
     public String getCurrentDmsUdn() {
         return null;
+    }
+
+    @Override
+    protected void restartMessageDialog(final String... message) {
+        // dアカが変わってもHOME遷移させない
     }
 }

@@ -10,61 +10,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#FFFFFF"
-        android:text="初回起動" />
+        android:text="初回(チュートリアル)" />
 
     <Button
         android:id="@+id/firstLanchLanchNoActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#FFFFFF"
-        android:text="初回起動ではない" />
+        android:text="チュートリアル確認済" />
 
-    <Button
-        android:id="@+id/pairYesLanchActivity"
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:text="ペアリング済、はい"
-        android:visibility="invisible" />
-
-    <Button
-        android:id="@+id/pairNoLanchActivity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:text="ペアリング済、いいえ"
-        android:visibility="invisible" />
-
-    <Button
-        android:id="@+id/dAccountLoginYesLanchActivity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:text="dアカウント自動ログイン済"
-        android:visibility="gone" />
-
-    <Button
-        android:id="@+id/dAccountLoginNoLanchActivity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:text="dアカウント自動ログインしない"
-        android:visibility="gone" />
-
-    <Button
-        android:id="@+id/stbWifiYesLanchActivity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:text="同一Wi-Fi上にSTBがある"
-        android:visibility="invisible" />
-
-    <Button
-        android:id="@+id/stbWifiNoLanchActivity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:text="同一Wi-Fi上にSTBがない"
-        android:visibility="invisible" />
+        android:layout_height="match_parent"
+        android:layout_margin="40dp"
+        android:text="Splash,チュートリアル,利用規約等は現時点未実装のためこれはダミーの画面です."
+        android:textColor="#FFFFFF"/>
 
 </LinearLayout>

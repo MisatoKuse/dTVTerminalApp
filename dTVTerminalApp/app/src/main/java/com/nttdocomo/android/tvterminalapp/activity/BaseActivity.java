@@ -1624,9 +1624,17 @@ public class BaseActivity extends FragmentActivity implements
         mDAccountControl.registService(getApplicationContext(), this);
     }
 
+    /**
+     * dアカウントOTTの取得契機で呼ばれる.
+     */
+    protected void onDaccountOttGetComplete() {
+    }
+
     @Override
     public void daccountControlCallBack(final boolean result) {
         DTVTLogger.start();
+
+        onDaccountOttGetComplete();
         //dアカウントの登録結果を受け取るコールバック
         if (result) {
             //処理に成功したので、帰る
