@@ -17,7 +17,7 @@ public class SerializablePreferencesData implements Serializable {
     /**
      * Serializableバージョン.
      */
-    private static final long serialVersionUID = 730336406251335293L;
+    private static final long serialVersionUID = -2672265264244417610L;
     /**
      * ユーザ情報リスト.
      */

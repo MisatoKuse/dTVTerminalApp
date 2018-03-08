@@ -4,10 +4,17 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist;
 
+import java.io.Serializable;
+
 /**
  * 契約情報構造体.
  */
-public class AccountList {
+public class AccountList implements Serializable {
+
+    /**
+     * バージョン.
+     */
+    private static final long serialVersionUID = 5253124266346397317L;
     /**
      * 契約状態.
      */

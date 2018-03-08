@@ -7,9 +7,19 @@ package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist.AccountList;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class UserInfoList {
+/**
+ * ユーザ情報クラス.
+ */
+public class UserInfoList implements Serializable {
+
+    /**
+     * バージョンUID.
+     */
+    private static final long serialVersionUID = 1279582890842645545L;
+
     /**
      * コンストラクタ.
      */
