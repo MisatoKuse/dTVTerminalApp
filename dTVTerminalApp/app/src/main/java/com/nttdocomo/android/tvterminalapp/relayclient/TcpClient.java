@@ -28,7 +28,7 @@ public class TcpClient {
     private int mRemotePort = 0;
 
     // STBスタンバイ状態からの電源ONとユーザアカウント切り替えに必要な最大待ち時間（ミリ秒）
-    public static final int SEND_RECV_TIMEOUT = 7000;
+    public static final int SEND_RECV_TIMEOUT = 15000;
 
     public TcpClient() {
         mSocket = null;
