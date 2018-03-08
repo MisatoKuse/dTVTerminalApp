@@ -23,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
-import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
@@ -58,7 +57,6 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     private GestureDetector mGestureDetector = null;
     private RelativeLayout mBottomLinearLayout, mTopLinearLayout = null;
     private OnStartRemoteControllerUIListener mStartUIListener = null;
-    private TextView mTextViewUseRemote = null;
     /**
      * 640 基準値（幅さ）.
      */
@@ -453,13 +451,11 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
             mBottomLinearLayout = findViewById(R.id.bottom_view_ll);
             mBottomLinearLayout.setVisibility(VISIBLE);
             mTopLinearLayout = findViewById(R.id.top_view_ll);
-            mTextViewUseRemote = findViewById(R.id.watch_by_tv);
             mTopLinearLayout.setVisibility(GONE);
             mFrameLayout = findViewById(R.id.header_watch_by_tv);
             remoteControllerSendKeyAction.cancelTimer();
             if (null != mStartUIListener) {
                 mStartUIListener.onEndRemoteControl();
-                mTextViewUseRemote.setText(getResources().getString(R.string.remote_controller_viewpager_text_use_remote));
             }
             setDefaultPage();
         }

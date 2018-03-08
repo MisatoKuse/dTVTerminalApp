@@ -406,6 +406,14 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
      * 操作履歴送信.
      */
     private SendOperateLog mSendOperateLog = null;
+    /**
+     * 二回目リモコン送信防止.
+     */
+    private boolean mIsSend = false;
+    /**
+     * ヘッダーチェック.
+     */
+    private boolean mIsFromHeader = false;
 
     private final Runnable mHideCtrlViewThread = new Runnable() {
 
@@ -2477,9 +2485,10 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
 
     @Override
     public void onStartRemoteControl(final boolean isFromHeader) {
+        mIsFromHeader = isFromHeader;
         DTVTLogger.start();
         // サービスIDにより起動するアプリを変更する
-        if (mDetailData != null) {
+        if (mDetailData != null && !mIsSend && !isFromHeader) {
             setRelayClientHandler();
             switch (mDetailData.getServiceId()) {
                 case DTV_CONTENTS_SERVICE_ID: // dTV
@@ -2658,6 +2667,14 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
 
     @Override
     public void onEndRemoteControl() {
+        if (!mIsFromHeader) {
+            mIsSend = true;
+            RemoteControllerView mRemoteControllerView = getRemoteControllerView();
+            if (mRemoteControllerView != null) {
+                TextView mTextView = mRemoteControllerView.findViewById(R.id.watch_by_tv);
+                mTextView.setText(getString(R.string.remote_controller_viewpager_text_use_remote));
+            }
+        }
         if (mDetailData != null) {
             if (DTV_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
                 mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),

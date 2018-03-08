@@ -1437,7 +1437,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @return RemoteControllerView
      */
-    private RemoteControllerView getRemoteControllerView() {
+    protected RemoteControllerView getRemoteControllerView() {
         return mRemoteControllerView;
     }
 
