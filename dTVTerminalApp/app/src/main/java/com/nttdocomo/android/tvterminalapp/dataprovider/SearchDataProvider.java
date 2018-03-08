@@ -6,11 +6,9 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 
 import android.content.Context;
-import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.struct.ResultType;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
@@ -202,49 +200,31 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
         List<ContentsData> contentsDataList = new ArrayList<>();
 
-        //クリップフラグ設定用
-        final String SEARCH_OK_TRUE = "1";
-        final String SEARCH_OK_FALSE = "0";
-
         int thisTimeTotal = content.searchContentInfo.size();
         for (int i = 0; i < thisTimeTotal; ++i) {
             ContentsData contentsData = new ContentsData();
             SearchContentInfo ci = content.searchContentInfo.get(i);
 
             //画面表示用データ設定
-            contentsData.setContentsId(ci.contentId);
-            contentsData.setServiceId(String.valueOf(ci.serviceId));
-            contentsData.setThumURL(ci.contentPictureUrl1);
-            contentsData.setTitle(ci.title);
-            contentsData.setRecommendOrder(ci.rank);
-            contentsData.setMobileViewingFlg(ci.mobileViewingFlg);
-            contentsData.setStartViewing(ci.startViewing);
-            contentsData.setEndViewing(ci.endViewing);
-            contentsData.setChannelName(ci.channelName);
-
-            SearchContentInfo searchContentInfo = resultType.getResultType().searchContentInfo.get(i);
-
-            //TODO:レスポンスパラメータがないため、仮データを設定
-            String searchOk;
-            if (searchContentInfo.clipFlag) {
-                searchOk = SEARCH_OK_TRUE;
-            } else {
-                searchOk = SEARCH_OK_FALSE;
-            }
-            contentsData.setSearchOk(searchOk);
-            ClipRequestData requestData = new ClipRequestData();
-            requestData.setCrid("672017101601");
-            requestData.setServiceId("672017101601");
-            requestData.setEventId("14c2");
-            requestData.setTitleId("");
-            requestData.setTitle(searchContentInfo.title);
-            requestData.setRValue("G");
-            requestData.setLinearStartDate("1513071135");
-            requestData.setLinearEndDate("1513306982");
-            requestData.setSearchOk(searchOk);
-            requestData.setIsNotify("disp_type", "content_type",
-                    "1513306982", "tv_service", "dtv");
-            contentsData.setRequestData(requestData);
+            contentsData.setContentsId(ci.mContentId);
+            contentsData.setServiceId(String.valueOf(ci.mServiceId));
+            contentsData.setThumURL(ci.mContentPictureUrl1);
+            contentsData.setTitle(ci.mTitle);
+            contentsData.setRecommendOrder(ci.mRank);
+            contentsData.setMobileViewingFlg(ci.mMobileViewingFlg);
+            contentsData.setStartViewing(ci.mStartViewing);
+            contentsData.setEndViewing(ci.mEndViewing);
+            contentsData.setChannelName(ci.mChannelName);
+            contentsData.setChannelId(ci.mChannelId);
+            contentsData.setReserved1(ci.mReserved1);
+            contentsData.setReserved2(ci.mReserved2);
+            contentsData.setReserved3(ci.mReserved3);
+            contentsData.setReserved4(ci.mReserved4);
+            contentsData.setReserved5(ci.mReserved5);
+            contentsData.setCategoryId(ci.mCategoryId);
+            contentsData.setDescription1(ci.mDescription1);
+            contentsData.setDescription2(ci.mDescription2);
+            contentsData.setDescription3(ci.mDescription3);
             contentsDataList.add(contentsData);
         }
         resultType.getResultType().setContentsDataList(contentsDataList);

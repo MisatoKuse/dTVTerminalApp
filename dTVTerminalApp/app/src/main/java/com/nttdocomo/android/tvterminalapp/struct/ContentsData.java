@@ -72,8 +72,12 @@ public class ContentsData {
     private String mReserved1 = null;
     // reserved2
     private String mReserved2 = null;
+    // reserved3
+    private String mReserved3 = null;
     // reserved4
     private String mReserved4 = null;
+    // reserved5
+    private String mReserved5 = null;
     // mobileViewingFlg
     private String  mobileViewingFlg = null;
     // クリップボタン
@@ -113,6 +117,36 @@ public class ContentsData {
     private boolean mIsClipStatusUpdate = false;
     // サブタイトル
     private String mSubTitle = null;
+    // description1
+    private String mDescription1 = null;
+    // description2
+    private String mDescription2 = null;
+    // description3
+    private String mDescription3 = null;
+
+    public String getDescription1() {
+        return mDescription1;
+    }
+
+    public void setDescription1(String mDescription1) {
+        this.mDescription1 = mDescription1;
+    }
+
+    public String getDescription2() {
+        return mDescription2;
+    }
+
+    public void setDescription2(String mDescription2) {
+        this.mDescription2 = mDescription2;
+    }
+
+    public String getDescription3() {
+        return mDescription3;
+    }
+
+    public void setDescription3(String mDescription3) {
+        this.mDescription3 = mDescription3;
+    }
 
     public String getSubTitle() {
         return mSubTitle;
@@ -372,12 +406,28 @@ public class ContentsData {
         this.mReserved2 = mReserved2;
     }
 
+    public String getReserved3() {
+        return mReserved3;
+    }
+
+    public void setReserved3(String mReserved3) {
+        this.mReserved3 = mReserved3;
+    }
+
     public String getReserved4() {
         return mReserved4;
     }
 
     public void setReserved4(String mReserved4) {
         this.mReserved4 = mReserved4;
+    }
+
+    public String getReserved5() {
+        return mReserved5;
+    }
+
+    public void setReserved5(String mReserved5) {
+        this.mReserved5 = mReserved5;
     }
 
     public ClipRequestData getRequestData() {
