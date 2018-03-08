@@ -208,7 +208,7 @@ enum OttGetQueue {
      */
     protected void cancelConnection() {
         if(mDaccountGetOTT == null) {
-            //まだクラスの準備ができていない
+            //まだクラスの準備ができていないので、以下の処理は無用
             return;
         }
 
