@@ -28,11 +28,9 @@ namespace dtvt {
     void DlnaXmlContainer::addXml(du_uchar* xml, size_t size) {
         if(NULL != xml && 0 < size){
             du_uchar* tXml=new du_uchar[size + 1];
-            if(tXml){
-                memset(tXml, 0x00, size * sizeof(du_uchar));
-                memcpy((void *) tXml, xml, size * sizeof(du_uchar));
-                mXmls.push_back(tXml);
-            }
+            memset(tXml, 0x00, size * sizeof(du_uchar));
+            memcpy((void *) tXml, xml, size * sizeof(du_uchar));
+            mXmls.push_back(tXml);
         }
     }
 
@@ -62,10 +60,7 @@ namespace dtvt {
 
     void DlnaXmlContainer::cleanAll(){
         mVVectorString.clear();
-        for(std::vector<du_uchar*>::iterator i = mXmls.begin(); i != mXmls.end(); ++i){
-            du_uchar* xml = *i;
-            DelIfNotNull(xml);
-        }
+        mXmls.clear();
     }
 
 }   //namespace dtvt
