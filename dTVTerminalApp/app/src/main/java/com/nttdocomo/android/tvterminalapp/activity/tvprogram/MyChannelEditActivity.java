@@ -284,7 +284,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
         String str = "";
         for (MyChannelMetaData myChannelData : mEditList) {
             if (myChannelData.getServiceId() != null) {
-                str = StringUtils.getConnectStrings(myChannelData.getServiceId(), COMMA);
+                str = str + StringUtils.getConnectStrings(myChannelData.getServiceId(), COMMA);
             }
         }
         return str.split(MyChannelEditAdapter.COMMA);
