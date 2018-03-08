@@ -144,6 +144,10 @@ public class SearchTopActivity extends BaseActivity
      * 検索窓内の文字の大きさ.
      */
     private static final int TEXT_SIZE = 14;
+    /**
+     * 最後に表示したタブindex.
+     */
+    public static int mTabIndex = 0;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -404,25 +408,22 @@ public class SearchTopActivity extends BaseActivity
             }
         }
         if (!TextUtils.isEmpty(searchText)) {
-            SearchBaseFragment baseFragment = getCurrentSearchBaseFragment();
+            SearchBaseFragment baseFragment = mFragmentFactory.createFragment(mTabIndex, this);
             if (null != baseFragment) {
                 baseFragment.clear();
                 //連続検索を行うと一瞬0件と表示される対策として、前回の検索結果件数を持たせる
                 String totalCountText = getResultString();
-                baseFragment.notifyDataSetChanged(totalCountText, mSearchViewPager.getCurrentItem());
+                baseFragment.notifyDataSetChanged(totalCountText, mTabIndex);
                 setPageNumber(0);
                 setPagingStatus(false);
             }
             sCurrentSearchText = searchText;
         }
 
-        //現在のページ番号を取得
-        int pageIndex = mSearchViewPager.getCurrentItem();
-        //SearchDataProvider dp=new SearchDataProvider();
         mSearchDataProvider.startSearchWith(
                 sCurrentSearchText,
                 mSearchNarrowCondition,
-                pageIndex,
+                mTabIndex,
                 mSearchSortKind,
                 mPageNumber,
                 this
@@ -435,11 +436,14 @@ public class SearchTopActivity extends BaseActivity
     private void initSearchedResultView() {
         DTVTLogger.start();
         if (null != mSearchViewPager) {
+            DTVTLogger.debug("mSearchViewPager is allready create");
+            mSearchViewPager.setCurrentItem(mTabIndex);
             return;
         }
         findViewById(R.id.fl_search_result).setVisibility(View.VISIBLE);
 
         mSearchViewPager = findViewById(R.id.vp_search_result);
+        mSearchViewPager.setCurrentItem(mTabIndex);
         initTabView();
         // tabを表示
         findViewById(R.id.rl_search_tab).setVisibility(View.VISIBLE);
@@ -451,6 +455,7 @@ public class SearchTopActivity extends BaseActivity
             public void onPageSelected(final int position) {
                 super.onPageSelected(position);
                 mTabLayout.setTab(position);
+                mTabIndex = position;
 
                 clearAllFragment();
                 setPagingStatus(false);
@@ -464,6 +469,8 @@ public class SearchTopActivity extends BaseActivity
                 }
             }
         });
+
+        DTVTLogger.end();
     }
 
     /**
@@ -480,6 +487,8 @@ public class SearchTopActivity extends BaseActivity
         } else {
             mTabLayout.resetTabView(mTabNames);
         }
+        // 最後のタブ位置を復旧
+        mTabLayout.setTab(mTabIndex);
         DTVTLogger.end();
     }
 
@@ -490,20 +499,8 @@ public class SearchTopActivity extends BaseActivity
             DTVTLogger.debug("viewpager not null");
             mSearchViewPager.setCurrentItem(position);
         }
+        mTabIndex = position;
         DTVTLogger.end();
-    }
-
-    /**
-     * 表示しているタブのfragmentを返却する.
-     *
-     * @return 表示しているタブのfragment
-     */
-    private SearchBaseFragment getCurrentSearchBaseFragment() {
-        if (null != mSearchViewPager) {
-            int currentPageNo = mSearchViewPager.getCurrentItem();
-            return mFragmentFactory.createFragment(currentPageNo, this);
-        }
-        return null;
     }
 
     @Override
@@ -512,7 +509,7 @@ public class SearchTopActivity extends BaseActivity
         mSearchTotalCount = content.totalCount;
         mIsScroll = false;
 
-        SearchBaseFragment baseFragment = getCurrentSearchBaseFragment();
+        SearchBaseFragment baseFragment = mFragmentFactory.createFragment(mTabIndex, this);
         if (null == baseFragment) {
             return;
         }
@@ -535,11 +532,11 @@ public class SearchTopActivity extends BaseActivity
 
             DTVTLogger.debug("baseFragment.mData.size = " + baseFragment.mData.size());
 
-            baseFragment.notifyDataSetChanged(getResultString(), mSearchViewPager.getCurrentItem());
+            baseFragment.notifyDataSetChanged(getResultString(), mTabIndex);
             baseFragment.invalidateViews();
         } else {
             //表示件数0件の場合は"タブ名+検索結果:0件"を表示する
-            baseFragment.notifyDataSetChanged(getResultString(), mSearchViewPager.getCurrentItem());
+            baseFragment.notifyDataSetChanged(getResultString(), mTabIndex);
         }
         baseFragment.displayLoadMore(false);
         setSearchStart(false);
@@ -582,6 +579,7 @@ public class SearchTopActivity extends BaseActivity
         synchronized (this) {
             mIsPaging = pagingFlag;
         }
+        DTVTLogger.end();
     }
 
     @Override
@@ -592,7 +590,6 @@ public class SearchTopActivity extends BaseActivity
         mIsScroll = true;
         if (firstVisibleItem + visibleItemCount >= pageMax && maxPage >= 1 + mPageNumber) {
             setPageNumber(mPageNumber + 1);
-            DTVTLogger.debug("page no=" + (mPageNumber + 1));
             setPagingStatus(true);
             fragment.displayLoadMore(true);
 
@@ -659,9 +656,8 @@ public class SearchTopActivity extends BaseActivity
      * @return 検索結果件数の文字列
      */
     private String getResultString() {
-        int pageIndex = mSearchViewPager.getCurrentItem();
         String[] tabNames = getResources().getStringArray(R.array.tab_names);
-        String tabName = tabNames[pageIndex];
+        String tabName = tabNames[mTabIndex];
         String[] strings = {tabName,
                 getString(R.string.keyword_search_result_no),
                 getString(R.string.keyword_search_result),
@@ -698,7 +694,7 @@ public class SearchTopActivity extends BaseActivity
         if (mSearchDataProvider != null) {
             mSearchDataProvider.enableConnect();
         }
-        SearchBaseFragment baseFragment = getCurrentSearchBaseFragment();
+        SearchBaseFragment baseFragment = mFragmentFactory.createFragment(mTabIndex, this);
         if (baseFragment != null) {
             baseFragment.enableContentsAdapterCommunication();
             baseFragment.displayLoadMore(false);
@@ -716,7 +712,7 @@ public class SearchTopActivity extends BaseActivity
         stopSearchDataConnect.execute(mSearchDataProvider);
 
         //FragmentにContentsAdapterの通信を止めるように通知する
-        SearchBaseFragment baseFragment = getCurrentSearchBaseFragment();
+        SearchBaseFragment baseFragment = mFragmentFactory.createFragment(mTabIndex, this);
         if (baseFragment != null) {
             baseFragment.stopContentsAdapterCommunication();
         }

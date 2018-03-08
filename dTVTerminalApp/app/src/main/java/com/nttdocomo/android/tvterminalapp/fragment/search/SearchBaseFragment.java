@@ -108,6 +108,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
      * @return View
      */
     private View initView() {
+        DTVTLogger.start();
         if (null == mTvFragmentView) {
             mTvFragmentView = View.inflate(getActivity(), R.layout.fragment_televi_content, null);
             mTvListView = mTvFragmentView.findViewById(R.id.lv_searched_result);
@@ -128,6 +129,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
             mCountText = mTvFragmentView.findViewById(R.id.tv_searched_result);
         }
 
+        DTVTLogger.end();
         return mTvFragmentView;
     }
 
@@ -137,6 +139,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
      * @param count 検索結果件数
      */
     public void notifyDataSetChanged(final String count, final int tabPosition) {
+        DTVTLogger.debug("count:" + count + ",tabPosition:" + tabPosition);
         if (null != mContentsAdapter) {
             if (tabPosition == PAGE_NO_OF_SERVICE_TELEVISION) {
                 mContentsAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_TV);
