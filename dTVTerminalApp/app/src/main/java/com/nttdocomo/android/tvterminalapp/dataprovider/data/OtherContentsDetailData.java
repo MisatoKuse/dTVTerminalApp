@@ -30,14 +30,19 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
     private String mHighlight;
     private String mContentsType;
     private int mAge;
-    private String[] roleList;
-    private String availStartDate;
-    private String availEndDate;
-    private String displayType;
-    private String categoryId;
-    private String reserved1;
-    private String reserved2;
-    private String reserved4;
+    private String[] mRoleList;
+    private String mStartDate;
+    private String mEndDate;
+    private String mDisplayType;
+    private String mCategoryId;
+    private String mDescription1;
+    private String mDescription2;
+    private String mDescription3;
+    private String mReserved1;
+    private String mReserved2;
+    private String mReserved3;
+    private String mReserved4;
+    private String mReserved5;
     private String mobileViewingFlg;
     private List<String> staffList;
 
@@ -179,44 +184,44 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         this.staffList = staffList;
     }
 
-    public String[] getRoleList() {
-        return roleList.clone();
+    public String[] getmRoleList() {
+        return mRoleList.clone();
     }
 
-    public void setRoleList(final String[] roleList) {
-        this.roleList = roleList.clone();
+    public void setmRoleList(final String[] mRoleList) {
+        this.mRoleList = mRoleList.clone();
     }
 
-    public String getAvailStartDate() {
-        return availStartDate;
+    public String getmStartDate() {
+        return mStartDate;
     }
 
-    public void setAvailStartDate(final String availStartDate) {
-        this.availStartDate = availStartDate;
+    public void setmStartDate(final String mStartDate) {
+        this.mStartDate = mStartDate;
     }
 
-    public String getAvailEndDate() {
-        return availEndDate;
+    public String getmEndDate() {
+        return mEndDate;
     }
 
-    public void setAvailEndDate(final String availEndDate) {
-        this.availEndDate = availEndDate;
+    public void setmEndDate(final String mEndDate) {
+        this.mEndDate = mEndDate;
     }
 
-    public String getDisplayType() {
-        return displayType;
+    public String getmDisplayType() {
+        return mDisplayType;
     }
 
-    public void setDisplayType(final String displayType) {
-        this.displayType = displayType;
+    public void setmDisplayType(final String mDisplayType) {
+        this.mDisplayType = mDisplayType;
     }
 
     public String getCategoryId() {
-        return categoryId;
+        return mCategoryId;
     }
 
     public void setCategoryId(final String categoryId) {
-        this.categoryId = categoryId;
+        this.mCategoryId = categoryId;
     }
 
     public String getContentId() {
@@ -228,27 +233,67 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
     }
 
     public String getReserved1() {
-        return reserved1;
+        return mReserved1;
     }
 
-    public void setReserved1(final String reserved1) {
-        this.reserved1 = reserved1;
+    public void setReserved1(final String mReserved1) {
+        this.mReserved1 = mReserved1;
     }
 
     public String getReserved2() {
-        return reserved2;
+        return mReserved2;
     }
 
-    public void setReserved2(final String reserved2) {
-        this.reserved2 = reserved2;
+    public void setReserved2(final String mReserved2) {
+        this.mReserved2 = mReserved2;
     }
 
     public String getReserved4() {
-        return reserved4;
+        return mReserved4;
     }
 
-    public void setReserved4(final String reserved4) {
-        this.reserved4 = reserved4;
+    public void setReserved4(final String mReserved4) {
+        this.mReserved4 = mReserved4;
+    }
+
+    public String getDescription1() {
+        return mDescription1;
+    }
+
+    public void setDescription1(String mDescription1) {
+        this.mDescription1 = mDescription1;
+    }
+
+    public String getDescription2() {
+        return mDescription2;
+    }
+
+    public void setDescription2(String mDescription2) {
+        this.mDescription2 = mDescription2;
+    }
+
+    public String getDescription3() {
+        return mDescription3;
+    }
+
+    public void setDescription3(String mDescription3) {
+        this.mDescription3 = mDescription3;
+    }
+
+    public String getReserved3() {
+        return mReserved3;
+    }
+
+    public void setReserved3(String mReserved3) {
+        this.mReserved3 = mReserved3;
+    }
+
+    public String getReserved5() {
+        return mReserved5;
+    }
+
+    public void setReserved5(String mReserved5) {
+        this.mReserved5 = mReserved5;
     }
 
     public VodMetaFullData getVodMetaFullData() {
@@ -420,14 +465,19 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         dest.writeString(this.mHighlight);
         dest.writeString(this.mContentsType);
         dest.writeInt(this.mAge);
-        dest.writeStringArray(this.roleList);
-        dest.writeString(this.availStartDate);
-        dest.writeString(this.availEndDate);
-        dest.writeString(this.displayType);
-        dest.writeString(this.categoryId);
-        dest.writeString(this.reserved1);
-        dest.writeString(this.reserved2);
-        dest.writeString(this.reserved4);
+        dest.writeStringArray(this.mRoleList);
+        dest.writeString(this.mStartDate);
+        dest.writeString(this.mEndDate);
+        dest.writeString(this.mDisplayType);
+        dest.writeString(this.mCategoryId);
+        dest.writeString(this.mDescription1);
+        dest.writeString(this.mDescription2);
+        dest.writeString(this.mDescription3);
+        dest.writeString(this.mReserved1);
+        dest.writeString(this.mReserved2);
+        dest.writeString(this.mReserved3);
+        dest.writeString(this.mReserved4);
+        dest.writeString(this.mReserved5);
         dest.writeString(this.mobileViewingFlg);
         dest.writeStringList(this.staffList);
         dest.writeSerializable(this.mVodMetaFullData);
@@ -466,14 +516,19 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         this.mHighlight = in.readString();
         this.mContentsType = in.readString();
         this.mAge = in.readInt();
-        this.roleList = in.createStringArray();
-        this.availStartDate = in.readString();
-        this.availEndDate = in.readString();
-        this.displayType = in.readString();
-        this.categoryId = in.readString();
-        this.reserved1 = in.readString();
-        this.reserved2 = in.readString();
-        this.reserved4 = in.readString();
+        this.mRoleList = in.createStringArray();
+        this.mStartDate = in.readString();
+        this.mEndDate = in.readString();
+        this.mDisplayType = in.readString();
+        this.mCategoryId = in.readString();
+        this.mDescription1 = in.readString();
+        this.mDescription2 = in.readString();
+        this.mDescription3 = in.readString();
+        this.mReserved1 = in.readString();
+        this.mReserved2 = in.readString();
+        this.mReserved3 = in.readString();
+        this.mReserved4 = in.readString();
+        this.mReserved5 = in.readString();
         this.mobileViewingFlg = in.readString();
         this.staffList = in.createStringArrayList();
         this.mVodMetaFullData = (VodMetaFullData) in.readSerializable();

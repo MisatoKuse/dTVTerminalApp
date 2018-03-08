@@ -241,6 +241,19 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         detailData.setDetail(info.getSynop());
         detailData.setServiceId(Integer.parseInt(info.getServiceId()));
         detailData.setMobileViewingFlg(info.getMobileViewingFlg());
+        detailData.setmStartDate(info.getStartViewing());
+        detailData.setmEndDate(info.getEndViewing());
+        detailData.setCategoryId(info.getCategoryId());
+        detailData.setChannelId(info.getChannelId());
+        detailData.setChannelName(info.getChannelName());
+        detailData.setReserved1(info.getReserved1());
+        detailData.setReserved2(info.getReserved2());
+        detailData.setReserved3(info.getReserved3());
+        detailData.setReserved4(info.getReserved4());
+        detailData.setReserved5(info.getReserved5());
+        detailData.setDescription1(info.getDescription1());
+        detailData.setDescription2(info.getDescription2());
+        detailData.setDescription3(info.getDescription3());
 
         //コンテンツIDの受け渡しを追加
         detailData.setContentId(info.getContentsId());

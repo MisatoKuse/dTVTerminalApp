@@ -21,11 +21,11 @@ public class TotalSearchResponseData {
         /**
          * serviceId.
          */
-        int serviceId;
+        int mServiceId;
         /**
          * contentCount.
          */
-        int contentCount;
+        int mContentCount;
     }
 
     /**
@@ -35,45 +35,99 @@ public class TotalSearchResponseData {
         /**
          * ランク.
          */
-        int rank;
+        int mRank;
         /**
          * コンテンツId.
          */
-        String ctId;
+        String mContentsId;
         /**
          * サービスId.
          */
-        int serviceId;
+        int mServiceId;
         /**
          * サムネイルURL1.
          */
-        String ctPicURL1;
+        String mCtPicURL1;
         /**
          * サムネイルURL2.
          */
-        String ctPicURL2;
+        String mCtPicURL2;
         /**
          * タイトル.
          */
-        String title;
+        String mTitle;
         /**
          * mobileViewingFlg モバイル視聴可否フラグ.
          */
-        String  mobileViewingFlg;
-        //String person;    //iosソースより、保留
-        //int titleKind;    //iosソースより、保留
+        String mMobileViewingFlg;
         /**
          *  開始時刻.
          */
-        public String startViewing;
+        String mStartViewing;
         /**
          *  終了時刻.
          */
-        public String endViewing;
+        String mEndViewing;
         /**
          *  チャンネル名.
          */
-        public String channelName;
+        String mChannelName;
+        /**
+         *  種類名.
+         */
+        String mGenreName;
+        /**
+         *  チャンネルID.
+         */
+        String mChannelId;
+        /**
+         *  カテゴリーID.
+         */
+        String mCategoryId;
+        /**
+         *  年齢.
+         */
+        String mViewableAge;
+        /**
+         *  cast.
+         */
+        String mCast;
+        /**
+         *  reserved1.
+         */
+        String mReserved1;
+        /**
+         *  reserved2.
+         */
+        String mReserved2;
+        /**
+         *  reserved3.
+         */
+        String mReserved3;
+        /**
+         *  reserved4.
+         */
+        String mReserved4;
+        /**
+         *  reserved5.
+         */
+        String mReserved5;
+        /**
+         *  description1.
+         */
+        String mDescription1;
+        /**
+         *  description2.
+         */
+        String mDescription2;
+        /**
+         *  description3.
+         */
+        String mDescription3;
+        /**
+         *  paymentFlg.
+         */
+        String mPaymentFlg;
     }
 
     /**
@@ -126,9 +180,12 @@ public class TotalSearchResponseData {
             searchContentInfoArray.clear();
         }
         for (Content content: contentList) {
-            SearchContentInfo info = new SearchContentInfo(false, content.ctId, content.serviceId,
-                    content.ctPicURL1, content.ctPicURL2, content.title, content.rank, content.mobileViewingFlg,
-                    content.startViewing, content.endViewing, content.channelName);
+            SearchContentInfo info = new SearchContentInfo(false, content.mContentsId, content.mServiceId, content.mCategoryId,
+                    content.mCtPicURL1, content.mCtPicURL2, content.mTitle, content.mRank, content.mMobileViewingFlg,
+                    content.mStartViewing, content.mEndViewing, content.mChannelName, content.mChannelId,
+                    content.mGenreName, content.mDescription1, content.mDescription2, content.mDescription3,
+                    content.mViewableAge, content.mReserved1, content.mReserved2, content.mReserved3,
+                    content.mReserved4, content.mReserved5);
             searchContentInfoArray.add(info);
         }
     }

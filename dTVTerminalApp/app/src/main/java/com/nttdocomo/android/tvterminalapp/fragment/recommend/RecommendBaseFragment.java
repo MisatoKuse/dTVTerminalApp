@@ -298,8 +298,8 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
         detailData.setCategoryId(info.getCategoryId());
         detailData.setRecommendFlg(ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY);
 
-        detailData.setAvailStartDate(info.getStartViewing());
-        detailData.setAvailEndDate(info.getEndViewing());
+        detailData.setmStartDate(info.getStartViewing());
+        detailData.setmEndDate(info.getEndViewing());
         return detailData;
     }
 

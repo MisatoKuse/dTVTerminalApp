@@ -11,59 +11,99 @@ public class SearchContentInfo {
     /**
      * クリップフラグ.
      */
-    public boolean clipFlag;
+    public boolean mClipFlag;
     /**
      * コンテンツID.
      */
-    public String contentId;
+    public String mContentId;
     /**
      * サービスID.
      */
-    public int serviceId;
+    public int mServiceId;
+    /**
+     * カテゴリーID.
+     */
+    public String mCategoryId;
     /**
      * サムネイルURL1.
      */
-    public String contentPictureUrl1;
+    public String mContentPictureUrl1;
     /**
      * サムネイルURL2.
      */
-    public String contentPictureUrl2;
+    public String mContentPictureUrl2;
     /**
      * タイトル.
      */
-    public String title;
-    /**
-     * あらすじ.
-     */
-    public String synop;
-    /**
-     * 解説.
-     */
-    public String comment;
-    /**
-     * みどころ.
-     */
-    public String highlight;
+    public String mTitle;
     /**
      * ランク.
      */
-    public String rank;
+    public String mRank;
     /**
      *  mobileViewingFlg.
      */
-    public String mobileViewingFlg;
+    public String mMobileViewingFlg;
     /**
      *  開始時刻.
      */
-    public String startViewing;
+    public String mStartViewing;
     /**
      *  終了時刻.
      */
-    public String endViewing;
+    public String mEndViewing;
     /**
      *  チャンネル名.
      */
-    public String channelName;
+    public String mChannelName;
+    /**
+     *  チャンネルId.
+     */
+    public String mChannelId;
+    /**
+     *  種類名.
+     */
+    public String mGenreName;
+    /**
+     *  cast.
+     */
+    public String mCast;
+    /**
+     *  description1.
+     */
+    public String mDescription1;
+    /**
+     *  description2.
+     */
+    public String mDescription2;
+    /**
+     *  description3.
+     */
+    public String mDescription3;
+    /**
+     *  viewAbleAge.
+     */
+    public String mViewAbleAge;
+    /**
+     *  reserved1.
+     */
+    public String mReserved1;
+    /**
+     *  reserved2.
+     */
+    public String mReserved2;
+    /**
+     *  mReserved3.
+     */
+    public String mReserved3;
+    /**
+     *  mReserved4.
+     */
+    public String mReserved4;
+    /**
+     *  mReserved5.
+     */
+    public String mReserved5;
 
     /**
      * コンストラクタ.
@@ -71,39 +111,57 @@ public class SearchContentInfo {
      * @param clipFlag  クリップフラグ
      * @param contentId コンテンツID
      * @param serviceId サービスID
+     * @param categoryId カテゴリーID
      * @param contentPictureUrl1    サムネイルURL1
      * @param contentPictureUrl2    サムネイルURL2
      * @param title     タイトル
-     * @param rank      ランク
+     * @param rank     ランク
+     * @param mobileViewingFlg  モバイルビューフラグ
+     * @param startViewing      開始時間
+     * @param endViewing      終了時間
+     * @param channelName      チャンネル名
+     * @param channelId      チャンネルID
+     * @param genreName      ジャンル名
+     * @param description1   description1
+     * @param description2   description2
+     * @param description3   description3
+     * @param viewAbleAge   viewAbleAge
+     * @param reserved1   予備1
+     * @param reserved2   予備2
+     * @param reserved3   予備3
+     * @param reserved4   予備4
+     * @param reserved5   予備5
      */
     public SearchContentInfo(final boolean clipFlag, final String contentId, final int serviceId,
-                             final String contentPictureUrl1, final String contentPictureUrl2,
+                             final String categoryId, final String contentPictureUrl1, final String contentPictureUrl2,
                              final String title, final int rank, final String mobileViewingFlg,
-                             final String startViewing, final String endViewing, final String channelName) {
-        this.clipFlag = clipFlag;
-        this.contentId = contentId;
-        this.serviceId = serviceId;
-        this.contentPictureUrl1 = contentPictureUrl1;
-        this.contentPictureUrl2 = contentPictureUrl2;
-        this.title = title;
-        this.rank = String.valueOf(rank);
-        this.mobileViewingFlg = mobileViewingFlg;
-        this.startViewing = startViewing;
-        this.endViewing = endViewing;
-        this.channelName = channelName;
-        //TODO:↓レコメンドサーバからコンテンツ詳細情報が取得できるようになったら、synop、comment、highlight取得に関する一連の処理を追加する
-        this.synop = "";
-        this.comment = "※解説(ダミー)【吹替版】" +
-                "魔女の呪いによって野獣の姿に変えられてしまった王子。呪いを解く鍵は、"
-                + "魔法のバラの花びらが全て散る前に誰かを心から愛し、そして愛されること―。"
-                + "だが野獣の姿になった彼を愛するものなどいるはずがない。"
-                + "独り心を閉ざしていく中、心に孤独を抱えながらも、自分の輝きを信じて生きる、"
-                + "聡明で美しい女性、ベルと出会うが。。。";
-        this.highlight = "※みどころ(ダミー)【吹替版】"
-                + "魔女の呪いによって野獣の姿に変えられてしまった王子。呪いを解く鍵は、"
-                + "魔法のバラの花びらが全て散る前に誰かを心から愛し、そして愛されること―。"
-                + "だが野獣の姿になった彼を愛するものなどいるはずがない。"
-                + "独り心を閉ざしていく中、心に孤独を抱えながらも、自分の輝きを信じて生きる、"
-                + "聡明で美しい女性、ベルと出会うが。。。";
+                             final String startViewing, final String endViewing, final String channelName,
+                             final String channelId, final String genreName, final String description1,
+                             final String description2, final String description3, final String viewAbleAge,
+                             final String reserved1, final String reserved2, final String reserved3,
+                             final String reserved4, final String reserved5) {
+        this.mClipFlag = clipFlag;
+        this.mContentId = contentId;
+        this.mServiceId = serviceId;
+        this.mCategoryId = categoryId;
+        this.mContentPictureUrl1 = contentPictureUrl1;
+        this.mContentPictureUrl2 = contentPictureUrl2;
+        this.mTitle = title;
+        this.mRank = String.valueOf(rank);
+        this.mMobileViewingFlg = mobileViewingFlg;
+        this.mStartViewing = startViewing;
+        this.mEndViewing = endViewing;
+        this.mChannelName = channelName;
+        this.mChannelId = channelId;
+        this.mGenreName = genreName;
+        this.mDescription1 = description1;
+        this.mDescription2 = description2;
+        this.mDescription3 = description3;
+        this.mViewAbleAge = viewAbleAge;
+        this.mReserved1 = reserved1;
+        this.mReserved2 = reserved2;
+        this.mReserved3 = reserved3;
+        this.mReserved4 = reserved4;
+        this.mReserved5 = reserved5;
     }
 }
