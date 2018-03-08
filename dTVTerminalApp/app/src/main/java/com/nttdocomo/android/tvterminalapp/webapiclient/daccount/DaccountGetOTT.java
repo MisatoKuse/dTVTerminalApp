@@ -229,7 +229,7 @@ public class DaccountGetOTT {
     /**
      * dアカウントアプリを切り離す.
      */
-    void daccountServiceEnd() {
+    public void daccountServiceEnd() {
         if (mService != null) {
             try {
                 mContext.unbindService(mServiceConnection);

@@ -668,6 +668,7 @@ public class WebApiBasePlala {
 
                             //通信エラーとして処理を終了する
                             if (serviceTokenErrorCallback != null) {
+                                DTVTLogger.debug("token get failed ");
                                 //通信エラーのエラーコードを作成する
                                 ReturnCode returnCode = new ReturnCode();
                                 returnCode.errorType =
