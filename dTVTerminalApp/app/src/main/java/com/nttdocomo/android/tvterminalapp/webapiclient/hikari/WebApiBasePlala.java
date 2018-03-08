@@ -52,7 +52,7 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 /**
  * 通信処理.
  */
-public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
+public class WebApiBasePlala {
     /**
      * エラー値.
      */
@@ -175,6 +175,18 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          * @param returnCode 値を返す構造体
          */
         void onError(final ReturnCode returnCode);
+    }
+
+    /**
+     * サービストークンエラーコールバック.
+     */
+    interface ServiceTokenErrorCallback {
+        /**
+         * サービストークン取得失敗のコールバック.
+         *
+         * @param returnCode 値を返す構造体
+         */
+        void onTokenError(final ReturnCode returnCode);
     }
 
     //指定文字列パラメータ群
@@ -527,7 +539,14 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         //呼び出し元に戻るコールバックの準備
         mWebApiBasePlalaCallback = webApiBasePlalaCallback;
 
-        //ワンタイムトークン取得後のコールバックの準備
+        //ワンタイムトークン専用のコールバックを作成する
+        ServiceTokenErrorCallback serviceTokenErrorCallback = new ServiceTokenErrorCallback() {
+            @Override
+            public void onTokenError(ReturnCode returnCode) {
+                //呼び出し元にエラーを伝える
+                mWebApiBasePlalaCallback.onError(returnCode);
+            }
+        };
 
         //ワンタイムトークンの情報を取得する
         mOneTimeTokenData = SharedPreferencesUtils.getOneTimeTokenData(mContext);
@@ -536,7 +555,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         if (mOneTimeTokenData.getOneTimeTokenGetTime()
                 < DateUtils.getNowTimeFormatEpoch()) {
             //期限切れなので、ワンタイムパスワードの取得を起動
-            getOneTimePassword(mContext);
+            getOneTimePassword(mContext, serviceTokenErrorCallback);
         } else {
             //有効なワンタイムトークンなので、そのまま使用して処理を呼び出す
             mCommunicationTaskOtt.setOneTimeToken(mOneTimeTokenData.getOneTimeToken());
@@ -576,33 +595,35 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      *
      * @param context コンテキスト
      */
-    private void getOneTimePassword(final Context context) {
+    private void getOneTimePassword(final Context context,
+                                    final ServiceTokenErrorCallback serviceTokenErrorCallback) {
         //ワンタイムパスワードの取得
         mGetOtt = new DaccountGetOTT();
-        mGetOtt.execDaccountGetOTT(context, this);
-    }
+        mGetOtt.execDaccountGetOTT(context, new DaccountGetOTT.DaccountGetOttCallBack() {
+            @Override
+            public void getOttCallBack(int result, String id, String oneTimePassword) {
+                //ワンタイムトークンが期限内ならば、そのまま使用する
+                OneTimeTokenData tokenData = SharedPreferencesUtils.getOneTimeTokenData(mContext);
 
-    @Override
-    public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
-        //ワンタイムトークンが期限内ならば、そのまま使用する
-        OneTimeTokenData tokenData = SharedPreferencesUtils.getOneTimeTokenData(mContext);
+                //期限内ならば、そのまま使用する
+                if (tokenData.getOneTimeTokenGetTime() > DateUtils.getNowTimeFormatEpoch()) {
+                    //取得済みのトークンを使用する
+                    mCommunicationTaskOtt.setOneTimeToken(tokenData.getOneTimeToken());
 
-        //期限内ならば、そのまま使用する
-        if (tokenData.getOneTimeTokenGetTime() > DateUtils.getNowTimeFormatEpoch()) {
-            //取得済みのトークンを使用する
-            mCommunicationTaskOtt.setOneTimeToken(tokenData.getOneTimeToken());
+                    //結果格納構造体の作成
+                    ReturnCode returnCode = new ReturnCode();
 
-            //結果格納構造体の作成
-            ReturnCode returnCode = new ReturnCode();
+                    //ワンタイムトークンの取得結果を元にして、通信を開始する
+                    DTVTLogger.debug("******mCommunicationTaskOtt.execute at getOttCallBack");
+                    mCommunicationTaskOtt.execute(returnCode);
+                    return;
+                }
 
-            //ワンタイムトークンの取得結果を元にして、通信を開始する
-            DTVTLogger.debug("******mCommunicationTaskOtt.execute at getOttCallBack");
-            mCommunicationTaskOtt.execute(returnCode);
-            return;
-        }
-
-        //ワンタイムトークンの取得を行う
-        getServiceToken(mContext, mCommunicationTaskOtt, oneTimePassword);
+                //ワンタイムトークンの取得を行う
+                getServiceToken(mContext, mCommunicationTaskOtt,
+                        oneTimePassword, serviceTokenErrorCallback);
+            }
+        });
     }
 
     /**
@@ -614,7 +635,8 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      */
     public static void getServiceToken(final Context context,
                                        final CommunicationTask communicationTask,
-                                       final String oneTimePassword) {
+                                       final String oneTimePassword,
+                                       final ServiceTokenErrorCallback serviceTokenErrorCallback) {
         //ワンタイムトークンとその取得時間を取得する
         ServiceTokenClient tokenClient = new ServiceTokenClient(context);
 
@@ -631,20 +653,16 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                         } else {
                             //値が無いのでリセット
                             communicationTask.setOneTimeToken("");
-                        }
 
-                        //結果格納構造体の作成
-                        ReturnCode returnCode = new ReturnCode();
-
-                        DTVTLogger.debug("communicationTask = " + communicationTask);
-
-                        //既に実行されたかどうかの判定
-                        if(!communicationTask.getStatus().equals(AsyncTask.Status.RUNNING)) {
-                            //実行されていないので、ワンタイムトークンの取得結果を元にして、通信を開始する
-                            communicationTask.execute(returnCode);
-                        } else {
-                            //既に実行されていたので、処理をスキップ
-                            DTVTLogger.debug("communicationTask already exec");
+                            //通信エラーとして処理を終了する
+                            if (serviceTokenErrorCallback != null) {
+                                //通信エラーのエラーコードを作成する
+                                ReturnCode returnCode = new ReturnCode();
+                                returnCode.errorType =
+                                        DTVTConstants.ERROR_TYPE.COMMUNICATION_ERROR;
+                                //呼び出し元にエラーを伝える
+                                serviceTokenErrorCallback.onTokenError(returnCode);
+                            }
                         }
                     }
                 }
@@ -653,6 +671,8 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         DTVTLogger.debug("getServiceToken answer = " + answer);
 
         if (!answer) {
+            //dアカウントが設定されていない場合はこちらが動作する
+
             //結果格納構造体の作成
             ReturnCode returnCode = new ReturnCode();
 
@@ -1135,7 +1155,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
             }
 
             //次のワンタイムトークンの取得を許可する
-            if(mGetOtt != null) {
+            if (mGetOtt != null) {
                 mGetOtt.allowNext(mContext);
             }
 
