@@ -206,7 +206,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             SearchContentInfo ci = content.searchContentInfo.get(i);
 
             //画面表示用データ設定
-            contentsData.setContentsId(ci.mContentId);
+            contentsData.setContentsId(ci.mContentsId);
             contentsData.setServiceId(String.valueOf(ci.mServiceId));
             contentsData.setThumURL(ci.mContentPictureUrl1);
             contentsData.setTitle(ci.mTitle);

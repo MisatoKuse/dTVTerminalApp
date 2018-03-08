@@ -289,7 +289,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
         detailData.setReserved2(info.getReserved2());
 
         //コンテンツIDの受け渡しを追加
-        detailData.setContentId(info.getContentsId());
+        detailData.setContentsId(info.getContentsId());
         detailData.setChannelId(info.getChannelId());
         detailData.setRecommendOrder(info.getRecommendOrder());
         detailData.setPageId(info.getPageId());

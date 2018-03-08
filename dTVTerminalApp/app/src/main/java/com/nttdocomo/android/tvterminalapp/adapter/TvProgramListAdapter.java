@@ -654,7 +654,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         OtherContentsDetailData detailData = new OtherContentsDetailData();
 
         //コンテンツIDの受け渡しを追加
-        detailData.setContentId(itemSchedule.getContentsId());
+        detailData.setContentsId(itemSchedule.getContentsId());
         detailData.setDispType(itemSchedule.getDispType());
         detailData.setContentsType(itemSchedule.getContentType());
         detailData.setRecommendFlg(recommendFlg);

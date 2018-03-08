@@ -50,7 +50,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
     private VodMetaFullData mVodMetaFullData = null;
 
     //コンテンツIDを追加
-    private String mContentId;
+    private String mContentsId;
 
     // チャンネルID
     private String mChannelId = "";
@@ -224,12 +224,12 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         this.mCategoryId = categoryId;
     }
 
-    public String getContentId() {
-        return mContentId;
+    public String getContentsId() {
+        return mContentsId;
     }
 
-    public void setContentId(final String mContentId) {
-        this.mContentId = mContentId;
+    public void setContentsId(final String mContentsId) {
+        this.mContentsId = mContentsId;
     }
 
     public String getReserved1() {
@@ -481,7 +481,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         dest.writeString(this.mobileViewingFlg);
         dest.writeStringList(this.staffList);
         dest.writeSerializable(this.mVodMetaFullData);
-        dest.writeString(this.mContentId);
+        dest.writeString(this.mContentsId);
         dest.writeString(this.mChannelId);
         dest.writeString(this.mRecommendOrder);
         dest.writeString(this.mPageId);
@@ -532,7 +532,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         this.mobileViewingFlg = in.readString();
         this.staffList = in.createStringArrayList();
         this.mVodMetaFullData = (VodMetaFullData) in.readSerializable();
-        this.mContentId = in.readString();
+        this.mContentsId = in.readString();
         this.mChannelId = in.readString();
         this.mRecommendOrder = in.readString();
         this.mPageId = in.readString();

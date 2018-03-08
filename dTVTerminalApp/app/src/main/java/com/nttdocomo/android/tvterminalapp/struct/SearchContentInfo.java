@@ -15,7 +15,7 @@ public class SearchContentInfo {
     /**
      * コンテンツID.
      */
-    public String mContentId;
+    public String mContentsId;
     /**
      * サービスID.
      */
@@ -109,7 +109,7 @@ public class SearchContentInfo {
      * コンストラクタ.
      *
      * @param clipFlag  クリップフラグ
-     * @param contentId コンテンツID
+     * @param contentsId コンテンツID
      * @param serviceId サービスID
      * @param categoryId カテゴリーID
      * @param contentPictureUrl1    サムネイルURL1
@@ -132,7 +132,7 @@ public class SearchContentInfo {
      * @param reserved4   予備4
      * @param reserved5   予備5
      */
-    public SearchContentInfo(final boolean clipFlag, final String contentId, final int serviceId,
+    public SearchContentInfo(final boolean clipFlag, final String contentsId, final int serviceId,
                              final String categoryId, final String contentPictureUrl1, final String contentPictureUrl2,
                              final String title, final int rank, final String mobileViewingFlg,
                              final String startViewing, final String endViewing, final String channelName,
@@ -141,7 +141,7 @@ public class SearchContentInfo {
                              final String reserved1, final String reserved2, final String reserved3,
                              final String reserved4, final String reserved5) {
         this.mClipFlag = clipFlag;
-        this.mContentId = contentId;
+        this.mContentsId = contentsId;
         this.mServiceId = serviceId;
         this.mCategoryId = categoryId;
         this.mContentPictureUrl1 = contentPictureUrl1;

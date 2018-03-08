@@ -1815,7 +1815,7 @@ public class BaseActivity extends FragmentActivity implements
             detailData.setThumb(info.getThumDetailURL());
         }
         detailData.setReserved4(info.getReserved4());
-        detailData.setContentId(info.getContentsId());
+        detailData.setContentsId(info.getContentsId());
         detailData.setDispType(info.getDispType());
         detailData.setContentsType(info.getContentsType());
         detailData.setChannelId(info.getChannelId());

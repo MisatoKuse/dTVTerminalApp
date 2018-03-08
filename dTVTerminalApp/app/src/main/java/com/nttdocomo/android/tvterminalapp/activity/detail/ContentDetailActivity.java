@@ -1205,9 +1205,9 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
         mDetailDataProvider = new ContentsDetailDataProvider(this);
         String[] cRid;
         if (mDetailData != null) {
-            DTVTLogger.debug("contentId:" + mDetailData.getContentId());
+            DTVTLogger.debug("contentId:" + mDetailData.getContentsId());
             cRid = new String[1];
-            cRid[cRid.length - 1] = mDetailData.getContentId();
+            cRid[cRid.length - 1] = mDetailData.getContentsId();
             int ageReq = mDetailData.getAge();
             mDetailDataProvider.getContentsDetailData(cRid, "", ageReq);
         } else {
@@ -2315,14 +2315,14 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                                 } else {
                                     //RESERVED4は4の場合
                                     if (RESERVED4_TYPE4.equals(mDetailData.getReserved4())) {
-                                        startApp(UrlConstants.WebUrl.WORK_START_TYPE + mDetailData.getContentId());
+                                        startApp(UrlConstants.WebUrl.WORK_START_TYPE + mDetailData.getContentsId());
                                         //RESERVED4は7,8の場合
                                     } else if (RESERVED4_TYPE7.equals(mDetailData.getReserved4())
                                             || RESERVED4_TYPE8.equals(mDetailData.getReserved4())) {
-                                        startApp(UrlConstants.WebUrl.SUPER_SPEED_START_TYPE + mDetailData.getContentId());
+                                        startApp(UrlConstants.WebUrl.SUPER_SPEED_START_TYPE + mDetailData.getContentsId());
                                         //その他の場合
                                     } else {
-                                        startApp(UrlConstants.WebUrl.TITTLE_START_TYPE + mDetailData.getContentId());
+                                        startApp(UrlConstants.WebUrl.TITTLE_START_TYPE + mDetailData.getContentsId());
                                     }
                                 }
                                 //DTVアプリ存在しない場合
@@ -2376,8 +2376,8 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                                         //ビデオ再生  「categoryId」が「02」または「03」の場合
                                     } else if (DTV_CHANNEL_CATEGORY_MISSED.equals(mDetailData.getCategoryId())
                                             || DTV_CHANNEL_CATEGORY_RELATION.equals(mDetailData.getCategoryId())) {
-                                        startApp(UrlConstants.WebUrl.DTVCHANNEL_VIDEO_START_URL + mDetailData.getContentId());
-                                        DTVTLogger.debug("ContentId :----" + mDetailData.getContentId());
+                                        startApp(UrlConstants.WebUrl.DTVCHANNEL_VIDEO_START_URL + mDetailData.getContentsId());
+                                        DTVTLogger.debug("ContentId :----" + mDetailData.getContentsId());
                                     }
                                 }
                             } else {
@@ -2487,14 +2487,14 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                         setRemoteProgressVisible(View.VISIBLE);
                     }
                     requestStartApplication(
-                            RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV, mDetailData.getContentId());
+                            RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV, mDetailData.getContentsId());
                     break;
                 case D_ANIMATION_CONTENTS_SERVICE_ID: // dアニメ
                     if (!isFromHeader) {
                         setRemoteProgressVisible(View.VISIBLE);
                     }
                     requestStartApplication(
-                            RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, mDetailData.getContentId());
+                            RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, mDetailData.getContentsId());
                     break;
                 case DTV_CHANNEL_CONTENTS_SERVICE_ID: // dチャンネル
                     if (!isFromHeader) {
@@ -2505,19 +2505,19 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                         requestStartApplicationDtvChannel(
                                 RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL,
                                 RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_BROADCAST,
-                                mDetailData.getContentId(), mDetailData.getChannelId());
+                                mDetailData.getContentsId(), mDetailData.getChannelId());
                         //VOD(見逃し)の場合
                     } else if (DTV_CHANNEL_CATEGORY_MISSED.equals(mDetailData.getCategoryId())) {
                         requestStartApplicationDtvChannel(
                                 RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL,
                                 RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_MISSED,
-                                mDetailData.getContentId(), mDetailData.getChannelId());
+                                mDetailData.getContentsId(), mDetailData.getChannelId());
                         //VOD(関連)の場合
                     } else if (DTV_CHANNEL_CATEGORY_RELATION.equals(mDetailData.getCategoryId())) {
                         requestStartApplicationDtvChannel(
                                 RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL,
                                 RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_RELATION,
-                                mDetailData.getContentId(), mDetailData.getChannelId());
+                                mDetailData.getContentsId(), mDetailData.getChannelId());
                     }
                     break;
                 case OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID://ひかりTV

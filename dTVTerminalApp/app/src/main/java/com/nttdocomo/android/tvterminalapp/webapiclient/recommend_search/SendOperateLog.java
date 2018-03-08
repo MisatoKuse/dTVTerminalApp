@@ -154,7 +154,7 @@ public class SendOperateLog extends WebApiBase {
             mUrl.append(mDetailData.getChannelId());
         }
         mUrl.append(URL_TEXT_CID);
-        mUrl.append(mDetailData.getContentId());
+        mUrl.append(mDetailData.getContentsId());
         mUrl.append(URL_TEXT_OPERATE_KIND);
         if (ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY.equals(mDetailData.getRecommendFlg())) {
             mUrl.append(URL_TEXT_OPERATE_KIND_RECOMMEND);

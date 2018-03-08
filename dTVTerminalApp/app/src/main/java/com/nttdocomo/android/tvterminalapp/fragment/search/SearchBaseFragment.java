@@ -256,7 +256,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         detailData.setDescription3(info.getDescription3());
 
         //コンテンツIDの受け渡しを追加
-        detailData.setContentId(info.getContentsId());
+        detailData.setContentsId(info.getContentsId());
         detailData.setRecommendOrder(info.getRecommendOrder());
 
         return detailData;
