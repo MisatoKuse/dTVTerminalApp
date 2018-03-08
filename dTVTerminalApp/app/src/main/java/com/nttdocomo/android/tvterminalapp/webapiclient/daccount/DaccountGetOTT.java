@@ -177,6 +177,7 @@ public class DaccountGetOTT {
             final Context context,
             final DaccountGetOttCallBack daccountGetOttCallBack) {
         DTVTLogger.start();
+        DTVTLogger.debug("DaccountGetOttCallBack = " + daccountGetOttCallBack);
         //同時に複数個実行されないようにする
         mOttGetQueue.getOttAddOrExec(context,daccountGetOttCallBack);
         DTVTLogger.end();
