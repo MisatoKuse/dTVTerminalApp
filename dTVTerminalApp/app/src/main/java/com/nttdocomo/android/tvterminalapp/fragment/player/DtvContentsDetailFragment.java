@@ -232,7 +232,7 @@ public class DtvContentsDetailFragment extends Fragment {
                 clipButton.setVisibility(View.GONE);
             }
         } else {
-            clipButton.setVisibility(View.VISIBLE);
+            clipButton.setVisibility(View.GONE);
         }
 
         clipButton.setOnClickListener(new View.OnClickListener() {
