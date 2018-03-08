@@ -179,7 +179,7 @@ public class DaccountGetOTT {
         DTVTLogger.start();
         DTVTLogger.debug("DaccountGetOttCallBack = " + daccountGetOttCallBack);
         //同時に複数個実行されないようにする
-        mOttGetQueue.getOttAddOrExec(context,daccountGetOttCallBack);
+        mOttGetQueue.getOttAddOrExec(context, daccountGetOttCallBack);
         DTVTLogger.end();
     }
 
@@ -213,7 +213,7 @@ public class DaccountGetOTT {
                 DaccountConstants.D_ACCOUNT_SERVICE);
 
         //パラメータにヌルがあるならばエラーとする
-        if(mContext == null || mServiceConnection == null) {
+        if (mContext == null || mServiceConnection == null) {
             mDaccountGetOttCallBack.getOttCallBack(IDimDefines.RESULT_INTERNAL_ERROR, "", "");
             return;
         }
@@ -231,9 +231,15 @@ public class DaccountGetOTT {
      */
     void daccountServiceEnd() {
         if (mService != null) {
-            mContext.unbindService(mServiceConnection);
+            try {
+                mContext.unbindService(mServiceConnection);
+                DTVTLogger.debug("DaccountGetOTTUnbind");
+            } catch (IllegalArgumentException e) {
+                // 何らかの理由でdアカウントアプリ側で問題が発生してアンバインドできない場合の例外。
+                // 通常は発生しないはず。また発生してもこちらでは何もできない。
+                DTVTLogger.debug(e);
+            }
             mService = null;
-            DTVTLogger.debug("DaccountGetOTTUnbind");
         }
     }
 

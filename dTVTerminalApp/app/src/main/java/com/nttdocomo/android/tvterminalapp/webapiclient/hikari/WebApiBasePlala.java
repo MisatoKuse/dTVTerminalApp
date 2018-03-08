@@ -650,6 +650,18 @@ public class WebApiBasePlala {
                             communicationTask.setOneTimeToken(
                                     SharedPreferencesUtils.
                                             getOneTimeTokenData(context).getOneTimeToken());
+
+                            ReturnCode returnCode = new ReturnCode();
+                            //既に実行されたかどうかの判定
+                            if(communicationTask.getStatus().equals(AsyncTask.Status.PENDING)) {
+                                //実行されていないので、ワンタイムトークンの取得結果を元にして、通信を開始する
+                                communicationTask.execute(returnCode);
+                            } else {
+                                //既に実行されていたので、処理をスキップ
+                                //(2重起動はsuccessFlagがfalseの場合にしか確認していないので、実行されない筈ですが)
+                                DTVTLogger.debug("communicationTask already exec");
+                            }
+
                         } else {
                             //値が無いのでリセット
                             communicationTask.setOneTimeToken("");
