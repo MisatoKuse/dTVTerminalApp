@@ -27,6 +27,15 @@ public class RecordedContentsDetailData implements Parcelable {
     private String mClearTextSize;
     private int mDownLoadStatus;
     private String mDlFileFullPath;
+    private boolean mIsLive = false;
+
+    public boolean isIsLive() {
+        return mIsLive;
+    }
+
+    public void setIsLive(final boolean mIsLive) {
+        this.mIsLive = mIsLive;
+    }
 
     public void setDetailParamFromWhere(final DetailParamFromWhere from) {
         mDetailParamFromWhere = from;
@@ -152,6 +161,7 @@ public class RecordedContentsDetailData implements Parcelable {
         dest.writeString(this.mClearTextSize);
         dest.writeInt(this.mDownLoadStatus);
         dest.writeString(this.mDlFileFullPath);
+        dest.writeByte(this.mIsLive ? (byte) 1 : (byte) 0);
     }
 
     public RecordedContentsDetailData() {
@@ -172,6 +182,7 @@ public class RecordedContentsDetailData implements Parcelable {
         this.mClearTextSize = in.readString();
         this.mDownLoadStatus = in.readInt();
         this.mDlFileFullPath = in.readString();
+        this.mIsLive = in.readByte() != 0;
     }
 
     public static final Creator<RecordedContentsDetailData> CREATOR = new Creator<RecordedContentsDetailData>() {

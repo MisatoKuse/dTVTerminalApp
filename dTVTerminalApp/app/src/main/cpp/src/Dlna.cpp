@@ -439,7 +439,7 @@ namespace dtvt {
                 //du_sync_notify(&d->soap.sync);
             }
         #elif defined(DLNA_KARI_DMS_NAS)
-            if (0 == vv.size()) {
+        if (0 == vv.size()) {
                 VVectorString totalVv = thiz->getDlnaXmlContainer().getAllVVectorString();
                 if (totalVv.empty() || totalVv.size() == 0) {
                     du_sync_notify(&d->soap.sync);
@@ -454,7 +454,21 @@ namespace dtvt {
                 thiz->notifyObject(parser->getMsgId(), totalVv);
             } else {
                 thiz->getDlnaXmlContainer().addVVectorString(vv);
-                thiz->sendSoap((char*)response->url, DLNA_DMS_ROOT, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                switch (parser->getMsgId()){
+                    case DLNA_MSG_ID_TER_CHANNEL_LIST:
+                        thiz->sendSoap((char*)response->url, DLNA_DMS_TER_CHANNEL, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                        break;
+                    case DLNA_MSG_ID_BS_CHANNEL_LIST:
+                        thiz->sendSoap((char*)response->url, DLNA_DMS_BS_CHANNEL, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                        break;
+                    case DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST:
+                        thiz->sendSoap((char*)response->url, DLNA_DMS_RECORD_LIST, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                        break;
+                    default:
+                        VVectorString totalVv = thiz->getDlnaXmlContainer().getAllVVectorString();
+                        thiz->notifyObject(parser->getMsgId(), totalVv);
+                        break;
+                }
             }
         #elif defined(DLNA_KARI_DMS_RELEASE)
             if (0 == vv.size()) {
@@ -472,7 +486,21 @@ namespace dtvt {
                 thiz->notifyObject(parser->getMsgId(), totalVv);
             } else {
                 thiz->getDlnaXmlContainer().addVVectorString(vv);
-                thiz->sendSoap((char*)response->url, DLNA_DMS_ROOT, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                switch (parser->getMsgId()){
+                    case DLNA_MSG_ID_TER_CHANNEL_LIST:
+                        thiz->sendSoap((char*)response->url, DLNA_DMS_TER_CHANNEL, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                        break;
+                    case DLNA_MSG_ID_BS_CHANNEL_LIST:
+                        thiz->sendSoap((char*)response->url, DLNA_DMS_BS_CHANNEL, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                        break;
+                    case DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST:
+                        thiz->sendSoap((char*)response->url, DLNA_DMS_RECORD_LIST, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                        break;
+                    default:
+                        VVectorString totalVv = thiz->getDlnaXmlContainer().getAllVVectorString();
+                        thiz->notifyObject(parser->getMsgId(), totalVv);
+                        break;
+                }
             }
         #endif
 
@@ -748,7 +776,7 @@ namespace dtvt {
         }
 
         //DlnaBsChListItem_Field_mTitle
-        ret= setJavaObjectField(env, cl, DlnaBsChListItem_Field_mTitle, Dlna_Java_String_Path,  *i++, objOut);
+        ret= setJavaObjectField(env, cl, DlnaBsChListItem_Field_mChannelName, Dlna_Java_String_Path,  *i++, objOut);
         if(!ret){
             return false;
         }
@@ -796,16 +824,16 @@ namespace dtvt {
         }
 
         //DlnaBsChListItem_Field_mVideoType
-        ret= setJavaObjectField(env, cl, DlnaBsChListItem_Field_mVideoType, Dlna_Java_String_Path,  *i++, objOut);
+        ret= setJavaObjectField(env, cl, DlnaBsChListItem_Field_mVideoType, Dlna_Java_String_Path,  *i, objOut);
         if(!ret){
             return false;
         }
 
         //mChannelName
-        ret= setJavaObjectField(env, cl, DlnaBsChListItem_Field_mChannelName, Dlna_Java_String_Path,  *i, objOut);
-        if(!ret){
-            return false;
-        }
+//        ret= setJavaObjectField(env, cl, DlnaBsChListItem_Field_mChannelName, Dlna_Java_String_Path,  *i, objOut);
+//        if(!ret){
+//            return false;
+//        }
 
         ret=env->CallBooleanMethod(listObj , listAddId , objOut);
 
@@ -822,7 +850,7 @@ namespace dtvt {
         }
 
         //DlnaTerChListItem_Field_mTitle
-        ret= setJavaObjectField(env, cl, DlnaTerChListItem_Field_mTitle, Dlna_Java_String_Path,  *i++, objOut);
+        ret= setJavaObjectField(env, cl, DlnaTerChListItem_Field_mChannelName, Dlna_Java_String_Path,  *i++, objOut);
         if(!ret){
             return false;
         }
@@ -870,16 +898,16 @@ namespace dtvt {
         }
 
         //DlnaTerChListItem_Field_mVideoType
-        ret= setJavaObjectField(env, cl, DlnaTerChListItem_Field_mVideoType, Dlna_Java_String_Path,  *i++, objOut);
+        ret= setJavaObjectField(env, cl, DlnaTerChListItem_Field_mVideoType, Dlna_Java_String_Path,  *i, objOut);
         if(!ret){
             return false;
         }
 
         //mChannelName
-        ret= setJavaObjectField(env, cl, DlnaTerChListItem_Field_mChannelName, Dlna_Java_String_Path,  *i, objOut);
-        if(!ret){
-            return false;
-        }
+//        ret= setJavaObjectField(env, cl, DlnaTerChListItem_Field_mChannelName, Dlna_Java_String_Path,  *i, objOut);
+//        if(!ret){
+//            return false;
+//        }
 
         ret=env->CallBooleanMethod(listObj , listAddId , objOut);
 
@@ -1231,6 +1259,7 @@ namespace dtvt {
             IfNullReturnFalse(mBsDigitalXmlParser);
         }
         mRecursionXmlParser=mBsDigitalXmlParser;
+        mDlnaXmlContainer.cleanAll();
         #if defined(DLNA_KARI_DMS_UNIVERSAL)
             return sendSoap(controlUrl, "0");
         #elif defined(DLNA_KARI_DMS_NAS)
@@ -1246,6 +1275,7 @@ namespace dtvt {
             IfNullReturnFalse(mTerChXmlParser);
         }
         mRecursionXmlParser=mTerChXmlParser;
+        mDlnaXmlContainer.cleanAll();
         #if defined(DLNA_KARI_DMS_UNIVERSAL)
                 return sendSoap(controlUrl, "0");
         #elif defined(DLNA_KARI_DMS_NAS)
@@ -1261,6 +1291,7 @@ namespace dtvt {
             IfNullReturnFalse(mHikariChXmlParser);
         }
         mRecursionXmlParser=mHikariChXmlParser;
+        mDlnaXmlContainer.cleanAll();
         #if defined(DLNA_KARI_DMS_UNIVERSAL)
                 return sendSoap(controlUrl, "0");
         #elif defined(DLNA_KARI_DMS_NAS)

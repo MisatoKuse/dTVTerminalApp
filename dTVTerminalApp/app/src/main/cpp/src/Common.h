@@ -168,29 +168,38 @@ namespace dtvt {
 
     //開発段階にて、本番のDMSはないので、仮DMSを使っていますが、違うDMSを定義し、どのDMSを選択できるよう
     //#define DLNA_KARI_DMS_UNIVERSAL
-    #define DLNA_KARI_DMS_NAS
-    //#define DLNA_KARI_DMS_RELEASE
+//    #define DLNA_KARI_DMS_NAS
+    #define DLNA_KARI_DMS_RELEASE
 
     #if defined(DLNA_KARI_DMS_UNIVERSAL)
         const char* const DLNA_DMS_ROOT = "0";
     #elif defined(DLNA_KARI_DMS_NAS)
         const char* const DLNA_DMS_ROOT = "0/video/all";
-        const int const PAGE_COUNT = 30;
-    #elif defined(DLNA_KARI_DMS_RELEASE)
+        const int PAGE_COUNT = 30;
         //チューナールート/スマホ向け/録画一覧
-        //const char* const DLNA_DMS_RECORD_LIST = "0/smartphone/rec/all"; //本番
         const char* const DLNA_DMS_RECORD_LIST = "0/video/all"; //nasでテスト
 
         //チューナールート/スマホ向け/多チャンネル
         const char* const DLNA_DMS_MULTI_CHANNEL = "0/smartphone/ip";
 
         //チューナールート/スマホ向け/地上デジタル
-        //const char* const DLNA_DMS_TER_CHANNEL = "0/smartphone/tb"; //本番
         const char* const DLNA_DMS_TER_CHANNEL = "0/video/all"; //nasでテスト
 
         //チューナールート/スマホ向け/BSデジタル
-        //const char* const DLNA_DMS_BS_CHANNEL = "0/smartphone/bs"; //本番
         const char* const DLNA_DMS_BS_CHANNEL = "0/video/all"; //nasでテスト
+    #elif defined(DLNA_KARI_DMS_RELEASE)
+        const int PAGE_COUNT = 30;
+        //チューナールート/スマホ向け/録画一覧
+        const char* const DLNA_DMS_RECORD_LIST = "0/smartphone/rec/all"; //本番
+
+        //チューナールート/スマホ向け/多チャンネル
+        const char* const DLNA_DMS_MULTI_CHANNEL = "0/smartphone/ip";
+
+        //チューナールート/スマホ向け/地上デジタル
+        const char* const DLNA_DMS_TER_CHANNEL = "0/smartphone/tb"; //本番
+
+        //チューナールート/スマホ向け/BSデジタル
+        const char* const DLNA_DMS_BS_CHANNEL = "0/smartphone/bs"; //本番
     #endif
 
     /*----------------------------- function begin --------------------------------*/

@@ -26,18 +26,21 @@
         android:id="@+id/tv_player_ctrl_video_record_player_pause_fl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true">
+        android:layout_centerInParent="true"
+        android:visibility="invisible">
 
         <ImageView
             android:layout_width="@dimen/contents_detail_player_media_controller_size"
             android:layout_height="@dimen/contents_detail_player_media_controller_size"
-            android:background="@mipmap/mediacontrol_icon_white_play_arrow" />
+            android:background="@mipmap/mediacontrol_icon_white_play_arrow"
+            android:contentDescription="@null"/>
 
         <ImageView
             android:layout_width="@dimen/contents_detail_player_media_controller_size"
             android:layout_height="@dimen/contents_detail_player_media_controller_size"
             android:background="@mipmap/mediacontrol_icon_white_stop"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:contentDescription="@null"/>
     </FrameLayout>
 
     <ImageView
@@ -47,7 +50,9 @@
         android:layout_toStartOf="@id/tv_player_ctrl_video_record_player_pause_fl"
         android:layout_centerVertical="true"
         android:background="@mipmap/mediacontrol_icon_white_replay_10"
-        android:layout_marginEnd="@dimen/contents_detail_player_media_controller_replay_right_margin" />
+        android:layout_marginEnd="@dimen/contents_detail_player_media_controller_replay_right_margin"
+        android:visibility="invisible"
+        android:contentDescription="@null"/>
 
     <ImageView
         android:id="@+id/tv_player_ctrl_video_record_30_tv"
@@ -56,7 +61,9 @@
         android:layout_toEndOf="@id/tv_player_ctrl_video_record_player_pause_fl"
         android:layout_centerVertical="true"
         android:background="@mipmap/mediacontrol_icon_white_forward_30"
-        android:layout_marginStart="@dimen/contents_detail_player_media_controller_forward_right_margin" />
+        android:layout_marginStart="@dimen/contents_detail_player_media_controller_forward_right_margin"
+        android:visibility="invisible"
+        android:contentDescription="@null"/>
 
     <RelativeLayout
         android:id="@+id/tv_player_ctrl_video_record_control_bar_iv"
@@ -71,7 +78,8 @@
             android:layout_marginStart="@dimen/contents_detail_player_media_controller_time_left_margin"
             android:layout_marginBottom="@dimen/contents_detail_player_media_controller_time_bottom_margin"
             android:background="@color/contents_player_now_on_air_cur_text_backgroud_color"
-            android:textColor="@color/contents_player_media_controller_time_text" />
+            android:textColor="@color/contents_player_media_controller_time_text"
+            android:visibility="invisible"/>
 
         <ImageView
             android:id="@+id/tv_player_ctrl_now_on_air_full_screen_iv"
@@ -81,7 +89,8 @@
             android:layout_alignParentBottom="true"
             android:layout_marginEnd="@dimen/contents_detail_player_media_controller_full_screen_icon_right_margin"
             android:layout_marginBottom="@dimen/contents_detail_player_media_controller_full_screen_icon_bottom_margin"
-            android:background="@mipmap/icon_normal_zoom_in" />
+            android:background="@mipmap/icon_normal_zoom_in"
+            android:contentDescription="@null"/>
 
         <TextView
             android:id="@+id/tv_player_ctrl_now_on_air_total_time_tv"
@@ -92,13 +101,15 @@
             android:layout_marginEnd="@dimen/contents_detail_player_media_controller_time_right_margin"
             android:layout_marginBottom="@dimen/contents_detail_player_media_controller_time_bottom_margin"
             android:background="@color/contents_player_now_on_air_total_text_backgroud_color"
-            android:textColor="@color/contents_player_media_controller_time_text" />
+            android:textColor="@color/contents_player_media_controller_time_text"
+            android:visibility="invisible"/>
 
         <RelativeLayout
             android:id="@+id/tv_player_ctrl_progress_ll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true" >
+            android:layout_alignParentBottom="true"
+            android:visibility="invisible">
             <SeekBar
                 android:id="@+id/tv_player_ctrl_now_on_air_seek_bar_sb"
                 android:layout_width="match_parent"

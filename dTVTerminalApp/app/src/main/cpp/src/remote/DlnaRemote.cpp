@@ -212,7 +212,7 @@ namespace dtvt {
         du_uchar_array ua2;
         dupnp_taskmgr* taskmgr;
         dupnp_schedtaskmgr* schedtaskmgr;
-        char* ddd = "/data/user/0/com.nttdocomo.android.tvterminalapp/files/drm/conf/dirag/rada/rada_relay";
+        const char* ddd = "/data/user/0/com.nttdocomo.android.tvterminalapp/files/drm/conf/dirag/rada/rada_relay";
 
         du_uchar_array_init(&ua);
         du_uchar_array_init(&ua2);

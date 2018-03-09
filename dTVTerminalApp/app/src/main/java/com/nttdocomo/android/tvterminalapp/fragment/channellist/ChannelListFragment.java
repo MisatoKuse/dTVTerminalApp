@@ -346,6 +346,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
                     ret.setTitle(bsI.mChannelName);
                     ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabBs);
                     ret.setVideoType(bsI.mVideoType);
+                    ret.setIsLive(true);
                     break;
                 case CH_LIST_DATA_TYPE_TDB:
                     DlnaTerChListItem bsT = (DlnaTerChListItem) mData.get(i);
@@ -358,6 +359,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
                     ret.setTitle(bsT.mChannelName);
                     ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabTer);
                     ret.setVideoType(bsT.mVideoType);
+                    ret.setIsLive(true);
                     break;
                 default:
                     return null;
