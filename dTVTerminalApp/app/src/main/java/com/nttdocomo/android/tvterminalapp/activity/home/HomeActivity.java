@@ -592,6 +592,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                //callbackが帰ってきたらProgressDialogを消す
+                showProgessBar(false);
                 if (channelList != null) {
                     if (channelList.size() > 0) {
                         Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_CHANNEL, channelList);
@@ -610,6 +612,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                //callbackが帰ってきたらProgressDialogを消す
+                showProgessBar(false);
                 if (dailyRankList != null) {
                     if (dailyRankList.size() > 0) {
                         Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_TODAY, dailyRankList);
@@ -624,6 +628,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void tvClipListCallback(final List<ContentsData> tvClipList) {
+        //callbackが帰ってきたらProgressDialogを消す
+        showProgessBar(false);
         if (tvClipList != null) {
             if (tvClipList.size() > 0) {
                 Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_TV_CLIP, tvClipList);
@@ -636,6 +642,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void vodClipListCallback(final List<ContentsData> vodClipList) {
+        //callbackが帰ってきたらProgressDialogを消す
+        showProgessBar(false);
         if (vodClipList != null) {
             if (vodClipList.size() > 0) {
                 Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_VOD_CLIP, vodClipList);
@@ -652,6 +660,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                //callbackが帰ってきたらProgressDialogを消す
+                showProgessBar(false);
                 if (videoRankList != null) {
                     if (videoRankList.size() > 0) {
                         Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_VIDEO, videoRankList);
@@ -670,6 +680,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                //callbackが帰ってきたらProgressDialogを消す
+                showProgessBar(false);
                 if (watchingVideoList != null) {
                     if (watchingVideoList.size() > 0) {
                         Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_WATCHING_VIDEO, watchingVideoList);
@@ -688,6 +700,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                //callbackが帰ってきたらProgressDialogを消す
+                showProgessBar(false);
                 if (redChList != null) {
                     if (redChList.size() > 0) {
                         Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RECOMMEND_PROGRAM, redChList);
@@ -706,6 +720,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                //callbackが帰ってきたらProgressDialogを消す
+                showProgessBar(false);
                 if (redVdList != null) {
                     if (redVdList.size() > 0) {
                         Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RECOMMEND_VOD, redVdList);
@@ -832,6 +848,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                //callbackが帰ってきたらProgressDialogを消す
+                showProgessBar(false);
                 if (rentalList != null) {
                     if (rentalList.size() > 0) {
                         Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RENTAL, rentalList);
@@ -850,6 +868,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                //callbackが帰ってきたらProgressDialogを消す
+                showProgessBar(false);
                 if (premiumVideoList != null) {
                     if (premiumVideoList.size() > 0) {
                         Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_PREMIUM, premiumVideoList);
@@ -864,46 +884,64 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void rentalListNgCallback() {
+        //callbackが帰ってきたらProgressDialogを消す
+        showProgessBar(false);
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
     @Override
     public void watchListenVideoListCallback(final List<ContentsData> clipContentInfo) {
+        //callbackが帰ってきたらProgressDialogを消す
+        showProgessBar(false);
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
     @Override
     public void genreListCallback(final List<GenreCountGetMetaData> listData) {
+        //callbackが帰ってきたらProgressDialogを消す
+        showProgessBar(false);
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
     @Override
     public void genreListMapCallback(final Map<String, VideoGenreList> map, final List<String> firstGenreIdList) {
+        //callbackが帰ってきたらProgressDialogを消す
+        showProgessBar(false);
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
     @Override
     public void onContentsDetailInfoCallback(final ArrayList<VodMetaFullData> contentsDetailInfo, final boolean clipStatus) {
+        //callbackが帰ってきたらProgressDialogを消す
+        showProgessBar(false);
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
     @Override
     public void onRoleListCallback(final ArrayList<RoleListMetaData> roleListInfo) {
+        //callbackが帰ってきたらProgressDialogを消す
+        showProgessBar(false);
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
     @Override
     public void recordingReservationResult(final RemoteRecordingReservationResultResponse response) {
+        //callbackが帰ってきたらProgressDialogを消す
+        showProgessBar(false);
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
     @Override
     public void onRentalVodListCallback(final PurchasedVodListResponse response) {
+        //callbackが帰ってきたらProgressDialogを消す
+        showProgessBar(false);
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
     @Override
     public void onRentalChListCallback(final PurchasedChListResponse response) {
+        //callbackが帰ってきたらProgressDialogを消す
+        showProgessBar(false);
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 }
