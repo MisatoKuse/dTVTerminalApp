@@ -220,7 +220,7 @@ public class DtvContentsDetailFragment extends Fragment {
 
         //他サービスならクリップボタン非表示
         if (mOtherContentsDetailData != null) {
-            if (mOtherContentsDetailData.getVodMetaFullData() != null && mOtherContentsDetailData.isClipExec()) {
+            if (mOtherContentsDetailData.isClipExec()) {
                 if (mOtherContentsDetailData.isClipStatus()) {
                     clipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
                     clipButton.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
@@ -264,19 +264,22 @@ public class DtvContentsDetailFragment extends Fragment {
      * @return Clipリクエストに必要なデータ
      */
     private static ClipRequestData setClipData(final VodMetaFullData metaFullData) {
-        //コンテンツ詳細は、メタデータを丸ごと持っているため、そのまま利用する
-        ClipRequestData requestData = new ClipRequestData();
-        requestData.setCrid(metaFullData.getCrid());
-        requestData.setServiceId(metaFullData.getmService_id());
-        requestData.setEventId(metaFullData.getmEvent_id());
-        requestData.setTitleId(metaFullData.getTitle_id());
-        requestData.setTitle(metaFullData.getTitle());
-        requestData.setRValue(metaFullData.getR_value());
-        requestData.setLinearStartDate(String.valueOf(metaFullData.getAvail_start_date()));
-        requestData.setLinearEndDate(String.valueOf(metaFullData.getAvail_end_date()));
-        requestData.setSearchOk(metaFullData.getmSearch_ok());
-        requestData.setIsNotify(metaFullData.getDisp_type(), metaFullData.getmContent_type(),
-                String.valueOf(metaFullData.getAvail_end_date()), metaFullData.getmTv_service(), metaFullData.getDtv());
+        ClipRequestData requestData = null;
+        if (metaFullData != null) {
+            //コンテンツ詳細は、メタデータを丸ごと持っているため、そのまま利用する
+            requestData = new ClipRequestData();
+            requestData.setCrid(metaFullData.getCrid());
+            requestData.setServiceId(metaFullData.getmService_id());
+            requestData.setEventId(metaFullData.getmEvent_id());
+            requestData.setTitleId(metaFullData.getTitle_id());
+            requestData.setTitle(metaFullData.getTitle());
+            requestData.setRValue(metaFullData.getR_value());
+            requestData.setLinearStartDate(String.valueOf(metaFullData.getAvail_start_date()));
+            requestData.setLinearEndDate(String.valueOf(metaFullData.getAvail_end_date()));
+            requestData.setSearchOk(metaFullData.getmSearch_ok());
+            requestData.setIsNotify(metaFullData.getDisp_type(), metaFullData.getmContent_type(),
+                    String.valueOf(metaFullData.getAvail_end_date()), metaFullData.getmTv_service(), metaFullData.getDtv());
+        }
         return requestData;
     }
 
