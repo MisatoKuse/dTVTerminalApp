@@ -39,6 +39,7 @@ public class RentalVodListWebClient
      */
     private RentalVodListJsonParserCallback mRentalVodListJsonParserCallback;
 
+    private Context mContext = null;
     /**
      * コンテキストを継承元のコンストラクタに送る.
      *
@@ -46,13 +47,14 @@ public class RentalVodListWebClient
      */
     public RentalVodListWebClient(final Context context) {
         super(context);
+        mContext = context;
     }
 
     @Override
     public void onAnswer(final ReturnCode returnCode) {
         if (mRentalVodListJsonParserCallback != null) {
             //JSONをパースして、データを返す
-            new RentalVodListJsonParser(mRentalVodListJsonParserCallback)
+            new RentalVodListJsonParser(mContext, mRentalVodListJsonParserCallback)
                     .execute(returnCode.bodyData);
         }
     }

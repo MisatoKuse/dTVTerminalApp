@@ -4,6 +4,10 @@
 
 package com.nttdocomo.android.tvterminalapp.utils;
 
+import android.content.Context;
+
+import com.nttdocomo.android.tvterminalapp.common.UserState;
+
 /**
  * クリップ関連のUtilクラス.
  */
@@ -37,14 +41,22 @@ public class ClipUtils {
     /**
      * クリップ可否フラグを返却する.
      *
+     * @param context コンテキストファイル
      * @param dispType 表示タイプ
      * @param searchOk クリップ判定情報
      * @param dtv      dTVフラグ
      * @param dtvType  dTVタイプ
      * @return クリップ可：true,クリップ不可：false
      */
-    public static boolean isCanClip(final String dispType, final String searchOk,
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
+    public static boolean isCanClip(final Context context, final String dispType, final String searchOk,
                                     final String dtv, final String dtvType) {
+
+        //ユーザ情報が未ログインの時は一律クリップ不可
+        UserState userState = UserInfoUtils.getUserState(context);
+        if (userState.equals(UserState.LOGIN_NG)) {
+            return false;
+        }
 
         //クリップ可否判定用
         final String DISP_TYPE_BLANK = "";

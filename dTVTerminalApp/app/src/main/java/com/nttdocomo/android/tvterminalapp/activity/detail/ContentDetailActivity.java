@@ -64,6 +64,7 @@ import com.nttdocomo.android.tvterminalapp.struct.CalendarComparator;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
+import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
@@ -1898,6 +1899,7 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
         detailFragment.setRecordingReservationIconListener(this);
     }
 
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     @Override
     public void onContentsDetailInfoCallback(final ArrayList<VodMetaFullData> contentsDetailInfo, final boolean clipStatus) {
         //詳細情報取得して、更新する
@@ -1924,16 +1926,21 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                     }
                 }
             }
+            String dispType = mDetailFullData.getDisp_type();
+            String searchOk = mDetailFullData.getmSearch_ok();
+            String dTv = mDetailFullData.getDtv();
+            String dTvType = mDetailFullData.getDtvType();
             detailFragment.mOtherContentsDetailData.setTitle(mDetailFullData.getTitle());
             setTitleAndThumbnail(mDetailFullData.getTitle(), mDetailFullData.getmDtv_thumb_448_252());
             detailFragment.mOtherContentsDetailData.setVodMetaFullData(contentsDetailInfo.get(FIRST_VOD_META_DATA));
             detailFragment.mOtherContentsDetailData.setDetail(mDetailFullData.getSynop());
             // コンテンツ状態を反映
             detailFragment.mOtherContentsDetailData.setClipStatus(clipStatus);
-            detailFragment.mOtherContentsDetailData.setDispType(mDetailFullData.getDisp_type());
-            detailFragment.mOtherContentsDetailData.setSearchOk(mDetailFullData.getmSearch_ok());
-            detailFragment.mOtherContentsDetailData.setDtv(mDetailFullData.getDtv());
-            detailFragment.mOtherContentsDetailData.setDtvType(mDetailFullData.getDtvType());
+            detailFragment.mOtherContentsDetailData.setClipExec(ClipUtils.isCanClip(this, dispType, searchOk, dTv, dTvType));
+            detailFragment.mOtherContentsDetailData.setDispType(dispType);
+            detailFragment.mOtherContentsDetailData.setSearchOk(searchOk);
+            detailFragment.mOtherContentsDetailData.setDtv(dTv);
+            detailFragment.mOtherContentsDetailData.setDtvType(dTvType);
             detailFragment.mOtherContentsDetailData.setCrId(mDetailFullData.getCrid());
             detailFragment.mOtherContentsDetailData.setEventId(mDetailFullData.getmEvent_id());
             detailFragment.mOtherContentsDetailData.setTitleId(mDetailFullData.getTitle_id());
@@ -3111,6 +3118,7 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
     /**
      * 視聴可否判定、契約情報が"002"の場合.
      */
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     private void  contractInfoTwo() {
         final String TV_PROGRAM = "tv_program";
         final String VIDEO_PROGRAM = "video_program";
@@ -3450,6 +3458,7 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
     /**
      * 視聴可否判定に基づいてUIの操作などを行う.
      */
+    @SuppressWarnings("OverlyLongMethod")
     private void changeUIBasedContractInfo() {
         DtvContentsDetailFragment detailFragment = getDetailFragment();
         switch (mIsEnableWatch) {
@@ -3520,9 +3529,6 @@ public class ContentDetailActivity extends BaseActivity implements ContentsDetai
                 //再生導線を非表示にする
 
                 //TODO 再生、評価はコンテンツ毎の詳細画面の表示が行われてから対応する
-
-                //クリップを非表示
-                detailFragment.changeClipButtonVisibility(false);
 
                 //録画予約ボタンを非表示
                 detailFragment.changeVisibilityRecordingReservationIcon(View.INVISIBLE);

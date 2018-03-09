@@ -221,6 +221,7 @@ public class DtvContentsDetailFragment extends Fragment {
         //他サービスならクリップボタン非表示
         if (mOtherContentsDetailData != null) {
             if (mOtherContentsDetailData.isClipExec()) {
+                clipButton.setVisibility(View.VISIBLE);
                 if (mOtherContentsDetailData.isClipStatus()) {
                     clipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
                     clipButton.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
@@ -549,22 +550,6 @@ public class DtvContentsDetailFragment extends Fragment {
         if (mTxtChannelDate != null) {
             String untilDate = StringUtils.getConnectStrings(date, getString(R.string.contents_detail_until_date));
             mTxtChannelDate.setText(untilDate);
-        }
-    }
-
-    /**
-     * クリップボタンの表示/非表示を変更する.
-     *
-     * @param visibility true:表示 false:非表示
-     */
-    public void changeClipButtonVisibility(final boolean visibility) {
-        DTVTLogger.start();
-        if (mClipButton != null) {
-            if (visibility) {
-                mClipButton.setVisibility(View.VISIBLE);
-            } else {
-                mClipButton.setVisibility(View.GONE);
-            }
         }
     }
 

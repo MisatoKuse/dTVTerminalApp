@@ -38,6 +38,7 @@ public class ContentsDetailGetWebClient
         void onContentsDetailJsonParsed(ContentsDetailGetResponse ContentsDetailLists);
     }
 
+    private Context mContext = null;
     //コールバックのインスタンス
     private ContentsDetailJsonParserCallback mContentsDetailJsonParserCallback;
 
@@ -48,6 +49,7 @@ public class ContentsDetailGetWebClient
      */
     public ContentsDetailGetWebClient(final Context context) {
         super(context);
+        mContext = context;
     }
 
     /**
@@ -59,7 +61,7 @@ public class ContentsDetailGetWebClient
     public void onAnswer(final ReturnCode returnCode) {
         //JSONをパースして、データを返す
         if (mContentsDetailJsonParserCallback != null) {
-            new ContentsDetailJsonParser(mContentsDetailJsonParserCallback).
+            new ContentsDetailJsonParser(mContext, mContentsDetailJsonParserCallback).
                     execute(returnCode.bodyData);
         }
     }

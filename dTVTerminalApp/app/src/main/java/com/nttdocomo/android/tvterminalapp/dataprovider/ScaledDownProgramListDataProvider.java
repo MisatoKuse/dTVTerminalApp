@@ -189,7 +189,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                         mSchedule.setDtv(dtv);
                         mSchedule.setRValue(rValue);
                         mSchedule.setDispType(dispType);
-                        mSchedule.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
+                        mSchedule.setClipExec(ClipUtils.isCanClip(mContext, dispType, searchOk, dtv, dtvType));
                         mSchedule.setClipRequestData(setClipData(map));
                         mSchedule.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
                         mSchedule.setTvService(map.get(JsonConstants.META_RESPONSE_TV_SERVICE));
@@ -447,7 +447,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         mSchedule.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
         mSchedule.setTitleId(map.get(JsonConstants.META_RESPONSE_TITLE_ID));
         mSchedule.setCrId(map.get(JsonConstants.META_RESPONSE_CRID));
-        mSchedule.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
+        mSchedule.setClipExec(ClipUtils.isCanClip(mContext, dispType, searchOk, dtv, dtvType));
         mSchedule.setClipRequestData(setClipData(map));
         mSchedule.setClipStatus(getClipStatus(dispType, contentType, dtv,
                 map.get(JsonConstants.META_RESPONSE_CRID),

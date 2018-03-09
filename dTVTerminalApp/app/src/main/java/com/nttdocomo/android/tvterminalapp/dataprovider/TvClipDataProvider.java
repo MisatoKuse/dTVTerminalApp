@@ -182,7 +182,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
             contentInfo.setDispType(dispType);
             contentInfo.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
             contentInfo.setEventId(map.get(JsonConstants.META_RESPONSE_EVENT_ID));
-            contentInfo.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
+            contentInfo.setClipExec(ClipUtils.isCanClip(mContext, dispType, searchOk, dtv, dtvType));
             contentInfo.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();

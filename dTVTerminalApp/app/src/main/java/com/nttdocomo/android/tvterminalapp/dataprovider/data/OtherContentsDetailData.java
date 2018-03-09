@@ -6,8 +6,6 @@ package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 import android.os.Parcel;
 
-import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
-
 import java.util.List;
 
 public class OtherContentsDetailData extends RecordedContentsDetailData {
@@ -385,7 +383,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
     }
 
     public boolean isClipExec() {
-        return ClipUtils.isCanClip(mDispType, mSearchOk, mDtv, mDtvType);
+        return mClipExec;
     }
 
     public void setClipExec(final boolean mClipExec) {

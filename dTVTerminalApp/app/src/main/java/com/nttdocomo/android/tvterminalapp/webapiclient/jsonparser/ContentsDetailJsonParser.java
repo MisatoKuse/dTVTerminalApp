@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -19,6 +20,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> {
+    private Context mContext;
     private final String CLASS_NAME = getClass().getSimpleName();
     private static final String SEND_RESPONSE = ".sendContentDetailGetResponse";
     private static final String SEND_STATUS = ".sendStatus";
@@ -35,9 +37,10 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
      * <p>
      * //     * @param genreCountGetJsonParserCallback
      */
-    public ContentsDetailJsonParser(final ContentsDetailGetWebClient.
+    public ContentsDetailJsonParser(final Context context, final ContentsDetailGetWebClient.
                                             ContentsDetailJsonParserCallback
                                             contentsDetailJsonParserCallback) {
+        mContext = context;
         mContentsDetailJsonParserCallback =
                 contentsDetailJsonParserCallback;
         mContentsDetailGetResponse = new ContentsDetailGetResponse();
@@ -121,7 +124,7 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
                     VodMetaFullData fullData = new VodMetaFullData();
 
                     //データを個別に転送する
-                    fullData.setData(lists.getJSONObject(i));
+                    fullData.setData(mContext,lists.getJSONObject(i));
 
                     //データを追加
                     vodMetaFullDataArrayList.add(fullData);

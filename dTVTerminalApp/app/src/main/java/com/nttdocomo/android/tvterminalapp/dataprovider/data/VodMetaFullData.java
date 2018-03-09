@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
+import android.content.Context;
+
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.vodmetafulldata.Puinf;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
@@ -713,9 +715,10 @@ public class VodMetaFullData implements Serializable {
     /**
      * VOD&番組メタレスポンス（フル版）の json データをデータオブジェクトに変換.
      *
+     * @param context 　Context
      * @param jsonObj 　json データ
      */
-    public void setData(final JSONObject jsonObj) {
+    public void setData(final Context context, final JSONObject jsonObj) {
         // ライセンス/販売情報リスト
         Puinf puinf;
         try {
@@ -724,7 +727,7 @@ public class VodMetaFullData implements Serializable {
                 for (String item : mRootPara) {
                     if (!jsonObj.isNull(item)) {
                         setMember(item, jsonObj.get(item));
-                        setClipExec(ClipUtils.isCanClip(getDisp_type(), getmSearch_ok(), getDtv(), getDtvType()));
+                        setClipExec(ClipUtils.isCanClip(context, getDisp_type(), getmSearch_ok(), getDtv(), getDtvType()));
                     }
                 }
 
@@ -760,6 +763,7 @@ public class VodMetaFullData implements Serializable {
      * @param key  キー
      * @param data キーの値
      */
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     private void setMember(final String key, final Object data) {
         //キーに値があれば、それを元に値を格納する
         if (key != null && !key.isEmpty()) {
@@ -1014,6 +1018,7 @@ public class VodMetaFullData implements Serializable {
      *
      * @param key 取得したい値のキー
      */
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     public Object getMember(final String key) {
         if (key == null || key.isEmpty()) {
             //キーが無いので、空文字を返す

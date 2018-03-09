@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -26,6 +27,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListRes
  */
 public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
 
+    private Context mContext = null;
     private RentalVodListWebClient.RentalVodListJsonParserCallback
             mRentalVodListJsonParserCallback = null;
 
@@ -37,7 +39,8 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
      *
      * @param rentalVodListJsonParserCallback コールバックの飛び先
      */
-    public RentalVodListJsonParser(final RentalVodListWebClient.RentalVodListJsonParserCallback rentalVodListJsonParserCallback) {
+    public RentalVodListJsonParser(final Context context, final RentalVodListWebClient.RentalVodListJsonParserCallback rentalVodListJsonParserCallback) {
+        mContext = context;
         mRentalVodListJsonParserCallback = rentalVodListJsonParserCallback;
         mPurchasedVodListResponse = new PurchasedVodListResponse();
     }
@@ -120,7 +123,7 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
                 // VODメタレスポンス（フル版）のデータオブジェクトArrayListを生成する
                 for (int i = 0; i < lists.length(); i++) {
                     VodMetaFullData vodMetaFullData = new VodMetaFullData();
-                    vodMetaFullData.setData(lists.getJSONObject(i));
+                    vodMetaFullData.setData(mContext, lists.getJSONObject(i));
                     vodMetaFullDataList.add(vodMetaFullData);
                 }
                 // 購入済みVOD一覧リストをセットする
