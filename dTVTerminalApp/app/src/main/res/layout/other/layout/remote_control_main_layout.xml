@@ -125,41 +125,26 @@
                     android:layout_alignParentBottom="true"
                     android:layout_width="match_parent"
                     android:layout_height="16dp"/>
+
                 <LinearLayout
+                    android:id="@+id/remocon_index"
                     android:layout_width="match_parent"
                     android:layout_height="8dp"
                     android:layout_above="@id/remocon_bottom"
                     android:gravity="center_horizontal"
                     android:baselineAligned="false"
                     android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="169" />
-
-                    <LinearLayout
-                        android:id="@+id/remocon_index"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="22"
-                        android:orientation="horizontal">
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:contentDescription="@null"
-                            android:src="@mipmap/remote_material_paging_current"/>
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:contentDescription="@null"
-                            android:src="@mipmap/remote_material_paging_normal"
-                            android:layout_marginStart="6dp"/>
-                    </LinearLayout>
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="168" />
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@null"
+                        android:src="@mipmap/remote_material_paging_current"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@null"
+                        android:src="@mipmap/remote_material_paging_normal"
+                        android:layout_marginStart="6dp"/>
                 </LinearLayout>
             </RelativeLayout>
         </LinearLayout>
