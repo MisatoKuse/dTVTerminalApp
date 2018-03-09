@@ -169,7 +169,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                         Map<String, String> map = resultSet.get(i);
                         String chNo = map.get(JsonConstants.META_RESPONSE_CHNO);
                         String title = map.get(JsonConstants.META_RESPONSE_TITLE);
-                        String thumb = map.get(JsonConstants.META_RESPONSE_DEFAULT_THUMB);
+                        String thumb = map.get(JsonConstants.META_RESPONSE_THUMB_448);
                         String serviceId = map.get(JsonConstants.META_RESPONSE_SERVICE_ID);
                         String rValue = map.get(JsonConstants.META_RESPONSE_R_VALUE);
                         String dispType = map.get(JsonConstants.META_RESPONSE_DISP_TYPE);
@@ -527,7 +527,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             HashMap<String, String> hashMap = channelList.get(i);
             String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
             String title = hashMap.get(JsonConstants.META_RESPONSE_TITLE);
-            String thumbnail = hashMap.get(JsonConstants.META_RESPONSE_DEFAULT_THUMB);
+            String thumbnail = hashMap.get(JsonConstants.META_RESPONSE_THUMB_448);
             String serviceId = hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID);
             String chType = hashMap.get(JsonConstants.META_RESPONSE_CH_TYPE);
             String puId = hashMap.get(JsonConstants.META_RESPONSE_PUID);
