@@ -10,6 +10,7 @@ import android.os.Handler;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RentalListInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.RentalListDataManager;
@@ -23,6 +24,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalVodListWebClient;
 
 import java.util.ArrayList;
@@ -342,6 +344,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
         if (metaFullData.size() != activeDataList.size()) {
             return list;
         }
+        UserState userState = UserInfoUtils.getUserState(mContext);
         for (int i = 0; i < metaFullData.size(); i++) { //indexをactiveDataListで使うため、foreachを使いません
             VodMetaFullData vodMetaFullData = metaFullData.get(i);
             if (displayFlg(vodMetaFullData)) {
@@ -380,7 +383,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
                 data.setDtv(dtv);
                 data.setDtvType(dtvType);
                 data.setDispType(dispType);
-                data.setClipExec(ClipUtils.isCanClip(mContext, dispType, searchOk, dtv, dtvType));
+                data.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
                 data.setContentsId(vodMetaFullData.getCrid());
 
                 //クリップリクエストデータ作成

@@ -6,12 +6,14 @@ package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.vodmetafulldata.Puinf;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -715,10 +717,10 @@ public class VodMetaFullData implements Serializable {
     /**
      * VOD&番組メタレスポンス（フル版）の json データをデータオブジェクトに変換.
      *
-     * @param context 　Context
+     * @param userState 　ユーザ情報
      * @param jsonObj 　json データ
      */
-    public void setData(final Context context, final JSONObject jsonObj) {
+    public void setData(final UserState userState, final JSONObject jsonObj) {
         // ライセンス/販売情報リスト
         Puinf puinf;
         try {
@@ -727,7 +729,7 @@ public class VodMetaFullData implements Serializable {
                 for (String item : mRootPara) {
                     if (!jsonObj.isNull(item)) {
                         setMember(item, jsonObj.get(item));
-                        setClipExec(ClipUtils.isCanClip(context, getDisp_type(), getmSearch_ok(), getDtv(), getDtvType()));
+                        setClipExec(ClipUtils.isCanClip(userState, getDisp_type(), getmSearch_ok(), getDtv(), getDtvType()));
                     }
                 }
 

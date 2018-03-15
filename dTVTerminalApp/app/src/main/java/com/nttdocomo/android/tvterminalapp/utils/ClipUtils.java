@@ -41,7 +41,7 @@ public class ClipUtils {
     /**
      * クリップ可否フラグを返却する.
      *
-     * @param context コンテキストファイル
+     * @param userState ユーザ情報
      * @param dispType 表示タイプ
      * @param searchOk クリップ判定情報
      * @param dtv      dTVフラグ
@@ -49,11 +49,10 @@ public class ClipUtils {
      * @return クリップ可：true,クリップ不可：false
      */
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
-    public static boolean isCanClip(final Context context, final String dispType, final String searchOk,
+    public static boolean isCanClip(final UserState userState, final String dispType, final String searchOk,
                                     final String dtv, final String dtvType) {
 
         //ユーザ情報が未ログインの時は一律クリップ不可
-        UserState userState = UserInfoUtils.getUserState(context);
         if (userState.equals(UserState.LOGIN_NG)) {
             return false;
         }

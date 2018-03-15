@@ -8,12 +8,14 @@ import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
 
 import java.util.ArrayList;
@@ -159,6 +161,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
 
         ContentsData clipContentInfo;
 
+        UserState userState = UserInfoUtils.getUserState(mContext);
         for (int i = 0; i < clipMapList.size(); i++) {
             clipContentInfo = new ContentsData();
 
@@ -182,7 +185,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
             clipContentInfo.setDtv(dtv);
             clipContentInfo.setDtvType(dtvType);
             clipContentInfo.setDispType(dispType);
-            clipContentInfo.setClipExec(ClipUtils.isCanClip(mContext, dispType, searchOk, dtv, dtvType));
+            clipContentInfo.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
             clipContentInfo.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();

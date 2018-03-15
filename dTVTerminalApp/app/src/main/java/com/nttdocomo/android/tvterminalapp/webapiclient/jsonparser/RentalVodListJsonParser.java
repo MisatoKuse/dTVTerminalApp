@@ -9,9 +9,11 @@ import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalVodListWebClient;
 
 import org.json.JSONArray;
@@ -120,10 +122,11 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
                 if (lists.length() == 0) {
                     return;
                 }
+                UserState userState = UserInfoUtils.getUserState(mContext);
                 // VODメタレスポンス（フル版）のデータオブジェクトArrayListを生成する
                 for (int i = 0; i < lists.length(); i++) {
                     VodMetaFullData vodMetaFullData = new VodMetaFullData();
-                    vodMetaFullData.setData(mContext, lists.getJSONObject(i));
+                    vodMetaFullData.setData(userState, lists.getJSONObject(i));
                     vodMetaFullDataList.add(vodMetaFullData);
                 }
                 // 購入済みVOD一覧リストをセットする

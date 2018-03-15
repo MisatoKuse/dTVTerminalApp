@@ -5,7 +5,7 @@
 <resources>
 
     <!-- Common -->
-    <string name="app_name">ドコモテレビターミナル</string>
+    <string name="app_name">テレビターミナル</string>
     <string name="contents_hyphen">-</string>
     <string name="positive_response">はい</string>
     <string name="negative_response">いいえ</string>
@@ -28,8 +28,8 @@
     <string name="common_text_retry">リトライ</string>
     <string name="save_token">トークンの保存を行います。</string>
     <string name="transoceanic_communication_dialog_confirm">利用する</string>
-    <string name="transoceanic_communication_dialog_content">海外でのパケット通信は、日本国内とは異なる料金体系となりますのでご注意ください \n※通信料はご契約の通信会社提供のプランにより異なります。\n※Wi-Fi接続でご利用される場合はこの限りではありません。</string>
-    <string name="transoceanic_communication_dialog_title">海外通信の利用</string>
+    <string name="transoceanic_communication_dialog_content">海外でのパケット通信は、日本国内とは異なる料金体系となりますのでご注意ください。 \n※通信料はご契約の通信会社提供のプランにより異なります。\n※Wi-Fi接続でご利用される場合はこの限りではありません。</string>
+    <string name="transoceanic_communication_dialog_title">海外での通信利用</string>
     <string name="permission_denied_dialog_title">Permission Denied</string>
     <string name="permission_denied_dialog_content">通信許可がないためアプリケーションを終了します</string>
     <string name="permission_detail_dialog_title">権限の用途</string>
@@ -44,27 +44,28 @@
     <string name="str_app_title">ドコモテレビターミナル</string>
     <string name="str_launch_title">起動画面</string>
     <string name="str_tutorial_title">チュートリアル画面</string>
-    <string name="str_stb_select_result_text">ペアリング可能なデバイスが\n見つかりました。</string>
-    <string name="str_stb_next_not_display_text">次回以降表示しない</string>
-    <string name="str_stb_connect_success_text">ドコモテレビターミナルとペアリングしました。</string>
-    <string name="str_stb_no_pair_use_text">ペアリングしないでアプリを利用する</string>
-    <string name="str_stb_no_login_use_text">ログインしないでアプリを利用する</string>
+    <string name="str_tutorial_skip">スキップ</string>
+    <string name="str_stb_next_not_display_text">以後、表示しない</string>
+    <string name="str_stb_connect_success_text">ドコモテレビターミナルとペアリングしました</string>
+    <string name="str_stb_no_pair_use_text">ペアリングをしないで利用する</string>
+    <string name="str_stb_no_login_use_text">ログインしないで利用する</string>
     <string name="str_stb_paring_cancel_text">ペアリング解除する</string>
     <string name="str_stb_paring_setting_title">ペアリング設定</string>
     <string name="str_d_account_resetting_title">dアカウント再設定</string>
     <string name="str_d_account_app_not_install">ドコモテレビターミナルとペアリングするには\ndアカウントでのログインが必要です</string>
-    <string name="str_d_account_app_download">dアカウントアプリをダウンロードする</string>
-    <string name="str_stb_select_result_text_failed">ペアリング可能なデバイスが\n見つかりませんでした。</string>
-    <string name="str_stb_select_result_text_search">ペアリング可能なデバイスを\n探しています。</string>
+    <string name="str_d_account_app_download">dアカウント設定アプリをダウンロードする</string>
+    <string name="str_stb_select_result_text">ペアリング可能なドコモテレビターミナルが\n見つかりました</string>
+    <string name="str_stb_select_result_text_failed">ペアリング可能なドコモテレビターミナルが\n見つかりませんでした</string>
+    <string name="str_stb_select_result_text_search">ペアリング可能なドコモテレビターミナルを\n探しています</string>
     <string name="str_stb_search_failed_help">ドコモテレビターミナルとペアリングするには</string>
     <string name="str_stb_search_failed_paring_again">再度ペアリングを実行する</string>
-    <string name="str_stb_not_registration_account_message">ドコモテレビターミナルに\ndアカウントが登録されていません。</string>
+    <string name="str_stb_not_registration_account_message">ドコモテレビターミナルに\ndアカウントが登録されていません</string>
     <string name="str_stb_login_other_account">別のdアカウントでログインする</string>
-    <string name="str_stb_d_account_registration_help">ドコモテレビターミナルにdアカウントを登録するには</string>
-    <string name="str_stb_input_activation_code">アクティベーションコードを入力する</string>
+    <string name="str_stb_d_account_registration_help">ドコモテレビターミナルに\ndアカウントを登録するには</string>
+    <string name="str_stb_input_activation_code">ペアリングコードを入力する</string>
     <string name="str_stb_again_pairing">再度ペアリングを実行する</string>
 
-    <string name="str_stb_pairing">ドコモテレビターミナルとペアリング中です。</string>
+    <string name="str_stb_pairing">ドコモテレビターミナルとペアリング中です</string>
     <string name="str_stb_stb_error">STBの処理に失敗しました</string>
 
     <!-- リモコン-->
@@ -270,7 +271,7 @@
     <string name="channel_list_activity_title">チャンネルリスト</string>
 
     <!-- ペアリング設定画面 -->
-    <string name="paring_setting_search_failed_text">ペアリング可能なデバイスが見つかりませんでした。</string>
+    <string name="paring_setting_search_failed_text">ペアリング可能なデバイスが見つかりませんでした</string>
     <string name="paring_setting_search_help_text">STBとペアリングするには</string>
     <string name="paring_setting_select_text">ペアリングするドコモテレビターミナルを選択</string>
 

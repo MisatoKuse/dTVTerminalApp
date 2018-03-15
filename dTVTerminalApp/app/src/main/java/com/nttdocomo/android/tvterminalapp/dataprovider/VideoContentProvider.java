@@ -8,12 +8,14 @@ import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
@@ -138,11 +140,13 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
      * @param videoContentMapList コンテンツリストデータ
      * @return dataList 読み込み表示フラグ
      */
+    @SuppressWarnings("OverlyLongMethod")
     private List<ContentsData> setVideoContentData(final List<Map<String, String>> videoContentMapList) {
         List<ContentsData> videoContentsDataList = new ArrayList<>();
 
         ContentsData contentsData;
 
+        UserState userState = UserInfoUtils.getUserState(mContext);
         for (int i = 0; i < videoContentMapList.size(); i++) {
             contentsData = new ContentsData();
 
@@ -162,7 +166,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
             contentsData.setDtv(dtv);
             contentsData.setDtvType(dtvType);
             contentsData.setDispType(dispType);
-            contentsData.setClipExec(ClipUtils.isCanClip(mContext, dispType, searchOk, dtv, dtvType));
+            contentsData.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
             contentsData.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();

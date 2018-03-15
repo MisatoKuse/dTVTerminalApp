@@ -8,12 +8,14 @@ import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvClipList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvClipWebClient;
 
 import java.util.ArrayList;
@@ -158,6 +160,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
 
         ContentsData contentInfo;
 
+        UserState userState = UserInfoUtils.getUserState(mContext);
         for (int i = 0; i < clipMapList.size(); i++) {
             contentInfo = new ContentsData();
 
@@ -182,7 +185,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
             contentInfo.setDispType(dispType);
             contentInfo.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
             contentInfo.setEventId(map.get(JsonConstants.META_RESPONSE_EVENT_ID));
-            contentInfo.setClipExec(ClipUtils.isCanClip(mContext, dispType, searchOk, dtv, dtvType));
+            contentInfo.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
             contentInfo.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();

@@ -10,6 +10,7 @@ import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvScheduleInsertDataManager;
@@ -23,6 +24,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClient;
 
@@ -161,6 +163,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                                       final List<Map<String, String>> resultSet,
                                       final int operationId) {
         if (isSuccessful) {
+            UserState userState = UserInfoUtils.getUserState(mContext);
             switch (operationId) {
                 case CHANNEL_SELECT:
                     ArrayList<ChannelInfo> channels = new ArrayList<>();
@@ -189,7 +192,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                         mSchedule.setDtv(dtv);
                         mSchedule.setRValue(rValue);
                         mSchedule.setDispType(dispType);
-                        mSchedule.setClipExec(ClipUtils.isCanClip(mContext, dispType, searchOk, dtv, dtvType));
+                        mSchedule.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
                         mSchedule.setClipRequestData(setClipData(map));
                         mSchedule.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
                         mSchedule.setTvService(map.get(JsonConstants.META_RESPONSE_TV_SERVICE));
@@ -221,7 +224,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                             ArrayList<ScheduleInfo> scheduleInfoList = new ArrayList<>();
                             for (int i = 0; i < channelInfos.size(); i++) { //番組データ取得して整形する
                                 HashMap<String, String> hashMap =  (HashMap<String, String>) channelInfos.get(i);
-                                ScheduleInfo mSchedule = convertScheduleInfo(hashMap);
+                                ScheduleInfo mSchedule = convertScheduleInfo(hashMap, userState);
                                 scheduleInfoList.add(mSchedule);
                             }
                             //setScheduleInfoのやり方を踏襲.
@@ -381,8 +384,8 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      * @param hashMap 番組情報
      * @param channelsInfo チャンネル情報
      */
-    private void setScheduleInfo(final Map<String, String> hashMap, final ChannelInfoList channelsInfo) {
-        ScheduleInfo mSchedule = convertScheduleInfo(hashMap);
+    private void setScheduleInfo(final Map<String, String> hashMap, final ChannelInfoList channelsInfo, final UserState userState) {
+        ScheduleInfo mSchedule = convertScheduleInfo(hashMap, userState);
 
         if (!TextUtils.isEmpty(mSchedule.getChNo())) { //CH毎番組データ取得して、整形する
             List<ChannelInfo> oldChannelList = channelsInfo.getChannels();
@@ -414,9 +417,10 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      * hashMap情報からScheduleInfo情報を組み立てる.
      *
      * @param map マップ
+     * @param userState ユーザ情報
      * @return ScheduleInfo情報
      */
-    private ScheduleInfo convertScheduleInfo(final Map<String, String> map) {
+    private ScheduleInfo convertScheduleInfo(final Map<String, String> map, final UserState userState) {
         ScheduleInfo mSchedule = new ScheduleInfo();
         String startDate = map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE);
         String endDate = map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE);
@@ -447,7 +451,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         mSchedule.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
         mSchedule.setTitleId(map.get(JsonConstants.META_RESPONSE_TITLE_ID));
         mSchedule.setCrId(map.get(JsonConstants.META_RESPONSE_CRID));
-        mSchedule.setClipExec(ClipUtils.isCanClip(mContext, dispType, searchOk, dtv, dtvType));
+        mSchedule.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
         mSchedule.setClipRequestData(setClipData(map));
         mSchedule.setClipStatus(getClipStatus(dispType, contentType, dtv,
                 map.get(JsonConstants.META_RESPONSE_CRID),
@@ -469,10 +473,11 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         List<Map<String, String>> mChannelProgramList = mTvScheduleList.geTvsList();
         if (mChannelProgramList != null) {
             channelsInfo = new ChannelInfoList();
+            UserState userState = UserInfoUtils.getUserState(mContext);
             for (int i = 0; i < mChannelProgramList.size(); i++) {
                 //CH毎番組データ取得して、整形する
                 Map<String, String> hashMap = mChannelProgramList.get(i);
-                setScheduleInfo(hashMap, channelsInfo);
+                setScheduleInfo(hashMap, channelsInfo, userState);
             }
             mChannelsInfoList = channelsInfo;
             Handler handler = new Handler();
@@ -628,6 +633,8 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      * @param type displayType
      */
     private void getProgram(final int[] chList, final String[] dateList, final String filter, final int type) {
+        //TODO:CH毎番組表取得は表示された列と連動させる
+        //TODO:一度渡したデータは画面に保持させておく
         DateUtils dateUtils = new DateUtils(mContext);
         //dateListのサイズは1.
         mProgramSelectDate = dateList[0];
@@ -644,6 +651,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             }
         }
 
+        //TODO:一斉取得をやめ、逐次取得に変更(表示された列のチャンネル部分だけを取得)
         //データをDBから取得する
         if (mFromDB.size() > 0) {
             Handler handler = new Handler();
@@ -656,6 +664,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             }
         }
 
+        //TODO:一斉取得をやめ、逐次取得に変更(表示された列のチャンネル部分だけを取得)
         //データをWebAPIから取得する
         if (!isStop) {
             mTvScheduleWebClient = new TvScheduleWebClient(mContext);

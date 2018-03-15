@@ -9,8 +9,10 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ContentsDetailGetResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsDetailGetWebClient;
 
 import org.json.JSONArray;
@@ -119,12 +121,13 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
                     return;
                 }
 
+                UserState userState = UserInfoUtils.getUserState(mContext);
                 //VOD＆番組マージメタデータ（フル版）のデータオブジェクトArrayListを生成する
                 for (int i = 0; i < lists.length(); i++) {
                     VodMetaFullData fullData = new VodMetaFullData();
 
                     //データを個別に転送する
-                    fullData.setData(mContext,lists.getJSONObject(i));
+                    fullData.setData(userState,lists.getJSONObject(i));
 
                     //データを追加
                     vodMetaFullDataArrayList.add(fullData);
