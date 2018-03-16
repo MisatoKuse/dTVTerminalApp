@@ -14,6 +14,7 @@ import com.nttdocomo.android.ocsplib.OcspUtil;
 import com.nttdocomo.android.ocsplib.exception.OcspParameterException;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.struct.OneTimeTokenData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
@@ -358,7 +359,7 @@ public class WebApiBasePlala {
         /**
          * 通信時エラー情報.
          */
-        DTVTConstants.ERROR_TYPE errorType;
+        ErrorState errorState;
         /**
          * 本体データ.
          */
@@ -372,7 +373,7 @@ public class WebApiBasePlala {
          * コンストラクタ.
          */
         ReturnCode() {
-            errorType = DTVTConstants.ERROR_TYPE.SUCCESS;
+            errorState = new ErrorState();
             bodyData = "";
             extraData = null;
         }
@@ -472,6 +473,15 @@ public class WebApiBasePlala {
                 mUrlConnections = null;
             }
         }
+    }
+
+    /**
+     * WebAPIのエラー情報を取得する.
+     *
+     * @return エラー情報クラス
+     */
+    public ErrorState getError() {
+        return mReturnCode.errorState;
     }
 
     /**
@@ -653,7 +663,7 @@ public class WebApiBasePlala {
 
                             ReturnCode returnCode = new ReturnCode();
                             //既に実行されたかどうかの判定
-                            if(communicationTask.getStatus().equals(AsyncTask.Status.PENDING)) {
+                            if (communicationTask.getStatus().equals(AsyncTask.Status.PENDING)) {
                                 //実行されていないので、ワンタイムトークンの取得結果を元にして、通信を開始する
                                 communicationTask.execute(returnCode);
                             } else {
@@ -671,8 +681,8 @@ public class WebApiBasePlala {
                                 DTVTLogger.debug("token get failed ");
                                 //通信エラーのエラーコードを作成する
                                 ReturnCode returnCode = new ReturnCode();
-                                returnCode.errorType =
-                                        DTVTConstants.ERROR_TYPE.COMMUNICATION_ERROR;
+                                returnCode.errorState.setErrorType(
+                                        DTVTConstants.ERROR_TYPE.TOKEN_ERROR);
                                 //呼び出し元にエラーを伝える
                                 serviceTokenErrorCallback.onTokenError(returnCode);
                             }
@@ -705,7 +715,7 @@ public class WebApiBasePlala {
     private String readConnectionBody(final int statusCode) {
         if (statusCode != HttpURLConnection.HTTP_OK) {
             //HTTP通信エラーとして元に返す
-            mReturnCode.errorType = DTVTConstants.ERROR_TYPE.HTTP_ERROR;
+            mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.SERVER_ERROR);
             DTVTLogger.debug(String.format("statusCode[%s]", statusCode));
             return "";
         }
@@ -733,13 +743,13 @@ public class WebApiBasePlala {
 
         } catch (UnsupportedEncodingException e) {
             //HTTP通信エラーとして元に返す
-            mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
+            mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.HTTP_ERROR);
             DTVTLogger.debug(e);
         } catch (IOException e) {
             //全通信停止発行済みならば、正常な動作となる
             if (!mIsStopAllConnections) {
                 //通信停止ではないので、通信エラー
-                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
+                mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.HTTP_ERROR);
                 DTVTLogger.debug(e);
             }
         } finally {
@@ -804,7 +814,7 @@ public class WebApiBasePlala {
             bufferedReader.close();
         } catch (IOException e) {
             //エラーコードを設定する
-            mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
+            mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.HTTP_ERROR);
         } finally {
             if (bufferedReader != null) {
                 try {
@@ -837,14 +847,14 @@ public class WebApiBasePlala {
         } catch (IOException e) {
             // POST送信エラー
             DTVTLogger.debug(e);
-            mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
+            mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.HTTP_ERROR);
         } finally {
             if (dataOutputStream != null) {
                 try {
                     dataOutputStream.close();
                 } catch (IOException e1) {
                     DTVTLogger.debug(e1);
-                    mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
+                    mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.HTTP_ERROR);
                 }
             }
         }
@@ -866,7 +876,7 @@ public class WebApiBasePlala {
                 stream.close();
             } catch (IOException e) {
                 //クローズ失敗は通信エラー
-                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
+                mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.HTTP_ERROR);
                 DTVTLogger.debug(e);
             }
         }
@@ -875,7 +885,7 @@ public class WebApiBasePlala {
                 inputStreamReader.close();
             } catch (IOException e) {
                 //クローズ失敗は通信エラー
-                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
+                mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.HTTP_ERROR);
                 DTVTLogger.debug(e);
             }
         }
@@ -884,7 +894,7 @@ public class WebApiBasePlala {
                 bufferedReader.close();
             } catch (IOException e) {
                 //クローズ失敗は通信エラー
-                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
+                mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.HTTP_ERROR);
                 DTVTLogger.debug(e);
             }
         }
@@ -1094,22 +1104,24 @@ public class WebApiBasePlala {
                 removeConnections(mUrlConnection);
             } catch (ConnectException e) {
                 //通信エラー扱いとする
-                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.COMMUNICATION_ERROR;
+                mReturnCode.errorState.setErrorType(
+                        DTVTConstants.ERROR_TYPE.NETWORK_ERROR);
             } catch (SSLHandshakeException e) {
                 //SSL証明書が失効している
-                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.SSL_ERROR;
+                mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.SSL_ERROR);
                 DTVTLogger.debug(e);
             } catch (SSLPeerUnverifiedException e) {
                 //SSLチェックライブラリの初期化が行われていない
-                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.SSL_ERROR;
+                mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.SSL_ERROR);
                 DTVTLogger.debug(e);
             } catch (IOException e) {
                 //通信エラー扱いとする
-                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.COMMUNICATION_ERROR;
+                mReturnCode.errorState.setErrorType(
+                        DTVTConstants.ERROR_TYPE.HTTP_ERROR);
                 DTVTLogger.debug(e);
             } catch (OcspParameterException e) {
                 //SSLチェックの初期化に失敗している・通常は発生しないとの事
-                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.SSL_ERROR;
+                mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.SSL_ERROR);
                 DTVTLogger.debug(e);
             } finally {
                 //最後なので初期化
@@ -1138,7 +1150,7 @@ public class WebApiBasePlala {
             }
 
             //呼び出し元に伝える情報を判断する
-            switch (returnCode.errorType) {
+            switch (returnCode.errorState.getErrorType()) {
                 case SUCCESS:
                     if (mAnswerBuffer.isEmpty()) {
                         //結果の値が無いので、失敗を伝える
@@ -1152,15 +1164,13 @@ public class WebApiBasePlala {
                         mWebApiBasePlalaCallback.onAnswer(returnCode);
                     }
                     break;
+                //TODO: NWエラーのQA回答後は、ここでメッセージを出し分ける予定
+                case NETWORK_ERROR:
+                case SERVER_ERROR:
+                case TOKEN_ERROR:
                 case SSL_ERROR:
-                    //SSLチェックライブラリのエラーなので、呼び出し元にエラーを伝える
-                    mWebApiBasePlalaCallback.onError(returnCode);
-                    break;
                 case HTTP_ERROR:
-                case COMMUNICATION_ERROR:
-                case OTHER_ERROR:
-                case ANALYSIS_ERROR:
-                case NO_DATA:
+                case API_ERROR:
                 default:
                     //その他のエラーなので、呼び出し元にはエラーを伝える
                     mWebApiBasePlalaCallback.onError(returnCode);
@@ -1304,19 +1314,19 @@ public class WebApiBasePlala {
 
             } catch (SSLHandshakeException e) {
                 //SSL証明書が失効している
-                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.SSL_ERROR;
+                mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.SSL_ERROR);
                 DTVTLogger.debug(e);
             } catch (SSLPeerUnverifiedException e) {
                 //SSLチェックライブラリの初期化が行われていない
-                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.SSL_ERROR;
+                mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.SSL_ERROR);
                 DTVTLogger.debug(e);
             } catch (IOException e) {
                 DTVTLogger.debug(e);
                 //エラーコードを設定
-                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
+                mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.HTTP_ERROR);
             } catch (OcspParameterException e) {
                 //SSLチェックの初期化に失敗している・通常は発生しないとの事
-                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.SSL_ERROR;
+                mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.SSL_ERROR);
                 DTVTLogger.debug(e);
             } finally {
                 //通信の切断処理
@@ -1401,14 +1411,14 @@ public class WebApiBasePlala {
 
                 if (TextUtils.isEmpty(serviceToken)) {
                     //サービストークンは見つからなかったので、エラーコードを設定する
-                    mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
+                    mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.TOKEN_ERROR);
                 } else {
                     //サービストークン取得では使用しないが、データを格納しなければエラー扱いになるので、トークンを入れておく
                     mAnswerBuffer = serviceToken;
                 }
             } else {
-                //なんらかの異常があった場合はエラーコードを設定
-                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
+                //トークン取得以前の問題なので、その他エラーとする
+                mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.HTTP_ERROR);
             }
         }
     }

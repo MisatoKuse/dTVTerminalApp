@@ -280,7 +280,7 @@
     <string name="paring_setting_select_text">ペアリングするドコモテレビターミナルを選択</string>
 
     <!-- 設定画面 -->
-    <string name="main_setting_d_account_message">dアカウントアプリがインストールされていません。\nインストールしますか？</string>
+    <string name="main_setting_d_account_message">dアカウント設定アプリがインストールされていません。\nインストールしますか？</string>
     <string name="main_setting_pairing">ペアリング済み</string>
     <string name="main_setting_not_paring">未ペアリング</string>
     <string name="main_setting_image_quality_low">標準画質</string>
@@ -290,6 +290,7 @@
     <string name="main_setting_application_info_header">アプリケーション情報</string>
     <string name="main_setting_quality_status">status</string>
     <string name="main_setting_stb_application_launch_fail">ドコモテレビターミナルのアプリの起動に失敗しました</string>
+    <string name="main_setting_stb_application_launch_fail_id_notexist">ドコモテレビターミナルのアプリの起動に失敗しました。本アプリでログインしているdアカウントのユーザーをドコモテレビターミナル（テレビ側）に登録してください。</string>
     <string name="main_setting_dtv_uninstall_message">ドコモテレビターミナルのdTVアプリはインストールされてない</string>
     <string name="main_setting_dtv_update_message">ドコモテレビターミナルのdTVアプリのバージョンアップが必要です</string>
     <string name="main_setting_d_anime_store_uninstall_message">ドコモテレビターミナルのdアニメストアの起動に失敗しました</string>
@@ -329,7 +330,7 @@
 
     <!-- dアカウント登録 -->
     <string name="d_account_regist_error">dアカウントの処理に失敗しました</string>
-    <string name="d_account_chamge_message">dアカウントが変更されたため、トップ画面に戻ります。</string>
+    <string name="d_account_chamge_message">dアカウントが変更されたため、ホームに戻ります。</string>
 
     <!-- お知らせ -->
     <string name="information_title">お知らせ</string>

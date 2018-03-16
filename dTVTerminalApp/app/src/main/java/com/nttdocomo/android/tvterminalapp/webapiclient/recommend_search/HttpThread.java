@@ -136,7 +136,7 @@ public class HttpThread extends Thread {
         ErrorStatus() {
             //内容の初期化
             errType = DTVTConstants.ERROR_TYPE.SUCCESS;
-            //未使用の警告が出るが、アクティビティ側でエラー対応が進めば、将来的には使われるはず。
+            //未使用の警告が出るが、アクティビティ側のエラー対応で使われる。
             message = "";
         }
     }
@@ -323,7 +323,7 @@ public class HttpThread extends Thread {
             setErrorStatus(e, DTVTConstants.ERROR_TYPE.SSL_ERROR);
         } catch (IOException e) {
             //その他通信エラー処理
-            setErrorStatus(e, DTVTConstants.ERROR_TYPE.COMMUNICATION_ERROR);
+            setErrorStatus(e, DTVTConstants.ERROR_TYPE.HTTP_ERROR);
         }
 
         //ハンドラーの有無でコールバックの返し方を変える
@@ -425,7 +425,7 @@ public class HttpThread extends Thread {
                         bufferedReader.close();
                     } catch (IOException e) {
                         //その他通信エラー処理
-                        setErrorStatus(e, DTVTConstants.ERROR_TYPE.COMMUNICATION_ERROR);
+                        setErrorStatus(e, DTVTConstants.ERROR_TYPE.HTTP_ERROR);
                     }
                 }
             }

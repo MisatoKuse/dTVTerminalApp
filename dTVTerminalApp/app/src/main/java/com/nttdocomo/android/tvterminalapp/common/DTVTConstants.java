@@ -65,33 +65,35 @@ public class DTVTConstants {
         SUCCESS,
 
         /**
-         * HTTPエラー.
+         * サーバーエラー：WebAPIやそのサーバーへのアクセスが失敗した場合のエラー.
          */
-        HTTP_ERROR,
+        SERVER_ERROR,
 
         /**
-         * その他通信エラー.
+         * トークン取得エラー：各種トークンの取得に失敗した場合のエラー.
          */
-        COMMUNICATION_ERROR,
+        TOKEN_ERROR,
+
         /**
-         * 証明書の問題等、SSLのエラー.
+         * SSLエラー：証明書の期限切れ等、SSLライブラリの出すエラー.
          */
         SSL_ERROR,
 
         /**
-         * データなし.
+         * ネットワークエラー:圏外等ネットワークに接続できない場合のエラー
          */
-        NO_DATA,
+        NETWORK_ERROR,
 
         /**
-         * レスポンス解析エラー.
+         * HTTPエラー:その他通信エラー.
          */
-        ANALYSIS_ERROR,
+        HTTP_ERROR,
 
         /**
-         * その他エラー.
+         * 通信には成功したが、WebAPIの結果がエラー.
          */
-        OTHER_ERROR,
+        API_ERROR,
+
     }
 
 }
