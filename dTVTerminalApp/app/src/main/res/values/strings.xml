@@ -39,6 +39,8 @@
     <string name="status_bar_height_name">status_bar_height</string>
     <string name="status_bar_height_deftype">dimen</string>
     <string name="status_bar_height_defpackage">android</string>
+    <string name="common_empty_data_message">コンテンツがありません</string>
+    <string name="common_get_data_failed_message">取得に失敗しました</string>
 
     <!-- Launch -->
     <string name="str_app_title">ドコモテレビターミナル</string>
@@ -79,7 +81,7 @@
         <item>ビデオ</item>
         <item>dTV</item>
         <item>dTVチャンネル</item>
-        <item>dアニメ</item>
+        <item>dアニメストア</item>
     </string-array>
     <string name="recording_reservation_list_title">録画予約</string>
     <string name="recording_reservation_list_error_toast">録画予約一覧取得失敗</string>
@@ -89,7 +91,7 @@
     <string name="activity_start_network_error_message">ネットワークに接続できませんでした。\nネットワーク状態を確認してください。</string>
     <string name="get_user_info_error_message">ひかりTV for docomoの契約情報取得に失敗しました。</string>
     <string name="get_contents_data_error_message">情報の取得に失敗したため、一部のコンテンツのみ表示します。\nしばらく時間が経ってから再度お試しください。</string>
-    <string name="home_no_contract_info_text">ご利用中のdアカウントでひかりTV for docomoの契約がありません。</string>
+    <string name="home_no_contract_info_text">ご利用中のdアカウントでひかりTV for docomoの契約がありません</string>
     <string name="home_contract_button_text">契約する</string>
     <string name="home_contents_pipe">" | "</string>
     <string name="home_contents_hyphen">" - "</string>
@@ -104,7 +106,7 @@
     <!-- クリップ一覧 -->
     <string name="str_clip_activity_title">クリップ</string>
     <string-array name="tab_clip_names">
-        <item>テレビ</item>
+        <item>番組</item>
         <item>ビデオ</item>
         <!-- <item>キーワード</item> -->
         <!-- <item>人物</item> -->
@@ -112,7 +114,7 @@
 
     <!-- チャンネルリスト -->
     <string-array name="channel_list_tab_names">
-        <item>ひかりTV</item>
+        <item>ひかりTV for docomo</item>
         <item>地上波</item>
         <item>BS</item>
         <item>dTVチャンネル</item>
@@ -120,7 +122,7 @@
 
     <!-- チャンネルリスト STB未接続時 -->
     <string-array name="channel_list_tab_names_no_paring">
-        <item>ひかりTV</item>
+        <item>ひかりTV for docomo</item>
         <item>dTVチャンネル</item>
     </string-array>
 
@@ -131,7 +133,7 @@
     <!-- TvProgram -->
     <string-array name="tv_program_list_tab_names">
         <item>マイ番組表</item>
-        <item>ひかり</item>
+        <item>ひかりTV for docomo</item>
         <item>dTVチャンネル</item>
     </string-array>
     <string name="tv_program_tip">マイ番組が設定されていません</string>
@@ -139,12 +141,12 @@
     <!-- 録画番組 -->
     <string-array name="record_list_tab_names">
         <item>すべて</item>
-        <item>持ち出し</item>
+        <item>ダウンロード済み</item>
     </string-array>
     <string name="record_download_status">ダウンロード中</string>
     <string name="record_download_percent_mark">%</string>
     <string name="record_download_error_message">取得に失敗しました</string>
-    <string name="record_download_delete_title">削除してもよろしいでしょうか？</string>
+    <string name="record_download_delete_title">削除しますか？</string>
     <string name="record_download_cancel_title">ダウンロードを取りやめますか？</string>
     <string name="record_download_cancel_confirm">取りやめる</string>
     <string name="record_download_notification">録画番組をダウンロード中</string>
@@ -162,17 +164,18 @@
     <string name="keyword_search_result">検索結果:</string>
     <string name="keyword_search_result_num">件</string>
     <string name="keyword_search_result_no">の</string>
+    <string name="keyword_search_empty_data_message">該当の番組はありません</string>
     <string-array name="tab_names">
         <item>テレビ</item>
         <item>ビデオ</item>
         <item>dTV</item>
         <item>dTVチャンネル</item>
-        <item>dアニメ</item>
+        <item>dアニメストア</item>
     </string-array>
 
     <!-- Ranking -->
-    <string name="daily_tv_ranking_title">今日のテレビランキング</string>
-    <string name="weekly_tv_ranking_title">週間テレビランキング</string>
+    <string name="daily_tv_ranking_title">今日の番組ランキング</string>
+    <string name="weekly_tv_ranking_title">週間番組ランキング</string>
     <string name="video_ranking_title">ビデオランキング</string>
     <string name="common_ranking_enter">\n</string>
     <string name="common_ranking_tab_all">総合</string>
@@ -189,8 +192,8 @@
     <string name="nav_menu_item_staff_recommend">スタッフおすすめ</string>
     <string name="nav_menu_item_ranking">ランキング</string>
     <string name="nav_menu_item_clip">クリップ</string>
-    <string name="nav_menu_item_tv_clip">クリップ(テレビ)</string>
-    <string name="nav_menu_item_vod_clip">クリップ(ビデオ)</string>
+    <string name="nav_menu_item_tv_clip">クリップ（テレビ）</string>
+    <string name="nav_menu_item_vod_clip">クリップ（ビデオ）</string>
     <string name="nav_menu_item_purchased_video">購入済みビデオ</string>
     <string name="nav_menu_item_watch_listen_video">視聴中ビデオ</string>
     <string name="nav_menu_item_record_reserve">録画予約</string>
@@ -220,31 +223,35 @@
     <string name="contents_info_thumbnail_button">コンテンツ詳細のサムネイル画像上のボタン</string>
     <string name="contents_detail_tv_staff">キャスト・スタッフ</string>
     <string name="contents_detail_tv_staff_recommend">おすすめ作品</string>
-    <string name="contents_detail_until_date">　まで</string>
-    <string name="contents_detail_contract_text">このコンテンツをご覧になるには契約が必要です</string>
+    <string name="contents_detail_until_date">まで</string>
+    <string name="contents_detail_contract_text">ひかりTV for docomoの契約が必要です。契約済みの方はdアカウントでログインしてください。</string>
     <string name="dtv_content_service_start_text">dTVで視聴</string>
     <string name="dtv_content_service_start_dialog">dTVアプリを起動します</string>
     <string name="dtv_content_service_update_dialog">dTVアプリのアップデートが必要です</string>
     <string name="d_anime_store_content_service_start_text">dアニメストアで視聴</string>
     <string name="d_anime_store_content_service_start_dialog">dアニメストアアプリを起動します</string>
     <string name="d_anime_store_content_service_update_dialog">dアニメストアアプリのアップデートが必要です</string>
-    <string name="dtv_channel_service_start_text">dtvチャンネルで視聴</string>
+    <string name="dtv_channel_service_start_text">dTVチャンネルで視聴</string>
     <string name="dtv_channel_service_start_dialog">dtvチャンネルアプリを起動します</string>
     <string name="dtv_channel_service_update_dialog">ｄTVチャンネルアプリのアップデートが必要です</string>
     <string name="d_tv_terminal_application_version_update_dialog">ドコモテレビターミナルを操作したい場合は、ドコモテレビターミナルアプリをアップデートしてください。</string>
     <string name="stb_application_version_update">ご利用のドコモテレビターミナルの最新版がありますドコモテレビターミナルのアップデートをしてください。</string>
     <string name="contents_detail_thumbnail_text">テレビで視聴できます</string>
     <string name="contents_detail_contract_leading_button">契約する</string>
+    <string name="contents_detail_tab_program_detail">番組詳細</string>
+    <string name="contents_detail_tab_channel">チャンネル</string>
+    <string name="contents_detail_tab_episode">エピソード</string>
+    <string name="contents_detail_tab_contents_info">作品情報</string>
     <string-array name="other_service_contents_detail_tabs">
-        <item>作品情報</item>
+        <item>@string/contents_detail_tab_contents_info</item>
     </string-array>
     <string-array name="other_contents_detail_tabs">
-        <item>番組詳細</item>
-        <item>チャンネル</item>
+        <item>@string/contents_detail_tab_program_detail</item>
+        <item>@string/contents_detail_tab_channel</item>
     </string-array>
     <string-array name="video_contents_detail_tabs">
-        <item>番組詳細</item>
-        <item>エピソード</item>
+        <item>@string/contents_detail_tab_program_detail</item>
+        <item>@string/contents_detail_tab_episode</item>
     </string-array>
     <string name="recording_reservation_complete_dialog_msg">録画予約依頼を受け付けました。</string>
     <string name="recording_reservation_complete_dialog_ok">OK</string>
@@ -258,14 +265,14 @@
     <string name="recording_reservation_confirm_dialog_msg">録画予約しますか？</string>
     <string name="recording_reservation_confirm_dialog_confirm">録画予約する</string>
     <string name="recording_reservation_confirm_dialog_cancel">キャンセル</string>
-    <string name="contents_detail_contract_text_vod">ご覧になるには購入が必要です。ドコモテレビターミナル側で購入してください。</string>
+    <string name="contents_detail_contract_text_vod">ご覧になるには購入が必要です。\nドコモテレビターミナルで購入してください。</string>
     <string name="contents_detail_contract_button_vod">ドコモテレビターミナルで購入する</string>
-    <string name="contents_detail_contract_text_ch">このチャンネルをご覧になるにはドコモテレビターミナル側での契約が必要です。</string>
+    <string name="contents_detail_contract_text_ch">このチャンネルをご覧になるにはドコモテレビターミナルでの契約が必要です</string>
     <string name="contents_detail_contract_button_ch">ドコモテレビターミナルで契約する</string>
-    <string name="contents_detail_external_display_dialog_msg">外部出力が検知されたため再生を停止します。</string>
-    <string name="contents_detail_parental_check_fail">年齢制限のため視聴できません。</string>
+    <string name="contents_detail_external_display_dialog_msg">外部出力が検出されたので、再生を停止しました</string>
+    <string name="contents_detail_parental_check_fail">年齢制限のため視聴できません</string>
     <string name="contents_detail_response_ok">OK</string>
-    <string name="contents_player_bad_contents_info">コンテンツの情報が正しくないため再生できません</string>
+    <string name="contents_player_bad_contents_info">再生できませんでした</string>
 
     <!-- チャンネルリストタイトル -->
     <string name="channel_list_activity_title">チャンネルリスト</string>
@@ -287,16 +294,16 @@
     <string name="main_setting_quality_status">status</string>
     <string name="main_setting_stb_application_launch_fail">ドコモテレビターミナルのアプリの起動に失敗しました</string>
     <string name="main_setting_dtv_uninstall_message">ドコモテレビターミナルのdTVアプリはインストールされてない</string>
-    <string name="main_setting_dtv_update_message">ドコモテレビターミナルのdTVのバージョンアップが必要です。</string>
+    <string name="main_setting_dtv_update_message">ドコモテレビターミナルのdTVアプリのバージョンアップが必要です</string>
     <string name="main_setting_d_anime_store_uninstall_message">ドコモテレビターミナルのdアニメストアの起動に失敗しました</string>
-    <string name="main_setting_d_anime_store_update_message">ドコモテレビターミナルのdアニメストアのバージョンアップが必要です。</string>
+    <string name="main_setting_d_anime_store_update_message">ドコモテレビターミナルのdアニメストアアプリのバージョンアップが必要です</string>
     <string name="main_setting_dtv_channel_uninstall_message">ドコモテレビターミナルのdTVチャンネルの起動に失敗しました</string>
-    <string name="main_setting_dtv_channel_update_message">ドコモテレビターミナルのdTVチャンネルのバージョンアップが必要です。</string>
+    <string name="main_setting_dtv_channel_update_message">ドコモテレビターミナルのdTVチャンネルアプリのバージョンアップが必要です</string>
     <string name="main_setting_hikari_tv_uninstall_message">ドコモテレビターミナルのひかりTVの起動に失敗しました</string>
-    <string name="main_setting_hikari_tv_update_message">ドコモテレビターミナルのひかりTVのバージョンアップが必要です。</string>
+    <string name="main_setting_hikari_tv_update_message">ドコモテレビターミナルのひかりTV for docomoアプリのバージョンアップが必要です</string>
     <string name="main_setting_dazn_uninstall_message">ドコモテレビターミナルのダ・ゾーンの起動に失敗しました</string>
     <string name="main_setting_dazn_update_message">ドコモテレビターミナルのダ・ゾーンのバージョンアップが必要です。</string>
-    <string name="main_setting_connect_error_message">STBとの接続に失敗しました。</string>
+    <string name="main_setting_connect_error_message">ドコモテレビターミナルとの通信に失敗しました</string>
     <string name="main_setting_stb_busy_error_message">ドコモテレビターミナルが処理中です。</string>
     <string name="main_setting_menu_title_faq_list">FAQ</string>
     <string name="main_setting_menu_title_license">ライセンス情報</string>
