@@ -39,6 +39,8 @@
     <string name="status_bar_height_name">status_bar_height</string>
     <string name="status_bar_height_deftype">dimen</string>
     <string name="status_bar_height_defpackage">android</string>
+    <string name="common_empty_data_message">コンテンツがありません</string>
+    <string name="common_get_data_failed_message">取得に失敗しました</string>
 
     <!-- Launch -->
     <string name="str_app_title">ドコモテレビターミナル</string>
@@ -79,7 +81,7 @@
         <item>ビデオ</item>
         <item>dTV</item>
         <item>dTVチャンネル</item>
-        <item>dアニメ</item>
+        <item>dアニメストア</item>
     </string-array>
     <string name="recording_reservation_list_title">録画予約</string>
     <string name="recording_reservation_list_error_toast">録画予約一覧取得失敗</string>
@@ -104,7 +106,7 @@
     <!-- クリップ一覧 -->
     <string name="str_clip_activity_title">クリップ</string>
     <string-array name="tab_clip_names">
-        <item>テレビ</item>
+        <item>番組</item>
         <item>ビデオ</item>
         <!-- <item>キーワード</item> -->
         <!-- <item>人物</item> -->
@@ -112,7 +114,7 @@
 
     <!-- チャンネルリスト -->
     <string-array name="channel_list_tab_names">
-        <item>ひかりTV</item>
+        <item>ひかりTV for docomo</item>
         <item>地上波</item>
         <item>BS</item>
         <item>dTVチャンネル</item>
@@ -120,7 +122,7 @@
 
     <!-- チャンネルリスト STB未接続時 -->
     <string-array name="channel_list_tab_names_no_paring">
-        <item>ひかりTV</item>
+        <item>ひかりTV for docomo</item>
         <item>dTVチャンネル</item>
     </string-array>
 
@@ -130,8 +132,8 @@
 
     <!-- TvProgram -->
     <string-array name="tv_program_list_tab_names">
-        <item>MY番組表</item>
-        <item>ひかり</item>
+        <item>マイ番組表</item>
+        <item>ひかりTV for docomo</item>
         <item>dTVチャンネル</item>
     </string-array>
     <string name="tv_program_tip">マイ番組が設定されていません</string>
@@ -139,12 +141,12 @@
     <!-- 録画番組 -->
     <string-array name="record_list_tab_names">
         <item>すべて</item>
-        <item>持ち出し</item>
+        <item>ダウンロード済み</item>
     </string-array>
     <string name="record_download_status">ダウンロード中</string>
     <string name="record_download_percent_mark">%</string>
     <string name="record_download_error_message">取得に失敗しました</string>
-    <string name="record_download_delete_title">削除してもよろしいでしょうか？</string>
+    <string name="record_download_delete_title">削除しますか？</string>
     <string name="record_download_cancel_title">ダウンロードを取りやめますか？</string>
     <string name="record_download_cancel_confirm">取りやめる</string>
     <string name="record_download_notification">録画番組をダウンロード中</string>
@@ -162,17 +164,18 @@
     <string name="keyword_search_result">検索結果:</string>
     <string name="keyword_search_result_num">件</string>
     <string name="keyword_search_result_no">の</string>
+    <string name="keyword_search_empty_data_message">該当の番組はありません</string>
     <string-array name="tab_names">
         <item>テレビ</item>
         <item>ビデオ</item>
         <item>dTV</item>
         <item>dTVチャンネル</item>
-        <item>dアニメ</item>
+        <item>dアニメストア</item>
     </string-array>
 
     <!-- Ranking -->
-    <string name="daily_tv_ranking_title">今日のテレビランキング</string>
-    <string name="weekly_tv_ranking_title">週間テレビランキング</string>
+    <string name="daily_tv_ranking_title">今日の番組ランキング</string>
+    <string name="weekly_tv_ranking_title">週間番組ランキング</string>
     <string name="video_ranking_title">ビデオランキング</string>
     <string name="common_ranking_enter">\n</string>
     <string name="common_ranking_tab_all">総合</string>
@@ -211,7 +214,7 @@
     <string name="search_loading">loading&#8230;</string>
 
     <!-- レンタル -->
-    <string name="rental_title">レンタル</string>
+    <string name="rental_title">レンタルビデオ</string>
     <string name="delivery_end_message">配信終了</string>
 
     <!--コンテンツ詳細-->
