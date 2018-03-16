@@ -247,6 +247,8 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             //　アプリが無ければインストール画面に誘導
             CustomDialog dAccountUninstallDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
             dAccountUninstallDialog.setContent(getResources().getString(R.string.main_setting_d_account_message));
+            dAccountUninstallDialog.setConfirmText(R.string.positive_response);
+            dAccountUninstallDialog.setCancelText(R.string.negative_response);
             dAccountUninstallDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                 @Override
                 public void onOKCallback(final boolean isOK) {
