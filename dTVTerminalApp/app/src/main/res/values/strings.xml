@@ -5,7 +5,7 @@
 <resources>
 
     <!-- Common -->
-    <string name="app_name">テレビターミナル</string>
+    <string name="app_name">ドコモテレビターミナルアプリ</string>
     <string name="contents_hyphen">-</string>
     <string name="positive_response">はい</string>
     <string name="negative_response">いいえ</string>
@@ -49,7 +49,7 @@
     <string name="str_stb_connect_success_text">ドコモテレビターミナルとペアリングしました</string>
     <string name="str_stb_no_pair_use_text">ペアリングをしないで利用する</string>
     <string name="str_stb_no_login_use_text">ログインしないで利用する</string>
-    <string name="str_stb_paring_cancel_text">ペアリング解除する</string>
+    <string name="str_stb_paring_cancel_text">ペアリングを解除する</string>
     <string name="str_stb_paring_setting_title">ペアリング設定</string>
     <string name="str_d_account_resetting_title">dアカウント再設定</string>
     <string name="str_d_account_app_not_install">ドコモテレビターミナルとペアリングするには\ndアカウントでのログインが必要です</string>
@@ -130,7 +130,7 @@
 
     <!-- TvProgram -->
     <string-array name="tv_program_list_tab_names">
-        <item>MY番組表</item>
+        <item>マイ番組表</item>
         <item>ひかり</item>
         <item>dTVチャンネル</item>
     </string-array>
@@ -194,7 +194,7 @@
     <string name="nav_menu_item_purchased_video">購入済みビデオ</string>
     <string name="nav_menu_item_watch_listen_video">視聴中ビデオ</string>
     <string name="nav_menu_item_record_reserve">録画予約</string>
-    <string name="nav_menu_item_video">ビデオ</string>
+    <string name="nav_menu_item_video">ビデオジャンル</string>
     <string name="nav_menu_item_keyword_search">キーワードで探す</string>
     <string name="nav_menu_item_notice">お知らせ</string>
     <string name="nav_menu_item_setting">設定</string>
@@ -211,7 +211,7 @@
     <string name="search_loading">loading&#8230;</string>
 
     <!-- レンタル -->
-    <string name="rental_title">レンタル</string>
+    <string name="rental_title">レンタルビデオ</string>
     <string name="delivery_end_message">配信終了</string>
 
     <!--コンテンツ詳細-->
@@ -276,7 +276,7 @@
     <string name="paring_setting_select_text">ペアリングするドコモテレビターミナルを選択</string>
 
     <!-- 設定画面 -->
-    <string name="main_setting_d_account_message">dアカウントアプリがインストールされていません。\nインストールしますか？</string>
+    <string name="main_setting_d_account_message">dアカウント設定アプリがインストールされていません。\nインストールしますか？</string>
     <string name="main_setting_pairing">ペアリング済み</string>
     <string name="main_setting_not_paring">未ペアリング</string>
     <string name="main_setting_image_quality_low">標準画質</string>
@@ -298,10 +298,10 @@
     <string name="main_setting_dazn_update_message">ドコモテレビターミナルのダ・ゾーンのバージョンアップが必要です。</string>
     <string name="main_setting_connect_error_message">STBとの接続に失敗しました。</string>
     <string name="main_setting_stb_busy_error_message">ドコモテレビターミナルが処理中です。</string>
-    <string name="main_setting_menu_title_faq_list">FAQ一覧</string>
+    <string name="main_setting_menu_title_faq_list">FAQ</string>
     <string name="main_setting_menu_title_license">ライセンス情報</string>
     <string name="main_setting_menu_title_privacy_policy">プライバシーポリシー</string>
-    <string name="main_setting_menu_title_app">APP</string>
+    <string name="main_setting_menu_title_app">アプリケーション・プライバシーポリシー</string>
     <string name="main_setting_menu_title_terms_of_service">利用規約</string>
     <string-array name="main_setting_items">
         <item>dアカウント設定</item>
@@ -312,11 +312,11 @@
         <item>アプリケーション情報</item>
         <item>ライセンス情報</item>
         <item>プライバシーポリシー</item>
-        <item>APP</item>
+        <item>アプリケーション・プライバシーポリシー</item>
         <item>利用規約</item>
     </string-array>
 
-    <!-- MY番組表設定 -->
+    <!-- マイ番組表設定 -->
     <string name="my_channel_list_setting">マイ番組表設定</string>
     <string name="my_channel_list_setting_select_channel">チャンネルを選択</string>
     <string name="my_channel_list_setting_failed_dialog_content_register">マイ番組表の登録に失敗しました</string>
