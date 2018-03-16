@@ -89,13 +89,13 @@ public class BaseActivity extends FragmentActivity implements
      */
     private LinearLayout mBaseLinearLayout = null;
     /**
-     *　ステータスレイアウト.
+     * 　ステータスレイアウト.
      */
-    private   LinearLayout mStatusLinearLayout = null;
+    private LinearLayout mStatusLinearLayout = null;
     /**
-     *　タイトルレイアウト.
+     * 　タイトルレイアウト.
      */
-    private  RelativeLayout mHeaderTitleLayout = null;
+    private RelativeLayout mHeaderTitleLayout = null;
     /**
      * ヘッダーレイアウト.
      */
@@ -199,6 +199,10 @@ public class BaseActivity extends FragmentActivity implements
      * dアカウント設定アプリ登録処理.
      */
     private DaccountControl mDAccountControl = null;
+    /**
+     * 初回dアカウント取得失敗時のダイアログを呼び出すハンドラー
+     */
+    private Handler mFirstDaccountErrorHandler = null;
 
     /**
      * 詳細画面起動元Classを保存.
@@ -546,9 +550,10 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     /**
-     *　タイトルの描画を監視する.
-     * @param mHeaderTitleLayout タイトルレイアウト
-     * @param mStatusLinearLayout　ステータスアイコンレイアウト
+     * 　タイトルの描画を監視する.
+     *
+     * @param mHeaderTitleLayout  タイトルレイアウト
+     * @param mStatusLinearLayout 　ステータスアイコンレイアウト
      */
 
     private void changeTitleLayout(final RelativeLayout mHeaderTitleLayout, final LinearLayout mStatusLinearLayout) {
@@ -566,8 +571,9 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * タイトルのレイアウトを変える.
-     * @param mHeaderTitleLayout　タイトルレイアウト
-     * @param statusIcon　ステータスアイコンレイアウト
+     *
+     * @param mHeaderTitleLayout 　タイトルレイアウト
+     * @param statusIcon         　ステータスアイコンレイアウト
      */
 
     private void displayTitleLayout(final RelativeLayout mHeaderTitleLayout, final LinearLayout statusIcon) {
@@ -582,9 +588,10 @@ public class BaseActivity extends FragmentActivity implements
 
 
     /**
-     *　タイトルの描画を監視する.
-     * @param mTitleImageView タイトルレイアウト
-     * @param mStatusLinearLayout　ステータスアイコンレイアウト
+     * 　タイトルの描画を監視する.
+     *
+     * @param mTitleImageView     タイトルレイアウト
+     * @param mStatusLinearLayout 　ステータスアイコンレイアウト
      */
     private void changeTitlePosition(final ImageView mTitleImageView, final LinearLayout mStatusLinearLayout) {
         mStatusLinearLayout.getViewTreeObserver()
@@ -600,8 +607,9 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * タイトルのレイアウトを変える.
-     * @param mTitleImageView　タイトルレイアウト
-     * @param statusIcon　ステータスアイコンレイアウト
+     *
+     * @param mTitleImageView 　タイトルレイアウト
+     * @param statusIcon      　ステータスアイコンレイアウト
      */
     private void displayTitlePosition(final ImageView mTitleImageView, final LinearLayout statusIcon) {
         if (mTitleImageView.getX() + mTitleImageView.getMeasuredWidth() > statusIcon.getX()) {
@@ -1619,6 +1627,9 @@ public class BaseActivity extends FragmentActivity implements
      * dアカウントの切り替えや無効化を受信できるように設定を行う.
      */
     protected void setDaccountControl() {
+        //UIスレッド上の動作である間にエラー用ダイアログ表示準備を行う
+        mFirstDaccountErrorHandler = new Handler();
+
         //dアカウント関連の処理を依頼する
         mDAccountControl = new DaccountControl();
         mDAccountControl.registService(getApplicationContext(), this);
@@ -1634,6 +1645,18 @@ public class BaseActivity extends FragmentActivity implements
     public void daccountControlCallBack(final boolean result) {
         DTVTLogger.start();
 
+        //エラー表示を行うかどうかのスイッチ
+        boolean firstDaccountError = false;
+
+        //初回dアカウント取得かどうかの判定
+        if (SharedPreferencesUtils.isFirstDaccountGetProcess(getApplicationContext()) && !result) {
+            //初回のdアカウント取得かつ問題が発生していた場合はtrueにする
+            firstDaccountError = true;
+        }
+
+        //初回dアカウント取得が行われていた場合は終わらせる
+        SharedPreferencesUtils.setFirstExecEnd(getApplicationContext());
+
         onDaccountOttGetComplete();
         //dアカウントの登録結果を受け取るコールバック
         if (result) {
@@ -1642,12 +1665,21 @@ public class BaseActivity extends FragmentActivity implements
             return;
         }
 
-        if (mDAccountControl == null) {
+        //dアカウント処理クラスがヌルか、初回起動時にdアカウント取得で問題が発生したかどうかを確認
+        if (mDAccountControl == null || firstDaccountError) {
             //処理には失敗したが、動作の続行ができないので、ここで終わらせる。ただ、このコールバックを受けている以上、ヌルになることありえないはず
-            CustomDialog errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
-            errorDialog.setContent(getString(R.string.d_account_regist_error));
-            errorDialog.showDialog();
-            DTVTLogger.end("null end");
+            //今はUIスレッドではないので、ダイアログの処理を移譲する
+            mFirstDaccountErrorHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    //初回実行時に限り、エラーダイアログを表示する。現状エラー文言は1種類なので、文言切り替えは必要ない
+                    CustomDialog errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
+                    errorDialog.setContent(getString(R.string.d_account_regist_error));
+                    errorDialog.showDialog();
+                }
+            });
+
+            DTVTLogger.end("null end or first daccount get error");
             return;
         }
 

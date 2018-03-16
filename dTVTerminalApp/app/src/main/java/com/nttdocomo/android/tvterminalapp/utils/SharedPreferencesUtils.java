@@ -117,6 +117,24 @@ public class SharedPreferencesUtils {
      * ユーザ情報永続化キー.
      */
     public static final String USER_INFO_SERIALIZABLE_DATA_KEY = "user_info_serializable_data_key";
+    /**
+     * 初回dアカウント取得フラグ.
+     * ランチャーアクティビティの最初に初回実行状態に更新し、dアカウントの最初の取得処理で初回実行終了とする
+     * 以後はdアカウントユーザー切り替えも含めて内容は変更しない。
+     */
+    private static final String FIRST_D_ACCOUNT_GET_KEY = "FIRST_D_ACCOUNT_GET_KEY";
+    /**
+     * 初回dアカウント取得フラグのデフォルト値.
+     */
+    private static final int FIRST_D_ACCOUNT_GET_BEFORE = 0;
+    /**
+     * 初回dアカウント取得フラグの、取得中の値.
+     */
+    private static final int FIRST_D_ACCOUNT_GET_NOW = 1;
+    /**
+     * 初回dアカウント取得フラグの、取得後の値。一度この値になると、以後の変化は無い.
+     */
+    private static final int FIRST_D_ACCOUNT_GET_AFTER = 2;
 
     /**
      * 独自の削除メソッドがある接続済みSTB情報以外の、dアカウントユーザー切り替え時の削除対象
@@ -166,7 +184,9 @@ public class SharedPreferencesUtils {
             // ワンタイムトークン
             ONE_TIME_TOKEN,
             //ユーザ情報
-            USER_INFO_SERIALIZABLE_DATA_KEY
+            USER_INFO_SERIALIZABLE_DATA_KEY,
+            // 初回dアカウント取得フラグはdアカウント切り替え時も削除無用。指定漏れとの誤認防止用にコメントで記載
+            //FIRST_D_ACCOUNT_GET_KEY,
     };
 
 
@@ -735,5 +755,79 @@ public class SharedPreferencesUtils {
         }
         //保存したひかりTVfordocomo視聴年齢値が無いときはnullを返却
         return preferencesData.getUserInfoList();
+    }
+
+    /**
+     * 最初のdアカウント取得処理を行ったかどうかを問い合わせる.
+     *
+     * @param context コンテキスト
+     * @return 最初のdアカウント取得処理は既に行っていたならばfalse
+     */
+    public static boolean isFirstDaccountGetProcess(final Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                FIRST_D_ACCOUNT_GET_KEY, Context.MODE_PRIVATE);
+
+        //現在のステータスを取得する
+        int status = data.getInt(FIRST_D_ACCOUNT_GET_KEY, FIRST_D_ACCOUNT_GET_BEFORE);
+
+        //実行後ならば、falseを返却
+        if (status == FIRST_D_ACCOUNT_GET_AFTER) {
+            DTVTLogger.end();
+            return false;
+        }
+
+        DTVTLogger.end();
+        //実行後以外ならばtrueを返却
+        return true;
+    }
+
+    /**
+     * dアカウント取得実行状況の書き込みを行う.
+     *
+     * @param context コンテキスト
+     * @param status  実行状況
+     */
+    private static void setFirstExecFlag(final Context context, int status) {
+        DTVTLogger.start();
+
+        //既に初回のdアカウント取得処理を行ったかどうかの確認
+        SharedPreferences data = context.getSharedPreferences(
+                FIRST_D_ACCOUNT_GET_KEY, Context.MODE_PRIVATE);
+        int nowStatus = data.getInt(FIRST_D_ACCOUNT_GET_KEY, FIRST_D_ACCOUNT_GET_BEFORE);
+
+        //実行後ならば、何もせずに帰る
+        if (nowStatus == FIRST_D_ACCOUNT_GET_AFTER) {
+            DTVTLogger.end();
+            return;
+        }
+
+        //新たなステータスを書き込む
+        SharedPreferences.Editor editor = data.edit();
+        editor.putInt(FIRST_D_ACCOUNT_GET_KEY, status);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * 初回のdアカウント取得処理を行う前に呼び出す.
+     *
+     * @param context コンテキスト
+     */
+    public static void setFirstExecStart(final Context context) {
+        DTVTLogger.start();
+        setFirstExecFlag(context, FIRST_D_ACCOUNT_GET_NOW);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 初回のdアカウント取得処理を行った後に呼び出す.
+     *
+     * @param context コンテキスト
+     */
+    public static void setFirstExecEnd(final Context context) {
+        DTVTLogger.start();
+        setFirstExecFlag(context, FIRST_D_ACCOUNT_GET_AFTER);
+        DTVTLogger.end();
     }
 }

@@ -89,7 +89,7 @@ public class DaccountControl implements
      *
      * @return エラーの値
      */
-    public int getmResult() {
+    public int getResult() {
         //必要な場合に戻り値を取得できるようにする
         return mResult;
     }
@@ -126,6 +126,10 @@ public class DaccountControl implements
         if (mIsCancel) {
             return;
         }
+
+        //初回実行である事を設定する
+        SharedPreferencesUtils.setFirstExecStart(context);
+
         if (DAccountUtils.checkDAccountIsExist() == null) {
             //dアカウント設定アプリが存在しないので帰る。ここで帰れば、単体実行フラグがセットされず、別のアクティビティの実行時に自動的に実行される。
             //後ほど、dアカウント設定アプリがダウンロードされた場合、その直後のアクティビティの起動時に呼び出されるので、意図的にダウンロード直後に処理を
@@ -191,6 +195,7 @@ public class DaccountControl implements
                 && result != IDimDefines.RESULT_INCOMPATIBLE_ENVIRONMENT
                 && result != IDimDefines.RESULT_INTERNAL_ERROR) {
             //結果が利用不可や動作対象外や内部エラー以外は、サービス登録要求を呼び出す
+            //（この時点でサービス未登録ならば登録すればいいので、ワーディングリストのサービス未登録とは別件）
             mDaccountRegistService = new DaccountRegistService();
             mDaccountRegistService.execRegistService(mContext, this);
             //クラスの識別値を控える
@@ -226,6 +231,7 @@ public class DaccountControl implements
             mResultClass = CHECK_LAST_CLASS.ONE_TIME_PASS_WORD;
         } else {
             //実行失敗なので、エラーを返す
+            // ここでサービス登録に失敗するのが、ワーディングリストの「サービス未登録」になる
             mDaccountControlCallBack.daccountControlCallBack(false);
 
             //次回実行する為にフラグをリセット
@@ -244,6 +250,11 @@ public class DaccountControl implements
         mResult = result;
 
         //ワンタイムパスワードの取得結果(ワンタイムパスワードの有無が重要なので、resultの判定は無用)
+        //ワーディングリストのdアカウント取得失敗の下記の問題はここでの判定となる
+        //認証状態無効・タイムアウト・ユーザー中断・ユーザー状態異常・サーバエラー・ネットワークエラー・内部エラー
+        //本来はresultが以下の値であることの検査が必要だが、各エラーに固有のエラーメッセージは無いので、現状では行わない
+        // RESULT_INVALID_ID/RESULT_USER_TIMEOUT/RESULT_USER_CANCEL/RESULT_USER_INVALID_STATE/
+        // RESULT_SERVER_ERROR/RESULT_NETWORK_ERROR/RESULT_INTERNAL_ERROR
         if (oneTimePassword == null || oneTimePassword.isEmpty()) {
             //ワンタイムトークン取得失敗
             //実行失敗なので、エラーを返す

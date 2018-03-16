@@ -117,6 +117,7 @@ class DaccountCheckService {
                 //サービスチェック処理を呼び出す
                 result = mService.checkService(appReqId, serviceKey, callback);
             } catch (RemoteException e) {
+                //ワーディングリストのリモートエクセプションの判定はこちらとなる
                 DTVTLogger.debug(e);
                 //例外が発生した場合は、自前で内部エラーにする
                 result = IDimDefines.RESULT_INTERNAL_ERROR;
