@@ -236,8 +236,8 @@
     <string name="dtv_channel_service_start_text">dTVチャンネルで視聴</string>
     <string name="dtv_channel_service_start_dialog">dtvチャンネルアプリを起動します</string>
     <string name="dtv_channel_service_update_dialog">ｄTVチャンネルアプリのアップデートが必要です</string>
-    <string name="d_tv_terminal_application_version_update_dialog">ドコモテレビターミナルを操作したい場合は、ドコモテレビターミナルアプリをアップデートしてください。</string>
-    <string name="stb_application_version_update">ご利用のドコモテレビターミナルの最新版がありますドコモテレビターミナルのアップデートをしてください。</string>
+    <string name="d_tv_terminal_application_version_update_dialog">ドコモテレビターミナルアプリのアップデートが必要です</string>
+    <string name="stb_application_version_update">ご利用のドコモテレビターミナルでアプリのアップデートが必要です。\nドコモテレビターミナルを起動し、設定＞ドコモサービス設定＞ドコモアプリ管理　から「ドコモテレビターミナルアプリ用アプリ」をアップデートしてください。</string>
     <string name="contents_detail_thumbnail_text">テレビで視聴できます</string>
     <string name="contents_detail_contract_leading_button">契約する</string>
     <string name="contents_detail_tab_program_detail">番組詳細</string>
@@ -295,7 +295,7 @@
     <string name="main_setting_application_info_header">アプリケーション情報</string>
     <string name="main_setting_quality_status">status</string>
     <string name="main_setting_stb_application_launch_fail">ドコモテレビターミナルのアプリの起動に失敗しました</string>
-    <string name="main_setting_stb_application_launch_fail_id_notexist">ドコモテレビターミナルのアプリの起動に失敗しました。本アプリでログインしているdアカウントのユーザーをドコモテレビターミナル（テレビ側）に登録してください。</string>
+    <string name="main_setting_stb_application_launch_fail_id_notexist">本アプリでログインしているdアカウントのユーザーをドコモテレビターミナル（テレビ側）に登録してください。</string>
     <string name="main_setting_dtv_uninstall_message">ドコモテレビターミナルのdTVアプリはインストールされてない</string>
     <string name="main_setting_dtv_update_message">ドコモテレビターミナルのdTVアプリのバージョンアップが必要です</string>
     <string name="main_setting_d_anime_store_uninstall_message">ドコモテレビターミナルのdアニメストアの起動に失敗しました</string>

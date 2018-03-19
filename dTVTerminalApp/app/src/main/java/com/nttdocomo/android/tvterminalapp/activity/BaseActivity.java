@@ -873,6 +873,17 @@ public class BaseActivity extends FragmentActivity implements
                         startApplicationErrorHandler(resultCode, appId);
                         break;
                     case IS_USER_ACCOUNT_EXIST:
+                        CustomDialog dAccountRegDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+                        dAccountRegDialog.setContent(getResources().getString(R.string.main_setting_stb_application_launch_fail_id_notexist));
+                        dAccountRegDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                            @Override
+                            public void onOKCallback(final boolean isOK) {
+                                Intent intent = new Intent(getApplicationContext(), DAccountSettingHelpActivity.class);
+                                startActivity(intent);
+                            }
+                        });
+                        dAccountRegDialog.showDialog();
+                        break;
                     case SET_DEFAULT_USER_ACCOUNT:
                         switch (resultCode) {
                             case RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
