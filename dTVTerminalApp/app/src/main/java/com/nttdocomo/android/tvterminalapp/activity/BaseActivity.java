@@ -873,16 +873,19 @@ public class BaseActivity extends FragmentActivity implements
                         startApplicationErrorHandler(resultCode, appId);
                         break;
                     case IS_USER_ACCOUNT_EXIST:
-                        CustomDialog dAccountRegDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
-                        dAccountRegDialog.setContent(getResources().getString(R.string.main_setting_stb_application_launch_fail_id_notexist));
-                        dAccountRegDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                            @Override
-                            public void onOKCallback(final boolean isOK) {
-                                Intent intent = new Intent(getApplicationContext(), DAccountSettingHelpActivity.class);
-                                startActivity(intent);
-                            }
-                        });
-                        dAccountRegDialog.showDialog();
+                        switch (resultCode) {
+                            case RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
+                                //サーバエラー
+                            case RelayServiceResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE:
+                                //ユーザアカウントチェックサービス未登録
+                                showErrorDialog(getResources().getString(R.string.main_setting_connect_error_message));
+                                break;
+                            case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
+                                showDAccountRegDialog();
+                                break;
+                            default:
+                                break;
+                        }
                         break;
                     case SET_DEFAULT_USER_ACCOUNT:
                         switch (resultCode) {
@@ -890,16 +893,15 @@ public class BaseActivity extends FragmentActivity implements
                                 //サーバエラー
                             case RelayServiceResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE:
                                 //ユーザアカウントチェックサービス未登録
-                            case RelayServiceResponseMessage.RELAY_RESULT_CONNECTION_TIMEOUT:
+                            case RelayServiceResponseMessage.RELAY_RESULT_USER_INVALID_STATE:
                                 //STBの中継アプリ~応答が無かった場合(要求はできたのでSTBとの通信はOK)
+                                showErrorDialog(getResources().getString(R.string.main_setting_connect_error_message));
                                 break;
                             case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
                                 // チェック処理の状態で処理を分岐する
                                 SharedPreferencesUtils.resetSharedPreferencesStbInfo(getApplicationContext());
                                 // TODO アプリのキャッシュをきれいにクリアする処理が必要
-                                Intent intent = new Intent(mActivity, DAccountReSettingActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                startActivity(intent);
+                                showDAccountRegDialog();
                                 break;
                             default:
                                 break;
@@ -2216,6 +2218,22 @@ public class BaseActivity extends FragmentActivity implements
         });
         closeDialog.setCancelable(false);
         closeDialog.showDialog();
+    }
+
+    /**
+     * dアカウント登録ヘルプ画面遷移するダイアログ表示.
+     */
+    public void showDAccountRegDialog() {
+        CustomDialog dAccountRegDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        dAccountRegDialog.setContent(getResources().getString(R.string.main_setting_stb_application_launch_fail_id_notexist));
+        dAccountRegDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @Override
+            public void onOKCallback(final boolean isOK) {
+                Intent intent = new Intent(getApplicationContext(), DAccountSettingHelpActivity.class);
+                startActivity(intent);
+            }
+        });
+        dAccountRegDialog.showDialog();
     }
 
 }
