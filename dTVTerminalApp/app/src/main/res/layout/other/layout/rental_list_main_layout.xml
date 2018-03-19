@@ -23,6 +23,16 @@
             android:layout_centerInParent="true" />
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/rental_list_no_items"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/search_tab_margin_left"
+        android:textColor="@color/white_text"
+        android:textSize="@dimen/tab_text_size_14dp"
+        android:text="@string/common_empty_data_message"
+        android:visibility="gone"/>
+
     <ListView
         android:id="@+id/rental_list"
         android:layout_width="match_parent"

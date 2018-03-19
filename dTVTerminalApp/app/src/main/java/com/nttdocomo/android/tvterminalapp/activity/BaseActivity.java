@@ -2183,4 +2183,28 @@ public class BaseActivity extends FragmentActivity implements
         view.setVisibility(View.GONE);
         return view;
     }
+
+    /**
+     * データが取得失敗した時のトースト表示.
+     */
+    public void showGetDataFailedToast() {
+        Toast.makeText(this, R.string.common_get_data_failed_message, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * データが取得失敗した時のダイアログ表示.
+     */
+    public void showDialogToClose() {
+        CustomDialog closeDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        closeDialog.setContent(getApplicationContext().getString(R.string.common_get_data_failed_message));
+        closeDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @Override
+            public void onOKCallback(final boolean isOK) {
+                finish();
+            }
+        });
+        closeDialog.setCancelable(false);
+        closeDialog.showDialog();
+    }
+
 }

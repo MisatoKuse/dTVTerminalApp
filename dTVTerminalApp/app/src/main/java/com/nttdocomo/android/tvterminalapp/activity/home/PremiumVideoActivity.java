@@ -15,6 +15,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -85,6 +86,10 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
      * プログレスダイアログ.
      */
     private RelativeLayout mRelativeLayout = null;
+    /**
+     * リスト0件メッセージ.
+     */
+    private TextView mNoDataMessage;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -145,6 +150,7 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
                 ContentsAdapter.ActivityTypeItem.TYPE_PREMIUM_VIDEO_LIST);
         mListView.setAdapter(mContentsAdapter);
         mLoadMoreView = LayoutInflater.from(this).inflate(R.layout.search_load_more, null);
+        mNoDataMessage = findViewById(R.id.premium_video_list_no_items);
     }
 
     /**
@@ -197,6 +203,7 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
                 }
 
                 if (0 == dataList.size()) {
+                    mNoDataMessage.setVisibility(View.VISIBLE);
                     resetCommunication();
                     return;
                 }
@@ -223,6 +230,7 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
         DTVTLogger.start();
         mRelativeLayout.setVisibility(View.GONE);
         mListView.setVisibility(View.VISIBLE);
+        showDialogToClose();
         //データ取得失敗時
         resetCommunication();
     }
@@ -284,7 +292,7 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
                 }
 
                 DTVTLogger.debug("onScrollStateChanged, do paging");
-
+                mNoDataMessage.setVisibility(View.GONE);
                 displayMoreData(true);
                 setCommunicatingStatus(true);
 

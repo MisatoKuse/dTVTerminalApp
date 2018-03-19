@@ -192,7 +192,10 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
      * 番組表データプロバイダー.
      */
     private ScaledDownProgramListDataProvider mScaledDownProgramListDataProvider;
-
+    /**
+     * リスト0件メッセージ.
+     */
+    private TextView mNoDataMessage;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -254,6 +257,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         mTimeLine = findViewById(R.id.tv_program_list_main_layout_time_line);
         mNowImage = findViewById(R.id.tv_program_list_main_layout_time_line_now);
         mMyChannelNoDataTxT = findViewById(R.id.tv_program_list_main_layout_tip_tv);
+        mNoDataMessage = findViewById(R.id.tv_program_list_no_items);
 
         mChannelRecyclerView.bringToFront();
         mTagImageView.bringToFront();
@@ -738,6 +742,8 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
                 //TODO 現状一括でリクエストしているため修正予定.
                 mScaledDownProgramListDataProvider.getProgram(channelNos, dateList, mTabIndex);
             } else {
+                mNoDataMessage.setVisibility(View.VISIBLE);
+                showGetDataFailedToast();
                 scrollToCurTime();
                 refreshTimeLine();
             }
@@ -779,6 +785,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
             mTagImageView.setVisibility(View.INVISIBLE);
             mTimeLine.setVisibility(View.INVISIBLE);
             mMyChannelNoDataTxT.setVisibility(View.VISIBLE);
+            mNoDataMessage.setVisibility(View.GONE);
         } else {
             mTimeScrollView.setVisibility(View.VISIBLE);
             mTagImageView.setVisibility(View.VISIBLE);
@@ -867,7 +874,10 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
             //MY番組表情報がなければMY番組表を設定していないとする(データないので、特にタイムライン表示必要がない)
             if (mTabIndex == INDEX_TAB_MY_CHANNEL) {
                 showMyChannelNoItem(true);
+            } else {
+                mNoDataMessage.setVisibility(View.VISIBLE);
             }
+            showGetDataFailedToast();
         }
     }
 

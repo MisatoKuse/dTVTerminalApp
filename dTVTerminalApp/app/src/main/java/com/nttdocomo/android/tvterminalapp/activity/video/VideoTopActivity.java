@@ -213,6 +213,7 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
                 }
             }
         } else {
+            showGetDataFailedToast();
             DTVTLogger.debug("Contents Count request is faild");
         }
         // ジャンル情報取得後はリストを更新
@@ -249,6 +250,7 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
             mVideoGenreProvider.getContentCountListData(requestGenreIdList);
             DTVTLogger.end();
         } else {
+            showGetDataFailedToast();
             DTVTLogger.debug("genreListMapCallback is Null");
         }
     }

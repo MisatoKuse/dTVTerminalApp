@@ -70,6 +70,10 @@ public class RecordReservationListActivity extends BaseActivity
      * グローバルメニューからの起動かどうか.
      */
     private Boolean mIsMenuLaunch = false;
+    /**
+     * リスト0件メッセージ.
+     */
+    private TextView mNoDataMessage;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -113,6 +117,7 @@ public class RecordReservationListActivity extends BaseActivity
 
         //先頭の区切り線を取得
         mHeaderDivider = findViewById(R.id.header_divider);
+        mNoDataMessage = findViewById(R.id.record_reservation_list_no_items);
 
         DTVTLogger.end();
     }
@@ -166,7 +171,7 @@ public class RecordReservationListActivity extends BaseActivity
                 }
 
                 DTVTLogger.debug("onScrollStateChanged, do paging");
-
+                mNoDataMessage.setVisibility(View.GONE);
                 displayMoreData(true);
                 setCommunicatingStatus(true);
 
@@ -259,10 +264,12 @@ public class RecordReservationListActivity extends BaseActivity
             Toast.makeText(this, R.string.recording_reservation_list_error_toast, Toast.LENGTH_SHORT).show();
             resetPaging();
             resetCommunication();
+            showDialogToClose();
             return;
         }
 
         if (0 == dataList.size()) {
+            mNoDataMessage.setVisibility(View.VISIBLE);
             resetCommunication();
             return;
         }

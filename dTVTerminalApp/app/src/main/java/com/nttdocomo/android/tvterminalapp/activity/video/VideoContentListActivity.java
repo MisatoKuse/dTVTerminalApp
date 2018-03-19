@@ -13,6 +13,8 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -97,6 +99,10 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
      * ビデオ一覧（コンテンツツリー）からののIntent KEY.
      */
     public static final String VIDEO_CONTENTS_BUNDLE_KEY = "videoContentKey";
+    /**
+     * リスト0件メッセージ.
+     */
+    private TextView mNoDataMessage;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -113,7 +119,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         VideoGenreListDataInfo info = getIntent().getParcelableExtra(VIDEO_CONTENTS_BUNDLE_KEY);
         mGenreId = info.getGenreId();
         if (info.getVideoGenreListShowData() == null) {
-            setTitleText(getString(R.string.video_list_genre_all));
+            setTitleText(getString(R.string.video_list_genre_all_contents));
         } else {
             setTitleText(info.getVideoGenreListShowData().getTitle());
         }
@@ -144,6 +150,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         );
         mListView.setAdapter(mContentsAdapter);
         mLoadMoreView = View.inflate(this, R.layout.search_load_more, null);
+        mNoDataMessage  = findViewById(R.id.tv_rank_list_no_items);
     }
 
     /**
@@ -252,6 +259,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
                 DTVTLogger.debug("onScrollStateChanged, do paging");
                 displayMoreData(true);
                 setCommunicatingStatus(true);
+                mNoDataMessage.setVisibility(View.GONE);
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -284,7 +292,13 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
      * @param videoContentInfo  ビデオコンテンツ情報
      */
     private void setShowVideoContent(final List<ContentsData> videoContentInfo) {
-        if (null == videoContentInfo || 0 == videoContentInfo.size()) {
+        if (null == videoContentInfo) {
+            showDialogToClose();
+            displayMoreData(false);
+            return;
+        }
+        if (0 == videoContentInfo.size()) {
+            mNoDataMessage.setVisibility(View.VISIBLE);
             displayMoreData(false);
             return;
         }

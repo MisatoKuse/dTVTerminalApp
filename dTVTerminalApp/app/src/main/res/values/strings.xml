@@ -13,8 +13,8 @@
     <string name="custom_dialog_cancel">キャンセル</string>
     <string name="clip_regist_result_message">をクリップしました</string>
     <string name="clip_regist_error_message">のクリップに失敗しました</string>
-    <string name="clip_delete_result_message">のクリップを削除しました</string>
-    <string name="clip_delete_error_message">のクリップ削除に失敗しました</string>
+    <string name="clip_delete_result_message">のクリップを解除しました</string>
+    <string name="clip_delete_error_message">のクリップの解除に失敗しました</string>
     <string name="clip_data_get_error_message">クリップデータ取得失敗</string>
     <string name="epg_contents_message">番組</string>
     <string name="vod_contents_message">ビデオ</string>
@@ -89,8 +89,8 @@
     <string name="recording_reservation_status_accept_failure">受付失敗</string>
     <string name="recording_reservation_list_update_time">現在</string>
     <string name="activity_start_network_error_message">ネットワークに接続できませんでした。\nネットワーク状態を確認してください。</string>
-    <string name="get_user_info_error_message">ひかりTV for docomoの契約情報取得に失敗しました。</string>
-    <string name="get_contents_data_error_message">情報の取得に失敗したため、一部のコンテンツのみ表示します。\nしばらく時間が経ってから再度お試しください。</string>
+    <string name="get_user_info_error_message">ひかりTV for docomoの契約情報取得に失敗しました</string>
+    <string name="get_contents_data_error_message">情報の取得に失敗したため、一部のコンテンツのみ表示します。\nしばらく経ってから再度お試しください。</string>
     <string name="home_no_contract_info_text">ご利用中のdアカウントでひかりTV for docomoの契約がありません</string>
     <string name="home_contract_button_text">契約する</string>
     <string name="home_contents_pipe">" | "</string>
@@ -105,6 +105,7 @@
 
     <!-- クリップ一覧 -->
     <string name="str_clip_activity_title">クリップ</string>
+    <string name="str_clip_list_no_content">クリップしたコンテンツがありません</string>
     <string-array name="tab_clip_names">
         <item>番組</item>
         <item>ビデオ</item>
@@ -145,7 +146,7 @@
     </string-array>
     <string name="record_download_status">ダウンロード中</string>
     <string name="record_download_percent_mark">%</string>
-    <string name="record_download_error_message">取得に失敗しました</string>
+    <string name="record_download_error_message">ダウンロードに失敗しました</string>
     <string name="record_download_delete_title">削除しますか？</string>
     <string name="record_download_cancel_title">ダウンロードを取りやめますか？</string>
     <string name="record_download_cancel_confirm">取りやめる</string>
@@ -156,6 +157,7 @@
     <!-- ビデオ一覧 -->
     <string name="video_content_top_title">ビデオ</string>
     <string name="video_list_genre_all">すべて</string>
+    <string name="video_list_genre_all_contents">すべての作品</string>
     <string name="video_list_genre_nod">NHKオンデマンド</string>
 
     <!-- Search -->
@@ -253,14 +255,14 @@
         <item>@string/contents_detail_tab_program_detail</item>
         <item>@string/contents_detail_tab_episode</item>
     </string-array>
-    <string name="recording_reservation_complete_dialog_msg">録画予約依頼を受け付けました。</string>
+    <string name="recording_reservation_complete_dialog_msg">録画予約依頼を受け付けました</string>
     <string name="recording_reservation_complete_dialog_ok">OK</string>
-    <string name="recording_reservation_failed_dialog_msg">登録件数が一杯のため録画予約に失敗しました。</string>
+    <string name="recording_reservation_failed_dialog_msg">録画予約に失敗しました</string>
     <string name="recording_reservation_failed_dialog_confirm">OK</string>
     <string name="recording_reservation_failed_dialog_token">トークン不一致</string>
     <string name="recording_reservation_failed_dialog_other">その他の異常</string>
     <string name="recording_reservation_failed_dialog_param">リクエストパラメータ不正</string>
-    <string name="recording_reservation_failed_dialog_over">登録件数超過</string>
+    <string name="recording_reservation_failed_dialog_over">登録件数が上限に達したため録画予約に失敗しました</string>
     <string name="recording_reservation_failed_dialog_no_agreement">未契約エラー</string>
     <string name="recording_reservation_confirm_dialog_msg">録画予約しますか？</string>
     <string name="recording_reservation_confirm_dialog_confirm">録画予約する</string>
@@ -333,13 +335,13 @@
 
     <!-- dアカウント登録 -->
     <string name="d_account_regist_error">dアカウントの処理に失敗しました</string>
-    <string name="d_account_chamge_message">dアカウントが変更されたため、ホームに戻ります。</string>
+    <string name="d_account_chamge_message">dアカウントが変更されたため、ホーム画面に戻ります</string>
 
     <!-- お知らせ -->
     <string name="information_title">お知らせ</string>
 
     <!-- H4d契約情報取得 -->
-    <string name="h4d_agreement_change">契約状態が変更されたため、トップ画面に戻ります。</string>
+    <string name="h4d_agreement_change">契約状態が変更されたため、ホームに戻ります</string>
 
     <!-- アプリケーション情報 -->
     <string name="application_info_application_name">アプリケーション名</string>

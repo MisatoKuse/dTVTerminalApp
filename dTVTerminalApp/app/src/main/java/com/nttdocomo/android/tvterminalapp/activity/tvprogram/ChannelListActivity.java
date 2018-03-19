@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -158,6 +159,10 @@ public class ChannelListActivity extends BaseActivity implements
      */
     private boolean mIsStbConnected;
     /**
+     * リスト0件メッセージ.
+     */
+    private TextView mNoDataMessage;
+    /**
      * コンストラクタ.
      *
      * @param savedInstanceState savedInstanceState
@@ -227,6 +232,7 @@ public class ChannelListActivity extends BaseActivity implements
      */
     private void getChListData() {
         DTVTLogger.start();
+        mNoDataMessage.setVisibility(View.GONE);
         switch (mCurrentType) {
             case CH_LIST_DATA_TYPE_BS:
                 getBsData();
@@ -310,6 +316,7 @@ public class ChannelListActivity extends BaseActivity implements
         if (null == view) {
             return;
         }
+        mNoDataMessage = findViewById(R.id.channel_list_no_items);
         view.setOnClickListener(mRemoteControllerOnClickListener);
         //mViewPager = findViewById(R.id.channel_list_main_layout_channel_body_vp);
         initChannelListTab();
@@ -574,6 +581,7 @@ public class ChannelListActivity extends BaseActivity implements
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
+                        mNoDataMessage.setVisibility(View.GONE);
                         switch (fragment.getChListDataType()) {
                             case CH_LIST_DATA_TYPE_BS:
                                 getBsData();
@@ -606,6 +614,7 @@ public class ChannelListActivity extends BaseActivity implements
     @Override
     public void setUserVisibleHint(final boolean isVisibleToUser, final ChannelListFragment fragment) {
         DTVTLogger.start();
+        mNoDataMessage.setVisibility(View.GONE);
         if (!isVisibleToUser) {
             fragment.clearDatas();
             //fragment.noticeRefresh();
@@ -781,11 +790,14 @@ public class ChannelListActivity extends BaseActivity implements
     public void channelListCallback(final ArrayList<ChannelInfo> channels) {
         DTVTLogger.start();
         if (null == channels) {
+            mNoDataMessage.setVisibility(View.VISIBLE);
+            showGetDataFailedToast();
             DTVTLogger.end();
             return;
         }
         int size = channels.size();
         if (0 == size) {
+            mNoDataMessage.setVisibility(View.VISIBLE);
             return;
         }
         int pos = mViewPager.getCurrentItem();

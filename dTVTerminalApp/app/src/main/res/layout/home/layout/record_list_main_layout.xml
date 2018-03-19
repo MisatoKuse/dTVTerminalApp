@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/recorded_background"
+    android:background="@color/common_tab_background_color"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -11,6 +11,18 @@
         android:layout_height="@dimen/tab_layout_area_height"
         android:background="@color/common_tab_background_color"
         android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/recorded_list_no_items"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/search_tab_margin_left"
+        android:layout_below="@+id/rl_recorded_list_tab"
+        android:textColor="@color/white_text"
+        android:background="@color/common_tab_background_color"
+        android:textSize="@dimen/tab_text_size_14dp"
+        android:text="@string/common_empty_data_message"
+        android:visibility="gone"/>
 
     <!-- 検索結果画面 -->
     <RelativeLayout

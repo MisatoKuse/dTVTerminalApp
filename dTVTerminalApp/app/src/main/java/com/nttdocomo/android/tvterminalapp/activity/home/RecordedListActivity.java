@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -104,6 +105,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * タブ名.
      */
 	public static final String RLA_FragmentName_All = "all";
+    /**
+     * リスト0件メッセージ.
+     */
+    private TextView mNoDataMessage;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -152,6 +157,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         mTabNames = getResources().getStringArray(R.array.record_list_tab_names);
         mRecordedFragmentFactory = new RecordedFragmentFactory();
         progressBar = findViewById(R.id.record_list_main_layout_progress);
+        mNoDataMessage = findViewById(R.id.recorded_list_no_items);
     }
 
     /**
@@ -210,6 +216,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             mTabLayout.setTab(position);
         }
         progressBar.setVisibility(View.VISIBLE);
+        mNoDataMessage.setVisibility(View.GONE);
         switch (mViewPager.getCurrentItem()) {
             case 0:
                 getData();
@@ -273,6 +280,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                         }
                     }
                 }
+            } else {
+                mNoDataMessage.setVisibility(View.VISIBLE);
+                showGetDataFailedToast();
             }
             baseFragment.notifyDataSetChanged();
         }
@@ -294,7 +304,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
         // 未ペアリング時
         if (dlnaDmsItem.mControlUrl.isEmpty()) {
-            Toast.makeText(this, getString(R.string.main_setting_not_paring), Toast.LENGTH_SHORT).show();
+            showGetDataFailedToast();
+            mNoDataMessage.setVisibility(View.VISIBLE);
             setProgressBarGone();
         } else {
             if (mDlnaProvRecVideo == null) {
@@ -307,6 +318,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                     DTVTLogger.debug("browseRecVideoDms false");
                 }
             } else {
+                showGetDataFailedToast();
+                mNoDataMessage.setVisibility(View.VISIBLE);
                 setProgressBarGone();
             }
         }
@@ -366,6 +379,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     public void onVideoBrows(final DlnaRecVideoInfo curInfo) {
         if (curInfo != null && curInfo.getRecordVideoLists() != null) {
             setVideoBrows(curInfo.getRecordVideoLists());
+        } else {
+            showGetDataFailedToast();
+            mNoDataMessage.setVisibility(View.VISIBLE);
         }
         setProgressBarGone();
     }
@@ -572,6 +588,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         super.onStartCommunication();
         if (progressBar != null) {
             progressBar.setVisibility(View.VISIBLE);
+            mNoDataMessage.setVisibility(View.GONE);
         }
         initDl();
         getData();
@@ -667,6 +684,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 showMessage(msg2);
             }
         });
+        showGetDataFailedToast();
+        mNoDataMessage.setVisibility(View.VISIBLE);
         setProgressBarGone();
     }
 

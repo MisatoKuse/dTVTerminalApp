@@ -14,6 +14,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -78,6 +79,10 @@ public class DailyTvRankingActivity extends BaseActivity implements
      * コンテンツ詳細表示フラグ.
      */
     private boolean mContentsDetailDisplay = false;
+    /**
+     * リスト0件メッセージ.
+     */
+    private TextView mNoDataMessage;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -136,6 +141,7 @@ public class DailyTvRankingActivity extends BaseActivity implements
                 ContentsAdapter.ActivityTypeItem.TYPE_DAILY_RANK);
         mListView.setAdapter(mContentsAdapter);
         mLoadMoreView = View.inflate(this, R.layout.search_load_more, null);
+        mNoDataMessage  = findViewById(R.id.tv_rank_list_no_items);
     }
 
     /**
@@ -258,7 +264,12 @@ public class DailyTvRankingActivity extends BaseActivity implements
      * @param contentsDataList 取得したコンテンツデータリスト
      */
     private void setShowDailyRanking(final List<ContentsData> contentsDataList) {
-        if (null == contentsDataList || 0 == contentsDataList.size()) {
+        if (null == contentsDataList) {
+            showDialogToClose();
+            return;
+        }
+        if (0 == contentsDataList.size()) {
+            mNoDataMessage.setVisibility(View.VISIBLE);
             return;
         }
 

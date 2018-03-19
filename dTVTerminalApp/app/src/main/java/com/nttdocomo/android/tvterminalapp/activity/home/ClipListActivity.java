@@ -12,8 +12,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.AbsListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -92,12 +94,15 @@ public class ClipListActivity extends BaseActivity implements
      * 表示開始タブ指定キー.
      */
     public static final String CLIP_LIST_START_PAGE = "clipListStartPage";
-
+    /**
+     * リスト0件メッセージ.
+     */
+    private TextView mNoDataMessage;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.clip_list_main);
-
+        mNoDataMessage = findViewById(R.id.clip_list_no_items);
         //Headerの設定
         setTitleText(getString(R.string.str_clip_activity_title));
         Intent intent = getIntent();
@@ -259,16 +264,19 @@ public class ClipListActivity extends BaseActivity implements
 
     @Override
     public void tvClipListCallback(final List<ContentsData> clipContentInfo) {
-        if (null == clipContentInfo || 0 == clipContentInfo.size()) {
+        if (null == clipContentInfo) {
             //通信とJSON Parseに関してerror処理
             DTVTLogger.debug("ClipListActivity::TvClipListCallback, get data failed.");
             // TODO:エラーメッセージ表示はリスト画面上に表示する
-            Toast.makeText(this, getString(R.string.clip_data_get_error_message), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, getString(R.string.clip_data_get_error_message), Toast.LENGTH_SHORT).show();
+            showGetDataFailedToast();
+            mNoDataMessage.setVisibility(View.VISIBLE);
             return;
         }
 
         if (0 == clipContentInfo.size()) {
             //doing
+            mNoDataMessage.setVisibility(View.VISIBLE);
             resetCommunication();
             return;
         }
@@ -295,16 +303,19 @@ public class ClipListActivity extends BaseActivity implements
 
     @Override
     public void vodClipListCallback(final List<ContentsData> clipContentInfo) {
-        if (null == clipContentInfo || 0 == clipContentInfo.size()) {
+        if (null == clipContentInfo) {
             //通信とJSON Parseに関してerror処理
             DTVTLogger.debug("ClipListActivity::VodClipListCallback, get data failed");
             // TODO:エラーメッセージ表示はリスト画面上に表示する
-            Toast.makeText(this, getString(R.string.clip_data_get_error_message), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, getString(R.string.clip_data_get_error_message), Toast.LENGTH_SHORT).show();
+            showGetDataFailedToast();
+            mNoDataMessage.setVisibility(View.VISIBLE);
             return;
         }
 
         if (0 == clipContentInfo.size()) {
             //doing
+            mNoDataMessage.setVisibility(View.VISIBLE);
             resetCommunication();
             return;
         }
@@ -400,6 +411,7 @@ public class ClipListActivity extends BaseActivity implements
                         if (null != fragment.mClipListData) {
                             offset = fragment.mClipListData.size();
                         }
+                        mNoDataMessage.setVisibility(View.GONE);
                         switch (TAB_POSITION) {
                             case CLIP_LIST_PAGE_NO_OF_TV:
                                 mTvClipDataProvider.getClipData(offset);
@@ -500,6 +512,7 @@ public class ClipListActivity extends BaseActivity implements
         //スワイプ時にページング中のプログレスバーを非表示にする
         resetCommunication();
         fragment.setMode(ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_VIDEO);
+        mNoDataMessage.setVisibility(View.GONE);
         mVodClipDataProvider.getClipData(1);
     }
 
@@ -512,6 +525,7 @@ public class ClipListActivity extends BaseActivity implements
         //スワイプ時にページング中のプログレスバーを非表示にする
         resetCommunication();
         fragment.setMode(ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_TV);
+        mNoDataMessage.setVisibility(View.GONE);
         mTvClipDataProvider.getClipData(1);
     }
 

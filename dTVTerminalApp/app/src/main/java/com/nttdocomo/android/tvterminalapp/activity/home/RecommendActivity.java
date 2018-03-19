@@ -13,9 +13,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -94,6 +96,10 @@ public class RecommendActivity extends BaseActivity implements
      * 開始ページ.
      */
     private int mStartPageNo = 0;
+    /**
+     * リスト0件メッセージ.
+     */
+    private TextView mNoDataMessage;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -180,6 +186,7 @@ public class RecommendActivity extends BaseActivity implements
      * データプロバイダへデータ取得要求.
      */
     private void requestRecommendData() {
+        mNoDataMessage.setVisibility(View.GONE);
         if (null == mRecommendDataProvider) {
             DTVTLogger.debug("RecommendActivity::setRecommendData, mRecommendDataProvider is null");
             return;
@@ -212,6 +219,7 @@ public class RecommendActivity extends BaseActivity implements
             return;
         }
         sRecommendViewPager = findViewById(R.id.vp_recommend_list_items);
+        mNoDataMessage = findViewById(R.id.recommend_list_no_items);
         initTabVIew();
 
         sRecommendViewPager.setAdapter(new TabAdapter(getSupportFragmentManager(), this));
@@ -294,6 +302,10 @@ public class RecommendActivity extends BaseActivity implements
             }
         }
 
+        if (0 == resultInfoList.size()) {
+            mNoDataMessage.setVisibility(View.VISIBLE);
+        }
+
         if (0 < resultInfoList.size()) {
             for (ContentsData info : resultInfoList) {
                 baseFragment.mData.add(info);
@@ -336,6 +348,8 @@ public class RecommendActivity extends BaseActivity implements
      * データ取得失敗時の処理.
      */
     private void recommendDataProviderFinishNg() {
+        showGetDataFailedToast();
+        mNoDataMessage.setVisibility(View.VISIBLE);
         RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
         if (baseFragment == null) {
             return;

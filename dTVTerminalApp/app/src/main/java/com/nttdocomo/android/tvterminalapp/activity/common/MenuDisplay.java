@@ -185,6 +185,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                         intent.setClass(mActivity, WatchingVideoListActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                        intent.setFlags(0);
                         mActivity.startActivity(intent);
                     }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_record_reserve))) {
@@ -192,6 +193,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                         intent.setClass(mActivity, RecordReservationListActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                        intent.setFlags(0);
                         mActivity.startActivity(intent);
                     }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_video))) {
@@ -213,6 +215,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                     intent.setClass(mActivity, PremiumVideoActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                    intent.setFlags(0);
                     mActivity.startActivity(intent);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.rental_title))) {
@@ -220,6 +223,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                         intent.setClass(mActivity, RentalListActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                        intent.setFlags(0);
                         mActivity.startActivity(intent);
                     }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_notice))) {

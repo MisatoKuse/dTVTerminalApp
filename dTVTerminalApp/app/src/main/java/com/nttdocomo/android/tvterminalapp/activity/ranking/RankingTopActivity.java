@@ -236,6 +236,8 @@ public class RankingTopActivity extends BaseActivity
             public void run() {
                 if (contentsDataList != null && contentsDataList.size() > 0) {
                     setRecyclerView(contentsDataList, TODAY_SORT);
+                } else {
+                    showGetDataFailedToast();
                 }
             }
         });
@@ -248,6 +250,8 @@ public class RankingTopActivity extends BaseActivity
             public void run() {
                 if (contentsDataList != null && contentsDataList.size() > 0) {
                     setRecyclerView(contentsDataList, WEEK_SORT);
+                } else {
+                    showGetDataFailedToast();
                 }
             }
         });
@@ -261,6 +265,8 @@ public class RankingTopActivity extends BaseActivity
             public void run() {
                 if (contentsDataList != null && contentsDataList.size() > 0) {
                     setRecyclerView(contentsDataList, VIDEO_SORT);
+                } else {
+                    showGetDataFailedToast();
                 }
             }
         });

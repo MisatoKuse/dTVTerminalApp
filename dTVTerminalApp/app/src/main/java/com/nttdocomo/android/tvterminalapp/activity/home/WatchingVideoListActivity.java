@@ -15,6 +15,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -105,6 +106,10 @@ public class WatchingVideoListActivity extends BaseActivity implements
      * 横スクロール判定用倍率.
      */
     private static final float RANGE_MAGNIFICATION = 3;
+    /**
+     * リスト0件メッセージ.
+     */
+    private TextView mNoDataMessage;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -164,6 +169,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
                 = new ContentsAdapter(this, mWatchingVideoListData, ContentsAdapter.ActivityTypeItem.TYPE_WATCHING_VIDEO_LIST);
         mListView.setAdapter(mWatchListenVideoBaseAdapter);
         mLoadMoreView = LayoutInflater.from(this).inflate(R.layout.search_load_more, null);
+        mNoDataMessage = findViewById(R.id.video_watching_list_no_items);
     }
 
     @Override
@@ -245,11 +251,13 @@ public class WatchingVideoListActivity extends BaseActivity implements
                     DTVTLogger.debug("ClipListActivity::VodClipListCallback, get data failed.");
                     resetPaging();
                     resetCommunication();
+                    showDialogToClose();
                     return;
                 }
 
                 if (0 == watchListenVideoContentInfo.size()) {
                     //doing
+                    mNoDataMessage.setVisibility(View.VISIBLE);
                     resetCommunication();
                     return;
                 }
@@ -363,7 +371,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
 
                 displayMoreData(true);
                 setCommunicatingStatus(true);
-
+                mNoDataMessage.setVisibility(View.GONE);
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override

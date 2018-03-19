@@ -8,8 +8,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.AbsListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -70,6 +72,10 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
      * 標準タブ数.
      */
     private static final int DEFAULT_TAB_MAX = 4;
+    /**
+     * リスト0件メッセージ.
+     */
+    private TextView mNoDataMessage;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -151,6 +157,7 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         mViewPager = findViewById(R.id.vp_video_ranking_result);
+        mNoDataMessage = findViewById(R.id.video_ranking_no_items);
     }
 
     /**
@@ -217,6 +224,7 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
         if (null != mViewPager) {
             DTVTLogger.debug("viewpager not null");
             mViewPager.setCurrentItem(position);
+            mNoDataMessage.setVisibility(View.GONE);
         }
         DTVTLogger.end();
     }
@@ -231,7 +239,9 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
         if (null == videoRankMapList || 0 == videoRankMapList.size()) {
             //通信とJSON Parseに関してerror処理
             //TODO: エラー表示は検討の必要あり
-            Toast.makeText(this, "ランキングデータ取得失敗", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "ランキングデータ取得失敗", Toast.LENGTH_SHORT).show();
+            showGetDataFailedToast();
+            mNoDataMessage.setVisibility(View.VISIBLE);
             return;
         }
 
@@ -311,6 +321,8 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
                     setShowVideoRanking(videoRankList);
                     DTVTLogger.end();
                 } else {
+                    showGetDataFailedToast();
+                    mNoDataMessage.setVisibility(View.VISIBLE);
                     DTVTLogger.debug("ResponseDataSize :0");
                 }
             }
@@ -334,7 +346,9 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
                 @Override
                 public void run() {
                     //TODO:文言は仕様未確定
-                    Toast.makeText(VideoRankingActivity.this, "ジャンルデータ取得失敗しました", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(VideoRankingActivity.this, "ジャンルデータ取得失敗しました", Toast.LENGTH_SHORT).show();
+                    showGetDataFailedToast();
+                    mNoDataMessage.setVisibility(View.VISIBLE);
                 }
             });
         }

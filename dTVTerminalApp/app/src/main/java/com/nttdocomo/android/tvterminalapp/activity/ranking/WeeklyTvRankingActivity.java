@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -76,6 +77,10 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
      * 標準タブ数.
      */
     private static final int DEFAULT_TAB_MAX = 4;
+    /**
+     * リスト0件メッセージ.
+     */
+    private TextView mNoDataMessage;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -169,6 +174,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         mViewPager = findViewById(R.id.vp_weekly_ranking_result);
+        mNoDataMessage = findViewById(R.id.weekly_ranking_no_items);
     }
 
     /**
@@ -235,6 +241,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         if (null != mViewPager) {
             DTVTLogger.debug("viewpager not null");
             mViewPager.setCurrentItem(position);
+            mNoDataMessage.setVisibility(View.GONE);
         }
         DTVTLogger.end();
     }
@@ -249,7 +256,9 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         if (null == contentsDataList || 0 == contentsDataList.size()) {
             //通信とJSON Parseに関してerror処理
             //TODO: メッセージは仕様検討の必要あり
-            Toast.makeText(this, "ランキングデータ取得失敗", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "ランキングデータ取得失敗", Toast.LENGTH_SHORT).show();
+            showGetDataFailedToast();
+            mNoDataMessage.setVisibility(View.VISIBLE);
             return;
         }
 
@@ -333,7 +342,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                DTVTLogger.start("ResponseDataSize :" + contentsDataList.size());
+                //DTVTLogger.start("ResponseDataSize :" + contentsDataList.size());
                 setShowWeeklyRanking(contentsDataList);
             }
         });
@@ -354,7 +363,9 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
                 @Override
                 public void run() {
                     //TODO データ取得エラー表示対応
-                    Toast.makeText(WeeklyTvRankingActivity.this, "ジャンルデータ取得失敗しました", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(WeeklyTvRankingActivity.this, "ジャンルデータ取得失敗しました", Toast.LENGTH_SHORT).show();
+                    showGetDataFailedToast();
+                    mNoDataMessage.setVisibility(View.VISIBLE);
                 }
             });
         }
