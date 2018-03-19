@@ -677,14 +677,12 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onError(final String msg) {
         DTVTLogger.start(msg);
-        final String msg2 = msg;
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                showMessage(msg2);
+                showMessage(getApplicationContext().getString(R.string.common_get_data_failed_message));
             }
         });
-        showGetDataFailedToast();
         mNoDataMessage.setVisibility(View.VISIBLE);
         setProgressBarGone();
     }
