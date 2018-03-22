@@ -10,7 +10,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 26
         versionCode 5            //★バージョンコード. リリース毎に更新する事
-        versionName "10.00."    //★メジャーバージョン.マイナーバージョン. リリース毎に更新する事
+        versionName "01.00."    //★メジャーバージョン.マイナーバージョン. リリース毎に更新する事
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
