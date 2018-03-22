@@ -197,6 +197,7 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
                     new RankingTopDataProvider(this, ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
         }
         if (genreMetaDataList != null && genreMetaDataList.size() > 0) {
+            mNoDataMessage.setVisibility(View.GONE);
             mRankingDataProvider.getVideoRankingData(genreMetaDataList.get(mViewPager.getCurrentItem()).getId());
         }
     }
@@ -236,11 +237,10 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
      */
     private void setShowVideoRanking(final List<ContentsData> videoRankMapList) {
         DTVTLogger.start();
-        if (null == videoRankMapList || 0 == videoRankMapList.size()) {
+        if (0 == videoRankMapList.size()) {
             //通信とJSON Parseに関してerror処理
             //TODO: エラー表示は検討の必要あり
             //Toast.makeText(this, "ランキングデータ取得失敗", Toast.LENGTH_SHORT).show();
-            showGetDataFailedToast();
             mNoDataMessage.setVisibility(View.VISIBLE);
             return;
         }
@@ -316,7 +316,7 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (videoRankList.size() > 0) {
+                if (videoRankList != null) {
                     DTVTLogger.debug("ResponseDataSize :" + videoRankList.size());
                     setShowVideoRanking(videoRankList);
                     DTVTLogger.end();
@@ -348,7 +348,6 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
                     //TODO:文言は仕様未確定
                     //Toast.makeText(VideoRankingActivity.this, "ジャンルデータ取得失敗しました", Toast.LENGTH_SHORT).show();
                     showGetDataFailedToast();
-                    mNoDataMessage.setVisibility(View.VISIBLE);
                 }
             });
         }

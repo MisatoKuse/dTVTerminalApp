@@ -57,11 +57,11 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
 
     @Override
     public void onVodClipJsonParsed(final List<VodClipList> vodClipLists) {
-        if (vodClipLists != null && vodClipLists.size() > 0) {
+        if (vodClipLists != null) {
             List vclist = vodClipLists.get(0).getVcList();
-            if (vclist != null && vclist.size() > 0) {
-                HashMap hashMap = (HashMap) vclist.get(0);
-                if (!hashMap.isEmpty()) {
+            if (vclist != null) {
+                //HashMap hashMap = (HashMap) vclist.get(0);
+                //if (!hashMap.isEmpty()) {
                     VodClipList list = vodClipLists.get(0);
                     //            setStructDB(list);
                     if (!mRequiredClipKeyList
@@ -71,10 +71,14 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
                         mClipList = list;
                         sendVodClipListData(list.getVcList());
                     }
-                } else {
-                    if (null != apiDataProviderCallback) {
-                        apiDataProviderCallback.vodClipListCallback(null);
-                    }
+                //} else {
+                //    if (null != apiDataProviderCallback) {
+                //        apiDataProviderCallback.vodClipListCallback(null);
+                //    }
+                //}
+            } else {
+                if (null != apiDataProviderCallback) {
+                    apiDataProviderCallback.vodClipListCallback(null);
                 }
             }
         } else {
@@ -235,8 +239,10 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
             //int pagerOffset = 1;
             String direction = "";
 
-            mWebClient.getVodClipApi(ageReq, upperPageLimit,
-                    lowerPageLimit, pagerOffset, direction, this);
+            if (!mWebClient.getVodClipApi(ageReq, upperPageLimit,
+                    lowerPageLimit, pagerOffset, direction, this)) {
+                apiDataProviderCallback.vodClipListCallback(null);
+            }
         } else {
             DTVTLogger.error("VodClipDataProvider is stopping connection");
             if (null != apiDataProviderCallback) {

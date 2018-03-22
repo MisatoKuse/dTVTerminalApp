@@ -185,7 +185,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     @SuppressWarnings("OverlyLongMethod")
     private void sendWatchListenVideoListData(final List<Map<String, String>> mapList) {
         //情報が取得できなかった時はActivityにnullを返却
-        if (mapList == null || mapList.size() < 1 || mapList.get(0).isEmpty()) {
+        if (mapList == null) {
             mApiDataProviderCallback.watchListenVideoListCallback(null);
             return;
         }

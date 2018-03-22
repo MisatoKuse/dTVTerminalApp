@@ -224,8 +224,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     @Override
     public void recommendCallback(final RecommendChList mRecommendChList) {
         if (mRecommendChList != null
-                && mRecommendChList.getmRcList() != null
-                && mRecommendChList.getmRcList().size() > 0) {
+                && mRecommendChList.getmRcList() != null) {
             sendRecommendChListData(mRecommendChList);
         } else {
             //TODO WEBAPIを取得できなかった時の処理を記載予定

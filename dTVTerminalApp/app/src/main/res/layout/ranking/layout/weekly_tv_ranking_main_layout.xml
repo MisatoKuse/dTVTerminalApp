@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     style="@style/default_layout_style"
     android:orientation="vertical"
-    android:background="@color/channel_list_background_color">
+    android:background="@color/ranking_list_background">
 
     <RelativeLayout
         android:id="@+id/rl_weekly_ranking_tab"
@@ -16,8 +16,8 @@
         android:id="@+id/weekly_ranking_no_items"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/search_tab_margin_left"
-        android:layout_below="@+id/rl_weekly_ranking_tab"
+        android:layout_marginStart="@dimen/list_no_items_text_left"
+        android:layout_marginTop="@dimen/list_no_items_text_top"
         android:textColor="@color/white_text"
         android:textSize="@dimen/tab_text_size_14dp"
         android:text="@string/common_empty_data_message"

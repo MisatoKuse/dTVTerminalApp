@@ -181,6 +181,8 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             // コールバック判定
             if (!mRequiredClipKeyList || mResponseEndFlag) {
                 sendWeeklyRankList(list);
+            } else {
+                mWeeklyRankList = list;
             }
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
@@ -205,6 +207,8 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             }
             if (!mRequiredClipKeyList || mResponseEndFlag) {
                 sendVideoRankList(list);
+            } else {
+                mVideoRankList = list;
             }
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
@@ -642,7 +646,11 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 mDailyRankWebClient = new DailyRankWebClient(mContext);
                 UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
                 int ageReq = userInfoDataProvider.getUserAge();
-                mDailyRankWebClient.getDailyRankApi(UPPER_PAGE_LIMIT, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, this);
+                if (!mDailyRankWebClient.getDailyRankApi(UPPER_PAGE_LIMIT, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, this)) {
+                    if (mApiDataProviderCallback != null) {
+                        mApiDataProviderCallback.dailyRankListCallback(null);
+                    }
+                }
             } else {
                 DTVTLogger.error("RankingTopDataProvider is stopping connect");
             }
@@ -675,7 +683,11 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 mWeeklyRankWebClient = new WeeklyRankWebClient(mContext);
                 UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
                 int ageReq = userInfoDataProvider.getUserAge();
-                mWeeklyRankWebClient.getWeeklyRankApi(UPPER_PAGE_LIMIT, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, genreId, this);
+                if (!mWeeklyRankWebClient.getWeeklyRankApi(UPPER_PAGE_LIMIT, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, genreId, this)) {
+                    if (mApiDataProviderCallback != null) {
+                        mApiDataProviderCallback.weeklyRankCallback(null);
+                    }
+                }
             } else {
                 DTVTLogger.error("RankingTopDataProvider is stopping connect");
             }
@@ -711,8 +723,12 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 int ageReq = userInfoDataProvider.getUserAge();
                 //人気順でソートする
                 String sort = JsonConstants.GENRE_PER_CONTENTS_SORT_PLAY_COUNT_DESC;
-                mContentsListPerGenreWebClient.getContentsListPerGenreApi(
-                        UPPER_PAGE_LIMIT, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, genreId, sort, this);
+                if (!mContentsListPerGenreWebClient.getContentsListPerGenreApi(
+                            UPPER_PAGE_LIMIT, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, genreId, sort, this)) {
+                        if (mApiDataProviderCallback != null) {
+                            mApiDataProviderCallback.videoRankCallback(null);
+                        }
+                }
             } else {
                 DTVTLogger.error("RankingTopDataProvider is stopping connect");
             }

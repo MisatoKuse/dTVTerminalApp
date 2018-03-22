@@ -253,11 +253,16 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
      */
     private void setShowWeeklyRanking(final List<ContentsData> contentsDataList) {
         DTVTLogger.start();
-        if (null == contentsDataList || 0 == contentsDataList.size()) {
+        if (null == contentsDataList) {
             //通信とJSON Parseに関してerror処理
             //TODO: メッセージは仕様検討の必要あり
             //Toast.makeText(this, "ランキングデータ取得失敗", Toast.LENGTH_SHORT).show();
             showGetDataFailedToast();
+            mNoDataMessage.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        if (0 == contentsDataList.size()) {
             mNoDataMessage.setVisibility(View.VISIBLE);
             return;
         }
@@ -365,7 +370,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
                     //TODO データ取得エラー表示対応
                     //Toast.makeText(WeeklyTvRankingActivity.this, "ジャンルデータ取得失敗しました", Toast.LENGTH_SHORT).show();
                     showGetDataFailedToast();
-                    mNoDataMessage.setVisibility(View.VISIBLE);
                 }
             });
         }

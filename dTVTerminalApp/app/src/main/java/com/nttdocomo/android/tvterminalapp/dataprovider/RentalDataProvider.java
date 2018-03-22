@@ -241,7 +241,9 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
         } else {
             //通信クラスにデータ取得要求を出す
             mWebClient = new RentalVodListWebClient(mContext);
-            mWebClient.getRentalVodListApi(this);
+            if (!mWebClient.getRentalVodListApi(this)) {
+                mApiDataProviderCallback.rentalListNgCallback();
+            }
         }
     }
 
