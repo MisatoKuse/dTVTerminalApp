@@ -89,11 +89,6 @@ public class DTVTConstants {
          */
         HTTP_ERROR,
 
-        /**
-         * 通信には成功したが、WebAPIの結果がエラー.
-         */
-        API_ERROR,
-
     }
 
 }
