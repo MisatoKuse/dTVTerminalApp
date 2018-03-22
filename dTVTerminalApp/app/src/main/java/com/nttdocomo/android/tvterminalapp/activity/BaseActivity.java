@@ -1686,7 +1686,12 @@ public class BaseActivity extends FragmentActivity implements
                 @Override
                 public void run() {
                     //初回実行時に限り、エラーダイアログを表示する。現状エラー文言は1種類なので、文言切り替えは必要ない
-                    CustomDialog errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
+                    CustomDialog errorDialog = new CustomDialog(
+                            BaseActivity.this, CustomDialog.DialogType.ERROR);
+
+                    //失敗原因コードを取得
+                    DTVTLogger.debug("daccount error code = " + mDAccountControl.getResult());
+
                     errorDialog.setContent(getString(R.string.d_account_regist_error));
                     errorDialog.showDialog();
                 }
@@ -2201,7 +2206,8 @@ public class BaseActivity extends FragmentActivity implements
      * データが取得失敗した時のトースト表示.
      */
     public void showGetDataFailedToast() {
-        Toast.makeText(this, R.string.common_get_data_failed_message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(
+                this, R.string.common_get_data_failed_message, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -2225,7 +2231,8 @@ public class BaseActivity extends FragmentActivity implements
      */
     public void showDAccountRegDialog() {
         CustomDialog dAccountRegDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
-        dAccountRegDialog.setContent(getResources().getString(R.string.main_setting_stb_application_launch_fail_id_notexist));
+        dAccountRegDialog.setContent(getResources().getString(
+                R.string.main_setting_stb_application_launch_fail_id_notexist));
         dAccountRegDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {

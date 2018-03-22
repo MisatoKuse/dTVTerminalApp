@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.HttpThread;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.WebApiCallback;
@@ -115,8 +116,38 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
         return stringBuffer.toString();
     }
 
+
+
+    /**
+     * エラーステータスを返す.
+     *
+     * @return エラーステータス
+     */
+    public ErrorState getError() {
+        //エラー情報の有無を判定
+        if(mHttpThread != null && mHttpThread.getError() != null) {
+            //エラー情報があるならば横流しする
+            return mHttpThread.getError();
+        } else {
+            //エラー情報がまだない場合は、新規に作成して返す
+            return new ErrorState();
+        }
+    }
+
+    /**
+     * 継承先から受け取ったエラーコードを横流しする.
+     *
+     * @param errorCode エラーコード
+     */
+    public void setErrorCode(String errorCode) {
+        mHttpThread.setErrorCode(errorCode);
+    }
+
     @Override
-    public void onHttpThreadFinish(final String str, final HttpThread.ErrorStatus errorStatus) {
+    public void onHttpThreadFinish(final String str, final ErrorState errorStatus) {
+        //エラーコードだけ抜き出してエラー情報に入れる
+        mHttpThread.setXmlErrorCode(str);
+
         if (null != mWebApiCallback) {
             mWebApiCallback.onFinish(str);
         }

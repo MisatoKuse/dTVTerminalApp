@@ -348,4 +348,10 @@
     <string name="application_info_application_provider">提供者</string>
     <string name="application_info_application_version">バージョン</string>
     <string name="application_info_application_provider_value">株式会社NTTドコモ</string>
+
+    <!-- TODO: ネットワークエラー（仮）ワーディングが確定するまでの文言 -->
+    <!-- メッセージ自体は細分化せず、2種類に留める予定 -->
+    <string name="nw_error_message">通信時に問題が発生しました</string>
+    <string name="nw_error_ssl_message">SSL証明書に問題が発生しました</string>
+
 </resources>
