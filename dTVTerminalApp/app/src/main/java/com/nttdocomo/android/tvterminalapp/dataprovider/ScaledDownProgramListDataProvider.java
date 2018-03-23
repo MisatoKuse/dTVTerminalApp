@@ -136,12 +136,12 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     private List<List<Map<String, String>>> mResultSets = null;
 
     /**
-     * チャンネルリスト用エラー情報バッファ
+     * チャンネルリスト用エラー情報バッファ.
      */
     private ErrorState mChannelError = null;
 
     /**
-     * 番組リスト用エラー情報バッファ
+     * 番組リスト用エラー情報バッファ.
      */
     private ErrorState mTvScheduleError = null;
 
@@ -169,7 +169,8 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     }
 
     /**
-     * チャンネル情報取得エラーのクラスを返すゲッター
+     * チャンネル情報取得エラーのクラスを返すゲッター.
+     *
      * @return チャンネル情報取得エラーのクラス
      */
     public ErrorState getChannelError() {
@@ -177,7 +178,8 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     }
 
     /**
-     * 番組情報取得エラーのクラスを返すゲッター
+     * 番組情報取得エラーのクラスを返すゲッター.
+     *
      * @return 番組情報取得エラーのクラス
      */
     public ErrorState getmTvScheduleError() {

@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.activity.tvprogram;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -79,7 +80,7 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
         changeGlobalMenuIcon(false);
         setStatusBarColor(false);
         initView();
-        loadData();
+        //ここに存在したloadDataメソッドは、処理の重複なので、削除を行いました。
     }
 
     /**
@@ -142,6 +143,19 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
             mChannelListAdapter.setChListDataType(ChannelListActivity.ChListDataType.CH_LIST_DATA_TYPE_HIKARI);
             mSelectListView.setAdapter(mChannelListAdapter);
             mChannelListAdapter.notifyDataSetChanged();
+        } else {
+            //情報がヌルなので、ネットワークエラーメッセージを取得する
+            String message = mScaledDownProgramListDataProvider.
+                    getChannelError().getApiErrorMessage(getApplicationContext());
+
+            //メッセージの有無で処理を分ける
+            if (TextUtils.isEmpty(message)) {
+                //メッセージが無いので、「取得に失敗」のダイアログを表示。OKボタンで本画面は終了
+                showDialogToClose();
+            } else {
+                //メッセージがあるので、該当メッセージのダイアログを表示。OKボタンで本画面は終了
+                showDialogToClose(message);
+            }
         }
     }
 
