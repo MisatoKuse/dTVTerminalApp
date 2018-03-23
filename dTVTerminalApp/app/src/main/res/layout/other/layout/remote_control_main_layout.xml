@@ -87,7 +87,7 @@
                             android:layout_height="48dp"
                             android:layout_marginTop="16dp"
                             android:layout_marginBottom="16dp"
-                            android:layout_marginStart="24dp"
+                            android:layout_marginStart="16dp"
                             android:layout_alignParentStart="true"
                             android:contentDescription="@null"
                             android:src="@mipmap/remote_tap_ch_power" />

@@ -61,7 +61,7 @@ public class RemoteControllerSendKeyAction {
         cViewHolder.remote_controller_iv_power = view.findViewById(R.id.remote_controller_iv_power);
         cViewHolder.remote_controller_bt_degital = view.findViewById(R.id.remote_controller_bt_degital);
         cViewHolder.remote_controller_bt_bs = view.findViewById(R.id.remote_controller_bt_bs);
-        cViewHolder.remote_controller_bt_iptv = view.findViewById(R.id.remote_controller_bt_iptv);
+        cViewHolder.remote_controller_bt_specialtychannel = view.findViewById(R.id.remote_controller_bt_specialtychannel);
         cViewHolder.remote_controller_bt_two = view.findViewById(R.id.remote_controller_bt_two);
         cViewHolder.remote_controller_bt_one = view.findViewById(R.id.remote_controller_bt_one);
         cViewHolder.remote_controller_bt_three = view.findViewById(R.id.remote_controller_bt_three);
@@ -134,7 +134,7 @@ public class RemoteControllerSendKeyAction {
         ImageView remote_controller_iv_power = null;
         Button remote_controller_bt_degital = null;
         Button remote_controller_bt_bs = null;
-        Button remote_controller_bt_iptv = null;
+        Button remote_controller_bt_specialtychannel = null;
         Button remote_controller_bt_two = null;
         Button remote_controller_bt_one = null;
         Button remote_controller_bt_three = null;
@@ -191,7 +191,7 @@ public class RemoteControllerSendKeyAction {
         cViewHolder.remote_controller_iv_power.setOnTouchListener(mListener);
         cViewHolder.remote_controller_bt_degital.setOnTouchListener(mListener);
         cViewHolder.remote_controller_bt_bs.setOnTouchListener(mListener);
-        cViewHolder.remote_controller_bt_iptv.setOnTouchListener(mListener);
+        cViewHolder.remote_controller_bt_specialtychannel.setOnTouchListener(mListener);
         cViewHolder.remote_controller_bt_two.setOnTouchListener(mListener);
         cViewHolder.remote_controller_bt_one.setOnTouchListener(mListener);
         cViewHolder.remote_controller_bt_three.setOnTouchListener(mListener);
@@ -321,8 +321,8 @@ public class RemoteControllerSendKeyAction {
                     new int[]{R.mipmap.remote_ch_btn_terrestrialdigital, R.mipmap.remote_tap_ch_btn_terrestrialdigital}); // 地デジ
             put(R.id.remote_controller_bt_bs,
                     new int[]{R.mipmap.remote_ch_btn_bs, R.mipmap.remote_tap_ch_btn_bs}); // BS
-            put(R.id.remote_controller_bt_iptv,
-                    new int[]{R.mipmap.remote_ch_btn_iptv, R.mipmap.remote_tap_ch_btn_iptv}); // IPTV
+            put(R.id.remote_controller_bt_specialtychannel,
+                    new int[]{R.mipmap.remote_ch_btn_specialtychannel, R.mipmap.remote_tap_ch_btn_specialtychannel}); // 専門ch
             put(R.id.remote_controller_bt_tv_program,
                     new int[]{R.mipmap.remote_player_sub_btn_tv_schedule, R.mipmap.remote_tap_player_sub_btn_tv_schedule}); // 番組表
             put(R.id.remote_controller_bt_decide,
