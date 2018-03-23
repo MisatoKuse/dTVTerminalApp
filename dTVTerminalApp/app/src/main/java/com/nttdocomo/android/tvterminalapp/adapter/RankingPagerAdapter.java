@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingFragmentFactory;
-import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingFragmentScrollListener;
 
 /**
  * 検索結果タブ専用アダプター.
@@ -32,11 +31,6 @@ public class RankingPagerAdapter extends FragmentStatePagerAdapter {
     private ContentsAdapter.ActivityTypeItem mType;
 
     /**
-     * リスナー.
-     */
-    private RankingFragmentScrollListener mRankingFragmentScrollListener = null;
-
-    /**
      * コンストラクタ.
      *
      * @param fm FragmentManager
@@ -44,13 +38,6 @@ public class RankingPagerAdapter extends FragmentStatePagerAdapter {
     public RankingPagerAdapter(final FragmentManager fm, final ContentsAdapter.ActivityTypeItem mType) {
         super(fm);
         this.mType = mType;
-    }
-
-    /**
-     * リスナーを設定.
-     */
-    public void setRankingFragmentScrollListener(final RankingFragmentScrollListener lis) {
-        this.mRankingFragmentScrollListener = lis;
     }
 
     /**
@@ -69,7 +56,7 @@ public class RankingPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(final int position) {
-        return mRankingFragmentFactory.createFragment(mType, position, mRankingFragmentScrollListener);
+        return mRankingFragmentFactory.createFragment(mType, position);
     }
 
     @Override

@@ -5,15 +5,12 @@
 package com.nttdocomo.android.tvterminalapp.activity.ranking;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -28,7 +25,6 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.VideoGenreProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingFragmentFactory;
-import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
 import java.util.ArrayList;
@@ -38,13 +34,9 @@ import java.util.List;
  * 週間テレビランキング一覧表示画面.
  */
 public class WeeklyTvRankingActivity extends BaseActivity implements
-        RankingTopDataProvider.WeeklyRankingApiDataProviderCallback, RankingFragmentScrollListener,
+        RankingTopDataProvider.WeeklyRankingApiDataProviderCallback,
         VideoGenreProvider.RankGenreListCallback, TabItemLayout.OnClickTabTextListener {
 
-    /**
-     * 追加データ読み込み中判別フラグ.
-     */
-    private boolean mIsCommunicating = false;
     /**
      * タブ名.
      */
@@ -124,23 +116,11 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
      */
     private void resetPaging() {
         synchronized (this) {
-            setCommunicatingStatus(false);
             RankingBaseFragment baseFragment = getCurrentFragment();
             if (null != baseFragment && null != baseFragment.mData) {
                 baseFragment.mData.clear();
                 baseFragment.noticeRefresh();
             }
-        }
-    }
-
-    /**
-     * データの追加読み込み中判定フラグの設定.
-     *
-     * @param bool true:追加読み込み中 false：それ以外
-     */
-    private void setCommunicatingStatus(final boolean bool) {
-        synchronized (this) {
-            mIsCommunicating = bool;
         }
     }
 
@@ -159,7 +139,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         for (int i = 0; i < tabCount; ++i) { // タブの数だけ処理を行う
             if (mRankingFragmentFactory != null) {
                 RankingBaseFragment b = mRankingFragmentFactory.createFragment(
-                        ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK, i, this);
+                        ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK, i);
                 if (null != b) {
                     b.mData.clear();
                 }
@@ -186,7 +166,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         }
         RankingPagerAdapter rankingPagerAdapter = new RankingPagerAdapter(getSupportFragmentManager(),
                 ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK);
-        rankingPagerAdapter.setRankingFragmentScrollListener(this);
         rankingPagerAdapter.setTabNames(mTabNames);
         rankingPagerAdapter.setRankingFragmentFactory(mRankingFragmentFactory);
         mViewPager.setAdapter(rankingPagerAdapter);
@@ -268,7 +247,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         }
 
         RankingBaseFragment fragment = mRankingFragmentFactory.createFragment(
-                ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK, mViewPager.getCurrentItem(), this);
+                ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK, mViewPager.getCurrentItem());
 
         //既に元のデータ以上の件数があれば足す物は無いので、更新せずに帰る
         if (null != fragment.mData && fragment.mData.size() >= contentsDataList.size()) {
@@ -288,42 +267,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
     }
 
     /**
-     * コンテンツ詳細への遷移.
-     */
-//    public void contentsDetailButton(View view) {
-//        Intent intent = new Intent(this, ContentDetailActivity.class);
-//        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
-//        startActivity(intent);
-//    }
-
-    @Override
-    public void onScroll(final RankingBaseFragment fragment, final AbsListView absListView,
-                         final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
-        synchronized (this) {
-            RankingBaseFragment baseFragment = getCurrentFragment();
-            if (null == baseFragment || null == fragment.getRankingAdapter()) {
-                return;
-            }
-
-            if (!fragment.equals(baseFragment)) {
-                return;
-            }
-
-            if (firstVisibleItem + visibleItemCount == totalItemCount && 0 != totalItemCount) {
-                DTVTLogger.debug("Activity::onScroll, paging, firstVisibleItem="
-                        + firstVisibleItem + ", totalItemCount=" + totalItemCount
-                        + ", visibleItemCount=" + visibleItemCount);
-
-            }
-        }
-    }
-
-    @Override
-    public void onScrollStateChanged(final RankingBaseFragment fragment,
-                                     final AbsListView absListView, final int scrollState) {
-    }
-
-    /**
      * Fragmentの取得.
      *
      * @return Fragment
@@ -332,7 +275,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
 
         int i = mViewPager.getCurrentItem();
         if (mRankingFragmentFactory != null) {
-            return mRankingFragmentFactory.createFragment(ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK, i, this);
+            return mRankingFragmentFactory.createFragment(ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK, i);
         }
         return null;
     }
@@ -432,7 +375,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
             if (baseFragment.getRankingAdapter() != null) {
                 baseFragment.enableContentsAdapterCommunication();
                 baseFragment.noticeRefresh();
-                baseFragment.changeLastScrollUp(false);
             }
         }
     }

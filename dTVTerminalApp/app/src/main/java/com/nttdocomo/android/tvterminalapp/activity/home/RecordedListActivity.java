@@ -17,7 +17,6 @@ import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -31,7 +30,6 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragment;
-import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
@@ -63,7 +61,7 @@ import java.util.Map;
  * 録画番組.
  */
 public class RecordedListActivity extends BaseActivity implements View.OnClickListener,
-        RecordedBaseFragmentScrollListener, DlnaRecVideoListener, TabItemLayout.OnClickTabTextListener {
+        DlnaRecVideoListener, TabItemLayout.OnClickTabTextListener {
 
     /**
      * タブ名.
@@ -232,6 +230,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     /**
      * 持ち出しリスト生成.
      */
+    @SuppressWarnings("OverlyLongMethod")
     public void setRecordedTakeOutContents() {
         DTVTLogger.start();
         RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment();
@@ -338,7 +337,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         } else {
             tabIndex = mViewPager.getCurrentItem();
         }
-        RecordedBaseFragment f = mRecordedFragmentFactory.createFragment(tabIndex, this);
+        RecordedBaseFragment f = mRecordedFragmentFactory.createFragment(tabIndex);
         if (0 == tabIndex && null != f) {
             f.setFragmentName(RLA_FragmentName_All);
         }
@@ -362,16 +361,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private void clearFragment(final int tabNo) {
         DTVTLogger.start();
         if (null != mViewPager) {
-            RecordedBaseFragment baseFragment = mRecordedFragmentFactory.createFragment(tabNo, this);
+            RecordedBaseFragment baseFragment = mRecordedFragmentFactory.createFragment(tabNo);
             baseFragment.clear();
             baseFragment.notifyDataSetChanged();
         }
-    }
-
-    @Override
-    public void onScroll(final RecordedBaseFragment fragment, final AbsListView absListView,
-                         final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
-        DTVTLogger.start();
     }
 
     @Override
@@ -452,6 +445,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      *
      * @param dlnaRecVideoItems 録画ビデオアイテム
      */
+    @SuppressWarnings("OverlyLongMethod")
     private void setVideoBrows(final ArrayList<DlnaRecVideoItem> dlnaRecVideoItems) {
         final RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
 		baseFragment.setFragmentName(RLA_FragmentName_All);
@@ -676,14 +670,19 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onError(final String msg) {
         DTVTLogger.start(msg);
-        mHandler.post(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                showMessage(getApplicationContext().getString(R.string.common_get_data_failed_message));
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        showMessage(getApplicationContext().getString(R.string.common_get_data_failed_message));
+                    }
+                });
+                mNoDataMessage.setVisibility(View.VISIBLE);
+                setProgressBarGone();
             }
         });
-        mNoDataMessage.setVisibility(View.VISIBLE);
-        setProgressBarGone();
     }
 
     /**
@@ -719,7 +718,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         public Fragment getItem(final int position) {
             synchronized (this) {
                 DTVTLogger.start();
-                RecordedBaseFragment f = mRecordedFragmentFactory.createFragment(position, RecordedListActivity.this);
+                RecordedBaseFragment f = mRecordedFragmentFactory.createFragment(position);
                 if (0 == position && null != f) {
                     f.setFragmentName(RLA_FragmentName_All);
                 }
@@ -811,7 +810,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         if (null == mRecordedFragmentFactory) {
             return;
         }
-        RecordedBaseFragment fra = mRecordedFragmentFactory.createFragment(0, RecordedListActivity.this);
+        RecordedBaseFragment fra = mRecordedFragmentFactory.createFragment(0);
         if (null != fra) {
             if (fra == thiz) {
                 return;

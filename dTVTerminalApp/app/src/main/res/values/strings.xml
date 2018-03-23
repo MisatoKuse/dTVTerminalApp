@@ -5,7 +5,7 @@
 <resources>
 
     <!-- Common -->
-    <string name="app_name">ドコモテレビターミナルアプリ</string>
+    <string name="app_name">テレビターミナル</string>
     <string name="contents_hyphen">-</string>
     <string name="positive_response">はい</string>
     <string name="negative_response">いいえ</string>
@@ -144,7 +144,6 @@
         <item>すべて</item>
         <item>ダウンロード済み</item>
     </string-array>
-    <string name="record_download_status">ダウンロード中</string>
     <string name="record_download_percent_mark">%</string>
     <string name="record_download_error_message">ダウンロードに失敗しました</string>
     <string name="record_download_delete_title">削除しますか？</string>

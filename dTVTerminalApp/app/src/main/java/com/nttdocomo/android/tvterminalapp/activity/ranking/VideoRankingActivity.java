@@ -5,11 +5,9 @@
 package com.nttdocomo.android.tvterminalapp.activity.ranking;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -27,7 +25,6 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.callback.VideoRankingApi
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingFragmentFactory;
-import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
 import java.util.ArrayList;
@@ -36,7 +33,7 @@ import java.util.List;
 /**
  * ビデオランキング.
  */
-public class VideoRankingActivity extends BaseActivity implements VideoRankingApiDataProviderCallback, RankingFragmentScrollListener,
+public class VideoRankingActivity extends BaseActivity implements VideoRankingApiDataProviderCallback,
         VideoGenreProvider.RankGenreListCallback, TabItemLayout.OnClickTabTextListener {
     /**
      * タブ名.
@@ -141,7 +138,7 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
         for (int i = 0; i < tabCount; ++i) { // タブの数だけ処理を行う
             if (mRankingFragmentFactory != null) {
                 RankingBaseFragment baseFragment = mRankingFragmentFactory.createFragment(
-                        ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK, i, this);
+                        ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK, i);
                 if (null != baseFragment) {
                     baseFragment.mData.clear();
                 }
@@ -168,7 +165,6 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
         }
         RankingPagerAdapter rankingPagerAdapter = new RankingPagerAdapter(getSupportFragmentManager(),
                 ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
-        rankingPagerAdapter.setRankingFragmentScrollListener(this);
         rankingPagerAdapter.setTabNames(mTabNames);
         rankingPagerAdapter.setRankingFragmentFactory(mRankingFragmentFactory);
         mViewPager.setAdapter(rankingPagerAdapter);
@@ -248,7 +244,7 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
 
         RankingBaseFragment fragment = mRankingFragmentFactory.createFragment(
                 ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK,
-                mViewPager.getCurrentItem(), this);
+                mViewPager.getCurrentItem());
 
         //既に元のデータ以上の件数があれば足す物は無いので、更新せずに帰る
         if (null != fragment.mData && fragment.mData.size() >= videoRankMapList.size()) {
@@ -265,32 +261,6 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
         DTVTLogger.end();
     }
 
-    @Override
-    public void onScroll(final RankingBaseFragment fragment, final AbsListView absListView,
-                         final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
-        synchronized (this) {
-            RankingBaseFragment baseFragment = getCurrentFragment();
-            if (null == baseFragment || null == fragment.getRankingAdapter()) {
-                return;
-            }
-            if (!fragment.equals(baseFragment)) {
-                return;
-            }
-
-            if (firstVisibleItem + visibleItemCount == totalItemCount && 0 != totalItemCount) {
-                DTVTLogger.debug("Activity::onScroll, paging, firstVisibleItem="
-                        + firstVisibleItem + ", totalItemCount=" + totalItemCount
-                        + ", visibleItemCount=" + visibleItemCount);
-
-            }
-        }
-    }
-
-    @Override
-    public void onScrollStateChanged(
-            final RankingBaseFragment fragment, final AbsListView absListView, final int scrollState) {
-    }
-
     /**
      * Fragmentの取得.
      *
@@ -300,7 +270,7 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
 
         int i = mViewPager.getCurrentItem();
         if (mRankingFragmentFactory != null) {
-            return mRankingFragmentFactory.createFragment(ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK, i, this);
+            return mRankingFragmentFactory.createFragment(ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK, i);
         }
         return null;
     }
@@ -409,7 +379,6 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
             if (baseFragment.getRankingAdapter() != null) {
                 baseFragment.enableContentsAdapterCommunication();
                 baseFragment.noticeRefresh();
-                baseFragment.changeLastScrollUp(false);
             }
         }
     }

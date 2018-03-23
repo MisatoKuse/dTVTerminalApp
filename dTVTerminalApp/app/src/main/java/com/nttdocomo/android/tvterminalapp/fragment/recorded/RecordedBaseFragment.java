@@ -14,7 +14,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -49,7 +48,7 @@ import java.util.Set;
 /**
  * 録画一覧フラグメント.
  */
-public class RecordedBaseFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener,
+public class RecordedBaseFragment extends Fragment implements AdapterView.OnItemClickListener,
         ContentsAdapter.DownloadCallback {
 
     private Context mContext;
@@ -106,7 +105,6 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                     R.layout.record_contents_list_layout, null);
             mRecordedListView = mRecordedFragmentView.findViewById(R.id.recorded_contents_result);
 
-            mRecordedListView.setOnScrollListener(this);
             mRecordedListView.setOnItemClickListener(this);
 
             getContext();
@@ -159,15 +157,6 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     public List<ContentsData> getContentsData() {
         DTVTLogger.start();
         return mContentsData;
-    }
-
-    @Override
-    public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
-    }
-
-    @Override
-    public void onScroll(final AbsListView absListView, final int firstVisibleItem,
-                         final int visibleItemCount, final int totalItemCount) {
     }
 
     @Override
@@ -434,7 +423,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 mContentsData.get(index).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_LOADING);
                 break;
             case ContentsAdapter.DOWNLOAD_STATUS_LOADING:
-                mProgress = getResources().getString(R.string.record_download_status) + progress
+                mProgress = progress
                         + getResources().getString(R.string.record_download_percent_mark);
                 if (textView != null) {
                     TextView timeView = view.findViewById(R.id.item_common_result_content_time);
@@ -574,6 +563,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
      * @param index インデックス
      * @return ダウンロード開始判定
      */
+    @SuppressWarnings("OverlyLongMethod")
     private boolean prepareDownLoad(final int index) {
         Context context = getActivity();
         if (null == context) {
@@ -728,6 +718,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             customDialog.setConfirmText(R.string.record_download_cancel_confirm);
         }
         customDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @SuppressWarnings("OverlyLongMethod")
             @Override
             public void onOKCallback(final boolean isOK) {
                 if (isOK) {

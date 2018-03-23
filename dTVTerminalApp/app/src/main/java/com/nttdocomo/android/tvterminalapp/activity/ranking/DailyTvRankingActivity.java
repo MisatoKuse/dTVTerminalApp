@@ -6,11 +6,8 @@ package com.nttdocomo.android.tvterminalapp.activity.ranking;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -35,9 +32,7 @@ import java.util.List;
  * 今日のテレビランキング一覧表示画面.
  */
 public class DailyTvRankingActivity extends BaseActivity implements
-        RankingTopDataProvider.ApiDataProviderCallback,
-        AbsListView.OnScrollListener, AdapterView.OnItemClickListener,
-        AbsListView.OnTouchListener {
+        RankingTopDataProvider.ApiDataProviderCallback, AdapterView.OnItemClickListener {
 
     /**
      * ランキングデータ取得用プロパイダ.
@@ -59,18 +54,6 @@ public class DailyTvRankingActivity extends BaseActivity implements
      * コンテンツデータ一覧のリスト.
      */
     private List<ContentsData> mContentsList;
-    /**
-     * スクロール位置の記録.
-     */
-    private int mFirstVisibleItem = 0;
-    /**
-     * 最後のスクロール方向が上ならばtrue.
-     */
-    private boolean mLastScrollUp = false;
-    /**
-     * 指を置いたY座標.
-     */
-    private float mStartY = 0;
     /**
      * ProgressBar.
      */
@@ -131,10 +114,6 @@ public class DailyTvRankingActivity extends BaseActivity implements
         }
         mListView = findViewById(R.id.tv_rank_list);
         mListView.setOnItemClickListener(this);
-        mListView.setOnScrollListener(this);
-
-        //スクロールの上下方向検知用のリスナーを設定
-        mListView.setOnTouchListener(this);
 
         mRelativeLayout = findViewById(R.id.tv_rank_progress);
         mContentsAdapter = new ContentsAdapter(this, mContentsList,
@@ -171,64 +150,6 @@ public class DailyTvRankingActivity extends BaseActivity implements
             return 1;
         }
         return mContentsList.size() / NUM_PER_PAGE;
-    }
-
-    @Override
-    public boolean onTouch(final View view, final MotionEvent motionEvent) {
-        if (!(view instanceof ListView)) {
-            //今回はリストビューの事しか考えないので、他のビューならば帰る
-            return false;
-        }
-
-        //指を動かした方向を検知する
-        switch (motionEvent.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                //指を降ろしたので、位置を記録
-                mStartY = motionEvent.getY();
-                break;
-            case MotionEvent.ACTION_UP:
-                //指を離したので、位置を記録
-                float mEndY = motionEvent.getY();
-
-                mLastScrollUp = false;
-
-                //スクロール方向の判定
-                if (mStartY < mEndY) {
-                    //終了時のY座標の方が大きいので、上スクロール
-                    mLastScrollUp = true;
-                }
-
-                break;
-
-            default:
-                //現状処理は無い・警告対応
-        }
-
-        return false;
-    }
-
-    @Override
-    public void onScroll(final AbsListView absListView, final int firstVisibleItem,
-                         final int visibleItemCount, final int totalItemCount) {
-        synchronized (this) {
-            if (null == mContentsAdapter) {
-                return;
-            }
-
-            //現在のスクロール位置の記録
-            mFirstVisibleItem = firstVisibleItem;
-
-            if (firstVisibleItem + visibleItemCount == totalItemCount && 0 != totalItemCount) {
-                DTVTLogger.debug(
-                        "Activity::onScroll, paging, firstVisibleItem=" + firstVisibleItem
-                                + ", totalItemCount=" + totalItemCount
-                                + ", visibleItemCount=" + visibleItemCount);
-            }
-        }
-    }
-
-    @Override
-    public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
     }
 
     @Override
