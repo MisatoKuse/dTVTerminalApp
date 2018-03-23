@@ -438,7 +438,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param isOn true: 表示  false: 非表示
      */
-    protected void enableGlobalMenuIcon(final boolean isOn) {
+    public void enableGlobalMenuIcon(final boolean isOn) {
         if (null != mMenuImageViewForBase) {
             if (isOn) {
                 mMenuImageViewForBase.setVisibility(View.VISIBLE);

@@ -121,7 +121,6 @@ public class RankingTopActivity extends BaseActivity
         }
     }
 
-
     /**
      * プロセスバーを表示する.
      *
