@@ -19,7 +19,6 @@ import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvClipWebClient;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,10 +58,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
         if (tvClipLists != null) {
             List vclist = tvClipLists.get(0).getVcList();
             if (vclist != null) {
-                //HashMap hashMap = (HashMap) vclist.get(0);
-                //if (!hashMap.isEmpty()) {
                     TvClipList list = tvClipLists.get(0);
-                    //            setStructDB(list);
                     if (!mRequiredClipKeyList
                             || mResponseEndFlag) {
                         sendTvClipListData(list.getVcList());
@@ -70,11 +66,6 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
                         mClipList = list;
                         sendTvClipListData(list.getVcList());
                     }
-                //} else {
-                //    if (null != apiDataProviderCallback) {
-                //        apiDataProviderCallback.tvClipListCallback(null);
-                //    }
-                //}
             } else {
                 if (null != apiDataProviderCallback) {
                     apiDataProviderCallback.tvClipListCallback(null);

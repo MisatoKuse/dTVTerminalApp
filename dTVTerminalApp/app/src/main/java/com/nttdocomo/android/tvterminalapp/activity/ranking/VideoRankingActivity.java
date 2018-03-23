@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -237,10 +236,12 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
      */
     private void setShowVideoRanking(final List<ContentsData> videoRankMapList) {
         DTVTLogger.start();
+        if (null == videoRankMapList) {
+            showGetDataFailedToast();
+            mNoDataMessage.setVisibility(View.VISIBLE);
+            return;
+        }
         if (0 == videoRankMapList.size()) {
-            //通信とJSON Parseに関してerror処理
-            //TODO: エラー表示は検討の必要あり
-            //Toast.makeText(this, "ランキングデータ取得失敗", Toast.LENGTH_SHORT).show();
             mNoDataMessage.setVisibility(View.VISIBLE);
             return;
         }

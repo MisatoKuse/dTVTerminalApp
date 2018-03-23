@@ -7,15 +7,12 @@ package com.nttdocomo.android.tvterminalapp.activity.home;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -23,59 +20,32 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.HikariTvChDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecommendDataProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopHikariTvChDataConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRecommendDataConnect;
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendBaseFragment;
-import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendBaseFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
-import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
-import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class RecommendActivity extends BaseActivity implements
         RecommendDataProvider.RecommendApiDataProviderCallback,
-        HikariTvChDataProvider.ApiDataProviderCallback,
         TabItemLayout.OnClickTabTextListener {
 
     private String[] mTabNames = null;
     private boolean mIsSearching = false;
     private Boolean mIsMenuLaunch = false;
 
-    //チャンネル情報
-    private List<Map<String, String>> mChannelMap;
-
-    private LinearLayout mLinearLayout = null;
     private TabItemLayout mTabLayout = null;
     //ページャーのクラス(staticにしないと前回の値が維持され、データの更新に失敗する場合がある)
     private static ViewPager sRecommendViewPager = null;
 
     private RecommendDataProvider mRecommendDataProvider = null;
-    private HikariTvChDataProvider mHikariTvChDataProvider = null;
-
-    private int mPagingOffset = 1;
-
-    private static final int LOAD_PAGE_DELAY_TIME = 500;
-    private static final int SCREEN_TIME_WIDTH_PERCENT = 9;
-    private static final int MARGIN_ZERO = 0;
-    private static final int MARGIN_LEFT_TAB = 5;
-
-    //チャンネルを指定
-    private static final int SEARCH_CHANNEL = 3;
-
-    private final static int TEXT_SIZE = 15;
 
     // 表示中の最後の行を保持(staticにしないと前回の値が維持され、データの更新に失敗する場合がある)
     private static int sSearchLastItem = 0;
-    // ページングの回数(staticにしないと前回の値が維持され、データの更新に失敗する場合がある)
-    private static int sCntPaging = 0;
     // ページング判定
     private boolean mIsPaging = false;
     //アクティビティ初回起動フラグ
@@ -105,9 +75,6 @@ public class RecommendActivity extends BaseActivity implements
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recommend_main_layout);
-
-        //チャンネルリスト取得
-        //getChannelList();
 
         //Headerの設定
         setTitleText(getString(R.string.recommend_list_title));
@@ -158,20 +125,6 @@ public class RecommendActivity extends BaseActivity implements
     }
 
     /**
-     * チャンネルリストの取得.
-     */
-    private void getChannelList() {
-        //チャンネルリストプロバイダーでデータを取得する
-        mHikariTvChDataProvider = new HikariTvChDataProvider(this);
-        mHikariTvChDataProvider.getChannelList(0, 0, "");
-        try {
-            mChannelMap = mHikariTvChDataProvider.dbOperation(SEARCH_CHANNEL);
-        } catch (IllegalStateException e) {
-            DTVTLogger.debug(e);
-        }
-    }
-
-    /**
      * 検索中フラグの変更.
      *
      * @param searchingFlag 検索中フラグ
@@ -212,8 +165,6 @@ public class RecommendActivity extends BaseActivity implements
      * レコメンドのリストを初期化.
      */
     private void initRecommendListView() {
-        //ページカウンターの初期化が必要になった
-        sCntPaging = 0;
 
         if (null != sRecommendViewPager) {
             return;
@@ -232,12 +183,10 @@ public class RecommendActivity extends BaseActivity implements
                 mTabLayout.setTab(position);
                 clearAllFragment();
                 setPagingStatus(false);
-                sCntPaging = 0;
                 sSearchLastItem = 0;
                 //ここでフラグをクリアしないと、以後の更新が行われなくなる場合がある
                 setSearchStart(false);
                 requestRecommendData();
-                //getChannelList();
             }
         });
     }
@@ -321,9 +270,6 @@ public class RecommendActivity extends BaseActivity implements
                 sSearchLastItem = 0;
             }
 
-            //フラグメントにチャンネルリストを送信する
-            baseFragment.setChannelData(mChannelMap);
-
             baseFragment.setSelection(sSearchLastItem);
             baseFragment.displayLoadMore(false);
             setSearchStart(false);
@@ -376,27 +322,6 @@ public class RecommendActivity extends BaseActivity implements
     private void setPagingStatus(final boolean bool) {
         synchronized (this) {
             mIsPaging = bool;
-        }
-    }
-
-    @Override
-    public void channelInfoCallback(final ChannelInfoList channelsInfo) {
-        //チャンネル情報取得後のコールバック
-        mChannelMap = mHikariTvChDataProvider.dbOperation(SEARCH_CHANNEL);
-        getCurrentRecommendBaseFragment().setChannelData(mChannelMap);
-
-    }
-
-    @Override
-    public void channelListCallback(final ArrayList<ChannelInfo> channels) {
-        //チャンネル情報取得後のコールバック
-        try {
-            mChannelMap = mHikariTvChDataProvider.dbOperation(SEARCH_CHANNEL);
-
-            getCurrentRecommendBaseFragment().setChannelData(mChannelMap);
-        } catch (Exception e) {
-            //一般例外しか出ない模様となる
-            DTVTLogger.debug(e);
         }
     }
 
@@ -598,9 +523,6 @@ public class RecommendActivity extends BaseActivity implements
         if (mRecommendDataProvider != null) {
             mRecommendDataProvider.enableConnect();
         }
-        if (mHikariTvChDataProvider != null) {
-            mHikariTvChDataProvider.enableConnect();
-        }
         RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
         if (baseFragment != null) {
             baseFragment.enableContentsAdapterCommunication();
@@ -616,9 +538,7 @@ public class RecommendActivity extends BaseActivity implements
 
         //おすすめ番組・ビデオの通信を止める
         StopRecommendDataConnect stopRecommendDataConnect = new StopRecommendDataConnect();
-        StopHikariTvChDataConnect stopHikariTvChDataConnect = new StopHikariTvChDataConnect();
         stopRecommendDataConnect.execute(mRecommendDataProvider);
-        stopHikariTvChDataConnect.execute(mHikariTvChDataProvider);
 
         //FragmentにContentsAdapterの通信を止めるように通知する
         RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
