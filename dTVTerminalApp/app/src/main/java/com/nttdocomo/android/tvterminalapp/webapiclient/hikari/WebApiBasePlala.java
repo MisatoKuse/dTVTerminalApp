@@ -482,9 +482,12 @@ public class WebApiBasePlala {
      * @return エラー情報クラス
      */
     public ErrorState getError() {
+        DTVTLogger.start();
+        DTVTLogger.debug("get error statue=" + mReturnCode.errorState.getErrorType());
         //エラーメッセージの取得を行う
         mReturnCode.errorState.addErrorMessage(mContext);
-
+        DTVTLogger.debug("get error message=" + mReturnCode.errorState.getErrorMessage());
+        DTVTLogger.end();
         //エラーコードを返す
         return mReturnCode.errorState;
     }
