@@ -53,7 +53,7 @@ public class RemoteControlRelayClient {
     private static final String KEYCODE_12 = "KEYCODE_12";
     private static final String KEYCODE_TV_TERRESTRIAL_DIGITAL = "KEYCODE_TV_TERRESTRIAL_DIGITAL";
     private static final String KEYCODE_TV_SATELLITE_BS = "KEYCODE_TV_SATELLITE_BS";
-    private static final String KEYCODE_TV = "KEYCODE_TV";
+    private static final String KEYCODE_TV_SPECIALTYCHANNEL = "KEYCODE_TV_SPECIALTYCHANNEL";
     private static final String KEYCODE_GUIDE = "KEYCODE_GUIDE";
     private static final String KEYCODE_DPAD_CENTER = "KEYCODE_DPAD_CENTER";
     private static final String KEYCODE_BACK = "KEYCODE_BACK";
@@ -94,7 +94,7 @@ public class RemoteControlRelayClient {
             put(R.id.remote_controller_bt_twelve, KEYCODE_12);
             put(R.id.remote_controller_bt_degital, KEYCODE_TV_TERRESTRIAL_DIGITAL); // 地デジ
             put(R.id.remote_controller_bt_bs, KEYCODE_TV_SATELLITE_BS); // BS
-            put(R.id.remote_controller_bt_iptv, KEYCODE_TV); // IPTV
+            put(R.id.remote_controller_bt_specialtychannel, KEYCODE_TV_SPECIALTYCHANNEL); // 専門ch
             put(R.id.remote_controller_bt_tv_program, KEYCODE_GUIDE); // 番組表
             put(R.id.remote_controller_bt_decide, KEYCODE_DPAD_CENTER); // 決定
             put(R.id.remote_controller_bt_back, KEYCODE_BACK); // 戻る

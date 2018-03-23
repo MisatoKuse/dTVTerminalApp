@@ -49,11 +49,11 @@
             android:layout_weight="12" />
 
         <Button
-            android:id="@+id/remote_controller_bt_iptv"
+            android:id="@+id/remote_controller_bt_specialtychannel"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="96"
-            android:background="@mipmap/remote_ch_btn_iptv" />
+            android:background="@mipmap/remote_ch_btn_specialtychannel" />
 
         <TextView
             android:layout_width="0dp"
@@ -302,8 +302,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="40"
-            android:contentDescription="@null"
-            android:src="@mipmap/remote_ch_icon_ch_12" />
+            android:contentDescription="@null"/>
 
         <TextView
             android:layout_width="0dp"
