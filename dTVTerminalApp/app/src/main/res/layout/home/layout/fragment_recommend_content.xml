@@ -8,6 +8,21 @@
                 android:layout_height="match_parent"
 				android:background="@color/recommend_list_background">
 
+	<RelativeLayout
+		android:id="@+id/lv_recommend_progress"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:clickable="true"
+		android:visibility="gone">
+
+		<ProgressBar
+			android:id="@+id/base_progress"
+			style="?android:attr/progressBarStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true" />
+	</RelativeLayout>
+
 	<!-- 例外防止リストビュー -->
 	<com.nttdocomo.android.tvterminalapp.view.RecommendListView
 		android:id="@+id/lv_recommend_list"
