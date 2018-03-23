@@ -525,6 +525,7 @@ public class SearchTopActivity extends BaseActivity
         baseFragment.setResultTextVisibility(true);
         if (0 < mSearchTotalCount) {
 
+            baseFragment.setNoDataMessageVisibility(false);
             //画面表示用のデータセット
             for (int i = 0; i < content.getContentsDataList().size(); ++i) {
                 baseFragment.mData.add(content.getContentsDataList().get(i));
@@ -537,6 +538,7 @@ public class SearchTopActivity extends BaseActivity
         } else {
             //表示件数0件の場合は"タブ名+検索結果:0件"を表示する
             baseFragment.notifyDataSetChanged(getResultString(), mTabIndex);
+            baseFragment.setNoDataMessageVisibility(true);
         }
         baseFragment.displayLoadMore(false);
         setSearchStart(false);

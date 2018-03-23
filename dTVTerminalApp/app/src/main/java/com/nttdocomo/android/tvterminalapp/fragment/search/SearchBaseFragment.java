@@ -72,6 +72,10 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
      * 検索結果数文字列の初期値.
      */
     private final static String SearchCountDefault = "検索結果:0件";
+    /**
+     * リスト0件メッセージ.
+     */
+    private TextView mNoDataMessage;
 
     /**
      * スクロールリスナーをセットする.
@@ -128,6 +132,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         if (null == mCountText) {
             mCountText = mTvFragmentView.findViewById(R.id.tv_searched_result);
         }
+        mNoDataMessage = mTvFragmentView.findViewById(R.id.search_list_no_items);
 
         DTVTLogger.end();
         return mTvFragmentView;
@@ -188,6 +193,22 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
                 mCountText.setVisibility(View.VISIBLE);
             } else {
                 mCountText.setVisibility(View.INVISIBLE);
+                setNoDataMessageVisibility(false);
+            }
+        }
+    }
+
+    /**
+     * 検索結果0件の表示/非表示.
+     *
+     * @param visibility true:表示 false:非表示
+     */
+    public void setNoDataMessageVisibility(final Boolean visibility) {
+        if (null != mNoDataMessage) {
+            if (visibility) {
+                mNoDataMessage.setVisibility(View.VISIBLE);
+            } else {
+                mNoDataMessage.setVisibility(View.INVISIBLE);
             }
         }
     }

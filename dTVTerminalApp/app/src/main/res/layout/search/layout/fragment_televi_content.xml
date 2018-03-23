@@ -24,6 +24,18 @@
 		android:layout_marginRight="16dp"
 		android:background="@color/keyword_search_background_color"/>
 
+	<TextView
+		android:id="@+id/search_list_no_items"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="@dimen/list_no_items_text_left"
+		android:layout_marginTop="@dimen/list_no_items_text_top"
+		android:layout_below="@+id/tv_searched_result"
+		android:text="@string/common_empty_data_message"
+		android:textColor="@color/white_text"
+		android:textSize="@dimen/tab_text_size_14dp"
+		android:visibility="gone" />
+
 	<ListView
 		android:id="@+id/lv_searched_result"
 		android:layout_width="match_parent"
