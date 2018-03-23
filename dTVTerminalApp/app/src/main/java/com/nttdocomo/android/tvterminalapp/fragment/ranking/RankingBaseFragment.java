@@ -50,6 +50,10 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
      */
     private ListView mRankingListView = null;
     /**
+     * 各タブのProgressBar.
+     */
+    private RelativeLayout mRelativeLayout = null;
+    /**
      * リスト表示用アダプタ.
      */
     public ContentsAdapter mContentsAdapter;

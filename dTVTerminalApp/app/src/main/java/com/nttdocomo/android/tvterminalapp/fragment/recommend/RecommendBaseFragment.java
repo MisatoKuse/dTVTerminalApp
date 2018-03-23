@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.RelativeLayout;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
@@ -54,6 +55,10 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      * リストビュー.
      */
     private RecommendListView mRecommendListView = null;
+    /**
+     * ProgressBar.
+     */
+    private RelativeLayout mRelativeLayout = null;
     /**
      * アダプター.
      */
@@ -127,6 +132,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
             mRecommendFragmentView = View.inflate(getActivity(),
                     R.layout.fragment_recommend_content, null);
             mRecommendListView = mRecommendFragmentView.findViewById(R.id.lv_recommend_list);
+            mRelativeLayout = mRecommendFragmentView.findViewById(R.id.lv_recommend_progress);
 
             mRecommendListView.setOnScrollListener(this);
             mRecommendListView.setOnItemClickListener(this);
@@ -135,7 +141,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
             mLoadMoreView = LayoutInflater.from(mActivity).inflate(
                     R.layout.search_load_more, container, false);
         }
-
+        showProgressBar(true);
         if (getContext() != null) {
             mRecommendListBaseAdapter = new ContentsAdapter(getContext(), mData,
                     ContentsAdapter.ActivityTypeItem.TYPE_RECOMMEND_LIST);
@@ -146,11 +152,29 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     }
 
     /**
+     * プロセスバーを表示する.
+     *
+     * @param showProgressBar プロセスバーを表示するかどうか
+     */
+    private void showProgressBar(final boolean showProgressBar) {
+        mRecommendListView = mRecommendFragmentView.findViewById(R.id.lv_recommend_list);
+        mRelativeLayout = mRecommendFragmentView.findViewById(R.id.lv_recommend_progress);
+        if (showProgressBar) {
+            mRecommendListView.setVisibility(View.GONE);
+            mRelativeLayout.setVisibility(View.VISIBLE);
+        } else {
+            mRecommendListView.setVisibility(View.VISIBLE);
+            mRelativeLayout.setVisibility(View.GONE);
+        }
+    }
+
+    /**
      * データの更新.
      *
      * @param tabPosition タブインデックス
      */
     public void notifyDataSetChanged(final int tabPosition) {
+        showProgressBar(false);
         if (null != mRecommendListBaseAdapter) {
             switch (tabPosition) {
                 case POSITION_TV:
@@ -244,6 +268,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
 
         mData.clear();
         if (mRecommendListBaseAdapter != null) {
+            showProgressBar(false);
             mRecommendListBaseAdapter.notifyDataSetChanged();
         }
     }
@@ -308,6 +333,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      */
     public void stopContentsAdapterCommunication() {
         DTVTLogger.start();
+        showProgressBar(false);
         StopContentsAdapterConnect stopContentsAdapterConnect = new StopContentsAdapterConnect();
         if (mRecommendListBaseAdapter != null) {
             stopContentsAdapterConnect.execute(mRecommendListBaseAdapter);
@@ -319,6 +345,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      */
     public void enableContentsAdapterCommunication() {
         DTVTLogger.start();
+        showProgressBar(true);
         if (mRecommendListBaseAdapter != null) {
             mRecommendListBaseAdapter.enableConnect();
         }
