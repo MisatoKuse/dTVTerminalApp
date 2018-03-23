@@ -69,6 +69,8 @@ public class ErrorState {
     /**
      * エラーメッセージとして、エラーメッセージとエラーコードを組み合わせた物を返す.
      *
+     * こちらはエラーコードが付加されるので、基本的にはダイアログ用となります。
+     *
      * @param context 指定していればエラーコードは文字リソースから取得した括弧で囲まれる。なければそのまま出力
      * @return エラーメッセージ
      */
@@ -108,13 +110,27 @@ public class ErrorState {
     }
 
     /**
+     * エラーメッセージを返す.
+     *
+     * こちらはエラーコードが混在することが無いので、基本的にトースト用となります。
+     * @return エラーメッセージ
+     */
+    public String getErrorMessage() {
+        return mErrorMessage;
+    }
+
+
+    /**
      * 現在のエラー情報に合わせたエラーメッセージを取得する.
      *
      * @param context コンテキスト
      */
     public void addErrorMessage(Context context) {
+        DTVTLogger.start();
+
         //コンテキストが無いとリソースにアクセスできないので、帰る
         if (context == null) {
+            DTVTLogger.debug("addErrorMessage no context");
             return;
         }
 
@@ -123,6 +139,7 @@ public class ErrorState {
         switch (mErrorType) {
             case SUCCESS:
                 //正常なのでメッセージは無し。
+                DTVTLogger.debug("success ");
                 break;
             case SSL_ERROR:
                 //SSLエラー用メッセージの取得
@@ -132,11 +149,12 @@ public class ErrorState {
             case TOKEN_ERROR:
             case NETWORK_ERROR:
             case HTTP_ERROR:
-                //case API_ERROR:
                 //その他Lエラー用メッセージの取得
                 mErrorMessage = context.getString(R.string.nw_error_message);
                 break;
         }
+
+        DTVTLogger.end();
     }
 
     /**
@@ -243,18 +261,16 @@ public class ErrorState {
         }
     }
 
-    //各ゲッター・セッター群（基本的にコメントは略）
+    //その他 各ゲッター・セッター群（基本的にコメントは略）
 
     public DTVTConstants.ERROR_TYPE getErrorType() {
         return mErrorType;
     }
 
     public void setErrorType(DTVTConstants.ERROR_TYPE errorType) {
+        DTVTLogger.start("ErrorType = " + errorType);
         this.mErrorType = errorType;
-    }
-
-    public String getErrorMessage() {
-        return mErrorMessage;
+        DTVTLogger.end();
     }
 
     public void setErrorMessage(String errorMessage) {

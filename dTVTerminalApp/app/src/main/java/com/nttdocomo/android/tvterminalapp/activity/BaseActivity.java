@@ -19,6 +19,7 @@ import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -2208,6 +2209,22 @@ public class BaseActivity extends FragmentActivity implements
     public void showGetDataFailedToast() {
         Toast.makeText(
                 this, R.string.common_get_data_failed_message, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * データが取得失敗した時のトースト表示(メッセージ付き).
+     *
+     * @param message トースト表示するメッセージ
+     */
+    public void showGetDataFailedToast(String message) {
+        if(TextUtils.isEmpty(message)) {
+            //メッセージが空文字ならば、既存のメッセージ表示を呼び出す
+            showGetDataFailedToast();
+        } else {
+            //指定されたメッセージを表示する
+            Toast.makeText(
+                    this, message, Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**

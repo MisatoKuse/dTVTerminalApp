@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
@@ -135,6 +136,16 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     private List<List<Map<String, String>>> mResultSets = null;
 
     /**
+     * チャンネルリスト用エラー情報バッファ
+     */
+    private ErrorState mChannelError = null;
+
+    /**
+     * 番組リスト用エラー情報バッファ
+     */
+    private ErrorState mTvScheduleError = null;
+
+    /**
      * コンストラクタ.
      *
      * @param mContext TvProgramListActivity
@@ -156,6 +167,23 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         this.mContext = mContext;
         this.mApiDataProviderCallback = mApiDataProviderCallback;
     }
+
+    /**
+     * チャンネル情報取得エラーのクラスを返すゲッター
+     * @return チャンネル情報取得エラーのクラス
+     */
+    public ErrorState getChannelError() {
+        return mChannelError;
+    }
+
+    /**
+     * 番組情報取得エラーのクラスを返すゲッター
+     * @return 番組情報取得エラーのクラス
+     */
+    public ErrorState getmTvScheduleError() {
+        return mTvScheduleError;
+    }
+
 
     @SuppressWarnings("OverlyLongMethod")
     @Override
@@ -296,6 +324,9 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 DTVTLogger.debug(e);
                 channels = null;
             }
+        } else {
+            //データが取得できなかったので、エラーを取得する
+            mChannelError = mChannelWebClient.getError();
         }
 
         //WebApi上は必ずひかり・dCH共に取得するが、呼び出し元によってはどちらか一方のみ用いるのでフィルタ.
@@ -346,6 +377,9 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 }
             }
         } else {
+            //データが取得できなかったので、エラーを取得する
+            mTvScheduleError = mTvScheduleWebClient.getError();
+
             //Data取得時に、DBから取得するチャンネル番号とWebAPIから取得するチャンネル番号を分けて
             //データを取っているため、ここで改めてDBからデータを取得は行わない.
             if (null != mApiDataProviderCallback) {

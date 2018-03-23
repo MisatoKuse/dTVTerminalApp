@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -128,26 +129,26 @@ public class ChannelListActivity extends BaseActivity implements
     }
 
     /**
-     *　STB接続時タブリスト.
+     * 　STB接続時タブリスト.
      */
     private static final ChListDataType[] CHANNEL_LIST_TAB_NO_STB_LIST
             = {ChListDataType.CH_LIST_DATA_TYPE_HIKARI,
-                 ChListDataType.CH_LIST_DATA_TYPE_DCH};
+            ChListDataType.CH_LIST_DATA_TYPE_DCH};
     /**
-     *　STB未接続時タブリスト.
+     * 　STB未接続時タブリスト.
      */
     private static final ChListDataType[] CHANNEL_LIST_TAB_CONNECT_STB_LIST
             = {ChListDataType.CH_LIST_DATA_TYPE_HIKARI,
-                  ChListDataType.CH_LIST_DATA_TYPE_TDB,
-                  ChListDataType.CH_LIST_DATA_TYPE_BS,
-                 ChListDataType.CH_LIST_DATA_TYPE_DCH};
+            ChListDataType.CH_LIST_DATA_TYPE_TDB,
+            ChListDataType.CH_LIST_DATA_TYPE_BS,
+            ChListDataType.CH_LIST_DATA_TYPE_DCH};
 
     /**
-     *　タブ延長タイム.
+     * 　タブ延長タイム.
      */
     private final int CHANNEL_LIST_TAB_DELAY_TIME = 1300;
     /**
-     *　現在タイプ.
+     * 　現在タイプ.
      */
     private ChListDataType mCurrentType = ChListDataType.CH_LIST_DATA_TYPE_HIKARI;
     /**
@@ -155,13 +156,23 @@ public class ChannelListActivity extends BaseActivity implements
      */
     private Handler mHandle = new Handler();
     /**
-     *　画面表示時のSTB接続状態.
+     * 　画面表示時のSTB接続状態.
      */
     private boolean mIsStbConnected;
     /**
      * リスト0件メッセージ.
      */
     private TextView mNoDataMessage;
+    /**
+     * ひかりTV for docomoタブの連続更新防止用.
+     */
+    private long beforeGetHikariData;
+    /**
+     * ひかりTV for docomoタブの連続更新防止用実行間隔.
+     * これより短い間隔で呼ばれた場合は、スキップする
+     */
+    private static final long GET_HIKARI_DATA_INTERVAL = 100L;
+
     /**
      * コンストラクタ.
      *
@@ -303,6 +314,10 @@ public class ChannelListActivity extends BaseActivity implements
     private void initData() {
         DTVTLogger.start();
         mFactory = new ChannelListFragmentFactory();
+
+        //初回は必ず実行させるために、最小値を入れる
+        beforeGetHikariData = Long.MIN_VALUE;
+
         DTVTLogger.end();
     }
 
@@ -394,7 +409,23 @@ public class ChannelListActivity extends BaseActivity implements
      * Hikariデータ取得.
      */
     private void getHikariData() {
-        DTVTLogger.start();
+        DTVTLogger.start("time = " + beforeGetHikariData +
+                " now = " + System.currentTimeMillis());
+
+        //アクティビティ起動時は、アクティビティ表示の初期化用とタブ表示更新用の2回ここが呼ばれてしまう。
+        //ネットワークエラーの表示がおかしくなるので、連続して呼ばれた場合は、後者をスキップする
+        if (beforeGetHikariData + GET_HIKARI_DATA_INTERVAL > System.currentTimeMillis()) {
+            //連続して呼ばれたので帰る
+            DTVTLogger.end("getHikariData skip");
+            return;
+        }
+
+        //連続実行ではないので、実行する
+        DTVTLogger.end("getHikariData exec");
+
+        //現在時刻を取得する
+        beforeGetHikariData = System.currentTimeMillis();
+
         mHandle.postDelayed(mRunnableHikari, CHANNEL_LIST_TAB_DELAY_TIME);
         DTVTLogger.end();
     }
@@ -737,6 +768,7 @@ public class ChannelListActivity extends BaseActivity implements
 
         /**
          * コンストラクタ.
+         *
          * @param fm fm
          */
         ChannelListPagerAdapter(final FragmentManager fm) {
@@ -791,7 +823,17 @@ public class ChannelListActivity extends BaseActivity implements
         DTVTLogger.start();
         if (null == channels) {
             mNoDataMessage.setVisibility(View.VISIBLE);
-            showGetDataFailedToast();
+
+            //エラーメッセージを取得する
+            String message = mHikariTvChDataProvider.getChannelError().getErrorMessage();
+
+            //有無で処理を分ける
+            if (TextUtils.isEmpty(message)) {
+                showGetDataFailedToast();
+            } else {
+                showGetDataFailedToast(message);
+            }
+
             DTVTLogger.end();
             return;
         }
