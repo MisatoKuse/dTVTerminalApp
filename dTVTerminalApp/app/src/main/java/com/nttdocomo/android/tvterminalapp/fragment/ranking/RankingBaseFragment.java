@@ -87,7 +87,7 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
 
         return initView(container);
     }
-private RelativeLayout mRelativeLayout = null;
+
     /**
      * 各タブ画面は別々に実現して表示されること.
      *
