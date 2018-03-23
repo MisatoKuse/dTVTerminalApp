@@ -4,10 +4,26 @@
     android:layout_height="match_parent"
     android:background="#000000"
     android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/ranking_top_layout_progress_bar_Layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/base_progress"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
+
     <ScrollView
         android:background="#FF0000"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="visible">
         <LinearLayout
             android:id="@+id/ranking_top_main_layout_linearLayout"
             android:layout_width="match_parent"
