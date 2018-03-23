@@ -743,7 +743,6 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
                 mScaledDownProgramListDataProvider.getProgram(channelNos, dateList, mTabIndex);
             } else {
                 mNoDataMessage.setVisibility(View.VISIBLE);
-                showGetDataFailedToast();
                 scrollToCurTime();
                 refreshTimeLine();
             }
@@ -877,7 +876,6 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
             } else {
                 mNoDataMessage.setVisibility(View.VISIBLE);
             }
-            showGetDataFailedToast();
         }
     }
 

@@ -282,7 +282,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 }
             } else {
                 mNoDataMessage.setVisibility(View.VISIBLE);
-                showGetDataFailedToast();
             }
             baseFragment.notifyDataSetChanged();
         }
