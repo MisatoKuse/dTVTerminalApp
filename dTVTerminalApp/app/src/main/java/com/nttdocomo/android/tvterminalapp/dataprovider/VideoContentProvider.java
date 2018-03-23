@@ -115,7 +115,11 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
             //TODO：暫定的に人気順でソートする
             String sort = JsonConstants.GENRE_PER_CONTENTS_SORT_PLAY_COUNT_DESC;
 
-            mGenreListWebClient.getContentsListPerGenreApi(UPPER_PAGE_LIMIT, offset, WebApiBasePlala.FILTER_RELEASE, ageReq, genreId, sort, this);
+            if (!mGenreListWebClient.getContentsListPerGenreApi(UPPER_PAGE_LIMIT, offset, WebApiBasePlala.FILTER_RELEASE, ageReq, genreId, sort, this)) {
+                if (null != mApiVideoContentDataProviderCallback) {
+                    mApiVideoContentDataProviderCallback.videoContentCallback(null);
+                }
+            }
         } else {
             DTVTLogger.error("VideoContentProvider is stopping connection");
             if (null != mApiVideoContentDataProviderCallback) {
@@ -206,16 +210,24 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
 
     @Override
     public void onContentsListPerGenreJsonParsed(final List<VideoRankList> contentsListPerGenre, final String genreId) {
-        if (contentsListPerGenre != null && contentsListPerGenre.size() > 0) {
+        if (contentsListPerGenre != null) {
             VideoRankList list = contentsListPerGenre.get(0);
-            if (!mRequiredClipKeyList
-                    || mResponseEndFlag) {
-                sendContentListData(list.getVrList());
+            if (list != null) {
+                if (!mRequiredClipKeyList
+                        || mResponseEndFlag) {
+                    sendContentListData(list.getVrList());
+                } else {
+                    mVideoRankList = list;
+                }
             } else {
-                mVideoRankList = list;
+                if (null != mApiVideoContentDataProviderCallback) {
+                    mApiVideoContentDataProviderCallback.videoContentCallback(null);
+                }
             }
         } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            if (null != mApiVideoContentDataProviderCallback) {
+                mApiVideoContentDataProviderCallback.videoContentCallback(null);
+            }
         }
     }
 

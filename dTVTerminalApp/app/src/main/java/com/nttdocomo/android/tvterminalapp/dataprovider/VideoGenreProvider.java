@@ -185,7 +185,11 @@ public class VideoGenreProvider implements
             if (!mIsCancel) {
                 //データの有効期限切れなら通信で取得
                 mGenreListWebClient = new GenreListWebClient(mContext);
-                mGenreListWebClient.getGenreListApi(this);
+                if (!mGenreListWebClient.getGenreListApi(this)) {
+                    if (mRankGenreListCallback != null) {
+                        mRankGenreListCallback.onRankGenreListCallback(null);
+                    }
+                }
             } else {
                 DTVTLogger.error("VideoGenreProvider is stopping connection");
                 if (mRankGenreListCallback != null) {
@@ -207,7 +211,11 @@ public class VideoGenreProvider implements
                 if (!mIsCancel) {
                     //SharedPreferences取得失敗時には通信で取得
                     mGenreListWebClient = new GenreListWebClient(mContext);
-                    mGenreListWebClient.getGenreListApi(this);
+                    if (!mGenreListWebClient.getGenreListApi(this)) {
+                        if (mRankGenreListCallback != null) {
+                            mRankGenreListCallback.onRankGenreListCallback(null);
+                        }
+                    }
                 } else {
                     DTVTLogger.error("VideoGenreProvider is stopping connection");
                     if (mRankGenreListCallback != null) {
@@ -232,7 +240,9 @@ public class VideoGenreProvider implements
             int offset = 1;
             String filter = "";
             int ageReq = 1;
-            mWebClient.getGenreCountGetApi(filter, ageReq, genreId, this);
+            if (!mWebClient.getGenreCountGetApi(filter, ageReq, genreId, this)) {
+                mApiGenreListDataProviderCallback.genreListCallback(null);
+            }
         } else {
             DTVTLogger.error("VideoGenreProvider is stopping connection");
             mApiGenreListDataProviderCallback.genreListCallback(null);

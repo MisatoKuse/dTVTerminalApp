@@ -56,11 +56,11 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
 
     @Override
     public void onTvClipJsonParsed(final List<TvClipList> tvClipLists) {
-        if (tvClipLists != null && tvClipLists.size() > 0) {
+        if (tvClipLists != null) {
             List vclist = tvClipLists.get(0).getVcList();
-            if (vclist != null && vclist.size() > 0) {
-                HashMap hashMap = (HashMap) vclist.get(0);
-                if (!hashMap.isEmpty()) {
+            if (vclist != null) {
+                //HashMap hashMap = (HashMap) vclist.get(0);
+                //if (!hashMap.isEmpty()) {
                     TvClipList list = tvClipLists.get(0);
                     //            setStructDB(list);
                     if (!mRequiredClipKeyList
@@ -70,10 +70,14 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
                         mClipList = list;
                         sendTvClipListData(list.getVcList());
                     }
-                } else {
-                    if (null != apiDataProviderCallback) {
-                        apiDataProviderCallback.tvClipListCallback(null);
-                    }
+                //} else {
+                //    if (null != apiDataProviderCallback) {
+                //        apiDataProviderCallback.tvClipListCallback(null);
+                //    }
+                //}
+            } else {
+                if (null != apiDataProviderCallback) {
+                    apiDataProviderCallback.tvClipListCallback(null);
                 }
             }
         } else {
@@ -237,8 +241,10 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
             int lowerPageLimit = 1;
             //int pagerOffset = 1;
             String pagerDirection = "";
-            mWebClient.getTvClipApi(ageReq, upperPageLimit,
-                    lowerPageLimit, pagerOffset, pagerDirection, this);
+            if (!mWebClient.getTvClipApi(ageReq, upperPageLimit,
+                    lowerPageLimit, pagerOffset, pagerDirection, this)) {
+                apiDataProviderCallback.tvClipListCallback(null);
+            }
         } else {
             DTVTLogger.error("TvClipDataProvider is stopping connection");
             if (null != apiDataProviderCallback) {
