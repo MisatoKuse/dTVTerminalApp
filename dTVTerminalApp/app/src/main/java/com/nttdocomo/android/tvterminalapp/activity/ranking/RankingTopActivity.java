@@ -39,6 +39,10 @@ public class RankingTopActivity extends BaseActivity
      */
     private LinearLayout mLinearLayout;
     /**
+     * ランキングトップ画面のProgressDialog.
+     */
+    private RelativeLayout mRelativeLayout;
+    /**
      * ランキングトップ画面のデータ取得用データプロパイダ.
      */
     private RankingTopDataProvider mRankingTopDataProvider;
@@ -107,12 +111,32 @@ public class RankingTopActivity extends BaseActivity
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         mLinearLayout = findViewById(R.id.ranking_top_main_layout_linearLayout);
+        mRelativeLayout = findViewById(R.id.ranking_top_layout_progress_bar_Layout);
         //各ランキングリストのUIをあらかじめ用意する
         for (int i = 0; i < CONTENT_LIST_COUNT; i++) {
             View view = View.inflate(this, R.layout.home_main_layout_item, null);
             view.setTag(i);
             view.setVisibility(View.GONE);
             mLinearLayout.addView(view);
+        }
+    }
+
+
+    /**
+     * プロセスバーを表示する.
+     *
+     * @param showProgressBar プロセスバーを表示するかどうか
+     */
+    private void showProgressBar(final boolean showProgressBar) {
+        enableGlobalMenuIcon(!showProgressBar);
+        mLinearLayout = findViewById(R.id.ranking_top_main_layout_linearLayout);
+        mRelativeLayout = findViewById(R.id.ranking_top_layout_progress_bar_Layout);
+        if (showProgressBar) {
+            mLinearLayout.setVisibility(View.GONE);
+            mRelativeLayout.setVisibility(View.VISIBLE);
+        } else {
+            mLinearLayout.setVisibility(View.VISIBLE);
+            mRelativeLayout.setVisibility(View.GONE);
         }
     }
 
@@ -234,6 +258,7 @@ public class RankingTopActivity extends BaseActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                showProgressBar(false);
                 if (contentsDataList != null && contentsDataList.size() > 0) {
                     setRecyclerView(contentsDataList, TODAY_SORT);
                 } else {
@@ -248,6 +273,7 @@ public class RankingTopActivity extends BaseActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                showProgressBar(false);
                 if (contentsDataList != null && contentsDataList.size() > 0) {
                     setRecyclerView(contentsDataList, WEEK_SORT);
                 } else {
@@ -263,6 +289,7 @@ public class RankingTopActivity extends BaseActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                showProgressBar(false);
                 if (contentsDataList != null && contentsDataList.size() > 0) {
                     setRecyclerView(contentsDataList, VIDEO_SORT);
                 } else {
@@ -335,6 +362,7 @@ public class RankingTopActivity extends BaseActivity
 
         //足りないデータがあるのでデータの取得を行う
         if (getData) {
+            showProgressBar(true);
             mRankingTopDataProvider.getRankingTopData();
         }
     }
@@ -344,6 +372,7 @@ public class RankingTopActivity extends BaseActivity
         super.onPause();
         DTVTLogger.start();
         //通信を止める
+        showProgressBar(false);
         StopRankingTopDataConnect stopRankingTopDataConnect = new StopRankingTopDataConnect();
         stopRankingTopDataConnect.execute(mRankingTopDataProvider);
         StopHomeRecyclerViewAdapterConnect stopHomeRecyclerViewAdapterConnect = new StopHomeRecyclerViewAdapterConnect();

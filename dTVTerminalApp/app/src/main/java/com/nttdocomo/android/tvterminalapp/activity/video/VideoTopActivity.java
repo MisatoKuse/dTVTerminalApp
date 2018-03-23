@@ -34,7 +34,7 @@ import java.util.Map;
  * ビデオ＞ジャンル/サブジャンル一覧 Activityクラス.
  */
 public class VideoTopActivity extends BaseActivity implements VideoGenreProvider.apiGenreListDataProviderCallback,
-        AbsListView.OnScrollListener, AdapterView.OnItemClickListener, VideoGenreProvider.GenreListMapCallback {
+        AdapterView.OnItemClickListener, VideoGenreProvider.GenreListMapCallback {
 
     private ImageView mMenuImageView;
     private List mContentsList;
@@ -76,7 +76,6 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
         }
         mListView = findViewById(R.id.genre_list);
         mListView.setOnItemClickListener(this);
-        mListView.setOnScrollListener(this);
         mVideoGenreAdapter = new VideoGenreAdapter(
                 this,
                 mContentsList
@@ -135,16 +134,7 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
         }
     }
 
-    @Override
-    public void onScrollStateChanged(final AbsListView view, final int scrollState) {
-        // NOP
-    }
-
-    @Override
-    public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
-        // NOP
-    }
-
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     @Override
     public void genreListCallback(final List<GenreCountGetMetaData> genreList) {
         DTVTLogger.start();
