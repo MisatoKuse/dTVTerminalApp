@@ -2217,7 +2217,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param message トースト表示するメッセージ
      */
     public void showGetDataFailedToast(String message) {
-        if(TextUtils.isEmpty(message)) {
+        if (TextUtils.isEmpty(message)) {
             //メッセージが空文字ならば、既存のメッセージ表示を呼び出す
             showGetDataFailedToast();
         } else {
@@ -2228,11 +2228,13 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     /**
-     * データが取得失敗した時のダイアログ表示.
+     * データが取得失敗した時のダイアログ表示（メッセージ指定）.
+     *
+     * @param message メッセージ
      */
-    public void showDialogToClose() {
+    public void showDialogToClose(String message) {
         CustomDialog closeDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
-        closeDialog.setContent(getApplicationContext().getString(R.string.common_get_data_failed_message));
+        closeDialog.setContent(message);
         closeDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
@@ -2241,6 +2243,15 @@ public class BaseActivity extends FragmentActivity implements
         });
         closeDialog.setCancelable(false);
         closeDialog.showDialog();
+    }
+
+    /**
+     * データが取得失敗した時のダイアログ表示.
+     */
+    public void showDialogToClose() {
+        //文字列リソースを取得して、メッセージ指定側に処理を移譲
+        showDialogToClose(getApplicationContext().getString(
+                R.string.common_get_data_failed_message));
     }
 
     /**
