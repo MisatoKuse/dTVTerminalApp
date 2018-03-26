@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,7 +84,7 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
         //initData();//一時使うデータ
         DTVTLogger.debug("onCreateView");
 
-        return initView(container);
+        return initView();
     }
 
     /**
@@ -93,7 +92,7 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
      *
      * @return 各タブ画面
      */
-    private View initView(final ViewGroup container) {
+    private View initView() {
         if (mData == null) {
             mData = new ArrayList<>();
         }
@@ -105,9 +104,7 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
 
             mRankingListView.setOnItemClickListener(this);
         }
-        if (mRankingListView != null && mRelativeLayout != null) {
-            showProgressBar(true);
-        }
+        showProgressBar(true);
         if (mContentsAdapter == null) {
             initRankingView();
         }
@@ -226,7 +223,6 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
     public void enableContentsAdapterCommunication() {
         DTVTLogger.start();
         if (mContentsAdapter != null) {
-            showProgressBar(true);
             mContentsAdapter.enableConnect();
         }
     }
