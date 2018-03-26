@@ -31,6 +31,8 @@ import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewAdapter;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
@@ -97,10 +99,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private boolean mIsCloseDialog = false;
     /**
-     * コンテンツ情報取得失敗フラグ.
-     */
-    private boolean mIsGetContentsInfoFailed = false;
-    /**
      * NOW ON AIR用チャンネル一覧.
      */
     private ChannelList mChannelList = null;
@@ -115,43 +113,43 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     /**
      * UIの上下表示順(NOW ON AIR).
      */
-    private final static int HOME_CONTENTS_SORT_CHANNEL = HOME_CONTENTS_LIST_START_INDEX;
+    public final static int HOME_CONTENTS_SORT_CHANNEL = HOME_CONTENTS_LIST_START_INDEX;
     /**
      * UIの上下表示順(おすすめ番組).
      */
-    private final static int HOME_CONTENTS_SORT_RECOMMEND_PROGRAM = HOME_CONTENTS_LIST_START_INDEX + 1;
+    public final static int HOME_CONTENTS_SORT_RECOMMEND_PROGRAM = HOME_CONTENTS_LIST_START_INDEX + 1;
     /**
      * UIの上下表示順(おすすめビデオ).
      */
-    private final static int HOME_CONTENTS_SORT_RECOMMEND_VOD = HOME_CONTENTS_LIST_START_INDEX + 2;
+    public final static int HOME_CONTENTS_SORT_RECOMMEND_VOD = HOME_CONTENTS_LIST_START_INDEX + 2;
     /**
      * UIの上下表示順(今日のテレビランキング).
      */
-    private final static int HOME_CONTENTS_SORT_TODAY = HOME_CONTENTS_LIST_START_INDEX + 3;
+    public final static int HOME_CONTENTS_SORT_TODAY = HOME_CONTENTS_LIST_START_INDEX + 3;
     /**
      * UIの上下表示順(ビデオランキング).
      */
-    private final static int HOME_CONTENTS_SORT_VIDEO = HOME_CONTENTS_LIST_START_INDEX + 4;
+    public final static int HOME_CONTENTS_SORT_VIDEO = HOME_CONTENTS_LIST_START_INDEX + 4;
     /**
      * UIの上下表示順(視聴中ビデオ).
      */
-    private final static int HOME_CONTENTS_SORT_WATCHING_VIDEO = HOME_CONTENTS_LIST_START_INDEX + 5;
+    public final static int HOME_CONTENTS_SORT_WATCHING_VIDEO = HOME_CONTENTS_LIST_START_INDEX + 5;
     /**
      * UIの上下表示順(クリップ[テレビ]).
      */
-    private final static int HOME_CONTENTS_SORT_TV_CLIP = HOME_CONTENTS_LIST_START_INDEX + 6;
+    public final static int HOME_CONTENTS_SORT_TV_CLIP = HOME_CONTENTS_LIST_START_INDEX + 6;
     /**
      * UIの上下表示順(クリップ[ビデオ]).
      */
-    private final static int HOME_CONTENTS_SORT_VOD_CLIP = HOME_CONTENTS_LIST_START_INDEX + 7;
+    public final static int HOME_CONTENTS_SORT_VOD_CLIP = HOME_CONTENTS_LIST_START_INDEX + 7;
     /**
      * UIの上下表示順(プレミアム).
      */
-    private final static int HOME_CONTENTS_SORT_PREMIUM = HOME_CONTENTS_LIST_START_INDEX + 8;
+    public final static int HOME_CONTENTS_SORT_PREMIUM = HOME_CONTENTS_LIST_START_INDEX + 8;
     /**
      * UIの上下表示順(レンタル).
      */
-    private final static int HOME_CONTENTS_SORT_RENTAL = HOME_CONTENTS_LIST_START_INDEX + 9;
+    public final static int HOME_CONTENTS_SORT_RENTAL = HOME_CONTENTS_LIST_START_INDEX + 9;
     /**
      * アダプタ内でのリスト識別用定数.
      */
@@ -240,7 +238,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onResume() {
         super.onResume();
-        mIsGetContentsInfoFailed = false;
         mUserInfoDataProvider = new UserInfoDataProvider(this, this);
         //アプリ起動時のデータ取得ユーザ情報未取得又は時間切れ又はonCreateから開始した場合はユーザ情報取得から
         if (mUserInfoDataProvider.isUserInfoTimeOut() && !TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(this))) {
@@ -292,10 +289,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private void requestHomeData() {
         //Home画面用データを取得
-        showProgessBar(true);
-        showHomeBanner();
-        mHomeDataProvider = new HomeDataProvider(this);
-        mHomeDataProvider.getHomeData();
+        if (networkCheck()) {
+            showProgessBar(true);
+            showHomeBanner();
+            mHomeDataProvider = new HomeDataProvider(this);
+            mHomeDataProvider.getHomeData();
+        }
     }
 
     /**
@@ -594,13 +593,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             public void run() {
                 //callbackが帰ってきたらProgressDialogを消す
                 showProgessBar(false);
-                if (channelList != null) {
-                    if (channelList.size() > 0) {
-                        Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_CHANNEL, channelList);
-                        mHandler.sendMessage(msg);
-                    }
+                if (channelList != null && channelList.size() > 0) {
+                    Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_CHANNEL, channelList);
+                    mHandler.sendMessage(msg);
                 } else {
-                    showGetDataFailedDialog();
+                    showErrorDialogByErrorStatus(HOME_CONTENTS_SORT_CHANNEL);
                 }
             }
         });
@@ -614,13 +611,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             public void run() {
                 //callbackが帰ってきたらProgressDialogを消す
                 showProgessBar(false);
-                if (dailyRankList != null) {
-                    if (dailyRankList.size() > 0) {
-                        Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_TODAY, dailyRankList);
-                        mHandler.sendMessage(msg);
-                    }
+                if (dailyRankList != null && dailyRankList.size() > 0) {
+                    Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_TODAY, dailyRankList);
+                    mHandler.sendMessage(msg);
                 } else {
-                    showGetDataFailedDialog();
+                    showErrorDialogByErrorStatus(HOME_CONTENTS_SORT_TODAY);
                 }
             }
         });
@@ -630,13 +625,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public void tvClipListCallback(final List<ContentsData> tvClipList) {
         //callbackが帰ってきたらProgressDialogを消す
         showProgessBar(false);
-        if (tvClipList != null) {
-            if (tvClipList.size() > 0) {
-                Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_TV_CLIP, tvClipList);
-                mHandler.sendMessage(msg);
-            }
+        if (tvClipList != null && tvClipList.size() > 0) {
+            Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_TV_CLIP, tvClipList);
+            mHandler.sendMessage(msg);
         } else {
-            showGetDataFailedDialog();
+            showErrorDialogByErrorStatus(HOME_CONTENTS_SORT_TV_CLIP);
         }
     }
 
@@ -644,13 +637,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public void vodClipListCallback(final List<ContentsData> vodClipList) {
         //callbackが帰ってきたらProgressDialogを消す
         showProgessBar(false);
-        if (vodClipList != null) {
-            if (vodClipList.size() > 0) {
-                Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_VOD_CLIP, vodClipList);
-                mHandler.sendMessage(msg);
-            }
+        if (vodClipList != null && vodClipList.size() > 0) {
+            Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_VOD_CLIP, vodClipList);
+            mHandler.sendMessage(msg);
         } else {
-            showGetDataFailedDialog();
+            showErrorDialogByErrorStatus(HOME_CONTENTS_SORT_VOD_CLIP);
         }
     }
 
@@ -662,13 +653,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             public void run() {
                 //callbackが帰ってきたらProgressDialogを消す
                 showProgessBar(false);
-                if (videoRankList != null) {
-                    if (videoRankList.size() > 0) {
-                        Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_VIDEO, videoRankList);
-                        mHandler.sendMessage(msg);
-                    }
+                if (videoRankList != null && videoRankList.size() > 0) {
+                    Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_VIDEO, videoRankList);
+                    mHandler.sendMessage(msg);
                 } else {
-                    showGetDataFailedDialog();
+                    showErrorDialogByErrorStatus(HOME_CONTENTS_SORT_VIDEO);
                 }
             }
         });
@@ -682,13 +671,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             public void run() {
                 //callbackが帰ってきたらProgressDialogを消す
                 showProgessBar(false);
-                if (watchingVideoList != null) {
-                    if (watchingVideoList.size() > 0) {
-                        Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_WATCHING_VIDEO, watchingVideoList);
-                        mHandler.sendMessage(msg);
-                    }
+                if (watchingVideoList != null && watchingVideoList.size() > 0) {
+                    Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_WATCHING_VIDEO, watchingVideoList);
+                    mHandler.sendMessage(msg);
                 } else {
-                    showGetDataFailedDialog();
+                    showErrorDialogByErrorStatus(HOME_CONTENTS_SORT_WATCHING_VIDEO);
                 }
             }
         });
@@ -702,13 +689,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             public void run() {
                 //callbackが帰ってきたらProgressDialogを消す
                 showProgessBar(false);
-                if (redChList != null) {
-                    if (redChList.size() > 0) {
-                        Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RECOMMEND_PROGRAM, redChList);
-                        mHandler.sendMessage(msg);
-                    }
+                if (redChList != null && redChList.size() > 0) {
+                    Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RECOMMEND_PROGRAM, redChList);
+                    mHandler.sendMessage(msg);
                 } else {
-                    showGetDataFailedDialog();
+                    showErrorDialogByErrorStatus(HOME_CONTENTS_SORT_RECOMMEND_PROGRAM);
                 }
             }
         });
@@ -722,13 +707,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             public void run() {
                 //callbackが帰ってきたらProgressDialogを消す
                 showProgessBar(false);
-                if (redVdList != null) {
-                    if (redVdList.size() > 0) {
-                        Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RECOMMEND_VOD, redVdList);
-                        mHandler.sendMessage(msg);
-                    }
+                if (redVdList != null && redVdList.size() > 0) {
+                    Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RECOMMEND_VOD, redVdList);
+                    mHandler.sendMessage(msg);
                 } else {
-                    showGetDataFailedDialog();
+                    showErrorDialogByErrorStatus(HOME_CONTENTS_SORT_RECOMMEND_VOD);
                 }
             }
         });
@@ -786,20 +769,32 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     /**
-     * データ取得失敗ダイアログ.
+     * ユーザ情報取得処理.
+     *
+     * @param tag  api区別
      */
-    private void showGetDataFailedDialog() {
-        //一度表示されたら表示しない
-        if (!mIsGetContentsInfoFailed) {
-            mIsGetContentsInfoFailed = true;
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    String message = getResources().getString(R.string.get_contents_data_error_message);
-                    errorDialog(message, R.string.custom_dialog_ok);
-                }
-            });
+    private void showErrorDialogByErrorStatus(final int tag) {
+        ErrorState errorState = mHomeDataProvider.getError(tag);
+        if (errorState != null && errorState.getErrorType() != DTVTConstants.ERROR_TYPE.SUCCESS) {
+            String message = errorState.getApiErrorMessage(this);
+            if (!TextUtils.isEmpty(message)) {
+                showGetDataFailedDialog(message);
+            }
         }
+    }
+
+    /**
+     * データ取得失敗ダイアログ.
+     * @param message  エラーメッセージ
+     */
+    private void showGetDataFailedDialog(final String message) {
+        //一度表示されたら表示しない
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                errorDialog(message, R.string.custom_dialog_ok);
+            }
+        });
     }
 
     /**
@@ -856,7 +851,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                         mHandler.sendMessage(msg);
                     }
                 } else {
-                    showGetDataFailedDialog();
+                    showErrorDialogByErrorStatus(HOME_CONTENTS_SORT_RENTAL);
                 }
             }
         });
@@ -876,7 +871,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                         mHandler.sendMessage(msg);
                     }
                 } else {
-                    showGetDataFailedDialog();
+                    showErrorDialogByErrorStatus(HOME_CONTENTS_SORT_PREMIUM);
                 }
             }
         });

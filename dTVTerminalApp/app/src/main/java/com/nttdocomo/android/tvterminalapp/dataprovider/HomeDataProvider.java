@@ -9,9 +9,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 
+import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
@@ -60,7 +61,6 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WatchListenVideoWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
-import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -785,14 +785,14 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         } else {
             if (!mIsStop) {
                 //通信クラスにデータ取得要求を出す
-                TvScheduleWebClient webClient = new TvScheduleWebClient(mContext);
+                mTvScheduleWebClient = new TvScheduleWebClient(mContext);
                 int[] chNos = new int[chNo.length];
                 for (int i = 0; i < chNo.length; i++) {
                     chNos[i] = Integer.parseInt(chNo[i]);
                 }
                 String[] channelInfoDate = new String[]{WebApiBasePlala.DATE_NOW};
                 String lowerPageLimit = "";
-                webClient.getTvScheduleApi(chNos, channelInfoDate, lowerPageLimit, this);
+                mTvScheduleWebClient.getTvScheduleApi(chNos, channelInfoDate, lowerPageLimit, this);
             } else {
                 DTVTLogger.error("TvScheduleWebClient is stopping connect");
             }
@@ -806,8 +806,10 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private void getRecommendChListData() {
         DTVTLogger.start();
-        mRecommendDataProvider = new RecommendDataProvider(
-                mContext.getApplicationContext(), this);
+        if (mRecommendDataProvider == null) {
+            mRecommendDataProvider = new RecommendDataProvider(
+                    mContext.getApplicationContext(), this);
+        }
 
         mRecommendDataProvider.getHomeTvRecommend();
         DTVTLogger.end();
@@ -819,9 +821,11 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private void getRecommendVdListData() {
         DTVTLogger.start();
-        RecommendDataProvider recommendDataProvider = new RecommendDataProvider(
-                mContext.getApplicationContext(), this);
-        recommendDataProvider.getVodRecommend();
+        if (mRecommendDataProvider == null) {
+            mRecommendDataProvider = new RecommendDataProvider(
+                    mContext.getApplicationContext(), this);
+        }
+        mRecommendDataProvider.getVodRecommend();
         DTVTLogger.end();
     }
 
@@ -831,14 +835,14 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     private void getTvClipListData() {
         if (!mIsStop) {
             //通信クラスにデータ取得要求を出す
-            TvClipWebClient webClient = new TvClipWebClient(mContext);
+            mTvClipWebClient = new TvClipWebClient(mContext);
             int ageReq = 1;
             int upperPageLimit = 1;
             int lowerPageLimit = 1;
             int pagerOffset = 1;
             String pagerDirection = "";
 
-            webClient.getTvClipApi(ageReq, upperPageLimit,
+            mTvClipWebClient.getTvClipApi(ageReq, upperPageLimit,
                     lowerPageLimit, pagerOffset, pagerDirection, this);
         } else {
             DTVTLogger.error("TvClipWebClient is stopping connect");
@@ -851,14 +855,14 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     private void getVodClipListData() {
         if (!mIsStop) {
             //通信クラスにデータ取得要求を出す
-            VodClipWebClient webClient = new VodClipWebClient(mContext);
+            mVodClipWebClient = new VodClipWebClient(mContext);
             int ageReq = 1;
             int upperPageLimit = 1;
             int lowerPageLimit = 1;
             int pagerOffset = 1;
             String pagerDirection = "";
 
-            webClient.getVodClipApi(ageReq, upperPageLimit,
+            mVodClipWebClient.getVodClipApi(ageReq, upperPageLimit,
                     lowerPageLimit, pagerOffset, pagerDirection, this);
         } else {
             DTVTLogger.error("VodClipWebClient is stopping connect");
@@ -883,11 +887,11 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         } else {
             if (!mIsStop) {
                 //通信クラスにデータ取得要求を出す
-                DailyRankWebClient webClient = new DailyRankWebClient(mContext);
+                mDailyRankWebClient = new DailyRankWebClient(mContext);
                 // 年齢情報取得(取得済み情報より)
                 UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
                 int ageReq = userInfoDataProvider.getUserAge();
-                webClient.getDailyRankApi(UPPER_PAGE_LIMIT, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, this);
+                mDailyRankWebClient.getDailyRankApi(UPPER_PAGE_LIMIT, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, this);
             } else {
                 DTVTLogger.error("DailyRankWebClient is stopping connect");
             }
@@ -922,8 +926,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         } else {
             if (!mIsStop) {
                 //通信クラスにデータ取得要求を出す
-                ContentsListPerGenreWebClient webClient = new ContentsListPerGenreWebClient(mContext);
-                webClient.getContentsListPerGenreApi(limit, offset, filter, ageReq, genreId, sort, this);
+                mContentsListPerGenreWebClient = new ContentsListPerGenreWebClient(mContext);
+                mContentsListPerGenreWebClient.getContentsListPerGenreApi(limit, offset, filter, ageReq, genreId, sort, this);
             } else {
                 DTVTLogger.error("ContentsListPerGenreWebClient is stopping connect");
             }
@@ -951,8 +955,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             t.start();
         } else {
             //通信クラスにデータ取得要求を出す
-            ChannelWebClient mChannelList = new ChannelWebClient(mContext);
-            mChannelList.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], this);
+            mChannelWebClient = new ChannelWebClient(mContext);
+            mChannelWebClient.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], this);
         }
         DTVTLogger.end();
     }
@@ -977,14 +981,14 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 || !DBUtils.isCachingRecord(mContext, DBConstants.WATCH_LISTEN_VIDEO_TABLE_NAME))
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
-                WatchListenVideoWebClient webClient = new WatchListenVideoWebClient(mContext);
+                mWatchListenVideoWebClient = new WatchListenVideoWebClient(mContext);
 
                 UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
                 int ageReq = userInfoDataProvider.getUserAge();
                 int lowerPageLimit = 1;
                 String pagerDirection = "next";
 
-                webClient.getWatchListenVideoApi(ageReq, UPPER_PAGE_LIMIT,
+                mWatchListenVideoWebClient.getWatchListenVideoApi(ageReq, UPPER_PAGE_LIMIT,
                         lowerPageLimit, pagerOffset, pagerDirection, this);
             } else {
                 DTVTLogger.error("WatchListenVideoWebClient is stopping connect");
@@ -1012,8 +1016,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
                 //レンタル一覧取得
-                RentalVodListWebClient webClient = new RentalVodListWebClient(mContext);
-                webClient.getRentalVodListApi(this);
+                mRentalVodListWebClient = new RentalVodListWebClient(mContext);
+                mRentalVodListWebClient.getRentalVodListApi(this);
             } else {
                 DTVTLogger.error("RentalVodListWebClient is stopping connect");
             }
@@ -1036,8 +1040,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate))
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
-                RentalChListWebClient rentalChListWebClient = new RentalChListWebClient(mContext);
-                rentalChListWebClient.getRentalChListApi(this);
+                mRentalChListWebClient = new RentalChListWebClient(mContext);
+                mRentalChListWebClient.getRentalChListApi(this);
             } else {
                 DTVTLogger.error("RentalChListWebClient is stopping connect");
             }
@@ -1055,8 +1059,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
                 dateUtils.addLastProgramDate(DateUtils.ROLELIST_LAST_UPDATE);
-                RoleListWebClient roleListWebClient = new RoleListWebClient(mContext);
-                roleListWebClient.getRoleListApi(this);
+                mRoleListWebClient = new RoleListWebClient(mContext);
+                mRoleListWebClient.getRoleListApi(this);
             } else {
                 DTVTLogger.error("RoleListWebClient is stopping connect");
             }
@@ -1074,8 +1078,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
                 //データの有効期限切れなら通信で取得
-                GenreListWebClient webClient = new GenreListWebClient(mContext);
-                webClient.getGenreListApi(this);
+                mGenreListWebClient = new GenreListWebClient(mContext);
+                mGenreListWebClient.getGenreListApi(this);
             } else {
                 DTVTLogger.error("GenreListWebClient is stopping connect");
             }
@@ -1551,5 +1555,64 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if (mRentalVodListWebClient != null) {
             mRentalVodListWebClient.enableConnection();
         }
+    }
+
+    /**
+     * 通信エラーメッセージを取得する.
+     * @param apiIndex API区別インデックス
+     */
+    public ErrorState getError(final int apiIndex) {
+        ErrorState errorState = null;
+        switch (apiIndex) {
+            case HomeActivity.HOME_CONTENTS_SORT_CHANNEL:
+                if (mChannelWebClient != null) {
+                    errorState = mChannelWebClient.getError();
+                }
+                break;
+            case HomeActivity.HOME_CONTENTS_SORT_RECOMMEND_PROGRAM:
+                if (mRecommendDataProvider != null) {
+                    errorState = mRecommendDataProvider.getError(0);
+                }
+                break;
+            case HomeActivity.HOME_CONTENTS_SORT_RECOMMEND_VOD:
+                if (mRecommendDataProvider != null) {
+                    errorState = mRecommendDataProvider.getError(1);
+                }
+                break;
+            case HomeActivity.HOME_CONTENTS_SORT_TODAY:
+                if (mDailyRankWebClient != null) {
+                    errorState = mDailyRankWebClient.getError();
+                }
+                break;
+            case HomeActivity.HOME_CONTENTS_SORT_VIDEO:
+                if (mContentsListPerGenreWebClient != null) {
+                    errorState = mContentsListPerGenreWebClient.getError();
+                }
+                break;
+            case HomeActivity.HOME_CONTENTS_SORT_WATCHING_VIDEO:
+                if (mWatchListenVideoWebClient != null) {
+                    errorState = mWatchListenVideoWebClient.getError();
+                }
+                break;
+            case HomeActivity.HOME_CONTENTS_SORT_TV_CLIP:
+                if (mTvClipWebClient != null) {
+                    errorState = mTvClipWebClient.getError();
+                }
+                break;
+            case HomeActivity.HOME_CONTENTS_SORT_VOD_CLIP:
+                if (mVodClipWebClient != null) {
+                    errorState = mVodClipWebClient.getError();
+                }
+                break;
+            case HomeActivity.HOME_CONTENTS_SORT_PREMIUM:
+            case HomeActivity.HOME_CONTENTS_SORT_RENTAL:
+                if (mRentalVodListWebClient != null) {
+                    errorState = mRentalVodListWebClient.getError();
+                }
+                break;
+            default:
+                break;
+        }
+        return errorState;
     }
 }
