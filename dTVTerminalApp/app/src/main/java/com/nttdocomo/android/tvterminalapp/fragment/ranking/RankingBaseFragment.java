@@ -189,8 +189,8 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
      */
     public void noticeRefresh() {
         if (null != mContentsAdapter) {
-            showProgressBar(false);
             mContentsAdapter.notifyDataSetChanged();
+            showProgressBar(false);
         }
     }
 
@@ -210,11 +210,11 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
      */
     public void stopContentsAdapterCommunication() {
         DTVTLogger.start();
-        showProgressBar(false);
         StopContentsAdapterConnect stopContentsAdapterConnect = new StopContentsAdapterConnect();
         if (mContentsAdapter != null) {
             stopContentsAdapterConnect.execute(mContentsAdapter);
         }
+        showProgressBar(false);
     }
 
     /**

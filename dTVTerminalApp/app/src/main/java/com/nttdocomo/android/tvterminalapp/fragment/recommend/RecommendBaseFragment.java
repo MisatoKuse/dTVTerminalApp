@@ -174,7 +174,6 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      * @param tabPosition タブインデックス
      */
     public void notifyDataSetChanged(final int tabPosition) {
-        showProgressBar(false);
         if (null != mRecommendListBaseAdapter) {
             switch (tabPosition) {
                 case POSITION_TV:
@@ -196,6 +195,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
                     break;
             }
             mRecommendListBaseAdapter.notifyDataSetChanged();
+            showProgressBar(false);
         }
     }
 
@@ -268,8 +268,8 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
 
         mData.clear();
         if (mRecommendListBaseAdapter != null) {
-            showProgressBar(false);
             mRecommendListBaseAdapter.notifyDataSetChanged();
+            showProgressBar(false);
         }
     }
 
@@ -345,7 +345,6 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      */
     public void enableContentsAdapterCommunication() {
         DTVTLogger.start();
-        showProgressBar(true);
         if (mRecommendListBaseAdapter != null) {
             mRecommendListBaseAdapter.enableConnect();
         }
