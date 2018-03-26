@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +51,10 @@ public class RecordReservationListActivity extends BaseActivity
      * 録画予約表示用リスト.
      */
     private ListView mListView = null;
+    /**
+     * 録画予約ProgressDialog表示用リスト.
+     */
+    private RelativeLayout mRelativeLayout = null;
     /**
      * 録画予約詳細データリスト.
      */
@@ -120,6 +125,23 @@ public class RecordReservationListActivity extends BaseActivity
         mNoDataMessage = findViewById(R.id.record_reservation_list_no_items);
 
         DTVTLogger.end();
+    }
+
+    /**
+     * プロセスバーを表示する.
+     *
+     * @param showProgressBar プロセスバーを表示するかどうか
+     */
+    private void showProgressBar(final boolean showProgressBar) {
+        mListView = findViewById(R.id.record_reservation_list_view);
+        mRelativeLayout = findViewById(R.id.record_reservation_progress);
+        if (showProgressBar) {
+            mListView.setVisibility(View.GONE);
+            mRelativeLayout.setVisibility(View.VISIBLE);
+        } else {
+            mListView.setVisibility(View.VISIBLE);
+            mRelativeLayout.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -257,6 +279,7 @@ public class RecordReservationListActivity extends BaseActivity
     public void recordingReservationListCallback(final List<ContentsData> dataList) {
         DTVTLogger.start();
         setUpdateTime();
+        showProgressBar(false);
         if (null == dataList) {
             //通信とJSON Parseに関してのerror処理
             // TODO データ取得失敗時の仕様決定後に修正が必要
@@ -309,6 +332,7 @@ public class RecordReservationListActivity extends BaseActivity
         super.onStartCommunication();
         DTVTLogger.start();
 
+        showProgressBar(true);
         //プロパイダが無ければ作成し、あれば通信を許可する
         if (mProvider != null) {
             mProvider.enableConnect();
@@ -332,6 +356,7 @@ public class RecordReservationListActivity extends BaseActivity
     protected void onPause() {
         super.onPause();
         DTVTLogger.start();
+        showProgressBar(false);
         //通信を止める
         StopRecordingReservationListDataConnect stopRecordingReservationListDataConnect =
                 new StopRecordingReservationListDataConnect();

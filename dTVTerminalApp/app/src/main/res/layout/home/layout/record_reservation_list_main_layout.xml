@@ -48,6 +48,21 @@
         android:text="@string/common_empty_data_message"
         android:visibility="gone"/>
 
+    <RelativeLayout
+        android:id="@+id/record_reservation_progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/base_progress"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
+
     <ListView
         android:id="@+id/record_reservation_list_view"
         android:divider="@drawable/list_item_divider"
