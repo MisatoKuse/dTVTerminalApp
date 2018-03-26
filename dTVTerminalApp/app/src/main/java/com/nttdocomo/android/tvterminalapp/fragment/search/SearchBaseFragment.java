@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -67,7 +68,11 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
     /**
      * 検索結果のリストView.
      */
-    private ListView mTvListView;
+    private ListView mTvListView = null;
+    /**
+     * 検索中ProgressDialog.
+     */
+    private RelativeLayout mRelativeLayout = null;
     /**
      * 検索結果数文字列の初期値.
      */
@@ -116,6 +121,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         if (null == mTvFragmentView) {
             mTvFragmentView = View.inflate(getActivity(), R.layout.fragment_televi_content, null);
             mTvListView = mTvFragmentView.findViewById(R.id.lv_searched_result);
+            mRelativeLayout = mTvFragmentView.findViewById(R.id.lv_searched_progress);
 
             mTvListView.setOnScrollListener(this);
             mTvListView.setOnItemClickListener(this);
@@ -123,7 +129,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
             getContext();
             mLoadMoreView = LayoutInflater.from(mContext).inflate(R.layout.search_load_more, mTvListView, false);
         }
-
+        showProgressBar(true);
         if (getContext() != null) {
             mContentsAdapter = new ContentsAdapter(getContext(), mData, ContentsAdapter.ActivityTypeItem.TYPE_SEARCH_LIST);
         }
@@ -136,6 +142,27 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
 
         DTVTLogger.end();
         return mTvFragmentView;
+    }
+
+    /**
+     * プロセスバーを表示する.
+     *
+     * @param showProgressBar プロセスバーを表示するかどうか
+     */
+    public void showProgressBar(final boolean showProgressBar) {
+        //Activityから直接呼び出されるためここでNullチェック
+        if (mTvFragmentView == null) {
+            return;
+        }
+        mTvListView = mTvFragmentView.findViewById(R.id.lv_searched_result);
+        mRelativeLayout = mTvFragmentView.findViewById(R.id.lv_searched_progress);
+        if (showProgressBar) {
+            mTvListView.setVisibility(View.GONE);
+            mRelativeLayout.setVisibility(View.VISIBLE);
+        } else {
+            mTvListView.setVisibility(View.VISIBLE);
+            mRelativeLayout.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -221,6 +248,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
             mData.clear();
         }
         notifyDataSetChanged(SearchCountDefault, PAGE_NO_OF_SERVICE_CLEAR);
+        showProgressBar(false);
     }
 
     @Override

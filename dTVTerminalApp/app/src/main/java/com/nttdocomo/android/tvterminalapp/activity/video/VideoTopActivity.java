@@ -8,10 +8,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -44,7 +44,10 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
     private VideoGenreListDataInfo mVideoGenreListDataInfo = null;
     private List<VideoGenreList> mShowContentsList = null;
     private VideoGenreProvider mVideoGenreProvider = null;
-    private ListView mListView;
+    /** ビデオジャンルのListView. **/
+    private ListView mListView = null;
+    /** ビデオジャンルのProgressDialog. **/
+    private RelativeLayout mRelativeLayout = null;
 
     // ジャンルIDのIntent KEY
     private static final String VIDEO_GENRE_ID_BUNDLE_KEY = "videoContentKey";
@@ -75,12 +78,31 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
             mContentsList = new ArrayList();
         }
         mListView = findViewById(R.id.genre_list);
+        mRelativeLayout = findViewById(R.id.genre_progress);
+        showProgressBar(true);
         mListView.setOnItemClickListener(this);
         mVideoGenreAdapter = new VideoGenreAdapter(
                 this,
                 mContentsList
         );
         mListView.setAdapter(mVideoGenreAdapter);
+    }
+
+    /**
+     * プロセスバーを表示する.
+     *
+     * @param showProgressBar プロセスバーを表示するかどうか
+     */
+    private void showProgressBar(final boolean showProgressBar) {
+        mListView = findViewById(R.id.genre_list);
+        mRelativeLayout = findViewById(R.id.genre_progress);
+        if (showProgressBar) {
+            mListView.setVisibility(View.GONE);
+            mRelativeLayout.setVisibility(View.VISIBLE);
+        } else {
+            mListView.setVisibility(View.VISIBLE);
+            mRelativeLayout.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -95,6 +117,7 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
             mVideoGenreAdapter.mData = mContentsList;
             mVideoGenreAdapter.notifyDataSetChanged();
         }
+        showProgressBar(false);
         DTVTLogger.end();
     }
 

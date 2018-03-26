@@ -66,7 +66,11 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     /**
      * ビデオコンテンツリストを表示するリスト.
      */
-    private ListView mListView;
+    private ListView mListView = null;
+    /**
+     * ビデオコンテンツリスト用.
+     */
+    private RelativeLayout mRelativeLayout = null;
     /**
      * コンテンツデータ一覧のリスト.
      */
@@ -126,6 +130,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         resetPaging();
 
         initView();
+        showProgressBar(true);
     }
 
     /**
@@ -138,6 +143,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
             mContentsList = new ArrayList<>();
         }
         mListView = findViewById(R.id.tv_rank_list);
+        mRelativeLayout = findViewById(R.id.tv_rank_progress);
         mListView.setOnItemClickListener(this);
         mListView.setOnScrollListener(this);
 
@@ -151,6 +157,23 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         mListView.setAdapter(mContentsAdapter);
         mLoadMoreView = View.inflate(this, R.layout.search_load_more, null);
         mNoDataMessage  = findViewById(R.id.tv_rank_list_no_items);
+    }
+
+    /**
+     * プロセスバーを表示する.
+     *
+     * @param showProgressBar プロセスバーを表示するかどうか
+     */
+    private void showProgressBar(final boolean showProgressBar) {
+        mListView = findViewById(R.id.tv_rank_list);
+        mRelativeLayout = findViewById(R.id.tv_rank_progress);
+        if (showProgressBar) {
+            mListView.setVisibility(View.GONE);
+            mRelativeLayout.setVisibility(View.VISIBLE);
+        } else {
+            mListView.setVisibility(View.VISIBLE);
+            mRelativeLayout.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -319,31 +342,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         }
         resetCommunication();
         mContentsAdapter.notifyDataSetChanged();
-    }
-
-    /**
-     * 取得したリストマップをContentsDataクラスへ入れる.
-     *
-     * @param videoContentMapList コンテンツリストデータ
-     * @return dataList 読み込み表示フラグ
-     */
-    private  List<ContentsData> setVideoContentData(
-           final List<Map<String, String>> videoContentMapList) {
-        List<ContentsData> videoContentsDataList = new ArrayList<>();
-
-        ContentsData contentsData;
-
-        for (int i = 0; i < videoContentMapList.size(); i++) {
-            contentsData = new ContentsData();
-            contentsData.setThumURL(videoContentMapList.get(i).get(JsonConstants.META_RESPONSE_THUMB_448));
-            contentsData.setThumDetailURL(videoContentMapList.get(i).get(JsonConstants.META_RESPONSE_THUMB_640));
-            contentsData.setTitle(videoContentMapList.get(i).get(JsonConstants.META_RESPONSE_TITLE));
-            contentsData.setRatStar(videoContentMapList.get(i).get(JsonConstants.META_RESPONSE_RATING));
-
-            videoContentsDataList.add(contentsData);
-        }
-
-        return videoContentsDataList;
+        showProgressBar(false);
     }
 
     @Override
@@ -404,6 +403,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         super.onPause();
         DTVTLogger.start();
         //通信を止める
+        showProgressBar(false);
         StopVideoContentConnect stopConnect = new StopVideoContentConnect();
         stopConnect.execute(mVideoContentProvider);
         StopContentsAdapterConnect stopAdapterConnect = new StopContentsAdapterConnect();

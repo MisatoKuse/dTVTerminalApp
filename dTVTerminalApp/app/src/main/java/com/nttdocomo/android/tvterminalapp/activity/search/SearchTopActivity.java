@@ -414,6 +414,7 @@ public class SearchTopActivity extends BaseActivity
                 //連続検索を行うと一瞬0件と表示される対策として、前回の検索結果件数を持たせる
                 String totalCountText = getResultString();
                 baseFragment.notifyDataSetChanged(totalCountText, mTabIndex);
+                baseFragment.showProgressBar(true);
                 setPageNumber(0);
                 setPagingStatus(false);
             }
@@ -540,6 +541,7 @@ public class SearchTopActivity extends BaseActivity
             baseFragment.notifyDataSetChanged(getResultString(), mTabIndex);
             baseFragment.setNoDataMessageVisibility(true);
         }
+        baseFragment.showProgressBar(false);
         baseFragment.displayLoadMore(false);
         setSearchStart(false);
     }
