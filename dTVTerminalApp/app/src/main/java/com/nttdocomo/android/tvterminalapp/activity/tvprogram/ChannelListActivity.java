@@ -930,6 +930,18 @@ public class ChannelListActivity extends BaseActivity implements
         if (null == mViewPager) {
             DTVTLogger.end();
             return;
+        } else {
+            //取得エラー時はProgressDialog非表示
+            final ChannelListFragment.ChannelListFragmentListener lis = this;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    int pos = mViewPager.getCurrentItem();
+                    ChListDataType chType = getTypeFromViewPagerIndex(pos);
+                    ChannelListFragment fragment = mFactory.createFragment(pos, lis, chType);
+                    fragment.showProgressBar(false);
+                }
+            });
         }
 //        mHandler.post(new Runnable() {
 //            @Override
