@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
@@ -97,6 +98,14 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * RecommendWebClient.
      */
     private RecommendWebClient mRecommendWebClient = null;
+    /**
+     * RecommendWebClient(番組).
+     */
+    private RecommendWebClient mVodWebClient = null;
+    /**
+     * RecommendWebClient(テレビ).
+     */
+    private RecommendWebClient mTvWebClient = null;
     /**
      * テレビカテゴリー一覧（dTVチャンネル　VOD（見逃し）が無くなった等の新情報を反映）.
      */
@@ -312,6 +321,25 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     }
 
     /**
+     * 通信エラーメッセージを取得する.
+     * @param apiIndex API区別インデックス
+     */
+    public ErrorState getError(final int apiIndex) {
+        ErrorState errorState = null;
+        //テレビ
+        if (apiIndex == 0) {
+            if (mTvWebClient != null) {
+                errorState = mTvWebClient.getError();
+            }
+        } else {
+            if (mVodWebClient != null) {
+                errorState = mVodWebClient.getError();
+            }
+        }
+        return errorState;
+    }
+
+    /**
      * おすすめテレビ取得.
      */
     void getHomeTvRecommend() {
@@ -327,8 +355,8 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 requestData.startIndex = String.valueOf(RECOMMEND_START_INDEX);
                 requestData.serviceCategoryId = getTerebiRequestSCIdStr();
                 // サーバへリクエストを送信
-                mRecommendWebClient = new RecommendWebClient(this, mContext);
-                mRecommendWebClient.getRecommendApi(requestData);
+                mTvWebClient = new RecommendWebClient(this, mContext);
+                mTvWebClient.getRecommendApi(requestData);
             } else {
                 DTVTLogger.error("RecommendDataProvider is stopping connect");
             }
@@ -388,8 +416,8 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 requestData.startIndex = String.valueOf(RECOMMEND_START_INDEX);
                 requestData.serviceCategoryId = getVideoRequestSCIdStr();
                 // サーバへリクエストを送信
-                mRecommendWebClient = new RecommendWebClient(this, mContext);
-                mRecommendWebClient.getRecommendApi(requestData);
+                mVodWebClient = new RecommendWebClient(this, mContext);
+                mVodWebClient.getRecommendApi(requestData);
             } else {
                 DTVTLogger.error("RecommendDataProvider is stopping connect");
             }
@@ -747,6 +775,12 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         if (mRecommendWebClient != null) {
             mRecommendWebClient.stopConnection();
         }
+        if (mVodWebClient != null) {
+            mVodWebClient.stopConnection();
+        }
+        if (mTvWebClient != null) {
+            mTvWebClient.stopConnection();
+        }
     }
 
     /**
@@ -757,6 +791,12 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         mIsStop = false;
         if (mRecommendWebClient != null) {
             mRecommendWebClient.enableConnection();
+        }
+        if (mVodWebClient != null) {
+            mVodWebClient.enableConnection();
+        }
+        if (mTvWebClient != null) {
+            mTvWebClient.enableConnection();
         }
     }
 
