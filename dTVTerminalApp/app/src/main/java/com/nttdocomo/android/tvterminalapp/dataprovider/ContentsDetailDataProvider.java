@@ -10,6 +10,7 @@ import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
@@ -46,10 +47,65 @@ import java.util.Map;
 /**
  * コンテンツ詳細画面のDataProvider.
  */
-public class ContentsDetailDataProvider extends ClipKeyListDataProvider implements ContentsDetailGetWebClient.ContentsDetailJsonParserCallback,
-        RoleListWebClient.RoleListJsonParserCallback, DbThread.DbOperation, RemoteRecordingReservationWebClient.RemoteRecordingReservationJsonParserCallback,
-        RentalVodListWebClient.RentalVodListJsonParserCallback, RentalChListWebClient.RentalChListJsonParserCallback {
+public class ContentsDetailDataProvider extends ClipKeyListDataProvider implements
+        ContentsDetailGetWebClient.ContentsDetailJsonParserCallback
+        , RoleListWebClient.RoleListJsonParserCallback
+        , DbThread.DbOperation
+        , RemoteRecordingReservationWebClient.RemoteRecordingReservationJsonParserCallback
+        , RentalVodListWebClient.RentalVodListJsonParserCallback
+        , RentalChListWebClient.RentalChListJsonParserCallback
+{
 
+    // declaration
+    public enum ErrorType {
+        contentsDetailGet,
+        roleList,
+        rentalChList,
+        rentalVodList,
+    }
+
+    // callback
+    /**
+     * 画面用データを返却するためのコールバック.
+     */
+    public interface ApiDataProviderCallback {
+        /**
+         * コンテンツ情報取得.
+         *
+         * @param contentsDetailInfo 画面に渡すチャンネル番組情報
+         */
+        void onContentsDetailInfoCallback(ArrayList<VodMetaFullData> contentsDetailInfo, boolean clipStatus);
+
+        /**
+         * ロールリスト情報取得.
+         *
+         * @param roleListInfo 画面に渡すチャンネルロールリスト情報
+         */
+        void onRoleListCallback(ArrayList<RoleListMetaData> roleListInfo);
+
+        /**
+         * リモート録画予約実行結果を返す.
+         *
+         * @param response 実行結果
+         */
+        void recordingReservationResult(RemoteRecordingReservationResultResponse response);
+
+        /**
+         * 購入済みVOD一覧を返す.
+         *
+         * @param response 購入済みVOD一覧
+         */
+        void onRentalVodListCallback(PurchasedVodListResponse response);
+
+        /**
+         * 購入済みCH一覧を返す.
+         *
+         * @param response 購入済みCH一覧
+         */
+        void onRentalChListCallback(final PurchasedChListResponse response);
+    }
+
+    // region variable
     /**
      * ApiDataProviderCallbackのインスタンス.
      */
@@ -130,6 +186,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
      */
     private boolean isStop = false;
 
+    // endregion
     /**
      * コンストラクタ.
      *
@@ -141,6 +198,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
         this.mApiDataProviderCallback = (ApiDataProviderCallback) context;
     }
 
+    // region super class
     @Override
     public void onContentsDetailJsonParsed(final ContentsDetailGetResponse contentsDetailLists) {
         if (contentsDetailLists != null) {
@@ -165,7 +223,6 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                 mApiDataProviderCallback.onContentsDetailInfoCallback(null, false);
             }
         } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
             mApiDataProviderCallback.onContentsDetailInfoCallback(null, false);
         }
     }
@@ -186,6 +243,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
 
     @Override
     public void onRentalVodListJsonParsed(final PurchasedVodListResponse purchasedVodListResponse) {
+
         mPurchasedVodListResponse = purchasedVodListResponse;
         if (mPurchasedVodListResponse != null) {
             DateUtils dateUtils = new DateUtils(mContext);
@@ -197,11 +255,9 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
             } catch (Exception e) {
                 DTVTLogger.debug(e);
             }
-        } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
-        }
-        if (mPurchasedVodListResponse != null) {
             mApiDataProviderCallback.onRentalVodListCallback(mPurchasedVodListResponse);
+        } else {
+            mApiDataProviderCallback.onRentalVodListCallback(null);
         }
     }
 
@@ -218,11 +274,9 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
             } catch (Exception e) {
                 DTVTLogger.debug(e);
             }
-        } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
-        }
-        if (mPurchasedChListResponse != null) {
             mApiDataProviderCallback.onRentalChListCallback(purchasedChListResponse);
+        } else {
+            mApiDataProviderCallback.onRentalChListCallback(null);
         }
     }
 
@@ -410,47 +464,9 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
             }
         }
     }
+    // endregion
 
-    /**
-     * 画面用データを返却するためのコールバック.
-     */
-    public interface ApiDataProviderCallback {
-        /**
-         * コンテンツ情報取得.
-         *
-         * @param contentsDetailInfo 画面に渡すチャンネル番組情報
-         */
-        void onContentsDetailInfoCallback(ArrayList<VodMetaFullData> contentsDetailInfo, boolean clipStatus);
-
-        /**
-         * ロールリスト情報取得.
-         *
-         * @param roleListInfo 画面に渡すチャンネルロールリスト情報
-         */
-        void onRoleListCallback(ArrayList<RoleListMetaData> roleListInfo);
-
-        /**
-         * リモート録画予約実行結果を返す.
-         *
-         * @param response 実行結果
-         */
-        void recordingReservationResult(RemoteRecordingReservationResultResponse response);
-
-        /**
-         * 購入済みVOD一覧を返す.
-         *
-         * @param response 購入済みVOD一覧
-         */
-        void onRentalVodListCallback(PurchasedVodListResponse response);
-
-        /**
-         * 購入済みCH一覧を返す.
-         *
-         * @param response 購入済みCH一覧
-         */
-        void onRentalChListCallback(final PurchasedChListResponse response);
-    }
-
+    // region public method
     /**
      * コンテンツ詳細取得.
      *
@@ -574,44 +590,6 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     }
 
     /**
-     * コンテンツ詳細情報のメタデータを元にクリップ状態を取得.
-     *
-     * @param metaFullData クリップ状態
-     * @return コンテンツ詳細データ
-     */
-    private boolean getContentsDetailClipStatus(final VodMetaFullData metaFullData) {
-        return getClipStatus(metaFullData.getDisp_type(),
-                metaFullData.getmContent_type(),
-                metaFullData.getDtv(),
-                metaFullData.getCrid(),
-                metaFullData.getmService_id(),
-                metaFullData.getmEvent_id(),
-                metaFullData.getTitle_id(), metaFullData.getmTv_service());
-    }
-
-    /**
-     * コンテンツ詳細情報を元にクリップキー一覧の取得を要求.
-     *
-     * @param metaFullData コンテンツ詳細データ
-     */
-    private void requestGetClipKeyList(final VodMetaFullData metaFullData) {
-        ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(metaFullData.getDisp_type(), metaFullData.getmContent_type());
-        if (tableType != null) {
-            switch (tableType) {
-                case TV:
-                    getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.TV));
-                    break;
-                case VOD:
-                    getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
-                    break;
-            }
-        } else {
-            //データの読み込みが行われても、テーブルタイプがヌルならば、エラー扱いとする
-            mApiDataProviderCallback.onContentsDetailInfoCallback(null, false);
-        }
-    }
-
-    /**
      * 通信を止める.
      */
     public void stopConnect() {
@@ -650,4 +628,66 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
             mRentalVodListWebClient.enableConnection();
         }
     }
+
+    /**
+     * WebClientで発生したエラーを返す
+     * @param type WebClientType(コールしたWebClientType)
+     *
+     * @return エラー情報
+     */
+    public ErrorState getError(final ErrorType type) {
+        switch (type){
+            case contentsDetailGet:
+                return mDetailGetWebClient.getError();
+            case roleList:
+                return mRoleListWebClient.getError();
+            case rentalChList:
+                return mRentalChListWebClient.getError();
+            case rentalVodList:
+                return mRentalVodListWebClient.getError();
+        }
+        return null;
+    }
+    // endregion
+
+    // region private method
+    /**
+     * コンテンツ詳細情報のメタデータを元にクリップ状態を取得.
+     *
+     * @param metaFullData クリップ状態
+     * @return コンテンツ詳細データ
+     */
+    private boolean getContentsDetailClipStatus(final VodMetaFullData metaFullData) {
+        return getClipStatus(metaFullData.getDisp_type(),
+                metaFullData.getmContent_type(),
+                metaFullData.getDtv(),
+                metaFullData.getCrid(),
+                metaFullData.getmService_id(),
+                metaFullData.getmEvent_id(),
+                metaFullData.getTitle_id(), metaFullData.getmTv_service());
+    }
+
+    /**
+     * コンテンツ詳細情報を元にクリップキー一覧の取得を要求.
+     *
+     * @param metaFullData コンテンツ詳細データ
+     */
+    private void requestGetClipKeyList(final VodMetaFullData metaFullData) {
+        ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(metaFullData.getDisp_type(), metaFullData.getmContent_type());
+        if (tableType != null) {
+            switch (tableType) {
+                case TV:
+                    getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.TV));
+                    break;
+                case VOD:
+                    getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+                    break;
+            }
+        } else {
+            //データの読み込みが行われても、テーブルタイプがヌルならば、エラー扱いとする
+            mApiDataProviderCallback.onContentsDetailInfoCallback(null, false);
+        }
+    }
+    // endregion
+
 }
