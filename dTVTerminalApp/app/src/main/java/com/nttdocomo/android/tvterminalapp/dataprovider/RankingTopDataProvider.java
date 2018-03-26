@@ -372,17 +372,39 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
      */
     private void sendVideoRankList(final VideoRankList videoRankList) {
         DTVTLogger.start();
+        //エラーフラグ
+        boolean isError = false;
+
         if (videoRankList != null) {
             List<ContentsData> contentsDataList = setRankingContentData(videoRankList.getVrList(), null);
-            if (mApiDataProviderCallback != null) {
+            if(contentsDataList != null) {
                 if (mApiDataProviderCallback != null) {
-                    mApiDataProviderCallback.videoRankCallback(contentsDataList);
+                    if (mApiDataProviderCallback != null) {
+                        mApiDataProviderCallback.videoRankCallback(contentsDataList);
+                    }
+                } else {
+                    if (mVideoRankingApiDataProviderCallback != null) {
+                        mVideoRankingApiDataProviderCallback.onVideoRankListCallback(contentsDataList);
+                    }
+                    DTVTLogger.end();
                 }
             } else {
-                if (mVideoRankingApiDataProviderCallback != null) {
-                    mVideoRankingApiDataProviderCallback.onVideoRankListCallback(contentsDataList);
-                }
-                DTVTLogger.end();
+                //データが無いので、フラグをセット
+                isError = true;
+            }
+        } else {
+            //エラーなのでフラグをセット
+            isError = true;
+        }
+
+        //エラーなので、ヌルを返す
+        if(isError) {
+            //エラー情報を控えておく
+            mContentsListPerGenreWebApiErrorState
+                    = mContentsListPerGenreWebClient.getError();
+            if(mApiDataProviderCallback != null) {
+                //ビデオ情報が無いので、ヌルで帰る
+                mApiDataProviderCallback.videoRankCallback(null);
             }
         }
     }
