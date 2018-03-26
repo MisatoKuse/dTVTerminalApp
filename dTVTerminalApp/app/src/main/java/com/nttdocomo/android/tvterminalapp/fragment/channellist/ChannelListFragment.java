@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
@@ -76,9 +77,17 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
      */
     private List mData = null;
     /**
+     * ChannelListLayout.
+     */
+    private View mRootView = null;
+    /**
      * 表示するListView自体.
      */
-    private ListView mListview;
+    private ListView mListView;
+    /**
+     * 表示するProgressDialog.
+     */
+    private RelativeLayout mRelativeLayout;
     /**
      * Listにセットするアダプタ.
      */
@@ -124,7 +133,6 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-        View mRootView;
         if (mData == null) {
             mData = new ArrayList();
         }
@@ -165,16 +173,39 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
 
     /**
      * Viewの初期化処理.
-     * @param mRootView parentView
+     * @param rootView parentView
      */
-    private void initContentListView(final View mRootView) {
-        mListview = mRootView.findViewById(R.id.channel_list_content_body_lv);
+    private void initContentListView(final View rootView) {
+        mListView = rootView.findViewById(R.id.channel_list_content_body_lv);
+        mRelativeLayout = rootView.findViewById(R.id.channel_list_progress);
+        showProgressBar(true);
 
-        mListview.setOnScrollListener(this);
-        mListview.setOnItemClickListener(this);
+        mListView.setOnScrollListener(this);
+        mListView.setOnItemClickListener(this);
 
         mChannelListAdapter = new ChannelListAdapter(getContext(), mData, R.layout.channel_list_item);
-        mListview.setAdapter(mChannelListAdapter);
+        mListView.setAdapter(mChannelListAdapter);
+    }
+
+    /**
+     * プロセスバーを表示する.
+     *
+     * @param showProgressBar プロセスバーを表示するかどうか
+     */
+    public void showProgressBar(final boolean showProgressBar) {
+        //Activityから直接呼び出されるためNullチェック
+        if (mRootView == null) {
+            return;
+        }
+        mListView = mRootView.findViewById(R.id.channel_list_content_body_lv);
+        mRelativeLayout = mRootView.findViewById(R.id.channel_list_progress);
+        if (showProgressBar) {
+            mListView.setVisibility(View.GONE);
+            mRelativeLayout.setVisibility(View.VISIBLE);
+        } else {
+            mListView.setVisibility(View.VISIBLE);
+            mRelativeLayout.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -218,69 +249,6 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
             return 0;
         }
         return mData.size();
-    }
-
-    /**
-     * 表示されているデータに、引数のデータが含まれているかどうか.
-     *
-     * @param item 表示されているか確認を行うデータ
-     * @return true:含まれている false:含まれていない
-     */
-    public boolean hasData(final Object item) {
-        if (null == item || null == mData || 0 == mData.size()) {
-            return false;
-        }
-        boolean ret = false;
-        if (mChListDataType != null) {
-            switch (mChListDataType) {
-                case CH_LIST_DATA_TYPE_BS:
-                    if (item instanceof DlnaBsChListItem) {
-                        DlnaBsChListItem bs2 = (DlnaBsChListItem) item;
-                        for (Object obj : mData) {
-                            if (obj instanceof DlnaBsChListItem) {
-                                DlnaBsChListItem bs1 = (DlnaBsChListItem) obj;
-                                ret = bs1.equalTo(bs2);
-                                if (ret) {
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    break;
-                case CH_LIST_DATA_TYPE_TDB:
-                    if (item instanceof DlnaTerChListItem) {
-                        DlnaTerChListItem ter2 = (DlnaTerChListItem) item;
-                        for (Object obj : mData) {
-                            if (obj instanceof DlnaTerChListItem) {
-                                DlnaTerChListItem ter1 = (DlnaTerChListItem) obj;
-                                ret = ter1.equalTo(ter2);
-                                if (ret) {
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    break;
-                case CH_LIST_DATA_TYPE_HIKARI:
-                case CH_LIST_DATA_TYPE_DCH:
-                    if (item instanceof ChannelInfo) {
-                        ChannelInfo ch2 = (ChannelInfo) item;
-                        for (Object obj : mData) {
-                            if (obj instanceof ChannelInfo) {
-                                ChannelInfo ch1 = (ChannelInfo) obj;
-                                ret = ch1.equalTo(ch2);
-                                if (ret) {
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    break;
-                default:
-                    return true;    //データを追加しない
-            }
-        }
-        return ret;
     }
 
     @Override

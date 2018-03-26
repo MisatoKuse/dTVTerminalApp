@@ -305,6 +305,7 @@ public class ChannelListActivity extends BaseActivity implements
             }
             fragment.clearDatas();
             fragment.noticeRefresh();
+            fragment.showProgressBar(false);
         }
     }
 
@@ -336,6 +337,7 @@ public class ChannelListActivity extends BaseActivity implements
         //mViewPager = findViewById(R.id.channel_list_main_layout_channel_body_vp);
         initChannelListTab();
         ChannelListPagerAdapter adp = new ChannelListPagerAdapter(getSupportFragmentManager());
+        final ChannelListFragment.ChannelListFragmentListener lis = this;
         mViewPager = findViewById(R.id.channel_list_main_layout_channel_body_vp);
         mViewPager.setAdapter(adp);
         mViewPager.addOnPageChangeListener(new ViewPager
@@ -344,6 +346,7 @@ public class ChannelListActivity extends BaseActivity implements
             public void onPageSelected(final int position) {
                 super.onPageSelected(position);
                 mTabLayout.setTab(position);
+                mFactory.createFragment(position, lis, ChListDataType.values()[position]).showProgressBar(true);
             }
         });
         DTVTLogger.end();
@@ -650,6 +653,7 @@ public class ChannelListActivity extends BaseActivity implements
             fragment.clearDatas();
             //fragment.noticeRefresh();
             noticeRefresh(fragment);
+            fragment.showProgressBar(true);
             DTVTLogger.end();
             return;
         }
@@ -689,6 +693,7 @@ public class ChannelListActivity extends BaseActivity implements
             @Override
             public void run() {
                 fragment.noticeRefresh();
+                fragment.showProgressBar(false);
             }
         });
     }
@@ -887,6 +892,7 @@ public class ChannelListActivity extends BaseActivity implements
                     fragment.addData(objBs);
                 }
                 noticeRefresh(fragment);
+                fragment.showProgressBar(false);
             }
         });
 
