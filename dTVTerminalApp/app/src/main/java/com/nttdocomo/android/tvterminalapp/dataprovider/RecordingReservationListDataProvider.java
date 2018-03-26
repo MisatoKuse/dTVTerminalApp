@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationListResponse;
@@ -201,6 +202,10 @@ public class RecordingReservationListDataProvider implements
      * チャンネルリスト取得用Webクライアント.
      */
     private ChannelWebClient mWebClient;
+    /**
+     * 録画予約一覧用エラー情報バッファ.
+     */
+    private ErrorState mError = null;
 
     /**
      * STB/dリモート 定期予約タイプ対応定数.
@@ -304,7 +309,9 @@ public class RecordingReservationListDataProvider implements
             }
         } else {
             DTVTLogger.error("response is null");
-            //TODO WEBAPIを取得できなかった時の処理を記載予定
+            //データが取得できなかったので、エラーを取得する
+            mError = mStbWebClient.getError();
+            mApiDataProviderCallback.recordingReservationListCallback(null);
         }
         DTVTLogger.end();
     }
@@ -325,7 +332,9 @@ public class RecordingReservationListDataProvider implements
             }
         } else {
             DTVTLogger.error("response is null");
-            //TODO WEBAPIを取得できなかった時の処理を記載予定
+            //データが取得できなかったので、エラーを取得する
+            mError = mDRemoteWebClient.getError();
+            mApiDataProviderCallback.recordingReservationListCallback(null);
         }
         DTVTLogger.end();
     }
@@ -344,7 +353,9 @@ public class RecordingReservationListDataProvider implements
             }
         } else {
             DTVTLogger.error("response is null");
-            //TODO WEBAPIを取得できなかった時の処理を記載予定
+            //データが取得できなかったので、エラーを取得する
+            mError = mWebClient.getError();
+            mApiDataProviderCallback.recordingReservationListCallback(null);
         }
         DTVTLogger.end();
     }
@@ -981,5 +992,14 @@ public class RecordingReservationListDataProvider implements
         if (mWebClient != null) {
             mWebClient.enableConnection();
         }
+    }
+
+    /**
+     * 録画予約リスト取得エラーのクラスを返すゲッター.
+     *
+     * @return 録画予約リスト取得エラーのクラス
+     */
+    public ErrorState getError() {
+        return mError;
     }
 }

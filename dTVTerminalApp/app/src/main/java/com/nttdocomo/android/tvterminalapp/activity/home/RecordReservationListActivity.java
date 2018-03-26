@@ -16,7 +16,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -282,12 +281,18 @@ public class RecordReservationListActivity extends BaseActivity
         showProgressBar(false);
         if (null == dataList) {
             //通信とJSON Parseに関してのerror処理
-            // TODO データ取得失敗時の仕様決定後に修正が必要
             DTVTLogger.debug("RecordingReservationListActivity::RecordingReservationListCallback, 録画予約一覧取得失敗");
-            Toast.makeText(this, R.string.recording_reservation_list_error_toast, Toast.LENGTH_SHORT).show();
             resetPaging();
             resetCommunication();
-            showDialogToClose();
+            //エラーメッセージを取得する
+            String message = mProvider.getError().getApiErrorMessage(getApplicationContext());
+
+            //有無で処理を分ける
+            if (TextUtils.isEmpty(message)) {
+                showDialogToClose();
+            } else {
+                showDialogToClose(message);
+            }
             return;
         }
 
