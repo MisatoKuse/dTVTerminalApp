@@ -155,6 +155,7 @@ public class ClipListActivity extends BaseActivity implements
             if (null != baseFragment && null != baseFragment.mClipListData) {
                 baseFragment.mClipListData.clear();
                 baseFragment.noticeRefresh();
+                baseFragment.showProgressBar(true);
             }
         }
     }
@@ -233,8 +234,13 @@ public class ClipListActivity extends BaseActivity implements
      * @return 判定結果
      */
     private boolean isContentEqual(final ContentsData item1, final ContentsData item2) {
-        return !(null == item1 || null == item2) && item1.getThumURL().equals(item2.getThumURL())
-                && item1.getRatStar().equals(item2.getRatStar()) && item1.getTitle().equals(item2.getTitle());
+        return !(null == item1 || null == item2)
+                && !(null == item1.getThumURL() || null == item2.getThumURL())
+                && item1.getThumURL().equals(item2.getThumURL())
+                && !(null == item1.getRatStar() || null == item2.getRatStar())
+                && item1.getRatStar().equals(item2.getRatStar())
+                && !(null == item1.getTitle() || null == item2.getTitle())
+                && item1.getTitle().equals(item2.getTitle());
     }
 
     /**
@@ -306,6 +312,7 @@ public class ClipListActivity extends BaseActivity implements
 
         resetCommunication();
         fragment.noticeRefresh();
+        fragment.showProgressBar(false);
     }
 
     @Override
@@ -352,6 +359,7 @@ public class ClipListActivity extends BaseActivity implements
 
         resetCommunication();
         fragment.noticeRefresh();
+        fragment.showProgressBar(false);
     }
 
     /**

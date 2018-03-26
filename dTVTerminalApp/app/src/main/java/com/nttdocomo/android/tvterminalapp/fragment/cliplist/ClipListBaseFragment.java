@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -56,6 +57,10 @@ public class ClipListBaseFragment extends Fragment
      * FragmentListView.
      */
     private ListView mTvListView = null;
+    /**
+     * FragmentProgressDialog.
+     */
+    private RelativeLayout mRelativeLayout = null;
 
     /**
      * コンテンツリストアダプター.
@@ -125,6 +130,7 @@ public class ClipListBaseFragment extends Fragment
         mLoadMoreView = LayoutInflater.from(getActivity()).inflate(R.layout.search_load_more, container, false);
 
         initContentListView();
+        showProgressBar(true);
         return mTvFragmentView;
     }
 
@@ -152,6 +158,26 @@ public class ClipListBaseFragment extends Fragment
 
         mClipMainAdapter = new ContentsAdapter(getContext(), mClipListData, ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_TV);
         mTvListView.setAdapter(mClipMainAdapter);
+    }
+
+    /**
+     * プロセスバーを表示する.
+     *
+     * @param showProgressBar プロセスバーを表示するかどうか
+     */
+    public void showProgressBar(final boolean showProgressBar) {
+        if (mTvFragmentView == null) {
+            return;
+        }
+        mTvListView = mTvFragmentView.findViewById(R.id.clip_list_lv_searched_result);
+        mRelativeLayout = mTvFragmentView.findViewById(R.id.clip_list_progress);
+        if (showProgressBar) {
+            mTvListView.setVisibility(View.GONE);
+            mRelativeLayout.setVisibility(View.VISIBLE);
+        } else {
+            mTvListView.setVisibility(View.VISIBLE);
+            mRelativeLayout.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -290,5 +316,6 @@ public class ClipListBaseFragment extends Fragment
     public void updateContentsList(final List<ContentsData> contentsDataList) {
         mClipMainAdapter.setListData(contentsDataList);
         noticeRefresh();
+        showProgressBar(false);
     }
 }
