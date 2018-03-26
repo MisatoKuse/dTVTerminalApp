@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
@@ -76,6 +77,10 @@ public class VideoGenreProvider implements
      * ジャンルコンテンツ数取得用webクライアント.
      */
     private GenreCountGetWebClient mWebClient = null;
+    /**
+     * ジャンル情報取得用エラー情報バッファ.
+     */
+    private ErrorState mError = null;
 
     @Override
     public void onGenreListJsonParsed(final GenreListResponse genreListResponse) {
@@ -107,6 +112,7 @@ public class VideoGenreProvider implements
             if (genreCountGetResponse != null) {
                 mApiGenreListDataProviderCallback.genreListCallback(genreCountGetResponse.getGenreCountGetMetaData());
             } else {
+                mError = mWebClient.getError();
                 mApiGenreListDataProviderCallback.genreListCallback(null);
             }
         }
@@ -236,8 +242,6 @@ public class VideoGenreProvider implements
         if (!mIsCancel) {
             //通信クラスにデータ取得要求を出す
             mWebClient = new GenreCountGetWebClient(mContext);
-            int limit = 1;
-            int offset = 1;
             String filter = "";
             int ageReq = 1;
             if (!mWebClient.getGenreCountGetApi(filter, ageReq, genreId, this)) {
@@ -255,7 +259,10 @@ public class VideoGenreProvider implements
      * @param genreListResponse ジャンル一覧APIからのレスポンス
      */
     private void setRankGenreListData(final GenreListResponse genreListResponse) {
-        try {
+        if (genreListResponse == null) {
+            mError = mGenreListWebClient.getError();
+            mRankGenreListCallback.onRankGenreListCallback(null);
+        } else {
             Map<String, ArrayList<GenreListMetaData>> listMap = genreListResponse.getTypeList();
             if (listMap == null) {
                 DTVTLogger.error("response is null");
@@ -290,10 +297,6 @@ public class VideoGenreProvider implements
                     mRankGenreListCallback.onRankGenreListCallback(null);
                 }
             }
-        } catch (Exception e) {
-            DTVTLogger.debug(e);
-            DTVTLogger.error("response genreListData error");
-            mRankGenreListCallback.onRankGenreListCallback(null);
         }
     }
 
@@ -303,13 +306,15 @@ public class VideoGenreProvider implements
      * @param genreListResponse ジャンル一覧APIからのレスポンス
      */
     private void getGenreList(final GenreListResponse genreListResponse) {
+        if (genreListResponse == null) {
+            mError = mGenreListWebClient.getError();
+            genreListMapCallback.genreListMapCallback(null, null);
+            DTVTLogger.error("response is null");
+            return;
+        }
         Map<String, ArrayList<GenreListMetaData>> listMap = new HashMap<>();
         ArrayList<GenreListMetaData> genreMetaDataList = new ArrayList<>();
-        try {
-            listMap = genreListResponse.getTypeList();
-        } catch (Exception e) {
-            DTVTLogger.error("response is null");
-        }
+        listMap = genreListResponse.getTypeList();
         //IPTVコンテンツデータをすべて取得
         if (listMap.get(VIDEO_GENRE_KEY_IPTV) != null) {
             GenreListMetaData genreAll = new GenreListMetaData();
@@ -395,5 +400,14 @@ public class VideoGenreProvider implements
         if (mWebClient != null) {
             mWebClient.enableConnect();
         }
+    }
+
+    /**
+     * ジャンル情報取得エラーのクラスを返すゲッター.
+     *
+     * @return ジャンル情報取得エラーのクラス
+     */
+    public ErrorState getError() {
+        return mError;
     }
 }

@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.activity.ranking;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,6 +17,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.adapter.RankingPagerAdapter;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRankingTopDataConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopVideoGenreConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
@@ -234,10 +236,18 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         DTVTLogger.start();
         if (null == contentsDataList) {
             //通信とJSON Parseに関してerror処理
-            //TODO: メッセージは仕様検討の必要あり
-            //Toast.makeText(this, "ランキングデータ取得失敗", Toast.LENGTH_SHORT).show();
-            showGetDataFailedToast();
+            //エラーメッセージを取得する
             mNoDataMessage.setVisibility(View.VISIBLE);
+            ErrorState errorState = mRankingDataProvider.getWeeklyRankWebApiErrorState();
+            if (errorState != null) {
+                String message = errorState.getErrorMessage();
+                //有無で処理を分ける
+                if (!TextUtils.isEmpty(message)) {
+                    showGetDataFailedToast(message);
+                    return;
+                }
+            }
+            showGetDataFailedToast();
             return;
         }
 
@@ -310,8 +320,16 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    //TODO データ取得エラー表示対応
-                    //Toast.makeText(WeeklyTvRankingActivity.this, "ジャンルデータ取得失敗しました", Toast.LENGTH_SHORT).show();
+                    //エラーメッセージを取得する
+                    ErrorState errorState = mVideoGenreProvider.getError();
+                    if (errorState != null) {
+                        String message = errorState.getErrorMessage();
+                        //有無で処理を分ける
+                        if (!TextUtils.isEmpty(message)) {
+                            showGetDataFailedToast(message);
+                            return;
+                        }
+                    }
                     showGetDataFailedToast();
                 }
             });

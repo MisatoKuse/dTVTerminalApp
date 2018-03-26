@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.activity.home;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -16,7 +17,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -24,6 +24,7 @@ import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.WatchListenVideoListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
@@ -251,6 +252,17 @@ public class WatchingVideoListActivity extends BaseActivity implements
                     DTVTLogger.debug("ClipListActivity::VodClipListCallback, get data failed.");
                     resetPaging();
                     resetCommunication();
+
+                    //エラーメッセージを取得する
+                    ErrorState errorState = mWatchListenVideoListDataProvider.getError();
+                    if (errorState != null) {
+                        String message = errorState.getApiErrorMessage(getApplicationContext());
+                        //有無で処理を分ける
+                        if (!TextUtils.isEmpty(message)) {
+                            showDialogToClose(message);
+                            return;
+                        }
+                    }
                     showDialogToClose();
                     return;
                 }
