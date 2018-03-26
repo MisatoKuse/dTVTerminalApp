@@ -326,14 +326,18 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      */
     public ErrorState getError(final int apiIndex) {
         ErrorState errorState = null;
-        //テレビ
-        if (apiIndex == 0) {
+        //テレビ(ホーム用)
+        if (apiIndex == -1) {
             if (mTvWebClient != null) {
                 errorState = mTvWebClient.getError();
             }
-        } else {
+        } else if (apiIndex == 1) {//ビデオ
             if (mVodWebClient != null) {
                 errorState = mVodWebClient.getError();
+            }
+        } else {//テレビ、dTV、dTVチャンネル、dアニメストア
+            if (mRecommendWebClient != null) {
+                errorState = mRecommendWebClient.getError();
             }
         }
         return errorState;
