@@ -830,7 +830,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             }
         } else {
             //URLがない場合はサムネイル取得失敗の画像を表示
-            holder.iv_thumbnail.setBackgroundResource(R.drawable.error_list);
+            holder.iv_thumbnail.setBackgroundResource(R.mipmap.error_list);
         }
     }
 
