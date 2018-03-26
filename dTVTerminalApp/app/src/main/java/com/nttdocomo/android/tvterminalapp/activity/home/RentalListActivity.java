@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.activity.home;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -21,6 +22,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRentalDataConnect;
@@ -230,9 +232,17 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
         DTVTLogger.start();
         mRelativeLayout.setVisibility(View.GONE);
         mListView.setVisibility(View.VISIBLE);
-        showDialogToClose();
         //データ取得失敗時
         resetCommunication();
+        ErrorState errorState = mRentalDataProvider.getError();
+        if (errorState != null) {
+            String message = errorState.getApiErrorMessage(getApplicationContext());
+            if (!TextUtils.isEmpty(message)) {
+                showDialogToClose(message);
+                return;
+            }
+        }
+        showDialogToClose();
     }
 
     /**

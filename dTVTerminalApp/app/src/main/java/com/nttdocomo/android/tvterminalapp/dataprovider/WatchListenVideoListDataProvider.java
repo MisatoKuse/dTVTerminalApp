@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
@@ -76,10 +77,20 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
      * 視聴中ビデオ一覧取得(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
      */
     private static final int WATCH_LISTEN_VIDEO_SELECT = 4;
+    /**
+     * 視聴中ビデオ一覧用エラー情報バッファ.
+     */
+    private ErrorState mError = null;
 
     @Override
     public void onWatchListenVideoJsonParsed(final List<WatchListenVideoList> watchListenVideoList) {
         WatchListenVideoListDataManager videoListDataManager = new WatchListenVideoListDataManager(mContext);
+        if (watchListenVideoList == null) {
+            mError = mWebClient.getError();
+            mApiDataProviderCallback.watchListenVideoListCallback(null);
+            DTVTLogger.error("watchListenVideoList is null");
+            return;
+        }
         if (watchListenVideoList != null && watchListenVideoList.size() > 0) {
             WatchListenVideoList list = watchListenVideoList.get(0);
             setStructDB(list);
@@ -317,5 +328,14 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
                 break;
         }
         return null;
+    }
+
+    /**
+     * 視聴中ビデオ一覧取得エラーのクラスを返すゲッター.
+     *
+     * @return 視聴中ビデオ一覧取得エラーのクラス
+     */
+    public ErrorState getError() {
+        return mError;
     }
 }

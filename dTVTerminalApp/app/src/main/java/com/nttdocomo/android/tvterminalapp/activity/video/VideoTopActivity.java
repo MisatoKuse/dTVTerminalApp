@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.activity.video;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,6 +19,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.VideoGenreAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VideoGenreProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
@@ -226,7 +228,13 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
                 }
             }
         } else {
-            showGetDataFailedToast();
+            //エラーメッセージを取得する
+            ErrorState errorState = mVideoGenreProvider.getError();
+            if (errorState == null || TextUtils.isEmpty(errorState.getErrorMessage())) {
+                showGetDataFailedToast();
+            } else {
+                showGetDataFailedToast(errorState.getErrorMessage());
+            }
             DTVTLogger.debug("Contents Count request is faild");
         }
         // ジャンル情報取得後はリストを更新
@@ -263,7 +271,13 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
             mVideoGenreProvider.getContentCountListData(requestGenreIdList);
             DTVTLogger.end();
         } else {
-            showGetDataFailedToast();
+            //エラーメッセージを取得する
+            ErrorState errorState = mVideoGenreProvider.getError();
+            if (errorState == null || TextUtils.isEmpty(errorState.getErrorMessage())) {
+                showGetDataFailedToast();
+            } else {
+                showGetDataFailedToast(errorState.getErrorMessage());
+            }
             DTVTLogger.debug("genreListMapCallback is Null");
         }
     }

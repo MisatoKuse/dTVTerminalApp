@@ -8,7 +8,9 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
@@ -112,6 +114,10 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
      * レンタルデータSelect判定(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
      */
     private static final int RENTAL_VIDEO_LIST_SELECT = 4;
+    /**
+     * レンタルデータ用エラー情報バッファ.
+     */
+    private ErrorState mError = null;
 
     /**
      * Activity指定.
@@ -138,7 +144,9 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
                 mPurchasedVodListResponse = response;
             }
         } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            if (mWebClient.getError() != null && mWebClient.getError().getErrorType() != DTVTConstants.ERROR_TYPE.SUCCESS) {
+                mError = mWebClient.getError();
+            }
             mApiDataProviderCallback.rentalListNgCallback();
         }
     }
@@ -532,5 +540,14 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
                 break;
         }
         return null;
+    }
+
+    /**
+     * レンタルデータ取得エラーのクラスを返すゲッター.
+     *
+     * @return レンタルデータ取得エラーのクラス
+     */
+    public ErrorState getError() {
+        return mError;
     }
 }

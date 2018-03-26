@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.activity.video;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
@@ -22,6 +23,7 @@ import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VideoContentProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
@@ -316,8 +318,19 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
      */
     private void setShowVideoContent(final List<ContentsData> videoContentInfo) {
         if (null == videoContentInfo) {
-            showDialogToClose();
             displayMoreData(false);
+
+            //エラーメッセージを取得する
+            ErrorState errorState = mVideoContentProvider.getError();
+            if (errorState != null) {
+                String message = errorState.getApiErrorMessage(getApplicationContext());
+                //有無で処理を分ける
+                if (!TextUtils.isEmpty(message)) {
+                    showDialogToClose(message);
+                    return;
+                }
+            }
+            showDialogToClose();
             return;
         }
         if (0 == videoContentInfo.size()) {

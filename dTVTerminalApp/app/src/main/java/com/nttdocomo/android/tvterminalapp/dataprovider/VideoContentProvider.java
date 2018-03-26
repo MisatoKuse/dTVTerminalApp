@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
@@ -56,6 +57,10 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
      * クリップキー一覧取得プロバイダ.
      */
     private ClipKeyListDataProvider mClipKeyListDataProvider = null;
+    /**
+     * ジャンル情報取得用エラー情報バッファ.
+     */
+    private ErrorState mError = null;
 
     /**
      * コンストラクタ.
@@ -226,6 +231,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
             }
         } else {
             if (null != mApiVideoContentDataProviderCallback) {
+                mError = mGenreListWebClient.getError();
                 mApiVideoContentDataProviderCallback.videoContentCallback(null);
             }
         }
@@ -268,5 +274,14 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
         if (mGenreListWebClient != null) {
             mGenreListWebClient.enableConnect();
         }
+    }
+
+    /**
+     * ジャンル情報取得エラーのクラスを返すゲッター.
+     *
+     * @return ジャンル情報取得エラーのクラス
+     */
+    public ErrorState getError() {
+        return mError;
     }
 }

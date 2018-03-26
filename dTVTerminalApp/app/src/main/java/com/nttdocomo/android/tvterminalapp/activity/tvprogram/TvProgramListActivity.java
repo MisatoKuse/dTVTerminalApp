@@ -27,6 +27,7 @@ import com.nttdocomo.android.tvterminalapp.adapter.ProgramChannelAdapter;
 import com.nttdocomo.android.tvterminalapp.adapter.TvProgramListAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.MyChannelDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
@@ -742,6 +743,15 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
                 //TODO 現状一括でリクエストしているため修正予定.
                 mScaledDownProgramListDataProvider.getProgram(channelNos, dateList, mTabIndex);
             } else {
+                //情報がヌルなので、ネットワークエラーメッセージを取得する
+                ErrorState errorState = mScaledDownProgramListDataProvider.getChannelError();
+                if (errorState != null) {
+                    String message = errorState.getErrorMessage();
+                    //メッセージの有無で処理を分ける
+                    if (!TextUtils.isEmpty(message)) {
+                        showGetDataFailedToast(message);
+                    }
+                }
                 mNoDataMessage.setVisibility(View.VISIBLE);
                 scrollToCurTime();
                 refreshTimeLine();
@@ -870,6 +880,20 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
             }
             mScaledDownProgramListDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_ALL);
         } else {
+            //情報がヌルなので、ネットワークエラーメッセージを取得する
+            ErrorState errorState;
+            if (mScaledDownProgramListDataProvider != null) {
+                errorState = mScaledDownProgramListDataProvider.getChannelError();
+            } else {
+                errorState = mMyChannelDataProvider.getMyChannelListError();
+            }
+            if (errorState != null) {
+                String message = errorState.getErrorMessage();
+                //メッセージの有無で処理を分ける
+                if (!TextUtils.isEmpty(message)) {
+                    showGetDataFailedToast(message);
+                }
+            }
             //MY番組表情報がなければMY番組表を設定していないとする(データないので、特にタイムライン表示必要がない)
             if (mTabIndex == INDEX_TAB_MY_CHANNEL) {
                 showMyChannelNoItem(true);
