@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.activity.ranking;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,6 +20,7 @@ import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
@@ -172,6 +174,24 @@ public class DailyTvRankingActivity extends BaseActivity implements
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                //エラー情報の存在を見る
+                ErrorState errorState = mRankingTopDataProvider.getDailyRankWebApiErrorState();
+                if(errorState != null) {
+                    //エラー情報が存在すれば、DBにデータが無く、通信も失敗しているので、エラーメッセージを出して帰る
+                    String message = errorState.getApiErrorMessage(
+                            getApplication().getApplicationContext());
+
+                    //メッセージの有無を確認
+                    if(TextUtils.isEmpty(message)) {
+                        //メッセージが無いので、デフォルトメッセージで表示
+                        showDialogToClose();
+                    } else {
+                        //メッセージがあるので表示
+                        showDialogToClose(message);
+                    }
+                    return;
+                }
+
                 mListView.setVisibility(View.VISIBLE);
                 mRelativeLayout.setVisibility(View.GONE);
                 setShowDailyRanking(contentsDataList);
