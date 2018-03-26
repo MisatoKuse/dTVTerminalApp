@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
@@ -53,26 +54,36 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
      * クリップキー一覧取得プロバイダ.
      */
     private ClipKeyListDataProvider mClipKeyListDataProvider = null;
+    /**
+     * ネットワークエラーの控え.
+     */
+    private ErrorState mNetworkError = null;
 
     @Override
     public void onVodClipJsonParsed(final List<VodClipList> vodClipLists) {
         if (vodClipLists != null) {
             List vclist = vodClipLists.get(0).getVcList();
             if (vclist != null) {
-                    VodClipList list = vodClipLists.get(0);
-                    if (!mRequiredClipKeyList
-                            || mResponseEndFlag) {
-                        sendVodClipListData(list.getVcList());
-                    } else {
-                        mClipList = list;
-                        sendVodClipListData(list.getVcList());
-                    }
+                VodClipList list = vodClipLists.get(0);
+                if (!mRequiredClipKeyList
+                        || mResponseEndFlag) {
+                    sendVodClipListData(list.getVcList());
+                } else {
+                    mClipList = list;
+                    sendVodClipListData(list.getVcList());
+                }
             } else {
                 if (null != apiDataProviderCallback) {
+                    //ヌルなので、ネットワークエラーを取得する
+                    mNetworkError = mWebClient.getError();
+
                     apiDataProviderCallback.vodClipListCallback(null);
                 }
             }
         } else {
+            //ヌルなので、ネットワークエラーを取得する
+            mNetworkError = mWebClient.getError();
+
             if (null != apiDataProviderCallback) {
                 apiDataProviderCallback.vodClipListCallback(null);
             }
@@ -268,5 +279,14 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
         if (mWebClient != null) {
             mWebClient.enableConnection();
         }
+    }
+
+    /**
+     * ネットワークエラーのゲッター.
+     *
+     * @return ネットワークエラーのクラス
+     */
+    public ErrorState getNetworkError() {
+        return mNetworkError;
     }
 }

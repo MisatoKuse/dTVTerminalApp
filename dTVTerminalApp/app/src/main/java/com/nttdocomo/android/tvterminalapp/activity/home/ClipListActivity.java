@@ -11,26 +11,26 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.dataprovider.TvClipDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.VodClipDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopTvClipDataConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopVodClipDataConnect;
 import com.nttdocomo.android.tvterminalapp.fragment.cliplist.ClipListBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.cliplist.ClipListBaseFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.fragment.cliplist.ClipListFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
-import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.TvClipDataProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.VodClipDataProvider;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
 import java.util.List;
@@ -267,9 +267,16 @@ public class ClipListActivity extends BaseActivity implements
         if (null == clipContentInfo) {
             //通信とJSON Parseに関してerror処理
             DTVTLogger.debug("ClipListActivity::TvClipListCallback, get data failed.");
-            // TODO:エラーメッセージ表示はリスト画面上に表示する
-            //Toast.makeText(this, getString(R.string.clip_data_get_error_message), Toast.LENGTH_SHORT).show();
-            showGetDataFailedToast();
+            // ネットワークエラーの取得
+            String message = mTvClipDataProvider.getNetworkError().getErrorMessage();
+
+            //メッセージの有無で表示方法を分ける
+            if (TextUtils.isEmpty(message)) {
+                showGetDataFailedToast();
+            } else {
+                showGetDataFailedToast(message);
+            }
+
             mNoDataMessage.setVisibility(View.VISIBLE);
             return;
         }
@@ -306,9 +313,16 @@ public class ClipListActivity extends BaseActivity implements
         if (null == clipContentInfo) {
             //通信とJSON Parseに関してerror処理
             DTVTLogger.debug("ClipListActivity::VodClipListCallback, get data failed");
-            // TODO:エラーメッセージ表示はリスト画面上に表示する
-            //Toast.makeText(this, getString(R.string.clip_data_get_error_message), Toast.LENGTH_SHORT).show();
-            showGetDataFailedToast();
+            // ネットワークエラーの取得
+            String message = mVodClipDataProvider.getNetworkError().getErrorMessage();
+
+            //メッセージの有無で表示方法を分ける
+            if (TextUtils.isEmpty(message)) {
+                showGetDataFailedToast();
+            } else {
+                showGetDataFailedToast(message);
+            }
+
             mNoDataMessage.setVisibility(View.VISIBLE);
             return;
         }

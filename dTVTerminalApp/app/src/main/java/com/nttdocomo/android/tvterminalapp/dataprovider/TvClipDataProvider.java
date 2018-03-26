@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
@@ -52,6 +53,10 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
      * クリップキー一覧取得プロバイダ.
      */
     private ClipKeyListDataProvider mClipKeyListDataProvider = null;
+    /**
+     * ネットワークエラーの控え.
+     */
+    private ErrorState mNetworkError = null;
 
     @Override
     public void onTvClipJsonParsed(final List<TvClipList> tvClipLists) {
@@ -68,10 +73,16 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
                     }
             } else {
                 if (null != apiDataProviderCallback) {
+                    //ヌルなので、ネットワークエラーを取得する
+                    mNetworkError = mWebClient.getError();
+
                     apiDataProviderCallback.tvClipListCallback(null);
                 }
             }
         } else {
+            //ヌルなので、ネットワークエラーを取得する
+            mNetworkError = mWebClient.getError();
+
             if (null != apiDataProviderCallback) {
                 apiDataProviderCallback.tvClipListCallback(null);
             }
@@ -270,5 +281,14 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
         if (mWebClient != null) {
             mWebClient.enableConnection();
         }
+    }
+
+    /**
+     * ネットワークエラーのゲッター.
+     *
+     * @return ネットワークエラーのクラス
+     */
+    public ErrorState getNetworkError() {
+        return mNetworkError;
     }
 }

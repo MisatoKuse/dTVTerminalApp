@@ -2216,7 +2216,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param message トースト表示するメッセージ
      */
-    public void showGetDataFailedToast(String message) {
+    public void showGetDataFailedToast(final String message) {
         if (TextUtils.isEmpty(message)) {
             //メッセージが空文字ならば、既存のメッセージ表示を呼び出す
             showGetDataFailedToast();
@@ -2232,7 +2232,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param message メッセージ
      */
-    public void showDialogToClose(String message) {
+    public void showDialogToClose(final String message) {
         CustomDialog closeDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
         closeDialog.setContent(message);
         closeDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
