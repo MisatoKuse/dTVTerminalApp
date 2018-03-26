@@ -237,6 +237,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
                 t.start();
             } catch (Exception e) {
                 DTVTLogger.debug(e);
+                mApiDataProviderCallback.rentalListNgCallback();
             }
         } else {
             //通信クラスにデータ取得要求を出す
@@ -257,6 +258,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
             t.start();
         } catch (Exception e) {
             DTVTLogger.debug(e);
+            mApiDataProviderCallback.rentalListNgCallback();
         }
     }
 
