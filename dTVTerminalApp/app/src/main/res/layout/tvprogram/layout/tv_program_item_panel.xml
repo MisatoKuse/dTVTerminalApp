@@ -32,7 +32,7 @@
 			android:clickable="true"
 			android:contentDescription="@null"
 			android:scaleType="fitCenter"
-			android:src="@mipmap/icon_circle_opacity_clip"/>
+			android:background="@drawable/tv_program_schedule_clip_selector"/>
 	</RelativeLayout>
 
 	<RelativeLayout

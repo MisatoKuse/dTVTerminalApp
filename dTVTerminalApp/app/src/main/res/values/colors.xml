@@ -134,8 +134,9 @@
     <color name="tv_program_list_ch_bg">#1d1d1d</color>
     <color name="tv_program_list_ch_tab_bg">#000000</color>
     <color name="program_end_gray">#000000</color>
+    <color name="program_missed_gray">#121212</color>
 	<color name="program_playing_gray">#404040</color>
-    <color name="program_start_gray">#1D1D1D</color>
+    <color name="program_start_gray">#121212</color>
     <color name="tv_program_list_ch_title_text_color">#FFFFFF</color>
     <color name="tv_program_list_panel_start_time_text_color">#FFFFFF</color>
     <color name="tv_program_list_content_text_color">#FFFFFF</color>

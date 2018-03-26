@@ -416,7 +416,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private void watchByContentType(final ItemViewHolder itemViewHolder, final String contentType) {
         //見逃し(あり)
         if (MISS_CUT_OUT.equals(contentType) || MISS_COMPLETE.equals(contentType)) {
-            itemViewHolder.mView.setBackgroundResource(R.drawable.program_start_gray);
+            itemViewHolder.mView.setBackgroundResource(R.drawable.program_missed_gray);
             itemViewHolder.mView.setTag(1);
         } else {
         //関連VOD(なし)
@@ -530,10 +530,10 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             } else {
 
                 if (isClipStatus) {
-                    itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
+                    itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_normal_clip_schedule_end);
                     itemViewHolder.mClipButton.setTag(BaseActivity.CLIP_OPACITY_STATUS);
                 } else {
-                    itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                    itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip_schedule_end);
                     itemViewHolder.mClipButton.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
                 }
             }
