@@ -9,6 +9,7 @@ import android.content.Context;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelDeleteResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
@@ -50,18 +51,27 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
      */
     private MyChannelDeleteWebClient mMyChannelDeleteStatus;
 
+    /**
+     * コンストラクタ.
+     *
+     * @param mContext 　My番組表
+     */
+    public MyChannelDataProvider(final Context mContext) {
+        this.mContext = mContext;
+        this.mApiDataProviderCallback = (MyChannelDataProvider.ApiDataProviderCallback) mContext;
+    }
+
     @Override
     public void onMyChannelListJsonParsed(final MyChannelListResponse myChannelListResponse) {
+        if (mApiDataProviderCallback == null) {
+            return;
+        }
+
         if (myChannelListResponse != null && myChannelListResponse.getMyChannelMetaData() != null) {
-            ArrayList<MyChannelMetaData> mMyChannelMetaDataList = myChannelListResponse.getMyChannelMetaData();
-            if (mApiDataProviderCallback != null) {
-                mApiDataProviderCallback.onMyChannelListCallback(mMyChannelMetaDataList);
-            }
+            ArrayList<MyChannelMetaData> myChannelMetaData = myChannelListResponse.getMyChannelMetaData();
+            mApiDataProviderCallback.onMyChannelListCallback(myChannelMetaData);
         } else {
-            //エラーの場合
-            if (mApiDataProviderCallback != null) {
-                mApiDataProviderCallback.onMyChannelListCallback(null);
-            }
+            mApiDataProviderCallback.onMyChannelListCallback(null);
         }
     }
 
@@ -79,14 +89,8 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
         }
     }
 
-    /**
-     * コンストラクタ.
-     *
-     * @param mContext 　My番組表
-     */
-    public MyChannelDataProvider(final Context mContext) {
-        this.mContext = mContext;
-        this.mApiDataProviderCallback = (MyChannelDataProvider.ApiDataProviderCallback) mContext;
+    public ErrorState getMyChannelListError() {
+        return mMyChannelListWebClient.getError();
     }
 
     /**
