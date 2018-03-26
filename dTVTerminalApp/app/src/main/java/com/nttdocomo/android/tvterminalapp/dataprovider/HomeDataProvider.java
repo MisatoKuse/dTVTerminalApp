@@ -1571,7 +1571,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 break;
             case HomeActivity.HOME_CONTENTS_SORT_RECOMMEND_PROGRAM:
                 if (mRecommendDataProvider != null) {
-                    errorState = mRecommendDataProvider.getError(0);
+                    errorState = mRecommendDataProvider.getError(-1);
                 }
                 break;
             case HomeActivity.HOME_CONTENTS_SORT_RECOMMEND_VOD:
