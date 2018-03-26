@@ -13,7 +13,9 @@ import android.widget.ListView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.MyChannelEditAdapter;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.MyChannelDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
@@ -32,6 +34,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
         MyChannelEditAdapter.EditMyChannelItemImpl,
         MyChannelDataProvider.ApiDataProviderCallback {
 
+    //region variable
     /**
      * マイ番組表数.
      */
@@ -87,7 +90,8 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      * 削除ポジション.
      */
     private int mDeletePosition = 0;
-
+    // endregion
+    // region Activity LifeCycle
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
@@ -102,6 +106,45 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
         initView();
         loadData();
     }
+
+    /**
+     * チャンネル選択画面からのデータを渡す.
+     *
+     * @param requestCode リクエストコード
+     * @param resultCode  結果コード
+     * @param data        却ってきた情報
+     */
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data == null) {
+            return;
+        }
+        switch (requestCode) {
+            case 0:
+                DTVTLogger.start();
+                Bundle info = data.getBundleExtra(CHANNEL_INFO);
+                ChannelInfo channel = new ChannelInfo();
+                channel.setServiceId(info.getString(SERVICE_ID));
+                channel.setTitle(info.getString(TITLE));
+                //MYチャンネル登録実行
+                executeMyChannelListRegister(mAddPosition, channel);
+                DTVTLogger.end();
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        DTVTLogger.start();
+        //マイ番組表設定通信を止める
+        StopMyProgramListDataConnect stopMyConnect = new StopMyProgramListDataConnect();
+        stopMyConnect.execute(mMyChannelDataProvider);
+    }
+    // endregion
 
     /**
      * view 初期化.
@@ -167,6 +210,8 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
             MyChannelEditAdapter myEditAdapter = new MyChannelEditAdapter(this, mEditList);
             mEditListView.setAdapter(myEditAdapter);
             myEditAdapter.notifyDataSetChanged();
+        } else {
+            showErrorDialog();
         }
         DTVTLogger.end();
     }
@@ -247,35 +292,6 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     }
 
     /**
-     * チャンネル選択画面からのデータを渡す.
-     *
-     * @param requestCode リクエストコード
-     * @param resultCode  結果コード
-     * @param data        却ってきた情報
-     */
-    @Override
-    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (data == null) {
-            return;
-        }
-        switch (requestCode) {
-            case 0:
-                DTVTLogger.start();
-                Bundle info = data.getBundleExtra(CHANNEL_INFO);
-                ChannelInfo channel = new ChannelInfo();
-                channel.setServiceId(info.getString(SERVICE_ID));
-                channel.setTitle(info.getString(TITLE));
-                //MYチャンネル登録実行
-                executeMyChannelListRegister(mAddPosition, channel);
-                DTVTLogger.end();
-                break;
-            default:
-                break;
-        }
-    }
-
-    /**
      * マイ番組表サービスIDを纏めて取得する.
      *
      * @return  マイ番組表サービスIDリスト
@@ -348,12 +364,20 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        DTVTLogger.start();
-        //マイ番組表設定通信を止める
-        StopMyProgramListDataConnect stopMyConnect = new StopMyProgramListDataConnect();
-        stopMyConnect.execute(mMyChannelDataProvider);
+    private void showErrorDialog() {
+        ErrorState errorState = mMyChannelDataProvider.getMyChannelListError();
+        if (errorState == null || errorState.getErrorType() == DTVTConstants.ERROR_TYPE.SUCCESS) {
+            return;
+        }
+
+        CustomDialog customDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+        customDialog.setContent(errorState.getErrorMessage());
+        customDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @Override
+            public void onOKCallback(final boolean isOK) {
+                finish();
+            }
+        });
+        customDialog.showDialog();
     }
 }
