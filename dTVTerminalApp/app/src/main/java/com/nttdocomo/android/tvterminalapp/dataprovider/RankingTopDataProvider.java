@@ -14,8 +14,10 @@ import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity
 import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.VideoRankInsertDataManager;
@@ -33,6 +35,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
@@ -98,6 +101,30 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
      */
     private ContentsListPerGenreWebClient mContentsListPerGenreWebClient = null;
     /**
+     * 今日のテレビランキング取得用Webクライアントがエラーだった場合のフラグ
+     */
+    private boolean mIsDailyRankWebApiError = false;
+    /**
+     * 週間ランキング取得用Webクライアントがエラーだった場合のフラグ
+     */
+    private boolean mIsWeeklyRankWebApiError = false;
+    /**
+     * ビデオランキング取得用Webクライアントがエラーだった場合のフラグ
+     */
+    private boolean mIsContentsListPerGenreWebApiError = false;
+    /**
+     * 今日のテレビランキング取得用エラー情報
+     */
+    private ErrorState mDailyRankWebApiErrorState = null;
+    /**
+     * 週間ランキング取得用エラー情報
+     */
+    private ErrorState mWeeklyRankWebApiErrorState = null;
+    /**
+     * ビデオランキング取得用エラー情報
+     */
+    private ErrorState mContentsListPerGenreWebApiErrorState = null;
+    /**
      * DailyRankingDBThread判定用(insert)(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
      */
     private static final int INSERT_DAILY_RANKING_DATA = 6;
@@ -136,11 +163,11 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
     /**
      * ランクタイプ（今日）.
      */
-    private int DAILY_RANK = 1;
+    private static final int DAILY_RANK = 1;
     /**
      * ランクタイプ（週刊）.
      */
-    private int WEEKLY_RANK = 2;
+    private static final int WEEKLY_RANK = 2;
     /**
      * ランクタイプ.
      */
@@ -148,6 +175,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
 
     @Override
     public void onDailyRankJsonParsed(final List<DailyRankList> dailyRankLists) {
+        //エラー情報をクリア
+        mDailyRankWebApiErrorState = null;
+
         if (dailyRankLists != null && dailyRankLists.size() > 0) {
             DailyRankList list = dailyRankLists.get(0);
             setStructDB(list);
@@ -157,7 +187,20 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 mDailyRankList = list;
             }
         } else {
-            //WEBAPIを取得できなかった時はDBのデータを使用
+            //通信エラーなので、DBのテーブルの存在を確認する
+            boolean isDailyData = DBUtils.isCachingRecord(
+                    mContext, DBConstants.DAILYRANK_LIST_TABLE_NAME);
+            DTVTLogger.debug(DBConstants.DAILYRANK_LIST_TABLE_NAME + " = " + isDailyData);
+            //ここにたどり着いたならば、DB上のデータは存在しないか期限切れとなる。
+            if (mIsDailyRankWebApiError && !isDailyData) {
+                // 通信に失敗し、DBにデータが存在しなければ、ネットワークエラーを取得する
+                mDailyRankWebApiErrorState = mDailyRankWebClient.getError();
+                //ヌルで帰る
+                sendDailyRankListData(null);
+                return;
+            }
+
+            //WEBAPIを取得できなかった時はDBのデータを使用（期限切れでも使用する）
             Handler handler = new Handler();
             try {
                 DbThread t = new DbThread(handler, this, SELECT_DAILY_RANKING_DATA);
@@ -185,7 +228,20 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 mWeeklyRankList = list;
             }
         } else {
-            //WEBAPIを取得できなかった時はDBのデータを使用
+            //通信エラーなので、DBのテーブルの存在を確認する
+            boolean isWeeklyData = DBUtils.isCachingRecord(
+                    mContext, DBConstants.WEEKLYRANK_LIST_TABLE_NAME);
+            DTVTLogger.debug(DBConstants.WEEKLYRANK_LIST_TABLE_NAME + " = " + isWeeklyData);
+            //ここにたどり着いたならば、DB上のデータは存在しないか期限切れとなる。
+            if (mIsWeeklyRankWebApiError && !isWeeklyData) {
+                // 通信に失敗し、DBにデータが存在しなければ、ネットワークエラーを取得する
+                mWeeklyRankWebApiErrorState = mWeeklyRankWebClient.getError();
+                //ヌルで帰る
+                sendWeeklyRankList(null);
+                return;
+            }
+
+            //WEBAPIを取得できなかった時はDBのデータを使用（期限切れでも使用する）
             Handler handler = new Handler();
             try {
                 DbThread t = new DbThread(handler, this, SELECT_WEEKLY_RANKING_DATA);
@@ -211,7 +267,22 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 mVideoRankList = list;
             }
         } else {
-            //WEBAPIを取得できなかった時はDBのデータを使用
+            //通信エラーなので、DBのテーブルの存在を確認する
+            boolean isContentsListPerGenreData = DBUtils.isCachingRecord(
+                    mContext, DBConstants.RANKING_VIDEO_LIST_TABLE_NAME);
+            DTVTLogger.debug(DBConstants.RANKING_VIDEO_LIST_TABLE_NAME + " = " +
+                    isContentsListPerGenreData);
+            //ここにたどり着いたならば、DB上のデータは存在しないか期限切れとなる。
+            if (mIsContentsListPerGenreWebApiError && !isContentsListPerGenreData) {
+                // 通信に失敗し、DBにデータが存在しなければ、ネットワークエラーを取得する
+                mContentsListPerGenreWebApiErrorState =
+                        mContentsListPerGenreWebClient.getError();
+                //ヌルで帰る
+                sendVideoRankList(null);
+                return;
+            }
+
+            //WEBAPIを取得できなかった時はDBのデータを使用（期限切れでも使用する）
             Handler handler = new Handler();
             try {
                 DbThread t = new DbThread(handler, this, SELECT_VIDEO_RANKING_DATA);
@@ -619,7 +690,6 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
 
     /**
      * 今日のランキングデータを取得する.
-     *
      */
     private void getDailyRankListData() {
         DateUtils dateUtils = new DateUtils(mContext);
@@ -632,6 +702,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
 
         //今日のランキング一覧のDB保存履歴と、有効期間を確認
         if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate)) {
+            //DBからデータを取得したので、通信フラグはfalse
+            mIsDailyRankWebApiError = false;
+
             //データをDBから取得する
             Handler handler = new Handler();
             try {
@@ -642,6 +715,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             }
         } else {
             if (!mIsCancel) {
+                //DBは存在していないか期限切れなので、通信を行った事を示すフラグを立てる
+                mIsDailyRankWebApiError = true;
+
                 //通信クラスにデータ取得要求を出す
                 mDailyRankWebClient = new DailyRankWebClient(mContext);
                 UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
@@ -669,6 +745,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
         //ジャンル指定ありの場合は必ずWeb取得（キャッシュしない）
         if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate) && (genreId == null || genreId.isEmpty())) {
+            //DBを読みに行くので、通信を行った事を示すフラグはクリア
+            mIsWeeklyRankWebApiError = false;
+
             //データをDBから取得する
             Handler handler = new Handler();
             try {
@@ -679,6 +758,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             }
         } else {
             if (!mIsCancel) {
+                //DBは存在していないか期限切れなので、通信を行った事を示すフラグを立てる
+                mIsWeeklyRankWebApiError = true;
+
                 //通信クラスにデータ取得要求を出す
                 mWeeklyRankWebClient = new WeeklyRankWebClient(mContext);
                 UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
@@ -707,6 +789,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
         //ジャンル指定ありの場合は必ずWeb取得（キャッシュしない）
         if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate) && (genreId == null || genreId.isEmpty())) {
+            //通信は行わないので、フラグはクリア
+            mIsContentsListPerGenreWebApiError = true;
+
             //データをDBから取得する
             Handler handler = new Handler();
             try {
@@ -717,6 +802,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             }
         } else {
             if (!mIsCancel) {
+                //DBは存在していないか期限切れなので、通信を行った事を示すフラグを立てる
+                mIsContentsListPerGenreWebApiError = true;
+
                 //通信クラスにデータ取得要求を出す
                 mContentsListPerGenreWebClient = new ContentsListPerGenreWebClient(mContext);
                 UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
@@ -724,10 +812,10 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 //人気順でソートする
                 String sort = JsonConstants.GENRE_PER_CONTENTS_SORT_PLAY_COUNT_DESC;
                 if (!mContentsListPerGenreWebClient.getContentsListPerGenreApi(
-                            UPPER_PAGE_LIMIT, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, genreId, sort, this)) {
-                        if (mApiDataProviderCallback != null) {
-                            mApiDataProviderCallback.videoRankCallback(null);
-                        }
+                        UPPER_PAGE_LIMIT, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, genreId, sort, this)) {
+                    if (mApiDataProviderCallback != null) {
+                        mApiDataProviderCallback.videoRankCallback(null);
+                    }
                 }
             } else {
                 DTVTLogger.error("RankingTopDataProvider is stopping connect");
@@ -784,6 +872,33 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         } catch (Exception e) {
             DTVTLogger.debug(e);
         }
+    }
+
+    /**
+     * 今日のテレビランキング取得用エラー情報のゲッター.
+     *
+     * @return 今日のテレビランキング取得用エラー情報
+     */
+    public ErrorState getDailyRankWebApiErrorState() {
+        return mDailyRankWebApiErrorState;
+    }
+
+    /**
+     * 週間テレビランキング取得用エラー情報のゲッター.
+     *
+     * @return 週間テレビランキング取得用エラー情報
+     */
+    public ErrorState getWeeklyRankWebApiErrorState() {
+        return mWeeklyRankWebApiErrorState;
+    }
+
+    /**
+     * ビデオランキング取得用エラー情報のゲッター.
+     *
+     * @return ビデオランキング取得用エラー情報
+     */
+    public ErrorState getContentsListPerGenreWebApiErrorState() {
+        return mContentsListPerGenreWebApiErrorState;
     }
 
     /**
