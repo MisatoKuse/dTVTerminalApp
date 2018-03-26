@@ -102,7 +102,7 @@ public class RecommendActivity extends BaseActivity implements
         //Headerの設定
         setTitleText(getString(R.string.recommend_list_title));
         Intent intent = getIntent();
-        int mStartPageNo = intent.getIntExtra(RECOMMEND_LIST_START_PAGE, RECOMMEND_LIST_PAGE_NO_OF_TV);
+        int startPageNo = intent.getIntExtra(RECOMMEND_LIST_START_PAGE, RECOMMEND_LIST_PAGE_NO_OF_TV);
         mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
         if (mIsMenuLaunch) {
             enableHeaderBackIcon(false);
@@ -118,8 +118,8 @@ public class RecommendActivity extends BaseActivity implements
         //初回起動フラグをONにする
         mIsFirst = true;
         //初回表示のみ前画面からのタブ指定を反映する
-        sRecommendViewPager.setCurrentItem(mStartPageNo);
-        mTabLayout.setTab(mStartPageNo);
+        sRecommendViewPager.setCurrentItem(startPageNo);
+        mTabLayout.setTab(startPageNo);
     }
 
     @Override
@@ -385,11 +385,11 @@ public class RecommendActivity extends BaseActivity implements
     /**
      * おすすめテレビ用コールバック.
      *
-     * @param tab タブ
+     * @param tabFlg タブ区別フラグ
      */
-    private boolean showErrorMessage(final int tab) {
+    private boolean showErrorMessage(final int tabFlg) {
         boolean isError = false;
-        ErrorState errorState = mRecommendDataProvider.getError(tab);
+        ErrorState errorState = mRecommendDataProvider.getError(tabFlg);
         if (errorState != null && errorState.getErrorType() != DTVTConstants.ERROR_TYPE.SUCCESS) {
             String message = errorState.getErrorMessage();
             if (!TextUtils.isEmpty(message)) {
@@ -418,7 +418,7 @@ public class RecommendActivity extends BaseActivity implements
                         recommendDataProviderSuccess(recommendContentInfoList);
                     }
                 } else {
-                    showErrorMessage(0);
+                    showErrorMessage(RecommendDataProvider.API_INDEX_OTHER);
                 }
             }
         });
@@ -442,7 +442,7 @@ public class RecommendActivity extends BaseActivity implements
                         recommendDataProviderSuccess(recommendContentInfoList);
                     }
                 } else {
-                    showErrorMessage(1);
+                    showErrorMessage(RecommendDataProvider.API_INDEX_TV);
                 }
             }
         });
@@ -466,7 +466,7 @@ public class RecommendActivity extends BaseActivity implements
                         recommendDataProviderSuccess(recommendContentInfoList);
                     }
                 } else {
-                    showErrorMessage(2);
+                    showErrorMessage(RecommendDataProvider.API_INDEX_OTHER);
                 }
             }
         });
@@ -490,7 +490,7 @@ public class RecommendActivity extends BaseActivity implements
                         recommendDataProviderSuccess(recommendContentInfoList);
                     }
                 } else {
-                    showErrorMessage(4);
+                    showErrorMessage(RecommendDataProvider.API_INDEX_OTHER);
                 }
             }
         });
@@ -514,7 +514,7 @@ public class RecommendActivity extends BaseActivity implements
                         recommendDataProviderSuccess(recommendContentInfoList);
                     }
                 } else {
-                    showErrorMessage(3);
+                    showErrorMessage(RecommendDataProvider.API_INDEX_OTHER);
                 }
             }
         });

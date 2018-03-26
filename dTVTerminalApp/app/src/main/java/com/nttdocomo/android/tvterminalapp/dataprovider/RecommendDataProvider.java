@@ -107,6 +107,18 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      */
     private RecommendWebClient mTvWebClient = null;
     /**
+     * API_INDEX_TV(ホーム).
+     */
+    public static final int API_INDEX_TV_HOME = -1;
+    /**
+     * API_INDEX_TV.
+     */
+    public static final int API_INDEX_TV = 1;
+    /**
+     * API_INDEX(その他).
+     */
+    public static final int API_INDEX_OTHER = 2;
+    /**
      * テレビカテゴリー一覧（dTVチャンネル　VOD（見逃し）が無くなった等の新情報を反映）.
      */
     private final String[] RECOMMEND_CATEGORY_ID_TELEVI = {
@@ -327,15 +339,17 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     public ErrorState getError(final int apiIndex) {
         ErrorState errorState = null;
         //テレビ(ホーム用)
-        if (apiIndex == -1) {
+        if (apiIndex == API_INDEX_TV_HOME) {
             if (mTvWebClient != null) {
                 errorState = mTvWebClient.getError();
             }
-        } else if (apiIndex == 1) {//ビデオ
+        //ビデオ
+        } else if (apiIndex == API_INDEX_TV) {
             if (mVodWebClient != null) {
                 errorState = mVodWebClient.getError();
             }
-        } else {//テレビ、dTV、dTVチャンネル、dアニメストア
+        //テレビ、dTV、dTVチャンネル、dアニメストア
+        } else {
             if (mRecommendWebClient != null) {
                 errorState = mRecommendWebClient.getError();
             }

@@ -1571,12 +1571,12 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 break;
             case HomeActivity.HOME_CONTENTS_SORT_RECOMMEND_PROGRAM:
                 if (mRecommendDataProvider != null) {
-                    errorState = mRecommendDataProvider.getError(-1);
+                    errorState = mRecommendDataProvider.getError(RecommendDataProvider.API_INDEX_TV_HOME);
                 }
                 break;
             case HomeActivity.HOME_CONTENTS_SORT_RECOMMEND_VOD:
                 if (mRecommendDataProvider != null) {
-                    errorState = mRecommendDataProvider.getError(1);
+                    errorState = mRecommendDataProvider.getError(RecommendDataProvider.API_INDEX_TV);
                 }
                 break;
             case HomeActivity.HOME_CONTENTS_SORT_TODAY:
