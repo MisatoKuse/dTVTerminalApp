@@ -807,6 +807,10 @@ public class ChannelListActivity extends BaseActivity implements
     @Override
     public void channelInfoCallback(final ChannelInfoList channelsInfo) {
         DTVTLogger.start();
+        int pos = mViewPager.getCurrentItem();
+        ChListDataType chType = getTypeFromViewPagerIndex(pos);
+        ChannelListFragment fragment = mFactory.createFragment(pos, this, chType);
+        fragment.showProgressBar(false);
         if (null == channelsInfo) {
             DTVTLogger.end();
             return;
@@ -826,6 +830,10 @@ public class ChannelListActivity extends BaseActivity implements
     @Override
     public void channelListCallback(final ArrayList<ChannelInfo> channels) {
         DTVTLogger.start();
+        int pos = mViewPager.getCurrentItem();
+        ChListDataType chType = getTypeFromViewPagerIndex(pos);
+        ChannelListFragment fragment = mFactory.createFragment(pos, this, chType);
+        fragment.showProgressBar(false);
         if (null == channels) {
             mNoDataMessage.setVisibility(View.VISIBLE);
 
@@ -847,9 +855,6 @@ public class ChannelListActivity extends BaseActivity implements
             mNoDataMessage.setVisibility(View.VISIBLE);
             return;
         }
-        int pos = mViewPager.getCurrentItem();
-        ChListDataType chType = getTypeFromViewPagerIndex(pos);
-        ChannelListFragment fragment = null;
         switch (chType) {
             case CH_LIST_DATA_TYPE_HIKARI:
             case CH_LIST_DATA_TYPE_DCH:
@@ -858,6 +863,7 @@ public class ChannelListActivity extends BaseActivity implements
             case CH_LIST_DATA_TYPE_TDB:
             case CH_LIST_DATA_TYPE_BS:
             default:
+                fragment = null;
                 break;
         }
         if (null == fragment) {
