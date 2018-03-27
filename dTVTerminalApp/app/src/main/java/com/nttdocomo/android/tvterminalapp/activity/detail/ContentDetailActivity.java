@@ -3716,7 +3716,7 @@ public class ContentDetailActivity extends BaseActivity implements
         }
 
         //契約誘導ダイアログを表示
-        CustomDialog customDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+        CustomDialog customDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
         customDialog.setContent(errorState.getErrorMessage());
         if (okCallback != null) {
             customDialog.setOkCallBack(okCallback);
