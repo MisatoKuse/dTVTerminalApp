@@ -8,15 +8,6 @@
     android:layout_height="match_parent"
     android:minHeight="@dimen/main_setting_list_height"
     android:background="@color/setting_list_background_color">
-    <TextView
-        android:id="@+id/setting_main_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="@dimen/main_setting_text_start_margin"
-        android:textSize="@dimen/main_setting_list_item_textsize"
-        android:textColor="@color/white_text"/>
     <ImageView
         android:id="@+id/setting_forward_image"
         android:layout_width="30dp"
@@ -24,7 +15,8 @@
         android:layout_alignParentEnd="true"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="@dimen/main_setting_view_margin"
-        android:src="@mipmap/icon_normal_arrow_next_prev"/>
+        android:src="@mipmap/icon_normal_arrow_next_prev"
+        android:contentDescription="@null"/>
     <TextView
         android:id="@+id/setting_state_text"
         android:layout_width="wrap_content"
@@ -35,4 +27,16 @@
         android:textAlignment="textEnd"
         android:textSize="@dimen/main_setting_list_status_textsize"
         android:textColor="@color/white_text"/>
+    <TextView
+        android:id="@+id/setting_main_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@id/setting_state_text"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/main_setting_text_start_margin"
+        android:textSize="@dimen/main_setting_list_item_textsize"
+        android:textColor="@color/white_text"
+        android:maxLines="1"
+        android:ellipsize="end"/>
 </RelativeLayout>
