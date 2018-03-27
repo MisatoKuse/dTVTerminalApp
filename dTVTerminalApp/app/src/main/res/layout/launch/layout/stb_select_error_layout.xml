@@ -46,7 +46,7 @@
         android:background="@color/stb_select_white_color"
         android:gravity="center"
         android:textStyle="bold"
-        android:text="@string/str_stb_search_failed_help"
+        android:text="@string/paring_setting_search_help_text"
         android:textSize="@dimen/launch_device_search_error_help_button_text"
         android:textColor="@color/stb_select_black_color" />
     <TextView
