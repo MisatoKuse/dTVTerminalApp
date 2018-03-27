@@ -1404,7 +1404,17 @@ public class ContentDetailActivity extends BaseActivity implements
 
             //「mobileViewingFlg」が「0」の場合モバイル視聴不可
             if (MOBILEVIEWINGFLG_FLAG_ZERO.equals(mDetailData.getMobileViewingFlg())) {
-                setThumbnailText(getResources().getString(R.string.contents_detail_thumbnail_text));
+                //未ペアリングかつ宅外の場合は、"ドコモテレビターミナルに接続してください"を表示する仕様ですが、
+                //本ソースでは宅外判定がペアリング判定で行われていたので、判定はペアリングの有無のみ。
+                if(!getStbStatus()) {
+                    //未ペアリングなので、"ドコモテレビターミナルに接続してください"を表示
+                    setThumbnailText(getResources().getString(
+                            R.string.contents_detail_thumbnail_text_no_pair));
+                } else {
+                    //ペアリング済みなので、"テレビで視聴できます"を表示
+                    setThumbnailText(getResources().getString(
+                            R.string.contents_detail_thumbnail_text));
+                }
                 mThumbnailBtn.setEnabled(false);
             } else {
                 //  dアニメの場合
@@ -1414,7 +1424,17 @@ public class ContentDetailActivity extends BaseActivity implements
                 } else if (serviceId == DTV_CONTENTS_SERVICE_ID) {
                     //DTVコンテンツ　「reserved2」が「1」　Androidのモバイル視聴不可
                     if (CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved2())) {
-                        setThumbnailText(getResources().getString(R.string.contents_detail_thumbnail_text));
+                        //未ペアリングかつ宅外の場合は、"ドコモテレビターミナルに接続してください"を表示する仕様ですが、
+                        //本ソースでは宅外判定がペアリング判定で行われていたので、判定はペアリングの有無のみ。
+                        if(!getStbStatus()) {
+                            //未ペアリングなので、"ドコモテレビターミナルに接続してください"を表示
+                            setThumbnailText(getResources().getString(
+                                    R.string.contents_detail_thumbnail_text_no_pair));
+                        } else {
+                            //ペアリング済みなので、"テレビで視聴できます"を表示
+                            setThumbnailText(getResources().getString(
+                                    R.string.contents_detail_thumbnail_text));
+                        }
                         mThumbnailBtn.setEnabled(false);
                     } else {
                         setThumbnailText(getResources().getString(R.string.dtv_content_service_start_text));
@@ -2992,10 +3012,18 @@ public class ContentDetailActivity extends BaseActivity implements
      * @return 録画予約確認ダイアログ
      */
     private CustomDialog createRecordingReservationConfirmDialog() {
-        CustomDialog recordingReservationConfirmDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-        recordingReservationConfirmDialog.setContent(getResources().getString(R.string.recording_reservation_confirm_dialog_msg));
-        recordingReservationConfirmDialog.setConfirmText(R.string.recording_reservation_confirm_dialog_confirm);
-        recordingReservationConfirmDialog.setCancelText(R.string.recording_reservation_confirm_dialog_cancel);
+        CustomDialog recordingReservationConfirmDialog =
+                new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+        //タイトル指定
+        recordingReservationConfirmDialog.setTitle(getResources().getString(
+                R.string.recording_reservation_confirm_dialog_title));
+        //本文指定
+        recordingReservationConfirmDialog.setContent(getResources().getString(
+                R.string.recording_reservation_confirm_dialog_msg));
+        recordingReservationConfirmDialog.setConfirmText(
+                R.string.recording_reservation_confirm_dialog_confirm);
+        recordingReservationConfirmDialog.setCancelText(
+                R.string.recording_reservation_confirm_dialog_cancel);
         // Cancelable
         recordingReservationConfirmDialog.setCancelable(false);
         recordingReservationConfirmDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
@@ -3003,7 +3031,8 @@ public class ContentDetailActivity extends BaseActivity implements
             public void onOKCallback(final boolean isOK) {
                 DTVTLogger.debug("Request RecordingReservation");
                 DTVTLogger.debug(mRecordingReservationContentsDetailInfo.toString());
-                mContentsDetailDataProvider.requestRecordingReservation(mRecordingReservationContentsDetailInfo);
+                mContentsDetailDataProvider.requestRecordingReservation(
+                        mRecordingReservationContentsDetailInfo);
             }
         });
         return recordingReservationConfirmDialog;
