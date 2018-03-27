@@ -330,7 +330,7 @@
     <string name="my_channel_list_setting_select_channel">チャンネルを選択</string>
     <string name="my_channel_list_setting_failed_dialog_content_register">マイ番組表の登録に失敗しました</string>
     <string name="my_channel_list_setting_failed_dialog_content_unregister">マイ番組表の削除に失敗しました</string>
-    <string name="my_channel_list_setting_dialog_content_unregister">を番組表から削除しますか?</string>
+    <string name="my_channel_list_setting_dialog_content_unregister">をマイ番組表から解除しますか？</string>
 
     <!-- dアカウント登録 -->
     <string name="d_account_regist_error">dアカウントの処理に失敗しました</string>
