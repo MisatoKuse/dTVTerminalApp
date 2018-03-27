@@ -21,6 +21,17 @@
             android:layout_centerInParent="true" />
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/genre_list_no_items"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/list_no_items_text_left"
+        android:layout_marginTop="@dimen/list_no_items_text_top"
+        android:textColor="@color/white_text"
+        android:textSize="@dimen/tab_text_size_14dp"
+        android:text="@string/common_empty_data_message"
+        android:visibility="gone"/>
+
     <ListView
         android:id="@+id/genre_list"
         android:layout_width="match_parent"

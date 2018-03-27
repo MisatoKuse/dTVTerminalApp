@@ -37,70 +37,44 @@ public class ClipListBaseFragment extends Fragment
         implements AbsListView.OnScrollListener,
         AdapterView.OnItemClickListener, AdapterView.OnTouchListener {
 
-    /**
-     * コンテキストファイル.
-     */
-    private Context mActivity = null;
-    /**
-     * コンテンツリストデータ.
-     */
-    public List<ContentsData> mClipListData = new ArrayList<>();
-    /**
-     * フッター追加用View.
-     */
-    private View mLoadMoreView = null;
-
-    /**
-     * Fragmentレイアウト.
-     */
-    private View mTvFragmentView = null;
-    /**
-     * FragmentListView.
-     */
-    private ListView mTvListView = null;
-    /**
-     * FragmentProgressDialog.
-     */
-    private RelativeLayout mRelativeLayout = null;
-
-    /**
-     * コンテンツリストアダプター.
-     */
-    public ContentsAdapter mClipMainAdapter = null;
-
-    /**
-     * スクロール位置の記録.
-     */
-    private int mFirstVisibleItem = 0;
-    /**
-     * 最後のスクロール方向が上ならばtrue.
-     */
-    private boolean mLastScrollUp = false;
-    /**
-     * コンテンツ詳細表示フラグ.
-     */
-    public boolean mContentsDetailDisplay = false;
-    /**
-     * 指を置いたY座標.
-     */
-    private float mStartY = 0;
-
-    /**
-     * スクロールリスナー.
-     */
+    /** コンテキストファイル. */
+    private Context mContext = null;
+    /** スクロールリスナー. */
     private ClipListBaseFragmentScrollListener mClipListBaseFragmentScrollListener = null;
 
-    /**
-     * コンストラクタ.
-     */
+    /** コンテンツリストデータ. */
+    public List<ContentsData> mClipListData = new ArrayList<>();
+
+    /** フッター追加用View. */
+    private View mLoadMoreView = null;
+    /** Fragmentレイアウト. */
+    private View mTvFragmentView = null;
+    /** FragmentListView. */
+    private ListView mTvListView = null;
+    /** FragmentProgressDialog. */
+    private RelativeLayout mRelativeLayout = null;
+
+    /** コンテンツリストアダプター. */
+    public ContentsAdapter mClipMainAdapter = null;
+
+    /** スクロール位置の記録. */
+    private int mFirstVisibleItem = 0;
+    /** 指を置いたY座標. */
+    private float mStartY = 0;
+    /** 最後のスクロール方向が上ならばtrue. */
+    private boolean mLastScrollUp = false;
+    /**コンテンツ詳細表示フラグ. */
+    public boolean mContentsDetailDisplay = false;
+
+    /** コンストラクタ. */
     public ClipListBaseFragment() {
         mClipListData = new ArrayList();
     }
 
     @Override
     public Context getContext() {
-        this.mActivity = getActivity();
-        return mActivity;
+        this.mContext = getActivity();
+        return mContext;
     }
 
     @Override
@@ -150,6 +124,7 @@ public class ClipListBaseFragment extends Fragment
     private void initContentListView() {
         mTvListView = mTvFragmentView
                 .findViewById(R.id.clip_list_lv_searched_result);
+        mRelativeLayout = mTvFragmentView.findViewById(R.id.clip_list_progress);
 
         mTvListView.setOnScrollListener(this);
         mTvListView.setOnItemClickListener(this);
@@ -167,11 +142,10 @@ public class ClipListBaseFragment extends Fragment
      * @param showProgressBar プロセスバーを表示するかどうか
      */
     public void showProgressBar(final boolean showProgressBar) {
+        //Viewが生成にActivityから直接呼ばれたとき用
         if (mTvFragmentView == null) {
             return;
         }
-        mTvListView = mTvFragmentView.findViewById(R.id.clip_list_lv_searched_result);
-        mRelativeLayout = mTvFragmentView.findViewById(R.id.clip_list_progress);
         if (showProgressBar) {
             //オフライン時は表示しない
             if (!NetWorkUtils.isOnline(getActivity())) {
@@ -283,9 +257,9 @@ public class ClipListBaseFragment extends Fragment
             return;
         }
 
-        if (mActivity != null) {
+        if (mContext != null) {
             mContentsDetailDisplay = true;
-            Intent intent = new Intent(mActivity, ContentDetailActivity.class);
+            Intent intent = new Intent(mContext, ContentDetailActivity.class);
             intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
             OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(mClipListData.get(i), ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
             intent.putExtra(detailData.getRecommendFlg(), detailData);

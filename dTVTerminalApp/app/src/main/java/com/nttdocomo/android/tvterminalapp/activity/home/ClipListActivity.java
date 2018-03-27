@@ -270,6 +270,8 @@ public class ClipListActivity extends BaseActivity implements
 
     @Override
     public void tvClipListCallback(final List<ContentsData> clipContentInfo) {
+
+        ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
         if (null == clipContentInfo) {
             //通信とJSON Parseに関してerror処理
             DTVTLogger.debug("ClipListActivity::TvClipListCallback, get data failed.");
@@ -282,6 +284,7 @@ public class ClipListActivity extends BaseActivity implements
             } else {
                 showGetDataFailedToast(message);
             }
+            fragment.showProgressBar(false);
 
             mNoDataMessage.setVisibility(View.VISIBLE);
             return;
@@ -290,6 +293,7 @@ public class ClipListActivity extends BaseActivity implements
         if (0 == clipContentInfo.size()) {
             //doing
             mNoDataMessage.setVisibility(View.VISIBLE);
+            fragment.showProgressBar(false);
             resetCommunication();
             return;
         }
@@ -298,8 +302,6 @@ public class ClipListActivity extends BaseActivity implements
             resetCommunication();
             return;
         }
-
-        ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
 
         int pageNumber = getCurrentNumber();
         for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE && i < clipContentInfo.size(); ++i) {
@@ -317,6 +319,9 @@ public class ClipListActivity extends BaseActivity implements
 
     @Override
     public void vodClipListCallback(final List<ContentsData> clipContentInfo) {
+
+        ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
+
         if (null == clipContentInfo) {
             //通信とJSON Parseに関してerror処理
             DTVTLogger.debug("ClipListActivity::VodClipListCallback, get data failed");
@@ -331,12 +336,14 @@ public class ClipListActivity extends BaseActivity implements
             }
 
             mNoDataMessage.setVisibility(View.VISIBLE);
+            fragment.showProgressBar(false);
             return;
         }
 
         if (0 == clipContentInfo.size()) {
             //doing
             mNoDataMessage.setVisibility(View.VISIBLE);
+            fragment.showProgressBar(false);
             resetCommunication();
             return;
         }
@@ -345,8 +352,6 @@ public class ClipListActivity extends BaseActivity implements
             resetCommunication();
             return;
         }
-
-        ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
 
         int pageNumber = getCurrentNumber();
         for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE && i < clipContentInfo.size(); ++i) {
