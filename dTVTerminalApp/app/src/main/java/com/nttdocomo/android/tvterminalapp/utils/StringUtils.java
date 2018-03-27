@@ -412,6 +412,11 @@ public class StringUtils {
         ByteArrayInputStream byteArrayInputStream = null;
         ObjectInputStream objectInputStream = null;
 
+        //初回起動時にビデオジャンルレスポンス取得失敗した場合は"base64"がnullで来ることがあるので、ここでチェックする
+        if (base64 == null) {
+            return null;
+        }
+
         byte[] bytes = Base64.decode(base64.getBytes(), Base64.NO_WRAP);
 
         try {

@@ -26,6 +26,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopVideoGenreConnect;
 import com.nttdocomo.android.tvterminalapp.struct.VideoGenreListDataInfo;
+import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -99,6 +100,10 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
         mListView = findViewById(R.id.genre_list);
         mRelativeLayout = findViewById(R.id.genre_progress);
         if (showProgressBar) {
+            //オフライン時は表示しない
+            if (!NetWorkUtils.isOnline(this)) {
+                return;
+            }
             mListView.setVisibility(View.GONE);
             mRelativeLayout.setVisibility(View.VISIBLE);
         } else {
@@ -119,7 +124,6 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
             mVideoGenreAdapter.mData = mContentsList;
             mVideoGenreAdapter.notifyDataSetChanged();
         }
-        showProgressBar(false);
         DTVTLogger.end();
     }
 
@@ -163,6 +167,7 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
     @Override
     public void genreListCallback(final List<GenreCountGetMetaData> genreList) {
         DTVTLogger.start();
+        showProgressBar(false);
         if (genreList != null) {
             DTVTLogger.debug("Contents Count request is Success");
             int allContentsCnt = 0;

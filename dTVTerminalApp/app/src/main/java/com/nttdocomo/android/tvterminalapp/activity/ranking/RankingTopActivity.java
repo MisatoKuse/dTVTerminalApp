@@ -27,6 +27,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopHomeRecyclerViewAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRankingTopDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.List;
 
@@ -168,6 +169,10 @@ public class RankingTopActivity extends BaseActivity
         mLinearLayout = findViewById(R.id.ranking_top_main_layout_linearLayout);
         mRelativeLayout = findViewById(R.id.ranking_top_layout_progress_bar_Layout);
         if (showProgressBar) {
+            //オフライン時は表示しない
+            if (!NetWorkUtils.isOnline(this)) {
+                return;
+            }
             mLinearLayout.setVisibility(View.GONE);
             mRelativeLayout.setVisibility(View.VISIBLE);
         } else {

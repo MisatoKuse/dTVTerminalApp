@@ -23,6 +23,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.view.RecommendListView;
 
 import java.util.ArrayList;
@@ -160,6 +161,10 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
         mRecommendListView = mRecommendFragmentView.findViewById(R.id.lv_recommend_list);
         mRelativeLayout = mRecommendFragmentView.findViewById(R.id.lv_recommend_progress);
         if (showProgressBar) {
+            //オフライン時は表示しない
+            if (!NetWorkUtils.isOnline(getActivity())) {
+                return;
+            }
             mRecommendListView.setVisibility(View.GONE);
             mRelativeLayout.setVisibility(View.VISIBLE);
         } else {

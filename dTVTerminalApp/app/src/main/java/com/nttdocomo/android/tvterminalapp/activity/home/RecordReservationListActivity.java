@@ -26,6 +26,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationList
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRecordingReservationListDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -135,6 +136,10 @@ public class RecordReservationListActivity extends BaseActivity
         mListView = findViewById(R.id.record_reservation_list_view);
         mRelativeLayout = findViewById(R.id.record_reservation_progress);
         if (showProgressBar) {
+            //オフライン時は表示しない
+            if (!NetWorkUtils.isOnline(this)) {
+                return;
+            }
             mListView.setVisibility(View.GONE);
             mRelativeLayout.setVisibility(View.VISIBLE);
         } else {

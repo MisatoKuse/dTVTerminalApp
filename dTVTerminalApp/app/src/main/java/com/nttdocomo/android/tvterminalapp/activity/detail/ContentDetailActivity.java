@@ -66,6 +66,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
+import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
@@ -3590,6 +3591,10 @@ public class ContentDetailActivity extends BaseActivity implements
      */
     private void showProgressBar(final boolean showProgessBar) {
         if (showProgessBar) {
+            //オフライン時は表示しない
+            if (!NetWorkUtils.isOnline(this)) {
+                return;
+            }
             findViewById(R.id.contents_detail_scroll_layout).setVisibility(View.INVISIBLE);
             setRemoteProgressVisible(View.VISIBLE);
         } else {
@@ -3713,7 +3718,7 @@ public class ContentDetailActivity extends BaseActivity implements
         //契約誘導ダイアログを表示
         CustomDialog customDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
         customDialog.setContent(errorState.getErrorMessage());
-        if (okCallback != null){
+        if (okCallback != null) {
             customDialog.setOkCallBack(okCallback);
         }
         customDialog.showDialog();

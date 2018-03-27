@@ -25,6 +25,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapter
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -157,6 +158,10 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         mTvListView = mTvFragmentView.findViewById(R.id.lv_searched_result);
         mRelativeLayout = mTvFragmentView.findViewById(R.id.lv_searched_progress);
         if (showProgressBar) {
+            //オフライン時は表示しない
+            if (!NetWorkUtils.isOnline(getActivity())) {
+                return;
+            }
             mTvListView.setVisibility(View.GONE);
             mRelativeLayout.setVisibility(View.VISIBLE);
         } else {

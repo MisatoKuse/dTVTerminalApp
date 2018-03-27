@@ -24,13 +24,13 @@ import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
-import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VideoContentProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopVideoContentConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.VideoGenreListDataInfo;
+import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -170,6 +170,10 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         mListView = findViewById(R.id.tv_rank_list);
         mRelativeLayout = findViewById(R.id.tv_rank_progress);
         if (showProgressBar) {
+            //オフライン時は表示しない
+            if (!NetWorkUtils.isOnline(this)) {
+                return;
+            }
             mListView.setVisibility(View.GONE);
             mRelativeLayout.setVisibility(View.VISIBLE);
         } else {
@@ -355,12 +359,13 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         }
         resetCommunication();
         mContentsAdapter.notifyDataSetChanged();
-        showProgressBar(false);
     }
 
     @Override
     public void videoContentCallback(final List<ContentsData> videoHashMap) {
-        setShowVideoContent(videoHashMap);
+        showProgressBar(false);
+        List<ContentsData> list = new ArrayList<>();
+        setShowVideoContent(list);
     }
 
     @Override

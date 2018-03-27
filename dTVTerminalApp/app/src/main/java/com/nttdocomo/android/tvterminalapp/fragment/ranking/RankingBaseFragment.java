@@ -24,6 +24,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,6 +121,10 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
         mRankingListView = mRankingFragmentView.findViewById(R.id.lv_ranking_list);
         mRelativeLayout = mRankingFragmentView.findViewById(R.id.lv_ranking_progress);
         if (showProgressBar) {
+            //オフライン時は表示しない
+            if (!NetWorkUtils.isOnline(getActivity())) {
+                return;
+            }
             mRankingListView.setVisibility(View.GONE);
             mRelativeLayout.setVisibility(View.VISIBLE);
         } else {

@@ -44,6 +44,7 @@ import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
@@ -213,7 +214,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         if (mTabLayout != null) {
             mTabLayout.setTab(position);
         }
-        progressBar.setVisibility(View.VISIBLE);
+        showProgressBar(true);
         mNoDataMessage.setVisibility(View.GONE);
         switch (mViewPager.getCurrentItem()) {
             case 0:
@@ -224,6 +225,23 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * プロセスバーを表示する.
+     *
+     * @param showProgressBar プロセスバーを表示するかどうか
+     */
+    private void showProgressBar(final boolean showProgressBar) {
+        if (showProgressBar) {
+            //オフライン時は表示しない
+            if (!NetWorkUtils.isOnline(this)) {
+                return;
+            }
+            progressBar.setVisibility(View.VISIBLE);
+        } else {
+            progressBar.setVisibility(View.GONE);
         }
     }
 
@@ -284,7 +302,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             }
             baseFragment.notifyDataSetChanged();
         }
-        progressBar.setVisibility(View.GONE);
+        showProgressBar(false);
     }
 
     @Override
@@ -580,7 +598,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     public void onStartCommunication() {
         super.onStartCommunication();
         if (progressBar != null) {
-            progressBar.setVisibility(View.VISIBLE);
+            showProgressBar(true);
             mNoDataMessage.setVisibility(View.GONE);
         }
         initDl();
