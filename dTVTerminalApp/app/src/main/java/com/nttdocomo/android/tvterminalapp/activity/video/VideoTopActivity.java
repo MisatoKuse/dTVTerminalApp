@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -39,7 +40,6 @@ import java.util.Map;
 public class VideoTopActivity extends BaseActivity implements VideoGenreProvider.apiGenreListDataProviderCallback,
         AdapterView.OnItemClickListener, VideoGenreProvider.GenreListMapCallback {
 
-    private ImageView mMenuImageView;
     private List mContentsList;
     private Boolean mIsMenuLaunch = false;
 
@@ -47,10 +47,14 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
     private VideoGenreListDataInfo mVideoGenreListDataInfo = null;
     private List<VideoGenreList> mShowContentsList = null;
     private VideoGenreProvider mVideoGenreProvider = null;
+    /** ヘッダImageView. **/
+    private ImageView mMenuImageView;
     /** ビデオジャンルのListView. **/
     private ListView mListView = null;
     /** ビデオジャンルのProgressDialog. **/
     private RelativeLayout mRelativeLayout = null;
+    /** リスト0件メッセージ. */
+    private TextView mNoDataMessage;
 
     // ジャンルIDのIntent KEY
     private static final String VIDEO_GENRE_ID_BUNDLE_KEY = "videoContentKey";
@@ -82,6 +86,7 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
         }
         mListView = findViewById(R.id.genre_list);
         mRelativeLayout = findViewById(R.id.genre_progress);
+        mNoDataMessage = findViewById(R.id.genre_list_no_items);
         showProgressBar(true);
         mListView.setOnItemClickListener(this);
         mVideoGenreAdapter = new VideoGenreAdapter(
@@ -97,8 +102,6 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
      * @param showProgressBar プロセスバーを表示するかどうか
      */
     private void showProgressBar(final boolean showProgressBar) {
-        mListView = findViewById(R.id.genre_list);
-        mRelativeLayout = findViewById(R.id.genre_progress);
         if (showProgressBar) {
             //オフライン時は表示しない
             if (!NetWorkUtils.isOnline(this)) {
@@ -170,6 +173,7 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
         showProgressBar(false);
         if (genreList != null) {
             DTVTLogger.debug("Contents Count request is Success");
+
             int allContentsCnt = 0;
             for (int i = 0; i < mShowContentsList.size(); i++) {
                 for (GenreCountGetMetaData cntData : genreList) {
@@ -250,6 +254,12 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
             videoGenreList.setContentCount(mVideoGenreListDataInfo.getVideoGenreListShowData().getContentCount());
             videoGenreList.setGenreId(mVideoGenreListDataInfo.getGenreId());
             mShowContentsList.add(0, videoGenreList);
+        }
+        mShowContentsList = new ArrayList<>();
+        if (null == mShowContentsList || 0 == mShowContentsList.size()) {
+            //コンテンツ0件表示
+            mNoDataMessage.setVisibility(View.VISIBLE);
+            return;
         }
         noticeRefresh(mShowContentsList);
         DTVTLogger.end();
