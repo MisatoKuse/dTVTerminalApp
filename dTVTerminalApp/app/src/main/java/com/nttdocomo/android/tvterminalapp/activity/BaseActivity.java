@@ -2242,6 +2242,13 @@ public class BaseActivity extends FragmentActivity implements
                 finish();
             }
         });
+        //戻るボタン等でダイアログが閉じられた時もOKと同じ挙動
+        closeDialog.setDialogDismissCallback(new CustomDialog.DialogDismissCallback() {
+            @Override
+            public void onDialogDismissCallback() {
+                finish();
+            }
+        });
         closeDialog.setCancelable(false);
         closeDialog.showDialog();
     }
