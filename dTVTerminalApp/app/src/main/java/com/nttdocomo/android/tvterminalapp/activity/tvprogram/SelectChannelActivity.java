@@ -151,10 +151,10 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
             //メッセージの有無で処理を分ける
             if (TextUtils.isEmpty(message)) {
                 //メッセージが無いので、「取得に失敗」のダイアログを表示。OKボタンで本画面は終了
-                showDialogToClose();
+                showDialogToClose(this);
             } else {
                 //メッセージがあるので、該当メッセージのダイアログを表示。OKボタンで本画面は終了
-                showDialogToClose(message);
+                showDialogToClose(this, message);
             }
         }
     }

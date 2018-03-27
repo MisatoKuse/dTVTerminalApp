@@ -2230,10 +2230,11 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * データが取得失敗した時のダイアログ表示（メッセージ指定）.
      *
+     * @param context コンテキスト
      * @param message メッセージ
      */
-    public void showDialogToClose(final String message) {
-        CustomDialog closeDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+    public void showDialogToClose(final Context context, final String message) {
+        CustomDialog closeDialog = new CustomDialog(context, CustomDialog.DialogType.ERROR);
         closeDialog.setContent(message);
         closeDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
@@ -2248,9 +2249,9 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * データが取得失敗した時のダイアログ表示.
      */
-    public void showDialogToClose() {
+    public void showDialogToClose(final Context context) {
         //文字列リソースを取得して、メッセージ指定側に処理を移譲
-        showDialogToClose(getApplicationContext().getString(
+        showDialogToClose(this, getApplicationContext().getString(
                 R.string.common_get_data_failed_message));
     }
 

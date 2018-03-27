@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.ranking;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -26,6 +27,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetail
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRankingTopDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,8 +86,7 @@ public class DailyTvRankingActivity extends BaseActivity implements
         resetPaging();
 
         initView();
-        mListView.setVisibility(View.GONE);
-        mRelativeLayout.setVisibility(View.VISIBLE);
+        showProgressBar(true);
         mRankingTopDataProvider = new RankingTopDataProvider(this);
     }
 
@@ -123,6 +124,27 @@ public class DailyTvRankingActivity extends BaseActivity implements
         mListView.setAdapter(mContentsAdapter);
         mLoadMoreView = View.inflate(this, R.layout.search_load_more, null);
         mNoDataMessage  = findViewById(R.id.tv_rank_list_no_items);
+    }
+
+    /**
+     * プロセスバーを表示する.
+     *
+     * @param showProgressBar プロセスバーを表示するかどうか
+     */
+    private void showProgressBar(final boolean showProgressBar) {
+        mListView = findViewById(R.id.tv_rank_list);
+        mRelativeLayout = findViewById(R.id.tv_rank_progress);
+        if (showProgressBar) {
+            //オフライン時は表示しない
+            if (!NetWorkUtils.isOnline(this)) {
+                return;
+            }
+            mListView.setVisibility(View.GONE);
+            mRelativeLayout.setVisibility(View.VISIBLE);
+        } else {
+            mListView.setVisibility(View.VISIBLE);
+            mRelativeLayout.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -171,9 +193,11 @@ public class DailyTvRankingActivity extends BaseActivity implements
     @Override
     public void dailyRankListCallback(final List<ContentsData> contentsDataList) {
         //DbThreadからのコールバックではUIスレッドとして扱われないため
+        final Context context = this;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                showProgressBar(false);
                 //エラー情報の存在を見る
                 ErrorState errorState = mRankingTopDataProvider.getDailyRankWebApiErrorState();
                 if(errorState != null) {
@@ -184,16 +208,14 @@ public class DailyTvRankingActivity extends BaseActivity implements
                     //メッセージの有無を確認
                     if(TextUtils.isEmpty(message)) {
                         //メッセージが無いので、デフォルトメッセージで表示
-                        showDialogToClose();
+                        showDialogToClose(context);
                     } else {
                         //メッセージがあるので表示
-                        showDialogToClose(message);
+                        showDialogToClose(context, message);
                     }
                     return;
                 }
 
-                mListView.setVisibility(View.VISIBLE);
-                mRelativeLayout.setVisibility(View.GONE);
                 setShowDailyRanking(contentsDataList);
             }
         });
@@ -206,7 +228,7 @@ public class DailyTvRankingActivity extends BaseActivity implements
      */
     private void setShowDailyRanking(final List<ContentsData> contentsDataList) {
         if (null == contentsDataList) {
-            showDialogToClose();
+            showDialogToClose(this);
             return;
         }
         if (0 == contentsDataList.size()) {

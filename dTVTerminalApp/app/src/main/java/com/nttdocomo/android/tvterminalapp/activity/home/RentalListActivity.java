@@ -30,6 +30,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RentalDataProvider;
+import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -141,8 +142,7 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
         mListView.setOnItemClickListener(this);
         mListView.setOnScrollListener(this);
         mRelativeLayout = findViewById(R.id.rental_list_progress);
-        mRelativeLayout.setVisibility(View.VISIBLE);
-        mListView.setVisibility(View.GONE);
+        showProgressBar(true);
         //スクロールの上下方向検知用のリスナーを設定
         mListView.setOnTouchListener(this);
         if (mContentsList == null) {
@@ -153,6 +153,27 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
         mListView.setAdapter(mContentsAdapter);
         mLoadMoreView = LayoutInflater.from(this).inflate(R.layout.search_load_more, null);
         mNoDataMessage = findViewById(R.id.rental_list_no_items);
+    }
+
+    /**
+     * プロセスバーを表示する.
+     *
+     * @param showProgressBar プロセスバーを表示するかどうか
+     */
+    private void showProgressBar(final boolean showProgressBar) {
+        mListView = findViewById(R.id.rental_list);
+        mRelativeLayout = findViewById(R.id.rental_list_progress);
+        if (showProgressBar) {
+            //オフライン時は表示しない
+            if (!NetWorkUtils.isOnline(this)) {
+                return;
+            }
+            mListView.setVisibility(View.GONE);
+            mRelativeLayout.setVisibility(View.VISIBLE);
+        } else {
+            mListView.setVisibility(View.VISIBLE);
+            mRelativeLayout.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -230,19 +251,18 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
     @Override
     public void rentalListNgCallback() {
         DTVTLogger.start();
-        mRelativeLayout.setVisibility(View.GONE);
-        mListView.setVisibility(View.VISIBLE);
+        showProgressBar(false);
         //データ取得失敗時
         resetCommunication();
         ErrorState errorState = mRentalDataProvider.getError();
         if (errorState != null) {
             String message = errorState.getApiErrorMessage(getApplicationContext());
             if (!TextUtils.isEmpty(message)) {
-                showDialogToClose(message);
+                showDialogToClose(this, message);
                 return;
             }
         }
-        showDialogToClose();
+        showDialogToClose(this);
     }
 
     /**

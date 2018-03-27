@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,6 +31,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetail
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopWatchListenVideoListDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -130,8 +132,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
         resetPaging();
 
         initView();
-        mListView.setVisibility(View.GONE);
-        mRelativeLayout.setVisibility(View.VISIBLE);
+        showProgressBar(true);
 
         //スクロールの上下方向検知用のリスナーを設定
         mListView.setOnTouchListener(this);
@@ -171,6 +172,27 @@ public class WatchingVideoListActivity extends BaseActivity implements
         mListView.setAdapter(mWatchListenVideoBaseAdapter);
         mLoadMoreView = LayoutInflater.from(this).inflate(R.layout.search_load_more, null);
         mNoDataMessage = findViewById(R.id.video_watching_list_no_items);
+    }
+
+    /**
+     * プロセスバーを表示する.
+     *
+     * @param showProgressBar プロセスバーを表示するかどうか
+     */
+    private void showProgressBar(final boolean showProgressBar) {
+        mRelativeLayout = findViewById(R.id.video_watching_progress);
+        mListView = findViewById(R.id.video_watching_list);
+        if (showProgressBar) {
+            //オフライン時は表示しない
+            if (!NetWorkUtils.isOnline(this)) {
+                return;
+            }
+            mListView.setVisibility(View.GONE);
+            mRelativeLayout.setVisibility(View.VISIBLE);
+        } else {
+            mListView.setVisibility(View.VISIBLE);
+            mRelativeLayout.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -242,11 +264,11 @@ public class WatchingVideoListActivity extends BaseActivity implements
     @Override
     public void watchListenVideoListCallback(final List<ContentsData> watchListenVideoContentInfo) {
         //DbThreadからのコールバックではUIスレッドとして扱われないため
+        final Context context = this;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mListView.setVisibility(View.VISIBLE);
-                mRelativeLayout.setVisibility(View.GONE);
+                showProgressBar(false);
                 if (null == watchListenVideoContentInfo) {
                     //通信とJSON Parseに関してerror処理
                     DTVTLogger.debug("ClipListActivity::VodClipListCallback, get data failed.");
@@ -259,11 +281,11 @@ public class WatchingVideoListActivity extends BaseActivity implements
                         String message = errorState.getApiErrorMessage(getApplicationContext());
                         //有無で処理を分ける
                         if (!TextUtils.isEmpty(message)) {
-                            showDialogToClose(message);
+                            showDialogToClose(context, message);
                             return;
                         }
                     }
-                    showDialogToClose();
+                    showDialogToClose(context);
                     return;
                 }
 
@@ -316,6 +338,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
     private void resetPaging() {
         synchronized (this) {
             setCommunicatingStatus(false);
+            showProgressBar(false);
             if (null != mWatchingVideoListData) {
                 mWatchingVideoListData.clear();
                 if (null != mWatchListenVideoBaseAdapter) {

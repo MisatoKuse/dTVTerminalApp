@@ -330,11 +330,11 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
                 String message = errorState.getApiErrorMessage(getApplicationContext());
                 //有無で処理を分ける
                 if (!TextUtils.isEmpty(message)) {
-                    showDialogToClose(message);
+                    showDialogToClose(this, message);
                     return;
                 }
             }
-            showDialogToClose();
+            showDialogToClose(this);
             return;
         }
         if (0 == videoContentInfo.size()) {

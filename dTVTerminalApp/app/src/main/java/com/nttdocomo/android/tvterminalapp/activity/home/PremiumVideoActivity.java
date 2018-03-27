@@ -30,6 +30,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetail
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRentalDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -141,8 +142,7 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
         mListView.setOnItemClickListener(this);
         mListView.setOnScrollListener(this);
         mRelativeLayout = findViewById(R.id.premium_video_progress);
-        mRelativeLayout.setVisibility(View.VISIBLE);
-        mListView.setVisibility(View.GONE);
+        showProgressBar(true);
         //スクロールの上下方向検知用のリスナーを設定
         mListView.setOnTouchListener(this);
         if (mContentsList == null) {
@@ -153,6 +153,27 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
         mListView.setAdapter(mContentsAdapter);
         mLoadMoreView = LayoutInflater.from(this).inflate(R.layout.search_load_more, null);
         mNoDataMessage = findViewById(R.id.premium_video_list_no_items);
+    }
+
+    /**
+     * プロセスバーを表示する.
+     *
+     * @param showProgressBar プロセスバーを表示するかどうか
+     */
+    private void showProgressBar(final boolean showProgressBar) {
+        mListView = findViewById(R.id.premium_video_list);
+        mRelativeLayout = findViewById(R.id.premium_video_progress);
+        if (showProgressBar) {
+            //オフライン時は表示しない
+            if (!NetWorkUtils.isOnline(this)) {
+                return;
+            }
+            mListView.setVisibility(View.GONE);
+            mRelativeLayout.setVisibility(View.VISIBLE);
+        } else {
+            mListView.setVisibility(View.VISIBLE);
+            mRelativeLayout.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -196,8 +217,7 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mRelativeLayout.setVisibility(View.GONE);
-                mListView.setVisibility(View.VISIBLE);
+                showProgressBar(false);
                 if (null == dataList) {
                     resetPaging();
                     resetCommunication();
@@ -238,11 +258,11 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
         if (errorState != null) {
             String message = errorState.getApiErrorMessage(getApplicationContext());
             if (!TextUtils.isEmpty(message)) {
-                showDialogToClose(message);
+                showDialogToClose(this, message);
                 return;
             }
         }
-        showDialogToClose();
+        showDialogToClose(this);
     }
 
     /**

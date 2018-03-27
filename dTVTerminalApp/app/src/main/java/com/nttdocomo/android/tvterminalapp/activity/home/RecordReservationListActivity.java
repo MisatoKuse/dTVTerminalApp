@@ -294,9 +294,9 @@ public class RecordReservationListActivity extends BaseActivity
 
             //有無で処理を分ける
             if (TextUtils.isEmpty(message)) {
-                showDialogToClose();
+                showDialogToClose(this);
             } else {
-                showDialogToClose(message);
+                showDialogToClose(this, message);
             }
             return;
         }
