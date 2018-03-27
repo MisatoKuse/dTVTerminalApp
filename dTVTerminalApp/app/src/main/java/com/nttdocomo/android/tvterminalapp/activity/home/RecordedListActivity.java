@@ -214,7 +214,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         if (mTabLayout != null) {
             mTabLayout.setTab(position);
         }
-        showProgressBar(true);
+        showProgressBar();
         mNoDataMessage.setVisibility(View.GONE);
         switch (mViewPager.getCurrentItem()) {
             case 0:
@@ -230,18 +230,14 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     /**
      * プロセスバーを表示する.
-     *
-     * @param showProgressBar プロセスバーを表示するかどうか
      */
-    private void showProgressBar(final boolean showProgressBar) {
-        if (showProgressBar) {
-            //オフライン時は表示しない
-            if (!NetWorkUtils.isOnline(this)) {
-                return;
-            }
+    private void showProgressBar() {
+        //オフライン時は表示しない
+        if (!NetWorkUtils.isOnline(this)) {
+            return;
+        }
+        if (progressBar != null) {
             progressBar.setVisibility(View.VISIBLE);
-        } else {
-            progressBar.setVisibility(View.GONE);
         }
     }
 
@@ -302,7 +298,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             }
             baseFragment.notifyDataSetChanged();
         }
-        showProgressBar(false);
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -597,10 +593,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onStartCommunication() {
         super.onStartCommunication();
-        if (progressBar != null) {
-            showProgressBar(true);
-            mNoDataMessage.setVisibility(View.GONE);
-        }
+        showProgressBar();
+        mNoDataMessage.setVisibility(View.GONE);
         initDl();
         getData();
     }
