@@ -585,7 +585,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                         break;
                 }
                 break;
-            case TYPE_DAILY_RANK: // 今日のテレビランキング
+            case TYPE_DAILY_RANK: // 今日の番組ランキング
             case TYPE_WEEKLY_RANK: // 週間ランキング
                 checkNowOnAir(holder, listContentInfo, contentView, true);
                 break;
@@ -830,7 +830,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             }
         } else {
             //URLがない場合はサムネイル取得失敗の画像を表示
-            holder.iv_thumbnail.setBackgroundResource(R.mipmap.error_list);
+            holder.iv_thumbnail.setBackgroundResource(R.mipmap.error_scroll);
         }
     }
 
