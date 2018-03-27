@@ -193,7 +193,7 @@
     <string name="nav_menu_item_staff_recommend">スタッフおすすめ</string>
     <string name="nav_menu_item_ranking">ランキング</string>
     <string name="nav_menu_item_clip">クリップ</string>
-    <string name="nav_menu_item_tv_clip">クリップ（テレビ）</string>
+    <string name="nav_menu_item_tv_clip">クリップ（番組）</string>
     <string name="nav_menu_item_vod_clip">クリップ（ビデオ）</string>
     <string name="nav_menu_item_purchased_video">購入済みビデオ</string>
     <string name="nav_menu_item_watch_listen_video">視聴中ビデオ</string>
