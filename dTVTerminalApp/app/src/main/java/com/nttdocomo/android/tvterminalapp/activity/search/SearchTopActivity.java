@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
 package com.nttdocomo.android.tvterminalapp.activity.search;
 
 import android.content.Intent;
@@ -22,6 +25,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.SearchDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopSearchDataConnect;
 import com.nttdocomo.android.tvterminalapp.fragment.search.SearchBaseFragment;
@@ -571,6 +575,20 @@ public class SearchTopActivity extends BaseActivity
         }
         mIsScroll = false;
         setSearchStart(false);
+        showErrorMessage();
+    }
+
+    /**
+     * おすすめテレビ用コールバック.
+     */
+    private void showErrorMessage() {
+        ErrorState errorState = mSearchDataProvider.getError();
+        if (errorState != null && errorState.getErrorType() != DTVTConstants.ERROR_TYPE.SUCCESS) {
+            String message = errorState.getErrorMessage();
+            if (!TextUtils.isEmpty(message)) {
+                showGetDataFailedToast(message);
+            }
+        }
     }
 
     /**

@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.struct.ResultType;
@@ -363,5 +364,16 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
     public void enableConnect() {
         DTVTLogger.start();
         mIsCancel = false;
+    }
+
+    /**
+     * 通信エラーメッセージを取得する.
+     */
+    public ErrorState getError() {
+        ErrorState errorState = null;
+        if (mTotalSearchWebApi != null) {
+            errorState = mTotalSearchWebApi.getError();
+        }
+        return errorState;
     }
 }
