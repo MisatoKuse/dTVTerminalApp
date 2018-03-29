@@ -21,11 +21,11 @@ import com.nttdocomo.android.tvterminalapp.adapter.VideoGenreAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
-import com.nttdocomo.android.tvterminalapp.dataprovider.VideoGenreProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.GenreListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
-import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopVideoGenreConnect;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopGenreListDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.VideoGenreListDataInfo;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
@@ -37,8 +37,8 @@ import java.util.Map;
 /**
  * ビデオ＞ジャンル/サブジャンル一覧 Activityクラス.
  */
-public class VideoTopActivity extends BaseActivity implements VideoGenreProvider.apiGenreListDataProviderCallback,
-        AdapterView.OnItemClickListener, VideoGenreProvider.GenreListMapCallback {
+public class VideoTopActivity extends BaseActivity implements GenreListDataProvider.ApiDataProviderCallback,
+        AdapterView.OnItemClickListener, GenreListDataProvider.GenreListMapCallback {
 
     private List mContentsList;
     private Boolean mIsMenuLaunch = false;
@@ -46,7 +46,7 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
     private VideoGenreAdapter mVideoGenreAdapter;
     private VideoGenreListDataInfo mVideoGenreListDataInfo = null;
     private List<VideoGenreList> mShowContentsList = null;
-    private VideoGenreProvider mVideoGenreProvider = null;
+    private GenreListDataProvider mVideoGenreProvider = null;
     /** ヘッダImageView. **/
     private ImageView mMenuImageView;
     /** ビデオジャンルのListView. **/
@@ -329,7 +329,7 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
         }
         if (mContentsList == null || mContentsList.size() == 0) {
             //コンテンツ情報が無ければ取得を行う
-            mVideoGenreProvider = new VideoGenreProvider(this);
+            mVideoGenreProvider = new GenreListDataProvider(this);
             Intent intent = getIntent();
             if (intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false)) {
                 mVideoGenreListDataInfo = null;
@@ -381,7 +381,7 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
         super.onPause();
         DTVTLogger.start();
         //通信を止める
-        StopVideoGenreConnect stopConnect = new StopVideoGenreConnect();
+        StopGenreListDataConnect stopConnect = new StopGenreListDataConnect();
         stopConnect.execute(mVideoGenreProvider);
     }
 }

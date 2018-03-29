@@ -7,25 +7,25 @@ package com.nttdocomo.android.tvterminalapp.dataprovider.stop;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.VideoGenreProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.GenreListDataProvider;
 
 /**
  * ジャンル取得の通信を止める.
  */
-public class StopVideoGenreConnect extends AsyncTask<VideoGenreProvider, Void, Void> {
+public class StopGenreListDataConnect extends AsyncTask<GenreListDataProvider, Void, Void> {
     /**
      * コンストラクタ.
      */
-    public StopVideoGenreConnect() {
+    public StopGenreListDataConnect() {
         DTVTLogger.start();
     }
 
     @Override
-    protected Void doInBackground(final VideoGenreProvider... providers) {
+    protected Void doInBackground(final GenreListDataProvider... providers) {
         DTVTLogger.start();
         //通信を行っている処理を止める
         if (providers != null) {
-            for (VideoGenreProvider videoGenreProvider : providers) {
+            for (GenreListDataProvider videoGenreProvider : providers) {
                 if (videoGenreProvider != null) {
                     videoGenreProvider.stopConnect();
                 }

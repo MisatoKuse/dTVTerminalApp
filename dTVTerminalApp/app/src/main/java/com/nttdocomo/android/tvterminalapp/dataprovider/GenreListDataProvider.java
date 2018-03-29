@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -27,101 +28,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * ビデオジャンル一覧.
- */
-public class VideoGenreProvider implements
+
+public class GenreListDataProvider implements
         GenreListWebClient.GenreListJsonParserCallback,
         GenreCountGetWebClient.GenreCountGetJsonParserCallback {
-    /**
-     * ジャンルデータ取得プロパイダのコールバック.
-     */
-    private apiGenreListDataProviderCallback mApiGenreListDataProviderCallback = null;
-    /**
-     * ビデオジャンル:IPTV.
-     */
-    private static final String VIDEO_GENRE_KEY_IPTV = "IPTV";
-    /**
-     * ビデオジャンル;NOD.
-     */
-    private static final String VIDEO_GENRE_KEY_NOD = "NOD";
-    /**
-     * ビデオジャンル:ARIB.
-     */
-    private static final String VIDEO_GENRE_KEY_ARIB = "ARIB";
-    /**
-     * コンテキスト.
-     */
-    private Context mContext = null;
-    /**
-     * ジャンルデータMapを返却するためのコールバック.
-     */
-    private GenreListMapCallback genreListMapCallback;
-    /**
-     * ジャンルデータ取得のコールバック.
-     */
-    private RankGenreListCallback mRankGenreListCallback;
-    /**
-     * コンテンツタイプ.
-     */
-    private ContentsAdapter.ActivityTypeItem type;
-    /**
-     * 通信禁止判定フラグ.
-     */
-    private boolean mIsCancel = false;
-    /**
-     * ジャンルリスト取得用webクライアント.
-     */
-    private GenreListWebClient mGenreListWebClient = null;
-    /**
-     * ジャンルコンテンツ数取得用webクライアント.
-     */
-    private GenreCountGetWebClient mWebClient = null;
-    /**
-     * ジャンル情報取得用エラー情報バッファ.
-     */
-    private ErrorState mError = null;
-
-    @Override
-    public void onGenreListJsonParsed(final GenreListResponse genreListResponse) {
-
-        GenreListResponse response = genreListResponse;
-        if (genreListResponse != null && !genreListResponse.getTypeList().isEmpty()) {
-            //取得した情報を保存する
-            DateUtils dateUtils = new DateUtils(mContext);
-            String lastDate = dateUtils.getLastDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
-            if (TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate)) {
-                dateUtils.addLastDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
-                dateUtils.addLastProgramDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
-                SharedPreferencesUtils.setSharedPreferencesVideoGenreData(mContext,
-                        StringUtils.toGenreListResponseBase64(genreListResponse));
-            }
-        } else {
-            response = StringUtils.toGenreListResponse(SharedPreferencesUtils.getSharedPreferencesVideoGenreData(mContext));
-        }
-        if (mRankGenreListCallback != null) {
-            setRankGenreListData(response);
-        } else {
-            getGenreList(response);
-        }
-    }
-
-    @Override
-    public void onGenreCountGetJsonParsed(final GenreCountGetResponse genreCountGetResponse) {
-        if (mApiGenreListDataProviderCallback != null) {
-            if (genreCountGetResponse != null) {
-                mApiGenreListDataProviderCallback.genreListCallback(genreCountGetResponse.getGenreCountGetMetaData());
-            } else {
-                mError = mWebClient.getError();
-                mApiGenreListDataProviderCallback.genreListCallback(null);
-            }
-        }
-    }
-
+    // region declaration
     /**
      * ビデオジャンル一覧画面用データを返却するためのコールバック.
      */
-    public interface apiGenreListDataProviderCallback {
+    public interface ApiDataProviderCallback {
         /**
          * Listデータコールバック.
          *
@@ -154,14 +69,45 @@ public class VideoGenreProvider implements
          */
         void onRankGenreListCallback(ArrayList<GenreListMetaData> genreMetaDataList);
     }
+    // endregion
+
+    // callback
+    /** ジャンルデータ取得プロパイダのコールバック. */
+    private ApiDataProviderCallback mApiDataProviderCallback= null;
+    /** ジャンルデータMapを返却するためのコールバック. */
+    private GenreListMapCallback genreListMapCallback;
+    /** ジャンルデータ取得のコールバック. */
+    private RankGenreListCallback mRankGenreListCallback;
+
+    // static final
+    /** ビデオジャンル:IPTV. */
+    private static final String VIDEO_GENRE_KEY_IPTV = "IPTV";
+    /** ビデオジャンル;NOD. */
+    private static final String VIDEO_GENRE_KEY_NOD = "NOD";
+    /** ビデオジャンル:ARIB. */
+    private static final String VIDEO_GENRE_KEY_ARIB = "ARIB";
+
+    /** コンテキスト. */
+    private Context mContext = null;
+    /** コンテンツタイプ. */
+    private ContentsAdapter.ActivityTypeItem type;
+
+    /** ジャンルリスト取得用webクライアント. */
+    private GenreListWebClient mGenreListWebClient = null;
+    /** ジャンルコンテンツ数取得用webクライアント. */
+    private GenreCountGetWebClient mWebClient = null;
+    /** 通信禁止判定フラグ. */
+    private boolean mIsCancel = false;
+    /** ジャンル情報取得用エラー情報バッファ. */
+    private ErrorState mError = null;
 
     /**
      * コンストラクタ.
      *
      * @param context コンテキスト
      */
-    public VideoGenreProvider(final Context context) {
-        this.mApiGenreListDataProviderCallback = (apiGenreListDataProviderCallback) context;
+    public GenreListDataProvider(final Context context) {
+        mApiDataProviderCallback = (ApiDataProviderCallback) context;
         genreListMapCallback = (GenreListMapCallback) context;
         mContext = context;
     }
@@ -173,18 +119,60 @@ public class VideoGenreProvider implements
      * @param mRankGenreListCallback コールバック
      * @param type                   コンテンツタイプ
      */
-    public VideoGenreProvider(final Context context, final RankGenreListCallback mRankGenreListCallback,
-                              final ContentsAdapter.ActivityTypeItem type) {
+    public GenreListDataProvider(final Context context, final RankGenreListCallback mRankGenreListCallback,
+                                 final ContentsAdapter.ActivityTypeItem type) {
         this.type = type;
         this.mRankGenreListCallback = mRankGenreListCallback;
         mContext = context;
     }
+
+    // region implement method
+    @Override
+    public void onGenreListJsonParsed(@Nullable final GenreListResponse genreListResponse) {
+
+        GenreListResponse response = genreListResponse;
+        if (genreListResponse != null && !genreListResponse.getTypeList().isEmpty()) {
+            //取得した情報を保存する
+            DateUtils dateUtils = new DateUtils(mContext);
+            String lastDate = dateUtils.getLastDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
+            if (TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate)) {
+                dateUtils.addLastDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
+                dateUtils.addLastProgramDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
+                SharedPreferencesUtils.setSharedPreferencesVideoGenreData(mContext,
+                        StringUtils.toGenreListResponseBase64(genreListResponse));
+            }
+        } else {
+            response = StringUtils.toGenreListResponse(SharedPreferencesUtils.getSharedPreferencesVideoGenreData(mContext));
+        }
+
+        if (mRankGenreListCallback != null) {
+            setRankGenreListData(response);
+        } else {
+            getGenreList(response);
+        }
+    }
+
+    @Override
+    public void onGenreCountGetJsonParsed(@Nullable final GenreCountGetResponse genreCountGetResponse) {
+        if (mApiDataProviderCallback == null) {
+            return;
+        }
+
+        if (genreCountGetResponse != null) {
+            mApiDataProviderCallback.genreListCallback(genreCountGetResponse.getGenreCountGetMetaData());
+        } else {
+            mError = mWebClient.getError();
+            mApiDataProviderCallback.genreListCallback(null);
+        }
+    }
+    // endregion
 
     /**
      * ジャンル一覧.
      * VideoTopActivityからのデータ取得要求受付
      */
     public void getGenreListDataRequest() {
+        DTVTLogger.debug("=============================================================================!!!!!!!!!!!!!!!!!!!!!!!!===================");
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
         if (TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate)) {
@@ -197,7 +185,7 @@ public class VideoGenreProvider implements
                     }
                 }
             } else {
-                DTVTLogger.error("VideoGenreProvider is stopping connection");
+                DTVTLogger.error("GenreListDataProvider is stopping connection");
                 if (mRankGenreListCallback != null) {
                     //nullデータを返却する
                     mRankGenreListCallback.onRankGenreListCallback(null);
@@ -223,7 +211,7 @@ public class VideoGenreProvider implements
                         }
                     }
                 } else {
-                    DTVTLogger.error("VideoGenreProvider is stopping connection");
+                    DTVTLogger.error("GenreListDataProvider is stopping connection");
                     if (mRankGenreListCallback != null) {
                         //nullデータを返却する
                         mRankGenreListCallback.onRankGenreListCallback(null);
@@ -245,11 +233,11 @@ public class VideoGenreProvider implements
             String filter = "";
             int ageReq = 1;
             if (!mWebClient.getGenreCountGetApi(filter, ageReq, genreId, this)) {
-                mApiGenreListDataProviderCallback.genreListCallback(null);
+                mApiDataProviderCallback.genreListCallback(null);
             }
         } else {
-            DTVTLogger.error("VideoGenreProvider is stopping connection");
-            mApiGenreListDataProviderCallback.genreListCallback(null);
+            DTVTLogger.error("GenreListDataProvider is stopping connection");
+            mApiDataProviderCallback.genreListCallback(null);
         }
     }
 
@@ -258,7 +246,7 @@ public class VideoGenreProvider implements
      *
      * @param genreListResponse ジャンル一覧APIからのレスポンス
      */
-    private void setRankGenreListData(final GenreListResponse genreListResponse) {
+    private void setRankGenreListData(@Nullable final GenreListResponse genreListResponse) {
         if (genreListResponse == null) {
             mError = mGenreListWebClient.getError();
             mRankGenreListCallback.onRankGenreListCallback(null);
@@ -305,16 +293,16 @@ public class VideoGenreProvider implements
      *
      * @param genreListResponse ジャンル一覧APIからのレスポンス
      */
-    private void getGenreList(final GenreListResponse genreListResponse) {
+    private void getGenreList(@Nullable final GenreListResponse genreListResponse) {
         if (genreListResponse == null) {
             mError = mGenreListWebClient.getError();
             genreListMapCallback.genreListMapCallback(null, null);
             DTVTLogger.error("response is null");
             return;
         }
-        Map<String, ArrayList<GenreListMetaData>> listMap = new HashMap<>();
+
+        Map<String, ArrayList<GenreListMetaData>> listMap = genreListResponse.getTypeList();
         ArrayList<GenreListMetaData> genreMetaDataList = new ArrayList<>();
-        listMap = genreListResponse.getTypeList();
         //IPTVコンテンツデータをすべて取得
         if (listMap.get(VIDEO_GENRE_KEY_IPTV) != null) {
             GenreListMetaData genreAll = new GenreListMetaData();
@@ -360,7 +348,7 @@ public class VideoGenreProvider implements
         Map<String, VideoGenreList> videoGenreListMap = listMap;
         // サブジャンルがあるかどうかの判定
         if (metaData.getSubContent() != null
-                && metaData.getSubContent().size() != 0) {
+                && metaData.getSubContent().size() > 0) {
             // サブジャンルがある場合
             for (GenreListMetaData data : metaData.getSubContent()) {
                 // サブジャンルのジャンルIDをリストに格納
@@ -410,4 +398,5 @@ public class VideoGenreProvider implements
     public ErrorState getError() {
         return mError;
     }
+
 }

@@ -48,7 +48,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ContentsDetailDataProvid
 import com.nttdocomo.android.tvterminalapp.dataprovider.HomeDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RentalDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.VideoGenreProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.GenreListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.WatchListenVideoListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChListResponse;
@@ -70,8 +70,8 @@ import java.util.Map;
  * ホーム画面表示.
  */
 public class HomeActivity extends BaseActivity implements View.OnClickListener,
-        VideoGenreProvider.apiGenreListDataProviderCallback,
-        VideoGenreProvider.GenreListMapCallback,
+        GenreListDataProvider.ApiDataProviderCallback,
+        GenreListDataProvider.GenreListMapCallback,
         ContentsDetailDataProvider.ApiDataProviderCallback,
         WatchListenVideoListDataProvider.WatchListenVideoListProviderCallback,
         RentalChListWebClient.RentalChListJsonParserCallback,

@@ -1053,6 +1053,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * ロールリスト取得.
      */
     private void getRoleListData() {
+        DTVTLogger.start();
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.ROLELIST_LAST_UPDATE);
         if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate))
@@ -1066,12 +1067,14 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             }
         }
         //TODO:Homeでこのデータを使用する場合はオフライン時等にキャッシュ取得等の対応が必要
+        DTVTLogger.end();
     }
 
     /**
      * ジャンル一覧取得.
      */
     private void getGenreListDataRequest() {
+        DTVTLogger.start();
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
         if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate))
@@ -1084,7 +1087,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 DTVTLogger.error("GenreListWebClient is stopping connect");
             }
         }
-        //TODO:Homeでこのデータを使用する場合はオフライン時等にキャッシュ取得等の対応が必要
+        // TODO:Homeでこのデータを使用する場合はオフライン時等にキャッシュ取得等の対応が必要
+        // ビデオ系は使ってない番組(IPTV)でつかうかな？
+        DTVTLogger.end();
     }
 
     /**

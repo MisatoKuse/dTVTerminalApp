@@ -18,11 +18,11 @@ import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.adapter.RankingPagerAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRankingTopDataConnect;
-import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopVideoGenreConnect;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopGenreListDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.VideoGenreProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.GenreListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.callback.VideoRankingApiDataProviderCallback;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingBaseFragment;
@@ -36,7 +36,7 @@ import java.util.List;
  * ビデオランキング.
  */
 public class VideoRankingActivity extends BaseActivity implements VideoRankingApiDataProviderCallback,
-        VideoGenreProvider.RankGenreListCallback, TabItemLayout.OnClickTabTextListener {
+        GenreListDataProvider.RankGenreListCallback, TabItemLayout.OnClickTabTextListener {
     /**
      * タブ名.
      */
@@ -64,7 +64,7 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
     /**
      * ビデオジャンル取得用プロパイダ.
      */
-    private VideoGenreProvider mVideoGenreProvider = null;
+    private GenreListDataProvider mVideoGenreProvider = null;
 
     /**
      * 標準タブ数.
@@ -360,7 +360,7 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
             mVideoGenreProvider.enableConnect();
         } else {
             //全てのデータが取得できていないケース
-            mVideoGenreProvider = new VideoGenreProvider(this, this,
+            mVideoGenreProvider = new GenreListDataProvider(this, this,
                     ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
             mVideoGenreProvider.getGenreListDataRequest();
             //ジャンルデータを使用してランキングデータ取得を行うため、以降の処理を行わない
@@ -380,7 +380,7 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
                 mRankingDataProvider.getVideoRankingData(genreMetaDataList.get(mViewPager.getCurrentItem()).getId());
             } else {
                 //ジャンルデータ or ViewPagerが存在しない場合はジャンルデータから取得しなおす
-                mVideoGenreProvider = new VideoGenreProvider(this, this,
+                mVideoGenreProvider = new GenreListDataProvider(this, this,
                         ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
                 mVideoGenreProvider.getGenreListDataRequest();
                 return;
@@ -391,7 +391,7 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
         if (baseFragment != null) {
             if (baseFragment.mData.size() == 0) {
                 //Fragmentがデータを保持していない場合は再取得を行う
-                mVideoGenreProvider = new VideoGenreProvider(this, this,
+                mVideoGenreProvider = new GenreListDataProvider(this, this,
                         ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
                 mVideoGenreProvider.getGenreListDataRequest();
                 return;
@@ -408,7 +408,7 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
         super.onPause();
         DTVTLogger.start();
         //通信を止める
-        StopVideoGenreConnect stopVideoGenreConnect = new StopVideoGenreConnect();
+        StopGenreListDataConnect stopVideoGenreConnect = new StopGenreListDataConnect();
         stopVideoGenreConnect.execute(mVideoGenreProvider);
         StopRankingTopDataConnect stopRankingTopDataConnect = new StopRankingTopDataConnect();
         stopRankingTopDataConnect.execute(mRankingDataProvider);
