@@ -86,6 +86,8 @@ public class GenreListDataProvider implements
     private static final String VIDEO_GENRE_KEY_NOD = "NOD";
     /** ビデオジャンル:ARIB. */
     private static final String VIDEO_GENRE_KEY_ARIB = "ARIB";
+    /** ビデオジャンル:VOD.*/
+    private static final String VIDEO_GENRE_KEY_VOD = "VOD";
 
     /** コンテキスト. */
     private Context mContext = null;
@@ -172,7 +174,6 @@ public class GenreListDataProvider implements
      * VideoTopActivityからのデータ取得要求受付
      */
     public void getGenreListDataRequest() {
-        DTVTLogger.debug("=============================================================================!!!!!!!!!!!!!!!!!!!!!!!!===================");
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
         if (TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate)) {
@@ -264,8 +265,8 @@ public class GenreListDataProvider implements
                     genreMetaDataList.add(genreAll);
                     if (ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK.equals(type)) {
                         //IPTVコンテンツデータをすべて取得
-                        if (listMap.get(VIDEO_GENRE_KEY_IPTV) != null) {
-                            genreMetaDataList.addAll(listMap.get(VIDEO_GENRE_KEY_IPTV));
+                        if (listMap.get(VIDEO_GENRE_KEY_VOD) != null) {
+                            genreMetaDataList.addAll(listMap.get(VIDEO_GENRE_KEY_VOD));
                         } else {
                             DTVTLogger.error("IPTV is not found");
                         }

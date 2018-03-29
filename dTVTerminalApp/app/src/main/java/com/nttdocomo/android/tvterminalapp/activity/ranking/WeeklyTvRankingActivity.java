@@ -103,8 +103,8 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         DTVTLogger.start();
         //通信を止める
         StopGenreListDataConnect stopVideoGenreConnect = new StopGenreListDataConnect();

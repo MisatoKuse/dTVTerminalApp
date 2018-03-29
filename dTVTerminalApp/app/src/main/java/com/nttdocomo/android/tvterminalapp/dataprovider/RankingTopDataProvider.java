@@ -24,7 +24,6 @@ import com.nttdocomo.android.tvterminalapp.datamanager.insert.VideoRankInsertDat
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.WeeklyRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.HomeDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.RankingTopDataManager;
-import com.nttdocomo.android.tvterminalapp.dataprovider.callback.VideoRankingApiDataProviderCallback;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
@@ -54,8 +53,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         DailyRankWebClient.DailyRankJsonParserCallback,
         WeeklyRankWebClient.WeeklyRankJsonParserCallback,
         ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback,
-        ScaledDownProgramListDataProvider.ApiDataProviderCallback {
 
+        ScaledDownProgramListDataProvider.ApiDataProviderCallback
+{
     /**
      * コンテキスト.
      */
@@ -490,7 +490,14 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
          */
         void onWeeklyRankListCallback(List<ContentsData> contentsDataList);
     }
-
+    public interface VideoRankingApiDataProviderCallback {
+        /**
+         * ジャンル系のコールバック.
+         *
+         * @param videoRankList アダプターで使うデータ
+         */
+        void onVideoRankListCallback(List<ContentsData> videoRankList);
+    }
     /**
      * コンストラクタ.
      *

@@ -23,7 +23,6 @@ import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.GenreListDataProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.callback.VideoRankingApiDataProviderCallback;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingFragmentFactory;
@@ -35,46 +34,36 @@ import java.util.List;
 /**
  * ビデオランキング.
  */
-public class VideoRankingActivity extends BaseActivity implements VideoRankingApiDataProviderCallback,
-        GenreListDataProvider.RankGenreListCallback, TabItemLayout.OnClickTabTextListener {
-    /**
-     * タブ名.
-     */
-    private String[] mTabNames;
-    /**
-     * DataProvider.
-     */
-    private RankingTopDataProvider mRankingDataProvider;
-    /**
-     * FragmentFactory.
-     */
-    private RankingFragmentFactory mRankingFragmentFactory = null;
-    /**
-     * タブ用レイアウト.
-     */
-    private TabItemLayout mTabLayout;
-    /**
-     * ViewPager.
-     */
-    private ViewPager mViewPager;
-    /**
-     * ジャンルリスト.
-     */
-    private ArrayList<GenreListMetaData> genreMetaDataList;
-    /**
-     * ビデオジャンル取得用プロパイダ.
-     */
-    private GenreListDataProvider mVideoGenreProvider = null;
+public class VideoRankingActivity extends BaseActivity implements
+        TabItemLayout.OnClickTabTextListener,
 
-    /**
-     * 標準タブ数.
-     */
+        RankingTopDataProvider.VideoRankingApiDataProviderCallback,
+        GenreListDataProvider.RankGenreListCallback
+{
+    // region variable
+    /** 標準タブ数. */
     private static final int DEFAULT_TAB_MAX = 4;
-    /**
-     * リスト0件メッセージ.
-     */
+
+    /** FragmentFactory. */
+    private RankingFragmentFactory mRankingFragmentFactory = null;
+    /** タブ用レイアウト. */
+    private TabItemLayout mTabLayout;
+    /** ViewPager. */
+    private ViewPager mViewPager;
+    /** リスト0件メッセージ. */
     private TextView mNoDataMessage;
 
+    /** DataProvider. */
+    private RankingTopDataProvider mRankingDataProvider;
+    /** ビデオジャンル取得用プロパイダ. */
+    private GenreListDataProvider mVideoGenreProvider = null;
+    /** ジャンルリスト. */
+    private ArrayList<GenreListMetaData> mGenreMetaDataList;
+    /** タブ名. */
+    private String[] mTabNames;
+    // endregion
+
+    // region Activity LifeCycle
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,16 +99,20 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
         DTVTLogger.end();
     }
 
-    /**
-     * ページのリセット.
-     */
-    private void resetPaging() {
-        synchronized (this) {
-            RankingBaseFragment baseFragment = getCurrentFragment();
-            if (null != baseFragment && null != baseFragment.mData) {
-                baseFragment.mData.clear();
-                baseFragment.noticeRefresh();
-            }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        DTVTLogger.start();
+        //通信を止める
+        StopGenreListDataConnect stopVideoGenreConnect = new StopGenreListDataConnect();
+        stopVideoGenreConnect.execute(mVideoGenreProvider);
+        StopRankingTopDataConnect stopRankingTopDataConnect = new StopRankingTopDataConnect();
+        stopRankingTopDataConnect.execute(mRankingDataProvider);
+
+        //FragmentにContentsAdapterの通信を止めるように通知する
+        RankingBaseFragment baseFragment = getCurrentFragment();
+        if (baseFragment != null) {
+            baseFragment.stopContentsAdapterCommunication();
         }
     }
 
@@ -144,6 +137,159 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
                 if (null != baseFragment) {
                     baseFragment.mData.clear();
                 }
+            }
+        }
+    }
+    // endregion
+
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+        DTVTLogger.start();
+        return !checkRemoteControllerView() && super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onStartCommunication() {
+        super.onStartCommunication();
+        DTVTLogger.start();
+        //通信を許可する
+        //ジャンル取得のデータプロパイダがあれば通信を許可し、無ければ取得する
+        if (mVideoGenreProvider != null) {
+            mVideoGenreProvider.enableConnect();
+        } else {
+            //全てのデータが取得できていないケース
+            mVideoGenreProvider = new GenreListDataProvider(this, this,
+                    ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
+            mVideoGenreProvider.getGenreListDataRequest();
+            //ジャンルデータを使用してランキングデータ取得を行うため、以降の処理を行わない
+            if (mRankingDataProvider != null) {
+                mRankingDataProvider.enableConnect();
+            }
+            return;
+        }
+
+        //ランキングデータ取得のデータプロパイダがあれば通信を許可し、無ければ取得する
+        if (mRankingDataProvider != null) {
+            mRankingDataProvider.enableConnect();
+        } else {
+            mRankingDataProvider =
+                    new RankingTopDataProvider(this, ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
+            if (mGenreMetaDataList != null && mGenreMetaDataList.size() > 0) {
+                mRankingDataProvider.getVideoRankingData(mGenreMetaDataList.get(mViewPager.getCurrentItem()).getId());
+            } else {
+                //ジャンルデータ or ViewPagerが存在しない場合はジャンルデータから取得しなおす
+                mVideoGenreProvider = new GenreListDataProvider(this, this,
+                        ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
+                mVideoGenreProvider.getGenreListDataRequest();
+                return;
+            }
+        }
+
+        RankingBaseFragment baseFragment = getCurrentFragment();
+        if (baseFragment != null) {
+            if (baseFragment.mData.size() == 0) {
+                //Fragmentがデータを保持していない場合は再取得を行う
+                mVideoGenreProvider = new GenreListDataProvider(this, this,
+                        ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
+                mVideoGenreProvider.getGenreListDataRequest();
+                return;
+            }
+            if (baseFragment.getRankingAdapter() != null) {
+                baseFragment.enableContentsAdapterCommunication();
+                baseFragment.noticeRefresh();
+            }
+        }
+    }
+
+    // region implement
+    @Override
+    public void onClickTab(final int position) {
+        DTVTLogger.start("position = " + position);
+        if (null != mViewPager) {
+            DTVTLogger.debug("viewpager not null");
+            mViewPager.setCurrentItem(position);
+            mNoDataMessage.setVisibility(View.GONE);
+        }
+        DTVTLogger.end();
+    }
+
+    /**
+     * 取得条件"総合"用コールバック.
+     *
+     * @param videoRankList ビデオランクリスト
+     */
+    @Override
+    public void onVideoRankListCallback(final List<ContentsData> videoRankList) {
+        DTVTLogger.start();
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (videoRankList != null) {
+                    DTVTLogger.debug("videoRankList.size :" + videoRankList.size());
+                    setShowVideoRanking(videoRankList);
+                } else {
+                    mNoDataMessage.setVisibility(View.VISIBLE);
+                    //エラーメッセージを取得する
+                    ErrorState errorState = mRankingDataProvider.getContentsListPerGenreWebApiErrorState();
+                    if (errorState != null) {
+                        String message = errorState.getErrorMessage();
+                        //有無で処理を分ける
+                        if (!TextUtils.isEmpty(message)) {
+                            showGetDataFailedToast(message);
+                            return;
+                        }
+                    }
+                    showGetDataFailedToast();
+                    DTVTLogger.debug("ResponseDataSize :0");
+                }
+            }
+        });
+        DTVTLogger.end();
+    }
+
+    @Override
+    public void onRankGenreListCallback(final ArrayList<GenreListMetaData> genreMetaDataList) {
+        DTVTLogger.start();
+        if (genreMetaDataList != null) {
+            mGenreMetaDataList = genreMetaDataList;
+            int totalSize = mGenreMetaDataList.size();
+            mTabNames = new String[totalSize];
+            for (int i = 0; i < totalSize; i++) {
+                mTabNames[i] = mGenreMetaDataList.get(i).getTitle();
+            }
+            initTab();
+        } else {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //エラーメッセージを取得する
+                    ErrorState errorState = mVideoGenreProvider.getError();
+                    if (errorState != null) {
+                        String message = errorState.getErrorMessage();
+                        //有無で処理を分ける
+                        if (!TextUtils.isEmpty(message)) {
+                            showGetDataFailedToast(message);
+                            return;
+                        }
+                    }
+                    showGetDataFailedToast();
+                }
+            });
+        }
+    }
+    // endregion implement
+
+    // region private method
+    /**
+     * ページのリセット.
+     */
+    private void resetPaging() {
+        synchronized (this) {
+            RankingBaseFragment baseFragment = getCurrentFragment();
+            if (null != baseFragment && null != baseFragment.mData) {
+                baseFragment.mData.clear();
+                baseFragment.noticeRefresh();
             }
         }
     }
@@ -193,9 +339,9 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
             mRankingDataProvider =
                     new RankingTopDataProvider(this, ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
         }
-        if (genreMetaDataList != null && genreMetaDataList.size() > 0) {
+        if (mGenreMetaDataList != null && mGenreMetaDataList.size() > 0) {
             mNoDataMessage.setVisibility(View.GONE);
-            mRankingDataProvider.getVideoRankingData(genreMetaDataList.get(mViewPager.getCurrentItem()).getId());
+            mRankingDataProvider.getVideoRankingData(mGenreMetaDataList.get(mViewPager.getCurrentItem()).getId());
         }
     }
 
@@ -216,16 +362,6 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
         DTVTLogger.end();
     }
 
-    @Override
-    public void onClickTab(final int position) {
-        DTVTLogger.start("position = " + position);
-        if (null != mViewPager) {
-            DTVTLogger.debug("viewpager not null");
-            mViewPager.setCurrentItem(position);
-            mNoDataMessage.setVisibility(View.GONE);
-        }
-        DTVTLogger.end();
-    }
 
     /**
      * 取得結果の設定・表示.
@@ -276,147 +412,5 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
         }
         return null;
     }
-
-    /**
-     * 取得条件"総合"用コールバック.
-     *
-     * @param videoRankList ビデオランクリスト
-     */
-    @Override
-    public void onVideoRankListCallback(final List<ContentsData> videoRankList) {
-        DTVTLogger.start();
-        //DbThreadからのコールバックではUIスレッドとして扱われないため
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (videoRankList != null) {
-                    DTVTLogger.debug("ResponseDataSize :" + videoRankList.size());
-                    setShowVideoRanking(videoRankList);
-                    DTVTLogger.end();
-                } else {
-                    mNoDataMessage.setVisibility(View.VISIBLE);
-                    //エラーメッセージを取得する
-                    ErrorState errorState = mRankingDataProvider.getContentsListPerGenreWebApiErrorState();
-                    if (errorState != null) {
-                        String message = errorState.getErrorMessage();
-                        //有無で処理を分ける
-                        if (!TextUtils.isEmpty(message)) {
-                            showGetDataFailedToast(message);
-                            return;
-                        }
-                    }
-                    showGetDataFailedToast();
-                    DTVTLogger.debug("ResponseDataSize :0");
-                }
-            }
-        });
-        DTVTLogger.end();
-    }
-
-    @Override
-    public void onRankGenreListCallback(final ArrayList<GenreListMetaData> genreMetaDataList) {
-        DTVTLogger.start();
-        if (genreMetaDataList != null) {
-            this.genreMetaDataList = genreMetaDataList;
-            int totalSize = genreMetaDataList.size();
-            mTabNames = new String[totalSize];
-            for (int i = 0; i < totalSize; i++) {
-                mTabNames[i] = genreMetaDataList.get(i).getTitle();
-            }
-            initTab();
-        } else {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    //エラーメッセージを取得する
-                    ErrorState errorState = mVideoGenreProvider.getError();
-                    if (errorState != null) {
-                        String message = errorState.getErrorMessage();
-                        //有無で処理を分ける
-                        if (!TextUtils.isEmpty(message)) {
-                            showGetDataFailedToast(message);
-                            return;
-                        }
-                    }
-                    showGetDataFailedToast();
-                }
-            });
-        }
-    }
-
-    @Override
-    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-        DTVTLogger.start();
-        return !checkRemoteControllerView() && super.onKeyDown(keyCode, event);
-    }
-
-    @Override
-    public void onStartCommunication() {
-        super.onStartCommunication();
-        DTVTLogger.start();
-        //通信を許可する
-        //ジャンル取得のデータプロパイダがあれば通信を許可し、無ければ取得する
-        if (mVideoGenreProvider != null) {
-            mVideoGenreProvider.enableConnect();
-        } else {
-            //全てのデータが取得できていないケース
-            mVideoGenreProvider = new GenreListDataProvider(this, this,
-                    ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
-            mVideoGenreProvider.getGenreListDataRequest();
-            //ジャンルデータを使用してランキングデータ取得を行うため、以降の処理を行わない
-            if (mRankingDataProvider != null) {
-                mRankingDataProvider.enableConnect();
-            }
-            return;
-        }
-
-        //ランキングデータ取得のデータプロパイダがあれば通信を許可し、無ければ取得する
-        if (mRankingDataProvider != null) {
-            mRankingDataProvider.enableConnect();
-        } else {
-            mRankingDataProvider =
-                    new RankingTopDataProvider(this, ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
-            if (genreMetaDataList != null && genreMetaDataList.size() > 0) {
-                mRankingDataProvider.getVideoRankingData(genreMetaDataList.get(mViewPager.getCurrentItem()).getId());
-            } else {
-                //ジャンルデータ or ViewPagerが存在しない場合はジャンルデータから取得しなおす
-                mVideoGenreProvider = new GenreListDataProvider(this, this,
-                        ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
-                mVideoGenreProvider.getGenreListDataRequest();
-                return;
-            }
-        }
-
-        RankingBaseFragment baseFragment = getCurrentFragment();
-        if (baseFragment != null) {
-            if (baseFragment.mData.size() == 0) {
-                //Fragmentがデータを保持していない場合は再取得を行う
-                mVideoGenreProvider = new GenreListDataProvider(this, this,
-                        ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
-                mVideoGenreProvider.getGenreListDataRequest();
-                return;
-            }
-            if (baseFragment.getRankingAdapter() != null) {
-                baseFragment.enableContentsAdapterCommunication();
-                baseFragment.noticeRefresh();
-            }
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        DTVTLogger.start();
-        //通信を止める
-        StopGenreListDataConnect stopVideoGenreConnect = new StopGenreListDataConnect();
-        stopVideoGenreConnect.execute(mVideoGenreProvider);
-        StopRankingTopDataConnect stopRankingTopDataConnect = new StopRankingTopDataConnect();
-        stopRankingTopDataConnect.execute(mRankingDataProvider);
-
-        //FragmentにContentsAdapterの通信を止めるように通知する
-        RankingBaseFragment baseFragment = getCurrentFragment();
-        if (baseFragment != null) {
-            baseFragment.stopContentsAdapterCommunication();
-        }
-    }
+    // endregion
 }
