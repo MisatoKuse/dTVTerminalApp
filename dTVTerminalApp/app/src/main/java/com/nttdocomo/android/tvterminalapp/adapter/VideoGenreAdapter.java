@@ -18,13 +18,13 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
 
 import java.util.List;
 
-public class VideoGenreAdapter extends BaseAdapter implements AbsListView.OnScrollListener {
+public class VideoGenreAdapter extends BaseAdapter {
     private Context mContext = null;
-    public List mData = null;
+    public List<VideoGenreList> mData = null;
 
-    public VideoGenreAdapter(final Context context, final List data) {
-        this.mContext = context;
-        this.mData = data;
+    public VideoGenreAdapter(final Context context, final List<VideoGenreList> data) {
+        mContext = context;
+        mData = data;
     }
 
     @Override
@@ -44,8 +44,7 @@ public class VideoGenreAdapter extends BaseAdapter implements AbsListView.OnScro
 
     @Override
     public View getView(final int position, View view, final ViewGroup parent) {
-        DTVTLogger.start();
-        VideoGenreList videoGenreList = (VideoGenreList) mData.get(position);
+        VideoGenreList videoGenreList = mData.get(position);
         ViewHolder holder;
         if (null == view) {
             view = View.inflate(mContext, R.layout.item_video_genre, null);
@@ -64,18 +63,7 @@ public class VideoGenreAdapter extends BaseAdapter implements AbsListView.OnScro
         if (!TextUtils.isEmpty(videoGenreList.getTitle())) {
             holder.content_count.setText(videoGenreList.getContentCount());
         }
-        DTVTLogger.end();
         return view;
-    }
-
-    @Override
-    public void onScrollStateChanged(final AbsListView view, final int scrollState) {
-        // NOP
-    }
-
-    @Override
-    public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
-        // NOP
     }
 
     static class ViewHolder {

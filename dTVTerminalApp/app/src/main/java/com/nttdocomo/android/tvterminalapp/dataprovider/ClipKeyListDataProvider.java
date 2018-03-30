@@ -475,7 +475,6 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     protected boolean getClipStatus(
             final String dispType, final String contentsType, final String dTv, final String crid,
             final String serviceId, final String eventId, final String titleId, final String tvService) {
-        DTVTLogger.start();
         boolean clipStatus = false;
         ClipKeyListDao.CONTENT_TYPE contentType = searchContentsType(dispType, contentsType, dTv, tvService);
         ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(dispType, contentsType);
@@ -493,9 +492,9 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
                     break;
             }
         } else {
-            DTVTLogger.debug("contentType is null");
+            // 大量のログが発生するため必要な場合のみ解除して使ってください。
+//            DTVTLogger.debug("contentType is null");
         }
-        DTVTLogger.end();
         return clipStatus;
     }
 

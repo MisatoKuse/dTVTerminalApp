@@ -86,14 +86,12 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
             imageUrl = params[0];
             Bitmap bitmap = thumbnailProvider.mThumbnailCacheManager.getBitmapFromDisk(imageUrl);
             if (bitmap != null) {
-                DTVTLogger.debug("image exists in file");
                 thumbnailProvider.mThumbnailCacheManager.putBitmapToMem(imageUrl, bitmap);
                 return bitmap;
             }
             if (isCancelled() || mIsStop) {
                 return null;
             }
-            DTVTLogger.debug("download start..... url=" + imageUrl);
             URL url = new URL(imageUrl);
             urlConnection = (HttpURLConnection) url.openConnection();
 
@@ -158,7 +156,6 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
                 // 画像のpositionをズレないよう
                 if (imageView.getTag() != null && imageUrl.equals(imageView.getTag())) {
                     imageView.setImageBitmap(result);
-                    DTVTLogger.debug("download end..... url=" + imageUrl);
                 }
             } else {
                 // 画像取得失敗のケース

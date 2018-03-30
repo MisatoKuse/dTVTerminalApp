@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
@@ -42,7 +43,7 @@ public class GenreListDataProvider implements
          *
          * @param listData ジャンルのコンテンツ数一覧
          */
-        void genreListCallback(List<GenreCountGetMetaData> listData);
+        void genreListCallback(@Nullable List<GenreCountGetMetaData> listData);
     }
 
     /**
@@ -88,7 +89,8 @@ public class GenreListDataProvider implements
     private static final String VIDEO_GENRE_KEY_ARIB = "ARIB";
     /** ビデオジャンル:VOD.*/
     private static final String VIDEO_GENRE_KEY_VOD = "VOD";
-
+    /** ビデオジャンル:dTV.*/
+    private static final String VIDEO_GENRE_KEY_DTV = "dTV";
     /** コンテキスト. */
     private Context mContext = null;
     /** コンテンツタイプ. */
@@ -304,30 +306,46 @@ public class GenreListDataProvider implements
 
         Map<String, ArrayList<GenreListMetaData>> listMap = genreListResponse.getTypeList();
         ArrayList<GenreListMetaData> genreMetaDataList = new ArrayList<>();
-        //IPTVコンテンツデータをすべて取得
-        if (listMap.get(VIDEO_GENRE_KEY_IPTV) != null) {
-            GenreListMetaData genreAll = new GenreListMetaData();
-            genreAll.setTitle(mContext.getResources().getString(R.string.video_list_genre_all));
-            genreAll.setId(GenreListMetaData.VIDEO_LIST_GENRE_ID_ALL_CONTENTS);
-            genreMetaDataList.add(genreAll);
-            genreMetaDataList.addAll(listMap.get(VIDEO_GENRE_KEY_IPTV));
+
+        // すべて(VOD)
+        GenreListMetaData genreAll = new GenreListMetaData();
+        genreAll.setTitle(mContext.getResources().getString(R.string.video_list_genre_all));
+        genreAll.setId(GenreListMetaData.VIDEO_LIST_GENRE_ID_ALL_CONTENTS);
+        genreMetaDataList.add(genreAll);
+
+        // VOD親ジャンルを追加
+        ArrayList<GenreListMetaData> vodList = listMap.get(VIDEO_GENRE_KEY_VOD);
+        if (vodList != null) {
+            genreMetaDataList.addAll(vodList);
         }
 
-        //NODコンテンツデータをすべて取得
-        if (listMap.get(VIDEO_GENRE_KEY_NOD) != null) {
+        // NODを追加
+        ArrayList<GenreListMetaData> nodList = listMap.get(VIDEO_GENRE_KEY_NOD);
+        if (nodList != null) {
             GenreListMetaData firstNodData = new GenreListMetaData();
             firstNodData.setTitle(mContext.getResources().getString(R.string.video_list_genre_nod));
             firstNodData.setId(GenreListMetaData.VIDEO_LIST_GENRE_ID_NOD);
-            firstNodData.setSubContentAll(listMap.get(VIDEO_GENRE_KEY_NOD));
+            firstNodData.setSubContentAll(nodList);
             genreMetaDataList.add(firstNodData);
         }
 
-        // 初期画面のジャンルIDを設定
+        //dTVを追加
+        ArrayList<GenreListMetaData> dtvList = listMap.get(VIDEO_GENRE_KEY_DTV);
+        if (dtvList != null) {
+            GenreListMetaData firstDtvData = new GenreListMetaData();
+            firstDtvData.setTitle(mContext.getResources().getString(R.string.video_list_genre_dtv));
+            firstDtvData.setId(GenreListMetaData.VIDEO_LIST_GENRE_ID_DTV);
+            firstDtvData.setSubContentAll(dtvList);
+            genreMetaDataList.add(firstDtvData);
+        }
+
+        // 初期画面のジャンル一覧データを生成
         List<String> firstPageGenreIdList = new ArrayList<>();
         Map<String, VideoGenreList> videoGenreListMap = new HashMap<>();
-        for (int i = 0; i < genreMetaDataList.size(); i++) {
-            firstPageGenreIdList.add(genreMetaDataList.get(i).getId());
-            videoGenreListMap = setVideoGenreList(genreMetaDataList.get(i), videoGenreListMap);
+
+        for (GenreListMetaData genreMetaData: genreMetaDataList) {
+            firstPageGenreIdList.add(genreMetaData.getId());
+            videoGenreListMap = setVideoGenreList(genreMetaData, videoGenreListMap);
         }
         genreListMapCallback.genreListMapCallback(videoGenreListMap, firstPageGenreIdList);
     }

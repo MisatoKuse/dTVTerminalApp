@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -892,7 +893,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void genreListCallback(final List<GenreCountGetMetaData> listData) {
+    public void genreListCallback(@Nullable final List<GenreCountGetMetaData> listData) {
         //callbackが帰ってきたらProgressDialogを消す
         showProgessBar(false);
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる

@@ -364,8 +364,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     @Override
     public void videoContentCallback(final List<ContentsData> videoHashMap) {
         showProgressBar(false);
-        List<ContentsData> list = new ArrayList<>();
-        setShowVideoContent(list);
+        setShowVideoContent(videoHashMap);
     }
 
     @Override

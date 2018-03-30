@@ -17,6 +17,8 @@ import java.util.ArrayList;
 public class GenreListMetaData implements Serializable {
     private static final long serialVersionUID = -4466388996087422463L;
     public static final String VIDEO_LIST_GENRE_ID_NOD = "genre_id_nod";
+    public static final String VIDEO_LIST_GENRE_ID_VOD = "genre_id_vod";
+    public static final String VIDEO_LIST_GENRE_ID_DTV = "genre_id_dtv";
     public static final String VIDEO_LIST_GENRE_ID_ALL_CONTENTS = "genre_id_all_contents";
 
     private String mId; //id

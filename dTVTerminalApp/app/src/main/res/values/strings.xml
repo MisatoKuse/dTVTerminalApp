@@ -157,6 +157,7 @@
     <string name="video_list_genre_all">すべて</string>
     <string name="video_list_genre_all_contents">すべての作品</string>
     <string name="video_list_genre_nod">NHKオンデマンド</string>
+    <string name="video_list_genre_dtv">dTV</string>
 
     <!-- Search -->
     <string name="keyword_search_title">キーワード検索</string>
