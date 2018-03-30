@@ -611,9 +611,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                         result = true;
                     } else if (ContentDetailActivity.CONTENT_TYPE_FLAG_ONE.equals(listContentInfo.getContentsType())
                             || ContentDetailActivity.CONTENT_TYPE_FLAG_TWO.equals(listContentInfo.getContentsType())) {
-                        long startDate = DateUtils.getEpochTimeLink(listContentInfo.getLinearStartDate());
-                        long endDate = DateUtils.getEpochTimeLink(listContentInfo.getLinearEndDate());
-                        if (DateUtils.isBetweenNowTime(startDate, endDate)) {
+                        if (DateUtils.isNowOnAirDate(listContentInfo.getLinearStartDate(),
+                                listContentInfo.getLinearEndDate(), true)) {
                             result = true;
                         }
                     } else {
@@ -630,9 +629,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 if (OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID == serviceId
                         && (ContentDetailActivity.H4D_CATEGORY_IPTV.equals(categoryId)
                         || ContentDetailActivity.H4D_CATEGORY_DTV_CHANNEL_BROADCAST.equals(categoryId))) {
-                    long startDate = DateUtils.getEpochTimeLink(listContentInfo.getStartViewing());
-                    long endDate = DateUtils.getEpochTimeLink(listContentInfo.getEndViewing());
-                    if (DateUtils.isBetweenNowTime(startDate, endDate)) {
+                    if (DateUtils.isNowOnAirDate(listContentInfo.getStartViewing(),
+                            listContentInfo.getEndViewing(), false)) {
                         result = true;
                     }
                 }

@@ -458,8 +458,8 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      */
     private ScheduleInfo convertScheduleInfo(final Map<String, String> map, final UserState userState) {
         ScheduleInfo mSchedule = new ScheduleInfo();
-        String startDate = map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE);
-        String endDate = map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE);
+        String startDate = map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE);
+        String endDate = map.get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE);
         String thumb = map.get(JsonConstants.META_RESPONSE_THUMB_448);
         String thumbDetail = map.get(JsonConstants.META_RESPONSE_THUMB_640);
         String title = map.get(JsonConstants.META_RESPONSE_TITLE);

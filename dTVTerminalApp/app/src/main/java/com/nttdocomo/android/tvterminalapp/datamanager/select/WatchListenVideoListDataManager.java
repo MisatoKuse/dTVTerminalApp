@@ -40,9 +40,9 @@ public class WatchListenVideoListDataManager {
     }
 
     /**
-     * クリップ一覧画面用クリップデータを返却する.
+     * 視聴中ビデオ一覧データを返却する.
      *
-     * @return クリップ一覧画面用クリップデータ
+     * @return 視聴中ビデオ一覧データ
      */
     public synchronized List<Map<String, String>> selectWatchListenVideoData() {
 

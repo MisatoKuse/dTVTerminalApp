@@ -91,7 +91,6 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.MediaVideoInfo;
 import com.nttdocomo.android.tvterminalapp.struct.RecordingReservationContentsDetailInfo;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SendOperateLog;
@@ -116,23 +115,19 @@ import java.util.regex.Pattern;
  * クラス名のRename禁止(dCHアプリを起動するコンポーネントは、dCHアプリ側でホワイトリスト化するとのこと)
  */
 public class ContentDetailActivity extends BaseActivity implements
-        View.OnClickListener
-        , TabItemLayout.OnClickTabTextListener
+        View.OnClickListener,
+        TabItemLayout.OnClickTabTextListener,
+        ContentsDetailDataProvider.ApiDataProviderCallback,
+        ScaledDownProgramListDataProvider.ApiDataProviderCallback,
+        MediaPlayerController.OnStateChangeListener,
+        MediaPlayerController.OnFormatChangeListener,
+        MediaPlayerController.OnPlayerEventListener,
+        MediaPlayerController.OnErrorListener,
+        MediaPlayerController.OnCaptionDataListener,
+        RemoteControllerView.OnStartRemoteControllerUIListener,
+        DtvContentsDetailFragment.RecordingReservationIconListener,
+        DtvContentsChannelFragment.ChangedScrollLoadListener {
 
-        , ContentsDetailDataProvider.ApiDataProviderCallback
-        , ScaledDownProgramListDataProvider.ApiDataProviderCallback
-
-        , MediaPlayerController.OnStateChangeListener
-        , MediaPlayerController.OnFormatChangeListener
-        , MediaPlayerController.OnPlayerEventListener
-        , MediaPlayerController.OnErrorListener
-        , MediaPlayerController.OnCaptionDataListener
-
-        , RemoteControllerView.OnStartRemoteControllerUIListener
-
-        , DtvContentsDetailFragment.RecordingReservationIconListener
-        , DtvContentsChannelFragment.ChangedScrollLoadListener
-{
     // declaration
     private enum ErrorType {
         contentDetailGet,
@@ -195,7 +190,7 @@ public class ContentDetailActivity extends BaseActivity implements
     public static final int DTV_CONTENTS_SERVICE_ID = 15;
     public static final int D_ANIMATION_CONTENTS_SERVICE_ID = 17;
     public static final int DTV_CHANNEL_CONTENTS_SERVICE_ID = 43;
-    private static final int DTV_HIKARI_CONTENTS_SERVICE_ID = 44;
+    public static final int DTV_HIKARI_CONTENTS_SERVICE_ID = 44;
     private static final String CONTENTS_DETAIL_RESERVEDID = "1";
     private static final String MOBILEVIEWINGFLG_FLAG_ZERO = "0";
 
@@ -233,11 +228,11 @@ public class ContentDetailActivity extends BaseActivity implements
     /**
      * カテゴリID(01).
      */
-    private static final String H4D_CATEGORY_TERRESTRIAL_DIGITAL = "01";
+    public static final String H4D_CATEGORY_TERRESTRIAL_DIGITAL = "01";
     /**
      * カテゴリID(02).
      */
-    private static final String H4D_CATEGORY_SATELLITE_BS = "02";
+    public static final String H4D_CATEGORY_SATELLITE_BS = "02";
     /**
      * カテゴリID(03).
      */
@@ -249,11 +244,19 @@ public class ContentDetailActivity extends BaseActivity implements
     /**
      * カテゴリID(05).
      */
-    private static final String H4D_CATEGORY_DTV_CHANNEL_MISSED = "05";
+    public static final String H4D_CATEGORY_DTV_CHANNEL_MISSED = "05";
     /**
      * カテゴリID(06).
      */
-    private static final String H4D_CATEGORY_DTV_CHANNEL_RELATION = "06";
+    public static final String H4D_CATEGORY_DTV_CHANNEL_RELATION = "06";
+    /**
+     * カテゴリID(08).
+     */
+    public static final String H4D_CATEGORY_HIKARITV_VOD = "08";
+    /**
+     * カテゴリID(10).
+     */
+    public static final String H4D_CATEGORY_HIKARI_DTV_SVOD = "10";
     /**
      * disp_type(tv_program).
      */
@@ -261,11 +264,11 @@ public class ContentDetailActivity extends BaseActivity implements
     /**
      * disp_type(video_program).
      */
-    private static final String VIDEO_PROGRAM = "video_program";
+    public static final String VIDEO_PROGRAM = "video_program";
     /**
      * disp_type(video_series).
      */
-    private static final String VIDEO_SERIES = "video_series";
+    public static final String VIDEO_SERIES = "video_series";
     /**
      * dtv(1).
      */
@@ -451,6 +454,10 @@ public class ContentDetailActivity extends BaseActivity implements
      * 放送中フラグ.
      */
     private boolean isVideoBroadcast = false;
+    /**
+     * ひかりTV内dch_見逃し.
+     */
+    public static final String D_CHANNEL_OLD_VOD_STR =  "見逃し | ";
 
     private final Runnable mHideCtrlViewThread = new Runnable() {
 
@@ -1374,7 +1381,7 @@ public class ContentDetailActivity extends BaseActivity implements
                 // 他サービス(dtv/dtvチャンネル/dアニメ)フラグを立てる
                 mIsOtherService = true;
             }
-//            STBに接続している　「テレビで視聴」が表示
+            // STBに接続している　「テレビで視聴」が表示
             if (getStbStatus()) {
                 if (mIsOtherService) {
                     if (serviceId == D_ANIMATION_CONTENTS_SERVICE_ID) {
@@ -1406,7 +1413,7 @@ public class ContentDetailActivity extends BaseActivity implements
             if (MOBILEVIEWINGFLG_FLAG_ZERO.equals(mDetailData.getMobileViewingFlg())) {
                 //未ペアリングかつ宅外の場合は、"ドコモテレビターミナルに接続してください"を表示する仕様ですが、
                 //本ソースでは宅外判定がペアリング判定で行われていたので、判定はペアリングの有無のみ。
-                if(!getStbStatus()) {
+                if (!getStbStatus()) {
                     //未ペアリングなので、"ドコモテレビターミナルに接続してください"を表示
                     setThumbnailText(getResources().getString(
                             R.string.contents_detail_thumbnail_text_no_pair));
@@ -1426,7 +1433,7 @@ public class ContentDetailActivity extends BaseActivity implements
                     if (CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved2())) {
                         //未ペアリングかつ宅外の場合は、"ドコモテレビターミナルに接続してください"を表示する仕様ですが、
                         //本ソースでは宅外判定がペアリング判定で行われていたので、判定はペアリングの有無のみ。
-                        if(!getStbStatus()) {
+                        if (!getStbStatus()) {
                             //未ペアリングなので、"ドコモテレビターミナルに接続してください"を表示
                             setThumbnailText(getResources().getString(
                                     R.string.contents_detail_thumbnail_text_no_pair));
@@ -1451,6 +1458,16 @@ public class ContentDetailActivity extends BaseActivity implements
         if (mIsOtherService) {
             // コンテンツ詳細(他サービスの時は、タブ一つに設定する)
             mTabNames = getResources().getStringArray(R.array.other_service_contents_detail_tabs);
+            DateUtils.ContentsType contentsType = DateUtils.getContentsDateByRecommend(mDetailData.getServiceId(), mDetailData.getCategoryId());
+            String date = null;
+            if (contentsType == DateUtils.ContentsType.TV) {
+                //番組(m/d（曜日）h:ii - h:ii)
+                date = DateUtils.getContentsDetailDate(mDetailData.getmStartDate(), mDetailData.getmEndDate());
+            } else if (contentsType == DateUtils.ContentsType.VOD) {
+                //VOD(m/d（曜日）まで)
+                date = DateUtils.getContentsDetailVodDate(mDetailData.getmEndDate());
+            }
+            mDetailData.setChannelDate(date);
         } else {
             if (mDetailData != null && DTV_FLAG_ONE.equals(mDetailData.getDtv())) {
                 if (VIDEO_SERIES.equals(mDetailData.getDispType()) || VIDEO_PROGRAM.equals(mDetailData.getDispType())) {
@@ -1972,7 +1989,22 @@ public class ContentDetailActivity extends BaseActivity implements
             detailFragment.mOtherContentsDetailData.setCrId(mDetailFullData.getCrid());
             detailFragment.mOtherContentsDetailData.setEventId(mDetailFullData.getmEvent_id());
             detailFragment.mOtherContentsDetailData.setTitleId(mDetailFullData.getTitle_id());
-
+            String date = null;
+            DateUtils.ContentsType contentsType = DateUtils.getContentsDateByPlala(mDetailFullData.getDisp_type(),
+                    mDetailFullData.getmTv_service(), mDetailFullData.getmContent_type(), mDetailFullData.getAvail_end_date(),
+                    mDetailFullData.getmVod_start_date(), mDetailFullData.getmVod_end_date());
+            if (contentsType == DateUtils.ContentsType.TV) {
+                //番組(m/d（曜日）h:ii - h:ii)
+                date = DateUtils.getContentsDetailTvDate(mDetailFullData.getPublish_start_date(), mDetailFullData.getPublish_end_date());
+            } else if (contentsType == DateUtils.ContentsType.VOD) {
+                //VOD(m/d（曜日）まで)
+                date = DateUtils.getContentsDetailVodDate(mDetailFullData.getAvail_end_date());
+            } else if (contentsType == DateUtils.ContentsType.DCHANNEL_OLD_VOD) {
+                //VOD(m/d（曜日）まで) ひかりTV内dch_見逃し
+                date = DateUtils.getContentsDetailVodDate(mDetailFullData.getAvail_end_date());
+                date = D_CHANNEL_OLD_VOD_STR + date;
+            }
+            detailFragment.mOtherContentsDetailData.setChannelDate(date);
             detailFragment.noticeRefresh();
             String[] credit_array = mDetailFullData.getmCredit_array();
             if (credit_array != null && credit_array.length > 0) {
@@ -2121,9 +2153,6 @@ public class ContentDetailActivity extends BaseActivity implements
                         mChannel = channel;
                         String channelName = channel.getTitle();
                         detailFragment.mOtherContentsDetailData.setChannelName(channelName);
-                        String channelStartDate = channel.getStartDate();
-                        String channelEndDate = channel.getEndDate();
-                        detailFragment.mOtherContentsDetailData.setChannelDate(getDateFormat(channelStartDate, channelEndDate));
                         break;
                     }
                 }
@@ -2268,37 +2297,6 @@ public class ContentDetailActivity extends BaseActivity implements
         for (ChannelInfo channel : channels) {
             Collections.sort(channel.getSchedules(), new CalendarComparator());
         }
-    }
-
-    /**
-     * 時刻.
-     *
-     * @param start 開始時刻
-     * @param end   　終了時刻
-     * @return データ整形
-     */
-    private String getDateFormat(final String start, final String end) {
-        String channelDate = "";
-        if (!TextUtils.isEmpty(start)) {
-            String replaceStart = start.replaceAll("-", "/");
-            SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
-            StringBuilder startBuilder = new StringBuilder();
-            startBuilder.append(replaceStart.substring(0, 10));
-            startBuilder.append(replaceStart.substring(11, 19));
-            try {
-                Calendar calendar = Calendar.getInstance(Locale.JAPAN);
-                calendar.setTime(sdf.parse(startBuilder.toString()));
-                String[] strings = {String.valueOf(calendar.get(Calendar.MONTH)), "/",
-                        String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)), " (",
-                        DateUtils.STRING_DAY_OF_WEEK[calendar.get(Calendar.DAY_OF_WEEK)], ") ",
-                        start.substring(11, 16), " - ",
-                        end.substring(11, 16)};
-                channelDate = StringUtils.getConnectString(strings);
-            } catch (ParseException e) {
-                DTVTLogger.debug(e);
-            }
-        }
-        return channelDate;
     }
 
     /**

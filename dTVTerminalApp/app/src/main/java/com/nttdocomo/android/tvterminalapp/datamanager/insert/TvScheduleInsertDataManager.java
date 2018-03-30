@@ -89,7 +89,7 @@ public class TvScheduleInsertDataManager {
                     Map.Entry entry = (Map.Entry) entries.next();
                     String keyName = (String) entry.getKey();
                     String valName = (String) entry.getValue();
-                    if (JsonConstants.META_RESPONSE_AVAIL_START_DATE.equals(keyName)) {
+                    if (JsonConstants.META_RESPONSE_PUBLISH_START_DATE.equals(keyName)) {
                         values.put(DBConstants.UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
                     }
                     values.put(DBUtils.fourKFlgConversion(keyName), valName);

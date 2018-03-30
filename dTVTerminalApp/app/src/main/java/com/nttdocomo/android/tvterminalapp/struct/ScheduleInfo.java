@@ -17,58 +17,103 @@ import java.util.Date;
 import java.util.Locale;
 
 
-/* 作成中 */
 /*
  * 番組クラス.
  * 　　機能： 番組の属性を纏めるクラスである.
  */
 public class ScheduleInfo {
 
-    //タイトル
+    /**
+     * タイトル.
+     */
     private String title;
-    //番組詳細
+    /**
+     * 番組詳細.
+     */
     private String detail;
-    //開始時間
+    /**
+     * 開始時間.
+     */
     private String startTime;
-    //終了時間
+    /**
+     * 終了時間.
+     */
     private String endTime;
-    //サムネイル url
+    /**
+     * サムネイル url.
+     */
     private String imageUrl;
-    //サムネイル url(詳細画面用)
+    /**
+     * サムネイル url(詳細画面用).
+     */
     private String imageDetailUrl;
-    //チャンネル ID
+    /**
+     * チャンネル ID.
+     */
     private String chNo;
-    //パレンタル情報
+    /**
+     * パレンタル情報.
+     */
     private String mRValue = null;
-    //表示タイプ
+    /**
+     * 表示タイプ.
+     */
     private String mDispType = null;
-    //クリップ判定情報
+    /**
+     * クリップ判定情報.
+     */
     private String mSearchOk = null;
-    //dTVフラグ
+    /**
+     * dTVフラグ.
+     */
     private String mDtv = null;
-    //dTVタイプ
+    /**
+     * dTVタイプ.
+     */
     private String mDtvType = null;
-    //コンテンツタイプ
+    /**
+     * コンテンツタイプ.
+     */
     private String mContentType = null;
-    //TVサービス種別
+    /**
+     * TVサービス種別.
+     */
     private String mTvService = null;
-    //サービスID
+    /**
+     * サービスID.
+     */
     private String mServiceId = null;
-    //イベントID
+    /**
+     * イベントID.
+     */
     private String mEventId = null;
-    //タイトルID
+    /**
+     * タイトルID.
+     */
     private String mTitleId = null;
-    //crid
+    /**
+     * crid.
+     */
     private String mCrId = null;
-    //クリップリクエスト用データ
+    /**
+     * クリップリクエスト用データ.
+     */
     private ClipRequestData mClipRequestData = null;
-    //時間単価換算
+    /**
+     * 時間単価換算.
+     */
     private static final float FORMAT = 1000 * 60 * 60;
-    // クリップ可否
+    /**
+     * クリップ可否.
+     */
     private boolean mClipExec = false;
-    // クリップ未/済
+    /**
+     * クリップ未/済.
+     */
     private boolean mClipStatus = false;
-    //コンテンツID
+    /**
+     * コンテンツID.
+     */
     private String mContentsId = null;
 
     /*

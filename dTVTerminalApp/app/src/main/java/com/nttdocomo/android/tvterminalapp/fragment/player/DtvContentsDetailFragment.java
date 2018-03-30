@@ -9,7 +9,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.Layout;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -329,8 +332,18 @@ public class DtvContentsDetailFragment extends Fragment {
         setLabelStatus();
         contentsDetailInfo = selectDetail();
         //日付
-        if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelDate())) {
-            mTxtChannelDate.setText(mOtherContentsDetailData.getChannelDate());
+        String date = mOtherContentsDetailData.getChannelDate();
+        if (!TextUtils.isEmpty(date)) {
+            mTxtChannelDate.setVisibility(View.VISIBLE);
+            SpannableString spannableString = new SpannableString(date);
+            int subCount = 0;
+            if (date.contains(ContentDetailActivity.D_CHANNEL_OLD_VOD_STR)) {
+                subCount = 3;
+            }
+            //「見逃し」は黄色文字で表示する
+            spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.recommend_list_now_on_air)),
+                    0, subCount, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            mTxtChannelDate.setText(spannableString);
         } else {
             mTxtChannelDate.setVisibility(View.GONE);
         }

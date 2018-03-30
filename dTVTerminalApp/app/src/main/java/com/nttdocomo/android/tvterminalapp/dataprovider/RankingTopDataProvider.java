@@ -637,7 +637,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
 
             String title = map.get(JsonConstants.META_RESPONSE_TITLE);
             String searchOk = map.get(JsonConstants.META_RESPONSE_SEARCH_OK);
-            String linearEndDate = map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE);
+            String linearEndDate = map.get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE);
             String dispType = map.get(JsonConstants.META_RESPONSE_DISP_TYPE);
             String dtv = map.get(JsonConstants.META_RESPONSE_DTV);
             String dtvType = map.get(JsonConstants.META_RESPONSE_DTV_TYPE);
@@ -676,7 +676,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             requestData.setTitleId(map.get(JsonConstants.META_RESPONSE_TITLE_ID));
             requestData.setTitle(title);
             requestData.setRValue(map.get(JsonConstants.META_RESPONSE_R_VALUE));
-            requestData.setLinearStartDate(map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE));
+            requestData.setLinearStartDate(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE));
             requestData.setLinearEndDate(linearEndDate);
             requestData.setSearchOk(searchOk);
 
