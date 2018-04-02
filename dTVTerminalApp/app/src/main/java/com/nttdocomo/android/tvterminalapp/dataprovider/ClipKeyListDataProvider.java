@@ -492,7 +492,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
                     break;
             }
         } else {
-            // 大量のログが発生するため必要な場合のみ解除して使ってください。
+            // TODO: 大量のログが発生するため必要な場合のみ解除して使ってください。
 //            DTVTLogger.debug("contentType is null");
         }
         return clipStatus;
