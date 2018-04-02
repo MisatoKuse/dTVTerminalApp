@@ -167,7 +167,7 @@ public class DateUtils {
     /**
      * 日付フォーマット.
      */
-    private static final String DATE_HIFUN = " - ";
+    private static final String DATE_HYPHEN = " - ";
 
     /**
      * 日付フォーマット.
@@ -290,18 +290,6 @@ public class DateUtils {
      * " ".
      */
     private static final String DATE_FORMAT_BLANK = " ";
-    /**
-     * ":".
-     */
-    private static final String DATE_FORMAT_KANMA = ":";
-    /**
-     * "00".
-     */
-    private static final String DATE_FORMAT_00 = "00";
-    /**
-     * "0".
-     */
-    private static final String DATE_FORMAT_0 = "0";
 
     public enum ContentsType {
         /**
@@ -670,7 +658,7 @@ public class DateUtils {
         String startText = getHmm(cal);
         cal.setTimeInMillis(endTime * 1000);
         String endText = getHmm(cal);
-        return date + DATE_FORMAT_BLANK + startText + DATE_HIFUN + endText;
+        return date + DATE_FORMAT_BLANK + startText + DATE_HYPHEN + endText;
     }
 
     /**
@@ -724,7 +712,7 @@ public class DateUtils {
             String startText = getHmm(cal);
             cal.setTime(endDate);
             String endText = getHmm(cal);
-            return date + DATE_FORMAT_BLANK + startText + DATE_HIFUN + endText;
+            return date + DATE_FORMAT_BLANK + startText + DATE_HYPHEN + endText;
         } catch (ParseException e) {
             DTVTLogger.debug(e);
         }
@@ -909,15 +897,7 @@ public class DateUtils {
     private static String getHmm(final Calendar cal) {
         int hour = cal.get(Calendar.HOUR_OF_DAY);
         int min = cal.get(Calendar.MINUTE);
-        String minText = "";
-        if (min == 0) {
-            minText = DATE_FORMAT_00;
-        } else if (min < 10) {
-            minText = DATE_FORMAT_0 + min;
-        } else {
-            minText = String.valueOf(min);
-        }
-        return hour + DATE_FORMAT_KANMA + minText;
+        return String.format(Locale.getDefault(), "%d:%02d", hour, min);
     }
 
     /**
