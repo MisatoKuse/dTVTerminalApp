@@ -968,23 +968,11 @@ public class BaseActivity extends FragmentActivity implements
             case RelayServiceResponseMessage.RELAY_RESULT_APPLICATION_NOT_INSTALL:
                 switch (appId) {
                     case DTV:
-                        message = getResources().getString(R.string.main_setting_dtv_uninstall_message);
-                        showErrorDialog(message);
-                        break;
                     case DANIMESTORE:
-                        message = getResources().getString(R.string.main_setting_d_anime_store_uninstall_message);
-                        showErrorDialog(message);
-                        break;
                     case DTVCHANNEL:
-                        message = getResources().getString(R.string.main_setting_dtv_channel_uninstall_message);
-                        showErrorDialog(message);
-                        break;
                     case HIKARITV:
-                        message = getResources().getString(R.string.main_setting_hikari_tv_uninstall_message);
-                        showErrorDialog(message);
-                        break;
                     case DAZN:
-                        message = getResources().getString(R.string.main_setting_dazn_uninstall_message);
+                        message = getResources().getString(R.string.main_setting_stb_application_launch_fail);
                         showErrorDialog(message);
                         break;
                     //ENUMをSwitchで使用する場合、未使用項目も記載しなければアナライザーがエラー扱いにしてしまうのでUNKNOWNを追加した、

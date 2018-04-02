@@ -95,13 +95,7 @@ public class ApplicationInfoActivity extends BaseActivity {
      * @return String
      */
     private String getAppName() {
-        try {
-            ApplicationInfo info = mPackageManager.getApplicationInfo(mPackageName, 0);
-            return info.loadLabel(mPackageManager).toString();
-        } catch (PackageManager.NameNotFoundException e) {
-            DTVTLogger.debug(e);
-        }
-        return null;
+        return  getResources().getString(R.string.application_info_application_name_value);
     }
 
     /**

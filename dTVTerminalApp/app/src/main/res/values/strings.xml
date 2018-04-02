@@ -32,8 +32,8 @@
     <string name="transoceanic_communication_dialog_title">海外での通信利用</string>
     <string name="permission_denied_dialog_title">Permission Denied</string>
     <string name="permission_denied_dialog_content">通信許可がないためアプリケーションを終了します</string>
-    <string name="permission_detail_dialog_title">権限の用途</string>
-    <string name="permission_detail_dialog_content">・海外通信の利用確認のためSIM情報を取得</string>
+    <string name="permission_detail_dialog_title">SIM情報の取得確認</string>
+    <string name="permission_detail_dialog_content">ドコモテレビターミナルアプリは、海外での通信利用確認のためSIM情報を取得します。\n次の画面で「許可」を選択してください。\n※「許可しない」を選択した場合、海外利用時に海外通信を利用する旨の通知がされません。</string>
     <string name="permission_detail_dialog_confirm">許可する</string>
     <string name="permission_detail_dialog_cancel">許可しない</string>
     <string name="status_bar_height_name">status_bar_height</string>
@@ -268,10 +268,10 @@
     <string name="recording_reservation_confirm_dialog_msg">録画予約依頼を行います。録画予約が受け付けられるまで、時間がかかる場合がありますのでご注意ください。</string>
     <string name="recording_reservation_confirm_dialog_confirm">録画予約する</string>
     <string name="recording_reservation_confirm_dialog_cancel">キャンセル</string>
-    <string name="contents_detail_contract_text_vod">ご覧になるには購入が必要です。\nドコモテレビターミナルで購入してください。</string>
+    <string name="contents_detail_contract_text_vod">ご覧になるにはコンテンツの契約が必要です。\nドコモテレビターミナルで契約してください。</string>
     <string name="contents_detail_contract_button_vod">ドコモテレビターミナルで購入する</string>
-    <string name="contents_detail_contract_text_ch">このチャンネルをご覧になるには\nSTB側での契約が必要です。</string>
-    <string name="contents_detail_contract_button_ch">STBで契約する</string>
+    <string name="contents_detail_contract_text_ch">このチャンネルをご覧になるには\nドコモテレビターミナルでの契約が必要です</string>
+    <string name="contents_detail_contract_button_ch">ドコモテレビターミナルで契約する</string>
     <string name="contents_detail_external_display_dialog_msg">外部出力が検出されたので、再生を停止しました</string>
     <string name="contents_detail_parental_check_fail">年齢制限のため視聴できません</string>
     <string name="contents_detail_response_ok">OK</string>
@@ -297,15 +297,10 @@
     <string name="main_setting_quality_status">status</string>
     <string name="main_setting_stb_application_launch_fail">ドコモテレビターミナルのアプリの起動に失敗しました</string>
     <string name="main_setting_stb_application_launch_fail_id_notexist">本アプリでログインしているdアカウントのユーザーをドコモテレビターミナル（テレビ側）に登録してください。</string>
-    <string name="main_setting_dtv_uninstall_message">ドコモテレビターミナルのdTVアプリはインストールされてない</string>
     <string name="main_setting_dtv_update_message">ドコモテレビターミナルのdTVアプリのバージョンアップが必要です</string>
-    <string name="main_setting_d_anime_store_uninstall_message">ドコモテレビターミナルのdアニメストアの起動に失敗しました</string>
     <string name="main_setting_d_anime_store_update_message">ドコモテレビターミナルのdアニメストアアプリのバージョンアップが必要です</string>
-    <string name="main_setting_dtv_channel_uninstall_message">ドコモテレビターミナルのdTVチャンネルの起動に失敗しました</string>
     <string name="main_setting_dtv_channel_update_message">ドコモテレビターミナルのdTVチャンネルアプリのバージョンアップが必要です</string>
-    <string name="main_setting_hikari_tv_uninstall_message">ドコモテレビターミナルのひかりTVの起動に失敗しました</string>
     <string name="main_setting_hikari_tv_update_message">ドコモテレビターミナルのひかりTV for docomoアプリのバージョンアップが必要です</string>
-    <string name="main_setting_dazn_uninstall_message">ドコモテレビターミナルのダ・ゾーンの起動に失敗しました</string>
     <string name="main_setting_dazn_update_message">ドコモテレビターミナルのダ・ゾーンのバージョンアップが必要です。</string>
     <string name="main_setting_connect_error_message">ドコモテレビターミナルとの通信に失敗しました</string>
     <string name="main_setting_stb_busy_error_message">ドコモテレビターミナルが処理中です。</string>
@@ -346,6 +341,7 @@
 
     <!-- アプリケーション情報 -->
     <string name="application_info_application_name">アプリケーション名</string>
+    <string name="application_info_application_name_value">ドコモテレビターミナルアプリ</string>
     <string name="application_info_application_provider">提供者</string>
     <string name="application_info_application_version">バージョン</string>
     <string name="application_info_application_provider_value">株式会社NTTドコモ</string>
