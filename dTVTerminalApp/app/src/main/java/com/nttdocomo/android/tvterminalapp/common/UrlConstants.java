@@ -235,8 +235,7 @@ public class UrlConstants {
          * ジャンル一覧リストファイル：こちらはAPIではなく、ファイルの直接読み込みとのこと.
          * APIではないので、例外としてURL全体を指定する
          */
-        public static final String GENRE_LIST_FILE =
-                BaseUrlConstants.PLALA_ID_FILE_URL + "genreList.json";
+        public static final String GENRE_LIST_FILE = "https://tconf.hikaritv-docomo.jp/common/client/genreList.json";
 
         /**
          * ロール一覧リストファイル：こちらはAPIではなく、ファイルの直接読み込みとのこと.
