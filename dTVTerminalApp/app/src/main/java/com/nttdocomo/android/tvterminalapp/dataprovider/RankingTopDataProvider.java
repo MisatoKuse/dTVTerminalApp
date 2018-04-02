@@ -647,7 +647,6 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             rankingContentInfo.setThumURL(map.get(JsonConstants.META_RESPONSE_THUMB_448));
             rankingContentInfo.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_THUMB_640));
             rankingContentInfo.setTitle(title);
-            rankingContentInfo.setTime(map.get(JsonConstants.META_RESPONSE_DISPLAY_START_DATE));
             rankingContentInfo.setSearchOk(searchOk);
             rankingContentInfo.setRank(String.valueOf(i + 1));
             rankingContentInfo.setRatStar(map.get(JsonConstants.META_RESPONSE_RATING));

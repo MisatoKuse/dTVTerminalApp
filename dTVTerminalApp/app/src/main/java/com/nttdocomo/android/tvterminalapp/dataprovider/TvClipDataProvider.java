@@ -173,7 +173,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
             Map<String, String> map = clipMapList.get(i);
             String title = map.get(JsonConstants.META_RESPONSE_TITLE);
             String searchOk = map.get(JsonConstants.META_RESPONSE_SEARCH_OK);
-            String linearEndDate = map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE);
+            String linearEndDate = map.get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE);
             String dispType = map.get(JsonConstants.META_RESPONSE_DISP_TYPE);
             String dtv = map.get(JsonConstants.META_RESPONSE_DTV);
             String dtvType = map.get(JsonConstants.META_RESPONSE_DTV_TYPE);
@@ -182,7 +182,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
             contentInfo.setThumURL(map.get(JsonConstants.META_RESPONSE_THUMB_448));
             contentInfo.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_THUMB_640));
             contentInfo.setTitle(title);
-            contentInfo.setTime(map.get(JsonConstants.META_RESPONSE_DISPLAY_START_DATE));
+            contentInfo.setTime(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE));
             contentInfo.setSearchOk(searchOk);
             contentInfo.setRatStar(map.get(JsonConstants.META_RESPONSE_RATING));
             contentInfo.setContentsType(map.get(JsonConstants.META_RESPONSE_CONTENT_TYPE));
@@ -201,7 +201,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
             requestData.setTitleId(map.get(JsonConstants.META_RESPONSE_TITLE_ID));
             requestData.setTitle(title);
             requestData.setRValue(map.get(JsonConstants.META_RESPONSE_R_VALUE));
-            requestData.setLinearStartDate(map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE));
+            requestData.setLinearStartDate(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE));
             requestData.setLinearEndDate(linearEndDate);
             requestData.setSearchOk(searchOk);
 
