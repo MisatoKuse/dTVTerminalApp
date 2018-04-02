@@ -153,7 +153,7 @@
     <string name="activation_failed_error">アクティベーション出来ませんでした。</string>
 
     <!-- ビデオ一覧 -->
-    <string name="video_content_top_title">ビデオ</string>
+    <string name="video_content_top_title">ビデオジャンル</string>
     <string name="video_list_genre_all">すべて</string>
     <string name="video_list_genre_all_contents">すべての作品</string>
     <string name="video_list_genre_nod">NHKオンデマンド</string>
