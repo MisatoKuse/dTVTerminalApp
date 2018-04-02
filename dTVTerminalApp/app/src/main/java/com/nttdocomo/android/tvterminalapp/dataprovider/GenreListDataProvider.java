@@ -266,18 +266,16 @@ public class GenreListDataProvider implements
                     genreAll.setId("");
                     genreMetaDataList.add(genreAll);
                     if (ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK.equals(type)) {
-                        //IPTVコンテンツデータをすべて取得
                         if (listMap.get(VIDEO_GENRE_KEY_VOD) != null) {
                             genreMetaDataList.addAll(listMap.get(VIDEO_GENRE_KEY_VOD));
                         } else {
-                            DTVTLogger.error("IPTV is not found");
+                            DTVTLogger.error("VOD listMap is not found");
                         }
                     } else if (ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK.equals(type)) {
-                        //ARIBコンテンツデータをすべて取得
                         if (listMap.get(VIDEO_GENRE_KEY_ARIB) != null) {
                             genreMetaDataList.addAll(listMap.get(VIDEO_GENRE_KEY_ARIB));
                         } else {
-                            DTVTLogger.error("ARIB is not found");
+                            DTVTLogger.error("ARIB listMap is not found");
                         }
                     } else {
                         DTVTLogger.error("activity is not found");
