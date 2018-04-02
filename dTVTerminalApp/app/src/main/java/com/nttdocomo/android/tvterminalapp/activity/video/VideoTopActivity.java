@@ -81,6 +81,7 @@ public class VideoTopActivity extends BaseActivity implements
         mMenuImageView.setVisibility(View.VISIBLE);
         mMenuImageView.setOnClickListener(this);
 
+        enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
@@ -104,8 +105,8 @@ public class VideoTopActivity extends BaseActivity implements
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
                 if (mIsMenuLaunch) {
-                    //メニューから起動の場合はアプリ終了ダイアログを表示
-                    showTips();
+                    //メニューから起動の場合ホーム画面に戻る
+                    contentsDetailBackKey(null);
                     return false;
                 }
             default:

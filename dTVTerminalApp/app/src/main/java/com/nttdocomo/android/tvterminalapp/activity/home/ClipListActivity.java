@@ -109,7 +109,7 @@ public class ClipListActivity extends BaseActivity implements
         mStartPageNo = intent.getIntExtra(CLIP_LIST_START_PAGE, CLIP_LIST_PAGE_NO_OF_TV);
         mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
         if (mIsMenuLaunch) {
-            enableHeaderBackIcon(false);
+            enableHeaderBackIcon(true);
         }
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
@@ -600,8 +600,8 @@ public class ClipListActivity extends BaseActivity implements
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
                 if (mIsMenuLaunch) {
-                    //メニューから起動の場合はアプリ終了ダイアログを表示
-                    showTips();
+                    //メニューから起動の場合ホーム画面に戻る
+                    contentsDetailBackKey(null);
                     return false;
                 }
             default:

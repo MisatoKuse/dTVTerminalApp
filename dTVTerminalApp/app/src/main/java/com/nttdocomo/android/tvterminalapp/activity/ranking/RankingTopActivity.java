@@ -123,7 +123,7 @@ public class RankingTopActivity extends BaseActivity
         Intent intent = getIntent();
         mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
         if (mIsMenuLaunch) {
-            enableHeaderBackIcon(false);
+            enableHeaderBackIcon(true);
         }
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
@@ -409,8 +409,8 @@ public class RankingTopActivity extends BaseActivity
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
                 if (mIsMenuLaunch) {
-                    //メニューから起動の場合はアプリ終了ダイアログを表示
-                    showTips();
+                    //メニューから起動の場合ホーム画面に戻る
+                    contentsDetailBackKey(null);
                     return false;
                 }
             default:

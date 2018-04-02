@@ -105,7 +105,7 @@ public class RecommendActivity extends BaseActivity implements
         int startPageNo = intent.getIntExtra(RECOMMEND_LIST_START_PAGE, RECOMMEND_LIST_PAGE_NO_OF_TV);
         mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
         if (mIsMenuLaunch) {
-            enableHeaderBackIcon(false);
+            enableHeaderBackIcon(true);
         }
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
@@ -189,12 +189,12 @@ public class RecommendActivity extends BaseActivity implements
      */
     private void initRecommendListView() {
 
+        mNoDataMessage = findViewById(R.id.recommend_list_no_items);
+        initTabVIew();
         if (null != sRecommendViewPager) {
             return;
         }
         sRecommendViewPager = findViewById(R.id.vp_recommend_list_items);
-        mNoDataMessage = findViewById(R.id.recommend_list_no_items);
-        initTabVIew();
 
         sRecommendViewPager.setAdapter(new TabAdapter(getSupportFragmentManager()));
         // フリックによるtab切り替え
@@ -534,8 +534,8 @@ public class RecommendActivity extends BaseActivity implements
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
                 if (mIsMenuLaunch) {
-                    //メニューから起動の場合はアプリ終了ダイアログを表示
-                    showTips();
+                    //メニューから起動の場合ホーム画面に戻る
+                    contentsDetailBackKey(null);
                     return false;
                 }
             default:

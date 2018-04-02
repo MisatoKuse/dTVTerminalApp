@@ -37,7 +37,14 @@ import android.widget.Toast;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.ClipListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.PremiumVideoActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.RecommendActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.RecordReservationListActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.RentalListActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.WatchingVideoListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.DAccountInductionActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.DAccountReSettingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.DAccountSettingHelpActivity;
@@ -46,7 +53,13 @@ import com.nttdocomo.android.tvterminalapp.activity.launch.PairingHelpActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBConnectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectErrorActivity;
+import com.nttdocomo.android.tvterminalapp.activity.ranking.RankingTopActivity;
+import com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity;
+import com.nttdocomo.android.tvterminalapp.activity.setting.NewsActivity;
 import com.nttdocomo.android.tvterminalapp.activity.setting.SettingActivity;
+import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
+import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity;
+import com.nttdocomo.android.tvterminalapp.activity.video.VideoTopActivity;
 import com.nttdocomo.android.tvterminalapp.application.TvtApplication;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
@@ -1198,12 +1211,32 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     /**
-     * コンテンツ詳細の戻るボタン.
+     * 戻るボタン.
      *
      * @param view 戻るボタンのビュー
      */
     public void contentsDetailBackKey(final View view) {
-        finish();
+        if (this instanceof RecommendActivity
+                || this instanceof SearchTopActivity
+                || this instanceof TvProgramListActivity
+                || this instanceof ChannelListActivity
+                || this instanceof RecordedListActivity
+                || this instanceof RankingTopActivity
+                || this instanceof WatchingVideoListActivity
+                || this instanceof ClipListActivity
+                || this instanceof VideoTopActivity
+                || this instanceof PremiumVideoActivity
+                || this instanceof RentalListActivity
+                || this instanceof RecordReservationListActivity
+                || this instanceof NewsActivity
+                || this instanceof SettingActivity) {
+            Intent intent = mActivity.getIntent();
+            intent.setClass(mActivity, HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            mActivity.startActivity(intent);
+        } else {
+            finish();
+        }
     }
 
     /**
@@ -2239,14 +2272,14 @@ public class BaseActivity extends FragmentActivity implements
         closeDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
-                finish();
+                contentsDetailBackKey(null);
             }
         });
         //戻るボタン等でダイアログが閉じられた時もOKと同じ挙動
         closeDialog.setDialogDismissCallback(new CustomDialog.DialogDismissCallback() {
             @Override
             public void onDialogDismissCallback() {
-                finish();
+                contentsDetailBackKey(null);
             }
         });
         closeDialog.setCancelable(false);
