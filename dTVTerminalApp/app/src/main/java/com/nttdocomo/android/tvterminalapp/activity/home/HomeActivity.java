@@ -174,7 +174,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         // TODO Bundle内の"state"ではなくSharedPreferencesからペアリング状態を取得する
         setContentView(R.layout.home_main_layout);
         setTitleText(getString(R.string.str_app_title));
-        enableHeaderBackIcon(false);
+        enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         setStatusBarColor(true);
         initView();
@@ -333,22 +333,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             default:
                 break;
         }
-    }
-
-    @Override
-    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_BACK:
-                if (isFastClick()) {
-                    //メニューから起動の場合はアプリ終了ダイアログを表示
-                    showTips();
-                }
-                break;
-
-            default:
-                break;
-        }
-        return false;
     }
 
     /**

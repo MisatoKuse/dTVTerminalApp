@@ -127,105 +127,74 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
             Intent intent = mActivity.getIntent();
 
             if (menuName.equals(mActivity.getString(R.string.nav_menu_item_home))) {
-                    if (!(mActivity instanceof HomeActivity)) {
-                        intent.setClass(mActivity, HomeActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
-                        mActivity.startActivity(intent);
-                    }
+                intent.setClass(mActivity, HomeActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_program_list))) {
-                    if (!(mActivity instanceof TvProgramListActivity)) {
-                        intent.setClass(mActivity, TvProgramListActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
-                        mActivity.startActivity(intent);
-                }
+                intent.setClass(mActivity, TvProgramListActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_channel_list))) {
-                    if (!(mActivity instanceof ChannelListActivity)) {
-                        intent.setClass(mActivity, ChannelListActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
-                        mActivity.startActivity(intent);
-                }
+                intent.setClass(mActivity, ChannelListActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_recorder_program))) {
-                    if (!(mActivity instanceof RecordedListActivity)) {
-                        intent.setClass(mActivity, RecordedListActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
-                        mActivity.startActivity(intent);
-                }
+                intent.setClass(mActivity, RecordedListActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_recommend_program_video))) {
-                    //「おすすめ番組・ビデオ」画面も、他の画面と同様に同一画面表示中の起動抑止を追加
-                    if (!(mActivity instanceof RecommendActivity)) {
-                        intent.setClass(mActivity, RecommendActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
-                        mActivity.startActivity(intent);
-                }
+                intent.setClass(mActivity, RecommendActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_staff_recommend))) {
                     //4月時は非対応
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_ranking))) {
-                    if (!(mActivity instanceof RankingTopActivity)) {
-                        intent.setClass(mActivity, RankingTopActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
-                        mActivity.startActivity(intent);
-                }
+                intent.setClass(mActivity, RankingTopActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_clip))) {
-                    if (!(mActivity instanceof ClipListActivity)) {
-                        intent.setClass(mActivity, ClipListActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
-                        mActivity.startActivity(intent);
-                }
+                intent.setClass(mActivity, ClipListActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_purchased_video))) {
                     //4月時は非対応
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_watch_listen_video))) {
-                    if (!(mActivity instanceof WatchingVideoListActivity)) {
-                        intent.setClass(mActivity, WatchingVideoListActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
-                        intent.setFlags(0);
-                        mActivity.startActivity(intent);
-                    }
+                intent.setClass(mActivity, WatchingVideoListActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_record_reserve))) {
-                    if (!(mActivity instanceof RecordReservationListActivity)) {
-                        intent.setClass(mActivity, RecordReservationListActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
-                        intent.setFlags(0);
-                        mActivity.startActivity(intent);
-                    }
+                intent.setClass(mActivity, RecordReservationListActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_video))) {
-                    if (!(mActivity instanceof VideoTopActivity)) {
-                        intent.setClass(mActivity, VideoTopActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
-                        mActivity.startActivity(intent);
-                    }
+                intent.setClass(mActivity, VideoTopActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_keyword_search))) {
-                    if (!(mActivity instanceof SearchTopActivity)) {
-                        intent.setClass(mActivity, SearchTopActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
-                        mActivity.startActivity(intent);
-                    }
+                intent.setClass(mActivity, SearchTopActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_premium_video))) {
-                if (!(mActivity instanceof PremiumVideoActivity)) {
-                    intent.setClass(mActivity, PremiumVideoActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
-                    intent.setFlags(0);
-                    mActivity.startActivity(intent);
-                }
+                intent.setClass(mActivity, PremiumVideoActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.rental_title))) {
-                    if (!(mActivity instanceof RentalListActivity)) {
-                        intent.setClass(mActivity, RentalListActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
-                        intent.setFlags(0);
-                        mActivity.startActivity(intent);
-                    }
+                intent.setClass(mActivity, RentalListActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_notice))) {
                     if (!(mActivity instanceof NewsActivity)) {
                         intent.setClass(mActivity, NewsActivity.class);

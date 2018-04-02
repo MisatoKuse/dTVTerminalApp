@@ -46,7 +46,7 @@ public class NewsActivity extends BaseActivity implements View.OnClickListener {
 
         //Headerの設定
         setTitleText(getString(R.string.information_title));
-        enableHeaderBackIcon(false);
+        enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
@@ -79,10 +79,9 @@ public class NewsActivity extends BaseActivity implements View.OnClickListener {
         DTVTLogger.start();
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                if (mNewsWebView.canGoBack()) {
-                    mNewsWebView.goBack();
-                    return false;
-                }
+                //メニューから起動の場合ホーム画面に戻る
+                contentsDetailBackKey(null);
+                return false;
             default:
                 break;
         }

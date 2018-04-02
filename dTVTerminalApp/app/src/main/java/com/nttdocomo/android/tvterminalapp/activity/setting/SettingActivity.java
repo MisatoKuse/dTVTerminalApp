@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -125,7 +126,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
 
         //Headerの設定
         setTitleText(getString(R.string.nav_menu_item_setting));
-        enableHeaderBackIcon(false);
+        enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
@@ -291,5 +292,18 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             }
         }
         mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+        DTVTLogger.start();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                contentsDetailBackKey(null);
+                return false;
+            default:
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
