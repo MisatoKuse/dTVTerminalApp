@@ -940,7 +940,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_recorded_ch_name.setVisibility(View.GONE);
             }
             if (mType == ActivityTypeItem.TYPE_RECOMMEND_LIST || mType == ActivityTypeItem.TYPE_SEARCH_LIST) {
-                setTabHyphenVisibility(holder);
+                setTabHyphenVisibility(holder, listContentInfo);
             }
         }
     }
@@ -949,13 +949,16 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * ハイフンの可視設定.
      *
      * @param holder holder
+     * @param listContentInfo ContentsData
      */
-    private void setTabHyphenVisibility(final ViewHolder holder) {
+    private void setTabHyphenVisibility(final ViewHolder holder, final ContentsData listContentInfo) {
         switch (mTabType) {
             case TAB_TV:
-                holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
-                holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
-                holder.tv_recorded_ch_name.setText("ダミー");
+                if (!TextUtils.isEmpty(listContentInfo.getChannelName())) {
+                    holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
+                    holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
+                    holder.tv_recorded_ch_name.setText(listContentInfo.getChannelName());
+                }
                 break;
             case TAB_D_ANIMATE:
             case TAB_D_CHANNEL:
