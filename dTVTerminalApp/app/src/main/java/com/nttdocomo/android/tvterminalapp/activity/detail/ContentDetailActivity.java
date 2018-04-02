@@ -457,7 +457,11 @@ public class ContentDetailActivity extends BaseActivity implements
     /**
      * ひかりTV内dch_見逃し.
      */
-    public static final String D_CHANNEL_OLD_VOD_STR =  "見逃し | ";
+    public static final String D_CHANNEL_OLD_VOD_STR_32 =  "見逃し";
+    /**
+     * ひかりTV内dch_見逃し.
+     */
+    public static final String D_CHANNEL_OLD_VOD_STR = D_CHANNEL_OLD_VOD_STR_32 + " | ";
 
     private final Runnable mHideCtrlViewThread = new Runnable() {
 
@@ -1999,10 +2003,10 @@ public class ContentDetailActivity extends BaseActivity implements
             } else if (contentsType == DateUtils.ContentsType.VOD) {
                 //VOD(m/d（曜日）まで)
                 date = DateUtils.getContentsDetailVodDate(mDetailFullData.getAvail_end_date());
+                date = D_CHANNEL_OLD_VOD_STR + date;
             } else if (contentsType == DateUtils.ContentsType.DCHANNEL_OLD_VOD) {
                 //VOD(m/d（曜日）まで) ひかりTV内dch_見逃し
-                date = DateUtils.getContentsDetailVodDate(mDetailFullData.getAvail_end_date());
-                date = D_CHANNEL_OLD_VOD_STR + date;
+                date = D_CHANNEL_OLD_VOD_STR_32;
             }
             detailFragment.mOtherContentsDetailData.setChannelDate(date);
             detailFragment.noticeRefresh();
