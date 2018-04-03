@@ -82,8 +82,6 @@ public class GenreListDataProvider implements
     private RankGenreListCallback mRankGenreListCallback;
 
     // static final
-    /** ビデオジャンル:IPTV. */
-    private static final String VIDEO_GENRE_KEY_IPTV = "IPTV";
     /** ビデオジャンル;NOD. */
     private static final String VIDEO_GENRE_KEY_NOD = "NOD";
     /** ビデオジャンル:ARIB. */

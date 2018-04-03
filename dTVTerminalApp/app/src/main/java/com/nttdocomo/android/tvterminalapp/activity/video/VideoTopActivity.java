@@ -247,11 +247,12 @@ public class VideoTopActivity extends BaseActivity implements
 
         if (mVideoGenreListDataInfo != null
                 && mVideoGenreListDataInfo.getGenreId() != null
-                && !GenreListMetaData.VIDEO_LIST_GENRE_ID_NOD.equals(mVideoGenreListDataInfo.getGenreId())) { // ジャンル情報取得後はリストを更新
+                && !GenreListMetaData.VIDEO_LIST_GENRE_ID_NOD.equals(mVideoGenreListDataInfo.getGenreId())
+                && !GenreListMetaData.VIDEO_LIST_GENRE_ID_DTV.equals(mVideoGenreListDataInfo.getGenreId())) { // ジャンル情報取得後はリストを更新
             DTVTLogger.debug("ジャンル情報取得後はリストを更新");
             VideoGenreList videoGenreList = new VideoGenreList();
             videoGenreList.setTitle(this.getResources().getString(R.string.video_list_genre_all));
-            videoGenreList.setContentCount(mVideoGenreListDataInfo.getVideoGenreListShowData().getContentCount());
+            videoGenreList.setContentCount("");
             videoGenreList.setGenreId(mVideoGenreListDataInfo.getGenreId());
             mShowContentsList.add(0, videoGenreList);
         }
