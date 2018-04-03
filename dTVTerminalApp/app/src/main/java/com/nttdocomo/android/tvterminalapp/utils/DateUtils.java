@@ -739,10 +739,10 @@ public class DateUtils {
             //ひかりTV_VOD、ひかりTV内dTV
             c_type = getContentsTypeByAvailEndDate(availEndDate);
         } else if (ContentDetailActivity.TV_PROGRAM.equals(dispType)) {
-            if (ContentDetailActivity.TV_SERVICE_FLAG_ZERO.equals(tvService)) {
+            if (ContentDetailActivity.TV_SERVICE_FLAG_HIKARI.equals(tvService)) {
                 //ひかりTV_番組
                 c_type = ContentsType.TV;
-            } else if (ContentDetailActivity.TV_SERVICE_FLAG_ONE.equals(tvService)) {
+            } else if (ContentDetailActivity.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(tvService)) {
                 if (ContentDetailActivity.CONTENT_TYPE_FLAG_THREE.equals(contentsType)) {
                     //ひかりTV内dTVチャンネル_関連VOD
                     c_type = getContentsTypeByAvailEndDate(availEndDate);
@@ -759,7 +759,7 @@ public class DateUtils {
                             //ひかりTV内dTVチャンネル_見逃し(32日以上)
                             c_type = ContentsType.DCHANNEL_OLD_VOD;
                         } else {
-                            //ひかりTV内dTVチャンネル_見逃し(31内)
+                            //ひかりTV内dTVチャンネル_見逃し(31日以内)
                             c_type = ContentsType.VOD;
                         }
                     } else {

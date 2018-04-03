@@ -283,11 +283,11 @@ public class ContentDetailActivity extends BaseActivity implements
     /**
      * tv_service(0).
      */
-    public static final String TV_SERVICE_FLAG_ZERO = "0";
+    public static final String TV_SERVICE_FLAG_HIKARI = "1";
     /**
      * tv_service(1).
      */
-    public static final String TV_SERVICE_FLAG_ONE = "1";
+    public static final String TV_SERVICE_FLAG_DCH_IN_HIKARI = "2";
     /**
      * contents_type(0).
      */
@@ -1952,10 +1952,10 @@ public class ContentDetailActivity extends BaseActivity implements
             mDetailFullData = contentsDetailInfo.get(0);
             if (TV_PROGRAM.equals(mDetailFullData.getDisp_type())) {
                 //tv_programの場合
-                if (TV_SERVICE_FLAG_ZERO.equals(mDetailFullData.getmTv_service())) {
+                if (TV_SERVICE_FLAG_HIKARI.equals(mDetailFullData.getmTv_service())) {
                     //tv_serviceは0の場合
                     setRecordingData(detailFragment);
-                } else if (TV_SERVICE_FLAG_ONE.equals(mDetailFullData.getmTv_service())) {
+                } else if (TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(mDetailFullData.getmTv_service())) {
                     //tv_serviceは1の場合
                     if (CONTENT_TYPE_FLAG_ONE.equals(mDetailFullData.getmContent_type())
                             || CONTENT_TYPE_FLAG_TWO.equals(mDetailFullData.getmContent_type())) {
@@ -2453,7 +2453,7 @@ public class ContentDetailActivity extends BaseActivity implements
                     //ひかりTV内DTVチャンネル
                     // テレビ再生「disp_type」が「tv_program」
                     if (TV_PROGRAM.equals(mDetailData.getDispType())) {
-                        if (TV_SERVICE_FLAG_ONE.equals(mDetailData.getTvService())) {
+                        if (TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(mDetailData.getTvService())) {
                             //「contents_type」が「0」または未設定
                             if (CONTENT_TYPE_FLAG_ZERO.equals(mDetailData.getContentsType())
                                     || null == mDetailData.getContentsType()) {
@@ -2629,7 +2629,7 @@ public class ContentDetailActivity extends BaseActivity implements
                         //「disp_type」が「video_program」の場合
                     } else if (TV_PROGRAM.equals(mDetailData.getDispType())) {
                         //「tv_service」が「0」の場合 ひかりTVの番組
-                        if (TV_SERVICE_FLAG_ZERO.equals(mDetailFullData.getmTv_service())) {
+                        if (TV_SERVICE_FLAG_HIKARI.equals(mDetailFullData.getmTv_service())) {
                             //ひかりTVの番組 地デジ
                             if (H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(mDetailData.getCategoryId())) {
                                 requestStartApplicationHikariTvCategoryTerrestrialDigital(mDetailFullData.getmChno());
@@ -2641,7 +2641,7 @@ public class ContentDetailActivity extends BaseActivity implements
                                 requestStartApplicationHikariTvCategoryIptv(mDetailFullData.getmChno());
                             }
                             //「tv_service」が「1」の場合
-                        } else if (TV_SERVICE_FLAG_ONE.equals(mDetailFullData.getmTv_service())) {
+                        } else if (TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(mDetailFullData.getmTv_service())) {
                             //「contents_type」が「0」または未設定の場合  ひかりTV内dTVチャンネルの番組
                             if (CONTENT_TYPE_FLAG_ZERO.equals(mDetailData.getContentsType())
                                     || null == mDetailFullData.getmContent_type()) {

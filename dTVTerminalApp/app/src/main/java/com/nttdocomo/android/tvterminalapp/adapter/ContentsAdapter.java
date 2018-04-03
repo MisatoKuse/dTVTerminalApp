@@ -606,7 +606,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         boolean result = false;
         if (isPlala) {
             if (ContentDetailActivity.TV_PROGRAM.equals(listContentInfo.getDispType())) {
-                if (ContentDetailActivity.TV_SERVICE_FLAG_ONE.equals(listContentInfo.getTvService())) {
+                if (ContentDetailActivity.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(listContentInfo.getTvService())) {
                     if (ContentDetailActivity.CONTENT_TYPE_FLAG_THREE.equals(listContentInfo.getContentsType())) {
                         result = true;
                     } else if (ContentDetailActivity.CONTENT_TYPE_FLAG_ONE.equals(listContentInfo.getContentsType())
@@ -618,7 +618,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                     } else {
                         result = true;
                     }
-                } else if (ContentDetailActivity.TV_SERVICE_FLAG_ZERO.equals(listContentInfo.getTvService())) {
+                } else if (ContentDetailActivity.TV_SERVICE_FLAG_HIKARI.equals(listContentInfo.getTvService())) {
                     result = true;
                 }
             }

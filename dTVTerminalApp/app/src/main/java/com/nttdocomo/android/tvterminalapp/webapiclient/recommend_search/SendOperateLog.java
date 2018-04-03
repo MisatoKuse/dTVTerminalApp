@@ -194,9 +194,9 @@ public class SendOperateLog extends WebApiBase {
             switch (mDetailFullData.getDisp_type() == null ? valueBlank : mDetailFullData.getDisp_type()) {
                 case ContentDetailActivity.TV_PROGRAM:
                     switch (mDetailFullData.getmTv_service() == null ? valueBlank : mDetailFullData.getmTv_service()) {
-                        case ContentDetailActivity.TV_SERVICE_FLAG_ZERO:
+                        case ContentDetailActivity.TV_SERVICE_FLAG_HIKARI:
                             return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_IPTV.getCategoryId();
-                        case ContentDetailActivity.TV_SERVICE_FLAG_ONE:
+                        case ContentDetailActivity.TV_SERVICE_FLAG_DCH_IN_HIKARI:
                             switch (mDetailFullData.getmContent_type() == null ? valueBlank : mDetailFullData.getmContent_type()) {
                                 case valueBlank:
                                 case ContentDetailActivity.CONTENT_TYPE_FLAG_ZERO:
