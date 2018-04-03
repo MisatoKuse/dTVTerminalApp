@@ -17,7 +17,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Display;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -174,7 +173,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         // TODO Bundle内の"state"ではなくSharedPreferencesからペアリング状態を取得する
         setContentView(R.layout.home_main_layout);
         setTitleText(getString(R.string.str_app_title));
-        enableHeaderBackIcon(true);
+        enableHeaderBackIcon(false);
         enableStbStatusIcon(true);
         setStatusBarColor(true);
         initView();

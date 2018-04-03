@@ -1737,31 +1737,6 @@ public class BaseActivity extends FragmentActivity implements
         mRemoteControlRelayClient.setHandler(mRelayClientHandler);
     }
 
-    /**
-     * 機能: バックキー押下によるアプリ終了ダイアログを表示.
-     */
-    protected void showTips() {
-        DTVTLogger.start();
-        if (checkRemoteControllerView()) {
-            //リモコンUI表示時はリモコンUIを閉じてダイアログは表示しない
-            return;
-        }
-        CustomDialog applicationFinishDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-        applicationFinishDialog.setContent(getString(R.string.app_finish_dialog_message));
-        applicationFinishDialog.setCancelable(false);
-        applicationFinishDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-            @Override
-            public void onOKCallback(final boolean isOK) {
-                //アプリ終了する
-                Intent startMain = new Intent(Intent.ACTION_MAIN);
-                startMain.addCategory(Intent.CATEGORY_HOME);
-                startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(startMain);
-                finish();
-            }
-        });
-        applicationFinishDialog.showDialog();
-    }
 //    TODO 検討中
 //    @Override
 //    public void userInfoListCallback(boolean isChange, List<UserInfoList> list) {
