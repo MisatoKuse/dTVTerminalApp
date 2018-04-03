@@ -574,6 +574,12 @@ public class SearchTopActivity extends BaseActivity
             DTVTLogger.debug("onSearchDataProviderFinishNg");
         }
         mIsScroll = false;
+
+        //エラーの場合もプログレスバーを消して0件にする
+        SearchBaseFragment baseFragment = mFragmentFactory.createFragment(mTabIndex, this);
+        baseFragment.showProgressBar(false);
+        baseFragment.displayLoadMore(false);
+
         setSearchStart(false);
         showErrorMessage();
     }

@@ -11,10 +11,10 @@
     <string name="negative_response">いいえ</string>
     <string name="custom_dialog_ok">OK</string>
     <string name="custom_dialog_cancel">キャンセル</string>
-    <string name="clip_regist_result_message">をクリップしました</string>
-    <string name="clip_regist_error_message">のクリップに失敗しました</string>
-    <string name="clip_delete_result_message">のクリップを解除しました</string>
-    <string name="clip_delete_error_message">のクリップの解除に失敗しました</string>
+    <string name="clip_regist_result_message">クリップしました</string>
+    <string name="clip_regist_error_message">クリップに失敗しました</string>
+    <string name="clip_delete_result_message">クリップを解除しました</string>
+    <string name="clip_delete_error_message">クリップの解除に失敗しました</string>
     <string name="clip_data_get_error_message">クリップデータ取得失敗</string>
     <string name="epg_contents_message">番組</string>
     <string name="vod_contents_message">ビデオ</string>

@@ -175,10 +175,6 @@ public class BaseActivity extends FragmentActivity implements
      */
     private boolean mClipRunTime = false;
     /**
-     * クリップ対象.
-     */
-    private String mClipTarget = null;
-    /**
      * stb status icon状態.
      */
     private boolean mIsStbStatusOn = false;
@@ -1581,12 +1577,6 @@ public class BaseActivity extends FragmentActivity implements
             mClipButton = clipButton;
             mClipRequestData = data;
 
-            //クリップ対象を格納
-            if (data.getIsNotify()) {
-                mClipTarget = getString(R.string.epg_contents_message);
-            } else {
-                mClipTarget = getString(R.string.vod_contents_message);
-            }
             boolean isParamCheck;
 
             //クリップ状態によりクリップ登録/削除実行
@@ -1616,11 +1606,9 @@ public class BaseActivity extends FragmentActivity implements
      * @param msgId 各ステータスのメッセージID
      */
     private void showClipToast(final int msgId) {
-        //クリップ対象がない場合には、トーストのメッセージに不整合が生じるため、表示しない
-        if (mClipTarget != null && mClipTarget.length() > 0) {
-            String[] strings = {mClipTarget, getString(msgId)};
-            Toast.makeText(this, StringUtils.getConnectString(strings), Toast.LENGTH_SHORT).show();
-        }
+        //指定された文字リソースを表示する
+        Toast.makeText(this, msgId, Toast.LENGTH_SHORT).show();
+
         //クリップ処理終了メッセージ後にフラグを実行中から終了に変更
         mClipRunTime = false;
     }
