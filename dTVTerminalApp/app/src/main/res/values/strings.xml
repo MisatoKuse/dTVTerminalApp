@@ -225,6 +225,8 @@
     <string name="contents_detail_tv_staff">キャスト・スタッフ</string>
     <string name="contents_detail_tv_staff_recommend">おすすめ作品</string>
     <string name="contents_detail_until_date">まで</string>
+    <string name="contents_detail_hikari_d_channel_miss_viewing">見逃し</string>
+    <string name="contents_detail_hikari_d_channel_miss_viewing_separation">見逃し | </string>
     <string name="contents_detail_contract_text">ひかりTV for docomoの契約が必要です。契約済みの方はdアカウントでログインしてください。</string>
     <string name="dtv_content_service_start_text">dTVで視聴</string>
     <string name="dtv_content_service_start_dialog">dTVを起動します。</string>

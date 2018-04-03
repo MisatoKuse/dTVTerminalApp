@@ -337,8 +337,8 @@ public class DtvContentsDetailFragment extends Fragment {
             mTxtChannelDate.setVisibility(View.VISIBLE);
             SpannableString spannableString = new SpannableString(date);
             int subCount = 0;
-            if (date.contains(ContentDetailActivity.D_CHANNEL_OLD_VOD_STR_32)
-                    && !date.contains(ContentDetailActivity.D_CHANNEL_OLD_VOD_STR)) {
+            if (date.contains(getString(R.string.contents_detail_hikari_d_channel_miss_viewing))
+                    && !date.contains(getString(R.string.contents_detail_hikari_d_channel_miss_viewing_separation))) {
                 subCount = 3;
             }
             //「見逃し」は黄色文字で表示する
