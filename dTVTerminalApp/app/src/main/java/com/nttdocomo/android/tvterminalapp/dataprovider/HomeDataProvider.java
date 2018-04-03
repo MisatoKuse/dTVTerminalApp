@@ -209,12 +209,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * 番組Listクラス.
      */
     private TvScheduleList mTvScheduleList = null;
-
-    /**
-     * 番組表コンテンツリスト.
-     */
-    private List<ContentsData> mTvScheduleContentsList = null;
-
     //ここから
     /**
      * クリップ(TV)WebClient.
@@ -264,7 +258,14 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * RecommendDataProvider.
      */
     private RecommendDataProvider mRecommendDataProvider = null;
-
+    /**
+     * おすすめ番組データ.
+     */
+    private List<ContentsData> mRecommendChData = null;
+    /**
+     * 今日の番組データ.
+     */
+    private List<Map<String, String>> mDailyRankListData = null;
     /**
      * 通信禁止判定フラグ.
      */
@@ -291,7 +292,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         DTVTLogger.start();
         if (tvScheduleList != null && tvScheduleList.size() > 0) {
             TvScheduleList list = tvScheduleList.get(0);
-            mTvScheduleContentsList = setHomeContentData(list.geTvsList(), false);
             setStructDB(list);
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
@@ -385,6 +385,13 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             DbThread t = new DbThread(handler, this, SELECT_CHANNEL_LIST);
             t.start();
         }
+        //おすすめ番組は、チャンネル取得してから、再設定する
+        if (mRecommendChData != null) {
+            sendRecommendChListData(mRecommendChData);
+        }
+        if (mDailyRankListData != null) {
+            sendDailyRankListData(mDailyRankListData);
+        }
         DTVTLogger.end();
     }
 
@@ -393,26 +400,31 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      *
      * @param scheduleList 番組表コンテンツリスト
      * @param channelList  チャンネルリスト
+     * @param isPlala  true ぷららサーバ  flase レコメンドサーバ
      * @return チャンネル名
      */
-    private List<ContentsData> setChannelName(final List<ContentsData> scheduleList, final ChannelList channelList) {
-        mTvScheduleContentsList = scheduleList;
-        if (channelList != null && mTvScheduleContentsList != null) {
+    private List<ContentsData> setChannelName(final List<ContentsData> scheduleList, final ChannelList channelList, final boolean isPlala) {
+        if (channelList != null && scheduleList != null) {
             List<HashMap<String, String>> list = channelList.getChannelList();
-            for (int i = 0; i < mTvScheduleContentsList.size(); i++) {
-                String scheduleId = mTvScheduleContentsList.get(i).getServiceId();
+            for (int i = 0; i < scheduleList.size(); i++) {
+                String scheduleId = "";
+                if (!isPlala) {
+                    scheduleId = scheduleList.get(i).getChannelId();
+                } else {
+                    scheduleId = scheduleList.get(i).getServiceId();
+                }
                 if (!TextUtils.isEmpty(scheduleId)) {
                     for (HashMap<String, String> hashMap : list) {
                         String channelId = (hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID));
                         //番組表と
                         if (!TextUtils.isEmpty(channelId) && scheduleId.equals(channelId)) {
-                            mTvScheduleContentsList.get(i).setChannelName(hashMap.get(JsonConstants.META_RESPONSE_TITLE));
+                            scheduleList.get(i).setChannelName(hashMap.get(JsonConstants.META_RESPONSE_TITLE));
                         }
                     }
                 }
             }
         }
-        return mTvScheduleContentsList;
+        return scheduleList;
     }
 
     @Override
@@ -535,12 +547,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         //NOW ON AIRを取得するためにまずはチャンネルリスト取得
         getChannelList(0, 0, "", DEFAULT_CHANNEL_DISPLAY_TYPE);
 
-        //おすすめ番組・レコメンド情報は最初からContentsDataのリストなので、そのまま使用する
-        getRecommendChListData();
-
-        //おすすめビデオ・ワンタイムパスワードの取得で重複しないようにしたので、連続呼び出しが可能になった
-        getRecommendVdListData();
-
         //今日のテレビランキング
         getDailyRankListData();
 
@@ -557,6 +563,12 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
 
         //ロールID一覧取得
         getRoleListData();
+
+        //おすすめ番組・レコメンド情報は最初からContentsDataのリストなので、そのまま使用する
+        getRecommendChListData();
+
+        //おすすめビデオ・ワンタイムパスワードの取得で重複しないようにしたので、連続呼び出しが可能になった
+        getRecommendVdListData();
 
         if (userInfoDataProvider.isH4dUser()) {
             //H4dユーザに必要なデータ取得開始
@@ -597,7 +609,11 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param list おすすめ番組のコンテンツ情報
      */
     private void sendRecommendChListData(final List<ContentsData> list) {
-        mApiDataProviderCallback.recommendChannelCallback(list);
+        if (mChannelList != null) {
+            mApiDataProviderCallback.recommendChannelCallback(setChannelName(list, mChannelList, false));
+        } else {
+            mRecommendChData = list;
+        }
     }
 
     /**
@@ -615,7 +631,11 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param list デイリーランクリスト
      */
     private void sendDailyRankListData(final List<Map<String, String>> list) {
-        mApiDataProviderCallback.dailyRankListCallback(setHomeContentData(list, true));
+        if (mChannelList != null) {
+            mApiDataProviderCallback.dailyRankListCallback(setChannelName(setHomeContentData(list, true), mChannelList, true));
+        } else {
+            mDailyRankListData = list;
+        }
     }
 
     /**
@@ -1103,7 +1123,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if (mTvScheduleList != null && mTvScheduleList.geTvsList() != null) {
             List<Map<String, String>> map = tvScheduleList.geTvsList();
             List<ContentsData> contentsData = setHomeContentData(map, false);
-            sendTvScheduleListData(setChannelName(contentsData, mChannelList));
+            sendTvScheduleListData(setChannelName(contentsData, mChannelList, true));
             //DB保存
             Handler handler = new Handler(Looper.getMainLooper());
             DbThread t = new DbThread(handler, this, TV_SCHEDULE_LIST);
@@ -1411,7 +1431,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 List<Map<String, String>> scheduleList;
                 homeDataManager = new HomeDataManager(mContext);
                 scheduleList = homeDataManager.selectTvScheduleListHomeData();
-                sendTvScheduleListData(setChannelName(setHomeContentData(scheduleList, false), mChannelList));
+                sendTvScheduleListData(setChannelName(setHomeContentData(scheduleList, false), mChannelList, true));
                 break;
             case SELECT_DAILY_RANK_LIST:
                 List<Map<String, String>> dailyRankList;
@@ -1432,6 +1452,13 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 //チャンネル情報を元にNowOnAir情報の取得を行う.
                 mChannelList = chList;
                 getTvScheduleFromChInfo(chList);
+                //おすすめ番組は、前回チャンネル取得できなければ、再設定する
+                if (mRecommendChData != null) {
+                    sendRecommendChListData(mRecommendChData);
+                }
+                if (mDailyRankListData != null) {
+                    sendDailyRankListData(mDailyRankListData);
+                }
                 break;
             case SELECT_WATCH_LISTEN_VIDEO_LIST:
                 homeDataManager = new HomeDataManager(mContext);
@@ -1442,7 +1469,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 recommendDataManager = new RecommendListDataManager(mContext);
                 resultList = recommendDataManager.selectRecommendList(
                         SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV);
-                mApiDataProviderCallback.recommendChannelCallback(resultList);
+                mApiDataProviderCallback.recommendChannelCallback(setChannelName(resultList, mChannelList, false));
                 break;
             case SELECT_RECOMMEND_VOD_LIST:
                 recommendDataManager = new RecommendListDataManager(mContext);
