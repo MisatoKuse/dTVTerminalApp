@@ -93,6 +93,10 @@ public class RecommendActivity extends BaseActivity implements
      * リスト0件メッセージ.
      */
     private TextView mNoDataMessage;
+    /**
+     * フラグメント作成クラス.
+     */
+    private RecommendFragmentFactory mRecommendFragmentFactory = null;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -105,6 +109,8 @@ public class RecommendActivity extends BaseActivity implements
         int startPageNo = intent.getIntExtra(RECOMMEND_LIST_START_PAGE, RECOMMEND_LIST_PAGE_NO_OF_TV);
         mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
         if (mIsMenuLaunch) {
+            sRecommendViewPager = null;
+            startPageNo = RECOMMEND_LIST_PAGE_NO_OF_TV;
             enableHeaderBackIcon(true);
         }
         enableStbStatusIcon(true);
@@ -144,6 +150,7 @@ public class RecommendActivity extends BaseActivity implements
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         mTabNames = getResources().getStringArray(R.array.recommend_list_tab_names);
         mRecommendDataProvider = new RecommendDataProvider(this);
+        mRecommendFragmentFactory = new RecommendFragmentFactory();
 
     }
 
@@ -249,7 +256,7 @@ public class RecommendActivity extends BaseActivity implements
     private RecommendBaseFragment getCurrentRecommendBaseFragment() {
         if (sRecommendViewPager != null) {
             int currentPageNo = sRecommendViewPager.getCurrentItem();
-            return RecommendFragmentFactory.createFragment(currentPageNo);
+            return mRecommendFragmentFactory.createFragment(currentPageNo);
         }
         return null;
     }
@@ -307,9 +314,9 @@ public class RecommendActivity extends BaseActivity implements
     public void clearAllFragment() {
 
         if (null != sRecommendViewPager) {
-            int sum = RecommendFragmentFactory.getFragmentCount();
+            int sum = mRecommendFragmentFactory.getFragmentCount();
             for (int i = 0; i < sum; ++i) {
-                RecommendBaseFragment baseFragment = RecommendFragmentFactory.createFragment(i);
+                RecommendBaseFragment baseFragment = mRecommendFragmentFactory.createFragment(i);
                 baseFragment.clear();
             }
         }
@@ -368,7 +375,7 @@ public class RecommendActivity extends BaseActivity implements
         @Override
         public Fragment getItem(final int position) {
             synchronized (this) {
-                return RecommendFragmentFactory.createFragment(position);
+                return mRecommendFragmentFactory.createFragment(position);
             }
         }
 
@@ -558,8 +565,6 @@ public class RecommendActivity extends BaseActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //ヌルを入れて解放されやすくする
-        sRecommendViewPager = null;
 
         //この組み合わせは、Androidのソースでも行われている正当な方法です。
         System.gc();

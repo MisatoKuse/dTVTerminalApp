@@ -15,7 +15,7 @@ public class RecommendFragmentFactory {
     /**
      * Fragment格納用.
      */
-    private static final Map<Integer, RecommendBaseFragment> mFragments = new HashMap<>();
+    private final Map<Integer, RecommendBaseFragment> mFragments = new HashMap<>();
 
     /**
      * Fragment生成.
@@ -23,7 +23,7 @@ public class RecommendFragmentFactory {
      * @param position position
      * @return fragment
      */
-    public static synchronized RecommendBaseFragment createFragment(final int position) {
+    public synchronized RecommendBaseFragment createFragment(final int position) {
         RecommendBaseFragment fragment;
         fragment = mFragments.get(position);
 
@@ -40,7 +40,7 @@ public class RecommendFragmentFactory {
      *
      * @return FragmentCount
      */
-    public static synchronized int getFragmentCount() {
+    public synchronized int getFragmentCount() {
         return mFragments.size();
     }
 
