@@ -68,6 +68,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -454,14 +455,6 @@ public class ContentDetailActivity extends BaseActivity implements
      * 放送中フラグ.
      */
     private boolean isVideoBroadcast = false;
-    /**
-     * ひかりTV内dch_見逃し.
-     */
-    public static final String D_CHANNEL_OLD_VOD_STR_32 =  "見逃し";
-    /**
-     * ひかりTV内dch_見逃し.
-     */
-    public static final String D_CHANNEL_OLD_VOD_STR = D_CHANNEL_OLD_VOD_STR_32 + " | ";
 
     private final Runnable mHideCtrlViewThread = new Runnable() {
 
@@ -1062,6 +1055,7 @@ public class ContentDetailActivity extends BaseActivity implements
      *
      * @return whether succeed
      */
+    @SuppressWarnings("OverlyLongMethod")
     private boolean setCurrentMediaInfo() {
         DTVTLogger.start();
         RecordedContentsDetailData datas = mIntent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
@@ -1373,6 +1367,7 @@ public class ContentDetailActivity extends BaseActivity implements
     /**
      * データの初期化.
      */
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     private void initContentData() {
         mFrameLayout = findViewById(R.id.header_watch_by_tv);
         // タブ数を先に決定するため、コンテンツ詳細のデータを最初に取得しておく
@@ -1661,6 +1656,7 @@ public class ContentDetailActivity extends BaseActivity implements
      *
      * @param isLandscape 端末の縦横判定
      */
+    @SuppressWarnings("OverlyLongMethod")
     private void setPlayerProgressView(final boolean isLandscape) {
         if (isLandscape) {
             //端末横向き
@@ -2003,10 +1999,13 @@ public class ContentDetailActivity extends BaseActivity implements
             } else if (contentsType == DateUtils.ContentsType.VOD) {
                 //VOD(m/d（曜日）まで)
                 date = DateUtils.getContentsDetailVodDate(mDetailFullData.getAvail_end_date());
-                date = D_CHANNEL_OLD_VOD_STR + date;
+                date = StringUtils.getConnectStrings(
+                        getString(R.string.contents_detail_hikari_d_channel_miss_viewing_separation),
+                        date);
             } else if (contentsType == DateUtils.ContentsType.DCHANNEL_OLD_VOD) {
                 //VOD(m/d（曜日）まで) ひかりTV内dch_見逃し
-                date = D_CHANNEL_OLD_VOD_STR_32;
+                date = StringUtils.getConnectStrings(
+                        getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
             }
             detailFragment.mOtherContentsDetailData.setChannelDate(date);
             detailFragment.noticeRefresh();
@@ -2314,6 +2313,7 @@ public class ContentDetailActivity extends BaseActivity implements
     }
 
     //region View.OnClickListener
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     @Override
     public void onClick(final View v) {
         DTVTLogger.start();
@@ -2526,6 +2526,7 @@ public class ContentDetailActivity extends BaseActivity implements
         return -1;
     }
     //region RemoteControllerView
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     @Override
     public void onStartRemoteControl(final boolean isFromHeader) {
         mIsFromHeader = isFromHeader;
