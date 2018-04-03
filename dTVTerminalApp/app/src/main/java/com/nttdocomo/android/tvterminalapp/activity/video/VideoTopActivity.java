@@ -119,6 +119,16 @@ public class VideoTopActivity extends BaseActivity implements
     }
 
     @Override
+    public void contentsDetailBackKey(final View view) {
+        if (mIsMenuLaunch) {
+            //メニューから起動の場合ホーム画面に戻る
+            super.contentsDetailBackKey(null);
+        } else {
+            finish();
+        }
+    }
+
+    @Override
     public void onStartCommunication() {
         super.onStartCommunication();
         DTVTLogger.start();
@@ -174,7 +184,7 @@ public class VideoTopActivity extends BaseActivity implements
 
             mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
             if (mIsMenuLaunch) {
-                enableHeaderBackIcon(false);
+                enableHeaderBackIcon(true);
             }
         }
     }

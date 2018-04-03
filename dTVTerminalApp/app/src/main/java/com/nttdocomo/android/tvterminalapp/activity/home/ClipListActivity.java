@@ -109,6 +109,7 @@ public class ClipListActivity extends BaseActivity implements
         mStartPageNo = intent.getIntExtra(CLIP_LIST_START_PAGE, CLIP_LIST_PAGE_NO_OF_TV);
         mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
         if (mIsMenuLaunch) {
+            mStartPageNo = CLIP_LIST_PAGE_NO_OF_TV;
             enableHeaderBackIcon(true);
         }
         enableStbStatusIcon(true);
