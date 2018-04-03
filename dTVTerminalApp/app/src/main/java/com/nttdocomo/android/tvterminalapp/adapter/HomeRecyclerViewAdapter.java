@@ -451,19 +451,6 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         String startTime = String.valueOf(DateUtils.getEpochTime(contentsData.getLinearStartDate()) / 1000);
         String endTime = String.valueOf(DateUtils.getEpochTime(contentsData.getLinearEndDate()) / 1000);
         String channelName = contentsData.getChannelName();
-        if (TextUtils.isEmpty(startTime) || !DBUtils.isNumber(startTime)) {
-            //TODO 放送開始時間が取得できなかった場合の仕様は現在未決定のため仮の時間を設定する.
-            startTime = "1516766741";
-        }
-        if (TextUtils.isEmpty(endTime) || !DBUtils.isNumber(endTime)) {
-            //TODO 放送終了時間が取得できなかった場合の仕様は現在未決定のため仮の時間を設定する.
-            endTime = String.valueOf(DateUtils.getNowTimeFormatEpoch());
-        }
-        if (TextUtils.isEmpty(channelName)) {
-            //TODO 放送終了時間が取得できなかった場合の仕様は現在未決定のため仮の時間を設定する.
-            channelName = "CH名";
-        }
-
         String date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(startTime)),
                 DateUtils.formatEpochToStringOpeLog(Long.parseLong(endTime)), channelName);
 
@@ -478,12 +465,8 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      */
     private void setRecommendInfo(final ContentsData contentsData, final ViewHolder viewHolder) {
         String startViewing = contentsData.getStartViewing();
-        if (TextUtils.isEmpty(startViewing) || !DBUtils.isNumber(startViewing)) {
-            //TODO 放送開始時間が取得できなかった場合の仕様は現在未決定のため仮の時間を設定する.
-            startViewing = "20180130123456";
-        }
-
-        viewHolder.mTime.setText(structDateStrings(startViewing));
+        String channelName = contentsData.getChannelName();
+        viewHolder.mTime.setText(structDateStrings(startViewing, channelName));
     }
 
     /**
@@ -494,12 +477,8 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      */
     private void setTvRankingInfo(final ContentsData contentsData, final ViewHolder viewHolder) {
         String availStartDate = contentsData.getLinearStartDate();
-        if (TextUtils.isEmpty(availStartDate) || !DBUtils.isNumber(availStartDate)) {
-            //TODO 放送開始時間が取得できなかった場合の仕様は現在未決定のため仮の時間を設定する.
-            availStartDate = "1516966741";
-        }
-
-        String date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(availStartDate)));
+        String channelName = contentsData.getChannelName();
+        String date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(availStartDate)), channelName);
         viewHolder.mTime.setText(date);
     }
 
@@ -538,10 +517,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         timeMinuteOnePlace = endTime.substring(START_TIME_MINUTE_SEPARATE, START_TIME_MINUTE_END);
         String endMinute = StringUtils.getConnectStrings(timeMinuteTensPlace, timeMinuteOnePlace);
 
-        return StringUtils.getConnectStrings(channelName, mContext.getString(R.string.home_contents_pipe),
-                startHour, mContext.getString(R.string.home_contents_colon), startMinute,
+        return StringUtils.getConnectStrings(startHour, mContext.getString(R.string.home_contents_colon), startMinute,
                 mContext.getString(R.string.home_contents_hyphen), endHour,
-                mContext.getString(R.string.home_contents_colon), endMinute);
+                mContext.getString(R.string.home_contents_colon), endMinute, mContext.getString(R.string.home_contents_pipe),
+                channelName);
     }
 
     /**
@@ -550,7 +529,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      * @param dateString yyyyMMddHHmmssデータ
      * @return 整形した日付データ
      */
-    private String structDateStrings(final String dateString) {
+    private String structDateStrings(final String dateString, final String channelName) {
         //曜日を取得する
         String dayOfWeek = DateUtils.getStringDayOfWeek(DateUtils.getDayOfWeek(DateUtils.getEpochTimeLink(dateString)));
 
@@ -589,7 +568,8 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         return StringUtils.getConnectStrings(month, mContext.getString(R.string.home_contents_slash), day,
                 mContext.getString(R.string.home_contents_front_bracket), dayOfWeek,
                 mContext.getString(R.string.home_contents_back_bracket), hour,
-                mContext.getString(R.string.home_contents_colon), minute);
+                mContext.getString(R.string.home_contents_colon), minute,
+                mContext.getString(R.string.home_contents_hyphen), channelName);
     }
 
     @Override
