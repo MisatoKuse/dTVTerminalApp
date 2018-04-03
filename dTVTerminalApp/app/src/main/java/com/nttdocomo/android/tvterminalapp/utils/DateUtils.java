@@ -301,9 +301,13 @@ public class DateUtils {
          */
         VOD,
         /**
-         * ひかりTV内dch_見逃し.
+         * ひかりTV内dch_見逃し(３２以上).
          */
-        DCHANNEL_OLD_VOD,
+        DCHANNEL_VOD_OVER_31,
+        /**
+         * ひかりTV内dch_見逃し(３1以内).
+         */
+        DCHANNEL_VOD_31,
         /**
          * その他.
          */
@@ -728,7 +732,7 @@ public class DateUtils {
      * @param availEndDate 配信日時(avail_end_date)
      * @param vodStartDate VOD配信日時(vod_start_date)
      * @param vodEndDate VOD配信日時(vod_end_date)
-     * @return VOD、TV、DCHANNEL_OLD_VOD、その他
+     * @return VOD、TV、DCHANNEL_VOD_OVER_31、その他
      */
     public static ContentsType getContentsDateByPlala(final String dispType, final String tvService,
                                                       final String contentsType, final long availEndDate,
@@ -752,15 +756,15 @@ public class DateUtils {
                     Date nowDate = cal.getTime();
                     cal.setTimeInMillis(vodStartDate * 1000);
                     Date startDate = cal.getTime();
-                    if (nowDate.compareTo(startDate) != 1) {
+                    if (startDate.compareTo(nowDate) != 1) {
                         //ひかりTV内dTVチャンネル_見逃し
                         cal.setTimeInMillis(vodEndDate * 1000);
                         if (isOver31Day(nowDate, cal)) {
                             //ひかりTV内dTVチャンネル_見逃し(32日以上)
-                            c_type = ContentsType.DCHANNEL_OLD_VOD;
+                            c_type = ContentsType.DCHANNEL_VOD_OVER_31;
                         } else {
                             //ひかりTV内dTVチャンネル_見逃し(31日以内)
-                            c_type = ContentsType.VOD;
+                            c_type = ContentsType.DCHANNEL_VOD_31;
                         }
                     } else {
                         //ひかりTV内dTVチャンネル_番組

@@ -1999,13 +1999,16 @@ public class ContentDetailActivity extends BaseActivity implements
             } else if (contentsType == DateUtils.ContentsType.VOD) {
                 //VOD(m/d（曜日）まで)
                 date = DateUtils.getContentsDetailVodDate(mDetailFullData.getAvail_end_date());
-                date = StringUtils.getConnectStrings(
-                        getString(R.string.contents_detail_hikari_d_channel_miss_viewing_separation),
-                        date);
-            } else if (contentsType == DateUtils.ContentsType.DCHANNEL_OLD_VOD) {
+            } else if (contentsType == DateUtils.ContentsType.DCHANNEL_VOD_OVER_31) {
                 //VOD(m/d（曜日）まで) ひかりTV内dch_見逃し
                 date = StringUtils.getConnectStrings(
                         getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
+            } else if (contentsType == DateUtils.ContentsType.DCHANNEL_VOD_31) {
+                //VOD(m/d（曜日）まで)
+                date = DateUtils.getContentsDetailVodDate(mDetailFullData.getmVod_end_date());
+                date = StringUtils.getConnectStrings(
+                        getString(R.string.contents_detail_hikari_d_channel_miss_viewing_separation),
+                        date);
             }
             detailFragment.mOtherContentsDetailData.setChannelDate(date);
             detailFragment.noticeRefresh();
@@ -2953,8 +2956,11 @@ public class ContentDetailActivity extends BaseActivity implements
      */
     private boolean comparisonStartTime() {
         long nowTimeEpoch = DateUtils.getNowTimeFormatEpoch();
-        long canRecordingReservationTime =
-                mRecordingReservationContentsDetailInfo.getStartTime() - (DateUtils.EPOCH_TIME_ONE_HOUR * 2);
+        long canRecordingReservationTime = 0;
+        if (mRecordingReservationContentsDetailInfo != null) {
+            canRecordingReservationTime =
+                    mRecordingReservationContentsDetailInfo.getStartTime() - (DateUtils.EPOCH_TIME_ONE_HOUR * 2);
+        }
         return !(nowTimeEpoch >= canRecordingReservationTime);
     }
 

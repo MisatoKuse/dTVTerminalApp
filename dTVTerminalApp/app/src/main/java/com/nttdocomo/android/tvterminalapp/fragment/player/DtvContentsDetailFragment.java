@@ -471,8 +471,17 @@ public class DtvContentsDetailFragment extends Fragment {
         if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelName())) {
             mTxtChannelName.setText(mOtherContentsDetailData.getChannelName());
         }
-        if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelDate())) {
-            mTxtChannelDate.setText(mOtherContentsDetailData.getChannelDate());
+        String date = mOtherContentsDetailData.getChannelDate();
+        if (!TextUtils.isEmpty(date)) {
+            SpannableString spannableString = new SpannableString(date);
+            int subCount = 0;
+            if (date.contains(getString(R.string.contents_detail_hikari_d_channel_miss_viewing))) {
+                subCount = 3;
+            }
+            //「見逃し」は黄色文字で表示する
+            spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.recommend_list_now_on_air)),
+                    0, subCount, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            mTxtChannelDate.setText(spannableString);
         }
     }
 

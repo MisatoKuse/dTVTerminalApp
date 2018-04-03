@@ -728,6 +728,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                     break;
                 case TYPE_DAILY_RANK: // 今日のテレビランキング
                 case TYPE_WEEKLY_RANK: // 週間ランキング
+                case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
                     holder.tv_time.setText(DateUtils.getRecordShowListItem(Long.parseLong(listContentInfo.getTime())));
                     break;
                 case TYPE_RENTAL_RANK: // レンタル一覧
@@ -753,7 +754,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 case TYPE_RECORDED_LIST: // 録画番組一覧
                 case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
-                case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
                 case TYPE_CONTENT_DETAIL_CHANNEL_LIST: // コンテンツ詳細チャンネル一覧
                     holder.tv_time.setText(listContentInfo.getTime());
                     break;
