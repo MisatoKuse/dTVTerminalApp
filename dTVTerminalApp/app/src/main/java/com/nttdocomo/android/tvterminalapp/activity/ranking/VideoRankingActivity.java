@@ -264,7 +264,7 @@ public class VideoRankingActivity extends BaseActivity implements
                 @Override
                 public void run() {
                     //エラーメッセージを取得する
-                    ErrorState errorState = mVideoGenreProvider.getError();
+                    ErrorState errorState = mVideoGenreProvider.getGenreListError();
                     if (errorState != null) {
                         String message = errorState.getErrorMessage();
                         //有無で処理を分ける

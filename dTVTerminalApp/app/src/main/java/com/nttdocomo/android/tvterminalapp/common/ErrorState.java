@@ -37,6 +37,11 @@ public class ErrorState {
     private String mErrorMessage;
 
     /**
+     * トースト用エラーメッセージ.
+     */
+    private String mToastErrorMessage;
+
+    /**
      * エラーコード.
      */
     private String mErrorCode;
@@ -116,7 +121,8 @@ public class ErrorState {
      * @return エラーメッセージ
      */
     public String getErrorMessage() {
-        return mErrorMessage;
+        //トースト用メッセージを返す
+        return mToastErrorMessage;
     }
 
 
@@ -135,7 +141,8 @@ public class ErrorState {
         }
 
         //エラーメッセージの選択
-        //TODO: 仮ワーディングで現在は2種類になっている
+        //TODO: 使用するメッセージは、ダイアログ用SSLメッセージ以外は既存の物を流用する
+        //トースト用は現状同一メッセージとする
         switch (mErrorType) {
             case SUCCESS:
                 //正常なのでメッセージは無し。
@@ -144,13 +151,29 @@ public class ErrorState {
             case SSL_ERROR:
                 //SSLエラー用メッセージの取得
                 mErrorMessage = context.getString(R.string.nw_error_ssl_message);
+
+                //トースト用
+                mToastErrorMessage = context.getString(
+                        R.string.common_get_data_failed_message);
+                break;
+            case NETWORK_ERROR:
+                //通信不能用のメッセージ
+                mErrorMessage = context.getString(
+                        R.string.activity_start_network_error_message);
+
+                //トースト用
+                mToastErrorMessage = context.getString(
+                        R.string.common_get_data_failed_message);
                 break;
             case SERVER_ERROR:
             case TOKEN_ERROR:
-            case NETWORK_ERROR:
             case HTTP_ERROR:
                 //その他Lエラー用メッセージの取得
-                mErrorMessage = context.getString(R.string.nw_error_message);
+                mErrorMessage = context.getString(R.string.common_get_data_failed_message);
+
+                //トースト用
+                mToastErrorMessage = context.getString(
+                        R.string.common_get_data_failed_message);
                 break;
         }
 

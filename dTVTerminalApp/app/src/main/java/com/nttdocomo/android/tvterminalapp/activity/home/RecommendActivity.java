@@ -319,7 +319,8 @@ public class RecommendActivity extends BaseActivity implements
      * データ取得失敗時の処理.
      */
     private void recommendDataProviderFinishNg() {
-        showGetDataFailedToast();
+        //エラーメッセージを表示する
+        showErrorMessage(sRecommendViewPager.getCurrentItem());
         mNoDataMessage.setVisibility(View.VISIBLE);
         RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
         if (baseFragment == null) {

@@ -260,6 +260,12 @@ public class VideoTopActivity extends BaseActivity implements
         if (listMap == null || firstGenreIdList == null) {
             showError();
             DTVTLogger.debug("listMap or firstGenreIdList is Null");
+
+            //エラーなのでプログレスバーを消す
+            showProgressBar(false);
+            //データ無しを表示
+            mNoDataMessage.setVisibility(View.VISIBLE);
+
             return;
         }
 
@@ -339,7 +345,7 @@ public class VideoTopActivity extends BaseActivity implements
         DTVTLogger.end();
     }
     private void showError() {
-        ErrorState errorState = mVideoGenreProvider.getError();
+        ErrorState errorState = mVideoGenreProvider.getGenreListError();
         if (errorState == null || TextUtils.isEmpty(errorState.getErrorMessage())) {
             showGetDataFailedToast();
         } else {
@@ -365,8 +371,9 @@ public class VideoTopActivity extends BaseActivity implements
     }
 
     /**
-     * 親ジャンル表示
-     * @param allContentsCount
+     * 親ジャンル表示.
+     *
+     * @param allContentsCount 全コンテンツ数
      */
     private void showFirstGenreListView(final int allContentsCount) {
         DTVTLogger.debug("allContentsCount = " + allContentsCount);
@@ -402,8 +409,9 @@ public class VideoTopActivity extends BaseActivity implements
     }
 
     /**
-     * 親ジャンル以外の表示
-     * @param allContentsCount
+     * 親ジャンル以外の表示.
+     *
+     * @param allContentsCount 全コンテンツ数
      */
     private void showGenerListView(final int allContentsCount) {
         // 0件のコンテンツをリストから削除

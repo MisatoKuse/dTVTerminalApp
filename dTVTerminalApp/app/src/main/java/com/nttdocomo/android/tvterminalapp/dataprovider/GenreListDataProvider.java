@@ -11,6 +11,7 @@ import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
@@ -102,8 +103,10 @@ public class GenreListDataProvider implements
     private GenreCountGetWebClient mWebClient = null;
     /** 通信禁止判定フラグ. */
     private boolean mIsCancel = false;
-    /** ジャンル情報取得用エラー情報バッファ. */
-    private ErrorState mError = null;
+    /** ジャンルリスト用エラー情報バッファ. */
+    private ErrorState mGenreListError = null;
+    /** ジャンルコンテンツ数用エラー情報バッファ. */
+    private ErrorState mGenreCountError = null;
 
     /**
      * コンストラクタ.
@@ -165,7 +168,7 @@ public class GenreListDataProvider implements
         if (genreCountGetResponse != null) {
             mApiDataProviderCallback.genreListCallback(genreCountGetResponse.getGenreCountGetMetaData());
         } else {
-            mError = mWebClient.getError();
+            mGenreCountError = mWebClient.getError();
             mApiDataProviderCallback.genreListCallback(null);
         }
     }
@@ -251,7 +254,7 @@ public class GenreListDataProvider implements
      */
     private void setRankGenreListData(@Nullable final GenreListResponse genreListResponse) {
         if (genreListResponse == null) {
-            mError = mGenreListWebClient.getError();
+            mGenreListError = mGenreListWebClient.getError();
             mRankGenreListCallback.onRankGenreListCallback(null);
         } else {
             Map<String, ArrayList<GenreListMetaData>> listMap = genreListResponse.getTypeList();
@@ -296,7 +299,7 @@ public class GenreListDataProvider implements
      */
     private void getGenreList(@Nullable final GenreListResponse genreListResponse) {
         if (genreListResponse == null) {
-            mError = mGenreListWebClient.getError();
+            mGenreListError = mGenreListWebClient.getError();
             genreListMapCallback.genreListMapCallback(null, null);
             DTVTLogger.error("response is null");
             return;
@@ -408,12 +411,18 @@ public class GenreListDataProvider implements
     }
 
     /**
-     * ジャンル情報取得エラーのクラスを返すゲッター.
+     * ジャンルリスト用エラーのクラスを返すゲッター.
      *
      * @return ジャンル情報取得エラーのクラス
      */
-    public ErrorState getError() {
-        return mError;
-    }
+    public ErrorState getGenreListError() {
+        //ジャンルリストAPIが正常動作ならば、コンテンツ数取得エラーの値を返す
+        if(mGenreListError == null ||
+                mGenreListError.getErrorType() == DTVTConstants.ERROR_TYPE.SUCCESS) {
+            return mGenreCountError;
+        }
 
+        //ジャンルリストはエラーなので、それを返す
+        return mGenreListError;
+    }
 }

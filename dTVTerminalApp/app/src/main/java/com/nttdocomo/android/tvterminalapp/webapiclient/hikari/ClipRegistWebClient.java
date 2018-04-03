@@ -71,7 +71,7 @@ public class ClipRegistWebClient
      */
     @Override
     public void onError(final ReturnCode returnCode) {
-        //エラーが発生したのでヌルを返す
+        //エラーが発生したのでヌルを返す(専用のエラーメッセージがあるので、ネットワークエラーは送らない)
         mClipRegistJsonParserCallback.onClipRegistFailure();
     }
 

@@ -561,6 +561,9 @@ public class WebApiBasePlala {
         ServiceTokenErrorCallback serviceTokenErrorCallback = new ServiceTokenErrorCallback() {
             @Override
             public void onTokenError(ReturnCode returnCode) {
+                //ワンタイムトークン側のエラー情報を、WebApi側にも反映する
+                mReturnCode = returnCode;
+
                 //呼び出し元にエラーを伝える
                 mWebApiBasePlalaCallback.onError(returnCode);
             }

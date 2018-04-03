@@ -47,10 +47,6 @@ public class DailyTvRankingActivity extends BaseActivity implements
      */
     private ContentsAdapter mContentsAdapter;
     /**
-     * データの追加読み込み時に表示するプログレスダイアログのView.
-     */
-    private View mLoadMoreView;
-    /**
      * ランキングリストを表示するリスト.
      */
     private ListView mListView;
@@ -122,7 +118,6 @@ public class DailyTvRankingActivity extends BaseActivity implements
         mContentsAdapter = new ContentsAdapter(this, mContentsList,
                 ContentsAdapter.ActivityTypeItem.TYPE_DAILY_RANK);
         mListView.setAdapter(mContentsAdapter);
-        mLoadMoreView = View.inflate(this, R.layout.search_load_more, null);
         mNoDataMessage  = findViewById(R.id.tv_rank_list_no_items);
     }
 
@@ -178,9 +173,6 @@ public class DailyTvRankingActivity extends BaseActivity implements
 
     @Override
     public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-        if (mLoadMoreView.equals(view)) {
-            return;
-        }
         Intent intent = new Intent(this, ContentDetailActivity.class);
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
         OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(mContentsList.get(position), ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);

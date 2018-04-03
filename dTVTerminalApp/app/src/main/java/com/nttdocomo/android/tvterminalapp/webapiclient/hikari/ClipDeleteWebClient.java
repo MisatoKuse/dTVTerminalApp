@@ -69,7 +69,7 @@ public class ClipDeleteWebClient
      */
     @Override
     public void onError(final ReturnCode returnCode) {
-        //エラーが発生したのでヌルを返す
+        //エラーが発生したのでヌルを返す(専用のエラーメッセージがあるので、ネットワークエラーは送らない)
         mClipDeleteJsonParserCallback.onClipDeleteFailure();
     }
 

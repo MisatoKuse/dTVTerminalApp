@@ -9,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist.AccountList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist.SerializablePreferencesData;
@@ -55,6 +56,10 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
      * 通信禁止判定フラグ.
      */
     private boolean mIsStop = false;
+    /**
+     * エラー情報
+     */
+    private ErrorState mErrorSate = null;
 
     @Override
     public void onUserInfoJsonParsed(final List<UserInfoList> userInfoLists) {
@@ -71,6 +76,9 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
             //後処理を行う
             afterProcess(userInfoLists);
         } else {
+            //エラー情報を控えておく
+            mErrorSate = mUserInfoWebClient.getError();
+
             //取得ができなかったので、DBから取得する
             afterProcess(null);
         }
@@ -311,5 +319,14 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
         if (mUserInfoWebClient != null) {
             mUserInfoWebClient.enableConnection();
         }
+    }
+
+    /**
+     * ネットワークエラー情報のゲッター.
+     *
+     * @return ネットワークエラークラス
+     */
+    public ErrorState getError() {
+        return mErrorSate;
     }
 }

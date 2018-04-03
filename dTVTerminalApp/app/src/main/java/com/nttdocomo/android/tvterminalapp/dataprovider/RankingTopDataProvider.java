@@ -405,6 +405,8 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             if(mApiDataProviderCallback != null) {
                 //ビデオ情報が無いので、ヌルで帰る
                 mApiDataProviderCallback.videoRankCallback(null);
+            } else if(mVideoRankingApiDataProviderCallback != null) {
+                mVideoRankingApiDataProviderCallback.onVideoRankListCallback(null);
             }
         }
     }
@@ -843,6 +845,8 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                         UPPER_PAGE_LIMIT, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, genreId, sort, this)) {
                     if (mApiDataProviderCallback != null) {
                         mApiDataProviderCallback.videoRankCallback(null);
+                    } else if(mVideoRankingApiDataProviderCallback != null) {
+                        mVideoRankingApiDataProviderCallback.onVideoRankListCallback(null);
                     }
                 }
             } else {
