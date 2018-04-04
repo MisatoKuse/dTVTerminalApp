@@ -239,7 +239,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                             channel.setServiceId(serviceId);
                             mScheduleList = new ArrayList<>();
                             mScheduleList.add(mSchedule);
-                            channel.setSchedules(mScheduleList);
+//                            channel.setSchedules(mScheduleList);
                             channels.add(channel);
                         }
                     }
@@ -368,16 +368,17 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         if (tvScheduleList != null) {
             //チャンネルデータ
             mTvScheduleList = tvScheduleList.get(0);
-            if (mRequiredClipKeyList) {
-                // クリップキーリストを取得
-                tvClipKeyListResponse = false;
-                vodClipKeyListResponse = false;
-                getClipKeyList();
-            } else {
-                if (null != mApiDataProviderCallback) {
-                    mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
-                }
-            }
+//            if (mRequiredClipKeyList) {
+//                // クリップキーリストを取得
+//                tvClipKeyListResponse = false;
+//                vodClipKeyListResponse = false;
+//                getClipKeyList();
+//            } else {
+//                if (null != mApiDataProviderCallback) {
+//                    mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
+//                }
+//            }
+            mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
         } else {
             //データが取得できなかったので、エラーを取得する
             mTvScheduleError = mTvScheduleWebClient.getError();
@@ -395,7 +396,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         super.onTvClipKeyListJsonParsed(clipKeyListResponse);
         if (vodClipKeyListResponse) {
             if (null != mApiDataProviderCallback) {
-                mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
+//                mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
             }
         } else {
             tvClipKeyListResponse = true;
@@ -407,7 +408,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
         if (tvClipKeyListResponse) {
             if (null != mApiDataProviderCallback) {
-                mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
+//                mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
             }
         } else {
             vodClipKeyListResponse = true;
@@ -487,15 +488,15 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         mSchedule.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
         mSchedule.setTitleId(map.get(JsonConstants.META_RESPONSE_TITLE_ID));
         mSchedule.setCrId(map.get(JsonConstants.META_RESPONSE_CRID));
-        mSchedule.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
-        mSchedule.setClipRequestData(setClipData(map));
-        mSchedule.setClipStatus(getClipStatus(dispType, contentType, dtv,
-                map.get(JsonConstants.META_RESPONSE_CRID),
-                map.get(JsonConstants.META_RESPONSE_SERVICE_ID),
-                map.get(JsonConstants.META_RESPONSE_EVENT_ID),
-                map.get(JsonConstants.META_RESPONSE_TITLE_ID),
-                map.get(JsonConstants.META_RESPONSE_TV_SERVICE)));
-        mSchedule.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
+//        mSchedule.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
+//        mSchedule.setClipRequestData(setClipData(map));
+//        mSchedule.setClipStatus(getClipStatus(dispType, contentType, dtv,
+//                map.get(JsonConstants.META_RESPONSE_CRID),
+//                map.get(JsonConstants.META_RESPONSE_SERVICE_ID),
+//                map.get(JsonConstants.META_RESPONSE_EVENT_ID),
+//                map.get(JsonConstants.META_RESPONSE_TITLE_ID),
+//                map.get(JsonConstants.META_RESPONSE_TV_SERVICE)));
+//        mSchedule.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
         return mSchedule;
     }
 
@@ -515,15 +516,15 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 Map<String, String> hashMap = mChannelProgramList.get(i);
                 setScheduleInfo(hashMap, channelsInfo, userState);
             }
-            mChannelsInfoList = channelsInfo;
-            Handler handler = new Handler();
-            //番組情報更新
-            try {
-                DbThread t = new DbThread(handler, this, SCHEDULE_UPDATE);
-                t.start();
-            } catch (Exception e) {
-                DTVTLogger.debug(e);
-            }
+//            mChannelsInfoList = channelsInfo;
+//            Handler handler = new Handler();
+//            //番組情報更新
+//            try {
+//                DbThread t = new DbThread(handler, this, SCHEDULE_UPDATE);
+//                t.start();
+//            } catch (Exception e) {
+//                DTVTLogger.debug(e);
+//            }
         }
         return channelsInfo;
     }
@@ -624,28 +625,34 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      * @param type   dch：dチャンネル, hikaritv：ひかりTVの多ch, 指定なしの場合：すべて
      */
     public void getChannelList(final int limit, final int offset, final String filter, final int type) {
-        mChannelServiceType = type;
-
-        DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(DateUtils.CHANNEL_LAST_UPDATE);
-        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
-            //データをDBから取得する
-            Handler handler = new Handler(mContext.getMainLooper());
-            //チャンネル情報更新
-            try {
-                DbThread t = new DbThread(handler, this, CHANNEL_SELECT);
-                t.start();
-            } catch (IllegalThreadStateException e) {
-                DTVTLogger.debug(e);
-                //TODO:エラー返却した上でUI上に通知が必要
-            }
+//        mChannelServiceType = type;
+//
+//        DateUtils dateUtils = new DateUtils(mContext);
+//        String lastDate = dateUtils.getLastDate(DateUtils.CHANNEL_LAST_UPDATE);
+//        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
+//            //データをDBから取得する
+//            Handler handler = new Handler(mContext.getMainLooper());
+//            //チャンネル情報更新
+//            try {
+//                DbThread t = new DbThread(handler, this, CHANNEL_SELECT);
+//                t.start();
+//            } catch (IllegalThreadStateException e) {
+//                DTVTLogger.debug(e);
+//                //TODO:エラー返却した上でUI上に通知が必要
+//            }
+//        } else {
+//            if (!isStop) {
+//                mChannelWebClient = new ChannelWebClient(mContext);
+//                mChannelWebClient.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], this);
+//            } else {
+//                DTVTLogger.error("ScaledDownProgramListDataProvider is stopping connect");
+//            }
+//        }
+        if (!isStop) {
+            mChannelWebClient = new ChannelWebClient(mContext);
+            mChannelWebClient.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], this);
         } else {
-            if (!isStop) {
-                mChannelWebClient = new ChannelWebClient(mContext);
-                mChannelWebClient.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], this);
-            } else {
-                DTVTLogger.error("ScaledDownProgramListDataProvider is stopping connect");
-            }
+            DTVTLogger.error("ScaledDownProgramListDataProvider is stopping connect");
         }
     }
 
@@ -654,10 +661,9 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      *
      * @param chList   配列, 中身は整数値
      * @param dateList 配列, 中身は整数値 YYYYMMDD
-     * @param display_type displayType
      */
-    public void getProgram(final int[] chList, final String[] dateList, final int display_type) {
-        getProgram(chList, dateList, PROGRAM_LIST_CHANNEL_PROGRAM_FILTER_RELEASE, display_type);
+    public void getProgram(final int[] chList, final String[] dateList) {
+        getProgram(chList, dateList, PROGRAM_LIST_CHANNEL_PROGRAM_FILTER_RELEASE);
     }
 
     /**
@@ -666,52 +672,53 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      * @param chList   配列, 中身は整数値
      * @param dateList 配列, 中身は整数値 YYYYMMDD
      * @param filter   文字列、Filter
-     * @param type displayType
      */
-    private void getProgram(final int[] chList, final String[] dateList, final String filter, final int type) {
-        //TODO:CH毎番組表取得は表示された列と連動させる
-        //TODO:一度渡したデータは画面に保持させておく
-        DateUtils dateUtils = new DateUtils(mContext);
-        //dateListのサイズは1.
-        mProgramSelectDate = dateList[0];
-        //前回のデータ取得日時を取得
-        String[] lastDate = dateUtils.getChLastDate(chList, mProgramSelectDate);
-        //DBから取得するチャンネル情報とWebAPiから取得するチャンネル番号を分ける.
-        List<Integer> fromWebAPI = new ArrayList<>();
-
-        for (int i = 0; i < lastDate.length; i++) {
-            if (dateUtils.isBeforeLimitChDate(lastDate[i])) {
-                fromWebAPI.add(chList[i]);
-            } else {
-                mFromDB.add(String.valueOf(chList[i]));
-            }
-        }
-
-        //TODO:一斉取得をやめ、逐次取得に変更(表示された列のチャンネル部分だけを取得)
-        //データをDBから取得する
-        if (mFromDB.size() > 0) {
-            Handler handler = new Handler();
-            //チャンネル情報更新
-            try {
-                DbThread t = new DbThread(handler, this, SCHEDULE_SELECT);
-                t.start();
-            } catch (Exception e) {
-                DTVTLogger.debug(e);
-            }
-        }
-
-        //TODO:一斉取得をやめ、逐次取得に変更(表示された列のチャンネル部分だけを取得)
-        //データをWebAPIから取得する
-        if (!isStop) {
-            mTvScheduleWebClient = new TvScheduleWebClient(mContext);
-            int[] chNos = new int[fromWebAPI.size()];
-            for (int i = 0; i < fromWebAPI.size(); i++) {
-                chNos[i] = fromWebAPI.get(i);
-            }
-            mTvScheduleWebClient.getTvScheduleApi(chNos, dateList, filter, this);
-        } else {
-            DTVTLogger.error("ScaledDownProgramListDataProvider is stopping connect");
-        }
+    private void getProgram(final int[] chList, final String[] dateList, final String filter) {
+//        DateUtils dateUtils = new DateUtils(mContext);
+//        //dateListのサイズは1.
+//        mProgramSelectDate = dateList[0];
+//        //前回のデータ取得日時を取得
+//        String[] lastDate = dateUtils.getChLastDate(chList, mProgramSelectDate);
+//        //DBから取得するチャンネル情報とWebAPiから取得するチャンネル番号を分ける.
+//        List<Integer> fromWebAPI = new ArrayList<>();
+//
+//        for (int i = 0; i < lastDate.length; i++) {
+//            if (dateUtils.isBeforeLimitChDate(lastDate[i])) {
+//                fromWebAPI.add(chList[i]);
+//            } else {
+//                mFromDB.add(String.valueOf(chList[i]));
+//            }
+//        }
+//
+//        //データをDBから取得する
+//        if (mFromDB.size() > 0) {
+//            Handler handler = new Handler();
+//            //チャンネル情報更新
+//            try {
+//                DbThread t = new DbThread(handler, this, SCHEDULE_SELECT);
+//                t.start();
+//            } catch (Exception e) {
+//                DTVTLogger.debug(e);
+//            }
+//        }
+//
+//        //データをWebAPIから取得する
+//        if (!isStop) {
+//            mTvScheduleWebClient = new TvScheduleWebClient(mContext);
+//            int[] chNos = new int[fromWebAPI.size()];
+//            for (int i = 0; i < fromWebAPI.size(); i++) {
+//                chNos[i] = fromWebAPI.get(i);
+//            }
+//            mTvScheduleWebClient.getTvScheduleApi(chNos, dateList, filter, this);
+//        } else {
+//            DTVTLogger.error("ScaledDownProgramListDataProvider is stopping connect");
+//        }
+        mTvScheduleWebClient = new TvScheduleWebClient(mContext);
+//        int[] chNos = new int[fromWebAPI.size()];
+//        for (int i = 0; i < fromWebAPI.size(); i++) {
+//            chNos[i] = fromWebAPI.get(i);
+//        }
+        mTvScheduleWebClient.getTvScheduleApi(chList, dateList, filter, this);
     }
 
     /**

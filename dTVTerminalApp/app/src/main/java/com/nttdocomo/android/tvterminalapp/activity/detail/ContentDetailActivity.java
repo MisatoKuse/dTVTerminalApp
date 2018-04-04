@@ -1289,7 +1289,7 @@ public class ContentDetailActivity extends BaseActivity implements
                 Toast.makeText(this, "No channel number", Toast.LENGTH_SHORT).show();
                 return;
             }
-            mScaledDownProgramListDataProvider.getProgram(channelNos, dateList, 1);
+            mScaledDownProgramListDataProvider.getProgram(channelNos, dateList);
         } else {
             channelLoadCompleted();
         }

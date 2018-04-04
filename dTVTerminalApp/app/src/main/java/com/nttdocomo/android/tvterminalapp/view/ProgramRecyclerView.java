@@ -8,8 +8,9 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.widget.AbsListView;
 
-public class ProgramRecyclerView extends RecyclerView {
+public class ProgramRecyclerView extends RecyclerView implements AbsListView.OnScrollListener {
 
     public ProgramRecyclerView(final Context context) {
         super(context);
@@ -38,5 +39,15 @@ public class ProgramRecyclerView extends RecyclerView {
     public boolean dispatchTouchEvent(final MotionEvent ev) {
         getParent().requestDisallowInterceptTouchEvent(false);
         return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView absListView, int i) {
+
+    }
+
+    @Override
+    public void onScroll(AbsListView absListView, int i, int i1, int i2) {
+
     }
 }

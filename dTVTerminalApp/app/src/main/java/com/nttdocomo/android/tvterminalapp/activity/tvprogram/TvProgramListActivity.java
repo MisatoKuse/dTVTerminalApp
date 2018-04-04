@@ -55,11 +55,18 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
+import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE;
+
 /**
  * 番組表表示Activity.
  */
-public class TvProgramListActivity extends BaseActivity implements View.OnClickListener, ScaledDownProgramListDataProvider.ApiDataProviderCallback,
-        ProgramScrollView.OnScrollOffsetListener, MyChannelDataProvider.ApiDataProviderCallback, TabItemLayout.OnClickTabTextListener {
+public class TvProgramListActivity extends BaseActivity implements
+        View.OnClickListener
+        , ScaledDownProgramListDataProvider.ApiDataProviderCallback
+        , ProgramScrollView.OnScrollOffsetListener
+        , MyChannelDataProvider.ApiDataProviderCallback
+        , TabItemLayout.OnClickTabTextListener
+{
 
     /**
      * hikariタブインデックス.
@@ -137,6 +144,8 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
      * タブインデックス.
      */
     private int mTabIndex = 0;
+    /** 初回取得チャンネル数指定. **/
+    private final static int FIRST_GET_CHANNEL_NUM = 3;
     /**
      * 番組表中身アダプター.
      */
@@ -198,6 +207,8 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
      */
     private TextView mNoDataMessage;
 
+    private int mScrollOffset = 0;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -232,15 +243,15 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
     protected void onResume() {
         super.onResume();
         //BG→FG復帰時に各アイテムのクリップ状態が変更されている可能性があるためonResumeのタイミングでチェックする
-        if (mTvProgramListAdapter != null) {
-            List<ChannelInfo> infoList = mTvProgramListAdapter.getProgramList();
-            if (infoList != null) {
-                List<ChannelInfo> list;
-                list = mScaledDownProgramListDataProvider.checkTvProgramClipStatus(infoList);
-                mTvProgramListAdapter.setProgramList(list);
-                mTvProgramListAdapter.notifyDataSetChanged();
-            }
-        }
+//        if (mTvProgramListAdapter != null) {
+//            List<ChannelInfo> infoList = mTvProgramListAdapter.getProgramList();
+//            if (infoList != null) {
+//                List<ChannelInfo> list;
+//                list = mScaledDownProgramListDataProvider.checkTvProgramClipStatus(infoList);
+//                mTvProgramListAdapter.setProgramList(list);
+//                mTvProgramListAdapter.notifyDataSetChanged();
+//            }
+//        }
     }
 
     /**
@@ -253,6 +264,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         mTimeScrollView = findViewById(R.id.tv_program_list_main_layout_time_sl);
         mChannelRecyclerView = findViewById(R.id.tv_program_list_main_layout_channel_rv);
         mProgramRecyclerView = findViewById(R.id.tv_program_list_main_layout_channeldetail_rv);
+
         final ProgramScrollView programScrollView = findViewById(R.id.tv_program_list_main_layout_channeldetail_sl);
         mTagImageView = findViewById(R.id.tv_program_list_main_layout_curtime_iv);
         mTimeLine = findViewById(R.id.tv_program_list_main_layout_time_line);
@@ -267,6 +279,8 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         mTitleArrowImage.setOnClickListener(this);
         mTimeScrollView.setScrollView(programScrollView);
         programScrollView.setScrollView(mTimeScrollView);
+        mProgramRecyclerView.setHasFixedSize(true);
+        mProgramRecyclerView.setItemViewCacheSize(20);
         programScrollView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(final View view, final MotionEvent motionEvent) {
@@ -482,14 +496,40 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
                         programList.scrollBy(dx, dy);
                 }
             }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
         });
 
         programList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(final RecyclerView recyclerView, final int dx, final int dy) {
+                mScrollOffset = dx;
                 if (recyclerView.getScrollState() != RecyclerView.SCROLL_STATE_IDLE) {
                         channelList.stopScroll();
                         channelList.scrollBy(dx, dy);
+                }
+            }
+
+            @Override
+            public void onScrollStateChanged(final RecyclerView recyclerView, final int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                switch (newState) {
+                    case SCROLL_STATE_IDLE:
+                        if (mScrollOffset > 0) {
+                            String dateStr = mSelectDateStr.replace("-", "");
+                            String[] dateList = {dateStr};
+                            int[] chList = mTvProgramListAdapter.getNeedProgramChannels();
+                            if (chList != null && chList.length > 0) {
+                                mScaledDownProgramListDataProvider.getProgram(chList, dateList);
+                            }
+                            mScrollOffset = 0;
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
         });
@@ -522,18 +562,19 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         mLinearLayout.setGravity(Gravity.CENTER);
         mLinearLayout.setBackgroundColor(Color.BLACK);
         mTimeScrollView.addView(mLinearLayout);
+        float density = getDensity();
+        int lineWidth = dip2px(TIME_LINE_WIDTH);
+        int oneHourUnit = dip2px(ONE_HOUR_UNIT);
         for (int i = START_TIME; i < STANDARD_TIME + START_TIME; i++) {
             TextView tabTextView = new TextView(this);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    dip2px(TIME_LINE_WIDTH),
-                    dip2px(ONE_HOUR_UNIT));
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(lineWidth, oneHourUnit);
             tabTextView.setLayoutParams(params);
             int curTime = i;
             if (curTime >= STANDARD_TIME) {
                 curTime = curTime - STANDARD_TIME;
             }
             tabTextView.setText(String.valueOf(curTime));
-            tabTextView.setPadding(0, (int) getDensity() * 8, 0, 0);
+            tabTextView.setPadding(0, (int) density * 8, 0, 0);
             tabTextView.setBackgroundColor(Color.BLACK);
             if (i == STANDARD_TIME + START_TIME - 1) {
                 tabTextView.setBackgroundResource(R.drawable.rectangele_end);
@@ -558,7 +599,11 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mChannelRecyclerView.setLayoutManager(linearLayoutManager);
         mProgramChannelAdapter = new ProgramChannelAdapter(this, channels);
+        mTvProgramListAdapter = new TvProgramListAdapter(this, channels);
         mChannelRecyclerView.setAdapter(mProgramChannelAdapter);
+        mProgramRecyclerView.setAdapter(mTvProgramListAdapter);
+        scrollToCurTime();
+        refreshTimeLine();
     }
 
     /**
@@ -604,24 +649,31 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
      * @param channelInfo 番組表情報.
      */
     private void setProgramRecyclerView(final List<ChannelInfo> channelInfo) {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        mProgramRecyclerView.setLayoutManager(linearLayoutManager);
-        //以前のアダプタに設定されている値を取得して追加.
-        if (mTvProgramListAdapter != null) {
-            List<ChannelInfo> oldChannelInfo = mTvProgramListAdapter.getProgramList();
-            for (ChannelInfo oldChannel : oldChannelInfo) {
-                channelInfo.add(oldChannel);
+        DTVTLogger.start();
+        if (channelInfo != null) {
+            DTVTLogger.debug("channelInfo size:" + channelInfo.size());
+            DTVTLogger.debug("channelInfo :" + channelInfo.toString());
+            if (mProgramRecyclerView.getLayoutManager() == null) {
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+                linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+                mProgramRecyclerView.setLayoutManager(linearLayoutManager);
             }
+        //以前のアダプタに設定されている値を取得して追加.
+//        if (mTvProgramListAdapter != null) {
+//            List<ChannelInfo> oldChannelInfo = mTvProgramListAdapter.getProgramList();
+//            for (ChannelInfo oldChannel : oldChannelInfo) {
+//                channelInfo.add(oldChannel);
+//            }
+//        }
+            if(channelInfo.size() > 0) {
+                mTvProgramListAdapter.setProgramList(channelInfo);
+                mTvProgramListAdapter.notifyDataSetChanged();
+            }
+            //        mProgramRecyclerView.setAdapter(mTvProgramListAdapter);
+            //スクロール時、リスナー設置
+            mTimeScrollView.setOnScrollOffsetListener(this);
         }
-        mTvProgramListAdapter = new TvProgramListAdapter(this, channelInfo);
-        mProgramRecyclerView.setAdapter(mTvProgramListAdapter);
-        mProgramRecyclerView.setItemViewCacheSize(channelInfo.size());
-        mProgramRecyclerView.getRecycledViewPool().setMaxRecycledViews(mTvProgramListAdapter.getItemViewType(0), 3);
-        //スクロール時、リスナー設置
-        mTimeScrollView.setOnScrollOffsetListener(this);
-        scrollToCurTime();
-        refreshTimeLine();
+        DTVTLogger.end();
     }
 
     /**
@@ -685,40 +737,33 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void channelInfoCallback(final ChannelInfoList channelsInfo) {
+        //TODO:★ここでAdaptor生成するのではなく、チャンネルリストが取得できた時点でAdaptorを生成してしまう。
+        //TODO:★データの管理はAdaptor任せにして、必要なデータはAdaptorからActivity側に取得要求するようにする。
+        //TODO:★生成されているAdaptorへ番組データを渡す処理にする。
+        //TODO:★Adaptorはチャンネルリストに対して、取得した番組情報をMappingして溜めていく。
+        //TODO:★ちなみに現状、上部のチャンネルの表示はチャンネルリストを元に表示しているが、
+        //TODO:★ここで受け取るデータは番組のないチャンネルはデータ上含まれないのでチャンネルと番組欄にズレが起きる。
         if (channelsInfo != null && channelsInfo.getChannels() != null) {
             List<ChannelInfo> channels = channelsInfo.getChannels();
             sort(channels);
             mChannelInfo = channels;
-            if (mTabIndex != 0) {
-                setProgramRecyclerView(mChannelInfo);
-            } else { //マイ番組表
-                ArrayList<ChannelInfo> myChannels = new ArrayList<>();
-                try {
-                    for (int i = 0; i < mappedMyChannelList.size(); i++) {
-                        for (int j = 0; j < mChannelInfo.size(); j++) {
-                            if (mappedMyChannelList.get(i).getChNo() == mChannelInfo.get(j).getChNo()) {
-                                //チャンネル番号でマッピング
-                                myChannels.add(mChannelInfo.get(j));
-                            }
-                        }
-                    }
-                    setProgramRecyclerView(myChannels);
-                } catch (NullPointerException e) {
-                    DTVTLogger.debug("mappedMyChannelList NullPointerException");
-                }
-            }
+            setProgramRecyclerView(channels);
         }
     }
 
     @Override
     public void channelListCallback(final ArrayList<ChannelInfo> channels) {
+        //TODO:★ここでAdaptor生成する。
+        //TODO:★Adaptorはチャンネルリストに対して、取得した番組情報をMappingして溜めていく。
+        //TODO:★また初回として先頭○○チャンネル分だけ番組データをリクエストする。○○はRecyclerのキャッシュと同じ分。
         if (mTabIndex == INDEX_TAB_MY_CHANNEL) {
             //MY番組表
             if (channels != null && channels.size() > 0) {
+//                sort(channels);
                 showMyChannelNoItem(false);
                 this.hikariChannels = channels;
-                mappedMyChannelList = executeMapping();
-                setChannelContentsView(mappedMyChannelList);
+                ArrayList<ChannelInfo> channelList = executeMapping();
+                setChannelContentsView(channelList);
                 loadMyChannel();
             } else {
                 //ひかりTVデータなしの場合
@@ -728,20 +773,24 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         } else {
             //ひかり、dTVチャンネル
             if (channels != null && channels.size() > 0) {
+//                sort(channels);
                 showMyChannelNoItem(false);
                 this.mChannels = channels;
                 setChannelContentsView(mChannels);
                 if (mScaledDownProgramListDataProvider == null) {
                     mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
                 }
-                int[] channelNos = new int[channels.size()];
-                for (int i = 0; i < channels.size(); i++) {
+                int[] channelNos = new int[FIRST_GET_CHANNEL_NUM];
+                int channelNum = FIRST_GET_CHANNEL_NUM;
+                if (channels.size() < FIRST_GET_CHANNEL_NUM) {
+                    channelNum = channels.size();
+                }
+                for (int i = 0; i < channelNum; i++) {
                     channelNos[i] = channels.get(i).getChNo();
                 }
                 String dateStr = mSelectDateStr.replace("-", "");
                 String[] dateList = {dateStr};
-                //TODO 現状一括でリクエストしているため修正予定.
-                mScaledDownProgramListDataProvider.getProgram(channelNos, dateList, mTabIndex);
+                mScaledDownProgramListDataProvider.getProgram(channelNos, dateList);
             } else {
                 //情報がヌルなので、ネットワークエラーメッセージを取得する
                 ErrorState errorState = mScaledDownProgramListDataProvider.getChannelError();
@@ -774,7 +823,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         	//マイ番組表設定されていない場合、通信しない
             String dateStr = mSelectDateStr.replace("-", "");
             String[] dateList = {dateStr};
-            mScaledDownProgramListDataProvider.getProgram(channelNos, dateList, 1);
+            mScaledDownProgramListDataProvider.getProgram(channelNos, dateList);
         } else {
             //「マイ番組が設定されていません」と表示される
             if (mTabIndex == INDEX_TAB_MY_CHANNEL) {
