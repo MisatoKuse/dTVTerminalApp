@@ -41,6 +41,7 @@
     <string name="status_bar_height_defpackage">android</string>
     <string name="common_empty_data_message">コンテンツがありません</string>
     <string name="common_get_data_failed_message">取得に失敗しました</string>
+    <string name="common_root_device_detection_message">Rootデバイスを検知したためアプリを終了します</string>
 
     <!-- Launch -->
     <string name="str_app_title">ドコモテレビターミナル</string>

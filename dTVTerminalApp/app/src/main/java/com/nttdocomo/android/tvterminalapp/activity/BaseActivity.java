@@ -76,9 +76,9 @@ import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DeviceStateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.RuntimePermissionUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
@@ -714,6 +714,11 @@ public class BaseActivity extends FragmentActivity implements
         TvtApplication app = (TvtApplication) getApplication();
         // BG → FG でのonResumeかを判定
         if (app.getIsChangeApplicationVisible()) {
+            if (DeviceStateUtils.isRootDevice()) {
+                showApFinishDialog(getString(R.string.common_root_device_detection_message));
+                //Root化を検知した時点で以降の処理はしない
+                return;
+            }
             permissionCheckExec();
         } else {
             // 通常のライフサイクル
@@ -2261,6 +2266,23 @@ public class BaseActivity extends FragmentActivity implements
             }
         });
         dAccountRegDialog.showDialog();
+    }
+
+    /**
+     * アプリ終了ダイアログ.
+     *
+     * @param errorMessage エラーメッセージ
+     */
+    protected void showApFinishDialog(final String errorMessage) {
+        CustomDialog apFinishDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
+        apFinishDialog.setContent(errorMessage);
+        apFinishDialog.showDialog();
+        apFinishDialog.setDialogDismissCallback(new CustomDialog.DialogDismissCallback() {
+            @Override
+            public void onDialogDismissCallback() {
+                finish();
+            }
+        });
     }
 
 }
