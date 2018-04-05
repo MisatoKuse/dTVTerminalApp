@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.struct;
 
 import android.widget.ImageView;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -558,5 +559,26 @@ public class ContentsData {
 
     public void setClipStatusUpdate(boolean mClipStatusUpdate) {
         this.mIsClipStatusUpdate = mClipStatusUpdate;
+    }
+
+    /**
+     * 子コンテンツを持っているか
+     * @return 子コンテンツ持ちのコンテンツの場合、true
+     */
+    public boolean hasChildContentList() {
+        boolean result = false;
+        do {
+            if (mDispType == null) {
+                break;
+            }
+            if (mDispType.equals(DTVTConstants.DISP_TYPE_SERIES_SVOD)
+                    || mDispType.equals(DTVTConstants.DISP_TYPE_WIZARD)
+                    || mDispType.equals(DTVTConstants.DISP_TYPE_VIDEO_PACKAGE)
+                    || mDispType.equals(DTVTConstants.DISP_TYPE_SUBSCRIPTION_PACKAGE)) {
+                result = true;
+                break;
+            }
+        } while (false);
+        return result;
     }
 }

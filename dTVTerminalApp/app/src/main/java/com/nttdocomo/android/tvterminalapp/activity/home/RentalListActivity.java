@@ -38,62 +38,46 @@ import java.util.List;
 /**
  * レンタル一覧を表示.
  */
-public class RentalListActivity extends BaseActivity implements AdapterView.OnItemClickListener,
-        AbsListView.OnScrollListener, RentalDataProvider.ApiDataProviderCallback, AbsListView.OnTouchListener {
+public class RentalListActivity extends BaseActivity implements
+        AdapterView.OnItemClickListener,
+        AbsListView.OnScrollListener,
+        AbsListView.OnTouchListener,
 
-    /**
-     * レンタル一覧を取得するデータプロパイダ.
-     */
-    private RentalDataProvider mRentalDataProvider;
-    /**
-     * レンタル一覧を表示するリスト.
-     */
+        RentalDataProvider.ApiDataProviderCallback
+{
+    // region variable
+    // view
+    /** レンタル一覧を表示するリスト. */
     private ListView mListView;
-    /**
-     * データの追加読み込み時のダイアログ.
-     */
+    /** データの追加読み込み時のダイアログ. */
     private View mLoadMoreView;
-    /**
-     * コンテンツ一覧.
-     */
-    private List<ContentsData> mContentsList;
-    /**
-     * データの追加読み込み中判定フラグ.
-     */
-    private boolean mIsCommunicating = false;
-    /**
-     * グローバルメニューからの起動かどうか.
-     */
-    private Boolean mIsMenuLaunch = false;
-    /**
-     * コンテンツを表示するリストのアダプタ.
-     */
-    private ContentsAdapter mContentsAdapter;
-    /**
-     * スクロール位置の記録.
-     */
-    private int mFirstVisibleItem = 0;
-    /**
-     * 最後のスクロール方向が上ならばtrue.
-     */
-    private boolean mLastScrollUp = false;
-    /**
-     * コンテンツ詳細表示フラグ.
-     */
-    private boolean mContentsDetailDisplay = false;
-    /**
-     * 指を置いたY座標.
-     */
-    private float mStartY = 0;
-    /**
-     * プログレスダイアログ.
-     */
+    /** プログレスダイアログ. */
     private RelativeLayout mRelativeLayout = null;
-    /**
-     * リスト0件メッセージ.
-     */
+    /** リスト0件メッセージ. */
     private TextView mNoDataMessage;
 
+    // data
+    /** レンタル一覧を取得するデータプロパイダ. */
+    private RentalDataProvider mRentalDataProvider;
+    /** コンテンツを表示するリストのアダプタ. */
+    private ContentsAdapter mContentsAdapter;
+    /** コンテンツ一覧. */
+    private List<ContentsData> mContentsList;
+    /** データの追加読み込み中判定フラグ. */
+    private boolean mIsCommunicating = false;
+    /** グローバルメニューからの起動かどうか. */
+    private Boolean mIsMenuLaunch = false;
+    /** スクロール位置の記録. */
+    private int mFirstVisibleItem = 0;
+    /** 最後のスクロール方向が上ならばtrue. */
+    private boolean mLastScrollUp = false;
+    /** コンテンツ詳細表示フラグ. */
+    private boolean mContentsDetailDisplay = false;
+    /** 指を置いたY座標. */
+    private float mStartY = 0;
+    // endregion variable
+
+    // region Activity LifeCycle
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,6 +116,196 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
         DTVTLogger.end();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        DTVTLogger.start();
+        //通信を止める
+        StopRentalDataConnect stopConnect = new StopRentalDataConnect();
+        stopConnect.execute(mRentalDataProvider);
+        StopContentsAdapterConnect stopAdapterConnect = new StopContentsAdapterConnect();
+        stopAdapterConnect.execute(mContentsAdapter);
+    }
+    // endregion Activity LifeCycle
+
+    @Override
+    public boolean onTouch(final View view, final MotionEvent motionEvent) {
+        if (!(view instanceof ListView)) { //今回はリストビューの事しか考えないので、他のビューならば帰る
+            return false;
+        }
+
+        //指を動かした方向を検知する
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                //指を降ろしたので、位置を記録
+                mStartY = motionEvent.getY();
+                break;
+            case MotionEvent.ACTION_UP:
+                //指を離したので、位置を記録
+                float mEndY = motionEvent.getY();
+                mLastScrollUp = false;
+                //スクロール方向の判定
+                if (mStartY < mEndY) {
+                    //終了時のY座標の方が大きいので、上スクロール
+                    mLastScrollUp = true;
+                }
+                break;
+            default://現状処理は無い・警告対応
+                break;
+        }
+        return false;
+    }
+
+    @Override
+    public void onStartCommunication() {
+        super.onStartCommunication();
+        DTVTLogger.start();
+        if (mRentalDataProvider != null) {
+            mRentalDataProvider.enableConnect();
+        }
+        if (mContentsAdapter != null) {
+            mContentsAdapter.enableConnect();
+        }
+        if (mListView != null) {
+            mListView.invalidateViews();
+        }
+
+        if (mContentsList == null || mContentsList.size() == 0) {
+            //コンテンツ情報が無ければ取得を行う
+            mRentalDataProvider = new RentalDataProvider(this, RentalDataProvider.RentalType.RENTAL_LIST);
+            mRentalDataProvider.getRentalData(true);
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+        DTVTLogger.start();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                if (mIsMenuLaunch) { //メニューから起動の場合ホーム画面に戻る
+                    contentsDetailBackKey(null);
+                    return false;
+                }
+            default:
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
+        if (mLoadMoreView.equals(view)) {
+            return;
+        }
+        Intent intent = new Intent(this, ContentDetailActivity.class);
+        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
+        OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(mContentsList.get(i), ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
+        intent.putExtra(detailData.getRecommendFlg(), detailData);
+        mContentsDetailDisplay = true;
+        startActivity(intent);
+    }
+
+    @Override
+    public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
+        synchronized (this) {
+            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
+                    && absListView.getLastVisiblePosition() == mListView.getAdapter().getCount() - 1) {
+                if (mIsCommunicating) {
+                    return;
+                }
+                //スクロール位置がリストの先頭で上スクロールだった場合は、更新をせずに帰る
+                if (mFirstVisibleItem == 0 && mLastScrollUp) {
+                    return;
+                }
+
+                DTVTLogger.debug("onScrollStateChanged, do paging");
+                mNoDataMessage.setVisibility(View.GONE);
+                displayMoreData(true);
+                setCommunicatingStatus(true);
+
+                //再読み込み処理
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRentalDataProvider.getRentalData(false);
+                    }
+                }, LOAD_PAGE_DELAY_TIME);
+            }
+        }
+    }
+
+    @Override
+    public void onScroll(final AbsListView absListView, final int firstVisibleItem,
+                         final int visibleItemCount, final int totalItemCount) {
+        synchronized (this) {
+            if (null == mContentsAdapter) {
+                return;
+            }
+            //現在のスクロール位置の記録
+            mFirstVisibleItem = firstVisibleItem;
+        }
+    }
+
+
+    @Override
+    public void rentalListCallback(final List<ContentsData> dataList) {
+        DTVTLogger.warning("<<<<<<<<<<<<<<<<<<<<<<<<< get datalist " + dataList.size());
+        final RentalDataProvider dataProvider = new RentalDataProvider(this, RentalDataProvider.RentalType.RENTAL_LIST);
+        //DbThreadからのコールバックではUIスレッドとして扱われないため
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mRelativeLayout.setVisibility(View.GONE);
+                mListView.setVisibility(View.VISIBLE);
+                if (null == dataList) {
+                    resetPaging();
+                    resetCommunication();
+                    dataProvider.getDbRentalList();
+                }
+
+                if (0 == dataList.size()) {
+                    mNoDataMessage.setVisibility(View.VISIBLE);
+                    resetCommunication();
+                    return;
+                }
+
+                int pageNumber = getCurrentNumber();
+                //現在表示しているコンテンツ数よりもデータ取得件数が上回っている時のみ更新する
+                if (mContentsList.size() < dataList.size()) {
+                    for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE
+                            && i < dataList.size(); i++) { //mPageNumber
+                        mContentsList.add(dataList.get(i));
+                    }
+                }
+
+                resetCommunication();
+                mContentsAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    /**
+     * データ取得失敗時
+     */
+    @Override
+    public void rentalListNgCallback() {
+        DTVTLogger.start();
+        showProgressBar(false);
+        resetCommunication();
+        ErrorState errorState = mRentalDataProvider.getError();
+        if (errorState != null) {
+            String message = errorState.getApiErrorMessage(getApplicationContext());
+            if (!TextUtils.isEmpty(message)) {
+                showDialogToClose(this, message);
+                return;
+            }
+        }
+        showDialogToClose(this);
+    }
+    // region implement
+
+    // region private method
     /**
      * アダプタを設定.
      */
@@ -190,7 +364,6 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
             }
         }
     }
-
     /**
      * 再読み込み時の処理.
      */
@@ -209,61 +382,7 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
             mIsCommunicating = b;
         }
     }
-
-    @Override
-    public void rentalListCallback(final List<ContentsData> dataList) {
-        final RentalDataProvider dataProvider = new RentalDataProvider(this, RentalDataProvider.RentalType.RENTAL_LIST);
-        //DbThreadからのコールバックではUIスレッドとして扱われないため
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mRelativeLayout.setVisibility(View.GONE);
-                mListView.setVisibility(View.VISIBLE);
-                if (null == dataList) {
-                    resetPaging();
-                    resetCommunication();
-                    dataProvider.getDbRentalList();
-                }
-
-                if (0 == dataList.size()) {
-                    mNoDataMessage.setVisibility(View.VISIBLE);
-                    resetCommunication();
-                    return;
-                }
-
-                int pageNumber = getCurrentNumber();
-                //現在表示しているコンテンツ数よりもデータ取得件数が上回っている時のみ更新する
-                if (mContentsList.size() < dataList.size()) {
-                    for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE
-                            && i < dataList.size(); i++) { //mPageNumber
-                        mContentsList.add(dataList.get(i));
-                    }
-                }
-
-                DTVTLogger.debug("rentalListCallback, mData.size==" + mContentsList.size());
-
-                resetCommunication();
-                mContentsAdapter.notifyDataSetChanged();
-            }
-        });
-    }
-
-    @Override
-    public void rentalListNgCallback() {
-        DTVTLogger.start();
-        showProgressBar(false);
-        //データ取得失敗時
-        resetCommunication();
-        ErrorState errorState = mRentalDataProvider.getError();
-        if (errorState != null) {
-            String message = errorState.getApiErrorMessage(getApplicationContext());
-            if (!TextUtils.isEmpty(message)) {
-                showDialogToClose(this, message);
-                return;
-            }
-        }
-        showDialogToClose(this);
-    }
+    // endregion private method
 
     /**
      * ページングリセット.
@@ -292,151 +411,4 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
         return mContentsList.size() / NUM_PER_PAGE;
     }
 
-    @Override
-    public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
-        if (mLoadMoreView.equals(view)) {
-            return;
-        }
-        Intent intent = new Intent(this, ContentDetailActivity.class);
-        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
-        OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(mContentsList.get(i), ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
-        intent.putExtra(detailData.getRecommendFlg(), detailData);
-        mContentsDetailDisplay = true;
-        startActivity(intent);
-    }
-
-    @Override
-    public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
-
-        synchronized (this) {
-            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
-                    && absListView.getLastVisiblePosition() == mListView.getAdapter().getCount() - 1) {
-
-                if (mIsCommunicating) {
-                    return;
-                }
-
-                //スクロール位置がリストの先頭で上スクロールだった場合は、更新をせずに帰る
-                if (mFirstVisibleItem == 0 && mLastScrollUp) {
-                    return;
-                }
-
-                DTVTLogger.debug("onScrollStateChanged, do paging");
-                mNoDataMessage.setVisibility(View.GONE);
-                displayMoreData(true);
-                setCommunicatingStatus(true);
-
-                //再読み込み処理
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRentalDataProvider.getRentalData(false);
-                    }
-                }, LOAD_PAGE_DELAY_TIME);
-            }
-        }
-    }
-
-    @Override
-    public void onScroll(final AbsListView absListView, final int firstVisibleItem,
-                         final int visibleItemCount, final int totalItemCount) {
-        synchronized (this) {
-            if (null == mContentsAdapter) {
-                return;
-            }
-
-            //現在のスクロール位置の記録
-            mFirstVisibleItem = firstVisibleItem;
-
-            if (firstVisibleItem + visibleItemCount == totalItemCount && 0 != totalItemCount) {
-                DTVTLogger.debug("onScroll, paging, firstVisibleItem=" + firstVisibleItem
-                        + ", totalItemCount=" + totalItemCount + ", visibleItemCount="
-                        + visibleItemCount);
-            }
-        }
-    }
-
-    @Override
-    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-        DTVTLogger.start();
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_BACK:
-                if (mIsMenuLaunch) {
-                    //メニューから起動の場合ホーム画面に戻る
-                    contentsDetailBackKey(null);
-                    return false;
-                }
-            default:
-                break;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
-    public void onStartCommunication() {
-        super.onStartCommunication();
-        DTVTLogger.start();
-        if (mRentalDataProvider != null) {
-            mRentalDataProvider.enableConnect();
-        }
-        if (mContentsAdapter != null) {
-            mContentsAdapter.enableConnect();
-        }
-        if (mListView != null) {
-            mListView.invalidateViews();
-        }
-
-        if (mContentsList == null || mContentsList.size() == 0) {
-            //コンテンツ情報が無ければ取得を行う
-            mRentalDataProvider = new RentalDataProvider(this, RentalDataProvider.RentalType.RENTAL_LIST);
-            mRentalDataProvider.getRentalData(true);
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        DTVTLogger.start();
-        //通信を止める
-        StopRentalDataConnect stopConnect = new StopRentalDataConnect();
-        stopConnect.execute(mRentalDataProvider);
-        StopContentsAdapterConnect stopAdapterConnect = new StopContentsAdapterConnect();
-        stopAdapterConnect.execute(mContentsAdapter);
-    }
-
-
-    @Override
-    public boolean onTouch(final View view, final MotionEvent motionEvent) {
-        if (!(view instanceof ListView)) {
-            //今回はリストビューの事しか考えないので、他のビューならば帰る
-            return false;
-        }
-
-        //指を動かした方向を検知する
-        switch (motionEvent.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                //指を降ろしたので、位置を記録
-                mStartY = motionEvent.getY();
-                break;
-            case MotionEvent.ACTION_UP:
-                //指を離したので、位置を記録
-                float mEndY = motionEvent.getY();
-
-                mLastScrollUp = false;
-
-                //スクロール方向の判定
-                if (mStartY < mEndY) {
-                    //終了時のY座標の方が大きいので、上スクロール
-                    mLastScrollUp = true;
-                }
-
-                break;
-
-            default:
-                //現状処理は無い・警告対応
-        }
-
-        return false;
-    }
 }

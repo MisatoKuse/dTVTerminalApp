@@ -477,6 +477,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      */
     private void setTvRankingInfo(final ContentsData contentsData, final ViewHolder viewHolder) {
         String availStartDate = contentsData.getLinearStartDate();
+        if (availStartDate == null) {
+            availStartDate = "0"; // TODO:クラッシュのため暫定対応
+        }
         String channelName = contentsData.getChannelName();
         String date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(availStartDate)), channelName);
         viewHolder.mTime.setText(date);
