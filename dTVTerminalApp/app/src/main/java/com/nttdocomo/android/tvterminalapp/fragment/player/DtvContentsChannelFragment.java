@@ -139,6 +139,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
         if (null == mHeaderView) {
             mHeaderView = View.inflate(getContext(), R.layout.dtv_contents_channel_fragment_header, null);
             mHeaderView.setOnClickListener(null);
+            mHeaderView.setVisibility(View.GONE);
         }
         mContentsAdapter = new ContentsAdapter(getContext(), mContentsData, ContentsAdapter.ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST);
         mChannelListView.setAdapter(mContentsAdapter);
@@ -156,6 +157,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
      */
     public void setChannelDataChanged(final ChannelInfo info) {
         if (!TextUtils.isEmpty(info.getTitle())) {
+            mHeaderView.setVisibility(View.VISIBLE);
             mChannelTxt.setText(info.getTitle());
         }
         if (!TextUtils.isEmpty(info.getThumbnail())) {

@@ -1151,39 +1151,43 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * @param listContentInfo 行データー
      */
     private void setClipButton(final ViewHolder holder, final ContentsData listContentInfo) {
-        if (holder.tv_clip != null) {
-            String clipType = listContentInfo.getRequestData().getType();
-            //ひかりコンテンツ判定
-            if (StringUtils.isHikariContents(clipType) || StringUtils.isHikariInDtvContents(clipType)) {
-                //クリップボタン表示設定
-                if (!mType.equals(ActivityTypeItem.TYPE_RECORDING_RESERVATION_LIST)) {
-                    //クリップ状態が1以外の時は、非活性クリップボタンを表示
-                    if (listContentInfo.isClipExec()) {
-                        //クリップ状態が再取得された場合はタグでの判定を使用しない
-                        if (!listContentInfo.isClipStatusUpdate()) {
-                            //クリップ操作後のボタン状態に応じてクリップのステータスを変更し、リスト再利用時のボタン書き換えを回避する
-                            Object clipButtonTag = holder.tv_clip.getTag();
-                            if (clipButtonTag != null) {
-                                if (clipButtonTag.equals(BaseActivity.CLIP_ACTIVE_STATUS)) {
-                                    listContentInfo.setClipStatus(true);
-                                } else {
-                                    listContentInfo.setClipStatus(false);
+        if (holder.tv_clip != null ) {
+            if (listContentInfo.getRequestData() != null) {
+                String clipType = listContentInfo.getRequestData().getType();
+                //ひかりコンテンツ判定
+                if (StringUtils.isHikariContents(clipType) || StringUtils.isHikariInDtvContents(clipType)) {
+                    //クリップボタン表示設定
+                    if (!mType.equals(ActivityTypeItem.TYPE_RECORDING_RESERVATION_LIST)) {
+                        //クリップ状態が1以外の時は、非活性クリップボタンを表示
+                        if (listContentInfo.isClipExec()) {
+                            //クリップ状態が再取得された場合はタグでの判定を使用しない
+                            if (!listContentInfo.isClipStatusUpdate()) {
+                                //クリップ操作後のボタン状態に応じてクリップのステータスを変更し、リスト再利用時のボタン書き換えを回避する
+                                Object clipButtonTag = holder.tv_clip.getTag();
+                                if (clipButtonTag != null) {
+                                    if (clipButtonTag.equals(BaseActivity.CLIP_ACTIVE_STATUS)) {
+                                        listContentInfo.setClipStatus(true);
+                                    } else {
+                                        listContentInfo.setClipStatus(false);
+                                    }
                                 }
                             }
-                        }
-                        if (listContentInfo.isClipStatus()) {
-                            holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_clip);
-                            holder.tv_clip.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
+                            if (listContentInfo.isClipStatus()) {
+                                holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                                holder.tv_clip.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
+                            } else {
+                                holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
+                                holder.tv_clip.setTag(BaseActivity.CLIP_OPACITY_STATUS);
+                            }
                         } else {
-                            holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
-                            holder.tv_clip.setTag(BaseActivity.CLIP_OPACITY_STATUS);
+                            holder.tv_clip.setVisibility(View.GONE);
                         }
-                    } else {
-                        holder.tv_clip.setVisibility(View.GONE);
+                        //クリップ状態判定後は更新フラグをfalseに戻す
+                        listContentInfo.setClipStatusUpdate(false);
                     }
-                    //クリップ状態判定後は更新フラグをfalseに戻す
-                    listContentInfo.setClipStatusUpdate(false);
                 }
+            } else {
+                holder.tv_clip.setVisibility(View.GONE);
             }
         }
     }
