@@ -1374,9 +1374,9 @@ public class ContentDetailActivity extends BaseActivity implements
         mDetailData = mIntent.getParcelableExtra(RECOMMEND_INFO_BUNDLE_KEY);
         if (mDetailData != null) {
             int serviceId = mDetailData.getServiceId();
-            if (serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID
-                    || serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID
-                    || serviceId == OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID) {
+            if (serviceId == DTV_CONTENTS_SERVICE_ID
+                    || serviceId == D_ANIMATION_CONTENTS_SERVICE_ID
+                    || serviceId == DTV_CHANNEL_CONTENTS_SERVICE_ID) {
                 // 他サービス(dtv/dtvチャンネル/dアニメ)フラグを立てる
                 mIsOtherService = true;
             }
@@ -1989,6 +1989,10 @@ public class ContentDetailActivity extends BaseActivity implements
             detailFragment.mOtherContentsDetailData.setCrId(mDetailFullData.getCrid());
             detailFragment.mOtherContentsDetailData.setEventId(mDetailFullData.getmEvent_id());
             detailFragment.mOtherContentsDetailData.setTitleId(mDetailFullData.getTitle_id());
+            detailFragment.mOtherContentsDetailData.setRvalue(mDetailFullData.getR_value());
+            detailFragment.mOtherContentsDetailData.setCopy(mDetailFullData.getmCopy());
+            detailFragment.mOtherContentsDetailData.setM4kflg(mDetailFullData.getM4kflg());
+            detailFragment.mOtherContentsDetailData.setAdinfoArray(mDetailFullData.getmAdinfo_array());
             String date = null;
             DateUtils.ContentsType contentsType = DateUtils.getContentsDateByPlala(mDetailFullData.getDisp_type(),
                     mDetailFullData.getmTv_service(), mDetailFullData.getmContent_type(), mDetailFullData.getAvail_end_date(),
@@ -2576,7 +2580,7 @@ public class ContentDetailActivity extends BaseActivity implements
                                 mDetailData.getContentsId(), mDetailData.getChannelId());
                     }
                     break;
-                case OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID://ひかりTV
+                case DTV_HIKARI_CONTENTS_SERVICE_ID://ひかりTV
                     if (mDetailFullData == null) {
                         break;
                     }

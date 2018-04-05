@@ -408,7 +408,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             String categoryId = contentsData.getCategoryId();
             switch (Integer.parseInt(serviceId)) {
                 //ひかりTV
-                case OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID:
+                case ContentDetailActivity.DTV_HIKARI_CONTENTS_SERVICE_ID:
                     List<String> list = Arrays.asList(categoryId_Hikari);
                     if (list.contains(categoryId)) {
                         viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
@@ -421,17 +421,17 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
                     }
                     break;
                 //dTV
-                case OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID:
+                case ContentDetailActivity.DTV_CONTENTS_SERVICE_ID:
                     viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
                     viewHolder.mServiceIconFirst.setImageResource(R.mipmap.label_service_dtv);
                     break;
                 //アニメ
-                case OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID:
+                case ContentDetailActivity.D_ANIMATION_CONTENTS_SERVICE_ID:
                     viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
                     viewHolder.mServiceIconFirst.setImageResource(R.mipmap.label_service_danime);
                     break;
                 //dTVチャンネル
-                case OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID:
+                case ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID:
                     viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
                     viewHolder.mServiceIconFirst.setImageResource(R.mipmap.label_service_dch);
                     break;
