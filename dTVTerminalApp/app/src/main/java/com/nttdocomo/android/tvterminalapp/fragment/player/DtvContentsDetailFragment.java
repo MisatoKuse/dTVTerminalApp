@@ -30,11 +30,13 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.RatingBarLayout;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -128,17 +130,53 @@ public class DtvContentsDetailFragment extends Fragment {
      */
     private final static int STAFF_MARGIN_0 = 0;
     /**
-     * dTVフラグ.
+     * パラメータ名「4kflg」 1.
      */
-    private final static String DTV_FLG = "1";
+    private final static int LABEL_STATUS_4KFLG_1 = 1;
     /**
-     * display type(video_program).
+     * adinfo_array の adtype 9.
      */
-    private static final String VIDEO_PROGRAM = "video_program";
+    private final static int LABEL_STATUS_ADTYPE_9 = 9;
     /**
-     * display type(video_series).
+     * adinfo_array の adtype 2.
      */
-    private static final String VIDEO_SERIES = "video_series";
+    private final static int LABEL_STATUS_ADTYPE_2 = 2;
+    /**
+     * パラメータ名「copy」DTCP:CopyNever.
+     */
+    private final static String LABEL_STATUS_COPY_COPYNEVER = "DTCP:CopyNever";
+    /**
+     * パラメータ名「copy」DTCP:CopyNever.
+     */
+    private final static String LABEL_STATUS_COPY_COPYFREE = "DTCP:CopyFree";
+    /**
+     * パラメータ名「copy」DTCP:CopyNever.
+     */
+    private final static String LABEL_STATUS_COPY_COPYONCE = "DTCP:CopyOnce";
+    /**
+     * パラメータ名「copy」DTCP:CopyNever.
+     */
+    private final static String LABEL_STATUS_COPY_COPYNOMORE = "DTCP:CopyNoMore";
+    /**
+     * r_value PG-12.
+     */
+    private final static String LABEL_STATUS_R_VALUE_PG_12 = "PG-12";
+    /**
+     * r_value R-12.
+     */
+    private final static String LABEL_STATUS_R_VALUE_R_12 = "R-12";
+    /**
+     * r_value R-15.
+     */
+    private final static String LABEL_STATUS_R_VALUE_R_15 = "R-15";
+    /**
+     * r_value R-18.
+     */
+    private final static String LABEL_STATUS_R_VALUE_R_18 = "R-18";
+    /**
+     * r_value R-20.
+     */
+    private final static String LABEL_STATUS_R_VALUE_R_20 = "R-20";
 
     @Override
     public Context getContext() {
@@ -306,14 +344,15 @@ public class DtvContentsDetailFragment extends Fragment {
         mImgServiceIcon.setImageResource(serviceIcon);
         String dtv = mOtherContentsDetailData.getDtv();
         //dtvの場合
-        if (DTV_FLG.equals(dtv)) {
+        if (ContentDetailActivity.DTV_FLAG_ONE.equals(dtv)) {
             mImgServiceIconDtv.setVisibility(View.VISIBLE);
             mImgServiceIconDtv.setImageResource(R.mipmap.label_service_dtv_white);
             mRatingBar.setVisibility(View.GONE);
         } else {
             //VODの場合
-            if (mOtherContentsDetailData.getServiceId() == 0 && (VIDEO_SERIES.equals(mOtherContentsDetailData.getDispType())
-                    || VIDEO_PROGRAM.equals(mOtherContentsDetailData.getDispType()))) {
+            if (mOtherContentsDetailData.getServiceId() == 0
+                    && (ContentDetailActivity.VIDEO_SERIES.equals(mOtherContentsDetailData.getDispType())
+                    || ContentDetailActivity.VIDEO_PROGRAM.equals(mOtherContentsDetailData.getDispType()))) {
                 //評価
                 mRatingBar.setMiniFlg(false);
                 mRatingBar.setRating((float) mOtherContentsDetailData.getRating());
@@ -360,32 +399,123 @@ public class DtvContentsDetailFragment extends Fragment {
     }
 
     /**
+     * パラメータ名「adinfo_array」を参照(音声).
+     * @param labelStatusList ラベルステータス画像リスト
+     */
+    public void setAdtype(final List<Integer> labelStatusList) {
+        String[] adinfoArray = mOtherContentsDetailData.getAdinfoArray();
+        if (adinfoArray != null && adinfoArray.length > 0) {
+            int adtype = 0;
+            if (adinfoArray[0] != null) {
+                String[] arrayInfo = adinfoArray[0].split(getString(R.string.contents_detail_adinfo_array_pipe));
+                if (arrayInfo.length > 1 && DBUtils.isNumber(arrayInfo[1])) {
+                    adtype = Integer.parseInt(arrayInfo[1]);
+                }
+            }
+            if (LABEL_STATUS_ADTYPE_9 == adtype) {
+                labelStatusList.add(R.mipmap.label_status_sound);
+            } else if (LABEL_STATUS_ADTYPE_2 == adtype) {
+                labelStatusList.add(R.mipmap.label_status_voice);
+            } else if (adinfoArray.length >= 2) {
+                labelStatusList.add(R.mipmap.label_status_multilingual);
+            }
+        }
+    }
+
+    /**
+     * パラメータ名「copy」を参照(コピー制限).
+     * @param labelStatusList ラベルステータス画像リスト
+     */
+    public void setCopy(final List<Integer> labelStatusList) {
+        String copy = mOtherContentsDetailData.getCopy();
+        if (copy != null) {
+            switch (copy) {
+                case LABEL_STATUS_COPY_COPYNEVER:
+                    labelStatusList.add(R.mipmap.label_status_copy_never);
+                    break;
+                case LABEL_STATUS_COPY_COPYFREE:
+                    labelStatusList.add(R.mipmap.label_status_copy_free);
+                    break;
+                case LABEL_STATUS_COPY_COPYONCE:
+                    labelStatusList.add(R.mipmap.label_status_copy_once);
+                    break;
+                case LABEL_STATUS_COPY_COPYNOMORE:
+                default:
+                    break;
+            }
+        }
+    }
+
+    /**
+     * パラメータ名「r_value」を参照(R指定).
+     * @param labelStatusList ラベルステータス画像リスト
+     */
+    public void setRvalue(final List<Integer> labelStatusList) {
+        String rValue = mOtherContentsDetailData.getRvalue();
+        if (rValue != null) {
+            switch (rValue) {
+                case LABEL_STATUS_R_VALUE_PG_12:
+                    labelStatusList.add(R.mipmap.label_status_r_pg_12);
+                    break;
+                case LABEL_STATUS_R_VALUE_R_12:
+                    labelStatusList.add(R.mipmap.label_status_r_r_12);
+                    break;
+                case LABEL_STATUS_R_VALUE_R_15:
+                    labelStatusList.add(R.mipmap.label_status_r_r_15);
+                    break;
+                case LABEL_STATUS_R_VALUE_R_18:
+                    labelStatusList.add(R.mipmap.label_status_r_r_18);
+                    break;
+                case LABEL_STATUS_R_VALUE_R_20:
+                    labelStatusList.add(R.mipmap.label_status_r_r_20);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    /**
      * ラベルを設定する.
      */
     private void setLabelStatus() {
         LinearLayout labelStatus = mView.findViewById(R.id.dtv_contents_detail_fragment_label_status_ll);
         labelStatus.removeAllViews();
-        int[] status = {R.mipmap.label_status_new, R.mipmap.label_status_multilingual,
-                R.mipmap.label_status_4k, R.mipmap.label_status_voice, R.mipmap.label_status_sound};
-        for (int i = 0; i < status.length; i++) {
-            LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
-            if (i != 0) {
-                if (isAdded()) {
-                    imageParams.setMargins((int) getResources().getDimension(R.dimen.contents_detail_clip_margin),
-                            (int) getResources().getDimension(R.dimen.contents_tab_top_margin),
-                            (int) getResources().getDimension(R.dimen.contents_tab_top_margin),
-                            (int) getResources().getDimension(R.dimen.contents_tab_top_margin));
+        List<Integer> labelStatusList = new ArrayList<>();
+        //4Kアイコン
+        if (LABEL_STATUS_4KFLG_1 == mOtherContentsDetailData.getM4kflg()) {
+            labelStatusList.add(R.mipmap.label_status_4k);
+        }
+        //音声アイコン
+        setAdtype(labelStatusList);
+        //コピー制限アイコン
+        setCopy(labelStatusList);
+        //Rアイコン
+        setRvalue(labelStatusList);
+        if (labelStatusList.size() > 0) {
+            labelStatus.setVisibility(View.VISIBLE);
+            for (int i = 0; i < labelStatusList.size(); i++) {
+                LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                if (i != 0) {
+                    if (isAdded()) {
+                        imageParams.setMargins((int) getResources().getDimension(R.dimen.contents_detail_clip_margin),
+                                (int) getResources().getDimension(R.dimen.contents_tab_top_margin),
+                                (int) getResources().getDimension(R.dimen.contents_tab_top_margin),
+                                (int) getResources().getDimension(R.dimen.contents_tab_top_margin));
+                    }
+                }
+                Context context = getContext();
+                if (context != null) {
+                    ImageView imageView = new ImageView(context);
+                    imageView.setImageResource(labelStatusList.get(i));
+                    imageView.setLayoutParams(imageParams);
+                    labelStatus.addView(imageView);
                 }
             }
-            Context context = getContext();
-            if (context != null) {
-                ImageView imageView = new ImageView(context);
-                imageView.setImageResource(status[i]);
-                imageView.setLayoutParams(imageParams);
-                labelStatus.addView(imageView);
-            }
+        } else {
+            labelStatus.setVisibility(View.GONE);
         }
     }
 
@@ -470,18 +600,6 @@ public class DtvContentsDetailFragment extends Fragment {
     public void refreshChannelInfo() {
         if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelName())) {
             mTxtChannelName.setText(mOtherContentsDetailData.getChannelName());
-        }
-        String date = mOtherContentsDetailData.getChannelDate();
-        if (!TextUtils.isEmpty(date)) {
-            SpannableString spannableString = new SpannableString(date);
-            int subCount = 0;
-            if (date.contains(getString(R.string.contents_detail_hikari_d_channel_miss_viewing))) {
-                subCount = 3;
-            }
-            //「見逃し」は黄色文字で表示する
-            spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.recommend_list_now_on_air)),
-                    0, subCount, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            mTxtChannelDate.setText(spannableString);
         }
     }
 

@@ -116,7 +116,7 @@ public class SendOperateLog extends WebApiBase {
     public void sendOpeLog(final OtherContentsDetailData mDetailData, final VodMetaFullData mDetailFullData) {
         DTVTLogger.start();
         if (!mIsCancel && mDetailData != null) {
-            if (OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId() || mDetailFullData != null) {
+            if (ContentDetailActivity.DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId() || mDetailFullData != null) {
                 mCategoryId = getCategoryId(mDetailFullData);
             } else {
                 mCategoryId = mDetailData.getCategoryId();

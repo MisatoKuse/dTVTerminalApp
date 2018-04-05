@@ -278,6 +278,7 @@
     <string name="contents_detail_parental_check_fail">年齢制限のため視聴できません</string>
     <string name="contents_detail_response_ok">OK</string>
     <string name="contents_player_bad_contents_info">再生できませんでした</string>
+    <string name="contents_detail_adinfo_array_pipe">"\\|"</string>
 
     <!-- チャンネルリストタイトル -->
     <string name="channel_list_activity_title">チャンネルリスト</string>

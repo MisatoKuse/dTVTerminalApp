@@ -626,7 +626,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             if (!TextUtils.isEmpty(listContentInfo.getServiceId()) && DBUtils.isNumber(listContentInfo.getServiceId())) {
                 int serviceId = Integer.parseInt(listContentInfo.getServiceId());
                 String categoryId = listContentInfo.getServiceId();
-                if (OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID == serviceId
+                if (ContentDetailActivity.DTV_HIKARI_CONTENTS_SERVICE_ID == serviceId
                         && (ContentDetailActivity.H4D_CATEGORY_IPTV.equals(categoryId)
                         || ContentDetailActivity.H4D_CATEGORY_DTV_CHANNEL_BROADCAST.equals(categoryId))) {
                     if (DateUtils.isNowOnAirDate(listContentInfo.getStartViewing(),
