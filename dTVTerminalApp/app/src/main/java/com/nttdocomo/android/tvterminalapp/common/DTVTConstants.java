@@ -62,6 +62,8 @@ public class DTVTConstants {
             DISP_TYPE_VIDEO_PACKAGE = "video_package",
             DISP_TYPE_SUBSCRIPTION_PACKAGE = "subscription_package";
 
+    /** limitがない場合の初期値*/
+    public static final int REQUEST_LIMIT_50 = 50;
     //==================================== 定数定義 End ===================================
 
     /**

@@ -46,7 +46,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     /**
      * コンテキストファイル.
      */
-    private Context mContext;
+    protected Context mContext;
     /**
      * クリップキーリスト.
      */

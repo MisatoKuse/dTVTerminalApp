@@ -29,6 +29,7 @@
     <color name="common_tab_unselect_text_color">#FFFFFF</color>
     <color name="common_tab_indicating_no_color">#666666</color>
     <color name="common_tab_indicating_color">#FFFFFF</color>
+    <color name="common_background_color">#1d1d1d</color>
 
     <!--Home画面-->
     <color name="home_main_background_color">#1d1d1d</color>

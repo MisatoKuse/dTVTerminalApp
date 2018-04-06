@@ -13,7 +13,9 @@ import android.widget.Button;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.common.ChildContentListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListListener;
@@ -23,6 +25,7 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListListener;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+
 
 /**
  * アプリ起動時に最初に呼び出されるActivity.
@@ -132,7 +135,15 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     @Override
     public void onClick(final View v) {
         if (v.equals(mFirstLaunchLaunchYesActivity)) {
-            onFirstLaunchYesButton();
+//            onFirstLaunchYesButton();
+
+            // TODO: 子コンテンツ取得テストのための臨時コードSprintブランチマージ時点で削除
+            Intent intent = new Intent(this, ChildContentListActivity.class);
+            intent.putExtra(ChildContentListActivity.INTENT_KEY_CRID, "crid://plala.iptvf.jp/group/b0009c3");
+            intent.putExtra(ChildContentListActivity.INTENT_KEY_TITLE, "【33％OFF】明日、ママがいない　全9話パック");
+            intent.putExtra(ChildContentListActivity.INTENT_KEY_DISP_TYPE, DTVTConstants.DISP_TYPE_VIDEO_PACKAGE);
+            startActivity(intent);
+
         } else if (v.equals(mFirstLaunchLaunchNoActivity)) {
             doScreenTransition();
         }
