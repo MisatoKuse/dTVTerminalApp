@@ -90,6 +90,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     /**
      * 番組タイトル margintop.
      */
+    private final static int TITLE_MARGIN_TOP16 = 16;
+
+    /**
+     * 番組タイトル margintop.
+     */
     private final static int TITLE_MARGIN_TOP17 = 17;
 
     /**
@@ -158,6 +163,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * ダウンロード禁止判定フラグ.
      */
     private boolean isDownloadStop = false;
+
+    /**
+     * アローアイコンmargin right.
+     */
+    private final static int ARROW_MARGIN_RIGHT4 = 4;
 
     /**
      * 機能
@@ -255,6 +265,14 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
+     * disp_type 一覧（まず、多階層用のみ宣言）.
+     */
+    private static final String DISP_TYPE_SERIES_SVOD = "series_svod",
+            DISP_TYPE_WIZARD = "wizard",
+            DISP_TYPE_VIDEO_PACKAGE = "video_package",
+            DISP_TYPE_SUBSCRIPTION_PACKAGE = "subscription_package";
+
+    /**
      * コンストラクタ.
      *
      * @param mContext Activity
@@ -311,7 +329,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         return position;
     }
 
-    @SuppressWarnings("OverlyLongMethod")
     @Override
     public View getView(final int position, final View view, final ViewGroup parent) {
         ViewHolder holder;
@@ -326,12 +343,48 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         } else {
             holder = (ViewHolder) contentView.getTag();
         }
-        setShowDataVisibility(holder);
         //各アイテムデータを取得
         final ContentsData listContentInfo = mListData.get(position);
-        // アイテムデータを設定する
-        setContentsData(holder, listContentInfo, contentView);
 
+        if (isMultiLevelContent(listContentInfo)) {
+            setMultipleContentsData(holder, listContentInfo, contentView);
+        } else {
+            // アイテムデータを設定する
+            setContentsData(holder, listContentInfo, contentView);
+            setShowDataVisibility(holder);
+            setClipButtonItem(position, holder, contentView, listContentInfo);
+            setMarginLayout(position, holder, contentView);
+        }
+
+        return contentView;
+    }
+
+    /**
+     * 多階層コンテンツかの判定を行う.
+     * @param listContentInfo アイテムデータ
+     * @return true 多階層コンテンツ／ false 非多階層コンテンツ
+     */
+    private boolean isMultiLevelContent(final ContentsData listContentInfo) {
+        String dispType = listContentInfo.getDispType();
+
+        if (null != dispType && (dispType.equals(DISP_TYPE_SERIES_SVOD)
+                || dispType.equals(DISP_TYPE_WIZARD)
+                || dispType.equals(DISP_TYPE_VIDEO_PACKAGE)
+                || dispType.equals(DISP_TYPE_SUBSCRIPTION_PACKAGE))) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 非多階層アイテムのクリップボタン処理設定.
+     *
+     * @param position リスト位置
+     * @param holder 設定済みViewHolder
+     * @param contentView ビュー
+     * @param listContentInfo アイテムデータ
+     */
+    private void setClipButtonItem(final int position, final ViewHolder holder, final View contentView, final ContentsData listContentInfo) {
         if (!ActivityTypeItem.TYPE_RECORDED_LIST.equals(mType)) {
             //クリップボタン処理を設定する
             final ClipRequestData requestData = listContentInfo.getRequestData();
@@ -353,7 +406,17 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         } else {
             setDownloadStatus(holder, listContentInfo, position);
         }
+    }
 
+    /**
+     * 非多階層アイテムのレイアウト調整.
+     *
+     * @param position リスト位置
+     * @param holder 設定済みViewHolder
+     * @param contentView ビュー
+     */
+    @SuppressWarnings("OverlyLongMethod")
+    private void setMarginLayout(final int position, final ViewHolder holder, final View contentView) {
         RelativeLayout.LayoutParams layoutParamsClip = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         int textMargin;
@@ -420,7 +483,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_rank.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
             }
         }
-        return contentView;
     }
 
     /**
@@ -567,6 +629,37 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
+     * 各多階層コンテンツデータと表示設定を設定.
+     *
+     * @param holder          ビューの集合
+     * @param listContentInfo 行データー
+     * @param contentView ビュー
+     */
+    private void setMultipleContentsData(final ViewHolder holder, final ContentsData listContentInfo, final View contentView) {
+        DTVTLogger.start();
+        setTitleData(holder, listContentInfo);
+
+        holder.iv_thumbnail.setVisibility(View.GONE);
+        holder.ll_rating.setVisibility(View.GONE);
+        holder.rl_thumbnail.setVisibility(View.GONE);
+        holder.tv_rank.setVisibility(View.GONE);
+        holder.tv_time.setVisibility(View.GONE);
+        holder.tv_clip.setBackgroundResource(R.mipmap.icon_normal_arrow_right);
+
+        RelativeLayout.LayoutParams layoutParamsArrow = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        setTextMargin(TITLE_MARGIN_TOP16, holder, contentView);
+        DisplayMetrics DisplayMetrics = mContext.getResources().getDisplayMetrics();
+        float density = DisplayMetrics.density;
+
+        layoutParamsArrow.setMargins(THUMBNAIL_MARGIN0 * (int) density, THUMBNAIL_MARGIN0 * (int) density,
+                ARROW_MARGIN_RIGHT4 * (int) density, THUMBNAIL_MARGIN0 * (int) density);
+        layoutParamsArrow.addRule(RelativeLayout.ALIGN_PARENT_END, R.id.parent_relative_layout);
+        layoutParamsArrow.addRule(RelativeLayout.CENTER_VERTICAL);
+        contentView.findViewById(R.id.item_common_result_show_status_area).setLayoutParams(layoutParamsArrow);
+    }
+
+    /**
      * NOW ON AIR を設定.
      *
      * @param holder          ビューの集合
@@ -680,6 +773,31 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_time.setVisibility(View.GONE);
                 holder.ll_rating.setVisibility(View.GONE);
                 holder.tv_clip.setVisibility(View.GONE);
+                break;
+            case TAB_DEFAULT:
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 多階層タブレイアウト設定.
+     *
+     * @param holder holder
+     */
+    private void setMultipleTabContentLayout(final ViewHolder holder) {
+        holder.tv_rank.setVisibility(View.GONE);
+        holder.ll_rating.setVisibility(View.GONE);
+        holder.tv_time.setVisibility(View.GONE);
+
+        switch (mTabType) {
+            case TAB_TV:
+                break;
+            case TAB_VIDEO:
+                break;
+            case TAB_D_CHANNEL:
+            case TAB_D_ANIMATE:
+            case  TAB_D_TV:
                 break;
             case TAB_DEFAULT:
             default:
