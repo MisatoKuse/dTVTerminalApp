@@ -2219,6 +2219,7 @@ public class ContentDetailActivity extends BaseActivity implements
                                     isFirst = true;
                                 }
                                 contentsData.setTitle(scheduleInfo.getTitle());
+                                contentsData.setContentsId(scheduleInfo.getCrId());
                                 contentsData.setRequestData(scheduleInfo.getClipRequestData());
                                 contentsData.setThumURL(scheduleInfo.getImageUrl());
                                 contentsData.setTime(scheduleInfo.getStartTime().substring(11, 16));

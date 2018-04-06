@@ -45,137 +45,73 @@ import java.util.List;
  */
 public class DtvContentsDetailFragment extends Fragment {
 
-    /**
-     * コンテクスト.
-     */
+    /** コンテクスト.*/
     private Context mActivity = null;
-    /**
-     * フラグメントビュー.
-     */
+    /** フラグメントビュー.*/
     private View mView = null;
-    /**
-     * 詳細情報.
-     */
+    /** 詳細情報.*/
     public OtherContentsDetailData mOtherContentsDetailData = null;
-    /**
-     * スタッフビュー.
-     */
+    /** スタッフビュー.*/
     private LinearLayout mStaffLayout = null;
-    /**
-     * タイトル/詳細一部文字.
-     */
+    /** タイトル/詳細一部文字.*/
     private TextView mTxtTitleShortDetail = null;
-    /**
-     * タイトル/詳細全文字.
-     */
+    /** タイトル/詳細全文字.*/
     private TextView mTxtTitleAllDetail = null;
-    /**
-     * 評価.
-     */
+    /** 評価.*/
     private RatingBarLayout mRatingBar;
-    /**
-     * moreボタン.
-     */
+    /** moreボタン.*/
     private TextView mTxtMoreText = null;
-    /**
-     * ヘッダー.
-     */
+    /** ヘッダー.*/
     private TextView mTextHeader = null;
-    /**
-     * サブヘッダー.
-     */
+    /** サブヘッダー.*/
     private TextView mTextSubHeader = null;
-    /**
-     * サービスアイコン.
-     */
+    /** サービスアイコン.*/
     private ImageView mImgServiceIcon = null;
-    /**
-     * サービスアイコン dTV(白背景ロゴ).
-     */
+    /** サービスアイコン dTV(白背景ロゴ).*/
     private ImageView mImgServiceIconDtv = null;
-    /**
-     * チャンネル名.
-     */
+    /** チャンネル名.*/
     private TextView mTxtChannelName = null;
-    /**
-     * チャンネル日付.
-     */
+    /** チャンネル日付.*/
     private TextView mTxtChannelDate = null;
-    /**
-     * 全文表示フラグ.
-     */
+    /** 全文表示フラグ.*/
     private boolean mIsAllText = false;
-    /**
-     * 契約フラグ.
-     */
+    /** 契約フラグ.*/
     private boolean mIsContract = true;
-    /**
-     * クリップボタン.
-     */
+    /** クリップボタン.*/
     private ImageView mClipButton = null;
-    /**
-     * 録画リスナー.
-     */
+    /** 録画ボタン.*/
+    private ImageView mRecordButton = null;
+    /** 録画リスナー.*/
     private RecordingReservationIconListener mIconClickListener = null;
-    /**
-     * スタッフ文字サイズ(title).
-     */
+    /** スタッフ文字サイズ(title).*/
     private final static int TEXT_SIZE_12 = 12;
-    /**
-     * スタッフ文字サイズ(内容).
-     */
+    /** スタッフ文字サイズ(内容).*/
     private final static int TEXT_SIZE_14 = 14;
-    /**
-     * スタッフ margin 0.
-     */
+    /** スタッフ margin 0.*/
     private final static int STAFF_MARGIN_0 = 0;
-    /**
-     * パラメータ名「4kflg」 1.
-     */
+    /** パラメータ名「4kflg」 1.*/
     private final static int LABEL_STATUS_4KFLG_1 = 1;
-    /**
-     * adinfo_array の adtype 9.
-     */
+    /** adinfo_array の adtype 9.*/
     private final static int LABEL_STATUS_ADTYPE_9 = 9;
-    /**
-     * adinfo_array の adtype 2.
-     */
+    /** adinfo_array の adtype 2.*/
     private final static int LABEL_STATUS_ADTYPE_2 = 2;
-    /**
-     * パラメータ名「copy」DTCP:CopyNever.
-     */
+    /** パラメータ名「copy」DTCP:CopyNever.*/
     private final static String LABEL_STATUS_COPY_COPYNEVER = "DTCP:CopyNever";
-    /**
-     * パラメータ名「copy」DTCP:CopyNever.
-     */
+    /** パラメータ名「copy」DTCP:CopyNever.*/
     private final static String LABEL_STATUS_COPY_COPYFREE = "DTCP:CopyFree";
-    /**
-     * パラメータ名「copy」DTCP:CopyNever.
-     */
+    /** パラメータ名「copy」DTCP:CopyNever.*/
     private final static String LABEL_STATUS_COPY_COPYONCE = "DTCP:CopyOnce";
-    /**
-     * パラメータ名「copy」DTCP:CopyNever.
-     */
+    /** パラメータ名「copy」DTCP:CopyNever.*/
     private final static String LABEL_STATUS_COPY_COPYNOMORE = "DTCP:CopyNoMore";
-    /**
-     * r_value PG-12.
-     */
+    /** r_value PG-12.*/
     private final static String LABEL_STATUS_R_VALUE_PG_12 = "PG-12";
-    /**
-     * r_value R-12.
-     */
+    /** r_value R-12.*/
     private final static String LABEL_STATUS_R_VALUE_R_12 = "R-12";
-    /**
-     * r_value R-15.
-     */
+    /** r_value R-15.*/
     private final static String LABEL_STATUS_R_VALUE_R_15 = "R-15";
-    /**
-     * r_value R-18.
-     */
+    /** r_value R-18.*/
     private final static String LABEL_STATUS_R_VALUE_R_18 = "R-18";
-    /**
-     * r_value R-20.
-     */
+    /** r_value R-20.*/
     private final static String LABEL_STATUS_R_VALUE_R_20 = "R-20";
 
     @Override
@@ -230,7 +166,7 @@ public class DtvContentsDetailFragment extends Fragment {
                 mTxtMoreText.setVisibility(View.GONE);
             }
         });
-
+        mRecordButton = mView.findViewById(R.id.dtv_contents_detail_fragment_rec_iv);
         mClipButton = mView.findViewById(R.id.contents_detail_clip_button);
 
         if (mOtherContentsDetailData != null) {
@@ -636,7 +572,7 @@ public class DtvContentsDetailFragment extends Fragment {
      */
     public void changeVisibilityRecordingReservationIcon(final int visibility) {
         DTVTLogger.start("setVisibility:" + visibility);
-        mView.findViewById(R.id.dtv_contents_detail_fragment_rec_iv).setVisibility(visibility);
+        mRecordButton.setVisibility(visibility);
         DTVTLogger.end();
     }
 
@@ -650,7 +586,7 @@ public class DtvContentsDetailFragment extends Fragment {
         if (listener != null) {
             DTVTLogger.debug("setOnClickListener");
             mIconClickListener = listener;
-            mView.findViewById(R.id.dtv_contents_detail_fragment_rec_iv).setOnClickListener(new View.OnClickListener() {
+            mRecordButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
                     DTVTLogger.debug("onClick RecordingReservationIcon");
@@ -661,7 +597,7 @@ public class DtvContentsDetailFragment extends Fragment {
         } else {
             DTVTLogger.debug("Listener is Null");
             mIconClickListener = null;
-            mView.findViewById(R.id.dtv_contents_detail_fragment_rec_iv).setOnClickListener(null);
+            mRecordButton.setOnClickListener(null);
         }
         DTVTLogger.end();
     }
