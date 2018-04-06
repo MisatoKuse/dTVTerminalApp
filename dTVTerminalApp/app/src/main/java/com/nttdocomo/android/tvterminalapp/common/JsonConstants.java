@@ -581,4 +581,34 @@ public class JsonConstants {
      * play_count_desc：人気順（前日の視聴回数数降順）
      */
     public static final String GENRE_PER_CONTENTS_SORT_PLAY_COUNT_DESC = "play_count_desc";
+    /**
+     * 読み込み設定ファイルの実行停止部の親名.
+     */
+    public static final String SETTING_FILE_IS_STOP = "is_stop";
+    /**
+     * 読み込み設定ファイルの実行停止部の停止パラメータ.
+     */
+    public static final String SETTING_FILE_IS_STOP_VALUE = "value";
+    /**
+     * 読み込み設定ファイルの実行停止部の停止時文言.
+     */
+    public static final String SETTING_FILE_IS_STOP_DESCRIPTION = "description";
+    /**
+     * 読み込み設定ファイルの強制アップデート部の親名.
+     */
+    public static final String SETTING_FILE_FOURCE_UPDATE = "force_update";
+    /**
+     * 読み込み設定ファイルの強制アップデート部のAndroid用バージョン番号.
+     * (iOS用も存在するが、使用しない)
+     */
+    public static final String SETTING_FILE_FOURCE_UPDATE_AOS = "AOS";
+    /**
+     * 読み込み設定ファイルのアップデート部の親名.
+     */
+    public static final String SETTING_FILE_OPTIONAL_UPDATE = "optional_update";
+    /**
+     * 読み込み設定ファイルのアップデート部のAndroid用バージョン番号.
+     * (iOS用も存在するが、使用しない)
+     */
+    public static final String SETTING_FILE_OPTIONAL_UPDATE_AOS = "AOS";
 }
