@@ -645,18 +645,30 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         holder.tv_rank.setVisibility(View.GONE);
         holder.tv_time.setVisibility(View.GONE);
         holder.tv_clip.setBackgroundResource(R.mipmap.icon_normal_arrow_right);
+        holder.tv_title.setMaxLines(1);
 
-        RelativeLayout.LayoutParams layoutParamsArrow = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        setTextMargin(TITLE_MARGIN_TOP16, holder, contentView);
         DisplayMetrics DisplayMetrics = mContext.getResources().getDisplayMetrics();
         float density = DisplayMetrics.density;
 
+        RelativeLayout.LayoutParams layoutParamsArrow = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         layoutParamsArrow.setMargins(THUMBNAIL_MARGIN0 * (int) density, THUMBNAIL_MARGIN0 * (int) density,
                 ARROW_MARGIN_RIGHT4 * (int) density, THUMBNAIL_MARGIN0 * (int) density);
         layoutParamsArrow.addRule(RelativeLayout.ALIGN_PARENT_END, R.id.parent_relative_layout);
         layoutParamsArrow.addRule(RelativeLayout.CENTER_VERTICAL);
         contentView.findViewById(R.id.item_common_result_show_status_area).setLayoutParams(layoutParamsArrow);
+
+        RelativeLayout.LayoutParams layoutParamsTitle = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        layoutParamsTitle.setMargins(THUMBNAIL_MARGIN0 * (int) density, THUMBNAIL_MARGIN0 * (int) density,
+                THUMBNAIL_MARGIN0 * (int) density, THUMBNAIL_MARGIN0 * (int) density);
+        layoutParamsTitle.setMarginStart(THUMBNAIL_MARGIN_LEFT * (int) density);
+        layoutParamsTitle.addRule(RelativeLayout.START_OF, R.id.item_common_result_show_status_area);
+        layoutParamsTitle.addRule(RelativeLayout.END_OF, R.id.item_common_result_thumbnail_rl);
+        layoutParamsTitle.setMarginEnd(THUMBNAIL_MARGIN0 * (int) density);
+        layoutParamsTitle.addRule(RelativeLayout.CENTER_VERTICAL);
+        contentView.findViewById(R.id.item_common_result_contents).setLayoutParams(layoutParamsTitle);
+
     }
 
     /**
@@ -773,31 +785,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_time.setVisibility(View.GONE);
                 holder.ll_rating.setVisibility(View.GONE);
                 holder.tv_clip.setVisibility(View.GONE);
-                break;
-            case TAB_DEFAULT:
-            default:
-                break;
-        }
-    }
-
-    /**
-     * 多階層タブレイアウト設定.
-     *
-     * @param holder holder
-     */
-    private void setMultipleTabContentLayout(final ViewHolder holder) {
-        holder.tv_rank.setVisibility(View.GONE);
-        holder.ll_rating.setVisibility(View.GONE);
-        holder.tv_time.setVisibility(View.GONE);
-
-        switch (mTabType) {
-            case TAB_TV:
-                break;
-            case TAB_VIDEO:
-                break;
-            case TAB_D_CHANNEL:
-            case TAB_D_ANIMATE:
-            case  TAB_D_TV:
                 break;
             case TAB_DEFAULT:
             default:
