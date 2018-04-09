@@ -1999,6 +1999,7 @@ public class ContentDetailActivity extends BaseActivity implements
             detailFragment.mOtherContentsDetailData.setCopy(mDetailFullData.getmCopy());
             detailFragment.mOtherContentsDetailData.setM4kflg(mDetailFullData.getM4kflg());
             detailFragment.mOtherContentsDetailData.setAdinfoArray(mDetailFullData.getmAdinfo_array());
+            detailFragment.mOtherContentsDetailData.setmStartDate(String.valueOf(mDetailFullData.getPublish_start_date()));
             String date = null;
             DateUtils.ContentsType contentsType = DateUtils.getContentsDateByPlala(mDetailFullData.getDisp_type(),
                     mDetailFullData.getmTv_service(), mDetailFullData.getmContent_type(), mDetailFullData.getAvail_end_date(),
@@ -2030,7 +2031,7 @@ public class ContentDetailActivity extends BaseActivity implements
                 if (mScaledDownProgramListDataProvider == null) {
                     mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
                 }
-                mScaledDownProgramListDataProvider.getChannelList(0, 0, "", 1);
+                mScaledDownProgramListDataProvider.getChannelList(0, 0, "", 0);
             }
             if (DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
                 if (getStbStatus()) {
