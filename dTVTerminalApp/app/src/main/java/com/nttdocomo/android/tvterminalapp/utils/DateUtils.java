@@ -144,6 +144,10 @@ public class DateUtils {
      * 日付フォーマット.
      */
     public static final String DATE_YYYY_MM_DD = "yyyy/MM/dd";
+    /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_NOMARK_YYYYMMDD = "yyyyMMdd";
 
     /**
      * 日付フォーマット.

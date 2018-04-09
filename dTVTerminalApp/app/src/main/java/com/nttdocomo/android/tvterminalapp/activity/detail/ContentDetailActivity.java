@@ -455,6 +455,10 @@ public class ContentDetailActivity extends BaseActivity implements
      * 放送中フラグ.
      */
     private boolean isVideoBroadcast = false;
+    /**
+     * チャンネル日付.
+     */
+    private String mChannelDate = null;
 
     private final Runnable mHideCtrlViewThread = new Runnable() {
 
@@ -1255,17 +1259,17 @@ public class ContentDetailActivity extends BaseActivity implements
         if (mScaledDownProgramListDataProvider == null) {
             mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
         }
-        int[] channelNos = new int[mChannel.getChNo()];
+        int[] channelNos = new int[]{mChannel.getChNo()};
         dateList = null;
         if (mDateIndex <= 6) { //一週間以内
             dateList = new String[1];
         }
         if (dateList != null) {
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DD, Locale.JAPAN);
             try {
-                Calendar calendar = Calendar.getInstance();
-                SimpleDateFormat todaySdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DD, Locale.JAPAN);
-                String today = todaySdf.format(calendar.getTime()) + DateUtils.DATE_STANDARD_START;
-                SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
+                String today = sdf.format(calendar.getTime()) + DateUtils.DATE_STANDARD_START;
+                sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
                 Date date = sdf.parse(today);
                 //AM4:00以前の場合 日付-1
                 boolean is4HourPre = false;
@@ -1277,6 +1281,8 @@ public class ContentDetailActivity extends BaseActivity implements
                 } else {
                     calendar.add(Calendar.DAY_OF_MONTH, mDateIndex);
                 }
+                mChannelDate = sdf.format(calendar.getTime());
+                sdf = new SimpleDateFormat(DateUtils.DATE_NOMARK_YYYYMMDD, Locale.JAPAN);
                 dateList[0] = sdf.format(calendar.getTime());
                 mDateIndex++;
             } catch (ParseException e) {
@@ -1287,6 +1293,7 @@ public class ContentDetailActivity extends BaseActivity implements
                 //TODO channelNoが未指定の場合。エラー定義未決定のため一旦エラーを表示して戻る
                 DTVTLogger.error("No channel number");
                 Toast.makeText(this, "No channel number", Toast.LENGTH_SHORT).show();
+                channelLoadCompleted();
                 return;
             }
             mScaledDownProgramListDataProvider.getProgram(channelNos, dateList);
@@ -2212,6 +2219,7 @@ public class ContentDetailActivity extends BaseActivity implements
                                     isFirst = true;
                                 }
                                 contentsData.setTitle(scheduleInfo.getTitle());
+                                contentsData.setContentsId(scheduleInfo.getCrId());
                                 contentsData.setRequestData(scheduleInfo.getClipRequestData());
                                 contentsData.setThumURL(scheduleInfo.getImageUrl());
                                 contentsData.setTime(scheduleInfo.getStartTime().substring(11, 16));
@@ -2240,17 +2248,21 @@ public class ContentDetailActivity extends BaseActivity implements
      */
     private String getDate() {
         String subTitle = null;
-        SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
-        try {
-            Calendar calendar = Calendar.getInstance(Locale.JAPAN);
-            calendar.setTime(sdf.parse(dateList[0]));
-            int month = calendar.get(Calendar.MONTH);
-            int day = calendar.get(Calendar.DAY_OF_MONTH);
-            int week = calendar.get(Calendar.DAY_OF_WEEK);
-            subTitle = (month + 1) + "/" + day + "（" +
-                    DateUtils.STRING_DAY_OF_WEEK[week] + "）";
-        } catch (ParseException e) {
-            DTVTLogger.debug(e);
+        if (mChannelDate != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
+            try {
+                Calendar calendar = Calendar.getInstance(Locale.JAPAN);
+                calendar.setTime(sdf.parse(mChannelDate));
+                int month = calendar.get(Calendar.MONTH);
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+                int week = calendar.get(Calendar.DAY_OF_WEEK);
+                subTitle = (month + 1) + getString(R.string.home_contents_slash) + day
+                        + getString(R.string.home_contents_front_bracket)
+                        + DateUtils.STRING_DAY_OF_WEEK[week]
+                        + getString(R.string.home_contents_back_bracket);
+            } catch (ParseException e) {
+                DTVTLogger.debug(e);
+            }
         }
         return subTitle;
     }
