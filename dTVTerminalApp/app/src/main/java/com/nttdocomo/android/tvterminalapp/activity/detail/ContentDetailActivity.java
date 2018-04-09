@@ -1945,7 +1945,6 @@ public class ContentDetailActivity extends BaseActivity implements
                 mDetailFullData.getDur(),
                 mDetailFullData.getR_value());
         mRecordingReservationContentsDetailInfo.setEventId(mDetailFullData.getmEvent_id());
-        detailFragment.changeVisibilityRecordingReservationIcon(View.VISIBLE);
         detailFragment.setRecordingReservationIconListener(this);
     }
     //region ContentsDetailDataProvider.ApiDataProviderCallback
@@ -3513,6 +3512,7 @@ public class ContentDetailActivity extends BaseActivity implements
     @SuppressWarnings("OverlyLongMethod")
     private void changeUIBasedContractInfo() {
         DtvContentsDetailFragment detailFragment = getDetailFragment();
+        boolean isVisibleRecordButton = mRecordingReservationContentsDetailInfo != null;
         switch (mIsEnableWatch) {
             case ENABLE_WATCH_NO_LIMIT:
                 //視聴可能なので何もしない
@@ -3583,8 +3583,7 @@ public class ContentDetailActivity extends BaseActivity implements
                 //TODO 再生、評価はコンテンツ毎の詳細画面の表示が行われてから対応する
 
                 //録画予約ボタンを非表示
-                detailFragment.changeVisibilityRecordingReservationIcon(View.INVISIBLE);
-
+                isVisibleRecordButton = false;
                 //サムネイル上のdTVで視聴、dアニメストアで視聴を非表示
                 if (mThumbnailBtn != null) {
                     mThumbnailBtn.setVisibility(View.GONE);
@@ -3593,6 +3592,7 @@ public class ContentDetailActivity extends BaseActivity implements
             default:
                 break;
         }
+        detailFragment.changeVisibilityRecordingReservationIcon(isVisibleRecordButton ? View.VISIBLE : View.INVISIBLE);
     }
 
     /**
