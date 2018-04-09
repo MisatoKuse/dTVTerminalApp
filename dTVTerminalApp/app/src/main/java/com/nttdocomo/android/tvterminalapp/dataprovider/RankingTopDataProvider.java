@@ -312,7 +312,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         }
         // ビデオランキング
         if (mContext instanceof VideoRankingActivity) {
-            sendVideoRankList(mVideoRankList);
+            if (mVideoRankList != null) {
+                sendVideoRankList(mVideoRankList);
+            }
         }
 
         DTVTLogger.end();
@@ -427,7 +429,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             sendWeeklyRankList(mWeeklyRankList);
         }
         // ビデオランキング
-        if (mContext instanceof VideoRankingActivity) {
+        if (mContext instanceof VideoRankingActivity && mVideoRankList != null) {
             sendVideoRankList(mVideoRankList);
         }
         DTVTLogger.end();
