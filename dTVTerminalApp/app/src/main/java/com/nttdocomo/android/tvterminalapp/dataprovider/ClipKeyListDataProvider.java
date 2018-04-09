@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
 
+import com.nttdocomo.android.tvterminalapp.activity.common.ChildContentListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.ClipListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RentalListActivity;
@@ -228,7 +229,8 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
                 || context instanceof WatchingVideoListActivity
                 || context instanceof ContentDetailActivity
                 || context instanceof TvProgramListActivity
-                || context instanceof VideoContentListActivity) {
+                || context instanceof VideoContentListActivity
+                || context instanceof ChildContentListActivity) {
             DTVTLogger.debug("Need Getting ClipKeyList");
             return true;
         }

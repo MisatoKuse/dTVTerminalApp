@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
@@ -13,6 +14,7 @@ import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChildContentListGetResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
@@ -42,8 +44,11 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
     private ChildContentListGetWebClient mWebClient;
     private DataCallback mCallback = null;
 
+    private ChildContentListGetResponse mChildContentListGetResponse;
+
     private ErrorState mError = null;
     private boolean mIsCancel = false;
+
     // endregion variable
 
     /**
@@ -58,6 +63,14 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
+    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
+        super.onVodClipKeyListJsonParsed(clipKeyListResponse);
+        if (mChildContentListGetResponse != null) {
+            sendData(mChildContentListGetResponse);
+        }
+    }
+
+    @Override
     public void onJsonParsed(@Nullable ChildContentListGetResponse response) {
         if (response == null) {
             if (mWebClient.getError() != null) {
@@ -65,8 +78,8 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
             }
             mCallback.childContentListCallback(null);
         } else {
-            List<ContentsData> list = makeContentsData(response);
-            mCallback.childContentListCallback(list);
+            mChildContentListGetResponse = response;
+            sendData(response);
         }
     }
 
@@ -78,6 +91,7 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
         if (!mIsCancel) {
             if (mRequiredClipKeyList) {
                 getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+                mRequiredClipKeyList = false;
             }
 
             String filter = WebApiBasePlala.FILTER_RELEASE;
@@ -195,5 +209,9 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
             list.add(data);
         }
         return list;
+    }
+    private void sendData(@NonNull ChildContentListGetResponse response) {
+        List<ContentsData> list = makeContentsData(response);
+        mCallback.childContentListCallback(list);
     }
 }
