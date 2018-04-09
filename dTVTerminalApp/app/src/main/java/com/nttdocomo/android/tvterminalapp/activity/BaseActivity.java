@@ -87,6 +87,8 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipDeleteWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClient;
 
+import java.util.LinkedList;
+
 /**
  * クラス機能：
  * プロジェクトにて、すべての「Activity」のベースクラスである
@@ -94,9 +96,14 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClie
  */
 @SuppressLint("Registered")
 public class BaseActivity extends FragmentActivity implements
-        DlnaDevListListener, View.OnClickListener, RemoteControllerView.OnStartRemoteControllerUIListener,
-        ClipRegistWebClient.ClipRegistJsonParserCallback, ClipDeleteWebClient.ClipDeleteJsonParserCallback,
-        DaccountControl.DaccountControlCallBack {
+        DlnaDevListListener
+        , View.OnClickListener
+        , RemoteControllerView.OnStartRemoteControllerUIListener
+        , ClipRegistWebClient.ClipRegistJsonParserCallback
+        , ClipDeleteWebClient.ClipDeleteJsonParserCallback
+        , DaccountControl.DaccountControlCallBack
+        , CustomDialog.DismissCallback
+{
 
     /**
      * ヘッダーBaseレイアウト.
@@ -184,6 +191,8 @@ public class BaseActivity extends FragmentActivity implements
      */
     protected static final String DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL =
             "https://www.nttdocomo.co.jp/product/docomo_select/tt01/index.html";
+    /** DialogQue. **/
+    private LinkedList<CustomDialog> mLinkedList = new LinkedList<>();
 
     /**
      * タイムアウト時間.
@@ -1985,6 +1994,7 @@ public class BaseActivity extends FragmentActivity implements
     private CustomDialog createPermissionDetailDialog() {
         DTVTLogger.start();
         CustomDialog dialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+        dialog.setDialogDismissCallback(this);
         dialog.setCancelable(false);
         dialog.setOnTouchOutside(false);
         dialog.setConfirmText(R.string.permission_detail_dialog_confirm);
@@ -2232,9 +2242,14 @@ public class BaseActivity extends FragmentActivity implements
             }
         });
         //戻るボタン等でダイアログが閉じられた時もOKと同じ挙動
-        closeDialog.setDialogDismissCallback(new CustomDialog.DialogDismissCallback() {
+        closeDialog.setDialogDismissCallback(new CustomDialog.DismissCallback() {
             @Override
-            public void onDialogDismissCallback() {
+            public void allDismissCallback() {
+                //NOP
+            }
+
+            @Override
+            public void otherDismissCallback() {
                 contentsDetailBackKey(null);
             }
         });
@@ -2277,12 +2292,44 @@ public class BaseActivity extends FragmentActivity implements
         CustomDialog apFinishDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
         apFinishDialog.setContent(errorMessage);
         apFinishDialog.showDialog();
-        apFinishDialog.setDialogDismissCallback(new CustomDialog.DialogDismissCallback() {
+        apFinishDialog.setDialogDismissCallback(new CustomDialog.DismissCallback() {
             @Override
-            public void onDialogDismissCallback() {
+            public void allDismissCallback() {
                 finish();
+            }
+            @Override
+            public void otherDismissCallback() {
+                //NOP
             }
         });
     }
 
+    /**
+     * ダイアログをキューに追加.
+     * @param dialog キュー表示するダイアログ
+     */
+    private void offerDialog(CustomDialog dialog) {
+        mLinkedList.offer(dialog);
+        pollDialog();
+    }
+
+    /**
+     * キューにあるダイアログを順に表示.
+     */
+    public void pollDialog() {
+        if ((mShowDialog == null || !mShowDialog.isShowing()) && mLinkedList.size() > 0) {
+            mShowDialog = mLinkedList.poll();
+            mShowDialog.showDialog();
+        }
+    }
+
+    @Override
+    public void allDismissCallback() {
+        pollDialog();
+    }
+
+    @Override
+    public void otherDismissCallback() {
+        //NOP
+    }
 }
