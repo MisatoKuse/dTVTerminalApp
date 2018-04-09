@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
-  -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/common_background_color">
+    android:background="@color/ranking_list_background">
 
     <RelativeLayout
-        android:id="@+id/child_content_list_progress"
+        android:id="@+id/child_content_progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true"
@@ -40,7 +38,7 @@
         android:layout_height="match_parent"
         android:divider="@drawable/list_item_divider"
         android:listSelector="@drawable/channel_list_item_selector"
-        android:dividerHeight="@dimen/channel_list_divider_height">
+        android:dividerHeight="@dimen/video_contents_divider_divider_height">
     </ListView>
 
 </LinearLayout>
