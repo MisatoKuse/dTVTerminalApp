@@ -105,12 +105,15 @@ public class ClipRegistWebClient
 
         String strStartDate = linearStartDate;
         String strEndDate = linearEndDate;
-        //パラメータチェック終了後に日付をyyyy/MM/dd HH:mm:ss形式に変換する
-        if (strStartDate != null && DBUtils.isNumber(strStartDate)) {
-            strStartDate = DateUtils.formatEpochToString(Long.parseLong(strStartDate));
+        if (strStartDate != null && DBUtils.isNumber(strStartDate) && !strStartDate.equals("0")) {
+            strStartDate = DateUtils.formatEpochToString(Long.parseLong(strEndDate), null);
+        } else {
+            strStartDate = null;
         }
-        if (strEndDate != null && DBUtils.isNumber(strEndDate)) {
-            strEndDate = DateUtils.formatEpochToString(Long.parseLong(strEndDate));
+        if (strEndDate != null && DBUtils.isNumber(strEndDate) && !strEndDate.equals("0")) {
+            strEndDate = DateUtils.formatEpochToString(Long.parseLong(strEndDate), null);
+        } else {
+            strEndDate = null;
         }
 
         //コールバックの設定
@@ -263,7 +266,7 @@ public class ClipRegistWebClient
             putSelect(jsonObject,JsonConstants.META_RESPONSE_LINEAR_START_DATE, linearStartDate);
             putSelect(jsonObject,JsonConstants.META_RESPONSE_LINEAR_END_DATE, linearEndDate);
 
-            answerText = jsonObject.toString();
+            answerText = jsonObject.toString().replace("\\", "");
 
         } catch (JSONException e) {
             //JSONの作成に失敗したので空文字とする

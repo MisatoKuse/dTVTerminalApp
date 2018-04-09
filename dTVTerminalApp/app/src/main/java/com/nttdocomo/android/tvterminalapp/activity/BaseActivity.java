@@ -1588,7 +1588,7 @@ public class BaseActivity extends FragmentActivity implements
             if (data.isClipStatus()) {
                 ClipDeleteWebClient deleteWebClient = new ClipDeleteWebClient(getApplicationContext());
                 isParamCheck = deleteWebClient.getClipDeleteApi(data.getType(), data.getCrid(),
-                        data.getTitle(), this);
+                        data.getTitleId(), this);
             } else {
                 ClipRegistWebClient registWebClient = new ClipRegistWebClient(getApplicationContext());
                 isParamCheck = registWebClient.getClipRegistApi(
