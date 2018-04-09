@@ -418,6 +418,11 @@ public class DtvContentsDetailFragment extends Fragment {
         LinearLayout labelStatus = mView.findViewById(R.id.dtv_contents_detail_fragment_label_status_ll);
         labelStatus.removeAllViews();
         List<Integer> labelStatusList = new ArrayList<>();
+        //NEW アイコン
+        if (DBUtils.isNumber(mOtherContentsDetailData.getmStartDate())
+                && DateUtils.isOneWeek(mOtherContentsDetailData.getmStartDate())) {
+            labelStatusList.add(R.mipmap.label_status_new);
+        }
         //4Kアイコン
         if (LABEL_STATUS_4KFLG_1 == mOtherContentsDetailData.getM4kflg()) {
             labelStatusList.add(R.mipmap.label_status_4k);
