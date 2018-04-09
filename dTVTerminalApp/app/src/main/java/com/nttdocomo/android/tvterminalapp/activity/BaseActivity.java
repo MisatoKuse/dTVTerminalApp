@@ -903,7 +903,7 @@ public class BaseActivity extends FragmentActivity implements
                                 //サーバエラー
                             case RelayServiceResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE:
                                 //ユーザアカウントチェックサービス未登録
-                                showErrorDialog(getResources().getString(R.string.main_setting_connect_error_message));
+                                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
                                 break;
                             case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
                                 showDAccountRegDialog();
@@ -920,7 +920,7 @@ public class BaseActivity extends FragmentActivity implements
                                 //ユーザアカウントチェックサービス未登録
                             case RelayServiceResponseMessage.RELAY_RESULT_USER_INVALID_STATE:
                                 //STBの中継アプリ~応答が無かった場合(要求はできたのでSTBとの通信はOK)
-                                showErrorDialog(getResources().getString(R.string.main_setting_connect_error_message));
+                                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
                                 break;
                             case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
                                 // チェック処理の状態で処理を分岐する
@@ -943,10 +943,15 @@ public class BaseActivity extends FragmentActivity implements
                                         toGooglePlay(DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL);
                                     }
                                 });
-                                dTVTUpDateDialog.showDialog();
+                                //次のダイアログを呼ぶ為の処理
+                                dTVTUpDateDialog.setDialogDismissCallback(this);
+
+                                //ダイアログを表示
+                                offerDialog(dTVTUpDateDialog);
+                                //dTVTUpDateDialog.showDialog();
                                 break;
                             case RelayServiceResponseMessage.RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE:
-                                showErrorDialog(getResources().getString(R.string.stb_application_version_update));
+                                showErrorDialogOffer(getResources().getString(R.string.stb_application_version_update));
                                 break;
                             default:
                                 break;
@@ -958,14 +963,14 @@ public class BaseActivity extends FragmentActivity implements
                         switch (resultCode) {
                             case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
                                 if (getStbStatus()) {
-                                    showErrorDialog(getResources().getString(R.string.main_setting_connect_error_message));
+                                    showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
                                     //ペアリングアイコンをOFFにする
                                     setStbStatus(false);
                                 }
                                 break;
                             case RelayServiceResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY: // 他の端末の要求処理中
                                 //中継アプリからの応答待ち中に新しい要求を行った場合
-                                showErrorDialog(getResources().getString(R.string.main_setting_stb_busy_error_message));
+                                showErrorDialogOffer(getResources().getString(R.string.main_setting_stb_busy_error_message));
                                 break;
                             default:
                                 break;
@@ -1072,6 +1077,22 @@ public class BaseActivity extends FragmentActivity implements
         CustomDialog errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
         errorDialog.setContent(errorMessage);
         errorDialog.showDialog();
+    }
+
+    /**
+     * 機能 エラーメッセージの表示(重複ダイアログ用処理付き).
+     *
+     * @param errorMessage dialog content
+     */
+    protected void showErrorDialogOffer(final String errorMessage) {
+        CustomDialog errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
+        errorDialog.setContent(errorMessage);
+
+        //閉じたときに次のダイアログを呼ぶ処理
+        errorDialog.setDialogDismissCallback(this);
+
+        //ダイアログをキューにためる処理
+        offerDialog(errorDialog);
     }
 
     /**
@@ -1719,7 +1740,11 @@ public class BaseActivity extends FragmentActivity implements
                     DTVTLogger.debug("daccount error code = " + mDAccountControl.getResult());
 
                     errorDialog.setContent(getString(R.string.d_account_regist_error));
-                    errorDialog.showDialog();
+                    //次のダイアログを呼ぶ為の処理
+                    errorDialog.setDialogDismissCallback(BaseActivity.this);
+
+                    //showDialogの代わり・重複ダイアログ実現用
+                    offerDialog(errorDialog);
                 }
             });
 
@@ -2322,9 +2347,10 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * ダイアログをキューに追加.
+     * (設定ファイル処理から呼ぶためにパブリック化)
      * @param dialog キュー表示するダイアログ
      */
-    private void offerDialog(CustomDialog dialog) {
+    public void offerDialog(CustomDialog dialog) {
         mLinkedList.offer(dialog);
         pollDialog();
     }

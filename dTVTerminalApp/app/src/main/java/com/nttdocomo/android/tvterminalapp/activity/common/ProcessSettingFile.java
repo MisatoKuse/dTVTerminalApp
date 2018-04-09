@@ -219,8 +219,11 @@ public class ProcessSettingFile {
             }
         });
 
+        //次のダイアログを呼ぶ為の処理
+        dialog.setDialogDismissCallback(mActivity);
+
         //ダイアログを表示
-        dialog.showDialog();
+        mActivity.offerDialog(dialog);
     }
 
     /**
@@ -275,7 +278,10 @@ public class ProcessSettingFile {
             });
         }
 
-        //ダイアログを表示
-        dialog.showDialog();
+        //次のダイアログを呼ぶ為の処理
+        dialog.setDialogDismissCallback(mActivity);
+
+        //showDialogの代わり・重複ダイアログ実現用
+        mActivity.offerDialog(dialog);
     }
 }

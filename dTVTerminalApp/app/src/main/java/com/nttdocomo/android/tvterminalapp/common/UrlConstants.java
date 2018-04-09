@@ -251,7 +251,7 @@ public class UrlConstants {
          */
         public static final String SETTING_FILE =
                 "https://tconf.hikaritv-docomo.jp/common/client/genreList.json";
-                //"http://192.168.2.3:80/settinggenreList.json";
+                //"http://192.168.2.3:80/setting_aos.json";
 
         /**
          * ロール一覧リストファイル：こちらはAPIではなく、ファイルの直接読み込みとのこと.
