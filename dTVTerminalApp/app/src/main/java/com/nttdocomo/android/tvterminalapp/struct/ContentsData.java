@@ -562,7 +562,7 @@ public class ContentsData {
     }
 
     /**
-     * 子コンテンツを持っているか
+     * 子コンテンツを持っているか.
      * @return 子コンテンツ持ちのコンテンツの場合、true
      */
     public boolean hasChildContentList() {

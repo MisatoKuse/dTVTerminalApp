@@ -19,6 +19,7 @@ import android.widget.RelativeLayout;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.common.ChildContentListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
@@ -258,13 +259,41 @@ public class ClipListBaseFragment extends Fragment
         }
 
         if (mContext != null) {
-            mContentsDetailDisplay = true;
-            Intent intent = new Intent(mContext, ContentDetailActivity.class);
-            intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
-            OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(mClipListData.get(i), ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
-            intent.putExtra(detailData.getRecommendFlg(), detailData);
-            startActivity(intent);
+            ContentsData contentsData = mClipListData.get(i);
+            if (isChildContentList(contentsData)) {
+                startChildContentListActivity(contentsData);
+            } else {
+                mContentsDetailDisplay = true;
+                Intent intent = new Intent(mContext, ContentDetailActivity.class);
+                intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
+                OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(contentsData, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
+                intent.putExtra(detailData.getRecommendFlg(), detailData);
+                startActivity(intent);
+            }
         }
+    }
+
+    /**
+     * 多階層コンテンツであるか判定する.
+     * @param contentsData
+     * @return
+     */
+    private boolean isChildContentList(final ContentsData contentsData) {
+        if (null != contentsData) {
+            return contentsData.hasChildContentList();
+        }
+        return false;
+    }
+
+    /**
+     * ウイザード（多階層コンテンツ）画面を表示する.
+     */
+    private void startChildContentListActivity(final ContentsData contentsData) {
+        Intent intent = new Intent(mContext, ChildContentListActivity.class);
+        intent.putExtra(ChildContentListActivity.INTENT_KEY_CRID, contentsData.getCrid());
+        intent.putExtra(ChildContentListActivity.INTENT_KEY_TITLE, contentsData.getTitle());
+        intent.putExtra(ChildContentListActivity.INTENT_KEY_DISP_TYPE, contentsData.getDispType());
+        startActivity(intent);
     }
 
     /**
