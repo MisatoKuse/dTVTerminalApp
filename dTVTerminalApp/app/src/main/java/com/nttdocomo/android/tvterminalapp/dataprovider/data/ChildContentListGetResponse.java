@@ -8,8 +8,11 @@ import com.nttdocomo.android.tvterminalapp.struct.Pager;
 
 import java.util.ArrayList;
 
+/**
+ * 子コンテンツ一覧取得APIパース用
+ */
 public class ChildContentListGetResponse {
-    // status
+
     private String mStatus;
     private Pager mPager;
     private ArrayList<VodMetaFullData> mVodMetaFullData;
@@ -17,7 +20,7 @@ public class ChildContentListGetResponse {
     public ChildContentListGetResponse() {
         mStatus = "";
         mPager = new Pager();
-        mVodMetaFullData = new ArrayList<VodMetaFullData>();
+        mVodMetaFullData = new ArrayList<>();
     }
 
     public String getStatus() {

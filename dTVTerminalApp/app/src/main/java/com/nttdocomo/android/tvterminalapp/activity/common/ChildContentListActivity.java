@@ -16,17 +16,17 @@ import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 
 import java.util.List;
 
-/**
- * Created by moon_jaesung on 2018/04/05.
- */
 
+/**
+ * 子コンテンツ表示専用アクティビティ
+ */
 public class ChildContentListActivity extends BaseActivity implements ChildContentDataProvider.DataCallback {
 
     // region variable
 
     // view
 
-    //data
+    // data
     private ChildContentDataProvider mChildContentDataProvider;
 
     public static final String INTENT_KEY_CRID = "crid",
