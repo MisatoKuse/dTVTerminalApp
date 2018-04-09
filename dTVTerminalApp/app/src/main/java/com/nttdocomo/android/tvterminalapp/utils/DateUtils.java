@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
@@ -537,6 +538,20 @@ public class DateUtils {
      */
     public static String formatEpochToString(final long epochTime) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN);
+        return dateFormat.format(new Date(epochTime * 1000));
+    }
+
+    /**
+     * エポック秒を 指定のフォーマット文字列に返却.
+     * @param epochTime エポック秒
+     * @param format フォーマット文字列（nullの場合、DATE_PATTERN_HYPHEN)
+     * @return フォーマットされた日付
+     */
+    public static String formatEpochToString(final long epochTime, @Nullable String format) {
+        if (format == null) {
+            format = DATE_PATTERN_HYPHEN;
+        }
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
         return dateFormat.format(new Date(epochTime * 1000));
     }
 
