@@ -31,6 +31,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetail
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopWatchListenVideoListDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.ActivityUtil;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
@@ -323,13 +324,19 @@ public class WatchingVideoListActivity extends BaseActivity implements
 
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
-        Intent intent = new Intent(this, ContentDetailActivity.class);
-        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
-        OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(
-                mWatchingVideoListData.get(i), ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
-        intent.putExtra(detailData.getRecommendFlg(), detailData);
         mContentsDetailDisplay = true;
-        startActivity(intent);
+
+        ContentsData contentsData = mWatchingVideoListData.get(i);
+        if(ActivityUtil.isChildContentList(contentsData)) {
+            ActivityUtil.startChildContentListActivity(this, contentsData);
+        } else {
+            Intent intent = new Intent(this, ContentDetailActivity.class);
+            intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
+            OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(
+                    contentsData, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
+            intent.putExtra(detailData.getRecommendFlg(), detailData);
+            startActivity(intent);
+        }
     }
 
     /**

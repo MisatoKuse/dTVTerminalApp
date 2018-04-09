@@ -26,6 +26,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.ActivityUtil;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
@@ -260,8 +261,8 @@ public class ClipListBaseFragment extends Fragment
 
         if (mContext != null) {
             ContentsData contentsData = mClipListData.get(i);
-            if (isChildContentList(contentsData)) {
-                startChildContentListActivity(contentsData);
+            if (ActivityUtil.isChildContentList(contentsData)) {
+                ActivityUtil.startChildContentListActivity(mContext, contentsData);
             } else {
                 mContentsDetailDisplay = true;
                 Intent intent = new Intent(mContext, ContentDetailActivity.class);
@@ -271,29 +272,6 @@ public class ClipListBaseFragment extends Fragment
                 startActivity(intent);
             }
         }
-    }
-
-    /**
-     * 多階層コンテンツであるか判定する.
-     * @param contentsData
-     * @return
-     */
-    private boolean isChildContentList(final ContentsData contentsData) {
-        if (null != contentsData) {
-            return contentsData.hasChildContentList();
-        }
-        return false;
-    }
-
-    /**
-     * ウイザード（多階層コンテンツ）画面を表示する.
-     */
-    private void startChildContentListActivity(final ContentsData contentsData) {
-        Intent intent = new Intent(mContext, ChildContentListActivity.class);
-        intent.putExtra(ChildContentListActivity.INTENT_KEY_CRID, contentsData.getCrid());
-        intent.putExtra(ChildContentListActivity.INTENT_KEY_TITLE, contentsData.getTitle());
-        intent.putExtra(ChildContentListActivity.INTENT_KEY_DISP_TYPE, contentsData.getDispType());
-        startActivity(intent);
     }
 
     /**

@@ -394,6 +394,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
                 data.setDispType(dispType);
                 data.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
                 data.setContentsId(vodMetaFullData.getCrid());
+                data.setCrid(vodMetaFullData.getCrid());
 
                 //クリップリクエストデータ作成
                 ClipRequestData requestData = new ClipRequestData();

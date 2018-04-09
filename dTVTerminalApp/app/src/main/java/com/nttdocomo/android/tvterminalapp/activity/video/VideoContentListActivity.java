@@ -30,6 +30,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapter
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopVideoContentConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.VideoGenreListDataInfo;
+import com.nttdocomo.android.tvterminalapp.utils.ActivityUtil;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
@@ -309,11 +310,17 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         if (mLoadMoreView == view) {
             return;
         }
-        Intent intent = new Intent(this, ContentDetailActivity.class);
-        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
-        OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(mContentsList.get(position), ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
-        intent.putExtra(detailData.getRecommendFlg(), detailData);
-        startActivity(intent);
+        ContentsData contentsData = mContentsList.get(position);
+        if(ActivityUtil.isChildContentList(contentsData)) {
+            ActivityUtil.startChildContentListActivity(this, contentsData);
+        } else {
+            Intent intent = new Intent(this, ContentDetailActivity.class);
+            intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
+            OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(contentsData, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
+            intent.putExtra(detailData.getRecommendFlg(), detailData);
+            startActivity(intent);
+        }
+
     }
 
     /**

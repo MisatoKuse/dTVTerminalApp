@@ -30,6 +30,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RentalDataProvider;
+import com.nttdocomo.android.tvterminalapp.utils.ActivityUtil;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
@@ -197,12 +198,18 @@ public class RentalListActivity extends BaseActivity implements
         if (mLoadMoreView.equals(view)) {
             return;
         }
-        Intent intent = new Intent(this, ContentDetailActivity.class);
-        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
-        OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(mContentsList.get(i), ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
-        intent.putExtra(detailData.getRecommendFlg(), detailData);
         mContentsDetailDisplay = true;
-        startActivity(intent);
+
+        ContentsData contentsData = mContentsList.get(i);
+        if(ActivityUtil.isChildContentList(contentsData)) {
+            ActivityUtil.startChildContentListActivity(this, contentsData);
+        } else {
+            Intent intent = new Intent(this, ContentDetailActivity.class);
+            intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
+            OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(contentsData, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
+            intent.putExtra(detailData.getRecommendFlg(), detailData);
+            startActivity(intent);
+        }
     }
 
     @Override
