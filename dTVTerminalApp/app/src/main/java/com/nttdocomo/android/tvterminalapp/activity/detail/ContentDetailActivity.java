@@ -53,6 +53,7 @@ import com.digion.dixim.android.util.EnvironmentUtil;
 import com.digion.dixim.android.util.ExternalDisplayHelper;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.common.ProcessSettingFile;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
@@ -922,9 +923,31 @@ public class ContentDetailActivity extends BaseActivity implements
     }
 
     /**
-     * start playing.
+     * リモート視聴以外はそのまま再生を行う。リモート視聴の場合は再生可否のチェックを行う
      */
     private void playStart() {
+        if(!mCurrentMediaInfo.isRemote()) {
+            //リモート視聴ではないので、そのまま実行する
+            playStartOrigin();
+            return;
+        }
+
+        //リモート視聴なので、設定ファイルの内容に応じて判定を行う
+        ProcessSettingFile processSettingFile = new ProcessSettingFile(this);
+        processSettingFile.controlAtSettingFile(new ProcessSettingFile.ProcessSettingFileCallBack() {
+            @Override
+            public void onCallNoError() {
+                //設定ファイルの内容に問題は無かったので、再生を行う
+                playStartOrigin();
+            }
+        });
+    }
+
+    /**
+     * 元の再生開始.
+     * (リモート視聴の再生開始可否の為に、リネーム後に前チェックを追加)
+     */
+    private void playStartOrigin() {
         DTVTLogger.start();
         synchronized (this) {
             if (mCanPlay) {

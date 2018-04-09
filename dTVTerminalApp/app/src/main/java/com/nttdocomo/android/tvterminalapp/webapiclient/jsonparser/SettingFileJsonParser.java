@@ -43,9 +43,16 @@ public class SettingFileJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     @Override
-    protected void onPostExecute(final Object s) {
-        mSettingFileJsonParserCallback.
-                onSettingFileJsonParsed(mSettingFileResponse);
+    protected void onPostExecute(final Object response) {
+        if(response == null) {
+            //ファイルの読み込みに失敗しているならばヌルを返す
+            mSettingFileJsonParserCallback.
+                    onSettingFileJsonParsed(null);
+        } else {
+            //読み込みに成功しているので、既に編集済みのクラスを返す
+            mSettingFileJsonParserCallback.
+                    onSettingFileJsonParsed(mSettingFileResponse);
+        }
     }
 
     @Override
@@ -68,6 +75,11 @@ public class SettingFileJsonParser extends AsyncTask<Object, Object, Object> {
 
         //TODO: セッティングファイルのデータに置き換えるスタブを設置。後で外す事
         String jsonStringBuffer = getSettingFileStub(jsonStr);
+
+        //データがヌルならばそのまま返す
+        if(jsonStringBuffer == null) {
+            return null;
+        }
 
         DTVTLogger.debugHttp(jsonStringBuffer);
         mSettingFileResponse = new SettingFileResponse();
@@ -101,12 +113,10 @@ public class SettingFileJsonParser extends AsyncTask<Object, Object, Object> {
                     "    \"description\": \"おしまい\"\n" +
                     "  },\n" +
                     "  \"force_update\": {\n" +
-                    "    \"AOS\": \"111\",\n" +
-                    "    \"iOS\": \"version\"\n" +
+                    "    \"AOS\": \"5\"\n" +
                     "  },\n" +
                     "  \"optional_update\": {\n" +
-                    "    \"AOS\": \"222\",\n" +
-                    "    \"iOS\": \"version\"\n" +
+                    "    \"AOS\": \"5\"\n" +
                     "  }\n" +
                     "}";
             DTVTLogger.debug(answerText);

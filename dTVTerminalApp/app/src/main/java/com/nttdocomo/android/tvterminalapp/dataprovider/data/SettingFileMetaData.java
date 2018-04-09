@@ -17,6 +17,11 @@ public class SettingFileMetaData {
     private boolean mIsStop;
 
     /**
+     * 設定ファイルの読み込みに失敗した場合
+     */
+    private boolean mIsFileReadError;
+
+    /**
      * アプリ実行停止時に表示するメッセージ.
      */
     private String mDescription;
@@ -31,10 +36,30 @@ public class SettingFileMetaData {
      */
     private int mOptionalUpdateVersion;
 
+    /**
+     * コンストラクタ
+     */
+    public SettingFileMetaData() {
+        //内容の初期化
+        mIsStop = false;
+        mIsFileReadError = false;
+        mDescription = "";
+        mForceUpdateVersion = 0;
+        mOptionalUpdateVersion = 0;
+    }
+
     //個々の情報のゲッターとセッター・単純な物はコメント略
 
     public boolean isIsStop() {
         return mIsStop;
+    }
+
+    public boolean isFileReadError() {
+        return mIsFileReadError;
+    }
+
+    public void setIsFileReadError(boolean isFileReadError) {
+        mIsFileReadError = isFileReadError;
     }
 
     public void setIsStop(boolean isStop) {
@@ -55,10 +80,12 @@ public class SettingFileMetaData {
 
     /**
      * 与えられた強制アップデート対象バージョン情報を蓄積する.
+     * <p>
+     * (パーサーから取得したデータ用)
      *
      * @param forceUpdateVersion バージョン情報
      */
-    public void setForceUpdateVersion(String forceUpdateVersion) {
+    public void setForceUpdateVersion(final String forceUpdateVersion) {
         DTVTLogger.start();
 
         //文字列が数字だけかどうかを確認
@@ -67,6 +94,19 @@ public class SettingFileMetaData {
             mForceUpdateVersion = Integer.parseInt(forceUpdateVersion);
         }
 
+        DTVTLogger.end();
+    }
+
+    /**
+     * 与えられた強制アップデート対象バージョン情報を蓄積する.
+     * <p>
+     * (前回取得から1時間以内の再取得データ設定用)
+     *
+     * @param forceUpdateVersion バージョン情報
+     */
+    public void setForceUpdateVersion(final int forceUpdateVersion) {
+        DTVTLogger.start();
+        mForceUpdateVersion = forceUpdateVersion;
         DTVTLogger.end();
     }
 
@@ -79,13 +119,26 @@ public class SettingFileMetaData {
      *
      * @param optionalUpdateVersion バージョン情報
      */
-    public void setOptionalUpdateVersion(String optionalUpdateVersion) {
+    public void setOptionalUpdateVersion(final String optionalUpdateVersion) {
         DTVTLogger.start();
         //文字列が数字だけかどうかを確認
         if (DBUtils.isNumber(optionalUpdateVersion)) {
             //バージョン情報は数字の文字列だったので、数値に変換する
             mOptionalUpdateVersion = Integer.parseInt(optionalUpdateVersion);
         }
+        DTVTLogger.end();
+    }
+
+    /**
+     * 与えられたアップデート対象バージョン情報を蓄積する.
+     * <p>
+     * (前回取得から1時間以内の再取得データ設定用)
+     *
+     * @param optionalUpdateVersion バージョン情報
+     */
+    public void setOptionalUpdateVersion(final int optionalUpdateVersion) {
+        DTVTLogger.start();
+        mOptionalUpdateVersion = optionalUpdateVersion;
         DTVTLogger.end();
     }
 }

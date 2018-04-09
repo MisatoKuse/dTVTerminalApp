@@ -106,6 +106,12 @@ public class UrlConstants {
          * ペアリングヘルプHTTP URL.
          */
         public final static String SETTING_SUPPORT_PAIRING_URL = "https://apl.d.dmkt-sp.jp/dtv2/tvt_sp/support/pairing.html";
+
+        /**
+         * 自分グーグルショップ起動URL.
+         * TODO: 今はひとまず、DTVのアドレスを指定
+         */
+        public static final String GOOGLEPLAY_DOWNLOAD_MY_URL = "https://play.google.com/store/apps/details?id=jp.co.nttdocomo.dtv";
     }
 
     /**

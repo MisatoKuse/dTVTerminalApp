@@ -36,6 +36,7 @@ import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
+import com.nttdocomo.android.tvterminalapp.activity.common.ProcessSettingFile;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.ClipListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
@@ -1053,9 +1054,10 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * 機能　GooglePlayのAPPページへ.
      *
+     * (設定ファイル制御からも呼ぶので、publicに変更)
      * @param downLoadUrl 当アプリはGooglePlayのダウンロードURL
      */
-    protected void toGooglePlay(final String downLoadUrl) {
+    public void toGooglePlay(final String downLoadUrl) {
         Uri uri = Uri.parse(downLoadUrl);
         Intent installIntent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(installIntent);
@@ -2143,6 +2145,9 @@ public class BaseActivity extends FragmentActivity implements
         if (mNecessaryDAccountRegistService) {
             setDaccountControl();
         }
+        //アプリ設定ファイルの判定
+        checkSettingFile();
+
         checkDAccountOnRestart();
         onStartCommunication();
 
@@ -2150,6 +2155,17 @@ public class BaseActivity extends FragmentActivity implements
         setOttDisconnectionFlag(false);
 
         DTVTLogger.end();
+    }
+
+    /**
+     * 設定ファイルのチェック.
+     * (このタイミングでチェックを行うと、自ずとアプリ起動時か、BG→FG遷移時でのチェックになる)
+     */
+    void checkSettingFile() {
+        //アプリ起動時か、BG→FG遷移時は設定ファイルの処理を呼び出す
+        ProcessSettingFile checkSetting = new ProcessSettingFile(this);
+        //今回はコールバックは使用しないので、ヌルを指定する
+        checkSetting.controlAtSettingFile(null);
     }
 
     /**
