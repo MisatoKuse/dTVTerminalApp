@@ -155,7 +155,7 @@ public class SharedPreferencesUtils {
     /**
      * 初回dアカウント取得フラグのデフォルト値.
      */
-    private static final int FIRST_D_ACCOUNT_GET_BEFORE = 0;
+    public static final int FIRST_D_ACCOUNT_GET_BEFORE = 0;
     /**
      * 初回dアカウント取得フラグの、取得中の値.
      */
@@ -164,6 +164,10 @@ public class SharedPreferencesUtils {
      * 初回dアカウント取得フラグの、取得後の値。一度この値になると、以後の変化は無い.
      */
     private static final int FIRST_D_ACCOUNT_GET_AFTER = 2;
+    /**
+     * 初回dアカウント取得フラグの、強制設定値.
+     */
+    public static final int FIRST_D_ACCOUNT_FORCE_RESET = 3;
 
     /**
      * 独自の削除メソッドがある接続済みSTB情報以外の、dアカウントユーザー切り替え時の削除対象
@@ -829,7 +833,7 @@ public class SharedPreferencesUtils {
      * @param context コンテキスト
      * @param status  実行状況
      */
-    private static void setFirstExecFlag(final Context context, int status) {
+    public static void setFirstExecFlag(final Context context, int status) {
         DTVTLogger.start();
 
         //既に初回のdアカウント取得処理を行ったかどうかの確認
@@ -841,6 +845,11 @@ public class SharedPreferencesUtils {
         if (nowStatus == FIRST_D_ACCOUNT_GET_AFTER) {
             DTVTLogger.end();
             return;
+        }
+
+        //強制的にリセット
+        if(status == FIRST_D_ACCOUNT_FORCE_RESET) {
+            status = 0;
         }
 
         //新たなステータスを書き込む

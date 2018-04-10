@@ -39,19 +39,35 @@ public class ProcessSettingFile {
      */
     private SettingFileMetaData mSettingData;
     /**
-     * 設定ファイル読み込みAPI
+     * 設定ファイル読み込みAPI.
      */
     private SettingFileWebClient mSettingFileWebClient = null;
     /**
-     * コールバック用のインスタンス
+     * コールバック用のインスタンス.
      */
     private ProcessSettingFileCallBack mProcessSettingFileCallBack = null;
-
     /**
-     * リモート視聴の際、問題が無かった場合に視聴を介する為のコールバック
+     * 処理中フラグ
+     */
+    private boolean mBusy = false;
+    /**
+     * グーグルプレイ起動フラグ
+     */
+    private boolean mGooglePlay = false;
+    /**
+     * リモート視聴の際、問題が無かった場合に視聴を介する為のコールバック.
      */
     public interface ProcessSettingFileCallBack {
         void onCallNoError();
+    }
+
+    /**
+     * 設定ファイル処理が処理中かどうかを見る.
+     *
+     * @return 処理中ならばtrue
+     */
+    public boolean isBusy() {
+        return mBusy;
     }
 
     /**
@@ -72,6 +88,9 @@ public class ProcessSettingFile {
      * 設定ファイルの制御処理.
      */
     public void controlAtSettingFile(ProcessSettingFileCallBack callBack) {
+        //処理に入ったので、処理中フラグをtrueにする
+        mBusy = true;
+
         if (callBack != null) {
             //コールバックが指定されていた場合は、控えておく
             mProcessSettingFileCallBack = callBack;
@@ -143,6 +162,9 @@ public class ProcessSettingFile {
      * 設定ファイルに基いた実際の制御を行う.
      */
     private void processControl() {
+        //処理は終わったので、フラグをリセット
+        mBusy = false;
+
         //停止の有無を見る
         if (mSettingData.isIsStop()) {
             //停止処理を行う
@@ -237,6 +259,9 @@ public class ProcessSettingFile {
         CustomDialog dialog;
         String printMessage;
 
+        //GooglePlayを起動した
+        mGooglePlay = true;
+
         if (isCancel) {
             //ダイアログをキャンセル付きにする
             dialog = new CustomDialog(mActivity, CustomDialog.DialogType.CONFIRM);
@@ -255,9 +280,6 @@ public class ProcessSettingFile {
             @Override
             public void onOKCallback(final boolean isOK) {
                 DTVTLogger.start();
-                //自分は終わる
-                stopAllActivity();
-
                 //ダウンロードに遷移
                 mActivity.toGooglePlay(UrlConstants.WebUrl.GOOGLEPLAY_DOWNLOAD_MY_URL);
                 DTVTLogger.end();
@@ -270,6 +292,8 @@ public class ProcessSettingFile {
                 @Override
                 public void onCancelCallback() {
                     DTVTLogger.start();
+                    //キャンセルが押されたので、GooglePlayフラグはOFF
+                    mGooglePlay = false;
                     //ダウンロードしないので、コールバックが指定されていればそこへ飛ぶ
                     if (mProcessSettingFileCallBack != null) {
                         mProcessSettingFileCallBack.onCallNoError();
@@ -284,5 +308,17 @@ public class ProcessSettingFile {
 
         //showDialogの代わり・重複ダイアログ実現用
         mActivity.offerDialog(dialog);
+    }
+
+    /**
+     * グーグルプレイ起動フラグの取得.
+     *
+     * @return グーグルプレイを起動していた場合はtrue
+     */
+    public boolean isGooglePlay() {
+        return mGooglePlay;
+    }
+    public void setGooglePlay(boolean googlePlaySwitch) {
+        mGooglePlay = googlePlaySwitch;
     }
 }

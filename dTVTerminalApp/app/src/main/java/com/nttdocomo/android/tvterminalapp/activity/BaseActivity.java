@@ -220,7 +220,7 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * dアカウント設定アプリ登録処理.
      */
-    private DaccountControl mDAccountControl = null;
+    protected DaccountControl mDAccountControl = null;
     /**
      * 初回dアカウント取得失敗時のダイアログを呼び出すハンドラー
      */
@@ -247,6 +247,10 @@ public class BaseActivity extends FragmentActivity implements
      * 表示中ダイアログ.
      */
     private CustomDialog mShowDialog = null;
+    /**
+     * 設定ファイル処理クラス
+     */
+    protected ProcessSettingFile mCheckSetting = null;
     /**
      * 国内通信 MCC (440 Japan).
      */
@@ -1372,7 +1376,8 @@ public class BaseActivity extends FragmentActivity implements
             // onPause時にリモコンUIを閉じる
             mRemoteControllerView.closeRemoteControllerUI();
         }
-        dismissDialog();
+
+        dismissDialogOnPause();
         super.onPause();
 
         //ワンタイムトークン取得のキャンセル
@@ -1714,6 +1719,9 @@ public class BaseActivity extends FragmentActivity implements
         if (SharedPreferencesUtils.isFirstDaccountGetProcess(getApplicationContext()) && !result) {
             //初回のdアカウント取得かつ問題が発生していた場合はtrueにする
             firstDaccountError = true;
+        } else {
+            //初回以外はダイアログを出さないので、処理中フラグはリセット
+            mDAccountControl.setDAccountBusy(false);
         }
 
         //初回dアカウント取得が行われていた場合は終わらせる
@@ -1747,6 +1755,9 @@ public class BaseActivity extends FragmentActivity implements
 
                     //showDialogの代わり・重複ダイアログ実現用
                     offerDialog(errorDialog);
+
+                    //ダイアログを出す場合はここで処理中フラグをリセット
+                    mDAccountControl.setDAccountBusy(false);
                 }
             });
 
@@ -2104,6 +2115,13 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     /**
+     * オーバーライド先でdismissDialogを無効化する為に独立化
+     */
+    protected void dismissDialogOnPause() {
+        dismissDialog();
+    }
+
+    /**
      * 表示中のダイアログがある場合、閉じる.
      */
     private void dismissDialog() {
@@ -2205,9 +2223,9 @@ public class BaseActivity extends FragmentActivity implements
      */
     void checkSettingFile() {
         //アプリ起動時か、BG→FG遷移時は設定ファイルの処理を呼び出す
-        ProcessSettingFile checkSetting = new ProcessSettingFile(this);
+        mCheckSetting = new ProcessSettingFile(this);
         //今回はコールバックは使用しないので、ヌルを指定する
-        checkSetting.controlAtSettingFile(null);
+        mCheckSetting.controlAtSettingFile(null);
     }
 
     /**
@@ -2368,18 +2386,62 @@ public class BaseActivity extends FragmentActivity implements
      * @param dialog キュー表示するダイアログ
      */
     public void offerDialog(CustomDialog dialog) {
+        DTVTLogger.start();
         mLinkedList.offer(dialog);
         pollDialog();
+        DTVTLogger.end();
     }
 
     /**
      * キューにあるダイアログを順に表示.
      */
     public void pollDialog() {
+        DTVTLogger.start();
+        DTVTLogger.debug("mLinkedList.size()=" + mLinkedList.size());
         if ((mShowDialog == null || !mShowDialog.isShowing()) && mLinkedList.size() > 0) {
             mShowDialog = mLinkedList.poll();
             mShowDialog.showDialog();
+        } else {
+            if(mShowDialog != null) {
+                startNextProcess();
+                DTVTLogger.debug("show=" + mShowDialog.isShowing()
+                        + ":mLinkedList.size()=" + mLinkedList.size());
+            }
         }
+        DTVTLogger.end();
+    }
+
+    /**
+     * 次に行う処理があれば、オーバーライドしてください。
+     */
+    protected void startNextProcess() {
+        DTVTLogger.start();
+        DTVTLogger.end();
+    }
+
+    /**
+     * たまっているキューがあれば数を表示する.
+     *
+     * @return キューの個数。ダイアログが無い場合はゼロ
+     */
+    public int getDialogQurCount() {
+        if(mShowDialog == null) {
+            //ダイアログが存在していないならばゼロを返す
+            return 0;
+        }
+
+        //キューにたまっていれば個数を返す
+        if (mLinkedList.size() > 0) {
+            return mLinkedList.size();
+        }
+
+        //今表示中ならば1を返す
+        if(mShowDialog.isShowing()) {
+            return 1;
+        }
+
+        //それら以外はゼロを返す
+        return 0;
     }
 
     @Override
