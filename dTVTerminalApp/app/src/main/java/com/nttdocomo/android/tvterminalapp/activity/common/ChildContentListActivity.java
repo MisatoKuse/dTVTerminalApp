@@ -192,11 +192,13 @@ public class ChildContentListActivity extends BaseActivity implements
             if (mContentsAdapter.getCount() == 0) {
                 //初回取得中に通信が停止された場合、アダプタは存在するがデータは0件という状態になるため、
                 //その場合にはデータの再取得を行う.
+                showProgressBar(true);
                 mChildContentDataProvider.getChildContentList(mCrid, 1, mDispType);
             } else {
                 mContentsAdapter.notifyDataSetChanged();
             }
         } else {
+            showProgressBar(true);
             mChildContentDataProvider.getChildContentList(mCrid, 1, mDispType);
         }
     }
