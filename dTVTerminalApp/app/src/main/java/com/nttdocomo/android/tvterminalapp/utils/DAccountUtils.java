@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.utils;
 import android.app.Activity;
 import android.content.Intent;
 
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DaccountConstants;
@@ -41,7 +42,8 @@ public class DAccountUtils {
         Intent intent = new Intent();
         intent.setClass(activity, HomeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        activity.startActivity(intent);
+        BaseActivity baseActivity = (BaseActivity) activity;
+        baseActivity.startActivity(intent);
 
         DTVTLogger.end();
     }

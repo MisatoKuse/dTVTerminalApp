@@ -24,7 +24,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
-import com.nttdocomo.android.tvterminalapp.utils.ActivityUtil;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
@@ -206,14 +206,15 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
         mContentsDetailDisplay = true;
 
         ContentsData contentsData = mData.get(position);
-        if(ActivityUtil.isChildContentList(contentsData)) {
-            ActivityUtil.startChildContentListActivity(mContext, contentsData);
+        BaseActivity baseActivity = (BaseActivity) mContext;
+        if (ContentUtils.isChildContentList(contentsData)) {
+            baseActivity.startChildContentListActivity(contentsData);
         } else {
             Intent intent = new Intent(mContext, ContentDetailActivity.class);
             intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
             OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(contentsData, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
             intent.putExtra(detailData.getRecommendFlg(), detailData);
-            startActivity(intent);
+            baseActivity.startActivity(intent);
         }
     }
 

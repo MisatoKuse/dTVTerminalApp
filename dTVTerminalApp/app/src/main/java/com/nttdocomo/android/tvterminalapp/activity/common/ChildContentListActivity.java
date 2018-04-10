@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.common;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,7 +29,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetail
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopChildContentDataConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
-import com.nttdocomo.android.tvterminalapp.utils.ActivityUtil;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
@@ -229,12 +228,14 @@ public class ChildContentListActivity extends BaseActivity implements
     @Override
     public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
         ContentsData contentsData = mContentsList.get(position);
-        if (ActivityUtil.isChildContentList(contentsData)) {
-            Intent intent = new Intent(this, ChildContentListActivity.class);
-            intent.putExtra(ChildContentListActivity.INTENT_KEY_CRID, contentsData.getCrid());
-            intent.putExtra(ChildContentListActivity.INTENT_KEY_TITLE, contentsData.getTitle());
-            intent.putExtra(ChildContentListActivity.INTENT_KEY_DISP_TYPE, contentsData.getDispType());
-            startActivityForResult(intent, REQUEST_CODE_CHILD_CONTENT_LIST);
+        if (ContentUtils.isChildContentList(contentsData)) {
+            if (isFastClick()) {
+                Intent intent = new Intent(this, ChildContentListActivity.class);
+                intent.putExtra(ChildContentListActivity.INTENT_KEY_CRID, contentsData.getCrid());
+                intent.putExtra(ChildContentListActivity.INTENT_KEY_TITLE, contentsData.getTitle());
+                intent.putExtra(ChildContentListActivity.INTENT_KEY_DISP_TYPE, contentsData.getDispType());
+                startActivityForResult(intent, REQUEST_CODE_CHILD_CONTENT_LIST);
+            }
         } else {
             Intent intent = new Intent(this, ContentDetailActivity.class);
             intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());

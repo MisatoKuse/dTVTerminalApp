@@ -30,7 +30,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetail
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRentalDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
-import com.nttdocomo.android.tvterminalapp.utils.ActivityUtil;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
@@ -301,8 +301,8 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
         mContentsDetailDisplay = true;
 
         ContentsData contentsData = mContentsList.get(i);
-        if(ActivityUtil.isChildContentList(contentsData)) {
-            ActivityUtil.startChildContentListActivity(this, contentsData);
+        if (ContentUtils.isChildContentList(contentsData)) {
+            startChildContentListActivity(contentsData);
         } else {
             Intent intent = new Intent(this, ContentDetailActivity.class);
             intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());

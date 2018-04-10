@@ -17,13 +17,14 @@ import android.widget.RelativeLayout;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.RecommendActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
-import com.nttdocomo.android.tvterminalapp.utils.ActivityUtil;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.view.RecommendListView;
 
@@ -295,15 +296,15 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         ContentsData info = mData.get(i);
-
-        if(ActivityUtil.isChildContentList(info)) {
-            ActivityUtil.startChildContentListActivity(mActivity, info);
+        RecommendActivity recommendActivity = (RecommendActivity) mActivity;
+        if (ContentUtils.isChildContentList(info)) {
+            recommendActivity.startChildContentListActivity(info);
         } else {
             Intent intent = new Intent(mActivity, ContentDetailActivity.class);
             intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
             intent.putExtra(ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY,
                     getOtherContentsDetailData(info));
-            startActivity(intent);
+            recommendActivity.startActivity(intent);
         }
     }
 

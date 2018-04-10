@@ -473,7 +473,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                         intent.putExtra(DTVTConstants.SOURCE_SCREEN, ((TvProgramListActivity)mContext).getComponentName().getClassName());
                         OtherContentsDetailData detailData = getOtherContentsDetailData(itemSchedule, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
                         intent.putExtra(detailData.getRecommendFlg(), detailData);
-                        mContext.startActivity(intent);
+                        TvProgramListActivity tvProgramListActivity = (TvProgramListActivity) mContext;
+                        tvProgramListActivity.startActivity(intent);
                     }
                 }
             });

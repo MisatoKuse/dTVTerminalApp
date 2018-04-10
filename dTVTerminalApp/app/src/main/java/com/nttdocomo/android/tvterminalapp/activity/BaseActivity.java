@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
@@ -214,7 +215,7 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * ダブルクリック抑止用 DELAY.
      */
-    private static final int MIN_CLICK_DELAY_TIME = 1000;
+    private static final int MIN_CLICK_DELAY_TIME = 500;
 
     /**
      * dアカウント設定アプリ登録処理.
@@ -1255,7 +1256,7 @@ public class BaseActivity extends FragmentActivity implements
             Intent intent = mActivity.getIntent();
             intent.setClass(mActivity, HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            mActivity.startActivity(intent);
+            startActivity(intent);
         } else {
             finish();
         }
@@ -1855,39 +1856,54 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     /**
+     * ウイザード（多階層コンテンツ）画面に遷移する.
+     *
+     * @param contentsData コンテンツデータ
+     */
+    public void startChildContentListActivity(@NonNull final ContentsData contentsData) {
+        Intent intent = new Intent(this, ChildContentListActivity.class);
+        intent.putExtra(ChildContentListActivity.INTENT_KEY_CRID, contentsData.getCrid());
+        intent.putExtra(ChildContentListActivity.INTENT_KEY_TITLE, contentsData.getTitle());
+        intent.putExtra(ChildContentListActivity.INTENT_KEY_DISP_TYPE, contentsData.getDispType());
+        startActivity(intent);
+    }
+
+    /**
      * アニメーション付きスタートアクティビティ.
      *
      * @param intent アクティビティ呼び出し情報
      */
     @Override
     public void startActivity(final Intent intent) {
-        //普通にアクティビティを起動する
-        super.startActivity(intent);
+        if (isFastClick()) {
+            //普通にアクティビティを起動する
+            super.startActivity(intent);
 
-        //dアカウントアプリのバインドを解除する
-        final DaccountGetOTT getOtt = new DaccountGetOTT();
-        if (getOtt != null) {
-            DTVTLogger.debug("startAvtivity before unbind");
-            //他の画面に遷移する前に、dアカウントアプリとの連携を終わらせる
-            getOtt.daccountServiceEnd();
-        }
-
-        //飛び先画面として指定されていた名前を取得する
-        String callName = "";
-        if (intent != null && intent.getComponent() != null) {
-            callName = intent.getComponent().toShortString();
-        }
-        //飛び先がSTB選択の関連画面ならば、アニメは付加せず帰る
-        if (callName.contains(STBSelectActivity.class.getSimpleName())
-                || callName.contains(STBSelectErrorActivity.class.getSimpleName())) {
-            //ただし、設定画面から呼ばれた場合はアニメーションは行うので帰らない
-            if (!(this instanceof SettingActivity)) {
-                return;
+            //dアカウントアプリのバインドを解除する
+            final DaccountGetOTT getOtt = new DaccountGetOTT();
+            if (getOtt != null) {
+                DTVTLogger.debug("startAvtivity before unbind");
+                //他の画面に遷移する前に、dアカウントアプリとの連携を終わらせる
+                getOtt.daccountServiceEnd();
             }
-        }
 
-        //アニメーションを付加する
-        overridePendingTransition(R.anim.in_righttoleft, R.anim.out_lefttoright);
+            //飛び先画面として指定されていた名前を取得する
+            String callName = "";
+            if (intent != null && intent.getComponent() != null) {
+                callName = intent.getComponent().toShortString();
+            }
+            //飛び先がSTB選択の関連画面ならば、アニメは付加せず帰る
+            if (callName.contains(STBSelectActivity.class.getSimpleName())
+                    || callName.contains(STBSelectErrorActivity.class.getSimpleName())) {
+                //ただし、設定画面から呼ばれた場合はアニメーションは行うので帰らない
+                if (!(this instanceof SettingActivity)) {
+                    return;
+                }
+            }
+
+            //アニメーションを付加する
+            overridePendingTransition(R.anim.in_righttoleft, R.anim.out_lefttoright);
+        }
     }
 
     /**

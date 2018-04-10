@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
@@ -27,7 +28,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
-import com.nttdocomo.android.tvterminalapp.utils.ActivityUtil;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -386,14 +387,15 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         viewHolder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                if(ActivityUtil.isChildContentList(contentsData)) {
-                    ActivityUtil.startChildContentListActivity(mContext, contentsData);
+                HomeActivity homeActivity = (HomeActivity) mContext;
+                if (ContentUtils.isChildContentList(contentsData)) {
+                    homeActivity.startChildContentListActivity(contentsData);
                 } else {
                     Intent intent = new Intent(mContext, ContentDetailActivity.class);
                     ComponentName componentName = mContext.getComponentName();
                     intent.putExtra(DTVTConstants.SOURCE_SCREEN, componentName.getClassName());
                     intent.putExtra(detailData.getRecommendFlg(), detailData);
-                    mContext.startActivity(intent);
+                    homeActivity.startActivity(intent);
                 }
             }
         });

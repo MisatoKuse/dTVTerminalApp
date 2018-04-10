@@ -30,7 +30,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapter
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopVideoContentConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.VideoGenreListDataInfo;
-import com.nttdocomo.android.tvterminalapp.utils.ActivityUtil;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
@@ -311,8 +311,8 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
             return;
         }
         ContentsData contentsData = mContentsList.get(position);
-        if(ActivityUtil.isChildContentList(contentsData)) {
-            ActivityUtil.startChildContentListActivity(this, contentsData);
+        if (ContentUtils.isChildContentList(contentsData)) {
+            startChildContentListActivity(contentsData);
         } else {
             Intent intent = new Intent(this, ContentDetailActivity.class);
             intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
@@ -320,7 +320,6 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
             intent.putExtra(detailData.getRecommendFlg(), detailData);
             startActivity(intent);
         }
-
     }
 
     /**

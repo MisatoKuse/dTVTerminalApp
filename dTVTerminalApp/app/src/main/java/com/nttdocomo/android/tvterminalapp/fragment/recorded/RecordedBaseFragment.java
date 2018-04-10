@@ -170,7 +170,8 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                     Intent intent = new Intent(mContext, ContentDetailActivity.class);
                     intent.putExtra(DTVTConstants.SOURCE_SCREEN, activity.getComponentName().getClassName());
                     intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, mContentsList.get(i));
-                    startActivity(intent);
+                    RecordedListActivity recordedListActivity = (RecordedListActivity) activity;
+                    recordedListActivity.startActivity(intent);
                 }
             }
         }
