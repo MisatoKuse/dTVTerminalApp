@@ -334,6 +334,11 @@ public class ChildContentListActivity extends BaseActivity implements
         resetCommunication();
         mContentsAdapter.notifyDataSetChanged();
         DTVTLogger.end();
+        if (mContentsList.size() == 0) {
+            mNoDataMessage.setVisibility(View.VISIBLE);
+        } else {
+            mNoDataMessage.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -378,7 +383,7 @@ public class ChildContentListActivity extends BaseActivity implements
                 ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_CONTENT_LIST);
         mListView.setAdapter(mContentsAdapter);
         mLoadMoreView = View.inflate(this, R.layout.search_load_more, null);
-        mNoDataMessage  = findViewById(R.id.child_content_list_no_items);
+        mNoDataMessage = findViewById(R.id.child_content_list_no_items);
     }
 
     @Override

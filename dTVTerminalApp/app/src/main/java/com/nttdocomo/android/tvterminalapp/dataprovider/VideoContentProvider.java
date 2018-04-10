@@ -167,6 +167,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
             String dtv = map.get(JsonConstants.META_RESPONSE_DTV);
             String dtvType = map.get(JsonConstants.META_RESPONSE_DTV_TYPE);
 
+            contentsData.setCrid(map.get(JsonConstants.META_RESPONSE_CRID));
             contentsData.setThumURL(map.get(JsonConstants.META_RESPONSE_THUMB_448));
             contentsData.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_THUMB_640));
             contentsData.setTitle(map.get(JsonConstants.META_RESPONSE_TITLE));
