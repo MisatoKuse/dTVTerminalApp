@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
@@ -287,6 +288,10 @@ public class DateUtils {
      */
     private static final int AVAILABLE_BASE_DAY = 31;
     /**
+     * 配信期限一週間.
+     */
+    private static final int PUBLISH_BASE_DAY = 7;
+    /**
      * VODの日付フォーマット　m/d（曜日）まで.
      */
     private static final String DATE_FORMAT_VOD = " まで";
@@ -533,6 +538,20 @@ public class DateUtils {
      */
     public static String formatEpochToString(final long epochTime) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN);
+        return dateFormat.format(new Date(epochTime * 1000));
+    }
+
+    /**
+     * エポック秒を 指定のフォーマット文字列に返却.
+     * @param epochTime エポック秒
+     * @param format フォーマット文字列（nullの場合、DATE_PATTERN_HYPHEN)
+     * @return フォーマットされた日付
+     */
+    public static String formatEpochToString(final long epochTime, @Nullable String format) {
+        if (format == null) {
+            format = DATE_PATTERN_HYPHEN;
+        }
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
         return dateFormat.format(new Date(epochTime * 1000));
     }
 
@@ -811,6 +830,26 @@ public class DateUtils {
         cal.add(Calendar.DAY_OF_MONTH, +AVAILABLE_BASE_DAY);
         Date startDate = cal.getTime();
         return nowDate.compareTo(startDate) == 1;
+    }
+
+    /**
+     * 一週間以内判断.
+     *
+     * @param startPublishDate 配信開始
+     * @return true 一週間以内、一週間超えた
+     */
+    public static boolean isOneWeek(final String startPublishDate) {
+        if (TextUtils.isEmpty(startPublishDate) || !DBUtils.isNumber(startPublishDate)) {
+            return false;
+        }
+        long startTime = Long.parseLong(startPublishDate);
+        Calendar cal = Calendar.getInstance();
+        Date nowDate = cal.getTime();
+        cal.add(Calendar.DAY_OF_MONTH, -PUBLISH_BASE_DAY);
+        Date pre7Date = cal.getTime();
+        cal.setTimeInMillis(startTime * 1000);
+        Date startDate = cal.getTime();
+        return startDate.compareTo(nowDate) == -1 && startDate.compareTo(pre7Date) != -1;
     }
 
     /**

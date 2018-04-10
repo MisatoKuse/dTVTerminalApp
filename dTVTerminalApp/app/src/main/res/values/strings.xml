@@ -356,4 +356,10 @@
     <string name="nw_error_message">通信時に問題が発生しました</string>
     <string name="nw_error_ssl_message">SSL証明書に問題が発生しました</string>
 
+    <!-- TODO: 設定ファイル動作制御用仮ワーディング -->
+    <string name="setting_file_force_download">新しいバージョンのアプリがリリースされたので、ダウンロードを行います</string>
+    <string name="setting_file_download">新しいバージョンのアプリがリリースされました。ダウンロードを行いますか？</string>
+    <string name="setting_file_stop_apli">アプリの動作が行えませんでした</string>
+
+
 </resources>

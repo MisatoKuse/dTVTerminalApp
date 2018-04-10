@@ -28,84 +28,46 @@ import java.util.List;
 public class CustomDialog implements DialogInterface.OnClickListener, AdapterView.OnItemClickListener,
         DialogInterface.OnDismissListener {
 
-    /**
-     * コンテキスト.
-     */
+    /** コンテキスト. */
     private Context mContext = null;
-    /**
-     * ダイアログ.
-     */
+    /** ダイアログ. */
     private AlertDialog dialog = null;
-    /**
-     * ダイアログ種別.
-     */
+    /** ダイアログ種別. */
     private DialogType dialogType = null;
-    /**
-     * タイトル.
-     */
+    /** タイトル. */
     private String title = null;
-    /**
-     * 本文.
-     */
+    /** 本文. */
     private String content = null;
-    /**
-     * リスト表示時のリスト.
-     */
+    /** リスト表示時のリスト. */
     private List<String> list = null;
-    /**
-     * OK押下時のコールバック.
-     */
+    /** OK押下時のコールバック. */
     private ApiOKCallback apiOKCallback = null;
-    /**
-     * Cancel押下時のコールバック.
-     */
+    /** Cancel押下時のコールバック. */
     private ApiCancelCallback mApiCancelCallback = null;
-    /**
-     * リスト押下時のコールバック.
-     */
+    /** リスト押下時のコールバック. */
     private ApiSelectCallback apiSelectCallback = null;
-    /**
-     * リストアイテム押下時のコールバック.
-     */
+    /** リストアイテム押下時のコールバック. */
     private ApiItemSelectCallback apiItemSelectCallback = null;
-    /**
-     * ボタンタップ以外でダイアログが閉じた時のコールバック.
-     */
-    private DialogDismissCallback mDialogDismissCallback = null;
-    /**
-     * OKボタンに表示する文字列.
-     */
+    /** ボタンタップ以外でダイアログが閉じた時のコールバック. */
+    private DismissCallback mDialogDismissCallback = null;
+    /** OKボタンに表示する文字列. */
     private String confirmText = null;
-    /**
-     * Cancelボタンに表示する文字列.
-     */
+    /** Cancelボタンに表示する文字列. */
     private String cancelText = null;
-    /**
-     * ダイアログのcancelable設定値.
-     */
+    /** ダイアログのcancelable設定値. */
     private boolean cancelable = true;
-    /**
-     * ダイアログのOKボタン.
-     */
+    /** ダイアログのOKボタン. */
     private TextView mOkButton = null;
-    /**
-     * ダイアログのキャンセルボタン.
-     */
+    /** ダイアログのキャンセルボタン. */
     private TextView mCancelButton = null;
-    /**
-     * OKボタンの表示/非表示判定.
-     */
+    /** OKボタンの表示/非表示判定. */
     private int confirmVisibility = View.VISIBLE;
-    /**
-     * Cancelボタンの表示/非表示判定.
-     */
+    /** Cancelボタンの表示/非表示判定. */
     private int cancelVisibility = View.VISIBLE;
-
+    /** ボタンタップフラグ. **/
     private boolean mIsButtonTap = false;
 
-    /**
-     * 画面外タップによるキャンセル判定値.
-     */
+    /** 画面外タップによるキャンセル判定値. */
     private boolean mCancelableOutside = true;
 
     /**
@@ -158,11 +120,11 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     /**
      * ボタンタップ以外でダイアログが閉じた時のコールバック.
      */
-    public interface DialogDismissCallback {
-        /**
-         * ボタンタップ以外でダイアログが閉じた場合時のコールバック.
-         */
-        void onDialogDismissCallback();
+    public interface DismissCallback {
+        /** ボタンタップ以外でダイアログが閉じた場合時のコールバック. */
+        void allDismissCallback();
+        /** ボタンタップ以外でダイアログが閉じた場合時のコールバック. */
+        void otherDismissCallback();
     }
 
     /**
@@ -206,7 +168,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      *
      * @param callback ボタンタップ以外でダイアログが閉じた時のコールバック
      */
-    public void setDialogDismissCallback(final DialogDismissCallback callback) {
+    public void setDialogDismissCallback(final DismissCallback callback) {
         this.mDialogDismissCallback = callback;
     }
 
@@ -345,6 +307,17 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
         }
     }
 
+    /**
+     * ダイアログの表示状態.
+     */
+    public boolean isShowing() {
+        boolean isShow = false;
+        if (dialog != null) {
+            isShow = dialog.isShowing();
+        }
+        return isShow;
+    }
+
     @Override
     public void onClick(final DialogInterface dialog, final int which) {
         switch (which) {
@@ -464,10 +437,14 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
 
     @Override
     public void onDismiss(final DialogInterface dialogInterface) {
-        //ボタンタップ時は動作させない
-        if (mDialogDismissCallback != null && !mIsButtonTap) {
-            //ボタンタップ以外でダイアログが閉じた場合
-            mDialogDismissCallback.onDialogDismissCallback();
+        if (mDialogDismissCallback != null) {
+            //ダイアログが閉じたときのコールバック
+            mDialogDismissCallback.allDismissCallback();
+            //ボタンタップ時は動作させない
+            if (!mIsButtonTap) {
+                //ボタンタップ以外でダイアログが閉じた場合
+                mDialogDismissCallback.otherDismissCallback();
+            }
         }
         mIsButtonTap = false;
     }
