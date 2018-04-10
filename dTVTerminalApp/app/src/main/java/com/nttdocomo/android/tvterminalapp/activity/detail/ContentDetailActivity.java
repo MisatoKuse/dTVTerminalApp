@@ -1025,6 +1025,13 @@ public class ContentDetailActivity extends BaseActivity implements
      */
     private void hideCtrlView() {
         DTVTLogger.start();
+
+        if(mSecureVideoPlayer == null) {
+            //設定ファイルによるアプリ動作停止の場合、下記の物がヌルになっている可能性がある。その場合は処理は行わない
+            DTVTLogger.end("mSecureVideoPlayer is null");
+            return;
+        }
+
         mVideoPlayPause.setVisibility(View.INVISIBLE);
         mVideoRewind10.setVisibility(View.INVISIBLE);
         mVideoFast30.setVisibility(View.INVISIBLE);

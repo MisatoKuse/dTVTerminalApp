@@ -106,6 +106,9 @@ public class ProcessSettingFile {
             public void onSettingFileJsonParsed(SettingFileResponse settingFileResponse) {
                 //読み込み終了のコールバック
                 if (settingFileResponse != null) {
+                    //取得した値を取り込む
+                    mSettingData = settingFileResponse.getSettingFile();
+
                     //取得した値を次回の為に格納する
                     SharedPreferencesUtils.setSharedPreferencesSettingFileIsStop(
                             mContext, mSettingData.isIsStop());
@@ -189,7 +192,6 @@ public class ProcessSettingFile {
 
     /**
      * 実行停止ダイアログ.
-     * TODO: ひとまず普通のダイアログで実装
      */
     private void stopAllActivityDialog() {
         //ダイアログを、キャンセル無しにする
@@ -228,7 +230,6 @@ public class ProcessSettingFile {
 
     /**
      * グーグルプレイ呼び出しダイアログ.
-     * TODO: ひとまず普通のダイアログで実装
      *
      * @param isCancel キャンセルが必要ならばtrue
      */

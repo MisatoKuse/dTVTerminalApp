@@ -244,14 +244,13 @@ public class UrlConstants {
         public static final String GENRE_LIST_FILE =
                 "https://tconf.hikaritv-docomo.jp/common/client/genreList.json";
 
-        //TODO: Iemonサーバーの読み込みに失敗するので、読込先は一旦ジャンルリストを使用して、内部で置き換えることにする。
+        //TODO: 設定ファイルの配置場所はひとまずIemonサーバーとする。
         /**
          * アプリ起動設定ファイル：こちらはAPIではなく、ファイルの直接読み込みとなる.
          * APIではないので、例外としてURL全体を指定する
          */
         public static final String SETTING_FILE =
-                "https://tconf.hikaritv-docomo.jp/common/client/genreList.json";
-                //"http://192.168.2.3:80/setting_aos.json";
+                "http://192.168.2.3:80/setting_aos.json";
 
         /**
          * ロール一覧リストファイル：こちらはAPIではなく、ファイルの直接読み込みとのこと.

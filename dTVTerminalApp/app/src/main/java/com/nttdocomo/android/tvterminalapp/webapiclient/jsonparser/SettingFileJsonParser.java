@@ -23,9 +23,6 @@ public class SettingFileJsonParser extends AsyncTask<Object, Object, Object> {
     private static final String RESPONSE = ". SettingFileResponse";
     private static final String JSON_OBJECT = ".JSONObject";
 
-    //仮のセッティングファイル名
-    private static final String PROVISIONAL_SETTING_JSON_FILE_NAME = "/setting.json";
-
     private final SettingFileWebClient.SettingFileJsonParserCallback
             mSettingFileJsonParserCallback;
     // オブジェクトクラスの定義　
@@ -72,20 +69,16 @@ public class SettingFileJsonParser extends AsyncTask<Object, Object, Object> {
      * @return ジャンル一覧取得：正常時レスポンスデータ
      */
     private SettingFileResponse settingFileSender(final String jsonStr) {
-
-        //TODO: セッティングファイルのデータに置き換えるスタブを設置。後で外す事
-        String jsonStringBuffer = getSettingFileStub(jsonStr);
-
         //データがヌルならばそのまま返す
-        if(jsonStringBuffer == null) {
+        if(jsonStr == null) {
             return null;
         }
 
-        DTVTLogger.debugHttp(jsonStringBuffer);
+        DTVTLogger.debugHttp(jsonStr);
         mSettingFileResponse = new SettingFileResponse();
         try {
-            if (jsonStringBuffer != null) {
-                JSONObject jsonObject = new JSONObject(jsonStringBuffer);
+            if (jsonStr != null) {
+                JSONObject jsonObject = new JSONObject(jsonStr);
                 if (jsonObject != null) {
                     sendSettingFileResponse(jsonObject);
                     return mSettingFileResponse;
@@ -95,37 +88,6 @@ public class SettingFileJsonParser extends AsyncTask<Object, Object, Object> {
             DTVTLogger.debug(CLASS_NAME + JSON_OBJECT, e);
         }
         return null;
-    }
-
-    /**
-     * デバッグ用のセッティングファイルの取得.
-     * <p>
-     * TODO:セッティングファイルの正式な場所が確定した場合は消す事
-     *
-     * @return セッティングファイル
-     */
-    private String getSettingFileStub(String sourceString) {
-        //デバッグモードか否かで処理を切り替える
-        if (BuildConfig.DEBUG) {
-            String answerText = "{\n" +
-                    "  \"is_stop\":  {\n" +
-                    "    \"value\": false,\n" +
-                    "    \"description\": \"おしまい\"\n" +
-                    "  },\n" +
-                    "  \"force_update\": {\n" +
-                    "    \"AOS\": \"5\"\n" +
-                    "  },\n" +
-                    "  \"optional_update\": {\n" +
-                    "    \"AOS\": \"5\"\n" +
-                    "  }\n" +
-                    "}";
-            DTVTLogger.debug(answerText);
-            return answerText;
-        } else {
-            //本番ではこの処理自体を消すべきだが、最悪忘れた場合でも正常に動作させるように、
-            //読み込みデータをそのまま渡す
-            return sourceString;
-        }
     }
 
     /**
