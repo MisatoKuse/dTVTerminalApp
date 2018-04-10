@@ -41,12 +41,17 @@ import java.util.List;
  * 子コンテンツ表示専用アクティビティ
  */
 public class ChildContentListActivity extends BaseActivity implements
-        ChildContentDataProvider.DataCallback,
+
         AdapterView.OnItemClickListener,
         AbsListView.OnScrollListener,
-        AbsListView.OnTouchListener
-{
+        AbsListView.OnTouchListener,
 
+        ChildContentDataProvider.DataCallback
+{
+    /** 子コンテンツ一覧遷移時リクエストコード*/
+    private static final int REQUEST_CODE_CHILD_CONTENT_LIST = 1000;
+    /** 戻る際にアクティビティを終了するコード*/
+    private static final int RESULT_CODE_FINISH_ACTIVITY = REQUEST_CODE_CHILD_CONTENT_LIST + 1;
     // region variable
     // view
     /**
@@ -65,7 +70,6 @@ public class ChildContentListActivity extends BaseActivity implements
      * 検索プログレスバー.
      */
     private View mLoadMoreView;
-
 
     // data
     public static final String INTENT_KEY_CRID = "crid",
@@ -158,6 +162,17 @@ public class ChildContentListActivity extends BaseActivity implements
         StopContentsAdapterConnect stopContentsAdapterConnect = new StopContentsAdapterConnect();
         stopContentsAdapterConnect.execute(mContentsAdapter);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_CHILD_CONTENT_LIST
+                && resultCode == RESULT_CODE_FINISH_ACTIVITY) {
+            mContentsDetailDisplay = false;
+            setResult(RESULT_CODE_FINISH_ACTIVITY);
+            finish();
+        }
+    }
     // endregion Activity LifeCycle
 
     @Override
@@ -188,10 +203,38 @@ public class ChildContentListActivity extends BaseActivity implements
     }
 
     @Override
+    public boolean onTouch(final View view, final MotionEvent motionEvent) {
+        //指を動かした方向を検知する
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                //指を降ろしたので、位置を記録
+                mStartY = motionEvent.getY();
+                break;
+            case MotionEvent.ACTION_UP:
+                //指を離したので、位置を記録
+                float mEndY = motionEvent.getY();
+                mLastScrollUp = false;
+                //スクロール方向の判定
+                if (mStartY < mEndY) {
+                    //終了時のY座標の方が大きいので、上スクロール
+                    mLastScrollUp = true;
+                }
+                break;
+            default:
+                break;
+        }
+        return false;
+    }
+
+    @Override
     public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
         ContentsData contentsData = mContentsList.get(position);
         if (ActivityUtil.isChildContentList(contentsData)) {
-            ActivityUtil.startChildContentListActivity(this, contentsData);
+            Intent intent = new Intent(this, ChildContentListActivity.class);
+            intent.putExtra(ChildContentListActivity.INTENT_KEY_CRID, contentsData.getCrid());
+            intent.putExtra(ChildContentListActivity.INTENT_KEY_TITLE, contentsData.getTitle());
+            intent.putExtra(ChildContentListActivity.INTENT_KEY_DISP_TYPE, contentsData.getDispType());
+            startActivityForResult(intent, REQUEST_CODE_CHILD_CONTENT_LIST);
         } else {
             Intent intent = new Intent(this, ContentDetailActivity.class);
             intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
@@ -204,10 +247,54 @@ public class ChildContentListActivity extends BaseActivity implements
     }
 
     @Override
+    public void onScroll(final AbsListView absListView, final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
+        synchronized (this) {
+            if (null == mContentsAdapter) {
+                return;
+            }
+            //現在のスクロール位置の記録
+            mFirstVisibleItem = firstVisibleItem;
+        }
+    }
+
+    @Override
+    public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
+        synchronized (this) {
+            if (null == mContentsAdapter) {
+                return;
+            }
+            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
+                    && absListView.getLastVisiblePosition() == mContentsAdapter.getCount() - 1) {
+                DTVTLogger.warning("mIsCommunicating = " + mIsCommunicating);
+                if (mIsCommunicating) {
+                    return;
+                }
+                DTVTLogger.warning("mFirstVisibleItem = " + mFirstVisibleItem + ", mLastScrollUp = " + mLastScrollUp);
+                //スクロール位置がリストの先頭で上スクロールだった場合は、更新をせずに帰る
+                if (mFirstVisibleItem == 0 && mLastScrollUp) {
+                    return;
+                }
+
+                displayMoreData(true);
+                setCommunicatingStatus(true);
+                mNoDataMessage.setVisibility(View.GONE);
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        int offset = 0;
+                        if (null != mContentsList) {
+                            offset = mContentsList.size() + 1;
+                        }
+                        mChildContentDataProvider.getChildContentList(mCrid, offset, mDispType);
+                    }
+                }, LOAD_PAGE_DELAY_TIME);
+            }
+        }
+    }
+
+    @Override
     public void childContentListCallback(@Nullable final List<ContentsData> contentsDataList) {
-        DTVTLogger.warning("list.size() = " + contentsDataList.size());
-        //DbThreadからのコールバックではUIスレッドとして扱われないため
-        final Context context = this;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -223,7 +310,6 @@ public class ChildContentListActivity extends BaseActivity implements
      * @param contentsDataList 取得したコンテンツデータリスト
      */
     private void displayChildContentList(final List<ContentsData> contentsDataList) {
-        DTVTLogger.warning(">>> contentsDataList.size() = " + contentsDataList.size());
         if (null == contentsDataList) {
             displayMoreData(false);
 
@@ -289,10 +375,23 @@ public class ChildContentListActivity extends BaseActivity implements
         //スクロールの上下方向検知用のリスナーを設定
         mListView.setOnTouchListener(this);
         mContentsAdapter = new ContentsAdapter(this, mContentsList,
-                ContentsAdapter.ActivityTypeItem.TYPE_CHILD_CONTENT_LIST);
+                ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_CONTENT_LIST);
         mListView.setAdapter(mContentsAdapter);
         mLoadMoreView = View.inflate(this, R.layout.search_load_more, null);
         mNoDataMessage  = findViewById(R.id.child_content_list_no_items);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.header_layout_menu:
+                setResult(RESULT_CODE_FINISH_ACTIVITY);
+                finish();
+                break;
+            default:
+                super.onClick(view);
+                break;
+        }
     }
 
     /**
@@ -305,54 +404,6 @@ public class ChildContentListActivity extends BaseActivity implements
             mIsCommunicating = bool;
         }
     }
-
-    @Override
-    public void onScroll(final AbsListView absListView, final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
-        synchronized (this) {
-            if (null == mContentsAdapter) {
-                return;
-            }
-            //現在のスクロール位置の記録
-            mFirstVisibleItem = firstVisibleItem;
-        }
-    }
-
-    @Override
-    public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
-        synchronized (this) {
-            if (null == mContentsAdapter) {
-                return;
-            }
-            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
-                    && absListView.getLastVisiblePosition() == mContentsAdapter.getCount() - 1) {
-                DTVTLogger.warning("mIsCommunicating = " + mIsCommunicating);
-                if (mIsCommunicating) {
-                    return;
-                }
-                DTVTLogger.warning("mFirstVisibleItem = " + mFirstVisibleItem + ", mLastScrollUp = " + mLastScrollUp);
-                //スクロール位置がリストの先頭で上スクロールだった場合は、更新をせずに帰る
-                if (mFirstVisibleItem == 0 && mLastScrollUp) {
-                    return;
-                }
-
-                displayMoreData(true);
-                setCommunicatingStatus(true);
-                mNoDataMessage.setVisibility(View.GONE);
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        int offset = 0;
-                        if (null != mContentsList) {
-                            offset = mContentsList.size() + 1;
-                        }
-                        mChildContentDataProvider.getChildContentList(mCrid, offset, mDispType);
-                    }
-                }, LOAD_PAGE_DELAY_TIME);
-            }
-        }
-    }
-
     /**
      * 再読み込み時の処理.
      */
@@ -367,7 +418,6 @@ public class ChildContentListActivity extends BaseActivity implements
      * @param bool 読み込み表示フラグ
      */
     private void displayMoreData(final boolean bool) {
-        DTVTLogger.warning("displayMoreDatadisplayMoreDatadisplayMoreData");
         if (null != mListView) {
             if (bool) {
                 mListView.addFooterView(mLoadMoreView);
@@ -379,31 +429,4 @@ public class ChildContentListActivity extends BaseActivity implements
         }
     }
 
-    @Override
-    public boolean onTouch(final View view, final MotionEvent motionEvent) {
-        if (!(view instanceof ListView)) {
-            //今回はリストビューの事しか考えないので、他のビューならば帰る
-            return false;
-        }
-        //指を動かした方向を検知する
-        switch (motionEvent.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                //指を降ろしたので、位置を記録
-                mStartY = motionEvent.getY();
-                break;
-            case MotionEvent.ACTION_UP:
-                //指を離したので、位置を記録
-                float mEndY = motionEvent.getY();
-                mLastScrollUp = false;
-                //スクロール方向の判定
-                if (mStartY < mEndY) {
-                    //終了時のY座標の方が大きいので、上スクロール
-                    mLastScrollUp = true;
-                }
-                break;
-            default:
-                break;
-        }
-        return false;
-    }
 }

@@ -230,11 +230,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         /**
          * おすすめ番組・ビデオ.
          */
-        TYPE_RECOMMEND_LIST,
-        /**
-         * ウィザード画面の一覧.
-         */
-        TYPE_CHILD_CONTENT_LIST
+        TYPE_RECOMMEND_LIST
     }
 
     /**
