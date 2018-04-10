@@ -55,6 +55,8 @@ namespace dtvt {
         DLNA_MSG_ID_DL_STATUS = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 7,
         //Download param
         DLNA_MSG_ID_DL_XMLPARAM = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 8,
+        //LocalRegist status
+        DLNA_MSG_ID_RM_STATUS = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 9,
         //invalid value
         DLNA_MSG_ID_INVALID = 0xffffffff,
     } DLNA_MSG_ID;

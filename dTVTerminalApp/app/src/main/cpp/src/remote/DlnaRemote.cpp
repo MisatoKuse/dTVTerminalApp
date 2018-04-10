@@ -30,8 +30,15 @@
 #include "CommonRm.h"
 #include "../android_log_handler.h"
 #include "dirent.h"
+#include <du_file_input_buffer.h>
+#include <du_file.h>
 
 #include <drag_cp.h>
+
+#include "dvcdsc_device.h"
+#include "local_registration.h"
+#include <du_alloc.h>
+#include "dmp_ui_dms_view.h"
 
 #define CURRENT_BITRATE 8 * 1024 * 1024 * 50
 #define MONITOR_WIDTH 1280
@@ -62,23 +69,36 @@ namespace dtvt {
     }
 
     static void dcp_connect_status_handler(drag_cp_connect_status status, void* arg) {
+        DlnaRemote *thiz = (DlnaRemote *) arg;
+        std::string content;
         switch(status) {
+            //不明
             case DRAG_CP_CONNECT_STATUS_UNKNOWN:
                 puts("DRAG_CP_CONNECT_STATUS_UNKNOWN");
+                content = "UNKNOWN";
                 break;
+            //接続準備環境
             case DRAG_CP_CONNECT_STATUS_READY:
                 puts("DRAG_CP_CONNECT_STATUS_READY");
+                content = "READY";
                 break;
+            //接続中
             case DRAG_CP_CONNECT_STATUS_CONNECTED:
                 puts("DRAG_CP_CONNECT_STATUS_CONNECTED");
+                content = "CONNECTED";
                 break;
+            //切断
             case DRAG_CP_CONNECT_STATUS_DETECTED_DISCONNECTION:
                 puts("DRAG_CP_CONNECT_STATUS_DETECTED_DISCONNECTION");
+                content = "DISCONNECTION";
                 break;
+            //再接続失敗
             case DRAG_CP_CONNECT_STATUS_GAVEUP_RECONNECTION:
                 puts("DRAG_CP_CONNECT_STATUS_GAVEUP_RECONNECTION");
+                content = "RECONNECTION";
                 break;
         }
+//        thiz->notify(DLNA_MSG_ID_RM_STATUS, content);
     }
 
     //====================================== c function end ===========================================//
@@ -135,7 +155,7 @@ namespace dtvt {
             return false;
         }
 
-        duRet = dmp_start(mDmpRm);
+        duRet = dmp_start(mDmpRm, obj, confDir);
         if(false == duRet){
             stop();
             env->DeleteGlobalRef(mEvent.mJObject);
@@ -151,7 +171,174 @@ namespace dtvt {
         return ok;
     }
 
-    du_bool DlnaRemote::dmp_start(DmpRm* d) {
+    du_bool dmp_ui_regist(dmp_ui* ui, player* p, std::string udn) {
+        du_file_input_buffer fb;
+        du_uchar fb_buf[256];
+        du_uint argc = 2;
+        const du_uchar* argv[5];
+
+        du_file_input_buffer_init(&fb, fb_buf, sizeof fb_buf, du_file_stdin());
+
+        argv[0] = DU_UCHAR_CONST("lr");
+        argv[1] = DU_UCHAR_CONST("1");
+
+        ui->_current_view->_user_data;
+        ui->_current_view->_command_lr(ui->_current_view->_user_data, p, argc, argv, (du_uchar*)udn.c_str());
+        return 1;
+    }
+
+    static void lr_register_response_handler(du_uint32 requeseted_id, local_registration_error_info* error_info) {
+        if (error_info->type == LOCAL_REGISTRATION_ERROR_TYPE_NONE) {
+            puts("Finsh PrepareRegistration/Local (Un)Registration");
+        } else {
+            puts("Error PrepareRegistration/Local (Un)Registration");
+            printf("%d\n", error_info->type);
+            printf("%s\n", error_info->http_status);
+            printf("%s\n", error_info->soap_error_code);
+            printf("%s\n", error_info->soap_error_description);
+        }
+    }
+
+    typedef struct regist_dms_visitor_context {
+        dmp_ui_dms_view* mv;
+        const du_uchar* udn;
+        du_uchar* control_url;
+        du_uchar* dtcp1_host;
+        du_uint16 dtcp1_port;
+        du_bool is_v2;
+        du_bool found;
+        du_bool succeeded;
+    } regist_dms_visitor_context;
+
+    static du_bool regist_dms_visitor(dupnp_cp_dvcmgr_device* device, void* arg) {
+        regist_dms_visitor_context* context = (regist_dms_visitor_context*)arg;
+        dvcdsc_device* dd = (dvcdsc_device*)device->user_data;
+
+        if (du_str_diff(context->udn, device->udn)) return 1;
+
+        context->found = 1;
+        if (!du_str_clone(dd->x_dps.control_url, &context->control_url)) return 0;
+        if (!du_str_clone(dd->rs_regi_socket_host, &context->dtcp1_host)) goto error;
+        context->dtcp1_port = dd->rs_regi_socket_port;
+        context->is_v2 = dd->x_dps.dps_is_v2;
+        context->succeeded = 1;
+        return 0;
+
+        error:
+        du_alloc_free(&context->control_url);
+        context->control_url = 0;
+        return 0;
+    }
+
+//    du_bool dmp_ui_dms_view_init(dmp_ui_view* view, dmp_ui* ui, dupnp* upnp, dupnp_cp_dvcmgr* dm, player* p, const du_uchar* user_agent) {
+//        dmp_ui_dms_view* mv = 0;
+//
+//        mv = du_alloc_zero(sizeof(dmp_ui_dms_view));
+//        if (!mv) return 0;
+//        mv->_ui = ui;
+//        mv->_upnp = upnp;
+//        mv->user_agent = user_agent;
+//        mv->_dm = dm;
+//        mv->_player = p;
+//
+//        du_str_array_init(&mv->_udn_array);
+//
+//        view->_user_data = mv;
+//        view->_command = local_registration;
+//        view->_update_screen = update_screen;
+//        return 1;
+//    }
+
+    bool DlnaRemote::regist(std::string udn) {
+        set_android_log_handler();
+        DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaRemote.cpp DlnaRemote::regist enter");
+
+        mDmpRm->ea._join_handler_array;
+        if (!dmp_ui_regist(&mDmpRm->ui, &mDmpRm->p, udn)) {
+            goto error;
+        }
+        return 1;
+        error:
+        player_stop(&mDmpRm->p);
+        return 0;
+    }
+
+    du_bool dmp_ui_connect(dmp_ui* ui, player* p, std::string udn) {
+        du_file_input_buffer fb;
+        du_uchar fb_buf[256];
+        du_uint argc = 2;
+        const du_uchar* argv[5];
+
+        du_file_input_buffer_init(&fb, fb_buf, sizeof fb_buf, du_file_stdin());
+
+        argv[0] = DU_UCHAR_CONST("conn");
+        argv[1] = DU_UCHAR_CONST("1");
+        ui->_current_view->_user_data;
+//        &mDmpRm->p
+//        mv->_player = p;
+//        ui->_dms_view._command(mDmpRm->ea._join_handler_array, argc, argv);
+        ui->_current_view->_command_lr(ui->_current_view->_user_data, p, argc, argv, (du_uchar*) udn.c_str());
+//        ui->_dms_view dmp_ui_dms_view* mv
+        return 1;
+    }
+
+    bool DlnaRemote::connect(std::string udn) {
+        set_android_log_handler();
+        DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaRemote.cpp DlnaRemote::regist enter");
+
+        mDmpRm->ea._join_handler_array;
+        if (!dmp_ui_connect(&mDmpRm->ui, &mDmpRm->p, udn)) {
+            goto error;
+        }
+        return 1;
+        error:
+        player_stop(&mDmpRm->p);
+        return 0;
+    }
+
+    void clearAttachStatus(JNIEnv *env, JavaVM *vm, bool isAttached){
+        if(env && vm && isAttached){
+            vm->DetachCurrentThread();
+        }
+    }
+
+    du_bool DlnaRemote::dmp_start(DmpRm* d, jobject instance, std::string& dirToSave) {
+
+        JNIEnv *env = NULL;
+        bool isAttached=false;
+        int status = mEvent.mJavaVM->GetEnv((void **) &env, JNI_VERSION_1_6);
+        if (status < 0) {
+            status = mEvent.mJavaVM->AttachCurrentThread(&env, NULL);
+            if (status < 0 || NULL == env) {
+                DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start failed, status < 0 || NULL == env");
+                return false;
+            }
+            isAttached=true;
+        }
+
+        jobject objTmp = env->NewGlobalRef(instance);
+        jclass clazz = env->GetObjectClass(objTmp);
+        jmethodID mid = env->GetMethodID(clazz, "getUniqueId",
+                                         "()Ljava/lang/String;");
+        if (env->ExceptionCheck()) {
+            DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start failed, env->ExceptionCheck");
+            env->DeleteGlobalRef(instance);
+            env->DeleteLocalRef(clazz);
+
+            clearAttachStatus(env, mEvent.mJavaVM, isAttached);
+            return false;
+        }
+
+        jstring strObj = (jstring) env->CallObjectMethod(objTmp, mid);
+        if (env->ExceptionCheck()) {
+            DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start failed, jstring strObj");
+            env->DeleteGlobalRef(instance);
+            env->DeleteLocalRef(clazz);
+            env->DeleteLocalRef(strObj);
+            clearAttachStatus(env, mEvent.mJavaVM, isAttached);
+            return false;
+        }
+
         if (!dupnp_start(&d->upnp)) {
             return 0;
         }
@@ -161,7 +348,7 @@ namespace dtvt {
         if (!dmp_cp_start(d)) {
             goto error2;
         }
-        if (!player_start(&d->p)) {
+        if (!player_start(&d->p, mEvent.mJavaVM, objTmp, mid)) {
             goto error3;
         }
         if (!dmp_ui_start(&d->ui)) {
@@ -204,7 +391,44 @@ namespace dtvt {
             }
             closedir(dirTmp);
         }
-        DTVT_LOG_DBG("C>>>>>>>>>>>>>>>> --------------------------------");
+    }
+
+    void DlnaRemote::notify(int msg, std::string content) {
+        JNIEnv *env = NULL;
+        bool isAttached=false;
+        int status = mEvent.mJavaVM->GetEnv((void **) &env, JNI_VERSION_1_6);
+        if (status < 0) {
+            status = mEvent.mJavaVM->AttachCurrentThread(&env, NULL);
+            if (status < 0 || NULL == env) {
+                return;
+            }
+            isAttached=true;
+        }
+
+        jclass listActivityClazz = env->GetObjectClass(mEvent.mJObject);
+        if(NULL==listActivityClazz){
+            if(isAttached){
+                mEvent.mJavaVM->DetachCurrentThread();
+            }
+            return;
+        }
+        jmethodID method = env->GetMethodID(listActivityClazz, "notifyFromNative",
+                                            "(ILjava/lang/String;)V");
+        if (NULL == method) {
+            env->DeleteLocalRef(listActivityClazz);
+            if(isAttached){
+                mEvent.mJavaVM->DetachCurrentThread();
+            }
+            return;
+        }
+
+        jstring jstr = env->NewStringUTF(content.c_str());
+        env->CallVoidMethod(mEvent.mJObject, method, msg, jstr);
+        env->DeleteLocalRef(jstr);
+        env->DeleteLocalRef(listActivityClazz);
+        if(isAttached){
+            mEvent.mJavaVM->DetachCurrentThread();
+        }
     }
 
     du_bool DlnaRemote::dmp_init(DmpRm* d, const du_uchar* conf_path){
@@ -212,7 +436,6 @@ namespace dtvt {
         du_uchar_array ua2;
         dupnp_taskmgr* taskmgr;
         dupnp_schedtaskmgr* schedtaskmgr;
-        const char* ddd = "/data/user/0/com.nttdocomo.android.tvterminalapp/files/drm/conf/dirag/rada/rada_relay";
 
         du_uchar_array_init(&ua);
         du_uchar_array_init(&ua2);
@@ -222,19 +445,16 @@ namespace dtvt {
         if (!dupnp_init(&d->upnp, 0, 0)) {
             goto error;
         }
-        printDir(ddd);
 
         if (!dmp_cp_init(d)) {
             goto error2;
         }
-        printDir(ddd);
+
         dmp_event_adapter_init(&d->ea, &d->upnp, &d->dm, &d->em);
-        printDir(ddd);
 
         if (!dmp_conf_get_capability_xml_path(conf_path, &ua)) {
             goto error3;
         }
-        printDir(ddd);
 
         if (!du_uchar_array_cat0(&ua)) {
             goto error3;
@@ -243,12 +463,10 @@ namespace dtvt {
         if (!capability_init(d, du_uchar_array_get(&ua))) {
             goto error3;
         }
-        printDir(ddd);
 
         if (!dmp_conf_get_download_dir_path(conf_path, &ua, &ua2)) {
             goto error4;
         }
-        printDir(ddd);
 
         if (!du_uchar_array_cat0(&ua)) {
             goto error4;
@@ -256,36 +474,28 @@ namespace dtvt {
         if (!player_init(&d->p, 0, &d->cap, du_uchar_array_get(&ua))) {
             goto error4;
         }
-        printDir(ddd);
 
-#ifdef ENABLE_DTCP
         if (!dmp_conf_get_private_data_home_path(conf_path, &ua)) {
             goto error5;
         }
-        printDir(ddd);
 
         if (!du_uchar_array_cat0(&ua)) {
             goto error5;
         }
-        printDir(ddd);
 
         if (!player_set_private_data_home(&d->p, du_uchar_array_get(&ua))){
             goto error5;
         }
-        printDir(ddd);
-#endif
 
         if (!dupnp_cp_evtmgr_init(&d->em, &d->upnp)) {
             goto error5;
         }
-        printDir(ddd);
 
         taskmgr = dupnp_get_taskmgr(&d->upnp);
         if (!taskmgr) {
             goto error6;
         }
         schedtaskmgr = dupnp_taskmgr_get_schedtaskmgr(taskmgr);
-        printDir(ddd);
         if (!schedtaskmgr) {
             goto error6;
         }
@@ -293,37 +503,31 @@ namespace dtvt {
         if (!dmp_ui_init(&d->ui, &d->upnp, &d->dm, &d->cb_browse, &d->cb_event,&d->p, &d->ea, schedtaskmgr, &d->cap, dmp_get_user_agent())) {
             goto error6;
         }
-        printDir(ddd);
 
         dupnp_enable_netif_monitor(&d->upnp, 1);
-        printDir(ddd);
 
         if (!dmp_conf_get_dirag_path(conf_path, &ua)) {
             goto error6;
         }
-        printDir(ddd);
 
         if (!du_uchar_array_cat0(&ua)) {
             goto error6;
         }
+        //Dirag sdk を起動する
         if (!drag_cp_initialize(du_uchar_array_get(&ua))) {
             goto error6;
         }
-        printDir(ddd);
 
+        //ローカルレジストレーション をスタート
         if (!drag_cp_lrsys_start()) {
             goto error8;
         }
-        printDir(ddd);
 
-        //if (!drag_cp_rasys_start(dcp_connect_status_handler, d)) {
-        //if (!drag_cp_rasys_start(dcp_connect_status_handler, (void*)&m_connect_status_arg)) {
-        if (!drag_cp_rasys_start(dcp_connect_status_handler, this)) {
+        if (!drag_cp_rasys_start(dcp_connect_status_handler, d)) {
             drag_error_code err = drag_cp_get_last_error();
             DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaRemote.cpp dmp_init func, drag_cp_get_last_error = %x", err);
             goto error9;
         }
-        printDir(ddd);
 
         du_uchar_array_free(&ua);
         du_uchar_array_free(&ua2);

@@ -164,6 +164,6 @@ void dmp_ui_free(dmp_ui* ui) {
 }
 
 du_bool dmp_ui_start(dmp_ui* ui) {
-    command(ui);
+//    command(ui);
     return 1;
 }

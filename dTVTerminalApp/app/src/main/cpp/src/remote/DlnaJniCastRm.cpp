@@ -62,19 +62,46 @@ namespace dtvt {
         return (jboolean) ret;
     }
 
-//    /**
-//     * 機能：dlを開始
-//     */
-//    extern "C" void JNICALL
-//    Java_com_nttdocomo_android_tvterminalapp_jni_remote_DlnaInterfaceRI_nativeStopDlna(JNIEnv *env, jobject obj, jlong thiz) {
-//        unsigned char ret = 0;
-//        if (NULL == thiz) {
-//            DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_remote_DlnaInterfaceRI_nativeStartDlna exit, 0==thiz");
-//            return;
-//        }
-//        DlnaRemote *DlnaRemotePtr = (DlnaRemote *) thiz;
-//        DlnaRemotePtr->stop();
-//    }
+    extern "C" jboolean JNICALL
+    Java_com_nttdocomo_android_tvterminalapp_jni_remote_DlnaInterfaceRI_nativeStartDlnaRmRegist(JNIEnv *env, jobject obj, jlong thiz, jstring udn_) {
+        unsigned char ret = 0;
+        if (0 == thiz) {
+            DTVT_LOG_DBG("%s exit, 0==thiz", __FUNCTION__);
+            return (jboolean) ret;
+        }
+        DlnaRemote *DlnaRemotePtr = (DlnaRemote *) thiz;
+        const char *udn = env->GetStringUTFChars(udn_, 0);
+        bool result = DlnaRemotePtr->regist(udn);
+        return (jboolean) ret;
+    }
+
+    extern "C" jboolean JNICALL
+    Java_com_nttdocomo_android_tvterminalapp_jni_remote_DlnaInterfaceRI_nativeStartDlnaRmConnect(JNIEnv *env, jobject obj, jlong thiz, jstring udn_) {
+        unsigned char ret = 0;
+        if (0 == thiz) {
+            DTVT_LOG_DBG("%s exit, 0==thiz", __FUNCTION__);
+            return (jboolean) ret;
+        }
+        DlnaRemote *DlnaRemotePtr = (DlnaRemote *) thiz;
+        const char *udn = env->GetStringUTFChars(udn_, 0);
+        bool result = DlnaRemotePtr->connect(udn);
+
+        return (jboolean) ret;
+    }
+
+    /**
+     * 機能：dlを開始
+     */
+    extern "C" void JNICALL
+    Java_com_nttdocomo_android_tvterminalapp_jni_remote_DlnaInterfaceRI_nativeStartDlnaRmStop(JNIEnv *env, jobject obj, jlong thiz) {
+        unsigned char ret = 0;
+        if (NULL == thiz) {
+            DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_remote_DlnaInterfaceRI_nativeStartDlna exit, 0==thiz");
+            return;
+        }
+        DlnaRemote *DlnaRemotePtr = (DlnaRemote *) thiz;
+        DlnaRemotePtr->stop();
+    }
 //
 //    extern "C"  void JNICALL
 //    Java_com_nttdocomo_android_tvterminalapp_jni_remote_DlnaInterfaceRI_download(JNIEnv *env,

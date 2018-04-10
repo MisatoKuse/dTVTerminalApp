@@ -34,13 +34,11 @@ typedef struct player_media_info {
     du_uchar* original_uri;
     du_uchar* original_mime_type;
 
-#ifdef ENABLE_DTCP
     du_bool dtcp;
     du_uchar dtcp1host[DU_IP_STR_SIZE];
     du_uint16 dtcp1port;
     du_uint16 dtcp1raport;
     pmi_additional_mm_flags_param mm_flags;
-#endif
 } player_media_info;
 
 extern void player_media_info_init(player_media_info* mi);
@@ -73,7 +71,6 @@ extern const du_uchar* player_media_info_get_original_uri(player_media_info* mi)
 
 extern const du_uchar* player_media_info_get_original_mime_type(player_media_info* mi);
 
-#ifdef ENABLE_DTCP
 extern const du_bool player_media_info_is_dtcp(player_media_info* mi);
 
 extern const du_uchar* player_media_info_get_dtcp1host(player_media_info* mi);
@@ -83,7 +80,6 @@ extern du_uint16 player_media_info_get_dtcp1port(player_media_info* mi);
 extern du_uint16 player_media_info_get_dtcp1raport(player_media_info* mi);
 
 extern pmi_additional_mm_flags_param player_media_info_get_additional_mm_flags_param(player_media_info* mi);
-#endif
 
 
 #ifdef __cplusplus
