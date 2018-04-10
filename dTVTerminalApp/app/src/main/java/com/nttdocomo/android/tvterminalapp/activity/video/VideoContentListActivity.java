@@ -344,7 +344,8 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
             showDialogToClose(this);
             return;
         }
-        if (0 == videoContentInfo.size()) {
+        //既にデータが取得された場合表示しない
+        if (0 == videoContentInfo.size() && (null == mContentsList || mContentsList.size() == 0)) {
             mNoDataMessage.setVisibility(View.VISIBLE);
             displayMoreData(false);
             return;
