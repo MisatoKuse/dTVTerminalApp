@@ -47,10 +47,6 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         AbsListView.OnTouchListener {
 
     /**
-     * 最大表示件数.
-     */
-    private final static int NUM_PER_PAGE = 999;
-    /**
      * メニュー.
      */
     private ImageView mMenuImageView;
@@ -350,15 +346,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
             return;
         }
 
-        //既に元のデータ以上の件数があれば足す物は無いので、更新せずに帰る
-        if (null != mContentsList && mContentsList.size() >= videoContentInfo.size()) {
-            displayMoreData(false);
-            return;
-        }
-
-        int pageNumber = getCurrentNumber();
-        for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1)
-                * NUM_PER_PAGE && i < videoContentInfo.size(); ++i) {
+        for (int i = 0; i < videoContentInfo.size(); ++i) {
             DTVTLogger.debug("i = " + i);
             if (null != mContentsList) {
                 mContentsList.add(videoContentInfo.get(i));
