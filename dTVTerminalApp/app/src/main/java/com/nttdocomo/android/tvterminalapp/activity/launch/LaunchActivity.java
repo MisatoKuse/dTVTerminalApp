@@ -13,9 +13,7 @@ import android.widget.Button;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.common.ChildContentListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListListener;
@@ -25,7 +23,6 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListListener;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
-
 
 /**
  * アプリ起動時に最初に呼び出されるActivity.
@@ -65,29 +62,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
              * to do: DLNA起動失敗の場合、仕様はないので、ここで将来対応
              */
         }
-        setContents();
-    }
-
-    /**
-     * 画面設定を行う.
-     */
-    private void setContents() {
-        mFirstLaunchLaunchYesActivity = findViewById(R.id.firstLanchLanchYesActivity);
-        mFirstLaunchLaunchYesActivity.setOnClickListener(this);
-
-        mFirstLaunchLaunchNoActivity = findViewById(R.id.firstLanchLanchNoActivity);
-        mFirstLaunchLaunchNoActivity.setOnClickListener(this);
-
-        mFirstLaunchLaunchYesActivity.setEnabled(false);
-        mFirstLaunchLaunchYesActivity.getBackground().setColorFilter(Color.DKGRAY, PorterDuff.Mode.MULTIPLY);
-        mFirstLaunchLaunchNoActivity.setEnabled(false);
-        mFirstLaunchLaunchNoActivity.getBackground().setColorFilter(Color.DKGRAY, PorterDuff.Mode.MULTIPLY);
-        // TODO チュートリアル実装時にコメントアウトを外す
-//        if(SharedPreferencesUtils.getSharedPreferencesIsDisplayedTutorial(this)) {
-//            doScreenTransition();
-//        } else {
-//            startActivity(TutorialActivity.class, null);
-//        }
+        mIsFirstRun = !SharedPreferencesUtils.getSharedPreferencesIsDisplayedTutorial(this);
     }
 
     /**
@@ -155,11 +130,12 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                // アプリの起動時はdアカOTTが取得できるまで待つ。他画面には遷移させない。
-                mFirstLaunchLaunchYesActivity.setEnabled(true);
-                mFirstLaunchLaunchYesActivity.getBackground().setColorFilter(Color.LTGRAY, PorterDuff.Mode.MULTIPLY);
-                mFirstLaunchLaunchNoActivity.setEnabled(true);
-                mFirstLaunchLaunchNoActivity.getBackground().setColorFilter(Color.LTGRAY, PorterDuff.Mode.MULTIPLY);
+                // TODO チュートリアルレビューが終わったらコメントアウトを外す
+//                if (mIsFirstRun) {
+                    startActivity(TutorialActivity.class, null);
+//                } else {
+//                    doScreenTransition();
+//                }
             }
         });
     }

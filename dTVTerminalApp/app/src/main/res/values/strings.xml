@@ -361,5 +361,8 @@
     <string name="setting_file_download">新しいバージョンのアプリがリリースされました。ダウンロードを行いますか？</string>
     <string name="setting_file_stop_apli">アプリの動作が行えませんでした</string>
 
+    <!-- チュートリアル -->
+    <string name="tutorial_show_agreement">規約を表示</string>
+    <string name="tutorial_agreement_button">規約に同意して利用を開始</string>
 
 </resources>
