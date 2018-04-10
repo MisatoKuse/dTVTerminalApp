@@ -31,6 +31,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetail
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.ActivityUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -238,12 +239,17 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
 
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
-        Intent intent = new Intent();
-        intent.setClass(mActivity, ContentDetailActivity.class);
-        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
-        OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(mContentsData.get(i), ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
-        intent.putExtra(detailData.getRecommendFlg(), detailData);
-        startActivity(intent);
+        ContentsData contentsData = mContentsData.get(i);
+        if(ActivityUtil.isChildContentList(contentsData)) {
+            ActivityUtil.startChildContentListActivity(mActivity, contentsData);
+        } else {
+            Intent intent = new Intent();
+            intent.setClass(mActivity, ContentDetailActivity.class);
+            intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
+            OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(contentsData, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
+            intent.putExtra(detailData.getRecommendFlg(), detailData);
+            startActivity(intent);
+        }
     }
 
     /**

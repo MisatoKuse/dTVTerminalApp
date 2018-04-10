@@ -53,6 +53,17 @@ public class DTVTConstants {
      * ロケーションキー.
      */
     public static final String LOCATION_KEY = "Location";
+
+    /**
+     * disp_type 一覧（まず、多階層用のみ宣言）
+     */
+    public static final String DISP_TYPE_SERIES_SVOD = "series_svod",
+            DISP_TYPE_WIZARD = "wizard",
+            DISP_TYPE_VIDEO_PACKAGE = "video_package",
+            DISP_TYPE_SUBSCRIPTION_PACKAGE = "subscription_package";
+
+    /** limitがない場合の初期値*/
+    public static final int REQUEST_LIMIT_50 = 50;
     //==================================== 定数定義 End ===================================
 
     /**
