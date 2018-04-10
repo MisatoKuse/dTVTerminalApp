@@ -6,9 +6,19 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
+    <ImageView
+        android:id="@+id/item_img_arrow_right"
+        android:layout_width="@dimen/video_contents_list_right_arrow_size"
+        android:layout_height="@dimen/video_contents_list_right_arrow_size"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/video_contents_genre_button_margin_end"
+        android:src="@mipmap/icon_gray_arrow_right" />
+
     <TextView
         android:id="@+id/item_common_result_content_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:lines="1"
         android:layout_height="@dimen/video_contents_list_height"
         android:layout_centerVertical="true"
         android:layout_marginStart="@dimen/video_contents_genre_title_margin_start"
@@ -16,13 +26,7 @@
         android:ellipsize="end"
         android:textStyle="bold"
         android:textSize="@dimen/video_contents_genre_text_size"
+        android:layout_toLeftOf="@id/item_img_arrow_right"
         android:textColor="@color/video_list_text_color" />
 
-    <ImageView
-        android:layout_width="@dimen/video_contents_list_right_arrow_size"
-        android:layout_height="@dimen/video_contents_list_right_arrow_size"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="@dimen/video_contents_genre_button_margin_end"
-        android:src="@mipmap/icon_gray_arrow_right" />
 </RelativeLayout>

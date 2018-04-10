@@ -324,24 +324,38 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     @Override
     public View getView(final int position, final View view, final ViewGroup parent) {
         ViewHolder holder;
-
-        View contentView = view;
-        //ビューの再利用
-        if (contentView == null) {
-            holder = new ViewHolder();
-            contentView = mInflater.inflate(R.layout.item_common_result, parent, false);
-            holder = setListItemPattern(holder, contentView);
-            contentView.setTag(holder);
-        } else {
-            holder = (ViewHolder) contentView.getTag();
-        }
         //各アイテムデータを取得
         final ContentsData listContentInfo = mListData.get(position);
+        View contentView = view;
 
-        if (listContentInfo.hasChildContentList()) {
-            setChildContentsData(holder, listContentInfo, contentView);
+        if (contentView == null) {
+            if (listContentInfo.hasChildContentList()) {
+                holder = new ViewHolder();
+                contentView = mInflater.inflate(R.layout.item_wizard_cell, parent, false);
+                setWizardItem(holder, contentView);
+            } else {
+                holder = new ViewHolder();
+                contentView = mInflater.inflate(R.layout.item_common_result, parent, false);
+                setListItemPattern(holder, contentView);
+            }
         } else {
-            // アイテムデータを設定する
+            holder = (ViewHolder) contentView.getTag();
+            if (holder.isCommonContent && listContentInfo.hasChildContentList()) {
+                holder = new ViewHolder();
+                contentView = mInflater.inflate(R.layout.item_wizard_cell, parent, false);
+                setWizardItem(holder, contentView);
+            }
+            if (!holder.isCommonContent && !listContentInfo.hasChildContentList()) {
+                holder = new ViewHolder();
+                contentView = mInflater.inflate(R.layout.item_common_result, parent, false);
+                setListItemPattern(holder, contentView);
+            }
+        }
+
+        // アイテムデータを設定する
+        if (listContentInfo.hasChildContentList()) {
+            setTitleData(holder, listContentInfo);
+        } else {
             setContentsData(holder, listContentInfo, contentView);
             setShowDataVisibility(holder);
             setClipButtonItem(position, holder, contentView, listContentInfo);
@@ -601,50 +615,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         if (ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST.equals(mType)) {
             setSubTitle(holder, listContentInfo);
         }
-    }
-
-    /**
-     * 各多階層コンテンツデータと表示設定を設定.
-     *
-     * @param holder          ビューの集合
-     * @param listContentInfo 行データー
-     * @param contentView ビュー
-     */
-    private void setChildContentsData(final ViewHolder holder, final ContentsData listContentInfo,
-                                      final View contentView) {
-        DTVTLogger.start();
-        setTitleData(holder, listContentInfo);
-
-        holder.iv_thumbnail.setVisibility(View.GONE);
-        holder.ll_rating.setVisibility(View.GONE);
-        holder.rl_thumbnail.setVisibility(View.GONE);
-        holder.tv_rank.setVisibility(View.GONE);
-        holder.tv_time.setVisibility(View.GONE);
-        holder.tv_clip.setBackgroundResource(R.mipmap.icon_normal_arrow_right);
-        holder.tv_title.setMaxLines(1);
-
-        DisplayMetrics DisplayMetrics = mContext.getResources().getDisplayMetrics();
-        float density = DisplayMetrics.density;
-
-        RelativeLayout.LayoutParams layoutParamsArrow = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        layoutParamsArrow.setMargins(THUMBNAIL_MARGIN0 * (int) density, THUMBNAIL_MARGIN0 * (int) density,
-                ARROW_MARGIN_RIGHT4 * (int) density, THUMBNAIL_MARGIN0 * (int) density);
-        layoutParamsArrow.addRule(RelativeLayout.ALIGN_PARENT_END, R.id.parent_relative_layout);
-        layoutParamsArrow.addRule(RelativeLayout.CENTER_VERTICAL);
-        contentView.findViewById(R.id.item_common_result_show_status_area).setLayoutParams(layoutParamsArrow);
-
-        RelativeLayout.LayoutParams layoutParamsTitle = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        layoutParamsTitle.setMargins(THUMBNAIL_MARGIN0 * (int) density, THUMBNAIL_MARGIN0 * (int) density,
-                THUMBNAIL_MARGIN0 * (int) density, THUMBNAIL_MARGIN0 * (int) density);
-        layoutParamsTitle.setMarginStart(THUMBNAIL_MARGIN_LEFT * (int) density);
-        layoutParamsTitle.addRule(RelativeLayout.START_OF, R.id.item_common_result_show_status_area);
-        layoutParamsTitle.addRule(RelativeLayout.END_OF, R.id.item_common_result_thumbnail_rl);
-        layoutParamsTitle.setMarginEnd(THUMBNAIL_MARGIN0 * (int) density);
-        layoutParamsTitle.addRule(RelativeLayout.CENTER_VERTICAL);
-        contentView.findViewById(R.id.item_common_result_contents).setLayoutParams(layoutParamsTitle);
-
     }
 
     /**
@@ -1092,6 +1062,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         return holder;
     }
 
+    private void setWizardItem(final ViewHolder holder, final View view) {
+        holder.tv_title = view.findViewById(R.id.item_common_result_content_title);
+        holder.isCommonContent = false;
+        view.setTag(holder);
+    }
+
     /**
      * Itemのパターンを設定.
      *
@@ -1099,10 +1075,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * @param view   View
      * @return 各画面特化ViewHolder
      */
-    private ViewHolder setListItemPattern(final ViewHolder holder, final View view) {
+    private void setListItemPattern(final ViewHolder holder, final View view) {
         DTVTLogger.start();
         // TODO 録画予約一覧以外のパターンも共通項目以外を抽出し、修正する
         ViewHolder viewHolder = holder;
+        view.setTag(viewHolder);
+        viewHolder.isCommonContent = true;
         viewHolder = setCommonListItem(viewHolder, view);
         switch (mType) {
             case TYPE_RECOMMEND_LIST://おすすめ番組・ビデオ
@@ -1137,7 +1115,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             default:
                 break;
         }
-        return viewHolder;
     }
 
     /**
@@ -1381,6 +1358,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
          * サブタイトル.
          */
         TextView tv_sub_title = null;
+
+        boolean isCommonContent = true;
     }
 
     /**
