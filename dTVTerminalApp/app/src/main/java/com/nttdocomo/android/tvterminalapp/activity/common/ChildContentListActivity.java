@@ -88,10 +88,8 @@ public class ChildContentListActivity extends BaseActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.child_content_main_layout);
-        mListView = (ListView)findViewById(R.id.child_content_list);
 
         Intent intent = getIntent();
-
         mCrid = intent.getStringExtra(INTENT_KEY_CRID);
         mTitle = intent.getStringExtra(INTENT_KEY_TITLE);
         mDispType = intent.getStringExtra(INTENT_KEY_DISP_TYPE);
@@ -99,10 +97,12 @@ public class ChildContentListActivity extends BaseActivity implements
         DTVTLogger.debug("mCrid = " + mCrid + ", mTitle = " + mTitle);
         setTitleText(mTitle);
         enableStbStatusIcon(true);
+        setHeaderColor(false);
         enableGlobalMenuIcon(true);
+        changeGlobalMenuIcon(false);
+        setStatusBarColor(R.color.contents_header_background);
 
         initView();
-
     }
 
     @Override
@@ -278,8 +278,8 @@ public class ChildContentListActivity extends BaseActivity implements
         intent.putExtra(ChildContentListActivity.INTENT_KEY_CRID, contentsData.getCrid());
         intent.putExtra(ChildContentListActivity.INTENT_KEY_TITLE, contentsData.getTitle());
         intent.putExtra(ChildContentListActivity.INTENT_KEY_DISP_TYPE, contentsData.getDispType());
+        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
         startActivity(intent);
     }
-
 
 }
