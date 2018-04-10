@@ -35,6 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.common.ChildContentListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.ClipListActivity;
@@ -1306,6 +1307,10 @@ public class BaseActivity extends FragmentActivity implements
     public void onClick(final View view) {
         if (mMenuImageViewForBase == view) {
             if (HEADER_ICON_CLOSE.equals(mMenuImageViewForBase.getTag())) {
+                String sourceScreen = getSourceScreenClass();
+                if (sourceScreen.equals(ChildContentListActivity.class.getName())) {
+
+                }
                 //コンテンツ詳細画面の×ボタン時はコンテンツ詳細画面を閉じる
                 contentsDetailCloseKey(view);
             } else {

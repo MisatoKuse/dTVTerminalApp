@@ -122,7 +122,10 @@ public class ChildContentListActivity extends BaseActivity implements
         DTVTLogger.debug("mCrid = " + mCrid + ", mTitle = " + mTitle);
         setTitleText(mTitle);
         enableStbStatusIcon(true);
+        setHeaderColor(false);
         enableGlobalMenuIcon(true);
+        changeGlobalMenuIcon(false);
+        setStatusBarColor(R.color.contents_header_background);
 
         initView();
     }
@@ -379,5 +382,14 @@ public class ChildContentListActivity extends BaseActivity implements
                 break;
         }
         return false;
+    }
+
+    private void startChildContentListActivity(final ContentsData contentsData) {
+        Intent intent = new Intent(this, ChildContentListActivity.class);
+        intent.putExtra(ChildContentListActivity.INTENT_KEY_CRID, contentsData.getCrid());
+        intent.putExtra(ChildContentListActivity.INTENT_KEY_TITLE, contentsData.getTitle());
+        intent.putExtra(ChildContentListActivity.INTENT_KEY_DISP_TYPE, contentsData.getDispType());
+        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
+        startActivity(intent);
     }
 }
