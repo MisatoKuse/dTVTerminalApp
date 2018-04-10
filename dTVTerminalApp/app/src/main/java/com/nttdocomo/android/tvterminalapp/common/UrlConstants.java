@@ -274,7 +274,7 @@ public class UrlConstants {
          * 子コンテンツ詳細取得.
          */
         public static final String CHILD_CONTENTS_GET_WEB_CLIENT =
-                BaseUrlConstants.PLALA_CLIENT + "meta/genrecontents/list";
+                BaseUrlConstants.PLALA_CLIENT + "meta/member";
         /**
          * クリップ登録.
          */
