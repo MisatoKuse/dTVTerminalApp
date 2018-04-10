@@ -764,7 +764,7 @@ public class TvProgramListActivity extends BaseActivity implements
                 this.hikariChannels = channels;
                 ArrayList<ChannelInfo> channelList = executeMapping();
                 setChannelContentsView(channelList);
-                loadMyChannel();
+                loadMyChannel(channelList);
             } else {
                 //ひかりTVデータなしの場合
                 scrollToCurTime();
@@ -811,13 +811,13 @@ public class TvProgramListActivity extends BaseActivity implements
     /**
      * My番組表ロード.
      */
-    private void loadMyChannel() {
+    private void loadMyChannel(ArrayList<ChannelInfo> channelList) {
         if (mScaledDownProgramListDataProvider == null) {
             mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
         }
-        int[] channelNos = new int[mappedMyChannelList.size()];
-        for (int i = 0; i < mappedMyChannelList.size(); i++) {
-            channelNos[i] = mappedMyChannelList.get(i).getChNo();
+        int[] channelNos = new int[channelList.size()];
+        for (int i = 0; i < channelList.size(); i++) {
+            channelNos[i] = channelList.get(i).getChNo();
         }
         if (channelNos.length != 0) {
         	//マイ番組表設定されていない場合、通信しない

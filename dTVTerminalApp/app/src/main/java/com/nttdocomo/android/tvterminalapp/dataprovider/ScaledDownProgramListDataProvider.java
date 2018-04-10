@@ -260,7 +260,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                             //setScheduleInfoのやり方を踏襲.
                             ChannelInfo channel = new ChannelInfo();
                             channel.setChNo(Integer.parseInt(scheduleInfoList.get(0).getChNo()));
-                            channel.setTitle(scheduleInfoList.get(0).getTitle());
+//                            channel.setTitle(scheduleInfoList.get(0).getTitle());
                             channel.setSchedules(scheduleInfoList);
                             channelsInfo.addChannel(channel);
                         }
@@ -443,7 +443,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 mScheduleList.add(mSchedule);
                 ChannelInfo channel = new ChannelInfo();
                 channel.setChNo(Integer.parseInt(mSchedule.getChNo()));
-                channel.setTitle(mSchedule.getTitle());
+//                channel.setTitle(mSchedule.getTitle());
                 channel.setSchedules(mScheduleList);
                 channelsInfo.addChannel(channel);
             }
