@@ -27,6 +27,8 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ChildContentDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopChildContentDataConnect;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ActivityUtil;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
@@ -145,24 +147,44 @@ public class ChildContentListActivity extends BaseActivity implements
         }
         DTVTLogger.end();
     }
+
     @Override
     protected void onPause() {
         super.onPause();
         DTVTLogger.start();
         //通信を止める
+        StopChildContentDataConnect stopChildContentDataConnect = new StopChildContentDataConnect();
+        stopChildContentDataConnect.execute(mChildContentDataProvider);
+        StopContentsAdapterConnect stopContentsAdapterConnect = new StopContentsAdapterConnect();
+        stopContentsAdapterConnect.execute(mContentsAdapter);
     }
     // endregion Activity LifeCycle
 
     @Override
     public void onStartCommunication() {
         super.onStartCommunication();
+        DTVTLogger.start();
+
+        //データプロパイダあれば通信を許可し、無ければ作成
         if (mChildContentDataProvider != null) {
             mChildContentDataProvider.enableConnect();
+        } else {
+            mChildContentDataProvider = new ChildContentDataProvider(this);
         }
 
-        //コンテンツ情報が無ければ取得を行う
-        mChildContentDataProvider = new ChildContentDataProvider(this);
-        mChildContentDataProvider.getChildContentList(mCrid, 1, mDispType);
+        //アダプタがあれば更新を行い、無ければデータの取得を行う
+        if (mContentsAdapter != null) {
+            mContentsAdapter.enableConnect();
+            if (mContentsAdapter.getCount() == 0) {
+                //初回取得中に通信が停止された場合、アダプタは存在するがデータは0件という状態になるため、
+                //その場合にはデータの再取得を行う.
+                mChildContentDataProvider.getChildContentList(mCrid, 1, mDispType);
+            } else {
+                mContentsAdapter.notifyDataSetChanged();
+            }
+        } else {
+            mChildContentDataProvider.getChildContentList(mCrid, 1, mDispType);
+        }
     }
 
     @Override
@@ -267,7 +289,7 @@ public class ChildContentListActivity extends BaseActivity implements
         //スクロールの上下方向検知用のリスナーを設定
         mListView.setOnTouchListener(this);
         mContentsAdapter = new ContentsAdapter(this, mContentsList,
-                ContentsAdapter.ActivityTypeItem.TYPE_DAILY_RANK);
+                ContentsAdapter.ActivityTypeItem.TYPE_CHILD_CONTENT_LIST);
         mListView.setAdapter(mContentsAdapter);
         mLoadMoreView = View.inflate(this, R.layout.search_load_more, null);
         mNoDataMessage  = findViewById(R.id.child_content_list_no_items);
@@ -330,6 +352,7 @@ public class ChildContentListActivity extends BaseActivity implements
             }
         }
     }
+
     /**
      * 再読み込み時の処理.
      */
@@ -382,14 +405,5 @@ public class ChildContentListActivity extends BaseActivity implements
                 break;
         }
         return false;
-    }
-
-    private void startChildContentListActivity(final ContentsData contentsData) {
-        Intent intent = new Intent(this, ChildContentListActivity.class);
-        intent.putExtra(ChildContentListActivity.INTENT_KEY_CRID, contentsData.getCrid());
-        intent.putExtra(ChildContentListActivity.INTENT_KEY_TITLE, contentsData.getTitle());
-        intent.putExtra(ChildContentListActivity.INTENT_KEY_DISP_TYPE, contentsData.getDispType());
-        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
-        startActivity(intent);
     }
 }

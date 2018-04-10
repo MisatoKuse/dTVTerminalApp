@@ -230,7 +230,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         /**
          * おすすめ番組・ビデオ.
          */
-        TYPE_RECOMMEND_LIST
+        TYPE_RECOMMEND_LIST,
+        /**
+         * ウィザード画面の一覧.
+         */
+        TYPE_CHILD_CONTENT_LIST
     }
 
     /**
@@ -263,14 +267,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
          */
         TAB_DEFAULT,
     }
-
-    /**
-     * disp_type 一覧（まず、多階層用のみ宣言）.
-     */
-    private static final String DISP_TYPE_SERIES_SVOD = "series_svod",
-            DISP_TYPE_WIZARD = "wizard",
-            DISP_TYPE_VIDEO_PACKAGE = "video_package",
-            DISP_TYPE_SUBSCRIPTION_PACKAGE = "subscription_package";
 
     /**
      * コンストラクタ.
@@ -346,8 +342,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         //各アイテムデータを取得
         final ContentsData listContentInfo = mListData.get(position);
 
-        if (isMultiLevelContent(listContentInfo)) {
-            setMultipleContentsData(holder, listContentInfo, contentView);
+        if (listContentInfo.hasChildContentList()) {
+            setChildContentsData(holder, listContentInfo, contentView);
         } else {
             // アイテムデータを設定する
             setContentsData(holder, listContentInfo, contentView);
@@ -357,23 +353,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         }
 
         return contentView;
-    }
-
-    /**
-     * 多階層コンテンツかの判定を行う.
-     * @param listContentInfo アイテムデータ
-     * @return true 多階層コンテンツ／ false 非多階層コンテンツ
-     */
-    private boolean isMultiLevelContent(final ContentsData listContentInfo) {
-        String dispType = listContentInfo.getDispType();
-
-        if (null != dispType && (dispType.equals(DISP_TYPE_SERIES_SVOD)
-                || dispType.equals(DISP_TYPE_WIZARD)
-                || dispType.equals(DISP_TYPE_VIDEO_PACKAGE)
-                || dispType.equals(DISP_TYPE_SUBSCRIPTION_PACKAGE))) {
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -635,7 +614,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * @param listContentInfo 行データー
      * @param contentView ビュー
      */
-    private void setMultipleContentsData(final ViewHolder holder, final ContentsData listContentInfo, final View contentView) {
+    private void setChildContentsData(final ViewHolder holder, final ContentsData listContentInfo,
+                                      final View contentView) {
         DTVTLogger.start();
         setTitleData(holder, listContentInfo);
 
