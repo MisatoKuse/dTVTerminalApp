@@ -316,7 +316,7 @@ public class DtvContentsDetailFragment extends Fragment {
                 subCount = 3;
             }
             //「見逃し」は黄色文字で表示する
-            spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.recommend_list_now_on_air)),
+            spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.contents_detail_video_miss_color)),
                     0, subCount, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             mTxtChannelDate.setText(spannableString);
         } else {

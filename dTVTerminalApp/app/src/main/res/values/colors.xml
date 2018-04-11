@@ -90,6 +90,7 @@
     <color name="contents_detail_schedule_detail_sub_title">#ffffff</color>
     <color name="contents_detail_schedule_detail_schedule_info">#cccccc</color>
     <color name="contents_detail_channel_line_color">#333333</color>
+    <color name="contents_detail_video_miss_color">#ffbb4e</color>
     <!--録画番組一覧-->
     <color name="recorded_background">#000000</color>
     <color name="recorded_contents_background">#222222</color>
