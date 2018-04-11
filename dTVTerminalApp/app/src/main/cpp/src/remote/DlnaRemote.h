@@ -50,21 +50,35 @@ namespace dtvt {
         bool start(JNIEnv *env, jobject obj, std::string dirToSave);
 
         /**
+         * 機能：DlnaRemoteをスタート
+         * @param udn
+         * @return true: 成功 false: 失敗
+         */
+        bool regist(std::string udn);
+
+        /**
+         * 機能：DlnaRemoteを接続
+         * @param udn
+         * @return true: 成功 false: 失敗
+         */
+        bool connect(std::string udn);
+        /**
          * 機能：DlnaRemoteをストプ
          */
         void stop();
 
+        void notify(int msg, std::string content);
 
     private:
         //bool startDlEnv(JNIEnv *env, jobject obj, std::string& confDir);
 
-        void notify(int msg, std::string content);
+
         bool isStarted();
 
         du_bool dmp_init(DmpRm* d, const du_uchar* conf_path);
         du_bool dmp_cp_init(DmpRm* d);
         du_bool capability_init(DmpRm* p, const du_uchar* cap_path);
-        du_bool dmp_start(DmpRm* d);
+        du_bool dmp_start(DmpRm* d, jobject instance, std::string& dirToSave);
         void dmp_free(DmpRm* d);
 
     private:

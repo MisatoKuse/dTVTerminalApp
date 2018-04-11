@@ -155,7 +155,6 @@ error:
     return 0;
 }
 
-#ifdef ENABLE_DTCP
 static void set_additional_mm_flags_param(player_media_info* mi, dav_content_features* cf) {    const du_str_array* param_array;
     const du_uchar* flags_param;
 
@@ -173,7 +172,6 @@ static void set_additional_mm_flags_param(player_media_info* mi, dav_content_fea
         mi->mm_flags = PMI_ADDITIONAL_MM_FLAGS_PARAM_DIS_DTCP_MOVE;
     }
 }
-#endif
 
 static du_bool set_original_res_info(player_media_info* mi, dav_didl_object_property_list* prop_list) {
     du_uint32 i;
@@ -207,7 +205,6 @@ static du_bool set_original_res_info(player_media_info* mi, dav_didl_object_prop
         s = dav_protocol_info_get_content_format(&pi);
         if (!du_str_clone(s, &mi->original_mime_type)) goto error;
 
-#ifdef ENABLE_DTCP
         s = dav_protocol_info_get_content_format(&pi);
         if (du_mime_type_major_equal(s, DU_UCHAR_CONST("application")) && du_mime_type_sub_equal(s, DU_UCHAR_CONST("x-dtcp1"))) {
             du_uchar buf[256];
@@ -223,7 +220,6 @@ static du_bool set_original_res_info(player_media_info* mi, dav_didl_object_prop
 
             set_additional_mm_flags_param(mi, &cf);
         }
-#endif
 
         found = 1;
         break;
@@ -308,7 +304,6 @@ const du_uchar* player_media_info_get_original_mime_type(player_media_info* mi) 
     return mi->original_mime_type;
 }
 
-#ifdef ENABLE_DTCP
 const du_bool player_media_info_is_dtcp(player_media_info* mi) {
     return mi->dtcp;
 }
@@ -332,4 +327,3 @@ pmi_additional_mm_flags_param player_media_info_get_additional_mm_flags_param(pl
     return mi->mm_flags;
 }
 
-#endif

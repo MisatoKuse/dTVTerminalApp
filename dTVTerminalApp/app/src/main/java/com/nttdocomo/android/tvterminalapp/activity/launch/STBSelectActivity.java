@@ -25,6 +25,10 @@ import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.digion.dixim.android.activation.helper.ActivationHelper;
+import com.digion.dixim.android.secureplayer.MediaPlayerDefinitions;
+import com.digion.dixim.android.secureplayer.SecuredMediaPlayerController;
+import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
@@ -33,6 +37,8 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
+import com.nttdocomo.android.tvterminalapp.jni.remote.DlnaInterfaceRI;
+import com.nttdocomo.android.tvterminalapp.jni.remote.DlnaRemoteRet;
 import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessage;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
@@ -40,6 +46,7 @@ import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -183,7 +190,10 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      * デバイスを選択してDアカウントを登録フラグ.
      */
     private boolean mDaccountFlag = false;
-
+    /** アクティベーション.*/
+    private ActivationHelper mActivationHelper;
+    /** アクティベーションパス.*/
+    private String mDeviceKey;
     /**
      * タイマーステータス.
      */
@@ -1041,6 +1051,91 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         startActivity(DAccountInductionActivity.class, null);
     }
 
+    /**
+     * ローカルレジストレーション.
+     */
+    private void localRegist() {
+        //アクティーベション
+        if (isActivited()) {
+            //ローカルレジストレーション
+            excuteLocalRegist();
+        }
+    }
+
+    /**
+     * ローカルレジストレーションを実行.
+     */
+    private void excuteLocalRegist() {
+        DlnaInterfaceRI mDlnaInterfaceRI = new DlnaInterfaceRI();
+        //start
+        DlnaRemoteRet r = mDlnaInterfaceRI.startDlnaRI(this);
+        //rigist
+        mDlnaInterfaceRI.regist();
+        //stop
+        mDlnaInterfaceRI.stop();
+    }
+
+    /**
+     * アクティベーションThread.
+     */
+    private class ActivationThread extends Thread {
+
+        @Override
+        public void run() {
+            if (STBSelectActivity.this.mActivationHelper != null) {
+                int result = STBSelectActivity.this.mActivationHelper.activation(STBSelectActivity.this.mDeviceKey);
+                if (result == ActivationHelper.ACTC_OK) {
+                    excuteLocalRegist();
+                } else {
+                    DTVTLogger.debug(getString(R.string.activation_failed_error));
+                }
+            }
+        }
+    }
+
+    /**
+     * 機能：プレバイトデータフォルダを戻す.
+     *
+     * @return プレバイトデータフォルダ
+     */
+    private String getPrivateDataHome() {
+        return EnvironmentUtil.getPrivateDataHome(this, EnvironmentUtil.ACTIVATE_DATA_HOME.PLAYER);
+    }
+
+    /**
+     * DTCP-IPアクティーベションを行う.
+     */
+    private boolean isActivited() {
+        DTVTLogger.start();
+        boolean isActivited = false;
+        String path = getPrivateDataHome();
+        File dir = new File(path);
+        if (!dir.exists()) {
+            if (!dir.mkdir()) {
+                DTVTLogger.debug("activited file path create failed");
+            }
+        }
+        SecuredMediaPlayerController mPlayerController = new SecuredMediaPlayerController(this, true, true, true);
+        int ret = mPlayerController.dtcpInit(path);
+        if (ret != MediaPlayerDefinitions.SP_SUCCESS) {
+            activate();
+        } else {
+            isActivited = true;
+        }
+        return isActivited;
+    }
+
+    /**
+     * アクティベーションダイアログ表示.
+     */
+    private void activate() {
+        DTVTLogger.start();
+        mDeviceKey = getPrivateDataHome();
+        mActivationHelper = new ActivationHelper(this, mDeviceKey);
+        new STBSelectActivity.ActivationThread().start();
+        DTVTLogger.end();
+    }
+
     @Override
     protected void onStbClientResponse(final Message msg) {
         RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES requestCommand
@@ -1055,6 +1150,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                         // ※RELAY_RESULT_OK 応答時は requestCommand に START_APPLICATION/TITLE_DETAIL は設定されない
                         break;
                     case IS_USER_ACCOUNT_EXIST:
+                        //TODO ローカルレジストレーション処理を一応追加して、また修正が必要があります。
+                        //localRegist();
                         //TODO ナスネとペアリングしたいときは以下をコメントアウト　SharedPreferencesにSTBデータを保存
                         SharedPreferencesUtils.setSharedPreferencesStbInfo(this, mDlnaDmsItemList.get(mSelectDevice));
                         Intent intent = new Intent(this, STBConnectActivity.class);
