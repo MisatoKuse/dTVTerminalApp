@@ -1228,7 +1228,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onOKCallback(final boolean isOK) {
                 //OKが押されたので、ホーム画面の表示
-                DAccountUtils.reStartApplication(activity);
+                reStartApplication();
             }
         });
         restartDialog.showDialog();

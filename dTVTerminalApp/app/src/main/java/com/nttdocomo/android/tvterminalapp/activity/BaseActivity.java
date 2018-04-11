@@ -1127,7 +1127,7 @@ public class BaseActivity extends FragmentActivity implements
             @Override
             public void onOKCallback(final boolean isOK) {
                 //OKが押されたので、ホーム画面の表示
-                DAccountUtils.reStartApplication(activity);
+                reStartApplication();
             }
         });
         restartDialog.showDialog();
@@ -1877,6 +1877,21 @@ public class BaseActivity extends FragmentActivity implements
         intent.putExtra(ChildContentListActivity.INTENT_KEY_TITLE, contentsData.getTitle());
         intent.putExtra(ChildContentListActivity.INTENT_KEY_DISP_TYPE, contentsData.getDispType());
         startActivity(intent);
+    }
+
+    /**
+     * dアカウントの削除や変更後に、自アプリがフォアグラウンドならば、アプリの再起動を行う.
+     */
+    protected void reStartApplication() {
+        DTVTLogger.start();
+
+        //再起動処理を行う
+        Intent intent = new Intent();
+        intent.setClass(this, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+
+        DTVTLogger.end();
     }
 
     /**
