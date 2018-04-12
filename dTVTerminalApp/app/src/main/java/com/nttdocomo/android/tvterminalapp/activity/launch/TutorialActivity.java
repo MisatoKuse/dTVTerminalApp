@@ -112,7 +112,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
     /**
      * アニメーション時間（ミリ秒）.
      */
-    private final static int ANIMATION_TIME_FEED_IN_OUT = 1000;
+    private final static int ANIMATION_TIME_FEED_IN_OUT = 400;
     private final static int ANIMATION_TIME_WAIT = 2000;
     private final static int ANIMATION_TIME_MOVE_CURSOR = 300;
     /**
