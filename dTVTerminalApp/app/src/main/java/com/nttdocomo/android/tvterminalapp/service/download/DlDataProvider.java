@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -242,7 +243,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
             Intent intent = new Intent();
             intent.setAction(broad);
             intent.putExtra(paramName, param);
-            ds.sendBroadcast(intent);
+            LocalBroadcastManager.getInstance(ds).sendBroadcast(intent);
         }
     }
 
@@ -253,7 +254,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
             intent.setAction(broad);
             intent.putExtra(paramName, param);
             intent.putExtra(paramName2, intParam);
-            ds.sendBroadcast(intent);
+            LocalBroadcastManager.getInstance(ds).sendBroadcast(intent);
         }
     }
 
@@ -264,7 +265,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         if (null != ds) {
             Intent intent = new Intent();
             intent.setAction(broad);
-            ds.sendBroadcast(intent);
+            LocalBroadcastManager.getInstance(ds).sendBroadcast(intent);
         }
     }
 
@@ -274,7 +275,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
             Intent intent = new Intent();
             intent.setAction(broad);
             intent.putExtra(paramName, param);
-            ds.sendBroadcast(intent);
+            LocalBroadcastManager.getInstance(ds).sendBroadcast(intent);
         }
     }
 
