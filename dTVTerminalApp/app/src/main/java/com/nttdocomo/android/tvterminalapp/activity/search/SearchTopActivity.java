@@ -125,13 +125,13 @@ public class SearchTopActivity extends BaseActivity
      */
     private static final int PAGE_NO_OF_SERVICE_VIDEO = PAGE_NO_OF_SERVICE_TELEVISION + 1;
     /**
-     * dTVチャンネル.
-     */
-    private static final int PAGE_NO_OF_SERVICE_DTV_CHANNEL = PAGE_NO_OF_SERVICE_TELEVISION + 2;
-    /**
      * dTV.
      */
-    private static final int PAGE_NO_OF_SERVICE_DTV = PAGE_NO_OF_SERVICE_TELEVISION + 3;
+    private static final int PAGE_NO_OF_SERVICE_DTV = PAGE_NO_OF_SERVICE_TELEVISION + 2;
+    /**
+     * dTVチャンネル.
+     */
+    public static final int PAGE_NO_OF_SERVICE_DTV_CHANNEL = PAGE_NO_OF_SERVICE_TELEVISION + 3;
     /**
      * dアニメ.
      */

@@ -34,6 +34,7 @@ import java.util.List;
 
 import static com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity.PAGE_NO_OF_SERVICE_CLEAR;
 import static com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity.PAGE_NO_OF_SERVICE_TELEVISION;
+import static com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity.PAGE_NO_OF_SERVICE_DTV_CHANNEL;
 
 /**
  * 検索結果画面を表示する.
@@ -180,10 +181,16 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
     public void notifyDataSetChanged(final String count, final int tabPosition) {
         DTVTLogger.debug("count:" + count + ",tabPosition:" + tabPosition);
         if (null != mContentsAdapter) {
-            if (tabPosition == PAGE_NO_OF_SERVICE_TELEVISION) {
-                mContentsAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_TV);
-            } else {
-                mContentsAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_DEFAULT);
+            switch (tabPosition) {
+                case PAGE_NO_OF_SERVICE_TELEVISION:
+                    mContentsAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_TV);
+                    break;
+                case PAGE_NO_OF_SERVICE_DTV_CHANNEL:
+                    mContentsAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_D_CHANNEL);
+                    break;
+                default:
+                    mContentsAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_DEFAULT);
+                    break;
             }
             mContentsAdapter.notifyDataSetChanged();
         }

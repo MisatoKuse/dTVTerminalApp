@@ -93,6 +93,10 @@ public class RecommendActivity extends BaseActivity implements
      */
     public static final int RECOMMEND_LIST_PAGE_NO_OF_VOD = 1;
     /**
+     * タブポジション(dTVチャンネル).
+     */
+    public static final int RECOMMEND_LIST_PAGE_NO_OF_DTV_CHANNEL = 3;
+    /**
      * 表示開始タブ指定キー.
      */
     public static final String RECOMMEND_LIST_START_PAGE = "recommendListStartPage";
@@ -339,7 +343,9 @@ public class RecommendActivity extends BaseActivity implements
      */
     private String searchChannelName(String channelId) {
         //チャンネルデータの取得がまだの場合や、チャンネル名を使うのはテレビタブだけなので、それ以外のタブなら帰る
-        if(mChannels == null || sRecommendViewPager.getCurrentItem() != 0) {
+        if(mChannels == null ||
+                (sRecommendViewPager.getCurrentItem() != RECOMMEND_LIST_PAGE_NO_OF_TV &&
+                sRecommendViewPager.getCurrentItem() != RECOMMEND_LIST_PAGE_NO_OF_DTV_CHANNEL)) {
             return "";
         }
 
