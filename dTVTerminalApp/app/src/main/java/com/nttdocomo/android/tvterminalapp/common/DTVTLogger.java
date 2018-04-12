@@ -30,17 +30,23 @@ public class DTVTLogger {
     /**
      * ログレベル info 有効/無効.
      */
-    private static final boolean ENABLE_LOG_INFO = true;
+    private static final boolean ENABLE_LOG_INFO =
+            "unsigned_on".equals(BuildConfig.BUILD_TYPE) || "signed_on".equals(BuildConfig.BUILD_TYPE)
+                    || "_unsigned_on".equals(BuildConfig.BUILD_TYPE) || "_signed_on".equals(BuildConfig.BUILD_TYPE);;
 
     /**
      * ログレベル warning 有効/無効.
      */
-    private static final boolean ENABLE_LOG_WARNING = true;
+    private static final boolean ENABLE_LOG_WARNING =
+            "unsigned_on".equals(BuildConfig.BUILD_TYPE) || "signed_on".equals(BuildConfig.BUILD_TYPE)
+            || "_unsigned_on".equals(BuildConfig.BUILD_TYPE) || "_signed_on".equals(BuildConfig.BUILD_TYPE);;
 
     /**
      * ログレベル err 有効/無効.
      */
-    private static final boolean ENABLE_LOG_ERR = true;
+    private static final boolean ENABLE_LOG_ERR =
+            "unsigned_on".equals(BuildConfig.BUILD_TYPE) || "signed_on".equals(BuildConfig.BUILD_TYPE)
+            || "_unsigned_on".equals(BuildConfig.BUILD_TYPE) || "_signed_on".equals(BuildConfig.BUILD_TYPE);;
 
     /**
      * ログ出力用Tag名.
