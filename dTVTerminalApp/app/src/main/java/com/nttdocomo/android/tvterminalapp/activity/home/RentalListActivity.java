@@ -257,7 +257,7 @@ public class RentalListActivity extends BaseActivity implements
 
     @Override
     public void rentalListCallback(final List<ContentsData> dataList) {
-        DTVTLogger.warning("<<<<<<<<<<<<<<<<<<<<<<<<< get datalist " + dataList.size());
+        DTVTLogger.start();
         final RentalDataProvider dataProvider = new RentalDataProvider(this, RentalDataProvider.RentalType.RENTAL_LIST);
         //DbThreadからのコールバックではUIスレッドとして扱われないため
         runOnUiThread(new Runnable() {
@@ -271,7 +271,7 @@ public class RentalListActivity extends BaseActivity implements
                     dataProvider.getDbRentalList();
                 }
 
-                if (0 == dataList.size()) {
+                if (dataList != null && 0 == dataList.size()) {
                     mNoDataMessage.setVisibility(View.VISIBLE);
                     resetCommunication();
                     return;
@@ -279,7 +279,7 @@ public class RentalListActivity extends BaseActivity implements
 
                 int pageNumber = getCurrentNumber();
                 //現在表示しているコンテンツ数よりもデータ取得件数が上回っている時のみ更新する
-                if (mContentsList.size() < dataList.size()) {
+                if (dataList != null && mContentsList.size() < dataList.size()) {
                     for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE
                             && i < dataList.size(); i++) { //mPageNumber
                         mContentsList.add(dataList.get(i));
@@ -290,6 +290,7 @@ public class RentalListActivity extends BaseActivity implements
                 mContentsAdapter.notifyDataSetChanged();
             }
         });
+        DTVTLogger.end();
     }
 
     /**

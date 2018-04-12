@@ -2190,29 +2190,30 @@ public class ContentDetailActivity extends BaseActivity implements
     //region ScaledDownProgramListDataProvider.ApiDataProviderCallback
     @Override
     public void channelListCallback(final ArrayList<ChannelInfo> channels) {
-        if (channels != null) {
-            //チャンネル情報取得して、更新する
-            if (!TextUtils.isEmpty(mDetailFullData.getmService_id())) {
-                DtvContentsDetailFragment detailFragment = getDetailFragment();
-                for (int i = 0; i < channels.size(); i++) {
-                    ChannelInfo channel = channels.get(i);
-                    if (mDetailFullData.getmService_id().equals(channel.getServiceId())) {
-                        mChannel = channel;
-                        String channelName = channel.getTitle();
-                        detailFragment.mOtherContentsDetailData.setChannelName(channelName);
-                        break;
-                    }
-                }
-                detailFragment.refreshChannelInfo();
-            }
-            //コンテンツの視聴可否判定を行う
-            checkWatchContents();
-            //コンテンツの視聴可否判定に基づいてUI操作を行う
-            if (mIsEnableWatch != ENABLE_WATCH_NO_DEFINE) {
-                changeUIBasedContractInfo();
-            }
-        } else if (channels.isEmpty()) {
+        if(channels == null || channels.isEmpty()) {
             showErrorDialog(ErrorType.channelListGet);
+            return;
+        }
+
+        //チャンネル情報取得して、更新する
+        if (!TextUtils.isEmpty(mDetailFullData.getmService_id())) {
+            DtvContentsDetailFragment detailFragment = getDetailFragment();
+            for (int i = 0; i < channels.size(); i++) {
+                ChannelInfo channel = channels.get(i);
+                if (mDetailFullData.getmService_id().equals(channel.getServiceId())) {
+                    mChannel = channel;
+                    String channelName = channel.getTitle();
+                    detailFragment.mOtherContentsDetailData.setChannelName(channelName);
+                    break;
+                }
+            }
+            detailFragment.refreshChannelInfo();
+        }
+        //コンテンツの視聴可否判定を行う
+        checkWatchContents();
+        //コンテンツの視聴可否判定に基づいてUI操作を行う
+        if (mIsEnableWatch != ENABLE_WATCH_NO_DEFINE) {
+            changeUIBasedContractInfo();
         }
     }
 
@@ -2585,21 +2586,21 @@ public class ContentDetailActivity extends BaseActivity implements
             setRelayClientHandler();
             switch (mDetailData.getServiceId()) {
                 case DTV_CONTENTS_SERVICE_ID: // dTV
-                    if (!isFromHeader) {
+                    if (!mIsFromHeader) {
                         setRemoteProgressVisible(View.VISIBLE);
                     }
                     requestStartApplication(
                             RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV, mDetailData.getContentsId());
                     break;
                 case D_ANIMATION_CONTENTS_SERVICE_ID: // dアニメ
-                    if (!isFromHeader) {
+                    if (!mIsFromHeader) {
                         setRemoteProgressVisible(View.VISIBLE);
                     }
                     requestStartApplication(
                             RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, mDetailData.getContentsId());
                     break;
                 case DTV_CHANNEL_CONTENTS_SERVICE_ID: // dチャンネル
-                    if (!isFromHeader) {
+                    if (!mIsFromHeader) {
                         setRemoteProgressVisible(View.VISIBLE);
                     }
                     //番組の場合
@@ -2628,7 +2629,7 @@ public class ContentDetailActivity extends BaseActivity implements
                     }
                     String[] liinfArray = mDetailFullData.getmLiinf_array();
                     String puid = mDetailFullData.getPuid();
-                    if (!isFromHeader) {
+                    if (!mIsFromHeader) {
                         setRemoteProgressVisible(View.VISIBLE);
                     }
                     if (VIDEO_PROGRAM.equals(mDetailData.getDispType())) {

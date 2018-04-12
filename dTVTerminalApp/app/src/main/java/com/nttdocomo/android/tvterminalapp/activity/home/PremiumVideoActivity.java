@@ -225,7 +225,7 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
                     dataProvider.getDbRentalList();
                 }
 
-                if (0 == dataList.size()) {
+                if (dataList != null && 0 == dataList.size()) {
                     mNoDataMessage.setVisibility(View.VISIBLE);
                     resetCommunication();
                     return;
@@ -233,7 +233,7 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
 
                 int pageNumber = getCurrentNumber();
                 //現在表示しているコンテンツ数よりもデータ取得件数が上回っている時のみ更新する
-                if (mContentsList.size() < dataList.size()) {
+                if (dataList != null && mContentsList.size() < dataList.size()) {
                     for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE
                             && i < dataList.size(); i++) { //mPageNumber
                         mContentsList.add(dataList.get(i));
