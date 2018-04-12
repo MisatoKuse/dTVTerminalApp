@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.activity.home;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -23,13 +24,18 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecommendDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRecommendDataConnect;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopScaledProListDataConnect;
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendFragmentFactory;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,6 +43,7 @@ import java.util.List;
  */
 public class RecommendActivity extends BaseActivity implements
         RecommendDataProvider.RecommendApiDataProviderCallback,
+        ScaledDownProgramListDataProvider.ApiDataProviderCallback,
         TabItemLayout.OnClickTabTextListener {
 
     /**
@@ -97,6 +104,19 @@ public class RecommendActivity extends BaseActivity implements
      * フラグメント作成クラス.
      */
     private RecommendFragmentFactory mRecommendFragmentFactory = null;
+
+    /**
+     * チャンネル情報控え
+     */
+    private ArrayList<ChannelInfo> mChannels;
+    /**
+     * チャンネル情報取得プロバイダー
+     */
+    private ScaledDownProgramListDataProvider mScaledDownProgramListDataProvider = null;
+    /**
+     * チャンネル情報取得用ハンドラー
+     */
+    final private Handler mHandle = new Handler();
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -289,6 +309,9 @@ public class RecommendActivity extends BaseActivity implements
 
         if (0 < resultInfoList.size()) {
             for (ContentsData info : resultInfoList) {
+                //チャンネル名を付加
+                info.setChannelName(searchChannelName(info.getChannelId()));
+
                 baseFragment.mData.add(info);
             }
 
@@ -306,6 +329,31 @@ public class RecommendActivity extends BaseActivity implements
             baseFragment.displayLoadMore(false);
             setSearchStart(false);
         }
+    }
+
+    /**
+     * 指定されたIDを持つチャンネル名を見つける.
+     *
+     * @param channelId チャンネルID
+     * @return 見つかったチャンネル名
+     */
+    private String searchChannelName(String channelId) {
+        //チャンネルデータの取得がまだの場合や、チャンネル名を使うのはテレビタブだけなので、それ以外のタブなら帰る
+        if(mChannels == null || sRecommendViewPager.getCurrentItem() != 0) {
+            return "";
+        }
+
+        //チャンネル名検索
+        for(int ct = 0;ct <= mChannels.size();ct++) {
+            if(!TextUtils.isEmpty(channelId) &&
+                    mChannels.get(ct).getServiceId().equals(channelId)) {
+                //チャンネルIDが見つかった
+                return mChannels.get(ct).getTitle();
+            }
+        }
+
+        //見つからなければ空文字
+        return "";
     }
 
     /**
@@ -577,6 +625,10 @@ public class RecommendActivity extends BaseActivity implements
     public void onStartCommunication() {
         super.onStartCommunication();
         DTVTLogger.start();
+
+        //チャンネル情報の取得を依頼する
+        getChannel();
+
         if (mRecommendDataProvider != null) {
             mRecommendDataProvider.enableConnect();
         }
@@ -597,6 +649,12 @@ public class RecommendActivity extends BaseActivity implements
         StopRecommendDataConnect stopRecommendDataConnect = new StopRecommendDataConnect();
         stopRecommendDataConnect.execute(mRecommendDataProvider);
 
+        //チャンネル情報の通信を止める
+        if (mScaledDownProgramListDataProvider != null) {
+            StopScaledProListDataConnect stopScaledProListDataConnect = new StopScaledProListDataConnect();
+            stopScaledProListDataConnect.execute(mScaledDownProgramListDataProvider);
+        }
+
         //FragmentにContentsAdapterの通信を止めるように通知する
         RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
         if (baseFragment != null) {
@@ -604,4 +662,83 @@ public class RecommendActivity extends BaseActivity implements
         }
     }
 
+    @Override
+    public void channelInfoCallback(ChannelInfoList channelsInfo) {
+        //こちらは使用しない
+    }
+
+    /**
+     * チャンネル情報の取得をデータプロバイダーに依頼する
+     */
+    private void getChannel() {
+        DTVTLogger.start();
+        synchronized (mProgramList) {
+            super.onStartCommunication();
+
+            if (null == mScaledDownProgramListDataProvider) {
+                mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
+            } else {
+                mScaledDownProgramListDataProvider.enableConnect();
+            }
+            mHandle.postDelayed(mProgramList, 0);
+        }
+        DTVTLogger.end();
+    }
+
+
+    /**
+     * 番組表データスレッド.
+     */
+    private final Runnable mProgramList = new Runnable() {
+        @Override
+        public void run() {
+            DTVTLogger.start();
+            //全番組表の取り込み
+            mScaledDownProgramListDataProvider.getChannelList(0, 0, "",0);
+            DTVTLogger.end();
+        }
+    };
+
+    @Override
+    public void channelListCallback(ArrayList<ChannelInfo> channels) {
+        //チャンネル情報を受け取る
+
+        DTVTLogger.start();
+
+        //取得できたかどうかの判断
+        if (null == channels) {
+            //エラーメッセージを取得する
+            String message = mScaledDownProgramListDataProvider.
+                    getChannelError().getErrorMessage();
+
+            //有無で処理を分ける
+            if (TextUtils.isEmpty(message)) {
+                showGetDataFailedToast();
+            } else {
+                showGetDataFailedToast(message);
+            }
+
+            DTVTLogger.end();
+            return;
+        }
+
+        //後で使用する為に控えておく
+        mChannels = channels;
+
+        RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
+        if(baseFragment != null && baseFragment.mData != null) {
+            //おすすめ情報にはチャンネル名が無いので、取得したチャンネル名をIDで検索して設定を行う
+            for(int count = 0;count < baseFragment.mData.size();count++) {
+                baseFragment.mData.get(count).setChannelName(
+                        searchChannelName(baseFragment.mData.get(count).getChannelId()));
+            }
+
+            if(baseFragment.mData.size() > 0) {
+                //処理を行ったデータが存在するならば再描画
+                baseFragment.notifyDataSetChanged(sRecommendViewPager.getCurrentItem());
+            }
+        }
+
+        DTVTLogger.end();
+    }
 }

@@ -290,7 +290,8 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
             Intent intent = new Intent(mContext, ContentDetailActivity.class);
             intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
             intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, datas);
-            startActivity(intent);
+            ChannelListActivity channelListActivity = (ChannelListActivity) mContext;
+            channelListActivity.startActivity(intent);
         }
     }
 

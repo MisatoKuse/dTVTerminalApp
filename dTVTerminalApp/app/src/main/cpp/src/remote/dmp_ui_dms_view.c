@@ -284,7 +284,7 @@ error:
 #ifndef DDTCP_CRYPTO_SHA1_DIGEST_SIZE
 #  define DDTCP_CRYPTO_SHA1_DIGEST_SIZE 20
 #endif
-static void command_lr(dmp_ui_dms_view* mv, const du_uchar* index) {
+static void command_lr(dmp_ui_dms_view* mv, player* p, const du_uchar* index, const du_uchar* udn) {
     du_uint32 index_num;
     regist_dms_visitor_context context;
     du_uchar_array device_id;
@@ -302,21 +302,19 @@ static void command_lr(dmp_ui_dms_view* mv, const du_uchar* index) {
     if (!du_str_scan_uint32(index, &index_num)) goto error;
     if (index_num < mv->_starting_index) goto error;
     index_num -= mv->_starting_index;
-    context.udn = du_str_array_get_pos(&mv->_udn_array, index_num);
+//    context.udn = du_str_array_get_pos(&mv->_udn_array, index_num);
+    context.udn = udn;
     if (!context.udn) goto error;
-
     if (!dupnp_cp_dvcmgr_visit_device_type(mv->_dm, dmp_get_dms_type(), regist_dms_visitor, &context)) goto error;
     if (!context.found) goto not_found;
     if (!context.succeeded) goto error;
-
     version = context.is_v2 ? 2 : 1; // set DLPA version
     if (!local_registration_prepare_registration(mv->_upnp, mv->user_agent, context.control_url, lr_register_response_handler, &id, version)) goto error2;
 
-#ifdef ENABLE_DTCP
-    if (!player_sink_ra_register(mv->_player, context.dtcp1_host, context.dtcp1_port)) goto error2;
-    if (!player_get_device_id_hash(mv->_player, &hash)) goto error2;
+    if (!player_sink_ra_register(p, context.dtcp1_host, context.dtcp1_port)) goto error2;
+    if (!player_get_device_id_hash(p, &hash)) goto error2;
     if (!du_uchar_array_cat0(&hash)) goto error2;
-#endif
+
     if (!drag_cp_service_init(&device_id, version)) goto error2;
     if (!local_registration_register(mv->_upnp, mv->user_agent, context.control_url, du_uchar_array_get(&device_id),  DU_UCHAR_CONST("DRAG_CP Sample"),
 				     du_uchar_array_get(&hash), lr_register_response_handler, &id, version)) goto error2;
@@ -366,11 +364,11 @@ static void command_ur(dmp_ui_dms_view* mv, const du_uchar* index) {
     if (!context.found) goto not_found;
     if (!context.succeeded) goto error;
 
-#ifdef ENABLE_DTCP
+//#ifdef ENABLE_DTCP
     if (!player_sink_ra_register(mv->_player, context.dtcp1_host, context.dtcp1_port)) goto error2;
     if (!player_get_device_id_hash(mv->_player, &hash)) goto error2;
     if (!du_uchar_array_cat0(&hash)) goto error2;
-#endif
+//#endif
     version = context.is_v2 ? 2 : 1; // set DLPA version
     if (!drag_cp_service_init(&device_id, version)) goto error2;
     if (!local_registration_unregister(mv->_upnp, mv->user_agent, context.control_url, du_uchar_array_get(&device_id),
@@ -396,12 +394,12 @@ not_found:
     puts("Not Found");
 }
 
-static void command_conn(dmp_ui_dms_view* mv, const du_uchar* index) {
-    du_uint32 index_num;
-    du_uchar* udn;
+static void command_conn(dmp_ui_dms_view* mv, const du_uchar* index, const du_uchar* udn) {
+//    du_uint32 index_num;
+//    du_uchar* udn;
 
-    if (!du_str_scan_uint32(index, &index_num)) goto error;
-    udn = du_str_array_get_pos(&mv->_udn_array, index_num);
+    //if (!du_str_scan_uint32(index, &index_num)) goto error;
+    //udn = du_str_array_get_pos(&mv->_udn_array, index_num);
     if (!drag_cp_connect_to_dms(udn)) goto error;
 
     return;
@@ -447,7 +445,7 @@ static void help(dmp_ui_dms_view* mv) {
     dmp_ui_print_bar();
 }
 
-void command_dms(void* user_data, const du_uint argc, const du_uchar* argv[]) {
+void command_dms(void* user_data, player* p, const du_uint argc, const du_uchar* argv[], const du_uchar* udn) {
     dmp_ui_dms_view* mv = (dmp_ui_dms_view*)user_data;
     const du_uchar* command = argv[0];
 
@@ -474,11 +472,11 @@ void command_dms(void* user_data, const du_uint argc, const du_uchar* argv[]) {
         command_rls(mv);
     } else if (du_str_equal(command, DU_UCHAR_CONST("conn"))) {
         const du_uchar* index;
-
+        mv->_is_display_remote = 1;
         if (!mv->_is_display_remote) goto help;
         if (argc < 2) goto help;
         index = argv[1];
-        command_conn(mv, index);
+        command_conn(mv, index, udn);
     } else if (du_str_equal(command, DU_UCHAR_CONST("disconn"))) {
         const du_uchar* index;
 
@@ -498,7 +496,7 @@ void command_dms(void* user_data, const du_uint argc, const du_uchar* argv[]) {
         if (mv->_is_display_remote) goto help;
         if (argc < 2) goto help;
         index = argv[1];
-        command_lr(mv, index);
+        command_lr(mv, p, index, udn);
     } else if (du_str_equal(command, DU_UCHAR_CONST("ur"))) {
         const du_uchar* index;
 
@@ -535,7 +533,7 @@ du_bool dmp_ui_dms_view_init(dmp_ui_view* view, dmp_ui* ui, dupnp* upnp, dupnp_c
     du_str_array_init(&mv->_udn_array);
 
     view->_user_data = mv;
-    view->_command = command_dms;
+    view->_command_lr = command_dms;
     view->_update_screen = update_screen;
     return 1;
 }

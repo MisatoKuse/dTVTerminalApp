@@ -13,13 +13,13 @@
 #include <du_base64.h>
 #include <du_log.h>
 #include "player.h"
-//#include "dmp.h"
+#include "dmp.h"
 
-#ifdef ENABLE_DTCP
 #include <ddtcp_sink.h>
 #include <ddtcp_plus_sink.h>
 #include <ddtcp_util_http.h>
-#endif
+#include <hwif_aux.h>
+#include <ddtcp_plus.h>
 
 #include <stdio.h>
 
@@ -185,7 +185,6 @@ static du_bool play_media(player* p, player_action* action) {
         printf("%d bytes read\n", p->_nbytes_read);
     }
 
-
     if (!check_action(p, *action)) {du_log_mark_w(0); goto error;}
     du_str_array_free(&request_header);
     du_str_array_free(&response_header);
@@ -205,7 +204,6 @@ error:
     {du_log_mark_w(0); return 0;}
 }
 
-#ifdef ENABLE_DTCP
 typedef struct ake_handler_info {
     du_sync sync;
     du_mutex mutex;
@@ -245,7 +243,7 @@ error:
     du_mutex_unlock(&info->mutex);
     return status;
 }
-
+//#ifdef ENABLE_DTCP
 static du_bool do_ake(player* p, ddtcp_sink_ake* ake, ake_handler_info* hinfo, du_bool move, ddtcp_sink_mv_end_handler mvend_handler) {
     du_uint16 dtcp1raport;
 
@@ -476,7 +474,7 @@ error:
 #endif
     {du_log_mark_w(0); return 0;}
 }
-#endif
+//#endif
 
 static const du_uchar* get_suffix_by_mime_type(const du_uchar* mime_type) {
     if (du_mime_type_major_equal(mime_type, DU_UCHAR_CONST("video"))) {
@@ -498,9 +496,9 @@ static const du_uchar* get_suffix_by_mime_type(const du_uchar* mime_type) {
         if (du_mime_type_sub_equal(mime_type, DU_UCHAR_CONST("bmp"))) return DU_UCHAR_CONST("bmp");
     } else if (du_mime_type_major_equal(mime_type, DU_UCHAR_CONST("application"))) {
         if (du_mime_type_sub_equal(mime_type, DU_UCHAR_CONST("ogg"))) return DU_UCHAR_CONST("ogg");
-#ifdef ENABLE_DTCP
+//#ifdef ENABLE_DTCP
         if (du_mime_type_sub_equal(mime_type, DU_UCHAR_CONST("x-dtcp1"))) return DU_UCHAR_CONST("tts");
-#endif
+//#endif
     }
     {du_log_mark_w(0); return 0;}
 }
@@ -634,8 +632,6 @@ error:
     {du_log_mark_w(0); return 0;}
 }
 
-#ifdef ENABLE_DTCP
-
 static ddtcp_ret mv_end_handler(ddtcp_ret status, ddtcp_sink_ake ake, void* arg) {
     ake_handler_info* info = (ake_handler_info*)arg;
 
@@ -712,6 +708,7 @@ static du_bool do_mv_commitment(ddtcp_sink_ake ake, ake_handler_info* hinfo, con
     return 1;
 }
 
+//#ifdef ENABLE_DTCP
 static du_bool save_media_by_dtcp(player* p, player_action* action) {
     ddtcp_sink_stream stream = 0;
     ddtcp_sink_ake ake = 0;
@@ -816,7 +813,7 @@ error:
     end_http_connection_dtcp(p, move, &stream);
     {du_log_mark_w(0); return 0;}
 }
-#endif
+//#endif
 
 static du_bool wait_action(player* p, player_action* action) {
     du_bool r;
@@ -1138,7 +1135,7 @@ du_bool player_get_current_available_actions(player* p, du_uint32* actions, du_u
         }
         break;
     case PLAYER_STATE_STOPPED:
-#ifdef ENABLE_DTCP
+//#ifdef ENABLE_DTCP
         if (player_media_info_is_dtcp(&p->_media_info)) {
             pmi_additional_mm_flags_param fp;
 
@@ -1149,9 +1146,9 @@ du_bool player_get_current_available_actions(player* p, du_uint32* actions, du_u
         } else {
             set_available_action(actions, PLAYR_ACTION_FLAG_DOWNLOAD);
         }
-#else
-        set_available_action(actions, PLAYR_ACTION_FLAG_DOWNLOAD);
-#endif
+//#else
+        //set_available_action(actions, PLAYR_ACTION_FLAG_DOWNLOAD);
+//#endif
     case PLAYER_STATE_PAUSED_PLAYBACK:
         set_available_action(actions, PLAYR_ACTION_FLAG_PLAY);
         if (player_media_info_get_time_seek_supported(&p->_media_info)) {
@@ -1193,14 +1190,12 @@ du_bool player_init(player* p, du_uint32 stack_size, dav_capability* cap, const 
     p->_state = PLAYER_STATE_NO_MEDIA_PRESENT;
     p->_status = PLAYER_STATUS_OK;
     p->_disconnect = 1;
+
     if (download_dir) {
         if (!du_str_clone(download_dir, &p->_download_dir)) goto error5;
     }
 
-#ifdef ENABLE_DTCP
     if (DDTCP_FAILED(ddtcp_create_dtcp(&p->_dtcp))) goto error5;
-#endif
-
     return 1;
 
 error5:
@@ -1219,10 +1214,10 @@ error:
 }
 
 void player_free(player* p) {
-#ifdef ENABLE_DTCP
+//#ifdef ENABLE_DTCP
     ddtcp_destroy_dtcp(&p->_dtcp);
     du_alloc_free(p->_private_data_home);
-#endif
+//#endif
     du_http_client_free(&p->_hc);
     du_sync_free(&p->_action_sync);
     du_sync_free(&p->_thread_sync);
@@ -1236,30 +1231,33 @@ du_bool player_get_protocol_info(player* p, du_uchar_array* protocol_info) {
     return player_media_info_get_protocol_info(&p->_media_info, protocol_info);
 }
 
-#ifdef ENABLE_DTCP
+
 du_bool player_set_private_data_home(player* p, const du_uchar* private_data_home) {
     if (!du_str_clone(private_data_home, &p->_private_data_home)) {du_log_mark_w(0); return 0;}
     return 1;
 }
-#endif
 
-du_bool player_start(player* p) {
-#ifdef ENABLE_DTCP
+du_bool player_start(player* p, JavaVM *vm, jobject objTmp, jmethodID mid) {
+
     if (!p->_private_data_home) {du_log_mark_w(0); return 0;}
-    if (DDTCP_FAILED(ddtcp_set_additional_param(p->_dtcp, DDTCP_ADDITINAL_PARAM_TYPE_PRIVATE_DATA_IO, p->_private_data_home))) {du_log_mark_w(0); return 0;}
+    void *private_data;
+    dixim_hwif_private_data_io hwif;
+    hwif.private_data_home = (void *) p->_private_data_home;
+    hwif.vm = vm;
+    hwif.obj = objTmp;
+    hwif.mac_address_method_id = mid;
+    private_data = &hwif;
+    if (DDTCP_FAILED(ddtcp_set_additional_param(p->_dtcp, DDTCP_ADDITINAL_PARAM_TYPE_PRIVATE_DATA_IO, private_data))) {du_log_mark_w(0); return 0;}
+    //
     if (DDTCP_FAILED(ddtcp_startup(p->_dtcp))) {du_log_mark_w(0); return 0;}
-#endif
     return thread_start(p);
 }
 
 void player_stop(player* p) {
     thread_stop(p);
-#ifdef ENABLE_DTCP
     ddtcp_shutdown(p->_dtcp);
-#endif
 }
 
-#ifdef ENABLE_DTCP
 du_bool player_get_device_id_hash(player* p, du_uchar_array* hash_base64_ecoded) {
     ddtcp_ret ret = DDTCP_RET_SUCCESS;
     du_uint8 device_id_hash[DDTCP_CRYPTO_SHA1_DIGEST_SIZE];
@@ -1298,5 +1296,3 @@ error:
     {du_log_mark_w(0); return 0;}
 
 }
-#endif
-

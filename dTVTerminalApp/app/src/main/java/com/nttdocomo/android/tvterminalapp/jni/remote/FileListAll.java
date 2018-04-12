@@ -9,13 +9,13 @@ import java.util.HashMap;
 
 /**
  * todo 開発中ツールとして使う
- *       リリース時、削除
+ * リリース時、削除
  */
-public  class FileListAll {
+public class FileListAll {
 
     public HashMap<String, String> getList(File file) {
 
-        HashMap<String, String> fileList = new HashMap<String, String>();
+        HashMap<String, String> fileList = new HashMap<>();
         getFileList(file, fileList);
         return fileList;
     }
@@ -24,20 +24,20 @@ public  class FileListAll {
      * @param path
      * @param fileList
      */
-    private void getFileList(File path, HashMap<String, String> fileList){
-        if(path.isDirectory()){
+    private void getFileList(final File path, final HashMap<String, String> fileList) {
+        if (path.isDirectory()) {
             File[] files = path.listFiles();
-            if(null == files) {
+            if (null == files) {
                 return;
             }
-            for(int i = 0; i < files.length; i++){
+            for (int i = 0; i < files.length; i++) {
                 getFileList(files[i], fileList);
             }
-        }else{
+        } else {
             String filePath = path.getAbsolutePath();
 
-            String fileName = filePath.substring(filePath.lastIndexOf("/")+1);
-            File file=new File(fileName);
+            String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+            File file = new File(fileName);
             fileList.put(fileName, filePath + " size=" + DlnaInterfaceRI.getFileSize(filePath));
         }
     }

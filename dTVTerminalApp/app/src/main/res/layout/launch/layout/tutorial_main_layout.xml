@@ -1,29 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     style="@style/default_layout_style"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <android.support.v4.view.ViewPager
+        android:id="@+id/tutorial_walkthroughs"
         android:layout_width="match_parent"
-        android:layout_height="46dp"
-        android:background="#FF0000">
-        <TextView
-            android:id="@+id/titleTutorialActivity"
+        android:layout_height="match_parent"
+        android:persistentDrawingCache="animation"/>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:paddingBottom="@dimen/tutorial_dots_paddingBottom">
+
+        <LinearLayout
+            android:id="@+id/tutorial_dots_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/str_tutorial_title"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:textSize="18sp"/>
-    </RelativeLayout>
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/tutorial_dots_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/startup_paging_normal_normal"
+                android:contentDescription="@null"/>
+
+            <ImageView
+                android:id="@+id/tutorial_dots_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/tutorial_dots_margin"
+                android:src="@mipmap/startup_paging_normal_normal"
+                android:contentDescription="@null"/>
+
+            <ImageView
+                android:id="@+id/tutorial_dots_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/tutorial_dots_margin"
+                android:src="@mipmap/startup_paging_normal_normal"
+                android:contentDescription="@null"/>
+
+            <ImageView
+                android:id="@+id/tutorial_dots_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/tutorial_dots_margin"
+                android:src="@mipmap/startup_paging_normal_normal"
+                android:contentDescription="@null"/>
+
+            <ImageView
+                android:id="@+id/tutorial_dots_5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/tutorial_dots_margin"
+                android:src="@mipmap/startup_paging_normal_normal"
+                android:contentDescription="@null"/>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/cur_dot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/startup_paging_normal_active"
+            android:contentDescription="@null"/>
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tutorial_show_agreement"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/skipOrFinishTutorialAcivity"
+        android:layout_marginBottom="@dimen/tutorial_button_marginBottom"
+        android:text="@string/tutorial_show_agreement"
+        android:textColor="#FFFFFF"
+        android:layout_centerHorizontal="true"
+        android:textSize="@dimen/tutorial_show_agreement_text_size"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/skipOrFinishTutorialAcivity"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:text="@string/str_tutorial_skip" />
-</LinearLayout>
+        android:layout_height="@dimen/tutorial_button_height"
+        android:layout_marginBottom="@dimen/tutorial_button_marginBottom"
+        android:layout_marginLeft="@dimen/tutorial_button_margin_right_left"
+        android:layout_marginRight="@dimen/tutorial_button_margin_right_left"
+        android:layout_alignParentBottom="true"
+        android:textColor="#00A2E6"
+        android:textStyle="bold"
+        android:background="@mipmap/startup_btn_normal"
+        android:textSize="@dimen/tutorial_button_text_size"
+        android:text="@string/tutorial_agreement_button"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"/>
+    </RelativeLayout>

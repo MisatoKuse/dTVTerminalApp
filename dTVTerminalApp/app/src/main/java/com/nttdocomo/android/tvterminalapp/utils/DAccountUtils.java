@@ -4,11 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.utils;
 
-import android.app.Activity;
 import android.content.Intent;
 
-import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
-import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DaccountConstants;
 
 /**
@@ -27,22 +24,5 @@ public class DAccountUtils {
                 DaccountConstants.D_ACCOUNT_ID_MANAGER,
                 DaccountConstants.D_ACCOUNT_ID_MANAGER_CLASS_NAME);
         return intent;
-    }
-
-    /**
-     * dアカウントの削除や変更後に、自アプリがフォアグラウンドならば、アプリの再起動を行う.
-     *
-     * @param activity アクティビティ
-     */
-    public static void reStartApplication(final Activity activity) {
-        DTVTLogger.start();
-
-        //再起動処理を行う
-        Intent intent = new Intent();
-        intent.setClass(activity, HomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        activity.startActivity(intent);
-
-        DTVTLogger.end();
     }
 }

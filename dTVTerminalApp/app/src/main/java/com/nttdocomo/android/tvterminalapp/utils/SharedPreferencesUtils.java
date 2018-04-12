@@ -116,7 +116,36 @@ public class SharedPreferencesUtils {
     /**
      * ユーザ情報永続化キー.
      */
-    public static final String USER_INFO_SERIALIZABLE_DATA_KEY = "user_info_serializable_data_key";
+    public static final String USER_INFO_SERIALIZABLE_DATA_KEY
+            = "user_info_serializable_data_key";
+    /**
+     * 設定ファイル取得日時.
+     */
+    private static final String LAST_SETTING_FILE_DATE = "LAST_SETTING_FILE_DATE";
+    /**
+     * 設定ファイルアプリ動作停止.
+     */
+    private static final String LAST_SETTING_FILE_IS_STOP = "LAST_SETTING_FILE_IS_STOP";
+    /**
+     * 設定ファイル読み込み失敗.
+     */
+    private static final String LAST_SETTING_FILE_IS_FILE_READ_FAIL
+            = "LAST_SETTING_FILE_IS_FILE_READ_FAIL";
+    /**
+     * 設定ファイル動作停止時表示文言.
+     */
+    private static final String LAST_SETTING_FILE_STOP_MESSAGE
+            = "LAST_SETTING_FILE_STOP_MESSAGE";
+    /**
+     * 設定ファイル強制アップデートバージョン.
+     */
+    private static final String LAST_SETTING_FILE_FORCE_UPDATE
+            = "LAST_SETTING_FILE_FORCE_UPDATE";
+    /**
+     * 設定ファイル任意アップデートバージョン.
+     */
+    private static final String LAST_SETTING_FILE_OPTIONAL_UPDATE
+            = "LAST_SETTING_FILE_OPTIONAL_UPDATE";
     /**
      * 初回dアカウント取得フラグ.
      * ランチャーアクティビティの最初に初回実行状態に更新し、dアカウントの最初の取得処理で初回実行終了とする
@@ -126,7 +155,7 @@ public class SharedPreferencesUtils {
     /**
      * 初回dアカウント取得フラグのデフォルト値.
      */
-    private static final int FIRST_D_ACCOUNT_GET_BEFORE = 0;
+    public static final int FIRST_D_ACCOUNT_GET_BEFORE = 0;
     /**
      * 初回dアカウント取得フラグの、取得中の値.
      */
@@ -135,6 +164,10 @@ public class SharedPreferencesUtils {
      * 初回dアカウント取得フラグの、取得後の値。一度この値になると、以後の変化は無い.
      */
     private static final int FIRST_D_ACCOUNT_GET_AFTER = 2;
+    /**
+     * 初回dアカウント取得フラグの、強制設定値.
+     */
+    public static final int FIRST_D_ACCOUNT_FORCE_RESET = 3;
 
     /**
      * 独自の削除メソッドがある接続済みSTB情報以外の、dアカウントユーザー切り替え時の削除対象
@@ -187,6 +220,18 @@ public class SharedPreferencesUtils {
             USER_INFO_SERIALIZABLE_DATA_KEY,
             // 初回dアカウント取得フラグはdアカウント切り替え時も削除無用。指定漏れとの誤認防止用にコメントで記載
             //FIRST_D_ACCOUNT_GET_KEY,
+            // 設定ファイル取得日時
+            LAST_SETTING_FILE_DATE,
+            // 設定ファイル停止スイッチ
+            LAST_SETTING_FILE_IS_STOP,
+            // 設定ファイル読み込み失敗スイッチ
+            LAST_SETTING_FILE_IS_FILE_READ_FAIL,
+            // 設定ファイル停止時メッセージ
+            LAST_SETTING_FILE_STOP_MESSAGE,
+            // 設定ファイル強制アップデートバージョン
+            LAST_SETTING_FILE_FORCE_UPDATE,
+            //  設定ファイル任意アップデートバージョン
+            LAST_SETTING_FILE_OPTIONAL_UPDATE,
     };
 
 
@@ -788,7 +833,7 @@ public class SharedPreferencesUtils {
      * @param context コンテキスト
      * @param status  実行状況
      */
-    private static void setFirstExecFlag(final Context context, int status) {
+    public static void setFirstExecFlag(final Context context, int status) {
         DTVTLogger.start();
 
         //既に初回のdアカウント取得処理を行ったかどうかの確認
@@ -800,6 +845,11 @@ public class SharedPreferencesUtils {
         if (nowStatus == FIRST_D_ACCOUNT_GET_AFTER) {
             DTVTLogger.end();
             return;
+        }
+
+        //強制的にリセット
+        if(status == FIRST_D_ACCOUNT_FORCE_RESET) {
+            status = 0;
         }
 
         //新たなステータスを書き込む
@@ -829,5 +879,197 @@ public class SharedPreferencesUtils {
         DTVTLogger.start();
         setFirstExecFlag(context, FIRST_D_ACCOUNT_GET_AFTER);
         DTVTLogger.end();
+    }
+
+    /**
+     * セッティングファイルの最終取得日時を保存.
+     *
+     * @param context コンテキスト
+     * @param getTime 取得日時
+     */
+    public static void setSharedPreferencesSettingFileDate(final Context context,
+                                                           final long getTime) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                LAST_SETTING_FILE_DATE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putLong(LAST_SETTING_FILE_DATE, getTime);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * セッティングファイルの最終取得日時を取得.
+     *
+     * @param context コンテキスト
+     * @return 最終取得日時
+     */
+    public static long getSharedPreferencesSettingFileDate(final Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                LAST_SETTING_FILE_DATE, Context.MODE_PRIVATE);
+
+        //最終取得日時を返す。存在していなければ、最小値を返す
+        return data.getLong(LAST_SETTING_FILE_DATE, Long.MIN_VALUE);
+    }
+
+    /**
+     * セッティングファイルの停止情報を保存.
+     *
+     * @param context コンテキスト
+     * @param isStop アプリ停止ならばtrue
+     */
+    public static void setSharedPreferencesSettingFileIsStop(final Context context,
+                                                           final boolean isStop) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                LAST_SETTING_FILE_IS_STOP, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putBoolean(LAST_SETTING_FILE_IS_STOP, isStop);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * セッティングファイルの停止情報を取得.
+     *
+     * @param context コンテキスト
+     * @return アプリ停止ならばtrue
+     */
+    public static boolean getSharedPreferencesSettingFileIsStop(final Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                LAST_SETTING_FILE_IS_STOP, Context.MODE_PRIVATE);
+
+        //アプリ停止スイッチを返す。存在していなければ、trueを返す（ファイル読み込み失敗は停止扱いなので）
+        return data.getBoolean(LAST_SETTING_FILE_IS_STOP, true);
+    }
+
+    /**
+     * セッティングファイルの読み込みエラー情報を保存.
+     *
+     * @param context コンテキスト
+     * @param isReadFail 読み込み失敗ならばtrue
+     */
+    public static void setSharedPreferencesSettingFileIsReadFail(final Context context,
+                                                                 final boolean isReadFail) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                LAST_SETTING_FILE_IS_FILE_READ_FAIL, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putBoolean(LAST_SETTING_FILE_IS_FILE_READ_FAIL, isReadFail);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * セッティングファイルの読み込みエラー情報を取得.
+     *
+     * @param context コンテキスト
+     * @return 読み込み失敗ならばtrue
+     */
+    public static boolean getSharedPreferencesSettingFileIsReadFail(final Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                LAST_SETTING_FILE_IS_FILE_READ_FAIL, Context.MODE_PRIVATE);
+
+        //ファイルの読み込みに失敗していればtrueを返す
+        return data.getBoolean(LAST_SETTING_FILE_IS_FILE_READ_FAIL, true);
+    }
+
+    /**
+     * セッティングファイルの停止メッセージを保存.
+     *
+     * @param context コンテキスト
+     * @param message 停止メッセージ
+     */
+    public static void setSharedPreferencesSettingFileStopMessage(final Context context,
+                                                             final String message) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                LAST_SETTING_FILE_STOP_MESSAGE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putString(LAST_SETTING_FILE_STOP_MESSAGE, message);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * セッティングファイルの停止メッセージを取得.
+     *
+     * @param context コンテキスト
+     * @return アプリ停止メッセージ
+     */
+    public static String getSharedPreferencesSettingFileStopMessage(final Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                LAST_SETTING_FILE_STOP_MESSAGE, Context.MODE_PRIVATE);
+
+        //停止時メッセージを返す。存在していなければ、空文字
+        return data.getString(LAST_SETTING_FILE_STOP_MESSAGE, "");
+    }
+
+    /**
+     * セッティングファイルの強制アップデートバージョンを保存.
+     *
+     * @param context コンテキスト
+     * @param forceUpdate 取得日時
+     */
+    public static void setSharedPreferencesSettingFileForceUpdate(final Context context,
+                                                                  final int forceUpdate) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                LAST_SETTING_FILE_FORCE_UPDATE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putInt(LAST_SETTING_FILE_FORCE_UPDATE, forceUpdate);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * セッティングファイルの強制アップデートバージョンを取得.
+     *
+     * @param context コンテキスト
+     * @return アプリ停止メッセージ
+     */
+    public static int getSharedPreferencesSettingFileForceUpdate(final Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                LAST_SETTING_FILE_FORCE_UPDATE, Context.MODE_PRIVATE);
+
+        //バージョン番号を返す。存在していなければ、0を返す
+        return data.getInt(LAST_SETTING_FILE_FORCE_UPDATE, 0);
+    }
+
+    /**
+     * セッティングファイルの任意アップデートバージョンを保存.
+     *
+     * @param context コンテキスト
+     * @param optionalUpdate 取得日時
+     */
+    public static void setSharedPreferencesSettingFileOptionalUpdate(final Context context,
+                                                                  final int optionalUpdate) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                LAST_SETTING_FILE_OPTIONAL_UPDATE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putInt(LAST_SETTING_FILE_OPTIONAL_UPDATE, optionalUpdate);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * セッティングファイルの任意アップデートバージョンを取得.
+     *
+     * @param context コンテキスト
+     * @return アプリ停止メッセージ
+     */
+    public static int getSharedPreferencesSettingFileOptionalUpdate(final Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                LAST_SETTING_FILE_OPTIONAL_UPDATE, Context.MODE_PRIVATE);
+
+        //バージョン番号を返す。存在していなければ、0を返す
+        return data.getInt(LAST_SETTING_FILE_OPTIONAL_UPDATE, 0);
     }
 }

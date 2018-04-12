@@ -41,6 +41,7 @@
     <string name="status_bar_height_defpackage">android</string>
     <string name="common_empty_data_message">コンテンツがありません</string>
     <string name="common_get_data_failed_message">取得に失敗しました</string>
+    <string name="common_root_device_detection_message">Rootデバイスを検知したためアプリを終了します</string>
 
     <!-- Launch -->
     <string name="str_app_title">ドコモテレビターミナル</string>
@@ -278,6 +279,8 @@
     <string name="contents_detail_parental_check_fail">年齢制限のため視聴できません</string>
     <string name="contents_detail_response_ok">OK</string>
     <string name="contents_player_bad_contents_info">再生できませんでした</string>
+    <string name="contents_detail_adinfo_array_pipe">"\\|"</string>
+    <string name="contents_detail_date_left_">"\\|"</string>
 
     <!-- チャンネルリストタイトル -->
     <string name="channel_list_activity_title">チャンネルリスト</string>
@@ -352,5 +355,14 @@
     <!-- メッセージ自体は細分化せず、2種類に留める予定 -->
     <string name="nw_error_message">通信時に問題が発生しました</string>
     <string name="nw_error_ssl_message">SSL証明書に問題が発生しました</string>
+
+    <!-- TODO: 設定ファイル動作制御用仮ワーディング -->
+    <string name="setting_file_force_download">新しいバージョンのアプリがリリースされたので、ダウンロードを行います</string>
+    <string name="setting_file_download">新しいバージョンのアプリがリリースされました。ダウンロードを行いますか？</string>
+    <string name="setting_file_stop_apli">アプリの動作が行えませんでした</string>
+
+    <!-- チュートリアル -->
+    <string name="tutorial_show_agreement">規約を表示</string>
+    <string name="tutorial_agreement_button">規約に同意して利用を開始</string>
 
 </resources>

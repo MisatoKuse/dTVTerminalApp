@@ -21,9 +21,8 @@ extern du_bool dmp_conf_get_download_dir_path(const du_uchar* conf_path, du_ucha
 
 extern du_bool dmp_conf_get_mime_type_list_path(const du_uchar* conf_path, du_uchar_array* mime_type_list_path);
 
-#ifdef ENABLE_DTCP
 extern du_bool dmp_conf_get_private_data_home_path(const du_uchar* conf_path, du_uchar_array* private_data_home_path);
-#endif
+
 
 extern du_bool dmp_conf_get_dirag_path(const du_uchar* conf_path, du_uchar_array* dirag_path);
 

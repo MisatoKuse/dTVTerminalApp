@@ -158,6 +158,11 @@
             android:screenOrientation="portrait"
             android:exported="false"
 	        android:hardwareAccelerated="false"/>
+
+        <activity
+            android:name=".activity.common.ChildContentListActivity"
+            android:screenOrientation="portrait"
+            android:exported="false" />
         <!-- ======================================  Other グループ End ====================================== -->
 
 

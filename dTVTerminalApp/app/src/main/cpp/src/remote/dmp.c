@@ -210,7 +210,7 @@ static du_bool dmp_start(DmpRm* d) {
     if (!dupnp_start(&d->upnp)) return 0;
     if (!dupnp_cp_evtmgr_start(&d->em)) goto error;
     if (!dmp_cp_start(d)) goto error2;
-    if (!player_start(&d->p)) goto error3;
+//    if (!player_start(&d->p)) goto error3;
     if (!dmp_ui_start(&d->ui)) goto error4;
     return 1;
 

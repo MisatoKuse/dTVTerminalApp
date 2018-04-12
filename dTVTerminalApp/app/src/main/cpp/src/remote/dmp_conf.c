@@ -14,6 +14,12 @@ static du_bool get_conf_path(const du_uchar* conf_path, const du_uchar* name, du
     return 1;
 }
 
+static du_bool get_conf_path_new(const du_uchar* conf_path, const du_uchar* name, du_uchar_array* path) {
+    du_uchar_array_copys(path, conf_path);
+    if (du_uchar_array_failed(path)) return 0;
+    return 1;
+}
+
 static du_bool get_port_value(const du_uchar* path, du_uint16* port) {
     du_uchar strnum[DU_STR_FMT_SIZE];
 
@@ -63,12 +69,11 @@ du_bool dmp_conf_get_capability_xml_path(const du_uchar* conf_path, du_uchar_arr
     return 1;
 }
 
-#ifdef ENABLE_DTCP
 du_bool dmp_conf_get_private_data_home_path(const du_uchar* conf_path, du_uchar_array* private_data_home_path) {
-    if (!get_conf_path(conf_path, DU_UCHAR_CONST("private_data_home"), private_data_home_path)) return 0;
+    if (!get_conf_path_new(conf_path, DU_UCHAR_CONST("private_data_home"), private_data_home_path)) return 0;
     return 1;
 }
-#endif
+
 
 du_bool dmp_conf_get_dirag_path(const du_uchar* conf_path, du_uchar_array* dirag_path) {
     if (!get_conf_path(conf_path, DU_UCHAR_CONST("dirag/drag_configuration.xml"), dirag_path)) return 0;

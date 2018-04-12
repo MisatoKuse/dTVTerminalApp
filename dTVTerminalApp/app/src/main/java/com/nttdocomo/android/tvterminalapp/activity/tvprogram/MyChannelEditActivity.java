@@ -332,10 +332,12 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     @Override
     public void onAddChannelItem(final int position) {
         //画面遷移
-        mAddPosition = position;
-        Intent intent = new Intent(this, SelectChannelActivity.class);
-        intent.putExtra(SERVICE_IDS, getServiceIds());
-        startActivityForResult(intent, 0);
+        if (isFastClick()) {
+            mAddPosition = position;
+            Intent intent = new Intent(this, SelectChannelActivity.class);
+            intent.putExtra(SERVICE_IDS, getServiceIds());
+            startActivityForResult(intent, 0);
+        }
     }
 
     /**

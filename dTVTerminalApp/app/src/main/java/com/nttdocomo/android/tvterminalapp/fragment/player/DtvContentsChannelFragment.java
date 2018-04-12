@@ -21,17 +21,24 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * コンテンツ詳細画面表示用Fragment(チャンネル).
+ */
 public class DtvContentsChannelFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
 
     /**
@@ -139,6 +146,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
         if (null == mHeaderView) {
             mHeaderView = View.inflate(getContext(), R.layout.dtv_contents_channel_fragment_header, null);
             mHeaderView.setOnClickListener(null);
+            mHeaderView.setVisibility(View.GONE);
         }
         mContentsAdapter = new ContentsAdapter(getContext(), mContentsData, ContentsAdapter.ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST);
         mChannelListView.setAdapter(mContentsAdapter);
@@ -156,6 +164,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
      */
     public void setChannelDataChanged(final ChannelInfo info) {
         if (!TextUtils.isEmpty(info.getTitle())) {
+            mHeaderView.setVisibility(View.VISIBLE);
             mChannelTxt.setText(info.getTitle());
         }
         if (!TextUtils.isEmpty(info.getThumbnail())) {
@@ -230,9 +239,18 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
 
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
-        Intent intent = new Intent();
-        intent.setClass(mActivity, ContentDetailActivity.class);
-        startActivity(intent);
+        ContentsData contentsData = mContentsData.get(i);
+        ContentDetailActivity contentDetailActivity = (ContentDetailActivity) mActivity;
+        if (ContentUtils.isChildContentList(contentsData)) {
+            contentDetailActivity.startChildContentListActivity(contentsData);
+        } else {
+            Intent intent = new Intent();
+            intent.setClass(mActivity, ContentDetailActivity.class);
+            intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
+            OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(contentsData, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
+            intent.putExtra(detailData.getRecommendFlg(), detailData);
+            contentDetailActivity.startActivity(intent);
+        }
     }
 
     /**

@@ -33,7 +33,6 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
     // オブジェクトクラスの定義　
     private ContentsDetailGetResponse mContentsDetailGetResponse;
 
-
     /**
      * コンストラクタ.
      * <p>

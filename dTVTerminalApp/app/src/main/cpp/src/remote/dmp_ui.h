@@ -27,6 +27,7 @@ extern "C" {
 typedef struct dmp_ui_view {
     void* _user_data;
     void (*_command)(void* _user_data, const du_uint argc, const du_uchar* argv[]);
+    void (*_command_lr)(void* _user_data, player* p, const du_uint argc, const du_uchar* argv[], du_uchar* udn);
     void (*_update_screen)(void* _user_data);
 } dmp_ui_view;
 

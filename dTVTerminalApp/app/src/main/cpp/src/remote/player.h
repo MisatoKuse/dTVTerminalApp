@@ -14,15 +14,13 @@
 #include <du_sync.h>
 #include "player_media_info.h"
 
-#ifdef ENABLE_DTCP
 #include <ddtcp.h>
 #include <ddtcp_private.h>
-#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+#include <jni.h>
 #define ACTION_TIMEOUT_MS 30000
 
 typedef enum {
@@ -96,23 +94,22 @@ typedef struct player {
     du_uint32 _nbytes_read;
     du_ptr_array _state_change_handler_array;
 
-#ifdef ENABLE_DTCP
+//#ifdef ENABLE_DTCP
     ddtcp _dtcp;
     du_uchar* _private_data_home;
-#endif
+//#endif
 } player;
 
 extern du_bool player_init(player* p, du_uint32 stack_size, dav_capability* cap, const du_uchar* download_dir);
 
-extern du_bool player_start(player* p);
+extern du_bool player_start(player* p, JavaVM *vm, jobject objTmp, jmethodID mid);
 
 extern void player_stop(player* p);
 
 extern void player_free(player* p);
 
-#ifdef ENABLE_DTCP
 extern du_bool player_set_private_data_home(player* p, const du_uchar* private_data_home);
-#endif
+
 
 extern du_bool player_set_state_change_handler(player* p, player_state_change_handler handler, void* handler_arg);
 
@@ -140,11 +137,9 @@ extern du_bool player_get_position_info(player* p, player_position_info* info);
 
 extern du_bool player_get_protocol_info(player* p, du_uchar_array* protocol_info);
 
-#ifdef ENABLE_DTCP
 extern du_bool player_get_device_id_hash(player* p, du_uchar_array* hash_base64_ecoded);
 
 extern du_bool player_sink_ra_register(player* p, const du_uchar* dtcp1_host, du_uint16 dtcp1_port);
-#endif
 
 #ifdef __cplusplus
 }

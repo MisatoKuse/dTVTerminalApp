@@ -29,6 +29,7 @@
     <color name="common_tab_unselect_text_color">#FFFFFF</color>
     <color name="common_tab_indicating_no_color">#666666</color>
     <color name="common_tab_indicating_color">#FFFFFF</color>
+    <color name="common_background_color">#1d1d1d</color>
 
     <!--Home画面-->
     <color name="home_main_background_color">#1d1d1d</color>
@@ -89,6 +90,7 @@
     <color name="contents_detail_schedule_detail_sub_title">#ffffff</color>
     <color name="contents_detail_schedule_detail_schedule_info">#cccccc</color>
     <color name="contents_detail_channel_line_color">#333333</color>
+    <color name="contents_detail_video_miss_color">#ffbb4e</color>
     <!--録画番組一覧-->
     <color name="recorded_background">#000000</color>
     <color name="recorded_contents_background">#222222</color>

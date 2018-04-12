@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
@@ -35,7 +36,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.common.ChildContentListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
+import com.nttdocomo.android.tvterminalapp.activity.common.ProcessSettingFile;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.ClipListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
@@ -76,9 +79,9 @@ import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DeviceStateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.RuntimePermissionUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
@@ -87,6 +90,8 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipDeleteWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClient;
 
+import java.util.LinkedList;
+
 /**
  * クラス機能：
  * プロジェクトにて、すべての「Activity」のベースクラスである
@@ -94,9 +99,14 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClie
  */
 @SuppressLint("Registered")
 public class BaseActivity extends FragmentActivity implements
-        DlnaDevListListener, View.OnClickListener, RemoteControllerView.OnStartRemoteControllerUIListener,
-        ClipRegistWebClient.ClipRegistJsonParserCallback, ClipDeleteWebClient.ClipDeleteJsonParserCallback,
-        DaccountControl.DaccountControlCallBack {
+        DlnaDevListListener
+        , View.OnClickListener
+        , RemoteControllerView.OnStartRemoteControllerUIListener
+        , ClipRegistWebClient.ClipRegistJsonParserCallback
+        , ClipDeleteWebClient.ClipDeleteJsonParserCallback
+        , DaccountControl.DaccountControlCallBack
+        , CustomDialog.DismissCallback
+{
 
     /**
      * ヘッダーBaseレイアウト.
@@ -184,6 +194,8 @@ public class BaseActivity extends FragmentActivity implements
      */
     protected static final String DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL =
             "https://www.nttdocomo.co.jp/product/docomo_select/tt01/index.html";
+    /** DialogQue. **/
+    private LinkedList<CustomDialog> mLinkedList = new LinkedList<>();
 
     /**
      * タイムアウト時間.
@@ -203,12 +215,12 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * ダブルクリック抑止用 DELAY.
      */
-    private static final int MIN_CLICK_DELAY_TIME = 1000;
+    private static final int MIN_CLICK_DELAY_TIME = 500;
 
     /**
      * dアカウント設定アプリ登録処理.
      */
-    private DaccountControl mDAccountControl = null;
+    protected DaccountControl mDAccountControl = null;
     /**
      * 初回dアカウント取得失敗時のダイアログを呼び出すハンドラー
      */
@@ -235,6 +247,10 @@ public class BaseActivity extends FragmentActivity implements
      * 表示中ダイアログ.
      */
     private CustomDialog mShowDialog = null;
+    /**
+     * 設定ファイル処理クラス
+     */
+    protected ProcessSettingFile mCheckSetting = null;
     /**
      * 国内通信 MCC (440 Japan).
      */
@@ -714,6 +730,11 @@ public class BaseActivity extends FragmentActivity implements
         TvtApplication app = (TvtApplication) getApplication();
         // BG → FG でのonResumeかを判定
         if (app.getIsChangeApplicationVisible()) {
+            if (DeviceStateUtils.isRootDevice()) {
+                showApFinishDialog(getString(R.string.common_root_device_detection_message));
+                //Root化を検知した時点で以降の処理はしない
+                return;
+            }
             permissionCheckExec();
         } else {
             // 通常のライフサイクル
@@ -888,7 +909,7 @@ public class BaseActivity extends FragmentActivity implements
                                 //サーバエラー
                             case RelayServiceResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE:
                                 //ユーザアカウントチェックサービス未登録
-                                showErrorDialog(getResources().getString(R.string.main_setting_connect_error_message));
+                                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
                                 break;
                             case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
                                 showDAccountRegDialog();
@@ -905,7 +926,7 @@ public class BaseActivity extends FragmentActivity implements
                                 //ユーザアカウントチェックサービス未登録
                             case RelayServiceResponseMessage.RELAY_RESULT_USER_INVALID_STATE:
                                 //STBの中継アプリ~応答が無かった場合(要求はできたのでSTBとの通信はOK)
-                                showErrorDialog(getResources().getString(R.string.main_setting_connect_error_message));
+                                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
                                 break;
                             case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
                                 // チェック処理の状態で処理を分岐する
@@ -928,10 +949,15 @@ public class BaseActivity extends FragmentActivity implements
                                         toGooglePlay(DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL);
                                     }
                                 });
-                                dTVTUpDateDialog.showDialog();
+                                //次のダイアログを呼ぶ為の処理
+                                dTVTUpDateDialog.setDialogDismissCallback(this);
+
+                                //ダイアログを表示
+                                offerDialog(dTVTUpDateDialog);
+                                //dTVTUpDateDialog.showDialog();
                                 break;
                             case RelayServiceResponseMessage.RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE:
-                                showErrorDialog(getResources().getString(R.string.stb_application_version_update));
+                                showErrorDialogOffer(getResources().getString(R.string.stb_application_version_update));
                                 break;
                             default:
                                 break;
@@ -943,14 +969,14 @@ public class BaseActivity extends FragmentActivity implements
                         switch (resultCode) {
                             case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
                                 if (getStbStatus()) {
-                                    showErrorDialog(getResources().getString(R.string.main_setting_connect_error_message));
+                                    showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
                                     //ペアリングアイコンをOFFにする
                                     setStbStatus(false);
                                 }
                                 break;
                             case RelayServiceResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY: // 他の端末の要求処理中
                                 //中継アプリからの応答待ち中に新しい要求を行った場合
-                                showErrorDialog(getResources().getString(R.string.main_setting_stb_busy_error_message));
+                                showErrorDialogOffer(getResources().getString(R.string.main_setting_stb_busy_error_message));
                                 break;
                             default:
                                 break;
@@ -1039,9 +1065,10 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * 機能　GooglePlayのAPPページへ.
      *
+     * (設定ファイル制御からも呼ぶので、publicに変更)
      * @param downLoadUrl 当アプリはGooglePlayのダウンロードURL
      */
-    protected void toGooglePlay(final String downLoadUrl) {
+    public void toGooglePlay(final String downLoadUrl) {
         Uri uri = Uri.parse(downLoadUrl);
         Intent installIntent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(installIntent);
@@ -1056,6 +1083,22 @@ public class BaseActivity extends FragmentActivity implements
         CustomDialog errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
         errorDialog.setContent(errorMessage);
         errorDialog.showDialog();
+    }
+
+    /**
+     * 機能 エラーメッセージの表示(重複ダイアログ用処理付き).
+     *
+     * @param errorMessage dialog content
+     */
+    protected void showErrorDialogOffer(final String errorMessage) {
+        CustomDialog errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
+        errorDialog.setContent(errorMessage);
+
+        //閉じたときに次のダイアログを呼ぶ処理
+        errorDialog.setDialogDismissCallback(this);
+
+        //ダイアログをキューにためる処理
+        offerDialog(errorDialog);
     }
 
     /**
@@ -1084,7 +1127,7 @@ public class BaseActivity extends FragmentActivity implements
             @Override
             public void onOKCallback(final boolean isOK) {
                 //OKが押されたので、ホーム画面の表示
-                DAccountUtils.reStartApplication(activity);
+                reStartApplication();
             }
         });
         restartDialog.showDialog();
@@ -1217,7 +1260,7 @@ public class BaseActivity extends FragmentActivity implements
             Intent intent = mActivity.getIntent();
             intent.setClass(mActivity, HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            mActivity.startActivity(intent);
+            startActivity(intent);
         } else {
             finish();
         }
@@ -1301,7 +1344,7 @@ public class BaseActivity extends FragmentActivity implements
     public void onClick(final View view) {
         if (mMenuImageViewForBase == view) {
             if (HEADER_ICON_CLOSE.equals(mMenuImageViewForBase.getTag())) {
-                //コンテンツ詳細画面の×ボタン時はコンテンツ詳細画面を閉じる
+                // コンテンツ詳細画面の×ボタン時はコンテンツ詳細画面を閉じる
                 contentsDetailCloseKey(view);
             } else {
                 //ダブルクリックを防ぐ
@@ -1333,7 +1376,8 @@ public class BaseActivity extends FragmentActivity implements
             // onPause時にリモコンUIを閉じる
             mRemoteControllerView.closeRemoteControllerUI();
         }
-        dismissDialog();
+
+        dismissDialogOnPause();
         super.onPause();
 
         //ワンタイムトークン取得のキャンセル
@@ -1583,7 +1627,7 @@ public class BaseActivity extends FragmentActivity implements
             if (data.isClipStatus()) {
                 ClipDeleteWebClient deleteWebClient = new ClipDeleteWebClient(getApplicationContext());
                 isParamCheck = deleteWebClient.getClipDeleteApi(data.getType(), data.getCrid(),
-                        data.getTitle(), this);
+                        data.getTitleId(), this);
             } else {
                 ClipRegistWebClient registWebClient = new ClipRegistWebClient(getApplicationContext());
                 isParamCheck = registWebClient.getClipRegistApi(
@@ -1675,6 +1719,9 @@ public class BaseActivity extends FragmentActivity implements
         if (SharedPreferencesUtils.isFirstDaccountGetProcess(getApplicationContext()) && !result) {
             //初回のdアカウント取得かつ問題が発生していた場合はtrueにする
             firstDaccountError = true;
+        } else {
+            //初回以外はダイアログを出さないので、処理中フラグはリセット
+            mDAccountControl.setDAccountBusy(false);
         }
 
         //初回dアカウント取得が行われていた場合は終わらせる
@@ -1703,7 +1750,14 @@ public class BaseActivity extends FragmentActivity implements
                     DTVTLogger.debug("daccount error code = " + mDAccountControl.getResult());
 
                     errorDialog.setContent(getString(R.string.d_account_regist_error));
-                    errorDialog.showDialog();
+                    //次のダイアログを呼ぶ為の処理
+                    errorDialog.setDialogDismissCallback(BaseActivity.this);
+
+                    //showDialogの代わり・重複ダイアログ実現用
+                    offerDialog(errorDialog);
+
+                    //ダイアログを出す場合はここで処理中フラグをリセット
+                    mDAccountControl.setDAccountBusy(false);
                 }
             });
 
@@ -1813,39 +1867,69 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     /**
+     * ウイザード（多階層コンテンツ）画面に遷移する.
+     *
+     * @param contentsData コンテンツデータ
+     */
+    public void startChildContentListActivity(@NonNull final ContentsData contentsData) {
+        Intent intent = new Intent(this, ChildContentListActivity.class);
+        intent.putExtra(ChildContentListActivity.INTENT_KEY_CRID, contentsData.getCrid());
+        intent.putExtra(ChildContentListActivity.INTENT_KEY_TITLE, contentsData.getTitle());
+        intent.putExtra(ChildContentListActivity.INTENT_KEY_DISP_TYPE, contentsData.getDispType());
+        startActivity(intent);
+    }
+
+    /**
+     * dアカウントの削除や変更後に、自アプリがフォアグラウンドならば、アプリの再起動を行う.
+     */
+    protected void reStartApplication() {
+        DTVTLogger.start();
+
+        //再起動処理を行う
+        Intent intent = new Intent();
+        intent.setClass(this, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+
+        DTVTLogger.end();
+    }
+
+    /**
      * アニメーション付きスタートアクティビティ.
      *
      * @param intent アクティビティ呼び出し情報
      */
     @Override
     public void startActivity(final Intent intent) {
-        //普通にアクティビティを起動する
-        super.startActivity(intent);
+        if (isFastClick()) {
+            //普通にアクティビティを起動する
+            super.startActivity(intent);
 
-        //dアカウントアプリのバインドを解除する
-        final DaccountGetOTT getOtt = new DaccountGetOTT();
-        if (getOtt != null) {
-            DTVTLogger.debug("startAvtivity before unbind");
-            //他の画面に遷移する前に、dアカウントアプリとの連携を終わらせる
-            getOtt.daccountServiceEnd();
-        }
-
-        //飛び先画面として指定されていた名前を取得する
-        String callName = "";
-        if (intent != null && intent.getComponent() != null) {
-            callName = intent.getComponent().toShortString();
-        }
-        //飛び先がSTB選択の関連画面ならば、アニメは付加せず帰る
-        if (callName.contains(STBSelectActivity.class.getSimpleName())
-                || callName.contains(STBSelectErrorActivity.class.getSimpleName())) {
-            //ただし、設定画面から呼ばれた場合はアニメーションは行うので帰らない
-            if (!(this instanceof SettingActivity)) {
-                return;
+            //dアカウントアプリのバインドを解除する
+            final DaccountGetOTT getOtt = new DaccountGetOTT();
+            if (getOtt != null) {
+                DTVTLogger.debug("startAvtivity before unbind");
+                //他の画面に遷移する前に、dアカウントアプリとの連携を終わらせる
+                getOtt.daccountServiceEnd();
             }
-        }
 
-        //アニメーションを付加する
-        overridePendingTransition(R.anim.in_righttoleft, R.anim.out_lefttoright);
+            //飛び先画面として指定されていた名前を取得する
+            String callName = "";
+            if (intent != null && intent.getComponent() != null) {
+                callName = intent.getComponent().toShortString();
+            }
+            //飛び先がSTB選択の関連画面ならば、アニメは付加せず帰る
+            if (callName.contains(STBSelectActivity.class.getSimpleName())
+                    || callName.contains(STBSelectErrorActivity.class.getSimpleName())) {
+                //ただし、設定画面から呼ばれた場合はアニメーションは行うので帰らない
+                if (!(this instanceof SettingActivity)) {
+                    return;
+                }
+            }
+
+            //アニメーションを付加する
+            overridePendingTransition(R.anim.in_righttoleft, R.anim.out_lefttoright);
+        }
     }
 
     /**
@@ -1980,6 +2064,7 @@ public class BaseActivity extends FragmentActivity implements
     private CustomDialog createPermissionDetailDialog() {
         DTVTLogger.start();
         CustomDialog dialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+        dialog.setDialogDismissCallback(this);
         dialog.setCancelable(false);
         dialog.setOnTouchOutside(false);
         dialog.setConfirmText(R.string.permission_detail_dialog_confirm);
@@ -2042,6 +2127,13 @@ public class BaseActivity extends FragmentActivity implements
             onReStartCommunication();
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * オーバーライド先でdismissDialogを無効化する為に独立化
+     */
+    protected void dismissDialogOnPause() {
+        dismissDialog();
     }
 
     /**
@@ -2128,6 +2220,9 @@ public class BaseActivity extends FragmentActivity implements
         if (mNecessaryDAccountRegistService) {
             setDaccountControl();
         }
+        //アプリ設定ファイルの判定
+        checkSettingFile();
+
         checkDAccountOnRestart();
         onStartCommunication();
 
@@ -2135,6 +2230,17 @@ public class BaseActivity extends FragmentActivity implements
         setOttDisconnectionFlag(false);
 
         DTVTLogger.end();
+    }
+
+    /**
+     * 設定ファイルのチェック.
+     * (このタイミングでチェックを行うと、自ずとアプリ起動時か、BG→FG遷移時でのチェックになる)
+     */
+    void checkSettingFile() {
+        //アプリ起動時か、BG→FG遷移時は設定ファイルの処理を呼び出す
+        mCheckSetting = new ProcessSettingFile(this);
+        //今回はコールバックは使用しないので、ヌルを指定する
+        mCheckSetting.controlAtSettingFile(null);
     }
 
     /**
@@ -2227,9 +2333,14 @@ public class BaseActivity extends FragmentActivity implements
             }
         });
         //戻るボタン等でダイアログが閉じられた時もOKと同じ挙動
-        closeDialog.setDialogDismissCallback(new CustomDialog.DialogDismissCallback() {
+        closeDialog.setDialogDismissCallback(new CustomDialog.DismissCallback() {
             @Override
-            public void onDialogDismissCallback() {
+            public void allDismissCallback() {
+                //NOP
+            }
+
+            @Override
+            public void otherDismissCallback() {
                 contentsDetailBackKey(null);
             }
         });
@@ -2263,4 +2374,98 @@ public class BaseActivity extends FragmentActivity implements
         dAccountRegDialog.showDialog();
     }
 
+    /**
+     * アプリ終了ダイアログ.
+     *
+     * @param errorMessage エラーメッセージ
+     */
+    protected void showApFinishDialog(final String errorMessage) {
+        CustomDialog apFinishDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
+        apFinishDialog.setContent(errorMessage);
+        apFinishDialog.showDialog();
+        apFinishDialog.setDialogDismissCallback(new CustomDialog.DismissCallback() {
+            @Override
+            public void allDismissCallback() {
+                finish();
+            }
+            @Override
+            public void otherDismissCallback() {
+                //NOP
+            }
+        });
+    }
+
+    /**
+     * ダイアログをキューに追加.
+     * (設定ファイル処理から呼ぶためにパブリック化)
+     * @param dialog キュー表示するダイアログ
+     */
+    public void offerDialog(CustomDialog dialog) {
+        DTVTLogger.start();
+        mLinkedList.offer(dialog);
+        pollDialog();
+        DTVTLogger.end();
+    }
+
+    /**
+     * キューにあるダイアログを順に表示.
+     */
+    public void pollDialog() {
+        DTVTLogger.start();
+        DTVTLogger.debug("mLinkedList.size()=" + mLinkedList.size());
+        if ((mShowDialog == null || !mShowDialog.isShowing()) && mLinkedList.size() > 0) {
+            mShowDialog = mLinkedList.poll();
+            mShowDialog.showDialog();
+        } else {
+            if(mShowDialog != null) {
+                startNextProcess();
+                DTVTLogger.debug("show=" + mShowDialog.isShowing()
+                        + ":mLinkedList.size()=" + mLinkedList.size());
+            }
+        }
+        DTVTLogger.end();
+    }
+
+    /**
+     * 次に行う処理があれば、オーバーライドしてください。
+     */
+    protected void startNextProcess() {
+        DTVTLogger.start();
+        DTVTLogger.end();
+    }
+
+    /**
+     * たまっているキューがあれば数を表示する.
+     *
+     * @return キューの個数。ダイアログが無い場合はゼロ
+     */
+    public int getDialogQurCount() {
+        if(mShowDialog == null) {
+            //ダイアログが存在していないならばゼロを返す
+            return 0;
+        }
+
+        //キューにたまっていれば個数を返す
+        if (mLinkedList.size() > 0) {
+            return mLinkedList.size();
+        }
+
+        //今表示中ならば1を返す
+        if(mShowDialog.isShowing()) {
+            return 1;
+        }
+
+        //それら以外はゼロを返す
+        return 0;
+    }
+
+    @Override
+    public void allDismissCallback() {
+        pollDialog();
+    }
+
+    @Override
+    public void otherDismissCallback() {
+        //NOP
+    }
 }

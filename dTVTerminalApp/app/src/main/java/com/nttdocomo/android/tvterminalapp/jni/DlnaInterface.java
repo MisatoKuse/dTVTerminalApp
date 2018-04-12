@@ -37,6 +37,9 @@ public class DlnaInterface {
     public static final int DLNA_MSG_ID_DL_STATUS = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 7;
     //Download param
     private static final int DLNA_MSG_ID_DL_XMLPARAM = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 8;
+    //LocalRegist status
+    /** ローカルレジストレーションステータス.*/
+    public static final int DLNA_MSG_ID_RM_STATUS = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 9;
 
     //DMS情報
     private DlnaDMSInfo mDMSInfo = new DlnaDMSInfo();

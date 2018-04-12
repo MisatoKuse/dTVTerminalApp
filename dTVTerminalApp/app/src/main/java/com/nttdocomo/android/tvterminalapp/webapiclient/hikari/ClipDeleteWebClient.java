@@ -13,6 +13,7 @@ import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ClipDeleteJsonParser;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -163,20 +164,21 @@ public class ClipDeleteWebClient
         String answerText;
         try {
             //リクエストパラメータ(Json)作成
-
+            JSONObject listItemJsonObject = new JSONObject();
             //タイプとコンテンツ識別子は常に必須
-            jsonObject.put(JsonConstants.META_RESPONSE_TYPE, type);
-            jsonObject.put(JsonConstants.META_RESPONSE_CRID, crid);
+            listItemJsonObject.put(JsonConstants.META_RESPONSE_TYPE, type);
+            listItemJsonObject.put(JsonConstants.META_RESPONSE_CRID, crid);
 
             //タイトルIDはdtv_vodの時のみ必須。dtv_vodで空文字の場合は既にエラーになっているので、ここでは空文字判定だけで良い
             if(!TextUtils.isEmpty(titleId)) {
-                jsonObject.put(JsonConstants.META_RESPONSE_TITLE_ID, titleId);
+                listItemJsonObject.put(JsonConstants.META_RESPONSE_TITLE_ID, titleId);
             }
 
             //統合して文字列化する
-            JSONObject jsonListObject = new JSONObject();
-            jsonListObject.put(JsonConstants.META_RESPONSE_LIST,jsonObject);
-            answerText = jsonListObject.toString();
+            JSONArray jsonListObject = new JSONArray();
+            jsonListObject.put(0, listItemJsonObject);
+            jsonObject.put(JsonConstants.META_RESPONSE_LIST, jsonListObject);
+            answerText = jsonObject.toString().replace("\\", "");
 
         } catch (JSONException e) {
             //JSONの作成に失敗したので空文字とする

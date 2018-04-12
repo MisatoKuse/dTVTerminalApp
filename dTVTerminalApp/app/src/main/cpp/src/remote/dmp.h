@@ -30,7 +30,7 @@ extern "C" {
 //    dmp_ui ui;
 //    dav_capability cap;
 //} dmp;
-typedef struct {
+typedef struct DmpRm {
     dmp_event_adapter ea;
     dupnp upnp;
     dupnp_cp_dvcmgr dm;

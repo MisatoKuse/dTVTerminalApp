@@ -8,91 +8,108 @@ import android.os.Parcel;
 
 import java.util.List;
 
+
+/**
+ * 値渡しクラス.
+ */
 public class OtherContentsDetailData extends RecordedContentsDetailData {
 
-    public static final int DTV_CONTENTS_SERVICE_ID = 15;
-    public static final int D_ANIMATION_CONTENTS_SERVICE_ID = 17;
-    public static final int DTV_CHANNEL_CONTENTS_SERVICE_ID = 43;
-    public static final int DTV_HIKARI_CONTENTS_SERVICE_ID = 44;
-
-    public static final String HIKARI_CONTENTS_CATEGORY_ID_DTB = "01";
-    public static final String HIKARI_CONTENTS_CATEGORY_ID_BS = "02";
-    public static final String HIKARI_CONTENTS_CATEGORY_ID_IPTV = "03";
-
+    /**thumb.*/
     private String mThumb;
+    /**日付.*/
     private String mChannelDate;
+    /**チャンネル名.*/
     private String mChannelName;
+    /**サービスID.*/
     private int mServiceId;
+    /**detail.*/
     private String mDetail;
+    /**comment.*/
     private String mComment;
+    /**highlight.*/
     private String mHighlight;
+    /**コンテンツタイプ.*/
     private String mContentsType;
+    /**年齢.*/
     private int mAge;
+    /**ロール情報.*/
     private String[] mRoleList;
+    /**開始時間.*/
     private String mStartDate;
+    /**終了時間.*/
     private String mEndDate;
+    /**表示タイプ.*/
     private String mDisplayType;
+    /**カテゴリーID.*/
     private String mCategoryId;
+    /**商品詳細1.*/
     private String mDescription1;
+    /**商品詳細2.*/
     private String mDescription2;
+    /**商品詳細3.*/
     private String mDescription3;
+    /**予備1.*/
     private String mReserved1;
+    /**予備2.*/
     private String mReserved2;
+    /**予備3.*/
     private String mReserved3;
+    /**予備4.*/
     private String mReserved4;
+    /**予備5.*/
     private String mReserved5;
+    /**モバイル視聴可否フラグ.*/
     private String mobileViewingFlg;
+    /**スタッフ情報.*/
     private List<String> staffList;
-
-    // クリップ情報取得用
+    /**クリップ情報取得用.*/
     private VodMetaFullData mVodMetaFullData = null;
-
-    //コンテンツIDを追加
+    /**コンテンツIDを追加.*/
     private String mContentsId;
-
-    // チャンネルID
+    /**チャンネルID.*/
     private String mChannelId = "";
-    // おすすめ順
+    /**おすすめ順.*/
     private String mRecommendOrder = "";
-    // 画面ID
+    /**画面ID.*/
     private String mPageId = "";
-    // ユーザグループID
+    /**ユーザグループID.*/
     private String mGroupId = "";
-    // レコメンド手法ID
+    /**レコメンド手法ID.*/
     private String mRecommendMethodId = "";
-    // レコメンドフラグ
+    /**レコメンドフラグ.*/
     private String mRecommendFlg = "";
-    // 表示タイプ
+    /**表示タイプ.*/
     private String mDispType = "";
-    // クリップ情報
+    /**クリップ情報.*/
     private String mSearchOk = "";
-    // dTVフラグ
+    /**dTVフラグ.*/
     private String mDtv = "";
-    // dTVタイプ
+    /**dTVタイプ.*/
     private String mDtvType = "";
-    // クリップ可否
+    /**クリップ可否.*/
     private boolean mClipExec = false;
-    // クリップ未/済
+    /**クリップ未/済.*/
     private boolean mClipStatus = false;
-    // レーティング値
+    /**レーティング値.*/
     private double mRating = 0;
-    // シーズン名
+    /**シーズン名.*/
     private String mEpititle = "";
-    // Tvサービス
+    /**Tvサービス.*/
     private String mTvService = "";
-
-    /**
-     * crId.
-     */
+    /**crId.*/
     private String mCrId = null;
-    /**
-     * イベントID.
-     */
+    /**イベントID.*/
     private String mEventId = null;
-    /**
-     * タイトルID.
-     */
+    /**タイトルID.*/
     private String mTitleId = null;
+    /**4kflg.*/
+    private int m4kflg;
+    /**(音声、言語).*/
+    private String[] mAdinfoArray;
+    /**コピー制限.*/
+    private String mCopy = "";
+    /**視聴制限.*/
+    private String mRvalue = "";
 
     public String getChannelDate() {
         return mChannelDate;
@@ -426,7 +443,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mCrId;
     }
 
-    public void setCrId(String mCrId) {
+    public void setCrId(final String mCrId) {
         this.mCrId = mCrId;
     }
 
@@ -434,7 +451,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mEventId;
     }
 
-    public void setEventId(String mEventId) {
+    public void setEventId(final String mEventId) {
         this.mEventId = mEventId;
     }
 
@@ -442,9 +459,42 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         return mTitleId;
     }
 
-    public void setTitleId(String mTitleId) {
+    public void setTitleId(final String mTitleId) {
         this.mTitleId = mTitleId;
     }
+
+    public int getM4kflg() {
+        return m4kflg;
+    }
+
+    public void setM4kflg(final int m4kflg) {
+        this.m4kflg = m4kflg;
+    }
+
+    public String[] getAdinfoArray() {
+        return mAdinfoArray;
+    }
+
+    public void setAdinfoArray(final String[] mAdinfoArray) {
+        this.mAdinfoArray = mAdinfoArray;
+    }
+
+    public String getCopy() {
+        return mCopy;
+    }
+
+    public void setCopy(final String mCopy) {
+        this.mCopy = mCopy;
+    }
+
+    public String getRvalue() {
+        return mRvalue;
+    }
+
+    public void setRvalue(final String mRvalue) {
+        this.mRvalue = mRvalue;
+    }
+
 
     @Override
     public int describeContents() {
@@ -452,7 +502,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
     }
 
     @Override
-    public void writeToParcel(final Parcel dest, final int flags) {
+    public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         dest.writeString(this.mThumb);
         dest.writeString(this.mChannelDate);
@@ -498,6 +548,10 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         dest.writeString(this.mCrId);
         dest.writeString(this.mEventId);
         dest.writeString(this.mTitleId);
+        dest.writeInt(this.m4kflg);
+        dest.writeStringArray(this.mAdinfoArray);
+        dest.writeString(this.mCopy);
+        dest.writeString(this.mRvalue);
     }
 
     public OtherContentsDetailData() {
@@ -549,6 +603,10 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         this.mCrId = in.readString();
         this.mEventId = in.readString();
         this.mTitleId = in.readString();
+        this.m4kflg = in.readInt();
+        this.mAdinfoArray = in.createStringArray();
+        this.mCopy = in.readString();
+        this.mRvalue = in.readString();
     }
 
     public static final Creator<OtherContentsDetailData> CREATOR = new Creator<OtherContentsDetailData>() {

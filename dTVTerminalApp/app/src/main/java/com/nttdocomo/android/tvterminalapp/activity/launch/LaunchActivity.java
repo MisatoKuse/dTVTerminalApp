@@ -15,6 +15,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
@@ -42,6 +43,14 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
      * test用ボタン.
      */
     private Button mFirstLaunchLaunchNoActivity = null;
+    /**
+     * 次のアクティビティ情報
+     */
+    private Intent mNextActivity = null;
+    /**
+     * アプリ起動直後のdアカウントエラーの状況
+     */
+    private boolean mDaccountStatus = false;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -51,6 +60,10 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         setTitleText(getString(R.string.str_launch_title));
         enableHeaderBackIcon(false);
         setStatusBarColor(true);
+
+        //現在のdアカウントダイアログの状況を取得
+        mDaccountStatus = SharedPreferencesUtils.isFirstDaccountGetProcess(
+                getApplicationContext());
 
         //アプリ起動時のサービストークン削除を行う
         SharedPreferencesUtils.deleteOneTimeTokenData(getApplicationContext());
@@ -62,29 +75,16 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
              * to do: DLNA起動失敗の場合、仕様はないので、ここで将来対応
              */
         }
-        setContents();
+        mIsFirstRun = !SharedPreferencesUtils.getSharedPreferencesIsDisplayedTutorial(this);
     }
 
     /**
-     * 画面設定を行う.
+     * onPauseで消さないようにする為のオーバーライド
      */
-    private void setContents() {
-        mFirstLaunchLaunchYesActivity = findViewById(R.id.firstLanchLanchYesActivity);
-        mFirstLaunchLaunchYesActivity.setOnClickListener(this);
-
-        mFirstLaunchLaunchNoActivity = findViewById(R.id.firstLanchLanchNoActivity);
-        mFirstLaunchLaunchNoActivity.setOnClickListener(this);
-
-        mFirstLaunchLaunchYesActivity.setEnabled(false);
-        mFirstLaunchLaunchYesActivity.getBackground().setColorFilter(Color.DKGRAY, PorterDuff.Mode.MULTIPLY);
-        mFirstLaunchLaunchNoActivity.setEnabled(false);
-        mFirstLaunchLaunchNoActivity.getBackground().setColorFilter(Color.DKGRAY, PorterDuff.Mode.MULTIPLY);
-        // TODO チュートリアル実装時にコメントアウトを外す
-//        if(SharedPreferencesUtils.getSharedPreferencesIsDisplayedTutorial(this)) {
-//            doScreenTransition();
-//        } else {
-//            startActivity(TutorialActivity.class, null);
-//        }
+    @Override
+    protected void dismissDialogOnPause() {
+        //dissmissを行わない事を明示する為コメント化
+        //dismissDialog();
     }
 
     /**
@@ -143,7 +143,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
      */
     // TODO チュートリアル画面作成時に削除
     private void onFirstLaunchYesButton() {
-        startActivity(TutorialActivity.class, null);
+        startActivityWait(new Intent(getApplicationContext(),TutorialActivity.class));
     }
 
     @Override
@@ -152,11 +152,12 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                // アプリの起動時はdアカOTTが取得できるまで待つ。他画面には遷移させない。
-                mFirstLaunchLaunchYesActivity.setEnabled(true);
-                mFirstLaunchLaunchYesActivity.getBackground().setColorFilter(Color.LTGRAY, PorterDuff.Mode.MULTIPLY);
-                mFirstLaunchLaunchNoActivity.setEnabled(true);
-                mFirstLaunchLaunchNoActivity.getBackground().setColorFilter(Color.LTGRAY, PorterDuff.Mode.MULTIPLY);
+                // TODO チュートリアルレビューが終わったらコメントアウトを外す
+//                if (mIsFirstRun) {
+                startActivityWait(new Intent(getApplicationContext(), TutorialActivity.class));
+//                } else {
+//                    doScreenTransition();
+//                }
             }
         });
     }
@@ -171,7 +172,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
             SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(this, true);
             Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            startActivityWait(intent);
             DTVTLogger.debug("ParingOK Start HomeActivity");
         } else if (SharedPreferencesUtils.getSharedPreferencesStbSelect(this)) {
             // 次回から表示しないをチェック済み
@@ -179,16 +180,81 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
             SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(this, false);
             Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            startActivityWait(intent);
             DTVTLogger.debug("ParingNG Start HomeActivity");
         } else {
             // STB選択画面へ遷移
             Intent intent = new Intent(getApplicationContext(), STBSelectActivity.class);
             intent.putExtra(STBSelectActivity.FROM_WHERE, STBSelectActivity.STBSelectFromMode.STBSelectFromMode_Launch.ordinal());
-            startActivity(intent);
+            startActivityWait(intent);
             DTVTLogger.debug("Start STBSelectActivity");
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * ダイアログが表示されている場合は、まだ画面遷移を行わないようにするスタートアクティビティ.
+     *
+     * @param intent 飛び先情報のインテント
+     */
+    void startActivityWait(Intent intent) {
+        //次の画面情報を控える
+        mNextActivity = intent;
+
+        if(execCheck()) {
+            //そのまま次のアクティビティへ遷移する
+            startActivity(mNextActivity);
+        }
+    }
+
+    /**
+     * ダイアログの処理終了後に次の画面に遷移を行う
+     */
+    @Override
+    protected void startNextProcess() {
+        if(execCheck() && !isFinishing()) {
+            //遷移条件が整っていれば、次のアクティビティへ遷移する
+            startActivity(mNextActivity);
+
+            //GooglePlayの起動対象ならば、起動を行う
+            if(mCheckSetting.isGooglePlay()) {
+                toGooglePlay(UrlConstants.WebUrl.GOOGLEPLAY_DOWNLOAD_MY_URL);
+                mCheckSetting.setGooglePlay(false);
+
+                if(mDaccountStatus) {
+                    //この場合は、dアカウントフラグのクリアを行う
+                    SharedPreferencesUtils.setFirstExecFlag(getApplicationContext(),
+                            SharedPreferencesUtils.FIRST_D_ACCOUNT_GET_BEFORE);
+                }
+            }
+        }
+    }
+
+    /**
+     * 次画面遷移可否チェック.
+     *
+     * @return 次の画面に遷移可能ならばtrue
+     */
+    private boolean execCheck() {
+        //ダイアログの表示対象が処理中かどうかを見る
+        if(getDialogQurCount() > 0) {
+            //表示中のダイアログがあるならば遷移不可
+            return false;
+        }
+
+        //dアカウントの処理が続行中か、そもそも実行されていなければ遷移不可
+        if((mDAccountControl != null && mDAccountControl.isDAccountBusy())
+                || mCheckSetting == null) {
+            return false;
+        }
+
+        //設定ファイルの処理が続行中か、そもそも実行されていなければ遷移不可
+        if((mCheckSetting != null && mCheckSetting.isBusy())
+                || mCheckSetting == null) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override

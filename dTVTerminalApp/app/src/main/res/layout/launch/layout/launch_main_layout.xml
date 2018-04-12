@@ -5,20 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/firstLanchLanchYesActivity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:text="初回(チュートリアル)" />
-
-    <Button
-        android:id="@+id/firstLanchLanchNoActivity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:text="チュートリアル確認済" />
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

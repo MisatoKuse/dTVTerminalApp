@@ -353,17 +353,13 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
         ArrayList<VodMetaFullData> metaFullData = response.getVodMetaFullData();
         ArrayList<ActiveData> activeDataList = response.getVodActiveData();
         //activeDataListとmetaFullDataは別系統のJsonから取得するため、サイズチェックを入れる
-        if (metaFullData.size() != activeDataList.size()) {
-            return list;
-        }
+        DTVTLogger.warning("metaFullData.size() = " + metaFullData.size() + ", activeDataList.size() = " + activeDataList.size());
         UserState userState = UserInfoUtils.getUserState(mContext);
         for (int i = 0; i < metaFullData.size(); i++) { //indexをactiveDataListで使うため、foreachを使いません
             VodMetaFullData vodMetaFullData = metaFullData.get(i);
             if (displayFlg(vodMetaFullData)) {
                 ContentsData data = new ContentsData();
-
                 int rentalType = isEnableRentalContents(activeDataList.get(i).getValidEndDate());
-
                 switch (rentalType) {
                     case ENABLE_VOD_WATCH_CONTENTS_LIMITED:
                         //期限付きの場合のみ日付を設定する
@@ -380,6 +376,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
                     default:
                         break;
                 }
+
                 String title = vodMetaFullData.getTitle();
                 String searchOk = vodMetaFullData.getmSearch_ok();
                 String dispType = vodMetaFullData.getDisp_type();
@@ -397,6 +394,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
                 data.setDispType(dispType);
                 data.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
                 data.setContentsId(vodMetaFullData.getCrid());
+                data.setCrid(vodMetaFullData.getCrid());
 
                 //クリップリクエストデータ作成
                 ClipRequestData requestData = new ClipRequestData();

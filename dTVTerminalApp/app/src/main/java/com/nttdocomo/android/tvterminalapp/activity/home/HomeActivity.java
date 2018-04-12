@@ -205,12 +205,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 }
             });
 
-            failedRecordingReservationDialog.setDialogDismissCallback(new CustomDialog.DialogDismissCallback() {
+            failedRecordingReservationDialog.setDialogDismissCallback(new CustomDialog.DismissCallback() {
                 @Override
-                public void onDialogDismissCallback() {
+                public void otherDismissCallback() {
                     //ボタンタップ以外でダイアログが閉じた場合
                     showProgessBar(false);
                     mIsCloseDialog = false;
+                }
+
+                @Override
+                public void allDismissCallback() {
+                    //NOP
                 }
             });
         }
@@ -740,9 +745,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 }
             });
 
-            failedRecordingReservationDialog.setDialogDismissCallback(new CustomDialog.DialogDismissCallback() {
+            failedRecordingReservationDialog.setDialogDismissCallback(new CustomDialog.DismissCallback() {
                 @Override
-                public void onDialogDismissCallback() {
+                public void allDismissCallback() {
+                    //NOP
+                }
+
+                @Override
+                public void otherDismissCallback() {
                     //ボタンタップ以外でダイアログが閉じた場合は閉じる選択と想定
                     //ユーザ情報なし(未契約表示)
                     mIsCloseDialog = false;

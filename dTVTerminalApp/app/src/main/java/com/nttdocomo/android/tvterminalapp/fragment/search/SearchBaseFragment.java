@@ -19,12 +19,14 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
@@ -271,15 +273,21 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
 
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
-        ContentsData info =  mData.get(i);
         if (mLoadMoreView.equals(view)) {
             return;
         }
-        Intent intent = new Intent(mContext, ContentDetailActivity.class);
-        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
-        intent.putExtra(ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY,
-                getOtherContentsDetailData(info));
-        startActivity(intent);
+
+        ContentsData info =  mData.get(i);
+        SearchTopActivity searchTopActivity = (SearchTopActivity) mContext;
+        if (ContentUtils.isChildContentList(info)) {
+            searchTopActivity.startChildContentListActivity(info);
+        } else {
+            Intent intent = new Intent(mContext, ContentDetailActivity.class);
+            intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
+            intent.putExtra(ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY,
+                    getOtherContentsDetailData(info));
+            searchTopActivity.startActivity(intent);
+        }
     }
 
     /**

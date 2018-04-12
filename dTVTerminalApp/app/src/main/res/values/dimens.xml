@@ -343,4 +343,12 @@
     <dimen name="recommend_list_left_margine">5dp</dimen>
     <dimen name="recommend_list_right_margine">15dp</dimen>
 
+    <!-- チュートリアル -->
+    <dimen name="tutorial_dots_paddingBottom">24dp</dimen>
+    <dimen name="tutorial_dots_margin">3dp</dimen>
+    <dimen name="tutorial_show_agreement_text_size">14dp</dimen>
+    <dimen name="tutorial_button_text_size">16dp</dimen>
+    <dimen name="tutorial_button_margin_right_left">40dp</dimen>
+    <dimen name="tutorial_button_height">48dp</dimen>
+    <dimen name="tutorial_button_marginBottom">16dp</dimen>
 </resources>

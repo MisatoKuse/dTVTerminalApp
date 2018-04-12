@@ -260,7 +260,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                             //setScheduleInfoのやり方を踏襲.
                             ChannelInfo channel = new ChannelInfo();
                             channel.setChNo(Integer.parseInt(scheduleInfoList.get(0).getChNo()));
-                            channel.setTitle(scheduleInfoList.get(0).getTitle());
+//                            channel.setTitle(scheduleInfoList.get(0).getTitle());
                             channel.setSchedules(scheduleInfoList);
                             channelsInfo.addChannel(channel);
                         }
@@ -443,7 +443,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 mScheduleList.add(mSchedule);
                 ChannelInfo channel = new ChannelInfo();
                 channel.setChNo(Integer.parseInt(mSchedule.getChNo()));
-                channel.setTitle(mSchedule.getTitle());
+//                channel.setTitle(mSchedule.getTitle());
                 channel.setSchedules(mScheduleList);
                 channelsInfo.addChannel(channel);
             }
@@ -625,34 +625,28 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      * @param type   dch：dチャンネル, hikaritv：ひかりTVの多ch, 指定なしの場合：すべて
      */
     public void getChannelList(final int limit, final int offset, final String filter, final int type) {
-//        mChannelServiceType = type;
-//
-//        DateUtils dateUtils = new DateUtils(mContext);
-//        String lastDate = dateUtils.getLastDate(DateUtils.CHANNEL_LAST_UPDATE);
-//        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
-//            //データをDBから取得する
-//            Handler handler = new Handler(mContext.getMainLooper());
-//            //チャンネル情報更新
-//            try {
-//                DbThread t = new DbThread(handler, this, CHANNEL_SELECT);
-//                t.start();
-//            } catch (IllegalThreadStateException e) {
-//                DTVTLogger.debug(e);
-//                //TODO:エラー返却した上でUI上に通知が必要
-//            }
-//        } else {
-//            if (!isStop) {
-//                mChannelWebClient = new ChannelWebClient(mContext);
-//                mChannelWebClient.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], this);
-//            } else {
-//                DTVTLogger.error("ScaledDownProgramListDataProvider is stopping connect");
-//            }
-//        }
-        if (!isStop) {
-            mChannelWebClient = new ChannelWebClient(mContext);
-            mChannelWebClient.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], this);
+        mChannelServiceType = type;
+
+        DateUtils dateUtils = new DateUtils(mContext);
+        String lastDate = dateUtils.getLastDate(DateUtils.CHANNEL_LAST_UPDATE);
+        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
+            //データをDBから取得する
+            Handler handler = new Handler(mContext.getMainLooper());
+            //チャンネル情報更新
+            try {
+                DbThread t = new DbThread(handler, this, CHANNEL_SELECT);
+                t.start();
+            } catch (IllegalThreadStateException e) {
+                DTVTLogger.debug(e);
+                //TODO:エラー返却した上でUI上に通知が必要
+            }
         } else {
-            DTVTLogger.error("ScaledDownProgramListDataProvider is stopping connect");
+            if (!isStop) {
+                mChannelWebClient = new ChannelWebClient(mContext);
+                mChannelWebClient.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], this);
+            } else {
+                DTVTLogger.error("ScaledDownProgramListDataProvider is stopping connect");
+            }
         }
     }
 

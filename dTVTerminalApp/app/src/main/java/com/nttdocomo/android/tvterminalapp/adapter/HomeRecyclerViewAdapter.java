@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
@@ -27,6 +28,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -277,7 +279,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         if (getItemViewType(i) == TYPE_FOOTER) {
             return;
         }
-        ContentsData contentsData = mContentList.get(i);
+        final ContentsData contentsData = mContentList.get(i);
         String title = contentsData.getTitle();
         String rankNum = contentsData.getRank();
         String startTime = contentsData.getLinearStartDate();
@@ -385,11 +387,16 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         viewHolder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                Intent intent = new Intent(mContext, ContentDetailActivity.class);
-                ComponentName componentName = mContext.getComponentName();
-                intent.putExtra(DTVTConstants.SOURCE_SCREEN, componentName.getClassName());
-                intent.putExtra(detailData.getRecommendFlg(), detailData);
-                mContext.startActivity(intent);
+                HomeActivity homeActivity = (HomeActivity) mContext;
+                if (ContentUtils.isChildContentList(contentsData)) {
+                    homeActivity.startChildContentListActivity(contentsData);
+                } else {
+                    Intent intent = new Intent(mContext, ContentDetailActivity.class);
+                    ComponentName componentName = mContext.getComponentName();
+                    intent.putExtra(DTVTConstants.SOURCE_SCREEN, componentName.getClassName());
+                    intent.putExtra(detailData.getRecommendFlg(), detailData);
+                    homeActivity.startActivity(intent);
+                }
             }
         });
     }
@@ -408,7 +415,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             String categoryId = contentsData.getCategoryId();
             switch (Integer.parseInt(serviceId)) {
                 //ひかりTV
-                case OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID:
+                case ContentDetailActivity.DTV_HIKARI_CONTENTS_SERVICE_ID:
                     List<String> list = Arrays.asList(categoryId_Hikari);
                     if (list.contains(categoryId)) {
                         viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
@@ -421,17 +428,17 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
                     }
                     break;
                 //dTV
-                case OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID:
+                case ContentDetailActivity.DTV_CONTENTS_SERVICE_ID:
                     viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
                     viewHolder.mServiceIconFirst.setImageResource(R.mipmap.label_service_dtv);
                     break;
                 //アニメ
-                case OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID:
+                case ContentDetailActivity.D_ANIMATION_CONTENTS_SERVICE_ID:
                     viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
                     viewHolder.mServiceIconFirst.setImageResource(R.mipmap.label_service_danime);
                     break;
                 //dTVチャンネル
-                case OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID:
+                case ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID:
                     viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
                     viewHolder.mServiceIconFirst.setImageResource(R.mipmap.label_service_dch);
                     break;
@@ -477,6 +484,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      */
     private void setTvRankingInfo(final ContentsData contentsData, final ViewHolder viewHolder) {
         String availStartDate = contentsData.getLinearStartDate();
+        if (availStartDate == null) {
+            availStartDate = "0"; // TODO:クラッシュのため暫定対応
+        }
         String channelName = contentsData.getChannelName();
         String date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(availStartDate)), channelName);
         viewHolder.mTime.setText(date);

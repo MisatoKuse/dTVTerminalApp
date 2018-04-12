@@ -55,6 +55,10 @@ public class DaccountControl implements
      * DaccountCheckServiceクラスのインスタンス.
      */
     private DaccountCheckService mDaccountCheckService = null;
+    /**
+     * dアカウント処理中フラグ.
+     */
+    private boolean mDAccountBusy = false;
 
     /**
      * 実行クラスの識別用固定値.
@@ -104,6 +108,23 @@ public class DaccountControl implements
     }
 
     /**
+     * dアカウント取得状態のゲッター.
+     *
+     * @return 何らかのdアカウントの処理が行われているならばtrue
+     */
+    public boolean isDAccountBusy() {
+        return mDAccountBusy;
+    }
+    /**
+     * dアカウント取得状態のセッター.
+     *
+     * @param busy 処理が終わった場合はfalseをセット
+     */
+    public void setDAccountBusy(boolean busy) {
+        mDAccountBusy = busy;
+    }
+
+    /**
      * 結果を返すコールバック.
      */
     public interface DaccountControlCallBack {
@@ -129,6 +150,12 @@ public class DaccountControl implements
 
         //初回実行である事を設定する
         SharedPreferencesUtils.setFirstExecStart(context);
+
+        //初回起動の場合を判定
+        if (SharedPreferencesUtils.isFirstDaccountGetProcess(context)) {
+            //初回の場合はダイアログを表示するので、処理中フラグを立てる
+            mDAccountBusy = true;
+        }
 
         if (DAccountUtils.checkDAccountIsExist() == null) {
             //dアカウント設定アプリが存在しないので帰る。ここで帰れば、単体実行フラグがセットされず、別のアクティビティの実行時に自動的に実行される。
@@ -299,6 +326,9 @@ public class DaccountControl implements
 
         //ワンタイムパスワードを控える
         SharedPreferencesUtils.setSharedPreferencesOneTimePass(mContext, oneTimePassword);
+
+        //処理が正常に終わったので、フラグは初期化
+        mDAccountBusy = false;
 
         //実行に成功したので、trueを返す
         mDaccountControlCallBack.daccountControlCallBack(true);

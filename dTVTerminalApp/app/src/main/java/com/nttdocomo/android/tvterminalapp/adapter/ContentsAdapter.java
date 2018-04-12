@@ -90,6 +90,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     /**
      * 番組タイトル margintop.
      */
+    private final static int TITLE_MARGIN_TOP16 = 16;
+
+    /**
+     * 番組タイトル margintop.
+     */
     private final static int TITLE_MARGIN_TOP17 = 17;
 
     /**
@@ -158,6 +163,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * ダウンロード禁止判定フラグ.
      */
     private boolean isDownloadStop = false;
+
+    /**
+     * アローアイコンmargin right.
+     */
+    private final static int ARROW_MARGIN_RIGHT4 = 4;
 
     /**
      * 機能
@@ -311,27 +321,59 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         return position;
     }
 
-    @SuppressWarnings("OverlyLongMethod")
     @Override
     public View getView(final int position, final View view, final ViewGroup parent) {
         ViewHolder holder;
-
-        View contentView = view;
-        //ビューの再利用
-        if (contentView == null) {
-            holder = new ViewHolder();
-            contentView = mInflater.inflate(R.layout.item_common_result, parent, false);
-            holder = setListItemPattern(holder, contentView);
-            contentView.setTag(holder);
-        } else {
-            holder = (ViewHolder) contentView.getTag();
-        }
-        setShowDataVisibility(holder);
         //各アイテムデータを取得
         final ContentsData listContentInfo = mListData.get(position);
-        // アイテムデータを設定する
-        setContentsData(holder, listContentInfo, contentView);
+        View contentView = view;
 
+        if (contentView == null) {
+            if (listContentInfo.hasChildContentList()) {
+                holder = new ViewHolder();
+                contentView = mInflater.inflate(R.layout.item_wizard_cell, parent, false);
+                setWizardItem(holder, contentView);
+            } else {
+                holder = new ViewHolder();
+                contentView = mInflater.inflate(R.layout.item_common_result, parent, false);
+                setListItemPattern(holder, contentView);
+            }
+        } else {
+            holder = (ViewHolder) contentView.getTag();
+            if (holder.isCommonContent && listContentInfo.hasChildContentList()) {
+                holder = new ViewHolder();
+                contentView = mInflater.inflate(R.layout.item_wizard_cell, parent, false);
+                setWizardItem(holder, contentView);
+            }
+            if (!holder.isCommonContent && !listContentInfo.hasChildContentList()) {
+                holder = new ViewHolder();
+                contentView = mInflater.inflate(R.layout.item_common_result, parent, false);
+                setListItemPattern(holder, contentView);
+            }
+        }
+
+        // アイテムデータを設定する
+        if (listContentInfo.hasChildContentList()) {
+            setTitleData(holder, listContentInfo);
+        } else {
+            setContentsData(holder, listContentInfo, contentView);
+            setShowDataVisibility(holder);
+            setClipButtonItem(position, holder, contentView, listContentInfo);
+            setMarginLayout(position, holder, contentView);
+        }
+
+        return contentView;
+    }
+
+    /**
+     * 非多階層アイテムのクリップボタン処理設定.
+     *
+     * @param position リスト位置
+     * @param holder 設定済みViewHolder
+     * @param contentView ビュー
+     * @param listContentInfo アイテムデータ
+     */
+    private void setClipButtonItem(final int position, final ViewHolder holder, final View contentView, final ContentsData listContentInfo) {
         if (!ActivityTypeItem.TYPE_RECORDED_LIST.equals(mType)) {
             //クリップボタン処理を設定する
             final ClipRequestData requestData = listContentInfo.getRequestData();
@@ -353,7 +395,17 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         } else {
             setDownloadStatus(holder, listContentInfo, position);
         }
+    }
 
+    /**
+     * 非多階層アイテムのレイアウト調整.
+     *
+     * @param position リスト位置
+     * @param holder 設定済みViewHolder
+     * @param contentView ビュー
+     */
+    @SuppressWarnings("OverlyLongMethod")
+    private void setMarginLayout(final int position, final ViewHolder holder, final View contentView) {
         RelativeLayout.LayoutParams layoutParamsClip = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         int textMargin;
@@ -420,7 +472,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_rank.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
             }
         }
-        return contentView;
     }
 
     /**
@@ -626,7 +677,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             if (!TextUtils.isEmpty(listContentInfo.getServiceId()) && DBUtils.isNumber(listContentInfo.getServiceId())) {
                 int serviceId = Integer.parseInt(listContentInfo.getServiceId());
                 String categoryId = listContentInfo.getServiceId();
-                if (OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID == serviceId
+                if (ContentDetailActivity.DTV_HIKARI_CONTENTS_SERVICE_ID == serviceId
                         && (ContentDetailActivity.H4D_CATEGORY_IPTV.equals(categoryId)
                         || ContentDetailActivity.H4D_CATEGORY_DTV_CHANNEL_BROADCAST.equals(categoryId))) {
                     if (DateUtils.isNowOnAirDate(listContentInfo.getStartViewing(),
@@ -1011,6 +1062,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         return holder;
     }
 
+    private void setWizardItem(final ViewHolder holder, final View view) {
+        holder.tv_title = view.findViewById(R.id.item_common_result_content_title);
+        holder.isCommonContent = false;
+        view.setTag(holder);
+    }
+
     /**
      * Itemのパターンを設定.
      *
@@ -1018,10 +1075,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * @param view   View
      * @return 各画面特化ViewHolder
      */
-    private ViewHolder setListItemPattern(final ViewHolder holder, final View view) {
+    private void setListItemPattern(final ViewHolder holder, final View view) {
         DTVTLogger.start();
         // TODO 録画予約一覧以外のパターンも共通項目以外を抽出し、修正する
         ViewHolder viewHolder = holder;
+        view.setTag(viewHolder);
+        viewHolder.isCommonContent = true;
         viewHolder = setCommonListItem(viewHolder, view);
         switch (mType) {
             case TYPE_RECOMMEND_LIST://おすすめ番組・ビデオ
@@ -1056,7 +1115,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             default:
                 break;
         }
-        return viewHolder;
     }
 
     /**
@@ -1151,39 +1209,43 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * @param listContentInfo 行データー
      */
     private void setClipButton(final ViewHolder holder, final ContentsData listContentInfo) {
-        if (holder.tv_clip != null) {
-            String clipType = listContentInfo.getRequestData().getType();
-            //ひかりコンテンツ判定
-            if (StringUtils.isHikariContents(clipType) || StringUtils.isHikariInDtvContents(clipType)) {
-                //クリップボタン表示設定
-                if (!mType.equals(ActivityTypeItem.TYPE_RECORDING_RESERVATION_LIST)) {
-                    //クリップ状態が1以外の時は、非活性クリップボタンを表示
-                    if (listContentInfo.isClipExec()) {
-                        //クリップ状態が再取得された場合はタグでの判定を使用しない
-                        if (!listContentInfo.isClipStatusUpdate()) {
-                            //クリップ操作後のボタン状態に応じてクリップのステータスを変更し、リスト再利用時のボタン書き換えを回避する
-                            Object clipButtonTag = holder.tv_clip.getTag();
-                            if (clipButtonTag != null) {
-                                if (clipButtonTag.equals(BaseActivity.CLIP_ACTIVE_STATUS)) {
-                                    listContentInfo.setClipStatus(true);
-                                } else {
-                                    listContentInfo.setClipStatus(false);
+        if (holder.tv_clip != null ) {
+            if (listContentInfo.getRequestData() != null) {
+                String clipType = listContentInfo.getRequestData().getType();
+                //ひかりコンテンツ判定
+                if (StringUtils.isHikariContents(clipType) || StringUtils.isHikariInDtvContents(clipType)) {
+                    //クリップボタン表示設定
+                    if (!mType.equals(ActivityTypeItem.TYPE_RECORDING_RESERVATION_LIST)) {
+                        //クリップ状態が1以外の時は、非活性クリップボタンを表示
+                        if (listContentInfo.isClipExec()) {
+                            //クリップ状態が再取得された場合はタグでの判定を使用しない
+                            if (!listContentInfo.isClipStatusUpdate()) {
+                                //クリップ操作後のボタン状態に応じてクリップのステータスを変更し、リスト再利用時のボタン書き換えを回避する
+                                Object clipButtonTag = holder.tv_clip.getTag();
+                                if (clipButtonTag != null) {
+                                    if (clipButtonTag.equals(BaseActivity.CLIP_ACTIVE_STATUS)) {
+                                        listContentInfo.setClipStatus(true);
+                                    } else {
+                                        listContentInfo.setClipStatus(false);
+                                    }
                                 }
                             }
-                        }
-                        if (listContentInfo.isClipStatus()) {
-                            holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_clip);
-                            holder.tv_clip.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
+                            if (listContentInfo.isClipStatus()) {
+                                holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                                holder.tv_clip.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
+                            } else {
+                                holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
+                                holder.tv_clip.setTag(BaseActivity.CLIP_OPACITY_STATUS);
+                            }
                         } else {
-                            holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
-                            holder.tv_clip.setTag(BaseActivity.CLIP_OPACITY_STATUS);
+                            holder.tv_clip.setVisibility(View.GONE);
                         }
-                    } else {
-                        holder.tv_clip.setVisibility(View.GONE);
+                        //クリップ状態判定後は更新フラグをfalseに戻す
+                        listContentInfo.setClipStatusUpdate(false);
                     }
-                    //クリップ状態判定後は更新フラグをfalseに戻す
-                    listContentInfo.setClipStatusUpdate(false);
                 }
+            } else {
+                holder.tv_clip.setVisibility(View.GONE);
             }
         }
     }
@@ -1296,6 +1358,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
          * サブタイトル.
          */
         TextView tv_sub_title = null;
+
+        boolean isCommonContent = true;
     }
 
     /**
