@@ -629,7 +629,7 @@ public class DtvContentsDetailFragment extends Fragment {
         String date = DateUtils.formatEpochToString(endDate);
 
         if (mTxtChannelDate != null) {
-            String untilDate = StringUtils.getConnectStrings(date, getString(R.string.contents_detail_until_date));
+            String untilDate = StringUtils.getConnectStrings(date, getString(R.string.common_until));
             mTxtChannelDate.setText(untilDate);
         }
     }

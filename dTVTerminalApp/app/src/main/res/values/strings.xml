@@ -42,6 +42,8 @@
     <string name="common_empty_data_message">コンテンツがありません</string>
     <string name="common_get_data_failed_message">取得に失敗しました</string>
     <string name="common_root_device_detection_message">Rootデバイスを検知したためアプリを終了します</string>
+    <string name="common_from">から</string>
+    <string name="common_until">まで</string>
 
     <!-- Launch -->
     <string name="str_app_title">ドコモテレビターミナル</string>
@@ -225,7 +227,6 @@
     <string name="contents_info_thumbnail_button">コンテンツ詳細のサムネイル画像上のボタン</string>
     <string name="contents_detail_tv_staff">キャスト・スタッフ</string>
     <string name="contents_detail_tv_staff_recommend">おすすめ作品</string>
-    <string name="contents_detail_until_date">まで</string>
     <string name="contents_detail_hikari_d_channel_miss_viewing">見逃し</string>
     <string name="contents_detail_hikari_d_channel_miss_viewing_separation">"見逃し | "</string>
     <string name="contents_detail_contract_text">ひかりTV for docomoの契約が必要です。契約済みの方はdアカウントでログインしてください。</string>

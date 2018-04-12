@@ -782,7 +782,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                         } else {
                             //TODO:現状の表示は〇/〇(曜日)まで→表示変更は別チケットで対応予定
                             holder.tv_time.setText(StringUtils.getConnectStrings(listContentInfo.getTime(),
-                                    mContext.getString(R.string.contents_detail_until_date)));
+                                    mContext.getString(R.string.common_until)));
                         }
                     } else {
                         holder.tv_time.setVisibility(View.GONE);
