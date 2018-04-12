@@ -102,7 +102,7 @@
         android:layout_alignParentBottom="true"
         android:textColor="#00A2E6"
         android:textStyle="bold"
-        android:background="@mipmap/startup_btn_normal"
+        android:background="@drawable/startup_btn_normal"
         android:textSize="@dimen/tutorial_button_text_size"
         android:text="@string/tutorial_agreement_button"
         android:layout_centerHorizontal="true"

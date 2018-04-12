@@ -5,11 +5,8 @@
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -36,14 +33,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
      */
     private static boolean mIsFirstRun = true;
     /**
-     * test用ボタン.
-     */
-    private Button mFirstLaunchLaunchYesActivity = null;
-    /**
-     * test用ボタン.
-     */
-    private Button mFirstLaunchLaunchNoActivity = null;
-    /**
      * 次のアクティビティ情報
      */
     private Intent mNextActivity = null;
@@ -60,6 +49,9 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         setTitleText(getString(R.string.str_launch_title));
         enableHeaderBackIcon(false);
         setStatusBarColor(true);
+        setTheme(R.style.AppThemeBlack);
+        setStatusBarColor(R.color.contents_header_background);
+        setTitleVisibility(false);
 
         //現在のdアカウントダイアログの状況を取得
         mDaccountStatus = SharedPreferencesUtils.isFirstDaccountGetProcess(
@@ -128,36 +120,18 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         return getString(R.string.str_launch_title);
     }
 
-    // TODO チュートリアル画面作成時に削除
-    @Override
-    public void onClick(final View v) {
-        if (v.equals(mFirstLaunchLaunchYesActivity)) {
-            onFirstLaunchYesButton();
-        } else if (v.equals(mFirstLaunchLaunchNoActivity)) {
-            doScreenTransition();
-        }
-    }
-
-    /**
-     * チュートリアル画面へ遷移.
-     */
-    // TODO チュートリアル画面作成時に削除
-    private void onFirstLaunchYesButton() {
-        startActivityWait(new Intent(getApplicationContext(),TutorialActivity.class));
-    }
-
     @Override
     protected void onDaccountOttGetComplete() {
         super.onDaccountOttGetComplete();
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                // TODO チュートリアルレビューが終わったらコメントアウトを外す
-//                if (mIsFirstRun) {
-                startActivityWait(new Intent(getApplicationContext(), TutorialActivity.class));
-//                } else {
-//                    doScreenTransition();
-//                }
+                if (mIsFirstRun) {
+                    startActivityWait(new Intent(getApplicationContext(), TutorialActivity.class));
+                } else {
+                    doScreenTransition();
+                }
+                finish();
             }
         });
     }
