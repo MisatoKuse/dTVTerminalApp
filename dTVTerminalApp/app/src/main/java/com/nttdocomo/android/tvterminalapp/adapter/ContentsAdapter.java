@@ -27,7 +27,6 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationList
 import com.nttdocomo.android.tvterminalapp.dataprovider.RentalDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
@@ -86,11 +85,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * status　margintop.
      */
     private final static int STATUS_MARGIN_TOP10 = 10;
-
-    /**
-     * 番組タイトル margintop.
-     */
-    private final static int TITLE_MARGIN_TOP16 = 16;
 
     /**
      * 番組タイトル margintop.
@@ -163,11 +157,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * ダウンロード禁止判定フラグ.
      */
     private boolean isDownloadStop = false;
-
-    /**
-     * アローアイコンmargin right.
-     */
-    private final static int ARROW_MARGIN_RIGHT4 = 4;
 
     /**
      * 機能
@@ -485,6 +474,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         int clipMargin;
         switch (mTabType) {
             case TAB_TV:
+            case TAB_D_CHANNEL:
                 textMargin = STATUS_MARGIN_TOP10;
                 clipMargin = CLIP_MARGIN_TOP35;
                 setTextMargin(textMargin, holder, contentView);
@@ -498,7 +488,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 break;
 
             case TAB_D_ANIMATE:
-            case TAB_D_CHANNEL:
             case TAB_D_TV:
                 textMargin = TITLE_MARGIN_TOP30;
                 clipMargin = CLIP_MARGIN_TOP35;
@@ -726,7 +715,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 break;
             case TAB_D_CHANNEL:
             case TAB_D_ANIMATE:
-            case  TAB_D_TV:
+            case TAB_D_TV:
                 holder.tv_rank.setVisibility(View.GONE);
                 holder.tv_time.setVisibility(View.GONE);
                 holder.ll_rating.setVisibility(View.GONE);
@@ -1005,6 +994,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     private void setTabHyphenVisibility(final ViewHolder holder, final ContentsData listContentInfo) {
         switch (mTabType) {
             case TAB_TV:
+            case TAB_D_CHANNEL:
                 if (!TextUtils.isEmpty(listContentInfo.getChannelName())) {
                     holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
                     holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
@@ -1012,7 +1002,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 }
                 break;
             case TAB_D_ANIMATE:
-            case TAB_D_CHANNEL:
             case TAB_D_TV:
             case TAB_VIDEO:
                 break;
@@ -1126,12 +1115,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     private void setTabContentHyphen(final ViewHolder holder, final View view) {
         switch (mTabType) {
             case TAB_TV:
+            case TAB_D_CHANNEL:
             case TAB_DEFAULT:
                 holder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
                 holder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
                 break;
             case TAB_D_ANIMATE:
-            case TAB_D_CHANNEL:
             case TAB_D_TV:
             case TAB_VIDEO:
                 break;
@@ -1342,10 +1331,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
          * 録画予約ステータス.
          */
         TextView tv_recording_reservation = null;
-        /**
-         * チャンネル名.
-         */
-        final TextView tv_channel_name = null;
         /**
          * ハイフン.
          */
