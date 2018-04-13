@@ -17,6 +17,29 @@ import java.util.Date;
  */
 public class ContentUtils {
 
+    public enum ContentsType {
+        /**
+         * テレビ.
+         */
+        TV,
+        /**
+         * ビデオ.
+         */
+        VOD,
+        /**
+         * ひかりTV内dch_見逃し(３２以上).
+         */
+        DCHANNEL_VOD_OVER_31,
+        /**
+         * ひかりTV内dch_見逃し(３1以内).
+         */
+        DCHANNEL_VOD_31,
+        /**
+         * その他.
+         */
+        OTHER
+    }
+
     /**
      * 多階層コンテンツであるか判定する.
      * @param contentsData コンテンツデータ
@@ -33,41 +56,41 @@ public class ContentUtils {
      * @param categoryId tv_service
      * @return VOD、TV、その他
      */
-    public static DateUtils.ContentsType getContentsTypeByRecommend(final int serviceId, final String categoryId) {
-        DateUtils.ContentsType cType = DateUtils.ContentsType.OTHER;
+    public static ContentsType getContentsTypeByRecommend(final int serviceId, final String categoryId) {
+        ContentsType cType = ContentsType.OTHER;
         switch (serviceId) {
             //dTV
             case ContentDetailActivity.DTV_CONTENTS_SERVICE_ID:
                 if (ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(categoryId)
                         || ContentDetailActivity.H4D_CATEGORY_SATELLITE_BS.equals(categoryId)) {
-                    cType = DateUtils.ContentsType.VOD;
+                    cType = ContentsType.VOD;
                 }
                 break;
             //dアニメストア
             case ContentDetailActivity.D_ANIMATION_CONTENTS_SERVICE_ID:
                 if (ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(categoryId)) {
-                    cType = DateUtils.ContentsType.VOD;
+                    cType = ContentsType.VOD;
                 }
                 break;
             //dTVチャンネル
             case ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID:
                 if (ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(categoryId)) {
-                    cType = DateUtils.ContentsType.TV;
+                    cType = ContentsType.TV;
                 } else if (ContentDetailActivity.H4D_CATEGORY_SATELLITE_BS.equals(categoryId)
                         || ContentDetailActivity.H4D_CATEGORY_IPTV.equals(categoryId)) {
-                    cType = DateUtils.ContentsType.VOD;
+                    cType = ContentsType.VOD;
                 }
                 break;
             //ひかりTV for docomo
             case ContentDetailActivity.DTV_HIKARI_CONTENTS_SERVICE_ID:
                 if (ContentDetailActivity.H4D_CATEGORY_IPTV.equals(categoryId)
                         || ContentDetailActivity.H4D_CATEGORY_DTV_CHANNEL_BROADCAST.equals(categoryId)) {
-                    cType = DateUtils.ContentsType.TV;
+                    cType = ContentsType.TV;
                 } else if (ContentDetailActivity.H4D_CATEGORY_DTV_CHANNEL_MISSED.equals(categoryId)
                         || ContentDetailActivity.H4D_CATEGORY_DTV_CHANNEL_RELATION.equals(categoryId)
                         || ContentDetailActivity.H4D_CATEGORY_HIKARITV_VOD.equals(categoryId)
                         || ContentDetailActivity.H4D_CATEGORY_HIKARI_DTV_SVOD.equals(categoryId)) {
-                    cType = DateUtils.ContentsType.VOD;
+                    cType = ContentsType.VOD;
                 }
                 break;
             default:
@@ -87,10 +110,10 @@ public class ContentUtils {
      * @param vodEndDate VOD配信日時(vod_end_date)
      * @return VOD、TV、DCHANNEL_VOD_OVER_31、DCHANNEL_VOD_31、その他
      */
-    public static DateUtils.ContentsType getContentsTypeByPlala(final String dispType, final String tvService,
+    public static ContentsType getContentsTypeByPlala(final String dispType, final String tvService,
                                                                 final String contentsType, final long availEndDate,
                                                                 final long vodStartDate, final long vodEndDate) {
-        DateUtils.ContentsType cType = DateUtils.ContentsType.OTHER;
+        ContentsType cType = ContentsType.OTHER;
         if (ContentDetailActivity.VIDEO_PROGRAM.equals(dispType)
                 || ContentDetailActivity.VIDEO_SERIES.equals(dispType)) {
             //ひかりTV_VOD、ひかりTV内dTV
@@ -98,7 +121,7 @@ public class ContentUtils {
         } else if (ContentDetailActivity.TV_PROGRAM.equals(dispType)) {
             if (ContentDetailActivity.TV_SERVICE_FLAG_HIKARI.equals(tvService)) {
                 //ひかりTV_番組
-                cType = DateUtils.ContentsType.TV;
+                cType = ContentsType.TV;
             } else if (ContentDetailActivity.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(tvService)) {
                 if (ContentDetailActivity.CONTENT_TYPE_FLAG_THREE.equals(contentsType)) {
                     //ひかりTV内dTVチャンネル_関連VOD
@@ -113,18 +136,18 @@ public class ContentUtils {
                         //ひかりTV内dTVチャンネル_見逃し
                         if (DateUtils.isOver31Day(vodEndDate)) {
                             //ひかりTV内dTVチャンネル_見逃し(32日以上)
-                            cType = DateUtils.ContentsType.DCHANNEL_VOD_OVER_31;
+                            cType = ContentsType.DCHANNEL_VOD_OVER_31;
                         } else {
                             //ひかりTV内dTVチャンネル_見逃し(31日以内)
-                            cType = DateUtils.ContentsType.DCHANNEL_VOD_31;
+                            cType = ContentsType.DCHANNEL_VOD_31;
                         }
                     } else {
                         //ひかりTV内dTVチャンネル_番組
-                        cType = DateUtils.ContentsType.TV;
+                        cType = ContentsType.TV;
                     }
                 } else {
                     //ひかりTV内dTVチャンネル_番組
-                    cType = DateUtils.ContentsType.TV;
+                    cType = ContentsType.TV;
                 }
             }
         }

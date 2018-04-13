@@ -296,29 +296,6 @@ public class DateUtils {
      */
     private static final String DATE_FORMAT_BLANK = " ";
 
-    public enum ContentsType {
-        /**
-         * テレビ.
-         */
-        TV,
-        /**
-         * ビデオ.
-         */
-        VOD,
-        /**
-         * ひかりTV内dch_見逃し(３２以上).
-         */
-        DCHANNEL_VOD_OVER_31,
-        /**
-         * ひかりTV内dch_見逃し(３1以内).
-         */
-        DCHANNEL_VOD_31,
-        /**
-         * その他.
-         */
-        OTHER
-    }
-
     /**
      * コンストラクタ.
      *
@@ -849,10 +826,10 @@ public class DateUtils {
      * @param availEndDate availEndDate
      * @return VOD、OTHER
      */
-    public static ContentsType getContentsTypeByAvailEndDate(final long availEndDate) {
-        ContentsType cType = ContentsType.OTHER;
+    public static ContentUtils.ContentsType getContentsTypeByAvailEndDate(final long availEndDate) {
+        ContentUtils.ContentsType cType = ContentUtils.ContentsType.OTHER;
         if (!isOver31Day(availEndDate)) {
-            cType = ContentsType.VOD;
+            cType = ContentUtils.ContentsType.VOD;
         }
         return cType;
     }
