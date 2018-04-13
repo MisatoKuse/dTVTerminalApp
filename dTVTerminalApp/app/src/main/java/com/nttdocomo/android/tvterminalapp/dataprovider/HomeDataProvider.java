@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
@@ -856,14 +857,11 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if (!mIsStop) {
             //通信クラスにデータ取得要求を出す
             mTvClipWebClient = new TvClipWebClient(mContext);
-            int ageReq = 1;
-            int upperPageLimit = 1;
-            int lowerPageLimit = 1;
-            int pagerOffset = 1;
+            UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
             String pagerDirection = "";
 
-            mTvClipWebClient.getTvClipApi(ageReq, upperPageLimit,
-                    lowerPageLimit, pagerOffset, pagerDirection, this);
+            mTvClipWebClient.getTvClipApi(userInfoDataProvider.getUserAge(), DTVTConstants.REQUEST_LIMIT_50,
+                    DTVTConstants.REQUEST_LIMIT_50, 1, pagerDirection, this);
         } else {
             DTVTLogger.error("TvClipWebClient is stopping connect");
         }
@@ -876,14 +874,11 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if (!mIsStop) {
             //通信クラスにデータ取得要求を出す
             mVodClipWebClient = new VodClipWebClient(mContext);
-            int ageReq = 1;
-            int upperPageLimit = 1;
-            int lowerPageLimit = 1;
-            int pagerOffset = 1;
+            UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
             String pagerDirection = "";
 
-            mVodClipWebClient.getVodClipApi(ageReq, upperPageLimit,
-                    lowerPageLimit, pagerOffset, pagerDirection, this);
+            mVodClipWebClient.getVodClipApi(userInfoDataProvider.getUserAge(), DTVTConstants.REQUEST_LIMIT_50,
+                    DTVTConstants.REQUEST_LIMIT_50, 1, pagerDirection, this);
         } else {
             DTVTLogger.error("VodClipWebClient is stopping connect");
         }

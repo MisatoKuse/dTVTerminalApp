@@ -769,7 +769,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 case TYPE_DAILY_RANK: // 今日のテレビランキング
                 case TYPE_WEEKLY_RANK: // 週間ランキング
                 case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
-                    holder.tv_time.setText(DateUtils.getRecordShowListItem(Long.parseLong(listContentInfo.getTime())));
+                    try {
+                        holder.tv_time.setText(DateUtils.getRecordShowListItem(Long.parseLong(listContentInfo.getTime())));
+                    } catch(NumberFormatException e) {
+                        //TODO:Long.parseLongの対応はコンテンツの期間表示時に対応し、Long.parseLongを移動するなどしてtry~catchを削除する
+                        DTVTLogger.error(e.getMessage());
+                    }
                     break;
                 case TYPE_RENTAL_RANK: // レンタル一覧
                 case TYPE_PREMIUM_VIDEO_LIST: //プレミアムビデオ
