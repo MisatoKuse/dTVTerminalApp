@@ -345,8 +345,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         if (listContentInfo.hasChildContentList()) {
             setTitleData(holder, listContentInfo);
         } else {
-            setContentsData(holder, listContentInfo, contentView);
             setShowDataVisibility(holder);
+            setContentsData(holder, listContentInfo, contentView);
             setClipButtonItem(position, holder, contentView, listContentInfo);
             setMarginLayout(position, holder, contentView);
         }
