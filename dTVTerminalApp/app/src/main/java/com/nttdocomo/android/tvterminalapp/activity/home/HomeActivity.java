@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewAdapter;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
@@ -36,9 +38,11 @@ import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopHomeDataConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopUserInfoDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
@@ -76,7 +80,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         WatchListenVideoListDataProvider.WatchListenVideoListProviderCallback,
         RentalChListWebClient.RentalChListJsonParserCallback,
         RentalDataProvider.ApiDataProviderCallback,
-        HomeDataProvider.ApiDataProviderCallback, UserInfoDataProvider.UserDataProviderCallback {
+        HomeDataProvider.ApiDataProviderCallback, UserInfoDataProvider.UserDataProviderCallback,
+        HomeRecyclerViewAdapter.ItemClickCallback {
 
     /**
      * 表示するコンテンツを内包するLinearLayout.
@@ -488,6 +493,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(linearLayoutManager);
         HomeRecyclerViewAdapter horizontalViewAdapter = new HomeRecyclerViewAdapter(this, contentsDataList, index + HOME_CONTENTS_DISTINCTION_ADAPTER);
+        horizontalViewAdapter.setOnItemClickCallBack(this);
         recyclerView.setAdapter(horizontalViewAdapter);
         View footer = LayoutInflater.from(this).inflate(R.layout.home_main_layout_recyclerview_footer, recyclerView, false);
         RelativeLayout homeMore = footer.findViewById(R.id.home_main_layout_recyclerview_footer);
@@ -869,6 +875,19 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 }
             }
         });
+    }
+
+    @Override
+    public void onItemClickCallBack(final ContentsData contentsData, final OtherContentsDetailData detailData) {
+        if (ContentUtils.isChildContentList(contentsData)) {
+            startChildContentListActivity(contentsData);
+        } else {
+            Intent intent = new Intent(this, ContentDetailActivity.class);
+            ComponentName componentName = this.getComponentName();
+            intent.putExtra(DTVTConstants.SOURCE_SCREEN, componentName.getClassName());
+            intent.putExtra(detailData.getRecommendFlg(), detailData);
+            startActivity(intent);
+        }
     }
 
     @Override

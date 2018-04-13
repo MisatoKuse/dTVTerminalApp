@@ -5,8 +5,6 @@
 package com.nttdocomo.android.tvterminalapp.adapter;
 
 import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -20,15 +18,12 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
-import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
-import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -57,6 +52,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      * サムネイル取得プロバイダー.
      */
     private final ThumbnailProvider mThumbnailProvider;
+    /**
+     * サムネイル取得プロバイダー.
+     */
+    private ItemClickCallback mItemClickCallback;
     /**
      * コンテンツ種別を判別するためのインデックス.
      */
@@ -200,6 +199,19 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     private final static String categoryId_Hikari_dtv = "10";
 
     /**
+     * Itemクリック動作でコールバック.
+     */
+    public interface ItemClickCallback {
+        /**
+         * アイテムクリックコールバック.
+         *
+         * @param contentsData クリックしたデータ
+         * @param detailData 遷移渡すデータ
+         */
+        void onItemClickCallBack(ContentsData contentsData, OtherContentsDetailData detailData);
+    }
+
+    /**
      * コンストラクタ.
      *
      * @param context コンテキスト
@@ -212,6 +224,15 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         this.mContext = context;
         this.mIndex = index;
         mThumbnailProvider = new ThumbnailProvider(context);
+    }
+
+    /**
+     * コールバックを設定.
+     *
+     * @param mItemClickCallback コールバック
+     */
+    public void setOnItemClickCallBack(final ItemClickCallback mItemClickCallback) {
+        this.mItemClickCallback = mItemClickCallback;
     }
 
     /**
@@ -387,15 +408,8 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         viewHolder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                HomeActivity homeActivity = (HomeActivity) mContext;
-                if (ContentUtils.isChildContentList(contentsData)) {
-                    homeActivity.startChildContentListActivity(contentsData);
-                } else {
-                    Intent intent = new Intent(mContext, ContentDetailActivity.class);
-                    ComponentName componentName = mContext.getComponentName();
-                    intent.putExtra(DTVTConstants.SOURCE_SCREEN, componentName.getClassName());
-                    intent.putExtra(detailData.getRecommendFlg(), detailData);
-                    homeActivity.startActivity(intent);
+                if (mItemClickCallback != null) {
+                    mItemClickCallback.onItemClickCallBack(contentsData, detailData);
                 }
             }
         });
