@@ -45,6 +45,10 @@ public class ContentsData {
     private String mTitleId = null;
     // 番組種別
     private String mDispType = null;
+    // 日時（epoc秒）	(VOD用)コンテンツ自体の有効開始日時(PITのみ)
+    private long mAvailStartDate = 0;
+    // 日時（epoc秒）	(VOD用)コンテンツ自体の有効期限日時(PITのみ)
+    private long mAvailEndDate = 0;
     // 番組のパレンタル設定値
     private String mRValue = null;
     // 放送開始日時
@@ -57,6 +61,10 @@ public class ContentsData {
     private String mContentsType = null;
     // サービス種別
     private String mTvService = null;
+    // VOD配信開始日時  日時（epoc秒）
+    private long mVodStartDate = 0;
+    // VOD配信終了日時  日時（epoc秒）
+    private long mVodEndDate = 0;
     // dTVフラグ
     private String mDtv = null;
     // コンテンツID
@@ -124,6 +132,38 @@ public class ContentsData {
     private String mDescription2 = null;
     // description3
     private String mDescription3 = null;
+
+    public long getAvailStartDate() {
+        return mAvailStartDate;
+    }
+
+    public void setAvailStartDate(long availStartDate) {
+        this.mAvailStartDate = availStartDate;
+    }
+
+    public long getAvailEndDate() {
+        return mAvailEndDate;
+    }
+
+    public void setAvailEndDate(long availEndDate) {
+        this.mAvailEndDate = availEndDate;
+    }
+
+    public long getVodStartDate () {
+        return mVodStartDate;
+    }
+
+    public void setVodStartDate(long vodStartDate) {
+        this.mVodStartDate = vodStartDate;
+    }
+
+    public long getVodEndDate () {
+        return mVodEndDate;
+    }
+
+    public void setVodEndDate(long vodEndDate) {
+        this.mVodEndDate = vodEndDate;
+    }
 
     public String getDescription1() {
         return mDescription1;

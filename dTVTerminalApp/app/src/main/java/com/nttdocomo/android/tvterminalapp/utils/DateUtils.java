@@ -767,7 +767,7 @@ public class DateUtils {
     }
 
     /**
-     * コンテンツ配信表示(対向ぷららサーバ).
+     * コンテンツ配信表示(対向検レコサーバ).
      *
      * @param startView 配信開始時間
      * @return true 配信前、false 配信後

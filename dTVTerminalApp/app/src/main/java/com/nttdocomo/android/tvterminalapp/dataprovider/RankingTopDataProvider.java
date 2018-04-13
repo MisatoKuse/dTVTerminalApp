@@ -36,6 +36,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
@@ -671,6 +672,10 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                     }
                 }
             }
+            rankingContentInfo.setAvailEndDate(StringUtils.changeString2Long(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
+            rankingContentInfo.setVodStartDate(StringUtils.changeString2Long(map.get(JsonConstants.META_RESPONSE_VOD_START_DATE)));
+            rankingContentInfo.setVodEndDate(StringUtils.changeString2Long(map.get(JsonConstants.META_RESPONSE_VOD_END_DATE)));
+
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
             requestData.setCrid(map.get(JsonConstants.META_RESPONSE_CRID));
