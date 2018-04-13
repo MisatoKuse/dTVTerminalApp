@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.ranking;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,14 +20,17 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopHomeRecyclerViewAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRankingTopDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.List;
@@ -35,7 +39,7 @@ import java.util.List;
  * ランキングトップ画面.
  */
 public class RankingTopActivity extends BaseActivity
-        implements RankingTopDataProvider.ApiDataProviderCallback {
+        implements RankingTopDataProvider.ApiDataProviderCallback, HomeRecyclerViewAdapter.ItemClickCallback  {
 
     /**
      * ランキングトップ画面の主View.
@@ -222,6 +226,7 @@ public class RankingTopActivity extends BaseActivity
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(linearLayoutManager);
         HomeRecyclerViewAdapter horizontalViewAdapter = new HomeRecyclerViewAdapter(this, contentsDataList, index + RANKING_CONTENTS_DISTINCTION_ADAPTER);
+        horizontalViewAdapter.setOnItemClickCallBack(this);
         recyclerView.setAdapter(horizontalViewAdapter);
         View footer = LayoutInflater.from(this).inflate(R.layout.home_main_layout_recyclerview_footer, recyclerView, false);
         RelativeLayout rankingMore = footer.findViewById(R.id.home_main_layout_recyclerview_footer);
@@ -401,6 +406,19 @@ public class RankingTopActivity extends BaseActivity
                 controlErrorMessage();
             }
         });
+    }
+
+    @Override
+    public void onItemClickCallBack(final ContentsData contentsData, final OtherContentsDetailData detailData) {
+        if (ContentUtils.isChildContentList(contentsData)) {
+            startChildContentListActivity(contentsData);
+        } else {
+            Intent intent = new Intent(this, ContentDetailActivity.class);
+            ComponentName componentName = this.getComponentName();
+            intent.putExtra(DTVTConstants.SOURCE_SCREEN, componentName.getClassName());
+            intent.putExtra(detailData.getRecommendFlg(), detailData);
+            startActivity(intent);
+        }
     }
 
     @Override
