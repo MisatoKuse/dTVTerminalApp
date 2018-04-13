@@ -311,7 +311,7 @@
     <string name="main_setting_connect_error_message">ドコモテレビターミナルとの通信に失敗しました</string>
     <string name="main_setting_stb_busy_error_message">ドコモテレビターミナルが処理中です</string>
     <string name="main_setting_logon_request_error_message">ログインしてください</string>
-    <string name="main_setting_h4d_not_signed_message">ひかりTV for docomoの契約状態が確認できないため\nご利用になれません。</string>
+    <string name="main_setting_h4d_not_signed_message">ひかりTV for docomoの契約情報が確認できないため\nご利用になれません</string>
     <string name="main_setting_menu_title_faq_list">FAQ</string>
     <string name="main_setting_menu_title_license">ライセンス情報</string>
     <string name="main_setting_menu_title_privacy_policy">プライバシーポリシー</string>

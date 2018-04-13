@@ -277,7 +277,6 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             settingErrorDialog(R.string.main_setting_logon_request_error_message);
             return false;
         } else if (userState.equals(UserState.LOGIN_OK_CONTRACT_NG)) {
-            //TODO ログイン、未契約ペアリング(未実装)の条件判定を追加する必要があるか確認
             //未契約ならダイアログ表示
             settingErrorDialog(R.string.main_setting_h4d_not_signed_message);
             return false;
