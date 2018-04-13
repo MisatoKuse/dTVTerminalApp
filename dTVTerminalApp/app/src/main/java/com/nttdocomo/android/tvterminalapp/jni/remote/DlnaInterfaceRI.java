@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
 
 /**
  * 機能：For Dlna Remote.
@@ -79,8 +78,16 @@ public class DlnaInterfaceRI {
             try {
                 fis = new FileInputStream(file);
                 size = fis.available();
-            } catch (Exception e) {
+            } catch (IOException e) {
                 DTVTLogger.debug(e);
+            }finally {
+                try {
+                    if(fis != null) {
+                        fis.close();
+                    }
+                } catch (IOException e) {
+                    DTVTLogger.debug(e);
+                }
             }
         }
         return size;
@@ -215,14 +222,14 @@ public class DlnaInterfaceRI {
         String temp = null;
         InputStream ret = null;
         try {
-            temp = InputStreamToString(is, sFileEncoce);
+            temp = inputStreamToString(is, sFileEncoce);
             temp = temp.replace(whatToReplace, replace);
         } catch (Exception e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
         if(temp != null) {
             try {
-                ret = StringToInputStream(temp);
+                ret = stringToInputStream(temp);
             } catch (Exception e) {
                 DTVTLogger.debug(e);
             }
@@ -230,12 +237,12 @@ public class DlnaInterfaceRI {
         return ret;
     }
 
-    private static InputStream StringToInputStream(final String in) throws Exception {
+    private static InputStream stringToInputStream(final String in) throws Exception {
         ByteArrayInputStream is = new ByteArrayInputStream(in.getBytes(sFileEncoce));
         return is;
     }
 
-    private static String InputStreamToString(final InputStream in, final String encoding) throws Exception {
+    private static String inputStreamToString(final InputStream in, final String encoding) throws Exception {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         byte[] data = new byte[sBufSize];
         int count = -1;
@@ -252,7 +259,7 @@ public class DlnaInterfaceRI {
         try {
             File file = new File(fullPath);
             in = new FileInputStream(file);
-            ret = InputStreamToString(in, sFileEncoce);
+            ret = inputStreamToString(in, sFileEncoce);
         } catch (Exception e) {
             DTVTLogger.debug(e);
             ret = null;
@@ -366,35 +373,37 @@ public class DlnaInterfaceRI {
     }
 
     private static void copyFileFromAssets(final Context context, final String oldPath, final String newPath) {
+        String[] fileNames = null;
         try {
-            String fileNames[] = context.getAssets().list(oldPath);
-            // フォルダーの判断
-            if (fileNames.length > 0) {
-                File file = new File(newPath);
-                if (!file.exists()) {
-                    if (!file.mkdirs()) {
-                        DTVTLogger.debug("mkdir failed");
-                    }
-                }
-                for (String fileName : fileNames) {
-                    copyFileFromAssets(context, oldPath + File.separator + fileName, newPath + File.separator + fileName);
-                }
-            } else {
-                InputStream is = context.getAssets().open(oldPath);
-                FileOutputStream fos = new FileOutputStream(new File(newPath));
-                byte[] buffer = new byte[1024];
-                int byteCount;
-                while ((byteCount = is.read(buffer)) != -1) {
-                    // buffer
-                    fos.write(buffer, 0, byteCount);
-                }
-                fos.flush();
-                is.close();
-                fos.close();
-            }
+            fileNames = context.getAssets().list(oldPath);
         } catch (IOException e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
+        // フォルダーの判断
+         if (fileNames != null && fileNames.length > 0) {
+          File file = new File(newPath);
+             if (!file.exists()) {
+                 if (!file.mkdirs()) {
+                     DTVTLogger.debug("mkdir failed");
+                 }
+             }
+             for (String fileName : fileNames) {
+                 copyFileFromAssets(context, oldPath + File.separator + fileName, newPath + File.separator + fileName);
+             }
+         } else {
+             try (InputStream is = context.getAssets().open(oldPath);
+                  FileOutputStream fos = new FileOutputStream(new File(newPath))) {
+                 byte[] buffer = new byte[1024];
+                 int byteCount;
+                 while ((byteCount = is.read(buffer)) != -1) {
+                     // buffer
+                     fos.write(buffer, 0, byteCount);
+                 }
+                 fos.flush();
+             } catch (IOException e) {
+                 DTVTLogger.debug(e);
+             }
+         }
     }
 
     private boolean makeRedaRelayDir(final String destDir) {
