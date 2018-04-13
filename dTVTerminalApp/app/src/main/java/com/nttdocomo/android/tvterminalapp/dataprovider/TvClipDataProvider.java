@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
@@ -238,13 +239,11 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
         if (!mIsCancel) {
             //通信クラスにデータ取得要求を出す
             mWebClient = new TvClipWebClient(mContext);
-            int ageReq = 1;
-            int upperPageLimit = 1;
-            int lowerPageLimit = 1;
-            //int pagerOffset = 1;
+
             String pagerDirection = "";
-            if (!mWebClient.getTvClipApi(ageReq, upperPageLimit,
-                    lowerPageLimit, pagerOffset, pagerDirection, this)) {
+            UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
+            if (!mWebClient.getTvClipApi(userInfoDataProvider.getUserAge(), DTVTConstants.REQUEST_LIMIT_50,
+                    DTVTConstants.REQUEST_LIMIT_50, pagerOffset, pagerDirection, this)) {
                 apiDataProviderCallback.tvClipListCallback(null);
             }
         } else {

@@ -54,10 +54,6 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
      */
     private ContentsListPerGenreWebClient mGenreListWebClient = null;
     /**
-     * クリップキー一覧取得プロバイダ.
-     */
-    private ClipKeyListDataProvider mClipKeyListDataProvider = null;
-    /**
      * ジャンル情報取得用エラー情報バッファ.
      */
     private ErrorState mError = null;
@@ -255,9 +251,6 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
     public void stopConnect() {
         DTVTLogger.start();
         mIsCancel = true;
-        if (mClipKeyListDataProvider != null) {
-            mClipKeyListDataProvider.stopConnection();
-        }
         if (mGenreListWebClient != null) {
             mGenreListWebClient.stopConnect();
         }
@@ -269,9 +262,6 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
     public void enableConnect() {
         DTVTLogger.start();
         mIsCancel = false;
-        if (mClipKeyListDataProvider != null) {
-            mClipKeyListDataProvider.enableConnection();
-        }
         if (mGenreListWebClient != null) {
             mGenreListWebClient.enableConnect();
         }

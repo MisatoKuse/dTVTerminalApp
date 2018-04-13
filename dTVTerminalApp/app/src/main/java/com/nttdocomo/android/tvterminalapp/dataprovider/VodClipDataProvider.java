@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
@@ -235,14 +236,11 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
         if (!mIsCancel) {
             //通信クラスにデータ取得要求を出す
             mWebClient = new VodClipWebClient(mContext);
-            int ageReq = 1;
-            int upperPageLimit = 1;
-            int lowerPageLimit = 1;
-            //int pagerOffset = 1;
-            String direction = "";
 
-            if (!mWebClient.getVodClipApi(ageReq, upperPageLimit,
-                    lowerPageLimit, pagerOffset, direction, this)) {
+            String direction = "";
+            UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
+            if (!mWebClient.getVodClipApi(userInfoDataProvider.getUserAge(), DTVTConstants.REQUEST_LIMIT_50,
+                    DTVTConstants.REQUEST_LIMIT_50, pagerOffset, direction, this)) {
                 apiDataProviderCallback.vodClipListCallback(null);
             }
         } else {

@@ -202,6 +202,15 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     }
 
     /**
+     * ダイアログの本文を返す(同じダイアログが続けて表示される事を防止する為に使用).
+     *
+     * @return ダイアログの本文
+     */
+    public String getContent() {
+        return content;
+    }
+
+    /**
      * ダイアログに表示するリストを設定.
      *
      * @param list リスト
@@ -450,8 +459,9 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     }
 
     /**
-     * 画面外タップのキャンセル処理の可/不可を.
-     * @param cancelable
+     * 画面外タップのキャンセル処理の可/不可を設定.
+     *
+     * @param cancelable キャンセル可能ならばtrue
      */
     public void setOnTouchOutside(final boolean cancelable) {
         mCancelableOutside = cancelable;

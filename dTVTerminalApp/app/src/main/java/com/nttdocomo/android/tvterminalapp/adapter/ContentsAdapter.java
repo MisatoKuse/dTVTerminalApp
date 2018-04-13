@@ -346,8 +346,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         if (listContentInfo.hasChildContentList()) {
             setTitleData(holder, listContentInfo);
         } else {
-            setContentsData(holder, listContentInfo, contentView);
             setShowDataVisibility(holder);
+            setContentsData(holder, listContentInfo, contentView);
             setClipButtonItem(position, holder, contentView, listContentInfo);
             setMarginLayout(position, holder, contentView);
         }
@@ -623,21 +623,21 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         long vodStartDate = listContentInfo.getVodStartDate();
         long vodEndDate = listContentInfo.getVodEndDate();
 
-        DateUtils.ContentsType vodContentsType = ContentUtils.getContentsTypeByPlala(dispType, tvService,
+        ContentUtils.ContentsType vodContentsType = ContentUtils.getContentsTypeByPlala(dispType, tvService,
                 contentsType, availEndDate, vodStartDate, vodEndDate);
         String viewingPriod = "";
 
-        if (vodContentsType ==  DateUtils.ContentsType.VOD
-            || vodContentsType == DateUtils.ContentsType.DCHANNEL_VOD_31) {
+        if (vodContentsType ==  ContentUtils.ContentsType.VOD
+            || vodContentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
             if (DateUtils.isBefore(vodStartDate)) {
                 viewingPriod = DateUtils.getContentsDetailVodDate(mContext, vodStartDate);
                 viewingPriod = StringUtils.getConnectStrings(
                         mContext.getString(R.string.common_date_format_start_str), viewingPriod);
             } else {
-                if (vodContentsType ==  DateUtils.ContentsType.VOD) {
+                if (vodContentsType ==  ContentUtils.ContentsType.VOD) {
                     //VOD(m/d（曜日）まで)
                     viewingPriod = DateUtils.getContentsDetailVodDate(mContext, availEndDate);
-                } else if (vodContentsType == DateUtils.ContentsType.DCHANNEL_VOD_31) {
+                } else if (vodContentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
                     //VOD(m/d（曜日）まで)
                     viewingPriod = DateUtils.getContentsDetailVodDate(mContext, vodEndDate);
                     viewingPriod = StringUtils.getConnectStrings(
@@ -825,7 +825,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 case TYPE_DAILY_RANK: // 今日のテレビランキング
                 case TYPE_WEEKLY_RANK: // 週間ランキング
                 case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
-                    holder.tv_time.setText(DateUtils.getRecordShowListItem(Long.parseLong(listContentInfo.getTime())));
+                    try {
+                        holder.tv_time.setText(DateUtils.getRecordShowListItem(Long.parseLong(listContentInfo.getTime())));
+                    } catch(NumberFormatException e) {
+                        //TODO:Long.parseLongの対応はコンテンツの期間表示時に対応し、Long.parseLongを移動するなどしてtry~catchを削除する
+                        DTVTLogger.error(e.getMessage());
+                    }
                     break;
                 case TYPE_RENTAL_RANK: // レンタル一覧
                 case TYPE_PREMIUM_VIDEO_LIST: //プレミアムビデオ

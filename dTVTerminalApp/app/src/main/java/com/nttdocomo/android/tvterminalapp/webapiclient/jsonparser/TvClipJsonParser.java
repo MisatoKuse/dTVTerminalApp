@@ -25,7 +25,7 @@ public class TvClipJsonParser {
     // オブジェクトクラスの定義
     private TvClipList mTvClipList;
 
-    public static final String[] PAGER_PARA = {JsonConstants.META_RESPONSE_UPPER_LIMIT,
+    private static final String[] PAGER_PARA = {JsonConstants.META_RESPONSE_UPPER_LIMIT,
             JsonConstants.META_RESPONSE_LOWER_LIMIT, JsonConstants.META_RESPONSE_OFFSET,
             JsonConstants.META_RESPONSE_COUNT};
 
@@ -71,7 +71,9 @@ public class TvClipJsonParser {
                     }
                 }
             }
-            mTvClipList.setVcMap(map);
+            if(mTvClipList != null) {
+                mTvClipList.setVcMap(map);
+            }
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
