@@ -77,7 +77,7 @@ public class ContentUtils {
     }
 
     /**
-     * 番組、VODの判定(ぷららコンテンツ詳細画面用).
+     * 番組、VODの判定.
      *
      * @param dispType disp_type
      * @param tvService tv_service

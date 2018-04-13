@@ -793,7 +793,7 @@ public class DateUtils {
      * コンテンツ配信表示(対向ぷららサーバ).
      *
      * @param startView 配信開始時間
-     * @return 日付フォーマット
+     * @return true 配信前、false 配信後
      */
     public static boolean isBefore(final String startView) {
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DD_HH_MM_SS, Locale.JAPAN);
@@ -801,7 +801,7 @@ public class DateUtils {
             Date startDate = sdf.parse(startView);
             Calendar cal = Calendar.getInstance();
             Date nowDate = cal.getTime();
-            return startDate.compareTo(nowDate) != -1;
+            return nowDate.compareTo(startDate) == -1;
         } catch (ParseException e) {
             DTVTLogger.debug(e);
         }
@@ -812,13 +812,13 @@ public class DateUtils {
      * コンテンツ配信表示(対向ぷららサーバ).
      *
      * @param startDate 配信開始時間
-     * @return 日付フォーマット
+     * @return true 配信前、false 配信後
      */
     public static boolean isBefore(final long startDate) {
         Calendar cal = Calendar.getInstance();
         Date nowDate = cal.getTime();
         cal.setTimeInMillis(startDate * 1000);
-        return nowDate.compareTo(cal.getTime()) != -1;
+        return nowDate.compareTo(cal.getTime()) == -1;
     }
 
     /**
@@ -865,6 +865,10 @@ public class DateUtils {
      */
     public static boolean isOver31Day(final long date) {
         Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
         cal.add(Calendar.DAY_OF_MONTH, -AVAILABLE_BASE_DAY);
         Date pre31Date = cal.getTime();
         cal.setTimeInMillis(date * 1000);
@@ -880,6 +884,10 @@ public class DateUtils {
      */
     public static boolean isIn31Day(final long date) {
         Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
         Date nowDate = cal.getTime();
         cal.add(Calendar.DAY_OF_MONTH, -AVAILABLE_BASE_DAY);
         Date pre31Date = cal.getTime();
@@ -900,6 +908,10 @@ public class DateUtils {
         }
         long startTime = Long.parseLong(startPublishDate);
         Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
         Date nowDate = cal.getTime();
         cal.add(Calendar.DAY_OF_MONTH, -PUBLISH_BASE_DAY);
         Date pre7Date = cal.getTime();
