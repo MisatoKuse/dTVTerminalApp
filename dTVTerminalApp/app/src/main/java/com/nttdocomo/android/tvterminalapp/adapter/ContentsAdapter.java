@@ -28,6 +28,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.RentalDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -601,8 +602,63 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         setChannelName(holder, listContentInfo);
         setRecordedDownloadIcon(holder, listContentInfo);
         setNowOnAirData(holder, listContentInfo, contentView);
+        setStartViewing(holder, listContentInfo, contentView);
         if (ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST.equals(mType)) {
             setSubTitle(holder, listContentInfo);
+        }
+    }
+
+    /**
+     * 配信期限の表示.
+     *
+     * @param holder          ビューの集合
+     * @param listContentInfo 行データー
+     * @param contentView contentView
+     */
+    private void setStartViewing(final ViewHolder holder, final ContentsData listContentInfo, final View contentView) {
+        String dispType = listContentInfo.getDispType();
+        String tvService = listContentInfo.getTvService();
+        String contentsType = listContentInfo.getContentsType();
+        long availEndDate = listContentInfo.getAvailEndDate();
+        long vodStartDate = listContentInfo.getVodStartDate();
+        long vodEndDate = listContentInfo.getVodEndDate();
+
+        DateUtils.ContentsType vodContentsType = ContentUtils.getContentsTypeByPlala(dispType, tvService,
+                contentsType, availEndDate, vodStartDate, vodEndDate);
+        String viewingPriod = "";
+
+        if (vodContentsType ==  DateUtils.ContentsType.VOD
+            || vodContentsType == DateUtils.ContentsType.DCHANNEL_VOD_31) {
+            if (DateUtils.isBefore(vodStartDate)) {
+                viewingPriod = DateUtils.getContentsDetailVodDate(mContext, vodStartDate);
+                viewingPriod = StringUtils.getConnectStrings(
+                        mContext.getString(R.string.common_date_format_start_str), viewingPriod);
+            } else {
+                if (vodContentsType ==  DateUtils.ContentsType.VOD) {
+                    //VOD(m/d（曜日）まで)
+                    viewingPriod = DateUtils.getContentsDetailVodDate(mContext, availEndDate);
+                } else if (vodContentsType == DateUtils.ContentsType.DCHANNEL_VOD_31) {
+                    //VOD(m/d（曜日）まで)
+                    viewingPriod = DateUtils.getContentsDetailVodDate(mContext, vodEndDate);
+                    viewingPriod = StringUtils.getConnectStrings(
+                            mContext.getString(R.string.contents_detail_hikari_d_channel_miss_viewing), viewingPriod);
+                }
+            }
+        }
+        switch (vodContentsType) {
+            case  TV:
+                break;
+            case  VOD:
+            case  DCHANNEL_VOD_31:
+                holder.tv_sub_title.setVisibility(View.VISIBLE);
+                holder.tv_sub_title.setText(viewingPriod);
+                holder.tv_sub_title.setOnClickListener(null);
+                break;
+            case  DCHANNEL_VOD_OVER_31:
+            case  OTHER:
+                break;
+            default:
+                break;
         }
     }
 
