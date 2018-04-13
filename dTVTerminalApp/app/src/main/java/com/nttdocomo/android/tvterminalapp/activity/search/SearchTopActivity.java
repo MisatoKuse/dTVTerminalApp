@@ -151,7 +151,7 @@ public class SearchTopActivity extends BaseActivity
     /**
      * 最後に表示したタブindex.
      */
-    public static int mTabIndex = 0;
+    protected int mTabIndex = 0;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
