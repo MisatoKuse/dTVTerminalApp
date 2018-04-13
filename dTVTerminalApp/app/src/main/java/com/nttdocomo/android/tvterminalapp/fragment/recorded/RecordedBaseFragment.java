@@ -247,6 +247,9 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      * @param fullPath フルパス
      */
     public void onCancelAll(final String fullPath) {
+        if (null == fullPath || fullPath.isEmpty()) {
+            return;
+        }
         unQueueAllExceptForFirst();
         onCancelByBg(fullPath);
     }
@@ -387,6 +390,9 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      * @param fullPath フルパス
      */
     public void onLowStorageSpaceByBg(final String fullPath) {
+        if (null == fullPath || fullPath.isEmpty()) {
+            return;
+        }
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
@@ -659,6 +665,9 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      * @param percent パーセント
      */
     public void onDownloadProgressByBg(final int percent) {
+        if (percent < 0 ) {
+            return;
+        }
         if (queIndex.size() > 0) {
             mCanBeCanceled = true;
             setDownloadStatus(queIndex.get(0), percent);
@@ -671,6 +680,9 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      * @param fullPath フルパス
      */
     public void onDownloadSuccessByBg(final String fullPath) {
+        if (null == fullPath || fullPath.isEmpty()) {
+            return;
+        }
         mCanBeCanceled = false;
         setSuccessStatus(fullPath);
     }
@@ -681,6 +693,9 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      *
      */
     public void onDownloadFailByBg(final String fullPath) {
+        if (null == fullPath || fullPath.isEmpty()) {
+            return;
+        }
         mCanBeCanceled = false;
         if (mDlDataProvider != null) {
             mDlDataProvider.cancelDownLoadStatus(fullPath);
@@ -946,6 +961,9 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      * @param fullPath フルパス
      */
     public void onCancelByBg(final String fullPath) {
+        if (null == fullPath || fullPath.isEmpty()) {
+            return;
+        }
         mCanBeCanceled = false;
         if (activity != null) {
             showMessage();
