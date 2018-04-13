@@ -475,22 +475,16 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         int clipMargin;
         switch (mTabType) {
             case TAB_TV:
-            case TAB_D_CHANNEL:
                 textMargin = STATUS_MARGIN_TOP10;
                 clipMargin = CLIP_MARGIN_TOP35;
                 setTextMargin(textMargin, holder, contentView);
                 setClipMargin(clipMargin, contentView);
                 break;
             case TAB_VIDEO:
-                textMargin = TITLE_MARGIN_TOP20;
-                clipMargin = CLIP_MARGIN_TOP35;
-                setTextMargin(textMargin, holder, contentView);
-                setClipMargin(clipMargin, contentView);
-                break;
-
+            case TAB_D_CHANNEL:
             case TAB_D_ANIMATE:
             case TAB_D_TV:
-                textMargin = TITLE_MARGIN_TOP30;
+                textMargin = TITLE_MARGIN_TOP20;
                 clipMargin = CLIP_MARGIN_TOP35;
                 setTextMargin(textMargin, holder, contentView);
                 setClipMargin(clipMargin, contentView);
@@ -675,6 +669,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_SEARCH_LIST://検索
                 switch (mTabType) {
                     case TAB_TV:
+                    case TAB_D_CHANNEL:
                         checkNowOnAir(holder, listContentInfo, contentView, false);
                         break;
                     default:
@@ -721,7 +716,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         } else {
             if (!TextUtils.isEmpty(listContentInfo.getServiceId()) && DBUtils.isNumber(listContentInfo.getServiceId())) {
                 int serviceId = Integer.parseInt(listContentInfo.getServiceId());
-                String categoryId = listContentInfo.getServiceId();
+                String categoryId = listContentInfo.getCategoryId();
                 if (ContentDetailActivity.DTV_HIKARI_CONTENTS_SERVICE_ID == serviceId
                         && (ContentDetailActivity.H4D_CATEGORY_IPTV.equals(categoryId)
                         || ContentDetailActivity.H4D_CATEGORY_DTV_CHANNEL_BROADCAST.equals(categoryId))) {
@@ -729,12 +724,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                             listContentInfo.getEndViewing(), false)) {
                         result = true;
                     }
-                }
-                //TODO dTVチャンネル　放送の場合は一応保留
-                /*else if (OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID == serviceId
+                } else if (ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID == serviceId
                         && ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(categoryId)) {
                     result = true;
-                }*/
+                }
             }
         }
         if (result) {
@@ -766,14 +759,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 break;
             case TAB_VIDEO:
                 holder.tv_rank.setVisibility(View.GONE);
-                holder.tv_time.setVisibility(View.GONE);
                 holder.ll_rating.setVisibility(View.GONE);
                 break;
             case TAB_D_CHANNEL:
             case TAB_D_ANIMATE:
             case TAB_D_TV:
                 holder.tv_rank.setVisibility(View.GONE);
-                holder.tv_time.setVisibility(View.GONE);
                 holder.ll_rating.setVisibility(View.GONE);
                 holder.tv_clip.setVisibility(View.GONE);
                 break;
@@ -871,11 +862,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * @param listContentInfo コンテンツ情報
      */
     private void setTabTimeData(final ViewHolder holder, final ContentsData listContentInfo) {
+        //開始・終了日付の取得
+        long startDate = DateUtils.getEpochTimeLink(listContentInfo.getStartViewing());
         switch (mTabType) {
             case TAB_TV:
                 holder.tv_time.setVisibility(View.VISIBLE);
-                //開始・終了日付の取得
-                long startDate = DateUtils.getEpochTimeLink(listContentInfo.getStartViewing());
 
                 //日付の表示
                 String answerText = StringUtils.getConnectStrings(
@@ -887,7 +878,16 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TAB_D_CHANNEL:
             case TAB_D_ANIMATE:
             case TAB_DEFAULT:
-                holder.tv_time.setVisibility(View.GONE);
+                holder.tv_time.setVisibility(View.VISIBLE);
+                if (Integer.toString(ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID).equals(listContentInfo.getServiceId()) &&
+                        ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(listContentInfo.getCategoryId())) {
+                    holder.tv_time.setText(StringUtils.getConnectStrings(
+                            DateUtils.getRecordShowListItem(startDate)));
+                } else {
+                    if (DateUtils.isBefore(listContentInfo.getStartViewing())) {
+                        holder.tv_time.setText(DateUtils.getContentsDateString(mContext, listContentInfo.getStartViewing(), true));
+                    }
+                }
                 break;
             default:
                 break;
@@ -1029,7 +1029,9 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     private void setChannelName(final ViewHolder holder, final ContentsData listContentInfo) {
         DTVTLogger.start();
         if (!TextUtils.isEmpty(listContentInfo.getChannelName()) && mTabType != TabTypeItem.TAB_DEFAULT) { //ランク
-            holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
+            if (!TextUtils.isEmpty(holder.tv_time.getText())) {
+                holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
+            }
             holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
             holder.tv_recorded_ch_name.setText(listContentInfo.getChannelName());
             if (mType == ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST) {
@@ -1057,7 +1059,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TAB_TV:
             case TAB_D_CHANNEL:
                 if (!TextUtils.isEmpty(listContentInfo.getChannelName())) {
-                    holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
+                    if (TextUtils.isEmpty(holder.tv_time.getText())) {
+                        holder.tv_recorded_hyphen.setVisibility(View.GONE);
+                    } else {
+                        holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
+                    }
                     holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
                     holder.tv_recorded_ch_name.setText(listContentInfo.getChannelName());
                 }
@@ -1244,7 +1250,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_line.setVisibility(View.VISIBLE);
                 break;
             case TYPE_SEARCH_LIST: //検索
-                holder.tv_time.setVisibility(View.GONE);
                 holder.tv_rank.setVisibility(View.GONE);
                 holder.ll_rating.setVisibility(View.GONE);
             default:

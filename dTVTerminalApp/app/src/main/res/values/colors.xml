@@ -55,7 +55,7 @@
     <!-- おすすめ一覧 -->
     <color name="recommend_list_background">#222222</color>
     <color name="recommend_list_text">#FFFFFF</color>
-    <color name="recommend_list_now_on_air">#FF8800</color>
+    <color name="recommend_list_now_on_air">#ffbb4e</color>
     <!-- ランキング一覧 -->
     <color name="ranking_list_background">#222222</color>
     <color name="ranking_list_border">#888888</color>
