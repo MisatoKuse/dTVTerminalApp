@@ -1015,12 +1015,6 @@ public class BaseActivity extends FragmentActivity implements
                         break;
                 }
                 break;
-            case RelayServiceResponseMessage.RELAY_RESULT_APPLICATION_ID_NOTEXIST:
-            case RelayServiceResponseMessage.RELAY_RESULT_APPLICATION_START_FAILED:
-            case RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
-                message = getResources().getString(R.string.main_setting_stb_application_launch_fail);
-                showErrorDialog(message);
-                break;
             case RelayServiceResponseMessage.RELAY_RESULT_VERSION_CODE_INCOMPATIBLE:
                 switch (appId) {
                     case DTV:
@@ -1054,6 +1048,9 @@ public class BaseActivity extends FragmentActivity implements
                 setStbStatus(false);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
+            case RelayServiceResponseMessage.RELAY_RESULT_APPLICATION_ID_NOTEXIST:
+            case RelayServiceResponseMessage.RELAY_RESULT_APPLICATION_START_FAILED:
+            case RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
             default:
                 message = getResources().getString(R.string.main_setting_stb_application_launch_fail);
                 showErrorDialog(message);
