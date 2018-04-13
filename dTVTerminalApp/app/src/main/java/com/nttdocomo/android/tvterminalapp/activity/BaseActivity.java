@@ -78,7 +78,6 @@ import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessa
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
-import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DeviceStateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.RuntimePermissionUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -1908,7 +1907,7 @@ public class BaseActivity extends FragmentActivity implements
             //dアカウントアプリのバインドを解除する
             final DaccountGetOTT getOtt = new DaccountGetOTT();
             if (getOtt != null) {
-                DTVTLogger.debug("startAvtivity before unbind");
+                DTVTLogger.debug("startActivity before unbind");
                 //他の画面に遷移する前に、dアカウントアプリとの連携を終わらせる
                 getOtt.daccountServiceEnd();
             }
@@ -2397,11 +2396,28 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * ダイアログをキューに追加.
+     *
      * (設定ファイル処理から呼ぶためにパブリック化)
      * @param dialog キュー表示するダイアログ
      */
     public void offerDialog(CustomDialog dialog) {
         DTVTLogger.start();
+
+        //現在表示しているダイアログと新たに蓄積されるダイアログの本文を比較する
+        String contentText = dialog.getContent();
+        if(mShowDialog != null && mShowDialog.getContent().equals(contentText)) {
+            //現在表示しているダイアログと本文が同じなので、蓄積せずに帰る
+            return;
+        }
+
+        //蓄積しているキューの中に同じ文言の物があるかどうかをチェック
+        for(CustomDialog customDialog : mLinkedList) {
+            if(customDialog.getContent().equals(contentText)) {
+                //本文が同じ物が見つかったので、蓄積せずに帰る
+                return;
+            }
+        }
+
         mLinkedList.offer(dialog);
         pollDialog();
         DTVTLogger.end();
