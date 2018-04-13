@@ -9,7 +9,7 @@ import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
+import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 import java.io.File;
@@ -291,10 +291,6 @@ public class DateUtils {
      * 配信期限一週間.
      */
     private static final int PUBLISH_BASE_DAY = 7;
-    /**
-     * VODの日付フォーマット　m/d（曜日）まで.
-     */
-    private static final String DATE_FORMAT_VOD = " まで";
     /**
      * " ".
      */
@@ -671,13 +667,13 @@ public class DateUtils {
     }
 
     /**
-     * 引数の日付(エポック秒)を M/d (DAY_OF_WEEK) hh:mm のString型に変換(コンテンツ詳細ぷらら用).
+     * 引数の日付(エポック秒)を M/d (DAY_OF_WEEK) hh:mm のString型に変換(ぷらら用).
      *
      * @param startTime 開始日付(エポック秒)
      * @param endTime 終了日付(エポック秒)
      * @return 変換日付
      */
-    public static String getContentsDetailTvDate(final long startTime, final long endTime) {
+    public static String getContentsDateString(final long startTime, final long endTime) {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(startTime * 1000);
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_MDE, Locale.JAPAN);
@@ -685,49 +681,18 @@ public class DateUtils {
         String startText = getHmm(cal);
         cal.setTimeInMillis(endTime * 1000);
         String endText = getHmm(cal);
+        //番組(m/d（曜日）h:ii - h:ii)
         return date + DATE_FORMAT_BLANK + startText + DATE_HYPHEN + endText;
     }
 
     /**
-     * 引数の日付(エポック秒)を M/d (DAY_OF_WEEK) hh:mm のString型に変換(コンテンツ詳細ぷらら用).
+     * 引数の日付を M/d (DAY_OF_WEEK) hh:mm のString型に変換(レコメンド用).
      *
-     * @param endTime 終了日付(エポック秒)
+     * @param startTime 開始日付(String)
+     * @param endTime 終了日付(String)
      * @return 変換日付
      */
-    public static String getContentsDetailVodDate(final long endTime) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(endTime * 1000);
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_MDE, Locale.JAPAN);
-        String date = sdf.format(new Date(cal.getTimeInMillis()));
-        return date + DATE_FORMAT_VOD;
-    }
-
-    /**
-     * 引数の日付を M/d (DAY_OF_WEEK) まで のString型に変換(コンテンツ詳細レコメンド用).
-     *
-     * @param endTime 終了日付
-     * @return 変換日付
-     */
-    public static String getContentsDetailVodDate(final String endTime) {
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_MDE, Locale.JAPAN);
-        try {
-            Date endDate = sdf.parse(endTime);
-            String date = sdf.format(endDate);
-            return date + DATE_FORMAT_VOD;
-        } catch (ParseException e) {
-            DTVTLogger.debug(e);
-        }
-        return null;
-    }
-
-    /**
-     * 引数の日付を M/d (DAY_OF_WEEK) hh:mm のString型に変換(コンテンツ詳細レコメンド用).
-     *
-     * @param startTime 開始日付
-     * @param endTime 終了日付
-     * @return 変換日付
-     */
-    public static String getContentsDetailDate(final String startTime, final String endTime) {
+    public static String getContentsDateString(final String startTime, final String endTime) {
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DD_HH_MM_SS, Locale.JAPAN);
         try {
             Date startDate = sdf.parse(startTime);
@@ -739,6 +704,7 @@ public class DateUtils {
             String startText = getHmm(cal);
             cal.setTime(endDate);
             String endText = getHmm(cal);
+            //番組(m/d（曜日）h:ii - h:ii)
             return date + DATE_FORMAT_BLANK + startText + DATE_HYPHEN + endText;
         } catch (ParseException e) {
             DTVTLogger.debug(e);
@@ -747,89 +713,179 @@ public class DateUtils {
     }
 
     /**
-     * 番組、VODの判断(ぷらら).
+     * 引数の日付(エポック秒)を M/d (DAY_OF_WEEK) hh:mm のString型に変換(ぷらら用).
      *
-     * @param dispType disp_type
-     * @param tvService tv_service
-     * @param contentsType contents_type
-     * @param availEndDate 配信日時(avail_end_date)
-     * @param vodStartDate VOD配信日時(vod_start_date)
-     * @param vodEndDate VOD配信日時(vod_end_date)
-     * @return VOD、TV、DCHANNEL_VOD_OVER_31、その他
+     * @param startTime 開始日付(エポック秒)
+     * @return 変換日付
      */
-    public static ContentsType getContentsDateByPlala(final String dispType, final String tvService,
-                                                      final String contentsType, final long availEndDate,
-                                                      final long vodStartDate, final long vodEndDate) {
-        ContentsType c_type = ContentsType.OTHER;
-        if (ContentDetailActivity.VIDEO_PROGRAM.equals(dispType)
-                || ContentDetailActivity.VIDEO_SERIES.equals(dispType)) {
-            //ひかりTV_VOD、ひかりTV内dTV
-            c_type = getContentsTypeByAvailEndDate(availEndDate);
-        } else if (ContentDetailActivity.TV_PROGRAM.equals(dispType)) {
-            if (ContentDetailActivity.TV_SERVICE_FLAG_HIKARI.equals(tvService)) {
-                //ひかりTV_番組
-                c_type = ContentsType.TV;
-            } else if (ContentDetailActivity.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(tvService)) {
-                if (ContentDetailActivity.CONTENT_TYPE_FLAG_THREE.equals(contentsType)) {
-                    //ひかりTV内dTVチャンネル_関連VOD
-                    c_type = getContentsTypeByAvailEndDate(availEndDate);
-                } else if (ContentDetailActivity.CONTENT_TYPE_FLAG_ONE.equals(contentsType)
-                        || ContentDetailActivity.CONTENT_TYPE_FLAG_TWO.equals(contentsType)) {
-                    Calendar cal = Calendar.getInstance();
-                    Date nowDate = cal.getTime();
-                    cal.setTimeInMillis(vodStartDate * 1000);
-                    Date startDate = cal.getTime();
-                    if (startDate.compareTo(nowDate) != 1) {
-                        //ひかりTV内dTVチャンネル_見逃し
-                        cal.setTimeInMillis(vodEndDate * 1000);
-                        if (isOver31Day(nowDate, cal)) {
-                            //ひかりTV内dTVチャンネル_見逃し(32日以上)
-                            c_type = ContentsType.DCHANNEL_VOD_OVER_31;
-                        } else {
-                            //ひかりTV内dTVチャンネル_見逃し(31日以内)
-                            c_type = ContentsType.DCHANNEL_VOD_31;
-                        }
-                    } else {
-                        //ひかりTV内dTVチャンネル_番組
-                        c_type = ContentsType.TV;
-                    }
-                } else {
-                    //ひかりTV内dTVチャンネル_番組
-                    c_type = ContentsType.TV;
-                }
-            }
-        }
-        return c_type;
+    public static String getContentsDateString(final long startTime) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(startTime * 1000);
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_MDE, Locale.JAPAN);
+        String date = sdf.format(new Date(cal.getTimeInMillis()));
+        String startText = getHmm(cal);
+        //番組(m/d（曜日）h:ii)
+        return date + DATE_FORMAT_BLANK + startText;
     }
 
     /**
-     * VODの31日以内の判断.
+     * 引数の日付を M/d (DAY_OF_WEEK) hh:mm のString型に変換(レコメンド用).
+     *
+     * @param startTime 開始日付(String)
+     * @return 変換日付
+     */
+    public static String getContentsDateString(final String startTime) {
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DD_HH_MM_SS, Locale.JAPAN);
+        try {
+            Date startDate = sdf.parse(startTime);
+            sdf = new SimpleDateFormat(DATE_MDE, Locale.JAPAN);
+            String date = sdf.format(startDate);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(startDate);
+            String startText = getHmm(cal);
+            //番組(m/d（曜日）h:ii)
+            return date + DATE_FORMAT_BLANK + startText;
+        } catch (ParseException e) {
+            DTVTLogger.debug(e);
+        }
+        return null;
+    }
+
+    /**
+     * コンテンツ配信表示(対向ぷららサーバ).
+     *
+     * @param context コンテクスト
+     * @param availDate 配信開始/終了時間
+     * @param isBefore true 配信前　false 配信期限
+     * @return 日付フォーマット
+     */
+    public static String getContentsDateString(final Context context, final long availDate, final boolean isBefore) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(availDate * 1000);
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_MDE, Locale.JAPAN);
+        String date = sdf.format(new Date(cal.getTimeInMillis()));
+        //m/d（曜日）から若しくはまで
+        return date + (isBefore ? context.getString(R.string.common_date_format_start_str) : context.getString(R.string.common_date_format_end_str));
+    }
+
+    /**
+     * コンテンツ配信表示(対向検レコサーバ).
+     *
+     * @param context コンテクスト
+     * @param viewing 配信開始/終了時間
+     * @param isBefore true 配信前　false 配信期限
+     * @return 日付フォーマット
+     */
+    public static String getContentsDateString(final Context context, final String viewing, final boolean isBefore) {
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_MDE, Locale.JAPAN);
+        try {
+            Date date = sdf.parse(viewing);
+            String result = sdf.format(date);
+            //m/d（曜日）から若しくはまで
+            return result + (isBefore ? context.getString(R.string.common_date_format_start_str) : context.getString(R.string.common_date_format_end_str));
+        } catch (ParseException e) {
+            DTVTLogger.debug(e);
+        }
+        return null;
+    }
+
+    /**
+     * コンテンツ配信表示(対向ぷららサーバ).
+     *
+     * @param startView 配信開始時間
+     * @return 日付フォーマット
+     */
+    public static boolean isBefore(final String startView) {
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DD_HH_MM_SS, Locale.JAPAN);
+        try {
+            Date startDate = sdf.parse(startView);
+            Calendar cal = Calendar.getInstance();
+            Date nowDate = cal.getTime();
+            return startDate.compareTo(nowDate) != -1;
+        } catch (ParseException e) {
+            DTVTLogger.debug(e);
+        }
+        return false;
+    }
+
+    /**
+     * コンテンツ配信表示(対向ぷららサーバ).
+     *
+     * @param startDate 配信開始時間
+     * @return 日付フォーマット
+     */
+    public static boolean isBefore(final long startDate) {
+        Calendar cal = Calendar.getInstance();
+        Date nowDate = cal.getTime();
+        cal.setTimeInMillis(startDate * 1000);
+        return nowDate.compareTo(cal.getTime()) != -1;
+    }
+
+    /**
+     * 引数の日付(エポック秒)を M/d (DAY_OF_WEEK) hh:mm のString型に変換(コンテンツ詳細ぷらら用).
+     *
+     * @param context コンテクスト
+     * @param endTime 終了日付(エポック秒)
+     * @return 変換日付
+     */
+    public static String getContentsDetailVodDate(final Context context, final long endTime) {
+        return getContentsDateString(context, endTime, false);
+    }
+
+    /**
+     * 引数の日付を M/d (DAY_OF_WEEK) まで のString型に変換(コンテンツ詳細レコメンド用).
+     *
+     * @param context コンテクスト
+     * @param endTime 終了日付
+     * @return 変換日付
+     */
+    public static String getContentsDetailVodDate(final Context context, final String endTime) {
+        return getContentsDateString(context, endTime, false);
+    }
+
+    /**
+     * VODの31日以内の判断（コンテンツ詳細画面）.
      *
      * @param availEndDate availEndDate
      * @return VOD、OTHER
      */
-    private static ContentsType getContentsTypeByAvailEndDate(final long availEndDate) {
-        ContentsType c_type = ContentsType.OTHER;
-        Calendar cal = Calendar.getInstance();
-        Date nowDate = cal.getTime();
-        cal.setTimeInMillis(availEndDate * 1000);
-        if (!isOver31Day(nowDate, cal)) {
-            c_type = ContentsType.VOD;
+    public static ContentsType getContentsTypeByAvailEndDate(final long availEndDate) {
+        ContentsType cType = ContentsType.OTHER;
+        if (!isOver31Day(availEndDate)) {
+            cType = ContentsType.VOD;
         }
-        return c_type;
+        return cType;
     }
 
     /**
-     * ひかりTV内dch_見逃しの31日以内判断.
+     * ひかりTV内dch_見逃しの31日以上判定.
      *
-     * @param nowDate 現在
-     * @param cal vodStartDate
+     * @param date 現在
      * @return VOD、TV、その他
      */
-    private static boolean isOver31Day(final Date nowDate, final Calendar cal) {
-        cal.add(Calendar.DAY_OF_MONTH, +AVAILABLE_BASE_DAY);
+    public static boolean isOver31Day(final long date) {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, -AVAILABLE_BASE_DAY);
+        Date pre31Date = cal.getTime();
+        cal.setTimeInMillis(date * 1000);
         Date startDate = cal.getTime();
-        return nowDate.compareTo(startDate) == 1;
+        return startDate.compareTo(pre31Date) == -1;
+    }
+
+    /**
+     * ひかりTV内dch_見逃しの31日以内判定.
+     *
+     * @param date 現在
+     * @return VOD、TV、その他
+     */
+    public static boolean isIn31Day(final long date) {
+        Calendar cal = Calendar.getInstance();
+        Date nowDate = cal.getTime();
+        cal.add(Calendar.DAY_OF_MONTH, -AVAILABLE_BASE_DAY);
+        Date pre31Date = cal.getTime();
+        cal.setTimeInMillis(date * 1000);
+        Date startDate = cal.getTime();
+        return startDate.compareTo(nowDate) == -1 && startDate.compareTo(pre31Date) != -1;
     }
 
     /**
@@ -838,7 +894,7 @@ public class DateUtils {
      * @param startPublishDate 配信開始
      * @return true 一週間以内、一週間超えた
      */
-    public static boolean isOneWeek(final String startPublishDate) {
+    public static boolean isInOneWeek(final String startPublishDate) {
         if (TextUtils.isEmpty(startPublishDate) || !DBUtils.isNumber(startPublishDate)) {
             return false;
         }
@@ -850,56 +906,6 @@ public class DateUtils {
         cal.setTimeInMillis(startTime * 1000);
         Date startDate = cal.getTime();
         return startDate.compareTo(nowDate) == -1 && startDate.compareTo(pre7Date) != -1;
-    }
-
-    /**
-     * 番組、VODの判断(レコメンド).
-     *
-     * @param serviceId disp_type
-     * @param categoryId tv_service
-     * @return VOD、TV、その他
-     */
-    public static ContentsType getContentsDateByRecommend(final int serviceId, final String categoryId) {
-        ContentsType c_type = ContentsType.OTHER;
-        switch (serviceId) {
-            //dTV
-            case ContentDetailActivity.DTV_CONTENTS_SERVICE_ID:
-                if (ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(categoryId)
-                        || ContentDetailActivity.H4D_CATEGORY_SATELLITE_BS.equals(categoryId)) {
-                    c_type = ContentsType.VOD;
-                }
-                break;
-            //dアニメストア
-            case ContentDetailActivity.D_ANIMATION_CONTENTS_SERVICE_ID:
-                if (ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(categoryId)) {
-                    c_type = ContentsType.VOD;
-                }
-                break;
-            //dTVチャンネル
-            case ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID:
-                if (ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(categoryId)) {
-                    c_type = ContentsType.TV;
-                } else if (ContentDetailActivity.H4D_CATEGORY_SATELLITE_BS.equals(categoryId)
-                        || ContentDetailActivity.H4D_CATEGORY_IPTV.equals(categoryId)) {
-                    c_type = ContentsType.VOD;
-                }
-                break;
-            //ひかりTV for docomo
-            case ContentDetailActivity.DTV_HIKARI_CONTENTS_SERVICE_ID:
-                if (ContentDetailActivity.H4D_CATEGORY_IPTV.equals(categoryId)
-                        || ContentDetailActivity.H4D_CATEGORY_DTV_CHANNEL_BROADCAST.equals(categoryId)) {
-                    c_type = ContentsType.TV;
-                } else if (ContentDetailActivity.H4D_CATEGORY_DTV_CHANNEL_MISSED.equals(categoryId)
-                        || ContentDetailActivity.H4D_CATEGORY_DTV_CHANNEL_RELATION.equals(categoryId)
-                        || ContentDetailActivity.H4D_CATEGORY_HIKARITV_VOD.equals(categoryId)
-                        || ContentDetailActivity.H4D_CATEGORY_HIKARI_DTV_SVOD.equals(categoryId)) {
-                    c_type = ContentsType.VOD;
-                }
-                break;
-            default:
-                break;
-        }
-        return c_type;
     }
 
     /**

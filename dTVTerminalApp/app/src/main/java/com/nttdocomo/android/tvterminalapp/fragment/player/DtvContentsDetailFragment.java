@@ -420,7 +420,7 @@ public class DtvContentsDetailFragment extends Fragment {
         List<Integer> labelStatusList = new ArrayList<>();
         //NEW アイコン
         if (DBUtils.isNumber(mOtherContentsDetailData.getmStartDate())
-                && DateUtils.isOneWeek(mOtherContentsDetailData.getmStartDate())) {
+                && DateUtils.isInOneWeek(mOtherContentsDetailData.getmStartDate())) {
             labelStatusList.add(R.mipmap.label_status_new);
         }
         //4Kアイコン
