@@ -36,7 +36,7 @@ public class MyChannelEditAdapter extends BaseAdapter implements View.OnClickLis
     /**
      *ポジション.
      */
-    private final String POSITION_MY_CHANNEL_LIST = "position";
+    private static final String POSITION_MY_CHANNEL_LIST = "position";
     /**
      * インデックス.
      */
