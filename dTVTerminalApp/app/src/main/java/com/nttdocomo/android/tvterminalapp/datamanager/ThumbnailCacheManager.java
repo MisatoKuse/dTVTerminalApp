@@ -163,7 +163,7 @@ public class ThumbnailCacheManager {
     /**
      * ソート処理.
      */
-   private class CalendarComparator implements Comparator<Object>, Serializable {
+   private static class CalendarComparator implements Comparator<Object>, Serializable {
 
         private static final long serialVersionUID = -1L;
 

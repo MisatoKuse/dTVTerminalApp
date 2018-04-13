@@ -149,10 +149,12 @@ public class DaccountControl implements
         }
 
         //初回実行である事を設定する
-        SharedPreferencesUtils.setFirstExecStart(context);
+        if(context != null) {
+            SharedPreferencesUtils.setFirstExecStart(context);
+        }
 
         //初回起動の場合を判定
-        if (SharedPreferencesUtils.isFirstDaccountGetProcess(context)) {
+        if (context != null && SharedPreferencesUtils.isFirstDaccountGetProcess(context)) {
             //初回の場合はダイアログを表示するので、処理中フラグを立てる
             mDAccountBusy = true;
         }

@@ -39,11 +39,11 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     /**
      * コンテキスト.
      */
-    private Context mContext = null;
+    private Context mContext;
     /**
      * 視聴中ビデオ一覧データ.
      */
-    private WatchListenVideoList mWatchListenVideoList = null;
+    private WatchListenVideoList mWatchListenVideoList;
 
     /**
      * callback.
@@ -57,11 +57,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     /**
      * 視聴中ビデオリスト取得WebClient.
      */
-    private WatchListenVideoWebClient mWebClient = null;
-    /**
-     * クリップキー一覧取得プロバイダ.
-     */
-    private ClipKeyListDataProvider mClipKeyListDataProvider = null;
+    private WatchListenVideoWebClient mWebClient;
 
     /**
      * デフォルトのページ取得位置.
@@ -91,7 +87,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
             DTVTLogger.error("watchListenVideoList is null");
             return;
         }
-        if (watchListenVideoList != null && watchListenVideoList.size() > 0) {
+        if (watchListenVideoList.size() > 0) {
             WatchListenVideoList list = watchListenVideoList.get(0);
             setStructDB(list);
             if (!mRequiredClipKeyList
@@ -272,9 +268,6 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     public void stopConnect() {
         DTVTLogger.start();
         mIsCancel = true;
-        if (mClipKeyListDataProvider != null) {
-            mClipKeyListDataProvider.stopConnection();
-        }
         if (mWebClient != null) {
             mWebClient.stopConnection();
         }
@@ -286,9 +279,6 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     public void enableConnect() {
         DTVTLogger.start();
         mIsCancel = false;
-        if (mClipKeyListDataProvider != null) {
-            mClipKeyListDataProvider.enableConnection();
-        }
         if (mWebClient != null) {
             mWebClient.enableConnection();
         }
