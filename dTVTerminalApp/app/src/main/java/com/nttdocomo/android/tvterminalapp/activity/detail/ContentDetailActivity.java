@@ -1512,9 +1512,6 @@ public class ContentDetailActivity extends BaseActivity implements
                 if (contentsType == ContentUtils.ContentsType.TV) {
                     //番組(m/d（曜日）h:ii - h:ii)
                     date = DateUtils.getContentsDateString(mDetailData.getmStartDate(), mDetailData.getmEndDate());
-                } else if (contentsType == ContentUtils.ContentsType.VOD) {
-                    //VOD(m/d（曜日）まで)
-                    date = DateUtils.getContentsDetailVodDate(this, mDetailData.getmEndDate());
                 }
             }
             mDetailData.setChannelDate(date);
