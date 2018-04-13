@@ -284,8 +284,8 @@ public class HttpThread extends Thread {
         StringBuffer stringBuffer = new StringBuffer();
 
         //圏外等の判定
-        if(mContext == null
-                || (mContext != null && !NetWorkUtils.isOnline(mContext))) {
+        if( (mContext != null && !NetWorkUtils.isOnline(mContext))
+                || mContext == null) {
             //そもそも通信のできない状態なので、ネットワークエラーとする
             setErrorStatus(null, DTVTConstants.ERROR_TYPE.NETWORK_ERROR, "");
 

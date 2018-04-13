@@ -112,7 +112,7 @@ public class DlnaInterfaceRI {
         } catch (Exception e) {
             DTVTLogger.debug(e);
         }
-        if (fileNames.length > 0) {
+        if (fileNames != null && fileNames.length > 0) {
             File file = new File(destPath);
 
             FileListAll fs = new FileListAll();
@@ -219,12 +219,12 @@ public class DlnaInterfaceRI {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        try {
-            ret = StringToInputStream(temp);
-        } catch (Exception e) {
-            DTVTLogger.debug(e);
-            ret = null;
+        if(temp != null) {
+            try {
+                ret = StringToInputStream(temp);
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         }
         return ret;
     }

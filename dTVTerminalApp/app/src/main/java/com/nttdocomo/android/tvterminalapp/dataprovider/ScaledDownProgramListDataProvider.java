@@ -516,7 +516,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 Map<String, String> hashMap = mChannelProgramList.get(i);
                 setScheduleInfo(hashMap, channelsInfo, userState);
             }
-//            mChannelsInfoList = channelsInfo;
+            mChannelsInfoList = channelsInfo;
 //            Handler handler = new Handler();
 //            //番組情報更新
 //            try {
@@ -668,10 +668,10 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      * @param filter   文字列、Filter
      */
     private void getProgram(final int[] chList, final String[] dateList, final String filter) {
-//        DateUtils dateUtils = new DateUtils(mContext);
-//        //dateListのサイズは1.
-//        mProgramSelectDate = dateList[0];
-//        //前回のデータ取得日時を取得
+        DateUtils dateUtils = new DateUtils(mContext);
+        //dateListのサイズは1.
+        mProgramSelectDate = dateList[0];
+        //前回のデータ取得日時を取得
 //        String[] lastDate = dateUtils.getChLastDate(chList, mProgramSelectDate);
 //        //DBから取得するチャンネル情報とWebAPiから取得するチャンネル番号を分ける.
 //        List<Integer> fromWebAPI = new ArrayList<>();
