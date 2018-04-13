@@ -19,7 +19,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class GenreListJsonParser extends AsyncTask<Object, Object, Object> {
+public class GenreListJsonParser extends AsyncTask<String, Object, Object> {
     private final String CLASS_NAME = getClass().getSimpleName();
     private static final String SEND_RESPONSE = ".sendGenreListResponse";
     private static final String SEND_UPDATE_DATE = ".sendUpdateDate";
@@ -49,12 +49,11 @@ public class GenreListJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     @Override
-    protected Object doInBackground(final Object... strings) {
-        String result = (String) strings[0];
+    protected Object doInBackground(final String... strings) {
+        String result = strings[0];
         GenreListResponse response = genreListSender(result);
         return response;
     }
-
 
     /**
      * ジャンル一覧Jsonデータを解析する.
@@ -64,7 +63,7 @@ public class GenreListJsonParser extends AsyncTask<Object, Object, Object> {
      */
     public GenreListResponse genreListSender(final String jsonStr) {
 
-        DTVTLogger.debugHttp(jsonStr);
+//        DTVTLogger.debugHttp(jsonStr); ログを確認したい場合に使用
         mGenreListResponse = new GenreListResponse();
         try {
             if (jsonStr != null) {

@@ -21,9 +21,10 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-public class VodClipWebClient
-        extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback,
-        JsonParserThread.JsonParser {
+public class VodClipWebClient extends WebApiBasePlala implements
+        WebApiBasePlala.WebApiBasePlalaCallback,
+        JsonParserThread.JsonParser
+{
 
     /**
      * 通信禁止判定フラグ.
@@ -77,17 +78,6 @@ public class VodClipWebClient
      */
     @Override
     public void onAnswer(final ReturnCode returnCode) {
-        /*
-        //パース後データ受け取り用
-        List<VodClipList> pursedData;
-
-        //JSONをパースする
-        VodClipJsonParser vodClipJsonParser = new VodClipJsonParser();
-        pursedData = vodClipJsonParser.VodClipListSender(returnCode.bodyData);
-
-        //パース後のデータを返す
-        mVodClipJsonParserCallback.onVodClipJsonParsed(pursedData);
-        */
         Handler handler = new Handler();
         try {
             JsonParserThread t = new JsonParserThread(returnCode.bodyData, handler, this);
@@ -107,21 +97,20 @@ public class VodClipWebClient
     public void onError(final ReturnCode returnCode) {
         //エラーが発生したのでヌルを返す
         mVodClipJsonParserCallback.onVodClipJsonParsed(null);
-
     }
 
     /**
      * VODクリップ取得.
      *
      * @param ageReq                    年齢制限の値 1から17を指定。範囲外の値は1or17に丸める
-     * @param upperPagetLimit           結果の最大件数（1以上）
-     * @param lowerPagetLimit           結果の最小件数（1以上）
+     * @param upperPagerLimit           結果の最大件数（1以上）
+     * @param lowerPagerLimit           結果の最小件数（1以上）
      * @param pagerOffset               取得位置
      * @param pagerDirection            取得方向（prev|next）
      * @param vodClipJsonParserCallback コールバック
      * @return パラメータ等に問題があった場合はfalse
      */
-    public boolean getVodClipApi(final int ageReq, final int upperPagetLimit, final int lowerPagetLimit,
+    public boolean getVodClipApi(final int ageReq, final int upperPagerLimit, final int lowerPagerLimit,
                                  final int pagerOffset, final String pagerDirection,
                                  final VodClipJsonParserCallback vodClipJsonParserCallback) {
         if (mIsCancel) {
@@ -129,7 +118,7 @@ public class VodClipWebClient
             return false;
         }
         //パラメーターのチェック
-        if (!checkNormalParameter(ageReq, upperPagetLimit, lowerPagetLimit,
+        if (!checkNormalParameter(upperPagerLimit, lowerPagerLimit,
                 pagerOffset, pagerDirection, vodClipJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、ヌルで帰る
             return false;
@@ -139,7 +128,7 @@ public class VodClipWebClient
         mVodClipJsonParserCallback = vodClipJsonParserCallback;
 
         //送信用パラメータの作成
-        String sendParameter = makeSendParameter(ageReq, upperPagetLimit, lowerPagetLimit,
+        String sendParameter = makeSendParameter(ageReq, upperPagerLimit, lowerPagerLimit,
                 pagerOffset, pagerDirection);
 
         //JSONの組み立てに失敗していれば、ヌルで帰る
@@ -151,30 +140,28 @@ public class VodClipWebClient
         openUrlAddOtt(UrlConstants.WebApiUrl.VOD_CLIP_LIST,
                 sendParameter, this, null);
 
-        //今のところ正常なので、trueで帰る
         return true;
     }
 
     /**
      * 指定されたパラメータがおかしいかどうかのチェック.
      *
-     * @param ageReq                    年齢制限の値 1から17を指定。範囲外の値は1or17に丸めるのでチェックしない
-     * @param upperPagetLimit           結果の最大件数
-     * @param lowerPagetLimit           　            結果の最小件数
+     * @param upperPagerLimit           結果の最大件数
+     * @param lowerPagerLimit           　            結果の最小件数
      * @param pagerOffset               取得位置
      * @param pagerDirection            取得方向
      * @param vodClipJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(final int ageReq, final int upperPagetLimit, final int lowerPagetLimit,
+    private boolean checkNormalParameter(final int upperPagerLimit, final int lowerPagerLimit,
                                          final int pagerOffset, final String pagerDirection,
                                          final VodClipJsonParserCallback vodClipJsonParserCallback) {
 
         // 各値が下限以下ならばfalse
-        if (upperPagetLimit < 1) {
+        if (upperPagerLimit < 1) {
             return false;
         }
-        if (lowerPagetLimit < 1) {
+        if (lowerPagerLimit < 1) {
             return false;
         }
         if (pagerOffset < 0) {
@@ -194,8 +181,6 @@ public class VodClipWebClient
         if (vodClipJsonParserCallback == null) {
             return false;
         }
-
-        //何もエラーが無いのでtrue
         return true;
     }
 
@@ -203,35 +188,29 @@ public class VodClipWebClient
      * 指定されたパラメータをJSONで組み立てて文字列にする.
      *
      * @param ageReq          年齢制限の値 1から17を指定。範囲外の値は1or17に丸める
-     * @param upperPagetLimit 結果の最大件数
-     * @param lowerPagetLimit 　結果の最小件数
+     * @param upperPagerLimit 結果の最大件数
+     * @param lowerPagerLimit 　結果の最小件数
      * @param pagerOffset     取得位置
      * @param pagerDirection  取得方向
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(final int ageReq, final int upperPagetLimit, final int lowerPagetLimit,
+    private String makeSendParameter(final int ageReq, final int upperPagerLimit, final int lowerPagerLimit,
                                      final int pagerOffset, final String pagerDirection) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
-            int intAge = ageReq;
-            //数字がゼロの場合は無指定と判断して1にする.また17より大きい場合は17に丸める.
-            if (ageReq < WebApiBasePlala.AGE_LOW_VALUE) {
-                intAge = 1;
-            } else if (ageReq > WebApiBasePlala.AGE_HIGH_VALUE) {
-                intAge = 17;
-            }
-            jsonObject.put(JsonConstants.META_RESPONSE_AGE_REQ, intAge);
+            jsonObject.put(JsonConstants.META_RESPONSE_AGE_REQ, ageReq);
 
             JSONObject jsonPagerObject = new JSONObject();
 
-            jsonPagerObject.put(JsonConstants.META_RESPONSE_UPPER_LIMIT, upperPagetLimit);
-            jsonPagerObject.put(JsonConstants.META_RESPONSE_LOWER_LIMIT, lowerPagetLimit);
+            jsonPagerObject.put(JsonConstants.META_RESPONSE_UPPER_LIMIT, upperPagerLimit);
+            jsonPagerObject.put(JsonConstants.META_RESPONSE_LOWER_LIMIT, lowerPagerLimit);
             jsonPagerObject.put(JsonConstants.META_RESPONSE_OFFSET, pagerOffset);
 
+            // 下のコメント要確認
             //取得方向は中身も必須なので、省略されていた場合はprevを指定する
             if (TextUtils.isEmpty(pagerDirection)) {
-                jsonPagerObject.put(JsonConstants.META_RESPONSE_DIRECTION, ClipUtils.DIRECTION_PREV);
+                jsonPagerObject.put(JsonConstants.META_RESPONSE_DIRECTION, ClipUtils.DIRECTION_NEXT);
             } else {
                 jsonPagerObject.put(JsonConstants.META_RESPONSE_DIRECTION, pagerDirection);
             }

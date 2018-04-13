@@ -102,14 +102,14 @@ public class TvClipWebClient
      * TVクリップ取得.
      *
      * @param ageReq                   年齢制限の値 1から17を指定。範囲外の値は1or17に丸める
-     * @param upperPagetLimit          結果の最大件数（1以上）
-     * @param lowerPagetLimit          結果の最小件数（1以上）
+     * @param upperPagerLimit          結果の最大件数（1以上）
+     * @param lowerPagerLimit          結果の最小件数（1以上）
      * @param pagerOffset              取得位置
      * @param pagerDirection           検索方向（prev|next）
      * @param tvClipJsonParserCallback コールバック
      * @return パラメータ等に問題があった場合はfalse
      */
-    public boolean getTvClipApi(final int ageReq, final int upperPagetLimit, final int lowerPagetLimit,
+    public boolean getTvClipApi(final int ageReq, final int upperPagerLimit, final int lowerPagerLimit,
                                 final int pagerOffset, final String pagerDirection,
                                 final TvClipJsonParserCallback tvClipJsonParserCallback) {
         if (mIsCancel) {
@@ -118,7 +118,7 @@ public class TvClipWebClient
         }
 
         //パラメーターのチェック
-        if (!checkNormalParameter(ageReq, upperPagetLimit, lowerPagetLimit,
+        if (!checkNormalParameter(upperPagerLimit, lowerPagerLimit,
                 pagerOffset, pagerDirection, tvClipJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、ヌルで帰る
             return false;
@@ -129,7 +129,7 @@ public class TvClipWebClient
 
         //送信用パラメータの作成
         String sendParameter = makeSendParameter(
-                ageReq, upperPagetLimit, lowerPagetLimit, pagerOffset, pagerDirection);
+                ageReq, upperPagerLimit, lowerPagerLimit, pagerOffset, pagerDirection);
 
         //JSONの組み立てに失敗していれば、ヌルで帰る
         if (sendParameter.isEmpty()) {
@@ -147,23 +147,22 @@ public class TvClipWebClient
     /**
      * 指定されたパラメータがおかしいかどうかのチェック.
      *
-     * @param ageReq                   年齢制限の値 1から17を指定。範囲外の値は1or17に丸めるのでチェックしない
-     * @param upperPagetLimit          結果の最大件数
-     * @param lowerPagetLimit          結果の最小件数
+     * @param upperPagerLimit          結果の最大件数
+     * @param lowerPagerLimit          結果の最小件数
      * @param pagerOffset              取得位置
      * @param pagerDirection           取得方向
      * @param tvClipJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(final int ageReq, final int upperPagetLimit, final int lowerPagetLimit,
+    private boolean checkNormalParameter(final int upperPagerLimit, final int lowerPagerLimit,
                                          final int pagerOffset, final String pagerDirection,
                                          final TvClipJsonParserCallback tvClipJsonParserCallback) {
 
         // 各値が下限以下ならばfalse
-        if (upperPagetLimit < 1) {
+        if (upperPagerLimit < 1) {
             return false;
         }
-        if (lowerPagetLimit < 1) {
+        if (lowerPagerLimit < 1) {
             return false;
         }
         if (pagerOffset < 0) {
@@ -184,7 +183,6 @@ public class TvClipWebClient
             return false;
         }
 
-        //何もエラーが無いのでtrue
         return true;
     }
 
@@ -203,28 +201,20 @@ public class TvClipWebClient
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
-            int intAge = ageReq;
-            //数字がゼロの場合は無指定と判断して1にする.また17より大きい場合は17に丸める.
-            if (intAge < WebApiBasePlala.AGE_LOW_VALUE) {
-                intAge = 1;
-            } else if (intAge > WebApiBasePlala.AGE_HIGH_VALUE) {
-                intAge = 17;
-            }
-            jsonObject.put(JsonConstants.META_RESPONSE_AGE_REQ, intAge);
+            jsonObject.put(JsonConstants.META_RESPONSE_AGE_REQ, ageReq);
 
             JSONObject jsonPagerObject = new JSONObject();
 
             jsonPagerObject.put(JsonConstants.META_RESPONSE_UPPER_LIMIT, upperPagetLimit);
             jsonPagerObject.put(JsonConstants.META_RESPONSE_LOWER_LIMIT, lowerPagetLimit);
             jsonPagerObject.put(JsonConstants.META_RESPONSE_OFFSET, pagerOffset);
-
+            //下のコメントを要確認
             //取得方向は中身も必須なので、省略されていた場合はprevを指定する
             if (TextUtils.isEmpty(pagerDirection)) {
-                jsonPagerObject.put(JsonConstants.META_RESPONSE_DIRECTION, ClipUtils.DIRECTION_PREV);
+                jsonPagerObject.put(JsonConstants.META_RESPONSE_DIRECTION, ClipUtils.DIRECTION_NEXT);
             } else {
                 jsonPagerObject.put(JsonConstants.META_RESPONSE_DIRECTION, pagerDirection);
             }
-
 
             jsonObject.put(JsonConstants.META_RESPONSE_PAGER, jsonPagerObject);
 

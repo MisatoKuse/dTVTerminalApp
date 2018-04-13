@@ -19,7 +19,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class RoleListJsonParser extends AsyncTask<Object, Object, Object> {
+public class RoleListJsonParser extends AsyncTask<String, Object, Object> {
     private final String CLASS_NAME = getClass().getSimpleName();
     private static final String SEND_RESPONSE = ".sendRoleListResponse";
     private static final String RESPONSE = ". RoleListResponse";
@@ -47,8 +47,8 @@ public class RoleListJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     @Override
-    protected Object doInBackground(final Object... strings) {
-        String result = (String) strings[0];
+    protected Object doInBackground(final String... strings) {
+        String result = strings[0];
         RoleListResponse response = roleListSender(result);
         return response;
     }
@@ -62,7 +62,7 @@ public class RoleListJsonParser extends AsyncTask<Object, Object, Object> {
      */
     public RoleListResponse roleListSender(final String jsonStr) {
 
-        DTVTLogger.debugHttp(jsonStr);
+//        DTVTLogger.debugHttp(jsonStr); //jsonを把握したい場合
         mRoleListResponse = new RoleListResponse();
         try {
             if (jsonStr != null) {
