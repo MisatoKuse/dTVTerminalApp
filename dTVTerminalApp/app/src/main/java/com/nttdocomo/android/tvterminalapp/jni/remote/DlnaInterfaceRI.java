@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 機能：For Dlna Remote.
@@ -109,7 +110,7 @@ public class DlnaInterfaceRI {
         AssetManager am = context.getResources().getAssets();
         try {
             fileNames = am.list(assetsConfPath);
-        } catch (Exception e) {
+        } catch (IOException e) {
             DTVTLogger.debug(e);
         }
         if (fileNames != null && fileNames.length > 0) {
@@ -188,7 +189,7 @@ public class DlnaInterfaceRI {
             while ((length = in2.read(buffer)) > 0) {
                 out.write(buffer, 0, length);
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             DTVTLogger.debug(e);
             ret = false;
         } finally {
@@ -391,7 +392,7 @@ public class DlnaInterfaceRI {
                 is.close();
                 fos.close();
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
