@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
+public class WeeklyRankJsonParser extends AsyncTask<String, Object, Object> {
 
     final private WeeklyRankWebClient.WeeklyRankJsonParserCallback mWeeklyRankJsonParserCallback;
 
@@ -81,8 +81,8 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     @Override
-    protected Object doInBackground(final Object... strings) {
-        String result = (String) strings[0];
+    protected Object doInBackground(final String... strings) {
+        String result = strings[0];
         List<WeeklyRankList> resultList = weeklyRankListSender(result);
         return resultList;
     }

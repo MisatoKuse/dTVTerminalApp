@@ -47,7 +47,7 @@ public class ClipKeyListDataManager {
      */
     private synchronized List<Map<String, String>> selectClipKeyListData(
             final ClipKeyListDao.TABLE_TYPE type, final String selection, final String[] args) {
-        DTVTLogger.start();
+//        DTVTLogger.start(); //必要な時にコメントを解除して使用
 
         //データ存在チェック
         List<Map<String, String>> list = new ArrayList<>();
@@ -72,7 +72,7 @@ public class ClipKeyListDataManager {
         } catch (SQLiteException e) {
             DTVTLogger.debug("ClipKeyListDataManager::selectClipKeyListData, e.cause=" + e.getCause());
         }
-        DTVTLogger.end();
+//        DTVTLogger.end();//必要な時にコメントを解除して使用
         return list;
     }
 

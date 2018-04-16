@@ -4,9 +4,13 @@
 
 package com.nttdocomo.android.tvterminalapp.utils;
 
+import android.content.Context;
 import android.support.annotation.Nullable;
+import android.view.View;
 
+import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
+import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 
 import java.util.Calendar;
@@ -99,6 +103,7 @@ public class ContentUtils {
         return cType;
     }
 
+    // これ聞く->週間番組ランキングがOhterになっている
     /**
      * 番組、VODの判定.
      *
@@ -153,5 +158,57 @@ public class ContentUtils {
         }
         return cType;
     }
+    /**
+     * 配信期限の表示.
+     *
+     * @param holder          ビューの集合
+     * @param listContentInfo 行データー
+     * @return true 配信期限の表示する場合
+     */
+    public static boolean setStartViewing(final Context context, final ContentsAdapter.ViewHolder holder, final ContentsData listContentInfo) {
+        String dispType = listContentInfo.getDispType();
+        String tvService = listContentInfo.getTvService();
+        String contentsType = listContentInfo.getContentsType();
+        long availEndDate = listContentInfo.getAvailEndDate();
+        long vodStartDate = listContentInfo.getVodStartDate();
+        long vodEndDate = listContentInfo.getVodEndDate();
 
+        ContentUtils.ContentsType vodContentsType = ContentUtils.getContentsTypeByPlala(dispType, tvService,
+                contentsType, availEndDate, vodStartDate, vodEndDate);
+        String viewingPriod = "";
+
+        if (vodContentsType ==  ContentUtils.ContentsType.VOD
+                || vodContentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
+            if (DateUtils.isBefore(vodStartDate)) {
+                viewingPriod = DateUtils.getContentsDetailVodDate(context, vodStartDate);
+                viewingPriod = StringUtils.getConnectStrings(
+                        context.getString(R.string.common_date_format_start_str), viewingPriod);
+            } else {
+                if (vodContentsType ==  ContentUtils.ContentsType.VOD) {
+                    //VOD(m/d（曜日）まで)
+                    viewingPriod = DateUtils.getContentsDetailVodDate(context, availEndDate);
+                } else if (vodContentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
+                    //VOD(m/d（曜日）まで)
+                    viewingPriod = DateUtils.getContentsDetailVodDate(context, vodEndDate);
+                    viewingPriod = StringUtils.getConnectStrings(
+                            context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing), viewingPriod);
+                }
+            }
+        }
+        switch (vodContentsType) {
+            case  VOD:
+            case  DCHANNEL_VOD_31:
+                holder.tv_time.setVisibility(View.VISIBLE);
+                holder.tv_time.setText(viewingPriod);
+                return true;
+            case  DCHANNEL_VOD_OVER_31:
+                break;
+            case  TV:
+            case  OTHER:
+                break;
+            default:
+                break;
+        }
+        return false;
+    }
 }
