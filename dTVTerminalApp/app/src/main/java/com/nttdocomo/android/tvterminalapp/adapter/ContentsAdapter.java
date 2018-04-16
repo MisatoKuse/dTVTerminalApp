@@ -755,52 +755,54 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      */
     private void setTimeData(final ViewHolder holder, final ContentsData listContentInfo) {
         boolean isRecommendContent = false;
-        //TODO:基本的には日付はすべてエポック秒で扱い、表示する際にYYYY/MM/DD形式に変換する方針にする(今日のテレビランキング、週間ランキングと同じ方式に統一))
-        if (!TextUtils.isEmpty(listContentInfo.getTime()) || !TextUtils.isEmpty(listContentInfo.getStartViewing())) { //時間
-            switch (mType) {
-                case TYPE_RECOMMEND_LIST://おすすめ番組・ビデオ
-                case TYPE_SEARCH_LIST://検索
-                    setTabTimeData(holder, listContentInfo);
-                    break;
-                case TYPE_DAILY_RANK: // 今日のテレビランキング
-                case TYPE_WEEKLY_RANK: // 週間ランキング
-                case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
-                    try {
+        switch (mType) {
+            case TYPE_RECOMMEND_LIST://おすすめ番組・ビデオ
+            case TYPE_SEARCH_LIST://検索
+                setTabTimeData(holder, listContentInfo);
+                break;
+            case TYPE_DAILY_RANK: // 今日のテレビランキング
+            case TYPE_WEEKLY_RANK: // 週間ランキング
+            case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
+                try {
+                    if (!TextUtils.isEmpty(listContentInfo.getTime())) {
                         holder.tv_time.setText(DateUtils.getRecordShowListItem(Long.parseLong(listContentInfo.getTime())));
-                    } catch(NumberFormatException e) {
-                        //TODO:Long.parseLongの対応はコンテンツの期間表示時に対応し、Long.parseLongを移動するなどしてtry~catchを削除する
-                        DTVTLogger.error(e.getMessage());
                     }
-                    break;
-                case TYPE_RENTAL_RANK: // レンタル一覧
-                case TYPE_PREMIUM_VIDEO_LIST: //プレミアムビデオ
-                    String time = listContentInfo.getTime();
-                    if (!time.equals(RentalDataProvider.ENABLE_VOD_WATCH_CONTENTS_UNLIMITED_HYPHEN)) {
-                        //視聴期限表示
-                        holder.tv_time.setVisibility(View.VISIBLE);
-                        if (time.equals(mContext.getString(R.string.delivery_end_message))) {
-                            holder.tv_time.setText(listContentInfo.getTime());
-                        } else {
-                            ContentUtils.setPeriodText(mContext, holder, listContentInfo, isRecommendContent);
-                        }
+                } catch(NumberFormatException e) {
+                    //TODO:Long.parseLongの対応はコンテンツの期間表示時に対応し、Long.parseLongを移動するなどしてtry~catchを削除する
+                    DTVTLogger.error(e.getMessage());
+                }
+                break;
+            case TYPE_RENTAL_RANK: // レンタル一覧
+            case TYPE_PREMIUM_VIDEO_LIST: //プレミアムビデオ
+                String time = listContentInfo.getTime();
+                if (null != time && !time.equals(RentalDataProvider.ENABLE_VOD_WATCH_CONTENTS_UNLIMITED_HYPHEN)) {
+                    //視聴期限表示
+                    holder.tv_time.setVisibility(View.VISIBLE);
+                    if (time.equals(mContext.getString(R.string.delivery_end_message))) {
+                        holder.tv_time.setText(listContentInfo.getTime());
                     } else {
-                        holder.tv_time.setVisibility(View.GONE);
+                        ContentUtils.setPeriodText(mContext, holder, listContentInfo, isRecommendContent);
                     }
-                    break;
-                case TYPE_VIDEO_RANK: // ビデオランキング
-                case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
-                case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
-                case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
-                case TYPE_RECORDED_LIST: // 録画番組一覧
-                case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
-                case TYPE_CONTENT_DETAIL_CHANNEL_LIST: // コンテンツ詳細チャンネル一覧
-                    if (!ContentUtils.setPeriodText(mContext, holder, listContentInfo, isRecommendContent)) {
+                } else {
+                    holder.tv_time.setVisibility(View.GONE);
+                }
+                break;
+            case TYPE_VIDEO_RANK: // ビデオランキング
+            case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
+            case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
+            case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
+            case TYPE_RECORDED_LIST: // 録画番組一覧
+            case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
+            case TYPE_CONTENT_DETAIL_CHANNEL_LIST: // コンテンツ詳細チャンネル一覧
+                if (!ContentUtils.setPeriodText(mContext, holder, listContentInfo, isRecommendContent)) {
+                    if (!TextUtils.isEmpty(listContentInfo.getTime())) {
+                        holder.tv_time.setVisibility(View.VISIBLE);
                         holder.tv_time.setText(listContentInfo.getTime());
                     }
-                    break;
-                default:
-                    break;
-            }
+                }
+                break;
+            default:
+                break;
         }
     }
 
@@ -815,9 +817,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         switch (mTabType) {
             case TAB_TV:
                 holder.tv_time.setVisibility(View.VISIBLE);
-
-                //日付の表示
-                holder.tv_time.setText(DateUtils.getContentsDateString(listContentInfo.getStartViewing()));
+                if (!TextUtils.isEmpty(listContentInfo.getStartViewing())) {
+                    //日付の表示
+                    holder.tv_time.setText(DateUtils.getContentsDateString(listContentInfo.getStartViewing()));
+                }
                 break;
             case TAB_VIDEO:
             case TAB_D_TV:
@@ -828,7 +831,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 if (Integer.toString(ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID).equals(listContentInfo.getServiceId()) &&
                         ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(listContentInfo.getCategoryId())) {
                     holder.tv_time.setText(DateUtils.getContentsDateString(listContentInfo.getStartViewing()));
-                } else if (DateUtils.isBefore(listContentInfo.getStartViewing())) {
+                } else if (!TextUtils.isEmpty(listContentInfo.getStartViewing())
+                        && DateUtils.isBefore(listContentInfo.getStartViewing())) {
                     holder.tv_time.setText(DateUtils.getContentsDateString(mContext, listContentInfo.getStartViewing(), true));
                 } else {
                     holder.tv_time.setText("");

@@ -16,6 +16,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
@@ -174,6 +175,10 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
             contentsData.setDispType(dispType);
             contentsData.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
             contentsData.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
+            contentsData.setAvailStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
+            contentsData.setAvailEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
+            contentsData.setVodStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_START_DATE)));
+            contentsData.setVodEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_END_DATE)));
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
 
