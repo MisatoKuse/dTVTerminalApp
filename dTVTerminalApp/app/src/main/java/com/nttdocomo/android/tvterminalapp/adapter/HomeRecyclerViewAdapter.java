@@ -326,6 +326,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
                 setRecommendServiceIcon(contentsData, viewHolder);
                 break;
             case HOME_CONTENTS_SORT_RECOMMEND_VOD:
+                setRecommendVodInfo(contentsData, viewHolder);
                 setRecommendServiceIcon(contentsData, viewHolder);
                 break;
             case HOME_CONTENTS_SORT_TODAY:
@@ -488,6 +489,25 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         String startViewing = contentsData.getStartViewing();
         String channelName = contentsData.getChannelName();
         viewHolder.mTime.setText(structDateStrings(startViewing, channelName));
+    }
+
+    /**
+     * おすすめビデオの2段目に表示する情報を設定する.
+     *
+     * @param contentsData コンテンツデータ
+     * @param viewHolder ViewHolder
+     */
+    private void setRecommendVodInfo(final ContentsData contentsData, final ViewHolder viewHolder) {
+        long startDate = DateUtils.getEpochTimeLink(contentsData.getStartViewing());
+        if (Integer.toString(ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID).equals(contentsData.getServiceId()) &&
+                ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(contentsData.getCategoryId())) {
+            viewHolder.mTime.setText(StringUtils.getConnectStrings(
+                    DateUtils.getRecordShowListItem(startDate)));
+        } else if (DateUtils.isBefore(contentsData.getStartViewing())) {
+            viewHolder.mTime.setText(DateUtils.getContentsDateString(mContext, contentsData.getStartViewing(), true));
+        } else {
+            viewHolder.mTime.setText("");
+        }
     }
 
     /**
