@@ -24,6 +24,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -295,6 +296,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         return viewHolder;
     }
 
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final int i) {
         if (getItemViewType(i) == TYPE_FOOTER) {
@@ -332,8 +334,12 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             case HOME_CONTENTS_SORT_TODAY:
             case RANKING_CONTENTES_TODAY_SORT:
             case RANKING_CONTENTES_WEEK_SORT:
-                //今日のテレビランキング/週間テレビランキング (1行目:タイトル 2行目:放送時間)
-                setTvRankingInfo(contentsData, viewHolder);
+                //今日のテレビランキング/週間テレビランキング (1行目:タイトル 2行目:放送期間)
+                setRankingInfo(contentsData, viewHolder, false);
+                break;
+            case RANKING_CONTENTES_VIDEO_SORT:
+                //ビデオランキングテレビランキング (1行目:タイトル 2行目:放送期限)
+                setRankingInfo(contentsData, viewHolder, true);
                 break;
             default:
                 //上記以外 (タイトルが2行)
@@ -473,9 +479,18 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         String startTime = String.valueOf(DateUtils.getEpochTime(contentsData.getLinearStartDate()) / 1000);
         String endTime = String.valueOf(DateUtils.getEpochTime(contentsData.getLinearEndDate()) / 1000);
         String channelName = contentsData.getChannelName();
-        String date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(startTime)),
-                DateUtils.formatEpochToStringOpeLog(Long.parseLong(endTime)), channelName);
-
+        ContentUtils.ContentsType contentsType = ContentUtils.getContentsTypeByPlala(contentsData.getDispType(),
+                contentsData.getTvService(), contentsData.getContentsType(), contentsData.getAvailEndDate(),
+                contentsData.getVodStartDate(), contentsData.getVodEndDate());
+        String date;
+        if (contentsType == ContentUtils.ContentsType.TV || contentsType == ContentUtils.ContentsType.OTHER) {
+            date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(startTime)),
+                    DateUtils.formatEpochToStringOpeLog(Long.parseLong(endTime)), channelName);
+        } else {
+            date = StringUtils.getConnectStrings(
+                    DateUtils.addDateLimit(
+                            mContext, contentsData, contentsType), mContext.getString(R.string.home_contents_pipe), channelName);
+        }
         viewHolder.mTime.setText(date);
     }
 
@@ -509,18 +524,30 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     }
 
     /**
-     * 今日のテレビランキングの2段目に表示する情報を設定する.
+     * ランキングの2段目に表示する情報を設定する.
      *
      * @param contentsData コンテンツデータ
      * @param viewHolder ViewHolder
      */
-    private void setTvRankingInfo(final ContentsData contentsData, final ViewHolder viewHolder) {
+    private void setRankingInfo(final ContentsData contentsData, final ViewHolder viewHolder, final boolean isVideoRanking) {
         String availStartDate = contentsData.getLinearStartDate();
         if (availStartDate == null) {
             availStartDate = "0"; // TODO:クラッシュのため暫定対応
         }
         String channelName = contentsData.getChannelName();
-        String date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(availStartDate)), channelName);
+        ContentUtils.ContentsType contentsType = ContentUtils.getContentsTypeByPlala(contentsData.getDispType(),
+                contentsData.getTvService(), contentsData.getContentsType(), contentsData.getAvailEndDate(),
+                contentsData.getVodStartDate(), contentsData.getVodEndDate());
+        String date;
+        if (contentsType == ContentUtils.ContentsType.TV || contentsType == ContentUtils.ContentsType.OTHER) {
+            date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(availStartDate)), channelName);
+        } else {
+            if (isVideoRanking) {
+                date = DateUtils.addDateLimitVod(mContext, contentsData, contentsType);
+            } else {
+                date = DateUtils.addDateLimit(mContext, contentsData, contentsType);
+            }
+        }
         viewHolder.mTime.setText(date);
     }
 
