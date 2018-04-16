@@ -57,7 +57,9 @@ public class RentalListDataManager {
                 JsonConstants.META_RESPONSE_CONTENT_TYPE, JsonConstants.META_RESPONSE_DTV_TYPE,
                 JsonConstants.META_RESPONSE_RATING, JsonConstants.META_RESPONSE_EPISODE_ID,
                 JsonConstants.META_RESPONSE_EST_FLAG, JsonConstants.META_RESPONSE_CID,
-                JsonConstants.META_RESPONSE_THUMB_640
+                JsonConstants.META_RESPONSE_THUMB_640, JsonConstants.META_RESPONSE_CHNO,
+                JsonConstants.META_RESPONSE_DISPLAY_START_DATE, JsonConstants.META_RESPONSE_DUR,
+                JsonConstants.META_RESPONSE_PUBLISH_START_DATE
         };
         List<Map<String, String>> list = null;
 

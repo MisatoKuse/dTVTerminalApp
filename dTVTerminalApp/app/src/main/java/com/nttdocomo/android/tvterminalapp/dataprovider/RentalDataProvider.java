@@ -305,6 +305,10 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
             vodMetaFullData.setRating(Double.parseDouble(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_RATING)));
             vodMetaFullData.setCid(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_CID));
             vodMetaFullData.setEpisode_id(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_EPISODE_ID));
+            vodMetaFullData.setAvail_start_date(Long.parseLong(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
+            vodMetaFullData.setAvail_end_date(Long.parseLong(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
+            vodMetaFullData.setmVod_start_date(Long.parseLong(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_VOD_START_DATE)));
+            vodMetaFullData.setmVod_end_date(Long.parseLong(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_VOD_END_DATE)));
             vodMetaFullData.setEstFlag(estFlg);
             vodMetaFullDataList.add(vodMetaFullData);
         }

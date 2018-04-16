@@ -57,8 +57,10 @@ public class WatchListenVideoListDataManager {
                 JsonConstants.META_RESPONSE_AVAIL_START_DATE, JsonConstants.META_RESPONSE_AVAIL_END_DATE,
                 JsonConstants.META_RESPONSE_DISP_TYPE, JsonConstants.META_RESPONSE_CONTENT_TYPE,
                 JsonConstants.META_RESPONSE_DTV, JsonConstants.META_RESPONSE_TV_SERVICE,
-                JsonConstants.META_RESPONSE_DTV_TYPE, JsonConstants.META_RESPONSE_THUMB_640};
-
+                JsonConstants.META_RESPONSE_DTV_TYPE, JsonConstants.META_RESPONSE_THUMB_640,
+                JsonConstants.META_RESPONSE_PUBLISH_START_DATE, JsonConstants.META_RESPONSE_PUBLISH_END_DATE,
+                JsonConstants.META_RESPONSE_CID, JsonConstants.META_RESPONSE_CHNO,
+                JsonConstants.META_RESPONSE_DUR};
         try {
             //Daoクラス使用準備
             DBHelper dbHelper = new DBHelper(mContext);

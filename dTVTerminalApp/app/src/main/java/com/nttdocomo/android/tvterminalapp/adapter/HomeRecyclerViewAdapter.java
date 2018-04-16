@@ -110,13 +110,29 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      */
     private final static int HOME_CONTENTS_SORT_VIDEO = HOME_CONTENTS_SORT_CHANNEL + 4;
     /**
+     * 視聴中ビデオ(ホーム).
+     */
+    private final static int HOME_CONTENTS_SORT_WATCHING_VIDEO = HOME_CONTENTS_SORT_CHANNEL + 5;
+    /**
      * カテゴリ クリップ[テレビ](ホーム).
      */
     private final static int HOME_CONTENTS_SORT_TV_CLIP = HOME_CONTENTS_SORT_CHANNEL + 6;
     /**
+     * カテゴリ クリップ[ビデオ](ホーム).
+     */
+    private final static int HOME_CONTENTS_SORT_VOD_CLIP = HOME_CONTENTS_SORT_CHANNEL + 7;
+    /**
+     * プレミアムビデオ(ホーム).
+     */
+    private final static int HOME_CONTENTS_SORT_PREMIUM_VIDEO = HOME_CONTENTS_SORT_CHANNEL + 8;
+    /**
+     * レンタルビデオ(ホーム).
+     */
+    private final static int HOME_CONTENTS_SORT_RENTAL_VIDEO = HOME_CONTENTS_SORT_CHANNEL + 9;
+    /**
      * カテゴリ 今日のテレビランキング(ランキングトップ画面).
      */
-    private final static int RANKING_CONTENTES_TODAY_SORT = 20;
+    public final static int RANKING_CONTENTES_TODAY_SORT = 25;
     /**
      * カテゴリ 週間テレビランキング(ランキングトップ画面).
      */
@@ -334,10 +350,16 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             case HOME_CONTENTS_SORT_TODAY:
             case RANKING_CONTENTES_TODAY_SORT:
             case RANKING_CONTENTES_WEEK_SORT:
+            case HOME_CONTENTS_SORT_TV_CLIP:
                 //今日のテレビランキング/週間テレビランキング (1行目:タイトル 2行目:放送期間)
                 setRankingInfo(contentsData, viewHolder, false);
                 break;
+            case HOME_CONTENTS_SORT_WATCHING_VIDEO:
+            case HOME_CONTENTS_SORT_VOD_CLIP:
+            case HOME_CONTENTS_SORT_PREMIUM_VIDEO:
+            case HOME_CONTENTS_SORT_RENTAL_VIDEO:
             case RANKING_CONTENTES_VIDEO_SORT:
+            case HOME_CONTENTS_SORT_VIDEO:
                 //ビデオランキングテレビランキング (1行目:タイトル 2行目:放送期限)
                 setRankingInfo(contentsData, viewHolder, true);
                 break;
@@ -634,11 +656,19 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         String timeMinuteOnePlace = dateString.substring(START_TIME_MINUTE_SEPARATE, START_TIME_MINUTE_END);
         String minute = StringUtils.getConnectStrings(timeMinuteTensPlace, timeMinuteOnePlace);
 
-        return StringUtils.getConnectStrings(month, mContext.getString(R.string.home_contents_slash), day,
+        //m/d(E)hh:mm形式取得
+        String structDateString = StringUtils.getConnectStrings(month, mContext.getString(R.string.home_contents_slash), day,
                 mContext.getString(R.string.home_contents_front_bracket), dayOfWeek,
                 mContext.getString(R.string.home_contents_back_bracket), hour,
-                mContext.getString(R.string.home_contents_colon), minute,
-                mContext.getString(R.string.home_contents_hyphen), channelName);
+                mContext.getString(R.string.home_contents_colon), minute);
+        //channelNameがないときはそのまま
+        if (channelName == null || channelName.isEmpty()) {
+            return structDateString;
+        } else {
+            //チャンネル名を追加
+            return StringUtils.getConnectStrings(structDateString,
+                    mContext.getString(R.string.home_contents_hyphen), channelName);
+        }
     }
 
     @Override
@@ -662,7 +692,11 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             case HOME_CONTENTS_SORT_RECOMMEND_PROGRAM:
             case HOME_CONTENTS_SORT_TODAY:
             case HOME_CONTENTS_SORT_VIDEO:
+            case HOME_CONTENTS_SORT_WATCHING_VIDEO:
             case HOME_CONTENTS_SORT_TV_CLIP:
+            case HOME_CONTENTS_SORT_VOD_CLIP:
+            case HOME_CONTENTS_SORT_PREMIUM_VIDEO:
+            case HOME_CONTENTS_SORT_RENTAL_VIDEO:
             case RANKING_CONTENTES_TODAY_SORT:
             case RANKING_CONTENTES_WEEK_SORT:
             case RANKING_CONTENTES_VIDEO_SORT:

@@ -58,7 +58,9 @@ public class RankingTopDataManager {
                 JsonConstants.META_RESPONSE_DTV, JsonConstants.META_RESPONSE_TV_SERVICE,
                 JsonConstants.META_RESPONSE_DTV_TYPE, JsonConstants.META_RESPONSE_CID,
                 JsonConstants.META_RESPONSE_AVAIL_START_DATE, JsonConstants.META_RESPONSE_THUMB_640,
-                JsonConstants.META_RESPONSE_AVAIL_END_DATE};
+                JsonConstants.META_RESPONSE_AVAIL_END_DATE, JsonConstants.META_RESPONSE_DUR,
+                JsonConstants.META_RESPONSE_CHNO, JsonConstants.META_RESPONSE_PUBLISH_START_DATE,
+                JsonConstants.META_RESPONSE_PUBLISH_END_DATE};
 
         try {
             //Daoクラス使用準備
