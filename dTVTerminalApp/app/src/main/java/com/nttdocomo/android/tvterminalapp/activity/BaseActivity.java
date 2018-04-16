@@ -35,6 +35,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.Tracker;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.common.ChildContentListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
@@ -187,6 +188,10 @@ public class BaseActivity extends FragmentActivity implements
      * stb status icon状態.
      */
     private boolean mIsStbStatusOn = false;
+    /**
+     * GoogleAnalytics用
+     */
+    private Tracker mTracker;
     /**
      * GooglePlayのドコテレアプリページ.
      * 現在
@@ -727,6 +732,15 @@ public class BaseActivity extends FragmentActivity implements
         super.onResume();
         DTVTLogger.start();
         TvtApplication app = (TvtApplication) getApplication();
+
+        //Googleアナリティクスに画面名を送信する
+        mTracker = app.getDefaultTracker();
+        //TODO: 難読化を行うと、getClassがランダムな名前になる模様。その前に個別の画面名の設定が必要になる。
+        //TODO: 近いうちのスプリントで詳細な情報出力設定が行われる筈なので、ひとまず問題は無い。
+        mTracker.setScreenName(this.getClass().getSimpleName());
+        mTracker.send(
+                new com.google.android.gms.analytics.HitBuilders.ScreenViewBuilder().build());
+
         // BG → FG でのonResumeかを判定
         if (app.getIsChangeApplicationVisible()) {
             if (DeviceStateUtils.isRootDevice()) {
