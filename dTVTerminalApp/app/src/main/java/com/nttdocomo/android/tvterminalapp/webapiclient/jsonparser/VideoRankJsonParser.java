@@ -174,19 +174,8 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
                                 stringBuffer.append(JsonConstants.META_RESPONSE_PUINF);
                                 stringBuffer.append(JsonConstants.UNDER_LINE);
                                 stringBuffer.append(puinfBuffer);
-
-                                //日付項目チェック
-                                if (DBUtils.isDateItem(puinfBuffer)) {
-                                    //日付なので変換して格納する
-                                    String dateBuffer = DateUtils.formatEpochToString(
-                                            StringUtils.changeString2Long(puinfObj.getString(
-                                                    puinfBuffer)));
-                                    vrListMap.put(stringBuffer.toString(), dateBuffer);
-                                } else {
-                                    //日付ではないのでそのまま格納する
-                                    String para = puinfObj.getString(puinfBuffer);
-                                    vrListMap.put(JsonConstants.META_RESPONSE_PUINF + JsonConstants.UNDER_LINE + puinfBuffer, para);
-                                }
+                                String para = puinfObj.getString(puinfBuffer);
+                                vrListMap.put(JsonConstants.META_RESPONSE_PUINF + JsonConstants.UNDER_LINE + puinfBuffer, para);
                             }
                         } else if (DBUtils.isDateItem(listBuffer)) {
                             // DATE_PARAに含まれるのは日付なので、エポック秒となる。変換して格納する

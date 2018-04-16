@@ -602,60 +602,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
-     * 配信期限の表示.
-     *
-     * @param holder          ビューの集合
-     * @param listContentInfo 行データー
-     * @return true 配信期限の表示する場合
-     */
-    private boolean setStartViewing(final ViewHolder holder, final ContentsData listContentInfo) {
-        String dispType = listContentInfo.getDispType();
-        String tvService = listContentInfo.getTvService();
-        String contentsType = listContentInfo.getContentsType();
-        long availEndDate = listContentInfo.getAvailEndDate();
-        long vodStartDate = listContentInfo.getVodStartDate();
-        long vodEndDate = listContentInfo.getVodEndDate();
-
-        ContentUtils.ContentsType vodContentsType = ContentUtils.getContentsTypeByPlala(dispType, tvService,
-                contentsType, availEndDate, vodStartDate, vodEndDate);
-        String viewingPriod = "";
-
-        if (vodContentsType ==  ContentUtils.ContentsType.VOD
-            || vodContentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
-            if (DateUtils.isBefore(vodStartDate)) {
-                viewingPriod = DateUtils.getContentsDetailVodDate(mContext, vodStartDate);
-                viewingPriod = StringUtils.getConnectStrings(
-                        mContext.getString(R.string.common_date_format_start_str), viewingPriod);
-            } else {
-                if (vodContentsType ==  ContentUtils.ContentsType.VOD) {
-                    //VOD(m/d（曜日）まで)
-                    viewingPriod = DateUtils.getContentsDetailVodDate(mContext, availEndDate);
-                } else if (vodContentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
-                    //VOD(m/d（曜日）まで)
-                    viewingPriod = DateUtils.getContentsDetailVodDate(mContext, vodEndDate);
-                    viewingPriod = StringUtils.getConnectStrings(
-                            mContext.getString(R.string.contents_detail_hikari_d_channel_miss_viewing), viewingPriod);
-                }
-            }
-        }
-        switch (vodContentsType) {
-            case  VOD:
-            case  DCHANNEL_VOD_31:
-                holder.tv_time.setVisibility(View.VISIBLE);
-                holder.tv_time.setText(viewingPriod);
-                return true;
-            case  DCHANNEL_VOD_OVER_31:
-                break;
-            case  TV:
-            case  OTHER:
-                break;
-            default:
-                break;
-        }
-        return false;
-    }
-
-    /**
      * NOW ON AIR を設定.
      *
      * @param holder          ビューの集合
@@ -831,7 +777,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                         if (time.equals(mContext.getString(R.string.delivery_end_message))) {
                             holder.tv_time.setText(listContentInfo.getTime());
                         } else {
-                            setStartViewing(holder, listContentInfo);
+                            ContentUtils.setStartViewing(mContext, holder, listContentInfo);
                         }
                     } else {
                         holder.tv_time.setVisibility(View.GONE);
@@ -844,7 +790,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 case TYPE_RECORDED_LIST: // 録画番組一覧
                 case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
                 case TYPE_CONTENT_DETAIL_CHANNEL_LIST: // コンテンツ詳細チャンネル一覧
-                    if (!setStartViewing(holder, listContentInfo)) {
+                    if (!ContentUtils.setStartViewing(mContext, holder, listContentInfo)) {
                         holder.tv_time.setText(listContentInfo.getTime());
                     }
                     break;
@@ -1358,7 +1304,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     /**
      * ビュー管理クラス.
      */
-    private static class ViewHolder {
+    public static class ViewHolder {
         /**
          * サムネイル親レイアウト.
          */
@@ -1378,7 +1324,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         /**
          * サブタイトル.
          */
-        TextView tv_time;
+        public TextView tv_time;
         /**
          * メインタイトル.
          */
