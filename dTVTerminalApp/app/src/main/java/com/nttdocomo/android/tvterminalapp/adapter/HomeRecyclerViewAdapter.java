@@ -498,11 +498,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      * @param viewHolder ViewHolder
      */
     private void setRecommendVodInfo(final ContentsData contentsData, final ViewHolder viewHolder) {
-        long startDate = DateUtils.getEpochTimeLink(contentsData.getStartViewing());
         if (Integer.toString(ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID).equals(contentsData.getServiceId()) &&
                 ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(contentsData.getCategoryId())) {
-            viewHolder.mTime.setText(StringUtils.getConnectStrings(
-                    DateUtils.getRecordShowListItem(startDate)));
+            viewHolder.mTime.setText(DateUtils.getContentsDateString(contentsData.getStartViewing()));
         } else if (DateUtils.isBefore(contentsData.getStartViewing())) {
             viewHolder.mTime.setText(DateUtils.getContentsDateString(mContext, contentsData.getStartViewing(), true));
         } else {

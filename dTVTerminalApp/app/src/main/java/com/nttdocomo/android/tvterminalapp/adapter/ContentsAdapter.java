@@ -671,7 +671,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                     }
                 } else if (ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID == serviceId
                         && ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(categoryId)) {
-                    result = true;
+                    if (DateUtils.isNowOnAirDate(listContentInfo.getStartViewing(),
+                            listContentInfo.getEndViewing(), false)) {
+                        result = true;
+                    }
                 }
             }
         }
@@ -809,15 +812,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      */
     private void setTabTimeData(final ViewHolder holder, final ContentsData listContentInfo) {
         //開始・終了日付の取得
-        long startDate = DateUtils.getEpochTimeLink(listContentInfo.getStartViewing());
         switch (mTabType) {
             case TAB_TV:
                 holder.tv_time.setVisibility(View.VISIBLE);
 
                 //日付の表示
-                String answerText = StringUtils.getConnectStrings(
-                        DateUtils.getRecordShowListItem(startDate));
-                holder.tv_time.setText(answerText);
+                holder.tv_time.setText(DateUtils.getContentsDateString(listContentInfo.getStartViewing()));
                 break;
             case TAB_VIDEO:
             case TAB_D_TV:
@@ -827,12 +827,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_time.setVisibility(View.VISIBLE);
                 if (Integer.toString(ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID).equals(listContentInfo.getServiceId()) &&
                         ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(listContentInfo.getCategoryId())) {
-                    holder.tv_time.setText(StringUtils.getConnectStrings(
-                            DateUtils.getRecordShowListItem(startDate)));
+                    holder.tv_time.setText(DateUtils.getContentsDateString(listContentInfo.getStartViewing()));
+                } else if (DateUtils.isBefore(listContentInfo.getStartViewing())) {
+                    holder.tv_time.setText(DateUtils.getContentsDateString(mContext, listContentInfo.getStartViewing(), true));
                 } else {
-                    if (DateUtils.isBefore(listContentInfo.getStartViewing())) {
-                        holder.tv_time.setText(DateUtils.getContentsDateString(mContext, listContentInfo.getStartViewing(), true));
-                    }
+                    holder.tv_time.setText("");
                 }
                 break;
             default:
@@ -977,9 +976,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         if (!TextUtils.isEmpty(listContentInfo.getChannelName()) && mTabType != TabTypeItem.TAB_DEFAULT) { //ランク
             if (!TextUtils.isEmpty(holder.tv_time.getText())) {
                 holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
+            } else {
+                holder.tv_recorded_hyphen.setVisibility(View.GONE);
             }
             holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
             holder.tv_recorded_ch_name.setText(listContentInfo.getChannelName());
+            holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.content_time_text));
             if (mType == ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST) {
                 holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.record_download_status_color));
             }
@@ -1012,6 +1014,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                     }
                     holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
                     holder.tv_recorded_ch_name.setText(listContentInfo.getChannelName());
+                } else {
+                    holder.tv_recorded_hyphen.setVisibility(View.GONE);
+                    holder.tv_recorded_ch_name.setVisibility(View.GONE);
+                    holder.tv_recorded_ch_name.setText("");
                 }
                 break;
             case TAB_D_ANIMATE:
