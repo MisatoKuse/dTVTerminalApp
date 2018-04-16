@@ -751,6 +751,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * @param listContentInfo 　ContentsData
      */
     private void setTimeData(final ViewHolder holder, final ContentsData listContentInfo) {
+        boolean isRecommendContent = false;
         //TODO:基本的には日付はすべてエポック秒で扱い、表示する際にYYYY/MM/DD形式に変換する方針にする(今日のテレビランキング、週間ランキングと同じ方式に統一))
         if (!TextUtils.isEmpty(listContentInfo.getTime()) || !TextUtils.isEmpty(listContentInfo.getStartViewing())) { //時間
             switch (mType) {
@@ -777,7 +778,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                         if (time.equals(mContext.getString(R.string.delivery_end_message))) {
                             holder.tv_time.setText(listContentInfo.getTime());
                         } else {
-                            ContentUtils.setStartViewing(mContext, holder, listContentInfo);
+                            ContentUtils.setPeriodText(mContext, holder, listContentInfo, isRecommendContent);
                         }
                     } else {
                         holder.tv_time.setVisibility(View.GONE);
@@ -790,7 +791,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 case TYPE_RECORDED_LIST: // 録画番組一覧
                 case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
                 case TYPE_CONTENT_DETAIL_CHANNEL_LIST: // コンテンツ詳細チャンネル一覧
-                    if (!ContentUtils.setStartViewing(mContext, holder, listContentInfo)) {
+                    if (!ContentUtils.setPeriodText(mContext, holder, listContentInfo, isRecommendContent)) {
                         holder.tv_time.setText(listContentInfo.getTime());
                     }
                     break;
