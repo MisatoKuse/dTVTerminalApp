@@ -208,7 +208,7 @@ public class WebApiBasePlala {
     /**
      * フィルター用指定文字列・ssvod.
      */
-    public static final String FILTER_SSVOD = "ssvod";
+    public static final String FILTER_RELEASE_SSVOD = "release|ssvod";
     /**
      * フィルター用指定文字列・フィルターのパラメータ名.
      */

@@ -39,61 +39,30 @@ import java.util.List;
 /**
  * レンタル一覧を表示.
  */
-public class PremiumVideoActivity extends BaseActivity implements AdapterView.OnItemClickListener,
-        AbsListView.OnScrollListener, RentalDataProvider.ApiDataProviderCallback, AbsListView.OnTouchListener {
+public class PremiumVideoActivity extends BaseActivity implements
+        AdapterView.OnItemClickListener,
 
-    /**
-     * レンタル一覧を取得するデータプロパイダ.
-     */
-    private RentalDataProvider mRentalDataProvider;
-    /**
-     * レンタル一覧を表示するリスト.
-     */
+        RentalDataProvider.ApiDataProviderCallback {
+    // region variable
+    /** レンタル一覧を表示するリスト. */
     private ListView mListView;
-    /**
-     * データの追加読み込み時のダイアログ.
-     */
-    private View mLoadMoreView;
-    /**
-     * コンテンツ一覧.
-     */
-    private List<ContentsData> mContentsList;
-    /**
-     * データの追加読み込み中判定フラグ.
-     */
-    private boolean mIsCommunicating = false;
-    /**
-     * コンテンツ詳細表示フラグ.
-     */
-    private boolean mContentsDetailDisplay = false;
-    /**
-     * グローバルメニューからの起動かどうか.
-     */
-    private Boolean mIsMenuLaunch = false;
-    /**
-     * コンテンツを表示するリストのアダプタ.
-     */
-    private ContentsAdapter mContentsAdapter;
-    /**
-     * スクロール位置の記録.
-     */
-    private int mFirstVisibleItem = 0;
-    /**
-     * 最後のスクロール方向が上ならばtrue.
-     */
-    private boolean mLastScrollUp = false;
-    /**
-     * 指を置いたY座標.
-     */
-    private float mStartY = 0;
-    /**
-     * プログレスダイアログ.
-     */
+    /** プログレスダイアログ. */
     private RelativeLayout mRelativeLayout = null;
-    /**
-     * リスト0件メッセージ.
-     */
+    /** リスト0件メッセージ. */
     private TextView mNoDataMessage;
+
+    /** コンテンツを表示するリストのアダプタ. */
+    private ContentsAdapter mContentsAdapter;
+    /** レンタル一覧を取得するデータプロパイダ. */
+    private RentalDataProvider mRentalDataProvider;
+    /** コンテンツ一覧. */
+    private List<ContentsData> mContentsList;
+
+    /** コンテンツ詳細表示フラグ. */
+    private boolean mContentsDetailDisplay = false;
+    /** グローバルメニューからの起動かどうか. */
+    private Boolean mIsMenuLaunch = false;
+    // endregion variable
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -112,25 +81,21 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
 
-        resetPaging();
         initView();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        DTVTLogger.start();
+        DTVTLogger.debug("mContentsDetailDisplay = " + mContentsDetailDisplay);
         //コンテンツ詳細から戻ってきたときのみクリップ状態をチェックする
         if (mContentsDetailDisplay) {
             mContentsDetailDisplay = false;
-            if (null != mContentsAdapter) {
-                List<ContentsData> list = mRentalDataProvider.checkClipStatus(mContentsList);
-                mContentsAdapter.setListData(list);
-                mContentsAdapter.notifyDataSetChanged();
-                DTVTLogger.debug("PremiumVideoActivity::Clip Status Update");
-            }
+            List<ContentsData> list = mRentalDataProvider.checkClipStatus(mContentsList);
+            mContentsAdapter.setListData(list);
+            mContentsAdapter.notifyDataSetChanged();
+            DTVTLogger.debug("PremiumVideoActivity::Clip Status Update");
         }
-        DTVTLogger.end();
     }
 
     /**
@@ -141,18 +106,11 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         mListView = findViewById(R.id.premium_video_list);
         mListView.setOnItemClickListener(this);
-        mListView.setOnScrollListener(this);
         mRelativeLayout = findViewById(R.id.premium_video_progress);
         showProgressBar(true);
-        //スクロールの上下方向検知用のリスナーを設定
-        mListView.setOnTouchListener(this);
-        if (mContentsList == null) {
-            mContentsList = new ArrayList<>();
-        }
         mContentsAdapter = new ContentsAdapter(this, mContentsList,
                 ContentsAdapter.ActivityTypeItem.TYPE_PREMIUM_VIDEO_LIST);
         mListView.setAdapter(mContentsAdapter);
-        mLoadMoreView = LayoutInflater.from(this).inflate(R.layout.search_load_more, null);
         mNoDataMessage = findViewById(R.id.premium_video_list_no_items);
     }
 
@@ -177,40 +135,6 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
         }
     }
 
-    /**
-     * 再読み込み時のダイアログ表示処理.
-     *
-     * @param bool true:ダイアログ表示 false:非表示
-     */
-    private void displayMoreData(final boolean bool) {
-        if (null != mListView && null != mLoadMoreView) {
-            if (bool) {
-                mListView.addFooterView(mLoadMoreView);
-            } else {
-                mListView.removeFooterView(mLoadMoreView);
-            }
-        }
-    }
-
-    /**
-     * 再読み込み時の処理.
-     */
-    private void resetCommunication() {
-        displayMoreData(false);
-        setCommunicatingStatus(false);
-    }
-
-    /**
-     * 再読み込み実施フラグ設定.
-     *
-     * @param b フラグ
-     */
-    private void setCommunicatingStatus(final boolean b) {
-        synchronized (this) {
-            mIsCommunicating = b;
-        }
-    }
-
     @Override
     public void rentalListCallback(final List<ContentsData> dataList) {
         final RentalDataProvider dataProvider = new RentalDataProvider(this, RentalDataProvider.RentalType.PREMIUM_VIDEO);
@@ -220,30 +144,14 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
             public void run() {
                 showProgressBar(false);
                 if (null == dataList) {
-                    resetPaging();
-                    resetCommunication();
                     dataProvider.getDbRentalList();
-                }
-
-                if (dataList != null && 0 == dataList.size()) {
-                    mNoDataMessage.setVisibility(View.VISIBLE);
-                    resetCommunication();
                     return;
                 }
 
-                int pageNumber = getCurrentNumber();
-                //現在表示しているコンテンツ数よりもデータ取得件数が上回っている時のみ更新する
-                if (dataList != null && mContentsList.size() < dataList.size()) {
-                    for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE
-                            && i < dataList.size(); i++) { //mPageNumber
-                        mContentsList.add(dataList.get(i));
-                    }
-                }
-
-                DTVTLogger.debug("rentalListCallback, mData.size==" + mContentsList.size());
-
-                resetCommunication();
+                mContentsList.clear();
+                mContentsList.addAll(dataList);
                 mContentsAdapter.notifyDataSetChanged();
+                mNoDataMessage.setVisibility(mContentsList.isEmpty() ? View.VISIBLE : View.GONE);
             }
         });
     }
@@ -253,8 +161,8 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
         DTVTLogger.start();
         mRelativeLayout.setVisibility(View.GONE);
         mListView.setVisibility(View.VISIBLE);
-        //データ取得失敗時
-        resetCommunication();
+        showProgressBar(false);
+
         ErrorState errorState = mRentalDataProvider.getError();
         if (errorState != null) {
             String message = errorState.getApiErrorMessage(getApplicationContext());
@@ -266,38 +174,8 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
         showDialogToClose(this);
     }
 
-    /**
-     * ページングリセット.
-     */
-    private void resetPaging() {
-        synchronized (this) {
-            setCommunicatingStatus(false);
-            if (null != mContentsList) {
-                mContentsList.clear();
-                if (null != mContentsAdapter) {
-                    mContentsAdapter.notifyDataSetChanged();
-                }
-            }
-        }
-    }
-
-    /**
-     * ページング数取得.
-     *
-     * @return ページング数
-     */
-    private int getCurrentNumber() {
-        if (null == mContentsList) {
-            return 0;
-        }
-        return mContentsList.size() / NUM_PER_PAGE;
-    }
-
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
-        if (mLoadMoreView.equals(view)) {
-            return;
-        }
         mContentsDetailDisplay = true;
 
         ContentsData contentsData = mContentsList.get(i);
@@ -311,58 +189,6 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
             startActivity(intent);
         }
 
-    }
-
-    @Override
-    public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
-
-        synchronized (this) {
-            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
-                    && absListView.getLastVisiblePosition() == mListView.getAdapter().getCount() - 1) {
-
-                if (mIsCommunicating) {
-                    return;
-                }
-
-                //スクロール位置がリストの先頭で上スクロールだった場合は、更新をせずに帰る
-                if (mFirstVisibleItem == 0 && mLastScrollUp) {
-                    return;
-                }
-
-                DTVTLogger.debug("onScrollStateChanged, do paging");
-                mNoDataMessage.setVisibility(View.GONE);
-                displayMoreData(true);
-                setCommunicatingStatus(true);
-
-                //再読み込み処理
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRentalDataProvider.getRentalData(false);
-                    }
-                }, LOAD_PAGE_DELAY_TIME);
-            }
-        }
-    }
-
-    @Override
-    public void onScroll(final AbsListView absListView, final int firstVisibleItem,
-                         final int visibleItemCount, final int totalItemCount) {
-        synchronized (this) {
-            if (null == mContentsAdapter) {
-                return;
-            }
-
-            //現在のスクロール位置の記録
-            mFirstVisibleItem = firstVisibleItem;
-
-            if (firstVisibleItem + visibleItemCount == totalItemCount && 0 != totalItemCount) {
-                DTVTLogger.debug("onScroll, paging, firstVisibleItem=" + firstVisibleItem
-                        + ", totalItemCount=" + totalItemCount + ", visibleItemCount="
-                        + visibleItemCount);
-            }
-        }
     }
 
     @Override
@@ -395,7 +221,7 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
             mListView.invalidateViews();
         }
 
-        if (mContentsList == null || mContentsList.size() == 0) {
+        if (mContentsList.isEmpty()) {
             //コンテンツ情報が無ければ取得を行う
             mRentalDataProvider = new RentalDataProvider(this, RentalDataProvider.RentalType.PREMIUM_VIDEO);
             mRentalDataProvider.getRentalData(true);
@@ -413,38 +239,4 @@ public class PremiumVideoActivity extends BaseActivity implements AdapterView.On
         stopAdapterConnect.execute(mContentsAdapter);
     }
 
-
-    @Override
-    public boolean onTouch(final View view, final MotionEvent motionEvent) {
-        if (!(view instanceof ListView)) {
-            //今回はリストビューの事しか考えないので、他のビューならば帰る
-            return false;
-        }
-
-        //指を動かした方向を検知する
-        switch (motionEvent.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                //指を降ろしたので、位置を記録
-                mStartY = motionEvent.getY();
-                break;
-            case MotionEvent.ACTION_UP:
-                //指を離したので、位置を記録
-                float mEndY = motionEvent.getY();
-
-                mLastScrollUp = false;
-
-                //スクロール方向の判定
-                if (mStartY < mEndY) {
-                    //終了時のY座標の方が大きいので、上スクロール
-                    mLastScrollUp = true;
-                }
-
-                break;
-
-            default:
-                //現状処理は無い・警告対応
-        }
-
-        return false;
-    }
 }

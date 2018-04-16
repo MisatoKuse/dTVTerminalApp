@@ -96,7 +96,7 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
 
             String filter = WebApiBasePlala.FILTER_RELEASE;
             if (dispType.equals(DTVTConstants.DISP_TYPE_SERIES_SVOD)) {
-                filter = WebApiBasePlala.FILTER_SSVOD;
+                filter = WebApiBasePlala.FILTER_RELEASE_SSVOD;
             }
             UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
             final int ageReq = userInfoDataProvider.getUserAge();

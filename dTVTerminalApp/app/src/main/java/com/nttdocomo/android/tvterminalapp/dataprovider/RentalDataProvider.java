@@ -135,31 +135,30 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
 
     @Override
     public void onRentalVodListJsonParsed(final PurchasedVodListResponse response) {
-        if (response != null) {
-            setStructDB(response);
-            if (!mRequiredClipKeyList
-                    || mResponseEndFlag) {
-                sendRentalListData(response);
-            } else {
-                mPurchasedVodListResponse = response;
-            }
-        } else {
+        if (response == null) {
             if (mWebClient.getError() != null && mWebClient.getError().getErrorType() != DTVTConstants.ERROR_TYPE.SUCCESS) {
                 mError = mWebClient.getError();
             }
             mApiDataProviderCallback.rentalListNgCallback();
+            return;
+        }
+
+        setStructDB(response);
+        if (!mRequiredClipKeyList
+                || mResponseEndFlag) {
+            sendRentalListData(response);
+        } else { // clipキー一覧取得が終わってない場合は待つ
+            mPurchasedVodListResponse = response;
         }
     }
 
     @Override
     public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
-        DTVTLogger.start();
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
         // コールバック判定
         if (mPurchasedVodListResponse != null) {
             sendRentalListData(mPurchasedVodListResponse);
         }
-        DTVTLogger.end();
     }
 
     /**
@@ -474,7 +473,6 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
      * @return 視聴可否判定結果
      */
     public static int isEnableRentalContents(final long validEndDate) {
-        DTVTLogger.start();
         final int ONE_MONTH = 30;
 
         //視聴期限 > 現在時刻の場合
