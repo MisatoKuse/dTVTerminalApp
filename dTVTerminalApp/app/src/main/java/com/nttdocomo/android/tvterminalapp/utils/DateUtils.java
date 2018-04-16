@@ -754,10 +754,11 @@ public class DateUtils {
      * @return 日付フォーマット
      */
     public static String getContentsDateString(final Context context, final String viewing, final boolean isBefore) {
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_MDE, Locale.JAPAN);
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DD_HH_MM_SS, Locale.JAPAN);
         try {
-            Date date = sdf.parse(viewing);
-            String result = sdf.format(date);
+            Date startDate = sdf.parse(viewing);
+            sdf = new SimpleDateFormat(DATE_MDE, Locale.JAPAN);
+            String result = sdf.format(startDate);
             //m/d（曜日）から若しくはまで
             return result + (isBefore ? context.getString(R.string.common_date_format_start_str) : context.getString(R.string.common_date_format_end_str));
         } catch (ParseException e) {
