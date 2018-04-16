@@ -112,10 +112,6 @@ public class RankingTopActivity extends BaseActivity
      * UIの上下表示順(ビデオランキング).
      */
     private final static int VIDEO_SORT = 2;
-    /**
-     * アダプタ内でのリスト識別用定数.
-     */
-    private final static int RANKING_CONTENTS_DISTINCTION_ADAPTER = 20;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -225,7 +221,7 @@ public class RankingTopActivity extends BaseActivity
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(linearLayoutManager);
-        HomeRecyclerViewAdapter horizontalViewAdapter = new HomeRecyclerViewAdapter(this, contentsDataList, index + RANKING_CONTENTS_DISTINCTION_ADAPTER);
+        HomeRecyclerViewAdapter horizontalViewAdapter = new HomeRecyclerViewAdapter(this, contentsDataList, index + HomeRecyclerViewAdapter.RANKING_CONTENTES_TODAY_SORT);
         horizontalViewAdapter.setOnItemClickCallBack(this);
         recyclerView.setAdapter(horizontalViewAdapter);
         View footer = LayoutInflater.from(this).inflate(R.layout.home_main_layout_recyclerview_footer, recyclerView, false);

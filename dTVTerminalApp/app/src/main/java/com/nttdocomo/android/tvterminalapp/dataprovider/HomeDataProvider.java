@@ -740,6 +740,10 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             contentInfo.setRatStar(mapList.get(i).get(JsonConstants.META_RESPONSE_RATING));
             contentInfo.setSynop(mapList.get(i).get(JsonConstants.META_RESPONSE_SYNOP));
             contentInfo.setEventId(mapList.get(i).get(JsonConstants.META_RESPONSE_EVENT_ID));
+            contentInfo.setAvailStartDate(DateUtils.getSecondEpochTime(mapList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
+            contentInfo.setAvailEndDate(DateUtils.getSecondEpochTime(mapList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
+            contentInfo.setVodStartDate(DateUtils.getSecondEpochTime(mapList.get(i).get(JsonConstants.META_RESPONSE_VOD_START_DATE)));
+            contentInfo.setVodEndDate(DateUtils.getSecondEpochTime(mapList.get(i).get(JsonConstants.META_RESPONSE_VOD_END_DATE)));
             contentsDataList.add(contentInfo);
         }
 
