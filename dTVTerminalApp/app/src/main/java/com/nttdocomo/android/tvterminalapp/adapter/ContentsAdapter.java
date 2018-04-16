@@ -596,7 +596,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         setChannelName(holder, listContentInfo);
         setRecordedDownloadIcon(holder, listContentInfo);
         setNowOnAirData(holder, listContentInfo, contentView);
-        setStartViewing(holder, listContentInfo, contentView);
         if (ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST.equals(mType)) {
             setSubTitle(holder, listContentInfo);
         }
@@ -607,9 +606,9 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      *
      * @param holder          ビューの集合
      * @param listContentInfo 行データー
-     * @param contentView contentView
+     * @return true 配信期限の表示する場合
      */
-    private void setStartViewing(final ViewHolder holder, final ContentsData listContentInfo, final View contentView) {
+    private boolean setStartViewing(final ViewHolder holder, final ContentsData listContentInfo) {
         String dispType = listContentInfo.getDispType();
         String tvService = listContentInfo.getTvService();
         String contentsType = listContentInfo.getContentsType();
@@ -640,19 +639,20 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             }
         }
         switch (vodContentsType) {
-            case  TV:
-                break;
             case  VOD:
             case  DCHANNEL_VOD_31:
                 holder.tv_time.setVisibility(View.VISIBLE);
                 holder.tv_time.setText(viewingPriod);
-                break;
+                return true;
             case  DCHANNEL_VOD_OVER_31:
+                break;
+            case  TV:
             case  OTHER:
                 break;
             default:
                 break;
         }
+        return false;
     }
 
     /**
@@ -831,9 +831,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                         if (time.equals(mContext.getString(R.string.delivery_end_message))) {
                             holder.tv_time.setText(listContentInfo.getTime());
                         } else {
-                            //TODO:現状の表示は〇/〇(曜日)まで→表示変更は別チケットで対応予定
-                            holder.tv_time.setText(StringUtils.getConnectStrings(listContentInfo.getTime(),
-                                    mContext.getString(R.string.common_until)));
+                            setStartViewing(holder, listContentInfo);
                         }
                     } else {
                         holder.tv_time.setVisibility(View.GONE);
@@ -846,7 +844,9 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 case TYPE_RECORDED_LIST: // 録画番組一覧
                 case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
                 case TYPE_CONTENT_DETAIL_CHANNEL_LIST: // コンテンツ詳細チャンネル一覧
-                    holder.tv_time.setText(listContentInfo.getTime());
+                    if (!setStartViewing(holder, listContentInfo)) {
+                        holder.tv_time.setText(listContentInfo.getTime());
+                    }
                     break;
                 default:
                     break;
