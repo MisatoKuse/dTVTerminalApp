@@ -44,9 +44,8 @@ public class RentalListActivity extends BaseActivity implements
         AbsListView.OnScrollListener,
         AbsListView.OnTouchListener,
 
-        RentalDataProvider.ApiDataProviderCallback
-{
-    // region variable
+        RentalDataProvider.ApiDataProviderCallback {
+     // region variable
     // view
     /** レンタル一覧を表示するリスト. */
     private ListView mListView;
@@ -294,7 +293,7 @@ public class RentalListActivity extends BaseActivity implements
     }
 
     /**
-     * データ取得失敗時
+     * データ取得失敗時.
      */
     @Override
     public void rentalListNgCallback() {

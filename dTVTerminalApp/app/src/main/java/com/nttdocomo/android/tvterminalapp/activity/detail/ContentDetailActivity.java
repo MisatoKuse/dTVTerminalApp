@@ -131,13 +131,21 @@ public class ContentDetailActivity extends BaseActivity implements
         DtvContentsDetailFragment.RecordingReservationIconListener,
         DtvContentsChannelFragment.ChangedScrollLoadListener {
 
-    // declaration
+    /**
+     * エラータイプ.
+     */
     private enum ErrorType {
+        /** コンテンツ詳細取得.*/
         contentDetailGet,
+        /** スタッフリスト取得.*/
         roleListGet,
+        /** レンタルチャンネル取得.*/
         rentalChannelListGet,
+        /** レンタルVod取得.*/
         rentalVoidListGet,
+        /** チャンネルリスト取得.*/
         channelListGet,
+        /** 番組データ取得.*/
         tvScheduleListGet,
     }
 
@@ -160,70 +168,103 @@ public class ContentDetailActivity extends BaseActivity implements
     private static final int SCREEN_RATIO_HEIGHT_3 = 3;
 
 
-    //先頭のメタデータを取得用
+    /**先頭のメタデータを取得用.*/
     private static final int FIRST_VOD_META_DATA = 0;
 
-    /* コンテンツ詳細 start HorizontalScrollView */
+    /** コンテンツ詳細 start HorizontalScrollView.*/
     private TabItemLayout mTabLayout = null;
-
+    /** ViewPager.*/
     private ViewPager mViewPager = null;
+    /** コンテンツ詳細データ.*/
     private OtherContentsDetailData mDetailData = null;
+    /** フルメタデータ.*/
     private VodMetaFullData mDetailFullData = null;
-
+    /** コンテンツ詳細データプロバイダー.*/
     private ContentsDetailDataProvider mContentsDetailDataProvider = null;
+    /** 縮小番組表データプロバイダー .*/
     private ScaledDownProgramListDataProvider mScaledDownProgramListDataProvider = null;
+    /** サムネイルプロバイダー .*/
     private ThumbnailProvider mThumbnailProvider = null;
-
+    /** サムネイル取得処理ストップフラグ .*/
     private boolean isDownloadStop = false;
+    /** コンテンツ詳細フラグメントファクトリー.*/
     private DtvContentsDetailFragmentFactory mFragmentFactory = null;
+    /**購入済みVODレスポンス.*/
     private PurchasedVodListResponse response = null;
-
+    /** タブー名.*/
     private String[] mTabNames = null;
+    /**プレイヤー.*/
     private boolean mIsPlayer = false;
+    /**リモコンコントローラービジブルか.*/
     private boolean mIsControllerVisible = false;
+    /**インデント.*/
     private Intent mIntent = null;
-
+    /**サムネイルレイアウト.*/
     private LinearLayout mThumbnailBtn = null;
+    /**サムネイルRelativeLayout.*/
     private RelativeLayout mThumbnailRelativeLayout = null;
+    /**サムネイルイメージビュー.*/
     private ImageView mThumbnail = null;
 
+    /**レコメンド情報キー.*/
     public static final String RECOMMEND_INFO_BUNDLE_KEY = "recommendInfoKey";
+    /**ぷらら情報キー.*/
     public static final String PLALA_INFO_BUNDLE_KEY = "plalaInfoKey";
-
+    /**DTVコンテンツサービスID.*/
     public static final int DTV_CONTENTS_SERVICE_ID = 15;
+    /**DアニメコンテンツサービスID.*/
     public static final int D_ANIMATION_CONTENTS_SERVICE_ID = 17;
+    /**DTVチャンネルコンテンツサービスID.*/
     public static final int DTV_CHANNEL_CONTENTS_SERVICE_ID = 43;
+    /**DTVひかりコンテンツサービスID.*/
     public static final int DTV_HIKARI_CONTENTS_SERVICE_ID = 44;
+    /**コンテンツ詳細予約済みID.*/
     private static final String CONTENTS_DETAIL_RESERVEDID = "1";
+    /**モバイル視聴不可.*/
     private static final String MOBILEVIEWINGFLG_FLAG_ZERO = "0";
 
+    /** 日付インディーズ.*/
     private int mDateIndex = 0;
+    /** 日付リスト.*/
     private String[] dateList = null;
+    /** Vodかどうかフラグ.*/
     private boolean isVod = false;
 
     /* コンテンツ詳細 end */
 
-    /*DTV起動*/
+    /**DTVバージョン.*/
     private static final int DTV_VERSION_STANDARD = 52000;
+    /**レスポンス(1).*/
     private static final String METARESPONSE1 = "1";
+    /**レスポンス(2).*/
     private static final String METARESPONSE2 = "2";
+    /**予約済みタイプ(4).*/
     private static final String RESERVED4_TYPE4 = "4";
+    /**予約済みタイプ(7).*/
     private static final String RESERVED4_TYPE7 = "7";
+    /**予約済みタイプ(8).*/
     private static final String RESERVED4_TYPE8 = "8";
+    /**DTVパッケージ名.*/
     private static final String DTV_PACKAGE_NAME = "jp.co.nttdocomo.dtv";
+    /**エラーメッセージ.*/
     private String errorMessage;
     /*DTV起動*/
 
-    /*dアニメストア起動*/
+    /**dアニメストアパッケージ名.*/
     private static final String DANIMESTORE_PACKAGE_NAME = "com.nttdocomo.android.danimeapp";
+    /**dアニメストアバージョン.*/
     private static final int DANIMESTORE_VERSION_STANDARD = 132;
     /*dアニメストア起動*/
 
-    /*dTVチャンネル起動*/
+    /**dTVチャンネル起動.*/
     private static final String DTVCHANNEL_PACKAGE_NAME = "com.nttdocomo.dch";
+    /**dTVチャンネルバージョン.*/
     private static final int DTVCHANNEL_VERSION_STANDARD = 15;
+    /**dTVチャンネルカテゴリー放送.*/
     private static final String DTV_CHANNEL_CATEGORY_BROADCAST = "01";
+    /**dTVチャンネルカテゴリー見逃し.*/
     private static final String DTV_CHANNEL_CATEGORY_MISSED = "02";
+    /**dTVチャンネルカテゴリー関連.*/
     private static final String DTV_CHANNEL_CATEGORY_RELATION = "03";
     /*dTVチャンネル起動*/
 
@@ -280,7 +321,13 @@ public class ContentDetailActivity extends BaseActivity implements
      * dtv(0).
      */
     public static final String DTV_FLAG_ZERO = "0";
+    /**
+     * bvflg(1).
+     */
     private static final String BVFLG_FLAG_ONE = "1";
+    /**
+     * bvflg(0).
+     */
     private static final String BVFLG_FLAG_ZERO = "0";
     /**
      * tv_service(0).
@@ -306,42 +353,70 @@ public class ContentDetailActivity extends BaseActivity implements
      * contents_type(3).
      */
     public static final String CONTENT_TYPE_FLAG_THREE = "3";
+    /**
+     * flg(0).
+     */
     private static final int FLAG_ZERO = 0;
     /*ひかりTV起動*/
 
     /* player start */
+    /**コントローラービューを非表示になるまでの待ち時間.*/
     private static final long HIDE_IN_3_SECOND = 3 * 1000;
+    /**再発火.*/
     private static final int REFRESH_VIDEO_VIEW = 0;
+    /** 巻き戻す10s.*/
     private static final int REWIND_SECOND = 10 * 1000;
+    /**早送り30s.*/
     private static final int FAST_SECOND = 30 * 1000;
+    /**ローカルファイルパスー.*/
     private static final String LOCAL_FILE_PATH = "file://";
-
+    /**再生シークバー.*/
     private SeekBar mVideoSeekBar = null;
+    /**.*/
     private SecureVideoView mSecureVideoPlayer = null;
+    /**プレイヤーコントローラ.*/
     private SecuredMediaPlayerController mPlayerController = null;
+    /**.*/
     private MediaVideoInfo mCurrentMediaInfo = null;
+    /**プログレースRelativeLayout.*/
     private RelativeLayout progressLayout = null;
-
+    /**録画コントローラビューRelativeLayout.*/
     private RelativeLayout mRecordCtrlView = null;
+    /**ビデオコントローラバーRelativeLayout.*/
     private RelativeLayout mVideoCtrlBar = null;
+    /**ビデオ再生停止TextView.*/
     private FrameLayout mVideoPlayPause = null;
+    /**ビデオカレント時刻.*/
     private TextView mVideoCurTime = null;
+    /**FrameLayout.*/
     private FrameLayout mFrameLayout = null;
+    /**video全長.*/
     private TextView mVideoTotalTime = null;
+    /**タイトル.*/
     private TextView mTvTitle = null;
+    /**巻き戻しImageView.*/
     private ImageView mVideoRewind10 = null;
+    /**早送りImageView.*/
     private ImageView mVideoFast30 = null;
+    /**TvLogo.*/
     private ImageView mTvLogo = null;
+    /**全画面再生.*/
     private ImageView mVideoFullScreen = null;
-
+    /**ハンドラー.*/
     private static final Handler sCtrlHandler = new Handler(Looper.getMainLooper());
+    /**画面操作検知.*/
     private GestureDetector mGestureDetector = null;
-
+    /**端末画面Width.*/
     private int mScreenWidth = 0;
+    /**再生開始可否.*/
     private boolean mCanPlay = false;
+    /**操作アイコン表示か.*/
     private boolean mIsHideOperate = true;
+    /**プレイヤー生成フラグ.*/
     private boolean mIsOncreateOk = false;
+    /**録画予約コンテンツ詳細情報.*/
     private RecordingReservationContentsDetailInfo mRecordingReservationContentsDetailInfo = null;
+    /**録画予約ダイアログ.*/
     private CustomDialog mRecordingReservationCustomtDialog = null;
 
     /*private static final int RECORDING_RESERVATION_DIALOG_INDEX_0 = 0; // 予約録画する
@@ -433,13 +508,25 @@ public class ContentDetailActivity extends BaseActivity implements
      * 外部出力制御.
      */
     private ExternalDisplayHelper mExternalDisplayHelper;
+    /**　
+     * 外部出力制御判定フラグ.
+     */
     private boolean mExternalDisplayFlg = false;
+    /**
+     * アクティベーションハンドラー.
+     */
+    private Handler mActivationHandler = null;
     /**
      * アクティベーション.
      */
-    private Handler mActivationHandler = null;
     private ActivationHelper mActivationHelper;
+    /**
+     * デバイスキー.
+     */
     private String mDeviceKey;
+    /**
+     * アクティベーションスレッド.
+     * */
     private ActivationThread mActivationThread;
     /**
      * 操作履歴送信.
@@ -462,6 +549,9 @@ public class ContentDetailActivity extends BaseActivity implements
      */
     private String mChannelDate = null;
 
+    /**
+     *　コントロールビューを非表示にする.
+     */
     private final Runnable mHideCtrlViewThread = new Runnable() {
 
         /**
@@ -783,7 +873,7 @@ public class ContentDetailActivity extends BaseActivity implements
                 }
             });
         }
-    }// ActivationThread
+    } // ActivationThread
 
     /**
      * アクティベーション処理開始.
@@ -924,10 +1014,10 @@ public class ContentDetailActivity extends BaseActivity implements
     }
 
     /**
-     * リモート視聴以外はそのまま再生を行う。リモート視聴の場合は再生可否のチェックを行う
+     * リモート視聴以外はそのまま再生を行う。リモート視聴の場合は再生可否のチェックを行う.
      */
     private void playStart() {
-        if(!mCurrentMediaInfo.isRemote()) {
+        if (!mCurrentMediaInfo.isRemote()) {
             //リモート視聴ではないので、そのまま実行する
             playStartOrigin();
             return;
@@ -1027,7 +1117,7 @@ public class ContentDetailActivity extends BaseActivity implements
     private void hideCtrlView() {
         DTVTLogger.start();
 
-        if(mSecureVideoPlayer == null) {
+        if (mSecureVideoPlayer == null) {
             //設定ファイルによるアプリ動作停止の場合、下記の物がヌルになっている可能性がある。その場合は処理は行わない
             DTVTLogger.end("mSecureVideoPlayer is null");
             return;
@@ -1264,6 +1354,7 @@ public class ContentDetailActivity extends BaseActivity implements
 
     /**
      * チャンネルフラグメント取得.
+     * @return currentFragment
      */
     private DtvContentsChannelFragment getChannelFragment() {
         Fragment currentFragment = mFragmentFactory.createFragment(1);
@@ -2206,7 +2297,7 @@ public class ContentDetailActivity extends BaseActivity implements
     //region ScaledDownProgramListDataProvider.ApiDataProviderCallback
     @Override
     public void channelListCallback(final ArrayList<ChannelInfo> channels) {
-        if(channels == null || channels.isEmpty()) {
+        if (channels == null || channels.isEmpty()) {
             showErrorDialog(ErrorType.channelListGet);
             return;
         }
@@ -2743,7 +2834,7 @@ public class ContentDetailActivity extends BaseActivity implements
         super.onStartRemoteControl(isFromHeader);
         DTVTLogger.end();
 
-    }// end of onStartRemoteControl
+    } // end of onStartRemoteControl
 
     /**
      * onPlayerEvent.
@@ -3783,7 +3874,11 @@ public class ContentDetailActivity extends BaseActivity implements
         }
     }
 
-    private void showErrorDialog(ErrorType errorType) {
+    /**
+     * エラーダイアログを表示する.
+     * @param errorType エラータイプ
+     */
+    private void showErrorDialog(final ErrorType errorType) {
         ErrorState errorState = null;
         CustomDialog.ApiOKCallback okCallback = null;
         switch (errorType) {

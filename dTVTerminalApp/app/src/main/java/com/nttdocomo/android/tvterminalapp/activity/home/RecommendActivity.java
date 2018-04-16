@@ -63,7 +63,7 @@ public class RecommendActivity extends BaseActivity implements
      */
     private TabItemLayout mTabLayout = null;
     /**
-     * ビューページャ
+     * ビューページャ.
      * ページャーのクラス(staticにしないと前回の値が維持され、データの更新に失敗する場合がある).
      */
     private static ViewPager sRecommendViewPager = null;
@@ -110,15 +110,15 @@ public class RecommendActivity extends BaseActivity implements
     private RecommendFragmentFactory mRecommendFragmentFactory = null;
 
     /**
-     * チャンネル情報控え
+     * チャンネル情報控え.
      */
     private ArrayList<ChannelInfo> mChannels;
     /**
-     * チャンネル情報取得プロバイダー
+     * チャンネル情報取得プロバイダー.
      */
     private ScaledDownProgramListDataProvider mScaledDownProgramListDataProvider = null;
     /**
-     * チャンネル情報取得用ハンドラー
+     * チャンネル情報取得用ハンドラー.
      */
     final private Handler mHandle = new Handler();
 
@@ -341,18 +341,18 @@ public class RecommendActivity extends BaseActivity implements
      * @param channelId チャンネルID
      * @return 見つかったチャンネル名
      */
-    private String searchChannelName(String channelId) {
+    private String searchChannelName(final String channelId) {
         //チャンネルデータの取得がまだの場合や、チャンネル名を使うのはテレビタブだけなので、それ以外のタブなら帰る
-        if(mChannels == null ||
-                (sRecommendViewPager.getCurrentItem() != RECOMMEND_LIST_PAGE_NO_OF_TV &&
-                sRecommendViewPager.getCurrentItem() != RECOMMEND_LIST_PAGE_NO_OF_DTV_CHANNEL)) {
+        if (mChannels == null
+                || (sRecommendViewPager.getCurrentItem() != RECOMMEND_LIST_PAGE_NO_OF_TV
+                && sRecommendViewPager.getCurrentItem() != RECOMMEND_LIST_PAGE_NO_OF_DTV_CHANNEL)) {
             return "";
         }
 
         //チャンネル名検索
-        for(int ct = 0;ct <= mChannels.size();ct++) {
-            if(!TextUtils.isEmpty(channelId) &&
-                    mChannels.get(ct).getServiceId().equals(channelId)) {
+        for (int ct = 0; ct <= mChannels.size(); ct++) {
+            if (!TextUtils.isEmpty(channelId)
+                    && mChannels.get(ct).getServiceId().equals(channelId)) {
                 //チャンネルIDが見つかった
                 return mChannels.get(ct).getTitle();
             }
@@ -448,6 +448,7 @@ public class RecommendActivity extends BaseActivity implements
      * おすすめテレビ用コールバック.
      *
      * @param tabFlg タブ区別フラグ
+     * @return errorMessage
      */
     private boolean showErrorMessage(final int tabFlg) {
         boolean isError = false;
@@ -669,12 +670,12 @@ public class RecommendActivity extends BaseActivity implements
     }
 
     @Override
-    public void channelInfoCallback(ChannelInfoList channelsInfo) {
+    public void channelInfoCallback(final ChannelInfoList channelsInfo) {
         //こちらは使用しない
     }
 
     /**
-     * チャンネル情報の取得をデータプロバイダーに依頼する
+     * チャンネル情報の取得をデータプロバイダーに依頼する.
      */
     private void getChannel() {
         DTVTLogger.start();
@@ -700,13 +701,13 @@ public class RecommendActivity extends BaseActivity implements
         public void run() {
             DTVTLogger.start();
             //全番組表の取り込み
-            mScaledDownProgramListDataProvider.getChannelList(0, 0, "",0);
+            mScaledDownProgramListDataProvider.getChannelList(0, 0, "", 0);
             DTVTLogger.end();
         }
     };
 
     @Override
-    public void channelListCallback(ArrayList<ChannelInfo> channels) {
+    public void channelListCallback(final ArrayList<ChannelInfo> channels) {
         //チャンネル情報を受け取る
 
         DTVTLogger.start();
@@ -732,14 +733,14 @@ public class RecommendActivity extends BaseActivity implements
         mChannels = channels;
 
         RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
-        if(baseFragment != null && baseFragment.mData != null) {
+        if (baseFragment != null && baseFragment.mData != null) {
             //おすすめ情報にはチャンネル名が無いので、取得したチャンネル名をIDで検索して設定を行う
-            for(int count = 0;count < baseFragment.mData.size();count++) {
+            for (int count = 0; count < baseFragment.mData.size(); count++) {
                 baseFragment.mData.get(count).setChannelName(
                         searchChannelName(baseFragment.mData.get(count).getChannelId()));
             }
 
-            if(baseFragment.mData.size() > 0) {
+            if (baseFragment.mData.size() > 0) {
                 //処理を行ったデータが存在するならば再描画
                 baseFragment.notifyDataSetChanged(sRecommendViewPager.getCurrentItem());
             }

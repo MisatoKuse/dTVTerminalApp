@@ -17,13 +17,19 @@ import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
+/**
+ * STB接続Activity.
+ */
 public class STBConnectActivity extends BaseActivity {
 
+    /**STB接続フラグ.*/
     private boolean isStbConnected = false;
+    /** 遅延時間.*/
     private static final int DELAYED_TIME = 3000;
-    private final static String DTVT = "dTVTerminal";
+    /** コンテキスト.*/
     private Context mContext = null;
-
+    /**ハンドラー.*/
+    private Handler handler = new Handler();
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,11 +54,9 @@ public class STBConnectActivity extends BaseActivity {
         handler.postDelayed(runnable, DELAYED_TIME);
         DTVTLogger.end();
     }
-
     /**
      * STB接続できたら、ホーム画面に自動遷移する.
      */
-    private Handler handler = new Handler();
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {

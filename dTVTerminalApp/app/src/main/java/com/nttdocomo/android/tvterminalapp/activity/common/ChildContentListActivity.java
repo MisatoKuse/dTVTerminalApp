@@ -37,19 +37,17 @@ import java.util.List;
 
 
 /**
- * 子コンテンツ表示専用アクティビティ
+ * 子コンテンツ表示専用アクティビティ.
  */
 public class ChildContentListActivity extends BaseActivity implements
 
         AdapterView.OnItemClickListener,
         AbsListView.OnScrollListener,
         AbsListView.OnTouchListener,
-
-        ChildContentDataProvider.DataCallback
-{
-    /** 子コンテンツ一覧遷移時リクエストコード*/
+        ChildContentDataProvider.DataCallback {
+     /** 子コンテンツ一覧遷移時リクエストコード.*/
     private static final int REQUEST_CODE_CHILD_CONTENT_LIST = 1000;
-    /** 戻る際にアクティビティを終了するコード*/
+    /** 戻る際にアクティビティを終了するコード.*/
     private static final int RESULT_CODE_FINISH_ACTIVITY = REQUEST_CODE_CHILD_CONTENT_LIST + 1;
     // region variable
     // view
@@ -70,11 +68,16 @@ public class ChildContentListActivity extends BaseActivity implements
      */
     private View mLoadMoreView;
 
-    // data
+    /**
+     * data.
+     */
     public static final String INTENT_KEY_CRID = "crid",
             INTENT_KEY_TITLE = "title",
             INTENT_KEY_DISP_TYPE = "dispType";
 
+    /**
+     * ChildContentDataProvider.
+     */
     private ChildContentDataProvider mChildContentDataProvider;
     /**
      * リスト表示用アダプタ.
@@ -89,8 +92,17 @@ public class ChildContentListActivity extends BaseActivity implements
      * コンテンツ詳細表示フラグ.
      */
     private boolean mContentsDetailDisplay = false;
+    /**
+     * mCrid.
+     */
     private String mCrid;
+    /**
+     * タイトル.
+     */
     private String mTitle;
+    /**
+     * タイプ.
+     */
     private String mDispType;
 
     /**
@@ -114,7 +126,7 @@ public class ChildContentListActivity extends BaseActivity implements
 
     // region Activity LifeCycle
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.child_content_main_layout);
 
@@ -163,7 +175,7 @@ public class ChildContentListActivity extends BaseActivity implements
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_CHILD_CONTENT_LIST
                 && resultCode == RESULT_CODE_FINISH_ACTIVITY) {
@@ -390,8 +402,8 @@ public class ChildContentListActivity extends BaseActivity implements
     }
 
     @Override
-    public void onClick(View view) {
-        switch (view.getId()){
+    public void onClick(final View view) {
+        switch (view.getId()) {
             case R.id.header_layout_menu:
                 setResult(RESULT_CODE_FINISH_ACTIVITY);
                 finish();

@@ -33,11 +33,11 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
      */
     private static boolean mIsFirstRun = true;
     /**
-     * 次のアクティビティ情報
+     * 次のアクティビティ情報.
      */
     private Intent mNextActivity = null;
     /**
-     * アプリ起動直後のdアカウントエラーの状況
+     * アプリ起動直後のdアカウントエラーの状況.
      */
     private boolean mDaccountStatus = false;
 
@@ -80,7 +80,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     }
 
     /**
-     * onPauseで消さないようにする為のオーバーライド
+     * onPauseで消さないようにする為のオーバーライド.
      */
     @Override
     protected void dismissDialogOnPause() {
@@ -149,7 +149,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
         Intent intent;
 
-        if(mIsFirstRun) {
+        if (mIsFirstRun) {
             //チュートリアル画面に遷移
             intent = new Intent(getApplicationContext(), TutorialActivity.class);
 
@@ -173,7 +173,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
             DTVTLogger.debug("Start STBSelectActivity");
         }
 
-        //TODO: 作業の優先順位を鑑み、次画面ダイアログ表示の実装は保留とする
+        // TODO : 作業の優先順位を鑑み、次画面ダイアログ表示の実装は保留とする
 //        if(mIsDAccountErrorNextAvctivity) {
 //            //次の画面にdアカウントエラーの表示を依頼する
 //            //intent.putExtra()
@@ -191,32 +191,32 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
      *
      * @param intent 飛び先情報のインテント
      */
-    void startActivityWait(Intent intent) {
+    void startActivityWait(final Intent intent) {
         //次の画面情報を控える
         mNextActivity = intent;
 
-        //TODO: 暫定対応として、単純に呼び出す
-        if(execCheck()) {
+        //TODO : 暫定対応として、単純に呼び出す
+        if (execCheck()) {
             startActivity(mNextActivity);
             finish();
         }
     }
 
     /**
-     * ダイアログの処理終了後に次の画面に遷移を行う
+     * ダイアログの処理終了後に次の画面に遷移を行う.
      */
     @Override
     protected void startNextProcess() {
-        if(execCheck() && !isFinishing()) {
+        if (execCheck() && !isFinishing()) {
             //遷移条件が整っていれば、次のアクティビティへ遷移する
             startActivity(mNextActivity);
 
             //GooglePlayの起動対象ならば、起動を行う
-            if(mCheckSetting.isGooglePlay()) {
+            if (mCheckSetting.isGooglePlay()) {
                 toGooglePlay(UrlConstants.WebUrl.GOOGLEPLAY_DOWNLOAD_MY_URL);
                 mCheckSetting.setGooglePlay(false);
 
-                if(mDaccountStatus) {
+                if (mDaccountStatus) {
                     //この場合は、dアカウントフラグのクリアを行う
                     SharedPreferencesUtils.setFirstExecFlag(getApplicationContext(),
                             SharedPreferencesUtils.FIRST_D_ACCOUNT_GET_BEFORE);
@@ -232,19 +232,19 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
      */
     private boolean execCheck() {
         //ダイアログの表示対象が処理中かどうかを見る
-        if(getDialogQurCount() > 0) {
+        if (getDialogQurCount() > 0) {
             //表示中のダイアログがあるならば遷移不可
             return false;
         }
 
         //dアカウントの処理が続行中か、そもそも実行されていなければ遷移不可
-        if((mDAccountControl != null && mDAccountControl.isDAccountBusy())
+        if ((mDAccountControl != null && mDAccountControl.isDAccountBusy())
                 || mCheckSetting == null) {
             return false;
         }
 
         //設定ファイルの処理が続行中か、そもそも実行されていなければ遷移不可
-        //TODO: Iemonサーバーとアクセスできない環境では、この条件が絶対に成立してしまい、先に進まないので、ひとまず無効化
+        //TODO : Iemonサーバーとアクセスできない環境では、この条件が絶対に成立してしまい、先に進まないので、ひとまず無効化
 //        if((mCheckSetting != null && mCheckSetting.isBusy())
 //                || mCheckSetting == null) {
 //            return false;
