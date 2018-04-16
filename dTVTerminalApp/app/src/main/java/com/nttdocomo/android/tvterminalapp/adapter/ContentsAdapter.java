@@ -644,9 +644,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 break;
             case  VOD:
             case  DCHANNEL_VOD_31:
-                holder.tv_sub_title.setVisibility(View.VISIBLE);
-                holder.tv_sub_title.setText(viewingPriod);
-                holder.tv_sub_title.setOnClickListener(null);
+                holder.tv_time.setVisibility(View.VISIBLE);
+                holder.tv_time.setText(viewingPriod);
                 break;
             case  DCHANNEL_VOD_OVER_31:
             case  OTHER:
@@ -1219,7 +1218,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
             case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
             case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
-                holder.tv_time.setVisibility(View.GONE);
                 holder.tv_rank.setVisibility(View.GONE);
                 break;
             case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)

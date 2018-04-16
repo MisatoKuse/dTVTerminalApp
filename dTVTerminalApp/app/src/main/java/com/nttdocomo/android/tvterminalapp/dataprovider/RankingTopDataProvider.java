@@ -674,9 +674,10 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                     }
                 }
             }
-            rankingContentInfo.setAvailEndDate(StringUtils.changeString2Long(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
-            rankingContentInfo.setVodStartDate(StringUtils.changeString2Long(map.get(JsonConstants.META_RESPONSE_VOD_START_DATE)));
-            rankingContentInfo.setVodEndDate(StringUtils.changeString2Long(map.get(JsonConstants.META_RESPONSE_VOD_END_DATE)));
+            rankingContentInfo.setAvailStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
+            rankingContentInfo.setAvailEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
+            rankingContentInfo.setVodStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_START_DATE)));
+            rankingContentInfo.setVodEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_END_DATE)));
 
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
