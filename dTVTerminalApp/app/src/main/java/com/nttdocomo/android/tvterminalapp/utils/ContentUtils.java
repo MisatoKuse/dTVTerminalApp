@@ -11,6 +11,7 @@ import android.view.View;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 
 import java.util.Calendar;
@@ -159,52 +160,77 @@ public class ContentUtils {
         return cType;
     }
     /**
-     * 配信期限の表示.
+     * コンテンツ配信期限の表示 DREM-2011
+     * コンテンツ配信前表示(対向ぷららサーバ) DREM-2047
+     * コンテンツ配信前表示(対向検レコサーバ) DREM-2123
+     * pure dTVチャンネルの放送時間表記 DREM-2125
+     * おすすめ・検索の一覧画面でNOW ON AIR表示する DREM-2058
      *
+     * 表示用のテキストをセットする
      * @param holder          ビューの集合
      * @param listContentInfo 行データー
      * @return true 配信期限の表示する場合
      */
-    public static boolean setStartViewing(final Context context, final ContentsAdapter.ViewHolder holder, final ContentsData listContentInfo) {
-        String dispType = listContentInfo.getDispType();
-        String tvService = listContentInfo.getTvService();
-        String contentsType = listContentInfo.getContentsType();
-        long availEndDate = listContentInfo.getAvailEndDate();
-        long vodStartDate = listContentInfo.getVodStartDate();
-        long vodEndDate = listContentInfo.getVodEndDate();
-
-        ContentUtils.ContentsType vodContentsType = ContentUtils.getContentsTypeByPlala(dispType, tvService,
-                contentsType, availEndDate, vodStartDate, vodEndDate);
-        String viewingPriod = "";
-
-        if (vodContentsType ==  ContentUtils.ContentsType.VOD
-                || vodContentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
-            if (DateUtils.isBefore(vodStartDate)) {
-                viewingPriod = DateUtils.getContentsDetailVodDate(context, vodStartDate);
-                viewingPriod = StringUtils.getConnectStrings(
-                        context.getString(R.string.common_date_format_start_str), viewingPriod);
-            } else {
-                if (vodContentsType ==  ContentUtils.ContentsType.VOD) {
-                    //VOD(m/d（曜日）まで)
-                    viewingPriod = DateUtils.getContentsDetailVodDate(context, availEndDate);
-                } else if (vodContentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
-                    //VOD(m/d（曜日）まで)
-                    viewingPriod = DateUtils.getContentsDetailVodDate(context, vodEndDate);
-                    viewingPriod = StringUtils.getConnectStrings(
-                            context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing), viewingPriod);
-                }
-            }
+    public static boolean setPeriodText(final Context context, final ContentsAdapter.ViewHolder holder, final ContentsData listContentInfo, boolean isRecommend) {
+        final String dispType = listContentInfo.getDispType();
+        final String tvService = listContentInfo.getTvService();
+        final String contentsType = listContentInfo.getContentsType();
+        final long availEndDate = listContentInfo.getAvailEndDate();
+        final long vodStartDate = listContentInfo.getVodStartDate();
+        final long vodEndDate = listContentInfo.getVodEndDate();
+        int serviceId;
+        try {
+            serviceId = Integer.parseInt(listContentInfo.getServiceId());
+        } catch (Exception e) {
+            serviceId = 0;
+            DTVTLogger.warning(e.getMessage());
         }
-        switch (vodContentsType) {
-            case  VOD:
-            case  DCHANNEL_VOD_31:
+        final ContentsType periodContentsType;
+        if (isRecommend) {
+            periodContentsType = getContentsTypeByRecommend(serviceId, listContentInfo.getCategoryId());
+        } else {
+            periodContentsType = getContentsTypeByPlala(dispType, tvService, contentsType, availEndDate, vodStartDate, vodEndDate);
+        }
+
+        String viewingPeriod = "";
+        if (isRecommend) {
+
+        } else { // plala対向
+            switch (periodContentsType) {
+                case VOD:// VOD
+                case DCHANNEL_VOD_31: // ひかりTV内dch_見逃し(３1以内).
+                    if (DateUtils.isBefore(vodStartDate)) { //から
+                        viewingPeriod = DateUtils.getContentsDetailVodDate(context, vodStartDate);
+                        viewingPeriod = StringUtils.getConnectStrings(
+                                context.getString(R.string.common_date_format_start_str), viewingPeriod);
+                    } else { //まで //"見逃し"は他のどころで対応している
+                        if (periodContentsType ==  ContentUtils.ContentsType.VOD) {
+                            //VOD(m/d（曜日）まで)
+                            viewingPeriod = DateUtils.getContentsDetailVodDate(context, availEndDate);
+                        } else if (periodContentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
+                            //VOD(m/d（曜日）まで)
+                            viewingPeriod = DateUtils.getContentsDetailVodDate(context, vodEndDate);
+                            viewingPeriod = StringUtils.getConnectStrings(
+                                    context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing), viewingPeriod);
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+        }
+        // 実際の
+        switch (periodContentsType) {
+            case VOD:
+            case DCHANNEL_VOD_31:
                 holder.tv_time.setVisibility(View.VISIBLE);
-                holder.tv_time.setText(viewingPriod);
+                holder.tv_time.setText(viewingPeriod);
                 return true;
-            case  DCHANNEL_VOD_OVER_31:
+            case DCHANNEL_VOD_OVER_31:
                 break;
-            case  TV:
-            case  OTHER:
+            case TV:
+            case OTHER:
                 break;
             default:
                 break;
