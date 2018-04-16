@@ -11,6 +11,7 @@ import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 
 import java.io.File;
 import java.text.ParseException;
@@ -1100,5 +1101,53 @@ public class DateUtils {
 
         //収まっていないのでfalse
         return false;
+    }
+
+    /**
+     * ぷらら対抗向 日付情報の加工(まで/からをつける).
+     *
+     * @param context      コンテキストファイル
+     * @param contentsData コンテンツデータ
+     * @param contentsType コンテンツタイプ
+     * @return 加工後日付
+     */
+    public static String addDateLimit(final Context context, final ContentsData contentsData, final ContentUtils.ContentsType contentsType) {
+        String date;
+        long availStartDate = contentsData.getAvailStartDate();
+        if (DateUtils.isBefore(availStartDate)) {
+            //配信前 m/d（曜日）から
+            date = DateUtils.getContentsDateString(context, availStartDate, true);
+        } else {
+            date = addDateLimitVod(context, contentsData, contentsType);
+        }
+        return date;
+    }
+
+    /**
+     * ぷらら対抗向VODコンテンツ用 日付情報の加工(まで/からをつける).
+     *
+     * @param context      コンテキストファイル
+     * @param contentsData コンテンツデータ
+     * @param contentsType コンテンツタイプ
+     * @return 加工後日付
+     */
+    public static String addDateLimitVod(final Context context, final ContentsData contentsData, final ContentUtils.ContentsType contentsType) {
+        String date = "";
+        long availEndDate = contentsData.getAvailEndDate();
+        if (contentsType == ContentUtils.ContentsType.VOD) {
+            //VOD(m/d（曜日）まで)
+            date = DateUtils.getContentsDetailVodDate(context, availEndDate);
+        } else if (contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_OVER_31) {
+            //VOD(m/d（曜日）まで) ひかりTV内dch_見逃し
+            date = StringUtils.getConnectStrings(
+                    context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
+        } else if (contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
+            //VOD(m/d（曜日）まで)
+            date = DateUtils.getContentsDetailVodDate(context, contentsData.getVodEndDate());
+            date = StringUtils.getConnectStrings(
+                    context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing_separation),
+                    date);
+        }
+        return date;
     }
 }
