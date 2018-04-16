@@ -17,12 +17,21 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
+/**
+ * STB選択エラーActivity.
+ */
 public class STBSelectErrorActivity extends BaseActivity {
+    /** チェックボックス.*/
     private CheckBox mErrorCheckBox;
+    /** 再ペアリングボタン.*/
     private TextView mParingAgain;
+    /** ペアリングヘルプボタン.*/
     private TextView  mParingHelp;
+    /** ペアリングをしないで利用するボタン.*/
     private TextView mWithoutParing;
+    /** 以降、表示しない .*/
     private TextView mErrorCheckboxText;
+    /**  以降、表示しないフラグ.*/
     private boolean mIsNextTimeHide = false;
 
     @Override

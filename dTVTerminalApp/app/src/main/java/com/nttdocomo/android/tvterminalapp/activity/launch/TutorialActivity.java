@@ -37,20 +37,23 @@ import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * チュートリアルActivity.
+ */
 public class TutorialActivity extends BaseActivity implements View.OnClickListener {
-
+    /** チュートリアルを終了またはスキップする.*/
     private Button mSkipOrFinishTutorialAcivity = null;
 
     /**
      * 画面の素材（上）.
      */
-    private int[] mWalkthroughsAbove = { R.drawable.walkthrough_01,
+    private int[] mWalkthroughsAbove = {R.drawable.walkthrough_01,
             R.drawable.walkthrough_02_01, R.drawable.walkthrough_03_01,
             R.drawable.walkthrough_04_01, R.drawable.walkthrough_05_01 };
     /**
      * 画面の素材（下）.
      */
-    private int[] mWalkthroughsBelow = { R.drawable.walkthrough_01,
+    private int[] mWalkthroughsBelow = {R.drawable.walkthrough_01,
             R.drawable.walkthrough_02_02, R.drawable.walkthrough_03_02,
             R.drawable.walkthrough_04_02, R.drawable.walkthrough_05_02 };
     /**
@@ -88,7 +91,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
     /**
      * インジケータレイアウト.
      */
-    private LinearLayout mDotsLayout ;
+    private LinearLayout mDotsLayout;
     /**
      * 規約表示テキストビュー.
      */
@@ -101,19 +104,23 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
      * 画像編集開始位置.
      */
     private final static int PIXEL0 = 0;
-    /**
-     * ページング.
-     */
+    /** ページン0.*/
     private final static int PAGE_1 = 0;
+    /** ページン1.*/
     private final static int PAGE_2 = 1;
+    /** ページン2.*/
     private final static int PAGE_3 = 2;
+    /** ページン3.*/
     private final static int PAGE_4 = 3;
+    /** ページン4.*/
     private final static int PAGE_5 = 4;
     /**
      * アニメーション時間（ミリ秒）.
      */
     private final static int ANIMATION_TIME_FEED_IN_OUT = 400;
+    /** アニメーション待ち時間.*/
     private final static int ANIMATION_TIME_WAIT = 2000;
+    /** アニメーション待ち時間.*/
     private final static int ANIMATION_TIME_MOVE_CURSOR = 300;
     /**
      * インジケータマージン.
@@ -134,7 +141,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
      * アニメーションハンドラー.
      */
     private android.os.Handler mHandle = new android.os.Handler();
-
+    /**アニメーション.*/
     private final Runnable mRunnableAnimation = new Runnable() {
         @Override
         public void run() {
@@ -167,6 +174,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
         }
     };
 
+    /** コンテンツ設定.*/
     private void setContents() {
         setTheme(R.style.AppThemeBlack);
         setStatusBarColor(R.color.contents_header_background);
@@ -179,6 +187,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
         initView();
     }
 
+    /** ビューの初期化.*/
     private void initView() {
         mDotsLayout = findViewById(R.id.tutorial_dots_layout);
         findViewById(R.id.tutorial_dots_1).setOnClickListener(this);
@@ -206,7 +215,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
                 new ViewTreeObserver.OnPreDrawListener() {
                     @Override
                     public boolean onPreDraw() {
-                        mOffset = mCurDot.getWidth() + (int)getDensity() * DOTS_MARGIN;
+                        mOffset = mCurDot.getWidth() + (int) getDensity() * DOTS_MARGIN;
                         return true;
                     }
                 });
@@ -218,14 +227,15 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
         mWalkthroughsViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 
             @Override
-            public void onPageSelected(int position) {
+            public void onPageSelected(final int position) {
                 mHandle.removeCallbacks(mRunnableAnimation);
                 mTutorialTextView.setVisibility(View.GONE);
                 mSkipOrFinishTutorialAcivity.setVisibility(View.GONE);
                 mDotsLayout.setVisibility(View.VISIBLE);
                 mCurDot.setVisibility(View.VISIBLE);
                 moveCursorTo(position);
-                if (position == mWalkthroughsAbove.length - 1) {// 最後のページ
+                if (position == mWalkthroughsAbove.length - 1) {
+                    //  最後のページ
                     mTutorialTextView.setVisibility(View.VISIBLE);
                     mSkipOrFinishTutorialAcivity.setVisibility(View.VISIBLE);
                     mDotsLayout.setVisibility(View.GONE);
@@ -234,17 +244,17 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
                 mCurPos = position;
                 mIsAbove = true;
                 mWalkthroughsViewPager.getChildAt(mCurPos).findViewById(R.id.tutorial_walkthroughs_above).setVisibility(View.VISIBLE);
-                if (position != PAGE_1){
+                if (position != PAGE_1) {
                     mHandle.postDelayed(mRunnableAnimation, ANIMATION_TIME_WAIT);
                 }
             }
 
             @Override
-            public void onPageScrolled(int arg0, float arg1, int arg2) {
+            public void onPageScrolled(final int arg0, final float arg1, final int arg2) {
             }
 
             @Override
-            public void onPageScrollStateChanged(int arg0) {
+            public void onPageScrollStateChanged(final int arg0) {
             }
 
         });
@@ -255,8 +265,9 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
      *
      * @param index 画像ファイルのindex.
      * @param cutTop trueの場合上から切り取って表示（下寄せ）.
+     * @return Bitmap
      */
-    private Bitmap modifyBitmap(int index, boolean cutTop) {
+    private Bitmap modifyBitmap(final int index, final boolean cutTop) {
         clearBitmap();
         if (index < 0) {
             return null;
@@ -293,7 +304,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
     public void onResume() {
         super.onResume();
         clearBitmap();
-        if (mCurPos != PAGE_1){
+        if (mCurPos != PAGE_1) {
             mHandle.postDelayed(mRunnableAnimation, ANIMATION_TIME_WAIT);
         }
     }
@@ -349,7 +360,9 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
     public void onBackPressed() {
         //super.onBackPressed();
     }
-
+    /**
+     *チュートリアル画面をスキップまたは終了するボタンがタップされた時の処理.
+     * */
     private void onSkipOrFinish() {
         SharedPreferencesUtils.setSharedPreferencesIsDisplayedTutorial(this, true);
         doScreenTransition();
@@ -391,7 +404,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
      *
      * @param position 移動後の位置.
      */
-    private void moveCursorTo(int position) {
+    private void moveCursorTo(final int position) {
         TranslateAnimation anim = new TranslateAnimation(mOffset * mCurPos,
                 mOffset * position, PIXEL0, PIXEL0);
         anim.setDuration(ANIMATION_TIME_MOVE_CURSOR);
@@ -403,10 +416,13 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
      * チュートリアルページアダプタ.
      */
     private static class TutorialPagerAdapter extends PagerAdapter {
-
+        /**リストビュー.*/
         private List<View> views;
 
-        private TutorialPagerAdapter(List<View> views){
+        /**チュートリアルページアダプタ.
+         * @param views ビュー
+         */
+        private TutorialPagerAdapter(final List<View> views) {
             this.views = views;
         }
 
@@ -416,12 +432,12 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
         }
 
         @Override
-        public boolean isViewFromObject(View arg0, Object arg1) {
+        public boolean isViewFromObject(final View arg0, final Object arg1) {
             return arg0 == (arg1);
         }
 
         @Override
-        public void restoreState(Parcelable arg0, ClassLoader arg1) {
+        public void restoreState(final Parcelable arg0, final ClassLoader arg1) {
 
         }
 

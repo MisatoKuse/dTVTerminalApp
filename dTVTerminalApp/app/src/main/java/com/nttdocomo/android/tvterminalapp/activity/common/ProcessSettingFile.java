@@ -47,17 +47,18 @@ public class ProcessSettingFile {
      */
     private ProcessSettingFileCallBack mProcessSettingFileCallBack = null;
     /**
-     * 処理中フラグ
+     * 処理中フラグ.
      */
     private boolean mBusy = false;
     /**
-     * グーグルプレイ起動フラグ
+     * グーグルプレイ起動フラグ.
      */
     private boolean mGooglePlay = false;
     /**
      * リモート視聴の際、問題が無かった場合に視聴を介する為のコールバック.
      */
     public interface ProcessSettingFileCallBack {
+        /** 問題が無かった場合ののコールバック.*/
         void onCallNoError();
     }
 
@@ -72,8 +73,9 @@ public class ProcessSettingFile {
 
     /**
      * コンストラクタ.
+     * @param activity BaseActivity
      */
-    public ProcessSettingFile(BaseActivity activity) {
+    public ProcessSettingFile(final BaseActivity activity) {
         //アクティビティの退避
         mActivity = activity;
 
@@ -86,8 +88,9 @@ public class ProcessSettingFile {
 
     /**
      * 設定ファイルの制御処理.
+     * @param callBack コールバック.
      */
-    public void controlAtSettingFile(ProcessSettingFileCallBack callBack) {
+    public void controlAtSettingFile(final ProcessSettingFileCallBack callBack) {
         //処理に入ったので、処理中フラグをtrueにする
         mBusy = true;
 
@@ -122,7 +125,7 @@ public class ProcessSettingFile {
         mSettingFileWebClient = new SettingFileWebClient(mContext);
         mSettingFileWebClient.getSettingFileApi(new SettingFileWebClient.SettingFileJsonParserCallback() {
             @Override
-            public void onSettingFileJsonParsed(SettingFileResponse settingFileResponse) {
+            public void onSettingFileJsonParsed(final SettingFileResponse settingFileResponse) {
                 //読み込み終了のコールバック
                 if (settingFileResponse != null) {
                     //取得した値を取り込む
@@ -255,7 +258,7 @@ public class ProcessSettingFile {
      *
      * @param isCancel キャンセルが必要ならばtrue
      */
-    private void showGooglePlayDialog(boolean isCancel) {
+    private void showGooglePlayDialog(final boolean isCancel) {
         CustomDialog dialog;
         String printMessage;
 
@@ -318,7 +321,12 @@ public class ProcessSettingFile {
     public boolean isGooglePlay() {
         return mGooglePlay;
     }
-    public void setGooglePlay(boolean googlePlaySwitch) {
+
+    /**
+     *  googlePlayフラグ設定.
+     * @param googlePlaySwitch  googlePlay起動対象フラグ
+     */
+    public void setGooglePlay(final boolean googlePlaySwitch) {
         mGooglePlay = googlePlaySwitch;
     }
 }

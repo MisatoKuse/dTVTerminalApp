@@ -380,30 +380,48 @@ public class DlnaInterfaceRI {
             DTVTLogger.debug(e);
         }
         // フォルダーの判断
-         if (fileNames != null && fileNames.length > 0) {
-          File file = new File(newPath);
-             if (!file.exists()) {
-                 if (!file.mkdirs()) {
-                     DTVTLogger.debug("mkdir failed");
-                 }
-             }
-             for (String fileName : fileNames) {
-                 copyFileFromAssets(context, oldPath + File.separator + fileName, newPath + File.separator + fileName);
-             }
-         } else {
-             try (InputStream is = context.getAssets().open(oldPath);
-                  FileOutputStream fos = new FileOutputStream(new File(newPath))) {
-                 byte[] buffer = new byte[1024];
-                 int byteCount;
-                 while ((byteCount = is.read(buffer)) != -1) {
-                     // buffer
-                     fos.write(buffer, 0, byteCount);
-                 }
-                 fos.flush();
-             } catch (IOException e) {
-                 DTVTLogger.debug(e);
-             }
-         }
+        if (fileNames != null && fileNames.length > 0) {
+            File file = new File(newPath);
+            if (!file.exists()) {
+                if (!file.mkdirs()) {
+                    DTVTLogger.debug("mkdir failed");
+                }
+            }
+            for (String fileName : fileNames) {
+                copyFileFromAssets(context, oldPath + File.separator + fileName, newPath + File.separator + fileName);
+            }
+        } else {
+            InputStream is = null;
+            FileOutputStream fos = null;
+            try {
+                is = context.getAssets().open(oldPath);
+                fos = new FileOutputStream(new File(newPath));
+                byte[] buffer = new byte[1024];
+                int byteCount;
+                while ((byteCount = is.read(buffer)) != -1) {
+                    // buffer
+                    fos.write(buffer, 0, byteCount);
+                }
+                fos.flush();
+            } catch (IOException e) {
+                DTVTLogger.debug(e);
+            } finally {
+                try {
+                    if (is != null) {
+                        is.close();
+                    }
+                } catch (IOException e) {
+                    DTVTLogger.debug(e);
+                }
+                try {
+                    if (fos != null) {
+                        fos.close();
+                    }
+                } catch (IOException e) {
+                    DTVTLogger.debug(e);
+                }
+            }
+        }
     }
 
     private boolean makeRedaRelayDir(final String destDir) {
