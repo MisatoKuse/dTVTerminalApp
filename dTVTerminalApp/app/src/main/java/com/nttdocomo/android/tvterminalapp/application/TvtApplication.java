@@ -9,6 +9,7 @@ import android.app.Application;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 /**
@@ -25,10 +26,16 @@ public class TvtApplication extends Application implements Application.ActivityL
      * Started状態の前回状態を保存.
      */
     private int mTmpStartedCounter = 0;
+    /**
+     * Googleアナリティクス.
+     */
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        //Googleアナリティクスの情報収集
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         registerActivityLifecycleCallbacks(this);
         DTVTLogger.debug("application onCreate");
     }

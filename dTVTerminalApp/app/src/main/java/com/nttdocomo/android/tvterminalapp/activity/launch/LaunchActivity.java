@@ -41,6 +41,15 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
      */
     private boolean mDaccountStatus = false;
 
+    /**
+     * 次の画面でdアカウントエラーを出すならtrueにする.
+     */
+    private boolean mIsDAccountErrorNextAvctivity = false;
+    /**
+     * 次の画面で設定画面エラーを出すならtrueにする.
+     */
+    private boolean mIsSettingErrorNextAvctivity = false;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,17 +130,13 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     }
 
     @Override
-    protected void onDaccountOttGetComplete() {
-        super.onDaccountOttGetComplete();
+    protected void onDaccountOttGetComplete(final boolean result) {
+        super.onDaccountOttGetComplete(result);
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (mIsFirstRun) {
-                    startActivityWait(new Intent(getApplicationContext(), TutorialActivity.class));
-                } else {
-                    doScreenTransition();
-                }
-                finish();
+                //チュートリアルも含めて、次に表示する画面を選択する
+                doScreenTransition();
             }
         });
     }
@@ -141,28 +146,43 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
      */
     private void doScreenTransition() {
         DTVTLogger.start();
-        if (SharedPreferencesUtils.getSharedPreferencesStbConnect(this)) {
+
+        Intent intent;
+
+        if(mIsFirstRun) {
+            //チュートリアル画面に遷移
+            intent = new Intent(getApplicationContext(), TutorialActivity.class);
+
+        } else if (SharedPreferencesUtils.getSharedPreferencesStbConnect(this)) {
             // ペアリング済み HOME画面遷移
             SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(this, true);
-            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent = new Intent(getApplicationContext(), HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivityWait(intent);
             DTVTLogger.debug("ParingOK Start HomeActivity");
         } else if (SharedPreferencesUtils.getSharedPreferencesStbSelect(this)) {
             // 次回から表示しないをチェック済み
             // 未ペアリング HOME画面遷移
             SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(this, false);
-            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent = new Intent(getApplicationContext(), HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivityWait(intent);
             DTVTLogger.debug("ParingNG Start HomeActivity");
         } else {
             // STB選択画面へ遷移
-            Intent intent = new Intent(getApplicationContext(), STBSelectActivity.class);
+            intent = new Intent(getApplicationContext(), STBSelectActivity.class);
             intent.putExtra(STBSelectActivity.FROM_WHERE, STBSelectActivity.STBSelectFromMode.STBSelectFromMode_Launch.ordinal());
-            startActivityWait(intent);
             DTVTLogger.debug("Start STBSelectActivity");
         }
+
+        //TODO: 作業の優先順位を鑑み、次画面ダイアログ表示の実装は保留とする
+//        if(mIsDAccountErrorNextAvctivity) {
+//            //次の画面にdアカウントエラーの表示を依頼する
+//            //intent.putExtra()
+//        }
+//
+//        if(mIsSettingErrorNextAvctivity) {
+//            //次の画面に設定画面エラーの表示を依頼する
+//        }
+        startActivityWait(intent);
         DTVTLogger.end();
     }
 
@@ -175,9 +195,10 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         //次の画面情報を控える
         mNextActivity = intent;
 
+        //TODO: 暫定対応として、単純に呼び出す
         if(execCheck()) {
-            //そのまま次のアクティビティへ遷移する
             startActivity(mNextActivity);
+            finish();
         }
     }
 
@@ -223,10 +244,11 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         }
 
         //設定ファイルの処理が続行中か、そもそも実行されていなければ遷移不可
-        if((mCheckSetting != null && mCheckSetting.isBusy())
-                || mCheckSetting == null) {
-            return false;
-        }
+        //TODO: Iemonサーバーとアクセスできない環境では、この条件が絶対に成立してしまい、先に進まないので、ひとまず無効化
+//        if((mCheckSetting != null && mCheckSetting.isBusy())
+//                || mCheckSetting == null) {
+//            return false;
+//        }
 
         return true;
     }

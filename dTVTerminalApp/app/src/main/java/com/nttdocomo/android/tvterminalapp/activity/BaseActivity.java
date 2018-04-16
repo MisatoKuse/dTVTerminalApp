@@ -1700,8 +1700,10 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * dアカウントOTTの取得契機で呼ばれる.
+     *
+     * @param result 正常終了ならばtrue
      */
-    protected void onDaccountOttGetComplete() {
+    protected void onDaccountOttGetComplete(boolean result) {
     }
 
     @Override
@@ -1723,7 +1725,7 @@ public class BaseActivity extends FragmentActivity implements
         //初回dアカウント取得が行われていた場合は終わらせる
         SharedPreferencesUtils.setFirstExecEnd(getApplicationContext());
 
-        onDaccountOttGetComplete();
+        onDaccountOttGetComplete(result);
         //dアカウントの登録結果を受け取るコールバック
         if (result) {
             //処理に成功したので、帰る
