@@ -386,6 +386,13 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     }
 
     /**
+     * ダイアログの本文をクリアする
+     */
+    public void clearContentText() {
+        content = "";
+    }
+
+    /**
      * DialogType.CONFIRMのcancelテキストを変更.
      *
      * @param resId リソースID
