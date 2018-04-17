@@ -99,32 +99,15 @@ public class WatchListenVideoListJsonParser {
                         if (listBuffer.equals(JsonConstants.META_RESPONSE_PUINF)) {
                             JSONObject puinfObj = jsonObject.getJSONObject(listBuffer);
                             for (String puinfBuffer : JsonConstants.PUINF_PARA) {
-//                                String para = puinfObj.getString(puinfBuffer);
-//                                vcListMap.put(JsonConstants.META_RESPONSE_PUINF + JsonConstants.UNDER_LINE + puinfBuffer, para);
                                 //書き込み用項目名の作成
                                 StringBuilder stringBuffer = new StringBuilder();
                                 stringBuffer.append(JsonConstants.META_RESPONSE_PUINF);
                                 stringBuffer.append(JsonConstants.UNDER_LINE);
                                 stringBuffer.append(puinfBuffer);
+                                String para = puinfObj.getString(puinfBuffer);
+                                vcListMap.put(stringBuffer.toString(), para);
 
-                                //日付項目チェック
-                                if (DBUtils.isDateItem(puinfBuffer)) {
-                                    //日付なので変換して格納する
-                                    String dateBuffer = DateUtils.formatEpochToString(
-                                            StringUtils.changeString2Long(puinfObj.getString(
-                                                    puinfBuffer)));
-                                    vcListMap.put(stringBuffer.toString(), dateBuffer);
-                                } else {
-                                    //日付ではないのでそのまま格納する
-                                    String para = puinfObj.getString(puinfBuffer);
-                                    vcListMap.put(stringBuffer.toString(), para);
-                                }
                             }
-                        }  else if (DBUtils.isDateItem(listBuffer)) {
-                            // DATE_PARAに含まれるのは日付なので、エポック秒となる。変換して格納する
-                            String dateBuffer = DateUtils.formatEpochToString(
-                                    StringUtils.changeString2Long(jsonObject.getString(listBuffer)));
-                            vcListMap.put(listBuffer, dateBuffer);
                         } else {
                             String para = jsonObject.getString(listBuffer);
                             vcListMap.put(listBuffer, para);
