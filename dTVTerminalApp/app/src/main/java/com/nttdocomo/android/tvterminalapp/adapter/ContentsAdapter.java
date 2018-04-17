@@ -796,7 +796,13 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 if (!ContentUtils.setPeriodText(mContext, holder, listContentInfo)) {
                     if (!TextUtils.isEmpty(listContentInfo.getTime())) {
                         holder.tv_time.setVisibility(View.VISIBLE);
-                        holder.tv_time.setText(DateUtils.getContentsDateString(Long.parseLong(listContentInfo.getTime())));
+                        try {
+                            holder.tv_time.setText(DateUtils.getContentsDateString(Long.parseLong(listContentInfo.getTime())));
+                        } catch(NumberFormatException e) {
+                            //TODO:getTimeがepoctimeフォーマットになってないのは正しく無いので次回のスプリントでgetTime()を廃止して正しい日付が入るように修正する
+                            DTVTLogger.warning(e.getMessage());
+                            holder.tv_time.setText(listContentInfo.getTime());
+                        }
                     }
 
                 }
