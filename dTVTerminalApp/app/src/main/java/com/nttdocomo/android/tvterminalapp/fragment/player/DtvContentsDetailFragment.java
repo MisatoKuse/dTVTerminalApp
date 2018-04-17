@@ -328,8 +328,9 @@ public class DtvContentsDetailFragment extends Fragment {
             mStaffLayout.setVisibility(View.GONE);
         }
         if (!TextUtils.isEmpty(contentsDetailInfo)) {
-            mTxtTitleShortDetail.setText(contentsDetailInfo);
-            mTxtTitleAllDetail.setText(contentsDetailInfo);
+            final String replaceString = contentsDetailInfo.replace("\\n","\n");
+            mTxtTitleShortDetail.setText(replaceString);
+            mTxtTitleAllDetail.setText(replaceString);
         }
         setClipButton(mClipButton);
     }
