@@ -228,11 +228,14 @@ public class ContentUtils {
                     if (periodContentsType ==  ContentUtils.ContentsType.VOD) {
                         //VOD(m/d（曜日）まで)
                         viewingPeriod = DateUtils.getContentsDetailVodDate(context, availEndDate);
-                    } else if (periodContentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
+                    } else if (periodContentsType == ContentUtils.ContentsType.DCHANNEL_VOD_OVER_31) {
                         //VOD(m/d（曜日）まで)
                         viewingPeriod = DateUtils.getContentsDetailVodDate(context, vodEndDate);
                         viewingPeriod = StringUtils.getConnectStrings(viewingPeriod, context.getString(R.string.home_contents_pipe),
                                 context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
+                    } else if (periodContentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
+                        //VOD(m/d（曜日）まで)
+                        viewingPeriod = DateUtils.getContentsDetailVodDate(context, vodEndDate);
                     }
                 }
                 break;
@@ -245,6 +248,7 @@ public class ContentUtils {
         switch (periodContentsType) {
             case VOD:
             case DCHANNEL_VOD_31:
+            case DCHANNEL_VOD_OVER_31:
                 if (!TextUtils.isEmpty(viewingPeriod)) {
                     holder.tv_time.setVisibility(View.VISIBLE);
                     SpannableString spannableString = new SpannableString(viewingPeriod);
@@ -260,8 +264,6 @@ public class ContentUtils {
                     holder.tv_time.setText(spannableString);
                 }
                 return true;
-            case DCHANNEL_VOD_OVER_31:
-                break;
             case TV:
             case OTHER:
                 break;
