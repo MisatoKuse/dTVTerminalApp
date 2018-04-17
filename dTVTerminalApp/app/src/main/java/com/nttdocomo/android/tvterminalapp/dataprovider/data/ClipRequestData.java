@@ -9,100 +9,155 @@ import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
+/**
+ * ClipRequestData .
+ */
 public class ClipRequestData {
-    // タイプ
+    /**タイプ.*/
     private String mType = null;
-    // コンテンツ識別子
+    /**コンテンツ識別子.*/
     private String mCrid = null;
-    // サービスID
+    /**サービスID.*/
     private String mServiceId = null;
-    // イベントID
+    /**イベントID.*/
     private String mEventId = null;
-    // タイトルID
+    /**タイトルID.*/
     private String mTitleId = null;
-    // コンテンツタイトル
+    /**コンテンツタイトル.*/
     private String mTitle = null;
-    // 番組のパレンタル設定値
+    /**番組のパレンタル設定値.*/
     private String mRValue = null;
-    // 放送開始日時
+    /**放送開始日時.*/
     private String mLinearStartDate = null;
-    // 放送終了日時
+    /**放送終了日時.*/
     private String mLinearEndDate = null;
-    // クリップ状態
+    /**クリップ状態.*/
     private String mSearchOk = null;
-    // 表示タイプ
+    /**表示タイプ.*/
     private String mDispType = null;
-    // コンテンツタイプ
+    /**コンテンツタイプ.*/
     private String mContentType = null;
-    // テーブルタイプ
+    /**テーブルタイプ.*/
     private ClipKeyListDao.TABLE_TYPE mTableType = null;
-    // 視聴通知判定
+    /**視聴通知判定.*/
     private boolean mIsNotify = false;
-    // クリップ未/済
+    /**クリップ未/済.*/
     private boolean mClipStatus = false;
-    //EPG判定用
+    /**EPG判定用.*/
     private static final String TV_PROGRAM_CHECK = "tv_program";
-    //h4d_iptv
+    /**h4d_iptv.*/
     private static final String H4D_IPTV_SERVICE_CONTENTS = "0";
-    //dch
+    /**dch.*/
     private static final String DCH_SERVICE_CONTENTS = "1";
-    //h4d_vod
+    /**h4d_vod.*/
     private String DTV_SERVICE_CONTENTS_FALSE = "0";
-    //dtv_vod
+    /**dtv_vod.*/
     private static final String DTV_SERVICE_CONTENTS_TRUE = "1";
 
+    /**
+     * コンテンツタイトルを取得する.
+     * @return コンテンツタイトル
+     */
     public String getTitle() {
         return mTitle;
     }
 
+    /**
+     * コンテンツタイトルを設定する.
+     * @param mTitle コンテンツタイトル
+     */
     public void setTitle(final String mTitle) {
         this.mTitle = mTitle;
     }
-
+    /**
+     * タイプを取得する.
+     * @return タイプ
+     */
     public String getType() {
         return mType;
     }
 
+    /**
+     * コンテンツ識別子取得する.
+     * @return コンテンツ識別子
+     */
     public String getCrid() {
         return mCrid;
     }
 
+    /**
+     * コンテンツ識別子設定する.
+     * @param mCrid コンテンツ識別子
+     */
     public void setCrid(final String mCrid) {
         this.mCrid = mCrid;
     }
 
+    /**
+     * サービスID取得する.
+     * @return サービスID
+     */
     public String getServiceId() {
         return mServiceId;
     }
-
+    /**
+     * サービスID設定する.
+     * @param mServiceId サービスID
+     */
     public void setServiceId(final String mServiceId) {
         this.mServiceId = mServiceId;
     }
-
+    /**
+     * イベントID取得する.
+     * @return イベントID
+     */
     public String getEventId() {
         return mEventId;
     }
 
+    /**
+     * イベントID設定する.
+     * @param mEventId イベントID
+     */
     public void setEventId(final String mEventId) {
         this.mEventId = mEventId;
     }
 
+    /**
+     * タイトルID取得する.
+     * @return タイトルID
+     */
     public String getTitleId() {
         return mTitleId;
     }
-
+    /**
+     * タイトルID設定する.
+     * @param mTitleId タイトルID
+     */
     public void setTitleId(final String mTitleId) {
         this.mTitleId = mTitleId;
     }
 
+    /**
+     * 番組のパレンタル設定値取得する.
+     * @return 番組のパレンタル設定値
+     */
     public String getRValue() {
         return mRValue;
     }
 
+    /**
+     * 番組のパレンタル設定値設定する.
+     * @param mRValue 番組のパレンタル設定値
+     */
     public void setRValue(final String mRValue) {
         this.mRValue = mRValue;
     }
 
+    /**
+     * 放送開始日時取得する.
+      * @return 放送開始日時
+     */
     public String getLinearStartDate() {
         return mLinearStartDate;
     }
@@ -116,6 +171,10 @@ public class ClipRequestData {
         this.mLinearStartDate = mLinearStartDate;
     }
 
+    /**
+     * 放送終了日時取得する.
+     * @return 放送終了日時
+     */
     public String getLinearEndDate() {
         return mLinearEndDate;
     }
@@ -129,46 +188,89 @@ public class ClipRequestData {
         this.mLinearEndDate = mLinearEndDate;
     }
 
+    /**
+     * クリップ状態取得する.
+     * @return クリップ状態
+     */
     public String getSearchOk() {
         return mSearchOk;
     }
 
+    /**
+     * クリップ状態設定する.
+     * @param mSearchOk クリップ状態
+     */
     public void setSearchOk(final String mSearchOk) {
         this.mSearchOk = mSearchOk;
     }
-
+    /**
+     * 視聴通知判定取得する.
+     * @return 視聴通知判定
+     */
     public boolean getIsNotify() {
         return mIsNotify;
     }
 
+    /**
+     * 表示タイプ取得する.
+     * @return 表示タイプ
+     */
     public String getDispType() {
         return mDispType;
     }
 
+    /**
+     * 表示タイプ設定する.
+     * @param mDispType 表示タイプ
+     */
     public void setDispType(final String mDispType) {
         this.mDispType = mDispType;
     }
 
+    /**
+     * コンテンツタイプ取得する.
+     * @return コンテンツタイプ
+     */
     public String getContentType() {
         return mContentType;
     }
 
+    /**
+     * コンテンツタイプ設定する.
+     * @param mContentType コンテンツタイプ
+     */
     public void setContentType(final String mContentType) {
         this.mContentType = mContentType;
     }
 
+    /**
+     * テーブルタイプ取得する.
+     * @return テーブルタイプ
+     */
     public ClipKeyListDao.TABLE_TYPE getTableType() {
         return mTableType;
     }
 
+    /**
+     * テーブルタイプ設定する.
+     * @param mTableType テーブルタイプ
+     */
+
     public void setTableType(final ClipKeyListDao.TABLE_TYPE mTableType) {
         this.mTableType = mTableType;
     }
-
+    /**
+     * クリップ状態取得する.
+     * @return クリップ状態済み/未
+     */
     public boolean isClipStatus() {
         return mClipStatus;
     }
 
+    /**
+     * クリップ状態設定する.
+     * @param mClipStatus クリップ
+     */
     public void setClipStatus(final boolean mClipStatus) {
         this.mClipStatus = mClipStatus;
     }
@@ -209,15 +311,17 @@ public class ClipRequestData {
      */
     private void setTvType(final String tvService) {
         if (tvService != null) {
-            if (tvService.equals(H4D_IPTV_SERVICE_CONTENTS)) {
-                //h4d_iptv
-                mType = WebApiBasePlala.CLIP_TYPE_H4D_IPTV;
-            } else if (tvService.equals(DCH_SERVICE_CONTENTS)) {
-                //dch
-                mType = WebApiBasePlala.CLIP_TYPE_DCH;
-            } else {
+            switch (tvService) {
+                case H4D_IPTV_SERVICE_CONTENTS:
+                    mType = WebApiBasePlala.CLIP_TYPE_H4D_IPTV;
+                    break;
+                case DCH_SERVICE_CONTENTS:
+                    mType = WebApiBasePlala.CLIP_TYPE_DCH;
+                    break;
                 //TODO：上記二つ以外の仕様が未定のため暫定対応
-                mType = "";
+                default:
+                    mType = "";
+                    break;
             }
         }
     }

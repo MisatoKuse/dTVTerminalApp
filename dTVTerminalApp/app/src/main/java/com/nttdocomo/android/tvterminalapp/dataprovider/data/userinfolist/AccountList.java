@@ -37,30 +37,52 @@ public class AccountList implements Serializable {
         this.mH4dAgeReq = "";
     }
 
+    /**
+     * 契約状態をゲットする.
+     * @return 契約状態.
+     */
     public String getContractStatus() {
         return mContractStatus;
     }
-
+    /**
+     * 契約状態を設定するする.
+     * @param contractStatus 契約状態.
+     */
     public void setContractStatus(final String contractStatus) {
         if (contractStatus != null) {
             this.mContractStatus = contractStatus;
         }
     }
 
+    /**
+     * 視聴年齢値ゲットする.
+     * @return dTVチャンネル視聴年齢値
+     */
     public String getDchAgeReq() {
         return mDchAgeReq;
     }
-
+    /**
+     * 視聴年齢値設定する.
+     * @param dchAgeReq dTVチャンネル視聴年齢値
+     */
     public void setDchAgeReq(final String dchAgeReq) {
         if (dchAgeReq != null) {
             this.mDchAgeReq = dchAgeReq;
         }
     }
 
+    /**
+     * 視聴年齢値ゲットする.
+     * @return ひかりTVfordocomo視聴年齢値
+     */
     public String getH4dAgeReq() {
         return mH4dAgeReq;
     }
 
+    /**
+     * 視聴年齢値設定する.
+     * @param h4dAgeReq ひかりTVfordocomo視聴年齢値
+     */
     public void setH4dAgeReq(final String h4dAgeReq) {
         if (h4dAgeReq != null) {
             this.mH4dAgeReq = h4dAgeReq;
