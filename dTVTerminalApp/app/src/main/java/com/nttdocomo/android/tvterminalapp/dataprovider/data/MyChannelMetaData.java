@@ -11,64 +11,113 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
+/**
+ * マイチャンネルメタデータ.
+ */
 public class MyChannelMetaData implements Serializable {
     private static final long serialVersionUID = -5113796911971449210L;
-    private final String CLASS_NAME = getClass().getSimpleName();
-    private static final String SET_DATA = ".setData";
     //仕様書の名前に合わせているので、フルスペルではない変数名もあります
-
+    /**サービスID.*/
     private String mServiceId;
+    /**チャンネル名.*/
     private String mTitle;
+    /**パレンタル情報.*/
     private String mRValue;
+    /**チャンネルのアダルトタイプ.*/
     private String mAdultType;
+    /**マイチャンネル登録位置.*/
     private String mIndex;
 
+    /**
+     * サービスID取得.
+     * @return サービスID
+     */
     public String getServiceId() {
         return mServiceId;
     }
 
+    /**
+     * サービスID設定.
+     * @param mServiceId サービスID
+     */
     public void setServiceId(final String mServiceId) {
         this.mServiceId = mServiceId;
     }
 
+    /**
+     * チャンネル名取得.
+     * @return チャンネル名
+     */
     public String getTitle() {
         return mTitle;
     }
 
+    /**
+     * チャンネル名設定.
+     * @param mTitle チャンネル名
+     */
     public void setTitle(final String mTitle) {
         this.mTitle = mTitle;
     }
 
+    /**
+     * パレンタル情報取得.
+     * @return パレンタル情報
+     */
     public String getRValue() {
         return mRValue;
     }
-
+    /**
+     * パレンタル情報設定する.
+     * @param mRValue パレンタル情報
+     */
     public void setRValue(final String mRValue) {
         this.mRValue = mRValue;
     }
 
+    /**
+     * アダルトタイプ取得.
+     * @return アダルトタイプ
+     */
     public String getAdultType() {
         return mAdultType;
     }
 
+    /**
+     * アダルトタイプ設定する.
+     * @param mAdultType アダルトタイプ
+     */
     public void setAdultType(final String mAdultType) {
         this.mAdultType = mAdultType;
     }
 
+    /**
+     * マイチャンネル登録位置取得.
+     * @return マイチャンネル登録位置
+     */
     public String getIndex() {
         return mIndex;
     }
 
+    /**
+     * マイチャンネル登録位置設定.
+     * @param mIndex マイチャンネル登録位置
+     */
     public void setIndex(final String mIndex) {
         this.mIndex = mIndex;
     }
 
-    private static final String MY_CHANNEL_META_DATA_SERVICE_ID = "service_id"; //サービスID
-    private static final String MY_CHANNEL_META_DATA_TITLE = "title"; //チャンネル名
-    private static final String MY_CHANNEL_META_DATA_R_VALUE = "r_value"; //番組のパレンタル設定値
-    private static final String MY_CHANNEL_META_DATA_ADULT_TYPE = "adult_type"; //チャンネルのアダルトタイプ
-    private static final String MY_CHANNEL_META_DATA_ADULT_INDEX = "index"; //マイチャンネル登録位置
-
+    /**サービスIDキー名.*/
+    private static final String MY_CHANNEL_META_DATA_SERVICE_ID = "service_id";
+    /**チャンネル名キー名.*/
+    private static final String MY_CHANNEL_META_DATA_TITLE = "title";
+    /**番組のパレンタル設定値キー名.*/
+    private static final String MY_CHANNEL_META_DATA_R_VALUE = "r_value";
+    /**チャンネルのアダルトタイプキー名.*/
+    private static final String MY_CHANNEL_META_DATA_ADULT_TYPE = "adult_type";
+    /**マイチャンネル登録位置キー名.*/
+    private static final String MY_CHANNEL_META_DATA_ADULT_INDEX = "index"; //
+    /**チャンネル情報キー名.*/
     private static final String[] mRootPara = {MY_CHANNEL_META_DATA_SERVICE_ID,
             MY_CHANNEL_META_DATA_TITLE, MY_CHANNEL_META_DATA_R_VALUE,
             MY_CHANNEL_META_DATA_ADULT_TYPE, MY_CHANNEL_META_DATA_ADULT_INDEX};
@@ -80,6 +129,7 @@ public class MyChannelMetaData implements Serializable {
      * @param data キーの値
      */
     private void setMember(final String key, final Object data) {
+        DTVTLogger.start();
         if (!key.isEmpty()) {
             switch (key) {
                 case MY_CHANNEL_META_DATA_SERVICE_ID:
@@ -101,12 +151,14 @@ public class MyChannelMetaData implements Serializable {
 
             }
         }
+        DTVTLogger.end();
     }
 
     /**
      * キーの値を取得する.
      *
      * @param key キー
+     * @return key
      */
     public Object getMember(final String key) {
         if (key.isEmpty()) {
@@ -135,6 +187,7 @@ public class MyChannelMetaData implements Serializable {
      * @param jsonObj Jsonオブジェクト
      */
     public void setData(final JSONObject jsonObj) {
+        DTVTLogger.start();
         if (jsonObj != null) {
             // 単一データ
             for (String item : mRootPara) {
@@ -142,7 +195,7 @@ public class MyChannelMetaData implements Serializable {
                     try {
                         setMember(item, jsonObj.get(item));
                     } catch (JSONException e) {
-                        DTVTLogger.debug(CLASS_NAME + SET_DATA, e);
+                        DTVTLogger.end();
                     }
                 }
             }

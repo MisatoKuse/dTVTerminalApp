@@ -111,386 +111,768 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
     /**視聴制限.*/
     private String mRvalue = "";
 
+    /**
+     * 日付取得.
+     * @return 日付
+     */
     public String getChannelDate() {
         return mChannelDate;
     }
 
+    /**
+     * 日付設定.
+     * @param mChannelDate 日付
+     */
     public void setChannelDate(final String mChannelDate) {
         this.mChannelDate = mChannelDate;
     }
 
+    /**
+     * チャンネル名取得.
+     * @return チャンネル名
+     */
     public String getChannelName() {
         return mChannelName;
     }
 
+    /**
+     * チャンネル名設定.
+     * @param mChannelName チャンネル名
+     */
     public void setChannelName(final String mChannelName) {
         this.mChannelName = mChannelName;
     }
 
+    /**
+     * サムネイル取得.
+     * @return サムネイル
+     */
     public String getThumb() {
         return mThumb;
     }
 
+    /**
+     * サムネイル設定.
+     * @param mThumb サムネイル
+     */
     public void setThumb(final String mThumb) {
         this.mThumb = mThumb;
     }
-
+    /**
+     * サービスID取得.
+     * @return サービスID
+     */
     public int getServiceId() {
         return mServiceId;
     }
 
+    /**
+     * サービスID設定.
+     * @param serviceId サービスID
+     */
     public void setServiceId(final int serviceId) {
         this.mServiceId = serviceId;
     }
 
+    /**
+     * モバイル視聴可否取得.
+     * @return モバイル視聴可否フラグ
+     */
     public String getMobileViewingFlg() {
         return mobileViewingFlg;
     }
 
+    /**
+     * モバイル視聴可否設定.
+     * @param mobileViewingFlg モバイル視聴可否フラグ
+     */
     public void setMobileViewingFlg(final String mobileViewingFlg) {
         this.mobileViewingFlg = mobileViewingFlg;
     }
 
+    /**
+     * 詳細取得.
+     * @return  詳細
+     */
     public String getDetail() {
         return mDetail;
     }
 
+    /**
+     * 詳細設定.
+     * @param detail 詳細
+     */
     public void setDetail(final String detail) {
         this.mDetail = detail;
     }
 
+    /**
+     * comment取得.
+     * @return comment
+     */
     public String getComment() {
         return mComment;
     }
 
+    /**
+     * comment設定.
+     * @param mComment comment
+     */
     public void setComment(final String mComment) {
         this.mComment = mComment;
     }
 
+    /**
+     * highlight取得.
+     * @return highlight
+     */
     public String getHighlight() {
         return mHighlight;
     }
 
+    /**
+     * highlight設定.
+     * @param mHighlight highlight
+     */
     public void setHighlight(final String mHighlight) {
         this.mHighlight = mHighlight;
     }
-
+    /**
+     * コンテンツタイプ取得.
+     * @return コンテンツタイプ
+     */
     public String getContentsType() {
         return mContentsType;
     }
 
+    /**
+     * コンテンツタイプ設定.
+     * @param mContentsType コンテンツタイプ
+     */
     public void setContentsType(final String mContentsType) {
         this.mContentsType = mContentsType;
     }
 
+    /**
+     * 年齢取得.
+     * @return 年齢
+     */
     public int getAge() {
         return mAge;
     }
 
+    /**
+     * 年齢設定.
+     * @param Age 年齢
+     */
     public void setAge(final int Age) {
         this.mAge = Age;
     }
 
+    /**
+     * スタッフ情報取得.
+     * @return スタッフ情報
+     */
     public List<String> getStaffList() {
         return staffList;
     }
 
+    /**
+     * スタッフ情報設定.
+     * @param staffList スタッフ情報
+     */
     public void setStaffList(final List<String> staffList) {
         this.staffList = staffList;
     }
 
+    /**
+     * ロール情報取得.
+     * @return ロール情報
+     */
     public String[] getmRoleList() {
         return mRoleList.clone();
     }
 
+    /**
+     * ロール情報設定.
+     * @param mRoleList ロール情報
+     */
     public void setmRoleList(final String[] mRoleList) {
         this.mRoleList = mRoleList.clone();
     }
 
+    /**
+     * 開始時間取得.
+     * @return 開始時間
+     */
     public String getmStartDate() {
         return mStartDate;
     }
 
+    /**
+     * 開始時間設定.
+     * @param mStartDate 開始時間
+     */
     public void setmStartDate(final String mStartDate) {
         this.mStartDate = mStartDate;
     }
 
+    /**
+     * 終了時間取得.
+     * @return 終了時間
+     */
     public String getmEndDate() {
         return mEndDate;
     }
 
+    /**
+     * 終了時間設定.
+     * @param mEndDate 終了時間
+     */
     public void setmEndDate(final String mEndDate) {
         this.mEndDate = mEndDate;
     }
 
+    /**
+     * 表示タイプ取得.
+     * @return 表示タイプ
+     */
     public String getmDisplayType() {
         return mDisplayType;
     }
 
+    /**
+     * 表示タイプ設定.
+     * @param mDisplayType 表示タイプ
+     */
     public void setmDisplayType(final String mDisplayType) {
         this.mDisplayType = mDisplayType;
     }
 
+    /**
+     * カテゴリーID取得.
+     * @return カテゴリーID
+     */
     public String getCategoryId() {
         return mCategoryId;
     }
 
+    /**
+     * カテゴリーID設定.
+     * @param categoryId カテゴリーID
+     */
     public void setCategoryId(final String categoryId) {
         this.mCategoryId = categoryId;
     }
 
+    /**
+     * コンテンツIDを取得.
+     * @return コンテンツID
+     */
     public String getContentsId() {
         return mContentsId;
     }
 
+    /**
+     * コンテンツIDを設定.
+     * @param mContentsId コンテンツID
+     */
     public void setContentsId(final String mContentsId) {
         this.mContentsId = mContentsId;
     }
 
+    /**
+     * 予備1取得.
+     * @return 予備1
+     */
     public String getReserved1() {
         return mReserved1;
     }
 
+    /**
+     * 予備1設定.
+     * @param mReserved1 予備1
+     */
     public void setReserved1(final String mReserved1) {
         this.mReserved1 = mReserved1;
     }
 
+    /**
+     * 予備2取得.
+     * @return 予備2
+     */
     public String getReserved2() {
         return mReserved2;
     }
 
+    /**
+     * 予備2設定.
+     * @param mReserved2 予備2
+     */
     public void setReserved2(final String mReserved2) {
         this.mReserved2 = mReserved2;
     }
 
+    /**
+     * 予備4取得.
+     * @return 予備4
+     */
     public String getReserved4() {
         return mReserved4;
     }
 
+    /**
+     * 予備4設定.
+     * @param mReserved4 予備4
+     */
     public void setReserved4(final String mReserved4) {
         this.mReserved4 = mReserved4;
     }
 
+    /**
+     * 商品詳細1取得.
+     * @return 商品詳細1
+     */
     public String getDescription1() {
         return mDescription1;
     }
 
-    public void setDescription1(String mDescription1) {
+    /**
+     * 商品詳細1設定.
+     * @param mDescription1 商品詳細1
+     */
+    public void setDescription1(final String mDescription1) {
         this.mDescription1 = mDescription1;
     }
 
+    /**
+     * 商品詳細2取得.
+     * @return 商品詳細2
+     */
     public String getDescription2() {
         return mDescription2;
     }
 
-    public void setDescription2(String mDescription2) {
+    /**
+     * 商品詳細2設定.
+     * @param mDescription2 商品詳細2
+     */
+    public void setDescription2(final String mDescription2) {
         this.mDescription2 = mDescription2;
     }
 
+    /**
+     * 商品詳細3取得.
+     * @return 商品詳細3
+     */
     public String getDescription3() {
         return mDescription3;
     }
 
-    public void setDescription3(String mDescription3) {
+    /**
+     * 商品詳細3設定.
+     * @param mDescription3 商品詳細3
+     */
+    public void setDescription3(final String mDescription3) {
         this.mDescription3 = mDescription3;
     }
 
+    /**
+     * 予備3取得.
+     * @return 予備3
+     */
     public String getReserved3() {
         return mReserved3;
     }
 
-    public void setReserved3(String mReserved3) {
+    /**
+     * 予備3設定.
+     * @param mReserved3 予備3
+     */
+    public void setReserved3(final String mReserved3) {
         this.mReserved3 = mReserved3;
     }
 
+    /**
+     * 予備5取得.
+     * @return 予備5
+     */
     public String getReserved5() {
         return mReserved5;
     }
 
-    public void setReserved5(String mReserved5) {
+    /**
+     * 予備5設定.
+     * @param mReserved5 予備5
+     */
+    public void setReserved5(final String mReserved5) {
         this.mReserved5 = mReserved5;
     }
 
+    /**
+     * クリップ情報取得用.
+     * @return クリップ情報
+     */
     public VodMetaFullData getVodMetaFullData() {
         return mVodMetaFullData;
     }
 
+    /**
+     * クリップ情報取得用設定.
+     * @param mVodMetaFullData クリップ情報取得用
+     */
     public void setVodMetaFullData(final VodMetaFullData mVodMetaFullData) {
         this.mVodMetaFullData = mVodMetaFullData;
     }
 
+    /**
+     * チャンネルID取得.
+     * @return チャンネルID
+     */
     public String getChannelId() {
         return mChannelId;
     }
 
+    /**
+     * チャンネルID設定.
+     * @param mChannelId チャンネルID
+     */
     public void setChannelId(final String mChannelId) {
         this.mChannelId = mChannelId;
     }
 
+    /**
+     * おすすめ順取得.
+     * @return おすすめ順
+     */
     public String getRecommendOrder() {
         return mRecommendOrder;
     }
 
+    /**
+     * おすすめ順設定.
+     * @param mRecommendOrder おすすめ順
+     */
     public void setRecommendOrder(final String mRecommendOrder) {
         this.mRecommendOrder = mRecommendOrder;
     }
 
+    /**
+     * 画面ID取得.
+     * @return 画面ID
+     */
     public String getPageId() {
         return mPageId;
     }
 
+    /**
+     * 画面ID設定 .
+     * @param mPageId 画面ID
+     */
     public void setPageId(final String mPageId) {
         this.mPageId = mPageId;
     }
 
+    /**
+     * ユーザグループID取得.
+     * @return ユーザグループID
+     */
     public String getGroupId() {
         return mGroupId;
     }
 
+    /**
+     * ユーザグループID設定.
+     * @param mGroupId ユーザグループID
+     */
     public void setGroupId(final String mGroupId) {
         this.mGroupId = mGroupId;
     }
 
+    /**
+     * レコメンド手法ID取得.
+     * @return レコメンド手法ID
+     */
     public String getRecommendMethodId() {
         return mRecommendMethodId;
     }
 
+    /**
+     * レコメンド手法ID設定.
+     * @param mRecommendMethodId レコメンド手法ID
+     */
     public void setRecommendMethodId(final String mRecommendMethodId) {
         this.mRecommendMethodId = mRecommendMethodId;
     }
 
+    /**
+     * レコメンドフラグ取得.
+     * @return レコメンドフラグ
+     */
     public String getRecommendFlg() {
         return mRecommendFlg;
     }
 
+    /**
+     * レコメンドフラグ設定.
+     * @param mRecommendFlg レコメンドフラグ
+     */
     public void setRecommendFlg(final String mRecommendFlg) {
         this.mRecommendFlg = mRecommendFlg;
     }
 
+    /**
+     * 表示タイプ取得.
+     * @return 表示タイプ
+     */
     public String getDispType() {
         return mDispType;
     }
 
+    /**
+     * 表示タイプ設定.
+     * @param mDispType 表示タイプ
+     */
     public void setDispType(final String mDispType) {
         this.mDispType = mDispType;
     }
 
+    /**
+     * クリップ情報取得.
+     * @return クリップ情報
+     */
     public String getSearchOk() {
         return mSearchOk;
     }
 
+    /**
+     * クリップ情報設定.
+     * @param mSearchOk クリップ情報
+     */
     public void setSearchOk(final String mSearchOk) {
         this.mSearchOk = mSearchOk;
     }
 
+    /**
+     * dTVフラグ取得.
+     * @return dTVフラグ
+     */
     public String getDtv() {
         return mDtv;
     }
 
+    /**
+     * dTVフラグ設定.
+     * @param mDtv dTVフラグ
+     */
     public void setDtv(final String mDtv) {
         this.mDtv = mDtv;
     }
 
+    /**
+     * dTVタイプ取得.
+     * @return dTVタイプ
+     */
     public String getDtvType() {
         return mDtvType;
     }
 
+    /**
+     * dTVタイプ設定.
+     * @param mDtvType dTVタイプ
+     */
     public void setDtvType(final String mDtvType) {
         this.mDtvType = mDtvType;
     }
 
+    /**
+     * クリップ可否取得.
+     * @return クリップ可否
+     */
     public boolean isClipExec() {
         return mClipExec;
     }
 
+    /**
+     * クリップ可否設定.
+     * @param mClipExec クリップ可否
+     */
     public void setClipExec(final boolean mClipExec) {
         this.mClipExec = mClipExec;
     }
 
+    /**
+     * クリップ未/済取得.
+     * @return クリップ未/済
+     */
     public boolean isClipStatus() {
         return mClipStatus;
     }
 
+    /**
+     * クリップ未/済設定.
+     * @param mClipStatus クリップ未/済
+     */
     public void setClipStatus(final boolean mClipStatus) {
         this.mClipStatus = mClipStatus;
     }
 
+    /**
+     * レーティング値取得.
+     * @return レーティング値
+     */
     public double getRating() {
         return mRating;
     }
 
+    /**
+     * レーティング値設定.
+     * @param mRating レーティング値
+     */
     public void setRating(final double mRating) {
         this.mRating = mRating;
     }
 
+    /**
+     * シーズン名取得.
+     * @return シーズン名
+     */
     public String getEpititle() {
         return mEpititle;
     }
 
+    /**
+     * シーズン名設定.
+     * @param mEpititle シーズン名
+     */
     public void setEpititle(final String mEpititle) {
         this.mEpititle = mEpititle;
     }
 
+    /**
+     * Tvサービス取得.
+     * @return Tvサービス
+     */
     public String getTvService() {
         return mTvService;
     }
 
+    /**
+     * Tvサービス設定.
+     * @param mTvService Tvサービス
+     */
     public void setTvService(final String mTvService) {
         this.mTvService = mTvService;
     }
 
+    /**
+     * crId取得.
+     * @return crId
+     */
     public String getCrId() {
         return mCrId;
     }
 
+    /**
+     * crId設定.
+     * @param mCrId crId
+     */
     public void setCrId(final String mCrId) {
         this.mCrId = mCrId;
     }
 
+    /**
+     * イベントID取得.
+     * @return イベントID
+     */
     public String getEventId() {
         return mEventId;
     }
 
+    /**
+     * イベントID設定.
+     * @param mEventId イベントID
+     */
     public void setEventId(final String mEventId) {
         this.mEventId = mEventId;
     }
 
+    /**
+     * タイトルID取得.
+     * @return タイトルID
+     */
     public String getTitleId() {
         return mTitleId;
     }
 
+    /**
+     * タイトルID設定.
+     * @param mTitleId タイトルID
+     */
     public void setTitleId(final String mTitleId) {
         this.mTitleId = mTitleId;
     }
 
+    /**
+     * 4kflg取得.
+     * @return 4kflg
+     */
     public int getM4kflg() {
         return m4kflg;
     }
 
+    /**
+     * 4kflg設定.
+     * @param m4kflg 4kflg
+     */
     public void setM4kflg(final int m4kflg) {
         this.m4kflg = m4kflg;
     }
 
+    /**
+     * (音声、言語)取得.
+     * @return (音声,言語)
+     */
     public String[] getAdinfoArray() {
         return mAdinfoArray;
     }
 
+    /**
+     * (音声、言語)設定.
+     * @param mAdinfoArray (音声、言語)
+     */
     public void setAdinfoArray(final String[] mAdinfoArray) {
         this.mAdinfoArray = mAdinfoArray;
     }
 
+    /**
+     * コピー制限取得.
+     * @return コピー制限
+     */
     public String getCopy() {
         return mCopy;
     }
 
+    /**
+     * コピー制限設定.
+     * @param mCopy コピー制限
+     */
     public void setCopy(final String mCopy) {
         this.mCopy = mCopy;
     }
 
+    /**
+     * 視聴制限取得.
+     * @return 視聴制限
+     */
     public String getRvalue() {
         return mRvalue;
     }
 
+    /**
+     * 視聴制限設定.
+     * @param mRvalue 視聴制限
+     */
     public void setRvalue(final String mRvalue) {
         this.mRvalue = mRvalue;
     }
@@ -502,7 +884,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    public void writeToParcel(final Parcel dest, final int flags) {
         super.writeToParcel(dest, flags);
         dest.writeString(this.mThumb);
         dest.writeString(this.mChannelDate);
@@ -554,10 +936,15 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         dest.writeString(this.mRvalue);
     }
 
+    /**コンストラクタ.*/
     public OtherContentsDetailData() {
     }
 
-    protected OtherContentsDetailData(Parcel in) {
+    /**
+     * コンストラクタ.
+     * @param in source
+     */
+    protected OtherContentsDetailData(final Parcel in) {
         super(in);
         this.mThumb = in.readString();
         this.mChannelDate = in.readString();
@@ -609,14 +996,15 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         this.mRvalue = in.readString();
     }
 
+    /**CREATOR構造初期化.*/
     public static final Creator<OtherContentsDetailData> CREATOR = new Creator<OtherContentsDetailData>() {
         @Override
-        public OtherContentsDetailData createFromParcel(Parcel source) {
+        public OtherContentsDetailData createFromParcel(final Parcel source) {
             return new OtherContentsDetailData(source);
         }
 
         @Override
-        public OtherContentsDetailData[] newArray(int size) {
+        public OtherContentsDetailData[] newArray(final int size) {
             return new OtherContentsDetailData[size];
         }
     };
