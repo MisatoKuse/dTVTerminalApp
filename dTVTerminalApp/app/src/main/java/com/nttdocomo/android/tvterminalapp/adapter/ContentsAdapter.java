@@ -813,33 +813,32 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * @param listContentInfo コンテンツ情報
      */
     private void setTabTimeData(final ViewHolder holder, final ContentsData listContentInfo) {
-        //開始・終了日付の取得
-        switch (mTabType) {
-            case TAB_TV:
-                holder.tv_time.setVisibility(View.VISIBLE);
-                if (!TextUtils.isEmpty(listContentInfo.getStartViewing())) {
+        if (!TextUtils.isEmpty(listContentInfo.getStartViewing())) {
+            //開始・終了日付の取得
+            switch (mTabType) {
+                case TAB_TV:
+                    holder.tv_time.setVisibility(View.VISIBLE);
                     //日付の表示
                     holder.tv_time.setText(DateUtils.getContentsDateString(listContentInfo.getStartViewing()));
-                }
-                break;
-            case TAB_VIDEO:
-            case TAB_D_TV:
-            case TAB_D_CHANNEL:
-            case TAB_D_ANIMATE:
-            case TAB_DEFAULT:
-                holder.tv_time.setVisibility(View.VISIBLE);
-                if (Integer.toString(ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID).equals(listContentInfo.getServiceId()) &&
-                        ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(listContentInfo.getCategoryId())) {
-                    holder.tv_time.setText(DateUtils.getContentsDateString(listContentInfo.getStartViewing()));
-                } else if (!TextUtils.isEmpty(listContentInfo.getStartViewing())
-                        && DateUtils.isBefore(listContentInfo.getStartViewing())) {
-                    holder.tv_time.setText(DateUtils.getContentsDateString(mContext, listContentInfo.getStartViewing(), true));
-                } else {
-                    holder.tv_time.setText("");
-                }
-                break;
-            default:
-                break;
+                    break;
+                case TAB_VIDEO:
+                case TAB_D_TV:
+                case TAB_D_CHANNEL:
+                case TAB_D_ANIMATE:
+                case TAB_DEFAULT:
+                    holder.tv_time.setVisibility(View.VISIBLE);
+                    if (Integer.toString(ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID).equals(listContentInfo.getServiceId()) &&
+                            ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(listContentInfo.getCategoryId())) {
+                        holder.tv_time.setText(DateUtils.getContentsDateString(listContentInfo.getStartViewing()));
+                    } else if (DateUtils.isBefore(listContentInfo.getStartViewing())) {
+                        holder.tv_time.setText(DateUtils.getContentsDateString(mContext, listContentInfo.getStartViewing(), true));
+                    } else {
+                        holder.tv_time.setText("");
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
