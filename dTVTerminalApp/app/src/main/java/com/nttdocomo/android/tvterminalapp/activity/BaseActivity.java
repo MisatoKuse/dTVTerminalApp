@@ -2102,10 +2102,10 @@ public class BaseActivity extends FragmentActivity implements
      */
     private void checkCommunication() {
         DTVTLogger.start();
-        // SIMからMCC情報取得　日本(440,441) 以外で海外判定となる
+        // ネットワーク網からMCC情報取得　日本(440,441) 以外で海外判定となる
         TelephonyManager telManager = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
-        DTVTLogger.debug("mcc + mnc : " + telManager.getSimOperator());
-        String strMccMnc = telManager.getSimOperator();
+        DTVTLogger.debug("mcc + mnc : " + telManager.getNetworkOperator());
+        String strMccMnc = telManager.getNetworkOperator();
         // MCC情報取得判定
         if (strMccMnc.length() > 0) {
             String strMcc = strMccMnc.substring(0, 3);
