@@ -587,8 +587,8 @@ public class ContentDetailActivity extends BaseActivity implements
 
             int currentPosition = mPlayerController.getCurrentPosition();
             int totalDur = mPlayerController.getDuration();
-            time2TextViewFormat(mVideoCurTime, currentPosition);
-            time2TextViewFormat(mVideoTotalTime, totalDur);
+            mVideoCurTime.setText(DateUtils.time2TextViewFormat(currentPosition));
+            mVideoTotalTime.setText(DateUtils.time2TextViewFormat(totalDur));
             mVideoSeekBar.setMax(totalDur);
             mVideoSeekBar.setProgress(currentPosition);
             //録画コンテンツを終端まで再生した後は、シークバーを先頭に戻し、先頭で一時停止状態とする
@@ -613,6 +613,8 @@ public class ContentDetailActivity extends BaseActivity implements
         setContentView(R.layout.dtv_contents_detail_main_layout);
         DTVTLogger.start();
         setStatusBarColor(R.color.contents_header_background);
+        // プログレスバー表示中でもxボタンクリック可能にする
+        findViewById(R.id.base_progress_rl).setClickable(false);
         showProgressBar(true);
         initView();
     }
@@ -720,7 +722,7 @@ public class ContentDetailActivity extends BaseActivity implements
         mIntent = getIntent();
         mThumbnailRelativeLayout = findViewById(R.id.dtv_contents_detail_layout);
         Object object = mIntent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
-        if (object instanceof RecordedContentsDetailData) {
+        if (object instanceof RecordedContentsDetailData) { //プレイヤーで再生できるコンテンツ
             mIsPlayer = true;
             initPlayer();
             //外部出力および画面キャプチャ制御
@@ -749,28 +751,6 @@ public class ContentDetailActivity extends BaseActivity implements
         initContentsView();
     }
 
-
-    /**
-     * ミリ秒をtextViewで表示形(01,05...)に変更.
-     *
-     * @param textView textView
-     * @param millisecond ミリ秒
-     */
-    private void time2TextViewFormat(final TextView textView, final int millisecond) {
-        DTVTLogger.start();
-        int second = millisecond / 1000;
-        int hh = second / 3600;
-        int mm = second % 3600 / 60;
-        int ss = second % 60;
-        String str;
-        if (hh != 0) {
-            str = String.format(Locale.getDefault(), "%02d:%02d:%02d", hh, mm, ss);
-        } else {
-            str = String.format(Locale.getDefault(), "%02d:%02d", mm, ss);
-        }
-        textView.setText(str);
-        DTVTLogger.end();
-    }
 
     /**
      * initView player.
@@ -1938,9 +1918,7 @@ public class ContentDetailActivity extends BaseActivity implements
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(final SeekBar seekBar, final int i, final boolean b) {
-                DTVTLogger.start();
-                time2TextViewFormat(mVideoCurTime, i);
-                DTVTLogger.end();
+                mVideoCurTime.setText(DateUtils.time2TextViewFormat(i));
             }
 
             @Override
