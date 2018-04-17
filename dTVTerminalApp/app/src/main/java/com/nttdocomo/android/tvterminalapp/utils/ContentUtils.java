@@ -40,6 +40,14 @@ public class ContentUtils {
          */
         DCHANNEL_VOD_31,
         /**
+         * レンタル.
+         */
+        RENTAL,
+        /**
+         * プレミアム.
+         */
+        PREMIUM,
+        /**
          * その他.
          */
         OTHER
@@ -155,6 +163,31 @@ public class ContentUtils {
                     //ひかりTV内dTVチャンネル_番組
                     cType = ContentsType.TV;
                 }
+            }
+        }
+        return cType;
+    }
+
+    /**
+     * レンタル プレミアムビデオ判定.
+     * @param dispType disp_type
+     * @param estFlg estflg
+     * @param chSod chsod
+     * @return RENTAL、PREMIUM
+     */
+    public static ContentsType getContentsTypeRental(final String dispType, final String estFlg, final String chSod) {
+        ContentsType cType = ContentsType.OTHER;
+        final String ZERO_FLAG = "0";
+        if (ContentDetailActivity.VIDEO_PROGRAM.equals(dispType)
+                || ContentDetailActivity.VIDEO_PACKAGE.equals(dispType)) {
+            //レンタル
+            if (estFlg == null || estFlg.isEmpty() || estFlg.equals(ZERO_FLAG)) {
+                cType = ContentsType.RENTAL;
+            }
+        } else if (ContentDetailActivity.SUBSCRIPTION_PACKAGE.equals(dispType)
+                || ContentDetailActivity.SERIES_SVOD.equals(dispType)) {
+            if (chSod == null || chSod.isEmpty() || chSod.equals(ZERO_FLAG)) {
+                cType = ContentsType.PREMIUM;
             }
         }
         return cType;

@@ -557,12 +557,22 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             availStartDate = "0"; // TODO:クラッシュのため暫定対応
         }
         String channelName = contentsData.getChannelName();
-        ContentUtils.ContentsType contentsType = ContentUtils.getContentsTypeByPlala(contentsData.getDispType(),
+        String dispType = contentsData.getDispType();
+        ContentUtils.ContentsType contentsType = ContentUtils.getContentsTypeByPlala(dispType,
                 contentsData.getTvService(), contentsData.getContentsType(), contentsData.getAvailEndDate(),
                 contentsData.getVodStartDate(), contentsData.getVodEndDate());
         String date;
+        //レンタル・プレミアムビデオはここで判定する
+        if (contentsType == ContentUtils.ContentsType.OTHER) {
+            contentsType = ContentUtils.getContentsTypeRental(dispType, contentsData.getEstFlg(), contentsData.getChsVod());
+        }
         if (contentsType == ContentUtils.ContentsType.TV || contentsType == ContentUtils.ContentsType.OTHER) {
-            date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(availStartDate)), channelName);
+            //暫定対応 日付情報にlong、日付フォーマットが混在しているため
+            if (DBUtils.isNumber(availStartDate)) {
+                date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(availStartDate)), channelName);
+            } else {
+                date = structDateStrings(DateUtils.formatEpochToStringOpeLog(DateUtils.getSecondEpochTime(availStartDate)), channelName);
+            }
         } else {
             if (isVod) {
                 date = DateUtils.addDateLimitVod(mContext, contentsData, contentsType);
