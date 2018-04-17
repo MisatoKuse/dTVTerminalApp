@@ -842,7 +842,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                     } else if (DateUtils.isBefore(listContentInfo.getStartViewing())) {
                         holder.tv_time.setText(DateUtils.getContentsDateString(mContext, listContentInfo.getStartViewing(), true));
                     } else {
-                        holder.tv_time.setText("");
+                        holder.tv_time.setVisibility(View.GONE);
                     }
                     break;
                 default:
@@ -986,11 +986,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     private void setChannelName(final ViewHolder holder, final ContentsData listContentInfo) {
         DTVTLogger.start();
         if (!TextUtils.isEmpty(listContentInfo.getChannelName()) && mTabType != TabTypeItem.TAB_DEFAULT) { //ランク
-            if (!TextUtils.isEmpty(holder.tv_time.getText())) {
-                holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
-            } else {
-                holder.tv_recorded_hyphen.setVisibility(View.GONE);
-            }
+            holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
             holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
             holder.tv_recorded_ch_name.setText(listContentInfo.getChannelName());
             holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.content_time_text));
@@ -1006,6 +1002,13 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 setTabHyphenVisibility(holder, listContentInfo);
             }
         }
+        if (mTabType == TabTypeItem.TAB_D_CHANNEL) {
+            if (!Integer.toString(ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID).equals(listContentInfo.getServiceId()) ||
+                    !ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(listContentInfo.getCategoryId())) {
+                holder.tv_recorded_hyphen.setVisibility(View.GONE);
+                holder.tv_recorded_ch_name.setVisibility(View.GONE);
+            }
+        }
     }
 
     /**
@@ -1019,17 +1022,13 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TAB_TV:
             case TAB_D_CHANNEL:
                 if (!TextUtils.isEmpty(listContentInfo.getChannelName())) {
-                    if (TextUtils.isEmpty(holder.tv_time.getText())) {
-                        holder.tv_recorded_hyphen.setVisibility(View.GONE);
-                    } else {
-                        holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
-                    }
+                    holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
                     holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
                     holder.tv_recorded_ch_name.setText(listContentInfo.getChannelName());
+                    holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.content_time_text));
                 } else {
                     holder.tv_recorded_hyphen.setVisibility(View.GONE);
                     holder.tv_recorded_ch_name.setVisibility(View.GONE);
-                    holder.tv_recorded_ch_name.setText("");
                 }
                 break;
             case TAB_D_ANIMATE:
