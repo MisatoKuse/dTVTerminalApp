@@ -52,12 +52,10 @@
     <color name="keyword_search_text_unfocus">#CCCCCC</color>
     <color name="keyword_search_count_text">#FFFFFF</color>
     <color name="keyword_search_header_background">#000000</color>
-    <!-- おすすめ一覧 -->
-    <color name="recommend_list_background">#222222</color>
+
     <color name="recommend_list_text">#FFFFFF</color>
     <color name="recommend_list_now_on_air">#ffbb4e</color>
     <!-- ランキング一覧 -->
-    <color name="ranking_list_background">#222222</color>
     <color name="ranking_list_border">#888888</color>
     <!-- ランキング一覧 -->
     <color name="recording_reservation_status_text_color_red">#FF0000</color>
@@ -68,8 +66,6 @@
     <!-- ビデオ一覧 -->
     <color name="video_list_text_color">@color/basic_text_color_white</color>
     <color name="video_list_line">#424242</color>
-    <!-- レンタル一覧 -->
-    <color name="rental_background_color">#1d1d1d</color>
 
     <!--録画予約-->
     <color name="record_reservation_list_root_bg">#000000</color>
@@ -109,11 +105,8 @@
     <color name="remote_watch_by_tv_bottom_corners_dtv">#D3052C</color>
     <color name="remote_watch_by_tv_bottom_corners_d_anime">#DD5e30</color>
     <color name="remote_watch_by_tv_bottom_corners_dtvchannel_and_hikari">#00A2E6</color>
-    <!--//視聴中ビデオ-->
-    <color name="watch_listen_background_color">#1d1d1d</color>
     <!--//チャンネルリスト-->
     <color name="list_view_divider">#333333</color>
-    <color name="channel_list_background_color">#1d1d1d</color>
 
     <!--//設定画面-->
     <color name="setting_list_background_color">#1c1c1c</color>
