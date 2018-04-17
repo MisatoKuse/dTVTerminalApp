@@ -582,7 +582,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         }
         //表示対象がないときはトルツメ
         if (date != null && !date.isEmpty()) {
-            viewHolder.mTime.setText(date);
+            viewHolder.mTime.setText(DateUtils.setMissViewingColor(mContext, date));
         } else {
             viewHolder.mTime.setVisibility(View.GONE);
         }

@@ -7,7 +7,11 @@ package com.nttdocomo.android.tvterminalapp.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -1140,17 +1144,37 @@ public class DateUtils {
             //VOD(m/d（曜日）まで)
             date = DateUtils.getContentsDetailVodDate(context, availEndDate);
         } else if (contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_OVER_31) {
-            //VOD(m/d（曜日）まで) ひかりTV内dch_見逃し
-            date = StringUtils.getConnectStrings(
-                    context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
+            //VOD(m/d（曜日）まで) ひかりTV内dch_見逃し(３２以上)
+            date = DateUtils.getContentsDetailVodDate(context, availEndDate);
         } else if (contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
-            //VOD(m/d（曜日）まで)
+            //VOD(m/d（曜日）まで) ひかりTV内dch_見逃し(３1以内)
             date = DateUtils.getContentsDetailVodDate(context, contentsData.getVodEndDate());
-            date = StringUtils.getConnectStrings(
-                    context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing_separation),
-                    date);
+            date = StringUtils.getConnectStrings(date, context.getString(R.string.home_contents_pipe),
+                    context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
         }
         return date;
+    }
+
+    /**
+     * 見逃しを黄色文字に変更する.
+     *
+     * @param context       コンテキスト
+     * @param viewingPeriod 変換文字列
+     * @return 変換後文字列
+     */
+    public static SpannableString setMissViewingColor(final Context context, final String viewingPeriod) {
+        SpannableString spannableString = new SpannableString(viewingPeriod);
+        int subStart = 0;
+        int subEnd = 0;
+        String missView = context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing);
+        if (viewingPeriod.contains(missView)) {
+            subStart = viewingPeriod.indexOf(missView);
+            subEnd = subStart + missView.length();
+        }
+        //「見逃し」は黄色文字で表示する
+        spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(context, R.color.contents_detail_video_miss_color)),
+                subStart, subEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return spannableString;
     }
 
     /**
