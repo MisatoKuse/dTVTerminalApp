@@ -607,6 +607,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
         if (mRentalVodListWebClient != null) {
             mRentalVodListWebClient.stopConnection();
         }
+        stopConnection();
     }
 
     /**

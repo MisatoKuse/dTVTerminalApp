@@ -40,6 +40,9 @@ public class ClipKeyListWebClient
 
     @Override
     public void onParserFinished(final Object parsedData) {
+        if (mIsCancel) {
+            return;
+        }
         //パース後のデータを返す
         if (null != mTvClipKeyListJsonParserCallback) {
             mTvClipKeyListJsonParserCallback.onTvClipKeyListJsonParsed((ClipKeyListResponse) parsedData);
