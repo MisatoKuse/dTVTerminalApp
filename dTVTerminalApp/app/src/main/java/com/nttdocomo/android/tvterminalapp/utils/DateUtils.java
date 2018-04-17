@@ -1150,4 +1150,23 @@ public class DateUtils {
         }
         return date;
     }
+
+    /**
+     * ミリ秒をtextViewで表示形(01,05...)に変更.
+     * @param millisecond ミリ秒
+     * @return 文字列
+     */
+    public static String time2TextViewFormat(final int millisecond) {
+        final int second = millisecond / 1000;
+        final int hh = second / 3600;
+        final int mm = second % 3600 / 60;
+        final int ss = second % 60;
+        final String str;
+        if (hh != 0) {
+            str = String.format(Locale.getDefault(), "%02d:%02d:%02d", hh, mm, ss);
+        } else {
+            str = String.format(Locale.getDefault(), "%02d:%02d", mm, ss);
+        }
+        return str;
+    }
 }

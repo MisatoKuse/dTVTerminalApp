@@ -9,15 +9,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- 実際にビューがaddされる親ビュー -->
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/base_ll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:background="@color/header_background_color_red">
+            <!-- ヘッダー -->
             <include
                 android:id="@+id/base_title"
                 layout="@layout/header_layout" />
+            <!-- コンテンツビューが配置される場所 -->
+
         </LinearLayout>
 
         <RelativeLayout
@@ -37,6 +41,7 @@
                 layout="@layout/remote_control_main_layout" />
         </RelativeLayout>
 
+        <!-- プログレスバー -->
         <RelativeLayout
             android:id="@+id/base_progress_rl"
             android:layout_width="match_parent"
