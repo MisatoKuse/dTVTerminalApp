@@ -132,8 +132,8 @@ public class RecommendActivity extends BaseActivity implements
         Intent intent = getIntent();
         int startPageNo = intent.getIntExtra(RECOMMEND_LIST_START_PAGE, RECOMMEND_LIST_PAGE_NO_OF_TV);
         mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
+        sRecommendViewPager = null;
         if (mIsMenuLaunch) {
-            sRecommendViewPager = null;
             startPageNo = RECOMMEND_LIST_PAGE_NO_OF_TV;
             enableHeaderBackIcon(true);
         }
