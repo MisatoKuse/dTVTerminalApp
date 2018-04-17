@@ -398,6 +398,10 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
                 data.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
                 data.setContentsId(vodMetaFullData.getCrid());
                 data.setCrid(vodMetaFullData.getCrid());
+                data.setAvailStartDate(vodMetaFullData.getAvail_start_date());
+                data.setAvailEndDate(vodMetaFullData.getAvail_end_date());
+                data.setVodStartDate(vodMetaFullData.getmVod_start_date());
+                data.setVodEndDate(vodMetaFullData.getmVod_end_date());
 
                 //クリップリクエストデータ作成
                 ClipRequestData requestData = new ClipRequestData();
@@ -523,9 +527,9 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
     public List<Map<String, String>> dbOperation(final int operationId) {
         switch (operationId) {
             case RENTAL_VIDEO_LIST_INSERT:
-            RentalListInsertDataManager dataManager = new RentalListInsertDataManager(mContext);
-            dataManager.insertRentalListInsertList(mPurchasedVodListResponse);
-            sendRentalListData(mPurchasedVodListResponse);
+                RentalListInsertDataManager dataManager = new RentalListInsertDataManager(mContext);
+                dataManager.insertRentalListInsertList(mPurchasedVodListResponse);
+                sendRentalListData(mPurchasedVodListResponse);
                 break;
             case RENTAL_VIDEO_LIST_SELECT:
                 List<Map<String, String>> vodMetaList;

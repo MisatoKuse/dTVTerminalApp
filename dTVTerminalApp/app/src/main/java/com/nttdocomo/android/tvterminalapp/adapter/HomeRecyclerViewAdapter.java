@@ -549,8 +549,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      *
      * @param contentsData コンテンツデータ
      * @param viewHolder ViewHolder
+     * @param isVod vodフラグ
      */
-    private void setRankingInfo(final ContentsData contentsData, final ViewHolder viewHolder, final boolean isVideoRanking) {
+    private void setRankingInfo(final ContentsData contentsData, final ViewHolder viewHolder, final boolean isVod) {
         String availStartDate = contentsData.getLinearStartDate();
         if (availStartDate == null) {
             availStartDate = "0"; // TODO:クラッシュのため暫定対応
@@ -563,13 +564,18 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         if (contentsType == ContentUtils.ContentsType.TV || contentsType == ContentUtils.ContentsType.OTHER) {
             date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(availStartDate)), channelName);
         } else {
-            if (isVideoRanking) {
+            if (isVod) {
                 date = DateUtils.addDateLimitVod(mContext, contentsData, contentsType);
             } else {
                 date = DateUtils.addDateLimit(mContext, contentsData, contentsType);
             }
         }
-        viewHolder.mTime.setText(date);
+        //表示対象がないときはトルツメ
+        if (date != null && !date.isEmpty()) {
+            viewHolder.mTime.setText(date);
+        } else {
+            viewHolder.mTime.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -617,6 +623,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      * yyyyMMddHHmmss形式から表示するデータを整形する(おすすめ番組、今日のテレビランキング).
      *
      * @param dateString yyyyMMddHHmmssデータ
+     * @param channelName チャンネル名
      * @return 整形した日付データ
      */
     private String structDateStrings(final String dateString, final String channelName) {
