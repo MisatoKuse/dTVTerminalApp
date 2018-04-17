@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivity;
-import com.nttdocomo.android.tvterminalapp.activity.ranking.RankingTopActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
@@ -36,7 +35,6 @@ import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
@@ -55,8 +53,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         WeeklyRankWebClient.WeeklyRankJsonParserCallback,
         ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback,
 
-        ScaledDownProgramListDataProvider.ApiDataProviderCallback
-{
+        ScaledDownProgramListDataProvider.ApiDataProviderCallback {
     /**
      * コンテキスト.
      */
@@ -102,27 +99,27 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
      */
     private ContentsListPerGenreWebClient mContentsListPerGenreWebClient = null;
     /**
-     * 今日のテレビランキング取得用Webクライアントがエラーだった場合のフラグ
+     * 今日のテレビランキング取得用Webクライアントがエラーだった場合のフラグ.
      */
     private boolean mIsDailyRankWebApiError = false;
     /**
-     * 週間ランキング取得用Webクライアントがエラーだった場合のフラグ
+     * 週間ランキング取得用Webクライアントがエラーだった場合のフラグ.
      */
     private boolean mIsWeeklyRankWebApiError = false;
     /**
-     * ビデオランキング取得用Webクライアントがエラーだった場合のフラグ
+     * ビデオランキング取得用Webクライアントがエラーだった場合のフラグ.
      */
     private boolean mIsContentsListPerGenreWebApiError = false;
     /**
-     * 今日のテレビランキング取得用エラー情報
+     * 今日のテレビランキング取得用エラー情報.
      */
     private ErrorState mDailyRankWebApiErrorState = null;
     /**
-     * 週間ランキング取得用エラー情報
+     * 週間ランキング取得用エラー情報.
      */
     private ErrorState mWeeklyRankWebApiErrorState = null;
     /**
-     * ビデオランキング取得用エラー情報
+     * ビデオランキング取得用エラー情報.
      */
     private ErrorState mContentsListPerGenreWebApiErrorState = null;
     /**
@@ -158,21 +155,17 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
      */
     private ScaledDownProgramListDataProvider mScaledDownProgramListDataProvider = null;
     /**
-     * ランクマップリスト.
+     * 今日の番組ランキング.
      */
-    private List<Map<String, String>> mRankMapList = null;
+    private List<Map<String, String>> mDailyRankMapList = null;
     /**
-     * ランクタイプ（今日）.
+     * 週間ランキング.
      */
-    private static final int DAILY_RANK = 1;
+    private List<Map<String, String>> mWeeklyRankMapList = null;
     /**
-     * ランクタイプ（週刊）.
+     * チャンネル情報.
      */
-    private static final int WEEKLY_RANK = 2;
-    /**
-     * ランクタイプ.
-     */
-    private int mRankType = 0;
+    private ArrayList<ChannelInfo> channels = null;
 
     @Override
     public void onDailyRankJsonParsed(final List<DailyRankList> dailyRankLists) {
@@ -183,7 +176,12 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             DailyRankList list = dailyRankLists.get(0);
             setStructDB(list);
             if (!mRequiredClipKeyList || mResponseEndFlag) {
-                sendDailyRankListData(list.getDrList());
+                if (channels == null || channels.size() == 0) {
+                    mDailyRankMapList = list.getDrList();
+                    getChannelList();
+                } else {
+                    sendDailyRankListData(list.getDrList());
+                }
             } else {
                 mDailyRankList = list;
             }
@@ -224,7 +222,12 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             }
             // コールバック判定
             if (!mRequiredClipKeyList || mResponseEndFlag) {
-                sendWeeklyRankList(list);
+                if (channels == null || channels.size() == 0) {
+                    mWeeklyRankMapList = list.getWrList();
+                    getChannelList();
+                } else {
+                    sendWeeklyRankList(list);
+                }
             } else {
                 mWeeklyRankList = list;
             }
@@ -302,13 +305,23 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         // 今日のテレビランキング
         if (mContext instanceof DailyTvRankingActivity) {
             if (mDailyRankList != null) {
-                sendDailyRankListData(mDailyRankList.getDrList());
+                if (channels == null || channels.size() == 0) {
+                    mDailyRankMapList = mDailyRankList.getDrList();
+                    getChannelList();
+                } else {
+                    sendDailyRankListData(mDailyRankList.getDrList());
+                }
             }
         }
         // 週間テレビランキング
         if (mContext instanceof WeeklyTvRankingActivity) {
             if (mWeeklyRankList != null) {
-                sendWeeklyRankList(mWeeklyRankList);
+                if (channels == null || channels.size() == 0) {
+                    mWeeklyRankMapList = mWeeklyRankList.getWrList();
+                    getChannelList();
+                } else {
+                    sendWeeklyRankList(mWeeklyRankList);
+                }
             }
         }
         // ビデオランキング
@@ -322,6 +335,17 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
     }
 
     /**
+     * チャンネル情報取得.
+     */
+    private void getChannelList() {
+        // チャンネル情報を取得
+        if (mScaledDownProgramListDataProvider == null) {
+            mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(mContext, this);
+        }
+        mScaledDownProgramListDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_ALL);
+    }
+
+    /**
      * 週間ランクリストをActivityに送る.
      *
      * @param weeklyRankList 週間ランクリスト
@@ -331,24 +355,14 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         boolean isError = false;
         if (weeklyRankList != null) {
             if (weeklyRankList.getWrList() != null && weeklyRankList.getWrList().size() > 0) {
-                //ランキングトップでなければ、チャンネル情報を取得
-                if (!(mContext instanceof RankingTopActivity)) {
-                    if (mScaledDownProgramListDataProvider == null) {
-                        mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(mContext, this);
-                    }
-                    mScaledDownProgramListDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_ALL);
-                    mRankMapList = weeklyRankList.getWrList();
-                    mRankType = WEEKLY_RANK;
+                List<ContentsData> contentsDataList = setRankingContentData(weeklyRankList.getWrList(), channels);
+                if (mApiDataProviderCallback != null) {
+                    mApiDataProviderCallback.weeklyRankCallback(contentsDataList);
                 } else {
-                    List<ContentsData> contentsDataList = setRankingContentData(weeklyRankList.getWrList(), null);
-                    if (mApiDataProviderCallback != null) {
-                        mApiDataProviderCallback.weeklyRankCallback(contentsDataList);
-                    } else {
-                        if (mWeeklyRankingApiCallback != null) {
-                            mWeeklyRankingApiCallback.onWeeklyRankListCallback(contentsDataList);
-                        }
-                        DTVTLogger.end();
+                    if (mWeeklyRankingApiCallback != null) {
+                        mWeeklyRankingApiCallback.onWeeklyRankListCallback(contentsDataList);
                     }
+                    DTVTLogger.end();
                 }
             } else {
                 isError = true;
@@ -380,11 +394,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
 
         if (videoRankList != null) {
             List<ContentsData> contentsDataList = setRankingContentData(videoRankList.getVrList(), null);
-            if(contentsDataList != null) {
+            if (contentsDataList != null) {
                 if (mApiDataProviderCallback != null) {
-                    if (mApiDataProviderCallback != null) {
-                        mApiDataProviderCallback.videoRankCallback(contentsDataList);
-                    }
+                    mApiDataProviderCallback.videoRankCallback(contentsDataList);
                 } else {
                     if (mVideoRankingApiDataProviderCallback != null) {
                         mVideoRankingApiDataProviderCallback.onVideoRankListCallback(contentsDataList);
@@ -401,14 +413,14 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         }
 
         //エラーなので、ヌルを返す
-        if(isError) {
+        if (isError) {
             //エラー情報を控えておく
             mContentsListPerGenreWebApiErrorState
                     = mContentsListPerGenreWebClient.getError();
-            if(mApiDataProviderCallback != null) {
+            if (mApiDataProviderCallback != null) {
                 //ビデオ情報が無いので、ヌルで帰る
                 mApiDataProviderCallback.videoRankCallback(null);
-            } else if(mVideoRankingApiDataProviderCallback != null) {
+            } else if (mVideoRankingApiDataProviderCallback != null) {
                 mVideoRankingApiDataProviderCallback.onVideoRankListCallback(null);
             }
         }
@@ -422,12 +434,22 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         // 今日のテレビランキング
         if (mContext instanceof DailyTvRankingActivity) {
             if (mDailyRankList != null) {
-                sendDailyRankListData(mDailyRankList.getDrList());
+                if (channels == null || channels.size() == 0) {
+                    mDailyRankMapList = mDailyRankList.getDrList();
+                    getChannelList();
+                } else {
+                    sendDailyRankListData(mDailyRankList.getDrList());
+                }
             }
         }
         // 週間テレビランキング
         if (mWeeklyRankList != null) {
-            sendWeeklyRankList(mWeeklyRankList);
+            if (channels == null || channels.size() == 0) {
+                mWeeklyRankMapList = mWeeklyRankList.getWrList();
+                getChannelList();
+            } else {
+                sendWeeklyRankList(mWeeklyRankList);
+            }
         }
         // ビデオランキング
         if (mContext instanceof VideoRankingActivity && mVideoRankList != null) {
@@ -443,10 +465,13 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
 
     @Override
     public void channelListCallback(final ArrayList<ChannelInfo> channels) {
-        List<ContentsData> contentsDataList = setRankingContentData(mRankMapList, channels);
-        if (mRankType == DAILY_RANK) {
+        this.channels = channels;
+        if (mDailyRankMapList != null) {
+            List<ContentsData> contentsDataList = setRankingContentData(mDailyRankMapList, channels);
             mApiDataProviderCallback.dailyRankListCallback(contentsDataList);
-        } else if (mRankType == WEEKLY_RANK) {
+        }
+        if (mWeeklyRankMapList != null) {
+            List<ContentsData> contentsDataList = setRankingContentData(mWeeklyRankMapList, channels);
             if (mApiDataProviderCallback != null) {
                 mApiDataProviderCallback.weeklyRankCallback(contentsDataList);
             } else {
@@ -603,18 +628,8 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
      */
     private void sendDailyRankListData(final List<Map<String, String>> list) {
         if (list != null && list.size() > 0) {
-            //ランキングトップでなければ、チャンネル情報を取得
-            if (!(mContext instanceof RankingTopActivity)) {
-                if (mScaledDownProgramListDataProvider == null) {
-                    mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(mContext, this);
-                }
-                mScaledDownProgramListDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_ALL);
-                mRankMapList = list;
-                mRankType = DAILY_RANK;
-            } else {
-                List<ContentsData> contentsDataList = setRankingContentData(list, null);
-                mApiDataProviderCallback.dailyRankListCallback(contentsDataList);
-            }
+            List<ContentsData> contentsDataList = setRankingContentData(list, channels);
+            mApiDataProviderCallback.dailyRankListCallback(contentsDataList);
         } else {
             mApiDataProviderCallback.dailyRankListCallback(null);
         }
@@ -625,92 +640,88 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
      * データ作成処理に行数が必要なため SuppressWarnings しています。
      *
      * @param dailyRankMapList コンテンツリストデータ
+     * @param channels チャンネル情報
+     *
      * @return ListView表示用データ
      */
     @SuppressWarnings("OverlyLongMethod")
     private List<ContentsData> setRankingContentData(final List<Map<String, String>> dailyRankMapList, final ArrayList<ChannelInfo> channels) {
         DTVTLogger.start();
         List<ContentsData> rankingContentsDataList = new ArrayList<>();
-
         ContentsData rankingContentInfo;
-
         UserState userState = UserInfoUtils.getUserState(mContext);
-        for (int i = 0; i < dailyRankMapList.size(); i++) {
-            rankingContentInfo = new ContentsData();
-
-            Map<String, String> map = dailyRankMapList.get(i);
-
-            String title = map.get(JsonConstants.META_RESPONSE_TITLE);
-            String searchOk = map.get(JsonConstants.META_RESPONSE_SEARCH_OK);
-            String linearEndDate = map.get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE);
-            String dispType = map.get(JsonConstants.META_RESPONSE_DISP_TYPE);
-            String dtv = map.get(JsonConstants.META_RESPONSE_DTV);
-            String dtvType = map.get(JsonConstants.META_RESPONSE_DTV_TYPE);
-            String chNo = map.get(JsonConstants.META_RESPONSE_CHNO);
-
-            rankingContentInfo.setRank(String.valueOf(i + 1));
-            rankingContentInfo.setThumURL(map.get(JsonConstants.META_RESPONSE_THUMB_448));
-            rankingContentInfo.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_THUMB_640));
-            rankingContentInfo.setTitle(title);
-            rankingContentInfo.setSearchOk(searchOk);
-            rankingContentInfo.setRank(String.valueOf(i + 1));
-            rankingContentInfo.setRatStar(map.get(JsonConstants.META_RESPONSE_RATING));
-            rankingContentInfo.setContentsType(map.get(JsonConstants.META_RESPONSE_CONTENT_TYPE));
-            rankingContentInfo.setDtv(dtv);
-            rankingContentInfo.setDtvType(dtvType);
-            rankingContentInfo.setDispType(dispType);
-            rankingContentInfo.setTvService(map.get(JsonConstants.META_RESPONSE_TV_SERVICE));
-            rankingContentInfo.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
-            rankingContentInfo.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
-            rankingContentInfo.setLinearStartDate(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE));
-            rankingContentInfo.setLinearEndDate(map.get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE));
-            rankingContentInfo.setTime(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE));
-            if (channels != null && !TextUtils.isEmpty(chNo)) {
-                for (ChannelInfo channelInfo : channels) {
-                    if (chNo.equals(String.valueOf(channelInfo.getChNo()))) {
-                        rankingContentInfo.setChannelName(channelInfo.getTitle());
-                        break;
+        if (dailyRankMapList != null) {
+            for (int i = 0; i < dailyRankMapList.size(); i++) {
+                rankingContentInfo = new ContentsData();
+                Map<String, String> map = dailyRankMapList.get(i);
+                String title = map.get(JsonConstants.META_RESPONSE_TITLE);
+                String searchOk = map.get(JsonConstants.META_RESPONSE_SEARCH_OK);
+                String linearEndDate = map.get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE);
+                String dispType = map.get(JsonConstants.META_RESPONSE_DISP_TYPE);
+                String dtv = map.get(JsonConstants.META_RESPONSE_DTV);
+                String dtvType = map.get(JsonConstants.META_RESPONSE_DTV_TYPE);
+                String chNo = map.get(JsonConstants.META_RESPONSE_CHNO);
+                rankingContentInfo.setRank(String.valueOf(i + 1));
+                rankingContentInfo.setThumURL(map.get(JsonConstants.META_RESPONSE_THUMB_448));
+                rankingContentInfo.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_THUMB_640));
+                rankingContentInfo.setTitle(title);
+                rankingContentInfo.setSearchOk(searchOk);
+                rankingContentInfo.setRank(String.valueOf(i + 1));
+                rankingContentInfo.setRatStar(map.get(JsonConstants.META_RESPONSE_RATING));
+                rankingContentInfo.setContentsType(map.get(JsonConstants.META_RESPONSE_CONTENT_TYPE));
+                rankingContentInfo.setDtv(dtv);
+                rankingContentInfo.setDtvType(dtvType);
+                rankingContentInfo.setDispType(dispType);
+                rankingContentInfo.setTvService(map.get(JsonConstants.META_RESPONSE_TV_SERVICE));
+                rankingContentInfo.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
+                rankingContentInfo.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
+                rankingContentInfo.setChannelNo(map.get(JsonConstants.META_RESPONSE_CHNO));
+                rankingContentInfo.setLinearStartDate(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE));
+                rankingContentInfo.setLinearEndDate(map.get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE));
+                rankingContentInfo.setTime(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE));
+                if (channels != null && !TextUtils.isEmpty(chNo)) {
+                    for (ChannelInfo channelInfo : channels) {
+                        if (chNo.equals(String.valueOf(channelInfo.getChNo()))) {
+                            rankingContentInfo.setChannelName(channelInfo.getTitle());
+                            break;
+                        }
                     }
                 }
+                rankingContentInfo.setAvailStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
+                rankingContentInfo.setAvailEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
+                rankingContentInfo.setVodStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_START_DATE)));
+                rankingContentInfo.setVodEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_END_DATE)));
+                //クリップリクエストデータ作成
+                ClipRequestData requestData = new ClipRequestData();
+                requestData.setCrid(map.get(JsonConstants.META_RESPONSE_CRID));
+                requestData.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
+                requestData.setEventId(map.get(JsonConstants.META_RESPONSE_EVENT_ID));
+                requestData.setTitleId(map.get(JsonConstants.META_RESPONSE_TITLE_ID));
+                requestData.setTitle(title);
+                requestData.setRValue(map.get(JsonConstants.META_RESPONSE_R_VALUE));
+                requestData.setLinearStartDate(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE));
+                requestData.setLinearEndDate(linearEndDate);
+                requestData.setSearchOk(searchOk);
+                //視聴通知判定生成
+                String contentsType = map.get(JsonConstants.META_RESPONSE_CONTENT_TYPE);
+                String tvService = map.get(JsonConstants.META_RESPONSE_TV_SERVICE);
+                String dTv = map.get(JsonConstants.META_RESPONSE_DTV);
+                requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
+                requestData.setDispType(dispType);
+                requestData.setContentType(contentsType);
+                requestData.setTableType(decisionTableType(contentsType, contentsType));
+                if (mRequiredClipKeyList) {
+                    boolean clipStatus;
+                    // クリップ状態をコンテンツリストに格納
+                    clipStatus = getClipStatus(dispType, contentsType, dTv,
+                            requestData.getCrid(), requestData.getServiceId(),
+                            requestData.getEventId(), requestData.getTitleId(), tvService);
+                    rankingContentInfo.setClipStatus(clipStatus);
+                    requestData.setClipStatus(clipStatus);
+                }
+                rankingContentInfo.setRequestData(requestData);
+                rankingContentsDataList.add(rankingContentInfo);
             }
-            rankingContentInfo.setAvailStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
-            rankingContentInfo.setAvailEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
-            rankingContentInfo.setVodStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_START_DATE)));
-            rankingContentInfo.setVodEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_END_DATE)));
-
-            //クリップリクエストデータ作成
-            ClipRequestData requestData = new ClipRequestData();
-            requestData.setCrid(map.get(JsonConstants.META_RESPONSE_CRID));
-            requestData.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
-            requestData.setEventId(map.get(JsonConstants.META_RESPONSE_EVENT_ID));
-            requestData.setTitleId(map.get(JsonConstants.META_RESPONSE_TITLE_ID));
-            requestData.setTitle(title);
-            requestData.setRValue(map.get(JsonConstants.META_RESPONSE_R_VALUE));
-            requestData.setLinearStartDate(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE));
-            requestData.setLinearEndDate(linearEndDate);
-            requestData.setSearchOk(searchOk);
-
-            //視聴通知判定生成
-            String contentsType = map.get(JsonConstants.META_RESPONSE_CONTENT_TYPE);
-            String tvService = map.get(JsonConstants.META_RESPONSE_TV_SERVICE);
-            String dTv = map.get(JsonConstants.META_RESPONSE_DTV);
-            requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
-            requestData.setDispType(dispType);
-            requestData.setContentType(contentsType);
-            requestData.setTableType(decisionTableType(contentsType, contentsType));
-
-            if (mRequiredClipKeyList) {
-                boolean clipStatus;
-                // クリップ状態をコンテンツリストに格納
-                clipStatus = getClipStatus(dispType, contentsType, dTv,
-                        requestData.getCrid(), requestData.getServiceId(),
-                        requestData.getEventId(), requestData.getTitleId(), tvService);
-                rankingContentInfo.setClipStatus(clipStatus);
-                requestData.setClipStatus(clipStatus);
-            }
-
-            rankingContentInfo.setRequestData(requestData);
-            rankingContentsDataList.add(rankingContentInfo);
         }
         DTVTLogger.end();
         return rankingContentsDataList;
@@ -1005,14 +1016,24 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             case SELECT_DAILY_RANKING_DATA:
                 homeDataManager = new HomeDataManager(mContext);
                 List<Map<String, String>> dailyRankList = homeDataManager.selectDailyRankListHomeData();
-                sendDailyRankListData(dailyRankList);
+                if (channels == null || channels.size() == 0) {
+                    mDailyRankMapList = dailyRankList;
+                    getChannelList();
+                } else {
+                    sendDailyRankListData(dailyRankList);
+                }
                 break;
             case SELECT_WEEKLY_RANKING_DATA:
                 homeDataManager = new HomeDataManager(mContext);
                 List<Map<String, String>> weeklyRankList = homeDataManager.selectWeeklyRankListHomeData();
                 mWeeklyRankList = new WeeklyRankList();
                 mWeeklyRankList.setWrList(weeklyRankList);
-                sendWeeklyRankList(mWeeklyRankList);
+                if (channels == null || channels.size() == 0) {
+                    mWeeklyRankMapList = weeklyRankList;
+                    getChannelList();
+                } else {
+                    sendWeeklyRankList(mWeeklyRankList);
+                }
                 break;
             case SELECT_VIDEO_RANKING_DATA:
                 RankingTopDataManager rankingTopDataManager = new RankingTopDataManager(mContext);
