@@ -111,21 +111,20 @@ public class ThumbnailProvider {
 	 * queueチェック.
 	 */
 	public void checkQueueList() {
-		DTVTLogger.start();
 		DTVTLogger.debug("" + mIsCancel);
-		if (!mIsCancel) {
-			if (MAX_QUEUE_COUNT > currentQueueCount) {
-				if (mListURL.size() > 0) {
-					++currentQueueCount;
-					String imageUrl = mListURL.entrySet().iterator().next().getKey();
-					ImageView imageView = mListURL.get(imageUrl);
-					new ThumbnailDownloadTask(imageView, this, mContext).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, imageUrl);
-					mListURL.remove(imageUrl);
-				}
-			}
-		} else {
-            DTVTLogger.error("ThumbnailProvider is stopping connection");
-        }
+		if (mIsCancel) {
+			return;
+		}
+		DTVTLogger.start();
+		if (MAX_QUEUE_COUNT > currentQueueCount
+				&& mListURL.size() > 0) {
+			++currentQueueCount;
+			String imageUrl = mListURL.entrySet().iterator().next().getKey();
+			ImageView imageView = mListURL.get(imageUrl);
+			new ThumbnailDownloadTask(imageView, this, mContext).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, imageUrl);
+			mListURL.remove(imageUrl);
+		}
+
 	}
 
 	/**
