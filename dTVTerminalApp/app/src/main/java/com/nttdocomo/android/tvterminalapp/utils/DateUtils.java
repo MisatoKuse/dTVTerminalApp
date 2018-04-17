@@ -1150,7 +1150,7 @@ public class DateUtils {
         } else if (contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
             //VOD(m/d（曜日）まで) ひかりTV内dch_見逃し(３1以内)の場合は「m/d（曜日）まで | 見逃し」を表示
             date = DateUtils.getContentsDetailVodDate(context, contentsData.getVodEndDate());
-            date = StringUtils.getConnectStrings(date, context.getString(R.string.home_contents_pipe),
+            date = StringUtils.getConnectStrings(date, context.getString(R.string.home_contents_hyphen),
                     context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
         }
         return date;
