@@ -1144,10 +1144,11 @@ public class DateUtils {
             //VOD(m/d（曜日）まで)
             date = DateUtils.getContentsDetailVodDate(context, availEndDate);
         } else if (contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_OVER_31) {
-            //VOD(m/d（曜日）まで) ひかりTV内dch_見逃し(３２以上)
-            date = DateUtils.getContentsDetailVodDate(context, availEndDate);
+            //VOD(m/d（曜日）まで) ひかりTV内dch_見逃し(３２以上)は「見逃し」のみを表示
+            date = StringUtils.getConnectStrings(
+                    context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
         } else if (contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
-            //VOD(m/d（曜日）まで) ひかりTV内dch_見逃し(３1以内)
+            //VOD(m/d（曜日）まで) ひかりTV内dch_見逃し(３1以内)の場合は「m/d（曜日）まで | 見逃し」を表示
             date = DateUtils.getContentsDetailVodDate(context, contentsData.getVodEndDate());
             date = StringUtils.getConnectStrings(date, context.getString(R.string.home_contents_pipe),
                     context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
