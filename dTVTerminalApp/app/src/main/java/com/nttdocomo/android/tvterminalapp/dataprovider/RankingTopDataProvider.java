@@ -581,7 +581,6 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             getDailyRankListData();
         } else {
             DTVTLogger.error("RankingTopDataProvider is stopping connect");
-            mApiDataProviderCallback.dailyRankListCallback(null);
         }
     }
 
