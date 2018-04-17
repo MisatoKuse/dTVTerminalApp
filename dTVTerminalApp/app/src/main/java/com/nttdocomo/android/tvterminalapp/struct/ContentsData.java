@@ -89,6 +89,10 @@ public class ContentsData {
     private String mReserved5 = null;
     // mobileViewingFlg
     private String  mobileViewingFlg = null;
+    // chsvod
+    private String  mChsVod = null;
+    // estFlg
+    private String  mEstFlg = null;
     // クリップボタン
     private ImageView mClipButton = null;
     // クリップリクエストデータ
@@ -591,6 +595,22 @@ public class ContentsData {
 
     public void setMobileViewingFlg(String mobileViewingFlg) {
         this.mobileViewingFlg = mobileViewingFlg;
+    }
+
+    public String getChsVod() {
+        return mChsVod;
+    }
+
+    public void setChsVod(String mChsVod) {
+        this.mChsVod = mChsVod;
+    }
+
+    public String getEstFlg() {
+        return mEstFlg;
+    }
+
+    public void setEstFlg(String mEstFlg) {
+        this.mEstFlg = mEstFlg;
     }
 
     public boolean isClipStatusUpdate() {

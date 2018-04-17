@@ -310,9 +310,21 @@ public class ContentDetailActivity extends BaseActivity implements
      */
     public static final String VIDEO_PROGRAM = "video_program";
     /**
+     * disp_type(video_package).
+     */
+    public static final String VIDEO_PACKAGE = "video_package";
+    /**
      * disp_type(video_series).
      */
     public static final String VIDEO_SERIES = "video_series";
+    /**
+     * disp_type(subscription_package).
+     */
+    public static final String SUBSCRIPTION_PACKAGE = "subscription_package";
+    /**
+     * disp_type(series_svod).
+     */
+    public static final String SERIES_SVOD = "series_svod";
     /**
      * dtv(1).
      */

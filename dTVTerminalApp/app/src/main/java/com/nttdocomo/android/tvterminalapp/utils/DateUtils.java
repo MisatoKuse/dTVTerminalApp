@@ -1134,7 +1134,9 @@ public class DateUtils {
     public static String addDateLimitVod(final Context context, final ContentsData contentsData, final ContentUtils.ContentsType contentsType) {
         String date = "";
         long availEndDate = contentsData.getAvailEndDate();
-        if (contentsType == ContentUtils.ContentsType.VOD) {
+        if (contentsType == ContentUtils.ContentsType.VOD
+                || contentsType == ContentUtils.ContentsType.RENTAL
+                || contentsType == ContentUtils.ContentsType.PREMIUM) {
             //VOD(m/d（曜日）まで)
             date = DateUtils.getContentsDetailVodDate(context, availEndDate);
         } else if (contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_OVER_31) {
