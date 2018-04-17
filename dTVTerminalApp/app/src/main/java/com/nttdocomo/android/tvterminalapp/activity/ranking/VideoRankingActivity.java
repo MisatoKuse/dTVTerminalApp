@@ -38,9 +38,8 @@ public class VideoRankingActivity extends BaseActivity implements
         TabItemLayout.OnClickTabTextListener,
 
         RankingTopDataProvider.VideoRankingApiDataProviderCallback,
-        GenreListDataProvider.RankGenreListCallback
-{
-    // region variable
+        GenreListDataProvider.RankGenreListCallback {
+     // region variable
     /** 標準タブ数. */
     private static final int DEFAULT_TAB_MAX = 4;
 

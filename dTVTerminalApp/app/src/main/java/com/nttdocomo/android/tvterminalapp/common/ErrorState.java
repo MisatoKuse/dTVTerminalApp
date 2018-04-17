@@ -57,7 +57,7 @@ public class ErrorState {
     private static final String NORMAL_RESULT_TEXT = "0";
 
     /**
-     * XMLの結果コードの名前
+     * XMLの結果コードの名前.
      */
     private static final String XML_RESULT_STRING = "id";
 
@@ -79,7 +79,7 @@ public class ErrorState {
      * @param context 指定していればエラーコードは文字リソースから取得した括弧で囲まれる。なければそのまま出力
      * @return エラーメッセージ
      */
-    public String getApiErrorMessage(Context context) {
+    public String getApiErrorMessage(final Context context) {
         //エラーメッセージが無ければ空文字で帰る
         if (TextUtils.isEmpty(mErrorMessage)) {
             return "";
@@ -131,7 +131,7 @@ public class ErrorState {
      *
      * @param context コンテキスト
      */
-    public void addErrorMessage(Context context) {
+    public void addErrorMessage(final Context context) {
         DTVTLogger.start();
 
         //コンテキストが無いとリソースにアクセスできないので、帰る
@@ -141,7 +141,7 @@ public class ErrorState {
         }
 
         //エラーメッセージの選択
-        //TODO: 使用するメッセージは、ダイアログ用SSLメッセージ以外は既存の物を流用する
+        //TODO : 使用するメッセージは、ダイアログ用SSLメッセージ以外は既存の物を流用する
         //トースト用は現状同一メッセージとする
         switch (mErrorType) {
             case SUCCESS:
@@ -186,7 +186,7 @@ public class ErrorState {
      * @param errorCode HTTPステータス文字列やJSONのエラー情報
      * @return 結果がエラーならばtrue、正常ならばfalse
      */
-    public boolean setErrorCode(String errorCode) {
+    public boolean setErrorCode(final String errorCode) {
         //送られてきた文字列がJSONかどうかを見る為に、変換を行う
         JSONObject json;
         try {
@@ -227,11 +227,11 @@ public class ErrorState {
     }
 
     /**
-     * 出力されたXMLから、結果コードを先行して取得して、エラー番号としてセットする
+     * 出力されたXMLから、結果コードを先行して取得して、エラー番号としてセットする.
      *
      * @param xmlString XML文字列
      */
-    public void setXmlErrorCode(String xmlString) {
+    public void setXmlErrorCode(final String xmlString) {
         DTVTLogger.debugHttp(xmlString);
 
         if (TextUtils.isEmpty(xmlString)) {
@@ -286,20 +286,36 @@ public class ErrorState {
 
     //その他 各ゲッター・セッター群（基本的にコメントは略）
 
+    /**
+     * エラータイプを取得する.
+     * @return エラータイプ
+     */
     public DTVTConstants.ERROR_TYPE getErrorType() {
         return mErrorType;
     }
 
-    public void setErrorType(DTVTConstants.ERROR_TYPE errorType) {
+    /**
+     * エラータイプを設定する.
+     * @param errorType  エラータイプ
+     */
+    public void setErrorType(final DTVTConstants.ERROR_TYPE errorType) {
         DTVTLogger.start("ErrorType = " + errorType);
         this.mErrorType = errorType;
         DTVTLogger.end();
     }
 
-    public void setErrorMessage(String errorMessage) {
+    /**
+     * エラーメッセージを設定する.
+     * @param errorMessage エラーメッセージ
+     */
+    public void setErrorMessage(final String errorMessage) {
         this.mErrorMessage = errorMessage;
     }
 
+    /**
+     *エラーコード取得.
+     * @return エラーコード
+     */
     public String getErrorCode() {
         return mErrorCode;
     }

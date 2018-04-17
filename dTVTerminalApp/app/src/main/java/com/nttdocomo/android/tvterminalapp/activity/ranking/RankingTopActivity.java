@@ -221,7 +221,8 @@ public class RankingTopActivity extends BaseActivity
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(linearLayoutManager);
-        HomeRecyclerViewAdapter horizontalViewAdapter = new HomeRecyclerViewAdapter(this, contentsDataList, index + HomeRecyclerViewAdapter.RANKING_CONTENTES_TODAY_SORT);
+        HomeRecyclerViewAdapter horizontalViewAdapter = new HomeRecyclerViewAdapter(
+                this, contentsDataList, index + HomeRecyclerViewAdapter.RANKING_CONTENTES_TODAY_SORT);
         horizontalViewAdapter.setOnItemClickCallBack(this);
         recyclerView.setAdapter(horizontalViewAdapter);
         View footer = LayoutInflater.from(this).inflate(R.layout.home_main_layout_recyclerview_footer, recyclerView, false);
@@ -311,11 +312,11 @@ public class RankingTopActivity extends BaseActivity
                 && mVideoErrorState != null) {
             //全部ランキングのエラーステータスがあるならば、データは一つも取れていない。
             //代表して今日の番組のエラーを表示する。
-            //TODO: 各画面が積み重なって表示するようになった際はダイアログ表示にするので、getErrorMessageをgetApiErrorMessageに変更する
+            //TODO　: 各画面が積み重なって表示するようになった際はダイアログ表示にするので、getErrorMessageをgetApiErrorMessageに変更する
             //String message = mDailyErrorState.getApiErrorMessage(getApplicationContext());
             String message = mDailyErrorState.getErrorMessage();
 
-            //TODO: 各画面が積み重なって表示するようになった際は、showGetDataFailedToastをshowDialogToCloseに変更すると、前の画面に戻るようになる。
+            //TODO　: 各画面が積み重なって表示するようになった際は、showGetDataFailedToastをshowDialogToCloseに変更すると、前の画面に戻るようになる。
             if (TextUtils.isEmpty(message)) {
                 //showDialogToClose();
                 showGetDataFailedToast();

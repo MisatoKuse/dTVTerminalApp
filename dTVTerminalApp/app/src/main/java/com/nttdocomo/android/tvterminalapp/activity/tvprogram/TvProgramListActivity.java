@@ -61,13 +61,11 @@ import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE;
  * 番組表表示Activity.
  */
 public class TvProgramListActivity extends BaseActivity implements
-        View.OnClickListener
-        , ScaledDownProgramListDataProvider.ApiDataProviderCallback
-        , ProgramScrollView.OnScrollOffsetListener
-        , MyChannelDataProvider.ApiDataProviderCallback
-        , TabItemLayout.OnClickTabTextListener
-{
-
+        View.OnClickListener,
+        ScaledDownProgramListDataProvider.ApiDataProviderCallback,
+        ProgramScrollView.OnScrollOffsetListener,
+        MyChannelDataProvider.ApiDataProviderCallback,
+        TabItemLayout.OnClickTabTextListener {
     /**
      * hikariタブインデックス.
      */
@@ -206,7 +204,9 @@ public class TvProgramListActivity extends BaseActivity implements
      * リスト0件メッセージ.
      */
     private TextView mNoDataMessage;
-
+    /**
+     * スクロールオフセット.
+     */
     private int mScrollOffset = 0;
 
     @Override
@@ -498,7 +498,7 @@ public class TvProgramListActivity extends BaseActivity implements
             }
 
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            public void onScrollStateChanged(final RecyclerView recyclerView, final int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
@@ -665,7 +665,7 @@ public class TvProgramListActivity extends BaseActivity implements
 //                channelInfo.add(oldChannel);
 //            }
 //        }
-            if(channelInfo.size() > 0) {
+            if (channelInfo.size() > 0) {
                 mTvProgramListAdapter.setProgramList(channelInfo);
                 mTvProgramListAdapter.notifyDataSetChanged();
             }
@@ -737,12 +737,12 @@ public class TvProgramListActivity extends BaseActivity implements
 
     @Override
     public void channelInfoCallback(final ChannelInfoList channelsInfo) {
-        //TODO:★ここでAdaptor生成するのではなく、チャンネルリストが取得できた時点でAdaptorを生成してしまう。
-        //TODO:★データの管理はAdaptor任せにして、必要なデータはAdaptorからActivity側に取得要求するようにする。
-        //TODO:★生成されているAdaptorへ番組データを渡す処理にする。
-        //TODO:★Adaptorはチャンネルリストに対して、取得した番組情報をMappingして溜めていく。
-        //TODO:★ちなみに現状、上部のチャンネルの表示はチャンネルリストを元に表示しているが、
-        //TODO:★ここで受け取るデータは番組のないチャンネルはデータ上含まれないのでチャンネルと番組欄にズレが起きる。
+        //TODO :★ここでAdaptor生成するのではなく、チャンネルリストが取得できた時点でAdaptorを生成してしまう。
+        //TODO :★データの管理はAdaptor任せにして、必要なデータはAdaptorからActivity側に取得要求するようにする。
+        //TODO :★生成されているAdaptorへ番組データを渡す処理にする。
+        //TODO :★Adaptorはチャンネルリストに対して、取得した番組情報をMappingして溜めていく。
+        //TODO :★ちなみに現状、上部のチャンネルの表示はチャンネルリストを元に表示しているが、
+        //TODO :★ここで受け取るデータは番組のないチャンネルはデータ上含まれないのでチャンネルと番組欄にズレが起きる。
         if (channelsInfo != null && channelsInfo.getChannels() != null) {
             List<ChannelInfo> channels = channelsInfo.getChannels();
             sort(channels);
@@ -753,9 +753,9 @@ public class TvProgramListActivity extends BaseActivity implements
 
     @Override
     public void channelListCallback(final ArrayList<ChannelInfo> channels) {
-        //TODO:★ここでAdaptor生成する。
-        //TODO:★Adaptorはチャンネルリストに対して、取得した番組情報をMappingして溜めていく。
-        //TODO:★また初回として先頭○○チャンネル分だけ番組データをリクエストする。○○はRecyclerのキャッシュと同じ分。
+        //TODO :★ここでAdaptor生成する
+        //TODO :★Adaptorはチャンネルリストに対して、取得した番組情報をMappingして溜めていく
+        //TODO :★また初回として先頭○○チャンネル分だけ番組データをリクエストする。○○はRecyclerのキャッシュと同じ分
         if (mTabIndex == INDEX_TAB_MY_CHANNEL) {
             //MY番組表
             if (channels != null && channels.size() > 0) {
@@ -810,8 +810,9 @@ public class TvProgramListActivity extends BaseActivity implements
 
     /**
      * My番組表ロード.
+     * @param channelList チャンネルリスト
      */
-    private void loadMyChannel(ArrayList<ChannelInfo> channelList) {
+    private void loadMyChannel(final ArrayList<ChannelInfo> channelList) {
         if (mScaledDownProgramListDataProvider == null) {
             mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
         }
@@ -918,7 +919,7 @@ public class TvProgramListActivity extends BaseActivity implements
                         DTVTLogger.debug(e);
                         continue;
                     }
-                    if (1 <= indexNum && indexNum <= WebApiBasePlala.MY_CHANNEL_MAX_INDEX ){
+                    if (1 <= indexNum && indexNum <= WebApiBasePlala.MY_CHANNEL_MAX_INDEX) {
                         this.myChannelDataList.add(myChannelMetaData.get(j));
                     }
                 }

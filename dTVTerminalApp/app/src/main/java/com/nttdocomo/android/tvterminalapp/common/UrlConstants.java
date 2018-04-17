@@ -109,7 +109,7 @@ public class UrlConstants {
 
         /**
          * 自分グーグルショップ起動URL.
-         * TODO: 今はひとまず、DTVのアドレスを指定
+         * TODO : 今はひとまず、DTVのアドレスを指定
          */
         public static final String GOOGLEPLAY_DOWNLOAD_MY_URL = "https://play.google.com/store/apps/details?id=jp.co.nttdocomo.dtv";
     }
@@ -244,7 +244,7 @@ public class UrlConstants {
         public static final String GENRE_LIST_FILE =
                 "https://tconf.hikaritv-docomo.jp/common/client/genreList.json";
 
-        //TODO: 設定ファイルの配置場所はひとまずIemonサーバーとする。
+        //TODO : 設定ファイルの配置場所はひとまずIemonサーバーとする。
         /**
          * アプリ起動設定ファイル：こちらはAPIではなく、ファイルの直接読み込みとなる.
          * APIではないので、例外としてURL全体を指定する

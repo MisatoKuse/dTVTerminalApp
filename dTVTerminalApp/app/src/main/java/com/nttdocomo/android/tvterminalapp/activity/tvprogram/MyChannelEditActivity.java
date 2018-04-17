@@ -368,6 +368,9 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
         }
     }
 
+    /**
+     * エラーダイアログを表示する.
+     */
     private void showErrorDialog() {
         ErrorState errorState = mMyChannelDataProvider.getMyChannelListError();
         if (errorState == null || errorState.getErrorType() == DTVTConstants.ERROR_TYPE.SUCCESS) {

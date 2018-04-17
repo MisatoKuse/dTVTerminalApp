@@ -286,6 +286,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
 
     /**
      * 未ログイン時のダイアログ表示.
+     * @param resId エラーメッセージ
      */
     private void settingErrorDialog(final int resId) {
         //　アプリが無ければインストール画面に誘導

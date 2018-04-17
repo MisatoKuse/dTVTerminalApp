@@ -99,15 +99,13 @@ import java.util.LinkedList;
  */
 @SuppressLint("Registered")
 public class BaseActivity extends FragmentActivity implements
-        DlnaDevListListener
-        , View.OnClickListener
-        , RemoteControllerView.OnStartRemoteControllerUIListener
-        , ClipRegistWebClient.ClipRegistJsonParserCallback
-        , ClipDeleteWebClient.ClipDeleteJsonParserCallback
-        , DaccountControl.DaccountControlCallBack
-        , CustomDialog.DismissCallback
-{
-
+        DlnaDevListListener,
+        View.OnClickListener,
+        RemoteControllerView.OnStartRemoteControllerUIListener,
+        ClipRegistWebClient.ClipRegistJsonParserCallback,
+        ClipDeleteWebClient.ClipDeleteJsonParserCallback,
+        DaccountControl.DaccountControlCallBack,
+        CustomDialog.DismissCallback {
     /**
      * ヘッダーBaseレイアウト.
      */
@@ -189,7 +187,7 @@ public class BaseActivity extends FragmentActivity implements
      */
     private boolean mIsStbStatusOn = false;
     /**
-     * GoogleAnalytics用
+     * GoogleAnalytics用.
      */
     private Tracker mTracker;
     /**
@@ -226,7 +224,7 @@ public class BaseActivity extends FragmentActivity implements
      */
     protected DaccountControl mDAccountControl = null;
     /**
-     * 初回dアカウント取得失敗時のダイアログを呼び出すハンドラー
+     * 初回dアカウント取得失敗時のダイアログを呼び出すハンドラー.
      */
     private Handler mFirstDaccountErrorHandler = null;
 
@@ -252,7 +250,7 @@ public class BaseActivity extends FragmentActivity implements
      */
     private CustomDialog mShowDialog = null;
     /**
-     * 設定ファイル処理クラス
+     * 設定ファイル処理クラス.
      */
     protected ProcessSettingFile mCheckSetting = null;
     /**
@@ -735,8 +733,8 @@ public class BaseActivity extends FragmentActivity implements
 
         //Googleアナリティクスに画面名を送信する
         mTracker = app.getDefaultTracker();
-        //TODO: 難読化を行うと、getClassがランダムな名前になる模様。その前に個別の画面名の設定が必要になる。
-        //TODO: 近いうちのスプリントで詳細な情報出力設定が行われる筈なので、ひとまず問題は無い。
+        //TODO : 難読化を行うと、getClassがランダムな名前になる模様。その前に個別の画面名の設定が必要になる。
+        //TODO : 近いうちのスプリントで詳細な情報出力設定が行われる筈なので、ひとまず問題は無い。
         mTracker.setScreenName(this.getClass().getSimpleName());
         mTracker.send(
                 new com.google.android.gms.analytics.HitBuilders.ScreenViewBuilder().build());
@@ -1208,7 +1206,7 @@ public class BaseActivity extends FragmentActivity implements
      * @return カレントユーザ名
      */
     public String getUserName() {
-        //TODO:実装中のため仮の値を返却
+        //TODO :実装中のため仮の値を返却
         return "Test User";
     }
 
@@ -1717,7 +1715,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param result 正常終了ならばtrue
      */
-    protected void onDaccountOttGetComplete(boolean result) {
+    protected void onDaccountOttGetComplete(final boolean result) {
     }
 
     @Override
@@ -2142,7 +2140,7 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     /**
-     * オーバーライド先でdismissDialogを無効化する為に独立化
+     * オーバーライド先でdismissDialogを無効化する為に独立化.
      */
     protected void dismissDialogOnPause() {
         dismissDialog();
@@ -2260,7 +2258,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param disconnectionFlag 通信を止めるならばtrue
      */
-    private void setOttDisconnectionFlag(boolean disconnectionFlag) {
+    private void setOttDisconnectionFlag(final boolean disconnectionFlag) {
         DTVTLogger.start();
         final DaccountGetOTT getOtt = new DaccountGetOTT();
         if (getOtt != null) {
@@ -2362,6 +2360,7 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * データが取得失敗した時のダイアログ表示.
+     * @param context コンテキスト
      */
     public void showDialogToClose(final Context context) {
         //文字列リソースを取得して、メッセージ指定側に処理を移譲
@@ -2413,19 +2412,19 @@ public class BaseActivity extends FragmentActivity implements
      * (設定ファイル処理から呼ぶためにパブリック化)
      * @param dialog キュー表示するダイアログ
      */
-    public void offerDialog(CustomDialog dialog) {
+    public void offerDialog(final CustomDialog dialog) {
         DTVTLogger.start();
 
         //現在表示しているダイアログと新たに蓄積されるダイアログの本文を比較する
         String contentText = dialog.getContent();
-        if(mShowDialog != null && mShowDialog.getContent().equals(contentText)) {
+        if (mShowDialog != null && mShowDialog.getContent().equals(contentText)) {
             //現在表示しているダイアログと本文が同じなので、蓄積せずに帰る
             return;
         }
 
         //蓄積しているキューの中に同じ文言の物があるかどうかをチェック
-        for(CustomDialog customDialog : mLinkedList) {
-            if(customDialog.getContent().equals(contentText)) {
+        for (CustomDialog customDialog : mLinkedList) {
+            if (customDialog.getContent().equals(contentText)) {
                 //本文が同じ物が見つかったので、蓄積せずに帰る
                 return;
             }
@@ -2446,7 +2445,7 @@ public class BaseActivity extends FragmentActivity implements
             mShowDialog = mLinkedList.poll();
             mShowDialog.showDialog();
         } else {
-            if(mShowDialog != null) {
+            if (mShowDialog != null) {
                 startNextProcess();
                 DTVTLogger.debug("show=" + mShowDialog.isShowing()
                         + ":mLinkedList.size()=" + mLinkedList.size());
@@ -2456,7 +2455,7 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     /**
-     * 次に行う処理があれば、オーバーライドしてください。
+     * 次に行う処理があれば、オーバーライドしてください.
      */
     protected void startNextProcess() {
         DTVTLogger.start();
@@ -2469,7 +2468,7 @@ public class BaseActivity extends FragmentActivity implements
      * @return キューの個数。ダイアログが無い場合はゼロ
      */
     public int getDialogQurCount() {
-        if(mShowDialog == null) {
+        if (mShowDialog == null) {
             //ダイアログが存在していないならばゼロを返す
             return 0;
         }
@@ -2480,7 +2479,7 @@ public class BaseActivity extends FragmentActivity implements
         }
 
         //今表示中ならば1を返す
-        if(mShowDialog.isShowing()) {
+        if (mShowDialog.isShowing()) {
             return 1;
         }
 
