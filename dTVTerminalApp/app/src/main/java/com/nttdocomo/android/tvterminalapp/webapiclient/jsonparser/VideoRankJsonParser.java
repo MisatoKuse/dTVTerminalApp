@@ -177,6 +177,11 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
                                 String para = puinfObj.getString(puinfBuffer);
                                 vrListMap.put(JsonConstants.META_RESPONSE_PUINF + JsonConstants.UNDER_LINE + puinfBuffer, para);
                             }
+                        } else if (DBUtils.isDateItem(listBuffer)) {
+                            // DATE_PARAに含まれるのは日付なので、エポック秒となる。変換して格納する
+                            String dateBuffer = DateUtils.formatEpochToString(
+                                    StringUtils.changeString2Long(jsonObject.getString(listBuffer)));
+                            vrListMap.put(listBuffer, dateBuffer);
                         } else {
                             String para = jsonObject.getString(listBuffer);
                             vrListMap.put(listBuffer, para);

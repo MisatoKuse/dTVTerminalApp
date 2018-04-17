@@ -793,7 +793,13 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_CONTENT_DETAIL_CHANNEL_LIST: // コンテンツ詳細チャンネル一覧
             case TYPE_DAILY_RANK: // 今日の番組ランキング
             case TYPE_WEEKLY_RANK: // 週間ランキング
-                ContentUtils.setPeriodText(mContext, holder, listContentInfo);
+                if (!ContentUtils.setPeriodText(mContext, holder, listContentInfo)) {
+                    if (!TextUtils.isEmpty(listContentInfo.getTime())) {
+                        holder.tv_time.setVisibility(View.VISIBLE);
+                        holder.tv_time.setText(DateUtils.getContentsDateString(Long.parseLong(listContentInfo.getTime())));
+                    }
+
+                }
                 break;
             default:
                 break;
