@@ -219,23 +219,25 @@ public class ContentUtils {
         String viewingPeriod = "";
         switch (periodContentsType) {
             case VOD:// VOD
-            case DCHANNEL_VOD_31: // ひかりTV内dch_見逃し(３1以内).
+            case DCHANNEL_VOD_OVER_31: // ひかりTV内dch_見逃し(３２日以上).
+            case DCHANNEL_VOD_31: // ひかりTV内dch_見逃し(３1日以内).
                 if (DateUtils.isBefore(vodStartDate)) { //から
                     viewingPeriod = DateUtils.getContentsDetailVodDate(context, vodStartDate);
                     viewingPeriod = StringUtils.getConnectStrings(
                             context.getString(R.string.common_date_format_start_str), viewingPeriod);
-                } else { //まで //"見逃し"は他のどころで対応している
+                } else { //まで、見逃し
                     if (periodContentsType ==  ContentUtils.ContentsType.VOD) {
                         //VOD(m/d（曜日）まで)
                         viewingPeriod = DateUtils.getContentsDetailVodDate(context, availEndDate);
                     } else if (periodContentsType == ContentUtils.ContentsType.DCHANNEL_VOD_OVER_31) {
-                        //VOD(m/d（曜日）まで)
-                        viewingPeriod = DateUtils.getContentsDetailVodDate(context, vodEndDate);
-                        viewingPeriod = StringUtils.getConnectStrings(viewingPeriod, context.getString(R.string.home_contents_pipe),
-                                context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
+                        //「見逃し」
+                        viewingPeriod = context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing);
                     } else if (periodContentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
                         //VOD(m/d（曜日）まで)
                         viewingPeriod = DateUtils.getContentsDetailVodDate(context, vodEndDate);
+                        //「見逃し」
+                        viewingPeriod = StringUtils.getConnectStrings(viewingPeriod, context.getString(R.string.home_contents_hyphen),
+                                context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
                     }
                 }
                 break;
@@ -243,12 +245,11 @@ public class ContentUtils {
                 break;
         }
 
-
-        // 実際の
+        // 表示
         switch (periodContentsType) {
             case VOD:
-            case DCHANNEL_VOD_31:
             case DCHANNEL_VOD_OVER_31:
+            case DCHANNEL_VOD_31:
                 if (!TextUtils.isEmpty(viewingPeriod)) {
                     holder.tv_time.setVisibility(View.VISIBLE);
                     SpannableString spannableString = new SpannableString(viewingPeriod);
