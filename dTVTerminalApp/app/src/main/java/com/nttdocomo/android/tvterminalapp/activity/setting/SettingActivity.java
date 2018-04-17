@@ -160,19 +160,19 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             //Dアカウント設定
             startDAccountSetting();
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_PAIRING])) {
-            if (isSettingPossible()) {
+            if (isSettingPossible(false)) {
                 //ペアリング設定
                 Intent intent = new Intent(getApplicationContext(), STBSelectActivity.class);
                 intent.putExtra(STBSelectActivity.FROM_WHERE, STBSelectActivity.STBSelectFromMode.STBSelectFromMode_Setting.ordinal());
                 startActivity(intent);
             }
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_MY_PROGRAM])) {
-            if (isSettingPossible()) {
+            if (isSettingPossible(true)) {
                 //マイ番組表設定
                 startActivity(MyChannelEditActivity.class, null);
             }
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_QUALITY])) {
-            if (isSettingPossible()) {
+            if (isSettingPossible(true)) {
                 //外出先視聴時の画質設定画面への遷移
                 Intent intent = new Intent(this, SettingImageQualityActivity.class);
                 intent.putExtra(getString(R.string.main_setting_quality_status), mSettingList.get(i).getStateText());
@@ -268,18 +268,22 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
 
     /**
      * ユーザ状態判定.
+     *
+     * @param isDisplay 表示フラグ
      * @return 設定操作可否
      */
-    private boolean isSettingPossible() {
+    private boolean isSettingPossible(final boolean isDisplay) {
         UserState userState = UserInfoUtils.getUserState(this);
         if (userState.equals(UserState.LOGIN_NG)) {
             //未ログインならダイアログ表示
             settingErrorDialog(R.string.main_setting_logon_request_error_message);
             return false;
         } else if (userState.equals(UserState.LOGIN_OK_CONTRACT_NG)) {
-            //未契約ならダイアログ表示
-            settingErrorDialog(R.string.main_setting_h4d_not_signed_message);
-            return false;
+            if (isDisplay) {
+                //未契約ならダイアログ表示
+                settingErrorDialog(R.string.main_setting_h4d_not_signed_message);
+                return false;
+            }
         }
         return true;
     }
