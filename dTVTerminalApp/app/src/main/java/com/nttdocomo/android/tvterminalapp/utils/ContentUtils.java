@@ -6,6 +6,11 @@ package com.nttdocomo.android.tvterminalapp.utils;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -243,8 +248,8 @@ public class ContentUtils {
                         } else if (periodContentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
                             //VOD(m/d（曜日）まで)
                             viewingPeriod = DateUtils.getContentsDetailVodDate(context, vodEndDate);
-                            viewingPeriod = StringUtils.getConnectStrings(
-                                    context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing), viewingPeriod);
+                            viewingPeriod = StringUtils.getConnectStrings(viewingPeriod, context.getString(R.string.home_contents_pipe),
+                                    context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
                         }
                     }
                     break;
@@ -257,8 +262,20 @@ public class ContentUtils {
         switch (periodContentsType) {
             case VOD:
             case DCHANNEL_VOD_31:
-                holder.tv_time.setVisibility(View.VISIBLE);
-                holder.tv_time.setText(viewingPeriod);
+                if (!TextUtils.isEmpty(viewingPeriod)) {
+                    holder.tv_time.setVisibility(View.VISIBLE);
+                    SpannableString spannableString = new SpannableString(viewingPeriod);
+                    int subStart = 0;
+                    int subEnd = 0;
+                    if (viewingPeriod.contains(context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing))) {
+                        subStart = viewingPeriod.indexOf(context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
+                        subEnd = spannableString.length();
+                    }
+                    //「見逃し」は黄色文字で表示する
+                    spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(context, R.color.contents_detail_video_miss_color)),
+                            subStart, subEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    holder.tv_time.setText(spannableString);
+                }
                 return true;
             case DCHANNEL_VOD_OVER_31:
                 break;
