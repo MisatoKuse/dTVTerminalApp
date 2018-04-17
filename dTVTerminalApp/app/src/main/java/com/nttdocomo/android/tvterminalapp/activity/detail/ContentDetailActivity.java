@@ -1016,10 +1016,14 @@ public class ContentDetailActivity extends BaseActivity implements
         }
 
         //リモート視聴なので、設定ファイルの内容に応じて判定を行う
-        ProcessSettingFile processSettingFile = new ProcessSettingFile(this);
+        ProcessSettingFile processSettingFile = new ProcessSettingFile(this,false);
+        //リモート視聴の明示
+        processSettingFile.setIsRemote(true);
+        //コールバック指定付きで処理を開始する
         processSettingFile.controlAtSettingFile(new ProcessSettingFile.ProcessSettingFileCallBack() {
             @Override
-            public void onCallNoError() {
+            public void onCallBack(boolean dialogSwitch) {
+                //今回は確実に通常ダイアログなので、dialogSwitchの内容は無視していい
                 //設定ファイルの内容に問題は無かったので、再生を行う
                 playStartOrigin();
             }

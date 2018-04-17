@@ -6,10 +6,12 @@ package com.nttdocomo.android.tvterminalapp.activity.launch;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.common.ProcessSettingFile;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
@@ -27,7 +29,14 @@ import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
  */
 public class LaunchActivity extends BaseActivity implements View.OnClickListener,
         DlnaRecVideoListener, DlnaTerChListListener, DlnaBsChListListener {
-
+    /**
+     * 最初の待ち時間の2秒.
+     */
+    private static final long FIRST_WAIT_TIME = 2000L;
+    /**
+     * タイムアウトの待ち時間の8秒(最初の2秒と合わせて10秒).
+     */
+    private static final long TIME_OUT_WAIT_TIME = 8000L;
     /**
      * 初回起動判定Flag.
      */
@@ -49,6 +58,23 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
      * 次の画面で設定画面エラーを出すならtrueにする.
      */
     private boolean mIsSettingErrorNextAvctivity = false;
+    /**
+     * 待ち時間タイマー用ハンドラー.
+     */
+    private Handler mTimerHandler;
+    /**
+     * 待ち時間タイマー用ランナブル.
+     */
+    private Runnable mTimerRunnable;
+    /**
+     * タイムアウトタイマー用ハンドラー.
+     * (dアカウントなどの処理終了時の即時次画面遷移の判定にも使うので、ヌルを明示)
+     */
+    private Handler mTimeoutHandler = null;
+    /**
+     * タイムアウトタイマー用ランナブル.
+     */
+    private Runnable mTimeoutRunnable;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -77,6 +103,33 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
              */
         }
         mIsFirstRun = !SharedPreferencesUtils.getSharedPreferencesIsDisplayedTutorial(this);
+
+        //次に遷移する画面を選択する
+        selectScreenTransition();
+    }
+
+    /**
+     * 最初の2秒経過後の処理.
+     */
+    private void setTimeOut() {
+        //10秒経過後の処理
+        mTimeoutRunnable = new Runnable() {
+            @Override
+            public void run() {
+                //10秒経過したので、状況を確認する
+                startActivityWait();
+
+                if(!isFinishing()) {
+                    //終了していなければ、諦めて次の画面に遷移する
+                    startActivity(mNextActivity);
+                    finish();
+                }
+            }
+        };
+
+        //10秒を設定してタイマーを発動する
+        mTimeoutHandler = new Handler();
+        mTimeoutHandler.postDelayed(mTimeoutRunnable,TIME_OUT_WAIT_TIME);
     }
 
     /**
@@ -109,9 +162,50 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         super.onResume();
     }
 
+    /**
+     * 通信可能になってから呼ばれる
+     */
+    @Override
+    protected void onReStartCommunication() {
+        super.onReStartCommunication();
+
+        //2秒経過後の処理
+        mTimerRunnable = new Runnable() {
+            @Override
+            public void run() {
+                //2秒経過したので、状況を確認する
+                startActivityWait();
+
+                if(!isFinishing()) {
+                    //終了していなければ、次の処理を行う
+                    setTimeOut();
+                }
+            }
+        };
+
+        //最初の待ち時間の2秒を設定してタイマーを発動する
+        mTimerHandler = new Handler();
+        mTimerHandler.postDelayed(mTimerRunnable,FIRST_WAIT_TIME);
+    }
+
     @Override
     protected void onStop() {
         super.onStop();
+
+        //終了体制確認
+        if(isFinishing()) {
+            //終了時にタイマーが残っているならば、解除する
+            if(mTimerHandler != null) {
+                mTimerHandler.removeCallbacks(mTimerRunnable);
+                mTimerRunnable = null;
+                mTimerHandler = null;
+            }
+            if(mTimeoutHandler != null) {
+                mTimeoutHandler.removeCallbacks(mTimeoutRunnable);
+                mTimeoutRunnable = null;
+                mTimeoutHandler = null;
+            }
+        }
     }
 
     @Override
@@ -136,66 +230,66 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
             @Override
             public void run() {
                 //チュートリアルも含めて、次に表示する画面を選択する
-                doScreenTransition();
+                selectScreenTransition();
             }
         });
     }
 
     /**
-     * 次画面遷移.
+     * 次画面遷移選択.
      */
-    private void doScreenTransition() {
+    private void selectScreenTransition() {
         DTVTLogger.start();
-
-        Intent intent;
 
         if (mIsFirstRun) {
             //チュートリアル画面に遷移
-            intent = new Intent(getApplicationContext(), TutorialActivity.class);
+            mNextActivity = new Intent(getApplicationContext(), TutorialActivity.class);
 
         } else if (SharedPreferencesUtils.getSharedPreferencesStbConnect(this)) {
             // ペアリング済み HOME画面遷移
             SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(this, true);
-            intent = new Intent(getApplicationContext(), HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            mNextActivity = new Intent(getApplicationContext(), HomeActivity.class);
+            mNextActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             DTVTLogger.debug("ParingOK Start HomeActivity");
         } else if (SharedPreferencesUtils.getSharedPreferencesStbSelect(this)) {
             // 次回から表示しないをチェック済み
             // 未ペアリング HOME画面遷移
             SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(this, false);
-            intent = new Intent(getApplicationContext(), HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            mNextActivity = new Intent(getApplicationContext(), HomeActivity.class);
+            mNextActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             DTVTLogger.debug("ParingNG Start HomeActivity");
         } else {
             // STB選択画面へ遷移
-            intent = new Intent(getApplicationContext(), STBSelectActivity.class);
-            intent.putExtra(STBSelectActivity.FROM_WHERE, STBSelectActivity.STBSelectFromMode.STBSelectFromMode_Launch.ordinal());
+            mNextActivity = new Intent(getApplicationContext(), STBSelectActivity.class);
+            mNextActivity.putExtra(STBSelectActivity.FROM_WHERE, STBSelectActivity.STBSelectFromMode.STBSelectFromMode_Launch.ordinal());
             DTVTLogger.debug("Start STBSelectActivity");
         }
 
-        // TODO : 作業の優先順位を鑑み、次画面ダイアログ表示の実装は保留とする
-//        if(mIsDAccountErrorNextAvctivity) {
-//            //次の画面にdアカウントエラーの表示を依頼する
-//            //intent.putExtra()
-//        }
-//
-//        if(mIsSettingErrorNextAvctivity) {
-//            //次の画面に設定画面エラーの表示を依頼する
-//        }
-        startActivityWait(intent);
         DTVTLogger.end();
     }
 
     /**
      * ダイアログが表示されている場合は、まだ画面遷移を行わないようにするスタートアクティビティ.
-     *
-     * @param intent 飛び先情報のインテント
      */
-    void startActivityWait(final Intent intent) {
-        //次の画面情報を控える
-        mNextActivity = intent;
+    void startActivityWait() {
 
-        //TODO : 暫定対応として、単純に呼び出す
+        //dアカウントのダイアログ表示を次の画面に依頼するかを確認
+        if(mIsDAccountErrorNextAvctivity) {
+            //次の画面にdアカウントエラーの表示を依頼する
+            mNextActivity.putExtra(SHOW_D_ACCOUNT_DIALOG,true);
+        }
+
+        //設定ファイルダイアログ表示を次の画面に依頼するかを確認
+        if(mIsSettingErrorNextAvctivity) {
+            //次の画面に設定画面エラーの表示を依頼する
+            mNextActivity.putExtra(SHOW_SETTING_FILE_DIALOG,true);
+            Bundle sendData = new Bundle();
+            sendData.putSerializable(SHOW_SETTING_FILE_DIALOG_DATA,
+                    mCheckSetting.getSettingData());
+            mNextActivity.putExtra(SHOW_SETTING_FILE_DIALOG_DATA,sendData);
+        }
+
+        //dアカウントと設定ファイルの処理が既に終わっているかどうかを確認し、終わっていた場合は遷移する
         if (execCheck()) {
             startActivity(mNextActivity);
             finish();
@@ -244,11 +338,10 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         }
 
         //設定ファイルの処理が続行中か、そもそも実行されていなければ遷移不可
-        //TODO : Iemonサーバーとアクセスできない環境では、この条件が絶対に成立してしまい、先に進まないので、ひとまず無効化
-//        if((mCheckSetting != null && mCheckSetting.isBusy())
-//                || mCheckSetting == null) {
-//            return false;
-//        }
+        if((mCheckSetting != null && mCheckSetting.isBusy())
+                || mCheckSetting == null) {
+            return false;
+        }
 
         return true;
     }
@@ -276,5 +369,74 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void restartMessageDialog(final String... message) {
         // dアカが変わってもHOME遷移させない
+    }
+
+    /**
+     * 元のdアカウントのコールバックを置き換える.
+     *
+     * @param result 結果
+     */
+    @Override
+    public void daccountControlCallBack(final boolean result) {
+        //元のdアカウントのコールバックを呼ぶ
+        super.daccountControlCallBack(result);
+
+        //タイムアウトの待機中かどうかを見る
+        if(mTimeoutHandler != null) {
+            //終了条件を満たしていた場合は次の画面に遷移する
+            startActivityWait();
+        }
+    }
+
+    /**
+     * 元の設定ファイル処理呼び出しを置き換える.
+     */
+    @Override
+    protected void checkSettingFile() {
+        DTVTLogger.start();
+
+        //元の処理は使用しない事を明示する為にコメント化
+        //super.checkSettingFile();
+
+        //ダイアログ非表示スイッチ・ダイアログは表示
+        boolean noDialogSw = false;
+
+        //スプラッシュ画面かどうかの確認
+        if(this instanceof LaunchActivity) {
+            //スプラッシュ画面ならばダイアログは表示しない
+            noDialogSw = true;
+        }
+
+        //アプリ起動時か、BG→FG遷移時は設定ファイルの処理を呼び出す
+        mCheckSetting = new ProcessSettingFile(this,noDialogSw);
+
+        //ファイルのチェックを開始する
+        mCheckSetting.controlAtSettingFile(
+                new ProcessSettingFile.ProcessSettingFileCallBack() {
+            @Override
+            public void onCallBack(boolean dialogSw) {
+                if(dialogSw) {
+                    //エラーがあったので、フラグをON
+                    mIsSettingErrorNextAvctivity = true;
+                }
+                //タイムアウトの待機中かどうかを見る
+                if(mTimeoutHandler != null) {
+                    //終了条件を満たしていた場合は次の画面に遷移する
+                    startActivityWait();
+                }
+            }
+        });
+
+        DTVTLogger.end();
+    }
+
+    /**
+     * ベースアクティビティのdアカウントエラー表示を置き換える
+     */
+    @Override
+    protected void showDAccountErrorDialog() {
+        //dアカウントのダイアログはここでは表示しないので、superは呼ばない
+        //ダイアログ表示フラグをONにする
+        mIsDAccountErrorNextAvctivity = true;
     }
 }

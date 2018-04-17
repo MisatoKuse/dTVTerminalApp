@@ -70,6 +70,7 @@ import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.SettingFileMetaData;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
@@ -218,6 +219,20 @@ public class BaseActivity extends FragmentActivity implements
      * ダブルクリック抑止用 DELAY.
      */
     private static final int MIN_CLICK_DELAY_TIME = 500;
+
+    /**
+     * スプラッシュ画面用のdアカウント用ダイアログ表示識別文字列.
+     */
+    protected final static String SHOW_D_ACCOUNT_DIALOG = "SHOW_D_ACCOUNT_DIALOG";
+    /**
+     * スプラッシュ画面用のファイル設定ファイル用ダイアログ表示識別文字列.
+     */
+    protected final static String SHOW_SETTING_FILE_DIALOG = "SHOW_SETTING_FILE_DIALOG";
+    /**
+     * スプラッシュ画面用のファイル設定ファイル用ダイアログ表示内容表示識別文字列.
+     */
+    protected final static String SHOW_SETTING_FILE_DIALOG_DATA
+            = "SHOW_SETTING_FILE_DIALOG_DATA";
 
     /**
      * dアカウント設定アプリ登録処理.
@@ -718,9 +733,37 @@ public class BaseActivity extends FragmentActivity implements
         if (null != dlnaDmsItem && dlnaDmsItem.mIPAddress != null && dlnaDmsItem.mIPAddress.length() > 0) {
             mRemoteControlRelayClient.setRemoteIp(dlnaDmsItem.mIPAddress);
         }
+
+        //インテントにダイアログ表示依頼があるかどうかを見る
+        checkDialogShowRequest();
+
         DTVTLogger.end();
     }
 
+    /**
+     * スプラッシュ画面からダイアログの表示の依頼を受けたかどうかのチェック
+     */
+    void checkDialogShowRequest() {
+        DTVTLogger.start();
+        Intent intent = getIntent();
+
+        if(intent.getBooleanExtra(SHOW_D_ACCOUNT_DIALOG,false)) {
+            //dアカウント取得失敗エラーの表示依頼があったので、表示する
+            showDAccountErrorDialog();
+        }
+
+        if(intent.getBooleanExtra(SHOW_SETTING_FILE_DIALOG,false)) {
+            //設定ファイルエラーダイアログの表示依頼があったので、表示する
+            ProcessSettingFile settingFileInfo = new ProcessSettingFile(this,false);
+
+            Bundle bundle = intent.getBundleExtra(SHOW_SETTING_FILE_DIALOG_DATA);
+            SettingFileMetaData metaData =
+                    (SettingFileMetaData) bundle.getSerializable(SHOW_SETTING_FILE_DIALOG_DATA);
+            DTVTLogger.debug("metaData=" + metaData);
+            settingFileInfo.processControlEmulate(metaData);
+        }
+        DTVTLogger.end();
+    }
     /**
      * 機能：onResume
      * Sub classにて、super.onResume()をコールする必要がある.
@@ -1752,19 +1795,8 @@ public class BaseActivity extends FragmentActivity implements
             mFirstDaccountErrorHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    //初回実行時に限り、エラーダイアログを表示する。現状エラー文言は1種類なので、文言切り替えは必要ない
-                    CustomDialog errorDialog = new CustomDialog(
-                            BaseActivity.this, CustomDialog.DialogType.ERROR);
-
-                    //失敗原因コードを取得
-                    DTVTLogger.debug("daccount error code = " + mDAccountControl.getResult());
-
-                    errorDialog.setContent(getString(R.string.d_account_regist_error));
-                    //次のダイアログを呼ぶ為の処理
-                    errorDialog.setDialogDismissCallback(BaseActivity.this);
-
-                    //showDialogの代わり・重複ダイアログ実現用
-                    offerDialog(errorDialog);
+                    //初回実行時に限り、エラーダイアログを表示する。
+                    showDAccountErrorDialog();
 
                     //ダイアログを出す場合はここで処理中フラグをリセット
                     mDAccountControl.setDAccountBusy(false);
@@ -1787,6 +1819,30 @@ public class BaseActivity extends FragmentActivity implements
         //登録はできないので、こちらに来るのは自然な動作となる。
         DTVTLogger.end("d account error. no signature?");
     }
+
+    /**
+     * dアカウントダイアログ表示を行う.
+     *
+     * (オーバーライドの為にprotected指定で分離)
+     */
+    protected void showDAccountErrorDialog() {
+        //現状エラー文言は1種類なので、文言切り替えは必要ない
+        CustomDialog errorDialog = new CustomDialog(
+                BaseActivity.this, CustomDialog.DialogType.ERROR);
+
+        //失敗原因コードを取得
+        if(mDAccountControl != null) {
+            DTVTLogger.debug("daccount error code = " + mDAccountControl.getResult());
+        }
+
+        errorDialog.setContent(getString(R.string.d_account_regist_error));
+        //次のダイアログを呼ぶ為の処理
+        errorDialog.setDialogDismissCallback(BaseActivity.this);
+
+        //showDialogの代わり・重複ダイアログ実現用
+        offerDialog(errorDialog);
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -2219,7 +2275,7 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * アプリがBGからFGに遷移した際のResume処理.
      */
-    private void onReStartCommunication() {
+    protected void onReStartCommunication() {
         DTVTLogger.start();
         setRelayClientHandler();
         mRemoteControlRelayClient.resetIsCancel();
@@ -2244,11 +2300,22 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * 設定ファイルのチェック.
+     *
      * (このタイミングでチェックを行うと、自ずとアプリ起動時か、BG→FG遷移時でのチェックになる)
      */
-    void checkSettingFile() {
+    protected void checkSettingFile() {
+        //ダイアログ非表示スイッチ・ダイアログは表示
+        boolean noDialogSw = false;
+
+        //スプラッシュ画面かどうかの確認
+        if(this instanceof LaunchActivity) {
+            //スプラッシュ画面ならばダイアログは表示しない
+            noDialogSw = true;
+        }
+
         //アプリ起動時か、BG→FG遷移時は設定ファイルの処理を呼び出す
-        mCheckSetting = new ProcessSettingFile(this);
+        mCheckSetting = new ProcessSettingFile(this,noDialogSw);
+
         //今回はコールバックは使用しないので、ヌルを指定する
         mCheckSetting.controlAtSettingFile(null);
     }
@@ -2489,6 +2556,11 @@ public class BaseActivity extends FragmentActivity implements
 
     @Override
     public void allDismissCallback() {
+        if(mShowDialog != null) {
+            //次のダイアログの判定の為に、今のダイアログの文言をクリアする
+            mShowDialog.clearContentText();
+        }
+
         pollDialog();
     }
 

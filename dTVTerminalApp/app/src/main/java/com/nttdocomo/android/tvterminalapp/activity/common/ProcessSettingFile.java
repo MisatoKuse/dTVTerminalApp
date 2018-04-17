@@ -55,11 +55,22 @@ public class ProcessSettingFile {
      */
     private boolean mGooglePlay = false;
     /**
+     * リモート視聴ならばtrue
+     */
+    private boolean mIsRemote = false;
+    /**
+     * ダイアログ表示を行わないならばtrue
+     */
+    private boolean mIsNoDialog = false;
+    /**
      * リモート視聴の際、問題が無かった場合に視聴を介する為のコールバック.
      */
     public interface ProcessSettingFileCallBack {
-        /** 問題が無かった場合ののコールバック.*/
-        void onCallNoError();
+        /**
+         * 処理終了後のコールバック
+         * @param error エラーがあるならばtrue
+         */
+        void onCallBack(boolean error);
     }
 
     /**
@@ -72,10 +83,21 @@ public class ProcessSettingFile {
     }
 
     /**
-     * コンストラクタ.
-     * @param activity BaseActivity
+     * リモート視聴フラグのセット.
+     *
+     * @param mIsRemote リモート視聴ならばtrue
      */
-    public ProcessSettingFile(final BaseActivity activity) {
+    public void setIsRemote(boolean mIsRemote) {
+        this.mIsRemote = mIsRemote;
+    }
+
+    /**
+     * コンストラクタ.
+     *
+     * @param activity BaseActivity アクティビティ
+     * @param noDialogSwitch ダイアログ表示有無(ダイアログを表示するならfalse)
+     */
+    public ProcessSettingFile(final BaseActivity activity,boolean noDialogSwitch) {
         //アクティビティの退避
         mActivity = activity;
 
@@ -84,6 +106,9 @@ public class ProcessSettingFile {
 
         //情報クラスの初期化
         mSettingData = new SettingFileMetaData();
+
+        //ダイアログ表示のスイッチ設定
+        mIsNoDialog = noDialogSwitch;
     }
 
     /**
@@ -162,46 +187,53 @@ public class ProcessSettingFile {
     }
 
     /**
+     * 単独でダイアログを表示させるために、状況を再現するメソッド
+     * @param settingMetaData 設定ファイル再現情報
+     */
+    public void processControlEmulate(SettingFileMetaData settingMetaData) {
+        mSettingData = settingMetaData;
+
+        //ダイアログを表示する
+        processControl();
+    }
+
+    /**
      * 設定ファイルに基いた実際の制御を行う.
      */
     private void processControl() {
         //処理は終わったので、フラグをリセット
         mBusy = false;
 
+        //ダイアログスイッチ
+        boolean dialogSwitch = false;
+
         //停止の有無を見る
         if (mSettingData.isIsStop()) {
             //停止処理を行う
             stopAllActivityDialog();
-            //停止処理以降の処理は必要なし。
-            return;
-        }
+            //ダイアログを表示する分岐に入ったのでtrue
+            dialogSwitch = true;
 
-        //コールバックがある=リモート視聴判定の場合は、ファイルアクセス失敗の場合もエラーを出す
-        if (mProcessSettingFileCallBack != null && mSettingData.isFileReadError()) {
-            //停止処理を行う
+        } else if (mIsRemote && mSettingData.isFileReadError()) {
+            //リモート視聴判定の場合は、ファイルアクセス失敗の場合もエラーを出す
             stopAllActivityDialog();
-            return;
-        }
-
-        //強制アップデートバージョンと今のバージョンを比較する
-        if (mSettingData.getForceUpdateVersion() > BuildConfig.VERSION_CODE) {
+        } else if (mSettingData.getForceUpdateVersion() > BuildConfig.VERSION_CODE) {
             //強制アップデートのバージョンの方が新しいので、GooglePlayダイアログをキャンセル無しで呼び出す
             showGooglePlayDialog(false);
+            //ダイアログを表示する分岐に入ったのでtrue
+            dialogSwitch = true;
 
-            //以下の処理は必要なし
-            return;
-        }
-
-        //任意アップデートバージョンと今のバージョンを比較する
-        if (mSettingData.getOptionalUpdateVersion() > BuildConfig.VERSION_CODE) {
+        } else if (mSettingData.getOptionalUpdateVersion() > BuildConfig.VERSION_CODE) {
             //ダウンロードダイアログをキャンセル付きで呼び出す
             showGooglePlayDialog(true);
-            return;
+            //ダイアログを表示する分岐に入ったのでtrue
+            dialogSwitch = true;
+
         }
 
         //何も問題は無かったので、コールバックが指定されていればそこへ飛ぶ
         if (mProcessSettingFileCallBack != null) {
-            mProcessSettingFileCallBack.onCallNoError();
+            mProcessSettingFileCallBack.onCallBack(dialogSwitch);
         }
     }
 
@@ -219,6 +251,11 @@ public class ProcessSettingFile {
      * 実行停止ダイアログ.
      */
     private void stopAllActivityDialog() {
+        //今回はダイアログ表示を見送るか判定
+        if(mIsNoDialog) {
+            return;
+        }
+
         //ダイアログを、キャンセル無しにする
         CustomDialog dialog = new CustomDialog(mActivity, CustomDialog.DialogType.ERROR);
 
@@ -259,6 +296,11 @@ public class ProcessSettingFile {
      * @param isCancel キャンセルが必要ならばtrue
      */
     private void showGooglePlayDialog(final boolean isCancel) {
+        //今回はダイアログ表示を見送るか判定
+        if(mIsNoDialog) {
+            return;
+        }
+
         CustomDialog dialog;
         String printMessage;
 
@@ -299,7 +341,8 @@ public class ProcessSettingFile {
                     mGooglePlay = false;
                     //ダウンロードしないので、コールバックが指定されていればそこへ飛ぶ
                     if (mProcessSettingFileCallBack != null) {
-                        mProcessSettingFileCallBack.onCallNoError();
+                        //今回はダイアログ表示後の処理なので、falseを指定
+                        mProcessSettingFileCallBack.onCallBack(false);
                     }
                     DTVTLogger.end();
                 }
@@ -328,5 +371,22 @@ public class ProcessSettingFile {
      */
     public void setGooglePlay(final boolean googlePlaySwitch) {
         mGooglePlay = googlePlaySwitch;
+    }
+
+    /**
+     * 設定ファイル状況を渡す
+     * @return 設定ファイル状況
+     */
+    public SettingFileMetaData getSettingData() {
+        return mSettingData;
+    }
+
+    /**
+     * コールバック指定を後から追加する.
+     *
+     * @param callBack コールバック
+     */
+    public void setProcessSettingFileCallBack(final ProcessSettingFileCallBack callBack) {
+        mProcessSettingFileCallBack = callBack;
     }
 }

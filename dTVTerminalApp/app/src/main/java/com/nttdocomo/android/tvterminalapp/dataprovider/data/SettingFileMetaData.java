@@ -7,10 +7,14 @@ package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
+import java.io.Serializable;
+
 /**
  * 起動時等に読み込む設定ファイルの情報.
  */
-public class SettingFileMetaData {
+public class SettingFileMetaData  implements Serializable {
+    private static final long serialVersionUID = -1142550644372960915L;
+
     /**
      * アプリの実行を停止するならばtrue.
      */
