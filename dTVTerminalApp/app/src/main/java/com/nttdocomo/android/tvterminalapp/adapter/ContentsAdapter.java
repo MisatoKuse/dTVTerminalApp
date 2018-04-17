@@ -644,7 +644,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             if (ContentDetailActivity.TV_PROGRAM.equals(listContentInfo.getDispType())) {
                 if (ContentDetailActivity.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(listContentInfo.getTvService())) {
                     if (ContentDetailActivity.CONTENT_TYPE_FLAG_THREE.equals(listContentInfo.getContentsType())) {
-                        result = true;
+                        if (DateUtils.isNowOnAirDate(listContentInfo.getLinearStartDate(),
+                                listContentInfo.getLinearEndDate(), true)) {
+                            result = true;
+                        }
                     } else if (ContentDetailActivity.CONTENT_TYPE_FLAG_ONE.equals(listContentInfo.getContentsType())
                             || ContentDetailActivity.CONTENT_TYPE_FLAG_TWO.equals(listContentInfo.getContentsType())) {
                         if (DateUtils.isNowOnAirDate(listContentInfo.getLinearStartDate(),
@@ -652,10 +655,16 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                             result = true;
                         }
                     } else {
-                        result = true;
+                        if (DateUtils.isNowOnAirDate(listContentInfo.getLinearStartDate(),
+                                listContentInfo.getLinearEndDate(), true)) {
+                            result = true;
+                        }
                     }
                 } else if (ContentDetailActivity.TV_SERVICE_FLAG_HIKARI.equals(listContentInfo.getTvService())) {
-                    result = true;
+                    if (DateUtils.isNowOnAirDate(listContentInfo.getLinearStartDate(),
+                            listContentInfo.getLinearEndDate(), true)) {
+                        result = true;
+                    }
                 }
             }
         } else {
@@ -765,7 +774,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
                 try {
                     if (!TextUtils.isEmpty(listContentInfo.getTime())) {
-                        holder.tv_time.setText(DateUtils.getRecordShowListItem(Long.parseLong(listContentInfo.getTime())));
+                        holder.tv_time.setText(DateUtils.getContentsDateString(Long.parseLong(listContentInfo.getTime())));
                     }
                 } catch(NumberFormatException e) {
                     //TODO:Long.parseLongの対応はコンテンツの期間表示時に対応し、Long.parseLongを移動するなどしてtry~catchを削除する
