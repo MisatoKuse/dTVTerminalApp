@@ -21,7 +21,7 @@ public class SettingFileMetaData  implements Serializable {
     private boolean mIsStop;
 
     /**
-     * 設定ファイルの読み込みに失敗した場合
+     * 設定ファイルの読み込みに失敗した場合.
      */
     private boolean mIsFileReadError;
 
@@ -41,7 +41,7 @@ public class SettingFileMetaData  implements Serializable {
     private int mOptionalUpdateVersion;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      */
     public SettingFileMetaData() {
         //内容の初期化
@@ -54,30 +54,56 @@ public class SettingFileMetaData  implements Serializable {
 
     //個々の情報のゲッターとセッター・単純な物はコメント略
 
+    /**
+     * アプリの実行を停止するフラグを取得.
+     * @return 停止：true else false
+     */
     public boolean isIsStop() {
         return mIsStop;
     }
 
+    /**
+     * 設定ファイルの読み込みに失敗フラグを取得.
+     * @return 失敗:true else false
+     */
     public boolean isFileReadError() {
         return mIsFileReadError;
     }
-
-    public void setIsFileReadError(boolean isFileReadError) {
+    /**
+     * 設定ファイルの読み込みに失敗フラグ設定する.
+     * @param isFileReadError 設定ファイルの読み込みに失敗フラグ
+     */
+    public void setIsFileReadError(final boolean isFileReadError) {
         mIsFileReadError = isFileReadError;
     }
 
-    public void setIsStop(boolean isStop) {
+    /**
+     * アプリの実行を停止するフラグを設定.
+     * @param isStop アプリの実行を停止するフラグ
+     */
+    public void setIsStop(final boolean isStop) {
         mIsStop = isStop;
     }
-
+    /**
+     * アプリ実行停止時に表示するメッセージ取得.
+     * @return アプリ実行停止時に表示するメッセージ
+     */
     public String getDescription() {
         return mDescription;
     }
 
-    public void setDescription(String description) {
+    /**
+     * アプリ実行停止時に表示するメッセージ設定.
+     * @param description アプリ実行停止時に表示するメッセージ
+     */
+    public void setDescription(final String description) {
         mDescription = description;
     }
 
+    /**
+     * 強制アップデート対象バージョン取得.
+     * @return 強制アップデート対象バージョン
+     */
     public int getForceUpdateVersion() {
         return mForceUpdateVersion;
     }
@@ -114,6 +140,10 @@ public class SettingFileMetaData  implements Serializable {
         DTVTLogger.end();
     }
 
+    /**
+     * 与えられたアップデート対象バージョン情報を取得.
+     * @return 与えられたアップデート対象バージョン情報
+     */
     public int getOptionalUpdateVersion() {
         return mOptionalUpdateVersion;
     }

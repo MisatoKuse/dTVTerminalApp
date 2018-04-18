@@ -97,6 +97,8 @@ public class ClipListBaseFragment extends Fragment
 
     /**
      * 各タブ画面は別々に実現して表示されること.
+     * @param container container
+     * @return タブ画面
      */
     private View initView(final ViewGroup container) {
         if (mClipListData == null) {
