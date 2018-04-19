@@ -321,9 +321,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         final ContentsData contentsData = mContentList.get(i);
         String title = contentsData.getTitle();
         String rankNum = contentsData.getRank();
-        String startTime = contentsData.getLinearStartDate();
+        String startTime = contentsData.getPublishStartDate();
         Boolean newFlag = newContentsCheck(startTime);
-
+        viewHolder.mTime.setVisibility(View.GONE);
         if (TextUtils.isEmpty(title)) {
             title = contentsData.getTitle();
         }
@@ -351,17 +351,14 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             case RANKING_CONTENTES_TODAY_SORT:
             case RANKING_CONTENTES_WEEK_SORT:
             case HOME_CONTENTS_SORT_TV_CLIP:
-                //今日のテレビランキング/週間テレビランキング (1行目:タイトル 2行目:放送期間)
-                setRankingInfo(contentsData, viewHolder, false);
-                break;
             case HOME_CONTENTS_SORT_WATCHING_VIDEO:
             case HOME_CONTENTS_SORT_VOD_CLIP:
             case HOME_CONTENTS_SORT_PREMIUM_VIDEO:
             case HOME_CONTENTS_SORT_RENTAL_VIDEO:
             case RANKING_CONTENTES_VIDEO_SORT:
             case HOME_CONTENTS_SORT_VIDEO:
-                //ビデオランキングテレビランキング (1行目:タイトル 2行目:放送期限)
-                setRankingInfo(contentsData, viewHolder, true);
+                //配信期限の設定
+                ContentUtils.setPeriodText(mContext, viewHolder.mTime, contentsData);
                 break;
             default:
                 //上記以外 (タイトルが2行)
@@ -498,12 +495,13 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      * @param viewHolder ViewHolder
      */
     private void setNowOnAirInfo(final ContentsData contentsData, final ViewHolder viewHolder) {
-        String startTime = String.valueOf(DateUtils.getEpochTime(contentsData.getLinearStartDate()) / 1000);
-        String endTime = String.valueOf(DateUtils.getEpochTime(contentsData.getLinearEndDate()) / 1000);
+        String startTime = String.valueOf(DateUtils.getEpochTime(contentsData.getPublishStartDate()) / 1000);
+        String endTime = String.valueOf(DateUtils.getEpochTime(contentsData.getPublishEndDate()) / 1000);
         String channelName = contentsData.getChannelName();
         ContentUtils.ContentsType contentsType = ContentUtils.getContentsTypeByPlala(contentsData.getDispType(),
                 contentsData.getTvService(), contentsData.getContentsType(), contentsData.getAvailEndDate(),
-                contentsData.getVodStartDate(), contentsData.getVodEndDate());
+                contentsData.getVodStartDate(), contentsData.getVodEndDate(), contentsData.getEstFlg(),
+                contentsData.getChsVod());
         String date;
         if (contentsType == ContentUtils.ContentsType.TV || contentsType == ContentUtils.ContentsType.OTHER) {
             date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(startTime)),
@@ -540,50 +538,6 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             viewHolder.mTime.setVisibility(View.VISIBLE);
         } else {
             viewHolder.mTime.setText("");
-            viewHolder.mTime.setVisibility(View.GONE);
-        }
-    }
-
-    /**
-     * ランキングの2段目に表示する情報を設定する.
-     *
-     * @param contentsData コンテンツデータ
-     * @param viewHolder ViewHolder
-     * @param isVod vodフラグ
-     */
-    private void setRankingInfo(final ContentsData contentsData, final ViewHolder viewHolder, final boolean isVod) {
-        String availStartDate = contentsData.getLinearStartDate();
-        if (availStartDate == null) {
-            availStartDate = "0"; // TODO:クラッシュのため暫定対応
-        }
-        String channelName = contentsData.getChannelName();
-        String dispType = contentsData.getDispType();
-        ContentUtils.ContentsType contentsType = ContentUtils.getContentsTypeByPlala(dispType,
-                contentsData.getTvService(), contentsData.getContentsType(), contentsData.getAvailEndDate(),
-                contentsData.getVodStartDate(), contentsData.getVodEndDate());
-        String date;
-        //レンタル・プレミアムビデオはここで判定する
-        if (contentsType == ContentUtils.ContentsType.OTHER) {
-            contentsType = ContentUtils.getContentsTypeRental(dispType, contentsData.getEstFlg(), contentsData.getChsVod());
-        }
-        if (contentsType == ContentUtils.ContentsType.TV || contentsType == ContentUtils.ContentsType.OTHER) {
-            //暫定対応 日付情報にlong、日付フォーマットが混在しているため
-            if (DBUtils.isNumber(availStartDate)) {
-                date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(availStartDate)), channelName);
-            } else {
-                date = structDateStrings(DateUtils.formatEpochToStringOpeLog(DateUtils.getSecondEpochTime(availStartDate)), channelName);
-            }
-        } else {
-            if (isVod) {
-                date = DateUtils.addDateLimitVod(mContext, contentsData, contentsType);
-            } else {
-                date = DateUtils.addDateLimit(mContext, contentsData, contentsType);
-            }
-        }
-        //表示対象がないときはトルツメ
-        if (date != null && !date.isEmpty()) {
-            viewHolder.mTime.setText(DateUtils.setMissViewingColor(mContext, date));
-        } else {
             viewHolder.mTime.setVisibility(View.GONE);
         }
     }

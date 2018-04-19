@@ -186,7 +186,6 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
             clipContentInfo.setThumURL(map.get(JsonConstants.META_RESPONSE_THUMB_448));
             clipContentInfo.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_THUMB_640));
             clipContentInfo.setTitle(title);
-            clipContentInfo.setTime(map.get(JsonConstants.META_RESPONSE_DISPLAY_START_DATE));
             clipContentInfo.setSearchOk(searchOk);
             clipContentInfo.setRatStar(map.get(JsonConstants.META_RESPONSE_RATING));
             clipContentInfo.setContentsType(map.get(JsonConstants.META_RESPONSE_CONTENT_TYPE));

@@ -834,7 +834,7 @@ public class DateUtils {
      */
     public static ContentUtils.ContentsType getContentsTypeByAvailEndDate(final long availEndDate) {
         ContentUtils.ContentsType cType = ContentUtils.ContentsType.OTHER;
-        if (!isOver31Day(availEndDate)) {
+        if (isIn31Day(availEndDate)) {
             cType = ContentUtils.ContentsType.VOD;
         }
         return cType;
@@ -848,15 +848,15 @@ public class DateUtils {
      */
     public static boolean isOver31Day(final long date) {
         Calendar cal = Calendar.getInstance();
+        Date nowDate = cal.getTime();
+        cal.setTimeInMillis(date * 1000);
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
         cal.add(Calendar.DAY_OF_MONTH, -AVAILABLE_BASE_DAY);
         Date pre31Date = cal.getTime();
-        cal.setTimeInMillis(date * 1000);
-        Date startDate = cal.getTime();
-        return startDate.compareTo(pre31Date) == -1;
+        return nowDate.compareTo(pre31Date) == -1;
     }
 
     /**
@@ -867,16 +867,16 @@ public class DateUtils {
      */
     public static boolean isIn31Day(final long date) {
         Calendar cal = Calendar.getInstance();
+        Date nowDate = cal.getTime();
+        cal.setTimeInMillis(date * 1000);
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
-        Date nowDate = cal.getTime();
+        Date endDate = cal.getTime();
         cal.add(Calendar.DAY_OF_MONTH, -AVAILABLE_BASE_DAY);
         Date pre31Date = cal.getTime();
-        cal.setTimeInMillis(date * 1000);
-        Date startDate = cal.getTime();
-        return startDate.compareTo(nowDate) == -1 && startDate.compareTo(pre31Date) != -1;
+        return nowDate.compareTo(pre31Date) == 1 && nowDate.compareTo(endDate) != 1;
     }
 
     /**
@@ -891,16 +891,16 @@ public class DateUtils {
         }
         long startTime = Long.parseLong(startPublishDate);
         Calendar cal = Calendar.getInstance();
+        Date nowDate = cal.getTime();
+        cal.setTimeInMillis(startTime * 1000);
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
-        Date nowDate = cal.getTime();
-        cal.add(Calendar.DAY_OF_MONTH, -PUBLISH_BASE_DAY);
-        Date pre7Date = cal.getTime();
-        cal.setTimeInMillis(startTime * 1000);
         Date startDate = cal.getTime();
-        return startDate.compareTo(nowDate) == -1 && startDate.compareTo(pre7Date) != -1;
+        cal.add(Calendar.DAY_OF_MONTH, +PUBLISH_BASE_DAY);
+        Date endDate = cal.getTime();
+        return nowDate.compareTo(startDate) != -1 && nowDate.compareTo(endDate) == -1;
     }
 
     /**

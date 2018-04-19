@@ -52,9 +52,9 @@ public class ContentsData {
     // 番組のパレンタル設定値
     private String mRValue = null;
     // 放送開始日時
-    private String mLinearStartDate = null;
+    private String mPublishStartDate = null;
     // 放送終了日時
-    private String mLinearEndDate = null;
+    private String mPublishEndDate = null;
     // 視聴通知判定
     private String mIsNotify = null;
     // コンテンツタイプ
@@ -337,20 +337,20 @@ public class ContentsData {
         this.mRValue = mRValue;
     }
 
-    public String getLinearStartDate() {
-        return mLinearStartDate;
+    public String getPublishStartDate() {
+        return mPublishStartDate;
     }
 
-    public void setLinearStartDate(String linearStartDate) {
-        this.mLinearStartDate = linearStartDate;
+    public void setPublishStartDate(String mPublishStartDate) {
+        this.mPublishStartDate = mPublishStartDate;
     }
 
-    public String getLinearEndDate() {
-        return mLinearEndDate;
+    public String getPublishEndDate() {
+        return mPublishEndDate;
     }
 
-    public void setLinearEndDate(String mLinearEndDate) {
-        this.mLinearEndDate = mLinearEndDate;
+    public void setPublishEndDate(String mPublishEndDate) {
+        this.mPublishEndDate = mPublishEndDate;
     }
 
     public String getContentsType() {

@@ -644,25 +644,25 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             if (ContentDetailActivity.TV_PROGRAM.equals(listContentInfo.getDispType())) {
                 if (ContentDetailActivity.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(listContentInfo.getTvService())) {
                     if (ContentDetailActivity.CONTENT_TYPE_FLAG_THREE.equals(listContentInfo.getContentsType())) {
-                        if (DateUtils.isNowOnAirDate(listContentInfo.getLinearStartDate(),
-                                listContentInfo.getLinearEndDate(), true)) {
+                        if (DateUtils.isNowOnAirDate(listContentInfo.getPublishStartDate(),
+                                listContentInfo.getPublishEndDate(), true)) {
                             result = true;
                         }
                     } else if (ContentDetailActivity.CONTENT_TYPE_FLAG_ONE.equals(listContentInfo.getContentsType())
                             || ContentDetailActivity.CONTENT_TYPE_FLAG_TWO.equals(listContentInfo.getContentsType())) {
-                        if (DateUtils.isNowOnAirDate(listContentInfo.getLinearStartDate(),
-                                listContentInfo.getLinearEndDate(), true)) {
+                        if (DateUtils.isNowOnAirDate(listContentInfo.getPublishStartDate(),
+                                listContentInfo.getPublishEndDate(), true)) {
                             result = true;
                         }
                     } else {
-                        if (DateUtils.isNowOnAirDate(listContentInfo.getLinearStartDate(),
-                                listContentInfo.getLinearEndDate(), true)) {
+                        if (DateUtils.isNowOnAirDate(listContentInfo.getPublishStartDate(),
+                                listContentInfo.getPublishEndDate(), true)) {
                             result = true;
                         }
                     }
                 } else if (ContentDetailActivity.TV_SERVICE_FLAG_HIKARI.equals(listContentInfo.getTvService())) {
-                    if (DateUtils.isNowOnAirDate(listContentInfo.getLinearStartDate(),
-                            listContentInfo.getLinearEndDate(), true)) {
+                    if (DateUtils.isNowOnAirDate(listContentInfo.getPublishStartDate(),
+                            listContentInfo.getPublishEndDate(), true)) {
                         result = true;
                     }
                 }
@@ -763,6 +763,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * @param listContentInfo 　ContentsData
      */
     private void setTimeData(final ViewHolder holder, final ContentsData listContentInfo) {
+        holder.tv_time.setVisibility(View.GONE);
         switch (mType) {
             case TYPE_RECOMMEND_LIST://おすすめ番組・ビデオ
             case TYPE_SEARCH_LIST://検索
@@ -777,10 +778,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                     if (time.equals(mContext.getString(R.string.delivery_end_message))) {
                         holder.tv_time.setText(listContentInfo.getTime());
                     } else {
-                        ContentUtils.setPeriodText(mContext, holder, listContentInfo);
+                        ContentUtils.setPeriodText(mContext, holder.tv_time, listContentInfo);
                     }
-                } else {
-                    holder.tv_time.setVisibility(View.GONE);
                 }
                 break;
             case TYPE_VIDEO_RANK: // ビデオランキング
@@ -788,25 +787,17 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
             case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
+            case TYPE_DAILY_RANK: // 今日の番組ランキング
+            case TYPE_WEEKLY_RANK: // 週間ランキング
+                ContentUtils.setPeriodText(mContext, holder.tv_time, listContentInfo);
+                break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
             case TYPE_RECORDED_LIST: // 録画番組一覧
             case TYPE_CONTENT_DETAIL_CHANNEL_LIST: // コンテンツ詳細チャンネル一覧
-            case TYPE_DAILY_RANK: // 今日の番組ランキング
-            case TYPE_WEEKLY_RANK: // 週間ランキング
-                if (!ContentUtils.setPeriodText(mContext, holder, listContentInfo)) {
-                    if (!TextUtils.isEmpty(listContentInfo.getTime())) {
-                        holder.tv_time.setVisibility(View.VISIBLE);
-                        try {
-                            holder.tv_time.setText(DateUtils.getContentsDateString(Long.parseLong(listContentInfo.getTime())));
-                        } catch(NumberFormatException e) {
-                            //TODO:getTimeがepoctimeフォーマットになってないのは正しく無いので次回のスプリントでgetTime()を廃止して正しい日付が入るように修正する
-                            DTVTLogger.warning(e.getMessage());
-                            holder.tv_time.setText(listContentInfo.getTime());
-                        }
-                    }
-
+                if (!TextUtils.isEmpty(listContentInfo.getTime())) {
+                    holder.tv_time.setVisibility(View.VISIBLE);
+                    holder.tv_time.setText(listContentInfo.getTime());
                 }
-                break;
             default:
                 break;
         }
