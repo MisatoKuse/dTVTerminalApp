@@ -52,7 +52,7 @@ public enum MenuItem {
     /**
      * 録画予約.
      */
-    録画予約,
+    RECORD_RESERVE,
     /**
      * ビデオ.
      */

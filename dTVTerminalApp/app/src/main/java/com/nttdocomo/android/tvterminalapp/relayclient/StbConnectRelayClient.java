@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.relayclient;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
@@ -17,15 +18,24 @@ import java.net.SocketException;
  */
 
 public class StbConnectRelayClient {
+    /**リモートIP.*/
     private String mRemoteIp;
+    /**socket port初期値.*/
     private static final int REMOTE_SOCKET_PORT = 1025;
+    /**datagram port初期値.*/
     private static final int REMOTE_DATAGRAM_PORT = 1026;
+    /**charset_utf8.*/
     private static final String CHARSET_UTF8 = "UTF-8";
+    /**SocketPort.*/
     private int mRemoteSocketPort = REMOTE_SOCKET_PORT;
+    /**datagram port.*/
     private int mRemoteDatagramPort = REMOTE_DATAGRAM_PORT;
+    /**TcpClient.*/
     private TcpClient mTcpClient;
 
-    // シングルトン
+    /**
+     * TcpClient.
+     */
     private static final StbConnectRelayClient mInstance = new StbConnectRelayClient();
 
     /**
@@ -47,7 +57,7 @@ public class StbConnectRelayClient {
      * STBとSocket通信を開始する.
      * Socketに送受信タイムアウト（接続タイムアウト含む）を設定する
      *
-     * @return
+     * @return 成功:true
      */
     public boolean connect() {
         if (mRemoteIp == null) {
@@ -73,8 +83,8 @@ public class StbConnectRelayClient {
     /**
      * 　STBへメッセージ（JSON形式）を送信後する.
      *
-     * @param data
-     * @return
+     * @param data data
+     * @return 成功:true
      */
     public boolean send(final String data) {
         boolean ret;
@@ -90,7 +100,7 @@ public class StbConnectRelayClient {
     /**
      * STBへメッセージ送信後に応答（JSON形式）を受信する.
      *
-     * @return
+     * @return 成功:true
      */
     public String receive() {
         String recvdata = null;
@@ -106,8 +116,7 @@ public class StbConnectRelayClient {
     /**
      * 　STBへメッセージを送信後する.
      *
-     * @param data
-     * @return
+     * @param data data
      */
     public void sendDatagram(final String data) {
         DatagramSocket dataSocket = null;
@@ -116,14 +125,21 @@ public class StbConnectRelayClient {
                 if (mRemoteIp == null) {
                     return;
                 }
-                byte[] buff = data.getBytes(CHARSET_UTF8);
+                byte[] buff = new byte[0];
+                try {
+                    buff = data.getBytes(CHARSET_UTF8);
+                } catch (UnsupportedEncodingException e) {
+                    DTVTLogger.debug(e);
+                }
                 DatagramPacket packet = new DatagramPacket(buff, buff.length, new InetSocketAddress(mRemoteIp, mRemoteDatagramPort));
                 dataSocket = new DatagramSocket();
-                dataSocket.send(packet);
+                try {
+                    dataSocket.send(packet);
+                } catch (IOException e) {
+                    DTVTLogger.debug(e);
+                }
             }
         } catch (SocketException e) {
-            DTVTLogger.debug(e);
-        } catch (IOException e) {
             DTVTLogger.debug(e);
         } finally {
             if (dataSocket != null) {
@@ -136,7 +152,7 @@ public class StbConnectRelayClient {
     /**
      * Socket通信の送信先のIPアドレスを設定.
      *
-     * @param remoteIp
+     * @param remoteIp remoteIp
      */
     public void setRemoteIp(final String remoteIp) {
         mRemoteIp = remoteIp;
@@ -145,7 +161,7 @@ public class StbConnectRelayClient {
     /**
      * Socket通信の送信先の受信ポート.
      *
-     * @param remoteSocketPort
+     * @param remoteSocketPort remoteSocketPort
      */
     public void setRemoteSocketPort(final int remoteSocketPort) {
         mRemoteSocketPort = remoteSocketPort;
@@ -154,7 +170,7 @@ public class StbConnectRelayClient {
     /**
      * Datagram通信の送信先の受信ポート.
      *
-     * @param remoteDatagramPort
+     * @param remoteDatagramPort remoteDatagramPort
      */
     public void setRemoteDatagramPort(final int remoteDatagramPort) {
         mRemoteDatagramPort = remoteDatagramPort;

@@ -16,53 +16,67 @@ import java.util.ArrayList;
  */
 public class DlnaInterface {
 
-    //Singleton
+    /**Singleton.*/
     private static DlnaInterface sDlnaInterface = new DlnaInterface();
 
-    //Browseコンテンツ
+    /**Browseコンテンツ.*/
     private static final int DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST = 0;
-    //デバイスjoin
+    /**デバイスjoin.*/
     private static final int DLNA_MSG_ID_DEV_DISP_JOIN = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 1;
-    //デバイスleave
+    /**デバイスleave.*/
     private static final int DLNA_MSG_ID_DEV_DISP_LEAVE = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 2;
-    //BSデジタルに関して、チャンネルリストを発見
+    /**BSデジタルに関して、チャンネルリストを発見.*/
     private static final int DLNA_MSG_ID_BS_CHANNEL_LIST = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 3;
-    //地上波(terrestrial)に関して、チャンネルリストを発見
+    /**地上波(terrestrial)に関して、チャンネルリストを発見.*/
     private static final int DLNA_MSG_ID_TER_CHANNEL_LIST = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 4;
-    //ひかりTVに関して、チャンネルリストを発見
+    /**ひかりTVに関して、チャンネルリストを発見.*/
     private static final int DLNA_MSG_ID_HIKARI_CHANNEL_LIST = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 5;
-    //Download progress
+    /**Download progress.*/
     public static final int DLNA_MSG_ID_DL_PROGRESS = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 6;
-    //Download status
+    /**Download status.*/
     public static final int DLNA_MSG_ID_DL_STATUS = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 7;
-    //Download param
+    /**Download param.*/
     private static final int DLNA_MSG_ID_DL_XMLPARAM = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 8;
-    //LocalRegist status
     /** ローカルレジストレーションステータス.*/
     public static final int DLNA_MSG_ID_RM_STATUS = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 9;
 
-    //DMS情報
+    /**DMS情報.*/
     private DlnaDMSInfo mDMSInfo = new DlnaDMSInfo();
-
+    /**録画ビデオリスナー.*/
     private DlnaRecVideoListener mDlnaRecVideoListener;
+    /**BSチャンネルリスナー.*/
     private DlnaBsChListListener mDlnaBsChListListener;
+    /**地上波チャンネルリスナー.*/
     private DlnaTerChListListener mDlnaTerChListListener;
+    /**ひかりチャンネルリスナー.*/
     private DlnaHikariChListListener mDlnaHikariChListListener;
+    /**Dlna稼働フラグ.*/
     private boolean mIsDlnaRunning = false;
+    /**デバイスリストリスナー.*/
     private DlnaDevListListener mDlnaDevListListener = null;
+    /**NativeDlna.*/
     private long mNativeDlna = 0;
+    /**現在のDMS Item.*/
     private DlnaDmsItem mCurrentDmsItem;
 
-    // TODO:エラー表示仕様によって削除（コード上に文字列定義しない）
+    // TODO　:エラー表示仕様によって削除（コード上に文字列定義しない
+    /**DMS Errorエラーメッセージ.*/
     private static final String sErrorMsgDMS = "DMS Error";
+    /**録画一覧データ取得失敗エラーメッセージ.*/
     private static final String sErrorMsgRecordVideo = "録画一覧データ取得に失敗しました";
+    /**地上波チャンネルリスト取得失敗エラーメッセージ.*/
     private static final String sErrorMsgTerChannelList = "地上波チャンネルリスト取得に失敗しました";
+    /**BSチャンネルリスト取得失敗エラーメッセージ.*/
     private static final String sErrorMsgBsChannelList = "BSチャンネルリスト取得に失敗しました";
+    /**ひかりチャンネルリスト取得失敗エラーメッセージ.*/
     private static final String sErrorMsgHikariChannelList = "ひかりチャンネルリスト取得に失敗しました";
 
     //Dlna info
+    /**BSチャンネルリスト情報.*/
     private DlnaBsChListInfo mDlnaBsChListInfo;
+    /**地上波チャンネルリスト情報.*/
     private DlnaTerChListInfo mDlnaTerChListInfo;
+    /**ハンドラー.*/
     private Handler mHandler = new Handler();
 
     /**
@@ -316,6 +330,12 @@ public class DlnaInterface {
         }
     }
 
+    /**
+     * onError.
+     * @param msg msg
+     * @param content content
+     * @return true or false
+     */
     private boolean onError(final int msg, final ArrayList<Object> content) {
         boolean ret = false;
         if (null != content && 0 != content.size()) {
@@ -542,6 +562,7 @@ public class DlnaInterface {
      * 　　　Dlaninterfaceクラスはそのdms以外のdms変動情報をDlnaProviderRecoredVideoに通知しない
      *
      * @param item 使用しているDlnaDmsItem
+     * @return  true or false
      */
     boolean registerCurrentDms(final DlnaDmsItem item) {
         if (null != mDMSInfo && DlnaDmsItem.isDmsItemValid(item)) {
@@ -553,7 +574,7 @@ public class DlnaInterface {
 
     /**
      * 機能：dlna statusを設定する.
-     * @param status　status
+     * @param status  status
      */
     private synchronized void setDlnaStatus(final boolean status) {
         mIsDlnaRunning = status;
@@ -574,30 +595,38 @@ public class DlnaInterface {
 
     /**
      * 機能：jni関数.
+     * @param prt prt
      * @return 操作結果
      */
     private native boolean nativeStartDlna(long prt);
 
     /**
      * 機能：jni関数.
+     * @param prt prt
      * @return 操作結果
      */
     private native boolean nativeStopDlna(long prt);
 
     /**
      * 機能：jni関数.
+     * @param prt prt
+     * @param ctl ctl
      * @return 操作結果
      */
     private native boolean browseRecVideoDms(long prt, String ctl);
 
     /**
      * 機能：jni関数.
+     *@param prt prt
+     * @param ctl ctl
      * @return 操作結果
      */
     private native boolean browseBsChListDms(long prt, String ctl);
 
     /**
      * 機能：jni関数.
+     * @param prt prt
+     * @param ctl ctl
      * @return 操作結果
      */
     private native boolean browseTerChListDms(long prt, String ctl);
@@ -636,8 +665,19 @@ public class DlnaInterface {
         }
     }
 
+    /**
+     * getDlParam.
+     * @param prt prt
+     * @param itemId itemId
+     * @return param
+     */
     private native String getDlParam(long prt, String itemId);
 
+    /**
+     * getXmlToDl.
+     * @param itemId  itemId
+     * @return xmlToDl
+     */
     public static String getXmlToDl(final String itemId) {
         if (null == sDlnaInterface || null == itemId || itemId.isEmpty()) {
             return null;
@@ -646,6 +686,10 @@ public class DlnaInterface {
         return sDlnaInterface.getDlParam(itemId);
     }
 
+    /**
+     * dlnaOnResume.
+     * @return true or false
+     */
     public static boolean dlnaOnResume() {
 //        if(null==sDlnaInterface){
 //            return false;
@@ -655,6 +699,9 @@ public class DlnaInterface {
         return null != sDlnaInterface && sDlnaInterface.startDlna();
     }
 
+    /**
+     * dlnaOnStop.
+     */
     public static void dlnaOnStop() {
         if (null == sDlnaInterface) {
             return;
@@ -670,6 +717,10 @@ public class DlnaInterface {
         }
     }
 
+    /**
+     * isDlnaRunning.
+     * @return true or false
+     */
     boolean isDlnaRunning() {
         if (null == sDlnaInterface) {
             return false;

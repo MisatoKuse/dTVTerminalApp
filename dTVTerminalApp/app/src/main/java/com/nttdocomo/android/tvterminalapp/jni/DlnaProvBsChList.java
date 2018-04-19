@@ -31,6 +31,7 @@ public class DlnaProvBsChList {
     /**
      * 機能：DMSデバイスを取り始める.
      * @param lis listener
+     * @param item item
      * @return 成功true
      */
     public boolean start(final DlnaDmsItem item, final DlnaBsChListListener lis) {

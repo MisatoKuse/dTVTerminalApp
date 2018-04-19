@@ -11,499 +11,869 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationList
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
+/**
+ * コンテンツデータ管理クラス.
+ */
 public class ContentsData {
 
-    //ランキング順位
+    /**ランキング順位.*/
     private String mRank = null;
-    //時間
+    /**時間.*/
     private String mTime = null;
-    //メインタイトル
+    /**メインタイトル.*/
     private String mTitle = null;
-    //評価ポイント
+    /**評価ポイント.*/
     private String mRatStar = null;
-    //サムネイルURL(リスト)
+    /**サムネイルURL(リスト).*/
     private String mThumListURL = null;
-    //サムネイルURL(詳細画面)
+    /**サムネイルURL(詳細画面).*/
     private String mThumDetailURL = null;
-    // 録画予約ステータス
+    /**録画予約ステータス.*/
     private int mRecordingReservationStatus = RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_ALREADY_REFLECT;
-    // チャンネル名
+    /**チャンネル名.*/
     private String mChannelName = null;
-    // 録画番組用 チャンネル名
+    /**録画番組用 チャンネル名.*/
     private String recordedChannelName = null;
-    // 録画番組用 コピー残り回数
+    /**録画番組用 コピー残り回数.*/
     private int mAllowedUse = 0;
-    // クリップ状態
+    /**クリップ状態.*/
     private String mSearchOk = null;
-    // コンテンツ識別子
+    /**コンテンツ識別子.*/
     private String mCrid = null;
-    // サービスID
+    /**サービスID.*/
     private String mServiceId = null;
-    // イベントID
+    /**イベントID.*/
     private String mEventId = null;
-    // タイトルID
+    /**タイトルID.*/
     private String mTitleId = null;
-    // 番組種別
+    /**番組種別.*/
     private String mDispType = null;
-    // 日時（epoc秒）	(VOD用)コンテンツ自体の有効開始日時(PITのみ)
+    /**日時（epoc秒）	(VOD用)コンテンツ自体の有効開始日時(PITのみ).*/
     private long mAvailStartDate = 0;
-    // 日時（epoc秒）	(VOD用)コンテンツ自体の有効期限日時(PITのみ)
+    /**日時（epoc秒）	(VOD用)コンテンツ自体の有効期限日時(PITのみ).*/
     private long mAvailEndDate = 0;
-    // 番組のパレンタル設定値
+    /**番組のパレンタル設定値.*/
     private String mRValue = null;
-    // 放送開始日時
+    /**放送開始日時.*/
     private String mPublishStartDate = null;
-    // 放送終了日時
+    /**放送終了日時.*/
     private String mPublishEndDate = null;
-    // 視聴通知判定
+    /**視聴通知判定.*/
     private String mIsNotify = null;
-    // コンテンツタイプ
+    /**コンテンツタイプ.*/
     private String mContentsType = null;
-    // サービス種別
+    /**サービス種別.*/
     private String mTvService = null;
-    // VOD配信開始日時  日時（epoc秒）
+    /**VOD配信開始日時  日時（epoc秒）.*/
     private long mVodStartDate = 0;
-    // VOD配信終了日時  日時（epoc秒）
+    /**VOD配信終了日時  日時（epoc秒）.*/
     private long mVodEndDate = 0;
-    // dTVフラグ
+    /**dTVフラグ.*/
     private String mDtv = null;
-    // コンテンツID
+    /**コンテンツID.*/
     private String mContentsId = null;
-    // あらすじ
+    /**あらすじ.*/
     private String mSynop = null;
-    // カテゴリID
+    /**カテゴリID.*/
     private String mCategoryId = null;
-    // 開始時刻
+    /**開始時刻.*/
     private String mStartViewing = null;
-    //終了時刻
+    /**終了時刻.*/
     private String mEndViewing = null;
-    // reserved1
+    /**reserved1.*/
     private String mReserved1 = null;
-    // reserved2
+    /**reserved2.*/
     private String mReserved2 = null;
-    // reserved3
+    /**reserved3.*/
     private String mReserved3 = null;
-    // reserved4
+    /**reserved4.*/
     private String mReserved4 = null;
-    // reserved5
+    /**reserved5.*/
     private String mReserved5 = null;
-    // mobileViewingFlg
+    /**mobileViewingFlg.*/
     private String  mobileViewingFlg = null;
-    // chsvod
+    /**chsvod.*/
     private String  mChsVod = null;
-    // estFlg
+    /**estFlg.*/
     private String  mEstFlg = null;
-    // クリップボタン
+    /**クリップボタン.*/
     private ImageView mClipButton = null;
-    // クリップリクエストデータ
+    /**クリップリクエストデータ.*/
     private ClipRequestData mRequestData = new ClipRequestData();
 
 
-    //ダウンロードフラグ
+    /**ダウンロードフラグ.*/
     private int mDownloadFlg = 0;
-    //ダウンロードステータス（進捗）
+    /**ダウンロードステータス（進捗）.*/
     private String mDownloadStatus = null;
-    //ダウンロードパス
+    /**ダウンロードパス.*/
     private String mDlFileFullPath = null;
 
-    // チャンネルID
+    /**チャンネルID.*/
     private String mChannelId = null;
-    /**
-     * チャンネルNo
-     */
+    /**チャンネルNo.*/
     private String mChannelNo = null;
-    // おすすめ順
+    /**おすすめ順.*/
     private String mRecommendOrder = null;
-    // 画面ID
+    /**画面ID.*/
     private String mPageId = null;
-    // ユーザグループID
+    /**ユーザグループID.*/
     private String mGroupId = null;
-    // レコメンド手法ID
+    /**レコメンド手法ID.*/
     private String mRecommendMethodId = null;
-    // dTVタイプ
+    /**dTVタイプ.*/
     private String mDtvType = null;
-    // クリップ可否
+    /**クリップ可否.*/
     private boolean mClipExec = false;
-    // クリップ未/済
+    /**クリップ未/済.*/
     private boolean mClipStatus = false;
-    //クリップ状態に変更があった場合に真
+    /**クリップ状態に変更があった場合に真.*/
     private boolean mIsClipStatusUpdate = false;
-    // サブタイトル
+    /**サブタイトル.*/
     private String mSubTitle = null;
-    // description1
+    /**description1.*/
     private String mDescription1 = null;
-    // description2
+    /**description2.*/
     private String mDescription2 = null;
-    // description3
+    /**description3.*/
     private String mDescription3 = null;
 
+    /**
+     * 日時（epoc秒）	(VOD用)コンテンツ自体の有効開始日時(PITのみ)取得.
+     * @return 日時（epoc秒）	(VOD用)コンテンツ自体の有効開始日時(PITのみ)
+     */
     public long getAvailStartDate() {
         return mAvailStartDate;
     }
 
-    public void setAvailStartDate(long availStartDate) {
+    /**
+     * 日時（epoc秒）	(VOD用)コンテンツ自体の有効開始日時(PITのみ)設定.
+     * @param availStartDate 日時（epoc秒）	(VOD用)コンテンツ自体の有効開始日時(PITのみ)
+     */
+    public void setAvailStartDate(final long availStartDate) {
         this.mAvailStartDate = availStartDate;
     }
 
+    /**
+     * 日時（epoc秒）	(VOD用)コンテンツ自体の有効期限日時(PITのみ)取得.
+     * @return 日時（epoc秒）	(VOD用)コンテンツ自体の有効期限日時(PITのみ)
+     */
     public long getAvailEndDate() {
         return mAvailEndDate;
     }
 
-    public void setAvailEndDate(long availEndDate) {
+    /**
+     * 日時（epoc秒）	(VOD用)コンテンツ自体の有効期限日時(PITのみ)設定.
+     * @param availEndDate 日時（epoc秒）	(VOD用)コンテンツ自体の有効期限日時(PITのみ)
+     */
+    public void setAvailEndDate(final long availEndDate) {
         this.mAvailEndDate = availEndDate;
     }
 
-    public long getVodStartDate () {
+    /**
+     * VOD配信開始日時  日時（epoc秒）取得.
+     * @return VOD配信開始日時  日時（epoc秒）
+     */
+    public long getVodStartDate() {
         return mVodStartDate;
     }
 
-    public void setVodStartDate(long vodStartDate) {
+    /**
+     * VOD配信開始日時  日時（epoc秒）設定.
+     * @param vodStartDate VOD配信開始日時  日時（epoc秒）
+     */
+    public void setVodStartDate(final long vodStartDate) {
         this.mVodStartDate = vodStartDate;
     }
 
-    public long getVodEndDate () {
+    /**
+     * VOD配信終了日時  日時（epoc秒）取得.
+     * @return VOD配信終了日時  日時（epoc秒）
+     */
+    public long getVodEndDate() {
         return mVodEndDate;
     }
 
-    public void setVodEndDate(long vodEndDate) {
+    /**
+     * VOD配信終了日時  日時（epoc秒）設定.
+     * @param vodEndDate VOD配信終了日時  日時（epoc秒）
+     */
+    public void setVodEndDate(final long vodEndDate) {
         this.mVodEndDate = vodEndDate;
     }
 
+    /**
+     * description1取得.
+     * @return description1
+     */
     public String getDescription1() {
         return mDescription1;
     }
 
-    public void setDescription1(String mDescription1) {
+    /**
+     * description1設定.
+     * @param mDescription1 description1
+     */
+    public void setDescription1(final String mDescription1) {
         this.mDescription1 = mDescription1;
     }
 
+    /**
+     * description2取得.
+     * @return description2
+     */
     public String getDescription2() {
         return mDescription2;
     }
 
-    public void setDescription2(String mDescription2) {
+    /**
+     * description2設定.
+     * @param mDescription2 description2
+     */
+    public void setDescription2(final String mDescription2) {
         this.mDescription2 = mDescription2;
     }
 
+    /**
+     * description3取得.
+     * @return description3
+     */
     public String getDescription3() {
         return mDescription3;
     }
 
-    public void setDescription3(String mDescription3) {
+    /**
+     * description3設定.
+     * @param mDescription3 description3
+     */
+    public void setDescription3(final String mDescription3) {
         this.mDescription3 = mDescription3;
     }
 
+    /**
+     * サブタイトル取得.
+     * @return サブタイトル
+     */
     public String getSubTitle() {
         return mSubTitle;
     }
 
-    public void setSubTitle(String mSubTitle) {
+    /**
+     * サブタイトル設定.
+     * @param mSubTitle サブタイトル
+     */
+    public void setSubTitle(final String mSubTitle) {
         this.mSubTitle = mSubTitle;
     }
 
+    /**
+     * ランキング順位取得.
+     * @return ランキング順位
+     */
     public String getRank() {
         return mRank;
     }
 
-    public void setRank(String rank) {
+    /**
+     * ランキング順位設定.
+     * @param rank ランキング順位
+     */
+    public void setRank(final String rank) {
         this.mRank = rank;
     }
 
+    /**
+     * 時間取得.
+     * @return 時間
+     */
     public String getTime() {
         return mTime;
     }
 
-    public void setTime(String time) {
+    /**
+     * 時間設定.
+     * @param time 時間
+     */
+    public void setTime(final String time) {
         this.mTime = time;
     }
 
+    /**
+     * タイトルID取得.
+     * @return タイトルID
+     */
     public String getTitle() {
         return mTitle;
     }
 
-    public void setTitle(String title) {
+    /**
+     * タイトルID設定.
+     * @param title タイトルID
+     */
+    public void setTitle(final String title) {
         this.mTitle = title;
     }
 
+    /**
+     * 評価ポイント取得.
+     * @return 評価ポイント
+     */
     public String getRatStar() {
         return mRatStar;
     }
 
-    public void setRatStar(String ratStar) {
+    /**
+     * 評価ポイント設定.
+     * @param ratStar 評価ポイント
+     */
+    public void setRatStar(final String ratStar) {
         //不正な値が入った場合のためUtilメソッドを通してから格納
         this.mRatStar = StringUtils.toRatString(ratStar);
     }
 
+    /**
+     * サムネイルURL(リスト)取得.
+     * @return サムネイルURL(リスト)
+     */
     public String getThumURL() {
         return mThumListURL;
     }
 
-    public void setThumURL(String thumURL) {
+    /**
+     * サムネイルURL(リスト)設定.
+     * @param thumURL サムネイルURL(リスト)
+     */
+    public void setThumURL(final String thumURL) {
         this.mThumListURL = thumURL;
     }
 
+    /**
+     * サムネイルURL(詳細画面)取得.
+     * @return サムネイルURL(詳細画面)
+     */
     public String getThumDetailURL() {
         return mThumDetailURL;
     }
 
-    public void setThumDetailURL(String mThumDetailURL) {
+    /**
+     * サムネイルURL(詳細画面)設定.
+     * @param mThumDetailURL サムネイルURL(詳細画面)
+     */
+    public void setThumDetailURL(final String mThumDetailURL) {
         this.mThumDetailURL = mThumDetailURL;
     }
 
-    public void setRecordingReservationStatus(int status) {
+    /**
+     * 録画予約ステータス設定取得.
+     * @param status 録画予約ステータス
+     */
+    public void setRecordingReservationStatus(final int status) {
         mRecordingReservationStatus = status;
     }
 
+    /**
+     * 録画予約ステータス取得.
+     * @return 録画予約ステータス
+     */
     public int getRecordingReservationStatus() {
         return mRecordingReservationStatus;
     }
 
+    /**
+     * チャンネル名取得.
+     * @return チャンネル名
+     */
     public String getChannelName() {
         return mChannelName;
     }
 
-    public void setChannelName(String channelName) {
+    /**
+     * チャンネル名設定.
+     * @param channelName チャンネル名
+     */
+    public void setChannelName(final String channelName) {
         this.mChannelName = channelName;
     }
 
+    /**
+     * 録画番組用 チャンネル名取得.
+     * @return 録画番組用 チャンネル名
+     */
     public String getRecordedChannelName() {
         return recordedChannelName;
     }
 
-    public void setRecordedChannelName(String channelName) {
+    /**
+     * 録画番組用 チャンネル名設定.
+     * @param channelName 録画番組用 チャンネル名
+     */
+    public void setRecordedChannelName(final String channelName) {
         this.recordedChannelName = channelName;
     }
+
+    /**
+     * 録画番組用 コピー残り回数取得.
+     * @return 録画番組用 コピー残り回数
+     */
     public int getAllowedUse() {
         return mAllowedUse;
     }
 
-    public void setAllowedUse(int allowedUse) {
+    /**
+     * 録画番組用 コピー残り回数設定.
+     * @param allowedUse 録画番組用 コピー残り回数
+     */
+    public void setAllowedUse(final int allowedUse) {
         this.mAllowedUse = allowedUse;
     }
 
+    /**
+     * クリップ状態取得.
+     * @return クリップ状態
+     */
     public String getSearchOk() {
         return mSearchOk;
     }
 
-    public void setSearchOk(String mSearchOk) {
+    /**
+     * クリップ状態設定.
+     * @param mSearchOk クリップ状態
+     */
+    public void setSearchOk(final String mSearchOk) {
         this.mSearchOk = mSearchOk;
     }
 
+    /**
+     * コンテンツ識別子取得.
+     * @return コンテンツ識別子
+     */
     public String getCrid() {
         return mCrid;
     }
 
-    public void setCrid(String mCrid) {
+    /**
+     * コンテンツ識別子設定.
+     * @param mCrid コンテンツ識別子
+     */
+    public void setCrid(final String mCrid) {
         this.mCrid = mCrid;
     }
 
+    /**
+     * サービスID取得.
+     * @return サービスID
+     */
     public String getServiceId() {
         return mServiceId;
     }
 
-    public void setServiceId(String mServiceId) {
+    /**
+     * サービスID設定.
+     * @param mServiceId サービスID
+     */
+    public void setServiceId(final String mServiceId) {
         this.mServiceId = mServiceId;
     }
 
+    /**
+     * イベントID取得.
+     * @return イベントID
+     */
     public String getEventId() {
         return mEventId;
     }
 
-    public void setEventId(String mEventId) {
+    /**
+     * イベントID設定.
+     * @param mEventId イベントID
+     */
+    public void setEventId(final String mEventId) {
         this.mEventId = mEventId;
     }
 
+    /**
+     * 番組種別取得.
+     * @return 番組種別
+     */
     public String getDispType() {
         return mDispType;
     }
 
-    public void setDispType(String mDispType) {
+    /**
+     * 番組種別設定.
+     * @param mDispType 番組種別
+     */
+    public void setDispType(final String mDispType) {
         this.mDispType = mDispType;
     }
 
+    /**
+     * タイトルID取得.
+     * @return タイトルID
+     */
     public String getTitleId() {
         return mTitleId;
     }
 
-    public void setTitleId(String mTitleId) {
+    /**
+     * タイトルID設定.
+     * @param mTitleId タイトルID
+     */
+    public void setTitleId(final String mTitleId) {
         this.mTitleId = mTitleId;
     }
 
+    /**
+     * 番組のパレンタル設定値取得.
+     * @return 番組のパレンタル設定値
+     */
     public String getRValue() {
         return mRValue;
     }
 
-    public void setRValue(String mRValue) {
+    /**
+     * 番組のパレンタル設定値設定.
+     * @param mRValue 番組のパレンタル設定値
+     */
+    public void setRValue(final String mRValue) {
         this.mRValue = mRValue;
     }
 
+    /**
+     * 放送開始日時取得.
+     * @return 放送開始日時
+     */
     public String getPublishStartDate() {
         return mPublishStartDate;
     }
 
-    public void setPublishStartDate(String mPublishStartDate) {
+    /**
+     * 放送開始日時設定.
+     * @param mPublishStartDate 放送開始日時
+     */
+    public void setPublishStartDate(final String mPublishStartDate) {
         this.mPublishStartDate = mPublishStartDate;
     }
 
+    /**
+     * 放送終了日時取得.
+     * @return 放送終了日時
+     */
     public String getPublishEndDate() {
         return mPublishEndDate;
     }
 
-    public void setPublishEndDate(String mPublishEndDate) {
+    /**
+     * 放送終了日時設定.
+     * @param mPublishEndDate 放送終了日時
+     */
+    public void setPublishEndDate(final String mPublishEndDate) {
         this.mPublishEndDate = mPublishEndDate;
     }
 
+    /**
+     * コンテンツタイプ取得.
+     * @return コンテンツタイプ
+     */
     public String getContentsType() {
         return mContentsType;
     }
 
-    public void setContentsType(String mContentsType) {
+    /**
+     * コンテンツタイプ設定.
+     * @param mContentsType コンテンツタイプ
+     */
+    public void setContentsType(final String mContentsType) {
         this.mContentsType = mContentsType;
     }
 
+    /**
+     * 視聴通知判定取得.
+     * @return 視聴通知判定
+     */
     public String isIsNotify() {
         return mIsNotify;
     }
 
-    public void setIsNotify(String mIsNotify) {
+    /**
+     * 視聴通知判定設定.
+     * @param mIsNotify 視聴通知判定
+     */
+    public void setIsNotify(final String mIsNotify) {
         this.mIsNotify = mIsNotify;
     }
 
+    /**
+     * クリップボタン取得.
+     * @return クリップボタン
+     */
     public ImageView getClipButton() {
         return mClipButton;
     }
 
-    public void setClipButton(ImageView mClipButton) {
+    /**
+     * クリップボタン設定.
+     * @param mClipButton クリップボタン
+     */
+    public void setClipButton(final ImageView mClipButton) {
         this.mClipButton = mClipButton;
     }
 
+    /**
+     * サービス種別取得.
+     * @return サービス種別
+     */
     public String getTvService() {
         return mTvService;
     }
 
-    public void setTvService(String mTvService) {
+    /**
+     * サービス種別設定.
+     * @param mTvService サービス種別
+     */
+    public void setTvService(final String mTvService) {
         this.mTvService = mTvService;
     }
 
+    /**
+     * dTVタイプ取得.
+     * @return dTVタイプ
+     */
     public String getDtv() {
         return mDtv;
     }
 
-    public void setDtv(String mDtv) {
+    /**
+     * dTVタイプ設定.
+     * @param mDtv dTVタイプ
+     */
+    public void setDtv(final String mDtv) {
         this.mDtv = mDtv;
     }
 
+    /**
+     * コンテンツID取得.
+     * @return コンテンツID
+     */
     public String getContentsId() {
         return mContentsId;
     }
 
-    public void setContentsId(String mContentsId) {
+    /**
+     * コンテンツID設定.
+     * @param mContentsId コンテンツID
+     */
+    public void setContentsId(final String mContentsId) {
         this.mContentsId = mContentsId;
     }
 
+    /**
+     * あらすじ取得.
+     * @return あらすじ
+     */
     public String getSynop() {
         return mSynop;
     }
 
-    public void setSynop(String mSynop) {
-        //TODO:レスポンスがないためダミー
+    /**
+     * あらすじ設定.
+     * @param mSynop あらすじ
+     */
+    public void setSynop(final String mSynop) {
+        //TODO :レスポンスがないためダミー
 //        this.mSynop = mSynop;
         this.mSynop = "";
     }
 
+    /**
+     * カテゴリID取得.
+     * @return カテゴリID
+     */
     public String getCategoryId() {
         return mCategoryId;
     }
 
-    public void setCategoryId(String mCategoryId) {
+    /**
+     * カテゴリID設定.
+     * @param mCategoryId カテゴリID
+     */
+    public void setCategoryId(final String mCategoryId) {
         this.mCategoryId = mCategoryId;
     }
 
+    /**
+     * 開始時刻取得.
+     * @return 開始時刻
+     */
     public String getStartViewing() {
         return mStartViewing;
     }
 
-    public void setStartViewing(String mStartViewing) {
+    /**
+     * 開始時刻設定.
+     * @param mStartViewing 開始時刻
+     */
+    public void setStartViewing(final String mStartViewing) {
         this.mStartViewing = mStartViewing;
     }
 
+    /**
+     * 終了時刻取得.
+     * @return 終了時刻
+     */
     public String getEndViewing() {
         return mEndViewing;
     }
 
-    public void setEndViewing(String mEndViewing) {
+    /**
+     * 終了時刻設定.
+     * @param mEndViewing 終了時刻
+     */
+    public void setEndViewing(final String mEndViewing) {
         this.mEndViewing = mEndViewing;
     }
 
+    /**
+     * reserved1取得.
+     * @return reserved1
+     */
     public String getReserved1() {
         return mReserved1;
     }
 
-    public void setReserved1(String mReserved1) {
+    /**
+     * reserved1設定.
+     * @param mReserved1 reserved1
+     */
+    public void setReserved1(final String mReserved1) {
         this.mReserved1 = mReserved1;
     }
 
+    /**
+     * reserved2取得.
+     * @return reserved2
+     */
     public String getReserved2() {
         return mReserved2;
     }
 
-    public void setReserved2(String mReserved2) {
+    /**
+     * reserved2設定.
+     * @param mReserved2 reserved2
+     */
+    public void setReserved2(final String mReserved2) {
         this.mReserved2 = mReserved2;
     }
 
+    /**
+     * reserved3取得.
+     * @return reserved3
+     */
     public String getReserved3() {
         return mReserved3;
     }
 
-    public void setReserved3(String mReserved3) {
+    /**
+     * reserved3設定.
+     * @param mReserved3 reserved3
+     */
+    public void setReserved3(final String mReserved3) {
         this.mReserved3 = mReserved3;
     }
 
+    /**
+     * reserved4取得.
+     * @return reserved4
+     */
     public String getReserved4() {
         return mReserved4;
     }
 
-    public void setReserved4(String mReserved4) {
+    /**
+     * reserved4設定.
+     * @param mReserved4 reserved4
+     */
+    public void setReserved4(final String mReserved4) {
         this.mReserved4 = mReserved4;
     }
 
+    /**
+     * reserved5取得.
+     * @return reserved5
+     */
     public String getReserved5() {
         return mReserved5;
     }
 
-    public void setReserved5(String mReserved5) {
+    /**
+     * reserved5設定.
+     * @param mReserved5 reserved5
+     */
+    public void setReserved5(final String mReserved5) {
         this.mReserved5 = mReserved5;
     }
 
+    /**
+     * クリップリクエストデータ取得.
+     * @return クリップリクエストデータ
+     */
     public ClipRequestData getRequestData() {
         return mRequestData;
     }
 
-    public void setRequestData(ClipRequestData ｍRequestData) {
-        this.mRequestData = ｍRequestData;
+    /**
+     * クリップリクエストデータ設定.
+     * @param mRequestData クリップリクエストデータ
+     */
+    public void setRequestData(final ClipRequestData mRequestData) {
+        this.mRequestData = mRequestData;
     }
 
+    /**
+     * ダウンロードフラグ取得.
+     * @return ダウンロードフラグ
+     */
     public int getDownloadFlg() {
         return mDownloadFlg;
     }
 
-    public void setDownloadFlg(int mDownloadFlg) {
+    /**
+     * ダウンロードフラグ設定.
+     * @param mDownloadFlg ダウンロードフラグ
+     */
+    public void setDownloadFlg(final int mDownloadFlg) {
         this.mDownloadFlg = mDownloadFlg;
     }
 
+    /**
+     * ダウンロードステータス（進捗）取得.
+     * @return ダウンロードステータス（進捗）
+     */
     public String getDownloadStatus() {
         return mDownloadStatus;
     }
 
-    public void setDownloadStatus(String mDownloadStatus) {
+    /**
+     * ダウンロードステータス（進捗）設定.
+     * @param mDownloadStatus ダウンロードステータス（進捗）
+     */
+    public void setDownloadStatus(final String mDownloadStatus) {
         this.mDownloadStatus = mDownloadStatus;
     }
 
+    /**
+     * チャンネルID取得.
+     * @return チャンネルID
+     */
     public String getChannelId() {
         return mChannelId;
     }
 
-    public void setChannelId(String mChannelId) {
+    /**
+     * チャンネルID設定.
+     * @param mChannelId チャンネルID
+     */
+    public void setChannelId(final String mChannelId) {
         this.mChannelId = mChannelId;
     }
 
@@ -525,99 +895,195 @@ public class ContentsData {
         this.mChannelNo = channelNo;
     }
 
+    /**
+     * おすすめ順取得.
+     * @return おすすめ順
+     */
     public String getRecommendOrder() {
         return mRecommendOrder;
     }
 
-    public void setRecommendOrder(String mRecommendOrder) {
+    /**
+     * おすすめ順設定.
+     * @param mRecommendOrder おすすめ順
+     */
+    public void setRecommendOrder(final String mRecommendOrder) {
         this.mRecommendOrder = mRecommendOrder;
     }
 
+    /**
+     * 画面ID取得.
+     * @return 画面ID
+     */
     public String getPageId() {
         return mPageId;
     }
 
-    public void setPageId(String mPageId) {
+    /**
+     * 画面ID設定.
+     * @param mPageId 画面ID
+     */
+    public void setPageId(final String mPageId) {
         this.mPageId = mPageId;
     }
 
+    /**
+     * ユーザグループID取得.
+     * @return ユーザグループID
+     */
     public String getGroupId() {
         return mGroupId;
     }
 
-    public void setGroupId(String mGroupId) {
+    /**
+     * ユーザグループID設定.
+     * @param mGroupId ユーザグループID
+     */
+    public void setGroupId(final String mGroupId) {
         this.mGroupId = mGroupId;
     }
 
+    /**
+     * レコメンド手法ID取得.
+     * @return レコメンド手法ID
+     */
     public String getRecommendMethodId() {
         return mRecommendMethodId;
     }
 
-    public void setRecommendMethodId(String mRecommendMethodId) {
+    /**
+     * レコメンド手法ID設定.
+     * @param mRecommendMethodId レコメンド手法ID
+     */
+    public void setRecommendMethodId(final String mRecommendMethodId) {
         this.mRecommendMethodId = mRecommendMethodId;
     }
 
+    /**
+     * dTVタイプ取得.
+     * @return dTVタイプ
+     */
     public String getDtvType() {
         return mDtvType;
     }
 
-    public void setDtvType(String mDtvType) {
+    /**
+     * dTVタイプ設定.
+     * @param mDtvType dTVタイプ
+     */
+    public void setDtvType(final String mDtvType) {
         this.mDtvType = mDtvType;
     }
 
+    /**
+     * クリップ可否取得.
+     * @return クリップ可否
+     */
     public boolean isClipExec() {
         return mClipExec;
     }
 
-    public void setClipExec(boolean mClipExec) {
+    /**
+     * クリップ可否設定.
+     * @param mClipExec クリップ可否
+     */
+    public void setClipExec(final boolean mClipExec) {
         this.mClipExec = mClipExec;
     }
 
+    /**
+     * クリップ未/済取得.
+     * @return クリップ未/済
+     */
     public boolean isClipStatus() {
         return mClipStatus;
     }
 
-    public void setClipStatus(boolean mClipStatus) {
+    /**
+     * クリップ未/済設定.
+     * @param mClipStatus クリップ未/済
+     */
+    public void setClipStatus(final boolean mClipStatus) {
         this.mClipStatus = mClipStatus;
     }
 
-    public void setDlFileFullPath(String path){
-        mDlFileFullPath=path;
+    /**
+     * ダウンロードパス設定.
+     * @param path ダウンロードパス
+     */
+    public void setDlFileFullPath(final String path) {
+        mDlFileFullPath = path;
     }
 
+    /**
+     * ダウンロードパス取得.
+     * @return ダウンロードパス
+     */
     public String getDlFileFullPath() {
         return mDlFileFullPath;
     }
 
+    /**
+     * mobileViewingFlg取得.
+     * @return mobileViewingFlg
+     */
     public String getMobileViewingFlg() {
         return mobileViewingFlg;
     }
 
-    public void setMobileViewingFlg(String mobileViewingFlg) {
+    /**
+     * mobileViewingFlg設定.
+     * @param mobileViewingFlg mobileViewingFlg
+     */
+    public void setMobileViewingFlg(final String mobileViewingFlg) {
         this.mobileViewingFlg = mobileViewingFlg;
     }
 
+    /**
+     * chsvod取得.
+     * @return chsvod
+     */
     public String getChsVod() {
         return mChsVod;
     }
 
-    public void setChsVod(String mChsVod) {
+    /**
+     * chsvod設定.
+     * @param mChsVod chsvod
+     */
+    public void setChsVod(final String mChsVod) {
         this.mChsVod = mChsVod;
     }
 
+    /**
+     * estFlg取得.
+     * @return estFlg
+     */
     public String getEstFlg() {
         return mEstFlg;
     }
 
-    public void setEstFlg(String mEstFlg) {
+    /**
+     * estFlg.
+     * @param mEstFlg estFlg
+     */
+    public void setEstFlg(final String mEstFlg) {
         this.mEstFlg = mEstFlg;
     }
 
+    /**
+     * クリップ状態に変更があった場合に真取得.
+     * @return クリップ状態に変更があった場合に真
+     */
     public boolean isClipStatusUpdate() {
         return mIsClipStatusUpdate;
     }
 
-    public void setClipStatusUpdate(boolean mClipStatusUpdate) {
+    /**
+     * クリップ状態設定.
+     * @param mClipStatusUpdate クリップ状態に変更があった場合に真
+     */
+    public void setClipStatusUpdate(final boolean mClipStatusUpdate) {
         this.mIsClipStatusUpdate = mClipStatusUpdate;
     }
 

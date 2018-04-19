@@ -18,18 +18,26 @@ class DlnaHikariChListItem {
 
     //mItemId
     public String mChannelNo = "";
-    //チャンネルタイトル
+    /**チャンネルタイトル.*/
     public String mTitle = "";
     //protocolInfo start
+    /**コンテンツサイズ.*/
     public String mSize = "";
+    /**総再生時間(ms).*/
     public String mDuration = "";
+    /**解像度.*/
     public String mResolution = "";
+    /**ビット毎秒.*/
     public String mBitrate = "";
+    /**ダウンロードUrl.*/
     public String mResUrl = "";
+    /**サムネイル.*/
     public String mThumbnail = "";
     //protocolInfo end
     //日付
+    /**日付.*/
     public String mDate = "";
+    /**ビデオタイプ.*/
     public String mVideoType = "";
 
     //to do: 使用する必要があれば、新しいフィールドをここで追加

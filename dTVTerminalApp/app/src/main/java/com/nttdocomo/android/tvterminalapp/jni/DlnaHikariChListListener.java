@@ -17,8 +17,8 @@ public interface DlnaHikariChListListener {
 
     /**
      * 機能：Listenerに、Dmsが消える時、コールされる.
-     * @param curInfo　　　カレントDlnaDMSInfo
-     * @param leaveDmsUdn　消えるDmsのudn名
+     * @param curInfo 　カレントDlnaDMSInfo
+     * @param leaveDmsUdn  消えるDmsのudn名
      */
     void onDeviceLeave(final DlnaDMSInfo curInfo, final String leaveDmsUdn);
 
