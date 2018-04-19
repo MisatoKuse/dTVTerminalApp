@@ -269,6 +269,8 @@ public class ContentDetailActivity extends BaseActivity implements
     /*dTVチャンネル起動*/
 
     /*ひかりTV起動*/
+    /*他サービス起動リクエストコード.*/
+    private static final int START_APPLICATION_REQUEST_CODE = 0;
     /**
      * カテゴリID(01).
      */
@@ -2637,7 +2639,7 @@ public class ContentDetailActivity extends BaseActivity implements
         Uri uri = Uri.parse(url);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        startActivityForResult(intent, START_APPLICATION_REQUEST_CODE);
     }
 
     /**
