@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class DlnaDMSInfo {
 
-    //DMSの配列
+    /**DMSの配列.*/
     private ArrayList<DlnaDmsItem> mDMSList = new ArrayList();
 
     /**

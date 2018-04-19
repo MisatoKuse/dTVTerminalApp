@@ -9,11 +9,15 @@ import java.util.HashMap;
 
 /**
  * todo 開発中ツールとして使う
- * リリース時、削除
+ * リリース時、削除.
  */
 public class FileListAll {
-
-    public HashMap<String, String> getList(File file) {
+    /**
+     * getList.
+     * @param file file
+     * @return fileList
+     */
+    public HashMap<String, String> getList(final File file) {
 
         HashMap<String, String> fileList = new HashMap<>();
         getFileList(file, fileList);
@@ -21,8 +25,9 @@ public class FileListAll {
     }
 
     /**
-     * @param path
-     * @param fileList
+     * getFileList.
+     * @param path path
+     * @param fileList fileList
      */
     private void getFileList(final File path, final HashMap<String, String> fileList) {
         if (path.isDirectory()) {

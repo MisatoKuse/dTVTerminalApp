@@ -50,20 +50,32 @@ import java.util.Set;
  */
 public class RecordedBaseFragment extends Fragment implements AdapterView.OnItemClickListener,
         ContentsAdapter.DownloadCallback {
-
+    /**コンテキスト.*/
     private Context mContext;
+    /**コンテンツデータ.*/
     private List<ContentsData> mContentsData;
+    /**録画コンテンツ詳細.*/
     public List<RecordedContentsDetailData> mContentsList;
+    /**コンテンツアダプター.*/
     private ContentsAdapter mContentsAdapter = null;
+    /**データプロバイダー.*/
     private DlDataProvider mDlDataProvider = null;
+    /**ダウンロードパラメータ.*/
     private DownloadParam downloadParam;
+    /**キュー.*/
     private final List<DlData> que = new ArrayList<>();
+    /**キューインデックス.*/
     public List<Integer> queIndex = new ArrayList<>();
     //private Handler mHandler;
+    /**PercentToUpdateUi.*/
     private static final int mPercentToUpdateUi = 1;
+    /**activity.*/
     private Activity activity;
+    /**チャンネル名キャッシュ.*/
 	private Set<String> mChannelNameCache;
+    /**キャンセルフラグ.*/
     private boolean mCanBeCanceled = false;
+    /**フラグメント名.*/
     private String mFragmentName = null;
 
     @Override
@@ -89,8 +101,9 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         mContentsData = new ArrayList<>();
 		mChannelNameCache = new HashSet<>();
     }
-
+    /**録画フラグメントビュー.*/
     private View mRecordedFragmentView;
+    /**r録画リストビュー.*/
     private ListView mRecordedListView;
 
     /**
@@ -288,7 +301,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     /**
      * チャンネルと時間を戻す.
      */
-	private void restoreChannelAndTime(){
+	private void restoreChannelAndTime() {
         if (null == queIndex || 0 == queIndex.size() || null == mRecordedListView) {
             return;
         }
@@ -665,7 +678,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      * @param percent パーセント
      */
     public void onDownloadProgressByBg(final int percent) {
-        if (percent < 0 ) {
+        if (percent < 0) {
             return;
         }
         if (queIndex.size() > 0) {

@@ -12,39 +12,63 @@ import java.util.Map;
  * 中継アプリからの処理結果応答を通知する情報.
  */
 public class RelayServiceResponseMessage implements Serializable {
+    /**result_ok.*/
     public static final int RELAY_RESULT_OK = 0;
+    /**result_error.*/
     public static final int RELAY_RESULT_ERROR = 1;
+    /**result_success.*/
     public static final int RELAY_RESULT_SUCCESS = 0;
+    /**internal_error.*/
     public static final int RELAY_RESULT_INTERNAL_ERROR = 11;
+    /**application_not_install.*/
     public static final int RELAY_RESULT_APPLICATION_NOT_INSTALL = 12;
+    /**application_id_notexist .*/
     public static final int RELAY_RESULT_APPLICATION_ID_NOTEXIST = 13;
+    /**application_start_failed .*/
     public static final int RELAY_RESULT_APPLICATION_START_FAILED = 14;
+    /**version_code_incompatible.*/
     public static final int RELAY_RESULT_VERSION_CODE_INCOMPATIBLE = 15;
+    /**contents_id_notexist.*/
     public static final int RELAY_RESULT_CONTENTS_ID_NOTEXIST = 16;
+    /**crid_notexist.*/
     public static final int RELAY_RESULT_CRID_NOTEXIST = 17;
+    /**chno_notexist.*/
     public static final int RELAY_RESULT_CHNO_NOTEXIST = 18;
+    /**command_argument_notexist.*/
     public static final int RELAY_RESULT_COMMAND_ARGUMENT_NOTEXIST = 19;
-
+    /**not_registered_service.*/
     public static final int RELAY_RESULT_NOT_REGISTERED_SERVICE = 21;
+    /**unregistered_user_id.*/
     public static final int RELAY_RESULT_UNREGISTERED_USER_ID = 22;
+    /**connection_timeout.*/
     public static final int RELAY_RESULT_CONNECTION_TIMEOUT = 23;
+    /**relay_service_busy.*/
     public static final int RELAY_RESULT_RELAY_SERVICE_BUSY = 24;
+    /**user_invalid_state.*/
     public static final int RELAY_RESULT_USER_INVALID_STATE = 25;
+    /**distination_unreachable.*/
     public static final int RELAY_RESULT_DISTINATION_UNREACHABLE = 26;
+    /**service_category_type_notexist.*/
     public static final int RELAY_RESULT_SERVICE_CATEGORY_TYPE_NOTEXIST = 27;
+    /**dtvt_application_version_incompatible.*/
     public static final int RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE = 28;
+    /**stb_relay_service_version_incompatible.*/
     public static final int RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE = 29;
-
     private static final long serialVersionUID = -6651018925196027761L;
-
+    /**result初期化.*/
     private int mResult = RELAY_RESULT_OK;
+    /**初期化.*/
     private int mResultCode = RELAY_RESULT_SUCCESS;
+    /**アプリケーションタイプ.*/
     private RemoteControlRelayClient.STB_APPLICATION_TYPES mApplicationTypes =
             RemoteControlRelayClient.STB_APPLICATION_TYPES.UNKNOWN;
+    /**request_command_types.*/
     private RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES mRequestCommandTypes =
             RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN;
+    /**dtvchannel_service_category_types.*/
     private RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES mDtvChannelServiceCategoryTypes =
             RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES.UNKNOWN;
+    /**h4d_service_category_types.*/
     private RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES mHikariTvServiceCategoryTypes =
             RemoteControlRelayClient.H4D_SERVICE_CATEGORY_TYPES.UNKNOWN;
 

@@ -4,19 +4,19 @@
 
 package com.nttdocomo.android.tvterminalapp.jni.activation;
 
+import android.content.Context;
+
+import com.digion.dixim.android.util.EnvironmentUtil;
+import com.digion.dixim.android.util.FileSystemUtil;
+import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-
-import com.nttdocomo.android.tvterminalapp.R;
-import com.digion.dixim.android.util.EnvironmentUtil;
-import com.digion.dixim.android.util.FileSystemUtil;
-import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-
-import android.content.Context;
 
 /**
  * DTCP-IPアクティベーション処理クラス.
@@ -27,20 +27,30 @@ public class ActivationEnvironment {
 	 */
 	private static final String[] SEED = {"cEksLk32", "OG3LaLiW", "okTyxETR", "riFc3DUX", "68YIyKRX",
 			"6p3MG86q", "3j4do3t9", "OpwJ6LAq", "y5b2pIlE", "odt5PW6b"};
+	/**ca_seed_index.*/
 	private static final int CA_SEED_INDEX = 2;
+	/**cert_seed_index.*/
 	private static final int CERT_SEED_INDEX = 9;
+	/**pvk_seed_index.*/
 	private static final int PVK_SEED_INDEX = 8;
 
 	/**
 	 * ファイル情報.
 	 */
 	public static class JniLibrary {
+		/**ライブラリ名.*/
 		public static final String name = "dixim_activation_helper_jni";
+		/**ca_pemキー.*/
 		public static final  String CA_PEM = "ca.pem";
+		/**cert_pemキー.*/
 		public static final String CERT_PEM = "cert.pem";
+		/**pvk_pemキー.*/
 		public static final String PVK_PEM = "pvk.pem";
+		/**ca_datキー.*/
 		public static final String CA_DAT = "ca.dat";
+		/**cert_datキー.*/
 		public static final String CERT_DAT = "cert.dat";
+		/**pvk_datキー.*/
 		public static final String PVK_DAT = "pvk.dat";
 	}
 
@@ -89,6 +99,7 @@ public class ActivationEnvironment {
 	 * @param context コンテキスト
 	 * @param resId リソースID
 	 * @param pathname ファイルパス
+	 * @throws IOException IOException
 	 */
 	private static void writeOut(final Context context, final int resId, final String pathname)
 			throws IOException {
@@ -137,6 +148,7 @@ public class ActivationEnvironment {
 	 * @param srcPath 変換元ファイルパス
 	 * @param destPath 変換先ファイルパス
 	 * @param seed seed情報
+	 * @throws IOException IOException
 	 */
 	private static void convert(final String srcPath, final String destPath, final String seed)
 			throws IOException {

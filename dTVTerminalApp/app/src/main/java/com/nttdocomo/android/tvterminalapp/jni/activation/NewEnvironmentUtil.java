@@ -14,8 +14,15 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * NewEnvironmentUtil.
+ */
 public class NewEnvironmentUtil extends EnvironmentUtil {
-
+    /**
+     * getDataApkCmWorkName.
+     * @param dataHome dataHome
+     * @return cmWorkName
+     */
     private static String getDataApkCmWorkName(final EnvironmentUtil.ACTIVATE_DATA_HOME dataHome) {
         String cmWorkName;
         switch (dataHome) {
@@ -36,6 +43,12 @@ public class NewEnvironmentUtil extends EnvironmentUtil {
         return cmWorkName;
     }
 
+    /**
+     * getPrivateDataHome.
+     * @param destDataHomeDir destDataHomeDir
+     * @param dataHomeEnum dataHomeEnum
+     * @return ファイルパスー
+     */
     private static String getPrivateDataHome(final String destDataHomeDir, final EnvironmentUtil.ACTIVATE_DATA_HOME dataHomeEnum) {
         File f = new File(destDataHomeDir, getDataApkCmWorkName(dataHomeEnum));
         if (!f.exists()) {

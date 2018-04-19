@@ -14,6 +14,7 @@ import com.nttdocomo.android.tvterminalapp.service.download.DtcpDownloadParam;
  * 機能：DlnaからActivityにDownload I/Fを提供するクラス.
  */
 public class DlnaProvDownload {
+    /**DlnaInterfaceDl.*/
     private DlnaInterfaceDl mDlnaInterfaceDl = null;
 
     /**
@@ -30,6 +31,9 @@ public class DlnaProvDownload {
     /**
      * 機能：Listenを始める.
      * @param lis listener
+     * @param context context
+     * @param savePath savePath
+     * @param percentToNotify  percentToNotify
      * @return 成功true
      */
     public DlnaDownloadRet startListen(final DlnaDlListener lis, final Context context, final String savePath, final int percentToNotify) {
@@ -45,6 +49,7 @@ public class DlnaProvDownload {
 
     /**
      * 機能：ダウンロード開始.
+     * @param param param
      * @return 成功true
      */
     public DlnaDownloadRet download(final DtcpDownloadParam param) {
@@ -82,7 +87,7 @@ public class DlnaProvDownload {
     }
 
     /**
-     *
+     *cancel.
      */
     public void cancel() {
        if (null != mDlnaInterfaceDl) {
@@ -90,10 +95,18 @@ public class DlnaProvDownload {
        }
     }
 
+    /**
+     * initGlobalDl.
+     * @param saveDir saveDir
+     * @return true or false
+     */
     public static boolean initGlobalDl(final String saveDir) {
         return DlnaInterfaceDl.initGlobalDl(saveDir);
     }
 
+    /**
+     * uninitGlobalDl.
+     */
     public static void uninitGlobalDl() {
         DlnaInterfaceDl.uninitGlobalDl();
     }
