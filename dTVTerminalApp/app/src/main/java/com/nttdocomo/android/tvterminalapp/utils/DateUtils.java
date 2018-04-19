@@ -843,8 +843,8 @@ public class DateUtils {
     /**
      * ひかりTV内dch_見逃しの31日以上判定.
      *
-     * @param date 現在
-     * @return VOD、TV、その他
+     * @param date 判定日付
+     * @return true 32以上 false 其の他
      */
     public static boolean isOver31Day(final long date) {
         Calendar cal = Calendar.getInstance();
@@ -862,21 +862,56 @@ public class DateUtils {
     /**
      * ひかりTV内dch_見逃しの31日以内判定.
      *
-     * @param date 現在
-     * @return VOD、TV、その他
+     * @param date 判定日付
+     * @return true 31以内 false 其の他
      */
     public static boolean isIn31Day(final long date) {
         Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
         Date nowDate = cal.getTime();
         cal.setTimeInMillis(date * 1000);
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
-        Date endDate = cal.getTime();
         cal.add(Calendar.DAY_OF_MONTH, -AVAILABLE_BASE_DAY);
         Date pre31Date = cal.getTime();
-        return nowDate.compareTo(pre31Date) == 1 && nowDate.compareTo(endDate) != 1;
+        return nowDate.compareTo(pre31Date) == 1;
+    }
+
+    /**
+     * 検レコの31日以内判定.
+     *
+     * @param date 判定日付
+     * @return true 31以内 false 其の他
+     */
+    public static boolean isIn31Day(final String date) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date nowDate = cal.getTime();
+        Date startDate;
+        Date endDate;
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DD_HH_MM_SS, Locale.JAPAN);
+        try {
+            endDate = sdf.parse(date);
+            cal.setTime(endDate);
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+            cal.add(Calendar.DAY_OF_MONTH, -AVAILABLE_BASE_DAY);
+            startDate = cal.getTime();
+            return nowDate.compareTo(startDate) == 1;
+        } catch (ParseException e) {
+            DTVTLogger.debug(e);
+        }
+        return false;
     }
 
     /**
@@ -891,6 +926,10 @@ public class DateUtils {
         }
         long startTime = Long.parseLong(startPublishDate);
         Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
         Date nowDate = cal.getTime();
         cal.setTimeInMillis(startTime * 1000);
         cal.set(Calendar.HOUR_OF_DAY, 0);
