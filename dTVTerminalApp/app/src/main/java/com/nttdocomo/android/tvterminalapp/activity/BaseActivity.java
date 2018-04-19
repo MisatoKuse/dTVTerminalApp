@@ -35,6 +35,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.Tracker;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.common.ChildContentListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
@@ -69,6 +70,7 @@ import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.SettingFileMetaData;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
@@ -78,7 +80,6 @@ import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessa
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
-import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DeviceStateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.RuntimePermissionUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -99,15 +100,13 @@ import java.util.LinkedList;
  */
 @SuppressLint("Registered")
 public class BaseActivity extends FragmentActivity implements
-        DlnaDevListListener
-        , View.OnClickListener
-        , RemoteControllerView.OnStartRemoteControllerUIListener
-        , ClipRegistWebClient.ClipRegistJsonParserCallback
-        , ClipDeleteWebClient.ClipDeleteJsonParserCallback
-        , DaccountControl.DaccountControlCallBack
-        , CustomDialog.DismissCallback
-{
-
+        DlnaDevListListener,
+        View.OnClickListener,
+        RemoteControllerView.OnStartRemoteControllerUIListener,
+        ClipRegistWebClient.ClipRegistJsonParserCallback,
+        ClipDeleteWebClient.ClipDeleteJsonParserCallback,
+        DaccountControl.DaccountControlCallBack,
+        CustomDialog.DismissCallback {
     /**
      * ヘッダーBaseレイアウト.
      */
@@ -189,6 +188,10 @@ public class BaseActivity extends FragmentActivity implements
      */
     private boolean mIsStbStatusOn = false;
     /**
+     * GoogleAnalytics用.
+     */
+    private Tracker mTracker;
+    /**
      * GooglePlayのドコテレアプリページ.
      * 現在
      */
@@ -218,11 +221,25 @@ public class BaseActivity extends FragmentActivity implements
     private static final int MIN_CLICK_DELAY_TIME = 500;
 
     /**
+     * スプラッシュ画面用のdアカウント用ダイアログ表示識別文字列.
+     */
+    protected final static String SHOW_D_ACCOUNT_DIALOG = "SHOW_D_ACCOUNT_DIALOG";
+    /**
+     * スプラッシュ画面用のファイル設定ファイル用ダイアログ表示識別文字列.
+     */
+    protected final static String SHOW_SETTING_FILE_DIALOG = "SHOW_SETTING_FILE_DIALOG";
+    /**
+     * スプラッシュ画面用のファイル設定ファイル用ダイアログ表示内容表示識別文字列.
+     */
+    protected final static String SHOW_SETTING_FILE_DIALOG_DATA
+            = "SHOW_SETTING_FILE_DIALOG_DATA";
+
+    /**
      * dアカウント設定アプリ登録処理.
      */
     protected DaccountControl mDAccountControl = null;
     /**
-     * 初回dアカウント取得失敗時のダイアログを呼び出すハンドラー
+     * 初回dアカウント取得失敗時のダイアログを呼び出すハンドラー.
      */
     private Handler mFirstDaccountErrorHandler = null;
 
@@ -248,7 +265,7 @@ public class BaseActivity extends FragmentActivity implements
      */
     private CustomDialog mShowDialog = null;
     /**
-     * 設定ファイル処理クラス
+     * 設定ファイル処理クラス.
      */
     protected ProcessSettingFile mCheckSetting = null;
     /**
@@ -716,9 +733,37 @@ public class BaseActivity extends FragmentActivity implements
         if (null != dlnaDmsItem && dlnaDmsItem.mIPAddress != null && dlnaDmsItem.mIPAddress.length() > 0) {
             mRemoteControlRelayClient.setRemoteIp(dlnaDmsItem.mIPAddress);
         }
+
+        //インテントにダイアログ表示依頼があるかどうかを見る
+        checkDialogShowRequest();
+
         DTVTLogger.end();
     }
 
+    /**
+     * スプラッシュ画面からダイアログの表示の依頼を受けたかどうかのチェック
+     */
+    void checkDialogShowRequest() {
+        DTVTLogger.start();
+        Intent intent = getIntent();
+
+        if(intent.getBooleanExtra(SHOW_D_ACCOUNT_DIALOG,false)) {
+            //dアカウント取得失敗エラーの表示依頼があったので、表示する
+            showDAccountErrorDialog();
+        }
+
+        if(intent.getBooleanExtra(SHOW_SETTING_FILE_DIALOG,false)) {
+            //設定ファイルエラーダイアログの表示依頼があったので、表示する
+            ProcessSettingFile settingFileInfo = new ProcessSettingFile(this,false);
+
+            Bundle bundle = intent.getBundleExtra(SHOW_SETTING_FILE_DIALOG_DATA);
+            SettingFileMetaData metaData =
+                    (SettingFileMetaData) bundle.getSerializable(SHOW_SETTING_FILE_DIALOG_DATA);
+            DTVTLogger.debug("metaData=" + metaData);
+            settingFileInfo.processControlEmulate(metaData);
+        }
+        DTVTLogger.end();
+    }
     /**
      * 機能：onResume
      * Sub classにて、super.onResume()をコールする必要がある.
@@ -728,6 +773,15 @@ public class BaseActivity extends FragmentActivity implements
         super.onResume();
         DTVTLogger.start();
         TvtApplication app = (TvtApplication) getApplication();
+
+        //Googleアナリティクスに画面名を送信する
+        mTracker = app.getDefaultTracker();
+        //TODO : 難読化を行うと、getClassがランダムな名前になる模様。その前に個別の画面名の設定が必要になる。
+        //TODO : 近いうちのスプリントで詳細な情報出力設定が行われる筈なので、ひとまず問題は無い。
+        mTracker.setScreenName(this.getClass().getSimpleName());
+        mTracker.send(
+                new com.google.android.gms.analytics.HitBuilders.ScreenViewBuilder().build());
+
         // BG → FG でのonResumeかを判定
         if (app.getIsChangeApplicationVisible()) {
             if (DeviceStateUtils.isRootDevice()) {
@@ -1016,12 +1070,6 @@ public class BaseActivity extends FragmentActivity implements
                         break;
                 }
                 break;
-            case RelayServiceResponseMessage.RELAY_RESULT_APPLICATION_ID_NOTEXIST:
-            case RelayServiceResponseMessage.RELAY_RESULT_APPLICATION_START_FAILED:
-            case RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
-                message = getResources().getString(R.string.main_setting_stb_application_launch_fail);
-                showErrorDialog(message);
-                break;
             case RelayServiceResponseMessage.RELAY_RESULT_VERSION_CODE_INCOMPATIBLE:
                 switch (appId) {
                     case DTV:
@@ -1055,6 +1103,9 @@ public class BaseActivity extends FragmentActivity implements
                 setStbStatus(false);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
+            case RelayServiceResponseMessage.RELAY_RESULT_APPLICATION_ID_NOTEXIST:
+            case RelayServiceResponseMessage.RELAY_RESULT_APPLICATION_START_FAILED:
+            case RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
             default:
                 message = getResources().getString(R.string.main_setting_stb_application_launch_fail);
                 showErrorDialog(message);
@@ -1198,7 +1249,7 @@ public class BaseActivity extends FragmentActivity implements
      * @return カレントユーザ名
      */
     public String getUserName() {
-        //TODO:実装中のため仮の値を返却
+        //TODO :実装中のため仮の値を返却
         return "Test User";
     }
 
@@ -1704,8 +1755,10 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * dアカウントOTTの取得契機で呼ばれる.
+     *
+     * @param result 正常終了ならばtrue
      */
-    protected void onDaccountOttGetComplete() {
+    protected void onDaccountOttGetComplete(final boolean result) {
     }
 
     @Override
@@ -1727,7 +1780,7 @@ public class BaseActivity extends FragmentActivity implements
         //初回dアカウント取得が行われていた場合は終わらせる
         SharedPreferencesUtils.setFirstExecEnd(getApplicationContext());
 
-        onDaccountOttGetComplete();
+        onDaccountOttGetComplete(result);
         //dアカウントの登録結果を受け取るコールバック
         if (result) {
             //処理に成功したので、帰る
@@ -1742,19 +1795,8 @@ public class BaseActivity extends FragmentActivity implements
             mFirstDaccountErrorHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    //初回実行時に限り、エラーダイアログを表示する。現状エラー文言は1種類なので、文言切り替えは必要ない
-                    CustomDialog errorDialog = new CustomDialog(
-                            BaseActivity.this, CustomDialog.DialogType.ERROR);
-
-                    //失敗原因コードを取得
-                    DTVTLogger.debug("daccount error code = " + mDAccountControl.getResult());
-
-                    errorDialog.setContent(getString(R.string.d_account_regist_error));
-                    //次のダイアログを呼ぶ為の処理
-                    errorDialog.setDialogDismissCallback(BaseActivity.this);
-
-                    //showDialogの代わり・重複ダイアログ実現用
-                    offerDialog(errorDialog);
+                    //初回実行時に限り、エラーダイアログを表示する。
+                    showDAccountErrorDialog();
 
                     //ダイアログを出す場合はここで処理中フラグをリセット
                     mDAccountControl.setDAccountBusy(false);
@@ -1777,6 +1819,30 @@ public class BaseActivity extends FragmentActivity implements
         //登録はできないので、こちらに来るのは自然な動作となる。
         DTVTLogger.end("d account error. no signature?");
     }
+
+    /**
+     * dアカウントダイアログ表示を行う.
+     *
+     * (オーバーライドの為にprotected指定で分離)
+     */
+    protected void showDAccountErrorDialog() {
+        //現状エラー文言は1種類なので、文言切り替えは必要ない
+        CustomDialog errorDialog = new CustomDialog(
+                BaseActivity.this, CustomDialog.DialogType.ERROR);
+
+        //失敗原因コードを取得
+        if(mDAccountControl != null) {
+            DTVTLogger.debug("daccount error code = " + mDAccountControl.getResult());
+        }
+
+        errorDialog.setContent(getString(R.string.d_account_regist_error));
+        //次のダイアログを呼ぶ為の処理
+        errorDialog.setDialogDismissCallback(BaseActivity.this);
+
+        //showDialogの代わり・重複ダイアログ実現用
+        offerDialog(errorDialog);
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -1908,7 +1974,7 @@ public class BaseActivity extends FragmentActivity implements
             //dアカウントアプリのバインドを解除する
             final DaccountGetOTT getOtt = new DaccountGetOTT();
             if (getOtt != null) {
-                DTVTLogger.debug("startAvtivity before unbind");
+                DTVTLogger.debug("startActivity before unbind");
                 //他の画面に遷移する前に、dアカウントアプリとの連携を終わらせる
                 getOtt.daccountServiceEnd();
             }
@@ -2104,10 +2170,10 @@ public class BaseActivity extends FragmentActivity implements
      */
     private void checkCommunication() {
         DTVTLogger.start();
-        // SIMからMCC情報取得　日本(440,441) 以外で海外判定となる
+        // ネットワーク網からMCC情報取得　日本(440,441) 以外で海外判定となる
         TelephonyManager telManager = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
-        DTVTLogger.debug("mcc + mnc : " + telManager.getSimOperator());
-        String strMccMnc = telManager.getSimOperator();
+        DTVTLogger.debug("mcc + mnc : " + telManager.getNetworkOperator());
+        String strMccMnc = telManager.getNetworkOperator();
         // MCC情報取得判定
         if (strMccMnc.length() > 0) {
             String strMcc = strMccMnc.substring(0, 3);
@@ -2130,7 +2196,7 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     /**
-     * オーバーライド先でdismissDialogを無効化する為に独立化
+     * オーバーライド先でdismissDialogを無効化する為に独立化.
      */
     protected void dismissDialogOnPause() {
         dismissDialog();
@@ -2209,7 +2275,7 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * アプリがBGからFGに遷移した際のResume処理.
      */
-    private void onReStartCommunication() {
+    protected void onReStartCommunication() {
         DTVTLogger.start();
         setRelayClientHandler();
         mRemoteControlRelayClient.resetIsCancel();
@@ -2234,11 +2300,22 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * 設定ファイルのチェック.
+     *
      * (このタイミングでチェックを行うと、自ずとアプリ起動時か、BG→FG遷移時でのチェックになる)
      */
-    void checkSettingFile() {
+    protected void checkSettingFile() {
+        //ダイアログ非表示スイッチ・ダイアログは表示
+        boolean noDialogSw = false;
+
+        //スプラッシュ画面かどうかの確認
+        if(this instanceof LaunchActivity) {
+            //スプラッシュ画面ならばダイアログは表示しない
+            noDialogSw = true;
+        }
+
         //アプリ起動時か、BG→FG遷移時は設定ファイルの処理を呼び出す
-        mCheckSetting = new ProcessSettingFile(this);
+        mCheckSetting = new ProcessSettingFile(this,noDialogSw);
+
         //今回はコールバックは使用しないので、ヌルを指定する
         mCheckSetting.controlAtSettingFile(null);
     }
@@ -2248,7 +2325,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param disconnectionFlag 通信を止めるならばtrue
      */
-    private void setOttDisconnectionFlag(boolean disconnectionFlag) {
+    private void setOttDisconnectionFlag(final boolean disconnectionFlag) {
         DTVTLogger.start();
         final DaccountGetOTT getOtt = new DaccountGetOTT();
         if (getOtt != null) {
@@ -2350,6 +2427,7 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * データが取得失敗した時のダイアログ表示.
+     * @param context コンテキスト
      */
     public void showDialogToClose(final Context context) {
         //文字列リソースを取得して、メッセージ指定側に処理を移譲
@@ -2397,11 +2475,28 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * ダイアログをキューに追加.
+     *
      * (設定ファイル処理から呼ぶためにパブリック化)
      * @param dialog キュー表示するダイアログ
      */
-    public void offerDialog(CustomDialog dialog) {
+    public void offerDialog(final CustomDialog dialog) {
         DTVTLogger.start();
+
+        //現在表示しているダイアログと新たに蓄積されるダイアログの本文を比較する
+        String contentText = dialog.getContent();
+        if (mShowDialog != null && mShowDialog.getContent().equals(contentText)) {
+            //現在表示しているダイアログと本文が同じなので、蓄積せずに帰る
+            return;
+        }
+
+        //蓄積しているキューの中に同じ文言の物があるかどうかをチェック
+        for (CustomDialog customDialog : mLinkedList) {
+            if (customDialog.getContent().equals(contentText)) {
+                //本文が同じ物が見つかったので、蓄積せずに帰る
+                return;
+            }
+        }
+
         mLinkedList.offer(dialog);
         pollDialog();
         DTVTLogger.end();
@@ -2417,7 +2512,7 @@ public class BaseActivity extends FragmentActivity implements
             mShowDialog = mLinkedList.poll();
             mShowDialog.showDialog();
         } else {
-            if(mShowDialog != null) {
+            if (mShowDialog != null) {
                 startNextProcess();
                 DTVTLogger.debug("show=" + mShowDialog.isShowing()
                         + ":mLinkedList.size()=" + mLinkedList.size());
@@ -2427,7 +2522,7 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     /**
-     * 次に行う処理があれば、オーバーライドしてください。
+     * 次に行う処理があれば、オーバーライドしてください.
      */
     protected void startNextProcess() {
         DTVTLogger.start();
@@ -2440,7 +2535,7 @@ public class BaseActivity extends FragmentActivity implements
      * @return キューの個数。ダイアログが無い場合はゼロ
      */
     public int getDialogQurCount() {
-        if(mShowDialog == null) {
+        if (mShowDialog == null) {
             //ダイアログが存在していないならばゼロを返す
             return 0;
         }
@@ -2451,7 +2546,7 @@ public class BaseActivity extends FragmentActivity implements
         }
 
         //今表示中ならば1を返す
-        if(mShowDialog.isShowing()) {
+        if (mShowDialog.isShowing()) {
             return 1;
         }
 
@@ -2461,6 +2556,11 @@ public class BaseActivity extends FragmentActivity implements
 
     @Override
     public void allDismissCallback() {
+        if(mShowDialog != null) {
+            //次のダイアログの判定の為に、今のダイアログの文言をクリアする
+            mShowDialog.clearContentText();
+        }
+
         pollDialog();
     }
 

@@ -97,6 +97,8 @@ public class ClipListBaseFragment extends Fragment
 
     /**
      * 各タブ画面は別々に実現して表示されること.
+     * @param container container
+     * @return タブ画面
      */
     private View initView(final ViewGroup container) {
         if (mClipListData == null) {
@@ -133,8 +135,14 @@ public class ClipListBaseFragment extends Fragment
 
         //スクロールの上下方向検知用のリスナーを設定
         mTvListView.setOnTouchListener(this);
-
-        mClipMainAdapter = new ContentsAdapter(getContext(), mClipListData, ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_TV);
+        int position = getArguments().getInt(ClipListFragmentFactory.POSITION);
+        ContentsAdapter.ActivityTypeItem type;
+        if (position == 0) {
+            type = ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_TV;
+        } else {
+            type = ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_VIDEO;
+        }
+        mClipMainAdapter = new ContentsAdapter(getContext(), mClipListData, type);
         mTvListView.setAdapter(mClipMainAdapter);
     }
 

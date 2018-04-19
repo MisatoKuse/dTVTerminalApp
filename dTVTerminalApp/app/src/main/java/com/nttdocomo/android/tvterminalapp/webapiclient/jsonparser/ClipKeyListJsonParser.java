@@ -21,7 +21,7 @@ public class ClipKeyListJsonParser {
     // オブジェクトクラスの定義
     private ClipKeyListResponse mClipKeyListResponse;
 
-    public static final String[] LIST_PARAM = {JsonConstants.META_RESPONSE_CRID,
+    private static final String[] LIST_PARAM = {JsonConstants.META_RESPONSE_CRID,
             JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_EVENT_ID,
             JsonConstants.META_RESPONSE_TYPE, JsonConstants.META_RESPONSE_TITLE_ID};
 
@@ -53,7 +53,9 @@ public class ClipKeyListJsonParser {
             // statusの値を取得し、Mapに格納
             if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {
                 String status = jsonObj.getString(JsonConstants.META_RESPONSE_STATUS);
-                mClipKeyListResponse.setStatus(status);
+                if(mClipKeyListResponse != null) {
+                    mClipKeyListResponse.setStatus(status);
+                }
             }
             if (!jsonObj.isNull(JsonConstants.META_RESPONSE_IS_UPDATE)) {
                 boolean isUpdate = jsonObj.getBoolean(JsonConstants.META_RESPONSE_IS_UPDATE);

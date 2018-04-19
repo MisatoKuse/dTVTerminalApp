@@ -328,8 +328,9 @@ public class DtvContentsDetailFragment extends Fragment {
             mStaffLayout.setVisibility(View.GONE);
         }
         if (!TextUtils.isEmpty(contentsDetailInfo)) {
-            mTxtTitleShortDetail.setText(contentsDetailInfo);
-            mTxtTitleAllDetail.setText(contentsDetailInfo);
+            final String replaceString = contentsDetailInfo.replace("\\n", "\n");
+            mTxtTitleShortDetail.setText(replaceString);
+            mTxtTitleAllDetail.setText(replaceString);
         }
         setClipButton(mClipButton);
     }
@@ -420,7 +421,7 @@ public class DtvContentsDetailFragment extends Fragment {
         List<Integer> labelStatusList = new ArrayList<>();
         //NEW アイコン
         if (DBUtils.isNumber(mOtherContentsDetailData.getmStartDate())
-                && DateUtils.isOneWeek(mOtherContentsDetailData.getmStartDate())) {
+                && DateUtils.isInOneWeek(mOtherContentsDetailData.getmStartDate())) {
             labelStatusList.add(R.mipmap.label_status_new);
         }
         //4Kアイコン
@@ -629,7 +630,7 @@ public class DtvContentsDetailFragment extends Fragment {
         String date = DateUtils.formatEpochToString(endDate);
 
         if (mTxtChannelDate != null) {
-            String untilDate = StringUtils.getConnectStrings(date, getString(R.string.contents_detail_until_date));
+            String untilDate = StringUtils.getConnectStrings(date, getString(R.string.common_until));
             mTxtChannelDate.setText(untilDate);
         }
     }

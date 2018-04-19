@@ -42,7 +42,10 @@
       <property name="max" value="160"/>
     </module>
   </module>
-  <module name="JavadocPackage"/>
+    <!--
+      [Missing package-info.java file]警告をなくすために、
+  　　<module name="JavadocPackage"/>を無効化にする
+  -->
   <module name="RegexpSingleline">
     <property name="format" value="\s+$"/>
     <property name="message" value="Line has trailing spaces."/>

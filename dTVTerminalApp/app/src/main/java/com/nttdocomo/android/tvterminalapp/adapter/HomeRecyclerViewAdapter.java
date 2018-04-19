@@ -5,8 +5,6 @@
 package com.nttdocomo.android.tvterminalapp.adapter;
 
 import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -20,8 +18,6 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
-import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
@@ -57,6 +53,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      * サムネイル取得プロバイダー.
      */
     private final ThumbnailProvider mThumbnailProvider;
+    /**
+     * サムネイル取得プロバイダー.
+     */
+    private ItemClickCallback mItemClickCallback;
     /**
      * コンテンツ種別を判別するためのインデックス.
      */
@@ -110,13 +110,29 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      */
     private final static int HOME_CONTENTS_SORT_VIDEO = HOME_CONTENTS_SORT_CHANNEL + 4;
     /**
+     * 視聴中ビデオ(ホーム).
+     */
+    private final static int HOME_CONTENTS_SORT_WATCHING_VIDEO = HOME_CONTENTS_SORT_CHANNEL + 5;
+    /**
      * カテゴリ クリップ[テレビ](ホーム).
      */
     private final static int HOME_CONTENTS_SORT_TV_CLIP = HOME_CONTENTS_SORT_CHANNEL + 6;
     /**
+     * カテゴリ クリップ[ビデオ](ホーム).
+     */
+    private final static int HOME_CONTENTS_SORT_VOD_CLIP = HOME_CONTENTS_SORT_CHANNEL + 7;
+    /**
+     * プレミアムビデオ(ホーム).
+     */
+    private final static int HOME_CONTENTS_SORT_PREMIUM_VIDEO = HOME_CONTENTS_SORT_CHANNEL + 8;
+    /**
+     * レンタルビデオ(ホーム).
+     */
+    private final static int HOME_CONTENTS_SORT_RENTAL_VIDEO = HOME_CONTENTS_SORT_CHANNEL + 9;
+    /**
      * カテゴリ 今日のテレビランキング(ランキングトップ画面).
      */
-    private final static int RANKING_CONTENTES_TODAY_SORT = 20;
+    public final static int RANKING_CONTENTES_TODAY_SORT = 25;
     /**
      * カテゴリ 週間テレビランキング(ランキングトップ画面).
      */
@@ -200,6 +216,19 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     private final static String categoryId_Hikari_dtv = "10";
 
     /**
+     * Itemクリック動作でコールバック.
+     */
+    public interface ItemClickCallback {
+        /**
+         * アイテムクリックコールバック.
+         *
+         * @param contentsData クリックしたデータ
+         * @param detailData 遷移渡すデータ
+         */
+        void onItemClickCallBack(ContentsData contentsData, OtherContentsDetailData detailData);
+    }
+
+    /**
      * コンストラクタ.
      *
      * @param context コンテキスト
@@ -212,6 +241,15 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         this.mContext = context;
         this.mIndex = index;
         mThumbnailProvider = new ThumbnailProvider(context);
+    }
+
+    /**
+     * コールバックを設定.
+     *
+     * @param mItemClickCallback コールバック
+     */
+    public void setOnItemClickCallBack(final ItemClickCallback mItemClickCallback) {
+        this.mItemClickCallback = mItemClickCallback;
     }
 
     /**
@@ -274,6 +312,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         return viewHolder;
     }
 
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final int i) {
         if (getItemViewType(i) == TYPE_FOOTER) {
@@ -305,13 +344,24 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
                 setRecommendServiceIcon(contentsData, viewHolder);
                 break;
             case HOME_CONTENTS_SORT_RECOMMEND_VOD:
+                setRecommendVodInfo(contentsData, viewHolder);
                 setRecommendServiceIcon(contentsData, viewHolder);
                 break;
             case HOME_CONTENTS_SORT_TODAY:
             case RANKING_CONTENTES_TODAY_SORT:
             case RANKING_CONTENTES_WEEK_SORT:
-                //今日のテレビランキング/週間テレビランキング (1行目:タイトル 2行目:放送時間)
-                setTvRankingInfo(contentsData, viewHolder);
+            case HOME_CONTENTS_SORT_TV_CLIP:
+                //今日のテレビランキング/週間テレビランキング (1行目:タイトル 2行目:放送期間)
+                setRankingInfo(contentsData, viewHolder, false);
+                break;
+            case HOME_CONTENTS_SORT_WATCHING_VIDEO:
+            case HOME_CONTENTS_SORT_VOD_CLIP:
+            case HOME_CONTENTS_SORT_PREMIUM_VIDEO:
+            case HOME_CONTENTS_SORT_RENTAL_VIDEO:
+            case RANKING_CONTENTES_VIDEO_SORT:
+            case HOME_CONTENTS_SORT_VIDEO:
+                //ビデオランキングテレビランキング (1行目:タイトル 2行目:放送期限)
+                setRankingInfo(contentsData, viewHolder, true);
                 break;
             default:
                 //上記以外 (タイトルが2行)
@@ -387,15 +437,8 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         viewHolder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                HomeActivity homeActivity = (HomeActivity) mContext;
-                if (ContentUtils.isChildContentList(contentsData)) {
-                    homeActivity.startChildContentListActivity(contentsData);
-                } else {
-                    Intent intent = new Intent(mContext, ContentDetailActivity.class);
-                    ComponentName componentName = mContext.getComponentName();
-                    intent.putExtra(DTVTConstants.SOURCE_SCREEN, componentName.getClassName());
-                    intent.putExtra(detailData.getRecommendFlg(), detailData);
-                    homeActivity.startActivity(intent);
+                if (mItemClickCallback != null) {
+                    mItemClickCallback.onItemClickCallBack(contentsData, detailData);
                 }
             }
         });
@@ -458,9 +501,18 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         String startTime = String.valueOf(DateUtils.getEpochTime(contentsData.getLinearStartDate()) / 1000);
         String endTime = String.valueOf(DateUtils.getEpochTime(contentsData.getLinearEndDate()) / 1000);
         String channelName = contentsData.getChannelName();
-        String date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(startTime)),
-                DateUtils.formatEpochToStringOpeLog(Long.parseLong(endTime)), channelName);
-
+        ContentUtils.ContentsType contentsType = ContentUtils.getContentsTypeByPlala(contentsData.getDispType(),
+                contentsData.getTvService(), contentsData.getContentsType(), contentsData.getAvailEndDate(),
+                contentsData.getVodStartDate(), contentsData.getVodEndDate());
+        String date;
+        if (contentsType == ContentUtils.ContentsType.TV || contentsType == ContentUtils.ContentsType.OTHER) {
+            date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(startTime)),
+                    DateUtils.formatEpochToStringOpeLog(Long.parseLong(endTime)), channelName);
+        } else {
+            date = StringUtils.getConnectStrings(
+                    DateUtils.addDateLimit(
+                            mContext, contentsData, contentsType), mContext.getString(R.string.home_contents_pipe), channelName);
+        }
         viewHolder.mTime.setText(date);
     }
 
@@ -477,19 +529,63 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     }
 
     /**
-     * 今日のテレビランキングの2段目に表示する情報を設定する.
+     * おすすめビデオの2段目に表示する情報を設定する.
      *
      * @param contentsData コンテンツデータ
      * @param viewHolder ViewHolder
      */
-    private void setTvRankingInfo(final ContentsData contentsData, final ViewHolder viewHolder) {
+    private void setRecommendVodInfo(final ContentsData contentsData, final ViewHolder viewHolder) {
+        if (DateUtils.isBefore(contentsData.getStartViewing())) {
+            viewHolder.mTime.setText(DateUtils.getContentsDateString(mContext, contentsData.getStartViewing(), true));
+            viewHolder.mTime.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.mTime.setText("");
+            viewHolder.mTime.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * ランキングの2段目に表示する情報を設定する.
+     *
+     * @param contentsData コンテンツデータ
+     * @param viewHolder ViewHolder
+     * @param isVod vodフラグ
+     */
+    private void setRankingInfo(final ContentsData contentsData, final ViewHolder viewHolder, final boolean isVod) {
         String availStartDate = contentsData.getLinearStartDate();
         if (availStartDate == null) {
             availStartDate = "0"; // TODO:クラッシュのため暫定対応
         }
         String channelName = contentsData.getChannelName();
-        String date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(availStartDate)), channelName);
-        viewHolder.mTime.setText(date);
+        String dispType = contentsData.getDispType();
+        ContentUtils.ContentsType contentsType = ContentUtils.getContentsTypeByPlala(dispType,
+                contentsData.getTvService(), contentsData.getContentsType(), contentsData.getAvailEndDate(),
+                contentsData.getVodStartDate(), contentsData.getVodEndDate());
+        String date;
+        //レンタル・プレミアムビデオはここで判定する
+        if (contentsType == ContentUtils.ContentsType.OTHER) {
+            contentsType = ContentUtils.getContentsTypeRental(dispType, contentsData.getEstFlg(), contentsData.getChsVod());
+        }
+        if (contentsType == ContentUtils.ContentsType.TV || contentsType == ContentUtils.ContentsType.OTHER) {
+            //暫定対応 日付情報にlong、日付フォーマットが混在しているため
+            if (DBUtils.isNumber(availStartDate)) {
+                date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(availStartDate)), channelName);
+            } else {
+                date = structDateStrings(DateUtils.formatEpochToStringOpeLog(DateUtils.getSecondEpochTime(availStartDate)), channelName);
+            }
+        } else {
+            if (isVod) {
+                date = DateUtils.addDateLimitVod(mContext, contentsData, contentsType);
+            } else {
+                date = DateUtils.addDateLimit(mContext, contentsData, contentsType);
+            }
+        }
+        //表示対象がないときはトルツメ
+        if (date != null && !date.isEmpty()) {
+            viewHolder.mTime.setText(DateUtils.setMissViewingColor(mContext, date));
+        } else {
+            viewHolder.mTime.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -537,6 +633,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      * yyyyMMddHHmmss形式から表示するデータを整形する(おすすめ番組、今日のテレビランキング).
      *
      * @param dateString yyyyMMddHHmmssデータ
+     * @param channelName チャンネル名
      * @return 整形した日付データ
      */
     private String structDateStrings(final String dateString, final String channelName) {
@@ -575,11 +672,19 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         String timeMinuteOnePlace = dateString.substring(START_TIME_MINUTE_SEPARATE, START_TIME_MINUTE_END);
         String minute = StringUtils.getConnectStrings(timeMinuteTensPlace, timeMinuteOnePlace);
 
-        return StringUtils.getConnectStrings(month, mContext.getString(R.string.home_contents_slash), day,
+        //m/d(E)hh:mm形式取得
+        String structDateString = StringUtils.getConnectStrings(month, mContext.getString(R.string.home_contents_slash), day,
                 mContext.getString(R.string.home_contents_front_bracket), dayOfWeek,
                 mContext.getString(R.string.home_contents_back_bracket), hour,
-                mContext.getString(R.string.home_contents_colon), minute,
-                mContext.getString(R.string.home_contents_hyphen), channelName);
+                mContext.getString(R.string.home_contents_colon), minute);
+        //channelNameがないときはそのまま
+        if (channelName == null || channelName.isEmpty()) {
+            return structDateString;
+        } else {
+            //チャンネル名を追加
+            return StringUtils.getConnectStrings(structDateString,
+                    mContext.getString(R.string.home_contents_hyphen), channelName);
+        }
     }
 
     @Override
@@ -603,7 +708,11 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             case HOME_CONTENTS_SORT_RECOMMEND_PROGRAM:
             case HOME_CONTENTS_SORT_TODAY:
             case HOME_CONTENTS_SORT_VIDEO:
+            case HOME_CONTENTS_SORT_WATCHING_VIDEO:
             case HOME_CONTENTS_SORT_TV_CLIP:
+            case HOME_CONTENTS_SORT_VOD_CLIP:
+            case HOME_CONTENTS_SORT_PREMIUM_VIDEO:
+            case HOME_CONTENTS_SORT_RENTAL_VIDEO:
             case RANKING_CONTENTES_TODAY_SORT:
             case RANKING_CONTENTES_WEEK_SORT:
             case RANKING_CONTENTES_VIDEO_SORT:

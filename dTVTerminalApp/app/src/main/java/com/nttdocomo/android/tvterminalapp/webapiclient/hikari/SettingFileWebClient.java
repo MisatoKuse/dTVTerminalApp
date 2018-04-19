@@ -13,6 +13,12 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.SettingFileJs
 
 public class SettingFileWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
+    /**
+     * タイムアウト時間.
+     *
+     * (テストサーバーが見えない環境を考慮して短めとする。なお、テストサーバーが見えていれば、200ミリ秒でも読み込みに成功する)
+     */
+    private final int TIME_OUT_TIME = 2000;
 
     /**
      * 通信禁止判定フラグ.
@@ -91,7 +97,7 @@ public class SettingFileWebClient
 
         //設定ファイルを読み込む
         DTVTLogger.debug("Get setting file");
-        openUrl(UrlConstants.WebApiUrl.SETTING_FILE, "", this);
+        openUrl(UrlConstants.WebApiUrl.SETTING_FILE, "", TIME_OUT_TIME,this);
 
         DTVTLogger.end();
         //今のところ失敗していないので、trueを返す

@@ -412,8 +412,8 @@ public class ChannelListActivity extends BaseActivity implements
      * Hikariデータ取得.
      */
     private void getHikariData() {
-        DTVTLogger.start("time = " + beforeGetHikariData +
-                " now = " + System.currentTimeMillis());
+        DTVTLogger.start("time = " + beforeGetHikariData
+                + " now = " + System.currentTimeMillis());
 
         //アクティビティ起動時は、アクティビティ表示の初期化用とタブ表示更新用の2回ここが呼ばれてしまう。
         //ネットワークエラーの表示がおかしくなるので、連続して呼ばれた場合は、後者をスキップする

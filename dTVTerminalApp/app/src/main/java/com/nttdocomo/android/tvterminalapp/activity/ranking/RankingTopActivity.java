@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.ranking;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,14 +20,17 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopHomeRecyclerViewAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRankingTopDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.List;
@@ -35,7 +39,7 @@ import java.util.List;
  * ランキングトップ画面.
  */
 public class RankingTopActivity extends BaseActivity
-        implements RankingTopDataProvider.ApiDataProviderCallback {
+        implements RankingTopDataProvider.ApiDataProviderCallback, HomeRecyclerViewAdapter.ItemClickCallback  {
 
     /**
      * ランキングトップ画面の主View.
@@ -108,10 +112,6 @@ public class RankingTopActivity extends BaseActivity
      * UIの上下表示順(ビデオランキング).
      */
     private final static int VIDEO_SORT = 2;
-    /**
-     * アダプタ内でのリスト識別用定数.
-     */
-    private final static int RANKING_CONTENTS_DISTINCTION_ADAPTER = 20;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -221,7 +221,9 @@ public class RankingTopActivity extends BaseActivity
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(linearLayoutManager);
-        HomeRecyclerViewAdapter horizontalViewAdapter = new HomeRecyclerViewAdapter(this, contentsDataList, index + RANKING_CONTENTS_DISTINCTION_ADAPTER);
+        HomeRecyclerViewAdapter horizontalViewAdapter = new HomeRecyclerViewAdapter(
+                this, contentsDataList, index + HomeRecyclerViewAdapter.RANKING_CONTENTES_TODAY_SORT);
+        horizontalViewAdapter.setOnItemClickCallBack(this);
         recyclerView.setAdapter(horizontalViewAdapter);
         View footer = LayoutInflater.from(this).inflate(R.layout.home_main_layout_recyclerview_footer, recyclerView, false);
         RelativeLayout rankingMore = footer.findViewById(R.id.home_main_layout_recyclerview_footer);
@@ -310,11 +312,11 @@ public class RankingTopActivity extends BaseActivity
                 && mVideoErrorState != null) {
             //全部ランキングのエラーステータスがあるならば、データは一つも取れていない。
             //代表して今日の番組のエラーを表示する。
-            //TODO: 各画面が積み重なって表示するようになった際はダイアログ表示にするので、getErrorMessageをgetApiErrorMessageに変更する
+            //TODO　: 各画面が積み重なって表示するようになった際はダイアログ表示にするので、getErrorMessageをgetApiErrorMessageに変更する
             //String message = mDailyErrorState.getApiErrorMessage(getApplicationContext());
             String message = mDailyErrorState.getErrorMessage();
 
-            //TODO: 各画面が積み重なって表示するようになった際は、showGetDataFailedToastをshowDialogToCloseに変更すると、前の画面に戻るようになる。
+            //TODO　: 各画面が積み重なって表示するようになった際は、showGetDataFailedToastをshowDialogToCloseに変更すると、前の画面に戻るようになる。
             if (TextUtils.isEmpty(message)) {
                 //showDialogToClose();
                 showGetDataFailedToast();
@@ -401,6 +403,19 @@ public class RankingTopActivity extends BaseActivity
                 controlErrorMessage();
             }
         });
+    }
+
+    @Override
+    public void onItemClickCallBack(final ContentsData contentsData, final OtherContentsDetailData detailData) {
+        if (ContentUtils.isChildContentList(contentsData)) {
+            startChildContentListActivity(contentsData);
+        } else {
+            Intent intent = new Intent(this, ContentDetailActivity.class);
+            ComponentName componentName = this.getComponentName();
+            intent.putExtra(DTVTConstants.SOURCE_SCREEN, componentName.getClassName());
+            intent.putExtra(detailData.getRecommendFlg(), detailData);
+            startActivity(intent);
+        }
     }
 
     @Override

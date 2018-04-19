@@ -39,9 +39,8 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         TabItemLayout.OnClickTabTextListener,
 
         RankingTopDataProvider.WeeklyRankingApiDataProviderCallback,
-        GenreListDataProvider.RankGenreListCallback
-{
-    // region variable
+        GenreListDataProvider.RankGenreListCallback {
+     // region variable
     /** 標準タブ数. */
     private static final int DEFAULT_TAB_MAX = 4;
 
@@ -384,13 +383,18 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         }
         return mRankingFragmentFactory.createFragment(ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK, mViewPager.getCurrentItem());
     }
-
+    /**
+     * データ取得要求.
+     */
     private void requestgetGenreList() {
         mVideoGenreProvider = new GenreListDataProvider(this, this,
                 ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK);
         mVideoGenreProvider.getGenreListDataRequest();
     }
 
+    /**
+     * エラーメッセージを表示する.
+     */
     private void showErrorMessage() {
         runOnUiThread(new Runnable() {
             @Override

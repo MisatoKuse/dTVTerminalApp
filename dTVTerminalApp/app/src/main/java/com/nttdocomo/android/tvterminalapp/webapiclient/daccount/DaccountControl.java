@@ -149,31 +149,15 @@ public class DaccountControl implements
         }
 
         //初回実行である事を設定する
-        SharedPreferencesUtils.setFirstExecStart(context);
+        if(context != null) {
+            SharedPreferencesUtils.setFirstExecStart(context);
+        }
 
         //初回起動の場合を判定
-        if (SharedPreferencesUtils.isFirstDaccountGetProcess(context)) {
+        if (context != null && SharedPreferencesUtils.isFirstDaccountGetProcess(context)) {
             //初回の場合はダイアログを表示するので、処理中フラグを立てる
             mDAccountBusy = true;
         }
-
-        if (DAccountUtils.checkDAccountIsExist() == null) {
-            //dアカウント設定アプリが存在しないので帰る。ここで帰れば、単体実行フラグがセットされず、別のアクティビティの実行時に自動的に実行される。
-            //後ほど、dアカウント設定アプリがダウンロードされた場合、その直後のアクティビティの起動時に呼び出されるので、意図的にダウンロード直後に処理を
-            //挿入する必要はない。
-            DTVTLogger.end("not install idmanager");
-            return;
-        }
-
-        mOnceControl = DaccountControlOnce.getInstance();
-        if (mOnceControl.isExecOnce()) {
-            //既に実行済みなので帰る
-            DTVTLogger.end("registService already exec");
-            return;
-        }
-
-        //次回の実行を阻止するためフラグをセット
-        mOnceControl.setExecOnce(true, mDaccountGetOTT, mContext);
 
         //コールバックがヌルならば何もできないので帰る
         if (daccountControlCallBackSource == null) {
@@ -185,6 +169,25 @@ public class DaccountControl implements
             return;
         }
         mDaccountControlCallBack = daccountControlCallBackSource;
+
+        if (DAccountUtils.checkDAccountIsExist() == null) {
+            //dアカウント設定アプリが存在しないので帰る。ここで帰れば、単体実行フラグがセットされず、別のアクティビティの実行時に自動的に実行される。
+            //後ほど、dアカウント設定アプリがダウンロードされた場合、その直後のアクティビティの起動時に呼び出されるので、意図的にダウンロード直後に処理を
+            //挿入する必要はない。
+            DTVTLogger.end("not install idmanager");
+            mDaccountControlCallBack.daccountControlCallBack(false);
+            return;
+        }
+
+        mOnceControl = DaccountControlOnce.getInstance();
+        if (mOnceControl.isExecOnce()) {
+            //既に実行済みなので帰る。コールバックは既に実行済みのところで行うので、無用。
+            DTVTLogger.end("registService already exec");
+            return;
+        }
+
+        //次回の実行を阻止するためフラグをセット
+        mOnceControl.setExecOnce(true, mDaccountGetOTT, mContext);
 
         //ヌルではないコンテキストは後で使いまわす為に控える
         if (context == null) {

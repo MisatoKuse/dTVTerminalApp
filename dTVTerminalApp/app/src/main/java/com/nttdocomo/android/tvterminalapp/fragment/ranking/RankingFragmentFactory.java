@@ -9,15 +9,20 @@ import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * ランキングフラグメントファクトリー.
+ */
 public class RankingFragmentFactory {
-
+    /**
+     * Fragment格納Map.
+     */
     private final Map<Integer, RankingBaseFragment> mFragments = new HashMap<>();
 
     /**
      * フラグメントクラスの生成、取得.
-     *
-     * @param position
-     * @return
+     *@param mode データタイプ
+     * @param position position
+     * @return fragment
      */
     public RankingBaseFragment createFragment(final ContentsAdapter.ActivityTypeItem mode, final int position) {
         RankingBaseFragment fragment;

@@ -297,13 +297,15 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      * @return  マイ番組表サービスIDリスト
      */
     private String[] getServiceIds() {
-        String str = "";
+        String str;
+        StringBuilder buf = new StringBuilder();
         for (MyChannelMetaData myChannelData : mEditList) {
             if (myChannelData.getServiceId() != null) {
-                str = str + StringUtils.getConnectStrings(myChannelData.getServiceId(), COMMA);
+                str = StringUtils.getConnectStrings(myChannelData.getServiceId(), COMMA);
+                buf.append(str);
             }
         }
-        return str.split(MyChannelEditAdapter.COMMA);
+        return  buf.toString().split(MyChannelEditAdapter.COMMA);
     }
 
     /**
@@ -366,6 +368,9 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
         }
     }
 
+    /**
+     * エラーダイアログを表示する.
+     */
     private void showErrorDialog() {
         ErrorState errorState = mMyChannelDataProvider.getMyChannelListError();
         if (errorState == null || errorState.getErrorType() == DTVTConstants.ERROR_TYPE.SUCCESS) {

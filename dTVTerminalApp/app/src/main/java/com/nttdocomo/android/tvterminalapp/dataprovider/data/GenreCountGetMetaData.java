@@ -12,30 +12,59 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
-
+/**
+ * ジャンル毎コンテンツ数取得メタデータ.
+ */
 public class GenreCountGetMetaData implements Serializable {
     private static final long serialVersionUID = -2522621200651636807L;
-    private final String CLASS_NAME = getClass().getSimpleName();
-    private static final String SET_DATA = ".setData";
-    private String mGenreId; //ジャンルID
-    private int mCount; //コンテンツ数
+    /**
+     * ジャンルID.
+     */
+    private String mGenreId;
 
+    /**
+     * コンテンツ数.
+     */
+    private int mCount;
+    /**
+     * ジャンルIDパラメータキー名.
+     */
     private static final String GENRE_COUNT_GET_META_DATA_GENRE_ID = "genre_id";
+    /**
+     * コンテンツ数パラメータキー名.
+     */
     private static final String GENRE_COUNT_GET_META_DATA_COUNT = "count";
+    /**
+     * ルートパラメータキー.
+     */
     private static final String[] mRootPara = {GENRE_COUNT_GET_META_DATA_GENRE_ID, GENRE_COUNT_GET_META_DATA_COUNT};
-
+    /**
+     * ジャンルID取得.
+     * @return ジャンルID
+     */
     public String getGenreId() {
         return mGenreId;
     }
-
+    /**
+     * ジャンルID設定.
+     * @param mGenreId ジャンルID
+     */
     public void setGenreId(final String mGenreId) {
         this.mGenreId = mGenreId;
     }
 
+    /**
+     * コンテンツ数取得.
+     * @return コンテンツ数
+     */
     public int getCount() {
         return mCount;
     }
 
+    /**
+     * コンテンツ数設定.
+     * @param mCount コンテンツ数
+     */
     public void setCount(final int mCount) {
         this.mCount = mCount;
     }
@@ -64,6 +93,7 @@ public class GenreCountGetMetaData implements Serializable {
      * キーの値を取得する.
      *
      * @param key キー
+     * @return キー
      */
     public Object getMember(final String key) {
         if (key.isEmpty()) {
@@ -86,6 +116,7 @@ public class GenreCountGetMetaData implements Serializable {
      * @param jsonObj Jsonオブジェクト
      */
     public void setData(final JSONObject jsonObj) {
+        DTVTLogger.start();
         if (jsonObj != null) {
             //ジャンル毎コンテンツ数
             for (String item : mRootPara) {
@@ -93,7 +124,7 @@ public class GenreCountGetMetaData implements Serializable {
                     try {
                         setMember(item, jsonObj.get(item));
                     } catch (JSONException e) {
-                        DTVTLogger.debug(CLASS_NAME + SET_DATA, e);
+                        DTVTLogger.end();
                     }
                 }
             }

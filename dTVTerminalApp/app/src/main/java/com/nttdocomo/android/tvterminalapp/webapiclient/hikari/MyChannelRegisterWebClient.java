@@ -193,7 +193,7 @@ public class MyChannelRegisterWebClient
         }
 
         ////index範囲は0 < index ≦　MAX_INDEXなので、範囲外ならばfalse
-        if (index > MY_CHANNEL_MAX_INDEX && index <= 0) {
+        if (index > MY_CHANNEL_MAX_INDEX || index <= 0) {
             return false;
         }
 

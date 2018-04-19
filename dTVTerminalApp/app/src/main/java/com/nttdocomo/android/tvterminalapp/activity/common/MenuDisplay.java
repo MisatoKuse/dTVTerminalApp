@@ -37,6 +37,7 @@ import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActiv
 import com.nttdocomo.android.tvterminalapp.activity.video.VideoTopActivity;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.adapter.MenuListAdapter;
@@ -44,21 +45,32 @@ import com.nttdocomo.android.tvterminalapp.adapter.MenuListAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * MenuDisplay.
+ */
 public class MenuDisplay implements AdapterView.OnItemClickListener {
-
+    /**Singleton.*/
     private static MenuDisplay sMenuDisplay = new MenuDisplay();
+    /**ユーザーステータス.*/
     private UserState mUserState = UserState.LOGIN_NG;
     // TODO BaseActivityを持つことは実装的に望ましくない
+    /**BaseActivity.*/
     private BaseActivity mActivity = null;
+    /**コンテキスト.*/
     private Context mContext = null;
+    /**アカウント名.*/
     private View mAccountName = null;
-
+    /**ポップアップウィンドウ.*/
     private PopupWindow mPopupWindow = null;
+    /**メニューリスト.*/
     private ListView mGlobalMenuListView = null;
+    /**メニューアイテムタイトル.*/
     private List mMenuItemTitles = null;
+    /**メニューアイテムカウント.*/
     private List mMenuItemCount = null;
 
-    // TODO:メニュー表示種別
+    //TODO :メニュー表示種別.
+    /** メニュー表示種別 .*/
     public static final int INT_NONE_COUNT_STATUS = -1;
     /**
      * GlobalMenu横幅.
@@ -72,10 +84,19 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     private MenuDisplay() {
     }
 
+    /**
+     * インスタンス.
+     * @return インスタンス.
+     */
     public static MenuDisplay getInstance() {
         return sMenuDisplay;
     }
 
+    /**
+     * baseActivityに設定する.
+     * @param activity BaseActivity
+     * @param context コンテキスト
+     */
     public void setActivityAndListener(final BaseActivity activity, final Context context) {
         synchronized (MenuDisplay.class) {
             mContext = context;
@@ -83,18 +104,25 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         }
     }
 
+    /**ユーザー状態チェンジ.
+     * @param userState ユーザー状態
+     * */
     public void changeUserState(final UserState userState) {
         mUserState = userState;
     }
 
+    /**
+     * メニュー表示.
+     */
     public void display() {
         refreshMenu();
     }
 
+    /** メニューリスト更新.*/
     private void refreshMenu() {
         initPopupWindow();
     }
-
+    /** ポップアップメニュー初期化.*/
     private void initPopupWindow() {
         View popupWindowView = mActivity.getLayoutInflater().inflate(R.layout.nav_pop, null);
         mPopupWindow = new PopupWindow(popupWindowView, mActivity.dip2px(GLOBAL_MENU_WIDTH),
@@ -153,6 +181,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                 mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_staff_recommend))) {
                     //4月時は非対応
+                DTVTLogger.debug("4月時は非対応");
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_ranking))) {
                 intent.setClass(mActivity, RankingTopActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -164,7 +193,8 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                 intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
                 mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_purchased_video))) {
-                    //4月時は非対応
+                //4月時は非対応
+                DTVTLogger.debug("4月時は非対応");
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_watch_listen_video))) {
                 intent.setClass(mActivity, WatchingVideoListActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -240,7 +270,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
             mPopupWindow.dismiss();
         }
     }
-
+    /** ポップアップメニュークローズリスナー.*/
     class PopupDismissListener implements PopupWindow.OnDismissListener {
         @Override
         public void onDismiss() {
@@ -248,14 +278,21 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         }
     }
 
+    /**
+     *バックグラウンド透明度.
+     * @param bgAlpha 透明度
+     */
     private void backgroundAlpha(final float bgAlpha) {
         WindowManager.LayoutParams lp = mActivity.getWindow().getAttributes();
         lp.alpha = bgAlpha; //0.0-1.0
         mActivity.getWindow().setAttributes(lp);
     }
 
+    /**
+     * メニューリストロード.
+     * @param popupWindowView ポップアップウィンドウビュー
+     */
     private void loadMenuList(final View popupWindowView) {
-
         mGlobalMenuListView = popupWindowView.findViewById(R.id.menu_list);
 //        addFooterView(mGlobalMenuListView); //アカウント名アイテム追加
         initMenuListData();
@@ -266,6 +303,9 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         mGlobalMenuListView.setOnItemClickListener(this);
     }
 
+    /**
+     * メニューリストデータ初期化.
+     */
     private void initMenuListData() {
         mMenuItemTitles = new ArrayList();
         mMenuItemCount = new ArrayList();
@@ -292,7 +332,10 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                 break;
         }
     }
-
+    /**
+     * addFooterView.
+     * @param mGlobalMenuListView グロバルメニューリストビュー
+     */
     private void addFooterView(final ListView mGlobalMenuListView) {
         if (mAccountName == null) {
             mAccountName = View.inflate(mActivity, R.layout.menu_login_foot, null);
@@ -302,12 +345,16 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         mGlobalMenuListView.addFooterView(mAccountName);
     }
 
+    /**
+     *removeFooterView.
+     */
     private void removeFooterView() {
         if (mAccountName != null) {
             mGlobalMenuListView.removeFooterView(mAccountName);
         }
     }
 
+    /** ペアリングかつ契約状態のメニューリストアイテム.*/
     private void setMenuItemSignedPairing() {
         //ホーム～チャンネルリスト
         setHeaderMenuItem();
@@ -344,7 +391,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
             mMenuItemCount.add(INT_NONE_COUNT_STATUS);
         }
     }
-
+    /** 未契約ログインメニューリストアイテム. */
     private void setMenuItemSignedUnpaired() {
         //ホーム～チャンネルリスト
         setHeaderMenuItem();
@@ -356,6 +403,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         setFooterMenuItem();
     }
 
+    /** 未契約ログインメニューリストアイテム. */
     private void setMenuItemUnsignedLogin() {
         //ホーム～チャンネルリスト
         setHeaderMenuItem();
@@ -367,6 +415,9 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         setFooterMenuItem();
     }
 
+    /**
+     *未加入場合のメニューアイテム.
+     */
     private void setMenuItemLogoff() {
         //ホーム～チャンネルリスト
         setHeaderMenuItem();

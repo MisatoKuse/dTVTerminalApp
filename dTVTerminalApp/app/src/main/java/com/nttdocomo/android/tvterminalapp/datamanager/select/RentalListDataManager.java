@@ -53,11 +53,14 @@ public class RentalListDataManager {
                 JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_EVENT_ID,
                 JsonConstants.META_RESPONSE_TITLE_ID, JsonConstants.META_RESPONSE_R_VALUE,
                 JsonConstants.META_RESPONSE_AVAIL_START_DATE, JsonConstants.META_RESPONSE_AVAIL_END_DATE,
+                JsonConstants.META_RESPONSE_VOD_START_DATE, JsonConstants.META_RESPONSE_VOD_END_DATE,
                 JsonConstants.META_RESPONSE_DTV, JsonConstants.META_RESPONSE_TV_SERVICE,
                 JsonConstants.META_RESPONSE_CONTENT_TYPE, JsonConstants.META_RESPONSE_DTV_TYPE,
                 JsonConstants.META_RESPONSE_RATING, JsonConstants.META_RESPONSE_EPISODE_ID,
                 JsonConstants.META_RESPONSE_EST_FLAG, JsonConstants.META_RESPONSE_CID,
-                JsonConstants.META_RESPONSE_THUMB_640
+                JsonConstants.META_RESPONSE_THUMB_640, JsonConstants.META_RESPONSE_CHNO,
+                JsonConstants.META_RESPONSE_DISPLAY_START_DATE, JsonConstants.META_RESPONSE_DUR,
+                JsonConstants.META_RESPONSE_PUBLISH_START_DATE, JsonConstants.META_RESPONSE_CHSVOD
         };
         List<Map<String, String>> list = null;
 

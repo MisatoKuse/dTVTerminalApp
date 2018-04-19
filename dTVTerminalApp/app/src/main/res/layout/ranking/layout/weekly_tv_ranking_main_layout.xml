@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     style="@style/default_layout_style"
     android:orientation="vertical"
-    android:background="@color/ranking_list_background">
+    android:background="@color/common_background_color">
 
     <RelativeLayout
         android:id="@+id/rl_weekly_ranking_tab"

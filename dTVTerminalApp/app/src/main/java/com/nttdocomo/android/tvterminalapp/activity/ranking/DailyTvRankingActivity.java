@@ -185,7 +185,7 @@ public class DailyTvRankingActivity extends BaseActivity implements
             intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
             OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(contentsData, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
             intent.putExtra(detailData.getRecommendFlg(), detailData);
-            startActivity(intent);    
+            startActivity(intent);
         }
     }
 
@@ -199,13 +199,13 @@ public class DailyTvRankingActivity extends BaseActivity implements
                 showProgressBar(false);
                 //エラー情報の存在を見る
                 ErrorState errorState = mRankingTopDataProvider.getDailyRankWebApiErrorState();
-                if(errorState != null) {
+                if (errorState != null) {
                     //エラー情報が存在すれば、DBにデータが無く、通信も失敗しているので、エラーメッセージを出して帰る
                     String message = errorState.getApiErrorMessage(
                             getApplication().getApplicationContext());
 
                     //メッセージの有無を確認
-                    if(TextUtils.isEmpty(message)) {
+                    if (TextUtils.isEmpty(message)) {
                         //メッセージが無いので、デフォルトメッセージで表示
                         showDialogToClose(context);
                     } else {

@@ -135,31 +135,30 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
 
     @Override
     public void onRentalVodListJsonParsed(final PurchasedVodListResponse response) {
-        if (response != null) {
-            setStructDB(response);
-            if (!mRequiredClipKeyList
-                    || mResponseEndFlag) {
-                sendRentalListData(response);
-            } else {
-                mPurchasedVodListResponse = response;
-            }
-        } else {
+        if (response == null) {
             if (mWebClient.getError() != null && mWebClient.getError().getErrorType() != DTVTConstants.ERROR_TYPE.SUCCESS) {
                 mError = mWebClient.getError();
             }
             mApiDataProviderCallback.rentalListNgCallback();
+            return;
+        }
+
+        setStructDB(response);
+        if (!mRequiredClipKeyList
+                || mResponseEndFlag) {
+            sendRentalListData(response);
+        } else { // clipキー一覧取得が終わってない場合は待つ
+            mPurchasedVodListResponse = response;
         }
     }
 
     @Override
     public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
-        DTVTLogger.start();
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
         // コールバック判定
         if (mPurchasedVodListResponse != null) {
             sendRentalListData(mPurchasedVodListResponse);
         }
-        DTVTLogger.end();
     }
 
     /**
@@ -305,6 +304,10 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
             vodMetaFullData.setRating(Double.parseDouble(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_RATING)));
             vodMetaFullData.setCid(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_CID));
             vodMetaFullData.setEpisode_id(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_EPISODE_ID));
+            vodMetaFullData.setEstFlag(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_EST_FLAG));
+            vodMetaFullData.setmChsvod(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_CHSVOD));
+            vodMetaFullData.setmVod_start_date(Long.parseLong(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_VOD_START_DATE)));
+            vodMetaFullData.setmVod_end_date(Long.parseLong(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_VOD_END_DATE)));
             vodMetaFullData.setEstFlag(estFlg);
             vodMetaFullDataList.add(vodMetaFullData);
         }
@@ -395,6 +398,12 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
                 data.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
                 data.setContentsId(vodMetaFullData.getCrid());
                 data.setCrid(vodMetaFullData.getCrid());
+                data.setEstFlg(vodMetaFullData.getEstFlag());
+                data.setChsVod(vodMetaFullData.getmChsvod());
+                data.setAvailStartDate(vodMetaFullData.getAvail_start_date());
+                data.setAvailEndDate(vodMetaFullData.getAvail_end_date());
+                data.setVodStartDate(vodMetaFullData.getmVod_start_date());
+                data.setVodEndDate(vodMetaFullData.getmVod_end_date());
 
                 //クリップリクエストデータ作成
                 ClipRequestData requestData = new ClipRequestData();
@@ -470,7 +479,6 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
      * @return 視聴可否判定結果
      */
     public static int isEnableRentalContents(final long validEndDate) {
-        DTVTLogger.start();
         final int ONE_MONTH = 30;
 
         //視聴期限 > 現在時刻の場合
@@ -521,9 +529,9 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
     public List<Map<String, String>> dbOperation(final int operationId) {
         switch (operationId) {
             case RENTAL_VIDEO_LIST_INSERT:
-            RentalListInsertDataManager dataManager = new RentalListInsertDataManager(mContext);
-            dataManager.insertRentalListInsertList(mPurchasedVodListResponse);
-            sendRentalListData(mPurchasedVodListResponse);
+                RentalListInsertDataManager dataManager = new RentalListInsertDataManager(mContext);
+                dataManager.insertRentalListInsertList(mPurchasedVodListResponse);
+                sendRentalListData(mPurchasedVodListResponse);
                 break;
             case RENTAL_VIDEO_LIST_SELECT:
                 List<Map<String, String>> vodMetaList;

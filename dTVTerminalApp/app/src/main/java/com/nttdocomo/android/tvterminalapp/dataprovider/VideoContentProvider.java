@@ -16,6 +16,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
@@ -53,10 +54,6 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
      * ジャンル毎コンテンツ一覧取得用webクライアント.
      */
     private ContentsListPerGenreWebClient mGenreListWebClient = null;
-    /**
-     * クリップキー一覧取得プロバイダ.
-     */
-    private ClipKeyListDataProvider mClipKeyListDataProvider = null;
     /**
      * ジャンル情報取得用エラー情報バッファ.
      */
@@ -178,6 +175,10 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
             contentsData.setDispType(dispType);
             contentsData.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
             contentsData.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
+            contentsData.setAvailStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
+            contentsData.setAvailEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
+            contentsData.setVodStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_START_DATE)));
+            contentsData.setVodEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_END_DATE)));
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
 
@@ -255,9 +256,6 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
     public void stopConnect() {
         DTVTLogger.start();
         mIsCancel = true;
-        if (mClipKeyListDataProvider != null) {
-            mClipKeyListDataProvider.stopConnection();
-        }
         if (mGenreListWebClient != null) {
             mGenreListWebClient.stopConnect();
         }
@@ -269,9 +267,6 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
     public void enableConnect() {
         DTVTLogger.start();
         mIsCancel = false;
-        if (mClipKeyListDataProvider != null) {
-            mClipKeyListDataProvider.enableConnection();
-        }
         if (mGenreListWebClient != null) {
             mGenreListWebClient.enableConnect();
         }

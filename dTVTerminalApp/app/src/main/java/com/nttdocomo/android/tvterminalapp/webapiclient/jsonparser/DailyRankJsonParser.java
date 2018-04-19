@@ -27,7 +27,7 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
     // オブジェクトクラスの定義
     private DailyRankList mDailyRankList = null;
 
-    public static final String[] PAGER_PARA = {JsonConstants.META_RESPONSE_PAGER_LIMIT,
+    private static final String[] PAGER_PARA = {JsonConstants.META_RESPONSE_PAGER_LIMIT,
             JsonConstants.META_RESPONSE_OFFSET, JsonConstants.META_RESPONSE_COUNT,
             JsonConstants.META_RESPONSE_TOTAL};
 

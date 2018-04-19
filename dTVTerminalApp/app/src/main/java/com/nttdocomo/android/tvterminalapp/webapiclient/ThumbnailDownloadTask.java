@@ -32,29 +32,17 @@ import javax.net.ssl.SSLPeerUnverifiedException;
  * サムネイル画像取得タスク.
  */
 public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
-    /**
-     * サムネイルのURL.
-     */
+    /** サムネイルのURL. */
     private String imageUrl;
-    /**
-     * 取得したサムネイルを表示するImageView.
-     */
+    /** 取得したサムネイルを表示するImageView. */
     private ImageView imageView;
-    /**
-     * サムネイルプロバイダー.
-     */
+    /** サムネイルプロバイダー. */
     private ThumbnailProvider thumbnailProvider;
-    /**
-     * SSLチェック用コンテキスト.
-     */
+    /** SSLチェック用コンテキスト. */
     private Context mContext;
-    /**
-     * 通信停止用コネクション蓄積.
-     */
+    /** 通信停止用コネクション蓄積. */
     private volatile static List<HttpURLConnection> mUrlConnections = null;
-    /**
-     * 通信停止フラグ.
-     */
+    /** 通信停止フラグ. */
     private boolean mIsStop = false;
 
     /**
@@ -208,10 +196,7 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
                  }
              });
              thread.start();
-
-             //止めた物は消す
-             iterator.remove();
          }
-
+         mUrlConnections.clear();
      }
 }

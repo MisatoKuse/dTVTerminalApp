@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
@@ -16,6 +17,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
 
@@ -193,6 +195,10 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
             clipContentInfo.setDispType(dispType);
             clipContentInfo.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
             clipContentInfo.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
+            clipContentInfo.setAvailStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
+            clipContentInfo.setAvailEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
+            clipContentInfo.setVodStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_START_DATE)));
+            clipContentInfo.setVodEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_END_DATE)));
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
             requestData.setCrid(map.get(JsonConstants.META_RESPONSE_CRID));
@@ -235,14 +241,11 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
         if (!mIsCancel) {
             //通信クラスにデータ取得要求を出す
             mWebClient = new VodClipWebClient(mContext);
-            int ageReq = 1;
-            int upperPageLimit = 1;
-            int lowerPageLimit = 1;
-            //int pagerOffset = 1;
-            String direction = "";
 
-            if (!mWebClient.getVodClipApi(ageReq, upperPageLimit,
-                    lowerPageLimit, pagerOffset, direction, this)) {
+            String direction = "";
+            UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
+            if (!mWebClient.getVodClipApi(userInfoDataProvider.getUserAge(), DTVTConstants.REQUEST_LIMIT_50,
+                    DTVTConstants.REQUEST_LIMIT_50, pagerOffset, direction, this)) {
                 apiDataProviderCallback.vodClipListCallback(null);
             }
         } else {

@@ -21,6 +21,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoLis
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WatchListenVideoWebClient;
 
@@ -39,11 +40,11 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     /**
      * コンテキスト.
      */
-    private Context mContext = null;
+    private Context mContext;
     /**
      * 視聴中ビデオ一覧データ.
      */
-    private WatchListenVideoList mWatchListenVideoList = null;
+    private WatchListenVideoList mWatchListenVideoList;
 
     /**
      * callback.
@@ -57,11 +58,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     /**
      * 視聴中ビデオリスト取得WebClient.
      */
-    private WatchListenVideoWebClient mWebClient = null;
-    /**
-     * クリップキー一覧取得プロバイダ.
-     */
-    private ClipKeyListDataProvider mClipKeyListDataProvider = null;
+    private WatchListenVideoWebClient mWebClient;
 
     /**
      * デフォルトのページ取得位置.
@@ -91,7 +88,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
             DTVTLogger.error("watchListenVideoList is null");
             return;
         }
-        if (watchListenVideoList != null && watchListenVideoList.size() > 0) {
+        if (watchListenVideoList.size() > 0) {
             WatchListenVideoList list = watchListenVideoList.get(0);
             setStructDB(list);
             if (!mRequiredClipKeyList
@@ -231,6 +228,11 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
             contentInfo.setDispType(dispType);
             contentInfo.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
             contentInfo.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
+            contentInfo.setAvailStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
+            contentInfo.setAvailEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
+            contentInfo.setVodStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_START_DATE)));
+            contentInfo.setVodEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_END_DATE)));
+
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
             requestData.setCrid(map.get(JsonConstants.META_RESPONSE_CRID));
@@ -272,9 +274,6 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     public void stopConnect() {
         DTVTLogger.start();
         mIsCancel = true;
-        if (mClipKeyListDataProvider != null) {
-            mClipKeyListDataProvider.stopConnection();
-        }
         if (mWebClient != null) {
             mWebClient.stopConnection();
         }
@@ -286,9 +285,6 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     public void enableConnect() {
         DTVTLogger.start();
         mIsCancel = false;
-        if (mClipKeyListDataProvider != null) {
-            mClipKeyListDataProvider.enableConnection();
-        }
         if (mWebClient != null) {
             mWebClient.enableConnection();
         }

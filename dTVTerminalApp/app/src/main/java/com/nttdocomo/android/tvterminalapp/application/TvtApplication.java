@@ -9,6 +9,8 @@ import android.app.Application;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 /**
@@ -18,6 +20,10 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 public class TvtApplication extends Application implements Application.ActivityLifecycleCallbacks {
     /**
+     * Googleアナリティクス用のID
+     */
+    private static final String GOOGLE_ANALYTICS_ID = "UA-117255147-1";
+    /**
      * Started状態のActivityの数.
      */
     private int mOnStartedCounter = 0;
@@ -25,10 +31,17 @@ public class TvtApplication extends Application implements Application.ActivityL
      * Started状態の前回状態を保存.
      */
     private int mTmpStartedCounter = 0;
+    /**
+     * GoogleAnalytics用クラス(Google提示の設定例がどちらもstaticになっている).
+     */
+    private static GoogleAnalytics sAnalytics;
+    private static Tracker sTracker;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        //Googleアナリティクスの情報収集
+        sAnalytics = GoogleAnalytics.getInstance(this);
         registerActivityLifecycleCallbacks(this);
         DTVTLogger.debug("application onCreate");
     }
@@ -115,5 +128,18 @@ public class TvtApplication extends Application implements Application.ActivityL
      */
     public boolean getIsChangeApplicationInvisible() {
         return (mTmpStartedCounter <= 0);
+    }
+
+    /**
+     * トラッカーの取得.
+     *
+     * @return トラッカーのインスタンス
+     */
+    synchronized public Tracker getDefaultTracker() {
+        //トラッカーがヌルならば新たに取得
+       if (sTracker == null) {
+            sTracker = sAnalytics.newTracker(GOOGLE_ANALYTICS_ID);
+        }
+        return sTracker;
     }
 }

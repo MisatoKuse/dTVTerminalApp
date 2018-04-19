@@ -7,8 +7,11 @@ import android.support.v4.app.Fragment;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
+/**
+ * DTVコンテンツ詳細フラグメントファクトリー.
+ */
 public class DtvContentsDetailFragmentFactory {
-
+    /**フラグメント初期化.*/
     private final Fragment[] mFragments = new Fragment[2];
 
     /**

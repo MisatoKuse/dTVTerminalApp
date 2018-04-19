@@ -27,8 +27,8 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationList
 import com.nttdocomo.android.tvterminalapp.dataprovider.RentalDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -86,11 +86,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * status　margintop.
      */
     private final static int STATUS_MARGIN_TOP10 = 10;
-
-    /**
-     * 番組タイトル margintop.
-     */
-    private final static int TITLE_MARGIN_TOP16 = 16;
 
     /**
      * 番組タイトル margintop.
@@ -163,11 +158,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * ダウンロード禁止判定フラグ.
      */
     private boolean isDownloadStop = false;
-
-    /**
-     * アローアイコンmargin right.
-     */
-    private final static int ARROW_MARGIN_RIGHT4 = 4;
 
     /**
      * 機能
@@ -356,8 +346,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         if (listContentInfo.hasChildContentList()) {
             setTitleData(holder, listContentInfo);
         } else {
-            setContentsData(holder, listContentInfo, contentView);
             setShowDataVisibility(holder);
+            setContentsData(holder, listContentInfo, contentView);
             setClipButtonItem(position, holder, contentView, listContentInfo);
             setMarginLayout(position, holder, contentView);
         }
@@ -491,16 +481,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 setClipMargin(clipMargin, contentView);
                 break;
             case TAB_VIDEO:
-                textMargin = TITLE_MARGIN_TOP20;
-                clipMargin = CLIP_MARGIN_TOP35;
-                setTextMargin(textMargin, holder, contentView);
-                setClipMargin(clipMargin, contentView);
-                break;
-
-            case TAB_D_ANIMATE:
             case TAB_D_CHANNEL:
+            case TAB_D_ANIMATE:
             case TAB_D_TV:
-                textMargin = TITLE_MARGIN_TOP30;
+                textMargin = TITLE_MARGIN_TOP20;
                 clipMargin = CLIP_MARGIN_TOP35;
                 setTextMargin(textMargin, holder, contentView);
                 setClipMargin(clipMargin, contentView);
@@ -630,6 +614,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_SEARCH_LIST://検索
                 switch (mTabType) {
                     case TAB_TV:
+                    case TAB_D_CHANNEL:
                         checkNowOnAir(holder, listContentInfo, contentView, false);
                         break;
                     default:
@@ -659,7 +644,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             if (ContentDetailActivity.TV_PROGRAM.equals(listContentInfo.getDispType())) {
                 if (ContentDetailActivity.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(listContentInfo.getTvService())) {
                     if (ContentDetailActivity.CONTENT_TYPE_FLAG_THREE.equals(listContentInfo.getContentsType())) {
-                        result = true;
+                        if (DateUtils.isNowOnAirDate(listContentInfo.getLinearStartDate(),
+                                listContentInfo.getLinearEndDate(), true)) {
+                            result = true;
+                        }
                     } else if (ContentDetailActivity.CONTENT_TYPE_FLAG_ONE.equals(listContentInfo.getContentsType())
                             || ContentDetailActivity.CONTENT_TYPE_FLAG_TWO.equals(listContentInfo.getContentsType())) {
                         if (DateUtils.isNowOnAirDate(listContentInfo.getLinearStartDate(),
@@ -667,16 +655,22 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                             result = true;
                         }
                     } else {
-                        result = true;
+                        if (DateUtils.isNowOnAirDate(listContentInfo.getLinearStartDate(),
+                                listContentInfo.getLinearEndDate(), true)) {
+                            result = true;
+                        }
                     }
                 } else if (ContentDetailActivity.TV_SERVICE_FLAG_HIKARI.equals(listContentInfo.getTvService())) {
-                    result = true;
+                    if (DateUtils.isNowOnAirDate(listContentInfo.getLinearStartDate(),
+                            listContentInfo.getLinearEndDate(), true)) {
+                        result = true;
+                    }
                 }
             }
         } else {
             if (!TextUtils.isEmpty(listContentInfo.getServiceId()) && DBUtils.isNumber(listContentInfo.getServiceId())) {
                 int serviceId = Integer.parseInt(listContentInfo.getServiceId());
-                String categoryId = listContentInfo.getServiceId();
+                String categoryId = listContentInfo.getCategoryId();
                 if (ContentDetailActivity.DTV_HIKARI_CONTENTS_SERVICE_ID == serviceId
                         && (ContentDetailActivity.H4D_CATEGORY_IPTV.equals(categoryId)
                         || ContentDetailActivity.H4D_CATEGORY_DTV_CHANNEL_BROADCAST.equals(categoryId))) {
@@ -684,12 +678,13 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                             listContentInfo.getEndViewing(), false)) {
                         result = true;
                     }
-                }
-                //TODO dTVチャンネル　放送の場合は一応保留
-                /*else if (OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID == serviceId
+                } else if (ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID == serviceId
                         && ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(categoryId)) {
-                    result = true;
-                }*/
+                    if (DateUtils.isNowOnAirDate(listContentInfo.getStartViewing(),
+                            listContentInfo.getEndViewing(), false)) {
+                        result = true;
+                    }
+                }
             }
         }
         if (result) {
@@ -721,14 +716,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 break;
             case TAB_VIDEO:
                 holder.tv_rank.setVisibility(View.GONE);
-                holder.tv_time.setVisibility(View.GONE);
                 holder.ll_rating.setVisibility(View.GONE);
                 break;
             case TAB_D_CHANNEL:
             case TAB_D_ANIMATE:
-            case  TAB_D_TV:
+            case TAB_D_TV:
                 holder.tv_rank.setVisibility(View.GONE);
-                holder.tv_time.setVisibility(View.GONE);
                 holder.ll_rating.setVisibility(View.GONE);
                 holder.tv_clip.setVisibility(View.GONE);
                 break;
@@ -770,47 +763,52 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * @param listContentInfo 　ContentsData
      */
     private void setTimeData(final ViewHolder holder, final ContentsData listContentInfo) {
-        //TODO:基本的には日付はすべてエポック秒で扱い、表示する際にYYYY/MM/DD形式に変換する方針にする(今日のテレビランキング、週間ランキングと同じ方式に統一))
-        if (!TextUtils.isEmpty(listContentInfo.getTime()) || !TextUtils.isEmpty(listContentInfo.getStartViewing())) { //時間
-            switch (mType) {
-                case TYPE_RECOMMEND_LIST://おすすめ番組・ビデオ
-                case TYPE_SEARCH_LIST://検索
-                    setTabTimeData(holder, listContentInfo);
-                    break;
-                case TYPE_DAILY_RANK: // 今日のテレビランキング
-                case TYPE_WEEKLY_RANK: // 週間ランキング
-                case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
-                    holder.tv_time.setText(DateUtils.getRecordShowListItem(Long.parseLong(listContentInfo.getTime())));
-                    break;
-                case TYPE_RENTAL_RANK: // レンタル一覧
-                case TYPE_PREMIUM_VIDEO_LIST: //プレミアムビデオ
-                    String time = listContentInfo.getTime();
-                    if (!time.equals(RentalDataProvider.ENABLE_VOD_WATCH_CONTENTS_UNLIMITED_HYPHEN)) {
-                        //視聴期限表示
-                        holder.tv_time.setVisibility(View.VISIBLE);
-                        if (time.equals(mContext.getString(R.string.delivery_end_message))) {
-                            holder.tv_time.setText(listContentInfo.getTime());
-                        } else {
-                            //TODO:現状の表示は〇/〇(曜日)まで→表示変更は別チケットで対応予定
-                            holder.tv_time.setText(StringUtils.getConnectStrings(listContentInfo.getTime(),
-                                    mContext.getString(R.string.contents_detail_until_date)));
-                        }
+        switch (mType) {
+            case TYPE_RECOMMEND_LIST://おすすめ番組・ビデオ
+            case TYPE_SEARCH_LIST://検索
+                setTabTimeData(holder, listContentInfo);
+                break;
+            case TYPE_RENTAL_RANK: // レンタル一覧
+            case TYPE_PREMIUM_VIDEO_LIST: //プレミアムビデオ
+                String time = listContentInfo.getTime();
+                if (null != time && !time.equals(RentalDataProvider.ENABLE_VOD_WATCH_CONTENTS_UNLIMITED_HYPHEN)) {
+                    //視聴期限表示
+                    holder.tv_time.setVisibility(View.VISIBLE);
+                    if (time.equals(mContext.getString(R.string.delivery_end_message))) {
+                        holder.tv_time.setText(listContentInfo.getTime());
                     } else {
-                        holder.tv_time.setVisibility(View.GONE);
+                        ContentUtils.setPeriodText(mContext, holder, listContentInfo);
                     }
-                    break;
-                case TYPE_VIDEO_RANK: // ビデオランキング
-                case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
-                case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
-                case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
-                case TYPE_RECORDED_LIST: // 録画番組一覧
-                case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
-                case TYPE_CONTENT_DETAIL_CHANNEL_LIST: // コンテンツ詳細チャンネル一覧
-                    holder.tv_time.setText(listContentInfo.getTime());
-                    break;
-                default:
-                    break;
-            }
+                } else {
+                    holder.tv_time.setVisibility(View.GONE);
+                }
+                break;
+            case TYPE_VIDEO_RANK: // ビデオランキング
+            case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
+            case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
+            case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
+            case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
+            case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
+            case TYPE_RECORDED_LIST: // 録画番組一覧
+            case TYPE_CONTENT_DETAIL_CHANNEL_LIST: // コンテンツ詳細チャンネル一覧
+            case TYPE_DAILY_RANK: // 今日の番組ランキング
+            case TYPE_WEEKLY_RANK: // 週間ランキング
+                if (!ContentUtils.setPeriodText(mContext, holder, listContentInfo)) {
+                    if (!TextUtils.isEmpty(listContentInfo.getTime())) {
+                        holder.tv_time.setVisibility(View.VISIBLE);
+                        try {
+                            holder.tv_time.setText(DateUtils.getContentsDateString(Long.parseLong(listContentInfo.getTime())));
+                        } catch(NumberFormatException e) {
+                            //TODO:getTimeがepoctimeフォーマットになってないのは正しく無いので次回のスプリントでgetTime()を廃止して正しい日付が入るように修正する
+                            DTVTLogger.warning(e.getMessage());
+                            holder.tv_time.setText(listContentInfo.getTime());
+                        }
+                    }
+
+                }
+                break;
+            default:
+                break;
         }
     }
 
@@ -821,26 +819,32 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * @param listContentInfo コンテンツ情報
      */
     private void setTabTimeData(final ViewHolder holder, final ContentsData listContentInfo) {
-        switch (mTabType) {
-            case TAB_TV:
-                holder.tv_time.setVisibility(View.VISIBLE);
-                //開始・終了日付の取得
-                long startDate = DateUtils.getEpochTimeLink(listContentInfo.getStartViewing());
-
-                //日付の表示
-                String answerText = StringUtils.getConnectStrings(
-                        DateUtils.getRecordShowListItem(startDate));
-                holder.tv_time.setText(answerText);
-                break;
-            case TAB_VIDEO:
-            case TAB_D_TV:
-            case TAB_D_CHANNEL:
-            case TAB_D_ANIMATE:
-            case TAB_DEFAULT:
-                holder.tv_time.setVisibility(View.GONE);
-                break;
-            default:
-                break;
+        if (!TextUtils.isEmpty(listContentInfo.getStartViewing())) {
+            //開始・終了日付の取得
+            switch (mTabType) {
+                case TAB_TV:
+                    holder.tv_time.setVisibility(View.VISIBLE);
+                    //日付の表示
+                    holder.tv_time.setText(DateUtils.getContentsDateString(listContentInfo.getStartViewing()));
+                    break;
+                case TAB_VIDEO:
+                case TAB_D_TV:
+                case TAB_D_CHANNEL:
+                case TAB_D_ANIMATE:
+                case TAB_DEFAULT:
+                    holder.tv_time.setVisibility(View.VISIBLE);
+                    if (Integer.toString(ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID).equals(listContentInfo.getServiceId()) &&
+                            ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(listContentInfo.getCategoryId())) {
+                        holder.tv_time.setText(DateUtils.getContentsDateString(listContentInfo.getStartViewing()));
+                    } else if (DateUtils.isBefore(listContentInfo.getStartViewing())) {
+                        holder.tv_time.setText(DateUtils.getContentsDateString(mContext, listContentInfo.getStartViewing(), true));
+                    } else {
+                        holder.tv_time.setVisibility(View.GONE);
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -982,6 +986,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
             holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
             holder.tv_recorded_ch_name.setText(listContentInfo.getChannelName());
+            holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.content_time_text));
             if (mType == ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST) {
                 holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.record_download_status_color));
             }
@@ -992,6 +997,13 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             }
             if (mType == ActivityTypeItem.TYPE_RECOMMEND_LIST || mType == ActivityTypeItem.TYPE_SEARCH_LIST) {
                 setTabHyphenVisibility(holder, listContentInfo);
+            }
+        }
+        if (mTabType == TabTypeItem.TAB_D_CHANNEL) {
+            if (!Integer.toString(ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID).equals(listContentInfo.getServiceId()) ||
+                    !ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(listContentInfo.getCategoryId())) {
+                holder.tv_recorded_hyphen.setVisibility(View.GONE);
+                holder.tv_recorded_ch_name.setVisibility(View.GONE);
             }
         }
     }
@@ -1005,14 +1017,18 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     private void setTabHyphenVisibility(final ViewHolder holder, final ContentsData listContentInfo) {
         switch (mTabType) {
             case TAB_TV:
+            case TAB_D_CHANNEL:
                 if (!TextUtils.isEmpty(listContentInfo.getChannelName())) {
                     holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
                     holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
                     holder.tv_recorded_ch_name.setText(listContentInfo.getChannelName());
+                    holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.content_time_text));
+                } else {
+                    holder.tv_recorded_hyphen.setVisibility(View.GONE);
+                    holder.tv_recorded_ch_name.setVisibility(View.GONE);
                 }
                 break;
             case TAB_D_ANIMATE:
-            case TAB_D_CHANNEL:
             case TAB_D_TV:
             case TAB_VIDEO:
                 break;
@@ -1126,12 +1142,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     private void setTabContentHyphen(final ViewHolder holder, final View view) {
         switch (mTabType) {
             case TAB_TV:
+            case TAB_D_CHANNEL:
             case TAB_DEFAULT:
                 holder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
                 holder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
                 break;
             case TAB_D_ANIMATE:
-            case TAB_D_CHANNEL:
             case TAB_D_TV:
             case TAB_VIDEO:
                 break;
@@ -1163,7 +1179,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
             case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
             case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
-                holder.tv_time.setVisibility(View.GONE);
                 holder.tv_rank.setVisibility(View.GONE);
                 break;
             case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
@@ -1194,7 +1209,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_line.setVisibility(View.VISIBLE);
                 break;
             case TYPE_SEARCH_LIST: //検索
-                holder.tv_time.setVisibility(View.GONE);
                 holder.tv_rank.setVisibility(View.GONE);
                 holder.ll_rating.setVisibility(View.GONE);
             default:
@@ -1305,7 +1319,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     /**
      * ビュー管理クラス.
      */
-    private static class ViewHolder {
+    public static class ViewHolder {
         /**
          * サムネイル親レイアウト.
          */
@@ -1325,7 +1339,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         /**
          * サブタイトル.
          */
-        TextView tv_time;
+        public TextView tv_time;
         /**
          * メインタイトル.
          */
@@ -1342,10 +1356,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
          * 録画予約ステータス.
          */
         TextView tv_recording_reservation = null;
-        /**
-         * チャンネル名.
-         */
-        final TextView tv_channel_name = null;
         /**
          * ハイフン.
          */

@@ -140,6 +140,11 @@ public class WebApiBasePlala {
      */
     private CommunicationTask mCommunicationTaskOtt = null;
     /**
+     * タイムアウト時間.
+     */
+    private int mTimeOut = 0;
+
+    /**
      * 通信停止用フラグ.
      */
     private boolean mIsStop = false;
@@ -208,7 +213,7 @@ public class WebApiBasePlala {
     /**
      * フィルター用指定文字列・ssvod.
      */
-    public static final String FILTER_SSVOD = "ssvod";
+    public static final String FILTER_RELEASE_SSVOD = "release|ssvod";
     /**
      * フィルター用指定文字列・フィルターのパラメータ名.
      */
@@ -518,13 +523,32 @@ public class WebApiBasePlala {
     }
 
     /**
-     * 指定したAPIで通信を開始する(拡張情報付き).
+     * 指定したAPIで通信を開始する(タイムアウト指定付き).
      *
      * @param sourceUrl               API呼び出し名
      * @param receivedParameters      API呼び出し用パラメータ
-     * @param webApiBasePlalaCallback 結果のコールバック
-     * @param extraDataSrc            拡張情報
+     * @param timeOut                   タイムアウト時間指定(0はAPIデフォルト指定とする)
+     * @param webApiBasePlalaCallback コールバック
      */
+    public void openUrl(final String sourceUrl, final String receivedParameters,
+                        final int timeOut,
+                        final WebApiBasePlalaCallback webApiBasePlalaCallback) {
+        //タイムアウト時間を指定する
+        mTimeOut = timeOut;
+
+        //通常の通信開始を呼ぶ
+        openUrl(sourceUrl,receivedParameters,webApiBasePlalaCallback);
+    }
+
+
+        /**
+         * 指定したAPIで通信を開始する(拡張情報付き).
+         *
+         * @param sourceUrl               API呼び出し名
+         * @param receivedParameters      API呼び出し用パラメータ
+         * @param webApiBasePlalaCallback 結果のコールバック
+         * @param extraDataSrc            拡張情報
+         */
     public void openUrlWithExtraData(final String sourceUrl, final String receivedParameters,
                                      final WebApiBasePlalaCallback webApiBasePlalaCallback,
                                      final Bundle extraDataSrc) {
@@ -1250,6 +1274,11 @@ public class WebApiBasePlala {
             }
             urlConnection.setDoInput(true);
             urlConnection.setFixedLengthStreamingMode(sendParameterLength);
+
+            //タイムアウト指定(0以下ならば、APIのデフォルト値とするので、値を設定しない)
+            if(mTimeOut > 0) {
+                urlConnection.setConnectTimeout(mTimeOut);
+            }
         }
 
         /**

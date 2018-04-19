@@ -19,6 +19,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.MyChannelEditActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.MainSettingListAdapter;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -159,18 +160,24 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             //Dアカウント設定
             startDAccountSetting();
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_PAIRING])) {
-            //ペアリング設定
-            Intent intent = new Intent(getApplicationContext(), STBSelectActivity.class);
-            intent.putExtra(STBSelectActivity.FROM_WHERE, STBSelectActivity.STBSelectFromMode.STBSelectFromMode_Setting.ordinal());
-            startActivity(intent);
+            if (isSettingPossible(false)) {
+                //ペアリング設定
+                Intent intent = new Intent(getApplicationContext(), STBSelectActivity.class);
+                intent.putExtra(STBSelectActivity.FROM_WHERE, STBSelectActivity.STBSelectFromMode.STBSelectFromMode_Setting.ordinal());
+                startActivity(intent);
+            }
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_MY_PROGRAM])) {
-            //マイ番組表設定
-            startActivity(MyChannelEditActivity.class, null);
+            if (isSettingPossible(true)) {
+                //マイ番組表設定
+                startActivity(MyChannelEditActivity.class, null);
+            }
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_QUALITY])) {
-            //外出先視聴時の画質設定画面への遷移
-            Intent intent = new Intent(this, SettingImageQualityActivity.class);
-            intent.putExtra(getString(R.string.main_setting_quality_status), mSettingList.get(i).getStateText());
-            startActivity(intent);
+            if (isSettingPossible(true)) {
+                //外出先視聴時の画質設定画面への遷移
+                Intent intent = new Intent(this, SettingImageQualityActivity.class);
+                intent.putExtra(getString(R.string.main_setting_quality_status), mSettingList.get(i).getStateText());
+                startActivity(intent);
+            }
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_FAQ])) {
             //FAQ
             startActivity(SettingMenuFaqActivity.class, null);
@@ -222,11 +229,8 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         //項目名、設定値、>の画像、カテゴリ情報
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_D_ACCOUNT], BLANK));
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_PAIRING], isParing));
-        // 未ログイン状態ではMY番組表設定や画質設定は表示しない.
-        if (!dAccountId.isEmpty()) {
-            mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_MY_PROGRAM], BLANK));
-            mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_QUALITY], imageQuality));
-        }
+        mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_MY_PROGRAM], BLANK));
+        mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_QUALITY], imageQuality));
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_FAQ], BLANK));
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_APP_INFO], BLANK));
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_LICENCE], BLANK));
@@ -260,6 +264,39 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             });
             dAccountUninstallDialog.showDialog();
         }
+    }
+
+    /**
+     * ユーザ状態判定.
+     *
+     * @param isDisplay 表示フラグ
+     * @return 設定操作可否
+     */
+    private boolean isSettingPossible(final boolean isDisplay) {
+        UserState userState = UserInfoUtils.getUserState(this);
+        if (userState.equals(UserState.LOGIN_NG)) {
+            //未ログインならダイアログ表示
+            settingErrorDialog(R.string.main_setting_logon_request_error_message);
+            return false;
+        } else if (userState.equals(UserState.LOGIN_OK_CONTRACT_NG)) {
+            if (isDisplay) {
+                //未契約ならダイアログ表示
+                settingErrorDialog(R.string.main_setting_h4d_not_signed_message);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 未ログイン時のダイアログ表示.
+     * @param resId エラーメッセージ
+     */
+    private void settingErrorDialog(final int resId) {
+        //　アプリが無ければインストール画面に誘導
+        CustomDialog customDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        customDialog.setContent(getResources().getString(resId));
+        customDialog.showDialog();
     }
 
     /**

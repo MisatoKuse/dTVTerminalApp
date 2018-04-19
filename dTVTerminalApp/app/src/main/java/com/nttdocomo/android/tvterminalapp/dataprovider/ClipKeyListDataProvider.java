@@ -349,10 +349,10 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      */
     private boolean findDbVodClipKeyData(
             final ClipKeyListDao.TABLE_TYPE type, final String crid) {
-        DTVTLogger.start();
+//        DTVTLogger.start();//必要な時にコメントを解除して使用
         ClipKeyListDataManager dataManager = new ClipKeyListDataManager(mContext);
         List<Map<String, String>> clipKeyList = dataManager.selectClipKeyDbVodData(type, crid);
-        DTVTLogger.end();
+//        DTVTLogger.end();//必要な時にコメントを解除して使用
         return clipKeyList != null && clipKeyList.size() > 0;
     }
 
@@ -368,10 +368,10 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     private boolean findDbTvClipKeyData(
             final ClipKeyListDao.TABLE_TYPE tableType, final String serviceId,
             final String eventId, final String type) {
-        DTVTLogger.start();
+//        DTVTLogger.start();//必要な時にコメントを解除して使用
         ClipKeyListDataManager dataManager = new ClipKeyListDataManager(mContext);
         List<Map<String, String>> clipKeyList = dataManager.selectClipKeyDbTvData(tableType, serviceId, eventId, type);
-        DTVTLogger.end();
+//        DTVTLogger.end();//必要な時にコメントを解除して使用
 
         return clipKeyList != null && clipKeyList.size() > 0;
     }

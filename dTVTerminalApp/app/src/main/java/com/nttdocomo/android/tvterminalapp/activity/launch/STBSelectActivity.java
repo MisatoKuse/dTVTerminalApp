@@ -41,7 +41,6 @@ import com.nttdocomo.android.tvterminalapp.jni.remote.DlnaInterfaceRI;
 import com.nttdocomo.android.tvterminalapp.jni.remote.DlnaRemoteRet;
 import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessage;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
-import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
@@ -146,7 +145,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private int mFirstStatusHeight = 0;
 
     /**
-     * ステータス表示の高さの補正値
+     * ステータス表示の高さの補正値.
      */
     private final double ANDROID_4_4_FIX_SIZE = 1.2;
     /**
@@ -546,7 +545,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      *
      * @param statusTextView 文字の欠けるテキストビュー
      */
-    private void fixStatusTextView(TextView statusTextView) {
+    private void fixStatusTextView(final TextView statusTextView) {
         //ヌルかAndroid5.0以上ならば帰る
         if (statusTextView == null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             return;
@@ -1104,6 +1103,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
     /**
      * DTCP-IPアクティーベションを行う.
+     * @return isActivited:true or false
      */
     private boolean isActivited() {
         DTVTLogger.start();
@@ -1132,7 +1132,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
         mDeviceKey = getPrivateDataHome();
         mActivationHelper = new ActivationHelper(this, mDeviceKey);
-        new STBSelectActivity.ActivationThread().start();
+        new ActivationThread().start();
         DTVTLogger.end();
     }
 

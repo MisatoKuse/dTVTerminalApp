@@ -25,7 +25,7 @@ public class TvClipJsonParser {
     // オブジェクトクラスの定義
     private TvClipList mTvClipList;
 
-    public static final String[] PAGER_PARA = {JsonConstants.META_RESPONSE_UPPER_LIMIT,
+    private static final String[] PAGER_PARA = {JsonConstants.META_RESPONSE_UPPER_LIMIT,
             JsonConstants.META_RESPONSE_LOWER_LIMIT, JsonConstants.META_RESPONSE_OFFSET,
             JsonConstants.META_RESPONSE_COUNT};
 
@@ -71,7 +71,9 @@ public class TvClipJsonParser {
                     }
                 }
             }
-            mTvClipList.setVcMap(map);
+            if(mTvClipList != null) {
+                mTvClipList.setVcMap(map);
+            }
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
@@ -99,25 +101,9 @@ public class TvClipJsonParser {
                                 stringBuffer.append(JsonConstants.META_RESPONSE_PUINF);
                                 stringBuffer.append(JsonConstants.UNDER_LINE);
                                 stringBuffer.append(puinfBuffer);
-
-                                //日付項目チェック
-                                if (DBUtils.isDateItem(puinfBuffer)) {
-                                    //日付なので変換して格納する
-                                    String dateBuffer = DateUtils.formatEpochToString(
-                                            StringUtils.changeString2Long(puinfObj.getString(
-                                                    puinfBuffer)));
-                                    tcListMap.put(stringBuffer.toString(), dateBuffer);
-                                } else {
-                                    //日付ではないのでそのまま格納する
-                                    String para = puinfObj.getString(puinfBuffer);
-                                    tcListMap.put(stringBuffer.toString(), para);
-                                }
+                                String para = puinfObj.getString(puinfBuffer);
+                                tcListMap.put(stringBuffer.toString(), para);
                             }
-                        } else if (DBUtils.isDateItem(listBuffer)) {
-                            // DATE_PARAに含まれるのは日付なので、エポック秒となる。変換して格納する
-                            String dateBuffer = DateUtils.formatEpochToString(
-                                    StringUtils.changeString2Long(jsonObject.getString(listBuffer)));
-                            tcListMap.put(listBuffer, dateBuffer);
                         } else {
                             String para = jsonObject.getString(listBuffer);
                             tcListMap.put(listBuffer, para);

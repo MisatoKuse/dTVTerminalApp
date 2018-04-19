@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.fragment.cliplist;
 
+import android.os.Bundle;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +20,11 @@ public class ClipListFragmentFactory {
     private final Map<Integer, ClipListBaseFragment> mFragments = new HashMap<>();
 
     /**
+     * ポジション.
+     */
+    public static final String POSITION = "position";
+
+    /**
      * Fragment生成.
      *
      * @param position タブPosition
@@ -30,8 +37,14 @@ public class ClipListFragmentFactory {
         if (fragment == null) {
             if (position == 0) {
                 fragment = new ClipListBaseFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt(POSITION, position);
+                fragment.setArguments(bundle);
             } else if (position == 1) {
                 fragment = new ClipListBaseFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt(POSITION, position);
+                fragment.setArguments(bundle);
             }
             if (fragment != null) {
                 fragment.setClipListBaseFragmentScrollListener(lis);

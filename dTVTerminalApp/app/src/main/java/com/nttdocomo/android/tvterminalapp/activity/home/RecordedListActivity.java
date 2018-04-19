@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -602,7 +603,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(downloadReceiver);
+
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(downloadReceiver);
         boolean isRunning = isDownloadServiceRunning();
         if (!isRunning) {
             DlnaProvDownload.uninitGlobalDl();
@@ -623,7 +625,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         filter.addAction(DownloadService.DONWLOAD_OnStart);
         filter.addAction(DownloadService.DONWLOAD_DlDataProviderAvailable);
         filter.addAction(DownloadService.DONWLOAD_DlDataProviderUnavailable);
-        registerReceiver(downloadReceiver, filter);
+        LocalBroadcastManager.getInstance(this).registerReceiver(downloadReceiver, filter);
     }
 
     /**
