@@ -9,7 +9,9 @@ import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 
-
+/**
+ * DTVデータプロバイダー.
+ */
 public class DTvChDataProvider extends ScaledDownProgramListDataProvider {
     /**
      * コンストラクタ.

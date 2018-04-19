@@ -244,9 +244,10 @@ public class DaccountGetOTT {
     }
 
     /**
-     * 取得したOTTが使い終わった場合に呼び、次のOTT取得を許可する
+     * 取得したOTTが使い終わった場合に呼び、次のOTT取得を許可する.
+     * @param context コンテキスト
      */
-    public void allowNext(Context context) {
+    public void allowNext(final Context context) {
         //次の処理のウェイトを解除する
         mOttGetQueue.allowNext(context);
     }
@@ -256,7 +257,7 @@ public class DaccountGetOTT {
      *
      * @param disconnectionFlag trueならば通信切断
      */
-    public void setDisconnectionFlag(boolean disconnectionFlag) {
+    public void setDisconnectionFlag(final boolean disconnectionFlag) {
         if (mOttGetQueue != null) {
             //キュークラスに丸投げ
             mOttGetQueue.setDisconnectionFlag(disconnectionFlag);

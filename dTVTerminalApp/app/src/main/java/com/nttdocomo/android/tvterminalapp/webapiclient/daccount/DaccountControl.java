@@ -120,7 +120,7 @@ public class DaccountControl implements
      *
      * @param busy 処理が終わった場合はfalseをセット
      */
-    public void setDAccountBusy(boolean busy) {
+    public void setDAccountBusy(final boolean busy) {
         mDAccountBusy = busy;
     }
 
@@ -149,7 +149,7 @@ public class DaccountControl implements
         }
 
         //初回実行である事を設定する
-        if(context != null) {
+        if (context != null) {
             SharedPreferencesUtils.setFirstExecStart(context);
         }
 
@@ -388,7 +388,7 @@ public class DaccountControl implements
      * @param context        コンテキスト
      * @param daccountGetOTT ワンタイムトークン取得クラス
      */
-    static void cacheClear(final Context context, DaccountGetOTT daccountGetOTT) {
+    static void cacheClear(final Context context, final DaccountGetOTT daccountGetOTT) {
         DTVTLogger.start();
         DaccountControlOnce onceControl = DaccountControlOnce.getInstance();
 
@@ -516,6 +516,7 @@ public class DaccountControl implements
          *
          * @param execOnce       設定を行う実行フラグの値
          * @param daccountGetOTT OTT取得処理のインスタンス
+         * @param context コンテキスト
          */
         void setExecOnce(final boolean execOnce, final DaccountGetOTT daccountGetOTT,
                          final Context context) {

@@ -363,7 +363,9 @@ public class WebApiBasePlala {
     private static final String ONE_TIME_TOKEN_GET_CONTENT_TYPE =
             "application/x-www-form-urlencoded";
 
-    //戻り値用構造体
+    /**
+     * 戻り値用構造体.
+     */
     static protected class ReturnCode {
         /**
          * 通信時エラー情報.
@@ -537,7 +539,7 @@ public class WebApiBasePlala {
         mTimeOut = timeOut;
 
         //通常の通信開始を呼ぶ
-        openUrl(sourceUrl,receivedParameters,webApiBasePlalaCallback);
+        openUrl(sourceUrl, receivedParameters, webApiBasePlalaCallback);
     }
 
 
@@ -587,7 +589,7 @@ public class WebApiBasePlala {
         //ワンタイムトークン専用のコールバックを作成する
         ServiceTokenErrorCallback serviceTokenErrorCallback = new ServiceTokenErrorCallback() {
             @Override
-            public void onTokenError(ReturnCode returnCode) {
+            public void onTokenError(final ReturnCode returnCode) {
                 //ワンタイムトークン側のエラー情報を、WebApi側にも反映する
                 mReturnCode = returnCode;
 
@@ -642,6 +644,7 @@ public class WebApiBasePlala {
      * ワンタイムトークンを取得する為に、dアカウント設定アプリからワンタイムパスワードを取得する.
      *
      * @param context コンテキスト
+     *@param serviceTokenErrorCallback   サービストークンエラーコールバック
      */
     private void getOneTimePassword(final Context context,
                                     final ServiceTokenErrorCallback serviceTokenErrorCallback) {
@@ -649,7 +652,7 @@ public class WebApiBasePlala {
         mGetOtt = new DaccountGetOTT();
         mGetOtt.execDaccountGetOTT(context, new DaccountGetOTT.DaccountGetOttCallBack() {
             @Override
-            public void getOttCallBack(int result, String id, String oneTimePassword) {
+            public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
                 //ワンタイムトークンが期限内ならば、そのまま使用する
                 OneTimeTokenData tokenData = SharedPreferencesUtils.getOneTimeTokenData(mContext);
 
@@ -680,6 +683,7 @@ public class WebApiBasePlala {
      * @param context           　コンテキスト
      * @param communicationTask 通信処理クラス
      * @param oneTimePassword   ワンタイムパスワード
+     * @param serviceTokenErrorCallback サービストークンエラーコールバック
      */
     public static void getServiceToken(final Context context,
                                        final CommunicationTask communicationTask,
@@ -871,6 +875,7 @@ public class WebApiBasePlala {
      * パラメータをストリームに書き込む.
      *
      * @param urlConnection 書き込み対象のコネクション
+     * @param sendData パラメータ
      */
     private void setHttpsPostData(final HttpsURLConnection urlConnection, final String sendData) {
         if (urlConnection == null) {
@@ -1091,7 +1096,7 @@ public class WebApiBasePlala {
             }
 
             //圏外等の判定
-            if(mContext == null
+            if (mContext == null
                     || (mContext != null && !NetWorkUtils.isOnline(mContext))) {
                 //そもそも通信のできない状態なので、ネットワークエラーとする
                 mReturnCode.errorState.setErrorType(
@@ -1215,7 +1220,7 @@ public class WebApiBasePlala {
                         returnCode.bodyData = mAnswerBuffer;
 
                         //エラーコードをセットする
-                        if(returnCode.errorState.setErrorCode(mAnswerBuffer)) {
+                        if (returnCode.errorState.setErrorCode(mAnswerBuffer)) {
                             //エラーコードが存在したので、HTTPエラーとする
                             returnCode.errorState.setErrorType(
                                     DTVTConstants.ERROR_TYPE.HTTP_ERROR);
@@ -1276,7 +1281,7 @@ public class WebApiBasePlala {
             urlConnection.setFixedLengthStreamingMode(sendParameterLength);
 
             //タイムアウト指定(0以下ならば、APIのデフォルト値とするので、値を設定しない)
-            if(mTimeOut > 0) {
+            if (mTimeOut > 0) {
                 urlConnection.setConnectTimeout(mTimeOut);
             }
         }
@@ -1294,7 +1299,8 @@ public class WebApiBasePlala {
             DataOutputStream dataOutputStream = null;
             try {
                 dataOutputStream = new DataOutputStream(urlConnection.getOutputStream());
-                DTVTLogger.debug(String.format("RequestMethod[%s] mSendParameter[%s] size[%s]", urlConnection.getRequestMethod(), mSendParameter, mSendParameter.length()));
+                DTVTLogger.debug(String.format("RequestMethod[%s] mSendParameter[%s] size[%s]",
+                        urlConnection.getRequestMethod(), mSendParameter, mSendParameter.length()));
                 dataOutputStream.write(mSendParameter.getBytes(UTF8_CHARACTER_SET));
                 dataOutputStream.flush();
             } catch (IOException e) {
