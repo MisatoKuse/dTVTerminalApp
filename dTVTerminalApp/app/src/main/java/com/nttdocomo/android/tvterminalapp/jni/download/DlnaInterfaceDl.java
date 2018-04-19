@@ -21,12 +21,16 @@ public class DlnaInterfaceDl {
     //private Handler mHandler= new Handler();
 
     //Download
+    /**ダウンロードリスナー.*/
     private DlnaDlListener mDlnaDlListener;
+    /**コンテクスト.*/
     private Context mContext;
+    /**ネイティブDlna.*/
     private long mNativeDlna = 0;
 
     /**
      * 機能：デフォールト構造.
+     * @param savePath savePath
      */
     public DlnaInterfaceDl(final String savePath)/* throws Exception*/ {
 //        if(!startDtcpDl(savePath)){
@@ -36,7 +40,8 @@ public class DlnaInterfaceDl {
 
     /**
      * 機能：Dlna機能を開始。「stopDtcpDl」とPairで使用しなければならない.
-     *
+     *@param pathToSave  pathToSave
+     * @param percentToNotify percentToNotify
      * @return boolean
      */
     public DlnaDownloadRet startDtcpDl(final String pathToSave, final int percentToNotify) {
@@ -161,6 +166,7 @@ public class DlnaInterfaceDl {
     /**
      * 機能：Dlna download listenerを設定.
      * @param lis lis
+     * @param context context
      */
     public void setDlnaDlListener(final DlnaDlListener lis, final Context context) {
         mDlnaDlListener = lis;
@@ -192,7 +198,7 @@ public class DlnaInterfaceDl {
 
     /**
      * 機能：ダウンロードステータスのコールバック.
-     * @param content
+     * @param content content
      */
     private void dlStatus(final String content) {
         DTVTLogger.start();
@@ -215,7 +221,7 @@ public class DlnaInterfaceDl {
 
     /**
      * 機能：download.
-     *
+     *@param param param
      * @return DownloadRet_Succeed: 成功　
      *          DownloadRet_Unactivated：unactivated
      *          DownloadRet_CopyKeyFileFailed: copy key file error
@@ -237,14 +243,21 @@ public class DlnaInterfaceDl {
 //            public void run() {
 //                long id=Thread.currentThread().getId();
 //                DTVTLogger.debug("HandlerThread:"+id);
-//                download(mNativeDlna, param.getSavePath(), param.getSaveFileName(), param.getDtcp1host(), param.getDtcp1port(), param.getUrl(), param.getCleartextSize(), xml);
+//                download(mNativeDlna, param.getSavePath(), param.getSaveFileName(), param.getDtcp1host(),
+// 　　　　　　　　param.getDtcp1port(), param.getUrl(), param.getCleartextSize(), xml);
 //            }
 //        });
-        download(mNativeDlna, param.getSaveFileName(), param.getDtcp1host(), param.getDtcp1port(), param.getUrl(), param.getCleartextSize(), param.getXmlToDl());
+        download(mNativeDlna, param.getSaveFileName(), param.getDtcp1host(), param.getDtcp1port(),
+                param.getUrl(), param.getCleartextSize(), param.getXmlToDl());
         DTVTLogger.end();
         return DlnaDownloadRet.DownloadRet_Succeed;
     }
 
+    /**
+     * getParentDir.
+     * @param dir dir
+     * @return Parent path
+     */
     private String getParentDir(final String dir) {
         File f = new File(dir);
         if (!f.exists()) {
@@ -256,6 +269,9 @@ public class DlnaInterfaceDl {
         return f.getParent();
     }
 
+    /**
+     * downloadCancel.
+     */
     public void downloadCancel() {
         downloadCancel(mNativeDlna);
     }
@@ -268,17 +284,22 @@ public class DlnaInterfaceDl {
      * @param dtcp1port dtcp1port
      * @param url url
      * @param cleartextSize cleartextSize
+     * @param itemId itemId
      */
     private native void download(long prt, String fileNameToSave, String dtcp1host, int dtcp1port, String url, int cleartextSize, String itemId);
 
     /**
      * 機能：jni関数.
+     * @param prt prt
+     * @param percentToNotify pathToSave
+     * @param pathToSave percentToNotify
      * @return 操作結果
      */
     private native boolean nativeStartDlna(long prt, String pathToSave, int percentToNotify);
 
     /**
      * 機能：jni関数.
+     * @param prt prt
      */
     private native void nativeStopDlna(long prt);
 
@@ -294,7 +315,15 @@ public class DlnaInterfaceDl {
      */
     private native void downloadCancel(long prt);
 
+    /**
+     * initGlobalDl.
+     * @param saveDir saveDir
+     * @return true or false
+     */
     public static native boolean initGlobalDl(String saveDir);
 
+    /**
+     * uninitGlobalDl.
+     */
     public static native void uninitGlobalDl();
 }

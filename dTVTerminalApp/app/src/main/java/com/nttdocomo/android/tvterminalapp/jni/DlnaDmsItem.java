@@ -10,20 +10,18 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
  * 機能：一台のDMS設備を表示するクラス.
  */
 public class DlnaDmsItem {
-    /**
-     * このクラスにて、フィールドは「public」に設定している理由は、.
-     * １．JNIのC側で操作便利
-     * ２．フィールドは追加すると、setとget方法をjavaとc側両方で増やさないよう
-     */
-    //デバイスのudn名
+    //このクラスにて、フィールドは「public」に設定している理由は,
+    // １．JNIのC側で操作便利
+    // ２．フィールドは追加すると、setとget方法をjavaとc側両方で増やさないよう
+    /**デバイスのudn名.*/
     public String mUdn = "";
-    //デバイスのコントロールurl
+    /**デバイスのコントロールurl.*/
     public String mControlUrl = "";
-    //デバイスのhttp
+    /**デバイスのhttp.*/
     public String mHttp = "";
-    //Friendly名
+    /**Friendly名.*/
     public String mFriendlyName = "";
-    //IPアドレス
+    /**IPアドレス.*/
     public String mIPAddress = "";
 
     //to do: 使用する必要があれば、新しいフィールドをここで追加
@@ -34,6 +32,11 @@ public class DlnaDmsItem {
     public DlnaDmsItem() {
     }
 
+    /**
+     * getPortFromProtocal.
+     * @param portStr portStr
+     * @return port
+     */
     public static int getPortFromProtocal(final String portStr) {
         final String head = "DTCP1PORT=";
         final String tail = ";CONTENTFORMAT";
@@ -52,6 +55,11 @@ public class DlnaDmsItem {
         return retI;
     }
 
+    /**
+     * isDmsItemValid.
+     * @param item item
+     * @return true or false
+     */
     public static boolean isDmsItemValid(final DlnaDmsItem item) {
         boolean ret = false;
         if (null != item

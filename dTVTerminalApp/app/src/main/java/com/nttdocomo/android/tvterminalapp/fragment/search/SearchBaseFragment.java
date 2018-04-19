@@ -21,11 +21,11 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
@@ -33,8 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity.PAGE_NO_OF_SERVICE_CLEAR;
-import static com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity.PAGE_NO_OF_SERVICE_TELEVISION;
 import static com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity.PAGE_NO_OF_SERVICE_DTV_CHANNEL;
+import static com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity.PAGE_NO_OF_SERVICE_TELEVISION;
 
 /**
  * 検索結果画面を表示する.
@@ -177,6 +177,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
      * 画面の更新.
      *
      * @param count 検索結果件数
+     * @param tabPosition タブポジション
      */
     public void notifyDataSetChanged(final String count, final int tabPosition) {
         DTVTLogger.debug("count:" + count + ",tabPosition:" + tabPosition);

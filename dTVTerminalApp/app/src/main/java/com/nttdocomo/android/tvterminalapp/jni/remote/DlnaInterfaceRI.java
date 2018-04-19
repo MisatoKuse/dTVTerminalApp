@@ -32,13 +32,19 @@ import java.util.HashMap;
  * 機能：For Dlna Remote.
  */
 public class DlnaInterfaceRI {
+    /**FileEncoce.*/
     private static final String sFileEncoce = "UTF-8";
     /** コンテクスト.*/
     private Context mContext;
+    /**NativeDlna.*/
     private long mNativeDlna = 0;
+    /**BufSize.*/
     private static final int sBufSize = 1024;
+    /**WhatToReplace.*/
     private static final String sWhatToReplace = "[CONFDIR]";
+    /**ConFileDirName.*/
     private static final String sConFileDirName = "drm/conf";
+    /**RadaRelayDestPost.*/
     private static final String sRadaRelayDestPost = "/dirag/rada/rada_relay";
     /** コピー元（assets）.*/
     private static final String DRM_CONF_PRIVATE = "drm/conf/private_data_home";
@@ -70,6 +76,11 @@ public class DlnaInterfaceRI {
                 EnvironmentUtil.ACTIVATE_DATA_HOME.PLAYER);
     }
 
+    /**
+     * getFileSize .
+     * @param path path
+     * @return FileSize
+     */
     public static long getFileSize(final String path) {
         long size = 0;
         File file = new File(path);
@@ -80,9 +91,9 @@ public class DlnaInterfaceRI {
                 size = fis.available();
             } catch (IOException e) {
                 DTVTLogger.debug(e);
-            }finally {
+            } finally {
                 try {
-                    if(fis != null) {
+                    if (fis != null) {
                         fis.close();
                     }
                 } catch (IOException e) {
@@ -93,14 +104,18 @@ public class DlnaInterfaceRI {
         return size;
     }
 
-    public static void listAllConfFilesCopied(String path) {
+    /**
+     * listAllConfFilesCopied.
+     * @param path path
+     */
+    public static void listAllConfFilesCopied(final String path) {
         FileListAll fs = new FileListAll();
         File file = new File(path);
         HashMap<String, String> hm = fs.getList(file);
     }
 
     /**
-     * copy conf files to app
+     * copy conf files to app.
      *
      * @param context        context
      * @param assetsConfPath assetsConfPath
@@ -108,7 +123,7 @@ public class DlnaInterfaceRI {
      * @param forceUpdate    「true」の場合、毎回assetsからコピー
      * @return conf path:    Conf path is not null, error return null
      */
-    public static boolean copyConfFiles(Context context, String assetsConfPath, String destPath, boolean forceUpdate) {
+    public static boolean copyConfFiles(final Context context, final String assetsConfPath, final String destPath, final boolean forceUpdate) {
         if (null == context || TextUtils.isEmpty(assetsConfPath) || TextUtils.isEmpty(destPath)) {
             return false;
         }
@@ -148,7 +163,12 @@ public class DlnaInterfaceRI {
         return r;
     }
 
-    private static String getFileName(String path) {
+    /**
+     * getFileName.
+     * @param path path
+     * @return FileName
+     */
+    private static String getFileName(final String path) {
         if (null == path) {
             return path;
         }
@@ -160,7 +180,7 @@ public class DlnaInterfaceRI {
     }
 
     /**
-     * Copy one file
+     * Copy one file.
      *
      * @param context context
      * @param oldPath oldPath
@@ -218,6 +238,13 @@ public class DlnaInterfaceRI {
         return ret;
     }
 
+    /**
+     * filterSpecial.
+     * @param is is
+     * @param whatToReplace whatToReplace
+     * @param replace replace
+     * @return InputStream
+     */
     private static InputStream filterSpecial(final InputStream is, final String whatToReplace, final String replace) {
         String temp = null;
         InputStream ret = null;
@@ -227,7 +254,7 @@ public class DlnaInterfaceRI {
         } catch (Exception e) {
             DTVTLogger.debug(e);
         }
-        if(temp != null) {
+        if (temp != null) {
             try {
                 ret = stringToInputStream(temp);
             } catch (Exception e) {
@@ -237,11 +264,24 @@ public class DlnaInterfaceRI {
         return ret;
     }
 
+    /**
+     * stringToInputStream.
+     * @param in in
+     * @return ByteArrayInputStream
+     * @throws Exception Exception
+     */
     private static InputStream stringToInputStream(final String in) throws Exception {
         ByteArrayInputStream is = new ByteArrayInputStream(in.getBytes(sFileEncoce));
         return is;
     }
 
+    /**
+     * inputStreamToString.
+     * @param in in
+     * @param encoding encoding
+     * @return string
+     * @throws Exception Exception
+     */
     private static String inputStreamToString(final InputStream in, final String encoding) throws Exception {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         byte[] data = new byte[sBufSize];
@@ -253,6 +293,12 @@ public class DlnaInterfaceRI {
         return new String(outStream.toByteArray(), sFileEncoce);
     }
 
+    /**
+     * printFile.
+     * @param context context
+     * @param fullPath fullPath
+     * @return String
+     */
     private static String printFile(final Context context, final String fullPath) {
         InputStream in = null;
         String ret = null;
@@ -333,6 +379,10 @@ public class DlnaInterfaceRI {
         return DlnaRemoteRet.DlnaRemoteRet_Succeed;
     }
 
+    /**
+     * getUdn.
+     * @return Udn
+     */
     private String getUdn() {
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(mContext);
         if (dlnaDmsItem != null) {
@@ -341,7 +391,9 @@ public class DlnaInterfaceRI {
             return null;
         }
     }
-
+    /**
+     * regist.
+     */
     public void regist() {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(new Runnable() {
@@ -352,6 +404,9 @@ public class DlnaInterfaceRI {
         }, 3000);
     }
 
+    /**
+     * stop.
+     */
     public void stop() {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(new Runnable() {
@@ -362,6 +417,9 @@ public class DlnaInterfaceRI {
         }, 5000);
     }
 
+    /**
+     * connect.
+     */
     public void connect() {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(new Runnable() {
@@ -372,6 +430,12 @@ public class DlnaInterfaceRI {
         }, 25000);
     }
 
+    /**
+     * copyFileFromAssets.
+     * @param context context
+     * @param oldPath oldPath
+     * @param newPath newPath
+     */
     private static void copyFileFromAssets(final Context context, final String oldPath, final String newPath) {
         String[] fileNames = null;
         try {
@@ -424,6 +488,11 @@ public class DlnaInterfaceRI {
         }
     }
 
+    /**
+     * makeRedaRelayDir.
+     * @param destDir destDir
+     * @return true or false
+     */
     private boolean makeRedaRelayDir(final String destDir) {
         if (null == destDir || destDir.isEmpty()) {
             return false;
@@ -455,7 +524,7 @@ public class DlnaInterfaceRI {
      * @param msg メッセージID
      * @param content content
      */
-    public void notifyFromNative(int msg, String content) {
+    public void notifyFromNative(final int msg, final String content) {
         switch (msg) {
             case DlnaInterface.DLNA_MSG_ID_RM_STATUS:
 //                dlProgress(content);
@@ -485,16 +554,34 @@ public class DlnaInterfaceRI {
 
 
     /**
-     * 機能：jni関数.
-     *
+     * nativeStartDlnaRm.
+     *@param prt prt
+     * @param confPath confPath
      * @return 操作結果
      */
     private native boolean nativeStartDlnaRm(long prt, String confPath);
 
+    /**
+     *  nativeStartDlnaRmRegist.
+     * @param prt prt
+     * @param udn udn
+     * @return 操作結果
+     */
     private native boolean nativeStartDlnaRmRegist(long prt, String udn);
 
+    /**
+     * nativeStartDlnaRmConnect.
+     * @param prt prt
+     * @param udn udn
+     * @return 操作結果
+     */
     private native boolean nativeStartDlnaRmConnect(long prt, String udn);
 
+    /**
+     *nativeStartDlnaRmStop.
+     * @param prt  prt
+     * @return 操作結果
+     */
     private native boolean nativeStartDlnaRmStop(long prt);
 
 //    /**

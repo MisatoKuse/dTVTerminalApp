@@ -17,19 +17,27 @@ public class DlnaBsChListItem {
      */
 
     public String mChannelNo = "";
-    //チャンネルタイトル
+    /**チャンネルタイトル.*/
     public String mTitle = "";
     //protocolInfo start
+    /**コンテンツサイズ.*/
     public String mSize = "";
+    /**総再生時間(ms).*/
     public String mDuration = "";
+    /**解像度.*/
     public String mResolution = "";
+    /**ビット毎秒.*/
     public String mBitrate = "";
+    /**ダウンロードUrl.*/
     public String mResUrl = "";
+    /**サムネイル.*/
     public String mThumbnail = "";
     //protocolInfo end
-
+    /**日付.*/
     public String mDate = "";
+    /**ビデオタイプ.*/
     public String mVideoType = "";
+    /**チャンネル名.*/
     public String mChannelName = "";
 
     /**

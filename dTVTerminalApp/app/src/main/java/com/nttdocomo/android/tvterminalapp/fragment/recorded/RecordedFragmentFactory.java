@@ -9,14 +9,24 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 録画フラグメントファクトリー.
+ */
 public class RecordedFragmentFactory {
-
+    /** Fragment格納Map..*/
     private final Map<Integer, RecordedBaseFragment> mFragments = new HashMap<>();
-
+    /**
+     * コンストラクタ.
+     */
     public RecordedFragmentFactory() {
 
     }
 
+    /**
+     * フラグメントクラスの生成、取得.
+     * @param position position
+     * @return fragment
+     */
     public synchronized RecordedBaseFragment createFragment(final int position) {
         DTVTLogger.start();
         RecordedBaseFragment fragment;
