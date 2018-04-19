@@ -22,14 +22,19 @@ import java.util.Locale;
  * TCPクライアント.
  */
 public class TcpClient {
-
+    /**Socket.*/
     private Socket mSocket = null;
+    /**RemoteIp.*/
     private String mRemoteIp = null;
+    /**RemotePort.*/
     private int mRemotePort = 0;
 
-    // STBスタンバイ状態からの電源ONとユーザアカウント切り替えに必要な最大待ち時間（ミリ秒）
+    /**STBスタンバイ状態からの電源ONとユーザアカウント切り替えに必要な最大待ち時間（ミリ秒）.*/
     public static final int SEND_RECV_TIMEOUT = 15000;
 
+    /**
+     * コンストラクタ.
+     */
     public TcpClient() {
         mSocket = null;
         mRemoteIp = null;
@@ -38,9 +43,9 @@ public class TcpClient {
     /**
      * Socket通信でSTBへ接続する.
      *
-     * @param remoteIp
-     * @param remotePort
-     * @return
+     * @param remoteIp remoteIp
+     * @param remotePort remotePort
+     * @return 成功:true
      */
     public boolean connect(final String remoteIp, final int remotePort) {
         mRemoteIp = remoteIp;
@@ -104,7 +109,7 @@ public class TcpClient {
      * Socket通信のメッセージを受信する.
      * 中継アプリから JSON形式の応答メッセージを受信する
      *
-     * @return
+     * @return 応答メッセージ
      */
     public synchronized String receive() {
         StringBuilder data = null;
@@ -149,7 +154,7 @@ public class TcpClient {
     /**
      * STBへメッセージ（JSON形式）を送信する.
      *
-     * @param data
+     * @param data JSON形式メッセージ
      * @return true 送信した場合
      */
     public boolean send(final String data) {

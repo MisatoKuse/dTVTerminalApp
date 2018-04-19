@@ -31,6 +31,7 @@ public class DlnaProvRecVideo {
     /**
      * 機能：DMSデバイスを取り始める.
      * @param lis listener
+     * @param item item
      * @return 成功true
      */
     public boolean start(final DlnaDmsItem item, final DlnaRecVideoListener lis) {
@@ -62,6 +63,10 @@ public class DlnaProvRecVideo {
         return null != di && di.browseRecVideoDms();
     }
 
+    /**
+     * isDlnaProRecVideoAvailable.
+     * @return isDlnaRunning true
+     */
     private boolean isDlnaProRecVideoAvailable() {
         DlnaInterface di = DlnaInterface.getInstance();
 //        if(null!=di){

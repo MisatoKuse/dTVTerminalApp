@@ -6,18 +6,32 @@ package com.nttdocomo.android.tvterminalapp.jni;
 
 import java.util.ArrayList;
 
+/**
+ * ひかりチャンネルリスト情報.
+ */
 class DlnaHikariChListInfo {
-
+    /**ひかりチャンネルリスト.*/
     private ArrayList<DlnaHikariChListItem> mLists = new ArrayList<>();
 
+    /**
+     * addItem.
+     * @param item item
+     */
     private void addItem(final DlnaHikariChListItem item) {
         mLists.add(item);
     }
 
+    /**
+     * 全リストclear.
+     */
     public void clearAll() {
         mLists.clear();
     }
 
+    /**
+     * リストsize.
+     * @return size
+     */
     public int size() {
         if (null != mLists) {
             return mLists.size();
@@ -26,6 +40,11 @@ class DlnaHikariChListInfo {
         return 0;
     }
 
+    /**
+     * インデックス取得.
+     * @param index インデックス
+     * @return インデックス
+     */
     public DlnaHikariChListItem get(final int index) {
         int destIndex = index;
         if (index < 0) {
@@ -38,6 +57,11 @@ class DlnaHikariChListInfo {
         return mLists.get(destIndex);
     }
 
+    /**
+     * fromArrayList.
+     * @param content content
+     * @return info
+     */
     static DlnaHikariChListInfo fromArrayList(final ArrayList<Object> content) {
         if (null == content) {
             return null;
@@ -50,6 +74,10 @@ class DlnaHikariChListInfo {
         return info;
     }
 
+    /**
+     * getHikariChLists.
+     * @return HikariChLists
+     */
     ArrayList<DlnaHikariChListItem> getHikariChLists() {
         return mLists;
     }

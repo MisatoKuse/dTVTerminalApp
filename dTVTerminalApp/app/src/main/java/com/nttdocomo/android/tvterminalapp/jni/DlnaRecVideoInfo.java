@@ -6,14 +6,25 @@ package com.nttdocomo.android.tvterminalapp.jni;
 
 import java.util.ArrayList;
 
+/**
+ * DlnaRecVideoInfo.
+ */
 public class DlnaRecVideoInfo {
-
+    /**Singleton.*/
     private ArrayList<DlnaRecVideoItem> mRecordVideoLists = new ArrayList<>();
 
+    /**
+     * addItem.
+     * @param item item
+     */
     private void addItem(final DlnaRecVideoItem item) {
         mRecordVideoLists.add(item);
     }
 
+    /**
+     * addItemByValue.
+     * @param item item
+     */
     public void addItemByValue(final DlnaRecVideoItem item) {
         DlnaRecVideoItem newItem = new DlnaRecVideoItem();
         newItem.mTitle = item.mTitle;
@@ -30,10 +41,17 @@ public class DlnaRecVideoInfo {
         mRecordVideoLists.add(newItem);
     }
 
+    /**
+     * clearAll.
+     */
     public void clearAll() {
         mRecordVideoLists.clear();
     }
 
+    /**
+     * size.
+     * @return size
+     */
     public int size() {
         if (null != mRecordVideoLists) {
             return mRecordVideoLists.size();
@@ -42,6 +60,11 @@ public class DlnaRecVideoInfo {
         return 0;
     }
 
+    /**
+     * DlnaRecVideoItem.
+     * @param index index
+     * @return Item
+     */
     public DlnaRecVideoItem get(final int index) {
         int destIndex = index;
         if (index < 0) {
@@ -54,6 +77,11 @@ public class DlnaRecVideoInfo {
         return mRecordVideoLists.get(destIndex);
     }
 
+    /**
+     * fromArrayList.
+     * @param content content
+     * @return info
+     */
     static DlnaRecVideoInfo fromArrayList(final ArrayList<Object> content) {
         if (null == content) {
             return null;
@@ -66,6 +94,11 @@ public class DlnaRecVideoInfo {
         return info;
     }
 
+    /**
+     * toArrayList.
+     * @param info info
+     * @return ArrayList
+     */
     public static ArrayList<Object> toArrayList(final DlnaRecVideoInfo info) {
         ArrayList<Object> ret = new ArrayList<>();
         if (null == info || 0 == info.size()) {
@@ -77,6 +110,10 @@ public class DlnaRecVideoInfo {
         return ret;
     }
 
+    /**
+     * getRecordVideoLists.
+     * @return RecordVideoList
+     */
     public ArrayList<DlnaRecVideoItem> getRecordVideoLists() {
         return mRecordVideoLists;
     }

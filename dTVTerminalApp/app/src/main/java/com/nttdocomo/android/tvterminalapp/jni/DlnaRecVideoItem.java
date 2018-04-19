@@ -20,24 +20,35 @@ public class DlnaRecVideoItem {
 
     //mItemId
     public String mItemId = "";
-    //録画のタイトル
+    /**録画のタイトル.*/
     public String mTitle = "";
     //protocolInfo start
+    /**コンテンツサイズ.*/
     public String mSize = "";
+    /**総再生時間.*/
     public String mDuration = "";     //e.g.  "00:26:54"
+    /**解像度.*/
     public String mResolution = "";
+    /**ビット毎秒.*/
     public String mBitrate = "";
+    /**ダウンロードUrl.*/
     public String mResUrl = "";
+    /**UpnpIcon.*/
     public String mUpnpIcon = "";
     //protocolInfo end
     //録画の日付
+    /**録画の日付.*/
     public String mDate = "";
 
     //to do: 使用する必要があれば、新しいフィールドをここで追加
     //TODO コピー残り回数（まだ取得できない為ダミー）
+    /**コピー残り回数.*/
     public int mAllowedUse = 0;
+    /**ビデオタイプ.*/
     public String mVideoType = "";
+    /**ClearTextSize.*/
     public String mClearTextSize = "";
+    /**channelName.*/
     public String mChannelName = "";    //upnp:channelName
 
     /**

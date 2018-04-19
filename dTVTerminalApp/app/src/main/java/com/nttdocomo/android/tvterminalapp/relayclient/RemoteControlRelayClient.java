@@ -29,44 +29,78 @@ import java.util.Map;
  * キーコードをSTBへ送信する.
  */
 public class RemoteControlRelayClient {
-
+    /**keycode_unknown.*/
     private static final int KEYCODE_UNKNOWN = 0;
-    // TODO: STBがDMSとして動作しないためDMS機能が実装されるまで固定IPを使用する
+    // TODO　: STBがDMSとして動作しないためDMS機能が実装されるまで固定IPを使用する
+    /**固定IP.*/
     private String mRemoteHost = "192.168.11.23";
-
+    /**keycode_dpad_up.*/
     private static final String KEYCODE_DPAD_UP = "KEYCODE_DPAD_UP";
+    /**keycode_dpad_down.*/
     private static final String KEYCODE_DPAD_DOWN = "KEYCODE_DPAD_DOWN";
+    /**keycode_dpad_left.*/
     private static final String KEYCODE_DPAD_LEFT = "KEYCODE_DPAD_LEFT";
+    /**keycode_dpad_right.*/
     private static final String KEYCODE_DPAD_RIGHT = "KEYCODE_DPAD_RIGHT";
+    /**keycode_home.*/
     private static final String KEYCODE_HOME = "KEYCODE_HOME";
+    /**keycode_1.*/
     private static final String KEYCODE_1 = "KEYCODE_1";
+    /**keycode_2.*/
     private static final String KEYCODE_2 = "KEYCODE_2";
+    /**keycode_3.*/
     private static final String KEYCODE_3 = "KEYCODE_3";
+    /**keycode_4.*/
     private static final String KEYCODE_4 = "KEYCODE_4";
+    /**keycode_5.*/
     private static final String KEYCODE_5 = "KEYCODE_5";
+    /**keycode_6.*/
     private static final String KEYCODE_6 = "KEYCODE_6";
+    /**keycode_7.*/
     private static final String KEYCODE_7 = "KEYCODE_7";
+    /**keycode_8.*/
     private static final String KEYCODE_8 = "KEYCODE_8";
+    /**keycode_9.*/
     private static final String KEYCODE_9 = "KEYCODE_9";
+    /**keycode_0.*/
     private static final String KEYCODE_0 = "KEYCODE_0";
+    /**keycode_11.*/
     private static final String KEYCODE_11 = "KEYCODE_11";
+    /**keycode_12.*/
     private static final String KEYCODE_12 = "KEYCODE_12";
+    /**keycode_tv_terrestrial_digital.*/
     private static final String KEYCODE_TV_TERRESTRIAL_DIGITAL = "KEYCODE_TV_TERRESTRIAL_DIGITAL";
+    /**keycode_tv_satellite_bs.*/
     private static final String KEYCODE_TV_SATELLITE_BS = "KEYCODE_TV_SATELLITE_BS";
+    /**keycode_tv.*/
     private static final String KEYCODE_TV = "KEYCODE_TV";
+    /**keycode_guide.*/
     private static final String KEYCODE_GUIDE = "KEYCODE_GUIDE";
+    /**keycode_dpad_center.*/
     private static final String KEYCODE_DPAD_CENTER = "KEYCODE_DPAD_CENTER";
+    /**keycode_back.*/
     private static final String KEYCODE_BACK = "KEYCODE_BACK";
+    /**keycode_media_play_pause.*/
     private static final String KEYCODE_MEDIA_PLAY_PAUSE = "KEYCODE_MEDIA_PLAY_PAUSE";
+    /**keycode_media_skip_backward.*/
     private static final String KEYCODE_MEDIA_SKIP_BACKWARD = "KEYCODE_MEDIA_SKIP_BACKWARD";
+    /**keycode_media_rewind.*/
     private static final String KEYCODE_MEDIA_REWIND = "KEYCODE_MEDIA_REWIND";
+    /**keycode_media_fast_forward.*/
     private static final String KEYCODE_MEDIA_FAST_FORWARD = "KEYCODE_MEDIA_FAST_FORWARD";
+    /**keycode_media_skip_forward.*/
     private static final String KEYCODE_MEDIA_SKIP_FORWARD = "KEYCODE_MEDIA_SKIP_FORWARD";
+    /**keycode_channel_up.*/
     private static final String KEYCODE_CHANNEL_UP = "KEYCODE_CHANNEL_UP";
+    /**keycode_channel_down.*/
     private static final String KEYCODE_CHANNEL_DOWN = "KEYCODE_CHANNEL_DOWN";
+    /**keycode_info.*/
     private static final String KEYCODE_INFO = "KEYCODE_INFO";
+    /**keycode_tv_data_service.*/
     private static final String KEYCODE_TV_DATA_SERVICE = "KEYCODE_TV_DATA_SERVICE";
+    /**keycode_power.*/
     private static final String KEYCODE_POWER = "KEYCODE_POWER";
+    /**keycode_rec_list.*/
     private static final String KEYCODE_REC_LIST = "KEYCODE_REC_LIST";
 
     /**
@@ -254,106 +288,189 @@ public class RemoteControlRelayClient {
     }
 
     // アプリ起動要求に対応するアプリ名
+    /**dTV.*/
     static final String STB_APPLICATION_DTV = "dTV";  // dTV
+    /**dアニメストア.*/
     static final String STB_APPLICATION_DANIMESTORE = "dANIMESTORE";  // dアニメストア
+    /**dTVチャンネル.*/
     static final String STB_APPLICATION_DTVCHANNEL = "dTVCHANNEL";  // dTVチャンネル
+    /**ひかりTV.*/
     static final String STB_APPLICATION_HIKARITV = "HIKARITV";  // ひかりTV
+    /**ダ・ゾーン.*/
     static final String STB_APPLICATION_DAZN = "DAZN";  // ダ・ゾーン
     // 中継アプリクライアントが送信するアプリ起動要求のメッセージ定数
+    /**command.*/
     private static final String RELAY_COMMAND = "COMMAND";
+    /**タイトル詳細.*/
     static final String RELAY_COMMAND_TITLE_DETAIL = "TITLE_DETAIL";
+    /**アプリケーション起動.*/
     static final String RELAY_COMMAND_START_APPLICATION = "START_APPLICATION";
+    /**ユーザーアカウント存在.*/
     static final String RELAY_COMMAND_IS_USER_ACCOUNT_EXIST = "IS_USER_ACCOUNT_EXIST";
+    /**電源キー.*/
     static final String RELAY_COMMAND_KEYEVENT_KEYCODE_POWER = "KEYEVENT_KEYCODE_POWER";
     // コマンド実行時のユーザーアカウント切り替えとアプリケーションバージョンコードチェックでエラー応答として REQUEST_COMMAND で返却されるコマンド
+    /**デフォルトユーザーアカウント.*/
     static final String RELAY_COMMAND_SET_DEFAULT_USER_ACCOUNT = "SET_DEFAULT_USER_ACCOUNT";
+    /**アプリケーションバージョン交換性チェック.*/
     static final String RELAY_COMMAND_CHECK_APPLICATION_VERSION_COMPATIBILITY = "CHECK_APPLICATION_VERSION_COMPATIBILITY";
+    /**リクエスト処理.*/
     static final String RELAY_COMMAND_CHECK_APPLICATION_REQUEST_PROCESSING = "CHECK_APPLICATION_REQUEST_PROCESSING";
     // コマンドのパラメータ
+    /**リクエストコマンド.*/
     private static final String RELAY_COMMAND_REQUEST_COMMAND = "REQUEST_COMMAND";
+    /**command_unknown.*/
     static final String RELAY_COMMAND_UNKNOWN = "COMMAND_UNKNOWN";
+    /**ユーザーID.*/
     private static final String RELAY_COMMAND_ARGUMENT_USER_ID = "USER_ID";
+    /**APP　ID.*/
     private static final String RELAY_COMMAND_ARGUMENT_APPLICATION_ID = "APP_ID";
+    /**コンテンツID.*/
     private static final String RELAY_COMMAND_ARGUMENT_CONTENTS_ID = "CONTENTS_ID";
+    /**チャンネルナンバー.*/
     private static final String RELAY_COMMAND_ARGUMENT_CHNO_DTVCHANNEL = "CHNO";
+    /**crid.*/
     private static final String RELAY_COMMAND_ARGUMENT_CRID_DTVCHANNEL = "CRID";
+    /**サービスカテゴリタイプ.*/
     private static final String RELAY_COMMAND_ARGUMENT_SERVICE_CATEGORY_TYPE_DTVCHANNEL = "SERVICE_CATEGORY_TYPE";
+    /**アプリケーションバージョン交換性.*/
     private static final String RELAY_COMMAND_ARGUMENT_APPLICATION_VERSION_COMPATIBILITY = "APPLICATION_VERSION_COMPATIBILITY";
+    /**dtvt_application.*/
     private static final String RELAY_COMMAND_ARGUMENT_APPLICATION_VERSION_COMPATIBILITY_DTVT_APPLICATION = "dTVT_APPLICATION";
+    /**stb_relay_service.*/
     private static final String RELAY_COMMAND_ARGUMENT_APPLICATION_VERSION_COMPATIBILITY_STB_RELAY_SERVICE = "STB_RELAY_SERVICE";
     // ひかりTVのタイトル詳細起動：電文パラメータ：アプリケーションID
+    /**relay_command_argument_arg1.*/
     private static final String RELAY_COMMAND_ARGUMENT_ARG1 = "ARG1";
+    /**application_id_hikaritv初期化.*/
     private static final String RELAY_COMMAND_ARGUMENT_APPLICATION_ID_HIKARITV = RELAY_COMMAND_ARGUMENT_ARG1;
     // ひかりTVのタイトル詳細起動：電文パラメータ：サービスカテゴリー分類
+    /**relay_command_argument_arg2.*/
     private static final String RELAY_COMMAND_ARGUMENT_ARG2 = "ARG2";
+    /**relay_command_argument_service_category_type_hikaritv初期化.*/
     private static final String RELAY_COMMAND_ARGUMENT_SERVICE_CATEGORY_TYPE_HIKARITV = RELAY_COMMAND_ARGUMENT_ARG2;
     // ひかりTVのタイトル詳細起動：電文パラメータ：カテゴリー分類毎に別のパラメータを意味する
+    /**ARG3.*/
     private static final String RELAY_COMMAND_ARGUMENT_ARG3 = "ARG3";
+    /**service_ref_hikaritv_arg3.*/
     private static final String RELAY_COMMAND_ARGUMENT_SERVICE_REF_HIKARITV_ARG3 = RELAY_COMMAND_ARGUMENT_ARG3;
+    /**chno_hikaritv_arg3.*/
     private static final String RELAY_COMMAND_ARGUMENT_CHNO_HIKARITV_ARG3 = RELAY_COMMAND_ARGUMENT_ARG3;
+    /**crid_hikaritv_arg3.*/
     private static final String RELAY_COMMAND_ARGUMENT_CRID_HIKARITV_ARG3 = RELAY_COMMAND_ARGUMENT_ARG3;
+    /**license_id_hikaritv_arg3.*/
     private static final String RELAY_COMMAND_ARGUMENT_LICENSE_ID_HIKARITV_ARG3 = RELAY_COMMAND_ARGUMENT_ARG3;
+    /**episode_id_hikaritv_arg3.*/
     private static final String RELAY_COMMAND_ARGUMENT_EPISODE_ID_HIKARITV_ARG3 = RELAY_COMMAND_ARGUMENT_ARG3;
+    /**tv_cid_hikaritv_arg3.*/
     private static final String RELAY_COMMAND_ARGUMENT_TV_CID_HIKARITV_ARG3 = RELAY_COMMAND_ARGUMENT_ARG3;
     // ひかりTVのタイトル詳細起動：電文パラメータ：カテゴリー分類毎に別のパラメータを意味する
+    /**ARG4.*/
     private static final String RELAY_COMMAND_ARGUMENT_ARG4 = "ARG4";
+    /**cid_hikaritv_arg4.*/
     private static final String RELAY_COMMAND_ARGUMENT_CID_HIKARITV_ARG4 = RELAY_COMMAND_ARGUMENT_ARG4;
     // ひかりTVのタイトル詳細起動：電文パラメータ：カテゴリー分類毎に別のパラメータを意味する
+    /**ARG5.*/
     private static final String RELAY_COMMAND_ARGUMENT_ARG5 = "ARG5";
+    /**crid_hikaritv_arg5.*/
     private static final String RELAY_COMMAND_ARGUMENT_CRID_HIKARITV_ARG5 = RELAY_COMMAND_ARGUMENT_ARG5;
+    /**ひかりTVの番組の chno を SERVICE_REF への変換.*/
     private static final String RELAY_COMMAND_ARGUMENT_ARIB_SERVICE_REF = "arib://7780.%04x.%04x"; // ひかりTVの番組の chno を SERVICE_REF への変換
     //
+    /**result.*/
     private static final String RELAY_RESULT = "RESULT";
+    /**result_ok.*/
     static final String RELAY_RESULT_OK = "OK";
+    /**result_error.*/
     static final String RELAY_RESULT_ERROR = "ERROR";
     // dTVチャンネル・カテゴリー分類に対応するカテゴリー・シンボル名
+    /**dTVチャンネル・放送.*/
     static final String STB_APPLICATION_DTVCHANNEL_CATEGORY_BROADCAST = "DTVCHANNEL_CATEGORY_BROADCAST";
+    /**dTVチャンネル・VOD（見逃し）.*/
     static final String STB_APPLICATION_DTVCHANNEL_CATEGORY_MISSED = "DTVCHANNEL_CATEGORY_MISSED";
+    /**dTVチャンネル・VOD（関連番組）.*/
     static final String STB_APPLICATION_DTVCHANNEL_CATEGORY_RELATION = "DTVCHANNEL_CATEGORY_RELATION";
     // ひかりTV for docomo・カテゴリー分類
+    /** ひかりTVの番組（地デジ）.*/
     static final String STB_APPLICATION_H4D_CATEGORY_TERRESTRIAL_DIGITAL = "H4D_CATEGORY_TERRESTRIAL_DIGITAL"; // ひかりTVの番組（地デジ）
+    /**ひかりTVの番組（BS）.*/
     static final String STB_APPLICATION_H4D_CATEGORY_SATELLITE_BS = "H4D_CATEGORY_SATELLITE_BS"; // ひかりTVの番組（BS）
+    /**ひかりTVの番組（IPTV）.*/
     static final String STB_APPLICATION_H4D_CATEGORY_IPTV = "H4D_CATEGORY_IPTV"; // ひかりTVの番組（IPTV）
+    /**ひかりTV内 dTVチャンネルの番組.*/
     static final String STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_BROADCAST = "H4D_CATEGORY_DTVCHANNEL_BROADCAST"; // ひかりTV内 dTVチャンネルの番組
+    /**ひかりTV内 dTVチャンネル VOD（見逃し）.*/
     static final String STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_MISSED = "H4D_CATEGORY_DTVCHANNEL_MISSED"; //  ひかりTV内 dTVチャンネル VOD（見逃し）
+    /**ひかりTV内 dTVチャンネル VOD（関連番組）.*/
     static final String STB_APPLICATION_H4D_CATEGORY_DTVCHANNEL_RELATION = "H4D_CATEGORY_DTVCHANNEL_RELATION"; // ひかりTV内 dTVチャンネル VOD（関連番組）
+    /**ひかりTVのVOD.*/
     static final String STB_APPLICATION_H4D_CATEGORY_HIKARITV_VOD = "H4D_CATEGORY_HIKARITV_VOD"; // ひかりTVのVOD
+    /** ひかりTV内 dTVのVOD.*/
     static final String STB_APPLICATION_H4D_CATEGORY_DTV_VOD = "H4D_CATEGORY_DTV_VOD"; // ひかりTV内 dTVのVOD
+    /**ひかりTV内VOD(dTV含む)のシリーズ.*/
     static final String STB_APPLICATION_H4D_CATEGORY_DTV_SVOD = "H4D_CATEGORY_DTV_SVOD"; // ひかりTV内VOD(dTV含む)のシリーズ
-    // dTVTアプリバージョンコード（Android, iOSで共通）
+    /**dTVTアプリバージョンコード（Android, iOSで共通）.*/
     private static final int DTVT_APPLICATION_VERSION_CODE = 1;
-    // STBのバージョンコード β版、プレリリース版... と 1つずつ上がる
+    /**STBのバージョンコード β版、プレリリース版... と 1つずつ上がる.*/
     private static final int STB_RELAY_SERVICE_VERSION_CODE = 3;
     // 中継アプリクライアントが送信するキーコードのメッセージ定数
+    /**keyevent.*/
     private static final String RELAY_KEYEVENT = "KEYEVENT";
+    /**action.*/
     private static final String RELAY_KEYEVENT_ACTION = "ACTION";
+    /**down.*/
     private static final String RELAY_KEYEVENT_ACTION_DOWN = "DOWN";
+    /**up.*/
     private static final String RELAY_KEYEVENT_ACTION_UP = "UP";
+    /**canceled.*/
     private static final String RELAY_KEYEVENT_ACTION_CANCELED = "CANCELED";
+    /**true.*/
     private static final String RELAY_KEYEVENT_ACTION_CANCELED_TRUE = "TRUE";
     // 中継アプリのエラーコード定数
+    /**error_code.*/
     static final String RELAY_RESULT_ERROR_CODE = "ERROR_CODE";
+    /**サーバエラー.*/
     static final String RELAY_RESULT_INTERNAL_ERROR = "INTERNAL_ERROR";
+    /**未インストールエラー.*/
     static final String RELAY_RESULT_APPLICATION_NOT_INSTALL = "APPLICATION_NOT_INSTALL";
+    /**アプリケーションID存在しません.*/
     static final String RELAY_RESULT_APPLICATION_ID_NOTEXIST = "APPLICATION_ID_NOTEXIST";
+    /**起動失敗エラー.*/
     static final String RELAY_RESULT_APPLICATION_START_FAILED = "APPLICATION_START_FAILED";
+    /**STBサービスアプリのバージョンコード不適合エラー.*/
     static final String RELAY_RESULT_VERSION_CODE_INCOMPATIBLE = "VERSION_CODE_INCOMPATIBLE"; // STBサービスアプリのバージョンコード不適合
+    /**コンテンツID存在しない.*/
     static final String RELAY_RESULT_CONTENTS_ID_NOTEXIST = "CONTENTS_ID_NOTEXIST";
+    /**crid_not_exist.*/
     static final String RELAY_RESULT_CRID_NOTEXIST = "CRID_NOTEXIST";
+    /**chno_notexist.*/
     static final String RELAY_RESULT_CHNO_NOTEXIST = "CHNO_NOTEXIST";
+    /**command_argument_notexist.*/
     static final String RELAY_RESULT_COMMAND_ARGUMENT_NOTEXIST = "COMMAND_ARGUMENT_NOTEXIST";
+    /**command_argument_notexist.*/
     static final String RELAY_RESULT_SERVICE_CATEGORY_TYPE_NOTEXIST = "SERVICE_CATEGORY_TYPE_NOTEXIST";
+    /**ユーザ切替サービス未登録.*/
     static final String RELAY_RESULT_NOT_REGISTERED_SERVICE = "NOT_REGISTERED_SERVICE";
+    /**指定ユーザIDなし.*/
     static final String RELAY_RESULT_UNREGISTERED_USER_ID = "UNREGISTERED_USER_ID";
+    /**接続タイムアウト.*/
     static final String RELAY_RESULT_CONNECTION_TIMEOUT = "CONNECTION_TIMEOUT";
+    /**サービス多忙.*/
     static final String RELAY_RESULT_RELAY_SERVICE_BUSY = "SERVICE_BUSY";
+    /**ユーザー無効状態.*/
     static final String RELAY_RESULT_USER_INVALID_STATE = "USER_INVALID_STATE";
+    /**dTVTアプリのバージョンコード不適合.*/
     static final String RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE = "dTVT_APPLICATION_VERSION_INCOMPATIBLE"; // dTVTアプリのバージョンコード不適合
+    /**中継アプリのバージョンコード不適合.*/
     static final String RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE = "STB_RELAY_SERVICE_VERSION_INCOMPATIBLE"; // 中継アプリのバージョンコード不適合
     // URLエンコード対応文字
+    /**asterisk.*/
     private static final String URL_ENCODED_ASTERISK = "%2a";
+    /**hyphen.*/
     private static final String URL_ENCODED_HYPHEN = "%2d";
+    /**period.*/
     private static final String URL_ENCODED_PERIOD = "%2e";
+    /**space.*/
     private static final String URL_ENCODED_SPACE = "%20";
 
     /**
