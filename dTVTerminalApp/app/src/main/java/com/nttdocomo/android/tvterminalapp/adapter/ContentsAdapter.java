@@ -813,16 +813,23 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 case TAB_D_ANIMATE:
                 case TAB_DEFAULT:
                     String date = "";
-                    //DTVチャンネル 放送 m/d（曜日）h:ii
-                    if (Integer.toString(ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID).equals(listContentInfo.getServiceId())
-                            && ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(listContentInfo.getCategoryId())) {
-                        date = DateUtils.getContentsDateString(listContentInfo.getStartViewing());
-                    } else if (DateUtils.isBefore(listContentInfo.getStartViewing())) { //配信前　m/d（曜日）から
-                        date = DateUtils.getContentsDateString(mContext, listContentInfo.getStartViewing(), true);
-                    } else {
-                        // 31日以内　m/d（曜日）まで
-                        if (DateUtils.isIn31Day(listContentInfo.getEndViewing())) {
-                            date = DateUtils.getContentsDateString(mContext, listContentInfo.getEndViewing(), false);
+                    if (DBUtils.isNumber(listContentInfo.getServiceId())) {
+                        int serviceId = Integer.parseInt(listContentInfo.getServiceId());
+                        ContentUtils.ContentsType contentsType = ContentUtils.
+                                getContentsTypeByRecommend(serviceId, listContentInfo.getCategoryId());
+                        if (contentsType == ContentUtils.ContentsType.TV) {
+                            //番組 m/d（曜日）h:ii
+                            date = DateUtils.getContentsDateString(listContentInfo.getStartViewing());
+                        } else if (contentsType == ContentUtils.ContentsType.VOD) {
+                            //配信前　m/d（曜日）から
+                            if (DateUtils.isBefore(listContentInfo.getStartViewing())) {
+                                date = DateUtils.getContentsDateString(mContext, listContentInfo.getStartViewing(), true);
+                            } else {
+                                // 31日以内　m/d（曜日）まで
+                                if (DateUtils.isIn31Day(listContentInfo.getEndViewing())) {
+                                    date = DateUtils.getContentsDateString(mContext, listContentInfo.getEndViewing(), false);
+                                }
+                            }
                         }
                     }
                     if (!TextUtils.isEmpty(date)) {

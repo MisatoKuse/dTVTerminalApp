@@ -1584,24 +1584,17 @@ public class ContentDetailActivity extends BaseActivity implements
         if (mIsOtherService) {
             // コンテンツ詳細(他サービスの時は、タブ一つに設定する)
             mTabNames = getResources().getStringArray(R.array.other_service_contents_detail_tabs);
-            String date = null;
-            //「dTVチャンネル　放送」は分類が「ビデオ」ではないため表示下記を適用しない
-            // m/d（曜日）から
-            boolean isDchTv = false;
-            if (mDetailData.getServiceId() == DTV_CHANNEL_CONTENTS_SERVICE_ID
-                    && H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(mDetailData.getCategoryId())) {
-                isDchTv = true;
-            }
-            if (!isDchTv && DateUtils.isBefore(mDetailData.getmStartDate())) {
-                //配信前 m/d（曜日）から
-                date = DateUtils.getContentsDateString(this, mDetailData.getmStartDate(), true);
-            } else {
-                ContentUtils.ContentsType contentsType = ContentUtils.
-                        getContentsTypeByRecommend(mDetailData.getServiceId(), mDetailData.getCategoryId());
-                if (contentsType == ContentUtils.ContentsType.TV) {
-                    //番組(m/d（曜日）h:ii - h:ii)
-                    date = DateUtils.getContentsDateString(mDetailData.getmStartDate(), mDetailData.getmEndDate());
-                } else if (contentsType == ContentUtils.ContentsType.VOD) {
+            String date = "";
+            ContentUtils.ContentsType contentsType = ContentUtils.
+                    getContentsTypeByRecommend(mDetailData.getServiceId(), mDetailData.getCategoryId());
+            if (contentsType == ContentUtils.ContentsType.TV) {
+                //番組(m/d（曜日）h:ii - h:ii)
+                date = DateUtils.getContentsDateString(mDetailData.getmStartDate(), mDetailData.getmEndDate());
+            } else if (contentsType == ContentUtils.ContentsType.VOD) {
+                if (DateUtils.isBefore(mDetailData.getmStartDate())) {
+                    //配信前 m/d（曜日）から
+                    date = DateUtils.getContentsDateString(this, mDetailData.getmStartDate(), true);
+                } else {
                     //VOD(m/d（曜日）まで)
                     if (DateUtils.isIn31Day(mDetailData.getmEndDate())) {
                         date = DateUtils.getContentsDetailVodDate(this, mDetailData.getmEndDate());
@@ -2134,30 +2127,32 @@ public class ContentDetailActivity extends BaseActivity implements
             detailFragment.mOtherContentsDetailData.setAdinfoArray(mDetailFullData.getmAdinfo_array());
             detailFragment.mOtherContentsDetailData.setmStartDate(String.valueOf(mDetailFullData.getPublish_start_date()));
             String date = null;
-            if (DateUtils.isBefore(mDetailFullData.getAvail_start_date())) {
-                //配信前 m/d（曜日）から
-                date = DateUtils.getContentsDateString(this, mDetailFullData.getAvail_start_date(), true);
+            ContentUtils.ContentsType contentsType = ContentUtils.getContentsTypeByPlala(mDetailFullData.getDisp_type(),
+                    mDetailFullData.getmTv_service(), mDetailFullData.getmContent_type(), mDetailFullData.getAvail_end_date(),
+                    mDetailFullData.getmVod_start_date(), mDetailFullData.getmVod_end_date(), mDetailFullData.getEstFlag(),
+                    mDetailFullData.getmChsvod());
+            if (contentsType == ContentUtils.ContentsType.TV) {
+                //番組(m/d（曜日）h:ii - h:ii)
+                date = DateUtils.getContentsDateString(mDetailFullData.getPublish_start_date(), mDetailFullData.getPublish_end_date());
             } else {
-                ContentUtils.ContentsType contentsType = ContentUtils.getContentsTypeByPlala(mDetailFullData.getDisp_type(),
-                        mDetailFullData.getmTv_service(), mDetailFullData.getmContent_type(), mDetailFullData.getAvail_end_date(),
-                        mDetailFullData.getmVod_start_date(), mDetailFullData.getmVod_end_date(), mDetailFullData.getEstFlag(),
-                        mDetailFullData.getmChsvod());
-                if (contentsType == ContentUtils.ContentsType.TV) {
-                    //番組(m/d（曜日）h:ii - h:ii)
-                    date = DateUtils.getContentsDateString(mDetailFullData.getPublish_start_date(), mDetailFullData.getPublish_end_date());
-                } else if (contentsType == ContentUtils.ContentsType.VOD) {
-                    //VOD(m/d（曜日）まで)
-                    date = DateUtils.getContentsDetailVodDate(this, mDetailFullData.getAvail_end_date());
-                } else if (contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_OVER_31) {
-                    //VOD(見逃し)
-                    date = StringUtils.getConnectStrings(
-                            getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
-                } else if (contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
-                    //VOD(見逃し | m/d（曜日）まで)
-                    date = DateUtils.getContentsDetailVodDate(this, mDetailFullData.getmVod_end_date());
-                    date = StringUtils.getConnectStrings(
-                            getString(R.string.contents_detail_hikari_d_channel_miss_viewing_separation),
-                            date);
+                if (DateUtils.isBefore(mDetailFullData.getAvail_start_date())) {
+                    //配信前 m/d（曜日）から
+                    date = DateUtils.getContentsDateString(this, mDetailFullData.getAvail_start_date(), true);
+                } else {
+                    if (contentsType == ContentUtils.ContentsType.VOD) {
+                        //VOD(m/d（曜日）まで)
+                        date = DateUtils.getContentsDetailVodDate(this, mDetailFullData.getAvail_end_date());
+                    } else if (contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_OVER_31) {
+                        //VOD(見逃し)
+                        date = StringUtils.getConnectStrings(
+                                getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
+                    } else if (contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
+                        //VOD(見逃し | m/d（曜日）まで)
+                        date = DateUtils.getContentsDetailVodDate(this, mDetailFullData.getmVod_end_date());
+                        date = StringUtils.getConnectStrings(
+                                getString(R.string.contents_detail_hikari_d_channel_miss_viewing_separation),
+                                date);
+                    }
                 }
             }
             detailFragment.mOtherContentsDetailData.setChannelDate(date);
