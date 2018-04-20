@@ -186,6 +186,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
             contentInfo.setTitle(title);
             contentInfo.setSearchOk(searchOk);
             contentInfo.setRatStar(map.get(JsonConstants.META_RESPONSE_RATING));
+            contentInfo.setTvService(map.get(JsonConstants.META_RESPONSE_TV_SERVICE));
             contentInfo.setContentsType(map.get(JsonConstants.META_RESPONSE_CONTENT_TYPE));
             contentInfo.setDtv(dtv);
             contentInfo.setDtvType(dtvType);
