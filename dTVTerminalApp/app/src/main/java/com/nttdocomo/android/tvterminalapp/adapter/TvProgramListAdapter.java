@@ -162,8 +162,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * @param channels 番組表リスト
      */
     public TvProgramListAdapter(final Context mContext, final ArrayList<ChannelInfo> channels) {
-        //TODO:★ここではチャンネルのリストだけ受け取る。番組は後から取得して、チャンネルリストに当てはめていく。
-        //TODO:★各番組単位のViewは番組情報を取得したりスクロール停止したタイミングで、生成・addViewする。
+        //TODO :★ここではチャンネルのリストだけ受け取る。番組は後から取得して、チャンネルリストに当てはめていく。
+        //TODO :★各番組単位のViewは番組情報を取得したりスクロール停止したタイミングで、生成・addViewする。
         DTVTLogger.start();
         this.mProgramList = channels;
         this.mContext = mContext;
@@ -174,7 +174,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         getCurTime();
         for (int i = 0; i < mProgramList.size(); i++) {
             ChannelInfo itemChannel = mProgramList.get(i);
-            if (itemChannel != null ) {
+            if (itemChannel != null) {
                 ArrayList<ScheduleInfo> itemSchedules = itemChannel.getSchedules();
                 if (itemSchedules == null || itemSchedules.size() == 0) {
                     // 空のView(背景のみ)を追加
@@ -200,8 +200,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * @param mProgramList 番組表リスト
      */
     public TvProgramListAdapter(final Context mContext, final List<ChannelInfo> mProgramList) {
-        //TODO:★ここではチャンネルのリストだけ受け取る。番組は後から取得して、チャンネルリストに当てはめていく。
-        //TODO:★各番組単位のViewは番組情報を取得したりスクロール停止したタイミングで、生成・addViewする。
+        //TODO :★ここではチャンネルのリストだけ受け取る。番組は後から取得して、チャンネルリストに当てはめていく。
+        //TODO :★各番組単位のViewは番組情報を取得したりスクロール停止したタイミングで、生成・addViewする。
         DTVTLogger.start();
         this.mProgramList = mProgramList;
         this.mContext = mContext;
@@ -212,7 +212,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         getCurTime();
         for (int i = 0; i < mProgramList.size(); i++) {
             ChannelInfo itemChannel = mProgramList.get(i);
-            if (itemChannel != null ) {
+            if (itemChannel != null) {
                 ArrayList<ScheduleInfo> itemSchedules = itemChannel.getSchedules();
                 if (itemSchedules == null || itemSchedules.size() == 0) {
                     // 空のView(背景のみ)を追加
@@ -256,6 +256,10 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         return null;
     }
 
+    /**
+     * チャンネル番号取得.
+     * @return   チャンネル番号.
+     */
     public int[] getNeedProgramChannels() {
         List<Integer> chNoList = new ArrayList<>();
         for (MyViewHolder viewHolder :mMyViewHolder) {
@@ -266,8 +270,9 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 }
             }
         }
-        int newChNo[] = new int[chNoList.size()];
-        for (int j = 0; j < chNoList.size(); j++ ) {
+        int[] newChNo;
+        newChNo = new int[chNoList.size()];
+        for (int j = 0; j < chNoList.size(); j++) {
             newChNo[j] = chNoList.get(j);
         }
         return newChNo;
@@ -287,19 +292,29 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * 番組詳細ビュー共通化.
      */
     private class ItemViewHolder {
+        /**レイアウトインフレーター.*/
         public View mView = null;
+        /**同じビュー使用されてるか.*/
         private boolean mInUsage = false;
-
+        /**開始時間TextView.*/
         TextView mStartM = null;
+        /**コンテンツ説明TextView.*/
         TextView mContent = null;
+        /**サムネイル.*/
         ImageView mThumbnail = null;
+        /**RelativeLayout LayoutParams.*/
         RelativeLayout.LayoutParams mLayoutParams = null;
+        /**クリップアイオン.*/
         ImageView mClipButton = null;
+        /**詳細TextView.*/
         TextView mDetail = null;
+        /**タイトル描画開始か.*/
         boolean isTitleDraw = false;
+        /**エピソード描画開始か.*/
         boolean isEpiDraw = false;
+        /**クリープアイコン描画開始か.*/
         boolean isClipDraw = false;
-
+        /**同じビュー使用されてる.*/
         void setUsing() {
             mInUsage = true;
         }
@@ -329,7 +344,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                         schedule.getClipRequestData().setClipStatus(false);
                     }
                     //クリップボタンイベント
-                    ((BaseActivity)mContext).sendClipRequest(schedule.getClipRequestData(), mClipButton);
+                    ((BaseActivity) mContext).sendClipRequest(schedule.getClipRequestData(), mClipButton);
                 }
             });
         }
@@ -343,8 +358,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         DTVTLogger.debug("view Holder ===============>");
         holder.layout = (RelativeLayout) view;
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout
-                .LayoutParams((mScreenWidth - ((TvProgramListActivity)mContext).dip2px(TIME_LINE_WIDTH)) / 2,
-                ((TvProgramListActivity)mContext).dip2px(ONE_HOUR_UNIT) * 24);
+                .LayoutParams((mScreenWidth - ((TvProgramListActivity) mContext).dip2px(TIME_LINE_WIDTH)) / 2,
+                ((TvProgramListActivity) mContext).dip2px(ONE_HOUR_UNIT) * 24);
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
         holder.layout.setLayoutParams(layoutParams);
         return holder;
@@ -361,7 +376,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     }
 
     @Override
-    public void onViewRecycled(MyViewHolder holder) {
+    public void onViewRecycled(final MyViewHolder holder) {
         super.onViewRecycled(holder);
         holder.stopAddContentViews();
         holder.layout.removeAllViewsInLayout();
@@ -369,6 +384,11 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         holder.chNo = 0xFFFFFFFF;
     }
 
+    /**
+     *
+     * @param itemSchedule itemSchedule
+     * @param holder holder
+     */
     private void setSchedule(final ArrayList<ScheduleInfo> itemSchedule, final MyViewHolder holder) {
         if (itemSchedule != null) {
             setItemView(itemSchedule, holder);
@@ -389,8 +409,10 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
 //                    itemViewHolder.mThumbnail.setTag(thumbnailURL);
 //                    Bitmap bitmap = mThumbnailProvider.getThumbnailImage(itemViewHolder.mThumbnail, thumbnailURL);
 //                    if (bitmap != null) {
-//                        int thumbnailWidth = itemViewHolder.mView.getWidth() - ((TvProgramListActivity)mContext).dip2px(30) - ((TvProgramListActivity)mContext).dip2px(8);
-//                        int thumbnailHeight = ((TvProgramListActivity)mContext).dip2px(THUMBNAIL_HEIGHT) * thumbnailWidth / ((TvProgramListActivity)mContext).dip2px(THUMBNAIL_WIDTH);
+//                        int thumbnailWidth = itemViewHolder.mView.getWidth() - ((TvProgramListActivity)mContext).dip2px(30)
+//                                            - ((TvProgramListActivity)mContext).dip2px(8);
+//                        int thumbnailHeight = ((TvProgramListActivity)mContext).dip2px(THUMBNAIL_HEIGHT) * thumbnailWidth
+//                                            / ((TvProgramListActivity)mContext).dip2px(THUMBNAIL_WIDTH);
 //                        if (thumbnailWidth > 0 && thumbnailHeight > 0) {
 //                            bitmap.setWidth(thumbnailWidth);
 //                            bitmap.setHeight(thumbnailHeight);
@@ -435,9 +457,9 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         }
         float marginTop = itemSchedule.getMarginTop();
         float myHeight = itemSchedule.getMyHeight();
-        itemViewHolder.mLayoutParams.height = (int) (myHeight * (((TvProgramListActivity)mContext).dip2px(ONE_HOUR_UNIT)));
+        itemViewHolder.mLayoutParams.height = (int) (myHeight * (((TvProgramListActivity) mContext).dip2px(ONE_HOUR_UNIT)));
         itemViewHolder.mView.setLayoutParams(itemViewHolder.mLayoutParams);
-        itemViewHolder.mView.setY(marginTop * (((TvProgramListActivity)mContext).dip2px(ONE_HOUR_UNIT)));
+        itemViewHolder.mView.setY(marginTop * (((TvProgramListActivity) mContext).dip2px(ONE_HOUR_UNIT)));
 
         String contentType = itemSchedule.getContentType();
         //放送済み
@@ -470,7 +492,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     if ((int) view.getTag() == 1) {
                         Intent intent = new Intent();
                         intent.setClass(mContext, ContentDetailActivity.class);
-                        intent.putExtra(DTVTConstants.SOURCE_SCREEN, ((TvProgramListActivity)mContext).getComponentName().getClassName());
+                        intent.putExtra(DTVTConstants.SOURCE_SCREEN, ((TvProgramListActivity) mContext).getComponentName().getClassName());
                         OtherContentsDetailData detailData = getOtherContentsDetailData(itemSchedule, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
                         intent.putExtra(detailData.getRecommendFlg(), detailData);
                         TvProgramListActivity tvProgramListActivity = (TvProgramListActivity) mContext;
@@ -578,17 +600,17 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private void displayProgramEpi(final ItemViewHolder itemViewHolder, final boolean isParental) {
         int epiLineHeight = itemViewHolder.mDetail.getLineHeight();
         if (!isParental) {
-            if (mEpiSpace <= ((TvProgramListActivity)mContext).dip2px(EPI_MARGIN_TOP_THUMB)) {
+            if (mEpiSpace <= ((TvProgramListActivity) mContext).dip2px(EPI_MARGIN_TOP_THUMB)) {
                 itemViewHolder.mDetail.setVisibility(View.INVISIBLE);
             } else {
                 if (!isShowThumb) {
-                    mEpiSpace = mEpiSpace - ((TvProgramListActivity)mContext).dip2px(EPI_MARGIN_TOP_THUMB) + epiLineHeight;
+                    mEpiSpace = mEpiSpace - ((TvProgramListActivity) mContext).dip2px(EPI_MARGIN_TOP_THUMB) + epiLineHeight;
                 } else {
-                    if ((mScreenWidth - ((TvProgramListActivity)mContext).dip2px(TIME_LINE_WIDTH)) / 2 < CHANNEL_WIDTH) {
+                    if ((mScreenWidth - ((TvProgramListActivity) mContext).dip2px(TIME_LINE_WIDTH)) / 2 < CHANNEL_WIDTH) {
                         //チャンネル幅判断
-                        mEpiSpace = mEpiSpace - ((TvProgramListActivity)mContext).dip2px(EPI_MARGIN_TOP_THUMB) - epiLineHeight;
+                        mEpiSpace = mEpiSpace - ((TvProgramListActivity) mContext).dip2px(EPI_MARGIN_TOP_THUMB) - epiLineHeight;
                     } else {
-                        mEpiSpace = mEpiSpace - ((TvProgramListActivity)mContext).dip2px(EPI_MARGIN_TOP_THUMB);
+                        mEpiSpace = mEpiSpace - ((TvProgramListActivity) mContext).dip2px(EPI_MARGIN_TOP_THUMB);
                     }
                 }
                 if (mEpiSpace / epiLineHeight > 0) {
@@ -638,7 +660,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private void displayProgramTitle(final ItemViewHolder itemViewHolder, final boolean isParental) {
         DTVTLogger.start();
         int availableSpace = itemViewHolder.mView.getHeight()
-                - ((TvProgramListActivity)mContext).dip2px(PADDING_TOP) - ((TvProgramListActivity)mContext).dip2px(PADDING_BOTTOM);
+                - ((TvProgramListActivity) mContext).dip2px(PADDING_TOP) - ((TvProgramListActivity) mContext).dip2px(PADDING_BOTTOM);
         int titleLineHeight = itemViewHolder.mContent.getLineHeight();
         int titleLineCount = itemViewHolder.mContent.getLineCount();
         int titleSpace = titleLineHeight * titleLineCount;
@@ -658,23 +680,24 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             itemViewHolder.mDetail.setVisibility(View.INVISIBLE);
         } else {
             //パネルスペースを超えてないタイトル
-            int thumbnailWidth = itemViewHolder.mView.getWidth() - ((TvProgramListActivity)mContext)
-                    .dip2px(THUMB_MARGIN_LEFT) - ((TvProgramListActivity)mContext).dip2px(PADDING_RIGHT);
-            int thumbnailHeight = ((TvProgramListActivity)mContext).dip2px(THUMBNAIL_HEIGHT) * thumbnailWidth / ((TvProgramListActivity)mContext).dip2px(THUMBNAIL_WIDTH);
-            if (availableSpace - titleSpace <= ((TvProgramListActivity)mContext).dip2px(THUMB_MARGIN_TOP_TITLE)) {
+            int thumbnailWidth = itemViewHolder.mView.getWidth() - ((TvProgramListActivity) mContext)
+                    .dip2px(THUMB_MARGIN_LEFT) - ((TvProgramListActivity) mContext).dip2px(PADDING_RIGHT);
+            int thumbnailHeight = ((TvProgramListActivity) mContext).dip2px(THUMBNAIL_HEIGHT) * thumbnailWidth
+                    / ((TvProgramListActivity) mContext).dip2px(THUMBNAIL_WIDTH);
+            if (availableSpace - titleSpace <= ((TvProgramListActivity) mContext).dip2px(THUMB_MARGIN_TOP_TITLE)) {
                 itemViewHolder.mThumbnail.setVisibility(View.INVISIBLE);
                 itemViewHolder.mDetail.setVisibility(View.INVISIBLE);
             } else {
-                if (availableSpace - titleSpace - ((TvProgramListActivity)mContext)
+                if (availableSpace - titleSpace - ((TvProgramListActivity) mContext)
                         .dip2px(THUMB_MARGIN_TOP_TITLE) >= thumbnailHeight && !isParental) {
                     //サムネイル表示
-                    int mThumbEpiSpace = availableSpace - titleSpace - ((TvProgramListActivity)mContext).dip2px(THUMB_MARGIN_TOP_TITLE);
+                    int mThumbEpiSpace = availableSpace - titleSpace - ((TvProgramListActivity) mContext).dip2px(THUMB_MARGIN_TOP_TITLE);
                     mEpiSpace = mThumbEpiSpace - thumbnailHeight;
                     isShowThumb = true;
                 } else {
                     //サムネイル非表示
                     itemViewHolder.mThumbnail.setVisibility(View.GONE);
-                    mEpiSpace = availableSpace - titleSpace - ((TvProgramListActivity)mContext).dip2px(THUMB_MARGIN_TOP_TITLE);
+                    mEpiSpace = availableSpace - titleSpace - ((TvProgramListActivity) mContext).dip2px(THUMB_MARGIN_TOP_TITLE);
                     isShowThumb = false;
                 }
             }
@@ -717,8 +740,9 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * ViewHolder.
      */
     class MyViewHolder extends RecyclerView.ViewHolder {
-
+        /**ハンドラー.*/
         final Handler mHandler = new Handler();
+        /**.*/
         boolean mIsRunning = false;
 
         /**
@@ -729,7 +753,11 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             super(view);
         }
 
-        public void startAddContentViews(final ArrayList<ScheduleInfo> itemSchedules){
+        /**
+         * コンテンツビュー設定開始.
+         * @param itemSchedules  itemSchedules　itemSchedules
+         */
+        public void startAddContentViews(final ArrayList<ScheduleInfo> itemSchedules) {
             final int itemNum = itemSchedules.size();
             TimerTask task = new TimerTask() {
                 int count = 0;
@@ -751,8 +779,10 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                                     itemViewHolder.mThumbnail.setTag(thumbnailURL);
                                     Bitmap bitmap = mThumbnailProvider.getThumbnailImage(itemViewHolder.mThumbnail, thumbnailURL);
                                     if (bitmap != null) {
-                                        int thumbnailWidth = itemViewHolder.mView.getWidth() - ((TvProgramListActivity)mContext).dip2px(30) - ((TvProgramListActivity)mContext).dip2px(8);
-                                        int thumbnailHeight = ((TvProgramListActivity)mContext).dip2px(THUMBNAIL_HEIGHT) * thumbnailWidth / ((TvProgramListActivity)mContext).dip2px(THUMBNAIL_WIDTH);
+                                        int thumbnailWidth = itemViewHolder.mView.getWidth() - ((TvProgramListActivity) mContext).dip2px(30)
+                                                - ((TvProgramListActivity) mContext).dip2px(8);
+                                        int thumbnailHeight = ((TvProgramListActivity) mContext).dip2px(THUMBNAIL_HEIGHT) * thumbnailWidth
+                                                / ((TvProgramListActivity) mContext).dip2px(THUMBNAIL_WIDTH);
                                         if (thumbnailWidth > 0 && thumbnailHeight > 0) {
                                             bitmap.setWidth(thumbnailWidth);
                                             bitmap.setHeight(thumbnailHeight);
@@ -764,7 +794,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                                 DTVTLogger.debug("addContentView! count:" + count + " ChNo:" + itemSchedule.getChNo());
                             }
                             count++;
-                            if( count >= itemNum ){
+                            if (count >= itemNum) {
                                 // UIスレッド
                                 cancel();
                             }
@@ -772,14 +802,17 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     });
                 }
             };
-            if(!mIsRunning) {
+            if (!mIsRunning) {
                 Timer t = new Timer();
                 t.schedule(task, 0, 50);
             }
             mIsRunning = true;
         }
 
-        public void stopAddContentViews(){
+        /**
+         *コンテンツビュー設定ストップ.
+         */
+        public void stopAddContentViews() {
             mHandler.removeCallbacksAndMessages(null);
             mIsRunning = false;
         }
@@ -839,8 +872,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * @param newProgramList 番組表
      */
     public void setProgramList(final List<ChannelInfo> newProgramList) {
-        // TODO:★部分的なデータが来ることになるので自身で記憶しているチャンネルリストへMappingするようにする
-        // TODO:★また、描画反映が必要なので、ViewHolderを調べて該当のチャンネルがあれば、描画反映する
+        // TODO　:★部分的なデータが来ることになるので自身で記憶しているチャンネルリストへMappingするようにする
+        // TODO　:★また、描画反映が必要なので、ViewHolderを調べて該当のチャンネルがあれば、描画反映する
         if (newProgramList != null) {
             for (int i = 0; i < newProgramList.size(); i++) {
                 ChannelInfo newChannelInfo = newProgramList.get(i);

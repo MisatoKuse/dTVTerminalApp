@@ -13,12 +13,15 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipDeleteWebClie
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * クリップ削除JsonParser.
+ */
 public class ClipDeleteJsonParser extends AsyncTask<Object, Object, String> {
 
-    // callback
+    /**callback.*/
     private ClipDeleteWebClient.ClipDeleteJsonParserCallback mClipJsonParserCallback;
 
-    // クリップ登録/削除成功判定用
+    /**クリップ登録/削除成功判定用.*/
     private static final String CLIP_RESULT_STATUS_OK = "OK";
 
     /**
@@ -41,9 +44,6 @@ public class ClipDeleteJsonParser extends AsyncTask<Object, Object, String> {
             }
         } catch (JSONException e) {
             DTVTLogger.debug(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(e);
         }
         return null;
     }
@@ -51,7 +51,7 @@ public class ClipDeleteJsonParser extends AsyncTask<Object, Object, String> {
     /**
      * コンストラクタ.
      * <p>
-     * am mClipJsonParserCallback コールバック
+     *@param mClipJsonParserCallback コールバック
      */
     public ClipDeleteJsonParser(final ClipDeleteWebClient.ClipDeleteJsonParserCallback mClipJsonParserCallback) {
         this.mClipJsonParserCallback = mClipJsonParserCallback;
@@ -68,7 +68,7 @@ public class ClipDeleteJsonParser extends AsyncTask<Object, Object, String> {
     }
 
     @Override
-    protected String doInBackground(Object... strings) {
+    protected String doInBackground(final Object... strings) {
         String result = (String) strings[0];
         return getClipStatus(result);
     }

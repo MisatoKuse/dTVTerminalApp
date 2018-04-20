@@ -29,13 +29,19 @@ import java.util.Map;
  * Activityからこのクラスを利用する
  */
 public class DlDataProvider implements ServiceConnection, DownloadServiceListener, DbThread.DbOperation {
+    /**Binder.*/
     private DownloadService.Binder mBinder;
+    /**Activity.*/
     private Activity mActivity;
+    /**ダウンロードデータ.*/
     private DlData dlData;
+    /**アイテムID.*/
     private String itemId;
+    /**DlDataProvider機能有効か.*/
     private boolean isRegistered;
+    /**ダウンロードデータプロバイダー.*/
     private static DlDataProvider sDlDataProvider = new DlDataProvider();
-
+    /**コンストラクタ.*/
     private DlDataProvider() {
 
     }
@@ -58,6 +64,9 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         return sDlDataProvider;
     }
 
+    /**
+     * releaseInstance.
+     */
     static void releaseInstance() {
         if (null == sDlDataProvider) {
             return;
@@ -65,16 +74,25 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         sDlDataProvider = null;
     }
 
+    /**
+     * DlDataProvider機能有効かを取得.
+     * @return true or false
+     */
     public boolean getIsRegistered() {
         return isRegistered;
     }
 
+    /**
+     * ダウンロードデータプロバイダー.
+     * @param activity activity
+     */
     public DlDataProvider(final Activity activity) {
         this.mActivity = activity;
     }
 
     /**
      * DlDataProvider機能を有効.
+     * @param act Activity
      */
     public void beginProvider(final Activity act) {
         if (null == act) {
@@ -127,6 +145,10 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
     }
 
+    /**
+     * DownloadService取得.
+     * @return DownloadService
+     */
     private DownloadService getDownloadService() {
         if (null == mBinder) {
             return null;
@@ -157,6 +179,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 
     /**
      * ダウンロード進捗通知.
+     * @return 進捗値.
      */
     public int getProgressBytes() {
         DownloadService ds = getDownloadService();
@@ -168,6 +191,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 
     /**
      * ダウンロード進捗通知.
+     * @return  進捗値.
      */
     public float getProgressPercent() {
         DownloadService ds = getDownloadService();
@@ -179,6 +203,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 
     /**
      * ダウンロードエラー発生の時、コールされる.
+     * @return エラータイプ
      */
     public DLError isError() {
         DownloadService ds = getDownloadService();
@@ -237,6 +262,12 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
     }
 
+    /**
+     * ダウンロード成功,キャンセル,メモリ不足ブロードキャストsend.
+     * @param broad broad
+     * @param paramName paramName
+     * @param param param
+     */
     private void sendBroadcast(final String broad, final String paramName, final String param) {
         DownloadService ds = getDownloadService();
         if (null != ds) {
@@ -247,6 +278,14 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
     }
 
+    /**
+     * ダウンロード失敗時のブロードキャストsend.
+     * @param broad broad
+     * @param paramName paramName
+     * @param param param
+     * @param paramName2 paramName2
+     * @param intParam intParam
+     */
     private void sendBroadcast(final String broad, final String paramName, final String param, final String paramName2, final int intParam) {
         DownloadService ds = getDownloadService();
         if (null != ds) {
@@ -259,7 +298,10 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
 
-
+    /**
+     * ブロードキャストsend.
+     * @param broad broad
+     */
     private void sendBroadcast(final String broad) {
         DownloadService ds = getDownloadService();
         if (null != ds) {
@@ -269,6 +311,12 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
     }
 
+    /**
+     *ダウンロード開始、ダウンロード中ブロードキャストsend.
+     * @param broad broad
+     * @param paramName paramName
+     * @param param param
+     */
     private void sendBroadcast(final String broad, final String paramName, final int param) {
         DownloadService ds = getDownloadService();
         if (null != ds) {
@@ -278,7 +326,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
             LocalBroadcastManager.getInstance(ds).sendBroadcast(intent);
         }
     }
-
+    /**separator.*/
     private static final String sSeparator = File.separator + "";
 
     @Override
@@ -303,6 +351,9 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
     }
 
+    /**
+     * 次のコンテンツをダウンロード.
+     */
     private void setNextDownLoad() {
         if (DownloadService.getDlDataQue() != null && DownloadService.getDlDataQue().size() > 0) {
             DownloadService.setDlDataQueRemove0();
@@ -313,7 +364,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                 return;
             }
             try {
-                Thread.sleep(1000 * 1);
+                Thread.sleep(1000);
                 DTVTLogger.debug(">>>>>>>>>>>>>>>>>> new dl");
                 setDlParam(getDownLoadParam());
                 start();
@@ -325,6 +376,10 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
     }
 
+    /**
+     * ダウンロードに必要なパラメータ取得.
+     * @return パラメータ
+     */
     private DownloadParam getDownLoadParam() {
         DownloadParam downloadParam = null;
         if (DownloadService.getDlDataQue() != null && DownloadService.getDlDataQue().size() > 0) {
@@ -372,13 +427,20 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
             setNextDownLoad();
         }
     }
-
+    /**操作ID.*/
     private static final int DOWNLOAD_STATUS_SELECT = 1;
+    /**持ち出しのダウンロード情報格納.*/
     private static final int DOWNLOAD_INSERT = 2;
+    /**持ち出しのダウンロード情報更新.*/
     private static final int DOWNLOAD_UPDATE = 3;
+    /**DOWNLOAD_TOTALSIZE_SELECT.*/
     private static final int DOWNLOAD_TOTALSIZE_SELECT = 4;
+    /**持ち出しのダウンロード情報全削除.*/
     private static final int DOWNLOAD_DELETE_ALL = 5;
 
+    /**
+     * ダウンロードステータス取得.
+     */
     public void getDownLoadStatus() {
         dbOperationByThread(DOWNLOAD_STATUS_SELECT);
     }
@@ -436,6 +498,10 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         return resultSet;
     }
 
+    /**
+     * ダウンロードキャンセル.
+     * @param path パスー
+     */
     public void cancelDownLoadStatus(final String path) {
         if (null == path || path.isEmpty()) {
             return;
@@ -470,11 +536,17 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
     }
 
+    /**
+     * ダウンロードしたデータ状態取得.
+     * @return ダウンロードしたデータ状態.
+     */
     public List<Map<String, String>> getDownloadListData() {
         DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
         return downLoadListDataManager.selectDownLoadList();
     }
-
+    /**
+     * ダウンロードしたコンテンツを全削除.
+     */
     public void deleteAllDownLoadContents() {
         DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
         List<Map<String, String>> downLoadList = downLoadListDataManager.selectDownLoadList();
@@ -490,6 +562,10 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
     }
 
+    /**
+     * delete download file.
+     * @param root ルート
+     */
     private void deleteAllFiles(final File root) {
         File[] files = root.listFiles();
         if (files != null) {
@@ -529,6 +605,9 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         dbOperationByThread(DOWNLOAD_INSERT);
     }
 
+    /**
+     * DBにダウンロードステータス更新.
+     */
     private void updateDownloadStatusToDb() {
         DTVTLogger.start();
         if (mActivity != null) {
@@ -539,6 +618,10 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         DTVTLogger.end();
     }
 
+    /**
+     * キュー設定.
+     * @param dlData ダウンロードするデータ.
+     */
     public void setQue(final List<DlData> dlData) {
         if (DownloadService.getDlDataQue() != null && DownloadService.getDlDataQue().size() > 0) {
             DownloadService.setDlDataQueClear();
@@ -559,6 +642,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 
     /**
      * Ui runningを設定.
+     * @param yn true or false
      */
     public void setUiRunning(final boolean yn) {
         DownloadService ds = getDownloadService();
@@ -610,6 +694,10 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
     }
 
+    /**
+     * ダウンロード中なのか.
+     * @return true or false
+     */
     public synchronized boolean isDownloading() {
         DownloadService ds = getDownloadService();
         if (null != ds) {

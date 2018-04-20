@@ -7,7 +7,6 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
 import android.os.AsyncTask;
 
-import com.nttdocomo.android.tvterminalapp.BuildConfig;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.SettingFileMetaData;
@@ -17,21 +16,20 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.SettingFileWebCli
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * 設定ファイル用JsonParserクラス.
+ */
 public class SettingFileJsonParser extends AsyncTask<Object, Object, Object> {
-    private final String CLASS_NAME = getClass().getSimpleName();
-    private static final String SEND_RESPONSE = ".sendSettingFileResponse";
-    private static final String RESPONSE = ". SettingFileResponse";
-    private static final String JSON_OBJECT = ".JSONObject";
-
+    /**callback.*/
     private final SettingFileWebClient.SettingFileJsonParserCallback
             mSettingFileJsonParserCallback;
-    // オブジェクトクラスの定義　
+    /**オブジェクトクラスの定義.*/
     private SettingFileResponse mSettingFileResponse;
 
     /**
      * コンストラクタ.
      * <p>
-     * //     * @param genreListJsonParserCallback
+     * @param settingFileJsonParserCallback settingFileJsonParserCallback
      */
     public SettingFileJsonParser(final SettingFileWebClient.SettingFileJsonParserCallback
                                          settingFileJsonParserCallback) {
@@ -41,7 +39,7 @@ public class SettingFileJsonParser extends AsyncTask<Object, Object, Object> {
 
     @Override
     protected void onPostExecute(final Object response) {
-        if(response == null) {
+        if (response == null) {
             //ファイルの読み込みに失敗しているならばヌルを返す
             mSettingFileJsonParserCallback.
                     onSettingFileJsonParsed(null);
@@ -70,7 +68,7 @@ public class SettingFileJsonParser extends AsyncTask<Object, Object, Object> {
      */
     private SettingFileResponse settingFileSender(final String jsonStr) {
         //データがヌルならばそのまま返す
-        if(jsonStr == null) {
+        if (jsonStr == null) {
             return null;
         }
 
@@ -85,13 +83,13 @@ public class SettingFileJsonParser extends AsyncTask<Object, Object, Object> {
                 }
             }
         } catch (JSONException e) {
-            DTVTLogger.debug(CLASS_NAME + JSON_OBJECT, e);
+            DTVTLogger.debug(e);
         }
         return null;
     }
 
     /**
-     * 設定ファイルのデータを取得
+     * 設定ファイルのデータを取得.
      *
      * @param jsonObject APIレスポンス Jsonデータ
      */
@@ -121,7 +119,7 @@ public class SettingFileJsonParser extends AsyncTask<Object, Object, Object> {
 
             mSettingFileResponse.setSettingFile(settingFileMetaData);
         } catch (JSONException e) {
-            throw new RuntimeException(e);
+            DTVTLogger.debug(e);
         }
     }
 }

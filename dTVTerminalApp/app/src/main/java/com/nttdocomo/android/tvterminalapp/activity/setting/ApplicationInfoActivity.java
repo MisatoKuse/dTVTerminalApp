@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.setting;
 
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;

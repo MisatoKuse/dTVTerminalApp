@@ -19,22 +19,20 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * ジャンル一覧JsonParser.
+ */
 public class GenreListJsonParser extends AsyncTask<String, Object, Object> {
-    private final String CLASS_NAME = getClass().getSimpleName();
-    private static final String SEND_RESPONSE = ".sendGenreListResponse";
-    private static final String SEND_UPDATE_DATE = ".sendUpdateDate";
-    private static final String RESPONSE = ". GenreListResponse";
-    private static final String JSON_OBJECT = ".JSONObject";
-
+    /**GenreListJsonParserCallback.*/
     private GenreListWebClient.GenreListJsonParserCallback
             mGenreListJsonParserCallback;
-    // オブジェクトクラスの定義　
+    /**オブジェクトクラスの定義　.*/
     private GenreListResponse mGenreListResponse;
 
     /**
      * コンストラクタ.
      * <p>
-     * //     * @param genreListJsonParserCallback
+     * @param genreListJsonParserCallback  genreListJsonParserCallback
      */
     public GenreListJsonParser(final GenreListWebClient.GenreListJsonParserCallback genreListJsonParserCallback) {
         mGenreListJsonParserCallback =
@@ -75,10 +73,7 @@ public class GenreListJsonParser extends AsyncTask<String, Object, Object> {
                 }
             }
         } catch (JSONException e) {
-            DTVTLogger.debug(CLASS_NAME + JSON_OBJECT, e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + RESPONSE, e);
+            DTVTLogger.debug(e);
         }
         return null;
     }
@@ -98,12 +93,8 @@ public class GenreListJsonParser extends AsyncTask<String, Object, Object> {
                     mGenreListResponse.setUpdateDate(UpdateDate);
                 }
             }
-
         } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + SEND_UPDATE_DATE, e);
+            DTVTLogger.debug(e);
         }
     }
 
@@ -140,10 +131,7 @@ public class GenreListJsonParser extends AsyncTask<String, Object, Object> {
                 }
             }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + SEND_RESPONSE, e);
+            DTVTLogger.debug(e);
         }
     }
 }

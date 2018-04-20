@@ -91,11 +91,7 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
             }
 
             mChannelList.setResponseInfoMap(map);
-
         } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
     }
@@ -191,9 +187,6 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
                 mChannelList.setChannelList(vcList);
             }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
     }

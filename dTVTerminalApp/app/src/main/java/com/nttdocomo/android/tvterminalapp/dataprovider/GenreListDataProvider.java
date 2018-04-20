@@ -5,7 +5,6 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
@@ -30,7 +29,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * ジャンル一覧データプロバイダ.
+ */
 public class GenreListDataProvider implements
         GenreListWebClient.GenreListJsonParserCallback,
         GenreCountGetWebClient.GenreCountGetJsonParserCallback {
@@ -75,7 +76,7 @@ public class GenreListDataProvider implements
 
     // callback
     /** ジャンルデータ取得プロパイダのコールバック. */
-    private ApiDataProviderCallback mApiDataProviderCallback= null;
+    private ApiDataProviderCallback mApiDataProviderCallback = null;
     /** ジャンルデータMapを返却するためのコールバック. */
     private GenreListMapCallback genreListMapCallback;
     /** ジャンルデータ取得のコールバック. */
@@ -415,8 +416,8 @@ public class GenreListDataProvider implements
      */
     public ErrorState getGenreListError() {
         //ジャンルリストAPIが正常動作ならば、コンテンツ数取得エラーの値を返す
-        if(mGenreListError == null ||
-                mGenreListError.getErrorType() == DTVTConstants.ERROR_TYPE.SUCCESS) {
+        if (mGenreListError == null
+                || mGenreListError.getErrorType() == DTVTConstants.ERROR_TYPE.SUCCESS) {
             return mGenreCountError;
         }
 

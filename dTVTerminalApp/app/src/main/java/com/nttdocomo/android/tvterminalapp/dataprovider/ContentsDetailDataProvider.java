@@ -48,19 +48,22 @@ import java.util.Map;
  * コンテンツ詳細画面のDataProvider.
  */
 public class ContentsDetailDataProvider extends ClipKeyListDataProvider implements
-        ContentsDetailGetWebClient.ContentsDetailJsonParserCallback
-        , RoleListWebClient.RoleListJsonParserCallback
-        , DbThread.DbOperation
-        , RemoteRecordingReservationWebClient.RemoteRecordingReservationJsonParserCallback
-        , RentalVodListWebClient.RentalVodListJsonParserCallback
-        , RentalChListWebClient.RentalChListJsonParserCallback
-{
+        ContentsDetailGetWebClient.ContentsDetailJsonParserCallback,
+        RoleListWebClient.RoleListJsonParserCallback,
+        DbThread.DbOperation,
+        RemoteRecordingReservationWebClient.RemoteRecordingReservationJsonParserCallback,
+        RentalVodListWebClient.RentalVodListJsonParserCallback,
+        RentalChListWebClient.RentalChListJsonParserCallback {
 
-    // declaration
+    /**declaration.*/
     public enum ErrorType {
+        /**コンテンツ詳細取得.*/
         contentsDetailGet,
+        /**ロール一覧取得.*/
         roleList,
+        /**レンタルチャンネル一覧.*/
         rentalChList,
+        /**レンタルVod一覧.*/
         rentalVodList,
     }
 
@@ -73,6 +76,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
          * コンテンツ情報取得.
          *
          * @param contentsDetailInfo 画面に渡すチャンネル番組情報
+         * @param clipStatus クリープステータス
          */
         void onContentsDetailInfoCallback(ArrayList<VodMetaFullData> contentsDetailInfo, boolean clipStatus);
 
@@ -163,7 +167,9 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
      * 購入済みチャンネルリスト取得.
      */
     private static final int RENTAL_CHANNEL_SELECT = 8;
-
+    /**
+     * VodMetaFullData.
+     */
     private ArrayList<VodMetaFullData> mVodMetaFullDataList = null;
     /**
      * コンテンツ詳細取得WebClient.
@@ -299,7 +305,8 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                 mApiDataProviderCallback.onRoleListCallback(mRoleListInfo);
             }
         } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            //TODO :WEBAPIを取得できなかった時の処理を記載予定
+            DTVTLogger.debug("WEBAPIを取得できなかった時の処理を記載予定");
         }
     }
 
@@ -631,13 +638,13 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     }
 
     /**
-     * WebClientで発生したエラーを返す
+     * WebClientで発生したエラーを返す.
      * @param type WebClientType(コールしたWebClientType)
      *
      * @return エラー情報
      */
     public ErrorState getError(final ErrorType type) {
-        switch (type){
+        switch (type) {
             case contentsDetailGet:
                 return mDetailGetWebClient.getError();
             case roleList:

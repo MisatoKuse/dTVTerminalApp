@@ -20,13 +20,16 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * デイリーランクJsonParser.
+ */
 public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
-
+    /**callback.*/
     final private DailyRankWebClient.DailyRankJsonParserCallback mDailyRankJsonParserCallback;
 
-    // オブジェクトクラスの定義
+    /**オブジェクトクラスの定義.*/
     private DailyRankList mDailyRankList = null;
-
+    /**ページャーパラメータキー.*/
     private static final String[] PAGER_PARA = {JsonConstants.META_RESPONSE_PAGER_LIMIT,
             JsonConstants.META_RESPONSE_OFFSET, JsonConstants.META_RESPONSE_COUNT,
             JsonConstants.META_RESPONSE_TOTAL};
@@ -75,9 +78,6 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
             return drList;
         } catch (JSONException e) {
             DTVTLogger.debug(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(e);
         }
         return null;
     }
@@ -110,11 +110,7 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
             if (mDailyRankList != null) {
                 mDailyRankList.setDrMap(map);
             }
-
         } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
     }
@@ -151,9 +147,6 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
                 mDailyRankList.setDrList(drList);
             }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
     }

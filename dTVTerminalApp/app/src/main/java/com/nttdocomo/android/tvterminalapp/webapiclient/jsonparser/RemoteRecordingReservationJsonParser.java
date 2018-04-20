@@ -15,22 +15,22 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RemoteRecordingRe
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * リモート録画予約登録用JsonParserクラス.
+ */
 public class RemoteRecordingReservationJsonParser extends AsyncTask<Object, Object, Object> {
-    private final String CLASS_NAME = getClass().getSimpleName();
-    private static final String SEND_STATUS = ".sendStatus";
-    private static final String RESPONSE = ".RemoteRecordingReservationResultResponse";
-    private static final String JSON_OBJECT = ".JSONObject";
-
+    /**callback.*/
     private RemoteRecordingReservationWebClient.RemoteRecordingReservationJsonParserCallback
             mRemoteRecordingReservationJsonParserCallback;
-    // オブジェクトクラスの定義　
+    /**オブジェクトクラスの定義.*/
     private RemoteRecordingReservationResultResponse mRemoteRecordingReservationResultResponse;
 
     /**
      * コンストラクタ.
+     * @param recordingReservationListJsonParserCallback callback
      */
-    public RemoteRecordingReservationJsonParser(RemoteRecordingReservationWebClient.
-                                                        RemoteRecordingReservationJsonParserCallback recordingReservationListJsonParserCallback) {
+    public RemoteRecordingReservationJsonParser(final RemoteRecordingReservationWebClient.
+                  RemoteRecordingReservationJsonParserCallback recordingReservationListJsonParserCallback) {
         mRemoteRecordingReservationJsonParserCallback =
                 recordingReservationListJsonParserCallback;
         mRemoteRecordingReservationResultResponse = null;
@@ -50,7 +50,7 @@ public class RemoteRecordingReservationJsonParser extends AsyncTask<Object, Obje
     }
 
     /**
-     * 録画予約一覧Jsonデータを解析する.
+     * 録画予約登録リザルトJsonデータを解析する.
      *
      * @param jsonStr 録画予約一覧Jsonデータ
      * @return 録画予約一覧取得：正常時レスポンスデータ
@@ -70,9 +70,7 @@ public class RemoteRecordingReservationJsonParser extends AsyncTask<Object, Obje
                 DTVTLogger.debug("JsonStr is Null");
             }
         } catch (JSONException e) {
-            DTVTLogger.debug(CLASS_NAME + JSON_OBJECT, e);
-        } catch (Exception e) {
-            DTVTLogger.debug(CLASS_NAME + RESPONSE, e);
+            DTVTLogger.debug(e);
         }
         return null;
     }
@@ -98,12 +96,8 @@ public class RemoteRecordingReservationJsonParser extends AsyncTask<Object, Obje
             // レスポンスデータに格納（errornoはnullの場合もある）
             mRemoteRecordingReservationResultResponse
                     = new RemoteRecordingReservationResultResponse(status, errorNo);
-
         } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            //TODO:汎用例外はcatchしない
-            DTVTLogger.debug(CLASS_NAME + SEND_STATUS, e);
+            DTVTLogger.debug(e);
         }
     }
 }

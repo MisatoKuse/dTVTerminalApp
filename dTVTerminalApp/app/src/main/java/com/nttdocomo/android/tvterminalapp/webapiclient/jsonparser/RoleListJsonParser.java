@@ -19,21 +19,20 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/**
+ * ロール一覧用JsonParserクラス.
+ */
 public class RoleListJsonParser extends AsyncTask<String, Object, Object> {
-    private final String CLASS_NAME = getClass().getSimpleName();
-    private static final String SEND_RESPONSE = ".sendRoleListResponse";
-    private static final String RESPONSE = ". RoleListResponse";
-    private static final String JSON_OBJECT = ".JSONObject";
-
+    /**callback.*/
     private RoleListWebClient.RoleListJsonParserCallback
             mRoleListJsonParserCallback;
-    // オブジェクトクラスの定義　
+    /**オブジェクトクラスの定義　.*/
     private RoleListResponse mRoleListResponse;
 
     /**
      * コンストラクタ.
      * <p>
-     * //     * @param genreListJsonParserCallback
+     * @param roleListJsonParserCallback  genreListJsonParserCallback
      */
     public RoleListJsonParser(final RoleListWebClient.RoleListJsonParserCallback roleListJsonParserCallback) {
         mRoleListJsonParserCallback = roleListJsonParserCallback;
@@ -73,11 +72,7 @@ public class RoleListJsonParser extends AsyncTask<String, Object, Object> {
                 }
             }
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + JSON_OBJECT, e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + RESPONSE, e);
+            DTVTLogger.debug(e);
         }
         return null;
     }
@@ -107,10 +102,7 @@ public class RoleListJsonParser extends AsyncTask<String, Object, Object> {
             }
             mRoleListResponse.setRoleList(roleListMetaData);
         } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + SEND_RESPONSE, e);
+            DTVTLogger.debug(e);
         }
     }
 }

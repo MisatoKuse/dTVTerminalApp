@@ -7,9 +7,6 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
-import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,15 +17,23 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Vodクリップ一覧用JsonParserクラス.
+ */
 public class VodClipJsonParser {
 
-    // オブジェクトクラスの定義
+    /**オブジェクトクラスの定義.*/
     private VodClipList mVodClipList;
-
+    /**ページャーパラメータキー.*/
     public static final String[] PAGER_PARA = {JsonConstants.META_RESPONSE_UPPER_LIMIT,
             JsonConstants.META_RESPONSE_LOWER_LIMIT, JsonConstants.META_RESPONSE_OFFSET,
             JsonConstants.META_RESPONSE_COUNT};
 
+    /**
+     * Vodクリップ一覧Jsonデータ解析.
+     * @param jsonStr 元のJsonデータ
+     * @return 解析後のデータリスト
+     */
     public List<VodClipList> VodClipListSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
@@ -46,13 +51,14 @@ public class VodClipJsonParser {
             return vodClipList;
         } catch (JSONException e) {
             DTVTLogger.debug(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(e);
         }
         return null;
     }
 
+    /**
+     * statusの値をMapに格納.
+     * @param jsonObj 解析前のJsonデータ
+     */
     public void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
@@ -76,15 +82,13 @@ public class VodClipJsonParser {
                 mVodClipList.setVcMap(map);
             }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
     }
 
     /**
      * コンテンツのList<HashMap>をオブジェクトクラスに格納.
+     * @param arrayList ArrayList
      */
     public void sendVcList(final JSONArray arrayList) {
         try {
@@ -122,9 +126,6 @@ public class VodClipJsonParser {
                 mVodClipList.setVcList(vcList);
             }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
     }

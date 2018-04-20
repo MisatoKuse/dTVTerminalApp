@@ -16,13 +16,18 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
+/**
+ * データベースヘルパー.
+ */
 public class DBHelper extends SQLiteOpenHelper {
 
     /**
      * DBVersion.
      */
     private static final int DATABASE_VERSION = 1;
-
+    /**
+     * drop table if exists.
+     */
     private static final String DROP_TABLE_IF_EXISTS = "drop table if exists ";
 
     /**
@@ -35,28 +40,64 @@ public class DBHelper extends SQLiteOpenHelper {
      */
     private static final String DROP_CHANNEL_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.CHANNEL_LIST_TABLE_NAME);
+    /**
+     * 「デイリーランキング」テーブルの削除用SQL.
+     */
     private static final String DROP_DAILYRANK_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.DAILYRANK_LIST_TABLE_NAME);
+    /**
+     * 「おすすめチャンネル」テーブルの削除用SQL.
+     */
     private static final String DROP_RECOMMEND_CHANNEL_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.RECOMMEND_CHANNEL_LIST_TABLE_NAME);
+    /**
+     * 「おすすめビデオ」テーブルの削除用SQL.
+     */
     private static final String DROP_RECOMMEND_VIDEO_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.RECOMMEND_VIDEO_LIST_TABLE_NAME);
+    /**
+     * 「TV番組表」テーブルの削除用SQL.
+     */
     private static final String DROP_TV_SCHEDULE_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.TV_SCHEDULE_LIST_TABLE_NAME);
+    /**
+     * 「ユーザー情報」テーブルの削除用SQL.
+     */
     private static final String USER_INFO_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.USER_INFO_LIST_TABLE_NAME);
+    /**
+     * 「週間ランキングリスト」テーブルの削除用SQL.
+     */
     private static final String DROP_WEEKLYRANK_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.WEEKLYRANK_LIST_TABLE_NAME);
+    /**
+     * 「ビデオランキング」テーブルの削除用SQL.
+     */
     private static final String DROP_VIDEORANK_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.RANKING_VIDEO_LIST_TABLE_NAME);
+    /**
+     * 「レコメンド（dチャンネル）」テーブルの削除用SQL.
+     */
     private static final String DROP_RECOMMEND_DCHANNEL_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.RECOMMEND_LIST_DCHANNEL_TABLE_NAME);
+    /**
+     * 「レコメンド（dTV）」テーブルの削除用SQL.
+     */
     private static final String DROP_RECOMMEND_DTV_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.RECOMMEND_LIST_DTV_TABLE_NAME);
+    /**
+     * 「ロールリスト」テーブルの削除用SQL.
+     */
     private static final String DROP_ROLE_LIST_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.ROLE_LIST_TABLE_NAME);
+    /**
+     * 「ダウンロードリスト」テーブルの削除用SQL.
+     */
     private static final String DROP_DOWNLOAD_LIST_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.DOWNLOAD_LIST_TABLE_NAME);
+    /**
+     * 「レコメンド（dアニメ）」テーブルの削除用SQL.
+     */
     private static final String DROP_RECOMMEND_DANIME_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.RECOMMEND_LIST_DANIME_TABLE_NAME);
     /**
@@ -84,6 +125,9 @@ public class DBHelper extends SQLiteOpenHelper {
      */
     private static final String DROP_TV_CLIP_KEY_LIST_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.TV_CLIP_KEY_LIST_TABLE_NAME);
+    /**
+     * 「クリップキー一覧 キャッシュデータ」テーブル削除用SQL.
+     */
     private static final String DROP_VOD_CLIP_KEY_LIST_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.VOD_CLIP_KEY_LIST_TABLE_NAME);
 

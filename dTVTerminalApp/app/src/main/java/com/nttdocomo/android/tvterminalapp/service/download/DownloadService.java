@@ -19,54 +19,89 @@ import java.util.List;
 
 //import android.support.v7.app.NotificationCompat;
 
+/**
+ * ダウンロードサービスクラス.
+ */
 public class DownloadService extends Service implements DownloadListener {
+    /**ダウンロードサービスクラスリスナー.*/
     private DownloadServiceListener mDownloadServiceListener;
+    /**DownloaderBase.*/
     private DownloaderBase mDownloaderBase;
+    /**data.*/
     private String mData;
+    /**ダウンロードサービスID.*/
     private static final int DOWNLOAD_SERVICE_ID = 1;
+    /**ダウンロードデータキュー.*/
     private static List<DlData> sDlDataQue = new ArrayList<>();
+    /**UI更新あるか.*/
     private boolean mIsUiRunning = false;
 
     //broadcast type
+    /**プログレース.*/
     public static final String DONWLOAD_OnProgress = "onProgress";
+    /**ダウンロード成功.*/
     public static final String DONWLOAD_OnSuccess = "onSuccess";
+    /**ダウンロード失敗.*/
     public static final String DONWLOAD_OnFail = "onFail";
+    /**メモリ不足.*/
     public static final String DONWLOAD_OnLowStorageSpace = "onLowStorageSpace";
+    /**ダウンロードタスク全キャンセル.*/
     public static final String DONWLOAD_OnCancelAll = "OnCancelAll";
+    /**ダウンロードタスクキャンセル.*/
     public static final String DONWLOAD_OnCancel = "onCancel";
+    /**ダウンロード開始.*/
     public static final String DONWLOAD_OnStart = "onStart";
+    /**ダウンロードデータプロバイダー使用可.*/
     public static final String DONWLOAD_DlDataProviderAvailable = "onDlDataProviderAvailable";
+    /**ダウンロードデータプロバイダー使用不可.*/
     public static final String DONWLOAD_DlDataProviderUnavailable = "onDDataProviderUnavailable";
 
     //broadcast param type
+    /**broadcast param type　int.*/
     public static final String DONWLOAD_ParamInt = "paramInt";
+    /**broadcast param type  string.*/
     public static final String DONWLOAD_ParamString = "paramString";
 
-
+    /**
+     * ダウンロードデータキュー設定.
+     * @param dlDataQue ダウンロードデータキュー
+     */
     public synchronized static void setDlDataQue(final List<DlData> dlDataQue) {
         sDlDataQue = dlDataQue;
     }
-
+    /**ダウンロードデータキュークリア.*/
     public synchronized static void setDlDataQueClear() {
         if (null != sDlDataQue) {
             sDlDataQue.clear();
         }
     }
-
+    /**ダウンロードデータキューから先頭アイテム取り除く.*/
     public synchronized static void setDlDataQueRemove0() {
         if (null != sDlDataQue) {
             sDlDataQue.remove(0);
         }
     }
 
+    /**
+     * ダウンロードデータキュー.
+     * @return ダウンロードデータキュー
+     */
     public synchronized static  List<DlData> getDlDataQue() {
         return sDlDataQue;
     }
 
+    /**
+     * ダウンロードサービス稼働中か.
+     * @return true or false
+     */
     public static synchronized boolean isDownloadServiceRunning() {
         return (null != sDlDataQue) && 0 < sDlDataQue.size();
     }
 
+    /**
+     * ダウンロードリスナー設定.
+     * @param dlServiceListener ダウンロードリスナー
+     */
     public void setDownloadServiceListener(final DownloadServiceListener dlServiceListener) {
         mDownloadServiceListener = dlServiceListener;
     }
@@ -90,6 +125,7 @@ public class DownloadService extends Service implements DownloadListener {
 
     /**
      * ダウンロード進捗通知.
+     * @return  ダウンロード進捗
      */
     public int getProgressBytes() {
         if (null != mDownloaderBase) {
@@ -100,6 +136,7 @@ public class DownloadService extends Service implements DownloadListener {
 
     /**
      * ダウンロード進捗通知.
+     * @return ダウンロード進捗
      */
     public float getProgressPercent() {
         if (null != mDownloaderBase) {
@@ -110,6 +147,7 @@ public class DownloadService extends Service implements DownloadListener {
 
     /**
      * ダウンロードエラー発生の時、コールされる.
+     * @return ダウンロードエラータイプ
      */
     public DLError isError() {
         if (null != mDownloaderBase) {
@@ -148,10 +186,19 @@ public class DownloadService extends Service implements DownloadListener {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    /**
+     * ダウンロード開始開始.
+     */
     public void startService() {
         startForeground(DOWNLOAD_SERVICE_ID, getNotification(getResources().getString(R.string.record_download_notification), 0));
     }
 
+    /**
+     * 通知表示.
+     * @param title ダウンロード中番組タイトル.
+     * @param progress  ダウンロード進捗.
+     * @return 通知
+     */
     private Notification getNotification(final String title, final int progress) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "");
         builder.setSmallIcon(R.mipmap.icd_app_tvterminal);
@@ -165,6 +212,9 @@ public class DownloadService extends Service implements DownloadListener {
         return builder.build();
     }
 
+    /**
+     * ダウンロード停止.
+     */
     public void stopService() {
         stopForeground(true);
         stopSelf();
@@ -175,6 +225,10 @@ public class DownloadService extends Service implements DownloadListener {
         }
     }
 
+    /**
+     * UI更新あるか.
+     * @return true or false
+     */
     public boolean isUiRunning() {
         return mIsUiRunning;
     }
@@ -268,9 +322,18 @@ public class DownloadService extends Service implements DownloadListener {
      * Binderクラス.
      */
     public class Binder extends android.os.Binder {
+        /**
+         * setData.
+         * @param data data
+         */
         public void setData(final String data) {
             DownloadService.this.mData = data;
         }
+
+        /**
+         * DownloadService取得.
+         * @return  DownloadService
+         */
         public DownloadService getDownloadService() {
             return DownloadService.this;
         }
@@ -290,11 +353,16 @@ public class DownloadService extends Service implements DownloadListener {
 
     /**
      * Ui runningを設定.
+     * @param yn true or false
      */
     public void setUiRunning(final boolean yn) {
         mIsUiRunning = yn;
     }
 
+    /**
+     * ダウンロード中か.
+     * @return true or false
+     */
     public synchronized boolean isDownloading() {
         if (null == mDownloaderBase) {
             return false;

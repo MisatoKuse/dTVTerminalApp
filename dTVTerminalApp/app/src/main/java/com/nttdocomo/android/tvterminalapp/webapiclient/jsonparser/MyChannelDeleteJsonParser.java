@@ -15,22 +15,20 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.MyChannelDeleteWe
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
+/**
+ * マイチャンネル削除用JsonParserクラス.
+ */
 public class MyChannelDeleteJsonParser extends AsyncTask<Object, Object, Object> {
-    private final String CLASS_NAME = getClass().getSimpleName();
-    private static final String SEND_STATUS = ".sendStatus";
-    private static final String RESPONSE = ".MyChannelDeleteResponse";
-    private static final String JSON_OBJECT = ".JSONObject";
-
+    /**マイチャンネル削除JsonParser コールバック.*/
     private MyChannelDeleteWebClient.MyChannelDeleteJsonParserCallback
             myChannelDeleteJsonParserCallback;
-    // オブジェクトクラスの定義　
+    /**オブジェクトクラスの定義.*/
     private MyChannelDeleteResponse myChannelDeleteResponse;
 
     /**
      * コンストラクタ.
      * <p>
-     * //     * @param myChannelDeleteJsonParserCallback
+     * @param myChannelDeleteJsonParserCallback  コールバック
      */
     public MyChannelDeleteJsonParser(final MyChannelDeleteWebClient.MyChannelDeleteJsonParserCallback myChannelDeleteJsonParserCallback) {
         this.myChannelDeleteJsonParserCallback = myChannelDeleteJsonParserCallback;
@@ -66,10 +64,7 @@ public class MyChannelDeleteJsonParser extends AsyncTask<Object, Object, Object>
                 return myChannelDeleteResponse;
             }
         } catch (JSONException e) {
-            DTVTLogger.debug(CLASS_NAME + JSON_OBJECT, e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + RESPONSE, e);
+            DTVTLogger.debug(e);
         }
         return null;
     }
@@ -89,10 +84,7 @@ public class MyChannelDeleteJsonParser extends AsyncTask<Object, Object, Object>
                 }
             }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + SEND_STATUS, e);
+            DTVTLogger.debug(e);
         }
     }
 }

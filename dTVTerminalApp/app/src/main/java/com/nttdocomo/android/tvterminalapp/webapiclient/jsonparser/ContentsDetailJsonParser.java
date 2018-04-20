@@ -21,22 +21,23 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/**
+ * コンテンツ詳細JsonParser.
+ */
 public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> {
+    /**コンテキスト.*/
     private Context mContext;
-    private final String CLASS_NAME = getClass().getSimpleName();
-    private static final String SEND_RESPONSE = ".sendContentDetailGetResponse";
-    private static final String SEND_STATUS = ".sendStatus";
-    private static final String RESPONSE = ".ContentDetailGetResponse";
-    private static final String JSON_OBJECT = ".JSONObject";
+    /**コールバック.*/
     private final ContentsDetailGetWebClient.ContentsDetailJsonParserCallback
             mContentsDetailJsonParserCallback;
-    // オブジェクトクラスの定義　
+    /**オブジェクトクラスの定義　.*/
     private ContentsDetailGetResponse mContentsDetailGetResponse;
 
     /**
      * コンストラクタ.
      * <p>
-     * //     * @param genreCountGetJsonParserCallback
+     * @param context コンテキスト.
+     * @param contentsDetailJsonParserCallback コールバック
      */
     public ContentsDetailJsonParser(final Context context, final ContentsDetailGetWebClient.
                                             ContentsDetailJsonParserCallback
@@ -78,7 +79,7 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
                 return mContentsDetailGetResponse;
             }
         } catch (JSONException e) {
-            DTVTLogger.debug(CLASS_NAME + JSON_OBJECT, e);
+            DTVTLogger.debug(e);
         }
         return null;
     }
@@ -99,7 +100,7 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
                 }
             }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
+           DTVTLogger.debug(e);
         }
     }
 
@@ -126,7 +127,7 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
                     VodMetaFullData fullData = new VodMetaFullData();
 
                     //データを個別に転送する
-                    fullData.setData(userState,lists.getJSONObject(i));
+                    fullData.setData(userState, lists.getJSONObject(i));
 
                     //データを追加
                     vodMetaFullDataArrayList.add(fullData);
@@ -140,7 +141,7 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
 
             }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
+           DTVTLogger.debug(e);
         }
     }
 }

@@ -5,7 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 /**
- * リモート録画予約一覧取得：レスポンスデータ.
+ * リモート録画予約登録リザルト：レスポンスデータ.
  */
 public class RemoteRecordingReservationResultResponse {
     /**ステータスNG.*/
