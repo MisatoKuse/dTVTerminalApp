@@ -181,6 +181,12 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
             data.setDispType(dispType);
             data.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
             data.setContentsId(vodMetaFullData.getCrid());
+            data.setEstFlg(vodMetaFullData.getEstFlag());
+            data.setChsVod(vodMetaFullData.getmChsvod());
+            data.setAvailStartDate(vodMetaFullData.getAvail_start_date());
+            data.setAvailEndDate(vodMetaFullData.getAvail_end_date());
+            data.setVodStartDate(vodMetaFullData.getmVod_start_date());
+            data.setVodEndDate(vodMetaFullData.getmVod_end_date());
 
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();

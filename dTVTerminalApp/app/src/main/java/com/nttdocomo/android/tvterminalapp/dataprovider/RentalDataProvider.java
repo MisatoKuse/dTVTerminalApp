@@ -362,24 +362,6 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
             VodMetaFullData vodMetaFullData = metaFullData.get(i);
             if (displayFlg(vodMetaFullData)) {
                 ContentsData data = new ContentsData();
-                int rentalType = isEnableRentalContents(activeDataList.get(i).getValidEndDate());
-                switch (rentalType) {
-                    case ENABLE_VOD_WATCH_CONTENTS_LIMITED:
-                        //期限付きの場合のみ日付を設定する
-                        data.setTime(DateUtils.formatEpochToDateString(activeDataList.get(i).getValidEndDate()));
-                        break;
-                    case ENABLE_VOD_WATCH_CONTENTS_UNLIMITED:
-                        //期限付きの場合のみ日付を設定する
-                        data.setTime(ENABLE_VOD_WATCH_CONTENTS_UNLIMITED_HYPHEN);
-                        break;
-                    case DELIVERY_END_CONTENTS:
-                        //配信終了コンテンツは"配信終了"を設定する
-                        data.setTime(mContext.getString(R.string.delivery_end_message));
-                        break;
-                    default:
-                        break;
-                }
-
                 String title = vodMetaFullData.getTitle();
                 String searchOk = vodMetaFullData.getmSearch_ok();
                 String dispType = vodMetaFullData.getDisp_type();
@@ -469,35 +451,6 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
                         || vodMetaFullData.getDisp_type().equals(DISP_TYPE_SERIES_SVOD)));
             default:
                 return false;
-        }
-    }
-
-    /**
-     * レンタルコンテンツの有効期限判定.
-     *
-     * @param validEndDate 視聴期限
-     * @return 視聴可否判定結果
-     */
-    public static int isEnableRentalContents(final long validEndDate) {
-        final int ONE_MONTH = 30;
-
-        //視聴期限 > 現在時刻の場合
-        if (validEndDate > DateUtils.getNowTimeFormatEpoch()) {
-            //視聴可能期限まで一ヶ月以内かどうか
-            if (validEndDate - DateUtils.getNowTimeFormatEpoch()
-                    < DateUtils.EPOCH_TIME_ONE_DAY * ONE_MONTH) {
-                //視聴可能(一ヶ月以内)
-                DTVTLogger.debug("Viewable. Within ENABLE_VOD_WATCH_CONTENTS_LIMITED");
-                return ENABLE_VOD_WATCH_CONTENTS_LIMITED;
-            } else {
-                //視聴可能(一ヶ月超)
-                DTVTLogger.debug("Viewable. Within ENABLE_VOD_WATCH_CONTENTS_UNLIMITED");
-                return ENABLE_VOD_WATCH_CONTENTS_UNLIMITED;
-            }
-        } else {
-            //視聴期限範囲外のため視聴不可
-            DTVTLogger.debug("UnViewable. Within DELIVERY_END_CONTENTS");
-            return DELIVERY_END_CONTENTS;
         }
     }
 

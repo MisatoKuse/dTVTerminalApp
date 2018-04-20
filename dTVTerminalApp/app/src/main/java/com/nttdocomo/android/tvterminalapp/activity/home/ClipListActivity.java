@@ -287,13 +287,17 @@ public class ClipListActivity extends BaseActivity implements
             }
             fragment.showProgressBar(false);
 
-            mNoDataMessage.setVisibility(View.VISIBLE);
+            if (fragment.mClipListData == null || fragment.mClipListData.size() == 0) {
+                mNoDataMessage.setVisibility(View.VISIBLE);
+            }
             return;
         }
 
         if (0 == clipContentInfo.size()) {
             //doing
-            mNoDataMessage.setVisibility(View.VISIBLE);
+            if (fragment.mClipListData == null || fragment.mClipListData.size() == 0) {
+                mNoDataMessage.setVisibility(View.VISIBLE);
+            }
             fragment.showProgressBar(false);
             resetCommunication();
             return;
@@ -335,15 +339,18 @@ public class ClipListActivity extends BaseActivity implements
             } else {
                 showGetDataFailedToast(message);
             }
-
-            mNoDataMessage.setVisibility(View.VISIBLE);
+            if (fragment.mClipListData == null || fragment.mClipListData.size() == 0) {
+                mNoDataMessage.setVisibility(View.VISIBLE);
+            }
             fragment.showProgressBar(false);
             return;
         }
 
         if (0 == clipContentInfo.size()) {
             //doing
-            mNoDataMessage.setVisibility(View.VISIBLE);
+            if (fragment.mClipListData == null || fragment.mClipListData.size() == 0) {
+                mNoDataMessage.setVisibility(View.VISIBLE);
+            }
             fragment.showProgressBar(false);
             resetCommunication();
             return;
