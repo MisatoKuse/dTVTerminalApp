@@ -2612,17 +2612,17 @@ public class ContentDetailActivity extends BaseActivity implements
                     //ひかりTV内DTVチャンネル
                     // テレビ再生「disp_type」が「tv_program」
                     if (TV_PROGRAM.equals(mDetailData.getDispType())) {
-                        if (TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(mDetailData.getTvService())) {
+                        if (TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(mDetailFullData.getmTv_service())) {
                             //「contents_type」が「0」または未設定
-                            if (CONTENT_TYPE_FLAG_ZERO.equals(mDetailData.getContentsType())
-                                    || null == mDetailData.getContentsType()) {
-                                DTVTLogger.debug("contentsType :----" + mDetailData.getContentsType());
+                            if (CONTENT_TYPE_FLAG_ZERO.equals(mDetailFullData.getmContent_type())
+                                    || null == mDetailFullData.getmContent_type()) {
+                                DTVTLogger.debug("contentsType :----" + mDetailFullData.getmContent_type());
                                 startApp(UrlConstants.WebUrl.DTVCHANNEL_TELEVISION_START_URL + mDetailFullData.getmChno());
                                 DTVTLogger.debug("chno :----" + mDetailFullData.getmChno());
                                 //ビデオ再生 「disp_type」が「tv_program」かつ「contents_type」が「1」または「2」または「3」
-                            } else if (CONTENT_TYPE_FLAG_ONE.equals(mDetailData.getContentsType())
-                                    || CONTENT_TYPE_FLAG_TWO.equals(mDetailData.getContentsType())
-                                    || CONTENT_TYPE_FLAG_THREE.equals(mDetailData.getContentsType())) {
+                            } else if (CONTENT_TYPE_FLAG_ONE.equals(mDetailFullData.getmContent_type())
+                                    || CONTENT_TYPE_FLAG_TWO.equals(mDetailFullData.getmContent_type())
+                                    || CONTENT_TYPE_FLAG_THREE.equals(mDetailFullData.getmContent_type())) {
                                 startApp(UrlConstants.WebUrl.DTVCHANNEL_VIDEO_START_URL + mDetailFullData.getCrid());
                                 DTVTLogger.debug("crid :----" + mDetailFullData.getCrid());
                             }
