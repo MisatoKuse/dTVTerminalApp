@@ -38,7 +38,7 @@ public class RentalVodListWebClient
      * コールバックのインスタンス.
      */
     private RentalVodListJsonParserCallback mRentalVodListJsonParserCallback;
-
+    /**コンテキスト.*/
     private Context mContext = null;
     /**
      * コンテキストを継承元のコンストラクタに送る.

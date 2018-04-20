@@ -11,6 +11,9 @@ import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.RoleListJsonParser;
 
+/**
+ * ロール一覧WebClient.
+ */
 public class RoleListWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
@@ -31,7 +34,9 @@ public class RoleListWebClient
         void onRoleListJsonParsed(RoleListResponse roleListResponse);
     }
 
-    //コールバックのインスタンス
+    /**
+     * コールバックのインスタンス.
+     */
     private RoleListJsonParserCallback mRoleListJsonParserCallback;
 
     /**

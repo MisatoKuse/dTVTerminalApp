@@ -18,6 +18,9 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+/**
+ * 番組表情報WebClient.
+ */
 public class TvScheduleWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
@@ -47,7 +50,9 @@ public class TvScheduleWebClient
         void onTvScheduleJsonParsed(final List<TvScheduleList> tvScheduleList);
     }
 
-    //コールバックのインスタンス
+    /**
+     * コールバックのインスタンス.
+     */
     private TvScheduleJsonParserCallback mTvScheduleJsonParserCallback;
 
     /**
@@ -78,6 +83,7 @@ public class TvScheduleWebClient
      * @param chno   チャンネル番号
      * @param date   日付（"now"を指定した場合、現在放送中番組を返却)
      * @param filter フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
+     * @param tvScheduleJsonParserCallback callback
      * @return パラメータエラーならばfalse
      */
     public boolean getTvScheduleApi(final int[] chno, final String[] date, final String filter,

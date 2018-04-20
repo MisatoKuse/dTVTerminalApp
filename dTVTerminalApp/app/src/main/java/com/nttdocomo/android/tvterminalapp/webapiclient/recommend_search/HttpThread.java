@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import com.nttdocomo.android.ocsplib.OcspURLConnection;
 import com.nttdocomo.android.ocsplib.OcspUtil;
 import com.nttdocomo.android.ocsplib.exception.OcspParameterException;
-import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
@@ -32,18 +31,14 @@ import java.net.CookiePolicy;
 import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
-import java.net.UnknownServiceException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.concurrent.TimeoutException;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLHandshakeException;
-import javax.net.ssl.SSLPeerUnverifiedException;
 
 /**
  * HTTP通信スレッド.
@@ -64,15 +59,17 @@ public class HttpThread extends Thread {
      */
     static private final String REDIRECT_SKIP = "redirect skip";
 
-    /**
-     * 例外用メッセージ.
-     */
+    //例外用メッセージ.
+    /**error_message_input_stream_null.*/
     static private final String ERROR_MESSAGE_INPUT_STREAM_NULL =
             "HttpThread::run, inputStream==null";
+    /**error_message_input_stream_reader_null.*/
     static private final String ERROR_MESSAGE_INPUT_STREAM_READER_NULL =
             "HttpThread::run, inputStreamReader==null";
+    /**error_message_buffer_reader_null.*/
     static private final String ERROR_MESSAGE_BUFFER_READER_NULL =
             "HttpThread::run, bufferedReader==null";
+    /**error_message_http_response.*/
     static private final String ERROR_MESSAGE_HTTP_RESPONSE =
             "HttpThread::run, http response=";
 
@@ -171,8 +168,8 @@ public class HttpThread extends Thread {
      *
      * @param errorCode エラーコード
      */
-    public void setErrorCode(String errorCode) {
-        if(mErrorStatus != null) {
+    public void setErrorCode(final String errorCode) {
+        if (mErrorStatus != null) {
             mErrorStatus.setErrorCode(errorCode);
         }
     }
@@ -182,8 +179,8 @@ public class HttpThread extends Thread {
      *
      * @param xmlString XMLデータ
      */
-    public void setXmlErrorCode(String xmlString) {
-        if(mErrorStatus != null) {
+    public void setXmlErrorCode(final String xmlString) {
+        if (mErrorStatus != null) {
             mErrorStatus.setXmlErrorCode(xmlString);
         }
     }
@@ -284,7 +281,7 @@ public class HttpThread extends Thread {
         StringBuffer stringBuffer = new StringBuffer();
 
         //圏外等の判定
-        if( (mContext != null && !NetWorkUtils.isOnline(mContext))
+        if ((mContext != null && !NetWorkUtils.isOnline(mContext))
                 || mContext == null) {
             //そもそも通信のできない状態なので、ネットワークエラーとする
             setErrorStatus(null, DTVTConstants.ERROR_TYPE.NETWORK_ERROR, "");
@@ -336,7 +333,11 @@ public class HttpThread extends Thread {
                 DTVTLogger.debug(srcUrl);
 
                 //SSL証明書失効チェックライブラリの初期化を行う
-                OcspUtil.init(mContext);
+                try {
+                    OcspUtil.init(mContext);
+                } catch (OcspParameterException e) {
+                    setErrorStatus(e, DTVTConstants.ERROR_TYPE.SSL_ERROR, "");
+                }
 
                 //SSL証明書失効チェックを行う
                 OcspURLConnection ocspURLConnection = new OcspURLConnection(mHttpUrlConn);
@@ -348,21 +349,9 @@ public class HttpThread extends Thread {
         } catch (UnknownHostException e) {
             //通信スレッドへ移行する前の通信の例外
             setErrorStatus(e, DTVTConstants.ERROR_TYPE.SERVER_ERROR, "");
-        } catch (UnknownServiceException e) {
-            //通信スレッドへ移行する前の通信の例外
-            setErrorStatus(e, DTVTConstants.ERROR_TYPE.SERVER_ERROR, "");
-        } catch (SocketTimeoutException e) {
-            //通信スレッドへ移行する前の通信の例外
-            setErrorStatus(e, DTVTConstants.ERROR_TYPE.SERVER_ERROR, "");
         } catch (SSLHandshakeException e) {
             //SSLエラー処理(SSLエラーにコードは付けない)
-            setErrorStatus(e, DTVTConstants.ERROR_TYPE.SSL_ERROR,"");
-        } catch (SSLPeerUnverifiedException e) {
-            //SSLエラー処理(SSLエラーにコードは付けない)
-            setErrorStatus(e, DTVTConstants.ERROR_TYPE.SSL_ERROR,"");
-        } catch (OcspParameterException e) {
-            //SSLエラー処理(SSLエラーにコードは付けない)
-            setErrorStatus(e, DTVTConstants.ERROR_TYPE.SSL_ERROR,"");
+            setErrorStatus(e, DTVTConstants.ERROR_TYPE.SSL_ERROR, "");
         } catch (IOException e) {
             //その他通信エラー処理
             //エラーコードの処理はそれぞれの持ち場で行うので、ここでは処理を行わない
@@ -439,7 +428,7 @@ public class HttpThread extends Thread {
             InputStream inputStream = mHttpUrlConn.getInputStream();
             if (null == inputStream) {
                 //ストリームで問題が発生したので、サーバーエラーとする(メッセージはひとまず出さない)
-                setErrorStatus(null, DTVTConstants.ERROR_TYPE.SERVER_ERROR,"");
+                setErrorStatus(null, DTVTConstants.ERROR_TYPE.SERVER_ERROR, "");
                 throw new IOException(ERROR_MESSAGE_INPUT_STREAM_NULL);
             }
 
@@ -447,7 +436,7 @@ public class HttpThread extends Thread {
                     new InputStreamReader(inputStream, StandardCharsets.UTF_8.name());
             if (null == inputStreamReader) {
                 //ストリームで問題が発生したので、サーバーエラーとする(メッセージはひとまず出さない)
-                setErrorStatus(null, DTVTConstants.ERROR_TYPE.SERVER_ERROR,"");
+                setErrorStatus(null, DTVTConstants.ERROR_TYPE.SERVER_ERROR, "");
                 throw new IOException(ERROR_MESSAGE_INPUT_STREAM_READER_NULL);
             }
 
@@ -455,7 +444,7 @@ public class HttpThread extends Thread {
                 bufferedReader = new BufferedReader(inputStreamReader);
                 if (null == bufferedReader) {
                     //ストリームで問題が発生したので、サーバーエラーとする(メッセージはひとまず出さない)
-                    setErrorStatus(null, DTVTConstants.ERROR_TYPE.SERVER_ERROR,"");
+                    setErrorStatus(null, DTVTConstants.ERROR_TYPE.SERVER_ERROR, "");
                     throw new IOException(ERROR_MESSAGE_BUFFER_READER_NULL);
                 }
 
@@ -474,7 +463,7 @@ public class HttpThread extends Thread {
                         bufferedReader.close();
                     } catch (IOException e) {
                         //ストリームで問題が発生したので、サーバーエラーとする(メッセージはひとまず出さない)
-                        setErrorStatus(e, DTVTConstants.ERROR_TYPE.SERVER_ERROR,"");
+                        setErrorStatus(e, DTVTConstants.ERROR_TYPE.SERVER_ERROR, "");
                     }
                 }
             }
@@ -493,7 +482,7 @@ public class HttpThread extends Thread {
             communicationProcess();
         } else {
             //HTTPエラーなので、ステータスコードを付けてメッセージ定義を呼び出す
-            setErrorStatus(null,DTVTConstants.ERROR_TYPE.HTTP_ERROR,String.valueOf(status));
+            setErrorStatus(null, DTVTConstants.ERROR_TYPE.HTTP_ERROR, String.valueOf(status));
 
             //正常とリダイレクト以外の場合は例外発行とする
             String errMessage = StringUtils.getConnectStrings(ERROR_MESSAGE_HTTP_RESPONSE,
@@ -502,7 +491,7 @@ public class HttpThread extends Thread {
         }
 
         //リダイレクトの際は結果は無用なのでダミーデータを入れる
-        if(WebApiBasePlala.isRedirectCode(status)) {
+        if (WebApiBasePlala.isRedirectCode(status)) {
             stringBuffer.append(REDIRECT_SKIP);
         }
         //結果を返す
@@ -519,7 +508,7 @@ public class HttpThread extends Thread {
     private synchronized void setErrorStatus(final Exception exception,
                                              final DTVTConstants.ERROR_TYPE errorType,
                                              final String errorCode) {
-        if(exception != null) {
+        if (exception != null) {
             //例外種類のログ出力
             DTVTLogger.debug(exception);
         } else {
@@ -543,7 +532,7 @@ public class HttpThread extends Thread {
      * @param stringBuffer 読み込みデータ
      */
     private synchronized void finishSelect(final StringBuffer stringBuffer) {
-        if(stringBuffer != null && stringBuffer.toString().equals(REDIRECT_SKIP)) {
+        if (stringBuffer != null && stringBuffer.toString().equals(REDIRECT_SKIP)) {
             //リダイレクトの分の処理は飛ばす
             DTVTLogger.debug("redirect skip");
             return;

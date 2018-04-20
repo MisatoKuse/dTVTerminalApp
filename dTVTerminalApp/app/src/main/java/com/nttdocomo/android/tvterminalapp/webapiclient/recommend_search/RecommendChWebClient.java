@@ -14,22 +14,34 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChann
 
 import java.util.LinkedHashMap;
 
+/**
+ * おすすめ番組ウェブクライアント.
+ */
 public class RecommendChWebClient extends WebApiBase implements WebApiCallback {
     /**
      * 種別・チャンネル.
      */
     //ホーム画面におすすめ番組を表示する為のカテゴリー（仮の値から実際の値に昇格）
     private static final String CHANNEL_CATEGORY = "43:01,44:03,44:04&";
-
+    /**callback.*/
     private RecommendChannelCallback mRecommendChannelCallback;
 
-    //SSLチェック用コンテキスト
+    /**SSLチェック用コンテキスト.*/
     private Context mContext;
 
     public interface RecommendChannelCallback {
+        /**
+         * RecommendChannelCallback.
+         * @param mRecommendChList  おすすめ番組データ
+         */
         void RecommendChannelCallback(RecommendChList mRecommendChList);
     }
 
+    /**
+     * コンストラクタ.
+     * @param mRecommendChannelCallback callback
+     * @param context コンテキスト
+     */
     public RecommendChWebClient(final RecommendChannelCallback mRecommendChannelCallback,
                                 final Context context) {
         this.mRecommendChannelCallback = mRecommendChannelCallback;
@@ -38,6 +50,9 @@ public class RecommendChWebClient extends WebApiBase implements WebApiCallback {
         mContext = context;
     }
 
+    /**
+     * おすすめ番組Api取得.
+     */
     public void getRecommendChannelApi() {
 
         DTVTLogger.debug("getRecommendChannelApi");
@@ -52,7 +67,7 @@ public class RecommendChWebClient extends WebApiBase implements WebApiCallback {
         //最大件数(おすすめ画面用の先読みもここで行うので、件数を100件に変更)
         queryItems.put(RecommendWebClient.MAX_RESULT, RecommendWebClient.HOME_PAGE_MAX);
 
-        //TODO: ページIDは払い出されていないのでダミー値
+        //TODO : ページIDは払い出されていないのでダミー値
         queryItems.put(RecommendWebClient.PAGE_ID, RecommendWebClient.USE_PAGE_ID);
 
         //パラメータがあるならば、URLの後ろに"?"をつける

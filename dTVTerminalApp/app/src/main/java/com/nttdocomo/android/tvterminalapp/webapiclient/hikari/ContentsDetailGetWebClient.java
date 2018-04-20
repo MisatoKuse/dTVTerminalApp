@@ -18,6 +18,9 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+/**
+ * コンテンツ詳細取得WebClient.
+ */
 public class ContentsDetailGetWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
@@ -38,8 +41,13 @@ public class ContentsDetailGetWebClient
         void onContentsDetailJsonParsed(ContentsDetailGetResponse ContentsDetailLists);
     }
 
+    /**
+     * コンテキスト.
+     */
     private Context mContext = null;
-    //コールバックのインスタンス
+    /**
+     * コールバックのインスタンス.
+     */
     private ContentsDetailJsonParserCallback mContentsDetailJsonParserCallback;
 
     /**

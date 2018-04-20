@@ -10,7 +10,6 @@ import android.text.TextUtils;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ClipDeleteJsonParser;
 
 import org.json.JSONArray;
@@ -20,7 +19,7 @@ import org.json.JSONObject;
 import java.util.List;
 
 /**
- * クリップ削除処理.
+ * クリップ削除処理WebClient.
  */
 public class ClipDeleteWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
@@ -40,7 +39,7 @@ public class ClipDeleteWebClient
         void onClipDeleteFailure();
     }
 
-    //コールバックのインスタンス
+    /**コールバックのインスタンス.*/
     private ClipDeleteJsonParserCallback mClipDeleteJsonParserCallback;
 
     /**
@@ -170,7 +169,7 @@ public class ClipDeleteWebClient
             listItemJsonObject.put(JsonConstants.META_RESPONSE_CRID, crid);
 
             //タイトルIDはdtv_vodの時のみ必須。dtv_vodで空文字の場合は既にエラーになっているので、ここでは空文字判定だけで良い
-            if(!TextUtils.isEmpty(titleId)) {
+            if (!TextUtils.isEmpty(titleId)) {
                 listItemJsonObject.put(JsonConstants.META_RESPONSE_TITLE_ID, titleId);
             }
 

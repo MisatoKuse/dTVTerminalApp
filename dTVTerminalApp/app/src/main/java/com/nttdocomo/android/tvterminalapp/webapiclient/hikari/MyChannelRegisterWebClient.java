@@ -18,6 +18,9 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+/**
+ * マイチャンネル登録WebClient.
+ */
 public class MyChannelRegisterWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
@@ -39,7 +42,9 @@ public class MyChannelRegisterWebClient
                 MyChannelRegisterResponse myChannelRegisterResponse);
     }
 
-    //コールバックのインスタンス
+    /**
+     * コールバックのインスタンス.
+     */
     private MyChannelRegisterJsonParserCallback myChannelRegisterJsonParserCallback;
 
     /**
@@ -156,7 +161,11 @@ public class MyChannelRegisterWebClient
 
     /**
      * 指定されたパラメータがおかしいかどうかのチェック.
-     *
+     *@param serviceId サービスID
+     * @param title    チャンネル名
+     * @param rValue   チャンネルのパレンタル設定値
+     * @param adultType チャンネルのアダルトタイプ(adultか空文字)
+     * @param index     マイチャンネル登録位置（1以上16以下）
      * @param myChannelRegisterJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */

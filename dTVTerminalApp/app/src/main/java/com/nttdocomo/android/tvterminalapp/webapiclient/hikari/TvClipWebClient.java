@@ -21,6 +21,9 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+/**
+ * クリップ(TV)WebClient.
+ */
 public class TvClipWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback, JsonParserThread.JsonParser {
 
@@ -66,7 +69,9 @@ public class TvClipWebClient
         void onTvClipJsonParsed(List<TvClipList> tvClipLists);
     }
 
-    //コールバックのインスタンス
+    /**
+     * コールバックのインスタンス.
+     */
     private TvClipJsonParserCallback mTvClipJsonParserCallback;
 
     /**

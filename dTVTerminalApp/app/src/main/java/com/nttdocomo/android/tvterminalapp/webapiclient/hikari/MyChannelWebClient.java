@@ -11,6 +11,9 @@ import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelListResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.MyChannelListJsonParser;
 
+/**
+ * マイチャンネル一覧WebClient.
+ */
 public class MyChannelWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
@@ -32,7 +35,9 @@ public class MyChannelWebClient
                 MyChannelListResponse myChannelListResponse);
     }
 
-    //コールバックのインスタンス
+    /**
+     * コールバックのインスタンス.
+     */
     private MyChannelListJsonParserCallback myChannelListJsonParserCallback;
 
     /**
@@ -69,7 +74,7 @@ public class MyChannelWebClient
     /**
      * マイチャンネル一覧取得.
      * 本WebAPIには通常のパラメータが無く、基底クラスで追加するサービストークンのみとなる
-     * @param myChannelListJsonParserCallback
+     * @param myChannelListJsonParserCallback callback
      * @return パラメータエラー等が発生した場合はfalse
      */
     public boolean getMyChanelListApi(final MyChannelListJsonParserCallback myChannelListJsonParserCallback) {

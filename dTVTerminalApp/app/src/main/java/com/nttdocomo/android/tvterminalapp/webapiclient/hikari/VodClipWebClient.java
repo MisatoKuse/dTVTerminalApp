@@ -21,11 +21,12 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+/**
+ * クリップ(ビデオ)取得WebClient.
+ */
 public class VodClipWebClient extends WebApiBasePlala implements
         WebApiBasePlala.WebApiBasePlalaCallback,
-        JsonParserThread.JsonParser
-{
-
+        JsonParserThread.JsonParser {
     /**
      * 通信禁止判定フラグ.
      */
@@ -68,7 +69,9 @@ public class VodClipWebClient extends WebApiBasePlala implements
         void onVodClipJsonParsed(List<VodClipList> vodClipLists);
     }
 
-    //コールバックのインスタンス
+    /**
+     * コールバックのインスタンス.
+     */
     private VodClipJsonParserCallback mVodClipJsonParserCallback;
 
     /**

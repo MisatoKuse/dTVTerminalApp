@@ -19,7 +19,7 @@ import org.json.JSONObject;
 import java.util.List;
 
 /**
- * ジャンル毎コンテンツ数.
+ * ジャンル毎コンテンツ数取得WebClient.
  */
 public class GenreCountGetWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {

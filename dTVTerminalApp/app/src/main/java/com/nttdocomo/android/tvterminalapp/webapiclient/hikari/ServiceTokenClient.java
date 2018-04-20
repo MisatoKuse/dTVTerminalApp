@@ -37,22 +37,22 @@ public class ServiceTokenClient
     private static final String ERROR_STRING =
             "bbbb%3a%2f%2fcom.nttdocomo.android.tvterminalapp%2Fredirectstop";
 
-    // 送信パラメータの最初の固定部
+    /**送信パラメータの最初の固定部.*/
     private static final String FIRST_PARAMETER = "state=client=dremote urlok=";
 
-    // 送信パラメータの2番目の固定部
+    /**送信パラメータの2番目の固定部.*/
     private static final String SECOND_PARAMETER = " urlng=";
 
-    // 送信パラメータの3番目の固定部
+    /**送信パラメータの3番目の固定部.*/
     private static final String THIRD_PARAMETER = "&authotp=";
 
-    //統合送信パラメータ
+    /**統合送信パラメータ.*/
     private static final String UNITE_SEND_PARAMETER = StringUtils.getConnectStrings(
             FIRST_PARAMETER, SUCCESS_STRING,
             SECOND_PARAMETER, ERROR_STRING,
             THIRD_PARAMETER);
 
-    //コールバックのインスタンス
+    /**コールバックのインスタンス.*/
     private TokenGetCallback mTokenGetCallback;
 
     /**

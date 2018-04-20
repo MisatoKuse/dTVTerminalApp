@@ -110,7 +110,7 @@ public class RemoteRecordingReservationListWebClient
         String parameterBuffer;
         try {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put(JsonConstants.META_RESPONSE_PLATFORM_TYPE,platFormType);
+            jsonObject.put(JsonConstants.META_RESPONSE_PLATFORM_TYPE, platFormType);
             parameterBuffer = jsonObject.toString();
         } catch (JSONException e) {
             //パラメータは一つしかないので、例外の場合はエラーで帰る
@@ -119,7 +119,7 @@ public class RemoteRecordingReservationListWebClient
 
         //リモート録画一覧の情報を読み込むため、リモート録画一覧を呼び出す
         openUrlAddOtt(UrlConstants.WebApiUrl.REMOTE_RECORDING_RESERVATION_LIST_WEB_CLIENT,
-                parameterBuffer , this, null);
+                parameterBuffer, this, null);
 
         //今のところ失敗していないので、trueを返す
         return true;
