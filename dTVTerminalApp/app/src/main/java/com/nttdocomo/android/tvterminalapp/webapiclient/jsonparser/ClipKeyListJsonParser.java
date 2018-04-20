@@ -16,15 +16,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * クリップキー一覧用JsonParserクラス.
+ */
 public class ClipKeyListJsonParser {
 
-    // オブジェクトクラスの定義
+    /**オブジェクトクラスの定義.*/
     private ClipKeyListResponse mClipKeyListResponse;
-
+    /**クリップキー一覧パラメータキー.*/
     private static final String[] LIST_PARAM = {JsonConstants.META_RESPONSE_CRID,
             JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_EVENT_ID,
             JsonConstants.META_RESPONSE_TYPE, JsonConstants.META_RESPONSE_TITLE_ID};
 
+    /**
+     * クリップ一覧Jsonデータを解析する.
+     * @param jsonStr クリップ一覧Jsonデータ
+     * @return  正常時レスポンスデータ
+     */
     public ClipKeyListResponse clipKeyListSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
@@ -41,19 +49,20 @@ public class ClipKeyListJsonParser {
             return mClipKeyListResponse;
         } catch (JSONException e) {
             DTVTLogger.debug(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(e);
         }
         return null;
     }
 
+    /**
+     *  statusの値を正常時レスポンスデータオブジェクトに格納.
+     * @param jsonObj 解析前ステータス
+     */
     public void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
             if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {
                 String status = jsonObj.getString(JsonConstants.META_RESPONSE_STATUS);
-                if(mClipKeyListResponse != null) {
+                if (mClipKeyListResponse != null) {
                     mClipKeyListResponse.setStatus(status);
                 }
             }
@@ -62,15 +71,13 @@ public class ClipKeyListJsonParser {
                 mClipKeyListResponse.setIsUpdate(isUpdate);
             }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
     }
 
     /**
      * コンテンツのList<HashMap>をオブジェクトクラスに格納.
+     * @param arrayList JSONArray
      */
     public void sendVcList(final JSONArray arrayList) {
         try {
@@ -90,9 +97,6 @@ public class ClipKeyListJsonParser {
                 mClipKeyListResponse.setCkList(list);
             }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
     }

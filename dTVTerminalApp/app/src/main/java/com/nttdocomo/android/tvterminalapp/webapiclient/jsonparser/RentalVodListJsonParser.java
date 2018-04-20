@@ -28,17 +28,18 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListRes
  * レンタル一覧（Jsonパーサー）.
  */
 public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
-
+    /**コンテキスト.*/
     private Context mContext = null;
+    /**callback.*/
     private RentalVodListWebClient.RentalVodListJsonParserCallback
             mRentalVodListJsonParserCallback = null;
 
-    // オブジェクトクラスの定義　
+    /**オブジェクトクラスの定義.*/
     private PurchasedVodListResponse mPurchasedVodListResponse = null;
 
     /**
      * コンストラクタ.
-     *
+     * @param context コンテキスト
      * @param rentalVodListJsonParserCallback コールバックの飛び先
      */
     public RentalVodListJsonParser(final Context context, final RentalVodListWebClient.RentalVodListJsonParserCallback rentalVodListJsonParserCallback) {
@@ -60,7 +61,7 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     /**
-     * レンタル一覧Jsonデータを解析する
+     * レンタル一覧Jsonデータを解析する.
      *
      * @param jsonStr レンタル一覧Jsonデータ
      * @return 購入済みVOD一覧取得：正常時レスポンスデータ
@@ -82,9 +83,6 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
         } catch (JSONException e) {
             mPurchasedVodListResponse.setStatus(JsonConstants.META_RESPONSE_STATUS_NG);
             DTVTLogger.debug(e);
-        } catch (RuntimeException e) {
-            mPurchasedVodListResponse.setStatus(JsonConstants.META_RESPONSE_STATUS_NG);
-            DTVTLogger.debug(e);
         }
         return mPurchasedVodListResponse;
     }
@@ -103,7 +101,7 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
                 mPurchasedVodListResponse.setStatus(status);
             }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
+            DTVTLogger.debug(e);
         }
     }
 
@@ -133,7 +131,7 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
                 mPurchasedVodListResponse.setVodMetaFullData(vodMetaFullDataList);
             }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
+           DTVTLogger.debug(e);
         }
     }
 
@@ -177,7 +175,7 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
                 mPurchasedVodListResponse.setVodActiveData(vodActiveDataList);
             }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
+            DTVTLogger.debug(e);
         }
     }
 }

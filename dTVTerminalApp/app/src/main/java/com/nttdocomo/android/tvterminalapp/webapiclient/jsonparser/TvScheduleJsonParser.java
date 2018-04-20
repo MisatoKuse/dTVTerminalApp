@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 番組表情報JsonParser.
+ * 番組表情報用JsonParserクラス.
  */
 public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
     /**
@@ -101,8 +101,6 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
                 mTvScheduleList.setTvsMap(map);
             }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
             DTVTLogger.debug(e);
         }
     }
@@ -159,9 +157,6 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
                 mTvScheduleList.setTvsList(tsList);
             }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
     }

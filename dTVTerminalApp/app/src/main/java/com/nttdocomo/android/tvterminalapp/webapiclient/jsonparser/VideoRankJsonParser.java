@@ -24,12 +24,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * ビデオランキングデータ用JsonParserクラス.
+ */
 public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
-
+    /**callback.*/
     private ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback mContentsListPerGenreJsonParserCallback;
-    // オブジェクトクラスの定義
+    /**オブジェクトクラスの定義.*/
     private VideoRankList mVideoRankList;
-
+    /**ページャーパラメータキー.*/
     public static final String[] PAGER_PARA = {JsonConstants.META_RESPONSE_PAGER_LIMIT, JsonConstants.META_RESPONSE_OFFSET,
             JsonConstants.META_RESPONSE_COUNT, JsonConstants.META_RESPONSE_TOTAL};
 
@@ -46,7 +49,7 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
     /**
      * コンストラクタ.
      *
-     * @param mContentsListPerGenreJsonParserCallback
+     * @param mContentsListPerGenreJsonParserCallback callback
      */
     public VideoRankJsonParser(final ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback mContentsListPerGenreJsonParserCallback) {
         this.mContentsListPerGenreJsonParserCallback = mContentsListPerGenreJsonParserCallback;
@@ -59,7 +62,7 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
      * @param genreId リクエストしたジャンルID
      */
     public VideoRankJsonParser(final ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback
-                                       contentsListPerGenreJsonParserCallback, final Bundle extraDataSrc, String genreId) {
+                                       contentsListPerGenreJsonParserCallback, final Bundle extraDataSrc, final String genreId) {
         this.mContentsListPerGenreJsonParserCallback = contentsListPerGenreJsonParserCallback;
         //拡張情報の追加
         mExtraData = extraDataSrc;
@@ -109,9 +112,6 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
             return vrList;
         } catch (JSONException e) {
             DTVTLogger.debug(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(e);
         }
         return null;
     }
@@ -146,9 +146,6 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
             }
 
         } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
     }
@@ -156,7 +153,7 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
     /**
      * コンテンツリストをList<HashMap>の形式でObjectクラスへ格納する.
      *
-     * @param arrayList
+     * @param arrayList ArrayList
      */
     public void sendVrList(final JSONArray arrayList) {
         try {
@@ -195,9 +192,6 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
                 mVideoRankList.setVrList(vrList);
             }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
     }

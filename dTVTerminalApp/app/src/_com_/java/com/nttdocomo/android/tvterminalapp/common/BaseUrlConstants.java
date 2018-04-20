@@ -4,7 +4,9 @@
 
 package com.nttdocomo.android.tvterminalapp.common;
 
-
+/**
+ * BaseUrlConstants.
+ */
 public class BaseUrlConstants {
 
     /**
@@ -35,7 +37,13 @@ public class BaseUrlConstants {
      * APIアクセスプロキシパス.
      */
     public static final String PLALA_C_CLIENT = PLALA_BASE_URL + "dtt/c_client/";
+    /**
+     * PLALA_AUTH.
+     */
     public static final String PLALA_AUTH = PLALA_BASE_URL + "dtt/auth/";
+    /**
+     * PLALA_CLIENT.
+     */
     public static final String PLALA_CLIENT = PLALA_BASE_URL + "dtt/client/";
 
     /**

@@ -19,29 +19,25 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/**
+ * リモート録画予約一覧用JsonParserクラス.
+ */
 public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, Object, Object> {
-    private final String CLASS_NAME = getClass().getSimpleName();
-    private static final String SEND_RESPONSE = ".sendRemoteRecordingReservationListResponse";
-    private static final String SEND_STATUS = ".sendStatus";
-    private static final String IS_NUMBER = ".isNumber";
-    private static final String RESPONSE = ".RemoteRecordingReservationListResponse";
-    private static final String JSON_OBJECT = ".JSONObject";
+    /**callback.*/
+    private RemoteRecordingReservationListWebClient.RemoteRecordingReservationListJsonParserCallback
+                                     mRemoteRecordingReservationListJsonParserCallback;
 
-    private RemoteRecordingReservationListWebClient.
-            RemoteRecordingReservationListJsonParserCallback
-            mRemoteRecordingReservationListJsonParserCallback;
-
-    // オブジェクトクラスの定義　
+    /**オブジェクトクラスの定義.*/
     private RemoteRecordingReservationListResponse mRemoteRecordingReservationListResponse
             = new RemoteRecordingReservationListResponse();
 
     /**
      * コンストラクタ.
      * <p>
-     * //     * @param remoteRecordingReservationListJsonParserCallback
+     * @param remoteRecordingReservationListJsonParserCallback remoteRecordingReservationListJsonParserCallback
      */
     public RemoteRecordingReservationListJsonParser(final RemoteRecordingReservationListWebClient.RemoteRecordingReservationListJsonParserCallback
-                                                            remoteRecordingReservationListJsonParserCallback) {
+                                           remoteRecordingReservationListJsonParserCallback) {
         mRemoteRecordingReservationListJsonParserCallback =
                 remoteRecordingReservationListJsonParserCallback;
         mRemoteRecordingReservationListResponse = new RemoteRecordingReservationListResponse();
@@ -84,10 +80,7 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
                 }
             }
         } catch (JSONException e) {
-            DTVTLogger.debug(CLASS_NAME + JSON_OBJECT, e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + RESPONSE, e);
+            DTVTLogger.debug(e);
         }
         return null;
     }
@@ -118,17 +111,14 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
                         throw new NumberFormatException();
                     }
                 } catch (JSONException e) {
-                    DTVTLogger.debug(CLASS_NAME + IS_NUMBER, e);
+                    DTVTLogger.debug(e);
                 }
                 if (mRemoteRecordingReservationListResponse != null) {
                     mRemoteRecordingReservationListResponse.setCount(count);
                 }
             }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + SEND_STATUS, e);
+            DTVTLogger.debug(e);
         }
     }
 
@@ -158,10 +148,7 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
                 }
             }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + SEND_RESPONSE, e);
+            DTVTLogger.debug(e);
         }
     }
 }

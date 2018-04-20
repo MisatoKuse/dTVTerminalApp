@@ -19,22 +19,21 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/**
+ * ジャンル毎コンテンツ数取得JsonParser.
+ */
 public class GenreCountGetJsonParser extends AsyncTask<Object, Object, Object> {
-    private final String CLASS_NAME = getClass().getSimpleName();
-    private static final String SEND_RESPONSE = ".sendGenreCountGetResponse";
-    private static final String SEND_STATUS = ".sendStatus";
-    private static final String RESPONSE = ".GenreCountGetResponse";
-    private static final String JSON_OBJECT = ".JSONObject";
+    /**コールバック.*/
     private GenreCountGetWebClient.GenreCountGetJsonParserCallback
             mGenreCountGetJsonParserCallback;
-    // オブジェクトクラスの定義　
+    /**オブジェクトクラスの定義　.*/
     private GenreCountGetResponse mGenreCountGetResponse;
 
 
     /**
      * コンストラクタ.
      * <p>
-     * //     * @param genreCountGetJsonParserCallback
+     *@param genreCountGetJsonParserCallback コールバック
      */
     public GenreCountGetJsonParser(final GenreCountGetWebClient.GenreCountGetJsonParserCallback genreCountGetJsonParserCallback) {
         mGenreCountGetJsonParserCallback =
@@ -76,10 +75,7 @@ public class GenreCountGetJsonParser extends AsyncTask<Object, Object, Object> {
                 }
             }
         } catch (JSONException e) {
-            DTVTLogger.debug(CLASS_NAME + JSON_OBJECT, e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + RESPONSE, e);
+            DTVTLogger.debug(e);
         }
         return null;
     }
@@ -99,10 +95,7 @@ public class GenreCountGetJsonParser extends AsyncTask<Object, Object, Object> {
                 }
             }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + SEND_STATUS, e);
+            DTVTLogger.debug(e);
         }
     }
 
@@ -135,10 +128,7 @@ public class GenreCountGetJsonParser extends AsyncTask<Object, Object, Object> {
                 }
             }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + SEND_RESPONSE, e);
+            DTVTLogger.debug(e);
         }
     }
 }

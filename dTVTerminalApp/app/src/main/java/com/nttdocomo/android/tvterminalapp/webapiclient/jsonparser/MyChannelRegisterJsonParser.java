@@ -15,21 +15,20 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.MyChannelRegister
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * マイチャンネル登録用JsonParserクラス.
+ */
 public class MyChannelRegisterJsonParser extends AsyncTask<Object, Object, Object> {
-    private final String CLASS_NAME = getClass().getSimpleName();
-    private static final String SEND_STATUS = ".sendStatus";
-    private static final String RESPONSE = ".MyChannelRegisterResponse";
-    private static final String JSON_OBJECT = ".JSONObject";
-
+    /**callback.*/
     private MyChannelRegisterWebClient.MyChannelRegisterJsonParserCallback
             myChannelRegisterJsonParserCallback;
-    // オブジェクトクラスの定義　
+    /**オブジェクトクラスの定義　.*/
     private MyChannelRegisterResponse myChannelRegisterResponse;
 
     /**
      * コンストラクタ.
      * <p>
-     * //     * @param myChannelRegisterJsonParserCallback
+     * @param myChannelRegisterJsonParserCallback callback
      */
     public MyChannelRegisterJsonParser(final MyChannelRegisterWebClient.MyChannelRegisterJsonParserCallback myChannelRegisterJsonParserCallback) {
         this.myChannelRegisterJsonParserCallback = myChannelRegisterJsonParserCallback;
@@ -65,10 +64,7 @@ public class MyChannelRegisterJsonParser extends AsyncTask<Object, Object, Objec
                 return myChannelRegisterResponse;
             }
         } catch (JSONException e) {
-            DTVTLogger.debug(CLASS_NAME + JSON_OBJECT, e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + RESPONSE, e);
+            DTVTLogger.debug(e);
         }
         return null;
     }
@@ -88,10 +84,7 @@ public class MyChannelRegisterJsonParser extends AsyncTask<Object, Object, Objec
                 }
             }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + SEND_STATUS, e);
+            DTVTLogger.debug(e);
         }
     }
 }

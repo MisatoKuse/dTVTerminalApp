@@ -5,7 +5,6 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
@@ -26,6 +25,9 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 子コンテンツデータプロバイダー.
+ */
 public class ChildContentDataProvider extends ClipKeyListDataProvider implements ChildContentListGetWebClient.JsonParserCallback {
 
     // declaration
@@ -41,12 +43,15 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
     }
 
     // region variable
+    /**子コンテンツ一覧取得ウェブクライアント.*/
     private ChildContentListGetWebClient mWebClient;
+    /**コールバック.*/
     private DataCallback mCallback = null;
-
+    /**子コンテンツ一覧取得レスポンス.*/
     private ChildContentListGetResponse mChildContentListGetResponse;
-
+    /**WebAPIエラー情報.*/
     private ErrorState mError = null;
+    /**通信止めるフラグ.*/
     private boolean mIsCancel = false;
 
     // endregion variable
@@ -56,9 +61,9 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
      *
      * @param context コンテキスト
      */
-    public ChildContentDataProvider(Context context) {
+    public ChildContentDataProvider(final Context context) {
         super(context);
-        mCallback = (DataCallback)context;
+        mCallback = (DataCallback) context;
         mWebClient = new ChildContentListGetWebClient(context);
     }
 
@@ -71,7 +76,7 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onJsonParsed(@Nullable ChildContentListGetResponse response) {
+    public void onJsonParsed(final ChildContentListGetResponse response) {
         if (response == null) {
             if (mWebClient.getError() != null) {
                 mError = mWebClient.getError();
@@ -84,8 +89,10 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
     }
 
     /**
-     *
-     * @param offset
+     * 子コンテンツ一覧取得.
+     * @param crid コンテンツ識別子
+     * @param offset 　取得位置
+     * @param dispType 表示タイプ
      */
     public void getChildContentList(final String crid, final int offset, final String dispType) {
         if (!mIsCancel) {
@@ -155,7 +162,7 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
         ArrayList<VodMetaFullData> metaFullData = response.getVodMetaFullData();
 
         UserState userState = UserInfoUtils.getUserState(mContext);
-        for(VodMetaFullData vodMetaFullData : metaFullData) {
+        for (VodMetaFullData vodMetaFullData : metaFullData) {
             ContentsData data = new ContentsData();
             String title = vodMetaFullData.getTitle();
             String searchOk = vodMetaFullData.getmSearch_ok();
@@ -210,7 +217,12 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
         }
         return list;
     }
-    private void sendData(@NonNull ChildContentListGetResponse response) {
+
+    /**
+     * 通信で得たデータをcallbackで返す.
+     * @param response 通信で得たデータ
+     */
+    private void sendData(final ChildContentListGetResponse response) {
         List<ContentsData> list = makeContentsData(response);
         mCallback.childContentListCallback(list);
     }

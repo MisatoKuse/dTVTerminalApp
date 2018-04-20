@@ -741,20 +741,20 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     /**
-     * スプラッシュ画面からダイアログの表示の依頼を受けたかどうかのチェック
+     * スプラッシュ画面からダイアログの表示の依頼を受けたかどうかのチェック.
      */
     void checkDialogShowRequest() {
         DTVTLogger.start();
         Intent intent = getIntent();
 
-        if(intent.getBooleanExtra(SHOW_D_ACCOUNT_DIALOG,false)) {
+        if (intent.getBooleanExtra(SHOW_D_ACCOUNT_DIALOG, false)) {
             //dアカウント取得失敗エラーの表示依頼があったので、表示する
             showDAccountErrorDialog();
         }
 
-        if(intent.getBooleanExtra(SHOW_SETTING_FILE_DIALOG,false)) {
+        if (intent.getBooleanExtra(SHOW_SETTING_FILE_DIALOG, false)) {
             //設定ファイルエラーダイアログの表示依頼があったので、表示する
-            ProcessSettingFile settingFileInfo = new ProcessSettingFile(this,false);
+            ProcessSettingFile settingFileInfo = new ProcessSettingFile(this, false);
 
             Bundle bundle = intent.getBundleExtra(SHOW_SETTING_FILE_DIALOG_DATA);
             SettingFileMetaData metaData =
@@ -1831,7 +1831,7 @@ public class BaseActivity extends FragmentActivity implements
                 BaseActivity.this, CustomDialog.DialogType.ERROR);
 
         //失敗原因コードを取得
-        if(mDAccountControl != null) {
+        if (mDAccountControl != null) {
             DTVTLogger.debug("daccount error code = " + mDAccountControl.getResult());
         }
 
@@ -2308,13 +2308,13 @@ public class BaseActivity extends FragmentActivity implements
         boolean noDialogSw = false;
 
         //スプラッシュ画面かどうかの確認
-        if(this instanceof LaunchActivity) {
+        if (this instanceof LaunchActivity) {
             //スプラッシュ画面ならばダイアログは表示しない
             noDialogSw = true;
         }
 
         //アプリ起動時か、BG→FG遷移時は設定ファイルの処理を呼び出す
-        mCheckSetting = new ProcessSettingFile(this,noDialogSw);
+        mCheckSetting = new ProcessSettingFile(this, noDialogSw);
 
         //今回はコールバックは使用しないので、ヌルを指定する
         mCheckSetting.controlAtSettingFile(null);
@@ -2556,7 +2556,7 @@ public class BaseActivity extends FragmentActivity implements
 
     @Override
     public void allDismissCallback() {
-        if(mShowDialog != null) {
+        if (mShowDialog != null) {
             //次のダイアログの判定の為に、今のダイアログの文言をクリアする
             mShowDialog.clearContentText();
         }

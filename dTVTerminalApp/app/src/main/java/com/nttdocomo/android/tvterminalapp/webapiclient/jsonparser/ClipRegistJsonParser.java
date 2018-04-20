@@ -13,19 +13,22 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClie
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * クリップ登録JsonParser.
+ */
 public class ClipRegistJsonParser extends AsyncTask<Object, Object, String> {
 
-    // callback
+    /** callback.*/
     private ClipRegistWebClient.ClipRegistJsonParserCallback mClipJsonParserCallback;
 
-    // クリップ登録/削除成功判定用
+    /**クリップ登録/削除成功判定用.*/
     private static final String CLIP_RESULT_STATUS_OK = "OK";
 
     /**
      * CH一覧Jsonデータを解析する.
      *
      * @param jsonStr 元のJSONデータ
-     * @return リスト化データ
+     * @return 正常時レスポンスデータ
      */
     private String getClipStatus(final String jsonStr) {
 
@@ -42,9 +45,6 @@ public class ClipRegistJsonParser extends AsyncTask<Object, Object, String> {
                 return status;
             }
         } catch (JSONException e) {
-            DTVTLogger.debug(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
         return null;

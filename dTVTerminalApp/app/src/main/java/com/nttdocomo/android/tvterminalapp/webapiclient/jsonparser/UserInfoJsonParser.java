@@ -19,25 +19,36 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * ユーザー情報用JsonParserクラス.
+ */
 public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
-
+    /**ステータス.*/
     private static final String USER_INFO_LIST_STATUS = "status";
-
+    /**r登録されてるアカウント.*/
     public static final String USER_INFO_LIST_LOGGEDIN_ACCOUNT = "loggedin_account";
+    /**h4d契約アカウント.*/
     public static final String USER_INFO_LIST_H4D_CONTRACTED_ACCOUNT = "h4d_contracted_account";
+    /**契約ステータス.*/
     public static final String USER_INFO_LIST_CONTRACT_STATUS = "contract_status";
+    /**dch視聴年齢値キー.*/
     public static final String USER_INFO_LIST_DCH_AGE_REQ = "dch_age_req";
+    /**h4d視聴年齢値キー.*/
     public static final String USER_INFO_LIST_H4D_AGE_REQ = "h4d_age_req";
+    /**ユーザー情報更新タイム.*/
     public static final String USER_INFO_LIST_UPDATE_TIME = "update_time";
+    /**bracket_left.*/
     private static final String BRACKET_LEFT = "[";
+    /**bracket_right.*/
     private static final String BRACKET_RIGHT = "]";
-
+    /**callback.*/
     private final UserInfoWebClient.UserInfoJsonParserCallback mUserInfoJsonParserCallback;
-
+    /**ユーザ情報.*/
     private List<UserInfoList> mUserInfoListResponse;
 
     /**
      * コンストラクタ.
+     *@param userInfoJsonParserCallback  userInfoJsonParserCallback
      */
     public UserInfoJsonParser(final UserInfoWebClient.UserInfoJsonParserCallback userInfoJsonParserCallback) {
         mUserInfoJsonParserCallback = userInfoJsonParserCallback;
