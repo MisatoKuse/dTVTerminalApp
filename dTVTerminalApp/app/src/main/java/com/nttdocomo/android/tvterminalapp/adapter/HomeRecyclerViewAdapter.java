@@ -479,15 +479,27 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
                 contentsData.getVodStartDate(), contentsData.getVodEndDate(), contentsData.getEstFlg(),
                 contentsData.getChsVod());
         String date;
+        //channelNameが取得成功したときのみ区切り文字を追加する
+        if (channelName != null && !channelName.isEmpty()) {
+            channelName = StringUtils.getConnectStrings(mContext.getString(R.string.home_contents_pipe), channelName);
+        } else {
+            channelName = "";
+        }
         if (contentsType == ContentUtils.ContentsType.TV || contentsType == ContentUtils.ContentsType.OTHER) {
             date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(startTime)),
                     DateUtils.formatEpochToStringOpeLog(Long.parseLong(endTime)), channelName);
         } else {
             date = StringUtils.getConnectStrings(
                     DateUtils.addDateLimit(
-                            mContext, contentsData, contentsType), mContext.getString(R.string.home_contents_pipe), channelName);
+                            mContext, contentsData, contentsType), channelName);
         }
-        viewHolder.mTime.setText(date);
+        //表示情報がすべて取得できないときは非表示にする
+        if (date == null || date.isEmpty()) {
+            viewHolder.mTime.setVisibility(View.GONE);
+        } else {
+            viewHolder.mTime.setVisibility(View.VISIBLE);
+            viewHolder.mTime.setText(date);
+        }
     }
 
     /**
@@ -572,10 +584,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         timeMinuteOnePlace = endTime.substring(START_TIME_MINUTE_SEPARATE, START_TIME_MINUTE_END);
         String endMinute = StringUtils.getConnectStrings(timeMinuteTensPlace, timeMinuteOnePlace);
 
-        return StringUtils.getConnectStrings(startHour, mContext.getString(R.string.home_contents_colon), startMinute,
+       return StringUtils.getConnectStrings(startHour, mContext.getString(R.string.home_contents_colon), startMinute,
                 mContext.getString(R.string.home_contents_hyphen), endHour,
-                mContext.getString(R.string.home_contents_colon), endMinute, mContext.getString(R.string.home_contents_pipe),
-                channelName);
+                mContext.getString(R.string.home_contents_colon), endMinute, channelName);
     }
 
     @Override
