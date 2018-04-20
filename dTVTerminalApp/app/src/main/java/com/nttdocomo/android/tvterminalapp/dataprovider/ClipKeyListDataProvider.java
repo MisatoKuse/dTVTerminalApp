@@ -427,7 +427,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
 
     @Override
     public void onDbOperationFinished(final boolean isSuccessful, final List<Map<String, String>> resultSet, final int operationId) {
-        //TODO:DB保存後の処理があればここに記載
+        //TODO :DB保存後の処理があればここに記載
     }
 
     @Override
@@ -494,8 +494,8 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
                     break;
             }
         } else {
-            // TODO: 大量のログが発生するため必要な場合のみ解除して使ってください。
-//            DTVTLogger.debug("contentType is null");
+            // TODO : 大量のログが発生するため必要な場合のみ解除して使ってください
+            DTVTLogger.debug("contentType is null");
         }
         return clipStatus;
     }

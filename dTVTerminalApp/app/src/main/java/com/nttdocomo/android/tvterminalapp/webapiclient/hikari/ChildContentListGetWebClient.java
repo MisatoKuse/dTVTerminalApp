@@ -6,43 +6,39 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 
-import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChildContentListGetResponse;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.ContentsDetailGetResponse;
-import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
-import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChildContentListJsonParser;
-import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ContentsDetailJsonParser;
-import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.RentalVodListJsonParser;
 
-import org.json.JSONArray;
+import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChildContentListJsonParser;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
-
+/**
+ * 子コンテンツリスト取得WebClient.
+ */
 public class ChildContentListGetWebClient extends WebApiBasePlala implements
-        WebApiBasePlala.WebApiBasePlalaCallback
-{
+        WebApiBasePlala.WebApiBasePlalaCallback {
 
-    // declaration
+     // declaration
     /** コールバック. */
     public interface JsonParserCallback {
         /**
-         * コールバック
+         * コールバック.
          * errorの場合はnullを返却する
-         * @param response
+         * @param response response
          */
         void onJsonParsed(@Nullable ChildContentListGetResponse response);
     }
 
     // region variable
+    /**コンテクスト.*/
     private Context mContext = null;
+    /**JsonParserCallback.*/
     private JsonParserCallback mJsonParserCallback;
     /** 通信禁止判定フラグ. */
     private boolean mIsCancel = false;
@@ -80,10 +76,16 @@ public class ChildContentListGetWebClient extends WebApiBasePlala implements
     }
 
     /**
-     * APIリクエスト
-     * @return
+     * APIリクエスト.
+     * @param ageReq 年齢情報
+     * @param callback callback
+     * @param crid コンテンツ識別子
+     * @param filter フィルター用指定文字列・release.
+     * @param offset 取得位置(1～)
+     * @return 成功true
      */
-    public boolean requestChildContentListGetApi(final String crid, final int offset, final String filter, final int ageReq, final JsonParserCallback callback) {
+    public boolean requestChildContentListGetApi(final String crid, final int offset, final String filter,
+                                                 final int ageReq, final JsonParserCallback callback) {
         mJsonParserCallback = callback;
 
         final String receivedParameter = makeSendParameter(crid, offset, filter, ageReq);
@@ -95,6 +97,14 @@ public class ChildContentListGetWebClient extends WebApiBasePlala implements
         return true;
     }
 
+    /**
+     * SendParameter整合.
+     * @param crid コンテンツ識別子
+     * @param offset 取得位置(1～)
+     * @param filter フィルター用指定文字列・release.
+     * @param ageReq 年齢情報
+     * @return 整合されたparameter
+     */
     private String makeSendParameter(final String crid, final int offset, final String filter, final int ageReq) {
         String result = "";
         try {

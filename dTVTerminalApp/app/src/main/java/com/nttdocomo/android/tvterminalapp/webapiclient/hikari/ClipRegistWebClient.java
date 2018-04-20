@@ -12,7 +12,6 @@ import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ClipRegistJsonParser;
 
 import org.json.JSONException;
@@ -41,7 +40,7 @@ public class ClipRegistWebClient
         void onClipRegistFailure();
     }
 
-    //コールバックのインスタンス
+    /**コールバックのインスタンス.*/
     private ClipRegistJsonParserCallback mClipRegistJsonParserCallback;
 
     /**
@@ -254,17 +253,17 @@ public class ClipRegistWebClient
         String answerText;
         //リクエストパラメータ(Json)作成
         try {
-            putSelect(jsonObject,JsonConstants.META_RESPONSE_CRID,crid);
-            putSelect(jsonObject,JsonConstants.META_RESPONSE_SERVICE_ID, serviceId);
-            putSelect(jsonObject,JsonConstants.META_RESPONSE_TITLE_ID,titleId);
-            putSelect(jsonObject,JsonConstants.META_RESPONSE_TITLE, title);
-            putSelect(jsonObject,JsonConstants.META_RESPONSE_TYPE,type);
-            putSelect(jsonObject,JsonConstants.META_RESPONSE_EVENT_ID, eventId);
-            putSelect(jsonObject,JsonConstants.META_RESPONSE_R_VALUE, r_value);
+            putSelect(jsonObject, JsonConstants.META_RESPONSE_CRID, crid);
+            putSelect(jsonObject, JsonConstants.META_RESPONSE_SERVICE_ID, serviceId);
+            putSelect(jsonObject, JsonConstants.META_RESPONSE_TITLE_ID, titleId);
+            putSelect(jsonObject, JsonConstants.META_RESPONSE_TITLE, title);
+            putSelect(jsonObject, JsonConstants.META_RESPONSE_TYPE, type);
+            putSelect(jsonObject, JsonConstants.META_RESPONSE_EVENT_ID, eventId);
+            putSelect(jsonObject, JsonConstants.META_RESPONSE_R_VALUE, r_value);
             //isNotifyは事実上無いことが無い
             jsonObject.put(JsonConstants.META_RESPONSE_IS_NOTIFY, isNotify);
-            putSelect(jsonObject,JsonConstants.META_RESPONSE_LINEAR_START_DATE, linearStartDate);
-            putSelect(jsonObject,JsonConstants.META_RESPONSE_LINEAR_END_DATE, linearEndDate);
+            putSelect(jsonObject, JsonConstants.META_RESPONSE_LINEAR_START_DATE, linearStartDate);
+            putSelect(jsonObject, JsonConstants.META_RESPONSE_LINEAR_END_DATE, linearEndDate);
 
             answerText = jsonObject.toString().replace("\\", "");
 
@@ -287,11 +286,11 @@ public class ClipRegistWebClient
      * @param stringValue 追記内容
      * @throws JSONException JSONのエラーは呼び出し元で処理をする
      */
-    private void putSelect(JSONObject jsonObject,
-                           final String keyString,final String stringValue) throws JSONException {
-        if(!TextUtils.isEmpty(stringValue)) {
+    private void putSelect(final JSONObject jsonObject,
+                           final String keyString, final String stringValue) throws JSONException {
+        if (!TextUtils.isEmpty(stringValue)) {
             //値があればjsonObjectに追加する
-            jsonObject.put(keyString,stringValue);
+            jsonObject.put(keyString, stringValue);
         }
     }
 }

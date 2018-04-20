@@ -824,8 +824,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 case TAB_D_ANIMATE:
                 case TAB_DEFAULT:
                     holder.tv_time.setVisibility(View.VISIBLE);
-                    if (Integer.toString(ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID).equals(listContentInfo.getServiceId()) &&
-                            ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(listContentInfo.getCategoryId())) {
+                    if (Integer.toString(ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID).equals(listContentInfo.getServiceId())
+                            && ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(listContentInfo.getCategoryId())) {
                         holder.tv_time.setText(DateUtils.getContentsDateString(listContentInfo.getStartViewing()));
                     } else if (DateUtils.isBefore(listContentInfo.getStartViewing())) {
                         holder.tv_time.setText(DateUtils.getContentsDateString(mContext, listContentInfo.getStartViewing(), true));
@@ -928,7 +928,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      */
     private void setRecordedDownloadIcon(final ViewHolder holder, final ContentsData listContentInfo) {
         DTVTLogger.start();
-        //TODO:録画予約一覧等、クリップボタンを表示しない画面はここで外す
+        //TODO :録画予約一覧等、クリップボタンを表示しない画面はここで外す
         if (!mType.equals(ActivityTypeItem.TYPE_RECORDING_RESERVATION_LIST)) {
             if (holder.tv_clip != null) {
                 int downloadFlg = listContentInfo.getDownloadFlg();
@@ -991,8 +991,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             }
         }
         if (mTabType == TabTypeItem.TAB_D_CHANNEL) {
-            if (!Integer.toString(ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID).equals(listContentInfo.getServiceId()) ||
-                    !ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(listContentInfo.getCategoryId())) {
+            if (!Integer.toString(ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID).equals(listContentInfo.getServiceId())
+                    || !ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(listContentInfo.getCategoryId())) {
                 holder.tv_recorded_hyphen.setVisibility(View.GONE);
                 holder.tv_recorded_ch_name.setVisibility(View.GONE);
             }
@@ -1069,6 +1069,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         return holder;
     }
 
+    /**
+     * setWizardItem.
+     * @param holder holder
+     * @param view view
+     */
     private void setWizardItem(final ViewHolder holder, final View view) {
         holder.tv_title = view.findViewById(R.id.item_common_result_content_title);
         holder.isCommonContent = false;
@@ -1080,7 +1085,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      *
      * @param holder ViewHolder
      * @param view   View
-     * @return 各画面特化ViewHolder
      */
     private void setListItemPattern(final ViewHolder holder, final View view) {
         DTVTLogger.start();
@@ -1214,7 +1218,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * @param listContentInfo 行データー
      */
     private void setClipButton(final ViewHolder holder, final ContentsData listContentInfo) {
-        if (holder.tv_clip != null ) {
+        if (holder.tv_clip != null) {
             if (listContentInfo.getRequestData() != null) {
                 String clipType = listContentInfo.getRequestData().getType();
                 //ひかりコンテンツ判定
@@ -1359,7 +1363,9 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
          * サブタイトル.
          */
         TextView tv_sub_title = null;
-
+        /**
+         * 共通コンテンツなのか.
+         */
         boolean isCommonContent = true;
     }
 

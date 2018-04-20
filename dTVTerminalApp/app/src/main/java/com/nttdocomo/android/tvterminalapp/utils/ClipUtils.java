@@ -4,8 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.utils;
 
-import android.content.Context;
-
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 
 /**

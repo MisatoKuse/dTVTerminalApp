@@ -318,6 +318,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
 
     /**
      * ダイアログの表示状態.
+     * @return isShowing:true else false
      */
     public boolean isShowing() {
         boolean isShow = false;
@@ -386,7 +387,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     }
 
     /**
-     * ダイアログの本文をクリアする
+     * ダイアログの本文をクリアする.
      */
     public void clearContentText() {
         content = "";

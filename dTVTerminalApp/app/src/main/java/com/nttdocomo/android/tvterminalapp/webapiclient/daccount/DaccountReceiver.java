@@ -18,10 +18,10 @@ import java.util.Set;
  * dアカウントで状況の変化が発生した場合の通知を受け取るレシーバー.
  */
 public class DaccountReceiver extends BroadcastReceiver {
-    //前回受信時間
+    /**前回受信時間.*/
     private static long sBeforeReceiveTime = 0;
 
-    //連続通信扱い時間・5秒とする
+    /**連続通信扱い時間・5秒とする.*/
     static final long REPEAT_RECIEVE_TIME = 5000L;
 
     @Override
