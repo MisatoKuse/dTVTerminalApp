@@ -1078,7 +1078,12 @@ public class DateUtils {
      * @return エポック秒　ミリ秒→秒単位に変換後の値
      */
     public static long getSecondEpochTime(final String strDate) {
-        return (getEpochTime(strDate)) / 1000;
+        // 既にエポック秒だったら、変換しない
+        if (DBUtils.isNumber(strDate)) {
+            return Long.parseLong(strDate);
+        } else {
+            return (getEpochTime(strDate)) / 1000;
+        }
     }
 
     /**
