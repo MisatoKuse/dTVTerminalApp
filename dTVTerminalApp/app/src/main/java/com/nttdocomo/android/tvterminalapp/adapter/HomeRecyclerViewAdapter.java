@@ -155,30 +155,6 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      */
     private final static String RANKING_NUMBER_THREE = "3";
     /**
-     * 放送時刻の開始位置(月の十の位).
-     */
-    private final static int START_TIME_MONTH_BEGIN = 4;
-    /**
-     * 放送時刻の月の区切り.
-     */
-    private final static int START_TIME_MONTH_SEPARATE = 5;
-    /**
-     * 放送時刻の終了位置(月の一の位).
-     */
-    private final static int START_TIME_MONTH_END = 6;
-    /**
-     * 放送時刻の開始位置(日).
-     */
-    private final static int START_TIME_DAY_BEGIN = 6;
-    /**
-     * 放送時刻の日の区切り.
-     */
-    private final static int START_TIME_DAY_SEPARATE = 7;
-    /**
-     * 放送時刻の終了位置(日).
-     */
-    private final static int START_TIME_DAY_END = 8;
-    /**
      * 放送時刻の開始位置(時).
      */
     private final static int START_TIME_HOUR_BEGIN = 8;
@@ -523,7 +499,19 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     private void setRecommendInfo(final ContentsData contentsData, final ViewHolder viewHolder) {
         String startViewing = contentsData.getStartViewing();
         String channelName = contentsData.getChannelName();
-        viewHolder.mTime.setText(structDateStrings(startViewing, channelName));
+        String date = DateUtils.getContentsDateString(startViewing);
+        if (!TextUtils.isEmpty(channelName)) {
+            viewHolder.mTime.setVisibility(View.VISIBLE);
+            if (!TextUtils.isEmpty(date)) {
+                viewHolder.mTime.setText(StringUtils.getConnectStrings(date, mContext.getString(R.string.home_contents_hyphen),
+                        channelName));
+            } else {
+                viewHolder.mTime.setText(channelName);
+            }
+        } else if (!TextUtils.isEmpty(date)) {
+            viewHolder.mTime.setVisibility(View.VISIBLE);
+            viewHolder.mTime.setText(date);
+        }
     }
 
     /**
@@ -533,12 +521,19 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      * @param viewHolder ViewHolder
      */
     private void setRecommendVodInfo(final ContentsData contentsData, final ViewHolder viewHolder) {
+        String date = "";
+        //配信前　m/d（曜日）から
         if (DateUtils.isBefore(contentsData.getStartViewing())) {
-            viewHolder.mTime.setText(DateUtils.getContentsDateString(mContext, contentsData.getStartViewing(), true));
-            viewHolder.mTime.setVisibility(View.VISIBLE);
+            date = DateUtils.getContentsDateString(mContext, contentsData.getStartViewing(), true);
         } else {
-            viewHolder.mTime.setText("");
-            viewHolder.mTime.setVisibility(View.GONE);
+            // m/d（曜日）まで
+            if (DateUtils.isIn31Day(contentsData.getEndViewing())) {
+                date = DateUtils.getContentsDateString(mContext, contentsData.getEndViewing(), false);
+            }
+        }
+        if (!TextUtils.isEmpty(date)) {
+            viewHolder.mTime.setVisibility(View.VISIBLE);
+            viewHolder.mTime.setText(date);
         }
     }
 
@@ -581,64 +576,6 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
                 mContext.getString(R.string.home_contents_hyphen), endHour,
                 mContext.getString(R.string.home_contents_colon), endMinute, mContext.getString(R.string.home_contents_pipe),
                 channelName);
-    }
-
-    /**
-     * yyyyMMddHHmmss形式から表示するデータを整形する(おすすめ番組、今日のテレビランキング).
-     *
-     * @param dateString yyyyMMddHHmmssデータ
-     * @param channelName チャンネル名
-     * @return 整形した日付データ
-     */
-    private String structDateStrings(final String dateString, final String channelName) {
-        //曜日を取得する
-        String dayOfWeek = DateUtils.getStringDayOfWeek(DateUtils.getDayOfWeek(DateUtils.getEpochTimeLink(dateString)));
-
-        //表示するデータを整形する
-        String timeMonthTensPlace = dateString.substring(START_TIME_MONTH_BEGIN, START_TIME_MONTH_SEPARATE);
-        String timeMonthOnePlace = dateString.substring(START_TIME_MONTH_SEPARATE, START_TIME_MONTH_END);
-        String month;
-        if (timeMonthTensPlace.equals(ZERO)) {
-            month = timeMonthOnePlace;
-        } else {
-            month = StringUtils.getConnectStrings(timeMonthTensPlace, timeMonthOnePlace);
-        }
-
-        String timeDayTensPlace = dateString.substring(START_TIME_DAY_BEGIN, START_TIME_DAY_SEPARATE);
-        String timeDayOnePlace = dateString.substring(START_TIME_DAY_SEPARATE, START_TIME_DAY_END);
-        String day;
-        if (timeDayTensPlace.equals(ZERO)) {
-            day = timeDayOnePlace;
-        } else {
-            day = StringUtils.getConnectStrings(timeDayTensPlace, timeDayOnePlace);
-        }
-
-        String timeHourTensPlace = dateString.substring(START_TIME_HOUR_BEGIN, START_TIME_HOUR_SEPARATE);
-        String timeHourOnePlace = dateString.substring(START_TIME_HOUR_SEPARATE, START_TIME_HOUR_END);
-        String hour;
-        if (timeHourTensPlace.equals(ZERO)) {
-            hour = timeHourOnePlace;
-        } else {
-            hour = StringUtils.getConnectStrings(timeHourTensPlace, timeHourOnePlace);
-        }
-
-        String timeMinuteTensPlace = dateString.substring(START_TIME_MINUTE_BEGIN, START_TIME_MINUTE_SEPARATE);
-        String timeMinuteOnePlace = dateString.substring(START_TIME_MINUTE_SEPARATE, START_TIME_MINUTE_END);
-        String minute = StringUtils.getConnectStrings(timeMinuteTensPlace, timeMinuteOnePlace);
-
-        //m/d(E)hh:mm形式取得
-        String structDateString = StringUtils.getConnectStrings(month, mContext.getString(R.string.home_contents_slash), day,
-                mContext.getString(R.string.home_contents_front_bracket), dayOfWeek,
-                mContext.getString(R.string.home_contents_back_bracket), hour,
-                mContext.getString(R.string.home_contents_colon), minute);
-        //channelNameがないときはそのまま
-        if (channelName == null || channelName.isEmpty()) {
-            return structDateString;
-        } else {
-            //チャンネル名を追加
-            return StringUtils.getConnectStrings(structDateString,
-                    mContext.getString(R.string.home_contents_hyphen), channelName);
-        }
     }
 
     @Override

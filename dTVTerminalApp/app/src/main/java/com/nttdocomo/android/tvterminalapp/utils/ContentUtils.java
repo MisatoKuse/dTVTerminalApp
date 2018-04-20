@@ -187,7 +187,7 @@ public class ContentUtils {
      * @param chSod chsod
      * @return RENTAL、PREMIUM
      */
-    public static ContentsType getContentsTypeRental(final String dispType, final String estFlg, final String chSod) {
+    private static ContentsType getContentsTypeRental(final String dispType, final String estFlg, final String chSod) {
         ContentsType cType = ContentsType.OTHER;
         final String ZERO_FLAG = "0";
         if (ContentDetailActivity.VIDEO_PROGRAM.equals(dispType)

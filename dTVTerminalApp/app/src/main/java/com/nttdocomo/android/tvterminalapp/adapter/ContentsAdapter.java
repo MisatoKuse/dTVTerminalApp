@@ -771,17 +771,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 break;
             case TYPE_RENTAL_RANK: // レンタル一覧
             case TYPE_PREMIUM_VIDEO_LIST: //プレミアムビデオ
-                String time = listContentInfo.getTime();
-                if (null != time && !time.equals(RentalDataProvider.ENABLE_VOD_WATCH_CONTENTS_UNLIMITED_HYPHEN)) {
-                    //視聴期限表示
-                    holder.tv_time.setVisibility(View.VISIBLE);
-                    if (time.equals(mContext.getString(R.string.delivery_end_message))) {
-                        holder.tv_time.setText(listContentInfo.getTime());
-                    } else {
-                        ContentUtils.setPeriodText(mContext, holder.tv_time, listContentInfo);
-                    }
-                }
-                break;
             case TYPE_VIDEO_RANK: // ビデオランキング
             case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
             case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
@@ -823,14 +812,22 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 case TAB_D_CHANNEL:
                 case TAB_D_ANIMATE:
                 case TAB_DEFAULT:
-                    holder.tv_time.setVisibility(View.VISIBLE);
+                    String date = "";
+                    //DTVチャンネル 放送 m/d（曜日）h:ii
                     if (Integer.toString(ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID).equals(listContentInfo.getServiceId())
                             && ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(listContentInfo.getCategoryId())) {
-                        holder.tv_time.setText(DateUtils.getContentsDateString(listContentInfo.getStartViewing()));
-                    } else if (DateUtils.isBefore(listContentInfo.getStartViewing())) {
-                        holder.tv_time.setText(DateUtils.getContentsDateString(mContext, listContentInfo.getStartViewing(), true));
+                        date = DateUtils.getContentsDateString(listContentInfo.getStartViewing());
+                    } else if (DateUtils.isBefore(listContentInfo.getStartViewing())) { //配信前　m/d（曜日）から
+                        date = DateUtils.getContentsDateString(mContext, listContentInfo.getStartViewing(), true);
                     } else {
-                        holder.tv_time.setVisibility(View.GONE);
+                        // 31日以内　m/d（曜日）まで
+                        if (DateUtils.isIn31Day(listContentInfo.getEndViewing())) {
+                            date = DateUtils.getContentsDateString(mContext, listContentInfo.getEndViewing(), false);
+                        }
+                    }
+                    if (!TextUtils.isEmpty(date)) {
+                        holder.tv_time.setVisibility(View.VISIBLE);
+                        holder.tv_time.setText(date);
                     }
                     break;
                 default:
