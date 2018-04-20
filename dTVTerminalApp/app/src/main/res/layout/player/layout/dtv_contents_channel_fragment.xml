@@ -4,13 +4,12 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/common_background_color">
+    android:layout_height="match_parent">
 
     <ListView
         android:id="@+id/dtv_contents_channel_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:listSelector="@drawable/channel_list_item_selector"/>
+        android:listSelector="@drawable/content_detail_channel_list_item_selector"/>
 
 </RelativeLayout>
