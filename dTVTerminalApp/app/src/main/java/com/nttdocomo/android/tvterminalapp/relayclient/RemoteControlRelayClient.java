@@ -981,7 +981,8 @@ public class RemoteControlRelayClient {
     private String rfc3986UrlEncode(final String url) {
         String encodeUrl = "";
         try {
-            encodeUrl = URLEncoder.encode(url, java.nio.charset.StandardCharsets.UTF_8.toString());
+            //文字コード名としてUTF-8を設定してエンコードを行う
+            encodeUrl = URLEncoder.encode(url, java.nio.charset.StandardCharsets.UTF_8.name());
             // URLEncoder.encode はURLエンコードしないためエンコードする
             encodeUrl = encodeUrl.replace("*", URL_ENCODED_ASTERISK);
             encodeUrl = encodeUrl.replace("-", URL_ENCODED_HYPHEN);
