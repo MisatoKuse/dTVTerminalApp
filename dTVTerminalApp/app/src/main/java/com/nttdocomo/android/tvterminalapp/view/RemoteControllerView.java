@@ -157,9 +157,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
         // コンテンツ詳細画面でもコントローラのヘッダーを表示しない場合は高さを0に設定
         if (!mIsFirstVisible) {
-            // TODO: [結合](他サービス起動時のAPI変更)中継アプリ側の結合試験
-            // 「ひかりTVコンテンツ詳細にテレビで視聴する」が出ないための暫定対応
-//            mHeaderHeight = 0;
+            mHeaderHeight = 0;
         }
         // Headerを表示させる画面では、リモコンViewの下部に移動させ、50dpだけ表示させる
         DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();

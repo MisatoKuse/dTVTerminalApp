@@ -1531,6 +1531,8 @@ public class ContentDetailActivity extends BaseActivity implements
                                 R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
                         setStartRemoteControllerUIListener(this);
                     }
+                } else {
+                    createRemoteControllerView(true);
                 }
             }
 
@@ -1629,6 +1631,7 @@ public class ContentDetailActivity extends BaseActivity implements
         });
         //レコメンド（serviceId 44）若しくはぷららの場合
         if (!mIsOtherService) {
+            findViewById(R.id.remote_control_view).setVisibility(View.INVISIBLE);
             viewRefresher.sendEmptyMessage(REFRESH_VIDEO_VIEW);
         } else {
             sendOperateLog();
@@ -2232,6 +2235,9 @@ public class ContentDetailActivity extends BaseActivity implements
         }
         sendOperateLog();
         showProgressBar(false);
+        if (getStbStatus()) {
+            findViewById(R.id.remote_control_view).setVisibility(View.VISIBLE);
+        }
     }
 
     //endregion
