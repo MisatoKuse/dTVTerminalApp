@@ -19,6 +19,9 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+/**
+ * 視聴中ビデオ一覧取得WebClient.
+ */
 public class WatchListenVideoWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback, JsonParserThread.JsonParser {
 
@@ -32,12 +35,12 @@ public class WatchListenVideoWebClient
      *
      * @param context コンテキスト
      */
-    public WatchListenVideoWebClient(Context context) {
+    public WatchListenVideoWebClient(final Context context) {
         super(context);
     }
 
     @Override
-    public void onParserFinished(Object parsedData) {
+    public void onParserFinished(final Object parsedData) {
         //パース後のデータを返す
         if (null != mWatchListenVideoJsonParserCallback) {
             mWatchListenVideoJsonParserCallback.onWatchListenVideoJsonParsed((List<WatchListenVideoList>) parsedData);
@@ -45,7 +48,7 @@ public class WatchListenVideoWebClient
     }
 
     @Override
-    public Object parse(String body) {
+    public Object parse(final String body) {
         WatchListenVideoListJsonParser watchListenVideoListJsonParser = new WatchListenVideoListJsonParser();
         List<WatchListenVideoList> pursedData;
         pursedData = watchListenVideoListJsonParser.watchListenVideoListSender(body);
@@ -64,7 +67,9 @@ public class WatchListenVideoWebClient
         void onWatchListenVideoJsonParsed(List<WatchListenVideoList> watchListenVideoList);
     }
 
-    //コールバックのインスタンス
+    /**
+     * コールバックのインスタンス.
+     */
     private WatchListenVideoJsonParserCallback mWatchListenVideoJsonParserCallback;
 
     /**
@@ -104,6 +109,7 @@ public class WatchListenVideoWebClient
      * @param lowerPagetLimit                    　             結果の最小件数（1以上）
      * @param pagerOffset                        取得位置
      * @param watchListenVideoJsonParserCallback コールバック
+     * @param pagerDirection                     取得方向
      * @return パラメータ等に問題があった場合はfalse
      */
     public boolean getWatchListenVideoApi(final int ageReq, final int upperPagetLimit, final int lowerPagetLimit,

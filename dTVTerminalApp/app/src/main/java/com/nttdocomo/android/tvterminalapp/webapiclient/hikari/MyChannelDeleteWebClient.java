@@ -16,6 +16,9 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.MyChannelDele
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * マイチャンネル削除WebClient.
+ */
 public class MyChannelDeleteWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
@@ -37,7 +40,9 @@ public class MyChannelDeleteWebClient
                 MyChannelDeleteResponse myChannelDeleteResponse);
     }
 
-    //コールバックのインスタンス
+    /**
+     * コールバックのインスタンス.
+     */
     private MyChannelDeleteJsonParserCallback myChannelDeleteJsonParserCallback;
 
     /**

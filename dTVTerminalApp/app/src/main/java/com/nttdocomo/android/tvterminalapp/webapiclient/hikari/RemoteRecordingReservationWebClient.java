@@ -16,6 +16,9 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.RemoteRecordi
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * リモート録画予約登録WebClient.
+ */
 public class RemoteRecordingReservationWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
@@ -32,7 +35,9 @@ public class RemoteRecordingReservationWebClient
                 RemoteRecordingReservationResultResponse remoteRecordingReservationResultResponse);
     }
 
-    //コールバックのインスタンス
+    /**
+     * コールバックのインスタンス.
+     */
     private RemoteRecordingReservationJsonParserCallback
             mRemoteRecordingReservationJsonParserCallback;
 

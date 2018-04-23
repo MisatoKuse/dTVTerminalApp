@@ -11,6 +11,9 @@ import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.SettingFileResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.SettingFileJsonParser;
 
+/**
+ * 設定ファイルWebClient.
+ */
 public class SettingFileWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
     /**
@@ -37,7 +40,7 @@ public class SettingFileWebClient
         void onSettingFileJsonParsed(SettingFileResponse settingFileResponse);
     }
 
-    //コールバックのインスタンス
+    /**コールバックのインスタンス.*/
     private SettingFileJsonParserCallback mSettingFileJsonParserCallback;
 
     /**
@@ -97,7 +100,7 @@ public class SettingFileWebClient
 
         //設定ファイルを読み込む
         DTVTLogger.debug("Get setting file");
-        openUrl(UrlConstants.WebApiUrl.SETTING_FILE, "", TIME_OUT_TIME,this);
+        openUrl(UrlConstants.WebApiUrl.SETTING_FILE, "", TIME_OUT_TIME, this);
 
         DTVTLogger.end();
         //今のところ失敗していないので、trueを返す

@@ -13,6 +13,9 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonP
 
 import java.util.List;
 
+/**
+ * ユーザー情報取得WebClient.
+ */
 public class UserInfoWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
@@ -33,7 +36,9 @@ public class UserInfoWebClient
         void onUserInfoJsonParsed(List<UserInfoList> userInfoLists);
     }
 
-    //コールバックのインスタンス
+    /**
+     * コールバックのインスタンス.
+     */
     private UserInfoJsonParserCallback mUserInfoJsonParserCallback;
 
     /**

@@ -17,6 +17,9 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+/**
+ * チャンネル一覧取得WebClient.
+ */
 public class ChannelWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
@@ -26,7 +29,7 @@ public class ChannelWebClient
     private boolean mIsCancel = false;
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface ChannelJsonParserCallback {
         /**
@@ -37,7 +40,7 @@ public class ChannelWebClient
         void onChannelJsonParsed(List<ChannelList> channelLists);
     }
 
-    //コールバックのインスタンス
+    /**コールバックのインスタンス.*/
     private ChannelJsonParserCallback mChannelJsonParserCallback;
 
     /**
