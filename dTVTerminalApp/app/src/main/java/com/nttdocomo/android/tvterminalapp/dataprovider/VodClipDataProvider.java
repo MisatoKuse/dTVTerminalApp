@@ -195,6 +195,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
             clipContentInfo.setDispType(dispType);
             clipContentInfo.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
             clipContentInfo.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
+            clipContentInfo.setPublishStartDate(String.valueOf(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE))));
             clipContentInfo.setAvailStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
             clipContentInfo.setAvailEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
             clipContentInfo.setVodStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_START_DATE)));

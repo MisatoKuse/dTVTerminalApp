@@ -195,6 +195,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
             contentInfo.setEventId(map.get(JsonConstants.META_RESPONSE_EVENT_ID));
             contentInfo.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
             contentInfo.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
+            contentInfo.setPublishStartDate(String.valueOf(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE))));
             contentInfo.setAvailStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
             contentInfo.setAvailEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
             contentInfo.setVodStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_START_DATE)));
