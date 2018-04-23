@@ -228,16 +228,16 @@ public class RecordedContentsDetailData implements Parcelable {
     }
 
     /**
-     *clearTextSize取得.
-     * @return clearTextSize
+     *ダウンロードサイズ取得.
+     * @return ダウンロードサイズ
      */
     public String getClearTextSize() {
         return mClearTextSize;
     }
 
     /**
-     * clearTextSize設定.
-     * @param clearTextSize clearTextSize
+     * ダウンロードサイズ.
+     * @param clearTextSize ダウンロードサイズ
      */
     public void setClearTextSize(final String clearTextSize) {
         this.mClearTextSize = clearTextSize;
@@ -322,7 +322,7 @@ public class RecordedContentsDetailData implements Parcelable {
         this.mDlFileFullPath = in.readString();
         this.mIsLive = in.readByte() != 0;
     }
-    /**.*/
+    /**コンストラクタ.*/
     public static final Creator<RecordedContentsDetailData> CREATOR = new Creator<RecordedContentsDetailData>() {
         @Override
         public RecordedContentsDetailData createFromParcel(final Parcel source) {

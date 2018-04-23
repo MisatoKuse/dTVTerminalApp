@@ -35,7 +35,6 @@ import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 /**

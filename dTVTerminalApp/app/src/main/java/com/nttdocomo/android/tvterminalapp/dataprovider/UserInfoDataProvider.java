@@ -57,7 +57,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
      */
     private boolean mIsStop = false;
     /**
-     * エラー情報
+     * エラー情報.
      */
     private ErrorState mErrorSate = null;
 
@@ -93,7 +93,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
 
         /**
          * ユーザー情報一覧用コールバック.
-         *
+         *@param isDataChange データ更新
          * @param list コンテンツリスト
          */
         void userInfoListCallback(final boolean isDataChange, final List<UserInfoList> list);

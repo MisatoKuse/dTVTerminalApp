@@ -14,8 +14,11 @@ import com.nttdocomo.android.tvterminalapp.jni.download.DlnaProvDownload;
 
 import java.io.File;
 
+/**
+ * tcpダウンローダークラス.
+ */
 public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
-
+    /**DlnaProvDownloadインスタンス.*/
     private DlnaProvDownload mDlnaProvDownload;
 
     /**
@@ -70,6 +73,10 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
         errors(res);
     }
 
+    /**
+     * エラー.
+     * @param res ダウンロード結果
+     */
     private void errors(final DlnaDownloadRet res) {
         switch (res) {
             case DownloadRet_CopyKeyFileFailed:
@@ -112,7 +119,7 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
             int dlSize = (dp.getCleartextSize() / 1024) / 1024; //-->MB
             return (usableSpace - dlSize) < safeSpace;
         } catch (Exception e) {
-            //TODO:汎用例外catchは削除する事.必要な例外をキャッチして必要な処理を記載する事.
+            //TODO :汎用例外catchは削除する事.必要な例外をキャッチして必要な処理を記載する事.
             DTVTLogger.debug(e);
         }
         return true;
@@ -149,10 +156,13 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
                 break;
             case DOWNLOADER_STATUS_MOVING:
                 break;
-            //TODO:必ずdefault文を記載する事.
+            //TODO :必ずdefault文を記載する事.
         }
     }
 
+    /**
+     *ダウンロードパスーを出力する.
+     */
     private void printDlPathFiles() {
         try {
             DtcpDownloadParam dp = (DtcpDownloadParam) getDownloadParam();
@@ -173,11 +183,14 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
                 }
             }
         } catch (Exception e) {
-            //TODO:汎用例外catchは削除する事.必要な例外をキャッチして必要な処理を記載する事.
+            //TODO :汎用例外catchは削除する事.必要な例外をキャッチして必要な処理を記載する事.
             DTVTLogger.debug(e);
         }
     }
 
+    /**
+     * ダウンロード停止.
+     */
     private void onStopIt() {
         DTVTLogger.debug("dtcp download end, files");
         printDlPathFiles();
