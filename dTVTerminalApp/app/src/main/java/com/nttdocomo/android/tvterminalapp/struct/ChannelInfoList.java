@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/*
- * 複数チャンネルクラス
+/**
+ * 複数チャンネルクラス.
  * 　　機能： 複数チャンネルを管理するクラスである
  */
 public class ChannelInfoList {
 
-    //チャンネルの配列
+    /**チャンネルの配列.*/
     private List<ChannelInfo> mChannels = null;
 
     /**

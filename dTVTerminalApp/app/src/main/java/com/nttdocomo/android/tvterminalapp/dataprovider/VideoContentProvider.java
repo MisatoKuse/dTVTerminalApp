@@ -107,6 +107,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
     /**
      * ビデオコンテンツ一覧のデータ取得要求を行う.
      * @param genreId ジャンルID
+     * @param offset 取得位置(1～)
      */
     private void getVideoContentListData(final String genreId, final int offset) {
         //通信クラスにデータ取得要求を出す

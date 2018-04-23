@@ -14,20 +14,37 @@ import com.nttdocomo.android.tvterminalapp.jni.activation.NewEnvironmentUtil;
 
 import java.io.File;
 
+/**
+ * DownloaderBaseクラス.
+ */
 public abstract class DownloaderBase {
-
+    /**ダウンロードパラメータ.*/
     private DownloadParam mDownloadParam;
+    /**ダウンロードしたサイズ(Bytes).*/
     private int mDownloadedBytes;
+    /**トータルBytesサイズ.*/
     private int mTotalBytes;
+    /**エラー.*/
     private DownloadListener.DLError mError;
+    /**ダウンロードリスナー.*/
     private DownloadListener mDownloadListener;
+    /**d_.*/
     public static final String sDlPrefix = "d_";
+    /**ダウンロード中なのか.*/
     private boolean mIsDownloading = false;
 
+    /**
+     * ダウンロードしたサイズ(Bytes)設定.
+     * @param bytesDone ダウンロードしたサイズ(Bytes)設定
+     */
     protected void setDownloadedBytes(final int bytesDone) {
         mDownloadedBytes = bytesDone;
     }
 
+    /**
+     * ダウンロードパラメータ取得.
+     * @return ダウンロードパラメータ
+     */
     public DownloadParam getDownloadParam() {
         return mDownloadParam;
     }
@@ -93,6 +110,9 @@ public abstract class DownloaderBase {
         }
     }
 
+    /**
+     * 新しいダウンロードタスク.
+     */
     private void newDl() {
         try {
             DownLoadThread dt = new DownLoadThread();
@@ -111,6 +131,11 @@ public abstract class DownloaderBase {
      * ref: https://developer.android.com/reference/android/content/Context.html#getCacheDir()
      *      getCacheQuotaBytes(java.util.UUID)
      */
+
+    /**
+     * ストレージ不足なのか取得.
+     * @return true or false
+     */
     protected abstract boolean isStorageSpaceLow();
 
     /**
@@ -123,6 +148,10 @@ public abstract class DownloaderBase {
         }
     }
 
+    /**
+     * ダウンロード進捗.
+     * @param everyTimeBytes everyTimeBytes
+     */
     protected void onProgress(final int everyTimeBytes) {
         mDownloadedBytes += everyTimeBytes;
         if (null != mDownloadListener && null != mDownloadParam) {
@@ -141,6 +170,9 @@ public abstract class DownloaderBase {
         }
     }
 
+    /**
+     * DownLoadThread.
+     */
     class DownLoadThread extends Thread {
         @Override
         public void run() {
@@ -151,7 +183,8 @@ public abstract class DownloaderBase {
     }
 
     /**
-     * ダウンロード進捗通知.
+     * ダウンロード進捗取得.
+     * @return  ダウンロード進捗
      */
     int getProgressBytes() {
         return mDownloadedBytes;
@@ -159,6 +192,7 @@ public abstract class DownloaderBase {
 
     /**
      * ダウンロード進捗通知.
+     * @return ダウンロード進捗
      */
     float getProgressPercent() {
         if (0 == mTotalBytes) {
@@ -169,6 +203,7 @@ public abstract class DownloaderBase {
 
     /**
      * ダウンロードエラー発生の時、コールされる.
+     * @return ダウンロードエラー取得.
      */
     DownloadListener.DLError isError() {
         return mError;
@@ -183,6 +218,10 @@ public abstract class DownloaderBase {
         }
     }
 
+    /**
+     * ダウンロードしたファイルのフルパスを取得.
+     * @return ダウンロードしたファイルのフルパス
+     */
     private String getFullFilePath() {
         if (null != mDownloadParam) {
             StringBuilder sb = new StringBuilder();
@@ -222,12 +261,13 @@ public abstract class DownloaderBase {
     /**
      * @return MB.
      */
-    long getInnerStorageSafeSpaceMB(){
+    long getInnerStorageSafeSpaceMB() {
         return 300;
     }
 
     /**
      * Sub Classでダウンロード成功したとき、この関数をコール.
+     * @param error error
      */
     protected void onFail(final DownloadListener.DLError error) {
         setDownloading(false);
@@ -238,7 +278,7 @@ public abstract class DownloaderBase {
     }
 
     /**
-     *
+     *ダウンロードをキャンセルする.
      */
     protected void onCancel() {
         setDownloading(false);
@@ -268,7 +308,8 @@ public abstract class DownloaderBase {
 
     /**
      * Get save path.
-     * @return
+     * @param context context
+     * @return save path
      */
     public static String getDownloadPath(final Context context) {
         String downLoadPath = null;
@@ -306,6 +347,11 @@ public abstract class DownloaderBase {
         return downLoadPath;
     }
 
+    /**
+     * getDmpFolderName.
+     * @param context コンテキスト
+     * @return DmpFolderName
+     */
     public static String getDmpFolderName(final Context context) {
         if (null == context) {
             return null;
@@ -320,10 +366,18 @@ public abstract class DownloaderBase {
         return ret.substring(i + 1, l);
     }
 
+    /**
+     * ダウンロード中に設定.
+     * @param yn true or false
+     */
     private synchronized void setDownloading(final boolean yn) {
         mIsDownloading = yn;
     }
 
+    /**
+     * ダウンロード中なのか取得.
+     * @return true or false
+     */
     public synchronized boolean isDownloading() {
         return mIsDownloading;
     }

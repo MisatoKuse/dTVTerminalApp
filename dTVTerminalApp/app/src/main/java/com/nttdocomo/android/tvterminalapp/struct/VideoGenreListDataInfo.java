@@ -12,26 +12,49 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * ビデオジャンル一覧データ情報クラス.
+ */
 public class VideoGenreListDataInfo implements Parcelable {
+    /**ジャンルId.*/
     private String mGenreId;
+    /**コンテンツツリー.*/
     private Map<String, VideoGenreList> mContentsTree;
 
+    /**
+     * コンストラクタ.
+     */
     public VideoGenreListDataInfo() {
     }
 
+    /**
+     * サブジャンル取得.
+     * @return サブジャンル
+     */
     public Map<String, VideoGenreList> getSubGenre() {
         return mContentsTree;
     }
 
+    /**
+     * サブジャンル設定.
+     * @param subGenre サブジャンル
+     */
     public void setSubGenre(final Map<String, VideoGenreList> subGenre) {
         this.mContentsTree = subGenre;
     }
 
+    /**
+     * ジャンルId.
+     * @return ジャンルId取得.
+     */
     public String getGenreId() {
         return mGenreId;
     }
 
+    /**
+     * ジャンルId設定.
+     * @param genreId ジャンルId設定
+     */
     public void setGenreId(final String genreId) {
         this.mGenreId = genreId;
     }
@@ -47,12 +70,19 @@ public class VideoGenreListDataInfo implements Parcelable {
         dest.writeMap(this.mContentsTree);
     }
 
+    /**
+     * コンストラクタ.
+     * @param in source
+     */
     protected VideoGenreListDataInfo(final Parcel in) {
         this.mGenreId = (String) in.readSerializable();
         this.mContentsTree = new HashMap<String, VideoGenreList>();
         in.readMap(this.mContentsTree, getClass().getClassLoader());
     }
 
+    /**
+     * CREATORコンストラクタ.
+     */
     public static final Parcelable.Creator<VideoGenreListDataInfo> CREATOR = new Parcelable.Creator<VideoGenreListDataInfo>() {
         @Override
         public VideoGenreListDataInfo createFromParcel(final Parcel source) {
@@ -67,7 +97,7 @@ public class VideoGenreListDataInfo implements Parcelable {
 
     /**
      * このクラスのジャンルデータを取得.
-     * @return
+     * @return このクラスのジャンルデータ
      */
     public VideoGenreList getVideoGenreListShowData() {
         VideoGenreList videoGenreList = null;
@@ -79,8 +109,8 @@ public class VideoGenreListDataInfo implements Parcelable {
 
     /**
      * 引数で指定されたジャンルIDのデータを取得.
-     * @param genreId
-     * @return
+     * @param genreId ジャンルID
+     * @return 指定されたジャンルIDのデータ
      */
     public VideoGenreList getVideoGenreListData(final String genreId) {
         VideoGenreList videoGenreList = null;

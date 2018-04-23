@@ -12,18 +12,29 @@ import com.digion.dixim.android.secureplayer.MediaInfo;
  * 機能：再生するビデオ属性クラス.
  */
 public class MediaVideoInfo implements MediaInfo {
-
+	/**メディアのURI.*/
 	private final Uri mUri;
+	/**メディアのMimeType.*/
 	private final String mMimeType;
+	/**メディアのサイズ(Byte).*/
 	private final long mSize;
+	/**メディアの総再生時間(ms).*/
 	private final long mDurationMs;
+	/**メディアのビットレート(Byte/sec).*/
 	private final int mBytesPerSec;
+	/**DLNAのByteシークをサポートしているか.*/
 	private final boolean mIsAvailableConnectionStalling;
+	/**DLNAのTimeシークをサポートしているか.*/
 	private final boolean mIsSupportedByteSeek;
+	/**DLNAのAvailableConnectionStallingかどうか.*/
 	private final boolean mIsSupportedTimeSeek;
+	/**放送中コンテンツかどうか.*/
 	private final String mContentFormat;
+	/**リモートアクセスコンテンツかどうか.*/
 	private final boolean mIsVideoBroadcast;
+	/**メディアのタイトル.*/
 	private final boolean mIsRemote;
+	/**メディアのタイトル.*/
 	private final String mTitle;
 
 	/**
@@ -50,7 +61,8 @@ public class MediaVideoInfo implements MediaInfo {
 						  final boolean isSupportedTimeSeek,
 						  final boolean isAvailableConnectionStalling,
 						  final boolean isVideoBroadcast,
-						  final boolean isRemote, String title,
+						  final boolean isRemote,
+						  final String title,
 						  final String contentFormat) {
 		this.mUri = uri;
 		this.mMimeType = mimeType;

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * おすすめ番組パーサー.
+ * おすすめチャンネル用XmlParser.
  */
 public class RecommendChannelXmlParser extends AsyncTask<Object, Object, Object> {
 
@@ -30,26 +30,47 @@ public class RecommendChannelXmlParser extends AsyncTask<Object, Object, Object>
      * おすすめ番組パーサーコールバック.
      */
     private RecommendChWebClient.RecommendChannelCallback mRecommendChannelCallback;
+    /**レコメンドコンテンツリスト.*/
     public static final String RECOMMENDCHANNEL_LIST_RECOMMENDCONTENT = "RecommendContent";
+    /**おすすめ順.*/
     public static final String RECOMMENDCHANNEL_LIST_RECOMMENDORDER = "recommendOrder";
+    /**サービスID.*/
     public static final String RECOMMENDCHANNEL_LIST_SERVICEID = "serviceId";
+    /**カテゴリーID.*/
     public static final String RECOMMENDCHANNEL_LIST_CATEGORYID = "categoryId";
+    /**チャンネルID.*/
     public static final String RECOMMENDCHANNEL_LIST_CHANNELID = "channelId";
+    /**コンテンツID.*/
     public static final String RECOMMENDCHANNEL_LIST_CONTENTSID = "contentsId";
+    /**タイトル.*/
     public static final String RECOMMENDCHANNEL_LIST_TITLE = "title";
+    /**サムネイル用画像URL1.*/
     public static final String RECOMMENDCHANNEL_LIST_CTPICURL1 = "ctPicURL1";
+    /**サムネイル用画像URL2.*/
     public static final String RECOMMENDCHANNEL_LIST_CTPICURL2 = "ctPicURL2";
+    /**視聴可能期間開始日時.*/
     public static final String RECOMMENDCHANNEL_LIST_STARTVIEWING = "startViewing";
+    /**視聴可能期間終了日時.*/
     public static final String RECOMMENDCHANNEL_LIST_ENDVIEWING = "endViewing";
+    /**予備1.*/
     public static final String RECOMMENDCHANNEL_LIST_RESERVED1 = "reserved1";
+    /**予備2.*/
     public static final String RECOMMENDCHANNEL_LIST_RESERVED2 = "reserved2";
+    /**予備3.*/
     public static final String RECOMMENDCHANNEL_LIST_RESERVED3 = "reserved3";
+    /**予備4.*/
     public static final String RECOMMENDCHANNEL_LIST_RESERVED4 = "reserved4";
+    /**予備5.*/
     public static final String RECOMMENDCHANNEL_LIST_RESERVED5 = "reserved5";
+    /**サービス契約有無.*/
     public static final String RECOMMENDCHANNEL_LIST_AGREEMENT = "agreement";
+    /**契約なし動画再生可否.*/
     public static final String RECOMMENDCHANNEL_LIST_VIEWABLE = "viewable";
+    /**画面ID.*/
     public static final String RECOMMENDCHANNEL_LIST_PAGEID = "pageId";
+    /**ユーザグループID.*/
     public static final String RECOMMENDCHANNEL_LIST_GROUPID = "groupId";
+    /**コメンド手法ID.*/
     public static final String RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID = "recommendMethodId";
 
     /**

@@ -848,7 +848,7 @@ public class SharedPreferencesUtils {
         }
 
         //強制的にリセット
-        if(status == FIRST_D_ACCOUNT_FORCE_RESET) {
+        if (status == FIRST_D_ACCOUNT_FORCE_RESET) {
             status = 0;
         }
 

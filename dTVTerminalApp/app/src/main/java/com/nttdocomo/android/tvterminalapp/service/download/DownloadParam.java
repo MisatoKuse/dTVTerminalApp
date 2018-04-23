@@ -10,16 +10,27 @@ import android.content.Context;
  * このクラスから継承して、DownloaderBaseおよびSubClass用パラメータクラウスである.
  */
 public abstract class DownloadParam {
+    /**コンテキスト.*/
     private Context mContext;
+    /**保存パスー.*/
     private String mSavePath;
+    /**保存ファイル名.*/
     private String mSaveFileName;
-    //通知の頻度
+    /**通知の頻度.*/
     private int mPercentToNotify;
 
+    /**
+     * 通知の頻度設定.
+     * @param mPercentToNotify 通知の頻度
+     */
     public void setPercentToNotify(final int mPercentToNotify) {
         this.mPercentToNotify = mPercentToNotify;
     }
 
+    /**
+     * 通知の頻度取得.
+     * @return 通知の頻度
+     */
     public int getPercentToNotity() {
         return mPercentToNotify;
     }
@@ -74,7 +85,7 @@ public abstract class DownloadParam {
 
     /**
      * 機能：Sub Classで実現し、パラメーター有効かを戻す.
-     * @return
+     * @return true or false
      */
     public boolean isParamValid() {
         if (null == mContext || null == mSavePath || 1 > mSavePath.length() || null == mSaveFileName || 1 > mSaveFileName.length()) {
