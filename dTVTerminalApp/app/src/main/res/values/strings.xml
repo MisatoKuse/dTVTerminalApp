@@ -250,14 +250,14 @@
     <string name="contents_detail_tab_channel">チャンネル</string>
     <string name="contents_detail_tab_episode">エピソード</string>
     <string name="contents_detail_tab_contents_info">作品情報</string>
-    <string-array name="other_service_contents_detail_tabs">
+    <string-array name="contents_detail_tab_vod">
         <item>@string/contents_detail_tab_contents_info</item>
     </string-array>
-    <string-array name="other_contents_detail_tabs">
+    <string-array name="contents_detail_tabs_tv_ch">
         <item>@string/contents_detail_tab_program_detail</item>
         <item>@string/contents_detail_tab_channel</item>
     </string-array>
-    <string-array name="video_contents_detail_tabs">
+    <string-array name="contents_detail_tabs_tv_episode">
         <item>@string/contents_detail_tab_program_detail</item>
         <item>@string/contents_detail_tab_episode</item>
     </string-array>

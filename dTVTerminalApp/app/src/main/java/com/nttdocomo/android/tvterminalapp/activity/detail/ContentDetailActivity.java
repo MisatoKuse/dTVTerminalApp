@@ -189,6 +189,8 @@ public class ContentDetailActivity extends BaseActivity implements
     private boolean isDownloadStop = false;
     /** コンテンツ詳細フラグメントファクトリー.*/
     private DtvContentsDetailFragmentFactory mFragmentFactory = null;
+    /** ビューページャアダプター.*/
+    private ContentsDetailPagerAdapter contentsDetailPagerAdapter;
     /**購入済みVODレスポンス.*/
     private PurchasedVodListResponse response = null;
     /** タブー名.*/
@@ -227,9 +229,6 @@ public class ContentDetailActivity extends BaseActivity implements
     private int mDateIndex = 0;
     /** 日付リスト.*/
     private String[] dateList = null;
-    /** Vodかどうかフラグ.*/
-    private boolean isVod = false;
-
     /* コンテンツ詳細 end */
 
     /**DTVバージョン.*/
@@ -1582,44 +1581,37 @@ public class ContentDetailActivity extends BaseActivity implements
             mDetailData = mIntent.getParcelableExtra(PLALA_INFO_BUNDLE_KEY);
         }
         if (mIsOtherService) {
-            // コンテンツ詳細(他サービスの時は、タブ一つに設定する)
-            mTabNames = getResources().getStringArray(R.array.other_service_contents_detail_tabs);
             String date = "";
             ContentUtils.ContentsType contentsType = ContentUtils.
                     getContentsTypeByRecommend(mDetailData.getServiceId(), mDetailData.getCategoryId());
             if (contentsType == ContentUtils.ContentsType.TV) {
                 //番組(m/d（曜日）h:ii - h:ii)
                 date = DateUtils.getContentsDateString(mDetailData.getmStartDate(), mDetailData.getmEndDate());
-            } else if (contentsType == ContentUtils.ContentsType.VOD) {
-                if (DateUtils.isBefore(mDetailData.getmStartDate())) {
-                    //配信前 m/d（曜日）から
-                    date = DateUtils.getContentsDateString(this, mDetailData.getmStartDate(), true);
-                } else {
-                    //VOD(m/d（曜日）まで)
-                    if (DateUtils.isIn31Day(mDetailData.getmEndDate())) {
-                        date = DateUtils.getContentsDetailVodDate(this, mDetailData.getmEndDate());
+                // コンテンツ詳細(TVの場合は、チャンネルタブを追加設定する)
+                mTabNames = getResources().getStringArray(R.array.contents_detail_tabs_tv_ch);
+            } else {
+                if (contentsType == ContentUtils.ContentsType.VOD) {
+                    if (DateUtils.isBefore(mDetailData.getmStartDate())) {
+                        //配信前 m/d（曜日）から
+                        date = DateUtils.getContentsDateString(this, mDetailData.getmStartDate(), true);
+                    } else {
+                        //VOD(m/d（曜日）まで)
+                        if (DateUtils.isIn31Day(mDetailData.getmEndDate())) {
+                            date = DateUtils.getContentsDetailVodDate(this, mDetailData.getmEndDate());
+                        }
                     }
                 }
+                // コンテンツ詳細(VODの場合、タブ一つに設定する)
+                mTabNames = getResources().getStringArray(R.array.contents_detail_tab_vod);
             }
             mDetailData.setChannelDate(date);
         } else {
-            if (mDetailData != null && DTV_FLAG_ONE.equals(mDetailData.getDtv())) {
-                if (VIDEO_SERIES.equals(mDetailData.getDispType()) || VIDEO_PROGRAM.equals(mDetailData.getDispType())) {
-                    // VOD
-                    isVod = true;
-                    mTabNames = getResources().getStringArray(R.array.video_contents_detail_tabs);
-                } else {
-                    // コンテンツ詳細(他サービスの時は、タブ一つに設定する)
-                    mTabNames = getResources().getStringArray(R.array.other_contents_detail_tabs);
-                }
-            } else {
-                // コンテンツ詳細(他サービスの時は、タブ一つに設定する)
-                mTabNames = getResources().getStringArray(R.array.other_contents_detail_tabs);
-            }
+            // ディフォルトはチャンネルタブを付いて、コールバック来たら、再設定
+            mTabNames = getResources().getStringArray(R.array.contents_detail_tabs_tv_ch);
         }
 
         mFragmentFactory = new DtvContentsDetailFragmentFactory();
-        ContentsDetailPagerAdapter contentsDetailPagerAdapter
+        contentsDetailPagerAdapter
                 = new ContentsDetailPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(contentsDetailPagerAdapter);
         mViewPager.addOnPageChangeListener(new ViewPager
@@ -1630,9 +1622,6 @@ public class ContentDetailActivity extends BaseActivity implements
                 super.onPageSelected(position);
                 mTabLayout.setTab(position);
                 if (position == 1) {
-                    if (isVod) {
-                        return;
-                    }
                     getChannelFragment().initLoad();
                 }
                 loadHandler.postDelayed(loadRunnable, 1200);
@@ -2073,6 +2062,17 @@ public class ContentDetailActivity extends BaseActivity implements
         mRecordingReservationContentsDetailInfo.setEventId(mDetailFullData.getmEvent_id());
         detailFragment.setRecordingReservationIconListener(this);
     }
+
+    /**
+     * ビューページャの再設定.
+     */
+    private void setViewPagerTab() {
+        mTabNames = getResources().getStringArray(R.array.contents_detail_tab_vod);
+        mTabLayout.resetTabView(mTabNames);
+        mFragmentFactory.delFragment();
+        mViewPager.addOnPageChangeListener(null);
+        contentsDetailPagerAdapter.notifyDataSetChanged();
+    }
     //region ContentsDetailDataProvider.ApiDataProviderCallback
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     @Override
@@ -2135,6 +2135,7 @@ public class ContentDetailActivity extends BaseActivity implements
                 //番組(m/d（曜日）h:ii - h:ii)
                 date = DateUtils.getContentsDateString(mDetailFullData.getPublish_start_date(), mDetailFullData.getPublish_end_date());
             } else {
+                setViewPagerTab();
                 if (DateUtils.isBefore(mDetailFullData.getAvail_start_date())) {
                     //配信前 m/d（曜日）から
                     date = DateUtils.getContentsDateString(this, mDetailFullData.getAvail_start_date(), true);
@@ -2221,7 +2222,8 @@ public class ContentDetailActivity extends BaseActivity implements
                     setStartRemoteControllerUIListener(this);
                 }
             }
-        } else { // if (contentsDetailInfo != null && contentsDetailInfo.size() > 0) {
+        } else {
+            setViewPagerTab();
             showErrorDialog(ErrorType.contentDetailGet);
             // 他サービス
             if (!mIsOtherService) {

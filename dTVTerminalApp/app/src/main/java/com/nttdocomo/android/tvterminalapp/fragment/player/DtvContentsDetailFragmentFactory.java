@@ -7,12 +7,23 @@ import android.support.v4.app.Fragment;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * DTVコンテンツ詳細フラグメントファクトリー.
  */
 public class DtvContentsDetailFragmentFactory {
     /**フラグメント初期化.*/
-    private final Fragment[] mFragments = new Fragment[2];
+    private final List<Fragment> mFragments = new ArrayList<>();
+
+    /**
+     * コントラクター.
+     */
+    public DtvContentsDetailFragmentFactory() {
+        mFragments.add(null);
+        mFragments.add(null);
+    }
 
     /**
      * フラグメントクラスの生成、取得.
@@ -22,15 +33,25 @@ public class DtvContentsDetailFragmentFactory {
      */
     public Fragment createFragment(final int position) {
         DTVTLogger.start();
-        Fragment fragment = mFragments[position];
+        Fragment fragment = null;
+        if (mFragments.size() > position) {
+            fragment = mFragments.get(position);
+        }
         if (fragment == null) {
             if (position == 0) {
                 fragment = new DtvContentsDetailFragment();
             } else {
                 fragment = new DtvContentsChannelFragment();
             }
-            mFragments[position] = fragment;
+            mFragments.add(position, fragment);
         }
         return fragment;
+    }
+
+    /**
+     * フラグメントクラスの削除.
+     */
+    public void delFragment() {
+        mFragments.remove(mFragments.size() - 1);
     }
 }
