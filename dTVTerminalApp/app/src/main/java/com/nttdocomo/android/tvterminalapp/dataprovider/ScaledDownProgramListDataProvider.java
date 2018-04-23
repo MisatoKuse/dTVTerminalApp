@@ -311,8 +311,6 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     public void onChannelJsonParsed(final List<ChannelList> channelLists) {
         ArrayList<ChannelInfo> channels = null;
         if (channelLists != null) {
-            DateUtils dateUtils = new DateUtils(mContext);
-            dateUtils.addLastProgramDate(DateUtils.TVSCHEDULE_LAST_UPDATE);
             mChannelList = channelLists.get(0);
             List<HashMap<String, String>> channelList = mChannelList.getChannelList();
 
