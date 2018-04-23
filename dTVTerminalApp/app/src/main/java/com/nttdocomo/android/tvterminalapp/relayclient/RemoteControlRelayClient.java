@@ -835,7 +835,7 @@ public class RemoteControlRelayClient {
      */
     public boolean startApplicationHikariTvCategoryTerrestrialDigitalRequest(final String chno,
                                                                              final Context context) {
-        return mIsCancel && startApplicationHikariTvCategoryRequest(
+        return startApplicationHikariTvCategoryRequest(
                 H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_TERRESTRIAL_DIGITAL, context, setCommandArgumentServiceRef(chno));
     }
 
@@ -850,7 +850,7 @@ public class RemoteControlRelayClient {
      */
     public boolean startApplicationHikariTvCategorySatelliteBsRequest(final String chno,
                                                                       final Context context) {
-        return mIsCancel && startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_SATELLITE_BS,
+        return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_SATELLITE_BS,
                 context, setCommandArgumentServiceRef(chno));
     }
 
@@ -865,7 +865,7 @@ public class RemoteControlRelayClient {
      */
     public boolean startApplicationHikariTvCategoryIptvRequest(final String chno,
                                                                final Context context) {
-        return mIsCancel && startApplicationHikariTvCategoryRequest(
+        return startApplicationHikariTvCategoryRequest(
                 H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_IPTV, context, setCommandArgumentServiceRef(chno));
     }
 
@@ -894,7 +894,7 @@ public class RemoteControlRelayClient {
     public boolean startApplicationHikariTvCategoryHikaritvVodRequest(final String licenseId,
                                                                       final String cid, final String crid,
                                                                       final Context context) {
-        return mIsCancel && startApplicationHikariTvCategoryRequest(
+        return startApplicationHikariTvCategoryRequest(
                 H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_HIKARITV_VOD,
                 context, rfc3986UrlEncode(licenseId), rfc3986UrlEncode(cid), rfc3986UrlEncode(crid));
     }
@@ -910,7 +910,7 @@ public class RemoteControlRelayClient {
      */
     public boolean startApplicationHikariTvCategoryDtvchannelBroadcastRequest(final String chno,
                                                                               final Context context) {
-        return mIsCancel && startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_BROADCAST,
+        return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_BROADCAST,
                 context, chno);
     }
 
@@ -925,7 +925,7 @@ public class RemoteControlRelayClient {
      */
     public boolean startApplicationHikariTvCategoryDtvchannelMissedRequest(final String tvCid,
                                                                            final Context context) {
-        return mIsCancel && startApplicationHikariTvCategoryRequest(
+        return startApplicationHikariTvCategoryRequest(
                 H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_MISSED, context, rfc3986UrlEncode(tvCid));
     }
 
@@ -940,7 +940,7 @@ public class RemoteControlRelayClient {
      */
     public boolean startApplicationHikariTvCategoryDtvchannelRelationRequest(final String tvCid,
                                                                              final Context context) {
-        return mIsCancel && startApplicationHikariTvCategoryRequest(
+        return startApplicationHikariTvCategoryRequest(
                 H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_RELATION, context, rfc3986UrlEncode(tvCid));
     }
 
@@ -954,7 +954,7 @@ public class RemoteControlRelayClient {
      * @return リクエスト成否
      */
     public boolean startApplicationHikariTvCategoryDtvVodRequest(final String episodeId, final Context context) {
-        return mIsCancel && startApplicationHikariTvCategoryRequest(
+        return startApplicationHikariTvCategoryRequest(
                 H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_VOD, context, rfc3986UrlEncode(episodeId));
     }
 
@@ -968,7 +968,7 @@ public class RemoteControlRelayClient {
      * @return リクエスト成否
      */
     public boolean startApplicationHikariTvCategoryDtvSvodRequest(final String crid, final Context context) {
-        return mIsCancel && startApplicationHikariTvCategoryRequest(
+        return startApplicationHikariTvCategoryRequest(
                 H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_SVOD, context, rfc3986UrlEncode(crid));
     }
 
