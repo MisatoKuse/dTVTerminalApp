@@ -269,7 +269,7 @@ public class ContentDetailActivity extends BaseActivity implements
     /*dTVチャンネル起動*/
 
     /*ひかりTV起動*/
-    /*他サービス起動リクエストコード.*/
+    /**他サービス起動リクエストコード.*/
     private static final int START_APPLICATION_REQUEST_CODE = 0;
     /**
      * カテゴリID(01).
@@ -2357,7 +2357,7 @@ public class ContentDetailActivity extends BaseActivity implements
                                 contentsData.setContentsId(scheduleInfo.getCrId());
                                 contentsData.setRequestData(scheduleInfo.getClipRequestData());
                                 contentsData.setThumURL(scheduleInfo.getImageUrl());
-                                contentsData.setTime(scheduleInfo.getStartTime().substring(11, 16));
+                                contentsData.setTime(DateUtils.getContentsDetailChannelHmm(scheduleInfo.getStartTime()));
                                 contentsData.setClipExec(scheduleInfo.isClipExec());
                                 channelFragment.mContentsData.add(contentsData);
                             }

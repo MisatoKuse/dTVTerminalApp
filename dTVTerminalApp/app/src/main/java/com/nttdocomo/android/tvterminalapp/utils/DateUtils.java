@@ -202,21 +202,6 @@ public class DateUtils {
     /**
      * 日付フォーマット.
      */
-    public static final String DATE_Y = "年";
-
-    /**
-     * 日付フォーマット.
-     */
-    public static final String DATE_M = "月";
-
-    /**
-     * 日付フォーマット.
-     */
-    public static final String DATE_D = "日";
-
-    /**
-     * 日付フォーマット.
-     */
     public static final String DATE_STANDARD_START = "04:00:00";
 
     /**
@@ -985,6 +970,27 @@ public class DateUtils {
         int hour = cal.get(Calendar.HOUR_OF_DAY);
         int min = cal.get(Calendar.MINUTE);
         return String.format(Locale.getDefault(), "%d:%02d", hour, min);
+    }
+
+    /**
+     * 詳細画面のチャンネルタブでの時間を取得.
+     *
+     * @param date 日付
+     */
+    public static String getContentsDetailChannelHmm(final String date) {
+        String result = "";
+        if (!TextUtils.isEmpty(date)) {
+            SimpleDateFormat format = new SimpleDateFormat(DATE_PATTERN, Locale.JAPAN);
+            try {
+                Date resultDate = format.parse(date);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(resultDate);
+                result = getHmm(cal);
+            } catch (ParseException e) {
+                DTVTLogger.debug(e);
+            }
+        }
+        return result;
     }
 
     /**
