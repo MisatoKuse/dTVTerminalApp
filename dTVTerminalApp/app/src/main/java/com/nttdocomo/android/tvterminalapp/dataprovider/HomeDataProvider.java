@@ -691,7 +691,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param list クリップ[テレビ]リスト
      */
     private void sendTvClipListData(final List<Map<String, String>> list) {
-        mApiDataProviderCallback.tvClipListCallback(setHomeContentData(list, false));
+        mApiDataProviderCallback.tvClipListCallback(setChannelName(setHomeContentData(list, false), mChannelList, true));
     }
 
     /**
@@ -1591,6 +1591,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param apiIndex API区別インデックス
      * @return エラーメッセージ
      */
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     public ErrorState getError(final int apiIndex) {
         ErrorState errorState = null;
         switch (apiIndex) {

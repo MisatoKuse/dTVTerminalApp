@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -15,6 +16,8 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvClipList;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
@@ -28,15 +31,21 @@ import java.util.Map;
 /**
  * クリップ(TV)用データプロバイダ.
  */
-public class TvClipDataProvider extends ClipKeyListDataProvider implements TvClipWebClient.TvClipJsonParserCallback {
+public class TvClipDataProvider extends ClipKeyListDataProvider
+        implements TvClipWebClient.TvClipJsonParserCallback,
+        ScaledDownProgramListDataProvider.ApiDataProviderCallback {
     /**
      * コンテキスト.
      */
     private Context mContext;
     /**
-     * クリップリスト.
+     * クリップリスト(Map).
      */
-    private TvClipList mClipList = null;
+    private List<Map<String, String>> mClipMapList = null;
+    /**
+     * チャンネル情報.
+     */
+    private ArrayList<ChannelInfo> mChannels = null;
 
     /**
      * callback.
@@ -56,6 +65,10 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
      */
     private ClipKeyListDataProvider mClipKeyListDataProvider = null;
     /**
+     * チャンネルプロバイダー.
+     */
+    private ScaledDownProgramListDataProvider mScaledDownProgramListDataProvider = null;
+    /**
      * ネットワークエラーの控え.
      */
     private ErrorState mNetworkError = null;
@@ -63,15 +76,14 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
     @Override
     public void onTvClipJsonParsed(final List<TvClipList> tvClipLists) {
         if (tvClipLists != null) {
-            List vclist = tvClipLists.get(0).getVcList();
-            if (vclist != null) {
-                    TvClipList list = tvClipLists.get(0);
+            mClipMapList = tvClipLists.get(0).getVcList();
+            if (mClipMapList != null) {
                     if (!mRequiredClipKeyList
                             || mResponseEndFlag) {
-                        sendTvClipListData(list.getVcList());
+                        sendTvClipListData(mClipMapList, mChannels);
                     } else {
-                        mClipList = list;
-                        sendTvClipListData(list.getVcList());
+                        //TODO ClipKeyListDataProviderの不具合により、クリップキーリストのコールバックが取得できないための暫定対応
+                        sendTvClipListData(mClipMapList, mChannels);
                     }
             } else {
                 if (null != apiDataProviderCallback) {
@@ -92,12 +104,25 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
     }
 
     @Override
+    public void channelInfoCallback(ChannelInfoList channelsInfo) {
+        //NOP
+    }
+
+    @Override
+    public void channelListCallback(ArrayList<ChannelInfo> channels) {
+        this.mChannels = channels;
+        if (mClipMapList != null) {
+            sendTvClipListData(mClipMapList, mChannels);
+        }
+    }
+
+    @Override
     public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
         super.onTvClipKeyListJsonParsed(clipKeyListResponse);
         // コールバック判定
-        if (mClipList != null) {
-            sendTvClipListData(mClipList.getVcList());
+        if (mClipMapList != null) {
+            sendTvClipListData(mClipMapList, mChannels);
         }
         DTVTLogger.end();
     }
@@ -131,7 +156,6 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
      * @param pagerOffset ページオフセット
      */
     public void getClipData(final int pagerOffset) {
-        mClipList = null;
         if (!mIsCancel) {
             // クリップキー一覧を取得
             if (mRequiredClipKeyList) {
@@ -148,12 +172,27 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
     }
 
     /**
+     * チャンネル情報取得.
+     */
+    private void getChannelList() {
+        // チャンネル情報を取得
+        if (mScaledDownProgramListDataProvider == null) {
+            mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(mContext, this);
+        }
+        mScaledDownProgramListDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_ALL);
+    }
+
+    /**
      * TvクリップリストをActivityに送る.
      *
      * @param list Tvクリップリスト
      */
-    private void sendTvClipListData(final List<Map<String, String>> list) {
-        apiDataProviderCallback.tvClipListCallback(setClipContentData(list));
+    private void sendTvClipListData(final List<Map<String, String>> list, final ArrayList<ChannelInfo> channels) {
+        if (channels != null) {
+            apiDataProviderCallback.tvClipListCallback(setClipContentData(list, channels));
+        } else {
+            getChannelList();
+        }
     }
 
     /**
@@ -163,7 +202,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
      * @return ListView表示用データ
      */
     @SuppressWarnings("OverlyLongMethod")
-    private List<ContentsData> setClipContentData(final List<Map<String, String>> clipMapList) {
+    private List<ContentsData> setClipContentData(final List<Map<String, String>> clipMapList, final ArrayList<ChannelInfo> channels) {
         List<ContentsData> contentsDataList = new ArrayList<>();
 
         ContentsData contentInfo;
@@ -179,6 +218,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
             String dispType = map.get(JsonConstants.META_RESPONSE_DISP_TYPE);
             String dtv = map.get(JsonConstants.META_RESPONSE_DTV);
             String dtvType = map.get(JsonConstants.META_RESPONSE_DTV_TYPE);
+            String chNo = map.get(JsonConstants.META_RESPONSE_CHNO);
 
             contentInfo.setRank(String.valueOf(i + 1));
             contentInfo.setThumURL(map.get(JsonConstants.META_RESPONSE_THUMB_448));
@@ -200,6 +240,14 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
             contentInfo.setAvailEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
             contentInfo.setVodStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_START_DATE)));
             contentInfo.setVodEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_END_DATE)));
+            if (channels != null && !TextUtils.isEmpty(chNo)) {
+                for (ChannelInfo channelInfo : channels) {
+                    if (chNo.equals(String.valueOf(channelInfo.getChNo()))) {
+                        contentInfo.setChannelName(channelInfo.getTitle());
+                        break;
+                    }
+                }
+            }
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
             requestData.setCrid(map.get(JsonConstants.META_RESPONSE_CRID));

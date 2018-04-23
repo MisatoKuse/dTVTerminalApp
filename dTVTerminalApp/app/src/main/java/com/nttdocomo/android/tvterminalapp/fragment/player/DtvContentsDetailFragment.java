@@ -299,6 +299,7 @@ public class DtvContentsDetailFragment extends Fragment {
         }
         //チャンネル名
         if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelName())) {
+            mTxtChannelName.setVisibility(View.VISIBLE);
             mTxtChannelName.setText(mOtherContentsDetailData.getChannelName());
         } else {
             mTxtChannelName.setVisibility(View.GONE);
@@ -541,6 +542,7 @@ public class DtvContentsDetailFragment extends Fragment {
      */
     public void refreshChannelInfo() {
         if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelName())) {
+            mTxtChannelName.setVisibility(View.VISIBLE);
             mTxtChannelName.setText(mOtherContentsDetailData.getChannelName());
         }
     }
