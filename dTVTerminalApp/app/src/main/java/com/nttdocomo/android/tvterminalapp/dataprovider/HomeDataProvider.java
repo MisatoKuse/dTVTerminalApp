@@ -376,8 +376,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     public void onChannelJsonParsed(final List<ChannelList> channelLists) {
         DTVTLogger.start();
         if (channelLists != null && channelLists.size() > 0) {
-            DateUtils dateUtils = new DateUtils(mContext);
-            dateUtils.addLastDate(DateUtils.CHANNEL_LAST_UPDATE);
             ChannelList list = channelLists.get(0);
             setStructDB(list);
         } else {
