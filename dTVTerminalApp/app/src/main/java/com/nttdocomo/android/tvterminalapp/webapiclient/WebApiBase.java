@@ -125,7 +125,7 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
      */
     public ErrorState getError() {
         //エラー情報の有無を判定
-        if(mHttpThread != null && mHttpThread.getError() != null) {
+        if (mHttpThread != null && mHttpThread.getError() != null) {
             //エラー情報があるならば横流しする
             return mHttpThread.getError();
         } else {
@@ -139,7 +139,7 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
      *
      * @param errorCode エラーコード
      */
-    public void setErrorCode(String errorCode) {
+    public void setErrorCode(final String errorCode) {
         mHttpThread.setErrorCode(errorCode);
     }
 

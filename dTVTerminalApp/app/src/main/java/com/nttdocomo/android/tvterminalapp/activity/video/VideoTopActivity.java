@@ -43,8 +43,7 @@ public class VideoTopActivity extends BaseActivity implements
         AdapterView.OnItemClickListener,
 
         GenreListDataProvider.ApiDataProviderCallback,
-        GenreListDataProvider.GenreListMapCallback
-{
+        GenreListDataProvider.GenreListMapCallback {
     // region variable
     // view
     /** ビデオジャンルのListView. **/
@@ -58,17 +57,20 @@ public class VideoTopActivity extends BaseActivity implements
     private TextView mNoDataMessage;
 
     // data
+    /**ビデオジャンルデータプロバイダ.*/
     private GenreListDataProvider mVideoGenreProvider = null;
+    /**ビデオジャンルアダプター.*/
     private VideoGenreAdapter mVideoGenreAdapter;
-
+    /**ビデオジャンル一覧データ情報.*/
     private VideoGenreListDataInfo mVideoGenreListDataInfo = null;
-
+    /**ビデオ＞ジャンル/サブジャンル一覧.*/
     private List<VideoGenreList> mContentsList;
+    /**メニューから起動フラグ.*/
     private Boolean mIsMenuLaunch = false;
-
+    /**リスト表示データ.*/
     private List<VideoGenreList> mShowContentsList = null;
 
-    // ジャンルIDのIntent KEY
+    /**ジャンルIDのIntent KEY.*/
     private static final String VIDEO_GENRE_ID_BUNDLE_KEY = "videoContentKey";
     // endregion variable
 
@@ -257,7 +259,7 @@ public class VideoTopActivity extends BaseActivity implements
             mShowContentsList.add(0, videoGenreList);
         }
 
-        if (0 == mShowContentsList.size()) {//コンテンツ0件表示
+        if (0 == mShowContentsList.size()) { //コンテンツ0件表示
             mNoDataMessage.setVisibility(View.VISIBLE);
             return;
         }
@@ -296,7 +298,7 @@ public class VideoTopActivity extends BaseActivity implements
                     && !GenreListMetaData.VIDEO_LIST_GENRE_ID_ALL_CONTENTS.equals(genreId)) {
                 requestGenreIdList.add(genreId);
             }
-        }///
+        } ///
         // 現在表示中の項目のコンテンツ数の取得要求を行う
         mVideoGenreProvider.getContentCountListData(requestGenreIdList);
         DTVTLogger.end();
@@ -355,6 +357,10 @@ public class VideoTopActivity extends BaseActivity implements
 
         DTVTLogger.end();
     }
+
+    /**
+     * エラーダイアログ表示.
+     */
     private void showError() {
         ErrorState errorState = mVideoGenreProvider.getGenreListError();
         if (errorState == null || TextUtils.isEmpty(errorState.getErrorMessage())) {
@@ -365,11 +371,16 @@ public class VideoTopActivity extends BaseActivity implements
     }
     // endregion private mehtod
 
+    /**
+     * 表示中のコンテンツ数を設定.
+     * @param genreList genreList
+     * @return 表示中のコンテンツ数
+     */
     private int generateShowContentsList(@NonNull final List<GenreCountGetMetaData> genreList) {
         int retVal = 0;
-        for(VideoGenreList videoGenreList: mShowContentsList) {
-            for(GenreCountGetMetaData metaData: genreList) {
-                if(videoGenreList.getGenreId().equals(metaData.getGenreId())
+        for (VideoGenreList videoGenreList: mShowContentsList) {
+            for (GenreCountGetMetaData metaData: genreList) {
+                if (videoGenreList.getGenreId().equals(metaData.getGenreId())
                         && metaData.getCount() > 0) { // 表示中の項目とジャンルIDが一致するものにコンテンツ数を設定する
                     final int contentCount =  metaData.getCount();
                     videoGenreList.setContentCount(String.valueOf(contentCount));
@@ -395,7 +406,7 @@ public class VideoTopActivity extends BaseActivity implements
                 VideoGenreList list = iterator.next();
                 if (GenreListMetaData.VIDEO_LIST_GENRE_ID_ALL_CONTENTS.equals(list.getGenreId())
                         || GenreListMetaData.VIDEO_LIST_GENRE_ID_NOD.equals(list.getGenreId())
-                        || GenreListMetaData.VIDEO_LIST_GENRE_ID_DTV.equals(list.getGenreId()) ) {
+                        || GenreListMetaData.VIDEO_LIST_GENRE_ID_DTV.equals(list.getGenreId())) {
                     continue;
                 }
                 iterator.remove();
@@ -406,7 +417,7 @@ public class VideoTopActivity extends BaseActivity implements
                 VideoGenreList list = iterator.next();
                 if (GenreListMetaData.VIDEO_LIST_GENRE_ID_ALL_CONTENTS.equals(list.getGenreId())
                         || GenreListMetaData.VIDEO_LIST_GENRE_ID_NOD.equals(list.getGenreId())
-                        || GenreListMetaData.VIDEO_LIST_GENRE_ID_DTV.equals(list.getGenreId()) ) {
+                        || GenreListMetaData.VIDEO_LIST_GENRE_ID_DTV.equals(list.getGenreId())) {
                     continue;
                 }
                 if (list.getContentCount() == null

@@ -4,7 +4,13 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
-
+/**
+ * WebApiコールバック.
+ */
 public interface WebApiCallback {
+        /**
+         * 処理完了コールバック.
+         * @param responseData レスポンスデータ
+         */
         void onFinish(String responseData);
 }

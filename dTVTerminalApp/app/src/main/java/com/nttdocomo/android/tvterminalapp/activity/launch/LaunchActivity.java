@@ -119,7 +119,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
                 //10秒経過したので、状況を確認する
                 startActivityWait();
 
-                if(!isFinishing()) {
+                if (!isFinishing()) {
                     //終了していなければ、諦めて次の画面に遷移する
                     startActivity(mNextActivity);
                     finish();
@@ -129,7 +129,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
         //10秒を設定してタイマーを発動する
         mTimeoutHandler = new Handler();
-        mTimeoutHandler.postDelayed(mTimeoutRunnable,TIME_OUT_WAIT_TIME);
+        mTimeoutHandler.postDelayed(mTimeoutRunnable, TIME_OUT_WAIT_TIME);
     }
 
     /**
@@ -163,7 +163,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     }
 
     /**
-     * 通信可能になってから呼ばれる
+     * 通信可能になってから呼ばれる.
      */
     @Override
     protected void onReStartCommunication() {
@@ -176,7 +176,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
                 //2秒経過したので、状況を確認する
                 startActivityWait();
 
-                if(!isFinishing()) {
+                if (!isFinishing()) {
                     //終了していなければ、次の処理を行う
                     setTimeOut();
                 }
@@ -185,7 +185,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
         //最初の待ち時間の2秒を設定してタイマーを発動する
         mTimerHandler = new Handler();
-        mTimerHandler.postDelayed(mTimerRunnable,FIRST_WAIT_TIME);
+        mTimerHandler.postDelayed(mTimerRunnable, FIRST_WAIT_TIME);
     }
 
     @Override
@@ -193,14 +193,14 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         super.onStop();
 
         //終了体制確認
-        if(isFinishing()) {
+        if (isFinishing()) {
             //終了時にタイマーが残っているならば、解除する
-            if(mTimerHandler != null) {
+            if (mTimerHandler != null) {
                 mTimerHandler.removeCallbacks(mTimerRunnable);
                 mTimerRunnable = null;
                 mTimerHandler = null;
             }
-            if(mTimeoutHandler != null) {
+            if (mTimeoutHandler != null) {
                 mTimeoutHandler.removeCallbacks(mTimeoutRunnable);
                 mTimeoutRunnable = null;
                 mTimeoutHandler = null;
@@ -274,19 +274,19 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     void startActivityWait() {
 
         //dアカウントのダイアログ表示を次の画面に依頼するかを確認
-        if(mIsDAccountErrorNextAvctivity) {
+        if (mIsDAccountErrorNextAvctivity) {
             //次の画面にdアカウントエラーの表示を依頼する
-            mNextActivity.putExtra(SHOW_D_ACCOUNT_DIALOG,true);
+            mNextActivity.putExtra(SHOW_D_ACCOUNT_DIALOG, true);
         }
 
         //設定ファイルダイアログ表示を次の画面に依頼するかを確認
-        if(mIsSettingErrorNextAvctivity) {
+        if (mIsSettingErrorNextAvctivity) {
             //次の画面に設定画面エラーの表示を依頼する
-            mNextActivity.putExtra(SHOW_SETTING_FILE_DIALOG,true);
+            mNextActivity.putExtra(SHOW_SETTING_FILE_DIALOG, true);
             Bundle sendData = new Bundle();
             sendData.putSerializable(SHOW_SETTING_FILE_DIALOG_DATA,
                     mCheckSetting.getSettingData());
-            mNextActivity.putExtra(SHOW_SETTING_FILE_DIALOG_DATA,sendData);
+            mNextActivity.putExtra(SHOW_SETTING_FILE_DIALOG_DATA, sendData);
         }
 
         //dアカウントと設定ファイルの処理が既に終わっているかどうかを確認し、終わっていた場合は遷移する
@@ -338,7 +338,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         }
 
         //設定ファイルの処理が続行中か、そもそも実行されていなければ遷移不可
-        if((mCheckSetting != null && mCheckSetting.isBusy())
+        if ((mCheckSetting != null && mCheckSetting.isBusy())
                 || mCheckSetting == null) {
             return false;
         }
@@ -382,7 +382,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         super.daccountControlCallBack(result);
 
         //タイムアウトの待機中かどうかを見る
-        if(mTimeoutHandler != null) {
+        if (mTimeoutHandler != null) {
             //終了条件を満たしていた場合は次の画面に遷移する
             startActivityWait();
         }
@@ -402,25 +402,25 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         boolean noDialogSw = false;
 
         //スプラッシュ画面かどうかの確認
-        if(this instanceof LaunchActivity) {
+        if (this instanceof LaunchActivity) {
             //スプラッシュ画面ならばダイアログは表示しない
             noDialogSw = true;
         }
 
         //アプリ起動時か、BG→FG遷移時は設定ファイルの処理を呼び出す
-        mCheckSetting = new ProcessSettingFile(this,noDialogSw);
+        mCheckSetting = new ProcessSettingFile(this, noDialogSw);
 
         //ファイルのチェックを開始する
         mCheckSetting.controlAtSettingFile(
                 new ProcessSettingFile.ProcessSettingFileCallBack() {
             @Override
-            public void onCallBack(boolean dialogSw) {
-                if(dialogSw) {
+            public void onCallBack(final boolean dialogSw) {
+                if (dialogSw) {
                     //エラーがあったので、フラグをON
                     mIsSettingErrorNextAvctivity = true;
                 }
                 //タイムアウトの待機中かどうかを見る
-                if(mTimeoutHandler != null) {
+                if (mTimeoutHandler != null) {
                     //終了条件を満たしていた場合は次の画面に遷移する
                     startActivityWait();
                 }
@@ -431,7 +431,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     }
 
     /**
-     * ベースアクティビティのdアカウントエラー表示を置き換える
+     * ベースアクティビティのdアカウントエラー表示を置き換える.
      */
     @Override
     protected void showDAccountErrorDialog() {

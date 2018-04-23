@@ -20,42 +20,75 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-// Viewに長押しでクリックを繰り返す処理を追加する
+/**
+ * Viewに長押しでクリックを繰り返す処理を追加する.
+ */
 public class RemoteControllerSendKeyAction {
-
+    /**ハンドラー.*/
     private Handler mHandler = new Handler();
+    /**コンテキスト.*/
     private Context mContext = null;
+    /**RemoteControlRelayClientインタフェース.*/
     private RemoteControlRelayClient mRemoteControlRelayClient = null;
+    /**連続送信タイマークラスインタフェース.*/
     private RepeatStateManagement mRepeatStateManagement = null;
+    /**RemoteControllerChannelViewHolder.*/
     private RemoteControllerChannelViewHolder mChannelViewHolder = null;
+    /**RemoteControllerPlayerViewHolder.*/
     private RemoteControllerPlayerViewHolder mPlayerViewHolder = null;
+    /**View.*/
     private View mView;
-
+    /**SEND_KEYCODE_PARAM_ACTION_UP.*/
     private static final int SEND_KEYCODE_PARAM_ACTION_UP = 1;
+    /**SEND_KEYCODE_PARAM_ACTION_DOWN.*/
     private static final int SEND_KEYCODE_PARAM_ACTION_DOWN = 0;
 
+    /**
+     * タスクステータス.
+     */
     private enum RepeatTaskStatus {
+        /**初期状態.*/
         REPEAT_STATUS_DEFAULT, // 初期状態
+        /**実行待ち.*/
         REPEAT_STATUS_STAND_BY, // 実行待ち
+        /**起動中（初回起動待ち）.*/
         REPEAT_STATUS_DURING_STARTUP, // 起動中（初回起動待ち）
+        /**リピート処理実行.*/
         REPEAT_STATUS_EXECUTION, // リピート処理実行
     }
 
+    /**
+     * コンストラクタ.
+     * @param context コンテキスト.
+     */
     public RemoteControllerSendKeyAction(final Context context) {
         mContext = context;
         mRemoteControlRelayClient = RemoteControlRelayClient.getInstance();
     }
 
+    /**
+     * コンストラクタ.
+     * @param view  view
+     */
     public void initRemoteControllerPlayerView(final View view) {
         mView = view;
         mPlayerViewHolder = setPlayerViewHolder(new RemoteControllerPlayerViewHolder(), view);
     }
 
+    /**
+     * initRemoteControllerChannelView.
+     * @param view view
+     */
     public void initRemoteControllerChannelView(final View view) {
         mChannelViewHolder = setChannelViewHolder(new RemoteControllerChannelViewHolder(), view);
     }
 
-
+    /**
+     * チャンネルホルダー設定.
+     * @param cViewHolder RemoteControllerChannelViewHolder
+     * @param view  View
+     * @return cViewHolder
+     */
     private RemoteControllerChannelViewHolder setChannelViewHolder(RemoteControllerChannelViewHolder cViewHolder, final View view) {
         DTVTLogger.start();
         cViewHolder.remote_controller_iv_power = view.findViewById(R.id.remote_controller_iv_power);
@@ -85,6 +118,12 @@ public class RemoteControllerSendKeyAction {
         return cViewHolder;
     }
 
+    /**
+     * プレイヤービューホルダー設定.
+     * @param pViewHolder RemoteControllerPlayerViewHolder
+     * @param view View
+     * @return pViewHolder
+     */
     private RemoteControllerPlayerViewHolder setPlayerViewHolder(RemoteControllerPlayerViewHolder pViewHolder, final View view) {
         DTVTLogger.start("" + view.getId());
         pViewHolder.remote_controller_bt_record_list = view.findViewById(R.id.remote_controller_bt_record_list);
@@ -113,53 +152,89 @@ public class RemoteControllerSendKeyAction {
      */
     // プレイヤー操作UI
     private static class RemoteControllerPlayerViewHolder {
+        /**録画予約リスト.*/
         ImageView remote_controller_bt_record_list = null;
+        /**番組表.*/
         ImageView remote_controller_bt_tvprogram = null;
+        /**決定.*/
         ImageView remote_controller_bt_decide = null;
+        /**up.*/
         ImageView remote_controller_bt_up = null;
+        /**left.*/
         ImageView remote_controller_bt_left = null;
+        /**down .*/
         ImageView remote_controller_bt_down = null;
+        /**right .*/
         ImageView remote_controller_bt_right = null;
+        /**back.*/
         ImageView remote_controller_bt_back = null;
+        /**ホーム.*/
         ImageView remote_controller_bt_toHome = null;
+        /**プレイーまたはストップ.*/
         Button remote_controller_iv_playOrStop = null;
+        /**青.*/
         Button remote_controller_iv_blue = null;
+        /**赤.*/
         Button remote_controller_iv_red = null;
+        /**緑.*/
         Button remote_controller_iv_green = null;
+        /**黄.*/
         Button remote_controller_iv_yellow = null;
     }
 
-    // チャンネル操作UI
+    /**
+     * チャンネル操作UI.
+      */
     private static class RemoteControllerChannelViewHolder {
+        /**電源.*/
         ImageView remote_controller_iv_power = null;
+        /**地デジ.*/
         Button remote_controller_bt_degital = null;
+        /**BS.*/
         Button remote_controller_bt_bs = null;
+        /**専門Ch.*/
         Button remote_controller_bt_specialtychannel = null;
+        /**2.*/
         Button remote_controller_bt_two = null;
+        /**1.*/
         Button remote_controller_bt_one = null;
+        /**3.*/
         Button remote_controller_bt_three = null;
+        /**4.*/
         Button remote_controller_bt_four = null;
+        /**5.*/
         Button remote_controller_bt_five = null;
+        /**6.*/
         Button remote_controller_bt_six = null;
+        /**7.*/
         Button remote_controller_bt_seven = null;
+        /**8.*/
         Button remote_controller_bt_eight = null;
+        /**9.*/
         Button remote_controller_bt_nine = null;
+        /**10.*/
         Button remote_controller_bt_ten = null;
+        /**11.*/
         Button remote_controller_bt_eleven = null;
+        /**12.*/
         Button remote_controller_bt_twelve = null;
+        /**channel_plus.*/
         Button remote_controller_bt_channel_plus = null;
+        /**channel_minus.*/
         Button remote_controller_bt_channel_minus = null;
+        /**お知らせ.*/
         Button remote_controller_bt_notice = null;
+        /**dデータ.*/
         Button remote_controller_bt_ddata = null;
     }
 
     /**
      * リモコンUI（プレイヤー操作）の各ボタンにリスナーを設定.
      *
-     * @param pViewHolder
-     * @return
+     * @param pViewHolder RemoteControllerPlayerViewHolder
+     * @return pViewHolder
      */
-    private RemoteControllerPlayerViewHolder setRemoteControllerPlayerViewHolderListener(RemoteControllerPlayerViewHolder pViewHolder) {
+    private RemoteControllerPlayerViewHolder setRemoteControllerPlayerViewHolderListener(final RemoteControllerPlayerViewHolder pViewHolder) {
         DTVTLogger.start();
         pViewHolder.remote_controller_bt_record_list.setOnTouchListener(mListener);
         pViewHolder.remote_controller_bt_tvprogram.setOnTouchListener(mListener);
@@ -183,8 +258,8 @@ public class RemoteControllerSendKeyAction {
     /**
      * リモコンUI（チャンネル操作）の各ボタンにリスナーを設定.
      *
-     * @param cViewHolder
-     * @return
+     * @param cViewHolder RemoteControllerChannelViewHolder
+     * @return cViewHolder
      */
     private RemoteControllerChannelViewHolder setRemoteControllerChannelViewHolderListener(final RemoteControllerChannelViewHolder cViewHolder) {
         DTVTLogger.start();
@@ -213,7 +288,9 @@ public class RemoteControllerSendKeyAction {
         return cViewHolder;
     }
 
-    // OnTouchListener
+    /**
+     *  OnTouchListener.
+     */
     private View.OnTouchListener mListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(final View v, final MotionEvent event) {
@@ -234,7 +311,7 @@ public class RemoteControllerSendKeyAction {
                         mRepeatStateManagement.setRepeatTaskStatus(RepeatTaskStatus.REPEAT_STATUS_STAND_BY);
                         DTVTLogger.debug("sendKeyCode");
                     } else {
-                        // nop.
+                        DTVTLogger.debug("nop");
                     }
                     break;
                 case MotionEvent.ACTION_DOWN:
@@ -279,7 +356,9 @@ public class RemoteControllerSendKeyAction {
         }
     };
 
-    // selector画像名に対応する STBキーコード
+    /**
+     * selector画像名に対応する STBキーコード.
+     */
     private static final Map<Integer, int[]> keyDownUpSelector = new HashMap<Integer, int[]>() {
         {
             put(R.id.remote_controller_bt_up,
@@ -352,6 +431,11 @@ public class RemoteControllerSendKeyAction {
         }
     };
 
+    /**
+     * タッチリスナー設定.
+     * @param viewId  viewId
+     * @param isDown タッチされたか
+     */
     private void setTouchSelector(final int viewId, final boolean isDown) {
         int[] selectorPics = null;
         if (keyDownUpSelector.containsKey(viewId)) {
@@ -390,7 +474,10 @@ public class RemoteControllerSendKeyAction {
 
     /**
      * キーコードを送信する.
-     * @param viewId
+     * @param viewId viewId
+     * @param action アクション
+     * @param isCancelFlg キャンセルフラグ
+     * @param context コンテキスト
      */
     private void sendKeyCode(final int viewId, final int action, final boolean isCancelFlg, final Context context) {
         mRemoteControlRelayClient.sendKeycode(viewId, action, isCancelFlg, context);
@@ -401,19 +488,36 @@ public class RemoteControllerSendKeyAction {
      * 連続送信タイマークラス.
      */
     private class RepeatStateManagement extends Timer {
+        /**
+         * ハンドラー.
+         */
         private Handler mHandler = null;
-        // 状態管理変数
+        /**
+         * 状態管理変数.
+         */
         private RepeatTaskStatus mStatus = RepeatTaskStatus.REPEAT_STATUS_DEFAULT;
         /**
-         * リピート中のButtonID
+         * リピート中のButtonID.
          */
         private int mRepeatButtonId;
+        /**
+         * タイマー.
+         */
         private TimerTask mTimerTask = null;
-        // 実行間隔
+        /**
+         * 実行間隔.
+         */
         private long EXECUTION_INTERVAL = 50;
+        /**
+         * 遅延時間.
+         */
         private long DELAY_TIME = 500;
 
-
+        /**
+         * コンストラクタ.
+         * @param handler Handler
+         * @param buttonId リピート中のButtonID
+         */
         RepeatStateManagement(final Handler handler, final int buttonId) {
             mHandler = handler;
             mRepeatButtonId = buttonId;
@@ -422,7 +526,7 @@ public class RemoteControllerSendKeyAction {
         /**
          * タイマータスクの状態を設定.
          *
-         * @param status
+         * @param status ステータス
          */
         private void setRepeatTaskStatus(final RepeatTaskStatus status) {
             mStatus = status;
@@ -464,6 +568,7 @@ public class RemoteControllerSendKeyAction {
 
         /**
          * ボタンのViewIdを設定.
+         * @param viewId viewId
          */
         private void setRepeatButtonId(final int viewId) {
             mRepeatButtonId = viewId;
