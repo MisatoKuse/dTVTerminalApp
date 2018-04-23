@@ -66,13 +66,13 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
      */
     public static final String AIRTIME = "airtime";
 
-    //ホーム画面用最大件数（レコメンド情報の先読み分を含むので、100件に増加）.
+    /**ホーム画面用最大件数（レコメンド情報の先読み分を含むので、100件に増加）.*/
     public static final String HOME_PAGE_MAX = "100&";
 
-    //ホーム画面用開始位置.
+    /**ホーム画面用開始位置..*/
     public static final String HOME_PAGE_START = "1&";
 
-    //ページID. TODO: 現在はダミーの値
+    /**ページID. .*/ //TODO : 現在はダミーの値
     public static final String USE_PAGE_ID = "0";
 
     /**
@@ -80,7 +80,14 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
      */
     private boolean mIsCancel = false;
 
+    /**
+     * レコメンド用コールバック.
+     */
     public interface RecommendCallback {
+        /**
+         * コールバック.
+         * @param mRecommendChList mRecommendChList
+         */
         void recommendCallback(RecommendChList mRecommendChList);
     }
 

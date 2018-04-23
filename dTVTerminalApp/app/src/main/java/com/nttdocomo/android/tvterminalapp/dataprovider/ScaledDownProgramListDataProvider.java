@@ -298,7 +298,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 resultSet = new ArrayList<>();
                 // 番組データがある場合はダミーで1件の結果セットを返す
                 if (mResultSets != null && mResultSets.size() > 0) {
-                    resultSet.add(new HashMap<String, String>(){{put("","");}});
+                    resultSet.add(new HashMap<String, String>() {{ put("", ""); }});
                 }
                 break;
             default:
@@ -397,6 +397,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         if (vodClipKeyListResponse) {
             if (null != mApiDataProviderCallback) {
 //                mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
+                DTVTLogger.debug("null != mApiDataProviderCallback");
             }
         } else {
             tvClipKeyListResponse = true;
@@ -409,6 +410,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         if (tvClipKeyListResponse) {
             if (null != mApiDataProviderCallback) {
 //                mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
+                DTVTLogger.debug("null != mApiDataProviderCallback");
             }
         } else {
             vodClipKeyListResponse = true;
@@ -420,6 +422,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      *
      * @param hashMap 番組情報
      * @param channelsInfo チャンネル情報
+     * @param userState ユーザー状態
      */
     private void setScheduleInfo(final Map<String, String> hashMap, final ChannelInfoList channelsInfo, final UserState userState) {
         ScheduleInfo mSchedule = convertScheduleInfo(hashMap, userState);
@@ -638,7 +641,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 t.start();
             } catch (IllegalThreadStateException e) {
                 DTVTLogger.debug(e);
-                //TODO:エラー返却した上でUI上に通知が必要
+                //TODO　:エラー返却した上でUI上に通知が必要
             }
         } else {
             if (!isStop) {

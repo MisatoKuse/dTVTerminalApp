@@ -274,8 +274,8 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             //通信エラーなので、DBのテーブルの存在を確認する
             boolean isContentsListPerGenreData = DBUtils.isCachingRecord(
                     mContext, DBConstants.RANKING_VIDEO_LIST_TABLE_NAME);
-            DTVTLogger.debug(DBConstants.RANKING_VIDEO_LIST_TABLE_NAME + " = " +
-                    isContentsListPerGenreData);
+            DTVTLogger.debug(DBConstants.RANKING_VIDEO_LIST_TABLE_NAME + " = "
+                    + isContentsListPerGenreData);
             //ここにたどり着いたならば、DB上のデータは存在しないか期限切れとなる。
             if (mIsContentsListPerGenreWebApiError && !isContentsListPerGenreData) {
                 // 通信に失敗し、DBにデータが存在しなければ、ネットワークエラーを取得する
@@ -520,6 +520,10 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
          */
         void onWeeklyRankListCallback(List<ContentsData> contentsDataList);
     }
+
+    /**
+     * ビデオランキング用コールバック.
+     */
     public interface VideoRankingApiDataProviderCallback {
         /**
          * ジャンル系のコールバック.
@@ -863,7 +867,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                         UPPER_PAGE_LIMIT, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, genreId, sort, this)) {
                     if (mApiDataProviderCallback != null) {
                         mApiDataProviderCallback.videoRankCallback(null);
-                    } else if(mVideoRankingApiDataProviderCallback != null) {
+                    } else if (mVideoRankingApiDataProviderCallback != null) {
                         mVideoRankingApiDataProviderCallback.onVideoRankListCallback(null);
                     }
                 }

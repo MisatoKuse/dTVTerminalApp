@@ -558,7 +558,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         getVideoRankListData(UPPER_PAGE_LIMIT, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, "",
                 JsonConstants.GENRE_PER_CONTENTS_SORT_PLAY_COUNT_DESC);
 
-        //TODO:生データ保存のみ(DB保存までの処理を新設するか検討中)
+        //TODO :生データ保存のみ(DB保存までの処理を新設するか検討中)
         //ジャンルID(ビデオ一覧)一覧取得
         getGenreListDataRequest();
 
@@ -1065,7 +1065,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 DTVTLogger.error("RentalChListWebClient is stopping connect");
             }
         }
-        //TODO:Homeでこのデータを使用する場合はオフライン時等にキャッシュ取得等の対応が必要
+        //TODO :Homeでこのデータを使用する場合はオフライン時等にキャッシュ取得等の対応が必要
     }
 
     /**
@@ -1085,7 +1085,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 DTVTLogger.error("RoleListWebClient is stopping connect");
             }
         }
-        //TODO:Homeでこのデータを使用する場合はオフライン時等にキャッシュ取得等の対応が必要
+        //TODO :Homeでこのデータを使用する場合はオフライン時等にキャッシュ取得等の対応が必要
         DTVTLogger.end();
     }
 
@@ -1106,7 +1106,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 DTVTLogger.error("GenreListWebClient is stopping connect");
             }
         }
-        // TODO:Homeでこのデータを使用する場合はオフライン時等にキャッシュ取得等の対応が必要
+        // TODO :Homeでこのデータを使用する場合はオフライン時等にキャッシュ取得等の対応が必要
         // ビデオ系は使ってない番組(IPTV)でつかうかな？
         DTVTLogger.end();
     }
@@ -1320,7 +1320,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     public void recommendVideoCallback(final List<ContentsData> recommendContentInfoList) {
         DTVTLogger.start();
         //ワンタイムパスワードが競合しないように、おすすめVOD取得後に動作を開始する
-        //TODO:　競合は解消したので、ここでの動作は必要なくなった。最終的には上記コメントとログ出力も消去する
+        //TODO :　競合は解消したので、ここでの動作は必要なくなった。最終的には上記コメントとログ出力も消去する
         DTVTLogger.debug("mRecommendDataProvider.getDtvRecommend() executed before");
 
         if (recommendContentInfoList != null && recommendContentInfoList.size() > 0) {
@@ -1343,7 +1343,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     @Override
     public void recommendDTVCallback(final List<ContentsData> recommendContentInfoList) {
         //ワンタイムパスワードが競合しないように、おすすめDTV取得後に動作を開始する
-        //TODO:　競合は解消したので、ここでの動作は必要なくなった。最終的には上記コメントとログ出力も消去する
+        //TODO :　競合は解消したので、ここでの動作は必要なくなった。最終的には上記コメントとログ出力も消去する
         DTVTLogger.debug("mRecommendDataProvider.getDtvChRecommend() executed before");
 
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
@@ -1367,7 +1367,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     @Override
     public void recommendDChannelCallback(final List<ContentsData> recommendContentInfoList) {
         //ワンタイムパスワードが競合しないように、おすすめDチャンネル取得後に動作を開始する
-        //TODO:　競合は解消したので、ここでの動作は必要なくなった。最終的には上記コメントとログ出力も消去する
+        //TODO :　競合は解消したので、ここでの動作は必要なくなった。最終的には上記コメントとログ出力も消去する
         DTVTLogger.debug("mRecommendDataProvider.getDAnimationRecommend() executed before");
 
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
@@ -1591,6 +1591,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     /**
      * 通信エラーメッセージを取得する.
      * @param apiIndex API区別インデックス
+     * @return エラーメッセージ
      */
     public ErrorState getError(final int apiIndex) {
         ErrorState errorState = null;

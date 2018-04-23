@@ -32,30 +32,47 @@ import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**リモートコントローラービュークラス.*/
 public class RemoteControllerView extends RelativeLayout implements ViewPager.OnPageChangeListener {
-
+    /**コンテキスト.*/
     private Context mContext = null;
-
+    /**タッチされたY座標とビューTOPの距離.*/
     private int mDownY = 0;
+    /**移動した距離.*/
     private int mMovedY = 0;
+    /**スクロールできる最大範囲.*/
     private int mScrollHeight = 0;
+    /**へだーの高さ.*/
     private int mHeaderHeight = 0;
+    /**TOPまで表示されてるか.*/
     private boolean mIsTop = false;
+    /**最初に見える高さ.*/
     private float mVisibilityHeight = 0;
-    private long mSysTime; //システムTime
-    private boolean mIsClick = false; //クリックなのかスワイプなのか
-    private boolean mIsFirstVisible = false; //最初から表示されているか否か
-
+    /**システムTime.*/
+    private long mSysTime;
+    /**クリックなのかスワイプなのか.*/
+    private boolean mIsClick = false;
+    /**最初から表示されているか否か.*/
+    private boolean mIsFirstVisible = false;
+    /**子ビュー.*/
     private View mChild = null;
+    /**Scroller.*/
     private Scroller mScroller = null;
+    /**リストビュー.*/
     private List<View> mViewList = new ArrayList<>();
+    /**ViewPager.*/
     private ViewPager mViewPager = null;
+    /**FrameLayout.*/
     private FrameLayout mFrameLayout = null;
+    /**SendKeyAction.*/
     private RemoteControllerSendKeyAction remoteControllerSendKeyAction = null;
+    /**GestureDetector.*/
     private GestureDetector mParentGestureDetector = null;
+    /**GestureDetector.*/
     private GestureDetector mGestureDetector = null;
+    /**RelativeLayout.*/
     private RelativeLayout mBottomLinearLayout, mTopLinearLayout = null;
+    /**リスナー.*/
     private OnStartRemoteControllerUIListener mStartUIListener = null;
     /**
      * 640 基準値（幅さ）.
@@ -81,26 +98,48 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * 2 基準値（両側）.
      */
     private static final int BASE_LEFT_RIGHT = 2;
-
+    /**.*/
     private static final long CLICK_MAX_TIME = 100;
 
     /**
      * このViewがtopに表示された際に通知するリスナー.
      */
     public interface OnStartRemoteControllerUIListener {
+        /**
+         *リモートコントローラーUI表示開始コールバック.
+         * @param isFromHeader へだータップされて起動するのか
+         */
         void onStartRemoteControl(boolean isFromHeader);
 
+        /**
+         * リモートコントローラーUI表示閉じる.
+         */
         void onEndRemoteControl();
     }
 
+    /**
+     * コンストラクタ.
+     * @param context コンテキスト
+     */
     public RemoteControllerView(final Context context) {
         this(context, null);
     }
 
+    /**
+     * コンストラクタ.
+     * @param context コンテキスト
+     * @param attrs  attrs
+     */
     public RemoteControllerView(final Context context, final AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
+    /**
+     * コンストラクタ.
+     * @param context コンテキスト
+     * @param attrs attrs
+     * @param defStyleAttr defStyleAttr
+     */
     public RemoteControllerView(final Context context, final AttributeSet attrs, final int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mContext = context;
@@ -145,6 +184,10 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         mParentGestureDetector = new GestureDetector(this.getContext(), mGestureListener);
     }
 
+    /**
+     * クリックなのかを設定.
+     * @param is true or false
+     */
     private void setIsClick(final boolean is) {
         synchronized (this) {
             mIsClick = is;
@@ -261,7 +304,10 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         return super.onTouchEvent(event);
     }
 
-    //子ビュ―が一番上まで移動した場合表示するコンテンツを設定する
+    /**
+     * 子ビュ―が一番上まで移動した場合表示するコンテンツを設定する.
+     * @param isFromHeader へだーからUI表示
+     */
     private void setHeaderContent(final boolean isFromHeader) {
         DTVTLogger.start();
         mMovedY = mScrollHeight;
@@ -287,6 +333,9 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         }
     }
 
+    /**
+     * ページャー設定  .
+     */
     public void setPager() {
         LayoutInflater lf = LayoutInflater.from(this.getContext());
         View inflate1 = lf.inflate(R.layout.remote_controller_player_ui_layout, this, false);
@@ -341,6 +390,10 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         });
     }
 
+    /**
+     * ページャー設定.
+     * @param position ページ位置
+     */
     private void setPagerIndex(final int position) {
         LinearLayout linearLayout = findViewById(R.id.remocon_index);
         if (linearLayout != null && linearLayout.getChildCount() > 1) {
@@ -368,6 +421,9 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     public void onPageScrollStateChanged(final int state) {
     }
 
+    /**
+     * ページャーアダプタークラス.
+     */
     private class ViewPagerAdapter extends PagerAdapter {
         @Override
         public int getCount() {
@@ -430,7 +486,9 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
             return mGestureDetector.onTouchEvent(event);
         }
     };
-
+    /**
+     * キーボタン上でFlingした際にonFling処理.
+     */
     private OnTouchListener mParentOnTouchListener = new OnTouchListener() {
         @Override
         public boolean onTouch(final View v, final MotionEvent event) {
@@ -463,18 +521,23 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
     /**
      * isTopのboolean値を返す.
+     * @return true or false
      */
     public boolean isTopRemoteControllerUI() {
         return mIsTop;
     }
 
+    /**
+     * リモートUI表示.
+     * @param isHeader isHeader
+     */
     public void startRemoteUI(final boolean isHeader) {
         //viewPagerを初期化する
         if (mViewList.size() == 0) {
             setPager();
         }
 
-        DTVTLogger.debug("getScrollY:"+getScrollY());
+        DTVTLogger.debug("getScrollY:" + getScrollY());
         if (mIsFirstVisible) {
             mScroller.startScroll(0, 0, 0, mScrollHeight);
         } else {
@@ -485,19 +548,20 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     }
 
     /**
-     * リスナーを設定
+     * リスナーを設定.
      *
      * @param listener リスナー
      */
-    public void setOnStartRemoteControllerUI(OnStartRemoteControllerUIListener listener) {
+    public void setOnStartRemoteControllerUI(final OnStartRemoteControllerUIListener listener) {
         DTVTLogger.debug("Set StartRemoteControllerUIListener");
         mStartUIListener = listener;
     }
 
     /**
-     * リスナーが設定されている場合、通知処理を実行
+     * リスナーが設定されている場合、通知処理を実行.
+     * @param isFromHeader isFromHeader
      */
-    private void startRemoteControl(boolean isFromHeader) {
+    private void startRemoteControl(final boolean isFromHeader) {
         if (mStartUIListener != null && mIsTop) {
             DTVTLogger.debug("StartUIListener.onStartRemoteControl");
             mStartUIListener.onStartRemoteControl(isFromHeader);
@@ -505,12 +569,12 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     }
 
     /**
-     * dアプリ起動リクエスト処理を呼び出し
+     * dアプリ起動リクエスト処理を呼び出し.
      *
      * @param type       アプリ起動要求種別
      * @param contentsId コンテンツID
      */
-    public void sendStartApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES type, String contentsId) {
+    public void sendStartApplicationRequest(final RemoteControlRelayClient.STB_APPLICATION_TYPES type, final  String contentsId) {
         DTVTLogger.start();
         remoteControllerSendKeyAction.getRelayClient().startApplicationRequest(type, contentsId, mContext);
         DTVTLogger.end();
@@ -523,13 +587,13 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      *
      * @param type dTVチャンネル
      * @param serviceCategoryType カテゴリー分類
-     * @param crid
+     * @param crid コンテンツ識別子.
      * @param chno チャンネル番号
      */
     public void sendStartApplicationDtvChannelRequest(
-            RemoteControlRelayClient.STB_APPLICATION_TYPES type,
-            RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES serviceCategoryType,
-            String crid, String chno) {
+           final RemoteControlRelayClient.STB_APPLICATION_TYPES type,
+           final RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES serviceCategoryType,
+           final String crid, final String chno) {
         DTVTLogger.start();
         remoteControllerSendKeyAction.getRelayClient().startApplicationDtvChannelRequest(type, serviceCategoryType, crid, chno, mContext);
         DTVTLogger.end();
@@ -539,9 +603,9 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * 中継アプリ起動リクエスト処理を呼び出し.
      * ・ひかりTVの番組（地デジ）
      *
-     * @param chno
+     * @param chno チャンネルナンバー
      */
-    public void sendStartApplicationHikariTvCategoryTerrestrialDigitalRequest(String chno) {
+    public void sendStartApplicationHikariTvCategoryTerrestrialDigitalRequest(final String chno) {
         DTVTLogger.start();
         remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryTerrestrialDigitalRequest(chno, mContext);
         DTVTLogger.end();
@@ -551,9 +615,9 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * 中継アプリ起動リクエスト処理を呼び出し.
      * ・ひかりTVの番組（BS）
      *
-     * @param chno
+     * @param chno チャンネルナンバー
      */
-    public void sendStartApplicationHikariTvCategorySatelliteBsRequest(String chno) {
+    public void sendStartApplicationHikariTvCategorySatelliteBsRequest(final String chno) {
         DTVTLogger.start();
         remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategorySatelliteBsRequest(chno, mContext);
         DTVTLogger.end();
@@ -563,9 +627,9 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * 中継アプリ起動リクエスト処理を呼び出し.
      * ・ひかりTVの番組（IPTV）
      *
-     * @param chno
+     * @param chno チャンネルナンバー
      */
-    public void sendStartApplicationHikariTvCategoryIptvRequest(String chno) {
+    public void sendStartApplicationHikariTvCategoryIptvRequest(final String chno) {
         DTVTLogger.start();
         remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryIptvRequest(chno, mContext);
         DTVTLogger.end();
@@ -575,9 +639,9 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * 中継アプリ起動リクエスト処理を呼び出し.
      * ・ひかりTVのVOD
      *
-     * @param licenseId
-     * @param cid
-     * @param crid
+     * @param licenseId ラインセンスID
+     * @param cid コンテンツID
+     * @param crid コンテンツ識別子.
      */
     public void sendStartApplicationHikariTvCategoryHikaritvVodRequest(final String licenseId,
                                                                        final String cid, final String crid) {
@@ -591,9 +655,9 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * 中継アプリ起動リクエスト処理を呼び出し.
      * ・ひかりTV内 dTVチャンネルの番組
      *
-     * @param chno
+     * @param chno チャンネルナンバー.
      */
-    public void sendStartApplicationHikariTvCategoryDtvchannelBroadcastRequest(String chno) {
+    public void sendStartApplicationHikariTvCategoryDtvchannelBroadcastRequest(final String chno) {
         DTVTLogger.start();
         remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvchannelBroadcastRequest(chno, mContext);
         DTVTLogger.end();
@@ -603,9 +667,9 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * 中継アプリ起動リクエスト処理を呼び出し.
      * ・ひかりTV内 dTVチャンネル VOD（見逃し）
      *
-     * @param tvCid
+     * @param tvCid  ひかりTV内 dTVチャンネル VOD（見逃し）コンテンツID
      */
-    public void sendStartApplicationHikariTvCategoryDtvchannelMissedRequest(String tvCid) {
+    public void sendStartApplicationHikariTvCategoryDtvchannelMissedRequest(final String tvCid) {
         DTVTLogger.start();
         remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvchannelMissedRequest(tvCid, mContext);
         DTVTLogger.end();
@@ -615,9 +679,9 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * 中継アプリ起動リクエスト処理を呼び出し.
      * ・ひかりTV内 dTVチャンネル VOD（関連番組）
      *
-     * @param tvCid
+     * @param tvCid  ひかりTV内 dTVチャンネル VOD（見逃し）コンテンツID
      */
-    public void sendStartApplicationHikariTvCategoryDtvchannelRelationRequest(String tvCid) {
+    public void sendStartApplicationHikariTvCategoryDtvchannelRelationRequest(final String tvCid) {
         DTVTLogger.start();
         remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvchannelRelationRequest(tvCid, mContext);
         DTVTLogger.end();
@@ -627,9 +691,9 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * 中継アプリ起動リクエスト処理を呼び出し.
      * ・ひかりTV内 dTVのVOD
      *
-     * @param episodeId
+     * @param episodeId エピソードID
      */
-    public void sendStartApplicationHikariTvCategoryDtvVodRequest(String episodeId) {
+    public void sendStartApplicationHikariTvCategoryDtvVodRequest(final String episodeId) {
         DTVTLogger.start();
         remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvVodRequest(episodeId, mContext);
         DTVTLogger.end();
@@ -639,9 +703,9 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * 中継アプリ起動リクエスト処理を呼び出し.
      * ・ひかりTV内VOD(dTV含む)のシリーズ
      *
-     * @param crid
+     * @param crid ひかりTV内VOD(dTV含む)のシリーズコンテンツID
      */
-    public void sendStartApplicationHikariTvCategoryDtvSvodRequest(String crid) {
+    public void sendStartApplicationHikariTvCategoryDtvSvodRequest(final String crid) {
         DTVTLogger.start();
         remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvSvodRequest(
                 crid, mContext);
@@ -649,7 +713,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     }
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
+    public boolean onInterceptTouchEvent(final MotionEvent ev) {
         DTVTLogger.start();
         mParentGestureDetector.onTouchEvent(ev);
         this.setOnTouchListener(mParentOnTouchListener);
@@ -657,7 +721,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     }
 
     /**
-     * リモコンUI画面を閉じた際にplayer操作画面に戻す
+     * リモコンUI画面を閉じた際にplayer操作画面に戻す.
      */
     public void setDefaultPage() {
         mViewPager.setCurrentItem(0);

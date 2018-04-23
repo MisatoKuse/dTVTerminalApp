@@ -8,20 +8,28 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
 
 import java.util.List;
 
+/**
+ * ビデオジャンルアダプター.
+ */
 public class VideoGenreAdapter extends BaseAdapter {
+    /**コンテキスト.*/
     private Context mContext = null;
+    /**ビデオジャンル一覧.*/
     public List<VideoGenreList> mData = null;
 
+    /**
+     * コンストラクタ.
+     * @param context コンテキスト
+     * @param data ビデオジャンル一覧データ
+     */
     public VideoGenreAdapter(final Context context, final List<VideoGenreList> data) {
         mContext = context;
         mData = data;
@@ -43,7 +51,7 @@ public class VideoGenreAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(final int position, View view, final ViewGroup parent) {
+    public View getView(final int position,  View view, final ViewGroup parent) {
         VideoGenreList videoGenreList = mData.get(position);
         ViewHolder holder;
         if (null == view) {
@@ -66,10 +74,13 @@ public class VideoGenreAdapter extends BaseAdapter {
         return view;
     }
 
+    /**
+     * ViewHolder.
+     */
     static class ViewHolder {
-        // ジャンル名
+        /**ジャンル名.*/
         TextView genre_title;
-        // コンテンツ数
+        /**コンテンツ数.*/
         TextView content_count;
     }
 }

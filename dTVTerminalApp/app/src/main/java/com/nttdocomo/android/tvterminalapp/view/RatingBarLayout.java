@@ -22,6 +22,9 @@ import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.text.DecimalFormat;
 
+/**
+ * レーティングバーレイアウト.
+ */
 public class RatingBarLayout extends LinearLayout {
 
     /**
@@ -74,10 +77,21 @@ public class RatingBarLayout extends LinearLayout {
         this(context, null);
     }
 
+    /**
+     * コンストラクタ.
+     * @param context コンテクスト
+     * @param attrs attrs
+     */
     public RatingBarLayout(final Context context, final AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
+    /**
+     * コンストラクタ.
+     * @param context コンテクスト
+     * @param attrs attrs
+     * @param defStyleAttr defStyleAttr
+     */
     public RatingBarLayout(final Context context, final AttributeSet attrs, final int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mContext = context;
@@ -175,6 +189,7 @@ public class RatingBarLayout extends LinearLayout {
 
     /**
      * starの高さ、幅さ取得.
+     * @return starの高さ、幅さ
      */
     private float getStarHeightWidth() {
         if (isMini) {
@@ -186,6 +201,7 @@ public class RatingBarLayout extends LinearLayout {
 
     /**
      * numberの幅さ取得.
+     * @return numberの幅さ
      */
     private int getNumWidth() {
         if (isMini) {
@@ -197,6 +213,7 @@ public class RatingBarLayout extends LinearLayout {
 
     /**
      * 全starのIcon取得.
+     * @return  全starのIcon
      */
     private ImageView getFullStarsIcon() {
         ImageView imageView = new ImageView(mContext);
@@ -214,6 +231,7 @@ public class RatingBarLayout extends LinearLayout {
      * 進捗starのIcon取得.
      *
      * @param progressStarWidth 進捗star幅さ
+     * @return 進捗starのIcon
      */
     private ImageView getProgressStarIcon(final int progressStarWidth) {
         ImageView imageView = new ImageView(mContext);

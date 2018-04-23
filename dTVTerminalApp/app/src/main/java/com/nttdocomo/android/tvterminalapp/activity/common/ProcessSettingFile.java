@@ -55,11 +55,11 @@ public class ProcessSettingFile {
      */
     private boolean mGooglePlay = false;
     /**
-     * リモート視聴ならばtrue
+     * リモート視聴ならばtrue.
      */
     private boolean mIsRemote = false;
     /**
-     * ダイアログ表示を行わないならばtrue
+     * ダイアログ表示を行わないならばtrue.
      */
     private boolean mIsNoDialog = false;
     /**
@@ -67,7 +67,7 @@ public class ProcessSettingFile {
      */
     public interface ProcessSettingFileCallBack {
         /**
-         * 処理終了後のコールバック
+         * 処理終了後のコールバック.
          * @param error エラーがあるならばtrue
          */
         void onCallBack(boolean error);
@@ -87,7 +87,7 @@ public class ProcessSettingFile {
      *
      * @param mIsRemote リモート視聴ならばtrue
      */
-    public void setIsRemote(boolean mIsRemote) {
+    public void setIsRemote(final boolean mIsRemote) {
         this.mIsRemote = mIsRemote;
     }
 
@@ -97,7 +97,7 @@ public class ProcessSettingFile {
      * @param activity BaseActivity アクティビティ
      * @param noDialogSwitch ダイアログ表示有無(ダイアログを表示するならfalse)
      */
-    public ProcessSettingFile(final BaseActivity activity,boolean noDialogSwitch) {
+    public ProcessSettingFile(final BaseActivity activity, final boolean noDialogSwitch) {
         //アクティビティの退避
         mActivity = activity;
 
@@ -187,10 +187,10 @@ public class ProcessSettingFile {
     }
 
     /**
-     * 単独でダイアログを表示させるために、状況を再現するメソッド
+     * 単独でダイアログを表示させるために、状況を再現するメソッド.
      * @param settingMetaData 設定ファイル再現情報
      */
-    public void processControlEmulate(SettingFileMetaData settingMetaData) {
+    public void processControlEmulate(final SettingFileMetaData settingMetaData) {
         mSettingData = settingMetaData;
 
         //ダイアログを表示する
@@ -252,7 +252,7 @@ public class ProcessSettingFile {
      */
     private void stopAllActivityDialog() {
         //今回はダイアログ表示を見送るか判定
-        if(mIsNoDialog) {
+        if (mIsNoDialog) {
             return;
         }
 
@@ -297,7 +297,7 @@ public class ProcessSettingFile {
      */
     private void showGooglePlayDialog(final boolean isCancel) {
         //今回はダイアログ表示を見送るか判定
-        if(mIsNoDialog) {
+        if (mIsNoDialog) {
             return;
         }
 
@@ -374,7 +374,7 @@ public class ProcessSettingFile {
     }
 
     /**
-     * 設定ファイル状況を渡す
+     * 設定ファイル状況を渡す.
      * @return 設定ファイル状況
      */
     public SettingFileMetaData getSettingData() {

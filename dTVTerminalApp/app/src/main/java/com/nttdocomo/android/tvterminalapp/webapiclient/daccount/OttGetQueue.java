@@ -16,9 +16,12 @@ import java.util.Queue;
  */
 enum OttGetQueue {
     /**
-     * シングルトン制御
+     * シングルトン制御.
      */
     INSTANCE;
+    /**
+     * field.
+     */
     private String field;
 
     /**
@@ -37,13 +40,16 @@ enum OttGetQueue {
     private boolean mDisconnectionFlag = false;
 
     /**
-     * 通信スレッド
+     * 通信スレッド.
      */
     Thread mOttGetThread;
+    /**
+     * 通信Runnable.
+     */
     Runnable mOttGetRunnable;
 
     /**
-     * 前回実行時の時間を実行するか否かの基準にする
+     * 前回実行時の時間を実行するか否かの基準にする.
      */
     long mTaskExecFlag = 0;
 
@@ -53,12 +59,12 @@ enum OttGetQueue {
     private static final long MAX_WAIT_TIME = 3000;
 
     /**
-     * シングルトン制御用文字列
+     * シングルトン制御用文字列.
      */
     private static final String SINGLETON_TEXT = "SINGLETON_TEXT";
 
     /**
-     * クラスのインスタンス取得
+     * クラスのインスタンス取得.
      *
      * @return インスタンス
      */
@@ -73,8 +79,8 @@ enum OttGetQueue {
     }
 
     /**
-     * 実行中のOTT取得が無ければ、OTTを取得する。実行中ならば、終わるまで待つ
-     *
+     * 実行中のOTT取得が無ければ、OTTを取得する。実行中ならば、終わるまで待つ.
+     *@param context コンテキスト.
      * @param nextTask 実行するコールバック
      */
     public void getOttAddOrExec(final Context context,
@@ -114,6 +120,7 @@ enum OttGetQueue {
 
     /**
      * OTT取得実行待ち.
+     * @param context コンテキスト.
      * (基本的にはallowNextでの能動実行が行われるので、フェールセーフ処理となる)
      */
     private void waitTask(final Context context) {
@@ -142,6 +149,7 @@ enum OttGetQueue {
 
     /**
      * 次のOTT取得処理の実行を許可する.
+     * @param context コンテキスト.
      */
     public void allowNext(final Context context) {
         DTVTLogger.start();
@@ -154,7 +162,8 @@ enum OttGetQueue {
     }
 
     /**
-     * キューから情報を取得して、OTT取得処理を呼び出す
+     * キューから情報を取得して、OTT取得処理を呼び出す.
+     * @param context コンテキスト
      */
     private void execOtt(final Context context) {
         DTVTLogger.start();
@@ -190,13 +199,13 @@ enum OttGetQueue {
      *
      * @param disconnectionFlag trueならば通信切断
      */
-    protected void setDisconnectionFlag(boolean disconnectionFlag) {
+    protected void setDisconnectionFlag(final boolean disconnectionFlag) {
         DTVTLogger.start();
         mDisconnectionFlag = disconnectionFlag;
         DTVTLogger.debug("disconnect flag = " + mDisconnectionFlag);
 
         //スレッドが作成されていれて、フラグが停止ならば、それを伝える
-        if(mOttGetThread != null && disconnectionFlag) {
+        if (mOttGetThread != null && disconnectionFlag) {
             mOttGetThread.interrupt();
         }
 
@@ -204,16 +213,16 @@ enum OttGetQueue {
     }
 
     /**
-     * 今あるワンタイムトークン取得タスクは停止する
+     * 今あるワンタイムトークン取得タスクは停止する.
      */
     protected void cancelConnection() {
-        if(mDaccountGetOTT == null) {
+        if (mDaccountGetOTT == null) {
             //まだクラスの準備ができていないので、以下の処理は無用
             return;
         }
 
         //スレッドが作成されていれて、フラグが停止ならば、それを伝える
-        if(mOttGetThread != null) {
+        if (mOttGetThread != null) {
             mOttGetThread.interrupt();
         }
         //残った通信タスクをクリアする
