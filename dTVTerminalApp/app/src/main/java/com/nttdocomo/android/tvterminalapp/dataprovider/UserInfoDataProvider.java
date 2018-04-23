@@ -110,6 +110,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
 
     /**
      * コンストラクタ.
+     * @param userDataProviderCallback callback
      *
      * @param context コンテキスト
      */
@@ -264,6 +265,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
 
     /**
      * 取得済みのユーザー年齢情報を取得する.
+     * @return ユーザー年齢情報
      */
     public int getUserAge() {
 

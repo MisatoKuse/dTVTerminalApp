@@ -157,19 +157,33 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * 取得対象サービスID:カテゴリーID.
      */
     public enum RecommendRequestId {
+        /**dTV SVOD.*/
         DTV_SVOD("15", "01"),
+        /**dTV TVOD.*/
         DTV_TVOD("15", "02"),
+        /**dアニメストア.*/
         DANIME("17", "01"),
+        /**dTVチャンネル　放送.*/
         DTVCHANNEL_BLOADCAST("43", "01"),
+        /**dTVチャンネル　VOD（見逃し）.*/
         DTVCHANNEL_MISS("43", "02"),
+        /**dTVチャンネル　VOD（関連番組）.*/
         DTVCHANNEL_RELATION("43", "03"),
+        /**IPTV.*/
         HIKARITV_DOCOMO_IPTV("44", "03"),
+        /**dTVチャンネル　放送.*/
         HIKARITV_DOCOMO_DTV_BLOADCAST("44", "04"),
+        /**dTVチャンネル　VOD（見逃し）.*/
         HIKARITV_DOCOMO_DTV_MISS("44", "05"),
+        /**dTVチャンネル　VOD（関連番組）.*/
         HIKARITV_DOCOMO_DTV_RELATION("44", "06"),
+        /**ひかりTV VOD.*/
         HIKARITV_DOCOMO_HIKARITV_VOD("44", "08"),
+        /**dTV SVOD.*/
         HIKARITV_DOCOMO_DTV_SVOD("44", "10"),;
+        /**サービスID.*/
         private final String serviceId;
+        /**カテゴリーID.*/
         private final String categoryId;
 
         /**
@@ -335,6 +349,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     /**
      * 通信エラーメッセージを取得する.
      * @param apiIndex API区別インデックス
+     * @return エラーステータス
      */
     public ErrorState getError(final int apiIndex) {
         ErrorState errorState = null;
