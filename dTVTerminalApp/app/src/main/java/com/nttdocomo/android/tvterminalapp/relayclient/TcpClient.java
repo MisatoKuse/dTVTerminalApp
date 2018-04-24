@@ -6,10 +6,13 @@ package com.nttdocomo.android.tvterminalapp.relayclient;
 
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherApi;
+import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -112,7 +115,6 @@ public class TcpClient {
      * @return 応答メッセージ
      */
     public synchronized String receive() {
-        StringBuilder data = null;
         String recvdata = null;
 
         DTVTLogger.debug("receive start");
@@ -123,34 +125,61 @@ public class TcpClient {
         try {
             DTVTLogger.debug("getInputStream()");
             InputStream inputStream = mSocket.getInputStream();
-            InputStreamReader streamReader = new InputStreamReader(mSocket.getInputStream(), StandardCharsets.UTF_8);
-
-            data = new StringBuilder();
 
             while (inputStream.available() >= 0) {
                 // 受信待ち
                 if (inputStream.available() == 0) {
                     continue;
                 }
-                DTVTLogger.debug(String.format(Locale.getDefault(), "streamReader.read(%d)", inputStream.available()));
-                char[] line = new char[inputStream.available()];
-                if (streamReader.read(line) == -1) {
-                    continue;
+                DTVTLogger.warning("inputStream.available() = " + inputStream.available());
+
+                byte[] bytes = new byte[inputStream.available()];
+                inputStream.read(bytes, 0, inputStream.available());
+
+                String decodeString = CipherUtil.decodeData(bytes);
+                if (null != decodeString) {
+                    DTVTLogger.warning("decodeString = " + decodeString);
+                    recvdata = decodeString;
+                } else {
+                    recvdata = new String(bytes);
                 }
-                data.append(String.valueOf(line));
                 break;
             }
         }  catch (NullPointerException | IOException e) {
             // SocketException はIOExceptionに含まれる
             DTVTLogger.debug(String.format("??? :%s", e.getMessage()));
-        } finally {
-            if (data != null && data.length() != 0) {
-                recvdata = data.toString();
-            }
         }
+        DTVTLogger.error("recvdata = " + recvdata);
         return recvdata;
     }
-
+    /**
+     * 鍵交換Socket通信のメッセージを受信し、共有鍵を設定する
+     *
+     * @return 成功:true
+     */
+    public synchronized boolean receiveExchangeKey() {
+        boolean result = false;
+        if (mSocket == null) {
+            DTVTLogger.warning("mSocket == null");
+            return false;
+        }
+        try {
+            InputStream inputStream = mSocket.getInputStream();
+            while (inputStream.available() >= 0) {
+                // 受信待ち
+                if (inputStream.available() == 0) {
+                    continue;
+                }
+                byte[] dataBytes = new byte[inputStream.available()];
+                inputStream.read(dataBytes, 0, dataBytes.length);
+                result = CipherUtil.setShareKey(dataBytes);
+                break;
+            }
+        } catch (IOException e) {
+            DTVTLogger.debug(e);
+        }
+        return result;
+    }
     /**
      * STBへメッセージ（JSON形式）を送信する.
      *
@@ -177,4 +206,27 @@ public class TcpClient {
         }
         return true;
     }
+
+    /**
+     * STBへメッセージ（暗号化されたbinaryデータ）を送信する.
+     * @param data byte配列
+     * @param length byte配列長
+     * @return 成功:true
+     */
+    public boolean send(final byte[] data, final int length) {
+        DTVTLogger.debug(" >>>");
+        boolean result = false;
+        OutputStream out;
+        try {
+            out = mSocket.getOutputStream();
+            out.write(data, 0, length);
+            out.flush();
+            result = true;
+        } catch (IOException e) {
+            DTVTLogger.debug(e);
+        }
+        DTVTLogger.debug(" <<< result = " + result);
+        return result;
+    }
+    
 }

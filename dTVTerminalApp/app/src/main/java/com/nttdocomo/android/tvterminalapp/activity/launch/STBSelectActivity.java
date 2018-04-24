@@ -41,6 +41,8 @@ import com.nttdocomo.android.tvterminalapp.jni.remote.DlnaInterfaceRI;
 import com.nttdocomo.android.tvterminalapp.jni.remote.DlnaRemoteRet;
 import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessage;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
+import com.nttdocomo.android.tvterminalapp.relayclient.StbConnectRelayClient;
+import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherApi;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
@@ -58,6 +60,7 @@ import java.util.TimerTask;
 public class STBSelectActivity extends BaseActivity implements View.OnClickListener,
         AdapterView.OnItemClickListener, DlnaDevListListener {
 
+    // region variable
     /**
      * DMSリスト.
      */
@@ -228,6 +231,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
          */
         STBSelectFromMode_Setting,
     }
+    // endregion variable
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -332,7 +336,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         } else if (mStartMode == (STBSelectFromMode.STBSelectFromMode_Setting.ordinal())) {
             mParingTextView.setVisibility(View.VISIBLE);
             mLoadMoreView = findViewById(R.id.stb_device_setting_progressbar);
-//            //設定画面からの遷移
+            //設定画面からの遷移
             enableHeaderBackIcon(true);
             setTitleText(getString(R.string.str_stb_paring_setting_title));
             setStbStatusIconVisibility(true);
@@ -688,8 +692,22 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         mRemoteControlRelayClient.setRemoteIp(mDlnaDmsItemList.get(i).mIPAddress);
         //ペアリング中画面を出す
         showPairingeView();
-        //dアカチェック
-        checkDAccountApp();
+        //鍵交換
+        exchangeKey();
+    }
+
+    private void exchangeKey() {
+        CipherApi cipherApi = new CipherApi(new CipherApi.CipherApiCallback() {
+            @Override
+            public void apiCallback(boolean result, String data) {
+                if (result) {
+                    checkDAccountApp();
+                } else {
+                    createErrorDialog();
+                }
+            }
+        });
+        cipherApi.requestSendPublicKey();
     }
 
     /**
@@ -700,8 +718,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private void storeSTBData(final int selectDevice) {
         DTVTLogger.start();
         if (mCallbackTimer.getTimerStatus() != TimerStatus.TIMER_STATUS_DURING_STARTUP) {
-            //TODO ナスネとペアリングしたい時は以下をコメントイン SharedPreferencesにSTBデータを保存
-//            SharedPreferencesUtils.setSharedPreferencesStbInfo(this, mDlnaDmsItemList.get(selectDevice));
             if (mDlnaDmsItemList != null) {
                 if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal()
                         && mParingDevice.getVisibility() == View.VISIBLE) {
@@ -715,8 +731,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 }
             }
         }
-        //TODO ナスネとペアリングしたい時は以下をコメントイン
-//        startActivity(STBConnectActivity.class, null);
         DTVTLogger.end();
     }
 
