@@ -703,7 +703,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 if (result) {
                     checkDAccountApp();
                 } else {
-                    // TODO: fail popup
+                    createErrorDialog();
                 }
             }
         });

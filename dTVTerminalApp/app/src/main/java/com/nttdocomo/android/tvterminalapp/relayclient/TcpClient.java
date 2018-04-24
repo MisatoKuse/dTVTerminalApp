@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.relayclient;
 
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherApi;
 import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherUtil;
 
 import java.io.IOException;
@@ -114,7 +115,6 @@ public class TcpClient {
      * @return 応答メッセージ
      */
     public synchronized String receive() {
-        StringBuilder data = null;
         String recvdata = null;
 
         DTVTLogger.debug("receive start");
@@ -125,31 +125,31 @@ public class TcpClient {
         try {
             DTVTLogger.debug("getInputStream()");
             InputStream inputStream = mSocket.getInputStream();
-            InputStreamReader streamReader = new InputStreamReader(mSocket.getInputStream(), StandardCharsets.UTF_8);
-
-            data = new StringBuilder();
 
             while (inputStream.available() >= 0) {
                 // 受信待ち
                 if (inputStream.available() == 0) {
                     continue;
                 }
-                DTVTLogger.debug(String.format(Locale.getDefault(), "streamReader.read(%d)", inputStream.available()));
-                char[] line = new char[inputStream.available()];
-                if (streamReader.read(line) == -1) {
-                    continue;
+                DTVTLogger.warning("inputStream.available() = " + inputStream.available());
+
+                byte[] bytes = new byte[inputStream.available()];
+                inputStream.read(bytes, 0, inputStream.available());
+                try {
+                    String decodeString = CipherUtil.decodeData(bytes);
+                    DTVTLogger.warning("decodeString = " + decodeString);
+                    return decodeString;
+                } catch (Exception e) {
+                    DTVTLogger.error(e.getMessage());
                 }
-                data.append(String.valueOf(line));
+                recvdata = new String(bytes);
                 break;
             }
         }  catch (NullPointerException | IOException e) {
             // SocketException はIOExceptionに含まれる
             DTVTLogger.debug(String.format("??? :%s", e.getMessage()));
-        } finally {
-            if (data != null && data.length() != 0) {
-                recvdata = data.toString();
-            }
         }
+        DTVTLogger.error("recvdata = " + recvdata);
         return recvdata;
     }
     /**

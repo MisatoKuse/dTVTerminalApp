@@ -466,6 +466,8 @@ public class RemoteControlRelayClient {
     static final String RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE = "dTVT_APPLICATION_VERSION_INCOMPATIBLE"; // dTVTアプリのバージョンコード不適合
     /**中継アプリのバージョンコード不適合.*/
     static final String RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE = "STB_RELAY_SERVICE_VERSION_INCOMPATIBLE"; // 中継アプリのバージョンコード不適合
+    /**中継アプリの鍵不一致.*/
+    static final String RELAY_RESULT_STB_RELAY_KEY_ERROR = "KEY_ERROR";
     // URLエンコード対応文字
     /**asterisk.*/
     private static final String URL_ENCODED_ASTERISK = "%2a";
@@ -1208,6 +1210,27 @@ public class RemoteControlRelayClient {
                     response = setResponse(recvData);
                 }
                 stbConnection.disconnect();
+
+                if (response.getResultCode() == RelayServiceResponseMessage.RELAY_RESULT_STB_KEY_MISMATCH) {
+                    DTVTLogger.warning("need to exchange key");
+                    CipherApi api = new CipherApi(new CipherApi.CipherApiCallback() {
+                        @Override
+                        public void apiCallback(boolean result, @Nullable String data) {
+                            if (result) {
+                                run();
+                            } else {
+                                RelayServiceResponseMessage response = new RelayServiceResponseMessage();
+                                response.setResult(RelayServiceResponseMessage.RELAY_RESULT_ERROR);
+                                response.setResultCode(RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE);
+                                response.setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
+                                sendResponseMessage(response);
+                            }
+                        }
+                    });
+                    api.requestSendPublicKey();
+                    return;
+                }
+
             } else {
                 DTVTLogger.debug("failed to connect to the STB");
                 response.setResult(RelayServiceResponseMessage.RELAY_RESULT_ERROR);
@@ -1263,7 +1286,12 @@ public class RemoteControlRelayClient {
                                 resultErrorCode = response.mResultCodeMap.get(errorCodeStr);
                                 response.setResultCode(resultErrorCode);
                             } else {
-                                return response;
+                                if (errorCodeStr.equals(RELAY_RESULT_STB_RELAY_KEY_ERROR)) {
+                                    response.setResultCode(RelayServiceResponseMessage.RELAY_RESULT_STB_KEY_MISMATCH);
+                                    return response;
+                                } else {
+                                    return response;
+                                }
                             }
                         } else {
                             return response;

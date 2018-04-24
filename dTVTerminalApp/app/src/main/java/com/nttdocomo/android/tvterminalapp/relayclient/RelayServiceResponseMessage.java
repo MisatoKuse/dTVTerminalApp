@@ -54,6 +54,8 @@ public class RelayServiceResponseMessage implements Serializable {
     public static final int RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE = 28;
     /**stb_relay_service_version_incompatible.*/
     public static final int RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE = 29;
+    /** STB側の鍵不一致.*/
+    public static final int RELAY_RESULT_STB_KEY_MISMATCH = RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE + 1;
     private static final long serialVersionUID = -6651018925196027761L;
     /**result初期化.*/
     private int mResult = RELAY_RESULT_OK;
