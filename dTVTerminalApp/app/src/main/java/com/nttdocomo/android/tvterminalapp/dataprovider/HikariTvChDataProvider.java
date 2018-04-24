@@ -9,6 +9,9 @@ import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 
+/**
+ * ひかりテレビデータプロバイダクラス.
+ */
 public class HikariTvChDataProvider extends ScaledDownProgramListDataProvider {
     /**
      * コンストラクタ.

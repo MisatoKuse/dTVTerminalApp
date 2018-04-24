@@ -7,12 +7,21 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
 import com.nttdocomo.android.tvterminalapp.struct.SearchNarrowCondition;
 
+/**
+ * 検索絞込み条件:「課金方法」を指定する（複数指定可）.
+ */
 public class SearchChargeType extends SearchFilterTypeMappable {
+    /**0：見放題.*/
     public final int free = SearchNarrowCondition.getNextOrdinal();
+    /**1：レンタル.*/
     public final int rental = SearchNarrowCondition.getNextOrdinal();
-
+    /**検索条件初期値.*/
     private int self = SearchNarrowCondition.sEnumOrdinalNil;
 
+    /**
+     * コンストラクタ.
+     * @param name 検索絞込み条件
+     */
     public SearchChargeType(final String name) {
         if ("SearchChargeTypeFree".equals(name)) {
             self = free;

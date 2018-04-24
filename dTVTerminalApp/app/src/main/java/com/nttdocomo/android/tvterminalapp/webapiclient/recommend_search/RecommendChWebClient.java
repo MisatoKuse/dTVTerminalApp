@@ -29,9 +29,12 @@ public class RecommendChWebClient extends WebApiBase implements WebApiCallback {
     /**SSLチェック用コンテキスト.*/
     private Context mContext;
 
+    /**
+     * コールバック.
+     */
     public interface RecommendChannelCallback {
         /**
-         * RecommendChannelCallback.
+         * コールバック.
          * @param mRecommendChList  おすすめ番組データ
          */
         void RecommendChannelCallback(RecommendChList mRecommendChList);

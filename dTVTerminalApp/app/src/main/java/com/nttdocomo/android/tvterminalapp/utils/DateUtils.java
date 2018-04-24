@@ -302,7 +302,7 @@ public class DateUtils {
      */
     public void addLastDate(final String key) {
 
-        // TODO:DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
+        // TODO :DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
         //現在日時を取得
         Calendar c = Calendar.getInstance();
         c.add(Calendar.HOUR_OF_DAY, LIMIT_HOUR);
@@ -331,7 +331,7 @@ public class DateUtils {
      */
     public void addLastProgramDate(final String key) {
 
-        // TODO:DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
+        // TODO :DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
         //現在日時を取得
         Calendar c = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DD);
@@ -423,8 +423,8 @@ public class DateUtils {
      * @return 日付チェック結果
      */
     public boolean isBeforeLimitDate(final String str) {
-        // TODO:DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
-        // TODO:文字列でなくUTCのタイムスタンプでよい.無駄に複雑にしている.
+        // TODO :DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
+        // TODO :文字列でなくUTCのタイムスタンプでよい.無駄に複雑にしている.
         if (str == null) {
             // null渡しされた場合は取得すべきとして期限切れ判定.
             return true;
@@ -965,6 +965,7 @@ public class DateUtils {
      * HHMMを取得（h:ii）.
      *
      * @param cal 日付
+     * @return HHMM
      */
     private static String getHmm(final Calendar cal) {
         int hour = cal.get(Calendar.HOUR_OF_DAY);
@@ -976,6 +977,7 @@ public class DateUtils {
      * 詳細画面のチャンネルタブでの時間を取得.
      *
      * @param date 日付
+     * @return  詳細画面のチャンネルタブでの時間
      */
     public static String getContentsDetailChannelHmm(final String date) {
         String result = "";

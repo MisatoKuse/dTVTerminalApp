@@ -8,19 +8,38 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 
 //response
+
+/**
+ *検索エラー情報.
+ */
 public class TotalSearchErrorData {
+    /**.*/
     public String status;
+    /**エラー情報.*/
     public ErrorResultData error;
 
+    /**
+     * エラー結果データクラス.
+     */
     public static class ErrorResultData {
+        /**エラーID.*/
         public String id;
+        /**エラー原因.*/
         public String param;
     }
 
+    /**
+     *インスタンス.
+     */
     public TotalSearchErrorData() {
         error = new ErrorResultData();
     }
 
+    /**
+     * コンストラクタ.
+     * @param id エラーID
+     * @param param エラー原因
+     */
     public TotalSearchErrorData(final String id, final String param) {
         error = new ErrorResultData();
         error.id = id;

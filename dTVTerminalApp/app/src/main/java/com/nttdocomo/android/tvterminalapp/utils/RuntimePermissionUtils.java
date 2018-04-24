@@ -9,6 +9,9 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 
+/**
+ * RuntimePermission関連のUtils クラス.
+ */
 public class RuntimePermissionUtils {
 
     /**

@@ -26,9 +26,9 @@ public class TotalSearchContentInfo {
     private List<ContentsData> mContentsDataList = new ArrayList<>();
 
     /**
-     *
-     * @param totalCount
-     * @param searchContentInfo
+     *init.
+     * @param totalCount  totalCount
+     * @param searchContentInfo  searchContentInfo
      */
     public void init(final int totalCount, final ArrayList<SearchContentInfo> searchContentInfo) {
         this.totalCount = totalCount;
@@ -36,8 +36,8 @@ public class TotalSearchContentInfo {
     }
 
     /**
-     *
-     * @param resultType
+     *init.
+     * @param resultType  resultType
      */
     public void init(final ResultType resultType) {
         mResultType = resultType;

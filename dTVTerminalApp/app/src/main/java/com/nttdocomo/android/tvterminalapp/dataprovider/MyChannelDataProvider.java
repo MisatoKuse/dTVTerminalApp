@@ -89,6 +89,10 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
         }
     }
 
+    /**
+     * My番組表チャンネル情報エラーステータス取得.
+     * @return エラーステータス
+     */
     public ErrorState getMyChannelListError() {
         return mMyChannelListWebClient.getError();
     }
