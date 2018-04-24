@@ -135,14 +135,14 @@ public class TcpClient {
 
                 byte[] bytes = new byte[inputStream.available()];
                 inputStream.read(bytes, 0, inputStream.available());
-                try {
-                    String decodeString = CipherUtil.decodeData(bytes);
+
+                String decodeString = CipherUtil.decodeData(bytes);
+                if (null != decodeString) {
                     DTVTLogger.warning("decodeString = " + decodeString);
-                    return decodeString;
-                } catch (Exception e) {
-                    DTVTLogger.error(e.getMessage());
+                    recvdata = decodeString;
+                } else {
+                    recvdata = new String(bytes);
                 }
-                recvdata = new String(bytes);
                 break;
             }
         }  catch (NullPointerException | IOException e) {
@@ -163,7 +163,6 @@ public class TcpClient {
             DTVTLogger.warning("mSocket == null");
             return false;
         }
-
         try {
             InputStream inputStream = mSocket.getInputStream();
             while (inputStream.available() >= 0) {
@@ -173,11 +172,10 @@ public class TcpClient {
                 }
                 byte[] dataBytes = new byte[inputStream.available()];
                 inputStream.read(dataBytes, 0, dataBytes.length);
-                CipherUtil.setShareKey(dataBytes);
-                result = true;
+                result = CipherUtil.setShareKey(dataBytes);
                 break;
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             DTVTLogger.debug(e);
         }
         return result;

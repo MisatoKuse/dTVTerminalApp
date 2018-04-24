@@ -5,8 +5,12 @@
 package com.nttdocomo.android.tvterminalapp.relayclient.security;
 
 
+import android.support.annotation.Nullable;
+
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -53,7 +57,7 @@ public class CipherUtil {
      * @return 鍵生成結果.
      * @throws NoSuchAlgorithmException 例外
      */
-    public static CipherData generatePublicKey() throws Exception {
+    public static CipherData generatePublicKey() throws NoSuchAlgorithmException {
         byte[] module = null;
         byte[] exponent = null;
         synchronized (mLockObject) {
@@ -76,23 +80,20 @@ public class CipherUtil {
 
     /**
      * 共通鍵を設定する.
-     *
-     * @param shareKey 公開鍵で暗号化された共通鍵の鍵データ
-     * @throws NoSuchAlgorithmException 例外
-     * @throws NoSuchPaddingException 例外
-     * @throws InvalidKeyException 例外
-     * @throws IllegalBlockSizeException 例外
-     * @throws BadPaddingException 例外
+     * @param shareKey
+     * @return 設定結果
      */
-    public static void setShareKey(final byte[] shareKey)
-            throws NoSuchAlgorithmException, NoSuchPaddingException,
-            InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-
+    public static boolean setShareKey(final byte[] shareKey) {
         synchronized (mLockObject) {
-            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-            cipher.init(Cipher.DECRYPT_MODE, mPrivateKey);
-            mSecureDigest = cipher.doFinal(shareKey);
-            mShareKey = new SecretKeySpec(mSecureDigest, "AES");
+            try {
+                Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+                cipher.init(Cipher.DECRYPT_MODE, mPrivateKey);
+                mSecureDigest = cipher.doFinal(shareKey);
+                mShareKey = new SecretKeySpec(mSecureDigest, "AES");
+                return true;
+            } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | InvalidKeyException | BadPaddingException e) {
+                return false;
+            }
         }
     }
 
@@ -101,38 +102,38 @@ public class CipherUtil {
      *
      * @param srcDataString
      *            変換元文字列
-     * @return 変換結果Byte配列
-     * @throws Exception
+     * @return 変換結果Byte配列 or null
      */
-    public static byte[] encodeData(final String srcDataString)
-            throws Exception {
+    public static @Nullable byte[] encodeData(final String srcDataString) {
         byte[] encodeByteStream = null;
         byte[] resultByteStream = null;
         byte[] ivCode = null;
 
         synchronized (mLockObject) {
             if (mShareKey == null) {
-                DTVTLogger.warning("mShareKey == null");
-                throw new Exception("Key has not been generated.");
+                DTVTLogger.warning("Key has not been generated.");
+                return null;
             }
-
-            byte[] srcDataBytes = srcDataString.getBytes("UTF-8");
-
-            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-            byte[] ivSourceCode = random.generateSeed(IV_SIZE);
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, mShareKey, new IvParameterSpec(ivSourceCode));
-            encodeByteStream = cipher.doFinal(srcDataBytes);
-            ivCode = cipher.getIV();
+            try {
+                byte[] srcDataBytes = srcDataString.getBytes("UTF-8");
+                SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+                byte[] ivSourceCode = random.generateSeed(IV_SIZE);
+                Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+                cipher.init(Cipher.ENCRYPT_MODE, mShareKey, new IvParameterSpec(ivSourceCode));
+                encodeByteStream = cipher.doFinal(srcDataBytes);
+                ivCode = cipher.getIV();
+            } catch (UnsupportedEncodingException | IllegalBlockSizeException | NoSuchAlgorithmException | InvalidAlgorithmParameterException | InvalidKeyException | BadPaddingException | NoSuchPaddingException e) {
+                DTVTLogger.error(e.getMessage());
+                return null;
+            }
         }
-
         resultByteStream = new byte[(ivCode.length + encodeByteStream.length)];
         System.arraycopy(ivCode, 0, resultByteStream, 0, ivCode.length);
         System.arraycopy(encodeByteStream, 0, resultByteStream, ivCode.length, encodeByteStream.length);
         return resultByteStream;
     }
 
-    public static String decodeData(final byte[] srcData) throws Exception {
+    public static String decodeData(final byte[] srcData) {
         byte[] encodeByteStream = new byte[srcData.length - IV_SIZE];
         byte[] decodeByteStream;
 
@@ -147,12 +148,17 @@ public class CipherUtil {
                 DTVTLogger.warning("mShareKey == null");
                 return null;
             }
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.DECRYPT_MODE, mShareKey, new IvParameterSpec(ivCode));
-            decodeByteStream = cipher.doFinal(encodeByteStream);
+            try {
+                Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+                cipher.init(Cipher.DECRYPT_MODE, mShareKey, new IvParameterSpec(ivCode));
+                decodeByteStream = cipher.doFinal(encodeByteStream);
+                decodeString = new String(decodeByteStream, "UTF-8");
+                return decodeString;
+            } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | BadPaddingException | InvalidAlgorithmParameterException | IllegalBlockSizeException | UnsupportedEncodingException e) {
+                DTVTLogger.error(e.getMessage());
+                return null;
+            }
         }
-        decodeString = new String(decodeByteStream, "UTF-8");
-        return decodeString;
     }
 
     public static void writeInt(final int value, final byte[] writeBuffer) {

@@ -11,6 +11,8 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.relayclient.StbConnectRelayClient;
 
+import java.security.NoSuchAlgorithmException;
+
 
 public class CipherApi {
     public interface CipherApiCallback {
@@ -30,7 +32,7 @@ public class CipherApi {
                 CipherData cipherData;
                 try {
                     cipherData = CipherUtil.generatePublicKey();
-                } catch (Exception e) {
+                } catch (NoSuchAlgorithmException e) {
                     DTVTLogger.debug(e);
                     mCallback.apiCallback(false, null);
                     return;
