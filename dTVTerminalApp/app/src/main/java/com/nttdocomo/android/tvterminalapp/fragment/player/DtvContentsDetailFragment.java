@@ -541,7 +541,8 @@ public class DtvContentsDetailFragment extends Fragment {
      * チャンネル情報の更新.
      */
     public void refreshChannelInfo() {
-        if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelName())) {
+        if (mOtherContentsDetailData != null
+                && !TextUtils.isEmpty(mOtherContentsDetailData.getChannelName())) {
             mTxtChannelName.setVisibility(View.VISIBLE);
             mTxtChannelName.setText(mOtherContentsDetailData.getChannelName());
         }

@@ -148,26 +148,15 @@ public class ContentDetailActivity extends BaseActivity implements
         /** 番組データ取得.*/
         tvScheduleListGet,
     }
-
     // region variable
-    /**
-     * アスペクト比(16:9)の16.
-     */
+    /** アスペクト比(16:9)の16.*/
     private static final int SCREEN_RATIO_WIDTH_16 = 16;
-    /**
-     * アスペクト比(16:9)の9.
-     */
+    /** アスペクト比(16:9)の9.*/
     private static final int SCREEN_RATIO_HEIGHT_9 = 9;
-    /**
-     * アスペクト比(4:3)の4.
-     */
+    /** アスペクト比(4:3)の4.*/
     private static final int SCREEN_RATIO_WIDTH_4 = 4;
-    /**
-     * アスペクト比(4:3)の3.
-     */
+    /** アスペクト比(4:3)の3.*/
     private static final int SCREEN_RATIO_HEIGHT_3 = 3;
-
-
     /**先頭のメタデータを取得用.*/
     private static final int FIRST_VOD_META_DATA = 0;
 
@@ -270,105 +259,55 @@ public class ContentDetailActivity extends BaseActivity implements
     /*ひかりTV起動*/
     /**他サービス起動リクエストコード.*/
     private static final int START_APPLICATION_REQUEST_CODE = 0;
-    /**
-     * カテゴリID(01).
-     */
+    /** カテゴリID(01).*/
     public static final String H4D_CATEGORY_TERRESTRIAL_DIGITAL = "01";
-    /**
-     * カテゴリID(02).
-     */
+    /** カテゴリID(02).*/
     public static final String H4D_CATEGORY_SATELLITE_BS = "02";
-    /**
-     * カテゴリID(03).
-     */
+    /** カテゴリID(03).*/
     public static final String H4D_CATEGORY_IPTV = "03";
-    /**
-     * カテゴリID(04).
-     */
+    /** カテゴリID(04).*/
     public static final String H4D_CATEGORY_DTV_CHANNEL_BROADCAST = "04";
-    /**
-     * カテゴリID(05).
-     */
+    /** カテゴリID(05).*/
     public static final String H4D_CATEGORY_DTV_CHANNEL_MISSED = "05";
-    /**
-     * カテゴリID(06).
-     */
+    /** カテゴリID(06).*/
     public static final String H4D_CATEGORY_DTV_CHANNEL_RELATION = "06";
-    /**
-     * カテゴリID(08).
-     */
+    /** カテゴリID(08).*/
     public static final String H4D_CATEGORY_HIKARITV_VOD = "08";
-    /**
-     * カテゴリID(10).
-     */
+    /** カテゴリID(10).*/
     public static final String H4D_CATEGORY_HIKARI_DTV_SVOD = "10";
-    /**
-     * disp_type(tv_program).
-     */
+    /** disp_type(tv_program).*/
     public static final String TV_PROGRAM = "tv_program";
-    /**
-     * disp_type(video_program).
-     */
+    /** disp_type(video_program).*/
     public static final String VIDEO_PROGRAM = "video_program";
-    /**
-     * disp_type(video_package).
-     */
+    /** disp_type(video_package).*/
     public static final String VIDEO_PACKAGE = "video_package";
-    /**
-     * disp_type(video_series).
-     */
+    /** disp_type(video_series).*/
     public static final String VIDEO_SERIES = "video_series";
-    /**
-     * disp_type(subscription_package).
-     */
+    /** disp_type(subscription_package).*/
     public static final String SUBSCRIPTION_PACKAGE = "subscription_package";
-    /**
-     * disp_type(series_svod).
-     */
+    /** disp_type(series_svod).*/
     public static final String SERIES_SVOD = "series_svod";
-    /**
-     * dtv(1).
-     */
+    /** dtv(1).*/
     public static final String DTV_FLAG_ONE = "1";
-    /**
-     * dtv(0).
-     */
+    /** dtv(0).*/
     public static final String DTV_FLAG_ZERO = "0";
-    /**
-     * bvflg(1).
-     */
+    /** bvflg(1).*/
     private static final String BVFLG_FLAG_ONE = "1";
-    /**
-     * bvflg(0).
-     */
+    /** bvflg(0).*/
     private static final String BVFLG_FLAG_ZERO = "0";
-    /**
-     * tv_service(0).
-     */
+    /** tv_service(0).*/
     public static final String TV_SERVICE_FLAG_HIKARI = "1";
-    /**
-     * tv_service(1).
-     */
+    /** tv_service(1).*/
     public static final String TV_SERVICE_FLAG_DCH_IN_HIKARI = "2";
-    /**
-     * contents_type(0).
-     */
+    /** contents_type(0).*/
     public static final String CONTENT_TYPE_FLAG_ZERO = "0";
-    /**
-     * contents_type(1).
-     */
+    /** contents_type(1).*/
     public static final String CONTENT_TYPE_FLAG_ONE = "1";
-    /**
-     * contents_type(2).
-     */
+    /** contents_type(2).*/
     public static final String CONTENT_TYPE_FLAG_TWO = "2";
-    /**
-     * contents_type(3).
-     */
+    /** contents_type(3).*/
     public static final String CONTENT_TYPE_FLAG_THREE = "3";
-    /**
-     * flg(0).
-     */
+    /** flg(0).*/
     private static final int FLAG_ZERO = 0;
     /*ひかりTV起動*/
 
@@ -435,132 +374,72 @@ public class ContentDetailActivity extends BaseActivity implements
     /*private static final int RECORDING_RESERVATION_DIALOG_INDEX_0 = 0; // 予約録画する
     private static final int RECORDING_RESERVATION_DIALOG_INDEX_1 = 1; // キャンセル*/
 
-    /**
-     * プレイヤー横画面時のシークバーの下マージン.
-     */
+    /** プレイヤー横画面時のシークバーの下マージン.*/
     private static final int SEEKBAR_BOTTOM_MARGIN = 4;
-    /**
-     * プレイヤー横画面時のコントロールバーの下マージン.
-     */
+    /** プレイヤー横画面時のコントロールバーの下マージン.*/
     private static final int MEDIA_CONTROL_BAR_UNDER_MARGIN = 32;
-    /**
-     * プレイヤー横画面時のシークバーの時間の左右マージン.
-     */
+    /** プレイヤー横画面時のシークバーの時間の左右マージン.*/
     private static final int SEEKBAR_TIME_LATERAL_MARGIN = 18;
-    /**
-     * プレイヤー横画面時のフルスクリーンボタンの右マージン.
-     */
+    /** プレイヤー横画面時のフルスクリーンボタンの右マージン.*/
     private static final int FULL_SCREEN_BUTTON_RIGHT_MARGIN = 16;
-    /**
-     * 他サービスフラグ.
-     */
+    /** 他サービスフラグ.*/
     private boolean mIsOtherService = false;
-    /**
-     * 年齢.
-     */
+    /** 年齢.*/
     private int mAge = 0;
 
     //視聴判定
-    /**
-     * 対象コンテンツが視聴期限以内かどうか.
-     */
+    /** 対象コンテンツが視聴期限以内かどうか.*/
     private boolean mIsLimitThirtyDay = false;
-    /**
-     * 対象コンテンツが視聴期限以内かどうか(VOD情報).
-     */
+    /** 対象コンテンツが視聴期限以内かどうか(VOD情報).*/
     private boolean mIsVodLimitThirtyDay = false;
-    /**
-     * 対象コンテンツのチャンネルデータ.
-     */
+    /** 対象コンテンツのチャンネルデータ.*/
     private ChannelInfo mChannel = null;
-    /**
-     * 視聴可能期限.
-     */
+    /** 視聴可能期限.*/
     private long mEndDate = 0L;
-    /**
-     * 一ヶ月(30日).
-     */
+    /** 一ヶ月(30日).*/
     private static final int ONE_MONTH = 30;
-    /**
-     * 視聴不可(再生導線非表示).
-     */
+    /** 視聴不可(再生導線非表示).*/
     private static final int DISABLE_WATCH_NO_PLAY = -4;
-    /**
-     * 視聴不可(契約導線を表示(CH)).
-     */
+    /** 視聴不可(契約導線を表示(CH)).*/
     private static final int DISABLE_WATCH_LEAD_CONTRACT_CH = -3;
-    /**
-     * 視聴不可(契約導線を表示(VOD)).
-     */
+    /** 視聴不可(契約導線を表示(VOD)).*/
     private static final int DISABLE_WATCH_LEAD_CONTRACT_VOD = -2;
-    /**
-     * 視聴不可(契約導線を表示).
-     */
+    /** 視聴不可(契約導線を表示).*/
     private static final int DISABLE_WATCH_LEAD_CONTRACT = -1;
-    /**
-     * 視聴不可判定未実施.
-     */
+    /** 視聴不可判定未実施.*/
     private static final int ENABLE_WATCH_NO_DEFINE = 0;
-    /**
-     * 視聴可能(視聴可能期限無し).
-     */
+    /** 視聴可能(視聴可能期限無し).*/
     private static final int ENABLE_WATCH_NO_LIMIT = 1;
-    /**
-     * 視聴可能(視聴可能期限30日以内).
-     */
+    /** 視聴可能(視聴可能期限30日以内).*/
     private static final int ENABLE_WATCH_WITH_LIMIT = 2;
-    /**
-     * 視聴可能かどうか.
-     */
+    /** 視聴可能かどうか.*/
     private int mIsEnableWatch = ENABLE_WATCH_NO_DEFINE;
-    /**
-     * サムネイルにかけるシャドウのアルファ値.
-     */
+    /** サムネイルにかけるシャドウのアルファ値.*/
     private static final float THUMBNAIL_SHADOW_ALPHA = 0.5f;
-    /**
-     * 外部出力制御.
-     */
+    /** 外部出力制御.*/
     private ExternalDisplayHelper mExternalDisplayHelper;
-    /**　
-     * 外部出力制御判定フラグ.
-     */
+    /** 外部出力制御判定フラグ.*/
     private boolean mExternalDisplayFlg = false;
-    /**
-     * アクティベーションハンドラー.
-     */
+    /** アクティベーションハンドラー.*/
     private Handler mActivationHandler = null;
-    /**
-     * アクティベーション.
-     */
+    /** アクティベーション.*/
     private ActivationHelper mActivationHelper;
-    /**
-     * デバイスキー.
-     */
+    /** デバイスキー.*/
     private String mDeviceKey;
-    /**
-     * アクティベーションスレッド.
-     * */
+    /** アクティベーションスレッド. */
     private ActivationThread mActivationThread;
-    /**
-     * 操作履歴送信.
-     */
+    /** 操作履歴送信.*/
     private SendOperateLog mSendOperateLog = null;
-    /**
-     * 二回目リモコン送信防止.
-     */
+    /** 二回目リモコン送信防止.*/
     private boolean mIsSend = false;
-    /**
-     * ヘッダーチェック.
-     */
+    /** ヘッダーチェック.*/
     private boolean mIsFromHeader = false;
-    /**
-     * 放送中フラグ.
-     */
+    /** 放送中フラグ.*/
     private boolean isVideoBroadcast = false;
-    /**
-     * チャンネル日付.
-     */
+    /** チャンネル日付.*/
     private String mChannelDate = null;
+    /** サービスID(ぷらら).*/
+    private String serviceId = null;
 
     /**
      *　コントロールビューを非表示にする.
@@ -1582,11 +1461,13 @@ public class ContentDetailActivity extends BaseActivity implements
         } else {  //plalaサーバーから
             mDetailData = mIntent.getParcelableExtra(PLALA_INFO_BUNDLE_KEY);
         }
+        boolean isTV = false;
         if (mIsOtherService) {
             String date = "";
             ContentUtils.ContentsType contentsType = ContentUtils.
                     getContentsTypeByRecommend(mDetailData.getServiceId(), mDetailData.getCategoryId());
             if (contentsType == ContentUtils.ContentsType.TV) {
+                isTV = true;
                 //番組(m/d（曜日）h:ii - h:ii)
                 date = DateUtils.getContentsDateString(mDetailData.getmStartDate(), mDetailData.getmEndDate());
                 // コンテンツ詳細(TVの場合は、チャンネルタブを追加設定する)
@@ -1634,8 +1515,14 @@ public class ContentDetailActivity extends BaseActivity implements
             findViewById(R.id.remote_control_view).setVisibility(View.INVISIBLE);
             viewRefresher.sendEmptyMessage(REFRESH_VIDEO_VIEW);
         } else {
-            sendOperateLog();
-            showProgressBar(false);
+            serviceId = mDetailData.getChannelId();
+            if (isTV && !TextUtils.isEmpty(serviceId)) {
+                showProgressBar(true);
+                getChannelInfo();
+            } else {
+                sendOperateLog();
+                showProgressBar(false);
+            }
         }
     }
 
@@ -2067,6 +1954,16 @@ public class ContentDetailActivity extends BaseActivity implements
     }
 
     /**
+     * チャンネル情報を取得.
+     */
+    private void getChannelInfo() {
+        if (mScaledDownProgramListDataProvider == null) {
+            mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
+        }
+        mScaledDownProgramListDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_ALL);
+    }
+
+    /**
      * ビューページャの再設定.
      */
     private void setViewPagerTab() {
@@ -2166,10 +2063,8 @@ public class ContentDetailActivity extends BaseActivity implements
                 mContentsDetailDataProvider.getRoleListData();
             }
             if (!TextUtils.isEmpty(mDetailFullData.getmService_id())) {
-                if (mScaledDownProgramListDataProvider == null) {
-                    mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
-                }
-                mScaledDownProgramListDataProvider.getChannelList(0, 0, "", 0);
+                serviceId = mDetailFullData.getmService_id();
+                getChannelInfo();
             }
             if (DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
                 if (getStbStatus()) {
@@ -2302,27 +2197,32 @@ public class ContentDetailActivity extends BaseActivity implements
     //region ScaledDownProgramListDataProvider.ApiDataProviderCallback
     @Override
     public void channelListCallback(final ArrayList<ChannelInfo> channels) {
+        showProgressBar(false);
         if (channels == null || channels.isEmpty()) {
             showErrorDialog(ErrorType.channelListGet);
             return;
         }
 
         //チャンネル情報取得して、更新する
-        if (!TextUtils.isEmpty(mDetailFullData.getmService_id())) {
+        if (!TextUtils.isEmpty(serviceId)) {
             DtvContentsDetailFragment detailFragment = getDetailFragment();
             for (int i = 0; i < channels.size(); i++) {
                 ChannelInfo channel = channels.get(i);
-                if (mDetailFullData.getmService_id().equals(channel.getServiceId())) {
+                if (serviceId.equals(channel.getServiceId())) {
                     mChannel = channel;
                     String channelName = channel.getTitle();
-                    detailFragment.mOtherContentsDetailData.setChannelName(channelName);
+                    if (detailFragment.mOtherContentsDetailData != null) {
+                        detailFragment.mOtherContentsDetailData.setChannelName(channelName);
+                    }
                     break;
                 }
             }
             detailFragment.refreshChannelInfo();
         }
         //コンテンツの視聴可否判定を行う
-        checkWatchContents();
+        if (mDetailFullData != null) {
+            checkWatchContents();
+        }
         //コンテンツの視聴可否判定に基づいてUI操作を行う
         if (mIsEnableWatch != ENABLE_WATCH_NO_DEFINE) {
             changeUIBasedContractInfo();
