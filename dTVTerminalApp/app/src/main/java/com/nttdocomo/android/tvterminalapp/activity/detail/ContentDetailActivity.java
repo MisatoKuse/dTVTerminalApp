@@ -324,11 +324,11 @@ public class ContentDetailActivity extends BaseActivity implements
     private static final String LOCAL_FILE_PATH = "file://";
     /**再生シークバー.*/
     private SeekBar mVideoSeekBar = null;
-    /**.*/
+    /**SecureVideoView.*/
     private SecureVideoView mSecureVideoPlayer = null;
     /**プレイヤーコントローラ.*/
     private SecuredMediaPlayerController mPlayerController = null;
-    /**.*/
+    /**再生するビデオ属性.*/
     private MediaVideoInfo mCurrentMediaInfo = null;
     /**プログレースRelativeLayout.*/
     private RelativeLayout progressLayout = null;

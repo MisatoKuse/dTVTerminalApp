@@ -8,7 +8,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 import java.util.ArrayList;
 
 /**
- *
+ *　検索リクエストデータクラス.
  */
 public class TotalSearchRequestData {
 
