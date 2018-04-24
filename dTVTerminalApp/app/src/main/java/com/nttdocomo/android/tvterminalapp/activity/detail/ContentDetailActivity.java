@@ -2691,9 +2691,9 @@ public class ContentDetailActivity extends BaseActivity implements
                     } else if (VIDEO_SERIES.equals(mDetailData.getDispType())) {
                         // ひかりTV内VOD(dTV含む)のシリーズ
                         requestStartApplicationHikariTvCategoryDtvSvod(mDetailFullData.getCrid());
-                        //「disp_type」が「video_program」の場合
+                        //「disp_type」が「tv_program」の場合
                     } else if (TV_PROGRAM.equals(mDetailData.getDispType())) {
-                        //「tv_service」が「0」の場合 ひかりTVの番組
+                        //「tv_service」が「1」の場合 ひかりTVの番組
                         if (TV_SERVICE_FLAG_HIKARI.equals(mDetailFullData.getmTv_service())) {
                             //ひかりTVの番組 地デジ
                             if (H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(mDetailData.getCategoryId())) {
@@ -2705,16 +2705,16 @@ public class ContentDetailActivity extends BaseActivity implements
                             } else if (H4D_CATEGORY_IPTV.equals(mDetailData.getCategoryId())) {
                                 requestStartApplicationHikariTvCategoryIptv(mDetailFullData.getmChno());
                             }
-                            //「tv_service」が「1」の場合
+                            //「tv_service」が「2」の場合
                         } else if (TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(mDetailFullData.getmTv_service())) {
                             //「contents_type」が「0」または未設定の場合  ひかりTV内dTVチャンネルの番組
                             if (CONTENT_TYPE_FLAG_ZERO.equals(mDetailData.getContentsType())
                                     || null == mDetailFullData.getmContent_type()) {
                                 //中継アプリに「chno」を通知する
                                 requestStartApplicationHikariTvCategoryDtvchannelBroadcast(mDetailFullData.getmChno());
-                            } else if (CONTENT_TYPE_FLAG_ONE.equals(mDetailData.getChannelId())
-                                    || CONTENT_TYPE_FLAG_TWO.equals(mDetailData.getChannelId())
-                                    || CONTENT_TYPE_FLAG_THREE.equals(mDetailData.getChannelId())) {
+                            } else if (CONTENT_TYPE_FLAG_ONE.equals(mDetailFullData.getmContent_type())
+                                    || CONTENT_TYPE_FLAG_TWO.equals(mDetailFullData.getmContent_type())
+                                    || CONTENT_TYPE_FLAG_THREE.equals(mDetailFullData.getmContent_type())) {
                                 //「vod_start_date」> 現在時刻の場合  ひかりTV内dTVチャンネルの番組(見逃し、関連VOD予定だが未配信)
                                 if (DateUtils.getNowTimeFormatEpoch() < mDetailFullData.getmVod_start_date()) {
                                     //中継アプリに「chno」を通知する
