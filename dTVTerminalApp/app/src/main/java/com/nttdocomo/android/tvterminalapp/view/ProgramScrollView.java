@@ -11,15 +11,28 @@ import android.widget.ScrollView;
 
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity;
 
+/**
+ * 番組表スクロールビュー管理クラス.
+ */
 public class ProgramScrollView extends ScrollView {
-
+    /**View.*/
     private View mView;
+    /**番組表activity.*/
     private TvProgramListActivity onScrollOffsetListener;
 
+    /**
+     * コンストラクタ.
+     * @param context context
+     */
     public ProgramScrollView(final Context context) {
         super(context);
     }
 
+    /**
+     * コンストラクタ.
+     * @param context context
+     * @param attrs attrs
+     */
     public ProgramScrollView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
     }
@@ -35,13 +48,17 @@ public class ProgramScrollView extends ScrollView {
         }
     }
 
+    /**
+     * スクロールビュー設定.
+     * @param view スクロール対象view
+     */
     public void setScrollView(final View view) {
         mView = view;
     }
 
     /**
      * スクロール時、リスナー設置.
-     * @param onScrollOffsetListener
+     * @param onScrollOffsetListener activity
      */
     public void setOnScrollOffsetListener(final TvProgramListActivity onScrollOffsetListener) {
         this.onScrollOffsetListener = onScrollOffsetListener;
@@ -51,6 +68,10 @@ public class ProgramScrollView extends ScrollView {
      * スクロールされた距離リスナー.
      */
     public interface OnScrollOffsetListener {
+        /**
+         * スクロール距離コールバック.
+         * @param offset スクロールされた距離
+         */
         void onScrollOffset(int offset);
     }
 }

@@ -4,10 +4,17 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
-
+/**
+ * SearchFilterTypeMappableクラス.
+ */
 public abstract class SearchFilterTypeMappable {
 
     //must be overrode
+
+    /**
+     * サーチフィルタータイプ取得.
+     * @return null
+     */
     public SearchFilterType searchFilterType() {
         return null;
     }

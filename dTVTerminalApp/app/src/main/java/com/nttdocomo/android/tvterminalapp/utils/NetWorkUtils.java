@@ -10,6 +10,9 @@ import android.net.NetworkInfo;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
+/**
+ * ネットワーク関連のUtilsクラス.
+ */
 public class NetWorkUtils {
 
     /**

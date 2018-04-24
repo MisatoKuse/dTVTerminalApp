@@ -104,12 +104,12 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
     }
 
     @Override
-    public void channelInfoCallback(ChannelInfoList channelsInfo) {
+    public void channelInfoCallback(final ChannelInfoList channelsInfo) {
         //NOP
     }
 
     @Override
-    public void channelListCallback(ArrayList<ChannelInfo> channels) {
+    public void channelListCallback(final ArrayList<ChannelInfo> channels) {
         this.mChannels = channels;
         if (mClipMapList != null) {
             sendTvClipListData(mClipMapList, mChannels);
@@ -186,6 +186,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
      * TvクリップリストをActivityに送る.
      *
      * @param list Tvクリップリスト
+     * @param channels チャンネル情報
      */
     private void sendTvClipListData(final List<Map<String, String>> list, final ArrayList<ChannelInfo> channels) {
         if (channels != null) {
@@ -199,6 +200,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
      * 取得したリストマップをContentsDataクラスへ入れる.
      *
      * @param clipMapList コンテンツリストデータ
+     * @param channels チャンネル情報.
      * @return ListView表示用データ
      */
     @SuppressWarnings("OverlyLongMethod")

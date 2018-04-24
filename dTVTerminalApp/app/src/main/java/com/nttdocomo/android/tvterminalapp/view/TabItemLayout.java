@@ -21,29 +21,50 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
+/**
+ * 共通TABレイアウトクラス.
+  */
 public class TabItemLayout extends HorizontalScrollView {
-
+    /**コンテキスト.*/
     private Context mContext = null;
+    /**タブ押下通知リスナー.*/
     private OnClickTabTextListener mOnClickTabTextListener = null;
+    /**タブ名.*/
     private String[] mTabNames = null;
+    /**LinearLayout.*/
     private LinearLayout mLinearLayout = null;
+    /**アクティビティタイプ.*/
     private ActivityType mActivityType = null;
-    // tabのTextViewのパラメータ値
+    /**tabのTextViewのパラメータ値.*/
     private LinearLayout.LayoutParams mTabTextViewLayoutParams = null;
-    // tabの最後のViewのパラメータ値
+    /**tabの最後のViewのパラメータ値.*/
     private LinearLayout.LayoutParams mTabTextViewLastDataLayoutParams = null;
+    /**タブTextSize.*/
     private float mTabTextSize = 0;
+    /**タブWidth.*/
     private float mTabWidth = 0;
 
+    /**
+     * アクティビティタイプ種別.
+     */
     public enum ActivityType {
+        /**SearchActivity.*/
         SEARCH_ACTIVITY,
+        /**ClipListActivity.*/
         CLIP_LIST_ACTIVITY,
+        /**RecordedListActivity.*/
         RECORDED_LIST_ACTIVITY,
+        /**VideoRankingActivity.*/
         VIDEO_RANKING_ACTIVITY,
+        /**WeeklyTvRankingActivity.*/
         WEEKLY_RANKING_ACTIVITY,
+        /**RecommendActivity.*/
         RECOMMEND_LIST_ACTIVITY,
+        /**ChannelListActivity.*/
         CHANNEL_LIST_ACTIVITY,
+        /**TvProgramListActivity.*/
         PROGRAM_LIST_ACTIVITY,
+        /**ContentDetailActivity.*/
         DTV_CONTENTS_DETAIL_ACTIVITY,
     }
 
@@ -56,10 +77,21 @@ public class TabItemLayout extends HorizontalScrollView {
         this(context, null);
     }
 
+    /**
+     * コンストラクタ.
+     * @param context コンテキスト
+     * @param attrs  attrs
+     */
     public TabItemLayout(final Context context, final AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
+    /**
+     * コンストラクタ.
+     * @param context context
+     * @param attrs  attrs
+     * @param defStyleAttr defStyleAttr
+     */
     public TabItemLayout(final Context context, final AttributeSet attrs, final int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mContext = context;
@@ -69,6 +101,10 @@ public class TabItemLayout extends HorizontalScrollView {
      * タブ押下通知リスナーIF.
      */
     public interface OnClickTabTextListener {
+        /**
+         * タブ押下callback.
+         * @param position position
+         */
         void onClickTab(int position);
     }
 
@@ -126,6 +162,7 @@ public class TabItemLayout extends HorizontalScrollView {
 
     /**
      * tabに関連するViewの初期化.
+     * @param tabNames タブ名
      */
     public void resetTabView(final String[] tabNames) {
         DTVTLogger.start("tabNames.length = " + tabNames.length);
@@ -213,6 +250,10 @@ public class TabItemLayout extends HorizontalScrollView {
         this.smoothScrollTo(toX, 0);
     }
 
+    /**
+     * アクティビティタイプ設定.
+     * @param activityType アクティビティタイプ
+     */
     private void setActivityType(final ActivityType activityType) {
         mActivityType = activityType;
     }
@@ -221,6 +262,7 @@ public class TabItemLayout extends HorizontalScrollView {
      * 画面毎のTabのTextViewのレイアウトパラメータを設定する.
      *
      * @param lastData True:最後のView false:その他
+     * @return レイアウトパラメータ
      */
     private LinearLayout.LayoutParams getTabTextViewParameter(final boolean lastData) {
         LinearLayout.LayoutParams params;
@@ -337,6 +379,8 @@ public class TabItemLayout extends HorizontalScrollView {
 
     /**
      * 設定するインジケータの取得.
+     * @param isFocus フォーカスフラグ
+     * @return リソースID
      */
     private int setBackgroundResourceIndicating(final boolean isFocus) {
         int resId;
