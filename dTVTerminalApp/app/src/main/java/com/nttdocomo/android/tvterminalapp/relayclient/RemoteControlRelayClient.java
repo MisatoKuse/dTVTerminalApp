@@ -7,12 +7,15 @@ package com.nttdocomo.android.tvterminalapp.relayclient;
 import android.content.Context;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 import android.view.View;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherApi;
+import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherUtil;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
@@ -714,6 +717,7 @@ public class RemoteControlRelayClient {
          */
         @Override
         public void run() {
+            DTVTLogger.warning(" >>>");
             StbConnectRelayClient stbDatagram = StbConnectRelayClient.getInstance();  // Socket通信
             if (mKeycodeRequest != null) {
                 stbDatagram.sendDatagram(mKeycodeRequest);
@@ -1167,27 +1171,50 @@ public class RemoteControlRelayClient {
          */
         @Override
         public void run() {
+            DTVTLogger.warning(" >>>");
+            if (mRequestParam == null) {
+                DTVTLogger.warning("mRequestParam == null");
+                return;
+            }
+
+            if (!CipherUtil.hasShareKey()) { //鍵がないため、鍵交換後、通信する
+                DTVTLogger.warning("need to exchange key");
+                CipherApi api = new CipherApi(new CipherApi.CipherApiCallback() {
+                    @Override
+                    public void apiCallback(boolean result, @Nullable String data) {
+                        if (result) {
+                            run();
+                        } else {
+                            RelayServiceResponseMessage response = new RelayServiceResponseMessage();
+                            response.setResult(RelayServiceResponseMessage.RELAY_RESULT_ERROR);
+                            response.setResultCode(RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE);
+                            response.setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
+                            sendResponseMessage(response);
+                        }
+                    }
+                });
+                api.requestSendPublicKey();
+                return;
+            }
+
             StbConnectRelayClient stbConnection = StbConnectRelayClient.getInstance();  // Socket通信
             String recvData;
             RelayServiceResponseMessage response = new RelayServiceResponseMessage();
-
-            if (mRequestParam != null) {
-                // アプリ起動要求をSTBへ送信して処理結果応答を取得する
-                if (stbConnection.connect()) {
-                    if (stbConnection.send(mRequestParam)) {
-                        recvData = stbConnection.receive();
-                        DTVTLogger.debug("recvData:" + recvData);
-                        response = setResponse(recvData);
-                    }
-                    stbConnection.disconnect();
-                } else {
-                    DTVTLogger.debug("failed to connect to the STB");
-                    response.setResult(RelayServiceResponseMessage.RELAY_RESULT_ERROR);
-                    response.setResultCode(RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE);
-                    response.setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
+            // アプリ起動要求をSTBへ送信して処理結果応答を取得する
+            if (stbConnection.connect()) {
+                if (stbConnection.send(mRequestParam)) {
+                    recvData = stbConnection.receive();
+                    DTVTLogger.debug("recvData:" + recvData);
+                    response = setResponse(recvData);
                 }
-                sendResponseMessage(response);
+                stbConnection.disconnect();
+            } else {
+                DTVTLogger.debug("failed to connect to the STB");
+                response.setResult(RelayServiceResponseMessage.RELAY_RESULT_ERROR);
+                response.setResultCode(RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE);
+                response.setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
             }
+            sendResponseMessage(response);
         }
 
         /**
