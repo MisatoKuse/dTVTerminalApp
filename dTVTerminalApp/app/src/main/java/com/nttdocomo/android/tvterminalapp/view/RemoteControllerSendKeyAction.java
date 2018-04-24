@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.view;
 
 import android.content.Context;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -14,6 +15,8 @@ import android.widget.ImageView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
+import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherApi;
+import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -480,7 +483,17 @@ public class RemoteControllerSendKeyAction {
      * @param context コンテキスト
      */
     private void sendKeyCode(final int viewId, final int action, final boolean isCancelFlg, final Context context) {
-        mRemoteControlRelayClient.sendKeycode(viewId, action, isCancelFlg, context);
+        if (CipherUtil.hasShareKey()) {
+            mRemoteControlRelayClient.sendKeycode(viewId, action, isCancelFlg, context);
+        } else {
+            CipherApi api = new CipherApi(new CipherApi.CipherApiCallback() {
+                @Override
+                public void apiCallback(boolean result, @Nullable String data) {
+                    mRemoteControlRelayClient.sendKeycode(viewId, action, isCancelFlg, context);
+                }
+            });
+            api.requestSendPublicKey();
+        }
     }
 
 

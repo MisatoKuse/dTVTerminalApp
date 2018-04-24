@@ -715,7 +715,6 @@ public class RemoteControlRelayClient {
         @Override
         public void run() {
             StbConnectRelayClient stbDatagram = StbConnectRelayClient.getInstance();  // Socket通信
-                stbDatagram.setRemoteIp(mRemoteHost);
             if (mKeycodeRequest != null) {
                 stbDatagram.sendDatagram(mKeycodeRequest);
             }
@@ -1173,7 +1172,6 @@ public class RemoteControlRelayClient {
             RelayServiceResponseMessage response = new RelayServiceResponseMessage();
 
             if (mRequestParam != null) {
-                    stbConnection.setRemoteIp(mRemoteHost);
                 // アプリ起動要求をSTBへ送信して処理結果応答を取得する
                 if (stbConnection.connect()) {
                     if (stbConnection.send(mRequestParam)) {
@@ -1551,6 +1549,8 @@ public class RemoteControlRelayClient {
      * @param remoteIp IPアドレス
      */
     public void setRemoteIp(final String remoteIp) {
+        DTVTLogger.warning("remoteIp = " + remoteIp);
+        StbConnectRelayClient.getInstance().setRemoteIp(remoteIp);
         mRemoteHost = remoteIp;
     }
 
