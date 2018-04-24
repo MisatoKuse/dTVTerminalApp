@@ -439,7 +439,7 @@ public class ContentDetailActivity extends BaseActivity implements
     /** チャンネル日付.*/
     private String mChannelDate = null;
     /** サービスID(ぷらら).*/
-    private String serviceId = null;
+    private String mServiceId = null;
 
     /**
      *　コントロールビューを非表示にする.
@@ -1515,8 +1515,8 @@ public class ContentDetailActivity extends BaseActivity implements
             findViewById(R.id.remote_control_view).setVisibility(View.INVISIBLE);
             viewRefresher.sendEmptyMessage(REFRESH_VIDEO_VIEW);
         } else {
-            serviceId = mDetailData.getChannelId();
-            if (isTV && !TextUtils.isEmpty(serviceId)) {
+            mServiceId = mDetailData.getChannelId();
+            if (isTV && !TextUtils.isEmpty(mServiceId)) {
                 showProgressBar(true);
                 getChannelInfo();
             } else {
@@ -2063,7 +2063,7 @@ public class ContentDetailActivity extends BaseActivity implements
                 mContentsDetailDataProvider.getRoleListData();
             }
             if (!TextUtils.isEmpty(mDetailFullData.getmService_id())) {
-                serviceId = mDetailFullData.getmService_id();
+                mServiceId = mDetailFullData.getmService_id();
                 getChannelInfo();
             }
             if (DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
@@ -2204,11 +2204,11 @@ public class ContentDetailActivity extends BaseActivity implements
         }
 
         //チャンネル情報取得して、更新する
-        if (!TextUtils.isEmpty(serviceId)) {
+        if (!TextUtils.isEmpty(mServiceId)) {
             DtvContentsDetailFragment detailFragment = getDetailFragment();
             for (int i = 0; i < channels.size(); i++) {
                 ChannelInfo channel = channels.get(i);
-                if (serviceId.equals(channel.getServiceId())) {
+                if (mServiceId.equals(channel.getServiceId())) {
                     mChannel = channel;
                     String channelName = channel.getTitle();
                     if (detailFragment.mOtherContentsDetailData != null) {
