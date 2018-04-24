@@ -1460,6 +1460,9 @@ public class ContentDetailActivity extends BaseActivity implements
             setTitleAndThumbnail(mDetailData.getTitle(), mDetailData.getThumb());
         } else {  //plalaサーバーから
             mDetailData = mIntent.getParcelableExtra(PLALA_INFO_BUNDLE_KEY);
+            if (getStbStatus()) {
+                createRemoteControllerView(true);
+            }
         }
         boolean isTV = false;
         if (mIsOtherService) {
@@ -3153,10 +3156,10 @@ public class ContentDetailActivity extends BaseActivity implements
             DTVTLogger.debug("tv_service: " + mDetailFullData.getmTv_service());
             //"tv_service"の値を確認する
             if (IS_TV_SERVICE_FLAG.equals(mDetailFullData.getmTv_service())) {
-                if (checkWatchDate(mDetailFullData.getAvail_start_date(), mDetailFullData.getAvail_end_date())) {
+                if (checkWatchDate(mDetailFullData.getPublish_start_date(), mDetailFullData.getPublish_end_date())) {
                     if (mIsLimitThirtyDay) {
                         //視聴可能(期限まで30日以内)
-                        mEndDate = mDetailFullData.getAvail_end_date();
+                        mEndDate = mDetailFullData.getPublish_end_date();
                         mIsEnableWatch = ENABLE_WATCH_WITH_LIMIT;
                     } else {
                         //視聴可能
@@ -3164,12 +3167,12 @@ public class ContentDetailActivity extends BaseActivity implements
                     }
                     DTVTLogger.debug("Viewable. Within 30 days:" + mIsLimitThirtyDay);
                     return;
-                } else if (mDetailFullData.getAvail_start_date() >= DateUtils.getNowTimeFormatEpoch()) {
+                } else if (mDetailFullData.getPublish_start_date() >= DateUtils.getNowTimeFormatEpoch()) {
                     //視聴不可(視聴導線を非表示)
                     mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
                     DTVTLogger.debug("Unviewable(Hide playing method because outside broadcasting time)");
                     return;
-                }  else if (mDetailFullData.getAvail_end_date() <= DateUtils.getNowTimeFormatEpoch()) {
+                }  else if (mDetailFullData.getPublish_end_date() <= DateUtils.getNowTimeFormatEpoch()) {
                     if (checkVodDate(mDetailFullData.getmVod_start_date(), mDetailFullData.getmVod_end_date())) {
                         if (mIsVodLimitThirtyDay) {
                             //視聴可能(期限まで30日以内)
@@ -3188,7 +3191,7 @@ public class ContentDetailActivity extends BaseActivity implements
                         return;
                     }
                 }
-            } else if (NOT_TV_SERVICE_FLAG.equals(mDetailFullData.getmTv_service())) {
+            } else if (TextUtils.isEmpty(mDetailFullData.getmTv_service()) || NOT_TV_SERVICE_FLAG.equals(mDetailFullData.getmTv_service())) {
                 //視聴不可(視聴導線を非表示)
                 mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
                 DTVTLogger.debug("Unviewable(tv_service = 0)");
@@ -3234,23 +3237,32 @@ public class ContentDetailActivity extends BaseActivity implements
                             if (CH_TYPE_KIHON.equals(mChannel.getChType())
                                     || CH_TYPE_BASIC.equals(mChannel.getChType())
                                     || CH_TYPE_TRIAL.equals(mChannel.getChType())) {
-                                if (mDetailFullData.getAvail_start_date() <= DateUtils.getNowTimeFormatEpoch()
-                                        && DateUtils.getNowTimeFormatEpoch() < mDetailFullData.getAvail_end_date()) {
+                                if (mDetailFullData.getPublish_start_date() <= DateUtils.getNowTimeFormatEpoch()
+                                        && DateUtils.getNowTimeFormatEpoch() < mDetailFullData.getPublish_end_date()) {
                                     mIsEnableWatch = ENABLE_WATCH_NO_LIMIT;
                                     DTVTLogger.debug("Viewable");
                                     return;
-                                } else if (mDetailFullData.getAvail_start_date() > DateUtils.getNowTimeFormatEpoch()
-                                        || DateUtils.getNowTimeFormatEpoch() >= mDetailFullData.getAvail_end_date()) {
+                                } else if (mDetailFullData.getPublish_start_date() > DateUtils.getNowTimeFormatEpoch()
+                                        || DateUtils.getNowTimeFormatEpoch() >= mDetailFullData.getPublish_end_date()) {
                                     //視聴期間外のため視聴不可
                                     mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
                                     DTVTLogger.debug("Unviewable(Hide playing method because outside broadcasting time)");
                                     return;
                                 }
                             } else if (CH_TYPE_PREMIUM.equals(mChannel.getChType())) {
-                                //購入済みチャンネル一覧を取得
-                                mContentsDetailDataProvider.getChListData();
-                                //onRentalChListCallbackで続きの判定を行う
-                                return;
+                                if (mDetailFullData.getPublish_start_date() <= DateUtils.getNowTimeFormatEpoch()
+                                        && DateUtils.getNowTimeFormatEpoch() < mDetailFullData.getPublish_end_date()) {
+                                    //購入済みチャンネル一覧を取得
+                                    mContentsDetailDataProvider.getChListData();
+                                    //onRentalChListCallbackで続きの判定を行う
+                                    return;
+                                } else if (mDetailFullData.getPublish_start_date() > DateUtils.getNowTimeFormatEpoch()
+                                        || DateUtils.getNowTimeFormatEpoch() >= mDetailFullData.getPublish_end_date()) {
+                                    //視聴期間外のため視聴不可
+                                    mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
+                                    DTVTLogger.debug("Unviewable(Hide playing method because outside broadcasting time)");
+                                    return;
+                                }
                             }
                         }
                     }
@@ -3259,9 +3271,9 @@ public class ContentDetailActivity extends BaseActivity implements
                     DTVTLogger.debug("Unviewable(Incorrect channel info)");
                 } else if (IS_TV_SERVICE_FLAG.equals(mDetailFullData.getmTv_service())) {
                     //"tv_service"が1の場合（dチャンネル）
-                    if (checkWatchDate(mDetailFullData.getAvail_start_date(), mDetailFullData.getAvail_end_date())) {
+                    if (checkWatchDate(mDetailFullData.getPublish_start_date(), mDetailFullData.getPublish_end_date())) {
                         if (mIsLimitThirtyDay) {
-                            mEndDate = mDetailFullData.getAvail_end_date();
+                            mEndDate = mDetailFullData.getPublish_end_date();
                             mIsEnableWatch = ENABLE_WATCH_WITH_LIMIT;
                         } else {
                             //視聴可能
@@ -3269,12 +3281,12 @@ public class ContentDetailActivity extends BaseActivity implements
                         }
                         DTVTLogger.debug("Viewable. Within 30 days:" + mIsVodLimitThirtyDay);
                         return;
-                    } else if (mDetailFullData.getAvail_start_date() >= DateUtils.getNowTimeFormatEpoch()) {
+                    } else if (mDetailFullData.getPublish_start_date() >= DateUtils.getNowTimeFormatEpoch()) {
                         //視聴不可(視聴導線を非表示)
                         mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
                         DTVTLogger.debug("Unviewable(Hide playing method because outside broadcasting time)");
                         return;
-                    } else if (mDetailFullData.getAvail_end_date() <= DateUtils.getNowTimeFormatEpoch()) {
+                    } else if (mDetailFullData.getPublish_end_date() <= DateUtils.getNowTimeFormatEpoch()) {
                         if (checkVodDate(mDetailFullData.getmVod_start_date(), mDetailFullData.getmVod_end_date())) {
                             if (mIsVodLimitThirtyDay) {
                                 //視聴可能(期限まで30日以内)
@@ -3320,7 +3332,7 @@ public class ContentDetailActivity extends BaseActivity implements
                         DTVTLogger.debug("Unviewable(Outside broadcasting time)");
                         return;
                     }
-                } else if (NOT_DTV_FLAG.equals(mDetailFullData.getDtv())) {
+                } else if (TextUtils.isEmpty(mDetailFullData.getDtv()) || NOT_DTV_FLAG.equals(mDetailFullData.getDtv())) {
                     //"dtv"の値が0の場合、"bvflg"の値を確認する
                     DTVTLogger.debug("bvflg: " + mDetailFullData.getBvflg());
                     if (IS_BV_FLAG.equals(mDetailFullData.getBvflg())) {
@@ -3354,10 +3366,18 @@ public class ContentDetailActivity extends BaseActivity implements
                 DTVTLogger.debug("Unviewable(Incorrect dtv value)");
                 break;
             case SUBSCRIPTION_PACKAGE:
-                //レンタルコンテンツ(購入済みVOD)一覧を取得
-                mContentsDetailDataProvider.getVodListData();
-                //onRentalVodListCallbackで続きの判定を行う
-                break;
+                //視聴可能期限の確認
+                if (checkWatchDate(mDetailFullData.getAvail_start_date(), mDetailFullData.getAvail_end_date())) {
+                    //レンタルコンテンツ(購入済みVOD)一覧を取得
+                    mContentsDetailDataProvider.getVodListData();
+                    //onRentalVodListCallbackで続きの判定を行う
+                    return;
+                } else {
+                    //視聴可能期限内ではないので視聴不可
+                    mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
+                    DTVTLogger.debug("Unviewable(Outside broadcasting time)");
+                    return;
+                }
             default:
                 mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
                 break;
