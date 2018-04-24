@@ -10,23 +10,33 @@ import android.text.TextUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
-/*
+/**
  * ワンタイムトークンの情報伝達用構造体.
  */
 public class OneTimeTokenData {
-    //ワンタイムトークンのデータ分離用文字列
+    /**
+     * ワンタイムトークンのデータ分離用文字列.
+     */
     private static final String ONE_TIME_TOKEN_SPLITTER = "／";
 
-    //ワンタイムトークンのパラメータ順
+    /**
+     * ワンタイムトークンのパラメータ順.
+     */
     private static final int ONE_TIME_TOKEN_POSITION = 0;
 
-    //ワンタイムトークン取得日時のパラメータ順
+    /**
+     * ワンタイムトークン取得日時のパラメータ順.
+     */
     private static final int ONE_TIME_TOKEN_TIME_POSITION = 1;
 
-    //ワンタイムトークン
+    /**
+     * ワンタイムトークン.
+     */
     private String mOneTimeToken;
 
-    //ワンタイムトークン取得日時（エポック秒で記録）
+    /**
+     * ワンタイムトークン取得日時（エポック秒で記録）.
+     */
     private long mOneTimeTokenTime;
 
     /**
@@ -39,6 +49,7 @@ public class OneTimeTokenData {
 
     /**
      * 初期データ付きコンストラクタ.
+     * @param source 元になる文字列
      */
     public OneTimeTokenData(final String source) {
         //初期化を行う
@@ -48,10 +59,18 @@ public class OneTimeTokenData {
         analyzeOneTimeTokenString(source);
     }
 
+    /**
+     * ワンタイムトークン取得.
+     * @return ワンタイムトークン
+     */
     public String getOneTimeToken() {
         return mOneTimeToken;
     }
 
+    /**
+     * ワンタイムトークン設定.
+     * @param oneTimeToken ワンタイムトークン
+     */
     public void setOneTimeToken(final String oneTimeToken) {
         mOneTimeToken = oneTimeToken;
     }
@@ -65,6 +84,10 @@ public class OneTimeTokenData {
         return mOneTimeTokenTime;
     }
 
+    /**
+     * ワンタイムトークン使用期限のエポック秒設定.
+     * @param oneTimeTokenGetTime  ワンタイムトークン使用期限のエポック秒
+     */
     public void setOneTimeTokenGetTime(final long oneTimeTokenGetTime) {
         mOneTimeTokenTime = oneTimeTokenGetTime;
     }

@@ -25,7 +25,9 @@ import java.util.Date;
  * コンテンツ共通Utilクラス.
  */
 public class ContentUtils {
-
+    /**
+     * コンテンツタイプ.
+     */
     public enum ContentsType {
         /**
          * テレビ.

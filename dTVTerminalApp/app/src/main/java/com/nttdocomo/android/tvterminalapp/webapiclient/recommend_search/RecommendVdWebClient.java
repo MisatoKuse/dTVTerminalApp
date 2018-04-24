@@ -14,6 +14,9 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideo
 
 import java.util.LinkedHashMap;
 
+/**
+ * おすすめビデオWebClient.
+ */
 public class RecommendVdWebClient extends WebApiBase implements WebApiCallback {
 
     /**
@@ -22,16 +25,28 @@ public class RecommendVdWebClient extends WebApiBase implements WebApiCallback {
     private static final String VIDEO_CATEGORY =
             //ホーム画面におすすめビデオを表示する為のカテゴリー（仮の値から実際の値に昇格）
             "15:01,15:02,17:01,43:02,43:03,44:05,44:06,44:08,44:10&";
-
+    /**RecommendVideoCallback.*/
     private RecommendVideoCallback mRecommendVideoCallback;
 
-    //SSLチェック用コンテキスト
+    /**SSLチェック用コンテキスト.*/
     private Context mContext;
 
+    /**
+     * おすすめビデオ一覧用callback.
+     */
     public interface RecommendVideoCallback {
+        /**
+         * RecommendVideoCallback.
+         * @param mRecommendVdList おすすめビデオ一覧リスト
+         */
         void RecommendVideoCallback(RecommendVdList mRecommendVdList);
     }
 
+    /**
+     * コンストラクタ.
+     * @param mRecommendVideoCallback コールバック.
+     * @param context コンテキスト.
+     */
     public RecommendVdWebClient(final RecommendVideoCallback mRecommendVideoCallback, final Context context) {
         this.mRecommendVideoCallback = mRecommendVideoCallback;
 
@@ -39,6 +54,9 @@ public class RecommendVdWebClient extends WebApiBase implements WebApiCallback {
         mContext = context;
     }
 
+    /**
+     * おすすめビデオApi取得.
+     */
     public void getRecommendVideoApi() {
 
         DTVTLogger.debug("getRecommendVideoApi");
@@ -53,7 +71,7 @@ public class RecommendVdWebClient extends WebApiBase implements WebApiCallback {
         //最大件数(おすすめ画面用の先読みもここで行うので、件数を100件に変更)
         queryItems.put(RecommendWebClient.MAX_RESULT, RecommendWebClient.HOME_PAGE_MAX);
 
-        //TODO: ページIDは払い出されていないのでダミー値
+        //TODO : ページIDは払い出されていないのでダミー値
         queryItems.put(RecommendWebClient.PAGE_ID, RecommendWebClient.USE_PAGE_ID);
 
         //パラメータがあるならば、URLの後ろに"?"をつける

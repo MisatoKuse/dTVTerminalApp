@@ -20,7 +20,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 public class TvtApplication extends Application implements Application.ActivityLifecycleCallbacks {
     /**
-     * Googleアナリティクス用のID
+     * Googleアナリティクス用のID.
      */
     private static final String GOOGLE_ANALYTICS_ID = "UA-117255147-1";
     /**
@@ -35,6 +35,9 @@ public class TvtApplication extends Application implements Application.ActivityL
      * GoogleAnalytics用クラス(Google提示の設定例がどちらもstaticになっている).
      */
     private static GoogleAnalytics sAnalytics;
+    /**
+     * Tracker.
+     */
     private static Tracker sTracker;
 
     @Override

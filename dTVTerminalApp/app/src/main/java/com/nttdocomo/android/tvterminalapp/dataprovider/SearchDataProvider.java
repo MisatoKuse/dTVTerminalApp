@@ -160,7 +160,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
     }
 
     /**
-     * TODO:検索中止処理開始用.
+     * TODO :検索中止処理開始用.
      */
     public void cancelSearch() {
         setSearchState(SearchState.canceled);
@@ -368,6 +368,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
     /**
      * 通信エラーメッセージを取得する.
+     * @return エラーメッセージ
      */
     public ErrorState getError() {
         ErrorState errorState = null;
