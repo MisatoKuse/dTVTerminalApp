@@ -124,6 +124,9 @@ public class UserInfoUtils {
                 newUserInfoLists.add(dataBuffer1);
                 newUserInfoLists.add(dataBuffer2);
             }
+        } else {
+            //ユーザ情報がないときはPG12制限値を返却
+            return StringUtils.DEFAULT_USER_AGE_REQ;
         }
         //年齢情報の取得
         return getUserAgeInfo(newUserInfoLists);
