@@ -92,7 +92,7 @@ public class RemoteControllerSendKeyAction {
      * @param view  View
      * @return cViewHolder
      */
-    private RemoteControllerChannelViewHolder setChannelViewHolder(RemoteControllerChannelViewHolder cViewHolder, final View view) {
+    private RemoteControllerChannelViewHolder setChannelViewHolder(final RemoteControllerChannelViewHolder cViewHolder, final View view) {
         DTVTLogger.start();
         cViewHolder.remote_controller_iv_power = view.findViewById(R.id.remote_controller_iv_power);
         cViewHolder.remote_controller_bt_degital = view.findViewById(R.id.remote_controller_bt_degital);
@@ -114,11 +114,8 @@ public class RemoteControllerSendKeyAction {
         cViewHolder.remote_controller_bt_channel_minus = view.findViewById(R.id.remote_controller_bt_channel_minus);
         cViewHolder.remote_controller_bt_notice = view.findViewById(R.id.remote_controller_bt_notice);
         cViewHolder.remote_controller_bt_ddata = view.findViewById(R.id.remote_controller_bt_ddata);
-
-        cViewHolder = setRemoteControllerChannelViewHolderListener(cViewHolder);
-
         DTVTLogger.end();
-        return cViewHolder;
+        return setRemoteControllerChannelViewHolderListener(cViewHolder);
     }
 
     /**
@@ -127,7 +124,7 @@ public class RemoteControllerSendKeyAction {
      * @param view View
      * @return pViewHolder
      */
-    private RemoteControllerPlayerViewHolder setPlayerViewHolder(RemoteControllerPlayerViewHolder pViewHolder, final View view) {
+    private RemoteControllerPlayerViewHolder setPlayerViewHolder(final RemoteControllerPlayerViewHolder pViewHolder, final View view) {
         DTVTLogger.start("" + view.getId());
         pViewHolder.remote_controller_bt_record_list = view.findViewById(R.id.remote_controller_bt_record_list);
         pViewHolder.remote_controller_bt_tvprogram = view.findViewById(R.id.remote_controller_bt_tv_program);
@@ -143,11 +140,8 @@ public class RemoteControllerSendKeyAction {
         pViewHolder.remote_controller_iv_red = view.findViewById(R.id.remote_controller_iv_red);
         pViewHolder.remote_controller_iv_green = view.findViewById(R.id.remote_controller_iv_green);
         pViewHolder.remote_controller_iv_yellow = view.findViewById(R.id.remote_controller_iv_yellow);
-
-        pViewHolder = setRemoteControllerPlayerViewHolderListener(pViewHolder);
-
         DTVTLogger.end();
-        return pViewHolder;
+        return setRemoteControllerPlayerViewHolderListener(pViewHolder);
     }
 
     /**

@@ -833,7 +833,7 @@ public class SharedPreferencesUtils {
      * @param context コンテキスト
      * @param status  実行状況
      */
-    public static void setFirstExecFlag(final Context context, int status) {
+    public static void setFirstExecFlag(final Context context, final int status) {
         DTVTLogger.start();
 
         //既に初回のdアカウント取得処理を行ったかどうかの確認
@@ -846,15 +846,15 @@ public class SharedPreferencesUtils {
             DTVTLogger.end();
             return;
         }
-
+        int modifyStatus = status;
         //強制的にリセット
-        if (status == FIRST_D_ACCOUNT_FORCE_RESET) {
-            status = 0;
+        if (modifyStatus == FIRST_D_ACCOUNT_FORCE_RESET) {
+            modifyStatus = 0;
         }
 
         //新たなステータスを書き込む
         SharedPreferences.Editor editor = data.edit();
-        editor.putInt(FIRST_D_ACCOUNT_GET_KEY, status);
+        editor.putInt(FIRST_D_ACCOUNT_GET_KEY, modifyStatus);
         editor.apply();
         DTVTLogger.end();
     }

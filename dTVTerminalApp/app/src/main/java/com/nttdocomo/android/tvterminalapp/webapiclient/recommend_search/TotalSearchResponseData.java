@@ -172,12 +172,14 @@ public class TotalSearchResponseData {
      * 検索結果からコンテンツ情報をリストにセットする.
      *
      * @param searchContentInfoArray 検索結果リスト
+     * @return tmpSearchContentInfoArray 検索結果リスト
      */
-    public void map(ArrayList<SearchContentInfo> searchContentInfoArray) {
-        if (null == searchContentInfoArray) {
-            searchContentInfoArray = new ArrayList<>();
+    public ArrayList<SearchContentInfo> map(final ArrayList<SearchContentInfo> searchContentInfoArray) {
+        ArrayList<SearchContentInfo> tmpSearchContentInfoArray  = searchContentInfoArray;
+        if (null == tmpSearchContentInfoArray) {
+            tmpSearchContentInfoArray = new ArrayList<>();
         } else {
-            searchContentInfoArray.clear();
+            tmpSearchContentInfoArray.clear();
         }
         for (Content content: contentList) {
             SearchContentInfo info = new SearchContentInfo(false, content.mContentsId, content.mServiceId, content.mCategoryId,
@@ -186,8 +188,9 @@ public class TotalSearchResponseData {
                     content.mGenreName, content.mDescription1, content.mDescription2, content.mDescription3,
                     content.mViewableAge, content.mReserved1, content.mReserved2, content.mReserved3,
                     content.mReserved4, content.mReserved5);
-            searchContentInfoArray.add(info);
+            tmpSearchContentInfoArray.add(info);
         }
+        return tmpSearchContentInfoArray;
     }
 
     /**

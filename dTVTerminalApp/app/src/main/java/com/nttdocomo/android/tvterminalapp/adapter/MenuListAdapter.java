@@ -90,20 +90,20 @@ public class MenuListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(final int i, View view, final ViewGroup viewGroup) {
-        View itemProgramVIew;
+    public View getView(final int i, final View view, final ViewGroup viewGroup) {
+        View itemProgramView;
         ProgramViewHolder holder;
         if (view == null) {
             holder = new ProgramViewHolder();
-            itemProgramVIew = View.inflate(mContext, R.layout.nav_item_lv_menu_program, null);
-            holder.tv_title = itemProgramVIew.findViewById(R.id.tv_title);
-            holder.tv_count = itemProgramVIew.findViewById(R.id.tv_count);
-            holder.tv_arrow = itemProgramVIew.findViewById(R.id.iv_arrow);
-            holder.tv_title_icon = itemProgramVIew.findViewById(R.id.tv_title_icon);
-            view = itemProgramVIew;
-            view.setTag(holder);
+            itemProgramView = View.inflate(mContext, R.layout.nav_item_lv_menu_program, null);
+            holder.tv_title = itemProgramView.findViewById(R.id.tv_title);
+            holder.tv_count = itemProgramView.findViewById(R.id.tv_count);
+            holder.tv_arrow = itemProgramView.findViewById(R.id.iv_arrow);
+            holder.tv_title_icon = itemProgramView.findViewById(R.id.tv_title_icon);
+            itemProgramView.setTag(holder);
         } else {
-            holder = (ProgramViewHolder) view.getTag();
+            itemProgramView = view;
+            holder = (ProgramViewHolder) itemProgramView.getTag();
         }
         String title = String.valueOf(mData.get(i));
         holder.tv_title.setText(title);
@@ -117,7 +117,7 @@ public class MenuListAdapter extends BaseAdapter {
         } else {
             holder.tv_count.setText("");
         }
-        return view;
+        return itemProgramView;
     }
 
     /**

@@ -116,7 +116,7 @@ public class ChannelListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(final int position, View convertView, final  ViewGroup parent) {
+    public View getView(final int position, final View convertView, final  ViewGroup parent) {
         View view;
         ViewHolder holder;
         if (convertView == null) {
@@ -144,10 +144,10 @@ public class ChannelListAdapter extends BaseAdapter {
                 default:
                     break;
             }
-            convertView = view;
-            convertView.setTag(holder);
+            view.setTag(holder);
         } else {
-            holder = (ViewHolder) convertView.getTag();
+            view = convertView;
+            holder = (ViewHolder) view.getTag();
         }
 
         ArrayList<String> nameThumbnail = new ArrayList<>();
@@ -169,7 +169,7 @@ public class ChannelListAdapter extends BaseAdapter {
             holder.mThumbnail.setImageResource(R.mipmap.error_ch_mini);
         }
 
-        return convertView;
+        return view;
     }
 
     /**
@@ -184,7 +184,7 @@ public class ChannelListAdapter extends BaseAdapter {
         if (null != mData && mData.size() > 0) {
             switch (mChListDataType) {
                 case CH_LIST_DATA_TYPE_BS:
-                    if (mData.get(position) instanceof  DlnaBsChListItem) {
+                    if (mData.get(position) instanceof DlnaBsChListItem) {
                         DlnaBsChListItem bsItem = (DlnaBsChListItem) mData.get(position);
                         if (null != bsItem) {
                             chName = bsItem.mChannelName;

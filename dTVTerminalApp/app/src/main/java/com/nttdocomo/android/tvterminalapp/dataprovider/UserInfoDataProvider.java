@@ -214,7 +214,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
      *
      * @param userInfoLists 契約情報
      */
-    private void afterProcess(List<UserInfoList> userInfoLists) {
+    private void afterProcess(final List<UserInfoList> userInfoLists) {
         DTVTLogger.start();
         DTVTLogger.debug("userInfoLists " + userInfoLists);
 
@@ -226,19 +226,20 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
             DTVTLogger.debug("first exec");
             changeFlag = false;
         }
+        List<UserInfoList> tmpUserInfoLists = userInfoLists;
 
-        if (userInfoLists == null) {
+        if (tmpUserInfoLists == null) {
             DTVTLogger.debug("no user data");
             // データ指定がヌルなので、前回の値を指定する。
-            userInfoLists = SharedPreferencesUtils.getSharedPreferencesUserInfo(mContext);
-        } else if (userInfoLists.get(0).getLoggedinAccount().size() == 0) {
+            tmpUserInfoLists = SharedPreferencesUtils.getSharedPreferencesUserInfo(mContext);
+        } else if (tmpUserInfoLists.get(0).getLoggedinAccount().size() == 0) {
             //契約情報がゼロ件の場合、情報取得に失敗するので、userInfoListsをヌルにして、異常データであることを明示する
-            userInfoLists = null;
+            tmpUserInfoLists = null;
         }
 
         //新旧の年齢データを比較する
         int beforeAge = SharedPreferencesUtils.getSharedPreferencesAgeReq(mContext);
-        int newAge = UserInfoUtils.getUserAgeInfoWrapper(userInfoLists);
+        int newAge = UserInfoUtils.getUserAgeInfoWrapper(tmpUserInfoLists);
 
         DTVTLogger.debug("before age " + beforeAge);
         DTVTLogger.debug("new age " + newAge);

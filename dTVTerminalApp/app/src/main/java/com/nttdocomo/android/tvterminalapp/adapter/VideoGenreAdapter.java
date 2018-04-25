@@ -51,17 +51,19 @@ public class VideoGenreAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(final int position,  View view, final ViewGroup parent) {
+    public View getView(final int position, final View view, final ViewGroup parent) {
+        View convertView;
         VideoGenreList videoGenreList = mData.get(position);
         ViewHolder holder;
         if (null == view) {
-            view = View.inflate(mContext, R.layout.item_video_genre, null);
+            convertView = View.inflate(mContext, R.layout.item_video_genre, null);
             holder = new ViewHolder();
-            holder.genre_title = view.findViewById(R.id.genre_title);
-            holder.content_count = view.findViewById(R.id.content_count);
-            view.setTag(holder);
+            holder.genre_title = convertView.findViewById(R.id.genre_title);
+            holder.content_count = convertView.findViewById(R.id.content_count);
+            convertView.setTag(holder);
         } else {
-            holder = (ViewHolder) view.getTag();
+            convertView = view;
+            holder = (ViewHolder) convertView.getTag();
         }
 
         if (!TextUtils.isEmpty(videoGenreList.getTitle())) {
@@ -71,7 +73,7 @@ public class VideoGenreAdapter extends BaseAdapter {
         if (!TextUtils.isEmpty(videoGenreList.getTitle())) {
             holder.content_count.setText(videoGenreList.getContentCount());
         }
-        return view;
+        return convertView;
     }
 
     /**

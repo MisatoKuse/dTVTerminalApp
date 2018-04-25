@@ -6,7 +6,6 @@ package com.nttdocomo.android.tvterminalapp.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -510,11 +509,12 @@ public class DateUtils {
      * @param format フォーマット文字列（nullの場合、DATE_PATTERN_HYPHEN)
      * @return フォーマットされた日付
      */
-    public static String formatEpochToString(final long epochTime, @Nullable String format) {
-        if (format == null) {
-            format = DATE_PATTERN_HYPHEN;
+    public static String formatEpochToString(final long epochTime, final String format) {
+        String tmpFormat = format;
+        if (tmpFormat == null) {
+            tmpFormat = DATE_PATTERN_HYPHEN;
         }
-        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(tmpFormat);
         return dateFormat.format(new Date(epochTime * 1000));
     }
 
