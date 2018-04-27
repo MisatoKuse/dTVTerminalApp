@@ -24,13 +24,14 @@ public class ChannelListFragmentFactory {
      * @return fragment
      */
     public ChannelListFragment createFragment(final int position, final ChannelListFragment.ChannelListFragmentListener lis,
-                                              final ChannelListActivity.ChListDataType type) {
+                                              final ChannelListActivity.ChListDataType type, final ChannelListFragment.OnClickChannelItemListener listener) {
         ChannelListFragment fragment;
         fragment = mFragments.get(position);
         if (fragment == null) {
             fragment = new ChannelListFragment();
             fragment.setScrollListener(lis);
             fragment.setChListDataType(type);
+            fragment.setClickItemListener(listener);
             mFragments.put(position, fragment);
         }
         return fragment;

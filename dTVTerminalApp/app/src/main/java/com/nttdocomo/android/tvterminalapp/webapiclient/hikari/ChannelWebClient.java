@@ -195,9 +195,12 @@ public class ChannelWebClient
                 jsonPagerObject.put(JsonConstants.META_RESPONSE_OFFSET, pagerOffset);
                 jsonObject.put(JsonConstants.META_RESPONSE_PAGER, jsonPagerObject);
             }
+            if (filter.isEmpty()) {
 
-            //その他
-            jsonObject.put(JsonConstants.META_RESPONSE_FILTER, filter);
+            } else {
+                jsonObject.put(JsonConstants.META_RESPONSE_FILTER, filter);
+            }
+
             //typeは無視する(ひかり、DTVともに必ず取得しキャッシュ)
             //jsonObject.put(JsonConstants.META_RESPONSE_TYPE, type);
 

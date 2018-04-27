@@ -23,7 +23,10 @@ public class NetWorkUtils {
      */
     public static boolean isOnline(final Context context) {
         DTVTLogger.start();
-
+        if (context == null) {
+            DTVTLogger.warning("context == null");
+            return false;
+        }
         //システムのネットワーク情報を取得する
         ConnectivityManager connectManager = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
