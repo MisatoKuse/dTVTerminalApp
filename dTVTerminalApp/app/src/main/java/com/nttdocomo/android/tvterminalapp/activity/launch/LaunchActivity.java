@@ -106,6 +106,8 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
         //次に遷移する画面を選択する
         selectScreenTransition();
+        // dアカウント処理は不要
+        setUnnecessaryDaccountRegistService();
     }
 
     /**
@@ -179,6 +181,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
                 if (!isFinishing()) {
                     //終了していなければ、次の処理を行う
                     setTimeOut();
+                    findViewById(R.id.launch_progress).setVisibility(View.VISIBLE);
                 }
             }
         };
@@ -273,12 +276,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
      */
     void startActivityWait() {
 
-        //dアカウントのダイアログ表示を次の画面に依頼するかを確認
-        if (mIsDAccountErrorNextAvctivity) {
-            //次の画面にdアカウントエラーの表示を依頼する
-            mNextActivity.putExtra(SHOW_D_ACCOUNT_DIALOG, true);
-        }
-
         //設定ファイルダイアログ表示を次の画面に依頼するかを確認
         if (mIsSettingErrorNextAvctivity) {
             //次の画面に設定画面エラーの表示を依頼する
@@ -331,12 +328,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
             return false;
         }
 
-        //dアカウントの処理が続行中か、そもそも実行されていなければ遷移不可
-        if ((mDAccountControl != null && mDAccountControl.isDAccountBusy())
-                || mCheckSetting == null) {
-            return false;
-        }
-
         //設定ファイルの処理が続行中か、そもそも実行されていなければ遷移不可
         if ((mCheckSetting != null && mCheckSetting.isBusy())
                 || mCheckSetting == null) {
@@ -369,23 +360,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void restartMessageDialog(final String... message) {
         // dアカが変わってもHOME遷移させない
-    }
-
-    /**
-     * 元のdアカウントのコールバックを置き換える.
-     *
-     * @param result 結果
-     */
-    @Override
-    public void daccountControlCallBack(final boolean result) {
-        //元のdアカウントのコールバックを呼ぶ
-        super.daccountControlCallBack(result);
-
-        //タイムアウトの待機中かどうかを見る
-        if (mTimeoutHandler != null) {
-            //終了条件を満たしていた場合は次の画面に遷移する
-            startActivityWait();
-        }
     }
 
     /**

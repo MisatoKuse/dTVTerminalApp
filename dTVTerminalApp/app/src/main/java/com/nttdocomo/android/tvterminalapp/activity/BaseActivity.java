@@ -221,10 +221,6 @@ public class BaseActivity extends FragmentActivity implements
     private static final int MIN_CLICK_DELAY_TIME = 500;
 
     /**
-     * スプラッシュ画面用のdアカウント用ダイアログ表示識別文字列.
-     */
-    protected final static String SHOW_D_ACCOUNT_DIALOG = "SHOW_D_ACCOUNT_DIALOG";
-    /**
      * スプラッシュ画面用のファイル設定ファイル用ダイアログ表示識別文字列.
      */
     protected final static String SHOW_SETTING_FILE_DIALOG = "SHOW_SETTING_FILE_DIALOG";
@@ -746,11 +742,6 @@ public class BaseActivity extends FragmentActivity implements
     void checkDialogShowRequest() {
         DTVTLogger.start();
         Intent intent = getIntent();
-
-        if (intent.getBooleanExtra(SHOW_D_ACCOUNT_DIALOG, false)) {
-            //dアカウント取得失敗エラーの表示依頼があったので、表示する
-            showDAccountErrorDialog();
-        }
 
         if (intent.getBooleanExtra(SHOW_SETTING_FILE_DIALOG, false)) {
             //設定ファイルエラーダイアログの表示依頼があったので、表示する
@@ -2287,7 +2278,12 @@ public class BaseActivity extends FragmentActivity implements
             setDaccountControl();
         }
         //アプリ設定ファイルの判定
-        checkSettingFile();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                checkSettingFile();
+            }
+        }).start();
 
         checkDAccountOnRestart();
         onStartCommunication();
