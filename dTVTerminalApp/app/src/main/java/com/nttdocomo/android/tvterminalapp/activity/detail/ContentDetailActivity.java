@@ -2464,7 +2464,7 @@ public class ContentDetailActivity extends BaseActivity implements
                                     errorMessage = getResources().getString(R.string.d_anime_store_content_service_update_dialog);
                                     showErrorDialog(errorMessage);
                                 } else {
-                                    startApp(UrlConstants.WebUrl.DANIMESTORE_START_URL);
+                                    startApp(UrlConstants.WebUrl.DANIMESTORE_START_URL + mDetailData.getContentsId());
                                 }
                             } else {
                                 toGooglePlay(UrlConstants.WebUrl.DANIMESTORE_GOOGLEPLAY_DOWNLOAD_URL);

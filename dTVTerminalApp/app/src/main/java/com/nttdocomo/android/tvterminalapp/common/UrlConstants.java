@@ -51,7 +51,7 @@ public class UrlConstants {
         /**
          * dアニメストア起動用URL.
          */
-        public static final String DANIMESTORE_START_URL = "danimestore://openWebView?url=[URL]";
+        public static final String DANIMESTORE_START_URL = "danimestore://openWebView?url=https://anime.dmkt-sp.jp/animestore/ci?workId=";
 
         /**
          * dTVチャンネル起動用URL(テレビ).
