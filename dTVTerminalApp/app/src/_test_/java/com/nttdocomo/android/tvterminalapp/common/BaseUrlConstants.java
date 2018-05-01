@@ -45,4 +45,11 @@ public class BaseUrlConstants {
      */
     public static final String PLALA_ID_FILE_URL = "https://dev-conf.dch.dmkt-sp.jp/common/client/";
 
+    /**
+     * ぷららサーバー固定ファイル用ベースURL.
+     *
+     * (現状は、ジャンル一覧と設定ファイルで使用)
+     */
+    public static final String PLALA_FIXED_FILE_BASE_URL
+            = "https://tconf.hikaritv-docomo.jp/";
 }

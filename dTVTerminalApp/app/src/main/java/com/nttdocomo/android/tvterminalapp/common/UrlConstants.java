@@ -242,15 +242,15 @@ public class UrlConstants {
          * APIではないので、例外としてURL全体を指定する
          */
         public static final String GENRE_LIST_FILE =
-                "https://tconf.hikaritv-docomo.jp/common/client/genreList.json";
+                BaseUrlConstants.PLALA_FIXED_FILE_BASE_URL + "common/client/genreList.json";
 
-        //TODO : 設定ファイルの配置場所はひとまずIemonサーバーとする。
         /**
          * アプリ起動設定ファイル：こちらはAPIではなく、ファイルの直接読み込みとなる.
          * APIではないので、例外としてURL全体を指定する
          */
         public static final String SETTING_FILE =
-                "http://192.168.2.3:80/setting_aos.json";
+                BaseUrlConstants.PLALA_FIXED_FILE_BASE_URL + "dtt/setting_aos.json";
+                //"http://192.168.2.3:80/setting_aos.json"; //ローカルテスト用IemonサーバーのURL
 
         /**
          * ロール一覧リストファイル：こちらはAPIではなく、ファイルの直接読み込みとのこと.
