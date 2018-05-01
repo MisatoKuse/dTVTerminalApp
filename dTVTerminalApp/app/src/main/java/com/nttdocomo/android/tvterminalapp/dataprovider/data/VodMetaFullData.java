@@ -10,6 +10,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.vodmetafulldata.Pui
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
@@ -151,6 +152,8 @@ public class VodMetaFullData implements Serializable {
     private boolean mClipStatus = false;
     /**ESTフラグ.*/
     private String mEstFlag = null;
+    /** コンテンツタイプ. **/
+    private ContentUtils.ContentsType mContentsType = null;
 
     private static final long serialVersionUID = 3855428172716406303L;
 
@@ -1730,5 +1733,21 @@ public class VodMetaFullData implements Serializable {
      */
     public void setEstFlag(final String mEstFlag) {
         this.mEstFlag = mEstFlag;
+    }
+
+    /**
+     * コンテンツタイプ設定.
+     * @return コンテンツタイプ
+     */
+    public ContentUtils.ContentsType getContentsType() {
+        return mContentsType;
+    }
+
+    /**
+     * コンテンツタイプ設定.
+     * @param mContentsType コンテンツタイプ
+     */
+    public void setContentsType(final ContentUtils.ContentsType mContentsType) {
+        this.mContentsType = mContentsType;
     }
 }

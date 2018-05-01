@@ -1033,6 +1033,10 @@ public class DateUtils {
      * @return エポック秒
      */
     public static long getEpochTime(final String strDate) {
+        //エポック秒が入った場合はそのままlong変換
+        if (DBUtils.isNumber(strDate)) {
+            return Long.parseLong(strDate);
+        }
         if (strDate == null) {
             return 0L;
         }
@@ -1101,6 +1105,10 @@ public class DateUtils {
      * @return エポック秒
      */
     public static long getHyphenEpochTime(final String strDate) {
+        //エポック秒が入った場合はそのままlong変換
+        if (DBUtils.isNumber(strDate)) {
+            return Long.parseLong(strDate);
+        }
         long epochTime = 0;
         if (null != strDate) {
             SimpleDateFormat formatter = new SimpleDateFormat(DATE_PATTERN_HYPHEN);

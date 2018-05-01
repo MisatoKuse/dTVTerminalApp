@@ -210,7 +210,7 @@ public class ContentDetailActivity extends BaseActivity implements
     /**DTVひかりコンテンツサービスID.*/
     public static final int DTV_HIKARI_CONTENTS_SERVICE_ID = 44;
     /**コンテンツ詳細予約済みID.*/
-    private static final String CONTENTS_DETAIL_RESERVEDID = "1";
+    public static final String CONTENTS_DETAIL_RESERVEDID = "1";
     /**モバイル視聴不可.*/
     private static final String MOBILEVIEWINGFLG_FLAG_ZERO = "0";
 
@@ -1981,12 +1981,12 @@ public class ContentDetailActivity extends BaseActivity implements
     //region ContentsDetailDataProvider.ApiDataProviderCallback
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     @Override
-    public void onContentsDetailInfoCallback(final ArrayList<VodMetaFullData> contentsDetailInfo, final boolean clipStatus) {
+    public void onContentsDetailInfoCallback(final VodMetaFullData contentsDetailInfo, final boolean clipStatus) {
 
         //詳細情報取得して、更新する
-        if (contentsDetailInfo != null && contentsDetailInfo.size() > 0) {
+        if (contentsDetailInfo != null) {
             DtvContentsDetailFragment detailFragment = getDetailFragment();
-            mDetailFullData = contentsDetailInfo.get(0);
+            mDetailFullData = contentsDetailInfo;
             if (TV_PROGRAM.equals(mDetailFullData.getDisp_type())) {
                 //tv_programの場合
                 if (TV_SERVICE_FLAG_HIKARI.equals(mDetailFullData.getmTv_service())) {
@@ -2013,7 +2013,7 @@ public class ContentDetailActivity extends BaseActivity implements
             String dTvType = mDetailFullData.getDtvType();
             detailFragment.mOtherContentsDetailData.setTitle(mDetailFullData.getTitle());
             setTitleAndThumbnail(mDetailFullData.getTitle(), mDetailFullData.getmDtv_thumb_448_252());
-            detailFragment.mOtherContentsDetailData.setVodMetaFullData(contentsDetailInfo.get(FIRST_VOD_META_DATA));
+            detailFragment.mOtherContentsDetailData.setVodMetaFullData(contentsDetailInfo);
             detailFragment.mOtherContentsDetailData.setDetail(mDetailFullData.getSynop());
             // コンテンツ状態を反映
             detailFragment.mOtherContentsDetailData.setClipStatus(clipStatus);

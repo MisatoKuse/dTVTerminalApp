@@ -284,6 +284,7 @@
     <string name="contents_player_bad_contents_info">再生できませんでした</string>
     <string name="contents_detail_adinfo_array_pipe">"\\|"</string>
     <string name="contents_detail_date_left_">"\\|"</string>
+    <string name="contents_detail_pairing_request">ドコモテレビターミナルとのペアリングが必要です</string>
 
     <!-- チャンネルリストタイトル -->
     <string name="channel_list_activity_title">チャンネルリスト</string>

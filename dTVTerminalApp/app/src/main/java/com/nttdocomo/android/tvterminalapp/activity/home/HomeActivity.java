@@ -919,7 +919,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void onContentsDetailInfoCallback(final ArrayList<VodMetaFullData> contentsDetailInfo, final boolean clipStatus) {
+    public void onContentsDetailInfoCallback(final VodMetaFullData contentsDetailInfo, final boolean clipStatus) {
         //callbackが帰ってきたらProgressDialogを消す
         showProgessBar(false);
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
