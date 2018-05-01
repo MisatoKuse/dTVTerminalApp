@@ -86,7 +86,7 @@ namespace dtvt {
             goto error_2;
         }
 
-        tmpDMSItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jni/DlnaDmsItem");
+        tmpDMSItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jni/dms/DlnaDmsItem");
         mEvent.mJClassDmsItem = (jclass)env->NewGlobalRef(tmpDMSItem);
         if (NULL == mEvent.mJClassDmsItem) {
             goto error_2;
