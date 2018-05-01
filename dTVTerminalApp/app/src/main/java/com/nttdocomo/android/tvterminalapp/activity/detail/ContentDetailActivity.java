@@ -2509,29 +2509,69 @@ public class ContentDetailActivity extends BaseActivity implements
                                 || VIDEO_PACKAGE.equals(mDetailFullData.getDisp_type())
                                 || SUBSCRIPTION_PACKAGE.equals(mDetailFullData.getDisp_type())
                                 || SERIES_SVOD.equals(mDetailFullData.getDisp_type())) {
-                            if (METARESPONSE1.equals(mDetailFullData.getDtvType())) {
-                                startApp(UrlConstants.WebUrl.WORK_START_TYPE + mDetailFullData.getTitle_id());
-                            } else if (METARESPONSE2.equals(mDetailFullData.getDtvType())) {
-                                startApp(UrlConstants.WebUrl.SUPER_SPEED_START_TYPE + mDetailFullData.getTitle_id());
-                            } else {
-                                startApp(UrlConstants.WebUrl.TITTLE_START_TYPE + mDetailFullData.getTitle_id());
-                            }
-                        } else if (TV_PROGRAM.equals(mDetailFullData.getDisp_type())) { //ひかりTV中にdtvチャンネルの場合 DREM-1100
-                            if (TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(mDetailFullData.getmTv_service())) {
-                                //「contents_type」が「0」または未設定
-                                if (CONTENT_TYPE_FLAG_ZERO.equals(mDetailFullData.getmContent_type())
-                                        || null == mDetailFullData.getmContent_type()) {
-                                    DTVTLogger.debug("contentsType :----" + mDetailFullData.getmContent_type());
-                                    startApp(UrlConstants.WebUrl.DTVCHANNEL_TELEVISION_START_URL + mDetailFullData.getmChno());
-                                    DTVTLogger.debug("chno :----" + mDetailFullData.getmChno());
-                                    //ビデオ再生 「disp_type」が「tv_program」かつ「contents_type」が「1」または「2」または「3」
-                                } else if (CONTENT_TYPE_FLAG_ONE.equals(mDetailFullData.getmContent_type())
-                                        || CONTENT_TYPE_FLAG_TWO.equals(mDetailFullData.getmContent_type())
-                                        || CONTENT_TYPE_FLAG_THREE.equals(mDetailFullData.getmContent_type())) {
-                                    startApp(UrlConstants.WebUrl.DTVCHANNEL_VIDEO_START_URL + mDetailFullData.getCrid());
-                                    DTVTLogger.debug("crid :----" + mDetailFullData.getCrid());
+                            CustomDialog startAppDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+                            startAppDialog.setContent(getResources().getString(R.string.dtv_content_service_start_dialog));
+                            startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                                @Override
+                                public void onOKCallback(final boolean isOK) {
+                                    int localVersionCode = getVersionCode(DTV_PACKAGE_NAME);
+                                    //端末にDTVアプリはすでに存在した場合
+                                    if (isAppInstalled(ContentDetailActivity.this, DTV_PACKAGE_NAME)) {
+                                        //バージョンチェック
+                                        if (localVersionCode < DTV_VERSION_STANDARD) {
+                                            errorMessage = getResources().getString(R.string.dtv_content_service_update_dialog);
+                                            showErrorDialog(errorMessage);
+                                        } else {
+                                            if (METARESPONSE1.equals(mDetailFullData.getDtvType())) {
+                                                startApp(UrlConstants.WebUrl.WORK_START_TYPE + mDetailFullData.getTitle_id());
+                                            } else if (METARESPONSE2.equals(mDetailFullData.getDtvType())) {
+                                                startApp(UrlConstants.WebUrl.SUPER_SPEED_START_TYPE + mDetailFullData.getTitle_id());
+                                            } else {
+                                                startApp(UrlConstants.WebUrl.TITTLE_START_TYPE + mDetailFullData.getTitle_id());
+                                            }
+                                        }
+                                        //DTVアプリ存在しない場合
+                                    } else {
+                                        toGooglePlay(UrlConstants.WebUrl.GOOGLEPLAY_DOWNLOAD_URL);
+                                    }
                                 }
-                            }
+                            });
+                            startAppDialog.showDialog();
+                        } else if (TV_PROGRAM.equals(mDetailFullData.getDisp_type())) { //ひかりTV中にdtvチャンネルの場合 DREM-1100
+                            final CustomDialog startAppDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+                            startAppDialog.setContent(getResources().getString(R.string.dtv_channel_service_start_dialog));
+                            startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                                @Override
+                                public void onOKCallback(final boolean isOK) {
+                                    if (isAppInstalled(ContentDetailActivity.this, DTVCHANNEL_PACKAGE_NAME)) {
+                                        //バージョンコードは15
+                                        int localVersionCode = getVersionCode(DTVCHANNEL_PACKAGE_NAME);
+                                        if (localVersionCode < DTVCHANNEL_VERSION_STANDARD) {
+                                            errorMessage = getResources().getString(R.string.dtv_channel_service_update_dialog);
+                                            showErrorDialog(errorMessage);
+                                        } else {
+                                            if (TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(mDetailFullData.getmTv_service())) {
+                                                //「contents_type」が「0」または未設定
+                                                if (CONTENT_TYPE_FLAG_ZERO.equals(mDetailFullData.getmContent_type())
+                                                        || null == mDetailFullData.getmContent_type()) {
+                                                    DTVTLogger.debug("contentsType :----" + mDetailFullData.getmContent_type());
+                                                    startApp(UrlConstants.WebUrl.DTVCHANNEL_TELEVISION_START_URL + mDetailFullData.getmChno());
+                                                    DTVTLogger.debug("chno :----" + mDetailFullData.getmChno());
+                                                    //ビデオ再生 「disp_type」が「tv_program」かつ「contents_type」が「1」または「2」または「3」
+                                                } else if (CONTENT_TYPE_FLAG_ONE.equals(mDetailFullData.getmContent_type())
+                                                        || CONTENT_TYPE_FLAG_TWO.equals(mDetailFullData.getmContent_type())
+                                                        || CONTENT_TYPE_FLAG_THREE.equals(mDetailFullData.getmContent_type())) {
+                                                    startApp(UrlConstants.WebUrl.DTVCHANNEL_VIDEO_START_URL + mDetailFullData.getCrid());
+                                                    DTVTLogger.debug("crid :----" + mDetailFullData.getCrid());
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        toGooglePlay(UrlConstants.WebUrl.DTVCHANNEL_GOOGLEPLAY_DOWNLOAD_URL);
+                                    }
+                                }
+                            });
+                            startAppDialog.showDialog();
                         }
                     }
                 }
