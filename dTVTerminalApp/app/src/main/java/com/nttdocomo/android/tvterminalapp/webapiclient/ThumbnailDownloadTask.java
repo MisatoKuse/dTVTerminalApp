@@ -80,12 +80,12 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
             if (isCancelled() || mIsStop) {
                 return null;
             }
+
             URL url = new URL(imageUrl);
             urlConnection = (HttpURLConnection) url.openConnection();
 
             //コンテキストがあればSSL証明書失効チェックを行う
             if (mContext != null) {
-                DTVTLogger.debug(imageUrl);
 
                 //SSL証明書失効チェックライブラリの初期化を行う
                 OcspUtil.init(mContext);
@@ -111,16 +111,19 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
             }
             return bitmap;
         } catch (SSLHandshakeException e) {
+            DTVTLogger.warning("SSLHandshakeException");
             //　SSL証明書が失効していたので、通信中止
             DTVTLogger.debug(e);
         } catch (SSLPeerUnverifiedException e) {
+            DTVTLogger.warning("SSLPeerUnverifiedException");
             // SSLチェックライブラリの初期化が行われていないので、通信中止
             DTVTLogger.debug(e);
         } catch (OcspParameterException e) {
+            DTVTLogger.warning("OcspParameterException");
             // SSLチェックの初期化に失敗しているので、通信中止（通常は発生しないとの事）
             DTVTLogger.debug(e);
         } catch (IOException e) {
-            DTVTLogger.debug(e);
+//            DTVTLogger.debug(e); //現在サーバーからの不正で大量の例外になるため、コメントアウト
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -149,7 +152,6 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
                 // 画像取得失敗のケース
                 if (imageView.getTag() != null && imageUrl.equals(imageView.getTag())) {
                     imageView.setImageResource(R.mipmap.error_scroll);
-                    DTVTLogger.debug("download fail..... url=" + imageUrl);
                 }
             }
         }

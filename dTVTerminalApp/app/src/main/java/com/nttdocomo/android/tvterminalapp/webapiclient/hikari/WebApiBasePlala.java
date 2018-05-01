@@ -1090,7 +1090,6 @@ public class WebApiBasePlala {
          */
         @Override
         protected ReturnCode doInBackground(final Object... strings) {
-            DTVTLogger.start();
             if (isCancelled() || mIsStop) {
                 return null;
             }
@@ -1139,7 +1138,6 @@ public class WebApiBasePlala {
                     //通信開始時にSSL証明書失効チェックを併せて行う
                     OcspURLConnection ocspURLConnection = new OcspURLConnection(mUrlConnection);
                     ocspURLConnection.connect();
-                    DTVTLogger.debug("SSL check OK");
                 } else {
                     DTVTLogger.debug("SSL check error");
                     //将来はSSL専用になるので、コンテキストが無くて証明書チェックが行えないならばエラーとする
@@ -1159,24 +1157,29 @@ public class WebApiBasePlala {
                 mUrlConnection.disconnect();
                 removeConnections(mUrlConnection);
             } catch (ConnectException e) {
+                DTVTLogger.warning("ConnectException");
                 //通信エラー扱いとする
                 mReturnCode.errorState.setErrorType(
                         DTVTConstants.ERROR_TYPE.NETWORK_ERROR);
             } catch (SSLHandshakeException e) {
+                DTVTLogger.warning("SSLHandshakeException");
                 //SSL証明書が失効している
                 mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.SSL_ERROR);
                 DTVTLogger.debug(e);
             } catch (SSLPeerUnverifiedException e) {
+                DTVTLogger.warning("SSLPeerUnverifiedException");
                 //SSLチェックライブラリの初期化が行われていない
                 mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.SSL_ERROR);
                 DTVTLogger.debug(e);
             } catch (IOException e) {
+                DTVTLogger.warning("IOException");
                 //サーバーエラー扱いとする
                 mReturnCode.errorState.setErrorType(
                         DTVTConstants.ERROR_TYPE.SERVER_ERROR);
                 DTVTLogger.debug(e);
             } catch (OcspParameterException e) {
                 //SSLチェックの初期化に失敗している・通常は発生しないとの事
+                DTVTLogger.warning("OcspParameterException");
                 mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.SSL_ERROR);
                 DTVTLogger.debug(e);
             } finally {

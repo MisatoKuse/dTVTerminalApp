@@ -194,9 +194,12 @@ public class TvScheduleWebClient
             }
 
             jsonObject.put(JsonConstants.META_RESPONSE_DATE_LIST, dateArray);
+            if(filter.isEmpty()) {
+            } else {
+                //その他
+                jsonObject.put(JsonConstants.META_RESPONSE_FILTER, filter);
+            }
 
-            //その他
-            jsonObject.put(JsonConstants.META_RESPONSE_FILTER, filter);
 
             answerText = jsonObject.toString();
 

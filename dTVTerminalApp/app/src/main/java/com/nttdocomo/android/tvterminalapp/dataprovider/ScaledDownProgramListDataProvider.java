@@ -44,7 +44,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     /**
      * データ取得結果コールバック.
      */
-    private ApiDataProviderCallback mApiDataProviderCallback = null;
+    protected ApiDataProviderCallback mApiDataProviderCallback = null;
     /**
      * コンテキスト.
      */
@@ -422,7 +422,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      * @param channelsInfo チャンネル情報
      * @param userState ユーザー状態
      */
-    private void setScheduleInfo(final Map<String, String> hashMap, final ChannelInfoList channelsInfo, final UserState userState) {
+    protected void setScheduleInfo(final Map<String, String> hashMap, final ChannelInfoList channelsInfo, final UserState userState) {
         ScheduleInfo mSchedule = convertScheduleInfo(hashMap, userState);
 
         if (!TextUtils.isEmpty(mSchedule.getChNo())) { //CH毎番組データ取得して、整形する

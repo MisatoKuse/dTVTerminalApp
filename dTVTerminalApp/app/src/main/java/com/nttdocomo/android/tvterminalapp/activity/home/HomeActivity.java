@@ -508,7 +508,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         horizontalViewAdapter.setFooterView(footer);
         if (index == HOME_CONTENTS_SORT_CHANNEL && mChannelList != null) {
             //Now On Airのデータセット時に、チャンネルデータが既にある場合にはアダプタに渡す.
-            horizontalViewAdapter.setCHannnelList(mChannelList);
+            horizontalViewAdapter.setChannnelList(mChannelList);
         }
     }
 

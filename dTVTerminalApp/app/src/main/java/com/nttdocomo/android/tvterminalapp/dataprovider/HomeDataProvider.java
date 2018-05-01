@@ -768,7 +768,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
 
     /**
      * チャンネル情報を元にNowOnAir情報の取得を行う.
-     *
+     * 複数件のcalleeのchannelListは異なる場所でも同じinputを保証しなければならない
      * @param channelList チャンネル情報
      */
     private void getTvScheduleFromChInfo(final ChannelList channelList) {
@@ -789,8 +789,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
 
     /**
      * NOW ON AIR 情報取得.
-     *
-     * @param chNo チャンネル番号
+     * @param chNo チャンネル番号 dbからとる場合は同じチャンネルリストAPIから取ってキャッシュされてる
      */
     private void getTvScheduleListData(final String[] chNo) {
         DTVTLogger.start();

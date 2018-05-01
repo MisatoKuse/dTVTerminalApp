@@ -54,7 +54,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      */
     private final ThumbnailProvider mThumbnailProvider;
     /**
-     * サムネイル取得プロバイダー.
+     * ItemClickCallback.
      */
     private ItemClickCallback mItemClickCallback;
     /**
@@ -267,7 +267,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      *
      * @param channelList チャンネル一覧
      */
-    public void setCHannnelList(final ChannelList channelList) {
+    public void setChannnelList(final ChannelList channelList) {
         this.mChannelList = channelList;
     }
 

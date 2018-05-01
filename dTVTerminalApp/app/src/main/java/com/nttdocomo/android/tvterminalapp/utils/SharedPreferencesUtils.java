@@ -708,7 +708,6 @@ public class SharedPreferencesUtils {
      * @return ワンタイムトークン情報構造体
      */
     public static OneTimeTokenData getOneTimeTokenData(final Context context) {
-        DTVTLogger.start();
         //プリファレンスから読み込む
         SharedPreferences data = context.getSharedPreferences(
                 ONE_TIME_TOKEN, Context.MODE_PRIVATE);
@@ -720,7 +719,6 @@ public class SharedPreferencesUtils {
         //読み込んだ物を分割
         OneTimeTokenData tokenData = new OneTimeTokenData(afterBuffer);
 
-        DTVTLogger.end();
 
         return tokenData;
     }

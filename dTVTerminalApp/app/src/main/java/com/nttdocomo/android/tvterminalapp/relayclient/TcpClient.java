@@ -187,13 +187,12 @@ public class TcpClient {
      * @return true 送信した場合
      */
     public boolean send(final String data) {
-
-        OutputStreamWriter out = null;
         if (mSocket == null) {
             DTVTLogger.debug("mSocket is null!");
             return false;
         }
 
+        OutputStreamWriter out = null;
         try {
             DTVTLogger.debug("data:" + data);
             out = new OutputStreamWriter(mSocket.getOutputStream(), StandardCharsets.UTF_8);
@@ -214,7 +213,12 @@ public class TcpClient {
      * @return 成功:true
      */
     public boolean send(final byte[] data, final int length) {
+        if (mSocket == null) {
+            DTVTLogger.debug("mSocket is null!");
+            return false;
+        }
         DTVTLogger.debug(" >>>");
+
         boolean result = false;
         OutputStream out;
         try {
