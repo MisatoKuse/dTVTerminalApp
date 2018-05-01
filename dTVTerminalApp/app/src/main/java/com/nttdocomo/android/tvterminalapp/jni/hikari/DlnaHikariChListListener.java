@@ -2,25 +2,27 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-package com.nttdocomo.android.tvterminalapp.jni;
+package com.nttdocomo.android.tvterminalapp.jni.hikari;
 
+
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsInfo;
 
 /**
- * 機能：地上波一覧を提供するインターフェース.
+ * 機能：多チャンネル一覧を提供するインターフェース.
  */
-public interface DlnaTerChListListener {
+public interface DlnaHikariChListListener {
     /**
-     * 機能：Listenerに、地上波一覧情報が届く時、コールされる.
+     * 機能：Listenerに、BSデジタル一覧情報が届く時、コールされる.
      * @param curInfo current recorded video list
      */
-    void onListUpdate(DlnaTerChListInfo curInfo);
+    void onListUpdate(final DlnaHikariChListInfo curInfo);
 
     /**
      * 機能：Listenerに、Dmsが消える時、コールされる.
-     * @param curInfo 　カレントDlnaDMSInfo
+     * @param curInfo 　カレントDlnaDmsInfo
      * @param leaveDmsUdn  消えるDmsのudn名
      */
-    void onDeviceLeave(final DlnaDMSInfo curInfo, final String leaveDmsUdn);
+    void onDeviceLeave(final DlnaDmsInfo curInfo, final String leaveDmsUdn);
 
     /**
      * 機能：Listenerに、エラーメセッジを送信.

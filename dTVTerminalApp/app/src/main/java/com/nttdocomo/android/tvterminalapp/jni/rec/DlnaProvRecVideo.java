@@ -2,10 +2,14 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-package com.nttdocomo.android.tvterminalapp.jni;
+package com.nttdocomo.android.tvterminalapp.jni.rec;
 
+
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
 
 /**
+ * 録画一覧
  * 機能：DlnaからActivityに録画一覧を提供するクラス.
  */
 public class DlnaProvRecVideo {

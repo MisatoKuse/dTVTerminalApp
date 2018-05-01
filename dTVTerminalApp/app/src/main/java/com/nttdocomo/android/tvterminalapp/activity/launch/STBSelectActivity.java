@@ -33,7 +33,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
@@ -370,7 +370,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 return;
             } else {
                 //ペアリング済み
-                DlnaDMSInfo info = new DlnaDMSInfo();
+                DlnaDmsInfo info = new DlnaDmsInfo();
                 info.add(dlnaDmsItem);
                 updateDeviceList(info);
                 mTextDivider1.setVisibility(View.VISIBLE);
@@ -397,7 +397,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             mDlnaProvDevList = new DlnaProvDevList();
         }
         mDlnaProvDevList.start(this);
-        updateDeviceList(mDlnaProvDevList.getDlnaDMSInfo());
+        updateDeviceList(mDlnaProvDevList.getDlnaDmsInfo());
         DTVTLogger.end();
     }
 
@@ -737,11 +737,11 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     /**
      * 新しいデバイスが見つかった時にリストに追加する.
      *
-     * @param curInfo カレントDlnaDMSInfo.
+     * @param curInfo カレントDlnaDmsInfo.
      * @param newItem 新しいDms情報
      */
     @Override
-    public void onDeviceJoin(final DlnaDMSInfo curInfo, final DlnaDmsItem newItem) {
+    public void onDeviceJoin(final DlnaDmsInfo curInfo, final DlnaDmsItem newItem) {
         super.onDeviceJoin(curInfo, newItem);
         DTVTLogger.start();
         updateDeviceList(curInfo);
@@ -751,11 +751,11 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     /**
      * デバイスが消える時リストから削除する.
      *
-     * @param curInfo     　カレントDlnaDMSInfo
+     * @param curInfo     　カレントDlnaDmsInfo
      * @param leaveDmsUdn 　消えるDmsのudn名
      */
     @Override
-    public void onDeviceLeave(final DlnaDMSInfo curInfo, final String leaveDmsUdn) {
+    public void onDeviceLeave(final DlnaDmsInfo curInfo, final String leaveDmsUdn) {
         super.onDeviceLeave(curInfo, leaveDmsUdn);
         DTVTLogger.start();
         updateDeviceList(curInfo);
@@ -777,7 +777,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      *
      * @param info デバイスリスト情報
      */
-    private void updateDeviceList(final DlnaDMSInfo info) {
+    private void updateDeviceList(final DlnaDmsInfo info) {
         DTVTLogger.start();
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
 
@@ -786,8 +786,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         for (int i = 0; i < info.size(); i++) {
 
             DTVTLogger.debug("ContentsList.size = " + info.get(i).mFriendlyName);
-            DTVTLogger.debug("DlnaDMSInfo.mIPAddress = " + info.get(i).mIPAddress);
-            DTVTLogger.debug("DlnaDMSInfo.mUdn = " + info.get(i).mUdn);
+            DTVTLogger.debug("DlnaDmsInfo.mIPAddress = " + info.get(i).mIPAddress);
+            DTVTLogger.debug("DlnaDmsInfo.mUdn = " + info.get(i).mUdn);
             boolean flag = false;
             if (dlnaDmsItem != null && !TextUtils.isEmpty(dlnaDmsItem.mUdn)) {
                 if (dlnaDmsItem.mUdn.equals(info.get(i).mUdn)) {

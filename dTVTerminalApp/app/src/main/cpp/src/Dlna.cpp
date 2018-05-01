@@ -92,25 +92,25 @@ namespace dtvt {
             goto error_2;
         }
 
-        tmpDlnaRecVideoItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jni/DlnaRecVideoItem");
+        tmpDlnaRecVideoItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jni/rec/DlnaRecVideoItem");
         mEvent.mJClassRecVideoItem = (jclass)env->NewGlobalRef(tmpDlnaRecVideoItem);
         if (NULL == mEvent.mJClassRecVideoItem) {
             goto error_2;
         }
 
-        tmpDlnaBsChListItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jni/DlnaBsChListItem");
+        tmpDlnaBsChListItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jni/bs/DlnaBsChListItem");
         mEvent.mJClassBsChListItem = (jclass)env->NewGlobalRef(tmpDlnaBsChListItem);
         if (NULL == mEvent.mJClassBsChListItem) {
             goto error_2;
         }
 
-        tmpDlnaTerChListItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jni/DlnaTerChListItem");
+        tmpDlnaTerChListItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jni/ter/DlnaTerChListItem");
         mEvent.mJClassTerChListItem = (jclass)env->NewGlobalRef(tmpDlnaTerChListItem);
         if (NULL == mEvent.mJClassTerChListItem) {
             goto error_2;
         }
 
-        tmpDlnaHikariChListItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jni/DlnaHikariChListItem");
+        tmpDlnaHikariChListItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jni/hikari/DlnaHikariChListItem");
         mEvent.mJClassHikariChListItem = (jclass)env->NewGlobalRef(tmpDlnaHikariChListItem);
         if (NULL == mEvent.mJClassHikariChListItem) {
             goto error_2;
@@ -423,6 +423,7 @@ namespace dtvt {
         if (!checkSoapResponseError(response)) {
             goto error;
         }
+        LOG_WITH("before vv.size() = %u", vv.size());
         parser->parse((void *) response, vv, containerId, isContainerId);
         #if defined(DLNA_KARI_DMS_UNIVERSAL)
             if(containerId.length() != 0){
@@ -471,6 +472,7 @@ namespace dtvt {
                 }
             }
         #elif defined(DLNA_KARI_DMS_RELEASE)
+            LOG_WITH("after vv.size() = %u", vv.size());
             if (0 == vv.size()) {
                 VVectorString totalVv = thiz->getDlnaXmlContainer().getAllVVectorString();
                 if (totalVv.empty() || totalVv.size() == 0) {
@@ -495,6 +497,9 @@ namespace dtvt {
                         break;
                     case DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST:
                         thiz->sendSoap((char*)response->url, DLNA_DMS_RECORD_LIST, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                        break;
+                    case DLNA_MSG_ID_HIKARI_CHANNEL_LIST:
+                        thiz->sendSoap((char*)response->url, DLNA_DMS_MULTI_CHANNEL, thiz->getDlnaXmlContainer().getAllVVectorString().size());
                         break;
                     default:
                         VVectorString totalVv = thiz->getDlnaXmlContainer().getAllVVectorString();
@@ -576,13 +581,15 @@ namespace dtvt {
 
     //bool Dlna::sendSoap(std::string controlUrl, std::string objectId="0", const int startingIndex=0, const int requestCount=0, std::string browseFlag="BrowseDirectChildren", const int pageCount=30){
     bool Dlna::sendSoap(std::string controlUrl, std::string objectId, const int startingIndex, const int requestCount, std::string browseFlag, const int pageCount){
+        LOG_WITH("objectId = %s, startingIndex = %d, requestCount = %d, pageCount = %d", objectId.c_str(), startingIndex, requestCount, pageCount);
+
         if (0 == controlUrl.length() || 0==browseFlag.length() || 0==objectId.length()) {
             return false;
         }
-        int index=max(startingIndex, 0);
-        int count=max(requestCount, 0);
+        int index = max(startingIndex, 0);
+        int count = max(requestCount, 0);
         if (count == 0) {
-            count=max(pageCount, 0);
+            count = max(pageCount, 0);
         }
         du_uchar_array request_body;
         du_uchar_array_init(&request_body);
@@ -922,13 +929,11 @@ namespace dtvt {
         if(!ret){
             return false;
         }
-
         //DlnaHikariChListItem_Field_mTitle
         ret= setJavaObjectField(env, cl, DlnaHikariChListItem_Field_mTitle, Dlna_Java_String_Path,  *i++, objOut);
         if(!ret){
             return false;
         }
-
         //DlnaHikariChListItem_Field_mSize
         ret= setJavaObjectField(env, cl, DlnaHikariChListItem_Field_mSize, Dlna_Java_String_Path,  *i++, objOut);
         if(!ret){
@@ -965,19 +970,20 @@ namespace dtvt {
 //            return false;
 //        }
 
-        //DlnaHikariChListItem_Field_mDate
-        ++i;
+        //DlnaHikariChListItem_Field_mDate:取れてない+使ってないデータ
         ret= setJavaObjectField(env, cl, DlnaHikariChListItem_Field_mDate, Dlna_Java_String_Path,  *i++, objOut);
         if(!ret){
             return false;
         }
 
-        //DlnaHikariChListItem_Field_mVideoType
-        ret= setJavaObjectField(env, cl, DlnaHikariChListItem_Field_mVideoType, Dlna_Java_String_Path,  *i, objOut);
+        //videoType:パースしてないのでindexのみずらす
+        *i++;
+
+        //DlnaHikariChListItem_Field_mChannelNr
+        ret= setJavaObjectField(env, cl, DlnaHikariChListItem_Field_mChannelNr, Dlna_Java_String_Path,  *i++, objOut);
         if(!ret){
             return false;
         }
-
         ret=env->CallBooleanMethod(listObj , listAddId , objOut);
 
         return ret;
@@ -1038,6 +1044,7 @@ namespace dtvt {
 
 
     void Dlna::notifyObject(DLNA_MSG_ID msg, vector<VectorString> & vecContents) {
+        LOG_WITH("");
         JNIEnv *env = NULL;
         jobject itemObj = NULL;
         VectorString datas;
@@ -1228,7 +1235,7 @@ namespace dtvt {
     bool Dlna::browseRecVideoListDms(std::string controlUrl) {
         if(NULL==mDlnaRecVideoXmlParser){
             mDlnaRecVideoXmlParser=(DlnaXmlParserBase*)new DlnaRecVideoXmlParser();
-            IfNullReturnFalse(mBsDigitalXmlParser);
+            IfNullReturnFalse(mDlnaRecVideoXmlParser);
         }
         mRecursionXmlParser=mDlnaRecVideoXmlParser;
 
@@ -1242,14 +1249,6 @@ namespace dtvt {
             return sendSoap(controlUrl, DLNA_DMS_ROOT);   //本番
         #elif defined(DLNA_KARI_DMS_RELEASE)
             return sendSoap(controlUrl, DLNA_DMS_RECORD_LIST);
-//                //チューナールート/スマホ向け/録画一覧
-//                const char* const DLNA_DMS_RECORD_LIST = "0/smartphone/rec/all";
-//                //チューナールート/スマホ向け/多チャンネル
-//                const char* const DLNA_DMS_MULTI_CHANNEL = "0/smartphone/ip";
-//                //チューナールート/スマホ向け/地上デジタル
-//                const char* const DLNA_DMS_TER_CHANNEL = "0/smartphone/tb";
-//                //チューナールート/スマホ向け/BSデジタル
-//                const char* const DLNA_DMS_BS_CHANNEL = "0/smartphone/bs";
         #endif
     }
 

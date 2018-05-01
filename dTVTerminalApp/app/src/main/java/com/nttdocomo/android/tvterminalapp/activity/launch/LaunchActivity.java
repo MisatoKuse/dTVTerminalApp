@@ -15,13 +15,13 @@ import com.nttdocomo.android.tvterminalapp.activity.common.ProcessSettingFile;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListInfo;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListListener;
+import com.nttdocomo.android.tvterminalapp.jni.bs.DlnaBsChListInfo;
+import com.nttdocomo.android.tvterminalapp.jni.bs.DlnaBsChListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListInfo;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListListener;
+import com.nttdocomo.android.tvterminalapp.jni.rec.DlnaRecVideoInfo;
+import com.nttdocomo.android.tvterminalapp.jni.rec.DlnaRecVideoListener;
+import com.nttdocomo.android.tvterminalapp.jni.ter.DlnaTerChListInfo;
+import com.nttdocomo.android.tvterminalapp.jni.ter.DlnaTerChListListener;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 /**

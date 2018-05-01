@@ -17,8 +17,8 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListItem;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListItem;
+import com.nttdocomo.android.tvterminalapp.jni.bs.DlnaBsChListItem;
+import com.nttdocomo.android.tvterminalapp.jni.ter.DlnaTerChListItem;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 
 import java.util.ArrayList;

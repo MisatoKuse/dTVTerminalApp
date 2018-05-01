@@ -14,6 +14,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include "DlnaMacro.h"
 
 namespace dtvt {
 
@@ -47,7 +48,7 @@ namespace dtvt {
         DLNA_MSG_ID_BS_CHANNEL_LIST = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 3,
         //地上波(terrestrial)
         DLNA_MSG_ID_TER_CHANNEL_LIST = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 4,
-        //ひかりTV
+        //多チャンネル
         DLNA_MSG_ID_HIKARI_CHANNEL_LIST = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 5,
         //Download progress
         DLNA_MSG_ID_DL_PROGRESS = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 6,
@@ -135,6 +136,7 @@ namespace dtvt {
     //const char * const DlnaHikariChListItem_Field_mThumbnail =  "mThumbnail";
     const char * const DlnaHikariChListItem_Field_mDate =  "mDate";
     const char * const DlnaHikariChListItem_Field_mVideoType       ="mVideoType";
+    const char * const DlnaHikariChListItem_Field_mChannelNr ="mChannelNr";
 
     //java string path
     //const char * const Dlna_Java_String_Path = "java/lang/String";  error on android 8.x
@@ -154,6 +156,7 @@ namespace dtvt {
     const int Xml_Item_VideoType= Xml_Item_Id + 10;   //mVideoType
     const int Xml_Item_ClearTextSize= Xml_Item_Id + 11;   //mClearTextSize
     const int Xml_Item_ChannelName= Xml_Item_Id + 12;   //mChannelName
+    const int Xml_Item_ChannelNr= Xml_Item_Id + 13;   //mChannelName
 
     //for searching end tag
     const char * const RecVideoXml_Item_Begin_Tag ="<item id=\"";
@@ -162,7 +165,7 @@ namespace dtvt {
 
     #define IfNullGoTo(var, where) { if (NULL == (var) ) { goto  where; } }
     //#define IfGoTo(var, where) { if ( !(var) ) { goto  where; } }
-    #define IfNullReturn(var) { if (NULL == (var) ) { return; } }
+    #define IfNullReturn(var) { if (NULL == (var) ) { LOG_WITH("IfNullReturn"); return; } }
     #define IfNullReturnFalse(var) { if (NULL == (var) ) { return false; } }
     #define DelIfNotNull(obj) {  if(NULL != (obj) ) { delete obj; obj = NULL; }  }
     #define DelIfNotNullArray(obj) {  if(NULL!=(obj)) { delete[] obj; obj = NULL; }  }
@@ -190,7 +193,7 @@ namespace dtvt {
         //チューナールート/スマホ向け/BSデジタル
         const char* const DLNA_DMS_BS_CHANNEL = "0/video/all"; //nasでテスト
     #elif defined(DLNA_KARI_DMS_RELEASE)
-        const int PAGE_COUNT = 30;
+        const int PAGE_COUNT = 300;
         //チューナールート/スマホ向け/録画一覧
         const char* const DLNA_DMS_RECORD_LIST = "0/smartphone/rec/all"; //本番
 

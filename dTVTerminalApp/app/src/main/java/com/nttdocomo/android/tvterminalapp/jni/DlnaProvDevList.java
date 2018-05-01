@@ -45,12 +45,12 @@ public class DlnaProvDevList {
      * 機能：カレントDMSInfoを戻す.
      * @return カレントDMSInfo
      */
-    public DlnaDMSInfo getDlnaDMSInfo() {
+    public DlnaDmsInfo getDlnaDmsInfo() {
         DlnaInterface di = DlnaInterface.getInstance();
         if (null == di) {
             return null;
         }
-        return di.getDlnaDMSInfo();
+        return di.getDlnaDmsInfo();
     }
 
     /**

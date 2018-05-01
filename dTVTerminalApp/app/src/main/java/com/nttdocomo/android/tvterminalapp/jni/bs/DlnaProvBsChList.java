@@ -2,18 +2,23 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-package com.nttdocomo.android.tvterminalapp.jni;
+package com.nttdocomo.android.tvterminalapp.jni.bs;
 
+
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
+import com.nttdocomo.android.tvterminalapp.jni.bs.DlnaBsChListListener;
 
 /**
- * 機能：DlnaからActivityに地上波一覧を提供するクラス.
+ * BS
+ * 機能：DlnaからActivityにBSデジタル一覧を提供するクラス.
  */
-public class DlnaProvTerChList {
+public class DlnaProvBsChList {
 
     /**
      * 機能：DlnaProvRecVideoを構造.
      */
-    public DlnaProvTerChList() {
+    public DlnaProvBsChList() {
 
     }
 
@@ -25,7 +30,7 @@ public class DlnaProvTerChList {
         if (null == di) {
             return;
         }
-        di.setDlnaTerChListListener(null);
+        di.setDlnaBsChListListener(null);
     }
 
     /**
@@ -34,7 +39,7 @@ public class DlnaProvTerChList {
      * @param item item
      * @return 成功true
      */
-    public boolean start(final DlnaDmsItem item, final DlnaTerChListListener lis) {
+    public boolean start(final DlnaDmsItem item, final DlnaBsChListListener lis) {
         DlnaInterface di = DlnaInterface.getInstance();
         if (null == di) {
             return false;
@@ -46,7 +51,7 @@ public class DlnaProvTerChList {
         if (!ret) {
             return false;
         }
-        di.setDlnaTerChListListener(lis);
+        di.setDlnaBsChListListener(lis);
         return true;
     }
 
@@ -57,9 +62,9 @@ public class DlnaProvTerChList {
     public boolean browseChListDms() {
         DlnaInterface di = DlnaInterface.getInstance();
 //        if(null != di){
-//            return di.browseTerChListDms();
+//            return di.browseBsChListDms();
 //        }
 //        return false;
-        return null != di && di.browseTerChListDms();
+        return null != di && di.browseBsChListDms();
     }
 }
