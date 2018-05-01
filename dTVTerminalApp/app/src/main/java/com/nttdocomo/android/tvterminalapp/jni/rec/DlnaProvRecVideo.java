@@ -5,7 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.jni.rec;
 
 
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
 
 /**

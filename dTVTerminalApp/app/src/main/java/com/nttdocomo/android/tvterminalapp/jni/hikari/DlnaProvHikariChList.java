@@ -6,14 +6,10 @@ package com.nttdocomo.android.tvterminalapp.jni.hikari;
 
 
 import android.support.annotation.Nullable;
-import android.view.View;
 
-import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsInfo;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsInfo;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
-
-import java.util.ArrayList;
 
 /**
  * 多チャンネル

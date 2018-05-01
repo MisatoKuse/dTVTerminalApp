@@ -5,7 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.jni.bs;
 
 
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsInfo;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsInfo;
 
 /**
  * 機能：BSデジタル一覧を提供するインターフェース.

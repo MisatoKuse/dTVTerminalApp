@@ -5,7 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.jni.rec;
 
 
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsInfo;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsInfo;
 
 /**
  * 機能：録画一覧を提供するインターフェース.

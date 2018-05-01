@@ -5,7 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.jni.hikari;
 
 
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsInfo;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsInfo;
 
 /**
  * 機能：多チャンネル一覧を提供するインターフェース.

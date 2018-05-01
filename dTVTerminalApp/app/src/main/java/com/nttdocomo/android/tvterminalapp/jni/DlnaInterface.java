@@ -11,6 +11,9 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.jni.bs.DlnaBsChListInfo;
 import com.nttdocomo.android.tvterminalapp.jni.bs.DlnaBsChListItem;
 import com.nttdocomo.android.tvterminalapp.jni.bs.DlnaBsChListListener;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDevListListener;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsInfo;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.hikari.DlnaHikariChListInfo;
 import com.nttdocomo.android.tvterminalapp.jni.hikari.DlnaHikariChListItem;
 import com.nttdocomo.android.tvterminalapp.jni.hikari.DlnaHikariChListListener;
@@ -111,7 +114,7 @@ public class DlnaInterface {
      * @param udn udn
      * @return 存在しるか
      */
-    boolean isDmsAvailable(final String udn) {
+    public boolean isDmsAvailable(final String udn) {
         return mDMSInfo.exists(udn);
     }
 
@@ -120,7 +123,7 @@ public class DlnaInterface {
      *
      * @param lis listener
      */
-    void setDlnaDevListListener(final DlnaDevListListener lis) {
+    public void setDlnaDevListListener(final DlnaDevListListener lis) {
         synchronized (this) {
             mDlnaDevListListener = lis;
         }
@@ -163,7 +166,7 @@ public class DlnaInterface {
      * 機能：カレントDMSInfoを戻す.
      * @return カレントDMSInfo
      */
-    DlnaDmsInfo getDlnaDmsInfo() {
+    public DlnaDmsInfo getDlnaDmsInfo() {
         return mDMSInfo;
     }
 
@@ -669,7 +672,7 @@ public class DlnaInterface {
     /**
      * 機能：カレントDMSを削除.
      */
-    void dmsRemove() {
+    public void dmsRemove() {
         if (null != mDlnaDevListListener) {
             String udn = "";
             if (null != mCurrentDmsItem) {

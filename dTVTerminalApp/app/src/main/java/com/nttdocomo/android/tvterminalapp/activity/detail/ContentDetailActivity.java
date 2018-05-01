@@ -62,6 +62,9 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDat
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentDetailDataConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopScaledProListDataConnect;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsChannelFragment;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.jni.hikari.DlnaHikariChListItem;
+import com.nttdocomo.android.tvterminalapp.jni.hikari.DlnaProvHikariChList;
 import com.nttdocomo.android.tvterminalapp.struct.CalendarComparator;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;

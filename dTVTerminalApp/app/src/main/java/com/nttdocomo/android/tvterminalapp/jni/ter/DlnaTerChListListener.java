@@ -5,7 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.jni.ter;
 
 
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsInfo;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsInfo;
 
 /**
  * 機能：地上波一覧を提供するインターフェース.

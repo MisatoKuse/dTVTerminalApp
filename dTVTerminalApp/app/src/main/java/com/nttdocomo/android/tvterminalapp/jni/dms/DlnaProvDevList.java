@@ -2,8 +2,10 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-package com.nttdocomo.android.tvterminalapp.jni;
+package com.nttdocomo.android.tvterminalapp.jni.dms;
 
+
+import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
 
 /**
  * 機能：DlnaからActivityにDmsデバイス一覧を提供するクラス.

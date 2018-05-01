@@ -5,9 +5,8 @@
 package com.nttdocomo.android.tvterminalapp.jni.bs;
 
 
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
-import com.nttdocomo.android.tvterminalapp.jni.bs.DlnaBsChListListener;
 
 /**
  * BS
