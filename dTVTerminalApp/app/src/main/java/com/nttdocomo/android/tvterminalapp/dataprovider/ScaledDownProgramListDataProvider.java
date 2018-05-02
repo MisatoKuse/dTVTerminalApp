@@ -546,11 +546,11 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         requestData.setTitleId(map.get(JsonConstants.META_RESPONSE_TITLE_ID));
         requestData.setTitle(map.get(JsonConstants.META_RESPONSE_TITLE));
         requestData.setRValue(map.get(JsonConstants.META_RESPONSE_R_VALUE));
-        requestData.setLinearStartDate(String.valueOf(map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
-        requestData.setLinearEndDate(String.valueOf(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
+        requestData.setLinearStartDate(String.valueOf(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE)));
+        requestData.setLinearEndDate(String.valueOf(map.get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE)));
         requestData.setSearchOk(map.get(JsonConstants.META_RESPONSE_SEARCH_OK));
         requestData.setIsNotify(dispType, contentsType,
-                String.valueOf(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)),
+                DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_START_DATE)),
                 map.get(JsonConstants.META_RESPONSE_TV_SERVICE), map.get(JsonConstants.META_RESPONSE_DTV));
         requestData.setDispType(dispType);
         requestData.setContentType(contentsType);

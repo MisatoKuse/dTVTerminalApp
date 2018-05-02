@@ -75,7 +75,7 @@ public class ClipRegistWebClient
     }
 
     /**
-     * チャンネル一覧取得.
+     * クリップ登録取得.
      *
      * @param type                         タイプ　h4d_iptv：多チャンネル、h4d_vod：ビデオ、dch：dTVチャンネル、dtv_vod：dTV
      * @param crid                         コンテンツ識別子
@@ -105,7 +105,7 @@ public class ClipRegistWebClient
         String strStartDate = linearStartDate;
         String strEndDate = linearEndDate;
         if (strStartDate != null && DBUtils.isNumber(strStartDate) && !strStartDate.equals("0")) {
-            strStartDate = DateUtils.formatEpochToString(Long.parseLong(strEndDate), null);
+            strStartDate = DateUtils.formatEpochToString(Long.parseLong(strStartDate), null);
         } else {
             strStartDate = null;
         }

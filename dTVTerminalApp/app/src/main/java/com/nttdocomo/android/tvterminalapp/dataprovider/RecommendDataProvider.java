@@ -690,7 +690,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         requestData.setLinearEndDate("1513306982");
         requestData.setSearchOk("0");
         requestData.setIsNotify("disp_type", "content_type",
-                "1513306982", "tv_service", "dtv");
+                1513306982, "tv_service", "dtv");
         return requestData;
     }
 

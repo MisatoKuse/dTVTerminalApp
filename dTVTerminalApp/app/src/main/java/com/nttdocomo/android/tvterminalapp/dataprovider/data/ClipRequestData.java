@@ -4,8 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
@@ -43,12 +43,18 @@ public class ClipRequestData {
     private boolean mIsNotify = false;
     /**クリップ未/済.*/
     private boolean mClipStatus = false;
-    /**EPG判定用.*/
-    private static final String TV_PROGRAM_CHECK = "tv_program";
-    /**h4d_iptv.*/
-    private static final String H4D_IPTV_SERVICE_CONTENTS = "0";
-    /**dch.*/
-    private static final String DCH_SERVICE_CONTENTS = "1";
+    /**disp_type値 tv_program.*/
+    private static final String DISP_TYPE_TV_PROGRAM = "tv_program";
+    /**tv_service値 h4d_iptv.*/
+    private static final String TV_SERVICE_H4D_CONTENTS = "1";
+    /**tv_service値 dch.*/
+    private static final String TV_SERVICE_DCH_CONTENTS = "2";
+    /**content_type値 dCh番組1.*/
+    private static final String CONTENT_TYPE_DCH_PROGRAM_1 = "1";
+    /**content_type値 dCh番組2.*/
+    private static final String CONTENT_TYPE_DCH_PROGRAM_2 = "2";
+    /**content_type値 dCh関連VOD.*/
+    private static final String CONTENT_TYPE_DCH_VOD = "3";
     /**h4d_vod.*/
     private String DTV_SERVICE_CONTENTS_FALSE = "0";
     /**dtv_vod.*/
@@ -69,9 +75,10 @@ public class ClipRequestData {
     public void setTitle(final String mTitle) {
         this.mTitle = mTitle;
     }
+
     /**
-     * タイプを取得する.
-     * @return タイプ
+     * クリップタイプを取得する.クリップに関する判定以外には用いない事.
+     * @return クリップタイプ
      */
     public String getType() {
         return mType;
@@ -155,7 +162,7 @@ public class ClipRequestData {
     }
 
     /**
-     * 放送開始日時取得する.
+     * 放送開始日時 を取得する.
       * @return 放送開始日時
      */
     public String getLinearStartDate() {
@@ -163,7 +170,7 @@ public class ClipRequestData {
     }
 
     /**
-     * 仕様により avail_start_date を設定する.
+     * 放送開始日時 を設定する.
      *
      * @param mLinearStartDate 番組開始時間
      */
@@ -172,7 +179,7 @@ public class ClipRequestData {
     }
 
     /**
-     * 放送終了日時取得する.
+     * 放送終了日時 を取得する.
      * @return 放送終了日時
      */
     public String getLinearEndDate() {
@@ -180,7 +187,7 @@ public class ClipRequestData {
     }
 
     /**
-     * 仕様により avail_end_date を設定する.
+     * 放送終了日時 を設定する.
      *
      * @param mLinearEndDate 番組終了時間
      */
@@ -275,69 +282,59 @@ public class ClipRequestData {
         this.mClipStatus = mClipStatus;
     }
     /**
-     * 視聴通知とコンテンツタイプを指定する.
+     * 視聴通知とクリップコンテンツタイプを判断して設定する.
      *
      * @param dispType      　番組種別
      * @param contentsType  　コンテンツ種別
-     * @param linearEndDate 　放送終了日時
+     * @param vodStartDate 　VOD開始日時
      * @param tvService     　サービス種別
      * @param dTV           dTVフラグ
      */
     public void setIsNotify(final String dispType, final String contentsType,
-                            final String linearEndDate, final String tvService, final String dTV) {
+                            final long vodStartDate, final String tvService, final String dTV) {
 
-        //yyyy/MM/dd HH:mm:ss形式の時はエポック秒に変換する
-        String epocLinearEndDate = linearEndDate;
-        if (!DBUtils.isNumber(epocLinearEndDate)) {
-            epocLinearEndDate = String.valueOf(DateUtils.getEpochTime(epocLinearEndDate));
-        }
         //EPG/DTVはdispType,contentsTypeの内容で判定する
-        if (dispType != null && dispType.equals(TV_PROGRAM_CHECK)
-                && contentsType != null && contentsType.length() > 0
-                && Long.parseLong(epocLinearEndDate) < DateUtils.getNowTimeFormatEpoch()) {
-            //dispTypeがtv_programかつcontentsTypeにデータが存在かつ番組終了時間が現在時刻未満であればEPGと判断
-            mIsNotify = true;
-            setTvType(tvService);
-        } else {
-            mIsNotify = false;
-            setDtvType(dTV);
-        }
-    }
+        if (dispType != null && dispType.equals(DISP_TYPE_TV_PROGRAM)) {
+            if (tvService != null && tvService.equals(TV_SERVICE_H4D_CONTENTS)) {
+                //dispTypeがtv_programかつtvServiceが1ならH4dのIPTVコンテンツ
+                mType = WebApiBasePlala.CLIP_TYPE_H4D_IPTV;
+                mIsNotify = true;
+            } else if (tvService != null && tvService.equals(TV_SERVICE_DCH_CONTENTS)) {
+                //dispTypeがtv_programかつtvServiceが2なら全てdChコンテンツ(見逃しもこちら)
+                mType = WebApiBasePlala.CLIP_TYPE_DCH;
 
-    /**
-     * TV種別設定.
-     *
-     * @param tvService TV種別
-     */
-    private void setTvType(final String tvService) {
-        if (tvService != null) {
-            switch (tvService) {
-                case H4D_IPTV_SERVICE_CONTENTS:
-                    mType = WebApiBasePlala.CLIP_TYPE_H4D_IPTV;
-                    break;
-                case DCH_SERVICE_CONTENTS:
-                    mType = WebApiBasePlala.CLIP_TYPE_DCH;
-                    break;
-                //TODO：上記二つ以外の仕様が未定のため暫定対応
-                default:
-                    mType = "";
-                    break;
+                //視聴通知フラグの設定（EPG:true、VOD:false）
+                if (contentsType != null && contentsType.equals(CONTENT_TYPE_DCH_VOD)) {
+                    //contents_typeが3(dCh関連VOD)なら固定でVODなので視聴通知はoffにする
+                    mIsNotify = false;
+                } else if (contentsType != null
+                        && ((contentsType.equals(CONTENT_TYPE_DCH_PROGRAM_1)) || (contentsType.equals(CONTENT_TYPE_DCH_PROGRAM_2)))) {
+                    //contents_typeが1or2(dCh番組)なら見逃し判定を行い、見逃し化している物は視聴通知はoffにする
+                    if (vodStartDate <= DateUtils.getNowTimeFormatEpoch()) {
+                        mIsNotify = false;
+                    } else {
+                        mIsNotify = true;
+                    }
+                } else {
+                    //contents_typeが未設定やその他は番組扱いする
+                    mIsNotify = true;
+                }
+            } else {
+                //tvServiceが未設定の場合は異常.
+                DTVTLogger.warning("tv_program content has not tv_service!!");
+                mType = "";
+                mIsNotify = false;
             }
-        }
-    }
-
-    /**
-     * DTV種別設定.
-     *
-     * @param dtv dTV種別
-     */
-    private void setDtvType(final String dtv) {
-        if (dtv != null && dtv.equals(DTV_SERVICE_CONTENTS_TRUE)) {
-            //dtv_vod
-            mType = WebApiBasePlala.CLIP_TYPE_DTV_VOD;
         } else {
-            //h4d_vod
-            mType = WebApiBasePlala.CLIP_TYPE_H4D_VOD;
+            //dispTypeがtv_program以外は固定でVOD.dTVフラグでdTVかどうかを判断
+            if (dTV != null && dTV.equals(DTV_SERVICE_CONTENTS_TRUE)) {
+                //dtv_vod
+                mType = WebApiBasePlala.CLIP_TYPE_DTV_VOD;
+            } else {
+                //h4d_vod
+                mType = WebApiBasePlala.CLIP_TYPE_H4D_VOD;
+            }
+            mIsNotify = false;
         }
     }
 }

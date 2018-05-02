@@ -191,23 +191,21 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
 
-            String linearEndDate = String.valueOf(vodMetaFullData.getAvail_end_date());
-
             requestData.setCrid(vodMetaFullData.getCrid());
             requestData.setServiceId(vodMetaFullData.getmService_id());
             requestData.setEventId(vodMetaFullData.getmEvent_id());
             requestData.setTitleId(vodMetaFullData.getEpisode_id());
             requestData.setTitle(title);
             requestData.setRValue(vodMetaFullData.getR_value());
-            requestData.setLinearStartDate(String.valueOf(vodMetaFullData.getAvail_start_date()));
-            requestData.setLinearEndDate(linearEndDate);
+            requestData.setLinearStartDate(String.valueOf(vodMetaFullData.getPublish_start_date()));
+            requestData.setLinearEndDate(String.valueOf(vodMetaFullData.getPublish_end_date()));
             requestData.setSearchOk(searchOk);
 
             //視聴通知判定生成
             String contentsType = vodMetaFullData.getmContent_type();
             String tvService = vodMetaFullData.getmTv_service();
             String dTv = vodMetaFullData.getDtv();
-            requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
+            requestData.setIsNotify(dispType, contentsType, vodMetaFullData.getmVod_start_date(), tvService, dTv);
             requestData.setDispType(dispType);
             requestData.setContentType(contentsType);
             data.setRequestData(requestData);
