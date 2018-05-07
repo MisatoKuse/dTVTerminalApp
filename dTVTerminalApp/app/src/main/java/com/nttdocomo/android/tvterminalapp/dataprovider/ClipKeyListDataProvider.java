@@ -178,7 +178,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         DTVTLogger.start();
         if (!mIsCancel) {
             mResponseEndFlag = false;
-            request.setIsForce(isCachingClipKeyListRecord(request.getType()));
+            request.setIsForce(!isCachingClipKeyListRecord(request.getType()));
             mClient = new ClipKeyListWebClient(mContext);
             // リクエストによってコールバックを変える
             if (ClipKeyListRequest.CLIP_KEY_LIST_REQUEST_TYPE_TV.equals(request.getType())) {
