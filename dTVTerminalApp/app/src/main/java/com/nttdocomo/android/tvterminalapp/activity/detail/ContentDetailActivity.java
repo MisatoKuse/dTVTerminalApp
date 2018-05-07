@@ -2679,106 +2679,18 @@ public class ContentDetailActivity extends BaseActivity implements
                                 RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL,
                                 RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_RELATION,
                                 mDetailData.getContentsId(), mDetailData.getChannelId());
+                    } else {
+                        if (!mIsFromHeader) {
+                            setRemoteProgressVisible(View.GONE);
+                        }
                     }
                     break;
                 case DTV_HIKARI_CONTENTS_SERVICE_ID://ひかりTV
+                default:
                     if (mDetailFullData == null) {
                         break;
                     }
-                    String[] liinfArray = mDetailFullData.getmLiinf_array();
-                    String puid = mDetailFullData.getPuid();
-                    if (!mIsFromHeader) {
-                        setRemoteProgressVisible(View.VISIBLE);
-                    }
-                    if (VIDEO_PROGRAM.equals(mDetailData.getDispType())) {
-                        if (DTV_FLAG_ZERO.equals(mDetailData.getDtv()) || TextUtils.isEmpty(mDetailData.getDtv())
-                                || FLAG_ZERO == mDetailData.getDtv().trim().length()) {
-                            if (BVFLG_FLAG_ONE.equals(mDetailFullData.getBvflg())) {
-                                requestStartApplicationHikariTvCategoryHikaritvVod(mDetailFullData.getPuid(),
-                                        mDetailFullData.getCid(), mDetailFullData.getCrid());
-                            } else if (BVFLG_FLAG_ZERO.equals(mDetailFullData.getBvflg()) || null == mDetailFullData.getBvflg()) {
-                                //liinfを"|"区切りで分解する
-                                if (response == null) {
-                                    break;
-                                }
-                                ArrayList<ActiveData> activeDatas = response.getVodActiveData();
-                                for (String liinf : liinfArray) {
-                                    String[] column = liinf.split(Pattern.quote("|"), 0);
-                                    for (ActiveData activeData : activeDatas) {
-                                        String licenseId = activeData.getLicenseId();
-                                        //メタレスポンスのpuid、liinf_arrayのライセンスID（パイプ区切り）と
-                                        // 購入済みＶＯＤ一覧取得IF「active_list」の「license_id」と比較して一致した場合
-                                        if (licenseId.equals(column[0]) || licenseId.equals(puid)) {
-                                            //一致した「active_list」の「valid_end_date」> 現在時刻の場合
-                                            if (activeData.getValidEndDate() > DateUtils.getNowTimeFormatEpoch()) {
-                                                // license_idが複数ある場合は「valid_end_date」が一番長い「license_id」を指定する
-                                                long longestDate = activeData.getValidEndDate();
-                                                for (ActiveData activeDataEndDate : activeDatas) {
-                                                    if (longestDate < activeDataEndDate.getValidEndDate()) {
-                                                        longestDate = activeDataEndDate.getValidEndDate();
-                                                        licenseId = activeDataEndDate.getLicenseId();
-                                                    }
-                                                }
-                                                requestStartApplicationHikariTvCategoryHikaritvVod(licenseId,
-                                                        mDetailFullData.getCid(), mDetailFullData.getCrid());
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        } else if (DTV_FLAG_ONE.equals(mDetailData.getDtv())) {
-                            //ひかりTV内dTVのVOD,「episode_id」を通知する
-                            requestStartApplicationHikariTvCategoryDtvVod(mDetailFullData.getEpisode_id());
-                        }
-                        //「disp_type」が「video_series」の場合
-                    } else if (VIDEO_SERIES.equals(mDetailData.getDispType())) {
-                        // ひかりTV内VOD(dTV含む)のシリーズ
-                        requestStartApplicationHikariTvCategoryDtvSvod(mDetailFullData.getCrid());
-                        //「disp_type」が「tv_program」の場合
-                    } else if (TV_PROGRAM.equals(mDetailData.getDispType())) {
-                        //「tv_service」が「1」の場合 ひかりTVの番組
-                        if (TV_SERVICE_FLAG_HIKARI.equals(mDetailFullData.getmTv_service())) {
-                            //ひかりTVの番組 地デジ
-                            if (H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(mDetailData.getCategoryId())) {
-                                requestStartApplicationHikariTvCategoryTerrestrialDigital(mDetailFullData.getmChno());
-                                //ひかりTVの番組 BS
-                            } else if (H4D_CATEGORY_SATELLITE_BS.equals(mDetailData.getCategoryId())) {
-                                requestStartApplicationHikariTvCategorySatelliteBs(mDetailFullData.getmChno());
-                                //ひかりTVの番組 IPTV
-                            } else if (H4D_CATEGORY_IPTV.equals(mDetailData.getCategoryId())) {
-                                requestStartApplicationHikariTvCategoryIptv(mDetailFullData.getmChno());
-                            }
-                            //「tv_service」が「2」の場合
-                        } else if (TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(mDetailFullData.getmTv_service())) {
-                            //「contents_type」が「0」または未設定の場合  ひかりTV内dTVチャンネルの番組
-                            if (CONTENT_TYPE_FLAG_ZERO.equals(mDetailData.getContentsType())
-                                    || null == mDetailFullData.getmContent_type()) {
-                                //中継アプリに「chno」を通知する
-                                requestStartApplicationHikariTvCategoryDtvchannelBroadcast(mDetailFullData.getmChno());
-                            } else if (CONTENT_TYPE_FLAG_ONE.equals(mDetailFullData.getmContent_type())
-                                    || CONTENT_TYPE_FLAG_TWO.equals(mDetailFullData.getmContent_type())
-                                    || CONTENT_TYPE_FLAG_THREE.equals(mDetailFullData.getmContent_type())) {
-                                //「vod_start_date」> 現在時刻の場合  ひかりTV内dTVチャンネルの番組(見逃し、関連VOD予定だが未配信)
-                                if (DateUtils.getNowTimeFormatEpoch() < mDetailFullData.getmVod_start_date()) {
-                                    //中継アプリに「chno」を通知する
-                                    requestStartApplicationHikariTvCategoryDtvchannelBroadcast(mDetailFullData.getmChno());
-                                    //「vod_start_date」 <= 現在時刻 < 「vod_end_date」の場合  //「tv_cid」を通知する
-                                } else if (DateUtils.getNowTimeFormatEpoch() >= mDetailFullData.getmVod_start_date()
-                                        && DateUtils.getNowTimeFormatEpoch() < mDetailFullData.getmVod_end_date()) {
-                                    // ひかりTV内dTVチャンネル 見逃し
-                                    if (H4D_CATEGORY_DTV_CHANNEL_MISSED.equals(mDetailData.getCategoryId())) {
-                                        requestStartApplicationHikariTvCategoryDtvchannelMissed(mDetailFullData.getmTv_cid());
-                                        // ひかりTV内dTVチャンネル 関連VOD
-                                    } else if (H4D_CATEGORY_DTV_CHANNEL_RELATION.equals(mDetailData.getCategoryId())) {
-                                        requestStartApplicationHikariTvCategoryDtvchannelRelation(mDetailFullData.getmTv_cid());
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    break;
-                default:
+                    startHikariApplication();
                     break;
             }
         }
@@ -2786,6 +2698,125 @@ public class ContentDetailActivity extends BaseActivity implements
         DTVTLogger.end();
 
     } // end of onStartRemoteControl
+
+    /**
+     * STBのサービスアプリ起動（ひかり）.
+     */
+    private void startHikariApplication() {
+        if (!mIsFromHeader) {
+            setRemoteProgressVisible(View.VISIBLE);
+        }
+        if (VIDEO_PROGRAM.equals(mDetailFullData.getDisp_type())) {
+            if (DTV_FLAG_ZERO.equals(mDetailFullData.getDtv()) || TextUtils.isEmpty(mDetailFullData.getDtv())
+                    || FLAG_ZERO == mDetailFullData.getDtv().trim().length()) {
+                String[] liinfArray = mDetailFullData.getmLiinf_array();
+                String puid = mDetailFullData.getPuid();
+                if (BVFLG_FLAG_ONE.equals(mDetailFullData.getBvflg())) {
+                    requestStartApplicationHikariTvCategoryHikaritvVod(mDetailFullData.getPuid(),
+                            mDetailFullData.getCid(), mDetailFullData.getCrid());
+                } else if (BVFLG_FLAG_ZERO.equals(mDetailFullData.getBvflg()) || TextUtils.isEmpty(mDetailFullData.getBvflg())) {
+                    //liinfを"|"区切りで分解する
+                    if (response == null) {
+                        if (!mIsFromHeader) {
+                            setRemoteProgressVisible(View.GONE);
+                        }
+                        return;
+                    }
+                    ArrayList<ActiveData> activeDatas = response.getVodActiveData();
+                    //ひかりアプリ起動フラグ、くるくる処理ちゃんと消えるため
+                    boolean isStarted = false;
+                    for (String liinf : liinfArray) {
+                        String[] column = liinf.split(Pattern.quote("|"), 0);
+                        for (ActiveData activeData : activeDatas) {
+                            String licenseId = activeData.getLicenseId();
+                            //メタレスポンスのpuid、liinf_arrayのライセンスID（パイプ区切り）と
+                            // 購入済みＶＯＤ一覧取得IF「active_list」の「license_id」と比較して一致した場合
+                            if (licenseId.equals(column[0]) || licenseId.equals(puid)) {
+                                //一致した「active_list」の「valid_end_date」> 現在時刻の場合
+                                if (activeData.getValidEndDate() > DateUtils.getNowTimeFormatEpoch()) {
+                                    // license_idが複数ある場合は「valid_end_date」が一番長い「license_id」を指定する
+                                    long longestDate = activeData.getValidEndDate();
+                                    for (ActiveData activeDataEndDate : activeDatas) {
+                                        if (longestDate < activeDataEndDate.getValidEndDate()) {
+                                            longestDate = activeDataEndDate.getValidEndDate();
+                                            licenseId = activeDataEndDate.getLicenseId();
+                                        }
+                                    }
+                                    isStarted = true;
+                                    requestStartApplicationHikariTvCategoryHikaritvVod(licenseId,
+                                            mDetailFullData.getCid(), mDetailFullData.getCrid());
+                                }
+                            }
+                        }
+                    }
+                    if (!isStarted) {
+                        if (!mIsFromHeader) {
+                            setRemoteProgressVisible(View.GONE);
+                        }
+                    }
+                } else {
+                    if (!mIsFromHeader) {
+                        setRemoteProgressVisible(View.GONE);
+                    }
+                }
+            } else if (DTV_FLAG_ONE.equals(mDetailFullData.getDtv())) {
+                //ひかりTV内dTVのVOD,「episode_id」を通知する
+                requestStartApplicationHikariTvCategoryDtvVod(mDetailFullData.getEpisode_id());
+            } else {
+                if (!mIsFromHeader) {
+                    setRemoteProgressVisible(View.GONE);
+                }
+            }
+            //「disp_type」が「video_series」の場合
+        } else if (VIDEO_SERIES.equals(mDetailFullData.getDisp_type())) {
+            // ひかりTV内VOD(dTV含む)のシリーズ
+            requestStartApplicationHikariTvCategoryDtvSvod(mDetailFullData.getCrid());
+            //「disp_type」が「tv_program」の場合
+        } else if (TV_PROGRAM.equals(mDetailFullData.getDisp_type())) {
+            //「tv_service」が「1」の場合 ひかりTVの番組
+            if (TV_SERVICE_FLAG_HIKARI.equals(mDetailFullData.getmTv_service())) {
+                //ひかりTVの番組
+                requestStartApplicationHikariTvCategoryTerrestrialDigital(mDetailFullData.getmChno());
+                //「tv_service」が「2」の場合
+            } else if (TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(mDetailFullData.getmTv_service())) {
+                //「contents_type」が「0」または未設定の場合  ひかりTV内dTVチャンネルの番組
+                if (CONTENT_TYPE_FLAG_ZERO.equals(mDetailFullData.getmContent_type())
+                        || TextUtils.isEmpty(mDetailFullData.getmContent_type())) {
+                    //中継アプリに「chno」を通知する
+                    requestStartApplicationHikariTvCategoryDtvchannelBroadcast(mDetailFullData.getmChno());
+                } else if (CONTENT_TYPE_FLAG_ONE.equals(mDetailFullData.getmContent_type())
+                        || CONTENT_TYPE_FLAG_TWO.equals(mDetailFullData.getmContent_type())
+                        || CONTENT_TYPE_FLAG_THREE.equals(mDetailFullData.getmContent_type())) {
+                    //「vod_start_date」> 現在時刻の場合  ひかりTV内dTVチャンネルの番組(見逃し、関連VOD予定だが未配信)
+                    if (DateUtils.getNowTimeFormatEpoch() < mDetailFullData.getmVod_start_date()) {
+                        //中継アプリに「chno」を通知する
+                        requestStartApplicationHikariTvCategoryDtvchannelBroadcast(mDetailFullData.getmChno());
+                        //「vod_start_date」 <= 現在時刻 < 「vod_end_date」の場合  //「tv_cid」を通知する
+                    } else if (DateUtils.getNowTimeFormatEpoch() >= mDetailFullData.getmVod_start_date()
+                            && DateUtils.getNowTimeFormatEpoch() < mDetailFullData.getmVod_end_date()) {
+                        // ひかりTV内dTVチャンネル 見逃し
+                        requestStartApplicationHikariTvCategoryDtvchannelMissed(mDetailFullData.getmTv_cid());
+                    } else {
+                        if (!mIsFromHeader) {
+                            setRemoteProgressVisible(View.GONE);
+                        }
+                    }
+                } else {
+                    if (!mIsFromHeader) {
+                        setRemoteProgressVisible(View.GONE);
+                    }
+                }
+            } else {
+                if (!mIsFromHeader) {
+                    setRemoteProgressVisible(View.GONE);
+                }
+            }
+        } else {
+            if (!mIsFromHeader) {
+                setRemoteProgressVisible(View.GONE);
+            }
+        }
+    }
 
     /**
      * onPlayerEvent.
@@ -2837,6 +2868,9 @@ public class ContentDetailActivity extends BaseActivity implements
                         R.drawable.remote_watch_by_tv_bottom_corner_d_anime, null));
             } else if (DTV_CHANNEL_CONTENTS_SERVICE_ID == mDetailData.getServiceId()
                     || DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
+                mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
+                        R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
+            } else {
                 mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
                         R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
             }
