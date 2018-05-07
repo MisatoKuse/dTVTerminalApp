@@ -20,6 +20,7 @@ import com.nttdocomo.android.tvterminalapp.struct.OneTimeTokenData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
 
 import java.io.BufferedReader;
@@ -36,6 +37,7 @@ import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
@@ -1161,6 +1163,15 @@ public class WebApiBasePlala {
                 //通信エラー扱いとする
                 mReturnCode.errorState.setErrorType(
                         DTVTConstants.ERROR_TYPE.NETWORK_ERROR);
+
+                boolean isTimeout = false;
+                //コネクト時のタイムアウトはこちらに来るので、判定する
+                if(e.getMessage().contains(StringUtils.getTimeoutErrorMessage())) {
+                    //エラーメッセージにタイムアウトを示唆する物があればタイムアウトとして扱う
+                    isTimeout = true;
+                }
+                //タイムアウトエラーの設定
+                mReturnCode.errorState.setIsTimeout(isTimeout);
             } catch (SSLHandshakeException e) {
                 DTVTLogger.warning("SSLHandshakeException");
                 //SSL証明書が失効している
@@ -1170,6 +1181,15 @@ public class WebApiBasePlala {
                 DTVTLogger.warning("SSLPeerUnverifiedException");
                 //SSLチェックライブラリの初期化が行われていない
                 mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.SSL_ERROR);
+                DTVTLogger.debug(e);
+            } catch (SocketTimeoutException e) {
+                //タイムアウトを明示して取得
+                DTVTLogger.warning("SocketTimeoutException");
+                //サーバーエラー扱いとする
+                mReturnCode.errorState.setErrorType(
+                        DTVTConstants.ERROR_TYPE.SERVER_ERROR);
+                //タイムアウト判定用
+                mReturnCode.errorState.setIsTimeout(true);
                 DTVTLogger.debug(e);
             } catch (IOException e) {
                 DTVTLogger.warning("IOException");
@@ -1283,9 +1303,15 @@ public class WebApiBasePlala {
             urlConnection.setDoInput(true);
             urlConnection.setFixedLengthStreamingMode(sendParameterLength);
 
-            //タイムアウト指定(0以下ならば、APIのデフォルト値とするので、値を設定しない)
+            //タイムアウト指定(0以下ならば、デフォルト値の30秒とする)
             if (mTimeOut > 0) {
                 urlConnection.setConnectTimeout(mTimeOut);
+                urlConnection.setReadTimeout(mTimeOut);
+            } else {
+                //接続タイムアウト
+                urlConnection.setConnectTimeout(DTVTConstants.SERVER_CONNECT_TIMEOUT);
+                //読み込みタイムアウト
+                urlConnection.setReadTimeout(DTVTConstants.SERVER_READ_TIMEOUT);
             }
         }
 
@@ -1335,6 +1361,11 @@ public class WebApiBasePlala {
                 //指定された名前であらたなコネクションを開く
                 httpsConnection = (HttpsURLConnection) new URL(newUrlString).openConnection();
                 httpsConnection.setDoInput(true);
+
+                //接続タイムアウト
+                httpsConnection.setConnectTimeout(DTVTConstants.SERVER_CONNECT_TIMEOUT);
+                //読み込みタイムアウト
+                httpsConnection.setReadTimeout(DTVTConstants.SERVER_READ_TIMEOUT);
 
                 //DTVTLogger.debug("newHeader=" + httpsConnection.getHeaderFields().toString());
                 //コンテントタイプの設定
@@ -1393,6 +1424,15 @@ public class WebApiBasePlala {
             } catch (SSLPeerUnverifiedException e) {
                 //SSLチェックライブラリの初期化が行われていない
                 mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.SSL_ERROR);
+                DTVTLogger.debug(e);
+            } catch (SocketTimeoutException e) {
+                //タイムアウトを明示して取得
+                DTVTLogger.warning("SocketTimeoutException");
+                //サーバーエラー扱いとする
+                mReturnCode.errorState.setErrorType(
+                        DTVTConstants.ERROR_TYPE.SERVER_ERROR);
+                //タイムアウト判定用
+                mReturnCode.errorState.setIsTimeout(true);
                 DTVTLogger.debug(e);
             } catch (IOException e) {
                 DTVTLogger.debug(e);

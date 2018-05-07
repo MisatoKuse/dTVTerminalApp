@@ -277,6 +277,12 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if (tvClipLists != null && tvClipLists.size() > 0) {
             TvClipList list = tvClipLists.get(0);
             setStructDB(list);
+        } else {
+            //ここに来てもヌルではない場合があるので、確認する
+            if(tvClipLists == null) {
+                //タイムアウトならばウェイト表示を止める
+                ifTimeoutStopProgess(HomeActivity.HOME_CONTENTS_SORT_TV_CLIP);
+            }
         }
     }
 
@@ -285,6 +291,12 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if (vodClipLists != null && vodClipLists.size() > 0) {
             VodClipList list = vodClipLists.get(0);
             setStructDB(list);
+        } else {
+            //ここに来てもヌルではない場合があるので、確認する
+            if(vodClipLists == null) {
+                //タイムアウトならばウェイト表示を止める
+                ifTimeoutStopProgess(HomeActivity.HOME_CONTENTS_SORT_VOD_CLIP);
+            }
         }
     }
 
@@ -295,6 +307,12 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             TvScheduleList list = tvScheduleList.get(0);
             setStructDB(list);
         } else {
+            //ここに来てもヌルではない場合があるので、確認する
+            if(tvScheduleList == null) {
+                //タイムアウトならばウェイト表示を止める
+                ifTimeoutStopProgess(HomeActivity.HOME_CONTENTS_TV_SCHEDULE);
+            }
+
             //WEBAPIを取得できなかった時はDBのデータを使用
             Handler handler = new Handler(Looper.getMainLooper());
             DbThread t = new DbThread(handler, this, SELECT_TV_SCHEDULE_LIST);
@@ -310,6 +328,12 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             DailyRankList list = dailyRankLists.get(0);
             setStructDB(list);
         } else {
+            //ここに来てもヌルではない場合があるので、確認する
+            if(dailyRankLists == null) {
+                //タイムアウトならばウェイト表示を止める
+                ifTimeoutStopProgess(HomeActivity.HOME_CONTENTS_DAILY_RANK_LIST);
+            }
+
             //WEBAPIを取得できなかった時はDBのデータを使用
             Handler handler = new Handler(Looper.getMainLooper());
             DbThread t = new DbThread(handler, this, SELECT_DAILY_RANK_LIST);
@@ -319,12 +343,19 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onContentsListPerGenreJsonParsed(final List<VideoRankList> contentsListPerGenre, final String genreId) {
+    public void onContentsListPerGenreJsonParsed(final List<VideoRankList> contentsListPerGenre,
+                                                 final String genreId) {
         DTVTLogger.start();
         if (contentsListPerGenre != null && contentsListPerGenre.size() > 0) {
             VideoRankList list = contentsListPerGenre.get(0);
             setStructDB(list);
         } else {
+            //ここに来てもヌルではない場合があるので、確認する
+            if(contentsListPerGenre == null) {
+                //タイムアウトならばウェイト表示を止める
+                ifTimeoutStopProgess(HomeActivity.HOME_CONTENTS_LIST_PER_GENRE);
+            }
+
             //WEBAPIを取得できなかった時はDBのデータを使用
             Handler handler = new Handler(Looper.getMainLooper());
             DbThread t = new DbThread(handler, this, SELECT_VIDEO_RANK_LIST);
@@ -341,6 +372,12 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             List<Map<String, String>> vcList = list.getVcList();
             sendWatchingVideoListData(vcList);
         } else {
+            //ここに来てもヌルではない場合があるので、確認する
+            if(watchListenVideoList == null) {
+                //タイムアウトならばウェイト表示を止める
+                ifTimeoutStopProgess(HomeActivity.HOME_CONTENTS_SORT_WATCHING_VIDEO);
+            }
+
             //WEBAPIを取得できなかった時はDBのデータを使用
             Handler handler = new Handler(Looper.getMainLooper());
             DbThread t = new DbThread(handler, this, SELECT_WATCH_LISTEN_VIDEO_LIST);
@@ -355,6 +392,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             sendRentalListData(RentalVodListResponse);
             sendPremiumListData(RentalVodListResponse);
         } else {
+            //タイムアウトならばウェイト表示を止める
+            ifTimeoutStopProgess(HomeActivity.HOME_CONTENTS_SORT_RENTAL);
+
             //WEBAPIを取得できなかった時はDBのデータを使用
             Handler rentalHandler = new Handler(Looper.getMainLooper());
             DbThread rentalThread = new DbThread(rentalHandler, this, SELECT_RENTAL_VIDEO_LIST);
@@ -369,12 +409,22 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     public void onRentalChListJsonParsed(final PurchasedChListResponse RentalChListResponse) {
         if (RentalChListResponse != null) {
             setStructDB(RentalChListResponse);
+        } else {
+            //タイムアウトならばウェイト表示を止める
+            ifTimeoutStopProgess(HomeActivity.HOME_CONTENTS_SORT_RENTAL);
         }
     }
 
     @Override
     public void onChannelJsonParsed(final List<ChannelList> channelLists) {
         DTVTLogger.start();
+
+        //ヌルならば、エラー判定を行う
+        if ( channelLists == null ) {
+            //タイムアウトならばウェイト表示を止める
+            ifTimeoutStopProgess(HomeActivity.HOME_CONTENTS_SORT_CHANNEL);
+        }
+
         if (channelLists != null && channelLists.size() > 0) {
             ChannelList list = channelLists.get(0);
             setStructDB(list);
@@ -392,6 +442,21 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             sendDailyRankListData(mDailyRankListData);
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * タイムアウトならばウェイト表示の停止を行う.
+     *
+     * @param selectGetError WebClientを示す固定値。getErrorメソッドに指定する。
+     */
+    private void ifTimeoutStopProgess(int selectGetError) {
+        //エラー情報の取得
+        ErrorState errorState = getError(selectGetError);
+
+        //原因がタイムアウトならばこの場でヌルを指定したコールバックを返して、ウェイト表示を終わらせる
+        if(errorState.isTimeout()) {
+            mApiDataProviderCallback.tvScheduleListCallback(null);
+        }
     }
 
     /**
@@ -1640,6 +1705,23 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                     errorState = mRentalVodListWebClient.getError();
                 }
                 break;
+            case HomeActivity.HOME_CONTENTS_LIST_PER_GENRE:
+                //ジャンル一覧のエラー情報の取得
+                if(mContentsListPerGenreWebClient != null) {
+                    errorState = mContentsListPerGenreWebClient.getError();
+                }
+                break;
+            case HomeActivity.HOME_CONTENTS_DAILY_RANK_LIST:
+                //デイリーランキングのエラー情報の取得
+                if(mDailyRankWebClient != null) {
+                    errorState = mDailyRankWebClient.getError();
+                }
+                break;
+            case  HomeActivity.HOME_CONTENTS_TV_SCHEDULE:
+                //番組表のエラー情報取得
+                if(mTvScheduleWebClient != null) {
+                    errorState = mTvScheduleWebClient.getError();
+                }
             default:
                 break;
         }

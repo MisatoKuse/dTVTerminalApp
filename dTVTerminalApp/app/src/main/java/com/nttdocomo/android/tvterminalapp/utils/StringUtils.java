@@ -12,6 +12,7 @@ import android.util.Base64;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse;
@@ -474,7 +475,7 @@ public class StringUtils {
             // 暗号化情報生成
             SecretKeySpec key = new SecretKeySpec(byteKey, 0, CIPHER_KEY_LENGTH, CIPHER_TYPE);
 
-            // 暗号化クラスの初期化
+            // 暗号化クラスの初期化(暗号強度が低い事に対する警告が出るが、そもそも平文をそのまま使用したくないが為の暗号化なので、許容する)
             Cipher cipher = Cipher.getInstance(CIPHER_DATA);
             cipher.init(Cipher.DECRYPT_MODE, key);
 
@@ -793,5 +794,17 @@ public class StringUtils {
             default:
                 return "";
         }
+    }
+
+    /**
+     * タイムアウト判定用の文字列を返す.
+     *
+     * タイムアウトが、タイムアウト例外以外の例外で発生した際の識別用
+     * @return タイムアウトを判定する文字列
+     */
+    public static String getTimeoutErrorMessage() {
+        //指定したタイムアウト時間が含まれる判定用文字列を作成する
+        return String.format(Locale.US, DTVTConstants.TIMEOUT_ERROR_CHECK_STRING,
+                DTVTConstants.SERVER_CONNECT_TIMEOUT);
     }
 }

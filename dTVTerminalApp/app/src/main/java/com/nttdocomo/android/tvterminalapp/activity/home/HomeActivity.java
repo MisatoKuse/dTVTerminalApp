@@ -156,6 +156,21 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     public final static int HOME_CONTENTS_SORT_RENTAL = HOME_CONTENTS_LIST_START_INDEX + 9;
     /**
+     * エラー情報の取得用に追加（ジャンル一覧）.
+     */
+    public final static int HOME_CONTENTS_LIST_PER_GENRE =
+            HOME_CONTENTS_LIST_START_INDEX + 10;
+    /**
+     * エラー情報の取得用に追加（デイリーランク）.
+     */
+    public final static int HOME_CONTENTS_DAILY_RANK_LIST =
+            HOME_CONTENTS_LIST_START_INDEX + 11;
+    /**
+     * エラー情報の取得用に追加（番組表）.
+     */
+    public final static int HOME_CONTENTS_TV_SCHEDULE =
+            HOME_CONTENTS_LIST_START_INDEX + 12;
+    /**
      * アダプタ内でのリスト識別用定数.
      */
     private final static int HOME_CONTENTS_DISTINCTION_ADAPTER = 10;

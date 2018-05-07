@@ -47,6 +47,11 @@ public class ErrorState {
     private String mErrorCode;
 
     /**
+     * タイムアウトならばtrue
+     */
+    private boolean mIsTimeout = false;
+
+    /**
      * 空白文字.
      */
     private static final String SPACE_STRING = " ";
@@ -69,6 +74,7 @@ public class ErrorState {
         mErrorType = DTVTConstants.ERROR_TYPE.SUCCESS;
         mErrorMessage = "";
         mErrorCode = "";
+        mIsTimeout = false;
     }
 
     /**
@@ -319,4 +325,23 @@ public class ErrorState {
     public String getErrorCode() {
         return mErrorCode;
     }
+
+    /**
+     * タイムアウトならばtrueを返す.
+     *
+     * @return タイムアウトならばtrueが返る
+     */
+    public boolean isTimeout() {
+        return mIsTimeout;
+    }
+
+    /**
+     * タイムアウトか否かをセット.
+     *
+     * @param timeout タイムアウトならばtrueを指定する
+     */
+    public void setIsTimeout(boolean timeout) {
+        mIsTimeout = timeout;
+    }
+
 }

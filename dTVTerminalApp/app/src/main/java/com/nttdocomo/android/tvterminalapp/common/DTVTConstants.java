@@ -13,9 +13,17 @@ package com.nttdocomo.android.tvterminalapp.common;
 public class DTVTConstants {
     //=================================== 定数定義 Begin ==================================
     /**
-     * 一秒.
+     * サーバー用のコネクションタイムアウト時間 30秒.
      */
-    public static final int SEARCH_SERVER_TIMEOUT = 1000;
+    public static final int SERVER_CONNECT_TIMEOUT = 30000;
+    /**
+     * サーバー用の読み込みタイムアウト時間 30秒.
+     */
+    public static final int SERVER_READ_TIMEOUT = 30000;
+    /**
+     * タイムアウト判定文字列.
+     */
+    public static final String TIMEOUT_ERROR_CHECK_STRING = "after %dms:";
     /**
      * NG.
      */
