@@ -143,6 +143,11 @@ public class DateUtils {
     /**
      * 日付フォーマット.
      */
+    private static final String DATE_PATTERN_UNTIL_MINUTE = "yyyy/MM/dd HH:mm";
+
+    /**
+     * 日付フォーマット.
+     */
     private static final String DATE_PATTERN_RECORDING_RESERVATION = "M/d (E) HH:mm";
 
     /**
@@ -500,6 +505,17 @@ public class DateUtils {
      */
     public static String formatEpochToString(final long epochTime) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN);
+        return dateFormat.format(new Date(epochTime * 1000));
+    }
+
+    /**
+     * エポック秒を YYYY/MM/DD HH:mm かつString値に変換.
+     *
+     * @param epochTime エポック秒
+     * @return YYYY/MM/DD日付
+     */
+    public static String formatUntilMinuteTimeString(final long epochTime) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN_UNTIL_MINUTE);
         return dateFormat.format(new Date(epochTime * 1000));
     }
 
