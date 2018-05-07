@@ -252,11 +252,11 @@ public class DtvContentsDetailFragment extends Fragment {
             requestData.setTitleId(metaFullData.getTitle_id());
             requestData.setTitle(metaFullData.getTitle());
             requestData.setRValue(metaFullData.getR_value());
-            requestData.setLinearStartDate(String.valueOf(metaFullData.getAvail_start_date()));
-            requestData.setLinearEndDate(String.valueOf(metaFullData.getAvail_end_date()));
+            requestData.setLinearStartDate(String.valueOf(metaFullData.getPublish_start_date()));
+            requestData.setLinearEndDate(String.valueOf(metaFullData.getPublish_end_date()));
             requestData.setSearchOk(metaFullData.getmSearch_ok());
             requestData.setIsNotify(metaFullData.getDisp_type(), metaFullData.getmContent_type(),
-                    String.valueOf(metaFullData.getAvail_end_date()), metaFullData.getmTv_service(), metaFullData.getDtv());
+                    metaFullData.getmVod_start_date(), metaFullData.getmTv_service(), metaFullData.getDtv());
         }
         return requestData;
     }
