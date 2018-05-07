@@ -2,13 +2,13 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-package com.nttdocomo.android.tvterminalapp.jni;
+package com.nttdocomo.android.tvterminalapp.jni.hikari;
 
 
 /**
  * 機能：ひかりTVに関して、チャンネルリストを表示するクラス.
  */
-class DlnaHikariChListItem {
+public class DlnaHikariChListItem {
 
     /**
      * このクラスにて、フィールドは「public」に設定している理由は、.
@@ -39,7 +39,8 @@ class DlnaHikariChListItem {
     public String mDate = "";
     /**ビデオタイプ.*/
     public String mVideoType = "";
-
+    /**ChannelNo.*/
+    public String mChannelNr = "";
     //to do: 使用する必要があれば、新しいフィールドをここで追加
 
     /**

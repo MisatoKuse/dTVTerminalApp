@@ -2,7 +2,7 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-package com.nttdocomo.android.tvterminalapp.jni;
+package com.nttdocomo.android.tvterminalapp.jni.ter;
 
 import java.util.ArrayList;
 
@@ -61,7 +61,7 @@ public class DlnaTerChListInfo {
      * @param content content
      * @return チャンネル情報
      */
-    static DlnaTerChListInfo fromArrayList(final ArrayList<Object> content) {
+    public static DlnaTerChListInfo fromArrayList(final ArrayList<Object> content) {
         if (null == content) {
             return null;
         }
@@ -93,7 +93,7 @@ public class DlnaTerChListInfo {
      * 地上波チャンネルリスト取得.
      * @return 地上波チャンネルリスト
      */
-    ArrayList<DlnaTerChListItem> getTerChLists() {
+    public ArrayList<DlnaTerChListItem> getTerChLists() {
         return mLists;
     }
 }

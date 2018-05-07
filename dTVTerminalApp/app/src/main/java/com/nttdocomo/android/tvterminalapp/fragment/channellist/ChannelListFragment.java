@@ -22,10 +22,9 @@ import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
-import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListItem;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListItem;
+import com.nttdocomo.android.tvterminalapp.jni.bs.DlnaBsChListItem;
+import com.nttdocomo.android.tvterminalapp.jni.ter.DlnaTerChListItem;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;

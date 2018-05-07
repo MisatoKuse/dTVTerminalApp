@@ -71,11 +71,11 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.SettingFileMetaData;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsInfo;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDevListListener;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessage;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
@@ -1329,11 +1329,11 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * 機能：DMSを加入する場合コールされる.
      *
-     * @param curInfo カレントDlnaDMSInfo
+     * @param curInfo カレントDlnaDmsInfo
      * @param newItem 新しいDms情報
      */
     @Override
-    public void onDeviceJoin(final DlnaDMSInfo curInfo, final DlnaDmsItem newItem) {
+    public void onDeviceJoin(final DlnaDmsInfo curInfo, final DlnaDmsItem newItem) {
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
         if (null == dlnaDmsItem) {
             setStbStatus(false);
@@ -1352,11 +1352,11 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * 機能：DMSをなくなる場合コールされる.
      *
-     * @param curInfo     　　　カレントDlnaDMSInfo
+     * @param curInfo     　　　カレントDlnaDmsInfo
      * @param leaveDmsUdn 　消えるDmsのudn名
      */
     @Override
-    public void onDeviceLeave(final DlnaDMSInfo curInfo, final String leaveDmsUdn) {
+    public void onDeviceLeave(final DlnaDmsInfo curInfo, final String leaveDmsUdn) {
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
         if (null == dlnaDmsItem) {
             setStbStatus(false);

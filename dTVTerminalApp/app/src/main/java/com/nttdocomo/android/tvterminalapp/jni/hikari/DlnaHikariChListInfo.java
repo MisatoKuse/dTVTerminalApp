@@ -2,14 +2,14 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-package com.nttdocomo.android.tvterminalapp.jni;
+package com.nttdocomo.android.tvterminalapp.jni.hikari;
 
 import java.util.ArrayList;
 
 /**
  * ひかりチャンネルリスト情報.
  */
-class DlnaHikariChListInfo {
+public class DlnaHikariChListInfo {
     /**ひかりチャンネルリスト.*/
     private ArrayList<DlnaHikariChListItem> mLists = new ArrayList<>();
 
@@ -62,7 +62,7 @@ class DlnaHikariChListInfo {
      * @param content content
      * @return info
      */
-    static DlnaHikariChListInfo fromArrayList(final ArrayList<Object> content) {
+    public static DlnaHikariChListInfo fromArrayList(final ArrayList<Object> content) {
         if (null == content) {
             return null;
         }
@@ -78,7 +78,7 @@ class DlnaHikariChListInfo {
      * getHikariChLists.
      * @return HikariChLists
      */
-    ArrayList<DlnaHikariChListItem> getHikariChLists() {
+    public ArrayList<DlnaHikariChListItem> getHikariChLists() {
         return mLists;
     }
 }

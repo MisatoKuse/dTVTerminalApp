@@ -45,7 +45,6 @@ namespace dtvt {
     const char * const HikariChXmlParser_Field_Container    ="container";
     const char * const HikariChXmlParser_Field_Item         ="item";
     const char * const HikariChXmlParser_Field_Id           ="id";
-    const char * const HikariChXmlParser_Field_Title        ="title";
     const char * const HikariChXmlParser_Field_Res          ="res";
     const char * const HikariChXmlParser_Field_ProtocolInfo ="protocolInfo";
     const char * const HikariChXmlParser_Field_Size         ="size";
@@ -59,10 +58,21 @@ namespace dtvt {
     const char * const HikariChXmlParser_Field_Class        ="class";
     const char * const HikariChXmlParser_Field_VideoItem    ="object.item.videoItem";
     const char * const HikariChXmlParser_Field_Videos       ="Videos";
+    const char * const HikariChXmlParser_Field_ChannelName  ="channelName";
+    const char * const HikariChXmlParser_Field_ChannelNr    ="channelNr";
+
+#if defined(DLNA_KARI_DMS_UNIVERSAL)
+    const char * const HikariChXmlParser_Field_Title        ="title";
+#elif defined(DLNA_KARI_DMS_NAS)
+    const char * const HikariChXmlParser_Field_Title        ="title";
+#elif defined(DLNA_KARI_DMS_RELEASE)
+    const char * const HikariChXmlParser_Field_Title        ="channelName";
+#endif
 
     //ビデオ種類
     const char * const HikariChXmlParser_Field_Mp4           ="http-get:*:video/mp4";
-    const char * const HikariChXmlParser_Field_Mpeg          ="http-get:*:video/mpeg";
+    const char * const HikariChXmlParser_Field_Dtcp           ="http-get:*:application/x-dtcp1;";
+    const char * const HikariChXmlParser_Field_Mp4_Ret           ="http-get:*:video/mp4";
 
 }   //namespace dtvt
 
