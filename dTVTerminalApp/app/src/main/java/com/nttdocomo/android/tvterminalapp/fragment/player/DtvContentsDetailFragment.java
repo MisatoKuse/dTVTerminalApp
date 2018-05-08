@@ -264,6 +264,7 @@ public class DtvContentsDetailFragment extends Fragment {
     /**
      * 各Viewにコンテンツの詳細情報を渡す.
      */
+    @SuppressWarnings("OverlyLongMethod")
     private void setDetailData() {
         //タイトル
         mTextHeader.setText(mOtherContentsDetailData.getTitle());
@@ -630,7 +631,7 @@ public class DtvContentsDetailFragment extends Fragment {
      */
     public void displayEndDate(final long endDate) {
         DTVTLogger.start();
-        String date = DateUtils.formatEpochToString(endDate);
+        String date = DateUtils.formatUntilMinuteTimeString(endDate);
 
         if (mTxtChannelDate != null) {
             String untilDate = StringUtils.getConnectStrings(date, getString(R.string.common_until));

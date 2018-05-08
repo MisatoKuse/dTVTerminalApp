@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -55,9 +56,11 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.common.ProcessSettingFile;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
+import com.nttdocomo.android.tvterminalapp.activity.setting.SettingActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentDetailDataConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopScaledProListDataConnect;
@@ -619,7 +622,7 @@ public class ContentDetailActivity extends BaseActivity implements
         mIntent = getIntent();
         mThumbnailRelativeLayout = findViewById(R.id.dtv_contents_detail_layout);
         Object object = mIntent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
-        if (object instanceof RecordedContentsDetailData) { //プレイヤーで再生できるコンテンツ
+        if (object instanceof RecordedContentsDetailData && getStbStatus()) { //プレイヤーで再生できるコンテンツ
             mIsPlayer = true;
             initPlayer();
             //外部出力および画面キャプチャ制御
@@ -1186,7 +1189,7 @@ public class ContentDetailActivity extends BaseActivity implements
      */
     private void showMessage(final String msg) {
         DTVTLogger.start();
-        CustomDialog customDialog = new CustomDialog(getApplicationContext(), CustomDialog.DialogType.ERROR);
+        CustomDialog customDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
         customDialog.setContent(msg);
         customDialog.showDialog();
         DTVTLogger.end();
@@ -1198,7 +1201,7 @@ public class ContentDetailActivity extends BaseActivity implements
     private void errorExit() {
         DTVTLogger.start();
         // TODO エラー表示の要修正
-        showMessage(getApplicationContext().getString(R.string.contents_player_bad_contents_info));
+        showMessage(getString(R.string.contents_player_bad_contents_info));
         setCanPlay(false);
         DTVTLogger.end();
     }
@@ -1377,7 +1380,7 @@ public class ContentDetailActivity extends BaseActivity implements
     /**
      * データの初期化.
      */
-    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod", "EnumSwitchStatementWhichMissesCases"})
     private void initContentData() {
         mFrameLayout = findViewById(R.id.header_watch_by_tv);
         // タブ数を先に決定するため、コンテンツ詳細のデータを最初に取得しておく
@@ -1420,47 +1423,30 @@ public class ContentDetailActivity extends BaseActivity implements
                 }
             }
 
-            //「mobileViewingFlg」が「0」の場合モバイル視聴不可
-            if (MOBILEVIEWINGFLG_FLAG_ZERO.equals(mDetailData.getMobileViewingFlg())) {
-                //未ペアリングかつ宅外の場合は、"ドコモテレビターミナルに接続してください"を表示する仕様ですが、
-                //本ソースでは宅外判定がペアリング判定で行われていたので、判定はペアリングの有無のみ。
-                if (!getStbStatus()) {
-                    //未ペアリングなので、"ドコモテレビターミナルに接続してください"を表示
-                    setThumbnailText(getResources().getString(
-                            R.string.contents_detail_thumbnail_text_no_pair));
-                } else {
-                    //ペアリング済みなので、"テレビで視聴できます"を表示
-                    setThumbnailText(getResources().getString(
-                            R.string.contents_detail_thumbnail_text));
-                }
-                mThumbnailBtn.setEnabled(false);
-            } else {
-                //  dアニメの場合
-                if (serviceId == D_ANIMATION_CONTENTS_SERVICE_ID) {
-                    setThumbnailText(getResources().getString(R.string.d_anime_store_content_service_start_text));
-                    //ｄTVの場合
-                } else if (serviceId == DTV_CONTENTS_SERVICE_ID) {
-                    //DTVコンテンツ　「reserved2」が「1」　Androidのモバイル視聴不可
-                    if (CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved2())) {
-                        //未ペアリングかつ宅外の場合は、"ドコモテレビターミナルに接続してください"を表示する仕様ですが、
-                        //本ソースでは宅外判定がペアリング判定で行われていたので、判定はペアリングの有無のみ。
-                        if (!getStbStatus()) {
-                            //未ペアリングなので、"ドコモテレビターミナルに接続してください"を表示
-                            setThumbnailText(getResources().getString(
-                                    R.string.contents_detail_thumbnail_text_no_pair));
-                        } else {
-                            //ペアリング済みなので、"テレビで視聴できます"を表示
-                            setThumbnailText(getResources().getString(
-                                    R.string.contents_detail_thumbnail_text));
-                        }
-                        mThumbnailBtn.setEnabled(false);
+            //コンテンツタイプ取得
+            ContentUtils.ContentsType type = ContentUtils.getRecommendContentsType(mDetailData);
+
+            switch (type) {
+                case PURE_DTV:
+                    //「mobileViewingFlg」が「0」の場合モバイル視聴不可
+                    if (MOBILEVIEWINGFLG_FLAG_ZERO.equals(mDetailData.getMobileViewingFlg())) {
+                        //モバイル視聴不可なので、"テレビで視聴できます"を表示
+                        setThumbnailText(getResources().getString(
+                                R.string.contents_detail_thumbnail_text));
                     } else {
-                        setThumbnailText(getResources().getString(R.string.dtv_content_service_start_text));
+                        //モバイル視聴可なので、"dTVで視聴"を表示
+                        setThumbnailText(getResources().getString(
+                                R.string.dtv_content_service_start_text));
                     }
-                    //dtvチャンネルの場合
-                } else if (serviceId == DTV_CHANNEL_CONTENTS_SERVICE_ID) {
+                    break;
+                case PURE_DTV_CHANNEL:
+                case PURE_DTV_CHANNEL_MISS:
+                case PURE_DTV_CHANNEL_RELATION:
                     setThumbnailText(getResources().getString(R.string.dtv_channel_service_start_text));
-                }
+                    break;
+                case D_ANIME_STORE:
+                    setThumbnailText(getResources().getString(R.string.d_anime_store_content_service_start_text));
+                    break;
             }
             setTitleAndThumbnail(mDetailData.getTitle(), mDetailData.getThumb());
         } else {  //plalaサーバーから
@@ -2074,6 +2060,9 @@ public class ContentDetailActivity extends BaseActivity implements
                 mServiceId = mDetailFullData.getmService_id();
                 getChannelInfo();
             }
+            // サムネイル表示メッセージ取得
+            String thumbnailMessage = StringUtils.getContentsDetailThumbnailString(
+                    detailFragment.mOtherContentsDetailData, this, mDetailFullData.getContentsType());
             if (DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
                 if (getStbStatus()) {
                     createRemoteControllerView(true);
@@ -2083,44 +2072,55 @@ public class ContentDetailActivity extends BaseActivity implements
                     setStartRemoteControllerUIListener(this);
                 }
                 String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(this));
+                UserState userState = UserInfoUtils.getUserState(this);
                 //ひかりTV未契約の場合
-                if (contractInfo == null || contractInfo.isEmpty() || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo)) {
+                if (!UserInfoUtils.CONTRACT_INFO_H4D.equals(contractInfo)) {
                     DTVTLogger.debug("contractInfo:---" + contractInfo);
                     mThumbnailBtn.setVisibility(View.GONE);
                     LinearLayout contractLeadingView = findViewById(R.id.contract_leading_view);
                     contractLeadingView.setVisibility(View.VISIBLE);
                     setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
                     TextView contractLeadingText = findViewById(R.id.contract_leading_text);
-                    contractLeadingText.setText(getResources().getString(R.string.contents_detail_contract_text));
                     Button contractLeadingButton = findViewById(R.id.contract_leading_button);
-                    contractLeadingButton.setText(getResources().getString(R.string.contents_detail_contract_leading_button));
-                    contractLeadingButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(final View view) {
-                            if (getStbStatus()) {
-                                contentDetailRemoteController();
-                            } else {
-                                showErrorDialog(getResources().getString(R.string.main_setting_connect_error_message));
+                    String message;
+                    String buttonText;
+                    if (userState.equals(UserState.LOGIN_NG)) {
+                        DTVTLogger.debug("userState:---" + userState);
+                        message = getString(R.string.main_setting_logon_request_error_message);
+                        buttonText = getString(R.string.contents_detail_login_button);
+                        final Intent intent = new Intent(this, SettingActivity.class);
+                        contractLeadingButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(final View view) {
+                                startActivity(intent);
                             }
-                        }
-                    });
-                } else { //ひかりTV契約者の場合
-                    //ひかりTV中にDTVの場合
-                    if (VIDEO_PROGRAM.equals(mDetailFullData.getDisp_type())
-                            || VIDEO_SERIES.equals(mDetailFullData.getDisp_type())) {
-                        if (METARESPONSE1.equals(mDetailFullData.getDtv())) {
-                            setThumbnailText(getResources().getString(R.string.dtv_content_service_start_text));
-                        }
+                        });
+                    } else {
+                        message = getString(R.string.contents_detail_contract_text);
+                        buttonText = getString(R.string.contents_detail_contract_leading_button);
+                        contractLeadingButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(final View view) {
+                                if (getStbStatus()) {
+                                    contentDetailRemoteController();
+                                } else {
+                                    showErrorDialog(getString(R.string.main_setting_connect_error_message));
+                                }
+                            }
+                        });
                     }
-                    //ひかりTV中にdtvチャンネルの場合
-                    if (TV_PROGRAM.equals(mDetailFullData.getDisp_type())) {
-                        if (TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(mDetailFullData.getmTv_service())) {
-                            setThumbnailText(getResources().getString(R.string.dtv_channel_service_start_text));
-                        }
+                    contractLeadingText.setText(message);
+                    contractLeadingButton.setText(buttonText);
+                } else { //ひかりTV契約者の場合
+                    if (!thumbnailMessage.isEmpty()) {
+                        setThumbnailText(thumbnailMessage);
                     }
                 }
             } else { //レコメンドサーバー以外のひかりTV
                 if (getStbStatus()) {
+                    if (!thumbnailMessage.isEmpty()) {
+                        setThumbnailText(thumbnailMessage);
+                    }
                     createRemoteControllerView(true);
                     mIsControllerVisible = true;
                     setStartRemoteControllerUIListener(this);
@@ -3648,17 +3648,75 @@ public class ContentDetailActivity extends BaseActivity implements
     }
 
     /**
+     * ひかりTV Now On Air の時のみ自動再生する.
+     */
+    private void playNowOnAir() {
+        if (mDetailFullData.getContentsType().equals(ContentUtils.ContentsType.HIKARI_TV_NOW_ON_AIR)) {
+            //放送中番組
+            DlnaProvHikariChList provider = new DlnaProvHikariChList(new DlnaProvHikariChList.OnApiCallbackListener() {
+                @Override
+                public void itemFindCallback(@Nullable final DlnaHikariChListItem resultItem) {
+                    DTVTLogger.error(" <<< ");
+                    if (resultItem != null) {
+                        //Threadクラスからのコールバックのため、UIスレッド化する
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                DTVTLogger.error("resultItem != null");
+                                //player start
+                                //放送中ひかりTVコンテンツの時は自動再生する
+                                mIsPlayer = true;
+                                RecordedContentsDetailData data;
+                                data = new RecordedContentsDetailData();
+                                data.setUpnpIcon("");
+                                data.setResUrl(resultItem.mResUrl);
+                                data.setSize(resultItem.mSize);
+                                data.setDuration(resultItem.mDuration);
+                                data.setVideoType(resultItem.mVideoType);
+                                data.setBitrate(resultItem.mBitrate);
+                                data.setTitle(resultItem.mTitle);
+                                data.setIsLive(true);
+                                mIntent.putExtra(RecordedListActivity.RECORD_LIST_KEY, data);
+                                initPlayer();
+                                //外部出力および画面キャプチャ制御
+                                getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+                                mExternalDisplayHelper = createExternalDisplayHelper();
+                                initSecurePlayer();
+                                setPlayerEvent();
+                                setUserAgeInfo();
+                                mPlayerController.start();
+                            }
+                        });
+                    } else {
+                        DTVTLogger.error("resultItem == null");
+                    }
+                }
+            });
+            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+            if (dlnaDmsItem != null) {
+                //TODO チャンネル番号が"1010"でないとデータの取得ができないため暫定的に固定値を設定
+//                provider.start(dlnaDmsItem, String.valueOf(mChannel.getChNo()));
+                provider.start(dlnaDmsItem, "1010");
+            } else {
+                DTVTLogger.error("dlnaDmsItem == null");
+            }
+        }
+    }
+
+    /**
      * 視聴可否判定に基づいてUIの操作などを行う.
      */
-    @SuppressWarnings("OverlyLongMethod")
+    @SuppressWarnings({"OverlyLongMethod", "OverlyComplexMethod"})
     private void changeUIBasedContractInfo() {
         DtvContentsDetailFragment detailFragment = getDetailFragment();
         boolean isVisibleRecordButton = mRecordingReservationContentsDetailInfo != null;
         switch (mIsEnableWatch) {
             case ENABLE_WATCH_NO_LIMIT:
+                playNowOnAir();
                 //視聴可能なので何もしない
                 break;
             case ENABLE_WATCH_WITH_LIMIT:
+                playNowOnAir();
                 //「〇〇日まで」を表示
                 if (mEndDate != 0L) {
                     detailFragment.displayEndDate(mEndDate);

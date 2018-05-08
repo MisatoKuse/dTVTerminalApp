@@ -285,6 +285,7 @@
     <string name="contents_detail_adinfo_array_pipe">"\\|"</string>
     <string name="contents_detail_date_left_">"\\|"</string>
     <string name="contents_detail_pairing_request">ドコモテレビターミナルとのペアリングが必要です</string>
+    <string name="contents_detail_login_button">ログイン</string>
 
     <!-- チャンネルリストタイトル -->
     <string name="channel_list_activity_title">チャンネルリスト</string>

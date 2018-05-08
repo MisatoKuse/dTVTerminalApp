@@ -70,6 +70,10 @@ public class ContentUtils {
          */
         HIKARI_TV,
         /**
+         * ひかりTV(Now On Air).
+         */
+        HIKARI_TV_NOW_ON_AIR,
+        /**
          * ひかり内dTVCh(番組).
          */
         HIKARI_IN_DCH_TV,
@@ -401,6 +405,9 @@ public class ContentUtils {
         long vodStartDate = metaFullData.getmVod_start_date();
         //現在時刻
         long current = DateUtils.getNowTimeFormatEpoch();
+        //Now On Air フラグ
+        boolean isNowOnAir = DateUtils.isNowOnAirDate(
+                String.valueOf(metaFullData.getPublish_start_date()), String.valueOf(metaFullData.getPublish_end_date()), true);
         if (dispType == null) {
             return ContentsType.OTHER;
         } else {
@@ -429,12 +436,20 @@ public class ContentUtils {
                         switch (tvService) {
                             case ContentDetailActivity.CONTENT_TYPE_FLAG_ONE:
                                 //tv_service=1 -> ひかりTV_番組
-                                return ContentsType.HIKARI_TV;
+                                if (isNowOnAir) {
+                                    return ContentsType.HIKARI_TV_NOW_ON_AIR;
+                                } else {
+                                    return ContentsType.HIKARI_TV;
+                                }
                             case ContentDetailActivity.CONTENT_TYPE_FLAG_TWO:
                                 //tv_service=2
                                 if (contentsType == null) {
                                     //contentsType=other -> ひかりTV_番組
-                                    return ContentsType.HIKARI_TV;
+                                    if (isNowOnAir) {
+                                        return ContentsType.HIKARI_TV_NOW_ON_AIR;
+                                    } else {
+                                        return ContentsType.HIKARI_TV;
+                                    }
                                 } else {
                                     switch (contentsType) {
                                         case ContentDetailActivity.CONTENT_TYPE_FLAG_ONE:
@@ -451,7 +466,11 @@ public class ContentUtils {
                                             return ContentsType.HIKARI_IN_DCH_RELATION;
                                         default:
                                             //contentsType=other -> ひかりTV_番組
-                                            return ContentsType.HIKARI_TV;
+                                            if (isNowOnAir) {
+                                                return ContentsType.HIKARI_TV_NOW_ON_AIR;
+                                            } else {
+                                                return ContentsType.HIKARI_TV;
+                                            }
                                     }
                                 }
                             default:
