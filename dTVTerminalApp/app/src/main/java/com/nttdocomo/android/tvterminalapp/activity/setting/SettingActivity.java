@@ -59,15 +59,15 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
     /**
      * Dアカウントアプリ Package名.
      */
-    private static final String D_ACCOUNT_APP_PACKAGE_NAME = "com.nttdocomo.android.idmanager";
+    public static final String D_ACCOUNT_APP_PACKAGE_NAME = "com.nttdocomo.android.idmanager";
     /**
      * Dアカウントアプリ Activity名.
      */
-    private static final String D_ACCOUNT_APP_ACTIVITY_NAME = ".activity.DocomoIdTopActivity";
+    public static final String D_ACCOUNT_APP_ACTIVITY_NAME = ".activity.DocomoIdTopActivity";
     /**
      * DアカウントアプリURI.
      */
-    private static final String D_ACCOUNT_APP_URI = "market://details?id=com.nttdocomo.android.idmanager";
+    public static final String D_ACCOUNT_APP_URI = "market://details?id=com.nttdocomo.android.idmanager";
 
     /**
      * メニュー項目index（Dアカウント設定）.

@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.detail;
 
 import android.app.Presentation;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -2136,7 +2137,27 @@ public class ContentDetailActivity extends BaseActivity implements
                         contractLeadingButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(final View view) {
-                                startActivity(intent);
+                                Intent intent = new Intent();
+                                intent.setClassName(SettingActivity.D_ACCOUNT_APP_PACKAGE_NAME,
+                                        StringUtils.getConnectStrings(SettingActivity.D_ACCOUNT_APP_PACKAGE_NAME, SettingActivity.D_ACCOUNT_APP_ACTIVITY_NAME));
+                                try {
+                                    startActivity(intent);
+                                } catch (ActivityNotFoundException e) {
+                                    //　アプリが無ければインストール画面に誘導
+//                                    CustomDialog dAccountUninstallDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+//                                    dAccountUninstallDialog.setContent(getResources().getString(R.string.main_setting_d_account_message));
+//                                    dAccountUninstallDialog.setConfirmText(R.string.positive_response);
+//                                    dAccountUninstallDialog.setCancelText(R.string.negative_response);
+//                                    dAccountUninstallDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+//                                        @Override
+//                                        public void onOKCallback(final boolean isOK) {
+//                                            Uri uri = Uri.parse(SettingActivity.D_ACCOUNT_APP_URI);
+//                                            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+//                                            startActivity(intent);
+//                                        }
+//                                    });
+//                                    dAccountUninstallDialog.showDialog();
+                                }
                             }
                         });
                     } else {

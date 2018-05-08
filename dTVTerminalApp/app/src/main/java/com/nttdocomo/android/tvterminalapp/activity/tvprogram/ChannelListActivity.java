@@ -26,6 +26,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.DTvChDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.HikariTvChDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
@@ -43,6 +44,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
 import java.util.ArrayList;
@@ -477,7 +479,9 @@ public class ChannelListActivity extends BaseActivity implements
      */
     private void initChannelListTab() {
         Resources res = getResources();
-        if (mIsStbConnected) {
+        if (mIsStbConnected
+                && (UserInfoUtils.getUserState(this).equals(UserState.CONTRACT_OK_PAIRING_NG)
+                || UserInfoUtils.getUserState(this).equals(UserState.CONTRACT_OK_PARING_OK))) {
             mTabNames = res.getStringArray(R.array.channel_list_tab_names);
         } else {
             //未ペアリングの場合 BSと地上波は表示しない
@@ -750,7 +754,9 @@ public class ChannelListActivity extends BaseActivity implements
     private ChListDataType getTypeFromViewPagerIndex(final int viewPagerIndex) {
         DTVTLogger.start();
         ChListDataType ret;
-        if (mIsStbConnected) {
+        if (mIsStbConnected
+                && (UserInfoUtils.getUserState(this).equals(UserState.CONTRACT_OK_PAIRING_NG)
+                || UserInfoUtils.getUserState(this).equals(UserState.CONTRACT_OK_PARING_OK))) {
             ret = CHANNEL_LIST_TAB_CONNECT_STB_LIST[viewPagerIndex];
         } else {
             ret = CHANNEL_LIST_TAB_NO_STB_LIST[viewPagerIndex];
