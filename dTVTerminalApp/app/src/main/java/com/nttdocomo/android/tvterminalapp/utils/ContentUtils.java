@@ -416,15 +416,16 @@ public class ContentUtils {
                 case ContentDetailActivity.VIDEO_SERIES:
                     //dispType=video_program || video_series
                     if (dTvFlag == null) {
-                        return ContentsType.OTHER;
+                        //dTvFlag=0 || 未設定 -> ひかりTV_VOD
+                        return ContentsType.HIKARI_TV_VOD;
                     } else {
                         switch (dTvFlag) {
                             case ContentDetailActivity.DTV_FLAG_ONE:
                                 //dTvFlag=1 -> ひかりTV内dTV
-                                return ContentsType.HIKARI_TV_VOD;
+                                return ContentsType.HIKARI_IN_DTV;
                             default:
                                 //dTvFlag=0 || 未設定 -> ひかりTV_VOD
-                                return ContentsType.HIKARI_IN_DTV;
+                                return ContentsType.HIKARI_TV_VOD;
                         }
                     }
                 case ContentDetailActivity.TV_PROGRAM:

@@ -25,6 +25,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClient;
@@ -237,6 +238,13 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                             channel.setTitle(title);
                             channel.setThumbnail(thumb);
                             channel.setServiceId(serviceId);
+                            channel.setPuId(map.get(JsonConstants.META_RESPONSE_PUID));
+                            channel.setSubPuId(map.get(JsonConstants.META_RESPONSE_SUB_PUID));
+                            channel.setChPackPuId(map.get(StringUtils.getConnectStrings(
+                                    JsonConstants.META_RESPONSE_CHPACK,JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_PUID)));
+                            channel.setChPackSubPuId(map.get(StringUtils.getConnectStrings(
+                                    JsonConstants.META_RESPONSE_CHPACK, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_SUB_PUID)));
+                            channel.setChType(map.get(JsonConstants.META_RESPONSE_CH_TYPE));
                             mScheduleList = new ArrayList<>();
                             mScheduleList.add(mSchedule);
 //                            channel.setSchedules(mScheduleList);
