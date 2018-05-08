@@ -795,16 +795,4 @@ public class StringUtils {
                 return "";
         }
     }
-
-    /**
-     * タイムアウト判定用の文字列を返す.
-     *
-     * タイムアウトが、タイムアウト例外以外の例外で発生した際の識別用
-     * @return タイムアウトを判定する文字列
-     */
-    public static String getTimeoutErrorMessage() {
-        //指定したタイムアウト時間が含まれる判定用文字列を作成する
-        return String.format(Locale.US, DTVTConstants.TIMEOUT_ERROR_CHECK_STRING,
-                DTVTConstants.SERVER_CONNECT_TIMEOUT);
-    }
 }

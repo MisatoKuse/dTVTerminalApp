@@ -1121,6 +1121,10 @@ public class WebApiBasePlala {
                 return mReturnCode;
             }
 
+            //タイムアウト判定用
+            boolean isTimeout = false;
+            long startTime = System.currentTimeMillis();
+
             try {
                 //指定された名前でURLを作成する
                 URL url = new URL(mSourceUrl);
@@ -1164,11 +1168,15 @@ public class WebApiBasePlala {
                 mReturnCode.errorState.setErrorType(
                         DTVTConstants.ERROR_TYPE.NETWORK_ERROR);
 
-                boolean isTimeout = false;
                 //コネクト時のタイムアウトはこちらに来るので、判定する
-                if(e.getMessage().contains(StringUtils.getTimeoutErrorMessage())) {
+                if(System.currentTimeMillis() - startTime
+                        > DTVTConstants.SERVER_CONNECT_TIMEOUT) {
                     //エラーメッセージにタイムアウトを示唆する物があればタイムアウトとして扱う
                     isTimeout = true;
+                    DTVTLogger.debug("timeout ConnectException:" + e.getMessage());
+                } else {
+                    isTimeout = false;
+                    DTVTLogger.debug("normal ConnectException" + e.getMessage());
                 }
                 //タイムアウトエラーの設定
                 mReturnCode.errorState.setIsTimeout(isTimeout);
@@ -1185,6 +1193,8 @@ public class WebApiBasePlala {
             } catch (SocketTimeoutException e) {
                 //タイムアウトを明示して取得
                 DTVTLogger.warning("SocketTimeoutException");
+                DTVTLogger.debug("SocketTimeoutException normal ConnectException:" +
+                    e.getMessage());
                 //サーバーエラー扱いとする
                 mReturnCode.errorState.setErrorType(
                         DTVTConstants.ERROR_TYPE.SERVER_ERROR);
@@ -1357,6 +1367,11 @@ public class WebApiBasePlala {
             DTVTLogger.start();
 
             HttpsURLConnection httpsConnection = null;
+
+            //タイムアウト判定用
+            boolean isTimeout = false;
+            long startTime = System.currentTimeMillis();
+
             try {
                 //指定された名前であらたなコネクションを開く
                 httpsConnection = (HttpsURLConnection) new URL(newUrlString).openConnection();
@@ -1425,9 +1440,27 @@ public class WebApiBasePlala {
                 //SSLチェックライブラリの初期化が行われていない
                 mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.SSL_ERROR);
                 DTVTLogger.debug(e);
+            } catch (ConnectException e) {
+                DTVTLogger.warning("ConnectException");
+                //通信エラー扱いとする
+                mReturnCode.errorState.setErrorType(
+                        DTVTConstants.ERROR_TYPE.NETWORK_ERROR);
+
+                //コネクト時のタイムアウトはこちらに来るので、判定する
+                if(System.currentTimeMillis() - startTime
+                        > DTVTConstants.SERVER_CONNECT_TIMEOUT) {
+                    //エラーメッセージにタイムアウトを示唆する物があればタイムアウトとして扱う
+                    isTimeout = true;
+                    DTVTLogger.debug("timeout ConnectException:" + e.getMessage());
+                } else {
+                    isTimeout = false;
+                    DTVTLogger.debug("normal ConnectException" + e.getMessage());
+                }
+                //タイムアウトエラーの設定
+                mReturnCode.errorState.setIsTimeout(isTimeout);
             } catch (SocketTimeoutException e) {
                 //タイムアウトを明示して取得
-                DTVTLogger.warning("SocketTimeoutException");
+                DTVTLogger.warning("SocketTimeoutException:" + e.getMessage());
                 //サーバーエラー扱いとする
                 mReturnCode.errorState.setErrorType(
                         DTVTConstants.ERROR_TYPE.SERVER_ERROR);

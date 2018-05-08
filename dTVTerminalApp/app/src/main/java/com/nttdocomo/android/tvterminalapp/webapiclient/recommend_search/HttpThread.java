@@ -298,6 +298,10 @@ public class HttpThread extends Thread {
             return;
         }
 
+        //タイムアウト判定用
+        boolean isTimeout = false;
+        long startTime = System.currentTimeMillis();
+
         try {
             //必要ならばURLにパスワード認証を付加する
             String srcUrl = addUrlPassword(this.mUrl);
@@ -357,14 +361,19 @@ public class HttpThread extends Thread {
             //SSLエラー処理(SSLエラーにコードは付けない)
             setErrorStatus(e, DTVTConstants.ERROR_TYPE.SSL_ERROR, "");
         } catch(ConnectException e) {
-            boolean isTimeout = false;
             //コネクト時のタイムアウトはこちらに来るので、判定する
-            if(e.getMessage().contains(StringUtils.getTimeoutErrorMessage())) {
+            if(System.currentTimeMillis() - startTime
+                    > DTVTConstants.SERVER_CONNECT_TIMEOUT) {
                 //エラーメッセージにタイムアウトを示唆する物があればタイムアウトとして扱う
                 isTimeout = true;
+                DTVTLogger.debug("timeout ConnectException:" + e.getMessage());
+            } else {
+                isTimeout = false;
+                DTVTLogger.debug("normal ConnectException" + e.getMessage());
             }
             setErrorStatus(e, DTVTConstants.ERROR_TYPE.SERVER_ERROR, "",isTimeout);
         } catch (SocketTimeoutException e) {
+            DTVTLogger.debug("timeout:SocketTimeoutException");
             //タイムアウトは明示的に取得
             setErrorStatus(e, DTVTConstants.ERROR_TYPE.SERVER_ERROR, "",true);
         } catch (IOException e) {

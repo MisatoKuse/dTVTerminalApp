@@ -21,10 +21,6 @@ public class DTVTConstants {
      */
     public static final int SERVER_READ_TIMEOUT = 30000;
     /**
-     * タイムアウト判定文字列.
-     */
-    public static final String TIMEOUT_ERROR_CHECK_STRING = "after %dms:";
-    /**
      * NG.
      */
     public static final String SEARCH_STATUS_NG = "ng";
