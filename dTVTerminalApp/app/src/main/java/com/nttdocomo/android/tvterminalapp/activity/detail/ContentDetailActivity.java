@@ -2001,7 +2001,11 @@ public class ContentDetailActivity extends BaseActivity implements
             String dTv = mDetailFullData.getDtv();
             String dTvType = mDetailFullData.getDtvType();
             detailFragment.mOtherContentsDetailData.setTitle(mDetailFullData.getTitle());
-            setTitleAndThumbnail(mDetailFullData.getTitle(), mDetailFullData.getmDtv_thumb_448_252());
+            if (DTV_FLAG_ONE.equals(dTv)) {
+                setTitleAndThumbnail(mDetailFullData.getTitle(), mDetailFullData.getmDtv_thumb_640_360());
+            } else {
+                setTitleAndThumbnail(mDetailFullData.getTitle(), mDetailFullData.getmThumb_640_360());
+            }
             detailFragment.mOtherContentsDetailData.setVodMetaFullData(contentsDetailInfo);
             detailFragment.mOtherContentsDetailData.setDetail(mDetailFullData.getSynop());
             // コンテンツ状態を反映
@@ -2104,7 +2108,7 @@ public class ContentDetailActivity extends BaseActivity implements
                                 if (getStbStatus()) {
                                     contentDetailRemoteController();
                                 } else {
-                                    showErrorDialog(getString(R.string.main_setting_connect_error_message));
+                                    startBrowser(UrlConstants.WebUrl.CONTRACT_URL);
                                 }
                             }
                         });

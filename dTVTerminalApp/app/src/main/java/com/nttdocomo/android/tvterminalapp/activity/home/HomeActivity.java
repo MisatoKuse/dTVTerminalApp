@@ -351,24 +351,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             case R.id.home_main_layout_pr:
             case R.id.home_main_layout_kytv:
                 if (isFastClick()) {
-                    startBrowser();
+                    startBrowser(UrlConstants.WebUrl.PR_URL);
                 }
                 break;
             default:
                 break;
         }
-    }
-
-    /**
-     * 機能
-     * 外部ブラウザーを起動する.
-     */
-    private void startBrowser() {
-        Intent intent = new Intent();
-        intent.setAction("android.intent.action.VIEW");
-        Uri content_url = Uri.parse(UrlConstants.WebUrl.PR_URL);
-        intent.setData(content_url);
-        startActivity(intent);
     }
 
     /**

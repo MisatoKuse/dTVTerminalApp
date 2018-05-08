@@ -112,6 +112,12 @@ public class UrlConstants {
          * TODO : 今はひとまず、DTVのアドレスを指定
          */
         public static final String GOOGLEPLAY_DOWNLOAD_MY_URL = "https://play.google.com/store/apps/details?id=jp.co.nttdocomo.dtv";
+
+        /**
+         * 契約URL.
+         * TODO : 仮の契約URL
+         */
+        public static final String CONTRACT_URL = "http://www.google.co.jp";
     }
 
     /**

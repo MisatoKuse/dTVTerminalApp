@@ -739,7 +739,7 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * スプラッシュ画面からダイアログの表示の依頼を受けたかどうかのチェック.
      */
-    void checkDialogShowRequest() {
+    private void checkDialogShowRequest() {
         DTVTLogger.start();
         Intent intent = getIntent();
 
@@ -2515,6 +2515,20 @@ public class BaseActivity extends FragmentActivity implements
             }
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * 機能
+     * 外部ブラウザーを起動する.
+     *
+     * @param url 起動URL
+     */
+    public void startBrowser(final String url) {
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.VIEW");
+        Uri content_url = Uri.parse(url);
+        intent.setData(content_url);
+        startActivity(intent);
     }
 
     /**
