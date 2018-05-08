@@ -35,7 +35,7 @@ public class ClipRegistWebClient
         void onClipRegistResult();
 
         /**
-         * 正常に終了した場合に呼ばれるコールバック.
+         * 失敗した場合に呼ばれるコールバック.
          */
         void onClipRegistFailure();
     }
