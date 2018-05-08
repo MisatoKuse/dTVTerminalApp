@@ -78,6 +78,7 @@ public class HikariTvChDataProvider extends ScaledDownProgramListDataProvider {
         if (channelProgramList == null || channelProgramList.size() != 1) {
             DTVTLogger.error("3");
             // error
+            mContentsDataCallback.onContentDataGet(null);
             return;
         }
         DTVTLogger.debug("before callback");

@@ -619,6 +619,12 @@ public class ChannelListActivity extends BaseActivity implements
 
     @Override
     public void onContentDataGet(ContentsData data) {
+
+        if (data == null) {
+            //Now On Airコンテンツがない場合はダイアログ表示
+            showErrorDialog(getString(R.string.contents_detail_now_on_air_contents_nothing));
+            return;
+        }
         Intent intent = new Intent(this, ContentDetailActivity.class);
         ComponentName componentName = this.getComponentName();
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, componentName.getClassName());
