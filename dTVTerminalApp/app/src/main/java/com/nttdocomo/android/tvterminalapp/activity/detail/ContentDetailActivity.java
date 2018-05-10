@@ -128,6 +128,7 @@ public class ContentDetailActivity extends BaseActivity implements
         TabItemLayout.OnClickTabTextListener,
         ContentsDetailDataProvider.ApiDataProviderCallback,
         ScaledDownProgramListDataProvider.ApiDataProviderCallback,
+        ContentUtils.ActivationCallback,
         MediaPlayerController.OnStateChangeListener,
         MediaPlayerController.OnFormatChangeListener,
         MediaPlayerController.OnPlayerEventListener,
@@ -434,14 +435,6 @@ public class ContentDetailActivity extends BaseActivity implements
     private ExternalDisplayHelper mExternalDisplayHelper;
     /** 外部出力制御判定フラグ.*/
     private boolean mExternalDisplayFlg = false;
-    /** アクティベーションハンドラー.*/
-    private Handler mActivationHandler = null;
-    /** アクティベーション.*/
-    private ActivationHelper mActivationHelper;
-    /** デバイスキー.*/
-    private String mDeviceKey;
-    /** アクティベーションスレッド. */
-    private ActivationThread mActivationThread;
     /** 操作履歴送信.*/
     private SendOperateLog mSendOperateLog = null;
     /** 二回目リモコン送信防止.*/
@@ -700,132 +693,13 @@ public class ContentDetailActivity extends BaseActivity implements
         mPlayerController.setOnErrorListener(this);
         mPlayerController.setCaptionDataListener(this);
         mPlayerController.setCurrentCaption(0); // start caption.
-        boolean ret = isActivited();
+        ContentUtils.isActivited(this, this);
         showProgressBar(false);
-        if (!ret) {
-            DTVTLogger.debug("TvPlayerActivity::initSecurePlayer(), return false"); //SP_SECUREPLAYER_NEED_ACTIVATION_ERROR = 1001;
-            DTVTLogger.end();
-            return;
-        }
         preparePlayer();
-        DTVTLogger.end();
-    }
-
-    /**
-     * is activated.
-     *
-     * @return if it is activated
-     */
-    private boolean isActivited() {
-        DTVTLogger.start();
-        String path = getPrivateDataHome();
-        File dir = new File(path);
-        if (!dir.exists()) {
-            boolean ok = dir.mkdir();
-            if (!ok) {
-                DTVTLogger.debug("TvPlayerActivity::isActivited(), Make dir " + path + " failed");
-                DTVTLogger.end();
-                return false;
-            }
-        }
-        int ret = mPlayerController.dtcpInit(path);
-        if (ret == MediaPlayerDefinitions.SP_SUCCESS) {
-            DTVTLogger.end();
-            return true;
-        } else {
-            activate();
-        }
-        DTVTLogger.end();
-        return false;
-    }
-
-    /**
-     * アクティベーションダイアログ表示.
-     */
-    private void activate() {
-        DTVTLogger.start();
-        mActivationHandler = new Handler();
-        mDeviceKey = EnvironmentUtil.getPrivateDataHome(ContentDetailActivity.this, EnvironmentUtil.ACTIVATE_DATA_HOME.PLAYER);
-        if (TextUtils.isEmpty(mDeviceKey)) {
-            return;
-        }
-        mActivationHelper = new ActivationHelper(this, mDeviceKey);
-        mActivationThread = new ActivationThread();
-        CustomDialog customDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-        customDialog.setTitle(getResources().getString(R.string.activation_confirm_dialog_title));
-        customDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-            @Override
-            public void onOKCallback(final boolean isOK) {
-                if (isOK) {
-                    runActivation();
-                }
-            }
-        });
-        customDialog.showDialog();
         DTVTLogger.end();
     }
     //endregion
 
-    /**
-     * アクティベーションThread.
-     */
-    private class ActivationThread extends Thread {
-
-        @Override
-        public void run() {
-            int ret = RESULT_FIRST_USER + 2;
-            if (ContentDetailActivity.this.mActivationHelper != null) {
-                ret = ContentDetailActivity.this.mActivationHelper.activation(ContentDetailActivity.this.mDeviceKey);
-            }
-            final int result = ret;
-            if (ContentDetailActivity.this.mActivationHandler == null) {
-                return;
-            }
-            ContentDetailActivity.this.mActivationHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    ContentDetailActivity.this.onThreadFinish(result);
-                }
-            });
-        }
-    } // ActivationThread
-
-    /**
-     * アクティベーション処理開始.
-     */
-    private void runActivation() {
-        showProgressBar(true);
-        if (mActivationThread != null) {
-            mActivationThread.start();
-        }
-    }
-
-    /**
-     * アクティベーション処理終了.
-     *
-     * @param result 処理結果
-     */
-    private void onThreadFinish(final int result) {
-        showProgressBar(false);
-        if (result == ActivationHelper.ACTC_OK) {
-            onResume();
-        } else {
-            showErrorDialog(getResources().getString(R.string.activation_failed_error));
-        }
-    }
-
-    /**
-     * 機能：プレバイトデータフォルダを戻す.
-     *
-     * @return プレバイトデータフォルダ
-     */
-    private String getPrivateDataHome() {
-        DTVTLogger.start();
-        String ret = EnvironmentUtil.getPrivateDataHome(this,
-                EnvironmentUtil.ACTIVATE_DATA_HOME.PLAYER);
-        DTVTLogger.end();
-        return ret;
-    }
     // region player handle
     /**
      * Playerの初期化.
@@ -2200,6 +2074,15 @@ public class ContentDetailActivity extends BaseActivity implements
             }
         } else {
             showErrorDialog(ErrorType.roleListGet);
+        }
+    }
+
+    @Override
+    public void onActivationResultCallBack(final boolean result) {
+        if (result) {
+            DTVTLogger.debug(getString(R.string.activation_success_msg));
+        } else {
+            DTVTLogger.debug(getString(R.string.activation_failed_msg));
         }
     }
 

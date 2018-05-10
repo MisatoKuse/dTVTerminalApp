@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.utils;
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
@@ -14,12 +15,18 @@ import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.TextView;
 
+import com.digion.dixim.android.activation.helper.ActivationHelper;
+import com.digion.dixim.android.secureplayer.MediaPlayerDefinitions;
+import com.digion.dixim.android.secureplayer.SecuredMediaPlayerController;
+import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -598,5 +605,63 @@ public class ContentUtils {
                 }
         }
         return ContentsType.OTHER;
+    }
+
+    /**
+     * アクティベーション実行結果を返却するためのコールバック.
+     */
+    public interface ActivationCallback {
+        /**
+         * アクティベーション実行結果コールバック.
+         *
+         * @param result アクティベーション実行結果
+         */
+        void onActivationResultCallBack(final boolean result);
+    }
+
+    /**
+     * DTCP-IPアクティーベションを行う.
+     *
+     * @param context コンテキスト
+     * @param activationCallback アクティベーションリスナー
+     */
+    public static void isActivited(final Context context, final ActivationCallback activationCallback) {
+        //deviceKey
+        String path = EnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.PLAYER);
+        File dir = new File(path);
+        if (!dir.exists()) {
+            if (!dir.mkdir()) {
+                DTVTLogger.debug(context.getString(R.string.activation_file_path_create_file_msg));
+            }
+        }
+        SecuredMediaPlayerController mPlayerController = new SecuredMediaPlayerController(context, true, true, true);
+        int ret = mPlayerController.dtcpInit(path);
+        if (ret != MediaPlayerDefinitions.SP_SUCCESS) {
+            executeActivate(path, context, activationCallback);
+        } else {
+            DTVTLogger.debug(context.getString(R.string.activation_success_msg));
+        }
+    }
+
+    /**
+     * アクティベーションを実行する.
+     * @param deviceKey dtcp-ip deviceKey
+     * @param context コンテキスト
+     * @param activationCallback アクティベーションリスナー
+     */
+    private static void executeActivate(final String deviceKey, final Context context, final ActivationCallback activationCallback) {
+        Handler activationHandler = new Handler();
+        activationHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                ActivationHelper activationHelper = new ActivationHelper(context, deviceKey);
+                int result = activationHelper.activation(deviceKey);
+                if (result == ActivationHelper.ACTC_OK) {
+                    activationCallback.onActivationResultCallBack(true);
+                } else {
+                    activationCallback.onActivationResultCallBack(false);
+                }
+            }
+        });
     }
 }
