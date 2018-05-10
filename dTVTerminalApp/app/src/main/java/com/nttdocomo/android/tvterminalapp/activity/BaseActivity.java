@@ -71,11 +71,11 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.SettingFileMetaData;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsInfo;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDevListListener;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessage;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
@@ -220,10 +220,6 @@ public class BaseActivity extends FragmentActivity implements
      */
     private static final int MIN_CLICK_DELAY_TIME = 500;
 
-    /**
-     * スプラッシュ画面用のdアカウント用ダイアログ表示識別文字列.
-     */
-    protected final static String SHOW_D_ACCOUNT_DIALOG = "SHOW_D_ACCOUNT_DIALOG";
     /**
      * スプラッシュ画面用のファイル設定ファイル用ダイアログ表示識別文字列.
      */
@@ -743,14 +739,9 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * スプラッシュ画面からダイアログの表示の依頼を受けたかどうかのチェック.
      */
-    void checkDialogShowRequest() {
+    private void checkDialogShowRequest() {
         DTVTLogger.start();
         Intent intent = getIntent();
-
-        if (intent.getBooleanExtra(SHOW_D_ACCOUNT_DIALOG, false)) {
-            //dアカウント取得失敗エラーの表示依頼があったので、表示する
-            showDAccountErrorDialog();
-        }
 
         if (intent.getBooleanExtra(SHOW_SETTING_FILE_DIALOG, false)) {
             //設定ファイルエラーダイアログの表示依頼があったので、表示する
@@ -1338,11 +1329,11 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * 機能：DMSを加入する場合コールされる.
      *
-     * @param curInfo カレントDlnaDMSInfo
+     * @param curInfo カレントDlnaDmsInfo
      * @param newItem 新しいDms情報
      */
     @Override
-    public void onDeviceJoin(final DlnaDMSInfo curInfo, final DlnaDmsItem newItem) {
+    public void onDeviceJoin(final DlnaDmsInfo curInfo, final DlnaDmsItem newItem) {
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
         if (null == dlnaDmsItem) {
             setStbStatus(false);
@@ -1361,11 +1352,11 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * 機能：DMSをなくなる場合コールされる.
      *
-     * @param curInfo     　　　カレントDlnaDMSInfo
+     * @param curInfo     　　　カレントDlnaDmsInfo
      * @param leaveDmsUdn 　消えるDmsのudn名
      */
     @Override
-    public void onDeviceLeave(final DlnaDMSInfo curInfo, final String leaveDmsUdn) {
+    public void onDeviceLeave(final DlnaDmsInfo curInfo, final String leaveDmsUdn) {
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
         if (null == dlnaDmsItem) {
             setStbStatus(false);
@@ -2287,7 +2278,12 @@ public class BaseActivity extends FragmentActivity implements
             setDaccountControl();
         }
         //アプリ設定ファイルの判定
-        checkSettingFile();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                checkSettingFile();
+            }
+        }).start();
 
         checkDAccountOnRestart();
         onStartCommunication();
@@ -2519,6 +2515,20 @@ public class BaseActivity extends FragmentActivity implements
             }
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * 機能
+     * 外部ブラウザーを起動する.
+     *
+     * @param url 起動URL
+     */
+    public void startBrowser(final String url) {
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.VIEW");
+        Uri content_url = Uri.parse(url);
+        intent.setData(content_url);
+        startActivity(intent);
     }
 
     /**

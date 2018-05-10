@@ -25,12 +25,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.ConnectException;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
@@ -296,6 +298,10 @@ public class HttpThread extends Thread {
             return;
         }
 
+        //タイムアウト判定用
+        boolean isTimeout = false;
+        long startTime = System.currentTimeMillis();
+
         try {
             //必要ならばURLにパスワード認証を付加する
             String srcUrl = addUrlPassword(this.mUrl);
@@ -303,8 +309,10 @@ public class HttpThread extends Thread {
 
             mHttpUrlConn = (HttpsURLConnection) url.openConnection();
 
-            //リダイレクトは時間がかかるようなので、タイムアウト時間は延長する
-            mHttpUrlConn.setReadTimeout(DTVTConstants.SEARCH_SERVER_TIMEOUT * 2);
+            //接続タイムアウト
+            mHttpUrlConn.setConnectTimeout(DTVTConstants.SERVER_CONNECT_TIMEOUT);
+            //読み込みタイムアウト
+            mHttpUrlConn.setReadTimeout(DTVTConstants.SERVER_READ_TIMEOUT);
             mHttpUrlConn.setRequestMethod(DTVTConstants.REQUEST_METHOD_GET);
             mHttpUrlConn.setRequestProperty(DTVTConstants.ACCEPT_CHARSET,
                     StandardCharsets.UTF_8.name());
@@ -352,6 +360,22 @@ public class HttpThread extends Thread {
         } catch (SSLHandshakeException e) {
             //SSLエラー処理(SSLエラーにコードは付けない)
             setErrorStatus(e, DTVTConstants.ERROR_TYPE.SSL_ERROR, "");
+        } catch(ConnectException e) {
+            //コネクト時のタイムアウトはこちらに来るので、判定する
+            if(System.currentTimeMillis() - startTime
+                    > DTVTConstants.SERVER_CONNECT_TIMEOUT) {
+                //エラーメッセージにタイムアウトを示唆する物があればタイムアウトとして扱う
+                isTimeout = true;
+                DTVTLogger.debug("timeout ConnectException:" + e.getMessage());
+            } else {
+                isTimeout = false;
+                DTVTLogger.debug("normal ConnectException" + e.getMessage());
+            }
+            setErrorStatus(e, DTVTConstants.ERROR_TYPE.SERVER_ERROR, "",isTimeout);
+        } catch (SocketTimeoutException e) {
+            DTVTLogger.debug("timeout:SocketTimeoutException");
+            //タイムアウトは明示的に取得
+            setErrorStatus(e, DTVTConstants.ERROR_TYPE.SERVER_ERROR, "",true);
         } catch (IOException e) {
             //その他通信エラー処理
             //エラーコードの処理はそれぞれの持ち場で行うので、ここでは処理を行わない
@@ -496,6 +520,25 @@ public class HttpThread extends Thread {
         }
         //結果を返す
         return stringBuffer;
+    }
+
+    /**
+     * エラー情報設定(タイムアウト指定付き).
+     *
+     * @param exception 例外情報（例外ではない場合はヌルを指定する）
+     * @param errorType エラー種別
+     * @param errorCode エラーコード
+     * @param isTimeOut タイムアウトが原因ならばtrue
+     */
+    private synchronized void setErrorStatus(final Exception exception,
+                                             final DTVTConstants.ERROR_TYPE errorType,
+                                             final String errorCode,
+                                             final boolean isTimeOut) {
+        //タイムアウトか否かを指定
+        mErrorStatus.setIsTimeout(isTimeOut);
+
+        //残りの処理は通常のsetErrorStatusに委ねる
+        setErrorStatus(exception, errorType, errorCode);
     }
 
     /**

@@ -42,4 +42,12 @@ public class BaseUrlConstants {
      * ぷららサーバー ID管理ファイルアクセス用のベースURL.
      */
     public static final String PLALA_ID_FILE_URL = "http://192.168.2.3/";
+
+    /**
+     * ぷららサーバー固定ファイル用ベースURL.
+     *
+     * (現状は、ジャンル一覧と設定ファイルで使用)
+     */
+    public static final String PLALA_FIXED_FILE_BASE_URL
+            = "http://192.168.2.3/";
 }

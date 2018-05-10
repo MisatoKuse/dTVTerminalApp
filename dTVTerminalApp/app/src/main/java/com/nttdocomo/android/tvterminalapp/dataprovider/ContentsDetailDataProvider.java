@@ -32,6 +32,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.struct.RecordingReservationContentsDetailInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsDetailGetWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RemoteRecordingReservationWebClient;
@@ -78,7 +79,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
          * @param contentsDetailInfo 画面に渡すチャンネル番組情報
          * @param clipStatus クリープステータス
          */
-        void onContentsDetailInfoCallback(ArrayList<VodMetaFullData> contentsDetailInfo, boolean clipStatus);
+        void onContentsDetailInfoCallback(VodMetaFullData contentsDetailInfo, boolean clipStatus);
 
         /**
          * ロールリスト情報取得.
@@ -170,7 +171,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     /**
      * VodMetaFullData.
      */
-    private ArrayList<VodMetaFullData> mVodMetaFullDataList = null;
+    private VodMetaFullData mVodMetaFullData = null;
     /**
      * コンテンツ詳細取得WebClient.
      */
@@ -210,19 +211,18 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
         if (contentsDetailLists != null) {
             if (contentsDetailLists.getStatus().equals(mContext.getString(R.string.contents_detail_response_ok))) {
                 ArrayList<VodMetaFullData> detailListInfo = contentsDetailLists.getVodMetaFullData();
-                if (detailListInfo != null) {
+                if (detailListInfo != null && detailListInfo.size() > 0) {
+                    mVodMetaFullData = detailListInfo.get(0);
+                    mVodMetaFullData.setContentsType(ContentUtils.getHikariContentsType(mVodMetaFullData));
                     if (!mRequiredClipKeyList) {
                         mApiDataProviderCallback.onContentsDetailInfoCallback(
-                                detailListInfo, getContentsDetailClipStatus(detailListInfo.get(0)));
+                                mVodMetaFullData, getContentsDetailClipStatus(detailListInfo.get(0)));
                     } else {
-                        mVodMetaFullDataList = detailListInfo;
-                        if (detailListInfo.size() > 0) {
-                            requestGetClipKeyList(detailListInfo.get(0));
-                        } else {
-                            //結果がOKでも0件ならば、エラー扱いとする
-                            mApiDataProviderCallback.onContentsDetailInfoCallback(null, false);
-                        }
+                        requestGetClipKeyList(mVodMetaFullData);
                     }
+                } else {
+                    //結果がOKでも0件ならば、エラー扱いとする
+                    mApiDataProviderCallback.onContentsDetailInfoCallback(null, false);
                 }
             } else {
                 //status = "NG"の場合
@@ -237,14 +237,14 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         super.onTvClipKeyListJsonParsed(clipKeyListResponse);
         mApiDataProviderCallback.onContentsDetailInfoCallback(
-                mVodMetaFullDataList, getContentsDetailClipStatus(mVodMetaFullDataList.get(0)));
+                mVodMetaFullData, getContentsDetailClipStatus(mVodMetaFullData));
     }
 
     @Override
     public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
         mApiDataProviderCallback.onContentsDetailInfoCallback(
-                mVodMetaFullDataList, getContentsDetailClipStatus(mVodMetaFullDataList.get(0)));
+                mVodMetaFullData, getContentsDetailClipStatus(mVodMetaFullData));
     }
 
     @Override
@@ -310,6 +310,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
         }
     }
 
+    @SuppressWarnings("OverlyLongMethod")
     @Override
     public void onDbOperationFinished(final boolean isSuccessful, final List<Map<String, String>> resultSet, final int operationId) {
         if (isSuccessful) {

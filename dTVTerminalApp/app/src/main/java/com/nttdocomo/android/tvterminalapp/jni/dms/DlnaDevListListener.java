@@ -2,7 +2,7 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-package com.nttdocomo.android.tvterminalapp.jni;
+package com.nttdocomo.android.tvterminalapp.jni.dms;
 
 
 /**
@@ -11,17 +11,17 @@ package com.nttdocomo.android.tvterminalapp.jni;
 public interface DlnaDevListListener {
     /**
      * 機能：Listenerに、新しいDms情報が届く時、コールされる.
-     * @param curInfo カレントDlnaDMSInfo
+     * @param curInfo カレントDlnaDmsInfo
      * @param newItem 新しいDms情報
      */
-    void onDeviceJoin(final DlnaDMSInfo curInfo, final DlnaDmsItem newItem);
+    void onDeviceJoin(final DlnaDmsInfo curInfo, final DlnaDmsItem newItem);
 
     /**
      * 機能：Listenerに、Dmsが消える時、コールされる.
-     * @param curInfo   カレントDlnaDMSInfo
+     * @param curInfo   カレントDlnaDmsInfo
      * @param leaveDmsUdn 消えるDmsのudn名
      */
-    void onDeviceLeave(final DlnaDMSInfo curInfo, final String leaveDmsUdn);
+    void onDeviceLeave(final DlnaDmsInfo curInfo, final String leaveDmsUdn);
 
     /**
      * 機能：Listenerに、エラーメセッジを送信.

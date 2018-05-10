@@ -128,7 +128,6 @@ enum OttGetQueue {
         mOttGetThread = new Thread(mOttGetRunnable = new Runnable() {
             @Override
             public void run() {
-                DTVTLogger.start();
                 try {
                     //待ち時間の分だけウェイトを入れる
                     Thread.sleep(MAX_WAIT_TIME);
@@ -140,7 +139,6 @@ enum OttGetQueue {
                 DTVTLogger.debug("exec ott get");
                 //指定時間が経過したので、OTT取得処理を実行する
                 execOtt(context);
-                DTVTLogger.end();
             }
         });
         //定義したスレッドを実行する
@@ -152,13 +150,11 @@ enum OttGetQueue {
      * @param context コンテキスト.
      */
     public void allowNext(final Context context) {
-        DTVTLogger.start();
         //OTT取得開始時刻をゼロにすることで、判定が必ずタイムアウトになるようにする
         mTaskExecFlag = 0;
 
         //実行すべきOTT取得がキューにたまっていた場合は実行を開始する
         execOtt(context);
-        DTVTLogger.end();
     }
 
     /**
@@ -166,8 +162,6 @@ enum OttGetQueue {
      * @param context コンテキスト
      */
     private void execOtt(final Context context) {
-        DTVTLogger.start();
-        DTVTLogger.debug("Queue size = " + mTaskQueue.size());
 
         //通信切断フラグの検査
         if (mDisconnectionFlag) {
@@ -191,7 +185,6 @@ enum OttGetQueue {
                 mTaskExecFlag = System.currentTimeMillis();
             }
         }
-        DTVTLogger.end();
     }
 
     /**

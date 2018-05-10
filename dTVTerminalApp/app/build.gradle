@@ -322,6 +322,4 @@ dependencies {
     //        compile(name: 'dixim-android-util2', ext: 'aar')
     //SSLチェックライブラリ
     compile files('libs/ocsplib2.0.jar')
-    //Googleアナリティクス用ライブラリ（こちらはdependenciesの最後に追加せよとの注意あり）
-    apply plugin: 'com.google.gms.google-services'
 }

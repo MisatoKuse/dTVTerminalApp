@@ -651,7 +651,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         contentsData.setContentsId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID));
         contentsData.setCategoryId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID));
         contentsData.setServiceId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID));
-        contentsData.setThumURL(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1));
+        contentsData.setThumURL(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL2));
         contentsData.setTitle(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE));
         contentsData.setStartViewing(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING));
         contentsData.setEndViewing(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING));
@@ -690,7 +690,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         requestData.setLinearEndDate("1513306982");
         requestData.setSearchOk("0");
         requestData.setIsNotify("disp_type", "content_type",
-                "1513306982", "tv_service", "dtv");
+                1513306982, "tv_service", "dtv");
         return requestData;
     }
 

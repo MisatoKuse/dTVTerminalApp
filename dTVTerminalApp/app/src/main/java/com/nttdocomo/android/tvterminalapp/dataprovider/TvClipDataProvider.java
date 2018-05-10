@@ -216,7 +216,6 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
             Map<String, String> map = clipMapList.get(i);
             String title = map.get(JsonConstants.META_RESPONSE_TITLE);
             String searchOk = map.get(JsonConstants.META_RESPONSE_SEARCH_OK);
-            String linearEndDate = map.get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE);
             String dispType = map.get(JsonConstants.META_RESPONSE_DISP_TYPE);
             String dtv = map.get(JsonConstants.META_RESPONSE_DTV);
             String dtvType = map.get(JsonConstants.META_RESPONSE_DTV_TYPE);
@@ -259,14 +258,14 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
             requestData.setTitle(title);
             requestData.setRValue(map.get(JsonConstants.META_RESPONSE_R_VALUE));
             requestData.setLinearStartDate(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE));
-            requestData.setLinearEndDate(linearEndDate);
+            requestData.setLinearEndDate(map.get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE));
             requestData.setSearchOk(searchOk);
 
             //視聴通知判定生成
             String contentsType = map.get(JsonConstants.META_RESPONSE_CONTENT_TYPE);
             String tvService = map.get(JsonConstants.META_RESPONSE_TV_SERVICE);
             String dTv = map.get(JsonConstants.META_RESPONSE_DTV);
-            requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
+            requestData.setIsNotify(dispType, contentsType, contentInfo.getVodStartDate(), tvService, dTv);
             requestData.setDispType(dispType);
             requestData.setContentType(contentsType);
             contentInfo.setRequestData(requestData);

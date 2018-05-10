@@ -51,7 +51,7 @@ public class UrlConstants {
         /**
          * dアニメストア起動用URL.
          */
-        public static final String DANIMESTORE_START_URL = "danimestore://openWebView?url=[URL]";
+        public static final String DANIMESTORE_START_URL = "danimestore://openWebView?url=https://anime.dmkt-sp.jp/animestore/ci?workId=";
 
         /**
          * dTVチャンネル起動用URL(テレビ).
@@ -112,6 +112,12 @@ public class UrlConstants {
          * TODO : 今はひとまず、DTVのアドレスを指定
          */
         public static final String GOOGLEPLAY_DOWNLOAD_MY_URL = "https://play.google.com/store/apps/details?id=jp.co.nttdocomo.dtv";
+
+        /**
+         * 契約URL.
+         * TODO : 仮の契約URL
+         */
+        public static final String CONTRACT_URL = "http://www.google.co.jp";
     }
 
     /**
@@ -242,15 +248,15 @@ public class UrlConstants {
          * APIではないので、例外としてURL全体を指定する
          */
         public static final String GENRE_LIST_FILE =
-                "https://tconf.hikaritv-docomo.jp/common/client/genreList.json";
+                BaseUrlConstants.PLALA_FIXED_FILE_BASE_URL + "common/client/genreList.json";
 
-        //TODO : 設定ファイルの配置場所はひとまずIemonサーバーとする。
         /**
          * アプリ起動設定ファイル：こちらはAPIではなく、ファイルの直接読み込みとなる.
          * APIではないので、例外としてURL全体を指定する
          */
         public static final String SETTING_FILE =
-                "http://192.168.2.3:80/setting_aos.json";
+                BaseUrlConstants.PLALA_FIXED_FILE_BASE_URL + "dtt/setting_aos.json";
+                //"http://192.168.2.3:80/setting_aos.json"; //ローカルテスト用IemonサーバーのURL
 
         /**
          * ロール一覧リストファイル：こちらはAPIではなく、ファイルの直接読み込みとのこと.

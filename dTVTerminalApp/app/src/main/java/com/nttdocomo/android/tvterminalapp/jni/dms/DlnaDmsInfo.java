@@ -2,7 +2,7 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-package com.nttdocomo.android.tvterminalapp.jni;
+package com.nttdocomo.android.tvterminalapp.jni.dms;
 
 
 import java.util.ArrayList;
@@ -10,10 +10,10 @@ import java.util.ArrayList;
 /**
  * 機能：カレントのすべてのDMS設備を表示するクラス.
  */
-public class DlnaDMSInfo {
+public class DlnaDmsInfo {
 
     /**DMSの配列.*/
-    private ArrayList<DlnaDmsItem> mDMSList = new ArrayList();
+    private ArrayList<DlnaDmsItem> mDmsList = new ArrayList();
 
     /**
      * 機能：DlnaDmsItemを取得.
@@ -21,11 +21,11 @@ public class DlnaDMSInfo {
      * @return DlnaDmsItem
      */
     public DlnaDmsItem get(final int index) {
-        if (null == mDMSList || 0 == mDMSList.size()) {
+        if (null == mDmsList || 0 == mDmsList.size()) {
             return null;
         }
 
-        return mDMSList.get(index);
+        return mDmsList.get(index);
     }
 
     /**
@@ -33,10 +33,10 @@ public class DlnaDMSInfo {
      * @param item 追加するDMS
      */
     public void add(final DlnaDmsItem item) {
-        if (null == mDMSList) {
-            mDMSList = new ArrayList();
+        if (null == mDmsList) {
+            mDmsList = new ArrayList();
         }
-        mDMSList.add(item);
+        mDmsList.add(item);
     }
 
     /**
@@ -44,9 +44,9 @@ public class DlnaDMSInfo {
      * @param udn DMSのudn名で削除
      */
     public void remove(final String udn) {
-        for (DlnaDmsItem item: mDMSList) {
+        for (DlnaDmsItem item: mDmsList) {
             if (item.mUdn.equals(udn)) {
-                mDMSList.remove(item);
+                mDmsList.remove(item);
                 return;
             }
         }
@@ -57,11 +57,11 @@ public class DlnaDMSInfo {
      * @return size
      */
     public int size() {
-        if (null == mDMSList) {
+        if (null == mDmsList) {
             return 0;
         }
 
-        return mDMSList.size();
+        return mDmsList.size();
     }
 
     /**
@@ -70,13 +70,13 @@ public class DlnaDMSInfo {
      * @return 成功true
      */
     public boolean exists(final String udn) {
-        if (null == mDMSList) {
+        if (null == mDmsList) {
             return false;
         }
 
         boolean ret = false;
 
-        for (DlnaDmsItem item: mDMSList) {
+        for (DlnaDmsItem item: mDmsList) {
             if (udn.equals(item.mUdn)) {
                 ret = true;
                 break;
@@ -90,9 +90,9 @@ public class DlnaDMSInfo {
      * 機能：DlnaDmsItemを全部削除.
      */
     public void clear() {
-        if (null == mDMSList) {
+        if (null == mDmsList) {
             return;
         }
-        mDMSList.clear();
+        mDmsList.clear();
     }
 }

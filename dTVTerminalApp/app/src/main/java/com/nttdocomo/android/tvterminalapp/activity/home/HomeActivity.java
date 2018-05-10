@@ -156,6 +156,21 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     public final static int HOME_CONTENTS_SORT_RENTAL = HOME_CONTENTS_LIST_START_INDEX + 9;
     /**
+     * エラー情報の取得用に追加（ジャンル一覧）.
+     */
+    public final static int HOME_CONTENTS_LIST_PER_GENRE =
+            HOME_CONTENTS_LIST_START_INDEX + 10;
+    /**
+     * エラー情報の取得用に追加（デイリーランク）.
+     */
+    public final static int HOME_CONTENTS_DAILY_RANK_LIST =
+            HOME_CONTENTS_LIST_START_INDEX + 11;
+    /**
+     * エラー情報の取得用に追加（番組表）.
+     */
+    public final static int HOME_CONTENTS_TV_SCHEDULE =
+            HOME_CONTENTS_LIST_START_INDEX + 12;
+    /**
      * アダプタ内でのリスト識別用定数.
      */
     private final static int HOME_CONTENTS_DISTINCTION_ADAPTER = 10;
@@ -336,24 +351,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             case R.id.home_main_layout_pr:
             case R.id.home_main_layout_kytv:
                 if (isFastClick()) {
-                    startBrowser();
+                    startBrowser(UrlConstants.WebUrl.PR_URL);
                 }
                 break;
             default:
                 break;
         }
-    }
-
-    /**
-     * 機能
-     * 外部ブラウザーを起動する.
-     */
-    private void startBrowser() {
-        Intent intent = new Intent();
-        intent.setAction("android.intent.action.VIEW");
-        Uri content_url = Uri.parse(UrlConstants.WebUrl.PR_URL);
-        intent.setData(content_url);
-        startActivity(intent);
     }
 
     /**
@@ -508,7 +511,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         horizontalViewAdapter.setFooterView(footer);
         if (index == HOME_CONTENTS_SORT_CHANNEL && mChannelList != null) {
             //Now On Airのデータセット時に、チャンネルデータが既にある場合にはアダプタに渡す.
-            horizontalViewAdapter.setCHannnelList(mChannelList);
+            horizontalViewAdapter.setChannnelList(mChannelList);
         }
     }
 
@@ -919,7 +922,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void onContentsDetailInfoCallback(final ArrayList<VodMetaFullData> contentsDetailInfo, final boolean clipStatus) {
+    public void onContentsDetailInfoCallback(final VodMetaFullData contentsDetailInfo, final boolean clipStatus) {
         //callbackが帰ってきたらProgressDialogを消す
         showProgessBar(false);
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる

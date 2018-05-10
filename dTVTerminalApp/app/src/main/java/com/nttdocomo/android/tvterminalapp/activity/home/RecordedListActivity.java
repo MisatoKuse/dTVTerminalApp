@@ -32,12 +32,12 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedFragmentFactory;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaProvRecVideo;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsInfo;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.jni.rec.DlnaProvRecVideo;
+import com.nttdocomo.android.tvterminalapp.jni.rec.DlnaRecVideoInfo;
+import com.nttdocomo.android.tvterminalapp.jni.rec.DlnaRecVideoItem;
+import com.nttdocomo.android.tvterminalapp.jni.rec.DlnaRecVideoListener;
 import com.nttdocomo.android.tvterminalapp.jni.download.DlnaProvDownload;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadListener;
@@ -673,7 +673,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     };
 
     @Override
-    public void onDeviceLeave(final DlnaDMSInfo curInfo, final String leaveDmsUdn) {
+    public void onDeviceLeave(final DlnaDmsInfo curInfo, final String leaveDmsUdn) {
         DTVTLogger.start();
     }
 

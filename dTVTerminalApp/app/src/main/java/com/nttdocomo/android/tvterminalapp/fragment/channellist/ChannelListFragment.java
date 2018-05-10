@@ -23,8 +23,8 @@ import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivit
 import com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListItem;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListItem;
+import com.nttdocomo.android.tvterminalapp.jni.bs.DlnaBsChListItem;
+import com.nttdocomo.android.tvterminalapp.jni.ter.DlnaTerChListItem;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
@@ -67,7 +67,9 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
          */
         void setUserVisibleHint(boolean isVisibleToUser, ChannelListFragment fragment);
     }
-
+    public interface OnClickChannelItemListener {
+        void onClickChannelItem(int pos, ChannelListActivity.ChListDataType type);
+    }
     /**
      * コンテキスト.
      */
@@ -101,6 +103,8 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
      */
     private ChannelListActivity.ChListDataType mChListDataType;
 
+    private OnClickChannelItemListener mOnClickChannelItemListener;
+
     /**
      * コンストラクタ.
      */
@@ -115,6 +119,10 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
      */
     public void setChListDataType(final ChannelListActivity.ChListDataType type) {
         mChListDataType = type;
+    }
+
+    public void setClickItemListener(OnClickChannelItemListener listener) {
+        mOnClickChannelItemListener = listener;
     }
 
     /**
@@ -278,6 +286,9 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
 
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
+        if (mOnClickChannelItemListener != null) {
+            mOnClickChannelItemListener.onClickChannelItem(i, mChListDataType);
+        }
         if (null == mData || i < 0) {
             return;
         }

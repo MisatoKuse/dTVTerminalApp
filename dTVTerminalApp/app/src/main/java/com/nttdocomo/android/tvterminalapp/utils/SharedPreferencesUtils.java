@@ -10,7 +10,7 @@ import android.content.SharedPreferences;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist.SerializablePreferencesData;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.struct.OneTimeTokenData;
 
 import java.util.List;
@@ -708,7 +708,6 @@ public class SharedPreferencesUtils {
      * @return ワンタイムトークン情報構造体
      */
     public static OneTimeTokenData getOneTimeTokenData(final Context context) {
-        DTVTLogger.start();
         //プリファレンスから読み込む
         SharedPreferences data = context.getSharedPreferences(
                 ONE_TIME_TOKEN, Context.MODE_PRIVATE);
@@ -720,7 +719,6 @@ public class SharedPreferencesUtils {
         //読み込んだ物を分割
         OneTimeTokenData tokenData = new OneTimeTokenData(afterBuffer);
 
-        DTVTLogger.end();
 
         return tokenData;
     }

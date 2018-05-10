@@ -6,13 +6,17 @@ package com.nttdocomo.android.tvterminalapp.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Base64;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist.SerializablePreferencesData;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
@@ -471,7 +475,7 @@ public class StringUtils {
             // 暗号化情報生成
             SecretKeySpec key = new SecretKeySpec(byteKey, 0, CIPHER_KEY_LENGTH, CIPHER_TYPE);
 
-            // 暗号化クラスの初期化
+            // 暗号化クラスの初期化(暗号強度が低い事に対する警告が出るが、そもそも平文をそのまま使用したくないが為の暗号化なので、許容する)
             Cipher cipher = Cipher.getInstance(CIPHER_DATA);
             cipher.init(Cipher.DECRYPT_MODE, key);
 
@@ -710,5 +714,85 @@ public class StringUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * コンテンツ詳細のサムネイル上に表示する文字列を返却する.
+     *
+     * @param detailData   コンテンツ詳細データ
+     * @param context      コンテキストファイル
+     * @param contentsType コンテンツ種別
+     * @return 表示文字列
+     */
+    @SuppressWarnings({"EnumSwitchStatementWhichMissesCases", "OverlyComplexMethod"})
+    public static String getContentsDetailThumbnailString(
+            @NonNull final OtherContentsDetailData detailData,
+            @NonNull final Context context,
+            @NonNull final ContentUtils.ContentsType contentsType) {
+        String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(context));
+
+        switch (contentsType) {
+            case DIGITAL_TERRESTRIAL_BROADCASTING:
+            case BROADCASTING_SATELLITE:
+            case HIKARI_RECORDED:
+                //文言なし
+                return "";
+            case HIKARI_TV:
+                if (SharedPreferencesUtils.getSharedPreferencesStbConnect(context)) {
+                    //ペアリング済み
+                    if (contractInfo.equals(UserInfoUtils.CONTRACT_INFO_H4D)) {
+                        //文言なし
+                        return "";
+                    } else {
+                        return context.getString(R.string.contents_detail_contract_text_ch);
+                    }
+                } else {
+                    //未ペアリング
+                    UserState userState = UserInfoUtils.getUserState(context);
+                    if (userState.equals(UserState.LOGIN_NG)) {
+                        return context.getString(R.string.main_setting_logon_request_error_message);
+                    } else {
+                        if (contractInfo.equals(UserInfoUtils.CONTRACT_INFO_H4D)) {
+                            return context.getString(R.string.contents_detail_pairing_request);
+                        } else {
+                            return context.getString(R.string.contents_detail_contract_text_ch);
+                        }
+                    }
+                }
+            case HIKARI_TV_VOD:
+                //テレビで視聴できます
+                return context.getString(R.string.contents_detail_thumbnail_text);
+            case HIKARI_IN_DCH_TV:
+            case HIKARI_IN_DCH:
+            case HIKARI_IN_DCH_MISS:
+            case HIKARI_IN_DCH_RELATION:
+            case PURE_DTV_CHANNEL:
+                //dTVチャンネルで視聴
+                return context.getString(R.string.dtv_channel_service_start_text);
+            case HIKARI_IN_DTV:
+                //dTVで視聴
+                return context.getString(R.string.dtv_content_service_start_text);
+            case PURE_DTV:
+                String reserve = detailData.getReserved2();
+                //DTVコンテンツ　「reserved2」が「1」　Androidのモバイル視聴不可
+                if (reserve == null) {
+                    //テレビで視聴できます
+                    return context.getString(R.string.contents_detail_thumbnail_text);
+                } else {
+                    switch (reserve) {
+                        case ContentDetailActivity.CONTENTS_DETAIL_RESERVEDID:
+                            //dTVで視聴
+                            return context.getString(R.string.dtv_content_service_start_text);
+                        default:
+                            //テレビで視聴できます
+                            return context.getString(R.string.contents_detail_thumbnail_text);
+                    }
+                }
+            case D_ANIME_STORE:
+                //dアニメストアで視聴
+                return context.getString(R.string.d_anime_store_content_service_start_text);
+            default:
+                return "";
+        }
     }
 }

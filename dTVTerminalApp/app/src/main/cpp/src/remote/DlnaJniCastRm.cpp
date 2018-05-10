@@ -95,7 +95,7 @@ namespace dtvt {
     extern "C" void JNICALL
     Java_com_nttdocomo_android_tvterminalapp_jni_remote_DlnaInterfaceRI_nativeStartDlnaRmStop(JNIEnv *env, jobject obj, jlong thiz) {
         unsigned char ret = 0;
-        if (NULL == thiz) {
+        if (0 == thiz) {
             DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_remote_DlnaInterfaceRI_nativeStartDlna exit, 0==thiz");
             return;
         }

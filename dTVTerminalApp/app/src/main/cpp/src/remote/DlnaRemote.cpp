@@ -182,7 +182,6 @@ namespace dtvt {
         argv[0] = DU_UCHAR_CONST("lr");
         argv[1] = DU_UCHAR_CONST("1");
 
-        ui->_current_view->_user_data;
         ui->_current_view->_command_lr(ui->_current_view->_user_data, p, argc, argv, (du_uchar*)udn.c_str());
         return 1;
     }
@@ -253,7 +252,6 @@ namespace dtvt {
         set_android_log_handler();
         DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaRemote.cpp DlnaRemote::regist enter");
 
-        mDmpRm->ea._join_handler_array;
         if (!dmp_ui_regist(&mDmpRm->ui, &mDmpRm->p, udn)) {
             goto error;
         }
@@ -273,7 +271,6 @@ namespace dtvt {
 
         argv[0] = DU_UCHAR_CONST("conn");
         argv[1] = DU_UCHAR_CONST("1");
-        ui->_current_view->_user_data;
 //        &mDmpRm->p
 //        mv->_player = p;
 //        ui->_dms_view._command(mDmpRm->ea._join_handler_array, argc, argv);
@@ -286,7 +283,6 @@ namespace dtvt {
         set_android_log_handler();
         DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaRemote.cpp DlnaRemote::regist enter");
 
-        mDmpRm->ea._join_handler_array;
         if (!dmp_ui_connect(&mDmpRm->ui, &mDmpRm->p, udn)) {
             goto error;
         }

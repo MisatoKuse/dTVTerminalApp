@@ -31,6 +31,8 @@
     <color name="common_tab_indicating_color">#FFFFFF</color>
     <color name="common_background_color">#1d1d1d</color>
 
+    <!--スプラッシュ画面-->
+    <color name="launch_background_color_red">#cc0033</color>
     <!--Home画面-->
     <color name="home_main_background_color">#1d1d1d</color>
     <color name="home_no_contract_info_background_color">#ffffff</color>

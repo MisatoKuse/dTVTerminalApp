@@ -111,11 +111,9 @@ public class ThumbnailProvider {
 	 * queueチェック.
 	 */
 	public void checkQueueList() {
-		DTVTLogger.debug("" + mIsCancel);
 		if (mIsCancel) {
 			return;
 		}
-		DTVTLogger.start();
 		if (MAX_QUEUE_COUNT > currentQueueCount
 				&& mListURL.size() > 0) {
 			++currentQueueCount;

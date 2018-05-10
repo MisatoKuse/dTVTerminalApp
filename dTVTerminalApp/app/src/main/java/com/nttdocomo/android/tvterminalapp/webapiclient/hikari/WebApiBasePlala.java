@@ -20,6 +20,7 @@ import com.nttdocomo.android.tvterminalapp.struct.OneTimeTokenData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
 
 import java.io.BufferedReader;
@@ -36,6 +37,7 @@ import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
@@ -1090,7 +1092,6 @@ public class WebApiBasePlala {
          */
         @Override
         protected ReturnCode doInBackground(final Object... strings) {
-            DTVTLogger.start();
             if (isCancelled() || mIsStop) {
                 return null;
             }
@@ -1120,6 +1121,10 @@ public class WebApiBasePlala {
                 return mReturnCode;
             }
 
+            //タイムアウト判定用
+            boolean isTimeout = false;
+            long startTime = System.currentTimeMillis();
+
             try {
                 //指定された名前でURLを作成する
                 URL url = new URL(mSourceUrl);
@@ -1139,7 +1144,6 @@ public class WebApiBasePlala {
                     //通信開始時にSSL証明書失効チェックを併せて行う
                     OcspURLConnection ocspURLConnection = new OcspURLConnection(mUrlConnection);
                     ocspURLConnection.connect();
-                    DTVTLogger.debug("SSL check OK");
                 } else {
                     DTVTLogger.debug("SSL check error");
                     //将来はSSL専用になるので、コンテキストが無くて証明書チェックが行えないならばエラーとする
@@ -1159,24 +1163,53 @@ public class WebApiBasePlala {
                 mUrlConnection.disconnect();
                 removeConnections(mUrlConnection);
             } catch (ConnectException e) {
+                DTVTLogger.warning("ConnectException");
                 //通信エラー扱いとする
                 mReturnCode.errorState.setErrorType(
                         DTVTConstants.ERROR_TYPE.NETWORK_ERROR);
+
+                //コネクト時のタイムアウトはこちらに来るので、判定する
+                if(System.currentTimeMillis() - startTime
+                        > DTVTConstants.SERVER_CONNECT_TIMEOUT) {
+                    //エラーメッセージにタイムアウトを示唆する物があればタイムアウトとして扱う
+                    isTimeout = true;
+                    DTVTLogger.debug("timeout ConnectException:" + e.getMessage());
+                } else {
+                    isTimeout = false;
+                    DTVTLogger.debug("normal ConnectException" + e.getMessage());
+                }
+                //タイムアウトエラーの設定
+                mReturnCode.errorState.setIsTimeout(isTimeout);
             } catch (SSLHandshakeException e) {
+                DTVTLogger.warning("SSLHandshakeException");
                 //SSL証明書が失効している
                 mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.SSL_ERROR);
                 DTVTLogger.debug(e);
             } catch (SSLPeerUnverifiedException e) {
+                DTVTLogger.warning("SSLPeerUnverifiedException");
                 //SSLチェックライブラリの初期化が行われていない
                 mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.SSL_ERROR);
                 DTVTLogger.debug(e);
+            } catch (SocketTimeoutException e) {
+                //タイムアウトを明示して取得
+                DTVTLogger.warning("SocketTimeoutException");
+                DTVTLogger.debug("SocketTimeoutException normal ConnectException:" +
+                    e.getMessage());
+                //サーバーエラー扱いとする
+                mReturnCode.errorState.setErrorType(
+                        DTVTConstants.ERROR_TYPE.SERVER_ERROR);
+                //タイムアウト判定用
+                mReturnCode.errorState.setIsTimeout(true);
+                DTVTLogger.debug(e);
             } catch (IOException e) {
+                DTVTLogger.warning("IOException");
                 //サーバーエラー扱いとする
                 mReturnCode.errorState.setErrorType(
                         DTVTConstants.ERROR_TYPE.SERVER_ERROR);
                 DTVTLogger.debug(e);
             } catch (OcspParameterException e) {
                 //SSLチェックの初期化に失敗している・通常は発生しないとの事
+                DTVTLogger.warning("OcspParameterException");
                 mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.SSL_ERROR);
                 DTVTLogger.debug(e);
             } finally {
@@ -1280,9 +1313,15 @@ public class WebApiBasePlala {
             urlConnection.setDoInput(true);
             urlConnection.setFixedLengthStreamingMode(sendParameterLength);
 
-            //タイムアウト指定(0以下ならば、APIのデフォルト値とするので、値を設定しない)
+            //タイムアウト指定(0以下ならば、デフォルト値の30秒とする)
             if (mTimeOut > 0) {
                 urlConnection.setConnectTimeout(mTimeOut);
+                urlConnection.setReadTimeout(mTimeOut);
+            } else {
+                //接続タイムアウト
+                urlConnection.setConnectTimeout(DTVTConstants.SERVER_CONNECT_TIMEOUT);
+                //読み込みタイムアウト
+                urlConnection.setReadTimeout(DTVTConstants.SERVER_READ_TIMEOUT);
             }
         }
 
@@ -1328,10 +1367,20 @@ public class WebApiBasePlala {
             DTVTLogger.start();
 
             HttpsURLConnection httpsConnection = null;
+
+            //タイムアウト判定用
+            boolean isTimeout = false;
+            long startTime = System.currentTimeMillis();
+
             try {
                 //指定された名前であらたなコネクションを開く
                 httpsConnection = (HttpsURLConnection) new URL(newUrlString).openConnection();
                 httpsConnection.setDoInput(true);
+
+                //接続タイムアウト
+                httpsConnection.setConnectTimeout(DTVTConstants.SERVER_CONNECT_TIMEOUT);
+                //読み込みタイムアウト
+                httpsConnection.setReadTimeout(DTVTConstants.SERVER_READ_TIMEOUT);
 
                 //DTVTLogger.debug("newHeader=" + httpsConnection.getHeaderFields().toString());
                 //コンテントタイプの設定
@@ -1390,6 +1439,33 @@ public class WebApiBasePlala {
             } catch (SSLPeerUnverifiedException e) {
                 //SSLチェックライブラリの初期化が行われていない
                 mReturnCode.errorState.setErrorType(DTVTConstants.ERROR_TYPE.SSL_ERROR);
+                DTVTLogger.debug(e);
+            } catch (ConnectException e) {
+                DTVTLogger.warning("ConnectException");
+                //通信エラー扱いとする
+                mReturnCode.errorState.setErrorType(
+                        DTVTConstants.ERROR_TYPE.NETWORK_ERROR);
+
+                //コネクト時のタイムアウトはこちらに来るので、判定する
+                if(System.currentTimeMillis() - startTime
+                        > DTVTConstants.SERVER_CONNECT_TIMEOUT) {
+                    //エラーメッセージにタイムアウトを示唆する物があればタイムアウトとして扱う
+                    isTimeout = true;
+                    DTVTLogger.debug("timeout ConnectException:" + e.getMessage());
+                } else {
+                    isTimeout = false;
+                    DTVTLogger.debug("normal ConnectException" + e.getMessage());
+                }
+                //タイムアウトエラーの設定
+                mReturnCode.errorState.setIsTimeout(isTimeout);
+            } catch (SocketTimeoutException e) {
+                //タイムアウトを明示して取得
+                DTVTLogger.warning("SocketTimeoutException:" + e.getMessage());
+                //サーバーエラー扱いとする
+                mReturnCode.errorState.setErrorType(
+                        DTVTConstants.ERROR_TYPE.SERVER_ERROR);
+                //タイムアウト判定用
+                mReturnCode.errorState.setIsTimeout(true);
                 DTVTLogger.debug(e);
             } catch (IOException e) {
                 DTVTLogger.debug(e);

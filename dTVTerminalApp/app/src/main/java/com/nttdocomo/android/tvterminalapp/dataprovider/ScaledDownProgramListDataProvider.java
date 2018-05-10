@@ -25,6 +25,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClient;
@@ -44,7 +45,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     /**
      * データ取得結果コールバック.
      */
-    private ApiDataProviderCallback mApiDataProviderCallback = null;
+    protected ApiDataProviderCallback mApiDataProviderCallback = null;
     /**
      * コンテキスト.
      */
@@ -237,6 +238,13 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                             channel.setTitle(title);
                             channel.setThumbnail(thumb);
                             channel.setServiceId(serviceId);
+                            channel.setPuId(map.get(JsonConstants.META_RESPONSE_PUID));
+                            channel.setSubPuId(map.get(JsonConstants.META_RESPONSE_SUB_PUID));
+                            channel.setChPackPuId(map.get(StringUtils.getConnectStrings(
+                                    JsonConstants.META_RESPONSE_CHPACK,JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_PUID)));
+                            channel.setChPackSubPuId(map.get(StringUtils.getConnectStrings(
+                                    JsonConstants.META_RESPONSE_CHPACK, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_SUB_PUID)));
+                            channel.setChType(map.get(JsonConstants.META_RESPONSE_CH_TYPE));
                             mScheduleList = new ArrayList<>();
                             mScheduleList.add(mSchedule);
 //                            channel.setSchedules(mScheduleList);
@@ -422,7 +430,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      * @param channelsInfo チャンネル情報
      * @param userState ユーザー状態
      */
-    private void setScheduleInfo(final Map<String, String> hashMap, final ChannelInfoList channelsInfo, final UserState userState) {
+    protected void setScheduleInfo(final Map<String, String> hashMap, final ChannelInfoList channelsInfo, final UserState userState) {
         ScheduleInfo mSchedule = convertScheduleInfo(hashMap, userState);
 
         if (!TextUtils.isEmpty(mSchedule.getChNo())) { //CH毎番組データ取得して、整形する
@@ -546,11 +554,11 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         requestData.setTitleId(map.get(JsonConstants.META_RESPONSE_TITLE_ID));
         requestData.setTitle(map.get(JsonConstants.META_RESPONSE_TITLE));
         requestData.setRValue(map.get(JsonConstants.META_RESPONSE_R_VALUE));
-        requestData.setLinearStartDate(String.valueOf(map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
-        requestData.setLinearEndDate(String.valueOf(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
+        requestData.setLinearStartDate(String.valueOf(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE)));
+        requestData.setLinearEndDate(String.valueOf(map.get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE)));
         requestData.setSearchOk(map.get(JsonConstants.META_RESPONSE_SEARCH_OK));
         requestData.setIsNotify(dispType, contentsType,
-                String.valueOf(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)),
+                DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_START_DATE)),
                 map.get(JsonConstants.META_RESPONSE_TV_SERVICE), map.get(JsonConstants.META_RESPONSE_DTV));
         requestData.setDispType(dispType);
         requestData.setContentType(contentsType);

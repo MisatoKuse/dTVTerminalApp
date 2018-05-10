@@ -2,7 +2,7 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-package com.nttdocomo.android.tvterminalapp.jni;
+package com.nttdocomo.android.tvterminalapp.jni.bs;
 
 import java.util.ArrayList;
 
@@ -61,7 +61,7 @@ public class DlnaBsChListInfo {
      * @param content content
      * @return info
      */
-    static DlnaBsChListInfo fromArrayList(final ArrayList<Object> content) {
+    public static DlnaBsChListInfo fromArrayList(final ArrayList<Object> content) {
         if (null == content) {
             return null;
         }
@@ -93,7 +93,7 @@ public class DlnaBsChListInfo {
      * getBsChLists.
      * @return BsChLists
      */
-    ArrayList<DlnaBsChListItem> getBsChLists() {
+    public ArrayList<DlnaBsChListItem> getBsChLists() {
         return mLists;
     }
 }

@@ -136,7 +136,6 @@ public class DaccountGetOTT {
             //自動再認証OFFの設定
             int option = IDimDefines.CertOption.RESERVE;
             String appCheckKey = "";
-            DTVTLogger.debug("compName=" + name);
 
             try {
                 //OTT取得処理を呼び出す(IDは無設定の場合、既にdアカウント設定アプリに設定された物が
