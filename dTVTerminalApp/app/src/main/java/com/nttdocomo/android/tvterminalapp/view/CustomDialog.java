@@ -174,7 +174,8 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
 
     /**
      * コンストラクタ.
-     *  @param context    コンテキスト
+     *
+     * @param context    コンテキスト
      * @param dialogType ダイアログタイプ
      */
     public CustomDialog(final Context context, final DialogType dialogType) {

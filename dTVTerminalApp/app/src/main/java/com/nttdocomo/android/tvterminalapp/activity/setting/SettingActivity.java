@@ -4,10 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.setting;
 
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,6 +18,7 @@ import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.MyChannelEditActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.MainSettingListAdapter;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -56,18 +55,6 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
      * 空白文字.
      */
     private static final String BLANK = "";
-    /**
-     * Dアカウントアプリ Package名.
-     */
-    public static final String D_ACCOUNT_APP_PACKAGE_NAME = "com.nttdocomo.android.idmanager";
-    /**
-     * Dアカウントアプリ Activity名.
-     */
-    public static final String D_ACCOUNT_APP_ACTIVITY_NAME = ".activity.DocomoIdTopActivity";
-    /**
-     * DアカウントアプリURI.
-     */
-    public static final String D_ACCOUNT_APP_URI = "market://details?id=com.nttdocomo.android.idmanager";
 
     /**
      * メニュー項目index（Dアカウント設定）.
@@ -158,7 +145,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
 
         if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_D_ACCOUNT])) {
             //Dアカウント設定
-            startDAccountSetting();
+            DAccountUtils.startDAccountApplication(SettingActivity.this);
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_PAIRING])) {
             if (isSettingPossible(false)) {
                 //ペアリング設定
@@ -237,33 +224,6 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_PRIVACY_POLICY], BLANK));
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_APP_PRIVACY_POLICY], BLANK));
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_AGREEMENT], BLANK));
-    }
-
-    /**
-     * Dアカウント設定を連携起動する.
-     */
-    private void startDAccountSetting() {
-        Intent intent = new Intent();
-        intent.setClassName(D_ACCOUNT_APP_PACKAGE_NAME,
-                D_ACCOUNT_APP_PACKAGE_NAME + D_ACCOUNT_APP_ACTIVITY_NAME);
-        try {
-            startActivity(intent);
-        } catch (ActivityNotFoundException e) {
-            //　アプリが無ければインストール画面に誘導
-            CustomDialog dAccountUninstallDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-            dAccountUninstallDialog.setContent(getResources().getString(R.string.main_setting_d_account_message));
-            dAccountUninstallDialog.setConfirmText(R.string.positive_response);
-            dAccountUninstallDialog.setCancelText(R.string.negative_response);
-            dAccountUninstallDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                @Override
-                public void onOKCallback(final boolean isOK) {
-                    Uri uri = Uri.parse(D_ACCOUNT_APP_URI);
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    startActivity(intent);
-                }
-            });
-            dAccountUninstallDialog.showDialog();
-        }
     }
 
     /**

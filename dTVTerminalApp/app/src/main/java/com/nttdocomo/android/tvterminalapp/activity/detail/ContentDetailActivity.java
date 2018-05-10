@@ -5,7 +5,6 @@
 package com.nttdocomo.android.tvterminalapp.activity.detail;
 
 import android.app.Presentation;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -57,7 +56,6 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.common.ProcessSettingFile;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.setting.SettingActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
@@ -75,6 +73,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -2133,31 +2132,10 @@ public class ContentDetailActivity extends BaseActivity implements
                         DTVTLogger.debug("userState:---" + userState);
                         message = getString(R.string.main_setting_logon_request_error_message);
                         buttonText = getString(R.string.contents_detail_login_button);
-                        final Intent intent = new Intent(this, SettingActivity.class);
                         contractLeadingButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(final View view) {
-                                Intent intent = new Intent();
-                                intent.setClassName(SettingActivity.D_ACCOUNT_APP_PACKAGE_NAME,
-                                        StringUtils.getConnectStrings(SettingActivity.D_ACCOUNT_APP_PACKAGE_NAME, SettingActivity.D_ACCOUNT_APP_ACTIVITY_NAME));
-                                try {
-                                    startActivity(intent);
-                                } catch (ActivityNotFoundException e) {
-                                    //　アプリが無ければインストール画面に誘導
-//                                    CustomDialog dAccountUninstallDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-//                                    dAccountUninstallDialog.setContent(getResources().getString(R.string.main_setting_d_account_message));
-//                                    dAccountUninstallDialog.setConfirmText(R.string.positive_response);
-//                                    dAccountUninstallDialog.setCancelText(R.string.negative_response);
-//                                    dAccountUninstallDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-//                                        @Override
-//                                        public void onOKCallback(final boolean isOK) {
-//                                            Uri uri = Uri.parse(SettingActivity.D_ACCOUNT_APP_URI);
-//                                            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-//                                            startActivity(intent);
-//                                        }
-//                                    });
-//                                    dAccountUninstallDialog.showDialog();
-                                }
+                                DAccountUtils.startDAccountApplication(ContentDetailActivity.this);
                             }
                         });
                     } else {
