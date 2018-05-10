@@ -272,7 +272,6 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
         mPurchasedChListResponse = purchasedChListResponse;
         if (mPurchasedChListResponse != null) {
             DateUtils dateUtils = new DateUtils(mContext);
-            dateUtils.addLastProgramDate(DateUtils.RENTAL_CHANNEL_LAST_UPDATE);
             Handler handler = new Handler(); //チャンネル情報更新
             try {
                 DbThread t = new DbThread(handler, this, RENTAL_CHANNEL_UPDATE);

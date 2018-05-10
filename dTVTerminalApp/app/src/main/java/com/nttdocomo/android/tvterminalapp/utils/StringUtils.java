@@ -724,7 +724,7 @@ public class StringUtils {
      * @param contentsType コンテンツ種別
      * @return 表示文字列
      */
-    @SuppressWarnings({"EnumSwitchStatementWhichMissesCases", "OverlyComplexMethod"})
+    @SuppressWarnings({"EnumSwitchStatementWhichMissesCases", "OverlyComplexMethod", "OverlyLongMethod"})
     public static String getContentsDetailThumbnailString(
             @NonNull final OtherContentsDetailData detailData,
             @NonNull final Context context,
@@ -738,11 +738,32 @@ public class StringUtils {
                 //文言なし
                 return "";
             case HIKARI_TV:
+            case HIKARI_TV_VOD:
+            case HIKARI_IN_DCH_TV:
+            case HIKARI_IN_DCH:
+            case HIKARI_IN_DCH_MISS:
+            case HIKARI_IN_DCH_RELATION:
+            case HIKARI_IN_DTV:
                 if (SharedPreferencesUtils.getSharedPreferencesStbConnect(context)) {
                     //ペアリング済み
                     if (contractInfo.equals(UserInfoUtils.CONTRACT_INFO_H4D)) {
-                        //文言なし
-                        return "";
+                        switch (contentsType) {
+                            case HIKARI_TV:
+                                //文言なし
+                                return "";
+                            case HIKARI_TV_VOD:
+                                //テレビで視聴できます
+                                return context.getString(R.string.contents_detail_thumbnail_text);
+                            case HIKARI_IN_DCH_TV:
+                            case HIKARI_IN_DCH:
+                            case HIKARI_IN_DCH_MISS:
+                            case HIKARI_IN_DCH_RELATION:
+                                //dTVチャンネルで視聴
+                                return context.getString(R.string.dtv_channel_service_start_text);
+                            case HIKARI_IN_DTV:
+                                //dTVで視聴
+                                return context.getString(R.string.dtv_content_service_start_text);
+                        }
                     } else {
                         return context.getString(R.string.contents_detail_contract_text_ch);
                     }
@@ -759,19 +780,9 @@ public class StringUtils {
                         }
                     }
                 }
-            case HIKARI_TV_VOD:
-                //テレビで視聴できます
-                return context.getString(R.string.contents_detail_thumbnail_text);
-            case HIKARI_IN_DCH_TV:
-            case HIKARI_IN_DCH:
-            case HIKARI_IN_DCH_MISS:
-            case HIKARI_IN_DCH_RELATION:
             case PURE_DTV_CHANNEL:
                 //dTVチャンネルで視聴
                 return context.getString(R.string.dtv_channel_service_start_text);
-            case HIKARI_IN_DTV:
-                //dTVで視聴
-                return context.getString(R.string.dtv_content_service_start_text);
             case PURE_DTV:
                 String reserve = detailData.getReserved2();
                 //DTVコンテンツ　「reserved2」が「1」　Androidのモバイル視聴不可

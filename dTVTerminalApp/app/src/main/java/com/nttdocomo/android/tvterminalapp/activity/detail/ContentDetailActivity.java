@@ -56,7 +56,6 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.common.ProcessSettingFile;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.setting.SettingActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
@@ -74,6 +73,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -2132,11 +2132,10 @@ public class ContentDetailActivity extends BaseActivity implements
                         DTVTLogger.debug("userState:---" + userState);
                         message = getString(R.string.main_setting_logon_request_error_message);
                         buttonText = getString(R.string.contents_detail_login_button);
-                        final Intent intent = new Intent(this, SettingActivity.class);
                         contractLeadingButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(final View view) {
-                                startActivity(intent);
+                                DAccountUtils.startDAccountApplication(ContentDetailActivity.this);
                             }
                         });
                     } else {
