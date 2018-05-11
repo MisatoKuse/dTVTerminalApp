@@ -45,6 +45,7 @@
     <string name="common_until">まで</string>
     <string name="common_date_format_start_str">" から"</string>
     <string name="common_date_format_end_str">" まで"</string>
+    <string name="common_text_progress_done">完了しました</string>
 
     <!-- Launch -->
     <string name="str_app_title">ドコモテレビターミナル</string>
@@ -318,7 +319,10 @@
     <string name="main_setting_stb_busy_error_message">ドコモテレビターミナルが処理中です</string>
     <string name="main_setting_logon_request_error_message">ログインしてください</string>
     <string name="main_setting_h4d_not_signed_message">ひかりTV for docomoの契約状態が確認できないため\nご利用になれません。</string>
+    <string name="main_setting_stb_not_connected_message">ドコモテレビターミナルとの通信が確認できないため\nご利用になれません。</string>
     <string name="main_setting_menu_title_faq_list">FAQ</string>
+    <string name="main_setting_remote_start">main_setting_remote_start</string>
+    <string name="main_setting_remote_confirm_message">外出先でも視聴できるリモート視聴設定を有効にしますか？リモート設定は、「メニュー＞設定＞リモート設定」であとから設定できます。</string>
     <string name="main_setting_menu_title_license">ライセンス情報</string>
     <string name="main_setting_menu_title_privacy_policy">プライバシーポリシー</string>
     <string name="main_setting_menu_title_app">アプリケーション・プライバシーポリシー</string>
@@ -329,6 +333,7 @@
         <item>マイ番組表設定</item>
         <item>外出先視聴時の画質設定</item>
         <item>FAQ</item>
+        <item>リモート視聴設定</item>
         <item>アプリケーション情報</item>
         <item>ライセンス情報</item>
         <item>プライバシーポリシー</item>
