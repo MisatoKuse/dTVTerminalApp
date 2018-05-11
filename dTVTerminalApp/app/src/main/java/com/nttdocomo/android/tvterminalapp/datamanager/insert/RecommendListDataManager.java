@@ -137,7 +137,7 @@ public class RecommendListDataManager {
                     RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID,
                     RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID,
                     RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID,
-                    RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL2,
+                    RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1,
                     RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE,
                     RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING,
                     RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING,
@@ -164,7 +164,7 @@ public class RecommendListDataManager {
                 contentsData.setContentsId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID));
                 contentsData.setCategoryId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID));
                 contentsData.setServiceId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID));
-                contentsData.setThumURL(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL2));
+                contentsData.setThumURL(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1));
                 contentsData.setTitle(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE));
                 contentsData.setStartViewing(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING));
                 contentsData.setEndViewing(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING));
