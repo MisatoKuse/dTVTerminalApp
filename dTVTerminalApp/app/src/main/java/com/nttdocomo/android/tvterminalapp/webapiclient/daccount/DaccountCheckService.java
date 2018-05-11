@@ -168,6 +168,9 @@ class DaccountCheckService {
         boolean ans = mContext.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
         if (!ans && mDaccountCheckServiceCallBack != null) {
+            //正常以外の結果の場合でも、unBindは必要な場合あり
+            daccountServiceEnd();
+
             //正常以外の結果ならば、コールバックを呼んで終わらせる
             mDaccountCheckServiceCallBack.checkServiceCallBack(
                     IDimDefines.RESULT_INTERNAL_ERROR);
