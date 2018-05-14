@@ -33,9 +33,8 @@
     <string name="permission_denied_dialog_title">Permission Denied</string>
     <string name="permission_denied_dialog_content">通信許可がないためアプリケーションを終了します</string>
     <string name="permission_detail_dialog_title">SIM情報の取得確認</string>
-    <string name="permission_detail_dialog_content">ドコモテレビターミナルアプリは、海外での通信利用確認のためSIM情報を取得します。\n次の画面で「許可」を選択してください。\n※「許可しない」を選択した場合、海外利用時に海外通信を利用する旨の通知がされません。</string>
-    <string name="permission_detail_dialog_confirm">許可する</string>
-    <string name="permission_detail_dialog_cancel">許可しない</string>
+    <string name="permission_detail_dialog_content">ドコモテレビターミナルアプリは、海外での通信利用確認のためSIM情報を取得します。\n次の画面で「許可」を選択してください。</string>
+    <string name="permission_detail_dialog_confirm">OK</string>
     <string name="status_bar_height_name">status_bar_height</string>
     <string name="status_bar_height_deftype">dimen</string>
     <string name="status_bar_height_defpackage">android</string>

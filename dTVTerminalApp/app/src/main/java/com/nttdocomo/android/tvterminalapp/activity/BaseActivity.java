@@ -2033,10 +2033,19 @@ public class BaseActivity extends FragmentActivity implements
             } else {
                 // "今後表示しない"判定
                 if (RuntimePermissionUtils.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)) {
-                    onReStartCommunication();
-                } else {
+                    // ・パーミッション要求ダイアログが拒否された場合（「今後は確認しない」チェックなし）
+                    // ・一度は許可したが設定アプリから拒否された場合
+                    SharedPreferencesUtils.setSharedPreferencesIsDisplayedPermissionDialogTwice(mContext);
                     mShowDialog = createPermissionDetailDialog();
                     mShowDialog.showDialog();
+                } else {
+                    // ・初めてパーミッション要求ダイアログが表示された場合
+                    // ・パーミッション要求ダイアログが拒否された場合（「今後は確認しない」チェックあり）
+                    if (!SharedPreferencesUtils.getSharedPreferencesIsDisplayedPermissionDialogTwice(mContext)) {
+                        // 「今後は確認しない」チェックなし
+                        mShowDialog = createPermissionDetailDialog();
+                        mShowDialog.showDialog();
+                    }
                 }
             }
         } else {
@@ -2120,13 +2129,12 @@ public class BaseActivity extends FragmentActivity implements
      */
     private CustomDialog createPermissionDetailDialog() {
         DTVTLogger.start();
-        CustomDialog dialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+        CustomDialog dialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
         dialog.setDialogDismissCallback(this);
         dialog.setCancelable(false);
         dialog.setOnTouchOutside(false);
         dialog.setConfirmText(R.string.permission_detail_dialog_confirm);
         dialog.setConfirmVisibility(View.VISIBLE);
-        dialog.setCancelText(R.string.permission_detail_dialog_cancel);
         dialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
@@ -2138,14 +2146,6 @@ public class BaseActivity extends FragmentActivity implements
                     mActivity.requestPermissions(
                             new String[]{Manifest.permission.READ_PHONE_STATE}, 0);
                 }
-            }
-        });
-        dialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
-            @Override
-            public void onCancelCallback() {
-                // 海外判定を実施せず通信を行う
-                mShowDialog = null;
-                onReStartCommunication();
             }
         });
         dialog.setContent(this.getResources().getString(
