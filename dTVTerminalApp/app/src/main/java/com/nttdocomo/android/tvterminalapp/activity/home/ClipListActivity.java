@@ -535,7 +535,7 @@ public class ClipListActivity extends BaseActivity implements
                 }
             }
         });
-        initTabVIew();
+       mTabLayout = initTabData(mTabLayout, mTabNames);
     }
 
     /**
@@ -562,23 +562,6 @@ public class ClipListActivity extends BaseActivity implements
         fragment.setMode(ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_TV);
         mNoDataMessage.setVisibility(View.GONE);
         mTvClipDataProvider.getClipData(1);
-    }
-
-    /**
-     * tabに関連Viewの初期化.
-     */
-    private void initTabVIew() {
-        DTVTLogger.start();
-        if (mTabLayout == null) {
-            mTabLayout = new TabItemLayout(this);
-            mTabLayout.setTabClickListener(this);
-            mTabLayout.initTabView(mTabNames, TabItemLayout.ActivityType.CLIP_LIST_ACTIVITY);
-            RelativeLayout tabRelativeLayout = findViewById(R.id.rl_clip_list_tab);
-            tabRelativeLayout.addView(mTabLayout);
-        } else {
-            mTabLayout.resetTabView(mTabNames);
-        }
-        DTVTLogger.end();
     }
 
     @Override

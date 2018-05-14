@@ -32,6 +32,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -155,6 +156,18 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * 設定済みViewHolder.
      */
     private List<MyViewHolder> mMyViewHolder = new ArrayList<>();
+    /**
+     * 放送中または未放送viewHolder Tag.
+     */
+    private final static int VIEW_HOLDER_TAG_ONE = 1;
+    /**
+     * 関連VOD(なし)viewHolder Tag.
+     */
+    private final static int VIEW_HOLDER_TAG_ZERO = 0;
+    /**
+     * 日付比較リザルト
+     */
+    private final static int DATE_COMPARE_TO_LOW = -1;
     /**
      * コンストラクタ.
      *
@@ -452,7 +465,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             endDate = format.parse(end);
             curDate = format.parse(mCurDate);
             startData = format.parse(start);
-        } catch (Exception e) {
+        } catch (ParseException e) {
             DTVTLogger.debug(e);
         }
         float marginTop = itemSchedule.getMarginTop();
@@ -463,17 +476,17 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
 
         String contentType = itemSchedule.getContentType();
         //放送済み
-        if (endDate.compareTo(curDate) == -1) {
+        if (endDate.compareTo(curDate) == DATE_COMPARE_TO_LOW) {
             watchByContentType(itemViewHolder, contentType);
         } else {
             //放送中
-            if (startData.compareTo(curDate) == -1) {
+            if (startData.compareTo(curDate) == DATE_COMPARE_TO_LOW) {
                 itemViewHolder.mView.setBackgroundResource(R.drawable.program_playing_gray);
             } else {
                 //未放送
                 itemViewHolder.mView.setBackgroundResource(R.drawable.program_start_gray);
             }
-            itemViewHolder.mView.setTag(1);
+            itemViewHolder.mView.setTag(VIEW_HOLDER_TAG_ONE);
         }
 
         boolean isClipHide = false;
@@ -489,7 +502,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             itemViewHolder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View view) {
-                    if ((int) view.getTag() == 1) {
+                    if ((int) view.getTag() == VIEW_HOLDER_TAG_ONE) {
                         Intent intent = new Intent();
                         intent.setClass(mContext, ContentDetailActivity.class);
                         intent.putExtra(DTVTConstants.SOURCE_SCREEN, ((TvProgramListActivity) mContext).getComponentName().getClassName());
@@ -517,7 +530,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         //見逃し(あり)
         if (MISS_CUT_OUT.equals(contentType) || MISS_COMPLETE.equals(contentType)) {
             itemViewHolder.mView.setBackgroundResource(R.drawable.program_missed_gray);
-            itemViewHolder.mView.setTag(1);
+            itemViewHolder.mView.setTag(VIEW_HOLDER_TAG_ONE);
         } else {
         //関連VOD(なし)
             itemViewHolder.mView.setBackgroundResource(R.drawable.program_end_gray);
@@ -525,7 +538,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             itemViewHolder.mContent.setTextColor(ContextCompat.getColor(mContext, R.color.tv_program_miss_vod));
             itemViewHolder.mDetail.setTextColor(ContextCompat.getColor(mContext, R.color.tv_program_miss_vod));
             itemViewHolder.mThumbnail.setImageAlpha(128);
-            itemViewHolder.mView.setTag(0);
+            itemViewHolder.mView.setTag(VIEW_HOLDER_TAG_ZERO);
         }
     }
 

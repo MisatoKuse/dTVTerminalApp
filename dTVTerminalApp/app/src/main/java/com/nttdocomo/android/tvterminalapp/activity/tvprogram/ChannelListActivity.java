@@ -128,7 +128,9 @@ public class ChannelListActivity extends BaseActivity implements
     /** ハンドラー(ScrollView関連). */
     private final Handler mHandler = new Handler();
 
+    /**ひかりTVチャンネル一覧.*/
     private ArrayList<ChannelInfo> mHikariTvChannelList;
+    /**dTvチャンネル一覧.*/
     private ArrayList<ChannelInfo> mdTvChannelList;
 
     /** タブリスト. */
@@ -594,10 +596,10 @@ public class ChannelListActivity extends BaseActivity implements
     }
 
     @Override
-    public void onClickChannelItem(int pos, ChListDataType type) {
+    public void onClickChannelItem(final int pos, final  ChListDataType type) {
         DTVTLogger.warning("pos = " + pos);
         ChannelInfo channelInfo = null;
-            switch (type){
+            switch (type) {
                 case CH_LIST_DATA_TYPE_BS:
                 case CH_LIST_DATA_TYPE_TDB:
                     DTVTLogger.error(" >>>");
@@ -622,7 +624,7 @@ public class ChannelListActivity extends BaseActivity implements
     }
 
     @Override
-    public void onContentDataGet(ContentsData data) {
+    public void onContentDataGet(final ContentsData data) {
 
         if (data == null) {
             //Now On Airコンテンツがない場合はダイアログ表示

@@ -80,7 +80,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         setStatusBarColor(true);
 
         initView();
-        resetPaging();
+        resetPaging(mViewPager, mRankingFragmentFactory);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         super.onResume();
         DTVTLogger.start();
         //コンテンツ詳細から戻ってきたときのみクリップ状態をチェックする
-        RankingBaseFragment baseFragment = getCurrentFragment();
+        RankingBaseFragment baseFragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
         if (baseFragment != null && baseFragment.mContentsDetailDisplay) {
             baseFragment.mContentsDetailDisplay = false;
             if (null != baseFragment.mContentsAdapter) {
@@ -112,7 +112,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         stopRankingTopDataConnect.execute(mRankingDataProvider);
 
         //FragmentにContentsAdapterの通信を止めるように通知する
-        RankingBaseFragment baseFragment = getCurrentFragment();
+        RankingBaseFragment baseFragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
         if (baseFragment != null) {
             baseFragment.stopContentsAdapterCommunication();
         }
@@ -228,7 +228,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
             }
         }
 
-        RankingBaseFragment baseFragment = getCurrentFragment();
+        RankingBaseFragment baseFragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
         if (baseFragment != null) {
             if (baseFragment.mData.size() == 0) { //Fragmentがデータを保持していない場合は再取得を行う
                 requestgetGenreList();
@@ -236,19 +236,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
             }
             if (baseFragment.getRankingAdapter() != null) {
                 baseFragment.enableContentsAdapterCommunication();
-                baseFragment.noticeRefresh();
-            }
-        }
-    }
-    // region private method
-    /**
-     * ページのリセット.
-     */
-    private void resetPaging() {
-        synchronized (this) {
-            RankingBaseFragment baseFragment = getCurrentFragment();
-            if (null != baseFragment && null != baseFragment.mData) {
-                baseFragment.mData.clear();
                 baseFragment.noticeRefresh();
             }
         }
@@ -282,30 +269,13 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
             public void onPageSelected(final int position) {
                 // スクロールによるタブ切り替え
                 super.onPageSelected(position);
-                resetPaging();
+                resetPaging(mViewPager, mRankingFragmentFactory);
                 mTabLayout.setTab(position);
                 getGenreData();
             }
         });
-        initTabData();
+        mTabLayout = initTabData(mTabLayout, mTabNames);
         getGenreData();
-    }
-
-    /**
-     * tabのレイアウトを設定.
-     */
-    private void initTabData() {
-        DTVTLogger.start();
-        if (mTabLayout == null) {
-            mTabLayout = new TabItemLayout(this);
-            mTabLayout.setTabClickListener(this);
-            mTabLayout.initTabView(mTabNames, TabItemLayout.ActivityType.WEEKLY_RANKING_ACTIVITY);
-            RelativeLayout tabRelativeLayout = findViewById(R.id.rl_weekly_ranking_tab);
-            tabRelativeLayout.addView(mTabLayout);
-        } else {
-            mTabLayout.resetTabView(mTabNames);
-        }
-        DTVTLogger.end();
     }
     /**
      * タブ毎にリクエストを行う.
@@ -370,18 +340,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         }
         fragment.noticeRefresh();
         DTVTLogger.end();
-    }
-
-    /**
-     * Fragmentの取得.
-     *
-     * @return Fragment
-     */
-    private RankingBaseFragment getCurrentFragment() {
-        if (mRankingFragmentFactory == null) {
-            return null;
-        }
-        return mRankingFragmentFactory.createFragment(ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK, mViewPager.getCurrentItem());
     }
     /**
      * データ取得要求.

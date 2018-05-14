@@ -92,18 +92,22 @@ public class ProgramDataManager {
 
             ChannelListDao channelListDao = new ChannelListDao(database);
 
-            if (service == JsonConstants.CH_SERVICE_TYPE_INDEX_ALL) {
-                // ひかり・DTV
-                list = channelListDao.findById(columns);
-            } else if (service == JsonConstants.CH_SERVICE_TYPE_INDEX_HIKARI) {
-                // ひかりのみ
-                list = channelListDao.findByService(columns, CH_SERVICE_HIKARI);
-            } else if (service == JsonConstants.CH_SERVICE_TYPE_INDEX_DCH) {
-                // DCHのみ
-                list = channelListDao.findByService(columns, CH_SERVICE_DCH);
-            } else {
-                DTVTLogger.error("CH_SERVICE_TYPE is incorrect!");
-                return null;
+            switch (service) {
+                case JsonConstants.CH_SERVICE_TYPE_INDEX_ALL:
+                    // ひかり・DTV
+                    list = channelListDao.findById(columns);
+                    break;
+                case JsonConstants.CH_SERVICE_TYPE_INDEX_HIKARI:
+                    // ひかりのみ
+                    list = channelListDao.findByService(columns, CH_SERVICE_HIKARI);
+                    break;
+                case JsonConstants.CH_SERVICE_TYPE_INDEX_DCH:
+                    // DCHのみ
+                    list = channelListDao.findByService(columns, CH_SERVICE_DCH);
+                    break;
+                default:
+                    DTVTLogger.error("CH_SERVICE_TYPE is incorrect!");
+                    return null;
             }
         } catch (SQLiteException e) {
             DTVTLogger.debug("ProgramDataManager::selectChannelListProgramData, e.cause=" + e.getCause());

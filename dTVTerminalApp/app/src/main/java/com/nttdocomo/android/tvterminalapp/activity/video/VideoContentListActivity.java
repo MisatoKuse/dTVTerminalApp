@@ -209,7 +209,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     private void resetPaging() {
         synchronized (this) {
             setCommunicatingStatus(false);
-            if (0 != getCurrentNumber() && null != mContentsList) {
+            if (0 != getCurrentNumber(mContentsList) && null != mContentsList) {
                 mContentsList.clear();
                 if (null != mContentsAdapter) {
                     mContentsAdapter.notifyDataSetChanged();
@@ -229,21 +229,6 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
             mIsCommunicating = bool;
         }
     }
-
-    /**
-     * ページングを行った回数を取得.
-     *
-     * @return ページング回数
-     */
-    private int getCurrentNumber() {
-        if (null == mContentsList || 0 == mContentsList.size()) {
-            return 0;
-        } else if (mContentsList.size() < NUM_PER_PAGE) {
-            return 1;
-        }
-        return mContentsList.size() / NUM_PER_PAGE;
-    }
-
     @Override
     public void onScroll(final AbsListView absListView, final int firstVisibleItem,
                          final int visibleItemCount, final int totalItemCount) {

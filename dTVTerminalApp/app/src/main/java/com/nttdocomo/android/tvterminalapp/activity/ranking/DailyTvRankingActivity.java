@@ -148,7 +148,7 @@ public class DailyTvRankingActivity extends BaseActivity implements
      */
     private void resetPaging() {
         synchronized (this) {
-            if (0 != getCurrentNumber() && null != mContentsList) {
+            if (0 != getCurrentNumber(mContentsList) && null != mContentsList) {
                 mContentsList.clear();
                 if (null != mContentsAdapter) {
                     mContentsAdapter.notifyDataSetChanged();
@@ -157,21 +157,6 @@ public class DailyTvRankingActivity extends BaseActivity implements
         }
 
     }
-
-    /**
-     * ページングを行った回数を取得.
-     *
-     * @return ページング回数
-     */
-    private int getCurrentNumber() {
-        if (null == mContentsList || 0 == mContentsList.size()) {
-            return 0;
-        } else if (mContentsList.size() < NUM_PER_PAGE) {
-            return 1;
-        }
-        return mContentsList.size() / NUM_PER_PAGE;
-    }
-
     @Override
     public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
         //コンテンツ詳細表示フラグを有効にする

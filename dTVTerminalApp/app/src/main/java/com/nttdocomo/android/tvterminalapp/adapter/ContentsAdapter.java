@@ -710,9 +710,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     private void setTabContentLayout(final ViewHolder holder) {
         switch (mTabType) {
             case TAB_TV:
-                holder.tv_rank.setVisibility(View.GONE);
-                holder.ll_rating.setVisibility(View.GONE);
-                break;
             case TAB_VIDEO:
                 holder.tv_rank.setVisibility(View.GONE);
                 holder.ll_rating.setVisibility(View.GONE);

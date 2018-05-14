@@ -77,7 +77,7 @@ public class VideoRankingActivity extends BaseActivity implements
         setStatusBarColor(true);
 
         initView();
-        resetPaging();
+        resetPaging(mViewPager, mRankingFragmentFactory);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class VideoRankingActivity extends BaseActivity implements
         super.onResume();
         DTVTLogger.start();
         //コンテンツ詳細から戻ってきたときのみクリップ状態をチェックする
-        RankingBaseFragment baseFragment = getCurrentFragment();
+        RankingBaseFragment baseFragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
         if (baseFragment != null && baseFragment.mContentsDetailDisplay) {
             baseFragment.mContentsDetailDisplay = false;
             if (null != baseFragment.mContentsAdapter) {
@@ -109,7 +109,7 @@ public class VideoRankingActivity extends BaseActivity implements
         stopRankingTopDataConnect.execute(mRankingDataProvider);
 
         //FragmentにContentsAdapterの通信を止めるように通知する
-        RankingBaseFragment baseFragment = getCurrentFragment();
+        RankingBaseFragment baseFragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
         if (baseFragment != null) {
             baseFragment.stopContentsAdapterCommunication();
         }
@@ -184,7 +184,7 @@ public class VideoRankingActivity extends BaseActivity implements
             }
         }
 
-        RankingBaseFragment baseFragment = getCurrentFragment();
+        RankingBaseFragment baseFragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
         if (baseFragment != null) {
             if (baseFragment.mData.size() == 0) {
                 //Fragmentがデータを保持していない場合は再取得を行う
@@ -277,22 +277,6 @@ public class VideoRankingActivity extends BaseActivity implements
             });
         }
     }
-    // endregion implement
-
-    // region private method
-    /**
-     * ページのリセット.
-     */
-    private void resetPaging() {
-        synchronized (this) {
-            RankingBaseFragment baseFragment = getCurrentFragment();
-            if (null != baseFragment && null != baseFragment.mData) {
-                baseFragment.mData.clear();
-                baseFragment.noticeRefresh();
-            }
-        }
-    }
-
     /**
      * Viewの初期化.
      */
@@ -321,12 +305,12 @@ public class VideoRankingActivity extends BaseActivity implements
             public void onPageSelected(final int position) {
                 // スクロールによるタブ切り替え
                 super.onPageSelected(position);
-                resetPaging();
+                resetPaging(mViewPager, mRankingFragmentFactory);
                 mTabLayout.setTab(position);
                 getGenreData();
             }
         });
-        initTabData();
+        mTabLayout = initTabData(mTabLayout, mTabNames);
         getGenreData();
     }
 
@@ -343,25 +327,6 @@ public class VideoRankingActivity extends BaseActivity implements
             mRankingDataProvider.getVideoRankingData(mGenreMetaDataList.get(mViewPager.getCurrentItem()).getId());
         }
     }
-
-    /**
-     * tabのレイアウトを設定.
-     */
-    private void initTabData() {
-        DTVTLogger.start();
-        if (mTabLayout == null) {
-            mTabLayout = new TabItemLayout(this);
-            mTabLayout.setTabClickListener(this);
-            mTabLayout.initTabView(mTabNames, TabItemLayout.ActivityType.VIDEO_RANKING_ACTIVITY);
-            RelativeLayout tabRelativeLayout = findViewById(R.id.rl_video_ranking_tab);
-            tabRelativeLayout.addView(mTabLayout);
-        } else {
-            mTabLayout.resetTabView(mTabNames);
-        }
-        DTVTLogger.end();
-    }
-
-
     /**
      * 取得結果の設定・表示.
      *
@@ -397,19 +362,4 @@ public class VideoRankingActivity extends BaseActivity implements
         fragment.noticeRefresh();
         DTVTLogger.end();
     }
-
-    /**
-     * Fragmentの取得.
-     *
-     * @return Fragment
-     */
-    private RankingBaseFragment getCurrentFragment() {
-
-        int i = mViewPager.getCurrentItem();
-        if (mRankingFragmentFactory != null) {
-            return mRankingFragmentFactory.createFragment(ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK, i);
-        }
-        return null;
-    }
-    // endregion
 }
