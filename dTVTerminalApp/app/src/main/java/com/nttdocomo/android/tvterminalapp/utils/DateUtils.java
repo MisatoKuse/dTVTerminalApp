@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 
@@ -1329,5 +1330,16 @@ public class DateUtils {
     public static float minSec2Hour(final int curMin, final int curSec) {
         int sec = curMin * 60;
         return ((float) sec + curSec) / 3600;
+    }
+
+    /**
+     * 30日以内判定.
+     *
+     * @param activeDataDate 判定対象日時
+     * @return 真偽値
+     */
+    public static boolean isLimitThirtyDay(final long activeDataDate) {
+        return activeDataDate - DateUtils.getNowTimeFormatEpoch()
+                < DateUtils.EPOCH_TIME_ONE_DAY * ContentDetailActivity.ONE_MONTH;
     }
 }
