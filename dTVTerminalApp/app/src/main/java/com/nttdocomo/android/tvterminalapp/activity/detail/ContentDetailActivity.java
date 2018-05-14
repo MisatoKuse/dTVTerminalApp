@@ -74,6 +74,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -128,7 +129,6 @@ public class ContentDetailActivity extends BaseActivity implements
         TabItemLayout.OnClickTabTextListener,
         ContentsDetailDataProvider.ApiDataProviderCallback,
         ScaledDownProgramListDataProvider.ApiDataProviderCallback,
-        ContentUtils.ActivationCallback,
         MediaPlayerController.OnStateChangeListener,
         MediaPlayerController.OnFormatChangeListener,
         MediaPlayerController.OnPlayerEventListener,
@@ -693,7 +693,20 @@ public class ContentDetailActivity extends BaseActivity implements
         mPlayerController.setOnErrorListener(this);
         mPlayerController.setCaptionDataListener(this);
         mPlayerController.setCurrentCaption(0); // start caption.
-        ContentUtils.isActivited(this, this);
+        boolean result = DlnaUtils.getActivationState(this);
+        if (!result) {
+            showProgressBar(false);
+            showMessage(getString(R.string.activation_failed_msg));
+            return;
+        } else {
+            String privateHomePath = DlnaUtils.getPrivateDataHomePath(this);
+            int ret = mPlayerController.dtcpInit(privateHomePath);
+            if (ret != MediaPlayerDefinitions.SP_SUCCESS) {
+                showProgressBar(false);
+                showMessage(getString(R.string.dtcp_init_failed_msg));
+                return;
+            }
+        }
         showProgressBar(false);
         preparePlayer();
         DTVTLogger.end();
@@ -2074,15 +2087,6 @@ public class ContentDetailActivity extends BaseActivity implements
             }
         } else {
             showErrorDialog(ErrorType.roleListGet);
-        }
-    }
-
-    @Override
-    public void onActivationResultCallBack(final boolean result) {
-        if (result) {
-            DTVTLogger.debug(getString(R.string.activation_success_msg));
-        } else {
-            DTVTLogger.debug(getString(R.string.activation_failed_msg));
         }
     }
 
