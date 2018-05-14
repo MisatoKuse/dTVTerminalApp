@@ -164,6 +164,16 @@ public class DaccountGetOTT {
         mOttGetQueue = OttGetQueue.getInstance();
     }
 
+    /**
+     * コンストラクタ(context設定付き).
+     */
+    public DaccountGetOTT(Context context) {
+        //元のコンストラクターを呼ぶ
+        this();
+
+        //指定されたコンテキストを退避
+        mContext = context;
+    }
 
     /**
      * OTT取得処理を開始する.
@@ -220,6 +230,9 @@ public class DaccountGetOTT {
         boolean ans = mContext.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
         if (!ans && mDaccountGetOttCallBack != null) {
+            //正常以外の結果の場合も、unbindは必要な場合あり
+            daccountServiceEnd();
+
             //正常以外の結果ならば、コールバックを呼んで終わらせる
             mDaccountGetOttCallBack.getOttCallBack(IDimDefines.RESULT_INTERNAL_ERROR, "", "");
         }
@@ -229,7 +242,8 @@ public class DaccountGetOTT {
      * dアカウントアプリを切り離す.
      */
     public void daccountServiceEnd() {
-        if (mService != null) {
+        //アンバインドに必要なパラメータがそろっているかどうかを見る(なおmServiceがヌルの場合、アンバインドは失敗する)
+        if (mContext != null && mService != null && mServiceConnection != null) {
             try {
                 mContext.unbindService(mServiceConnection);
                 DTVTLogger.debug("DaccountGetOTTUnbind");

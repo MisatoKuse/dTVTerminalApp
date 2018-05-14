@@ -170,6 +170,9 @@ class DaccountRegistService {
         boolean ans = mContext.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
         if (!ans && mDaccountRegistServiceCallBack != null) {
+            //正常以外の結果でも、unBindは必要な場合あり
+            daccountServiceEnd();
+
             //正常以外の結果ならば、コールバックを呼んで終わらせる
             mDaccountRegistServiceCallBack.registServiceCallBack(
                     IDimDefines.RESULT_INTERNAL_ERROR);

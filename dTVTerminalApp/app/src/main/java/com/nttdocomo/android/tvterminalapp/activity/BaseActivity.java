@@ -1963,7 +1963,7 @@ public class BaseActivity extends FragmentActivity implements
             super.startActivity(intent);
 
             //dアカウントアプリのバインドを解除する
-            final DaccountGetOTT getOtt = new DaccountGetOTT();
+            final DaccountGetOTT getOtt = new DaccountGetOTT(getApplicationContext());
             if (getOtt != null) {
                 DTVTLogger.debug("startActivity before unbind");
                 //他の画面に遷移する前に、dアカウントアプリとの連携を終わらせる
