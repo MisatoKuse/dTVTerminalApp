@@ -12,6 +12,7 @@
 #include "DlnaDevXmlParser.h"
 #include "DlnaRecVideoXmlParser.h"
 #include "DlnaXmlContainer.h"
+#include "DmsInfo.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -178,6 +179,8 @@ namespace dtvt {
         void notifyObject(DLNA_MSG_ID msg, vector<VectorString> & vecContents);
 
         void getRecordedVideoXml(DlnaXmlParserBase* parser, dupnp_http_response *response);
+
+        static bool isSTB2nd(dms_info *dmsInfo);
     };
 
 } //namespace dtvt
