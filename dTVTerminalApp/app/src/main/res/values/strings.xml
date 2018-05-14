@@ -20,6 +20,7 @@
     <string name="vod_contents_message">ビデオ</string>
     <string name="app_finish_dialog_message">アプリを終了しますか？</string>
     <string name="message_three_asterisk">＊＊＊</string>
+    <string name="dtvt_contents_data_error_request">リクエストエラー(リクエストは空である)</string>
     <string name="parental_pg_12">PG12</string>
     <string name="parental_r_15">R15</string>
     <string name="parental_r_18">R18</string>
@@ -58,6 +59,7 @@
     <string name="str_stb_paring_cancel_text">ペアリングを解除する</string>
     <string name="str_stb_paring_setting_title">ペアリング設定</string>
     <string name="str_d_account_resetting_title">dアカウント再設定</string>
+    <string name="str_d_account_setting_help_title">ドコテレ画像</string>
     <string name="str_d_account_app_not_install">ドコモテレビターミナルとペアリングするには\ndアカウントでのログインが必要です</string>
     <string name="str_d_account_app_download">dアカウント設定アプリをダウンロードする</string>
     <string name="str_stb_select_result_text">ペアリング可能なドコモテレビターミナルが\n見つかりました</string>

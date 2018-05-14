@@ -34,11 +34,11 @@ import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragmen
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsInfo;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.jni.download.DlnaProvDownload;
 import com.nttdocomo.android.tvterminalapp.jni.rec.DlnaProvRecVideo;
 import com.nttdocomo.android.tvterminalapp.jni.rec.DlnaRecVideoInfo;
 import com.nttdocomo.android.tvterminalapp.jni.rec.DlnaRecVideoItem;
 import com.nttdocomo.android.tvterminalapp.jni.rec.DlnaRecVideoListener;
-import com.nttdocomo.android.tvterminalapp.jni.download.DlnaProvDownload;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadListener;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
@@ -109,6 +109,18 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * リスト0件メッセージ.
      */
     private TextView mNoDataMessage;
+    /**
+     * すべて.
+     */
+    private static final int ALL_RECORD_LIST = 0;
+    /**
+     * ダウンロード済み.
+     */
+    private static final int DOWNLOAD_OVER = 1;
+    /**
+     * エラーを返すハンドラー.
+     */
+    private Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -218,10 +230,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         showProgressBar();
         mNoDataMessage.setVisibility(View.GONE);
         switch (mViewPager.getCurrentItem()) {
-            case 0:
+            case ALL_RECORD_LIST:
                 getData();
                 break;
-            case 1:
+            case DOWNLOAD_OVER:
                 setRecordedTakeOutContents();
                 break;
             default:
@@ -676,11 +688,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     public void onDeviceLeave(final DlnaDmsInfo curInfo, final String leaveDmsUdn) {
         DTVTLogger.start();
     }
-
-    /**
-     * エラーを返すハンドラー.
-     */
-    private Handler mHandler = new Handler();
     @Override
     public void onError(final String msg) {
         DTVTLogger.start(msg);

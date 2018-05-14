@@ -15,7 +15,6 @@ import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -221,7 +220,7 @@ public class RecommendActivity extends BaseActivity implements
     private void initRecommendListView() {
 
         mNoDataMessage = findViewById(R.id.recommend_list_no_items);
-        initTabVIew();
+        mTabLayout = initTabData(mTabLayout, mTabNames);
         if (null != sRecommendViewPager) {
             return;
         }
@@ -244,24 +243,6 @@ public class RecommendActivity extends BaseActivity implements
             }
         });
     }
-
-    /**
-     * tabの関連Viewを初期化.
-     */
-    private void initTabVIew() {
-        DTVTLogger.start();
-        if (mTabLayout == null) {
-            mTabLayout = new TabItemLayout(this);
-            mTabLayout.setTabClickListener(this);
-            mTabLayout.initTabView(mTabNames, TabItemLayout.ActivityType.RECOMMEND_LIST_ACTIVITY);
-            RelativeLayout tabRelativeLayout = findViewById(R.id.rl_recommend_tab);
-            tabRelativeLayout.addView(mTabLayout);
-        } else {
-            mTabLayout.resetTabView(mTabNames);
-        }
-        DTVTLogger.end();
-    }
-
     @Override
     public void onClickTab(final int position) {
         DTVTLogger.start("position = " + position);

@@ -19,6 +19,9 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -58,12 +61,16 @@ import com.nttdocomo.android.tvterminalapp.activity.launch.STBConnectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectErrorActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.RankingTopActivity;
+import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
+import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity;
 import com.nttdocomo.android.tvterminalapp.activity.setting.NewsActivity;
 import com.nttdocomo.android.tvterminalapp.activity.setting.SettingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.video.VideoTopActivity;
+import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
+import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewAdapter;
 import com.nttdocomo.android.tvterminalapp.application.TvtApplication;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
@@ -71,27 +78,36 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.SettingFileMetaData;
-import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsInfo;
-import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDevListListener;
-import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingBaseFragment;
+import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDevListListener;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsInfo;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessage;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
+import com.nttdocomo.android.tvterminalapp.struct.CalendarComparator;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.DeviceStateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.RuntimePermissionUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
+import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipDeleteWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClient;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * クラス機能：
@@ -106,7 +122,7 @@ public class BaseActivity extends FragmentActivity implements
         ClipRegistWebClient.ClipRegistJsonParserCallback,
         ClipDeleteWebClient.ClipDeleteJsonParserCallback,
         DaccountControl.DaccountControlCallBack,
-        CustomDialog.DismissCallback {
+        CustomDialog.DismissCallback, HomeRecyclerViewAdapter.ItemClickCallback {
     /**
      * ヘッダーBaseレイアウト.
      */
@@ -198,7 +214,7 @@ public class BaseActivity extends FragmentActivity implements
     protected static final String DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL =
             "https://www.nttdocomo.co.jp/product/docomo_select/tt01/index.html";
     /** DialogQue. **/
-    private LinkedList<CustomDialog> mLinkedList = new LinkedList<>();
+    private final LinkedList<CustomDialog> mLinkedList = new LinkedList<>();
 
     /**
      * タイムアウト時間.
@@ -233,7 +249,7 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * dアカウント設定アプリ登録処理.
      */
-    protected DaccountControl mDAccountControl = null;
+    private DaccountControl mDAccountControl = null;
     /**
      * 初回dアカウント取得失敗時のダイアログを呼び出すハンドラー.
      */
@@ -285,6 +301,11 @@ public class BaseActivity extends FragmentActivity implements
      * 未クリップ状態.
      */
     public static final String CLIP_OPACITY_STATUS = "opacity";
+
+    /**
+     * アダプタ内でのリスト識別用定数.
+     */
+    private final static int HOME_CONTENTS_DISTINCTION_ADAPTER = 10;
 
     /**
      * 関数機能：
@@ -510,7 +531,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param isOn true: stb接続中   false: stb未接続
      */
-    protected void setStbStatus(final boolean isOn) {
+    private void setStbStatus(final boolean isOn) {
         if (null != mStbStatusIcon) {
             mStbStatusIcon.post(new Runnable() {
                 @Override
@@ -912,27 +933,7 @@ public class BaseActivity extends FragmentActivity implements
         DTVTLogger.debug(String.format("msg.what:%s requestCommand:%s", msg.what, requestCommand));
         switch (msg.what) {
             case RelayServiceResponseMessage.RELAY_RESULT_OK:
-                switch (requestCommand) {
-                    case START_APPLICATION:
-                    case TITLE_DETAIL:
-                        showRemoteControllerView();
-                        break;
-                    case IS_USER_ACCOUNT_EXIST:
-                        // 処理なし
-                        break;
-                    case SET_DEFAULT_USER_ACCOUNT:
-                    case CHECK_APPLICATION_VERSION_COMPATIBILITY:
-                    case CHECK_APPLICATION_REQUEST_PROCESSING:
-                        // STB_REQUEST_COMMAND_TYPES misses case 抑制.
-                        // ※RELAY_RESULT_OK 応答時は requestCommand に SET_DEFAULT_USER_ACCOUNT
-                        //   /CHECK_APPLICATION_VERSION_COMPATIBILITY /CHECK_APPLICATION_REQUEST_PROCESSING は設定されない
-                    case KEYEVENT_KEYCODE_POWER:
-                    case COMMAND_UNKNOWN:
-                        // 処理なし
-                        break;
-                    default:
-                        break;
-                }
+                switchResultOkRequest(requestCommand);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_ERROR:
                 int resultCode = ((RelayServiceResponseMessage) msg.obj).getResultCode();
@@ -949,86 +950,147 @@ public class BaseActivity extends FragmentActivity implements
                         startApplicationErrorHandler(resultCode, appId);
                         break;
                     case IS_USER_ACCOUNT_EXIST:
-                        switch (resultCode) {
-                            case RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
-                                //サーバエラー
-                            case RelayServiceResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE:
-                                //ユーザアカウントチェックサービス未登録
-                                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
-                                break;
-                            case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
-                                showDAccountRegDialog();
-                                break;
-                            default:
-                                break;
-                        }
+                        switchAccountExistCode(resultCode);
                         break;
                     case SET_DEFAULT_USER_ACCOUNT:
-                        switch (resultCode) {
-                            case RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
-                                //サーバエラー
-                            case RelayServiceResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE:
-                                //ユーザアカウントチェックサービス未登録
-                            case RelayServiceResponseMessage.RELAY_RESULT_USER_INVALID_STATE:
-                                //STBの中継アプリ~応答が無かった場合(要求はできたのでSTBとの通信はOK)
-                                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
-                                break;
-                            case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
-                                // チェック処理の状態で処理を分岐する
-                                SharedPreferencesUtils.resetSharedPreferencesStbInfo(getApplicationContext());
-                                // TODO アプリのキャッシュをきれいにクリアする処理が必要
-                                showDAccountRegDialog();
-                                break;
-                            default:
-                                break;
-                        }
+                        switchDefaultAccountCode(resultCode);
                         break;
                     case CHECK_APPLICATION_VERSION_COMPATIBILITY:
-                        switch (resultCode) {
-                            case RelayServiceResponseMessage.RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE:
-                                CustomDialog dTVTUpDateDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-                                dTVTUpDateDialog.setContent(getResources().getString(R.string.d_tv_terminal_application_version_update_dialog));
-                                dTVTUpDateDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                                    @Override
-                                    public void onOKCallback(final boolean isOK) {
-                                        toGooglePlay(DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL);
-                                    }
-                                });
-                                //次のダイアログを呼ぶ為の処理
-                                dTVTUpDateDialog.setDialogDismissCallback(this);
-
-                                //ダイアログを表示
-                                offerDialog(dTVTUpDateDialog);
-                                //dTVTUpDateDialog.showDialog();
-                                break;
-                            case RelayServiceResponseMessage.RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE:
-                                showErrorDialogOffer(getResources().getString(R.string.stb_application_version_update));
-                                break;
-                            default:
-                                break;
-                        }
+                        switchApplicationVersionCode(resultCode);
                         break;
                     case CHECK_APPLICATION_REQUEST_PROCESSING:
                         //中継アプリからの応答待ち中に新しい要求を行った場合
                     case COMMAND_UNKNOWN:
-                        switch (resultCode) {
-                            case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
-                                if (getStbStatus()) {
-                                    showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
-                                    //ペアリングアイコンをOFFにする
-                                    setStbStatus(false);
-                                }
-                                break;
-                            case RelayServiceResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY: // 他の端末の要求処理中
-                                //中継アプリからの応答待ち中に新しい要求を行った場合
-                                showErrorDialogOffer(getResources().getString(R.string.main_setting_stb_busy_error_message));
-                                break;
-                            default:
-                                break;
-                        }
+                        switchOtherResultCode(resultCode);
+                        break;
                     default:
                         break;
                 }
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * アプリケーション要求処理中チェック（エラー応答時）/受信タイムアウト時.
+     * @param resultCode resultCode
+     */
+    private void switchOtherResultCode(final int resultCode) {
+        switch (resultCode) {
+            case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
+                if (getStbStatus()) {
+                    showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                    //ペアリングアイコンをOFFにする
+                    setStbStatus(false);
+                }
+                break;
+            case RelayServiceResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY: // 他の端末の要求処理中
+                //中継アプリからの応答待ち中に新しい要求を行った場合
+                showErrorDialogOffer(getResources().getString(R.string.main_setting_stb_busy_error_message));
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * アプリケーションバージョンチェック（エラー応答時）.
+     * @param resultCode resultCode
+     */
+    private void switchApplicationVersionCode(final int resultCode) {
+        switch (resultCode) {
+            case RelayServiceResponseMessage.RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE:
+                CustomDialog dTVTUpDateDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+                dTVTUpDateDialog.setContent(getResources().getString(R.string.d_tv_terminal_application_version_update_dialog));
+                dTVTUpDateDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                    @Override
+                    public void onOKCallback(final boolean isOK) {
+                        toGooglePlay(DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL);
+                    }
+                });
+                //次のダイアログを呼ぶ為の処理
+                dTVTUpDateDialog.setDialogDismissCallback(this);
+
+                //ダイアログを表示
+                offerDialog(dTVTUpDateDialog);
+                //dTVTUpDateDialog.showDialog();
+                break;
+            case RelayServiceResponseMessage.RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE:
+                showErrorDialogOffer(getResources().getString(R.string.stb_application_version_update));
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * ユーザーアカウント切り替え（エラー応答時）.
+     * @param resultCode resultCode
+     */
+    private void switchDefaultAccountCode(final int resultCode) {
+        switch (resultCode) {
+            case RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
+                //サーバエラー
+            case RelayServiceResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE:
+                //ユーザアカウントチェックサービス未登録
+            case RelayServiceResponseMessage.RELAY_RESULT_USER_INVALID_STATE:
+                //STBの中継アプリ~応答が無かった場合(要求はできたのでSTBとの通信はOK)
+                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                break;
+            case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
+                // チェック処理の状態で処理を分岐する
+                SharedPreferencesUtils.resetSharedPreferencesStbInfo(getApplicationContext());
+                // TODO アプリのキャッシュをきれいにクリアする処理が必要
+                showDAccountRegDialog();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * ユーザ登録チェック.
+     * @param resultCode resultCode
+     */
+    private void switchAccountExistCode(final int resultCode) {
+        switch (resultCode) {
+            case RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
+                //サーバエラー
+            case RelayServiceResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE:
+                //ユーザアカウントチェックサービス未登録
+                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                break;
+            case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
+                showDAccountRegDialog();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * result ok.
+     * @param requestCommand requestCommand
+     */
+    private void switchResultOkRequest(final RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES requestCommand) {
+        switch (requestCommand) {
+            case START_APPLICATION:
+            case TITLE_DETAIL:
+                showRemoteControllerView();
+                break;
+            case IS_USER_ACCOUNT_EXIST:
+                // 処理なし
+                break;
+            case SET_DEFAULT_USER_ACCOUNT:
+            case CHECK_APPLICATION_VERSION_COMPATIBILITY:
+            case CHECK_APPLICATION_REQUEST_PROCESSING:
+                // STB_REQUEST_COMMAND_TYPES misses case 抑制.
+                // ※RELAY_RESULT_OK 応答時は requestCommand に SET_DEFAULT_USER_ACCOUNT
+                //   /CHECK_APPLICATION_VERSION_COMPATIBILITY /CHECK_APPLICATION_REQUEST_PROCESSING は設定されない
+            case KEYEVENT_KEYCODE_POWER:
+            case COMMAND_UNKNOWN:
+                // 処理なし
                 break;
             default:
                 break;
@@ -1132,7 +1194,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param errorMessage dialog content
      */
-    protected void showErrorDialogOffer(final String errorMessage) {
+    private void showErrorDialogOffer(final String errorMessage) {
         CustomDialog errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
         errorDialog.setContent(errorMessage);
 
@@ -1569,7 +1631,7 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * リモコンUI画面用 onClickListener.
      */
-    protected View.OnClickListener mRemoteControllerOnClickListener = new View.OnClickListener() {
+    protected final View.OnClickListener mRemoteControllerOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(final View v) {
             switch (v.getId()) {
@@ -2434,7 +2496,7 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * dアカウント登録ヘルプ画面遷移するダイアログ表示.
      */
-    public void showDAccountRegDialog() {
+    private void showDAccountRegDialog() {
         CustomDialog dAccountRegDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
         dAccountRegDialog.setContent(getResources().getString(
                 R.string.main_setting_stb_application_launch_fail_id_notexist));
@@ -2453,7 +2515,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param errorMessage エラーメッセージ
      */
-    protected void showApFinishDialog(final String errorMessage) {
+    private void showApFinishDialog(final String errorMessage) {
         CustomDialog apFinishDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
         apFinishDialog.setContent(errorMessage);
         apFinishDialog.showDialog();
@@ -2501,7 +2563,7 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * キューにあるダイアログを順に表示.
      */
-    public void pollDialog() {
+    private void pollDialog() {
         DTVTLogger.start();
         DTVTLogger.debug("mLinkedList.size()=" + mLinkedList.size());
         if ((mShowDialog == null || !mShowDialog.isShowing()) && mLinkedList.size() > 0) {
@@ -2529,6 +2591,221 @@ public class BaseActivity extends FragmentActivity implements
         Uri content_url = Uri.parse(url);
         intent.setData(content_url);
         startActivity(intent);
+    }
+
+    /**
+     *コンテンツ一覧ビューを設定.
+     * @param contentsDataList コンテンツ情報
+     * @param tag 遷移先
+     * @param linearLayout linearLayout
+     */
+   protected void setRecyclerView(final List<ContentsData> contentsDataList, final int tag, final LinearLayout linearLayout) {
+       String typeContentName = getContentTypeName(tag);
+       View view = linearLayout.getChildAt(tag);
+       view.setVisibility(View.VISIBLE);
+       TextView typeTextView = view.findViewById(R.id.home_main_item_type_tx);
+       ImageView rightArrowImageView = view.findViewById(R.id.home_main_item_right_arrow);
+       //各一覧を遷移すること
+
+       rightArrowImageView.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(final View view) {
+               startTo(tag);
+           }
+       });
+       RecyclerView recyclerView = view.findViewById(R.id.home_main_item_recyclerview);
+       //コンテンツタイプを設定
+       setCountTextView(typeContentName, view, tag);
+       typeTextView.setText(typeContentName);
+       //リサイクルビューデータ設定
+       setRecyclerViewData(recyclerView, contentsDataList, tag);
+
+   }
+
+    /**
+     * コンテンツタイプを設定（NOW ON AIR）.
+     * @param typeContentName コンテンツタイプ
+     * @param view View
+     * @param tag tag
+     */
+    protected void setCountTextView(final String typeContentName, final View view, final int tag) {
+        DTVTLogger.start();
+        DTVTLogger.end();
+    }
+
+    /**
+     * コンテンツ一覧タイトル取得.
+     * @param tag tag
+     * @return コンテンツ一覧タイトル.
+     */
+    protected String getContentTypeName(final int tag) {
+        DTVTLogger.start();
+        DTVTLogger.end();
+        return null;
+    }
+
+
+    /**
+     * コンテンツ一覧ビューを設定.
+     * @param recyclerView リサイクルビュー
+     * @param contentsDataList コンテンツ情報
+     * @param index 遷移先
+     */
+
+    private void setRecyclerViewData(final RecyclerView recyclerView, final  List<ContentsData> contentsDataList, final int index) {
+        int i = 0;
+        if (mActivity instanceof HomeActivity) {
+            i = HOME_CONTENTS_DISTINCTION_ADAPTER;
+        } else if (mActivity instanceof RankingTopActivity) {
+            i = HomeRecyclerViewAdapter.RANKING_CONTENTES_TODAY_SORT;
+        }
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        HomeRecyclerViewAdapter horizontalViewAdapter = new HomeRecyclerViewAdapter(
+                this, contentsDataList, index + i);
+        horizontalViewAdapter.setOnItemClickCallBack(this);
+        recyclerView.setAdapter(horizontalViewAdapter);
+        View footer = LayoutInflater.from(this).inflate(R.layout.home_main_layout_recyclerview_footer, recyclerView, false);
+        RelativeLayout moreData = footer.findViewById(R.id.home_main_layout_recyclerview_footer);
+        //もっと見るの遷移先を設定
+        moreData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                startTo(index);
+            }
+        });
+        //リサイクルビューデータの設定
+        horizontalViewAdapter.setFooterView(footer);
+        saveAdapter(index, horizontalViewAdapter);
+    }
+
+    /**
+     * 各アダプタを保存.
+     * @param index 遷移先
+     * @param horizontalViewAdapter アダプタ
+     */
+    protected void saveAdapter(final int index, final HomeRecyclerViewAdapter horizontalViewAdapter) {
+        DTVTLogger.start();
+        DTVTLogger.end();
+    }
+
+    /**
+     * 機能
+     * 遷移先を設定.
+     *
+     * @param index 遷移先
+     */
+    protected void startTo(final int index) {
+        DTVTLogger.start();
+        DTVTLogger.end();
+    }
+
+    /**
+     * ページングを行った回数を取得.
+     * @param mContentsList ContentsData
+     * @return ページング回数
+     */
+    protected int getCurrentNumber(final List<ContentsData> mContentsList) {
+        if (null == mContentsList || 0 == mContentsList.size()) {
+            return 0;
+        } else if (mContentsList.size() < NUM_PER_PAGE) {
+            return 1;
+        }
+        return mContentsList.size() / NUM_PER_PAGE;
+    }
+    /**
+     * ソートを行う.
+     *
+     * @param channels チャンネル情報リスト
+     */
+    protected void channelSort(final List<ChannelInfo> channels) {
+        for (ChannelInfo channel : channels) {
+
+            ArrayList<ScheduleInfo> scheduleInfo = channel.getSchedules();
+            boolean isContinue = false;
+            for (ScheduleInfo info : scheduleInfo) {
+                if (TextUtils.isEmpty(info.getStartTime())) {
+                    DTVTLogger.debug("getStartTime() : null");
+                    isContinue = true;
+                    break;
+                }
+            }
+            if (isContinue) {
+                continue;
+            }
+
+            Collections.sort(channel.getSchedules(), new CalendarComparator());
+        }
+    }
+
+    /**
+     * ページのリセット.
+     * @param rankingFragmentFactory rankingFragmentFactory
+     * @param viewPager viewPager
+     */
+    protected void resetPaging(final ViewPager viewPager, final RankingFragmentFactory rankingFragmentFactory) {
+        synchronized (this) {
+            RankingBaseFragment baseFragment = getCurrentFragment(viewPager, rankingFragmentFactory);
+            if (null != baseFragment && null != baseFragment.mData) {
+                baseFragment.mData.clear();
+                baseFragment.noticeRefresh();
+            }
+        }
+    }
+    /**
+     * Fragmentの取得.
+     * @param viewPager viewPager
+     * @param rankingFragmentFactory rankingFragmentFactory
+     * @return Fragment
+     */
+    protected RankingBaseFragment getCurrentFragment(final ViewPager viewPager, final RankingFragmentFactory rankingFragmentFactory) {
+        int i = viewPager.getCurrentItem();
+        if (rankingFragmentFactory != null) {
+            if (mActivity instanceof VideoRankingActivity) {
+
+                return rankingFragmentFactory.createFragment(ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK, i);
+            } else if (mActivity instanceof WeeklyTvRankingActivity) {
+                return rankingFragmentFactory.createFragment(ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK, i);
+            }
+        }
+        return null;
+    }
+    /**
+     * tabの関連Viewを初期化.
+     * @param tabLayout tabLayout
+     * @param tabNames  tabNames
+     * @return tabLayout
+     */
+    protected TabItemLayout initTabData(final TabItemLayout tabLayout, final String[] tabNames) {
+        DTVTLogger.start();
+        TabItemLayout tmpTabItemLayout = tabLayout;
+        if (tabLayout == null) {
+            tmpTabItemLayout = new TabItemLayout(mContext);
+            tmpTabItemLayout.setTabClickListener((TabItemLayout.OnClickTabTextListener) this);
+            RelativeLayout tabRelativeLayout = new RelativeLayout(this);
+            if (mActivity instanceof VideoRankingActivity) {
+                tmpTabItemLayout.initTabView(tabNames, TabItemLayout.ActivityType.VIDEO_RANKING_ACTIVITY);
+                tabRelativeLayout = findViewById(R.id.rl_video_ranking_tab);
+            } else if (mActivity instanceof WeeklyTvRankingActivity) {
+                tmpTabItemLayout.initTabView(tabNames, TabItemLayout.ActivityType.WEEKLY_RANKING_ACTIVITY);
+                tabRelativeLayout = findViewById(R.id.rl_weekly_ranking_tab);
+            } else if (mActivity instanceof RecommendActivity) {
+                tmpTabItemLayout.initTabView(tabNames, TabItemLayout.ActivityType.RECOMMEND_LIST_ACTIVITY);
+                tabRelativeLayout = findViewById(R.id.rl_recommend_tab);
+            } else if (mActivity instanceof ClipListActivity) {
+                tmpTabItemLayout.initTabView(tabNames, TabItemLayout.ActivityType.CLIP_LIST_ACTIVITY);
+                tabRelativeLayout = findViewById(R.id.rl_clip_list_tab);
+            } else if (mActivity instanceof SearchTopActivity) {
+                tmpTabItemLayout.initTabView(tabNames, TabItemLayout.ActivityType.SEARCH_ACTIVITY);
+                tabRelativeLayout = findViewById(R.id.rl_search_tab);
+            }
+            tabRelativeLayout.addView(tmpTabItemLayout);
+        } else {
+            tmpTabItemLayout.resetTabView(tabNames);
+        }
+        DTVTLogger.end();
+        return tmpTabItemLayout;
     }
 
     /**
@@ -2577,5 +2854,10 @@ public class BaseActivity extends FragmentActivity implements
     @Override
     public void otherDismissCallback() {
         //NOP
+    }
+
+    @Override
+    public void onItemClickCallBack(final ContentsData contentsData, final OtherContentsDetailData detailData) {
+
     }
 }

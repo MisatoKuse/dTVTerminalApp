@@ -360,9 +360,9 @@ public class HttpThread extends Thread {
         } catch (SSLHandshakeException e) {
             //SSLエラー処理(SSLエラーにコードは付けない)
             setErrorStatus(e, DTVTConstants.ERROR_TYPE.SSL_ERROR, "");
-        } catch(ConnectException e) {
+        } catch (ConnectException e) {
             //コネクト時のタイムアウトはこちらに来るので、判定する
-            if(System.currentTimeMillis() - startTime
+            if (System.currentTimeMillis() - startTime
                     > DTVTConstants.SERVER_CONNECT_TIMEOUT) {
                 //エラーメッセージにタイムアウトを示唆する物があればタイムアウトとして扱う
                 isTimeout = true;
@@ -371,11 +371,11 @@ public class HttpThread extends Thread {
                 isTimeout = false;
                 DTVTLogger.debug("normal ConnectException" + e.getMessage());
             }
-            setErrorStatus(e, DTVTConstants.ERROR_TYPE.SERVER_ERROR, "",isTimeout);
+            setErrorStatus(e, DTVTConstants.ERROR_TYPE.SERVER_ERROR, "", isTimeout);
         } catch (SocketTimeoutException e) {
             DTVTLogger.debug("timeout:SocketTimeoutException");
             //タイムアウトは明示的に取得
-            setErrorStatus(e, DTVTConstants.ERROR_TYPE.SERVER_ERROR, "",true);
+            setErrorStatus(e, DTVTConstants.ERROR_TYPE.SERVER_ERROR, "", true);
         } catch (IOException e) {
             //その他通信エラー処理
             //エラーコードの処理はそれぞれの持ち場で行うので、ここでは処理を行わない
@@ -589,7 +589,9 @@ public class HttpThread extends Thread {
                         if (mError) {
                             mXmlStr = "";
                         } else {
-                            mXmlStr = stringBuffer.toString();
+                            if (stringBuffer != null) {
+                                mXmlStr = stringBuffer.toString();
+                            }
                         }
                         mHttpThreadFinish.onHttpThreadFinish(mXmlStr, mErrorStatus);
                     }
@@ -600,7 +602,9 @@ public class HttpThread extends Thread {
                 if (mError) {
                     mXmlStr = "";
                 } else {
-                    mXmlStr = stringBuffer.toString();
+                    if (stringBuffer != null) {
+                        mXmlStr = stringBuffer.toString();
+                    }
                 }
                 mHttpThreadFinish.onHttpThreadFinish(mXmlStr, mErrorStatus);
             }

@@ -291,6 +291,11 @@ public class DateUtils {
     private static final String DATE_FORMAT_BLANK = " ";
 
     /**
+     * 最初時.
+     */
+    public static final int START_TIME = 4;
+
+    /**
      * コンストラクタ.
      *
      * @param context コンテキスト
@@ -1271,5 +1276,58 @@ public class DateUtils {
             str = String.format(Locale.getDefault(), "%02d:%02d", mm, ss);
         }
         return str;
+    }
+    /**
+     * 機能.
+     * システム時間取得して、日付(hour)チェックを行う、1時～4時の場合は日付-1
+     *
+     * @param selectDay チェする日付する、ない場合システム日付
+     * @return formatDay チェックした時刻を返却
+     */
+    public static String getSystemTimeAndCheckHour(final String selectDay) {
+        String formatDay;
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYYMMDD, Locale.JAPAN);
+        try {
+            if (selectDay != null) {
+                formatDay = selectDay;
+            } else {
+                formatDay = sdf.format(calendar.getTime());
+            }
+            if (isLastDay()) {
+                calendar.setTime(sdf.parse(formatDay));
+                calendar.add(Calendar.DAY_OF_MONTH, -1);
+                formatDay = sdf.format(calendar.getTime());
+            }
+            return formatDay;
+        } catch (ParseException e) {
+            DTVTLogger.debug(e);
+        }
+        return sdf.format(calendar.getTime());
+    }
+
+    /**
+     * 機能
+     * 昨日の日付であるかどうか.
+     *
+     * @return 日付確認結果
+     */
+    public static boolean isLastDay() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat todaySdf = new SimpleDateFormat(DateUtils.DATE_HHMMSS, Locale.JAPAN);
+        int hour = Integer.parseInt(todaySdf.format(calendar.getTime()).substring(0, 2));
+        return hour < START_TIME;
+    }
+
+    /**
+     * 分、秒を時に転換する.
+     *
+     * @param curMin 分
+     * @param curSec 秒
+     * @return 時
+     */
+    public static float minSec2Hour(final int curMin, final int curSec) {
+        int sec = curMin * 60;
+        return ((float) sec + curSec) / 3600;
     }
 }

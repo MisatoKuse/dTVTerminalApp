@@ -372,17 +372,8 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         //元の処理は使用しない事を明示する為にコメント化
         //super.checkSettingFile();
 
-        //ダイアログ非表示スイッチ・ダイアログは表示
-        boolean noDialogSw = false;
-
-        //スプラッシュ画面かどうかの確認
-        if (this instanceof LaunchActivity) {
-            //スプラッシュ画面ならばダイアログは表示しない
-            noDialogSw = true;
-        }
-
         //アプリ起動時か、BG→FG遷移時は設定ファイルの処理を呼び出す
-        mCheckSetting = new ProcessSettingFile(this, noDialogSw);
+        mCheckSetting = new ProcessSettingFile(this, true);
 
         //ファイルのチェックを開始する
         mCheckSetting.controlAtSettingFile(
