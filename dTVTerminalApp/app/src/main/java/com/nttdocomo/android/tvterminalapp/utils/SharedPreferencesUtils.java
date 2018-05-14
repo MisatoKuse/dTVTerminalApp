@@ -147,6 +147,11 @@ public class SharedPreferencesUtils {
     private static final String LAST_SETTING_FILE_OPTIONAL_UPDATE
             = "LAST_SETTING_FILE_OPTIONAL_UPDATE";
     /**
+     * パーミッションチェックダイアログの表示設定.
+     */
+    private static final String PERMISSION_DIALOG_DISPLAYED_TWICE
+            = "PERMISSION_DIALOG_DISPLAYED_TWICE";
+    /**
      * 初回dアカウント取得フラグ.
      * ランチャーアクティビティの最初に初回実行状態に更新し、dアカウントの最初の取得処理で初回実行終了とする
      * 以後はdアカウントユーザー切り替えも含めて内容は変更しない。
@@ -232,6 +237,8 @@ public class SharedPreferencesUtils {
             LAST_SETTING_FILE_FORCE_UPDATE,
             //  設定ファイル任意アップデートバージョン
             LAST_SETTING_FILE_OPTIONAL_UPDATE,
+            // パーミッションチェックダイアログの表示設定
+            PERMISSION_DIALOG_DISPLAYED_TWICE
     };
 
 
@@ -1069,5 +1076,34 @@ public class SharedPreferencesUtils {
 
         //バージョン番号を返す。存在していなければ、0を返す
         return data.getInt(LAST_SETTING_FILE_OPTIONAL_UPDATE, 0);
+    }
+
+    /**
+     * パーミッションチェックダイアログの表示設定.
+     *
+     * @param context     コンテキスト
+     */
+    public static void setSharedPreferencesIsDisplayedPermissionDialogTwice(final Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                PERMISSION_DIALOG_DISPLAYED_TWICE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putBoolean(PERMISSION_DIALOG_DISPLAYED_TWICE, true);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * パーミッションチェックダイアログの表示設定情報を取得.
+     *
+     * @param context コンテキスト
+     * @return パーミッションチェックダイアログの表示設定フラグ
+     */
+    public static boolean getSharedPreferencesIsDisplayedPermissionDialogTwice(final Context context) {
+        DTVTLogger.debug("getSharedPreferencesIsDisplayedPermissionDialogTwice");
+        SharedPreferences data = context.getSharedPreferences(
+                PERMISSION_DIALOG_DISPLAYED_TWICE, Context.MODE_PRIVATE);
+
+        return data.getBoolean(PERMISSION_DIALOG_DISPLAYED_TWICE, false);
     }
 }
