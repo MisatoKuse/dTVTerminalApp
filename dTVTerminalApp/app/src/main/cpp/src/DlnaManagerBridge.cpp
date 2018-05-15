@@ -158,7 +158,32 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
             g_ctx.javaVM->DetachCurrentThread();
         }
     };
+    dlnaRemoteConnect->DdtcpSinkAkeEndCallback = [](ddtcp_ret ddtcpSinkAkeEndRet) {
+        JNIEnv *_env = NULL;
+        int status = g_ctx.javaVM->GetEnv((void **) &_env, JNI_VERSION_1_6);
+        bool isAttached = false;
+        if (status < 0) {
+            status = g_ctx.javaVM->AttachCurrentThread(&_env, NULL);
+            if (status < 0 || NULL == _env) {
+                return;
+            }
+            isAttached = true;
+        }
 
+        switch(ddtcpSinkAkeEndRet) {
+            case DDTCP_RET_SUCCESS:
+                break;
+            default:
+                jint resultTypeNumber = 2;
+                jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "RegistResultCallBack", "(ZI)V");
+                _env->CallVoidMethod(g_ctx.jniHelperObj, methodID, false, resultTypeNumber);
+                break;
+        }
+
+        if (isAttached) {
+            g_ctx.javaVM->DetachCurrentThread();
+        }
+    };
     dlnaDmsBrowse->ContentBrowseCallback = [](std::vector<ContentInfo> contentList, const char* containerId) {
         for (auto item : contentList) {
             LOG_WITH("item.name = %s ", item.name);
