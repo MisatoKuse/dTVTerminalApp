@@ -12,19 +12,19 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.MyChannelEditActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.MainSettingListAdapter;
-import com.nttdocomo.android.tvterminalapp.common.UserState;
-import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
-import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
-import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.MainSettingUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
+import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -150,6 +150,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         checkImageQuality();
     }
 
+    @SuppressWarnings("OverlyComplexMethod")
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         String tappedItemName = mSettingList.get(i).getText();
@@ -263,15 +264,19 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             }
         }
         if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_REMOTE])) {
-            if (!UserInfoUtils.isPairing(this)) {
-                //未ペアリングならダイアログ表示
-                settingErrorDialog(R.string.contents_detail_pairing_request);
-                return false;
-            }
-            if (!getStbStatus()) {
-                //宅外ならダイアログ表示
-                settingErrorDialog(R.string.main_setting_stb_not_connected_message);
-                return false;
+            UserInfoUtils.PairingState pairingState = UserInfoUtils.getPairingState(this, getStbStatus());
+            switch (pairingState) {
+                case NO_PAIRING:
+                    //未ペアリングならダイアログ表示
+                    settingErrorDialog(R.string.contents_detail_pairing_request);
+                    return false;
+                case OUTSIDE_HOUSE:
+                    //宅外ならダイアログ表示
+                    settingErrorDialog(R.string.main_setting_stb_not_connected_message);
+                    return false;
+                case INSIDE_HOUSE:
+                default:
+                    break;
             }
         }
         return true;
@@ -293,7 +298,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
      */
     private void checkIsPairing() {
         String isParing = mResources.getString(R.string.main_setting_pairing);
-        if (!UserInfoUtils.isPairing(this)) {
+        if (!SharedPreferencesUtils.getSharedPreferencesDecisionParingSettled(this)) {
             // 未ペアリング時
             isParing = mResources.getString(R.string.main_setting_not_paring);
         }
