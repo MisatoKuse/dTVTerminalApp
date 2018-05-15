@@ -727,7 +727,6 @@ public class StringUtils {
             @NonNull final OtherContentsDetailData detailData,
             @NonNull final Context context,
             @NonNull final ContentUtils.ContentsType contentsType) {
-        String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(context));
 
         switch (contentsType) {
             case DIGITAL_TERRESTRIAL_BROADCASTING:
@@ -749,7 +748,7 @@ public class StringUtils {
                         return "";
                     case HIKARI_TV_VOD:
                         //テレビで視聴できます
-                        return context.getString(R.string.contents_detail_thumbnail_text);
+                        return context.getString(R.string.contents_detail_hikari_vod_inside_home);
                     case HIKARI_IN_DCH_TV:
                     case HIKARI_IN_DCH:
                     case HIKARI_IN_DCH_MISS:

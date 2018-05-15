@@ -705,6 +705,7 @@ public class ContentUtils {
      * @param metaFullData Vodメタデータ
      * @return 視聴可否判定結果
      */
+    @SuppressWarnings("OverlyComplexMethod")
     private static ViewIngType contractInfoOne(final VodMetaFullData metaFullData) {
         DTVTLogger.debug("disp_type: " + metaFullData.getDisp_type());
         //メタレスポンス「disp_type」が「tv_program」
@@ -717,7 +718,7 @@ public class ContentUtils {
                 long publishEndDate = metaFullData.getPublish_end_date();
                 long nowDate = DateUtils.getNowTimeFormatEpoch();
                 //メタレスポンス「publish_start_date」 <= 現在時刻 < 「publish_end_date」
-                if (publishStartDate <= publishEndDate) {
+                if (publishStartDate <= nowDate && nowDate < publishEndDate) {
                     //「publish_end_date」が現在日時から1か月以内
                     if (DateUtils.isLimitThirtyDay(publishEndDate)) {
                         //視聴可能期限(「publish_end_dateまで」)を表示
@@ -727,7 +728,7 @@ public class ContentUtils {
                         return ViewIngType.ENABLE_WATCH;
                     }
                     //メタレスポンス「publish_start_date」 >= 現在時刻
-                } else if (publishStartDate >= publishEndDate) {
+                } else if (publishStartDate >= nowDate) {
                     //視聴不可(放送時間外のため再生導線を非表示)
                     DTVTLogger.debug("Unviewable(Hide playing method because outside broadcasting time)");
                     return ViewIngType.DISABLE_WATCH_AND_PLAY;
@@ -742,14 +743,18 @@ public class ContentUtils {
                         //「vod_start_date」 <= 現在時刻 < 「vod_end_date」
                     } else if (vodStartDate <= nowDate && nowDate < vodEndDate) {
                         //「vod_end_date」が現在時刻から1か月以内の場合視聴可能期限(「vod_end_dateまで」)を表示
-                        return ViewIngType.ENABLE_WATCH_LIMIT_THIRTY;
+                        if (DateUtils.isLimitThirtyDay(vodEndDate)) {
+                            return ViewIngType.ENABLE_WATCH_LIMIT_THIRTY;
+                        } else {
+                            return ViewIngType.ENABLE_WATCH;
+                        }
                         //「vod_end_date」 <= 現在時刻
                     } else if (vodEndDate <= nowDate) {
                         //視聴不可
                         return ViewIngType.DISABLE_WATCH;
                     } else {
                         //視聴可否判定外ステータス
-                        return ViewIngType.NONE_STATUS;
+                        return ViewIngType.DISABLE_WATCH;
                     }
                 } else {
                     //視聴可否判定外ステータス
@@ -771,6 +776,7 @@ public class ContentUtils {
 
     /**
      * 視聴可否判定、契約情報が"002"の場合.
+     * 仕様が複雑なため、確認を簡単にするため、仕様の文章と連動する記載とする.
      *
      * @param metaFullData Vodメタデータ
      * @param channelInfo チャンネル情報
@@ -830,7 +836,7 @@ public class ContentUtils {
                         return ViewIngType.NONE_STATUS;
                     }
                     //メタレスポンス「tv_service」が「1」
-                } else if (ContentDetailActivity.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(chType)) {
+                } else if (ContentDetailActivity.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(tvService)) {
                     //メタレスポンス「publish_start_date」 <= 現在時刻 < 「publish_end_date」
                     if (publishStartDate <= nowDate && nowDate < publishEndDate) {
                         //「publish_end_date」が現在日時から1か月以内
@@ -840,7 +846,7 @@ public class ContentUtils {
                             //「publish_end_date」が現在日時から1か月以上先
                         } else {
                             //視聴可能期限は非表示
-                            return ViewIngType.ENABLE_WATCH_LIMIT_THIRTY_OVER;
+                            return ViewIngType.ENABLE_WATCH;
                         }
                         //メタレスポンス「publish_start_date」 >= 現在時刻
                     } else if (publishStartDate >= nowDate) {
@@ -887,10 +893,10 @@ public class ContentUtils {
                         if (DateUtils.isLimitThirtyDay(publishEndDate)) {
                             //視聴可能期限(「publish_end_dateまで」)を表示
                             return ViewIngType.ENABLE_WATCH_LIMIT_THIRTY;
-                            //「publish_end_date」が現在日時から1か月以上先
                         } else {
+                            //「publish_end_date」が現在日時から1か月以上先
                             //視聴可能期限は非表示
-                            return ViewIngType.ENABLE_WATCH_LIMIT_THIRTY_OVER;
+                            return ViewIngType.ENABLE_WATCH;
                         }
                         //メタレスポンス「publish_start_date」 > 現在時刻 または 現在時刻 >= 「publish_end_date」の場合
                     } else if (publishStartDate > nowDate || nowDate >= publishEndDate) {
@@ -912,7 +918,7 @@ public class ContentUtils {
                                 //「publish_end_date」が現在日時から1か月以上先
                             } else {
                                 //視聴可能期限は非表示
-                                return ViewIngType.DISABLE_WATCH;
+                                return ViewIngType.ENABLE_WATCH;
                             }
                         }
                     } else {
@@ -976,17 +982,13 @@ public class ContentUtils {
      * 購入済みチャンネル視聴可否判定.
      *
      * @param metaFullData Vodメタデータ
-     * @param response     購入済みチャンネルレスポンス
-     * @param channelInfo  チャンネルデータ
      * @param validEndDate  valid_end_date
      * @return 購入済みチャンネル視聴可否ステータス
      */
     @SuppressWarnings("OverlyComplexMethod")
     public static ViewIngType getRentalChannelViewingType(
-            final VodMetaFullData metaFullData, final PurchasedChListResponse response, final ChannelInfo channelInfo, final long validEndDate) {
+            final VodMetaFullData metaFullData, final long validEndDate) {
 
-        ChannelList channelList = response.getChannelListData();
-        HashMap<String, String> chList = checkChServiceIdListSame(channelList.getChannelList(), channelInfo);
         long nowDate = DateUtils.getNowTimeFormatEpoch();
 
         //getRentalChannelValidEndDateでvalidEndDateを取得した場合、次の条件に一致しないものは validEndDate = 0 で返却されるため、視聴可否判定にvalidEndDateを使用する
@@ -1000,20 +1002,16 @@ public class ContentUtils {
                 //視聴可能
                 //一致した「active_list」の「valid_end_date」が現在日時から1か月以内（複数の場合は期限が一番長いのを基準にする）
                 if (DateUtils.isLimitThirtyDay(validEndDate)) {
-                    return ViewIngType.ENABLE_WATCH_LIMIT_THIRTY_LONGEST;
+                    return ViewIngType.ENABLE_WATCH_LIMIT_THIRTY;
                     //一致した「active_list」の「valid_end_date」が現在日時から1か月以上先
-                } else if (DateUtils.isOver31Day(validEndDate)) {
-                    //視聴可能期限は表示しない
-                    return ViewIngType.ENABLE_WATCH_LIMIT_THIRTY_OVER;
                 } else {
-                    return ViewIngType.NONE_STATUS;
+                    //視聴可能期限は表示しない
+                    return ViewIngType.ENABLE_WATCH;
                 }
                 //メタレスポンス「publish_start_date」 > 現在時刻 または 現在時刻 >= 「publish_end_date」
-            } else if (publishStartDate > nowDate || nowDate >= publishEndDate) {
+            } else {
                 //視聴不可(放送時間外のため再生導線を非表示)
                 return ViewIngType.DISABLE_WATCH_AND_PLAY;
-            } else {
-                return ViewIngType.NONE_STATUS;
             }
             //対象チャンネルのpuid、sub_puid、CHPACK-puid、sub_puidと購入済みチャンネル一覧取得IF「active_list」の「license_id」と比較して一致しなかった場合
         } else {
@@ -1087,12 +1085,11 @@ public class ContentUtils {
      * 購入済みVod視聴可否判定.
      *
      * @param metaFullData Vodメタデータ
-     * @param activeList Activeリスト
      * @param validEndDate valid_end_date
      * @return 購入済みVod視聴可否ステータス
      */
     public static ViewIngType getRentalVodViewingType(
-            final VodMetaFullData metaFullData, final ArrayList<ActiveData> activeList, final long validEndDate) {
+            final VodMetaFullData metaFullData, final long validEndDate) {
 
         //現在Epoch秒
         long nowDate = DateUtils.getNowTimeFormatEpoch();
@@ -1111,11 +1108,9 @@ public class ContentUtils {
                     //視聴可能期限(「valid_end_dateまで」)を表示
                     return ViewIngType.ENABLE_WATCH_LIMIT_THIRTY;
                     //一致した「active_list」の「valid_end_date」が現在日時から1か月以上先
-                } else if (DateUtils.isOver31Day(validEndDate)) {
-                    //視聴可能期限は非表示
-                    return ViewIngType.ENABLE_WATCH_LIMIT_THIRTY_OVER;
                 } else {
-                    return ViewIngType.NONE_STATUS;
+                    //視聴可能期限は非表示
+                    return ViewIngType.ENABLE_WATCH;
                 }
                 //一致した「active_list」の「valid_end_date」<= 現在時刻の場合
             } else if (validEndDate <= nowDate) {
