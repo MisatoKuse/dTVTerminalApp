@@ -16,6 +16,8 @@ import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
@@ -26,7 +28,8 @@ import java.util.List;
 /**
  * STB接続済みActivity.
  */
-public class STBConnectActivity extends BaseActivity implements UserInfoDataProvider.UserDataProviderCallback {
+public class STBConnectActivity extends BaseActivity implements UserInfoDataProvider.UserDataProviderCallback,
+        DlnaManager.LocalRegistListener {
 
     /** 遅延時間.*/
     private static final int DELAYED_TIME = 3000;
@@ -38,6 +41,7 @@ public class STBConnectActivity extends BaseActivity implements UserInfoDataProv
         setContentView(R.layout.stb_connect_main_layout);
         //SharedPreferenceにSTB接続完了をセット
         SharedPreferencesUtils.setSharedPreferencesStbConnect(this, true);
+        DlnaManager.shared().StartDmp();
         setContents();
     }
 
@@ -114,14 +118,15 @@ public class STBConnectActivity extends BaseActivity implements UserInfoDataProv
                     boolean result = DlnaUtils.getActivationState(STBConnectActivity.this);
                     if (result) {
                         setRemoteProgressVisible(View.VISIBLE);
-//                        DlnaManager
+                        DlnaManager manager = DlnaManager.shared();
+                        manager.mLocalRegistListener = STBConnectActivity.this;
+                        manager.StartDtcp();
+                        manager.RestartDirag();
+                        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(STBConnectActivity.this);
+                        manager.RequestLocalRegistration(dlnaDmsItem.mUdn);
                     } else {
                         showErrorDialog("アクティベーション実行失敗しました。");
                     }
-//                    Intent intent = new Intent(getApplicationContext(), SettingActivity.class);
-//                    intent.putExtra(getResources().getString(R.string.main_setting_remote_confirm_message), true);
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    startActivity(intent);
                 }
             }
         });
@@ -144,5 +149,39 @@ public class STBConnectActivity extends BaseActivity implements UserInfoDataProv
             }
         });
         remoteConfirmDialog.showDialog();
+    }
+
+    @Override
+    public void onRegistCallBack(final boolean result) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setRemoteProgressVisible(View.GONE);
+                showRegistResultDialog(result);
+            }
+        });
+    }
+
+    /**
+     * ローカルレジストレーションの処理結果.
+     *
+     * @param isSuccess true 成功 false 失敗
+     */
+    private void showRegistResultDialog(final boolean isSuccess) {
+        CustomDialog resultDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        resultDialog.setOnTouchOutside(false);
+        if (isSuccess) {
+            resultDialog.setContent(getString(R.string.common_text_regist_progress_done));
+        } else {
+            resultDialog.setConfirmText(R.string.common_text_close);
+            resultDialog.setContent(getString(R.string.common_text_regist_other_error));
+        }
+        resultDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @Override
+            public void onOKCallback(final boolean isOK) {
+                handler.post(runnable);
+            }
+        });
+        resultDialog.showDialog();
     }
 }

@@ -135,6 +135,28 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
         }
     };
 
+    dlnaRemoteConnect->LocalRegistrationCallback = [](bool result) {
+        JNIEnv *_env = NULL;
+        int status = g_ctx.javaVM->GetEnv((void **) &_env, JNI_VERSION_1_6);
+        bool isAttached = false;
+        if (status < 0) {
+            status = g_ctx.javaVM->AttachCurrentThread(&_env, NULL);
+            if (status < 0 || NULL == _env) {
+                return;
+            }
+            isAttached = true;
+        }
+
+        //jboolean jResult = _env->NewBooleanArray(result, 0);
+        jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "RegistResultCallBack", "(Z)V");
+        _env->CallVoidMethod(g_ctx.jniHelperObj, methodID, result);
+        //_env->DeleteLocalRef(jResult);
+
+        if (isAttached) {
+            g_ctx.javaVM->DetachCurrentThread();
+        }
+    };
+
     dlnaDmsBrowse->ContentBrowseCallback = [](std::vector<ContentInfo> contentList, const char* containerId) {
         for (auto item : contentList) {
             LOG_WITH("item.name = %s ", item.name);
@@ -206,10 +228,11 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_restartDirag(JNIEnv *en
 }
 
 JNIEXPORT void JNICALL
-Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_requestLocalRegistration(JNIEnv *env, jobject thiz, jstring udn) {
+Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_requestLocalRegistration(JNIEnv *env, jobject thiz, jstring udn, jstring deviceName) {
     const char *udnString = env->GetStringUTFChars(udn, 0);
+    const char *deviceNameString = env->GetStringUTFChars(deviceName, 0);
     LOG_WITH("udnString = %s", udnString);
-    dlnaRemoteConnect->requestLocalRegistration(dmp, DU_UCHAR(udnString), DU_UCHAR("test"));
+    dlnaRemoteConnect->requestLocalRegistration(dmp, DU_UCHAR(udnString), DU_UCHAR(deviceNameString));
 }
 
 // endregion call from java

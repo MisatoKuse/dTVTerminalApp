@@ -19,12 +19,14 @@ import com.nttdocomo.android.tvterminalapp.activity.tvprogram.MyChannelEditActiv
 import com.nttdocomo.android.tvterminalapp.adapter.MainSettingListAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
-import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
-import com.nttdocomo.android.tvterminalapp.utils.MainSettingUtils;
-import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.utils.MainSettingUtils;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +34,8 @@ import java.util.List;
 /**
  * 設定画面.
  */
-public class SettingActivity extends BaseActivity implements AdapterView.OnItemClickListener {
+public class SettingActivity extends BaseActivity implements AdapterView.OnItemClickListener,
+        DlnaManager.LocalRegistListener {
 
     /**
      * 項目名の配列を保持.
@@ -123,6 +126,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
+        DlnaManager.shared().StartDmp();
 
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
@@ -350,12 +354,50 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             @Override
             public void onOKCallback(final boolean isOK) {
                 if (isOK) {
-                    // TODO リモート視聴設定処理呼び出す
-                    settingErrorDialog(R.string.common_text_progress_done);
+                    boolean result = DlnaUtils.getActivationState(SettingActivity.this);
+                    if (result) {
+                        setRemoteProgressVisible(View.VISIBLE);
+                        DlnaManager manager = DlnaManager.shared();
+                        manager.mLocalRegistListener = SettingActivity.this;
+                        manager.StartDtcp();
+                        manager.RestartDirag();
+                        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(SettingActivity.this);
+                        manager.RequestLocalRegistration(dlnaDmsItem.mUdn);
+                    } else {
+                        showErrorDialog("アクティベーション実行失敗しました。");
+                    }
                 }
             }
         });
         remoteConfirmDialog.showDialog();
+    }
+
+    @Override
+    public void onRegistCallBack(final boolean result) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setRemoteProgressVisible(View.GONE);
+                showRegistResultDialog(result);
+            }
+        });
+    }
+
+    /**
+     * ローカルレジストレーションの処理結果.
+     *
+     * @param isSuccess true 成功 false 失敗
+     */
+    private void showRegistResultDialog(final boolean isSuccess) {
+        CustomDialog resultDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        resultDialog.setOnTouchOutside(false);
+        if (isSuccess) {
+            resultDialog.setContent(getString(R.string.common_text_regist_progress_done));
+        } else {
+            resultDialog.setConfirmText(R.string.common_text_close);
+            resultDialog.setContent(getString(R.string.common_text_regist_other_error));
+        }
+        resultDialog.showDialog();
     }
 
 }

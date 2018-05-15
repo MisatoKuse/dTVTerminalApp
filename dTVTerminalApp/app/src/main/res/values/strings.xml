@@ -45,7 +45,10 @@
     <string name="common_until">まで</string>
     <string name="common_date_format_start_str">" から"</string>
     <string name="common_date_format_end_str">" まで"</string>
-    <string name="common_text_progress_done">完了しました</string>
+    <string name="common_text_regist_progress_done">完了しました</string>
+    <string name="common_text_regist_over_error">ペアリングの台数が上限に達しました。\nドコモテレビターミナルでペアリングを解除してください。解除方法はヘルプをご覧ください。リモート設定は、「メニュー＞設定＞リモート設定」であとから設定できます。</string>
+    <string name="common_text_regist_other_error">リモート視聴設定に失敗しました</string>
+
 
     <!-- Launch -->
     <string name="str_app_title">ドコモテレビターミナル</string>

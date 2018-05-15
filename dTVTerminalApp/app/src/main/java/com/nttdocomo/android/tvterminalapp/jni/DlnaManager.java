@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.jni;
 
 
 import android.content.Context;
+import android.os.Build;
 
 import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -20,6 +21,9 @@ public class DlnaManager {
     public interface DlnaManagerListener {
         void joinDms(String name, String host, String udn, String controlUrl, String eventSubscriptionUrl);
         void leaveDms(String udn);
+    }
+    public interface LocalRegistListener {
+        void onRegistCallBack(boolean result);
     }
     // endregion Listener declaration
 
@@ -37,10 +41,11 @@ public class DlnaManager {
         System.loadLibrary("dtvtlib");
     }
 
-    public DlnaManagerListener dlnaManagerListener = null;
+    public DlnaManagerListener mDlnaManagerListener = null;
+    public LocalRegistListener mLocalRegistListener = null;
     private Context mContext;
 
-    public void launch(Context context) {
+    public void launch(final Context context) {
         mContext = context;
         DTVTLogger.start();
 
@@ -80,8 +85,8 @@ public class DlnaManager {
     public void RestartDirag() {
         restartDirag();
     }
-    public void RequestLocalRegistration(String udn) {
-        requestLocalRegistration(udn);
+    public void RequestLocalRegistration(final String udn) {
+        requestLocalRegistration(udn, Build.MODEL);
     }
     // call from jni
     public String getUniqueId() {
@@ -97,7 +102,7 @@ public class DlnaManager {
     // callback
     public void DmsFoundCallback(String friendlyName, String udn, String location, String controlUrl, String eventSubscriptionUrl) {
         DTVTLogger.warning("friendlyName = " + friendlyName + ", udn = " + udn + ", location = " + location + ", controlUrl = " + controlUrl + ", eventSubscriptionUrl = " + eventSubscriptionUrl);
-        DlnaManagerListener listener = DlnaManager.shared().dlnaManagerListener;
+        DlnaManagerListener listener = DlnaManager.shared().mDlnaManagerListener;
         if (listener != null) {
             URL hostUrl = null;
             String hostString = "";
@@ -116,10 +121,21 @@ public class DlnaManager {
 
     public void DmsLeaveCallback(String udn) {
         DTVTLogger.warning("udn = " + udn);
-        DlnaManagerListener listener = DlnaManager.shared().dlnaManagerListener;
+        DlnaManagerListener listener = DlnaManager.shared().mDlnaManagerListener;
         if (listener != null) {
             DTVTLogger.warning("callback");
             listener.leaveDms(udn);
+        } else {
+            DTVTLogger.error("no callback");
+        }
+    }
+
+    public void RegistResultCallBack(boolean result) {
+        DTVTLogger.warning("result = " + result);
+        LocalRegistListener listener = DlnaManager.shared().mLocalRegistListener;
+        if (listener != null) {
+            DTVTLogger.warning("callback");
+            listener.onRegistCallBack(result);
         } else {
             DTVTLogger.error("no callback");
         }
@@ -141,7 +157,7 @@ public class DlnaManager {
 
     private native void startDtcp();
     private native void restartDirag();
-    private native void requestLocalRegistration(String udn);
+    private native void requestLocalRegistration(String udn, String deviceName);
     // endregion native method
 
 }
