@@ -1339,10 +1339,6 @@ namespace dtvt {
             return 0;
         }
 
-        // 特定のDMS に限定する場合は friendly_name を指定する
-        if (NULL == strstr((char*)info->friendly_name, "特定のDMSのfriendly_name")){
-//        return 0; // このデバイスをデバイスマネージャーの管理リストに追加しません
-        }
         device->user_data = (void*)info; // デバイスディスクリプションの解析情報 ※leaveHandlerで解放すること
 
         return 1;
