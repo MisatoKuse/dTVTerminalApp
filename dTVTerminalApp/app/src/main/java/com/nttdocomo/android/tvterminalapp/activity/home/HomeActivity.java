@@ -53,12 +53,9 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopHomeDataConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopUserInfoDataConnect;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
-import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
-import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
@@ -192,16 +189,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         enableStbStatusIcon(true);
         setStatusBarColor(true);
         initView();
-        boolean result = DlnaUtils.getActivationState(this);
-        DTVTLogger.warning("result = " + result);
-        DlnaDmsItem item = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-        DlnaManager.shared().StartDmp();
-        DlnaManager.shared().StartDtcp();
-        DlnaManager.shared().RestartDirag();
-
-//        DlnaManager.shared().RequestLocalRegistration(item.mUdn);
-        DlnaManager.shared().GetRemoteDeviceExpireDate(item.mUdn);
-
     }
 
     /**

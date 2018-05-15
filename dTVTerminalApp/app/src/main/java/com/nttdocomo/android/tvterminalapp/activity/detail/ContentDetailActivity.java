@@ -77,6 +77,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopScaledProListDa
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsChannelFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragmentFactory;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.hikari.DlnaHikariChListItem;
 import com.nttdocomo.android.tvterminalapp.jni.hikari.DlnaProvHikariChList;
@@ -811,6 +812,15 @@ public class ContentDetailActivity extends BaseActivity implements
             //リモート視聴ではないので、そのまま実行する
             playStartOrigin();
             return;
+        } else {
+            DlnaDmsItem item = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+            if (item != null) {
+                String remoteExpireDate = DlnaManager.shared().GetRemoteDeviceExpireDate(item.mUdn);
+                if (TextUtils.isEmpty(remoteExpireDate)) {
+                    showMessage(getString(R.string.contents_detail_out_house_player_error_msg));
+                    return;
+                }
+            }
         }
 
         //リモート視聴なので、設定ファイルの内容に応じて判定を行う
