@@ -9,6 +9,7 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
@@ -197,7 +198,7 @@ public class DBUtils {
         try (SQLiteDatabase database = dBHelper.getWritableDatabase()) {
             recordCount = DatabaseUtils.queryNumEntries(database, tableName);
         } catch (SQLiteException e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
         return recordCount > 0;
     }
@@ -285,7 +286,7 @@ public class DBUtils {
      * @param type テーブルの種類(TV or VOD)
      * @return SQLiteDatabaseクラスの戻り値(削除されたレコード数)
      */
-    public static String getClipKeyTableName(final ClipKeyListDao.TABLE_TYPE type) {
+    public static String getClipKeyTableName(final ClipKeyListDao.TableTypeEnum type) {
         String tableName = null;
         switch (type) {
             case TV:
@@ -293,6 +294,8 @@ public class DBUtils {
                 break;
             case VOD:
                 tableName = DBConstants.VOD_CLIP_KEY_LIST_TABLE_NAME;
+                break;
+            default:
                 break;
         }
         return tableName;

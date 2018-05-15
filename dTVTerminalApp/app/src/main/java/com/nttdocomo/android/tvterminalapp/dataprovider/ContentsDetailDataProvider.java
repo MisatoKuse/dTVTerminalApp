@@ -458,15 +458,15 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
             if (!TextUtils.isEmpty(chNo)) {
                 ChannelInfo channel = new ChannelInfo();
                 channel.setTitle(title);
-                channel.setChNo(Integer.parseInt(chNo));
+                channel.setChannelNo(Integer.parseInt(chNo));
                 channel.setServiceId(serviceId);
                 channel.setStartDate(startDate);
                 channel.setEndDate(endDate);
-                channel.setChType(chType);
-                channel.setPuId(puId);
-                channel.setSubPuId(subPuId);
-                channel.setChPackPuId(chPackPuId);
-                channel.setChPackSubPuId(chPackSubPuId);
+                channel.setChannelType(chType);
+                channel.setPurchaseId(puId);
+                channel.setSubPurchaseId(subPuId);
+                channel.setChannelPackPurchaseId(chPackPuId);
+                channel.setChannelPackSubPurchaseId(chPackSubPuId);
                 channels.add(channel);
             }
         }
@@ -681,14 +681,14 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
      * @param metaFullData コンテンツ詳細データ
      */
     private void requestGetClipKeyList(final VodMetaFullData metaFullData) {
-        ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(metaFullData.getDisp_type(), metaFullData.getmContent_type());
+        ClipKeyListDao.TableTypeEnum tableType = decisionTableType(metaFullData.getDisp_type(), metaFullData.getmContent_type());
         if (tableType != null) {
             switch (tableType) {
                 case TV:
-                    getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.TV));
+                    getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.TV));
                     break;
                 case VOD:
-                    getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+                    getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
                     break;
             }
         } else {

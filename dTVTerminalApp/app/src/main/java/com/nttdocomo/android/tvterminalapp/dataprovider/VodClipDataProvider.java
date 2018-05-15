@@ -137,7 +137,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
             // クリップキー一覧を取得
             if (mRequiredClipKeyList) {
                 mClipKeyListDataProvider = new ClipKeyListDataProvider(mContext);
-                mClipKeyListDataProvider.getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+                mClipKeyListDataProvider.getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
             }
             getVodClipListData(pagerOffset);
         } else {

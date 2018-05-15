@@ -53,13 +53,13 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
         //mFinishedBytes=0;
         DtcpDownloadParam param = (DtcpDownloadParam) getDownloadParam();
         if (!param.isParamValid()) {
-            onFail(DownloadListener.DLError.DLError_ParamError);
+            onFail(DownloadListener.DownLoadError.DLError_ParamError);
             return;
         }
 
         Context context = param.getContext();
         if (null == context) {
-            onFail(DownloadListener.DLError.DLError_Other);
+            onFail(DownloadListener.DownLoadError.DLError_Other);
             return;
         }
 
@@ -80,16 +80,16 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
     private void errors(final DlnaDownloadRet res) {
         switch (res) {
             case DownloadRet_CopyKeyFileFailed:
-                onFail(DownloadListener.DLError.DLError_CopyKeyFileFailed);
+                onFail(DownloadListener.DownLoadError.DLError_CopyKeyFileFailed);
                 break;
             case DownloadRet_ParamError:
-                onFail(DownloadListener.DLError.DLError_ParamError);
+                onFail(DownloadListener.DownLoadError.DLError_ParamError);
                 break;
             case DownloadRet_Unactivated:
-                onFail(DownloadListener.DLError.DLError_Unactivated);
+                onFail(DownloadListener.DownLoadError.DLError_Unactivated);
                 break;
             case DownloadRet_OtherError:
-                onFail(DownloadListener.DLError.DLError_Other);
+                onFail(DownloadListener.DownLoadError.DLError_Other);
                 break;
             case DownloadRet_Succeed:
                 break;
@@ -145,7 +145,7 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
                 onStopIt();
                 break;
             case DOWNLOADER_STATUS_ERROR_OCCURED:
-                onFail(DownloadListener.DLError.DLError_Download);
+                onFail(DownloadListener.DownLoadError.DLError_Download);
                 onStopIt();
                 break;
             case DOWNLOADER_STATUS_CANCELLED:

@@ -25,7 +25,7 @@ public abstract class DownloaderBase {
     /**トータルBytesサイズ.*/
     private int mTotalBytes;
     /**エラー.*/
-    private DownloadListener.DLError mError;
+    private DownloadListener.DownLoadError mError;
     /**ダウンロードリスナー.*/
     private DownloadListener mDownloadListener;
     /**d_.*/
@@ -83,7 +83,7 @@ public abstract class DownloaderBase {
     protected void reset() {
         mDownloadedBytes = 0;
         mTotalBytes = 0;
-        mError = DownloadListener.DLError.DLError_NoError;
+        mError = DownloadListener.DownLoadError.DLError_NoError;
         setDownloading(false);
     }
 
@@ -205,7 +205,7 @@ public abstract class DownloaderBase {
      * ダウンロードエラー発生の時、コールされる.
      * @return ダウンロードエラー取得.
      */
-    DownloadListener.DLError isError() {
+    DownloadListener.DownLoadError isError() {
         return mError;
     }
 
@@ -269,7 +269,7 @@ public abstract class DownloaderBase {
      * Sub Classでダウンロード成功したとき、この関数をコール.
      * @param error error
      */
-    protected void onFail(final DownloadListener.DLError error) {
+    protected void onFail(final DownloadListener.DownLoadError error) {
         setDownloading(false);
         if (null != mDownloadListener && null != mDownloadParam) {
             final String savePath = mDownloadParam.getSavePath() + File.separator + mDownloadParam.getSaveFileName();

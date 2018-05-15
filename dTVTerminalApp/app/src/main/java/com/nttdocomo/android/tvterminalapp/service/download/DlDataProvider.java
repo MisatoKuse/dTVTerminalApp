@@ -205,12 +205,12 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
      * ダウンロードエラー発生の時、コールされる.
      * @return エラータイプ
      */
-    public DLError isError() {
+    public DownLoadError isError() {
         DownloadService ds = getDownloadService();
         if (null != ds) {
             return ds.isError();
         }
-        return DLError.DLError_NoError;
+        return DownLoadError.DLError_NoError;
     }
 
     /**
@@ -250,7 +250,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     @Override
-    public void onFail(final DLError error, final String savePath) {
+    public void onFail(final DownLoadError error, final String savePath) {
         int paramInt = error.ordinal();
         sendBroadcast(DownloadService.DONWLOAD_OnFail, DownloadService.DONWLOAD_ParamString, savePath, DownloadService.DONWLOAD_ParamInt, paramInt);
         DownloadService ds = getDownloadService();

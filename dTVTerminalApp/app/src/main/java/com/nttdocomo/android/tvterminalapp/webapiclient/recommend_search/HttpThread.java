@@ -17,7 +17,7 @@ import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
-import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOtt;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import java.io.BufferedReader;
@@ -112,7 +112,7 @@ public class HttpThread extends Thread {
      *
      * 次のワンタイムパスワードの取得を許可するのに使用する
      */
-    private DaccountGetOTT mGetOtt = null;
+    private DaccountGetOtt mGetOtt = null;
     /**
      * クッキーマネージャー.
      */
@@ -198,7 +198,7 @@ public class HttpThread extends Thread {
      */
     public HttpThread(final String url, final HttpThreadFinish httpThreadFinish,
                       final Context context, final String oneTimePassword,
-                      final DaccountGetOTT getOtt) {
+                      final DaccountGetOtt getOtt) {
         //ワンタイムパスワードのセット
         mOneTimePassword = oneTimePassword;
 
@@ -222,7 +222,7 @@ public class HttpThread extends Thread {
      */
     public HttpThread(final String url, final Handler handler,
                       final HttpThreadFinish httpThreadFinish, final Context context,
-                      final String oneTimePassword, final DaccountGetOTT getOtt) {
+                      final String oneTimePassword, final DaccountGetOtt getOtt) {
         //ワンタイムパスワードのセット
         mOneTimePassword = oneTimePassword;
 
@@ -476,6 +476,8 @@ public class HttpThread extends Thread {
                 while ((buffer = bufferedReader.readLine()) != null) {
                     stringBuffer.append(buffer);
                 }
+            } catch (IOException e) {
+                DTVTLogger.debug(e);
             } finally {
                 //次回のワンタイムパスワードの取得の許可
                 if (mGetOtt != null) {

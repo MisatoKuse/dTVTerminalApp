@@ -299,7 +299,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         String rankNum = contentsData.getRank();
         String startTime = contentsData.getPublishStartDate();
         Boolean newFlag = newContentsCheck(startTime);
-        viewHolder.mTime.setVisibility(View.GONE);
+        if (viewHolder.mTime != null) {
+            viewHolder.mTime.setVisibility(View.GONE);
+        }
         if (TextUtils.isEmpty(title)) {
             title = contentsData.getTitle();
         }

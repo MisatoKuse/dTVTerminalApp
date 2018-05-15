@@ -41,7 +41,7 @@ import java.util.List;
  * ビデオコンテンツ一覧画面.
  */
 public class VideoContentListActivity extends BaseActivity implements View.OnClickListener,
-        VideoContentProvider.apiVideoContentDataProviderCallback,
+        VideoContentProvider.ApiVideoContentDataProviderCallback,
         AbsListView.OnScrollListener, AdapterView.OnItemClickListener,
         AbsListView.OnTouchListener {
 

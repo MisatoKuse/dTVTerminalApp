@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.relayclient;
 
+import com.nttdocomo.android.ocsplib.bouncycastle.util.encoders.EncoderException;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherConfig;
 import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherUtil;
@@ -106,7 +107,7 @@ public class StbConnectRelayClient {
             System.arraycopy(encodedData, 0, sum, actionBytes.length, encodedData.length);
 
             ret = mTcpClient.send(sum, sum.length);
-        } catch (Exception e) {
+        } catch (EncoderException e) {
             DTVTLogger.debug(e);
         }
         return ret;
@@ -139,7 +140,7 @@ public class StbConnectRelayClient {
         return receivedData;
     }
     /**
-     * 鍵交換リクエストの結果を受信する
+     * 鍵交換リクエストの結果を受信する.
      *
      * @return 成功:true
      */
@@ -176,8 +177,6 @@ public class StbConnectRelayClient {
                 }
             }
         } catch (SocketException e) {
-            DTVTLogger.debug(e);
-        } catch (Exception e) {
             DTVTLogger.debug(e);
         } finally {
             if (dataSocket != null) {

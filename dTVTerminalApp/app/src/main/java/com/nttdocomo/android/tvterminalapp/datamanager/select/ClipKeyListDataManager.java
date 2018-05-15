@@ -46,7 +46,7 @@ public class ClipKeyListDataManager {
      * @return クリップキーリスト
      */
     private synchronized List<Map<String, String>> selectClipKeyListData(
-            final ClipKeyListDao.TABLE_TYPE type, final String selection, final String[] args) {
+            final ClipKeyListDao.TableTypeEnum type, final String selection, final String[] args) {
 //        DTVTLogger.start(); //必要な時にコメントを解除して使用
 
         //データ存在チェック
@@ -82,7 +82,7 @@ public class ClipKeyListDataManager {
      * @param contentType コンテンツタイプ
      * @return Where句
      */
-    private String getSQLWhereStr(final ClipKeyListDao.CONTENT_TYPE contentType) {
+    private String getSQLWhereString(final ClipKeyListDao.ContentTypeEnum contentType) {
         StringBuilder strBuilder = new StringBuilder();
 
         switch (contentType) {
@@ -116,10 +116,10 @@ public class ClipKeyListDataManager {
      * @return クリップキーリスト
      */
     public List<Map<String, String>> selectClipKeyDbTvData(
-            final ClipKeyListDao.TABLE_TYPE tableType, final String serviceId,
+            final ClipKeyListDao.TableTypeEnum tableType, final String serviceId,
             final String eventId, final String type) {
         String[] args = {serviceId, eventId, type};
-        String selection = getSQLWhereStr(ClipKeyListDao.CONTENT_TYPE.TV);
+        String selection = getSQLWhereString(ClipKeyListDao.ContentTypeEnum.TV);
         return selectClipKeyListData(tableType, selection, args);
     }
 
@@ -131,9 +131,9 @@ public class ClipKeyListDataManager {
      * @return クリップキーリスト
      */
     public List<Map<String, String>> selectClipKeyDbDtvData(
-            final ClipKeyListDao.TABLE_TYPE tableType, final String titleId) {
+            final ClipKeyListDao.TableTypeEnum tableType, final String titleId) {
         String[] args = {titleId};
-        String selection = getSQLWhereStr(ClipKeyListDao.CONTENT_TYPE.DTV);
+        String selection = getSQLWhereString(ClipKeyListDao.ContentTypeEnum.DTV);
 
         return selectClipKeyListData(tableType, selection, args);
     }
@@ -146,9 +146,9 @@ public class ClipKeyListDataManager {
      * @return クリップキーリスト
      */
     public List<Map<String, String>> selectClipKeyDbVodData(
-            final ClipKeyListDao.TABLE_TYPE tableType, final String crid) {
+            final ClipKeyListDao.TableTypeEnum tableType, final String crid) {
         String[] args = {crid};
-        String selection = getSQLWhereStr(ClipKeyListDao.CONTENT_TYPE.VOD);
+        String selection = getSQLWhereString(ClipKeyListDao.ContentTypeEnum.VOD);
         return selectClipKeyListData(tableType, selection, args);
     }
 
@@ -159,7 +159,7 @@ public class ClipKeyListDataManager {
      * @return クリップキーリスト
      */
     public List<Map<String, String>> selectListData(
-            final ClipKeyListDao.TABLE_TYPE tableType) {
+            final ClipKeyListDao.TableTypeEnum tableType) {
         return selectClipKeyListData(tableType, null, null);
     }
 }

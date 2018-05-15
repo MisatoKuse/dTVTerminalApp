@@ -147,7 +147,7 @@ public class TvScheduleInsertDataManager {
             synchronized (channelInformation) {
                 for (ChannelInfo channelInfo : channelInformation) {
                     //DB名としてチャンネル番号を取得.
-                    String chNo = String.valueOf(channelInfo.getChNo());
+                    String chNo = String.valueOf(channelInfo.getChannelNo());
 
                     //各種オブジェクト作成
                     DBHelperChannel tvScheduleListDBHelper = new DBHelperChannel(mContext, chNo);

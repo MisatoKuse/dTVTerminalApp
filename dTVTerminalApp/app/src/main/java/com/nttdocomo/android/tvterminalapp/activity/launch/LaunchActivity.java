@@ -40,7 +40,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     /**
      * 初回起動判定Flag.
      */
-    private static boolean mIsFirstRun = true;
+    private static boolean sIsFirstRun = true;
     /**
      * 次のアクティビティ情報.
      */
@@ -102,7 +102,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
              * to do: DLNA起動失敗の場合、仕様はないので、ここで将来対応
              */
         }
-        mIsFirstRun = !SharedPreferencesUtils.getSharedPreferencesIsDisplayedTutorial(this);
+        sIsFirstRun = !SharedPreferencesUtils.getSharedPreferencesIsDisplayedTutorial(this);
 
         //次に遷移する画面を選択する
         selectScreenTransition();
@@ -217,7 +217,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     }
 
     @Override
-    public String getScreenID() {
+    public String getScreenId() {
         return getString(R.string.str_launch_title);
     }
 
@@ -244,7 +244,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     private void selectScreenTransition() {
         DTVTLogger.start();
 
-        if (mIsFirstRun) {
+        if (sIsFirstRun) {
             //チュートリアル画面に遷移
             mNextActivity = new Intent(getApplicationContext(), TutorialActivity.class);
 

@@ -658,7 +658,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             } else if (DownloadService.DONWLOAD_OnFail.equals(intent.getAction())) {
                 RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
                 String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);
-                int error = intent.getIntExtra(DownloadService.DONWLOAD_ParamInt, DownloadListener.DLError.DLError_NoError.ordinal());
+                int error = intent.getIntExtra(DownloadService.DONWLOAD_ParamInt, DownloadListener.DownLoadError.DLError_NoError.ordinal());
                 baseFragment.onDownloadFailByBg(fullPath);
             } else if (DownloadService.DONWLOAD_OnLowStorageSpace.equals(intent.getAction())) {
                 RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);

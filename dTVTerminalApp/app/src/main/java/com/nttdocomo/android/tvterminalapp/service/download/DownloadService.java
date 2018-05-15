@@ -149,11 +149,11 @@ public class DownloadService extends Service implements DownloadListener {
      * ダウンロードエラー発生の時、コールされる.
      * @return ダウンロードエラータイプ
      */
-    public DLError isError() {
+    public DownLoadError isError() {
         if (null != mDownloaderBase) {
             return mDownloaderBase.isError();
         }
-        return DLError.DLError_NoError;
+        return DownLoadError.DLError_NoError;
     }
 
     /**
@@ -281,7 +281,7 @@ public class DownloadService extends Service implements DownloadListener {
      * @param error　error
      */
     @Override
-    public void onFail(final DLError error, final String savePath) {
+    public void onFail(final DownLoadError error, final String savePath) {
         if (null != mDownloadServiceListener) {
             mDownloadServiceListener.onFail(error, savePath);
         }

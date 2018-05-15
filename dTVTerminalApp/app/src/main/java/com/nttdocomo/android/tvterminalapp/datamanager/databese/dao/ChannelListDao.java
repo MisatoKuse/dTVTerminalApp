@@ -11,13 +11,13 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 
 /**
  * チャンネルリストData Access Object.

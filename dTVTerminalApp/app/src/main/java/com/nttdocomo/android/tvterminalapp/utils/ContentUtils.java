@@ -788,7 +788,7 @@ public class ContentUtils {
         String vodServiceId = metaFullData.getmService_id();
         String channelServiceId = channelInfo.getServiceId();
         String tvService = metaFullData.getmTv_service();
-        String chType = channelInfo.getChType();
+        String chType = channelInfo.getChannelType();
         long publishStartDate = metaFullData.getPublish_start_date();
         long publishEndDate = metaFullData.getPublish_end_date();
         long nowDate = DateUtils.getNowTimeFormatEpoch();
@@ -948,10 +948,10 @@ public class ContentUtils {
         //一致した場合
         if (chList != null) {
             //対象チャンネルのpuid、sub_puid、CHPACK-puid、CHPACK-sub_puidと購入済みチャンネル一覧取得
-            String puId = channelInfo.getPuId();
-            String subPuId = channelInfo.getSubPuId();
-            String chPackPuId = channelInfo.getChPackPuId();
-            String chPackSubPuId = channelInfo.getChPackSubPuId();
+            String puId = channelInfo.getPurchaseId();
+            String subPuId = channelInfo.getSubPurchaseId();
+            String chPackPuId = channelInfo.getChannelPackPurchaseId();
+            String chPackSubPuId = channelInfo.getChannelPackSubPurchaseId();
             ArrayList<ActiveData> activeDataList = response.getChActiveData();
             long nowDate = DateUtils.getNowTimeFormatEpoch();
             //複数のvalidEndDateから期限が最も未来のものを抽出する()

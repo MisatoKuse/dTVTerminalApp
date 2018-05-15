@@ -38,7 +38,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
     /**
      * 前回の日時.
      */
-    private long beforeDate = 0;
+    private long mBeforeDate = 0;
 
     /**
      * dTV契約ステータス.
@@ -132,7 +132,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
         DTVTLogger.start();
 
         //今設定されている最終更新日時を控えておく
-        beforeDate = SharedPreferencesUtils.getSharedPreferencesUserInfoDate(mContext);
+        mBeforeDate = SharedPreferencesUtils.getSharedPreferencesUserInfoDate(mContext);
 
         //通信状況の取得
         if (!isOnline(mContext)) {
@@ -222,7 +222,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
         boolean changeFlag = true;
 
         //初回実行時はホーム画面に飛ばさないために、許可フラグはfalseにする
-        if (beforeDate == Long.MIN_VALUE) {
+        if (mBeforeDate == Long.MIN_VALUE) {
             DTVTLogger.debug("first exec");
             changeFlag = false;
         }

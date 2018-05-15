@@ -179,13 +179,13 @@ public class ContentDetailActivity extends BaseActivity implements
     /** サムネイルプロバイダー .*/
     private ThumbnailProvider mThumbnailProvider = null;
     /** サムネイル取得処理ストップフラグ .*/
-    private boolean isDownloadStop = false;
+    private boolean mIsDownloadStop = false;
     /** コンテンツ詳細フラグメントファクトリー.*/
     private DtvContentsDetailFragmentFactory mFragmentFactory = null;
     /** ビューページャアダプター.*/
-    private ContentsDetailPagerAdapter contentsDetailPagerAdapter;
+    private ContentsDetailPagerAdapter mContentsDetailPagerAdapter;
     /**購入済みVODレスポンス.*/
-    private PurchasedVodListResponse response = null;
+    private PurchasedVodListResponse mResponse = null;
     /** タブー名.*/
     private String[] mTabNames = null;
     /**表示状態.*/
@@ -229,7 +229,7 @@ public class ContentDetailActivity extends BaseActivity implements
     /** 日付インディーズ.*/
     private int mDateIndex = 0;
     /** 日付リスト.*/
-    private String[] dateList = null;
+    private String[] mDateList = null;
     /* コンテンツ詳細 end */
 
     /**DTVバージョン.*/
@@ -247,7 +247,7 @@ public class ContentDetailActivity extends BaseActivity implements
     /**DTVパッケージ名.*/
     private static final String DTV_PACKAGE_NAME = "jp.co.nttdocomo.dtv";
     /**エラーメッセージ.*/
-    private String errorMessage;
+    private String mErrorMessage;
     /*DTV起動*/
 
     /**dアニメストアパッケージ名.*/
@@ -345,7 +345,7 @@ public class ContentDetailActivity extends BaseActivity implements
     /**再生するビデオ属性.*/
     private MediaVideoInfo mCurrentMediaInfo = null;
     /**プログレースRelativeLayout.*/
-    private RelativeLayout progressLayout = null;
+    private RelativeLayout mProgressLayout = null;
     /**録画コントローラビューRelativeLayout.*/
     private RelativeLayout mRecordCtrlView = null;
     /**ビデオコントローラバーRelativeLayout.*/
@@ -420,7 +420,7 @@ public class ContentDetailActivity extends BaseActivity implements
     /** ヘッダーチェック.*/
     private boolean mIsFromHeader = false;
     /** 放送中フラグ.*/
-    private boolean isVideoBroadcast = false;
+    private boolean mIsVideoBroadcast = false;
     /** チャンネル日付.*/
     private String mChannelDate = null;
     /** サービスID(ぷらら).*/
@@ -531,6 +531,8 @@ public class ContentDetailActivity extends BaseActivity implements
                 dtvContentsDetailFragment.mOtherContentsDetailData = contentsDetailDataProvider.checkClipStatus(dtvContentsDetailFragment.mOtherContentsDetailData);
                 dtvContentsDetailFragment.resumeClipButton();
                 break;
+            default:
+                break;
         }
         DTVTLogger.end();
     }
@@ -566,6 +568,8 @@ public class ContentDetailActivity extends BaseActivity implements
                 if (channelFragment != null) {
                     channelFragment.stopContentsAdapterCommunication();
                 }
+                break;
+            default:
                 break;
         }
     }
@@ -612,6 +616,8 @@ public class ContentDetailActivity extends BaseActivity implements
                 if (channelFragment != null) {
                     channelFragment.enableContentsAdapterCommunication();
                 }
+                break;
+            default:
                 break;
         }
         DTVTLogger.end();
@@ -873,11 +879,11 @@ public class ContentDetailActivity extends BaseActivity implements
                             hideCtrlView();
                         }
                     } else {
-                        if (!isVideoBroadcast) {
+                        if (!mIsVideoBroadcast) {
                             mVideoPlayPause.setVisibility(View.VISIBLE);
                             mVideoRewind10.setVisibility(View.VISIBLE);
                             mVideoFast30.setVisibility(View.VISIBLE);
-                            progressLayout.setVisibility(View.VISIBLE);
+                            mProgressLayout.setVisibility(View.VISIBLE);
                             mVideoTotalTime.setVisibility(View.VISIBLE);
                             mVideoCurTime.setVisibility(View.VISIBLE);
                         }
@@ -1012,12 +1018,12 @@ public class ContentDetailActivity extends BaseActivity implements
         } else {
             type2 = type;
         }
-        isVideoBroadcast = datas.isIsLive();
+        mIsVideoBroadcast = datas.isIsLive();
         boolean isSupportedByteSeek = false;
         boolean isSupportedTimeSeek = false;
         boolean isAvailableConnectionStalling = false;
         boolean isRemote = false;
-        if (isVideoBroadcast) {
+        if (mIsVideoBroadcast) {
             isAvailableConnectionStalling = true;
         } else {
             isSupportedByteSeek = true;
@@ -1046,7 +1052,7 @@ public class ContentDetailActivity extends BaseActivity implements
                 isSupportedByteSeek,             //DLNAのByteシークをサポートしているか
                 isSupportedTimeSeek,             //DLNAのTimeシークをサポートしているか
                 isAvailableConnectionStalling,   //DLNAのAvailableConnectionStallingかどうか
-                isVideoBroadcast,                //放送中コンテンツかどうか
+                mIsVideoBroadcast,                //放送中コンテンツかどうか
                 isRemote,                        //リモートアクセスコンテンツかどうか
                 title,                           //メディアのタイトル
                 contentFormat                    //DIDLのres protocolInfoの3番目のフィールド
@@ -1169,12 +1175,12 @@ public class ContentDetailActivity extends BaseActivity implements
         if (mScaledDownProgramListDataProvider == null) {
             mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
         }
-        int[] channelNos = new int[]{mChannel.getChNo()};
-        dateList = null;
+        int[] channelNos = new int[]{mChannel.getChannelNo()};
+        mDateList = null;
         if (mDateIndex <= 6) { //一週間以内
-            dateList = new String[1];
+            mDateList = new String[1];
         }
-        if (dateList != null) {
+        if (mDateList != null) {
             Calendar calendar = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DD, Locale.JAPAN);
             try {
@@ -1193,7 +1199,7 @@ public class ContentDetailActivity extends BaseActivity implements
                 }
                 mChannelDate = sdf.format(calendar.getTime());
                 sdf = new SimpleDateFormat(DateUtils.DATE_NOMARK_YYYYMMDD, Locale.JAPAN);
-                dateList[0] = sdf.format(calendar.getTime());
+                mDateList[0] = sdf.format(calendar.getTime());
                 mDateIndex++;
             } catch (ParseException e) {
                 channelLoadCompleted();
@@ -1206,7 +1212,7 @@ public class ContentDetailActivity extends BaseActivity implements
                 channelLoadCompleted();
                 return;
             }
-            mScaledDownProgramListDataProvider.getProgram(channelNos, dateList);
+            mScaledDownProgramListDataProvider.getProgram(channelNos, mDateList);
         } else {
             channelLoadCompleted();
         }
@@ -1299,6 +1305,8 @@ public class ContentDetailActivity extends BaseActivity implements
                 message = getString(R.string.contents_detail_hikari_tv_agreement);
                 buttonText = getString(R.string.contents_detail_contract_leading_button);
                 break;
+            default:
+                break;
         }
         contractLeadingButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1330,7 +1338,7 @@ public class ContentDetailActivity extends BaseActivity implements
             if (mThumbnailProvider == null) {
                 mThumbnailProvider = new ThumbnailProvider(this);
             }
-            if (!isDownloadStop) {
+            if (!mIsDownloadStop) {
                 mThumbnail.setTag(url);
                 Bitmap bitmap = mThumbnailProvider.getThumbnailImage(mThumbnail, url);
                 if (bitmap != null) {
@@ -1422,6 +1430,8 @@ public class ContentDetailActivity extends BaseActivity implements
                 case D_ANIME_STORE:
                     setThumbnailText(getResources().getString(R.string.d_anime_store_content_service_start_text));
                     break;
+                default:
+                    break;
             }
             setTitleAndThumbnail(mDetailData.getTitle(), mDetailData.getThumb());
         } else {  //plalaサーバーから
@@ -1463,9 +1473,9 @@ public class ContentDetailActivity extends BaseActivity implements
         }
 
         mFragmentFactory = new DtvContentsDetailFragmentFactory();
-        contentsDetailPagerAdapter
+        mContentsDetailPagerAdapter
                 = new ContentsDetailPagerAdapter(getSupportFragmentManager());
-        mViewPager.setAdapter(contentsDetailPagerAdapter);
+        mViewPager.setAdapter(mContentsDetailPagerAdapter);
         mViewPager.addOnPageChangeListener(new ViewPager
                 .SimpleOnPageChangeListener() {
             @Override
@@ -1529,7 +1539,7 @@ public class ContentDetailActivity extends BaseActivity implements
         mVideoFullScreen = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_full_screen_iv);
         mVideoTotalTime = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_total_time_tv);
         mVideoSeekBar = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_seek_bar_sb);
-        progressLayout = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_progress_ll);
+        mProgressLayout = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_progress_ll);
         TextView nowTextView = mRecordCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_player_now_on_air_tv);
         mTvTitle = playerViewLayout.findViewById(R.id.tv_player_main_layout_video_ctrl_player_title);
         mTvLogo = playerViewLayout.findViewById(R.id.tv_player_main_layout_video_ctrl_player_logo);
@@ -1643,7 +1653,7 @@ public class ContentDetailActivity extends BaseActivity implements
     private void setPlayerProgressView(final boolean isLandscape) {
         if (isLandscape) {
             //端末横向き
-            if (isVideoBroadcast) {
+            if (mIsVideoBroadcast) {
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                         LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
@@ -1655,7 +1665,7 @@ public class ContentDetailActivity extends BaseActivity implements
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
                 layoutParams.setMargins(0, 0, 0, (int) getDensity() * MEDIA_CONTROL_BAR_UNDER_MARGIN);
-                progressLayout.setLayoutParams(layoutParams);
+                mProgressLayout.setLayoutParams(layoutParams);
 
                 layoutParams = new RelativeLayout.LayoutParams(
                         LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -1690,16 +1700,16 @@ public class ContentDetailActivity extends BaseActivity implements
                 layoutParams.setMargins(0, 0, 0, (int) getDensity() * SEEKBAR_BOTTOM_MARGIN);
                 mVideoSeekBar.setLayoutParams(layoutParams);
 
-                progressLayout.addView(mVideoCurTime);
-                progressLayout.addView(mVideoFullScreen, 2);
-                progressLayout.addView(mVideoTotalTime, 3);
+                mProgressLayout.addView(mVideoCurTime);
+                mProgressLayout.addView(mVideoFullScreen, 2);
+                mProgressLayout.addView(mVideoTotalTime, 3);
             }
         } else {
             //端末縦向き
-            if (progressLayout.getChildCount() > 1) {
-                progressLayout.removeViewAt(0);
-                progressLayout.removeViewAt(1);
-                progressLayout.removeViewAt(1);
+            if (mProgressLayout.getChildCount() > 1) {
+                mProgressLayout.removeViewAt(0);
+                mProgressLayout.removeViewAt(1);
+                mProgressLayout.removeViewAt(1);
                 mVideoCtrlBar.addView(mVideoCurTime);
                 mVideoCtrlBar.addView(mVideoFullScreen);
                 mVideoCtrlBar.addView(mVideoTotalTime);
@@ -1823,6 +1833,8 @@ public class ContentDetailActivity extends BaseActivity implements
                 initContentData();
                 initTab();
                 break;
+            default:
+                break;
         }
     }
 
@@ -1945,7 +1957,7 @@ public class ContentDetailActivity extends BaseActivity implements
         mTabLayout.resetTabView(mTabNames);
         mFragmentFactory.delFragment();
         mViewPager.addOnPageChangeListener(null);
-        contentsDetailPagerAdapter.notifyDataSetChanged();
+        mContentsDetailPagerAdapter.notifyDataSetChanged();
     }
     //region ContentsDetailDataProvider.ApiDataProviderCallback
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
@@ -2214,7 +2226,7 @@ public class ContentDetailActivity extends BaseActivity implements
                         String start = startTime.substring(0, 10) + startTime.substring(11, 19);
                         String end = endTime.substring(0, 10) + endTime.substring(11, 19);
                         if (!isLastDate(end)) {
-                            if (dateList != null) {
+                            if (mDateList != null) {
                                 ContentsData contentsData = new ContentsData();
                                 if (!isFirst) {
                                     if (mDateIndex == 1) {
@@ -2388,8 +2400,8 @@ public class ContentDetailActivity extends BaseActivity implements
                             if (isAppInstalled(ContentDetailActivity.this, DTV_PACKAGE_NAME)) {
                                 //バージョンチェック
                                 if (localVersionCode < DTV_VERSION_STANDARD) {
-                                    errorMessage = getResources().getString(R.string.dtv_content_service_update_dialog);
-                                    showErrorDialog(errorMessage);
+                                    mErrorMessage = getResources().getString(R.string.dtv_content_service_update_dialog);
+                                    showErrorDialog(mErrorMessage);
                                 } else {
                                     //RESERVED4は4の場合
                                     if (RESERVED4_TYPE4.equals(mDetailData.getReserved4())) {
@@ -2421,8 +2433,8 @@ public class ContentDetailActivity extends BaseActivity implements
                             if (isAppInstalled(ContentDetailActivity.this, DANIMESTORE_PACKAGE_NAME)) {
                                 //バージョンチェック
                                 if (localVersionCode < DANIMESTORE_VERSION_STANDARD) {
-                                    errorMessage = getResources().getString(R.string.d_anime_store_content_service_update_dialog);
-                                    showErrorDialog(errorMessage);
+                                    mErrorMessage = getResources().getString(R.string.d_anime_store_content_service_update_dialog);
+                                    showErrorDialog(mErrorMessage);
                                 } else {
                                     startApp(UrlConstants.WebUrl.DANIMESTORE_START_URL + mDetailData.getContentsId());
                                 }
@@ -2442,8 +2454,8 @@ public class ContentDetailActivity extends BaseActivity implements
                                 //バージョンコードは15
                                 int localVersionCode = getVersionCode(DTVCHANNEL_PACKAGE_NAME);
                                 if (localVersionCode < DTVCHANNEL_VERSION_STANDARD) {
-                                    errorMessage = getResources().getString(R.string.dtv_channel_service_update_dialog);
-                                    showErrorDialog(errorMessage);
+                                    mErrorMessage = getResources().getString(R.string.dtv_channel_service_update_dialog);
+                                    showErrorDialog(mErrorMessage);
                                 } else {    //テレビ再生  「categoryId」が「01」の場合
                                     if (DTV_CHANNEL_CATEGORY_BROADCAST.equals(mDetailData.getCategoryId())) {
                                         startApp(UrlConstants.WebUrl.DTVCHANNEL_TELEVISION_START_URL + mDetailData.getChannelId());
@@ -2481,8 +2493,8 @@ public class ContentDetailActivity extends BaseActivity implements
                                     if (isAppInstalled(ContentDetailActivity.this, DTV_PACKAGE_NAME)) {
                                         //バージョンチェック
                                         if (localVersionCode < DTV_VERSION_STANDARD) {
-                                            errorMessage = getResources().getString(R.string.dtv_content_service_update_dialog);
-                                            showErrorDialog(errorMessage);
+                                            mErrorMessage = getResources().getString(R.string.dtv_content_service_update_dialog);
+                                            showErrorDialog(mErrorMessage);
                                         } else {
                                             if (METARESPONSE1.equals(mDetailFullData.getDtvType())) {
                                                 startApp(UrlConstants.WebUrl.WORK_START_TYPE + mDetailFullData.getTitle_id());
@@ -2509,8 +2521,8 @@ public class ContentDetailActivity extends BaseActivity implements
                                         //バージョンコードは15
                                         int localVersionCode = getVersionCode(DTVCHANNEL_PACKAGE_NAME);
                                         if (localVersionCode < DTVCHANNEL_VERSION_STANDARD) {
-                                            errorMessage = getResources().getString(R.string.dtv_channel_service_update_dialog);
-                                            showErrorDialog(errorMessage);
+                                            mErrorMessage = getResources().getString(R.string.dtv_channel_service_update_dialog);
+                                            showErrorDialog(mErrorMessage);
                                         } else {
                                             if (TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(mDetailFullData.getmTv_service())) {
                                                 //「contents_type」が「0」または未設定
@@ -2676,13 +2688,13 @@ public class ContentDetailActivity extends BaseActivity implements
                             mDetailFullData.getCid(), mDetailFullData.getCrid());
                 } else if (BVFLG_FLAG_ZERO.equals(mDetailFullData.getBvflg()) || TextUtils.isEmpty(mDetailFullData.getBvflg())) {
                     //liinfを"|"区切りで分解する
-                    if (response == null) {
+                    if (mResponse == null) {
                         if (!mIsFromHeader) {
                             setRemoteProgressVisible(View.GONE);
                         }
                         return;
                     }
-                    ArrayList<ActiveData> activeDatas = response.getVodActiveData();
+                    ArrayList<ActiveData> activeDatas = mResponse.getVodActiveData();
                     //ひかりアプリ起動フラグ、くるくる処理ちゃんと消えるため
                     boolean isStarted = false;
                     for (String liinf : liinfArray) {
@@ -2820,19 +2832,21 @@ public class ContentDetailActivity extends BaseActivity implements
             }
         }
         if (mDetailData != null) {
-            if (DTV_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
-                mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
-                        R.drawable.remote_watch_by_tv_bottom_corner_dtv, null));
-            } else if (D_ANIMATION_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
-                mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
-                        R.drawable.remote_watch_by_tv_bottom_corner_d_anime, null));
-            } else if (DTV_CHANNEL_CONTENTS_SERVICE_ID == mDetailData.getServiceId()
-                    || DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
-                mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
-                        R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
-            } else {
-                mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
-                        R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
+            switch (mDetailData.getServiceId()) {
+                case DTV_CONTENTS_SERVICE_ID:
+                    mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
+                            R.drawable.remote_watch_by_tv_bottom_corner_dtv, null));
+                break;
+                case D_ANIMATION_CONTENTS_SERVICE_ID:
+                    mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
+                            R.drawable.remote_watch_by_tv_bottom_corner_d_anime, null));
+                    break;
+                case DTV_CHANNEL_CONTENTS_SERVICE_ID:
+                case DTV_HIKARI_CONTENTS_SERVICE_ID:
+                default:
+                    mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
+                            R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
+                    break;
             }
         }
         super.onEndRemoteControl();
@@ -2944,7 +2958,7 @@ public class ContentDetailActivity extends BaseActivity implements
      */
     private void stopThumbnailConnect() {
         DTVTLogger.start();
-        isDownloadStop = true;
+        mIsDownloadStop = true;
         if (mThumbnailProvider != null) {
             mThumbnailProvider.stopConnect();
         }
@@ -2955,7 +2969,7 @@ public class ContentDetailActivity extends BaseActivity implements
      */
     private void enableThumbnailConnect() {
         DTVTLogger.start();
-        isDownloadStop = false;
+        mIsDownloadStop = false;
         if (mThumbnailProvider != null) {
             mThumbnailProvider.enableConnect();
         }
@@ -3257,7 +3271,7 @@ public class ContentDetailActivity extends BaseActivity implements
                 });
                 DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
                 if (dlnaDmsItem != null) {
-                    provider.start(dlnaDmsItem, String.valueOf(mChannel.getChNo()), DlnaUtils.getImageQualitySetting(getApplicationContext()));
+                    provider.start(dlnaDmsItem, String.valueOf(mChannel.getChannelNo()), DlnaUtils.getImageQualitySetting(getApplicationContext()));
                     //TODO チャンネル番号が"1010"でないとデータの取得ができないため暫定的に固定値を設定する場合は次のように実装すること
 //                    provider.start(dlnaDmsItem, "1010");
                 } else {
@@ -3552,6 +3566,8 @@ public class ContentDetailActivity extends BaseActivity implements
                 break;
             case tvScheduleListGet:
                 errorState = mScaledDownProgramListDataProvider.getmTvScheduleError();
+                break;
+            default:
                 break;
         }
 

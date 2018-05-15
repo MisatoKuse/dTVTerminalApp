@@ -100,7 +100,7 @@ import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl;
-import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOtt;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipDeleteWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClient;
 
@@ -314,7 +314,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @return 「Activity」の「画面ID」を戻す
      */
-    public String getScreenID() {
+    public String getScreenId() {
         return "";
     }
 
@@ -2025,7 +2025,7 @@ public class BaseActivity extends FragmentActivity implements
             super.startActivity(intent);
 
             //dアカウントアプリのバインドを解除する
-            final DaccountGetOTT getOtt = new DaccountGetOTT(getApplicationContext());
+            final DaccountGetOtt getOtt = new DaccountGetOtt(getApplicationContext());
             if (getOtt != null) {
                 DTVTLogger.debug("startActivity before unbind");
                 //他の画面に遷移する前に、dアカウントアプリとの連携を終わらせる
@@ -2385,7 +2385,7 @@ public class BaseActivity extends FragmentActivity implements
      */
     private void setOttDisconnectionFlag(final boolean disconnectionFlag) {
         DTVTLogger.start();
-        final DaccountGetOTT getOtt = new DaccountGetOTT();
+        final DaccountGetOtt getOtt = new DaccountGetOtt();
         if (getOtt != null) {
             DTVTLogger.debug("setDisconnectionFlag = " + disconnectionFlag);
             //通信切断フラグを指定された値にセット
@@ -2399,7 +2399,7 @@ public class BaseActivity extends FragmentActivity implements
      */
     private void cancelOttConnection() {
         DTVTLogger.start();
-        final DaccountGetOTT getOtt = new DaccountGetOTT();
+        final DaccountGetOtt getOtt = new DaccountGetOtt();
         if (getOtt != null) {
             //通信キャンセル呼び出し
             getOtt.cancelConnection();

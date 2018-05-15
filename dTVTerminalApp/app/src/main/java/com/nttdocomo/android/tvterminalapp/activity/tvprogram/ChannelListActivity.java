@@ -611,7 +611,7 @@ public class ChannelListActivity extends BaseActivity implements
                         return;
                     }
                     channelInfo = mHikariTvChannelList.get(pos);
-                    mHikariTvChDataProvider.getNowOnAirProgram(channelInfo.getChNo());
+                    mHikariTvChDataProvider.getNowOnAirProgram(channelInfo.getChannelNo());
                     break;
                 case CH_LIST_DATA_TYPE_DCH:
                     if (mdTvChannelList.size() < pos) {
@@ -619,7 +619,7 @@ public class ChannelListActivity extends BaseActivity implements
                         return;
                     }
                     channelInfo = mdTvChannelList.get(pos);
-                    mHikariTvChDataProvider.getNowOnAirProgram(channelInfo.getChNo());
+                    mHikariTvChDataProvider.getNowOnAirProgram(channelInfo.getChannelNo());
                     break;
             }
     }

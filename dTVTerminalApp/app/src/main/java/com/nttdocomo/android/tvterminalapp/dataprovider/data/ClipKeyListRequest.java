@@ -32,7 +32,7 @@ public class ClipKeyListRequest {
     /**
      * リクエストタイプ.
      */
-    public enum REQUEST_PARAM_TYPE {
+    public enum RequestParamType {
         /**
          * TVタイプ.
          */
@@ -46,7 +46,7 @@ public class ClipKeyListRequest {
      * TV種別設定.
      * @param type TV種別
      */
-    public ClipKeyListRequest(final REQUEST_PARAM_TYPE type) {
+    public ClipKeyListRequest(final RequestParamType type) {
         switch (type) {
             case TV:
                 mType = CLIP_KEY_LIST_REQUEST_TYPE_TV;
