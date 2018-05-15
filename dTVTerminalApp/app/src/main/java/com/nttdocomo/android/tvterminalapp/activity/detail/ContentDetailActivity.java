@@ -1257,8 +1257,6 @@ public class ContentDetailActivity extends BaseActivity implements
     private void setThumbnailText(final String content) {
         UserState userState = UserInfoUtils.getUserState(this);
 
-        userState = UserState.CONTRACT_OK_PARING_OK;
-
         if (userState.equals(UserState.LOGIN_NG) && !mIsOtherService) {
             loginNgDisplay();
         } else {
@@ -1301,12 +1299,15 @@ public class ContentDetailActivity extends BaseActivity implements
                         mContractLeadingView.setVisibility(View.GONE);
                     }
                 } else {
-                    if (mDetailFullData.getContentsType().equals(ContentUtils.ContentsType.HIKARI_TV_VOD)) {
-                        imageView.setVisibility(View.GONE);
+                    if (mDetailFullData.getContentsType().equals(ContentUtils.ContentsType.HIKARI_TV_VOD)
+                            && UserInfoUtils.getPairingState(this, getStbStatus()).equals(UserInfoUtils.PairingState.NO_PAIRING)
+                            && UserInfoUtils.isContract(this)) {
+                        playNowOnAir();
+                    } else {
+                        mThumbnailBtn.setVisibility(View.VISIBLE);
+                        startAppIcon.setVisibility(View.VISIBLE);
+                        startAppIcon.setText(content);
                     }
-                    mThumbnailBtn.setVisibility(View.VISIBLE);
-                    startAppIcon.setVisibility(View.VISIBLE);
-                    startAppIcon.setText(content);
                 }
             } else {
                 noAgreementDisplay();
@@ -3274,21 +3275,22 @@ public class ContentDetailActivity extends BaseActivity implements
      */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
     private void playNowOnAir() {
-        if (UserInfoUtils.getPairingState(this, getStbStatus()).equals(UserInfoUtils.PairingState.NO_PAIRING)) {
+        if (UserInfoUtils.getPairingState(this, getStbStatus()).equals(UserInfoUtils.PairingState.NO_PAIRING)
+                && UserInfoUtils.isContract(this)) {
             ContentUtils.ContentsType contentsType = mDetailFullData.getContentsType();
             TextView startAppIcon = findViewById(R.id.view_contents_button_text);
-            startAppIcon.setVisibility(View.GONE);
-//            ImageView imageView = findViewById(R.id.dtv_contents_view_button);
+            ImageView imageView = findViewById(R.id.dtv_contents_view_button);
             //未ペアリングかつひかりTV状態の時はサムネイルにメッセージとペアリングボタンを表示する
             switch (contentsType) {
                 case HIKARI_TV:
                 case HIKARI_TV_NOW_ON_AIR:
                 case HIKARI_TV_VOD:
+                    startAppIcon.setVisibility(View.GONE);
                     mContractLeadingView.setVisibility(View.VISIBLE);
                     mThumbnailBtn.setVisibility(View.VISIBLE);
                     TextView contractLeadingText = findViewById(R.id.contract_leading_text);
                     contractLeadingText.setText(R.string.contents_detail_pairing_request);
-//                    imageView.setVisibility(View.GONE);
+                    imageView.setVisibility(View.GONE);
                     Button button = findViewById(R.id.contract_leading_button);
                     button.setVisibility(View.VISIBLE);
                     button.setText(R.string.contents_detail_pairing_button);
@@ -3370,8 +3372,8 @@ public class ContentDetailActivity extends BaseActivity implements
      */
     private void setRemotePlayArrow() {
         UserInfoUtils.PairingState userState = UserInfoUtils.getPairingState(this, getStbStatus());
-        //再生ボタンは宅外のみ表示
-        if (userState.equals(UserInfoUtils.PairingState.OUTSIDE_HOUSE)) {
+        //再生ボタンは宅外かつ契約があるときのみ表示
+        if (userState.equals(UserInfoUtils.PairingState.OUTSIDE_HOUSE) && UserInfoUtils.isContract(this)) {
             mThumbnailBtn.setVisibility(View.VISIBLE);
             ImageView imageView = findViewById(R.id.dtv_contents_view_button);
             Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.mediacontrol_icon_tap_play_arrow2);
@@ -3493,7 +3495,12 @@ public class ContentDetailActivity extends BaseActivity implements
                 isVisibleRecordButton = false;
                 //サムネイル上のdTVで視聴、dアニメストアで視聴を非表示
                 if (mThumbnailBtn != null) {
-                    mThumbnailBtn.setVisibility(View.GONE);
+                    if (UserInfoUtils.getPairingState(this, getStbStatus()).equals(UserInfoUtils.PairingState.NO_PAIRING)) {
+                        mThumbnailBtn.setVisibility(View.GONE);
+                        noAgreementDisplay();
+                    } else {
+                        mThumbnailBtn.setVisibility(View.GONE);
+                    }
                 }
                 break;
             case PREMIUM_CHECK_START:
