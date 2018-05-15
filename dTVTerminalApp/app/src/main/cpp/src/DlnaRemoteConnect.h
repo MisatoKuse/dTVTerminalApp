@@ -20,12 +20,13 @@ public:
     static std::function<void(eDiragConnectStatus status)> DiragConnectStatusChangeCallback;
     static std::function<void(bool result)> LocalRegistrationCallback;
     static std::function<void(ddtcp_ret ddtcpSinkAkeEndRet)> DdtcpSinkAkeEndCallback;
+
     /** NW環境変更時にコール*/
     bool restartDirag(DMP *d);
 
     bool requestLocalRegistration(DMP *d, const du_uchar* udn, const du_uchar* registerName);
     
-    bool listRemoteDevices();
+    const char* getRemoteDeviceExpireDate(const du_uchar* udn);
     
     void connectRemote(const du_uchar* udn);
     void finalizeDirag();

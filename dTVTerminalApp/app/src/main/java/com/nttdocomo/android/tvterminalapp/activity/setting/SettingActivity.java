@@ -35,7 +35,7 @@ import java.util.List;
  * 設定画面.
  */
 public class SettingActivity extends BaseActivity implements AdapterView.OnItemClickListener,
-        DlnaManager.LocalRegistListener {
+        DlnaManager.LocalRegisterListener {
 
     /**
      * 項目名の配列を保持.
@@ -358,7 +358,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
                     if (result) {
                         setRemoteProgressVisible(View.VISIBLE);
                         DlnaManager manager = DlnaManager.shared();
-                        manager.mLocalRegistListener = SettingActivity.this;
+                        manager.mLocalRegisterListener = SettingActivity.this;
                         manager.StartDtcp();
                         manager.RestartDirag();
                         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(SettingActivity.this);
@@ -373,7 +373,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
     }
 
     @Override
-    public void onRegistCallBack(final boolean result) {
+    public void onRegisterCallBack(final boolean result) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

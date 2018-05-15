@@ -64,7 +64,7 @@ static du_bool parser_info_init(parser_info* pi, dvcdsc_device_array* device_arr
     pi->v2 = 0;
     return 1;
 
-error:
+    error:
     du_uchar_array_free(&pi->value1);
     du_uchar_array_free(&pi->value2);
     du_uchar_array_free(&pi->value3);
@@ -144,15 +144,19 @@ static void device_start_handler(parser_info* pi, const XML_Char* name) {
         if (pi->depth % 2 != 1) goto skip;
     } else if (abs_name_equal(name, dupnp_urn_upnp_device1(), DU_UCHAR_CONST("friendlyName"))) {
         if (pi->depth % 2 != 1) goto skip;
+    } else if (abs_name_equal(name, dupnp_urn_upnp_device1(), DU_UCHAR_CONST("modelName"))) {
+        if (pi->depth % 2 != 1) goto skip;
+    } else if (abs_name_equal(name, dupnp_urn_upnp_device1(), DU_UCHAR_CONST("manufacturer"))) {
+        if (pi->depth % 2 != 1) goto skip;
     } else if (abs_name_equal(name, dupnp_urn_upnp_device1(), DU_UCHAR_CONST("UDN"))) {
         if (pi->depth % 2 != 1) goto skip;
     } else if (abs_name_equal(name, dupnp_urn_dlna_device1(), DU_UCHAR_CONST("X_DLNADOC"))) {
         if (pi->depth % 2 != 1) goto skip;
     } else if (abs_name_equal(name, dupnp_urn_digion_device1(), DU_UCHAR_CONST("CAP"))||
-	       abs_name_equal(name, dupnp_urn_dlpa_device1(), DU_UCHAR_CONST("CAP"))) {
+               abs_name_equal(name, dupnp_urn_dlpa_device1(), DU_UCHAR_CONST("CAP"))) {
         if (pi->depth % 2 != 1) goto skip;
     } else if (abs_name_equal(name, dupnp_urn_digion_device1(), DU_UCHAR_CONST("RSRegiSocket"))||
-	       abs_name_equal(name, dupnp_urn_dlpa_device1(), DU_UCHAR_CONST("RSRegiSocket"))) {
+               abs_name_equal(name, dupnp_urn_dlpa_device1(), DU_UCHAR_CONST("RSRegiSocket"))) {
         if (pi->depth % 2 != 1) goto skip;
     } else if (abs_name_equal(name, dupnp_urn_upnp_device1(), DU_UCHAR_CONST("iconList"))) {
         if (pi->depth % 2 != 1) goto skip;
@@ -168,11 +172,11 @@ static void device_start_handler(parser_info* pi, const XML_Char* name) {
     { if (du_str_start(DU_UCHAR_CONST(name), dupnp_urn_dlpa_device1())) pi->v2 = 1; }
     return;
 
-skip:
+    skip:
     pi->skip = pi->depth;
     return;
 
-error:
+    error:
     pi->depth = -1;
 }
 
@@ -221,13 +225,19 @@ static du_bool device_end_handler(parser_info* pi, const XML_Char* abs_name) {
         if (!du_uchar_array_cat0(&pi->text)) return 0;
         if (!dvcdsc_device_set_dlnadoc(device, du_uchar_array_get(&pi->text))) return 0;
     } else if (abs_name_equal(abs_name, dupnp_urn_digion_device1(), DU_UCHAR_CONST("CAP"))||
-	       abs_name_equal(abs_name, dupnp_urn_dlpa_device1(), DU_UCHAR_CONST("CAP"))) {
+               abs_name_equal(abs_name, dupnp_urn_dlpa_device1(), DU_UCHAR_CONST("CAP"))) {
         if (!du_uchar_array_cat0(&pi->text)) return 0;
         if (!dvcdsc_device_set_diximcap(device, du_uchar_array_get(&pi->text))) return 0;
     } else if (abs_name_equal(abs_name, dupnp_urn_digion_device1(), DU_UCHAR_CONST("RSRegiSocket"))||
-	       abs_name_equal(abs_name, dupnp_urn_dlpa_device1(), DU_UCHAR_CONST("RSRegiSocket"))) {
+               abs_name_equal(abs_name, dupnp_urn_dlpa_device1(), DU_UCHAR_CONST("RSRegiSocket"))) {
         if (!du_uchar_array_cat0(&pi->text)) return 0;
         if (!dvcdsc_device_set_rs_regi_socket(device, du_uchar_array_get(&pi->text))) return 0;
+    } else if (abs_name_equal(abs_name, dupnp_urn_upnp_device1(), DU_UCHAR_CONST("modelName"))) {
+        if (!du_uchar_array_cat0(&pi->text)) return 0;
+        if (!dvcdsc_device_set_model_name(device, du_uchar_array_get(&pi->text))) return 0;
+    } else if (abs_name_equal(abs_name, dupnp_urn_upnp_device1(), DU_UCHAR_CONST("manufacturer"))) {
+        if (!du_uchar_array_cat0(&pi->text)) return 0;
+        if (!dvcdsc_device_set_manufacturer(device, du_uchar_array_get(&pi->text))) return 0;
     }
     return 1;
 }
@@ -248,7 +258,7 @@ static void icon_start_handler(parser_info* pi, const XML_Char* abs_name) {
     }
     return;
 
-skip:
+    skip:
     pi->skip = pi->depth;
 }
 
@@ -275,7 +285,7 @@ static du_bool validate_icon(parser_info* pi) {
     if (!to_absolute_url(&pi->value4, pi->location, &pi->text)) goto invalid;
     return 1;
 
-invalid:
+    invalid:
     du_log_w(0, DU_UCHAR_CONST("dvcdsc_device_parser: invalid icon description"));
     return 0;
 }
@@ -340,7 +350,7 @@ static void service_start_handler(parser_info* pi, const XML_Char* abs_name) {
     }
     return;
 
-skip:
+    skip:
     pi->skip = pi->depth;
     return;
 }
@@ -349,7 +359,7 @@ static du_bool validate_service(parser_info* pi) {
     // service_type
     if (!dupnp_urn_version_le(dav_urn_cds(1), du_uchar_array_get(&pi->value1)) &&
         !dupnp_urn_version_le(ddps_urn_dps(1), du_uchar_array_get(&pi->value1)) &&
-	!dupnp_urn_version_le(ddps_urn_dps(2), du_uchar_array_get(&pi->value1))) return 0;
+        !dupnp_urn_version_le(ddps_urn_dps(2), du_uchar_array_get(&pi->value1))) return 0;
 
     // scpd_url
     if (!to_absolute_url(&pi->value2, pi->location, &pi->text)) goto invalid;
@@ -361,7 +371,7 @@ static du_bool validate_service(parser_info* pi) {
     if (!to_absolute_url(&pi->value4, pi->location, &pi->text)) goto invalid;
     return 1;
 
-invalid:
+    invalid:
     du_log_w(0, DU_UCHAR_CONST("dvcdsc_device_parser: invalid service description"));
     return 0;
 }
@@ -430,24 +440,24 @@ static void start_handler(void* arg, const XML_Char* abs_name, const XML_Char** 
         if (!abs_name_equal(abs_name, dupnp_urn_upnp_device1(), DU_UCHAR_CONST("root"))) goto error;
     } else {
         switch (pi->state) {
-        case STATE_DEVICE:
-            device_start_handler(pi, abs_name);
-            break;
-        case STATE_ICON:
-            icon_start_handler(pi, abs_name);
-            break;
-        case STATE_SERVICE:
-            service_start_handler(pi, abs_name);
-            break;
-        default:
-            goto error;
+            case STATE_DEVICE:
+                device_start_handler(pi, abs_name);
+                break;
+            case STATE_ICON:
+                icon_start_handler(pi, abs_name);
+                break;
+            case STATE_SERVICE:
+                service_start_handler(pi, abs_name);
+                break;
+            default:
+                goto error;
         }
     }
 
     if (!truncate_text(pi)) goto error;
     return;
 
-error:
+    error:
     pi->depth = -1;
 }
 
@@ -464,17 +474,17 @@ static void end_handler(void* arg, const XML_Char* abs_name) {
     if (pi->depth == 1) {
     } else {
         switch (pi->state) {
-        case STATE_DEVICE:
-            if (!device_end_handler(pi, abs_name)) goto error;
-            break;
-        case STATE_ICON:
-            if (!icon_end_handler(pi, abs_name)) goto error;
-            break;
-        case STATE_SERVICE:
-            if (!service_end_handler(pi, abs_name)) goto error;
-            break;
-        default:
-            goto error;
+            case STATE_DEVICE:
+                if (!device_end_handler(pi, abs_name)) goto error;
+                break;
+            case STATE_ICON:
+                if (!icon_end_handler(pi, abs_name)) goto error;
+                break;
+            case STATE_SERVICE:
+                if (!service_end_handler(pi, abs_name)) goto error;
+                break;
+            default:
+                goto error;
         }
     }
 
@@ -482,7 +492,7 @@ static void end_handler(void* arg, const XML_Char* abs_name) {
     --pi->depth;
     return;
 
-error:
+    error:
     pi->depth = -1;
 }
 
@@ -516,7 +526,7 @@ static void text_handler(void* arg, const XML_Char* s, du_int len) {
     if (du_uchar_array_failed(&pi->text)) goto error;
     return;
 
-error:
+    error:
     pi->depth = -1;
 }
 
@@ -547,7 +557,7 @@ static du_bool parse(dvcdsc_device_array* device_array, const du_uchar* xml, du_
     parser_info_free(&pi);
     return 1;
 
-error:
+    error:
     if (parser) XML_ParserFree(parser);
     parser_info_free(&pi);
     return 0;
@@ -571,7 +581,7 @@ du_bool dvcdsc_parser_parse(dvcdsc_device_array* device_array, const du_uchar* x
     du_uchar_array_free(&url_base);
     return 1;
 
-error:
+    error:
     du_uchar_array_free(&url_base);
     return 0;
 }

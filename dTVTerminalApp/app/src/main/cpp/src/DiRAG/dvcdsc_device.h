@@ -16,6 +16,8 @@ extern "C" {
 typedef struct dvcdsc_device {
     const du_uchar* device_type;
     const du_uchar* friendly_name;
+    const du_uchar* model_name;
+    const du_uchar* manufacturer;
     const du_uchar* udn;
     const du_uchar* dlnadoc;
     const du_uchar* diximcap;
@@ -27,6 +29,8 @@ typedef struct dvcdsc_device {
 
     du_uchar_array _tmp_device_type;
     du_uchar_array _tmp_friendly_name;
+    du_uchar_array _tmp_model_name;
+    du_uchar_array _tmp_manufacturer;
     du_uchar_array _tmp_udn;
     du_uchar_array _tmp_dlnadoc;
     du_uchar_array _tmp_diximcap;
@@ -39,6 +43,10 @@ extern void dvcdsc_device_init(dvcdsc_device* device);
 extern du_bool dvcdsc_device_set_device_type(dvcdsc_device* device, const du_uchar* device_type);
 
 extern du_bool dvcdsc_device_set_friendly_name(dvcdsc_device* device, const du_uchar* friendly_name);
+
+extern du_bool dvcdsc_device_set_model_name(dvcdsc_device* device, const du_uchar* model_name);
+
+extern du_bool dvcdsc_device_set_manufacturer(dvcdsc_device* device, const du_uchar* manufacturer);
 
 extern du_bool dvcdsc_device_set_udn(dvcdsc_device* device, const du_uchar* udn);
 

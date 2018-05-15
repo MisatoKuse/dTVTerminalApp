@@ -12,6 +12,8 @@ void dvcdsc_device_init(dvcdsc_device* device) {
     du_byte_zero((du_uint8*)device, sizeof(dvcdsc_device));
     du_uchar_array_init(&device->_tmp_device_type);
     du_uchar_array_init(&device->_tmp_friendly_name);
+    du_uchar_array_init(&device->_tmp_model_name);
+    du_uchar_array_init(&device->_tmp_manufacturer);
     du_uchar_array_init(&device->_tmp_udn);
     du_uchar_array_init(&device->_tmp_dlnadoc);
     du_uchar_array_init(&device->_tmp_diximcap);
@@ -25,6 +27,8 @@ void dvcdsc_device_free(dvcdsc_device* device) {
     if (!device) return;
     du_uchar_array_free(&device->_tmp_device_type);
     du_uchar_array_free(&device->_tmp_friendly_name);
+    du_uchar_array_free(&device->_tmp_model_name);
+    du_uchar_array_free(&device->_tmp_manufacturer);
     du_uchar_array_free(&device->_tmp_udn);
     du_uchar_array_free(&device->_tmp_dlnadoc);
     du_uchar_array_free(&device->_tmp_diximcap);
@@ -43,6 +47,16 @@ du_bool dvcdsc_device_set_device_type(dvcdsc_device* device, const du_uchar* dev
 
 du_bool dvcdsc_device_set_friendly_name(dvcdsc_device* device, const du_uchar* friendly_name) {
     if (!du_uchar_array_copys0(&device->_tmp_friendly_name, friendly_name)) return 0;
+    return 1;
+}
+
+du_bool dvcdsc_device_set_model_name(dvcdsc_device* device, const du_uchar* model_name) {
+    if (!du_uchar_array_copys0(&device->_tmp_model_name, model_name)) return 0;
+    return 1;
+}
+
+du_bool dvcdsc_device_set_manufacturer(dvcdsc_device* device, const du_uchar* manufacturer) {
+    if (!du_uchar_array_copys0(&device->_tmp_manufacturer, manufacturer)) return 0;
     return 1;
 }
 
@@ -73,6 +87,8 @@ du_bool dvcdsc_device_pack(dvcdsc_device* device) {
     du_uint32 len4;
     du_uint32 len5;
     du_uint32 len6;
+    du_uint32 len7;
+    du_uint32 len8;
     du_uint32 i = 0;
 
     du_alloc_free(device->_buffer);
@@ -101,13 +117,19 @@ du_bool dvcdsc_device_pack(dvcdsc_device* device) {
         if (!du_uchar_array_cat0(&device->_tmp_rs_regi_socket)) return 0;
         len6 = du_uchar_array_length(&device->_tmp_rs_regi_socket);
     } else {
-       len6 =  du_str_chr(du_uchar_array_get(&device->_tmp_rs_regi_socket), ':');
+        len6 =  du_str_chr(du_uchar_array_get(&device->_tmp_rs_regi_socket), ':');
         du_str_scan_uint16(du_uchar_array_get(&device->_tmp_rs_regi_socket) + len6 + 1, &device->rs_regi_socket_port);
         if (!du_uchar_array_insert0(&device->_tmp_rs_regi_socket, len6)) return 0;
         ++len6;
     }
 
-    device->_buffer = (du_uchar*)du_alloc(len1 + len2 + len3 + len4 + len5 + len6);
+    len7 = du_uchar_array_length(&device->_tmp_model_name);
+    if (!len7) return 0;
+
+    len8 = du_uchar_array_length(&device->_tmp_manufacturer);
+    if (!len8) return 0;
+
+    device->_buffer = (du_uchar*)du_alloc(len1 + len2 + len3 + len4 + len5 + len6 + len7 + len8);
     if (!device->_buffer) return 0;
 
     device->device_type = device->_buffer;
@@ -128,8 +150,16 @@ du_bool dvcdsc_device_pack(dvcdsc_device* device) {
     device->rs_regi_socket_host = device->_buffer + i;
     i += du_byte_copy(device->_buffer + i, len6, du_uchar_array_get(&device->_tmp_rs_regi_socket));
 
+    device->model_name = device->_buffer + i;
+    i += du_byte_copy(device->_buffer + i, len7, du_uchar_array_get(&device->_tmp_model_name));
+
+    device->manufacturer = device->_buffer + i;
+    i += du_byte_copy(device->_buffer + i, len8, du_uchar_array_get(&device->_tmp_manufacturer));
+
     du_uchar_array_free(&device->_tmp_device_type);
     du_uchar_array_free(&device->_tmp_friendly_name);
+    du_uchar_array_free(&device->_tmp_model_name);
+    du_uchar_array_free(&device->_tmp_manufacturer);
     du_uchar_array_free(&device->_tmp_udn);
     du_uchar_array_free(&device->_tmp_dlnadoc);
     du_uchar_array_free(&device->_tmp_diximcap);

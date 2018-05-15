@@ -12,7 +12,6 @@ import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -22,8 +21,8 @@ public class DlnaManager {
         void joinDms(String name, String host, String udn, String controlUrl, String eventSubscriptionUrl);
         void leaveDms(String udn);
     }
-    public interface LocalRegistListener {
-        void onRegistCallBack(boolean result);
+    public interface LocalRegisterListener {
+        void onRegisterCallBack(boolean result);
     }
     // endregion Listener declaration
 
@@ -42,7 +41,7 @@ public class DlnaManager {
     }
 
     public DlnaManagerListener mDlnaManagerListener = null;
-    public LocalRegistListener mLocalRegistListener = null;
+    public LocalRegisterListener mLocalRegisterListener = null;
     private Context mContext;
 
     public void launch(final Context context) {
@@ -82,12 +81,20 @@ public class DlnaManager {
     public void StartDtcp() {
         startDtcp();
     }
+
     public void RestartDirag() {
         restartDirag();
     }
+
     public void RequestLocalRegistration(final String udn) {
         requestLocalRegistration(udn, Build.MODEL);
     }
+
+    public String GetRemoteDeviceExpireDate(String udn) {
+        String result = getRemoteDeviceExpireDate(udn);
+        return result;
+    }
+
     // call from jni
     public String getUniqueId() {
         if (null == mContext) {
@@ -112,7 +119,6 @@ public class DlnaManager {
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
-            DTVTLogger.warning("callback");
             listener.joinDms(friendlyName, hostString, udn, controlUrl, eventSubscriptionUrl);
         } else {
             DTVTLogger.error("no callback");
@@ -123,7 +129,6 @@ public class DlnaManager {
         DTVTLogger.warning("udn = " + udn);
         DlnaManagerListener listener = DlnaManager.shared().mDlnaManagerListener;
         if (listener != null) {
-            DTVTLogger.warning("callback");
             listener.leaveDms(udn);
         } else {
             DTVTLogger.error("no callback");
@@ -132,10 +137,9 @@ public class DlnaManager {
 
     public void RegistResultCallBack(boolean result) {
         DTVTLogger.warning("result = " + result);
-        LocalRegistListener listener = DlnaManager.shared().mLocalRegistListener;
+        LocalRegisterListener listener = DlnaManager.shared().mLocalRegisterListener;
         if (listener != null) {
-            DTVTLogger.warning("callback");
-            listener.onRegistCallBack(result);
+            listener.onRegisterCallBack(result);
         } else {
             DTVTLogger.error("no callback");
         }
@@ -147,17 +151,16 @@ public class DlnaManager {
     private native void initDmp(String configFilePath);
     private native void initDirag(String configFilePath);
 
-
     private native void startDmp();
     private native void stopDmp();
 
     private native void connectDmsWithUdn(String udn);
     private native void browseContentWithContainerId(int offset, int limit, String containerId);
 
-
     private native void startDtcp();
     private native void restartDirag();
     private native void requestLocalRegistration(String udn, String deviceName);
+    private native String getRemoteDeviceExpireDate(String udn);
     // endregion native method
 
 }

@@ -29,7 +29,7 @@ import java.util.List;
  * STB接続済みActivity.
  */
 public class STBConnectActivity extends BaseActivity implements UserInfoDataProvider.UserDataProviderCallback,
-        DlnaManager.LocalRegistListener {
+        DlnaManager.LocalRegisterListener {
 
     /** 遅延時間.*/
     private static final int DELAYED_TIME = 3000;
@@ -119,7 +119,7 @@ public class STBConnectActivity extends BaseActivity implements UserInfoDataProv
                     if (result) {
                         setRemoteProgressVisible(View.VISIBLE);
                         DlnaManager manager = DlnaManager.shared();
-                        manager.mLocalRegistListener = STBConnectActivity.this;
+                        manager.mLocalRegisterListener = STBConnectActivity.this;
                         manager.StartDtcp();
                         manager.RestartDirag();
                         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(STBConnectActivity.this);
@@ -152,7 +152,7 @@ public class STBConnectActivity extends BaseActivity implements UserInfoDataProv
     }
 
     @Override
-    public void onRegistCallBack(final boolean result) {
+    public void onRegisterCallBack(final boolean result) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

@@ -26,6 +26,7 @@
 std::function<void(eDiragConnectStatus status)> DlnaRemoteConnect::DiragConnectStatusChangeCallback = nullptr;
 std::function<void(bool result)> DlnaRemoteConnect::LocalRegistrationCallback = nullptr;
 std::function<void(ddtcp_ret ddtcpSinkAkeEndRet)> DlnaRemoteConnect::DdtcpSinkAkeEndCallback = nullptr;
+
 typedef struct regist_dms_visitor_context {
     const du_uchar* udn;
     du_uchar* control_url;
@@ -35,15 +36,6 @@ typedef struct regist_dms_visitor_context {
     du_bool found;
     du_bool succeeded;
 } regist_dms_visitor_context;
-
-typedef struct list_devices_context {
-    du_uint32 current_index;
-    du_uint32 starting_index;
-    du_uint32 requested_count;
-    du_uint32 number_processed;
-    du_uint32 total_devices;
-    du_str_array* udn_array;
-} list_devices_context;
 
 typedef struct ake_handler_info {
     du_sync sync;
@@ -283,26 +275,28 @@ void DlnaRemoteConnect::connectRemote(const du_uchar* udn){
     LOG_WITH_BOOL_PARAM(result, "udn = %s", udn);
 }
 
-bool DlnaRemoteConnect::listRemoteDevices() {
+const char* DlnaRemoteConnect::getRemoteDeviceExpireDate(const du_uchar* udn) {
     LOG_WITH_PARAM(">>>");
     dms_info_array dia;
     dms_info* info;
     du_uint32 i;
     du_uint32 len;
+    char date[64] = {0};
 
     dms_info_array_init(&dia);
     if (!drag_cp_get_dms_list(&dia)) goto error;
     
     len = dms_info_array_length(&dia);
     info = dms_info_array_get(&dia);
-    
+
     for (i = 0; i < len; ++i, ++info) {
-//        if (!du_str_array_cato(&mv->_udn_array, info->udn)) goto error;
-        time_t t = info->expire_date;
-        struct tm *tm = localtime(&t);
-        char date[64];
-        strftime(date, sizeof(date), "%Y-%m-%d", tm);
-        LOG_WITH_PARAM("%d. %s ExpireDate:[%s]", i, info->friendly_name, date);
+        if (du_str_diff(udn, info->udn) == 0) {
+            time_t t = info->expire_date;
+            struct tm *tm = localtime(&t);
+            strftime(date, sizeof(date), "%Y-%m-%d %H:%I:%S", tm);
+            LOG_WITH_PARAM("%d. %s ExpireDate:[%s]", i, info->friendly_name, date);
+            break;
+        }
     }
     
     if (!len) LOG_WITH_PARAM("No Devices.");
@@ -311,12 +305,12 @@ bool DlnaRemoteConnect::listRemoteDevices() {
     dms_info_array_free(&dia);
     
     LOG_WITH_PARAM("<<<");
-    return true;
+    return date;
     
 error:
     LOG_WITH_PARAM("<<< Error");
     dms_info_array_free(&dia);
-    return false;
+    return nullptr;
 }
 
 #pragma mark - private method

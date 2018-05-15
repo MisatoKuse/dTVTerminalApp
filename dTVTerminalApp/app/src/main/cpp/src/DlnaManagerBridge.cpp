@@ -55,20 +55,20 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     return JNI_VERSION_1_6;
 }
 
-
 // region call from java
 JNIEXPORT void JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_secureIoGlobalCreate(JNIEnv *env, jobject thiz) {
     LOG_WITH("");
     secure_io_global_create();
 }
+
 JNIEXPORT void JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_cipherFileContextGlobalCreate(JNIEnv *env, jobject thiz, jstring path) {
     LOG_WITH("");
     const char *pathString = env->GetStringUTFChars(path, 0);
-
     cipher_file_context_global_create(secure_io_global_get_instance(), DU_UCHAR(pathString));
 }
+
 //private native void cipherFileContextGlobalCreate(String privateDataPath);
 JNIEXPORT void JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jobject thiz, jstring path) {
@@ -177,6 +177,7 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
     LOG_WITH("pathString %s ", pathString);
     bool resultDtcp = dlnaBase->initDtcp(dmp, pathString);
     LOG_WITH_BOOL(resultDtcp, "resultDtcp");
+
 }
 
 JNIEXPORT void JNICALL
@@ -233,6 +234,18 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_requestLocalRegistratio
     const char *deviceNameString = env->GetStringUTFChars(deviceName, 0);
     LOG_WITH("udnString = %s", udnString);
     dlnaRemoteConnect->requestLocalRegistration(dmp, DU_UCHAR(udnString), DU_UCHAR(deviceNameString));
+}
+
+JNIEXPORT jstring JNICALL
+Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_getRemoteDeviceExpireDate(JNIEnv *env, jobject thiz, jstring udn) {
+    const char *udnString = env->GetStringUTFChars(udn, 0);
+    LOG_WITH("udnString = %s", udnString);
+    auto expireDate = dlnaRemoteConnect->getRemoteDeviceExpireDate(DU_UCHAR(udnString));
+    LOG_WITH("expireDate = %s", expireDate);
+    char buf[64];
+    strncpy(buf, expireDate, sizeof(buf));
+    jstring jstrBuf = env->NewStringUTF(buf);
+    return jstrBuf;
 }
 
 // endregion call from java

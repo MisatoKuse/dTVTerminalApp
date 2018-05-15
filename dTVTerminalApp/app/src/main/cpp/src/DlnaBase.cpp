@@ -23,6 +23,11 @@
 #define THUMBNAIL_WIDTH 160
 #define THUMBNAIL_HEIGHT 120
 
+//STB2号機のモデル名
+#define DMS_MODE_NAME_STB2ND ("TT01")
+//STB2号機の製造元名
+#define DMS_MANUFACTURER_STB2ND ("HUAWEI TECHNOLOGIES CO.,LTD")
+
 std::function<void(const char* friendlyName, const char* udn, const char* location, const char* controlUrl, const char* eventSubscriptionUrl)> DlnaBase::DmsFoundCallback = nullptr;
 std::function<void(const char* udn)> DlnaBase::DmsLeaveCallback = nullptr;
 
@@ -66,11 +71,35 @@ du_bool allowjoinHandler(dupnp_cp_dvcmgr* x, dupnp_cp_dvcmgr_device* device, dup
     device->user_data = (void*)dd;
     return 1;
 }
+    /**
+     * 指定されたDMS情報が、STB2号機であることの判定.
+     *
+     * @param dmsInfo DMS情報
+     * @return STB2号機だった場合はtrue
+     */
+bool isSTB2nd(dvcdsc_device *info) {
+    //モデル名が"TT01"かを見る
+    if(0 != strcmp((char*)info->model_name, DMS_MODE_NAME_STB2ND)) {
+        //TT01ではなかったので、falseで帰る
+        return false;
+    }
 
+    //製造元が"HUAWEI TECHNOLOGIES CO.,LTD"かを見る（Analyzeがifから3項演算子への変更を推奨するが、メンテナンス性が低下するので行わない）
+    if(0 != strcmp((char*)info->manufacturer, DMS_MANUFACTURER_STB2ND)) {
+        //HUAWEI・・・ではなかったので、falseで帰る
+        return false;
+    }
+
+    //STB2号機である事の確認ができたので、trueで帰る
+    return true;
+}
 void joinHandler(dupnp_cp_dvcmgr* x, dupnp_cp_dvcmgr_device* device, dupnp_cp_dvcmgr_dvcdsc* dvcdsc, void* arg) {
     dvcdsc_device* info = static_cast<dvcdsc_device*>(device->user_data);
     LOG_WITH("info friendly_name = %s, udn = %s, location = %s", info->friendly_name, info->udn, device->location);
     LOG_WITH("controlUrl = %s, eventUrl= %s", info->cds.control_url, info->cds.event_sub_url);
+    if (!isSTB2nd(info)) {
+        return;
+    }
     if (DlnaBase::DmsFoundCallback != nullptr) {
         DlnaBase::DmsFoundCallback((char*)info->friendly_name, (char*)info->udn, (char*)device->location, (char*)info->cds.control_url, (char*)info->cds.event_sub_url);
     }

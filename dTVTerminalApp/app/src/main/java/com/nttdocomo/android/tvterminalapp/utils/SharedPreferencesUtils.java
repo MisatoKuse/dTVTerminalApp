@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist.SerializablePreferencesData;
@@ -306,6 +307,20 @@ public class SharedPreferencesUtils {
         editor.putString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_HTTP, item.mHttp);
         editor.putString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_FRIENDLY_NAME, item.mFriendlyName);
         editor.putString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_IPADDRESS, item.mIPAddress);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    public static void setSharedPreferencesStbInfo(final Context context, final STBSelectActivity.StbListData item) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                SHARED_KEY_SELECTED_STB_DATA_INFOMATION, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_UDN, item.udn);
+        editor.putString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_CONTROL_URL, item.controlUrl);
+        editor.putString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_HTTP, item.host);
+        editor.putString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_FRIENDLY_NAME, item.deviceName);
+        editor.putString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_IPADDRESS, item.host);
         editor.apply();
         DTVTLogger.end();
     }
