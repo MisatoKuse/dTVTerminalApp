@@ -154,7 +154,7 @@ public class STBConnectActivity extends BaseActivity implements UserInfoDataProv
                         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(STBConnectActivity.this);
                         manager.RequestLocalRegistration(dlnaDmsItem.mUdn);
                     } else {
-                        showErrorDialog("アクティベーション実行失敗しました。");
+                        showActivationErrorDialog();
                     }
                 }
             }
@@ -195,8 +195,9 @@ public class STBConnectActivity extends BaseActivity implements UserInfoDataProv
      * ローカルレジストレーションの処理結果.
      *
      * @param isSuccess true 成功 false 失敗
+     * @param errorType エラータイプ
      */
-    private void showRegistResultDialog(final boolean isSuccess, DlnaManager.LocalRegistrationErrorType errorType) {
+    private void showRegistResultDialog(final boolean isSuccess, final DlnaManager.LocalRegistrationErrorType errorType) {
         CustomDialog resultDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
         resultDialog.setOnTouchOutside(false);
         resultDialog.setCancelable(false);
@@ -208,10 +209,29 @@ public class STBConnectActivity extends BaseActivity implements UserInfoDataProv
                     resultDialog.setContent(getString(R.string.common_text_regist_over_error));
                     break;
                 default:
-                    resultDialog.setContent(getString(R.string.common_text_regist_other_error));break;
+                    resultDialog.setContent(getString(R.string.common_text_regist_other_error));
+                    break;
             }
             resultDialog.setConfirmText(R.string.common_text_close);
         }
+        resultDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @Override
+            public void onOKCallback(final boolean isOK) {
+                handler.post(runnable);
+            }
+        });
+        resultDialog.showDialog();
+    }
+
+    /**
+     * アクティベーションのエラー表示.
+     */
+    private void showActivationErrorDialog() {
+        CustomDialog resultDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        resultDialog.setOnTouchOutside(false);
+        resultDialog.setCancelable(false);
+        resultDialog.setContent(getString(R.string.activation_failed_msg));
+        resultDialog.setConfirmText(R.string.common_text_close);
         resultDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
