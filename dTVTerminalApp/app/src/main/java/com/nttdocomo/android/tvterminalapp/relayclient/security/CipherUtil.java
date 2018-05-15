@@ -80,7 +80,7 @@ public class CipherUtil {
 
     /**
      * 共通鍵を設定する.
-     * @param shareKey
+     * @param shareKey shareKey
      * @return 設定結果
      */
     public static boolean setShareKey(final byte[] shareKey) {
@@ -122,7 +122,9 @@ public class CipherUtil {
                 cipher.init(Cipher.ENCRYPT_MODE, mShareKey, new IvParameterSpec(ivSourceCode));
                 encodeByteStream = cipher.doFinal(srcDataBytes);
                 ivCode = cipher.getIV();
-            } catch (UnsupportedEncodingException | IllegalBlockSizeException | NoSuchAlgorithmException | InvalidAlgorithmParameterException | InvalidKeyException | BadPaddingException | NoSuchPaddingException e) {
+            } catch (UnsupportedEncodingException | IllegalBlockSizeException | NoSuchAlgorithmException
+                    | InvalidAlgorithmParameterException | InvalidKeyException | BadPaddingException
+                    | NoSuchPaddingException e) {
                 DTVTLogger.error(e.getMessage());
                 return null;
             }
@@ -133,6 +135,11 @@ public class CipherUtil {
         return resultByteStream;
     }
 
+    /**
+     * ディコードデータ.
+     * @param srcData 変換前srcData
+     * @return 変換後データ
+     */
     public static String decodeData(final byte[] srcData) {
         byte[] encodeByteStream = new byte[srcData.length - IV_SIZE];
         byte[] decodeByteStream;
@@ -154,7 +161,8 @@ public class CipherUtil {
                 decodeByteStream = cipher.doFinal(encodeByteStream);
                 decodeString = new String(decodeByteStream, "UTF-8");
                 return decodeString;
-            } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | BadPaddingException | InvalidAlgorithmParameterException | IllegalBlockSizeException | UnsupportedEncodingException e) {
+            } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | BadPaddingException
+                    | InvalidAlgorithmParameterException | IllegalBlockSizeException | UnsupportedEncodingException e) {
                 DTVTLogger.error(e.getMessage());
                 return null;
             }

@@ -4,7 +4,9 @@
 
 package com.nttdocomo.android.tvterminalapp.relayclient.security;
 
-
+/**
+ * 暗号化データ.
+ */
 public class CipherData {
 
     /** Module. */

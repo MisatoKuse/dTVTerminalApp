@@ -202,7 +202,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
         if (!mIsCancel) {
             // クリップキー一覧を取得
             if (mRequiredClipKeyList) {
-                getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+                getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
             }
             mSetDB = flg;
             //レンタル一覧取得

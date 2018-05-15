@@ -20,8 +20,7 @@ import com.nttdocomo.android.tvterminalapp.struct.OneTimeTokenData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
-import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOtt;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -92,7 +91,7 @@ public class WebApiBasePlala {
     /**
      * ワンタイムトークン取得クラス.
      */
-    private DaccountGetOTT mGetOtt = null;
+    private DaccountGetOtt mGetOtt = null;
     /**
      * クッキーマネージャー.
      */
@@ -651,8 +650,8 @@ public class WebApiBasePlala {
     private void getOneTimePassword(final Context context,
                                     final ServiceTokenErrorCallback serviceTokenErrorCallback) {
         //ワンタイムパスワードの取得
-        mGetOtt = new DaccountGetOTT();
-        mGetOtt.execDaccountGetOTT(context, new DaccountGetOTT.DaccountGetOttCallBack() {
+        mGetOtt = new DaccountGetOtt();
+        mGetOtt.execDaccountGetOTT(context, new DaccountGetOtt.DaccountGetOttCallBack() {
             @Override
             public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
                 //ワンタイムトークンが期限内ならば、そのまま使用する

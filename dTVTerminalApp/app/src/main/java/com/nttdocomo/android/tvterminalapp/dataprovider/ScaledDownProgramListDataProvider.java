@@ -110,15 +110,15 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     /**
      * tvコンテンツのクリップキーリスト取得済み判定.
      */
-    private boolean tvClipKeyListResponse = false;
+    private boolean mTvClipKeyListResponse = false;
     /**
      * vodコンテンツのクリップキーリスト取得済み判定.
      */
-    private boolean vodClipKeyListResponse = false;
+    private boolean mVodClipKeyListResponse = false;
     /**
      * 通信禁止判定フラグ.
      */
-    private boolean isStop = false;
+    private boolean mIsStop = false;
     /**
      * チャンネルリスト取得WebClient.
      */
@@ -234,17 +234,17 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
 
                         if (!TextUtils.isEmpty(chNo)) {
                             ChannelInfo channel = new ChannelInfo();
-                            channel.setChNo(Integer.parseInt(chNo));
+                            channel.setChannelNo(Integer.parseInt(chNo));
                             channel.setTitle(title);
                             channel.setThumbnail(thumb);
                             channel.setServiceId(serviceId);
-                            channel.setPuId(map.get(JsonConstants.META_RESPONSE_PUID));
-                            channel.setSubPuId(map.get(JsonConstants.META_RESPONSE_SUB_PUID));
-                            channel.setChPackPuId(map.get(StringUtils.getConnectStrings(
-                                    JsonConstants.META_RESPONSE_CHPACK,JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_PUID)));
-                            channel.setChPackSubPuId(map.get(StringUtils.getConnectStrings(
+                            channel.setPurchaseId(map.get(JsonConstants.META_RESPONSE_PUID));
+                            channel.setSubPurchaseId(map.get(JsonConstants.META_RESPONSE_SUB_PUID));
+                            channel.setChannelPackPurchaseId(map.get(StringUtils.getConnectStrings(
+                                    JsonConstants.META_RESPONSE_CHPACK, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_PUID)));
+                            channel.setChannelPackSubPurchaseId(map.get(StringUtils.getConnectStrings(
                                     JsonConstants.META_RESPONSE_CHPACK, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_SUB_PUID)));
-                            channel.setChType(map.get(JsonConstants.META_RESPONSE_CH_TYPE));
+                            channel.setChannelType(map.get(JsonConstants.META_RESPONSE_CH_TYPE));
                             mScheduleList = new ArrayList<>();
                             mScheduleList.add(mSchedule);
 //                            channel.setSchedules(mScheduleList);
@@ -267,7 +267,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                             }
                             //setScheduleInfoのやり方を踏襲.
                             ChannelInfo channel = new ChannelInfo();
-                            channel.setChNo(Integer.parseInt(scheduleInfoList.get(0).getChNo()));
+                            channel.setChannelNo(Integer.parseInt(scheduleInfoList.get(0).getChNo()));
 //                            channel.setTitle(scheduleInfoList.get(0).getTitle());
                             channel.setSchedules(scheduleInfoList);
                             channelsInfo.addChannel(channel);
@@ -400,26 +400,26 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     @Override
     public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         super.onTvClipKeyListJsonParsed(clipKeyListResponse);
-        if (vodClipKeyListResponse) {
+        if (mVodClipKeyListResponse) {
             if (null != mApiDataProviderCallback) {
 //                mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
                 DTVTLogger.debug("null != mApiDataProviderCallback");
             }
         } else {
-            tvClipKeyListResponse = true;
+            mTvClipKeyListResponse = true;
         }
     }
 
     @Override
     public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
-        if (tvClipKeyListResponse) {
+        if (mTvClipKeyListResponse) {
             if (null != mApiDataProviderCallback) {
 //                mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
                 DTVTLogger.debug("null != mApiDataProviderCallback");
             }
         } else {
-            vodClipKeyListResponse = true;
+            mVodClipKeyListResponse = true;
         }
     }
 
@@ -439,7 +439,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             if (oldChannelList.size() > 0) { //番組ID存在するのをチェックする
                 for (int j = 0; j < oldChannelList.size(); j++) {
                     ChannelInfo oldChannel = oldChannelList.get(j);
-                    if (oldChannel.getChNo() == Integer.parseInt(mSchedule.getChNo())) { //番組ID存在する場合
+                    if (oldChannel.getChannelNo() == Integer.parseInt(mSchedule.getChNo())) { //番組ID存在する場合
                         ArrayList<ScheduleInfo> oldSchedule = oldChannel.getSchedules();
                         oldSchedule.add(mSchedule);
                         isExist = true;
@@ -451,7 +451,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 ArrayList<ScheduleInfo> mScheduleList = new ArrayList<>();
                 mScheduleList.add(mSchedule);
                 ChannelInfo channel = new ChannelInfo();
-                channel.setChNo(Integer.parseInt(mSchedule.getChNo()));
+                channel.setChannelNo(Integer.parseInt(mSchedule.getChNo()));
 //                channel.setTitle(mSchedule.getTitle());
                 channel.setSchedules(mScheduleList);
                 channelsInfo.addChannel(channel);
@@ -591,14 +591,14 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             if (!TextUtils.isEmpty(chNo)) {
                 ChannelInfo channel = new ChannelInfo();
                 channel.setTitle(title);
-                channel.setChNo(Integer.parseInt(chNo));
+                channel.setChannelNo(Integer.parseInt(chNo));
                 channel.setThumbnail(thumbnail);
                 channel.setServiceId(serviceId);
-                channel.setChType(chType);
-                channel.setPuId(puId);
-                channel.setSubPuId(subPuId);
-                channel.setChPackPuId(chPackPuId);
-                channel.setChPackSubPuId(chPackSubPuId);
+                channel.setChannelType(chType);
+                channel.setPurchaseId(puId);
+                channel.setSubPurchaseId(subPuId);
+                channel.setChannelPackPurchaseId(chPackPuId);
+                channel.setChannelPackSubPurchaseId(chPackSubPuId);
                 channel.setService(service);
                 channels.add(channel);
             }
@@ -650,7 +650,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 //TODO　:エラー返却した上でUI上に通知が必要
             }
         } else {
-            if (!isStop) {
+            if (!mIsStop) {
                 mChannelWebClient = new ChannelWebClient(mContext);
                 mChannelWebClient.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], this);
             } else {
@@ -729,7 +729,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      */
     public void stopConnect() {
         DTVTLogger.start();
-        isStop = true;
+        mIsStop = true;
         if (mChannelWebClient != null) {
             mChannelWebClient.stopConnection();
         }
@@ -743,7 +743,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      */
     public void enableConnect() {
         DTVTLogger.start();
-        isStop = false;
+        mIsStop = false;
         if (mChannelWebClient != null) {
             mChannelWebClient.enableConnection();
         }

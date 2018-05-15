@@ -24,7 +24,7 @@ public class ThumbnailProvider {
 	/**
 	 * キャッシュマネージャー.
 	 */
-	public ThumbnailCacheManager mThumbnailCacheManager;
+	public ThumbnailCacheManager thumbnailCacheManager;
 	/**
 	 * Queue.
 	 */
@@ -36,7 +36,7 @@ public class ThumbnailProvider {
 	/**
 	 * URLリスト.
 	 */
-	private LinkedHashMap<String, ImageView> mListURL = null;
+	private LinkedHashMap<String, ImageView> mListUrl = null;
 	/**
 	 * コンテキスト.
 	 */
@@ -56,9 +56,9 @@ public class ThumbnailProvider {
 	 * @param context コンテキスト
 	 */
 	public ThumbnailProvider(final Context context) {
-		mThumbnailCacheManager = new ThumbnailCacheManager(context);
-		mListURL = new LinkedHashMap<>();
-		mThumbnailCacheManager.initMemCache();
+		thumbnailCacheManager = new ThumbnailCacheManager(context);
+		mListUrl = new LinkedHashMap<>();
+		thumbnailCacheManager.initMemCache();
 
 		//コンテキストの退避
 		mContext = context;
@@ -79,7 +79,7 @@ public class ThumbnailProvider {
 		}
 
 		// メモリから取得
-		Bitmap bitmap = mThumbnailCacheManager.getBitmapFromMem(imageUrl);
+		Bitmap bitmap = thumbnailCacheManager.getBitmapFromMem(imageUrl);
 
 		if (bitmap != null) {
 			DTVTLogger.debug("image exists in memory");
@@ -96,10 +96,10 @@ public class ThumbnailProvider {
                 mDownloadTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, imageUrl);
             } else {
 				//url重複がある場合
-                if (mListURL.containsKey(imageUrl)) {
-                    mListURL.remove(imageUrl);
+                if (mListUrl.containsKey(imageUrl)) {
+					mListUrl.remove(imageUrl);
                 }
-                mListURL.put(imageUrl, imageView);
+				mListUrl.put(imageUrl, imageView);
             }
 		} else {
             DTVTLogger.error("ThumbnailProvider is stopping connection");
@@ -115,12 +115,12 @@ public class ThumbnailProvider {
 			return;
 		}
 		if (MAX_QUEUE_COUNT > currentQueueCount
-				&& mListURL.size() > 0) {
+				&& mListUrl.size() > 0) {
 			++currentQueueCount;
-			String imageUrl = mListURL.entrySet().iterator().next().getKey();
-			ImageView imageView = mListURL.get(imageUrl);
+			String imageUrl = mListUrl.entrySet().iterator().next().getKey();
+			ImageView imageView = mListUrl.get(imageUrl);
 			new ThumbnailDownloadTask(imageView, this, mContext).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, imageUrl);
-			mListURL.remove(imageUrl);
+			mListUrl.remove(imageUrl);
 		}
 
 	}

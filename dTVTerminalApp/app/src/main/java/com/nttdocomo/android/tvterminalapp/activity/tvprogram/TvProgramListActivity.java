@@ -724,7 +724,7 @@ public class TvProgramListActivity extends BaseActivity implements
                     channelNum = channels.size();
                 }
                 for (int i = 0; i < channelNum; i++) {
-                    channelNos[i] = channels.get(i).getChNo();
+                    channelNos[i] = channels.get(i).getChannelNo();
                 }
                 String dateStr = mSelectDateStr.replace("-", "");
                 String[] dateList = {dateStr};
@@ -756,7 +756,7 @@ public class TvProgramListActivity extends BaseActivity implements
         }
         int[] channelNos = new int[channelList.size()];
         for (int i = 0; i < channelList.size(); i++) {
-            channelNos[i] = channelList.get(i).getChNo();
+            channelNos[i] = channelList.get(i).getChannelNo();
         }
         if (channelNos.length != 0) {
         	//マイ番組表設定されていない場合、通信しない

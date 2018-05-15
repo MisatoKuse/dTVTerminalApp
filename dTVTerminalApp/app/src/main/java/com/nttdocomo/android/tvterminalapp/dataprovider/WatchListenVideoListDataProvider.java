@@ -161,7 +161,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
 
         // クリップキー一覧を取得
         if (!mIsCancel && mRequiredClipKeyList) {
-            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
         }
 
         //視聴中ビデオ一覧のDB保存履歴と、有効期間を確認

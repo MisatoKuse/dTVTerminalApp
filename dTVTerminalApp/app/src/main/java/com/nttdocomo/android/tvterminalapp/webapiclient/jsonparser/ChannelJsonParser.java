@@ -49,7 +49,7 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
      * @param jsonStr 元のJSONデータ
      * @return リスト化データ
      */
-    private List<ChannelList> CHANNELListSender(final String jsonStr) {
+    private List<ChannelList> channelListSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         mChannelList = new ChannelList();
@@ -82,10 +82,10 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
             if (!jsonObj.isNull(JsonConstants.META_RESPONSE_PAGER)) {
                 JSONObject pager = jsonObj.getJSONObject(JsonConstants.META_RESPONSE_PAGER);
 
-                for (String PAGER_PARAMETER : PAGER_PARAMETERS) {
-                    if (!pager.isNull(PAGER_PARAMETER)) {
-                        String para = pager.getString(PAGER_PARAMETER);
-                        map.put(PAGER_PARAMETER, para);
+                for (String pagerParameter : PAGER_PARAMETERS) {
+                    if (!pager.isNull(pagerParameter)) {
+                        String para = pager.getString(pagerParameter);
+                        map.put(pagerParameter, para);
                     }
                 }
             }
@@ -113,7 +113,7 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
     @Override
     protected Object doInBackground(final Object... strings) {
         String result = (String) strings[0];
-        return CHANNELListSender(result);
+        return channelListSender(result);
     }
 
     /**

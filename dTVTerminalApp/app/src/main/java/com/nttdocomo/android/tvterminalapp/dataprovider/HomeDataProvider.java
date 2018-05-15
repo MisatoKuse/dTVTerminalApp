@@ -279,7 +279,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             setStructDB(list);
         } else {
             //ここに来てもヌルではない場合があるので、確認する
-            if(tvClipLists == null) {
+            if (tvClipLists == null) {
                 //タイムアウトならばウェイト表示を止める
                 ifTimeoutStopProgess(HomeActivity.HOME_CONTENTS_SORT_TV_CLIP);
             }
@@ -293,7 +293,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             setStructDB(list);
         } else {
             //ここに来てもヌルではない場合があるので、確認する
-            if(vodClipLists == null) {
+            if (vodClipLists == null) {
                 //タイムアウトならばウェイト表示を止める
                 ifTimeoutStopProgess(HomeActivity.HOME_CONTENTS_SORT_VOD_CLIP);
             }
@@ -308,7 +308,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             setStructDB(list);
         } else {
             //ここに来てもヌルではない場合があるので、確認する
-            if(tvScheduleList == null) {
+            if (tvScheduleList == null) {
                 //タイムアウトならばウェイト表示を止める
                 ifTimeoutStopProgess(HomeActivity.HOME_CONTENTS_TV_SCHEDULE);
             }
@@ -329,7 +329,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             setStructDB(list);
         } else {
             //ここに来てもヌルではない場合があるので、確認する
-            if(dailyRankLists == null) {
+            if (dailyRankLists == null) {
                 //タイムアウトならばウェイト表示を止める
                 ifTimeoutStopProgess(HomeActivity.HOME_CONTENTS_DAILY_RANK_LIST);
             }
@@ -351,7 +351,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             setStructDB(list);
         } else {
             //ここに来てもヌルではない場合があるので、確認する
-            if(contentsListPerGenre == null) {
+            if (contentsListPerGenre == null) {
                 //タイムアウトならばウェイト表示を止める
                 ifTimeoutStopProgess(HomeActivity.HOME_CONTENTS_LIST_PER_GENRE);
             }
@@ -373,7 +373,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             sendWatchingVideoListData(vcList);
         } else {
             //ここに来てもヌルではない場合があるので、確認する
-            if(watchListenVideoList == null) {
+            if (watchListenVideoList == null) {
                 //タイムアウトならばウェイト表示を止める
                 ifTimeoutStopProgess(HomeActivity.HOME_CONTENTS_SORT_WATCHING_VIDEO);
             }
@@ -420,7 +420,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         DTVTLogger.start();
 
         //ヌルならば、エラー判定を行う
-        if ( channelLists == null ) {
+        if (channelLists == null) {
             //タイムアウトならばウェイト表示を止める
             ifTimeoutStopProgess(HomeActivity.HOME_CONTENTS_SORT_CHANNEL);
         }
@@ -449,12 +449,12 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      *
      * @param selectGetError WebClientを示す固定値。getErrorメソッドに指定する。
      */
-    private void ifTimeoutStopProgess(int selectGetError) {
+    private void ifTimeoutStopProgess(final int selectGetError) {
         //エラー情報の取得
         ErrorState errorState = getError(selectGetError);
 
         //原因がタイムアウトならばこの場でヌルを指定したコールバックを返して、ウェイト表示を終わらせる
-        if(errorState.isTimeout()) {
+        if (errorState.isTimeout()) {
             mApiDataProviderCallback.tvScheduleListCallback(null);
         }
     }
@@ -1054,7 +1054,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
 
         // クリップキー一覧を取得
         if (mRequiredClipKeyList) {
-            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
         }
 
         //視聴中ビデオ一覧のDB保存履歴と、有効期間を確認(DBにデータが不在の時もデータ再取得)
@@ -1091,7 +1091,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         String lastDate = dateUtils.getLastDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
         // クリップキー一覧を取得
         if (mRequiredClipKeyList) {
-            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
         }
         if ((lastDate == null || lastDate.length() < 1 || dateUtils.isBeforeLimitDate(lastDate))
                 && NetWorkUtils.isOnline(mContext)) {
@@ -1707,21 +1707,22 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 break;
             case HomeActivity.HOME_CONTENTS_LIST_PER_GENRE:
                 //ジャンル一覧のエラー情報の取得
-                if(mContentsListPerGenreWebClient != null) {
+                if (mContentsListPerGenreWebClient != null) {
                     errorState = mContentsListPerGenreWebClient.getError();
                 }
                 break;
             case HomeActivity.HOME_CONTENTS_DAILY_RANK_LIST:
                 //デイリーランキングのエラー情報の取得
-                if(mDailyRankWebClient != null) {
+                if (mDailyRankWebClient != null) {
                     errorState = mDailyRankWebClient.getError();
                 }
                 break;
             case  HomeActivity.HOME_CONTENTS_TV_SCHEDULE:
                 //番組表のエラー情報取得
-                if(mTvScheduleWebClient != null) {
+                if (mTvScheduleWebClient != null) {
                     errorState = mTvScheduleWebClient.getError();
                 }
+                break;
             default:
                 break;
         }

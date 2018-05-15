@@ -160,7 +160,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
             // クリップキー一覧を取得
             if (mRequiredClipKeyList) {
                 mClipKeyListDataProvider = new ClipKeyListDataProvider(mContext);
-                mClipKeyListDataProvider.getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.TV));
+                mClipKeyListDataProvider.getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.TV));
             }
             getTvClipListData(pagerOffset);
         } else {
@@ -243,7 +243,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
             contentInfo.setVodEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_END_DATE)));
             if (channels != null && !TextUtils.isEmpty(chNo)) {
                 for (ChannelInfo channelInfo : channels) {
-                    if (chNo.equals(String.valueOf(channelInfo.getChNo()))) {
+                    if (chNo.equals(String.valueOf(channelInfo.getChannelNo()))) {
                         contentInfo.setChannelName(channelInfo.getTitle());
                         break;
                     }

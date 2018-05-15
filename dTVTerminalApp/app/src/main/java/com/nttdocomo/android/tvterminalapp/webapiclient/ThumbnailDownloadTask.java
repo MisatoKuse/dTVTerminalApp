@@ -33,11 +33,11 @@ import javax.net.ssl.SSLPeerUnverifiedException;
  */
 public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
     /** サムネイルのURL. */
-    private String imageUrl;
+    private String mImageUrl;
     /** 取得したサムネイルを表示するImageView. */
-    private ImageView imageView;
+    private ImageView mImageView;
     /** サムネイルプロバイダー. */
-    private ThumbnailProvider thumbnailProvider;
+    private ThumbnailProvider mThumbnailProvider;
     /** SSLチェック用コンテキスト. */
     private Context mContext;
     /** 通信停止用コネクション蓄積. */
@@ -54,8 +54,8 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
      */
     public ThumbnailDownloadTask(final ImageView imageView, final ThumbnailProvider thumbnailProvider,
                                  final Context context) {
-        this.imageView = imageView;
-        this.thumbnailProvider = thumbnailProvider;
+        this.mImageView = imageView;
+        this.mThumbnailProvider = thumbnailProvider;
 
         //コンテキストの退避
         mContext = context;
@@ -71,17 +71,17 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
         HttpURLConnection urlConnection = null;
         BufferedInputStream in = null;
         try {
-            imageUrl = params[0];
-            Bitmap bitmap = thumbnailProvider.mThumbnailCacheManager.getBitmapFromDisk(imageUrl);
+            mImageUrl = params[0];
+            Bitmap bitmap = mThumbnailProvider.thumbnailCacheManager.getBitmapFromDisk(mImageUrl);
             if (bitmap != null) {
-                thumbnailProvider.mThumbnailCacheManager.putBitmapToMem(imageUrl, bitmap);
+                mThumbnailProvider.thumbnailCacheManager.putBitmapToMem(mImageUrl, bitmap);
                 return bitmap;
             }
             if (isCancelled() || mIsStop) {
                 return null;
             }
 
-            URL url = new URL(imageUrl);
+            URL url = new URL(mImageUrl);
             urlConnection = (HttpURLConnection) url.openConnection();
 
             //コンテキストがあればSSL証明書失効チェックを行う
@@ -104,10 +104,10 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
             in = new BufferedInputStream(urlConnection.getInputStream(), 8 * 1024);
             bitmap = BitmapFactory.decodeStream(in);
             // ディスクに保存する
-            thumbnailProvider.mThumbnailCacheManager.saveBitmapToDisk(imageUrl, bitmap);
+            mThumbnailProvider.thumbnailCacheManager.saveBitmapToDisk(mImageUrl, bitmap);
             if (bitmap != null) {
                 // メモリにプッシュする
-                thumbnailProvider.mThumbnailCacheManager.putBitmapToMem(imageUrl, bitmap);
+                mThumbnailProvider.thumbnailCacheManager.putBitmapToMem(mImageUrl, bitmap);
             }
             return bitmap;
         } catch (SSLHandshakeException e) {
@@ -142,21 +142,21 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
     @Override
     protected void onPostExecute(final Bitmap result) {
         super.onPostExecute(result);
-        if (imageView != null) {
+        if (mImageView != null) {
             if (result != null) {
                 // 画像のpositionをズレないよう
-                if (imageView.getTag() != null && imageUrl.equals(imageView.getTag())) {
-                    imageView.setImageBitmap(result);
+                if (mImageView.getTag() != null && mImageUrl.equals(mImageView.getTag())) {
+                    mImageView.setImageBitmap(result);
                 }
             } else {
                 // 画像取得失敗のケース
-                if (imageView.getTag() != null && imageUrl.equals(imageView.getTag())) {
-                    imageView.setImageResource(R.mipmap.error_scroll);
+                if (mImageView.getTag() != null && mImageUrl.equals(mImageView.getTag())) {
+                    mImageView.setImageResource(R.mipmap.error_scroll);
                 }
             }
         }
-        --thumbnailProvider.currentQueueCount;
-        thumbnailProvider.checkQueueList();
+        --mThumbnailProvider.currentQueueCount;
+        mThumbnailProvider.checkQueueList();
     }
 
     /**

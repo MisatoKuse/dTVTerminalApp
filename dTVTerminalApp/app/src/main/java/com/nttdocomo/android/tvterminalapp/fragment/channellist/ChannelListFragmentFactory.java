@@ -21,10 +21,12 @@ public class ChannelListFragmentFactory {
      * @param position タブPosition
      * @param lis  ScrollListener
      * @param type データタイプ
+     * @param listener listener
      * @return fragment
      */
     public ChannelListFragment createFragment(final int position, final ChannelListFragment.ChannelListFragmentListener lis,
-                                              final ChannelListActivity.ChListDataType type, final ChannelListFragment.OnClickChannelItemListener listener) {
+                                              final ChannelListActivity.ChListDataType type,
+                                              final ChannelListFragment.OnClickChannelItemListener listener) {
         ChannelListFragment fragment;
         fragment = mFragments.get(position);
         if (fragment == null) {

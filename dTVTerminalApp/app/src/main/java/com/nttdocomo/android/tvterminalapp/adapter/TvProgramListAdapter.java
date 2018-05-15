@@ -278,7 +278,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         for (MyViewHolder viewHolder :mMyViewHolder) {
             int chNo = viewHolder.chNo;
             for (ChannelInfo channelInfo : mProgramList) {
-                if (chNo == channelInfo.getChNo() && channelInfo.getSchedules() == null) {
+                if (chNo == channelInfo.getChannelNo() && channelInfo.getSchedules() == null) {
                     chNoList.add(chNo);
                 }
             }
@@ -381,7 +381,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
         ChannelInfo itemChannel = mProgramList.get(position);
-        holder.chNo = itemChannel.getChNo();
+        holder.chNo = itemChannel.getChannelNo();
         DTVTLogger.debug("mProgramList size ===============>" + mProgramList.size());
         DTVTLogger.debug("onBindViewHolder position===============>" + position + " ChNo:" + holder.chNo);
         DTVTLogger.debug("channel Name ===============>" + itemChannel.getTitle());
@@ -892,11 +892,11 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 ChannelInfo newChannelInfo = newProgramList.get(i);
                 for (int j = 0; j < mProgramList.size(); j++) {
                     ChannelInfo mChannelInfo = mProgramList.get(j);
-                    if (newChannelInfo.getChNo() == mChannelInfo.getChNo()) {
+                    if (newChannelInfo.getChannelNo() == mChannelInfo.getChannelNo()) {
                         if (newChannelInfo.getSchedules() != null && newChannelInfo.getSchedules().size() > 0) {
                             mProgramList.set(j, newChannelInfo);
                             for (MyViewHolder myViewHolder : mMyViewHolder) {
-                                if (newChannelInfo.getChNo() == myViewHolder.chNo) {
+                                if (newChannelInfo.getChannelNo() == myViewHolder.chNo) {
                                     setItemView(newProgramList.get(i).getSchedules(), myViewHolder);
                                 }
                             }

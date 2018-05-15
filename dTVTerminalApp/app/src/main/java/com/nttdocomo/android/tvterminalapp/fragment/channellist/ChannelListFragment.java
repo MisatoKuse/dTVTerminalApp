@@ -67,7 +67,16 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
          */
         void setUserVisibleHint(boolean isVisibleToUser, ChannelListFragment fragment);
     }
+
+    /**
+     * callback.
+     */
     public interface OnClickChannelItemListener {
+        /**
+         * callback.
+         * @param pos タップされたポジション.
+         * @param type チャンネルリストのタイプ
+         */
         void onClickChannelItem(int pos, ChannelListActivity.ChListDataType type);
     }
     /**
@@ -102,7 +111,9 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
      * データタイプ.
      */
     private ChannelListActivity.ChListDataType mChListDataType;
-
+    /**
+     * リスナー.
+     */
     private OnClickChannelItemListener mOnClickChannelItemListener;
 
     /**
@@ -121,7 +132,11 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         mChListDataType = type;
     }
 
-    public void setClickItemListener(OnClickChannelItemListener listener) {
+    /**
+     * リスナー設定.
+     * @param listener listener
+     */
+    public void setClickItemListener(final OnClickChannelItemListener listener) {
         mOnClickChannelItemListener = listener;
     }
 

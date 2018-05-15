@@ -597,7 +597,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         if (!mIsCancel) {
             mWeeklyRankList = null;
             // クリップキー一覧取得
-            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.TV));
+            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.TV));
             // データを取得
             getWeeklyRankListData(genreId);
         } else {
@@ -615,7 +615,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             mVideoRankList = null;
             // クリップキー一覧取得
             if (mRequiredClipKeyList) {
-                getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+                getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
             }
 
             getVideoRankListData(genreId);
@@ -682,7 +682,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 rankingContentInfo.setPublishEndDate(map.get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE));
                 if (channels != null && !TextUtils.isEmpty(chNo)) {
                     for (ChannelInfo channelInfo : channels) {
-                        if (chNo.equals(String.valueOf(channelInfo.getChNo()))) {
+                        if (chNo.equals(String.valueOf(channelInfo.getChannelNo()))) {
                             rankingContentInfo.setChannelName(channelInfo.getTitle());
                             break;
                         }
@@ -748,7 +748,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         mDailyRankList = null;
         // クリップキー一覧取得
         if (mRequiredClipKeyList) {
-            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.TV));
+            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.TV));
         }
 
         //今日のランキング一覧のDB保存履歴と、有効期間を確認

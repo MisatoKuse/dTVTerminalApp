@@ -12,7 +12,7 @@ public interface DownloadListener {
     /**
      * ダウンロードエラー定義.
      */
-    enum DLError {
+    enum DownLoadError {
         /**サーバーエラー.*/
         DLError_NetLost,
         /**DmsLost.*/
@@ -53,7 +53,7 @@ public interface DownloadListener {
      * @param error  error
      * @param savePath savePath, savePathは提供できない場合、""に設定
      */
-    void onFail(DLError error, final String savePath);
+    void onFail(DownLoadError error, final String savePath);
 
     /**
      * ダウンロード完了の時、コールされる.

@@ -8,7 +8,6 @@ import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelDeleteResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelListResponse;

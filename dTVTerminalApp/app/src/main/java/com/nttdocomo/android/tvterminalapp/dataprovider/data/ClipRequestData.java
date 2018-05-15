@@ -38,7 +38,7 @@ public class ClipRequestData {
     /**コンテンツタイプ.*/
     private String mContentType = null;
     /**テーブルタイプ.*/
-    private ClipKeyListDao.TABLE_TYPE mTableType = null;
+    private ClipKeyListDao.TableTypeEnum mTableType = null;
     /**視聴通知判定.*/
     private boolean mIsNotify = false;
     /**クリップ未/済.*/
@@ -254,7 +254,7 @@ public class ClipRequestData {
      * テーブルタイプ取得する.
      * @return テーブルタイプ
      */
-    public ClipKeyListDao.TABLE_TYPE getTableType() {
+    public ClipKeyListDao.TableTypeEnum getTableType() {
         return mTableType;
     }
 
@@ -263,7 +263,7 @@ public class ClipRequestData {
      * @param mTableType テーブルタイプ
      */
 
-    public void setTableType(final ClipKeyListDao.TABLE_TYPE mTableType) {
+    public void setTableType(final ClipKeyListDao.TableTypeEnum mTableType) {
         this.mTableType = mTableType;
     }
     /**

@@ -28,18 +28,26 @@ import java.util.Map;
  */
 public class HikariTvChDataProvider extends ScaledDownProgramListDataProvider {
     public interface ContentsDataCallback {
+        /**
+         * コンテンツデータ取得コールバック.
+         * @param data data
+         */
         void onContentDataGet(ContentsData data);
     }
+    /**コンテキスト.*/
     private Context mContext;
+    /**番組表情報WebClient.*/
     private TvScheduleWebClient mTvScheduleWebClient;
+    /**callback.*/
     private ContentsDataCallback mContentsDataCallback;
+    /**エラーステータス.*/
     private ErrorState mErrorState;
     /**
      * コンストラクタ.
      *
      * @param mContext TvProgramListActivity
      */
-    public HikariTvChDataProvider(final Context mContext, ContentsDataCallback callback) {
+    public HikariTvChDataProvider(final Context mContext, final ContentsDataCallback callback) {
         super(mContext);
         this.mContext = mContext;
         mContentsDataCallback = callback;
@@ -56,13 +64,17 @@ public class HikariTvChDataProvider extends ScaledDownProgramListDataProvider {
         super.getChannelList(limit, offset, filter, JsonConstants.CH_SERVICE_TYPE_INDEX_HIKARI);
     }
 
+    /**
+     * NOW　ON AIR　番組情報を取得.
+     * @param chno チャンネルナンバー
+     */
     public void getNowOnAirProgram(final int chno) {
         mTvScheduleWebClient = new TvScheduleWebClient(mContext);
         mTvScheduleWebClient.getTvScheduleApi(new int[]{chno}, new String[]{WebApiBasePlala.DATE_NOW}, "", this);
     }
 
     @Override
-    public void onTvScheduleJsonParsed(List<TvScheduleList> tvScheduleList) {
+    public void onTvScheduleJsonParsed(final List<TvScheduleList> tvScheduleList) {
         if (tvScheduleList == null) { //networkエラー
             mErrorState = mTvScheduleWebClient.getError();
             DTVTLogger.error("1");

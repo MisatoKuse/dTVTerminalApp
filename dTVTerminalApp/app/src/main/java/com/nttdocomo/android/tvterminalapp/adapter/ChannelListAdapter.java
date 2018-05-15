@@ -128,8 +128,8 @@ public class ChannelListAdapter extends BaseAdapter {
                 case CH_LIST_DATA_TYPE_BS:
                 case CH_LIST_DATA_TYPE_TDB:
                     holder.mThumbnail.setVisibility(View.GONE);
-                    DisplayMetrics DisplayMetrics = mContext.getResources().getDisplayMetrics();
-                    float density = DisplayMetrics.density;
+                    DisplayMetrics displayMetrics = mContext.getResources().getDisplayMetrics();
+                    float density = displayMetrics.density;
                     RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                             RelativeLayout.LayoutParams.MATCH_PARENT, TEXT_HEIGHT * (int) density);
                     layoutParams.setMarginStart(TEXT_MARGIN_START * (int) density);

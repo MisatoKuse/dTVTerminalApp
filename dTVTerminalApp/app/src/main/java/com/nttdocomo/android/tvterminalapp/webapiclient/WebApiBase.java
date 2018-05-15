@@ -9,7 +9,7 @@ import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
-import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOtt;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.HttpThread;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.WebApiCallback;
 
@@ -65,8 +65,8 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
         final WebApiBase webApiBase = this;
         //Log.d(DCommon.LOG_DEF_TAG, "WebApiBase::get, url= " + url);
         //dアカウントのワンタイムパスワードの取得を行う
-        final DaccountGetOTT getOtt = new DaccountGetOTT();
-        getOtt.execDaccountGetOTT(context, new DaccountGetOTT.DaccountGetOttCallBack() {
+        final DaccountGetOtt getOtt = new DaccountGetOtt();
+        getOtt.execDaccountGetOTT(context, new DaccountGetOtt.DaccountGetOttCallBack() {
             @Override
             public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
                 //ワンタイムパスワードの取得後に呼び出す

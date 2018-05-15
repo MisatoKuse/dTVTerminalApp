@@ -322,7 +322,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
     }
 
     @Override
-    public String getScreenID() {
+    public String getScreenId() {
         return "";
     }
 

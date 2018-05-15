@@ -8,14 +8,15 @@ package com.nttdocomo.android.tvterminalapp.utils;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
+/**
+ * データ転換用クラス.
+ */
 public class DataConverter {
 
     /**
-     * 取得したマップでContentsDataを生成する
+     * 取得したマップでContentsDataを生成する.
      *
      * @param srcMap コンテンツデータMap
      * @return ContentsData

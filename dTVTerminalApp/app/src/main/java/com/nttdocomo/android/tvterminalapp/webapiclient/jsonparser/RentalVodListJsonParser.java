@@ -15,6 +15,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalVodListWebClient;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,7 +23,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 
 /**
  * レンタル一覧（Jsonパーサー）.

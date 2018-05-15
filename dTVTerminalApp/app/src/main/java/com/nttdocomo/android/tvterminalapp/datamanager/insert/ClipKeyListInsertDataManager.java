@@ -48,7 +48,7 @@ public class ClipKeyListInsertDataManager {
      * @param type                テーブル種別
      * @param clipKeyListResponse クリップキー一覧 レスポンスデータ
      */
-    public synchronized void insertClipKeyListInsert(final ClipKeyListDao.TABLE_TYPE type, final ClipKeyListResponse clipKeyListResponse) {
+    public synchronized void insertClipKeyListInsert(final ClipKeyListDao.TableTypeEnum type, final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
         try {
             //各種オブジェクト作成
@@ -98,7 +98,7 @@ public class ClipKeyListInsertDataManager {
      * @param titleId   タイトルID
      */
     public void insertRowSqlStart(
-            final ClipKeyListDao.TABLE_TYPE tableType, final String crId, final String serviceId,
+            final ClipKeyListDao.TableTypeEnum tableType, final String crId, final String serviceId,
             final String eventId, final String titleId) {
         DTVTLogger.start();
         try {
@@ -135,7 +135,7 @@ public class ClipKeyListInsertDataManager {
      * @param titleId   タイトルID
      */
     public void deleteRowSqlStart(
-            final ClipKeyListDao.TABLE_TYPE tableType, final String crId, final String serviceId,
+            final ClipKeyListDao.TableTypeEnum tableType, final String crId, final String serviceId,
             final String eventId, final String titleId) {
         DTVTLogger.start();
         try {

@@ -97,7 +97,7 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
     public void getChildContentList(final String crid, final int offset, final String dispType) {
         if (!mIsCancel) {
             if (mRequiredClipKeyList) {
-                getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+                getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
                 mRequiredClipKeyList = false;
             }
 

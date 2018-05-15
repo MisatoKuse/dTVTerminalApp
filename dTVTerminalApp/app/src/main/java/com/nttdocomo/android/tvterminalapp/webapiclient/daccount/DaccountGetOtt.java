@@ -19,7 +19,7 @@ import com.nttdocomo.android.tvterminalapp.common.DaccountConstants;
 /**
  * dアカウント連携・OTT取得.
  */
-public class DaccountGetOTT {
+public class DaccountGetOtt {
 
     /**
      * コンテキストの控え.
@@ -159,7 +159,7 @@ public class DaccountGetOTT {
     /**
      * コンストラクタ.
      */
-    public DaccountGetOTT() {
+    public DaccountGetOtt() {
         //重複OTT取得防止処理の設定
         mOttGetQueue = OttGetQueue.getInstance();
     }
@@ -167,7 +167,7 @@ public class DaccountGetOTT {
     /**
      * コンストラクタ(context設定付き).
      */
-    public DaccountGetOTT(Context context) {
+    public DaccountGetOtt(final Context context) {
         //元のコンストラクターを呼ぶ
         this();
 

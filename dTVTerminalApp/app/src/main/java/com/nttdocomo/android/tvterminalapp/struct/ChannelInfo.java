@@ -15,61 +15,61 @@ public class ChannelInfo {
     /**
      * Scheduleの配列を保存.
      */
-    private ArrayList<ScheduleInfo> schedules = null;
+    private ArrayList<ScheduleInfo> mSchedules = null;
     /**
      * チャンネルのタイトル.
      */
-    private String title;
+    private String mTitle;
     /**
      * チャンネルのチャンネルID.
      */
-    private int chNo = -1;
+    private int mChannelNo = -1;
     /**
      * チャンネルのサービスID.
      */
-    private String serviceId;
+    private String mServiceId;
     /**
      * チャンネルの開始時間.
      */
-    private String startDate;
+    private String mStartDate;
     /**
      * チャンネルの開始時間.
      */
-    private String endDate;
+    private String mEndDate;
     /**
      * チャンネルのアイコン.
      */
-    private String thumbnail;
+    private String mThumbnail;
     /**
      * チャンネルのタイプ.
      */
-    private String chType;
+    private String mChannelType;
     /**
      * パーチャスID.
      */
-    private String puId;
+    private String mPurchaseId;
     /**
      * サブパーチャスID.
      */
-    private String subPuId;
+    private String mSubPurchaseId;
     /**
      * チャンネルパックのパーチャスID.
      */
-    private String chPackPuId;
+    private String mChannelPackPurchaseId;
     /**
      * チャンネルパックのサブパーチャスID.
      */
-    private String chPackSubPuId;
+    private String mChannelPackSubPurchaseId;
     /**
      * チャンネルのサービス識別子.
      */
-    private String service;
+    private String mService;
     /**
      * Channelタイトルを取得.
      * @return title タイトル
      */
     public String getTitle() {
-        return title;
+        return mTitle;
     }
 
     /**
@@ -77,23 +77,23 @@ public class ChannelInfo {
      * @param title タイトル
      */
     public void setTitle(final String title) {
-        this.title = title;
+        this.mTitle = title;
     }
 
     /**
      * chNoを取得.
      * @return chNo
      */
-    public int getChNo() {
-        return chNo;
+    public int getChannelNo() {
+        return mChannelNo;
     }
 
     /**
      * ｍChnを設定.
      * @param chNo チャンネルID
      */
-    public void setChNo(final int chNo) {
-        this.chNo = chNo;
+    public void setChannelNo(final int chNo) {
+        this.mChannelNo = chNo;
     }
 
     /**
@@ -101,7 +101,7 @@ public class ChannelInfo {
      * @return serviceId
      */
     public String getServiceId() {
-        return serviceId;
+        return mServiceId;
     }
 
     /**
@@ -109,7 +109,7 @@ public class ChannelInfo {
      * @param serviceId チャンネルID
      */
     public void setServiceId(final String serviceId) {
-        this.serviceId = serviceId;
+        this.mServiceId = serviceId;
     }
 
     /**
@@ -117,14 +117,14 @@ public class ChannelInfo {
      * @return startDate
      */
     public String getStartDate() {
-        return startDate;
+        return mStartDate;
     }
     /**
      * startDateを設定.
      * @param startDate チャンネルID
      */
     public void setStartDate(final String startDate) {
-        this.startDate = startDate;
+        this.mStartDate = startDate;
     }
 
     /**
@@ -132,98 +132,98 @@ public class ChannelInfo {
      * @return endDate
      */
     public String getEndDate() {
-        return endDate;
+        return mEndDate;
     }
     /**
      * endDateを設定.
      * @param endDate チャンネルID
      */
     public void setEndDate(final String endDate) {
-        this.endDate = endDate;
+        this.mEndDate = endDate;
     }
     /**
      * thumbnailを取得.
      * @return thumbnail
      */
     public String getThumbnail() {
-        return thumbnail;
+        return mThumbnail;
     }
     /**
      * thumbnail.
      * @param thumbnail チャンネルID
      */
     public void setThumbnail(final String thumbnail) {
-        this.thumbnail = thumbnail;
+        this.mThumbnail = thumbnail;
     }
     /**
      * chTypeを取得.
      * @return chType
      */
-    public String getChType() {
-        return chType;
+    public String getChannelType() {
+        return mChannelType;
     }
     /**
      * chTypeを設定.
      * @param chType チャンネルタイプ
      */
-    public void setChType(final String chType) {
-        this.chType = chType;
+    public void setChannelType(final String chType) {
+        this.mChannelType = chType;
     }
     /**
      * puidを取得.
      * @return パーチャスID
      */
-    public String getPuId() {
-        return puId;
+    public String getPurchaseId() {
+        return mPurchaseId;
     }
     /**
      * puidを設定.
      * @param puId パーチャスID
      */
-    public void setPuId(final String puId) {
-        this.puId = puId;
+    public void setPurchaseId(final String puId) {
+        this.mPurchaseId = puId;
     }
     /**
      * sub_puidを取得.
      * @return サブパーチャスID
      */
-    public String getSubPuId() {
-        return subPuId;
+    public String getSubPurchaseId() {
+        return mSubPurchaseId;
     }
     /**
      * sub_puidを設定.
      * @param subPuId サブパーチャスID
      */
-    public void setSubPuId(final String subPuId) {
-        this.subPuId = subPuId;
+    public void setSubPurchaseId(final String subPuId) {
+        this.mSubPurchaseId = subPuId;
     }
     /**
      * CHPACKのpuidを取得.
      * @return チャンネルパックのパーチャスID
      */
-    public String getChPackPuId() {
-        return chPackPuId;
+    public String getChannelPackPurchaseId() {
+        return mChannelPackPurchaseId;
     }
     /**
      * CHPACKのpuidを設定.
      * @param chPackPuId チャンネルパックのパーチャスID
      */
-    public void setChPackPuId(final String chPackPuId) {
-        this.chPackPuId = chPackPuId;
+    public void setChannelPackPurchaseId(final String chPackPuId) {
+        this.mChannelPackPurchaseId = chPackPuId;
     }
     /**
      * CHPACKのsub_puidを取得.
      * @return チャンネルパックのサブパーチャスID
      */
-    public String getChPackSubPuId() {
-        return chPackSubPuId;
+    public String getChannelPackSubPurchaseId() {
+        return mChannelPackSubPurchaseId;
     }
     /**
      * CHPACKのsub_puidを設定.
      * @param chPackSubPuId チャンネルパックのサブパーチャスID
      */
-    public void setChPackSubPuId(final String chPackSubPuId) {
-        this.chPackSubPuId = chPackSubPuId;
+    public void setChannelPackSubPurchaseId(final String chPackSubPuId) {
+        this.mChannelPackSubPurchaseId = chPackSubPuId;
     }
 
     /**
@@ -231,14 +231,14 @@ public class ChannelInfo {
      * @return schedules　チャンネル番組
      */
     public ArrayList<ScheduleInfo> getSchedules() {
-        return schedules;
+        return mSchedules;
     }
     /**
      * チャンネル番組を設定.
      * @param schedules チャンネル
      */
     public void setSchedules(final ArrayList<ScheduleInfo> schedules) {
-        this.schedules = schedules;
+        this.mSchedules = schedules;
     }
 
     /**
@@ -246,14 +246,14 @@ public class ChannelInfo {
      * @return service　ひかり"1" or dCH"2"
      */
     public String getService() {
-        return service;
+        return mService;
     }
     /**
      * サービス識別子を設定.
      * @param service ひかり"1" or dCH"2"
      */
     public void setService(final String service) {
-        this.service = service;
+        this.mService = service;
     }
     /**
      * チャンネルを比較.
@@ -261,9 +261,9 @@ public class ChannelInfo {
      * @return true:同じ false:違う
      */
     public boolean equalTo(final ChannelInfo ch2) {
-        if (null == ch2 || null == this.title || null == ch2.title) {
+        if (null == ch2 || null == this.mTitle || null == ch2.mTitle) {
             return false;
         }
-        return this.chNo == ch2.chNo && this.title.equals(ch2.title);
+        return this.mChannelNo == ch2.mChannelNo && this.mTitle.equals(ch2.mTitle);
     }
 }

@@ -11,19 +11,19 @@ public class ActiveData {
     /**
      * ライセンスID.
      */
-    private String licenseId;
+    private String mLicenseId;
 
     /**
      * 有効期限.
      */
-    private long validEndDate;
+    private long mValidEndDate;
 
     /**
      * コンストラクタ.
      */
     public ActiveData() {
-        licenseId = "";
-        validEndDate = 0;
+        mLicenseId = "";
+        mValidEndDate = 0;
     }
 
     /**
@@ -31,7 +31,7 @@ public class ActiveData {
      * @return ライセンスID
      */
     public String getLicenseId() {
-        return licenseId;
+        return mLicenseId;
     }
 
     /**
@@ -39,7 +39,7 @@ public class ActiveData {
      * @param licenseId  ライセンスID
      */
     public void setLicenseId(final String licenseId) {
-        this.licenseId = licenseId;
+        this.mLicenseId = licenseId;
     }
 
     /**
@@ -47,7 +47,7 @@ public class ActiveData {
      * @return 有効期限
      */
     public long getValidEndDate() {
-        return validEndDate;
+        return mValidEndDate;
     }
 
     /**
@@ -55,7 +55,7 @@ public class ActiveData {
      * @param validEndDate  有効期限
      */
     public void setValidEndDate(final long validEndDate) {
-        this.validEndDate = validEndDate;
+        this.mValidEndDate = validEndDate;
     }
 
 }
