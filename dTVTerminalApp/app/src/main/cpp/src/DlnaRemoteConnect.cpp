@@ -24,7 +24,7 @@
 #endif
 
 std::function<void(eDiragConnectStatus status)> DlnaRemoteConnect::DiragConnectStatusChangeCallback = nullptr;
-std::function<void(bool result)> DlnaRemoteConnect::LocalRegistrationCallback = nullptr;
+std::function<void(bool result, eLocalRegistrationResultType resultType)> DlnaRemoteConnect::LocalRegistrationCallback = nullptr;
 std::function<void(ddtcp_ret ddtcpSinkAkeEndRet)> DlnaRemoteConnect::DdtcpSinkAkeEndCallback = nullptr;
 
 typedef struct regist_dms_visitor_context {
@@ -180,6 +180,7 @@ void prepare_lr_register_response_handler(du_uint32 requeseted_id, local_registr
 
 void lr_register_response_handler(du_uint32 requeseted_id, local_registration_error_info* error_info) {
     bool result = false;
+    eLocalRegistrationResultType resultType = LocalRegistrationResultTypeNone;
     if (error_info->type == LOCAL_REGISTRATION_ERROR_TYPE_NONE) {
         LOG_WITH("============================== Finsh Local Registration ==============================");
         result = true;
@@ -187,9 +188,15 @@ void lr_register_response_handler(du_uint32 requeseted_id, local_registration_er
         LOG_WITH("============================== Error Local Registration ==============================");
         LOG_WITH("http_status = %s, type = %d, soap_error_code = %s", error_info->http_status, error_info->type, error_info->soap_error_code);
         LOG_WITH("soap_error_description = %s", error_info->soap_error_description);
+
+        if(du_str_equal(error_info->soap_error_code, DU_UCHAR_CONST("803"))) {
+            resultType = LocalRegistrationResultTypeRegistrationOverError;
+        } else {
+            resultType = LocalRegistrationResultTypeUnknownError;
+        }
     }
     if (DlnaRemoteConnect::LocalRegistrationCallback != nullptr) {
-        DlnaRemoteConnect::LocalRegistrationCallback(result);
+        DlnaRemoteConnect::LocalRegistrationCallback(result, resultType);
     }
 }
 

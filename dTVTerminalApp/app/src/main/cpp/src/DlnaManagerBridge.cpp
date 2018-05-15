@@ -135,7 +135,7 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
         }
     };
 
-    dlnaRemoteConnect->LocalRegistrationCallback = [](bool result) {
+    dlnaRemoteConnect->LocalRegistrationCallback = [](bool result, eLocalRegistrationResultType resultType) {
         JNIEnv *_env = NULL;
         int status = g_ctx.javaVM->GetEnv((void **) &_env, JNI_VERSION_1_6);
         bool isAttached = false;
@@ -147,10 +147,12 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
             isAttached = true;
         }
 
-        //jboolean jResult = _env->NewBooleanArray(result, 0);
-        jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "RegistResultCallBack", "(Z)V");
-        _env->CallVoidMethod(g_ctx.jniHelperObj, methodID, result);
-        //_env->DeleteLocalRef(jResult);
+        jint resultTypeNumber = 0;
+        if (resultType == LocalRegistrationResultTypeRegistrationOverError) {
+            resultTypeNumber = 1;
+        }
+        jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "RegistResultCallBack", "(ZI)V");
+        _env->CallVoidMethod(g_ctx.jniHelperObj, methodID, result, resultTypeNumber);
 
         if (isAttached) {
             g_ctx.javaVM->DetachCurrentThread();

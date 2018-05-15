@@ -16,13 +16,19 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class DlnaManager {
+    public enum LocalRegistrationErrorType {
+        NONE,
+        OVER,
+        UNKNOWN
+    }
+
     // region Listener declaration
     public interface DlnaManagerListener {
         void joinDms(String name, String host, String udn, String controlUrl, String eventSubscriptionUrl);
         void leaveDms(String udn);
     }
     public interface LocalRegisterListener {
-        void onRegisterCallBack(boolean result);
+        void onRegisterCallBack(boolean result, LocalRegistrationErrorType errorType);
     }
     // endregion Listener declaration
 
@@ -39,6 +45,8 @@ public class DlnaManager {
     static {
         System.loadLibrary("dtvtlib");
     }
+
+    private static final int LOCAL_REGISTRATION_ERROR_TYPE_OVER = 1;
 
     public DlnaManagerListener mDlnaManagerListener = null;
     public LocalRegisterListener mLocalRegisterListener = null;
@@ -135,11 +143,15 @@ public class DlnaManager {
         }
     }
 
-    public void RegistResultCallBack(boolean result) {
+    public void RegistResultCallBack(boolean result, int errorType) {
         DTVTLogger.warning("result = " + result);
         LocalRegisterListener listener = DlnaManager.shared().mLocalRegisterListener;
         if (listener != null) {
-            listener.onRegisterCallBack(result);
+            LocalRegistrationErrorType localRegistrationErrorType = LocalRegistrationErrorType.NONE;
+            if (errorType == LOCAL_REGISTRATION_ERROR_TYPE_OVER){
+                localRegistrationErrorType = LocalRegistrationErrorType.OVER;
+            }
+            listener.onRegisterCallBack(result, localRegistrationErrorType);
         } else {
             DTVTLogger.error("no callback");
         }

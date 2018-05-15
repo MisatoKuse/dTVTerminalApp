@@ -106,6 +106,11 @@ enum eDiragConnectStatus {
     , DiragConnectStatusGaveupReconnection
 };
 
+enum eLocalRegistrationResultType {
+    LocalRegistrationResultTypeNone
+    , LocalRegistrationResultTypeUnknownError //不明なエラー
+    , LocalRegistrationResultTypeRegistrationOverError //台数オーバー
+};
 enum eDlnaErrorType {
     initError,
     startError,

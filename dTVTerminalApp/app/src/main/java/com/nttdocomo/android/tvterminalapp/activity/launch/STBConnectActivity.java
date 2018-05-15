@@ -152,12 +152,12 @@ public class STBConnectActivity extends BaseActivity implements UserInfoDataProv
     }
 
     @Override
-    public void onRegisterCallBack(final boolean result) {
+    public void onRegisterCallBack(final boolean result, final DlnaManager.LocalRegistrationErrorType errorType) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 setRemoteProgressVisible(View.GONE);
-                showRegistResultDialog(result);
+                showRegistResultDialog(result, errorType);
             }
         });
     }
@@ -167,14 +167,20 @@ public class STBConnectActivity extends BaseActivity implements UserInfoDataProv
      *
      * @param isSuccess true 成功 false 失敗
      */
-    private void showRegistResultDialog(final boolean isSuccess) {
+    private void showRegistResultDialog(final boolean isSuccess, DlnaManager.LocalRegistrationErrorType errorType) {
         CustomDialog resultDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
         resultDialog.setOnTouchOutside(false);
         if (isSuccess) {
             resultDialog.setContent(getString(R.string.common_text_regist_progress_done));
         } else {
+            switch (errorType) {
+                case OVER:
+                    resultDialog.setContent(getString(R.string.common_text_regist_over_error));
+                    break;
+                default:
+                    resultDialog.setContent(getString(R.string.common_text_regist_other_error));break;
+            }
             resultDialog.setConfirmText(R.string.common_text_close);
-            resultDialog.setContent(getString(R.string.common_text_regist_other_error));
         }
         resultDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
