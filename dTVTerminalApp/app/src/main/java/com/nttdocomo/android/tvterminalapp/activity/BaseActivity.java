@@ -2107,6 +2107,9 @@ public class BaseActivity extends FragmentActivity implements
                         // 「今後は確認しない」チェックなし
                         mShowDialog = createPermissionDetailDialog();
                         mShowDialog.showDialog();
+                    } else {
+                        // 海外判定を行わず通信を行う
+                        onReStartCommunication();
                     }
                 }
             }
