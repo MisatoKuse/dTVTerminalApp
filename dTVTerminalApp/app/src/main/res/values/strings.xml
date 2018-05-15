@@ -256,7 +256,6 @@
     <string name="contents_detail_tab_channel">チャンネル</string>
     <string name="contents_detail_tab_episode">エピソード</string>
     <string name="contents_detail_tab_contents_info">作品情報</string>
-    <string name="contents_detail_hikari_tv_agreement">このチャンネルをご覧になるには\nドコモテレビターミナルでの契約が必要です</string>
     <string name="contents_detail_hikari_vod_inside_home">本コンテンツはテレビで視聴できます</string>
     <string name="contents_detail_hikari_vod_agreement">ご覧になるにはコンテンツの契約が必要です。\nドコモテレビターミナルで契約してください</string>
     <string name="contents_detail_no_agreement">視聴いただくには契約が必要です</string>
@@ -298,6 +297,7 @@
     <string name="contents_detail_login_button">ログイン</string>
     <string name="contents_detail_now_on_air_contents_nothing">現在放送中のコンテンツがありません</string>
     <string name="contents_detail_out_house_player_error_msg">視聴いただくには、「リモート視聴設定」が必要です。\n設定＞リモート視聴設定　を行ってください。</string>
+    <string name="contents_detail_pairing_button">ペアリングする</string>
 
     <!-- チャンネルリストタイトル -->
     <string name="channel_list_activity_title">チャンネルリスト</string>

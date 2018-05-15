@@ -483,8 +483,9 @@ public class ContentUtils {
         //現在時刻
         long current = DateUtils.getNowTimeFormatEpoch();
         //Now On Air フラグ
-        boolean isNowOnAir = DateUtils.isNowOnAirDate(
-                String.valueOf(metaFullData.getPublish_start_date()), String.valueOf(metaFullData.getPublish_end_date()), true);
+        boolean isNowOnAir =
+                metaFullData.getPublish_start_date() <= current && current < metaFullData.getPublish_end_date();
+
         if (dispType == null) {
             return ContentsType.OTHER;
         } else {
@@ -685,7 +686,8 @@ public class ContentUtils {
      * @param channelInfo  Channelメタデータ
      * @return 視聴可否ステータス
      */
-    public static ViewIngType getViewingType(final String contractInfo, final VodMetaFullData metaFullData, final ChannelInfo channelInfo) {
+    public static ViewIngType getViewingType( String contractInfo, final VodMetaFullData metaFullData, final ChannelInfo channelInfo) {
+        contractInfo = UserInfoUtils.CONTRACT_INFO_H4D;
         if (contractInfo == null || contractInfo.isEmpty() || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo)) {
             //契約情報が未設定、または"none"の場合は視聴不可(契約導線を表示)
             DTVTLogger.debug("Unviewable(Not contract)");
@@ -835,7 +837,7 @@ public class ContentUtils {
                         //取得したチャンネル情報が不正の場合
                         return ViewIngType.NONE_STATUS;
                     }
-                    //メタレスポンス「tv_service」が「1」
+                    //メタレスポンス「tv_service」が「2」
                 } else if (ContentDetailActivity.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(tvService)) {
                     //メタレスポンス「publish_start_date」 <= 現在時刻 < 「publish_end_date」
                     if (publishStartDate <= nowDate && nowDate < publishEndDate) {
@@ -1113,11 +1115,9 @@ public class ContentUtils {
                     return ViewIngType.ENABLE_WATCH;
                 }
                 //一致した「active_list」の「valid_end_date」<= 現在時刻の場合
-            } else if (validEndDate <= nowDate) {
+            } else {
                 //視聴不可(契約導線を表示する)
                 return ViewIngType.DISABLE_VOD_WATCH_AGREEMENT_DISPLAY;
-            } else {
-                return ViewIngType.NONE_STATUS;
             }
             //一致した「active_list」の「valid_end_date」> 現在時刻の場合（一件でも条件を満たせば視聴可能）が不一致
         } else {
