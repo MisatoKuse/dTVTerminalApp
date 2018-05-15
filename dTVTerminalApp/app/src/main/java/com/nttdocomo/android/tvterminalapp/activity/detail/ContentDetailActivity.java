@@ -3200,7 +3200,7 @@ public class ContentDetailActivity extends BaseActivity implements
         ArrayList<ActiveData> vodActiveData = response.getVodActiveData();
         mEndDate = ContentUtils.getRentalVodValidEndDate(mDetailFullData, vodActiveData);
         DTVTLogger.debug("get rental vod end date:" + mEndDate);
-        mViewIngType = ContentUtils.getRentalVodViewingType(mDetailFullData, vodActiveData, mEndDate);
+        mViewIngType = ContentUtils.getRentalVodViewingType(mDetailFullData, mEndDate);
         DTVTLogger.debug("get rental vod viewing type:" + mViewIngType);
         changeUIBasedContractInfo();
     }
@@ -3216,7 +3216,7 @@ public class ContentDetailActivity extends BaseActivity implements
 
         mEndDate = ContentUtils.getRentalChannelValidEndDate(response, mChannel);
         DTVTLogger.debug("get rental vod end date:" + mEndDate);
-        mViewIngType = ContentUtils.getRentalChannelViewingType(mDetailFullData, response, mChannel, mEndDate);
+        mViewIngType = ContentUtils.getRentalChannelViewingType(mDetailFullData, mEndDate);
         DTVTLogger.debug("get rental vod viewing type:" + mViewIngType);
         changeUIBasedContractInfo();
     }
