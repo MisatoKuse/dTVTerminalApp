@@ -41,8 +41,19 @@ public class STBConnectActivity extends BaseActivity implements UserInfoDataProv
         setContentView(R.layout.stb_connect_main_layout);
         //SharedPreferenceにSTB接続完了をセット
         SharedPreferencesUtils.setSharedPreferencesStbConnect(this, true);
-        DlnaManager.shared().StartDmp();
         setContents();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        DlnaManager.shared().StartDmp();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        DlnaManager.shared().StopDmp();
     }
 
     /**
