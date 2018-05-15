@@ -2517,8 +2517,8 @@ public class ContentDetailActivity extends BaseActivity implements
                                                 if (CONTENT_TYPE_FLAG_ZERO.equals(mDetailFullData.getmContent_type())
                                                         || null == mDetailFullData.getmContent_type()) {
                                                     DTVTLogger.debug("contentsType :----" + mDetailFullData.getmContent_type());
-                                                    startApp(UrlConstants.WebUrl.DTVCHANNEL_TELEVISION_START_URL + mDetailFullData.getmChno());
-                                                    DTVTLogger.debug("chno :----" + mDetailFullData.getmChno());
+                                                    startApp(UrlConstants.WebUrl.DTVCHANNEL_TELEVISION_START_URL + mDetailFullData.getmService_id());
+                                                    DTVTLogger.debug("chno :----" + mDetailFullData.getmService_id());
                                                     //ビデオ再生 「disp_type」が「tv_program」かつ「contents_type」が「1」または「2」または「3」
                                                 } else if (CONTENT_TYPE_FLAG_ONE.equals(mDetailFullData.getmContent_type())
                                                         || CONTENT_TYPE_FLAG_TWO.equals(mDetailFullData.getmContent_type())
