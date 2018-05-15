@@ -55,6 +55,7 @@ namespace dtvt {
          * @return mDlnaMsgIdD
          */
         DLNA_MSG_ID getMsgId();
+        void setImageQuality(int imageQuality);
         int getImageQuality();
 
     protected:

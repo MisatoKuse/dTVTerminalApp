@@ -1287,12 +1287,12 @@ namespace dtvt {
         if(NULL==mDlnaRecVideoXmlParser){
             mDlnaRecVideoXmlParser=(DlnaXmlParserBase*)new DlnaRecVideoXmlParser();
             IfNullReturnFalse(mDlnaRecVideoXmlParser);
+            mDlnaRecVideoXmlParser->setImageQuality(imageQuality);
         }
         mRecursionXmlParser=mDlnaRecVideoXmlParser;
 
         mDlnaXmlContainer.cleanAll();
         mDlnaXmlContainer.setMsgId(DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST);
-        mDlnaXmlContainer.setImageQuality(imageQuality);
 
         #if defined(DLNA_KARI_DMS_UNIVERSAL)
             return sendSoap(controlUrl, "0");
@@ -1318,10 +1318,10 @@ namespace dtvt {
         if(NULL==mBsDigitalXmlParser){
             mBsDigitalXmlParser=(DlnaXmlParserBase*)new DlnaBSDigitalXmlParser();
             IfNullReturnFalse(mBsDigitalXmlParser);
+            mBsDigitalXmlParser->setImageQuality(imageQuality);
         }
         mRecursionXmlParser=mBsDigitalXmlParser;
         mDlnaXmlContainer.cleanAll();
-        mDlnaXmlContainer.setImageQuality(imageQuality);
         #if defined(DLNA_KARI_DMS_UNIVERSAL)
             return sendSoap(controlUrl, "0");
         #elif defined(DLNA_KARI_DMS_NAS)
@@ -1345,10 +1345,10 @@ namespace dtvt {
         if(NULL==mTerChXmlParser){
             mTerChXmlParser=(DlnaXmlParserBase*)new DlnaTerChXmlParser();
             IfNullReturnFalse(mTerChXmlParser);
+            mTerChXmlParser->setImageQuality(imageQuality);
         }
         mRecursionXmlParser=mTerChXmlParser;
         mDlnaXmlContainer.cleanAll();
-        mDlnaXmlContainer.setImageQuality(imageQuality);
         #if defined(DLNA_KARI_DMS_UNIVERSAL)
                 return sendSoap(controlUrl, "0");
         #elif defined(DLNA_KARI_DMS_NAS)
@@ -1372,10 +1372,10 @@ namespace dtvt {
         if(NULL==mHikariChXmlParser){
             mHikariChXmlParser=(DlnaXmlParserBase*)new DlnaHikariChXmlParser();
             IfNullReturnFalse(mHikariChXmlParser);
+            mHikariChXmlParser->setImageQuality(imageQuality);
         }
         mRecursionXmlParser=mHikariChXmlParser;
         mDlnaXmlContainer.cleanAll();
-        mDlnaXmlContainer.setImageQuality(imageQuality);
         #if defined(DLNA_KARI_DMS_UNIVERSAL)
                 return sendSoap(controlUrl, "0");
         #elif defined(DLNA_KARI_DMS_NAS)

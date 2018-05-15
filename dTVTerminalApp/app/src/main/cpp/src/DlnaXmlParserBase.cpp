@@ -15,6 +15,10 @@ namespace dtvt {
         return mDlnaMsgIdD;
     }
 
+    void  DlnaXmlParserBase::setImageQuality(int imageQuality){
+        mImageQuality = imageQuality;
+    }
+
     int DlnaXmlParserBase::getImageQuality(){
         return mImageQuality;
     }
