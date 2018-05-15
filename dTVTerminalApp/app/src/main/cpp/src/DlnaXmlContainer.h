@@ -29,6 +29,9 @@ extern "C" {
             inline void setMsgId(DLNA_MSG_ID id) { mDLNA_MSG_ID = id;  }
             inline const DLNA_MSG_ID getMsgId() { return mDLNA_MSG_ID; }
 
+            inline void setImageQuality(int imageQuality) { mIMAGE_QUALITY = imageQuality;  }
+            inline const int getImageQuality() { return mIMAGE_QUALITY; }
+
             void addXml(du_uchar* xml, size_t size);
             void addVVectorString(VVectorString & vs);
 
@@ -43,6 +46,7 @@ extern "C" {
 
         private:
             DLNA_MSG_ID mDLNA_MSG_ID;
+            int mIMAGE_QUALITY;
             VVectorString mVVectorString;
             std::vector<du_uchar*> mXmls;
         };

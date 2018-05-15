@@ -196,16 +196,33 @@ namespace dtvt {
         const int PAGE_COUNT = 300;
         //チューナールート/スマホ向け/録画一覧
         const char* const DLNA_DMS_RECORD_LIST = "0/smartphone/rec/all"; //本番
+        const char* const DLNA_DMS_RECORD_LIST_HIGH = "0/remote1/rec/all"; //最高画質
+        const char* const DLNA_DMS_RECORD_LIST_MIDDLE = "0/remote2/rec/all"; //高画質
+        const char* const DLNA_DMS_RECORD_LIST_LOW = "0/remote3/rec/all"; //標準画質
 
         //チューナールート/スマホ向け/多チャンネル
         const char* const DLNA_DMS_MULTI_CHANNEL = "0/smartphone/ip";
+        const char* const DLNA_DMS_MULTI_CHANNEL_HIGH = "0/remote1/ip"; //最高画質
+        const char* const DLNA_DMS_MULTI_CHANNEL_MIDDLE = "0/remote2/ip"; //高画質
+        const char* const DLNA_DMS_MULTI_CHANNEL_LOW = "0/remote3/ip"; //標準画質
 
         //チューナールート/スマホ向け/地上デジタル
         const char* const DLNA_DMS_TER_CHANNEL = "0/smartphone/tb"; //本番
+        const char* const DLNA_DMS_TER_CHANNEL_HIGH = "0/remote1/tb"; //最高画質
+        const char* const DLNA_DMS_TER_CHANNEL_MIDDLE = "0/remote2/tb"; //高画質
+        const char* const DLNA_DMS_TER_CHANNEL_LOW = "0/remote3/tb"; //標準画質
 
         //チューナールート/スマホ向け/BSデジタル
         const char* const DLNA_DMS_BS_CHANNEL = "0/smartphone/bs"; //本番
+        const char* const DLNA_DMS_BS_CHANNEL_HIGH = "0/remote1/bs"; //最高画質
+        const char* const DLNA_DMS_BS_CHANNEL_MIDDLE = "0/remote2/bs"; //高画質
+        const char* const DLNA_DMS_BS_CHANNEL_LOW = "0/remote3/bs"; //標準画質
     #endif
+    //画質設定
+    const int IMAGE_QUALITY_DEFAULT = 0;
+    const int IMAGE_QUALITY_HIGH = IMAGE_QUALITY_DEFAULT+1;
+    const int IMAGE_QUALITY_MIDDLE = IMAGE_QUALITY_DEFAULT+2;
+    const int IMAGE_QUALITY_LOW = IMAGE_QUALITY_DEFAULT+3;
 
     /*----------------------------- function begin --------------------------------*/
     extern bool setJavaObjectField(JNIEnv *env, jclass cls, const char* const  fieldName, const char* const classPath, std::string& value, jobject obj);

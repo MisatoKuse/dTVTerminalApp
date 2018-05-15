@@ -45,9 +45,10 @@ public class DlnaProvHikariChList implements DlnaHikariChListListener{
     /**
      * 機能：DMSデバイスを取り始める.
      * @param item item
+     * @param imageQuality 画質設定
      * @return 成功true
      */
-    public boolean start(final DlnaDmsItem item, final String channelNr) {
+    public boolean start(final DlnaDmsItem item, final String channelNr, int imageQuality) {
         DlnaInterface di = DlnaInterface.getInstance();
         if (null == di) {
             return false;
@@ -61,16 +62,17 @@ public class DlnaProvHikariChList implements DlnaHikariChListListener{
         }
         mChannelNr = channelNr;
         di.setDlnaHikariChListListener(this);
-        return di.browseHikariChListDms();
+        return di.browseHikariChListDms(imageQuality);
     }
 
     /**
      * 機能：チャンネル一覧を発見.
+     * @param imageQuality 画質設定
      * @return 成功true
      */
-    public boolean browseChListDms() {
+    public boolean browseChListDms(int imageQuality) {
         DlnaInterface di = DlnaInterface.getInstance();
-        return null != di && di.browseHikariChListDms();
+        return null != di && di.browseHikariChListDms(imageQuality);
     }
 
     @Override

@@ -45,6 +45,7 @@ import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -338,7 +339,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             }
             if (mDlnaProvRecVideo.start(dlnaDmsItem, this)) {
                 clearFragment(0);
-                boolean res = mDlnaProvRecVideo.browseRecVideoDms();
+                boolean res = mDlnaProvRecVideo.browseRecVideoDms(DlnaUtils.getImageQualitySetting(getApplicationContext()));
                 if (!res) {
                     DTVTLogger.debug("browseRecVideoDms false");
                 }

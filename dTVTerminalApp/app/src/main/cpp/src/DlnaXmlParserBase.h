@@ -55,6 +55,7 @@ namespace dtvt {
          * @return mDlnaMsgIdD
          */
         DLNA_MSG_ID getMsgId();
+        int getImageQuality();
 
     protected:
         void setXmlItemValues(VectorString& out, const int key, XmlItemMap& itemMap);
@@ -64,6 +65,7 @@ namespace dtvt {
 
     private:
         DLNA_MSG_ID mDlnaMsgIdD;
+        int mImageQuality;
     };
     
 }   //namespace dtvt

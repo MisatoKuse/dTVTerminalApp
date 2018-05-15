@@ -3257,7 +3257,7 @@ public class ContentDetailActivity extends BaseActivity implements
                 });
                 DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
                 if (dlnaDmsItem != null) {
-                    provider.start(dlnaDmsItem, String.valueOf(mChannel.getChNo()));
+                    provider.start(dlnaDmsItem, String.valueOf(mChannel.getChNo()), DlnaUtils.getImageQualitySetting(getApplicationContext()));
                     //TODO チャンネル番号が"1010"でないとデータの取得ができないため暫定的に固定値を設定する場合は次のように実装すること
 //                    provider.start(dlnaDmsItem, "1010");
                 } else {
