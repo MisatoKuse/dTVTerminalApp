@@ -84,30 +84,34 @@ namespace dtvt {
         /**
          * 機能：録画ヴィデオ一覧を発見
          * @param controlUrl
+         * @param imageQuality 画質設定
          * @return true: 成功 false: 失敗
          */
-        bool browseRecVideoListDms(std::string controlUrl);
+        bool browseRecVideoListDms(std::string controlUrl, int imageQuality);
 
         /**
          * 機能：BSデジタルに関して、チャンネルリストを取得
          * @param controlUrl
+         * @param imageQuality 画質設定
          * @return true: 成功  false:失敗
          */
-        bool browseBsChListDms(std::string controlUrl);
+        bool browseBsChListDms(std::string controlUrl, int imageQuality);
 
         /**
          * 機能：Terに関して、チャンネルリストを取得
          * @param controlUrl
+         * @param imageQuality 画質設定
          * @return true: 成功  false:失敗
          */
-        bool browseTerChListDms(std::string controlUrl);
+        bool browseTerChListDms(std::string controlUrl, int imageQuality);
 
         /**
          * 機能：Hikariに関して、チャンネルリストを取得
          * @param controlUrl
+         * @param imageQuality 画質設定
          * @return true: 成功  false:失敗
          */
-        bool browseHikariChListDms(std::string controlUrl);
+        bool browseHikariChListDms(std::string controlUrl, int imageQuality);
 
         /**
          * 機能：dtcp Download

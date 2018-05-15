@@ -43,6 +43,7 @@ import com.nttdocomo.android.tvterminalapp.jni.ter.DlnaTerChListListener;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
@@ -186,7 +187,7 @@ public class ChannelListActivity extends BaseActivity implements
             //本番ソース begin
             DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
             if (mDlnaProvTerChList.start(dlnaDmsItem, getActivity())) {
-                boolean ret = mDlnaProvTerChList.browseChListDms();
+                boolean ret = mDlnaProvTerChList.browseChListDms(DlnaUtils.getImageQualitySetting(getApplicationContext()));
                 if (!ret) {
                     onError("Get Ter channel list datas failed");
                 }
@@ -204,7 +205,7 @@ public class ChannelListActivity extends BaseActivity implements
             //本番ソース begin
             DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
             if (mDlnaProvBsChList.start(dlnaDmsItem, getActivity())) {
-                boolean ret = mDlnaProvBsChList.browseChListDms();
+                boolean ret = mDlnaProvBsChList.browseChListDms(DlnaUtils.getImageQualitySetting(getApplicationContext()));
                 if (!ret) {
                     onError("Get BS channel list datas failed");
                 }

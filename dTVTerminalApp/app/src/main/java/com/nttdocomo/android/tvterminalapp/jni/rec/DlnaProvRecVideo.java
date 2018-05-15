@@ -56,15 +56,16 @@ public class DlnaProvRecVideo {
 
     /**
      * 機能：録画ビデオ一覧を発見.
+     * @param imageQuality 画質設定
      * @return 成功true
      */
-    public boolean browseRecVideoDms() {
+    public boolean browseRecVideoDms(int imageQuality) {
         DlnaInterface di = DlnaInterface.getInstance();
 //        if(null!=di){
 //            return di.browseRecVideoDms();
 //        }
 //        return false;
-        return null != di && di.browseRecVideoDms();
+        return null != di && di.browseRecVideoDms(imageQuality);
     }
 
     /**

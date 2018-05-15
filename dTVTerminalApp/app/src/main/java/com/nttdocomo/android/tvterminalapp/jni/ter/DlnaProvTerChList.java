@@ -56,14 +56,15 @@ public class DlnaProvTerChList {
 
     /**
      * 機能：録画ビデオ一覧を発見.
+     * @param imageQuality 画質設定
      * @return 成功true
      */
-    public boolean browseChListDms() {
+    public boolean browseChListDms(int imageQuality) {
         DlnaInterface di = DlnaInterface.getInstance();
 //        if(null != di){
 //            return di.browseTerChListDms();
 //        }
 //        return false;
-        return null != di && di.browseTerChListDms();
+        return null != di && di.browseTerChListDms(imageQuality);
     }
 }

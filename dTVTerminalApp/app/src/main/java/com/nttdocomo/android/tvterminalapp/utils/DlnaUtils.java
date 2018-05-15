@@ -6,9 +6,11 @@ package com.nttdocomo.android.tvterminalapp.utils;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.text.TextUtils;
 
 import com.digion.dixim.android.activation.helper.ActivationHelper;
 import com.digion.dixim.android.util.EnvironmentUtil;
+import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 import java.io.BufferedInputStream;
@@ -37,6 +39,16 @@ public class DlnaUtils {
     private static final String REPLACE_STR = "[CONFDIR]";
     /**バファサイズ.*/
     private static final int BUF_SIZE = 1024;
+    /*視聴画質設定*/
+    /** デフォルト.*/
+    private static final int IMAGE_QUALITY_DEFAULT = 0;
+    /** 最高画質.*/
+    private static final int IMAGE_QUALITY_HIGH = 1;
+    /** 高画質.*/
+    private static final int IMAGE_QUALITY_MIDDLE = 2;
+    /** 標準画質.*/
+    private static final int IMAGE_QUALITY_LOW = 3;
+    /*視聴画質設定*/
 
     /**
      * アクティベーションのチェック、実行.
@@ -208,5 +220,32 @@ public class DlnaUtils {
             DTVTLogger.debug(e);
         }
         return result;
+    }
+
+    /**
+     * 設定した画質を取得.
+     *
+     * @param context コンテキスト
+     * @return 設定した画質
+     */
+    public static int getImageQualitySetting(final Context context) {
+        // TODO リモート視聴設定状態取得処理追加、仮で固定値「false」に設定
+        boolean isRemote = false;
+        if (context == null) {
+            return IMAGE_QUALITY_DEFAULT;
+        }
+        String imageQualitySetting = SharedPreferencesUtils.getSharedPreferencesImageQuality(context);
+        if (!isRemote || TextUtils.isEmpty(imageQualitySetting)) {
+            return IMAGE_QUALITY_DEFAULT;
+        } else {
+            if (imageQualitySetting.equals(context.getString(R.string.main_setting_image_quality_high))) {
+                return IMAGE_QUALITY_HIGH;
+            } else if (imageQualitySetting.equals(context.getString(R.string.main_setting_image_quality_middle))) {
+                return IMAGE_QUALITY_MIDDLE;
+            } else if (imageQualitySetting.equals(context.getString(R.string.main_setting_image_quality_low))) {
+                return IMAGE_QUALITY_LOW;
+            }
+        }
+        return IMAGE_QUALITY_DEFAULT;
     }
 }

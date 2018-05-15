@@ -223,16 +223,16 @@ public class DlnaInterface {
 
     /**
      * 機能：録画ビデオ一覧を発見.
-     *
+     * @param imageQuality 画質設定
      * @return 成功:true 失敗: false
      */
-    public boolean browseRecVideoDms() {
+    public boolean browseRecVideoDms(int imageQuality) {
         DTVTLogger.start();
         if (null == mCurrentDmsItem || null == mCurrentDmsItem.mControlUrl || 1 > mCurrentDmsItem.mControlUrl.length()) {
             return false;
         }
         synchronized (this) {
-            boolean ret = browseRecVideoDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
+            boolean ret = browseRecVideoDms(mNativeDlna, mCurrentDmsItem.mControlUrl, imageQuality);
             DTVTLogger.debug("call c++ browseRecVideoDms");
             DTVTLogger.end();
             return ret;
@@ -241,16 +241,16 @@ public class DlnaInterface {
 
     /**
      * 機能：BSデジタルに関して、チャンネルリストを発見.
-     *
+     * @param imageQuality 画質設定
      * @return 成功:true 失敗: false
      */
-    public boolean browseBsChListDms() {
+    public boolean browseBsChListDms(int imageQuality) {
         //boolean ret= browseBsChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
         if (null == mCurrentDmsItem || null == mCurrentDmsItem.mControlUrl || 1 > mCurrentDmsItem.mControlUrl.length()) {
             return false;
         }
         synchronized (this) {
-            boolean ret = browseBsChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
+            boolean ret = browseBsChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl, imageQuality);
             DTVTLogger.debug("call c++ browseBsChListDms");
             DTVTLogger.end();
             return ret;
@@ -258,15 +258,15 @@ public class DlnaInterface {
     }
     /**
      * 機能：多チャンネルに関して、チャンネルリストを発見.
-     *
+     * @param imageQuality 画質設定
      * @return 成功:true 失敗: false
      */
-    public boolean browseHikariChListDms() {
+    public boolean browseHikariChListDms(int imageQuality) {
         if (null == mCurrentDmsItem || null == mCurrentDmsItem.mControlUrl || 1 > mCurrentDmsItem.mControlUrl.length()) {
             return false;
         }
         synchronized (this) {
-            boolean ret = browseHikariChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
+            boolean ret = browseHikariChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl, imageQuality);
             DTVTLogger.debug("call c++ browseBsChListDms");
             DTVTLogger.end();
             return ret;
@@ -292,16 +292,16 @@ public class DlnaInterface {
 
     /**
      * 機能：地上波に関して、チャンネルリストを発見.
-     *
+     * @param imageQuality 画質設定
      * @return 成功:true 失敗: false
      */
-    public boolean browseTerChListDms() {
+    public boolean browseTerChListDms(int imageQuality) {
         //return browseTerChListDms(mNativeDlna, ctl);
         if (null == mCurrentDmsItem || null == mCurrentDmsItem.mControlUrl || 1 > mCurrentDmsItem.mControlUrl.length()) {
             return false;
         }
         synchronized (this) {
-            boolean ret = browseTerChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
+            boolean ret = browseTerChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl, imageQuality);
             DTVTLogger.debug("call c++ browseTerChListDms");
             DTVTLogger.end();
 
@@ -641,33 +641,37 @@ public class DlnaInterface {
      * 機能：jni関数.
      * @param prt prt
      * @param ctl ctl
+     * @param imageQuality 画質設定
      * @return 操作結果
      */
-    private native boolean browseRecVideoDms(long prt, String ctl);
+    private native boolean browseRecVideoDms(long prt, String ctl, int imageQuality);
 
     /**
      * 機能：jni関数.
      *@param prt prt
      * @param ctl ctl
+     * @param imageQuality 画質設定
      * @return 操作結果
      */
-    private native boolean browseBsChListDms(long prt, String ctl);
+    private native boolean browseBsChListDms(long prt, String ctl, int imageQuality);
 
     /**
      * 機能：jni関数.
      * @param prt prt
      * @param ctl ctl
+     * @param imageQuality 画質設定
      * @return 操作結果
      */
-    private native boolean browseTerChListDms(long prt, String ctl);
+    private native boolean browseTerChListDms(long prt, String ctl, int imageQuality);
 
     /**
      * 機能：jni関数.
      * @param prt prt
      * @param ctl ctl
+     * @param imageQuality 画質設定
      * @return 操作結果
      */
-    private native boolean browseHikariChListDms(long prt, String ctl);
+    private native boolean browseHikariChListDms(long prt, String ctl, int imageQuality);
 
     /**
      * 機能：カレントDMSを削除.

@@ -489,17 +489,69 @@ namespace dtvt {
                 thiz->getDlnaXmlContainer().addVVectorString(vv);
                 switch (parser->getMsgId()){
                     case DLNA_MSG_ID_TER_CHANNEL_LIST:
-                        thiz->sendSoap((char*)response->url, DLNA_DMS_TER_CHANNEL, thiz->getDlnaXmlContainer().getAllVVectorString().size());
-                        break;
+                        switch (parser->getImageQuality()){
+                            case IMAGE_QUALITY_HIGH:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_TER_CHANNEL_HIGH, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_MIDDLE:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_TER_CHANNEL_MIDDLE, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_LOW:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_TER_CHANNEL_LOW, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_DEFAULT:
+                            default:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_TER_CHANNEL, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                        }
                     case DLNA_MSG_ID_BS_CHANNEL_LIST:
-                        thiz->sendSoap((char*)response->url, DLNA_DMS_BS_CHANNEL, thiz->getDlnaXmlContainer().getAllVVectorString().size());
-                        break;
+                        switch (parser->getImageQuality()){
+                            case IMAGE_QUALITY_HIGH:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_BS_CHANNEL_HIGH, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_MIDDLE:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_BS_CHANNEL_MIDDLE, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_LOW:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_BS_CHANNEL_LOW, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_DEFAULT:
+                            default:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_BS_CHANNEL, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                        }
                     case DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST:
-                        thiz->sendSoap((char*)response->url, DLNA_DMS_RECORD_LIST, thiz->getDlnaXmlContainer().getAllVVectorString().size());
-                        break;
+                        switch (parser->getImageQuality()){
+                            case IMAGE_QUALITY_HIGH:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_RECORD_LIST_HIGH, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_MIDDLE:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_RECORD_LIST_MIDDLE, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_LOW:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_RECORD_LIST_LOW, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_DEFAULT:
+                            default:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_RECORD_LIST, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                        }
                     case DLNA_MSG_ID_HIKARI_CHANNEL_LIST:
-                        thiz->sendSoap((char*)response->url, DLNA_DMS_MULTI_CHANNEL, thiz->getDlnaXmlContainer().getAllVVectorString().size());
-                        break;
+                        switch (parser->getImageQuality()){
+                            case IMAGE_QUALITY_HIGH:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_MULTI_CHANNEL_HIGH, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_MIDDLE:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_MULTI_CHANNEL_MIDDLE, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_LOW:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_MULTI_CHANNEL_LOW, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_DEFAULT:
+                            default:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_MULTI_CHANNEL, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                        }
                     default:
                         VVectorString totalVv = thiz->getDlnaXmlContainer().getAllVVectorString();
                         thiz->notifyObject(parser->getMsgId(), totalVv);
@@ -1231,7 +1283,7 @@ namespace dtvt {
             }
     }
 
-    bool Dlna::browseRecVideoListDms(std::string controlUrl) {
+    bool Dlna::browseRecVideoListDms(std::string controlUrl, int imageQuality) {
         if(NULL==mDlnaRecVideoXmlParser){
             mDlnaRecVideoXmlParser=(DlnaXmlParserBase*)new DlnaRecVideoXmlParser();
             IfNullReturnFalse(mDlnaRecVideoXmlParser);
@@ -1240,6 +1292,7 @@ namespace dtvt {
 
         mDlnaXmlContainer.cleanAll();
         mDlnaXmlContainer.setMsgId(DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST);
+        mDlnaXmlContainer.setImageQuality(imageQuality);
 
         #if defined(DLNA_KARI_DMS_UNIVERSAL)
             return sendSoap(controlUrl, "0");
@@ -1247,55 +1300,98 @@ namespace dtvt {
             //return sendSoap(controlUrl, "0"); //test
             return sendSoap(controlUrl, DLNA_DMS_ROOT);   //本番
         #elif defined(DLNA_KARI_DMS_RELEASE)
-            return sendSoap(controlUrl, DLNA_DMS_RECORD_LIST);
+        switch (imageQuality){
+            case IMAGE_QUALITY_HIGH:
+                return sendSoap(controlUrl, DLNA_DMS_RECORD_LIST_HIGH);
+            case IMAGE_QUALITY_MIDDLE:
+                return sendSoap(controlUrl, DLNA_DMS_RECORD_LIST_MIDDLE);
+            case IMAGE_QUALITY_LOW:
+                return sendSoap(controlUrl, DLNA_DMS_RECORD_LIST_LOW);
+            case IMAGE_QUALITY_DEFAULT:
+            default:
+                return sendSoap(controlUrl, DLNA_DMS_RECORD_LIST);
+        }
         #endif
     }
 
-    bool Dlna::browseBsChListDms(std::string controlUrl) {
+    bool Dlna::browseBsChListDms(std::string controlUrl, int imageQuality) {
         if(NULL==mBsDigitalXmlParser){
             mBsDigitalXmlParser=(DlnaXmlParserBase*)new DlnaBSDigitalXmlParser();
             IfNullReturnFalse(mBsDigitalXmlParser);
         }
         mRecursionXmlParser=mBsDigitalXmlParser;
         mDlnaXmlContainer.cleanAll();
+        mDlnaXmlContainer.setImageQuality(imageQuality);
         #if defined(DLNA_KARI_DMS_UNIVERSAL)
             return sendSoap(controlUrl, "0");
         #elif defined(DLNA_KARI_DMS_NAS)
             return sendSoap(controlUrl, DLNA_DMS_ROOT);
         #elif defined(DLNA_KARI_DMS_RELEASE)
-            return sendSoap(controlUrl, DLNA_DMS_BS_CHANNEL);
+        switch (imageQuality){
+            case IMAGE_QUALITY_HIGH:
+                return sendSoap(controlUrl, DLNA_DMS_BS_CHANNEL_HIGH);
+            case IMAGE_QUALITY_MIDDLE:
+                return sendSoap(controlUrl, DLNA_DMS_BS_CHANNEL_MIDDLE);
+            case IMAGE_QUALITY_LOW:
+                return sendSoap(controlUrl, DLNA_DMS_BS_CHANNEL_LOW);
+            case IMAGE_QUALITY_DEFAULT:
+            default:
+                return sendSoap(controlUrl, DLNA_DMS_BS_CHANNEL);
+        }
         #endif
     }
 
-    bool Dlna::browseTerChListDms(std::string controlUrl) {
+    bool Dlna::browseTerChListDms(std::string controlUrl, int imageQuality) {
         if(NULL==mTerChXmlParser){
             mTerChXmlParser=(DlnaXmlParserBase*)new DlnaTerChXmlParser();
             IfNullReturnFalse(mTerChXmlParser);
         }
         mRecursionXmlParser=mTerChXmlParser;
         mDlnaXmlContainer.cleanAll();
+        mDlnaXmlContainer.setImageQuality(imageQuality);
         #if defined(DLNA_KARI_DMS_UNIVERSAL)
                 return sendSoap(controlUrl, "0");
         #elif defined(DLNA_KARI_DMS_NAS)
                 return sendSoap(controlUrl, DLNA_DMS_ROOT);
         #elif defined(DLNA_KARI_DMS_RELEASE)
+        switch (imageQuality){
+            case IMAGE_QUALITY_HIGH:
+                return sendSoap(controlUrl, DLNA_DMS_TER_CHANNEL_HIGH);
+            case IMAGE_QUALITY_MIDDLE:
+                return sendSoap(controlUrl, DLNA_DMS_TER_CHANNEL_MIDDLE);
+            case IMAGE_QUALITY_LOW:
+                return sendSoap(controlUrl, DLNA_DMS_TER_CHANNEL_LOW);
+            case IMAGE_QUALITY_DEFAULT:
+            default:
                 return sendSoap(controlUrl, DLNA_DMS_TER_CHANNEL);
+        }
         #endif
     }
 
-    bool Dlna::browseHikariChListDms(std::string controlUrl) {
+    bool Dlna::browseHikariChListDms(std::string controlUrl, int imageQuality) {
         if(NULL==mHikariChXmlParser){
             mHikariChXmlParser=(DlnaXmlParserBase*)new DlnaHikariChXmlParser();
             IfNullReturnFalse(mHikariChXmlParser);
         }
         mRecursionXmlParser=mHikariChXmlParser;
         mDlnaXmlContainer.cleanAll();
+        mDlnaXmlContainer.setImageQuality(imageQuality);
         #if defined(DLNA_KARI_DMS_UNIVERSAL)
                 return sendSoap(controlUrl, "0");
         #elif defined(DLNA_KARI_DMS_NAS)
                 return sendSoap(controlUrl, DLNA_DMS_ROOT);
         #elif defined(DLNA_KARI_DMS_RELEASE)
-                return sendSoap(controlUrl, DLNA_DMS_MULTI_CHANNEL);
+            switch (imageQuality){
+                case IMAGE_QUALITY_HIGH:
+                    return sendSoap(controlUrl, DLNA_DMS_MULTI_CHANNEL_HIGH);
+                case IMAGE_QUALITY_MIDDLE:
+                    return sendSoap(controlUrl, DLNA_DMS_MULTI_CHANNEL_MIDDLE);
+                case IMAGE_QUALITY_LOW:
+                    return sendSoap(controlUrl, DLNA_DMS_MULTI_CHANNEL_LOW);
+                case IMAGE_QUALITY_DEFAULT:
+                default:
+                    return sendSoap(controlUrl, DLNA_DMS_MULTI_CHANNEL);
+            }
         #endif
     }
 
