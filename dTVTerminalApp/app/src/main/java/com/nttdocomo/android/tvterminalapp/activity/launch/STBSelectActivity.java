@@ -1190,18 +1190,23 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      * エラーダイアログ表示.
      */
     private void createErrorDialog() {
-        CustomDialog failedRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
-        failedRecordingReservationDialog.setContent(getResources().getString(R.string.str_stb_stb_error));
-        failedRecordingReservationDialog.setCancelText(R.string.recording_reservation_failed_dialog_confirm);
-        // Cancelable
-        failedRecordingReservationDialog.setCancelable(false);
-        failedRecordingReservationDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+        runOnUiThread(new Runnable() {
             @Override
-            public void onOKCallback(final boolean isOK) {
-                revertSelectStbState();
+            public void run() {
+                CustomDialog failedRecordingReservationDialog = new CustomDialog(STBSelectActivity.this, CustomDialog.DialogType.ERROR);
+                failedRecordingReservationDialog.setContent(getResources().getString(R.string.str_stb_stb_error));
+                failedRecordingReservationDialog.setCancelText(R.string.recording_reservation_failed_dialog_confirm);
+                // Cancelable
+                failedRecordingReservationDialog.setCancelable(false);
+                failedRecordingReservationDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                    @Override
+                    public void onOKCallback(final boolean isOK) {
+                        revertSelectStbState();
+                    }
+                });
+                failedRecordingReservationDialog.showDialog();
             }
         });
-        failedRecordingReservationDialog.showDialog();
     }
 
     /**
