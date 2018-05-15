@@ -1430,10 +1430,10 @@ namespace dtvt {
         }
 
         //この情報がSTB2号機ではないならば、デバイスマネージャーの管理リストに追加しない
-//        if(!Dlna::isSTB2nd(info)) {
-//            //テスト等でSTB2号機以外のDLNA機器をSTB選択画面に表示したい場合は、このreturn 0を無効化してください。
-//            return 0;
-//        }
+        if(!Dlna::isSTB2nd(info)) {
+            //テスト等でSTB2号機以外のDLNA機器をSTB選択画面に表示したい場合は、このreturn 0を無効化してください。
+            return 0;
+        }
 
         device->user_data = (void*)info; // デバイスディスクリプションの解析情報 ※leaveHandlerで解放すること
 
