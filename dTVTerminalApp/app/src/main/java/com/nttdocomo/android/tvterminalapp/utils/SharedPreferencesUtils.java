@@ -311,20 +311,6 @@ public class SharedPreferencesUtils {
         DTVTLogger.end();
     }
 
-    public static void setSharedPreferencesStbInfo(final Context context, final STBSelectActivity.StbListData item) {
-        DTVTLogger.start();
-        SharedPreferences data = context.getSharedPreferences(
-                SHARED_KEY_SELECTED_STB_DATA_INFOMATION, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = data.edit();
-        editor.putString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_UDN, item.udn);
-        editor.putString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_CONTROL_URL, item.controlUrl);
-        editor.putString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_HTTP, item.host);
-        editor.putString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_FRIENDLY_NAME, item.deviceName);
-        editor.putString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_IPADDRESS, item.host);
-        editor.apply();
-        DTVTLogger.end();
-    }
-
     /**
      * STB選択画面"次回以降表示しない" 状態を取得.
      *
