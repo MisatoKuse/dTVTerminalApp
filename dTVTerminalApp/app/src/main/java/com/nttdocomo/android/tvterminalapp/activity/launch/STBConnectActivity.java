@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.activity.launch;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -49,11 +50,26 @@ public class STBConnectActivity extends BaseActivity implements UserInfoDataProv
         super.onStart();
         DlnaManager.shared().StartDmp();
     }
-
     @Override
     protected void onStop() {
         super.onStop();
         DlnaManager.shared().StopDmp();
+    }
+
+    @Override
+    public void onBackPressed() {
+    }
+
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+        DTVTLogger.start();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                return false;
+            default:
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     /**
@@ -123,6 +139,7 @@ public class STBConnectActivity extends BaseActivity implements UserInfoDataProv
         remoteConfirmDialog.setConfirmText(R.string.positive_response);
         remoteConfirmDialog.setCancelText(R.string.negative_response);
         remoteConfirmDialog.setOnTouchOutside(false);
+        remoteConfirmDialog.setCancelable(false);
         remoteConfirmDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
@@ -182,6 +199,7 @@ public class STBConnectActivity extends BaseActivity implements UserInfoDataProv
     private void showRegistResultDialog(final boolean isSuccess, DlnaManager.LocalRegistrationErrorType errorType) {
         CustomDialog resultDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
         resultDialog.setOnTouchOutside(false);
+        resultDialog.setCancelable(false);
         if (isSuccess) {
             resultDialog.setContent(getString(R.string.common_text_regist_progress_done));
         } else {
