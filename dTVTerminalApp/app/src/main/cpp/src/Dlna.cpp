@@ -12,7 +12,6 @@
 #include <dupnp_soap.h>
 #include <cstring>
 #include "Dlna.h"
-#include "DmsInfo.h"
 #include "DlnaBSDigitalXmlParser.h"
 #include "DlnaTerChXmlParser.h"
 #include "DlnaHikariChXmlParser.h"
@@ -1333,6 +1332,13 @@ namespace dtvt {
         if (!info){
             return 0; // このデバイスをデバイスマネージャーの管理リストに追加しません
         }
+
+        //この情報がSTB2号機ではないならば、デバイスマネージャーの管理リストに追加しない
+        if(!Dlna::isSTB2nd(info)) {
+            //テスト等でSTB2号機以外のDLNA機器をSTB選択画面に表示したい場合は、このreturn 0を無効化してください。
+            return 0;
+        }
+
         // 特定のDMS に限定する場合は friendly_name を指定する
         if (NULL == strstr((char*)info->friendly_name, "特定のDMSのfriendly_name")){
 //        return 0; // このデバイスをデバイスマネージャーの管理リストに追加しません
@@ -1368,6 +1374,29 @@ namespace dtvt {
         }
 
         thiz->notifyObject(DLNA_MSG_ID_DEV_DISP_JOIN, vv);
+    }
+
+    /**
+     * 指定されたDMS情報が、STB2号機であることの判定.
+     *
+     * @param dmsInfo DMS情報
+     * @return STB2号機だった場合はtrue
+     */
+    bool Dlna::isSTB2nd(dms_info* dmsInfo) {
+        //モデル名が"TT01"かを見る
+        if(0 != strcmp((char*)dmsInfo->modelName,DMS_MODE_NAME_STB2ND)) {
+            //TT01ではなかったので、falseで帰る
+            return false;
+        }
+
+        //製造元が"HUAWEI TECHNOLOGIES CO.,LTD"かを見る（Analyzeがifから3項演算子への変更を推奨するが、メンテナンス性が低下するので行わない）
+        if(0 != strcmp((char*)dmsInfo->manufacture,DMS_MANUFACTURER_STB2ND)) {
+            //HUAWEI・・・ではなかったので、falseで帰る
+            return false;
+        }
+
+        //STB2号機である事の確認ができたので、trueで帰る
+        return true;
     }
 
     /**

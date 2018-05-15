@@ -245,6 +245,31 @@ static du_bool setDmsInfoXmlDoc(dms_info *info, xmlNodePtr node, const du_uchar 
         goto error;
     }
 
+    //STB2号機限定用情報の追加
+    // モデル名を設定
+    if (!du_libxml_get_content_by_name(node->children, URN_DEVICE,
+                                       DU_UCHAR_CONST(DMS_MODEL_NAME), &ua)) {
+        goto error;
+    }
+    if (!du_uchar_array_cat0(&ua)) {
+        goto error;
+    }
+    if (!du_str_clone(du_uchar_array_get(&ua), &info->modelName)) {
+        goto error;
+    }
+
+    // 製造元を設定
+    if (!du_libxml_get_content_by_name(node->children, URN_DEVICE,
+                                       DU_UCHAR_CONST(DMS_MANUFACTURER),&ua)) {
+        goto error;
+    }
+    if (!du_uchar_array_cat0(&ua)) {
+        goto error;
+    }
+    if (!du_str_clone(du_uchar_array_get(&ua), &info->manufacture)) {
+        goto error;
+    }
+
     du_uchar_array_free(&ua);
     return 1;
 
