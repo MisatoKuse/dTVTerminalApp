@@ -350,6 +350,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         remoteConfirmDialog.setContent(getResources().getString(R.string.main_setting_remote_confirm_message));
         remoteConfirmDialog.setConfirmText(R.string.positive_response);
         remoteConfirmDialog.setCancelText(R.string.negative_response);
+        remoteConfirmDialog.setOnTouchOutside(false);
         remoteConfirmDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
