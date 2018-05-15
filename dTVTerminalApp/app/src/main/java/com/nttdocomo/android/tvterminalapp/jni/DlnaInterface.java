@@ -613,9 +613,7 @@ public class DlnaInterface {
     /*
      * 機能：libをロードする.
      */
-    static {
-        System.loadLibrary("dtvtlib");
-    }
+
 
     /**
      * 機能：jni関数.

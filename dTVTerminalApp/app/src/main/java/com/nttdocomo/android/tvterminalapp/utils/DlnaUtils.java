@@ -33,6 +33,9 @@ public class DlnaUtils {
     private static final String DIAG_ASSETS_DIR_ROOT = "drm/conf";
     /**リモート接続時、デバイスの情報が保持されます.*/
     private static final String DIAG_ASSETS_DIR_RADA_RELAY = "/dirag/rada/rada_relay";
+    /** DiRAGコンフィグファイルパス. */
+    private static final String DIRAG_CONF_FILE = "/dirag/drag_configuration.xml-turn";
+
     /**UTF-8.*/
     private static final String FILE_ENCODE = "UTF-8";
     /**書き換える文字列.*/
@@ -77,7 +80,9 @@ public class DlnaUtils {
     public static String getPrivateDataHomePath(final Context context) {
         return EnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.PLAYER);
     }
-
+    public static String getDiragConfileFilePath(final Context context) {
+        return getPrivateDataHomePath(context).concat(DIRAG_CONF_FILE);
+    }
     /**
      * ローカルレジストレーション、リモート接続事前準備.
      * @param context コンテキスト

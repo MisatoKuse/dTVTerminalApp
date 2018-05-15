@@ -15,6 +15,7 @@ import com.nttdocomo.android.tvterminalapp.activity.common.ProcessSettingFile;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.bs.DlnaBsChListInfo;
 import com.nttdocomo.android.tvterminalapp.jni.bs.DlnaBsChListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
@@ -94,7 +95,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
         //アプリ起動時のサービストークン削除を行う
         SharedPreferencesUtils.deleteOneTimeTokenData(getApplicationContext());
-
+        DlnaManager.shared().launch(this);
         boolean isDlnaOk = startDlna();
         if (!isDlnaOk) {
             DTVTLogger.debug("BaseActivity");
