@@ -49,7 +49,7 @@ import java.util.TimerTask;
 /**
  * ペアリング、再ペアリングするためのクラス.
  */
-public class STBSelectActivity extends BaseActivity implements View.OnClickListener,
+public class StbSelectActivity extends BaseActivity implements View.OnClickListener,
         AdapterView.OnItemClickListener, DlnaDevListListener {
 
     // region variable
@@ -209,15 +209,15 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     /**
      * 起動モード.
      */
-    public enum STBSelectFromMode {
+    public enum StbSelectFromMode {
         /**
          * ランチャーから起動.
          */
-        STBSelectFromMode_Launch,
+        StbSelectFromMode_Launch,
         /**
          * 設定から起動.
          */
-        STBSelectFromMode_Setting,
+        StbSelectFromMode_Setting,
     }
     // endregion variable
 
@@ -229,10 +229,10 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         if (intent != null) {
             mStartMode = intent.getIntExtra(FROM_WHERE, -1);
         }
-        if (mStartMode == STBSelectFromMode.STBSelectFromMode_Launch.ordinal()) {
+        if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
             setContentView(R.layout.stb_select_main_layout);
             initLaunchView();
-        } else if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal()) {
+        } else if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
             setContentView(R.layout.stb_select_device_list_setting);
             initSettingView();
         }
@@ -314,14 +314,14 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private void initView() {
         DTVTLogger.start();
         setStatusBarColor(true);
-        if (mStartMode == (STBSelectFromMode.STBSelectFromMode_Launch.ordinal())) {
+        if (mStartMode == (StbSelectFromMode.StbSelectFromMode_Launch.ordinal())) {
             //初回起動時
             enableHeaderBackIcon(false);
             setTitleText(getString(R.string.str_app_title));
             setStbStatusIconVisibility(false);
             enableGlobalMenuIcon(false);
             return;
-        } else if (mStartMode == (STBSelectFromMode.STBSelectFromMode_Setting.ordinal())) {
+        } else if (mStartMode == (StbSelectFromMode.StbSelectFromMode_Setting.ordinal())) {
             mParingTextView.setVisibility(View.VISIBLE);
             mLoadMoreView = findViewById(R.id.stb_device_setting_progressbar);
             //設定画面からの遷移
@@ -371,7 +371,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 }
             }
         } else {
-            DTVTLogger.debug("STBSelectFromMode :StartMode Error ");
+            DTVTLogger.debug("StbSelectFromMode :StartMode Error ");
         }
         DTVTLogger.end();
     }
@@ -399,7 +399,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         if (mIsAppDL) {
             //dアカウントアプリDLからの戻り時、各種Viewを初期状態に戻す
             mIsAppDL = false;
-            if (mStartMode == STBSelectFromMode.STBSelectFromMode_Launch.ordinal()) {
+            if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
 
                 TextView statusTextView = findViewById(R.id.stb_select_status_text);
 
@@ -472,7 +472,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private void showSearchingView() {
         DTVTLogger.start();
         // STB検索中文言表示
-        if (mStartMode == STBSelectFromMode.STBSelectFromMode_Launch.ordinal()) {
+        if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
             TextView statusTextView = findViewById(R.id.stb_select_status_text);
 
             //Android5.0未満の表示問題対策
@@ -483,7 +483,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             // STBが見つかるまで非表示
             TextView checkBoxText = findViewById(R.id.useWithoutPairingSTBParingInvitation);
             checkBoxText.setVisibility(View.VISIBLE);
-        } else if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal()) {
+        } else if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
             //プログレスビューを初期状態に戻る
             RelativeLayout parentLayout = findViewById(R.id.paring_select_text_relative_layout);
             if (parentLayout.getChildCount() == 1) {
@@ -506,7 +506,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private void showResultCompleteView() {
         DTVTLogger.start();
         // STB検索中文言表示
-        if (mStartMode == STBSelectFromMode.STBSelectFromMode_Launch.ordinal()) {
+        if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
             TextView statusTextView = findViewById(R.id.stb_select_status_text);
 
             //Android5.0未満の表示問題対策
@@ -564,13 +564,13 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void showPairingeView() {
         DTVTLogger.start();
-        if (mStartMode == STBSelectFromMode.STBSelectFromMode_Launch.ordinal()) {
+        if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
             TextView statusTextView = findViewById(R.id.stb_select_status_text);
             statusTextView.setText(R.string.str_stb_pairing);
 
             mCheckBox.setVisibility(View.GONE);
             mCheckboxText.setVisibility(View.GONE);
-        } else if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal()) {
+        } else if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
 
             if (mParingDevice.getVisibility() == View.VISIBLE && mCheckMark.getVisibility() == View.VISIBLE) {
                 mCheckMark.setVisibility(View.GONE);
@@ -646,12 +646,12 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
         mDlnaProvDevList.stopListen();
         //STB選択画面"次回以降表示しない" 状態をSharedPreferenceに保存
-        if (mStartMode == STBSelectFromMode.STBSelectFromMode_Launch.ordinal()) {
+        if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
             SharedPreferencesUtils.setSharedPreferencesStbSelect(this, mIsNextTimeHide);
             Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-        } else if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal()) {
+        } else if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
             if (mParingDevice.getVisibility() == View.VISIBLE) {
                 //ペアリング解除する場合、すべてのSTBキャッシュデータを削除して、ホーム画面に遷移する
                 mDlnaProvDevList.dmsRemove();
@@ -707,7 +707,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
         if (mCallbackTimer.getTimerStatus() != TimerStatus.TIMER_STATUS_DURING_STARTUP) {
             if (mDlnaDmsItemList != null) {
-                if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal()
+                if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()
                         && mParingDevice.getVisibility() == View.VISIBLE) {
                     this.runOnUiThread(new Runnable() {
                         @Override
@@ -773,7 +773,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         mDlnaDmsItemList.clear();
         for (int i = 0; i < info.size(); i++) {
 
-            DTVTLogger.debug("ContentsList.size = " + info.get(i).mFriendlyName);
+            DTVTLogger.debug("ContentsList.mSize = " + info.get(i).mFriendlyName);
             DTVTLogger.debug("DlnaDmsInfo.mIPAddress = " + info.get(i).mIPAddress);
             DTVTLogger.debug("DlnaDmsInfo.mUdn = " + info.get(i).mUdn);
             boolean flag = false;
@@ -883,12 +883,12 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
         displayMoreData((false));
         mDlnaProvDevList.stopListen();
-        if (mStartMode == STBSelectFromMode.STBSelectFromMode_Launch.ordinal()) {
-            startActivity(STBSelectErrorActivity.class, null);
+        if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
+            startActivity(StbSelectErrorActivity.class, null);
         } else {
             // リストを非表示
             mDeviceListView.setVisibility(View.GONE);
-            if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal()
+            if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()
                     && !mParingDevice.getText().toString().isEmpty()) {
                 mParingTextView.setText(R.string.str_stb_paring_cancel_text);
             }
@@ -1049,7 +1049,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.debug("not daccount app");
         //端末内にdアカウントアプリがない場合はdアカウントアプリDL誘導を行う
         mIsAppDL = true;
-        startActivity(DAccountInductionActivity.class, null);
+        startActivity(DaccountInductionActivity.class, null);
     }
 
     @Override
@@ -1068,7 +1068,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                     case IS_USER_ACCOUNT_EXIST:
                         //TODO ナスネとペアリングしたいときは以下をコメントアウト　SharedPreferencesにSTBデータを保存
                         SharedPreferencesUtils.setSharedPreferencesStbInfo(this, mDlnaDmsItemList.get(mSelectDevice));
-                        Intent intent = new Intent(this, STBConnectActivity.class);
+                        Intent intent = new Intent(this, StbConnectActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         break;
@@ -1107,7 +1107,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                             case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
                                 // チェック処理の状態で処理を分岐する
                                 SharedPreferencesUtils.resetSharedPreferencesStbInfo(getApplicationContext());
-                                startActivity(DAccountReSettingActivity.class, null);
+                                startActivity(DaccountResettingActivity.class, null);
                                 mParingTextView.setText(R.string.str_stb_no_pair_use_text);
                                 break;
                             case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
@@ -1178,7 +1178,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             public void onOKCallback(final boolean isOK) {
                 //初期状態に戻る
                 onResume();
-                if (mStartMode == STBSelectFromMode.STBSelectFromMode_Launch.ordinal()) {
+                if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
                     initLaunchView();
                 }
             }
@@ -1193,7 +1193,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                CustomDialog failedRecordingReservationDialog = new CustomDialog(STBSelectActivity.this, CustomDialog.DialogType.ERROR);
+                CustomDialog failedRecordingReservationDialog = new CustomDialog(StbSelectActivity.this, CustomDialog.DialogType.ERROR);
                 failedRecordingReservationDialog.setContent(getResources().getString(R.string.str_stb_stb_error));
                 failedRecordingReservationDialog.setCancelText(R.string.recording_reservation_failed_dialog_confirm);
                 // Cancelable
@@ -1228,11 +1228,11 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         }
 
         //ペアリング画面の時はダイアログ出さない
-        if (mStartMode == STBSelectFromMode.STBSelectFromMode_Launch.ordinal()) {
+        if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
             return;
         }
         //ペアリング設定画面かつユーザーがデバイスを選択してDアカウントを登録の場合はダイアログ出さない
-        if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal() && mDaccountFlag) {
+        if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal() && mDaccountFlag) {
             mDaccountFlag = false;
             return;
         }

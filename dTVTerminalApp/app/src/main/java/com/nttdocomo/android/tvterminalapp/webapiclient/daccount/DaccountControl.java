@@ -9,8 +9,8 @@ import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.ThumbnailCacheManager;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
 import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -432,12 +432,12 @@ public class DaccountControl implements
             ThumbnailCacheManager.clearThumbnailCache(mContext);
 
             //DBを丸ごと削除する
-            boolean deleteDatabaseExeced = mContext.deleteDatabase(DBConstants.DATABASE_NAME);
+            boolean deleteDatabaseExeced = mContext.deleteDatabase(DataBaseConstants.DATABASE_NAME);
 
             DTVTLogger.debug("deleteDatabase Answer = " + deleteDatabaseExeced);
 
             //DBを新造する・インスタンスを作ると自動で作成される
-            new DBHelper(mContext);
+            new DataBaseHelper(mContext);
 
             DTVTLogger.end();
             return null;

@@ -14,7 +14,7 @@ import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.MyChannelEditActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.MainSettingListAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -165,8 +165,8 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_PAIRING])) {
             if (isSettingPossible(false, tappedItemName)) {
                 //ペアリング設定
-                Intent intent = new Intent(getApplicationContext(), STBSelectActivity.class);
-                intent.putExtra(STBSelectActivity.FROM_WHERE, STBSelectActivity.STBSelectFromMode.STBSelectFromMode_Setting.ordinal());
+                Intent intent = new Intent(getApplicationContext(), StbSelectActivity.class);
+                intent.putExtra(StbSelectActivity.FROM_WHERE, StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Setting.ordinal());
                 startActivity(intent);
             }
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_MY_PROGRAM])) {

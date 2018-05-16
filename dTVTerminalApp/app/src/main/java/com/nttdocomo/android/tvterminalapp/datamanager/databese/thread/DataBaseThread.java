@@ -16,7 +16,7 @@ import java.util.Map;
  * <p>
  * 注意点: 一つのDB操作は一つのDbThreadオブジェクトを使うこと推薦.
  */
-public class DbThread extends Thread {
+public class DataBaseThread extends Thread {
 
     /**
      * ハンドラ.
@@ -25,7 +25,7 @@ public class DbThread extends Thread {
     /**
      * callbackInterface.
      */
-    private DbOperation mDbOperationFinish = null;
+    private DataBaseOperation mDataBaseOperationFinish = null;
     /**
      * OperationId.
      */
@@ -34,7 +34,7 @@ public class DbThread extends Thread {
     /**
      * callbackInterface.
      */
-    public interface DbOperation {
+    public interface DataBaseOperation {
         /**
          * DB操作完了する時実行される.
          *
@@ -58,10 +58,10 @@ public class DbThread extends Thread {
      * @param lis         　操作
      * @param operationId 多Threadオブジェクトを使用する時、Threadオブジェクトを区別する
      */
-    public DbThread(@NonNull final Handler handle, final DbOperation lis, final int operationId) {
+    public DataBaseThread(@NonNull final Handler handle, final DataBaseOperation lis, final int operationId) {
 
         mHandle = handle;
-        mDbOperationFinish = lis;
+        mDataBaseOperationFinish = lis;
         mOperationId = operationId;
     }
 
@@ -69,8 +69,8 @@ public class DbThread extends Thread {
     public void run() {
         List<Map<String, String>> ret = null;
 
-        if (null != mDbOperationFinish) {
-            ret = mDbOperationFinish.dbOperation(mOperationId);
+        if (null != mDataBaseOperationFinish) {
+            ret = mDataBaseOperationFinish.dbOperation(mOperationId);
         }
 
         final List<Map<String, String>> finalRet = ret;
@@ -78,11 +78,11 @@ public class DbThread extends Thread {
 
             @Override
             public void run() {
-                if (null != mDbOperationFinish) {
+                if (null != mDataBaseOperationFinish) {
                     if (finalRet == null || finalRet.size() < 1 || finalRet.get(0).isEmpty()) {
-                        mDbOperationFinish.onDbOperationFinished(false, null, mOperationId);
+                        mDataBaseOperationFinish.onDbOperationFinished(false, null, mOperationId);
                     } else {
-                        mDbOperationFinish.onDbOperationFinished(true, finalRet, mOperationId);
+                        mDataBaseOperationFinish.onDbOperationFinished(true, finalRet, mOperationId);
                     }
                 }
             }

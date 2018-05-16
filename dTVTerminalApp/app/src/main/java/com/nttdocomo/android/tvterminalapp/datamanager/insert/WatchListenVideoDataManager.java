@@ -11,9 +11,9 @@ import android.database.sqlite.SQLiteException;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WatchListenVideoListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoList;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
 import java.util.HashMap;
@@ -63,8 +63,8 @@ public class WatchListenVideoDataManager {
 
         try {
             //各種オブジェクト作成
-            DBHelper watchListenVideoDBHelper = new DBHelper(mContext);
-            DataBaseManager.initializeInstance(watchListenVideoDBHelper);
+            DataBaseHelper watchListenVideoDataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(watchListenVideoDataBaseHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
             WatchListenVideoListDao watchListenVideoListDao = new WatchListenVideoListDao(database);
@@ -82,7 +82,7 @@ public class WatchListenVideoDataManager {
                     Map.Entry entry = (Map.Entry) entries.next();
                     String keyName = (String) entry.getKey();
                     String valName = (String) entry.getValue();
-                    values.put(DBUtils.fourKFlgConversion(keyName), valName);
+                    values.put(DataBaseUtils.fourKFlgConversion(keyName), valName);
                 }
                 watchListenVideoListDao.insert(values);
             }

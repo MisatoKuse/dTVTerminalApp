@@ -12,7 +12,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvScheduleInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.ProgramDataManager;
@@ -326,8 +326,8 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             setChannelData(channels, channelList);
             Handler handler = new Handler(); //チャンネル情報更新
             try {
-                DbThread t = new DbThread(handler, this, CHANNEL_UPDATE);
-                t.start();
+                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, CHANNEL_UPDATE);
+                dataBaseThread.start();
             } catch (IllegalThreadStateException e) {
                 DTVTLogger.debug(e);
                 channels = null;
@@ -529,7 +529,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
 //            Handler handler = new Handler();
 //            //番組情報更新
 //            try {
-//                DbThread t = new DbThread(handler, this, SCHEDULE_UPDATE);
+//                DataBaseThread t = new DataBaseThread(handler, this, SCHEDULE_UPDATE);
 //                t.start();
 //            } catch (Exception e) {
 //                DTVTLogger.debug(e);
@@ -643,8 +643,8 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             Handler handler = new Handler(mContext.getMainLooper());
             //チャンネル情報更新
             try {
-                DbThread t = new DbThread(handler, this, CHANNEL_SELECT);
-                t.start();
+                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, CHANNEL_SELECT);
+                dataBaseThread.start();
             } catch (IllegalThreadStateException e) {
                 DTVTLogger.debug(e);
                 //TODO　:エラー返却した上でUI上に通知が必要
@@ -694,11 +694,11 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
 //        }
 //
 //        //データをDBから取得する
-//        if (mFromDB.size() > 0) {
+//        if (mFromDB.mSize() > 0) {
 //            Handler handler = new Handler();
 //            //チャンネル情報更新
 //            try {
-//                DbThread t = new DbThread(handler, this, SCHEDULE_SELECT);
+//                DataBaseThread t = new DataBaseThread(handler, this, SCHEDULE_SELECT);
 //                t.start();
 //            } catch (Exception e) {
 //                DTVTLogger.debug(e);

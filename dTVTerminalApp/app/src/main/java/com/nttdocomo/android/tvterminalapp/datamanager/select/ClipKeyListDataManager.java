@@ -11,8 +11,8 @@ import android.database.sqlite.SQLiteException;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +51,7 @@ public class ClipKeyListDataManager {
 
         //データ存在チェック
         List<Map<String, String>> list = new ArrayList<>();
-        if (!DBUtils.isCachingRecord(mContext, DBUtils.getClipKeyTableName(type))) {
+        if (!DataBaseUtils.isCachingRecord(mContext, DataBaseUtils.getClipKeyTableName(type))) {
             return list;
         }
 
@@ -63,8 +63,8 @@ public class ClipKeyListDataManager {
                 JsonConstants.META_RESPONSE_TITLE_ID};
 
         //Daoクラス使用準備
-        DBHelper dbHelper = new DBHelper(mContext);
-        try (SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+        DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
+        try (SQLiteDatabase database = dataBaseHelper.getWritableDatabase()) {
             ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
 
             //データ取得

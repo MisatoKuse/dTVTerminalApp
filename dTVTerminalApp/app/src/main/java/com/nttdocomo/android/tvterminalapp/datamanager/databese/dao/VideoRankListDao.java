@@ -8,7 +8,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +22,7 @@ public class VideoRankListDao {
     /**
      * SQLiteDatabase.
      */
-    private final SQLiteDatabase db;
+    private final SQLiteDatabase mSQLiteDatabase;
 
     /**
      * コンストラクタ.
@@ -30,7 +30,7 @@ public class VideoRankListDao {
      * @param db データベース
      */
     public VideoRankListDao(final SQLiteDatabase db) {
-        this.db = db;
+        this.mSQLiteDatabase = db;
     }
 
     /**
@@ -43,8 +43,8 @@ public class VideoRankListDao {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
 
-        Cursor cursor = db.query(
-                DBConstants.RANKING_VIDEO_LIST_TABLE_NAME,
+        Cursor cursor = mSQLiteDatabase.query(
+                DataBaseConstants.RANKING_VIDEO_LIST_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -77,7 +77,7 @@ public class VideoRankListDao {
      * @return 挿入データID
      */
     public long insert(final ContentValues values) {
-        return db.insert(DBConstants.RANKING_VIDEO_LIST_TABLE_NAME, null, values);
+        return mSQLiteDatabase.insert(DataBaseConstants.RANKING_VIDEO_LIST_TABLE_NAME, null, values);
     }
 
     /**
@@ -97,7 +97,7 @@ public class VideoRankListDao {
      * @return deleteの第2パラメータがヌルなのでゼロとなる
      */
     public int delete() {
-        return db.delete(DBConstants.RANKING_VIDEO_LIST_TABLE_NAME, null, null);
+        return mSQLiteDatabase.delete(DataBaseConstants.RANKING_VIDEO_LIST_TABLE_NAME, null, null);
     }
 }
 

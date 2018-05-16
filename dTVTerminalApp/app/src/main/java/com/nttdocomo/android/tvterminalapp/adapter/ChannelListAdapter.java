@@ -48,7 +48,8 @@ public class ChannelListAdapter extends BaseAdapter {
     /**
      * データタイプ.
      */
-    private ChannelListActivity.ChListDataType mChListDataType = ChannelListActivity.ChListDataType.CH_LIST_DATA_TYPE_HIKARI;
+    private ChannelListActivity.ChannelListDataType mChannelListDataType = ChannelListActivity
+            .ChannelListDataType.CH_LIST_DATA_TYPE_HIKARI;
 
     /**
      * テキストの高さ.
@@ -90,8 +91,8 @@ public class ChannelListAdapter extends BaseAdapter {
      *
      * @param type データタイプ
      */
-    public void setChListDataType(final ChannelListActivity.ChListDataType type) {
-        mChListDataType = type;
+    public void setChannelListDataType(final ChannelListActivity.ChannelListDataType type) {
+        mChannelListDataType = type;
     }
 
     @Override
@@ -124,7 +125,7 @@ public class ChannelListAdapter extends BaseAdapter {
             view = View.inflate(mContext, mLayoutId, null);
             holder.mThumbnail = view.findViewById(R.id.channel_list_item_thumb_iv);
             holder.mChannelName = view.findViewById(R.id.channel_list_item_title_tv);
-            switch (mChListDataType) {
+            switch (mChannelListDataType) {
                 case CH_LIST_DATA_TYPE_BS:
                 case CH_LIST_DATA_TYPE_TDB:
                     holder.mThumbnail.setVisibility(View.GONE);
@@ -182,7 +183,7 @@ public class ChannelListAdapter extends BaseAdapter {
         String chName = null;
         String thumbnail = null;
         if (null != mData && mData.size() > 0) {
-            switch (mChListDataType) {
+            switch (mChannelListDataType) {
                 case CH_LIST_DATA_TYPE_BS:
                     if (mData.get(position) instanceof DlnaBsChListItem) {
                         DlnaBsChListItem bsItem = (DlnaBsChListItem) mData.get(position);

@@ -20,9 +20,9 @@ import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActiv
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.video.VideoContentListActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ClipKeyListInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.ClipKeyListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
@@ -32,7 +32,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetail
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipKeyListWebClient;
 
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ import java.util.Map;
  * クリップキー取得管理.
  */
 public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyListJsonParserCallback,
-        ClipKeyListWebClient.VodClipKeyListJsonParserCallback, DbThread.DbOperation {
+        ClipKeyListWebClient.VodClipKeyListJsonParserCallback, DataBaseThread.DataBaseOperation {
     /**
      * コンテキストファイル.
      */
@@ -205,9 +205,9 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         //DB操作
         Handler handler = new Handler(); //チャンネル情報更新
         try {
-            DbThread t = new DbThread(handler, this, CLIP_ALL_INSERT);
-            t.start();
-        } catch (Exception e) {
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, CLIP_ALL_INSERT);
+            dataBaseThread.start();
+        } catch (RuntimeException e) {
             DTVTLogger.debug(e);
         }
         DTVTLogger.end();
@@ -248,14 +248,18 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         DTVTLogger.start();
         String tableName = null;
         // キャッシュを確認するDBのテーブル名を取得
-        if (ClipKeyListRequest.CLIP_KEY_LIST_REQUEST_TYPE_TV.equals(type)) {
-            tableName = DBConstants.TV_CLIP_KEY_LIST_TABLE_NAME;
-        } else if (ClipKeyListRequest.CLIP_KEY_LIST_REQUEST_TYPE_VOD.equals(type)) {
-            tableName = DBConstants.VOD_CLIP_KEY_LIST_TABLE_NAME;
+        switch (type) {
+            case ClipKeyListRequest.CLIP_KEY_LIST_REQUEST_TYPE_TV:
+                tableName = DataBaseConstants.TV_CLIP_KEY_LIST_TABLE_NAME;
+                break;
+            case ClipKeyListRequest.CLIP_KEY_LIST_REQUEST_TYPE_VOD:
+                tableName = DataBaseConstants.VOD_CLIP_KEY_LIST_TABLE_NAME;
+                break;
+            default:
+                break;
         }
-
         DTVTLogger.end();
-        return DBUtils.isCachingRecord(mContext, tableName);
+        return DataBaseUtils.isCachingRecord(mContext, tableName);
     }
 
     /**
@@ -401,9 +405,9 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         //DB操作
         Handler handler = new Handler(); //チャンネル情報更新
         try {
-            DbThread t = new DbThread(handler, this, CLIP_ROW_DELETE);
-            t.start();
-        } catch (Exception e) {
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, CLIP_ROW_DELETE);
+            dataBaseThread.start();
+        } catch (RuntimeException e) {
             DTVTLogger.debug(e);
         }
     }
@@ -418,9 +422,9 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         //DB操作
         Handler handler = new Handler(); //チャンネル情報更新
         try {
-            DbThread t = new DbThread(handler, this, CLIP_ROW_INSERT);
-            t.start();
-        } catch (Exception e) {
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, CLIP_ROW_INSERT);
+            dataBaseThread.start();
+        } catch (RuntimeException e) {
             DTVTLogger.debug(e);
         }
     }
@@ -491,6 +495,8 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
                     break;
                 case DTV:
                     clipStatus = findDbDtvClipKeyData(tableType, titleId);
+                    break;
+                default:
                     break;
             }
         } else {

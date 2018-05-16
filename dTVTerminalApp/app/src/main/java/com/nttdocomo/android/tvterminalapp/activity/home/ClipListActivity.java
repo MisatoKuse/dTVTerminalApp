@@ -15,14 +15,13 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.TvClipDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VodClipDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopTvClipDataConnect;
@@ -107,7 +106,7 @@ public class ClipListActivity extends BaseActivity implements
         setTitleText(getString(R.string.str_clip_activity_title));
         Intent intent = getIntent();
         mStartPageNo = intent.getIntExtra(CLIP_LIST_START_PAGE, CLIP_LIST_PAGE_NO_OF_TV);
-        mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
+        mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
         if (mIsMenuLaunch) {
             mStartPageNo = CLIP_LIST_PAGE_NO_OF_TV;
             enableHeaderBackIcon(true);

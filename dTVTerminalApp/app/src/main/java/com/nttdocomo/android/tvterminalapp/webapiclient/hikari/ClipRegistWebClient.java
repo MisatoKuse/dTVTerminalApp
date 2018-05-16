@@ -10,7 +10,7 @@ import android.text.TextUtils;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ClipRegistJsonParser;
 
@@ -104,12 +104,12 @@ public class ClipRegistWebClient
 
         String strStartDate = linearStartDate;
         String strEndDate = linearEndDate;
-        if (strStartDate != null && DBUtils.isNumber(strStartDate) && !strStartDate.equals("0")) {
+        if (strStartDate != null && DataBaseUtils.isNumber(strStartDate) && !strStartDate.equals("0")) {
             strStartDate = DateUtils.formatEpochToString(Long.parseLong(strStartDate), null);
         } else {
             strStartDate = null;
         }
-        if (strEndDate != null && DBUtils.isNumber(strEndDate) && !strEndDate.equals("0")) {
+        if (strEndDate != null && DataBaseUtils.isNumber(strEndDate) && !strEndDate.equals("0")) {
             strEndDate = DateUtils.formatEpochToString(Long.parseLong(strEndDate), null);
         } else {
             strEndDate = null;

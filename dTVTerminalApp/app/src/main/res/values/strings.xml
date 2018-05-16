@@ -172,6 +172,7 @@
     <!-- Search -->
     <string name="keyword_search_title">キーワード検索</string>
     <string name="keyword_search_hint">検索するキーワードを入力</string>
+    <string name="keyword_search_default_count">検索結果:0件</string>
     <string name="keyword_search_result">検索結果:</string>
     <string name="keyword_search_result_num">件</string>
     <string name="keyword_search_result_no">の</string>

@@ -10,13 +10,13 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 
 /**
  * 持ち出しリスト用データキャッシュ保存用DB.
  * ※持ち出しリストはローカルでの管理しかできないため、基本的にDBの更新は行わない.
  */
-public class DBHelperDownload extends SQLiteOpenHelper {
+public class DataBaseHelperDownload extends SQLiteOpenHelper {
 
     /**
      * DBVersion.
@@ -28,16 +28,16 @@ public class DBHelperDownload extends SQLiteOpenHelper {
      *
      * @param context コンテキスト
      */
-    public DBHelperDownload(final Context context) {
-        super(context, DBConstants.DOWNLOAD_DATABASE_NAME, null, DOWNLOAD_DATABASE_VERSION);
+    public DataBaseHelperDownload(final Context context) {
+        super(context, DataBaseConstants.DOWNLOAD_DATABASE_NAME, null, DOWNLOAD_DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(final SQLiteDatabase sqLiteDatabase) {
         try {
-            sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_DOWNLOAD_LIST_SQL);
+            sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_DOWNLOAD_LIST_SQL);
         } catch (SQLiteException e) {
-            DTVTLogger.debug("DBHelperDownload::onCreate, create " + DBConstants.CREATE_TABLE_DOWNLOAD_LIST_SQL + " table failed, cause=" + e.getCause());
+            DTVTLogger.debug("DataBaseHelperDownload::onCreate, create " + DataBaseConstants.CREATE_TABLE_DOWNLOAD_LIST_SQL + " table failed, cause=" + e.getCause());
         }
     }
 

@@ -11,10 +11,10 @@ import android.database.sqlite.SQLiteException;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChannelList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser;
@@ -52,7 +52,7 @@ public class RecommendListDataManager {
      * @param cacheDateKey キャッシュ対象ごとのキー
      */
     public void insertRecommendInsertList(
-            final RecommendChList redChList, final boolean addFlag, final int tagPageNo,
+            final RecommendChannelList redChList, final boolean addFlag, final int tagPageNo,
             final String cacheDateKey) {
 
         //取得データが空の場合は更新しないで、有効期限をクリアする
@@ -65,7 +65,7 @@ public class RecommendListDataManager {
         try {
             //各種オブジェクト作成
             List<Map<String, String>> hashMaps = redChList.getmRcList();
-            DBHelper deHelper = new DBHelper(mContext);
+            DataBaseHelper deHelper = new DataBaseHelper(mContext);
             DataBaseManager.initializeInstance(deHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
@@ -98,7 +98,7 @@ public class RecommendListDataManager {
                 }
                 redListDao.insert(values, tagPageNo);
             }
-            DTVTLogger.debug(String.format("RecommendListDao.insert [%s] size[%s]", DBUtils.getRecommendTableName(tagPageNo), hashMaps.size()));
+            DTVTLogger.debug(String.format("RecommendListDao.insert [%s] size[%s]", DataBaseUtils.getRecommendTableName(tagPageNo), hashMaps.size()));
             DateUtils dateUtils = new DateUtils(mContext);
             dateUtils.addLastDate(cacheDateKey);
         } catch (SQLiteException e) {
@@ -119,14 +119,14 @@ public class RecommendListDataManager {
         DTVTLogger.start();
         List<ContentsData> recommendContentInfoList = new ArrayList<>();
         try {
-            DBHelper deHelper = new DBHelper(mContext);
+            DataBaseHelper deHelper = new DataBaseHelper(mContext);
             DataBaseManager.initializeInstance(deHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
 
             //データテーブル存在チェック
-            if (!DBUtils.isCachingRecord(database, DBUtils.getRecommendTableName(tagPageNo))) {
-                DTVTLogger.debug(String.format("Database table [%s] data not exist", DBUtils.getRecommendTableName(tagPageNo)));
+            if (!DataBaseUtils.isCachingRecord(database, DataBaseUtils.getRecommendTableName(tagPageNo))) {
+                DTVTLogger.debug(String.format("Database table [%s] data not exist", DataBaseUtils.getRecommendTableName(tagPageNo)));
                 DataBaseManager.getInstance().closeDatabase();
                 return recommendContentInfoList;
             }
@@ -154,10 +154,10 @@ public class RecommendListDataManager {
                     = redListDao.findById(columns, tagPageNo);
             recommendContentInfoList = new ArrayList<>();
             if (resultList.size() == 0) {
-                DTVTLogger.debug(String.format("Database table [%s] data size 0", DBUtils.getRecommendTableName(tagPageNo)));
+                DTVTLogger.debug(String.format("Database table [%s] data size 0", DataBaseUtils.getRecommendTableName(tagPageNo)));
                 return recommendContentInfoList;
             }
-            DTVTLogger.debug(String.format("Database table [%s] resultList size[%s]", DBUtils.getRecommendTableName(tagPageNo), resultList.size()));
+            DTVTLogger.debug(String.format("Database table [%s] resultList size[%s]", DataBaseUtils.getRecommendTableName(tagPageNo), resultList.size()));
             for (int i = 0; i <= resultList.size() - 1; i++) {
                 Map<String, String> map = resultList.get(i);
                 ContentsData contentsData = new ContentsData();

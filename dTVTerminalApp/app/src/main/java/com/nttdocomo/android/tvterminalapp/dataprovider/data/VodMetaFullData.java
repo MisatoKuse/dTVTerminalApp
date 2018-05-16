@@ -5,13 +5,13 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.vodmetafulldata.Puinf;
-import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import org.json.JSONArray;
@@ -1415,7 +1415,7 @@ public class VodMetaFullData implements Serializable {
                     break;
                 case JsonConstants.META_RESPONSE_RATING:
                     // レーティング値
-                    mRating = DBUtils.getDecimal(data);
+                    mRating = DataBaseUtils.getDecimal(data);
                     break;
                 case JsonConstants.META_RESPONSE_DTV:
                     // dTVフラグ

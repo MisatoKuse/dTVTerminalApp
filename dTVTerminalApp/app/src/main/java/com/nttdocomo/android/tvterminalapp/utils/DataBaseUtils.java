@@ -11,10 +11,10 @@ import android.database.sqlite.SQLiteException;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelperChannel;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelperChannel;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 
 import java.util.Arrays;
@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 /**
  * DB関連のUtilクラス.
  */
-public class DBUtils {
+public class DataBaseUtils {
     /**
      * 整数の正規表現.
      */
@@ -56,8 +56,8 @@ public class DBUtils {
      */
     public static String fourKFlgConversion(final String string) {
         String s = string;
-        if (string.equals(DBConstants.FOUR_K_FLG)) {
-            s = DBConstants.UNDER_BAR_FOUR_K_FLG;
+        if (string.equals(DataBaseConstants.FOUR_K_FLG)) {
+            s = DataBaseConstants.UNDER_BAR_FOUR_K_FLG;
         }
         return s;
     }
@@ -194,7 +194,7 @@ public class DBUtils {
      */
     public static synchronized boolean isCachingRecord(final Context context, final String tableName) {
         long recordCount = 0;
-        DBHelper dBHelper = new DBHelper(context);
+        DataBaseHelper dBHelper = new DataBaseHelper(context);
         try (SQLiteDatabase database = dBHelper.getWritableDatabase()) {
             recordCount = DatabaseUtils.queryNumEntries(database, tableName);
         } catch (SQLiteException e) {
@@ -225,8 +225,8 @@ public class DBUtils {
      */
     public static synchronized boolean isChCachingRecord(final Context context, final String tableName,
                                                          final String chNo) {
-        DBHelperChannel dbHelperChannel = new DBHelperChannel(context, chNo);
-        SQLiteDatabase database = dbHelperChannel.getWritableDatabase();
+        DataBaseHelperChannel dataBaseHelperChannel = new DataBaseHelperChannel(context, chNo);
+        SQLiteDatabase database = dataBaseHelperChannel.getWritableDatabase();
         long recordCount = DatabaseUtils.queryNumEntries(database, tableName);
         database.close();
         return recordCount > 0;
@@ -243,7 +243,7 @@ public class DBUtils {
      */
     public static synchronized boolean isCachingRecord(
             final Context context, final String tableName, final String selection, final String[] args) {
-        DBHelper dBHelper = new DBHelper(context);
+        DataBaseHelper dBHelper = new DataBaseHelper(context);
         SQLiteDatabase database = dBHelper.getWritableDatabase();
         long recordCount = DatabaseUtils.queryNumEntries(database, tableName, selection, args);
         database.close();
@@ -260,19 +260,19 @@ public class DBUtils {
         String tableName = null;
         switch (tagPageNo) {
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV:
-                tableName = DBConstants.RECOMMEND_CHANNEL_LIST_TABLE_NAME;
+                tableName = DataBaseConstants.RECOMMEND_CHANNEL_LIST_TABLE_NAME;
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO:
-                tableName = DBConstants.RECOMMEND_VIDEO_LIST_TABLE_NAME;
+                tableName = DataBaseConstants.RECOMMEND_VIDEO_LIST_TABLE_NAME;
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV:
-                tableName = DBConstants.RECOMMEND_LIST_DTV_TABLE_NAME;
+                tableName = DataBaseConstants.RECOMMEND_LIST_DTV_TABLE_NAME;
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL:
-                tableName = DBConstants.RECOMMEND_LIST_DCHANNEL_TABLE_NAME;
+                tableName = DataBaseConstants.RECOMMEND_LIST_DCHANNEL_TABLE_NAME;
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME:
-                tableName = DBConstants.RECOMMEND_LIST_DANIME_TABLE_NAME;
+                tableName = DataBaseConstants.RECOMMEND_LIST_DANIME_TABLE_NAME;
                 break;
             default:
                 break;
@@ -290,10 +290,10 @@ public class DBUtils {
         String tableName = null;
         switch (type) {
             case TV:
-                tableName = DBConstants.TV_CLIP_KEY_LIST_TABLE_NAME;
+                tableName = DataBaseConstants.TV_CLIP_KEY_LIST_TABLE_NAME;
                 break;
             case VOD:
-                tableName = DBConstants.VOD_CLIP_KEY_LIST_TABLE_NAME;
+                tableName = DataBaseConstants.VOD_CLIP_KEY_LIST_TABLE_NAME;
                 break;
             default:
                 break;

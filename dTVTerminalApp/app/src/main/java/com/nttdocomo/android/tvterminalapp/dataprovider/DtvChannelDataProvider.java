@@ -12,13 +12,13 @@ import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 /**
  * DTVデータプロバイダー.
  */
-public class DTvChDataProvider extends ScaledDownProgramListDataProvider {
+public class DtvChannelDataProvider extends ScaledDownProgramListDataProvider {
     /**
      * コンストラクタ.
      *
      * @param mContext TvProgramListActivity
      */
-    public DTvChDataProvider(final Context mContext) {
+    public DtvChannelDataProvider(final Context mContext) {
         super(mContext);
     }
 

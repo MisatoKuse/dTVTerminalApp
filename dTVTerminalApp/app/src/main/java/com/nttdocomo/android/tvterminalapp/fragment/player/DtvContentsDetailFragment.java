@@ -30,7 +30,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.RatingBarLayout;
@@ -347,7 +347,7 @@ public class DtvContentsDetailFragment extends Fragment {
             int adtype = 0;
             if (adinfoArray[0] != null) {
                 String[] arrayInfo = adinfoArray[0].split(getString(R.string.contents_detail_adinfo_array_pipe));
-                if (arrayInfo.length > 1 && DBUtils.isNumber(arrayInfo[1])) {
+                if (arrayInfo.length > 1 && DataBaseUtils.isNumber(arrayInfo[1])) {
                     adtype = Integer.parseInt(arrayInfo[1]);
                 }
             }
@@ -422,7 +422,7 @@ public class DtvContentsDetailFragment extends Fragment {
         labelStatus.removeAllViews();
         List<Integer> labelStatusList = new ArrayList<>();
         //NEW アイコン
-        if (DBUtils.isNumber(mOtherContentsDetailData.getmStartDate())
+        if (DataBaseUtils.isNumber(mOtherContentsDetailData.getmStartDate())
                 && DateUtils.isInOneWeek(mOtherContentsDetailData.getmStartDate())) {
             labelStatusList.add(R.mipmap.label_status_new);
         }

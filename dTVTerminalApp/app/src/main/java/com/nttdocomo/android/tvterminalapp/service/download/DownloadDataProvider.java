@@ -15,8 +15,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DownLoadListDataManager;
 
 import java.io.File;
@@ -28,50 +28,60 @@ import java.util.Map;
  * ダウンロードデータプロバイダー.
  * Activityからこのクラスを利用する
  */
-public class DlDataProvider implements ServiceConnection, DownloadServiceListener, DbThread.DbOperation {
+public class DownloadDataProvider implements ServiceConnection, DownloadServiceListener, DataBaseThread.DataBaseOperation {
     /**Binder.*/
     private DownloadService.Binder mBinder;
     /**Activity.*/
     private Activity mActivity;
     /**ダウンロードデータ.*/
-    private DlData dlData;
+    private DownloadData mDownloadData;
     /**アイテムID.*/
-    private String itemId;
+    private String mItemId;
     /**DlDataProvider機能有効か.*/
-    private boolean isRegistered;
+    private boolean mIsRegistered;
     /**ダウンロードデータプロバイダー.*/
-    private static DlDataProvider sDlDataProvider = new DlDataProvider();
+    private static DownloadDataProvider sDownloadDataProvider = new DownloadDataProvider();
+    /**操作ID.*/
+    private static final int DOWNLOAD_STATUS_SELECT = 1;
+    /**持ち出しのダウンロード情報格納.*/
+    private static final int DOWNLOAD_INSERT = 2;
+    /**持ち出しのダウンロード情報更新.*/
+    private static final int DOWNLOAD_UPDATE = 3;
+    /**DOWNLOAD_TOTALSIZE_SELECT.*/
+    private static final int DOWNLOAD_TOTALSIZE_SELECT = 4;
+    /**持ち出しのダウンロード情報全削除.*/
+    private static final int DOWNLOAD_DELETE_ALL = 5;
+
     /**コンストラクタ.*/
-    private DlDataProvider() {
+    private DownloadDataProvider() {
 
     }
-
     /**
      * コンストラクタ.
      *
      * @param activity アクティビティ
      * @return dlDataProvider
      */
-    public static DlDataProvider getInstance(final Activity activity) {
+    public static DownloadDataProvider getInstance(final Activity activity) {
         if (null == activity) {
-            DTVTLogger.error("DlDataProvider.DlDataProvider, null activity");
+            DTVTLogger.error("DownloadDataProvider.DownloadDataProvider, null activity");
             return null;
         }
-        if (null == sDlDataProvider) {
-            sDlDataProvider = new DlDataProvider();
+        if (null == sDownloadDataProvider) {
+            sDownloadDataProvider = new DownloadDataProvider();
         }
-        sDlDataProvider.mActivity = activity;
-        return sDlDataProvider;
+        sDownloadDataProvider.mActivity = activity;
+        return sDownloadDataProvider;
     }
 
     /**
      * releaseInstance.
      */
     static void releaseInstance() {
-        if (null == sDlDataProvider) {
+        if (null == sDownloadDataProvider) {
             return;
         }
-        sDlDataProvider = null;
+        sDownloadDataProvider = null;
     }
 
     /**
@@ -79,14 +89,14 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
      * @return true or false
      */
     public boolean getIsRegistered() {
-        return isRegistered;
+        return mIsRegistered;
     }
 
     /**
      * ダウンロードデータプロバイダー.
      * @param activity activity
      */
-    public DlDataProvider(final Activity activity) {
+    public DownloadDataProvider(final Activity activity) {
         this.mActivity = activity;
     }
 
@@ -101,7 +111,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
         mActivity = act;
         Intent intent = new Intent(mActivity, DownloadService.class);
-        isRegistered = mActivity.bindService(intent, this, Context.BIND_AUTO_CREATE);
+        mIsRegistered = mActivity.bindService(intent, this, Context.BIND_AUTO_CREATE);
         startService();
     }
 
@@ -138,7 +148,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
      *
      * @param param パラメータ
      */
-    public void setDlParam(final DownloadParam param) {
+    public void setDownloadParam(final DownloadParam param) {
         DownloadService ds = getDownloadService();
         if (null != ds) {
             ds.setDlParam(param);
@@ -230,29 +240,29 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         if (null != ds) {
             ds.setDownloadServiceListener(this);
         }
-        sendBroadcast(DownloadService.DONWLOAD_DlDataProviderAvailable);
+        sendBroadcast(DownloadService.DOWNLOAD_DL_DATA_PROVIDER_AVAILABLE);
     }
 
     @Override
     public void onServiceDisconnected(final ComponentName componentName) {
         mBinder = null;
-        sendBroadcast(DownloadService.DONWLOAD_DlDataProviderUnavailable);
+        sendBroadcast(DownloadService.DOWNLOAD_DL_DATA_PROVIDER_UNAVAILABLE);
     }
 
     @Override
     public void onStart(final int totalFileByteSize) {
-        sendBroadcast(DownloadService.DONWLOAD_OnStart, DownloadService.DONWLOAD_ParamInt, totalFileByteSize);
+        sendBroadcast(DownloadService.DOWNLOAD_ON_START, DownloadService.DOWNLOAD_PARAM_INT, totalFileByteSize);
     }
 
     @Override
     public void onProgress(final int receivedBytes, final int percent) {
-        sendBroadcast(DownloadService.DONWLOAD_OnProgress, DownloadService.DONWLOAD_ParamInt, percent);
+        sendBroadcast(DownloadService.DOWNLOAD_ON_PROGRESS, DownloadService.DOWNLOAD_PARAM_INT, percent);
     }
 
     @Override
     public void onFail(final DownLoadError error, final String savePath) {
         int paramInt = error.ordinal();
-        sendBroadcast(DownloadService.DONWLOAD_OnFail, DownloadService.DONWLOAD_ParamString, savePath, DownloadService.DONWLOAD_ParamInt, paramInt);
+        sendBroadcast(DownloadService.DOWNLOAD_ON_FAIL, DownloadService.DOWNLOAD_PARAM_STRING, savePath, DownloadService.DOWNLOAD_PARAM_INT, paramInt);
         DownloadService ds = getDownloadService();
         if (null == ds) {
             return;
@@ -335,13 +345,13 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
             if (fullPath.contains(sSeparator)) {
                 String[] paths = fullPath.split(sSeparator);
                 String[] ids = fullPath.split(sSeparator);
-                itemId = ids[paths.length - 1];
-                if (!TextUtils.isEmpty(itemId)) {
+                mItemId = ids[paths.length - 1];
+                if (!TextUtils.isEmpty(mItemId)) {
                     updateDownloadStatusToDb();
                 }
             }
         }
-        sendBroadcast(DownloadService.DONWLOAD_OnSuccess, DownloadService.DONWLOAD_ParamString, fullPath);
+        sendBroadcast(DownloadService.DOWNLOAD_ON_SUCCESS, DownloadService.DOWNLOAD_PARAM_STRING, fullPath);
         DownloadService ds = getDownloadService();
         if (null == ds) {
             return;
@@ -359,14 +369,14 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
             DownloadService.setDlDataQueRemove0();
             DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok 3");
             if (0 == DownloadService.getDlDataQue().size()) {
-                isRegistered = false;
+                mIsRegistered = false;
                 stopService();
                 return;
             }
             try {
                 Thread.sleep(1000);
                 DTVTLogger.debug(">>>>>>>>>>>>>>>>>> new dl");
-                setDlParam(getDownLoadParam());
+                setDownloadParam(getDownLoadParam());
                 start();
             } catch (Exception e) {
                 DTVTLogger.debug(e);
@@ -383,7 +393,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     private DownloadParam getDownLoadParam() {
         DownloadParam downloadParam = null;
         if (DownloadService.getDlDataQue() != null && DownloadService.getDlDataQue().size() > 0) {
-            DlData item = DownloadService.getDlDataQue().get(0);
+            DownloadData item = DownloadService.getDlDataQue().get(0);
             Context context = null;
             if (getDownloadService() != null) {
                 context = getDownloadService().getApplicationContext();
@@ -399,14 +409,14 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
             dtcpDownloadParam.setCleartextSize(Integer.parseInt(item.getTotalSize()));
             dtcpDownloadParam.setItemId(item.getItemId());
             dtcpDownloadParam.setPercentToNotify(Integer.parseInt(item.getPercentToNotify()));
-            dtcpDownloadParam.setXmlToDl(item.getXmlToDl());
+            dtcpDownloadParam.setXmlToDownLoad(item.getXmlToDownLoad());
         }
         return downloadParam;
     }
 
     @Override
     public void onCancel(final String filePath) {
-        sendBroadcast(DownloadService.DONWLOAD_OnCancel, DownloadService.DONWLOAD_ParamString, filePath);
+        sendBroadcast(DownloadService.DOWNLOAD_ON_CANCEL, DownloadService.DOWNLOAD_PARAM_STRING, filePath);
         DownloadService ds = getDownloadService();
         if (null == ds) {
             return;
@@ -418,7 +428,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 
     @Override
     public void onLowStorageSpace(final String fullPath) {
-        sendBroadcast(DownloadService.DONWLOAD_OnLowStorageSpace, DownloadService.DONWLOAD_ParamString, fullPath);
+        sendBroadcast(DownloadService.DOWNLOAD_ON_LOW_STORAGE_SPACE, DownloadService.DOWNLOAD_PARAM_STRING, fullPath);
         DownloadService ds = getDownloadService();
         if (null == ds) {
             return;
@@ -427,16 +437,6 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
             setNextDownLoad();
         }
     }
-    /**操作ID.*/
-    private static final int DOWNLOAD_STATUS_SELECT = 1;
-    /**持ち出しのダウンロード情報格納.*/
-    private static final int DOWNLOAD_INSERT = 2;
-    /**持ち出しのダウンロード情報更新.*/
-    private static final int DOWNLOAD_UPDATE = 3;
-    /**DOWNLOAD_TOTALSIZE_SELECT.*/
-    private static final int DOWNLOAD_TOTALSIZE_SELECT = 4;
-    /**持ち出しのダウンロード情報全削除.*/
-    private static final int DOWNLOAD_DELETE_ALL = 5;
 
     /**
      * ダウンロードステータス取得.
@@ -450,19 +450,19 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         if (isSuccessful) {
             switch (operationId) {
                 case DOWNLOAD_STATUS_SELECT:
-                    List<DlData> statusList = new ArrayList<>();
+                    List<DownloadData> statusList = new ArrayList<>();
                     for (int i = 0; i < resultSet.size(); i++) {
                         Map<String, String> hashMap = resultSet.get(i);
-                        String downloadStatus = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
-                        String itemId = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
-                        String saveURL = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
-                        String fileName = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_TITLE);
-                        DlData mDlData = new DlData();
-                        mDlData.setItemId(itemId);
-                        mDlData.setSaveFile(saveURL);
-                        mDlData.setTitle(fileName);
-                        mDlData.setDownLoadStatus(downloadStatus);
-                        statusList.add(mDlData);
+                        String downloadStatus = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
+                        String itemId = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
+                        String saveURL = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
+                        String fileName = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_TITLE);
+                        DownloadData mDownloadData = new DownloadData();
+                        mDownloadData.setItemId(itemId);
+                        mDownloadData.setSaveFile(saveURL);
+                        mDownloadData.setTitle(fileName);
+                        mDownloadData.setDownLoadStatus(downloadStatus);
+                        statusList.add(mDownloadData);
                     }
                     break;
                 default:
@@ -480,13 +480,13 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                 resultSet = downLoadListDataManager.selectDownLoadListVideoData();
                 break;
             case DOWNLOAD_INSERT:
-                if (dlData != null) {
-                    downLoadListDataManager.insertDownload(dlData);
+                if (mDownloadData != null) {
+                    downLoadListDataManager.insertDownload(mDownloadData);
                 }
                 break;
             case DOWNLOAD_UPDATE:
-                if (dlData != null) {
-                    downLoadListDataManager.updateDownloadByItemId(itemId);
+                if (mDownloadData != null) {
+                    downLoadListDataManager.updateDownloadByItemId(mItemId);
                 }
                 break;
             case DOWNLOAD_DELETE_ALL:
@@ -553,7 +553,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         if (downLoadList != null && downLoadList.size() > 0) {
             for (int i = 0; i < downLoadList.size(); i++) {
                 Map<String, String> hashMap = downLoadList.get(i);
-                String path = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
+                String path = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
                 if (!TextUtils.isEmpty(path)) {
                     deleteAllFiles(new File(path));
                 }
@@ -598,10 +598,10 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     /**
      * DLデータ設定.
      *
-     * @param dlData DLデータ
+     * @param downloadData DLデータ
      */
-    public void setDlData(final DlData dlData) {
-        this.dlData = dlData;
+    public void setDownloadData(final DownloadData downloadData) {
+        this.mDownloadData = downloadData;
         dbOperationByThread(DOWNLOAD_INSERT);
     }
 
@@ -613,20 +613,20 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         if (mActivity != null) {
             DTVTLogger.debug("writing db");
             DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
-            downLoadListDataManager.updateDownloadByItemId(itemId);
+            downLoadListDataManager.updateDownloadByItemId(mItemId);
         }
         DTVTLogger.end();
     }
 
     /**
      * キュー設定.
-     * @param dlData ダウンロードするデータ.
+     * @param downloadData ダウンロードするデータ.
      */
-    public void setQue(final List<DlData> dlData) {
+    public void setQue(final List<DownloadData> downloadData) {
         if (DownloadService.getDlDataQue() != null && DownloadService.getDlDataQue().size() > 0) {
             DownloadService.setDlDataQueClear();
         }
-        DownloadService.setDlDataQue(dlData);
+        DownloadService.setDlDataQue(downloadData);
     }
 
     /**
@@ -636,7 +636,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
      */
     private void dbOperationByThread(final int operationId) {
         Handler handler = new Handler();
-        DbThread t = new DbThread(handler, this, operationId);
+        DataBaseThread t = new DataBaseThread(handler, this, operationId);
         t.start();
     }
 
@@ -656,7 +656,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
      * @param data data
      * @return fullpath fullpath
      */
-    private static String getCurrentDlFullPath(final DlData data) {
+    private static String getCurrentDlFullPath(final DownloadData data) {
         if (null == data) {
             return null;
         }
@@ -671,23 +671,23 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
      * 機能：海外になる時、すべてのDLをキャンセル.
      */
     public static synchronized void cancelAll() {
-        if (null == sDlDataProvider) {
+        if (null == sDownloadDataProvider) {
             return;
         }
-        DownloadService ds = sDlDataProvider.getDownloadService();
+        DownloadService ds = sDownloadDataProvider.getDownloadService();
         if (null != ds) {
             if (ds.isUiRunning()) {
-                sDlDataProvider.sendBroadcast(DownloadService.DONWLOAD_OnCancelAll);
+                sDownloadDataProvider.sendBroadcast(DownloadService.DOWNLOAD_ON_CANCEL_ALL);
             } else {
-                List<DlData> dlDataQue = ds.getDlDataQue();
-                for (DlData d : dlDataQue) {
+                List<DownloadData> downloadDataQue = ds.getDlDataQue();
+                for (DownloadData d : downloadDataQue) {
                     String path = getCurrentDlFullPath(d);
                     if (null != path) {
-                        sDlDataProvider.cancelDownLoadStatus(path);
+                        sDownloadDataProvider.cancelDownLoadStatus(path);
                     }
                 }
-                for (int i = dlDataQue.size() - 1; i > -1; --i) {
-                    dlDataQue.remove(i);
+                for (int i = downloadDataQue.size() - 1; i > -1; --i) {
+                    downloadDataQue.remove(i);
                 }
                 ds.cancel();
             }

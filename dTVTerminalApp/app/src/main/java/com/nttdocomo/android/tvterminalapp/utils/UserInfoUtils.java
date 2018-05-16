@@ -212,7 +212,7 @@ public class UserInfoUtils {
             }
         }
         //年齢情報が数字ならINTに変換
-        if (DBUtils.isNumber(age)) {
+        if (DataBaseUtils.isNumber(age)) {
             intAge = Integer.parseInt(age);
         }
         return intAge;

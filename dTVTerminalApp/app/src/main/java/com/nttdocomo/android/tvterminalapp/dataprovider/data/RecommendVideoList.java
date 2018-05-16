@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * おすすめビデオデータ管理クラス.
  */
-public class RecommendVdList {
+public class RecommendVideoList {
     /**おすすめビデオマップ.*/
     private HashMap<String, String> mRvMap = new HashMap<String, String>();
     /**おすすめビデオリスト.*/

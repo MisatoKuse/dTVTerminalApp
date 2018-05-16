@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * おすすめ番組データ管理クラス.
  */
-public class RecommendChList {
+public class RecommendChannelList {
     /**
      * おすすめ番組マップ.
      */

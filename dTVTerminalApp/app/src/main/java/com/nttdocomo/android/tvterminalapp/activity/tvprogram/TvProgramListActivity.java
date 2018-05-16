@@ -25,8 +25,8 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ProgramChannelAdapter;
 import com.nttdocomo.android.tvterminalapp.adapter.TvProgramListAdapter;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.MyChannelDataProvider;
@@ -156,15 +156,15 @@ public class TvProgramListActivity extends BaseActivity implements
     /**
      * ひかりチャンネルリスト.
      */
-    private ArrayList<ChannelInfo> hikariChannels;
+    private ArrayList<ChannelInfo> mHikariChannels;
     /**
      * マイ番組表にマッピングされたデータ.
      */
-    private ArrayList<ChannelInfo> mappedMyChannelList;
+    private ArrayList<ChannelInfo> mMappedMyChannelList;
     /**
      * マイ番組表データ.
      */
-    private ArrayList<MyChannelMetaData> myChannelDataList = new ArrayList<>();
+    private ArrayList<MyChannelMetaData> mMyChannelDataList = new ArrayList<>();
     /**
      * レッドタイムライン.
      */
@@ -209,7 +209,7 @@ public class TvProgramListActivity extends BaseActivity implements
 
         //Headerの設定
         Intent intent = getIntent();
-        mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
+        mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
         if (mIsMenuLaunch) {
             enableHeaderBackIcon(true);
         }
@@ -659,7 +659,7 @@ public class TvProgramListActivity extends BaseActivity implements
         String curTime = new SimpleDateFormat(DateUtils.DATE_HHMMSS, Locale.JAPAN).format(new Date());
         int curClock = Integer.parseInt(curTime.substring(0, 2));
         int scrollDis;
-        if ( DateUtils.START_TIME <= curClock && curClock < STANDARD_TIME) {
+        if (DateUtils.START_TIME <= curClock && curClock < STANDARD_TIME) {
             scrollDis = (curClock -  DateUtils.START_TIME) * mLinearLayout.getHeight() / STANDARD_TIME;
         } else {
             if (curClock == 0) {
@@ -699,7 +699,7 @@ public class TvProgramListActivity extends BaseActivity implements
             if (channels != null && channels.size() > 0) {
 //                sort(channels);
                 showMyChannelNoItem(false);
-                this.hikariChannels = channels;
+                this.mHikariChannels = channels;
                 ArrayList<ChannelInfo> channelList = executeMapping();
                 setChannelContentsView(channelList);
                 loadMyChannel(channelList);
@@ -798,12 +798,12 @@ public class TvProgramListActivity extends BaseActivity implements
      */
     private ArrayList<ChannelInfo> executeMapping() {
         ArrayList<ChannelInfo> myChannels = new ArrayList<>();
-        if (myChannelDataList != null) {
-            for (int i = 0; i < myChannelDataList.size(); i++) {
-                for (int j = 0; j < hikariChannels.size(); j++) {
+        if (mMyChannelDataList != null) {
+            for (int i = 0; i < mMyChannelDataList.size(); i++) {
+                for (int j = 0; j < mHikariChannels.size(); j++) {
                     //サービスIDでマッピング
-                    if (myChannelDataList.get(i).getServiceId().equals(hikariChannels.get(j).getServiceId())) {
-                        myChannels.add(hikariChannels.get(j));
+                    if (mMyChannelDataList.get(i).getServiceId().equals(mHikariChannels.get(j).getServiceId())) {
+                        myChannels.add(mHikariChannels.get(j));
                     }
                 }
             }
@@ -820,7 +820,7 @@ public class TvProgramListActivity extends BaseActivity implements
      */
     @Override
     public void onMyChannelListCallback(final ArrayList<MyChannelMetaData> myChannelMetaData) {
-        this.myChannelDataList.clear();
+        this.mMyChannelDataList.clear();
         if (myChannelMetaData != null && myChannelMetaData.size() > 0) {
             // アプリとして編集が可能な index16 までで絞る(サーバからはindex順でレスポンスが来ているのでソートはしない)
             for (int j = 0; j < myChannelMetaData.size(); j++) {
@@ -835,7 +835,7 @@ public class TvProgramListActivity extends BaseActivity implements
                         continue;
                     }
                     if (1 <= indexNum && indexNum <= WebApiBasePlala.MY_CHANNEL_MAX_INDEX) {
-                        this.myChannelDataList.add(myChannelMetaData.get(j));
+                        this.mMyChannelDataList.add(myChannelMetaData.get(j));
                     }
                 }
             }

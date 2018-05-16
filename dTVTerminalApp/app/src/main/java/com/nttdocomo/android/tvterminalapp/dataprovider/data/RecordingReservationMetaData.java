@@ -6,7 +6,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,7 +60,7 @@ public class RecordingReservationMetaData implements Serializable {
         if (!key.isEmpty()) {
             switch (key) {
                 case JsonConstants.META_RESPONSE_PRIORITY:
-                    mPriority = DBUtils.getNumeric(data);        //priority
+                    mPriority = DataBaseUtils.getNumeric(data);        //priority
                     break;
                 case JsonConstants.META_RESPONSE_PLATFORM_TYPE:
                     mPlatformType = (String) data;        //platform_type
@@ -75,10 +75,10 @@ public class RecordingReservationMetaData implements Serializable {
                     mServiceId = (String) data;           //service_id
                     break;
                 case JsonConstants.META_RESPONSE_START_SCHEDULE_TIME:
-                    mStartScheduleTime = DBUtils.getLong(data);  //start_schedule_time
+                    mStartScheduleTime = DataBaseUtils.getLong(data);  //start_schedule_time
                     break;
                 case JsonConstants.META_RESPONSE_END_SCHEDULE_TIME:
-                    mEndScheduleTime = DBUtils.getLong(data);     //end_schedule_time
+                    mEndScheduleTime = DataBaseUtils.getLong(data);     //end_schedule_time
                     break;
                 case JsonConstants.META_RESPONSE_EVENT_ID:
                     mEventId = (String) data;             //event_id
@@ -87,7 +87,7 @@ public class RecordingReservationMetaData implements Serializable {
                     mTitle = (String) data;               //title
                     break;
                 case JsonConstants.META_RESPONSE_PARENTAL_AGE_ATTRIBUTE_OF_PROGRAM:
-                    mParentalAgeAttributeOfProgram = DBUtils.getNumeric(data); //parental_age_attribute_of_program
+                    mParentalAgeAttributeOfProgram = DataBaseUtils.getNumeric(data); //parental_age_attribute_of_program
                     break;
                 default:
             }

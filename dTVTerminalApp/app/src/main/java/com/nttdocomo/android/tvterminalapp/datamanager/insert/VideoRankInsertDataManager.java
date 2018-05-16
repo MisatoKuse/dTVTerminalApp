@@ -11,9 +11,9 @@ import android.database.sqlite.SQLiteException;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VideoRankListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
 import java.util.HashMap;
@@ -62,8 +62,8 @@ public class VideoRankInsertDataManager {
 
         try {
             //各種オブジェクト作成
-            DBHelper videoRankListDBHelper = new DBHelper(mContext);
-            DataBaseManager.initializeInstance(videoRankListDBHelper);
+            DataBaseHelper videoRankListDataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(videoRankListDataBaseHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
             VideoRankListDao videoRankListDao = new VideoRankListDao(database);
@@ -81,7 +81,7 @@ public class VideoRankInsertDataManager {
                     Map.Entry entry = (Map.Entry) entries.next();
                     String keyName = (String) entry.getKey();
                     String valName = (String) entry.getValue();
-                    values.put(DBUtils.fourKFlgConversion(keyName), valName);
+                    values.put(DataBaseUtils.fourKFlgConversion(keyName), valName);
                 }
                 videoRankListDao.insert(values);
             }

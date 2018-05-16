@@ -8,7 +8,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +22,7 @@ public class RoleListDao {
     /**
      * SQLiteDatabase.
      */
-    private final SQLiteDatabase db;
+    private final SQLiteDatabase mSQLiteDatabase;
 
     /**
      * コンストラクタ.
@@ -30,7 +30,7 @@ public class RoleListDao {
      * @param db SQLiteDatabase
      */
     public RoleListDao(final SQLiteDatabase db) {
-        this.db = db;
+        this.mSQLiteDatabase = db;
     }
 
     /**
@@ -43,8 +43,8 @@ public class RoleListDao {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
 
-        Cursor cursor = db.query(
-                DBConstants.ROLE_LIST_TABLE_NAME,
+        Cursor cursor = mSQLiteDatabase.query(
+                DataBaseConstants.ROLE_LIST_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -66,7 +66,7 @@ public class RoleListDao {
             isEof = cursor.moveToNext();
         }
         cursor.close();
-        db.close();
+        mSQLiteDatabase.close();
         return list;
     }
 
@@ -80,8 +80,8 @@ public class RoleListDao {
     public List<Map<String, String>> findRoleList(final String[] strings) {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
-        Cursor cursor = db.query(
-                DBConstants.ROLE_LIST_TABLE_NAME,
+        Cursor cursor = mSQLiteDatabase.query(
+                DataBaseConstants.ROLE_LIST_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -113,7 +113,7 @@ public class RoleListDao {
      * @return 成功時:row ID 失敗時:-1
      */
     public long insert(final ContentValues values) {
-        return db.insert(DBConstants.ROLE_LIST_TABLE_NAME, null, values);
+        return mSQLiteDatabase.insert(DataBaseConstants.ROLE_LIST_TABLE_NAME, null, values);
     }
 
     /**
@@ -133,6 +133,6 @@ public class RoleListDao {
      * @return リターン値
      */
     public int delete() {
-        return db.delete(DBConstants.ROLE_LIST_TABLE_NAME, null, null);
+        return mSQLiteDatabase.delete(DataBaseConstants.ROLE_LIST_TABLE_NAME, null, null);
     }
 }

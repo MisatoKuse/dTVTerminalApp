@@ -25,7 +25,7 @@ public class ChannelListFragmentFactory {
      * @return fragment
      */
     public ChannelListFragment createFragment(final int position, final ChannelListFragment.ChannelListFragmentListener lis,
-                                              final ChannelListActivity.ChListDataType type,
+                                              final ChannelListActivity.ChannelListDataType type,
                                               final ChannelListFragment.OnClickChannelItemListener listener) {
         ChannelListFragment fragment;
         fragment = mFragments.get(position);

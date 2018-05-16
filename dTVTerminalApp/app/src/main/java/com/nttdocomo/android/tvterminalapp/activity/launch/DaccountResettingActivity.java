@@ -19,7 +19,7 @@ import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 /**
  * 端末に登録されているdアカウントとSTBに登録されているdアカウントが一致しなかった場合に表示される.
  */
-public class DAccountReSettingActivity extends BaseActivity implements View.OnClickListener {
+public class DaccountResettingActivity extends BaseActivity implements View.OnClickListener {
 
     /**
      * STBにdアカウントを登録するには.
@@ -122,7 +122,7 @@ public class DAccountReSettingActivity extends BaseActivity implements View.OnCl
      * dアカウント設定ヘルプ.
      */
     private void onDAccountRegButton() {
-        Intent intent = new Intent(getApplicationContext(), DAccountSettingHelpActivity.class);
+        Intent intent = new Intent(getApplicationContext(), DaccountSettingHelpActivity.class);
         startActivity(intent);
     }
 

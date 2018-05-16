@@ -9,7 +9,7 @@ import java.util.ArrayList;
 /**
  * 購入済みCh一覧取得：正常時レスポンスデータ.
  */
-public class PurchasedChListResponse {
+public class PurchasedChannelListResponse {
     /**
      * status.
      */
@@ -82,7 +82,7 @@ public class PurchasedChListResponse {
     /**
      * コンストラクタ.
      */
-    public PurchasedChListResponse() {
+    public PurchasedChannelListResponse() {
         mStatus = ""; //OK 固定値
         mChannelListData = new ChannelList(); //購入済みCH一覧
         mActiveData = new ArrayList<>(); //有効期限一覧

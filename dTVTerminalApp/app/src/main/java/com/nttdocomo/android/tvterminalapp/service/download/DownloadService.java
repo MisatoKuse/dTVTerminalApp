@@ -32,53 +32,53 @@ public class DownloadService extends Service implements DownloadListener {
     /**ダウンロードサービスID.*/
     private static final int DOWNLOAD_SERVICE_ID = 1;
     /**ダウンロードデータキュー.*/
-    private static List<DlData> sDlDataQue = new ArrayList<>();
+    private static List<DownloadData> sDownloadDataQue = new ArrayList<>();
     /**UI更新あるか.*/
     private boolean mIsUiRunning = false;
 
     //broadcast type
     /**プログレース.*/
-    public static final String DONWLOAD_OnProgress = "onProgress";
+    public static final String DOWNLOAD_ON_PROGRESS = "onProgress";
     /**ダウンロード成功.*/
-    public static final String DONWLOAD_OnSuccess = "onSuccess";
+    public static final String DOWNLOAD_ON_SUCCESS = "onSuccess";
     /**ダウンロード失敗.*/
-    public static final String DONWLOAD_OnFail = "onFail";
+    public static final String DOWNLOAD_ON_FAIL = "onFail";
     /**メモリ不足.*/
-    public static final String DONWLOAD_OnLowStorageSpace = "onLowStorageSpace";
+    public static final String DOWNLOAD_ON_LOW_STORAGE_SPACE = "onLowStorageSpace";
     /**ダウンロードタスク全キャンセル.*/
-    public static final String DONWLOAD_OnCancelAll = "OnCancelAll";
+    public static final String DOWNLOAD_ON_CANCEL_ALL = "OnCancelAll";
     /**ダウンロードタスクキャンセル.*/
-    public static final String DONWLOAD_OnCancel = "onCancel";
+    public static final String DOWNLOAD_ON_CANCEL = "onCancel";
     /**ダウンロード開始.*/
-    public static final String DONWLOAD_OnStart = "onStart";
+    public static final String DOWNLOAD_ON_START = "onStart";
     /**ダウンロードデータプロバイダー使用可.*/
-    public static final String DONWLOAD_DlDataProviderAvailable = "onDlDataProviderAvailable";
+    public static final String DOWNLOAD_DL_DATA_PROVIDER_AVAILABLE = "onDlDataProviderAvailable";
     /**ダウンロードデータプロバイダー使用不可.*/
-    public static final String DONWLOAD_DlDataProviderUnavailable = "onDDataProviderUnavailable";
+    public static final String DOWNLOAD_DL_DATA_PROVIDER_UNAVAILABLE = "onDDataProviderUnavailable";
 
     //broadcast param type
     /**broadcast param type　int.*/
-    public static final String DONWLOAD_ParamInt = "paramInt";
+    public static final String DOWNLOAD_PARAM_INT = "paramInt";
     /**broadcast param type  string.*/
-    public static final String DONWLOAD_ParamString = "paramString";
+    public static final String DOWNLOAD_PARAM_STRING = "paramString";
 
     /**
      * ダウンロードデータキュー設定.
-     * @param dlDataQue ダウンロードデータキュー
+     * @param downloadDataQue ダウンロードデータキュー
      */
-    public synchronized static void setDlDataQue(final List<DlData> dlDataQue) {
-        sDlDataQue = dlDataQue;
+    public synchronized static void setDlDataQue(final List<DownloadData> downloadDataQue) {
+        sDownloadDataQue = downloadDataQue;
     }
     /**ダウンロードデータキュークリア.*/
     public synchronized static void setDlDataQueClear() {
-        if (null != sDlDataQue) {
-            sDlDataQue.clear();
+        if (null != sDownloadDataQue) {
+            sDownloadDataQue.clear();
         }
     }
     /**ダウンロードデータキューから先頭アイテム取り除く.*/
     public synchronized static void setDlDataQueRemove0() {
-        if (null != sDlDataQue) {
-            sDlDataQue.remove(0);
+        if (null != sDownloadDataQue) {
+            sDownloadDataQue.remove(0);
         }
     }
 
@@ -86,8 +86,8 @@ public class DownloadService extends Service implements DownloadListener {
      * ダウンロードデータキュー.
      * @return ダウンロードデータキュー
      */
-    public synchronized static  List<DlData> getDlDataQue() {
-        return sDlDataQue;
+    public synchronized static  List<DownloadData> getDlDataQue() {
+        return sDownloadDataQue;
     }
 
     /**
@@ -95,7 +95,7 @@ public class DownloadService extends Service implements DownloadListener {
      * @return true or false
      */
     public static synchronized boolean isDownloadServiceRunning() {
-        return (null != sDlDataQue) && 0 < sDlDataQue.size();
+        return (null != sDownloadDataQue) && 0 < sDownloadDataQue.size();
     }
 
     /**
@@ -221,7 +221,7 @@ public class DownloadService extends Service implements DownloadListener {
         boolean isUiRunning = isUiRunning();
         if (!isUiRunning) {
             DlnaProvDownload.uninitGlobalDl();
-            DlDataProvider.releaseInstance();
+            DownloadDataProvider.releaseInstance();
         }
     }
 

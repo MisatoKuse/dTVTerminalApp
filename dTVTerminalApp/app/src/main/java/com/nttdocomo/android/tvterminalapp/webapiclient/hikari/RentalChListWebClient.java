@@ -8,7 +8,7 @@ import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChListResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChannelListResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.RentalChListJsonParser;
 
 /**
@@ -31,7 +31,7 @@ public class RentalChListWebClient
          *
          * @param RentalChListResponse JSONパース後のデータ
          */
-        void onRentalChListJsonParsed(PurchasedChListResponse RentalChListResponse);
+        void onRentalChListJsonParsed(PurchasedChannelListResponse RentalChListResponse);
     }
 
     /**

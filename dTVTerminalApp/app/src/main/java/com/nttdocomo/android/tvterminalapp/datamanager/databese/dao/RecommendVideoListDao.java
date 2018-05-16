@@ -8,7 +8,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +22,7 @@ public class RecommendVideoListDao {
     /**
      * SQLiteDatabase.
      */
-    private final SQLiteDatabase db;
+    private final SQLiteDatabase mSQLiteDatabase;
 
     /**
      * コンストラクタ.
@@ -30,7 +30,7 @@ public class RecommendVideoListDao {
      * @param db SQLiteDatabase
      */
     public RecommendVideoListDao(final SQLiteDatabase db) {
-        this.db = db;
+        this.mSQLiteDatabase = db;
     }
 
     /**
@@ -43,8 +43,8 @@ public class RecommendVideoListDao {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
 
-        Cursor cursor = db.query(
-                DBConstants.RECOMMEND_VIDEO_LIST_TABLE_NAME,
+        Cursor cursor = mSQLiteDatabase.query(
+                DataBaseConstants.RECOMMEND_VIDEO_LIST_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -77,7 +77,7 @@ public class RecommendVideoListDao {
      * @return 成功時:row ID 失敗時:-1
      */
     public long insert(final ContentValues values) {
-        return db.insert(DBConstants.RECOMMEND_VIDEO_LIST_TABLE_NAME, null, values);
+        return mSQLiteDatabase.insert(DataBaseConstants.RECOMMEND_VIDEO_LIST_TABLE_NAME, null, values);
     }
 
     /**
@@ -97,6 +97,6 @@ public class RecommendVideoListDao {
      * @return リターン値
      */
     public int delete() {
-        return db.delete(DBConstants.RECOMMEND_VIDEO_LIST_TABLE_NAME, null, null);
+        return mSQLiteDatabase.delete(DataBaseConstants.RECOMMEND_VIDEO_LIST_TABLE_NAME, null, null);
     }
 }

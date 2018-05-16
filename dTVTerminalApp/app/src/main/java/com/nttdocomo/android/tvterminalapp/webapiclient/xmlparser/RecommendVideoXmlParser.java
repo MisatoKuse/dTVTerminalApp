@@ -8,7 +8,7 @@ import android.os.AsyncTask;
 import android.util.Xml;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendVdList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendVideoList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendVdWebClient;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -84,7 +84,7 @@ public class RecommendVideoXmlParser extends AsyncTask<Object, Object, Object> {
 
     @Override
     protected void onPostExecute(final Object s) {
-        mRecommendVideoCallback.RecommendVideoCallback((RecommendVdList) s);
+        mRecommendVideoCallback.RecommendVideoCallback((RecommendVideoList) s);
     }
 
     @Override
@@ -99,9 +99,9 @@ public class RecommendVideoXmlParser extends AsyncTask<Object, Object, Object> {
      * @param responseData レスポンスデータ
      * @return パース後のデータ
      */
-    private RecommendVdList getRecommendVideoList(final String responseData) {
+    private RecommendVideoList getRecommendVideoList(final String responseData) {
         DTVTLogger.debugHttp(responseData);
-        RecommendVdList redVdContents = null;
+        RecommendVideoList redVdContents = null;
         List<Map<String, String>> redVdContentList = null;
         HashMap<String, String> redVdHashMap = null;
         XmlPullParser parser = Xml.newPullParser();
@@ -112,7 +112,7 @@ public class RecommendVideoXmlParser extends AsyncTask<Object, Object, Object> {
             while (!endFlg) {
                 switch (eventType) {
                     case XmlPullParser.START_DOCUMENT:
-                        redVdContents = new RecommendVdList();
+                        redVdContents = new RecommendVideoList();
                         redVdContentList = new ArrayList<>();
                         break;
                     case XmlPullParser.START_TAG:

@@ -7,12 +7,12 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 import android.content.Context;
 import android.os.Handler;
 
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RentalListInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.RentalListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
@@ -135,7 +135,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
     @Override
     public void onRentalVodListJsonParsed(final PurchasedVodListResponse response) {
         if (response == null) {
-            if (mWebClient.getError() != null && mWebClient.getError().getErrorType() != DTVTConstants.ERROR_TYPE.SUCCESS) {
+            if (mWebClient.getError() != null && mWebClient.getError().getErrorType() != DtvtConstants.ErrorType.SUCCESS) {
                 mError = mWebClient.getError();
             }
             mApiDataProviderCallback.rentalListNgCallback();
@@ -239,9 +239,9 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
             //レンタル一覧を送る
             Handler handler = new Handler();
             try {
-                DbThread t = new DbThread(handler, this, RENTAL_VIDEO_LIST_SELECT);
-                t.start();
-            } catch (Exception e) {
+                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, RENTAL_VIDEO_LIST_SELECT);
+                dataBaseThread.start();
+            } catch (RuntimeException e) {
                 DTVTLogger.debug(e);
                 mApiDataProviderCallback.rentalListNgCallback();
             }
@@ -260,9 +260,9 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
     public void getDbRentalList() {
         Handler handler = new Handler();
         try {
-            DbThread t = new DbThread(handler, this, RENTAL_VIDEO_LIST_SELECT);
-            t.start();
-        } catch (Exception e) {
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, RENTAL_VIDEO_LIST_SELECT);
+            dataBaseThread.start();
+        } catch (RuntimeException e) {
             DTVTLogger.debug(e);
             mApiDataProviderCallback.rentalListNgCallback();
         }
@@ -334,9 +334,9 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
         if (mSetDB) {
             Handler handler = new Handler();
             try {
-                DbThread t = new DbThread(handler, this, RENTAL_VIDEO_LIST_INSERT);
-                t.start();
-            } catch (Exception e) {
+                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, RENTAL_VIDEO_LIST_INSERT);
+                dataBaseThread.start();
+            } catch (RuntimeException e) {
                 DTVTLogger.debug(e);
             }
         }
@@ -355,7 +355,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
         ArrayList<VodMetaFullData> metaFullData = response.getVodMetaFullData();
         ArrayList<ActiveData> activeDataList = response.getVodActiveData();
         //activeDataListとmetaFullDataは別系統のJsonから取得するため、サイズチェックを入れる
-        DTVTLogger.warning("metaFullData.size() = " + metaFullData.size() + ", activeDataList.size() = " + activeDataList.size());
+        DTVTLogger.warning("metaFullData.mSize() = " + metaFullData.size() + ", activeDataList.mSize() = " + activeDataList.size());
         UserState userState = UserInfoUtils.getUserState(mContext);
         for (int i = 0; i < metaFullData.size(); i++) { //indexをactiveDataListで使うため、foreachを使いません
             VodMetaFullData vodMetaFullData = metaFullData.get(i);

@@ -9,7 +9,7 @@ import android.os.AsyncTask;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
@@ -156,7 +156,7 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
                                             stringBuffer.append(chpackPara);
 
                                             //日付項目チェック
-                                            if (DBUtils.isDateItem(chpackPara)) {
+                                            if (DataBaseUtils.isDateItem(chpackPara)) {
                                                 //日付なので変換して格納する
                                                 String dateBuffer = DateUtils.formatEpochToString(
                                                         StringUtils.changeString2Long(value));
@@ -168,7 +168,7 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
                                         }
                                     }
                                 }
-                            } else if (DBUtils.isDateItem(strings)) {
+                            } else if (DataBaseUtils.isDateItem(strings)) {
                                 // DATE_PARAに含まれるのは日付なので、エポック秒となる。変換して格納する
                                 String dateBuffer = DateUtils.formatEpochToString(
                                         StringUtils.changeString2Long(jsonObject.getString(

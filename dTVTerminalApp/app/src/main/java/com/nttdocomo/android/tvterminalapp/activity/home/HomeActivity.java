@@ -29,12 +29,12 @@ import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivi
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewAdapter;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ContentsDetailDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.GenreListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.HomeDataProvider;
@@ -44,7 +44,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.WatchListenVideoListData
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChListResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChannelListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationResultResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
@@ -55,7 +55,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopHomeDataConnect
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopUserInfoDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
@@ -713,7 +713,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private void showErrorDialogByErrorStatus(final int tag) {
         ErrorState errorState = mHomeDataProvider.getError(tag);
-        if (errorState != null && errorState.getErrorType() != DTVTConstants.ERROR_TYPE.SUCCESS) {
+        if (errorState != null && errorState.getErrorType() != DtvtConstants.ErrorType.SUCCESS) {
             String message = errorState.getApiErrorMessage(this);
             if (!TextUtils.isEmpty(message)) {
                 showGetDataFailedDialog(message);
@@ -752,7 +752,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void userInfoListCallback(final boolean isDataChange, final List<UserInfoList> userList) {
-        if (!DBUtils.isCachingRecord(this, DBConstants.USER_INFO_LIST_TABLE_NAME)) {
+        if (!DataBaseUtils.isCachingRecord(this, DataBaseConstants.USER_INFO_LIST_TABLE_NAME)) {
             //UserInfoテーブルにデータがないため初回取得と判定
             if (userList == null || userList.size() < 1) {
                 // 初回起動時または1度もH4d契約情報取得に成功していない状態で、
@@ -771,7 +771,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void onRentalChListJsonParsed(final PurchasedChListResponse RentalChListResponse) {
+    public void onRentalChListJsonParsed(final PurchasedChannelListResponse RentalChListResponse) {
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
@@ -822,7 +822,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         } else {
             Intent intent = new Intent(this, ContentDetailActivity.class);
             ComponentName componentName = this.getComponentName();
-            intent.putExtra(DTVTConstants.SOURCE_SCREEN, componentName.getClassName());
+            intent.putExtra(DtvtConstants.SOURCE_SCREEN, componentName.getClassName());
             intent.putExtra(detailData.getRecommendFlg(), detailData);
             startActivity(intent);
         }
@@ -885,7 +885,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void onRentalChListCallback(final PurchasedChListResponse response) {
+    public void onRentalChListCallback(final PurchasedChannelListResponse response) {
         //callbackが帰ってきたらProgressDialogを消す
         showProgessBar(false);
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる

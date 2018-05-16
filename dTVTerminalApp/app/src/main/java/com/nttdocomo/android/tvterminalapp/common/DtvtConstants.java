@@ -10,7 +10,7 @@ package com.nttdocomo.android.tvterminalapp.common;
  * クラス機能：
  * プロジェクトにて共通データを定義するクラスである.
  */
-public class DTVTConstants {
+public class DtvtConstants {
     //=================================== 定数定義 Begin ==================================
     /**
      * サーバー用のコネクションタイムアウト時間 30秒.
@@ -73,7 +73,7 @@ public class DTVTConstants {
     /**
      * 通信時エラー情報（WebAPI及びデータプロバイダー等で使用）.
      */
-    public enum ERROR_TYPE {
+    public enum ErrorType {
         /**
          * 通信成功.
          */

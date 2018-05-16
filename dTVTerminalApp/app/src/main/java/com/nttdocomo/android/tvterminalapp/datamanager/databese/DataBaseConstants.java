@@ -13,7 +13,7 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideo
 /**
  * DB定数定義クラス.
  */
-public class DBConstants {
+public class DataBaseConstants {
 
     /**
      * DB名.

@@ -52,14 +52,14 @@ import com.nttdocomo.android.tvterminalapp.activity.home.RecordReservationListAc
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RentalListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.WatchingVideoListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.launch.DAccountInductionActivity;
-import com.nttdocomo.android.tvterminalapp.activity.launch.DAccountReSettingActivity;
-import com.nttdocomo.android.tvterminalapp.activity.launch.DAccountSettingHelpActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.DaccountInductionActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.DaccountResettingActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.DaccountSettingHelpActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.PairingHelpActivity;
-import com.nttdocomo.android.tvterminalapp.activity.launch.STBConnectActivity;
-import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
-import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectErrorActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.StbConnectActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectErrorActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.RankingTopActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActivity;
@@ -87,7 +87,7 @@ import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessage;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
-import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
+import com.nttdocomo.android.tvterminalapp.service.download.DownloadDataProvider;
 import com.nttdocomo.android.tvterminalapp.struct.CalendarComparator;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
@@ -588,11 +588,11 @@ public class BaseActivity extends FragmentActivity implements
      * @param text 設定する文字列
      */
     protected void setTitleText(final CharSequence text) {
-        if (this instanceof LaunchActivity || this instanceof STBConnectActivity
-                || (this instanceof STBSelectActivity && text.equals(getString(R.string.str_app_title))
-                || this instanceof STBSelectErrorActivity || this instanceof PairingHelpActivity || this instanceof HomeActivity
-                || this instanceof DAccountInductionActivity || this instanceof DAccountReSettingActivity
-                || this instanceof DAccountSettingHelpActivity)) {
+        if (this instanceof LaunchActivity || this instanceof StbConnectActivity
+                || (this instanceof StbSelectActivity && text.equals(getString(R.string.str_app_title))
+                || this instanceof StbSelectErrorActivity || this instanceof PairingHelpActivity || this instanceof HomeActivity
+                || this instanceof DaccountInductionActivity || this instanceof DaccountResettingActivity
+                || this instanceof DaccountSettingHelpActivity)) {
             if (mTitleImageView != null) {
                 //ヘッダーに「ドコモテレビターミナル」画像を表示する対応
                 mTitleTextView.setVisibility(View.GONE);
@@ -855,7 +855,7 @@ public class BaseActivity extends FragmentActivity implements
      */
     private void registerDevListDlna() {
         DTVTLogger.start();
-        if (this instanceof STBSelectActivity
+        if (this instanceof StbSelectActivity
                 || this instanceof LaunchActivity
             //|| this instanceof RecordedListActivity
                 ) {
@@ -872,7 +872,7 @@ public class BaseActivity extends FragmentActivity implements
      */
     private void unregisterDevListDlna() {
         DTVTLogger.start();
-        if (this instanceof STBSelectActivity) {
+        if (this instanceof StbSelectActivity) {
             DTVTLogger.end();
             return;
         }
@@ -2038,8 +2038,8 @@ public class BaseActivity extends FragmentActivity implements
                 callName = intent.getComponent().toShortString();
             }
             //飛び先がSTB選択の関連画面ならば、アニメは付加せず帰る
-            if (callName.contains(STBSelectActivity.class.getSimpleName())
-                    || callName.contains(STBSelectErrorActivity.class.getSimpleName())) {
+            if (callName.contains(StbSelectActivity.class.getSimpleName())
+                    || callName.contains(StbSelectErrorActivity.class.getSimpleName())) {
                 //ただし、設定画面から呼ばれた場合はアニメーションは行うので帰らない
                 if (!(this instanceof SettingActivity)) {
                     return;
@@ -2173,7 +2173,7 @@ public class BaseActivity extends FragmentActivity implements
             @Override
             public void onCancelCallback() {
                 //Serviceでダウンロード中のタスクもキャンセル
-                DlDataProvider.cancelAll();
+                DownloadDataProvider.cancelAll();
                 mShowDialog = createPermissionDeniedDialog();
                 mShowDialog.showDialog();
             }
@@ -2506,7 +2506,7 @@ public class BaseActivity extends FragmentActivity implements
         dAccountRegDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
-                Intent intent = new Intent(getApplicationContext(), DAccountSettingHelpActivity.class);
+                Intent intent = new Intent(getApplicationContext(), DaccountSettingHelpActivity.class);
                 startActivity(intent);
             }
         });

@@ -54,9 +54,9 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.common.ProcessSettingFile;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
@@ -67,7 +67,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDat
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChListResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChannelListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationResultResponse;
@@ -650,7 +650,7 @@ public class ContentDetailActivity extends BaseActivity implements
         }
 
         //ヘッダーの設定
-        String sourceClass = mIntent.getStringExtra(DTVTConstants.SOURCE_SCREEN);
+        String sourceClass = mIntent.getStringExtra(DtvtConstants.SOURCE_SCREEN);
         if (sourceClass != null && !sourceClass.isEmpty()) {
             //赤ヘッダーである遷移元クラス名を保持
             setSourceScreenClass(sourceClass);
@@ -1283,8 +1283,8 @@ public class ContentDetailActivity extends BaseActivity implements
                                     @Override
                                     public void onClick(final View v) {
                                         //ペアリング設定
-                                        Intent intent = new Intent(getApplicationContext(), STBSelectActivity.class);
-                                        intent.putExtra(STBSelectActivity.FROM_WHERE, STBSelectActivity.STBSelectFromMode.STBSelectFromMode_Setting.ordinal());
+                                        Intent intent = new Intent(getApplicationContext(), StbSelectActivity.class);
+                                        intent.putExtra(StbSelectActivity.FROM_WHERE, StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Setting.ordinal());
                                         startActivity(intent);
                                     }
                                 });
@@ -3256,7 +3256,7 @@ public class ContentDetailActivity extends BaseActivity implements
     }
 
     @Override
-    public void onRentalChListCallback(final PurchasedChListResponse response) {
+    public void onRentalChListCallback(final PurchasedChannelListResponse response) {
         //購入済みCH一覧取得からの戻り
         DTVTLogger.start();
         if (response == null) {
@@ -3299,8 +3299,8 @@ public class ContentDetailActivity extends BaseActivity implements
                         @Override
                         public void onClick(final View v) {
                             //ペアリング設定
-                            Intent intent = new Intent(getApplicationContext(), STBSelectActivity.class);
-                            intent.putExtra(STBSelectActivity.FROM_WHERE, STBSelectActivity.STBSelectFromMode.STBSelectFromMode_Setting.ordinal());
+                            Intent intent = new Intent(getApplicationContext(), StbSelectActivity.class);
+                            intent.putExtra(StbSelectActivity.FROM_WHERE, StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Setting.ordinal());
                             startActivity(intent);
                         }
                     });
@@ -3692,7 +3692,7 @@ public class ContentDetailActivity extends BaseActivity implements
                 break;
         }
 
-        if (errorState == null || errorState.getErrorType() == DTVTConstants.ERROR_TYPE.SUCCESS) {
+        if (errorState == null || errorState.getErrorType() == DtvtConstants.ErrorType.SUCCESS) {
             return;
         }
 

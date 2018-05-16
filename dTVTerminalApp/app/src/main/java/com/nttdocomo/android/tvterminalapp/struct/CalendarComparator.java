@@ -8,6 +8,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
 import java.io.Serializable;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
@@ -33,7 +34,7 @@ public class CalendarComparator implements Comparator<ScheduleInfo>, Serializabl
         try {
             date1 = format.parse(time1.toString());
             date2 = format.parse(time2.toString());
-        } catch (Exception e) {
+        } catch (ParseException e) {
             DTVTLogger.debug(e);
         }
         return date1.compareTo(date2);

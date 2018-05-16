@@ -264,9 +264,9 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
             DTVTLogger.debug("ParingNG Start HomeActivity");
         } else {
             // STB選択画面へ遷移
-            mNextActivity = new Intent(getApplicationContext(), STBSelectActivity.class);
-            mNextActivity.putExtra(STBSelectActivity.FROM_WHERE, STBSelectActivity.STBSelectFromMode.STBSelectFromMode_Launch.ordinal());
-            DTVTLogger.debug("Start STBSelectActivity");
+            mNextActivity = new Intent(getApplicationContext(), StbSelectActivity.class);
+            mNextActivity.putExtra(StbSelectActivity.FROM_WHERE, StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal());
+            DTVTLogger.debug("Start StbSelectActivity");
         }
 
         DTVTLogger.end();

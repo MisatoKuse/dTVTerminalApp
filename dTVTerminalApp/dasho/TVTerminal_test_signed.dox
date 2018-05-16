@@ -39,12 +39,12 @@
         <android name="com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity" rename-class="true"/>
         <android name="com.nttdocomo.android.tvterminalapp.activity.home.RentalListActivity" rename-class="true"/>
         <android name="com.nttdocomo.android.tvterminalapp.activity.home.WatchingVideoListActivity" rename-class="true"/>
-        <android name="com.nttdocomo.android.tvterminalapp.activity.launch.DAccountReSettingActivity" rename-class="true"/>
-        <android name="com.nttdocomo.android.tvterminalapp.activity.launch.DAccountSettingHelpActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.launch.DaccountResettingActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.launch.DaccountSettingHelpActivity" rename-class="true"/>
         <android name="com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity"/>
         <android name="com.nttdocomo.android.tvterminalapp.activity.launch.PairingHelpActivity" rename-class="true"/>
-        <android name="com.nttdocomo.android.tvterminalapp.activity.launch.STBConnectActivity" rename-class="true"/>
-        <android name="com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.launch.StbConnectActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectActivity" rename-class="true"/>
         <android name="com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectErrorActivity" rename-class="true"/>
         <android name="com.nttdocomo.android.tvterminalapp.activity.launch.TutorialActivity" rename-class="true"/>
         <android name="com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivity" rename-class="true"/>
@@ -195,7 +195,7 @@
                 <method name="notifyFromNative" signature="int,java.lang.String"/>
                 <method name="notifyObjFromNative" signature="int,java.util.ArrayList"/>
             </classes>
-            <classes name="com.nttdocomo.android.tvterminalapp.jni.download.DlnaInterfaceDl">
+            <classes name="com.nttdocomo.android.tvterminalapp.jni.download.DlnaInterfaceDownLoad">
                 <method name="notifyFromNative" signature="int,java.lang.String"/>
                 <method name="getUniqueId" signature=""/>
             </classes>

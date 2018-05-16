@@ -201,7 +201,7 @@ public class StringUtils {
         }
 
         //数字の文字列かどうかの判定
-        if (data != null && data instanceof String && DBUtils.isNumber((String) data)) {
+        if (data != null && data instanceof String && DataBaseUtils.isNumber((String) data)) {
             //数字文字列だったので、変換して返す
             return Long.parseLong((String) data);
         }
@@ -229,7 +229,7 @@ public class StringUtils {
         }
 
         //数字の文字列かどうかの判定
-        if (data != null && data instanceof String && DBUtils.isNumber((String) data)) {
+        if (data != null && data instanceof String && DataBaseUtils.isNumber((String) data)) {
             //数字文字列だったので、変換して返す
             return Integer.parseInt((String) data);
         }
@@ -547,7 +547,7 @@ public class StringUtils {
         final String MAX_RAT_VALUE = "5.0";
         final String RAT_EXCEPTION_VALUE = "0";
         String strRatStar;
-        if (DBUtils.isFloat(ratStar)) {
+        if (DataBaseUtils.isFloat(ratStar)) {
             float rating = Float.parseFloat(ratStar);
             if (rating >= 5) {
                 strRatStar = MAX_RAT_VALUE;

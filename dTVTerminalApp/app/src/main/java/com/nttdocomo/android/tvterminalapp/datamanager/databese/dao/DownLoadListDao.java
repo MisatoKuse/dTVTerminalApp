@@ -8,7 +8,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ public class DownLoadListDao {
     /**
      * SQLiteDatabase.
      */
-    private final SQLiteDatabase db;
+    private final SQLiteDatabase mSQLiteDatabase;
 
     /**
      * コンストラクタ.
@@ -31,7 +31,7 @@ public class DownLoadListDao {
      * @param db SQLiteDatabase
      */
     public DownLoadListDao(final SQLiteDatabase db) {
-        this.db = db;
+        this.mSQLiteDatabase = db;
     }
 
     /**
@@ -44,8 +44,8 @@ public class DownLoadListDao {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
 
-        Cursor cursor = db.query(
-                DBConstants.DOWNLOAD_LIST_TABLE_NAME,
+        Cursor cursor = mSQLiteDatabase.query(
+                DataBaseConstants.DOWNLOAD_LIST_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -79,8 +79,8 @@ public class DownLoadListDao {
     public List<Map<String, String>> findAllDownloadList(final String[] strings) {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
-        Cursor cursor = db.query(
-                DBConstants.DOWNLOAD_LIST_TABLE_NAME,
+        Cursor cursor = mSQLiteDatabase.query(
+                DataBaseConstants.DOWNLOAD_LIST_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -113,13 +113,13 @@ public class DownLoadListDao {
      */
     public List<Map<String, String>> findByItemId(final String itemId) {
         //特定IDのデータ取得はしない方針
-        String[] selections = {DBConstants.DOWNLOAD_LIST_COLUM_URL};
+        String[] selections = {DataBaseConstants.DOWNLOAD_LIST_COLUM_URL};
         List<Map<String, String>> list = new ArrayList<>();
         String selectSelection = StringUtils.getConnectStrings(
-                DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID, "=? ");
+                DataBaseConstants.DOWNLOAD_LIST_COLUM_ITEM_ID, "=? ");
 
-        Cursor cursor = db.query(
-                DBConstants.DOWNLOAD_LIST_TABLE_NAME,
+        Cursor cursor = mSQLiteDatabase.query(
+                DataBaseConstants.DOWNLOAD_LIST_TABLE_NAME,
                 selections,
                 selectSelection,
                 new String[]{itemId},
@@ -133,7 +133,7 @@ public class DownLoadListDao {
         //データを一行ずつ格納する
         while (isEof) {
             HashMap<String, String> map = new HashMap<>();
-            map.put(DBConstants.DOWNLOAD_LIST_COLUM_URL, cursor.getString(cursor.getColumnIndex(DBConstants.DOWNLOAD_LIST_COLUM_URL)));
+            map.put(DataBaseConstants.DOWNLOAD_LIST_COLUM_URL, cursor.getString(cursor.getColumnIndex(DataBaseConstants.DOWNLOAD_LIST_COLUM_URL)));
             list.add(map);
 
             isEof = cursor.moveToNext();
@@ -149,7 +149,7 @@ public class DownLoadListDao {
      * @return 挿入リターン
      */
     public long insert(final ContentValues values) {
-        return db.insert(DBConstants.DOWNLOAD_LIST_TABLE_NAME, null, values);
+        return mSQLiteDatabase.insert(DataBaseConstants.DOWNLOAD_LIST_TABLE_NAME, null, values);
     }
 
     /**
@@ -162,8 +162,8 @@ public class DownLoadListDao {
     public int updateByItemId(final ContentValues contentValues, final String itemId) {
         //基本的にデータの更新はしない予定
         String updateSelection = StringUtils.getConnectStrings(
-                DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID, "=? ");
-        return db.update(DBConstants.DOWNLOAD_LIST_TABLE_NAME, contentValues, updateSelection, new String[]{itemId});
+                DataBaseConstants.DOWNLOAD_LIST_COLUM_ITEM_ID, "=? ");
+        return mSQLiteDatabase.update(DataBaseConstants.DOWNLOAD_LIST_TABLE_NAME, contentValues, updateSelection, new String[]{itemId});
     }
 
     /**
@@ -172,18 +172,18 @@ public class DownLoadListDao {
      * @return 削除リターン
      */
     public int delete() {
-        return db.delete(DBConstants.DOWNLOAD_LIST_TABLE_NAME, null, null);
+        return mSQLiteDatabase.delete(DataBaseConstants.DOWNLOAD_LIST_TABLE_NAME, null, null);
     }
 
     /**
-     * データの削除by itemId.
+     * データの削除by mItemId.
      *
-     * @param itemId itemId
+     * @param itemId mItemId
      * @return 削除リターン
      */
     public int deleteByItemId(final String itemId) {
         String deleteSelection = StringUtils.getConnectStrings(
-                DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID, "=? ");
-        return db.delete(DBConstants.DOWNLOAD_LIST_TABLE_NAME, deleteSelection, new String[]{itemId});
+                DataBaseConstants.DOWNLOAD_LIST_COLUM_ITEM_ID, "=? ");
+        return mSQLiteDatabase.delete(DataBaseConstants.DOWNLOAD_LIST_TABLE_NAME, deleteSelection, new String[]{itemId});
     }
 }

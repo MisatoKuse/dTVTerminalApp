@@ -27,7 +27,7 @@ import com.nttdocomo.android.tvterminalapp.activity.home.RecordReservationListAc
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RentalListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.WatchingVideoListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.setting.NewsActivity;
 import com.nttdocomo.android.tvterminalapp.activity.setting.SettingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.RankingTopActivity;
@@ -36,7 +36,7 @@ import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivit
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.video.VideoTopActivity;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
@@ -157,27 +157,27 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
             if (menuName.equals(mActivity.getString(R.string.nav_menu_item_home))) {
                 intent.setClass(mActivity, HomeActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
                 mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_program_list))) {
                 intent.setClass(mActivity, TvProgramListActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
                 mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_channel_list))) {
                 intent.setClass(mActivity, ChannelListActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
                 mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_recorder_program))) {
                 intent.setClass(mActivity, RecordedListActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
                 mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_recommend_program_video))) {
                 intent.setClass(mActivity, RecommendActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
                 mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_staff_recommend))) {
                     //4月時は非対応
@@ -185,12 +185,12 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_ranking))) {
                 intent.setClass(mActivity, RankingTopActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
                 mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_clip))) {
                 intent.setClass(mActivity, ClipListActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
                 mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_purchased_video))) {
                 //4月時は非対応
@@ -198,32 +198,32 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_watch_listen_video))) {
                 intent.setClass(mActivity, WatchingVideoListActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
                 mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_record_reserve))) {
                 intent.setClass(mActivity, RecordReservationListActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
                 mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_video))) {
                 intent.setClass(mActivity, VideoTopActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
                 mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_keyword_search))) {
                 intent.setClass(mActivity, SearchTopActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
                 mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_premium_video))) {
                 intent.setClass(mActivity, PremiumVideoActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
                 mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.rental_title))) {
                 intent.setClass(mActivity, RentalListActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
                 mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_notice))) {
                     if (!(mActivity instanceof NewsActivity)) {
@@ -233,7 +233,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                     }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_setting))) {
                     if (!(mActivity instanceof SettingActivity)) {
-                        if (mActivity instanceof STBSelectActivity) {
+                        if (mActivity instanceof StbSelectActivity) {
                             mActivity.finish();
                         } else {
                             intent.setClass(mActivity, SettingActivity.class);
@@ -271,7 +271,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         }
     }
     /** ポップアップメニュークローズリスナー.*/
-    class PopupDismissListener implements PopupWindow.OnDismissListener {
+  private class PopupDismissListener implements PopupWindow.OnDismissListener {
         @Override
         public void onDismiss() {
             backgroundAlpha(1f);

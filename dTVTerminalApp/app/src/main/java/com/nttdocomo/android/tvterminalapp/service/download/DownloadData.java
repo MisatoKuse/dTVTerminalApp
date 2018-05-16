@@ -7,7 +7,7 @@ package com.nttdocomo.android.tvterminalapp.service.download;
 /**
  * ダウンロードデータ管理クラス.
  */
-public class DlData {
+public class DownloadData {
     /**アイテムID.*/
     private String mItemId;
     /**メディアのURI.*/
@@ -55,7 +55,7 @@ public class DlData {
     /**パーセント.*/
     private String mPercentToNotify;
     /**ダウンロードパラメータ.*/
-    private String mXmlToDl;
+    private String mXmlToDownLoad;
 
     /**
      *Getter.
@@ -429,15 +429,15 @@ public class DlData {
      * Setter.
      * @param xml ダウンロードパラメータ
      */
-    public void setXmlToDl(final String xml) {
-        mXmlToDl = xml;
+    public void setXmlToDownLoad(final String xml) {
+        mXmlToDownLoad = xml;
     }
 
     /**
      * Getter.
      * @return ダウンロードパラメータ
      */
-    public String getXmlToDl() {
-        return mXmlToDl;
+    public String getXmlToDownLoad() {
+        return mXmlToDownLoad;
     }
 }

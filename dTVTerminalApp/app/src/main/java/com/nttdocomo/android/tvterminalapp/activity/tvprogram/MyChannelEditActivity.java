@@ -13,8 +13,8 @@ import android.widget.ListView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.MyChannelEditAdapter;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.MyChannelDataProvider;
@@ -373,7 +373,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      */
     private void showErrorDialog() {
         ErrorState errorState = mMyChannelDataProvider.getMyChannelListError();
-        if (errorState == null || errorState.getErrorType() == DTVTConstants.ERROR_TYPE.SUCCESS) {
+        if (errorState == null || errorState.getErrorType() == DtvtConstants.ErrorType.SUCCESS) {
             return;
         }
 

@@ -8,7 +8,7 @@ import android.os.AsyncTask;
 import android.util.Xml;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChannelList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendChWebClient;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -84,7 +84,7 @@ public class RecommendChannelXmlParser extends AsyncTask<Object, Object, Object>
 
     @Override
     protected void onPostExecute(final Object s) {
-        mRecommendChannelCallback.RecommendChannelCallback((RecommendChList) s);
+        mRecommendChannelCallback.RecommendChannelCallback((RecommendChannelList) s);
     }
 
     @Override
@@ -98,9 +98,9 @@ public class RecommendChannelXmlParser extends AsyncTask<Object, Object, Object>
      * @param responseData レスポンスデータ
      * @return パース後のデータ
      */
-    private RecommendChList getRecommendChannelList(final String responseData) {
+    private RecommendChannelList getRecommendChannelList(final String responseData) {
         DTVTLogger.debugHttp(responseData);
-        RecommendChList redChContents = null;
+        RecommendChannelList redChContents = null;
         List<Map<String, String>> redChContentList = null;
         HashMap<String, String> redChHashMap = null;
         XmlPullParser parser = Xml.newPullParser();
@@ -111,7 +111,7 @@ public class RecommendChannelXmlParser extends AsyncTask<Object, Object, Object>
             while (!endFlg) {
                 switch (eventType) {
                     case XmlPullParser.START_DOCUMENT:
-                        redChContents = new RecommendChList();
+                        redChContents = new RecommendChannelList();
                         redChContentList = new ArrayList<>();
                         break;
                     case XmlPullParser.START_TAG:

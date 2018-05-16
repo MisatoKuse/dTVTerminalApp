@@ -18,7 +18,7 @@ import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 /**
  * ドコモテレビターミナルにdアカウントを登録するには 画面.
  */
-public class DAccountSettingHelpActivity extends BaseActivity {
+public class DaccountSettingHelpActivity extends BaseActivity {
 
     /**
      * WebView.

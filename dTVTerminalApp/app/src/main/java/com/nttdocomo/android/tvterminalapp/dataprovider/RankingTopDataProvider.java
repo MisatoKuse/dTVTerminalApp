@@ -16,8 +16,8 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.VideoRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.WeeklyRankInsertDataManager;
@@ -33,7 +33,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
@@ -187,9 +187,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             }
         } else {
             //通信エラーなので、DBのテーブルの存在を確認する
-            boolean isDailyData = DBUtils.isCachingRecord(
-                    mContext, DBConstants.DAILYRANK_LIST_TABLE_NAME);
-            DTVTLogger.debug(DBConstants.DAILYRANK_LIST_TABLE_NAME + " = " + isDailyData);
+            boolean isDailyData = DataBaseUtils.isCachingRecord(
+                    mContext, DataBaseConstants.DAILYRANK_LIST_TABLE_NAME);
+            DTVTLogger.debug(DataBaseConstants.DAILYRANK_LIST_TABLE_NAME + " = " + isDailyData);
             //ここにたどり着いたならば、DB上のデータは存在しないか期限切れとなる。
             if (mIsDailyRankWebApiError && !isDailyData) {
                 // 通信に失敗し、DBにデータが存在しなければ、ネットワークエラーを取得する
@@ -202,9 +202,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             //WEBAPIを取得できなかった時はDBのデータを使用（期限切れでも使用する）
             Handler handler = new Handler();
             try {
-                DbThread t = new DbThread(handler, this, SELECT_DAILY_RANKING_DATA);
-                t.start();
-            } catch (Exception e) {
+                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, SELECT_DAILY_RANKING_DATA);
+                dataBaseThread.start();
+            } catch (RuntimeException e) {
                 DTVTLogger.debug(e);
             }
         }
@@ -223,7 +223,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             // コールバック判定
             if (!mRequiredClipKeyList || mResponseEndFlag) {
                 if (channels == null || channels.size() == 0) {
-                    mWeeklyRankMapList = list.getWrList();
+                    mWeeklyRankMapList = list.getWeeklyRankList();
                     getChannelList();
                 } else {
                     sendWeeklyRankList(list);
@@ -233,9 +233,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             }
         } else {
             //通信エラーなので、DBのテーブルの存在を確認する
-            boolean isWeeklyData = DBUtils.isCachingRecord(
-                    mContext, DBConstants.WEEKLYRANK_LIST_TABLE_NAME);
-            DTVTLogger.debug(DBConstants.WEEKLYRANK_LIST_TABLE_NAME + " = " + isWeeklyData);
+            boolean isWeeklyData = DataBaseUtils.isCachingRecord(
+                    mContext, DataBaseConstants.WEEKLYRANK_LIST_TABLE_NAME);
+            DTVTLogger.debug(DataBaseConstants.WEEKLYRANK_LIST_TABLE_NAME + " = " + isWeeklyData);
             //ここにたどり着いたならば、DB上のデータは存在しないか期限切れとなる。
             if (mIsWeeklyRankWebApiError && !isWeeklyData) {
                 // 通信に失敗し、DBにデータが存在しなければ、ネットワークエラーを取得する
@@ -248,9 +248,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             //WEBAPIを取得できなかった時はDBのデータを使用（期限切れでも使用する）
             Handler handler = new Handler();
             try {
-                DbThread t = new DbThread(handler, this, SELECT_WEEKLY_RANKING_DATA);
-                t.start();
-            } catch (Exception e) {
+                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, SELECT_WEEKLY_RANKING_DATA);
+                dataBaseThread.start();
+            } catch (RuntimeException e) {
                 DTVTLogger.debug(e);
             }
         }
@@ -272,9 +272,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             }
         } else {
             //通信エラーなので、DBのテーブルの存在を確認する
-            boolean isContentsListPerGenreData = DBUtils.isCachingRecord(
-                    mContext, DBConstants.RANKING_VIDEO_LIST_TABLE_NAME);
-            DTVTLogger.debug(DBConstants.RANKING_VIDEO_LIST_TABLE_NAME + " = "
+            boolean isContentsListPerGenreData = DataBaseUtils.isCachingRecord(
+                    mContext, DataBaseConstants.RANKING_VIDEO_LIST_TABLE_NAME);
+            DTVTLogger.debug(DataBaseConstants.RANKING_VIDEO_LIST_TABLE_NAME + " = "
                     + isContentsListPerGenreData);
             //ここにたどり着いたならば、DB上のデータは存在しないか期限切れとなる。
             if (mIsContentsListPerGenreWebApiError && !isContentsListPerGenreData) {
@@ -289,9 +289,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             //WEBAPIを取得できなかった時はDBのデータを使用（期限切れでも使用する）
             Handler handler = new Handler();
             try {
-                DbThread t = new DbThread(handler, this, SELECT_VIDEO_RANKING_DATA);
-                t.start();
-            } catch (Exception e) {
+                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, SELECT_VIDEO_RANKING_DATA);
+                dataBaseThread.start();
+            } catch (RuntimeException e) {
                 DTVTLogger.debug(e);
             }
         }
@@ -317,7 +317,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         if (mContext instanceof WeeklyTvRankingActivity) {
             if (mWeeklyRankList != null) {
                 if (channels == null || channels.size() == 0) {
-                    mWeeklyRankMapList = mWeeklyRankList.getWrList();
+                    mWeeklyRankMapList = mWeeklyRankList.getWeeklyRankList();
                     getChannelList();
                 } else {
                     sendWeeklyRankList(mWeeklyRankList);
@@ -354,8 +354,8 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         DTVTLogger.start();
         boolean isError = false;
         if (weeklyRankList != null) {
-            if (weeklyRankList.getWrList() != null && weeklyRankList.getWrList().size() > 0) {
-                List<ContentsData> contentsDataList = setRankingContentData(weeklyRankList.getWrList(), channels);
+            if (weeklyRankList.getWeeklyRankList() != null && weeklyRankList.getWeeklyRankList().size() > 0) {
+                List<ContentsData> contentsDataList = setRankingContentData(weeklyRankList.getWeeklyRankList(), channels);
                 if (mApiDataProviderCallback != null) {
                     mApiDataProviderCallback.weeklyRankCallback(contentsDataList);
                 } else {
@@ -445,7 +445,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         // 週間テレビランキング
         if (mWeeklyRankList != null) {
             if (channels == null || channels.size() == 0) {
-                mWeeklyRankMapList = mWeeklyRankList.getWrList();
+                mWeeklyRankMapList = mWeeklyRankList.getWeeklyRankList();
                 getChannelList();
             } else {
                 sendWeeklyRankList(mWeeklyRankList);
@@ -759,9 +759,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             //データをDBから取得する
             Handler handler = new Handler();
             try {
-                DbThread t = new DbThread(handler, this, SELECT_DAILY_RANKING_DATA);
-                t.start();
-            } catch (Exception e) {
+                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, SELECT_DAILY_RANKING_DATA);
+                dataBaseThread.start();
+            } catch (RuntimeException e) {
                 DTVTLogger.debug(e);
             }
         } else {
@@ -802,9 +802,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             //データをDBから取得する
             Handler handler = new Handler();
             try {
-                DbThread t = new DbThread(handler, this, SELECT_WEEKLY_RANKING_DATA);
-                t.start();
-            } catch (Exception e) {
+                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, SELECT_WEEKLY_RANKING_DATA);
+                dataBaseThread.start();
+            } catch (RuntimeException e) {
                 DTVTLogger.debug(e);
             }
         } else {
@@ -846,9 +846,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             //データをDBから取得する
             Handler handler = new Handler();
             try {
-                DbThread t = new DbThread(handler, this, SELECT_VIDEO_RANKING_DATA);
-                t.start();
-            } catch (Exception e) {
+                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, SELECT_VIDEO_RANKING_DATA);
+                dataBaseThread.start();
+            } catch (RuntimeException e) {
                 DTVTLogger.debug(e);
             }
         } else {
@@ -886,9 +886,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         //DB保存
         Handler handler = new Handler();
         try {
-            DbThread t = new DbThread(handler, this, INSERT_DAILY_RANKING_DATA);
-            t.start();
-        } catch (Exception e) {
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, INSERT_DAILY_RANKING_DATA);
+            dataBaseThread.start();
+        } catch (RuntimeException e) {
             DTVTLogger.debug(e);
         }
     }
@@ -903,9 +903,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         //DB保存
         Handler handler = new Handler();
         try {
-            DbThread t = new DbThread(handler, this, INSERT_WEEKLY_RANKING_DATA);
-            t.start();
-        } catch (Exception e) {
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, INSERT_WEEKLY_RANKING_DATA);
+            dataBaseThread.start();
+        } catch (RuntimeException e) {
             DTVTLogger.debug(e);
         }
     }
@@ -920,9 +920,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         //DB保存
         Handler handler = new Handler();
         try {
-            DbThread t = new DbThread(handler, this, INSERT_VIDEO_RANKING_DATA);
-            t.start();
-        } catch (Exception e) {
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, INSERT_VIDEO_RANKING_DATA);
+            dataBaseThread.start();
+        } catch (RuntimeException e) {
             DTVTLogger.debug(e);
         }
     }
@@ -1028,7 +1028,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 homeDataManager = new HomeDataManager(mContext);
                 List<Map<String, String>> weeklyRankList = homeDataManager.selectWeeklyRankListHomeData();
                 mWeeklyRankList = new WeeklyRankList();
-                mWeeklyRankList.setWrList(weeklyRankList);
+                mWeeklyRankList.setWeeklyRankList(weeklyRankList);
                 if (channels == null || channels.size() == 0) {
                     mWeeklyRankMapList = weeklyRankList;
                     getChannelList();

@@ -11,10 +11,10 @@ import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChannelList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
@@ -31,7 +31,7 @@ import java.util.Map;
 /**
  * レコメンド用データプロバイダ.
  */
-public class RecommendDataProvider implements RecommendWebClient.RecommendCallback, DbThread.DbOperation {
+public class RecommendDataProvider implements RecommendWebClient.RecommendCallback, DataBaseThread.DataBaseOperation {
 
     /**
      * コンテキスト.
@@ -63,7 +63,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     //TODO 検討中
 //    private String mCacheDateKey = null;
 //    private int mTagPageNo = -1;
-//    private RecommendChList mRecommendChList = null;
+//    private RecommendChannelList mRecommendChList = null;
 
     /**
      * CHレコメンドデータキャッシュ取得用.
@@ -182,9 +182,9 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         /**dTV SVOD.*/
         HIKARITV_DOCOMO_DTV_SVOD("44", "10"),;
         /**サービスID.*/
-        private final String serviceId;
+        private final String mServiceId;
         /**カテゴリーID.*/
-        private final String categoryId;
+        private final String mCategoryId;
 
         /**
          * 定数をENUMで蓄積するメソッド.
@@ -193,8 +193,8 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
          * @param categoryIdSource 元になるカテゴリーID
          */
         RecommendRequestId(final String serviceIdSource, final String categoryIdSource) {
-            this.serviceId = serviceIdSource;
-            this.categoryId = categoryIdSource;
+            this.mServiceId = serviceIdSource;
+            this.mCategoryId = categoryIdSource;
         }
 
         /**
@@ -203,7 +203,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
          * @return サービスID
          */
         public String getServiceId() {
-            return this.serviceId;
+            return this.mServiceId;
         }
 
         /**
@@ -212,7 +212,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
          * @return カテゴリーID
          */
         public String getCategoryId() {
-            return this.categoryId;
+            return this.mCategoryId;
         }
 
         /**
@@ -221,7 +221,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
          * @return 文字列
          */
         public String getRequestSCId() {
-            return StringUtils.getConnectString(new String[] {this.serviceId, SEPARATOR, this.categoryId});
+            return StringUtils.getConnectString(new String[] {this.mServiceId, SEPARATOR, this.mCategoryId});
         }
     }
 
@@ -257,10 +257,10 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     }
 
     @Override
-    public void recommendCallback(final RecommendChList mRecommendChList) {
-        if (mRecommendChList != null
-                && mRecommendChList.getmRcList() != null) {
-            sendRecommendChListData(mRecommendChList);
+    public void recommendCallback(final RecommendChannelList mRecommendChannelList) {
+        if (mRecommendChannelList != null
+                && mRecommendChannelList.getmRcList() != null) {
+            sendRecommendChListData(mRecommendChannelList);
         } else {
             //TODO WEBAPIを取得できなかった時の処理を記載予定
             if (!mIsStop) {
@@ -396,7 +396,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         } else {
             //DBキャッシュ取得
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, SELECT_RECOMMEND_CHANNEL_LIST);
+            DataBaseThread t = new DataBaseThread(handler, this, SELECT_RECOMMEND_CHANNEL_LIST);
             t.start();
             //キャッシュ取得時はおすすめビデオ取得が呼び出されないため、ここで呼び出す
             getVodRecommend();
@@ -427,7 +427,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         } else {
             //DBキャッシュ取得
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, SELECT_RECOMMEND_CHANNEL_LIST);
+            DataBaseThread t = new DataBaseThread(handler, this, SELECT_RECOMMEND_CHANNEL_LIST);
             t.start();
 
         }
@@ -457,7 +457,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         } else {
             //DBキャッシュ取得
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, SELECT_RECOMMEND_VOD_LIST);
+            DataBaseThread t = new DataBaseThread(handler, this, SELECT_RECOMMEND_VOD_LIST);
             t.start();
         }
     }
@@ -486,7 +486,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         } else {
             //DBキャッシュ取得
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, SELECT_RECOMMEND_DTV_CHANNEL_LIST);
+            DataBaseThread t = new DataBaseThread(handler, this, SELECT_RECOMMEND_DTV_CHANNEL_LIST);
             t.start();
         }
     }
@@ -516,7 +516,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         } else {
             //DBキャッシュ取得
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, SELECT_RECOMMEND_DTV_LIST);
+            DataBaseThread t = new DataBaseThread(handler, this, SELECT_RECOMMEND_DTV_LIST);
             t.start();
         }
     }
@@ -545,7 +545,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         } else {
             //DBキャッシュ取得
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, SELECT_RECOMMEND_D_ANIMATION_LIST);
+            DataBaseThread t = new DataBaseThread(handler, this, SELECT_RECOMMEND_D_ANIMATION_LIST);
             t.start();
         }
     }
@@ -585,7 +585,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * @param recChList おすすめ番組データ
      */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
-    private void sendRecommendChListData(final RecommendChList recChList) {
+    private void sendRecommendChListData(final RecommendChannelList recChList) {
         List<Map<String, String>> recList = recChList.getmRcList();
         List<ContentsData> recommendContentInfoList = new ArrayList<>();
         RESP_DATA_SERVICE_TYPE respDataServiceType = RESP_DATA_SERVICE_TYPE.UNKNOWN;
@@ -697,13 +697,13 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     /**
      * おすすめ番組をDBに保存する.
      *
-     * @param recommendChList レコメンド(TV)データ
+     * @param recommendChannelList レコメンド(TV)データ
      * @param cacheDateKey    データ更新日付
      * @param tagPageNo       ページ番号
      */
-    private void setStructDB(final RecommendChList recommendChList, final String cacheDateKey, final int tagPageNo) {
+    private void setStructDB(final RecommendChannelList recommendChannelList, final String cacheDateKey, final int tagPageNo) {
         RecommendListDataManager dataManager = new RecommendListDataManager(mContext);
-        dataManager.insertRecommendInsertList(recommendChList, mIsPaging, tagPageNo, cacheDateKey);
+        dataManager.insertRecommendInsertList(recommendChannelList, mIsPaging, tagPageNo, cacheDateKey);
     }
 
     /**

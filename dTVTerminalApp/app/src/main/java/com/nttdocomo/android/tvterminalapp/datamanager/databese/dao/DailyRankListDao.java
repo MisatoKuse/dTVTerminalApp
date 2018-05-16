@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 
 /**
  * 今日のテレビランキングData Access Object.
@@ -23,7 +23,7 @@ public class DailyRankListDao {
     /**
      * SQLデータベースクラス.
      */
-    private final SQLiteDatabase db;
+    private final SQLiteDatabase mSQLiteDatabase;
 
     /**
      * コンストラクタ.
@@ -31,7 +31,7 @@ public class DailyRankListDao {
      * @param db SQLデータベースクラス
      */
     public DailyRankListDao(final SQLiteDatabase db) {
-        this.db = db;
+        this.mSQLiteDatabase = db;
     }
 
     /**
@@ -44,8 +44,8 @@ public class DailyRankListDao {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
 
-        Cursor cursor = db.query(
-                DBConstants.DAILYRANK_LIST_TABLE_NAME,
+        Cursor cursor = mSQLiteDatabase.query(
+                DataBaseConstants.DAILYRANK_LIST_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -79,7 +79,7 @@ public class DailyRankListDao {
      * @return 挿入データID
      */
     public long insert(final ContentValues values) {
-        return db.insert(DBConstants.DAILYRANK_LIST_TABLE_NAME, null, values);
+        return mSQLiteDatabase.insert(DataBaseConstants.DAILYRANK_LIST_TABLE_NAME, null, values);
     }
 
     /**
@@ -98,6 +98,6 @@ public class DailyRankListDao {
      * @return deleteの第2パラメータがヌルなのでゼロとなる
      */
     public int delete() {
-        return db.delete(DBConstants.DAILYRANK_LIST_TABLE_NAME, null, null);
+        return mSQLiteDatabase.delete(DataBaseConstants.DAILYRANK_LIST_TABLE_NAME, null, null);
     }
 }

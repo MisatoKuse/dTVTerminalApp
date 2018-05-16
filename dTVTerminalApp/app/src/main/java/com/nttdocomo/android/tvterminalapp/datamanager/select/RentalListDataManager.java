@@ -10,11 +10,11 @@ import android.database.sqlite.SQLiteException;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RentalListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DataBaseManager;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,14 +66,14 @@ public class RentalListDataManager {
 
         try {
             //Daoクラス使用準備
-            DBHelper homeDBHelper = new DBHelper(mContext);
-            DataBaseManager.initializeInstance(homeDBHelper);
+            DataBaseHelper homeDataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(homeDataBaseHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
 
             //データ存在チェック
             list = new ArrayList<>();
-            if (!DBUtils.isCachingRecord(database, DBConstants.RENTAL_LIST_TABLE_NAME)) {
+            if (!DataBaseUtils.isCachingRecord(database, DataBaseConstants.RENTAL_LIST_TABLE_NAME)) {
                 return list;
             }
 
@@ -103,8 +103,8 @@ public class RentalListDataManager {
 
         try {
             //Daoクラス使用準備
-            DBHelper homeDBHelper = new DBHelper(mContext);
-            DataBaseManager.initializeInstance(homeDBHelper);
+            DataBaseHelper homeDataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(homeDataBaseHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
             RentalListDao rentalListDao = new RentalListDao(database);
@@ -135,8 +135,8 @@ public class RentalListDataManager {
 
         try {
             //Daoクラス使用準備
-            DBHelper dbHelper = new DBHelper(mContext);
-            DataBaseManager.initializeInstance(dbHelper);
+            DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(dataBaseHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
             RentalListDao rentalListDao = new RentalListDao(database);
@@ -165,8 +165,8 @@ public class RentalListDataManager {
 
         try {
             //Daoクラス使用準備
-            DBHelper homeDBHelper = new DBHelper(mContext);
-            DataBaseManager.initializeInstance(homeDBHelper);
+            DataBaseHelper homeDataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(homeDataBaseHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
             RentalListDao rentalListDao = new RentalListDao(database);

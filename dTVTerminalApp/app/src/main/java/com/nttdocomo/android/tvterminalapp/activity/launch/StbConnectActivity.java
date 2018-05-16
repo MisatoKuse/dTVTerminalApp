@@ -29,13 +29,13 @@ import java.util.List;
 /**
  * STB接続済みActivity.
  */
-public class STBConnectActivity extends BaseActivity implements UserInfoDataProvider.UserDataProviderCallback,
+public class StbConnectActivity extends BaseActivity implements UserInfoDataProvider.UserDataProviderCallback,
         DlnaManager.LocalRegisterListener {
 
     /** 遅延時間.*/
     private static final int DELAYED_TIME = 3000;
     /**ハンドラー.*/
-    private Handler handler = new Handler();
+    private Handler mHandler = new Handler();
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,7 +94,7 @@ public class STBConnectActivity extends BaseActivity implements UserInfoDataProv
         @Override
         public void run() {
             SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
-                    STBConnectActivity.this, true);
+                    StbConnectActivity.this, true);
             Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
@@ -124,7 +124,7 @@ public class STBConnectActivity extends BaseActivity implements UserInfoDataProv
                 showRemoteConfirmDialog();
             } else {
                 //ホーム画面に遷移
-                handler.postDelayed(runnable, DELAYED_TIME);
+                mHandler.postDelayed(runnable, DELAYED_TIME);
             }
         }
     }
@@ -144,14 +144,14 @@ public class STBConnectActivity extends BaseActivity implements UserInfoDataProv
             @Override
             public void onOKCallback(final boolean isOK) {
                 if (isOK) {
-                    boolean result = DlnaUtils.getActivationState(STBConnectActivity.this);
+                    boolean result = DlnaUtils.getActivationState(StbConnectActivity.this);
                     if (result) {
                         setRemoteProgressVisible(View.VISIBLE);
                         DlnaManager manager = DlnaManager.shared();
-                        manager.mLocalRegisterListener = STBConnectActivity.this;
+                        manager.mLocalRegisterListener = StbConnectActivity.this;
                         manager.StartDtcp();
                         manager.RestartDirag();
-                        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(STBConnectActivity.this);
+                        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(StbConnectActivity.this);
                         manager.RequestLocalRegistration(dlnaDmsItem.mUdn);
                     } else {
                         showActivationErrorDialog();
@@ -163,7 +163,7 @@ public class STBConnectActivity extends BaseActivity implements UserInfoDataProv
             @Override
             public void onCancelCallback() {
                 //ホーム画面に遷移
-                handler.post(runnable);
+                mHandler.post(runnable);
             }
         });
         remoteConfirmDialog.setDialogDismissCallback(new CustomDialog.DismissCallback() {
@@ -174,7 +174,7 @@ public class STBConnectActivity extends BaseActivity implements UserInfoDataProv
             @Override
             public void otherDismissCallback() {
                 //ホーム画面に遷移
-                handler.post(runnable);
+                mHandler.post(runnable);
             }
         });
         remoteConfirmDialog.showDialog();
@@ -217,7 +217,7 @@ public class STBConnectActivity extends BaseActivity implements UserInfoDataProv
         resultDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
-                handler.post(runnable);
+                mHandler.post(runnable);
             }
         });
         resultDialog.showDialog();
@@ -235,7 +235,7 @@ public class STBConnectActivity extends BaseActivity implements UserInfoDataProv
         resultDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
-                handler.post(runnable);
+                mHandler.post(runnable);
             }
         });
         resultDialog.showDialog();

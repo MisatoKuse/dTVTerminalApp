@@ -22,8 +22,8 @@ import android.widget.ImageView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.SearchDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopSearchDataConnect;
@@ -160,7 +160,7 @@ public class SearchTopActivity extends BaseActivity
         //Headerの設定
         setTitleText(getString(R.string.keyword_search_title));
         Intent intent = getIntent();
-        mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
+        mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
         if (mIsMenuLaunch) {
             enableHeaderBackIcon(true);
         }
@@ -570,7 +570,7 @@ public class SearchTopActivity extends BaseActivity
      */
     private void showErrorMessage() {
         ErrorState errorState = mSearchDataProvider.getError();
-        if (errorState != null && errorState.getErrorType() != DTVTConstants.ERROR_TYPE.SUCCESS) {
+        if (errorState != null && errorState.getErrorType() != DtvtConstants.ErrorType.SUCCESS) {
             String message = errorState.getErrorMessage();
             if (!TextUtils.isEmpty(message)) {
                 showGetDataFailedToast(message);

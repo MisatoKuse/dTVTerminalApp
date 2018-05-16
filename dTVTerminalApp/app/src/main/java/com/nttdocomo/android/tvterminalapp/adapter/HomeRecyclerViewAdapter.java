@@ -25,7 +25,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
@@ -72,7 +72,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     /**
      * ダウンロード禁止判定フラグ.
      */
-    private boolean isDownloadStop = false;
+    private boolean mIsDownloadStop = false;
     /**
      * 最大表示件数.
      */
@@ -391,7 +391,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
 
         //URLによって、サムネイル取得
         if (!TextUtils.isEmpty(thumbnail)) {
-            if (!isDownloadStop) {
+            if (!mIsDownloadStop) {
                 viewHolder.mImage.setTag(thumbnail);
                 Bitmap bitmap = mThumbnailProvider.getThumbnailImage(viewHolder.mImage, thumbnail);
                 if (bitmap != null) {
@@ -429,7 +429,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         String serviceId = contentsData.getServiceId();
         viewHolder.mServiceIconFirst.setVisibility(View.GONE);
         viewHolder.mServiceIconSecond.setVisibility(View.GONE);
-        if (!TextUtils.isEmpty(serviceId) && DBUtils.isNumber(serviceId)) {
+        if (!TextUtils.isEmpty(serviceId) && DataBaseUtils.isNumber(serviceId)) {
             String categoryId = contentsData.getCategoryId();
             switch (Integer.parseInt(serviceId)) {
                 //ひかりTV
@@ -702,7 +702,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      */
     public void stopConnect() {
         DTVTLogger.start();
-        isDownloadStop = true;
+        mIsDownloadStop = true;
         if (mThumbnailProvider != null) {
             mThumbnailProvider.stopConnect();
         }
@@ -713,7 +713,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      */
     public void enableConnect() {
         DTVTLogger.start();
-        isDownloadStop = false;
+        mIsDownloadStop = false;
         if (mThumbnailProvider != null) {
             mThumbnailProvider.enableConnect();
         }

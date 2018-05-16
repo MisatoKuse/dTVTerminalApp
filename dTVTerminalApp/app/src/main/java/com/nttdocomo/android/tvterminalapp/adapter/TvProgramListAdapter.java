@@ -23,8 +23,8 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
@@ -139,7 +139,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     /**
      * サムネイルを表示するかどうか.
      */
-    private boolean isShowThumb;
+    private boolean mIsShowThumb;
     /**
      * クリップボタンサイズ.
      */
@@ -151,7 +151,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     /**
      * ダウンロード禁止判定フラグ.
      */
-    private boolean isDownloadStop = false;
+    private boolean mIsDownloadStop = false;
     /**
      * 設定済みViewHolder.
      */
@@ -165,7 +165,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      */
     private final static int VIEW_HOLDER_TAG_ZERO = 0;
     /**
-     * 日付比較リザルト
+     * 日付比較リザルト.
      */
     private final static int DATE_COMPARE_TO_LOW = -1;
     /**
@@ -505,7 +505,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     if ((int) view.getTag() == VIEW_HOLDER_TAG_ONE) {
                         Intent intent = new Intent();
                         intent.setClass(mContext, ContentDetailActivity.class);
-                        intent.putExtra(DTVTConstants.SOURCE_SCREEN, ((TvProgramListActivity) mContext).getComponentName().getClassName());
+                        intent.putExtra(DtvtConstants.SOURCE_SCREEN, ((TvProgramListActivity) mContext).getComponentName().getClassName());
                         OtherContentsDetailData detailData = getOtherContentsDetailData(itemSchedule, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
                         intent.putExtra(detailData.getRecommendFlg(), detailData);
                         TvProgramListActivity tvProgramListActivity = (TvProgramListActivity) mContext;
@@ -616,7 +616,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             if (mEpiSpace <= ((TvProgramListActivity) mContext).dip2px(EPI_MARGIN_TOP_THUMB)) {
                 itemViewHolder.mDetail.setVisibility(View.INVISIBLE);
             } else {
-                if (!isShowThumb) {
+                if (!mIsShowThumb) {
                     mEpiSpace = mEpiSpace - ((TvProgramListActivity) mContext).dip2px(EPI_MARGIN_TOP_THUMB) + epiLineHeight;
                 } else {
                     if ((mScreenWidth - ((TvProgramListActivity) mContext).dip2px(TIME_LINE_WIDTH)) / 2 < CHANNEL_WIDTH) {
@@ -706,12 +706,12 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     //サムネイル表示
                     int mThumbEpiSpace = availableSpace - titleSpace - ((TvProgramListActivity) mContext).dip2px(THUMB_MARGIN_TOP_TITLE);
                     mEpiSpace = mThumbEpiSpace - thumbnailHeight;
-                    isShowThumb = true;
+                    mIsShowThumb = true;
                 } else {
                     //サムネイル非表示
                     itemViewHolder.mThumbnail.setVisibility(View.GONE);
                     mEpiSpace = availableSpace - titleSpace - ((TvProgramListActivity) mContext).dip2px(THUMB_MARGIN_TOP_TITLE);
-                    isShowThumb = false;
+                    mIsShowThumb = false;
                 }
             }
         }
@@ -788,7 +788,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                                 itemViewHolder.mThumbnail.setImageResource(R.mipmap.error_ch_mini);
                                 //URLによって、サムネイル取得
                                 String thumbnailURL = itemSchedule.getImageUrl();
-                                if (!TextUtils.isEmpty(thumbnailURL) && !isDownloadStop) {
+                                if (!TextUtils.isEmpty(thumbnailURL) && !mIsDownloadStop) {
                                     itemViewHolder.mThumbnail.setTag(thumbnailURL);
                                     Bitmap bitmap = mThumbnailProvider.getThumbnailImage(itemViewHolder.mThumbnail, thumbnailURL);
                                     if (bitmap != null) {
@@ -867,7 +867,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      */
     public void stopConnect() {
         DTVTLogger.start();
-        isDownloadStop = true;
+        mIsDownloadStop = true;
         if (mThumbnailProvider != null) {
             mThumbnailProvider.stopConnect();
         }
@@ -877,7 +877,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * サムネイル取得処理を再度可能な状態にする.
      */
     public void enableConnect() {
-        isDownloadStop = false;
+        mIsDownloadStop = false;
     }
 
     /**

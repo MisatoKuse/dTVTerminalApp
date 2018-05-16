@@ -5,7 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
 
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 
 //response
 
@@ -44,7 +44,7 @@ public class TotalSearchErrorData {
         error = new ErrorResultData();
         error.id = id;
         error.param = param;
-        status = DTVTConstants.SEARCH_STATUS_NG;
+        status = DtvtConstants.SEARCH_STATUS_NG;
     }
 
 }

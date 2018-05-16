@@ -13,7 +13,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RentalListInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RoleListInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.HomeDataManager;
@@ -24,7 +24,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ContentsDetailGetResponse;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChListResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChannelListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationResultResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
@@ -51,7 +51,7 @@ import java.util.Map;
 public class ContentsDetailDataProvider extends ClipKeyListDataProvider implements
         ContentsDetailGetWebClient.ContentsDetailJsonParserCallback,
         RoleListWebClient.RoleListJsonParserCallback,
-        DbThread.DbOperation,
+        DataBaseThread.DataBaseOperation,
         RemoteRecordingReservationWebClient.RemoteRecordingReservationJsonParserCallback,
         RentalVodListWebClient.RentalVodListJsonParserCallback,
         RentalChListWebClient.RentalChListJsonParserCallback {
@@ -107,7 +107,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
          *
          * @param response 購入済みCH一覧
          */
-        void onRentalChListCallback(final PurchasedChListResponse response);
+        void onRentalChListCallback(final PurchasedChannelListResponse response);
     }
 
     // region variable
@@ -130,7 +130,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     /**
      * 購入済みチャンネルリスト情報を保持.
      */
-    private PurchasedChListResponse mPurchasedChListResponse = null;
+    private PurchasedChannelListResponse mPurchasedChannelListResponse = null;
     /**
      * 購入済みチャンネルのactive_listの情報を保持.
      */
@@ -256,9 +256,9 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
             dateUtils.addLastProgramDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
             Handler handler = new Handler(); //チャンネル情報更新
             try {
-                DbThread t = new DbThread(handler, this, RENTAL_VOD_UPDATE);
-                t.start();
-            } catch (Exception e) {
+                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, RENTAL_VOD_UPDATE);
+                dataBaseThread.start();
+            } catch (RuntimeException e) {
                 DTVTLogger.debug(e);
             }
             mApiDataProviderCallback.onRentalVodListCallback(mPurchasedVodListResponse);
@@ -268,18 +268,18 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     }
 
     @Override
-    public void onRentalChListJsonParsed(final PurchasedChListResponse purchasedChListResponse) {
-        mPurchasedChListResponse = purchasedChListResponse;
-        if (mPurchasedChListResponse != null) {
+    public void onRentalChListJsonParsed(final PurchasedChannelListResponse purchasedChannelListResponse) {
+        mPurchasedChannelListResponse = purchasedChannelListResponse;
+        if (mPurchasedChannelListResponse != null) {
             DateUtils dateUtils = new DateUtils(mContext);
             Handler handler = new Handler(); //チャンネル情報更新
             try {
-                DbThread t = new DbThread(handler, this, RENTAL_CHANNEL_UPDATE);
-                t.start();
-            } catch (Exception e) {
+                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, RENTAL_CHANNEL_UPDATE);
+                dataBaseThread.start();
+            } catch (RuntimeException e) {
                 DTVTLogger.debug(e);
             }
-            mApiDataProviderCallback.onRentalChListCallback(purchasedChListResponse);
+            mApiDataProviderCallback.onRentalChListCallback(purchasedChannelListResponse);
         } else {
             mApiDataProviderCallback.onRentalChListCallback(null);
         }
@@ -294,9 +294,9 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
             if (mRoleListInfo != null) {
                 Handler handler = new Handler(); //チャンネル情報更新
                 try {
-                    DbThread t = new DbThread(handler, this, ROLELIST_UPDATE);
-                    t.start();
-                } catch (Exception e) {
+                    DataBaseThread dataBaseThread = new DataBaseThread(handler, this, ROLELIST_UPDATE);
+                    dataBaseThread.start();
+                } catch (RuntimeException e) {
                     DTVTLogger.debug(e);
                 }
             }
@@ -349,7 +349,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                     }
                     break;
                 case RENTAL_CHANNEL_SELECT:
-                    PurchasedChListResponse purchasedChListResponse = new PurchasedChListResponse();
+                    PurchasedChannelListResponse purchasedChannelListResponse = new PurchasedChannelListResponse();
                     ChannelList channelList = new ChannelList();
                     List<HashMap<String, String>> list = new ArrayList<>();
 
@@ -362,7 +362,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                         list.add(vcListMap);
                     }
                     channelList.setChannelList(list);
-                    purchasedChListResponse.setChannelListData(channelList);
+                    purchasedChannelListResponse.setChannelListData(channelList);
 
                     ArrayList<ActiveData> activeChDatas = new ArrayList<>();
                     for (int i = 0; i < mPurchasedChActiveList.size(); i++) {
@@ -378,9 +378,9 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
 
                         activeChDatas.add(activeDate);
                     }
-                    purchasedChListResponse.setChActiveData(activeChDatas);
+                    purchasedChannelListResponse.setChActiveData(activeChDatas);
                     if (null != mApiDataProviderCallback) {
-                        mApiDataProviderCallback.onRentalChListCallback(purchasedChListResponse);
+                        mApiDataProviderCallback.onRentalChListCallback(purchasedChannelListResponse);
                     }
                     break;
                 default:
@@ -416,7 +416,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                 break;
             case RENTAL_CHANNEL_UPDATE: //サーバーから取得した購入済みCHデータをDBに保存する
                 RentalListInsertDataManager rentalChListInsertDataManager = new RentalListInsertDataManager(mContext);
-                rentalChListInsertDataManager.insertChRentalListInsertList(mPurchasedChListResponse);
+                rentalChListInsertDataManager.insertChRentalListInsertList(mPurchasedChannelListResponse);
                 break;
             case RENTAL_CHANNEL_SELECT: //DBから購入済みCHデータを取得して返却する
                 RentalListDataManager rentalChListDataManager = new RentalListDataManager(mContext);
@@ -500,9 +500,9 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
             //データをDBから取得する
             Handler handler = new Handler(); //チャンネル情報更新
             try {
-                DbThread t = new DbThread(handler, this, RENTAL_VOD_SELECT);
-                t.start();
-            } catch (Exception e) {
+                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, RENTAL_VOD_SELECT);
+                dataBaseThread.start();
+            } catch (RuntimeException e) {
                 DTVTLogger.debug(e);
             }
         } else {
@@ -535,9 +535,9 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
             //データをDBから取得する
             Handler handler = new Handler(); //チャンネル情報更新
             try {
-                DbThread t = new DbThread(handler, this, RENTAL_CHANNEL_SELECT);
-                t.start();
-            } catch (Exception e) {
+                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, RENTAL_CHANNEL_SELECT);
+                dataBaseThread.start();
+            } catch (RuntimeException e) {
                 DTVTLogger.debug(e);
             }
         } else {
@@ -570,9 +570,9 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
             //データをDBから取得する
             Handler handler = new Handler(); //チャンネル情報更新
             try {
-                DbThread t = new DbThread(handler, this, ROLELIST_SELECT);
-                t.start();
-            } catch (Exception e) {
+                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, ROLELIST_SELECT);
+                dataBaseThread.start();
+            } catch (RuntimeException e) {
                 DTVTLogger.debug(e);
             }
         } else {
@@ -653,6 +653,8 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                 return mRentalChListWebClient.getError();
             case rentalVodList:
                 return mRentalVodListWebClient.getError();
+            default:
+                break;
         }
         return null;
     }
@@ -689,6 +691,8 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                     break;
                 case VOD:
                     getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
+                    break;
+                default:
                     break;
             }
         } else {

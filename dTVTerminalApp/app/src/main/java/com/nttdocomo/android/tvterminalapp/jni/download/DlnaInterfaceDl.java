@@ -248,7 +248,7 @@ public class DlnaInterfaceDl {
 //            }
 //        });
         download(mNativeDlna, param.getSaveFileName(), param.getDtcp1host(), param.getDtcp1port(),
-                param.getUrl(), param.getCleartextSize(), param.getXmlToDl());
+                param.getUrl(), param.getCleartextSize(), param.getXmlToDownLoad());
         DTVTLogger.end();
         return DlnaDownloadRet.DownloadRet_Succeed;
     }

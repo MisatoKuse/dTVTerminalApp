@@ -21,7 +21,7 @@ import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChListResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChannelListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
@@ -420,7 +420,7 @@ public class ContentUtils {
                 //番組(m/d（曜日）h:ii - h:ii)
                 long start = 0;
                 String startDate = listContentInfo.getPublishStartDate();
-                if (!TextUtils.isEmpty(startDate) && DBUtils.isNumber(startDate)) {
+                if (!TextUtils.isEmpty(startDate) && DataBaseUtils.isNumber(startDate)) {
                     start = Long.parseLong(listContentInfo.getPublishStartDate());
                 }
                 if (!TextUtils.isEmpty(listContentInfo.getChannelName())) {
@@ -946,7 +946,7 @@ public class ContentUtils {
      * @param channelInfo  チャンネルデータ
      * @return valid_end_date
      */
-    public static long getRentalChannelValidEndDate(final PurchasedChListResponse response, final ChannelInfo channelInfo) {
+    public static long getRentalChannelValidEndDate(final PurchasedChannelListResponse response, final ChannelInfo channelInfo) {
         ChannelList channelList = response.getChannelListData();
         HashMap<String, String> chList = checkChServiceIdListSame(channelList.getChannelList(), channelInfo);
 

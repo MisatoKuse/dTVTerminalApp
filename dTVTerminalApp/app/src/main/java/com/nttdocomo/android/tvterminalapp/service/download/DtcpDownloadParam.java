@@ -19,7 +19,7 @@ public class DtcpDownloadParam extends DownloadParam {
     /**CleartextSize.*/
     private int mCleartextSize;
     /**ダウンロードするためのxml.*/
-    private String mXmlToDl;
+    private String mXmlToDownLoad;
 
     /**
      * Dtcp1host取得.
@@ -107,7 +107,7 @@ public class DtcpDownloadParam extends DownloadParam {
         if (null == mDtcp1host || 7 > mDtcp1host.length()
                 || 0 == mDtcp1port
                 || null == mUrl || 1 > mUrl.length()
-                || null == mXmlToDl || mXmlToDl.isEmpty()) {
+                || null == mXmlToDownLoad || mXmlToDownLoad.isEmpty()) {
             return false;
         }
         return super.isParamValid();
@@ -117,16 +117,16 @@ public class DtcpDownloadParam extends DownloadParam {
      *ダウンロードするためのXml取得.
      * @return ダウンロードするためのXml
      */
-    public String getXmlToDl() {
-        return mXmlToDl;
+    public String getXmlToDownLoad() {
+        return mXmlToDownLoad;
     }
 
     /**
      * ダウンロードするためのXml設定.
      * @param xmlToDl ダウンロードするためのXml
      */
-    public void setXmlToDl(final String xmlToDl) {
-        mXmlToDl = xmlToDl;
+    public void setXmlToDownLoad(final String xmlToDl) {
+        mXmlToDownLoad = xmlToDl;
     }
 
     /**

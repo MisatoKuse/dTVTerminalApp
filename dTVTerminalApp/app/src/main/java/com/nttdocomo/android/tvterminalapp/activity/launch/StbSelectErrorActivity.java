@@ -20,7 +20,7 @@ import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 /**
  * STB選択エラーActivity.
  */
-public class STBSelectErrorActivity extends BaseActivity {
+public class StbSelectErrorActivity extends BaseActivity {
     /** チェックボックス.*/
     private CheckBox mErrorCheckBox;
     /** 再ペアリングボタン.*/

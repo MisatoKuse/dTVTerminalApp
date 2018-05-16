@@ -21,8 +21,8 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
@@ -77,10 +77,6 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
      * 検索中ProgressDialog.
      */
     private RelativeLayout mRelativeLayout = null;
-    /**
-     * 検索結果数文字列の初期値.
-     */
-    private final static String SearchCountDefault = "検索結果:0件";
     /**
      * リスト0件メッセージ.
      */
@@ -262,7 +258,8 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         if (null != mData) {
             mData.clear();
         }
-        notifyDataSetChanged(SearchCountDefault, PAGE_NO_OF_SERVICE_CLEAR);
+        notifyDataSetChanged(getResources().getString(R.string.keyword_search_default_count),
+                PAGE_NO_OF_SERVICE_CLEAR);
         showProgressBar(false);
     }
 
@@ -291,7 +288,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
             searchTopActivity.startChildContentListActivity(info);
         } else {
             Intent intent = new Intent(mContext, ContentDetailActivity.class);
-            intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
+            intent.putExtra(DtvtConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
             intent.putExtra(ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY,
                     getOtherContentsDetailData(info));
             searchTopActivity.startActivity(intent);

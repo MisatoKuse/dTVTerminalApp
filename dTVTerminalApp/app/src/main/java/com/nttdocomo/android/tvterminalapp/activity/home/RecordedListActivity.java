@@ -26,9 +26,9 @@ import android.widget.Toast;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedFragmentFactory;
@@ -39,7 +39,7 @@ import com.nttdocomo.android.tvterminalapp.jni.rec.DlnaProvRecVideo;
 import com.nttdocomo.android.tvterminalapp.jni.rec.DlnaRecVideoInfo;
 import com.nttdocomo.android.tvterminalapp.jni.rec.DlnaRecVideoItem;
 import com.nttdocomo.android.tvterminalapp.jni.rec.DlnaRecVideoListener;
-import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
+import com.nttdocomo.android.tvterminalapp.service.download.DownloadDataProvider;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadListener;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
@@ -130,7 +130,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         setContentView(R.layout.record_list_main_layout);
         setTitleText(getString(R.string.nav_menu_item_recorder_program));
         Intent intent = getIntent();
-        mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
+        mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
         if (mIsMenuLaunch) {
             enableHeaderBackIcon(true);
         }
@@ -269,18 +269,18 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             List<Map<String, String>> resultList = getDownloadListFromDb();
             if (resultList != null && resultList.size() > 0) {
                 for (Map<String, String> hashMap : resultList) {
-                    String downloadStatus = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
+                    String downloadStatus = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
                     if (!TextUtils.isEmpty(downloadStatus)) {
-                        String path = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
-                        String itemId = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
-                        String title = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_TITLE);
-                        String url = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_URL);
-                        String duration = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_DURATION);
-                        String totalSize = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_SIZE);
-                        String resolution = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_RESOLUTION);
-                        String upnpIcon = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_UPNP_ICON);
-                        String bitrate = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_BITRATE);
-                        String videoType = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_TYPE);
+                        String path = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
+                        String itemId = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
+                        String title = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_TITLE);
+                        String url = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_URL);
+                        String duration = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_DURATION);
+                        String totalSize = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_SIZE);
+                        String resolution = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_RESOLUTION);
+                        String upnpIcon = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_UPNP_ICON);
+                        String bitrate = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_BITRATE);
+                        String videoType = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_TYPE);
 
                         String fullPath = path + File.separator + itemId;
                         File file = new File(fullPath);
@@ -435,8 +435,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * @return リスト
      */
     private List<Map<String, String>> getDownloadListFromDb() {
-        DlDataProvider dlDataProvider = new DlDataProvider(this);
-        return dlDataProvider.getDownloadListData();
+        DownloadDataProvider downloadDataProvider = new DownloadDataProvider(this);
+        return downloadDataProvider.getDownloadListData();
     }
 
     /**
@@ -450,16 +450,16 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                                 final ArrayList<DlnaRecVideoItem> dlnaRecVideoItems, final List<Map<String, String>> resultList) {
         if (resultList != null) {
             for (Map<String, String> hashMap : resultList) {
-                String itemId = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
+                String itemId = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
                 for (int t = 0; t < dlnaRecVideoItems.size(); t++) {
                     String allItemId = dlnaRecVideoItems.get(t).mItemId;
                     if (!TextUtils.isEmpty(allItemId) && !allItemId.startsWith(DownloaderBase.sDlPrefix)) {
                         allItemId = DownloaderBase.getFileNameById(dlnaRecVideoItems.get(t).mItemId);
                     }
                     if (itemId.equals(allItemId)) {
-                        String downloadStatus = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
+                        String downloadStatus = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
                         if (TextUtils.isEmpty(downloadStatus)) {
-                            baseFragment.queIndex.add(t);
+                            baseFragment.mQueueIndex.add(t);
                             break;
                         }
                     }
@@ -484,10 +484,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         if (null != listData) {
             listData.clear();
         }
-        if (baseFragment.queIndex == null) {
-            baseFragment.queIndex = new ArrayList<>();
+        if (baseFragment.mQueueIndex == null) {
+            baseFragment.mQueueIndex = new ArrayList<>();
         }
-        baseFragment.queIndex.clear();
+        baseFragment.mQueueIndex.clear();
         setDownLoadQue(baseFragment, dlnaRecVideoItems, resultList);
         for (int i = 0; i < dlnaRecVideoItems.size(); i++) {
             DlnaRecVideoItem itemData = dlnaRecVideoItems.get(i);
@@ -504,8 +504,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             detailData.setClearTextSize(itemData.mClearTextSize);
             if (resultList != null && resultList.size() > 0) {
                 for (Map<String, String> hashMap : resultList) {
-                    String itemId = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
-                    String path = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
+                    String itemId = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
+                    String path = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
                     String fullPath = path + File.separator + itemId;
                     if (!TextUtils.isEmpty(itemId)) {
                         String allItemId = itemData.mItemId;
@@ -513,7 +513,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                             allItemId = DownloaderBase.getFileNameById(itemData.mItemId);
                         }
                         if (itemId.equals(allItemId)) {
-                            String downloadStatus = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
+                            String downloadStatus = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
                             if (!TextUtils.isEmpty(downloadStatus)) {
                                 detailData.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
                                 detailData.setDlFileFullPath(fullPath);
@@ -531,7 +531,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void run() {
                 baseFragment.notifyDataSetChanged();
-                if (baseFragment.queIndex.size() > 0) {
+                if (baseFragment.mQueueIndex.size() > 0) {
                     baseFragment.bindServiceFromBackground();
                 }
             }
@@ -629,15 +629,15 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      */
     private void registReceiver() {
         IntentFilter filter = new IntentFilter();
-        filter.addAction(DownloadService.DONWLOAD_OnProgress);
-        filter.addAction(DownloadService.DONWLOAD_OnSuccess);
-        filter.addAction(DownloadService.DONWLOAD_OnFail);
-        filter.addAction(DownloadService.DONWLOAD_OnLowStorageSpace);
-        filter.addAction(DownloadService.DONWLOAD_OnCancelAll);
-        filter.addAction(DownloadService.DONWLOAD_OnCancel);
-        filter.addAction(DownloadService.DONWLOAD_OnStart);
-        filter.addAction(DownloadService.DONWLOAD_DlDataProviderAvailable);
-        filter.addAction(DownloadService.DONWLOAD_DlDataProviderUnavailable);
+        filter.addAction(DownloadService.DOWNLOAD_ON_PROGRESS);
+        filter.addAction(DownloadService.DOWNLOAD_ON_SUCCESS);
+        filter.addAction(DownloadService.DOWNLOAD_ON_FAIL);
+        filter.addAction(DownloadService.DOWNLOAD_ON_LOW_STORAGE_SPACE);
+        filter.addAction(DownloadService.DOWNLOAD_ON_CANCEL_ALL);
+        filter.addAction(DownloadService.DOWNLOAD_ON_CANCEL);
+        filter.addAction(DownloadService.DOWNLOAD_ON_START);
+        filter.addAction(DownloadService.DOWNLOAD_DL_DATA_PROVIDER_AVAILABLE);
+        filter.addAction(DownloadService.DOWNLOAD_DL_DATA_PROVIDER_UNAVAILABLE);
         LocalBroadcastManager.getInstance(this).registerReceiver(downloadReceiver, filter);
     }
 
@@ -647,38 +647,38 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
         @Override
 	    public void onReceive(final Context context, final Intent intent) {
-            if (DownloadService.DONWLOAD_OnProgress.equals(intent.getAction())) {
-                int progress = intent.getIntExtra(DownloadService.DONWLOAD_ParamInt, 0);
+            if (DownloadService.DOWNLOAD_ON_PROGRESS.equals(intent.getAction())) {
+                int progress = intent.getIntExtra(DownloadService.DOWNLOAD_PARAM_INT, 0);
                 RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
                 baseFragment.onDownloadProgressByBg(progress);
-            } else if (DownloadService.DONWLOAD_OnSuccess.equals(intent.getAction())) {
+            } else if (DownloadService.DOWNLOAD_ON_SUCCESS.equals(intent.getAction())) {
                 RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
-                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);
+                String fullPath = intent.getStringExtra(DownloadService.DOWNLOAD_PARAM_STRING);
                 baseFragment.onDownloadSuccessByBg(fullPath);
-            } else if (DownloadService.DONWLOAD_OnFail.equals(intent.getAction())) {
+            } else if (DownloadService.DOWNLOAD_ON_FAIL.equals(intent.getAction())) {
                 RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
-                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);
-                int error = intent.getIntExtra(DownloadService.DONWLOAD_ParamInt, DownloadListener.DownLoadError.DLError_NoError.ordinal());
+                String fullPath = intent.getStringExtra(DownloadService.DOWNLOAD_PARAM_STRING);
+                int error = intent.getIntExtra(DownloadService.DOWNLOAD_PARAM_INT, DownloadListener.DownLoadError.DLError_NoError.ordinal());
                 baseFragment.onDownloadFailByBg(fullPath);
-            } else if (DownloadService.DONWLOAD_OnLowStorageSpace.equals(intent.getAction())) {
+            } else if (DownloadService.DOWNLOAD_ON_LOW_STORAGE_SPACE.equals(intent.getAction())) {
                 RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
-                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);
+                String fullPath = intent.getStringExtra(DownloadService.DOWNLOAD_PARAM_STRING);
                 baseFragment.onLowStorageSpaceByBg(fullPath);
-            }  else if (DownloadService.DONWLOAD_OnCancelAll.equals(intent.getAction())) {
+            }  else if (DownloadService.DOWNLOAD_ON_CANCEL_ALL.equals(intent.getAction())) {
                 RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
-                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);
+                String fullPath = intent.getStringExtra(DownloadService.DOWNLOAD_PARAM_STRING);
                 baseFragment.onCancelAll(fullPath);
-            }  else if (DownloadService.DONWLOAD_OnCancel.equals(intent.getAction())) {
+            }  else if (DownloadService.DOWNLOAD_ON_CANCEL.equals(intent.getAction())) {
                 RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
-                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);
+                String fullPath = intent.getStringExtra(DownloadService.DOWNLOAD_PARAM_STRING);
                 baseFragment.onCancelByBg(fullPath);
-            } else if (DownloadService.DONWLOAD_OnStart.equals(intent.getAction())) {
+            } else if (DownloadService.DOWNLOAD_ON_START.equals(intent.getAction())) {
                 RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
                 baseFragment.onStartBg();
-            } else if (DownloadService.DONWLOAD_DlDataProviderAvailable.equals(intent.getAction())) {
+            } else if (DownloadService.DOWNLOAD_DL_DATA_PROVIDER_AVAILABLE.equals(intent.getAction())) {
                 RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
                 baseFragment.onDlDataProviderAvailable();
-            }  else if (DownloadService.DONWLOAD_DlDataProviderUnavailable.equals(intent.getAction())) {
+            }  else if (DownloadService.DOWNLOAD_DL_DATA_PROVIDER_UNAVAILABLE.equals(intent.getAction())) {
                 RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
                 baseFragment.onDlDataProviderUnavailable();
             }
@@ -777,7 +777,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         }
         if (takeoutList != null) {
             for (Map<String, String> hashMap : takeoutList) {
-                String itemId = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
+                String itemId = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
                 boolean isExist = false;
                 if (!TextUtils.isEmpty(itemId)) {
                     for (DlnaRecVideoItem dlnaRecVideoItem : allList) {
@@ -788,10 +788,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                         }
                     }
                     if (!isExist) {
-                        String bitrate = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_BITRATE);
-                        String duration = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_DURATION);
-                        String title = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_TITLE);
-                        String totalSize = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_SIZE);
+                        String bitrate = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_BITRATE);
+                        String duration = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_DURATION);
+                        String title = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_TITLE);
+                        String totalSize = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_SIZE);
                         DlnaRecVideoItem dlnaRecVideoItem = new DlnaRecVideoItem();
                         dlnaRecVideoItem.mItemId = itemId;
                         dlnaRecVideoItem.mClearTextSize = totalSize;

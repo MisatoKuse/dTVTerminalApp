@@ -10,13 +10,10 @@ import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherConfig;
 import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherUtil;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
-
-import static com.nttdocomo.android.tvterminalapp.relayclient.security.CipherUtil.encodeData;
 
 /**
  * 中継アプリとの Socket通信処理.
@@ -113,6 +110,12 @@ public class StbConnectRelayClient {
         return ret;
     }
 
+    /**
+     * STBへメッセージを送信する.
+     * @param data 送信するメッセージ
+     * @param length　メッセージbyte配列長
+     * @return 成功true
+     */
     public boolean send(final byte[] data, final int length) {
         boolean ret;
         if (mTcpClient == null) {
@@ -168,7 +171,11 @@ public class StbConnectRelayClient {
                     return;
                 }
                 byte[] buff = CipherUtil.encodeData(data);
-                DatagramPacket packet = new DatagramPacket(buff, buff.length, new InetSocketAddress(mRemoteIp, mRemoteDatagramPort));
+                int buffLength = 0;
+                if (buff != null) {
+                    buffLength = buff.length;
+                }
+                DatagramPacket packet = new DatagramPacket(buff, buffLength, new InetSocketAddress(mRemoteIp, mRemoteDatagramPort));
                 dataSocket = new DatagramSocket();
                 try {
                     dataSocket.send(packet);

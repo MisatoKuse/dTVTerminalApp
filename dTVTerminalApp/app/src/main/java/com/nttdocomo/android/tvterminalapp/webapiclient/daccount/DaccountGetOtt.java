@@ -166,6 +166,7 @@ public class DaccountGetOtt {
 
     /**
      * コンストラクタ(context設定付き).
+     * @param context context
      */
     public DaccountGetOtt(final Context context) {
         //元のコンストラクターを呼ぶ

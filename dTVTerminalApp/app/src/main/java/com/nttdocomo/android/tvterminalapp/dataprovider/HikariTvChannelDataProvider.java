@@ -10,15 +10,11 @@ import android.content.Context;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
-import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
-import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.TotalSearchResponseData;
 
 import java.util.List;
 import java.util.Map;
@@ -26,7 +22,10 @@ import java.util.Map;
 /**
  * ひかりテレビデータプロバイダクラス.
  */
-public class HikariTvChDataProvider extends ScaledDownProgramListDataProvider {
+public class HikariTvChannelDataProvider extends ScaledDownProgramListDataProvider {
+    /**
+     * コンテンツデータコールバックインタフェース.
+     */
     public interface ContentsDataCallback {
         /**
          * コンテンツデータ取得コールバック.
@@ -46,8 +45,9 @@ public class HikariTvChDataProvider extends ScaledDownProgramListDataProvider {
      * コンストラクタ.
      *
      * @param mContext TvProgramListActivity
+     * @param callback  callback
      */
-    public HikariTvChDataProvider(final Context mContext, final ContentsDataCallback callback) {
+    public HikariTvChannelDataProvider(final Context mContext, final ContentsDataCallback callback) {
         super(mContext);
         this.mContext = mContext;
         mContentsDataCallback = callback;

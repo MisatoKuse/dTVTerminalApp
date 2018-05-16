@@ -8,7 +8,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +23,7 @@ public class WatchListenVideoListDao {
     /**
      * SQLiteDatabase.
      */
-    private final SQLiteDatabase db;
+    private final SQLiteDatabase mSQLiteDatabase;
 
     /**
      * コンストラクタ.
@@ -31,7 +31,7 @@ public class WatchListenVideoListDao {
      * @param db データベース
      */
     public WatchListenVideoListDao(final SQLiteDatabase db) {
-        this.db = db;
+        this.mSQLiteDatabase = db;
     }
 
     /**
@@ -44,8 +44,8 @@ public class WatchListenVideoListDao {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
 
-        Cursor cursor = db.query(
-                DBConstants.WATCH_LISTEN_VIDEO_TABLE_NAME,
+        Cursor cursor = mSQLiteDatabase.query(
+                DataBaseConstants.WATCH_LISTEN_VIDEO_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -82,7 +82,7 @@ public class WatchListenVideoListDao {
      * @return 挿入データID
      */
     public long insert(final ContentValues values) {
-        return db.insert(DBConstants.WATCH_LISTEN_VIDEO_TABLE_NAME, null, values);
+        return mSQLiteDatabase.insert(DataBaseConstants.WATCH_LISTEN_VIDEO_TABLE_NAME, null, values);
     }
 
     /**
@@ -91,6 +91,6 @@ public class WatchListenVideoListDao {
      * @return deleteの第2パラメータがヌルなのでゼロとなる
      */
     public int delete() {
-        return db.delete(DBConstants.WATCH_LISTEN_VIDEO_TABLE_NAME, null, null);
+        return mSQLiteDatabase.delete(DataBaseConstants.WATCH_LISTEN_VIDEO_TABLE_NAME, null, null);
     }
 }

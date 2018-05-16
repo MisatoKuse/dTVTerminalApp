@@ -928,7 +928,7 @@ public class DateUtils {
      * @return true 一週間以内、一週間超えた
      */
     public static boolean isInOneWeek(final String startPublishDate) {
-        if (TextUtils.isEmpty(startPublishDate) || !DBUtils.isNumber(startPublishDate)) {
+        if (TextUtils.isEmpty(startPublishDate) || !DataBaseUtils.isNumber(startPublishDate)) {
             return false;
         }
         long startTime = Long.parseLong(startPublishDate);
@@ -1056,7 +1056,7 @@ public class DateUtils {
      */
     public static long getEpochTime(final String strDate) {
         //エポック秒が入った場合はそのままlong変換
-        if (DBUtils.isNumber(strDate)) {
+        if (DataBaseUtils.isNumber(strDate)) {
             return Long.parseLong(strDate);
         }
         if (strDate == null) {
@@ -1113,7 +1113,7 @@ public class DateUtils {
      */
     public static long getSecondEpochTime(final String strDate) {
         // 既にエポック秒だったら、変換しない
-        if (DBUtils.isNumber(strDate)) {
+        if (DataBaseUtils.isNumber(strDate)) {
             return Long.parseLong(strDate);
         } else {
             return (getEpochTime(strDate)) / 1000;
@@ -1128,7 +1128,7 @@ public class DateUtils {
      */
     public static long getHyphenEpochTime(final String strDate) {
         //エポック秒が入った場合はそのままlong変換
-        if (DBUtils.isNumber(strDate)) {
+        if (DataBaseUtils.isNumber(strDate)) {
             return Long.parseLong(strDate);
         }
         long epochTime = 0;
@@ -1220,20 +1220,26 @@ public class DateUtils {
     public static String addDateLimitVod(final Context context, final ContentsData contentsData, final ContentUtils.ContentsType contentsType) {
         String date = "";
         long availEndDate = contentsData.getAvailEndDate();
-        if (contentsType == ContentUtils.ContentsType.VOD
-                || contentsType == ContentUtils.ContentsType.RENTAL
-                || contentsType == ContentUtils.ContentsType.PREMIUM) {
-            //VOD(m/d（曜日）まで)
-            date = DateUtils.getContentsDetailVodDate(context, availEndDate);
-        } else if (contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_OVER_31) {
-            //VOD(m/d（曜日）まで) ひかりTV内dch_見逃し(３２以上)は「見逃し」のみを表示
-            date = StringUtils.getConnectStrings(
-                    context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
-        } else if (contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
-            //VOD(m/d（曜日）まで) ひかりTV内dch_見逃し(３1以内)の場合は「m/d（曜日）まで | 見逃し」を表示
-            date = DateUtils.getContentsDetailVodDate(context, contentsData.getVodEndDate());
-            date = StringUtils.getConnectStrings(date, context.getString(R.string.home_contents_hyphen),
-                    context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
+        switch (contentsType) {
+            case VOD:
+            case RENTAL:
+            case PREMIUM:
+                //VOD(m/d（曜日）まで)
+                date = DateUtils.getContentsDetailVodDate(context, availEndDate);
+                break;
+            case DCHANNEL_VOD_OVER_31:
+                //VOD(m/d（曜日）まで) ひかりTV内dch_見逃し(３２以上)は「見逃し」のみを表示
+                date = StringUtils.getConnectStrings(
+                        context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
+                break;
+            case DCHANNEL_VOD_31:
+                //VOD(m/d（曜日）まで) ひかりTV内dch_見逃し(３1以内)の場合は「m/d（曜日）まで | 見逃し」を表示
+                date = DateUtils.getContentsDetailVodDate(context, contentsData.getVodEndDate());
+                date = StringUtils.getConnectStrings(date, context.getString(R.string.home_contents_hyphen),
+                        context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
+                break;
+            default:
+                break;
         }
         return date;
     }

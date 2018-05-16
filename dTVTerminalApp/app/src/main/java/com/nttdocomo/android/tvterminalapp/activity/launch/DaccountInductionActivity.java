@@ -18,7 +18,7 @@ import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 /**
  * Dアカウント誘導Activity.
  */
-public class DAccountInductionActivity extends BaseActivity {
+public class DaccountInductionActivity extends BaseActivity {
     /**
      *Dアカウントダウンロードボタン.
      */

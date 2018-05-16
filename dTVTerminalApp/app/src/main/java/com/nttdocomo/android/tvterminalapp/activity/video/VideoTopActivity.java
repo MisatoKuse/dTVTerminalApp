@@ -20,8 +20,8 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.VideoGenreAdapter;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.GenreListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
@@ -144,7 +144,7 @@ public class VideoTopActivity extends BaseActivity implements
             //コンテンツ情報が無ければ取得を行う
             mVideoGenreProvider = new GenreListDataProvider(this);
             Intent intent = getIntent();
-            if (intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false)) {
+            if (intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false)) {
                 mVideoGenreListDataInfo = null;
             } else {
                 mVideoGenreListDataInfo = intent.getParcelableExtra(VIDEO_GENRE_ID_BUNDLE_KEY);
@@ -184,7 +184,7 @@ public class VideoTopActivity extends BaseActivity implements
             }
             DTVTLogger.debug("mShowContentsList.size() = " + mShowContentsList.size());
 
-            mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
+            mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
             if (mIsMenuLaunch) {
                 enableHeaderBackIcon(true);
             }

@@ -194,7 +194,8 @@ public class TvScheduleWebClient
             }
 
             jsonObject.put(JsonConstants.META_RESPONSE_DATE_LIST, dateArray);
-            if(filter.isEmpty()) {
+            if (filter.isEmpty()) {
+                DTVTLogger.debug("filter is empty");
             } else {
                 //その他
                 jsonObject.put(JsonConstants.META_RESPONSE_FILTER, filter);

@@ -10,8 +10,8 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChListResponse;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChannelListResponse;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalChListWebClient;
@@ -38,7 +38,7 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
     /**
      * オブジェクトクラスの定義.
      */
-    private PurchasedChListResponse mPurchasedChListResponse = null;
+    private PurchasedChannelListResponse mPurchasedChannelListResponse = null;
 
     /**
      * コンストラクタ.
@@ -47,12 +47,12 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
      */
     public RentalChListJsonParser(final RentalChListWebClient.RentalChListJsonParserCallback rentalChListJsonParserCallback) {
         mRentalChListJsonParserCallback = rentalChListJsonParserCallback;
-        mPurchasedChListResponse = new PurchasedChListResponse();
+        mPurchasedChannelListResponse = new PurchasedChannelListResponse();
     }
 
     @Override
     protected void onPostExecute(final Object s) {
-        mRentalChListJsonParserCallback.onRentalChListJsonParsed(mPurchasedChListResponse);
+        mRentalChListJsonParserCallback.onRentalChListJsonParsed(mPurchasedChannelListResponse);
     }
 
     @Override
@@ -67,10 +67,10 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
      * @param jsonStr JSON
      * @return コールバック
      */
-    private PurchasedChListResponse channelListSender(final String jsonStr) {
+    private PurchasedChannelListResponse channelListSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
-        mPurchasedChListResponse = new PurchasedChListResponse();
+        mPurchasedChannelListResponse = new PurchasedChannelListResponse();
 
         try {
             JSONObject jsonObj = new JSONObject(jsonStr);
@@ -79,7 +79,7 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
             sendVcList(jsonObj);
             sendActiveListResponse(jsonObj);
 
-            return mPurchasedChListResponse;
+            return mPurchasedChannelListResponse;
         } catch (JSONException e) {
             DTVTLogger.debug(e);
         }
@@ -98,7 +98,7 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
             if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {
                 String status = jsonObj.getString(
                         JsonConstants.META_RESPONSE_STATUS);
-                mPurchasedChListResponse.setStatus(status);
+                mPurchasedChannelListResponse.setStatus(status);
             }
         } catch (JSONException e) {
             throw new RuntimeException(e);
@@ -148,7 +148,7 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
                                             stringBuffer.append(JsonConstants.CHPACK_PARA[c]);
 
                                             //日付項目チェック
-                                            if (DBUtils.isDateItem(JsonConstants.CHPACK_PARA[c])) {
+                                            if (DataBaseUtils.isDateItem(JsonConstants.CHPACK_PARA[c])) {
                                                 //日付なので変換して格納する
                                                 String dateBuffer = DateUtils.formatEpochToString(
                                                         StringUtils.changeString2Long(value));
@@ -160,7 +160,7 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
                                         }
                                     }
                                 }
-                            } else if (DBUtils.isDateItem(JsonConstants.METADATA_LIST_PARA[j])) {
+                            } else if (DataBaseUtils.isDateItem(JsonConstants.METADATA_LIST_PARA[j])) {
                                 // DATE_PARAに含まれるのは日付なので、エポック秒となる。変換して格納する
                                 String dateBuffer = DateUtils.formatEpochToString(
                                         StringUtils.changeString2Long(jsonObject.getString(JsonConstants.METADATA_LIST_PARA[j])));
@@ -182,7 +182,7 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
         }
 
         //購入済みチャンネルをセットする
-        mPurchasedChListResponse.setChannelListData(mChannelList);
+        mPurchasedChannelListResponse.setChannelListData(mChannelList);
     }
 
     /**
@@ -212,7 +212,7 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
                             JsonConstants.META_RESPONSE_LICENSE_ID));
                     }
                     String strDate = listData.getString(JsonConstants.META_RESPONSE_VAILD_END_DATE);
-                    if (!listData.isNull(JsonConstants.META_RESPONSE_VAILD_END_DATE) && DBUtils.isNumber(strDate)) {
+                    if (!listData.isNull(JsonConstants.META_RESPONSE_VAILD_END_DATE) && DataBaseUtils.isNumber(strDate)) {
                         activeData.setValidEndDate(StringUtils.changeString2Long(listData.getLong(
                                 JsonConstants.META_RESPONSE_VAILD_END_DATE)));
                     }
@@ -221,7 +221,7 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
                 }
 
                 // 有効期限一覧リストをセットする
-                mPurchasedChListResponse.setChActiveData(vodActiveDataList);
+                mPurchasedChannelListResponse.setChActiveData(vodActiveDataList);
             }
         } catch (JSONException e) {
             throw new RuntimeException(e);
