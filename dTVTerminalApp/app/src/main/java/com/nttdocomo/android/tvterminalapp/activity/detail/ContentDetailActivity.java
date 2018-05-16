@@ -1299,7 +1299,8 @@ public class ContentDetailActivity extends BaseActivity implements
                         mContractLeadingView.setVisibility(View.GONE);
                     }
                 } else {
-                    if (mDetailFullData.getContentsType().equals(ContentUtils.ContentsType.HIKARI_TV_VOD)
+                    if (mDetailFullData != null
+                            && mDetailFullData.getContentsType().equals(ContentUtils.ContentsType.HIKARI_TV_VOD)
                             && UserInfoUtils.getPairingState(this, getStbStatus()).equals(UserInfoUtils.PairingState.NO_PAIRING)
                             && UserInfoUtils.isContract(this)) {
                         playNowOnAir();
