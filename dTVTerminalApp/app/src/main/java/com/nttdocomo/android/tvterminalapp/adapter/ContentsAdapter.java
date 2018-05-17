@@ -28,7 +28,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.RatingBarLayout;
@@ -667,7 +667,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 }
             }
         } else {
-            if (!TextUtils.isEmpty(listContentInfo.getServiceId()) && DBUtils.isNumber(listContentInfo.getServiceId())) {
+            if (!TextUtils.isEmpty(listContentInfo.getServiceId()) && DataBaseUtils.isNumber(listContentInfo.getServiceId())) {
                 int serviceId = Integer.parseInt(listContentInfo.getServiceId());
                 String categoryId = listContentInfo.getCategoryId();
                 if (ContentDetailActivity.DTV_HIKARI_CONTENTS_SERVICE_ID == serviceId
@@ -710,9 +710,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     private void setTabContentLayout(final ViewHolder holder) {
         switch (mTabType) {
             case TAB_TV:
-                holder.tv_rank.setVisibility(View.GONE);
-                holder.ll_rating.setVisibility(View.GONE);
-                break;
             case TAB_VIDEO:
                 holder.tv_rank.setVisibility(View.GONE);
                 holder.ll_rating.setVisibility(View.GONE);
@@ -812,7 +809,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 case TAB_D_ANIMATE:
                 case TAB_DEFAULT:
                     String date = "";
-                    if (DBUtils.isNumber(listContentInfo.getServiceId())) {
+                    if (DataBaseUtils.isNumber(listContentInfo.getServiceId())) {
                         int serviceId = Integer.parseInt(listContentInfo.getServiceId());
                         ContentUtils.ContentsType contentsType = ContentUtils.
                                 getContentsTypeByRecommend(serviceId, listContentInfo.getCategoryId());

@@ -29,7 +29,7 @@ public class ProgramChannelAdapter extends
     /**LayoutInflater.*/
     private final LayoutInflater mInflater;
     /**チャンネル情報.*/
-    private final ArrayList<ChannelInfo> channelList;
+    private final ArrayList<ChannelInfo> mChannelList;
     /**スクリーンWidth.*/
     private int mScreenWidth = 0;
     /**タイムラインWidth.*/
@@ -42,14 +42,14 @@ public class ProgramChannelAdapter extends
      */
     public ProgramChannelAdapter(final Context context, final ArrayList<ChannelInfo> channelList) {
         mInflater = LayoutInflater.from(context);
-        this.channelList = channelList;
+        this.mChannelList = channelList;
         this.mContext = (TvProgramListActivity) context;
         mScreenWidth = context.getResources().getDisplayMetrics().widthPixels;
     }
 
     @Override
     public int getItemCount() {
-        return channelList.size();
+        return mChannelList.size();
     }
 
     @Override
@@ -69,7 +69,7 @@ public class ProgramChannelAdapter extends
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final int i) {
         if (viewHolder.channelText != null) {
-            viewHolder.channelText.setText(channelList.get(i).getTitle());
+            viewHolder.channelText.setText(mChannelList.get(i).getTitle());
         }
     }
 

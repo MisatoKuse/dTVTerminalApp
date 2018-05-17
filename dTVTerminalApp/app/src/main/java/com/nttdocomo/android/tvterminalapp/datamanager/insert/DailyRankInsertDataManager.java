@@ -11,9 +11,9 @@ import android.database.sqlite.SQLiteException;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.DailyRankListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
 import java.util.HashMap;
@@ -62,8 +62,8 @@ public class DailyRankInsertDataManager {
 
         try {
             //各種オブジェクト作成
-            DBHelper dailyRankListDBHelper = new DBHelper(mContext);
-            DataBaseManager.initializeInstance(dailyRankListDBHelper);
+            DataBaseHelper dailyRankListDataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(dailyRankListDataBaseHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
             DailyRankListDao dailyRankListDao = new DailyRankListDao(database);
@@ -81,7 +81,7 @@ public class DailyRankInsertDataManager {
                     Map.Entry entry = (Map.Entry) entries.next();
                     String keyName = (String) entry.getKey();
                     String valName = (String) entry.getValue();
-                    values.put(DBUtils.fourKFlgConversion(keyName), valName);
+                    values.put(DataBaseUtils.fourKFlgConversion(keyName), valName);
                 }
                 dailyRankListDao.insert(values);
             }

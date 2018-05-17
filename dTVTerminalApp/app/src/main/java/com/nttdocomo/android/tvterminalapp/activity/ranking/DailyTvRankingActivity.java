@@ -19,8 +19,8 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
@@ -148,7 +148,7 @@ public class DailyTvRankingActivity extends BaseActivity implements
      */
     private void resetPaging() {
         synchronized (this) {
-            if (0 != getCurrentNumber() && null != mContentsList) {
+            if (0 != getCurrentNumber(mContentsList) && null != mContentsList) {
                 mContentsList.clear();
                 if (null != mContentsAdapter) {
                     mContentsAdapter.notifyDataSetChanged();
@@ -157,21 +157,6 @@ public class DailyTvRankingActivity extends BaseActivity implements
         }
 
     }
-
-    /**
-     * ページングを行った回数を取得.
-     *
-     * @return ページング回数
-     */
-    private int getCurrentNumber() {
-        if (null == mContentsList || 0 == mContentsList.size()) {
-            return 0;
-        } else if (mContentsList.size() < NUM_PER_PAGE) {
-            return 1;
-        }
-        return mContentsList.size() / NUM_PER_PAGE;
-    }
-
     @Override
     public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
         //コンテンツ詳細表示フラグを有効にする
@@ -182,7 +167,7 @@ public class DailyTvRankingActivity extends BaseActivity implements
             startChildContentListActivity(contentsData);
         } else {
             Intent intent = new Intent(this, ContentDetailActivity.class);
-            intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
+            intent.putExtra(DtvtConstants.SOURCE_SCREEN, getComponentName().getClassName());
             OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(contentsData, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
             intent.putExtra(detailData.getRecommendFlg(), detailData);
             startActivity(intent);

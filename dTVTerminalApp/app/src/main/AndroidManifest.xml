@@ -68,15 +68,15 @@
 
         <!-- ===================================== Launch グループ Begin ===================================== -->
         <activity
-            android:name=".activity.launch.DAccountReSettingActivity"
+            android:name=".activity.launch.DaccountResettingActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name=".activity.launch.DAccountSettingHelpActivity"
+            android:name=".activity.launch.DaccountSettingHelpActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name=".activity.launch.DAccountInductionActivity"
+            android:name=".activity.launch.DaccountInductionActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
@@ -88,11 +88,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.launch.STBConnectActivity"
+            android:name=".activity.launch.StbConnectActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name=".activity.launch.STBSelectActivity"
+            android:name=".activity.launch.StbSelectActivity"
             android:screenOrientation="portrait"
             android:theme="@style/STBTheme"
             android:exported="false" />
@@ -103,7 +103,7 @@
         <activity android:name=".activity.launch.PairingHelpActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
-        <activity android:name=".activity.launch.STBSelectErrorActivity"
+        <activity android:name=".activity.launch.StbSelectErrorActivity"
             android:screenOrientation="portrait"
             android:theme="@style/STBTheme"
             android:exported="false" />

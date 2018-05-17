@@ -9,7 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +24,7 @@ public class ClipKeyListDao {
     /**
      * SQLデータベースクラス.
      */
-    private final SQLiteDatabase db;
+    private final SQLiteDatabase mSQLiteDatabase;
 
     /**
      * SQLデータベースクラス.
@@ -38,7 +38,7 @@ public class ClipKeyListDao {
     /**
      * コンテンツの種類.それぞれでキーになる情報が異なる.
      */
-    public enum CONTENT_TYPE {
+    public enum ContentTypeEnum {
         /** EPGコンテンツ. */
         TV,
         /** VODコンテンツ. */
@@ -50,7 +50,7 @@ public class ClipKeyListDao {
     /**
      * テーブルの種類.それぞれWebAPIコールして別々に取得している.
      */
-    public enum TABLE_TYPE {
+    public enum TableTypeEnum {
         /** EPGコンテンツ. */
         TV,
         /** VODコンテンツ. */
@@ -63,7 +63,7 @@ public class ClipKeyListDao {
      * @param db  SQLデータベースクラス
      */
     public ClipKeyListDao(final SQLiteDatabase db) {
-        this.db = db;
+        this.mSQLiteDatabase = db;
     }
 
     /**
@@ -75,13 +75,13 @@ public class ClipKeyListDao {
      * @param args ?パラメータに埋め込む値
      * @return list クリップキー一覧
      */
-    public List<Map<String, String>> findById(final String[] strings, final TABLE_TYPE type, final String selection, final String[] args) {
+    public List<Map<String, String>> findById(final String[] strings, final TableTypeEnum type, final String selection, final String[] args) {
         DTVTLogger.start();
         List<Map<String, String>> list = new ArrayList<>();
         Cursor cursor;
         try {
-            cursor = db.query(
-                    DBUtils.getClipKeyTableName(type),
+            cursor = mSQLiteDatabase.query(
+                    DataBaseUtils.getClipKeyTableName(type),
                     strings,
                     selection,
                     args,
@@ -118,9 +118,9 @@ public class ClipKeyListDao {
      * @param values 格納する値
      * @return SQLiteDatabaseクラスの戻り値(正常終了した場合はROWID,失敗した場合,マイナス1)
      */
-    public long insert(final TABLE_TYPE type, final ContentValues values) {
+    public long insert(final TableTypeEnum type, final ContentValues values) {
         DTVTLogger.debug("Insert Data");
-        return db.insert(DBUtils.getClipKeyTableName(type), null, values);
+        return mSQLiteDatabase.insert(DataBaseUtils.getClipKeyTableName(type), null, values);
     }
 
     /**
@@ -138,9 +138,9 @@ public class ClipKeyListDao {
      * @param type テーブルの種類(TV or VOD)
      * @return SQLiteDatabaseクラスの戻り値(削除されたレコード数)
      */
-    public int delete(final TABLE_TYPE type) {
+    public int delete(final TableTypeEnum type) {
         DTVTLogger.debug("Delete Data : " + type);
-        return db.delete(DBUtils.getClipKeyTableName(type), null, null);
+        return mSQLiteDatabase.delete(DataBaseUtils.getClipKeyTableName(type), null, null);
     }
 
     /**
@@ -149,8 +149,8 @@ public class ClipKeyListDao {
     @SuppressWarnings("unused")
     public void delete() {
         DTVTLogger.debug("Delete All Data");
-        delete(TABLE_TYPE.TV);
-        delete(TABLE_TYPE.VOD);
+        delete(TableTypeEnum.TV);
+        delete(TableTypeEnum.VOD);
     }
 
     /**
@@ -161,8 +161,8 @@ public class ClipKeyListDao {
      * @param columns   対象列名
      * @return SQLiteDatabaseクラスの戻り値(削除されたレコード数)
      */
-    public int deleteRowData(final TABLE_TYPE tableType, final String query, final String[] columns) {
+    public int deleteRowData(final TableTypeEnum tableType, final String query, final String[] columns) {
         DTVTLogger.debug("Delete Row : " + tableType);
-        return db.delete(DBUtils.getClipKeyTableName(tableType), query, columns);
+        return mSQLiteDatabase.delete(DataBaseUtils.getClipKeyTableName(tableType), query, columns);
     }
 }

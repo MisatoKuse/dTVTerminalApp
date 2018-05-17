@@ -58,8 +58,8 @@ public class VideoGenreAdapter extends BaseAdapter {
         if (null == view) {
             convertView = View.inflate(mContext, R.layout.item_video_genre, null);
             holder = new ViewHolder();
-            holder.genre_title = convertView.findViewById(R.id.genre_title);
-            holder.content_count = convertView.findViewById(R.id.content_count);
+            holder.genreTitle = convertView.findViewById(R.id.genre_title);
+            holder.contentCount = convertView.findViewById(R.id.content_count);
             convertView.setTag(holder);
         } else {
             convertView = view;
@@ -67,11 +67,11 @@ public class VideoGenreAdapter extends BaseAdapter {
         }
 
         if (!TextUtils.isEmpty(videoGenreList.getTitle())) {
-            holder.genre_title.setText(videoGenreList.getTitle());
+            holder.genreTitle.setText(videoGenreList.getTitle());
         }
 
         if (!TextUtils.isEmpty(videoGenreList.getTitle())) {
-            holder.content_count.setText(videoGenreList.getContentCount());
+            holder.contentCount.setText(videoGenreList.getContentCount());
         }
         return convertView;
     }
@@ -79,10 +79,10 @@ public class VideoGenreAdapter extends BaseAdapter {
     /**
      * ViewHolder.
      */
-    static class ViewHolder {
+    private static class ViewHolder {
         /**ジャンル名.*/
-        TextView genre_title;
+        TextView genreTitle;
         /**コンテンツ数.*/
-        TextView content_count;
+        TextView contentCount;
     }
 }

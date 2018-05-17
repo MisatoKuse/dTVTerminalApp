@@ -19,12 +19,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.SearchDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopSearchDataConnect;
@@ -161,7 +160,7 @@ public class SearchTopActivity extends BaseActivity
         //Headerの設定
         setTitleText(getString(R.string.keyword_search_title));
         Intent intent = getIntent();
-        mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
+        mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
         if (mIsMenuLaunch) {
             enableHeaderBackIcon(true);
         }
@@ -211,27 +210,27 @@ public class SearchTopActivity extends BaseActivity
                     setEditTextFocus();
                     // フォーカスが当たった時
                     mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                        private Handler mHandler = new Handler();
+                        Handler handler = new Handler();
                         // 次回検索日時
-                        long mSearchTime = 0;
+                        long searchTime = 0;
                         // 前回文字列
-                        private String mBeforeText = null;
+                        String beforeText = null;
                         // 入力文字列
-                        private String mInputText = null;
+                        String inputText = null;
 
                         @Override
                         public boolean onQueryTextSubmit(final String str) {
                             // 決定ボタンがタップされた時
                             long submit_time = System.currentTimeMillis();
-                            mInputText = str;
+                            inputText = str;
                             DTVTLogger.debug("onQueryTextSubmit");
-                            if ((mSearchTime + SEARCH_INTERVAL) > submit_time) {
+                            if ((searchTime + SEARCH_INTERVAL) > submit_time) {
                                 mTimer.cancel();
                                 mTimer = null;
                             }
                             // 検索処理実行
                             initSearchedResultView();
-                            setSearchData(mInputText);
+                            setSearchData(inputText);
                             mSearchView.clearFocus();
                             return false;
                         }
@@ -247,31 +246,31 @@ public class SearchTopActivity extends BaseActivity
                             //一時検索画面が表示される
                             initSearchedResultView();
                             if (searchText.length() > 0) {
-                                mInputText = searchText;
-                                if (mInputText.isEmpty()) {
+                                inputText = searchText;
+                                if (inputText.isEmpty()) {
                                     DTVTLogger.debug("isEmpty");
                                 }
-                                mSearchTime = System.currentTimeMillis();
+                                searchTime = System.currentTimeMillis();
                                 // result用画面に切り替え
                                 if (mTimer == null) {
                                     mTimer = new Timer();
                                     mTimer.schedule(new TimerTask() {
                                         @Override
                                         public void run() {
-                                            mHandler.post(new Runnable() {
+                                            handler.post(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     DTVTLogger.debug("1 second passed");
-                                                    mSearchTime = System.currentTimeMillis();
-                                                    if (!mInputText.equals(mBeforeText)) {
+                                                    searchTime = System.currentTimeMillis();
+                                                    if (!inputText.equals(beforeText)) {
                                                         // 文字列に変化があった場合
-                                                        DTVTLogger.debug("Start IncrementalSearch:" + mInputText);
+                                                        DTVTLogger.debug("Start IncrementalSearch:" + inputText);
                                                         initSearchedResultView();
-                                                        setSearchData(mInputText);
-                                                        mBeforeText = mInputText;
+                                                        setSearchData(inputText);
+                                                        beforeText = inputText;
                                                     } else {
                                                         // nop.
-                                                        DTVTLogger.debug("Don't Start IncrementalSearch I=" + mInputText + ":B=" + mBeforeText);
+                                                        DTVTLogger.debug("Don't Start IncrementalSearch I=" + inputText + ":B=" + beforeText);
                                                     }
                                                 }
                                             });
@@ -289,7 +288,7 @@ public class SearchTopActivity extends BaseActivity
                                 //検索文字が1文字以上から0文字になった場合、Tabを非表示にする
                                 mSearchViewPager = null;
                                 //前回と同一文字を入力しても検索実行するために前回キーワードを消去
-                                mBeforeText = null;
+                                beforeText = null;
                                 findViewById(R.id.fl_search_result).setVisibility(View.GONE);
                                 // tabViewの非表示
                                 findViewById(R.id.rl_search_tab).setVisibility(View.GONE);
@@ -449,7 +448,9 @@ public class SearchTopActivity extends BaseActivity
 
         mSearchViewPager = findViewById(R.id.vp_search_result);
         mSearchViewPager.setCurrentItem(mTabIndex);
-        initTabView();
+        mTabLayout =  initTabData(mTabLayout, mTabNames);
+        // 最後のタブ位置を復旧
+        mTabLayout.setTab(mTabIndex);
         // tabを表示
         findViewById(R.id.rl_search_tab).setVisibility(View.VISIBLE);
 
@@ -477,26 +478,6 @@ public class SearchTopActivity extends BaseActivity
 
         DTVTLogger.end();
     }
-
-    /**
-     * tab関連Viewの初期化.
-     */
-    private void initTabView() {
-        DTVTLogger.start();
-        if (mTabLayout == null) {
-            mTabLayout = new TabItemLayout(this);
-            mTabLayout.setTabClickListener(this);
-            mTabLayout.initTabView(mTabNames, TabItemLayout.ActivityType.SEARCH_ACTIVITY);
-            RelativeLayout tabRelativeLayout = findViewById(R.id.rl_search_tab);
-            tabRelativeLayout.addView(mTabLayout);
-        } else {
-            mTabLayout.resetTabView(mTabNames);
-        }
-        // 最後のタブ位置を復旧
-        mTabLayout.setTab(mTabIndex);
-        DTVTLogger.end();
-    }
-
     @Override
     public void onClickTab(final int position) {
         DTVTLogger.start("position = " + position);
@@ -589,7 +570,7 @@ public class SearchTopActivity extends BaseActivity
      */
     private void showErrorMessage() {
         ErrorState errorState = mSearchDataProvider.getError();
-        if (errorState != null && errorState.getErrorType() != DTVTConstants.ERROR_TYPE.SUCCESS) {
+        if (errorState != null && errorState.getErrorType() != DtvtConstants.ErrorType.SUCCESS) {
             String message = errorState.getErrorMessage();
             if (!TextUtils.isEmpty(message)) {
                 showGetDataFailedToast(message);

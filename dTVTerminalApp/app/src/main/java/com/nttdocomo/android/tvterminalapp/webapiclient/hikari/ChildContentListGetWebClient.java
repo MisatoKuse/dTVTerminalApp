@@ -7,7 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 import android.content.Context;
 import android.support.annotation.Nullable;
 
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
@@ -123,7 +123,7 @@ public class ChildContentListGetWebClient extends WebApiBasePlala implements
 
             JSONObject jsonPagerObject = new JSONObject();
             jsonPagerObject.put(JsonConstants.META_RESPONSE_OFFSET, offset);
-            jsonPagerObject.put(JsonConstants.META_RESPONSE_PAGER_LIMIT, DTVTConstants.REQUEST_LIMIT_50);
+            jsonPagerObject.put(JsonConstants.META_RESPONSE_PAGER_LIMIT, DtvtConstants.REQUEST_LIMIT_50);
             jsonObject.put(JsonConstants.META_RESPONSE_PAGER, jsonPagerObject);
 
             result = jsonObject.toString().replace("\\", "");

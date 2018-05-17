@@ -8,7 +8,7 @@ import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendVdList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendVideoList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
 import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideoXmlParser;
 
@@ -37,9 +37,9 @@ public class RecommendVdWebClient extends WebApiBase implements WebApiCallback {
     public interface RecommendVideoCallback {
         /**
          * RecommendVideoCallback.
-         * @param mRecommendVdList おすすめビデオ一覧リスト
+         * @param mRecommendVideoList おすすめビデオ一覧リスト
          */
-        void RecommendVideoCallback(RecommendVdList mRecommendVdList);
+        void RecommendVideoCallback(RecommendVideoList mRecommendVideoList);
     }
 
     /**

@@ -6,7 +6,6 @@ package com.nttdocomo.android.tvterminalapp.view;
 
 import android.content.Context;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -482,7 +481,7 @@ public class RemoteControllerSendKeyAction {
         } else {
             CipherApi api = new CipherApi(new CipherApi.CipherApiCallback() {
                 @Override
-                public void apiCallback(boolean result, @Nullable String data) {
+                public void apiCallback(final boolean result, final String data) {
                     mRemoteControlRelayClient.sendKeycode(viewId, action, isCancelFlg, context);
                 }
             });

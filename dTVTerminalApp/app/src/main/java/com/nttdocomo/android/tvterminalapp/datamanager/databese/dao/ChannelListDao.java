@@ -11,13 +11,13 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 
 /**
  * チャンネルリストData Access Object.
@@ -27,7 +27,7 @@ public class ChannelListDao {
     /**
      * SQLデータベースクラス.
      */
-    private final SQLiteDatabase db;
+    private final SQLiteDatabase mSQLiteDatabase;
 
     /**
      * コンストラクタ.
@@ -35,7 +35,7 @@ public class ChannelListDao {
      * @param db SQLデータベースクラス
      */
     public ChannelListDao(final SQLiteDatabase db) {
-        this.db = db;
+        this.mSQLiteDatabase = db;
     }
 
     /**
@@ -48,8 +48,8 @@ public class ChannelListDao {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
 
-        Cursor cursor = db.query(
-                DBConstants.CHANNEL_LIST_TABLE_NAME,
+        Cursor cursor = mSQLiteDatabase.query(
+                DataBaseConstants.CHANNEL_LIST_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -71,7 +71,7 @@ public class ChannelListDao {
             isEof = cursor.moveToNext();
         }
         cursor.close();
-        db.close();
+        mSQLiteDatabase.close();
         return list;
     }
 
@@ -93,8 +93,8 @@ public class ChannelListDao {
             };
             selection = StringUtils.getConnectString(selectionStrings);
         }
-        Cursor cursor = db.query(
-                DBConstants.CHANNEL_LIST_TABLE_NAME,
+        Cursor cursor = mSQLiteDatabase.query(
+                DataBaseConstants.CHANNEL_LIST_TABLE_NAME,
                 strings,
                 selection,
                 new  String[]{service},
@@ -126,7 +126,7 @@ public class ChannelListDao {
      * @return SQLiteDatabaseクラスの戻り値(正常終了した場合はROWID,失敗した場合,マイナス1)
      */
     public long insert(final ContentValues values) {
-        return db.insert(DBConstants.CHANNEL_LIST_TABLE_NAME, null, values);
+        return mSQLiteDatabase.insert(DataBaseConstants.CHANNEL_LIST_TABLE_NAME, null, values);
     }
 
     /**
@@ -145,7 +145,7 @@ public class ChannelListDao {
      * @return SQLiteDatabaseクラスの戻り値(削除されたレコード数)
      */
     public int delete() {
-        return db.delete(DBConstants.CHANNEL_LIST_TABLE_NAME, null, null);
+        return mSQLiteDatabase.delete(DataBaseConstants.CHANNEL_LIST_TABLE_NAME, null, null);
     }
 
 }

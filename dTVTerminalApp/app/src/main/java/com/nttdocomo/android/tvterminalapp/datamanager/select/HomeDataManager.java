@@ -10,16 +10,16 @@ import android.database.sqlite.SQLiteException;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ChannelListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.DailyRankListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RoleListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvScheduleListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WatchListenVideoListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WeeklyRankListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DataBaseManager;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,13 +63,13 @@ public class HomeDataManager {
 
         try {
             //Daoクラス使用準備
-            DBHelper dbHelper = new DBHelper(mContext);
-            DataBaseManager.initializeInstance(dbHelper);
+            DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(dataBaseHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
 
             //データ存在チェック
-            if (!DBUtils.isCachingRecord(database, DBConstants.WATCH_LISTEN_VIDEO_TABLE_NAME)) {
+            if (!DataBaseUtils.isCachingRecord(database, DataBaseConstants.WATCH_LISTEN_VIDEO_TABLE_NAME)) {
                 DataBaseManager.getInstance().closeDatabase();
                 return list;
             }
@@ -104,13 +104,13 @@ public class HomeDataManager {
 
         try {
             //Daoクラス使用準備
-            DBHelper dbHelper = new DBHelper(mContext);
-            DataBaseManager.initializeInstance(dbHelper);
+            DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(dataBaseHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
 
             //データ存在チェック
-            if (!DBUtils.isCachingRecord(database, DBConstants.CHANNEL_LIST_TABLE_NAME)) {
+            if (!DataBaseUtils.isCachingRecord(database, DataBaseConstants.CHANNEL_LIST_TABLE_NAME)) {
                 DataBaseManager.getInstance().closeDatabase();
                 return list;
             }
@@ -152,13 +152,13 @@ public class HomeDataManager {
 
         try {
             //Daoクラス使用準備
-            DBHelper DbHelper = new DBHelper(mContext);
-            DataBaseManager.initializeInstance(DbHelper);
+            DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(dataBaseHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
 
             //データ存在チェック
-            if (!DBUtils.isCachingRecord(database, DBConstants.DAILYRANK_LIST_TABLE_NAME)) {
+            if (!DataBaseUtils.isCachingRecord(database, DataBaseConstants.DAILYRANK_LIST_TABLE_NAME)) {
                 DataBaseManager.getInstance().closeDatabase();
                 return list;
             }
@@ -196,13 +196,13 @@ public class HomeDataManager {
 
         try {
             //Daoクラス使用準備
-            DBHelper dbHelper = new DBHelper(mContext);
-            DataBaseManager.initializeInstance(dbHelper);
+            DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(dataBaseHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
 
             //データ存在チェック
-            if (!DBUtils.isCachingRecord(database, DBConstants.TV_SCHEDULE_LIST_TABLE_NAME)) {
+            if (!DataBaseUtils.isCachingRecord(database, DataBaseConstants.TV_SCHEDULE_LIST_TABLE_NAME)) {
                 DataBaseManager.getInstance().closeDatabase();
                 return list;
             }
@@ -243,13 +243,13 @@ public class HomeDataManager {
 
         try {
             //Daoクラス使用準備
-            DBHelper dbHelper = new DBHelper(mContext);
-            DataBaseManager.initializeInstance(dbHelper);
+            DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(dataBaseHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
 
             //データ存在チェック
-            if (!DBUtils.isCachingRecord(database, DBConstants.WEEKLYRANK_LIST_TABLE_NAME)) {
+            if (!DataBaseUtils.isCachingRecord(database, DataBaseConstants.WEEKLYRANK_LIST_TABLE_NAME)) {
                 DataBaseManager.getInstance().closeDatabase();
                 return list;
             }
@@ -280,13 +280,13 @@ public class HomeDataManager {
 
         try {
             //Daoクラス使用準備
-            DBHelper dbHelper = new DBHelper(mContext);
-            DataBaseManager.initializeInstance(dbHelper);
+            DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(dataBaseHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
 
             //データ存在チェック
-            if (!DBUtils.isCachingRecord(database, DBConstants.ROLE_LIST_TABLE_NAME)) {
+            if (!DataBaseUtils.isCachingRecord(database, DataBaseConstants.ROLE_LIST_TABLE_NAME)) {
                 DataBaseManager.getInstance().closeDatabase();
                 return list;
             }

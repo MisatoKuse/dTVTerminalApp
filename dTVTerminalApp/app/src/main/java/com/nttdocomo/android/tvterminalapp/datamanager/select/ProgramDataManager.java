@@ -10,13 +10,13 @@ import android.database.sqlite.SQLiteException;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ChannelListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvScheduleListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelperChannel;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelperChannel;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DataBaseManager;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.io.File;
@@ -79,31 +79,35 @@ public class ProgramDataManager {
 
         try {
             //Daoクラス使用準備
-            DBHelper channelListDBHelper = new DBHelper(mContext);
-            DataBaseManager.initializeInstance(channelListDBHelper);
+            DataBaseHelper channelListDataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(channelListDataBaseHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
 
             //データ存在チェック
-            if (!DBUtils.isCachingRecord(database, DBConstants.CHANNEL_LIST_TABLE_NAME)) {
+            if (!DataBaseUtils.isCachingRecord(database, DataBaseConstants.CHANNEL_LIST_TABLE_NAME)) {
                 DataBaseManager.getInstance().closeDatabase();
                 return list;
             }
 
             ChannelListDao channelListDao = new ChannelListDao(database);
 
-            if (service == JsonConstants.CH_SERVICE_TYPE_INDEX_ALL) {
-                // ひかり・DTV
-                list = channelListDao.findById(columns);
-            } else if (service == JsonConstants.CH_SERVICE_TYPE_INDEX_HIKARI) {
-                // ひかりのみ
-                list = channelListDao.findByService(columns, CH_SERVICE_HIKARI);
-            } else if (service == JsonConstants.CH_SERVICE_TYPE_INDEX_DCH) {
-                // DCHのみ
-                list = channelListDao.findByService(columns, CH_SERVICE_DCH);
-            } else {
-                DTVTLogger.error("CH_SERVICE_TYPE is incorrect!");
-                return null;
+            switch (service) {
+                case JsonConstants.CH_SERVICE_TYPE_INDEX_ALL:
+                    // ひかり・DTV
+                    list = channelListDao.findById(columns);
+                    break;
+                case JsonConstants.CH_SERVICE_TYPE_INDEX_HIKARI:
+                    // ひかりのみ
+                    list = channelListDao.findByService(columns, CH_SERVICE_HIKARI);
+                    break;
+                case JsonConstants.CH_SERVICE_TYPE_INDEX_DCH:
+                    // DCHのみ
+                    list = channelListDao.findByService(columns, CH_SERVICE_DCH);
+                    break;
+                default:
+                    DTVTLogger.error("CH_SERVICE_TYPE is incorrect!");
+                    return null;
             }
         } catch (SQLiteException e) {
             DTVTLogger.debug("ProgramDataManager::selectChannelListProgramData, e.cause=" + e.getCause());
@@ -156,7 +160,7 @@ public class ProgramDataManager {
 
                 //テーブルの存在チェック.
                 List<Map<String, String>> list;
-                if (!DBUtils.isChCachingRecord(mContext, DBConstants.TV_SCHEDULE_LIST_TABLE_NAME, chNo)) {
+                if (!DataBaseUtils.isChCachingRecord(mContext, DataBaseConstants.TV_SCHEDULE_LIST_TABLE_NAME, chNo)) {
                     //databaseフォルダにコピーしたファイルを削除
                     if (!databaseFile.delete()) {
                         DTVTLogger.error("Failed to delete copy DB file");
@@ -177,7 +181,7 @@ public class ProgramDataManager {
                         JsonConstants.META_RESPONSE_THUMB_640};
 
                 //Daoクラス使用準備
-                DBHelperChannel channelListDBHelper = new DBHelperChannel(mContext, chNo);
+                DataBaseHelperChannel channelListDBHelper = new DataBaseHelperChannel(mContext, chNo);
                 DataBaseManager.clearChInfo();
                 DataBaseManager.initializeInstance(channelListDBHelper);
                 SQLiteDatabase database = DataBaseManager.getChInstance().openChDatabase();

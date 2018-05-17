@@ -142,11 +142,11 @@ public class WeeklyRankJsonParser extends AsyncTask<String, Object, Object> {
                 }
             }
             if (mWeeklyRankList != null) {
-                mWeeklyRankList.setWrMap(map);
+                mWeeklyRankList.setWeeklyRankMap(map);
             }
         } catch (JSONException e) {
             throw new RuntimeException(e);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
@@ -181,7 +181,7 @@ public class WeeklyRankJsonParser extends AsyncTask<String, Object, Object> {
             }
 
             if (mWeeklyRankList != null) {
-                mWeeklyRankList.setWrList(wrList);
+                mWeeklyRankList.setWeeklyRankList(wrList);
             }
         } catch (JSONException e) {
             DTVTLogger.debug(e);

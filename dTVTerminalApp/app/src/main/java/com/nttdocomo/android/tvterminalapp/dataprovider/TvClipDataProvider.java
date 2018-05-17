@@ -7,8 +7,8 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
@@ -50,7 +50,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
     /**
      * callback.
      */
-    private TvClipDataProviderCallback apiDataProviderCallback;
+    private TvClipDataProviderCallback mApiDataProviderCallback;
 
     /**
      * 通信禁止判定フラグ.
@@ -86,19 +86,19 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
                         sendTvClipListData(mClipMapList, mChannels);
                     }
             } else {
-                if (null != apiDataProviderCallback) {
+                if (null != mApiDataProviderCallback) {
                     //ヌルなので、ネットワークエラーを取得する
                     mNetworkError = mWebClient.getError();
 
-                    apiDataProviderCallback.tvClipListCallback(null);
+                    mApiDataProviderCallback.tvClipListCallback(null);
                 }
             }
         } else {
             //ヌルなので、ネットワークエラーを取得する
             mNetworkError = mWebClient.getError();
 
-            if (null != apiDataProviderCallback) {
-                apiDataProviderCallback.tvClipListCallback(null);
+            if (null != mApiDataProviderCallback) {
+                mApiDataProviderCallback.tvClipListCallback(null);
             }
         }
     }
@@ -147,7 +147,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
     public TvClipDataProvider(final Context context) {
         super(context);
         this.mContext = context;
-        this.apiDataProviderCallback = (TvClipDataProviderCallback) context;
+        this.mApiDataProviderCallback = (TvClipDataProviderCallback) context;
     }
 
     /**
@@ -160,13 +160,13 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
             // クリップキー一覧を取得
             if (mRequiredClipKeyList) {
                 mClipKeyListDataProvider = new ClipKeyListDataProvider(mContext);
-                mClipKeyListDataProvider.getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.TV));
+                mClipKeyListDataProvider.getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.TV));
             }
             getTvClipListData(pagerOffset);
         } else {
             DTVTLogger.error("TvClipDataProvider is stopping connection");
-            if (null != apiDataProviderCallback) {
-                apiDataProviderCallback.tvClipListCallback(null);
+            if (null != mApiDataProviderCallback) {
+                mApiDataProviderCallback.tvClipListCallback(null);
             }
         }
     }
@@ -190,7 +190,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
      */
     private void sendTvClipListData(final List<Map<String, String>> list, final ArrayList<ChannelInfo> channels) {
         if (channels != null) {
-            apiDataProviderCallback.tvClipListCallback(setClipContentData(list, channels));
+            mApiDataProviderCallback.tvClipListCallback(setClipContentData(list, channels));
         } else {
             getChannelList();
         }
@@ -243,7 +243,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
             contentInfo.setVodEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_END_DATE)));
             if (channels != null && !TextUtils.isEmpty(chNo)) {
                 for (ChannelInfo channelInfo : channels) {
-                    if (chNo.equals(String.valueOf(channelInfo.getChNo()))) {
+                    if (chNo.equals(String.valueOf(channelInfo.getChannelNo()))) {
                         contentInfo.setChannelName(channelInfo.getTitle());
                         break;
                     }
@@ -297,14 +297,14 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
 
             String pagerDirection = "";
             UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
-            if (!mWebClient.getTvClipApi(userInfoDataProvider.getUserAge(), DTVTConstants.REQUEST_LIMIT_50,
-                    DTVTConstants.REQUEST_LIMIT_50, pagerOffset, pagerDirection, this)) {
-                apiDataProviderCallback.tvClipListCallback(null);
+            if (!mWebClient.getTvClipApi(userInfoDataProvider.getUserAge(), DtvtConstants.REQUEST_LIMIT_50,
+                    DtvtConstants.REQUEST_LIMIT_50, pagerOffset, pagerDirection, this)) {
+                mApiDataProviderCallback.tvClipListCallback(null);
             }
         } else {
             DTVTLogger.error("TvClipDataProvider is stopping connection");
-            if (null != apiDataProviderCallback) {
-                apiDataProviderCallback.tvClipListCallback(null);
+            if (null != mApiDataProviderCallback) {
+                mApiDataProviderCallback.tvClipListCallback(null);
             }
         }
     }

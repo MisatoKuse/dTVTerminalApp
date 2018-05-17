@@ -9,7 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class TvScheduleListDao {
     /**
      * SQLiteDatabase.
      */
-    private final SQLiteDatabase db;
+    private final SQLiteDatabase mSQLiteDatabase;
 
     /**
      * コンストラクタ.
@@ -32,7 +32,7 @@ public class TvScheduleListDao {
      * @param db SQLiteDatabase
      */
     public TvScheduleListDao(final SQLiteDatabase db) {
-        this.db = db;
+        this.mSQLiteDatabase = db;
     }
 
     /**
@@ -44,8 +44,8 @@ public class TvScheduleListDao {
     public List<Map<String, String>> findById(final String[] strings) {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
-        Cursor cursor = db.query(
-                DBConstants.TV_SCHEDULE_LIST_TABLE_NAME,
+        Cursor cursor = mSQLiteDatabase.query(
+                DataBaseConstants.TV_SCHEDULE_LIST_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -67,7 +67,7 @@ public class TvScheduleListDao {
             isEof = cursor.moveToNext();
         }
         cursor.close();
-        db.close();
+        mSQLiteDatabase.close();
         return list;
     }
 
@@ -80,8 +80,8 @@ public class TvScheduleListDao {
     public List<Map<String, String>> findByTypeAndDate(final String[] columnStr) {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
-        Cursor cursor = db.query(
-                DBConstants.TV_SCHEDULE_LIST_TABLE_NAME,
+        Cursor cursor = mSQLiteDatabase.query(
+                DataBaseConstants.TV_SCHEDULE_LIST_TABLE_NAME,
                 columnStr,
                 null,
                 null,
@@ -112,7 +112,7 @@ public class TvScheduleListDao {
      * @return 保存結果
      */
     public long insert(final ContentValues values) {
-        return db.insert(DBConstants.TV_SCHEDULE_LIST_TABLE_NAME, null, values);
+        return mSQLiteDatabase.insert(DataBaseConstants.TV_SCHEDULE_LIST_TABLE_NAME, null, values);
     }
 
     /**
@@ -132,7 +132,7 @@ public class TvScheduleListDao {
      * @return 削除結果.
      */
     public int delete() {
-        return db.delete(DBConstants.TV_SCHEDULE_LIST_TABLE_NAME, null, null);
+        return mSQLiteDatabase.delete(DataBaseConstants.TV_SCHEDULE_LIST_TABLE_NAME, null, null);
     }
 
     /**
@@ -144,7 +144,7 @@ public class TvScheduleListDao {
     @SuppressWarnings("unused")
     public int deleteByType(final String type) {
         String deleteSelection = StringUtils.getConnectStrings(JsonConstants.META_RESPONSE_DISP_TYPE, "=? ");
-        return db.delete(DBConstants.TV_SCHEDULE_LIST_TABLE_NAME, deleteSelection, new String[]{type});
+        return mSQLiteDatabase.delete(DataBaseConstants.TV_SCHEDULE_LIST_TABLE_NAME, deleteSelection, new String[]{type});
     }
 }
 

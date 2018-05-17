@@ -15,6 +15,14 @@ namespace dtvt {
         return mDlnaMsgIdD;
     }
 
+    void  DlnaXmlParserBase::setImageQuality(int imageQuality){
+        mImageQuality = imageQuality;
+    }
+
+    int DlnaXmlParserBase::getImageQuality(){
+        return mImageQuality;
+    }
+
     void DlnaXmlParserBase::parse(void *response, vector<VectorString>& out, std::string &containerId, std::string &isContainerId){
         //XMLパーサー
         IfNullReturn(response);

@@ -6,7 +6,7 @@ package com.nttdocomo.android.tvterminalapp.struct;
 
 import android.widget.ImageView;
 
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -1097,10 +1097,10 @@ public class ContentsData {
             if (mDispType == null) {
                 break;
             }
-            if (mDispType.equals(DTVTConstants.DISP_TYPE_SERIES_SVOD)
-                    || mDispType.equals(DTVTConstants.DISP_TYPE_WIZARD)
-                    || mDispType.equals(DTVTConstants.DISP_TYPE_VIDEO_PACKAGE)
-                    || mDispType.equals(DTVTConstants.DISP_TYPE_SUBSCRIPTION_PACKAGE)) {
+            if (mDispType.equals(DtvtConstants.DISP_TYPE_SERIES_SVOD)
+                    || mDispType.equals(DtvtConstants.DISP_TYPE_WIZARD)
+                    || mDispType.equals(DtvtConstants.DISP_TYPE_VIDEO_PACKAGE)
+                    || mDispType.equals(DtvtConstants.DISP_TYPE_SUBSCRIPTION_PACKAGE)) {
                 result = true;
                 break;
             }

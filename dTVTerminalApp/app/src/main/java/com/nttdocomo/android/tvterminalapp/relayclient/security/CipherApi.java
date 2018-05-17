@@ -8,23 +8,37 @@ package com.nttdocomo.android.tvterminalapp.relayclient.security;
 import android.support.annotation.Nullable;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.relayclient.StbConnectRelayClient;
 
 import java.security.NoSuchAlgorithmException;
 
-
+/**
+ * 暗号化API
+ */
 public class CipherApi {
     public interface CipherApiCallback {
-        /** STBがbusyの場合false. */
+       //STBがbusyの場合false.
+        /**
+         * callback.
+         * @param result result
+         * @param data data
+         */
         void apiCallback(boolean result, @Nullable String data);
     }
+    /**callback.*/
     private CipherApiCallback mCallback;
 
-    public CipherApi(CipherApiCallback callback) {
+    /**
+     * 構造体.
+     * @param callback callback
+     */
+    public CipherApi(final CipherApiCallback callback) {
         mCallback = callback;
     }
 
+    /**
+     *
+     */
     public void requestSendPublicKey() {
         new Thread(new Runnable() {
             @Override

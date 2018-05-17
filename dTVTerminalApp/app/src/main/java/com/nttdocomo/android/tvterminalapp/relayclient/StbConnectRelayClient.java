@@ -4,18 +4,16 @@
 
 package com.nttdocomo.android.tvterminalapp.relayclient;
 
+import com.nttdocomo.android.ocsplib.bouncycastle.util.encoders.EncoderException;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherConfig;
 import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherUtil;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
-
-import static com.nttdocomo.android.tvterminalapp.relayclient.security.CipherUtil.encodeData;
 
 /**
  * 中継アプリとの Socket通信処理.
@@ -106,12 +104,18 @@ public class StbConnectRelayClient {
             System.arraycopy(encodedData, 0, sum, actionBytes.length, encodedData.length);
 
             ret = mTcpClient.send(sum, sum.length);
-        } catch (Exception e) {
+        } catch (EncoderException e) {
             DTVTLogger.debug(e);
         }
         return ret;
     }
 
+    /**
+     * STBへメッセージを送信する.
+     * @param data 送信するメッセージ
+     * @param length　メッセージbyte配列長
+     * @return 成功true
+     */
     public boolean send(final byte[] data, final int length) {
         boolean ret;
         if (mTcpClient == null) {
@@ -139,7 +143,7 @@ public class StbConnectRelayClient {
         return receivedData;
     }
     /**
-     * 鍵交換リクエストの結果を受信する
+     * 鍵交換リクエストの結果を受信する.
      *
      * @return 成功:true
      */
@@ -167,7 +171,11 @@ public class StbConnectRelayClient {
                     return;
                 }
                 byte[] buff = CipherUtil.encodeData(data);
-                DatagramPacket packet = new DatagramPacket(buff, buff.length, new InetSocketAddress(mRemoteIp, mRemoteDatagramPort));
+                int buffLength = 0;
+                if (buff != null) {
+                    buffLength = buff.length;
+                }
+                DatagramPacket packet = new DatagramPacket(buff, buffLength, new InetSocketAddress(mRemoteIp, mRemoteDatagramPort));
                 dataSocket = new DatagramSocket();
                 try {
                     dataSocket.send(packet);
@@ -176,8 +184,6 @@ public class StbConnectRelayClient {
                 }
             }
         } catch (SocketException e) {
-            DTVTLogger.debug(e);
-        } catch (Exception e) {
             DTVTLogger.debug(e);
         } finally {
             if (dataSocket != null) {

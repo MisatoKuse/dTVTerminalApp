@@ -11,13 +11,13 @@ import android.text.TextUtils;
 import com.nttdocomo.android.ocsplib.OcspURLConnection;
 import com.nttdocomo.android.ocsplib.OcspUtil;
 import com.nttdocomo.android.ocsplib.exception.OcspParameterException;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
-import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOtt;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import java.io.BufferedReader;
@@ -112,7 +112,7 @@ public class HttpThread extends Thread {
      *
      * 次のワンタイムパスワードの取得を許可するのに使用する
      */
-    private DaccountGetOTT mGetOtt = null;
+    private DaccountGetOtt mGetOtt = null;
     /**
      * クッキーマネージャー.
      */
@@ -198,7 +198,7 @@ public class HttpThread extends Thread {
      */
     public HttpThread(final String url, final HttpThreadFinish httpThreadFinish,
                       final Context context, final String oneTimePassword,
-                      final DaccountGetOTT getOtt) {
+                      final DaccountGetOtt getOtt) {
         //ワンタイムパスワードのセット
         mOneTimePassword = oneTimePassword;
 
@@ -222,7 +222,7 @@ public class HttpThread extends Thread {
      */
     public HttpThread(final String url, final Handler handler,
                       final HttpThreadFinish httpThreadFinish, final Context context,
-                      final String oneTimePassword, final DaccountGetOTT getOtt) {
+                      final String oneTimePassword, final DaccountGetOtt getOtt) {
         //ワンタイムパスワードのセット
         mOneTimePassword = oneTimePassword;
 
@@ -286,7 +286,7 @@ public class HttpThread extends Thread {
         if ((mContext != null && !NetWorkUtils.isOnline(mContext))
                 || mContext == null) {
             //そもそも通信のできない状態なので、ネットワークエラーとする
-            setErrorStatus(null, DTVTConstants.ERROR_TYPE.NETWORK_ERROR, "");
+            setErrorStatus(null, DtvtConstants.ErrorType.NETWORK_ERROR, "");
 
             //元々あるエラーフラグをtrueにセット
             mError = true;
@@ -310,13 +310,13 @@ public class HttpThread extends Thread {
             mHttpUrlConn = (HttpsURLConnection) url.openConnection();
 
             //接続タイムアウト
-            mHttpUrlConn.setConnectTimeout(DTVTConstants.SERVER_CONNECT_TIMEOUT);
+            mHttpUrlConn.setConnectTimeout(DtvtConstants.SERVER_CONNECT_TIMEOUT);
             //読み込みタイムアウト
-            mHttpUrlConn.setReadTimeout(DTVTConstants.SERVER_READ_TIMEOUT);
-            mHttpUrlConn.setRequestMethod(DTVTConstants.REQUEST_METHOD_GET);
-            mHttpUrlConn.setRequestProperty(DTVTConstants.ACCEPT_CHARSET,
+            mHttpUrlConn.setReadTimeout(DtvtConstants.SERVER_READ_TIMEOUT);
+            mHttpUrlConn.setRequestMethod(DtvtConstants.REQUEST_METHOD_GET);
+            mHttpUrlConn.setRequestProperty(DtvtConstants.ACCEPT_CHARSET,
                     StandardCharsets.UTF_8.name());
-            mHttpUrlConn.setRequestProperty(DTVTConstants.CONTENT_TYPE,
+            mHttpUrlConn.setRequestProperty(DtvtConstants.CONTENT_TYPE,
                     StandardCharsets.UTF_8.name());
 
             //クッキー情報の有無を検査
@@ -344,7 +344,7 @@ public class HttpThread extends Thread {
                 try {
                     OcspUtil.init(mContext);
                 } catch (OcspParameterException e) {
-                    setErrorStatus(e, DTVTConstants.ERROR_TYPE.SSL_ERROR, "");
+                    setErrorStatus(e, DtvtConstants.ErrorType.SSL_ERROR, "");
                 }
 
                 //SSL証明書失効チェックを行う
@@ -356,14 +356,14 @@ public class HttpThread extends Thread {
             stringBuffer = afterProcess();
         } catch (UnknownHostException e) {
             //通信スレッドへ移行する前の通信の例外
-            setErrorStatus(e, DTVTConstants.ERROR_TYPE.SERVER_ERROR, "");
+            setErrorStatus(e, DtvtConstants.ErrorType.SERVER_ERROR, "");
         } catch (SSLHandshakeException e) {
             //SSLエラー処理(SSLエラーにコードは付けない)
-            setErrorStatus(e, DTVTConstants.ERROR_TYPE.SSL_ERROR, "");
-        } catch(ConnectException e) {
+            setErrorStatus(e, DtvtConstants.ErrorType.SSL_ERROR, "");
+        } catch (ConnectException e) {
             //コネクト時のタイムアウトはこちらに来るので、判定する
-            if(System.currentTimeMillis() - startTime
-                    > DTVTConstants.SERVER_CONNECT_TIMEOUT) {
+            if (System.currentTimeMillis() - startTime
+                    > DtvtConstants.SERVER_CONNECT_TIMEOUT) {
                 //エラーメッセージにタイムアウトを示唆する物があればタイムアウトとして扱う
                 isTimeout = true;
                 DTVTLogger.debug("timeout ConnectException:" + e.getMessage());
@@ -371,11 +371,11 @@ public class HttpThread extends Thread {
                 isTimeout = false;
                 DTVTLogger.debug("normal ConnectException" + e.getMessage());
             }
-            setErrorStatus(e, DTVTConstants.ERROR_TYPE.SERVER_ERROR, "",isTimeout);
+            setErrorStatus(e, DtvtConstants.ErrorType.SERVER_ERROR, "", isTimeout);
         } catch (SocketTimeoutException e) {
             DTVTLogger.debug("timeout:SocketTimeoutException");
             //タイムアウトは明示的に取得
-            setErrorStatus(e, DTVTConstants.ERROR_TYPE.SERVER_ERROR, "",true);
+            setErrorStatus(e, DtvtConstants.ErrorType.SERVER_ERROR, "", true);
         } catch (IOException e) {
             //その他通信エラー処理
             //エラーコードの処理はそれぞれの持ち場で行うので、ここでは処理を行わない
@@ -452,7 +452,7 @@ public class HttpThread extends Thread {
             InputStream inputStream = mHttpUrlConn.getInputStream();
             if (null == inputStream) {
                 //ストリームで問題が発生したので、サーバーエラーとする(メッセージはひとまず出さない)
-                setErrorStatus(null, DTVTConstants.ERROR_TYPE.SERVER_ERROR, "");
+                setErrorStatus(null, DtvtConstants.ErrorType.SERVER_ERROR, "");
                 throw new IOException(ERROR_MESSAGE_INPUT_STREAM_NULL);
             }
 
@@ -460,7 +460,7 @@ public class HttpThread extends Thread {
                     new InputStreamReader(inputStream, StandardCharsets.UTF_8.name());
             if (null == inputStreamReader) {
                 //ストリームで問題が発生したので、サーバーエラーとする(メッセージはひとまず出さない)
-                setErrorStatus(null, DTVTConstants.ERROR_TYPE.SERVER_ERROR, "");
+                setErrorStatus(null, DtvtConstants.ErrorType.SERVER_ERROR, "");
                 throw new IOException(ERROR_MESSAGE_INPUT_STREAM_READER_NULL);
             }
 
@@ -468,7 +468,7 @@ public class HttpThread extends Thread {
                 bufferedReader = new BufferedReader(inputStreamReader);
                 if (null == bufferedReader) {
                     //ストリームで問題が発生したので、サーバーエラーとする(メッセージはひとまず出さない)
-                    setErrorStatus(null, DTVTConstants.ERROR_TYPE.SERVER_ERROR, "");
+                    setErrorStatus(null, DtvtConstants.ErrorType.SERVER_ERROR, "");
                     throw new IOException(ERROR_MESSAGE_BUFFER_READER_NULL);
                 }
 
@@ -476,6 +476,8 @@ public class HttpThread extends Thread {
                 while ((buffer = bufferedReader.readLine()) != null) {
                     stringBuffer.append(buffer);
                 }
+            } catch (IOException e) {
+                DTVTLogger.debug(e);
             } finally {
                 //次回のワンタイムパスワードの取得の許可
                 if (mGetOtt != null) {
@@ -487,13 +489,13 @@ public class HttpThread extends Thread {
                         bufferedReader.close();
                     } catch (IOException e) {
                         //ストリームで問題が発生したので、サーバーエラーとする(メッセージはひとまず出さない)
-                        setErrorStatus(e, DTVTConstants.ERROR_TYPE.SERVER_ERROR, "");
+                        setErrorStatus(e, DtvtConstants.ErrorType.SERVER_ERROR, "");
                     }
                 }
             }
         } else if (WebApiBasePlala.isRedirectCode(status)) {
             //リダイレクトの場合
-            mUrl = mHttpUrlConn.getHeaderField(DTVTConstants.LOCATION_KEY);
+            mUrl = mHttpUrlConn.getHeaderField(DtvtConstants.LOCATION_KEY);
             DTVTLogger.debug("Location=" + mUrl);
 
             //クッキーの退避
@@ -506,7 +508,7 @@ public class HttpThread extends Thread {
             communicationProcess();
         } else {
             //HTTPエラーなので、ステータスコードを付けてメッセージ定義を呼び出す
-            setErrorStatus(null, DTVTConstants.ERROR_TYPE.HTTP_ERROR, String.valueOf(status));
+            setErrorStatus(null, DtvtConstants.ErrorType.HTTP_ERROR, String.valueOf(status));
 
             //正常とリダイレクト以外の場合は例外発行とする
             String errMessage = StringUtils.getConnectStrings(ERROR_MESSAGE_HTTP_RESPONSE,
@@ -531,7 +533,7 @@ public class HttpThread extends Thread {
      * @param isTimeOut タイムアウトが原因ならばtrue
      */
     private synchronized void setErrorStatus(final Exception exception,
-                                             final DTVTConstants.ERROR_TYPE errorType,
+                                             final DtvtConstants.ErrorType errorType,
                                              final String errorCode,
                                              final boolean isTimeOut) {
         //タイムアウトか否かを指定
@@ -549,7 +551,7 @@ public class HttpThread extends Thread {
      * @param errorCode エラーコード
      */
     private synchronized void setErrorStatus(final Exception exception,
-                                             final DTVTConstants.ERROR_TYPE errorType,
+                                             final DtvtConstants.ErrorType errorType,
                                              final String errorCode) {
         if (exception != null) {
             //例外種類のログ出力
@@ -589,7 +591,9 @@ public class HttpThread extends Thread {
                         if (mError) {
                             mXmlStr = "";
                         } else {
-                            mXmlStr = stringBuffer.toString();
+                            if (stringBuffer != null) {
+                                mXmlStr = stringBuffer.toString();
+                            }
                         }
                         mHttpThreadFinish.onHttpThreadFinish(mXmlStr, mErrorStatus);
                     }
@@ -600,7 +604,9 @@ public class HttpThread extends Thread {
                 if (mError) {
                     mXmlStr = "";
                 } else {
-                    mXmlStr = stringBuffer.toString();
+                    if (stringBuffer != null) {
+                        mXmlStr = stringBuffer.toString();
+                    }
                 }
                 mHttpThreadFinish.onHttpThreadFinish(mXmlStr, mErrorStatus);
             }

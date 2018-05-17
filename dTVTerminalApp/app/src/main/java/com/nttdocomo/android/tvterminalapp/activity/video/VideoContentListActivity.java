@@ -21,8 +21,8 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VideoContentProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
@@ -41,7 +41,7 @@ import java.util.List;
  * ビデオコンテンツ一覧画面.
  */
 public class VideoContentListActivity extends BaseActivity implements View.OnClickListener,
-        VideoContentProvider.apiVideoContentDataProviderCallback,
+        VideoContentProvider.ApiVideoContentDataProviderCallback,
         AbsListView.OnScrollListener, AdapterView.OnItemClickListener,
         AbsListView.OnTouchListener {
 
@@ -80,7 +80,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     /**
      * ジャンルID.
      */
-    String mGenreId;
+    private String mGenreId;
 
     /**
      * スクロール位置の記録.
@@ -209,7 +209,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     private void resetPaging() {
         synchronized (this) {
             setCommunicatingStatus(false);
-            if (0 != getCurrentNumber() && null != mContentsList) {
+            if (0 != getCurrentNumber(mContentsList) && null != mContentsList) {
                 mContentsList.clear();
                 if (null != mContentsAdapter) {
                     mContentsAdapter.notifyDataSetChanged();
@@ -229,21 +229,6 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
             mIsCommunicating = bool;
         }
     }
-
-    /**
-     * ページングを行った回数を取得.
-     *
-     * @return ページング回数
-     */
-    private int getCurrentNumber() {
-        if (null == mContentsList || 0 == mContentsList.size()) {
-            return 0;
-        } else if (mContentsList.size() < NUM_PER_PAGE) {
-            return 1;
-        }
-        return mContentsList.size() / NUM_PER_PAGE;
-    }
-
     @Override
     public void onScroll(final AbsListView absListView, final int firstVisibleItem,
                          final int visibleItemCount, final int totalItemCount) {
@@ -310,7 +295,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
             startChildContentListActivity(contentsData);
         } else {
             Intent intent = new Intent(this, ContentDetailActivity.class);
-            intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
+            intent.putExtra(DtvtConstants.SOURCE_SCREEN, getComponentName().getClassName());
             OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(contentsData, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
             intent.putExtra(detailData.getRecommendFlg(), detailData);
             startActivity(intent);

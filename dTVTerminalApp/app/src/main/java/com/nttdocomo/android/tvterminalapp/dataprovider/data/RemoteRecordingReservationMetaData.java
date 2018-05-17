@@ -5,7 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -288,10 +288,10 @@ public class RemoteRecordingReservationMetaData implements Serializable {
                     mResvId = (String) data;                //resv_id
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_RESV_TYPE:
-                    mResvType = DBUtils.getNumeric(data);              //resv_type
+                    mResvType = DataBaseUtils.getNumeric(data);              //resv_type
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_RESV_PLATFORM_TYPE:
-                    mPlatformType = DBUtils.getNumeric(data);          //platform_type
+                    mPlatformType = DataBaseUtils.getNumeric(data);          //platform_type
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_SERVICE_ID:
                     mServiceId = String.valueOf(data);             //service_id
@@ -303,22 +303,22 @@ public class RemoteRecordingReservationMetaData implements Serializable {
                     mTitle = (String) data;                 //title
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_START_TIME:
-                    mStartTime = DBUtils.getLong(data);             //start_time
+                    mStartTime = DataBaseUtils.getLong(data);             //start_time
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_DURATION:
-                    mDuration = DBUtils.getNumeric(data);              //duration
+                    mDuration = DataBaseUtils.getNumeric(data);              //duration
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_LOOP_TYPE_NUM:
-                    mLoopTypeNum = DBUtils.getNumeric(data);           //loop_type_num
+                    mLoopTypeNum = DataBaseUtils.getNumeric(data);           //loop_type_num
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_R_VALUE:
-                    mRValue = DBUtils.getNumeric(data);                //r_value
+                    mRValue = DataBaseUtils.getNumeric(data);                //r_value
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_SYNC_STATUS:
-                    mSyncStatus = DBUtils.getNumeric(data);            //sync_status
+                    mSyncStatus = DataBaseUtils.getNumeric(data);            //sync_status
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_SYNC_ERROR_REASON:
-                    mSyncErrorReason = DBUtils.getNumeric(data);       //sync_error_reason
+                    mSyncErrorReason = DataBaseUtils.getNumeric(data);       //sync_error_reason
                     break;
                 default:
 

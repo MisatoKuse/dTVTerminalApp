@@ -7,23 +7,18 @@ package com.nttdocomo.android.tvterminalapp.activity.ranking;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewAdapter;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
@@ -121,7 +116,7 @@ public class RankingTopActivity extends BaseActivity
         //Headerの設定
         setTitleText(getString(R.string.nav_menu_item_ranking));
         Intent intent = getIntent();
-        mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
+        mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
         if (mIsMenuLaunch) {
             enableHeaderBackIcon(true);
         }
@@ -180,63 +175,9 @@ public class RankingTopActivity extends BaseActivity
             mRelativeLayout.setVisibility(View.GONE);
         }
     }
-
-    /**
-     * 機能.
-     * コンテンツ一覧ビューを設定
-     *
-     * @param contentsDataList コンテンツ一覧
-     * @param tag              ランキング種別
-     */
-    private void setRecyclerView(final List<ContentsData> contentsDataList, final int tag) {
-        String typeContentName = getContentTypeName(tag);
-        View view = mLinearLayout.getChildAt(tag);
-        view.setVisibility(View.VISIBLE);
-        TextView typeTextView = view.findViewById(R.id.home_main_item_type_tx);
-        ImageView rightArrowImageView = view.findViewById(R.id.home_main_item_right_arrow);
-        //各一覧を遷移すること
-
-        rightArrowImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                startTo(tag);
-            }
-        });
-        RecyclerView recyclerView = view.findViewById(R.id.home_main_item_recyclerview);
-        //コンテンツタイプを設定
-        typeTextView.setText(typeContentName);
-        //リサイクルビューデータ設定
-        setRecyclerViewData(recyclerView, contentsDataList, tag);
-    }
-
-    /**
-     * 機能.
-     * コンテンツ一覧データを設定
-     *
-     * @param recyclerView     リサイクルビュー
-     * @param contentsDataList コンテンツ一覧
-     * @param index            ランキング種別
-     */
-    private void setRecyclerViewData(final RecyclerView recyclerView, final List<ContentsData> contentsDataList, final int index) {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        HomeRecyclerViewAdapter horizontalViewAdapter = new HomeRecyclerViewAdapter(
-                this, contentsDataList, index + HomeRecyclerViewAdapter.RANKING_CONTENTES_TODAY_SORT);
-        horizontalViewAdapter.setOnItemClickCallBack(this);
-        recyclerView.setAdapter(horizontalViewAdapter);
-        View footer = LayoutInflater.from(this).inflate(R.layout.home_main_layout_recyclerview_footer, recyclerView, false);
-        RelativeLayout rankingMore = footer.findViewById(R.id.home_main_layout_recyclerview_footer);
-        //もっと見るの遷移先を設定
-        rankingMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                startTo(index);
-            }
-        });
-        //リサイクルビューデータの設定
-        horizontalViewAdapter.setFooterView(footer);
-        //各アダプタを保存
+    @Override
+    protected void saveAdapter(final int index, final HomeRecyclerViewAdapter horizontalViewAdapter) {
+        super.saveAdapter(index, horizontalViewAdapter);
         if (index == TODAY_SORT) {
             mHorizontalViewAdapterToday = horizontalViewAdapter;
         } else if (index == WEEK_SORT) {
@@ -245,24 +186,19 @@ public class RankingTopActivity extends BaseActivity
             mHorizontalViewAdapterVod = horizontalViewAdapter;
         }
     }
-
-    /**
-     * 機能.
-     * 遷移先を設定
-     *
-     * @param index リスト番号
-     */
-    private void startTo(final int index) {
+    @Override
+    protected void startTo(final int index) {
+        super.startTo(index);
         switch (index) {
-            case 0:
+            case TODAY_SORT:
                 //今日のテレビランキングへ遷移
                 startActivity(DailyTvRankingActivity.class, null);
                 break;
-            case 1:
+            case WEEK_SORT:
                 //週間テレビランキングへ遷移
                 startActivity(WeeklyTvRankingActivity.class, null);
                 break;
-            case 2:
+            case VIDEO_SORT:
                 //ビデオランキングへ遷移
                 startActivity(VideoRankingActivity.class, null);
                 break;
@@ -270,24 +206,18 @@ public class RankingTopActivity extends BaseActivity
                 break;
         }
     }
-
-    /**
-     * 機能.
-     * コンテンツ一覧タイトル取得
-     *
-     * @param tag 機能.
-     * @return コンテンツ一覧タイトル
-     */
-    private String getContentTypeName(final int tag) {
+    @Override
+    protected String getContentTypeName(final int tag) {
+        super.getContentTypeName(tag);
         String typeName = "";
         switch (tag) {
-            case 0:
+            case TODAY_SORT:
                 typeName = getResources().getString(R.string.daily_tv_ranking_title);
                 break;
-            case 1:
+            case WEEK_SORT:
                 typeName = getResources().getString(R.string.weekly_tv_ranking_title);
                 break;
-            case 2:
+            case VIDEO_SORT:
                 typeName = getResources().getString(R.string.video_ranking_title);
                 break;
             default:
@@ -349,7 +279,7 @@ public class RankingTopActivity extends BaseActivity
 
                 showProgressBar(false);
                 if (contentsDataList != null && contentsDataList.size() > 0) {
-                    setRecyclerView(contentsDataList, TODAY_SORT);
+                    setRecyclerView(contentsDataList, TODAY_SORT, mLinearLayout);
                 } else {
                     //データが来ていないので、今日の番組ランキングのエラー情報を取得する
                     mDailyErrorState = mRankingTopDataProvider.getDailyRankWebApiErrorState();
@@ -370,7 +300,7 @@ public class RankingTopActivity extends BaseActivity
 
                 showProgressBar(false);
                 if (contentsDataList != null && contentsDataList.size() > 0) {
-                    setRecyclerView(contentsDataList, WEEK_SORT);
+                    setRecyclerView(contentsDataList, WEEK_SORT, mLinearLayout);
                 } else {
                     //データが来ていないので、週間番組ランキングのエラー情報を取得する
                     mWeeklyErrorState =
@@ -393,7 +323,7 @@ public class RankingTopActivity extends BaseActivity
 
                 showProgressBar(false);
                 if (contentsDataList != null && contentsDataList.size() > 0) {
-                    setRecyclerView(contentsDataList, VIDEO_SORT);
+                    setRecyclerView(contentsDataList, VIDEO_SORT, mLinearLayout);
                 } else {
                     //データが来ていないので、ビデオランキングのエラー情報を取得する
                     mVideoErrorState =
@@ -412,7 +342,7 @@ public class RankingTopActivity extends BaseActivity
         } else {
             Intent intent = new Intent(this, ContentDetailActivity.class);
             ComponentName componentName = this.getComponentName();
-            intent.putExtra(DTVTConstants.SOURCE_SCREEN, componentName.getClassName());
+            intent.putExtra(DtvtConstants.SOURCE_SCREEN, componentName.getClassName());
             intent.putExtra(detailData.getRecommendFlg(), detailData);
             startActivity(intent);
         }

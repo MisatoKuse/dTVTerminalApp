@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteException;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RoleListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
@@ -51,8 +51,8 @@ public class RoleListInsertDataManager {
 
         try {
             //各種オブジェクト作成
-            DBHelper channelListDBHelper = new DBHelper(mContext);
-            DataBaseManager.initializeInstance(channelListDBHelper);
+            DataBaseHelper channelListDataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(channelListDataBaseHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
             RoleListDao roleListDao = new RoleListDao(database);

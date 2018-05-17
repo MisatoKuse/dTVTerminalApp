@@ -15,7 +15,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetail
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
-import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOtt;
 
 /**
  * ログ送信クラス.
@@ -46,7 +46,7 @@ public class SendOperateLog extends WebApiBase {
     /**
      * OTT取得クラス.
      */
-    private DaccountGetOTT mGetOtt;
+    private DaccountGetOtt mGetOtt;
 
     /**
      * サービスID.
@@ -123,8 +123,8 @@ public class SendOperateLog extends WebApiBase {
             }
             if (!TextUtils.isEmpty(mCategoryId)) {
                 //dアカウントのワンタイムパスワードの取得を行う
-                mGetOtt = new DaccountGetOTT();
-                mGetOtt.execDaccountGetOTT(mContext, new DaccountGetOTT.DaccountGetOttCallBack() {
+                mGetOtt = new DaccountGetOtt();
+                mGetOtt.execDaccountGetOTT(mContext, new DaccountGetOtt.DaccountGetOttCallBack() {
                     @Override
                     public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
                         //ワンタイムパスワードの取得後に呼び出す

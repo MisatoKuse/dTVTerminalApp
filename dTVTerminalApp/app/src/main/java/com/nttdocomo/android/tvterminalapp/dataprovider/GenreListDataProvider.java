@@ -10,8 +10,8 @@ import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetResponse;
@@ -94,7 +94,7 @@ public class GenreListDataProvider implements
     /** コンテキスト. */
     private Context mContext = null;
     /** コンテンツタイプ. */
-    private ContentsAdapter.ActivityTypeItem type;
+    private ContentsAdapter.ActivityTypeItem mType;
 
     /** ジャンルリスト取得用webクライアント. */
     private GenreListWebClient mGenreListWebClient = null;
@@ -127,7 +127,7 @@ public class GenreListDataProvider implements
      */
     public GenreListDataProvider(final Context context, final RankGenreListCallback mRankGenreListCallback,
                                  final ContentsAdapter.ActivityTypeItem type) {
-        this.type = type;
+        this.mType = type;
         this.mRankGenreListCallback = mRankGenreListCallback;
         mContext = context;
     }
@@ -267,20 +267,23 @@ public class GenreListDataProvider implements
                     genreAll.setTitle(mContext.getResources().getString(R.string.common_ranking_tab_all));
                     genreAll.setId("");
                     genreMetaDataList.add(genreAll);
-                    if (ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK.equals(type)) {
-                        if (listMap.get(VIDEO_GENRE_KEY_VOD) != null) {
-                            genreMetaDataList.addAll(listMap.get(VIDEO_GENRE_KEY_VOD));
-                        } else {
-                            DTVTLogger.error("VOD listMap is not found");
-                        }
-                    } else if (ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK.equals(type)) {
-                        if (listMap.get(VIDEO_GENRE_KEY_ARIB) != null) {
-                            genreMetaDataList.addAll(listMap.get(VIDEO_GENRE_KEY_ARIB));
-                        } else {
-                            DTVTLogger.error("ARIB listMap is not found");
-                        }
-                    } else {
-                        DTVTLogger.error("activity is not found");
+                    switch (mType) {
+                        case TYPE_VIDEO_RANK:
+                            if (listMap.get(VIDEO_GENRE_KEY_VOD) != null) {
+                                genreMetaDataList.addAll(listMap.get(VIDEO_GENRE_KEY_VOD));
+                            } else {
+                                DTVTLogger.error("VOD listMap is not found");
+                            }
+                            break;
+                        case TYPE_WEEKLY_RANK:
+                            if (listMap.get(VIDEO_GENRE_KEY_ARIB) != null) {
+                                genreMetaDataList.addAll(listMap.get(VIDEO_GENRE_KEY_ARIB));
+                            } else {
+                                DTVTLogger.error("ARIB listMap is not found");
+                            }
+                            break;
+                       default:
+                           DTVTLogger.error("activity is not found");
                     }
                     mRankGenreListCallback.onRankGenreListCallback(genreMetaDataList);
                 } else {
@@ -417,7 +420,7 @@ public class GenreListDataProvider implements
     public ErrorState getGenreListError() {
         //ジャンルリストAPIが正常動作ならば、コンテンツ数取得エラーの値を返す
         if (mGenreListError == null
-                || mGenreListError.getErrorType() == DTVTConstants.ERROR_TYPE.SUCCESS) {
+                || mGenreListError.getErrorType() == DtvtConstants.ErrorType.SUCCESS) {
             return mGenreCountError;
         }
 

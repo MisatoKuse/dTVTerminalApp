@@ -27,15 +27,15 @@ public class SettingImageQualityActivity extends BaseActivity implements View.On
     /**
      * 最高画質用チェックボックス.
      */
-    private CheckBox checkBoxHigh;
+    private CheckBox mCheckBoxHigh;
     /**
      * 高画質用チェックボックス.
      */
-    private CheckBox checkBoxMiddle;
+    private CheckBox mCheckBoxMiddle;
     /**
      * 標準画質用チェックボックス.
      */
-    private CheckBox checkBoxLow;
+    private CheckBox mCheckBoxLow;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -62,9 +62,9 @@ public class SettingImageQualityActivity extends BaseActivity implements View.On
         RelativeLayout relativeLayoutHigh = findViewById(R.id.main_setting_relativelayout_quality_high);
         RelativeLayout relativeLayoutMiddle = findViewById(R.id.main_setting_relativelayout_quality_middle);
         RelativeLayout relativeLayoutLow = findViewById(R.id.main_setting_relativelayout_quality_low);
-        checkBoxHigh = findViewById(R.id.main_setting_quality_checkbox_high);
-        checkBoxMiddle = findViewById(R.id.main_setting_quality_checkbox_middle);
-        checkBoxLow = findViewById(R.id.main_setting_quality_checkbox_low);
+        mCheckBoxHigh = findViewById(R.id.main_setting_quality_checkbox_high);
+        mCheckBoxMiddle = findViewById(R.id.main_setting_quality_checkbox_middle);
+        mCheckBoxLow = findViewById(R.id.main_setting_quality_checkbox_low);
 
         relativeLayoutHigh.setOnClickListener(this);
         relativeLayoutMiddle.setOnClickListener(this);
@@ -78,23 +78,23 @@ public class SettingImageQualityActivity extends BaseActivity implements View.On
         super.onClick(view);
         switch (view.getId()) {
             case R.id.main_setting_relativelayout_quality_high:
-                checkBoxHigh.setChecked(true);
-                checkBoxMiddle.setChecked(false);
-                checkBoxLow.setChecked(false);
+                mCheckBoxHigh.setChecked(true);
+                mCheckBoxMiddle.setChecked(false);
+                mCheckBoxLow.setChecked(false);
                 storeStatus(getString(R.string.main_setting_image_quality_high));
                 this.finish();
                 break;
             case R.id.main_setting_relativelayout_quality_middle:
-                checkBoxHigh.setChecked(false);
-                checkBoxMiddle.setChecked(true);
-                checkBoxLow.setChecked(false);
+                mCheckBoxHigh.setChecked(false);
+                mCheckBoxMiddle.setChecked(true);
+                mCheckBoxLow.setChecked(false);
                 storeStatus(getString(R.string.main_setting_image_quality_middle));
                 this.finish();
                 break;
             case R.id.main_setting_relativelayout_quality_low:
-                checkBoxHigh.setChecked(false);
-                checkBoxMiddle.setChecked(false);
-                checkBoxLow.setChecked(true);
+                mCheckBoxHigh.setChecked(false);
+                mCheckBoxMiddle.setChecked(false);
+                mCheckBoxLow.setChecked(true);
                 storeStatus(getString(R.string.main_setting_image_quality_low));
                 this.finish();
                 break;
@@ -108,11 +108,11 @@ public class SettingImageQualityActivity extends BaseActivity implements View.On
      */
     private void initCheckBox() {
         if (mStatus.equals(getString(R.string.main_setting_image_quality_high))) {
-            checkBoxHigh.setChecked(true);
+            mCheckBoxHigh.setChecked(true);
         } else if (mStatus.equals(getString(R.string.main_setting_image_quality_middle))) {
-            checkBoxMiddle.setChecked(true);
+            mCheckBoxMiddle.setChecked(true);
         } else if (mStatus.equals(getString(R.string.main_setting_image_quality_low))) {
-            checkBoxLow.setChecked(true);
+            mCheckBoxLow.setChecked(true);
         }
     }
 

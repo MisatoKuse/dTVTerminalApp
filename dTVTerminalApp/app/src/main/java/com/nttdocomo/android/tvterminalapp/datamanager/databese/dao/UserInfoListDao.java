@@ -8,7 +8,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +22,7 @@ public class UserInfoListDao {
     /**
      * SQLiteDatabase.
      */
-    private final SQLiteDatabase db;
+    private final SQLiteDatabase mSQLiteDatabase;
 
     /**
      * コンストラクタ.
@@ -30,7 +30,7 @@ public class UserInfoListDao {
      * @param db データベース
      */
     public UserInfoListDao(final SQLiteDatabase db) {
-        this.db = db;
+        this.mSQLiteDatabase = db;
     }
 
     /**
@@ -43,8 +43,8 @@ public class UserInfoListDao {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
 
-        Cursor cursor = db.query(
-                DBConstants.USER_INFO_LIST_TABLE_NAME,
+        Cursor cursor = mSQLiteDatabase.query(
+                DataBaseConstants.USER_INFO_LIST_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -77,7 +77,7 @@ public class UserInfoListDao {
      * @return 書き込み位置
      */
     public long insert(final ContentValues values) {
-        return db.insert(DBConstants.USER_INFO_LIST_TABLE_NAME, null, values);
+        return mSQLiteDatabase.insert(DataBaseConstants.USER_INFO_LIST_TABLE_NAME, null, values);
     }
 
     /**
@@ -91,7 +91,7 @@ public class UserInfoListDao {
     public long insert(final String key, final String value) {
         ContentValues values = new ContentValues();
         values.put(key, value);
-        return db.insert(DBConstants.USER_INFO_LIST_TABLE_NAME, null, values);
+        return mSQLiteDatabase.insert(DataBaseConstants.USER_INFO_LIST_TABLE_NAME, null, values);
     }
 
     /**
@@ -111,6 +111,6 @@ public class UserInfoListDao {
      * @return 削除行数
      */
     public int delete() {
-        return db.delete(DBConstants.USER_INFO_LIST_TABLE_NAME, null, null);
+        return mSQLiteDatabase.delete(DataBaseConstants.USER_INFO_LIST_TABLE_NAME, null, null);
     }
 }

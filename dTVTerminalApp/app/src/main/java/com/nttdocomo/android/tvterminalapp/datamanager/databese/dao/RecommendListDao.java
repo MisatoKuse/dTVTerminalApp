@@ -9,7 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +23,7 @@ public class RecommendListDao {
     /**
      * SQLiteDatabase.
      */
-    private final SQLiteDatabase db;
+    private final SQLiteDatabase mSQLiteDatabase;
 
     /**
      * コンストラクタ.
@@ -31,7 +31,7 @@ public class RecommendListDao {
      * @param db SQLiteDatabase
      */
     public RecommendListDao(final SQLiteDatabase db) {
-        this.db = db;
+        this.mSQLiteDatabase = db;
     }
 
     /**
@@ -44,9 +44,9 @@ public class RecommendListDao {
     public List<Map<String, String>> findById(final String[] strings, final int tagPageNo) {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
-        String tableName = DBUtils.getRecommendTableName(tagPageNo);
+        String tableName = DataBaseUtils.getRecommendTableName(tagPageNo);
 
-        Cursor cursor = db.query(
+        Cursor cursor = mSQLiteDatabase.query(
                 tableName,
                 strings,
                 null,
@@ -82,8 +82,8 @@ public class RecommendListDao {
      * @return 成功時:row ID 失敗時:-1
      */
     public long insert(final ContentValues values, final int tagPageNo) {
-        String tableName = DBUtils.getRecommendTableName(tagPageNo);
-        return db.insert(tableName, "", values);
+        String tableName = DataBaseUtils.getRecommendTableName(tagPageNo);
+        return mSQLiteDatabase.insert(tableName, "", values);
     }
 
     /**
@@ -104,8 +104,8 @@ public class RecommendListDao {
      * @return リターン値
      */
     public int delete(final int tagPageNo) {
-        String tableName = DBUtils.getRecommendTableName(tagPageNo);
+        String tableName = DataBaseUtils.getRecommendTableName(tagPageNo);
         DTVTLogger.debug(String.format("RecommendListDao.delete [%s]", tableName));
-        return db.delete(tableName, null, null);
+        return mSQLiteDatabase.delete(tableName, null, null);
     }
 }

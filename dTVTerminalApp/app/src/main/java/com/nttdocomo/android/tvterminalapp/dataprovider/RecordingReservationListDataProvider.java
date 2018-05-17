@@ -262,11 +262,11 @@ public class RecordingReservationListDataProvider implements
         /**
          * ID.
          */
-        private final int id;
+        private final int mId;
         /**
          * 予約タイプ.
          */
-        private final String dRemote;
+        private final String mDocomoRemote;
 
         /**
          * コンストラクタ.
@@ -275,8 +275,8 @@ public class RecordingReservationListDataProvider implements
          * @param dRemote 予約タイプ
          */
         ReservationType(final int id, final String dRemote) {
-            this.id = id;
-            this.dRemote = dRemote;
+            this.mId = id;
+            this.mDocomoRemote = dRemote;
         }
 
         /**
@@ -288,8 +288,8 @@ public class RecordingReservationListDataProvider implements
         public static int getInt(final String dRemote) {
             ReservationType[] types = ReservationType.values();
             for (ReservationType type : types) {
-                if (type.dRemote.equals(dRemote)) {
-                    return type.id;
+                if (type.mDocomoRemote.equals(dRemote)) {
+                    return type.mId;
                 }
             }
             return 99;

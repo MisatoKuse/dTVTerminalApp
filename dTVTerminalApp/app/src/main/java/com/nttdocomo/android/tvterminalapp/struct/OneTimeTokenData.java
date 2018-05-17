@@ -7,7 +7,7 @@ package com.nttdocomo.android.tvterminalapp.struct;
 
 import android.text.TextUtils;
 
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 /**
@@ -120,7 +120,7 @@ public class OneTimeTokenData {
         mOneTimeToken = buffer[ONE_TIME_TOKEN_POSITION];
 
         //数字判定を行う
-        if (DBUtils.isNumber(buffer[ONE_TIME_TOKEN_TIME_POSITION])) {
+        if (DataBaseUtils.isNumber(buffer[ONE_TIME_TOKEN_TIME_POSITION])) {
             //取得日時を取得
             mOneTimeTokenTime = Long.parseLong(
                     buffer[ONE_TIME_TOKEN_TIME_POSITION]);

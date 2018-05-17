@@ -6,8 +6,8 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
@@ -42,7 +42,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
     /**
      * callback.
      */
-    private ApiDataProviderCallback apiDataProviderCallback;
+    private ApiDataProviderCallback mApiDataProviderCallback;
 
     /**
      * 通信禁止判定フラグ.
@@ -75,19 +75,19 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
                     sendVodClipListData(list.getVcList());
                 }
             } else {
-                if (null != apiDataProviderCallback) {
+                if (null != mApiDataProviderCallback) {
                     //ヌルなので、ネットワークエラーを取得する
                     mNetworkError = mWebClient.getError();
 
-                    apiDataProviderCallback.vodClipListCallback(null);
+                    mApiDataProviderCallback.vodClipListCallback(null);
                 }
             }
         } else {
             //ヌルなので、ネットワークエラーを取得する
             mNetworkError = mWebClient.getError();
 
-            if (null != apiDataProviderCallback) {
-                apiDataProviderCallback.vodClipListCallback(null);
+            if (null != mApiDataProviderCallback) {
+                mApiDataProviderCallback.vodClipListCallback(null);
             }
         }
     }
@@ -123,7 +123,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
     public VodClipDataProvider(final Context mContext) {
         super(mContext);
         this.mContext = mContext;
-        this.apiDataProviderCallback = (ApiDataProviderCallback) mContext;
+        this.mApiDataProviderCallback = (ApiDataProviderCallback) mContext;
     }
 
     /**
@@ -137,13 +137,13 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
             // クリップキー一覧を取得
             if (mRequiredClipKeyList) {
                 mClipKeyListDataProvider = new ClipKeyListDataProvider(mContext);
-                mClipKeyListDataProvider.getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+                mClipKeyListDataProvider.getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
             }
             getVodClipListData(pagerOffset);
         } else {
             DTVTLogger.error("VodClipDataProvider is stopping connection");
-            if (null != apiDataProviderCallback) {
-                apiDataProviderCallback.vodClipListCallback(null);
+            if (null != mApiDataProviderCallback) {
+                mApiDataProviderCallback.vodClipListCallback(null);
             }
         }
     }
@@ -154,7 +154,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
      * @param list Vodクリップリスト
      */
     private void sendVodClipListData(final List<Map<String, String>> list) {
-        apiDataProviderCallback.vodClipListCallback(setVodClipContentData(list));
+        mApiDataProviderCallback.vodClipListCallback(setVodClipContentData(list));
     }
 
     /**
@@ -244,14 +244,14 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
 
             String direction = "";
             UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
-            if (!mWebClient.getVodClipApi(userInfoDataProvider.getUserAge(), DTVTConstants.REQUEST_LIMIT_50,
-                    DTVTConstants.REQUEST_LIMIT_50, pagerOffset, direction, this)) {
-                apiDataProviderCallback.vodClipListCallback(null);
+            if (!mWebClient.getVodClipApi(userInfoDataProvider.getUserAge(), DtvtConstants.REQUEST_LIMIT_50,
+                    DtvtConstants.REQUEST_LIMIT_50, pagerOffset, direction, this)) {
+                mApiDataProviderCallback.vodClipListCallback(null);
             }
         } else {
             DTVTLogger.error("VodClipDataProvider is stopping connection");
-            if (null != apiDataProviderCallback) {
-                apiDataProviderCallback.vodClipListCallback(null);
+            if (null != mApiDataProviderCallback) {
+                mApiDataProviderCallback.vodClipListCallback(null);
             }
         }
     }

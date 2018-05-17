@@ -10,7 +10,7 @@ import android.os.Bundle;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
@@ -174,7 +174,7 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
                                 String para = puinfObj.getString(puinfBuffer);
                                 vrListMap.put(JsonConstants.META_RESPONSE_PUINF + JsonConstants.UNDER_LINE + puinfBuffer, para);
                             }
-                        } else if (DBUtils.isDateItem(listBuffer)) {
+                        } else if (DataBaseUtils.isDateItem(listBuffer)) {
                             // DATE_PARAに含まれるのは日付なので、エポック秒となる。変換して格納する
                             String dateBuffer = DateUtils.formatEpochToString(
                                     StringUtils.changeString2Long(jsonObject.getString(listBuffer)));

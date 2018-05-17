@@ -12,15 +12,15 @@ import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvScheduleListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelperChannel;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelperChannel;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
@@ -70,8 +70,8 @@ public class TvScheduleInsertDataManager {
 
         try {
             //各種オブジェクト作成
-            DBHelper channelListDBHelper = new DBHelper(mContext);
-            DataBaseManager.initializeInstance(channelListDBHelper);
+            DataBaseHelper channelListDataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(channelListDataBaseHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
             TvScheduleListDao tvScheduleListDao = new TvScheduleListDao(database);
@@ -90,9 +90,9 @@ public class TvScheduleInsertDataManager {
                     String keyName = (String) entry.getKey();
                     String valName = (String) entry.getValue();
                     if (JsonConstants.META_RESPONSE_PUBLISH_START_DATE.equals(keyName)) {
-                        values.put(DBConstants.UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
+                        values.put(DataBaseConstants.UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
                     }
-                    values.put(DBUtils.fourKFlgConversion(keyName), valName);
+                    values.put(DataBaseUtils.fourKFlgConversion(keyName), valName);
                 }
                 tvScheduleListDao.insert(values);
             }
@@ -147,10 +147,10 @@ public class TvScheduleInsertDataManager {
             synchronized (channelInformation) {
                 for (ChannelInfo channelInfo : channelInformation) {
                     //DB名としてチャンネル番号を取得.
-                    String chNo = String.valueOf(channelInfo.getChNo());
+                    String chNo = String.valueOf(channelInfo.getChannelNo());
 
                     //各種オブジェクト作成
-                    DBHelperChannel tvScheduleListDBHelper = new DBHelperChannel(mContext, chNo);
+                    DataBaseHelperChannel tvScheduleListDBHelper = new DataBaseHelperChannel(mContext, chNo);
                     DataBaseManager.clearChInfo();
                     DataBaseManager.initializeInstance(tvScheduleListDBHelper);
                     SQLiteDatabase database = DataBaseManager.getChInstance().openChDatabase();

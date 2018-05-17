@@ -11,7 +11,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.WatchListenVideoDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.WatchListenVideoListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
@@ -98,8 +98,8 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
                 } else {
                     //通信でデータ取得できないときはDBから取得
                     Handler handler = new Handler();
-                    DbThread t = new DbThread(handler, this, WATCH_LISTEN_VIDEO_SELECT);
-                    t.start();
+                    DataBaseThread dataBaseThread = new DataBaseThread(handler, this, WATCH_LISTEN_VIDEO_SELECT);
+                    dataBaseThread.start();
                 }
             } else {
                 mWatchListenVideoList = list;
@@ -110,8 +110,8 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
             if (null != mApiDataProviderCallback) {
                 //通信でデータ取得できないときはDBから取得
                 Handler handler = new Handler();
-                DbThread t = new DbThread(handler, this, WATCH_LISTEN_VIDEO_SELECT);
-                t.start();
+                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, WATCH_LISTEN_VIDEO_SELECT);
+                dataBaseThread.start();
             }
         }
     }
@@ -161,7 +161,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
 
         // クリップキー一覧を取得
         if (!mIsCancel && mRequiredClipKeyList) {
-            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
         }
 
         //視聴中ビデオ一覧のDB保存履歴と、有効期間を確認
@@ -178,8 +178,8 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
             Handler handler = new Handler();
-            DbThread t = new DbThread(handler, this, WATCH_LISTEN_VIDEO_SELECT);
-            t.start();
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, WATCH_LISTEN_VIDEO_SELECT);
+            dataBaseThread.start();
         }
     }
 
@@ -298,9 +298,9 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
         //DB保存
         Handler handler = new Handler();
         try {
-            DbThread t = new DbThread(handler, this, WATCH_LISTEN_VIDEO_INSERT);
-            t.start();
-        } catch (Exception e) {
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, WATCH_LISTEN_VIDEO_INSERT);
+            dataBaseThread.start();
+        } catch (IllegalThreadStateException e) {
             DTVTLogger.debug(e);
         }
     }

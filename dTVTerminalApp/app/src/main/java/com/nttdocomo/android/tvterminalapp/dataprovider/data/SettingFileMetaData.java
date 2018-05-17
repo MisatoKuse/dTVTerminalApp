@@ -5,7 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 
 import java.io.Serializable;
 
@@ -119,7 +119,7 @@ public class SettingFileMetaData  implements Serializable {
         DTVTLogger.start();
 
         //文字列が数字だけかどうかを確認
-        if (DBUtils.isNumber(forceUpdateVersion)) {
+        if (DataBaseUtils.isNumber(forceUpdateVersion)) {
             //バージョン情報は数字文字列だったので、数値に変換する
             mForceUpdateVersion = Integer.parseInt(forceUpdateVersion);
         }
@@ -156,7 +156,7 @@ public class SettingFileMetaData  implements Serializable {
     public void setOptionalUpdateVersion(final String optionalUpdateVersion) {
         DTVTLogger.start();
         //文字列が数字だけかどうかを確認
-        if (DBUtils.isNumber(optionalUpdateVersion)) {
+        if (DataBaseUtils.isNumber(optionalUpdateVersion)) {
             //バージョン情報は数字の文字列だったので、数値に変換する
             mOptionalUpdateVersion = Integer.parseInt(optionalUpdateVersion);
         }

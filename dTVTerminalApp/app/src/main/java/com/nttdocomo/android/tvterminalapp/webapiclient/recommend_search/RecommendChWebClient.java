@@ -8,7 +8,7 @@ import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChannelList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
 import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser;
 
@@ -35,9 +35,9 @@ public class RecommendChWebClient extends WebApiBase implements WebApiCallback {
     public interface RecommendChannelCallback {
         /**
          * コールバック.
-         * @param mRecommendChList  おすすめ番組データ
+         * @param mRecommendChannelList  おすすめ番組データ
          */
-        void RecommendChannelCallback(RecommendChList mRecommendChList);
+        void RecommendChannelCallback(RecommendChannelList mRecommendChannelList);
     }
 
     /**

@@ -23,8 +23,8 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
@@ -32,6 +32,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -138,7 +139,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     /**
      * サムネイルを表示するかどうか.
      */
-    private boolean isShowThumb;
+    private boolean mIsShowThumb;
     /**
      * クリップボタンサイズ.
      */
@@ -150,11 +151,23 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     /**
      * ダウンロード禁止判定フラグ.
      */
-    private boolean isDownloadStop = false;
+    private boolean mIsDownloadStop = false;
     /**
      * 設定済みViewHolder.
      */
     private List<MyViewHolder> mMyViewHolder = new ArrayList<>();
+    /**
+     * 放送中または未放送viewHolder Tag.
+     */
+    private final static int VIEW_HOLDER_TAG_ONE = 1;
+    /**
+     * 関連VOD(なし)viewHolder Tag.
+     */
+    private final static int VIEW_HOLDER_TAG_ZERO = 0;
+    /**
+     * 日付比較リザルト.
+     */
+    private final static int DATE_COMPARE_TO_LOW = -1;
     /**
      * コンストラクタ.
      *
@@ -265,7 +278,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         for (MyViewHolder viewHolder :mMyViewHolder) {
             int chNo = viewHolder.chNo;
             for (ChannelInfo channelInfo : mProgramList) {
-                if (chNo == channelInfo.getChNo() && channelInfo.getSchedules() == null) {
+                if (chNo == channelInfo.getChannelNo() && channelInfo.getSchedules() == null) {
                     chNoList.add(chNo);
                 }
             }
@@ -368,7 +381,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
         ChannelInfo itemChannel = mProgramList.get(position);
-        holder.chNo = itemChannel.getChNo();
+        holder.chNo = itemChannel.getChannelNo();
         DTVTLogger.debug("mProgramList size ===============>" + mProgramList.size());
         DTVTLogger.debug("onBindViewHolder position===============>" + position + " ChNo:" + holder.chNo);
         DTVTLogger.debug("channel Name ===============>" + itemChannel.getTitle());
@@ -452,7 +465,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             endDate = format.parse(end);
             curDate = format.parse(mCurDate);
             startData = format.parse(start);
-        } catch (Exception e) {
+        } catch (ParseException e) {
             DTVTLogger.debug(e);
         }
         float marginTop = itemSchedule.getMarginTop();
@@ -463,17 +476,17 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
 
         String contentType = itemSchedule.getContentType();
         //放送済み
-        if (endDate.compareTo(curDate) == -1) {
+        if (endDate.compareTo(curDate) == DATE_COMPARE_TO_LOW) {
             watchByContentType(itemViewHolder, contentType);
         } else {
             //放送中
-            if (startData.compareTo(curDate) == -1) {
+            if (startData.compareTo(curDate) == DATE_COMPARE_TO_LOW) {
                 itemViewHolder.mView.setBackgroundResource(R.drawable.program_playing_gray);
             } else {
                 //未放送
                 itemViewHolder.mView.setBackgroundResource(R.drawable.program_start_gray);
             }
-            itemViewHolder.mView.setTag(1);
+            itemViewHolder.mView.setTag(VIEW_HOLDER_TAG_ONE);
         }
 
         boolean isClipHide = false;
@@ -489,10 +502,10 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             itemViewHolder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View view) {
-                    if ((int) view.getTag() == 1) {
+                    if ((int) view.getTag() == VIEW_HOLDER_TAG_ONE) {
                         Intent intent = new Intent();
                         intent.setClass(mContext, ContentDetailActivity.class);
-                        intent.putExtra(DTVTConstants.SOURCE_SCREEN, ((TvProgramListActivity) mContext).getComponentName().getClassName());
+                        intent.putExtra(DtvtConstants.SOURCE_SCREEN, ((TvProgramListActivity) mContext).getComponentName().getClassName());
                         OtherContentsDetailData detailData = getOtherContentsDetailData(itemSchedule, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
                         intent.putExtra(detailData.getRecommendFlg(), detailData);
                         TvProgramListActivity tvProgramListActivity = (TvProgramListActivity) mContext;
@@ -517,7 +530,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         //見逃し(あり)
         if (MISS_CUT_OUT.equals(contentType) || MISS_COMPLETE.equals(contentType)) {
             itemViewHolder.mView.setBackgroundResource(R.drawable.program_missed_gray);
-            itemViewHolder.mView.setTag(1);
+            itemViewHolder.mView.setTag(VIEW_HOLDER_TAG_ONE);
         } else {
         //関連VOD(なし)
             itemViewHolder.mView.setBackgroundResource(R.drawable.program_end_gray);
@@ -525,7 +538,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             itemViewHolder.mContent.setTextColor(ContextCompat.getColor(mContext, R.color.tv_program_miss_vod));
             itemViewHolder.mDetail.setTextColor(ContextCompat.getColor(mContext, R.color.tv_program_miss_vod));
             itemViewHolder.mThumbnail.setImageAlpha(128);
-            itemViewHolder.mView.setTag(0);
+            itemViewHolder.mView.setTag(VIEW_HOLDER_TAG_ZERO);
         }
     }
 
@@ -603,7 +616,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             if (mEpiSpace <= ((TvProgramListActivity) mContext).dip2px(EPI_MARGIN_TOP_THUMB)) {
                 itemViewHolder.mDetail.setVisibility(View.INVISIBLE);
             } else {
-                if (!isShowThumb) {
+                if (!mIsShowThumb) {
                     mEpiSpace = mEpiSpace - ((TvProgramListActivity) mContext).dip2px(EPI_MARGIN_TOP_THUMB) + epiLineHeight;
                 } else {
                     if ((mScreenWidth - ((TvProgramListActivity) mContext).dip2px(TIME_LINE_WIDTH)) / 2 < CHANNEL_WIDTH) {
@@ -693,12 +706,12 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     //サムネイル表示
                     int mThumbEpiSpace = availableSpace - titleSpace - ((TvProgramListActivity) mContext).dip2px(THUMB_MARGIN_TOP_TITLE);
                     mEpiSpace = mThumbEpiSpace - thumbnailHeight;
-                    isShowThumb = true;
+                    mIsShowThumb = true;
                 } else {
                     //サムネイル非表示
                     itemViewHolder.mThumbnail.setVisibility(View.GONE);
                     mEpiSpace = availableSpace - titleSpace - ((TvProgramListActivity) mContext).dip2px(THUMB_MARGIN_TOP_TITLE);
-                    isShowThumb = false;
+                    mIsShowThumb = false;
                 }
             }
         }
@@ -775,7 +788,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                                 itemViewHolder.mThumbnail.setImageResource(R.mipmap.error_ch_mini);
                                 //URLによって、サムネイル取得
                                 String thumbnailURL = itemSchedule.getImageUrl();
-                                if (!TextUtils.isEmpty(thumbnailURL) && !isDownloadStop) {
+                                if (!TextUtils.isEmpty(thumbnailURL) && !mIsDownloadStop) {
                                     itemViewHolder.mThumbnail.setTag(thumbnailURL);
                                     Bitmap bitmap = mThumbnailProvider.getThumbnailImage(itemViewHolder.mThumbnail, thumbnailURL);
                                     if (bitmap != null) {
@@ -854,7 +867,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      */
     public void stopConnect() {
         DTVTLogger.start();
-        isDownloadStop = true;
+        mIsDownloadStop = true;
         if (mThumbnailProvider != null) {
             mThumbnailProvider.stopConnect();
         }
@@ -864,7 +877,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * サムネイル取得処理を再度可能な状態にする.
      */
     public void enableConnect() {
-        isDownloadStop = false;
+        mIsDownloadStop = false;
     }
 
     /**
@@ -879,11 +892,11 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 ChannelInfo newChannelInfo = newProgramList.get(i);
                 for (int j = 0; j < mProgramList.size(); j++) {
                     ChannelInfo mChannelInfo = mProgramList.get(j);
-                    if (newChannelInfo.getChNo() == mChannelInfo.getChNo()) {
+                    if (newChannelInfo.getChannelNo() == mChannelInfo.getChannelNo()) {
                         if (newChannelInfo.getSchedules() != null && newChannelInfo.getSchedules().size() > 0) {
                             mProgramList.set(j, newChannelInfo);
                             for (MyViewHolder myViewHolder : mMyViewHolder) {
-                                if (newChannelInfo.getChNo() == myViewHolder.chNo) {
+                                if (newChannelInfo.getChannelNo() == myViewHolder.chNo) {
                                     setItemView(newProgramList.get(i).getSchedules(), myViewHolder);
                                 }
                             }

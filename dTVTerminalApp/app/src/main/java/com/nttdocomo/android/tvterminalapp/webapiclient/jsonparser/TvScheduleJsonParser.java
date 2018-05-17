@@ -9,7 +9,7 @@ import android.os.AsyncTask;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClient;
@@ -128,7 +128,7 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
                                 stringBuffer.append(puinfBuffer);
 
                                 //日付項目チェック
-                                if (DBUtils.isDateItem(puinfBuffer)) {
+                                if (DataBaseUtils.isDateItem(puinfBuffer)) {
                                     //日付なので変換して格納する
                                     String dateBuffer = DateUtils.formatEpochToString(
                                             StringUtils.changeString2Long(puinfObj.getString(
@@ -140,7 +140,7 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
                                     tsListMap.put(stringBuffer.toString(), para);
                                 }
                             }
-                        } else if (DBUtils.isDateItem(listBuffer)) {
+                        } else if (DataBaseUtils.isDateItem(listBuffer)) {
                             // DATE_PARAに含まれるのは日付なので、エポック秒となる。変換して格納する
                             String dateBuffer = DateUtils.formatEpochToString(
                                     StringUtils.changeString2Long(jsonObject.getString(listBuffer)));

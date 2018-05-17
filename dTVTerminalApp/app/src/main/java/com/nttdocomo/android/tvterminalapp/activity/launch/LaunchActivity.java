@@ -15,6 +15,7 @@ import com.nttdocomo.android.tvterminalapp.activity.common.ProcessSettingFile;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.bs.DlnaBsChListInfo;
 import com.nttdocomo.android.tvterminalapp.jni.bs.DlnaBsChListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
@@ -40,7 +41,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     /**
      * 初回起動判定Flag.
      */
-    private static boolean mIsFirstRun = true;
+    private static boolean sIsFirstRun = true;
     /**
      * 次のアクティビティ情報.
      */
@@ -94,7 +95,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
         //アプリ起動時のサービストークン削除を行う
         SharedPreferencesUtils.deleteOneTimeTokenData(getApplicationContext());
-
+        DlnaManager.shared().launch(this);
         boolean isDlnaOk = startDlna();
         if (!isDlnaOk) {
             DTVTLogger.debug("BaseActivity");
@@ -102,7 +103,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
              * to do: DLNA起動失敗の場合、仕様はないので、ここで将来対応
              */
         }
-        mIsFirstRun = !SharedPreferencesUtils.getSharedPreferencesIsDisplayedTutorial(this);
+        sIsFirstRun = !SharedPreferencesUtils.getSharedPreferencesIsDisplayedTutorial(this);
 
         //次に遷移する画面を選択する
         selectScreenTransition();
@@ -217,7 +218,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     }
 
     @Override
-    public String getScreenID() {
+    public String getScreenId() {
         return getString(R.string.str_launch_title);
     }
 
@@ -244,7 +245,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     private void selectScreenTransition() {
         DTVTLogger.start();
 
-        if (mIsFirstRun) {
+        if (sIsFirstRun) {
             //チュートリアル画面に遷移
             mNextActivity = new Intent(getApplicationContext(), TutorialActivity.class);
 
@@ -263,9 +264,9 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
             DTVTLogger.debug("ParingNG Start HomeActivity");
         } else {
             // STB選択画面へ遷移
-            mNextActivity = new Intent(getApplicationContext(), STBSelectActivity.class);
-            mNextActivity.putExtra(STBSelectActivity.FROM_WHERE, STBSelectActivity.STBSelectFromMode.STBSelectFromMode_Launch.ordinal());
-            DTVTLogger.debug("Start STBSelectActivity");
+            mNextActivity = new Intent(getApplicationContext(), StbSelectActivity.class);
+            mNextActivity.putExtra(StbSelectActivity.FROM_WHERE, StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal());
+            DTVTLogger.debug("Start StbSelectActivity");
         }
 
         DTVTLogger.end();
@@ -372,17 +373,8 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         //元の処理は使用しない事を明示する為にコメント化
         //super.checkSettingFile();
 
-        //ダイアログ非表示スイッチ・ダイアログは表示
-        boolean noDialogSw = false;
-
-        //スプラッシュ画面かどうかの確認
-        if (this instanceof LaunchActivity) {
-            //スプラッシュ画面ならばダイアログは表示しない
-            noDialogSw = true;
-        }
-
         //アプリ起動時か、BG→FG遷移時は設定ファイルの処理を呼び出す
-        mCheckSetting = new ProcessSettingFile(this, noDialogSw);
+        mCheckSetting = new ProcessSettingFile(this, true);
 
         //ファイルのチェックを開始する
         mCheckSetting.controlAtSettingFile(

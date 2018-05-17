@@ -8,7 +8,7 @@ import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChannelList;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
 import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendWebXmlParser;
@@ -27,7 +27,7 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
     /**
      * 先頭スイッチ.
      */
-    private boolean mfirstParmater = false;
+    private boolean mFirstParameter = false;
     /**
      * コールバック.
      */
@@ -86,9 +86,9 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
     public interface RecommendCallback {
         /**
          * コールバック.
-         * @param mRecommendChList mRecommendChList
+         * @param mRecommendChannelList mRecommendChannelList
          */
-        void recommendCallback(RecommendChList mRecommendChList);
+        void recommendCallback(RecommendChannelList mRecommendChannelList);
     }
 
     /**
@@ -116,7 +116,7 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
         LinkedHashMap queryItems = new LinkedHashMap();
 
         //先頭パラメータスイッチをONにする
-        mfirstParmater = true;
+        mFirstParameter = true;
 
         //パラメータの追加
         itemAdder(queryItems, SERVICE_ID, recommendRequestData.serviceId);
@@ -162,12 +162,12 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
         }
 
         String destKeyname;
-        if (mfirstParmater) {
+        if (mFirstParameter) {
             //先頭ならば前に？を付加
             destKeyname = StringUtils.getConnectStrings("?", keyname);
 
             //先頭0は終わるのでフラグを更新
-            mfirstParmater = false;
+            mFirstParameter = false;
         } else {
             //2番目以降ならば前に&を付加
             destKeyname = StringUtils.getConnectStrings("&", keyname);

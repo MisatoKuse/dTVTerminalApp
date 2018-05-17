@@ -7,9 +7,9 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
-import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.struct.ResultType;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
@@ -161,6 +161,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
     /**
      * TODO :検索中止処理開始用.
+     * 検索中止処理.
      */
     public void cancelSearch() {
         setSearchState(SearchState.canceled);
@@ -209,7 +210,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             //画面表示用データ設定
             contentsData.setContentsId(ci.mContentsId);
             contentsData.setServiceId(String.valueOf(ci.mServiceId));
-            contentsData.setThumURL(ci.mContentPictureUrl2);
+            contentsData.setThumURL(ci.mContentPictureUrl1);
             contentsData.setTitle(ci.mTitle);
             contentsData.setRecommendOrder(ci.mRank);
             contentsData.setMobileViewingFlg(ci.mMobileViewingFlg);

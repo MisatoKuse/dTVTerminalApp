@@ -11,9 +11,9 @@ import android.database.sqlite.SQLiteException;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WeeklyRankListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
 import java.util.HashMap;
@@ -49,13 +49,13 @@ public class WeeklyRankInsertDataManager {
     public void insertWeeklyRankInsertList(final WeeklyRankList weeklyRankList) {
 
         //取得データが空の場合は更新しないで、有効期限をクリアする
-        if (weeklyRankList == null || weeklyRankList.getWrList() == null
-                || weeklyRankList.getWrList().size() < 1) {
+        if (weeklyRankList == null || weeklyRankList.getWeeklyRankList() == null
+                || weeklyRankList.getWeeklyRankList().size() < 1) {
             DateUtils.clearLastProgramDate(mContext, DateUtils.WEEKLY_RANK_LAST_INSERT);
             return;
         } else {
             //HashMapが空の時も有効期限をクリアして何もしない
-            HashMap<String, String> hashMap = (HashMap<String, String>) weeklyRankList.getWrList().get(0);
+            HashMap<String, String> hashMap = (HashMap<String, String>) weeklyRankList.getWeeklyRankList().get(0);
             if (hashMap.isEmpty()) {
                 DateUtils.clearLastProgramDate(mContext, DateUtils.WEEKLY_RANK_LAST_INSERT);
                 return;
@@ -64,13 +64,13 @@ public class WeeklyRankInsertDataManager {
 
         try {
             //各種オブジェクト作成
-            DBHelper weeklyRankListDBHelper = new DBHelper(mContext);
-            DataBaseManager.initializeInstance(weeklyRankListDBHelper);
+            DataBaseHelper weeklyRankListDataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(weeklyRankListDataBaseHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
             WeeklyRankListDao weeklyRankListDao = new WeeklyRankListDao(database);
             @SuppressWarnings("unchecked")
-            List<HashMap<String, String>> hashMaps = weeklyRankList.getWrList();
+            List<HashMap<String, String>> hashMaps = weeklyRankList.getWeeklyRankList();
 
             //DB保存前に前回取得したデータは全消去する
             weeklyRankListDao.delete();
@@ -83,7 +83,7 @@ public class WeeklyRankInsertDataManager {
                     Map.Entry entry = (Map.Entry) entries.next();
                     String keyName = (String) entry.getKey();
                     String valName = (String) entry.getValue();
-                    values.put(DBUtils.fourKFlgConversion(keyName), valName);
+                    values.put(DataBaseUtils.fourKFlgConversion(keyName), valName);
                 }
                 weeklyRankListDao.insert(values);
             }

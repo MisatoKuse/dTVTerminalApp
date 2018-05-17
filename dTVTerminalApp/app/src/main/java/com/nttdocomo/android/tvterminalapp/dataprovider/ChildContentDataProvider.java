@@ -7,8 +7,8 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 import android.content.Context;
 import android.support.annotation.Nullable;
 
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChildContentListGetResponse;
@@ -97,12 +97,12 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
     public void getChildContentList(final String crid, final int offset, final String dispType) {
         if (!mIsCancel) {
             if (mRequiredClipKeyList) {
-                getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+                getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
                 mRequiredClipKeyList = false;
             }
 
             String filter = WebApiBasePlala.FILTER_RELEASE;
-            if (dispType.equals(DTVTConstants.DISP_TYPE_SERIES_SVOD)) {
+            if (dispType.equals(DtvtConstants.DISP_TYPE_SERIES_SVOD)) {
                 filter = WebApiBasePlala.FILTER_RELEASE_SSVOD;
             }
             UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);

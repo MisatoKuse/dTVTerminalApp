@@ -12,14 +12,14 @@ import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RentalListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChListResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChannelListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
@@ -64,8 +64,8 @@ public class RentalListInsertDataManager {
 
         try {
             //各種オブジェクト作成
-            DBHelper rentalListDBHelper = new DBHelper(mContext);
-            DataBaseManager.initializeInstance(rentalListDBHelper);
+            DataBaseHelper rentalListDataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(rentalListDataBaseHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
             RentalListDao rentalListDao = new RentalListDao(database);
@@ -84,7 +84,7 @@ public class RentalListInsertDataManager {
                 for (String item:vodMetaFullData.getRootPara()) {
                     //データがString型だけではなくなったので、変換を行ってから蓄積する
                     String valName = StringUtils.changeObject2String(vodMetaFullData.getMember(item));
-                    values.put(DBUtils.fourKFlgConversion(item), valName);
+                    values.put(DataBaseUtils.fourKFlgConversion(item), valName);
                 }
                 rentalListDao.insert(values);
             }
@@ -96,12 +96,12 @@ public class RentalListInsertDataManager {
                 String keyName = JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE
                         + JsonConstants.META_RESPONSE_LICENSE_ID;
                 String valName = StringUtils.changeObject2String(activeData.getLicenseId());
-                activeValues.put(DBUtils.fourKFlgConversion(keyName), valName);
+                activeValues.put(DataBaseUtils.fourKFlgConversion(keyName), valName);
 
                 String keyName2 = JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE
                         + JsonConstants.META_RESPONSE_VAILD_END_DATE;
                 String valName2 = StringUtils.changeObject2String(activeData.getValidEndDate());
-                activeValues.put(DBUtils.fourKFlgConversion(keyName2), valName2);
+                activeValues.put(DataBaseUtils.fourKFlgConversion(keyName2), valName2);
 
                 rentalListDao.insertActiveList(activeValues);
             }
@@ -121,11 +121,11 @@ public class RentalListInsertDataManager {
      * @param rentalChList 購入済みCH一覧
      */
     @SuppressWarnings("OverlyLongMethod")
-    public void insertChRentalListInsertList(final PurchasedChListResponse rentalChList) {
+    public void insertChRentalListInsertList(final PurchasedChannelListResponse rentalChList) {
         try {
             //各種オブジェクト作成
-            DBHelper rentalListDBHelper = new DBHelper(mContext);
-            DataBaseManager.initializeInstance(rentalListDBHelper);
+            DataBaseHelper rentalListDataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(rentalListDataBaseHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
             RentalListDao rentalListDao = new RentalListDao(database);
@@ -150,9 +150,9 @@ public class RentalListInsertDataManager {
                     String keyName = (String) entry.getKey();
                     String valName = (String) entry.getValue();
                     if (JsonConstants.META_RESPONSE_AVAIL_START_DATE.equals(keyName)) {
-                        values.put(DBConstants.UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
+                        values.put(DataBaseConstants.UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
                     }
-                    chValues.put(DBUtils.fourKFlgConversion(keyName), valName);
+                    chValues.put(DataBaseUtils.fourKFlgConversion(keyName), valName);
                 }
                 rentalListDao.insertCh(chValues);
             }
@@ -165,12 +165,12 @@ public class RentalListInsertDataManager {
                 String keyName = JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE
                         + JsonConstants.META_RESPONSE_LICENSE_ID;
                 String valName = StringUtils.changeObject2String(activeData.getLicenseId());
-                activeValues.put(DBUtils.fourKFlgConversion(keyName), valName);
+                activeValues.put(DataBaseUtils.fourKFlgConversion(keyName), valName);
 
                 String keyName2 = JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE
                         + JsonConstants.META_RESPONSE_VAILD_END_DATE;
                 String valName2 = StringUtils.changeObject2String(activeData.getValidEndDate());
-                activeValues.put(DBUtils.fourKFlgConversion(keyName2), valName2);
+                activeValues.put(DataBaseUtils.fourKFlgConversion(keyName2), valName2);
 
                 rentalListDao.insertChActiveList(activeValues);
             }

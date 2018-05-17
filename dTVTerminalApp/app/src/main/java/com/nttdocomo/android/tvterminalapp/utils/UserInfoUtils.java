@@ -11,7 +11,6 @@ import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist.AccountList;
-import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
 
 import java.util.ArrayList;
@@ -36,6 +35,24 @@ public class UserInfoUtils {
      * 契約状態 ひかり契約.
      */
     public static final String CONTRACT_INFO_H4D = "002";
+
+    /**
+     * ペアリング状態.
+     */
+    public enum PairingState {
+        /**
+         * 宅内.
+         */
+        INSIDE_HOUSE,
+        /**
+         * 宅外.
+         */
+        OUTSIDE_HOUSE,
+        /**
+         * 未ペアリング.
+         */
+        NO_PAIRING
+    }
 
     /**
      * レコメンドサーバ用に、ユーザ年齢情報を＋3して返却する.
@@ -195,7 +212,7 @@ public class UserInfoUtils {
             }
         }
         //年齢情報が数字ならINTに変換
-        if (DBUtils.isNumber(age)) {
+        if (DataBaseUtils.isNumber(age)) {
             intAge = Integer.parseInt(age);
         }
         return intAge;
@@ -230,7 +247,7 @@ public class UserInfoUtils {
                 // 契約済の場合はペアリング状態によって変わる
             } else {
                 // ペアリング済みかどうか.
-                if (isPairing(context)) {
+                if (SharedPreferencesUtils.getSharedPreferencesDecisionParingSettled(context)) {
                     //契約済みかつペアリング済み
                     param = UserState.CONTRACT_OK_PARING_OK;
                 } else {
@@ -247,11 +264,18 @@ public class UserInfoUtils {
      * ペアリング済みかどうか判定.
      *
      * @param context コンテキストファイル
-     * @return ペアリング済みかどうか(true ペアリング済み, false 未ペアリング)
+     * @param stbStatus STB接続状態
+     * @return ペアリング状態
      */
-    public static boolean isPairing(final Context context) {
-        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(context);
-        return !(dlnaDmsItem == null || dlnaDmsItem.mControlUrl.isEmpty());
+    public static PairingState getPairingState(final Context context, final boolean stbStatus) {
+        boolean isParingSettled = SharedPreferencesUtils.getSharedPreferencesDecisionParingSettled(context);
+        if (stbStatus && isParingSettled) {
+            return PairingState.INSIDE_HOUSE;
+        } else if (!stbStatus && isParingSettled) {
+            return PairingState.OUTSIDE_HOUSE;
+        } else {
+            return PairingState.NO_PAIRING;
+        }
     }
 
     /**

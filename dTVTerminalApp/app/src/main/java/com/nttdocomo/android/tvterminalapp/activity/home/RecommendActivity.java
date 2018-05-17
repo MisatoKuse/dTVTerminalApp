@@ -15,13 +15,12 @@ import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecommendDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
@@ -131,7 +130,7 @@ public class RecommendActivity extends BaseActivity implements
         setTitleText(getString(R.string.recommend_list_title));
         Intent intent = getIntent();
         int startPageNo = intent.getIntExtra(RECOMMEND_LIST_START_PAGE, RECOMMEND_LIST_PAGE_NO_OF_TV);
-        mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
+        mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
         sRecommendViewPager = null;
         if (mIsMenuLaunch) {
             startPageNo = RECOMMEND_LIST_PAGE_NO_OF_TV;
@@ -221,7 +220,7 @@ public class RecommendActivity extends BaseActivity implements
     private void initRecommendListView() {
 
         mNoDataMessage = findViewById(R.id.recommend_list_no_items);
-        initTabVIew();
+        mTabLayout = initTabData(mTabLayout, mTabNames);
         if (null != sRecommendViewPager) {
             return;
         }
@@ -244,24 +243,6 @@ public class RecommendActivity extends BaseActivity implements
             }
         });
     }
-
-    /**
-     * tabの関連Viewを初期化.
-     */
-    private void initTabVIew() {
-        DTVTLogger.start();
-        if (mTabLayout == null) {
-            mTabLayout = new TabItemLayout(this);
-            mTabLayout.setTabClickListener(this);
-            mTabLayout.initTabView(mTabNames, TabItemLayout.ActivityType.RECOMMEND_LIST_ACTIVITY);
-            RelativeLayout tabRelativeLayout = findViewById(R.id.rl_recommend_tab);
-            tabRelativeLayout.addView(mTabLayout);
-        } else {
-            mTabLayout.resetTabView(mTabNames);
-        }
-        DTVTLogger.end();
-    }
-
     @Override
     public void onClickTab(final int position) {
         DTVTLogger.start("position = " + position);
@@ -319,7 +300,7 @@ public class RecommendActivity extends BaseActivity implements
                 baseFragment.mData.add(info);
             }
 
-            DTVTLogger.debug("baseFragment.mData.size = " + baseFragment.mData.size());
+            DTVTLogger.debug("baseFragment.mData.mSize = " + baseFragment.mData.size());
 
             // フラグメントの更新
             baseFragment.notifyDataSetChanged(sRecommendViewPager.getCurrentItem());
@@ -453,7 +434,7 @@ public class RecommendActivity extends BaseActivity implements
     private boolean showErrorMessage(final int tabFlg) {
         boolean isError = false;
         ErrorState errorState = mRecommendDataProvider.getError(tabFlg);
-        if (errorState != null && errorState.getErrorType() != DTVTConstants.ERROR_TYPE.SUCCESS) {
+        if (errorState != null && errorState.getErrorType() != DtvtConstants.ErrorType.SUCCESS) {
             String message = errorState.getErrorMessage();
             if (!TextUtils.isEmpty(message)) {
                 isError = true;

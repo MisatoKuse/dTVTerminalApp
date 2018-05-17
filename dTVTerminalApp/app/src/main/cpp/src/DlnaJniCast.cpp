@@ -58,7 +58,7 @@ namespace dtvt {
      */
     extern "C" jboolean JNICALL
     Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterface_browseRecVideoDms(JNIEnv *env, jobject instance,
-                                                                    jlong thiz, jstring ctl_) {
+                                                                    jlong thiz, jstring ctl_, jint imageQuality) {
         if (NULL == ctl_) {
             return JNI_FALSE;
         }
@@ -70,7 +70,7 @@ namespace dtvt {
             return JNI_FALSE;
         }
 
-        bool ret = dlnaPtr->browseRecVideoListDms(std::string((char *) udn));
+        bool ret = dlnaPtr->browseRecVideoListDms(std::string((char *) udn), imageQuality);
         env->ReleaseStringUTFChars(ctl_, (const char *) udn);
 
         return ret;
@@ -81,7 +81,7 @@ namespace dtvt {
      */
     extern "C" jboolean JNICALL
     Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterface_browseBsChListDms(JNIEnv *env, jobject instance,
-                                                                                 jlong thiz, jstring ctl_) {
+                                                                                 jlong thiz, jstring ctl_, jint imageQuality) {
         if (NULL == ctl_) {
             return JNI_FALSE;
         }
@@ -93,7 +93,7 @@ namespace dtvt {
             return JNI_FALSE;
         }
 
-        bool ret = dlnaPtr->browseBsChListDms(std::string((char *) udn));
+        bool ret = dlnaPtr->browseBsChListDms(std::string((char *) udn), imageQuality);
         env->ReleaseStringUTFChars(ctl_, (const char *) udn);
 
         return ret;
@@ -101,7 +101,7 @@ namespace dtvt {
 
     extern "C" jboolean JNICALL
     Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterface_browseTerChListDms(JNIEnv *env, jobject instance,
-                                                                                 jlong thiz, jstring ctl_) {
+                                                                                 jlong thiz, jstring ctl_, jint imageQuality) {
         if (NULL == ctl_) {
             return JNI_FALSE;
         }
@@ -113,7 +113,7 @@ namespace dtvt {
             return JNI_FALSE;
         }
 
-        bool ret = dlnaPtr->browseTerChListDms(std::string((char *) udn));
+        bool ret = dlnaPtr->browseTerChListDms(std::string((char *) udn), imageQuality);
         env->ReleaseStringUTFChars(ctl_, (const char *) udn);
 
         return ret;
@@ -121,7 +121,7 @@ namespace dtvt {
 
     extern "C" jboolean JNICALL
     Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterface_browseHikariChListDms(JNIEnv *env, jobject instance,
-                                                                                 jlong thiz, jstring ctl_) {
+                                                                                 jlong thiz, jstring ctl_, jint imageQuality) {
         if (NULL == ctl_) {
             return JNI_FALSE;
         }
@@ -133,7 +133,7 @@ namespace dtvt {
             return JNI_FALSE;
         }
 
-        bool ret = dlnaPtr->browseHikariChListDms(std::string((char *) udn));
+        bool ret = dlnaPtr->browseHikariChListDms(std::string((char *) udn), imageQuality);
         env->ReleaseStringUTFChars(ctl_, (const char *) udn);
 
         return ret;

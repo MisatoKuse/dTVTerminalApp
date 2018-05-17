@@ -15,45 +15,45 @@ import java.util.List;
  */
 public class WeeklyRankList {
     /**週間テレビランキングデータマップ.*/
-    private HashMap<String, String> mWrMap = new HashMap<>();
+    private HashMap<String, String> mWeeklyRankMap = new HashMap<>();
     /**週間テレビランキングデータ.*/
-    private List<HashMap<String, String>> mWrList = new ArrayList<>();
+    private List<HashMap<String, String>> mWeeklyRankList = new ArrayList<>();
 
     /**
      * 拡張情報.
      **/
-    private Bundle extraData = null;
+    private Bundle mExtraData = null;
 
     /**
      * 週間テレビランキングデータマップ取得.
      * @return 週間テレビランキングデータマップ
      */
-    public HashMap getWrMap() {
-        return mWrMap;
+    public HashMap getWeeklyRankMap() {
+        return mWeeklyRankMap;
     }
 
     /**
      * 週間テレビランキングデータマップ設定.
      * @param wrMap 週間テレビランキングデータマップ
      */
-    public void setWrMap(final HashMap<String, String> wrMap) {
-        this.mWrMap = wrMap;
+    public void setWeeklyRankMap(final HashMap<String, String> wrMap) {
+        this.mWeeklyRankMap = wrMap;
     }
 
     /**
      * 週間テレビランキングデータ取得.
      * @return 週間テレビランキングデータ
      */
-    public List getWrList() {
-        return mWrList;
+    public List getWeeklyRankList() {
+        return mWeeklyRankList;
     }
 
     /**
      * 週間テレビランキングデータ設定.
-     * @param wrList 週間テレビランキングデータ
+     * @param weeklyRankList 週間テレビランキングデータ
      */
-    public void setWrList(final List wrList) {
-        this.mWrList = wrList;
+    public void setWeeklyRankList(final List weeklyRankList) {
+        this.mWeeklyRankList = weeklyRankList;
     }
 
     /**
@@ -62,7 +62,7 @@ public class WeeklyRankList {
      * @param extraDataSrc 代入する拡張情報
      */
     public void setExtraData(final Bundle extraDataSrc) {
-        extraData = extraDataSrc;
+        mExtraData = extraDataSrc;
     }
 
     /**
@@ -71,6 +71,6 @@ public class WeeklyRankList {
      * @return 拡張情報
      */
     public Bundle getExtraData() {
-        return extraData;
+        return mExtraData;
     }
 }

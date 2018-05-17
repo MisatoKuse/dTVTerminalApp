@@ -9,7 +9,7 @@ import android.os.AsyncTask;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
@@ -49,7 +49,7 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
      * @param jsonStr 元のJSONデータ
      * @return リスト化データ
      */
-    private List<ChannelList> CHANNELListSender(final String jsonStr) {
+    private List<ChannelList> channelListSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         mChannelList = new ChannelList();
@@ -82,10 +82,10 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
             if (!jsonObj.isNull(JsonConstants.META_RESPONSE_PAGER)) {
                 JSONObject pager = jsonObj.getJSONObject(JsonConstants.META_RESPONSE_PAGER);
 
-                for (String PAGER_PARAMETER : PAGER_PARAMETERS) {
-                    if (!pager.isNull(PAGER_PARAMETER)) {
-                        String para = pager.getString(PAGER_PARAMETER);
-                        map.put(PAGER_PARAMETER, para);
+                for (String pagerParameter : PAGER_PARAMETERS) {
+                    if (!pager.isNull(pagerParameter)) {
+                        String para = pager.getString(pagerParameter);
+                        map.put(pagerParameter, para);
                     }
                 }
             }
@@ -113,7 +113,7 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
     @Override
     protected Object doInBackground(final Object... strings) {
         String result = (String) strings[0];
-        return CHANNELListSender(result);
+        return channelListSender(result);
     }
 
     /**
@@ -156,7 +156,7 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
                                             stringBuffer.append(chpackPara);
 
                                             //日付項目チェック
-                                            if (DBUtils.isDateItem(chpackPara)) {
+                                            if (DataBaseUtils.isDateItem(chpackPara)) {
                                                 //日付なので変換して格納する
                                                 String dateBuffer = DateUtils.formatEpochToString(
                                                         StringUtils.changeString2Long(value));
@@ -168,7 +168,7 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
                                         }
                                     }
                                 }
-                            } else if (DBUtils.isDateItem(strings)) {
+                            } else if (DataBaseUtils.isDateItem(strings)) {
                                 // DATE_PARAに含まれるのは日付なので、エポック秒となる。変換して格納する
                                 String dateBuffer = DateUtils.formatEpochToString(
                                         StringUtils.changeString2Long(jsonObject.getString(

@@ -11,8 +11,8 @@ import android.database.sqlite.SQLiteException;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,12 +46,12 @@ public class ClipKeyListDataManager {
      * @return クリップキーリスト
      */
     private synchronized List<Map<String, String>> selectClipKeyListData(
-            final ClipKeyListDao.TABLE_TYPE type, final String selection, final String[] args) {
+            final ClipKeyListDao.TableTypeEnum type, final String selection, final String[] args) {
 //        DTVTLogger.start(); //必要な時にコメントを解除して使用
 
         //データ存在チェック
         List<Map<String, String>> list = new ArrayList<>();
-        if (!DBUtils.isCachingRecord(mContext, DBUtils.getClipKeyTableName(type))) {
+        if (!DataBaseUtils.isCachingRecord(mContext, DataBaseUtils.getClipKeyTableName(type))) {
             return list;
         }
 
@@ -63,8 +63,8 @@ public class ClipKeyListDataManager {
                 JsonConstants.META_RESPONSE_TITLE_ID};
 
         //Daoクラス使用準備
-        DBHelper dbHelper = new DBHelper(mContext);
-        try (SQLiteDatabase database = dbHelper.getWritableDatabase()) {
+        DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
+        try (SQLiteDatabase database = dataBaseHelper.getWritableDatabase()) {
             ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
 
             //データ取得
@@ -82,7 +82,7 @@ public class ClipKeyListDataManager {
      * @param contentType コンテンツタイプ
      * @return Where句
      */
-    private String getSQLWhereStr(final ClipKeyListDao.CONTENT_TYPE contentType) {
+    private String getSQLWhereString(final ClipKeyListDao.ContentTypeEnum contentType) {
         StringBuilder strBuilder = new StringBuilder();
 
         switch (contentType) {
@@ -116,10 +116,10 @@ public class ClipKeyListDataManager {
      * @return クリップキーリスト
      */
     public List<Map<String, String>> selectClipKeyDbTvData(
-            final ClipKeyListDao.TABLE_TYPE tableType, final String serviceId,
+            final ClipKeyListDao.TableTypeEnum tableType, final String serviceId,
             final String eventId, final String type) {
         String[] args = {serviceId, eventId, type};
-        String selection = getSQLWhereStr(ClipKeyListDao.CONTENT_TYPE.TV);
+        String selection = getSQLWhereString(ClipKeyListDao.ContentTypeEnum.TV);
         return selectClipKeyListData(tableType, selection, args);
     }
 
@@ -131,9 +131,9 @@ public class ClipKeyListDataManager {
      * @return クリップキーリスト
      */
     public List<Map<String, String>> selectClipKeyDbDtvData(
-            final ClipKeyListDao.TABLE_TYPE tableType, final String titleId) {
+            final ClipKeyListDao.TableTypeEnum tableType, final String titleId) {
         String[] args = {titleId};
-        String selection = getSQLWhereStr(ClipKeyListDao.CONTENT_TYPE.DTV);
+        String selection = getSQLWhereString(ClipKeyListDao.ContentTypeEnum.DTV);
 
         return selectClipKeyListData(tableType, selection, args);
     }
@@ -146,9 +146,9 @@ public class ClipKeyListDataManager {
      * @return クリップキーリスト
      */
     public List<Map<String, String>> selectClipKeyDbVodData(
-            final ClipKeyListDao.TABLE_TYPE tableType, final String crid) {
+            final ClipKeyListDao.TableTypeEnum tableType, final String crid) {
         String[] args = {crid};
-        String selection = getSQLWhereStr(ClipKeyListDao.CONTENT_TYPE.VOD);
+        String selection = getSQLWhereString(ClipKeyListDao.ContentTypeEnum.VOD);
         return selectClipKeyListData(tableType, selection, args);
     }
 
@@ -159,7 +159,7 @@ public class ClipKeyListDataManager {
      * @return クリップキーリスト
      */
     public List<Map<String, String>> selectListData(
-            final ClipKeyListDao.TABLE_TYPE tableType) {
+            final ClipKeyListDao.TableTypeEnum tableType) {
         return selectClipKeyListData(tableType, null, null);
     }
 }

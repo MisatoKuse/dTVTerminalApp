@@ -140,7 +140,7 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
             mSelectList.addAll(channels);
             ChannelListAdapter mChannelListAdapter = new ChannelListAdapter(
                     this, mSelectList, R.layout.channel_list_item);
-            mChannelListAdapter.setChListDataType(ChannelListActivity.ChListDataType.CH_LIST_DATA_TYPE_HIKARI);
+            mChannelListAdapter.setChannelListDataType(ChannelListActivity.ChannelListDataType.CH_LIST_DATA_TYPE_HIKARI);
             mSelectListView.setAdapter(mChannelListAdapter);
             mChannelListAdapter.notifyDataSetChanged();
         } else {

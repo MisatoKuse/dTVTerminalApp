@@ -12,16 +12,18 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.MyChannelEditActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.MainSettingListAdapter;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
-import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.utils.MainSettingUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -32,7 +34,8 @@ import java.util.List;
 /**
  * 設定画面.
  */
-public class SettingActivity extends BaseActivity implements AdapterView.OnItemClickListener {
+public class SettingActivity extends BaseActivity implements AdapterView.OnItemClickListener,
+        DlnaManager.LocalRegisterListener {
 
     /**
      * 項目名の配列を保持.
@@ -82,29 +85,34 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
     private static final int SETTING_MENU_INDEX_FAQ = 4;
 
     /**
+     * メニュー項目index（リモート視聴設定）.
+     */
+    private static final int SETTING_MENU_INDEX_REMOTE = 5;
+
+    /**
      * メニュー項目index（アプリケーション情報）.
      */
-    private static final int SETTING_MENU_INDEX_APP_INFO = 5;
+    private static final int SETTING_MENU_INDEX_APP_INFO = 6;
 
     /**
      * メニュー項目index（ライセンス）.
      */
-    private static final int SETTING_MENU_INDEX_LICENCE = 6;
+    private static final int SETTING_MENU_INDEX_LICENCE = 7;
 
     /**
      * メニュー項目index（プライバシーポリシー）.
      */
-    private static final int SETTING_MENU_INDEX_PRIVACY_POLICY = 7;
+    private static final int SETTING_MENU_INDEX_PRIVACY_POLICY = 8;
 
     /**
      * メニュー項目index（APP）.
      */
-    private static final int SETTING_MENU_INDEX_APP_PRIVACY_POLICY = 8;
+    private static final int SETTING_MENU_INDEX_APP_PRIVACY_POLICY = 9;
 
     /**
      * メニュー項目index（利用規約）.
      */
-    private static final int SETTING_MENU_INDEX_AGREEMENT = 9;
+    private static final int SETTING_MENU_INDEX_AGREEMENT = 10;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -118,12 +126,19 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
+        DlnaManager.shared().StartDmp();
 
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
 
         //設定画面に表示するデータを設定する
         initData();
+        //ペアリング完了から遷移する場合リモート視聴設定処理を呼び出す
+        if (getIntent().getBooleanExtra(getResources().getString(R.string.main_setting_remote_confirm_message), false)) {
+            // TODO リモート視聴設定処理呼び出す;
+            setRemoteProgressVisible(View.VISIBLE);
+            getIntent().putExtra(getResources().getString(R.string.main_setting_remote_confirm_message), false);
+        }
     }
 
     @Override
@@ -139,6 +154,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         checkImageQuality();
     }
 
+    @SuppressWarnings("OverlyComplexMethod")
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         String tappedItemName = mSettingList.get(i).getText();
@@ -147,19 +163,19 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             //Dアカウント設定
             DAccountUtils.startDAccountApplication(SettingActivity.this);
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_PAIRING])) {
-            if (isSettingPossible(false)) {
+            if (isSettingPossible(false, tappedItemName)) {
                 //ペアリング設定
-                Intent intent = new Intent(getApplicationContext(), STBSelectActivity.class);
-                intent.putExtra(STBSelectActivity.FROM_WHERE, STBSelectActivity.STBSelectFromMode.STBSelectFromMode_Setting.ordinal());
+                Intent intent = new Intent(getApplicationContext(), StbSelectActivity.class);
+                intent.putExtra(StbSelectActivity.FROM_WHERE, StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Setting.ordinal());
                 startActivity(intent);
             }
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_MY_PROGRAM])) {
-            if (isSettingPossible(true)) {
+            if (isSettingPossible(true, tappedItemName)) {
                 //マイ番組表設定
                 startActivity(MyChannelEditActivity.class, null);
             }
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_QUALITY])) {
-            if (isSettingPossible(true)) {
+            if (isSettingPossible(true, tappedItemName)) {
                 //外出先視聴時の画質設定画面への遷移
                 Intent intent = new Intent(this, SettingImageQualityActivity.class);
                 intent.putExtra(getString(R.string.main_setting_quality_status), mSettingList.get(i).getStateText());
@@ -168,6 +184,11 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_FAQ])) {
             //FAQ
             startActivity(SettingMenuFaqActivity.class, null);
+        } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_REMOTE])) {
+            if (isSettingPossible(true, tappedItemName)) {
+                //ローカルレジストレーションを促すダイアログを表示
+                showRemoteConfirmDialog();
+            }
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_APP_INFO])) {
             //アプリケーション情報への遷移
             startActivity(ApplicationInfoActivity.class, null);
@@ -219,6 +240,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_MY_PROGRAM], BLANK));
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_QUALITY], imageQuality));
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_FAQ], BLANK));
+        mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_REMOTE], BLANK));
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_APP_INFO], BLANK));
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_LICENCE], BLANK));
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_PRIVACY_POLICY], BLANK));
@@ -232,7 +254,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
      * @param isDisplay 表示フラグ
      * @return 設定操作可否
      */
-    private boolean isSettingPossible(final boolean isDisplay) {
+    private boolean isSettingPossible(final boolean isDisplay, String tappedItemName) {
         UserState userState = UserInfoUtils.getUserState(this);
         if (userState.equals(UserState.LOGIN_NG)) {
             //未ログインならダイアログ表示
@@ -243,6 +265,22 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
                 //未契約ならダイアログ表示
                 settingErrorDialog(R.string.main_setting_h4d_not_signed_message);
                 return false;
+            }
+        }
+        if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_REMOTE])) {
+            UserInfoUtils.PairingState pairingState = UserInfoUtils.getPairingState(this, getStbStatus());
+            switch (pairingState) {
+                case NO_PAIRING:
+                    //未ペアリングならダイアログ表示
+                    settingErrorDialog(R.string.contents_detail_pairing_request);
+                    return false;
+                case OUTSIDE_HOUSE:
+                    //宅外ならダイアログ表示
+                    settingErrorDialog(R.string.main_setting_stb_not_connected_message);
+                    return false;
+                case INSIDE_HOUSE:
+                default:
+                    break;
             }
         }
         return true;
@@ -264,7 +302,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
      */
     private void checkIsPairing() {
         String isParing = mResources.getString(R.string.main_setting_pairing);
-        if (!UserInfoUtils.isPairing(this)) {
+        if (!SharedPreferencesUtils.getSharedPreferencesDecisionParingSettled(this)) {
             // 未ペアリング時
             isParing = mResources.getString(R.string.main_setting_not_paring);
         }
@@ -303,4 +341,70 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         }
         return super.onKeyDown(keyCode, event);
     }
+
+    /**
+     * ローカルレジストレーションを促すダイアログを表示.
+     */
+    private void showRemoteConfirmDialog() {
+        CustomDialog remoteConfirmDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+        remoteConfirmDialog.setContent(getResources().getString(R.string.main_setting_remote_confirm_message));
+        remoteConfirmDialog.setConfirmText(R.string.positive_response);
+        remoteConfirmDialog.setCancelText(R.string.negative_response);
+        remoteConfirmDialog.setOnTouchOutside(false);
+        remoteConfirmDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @Override
+            public void onOKCallback(final boolean isOK) {
+                if (isOK) {
+                    boolean result = DlnaUtils.getActivationState(SettingActivity.this);
+                    if (result) {
+                        setRemoteProgressVisible(View.VISIBLE);
+                        DlnaManager manager = DlnaManager.shared();
+                        manager.mLocalRegisterListener = SettingActivity.this;
+                        manager.StartDtcp();
+                        manager.RestartDirag();
+                        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(SettingActivity.this);
+                        manager.RequestLocalRegistration(dlnaDmsItem.mUdn);
+                    } else {
+                        showErrorDialog("アクティベーション実行失敗しました。");
+                    }
+                }
+            }
+        });
+        remoteConfirmDialog.showDialog();
+    }
+
+    @Override
+    public void onRegisterCallBack(final boolean result, final DlnaManager.LocalRegistrationErrorType errorType) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setRemoteProgressVisible(View.GONE);
+                showRegistResultDialog(result, errorType);
+            }
+        });
+    }
+
+    /**
+     * ローカルレジストレーションの処理結果.
+     *
+     * @param isSuccess true 成功 false 失敗
+     */
+    private void showRegistResultDialog(final boolean isSuccess, final DlnaManager.LocalRegistrationErrorType errorType) {
+        CustomDialog resultDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        resultDialog.setOnTouchOutside(false);
+        if (isSuccess) {
+            resultDialog.setContent(getString(R.string.common_text_regist_progress_done));
+        } else {
+            switch (errorType) {
+                case OVER:
+                    resultDialog.setContent(getString(R.string.common_text_regist_over_error));
+                    break;
+                default:
+                    resultDialog.setContent(getString(R.string.common_text_regist_other_error));break;
+            }
+            resultDialog.setConfirmText(R.string.common_text_close);
+        }
+        resultDialog.showDialog();
+    }
+
 }

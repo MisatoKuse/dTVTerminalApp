@@ -31,39 +31,39 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     /** コンテキスト. */
     private Context mContext = null;
     /** ダイアログ. */
-    private AlertDialog dialog = null;
+    private AlertDialog mDialog = null;
     /** ダイアログ種別. */
-    private DialogType dialogType = null;
+    private DialogType mDialogType = null;
     /** タイトル. */
-    private String title = null;
+    private String mTitle = null;
     /** 本文. */
-    private String content = null;
+    private String mContent = null;
     /** リスト表示時のリスト. */
-    private List<String> list = null;
+    private List<String> mList = null;
     /** OK押下時のコールバック. */
-    private ApiOKCallback apiOKCallback = null;
+    private ApiOKCallback mApiOKCallback = null;
     /** Cancel押下時のコールバック. */
     private ApiCancelCallback mApiCancelCallback = null;
     /** リスト押下時のコールバック. */
-    private ApiSelectCallback apiSelectCallback = null;
+    private ApiSelectCallback mApiSelectCallback = null;
     /** リストアイテム押下時のコールバック. */
-    private ApiItemSelectCallback apiItemSelectCallback = null;
+    private ApiItemSelectCallback mApiItemSelectCallback = null;
     /** ボタンタップ以外でダイアログが閉じた時のコールバック. */
     private DismissCallback mDialogDismissCallback = null;
     /** OKボタンに表示する文字列. */
-    private String confirmText = null;
+    private String mConfirmText = null;
     /** Cancelボタンに表示する文字列. */
-    private String cancelText = null;
+    private String mCancelText = null;
     /** ダイアログのcancelable設定値. */
-    private boolean cancelable = true;
+    private boolean mCancelable = true;
     /** ダイアログのOKボタン. */
     private TextView mOkButton = null;
     /** ダイアログのキャンセルボタン. */
     private TextView mCancelButton = null;
     /** OKボタンの表示/非表示判定. */
-    private int confirmVisibility = View.VISIBLE;
+    private int mConfirmVisibility = View.VISIBLE;
     /** Cancelボタンの表示/非表示判定. */
-    private int cancelVisibility = View.VISIBLE;
+    private int mCancelVisibility = View.VISIBLE;
     /** ボタンタップフラグ. **/
     private boolean mIsButtonTap = false;
 
@@ -133,7 +133,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      * @param apiOKCallback OKボタン押下のコールバック
      */
     public void setOkCallBack(final ApiOKCallback apiOKCallback) {
-        this.apiOKCallback = apiOKCallback;
+        this.mApiOKCallback = apiOKCallback;
     }
 
     /**
@@ -151,7 +151,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      * @param apiSelectCallback リスト選択時のコールバック
      */
     public void setSelectCallBack(final ApiSelectCallback apiSelectCallback) {
-        this.apiSelectCallback = apiSelectCallback;
+        this.mApiSelectCallback = apiSelectCallback;
     }
 
     /**
@@ -160,7 +160,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      * @param callback リストアイテムが選択時のコールバック
      */
     public void setItemSelectCallback(final ApiItemSelectCallback callback) {
-        this.apiItemSelectCallback = callback;
+        this.mApiItemSelectCallback = callback;
     }
 
     /**
@@ -180,7 +180,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      */
     public CustomDialog(final Context context, final DialogType dialogType) {
         this.mContext = context;
-        this.dialogType = dialogType;
+        this.mDialogType = dialogType;
     }
 
     /**
@@ -189,7 +189,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      * @param title タイトル
      */
     public void setTitle(final String title) {
-        this.title = title;
+        this.mTitle = title;
     }
 
     /**
@@ -198,7 +198,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      * @param content 本文
      */
     public void setContent(final String content) {
-        this.content = content;
+        this.mContent = content;
     }
 
     /**
@@ -207,7 +207,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      * @return ダイアログの本文
      */
     public String getContent() {
-        return content;
+        return mContent;
     }
 
     /**
@@ -216,7 +216,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      * @param list リスト
      */
     public void setSelectData(final List<String> list) {
-        this.list = list;
+        this.mList = list;
     }
 
     /**
@@ -252,67 +252,67 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      * @param dialogBuilder スクリーン
      */
     private void initView(final AlertDialog.Builder dialogBuilder) {
-        if (TextUtils.isEmpty(confirmText)) {
-            confirmText = mContext.getString(R.string.custom_dialog_ok);
+        if (TextUtils.isEmpty(mConfirmText)) {
+            mConfirmText = mContext.getString(R.string.custom_dialog_ok);
         }
-        if (TextUtils.isEmpty(cancelText)) {
-            cancelText = mContext.getString(R.string.custom_dialog_cancel);
+        if (TextUtils.isEmpty(mCancelText)) {
+            mCancelText = mContext.getString(R.string.custom_dialog_cancel);
         }
-        switch (dialogType) {
+        switch (mDialogType) {
             case ERROR:
-                dialogBuilder.setPositiveButton(confirmText, this);
+                dialogBuilder.setPositiveButton(mConfirmText, this);
                 break;
             case SELECT:
-                if (confirmVisibility == View.VISIBLE) {
-                    dialogBuilder.setPositiveButton(confirmText, this);
+                if (mConfirmVisibility == View.VISIBLE) {
+                    dialogBuilder.setPositiveButton(mConfirmText, this);
                 }
-                if (cancelVisibility == View.VISIBLE) {
-                    dialogBuilder.setNegativeButton(cancelText, this);
+                if (mCancelVisibility == View.VISIBLE) {
+                    dialogBuilder.setNegativeButton(mCancelText, this);
                 }
-                if (list != null) {
+                if (mList != null) {
                     ListView listView = new ListView(mContext);
                     ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(mContext,
-                            android.R.layout.simple_list_item_1, list);
+                            android.R.layout.simple_list_item_1, mList);
                     listView.setAdapter(arrayAdapter);
                     listView.setOnItemClickListener(this);
                     dialogBuilder.setView(listView);
                 }
                 break;
             case CONFIRM:
-                dialogBuilder.setPositiveButton(confirmText, this);
-                dialogBuilder.setNegativeButton(cancelText, this);
+                dialogBuilder.setPositiveButton(mConfirmText, this);
+                dialogBuilder.setNegativeButton(mCancelText, this);
                 break;
             default:
                 break;
         }
-        dialog = dialogBuilder.create();
-        dialog.setCancelable(cancelable);
-        dialog.setCanceledOnTouchOutside(mCancelableOutside);
-        dialog.setOnKeyListener(keyListener);
+        mDialog = dialogBuilder.create();
+        mDialog.setCancelable(mCancelable);
+        mDialog.setCanceledOnTouchOutside(mCancelableOutside);
+        mDialog.setOnKeyListener(sKeyListener);
 
-        if (TextUtils.isEmpty(title)) {
-            Window window = dialog.getWindow();
+        if (TextUtils.isEmpty(mTitle)) {
+            Window window = mDialog.getWindow();
             if (window != null) {
                 window.requestFeature(Window.FEATURE_NO_TITLE);
             }
         } else {
-            dialog.setTitle(title);
+            mDialog.setTitle(mTitle);
         }
-        if (TextUtils.isEmpty(content)) {
-            dialog.setMessage("");
+        if (TextUtils.isEmpty(mContent)) {
+            mDialog.setMessage("");
         } else {
-            dialog.setMessage(content);
+            mDialog.setMessage(mContent);
         }
 
-        dialog.show();
+        mDialog.show();
     }
 
     /**
      * ダイアログを閉じる.
      */
     public void dismissDialog() {
-        if (dialog != null) {
-            dialog.dismiss();
+        if (mDialog != null) {
+            mDialog.dismiss();
         }
     }
 
@@ -322,8 +322,8 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      */
     public boolean isShowing() {
         boolean isShow = false;
-        if (dialog != null) {
-            isShow = dialog.isShowing();
+        if (mDialog != null) {
+            isShow = mDialog.isShowing();
         }
         return isShow;
     }
@@ -333,9 +333,9 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
         switch (which) {
             case AlertDialog.BUTTON_POSITIVE:
                 dismissDialog();
-                if (apiOKCallback != null) {
+                if (mApiOKCallback != null) {
                     mIsButtonTap = true;
-                    apiOKCallback.onOKCallback(true);
+                    mApiOKCallback.onOKCallback(true);
                 }
                 break;
             case AlertDialog.BUTTON_NEGATIVE:
@@ -352,18 +352,18 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
 
     @Override
     public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-        if (apiSelectCallback != null) {
-            apiSelectCallback.onSelectCallback(position);
+        if (mApiSelectCallback != null) {
+            mApiSelectCallback.onSelectCallback(position);
         }
-        if (apiItemSelectCallback != null) {
-            apiItemSelectCallback.onItemSelectCallback(dialog, position);
+        if (mApiItemSelectCallback != null) {
+            mApiItemSelectCallback.onItemSelectCallback(mDialog, position);
         }
     }
 
     /**
      * バックキー押下時の動作.
      */
-    private static OnKeyListener keyListener = new OnKeyListener() {
+    private static OnKeyListener sKeyListener = new OnKeyListener() {
         @Override
         public boolean onKey(final DialogInterface dialog, final int keyCode, final KeyEvent event) {
             if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0
@@ -383,14 +383,14 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      */
     public void setConfirmText(final int resId) {
         Resources resources = mContext.getResources();
-        confirmText = resources.getString(resId);
+        mConfirmText = resources.getString(resId);
     }
 
     /**
      * ダイアログの本文をクリアする.
      */
     public void clearContentText() {
-        content = "";
+        mContent = "";
     }
 
     /**
@@ -400,7 +400,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      */
     public void setCancelText(final int resId) {
         Resources resources = mContext.getResources();
-        cancelText = resources.getString(resId);
+        mCancelText = resources.getString(resId);
     }
 
     /**
@@ -409,7 +409,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      * @param cancelable キャンセル可否設定
      */
     public void setCancelable(final boolean cancelable) {
-        this.cancelable = cancelable;
+        this.mCancelable = cancelable;
     }
 
     /**
@@ -418,7 +418,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      * @param visibility 表示/非表示設定
      */
     public void setConfirmVisibility(final int visibility) {
-        confirmVisibility = visibility;
+        mConfirmVisibility = visibility;
     }
 
     /**
@@ -427,7 +427,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      * @param visibility 表示/非表示設定
      */
     public void setCancelVisibility(final int visibility) {
-        cancelVisibility = visibility;
+        mCancelVisibility = visibility;
     }
 
     /**
@@ -436,8 +436,8 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      * @param text 表示文言
      */
     public void setOkButtonText(final String text) {
-        if (confirmText != null) {
-            confirmText = text;
+        if (mConfirmText != null) {
+            mConfirmText = text;
         }
     }
 
@@ -447,8 +447,8 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      * @param text 表示文言
      */
     public void setCancelButtonText(final String text) {
-        if (cancelText != null) {
-            cancelText = text;
+        if (mCancelText != null) {
+            mCancelText = text;
         }
     }
 

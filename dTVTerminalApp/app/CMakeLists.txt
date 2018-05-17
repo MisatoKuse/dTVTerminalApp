@@ -357,33 +357,36 @@ add_library(
     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaRecVideoXmlParser.cpp
     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DmsInfo.c
     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaBSDigitalXmlParser.cpp
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaXmlContainer.cpp
+
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/android_log_handler.c
+
     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/downloader.cc
     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/dmspu_cipher_file.cc
     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/DlnaDownload.cpp
     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/DlnaJniCastDl.cpp
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/android_log_handler.c
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/DlnaRemote.cpp
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/DlnaJniCastRm.cpp
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dmp_conf.c
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dmp_event_adapter.c
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dmp_ui.c
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/player.c
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dvcdsc_service.c
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dvcdsc_device_array.c
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dvcdsc_parser.c
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dmp_ui_dms_view.c
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dmp_ui_browse_view.c
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dmp_ui_metadata_view.c
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/local_registration.c
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dmp_ui_player_view.c
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/ddps/ddps.c
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/cds_browser.c
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dvcdsc_device.c
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/player_media_info.c
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dvcdsc_icon.c
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/dmp.c
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/android_log_handler.c
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaXmlContainer.cpp
+
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaManagerBridge.cpp
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaBase.cpp
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaDmsBrowse.cpp
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaRemoteConnect.cpp
+
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/Browse/browse.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/Browse/dms_info.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/Browse/soap.c
+
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DiRAG/cds_browser.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DiRAG/dmp_conf.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DiRAG/dmp_event_adapter.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DiRAG/dvcdsc_device.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DiRAG/dvcdsc_device_array.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DiRAG/dvcdsc_icon.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DiRAG/dvcdsc_parser.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DiRAG/dvcdsc_service.c
+
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/LocalRegistration/ddps/ddps.c
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/LocalRegistration/local_registration.c
+
      )
 
 target_link_libraries(

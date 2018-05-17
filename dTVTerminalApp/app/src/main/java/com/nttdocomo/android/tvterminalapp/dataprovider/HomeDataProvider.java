@@ -10,12 +10,12 @@ import android.os.Looper;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendListDataManager;
@@ -32,7 +32,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChListResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChannelListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListResponse;
@@ -43,7 +43,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -174,7 +174,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     /**
      * 購入済みCh一覧取得クラス.
      */
-    private PurchasedChListResponse mPurchasedChListResponse = null;
+    private PurchasedChannelListResponse mPurchasedChannelListResponse = null;
 
     /**
      * ロールリスト.
@@ -279,7 +279,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             setStructDB(list);
         } else {
             //ここに来てもヌルではない場合があるので、確認する
-            if(tvClipLists == null) {
+            if (tvClipLists == null) {
                 //タイムアウトならばウェイト表示を止める
                 ifTimeoutStopProgess(HomeActivity.HOME_CONTENTS_SORT_TV_CLIP);
             }
@@ -293,7 +293,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             setStructDB(list);
         } else {
             //ここに来てもヌルではない場合があるので、確認する
-            if(vodClipLists == null) {
+            if (vodClipLists == null) {
                 //タイムアウトならばウェイト表示を止める
                 ifTimeoutStopProgess(HomeActivity.HOME_CONTENTS_SORT_VOD_CLIP);
             }
@@ -308,15 +308,15 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             setStructDB(list);
         } else {
             //ここに来てもヌルではない場合があるので、確認する
-            if(tvScheduleList == null) {
+            if (tvScheduleList == null) {
                 //タイムアウトならばウェイト表示を止める
                 ifTimeoutStopProgess(HomeActivity.HOME_CONTENTS_TV_SCHEDULE);
             }
 
             //WEBAPIを取得できなかった時はDBのデータを使用
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, SELECT_TV_SCHEDULE_LIST);
-            t.start();
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, SELECT_TV_SCHEDULE_LIST);
+            dataBaseThread.start();
         }
         DTVTLogger.end();
     }
@@ -329,14 +329,14 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             setStructDB(list);
         } else {
             //ここに来てもヌルではない場合があるので、確認する
-            if(dailyRankLists == null) {
+            if (dailyRankLists == null) {
                 //タイムアウトならばウェイト表示を止める
                 ifTimeoutStopProgess(HomeActivity.HOME_CONTENTS_DAILY_RANK_LIST);
             }
 
             //WEBAPIを取得できなかった時はDBのデータを使用
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, SELECT_DAILY_RANK_LIST);
+            DataBaseThread t = new DataBaseThread(handler, this, SELECT_DAILY_RANK_LIST);
             t.start();
         }
         DTVTLogger.end();
@@ -351,15 +351,15 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             setStructDB(list);
         } else {
             //ここに来てもヌルではない場合があるので、確認する
-            if(contentsListPerGenre == null) {
+            if (contentsListPerGenre == null) {
                 //タイムアウトならばウェイト表示を止める
                 ifTimeoutStopProgess(HomeActivity.HOME_CONTENTS_LIST_PER_GENRE);
             }
 
             //WEBAPIを取得できなかった時はDBのデータを使用
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, SELECT_VIDEO_RANK_LIST);
-            t.start();
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, SELECT_VIDEO_RANK_LIST);
+            dataBaseThread.start();
         }
         DTVTLogger.end();
     }
@@ -373,15 +373,15 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             sendWatchingVideoListData(vcList);
         } else {
             //ここに来てもヌルではない場合があるので、確認する
-            if(watchListenVideoList == null) {
+            if (watchListenVideoList == null) {
                 //タイムアウトならばウェイト表示を止める
                 ifTimeoutStopProgess(HomeActivity.HOME_CONTENTS_SORT_WATCHING_VIDEO);
             }
 
             //WEBAPIを取得できなかった時はDBのデータを使用
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, SELECT_WATCH_LISTEN_VIDEO_LIST);
-            t.start();
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, SELECT_WATCH_LISTEN_VIDEO_LIST);
+            dataBaseThread.start();
         }
     }
 
@@ -397,16 +397,16 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
 
             //WEBAPIを取得できなかった時はDBのデータを使用
             Handler rentalHandler = new Handler(Looper.getMainLooper());
-            DbThread rentalThread = new DbThread(rentalHandler, this, SELECT_RENTAL_VIDEO_LIST);
+            DataBaseThread rentalThread = new DataBaseThread(rentalHandler, this, SELECT_RENTAL_VIDEO_LIST);
             rentalThread.start();
             Handler premiumHandler = new Handler(Looper.getMainLooper());
-            DbThread premiumThread = new DbThread(premiumHandler, this, SELECT_PREMIUM_VIDEO_LIST);
+            DataBaseThread premiumThread = new DataBaseThread(premiumHandler, this, SELECT_PREMIUM_VIDEO_LIST);
             premiumThread.start();
         }
     }
 
     @Override
-    public void onRentalChListJsonParsed(final PurchasedChListResponse RentalChListResponse) {
+    public void onRentalChListJsonParsed(final PurchasedChannelListResponse RentalChListResponse) {
         if (RentalChListResponse != null) {
             setStructDB(RentalChListResponse);
         } else {
@@ -420,7 +420,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         DTVTLogger.start();
 
         //ヌルならば、エラー判定を行う
-        if ( channelLists == null ) {
+        if (channelLists == null) {
             //タイムアウトならばウェイト表示を止める
             ifTimeoutStopProgess(HomeActivity.HOME_CONTENTS_SORT_CHANNEL);
         }
@@ -431,8 +431,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, SELECT_CHANNEL_LIST);
-            t.start();
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, SELECT_CHANNEL_LIST);
+            dataBaseThread.start();
         }
         //おすすめ番組は、チャンネル取得してから、再設定する
         if (mRecommendChData != null) {
@@ -449,12 +449,12 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      *
      * @param selectGetError WebClientを示す固定値。getErrorメソッドに指定する。
      */
-    private void ifTimeoutStopProgess(int selectGetError) {
+    private void ifTimeoutStopProgess(final int selectGetError) {
         //エラー情報の取得
         ErrorState errorState = getError(selectGetError);
 
         //原因がタイムアウトならばこの場でヌルを指定したコールバックを返して、ウェイト表示を終わらせる
-        if(errorState.isTimeout()) {
+        if (errorState.isTimeout()) {
             mApiDataProviderCallback.tvScheduleListCallback(null);
         }
     }
@@ -867,8 +867,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 || !NetWorkUtils.isOnline(mContext)) {
             //データをDBから取得する
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, SELECT_TV_SCHEDULE_LIST);
-            t.start();
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, SELECT_TV_SCHEDULE_LIST);
+            dataBaseThread.start();
         } else {
             if (!mIsStop) {
                 //通信クラスにデータ取得要求を出す
@@ -926,8 +926,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
             String pagerDirection = "";
 
-            mTvClipWebClient.getTvClipApi(userInfoDataProvider.getUserAge(), DTVTConstants.REQUEST_LIMIT_50,
-                    DTVTConstants.REQUEST_LIMIT_50, 1, pagerDirection, this);
+            mTvClipWebClient.getTvClipApi(userInfoDataProvider.getUserAge(), DtvtConstants.REQUEST_LIMIT_50,
+                    DtvtConstants.REQUEST_LIMIT_50, 1, pagerDirection, this);
         } else {
             DTVTLogger.error("TvClipWebClient is stopping connect");
         }
@@ -943,8 +943,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
             String pagerDirection = "";
 
-            mVodClipWebClient.getVodClipApi(userInfoDataProvider.getUserAge(), DTVTConstants.REQUEST_LIMIT_50,
-                    DTVTConstants.REQUEST_LIMIT_50, 1, pagerDirection, this);
+            mVodClipWebClient.getVodClipApi(userInfoDataProvider.getUserAge(), DtvtConstants.REQUEST_LIMIT_50,
+                    DtvtConstants.REQUEST_LIMIT_50, 1, pagerDirection, this);
         } else {
             DTVTLogger.error("VodClipWebClient is stopping connect");
         }
@@ -963,8 +963,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             //データをDBから取得する
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, SELECT_DAILY_RANK_LIST);
-            t.start();
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, SELECT_DAILY_RANK_LIST);
+            dataBaseThread.start();
         } else {
             if (!mIsStop) {
                 //通信クラスにデータ取得要求を出す
@@ -1002,8 +1002,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 || !NetWorkUtils.isOnline(mContext)) {
             //データをDBから取得する
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, SELECT_VIDEO_RANK_LIST);
-            t.start();
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, SELECT_VIDEO_RANK_LIST);
+            dataBaseThread.start();
         } else {
             if (!mIsStop) {
                 //通信クラスにデータ取得要求を出す
@@ -1032,8 +1032,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 || !NetWorkUtils.isOnline(mContext)) {
             //データをDBから取得する
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, SELECT_CHANNEL_LIST);
-            t.start();
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, SELECT_CHANNEL_LIST);
+            dataBaseThread.start();
         } else {
             //通信クラスにデータ取得要求を出す
             mChannelWebClient = new ChannelWebClient(mContext);
@@ -1054,12 +1054,12 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
 
         // クリップキー一覧を取得
         if (mRequiredClipKeyList) {
-            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
         }
 
         //視聴中ビデオ一覧のDB保存履歴と、有効期間を確認(DBにデータが不在の時もデータ再取得)
         if ((lastDate == null || lastDate.length() < 1 || dateUtils.isBeforeLimitDate(lastDate)
-                || !DBUtils.isCachingRecord(mContext, DBConstants.WATCH_LISTEN_VIDEO_TABLE_NAME))
+                || !DataBaseUtils.isCachingRecord(mContext, DataBaseConstants.WATCH_LISTEN_VIDEO_TABLE_NAME))
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
                 mWatchListenVideoWebClient = new WatchListenVideoWebClient(mContext);
@@ -1077,8 +1077,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         } else {
             //キャッシュ期限内ならDBから取得
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, SELECT_WATCH_LISTEN_VIDEO_LIST);
-            t.start();
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, SELECT_WATCH_LISTEN_VIDEO_LIST);
+            dataBaseThread.start();
         }
         DTVTLogger.end();
     }
@@ -1091,7 +1091,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         String lastDate = dateUtils.getLastDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
         // クリップキー一覧を取得
         if (mRequiredClipKeyList) {
-            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
         }
         if ((lastDate == null || lastDate.length() < 1 || dateUtils.isBeforeLimitDate(lastDate))
                 && NetWorkUtils.isOnline(mContext)) {
@@ -1104,10 +1104,10 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             }
         } else {
             Handler rentalHandler = new Handler(Looper.getMainLooper());
-            DbThread rentalThread = new DbThread(rentalHandler, this, SELECT_RENTAL_VIDEO_LIST);
+            DataBaseThread rentalThread = new DataBaseThread(rentalHandler, this, SELECT_RENTAL_VIDEO_LIST);
             rentalThread.start();
             Handler premiumHandler = new Handler(Looper.getMainLooper());
-            DbThread premiumThread = new DbThread(premiumHandler, this, SELECT_PREMIUM_VIDEO_LIST);
+            DataBaseThread premiumThread = new DataBaseThread(premiumHandler, this, SELECT_PREMIUM_VIDEO_LIST);
             premiumThread.start();
         }
     }
@@ -1187,8 +1187,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             sendTvScheduleListData(setChannelName(contentsData, mChannelList, true));
             //DB保存
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, TV_SCHEDULE_LIST);
-            t.start();
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, TV_SCHEDULE_LIST);
+            dataBaseThread.start();
         }
         DTVTLogger.end();
     }
@@ -1206,8 +1206,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             sendDailyRankListData(drList);
             //DB保存
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, DAILY_RANK_LIST);
-            t.start();
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, DAILY_RANK_LIST);
+            dataBaseThread.start();
         }
         DTVTLogger.end();
     }
@@ -1225,8 +1225,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             sendVideoRankListData(vrList);
             //DB保存
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, VIDEO_RANK_LIST);
-            t.start();
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, VIDEO_RANK_LIST);
+            dataBaseThread.start();
         }
         DTVTLogger.end();
     }
@@ -1243,8 +1243,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if (chList != null && !chList.isEmpty()) {
             //DB保存
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, CHANNEL_LIST);
-            t.start();
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, CHANNEL_LIST);
+            dataBaseThread.start();
         }
         //チャンネル情報を元にNowOnAir情報の取得を行う.
         getTvScheduleFromChInfo(mChannelList);
@@ -1287,8 +1287,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if (vcList != null && !vcList.isEmpty()) {
             //DB保存
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, WATCH_LISTEN_VIDEO_LIST);
-            t.start();
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, WATCH_LISTEN_VIDEO_LIST);
+            dataBaseThread.start();
         }
         DTVTLogger.end();
     }
@@ -1307,8 +1307,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             if (actionData != null && actionData.size() > 0 && metaData != null && metaData.size() > 0) {
                 //DB保存
                 Handler handler = new Handler(Looper.getMainLooper());
-                DbThread t = new DbThread(handler, this, RENTAL_VOD_LIST);
-                t.start();
+                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, RENTAL_VOD_LIST);
+                dataBaseThread.start();
             }
         }
         DTVTLogger.end();
@@ -1317,19 +1317,19 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     /**
      * 購入済みCh一覧データをDBに格納する.
      *
-     * @param purchasedChListResponse 購入済みCh一覧用データ
+     * @param purchasedChannelListResponse 購入済みCh一覧用データ
      */
-    private void setStructDB(final PurchasedChListResponse purchasedChListResponse) {
+    private void setStructDB(final PurchasedChannelListResponse purchasedChannelListResponse) {
         DTVTLogger.start();
-        if (purchasedChListResponse != null) {
-            mPurchasedChListResponse = purchasedChListResponse;
-            ArrayList<ActiveData> actionData = mPurchasedChListResponse.getChActiveData();
-            List<HashMap<String, String>> channelList = mPurchasedChListResponse.getChannelListData().getChannelList();
+        if (purchasedChannelListResponse != null) {
+            mPurchasedChannelListResponse = purchasedChannelListResponse;
+            ArrayList<ActiveData> actionData = mPurchasedChannelListResponse.getChActiveData();
+            List<HashMap<String, String>> channelList = mPurchasedChannelListResponse.getChannelListData().getChannelList();
             if (actionData != null && actionData.size() > 0 && channelList != null && !channelList.isEmpty()) {
                 //DB保存
                 Handler handler = new Handler(Looper.getMainLooper());
-                DbThread t = new DbThread(handler, this, RENTAL_CH_LIST);
-                t.start();
+                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, RENTAL_CH_LIST);
+                dataBaseThread.start();
             }
         }
         DTVTLogger.end();
@@ -1346,8 +1346,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if (mRoleListMetaDataList != null && mRoleListMetaDataList.size() > 0) {
             //DB保存
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, ROLE_ID_LIST);
-            t.start();
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, ROLE_ID_LIST);
+            dataBaseThread.start();
         }
         DTVTLogger.end();
     }
@@ -1366,8 +1366,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, SELECT_RECOMMEND_CHANNEL_LIST);
-            t.start();
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, SELECT_RECOMMEND_CHANNEL_LIST);
+            dataBaseThread.start();
         }
 
         DTVTLogger.end();
@@ -1391,8 +1391,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
             Handler handler = new Handler(Looper.getMainLooper());
-            DbThread t = new DbThread(handler, this, SELECT_RECOMMEND_VOD_LIST);
-            t.start();
+            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, SELECT_RECOMMEND_VOD_LIST);
+            dataBaseThread.start();
         }
         DTVTLogger.end();
     }
@@ -1482,7 +1482,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 break;
             case RENTAL_CH_LIST:
                 RentalListInsertDataManager rentalChListInsertDataManager = new RentalListInsertDataManager(mContext);
-                rentalChListInsertDataManager.insertChRentalListInsertList(mPurchasedChListResponse);
+                rentalChListInsertDataManager.insertChRentalListInsertList(mPurchasedChannelListResponse);
                 break;
             case RENTAL_VOD_LIST:
                 RentalListInsertDataManager rentalListInsertDataManager = new RentalListInsertDataManager(mContext);
@@ -1707,21 +1707,22 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 break;
             case HomeActivity.HOME_CONTENTS_LIST_PER_GENRE:
                 //ジャンル一覧のエラー情報の取得
-                if(mContentsListPerGenreWebClient != null) {
+                if (mContentsListPerGenreWebClient != null) {
                     errorState = mContentsListPerGenreWebClient.getError();
                 }
                 break;
             case HomeActivity.HOME_CONTENTS_DAILY_RANK_LIST:
                 //デイリーランキングのエラー情報の取得
-                if(mDailyRankWebClient != null) {
+                if (mDailyRankWebClient != null) {
                     errorState = mDailyRankWebClient.getError();
                 }
                 break;
             case  HomeActivity.HOME_CONTENTS_TV_SCHEDULE:
                 //番組表のエラー情報取得
-                if(mTvScheduleWebClient != null) {
+                if (mTvScheduleWebClient != null) {
                     errorState = mTvScheduleWebClient.getError();
                 }
+                break;
             default:
                 break;
         }

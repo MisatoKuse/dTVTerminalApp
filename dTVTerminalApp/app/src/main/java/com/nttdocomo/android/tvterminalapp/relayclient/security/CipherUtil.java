@@ -27,26 +27,33 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+/**
+ * 暗号化CipherUtilクラス.
+ */
 public class CipherUtil {
     /** Share Key. */
-    private static SecretKey mShareKey = null;
+    private static SecretKey sShareKey = null;
 
     /** Digest Key. */
-    private static byte[] mSecureDigest = null;
+    private static byte[] sSecureDigest = null;
 
     /** Public Key. */
-    private static RSAPublicKey mPublicKey = null;
+    private static RSAPublicKey sPublicKey = null;
 
     /** Private Key. */
-    private static RSAPrivateKey mPrivateKey = null;
+    private static RSAPrivateKey sPrivateKey = null;
 
     /** ivのサイズ. */
     private static final int IV_SIZE = 16;
+    /** LockObject.*/
+    private static final Object sLockObject = new Object();
 
-    private static final Object mLockObject = new Object();
-
+    /**
+     * 共通鍵あるかをチェック.
+     * @return true or false
+     */
     public static boolean hasShareKey() {
-        boolean result = mShareKey != null;
+        boolean result = sShareKey != null;
         DTVTLogger.warning("result = " + result);
         return result;
     }
@@ -60,36 +67,36 @@ public class CipherUtil {
     public static CipherData generatePublicKey() throws NoSuchAlgorithmException {
         byte[] module = null;
         byte[] exponent = null;
-        synchronized (mLockObject) {
-            if (mPublicKey == null) {
+        synchronized (sLockObject) {
+            if (sPublicKey == null) {
                 KeyPairGenerator keygen = KeyPairGenerator.getInstance("RSA");
                 keygen.initialize(2048);
                 KeyPair keyPair = keygen.generateKeyPair();
 
                 // 秘密キー
-                mPrivateKey = (RSAPrivateKey) keyPair.getPrivate();
+                sPrivateKey = (RSAPrivateKey) keyPair.getPrivate();
                 // 公開キー
-                mPublicKey = (RSAPublicKey) keyPair.getPublic();
+                sPublicKey = (RSAPublicKey) keyPair.getPublic();
             }
 
-            module = mPublicKey.getModulus().toByteArray();
-            exponent = mPublicKey.getPublicExponent().toByteArray();
+            module = sPublicKey.getModulus().toByteArray();
+            exponent = sPublicKey.getPublicExponent().toByteArray();
         }
         return new CipherData(module, exponent);
     }
 
     /**
      * 共通鍵を設定する.
-     * @param shareKey
+     * @param shareKey shareKey
      * @return 設定結果
      */
     public static boolean setShareKey(final byte[] shareKey) {
-        synchronized (mLockObject) {
+        synchronized (sLockObject) {
             try {
                 Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-                cipher.init(Cipher.DECRYPT_MODE, mPrivateKey);
-                mSecureDigest = cipher.doFinal(shareKey);
-                mShareKey = new SecretKeySpec(mSecureDigest, "AES");
+                cipher.init(Cipher.DECRYPT_MODE, sPrivateKey);
+                sSecureDigest = cipher.doFinal(shareKey);
+                sShareKey = new SecretKeySpec(sSecureDigest, "AES");
                 return true;
             } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | InvalidKeyException | BadPaddingException e) {
                 return false;
@@ -109,8 +116,8 @@ public class CipherUtil {
         byte[] resultByteStream = null;
         byte[] ivCode = null;
 
-        synchronized (mLockObject) {
-            if (mShareKey == null) {
+        synchronized (sLockObject) {
+            if (sShareKey == null) {
                 DTVTLogger.warning("Key has not been generated.");
                 return null;
             }
@@ -119,10 +126,12 @@ public class CipherUtil {
                 SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
                 byte[] ivSourceCode = random.generateSeed(IV_SIZE);
                 Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-                cipher.init(Cipher.ENCRYPT_MODE, mShareKey, new IvParameterSpec(ivSourceCode));
+                cipher.init(Cipher.ENCRYPT_MODE, sShareKey, new IvParameterSpec(ivSourceCode));
                 encodeByteStream = cipher.doFinal(srcDataBytes);
                 ivCode = cipher.getIV();
-            } catch (UnsupportedEncodingException | IllegalBlockSizeException | NoSuchAlgorithmException | InvalidAlgorithmParameterException | InvalidKeyException | BadPaddingException | NoSuchPaddingException e) {
+            } catch (UnsupportedEncodingException | IllegalBlockSizeException | NoSuchAlgorithmException
+                    | InvalidAlgorithmParameterException | InvalidKeyException | BadPaddingException
+                    | NoSuchPaddingException e) {
                 DTVTLogger.error(e.getMessage());
                 return null;
             }
@@ -133,6 +142,11 @@ public class CipherUtil {
         return resultByteStream;
     }
 
+    /**
+     * ディコードデータ.
+     * @param srcData 変換前srcData
+     * @return 変換後データ
+     */
     public static String decodeData(final byte[] srcData) {
         byte[] encodeByteStream = new byte[srcData.length - IV_SIZE];
         byte[] decodeByteStream;
@@ -143,24 +157,29 @@ public class CipherUtil {
 
         String decodeString = null;
         DTVTLogger.debug(" >>>");
-        synchronized (mLockObject) {
-            if (mShareKey == null) {
+        synchronized (sLockObject) {
+            if (sShareKey == null) {
                 DTVTLogger.warning("mShareKey == null");
                 return null;
             }
             try {
                 Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-                cipher.init(Cipher.DECRYPT_MODE, mShareKey, new IvParameterSpec(ivCode));
+                cipher.init(Cipher.DECRYPT_MODE, sShareKey, new IvParameterSpec(ivCode));
                 decodeByteStream = cipher.doFinal(encodeByteStream);
                 decodeString = new String(decodeByteStream, "UTF-8");
                 return decodeString;
-            } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | BadPaddingException | InvalidAlgorithmParameterException | IllegalBlockSizeException | UnsupportedEncodingException e) {
+            } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | BadPaddingException
+                    | InvalidAlgorithmParameterException | IllegalBlockSizeException | UnsupportedEncodingException e) {
                 DTVTLogger.error(e.getMessage());
                 return null;
             }
         }
     }
-
+    /**
+     * writeInt.
+     * @param value value
+     * @param writeBuffer writeBuffer
+     */
     public static void writeInt(final int value, final byte[] writeBuffer) {
         int tempValue = value;
         writeBuffer[3] = (byte) tempValue;

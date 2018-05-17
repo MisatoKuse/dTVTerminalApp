@@ -322,7 +322,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
     }
 
     @Override
-    public String getScreenID() {
+    public String getScreenId() {
         return "";
     }
 
@@ -391,10 +391,10 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
             DTVTLogger.debug("ParingNG Start HomeActivity");
         } else {
             // STB選択画面へ遷移
-            Intent intent = new Intent(getApplicationContext(), STBSelectActivity.class);
-            intent.putExtra(STBSelectActivity.FROM_WHERE, STBSelectActivity.STBSelectFromMode.STBSelectFromMode_Launch.ordinal());
+            Intent intent = new Intent(getApplicationContext(), StbSelectActivity.class);
+            intent.putExtra(StbSelectActivity.FROM_WHERE, StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal());
             startActivity(intent);
-            DTVTLogger.debug("Start STBSelectActivity");
+            DTVTLogger.debug("Start StbSelectActivity");
         }
         DTVTLogger.end();
     }

@@ -6,12 +6,10 @@ package com.nttdocomo.android.tvterminalapp.relayclient;
 
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherApi;
 import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
@@ -19,7 +17,6 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
-import java.util.Locale;
 
 /**
  * TCPクライアント.
@@ -153,7 +150,7 @@ public class TcpClient {
         return recvdata;
     }
     /**
-     * 鍵交換Socket通信のメッセージを受信し、共有鍵を設定する
+     * 鍵交換Socket通信のメッセージを受信し、共有鍵を設定する.
      *
      * @return 成功:true
      */
@@ -232,5 +229,4 @@ public class TcpClient {
         DTVTLogger.debug(" <<< result = " + result);
         return result;
     }
-    
 }

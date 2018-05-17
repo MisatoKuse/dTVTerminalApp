@@ -21,6 +21,16 @@
 #define DMS_EVENTSUB_URL ("eventSubURL")
 #define DMS_FRIENDLY_NAME_ELEMENT ("friendlyName")
 
+//STB2号機限定情報項目の追加
+#define DMS_MODEL_NAME ("modelName")
+#define DMS_MANUFACTURER ("manufacturer")
+
+//STB2号機のモデル名
+#define DMS_MODE_NAME_STB2ND ("TT01")
+//STB2号機の製造元名
+#define DMS_MANUFACTURER_STB2ND ("HUAWEI TECHNOLOGIES CO.,LTD")
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -40,6 +50,9 @@ typedef struct dms_info {
     du_uchar* udn;              // unique device name.
     du_uchar* friendly_name;    // friendly name of device.
     cds_info cds;               // information of content directory service.
+
+    du_uchar* modelName;        //モデル名
+    du_uchar* manufacture;      //製造元名
 } dms_info;
 
 extern dms_info* createDmsInfoXmlDoc(const du_uchar* xml, du_uint32 xml_len, const du_uchar* udn, const du_uchar* device_type, const du_uchar* location);

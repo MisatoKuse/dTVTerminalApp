@@ -7,18 +7,14 @@ package com.nttdocomo.android.tvterminalapp.activity.home;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Display;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -29,41 +25,41 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
-import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewAdapter;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewAdapter;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
-import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopHomeDataConnect;
-import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopUserInfoDataConnect;
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
-import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
-import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
-import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
-import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
-import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ContentsDetailDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.GenreListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.HomeDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RentalDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.GenreListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.WatchListenVideoListDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChListResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChannelListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationResultResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopHomeDataConnect;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopUserInfoDataConnect;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
+import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalChListWebClient;
 
 import java.util.ArrayList;
@@ -171,10 +167,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public final static int HOME_CONTENTS_TV_SCHEDULE =
             HOME_CONTENTS_LIST_START_INDEX + 12;
     /**
-     * アダプタ内でのリスト識別用定数.
-     */
-    private final static int HOME_CONTENTS_DISTINCTION_ADAPTER = 10;
-    /**
      * HomeDataProvider.
      */
     private HomeDataProvider mHomeDataProvider = null;
@@ -190,7 +182,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO Bundle内の"state"ではなくSharedPreferencesからペアリング状態を取得する
+
         setContentView(R.layout.home_main_layout);
         setTitleText(getString(R.string.str_app_title));
         enableHeaderBackIcon(false);
@@ -397,21 +389,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         }
     }
 
-    /**
-     * 機能
-     * コンテンツ一覧ビューを設定.
-     *
-     * @param contentsDataList コンテンツ情報
-     * @param tag              遷移先
-     */
-    private void setRecyclerView(final List<ContentsData> contentsDataList, final int tag) {
-        DTVTLogger.start();
-        String typeContentName = getContentTypeName(tag);
-        View view = mLinearLayout.getChildAt(tag);
-        view.setVisibility(View.VISIBLE);
-        TextView typeTextView = view.findViewById(R.id.home_main_item_type_tx);
+    @Override
+    protected void setCountTextView(final String typeContentName, final View view, final int tag) {
+        super.setCountTextView(typeContentName, view, tag);
         TextView countTextView = view.findViewById(R.id.home_main_item_type_tx_count);
-        ImageView rightArrowImageView = view.findViewById(R.id.home_main_item_right_arrow);
         //各一覧を遷移すること
         countTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -419,31 +400,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 startTo(tag);
             }
         });
-        rightArrowImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                startTo(tag);
-            }
-        });
-        RecyclerView recyclerView = view.findViewById(R.id.home_main_item_recyclerview);
-        //コンテンツタイプを設定（NOW ON AIR）
-        typeTextView.setText(typeContentName);
         //コンテンツカウントを設定（20）
         if (typeContentName.equals(getString(R.string.home_label_now_on_air))) {
             countTextView.setText(getString(R.string.home_now_on_air_channel_list));
         }
-        //リサイクルビューデータ設定
-        setRecyclerViewData(recyclerView, contentsDataList, tag);
     }
-
-    /**
-     * 機能
-     * コンテンツ一覧タイトル取得.
-     *
-     * @param tag コンテンツ種別
-     * @return コンテンツ表示名
-     */
-    private String getContentTypeName(final int tag) {
+   @Override
+    protected String getContentTypeName(final int tag) {
+        super.getContentTypeName(tag);
         String typeName = "";
         switch (tag) {
             case HOME_CONTENTS_SORT_CHANNEL:
@@ -482,46 +446,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         return typeName;
     }
 
-    /**
-     * 機能
-     * コンテンツ一覧データを設定.
-     *
-     * @param recyclerView     リサイクルビュー
-     * @param contentsDataList コンテンツ情報
-     * @param index            遷移先
-     */
-    private void setRecyclerViewData(final RecyclerView recyclerView, final List<ContentsData> contentsDataList, final int index) {
-        DTVTLogger.start();
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        HomeRecyclerViewAdapter horizontalViewAdapter = new HomeRecyclerViewAdapter(this, contentsDataList, index + HOME_CONTENTS_DISTINCTION_ADAPTER);
-        horizontalViewAdapter.setOnItemClickCallBack(this);
-        recyclerView.setAdapter(horizontalViewAdapter);
-        View footer = LayoutInflater.from(this).inflate(R.layout.home_main_layout_recyclerview_footer, recyclerView, false);
-        RelativeLayout homeMore = footer.findViewById(R.id.home_main_layout_recyclerview_footer);
-        //もっと見るの遷移先を設定
-        homeMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                startTo(index);
-            }
-        });
-        //リサイクルビューデータの設定
-        horizontalViewAdapter.setFooterView(footer);
+    @Override
+    protected void saveAdapter(final int index, final HomeRecyclerViewAdapter horizontalViewAdapter) {
+        super.saveAdapter(index, horizontalViewAdapter);
         if (index == HOME_CONTENTS_SORT_CHANNEL && mChannelList != null) {
             //Now On Airのデータセット時に、チャンネルデータが既にある場合にはアダプタに渡す.
             horizontalViewAdapter.setChannnelList(mChannelList);
         }
     }
-
-    /**
-     * 機能
-     * 遷移先を設定.
-     *
-     * @param index 遷移先
-     */
-    private void startTo(final int index) {
+    @Override
+    protected void startTo(final int index) {
+        super.startTo(index);
         Bundle bundle;
         switch (index) {
             case HOME_CONTENTS_SORT_CHANNEL:
@@ -578,7 +513,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(final Message msg) {
-            setRecyclerView((List) msg.obj, msg.what);
+            setRecyclerView((List) msg.obj, msg.what, mLinearLayout);
             showProgessBar(false);
         }
     };
@@ -778,7 +713,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private void showErrorDialogByErrorStatus(final int tag) {
         ErrorState errorState = mHomeDataProvider.getError(tag);
-        if (errorState != null && errorState.getErrorType() != DTVTConstants.ERROR_TYPE.SUCCESS) {
+        if (errorState != null && errorState.getErrorType() != DtvtConstants.ErrorType.SUCCESS) {
             String message = errorState.getApiErrorMessage(this);
             if (!TextUtils.isEmpty(message)) {
                 showGetDataFailedDialog(message);
@@ -817,7 +752,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void userInfoListCallback(final boolean isDataChange, final List<UserInfoList> userList) {
-        if (!DBUtils.isCachingRecord(this, DBConstants.USER_INFO_LIST_TABLE_NAME)) {
+        if (!DataBaseUtils.isCachingRecord(this, DataBaseConstants.USER_INFO_LIST_TABLE_NAME)) {
             //UserInfoテーブルにデータがないため初回取得と判定
             if (userList == null || userList.size() < 1) {
                 // 初回起動時または1度もH4d契約情報取得に成功していない状態で、
@@ -836,7 +771,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void onRentalChListJsonParsed(final PurchasedChListResponse RentalChListResponse) {
+    public void onRentalChListJsonParsed(final PurchasedChannelListResponse RentalChListResponse) {
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
@@ -887,7 +822,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         } else {
             Intent intent = new Intent(this, ContentDetailActivity.class);
             ComponentName componentName = this.getComponentName();
-            intent.putExtra(DTVTConstants.SOURCE_SCREEN, componentName.getClassName());
+            intent.putExtra(DtvtConstants.SOURCE_SCREEN, componentName.getClassName());
             intent.putExtra(detailData.getRecommendFlg(), detailData);
             startActivity(intent);
         }
@@ -950,7 +885,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void onRentalChListCallback(final PurchasedChListResponse response) {
+    public void onRentalChListCallback(final PurchasedChannelListResponse response) {
         //callbackが帰ってきたらProgressDialogを消す
         showProgessBar(false);
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる

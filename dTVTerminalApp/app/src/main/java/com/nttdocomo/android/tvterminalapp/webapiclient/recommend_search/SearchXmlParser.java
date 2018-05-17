@@ -9,8 +9,8 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Xml;
 
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -234,8 +234,8 @@ public class SearchXmlParser extends AsyncTask<String, Integer, String> {
      * 異常時に返却するデータを設定する.
      */
     private void setOtherError() {
-        searchError = new TotalSearchErrorData(DTVTConstants.SEARCH_ERROR_ID_1,
-                DTVTConstants.SEARCH_ERROR_PARAM_NULL_REQ);
+        searchError = new TotalSearchErrorData(DtvtConstants.SEARCH_ERROR_ID_1,
+                DtvtConstants.SEARCH_ERROR_PARAM_NULL_REQ);
     }
 
     @Override

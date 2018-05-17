@@ -29,7 +29,7 @@ public class ErrorState {
     /**
      * 通信時エラー情報.
      */
-    private DTVTConstants.ERROR_TYPE mErrorType;
+    private DtvtConstants.ErrorType mErrorType;
 
     /**
      * エラーメッセージ.
@@ -47,7 +47,7 @@ public class ErrorState {
     private String mErrorCode;
 
     /**
-     * タイムアウトならばtrue
+     * タイムアウトならばtrue.
      */
     private boolean mIsTimeout = false;
 
@@ -71,7 +71,7 @@ public class ErrorState {
      */
     public ErrorState() {
         //エラー情報を初期化
-        mErrorType = DTVTConstants.ERROR_TYPE.SUCCESS;
+        mErrorType = DtvtConstants.ErrorType.SUCCESS;
         mErrorMessage = "";
         mErrorCode = "";
         mIsTimeout = false;
@@ -181,6 +181,8 @@ public class ErrorState {
                 mToastErrorMessage = context.getString(
                         R.string.common_get_data_failed_message);
                 break;
+            default:
+                break;
         }
 
         DTVTLogger.end();
@@ -277,7 +279,7 @@ public class ErrorState {
                         endFlg = true;
 
                         //本来はここまで来る前に結果コードを取得できるので、エラーとする
-                        mErrorType = DTVTConstants.ERROR_TYPE.NETWORK_ERROR;
+                        mErrorType = DtvtConstants.ErrorType.NETWORK_ERROR;
                         break;
                     default:
                         break;
@@ -286,7 +288,7 @@ public class ErrorState {
             }
         } catch (XmlPullParserException | IOException | NullPointerException e) {
             //正常なXMLが来ていないので、エラーとする
-            mErrorType = DTVTConstants.ERROR_TYPE.NETWORK_ERROR;
+            mErrorType = DtvtConstants.ErrorType.NETWORK_ERROR;
         }
     }
 
@@ -296,7 +298,7 @@ public class ErrorState {
      * エラータイプを取得する.
      * @return エラータイプ
      */
-    public DTVTConstants.ERROR_TYPE getErrorType() {
+    public DtvtConstants.ErrorType getErrorType() {
         return mErrorType;
     }
 
@@ -304,7 +306,7 @@ public class ErrorState {
      * エラータイプを設定する.
      * @param errorType  エラータイプ
      */
-    public void setErrorType(final DTVTConstants.ERROR_TYPE errorType) {
+    public void setErrorType(final DtvtConstants.ErrorType errorType) {
         DTVTLogger.start("ErrorType = " + errorType);
         this.mErrorType = errorType;
         DTVTLogger.end();
@@ -340,7 +342,7 @@ public class ErrorState {
      *
      * @param timeout タイムアウトならばtrueを指定する
      */
-    public void setIsTimeout(boolean timeout) {
+    public void setIsTimeout(final boolean timeout) {
         mIsTimeout = timeout;
     }
 

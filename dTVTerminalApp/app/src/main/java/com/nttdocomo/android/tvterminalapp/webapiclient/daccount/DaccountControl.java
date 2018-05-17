@@ -9,8 +9,8 @@ import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.ThumbnailCacheManager;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
 import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -19,7 +19,7 @@ import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
  * dアカウント連携・サービス登録状況の確認からワンタイムパスワードの取得までを行うクラス.
  */
 public class DaccountControl implements
-        DaccountGetOTT.DaccountGetOttCallBack,
+        DaccountGetOtt.DaccountGetOttCallBack,
         DaccountRegistService.DaccountRegistServiceCallBack,
         DaccountCheckService.DaccountCheckServiceCallBack {
 
@@ -50,7 +50,7 @@ public class DaccountControl implements
     /**
      * DaccountGetOTTクラスのインスタンス.
      */
-    private DaccountGetOTT mDaccountGetOTT = null;
+    private DaccountGetOtt mDaccountGetOtt = null;
     /**
      * DaccountCheckServiceクラスのインスタンス.
      */
@@ -63,7 +63,7 @@ public class DaccountControl implements
     /**
      * 実行クラスの識別用固定値.
      */
-    private enum CHECK_LAST_CLASS {
+    private enum CheckLastClassEnum {
         /**
          * サービス登録チェック.
          */
@@ -81,7 +81,7 @@ public class DaccountControl implements
     /**
      * 実行クラス識別値控え.
      */
-    private CHECK_LAST_CLASS mResultClass;
+    private CheckLastClassEnum mResultClass;
 
     /**
      * 通信禁止判定フラグ.
@@ -103,7 +103,7 @@ public class DaccountControl implements
      *
      * @return 実行したクラスの識別値
      */
-    public CHECK_LAST_CLASS getmResultClass() {
+    public CheckLastClassEnum getmResultClass() {
         return mResultClass;
     }
 
@@ -164,7 +164,7 @@ public class DaccountControl implements
             DTVTLogger.end("no callback");
 
             //次回実行する為にフラグをリセット
-            mOnceControl.setExecOnce(false, mDaccountGetOTT, mContext);
+            mOnceControl.setExecOnce(false, mDaccountGetOtt, mContext);
 
             return;
         }
@@ -187,7 +187,7 @@ public class DaccountControl implements
         }
 
         //次回の実行を阻止するためフラグをセット
-        mOnceControl.setExecOnce(true, mDaccountGetOTT, mContext);
+        mOnceControl.setExecOnce(true, mDaccountGetOtt, mContext);
 
         //ヌルではないコンテキストは後で使いまわす為に控える
         if (context == null) {
@@ -196,7 +196,7 @@ public class DaccountControl implements
             DTVTLogger.end("no context");
 
             //次回実行する為にフラグをリセット
-            mOnceControl.setExecOnce(false, mDaccountGetOTT, mContext);
+            mOnceControl.setExecOnce(false, mDaccountGetOtt, mContext);
 
             return;
         }
@@ -207,7 +207,7 @@ public class DaccountControl implements
         mDaccountCheckService.execDaccountCheckService(context, this);
 
         //クラスの識別値を控える
-        mResultClass = CHECK_LAST_CLASS.CHECK_SERVICE;
+        mResultClass = CheckLastClassEnum.CHECK_SERVICE;
     }
 
 
@@ -215,7 +215,7 @@ public class DaccountControl implements
     public void checkServiceCallBack(final int result) {
         if (mIsCancel) {
             //次回実行する為にフラグをリセット
-            mOnceControl.setExecOnce(false, mDaccountGetOTT, mContext);
+            mOnceControl.setExecOnce(false, mDaccountGetOtt, mContext);
             return;
         }
         //戻り値を控える
@@ -229,13 +229,13 @@ public class DaccountControl implements
             mDaccountRegistService = new DaccountRegistService();
             mDaccountRegistService.execRegistService(mContext, this);
             //クラスの識別値を控える
-            mResultClass = CHECK_LAST_CLASS.REGIST_SERVICE;
+            mResultClass = CheckLastClassEnum.REGIST_SERVICE;
         } else {
             //実行失敗なので、エラーを返す
             mDaccountControlCallBack.daccountControlCallBack(false);
 
             //次回実行する為にフラグをリセット
-            mOnceControl.setExecOnce(false, mDaccountGetOTT, mContext);
+            mOnceControl.setExecOnce(false, mDaccountGetOtt, mContext);
 
             DTVTLogger.end();
         }
@@ -245,7 +245,7 @@ public class DaccountControl implements
     public void registServiceCallBack(final int result) {
         if (mIsCancel) {
             //次回実行する為にフラグをリセット
-            mOnceControl.setExecOnce(false, mDaccountGetOTT, mContext);
+            mOnceControl.setExecOnce(false, mDaccountGetOtt, mContext);
             return;
         }
         //戻り値を控える
@@ -255,17 +255,17 @@ public class DaccountControl implements
         if (result == IDimDefines.RESULT_COMPLETE
                 || result == IDimDefines.RESULT_RESULT_REGISTERED) {
             // 登録結果が登録/更新成功か、既に登録済みならば、ワンタイムパスワードの取得を行う
-            mDaccountGetOTT = new DaccountGetOTT();
-            mDaccountGetOTT.execDaccountGetOTT(mContext, this);
+            mDaccountGetOtt = new DaccountGetOtt();
+            mDaccountGetOtt.execDaccountGetOTT(mContext, this);
             //クラスの識別値を控える
-            mResultClass = CHECK_LAST_CLASS.ONE_TIME_PASS_WORD;
+            mResultClass = CheckLastClassEnum.ONE_TIME_PASS_WORD;
         } else {
             //実行失敗なので、エラーを返す
             // ここでサービス登録に失敗するのが、ワーディングリストの「サービス未登録」になる
             mDaccountControlCallBack.daccountControlCallBack(false);
 
             //次回実行する為にフラグをリセット
-            mOnceControl.setExecOnce(false, mDaccountGetOTT, mContext);
+            mOnceControl.setExecOnce(false, mDaccountGetOtt, mContext);
 
             DTVTLogger.end();
         }
@@ -291,7 +291,7 @@ public class DaccountControl implements
             mDaccountControlCallBack.daccountControlCallBack(false);
 
             //次回実行する為にフラグをリセット
-            mOnceControl.setExecOnce(false, mDaccountGetOTT, mContext);
+            mOnceControl.setExecOnce(false, mDaccountGetOtt, mContext);
 
             DTVTLogger.end("not get one time password");
             return;
@@ -315,13 +315,13 @@ public class DaccountControl implements
 
             //キャッシュクリアを呼ぶ
             //IDが変更されていた場合は、キャッシュクリアを呼ぶ
-            DaccountControl.cacheClear(mContext, mDaccountGetOTT);
+            DaccountControl.cacheClear(mContext, mDaccountGetOtt);
 
             //エラーを返す
             mDaccountControlCallBack.daccountControlCallBack(false);
 
             //次回実行する為にフラグをリセット
-            mOnceControl.setExecOnce(false, mDaccountGetOTT, mContext);
+            mOnceControl.setExecOnce(false, mDaccountGetOtt, mContext);
 
             DTVTLogger.end("change id");
             return;
@@ -344,7 +344,7 @@ public class DaccountControl implements
      * @return そうならばtrue
      */
     public boolean isCheckService() {
-        return mResultClass == CHECK_LAST_CLASS.CHECK_SERVICE;
+        return mResultClass == CheckLastClassEnum.CHECK_SERVICE;
 
     }
 
@@ -354,7 +354,7 @@ public class DaccountControl implements
      * @return そうならばtrue
      */
     public boolean isRegistService() {
-        return mResultClass == CHECK_LAST_CLASS.REGIST_SERVICE;
+        return mResultClass == CheckLastClassEnum.REGIST_SERVICE;
 
     }
 
@@ -364,7 +364,7 @@ public class DaccountControl implements
      * @return そうならばtrue
      */
     public boolean isOneTimePass() {
-        return mResultClass == CHECK_LAST_CLASS.ONE_TIME_PASS_WORD;
+        return mResultClass == CheckLastClassEnum.ONE_TIME_PASS_WORD;
 
     }
 
@@ -386,9 +386,9 @@ public class DaccountControl implements
      * (次回OTT取得許可付き)
      *
      * @param context        コンテキスト
-     * @param daccountGetOTT ワンタイムトークン取得クラス
+     * @param daccountGetOtt ワンタイムトークン取得クラス
      */
-    static void cacheClear(final Context context, final DaccountGetOTT daccountGetOTT) {
+    static void cacheClear(final Context context, final DaccountGetOtt daccountGetOtt) {
         DTVTLogger.start();
         DaccountControlOnce onceControl = DaccountControlOnce.getInstance();
 
@@ -397,7 +397,7 @@ public class DaccountControl implements
         clearTask.execute(context);
 
         //次回実行する為にフラグをリセット
-        onceControl.setExecOnce(false, daccountGetOTT, context);
+        onceControl.setExecOnce(false, daccountGetOtt, context);
 
         DTVTLogger.end();
     }
@@ -432,12 +432,12 @@ public class DaccountControl implements
             ThumbnailCacheManager.clearThumbnailCache(mContext);
 
             //DBを丸ごと削除する
-            boolean deleteDatabaseExeced = mContext.deleteDatabase(DBConstants.DATABASE_NAME);
+            boolean deleteDatabaseExeced = mContext.deleteDatabase(DataBaseConstants.DATABASE_NAME);
 
             DTVTLogger.debug("deleteDatabase Answer = " + deleteDatabaseExeced);
 
             //DBを新造する・インスタンスを作ると自動で作成される
-            new DBHelper(mContext);
+            new DataBaseHelper(mContext);
 
             DTVTLogger.end();
             return null;
@@ -478,8 +478,8 @@ public class DaccountControl implements
             mDaccountCheckService.daccountServiceEnd();
             DTVTLogger.debug("DaccountCheckServiceStop");
         }
-        if (mDaccountGetOTT != null) {
-            mDaccountGetOTT.daccountServiceEnd();
+        if (mDaccountGetOtt != null) {
+            mDaccountGetOtt.daccountServiceEnd();
             DTVTLogger.debug("DaccountGetOTTStop");
         }
         if (mDaccountRegistService != null) {
@@ -515,17 +515,17 @@ public class DaccountControl implements
          * 実行フラグを設定する.
          *
          * @param execOnce       設定を行う実行フラグの値
-         * @param daccountGetOTT OTT取得処理のインスタンス
+         * @param daccountGetOtt OTT取得処理のインスタンス
          * @param context コンテキスト
          */
-        void setExecOnce(final boolean execOnce, final DaccountGetOTT daccountGetOTT,
+        void setExecOnce(final boolean execOnce, final DaccountGetOtt daccountGetOtt,
                          final Context context) {
             DaccountControlOnce.sExecOnce = execOnce;
 
             //OTT取得と無関係なところから呼ばれた場合はヌルなので、判定する
-            if (daccountGetOTT != null) {
+            if (daccountGetOtt != null) {
                 //次のOTT取得を許可する
-                daccountGetOTT.allowNext(context);
+                daccountGetOtt.allowNext(context);
             }
         }
 

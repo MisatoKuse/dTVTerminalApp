@@ -41,7 +41,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
     /**
      * ビデオコンテンツ画面用コールバック.
      */
-    private apiVideoContentDataProviderCallback mApiVideoContentDataProviderCallback = null;
+    private ApiVideoContentDataProviderCallback mApiVideoContentDataProviderCallback = null;
     /**
      * ビデオランキングリスト.
      */
@@ -67,13 +67,13 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
     public VideoContentProvider(final Context mContext) {
         super(mContext);
         this.mContext = mContext;
-        this.mApiVideoContentDataProviderCallback = (apiVideoContentDataProviderCallback) mContext;
+        this.mApiVideoContentDataProviderCallback = (ApiVideoContentDataProviderCallback) mContext;
     }
 
     /**
      * ビデオコンテンツ一覧画面用データを返却するためのコールバック.
      */
-    public interface apiVideoContentDataProviderCallback {
+    public interface ApiVideoContentDataProviderCallback {
         /**
          * ビデオコンテンツ一覧用コールバック.
          *
@@ -92,7 +92,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
         mVideoRankList = null;
         if (!mIsCancel) {
             if (mRequiredClipKeyList) {
-                getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+                getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
             }
             // コンテンツ数
             getVideoContentListData(genreId, offset);

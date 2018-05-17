@@ -7,7 +7,6 @@ package com.nttdocomo.android.tvterminalapp.relayclient;
 import android.content.Context;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 import android.view.View;
 
@@ -109,7 +108,7 @@ public class RemoteControlRelayClient {
     /**
      * 受信キーコード名に対応する STBキーコード.
      */
-    private static final Map<Integer, String> keyCodeNameMap = new HashMap<Integer, String>() {
+    private static final Map<Integer, String> sKeyCodeNameMap = new HashMap<Integer, String>() {
         {
             put(R.id.remote_controller_bt_up, KEYCODE_DPAD_UP); // カーソル (上下左右)
             put(R.id.remote_controller_bt_down, KEYCODE_DPAD_DOWN);
@@ -431,7 +430,7 @@ public class RemoteControlRelayClient {
     private static final String RELAY_KEYEVENT_ACTION_CANCELED_TRUE = "TRUE";
     // 中継アプリのエラーコード定数
     /**error_code.*/
-    static final String RELAY_RESULT_ERROR_CODE = "ERROR_CODE";
+    private static final String RELAY_RESULT_ERROR_CODE = "ERROR_CODE";
     /**サーバエラー.*/
     static final String RELAY_RESULT_INTERNAL_ERROR = "INTERNAL_ERROR";
     /**未インストールエラー.*/
@@ -467,7 +466,7 @@ public class RemoteControlRelayClient {
     /**中継アプリのバージョンコード不適合.*/
     static final String RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE = "STB_RELAY_SERVICE_VERSION_INCOMPATIBLE"; // 中継アプリのバージョンコード不適合
     /**中継アプリの鍵不一致.*/
-    static final String RELAY_RESULT_STB_RELAY_KEY_ERROR = "KEY_ERROR";
+    private static final String RELAY_RESULT_STB_RELAY_KEY_ERROR = "KEY_ERROR";
     // URLエンコード対応文字
     /**asterisk.*/
     private static final String URL_ENCODED_ASTERISK = "%2a";
@@ -631,8 +630,8 @@ public class RemoteControlRelayClient {
      */
     private String convertKeycode(final int keycodeRid) {
         String keyCodeName = null;
-        if (keyCodeNameMap.containsKey(keycodeRid)) {
-            keyCodeName = keyCodeNameMap.get(keycodeRid);
+        if (sKeyCodeNameMap.containsKey(keycodeRid)) {
+            keyCodeName = sKeyCodeNameMap.get(keycodeRid);
         }
         return keyCodeName;
     }
@@ -1183,7 +1182,7 @@ public class RemoteControlRelayClient {
                 DTVTLogger.warning("need to exchange key");
                 CipherApi api = new CipherApi(new CipherApi.CipherApiCallback() {
                     @Override
-                    public void apiCallback(boolean result, @Nullable String data) {
+                    public void apiCallback(final boolean result, final String data) {
                         if (result) {
                             run();
                         } else {
@@ -1215,7 +1214,7 @@ public class RemoteControlRelayClient {
                     DTVTLogger.warning("need to exchange key");
                     CipherApi api = new CipherApi(new CipherApi.CipherApiCallback() {
                         @Override
-                        public void apiCallback(boolean result, @Nullable String data) {
+                        public void apiCallback(final boolean result, final String data) {
                             if (result) {
                                 run();
                             } else {

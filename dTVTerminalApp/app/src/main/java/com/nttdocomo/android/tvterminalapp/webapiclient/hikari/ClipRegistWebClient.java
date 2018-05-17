@@ -10,7 +10,7 @@ import android.text.TextUtils;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ClipRegistJsonParser;
 
@@ -83,7 +83,7 @@ public class ClipRegistWebClient
      * @param eventId                      イベントID
      * @param titleId                      タイトルID
      * @param title                        コンテンツタイトル
-     * @param r_value                      番組のパレンタル設定値
+     * @param rValue                      番組のパレンタル設定値
      * @param linearStartDate              放送開始日時
      * @param linearEndDate                放送終了日時
      * @param isNotify                     視聴通知するか否か
@@ -92,11 +92,11 @@ public class ClipRegistWebClient
      */
     public boolean getClipRegistApi(final String type, final String crid, final String serviceId,
                                     final String eventId, final String titleId, final String title,
-                                    final String r_value, final String linearStartDate,
+                                    final String rValue, final String linearStartDate,
                                     final String linearEndDate, final boolean isNotify,
                                     final ClipRegistJsonParserCallback clipRegistJsonParserCallback) {
         //パラメーターのチェック
-        if (!checkParameter(type, crid, serviceId, eventId, titleId, title, r_value,
+        if (!checkParameter(type, crid, serviceId, eventId, titleId, title, rValue,
                 linearStartDate, linearEndDate, isNotify, clipRegistJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
             return false;
@@ -104,12 +104,12 @@ public class ClipRegistWebClient
 
         String strStartDate = linearStartDate;
         String strEndDate = linearEndDate;
-        if (strStartDate != null && DBUtils.isNumber(strStartDate) && !strStartDate.equals("0")) {
+        if (strStartDate != null && DataBaseUtils.isNumber(strStartDate) && !strStartDate.equals("0")) {
             strStartDate = DateUtils.formatEpochToString(Long.parseLong(strStartDate), null);
         } else {
             strStartDate = null;
         }
-        if (strEndDate != null && DBUtils.isNumber(strEndDate) && !strEndDate.equals("0")) {
+        if (strEndDate != null && DataBaseUtils.isNumber(strEndDate) && !strEndDate.equals("0")) {
             strEndDate = DateUtils.formatEpochToString(Long.parseLong(strEndDate), null);
         } else {
             strEndDate = null;
@@ -119,7 +119,7 @@ public class ClipRegistWebClient
         mClipRegistJsonParserCallback = clipRegistJsonParserCallback;
 
         //送信用パラメータの作成
-        String sendParameter = makeSendParameter(type, crid, serviceId, eventId, titleId, title, r_value,
+        String sendParameter = makeSendParameter(type, crid, serviceId, eventId, titleId, title, rValue,
                 strStartDate, strEndDate, isNotify);
 
         //JSONの組み立てに失敗していれば、falseで帰る
@@ -144,7 +144,7 @@ public class ClipRegistWebClient
      * @param eventId                      イベントID
      * @param titleId                      タイトルID
      * @param title                        コンテンツタイトル
-     * @param r_value                      番組のパレンタル設定値
+     * @param rValue                      番組のパレンタル設定値
      * @param linearStartDate              放送開始日時
      * @param linearEndDate                放送終了日時
      * @param isNotify                     視聴通知するか否か
@@ -153,7 +153,7 @@ public class ClipRegistWebClient
      */
     private boolean checkParameter(final String type, final String crid, final String serviceId,
                                    final String eventId, final String titleId, final String title,
-                                   final String r_value, final String linearStartDate,
+                                   final String rValue, final String linearStartDate,
                                    final String linearEndDate, final boolean isNotify,
                                    final ClipRegistJsonParserCallback clipRegistJsonParserCallback) {
         //文字列がヌルならfalse
@@ -187,7 +187,7 @@ public class ClipRegistWebClient
         }
 
         //パラメータチェック後半
-        return checkLatterHalfParameter(type, title, r_value, linearStartDate, linearEndDate,
+        return checkLatterHalfParameter(type, title, rValue, linearStartDate, linearEndDate,
                 isNotify, clipRegistJsonParserCallback);
     }
 
@@ -196,7 +196,7 @@ public class ClipRegistWebClient
      *
      * @param type                         タイプ　h4d_iptv：多チャンネル、h4d_vod：ビデオ、dch：dTVチャンネル、dtv_vod：dTV
      * @param title                        コンテンツタイトル
-     * @param r_value                      番組のパレンタル設定値
+     * @param rValue                      番組のパレンタル設定値
      * @param linearStartDate              放送開始日時
      * @param linearEndDate                放送終了日時
      * @param isNotify                     視聴通知するか否か
@@ -204,14 +204,14 @@ public class ClipRegistWebClient
      * @return 値がおかしいならばfalse
      */
     private boolean checkLatterHalfParameter(final String type, final String title,
-                                             final String r_value, final String linearStartDate,
+                                             final String rValue, final String linearStartDate,
                                              final String linearEndDate, final boolean isNotify,
                                              final ClipRegistJsonParserCallback clipRegistJsonParserCallback) {
 
         //コンテンツタイトル、番組のパレンタル設定値 type=h4d_iptv、h4d_vod、is_notify=true の場合必須
         if ((type.equals(CLIP_TYPE_H4D_IPTV) || type.equals(CLIP_TYPE_H4D_VOD)
-                || isNotify) && (title == null || r_value == null || title.length() < 1
-                || r_value.length() < 1)) {
+                || isNotify) && (title == null || rValue == null || title.length() < 1
+                || rValue.length() < 1)) {
             return false;
         }
         //放送開始日時、放送終了日時 type=h4d_iptv、dch の場合必須
@@ -239,7 +239,7 @@ public class ClipRegistWebClient
      * @param eventId         イベントID
      * @param titleId         タイトルID
      * @param title           コンテンツタイトル
-     * @param r_value         番組のパレンタル設定値
+     * @param rValue         番組のパレンタル設定値
      * @param linearStartDate 放送開始日時
      * @param linearEndDate   放送終了日時
      * @param isNotify        視聴通知するか否か
@@ -247,7 +247,7 @@ public class ClipRegistWebClient
      */
     private String makeSendParameter(final String type, final String crid, final String serviceId,
                                      final String eventId, final String titleId, final String title,
-                                     final String r_value, final String linearStartDate,
+                                     final String rValue, final String linearStartDate,
                                      final String linearEndDate, final boolean isNotify) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
@@ -259,7 +259,7 @@ public class ClipRegistWebClient
             putSelect(jsonObject, JsonConstants.META_RESPONSE_TITLE, title);
             putSelect(jsonObject, JsonConstants.META_RESPONSE_TYPE, type);
             putSelect(jsonObject, JsonConstants.META_RESPONSE_EVENT_ID, eventId);
-            putSelect(jsonObject, JsonConstants.META_RESPONSE_R_VALUE, r_value);
+            putSelect(jsonObject, JsonConstants.META_RESPONSE_R_VALUE, rValue);
             //isNotifyは事実上無いことが無い
             jsonObject.put(JsonConstants.META_RESPONSE_IS_NOTIFY, isNotify);
             putSelect(jsonObject, JsonConstants.META_RESPONSE_LINEAR_START_DATE, linearStartDate);

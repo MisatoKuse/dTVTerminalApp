@@ -23,6 +23,14 @@ public class ClipListFragmentFactory {
      * ポジション.
      */
     public static final String POSITION = "position";
+    /**
+     * ポジション0.
+     */
+    private static final int POSITION_ZERO = 0;
+    /**
+     * ポジション1.
+     */
+    private static final int POSITION_ONE = 1;
 
     /**
      * Fragment生成.
@@ -35,16 +43,20 @@ public class ClipListFragmentFactory {
         ClipListBaseFragment fragment;
         fragment = mFragments.get(position);
         if (fragment == null) {
-            if (position == 0) {
-                fragment = new ClipListBaseFragment();
-                Bundle bundle = new Bundle();
-                bundle.putInt(POSITION, position);
-                fragment.setArguments(bundle);
-            } else if (position == 1) {
-                fragment = new ClipListBaseFragment();
-                Bundle bundle = new Bundle();
-                bundle.putInt(POSITION, position);
-                fragment.setArguments(bundle);
+            Bundle bundle = new Bundle();
+            switch (position) {
+                case POSITION_ZERO:
+                    fragment = new ClipListBaseFragment();
+                    bundle.putInt(POSITION, position);
+                    fragment.setArguments(bundle);
+                    break;
+                case POSITION_ONE:
+                    fragment = new ClipListBaseFragment();
+                    bundle.putInt(POSITION, position);
+                    fragment.setArguments(bundle);
+                    break;
+                default:
+                    break;
             }
             if (fragment != null) {
                 fragment.setClipListBaseFragmentScrollListener(lis);

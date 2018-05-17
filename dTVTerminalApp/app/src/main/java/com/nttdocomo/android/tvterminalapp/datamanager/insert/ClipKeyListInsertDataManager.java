@@ -12,10 +12,10 @@ import android.database.sqlite.SQLiteException;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.util.HashMap;
@@ -48,12 +48,12 @@ public class ClipKeyListInsertDataManager {
      * @param type                テーブル種別
      * @param clipKeyListResponse クリップキー一覧 レスポンスデータ
      */
-    public synchronized void insertClipKeyListInsert(final ClipKeyListDao.TABLE_TYPE type, final ClipKeyListResponse clipKeyListResponse) {
+    public synchronized void insertClipKeyListInsert(final ClipKeyListDao.TableTypeEnum type, final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
         try {
             //各種オブジェクト作成
-            DBHelper dbHelper = new DBHelper(mContext);
-            DataBaseManager.initializeInstance(dbHelper);
+            DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(dataBaseHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
 
@@ -76,7 +76,7 @@ public class ClipKeyListInsertDataManager {
                     Map.Entry entry = (Map.Entry) entries.next();
                     String keyName = (String) entry.getKey();
                     String valName = (String) entry.getValue();
-                    values.put(DBUtils.fourKFlgConversion(keyName), valName);
+                    values.put(DataBaseUtils.fourKFlgConversion(keyName), valName);
                 }
                 clipKeyListDao.insert(type, values);
             }
@@ -98,13 +98,13 @@ public class ClipKeyListInsertDataManager {
      * @param titleId   タイトルID
      */
     public void insertRowSqlStart(
-            final ClipKeyListDao.TABLE_TYPE tableType, final String crId, final String serviceId,
+            final ClipKeyListDao.TableTypeEnum tableType, final String crId, final String serviceId,
             final String eventId, final String titleId) {
         DTVTLogger.start();
         try {
             //各種オブジェクト作成
-            DBHelper clipKeyListDBHelper = new DBHelper(mContext);
-            DataBaseManager.initializeInstance(clipKeyListDBHelper);
+            DataBaseHelper clipKeyListDataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(clipKeyListDataBaseHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
             ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
@@ -135,13 +135,13 @@ public class ClipKeyListInsertDataManager {
      * @param titleId   タイトルID
      */
     public void deleteRowSqlStart(
-            final ClipKeyListDao.TABLE_TYPE tableType, final String crId, final String serviceId,
+            final ClipKeyListDao.TableTypeEnum tableType, final String crId, final String serviceId,
             final String eventId, final String titleId) {
         DTVTLogger.start();
         try {
             //各種オブジェクト作成
-            DBHelper clipKeyListDBHelper = new DBHelper(mContext);
-            DataBaseManager.initializeInstance(clipKeyListDBHelper);
+            DataBaseHelper clipKeyListDataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(clipKeyListDataBaseHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
             ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);

@@ -20,6 +20,7 @@
     <string name="vod_contents_message">ビデオ</string>
     <string name="app_finish_dialog_message">アプリを終了しますか？</string>
     <string name="message_three_asterisk">＊＊＊</string>
+    <string name="dtvt_contents_data_error_request">リクエストエラー(リクエストは空である)</string>
     <string name="parental_pg_12">PG12</string>
     <string name="parental_r_15">R15</string>
     <string name="parental_r_18">R18</string>
@@ -34,8 +35,7 @@
     <string name="permission_denied_dialog_content">通信許可がないためアプリケーションを終了します</string>
     <string name="permission_detail_dialog_title">SIM情報の取得確認</string>
     <string name="permission_detail_dialog_content">ドコモテレビターミナルアプリは、海外での通信利用確認のためSIM情報を取得します。\n次の画面で「許可」を選択してください。\n※「許可しない」を選択した場合、海外利用時に海外通信を利用する旨の通知がされません。</string>
-    <string name="permission_detail_dialog_confirm">許可する</string>
-    <string name="permission_detail_dialog_cancel">許可しない</string>
+    <string name="permission_detail_dialog_confirm">OK</string>
     <string name="status_bar_height_name">status_bar_height</string>
     <string name="status_bar_height_deftype">dimen</string>
     <string name="status_bar_height_defpackage">android</string>
@@ -45,6 +45,10 @@
     <string name="common_until">まで</string>
     <string name="common_date_format_start_str">" から"</string>
     <string name="common_date_format_end_str">" まで"</string>
+    <string name="common_text_regist_progress_done">完了しました</string>
+    <string name="common_text_regist_over_error">ペアリングの台数が上限に達しました。\nドコモテレビターミナルでペアリングを解除してください。解除方法はヘルプをご覧ください。リモート設定は、「メニュー＞設定＞リモート設定」であとから設定できます。</string>
+    <string name="common_text_regist_other_error">リモート視聴設定に失敗しました</string>
+
 
     <!-- Launch -->
     <string name="str_app_title">ドコモテレビターミナル</string>
@@ -58,6 +62,7 @@
     <string name="str_stb_paring_cancel_text">ペアリングを解除する</string>
     <string name="str_stb_paring_setting_title">ペアリング設定</string>
     <string name="str_d_account_resetting_title">dアカウント再設定</string>
+    <string name="str_d_account_setting_help_title">ドコテレ画像</string>
     <string name="str_d_account_app_not_install">ドコモテレビターミナルとペアリングするには\ndアカウントでのログインが必要です</string>
     <string name="str_d_account_app_download">dアカウント設定アプリをダウンロードする</string>
     <string name="str_stb_select_result_text">ペアリング可能なドコモテレビターミナルが\n見つかりました</string>
@@ -153,8 +158,9 @@
     <string name="record_download_cancel_title">ダウンロードを取りやめますか？</string>
     <string name="record_download_cancel_confirm">取りやめる</string>
     <string name="record_download_notification">録画番組をダウンロード中</string>
-    <string name="activation_confirm_dialog_title">アクティベーション実行の確認</string>
-    <string name="activation_failed_error">アクティベーション出来ませんでした。</string>
+    <string name="activation_file_path_create_file_msg">アクティベーションファイルパス作成失敗しました。</string>
+    <string name="activation_failed_msg">アクティベーション失敗しました。</string>
+    <string name="dtcp_init_failed_msg">dtcp init 失敗しました。</string>
 
     <!-- ビデオ一覧 -->
     <string name="video_content_top_title">ビデオジャンル</string>
@@ -166,6 +172,7 @@
     <!-- Search -->
     <string name="keyword_search_title">キーワード検索</string>
     <string name="keyword_search_hint">検索するキーワードを入力</string>
+    <string name="keyword_search_default_count">検索結果:0件</string>
     <string name="keyword_search_result">検索結果:</string>
     <string name="keyword_search_result_num">件</string>
     <string name="keyword_search_result_no">の</string>
@@ -250,6 +257,9 @@
     <string name="contents_detail_tab_channel">チャンネル</string>
     <string name="contents_detail_tab_episode">エピソード</string>
     <string name="contents_detail_tab_contents_info">作品情報</string>
+    <string name="contents_detail_hikari_vod_inside_home">本コンテンツはテレビで視聴できます</string>
+    <string name="contents_detail_hikari_vod_agreement">ご覧になるにはコンテンツの契約が必要です。\nドコモテレビターミナルで契約してください</string>
+    <string name="contents_detail_no_agreement">視聴いただくには契約が必要です</string>
     <string-array name="contents_detail_tab_vod">
         <item>@string/contents_detail_tab_contents_info</item>
     </string-array>
@@ -287,6 +297,8 @@
     <string name="contents_detail_pairing_request">ドコモテレビターミナルとのペアリングが必要です</string>
     <string name="contents_detail_login_button">ログイン</string>
     <string name="contents_detail_now_on_air_contents_nothing">現在放送中のコンテンツがありません</string>
+    <string name="contents_detail_out_house_player_error_msg">視聴いただくには、「リモート視聴設定」が必要です。\n設定＞リモート視聴設定　を行ってください。</string>
+    <string name="contents_detail_pairing_button">ペアリングする</string>
 
     <!-- チャンネルリストタイトル -->
     <string name="channel_list_activity_title">チャンネルリスト</string>
@@ -317,7 +329,10 @@
     <string name="main_setting_stb_busy_error_message">ドコモテレビターミナルが処理中です</string>
     <string name="main_setting_logon_request_error_message">ログインしてください</string>
     <string name="main_setting_h4d_not_signed_message">ひかりTV for docomoの契約状態が確認できないため\nご利用になれません。</string>
+    <string name="main_setting_stb_not_connected_message">ドコモテレビターミナルとの通信が確認できないため\nご利用になれません。</string>
     <string name="main_setting_menu_title_faq_list">FAQ</string>
+    <string name="main_setting_remote_start">main_setting_remote_start</string>
+    <string name="main_setting_remote_confirm_message">外出先でも視聴できるリモート視聴設定を有効にしますか？リモート設定は、「メニュー＞設定＞リモート設定」であとから設定できます。</string>
     <string name="main_setting_menu_title_license">ライセンス情報</string>
     <string name="main_setting_menu_title_privacy_policy">プライバシーポリシー</string>
     <string name="main_setting_menu_title_app">アプリケーション・プライバシーポリシー</string>
@@ -328,6 +343,7 @@
         <item>マイ番組表設定</item>
         <item>外出先視聴時の画質設定</item>
         <item>FAQ</item>
+        <item>リモート視聴設定</item>
         <item>アプリケーション情報</item>
         <item>ライセンス情報</item>
         <item>プライバシーポリシー</item>

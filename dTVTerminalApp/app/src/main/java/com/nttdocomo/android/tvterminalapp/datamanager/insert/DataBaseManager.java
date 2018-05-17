@@ -6,9 +6,9 @@ package com.nttdocomo.android.tvterminalapp.datamanager.insert;
 
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelperChannel;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelperDownload;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelperChannel;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelperDownload;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -41,17 +41,17 @@ public class DataBaseManager {
      */
     private static DataBaseManager sInstanceDownLoad;
     /**
-     * DBHelper.
+     * DataBaseHelper.
      */
-    private static DBHelper sDatabaseHelper;
+    private static DataBaseHelper sDatabaseHelper;
     /**
-     * DBHelper(番組情報用).
+     * DataBaseHelper(番組情報用).
      */
-    private static DBHelperChannel sDatabaseChannelHelper;
+    private static DataBaseHelperChannel sDatabaseChannelHelper;
     /**
-     * DBHelper(録画リスト用).
+     * DataBaseHelper(録画リスト用).
      */
-    private static DBHelperDownload sDatabaseDownloadHelper;
+    private static DataBaseHelperDownload sDatabaseDownloadHelper;
     /**
      * Database.
      */
@@ -60,9 +60,9 @@ public class DataBaseManager {
     /**
      * 初期化処理.
      *
-     * @param helper DBHelper
+     * @param helper DataBaseHelper
      */
-    public static synchronized void initializeInstance(final DBHelper helper) {
+    public static synchronized void initializeInstance(final DataBaseHelper helper) {
         if (sInstance == null) {
             sInstance = new DataBaseManager();
             sDatabaseHelper = helper;
@@ -72,9 +72,9 @@ public class DataBaseManager {
     /**
      * 初期化処理(番組情報用).
      *
-     * @param helper DBHelper
+     * @param helper DataBaseHelper
      */
-    public static synchronized void initializeInstance(final DBHelperChannel helper) {
+    public static synchronized void initializeInstance(final DataBaseHelperChannel helper) {
         if (sInstanceCh == null) {
             sInstanceCh = new DataBaseManager();
             sDatabaseChannelHelper = helper;
@@ -84,9 +84,9 @@ public class DataBaseManager {
     /**
      * 初期化処理(ダウンロードコンテンツ情報用).
      *
-     * @param helper DBHelper
+     * @param helper DataBaseHelper
      */
-    public static synchronized void initializeInstance(final DBHelperDownload helper) {
+    public static synchronized void initializeInstance(final DataBaseHelperDownload helper) {
         if (sInstanceDownLoad == null) {
             sInstanceDownLoad = new DataBaseManager();
             sDatabaseDownloadHelper = helper;

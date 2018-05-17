@@ -5,7 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -82,7 +82,7 @@ public class GenreCountGetMetaData implements Serializable {
                     mGenreId = (String) data;
                     break;
                 case GENRE_COUNT_GET_META_DATA_COUNT:
-                    mCount = DBUtils.getNumeric(data);
+                    mCount = DataBaseUtils.getNumeric(data);
                     break;
                 default:
             }

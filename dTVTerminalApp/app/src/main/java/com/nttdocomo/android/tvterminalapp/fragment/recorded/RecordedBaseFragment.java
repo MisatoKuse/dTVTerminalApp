@@ -24,13 +24,13 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
-import com.nttdocomo.android.tvterminalapp.service.download.DlData;
-import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
+import com.nttdocomo.android.tvterminalapp.service.download.DownloadData;
+import com.nttdocomo.android.tvterminalapp.service.download.DownloadDataProvider;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadParam;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
 import com.nttdocomo.android.tvterminalapp.service.download.DtcpDownloadParam;
@@ -59,18 +59,18 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     /**コンテンツアダプター.*/
     private ContentsAdapter mContentsAdapter = null;
     /**データプロバイダー.*/
-    private DlDataProvider mDlDataProvider = null;
+    private DownloadDataProvider mDownloadDataProvider = null;
     /**ダウンロードパラメータ.*/
-    private DownloadParam downloadParam;
+    private DownloadParam mDownloadParam;
     /**キュー.*/
-    private final List<DlData> que = new ArrayList<>();
+    private final List<DownloadData> mQueue = new ArrayList<>();
     /**キューインデックス.*/
-    public List<Integer> queIndex = new ArrayList<>();
+    public List<Integer> mQueueIndex = new ArrayList<>();
     //private Handler mHandler;
     /**PercentToUpdateUi.*/
     private static final int mPercentToUpdateUi = 1;
     /**activity.*/
-    private Activity activity;
+    private Activity mActivity;
     /**チャンネル名キャッシュ.*/
 	private Set<String> mChannelNameCache;
     /**キャンセルフラグ.*/
@@ -176,14 +176,14 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     public void onItemClick(final AdapterView<?> adapterView, final View view,
                             final int i, final long l) {
         if (null != mContext) {
-            if (que.size() > 0) {
+            if (mQueue.size() > 0) {
                 showMessage();
             } else {
-                if (activity != null && null != mContentsList) {
+                if (mActivity != null && null != mContentsList) {
                     Intent intent = new Intent(mContext, ContentDetailActivity.class);
-                    intent.putExtra(DTVTConstants.SOURCE_SCREEN, activity.getComponentName().getClassName());
+                    intent.putExtra(DtvtConstants.SOURCE_SCREEN, mActivity.getComponentName().getClassName());
                     intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, mContentsList.get(i));
-                    RecordedListActivity recordedListActivity = (RecordedListActivity) activity;
+                    RecordedListActivity recordedListActivity = (RecordedListActivity) mActivity;
                     recordedListActivity.startActivity(intent);
                 }
             }
@@ -194,10 +194,10 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      * DlDataProvider使用開始.
      */
     public void onDlDataProviderAvailable() {
-        mDlDataProvider.setUiRunning(true);
-        if (!mDlDataProvider.isDownloading()) {
-            mDlDataProvider.setDlParam(downloadParam);
-            mDlDataProvider.start();
+        mDownloadDataProvider.setUiRunning(true);
+        if (!mDownloadDataProvider.isDownloading()) {
+            mDownloadDataProvider.setDownloadParam(mDownloadParam);
+            mDownloadDataProvider.start();
         }
     }
 
@@ -205,23 +205,23 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      * DlDataProvider使用不可時の設定.
      */
     public void onDlDataProviderUnavailable() {
-        mDlDataProvider = null;
+        mDownloadDataProvider = null;
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (RecordedListActivity.RLA_FragmentName_All.equals(mFragmentName) && null != mDlDataProvider) {
-            mDlDataProvider.setUiRunning(false);
-            if (mDlDataProvider.getIsRegistered()) {
-                mDlDataProvider.endProvider();
+        if (RecordedListActivity.RLA_FragmentName_All.equals(mFragmentName) && null != mDownloadDataProvider) {
+            mDownloadDataProvider.setUiRunning(false);
+            if (mDownloadDataProvider.getIsRegistered()) {
+                mDownloadDataProvider.endProvider();
             }
-            if (0 == que.size()) {
-                if (!mDlDataProvider.isDownloading()) {
-                    mDlDataProvider.stopService();
+            if (0 == mQueue.size()) {
+                if (!mDownloadDataProvider.isDownloading()) {
+                    mDownloadDataProvider.stopService();
                 }
             } else {
-                mDlDataProvider.setQue(que);
+                mDownloadDataProvider.setQue(mQueue);
             }
         }
     }
@@ -230,17 +230,17 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     public void onResume() {
         super.onResume();
         if (RecordedListActivity.RLA_FragmentName_All.equals(mFragmentName)) {
-            if (mDlDataProvider == null) {
+            if (mDownloadDataProvider == null) {
                 try {
-                    mDlDataProvider = DlDataProvider.getInstance(activity);
+                    mDownloadDataProvider = DownloadDataProvider.getInstance(mActivity);
                 } catch (Exception e) {
                     DTVTLogger.debug(e);
                     showMessage();
                     return;
                 }
             }
-            if (mDlDataProvider != null) {
-                mDlDataProvider.setUiRunning(true);
+            if (mDownloadDataProvider != null) {
+                mDownloadDataProvider.setUiRunning(true);
             }
         }
     }
@@ -250,7 +250,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     public void onAttach(final Context context) {
         super.onAttach(context);
         if (context instanceof Activity) {
-            activity = (Activity) context;
+            mActivity = (Activity) context;
         }
     }
 
@@ -273,8 +273,8 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      * @param fullPath フルパス
      */
     private void setSuccessStatus(final String fullPath) {
-        if (queIndex.size() > 0 && null != mRecordedListView) {
-            int idx0 = queIndex.get(0) - mRecordedListView.getFirstVisiblePosition();
+        if (mQueueIndex.size() > 0 && null != mRecordedListView) {
+            int idx0 = mQueueIndex.get(0) - mRecordedListView.getFirstVisiblePosition();
             View view = mRecordedListView.getChildAt(idx0);
             if (view != null) {
                 view.findViewById(R.id.item_common_result_clip_tv).setBackgroundResource(R.mipmap.icon_circle_normal_download_check);
@@ -282,7 +282,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
 				restoreChannelAndTime();
             }
             ContentsData cd = null;
-            int idx = queIndex.get(0);
+            int idx = mQueueIndex.get(0);
             try {
                 cd = mContentsData.get(idx);
             } catch (Exception e) {
@@ -302,10 +302,10 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      * チャンネルと時間を戻す.
      */
 	private void restoreChannelAndTime() {
-        if (null == queIndex || 0 == queIndex.size() || null == mRecordedListView) {
+        if (null == mQueueIndex || 0 == mQueueIndex.size() || null == mRecordedListView) {
             return;
         }
-        int idx = queIndex.get(0) - mRecordedListView.getFirstVisiblePosition();
+        int idx = mQueueIndex.get(0) - mRecordedListView.getFirstVisiblePosition();
         if (idx < 0 || idx >= mRecordedListView.getChildCount()) {
             return;
         }
@@ -340,11 +340,11 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      * @param index インデックス
      */
     private void setCancelStatusOnly(final String fullPath, final int index) {
-        if (null == queIndex || -1 < index - queIndex.size()) {
+        if (null == mQueueIndex || -1 < index - mQueueIndex.size()) {
             return;
         }
         View view;
-        int idx = queIndex.get(index);
+        int idx = mQueueIndex.get(index);
         if (null == mRecordedListView) {
             return;
         } else {
@@ -367,13 +367,13 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      */
     private void setNextDownLoad() {
         unQueue(0);
-        if (que.size() > 0) {
-            boolean isOk = prepareDownLoad(queIndex.get(0));
+        if (mQueue.size() > 0) {
+            boolean isOk = prepareDownLoad(mQueueIndex.get(0));
             if (!isOk) {
                 return;
             }
-            mDlDataProvider.setDlParam(downloadParam);
-            mDlDataProvider.start();
+            mDownloadDataProvider.setDownloadParam(mDownloadParam);
+            mDownloadDataProvider.start();
         }
     }
 
@@ -406,8 +406,8 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         if (null == fullPath || fullPath.isEmpty()) {
             return;
         }
-        if (activity != null) {
-            activity.runOnUiThread(new Runnable() {
+        if (mActivity != null) {
+            mActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     showMessage();
@@ -505,20 +505,20 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         int index = (int) view.getTag();
         switch (mContentsData.get(index).getDownloadFlg()) {
             case ContentsAdapter.DOWNLOAD_STATUS_ALLOW :
-                if (que.size() == 0) {
+                if (mQueue.size() == 0) {
                     boolean isOk = prepareDownLoad(index);
                     if (!isOk) {
                         return;
                     }
                     mCanBeCanceled = false;
                 }
-                DlData dlData = setDlData(index);
-                if (dlData != null) {
-                    mDlDataProvider.setDlData(dlData);
+                DownloadData downloadData = setDlData(index);
+                if (downloadData != null) {
+                    mDownloadDataProvider.setDownloadData(downloadData);
                     mCanBeCanceled = false;
-                    enqueue(index, dlData);
+                    enqueue(index, downloadData);
                     setDownloadStatus(index, 0);
-                    mDlDataProvider.start();
+                    mDownloadDataProvider.start();
                 }
                 break;
             case ContentsAdapter.DOWNLOAD_STATUS_LOADING :
@@ -538,33 +538,33 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      * @param index インデックス
      * @return DLデータ
      */
-    private DlData setDlData(final int index) {
+    private DownloadData setDlData(final int index) {
         if (null == mContentsList || index >= mContentsList.size()) {
             return null;
         }
-        DlData dlData = new DlData();
+        DownloadData downloadData = new DownloadData();
         RecordedContentsDetailData itemData = mContentsList.get(index);
-        dlData.setItemId(DownloaderBase.getFileNameById(itemData.getItemId()));
-        dlData.setSaveFile(DownloaderBase.getDownloadPath(getContext()));
-        dlData.setTotalSize(itemData.getClearTextSize());
-        dlData.setTitle(itemData.getTitle());
-        dlData.setUrl(itemData.getResUrl());
-        dlData.setBitrate(itemData.getBitrate());
-        dlData.setPort(String.valueOf(DlnaDmsItem.getPortFromProtocal(itemData.getVideoType())));
-        dlData.setDuration(itemData.getDuration());
-        dlData.setVideoType(itemData.getVideoType());
-        dlData.setUpnpIcon(itemData.getUpnpIcon());
+        downloadData.setItemId(DownloaderBase.getFileNameById(itemData.getItemId()));
+        downloadData.setSaveFile(DownloaderBase.getDownloadPath(getContext()));
+        downloadData.setTotalSize(itemData.getClearTextSize());
+        downloadData.setTitle(itemData.getTitle());
+        downloadData.setUrl(itemData.getResUrl());
+        downloadData.setBitrate(itemData.getBitrate());
+        downloadData.setPort(String.valueOf(DlnaDmsItem.getPortFromProtocal(itemData.getVideoType())));
+        downloadData.setDuration(itemData.getDuration());
+        downloadData.setVideoType(itemData.getVideoType());
+        downloadData.setUpnpIcon(itemData.getUpnpIcon());
         DlnaDmsItem dmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getContext());
-        dlData.setHost(dmsItem.mIPAddress);
-        dlData.setPercentToNotify(String.valueOf(mPercentToUpdateUi));
+        downloadData.setHost(dmsItem.mIPAddress);
+        downloadData.setPercentToNotify(String.valueOf(mPercentToUpdateUi));
 
         String xml = getXmlToDl(itemData.getItemId());
         if (null == xml) {
             showMessage();
             return null;
         }
-        dlData.setXmlToDl(xml);
-        return dlData;
+        downloadData.setXmlToDownLoad(xml);
+        return downloadData;
     }
 
     /**
@@ -628,8 +628,8 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
             showMessage();
             return false;
         }
-        downloadParam = new DtcpDownloadParam();
-        DtcpDownloadParam dtcpDownloadParam = (DtcpDownloadParam) downloadParam;
+        mDownloadParam = new DtcpDownloadParam();
+        DtcpDownloadParam dtcpDownloadParam = (DtcpDownloadParam) mDownloadParam;
         dtcpDownloadParam.setContext(context);
         dtcpDownloadParam.setSavePath(dlPath);
         dtcpDownloadParam.setSaveFileName(dlFileName);
@@ -644,8 +644,8 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
             showMessage();
             return false;
         }
-        dtcpDownloadParam.setXmlToDl(xml);
-        mDlDataProvider.beginProvider(getActivity());
+        dtcpDownloadParam.setXmlToDownLoad(xml);
+        mDownloadDataProvider.beginProvider(getActivity());
 
         return true;
     }
@@ -655,20 +655,20 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      *
      */
     public void bindServiceFromBackground() {
-        if (null == activity) {
-            activity = getActivity();
+        if (null == mActivity) {
+            mActivity = getActivity();
         }
-        if (null == activity) {
+        if (null == mActivity) {
             return;
         }
-        mDlDataProvider.beginProvider(activity);
-        if (queIndex != null && queIndex.size() > 0) {
-            que.clear();
-            for (int i = 0; i < queIndex.size(); i++) {
-                DlData dlData = setDlData(queIndex.get(i));
-                que.add(dlData);
+        mDownloadDataProvider.beginProvider(mActivity);
+        if (mQueueIndex != null && mQueueIndex.size() > 0) {
+            mQueue.clear();
+            for (int i = 0; i < mQueueIndex.size(); i++) {
+                DownloadData downloadData = setDlData(mQueueIndex.get(i));
+                mQueue.add(downloadData);
             }
-            prepareDownLoad(queIndex.get(0));
+            prepareDownLoad(mQueueIndex.get(0));
         }
     }
 
@@ -681,9 +681,9 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         if (percent < 0) {
             return;
         }
-        if (queIndex.size() > 0) {
+        if (mQueueIndex.size() > 0) {
             mCanBeCanceled = true;
-            setDownloadStatus(queIndex.get(0), percent);
+            setDownloadStatus(mQueueIndex.get(0), percent);
         }
     }
 
@@ -710,8 +710,8 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
             return;
         }
         mCanBeCanceled = false;
-        if (mDlDataProvider != null) {
-            mDlDataProvider.cancelDownLoadStatus(fullPath);
+        if (mDownloadDataProvider != null) {
+            mDownloadDataProvider.cancelDownLoadStatus(fullPath);
         }
         setNextDownLoad();
     }
@@ -752,9 +752,9 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
             public void onOKCallback(final boolean isOK) {
                 if (isOK) {
                     if (!completed) {
-                        if (null != mDlDataProvider && null != queIndex && 0 < queIndex.size()) {
+                        if (null != mDownloadDataProvider && null != mQueueIndex && 0 < mQueueIndex.size()) {
                             int num = (int) view.getTag();
-                            boolean isCurDl = queIndex.get(0) == num;
+                            boolean isCurDl = mQueueIndex.get(0) == num;
                             if (isCurDl) {
                                 if (!mCanBeCanceled) {
                                     showMessage();
@@ -762,10 +762,10 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                                 }
                                 cancelCurrentDl();
                             } else {
-                                for (int i = 0; i < queIndex.size(); i++) {
-                                    if (num == queIndex.get(i)) {
+                                for (int i = 0; i < mQueueIndex.size(); i++) {
+                                    if (num == mQueueIndex.get(i)) {
                                         String path = getCurrentDlFullPath(i);
-                                        mDlDataProvider.cancelDownLoadStatus(path);
+                                        mDownloadDataProvider.cancelDownLoadStatus(path);
                                         unQueue(i);
                                         break;
                                     }
@@ -783,23 +783,23 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                             itemId = DownloaderBase.getFileNameById(itemId);
                         }
                         path.append(itemId);
-                        if (mDlDataProvider == null) {
+                        if (mDownloadDataProvider == null) {
                             try {
-                                mDlDataProvider = DlDataProvider.getInstance(activity);
+                                mDownloadDataProvider = DownloadDataProvider.getInstance(mActivity);
                             } catch (Exception e) {
                                 DTVTLogger.debug(e);
                                 showMessage();
                             }
                         }
-                        mDlDataProvider.cancelDownLoadStatus(path.toString());
+                        mDownloadDataProvider.cancelDownLoadStatus(path.toString());
                         noticeActDel(path.toString());
                     }
                     setDownloadStatusClear(view);
                     view.setBackgroundResource(R.mipmap.icon_circle_normal_download);
                     mContentsData.get((Integer) view.getTag()).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_ALLOW);
                     mContentsData.get((Integer) view.getTag()).setDownloadStatus("");
-                    if (((RecordedListActivity) activity).getCurrentPosition() == 1) {
-                        ((RecordedListActivity) activity).setRecordedTakeOutContents();
+                    if (((RecordedListActivity) mActivity).getCurrentPosition() == 1) {
+                        ((RecordedListActivity) mActivity).setRecordedTakeOutContents();
                     }
                     int idx = (Integer) view.getTag();
                     setContentListStatusContent(idx, ContentsAdapter.DOWNLOAD_STATUS_ALLOW, "");
@@ -813,9 +813,9 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      * 現在のDLを取りやめる.
      */
     private void cancelCurrentDl() {
-        mDlDataProvider.cancel();
+        mDownloadDataProvider.cancel();
         String path = getCurrentDlFullPath(0);
-        mDlDataProvider.cancelDownLoadStatus(path);
+        mDownloadDataProvider.cancelDownLoadStatus(path);
     }
 
     /**
@@ -825,11 +825,11 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      * @return フルパス
      */
     private String getCurrentDlFullPath(final int idx) {
-        if (idx >= que.size()) {
+        if (idx >= mQueue.size()) {
             return null;
         }
-        return StringUtils.getConnectStrings(que.get(idx).getSaveFile(), File.separator,
-                que.get(idx).getItemId());
+        return StringUtils.getConnectStrings(mQueue.get(idx).getSaveFile(), File.separator,
+                mQueue.get(idx).getItemId());
     }
 
     /**
@@ -854,14 +854,14 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     /**
      * enqueue.
      * @param index index
-     * @param dlData dlData
+     * @param downloadData downloadData
      */
-    private void enqueue(final int index, final DlData dlData) {
-        if (null == queIndex) {
+    private void enqueue(final int index, final DownloadData downloadData) {
+        if (null == mQueueIndex) {
             return;
         }
-        que.add(dlData);
-        queIndex.add(index);
+        mQueue.add(downloadData);
+        mQueueIndex.add(index);
     }
 
     /**
@@ -869,11 +869,11 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      * @param index index
      */
     private void unQueue(final int index) {
-        if (index < que.size() && -1 < index) {
-            que.remove(index);
+        if (index < mQueue.size() && -1 < index) {
+            mQueue.remove(index);
         }
-        if (null != queIndex && index < queIndex.size() && -1 < index) {
-            queIndex.remove(index);
+        if (null != mQueueIndex && index < mQueueIndex.size() && -1 < index) {
+            mQueueIndex.remove(index);
         }
     }
 
@@ -881,33 +881,33 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      * unQueueAllExceptForFirst.
      */
     private void unQueueAllExceptForFirst() {
-        if (null == activity || null == mDlDataProvider) {
+        if (null == mActivity || null == mDownloadDataProvider) {
             return;
         }
-        if (1 == que.size()) {
-            mDlDataProvider.cancel();
+        if (1 == mQueue.size()) {
+            mDownloadDataProvider.cancel();
             return;
         }
 
-        activity.runOnUiThread(new Runnable() {
+        mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 String fullPath;
-                for (int i = 0; i < que.size(); ++i) {
+                for (int i = 0; i < mQueue.size(); ++i) {
                     fullPath = getCurrentDlFullPath(i);
                     if (!TextUtils.isEmpty(fullPath)) {
                         if (0 == i) {
-                            mDlDataProvider.cancel();
+                            mDownloadDataProvider.cancel();
                         }
                         setCancelStatusOnly(fullPath, i);
-                        mDlDataProvider.cancelDownLoadStatus(fullPath);
+                        mDownloadDataProvider.cancelDownLoadStatus(fullPath);
                     }
                 }
-                for (int i = 0; i < que.size(); ++i) {
-                    que.remove(i);
+                for (int i = 0; i < mQueue.size(); ++i) {
+                    mQueue.remove(i);
                 }
-                for (int i = 0; i < queIndex.size(); ++i) {
-                    queIndex.remove(i);
+                for (int i = 0; i < mQueueIndex.size(); ++i) {
+                    mQueueIndex.remove(i);
                 }
             }
         });
@@ -918,8 +918,8 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      * @param fullPath fullPath
      */
     private void noticeActDel(final String fullPath) {
-        if (null != activity) {
-            ((RecordedListActivity) activity).onNoticeActDel(fullPath, this);
+        if (null != mActivity) {
+            ((RecordedListActivity) mActivity).onNoticeActDel(fullPath, this);
         }
     }
 
@@ -956,7 +956,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      * @return yn
      */
     public boolean checkIsDownloading() {
-        return 0 < que.size();
+        return 0 < mQueue.size();
     }
 
     /**
@@ -978,7 +978,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
             return;
         }
         mCanBeCanceled = false;
-        if (activity != null) {
+        if (mActivity != null) {
             showMessage();
             setCancelStatus(fullPath);
         }
@@ -988,17 +988,17 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      * ダウンロード開始時に呼ばれる.
      */
     public void onStartBg() {
-        if (null == activity) {
+        if (null == mActivity) {
             return;
         }
-        if (mDlDataProvider != null) {
-            mDlDataProvider.setUiRunning(true);
+        if (mDownloadDataProvider != null) {
+            mDownloadDataProvider.setUiRunning(true);
         }
-        activity.runOnUiThread(new Runnable() {
+        mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (queIndex.size() > 0) {
-                    setDownloadStatus(queIndex.get(0), 0);
+                if (mQueueIndex.size() > 0) {
+                    setDownloadStatus(mQueueIndex.get(0), 0);
                 }
             }
         });

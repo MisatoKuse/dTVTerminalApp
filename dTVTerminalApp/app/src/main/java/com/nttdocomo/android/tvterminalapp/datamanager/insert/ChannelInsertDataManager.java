@@ -12,11 +12,11 @@ import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ChannelListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
 import java.util.HashMap;
@@ -59,8 +59,8 @@ public class ChannelInsertDataManager {
 
         try {
             //各種オブジェクト作成
-            DBHelper channelListDBHelper = new DBHelper(mContext);
-            DataBaseManager.initializeInstance(channelListDBHelper);
+            DataBaseHelper channelListDataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(channelListDataBaseHelper);
             SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
             database.acquireReference();
             ChannelListDao channelListDao = new ChannelListDao(database);
@@ -80,9 +80,9 @@ public class ChannelInsertDataManager {
                     String keyName = (String) entry.getKey();
                     String valName = (String) entry.getValue();
                     if (JsonConstants.META_RESPONSE_AVAIL_START_DATE.equals(keyName)) {
-                        values.put(DBConstants.UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
+                        values.put(DataBaseConstants.UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
                     }
-                    values.put(DBUtils.fourKFlgConversion(keyName), valName);
+                    values.put(DataBaseUtils.fourKFlgConversion(keyName), valName);
                 }
                 channelListDao.insert(values);
             }

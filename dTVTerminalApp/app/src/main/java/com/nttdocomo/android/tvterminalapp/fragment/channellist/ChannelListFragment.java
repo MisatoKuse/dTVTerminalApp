@@ -21,7 +21,7 @@ import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.jni.bs.DlnaBsChListItem;
 import com.nttdocomo.android.tvterminalapp.jni.ter.DlnaTerChListItem;
@@ -67,8 +67,17 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
          */
         void setUserVisibleHint(boolean isVisibleToUser, ChannelListFragment fragment);
     }
+
+    /**
+     * callback.
+     */
     public interface OnClickChannelItemListener {
-        void onClickChannelItem(int pos, ChannelListActivity.ChListDataType type);
+        /**
+         * callback.
+         * @param pos タップされたポジション.
+         * @param type チャンネルリストのタイプ
+         */
+        void onClickChannelItem(int pos, ChannelListActivity.ChannelListDataType type);
     }
     /**
      * コンテキスト.
@@ -101,8 +110,10 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
     /**
      * データタイプ.
      */
-    private ChannelListActivity.ChListDataType mChListDataType;
-
+    private ChannelListActivity.ChannelListDataType mChannelListDataType;
+    /**
+     * リスナー.
+     */
     private OnClickChannelItemListener mOnClickChannelItemListener;
 
     /**
@@ -117,11 +128,15 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
      *
      * @param type データタイプ
      */
-    public void setChListDataType(final ChannelListActivity.ChListDataType type) {
-        mChListDataType = type;
+    public void setChListDataType(final ChannelListActivity.ChannelListDataType type) {
+        mChannelListDataType = type;
     }
 
-    public void setClickItemListener(OnClickChannelItemListener listener) {
+    /**
+     * リスナー設定.
+     * @param listener listener
+     */
+    public void setClickItemListener(final OnClickChannelItemListener listener) {
         mOnClickChannelItemListener = listener;
     }
 
@@ -130,8 +145,8 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
      *
      * @return データタイプ
      */
-    public ChannelListActivity.ChListDataType getChListDataType() {
-        return mChListDataType;
+    public ChannelListActivity.ChannelListDataType getChListDataType() {
+        return mChannelListDataType;
     }
 
     @Override
@@ -225,7 +240,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
      */
     public void noticeRefresh() {
         if (null != mChannelListAdapter) {
-            mChannelListAdapter.setChListDataType(mChListDataType);
+            mChannelListAdapter.setChannelListDataType(mChannelListDataType);
             mChannelListAdapter.notifyDataSetChanged();
         }
     }
@@ -287,7 +302,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         if (mOnClickChannelItemListener != null) {
-            mOnClickChannelItemListener.onClickChannelItem(i, mChListDataType);
+            mOnClickChannelItemListener.onClickChannelItem(i, mChannelListDataType);
         }
         if (null == mData || i < 0) {
             return;
@@ -299,7 +314,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         }
         if (null != mContext) {
             Intent intent = new Intent(mContext, ContentDetailActivity.class);
-            intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
+            intent.putExtra(DtvtConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
             intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, datas);
             ChannelListActivity channelListActivity = (ChannelListActivity) mContext;
             channelListActivity.startActivity(intent);
@@ -314,8 +329,8 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
      */
     private RecordedContentsDetailData getParcleData(final int i) {
         RecordedContentsDetailData ret = new RecordedContentsDetailData();
-        if (mChListDataType != null) {
-            switch (mChListDataType) {
+        if (mChannelListDataType != null) {
+            switch (mChannelListDataType) {
                 case CH_LIST_DATA_TYPE_HIKARI:
                 case CH_LIST_DATA_TYPE_DCH:
                     return null;

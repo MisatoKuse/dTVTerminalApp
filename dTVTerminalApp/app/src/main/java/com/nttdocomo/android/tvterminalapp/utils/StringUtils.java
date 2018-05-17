@@ -12,9 +12,7 @@ import android.util.Base64;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist.SerializablePreferencesData;
@@ -203,7 +201,7 @@ public class StringUtils {
         }
 
         //数字の文字列かどうかの判定
-        if (data != null && data instanceof String && DBUtils.isNumber((String) data)) {
+        if (data != null && data instanceof String && DataBaseUtils.isNumber((String) data)) {
             //数字文字列だったので、変換して返す
             return Long.parseLong((String) data);
         }
@@ -231,7 +229,7 @@ public class StringUtils {
         }
 
         //数字の文字列かどうかの判定
-        if (data != null && data instanceof String && DBUtils.isNumber((String) data)) {
+        if (data != null && data instanceof String && DataBaseUtils.isNumber((String) data)) {
             //数字文字列だったので、変換して返す
             return Integer.parseInt((String) data);
         }
@@ -549,7 +547,7 @@ public class StringUtils {
         final String MAX_RAT_VALUE = "5.0";
         final String RAT_EXCEPTION_VALUE = "0";
         String strRatStar;
-        if (DBUtils.isFloat(ratStar)) {
+        if (DataBaseUtils.isFloat(ratStar)) {
             float rating = Float.parseFloat(ratStar);
             if (rating >= 5) {
                 strRatStar = MAX_RAT_VALUE;
@@ -729,12 +727,12 @@ public class StringUtils {
             @NonNull final OtherContentsDetailData detailData,
             @NonNull final Context context,
             @NonNull final ContentUtils.ContentsType contentsType) {
-        String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(context));
 
         switch (contentsType) {
             case DIGITAL_TERRESTRIAL_BROADCASTING:
             case BROADCASTING_SATELLITE:
             case HIKARI_RECORDED:
+            case HIKARI_TV_NOW_ON_AIR:
                 //文言なし
                 return "";
             case HIKARI_TV:
@@ -744,41 +742,24 @@ public class StringUtils {
             case HIKARI_IN_DCH_MISS:
             case HIKARI_IN_DCH_RELATION:
             case HIKARI_IN_DTV:
-                if (SharedPreferencesUtils.getSharedPreferencesStbConnect(context)) {
-                    //ペアリング済み
-                    if (contractInfo.equals(UserInfoUtils.CONTRACT_INFO_H4D)) {
-                        switch (contentsType) {
-                            case HIKARI_TV:
-                                //文言なし
-                                return "";
-                            case HIKARI_TV_VOD:
-                                //テレビで視聴できます
-                                return context.getString(R.string.contents_detail_thumbnail_text);
-                            case HIKARI_IN_DCH_TV:
-                            case HIKARI_IN_DCH:
-                            case HIKARI_IN_DCH_MISS:
-                            case HIKARI_IN_DCH_RELATION:
-                                //dTVチャンネルで視聴
-                                return context.getString(R.string.dtv_channel_service_start_text);
-                            case HIKARI_IN_DTV:
-                                //dTVで視聴
-                                return context.getString(R.string.dtv_content_service_start_text);
-                        }
-                    } else {
-                        return context.getString(R.string.contents_detail_contract_text_ch);
-                    }
-                } else {
-                    //未ペアリング
-                    UserState userState = UserInfoUtils.getUserState(context);
-                    if (userState.equals(UserState.LOGIN_NG)) {
-                        return context.getString(R.string.main_setting_logon_request_error_message);
-                    } else {
-                        if (contractInfo.equals(UserInfoUtils.CONTRACT_INFO_H4D)) {
-                            return context.getString(R.string.contents_detail_pairing_request);
-                        } else {
-                            return context.getString(R.string.contents_detail_contract_text_ch);
-                        }
-                    }
+                switch (contentsType) {
+                    case HIKARI_TV:
+                        //文言なし
+                        return "";
+                    case HIKARI_TV_VOD:
+                        //テレビで視聴できます
+                        return context.getString(R.string.contents_detail_hikari_vod_inside_home);
+                    case HIKARI_IN_DCH_TV:
+                    case HIKARI_IN_DCH:
+                    case HIKARI_IN_DCH_MISS:
+                    case HIKARI_IN_DCH_RELATION:
+                        //dTVチャンネルで視聴
+                        return context.getString(R.string.dtv_channel_service_start_text);
+                    case HIKARI_IN_DTV:
+                        //dTVで視聴
+                        return context.getString(R.string.dtv_content_service_start_text);
+                    default:
+                        return "";
                 }
             case PURE_DTV_CHANNEL:
                 //dTVチャンネルで視聴

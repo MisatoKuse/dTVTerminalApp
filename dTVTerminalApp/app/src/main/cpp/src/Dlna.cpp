@@ -12,7 +12,6 @@
 #include <dupnp_soap.h>
 #include <cstring>
 #include "Dlna.h"
-#include "DmsInfo.h"
 #include "DlnaBSDigitalXmlParser.h"
 #include "DlnaTerChXmlParser.h"
 #include "DlnaHikariChXmlParser.h"
@@ -490,17 +489,69 @@ namespace dtvt {
                 thiz->getDlnaXmlContainer().addVVectorString(vv);
                 switch (parser->getMsgId()){
                     case DLNA_MSG_ID_TER_CHANNEL_LIST:
-                        thiz->sendSoap((char*)response->url, DLNA_DMS_TER_CHANNEL, thiz->getDlnaXmlContainer().getAllVVectorString().size());
-                        break;
+                        switch (parser->getImageQuality()){
+                            case IMAGE_QUALITY_HIGH:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_TER_CHANNEL_HIGH, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_MIDDLE:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_TER_CHANNEL_MIDDLE, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_LOW:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_TER_CHANNEL_LOW, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_DEFAULT:
+                            default:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_TER_CHANNEL, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                        }
                     case DLNA_MSG_ID_BS_CHANNEL_LIST:
-                        thiz->sendSoap((char*)response->url, DLNA_DMS_BS_CHANNEL, thiz->getDlnaXmlContainer().getAllVVectorString().size());
-                        break;
+                        switch (parser->getImageQuality()){
+                            case IMAGE_QUALITY_HIGH:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_BS_CHANNEL_HIGH, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_MIDDLE:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_BS_CHANNEL_MIDDLE, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_LOW:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_BS_CHANNEL_LOW, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_DEFAULT:
+                            default:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_BS_CHANNEL, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                        }
                     case DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST:
-                        thiz->sendSoap((char*)response->url, DLNA_DMS_RECORD_LIST, thiz->getDlnaXmlContainer().getAllVVectorString().size());
-                        break;
+                        switch (parser->getImageQuality()){
+                            case IMAGE_QUALITY_HIGH:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_RECORD_LIST_HIGH, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_MIDDLE:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_RECORD_LIST_MIDDLE, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_LOW:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_RECORD_LIST_LOW, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_DEFAULT:
+                            default:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_RECORD_LIST, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                        }
                     case DLNA_MSG_ID_HIKARI_CHANNEL_LIST:
-                        thiz->sendSoap((char*)response->url, DLNA_DMS_MULTI_CHANNEL, thiz->getDlnaXmlContainer().getAllVVectorString().size());
-                        break;
+                        switch (parser->getImageQuality()){
+                            case IMAGE_QUALITY_HIGH:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_MULTI_CHANNEL_HIGH, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_MIDDLE:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_MULTI_CHANNEL_MIDDLE, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_LOW:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_MULTI_CHANNEL_LOW, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                            case IMAGE_QUALITY_DEFAULT:
+                            default:
+                                thiz->sendSoap((char*)response->url, DLNA_DMS_MULTI_CHANNEL, thiz->getDlnaXmlContainer().getAllVVectorString().size());
+                                break;
+                        }
                     default:
                         VVectorString totalVv = thiz->getDlnaXmlContainer().getAllVVectorString();
                         thiz->notifyObject(parser->getMsgId(), totalVv);
@@ -1232,10 +1283,11 @@ namespace dtvt {
             }
     }
 
-    bool Dlna::browseRecVideoListDms(std::string controlUrl) {
+    bool Dlna::browseRecVideoListDms(std::string controlUrl, int imageQuality) {
         if(NULL==mDlnaRecVideoXmlParser){
             mDlnaRecVideoXmlParser=(DlnaXmlParserBase*)new DlnaRecVideoXmlParser();
             IfNullReturnFalse(mDlnaRecVideoXmlParser);
+            mDlnaRecVideoXmlParser->setImageQuality(imageQuality);
         }
         mRecursionXmlParser=mDlnaRecVideoXmlParser;
 
@@ -1248,14 +1300,25 @@ namespace dtvt {
             //return sendSoap(controlUrl, "0"); //test
             return sendSoap(controlUrl, DLNA_DMS_ROOT);   //本番
         #elif defined(DLNA_KARI_DMS_RELEASE)
-            return sendSoap(controlUrl, DLNA_DMS_RECORD_LIST);
+        switch (imageQuality){
+            case IMAGE_QUALITY_HIGH:
+                return sendSoap(controlUrl, DLNA_DMS_RECORD_LIST_HIGH);
+            case IMAGE_QUALITY_MIDDLE:
+                return sendSoap(controlUrl, DLNA_DMS_RECORD_LIST_MIDDLE);
+            case IMAGE_QUALITY_LOW:
+                return sendSoap(controlUrl, DLNA_DMS_RECORD_LIST_LOW);
+            case IMAGE_QUALITY_DEFAULT:
+            default:
+                return sendSoap(controlUrl, DLNA_DMS_RECORD_LIST);
+        }
         #endif
     }
 
-    bool Dlna::browseBsChListDms(std::string controlUrl) {
+    bool Dlna::browseBsChListDms(std::string controlUrl, int imageQuality) {
         if(NULL==mBsDigitalXmlParser){
             mBsDigitalXmlParser=(DlnaXmlParserBase*)new DlnaBSDigitalXmlParser();
             IfNullReturnFalse(mBsDigitalXmlParser);
+            mBsDigitalXmlParser->setImageQuality(imageQuality);
         }
         mRecursionXmlParser=mBsDigitalXmlParser;
         mDlnaXmlContainer.cleanAll();
@@ -1264,14 +1327,25 @@ namespace dtvt {
         #elif defined(DLNA_KARI_DMS_NAS)
             return sendSoap(controlUrl, DLNA_DMS_ROOT);
         #elif defined(DLNA_KARI_DMS_RELEASE)
-            return sendSoap(controlUrl, DLNA_DMS_BS_CHANNEL);
+        switch (imageQuality){
+            case IMAGE_QUALITY_HIGH:
+                return sendSoap(controlUrl, DLNA_DMS_BS_CHANNEL_HIGH);
+            case IMAGE_QUALITY_MIDDLE:
+                return sendSoap(controlUrl, DLNA_DMS_BS_CHANNEL_MIDDLE);
+            case IMAGE_QUALITY_LOW:
+                return sendSoap(controlUrl, DLNA_DMS_BS_CHANNEL_LOW);
+            case IMAGE_QUALITY_DEFAULT:
+            default:
+                return sendSoap(controlUrl, DLNA_DMS_BS_CHANNEL);
+        }
         #endif
     }
 
-    bool Dlna::browseTerChListDms(std::string controlUrl) {
+    bool Dlna::browseTerChListDms(std::string controlUrl, int imageQuality) {
         if(NULL==mTerChXmlParser){
             mTerChXmlParser=(DlnaXmlParserBase*)new DlnaTerChXmlParser();
             IfNullReturnFalse(mTerChXmlParser);
+            mTerChXmlParser->setImageQuality(imageQuality);
         }
         mRecursionXmlParser=mTerChXmlParser;
         mDlnaXmlContainer.cleanAll();
@@ -1280,14 +1354,25 @@ namespace dtvt {
         #elif defined(DLNA_KARI_DMS_NAS)
                 return sendSoap(controlUrl, DLNA_DMS_ROOT);
         #elif defined(DLNA_KARI_DMS_RELEASE)
+        switch (imageQuality){
+            case IMAGE_QUALITY_HIGH:
+                return sendSoap(controlUrl, DLNA_DMS_TER_CHANNEL_HIGH);
+            case IMAGE_QUALITY_MIDDLE:
+                return sendSoap(controlUrl, DLNA_DMS_TER_CHANNEL_MIDDLE);
+            case IMAGE_QUALITY_LOW:
+                return sendSoap(controlUrl, DLNA_DMS_TER_CHANNEL_LOW);
+            case IMAGE_QUALITY_DEFAULT:
+            default:
                 return sendSoap(controlUrl, DLNA_DMS_TER_CHANNEL);
+        }
         #endif
     }
 
-    bool Dlna::browseHikariChListDms(std::string controlUrl) {
+    bool Dlna::browseHikariChListDms(std::string controlUrl, int imageQuality) {
         if(NULL==mHikariChXmlParser){
             mHikariChXmlParser=(DlnaXmlParserBase*)new DlnaHikariChXmlParser();
             IfNullReturnFalse(mHikariChXmlParser);
+            mHikariChXmlParser->setImageQuality(imageQuality);
         }
         mRecursionXmlParser=mHikariChXmlParser;
         mDlnaXmlContainer.cleanAll();
@@ -1296,7 +1381,17 @@ namespace dtvt {
         #elif defined(DLNA_KARI_DMS_NAS)
                 return sendSoap(controlUrl, DLNA_DMS_ROOT);
         #elif defined(DLNA_KARI_DMS_RELEASE)
-                return sendSoap(controlUrl, DLNA_DMS_MULTI_CHANNEL);
+            switch (imageQuality){
+                case IMAGE_QUALITY_HIGH:
+                    return sendSoap(controlUrl, DLNA_DMS_MULTI_CHANNEL_HIGH);
+                case IMAGE_QUALITY_MIDDLE:
+                    return sendSoap(controlUrl, DLNA_DMS_MULTI_CHANNEL_MIDDLE);
+                case IMAGE_QUALITY_LOW:
+                    return sendSoap(controlUrl, DLNA_DMS_MULTI_CHANNEL_LOW);
+                case IMAGE_QUALITY_DEFAULT:
+                default:
+                    return sendSoap(controlUrl, DLNA_DMS_MULTI_CHANNEL);
+            }
         #endif
     }
 
@@ -1333,10 +1428,13 @@ namespace dtvt {
         if (!info){
             return 0; // このデバイスをデバイスマネージャーの管理リストに追加しません
         }
-        // 特定のDMS に限定する場合は friendly_name を指定する
-        if (NULL == strstr((char*)info->friendly_name, "特定のDMSのfriendly_name")){
-//        return 0; // このデバイスをデバイスマネージャーの管理リストに追加しません
+
+        //この情報がSTB2号機ではないならば、デバイスマネージャーの管理リストに追加しない
+        if(!Dlna::isSTB2nd(info)) {
+            //テスト等でSTB2号機以外のDLNA機器をSTB選択画面に表示したい場合は、このreturn 0を無効化してください。
+            return 0;
         }
+
         device->user_data = (void*)info; // デバイスディスクリプションの解析情報 ※leaveHandlerで解放すること
 
         return 1;
@@ -1368,6 +1466,29 @@ namespace dtvt {
         }
 
         thiz->notifyObject(DLNA_MSG_ID_DEV_DISP_JOIN, vv);
+    }
+
+    /**
+     * 指定されたDMS情報が、STB2号機であることの判定.
+     *
+     * @param dmsInfo DMS情報
+     * @return STB2号機だった場合はtrue
+     */
+    bool Dlna::isSTB2nd(dms_info* dmsInfo) {
+        //モデル名が"TT01"かを見る
+        if(0 != strcmp((char*)dmsInfo->modelName,DMS_MODE_NAME_STB2ND)) {
+            //TT01ではなかったので、falseで帰る
+            return false;
+        }
+
+        //製造元が"HUAWEI TECHNOLOGIES CO.,LTD"かを見る（Analyzeがifから3項演算子への変更を推奨するが、メンテナンス性が低下するので行わない）
+        if(0 != strcmp((char*)dmsInfo->manufacture,DMS_MANUFACTURER_STB2ND)) {
+            //HUAWEI・・・ではなかったので、falseで帰る
+            return false;
+        }
+
+        //STB2号機である事の確認ができたので、trueで帰る
+        return true;
     }
 
     /**

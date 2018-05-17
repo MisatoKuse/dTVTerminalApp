@@ -196,7 +196,7 @@ public class ChannelWebClient
                 jsonObject.put(JsonConstants.META_RESPONSE_PAGER, jsonPagerObject);
             }
             if (filter.isEmpty()) {
-
+                DTVTLogger.debug("");
             } else {
                 jsonObject.put(JsonConstants.META_RESPONSE_FILTER, filter);
             }

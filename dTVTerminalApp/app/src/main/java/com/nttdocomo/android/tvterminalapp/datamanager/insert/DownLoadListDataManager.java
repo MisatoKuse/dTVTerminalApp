@@ -10,10 +10,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.DownLoadListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelperDownload;
-import com.nttdocomo.android.tvterminalapp.service.download.DlData;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelperDownload;
+import com.nttdocomo.android.tvterminalapp.service.download.DownloadData;
 
 import java.util.List;
 import java.util.Map;
@@ -42,13 +42,13 @@ public class DownLoadListDataManager {
 
     /**
      * 持ち出しのダウンロード情報をDBに格納する.
-     * @param dlData ダウンロード情報
+     * @param downloadData ダウンロード情報
      */
-    public void insertDownload(final DlData dlData) {
+    public void insertDownload(final DownloadData downloadData) {
 
         try {
             //各種オブジェクト作成
-            DBHelperDownload downLoadListDBHelper = new DBHelperDownload(mContext);
+            DataBaseHelperDownload downLoadListDBHelper = new DataBaseHelperDownload(mContext);
             DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
             SQLiteDatabase database = DataBaseManager.getDownloadInstance().openDownloadDatabase();
@@ -56,20 +56,20 @@ public class DownLoadListDataManager {
             DownLoadListDao downloadListDao = new DownLoadListDao(database);
 
             //DB保存前に前回取得したデータは全消去する
-            downloadListDao.deleteByItemId(dlData.getItemId());
+            downloadListDao.deleteByItemId(downloadData.getItemId());
 
             //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
             ContentValues values = new ContentValues();
-            values.put(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID, dlData.getItemId());
-            values.put(DBConstants.DOWNLOAD_LIST_COLUM_URL, dlData.getUrl());
-            values.put(DBConstants.DOWNLOAD_LIST_COLUM_TITLE, dlData.getTitle());
-            values.put(DBConstants.DOWNLOAD_LIST_COLUM_SIZE, dlData.getTotalSize());
-            values.put(DBConstants.DOWNLOAD_LIST_COLUM_DURATION, dlData.getDuration());
-            values.put(DBConstants.DOWNLOAD_LIST_COLUM_RESOLUTION, dlData.getResolution());
-            values.put(DBConstants.DOWNLOAD_LIST_COLUM_BITRATE, dlData.getBitrate());
-            values.put(DBConstants.DOWNLOAD_LIST_COLUM_UPNP_ICON, dlData.getUpnpIcon());
-            values.put(DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL, dlData.getSaveFile());
-            values.put(DBConstants.DOWNLOAD_LIST_COLUM_TYPE, dlData.getVideoType());
+            values.put(DataBaseConstants.DOWNLOAD_LIST_COLUM_ITEM_ID, downloadData.getItemId());
+            values.put(DataBaseConstants.DOWNLOAD_LIST_COLUM_URL, downloadData.getUrl());
+            values.put(DataBaseConstants.DOWNLOAD_LIST_COLUM_TITLE, downloadData.getTitle());
+            values.put(DataBaseConstants.DOWNLOAD_LIST_COLUM_SIZE, downloadData.getTotalSize());
+            values.put(DataBaseConstants.DOWNLOAD_LIST_COLUM_DURATION, downloadData.getDuration());
+            values.put(DataBaseConstants.DOWNLOAD_LIST_COLUM_RESOLUTION, downloadData.getResolution());
+            values.put(DataBaseConstants.DOWNLOAD_LIST_COLUM_BITRATE, downloadData.getBitrate());
+            values.put(DataBaseConstants.DOWNLOAD_LIST_COLUM_UPNP_ICON, downloadData.getUpnpIcon());
+            values.put(DataBaseConstants.DOWNLOAD_LIST_COLUM_SAVE_URL, downloadData.getSaveFile());
+            values.put(DataBaseConstants.DOWNLOAD_LIST_COLUM_TYPE, downloadData.getVideoType());
             downloadListDao.insert(values);
         } catch (SQLiteException e) {
             DTVTLogger.debug("DownLoadListDataManager::insertDownload, e.cause=" + e.getCause());
@@ -86,7 +86,7 @@ public class DownLoadListDataManager {
 
         try {
             //各種オブジェクト作成
-            DBHelperDownload downLoadListDBHelper = new DBHelperDownload(mContext);
+            DataBaseHelperDownload downLoadListDBHelper = new DataBaseHelperDownload(mContext);
             DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
             SQLiteDatabase database = DataBaseManager.getDownloadInstance().openDownloadDatabase();
@@ -109,7 +109,7 @@ public class DownLoadListDataManager {
 
         try {
             //各種オブジェクト作成
-            DBHelperDownload downLoadListDBHelper = new DBHelperDownload(mContext);
+            DataBaseHelperDownload downLoadListDBHelper = new DataBaseHelperDownload(mContext);
             DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
             SQLiteDatabase database = DataBaseManager.getDownloadInstance().openDownloadDatabase();
@@ -132,7 +132,7 @@ public class DownLoadListDataManager {
 
         try {
             //各種オブジェクト作成
-            DBHelperDownload downLoadListDBHelper = new DBHelperDownload(mContext);
+            DataBaseHelperDownload downLoadListDBHelper = new DataBaseHelperDownload(mContext);
             DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
             SQLiteDatabase database = DataBaseManager.getDownloadInstance().openDownloadDatabase();
@@ -141,7 +141,7 @@ public class DownLoadListDataManager {
 
             //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
             ContentValues values = new ContentValues();
-            values.put(DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS, DOWNLOAD_OK);
+            values.put(DataBaseConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS, DOWNLOAD_OK);
             downloadListDao.updateByItemId(values, itemId);
         } catch (SQLiteException e) {
             DTVTLogger.debug("DownLoadListDataManager::updateDownloadByItemId, e.cause=" + e.getCause());
@@ -159,11 +159,11 @@ public class DownLoadListDataManager {
         List<Map<String, String>> list = null;
         try {
             //ホーム画面に必要な列を列挙する
-            String[] columns = {DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS, DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID,
-            DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL, DBConstants.DOWNLOAD_LIST_COLUM_TITLE};
+            String[] columns = {DataBaseConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS, DataBaseConstants.DOWNLOAD_LIST_COLUM_ITEM_ID,
+            DataBaseConstants.DOWNLOAD_LIST_COLUM_SAVE_URL, DataBaseConstants.DOWNLOAD_LIST_COLUM_TITLE};
 
             //Daoクラス使用準備
-            DBHelperDownload downLoadListDBHelper = new DBHelperDownload(mContext);
+            DataBaseHelperDownload downLoadListDBHelper = new DataBaseHelperDownload(mContext);
             DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
             SQLiteDatabase database = DataBaseManager.getDownloadInstance().openDownloadDatabase();
@@ -189,20 +189,20 @@ public class DownLoadListDataManager {
         List<Map<String, String>> list = null;
         try {
             //ホーム画面に必要な列を列挙する
-            String[] columns = {DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID, DBConstants.DOWNLOAD_LIST_COLUM_URL,
-                    DBConstants.DOWNLOAD_LIST_COLUM_SAVE_DIDL, DBConstants.DOWNLOAD_LIST_COLUM_SAVE_HOST,
-                    DBConstants.DOWNLOAD_LIST_COLUM_SAVE_PORT, DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL,
-                    DBConstants.DOWNLOAD_LIST_COLUM_TYPE, DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_SIZE,
-                    DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS, DBConstants.DOWNLOAD_LIST_COLUM_SIZE,
-                    DBConstants.DOWNLOAD_LIST_COLUM_DURATION, DBConstants.DOWNLOAD_LIST_COLUM_RESOLUTION,
-                    DBConstants.DOWNLOAD_LIST_COLUM_UPNP_ICON, DBConstants.DOWNLOAD_LIST_COLUM_BITRATE,
-                    DBConstants.DOWNLOAD_LIST_COLUM_IS_SUPPORTED_BYTE_SEEK, DBConstants.DOWNLOAD_LIST_COLUM_IS_SUPPORTED_TIME_SEEK,
-                    DBConstants.DOWNLOAD_LIST_COLUM_IS_AVAILABLE_CONNECTION_STALLING, DBConstants.DOWNLOAD_LIST_COLUM_IS_LIVE_MODE,
-                    DBConstants.DOWNLOAD_LIST_COLUM_IS_REMOTE, DBConstants.DOWNLOAD_LIST_COLUM_TITLE,
-                    DBConstants.DOWNLOAD_LIST_COLUM_CONTENTFORMAT};
+            String[] columns = {DataBaseConstants.DOWNLOAD_LIST_COLUM_ITEM_ID, DataBaseConstants.DOWNLOAD_LIST_COLUM_URL,
+                    DataBaseConstants.DOWNLOAD_LIST_COLUM_SAVE_DIDL, DataBaseConstants.DOWNLOAD_LIST_COLUM_SAVE_HOST,
+                    DataBaseConstants.DOWNLOAD_LIST_COLUM_SAVE_PORT, DataBaseConstants.DOWNLOAD_LIST_COLUM_SAVE_URL,
+                    DataBaseConstants.DOWNLOAD_LIST_COLUM_TYPE, DataBaseConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_SIZE,
+                    DataBaseConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS, DataBaseConstants.DOWNLOAD_LIST_COLUM_SIZE,
+                    DataBaseConstants.DOWNLOAD_LIST_COLUM_DURATION, DataBaseConstants.DOWNLOAD_LIST_COLUM_RESOLUTION,
+                    DataBaseConstants.DOWNLOAD_LIST_COLUM_UPNP_ICON, DataBaseConstants.DOWNLOAD_LIST_COLUM_BITRATE,
+                    DataBaseConstants.DOWNLOAD_LIST_COLUM_IS_SUPPORTED_BYTE_SEEK, DataBaseConstants.DOWNLOAD_LIST_COLUM_IS_SUPPORTED_TIME_SEEK,
+                    DataBaseConstants.DOWNLOAD_LIST_COLUM_IS_AVAILABLE_CONNECTION_STALLING, DataBaseConstants.DOWNLOAD_LIST_COLUM_IS_LIVE_MODE,
+                    DataBaseConstants.DOWNLOAD_LIST_COLUM_IS_REMOTE, DataBaseConstants.DOWNLOAD_LIST_COLUM_TITLE,
+                    DataBaseConstants.DOWNLOAD_LIST_COLUM_CONTENTFORMAT};
 
             //Daoクラス使用準備
-            DBHelperDownload downLoadListDBHelper = new DBHelperDownload(mContext);
+            DataBaseHelperDownload downLoadListDBHelper = new DataBaseHelperDownload(mContext);
             DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
             SQLiteDatabase database = DataBaseManager.getDownloadInstance().openDownloadDatabase();

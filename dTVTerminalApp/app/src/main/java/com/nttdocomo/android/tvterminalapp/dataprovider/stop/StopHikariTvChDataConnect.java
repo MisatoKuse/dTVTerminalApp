@@ -7,13 +7,13 @@ package com.nttdocomo.android.tvterminalapp.dataprovider.stop;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.HikariTvChDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.HikariTvChannelDataProvider;
 
 /**
  * おすすめ番組・ビデオ取得で行っている通信を止める.
  */
 
-public class StopHikariTvChDataConnect extends AsyncTask<HikariTvChDataProvider, Void, Void> {
+public class StopHikariTvChDataConnect extends AsyncTask<HikariTvChannelDataProvider, Void, Void> {
     /**
      * コンストラクタ.
      */
@@ -22,13 +22,13 @@ public class StopHikariTvChDataConnect extends AsyncTask<HikariTvChDataProvider,
     }
 
     @Override
-    protected Void doInBackground(final HikariTvChDataProvider... dataProviders) {
+    protected Void doInBackground(final HikariTvChannelDataProvider... dataProviders) {
         DTVTLogger.start();
         //通信を行っている処理を止める
         if (dataProviders != null) {
-            for (HikariTvChDataProvider hikariTvChDataProvider : dataProviders) {
-                if (hikariTvChDataProvider != null) {
-                    hikariTvChDataProvider.stopConnect();
+            for (HikariTvChannelDataProvider hikariTvChannelDataProvider : dataProviders) {
+                if (hikariTvChannelDataProvider != null) {
+                    hikariTvChannelDataProvider.stopConnect();
                 }
             }
         }
