@@ -27,8 +27,8 @@ import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
-import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadData;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadDataProvider;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadParam;
@@ -77,6 +77,10 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     private boolean mCanBeCanceled = false;
     /**フラグメント名.*/
     private String mFragmentName = null;
+    /**録画フラグメントビュー.*/
+    private View mRecordedFragmentView;
+    /**r録画リストビュー.*/
+    private ListView mRecordedListView;
 
     @Override
     public Context getContext() {
@@ -101,10 +105,6 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         mContentsData = new ArrayList<>();
 		mChannelNameCache = new HashSet<>();
     }
-    /**録画フラグメントビュー.*/
-    private View mRecordedFragmentView;
-    /**r録画リストビュー.*/
-    private ListView mRecordedListView;
 
     /**
      * Viewの初期化.
@@ -231,10 +231,8 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         super.onResume();
         if (RecordedListActivity.RLA_FragmentName_All.equals(mFragmentName)) {
             if (mDownloadDataProvider == null) {
-                try {
-                    mDownloadDataProvider = DownloadDataProvider.getInstance(mActivity);
-                } catch (Exception e) {
-                    DTVTLogger.debug(e);
+                mDownloadDataProvider = DownloadDataProvider.getInstance(mActivity);
+                if (mDownloadDataProvider == null) {
                     showMessage();
                     return;
                 }
@@ -281,18 +279,15 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                 setDownloadStatusClear(view.findViewById(R.id.item_common_result_clip_tv));
 				restoreChannelAndTime();
             }
-            ContentsData cd = null;
             int idx = mQueueIndex.get(0);
-            try {
-                cd = mContentsData.get(idx);
-            } catch (Exception e) {
-                DTVTLogger.debug(e);
-            }
-            if (null != cd) {
-                cd.setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
-                cd.setDlFileFullPath(fullPath);
-                cd.setDownloadStatus("");
-                setContentListStatusContent(idx, ContentsAdapter.DOWNLOAD_STATUS_COMPLETED, fullPath);
+            if (mContentsData != null && mContentsData.size() > idx) {
+                ContentsData cd = mContentsData.get(idx);
+                if (null != cd) {
+                    cd.setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
+                    cd.setDlFileFullPath(fullPath);
+                    cd.setDownloadStatus("");
+                    setContentListStatusContent(idx, ContentsAdapter.DOWNLOAD_STATUS_COMPLETED, fullPath);
+                }
             }
         }
         setNextDownLoad();
@@ -591,13 +586,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         }
         String dlPath = DownloaderBase.getDownloadPath(context);
         RecordedContentsDetailData item;
-        try {
-            item = mContentsList.get(index);
-        } catch (Exception e) {
-            DTVTLogger.debug(e);
-            showMessage();
-            return false;
-        }
+        item = mContentsList.get(index);
         if (null == item) {
             showMessage();
             return false;
@@ -624,7 +613,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         int clearTextSizeInt;
         try {
             clearTextSizeInt = Integer.parseInt(clearTextSize);
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             showMessage();
             return false;
         }
@@ -784,10 +773,8 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                         }
                         path.append(itemId);
                         if (mDownloadDataProvider == null) {
-                            try {
-                                mDownloadDataProvider = DownloadDataProvider.getInstance(mActivity);
-                            } catch (Exception e) {
-                                DTVTLogger.debug(e);
+                            mDownloadDataProvider = DownloadDataProvider.getInstance(mActivity);
+                            if (mDownloadDataProvider == null) {
                                 showMessage();
                             }
                         }

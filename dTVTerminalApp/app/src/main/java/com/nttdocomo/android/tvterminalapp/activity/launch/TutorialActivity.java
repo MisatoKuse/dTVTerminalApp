@@ -417,18 +417,18 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
      */
     private static class TutorialPagerAdapter extends PagerAdapter {
         /**リストビュー.*/
-        private List<View> views;
+        private List<View> mViews;
 
         /**チュートリアルページアダプタ.
          * @param views ビュー
          */
         private TutorialPagerAdapter(final List<View> views) {
-            this.views = views;
+            this.mViews = views;
         }
 
         @Override
         public int getCount() {
-            return views.size();
+            return mViews.size();
         }
 
         @Override
@@ -448,13 +448,13 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
 
         @Override
         public Object instantiateItem(final ViewGroup container, final int position) {
-            container.addView(views.get(position));
-            return views.get(position);
+            container.addView(mViews.get(position));
+            return mViews.get(position);
         }
 
         @Override
         public void destroyItem(final ViewGroup container, final int position, final Object object) {
-            container.removeView(views.get(position));
+            container.removeView(mViews.get(position));
         }
 
     }

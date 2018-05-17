@@ -295,19 +295,23 @@ public class RemoteControllerSendKeyAction {
                 case MotionEvent.ACTION_UP:
                     setTouchSelector(v.getId(), false);
                     DTVTLogger.debug("MotionEvemt ACTION_UP");
-                    if (mRepeatStateManagement.mStatus == RepeatTaskStatus.REPEAT_STATUS_EXECUTION) {
-                        // リピート実行中の場合
-                        sendKeyCode(v.getId(), SEND_KEYCODE_PARAM_ACTION_UP, true, mContext);
-                        mRepeatStateManagement.repeatCancel();
-                        mRepeatStateManagement.setRepeatTaskStatus(RepeatTaskStatus.REPEAT_STATUS_STAND_BY);
-                    } else if (mRepeatStateManagement.mStatus == RepeatTaskStatus.REPEAT_STATUS_DURING_STARTUP) {
-                        // リピート処理を1度も行っていない場合
-                        sendKeyCode(v.getId(), SEND_KEYCODE_PARAM_ACTION_UP, false, mContext);
-                        mRepeatStateManagement.repeatCancel();
-                        mRepeatStateManagement.setRepeatTaskStatus(RepeatTaskStatus.REPEAT_STATUS_STAND_BY);
-                        DTVTLogger.debug("sendKeyCode");
-                    } else {
-                        DTVTLogger.debug("nop");
+                    switch (mRepeatStateManagement.mStatus) {
+                        case REPEAT_STATUS_EXECUTION:
+                            // リピート実行中の場合
+                            sendKeyCode(v.getId(), SEND_KEYCODE_PARAM_ACTION_UP, true, mContext);
+                            mRepeatStateManagement.repeatCancel();
+                            mRepeatStateManagement.setRepeatTaskStatus(RepeatTaskStatus.REPEAT_STATUS_STAND_BY);
+                            break;
+                        case REPEAT_STATUS_DURING_STARTUP:
+                            // リピート処理を1度も行っていない場合
+                            sendKeyCode(v.getId(), SEND_KEYCODE_PARAM_ACTION_UP, false, mContext);
+                            mRepeatStateManagement.repeatCancel();
+                            mRepeatStateManagement.setRepeatTaskStatus(RepeatTaskStatus.REPEAT_STATUS_STAND_BY);
+                            DTVTLogger.debug("sendKeyCode");
+                            break;
+                        default:
+                            DTVTLogger.debug("nop");
+                            break;
                     }
                     break;
                 case MotionEvent.ACTION_DOWN:
@@ -355,7 +359,7 @@ public class RemoteControllerSendKeyAction {
     /**
      * selector画像名に対応する STBキーコード.
      */
-    private static final Map<Integer, int[]> keyDownUpSelector = new HashMap<Integer, int[]>() {
+    private static final Map<Integer, int[]> sKeyDownUpSelector = new HashMap<Integer, int[]>() {
         {
             put(R.id.remote_controller_bt_up,
                     new int[]{R.mipmap.remote_player_main_btn_arrow_top, R.mipmap.remote_tap_player_main_btn_arrow_top}); // カーソル (上下左右)
@@ -434,27 +438,33 @@ public class RemoteControllerSendKeyAction {
      */
     private void setTouchSelector(final int viewId, final boolean isDown) {
         int[] selectorPics = null;
-        if (keyDownUpSelector.containsKey(viewId)) {
-            selectorPics = keyDownUpSelector.get(viewId);
+        if (sKeyDownUpSelector.containsKey(viewId)) {
+            selectorPics = sKeyDownUpSelector.get(viewId);
         }
         if (selectorPics != null && selectorPics.length > 1) {
             if (mView.findViewById(viewId) instanceof Button) {
                 Button button = mView.findViewById(viewId);
                 if (isDown) {
-                    if (R.id.remote_controller_bt_channel_plus == viewId
-                            || R.id.remote_controller_bt_channel_minus == viewId) {
-                        ImageView imageView = mView.findViewById(R.id.remote_controller_tv_channel);
-                        imageView.setImageResource(selectorPics[1]);
-                    } else {
-                        button.setBackgroundResource(selectorPics[1]);
+                    switch (viewId) {
+                        case R.id.remote_controller_bt_channel_plus:
+                        case R.id.remote_controller_bt_channel_minus:
+                            ImageView imageView = mView.findViewById(R.id.remote_controller_tv_channel);
+                            imageView.setImageResource(selectorPics[1]);
+                            break;
+                        default:
+                            button.setBackgroundResource(selectorPics[1]);
+                            break;
                     }
                 } else {
-                    if (R.id.remote_controller_bt_channel_plus == viewId
-                            || R.id.remote_controller_bt_channel_minus == viewId) {
-                        ImageView imageView = mView.findViewById(R.id.remote_controller_tv_channel);
-                        imageView.setImageResource(selectorPics[0]);
-                    } else {
-                        button.setBackgroundResource(selectorPics[0]);
+                    switch (viewId) {
+                        case R.id.remote_controller_bt_channel_plus:
+                        case R.id.remote_controller_bt_channel_minus:
+                            ImageView imageView = mView.findViewById(R.id.remote_controller_tv_channel);
+                            imageView.setImageResource(selectorPics[0]);
+                            break;
+                        default:
+                            button.setBackgroundResource(selectorPics[0]);
+                            break;
                     }
                 }
             } else if (mView.findViewById(viewId) instanceof ImageView) {

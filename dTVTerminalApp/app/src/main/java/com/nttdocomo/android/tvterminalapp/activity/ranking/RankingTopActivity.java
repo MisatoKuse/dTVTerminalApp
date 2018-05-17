@@ -178,12 +178,18 @@ public class RankingTopActivity extends BaseActivity
     @Override
     protected void saveAdapter(final int index, final HomeRecyclerViewAdapter horizontalViewAdapter) {
         super.saveAdapter(index, horizontalViewAdapter);
-        if (index == TODAY_SORT) {
-            mHorizontalViewAdapterToday = horizontalViewAdapter;
-        } else if (index == WEEK_SORT) {
-            mHorizontalViewAdapterWeekly = horizontalViewAdapter;
-        } else if (index == VIDEO_SORT) {
-            mHorizontalViewAdapterVod = horizontalViewAdapter;
+        switch (index) {
+            case TODAY_SORT:
+                mHorizontalViewAdapterToday = horizontalViewAdapter;
+                break;
+            case WEEK_SORT:
+                mHorizontalViewAdapterWeekly = horizontalViewAdapter;
+                break;
+            case VIDEO_SORT:
+                mHorizontalViewAdapterVod = horizontalViewAdapter;
+                break;
+            default:
+                break;
         }
     }
     @Override

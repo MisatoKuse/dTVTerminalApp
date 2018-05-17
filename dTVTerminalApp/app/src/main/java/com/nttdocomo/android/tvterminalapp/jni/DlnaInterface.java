@@ -226,7 +226,7 @@ public class DlnaInterface {
      * @param imageQuality 画質設定
      * @return 成功:true 失敗: false
      */
-    public boolean browseRecVideoDms(int imageQuality) {
+    public boolean browseRecVideoDms(final int imageQuality) {
         DTVTLogger.start();
         if (null == mCurrentDmsItem || null == mCurrentDmsItem.mControlUrl || 1 > mCurrentDmsItem.mControlUrl.length()) {
             return false;
@@ -244,7 +244,7 @@ public class DlnaInterface {
      * @param imageQuality 画質設定
      * @return 成功:true 失敗: false
      */
-    public boolean browseBsChListDms(int imageQuality) {
+    public boolean browseBsChListDms(final int imageQuality) {
         //boolean ret= browseBsChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
         if (null == mCurrentDmsItem || null == mCurrentDmsItem.mControlUrl || 1 > mCurrentDmsItem.mControlUrl.length()) {
             return false;
@@ -261,7 +261,7 @@ public class DlnaInterface {
      * @param imageQuality 画質設定
      * @return 成功:true 失敗: false
      */
-    public boolean browseHikariChListDms(int imageQuality) {
+    public boolean browseHikariChListDms(final int imageQuality) {
         if (null == mCurrentDmsItem || null == mCurrentDmsItem.mControlUrl || 1 > mCurrentDmsItem.mControlUrl.length()) {
             return false;
         }
@@ -295,7 +295,7 @@ public class DlnaInterface {
      * @param imageQuality 画質設定
      * @return 成功:true 失敗: false
      */
-    public boolean browseTerChListDms(int imageQuality) {
+    public boolean browseTerChListDms(final int imageQuality) {
         //return browseTerChListDms(mNativeDlna, ctl);
         if (null == mCurrentDmsItem || null == mCurrentDmsItem.mControlUrl || 1 > mCurrentDmsItem.mControlUrl.length()) {
             return false;

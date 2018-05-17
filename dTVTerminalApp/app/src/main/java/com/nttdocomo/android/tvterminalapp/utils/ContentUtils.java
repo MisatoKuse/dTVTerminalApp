@@ -571,7 +571,7 @@ public class ContentUtils {
      * @return ContentsType
      */
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
-    public static ContentsType getRecommendContentsType(OtherContentsDetailData detailData) {
+    public static ContentsType getRecommendContentsType(final OtherContentsDetailData detailData) {
         int serviceId = detailData.getServiceId();
         String categoryId = detailData.getCategoryId();
         switch (serviceId) {

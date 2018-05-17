@@ -113,7 +113,7 @@ public class StbConnectRelayClient {
     /**
      * STBへメッセージを送信する.
      * @param data 送信するメッセージ
-     * @param length　メッセージbyte配列長
+     * @param length メッセージbyte配列長
      * @return 成功true
      */
     public boolean send(final byte[] data, final int length) {

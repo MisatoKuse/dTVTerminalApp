@@ -15,29 +15,72 @@ import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+/**
+ * DLNAマネージャー.
+ */
 public class DlnaManager {
+    /**エラータイプ.*/
     public enum LocalRegistrationErrorType {
+        /**NONE.*/
         NONE,
+        /**OVER.*/
         OVER,
+        /**UNKNOWN.*/
         UNKNOWN
     }
 
     // region Listener declaration
+
+    /**
+     * DlnaManagerListener.
+     */
     public interface DlnaManagerListener {
-        void joinDms(String name, String host, String udn, String controlUrl, String eventSubscriptionUrl);
+        /**
+         * joinDms.
+         * @param name name
+         * @param host host
+         * @param udn udn
+         * @param controlUrl controlUrl
+         * @param eventSubscriptionUrl eventSubscriptionUrl
+         */
+        void joinDms(final String name, final String host, final String udn, final String controlUrl,
+                     final String eventSubscriptionUrl);
+
+        /**
+         * leaveDms.
+         * @param udn udn
+         */
         void leaveDms(String udn);
     }
+
+    /**
+     * LocalRegisterListener.
+     */
     public interface LocalRegisterListener {
-        void onRegisterCallBack(boolean result, LocalRegistrationErrorType errorType);
+        /**
+         * onRegisterCallBack.
+         * @param result result
+         * @param errorType errorType
+         */
+        void onRegisterCallBack(final boolean result, final LocalRegistrationErrorType errorType);
     }
     // endregion Listener declaration
 
-    // singletone
+    /**
+     * singletone.
+     */
     private static DlnaManager sInstance = new DlnaManager();
 
+    /**
+     * DlnaManager.
+     */
     private DlnaManager() {
     }
 
+    /**
+     * shared.
+     * @return Instance
+     */
     public static DlnaManager shared() {
         return sInstance;
     }
@@ -45,13 +88,27 @@ public class DlnaManager {
     static {
         System.loadLibrary("dtvtlib");
     }
-
+    /**
+     * エラータイプ:OVER.
+     */
     private static final int LOCAL_REGISTRATION_ERROR_TYPE_OVER = 1;
-
+    /**
+     * DlnaManagerListener.
+     */
     public DlnaManagerListener mDlnaManagerListener = null;
+    /**
+     * LocalRegisterListener.
+     */
     public LocalRegisterListener mLocalRegisterListener = null;
+    /**
+     * Context.
+     */
     private Context mContext;
 
+    /**
+     * launch.
+     * @param context コンテキスト
+     */
     public void launch(final Context context) {
         mContext = context;
         DTVTLogger.start();
@@ -70,40 +127,76 @@ public class DlnaManager {
         DTVTLogger.end();
     }
 
+    /**
+     * StartDmp.
+     */
     public void StartDmp() {
         startDmp();
     }
 
+    /**
+     * StopDmp.
+     */
     public void StopDmp() {
         stopDmp();
     }
 
-    public void ConnectDmsWithUdn(String udn) {
+    /**
+     * ConnectDmsWithUdn.
+     * @param udn udn
+     */
+    public void ConnectDmsWithUdn(final String udn) {
         connectDmsWithUdn(udn);
     }
 
-    public void BrowseContentWithContainerId(int offset, int limit, String containerId) {
+    /**
+     * BrowseContentWithContainerId.
+     * @param offset offset
+     * @param limit limit
+     * @param containerId containerId
+     */
+    public void BrowseContentWithContainerId(final int offset, final int limit, final String containerId) {
         browseContentWithContainerId(offset, limit, containerId);
     }
 
+    /**
+     * StartDtcp.
+     */
     public void StartDtcp() {
         startDtcp();
     }
 
+    /**
+     * RestartDirag.
+     */
     public void RestartDirag() {
         restartDirag();
     }
 
+    /**
+     * RequestLocalRegistration.
+     * @param udn udn
+     */
     public void RequestLocalRegistration(final String udn) {
         requestLocalRegistration(udn, Build.MODEL);
     }
 
-    public String GetRemoteDeviceExpireDate(String udn) {
+    /**
+     * GetRemoteDeviceExpireDate.
+     * @param udn udn
+     * @return RemoteDeviceExpireDate
+     */
+    public String GetRemoteDeviceExpireDate(final String udn) {
         String result = getRemoteDeviceExpireDate(udn);
         return result;
     }
 
     // call from jni
+
+    /**
+     * getUniqueId.
+     * @return uniqueId
+     */
     public String getUniqueId() {
         if (null == mContext) {
             DTVTLogger.warning("mContext is null!");
@@ -114,9 +207,18 @@ public class DlnaManager {
         return uniqueId;
     }
 
-    // callback
-    public void DmsFoundCallback(String friendlyName, String udn, String location, String controlUrl, String eventSubscriptionUrl) {
-        DTVTLogger.warning("friendlyName = " + friendlyName + ", udn = " + udn + ", location = " + location + ", controlUrl = " + controlUrl + ", eventSubscriptionUrl = " + eventSubscriptionUrl);
+    /**
+     *  callback.
+     * @param friendlyName friendlyName
+     * @param udn udn
+     * @param location location
+     * @param controlUrl controlUrl
+     * @param eventSubscriptionUrl eventSubscriptionUrl
+     */
+    public void DmsFoundCallback(final String friendlyName, final  String udn, final String location,
+                                 final String controlUrl, final String eventSubscriptionUrl) {
+        DTVTLogger.warning("friendlyName = " + friendlyName + ", udn = " + udn + ", location = " + location
+                + ", controlUrl = " + controlUrl + ", eventSubscriptionUrl = " + eventSubscriptionUrl);
         DlnaManagerListener listener = DlnaManager.shared().mDlnaManagerListener;
         if (listener != null) {
             URL hostUrl = null;
@@ -133,7 +235,11 @@ public class DlnaManager {
         }
     }
 
-    public void DmsLeaveCallback(String udn) {
+    /**
+     * DmsLeaveCallback.
+     * @param udn  udn
+     */
+    public void DmsLeaveCallback(final String udn) {
         DTVTLogger.warning("udn = " + udn);
         DlnaManagerListener listener = DlnaManager.shared().mDlnaManagerListener;
         if (listener != null) {
@@ -143,12 +249,17 @@ public class DlnaManager {
         }
     }
 
-    public void RegistResultCallBack(boolean result, int errorType) {
+    /**
+     * RegistResultCallBack.
+     * @param result result
+     * @param errorType errorType
+     */
+    public void RegistResultCallBack(final boolean result, final int errorType) {
         DTVTLogger.warning("result = " + result);
         LocalRegisterListener listener = DlnaManager.shared().mLocalRegisterListener;
         if (listener != null) {
             LocalRegistrationErrorType localRegistrationErrorType = LocalRegistrationErrorType.NONE;
-            if (errorType == LOCAL_REGISTRATION_ERROR_TYPE_OVER){
+            if (errorType == LOCAL_REGISTRATION_ERROR_TYPE_OVER) {
                 localRegistrationErrorType = LocalRegistrationErrorType.OVER;
             }
             listener.onRegisterCallBack(result, localRegistrationErrorType);
@@ -158,21 +269,76 @@ public class DlnaManager {
     }
 
     // region native method
+
+    /**
+     * secureIoGlobalCreate.
+     */
     private native void secureIoGlobalCreate();
+
+    /**
+     * cipherFileContextGlobalCreate.
+     * @param privateDataPath privateDataPath
+     */
     private native void cipherFileContextGlobalCreate(String privateDataPath);
+
+    /**
+     * initDmp.
+     * @param configFilePath configFilePath
+     */
     private native void initDmp(String configFilePath);
+
+    /**
+     * initDirag.
+     * @param configFilePath configFilePath
+     */
     private native void initDirag(String configFilePath);
 
+    /**
+     * startDmp.
+     */
     private native void startDmp();
+
+    /**
+     * stopDmp.
+     */
     private native void stopDmp();
 
+    /**
+     * connectDmsWithUdn.
+     * @param udn udn
+     */
     private native void connectDmsWithUdn(String udn);
-    private native void browseContentWithContainerId(int offset, int limit, String containerId);
 
+    /**
+     * browseContentWithContainerId.
+     * @param offset offset
+     * @param limit limit
+     * @param containerId containerId
+     */
+    private native void browseContentWithContainerId(final int offset, final int limit, final String containerId);
+
+    /**
+     * startDtcp.
+     */
     private native void startDtcp();
-    private native void restartDirag();
-    private native void requestLocalRegistration(String udn, String deviceName);
-    private native String getRemoteDeviceExpireDate(String udn);
-    // endregion native method
 
+    /**
+     * restartDirag.
+     */
+    private native void restartDirag();
+
+    /**
+     * requestLocalRegistration.
+     * @param udn udn
+     * @param deviceName deviceName
+     */
+    private native void requestLocalRegistration(final String udn, final String deviceName);
+
+    /**
+     * getRemoteDeviceExpireDate.
+     * @param udn udn
+     * @return DeviceExpireDate
+     */
+    private native String getRemoteDeviceExpireDate(final String udn);
+    // endregion native method
 }

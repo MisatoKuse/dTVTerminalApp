@@ -37,7 +37,8 @@ public class DataBaseHelperDownload extends SQLiteOpenHelper {
         try {
             sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_DOWNLOAD_LIST_SQL);
         } catch (SQLiteException e) {
-            DTVTLogger.debug("DataBaseHelperDownload::onCreate, create " + DataBaseConstants.CREATE_TABLE_DOWNLOAD_LIST_SQL + " table failed, cause=" + e.getCause());
+            DTVTLogger.debug("DataBaseHelperDownload::onCreate, create"
+                    + DataBaseConstants.CREATE_TABLE_DOWNLOAD_LIST_SQL + " table failed, cause=" + e.getCause());
         }
     }
 

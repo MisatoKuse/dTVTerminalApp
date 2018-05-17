@@ -18,7 +18,7 @@ public class ProgramScrollView extends ScrollView {
     /**View.*/
     private View mView;
     /**番組表activity.*/
-    private TvProgramListActivity onScrollOffsetListener;
+    private TvProgramListActivity mOnScrollOffsetListener;
 
     /**
      * コンストラクタ.
@@ -43,8 +43,8 @@ public class ProgramScrollView extends ScrollView {
         if (mView != null) {
             mView.scrollTo(l, t);
         }
-        if (onScrollOffsetListener != null) {
-            onScrollOffsetListener.onScrollOffset(t);
+        if (mOnScrollOffsetListener != null) {
+            mOnScrollOffsetListener.onScrollOffset(t);
         }
     }
 
@@ -61,7 +61,7 @@ public class ProgramScrollView extends ScrollView {
      * @param onScrollOffsetListener activity
      */
     public void setOnScrollOffsetListener(final TvProgramListActivity onScrollOffsetListener) {
-        this.onScrollOffsetListener = onScrollOffsetListener;
+        this.mOnScrollOffsetListener = onScrollOffsetListener;
     }
 
     /**

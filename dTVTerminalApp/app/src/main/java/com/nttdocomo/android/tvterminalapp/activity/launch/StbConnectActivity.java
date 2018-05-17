@@ -90,7 +90,7 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
     /**
      * STB接続できたら、ホーム画面に自動遷移する.
      */
-    private Runnable runnable = new Runnable() {
+    private final Runnable runnable = new Runnable() {
         @Override
         public void run() {
             SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(

@@ -683,11 +683,13 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         //鍵交換
         exchangeKey();
     }
-
+    /**
+     * 鍵交換.
+     */
     private void exchangeKey() {
         CipherApi cipherApi = new CipherApi(new CipherApi.CipherApiCallback() {
             @Override
-            public void apiCallback(boolean result, String data) {
+            public void apiCallback(final boolean result, final String data) {
                 if (result) {
                     checkDAccountApp();
                 } else {

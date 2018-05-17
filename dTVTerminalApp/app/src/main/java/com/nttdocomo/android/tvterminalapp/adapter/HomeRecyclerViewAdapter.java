@@ -487,13 +487,16 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         } else {
             channelName = "";
         }
-        if (contentsType == ContentUtils.ContentsType.TV || contentsType == ContentUtils.ContentsType.OTHER) {
-            date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(startTime)),
-                    DateUtils.formatEpochToStringOpeLog(Long.parseLong(endTime)), channelName);
-        } else {
-            date = StringUtils.getConnectStrings(
-                    DateUtils.addDateLimit(
-                            mContext, contentsData, contentsType), channelName);
+        switch (contentsType) {
+            case TV:
+            case OTHER:
+                date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(startTime)),
+                        DateUtils.formatEpochToStringOpeLog(Long.parseLong(endTime)), channelName);
+                break;
+            default:
+                date = StringUtils.getConnectStrings(DateUtils.addDateLimit(
+                        mContext, contentsData, contentsType), channelName);
+                break;
         }
         //表示情報がすべて取得できないときは非表示にする
         if (date == null || date.isEmpty()) {

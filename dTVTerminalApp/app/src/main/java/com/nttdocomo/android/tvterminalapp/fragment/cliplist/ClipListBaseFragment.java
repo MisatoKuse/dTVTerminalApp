@@ -257,6 +257,7 @@ public class ClipListBaseFragment extends Fragment
                 break;
             default:
                 //現状処理は無い・警告対応
+                break;
         }
         return false;
     }

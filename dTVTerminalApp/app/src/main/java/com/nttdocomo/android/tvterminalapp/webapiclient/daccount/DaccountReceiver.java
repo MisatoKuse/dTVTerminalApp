@@ -103,6 +103,7 @@ public class DaccountReceiver extends BroadcastReceiver {
                 break;
             default:
                 //アナライザー対策なので無処理
+                break;
         }
     }
 }

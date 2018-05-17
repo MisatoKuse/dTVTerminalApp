@@ -530,7 +530,8 @@ public class ContentDetailActivity extends BaseActivity implements
                 //BG復帰時にクリップボタンの更新を行う
                 DtvContentsDetailFragment dtvContentsDetailFragment = getDetailFragment();
                 ContentsDetailDataProvider contentsDetailDataProvider = new ContentsDetailDataProvider(this);
-                dtvContentsDetailFragment.mOtherContentsDetailData = contentsDetailDataProvider.checkClipStatus(dtvContentsDetailFragment.mOtherContentsDetailData);
+                dtvContentsDetailFragment.mOtherContentsDetailData = contentsDetailDataProvider.
+                        checkClipStatus(dtvContentsDetailFragment.mOtherContentsDetailData);
                 dtvContentsDetailFragment.resumeClipButton();
                 break;
             default:
@@ -1429,27 +1430,34 @@ public class ContentDetailActivity extends BaseActivity implements
             // STBに接続している　「テレビで視聴」が表示
             if (getStbStatus()) {
                 if (mIsOtherService) {
-                    if (serviceId == D_ANIMATION_CONTENTS_SERVICE_ID) {
-                        // リモコンUIのリスナーを設定
-                        createRemoteControllerView(true);
-                        mIsControllerVisible = true;
-                        mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner_d_anime, null));
-                        setStartRemoteControllerUIListener(this);
-                        //「serviceId」が「15」(dTVコンテンツ)の場合
-                    } else if (serviceId == DTV_CONTENTS_SERVICE_ID) {
-                        // 「reserved1」が「1」STB視聴不可
-                        if (!CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved1())) {
+                    switch (serviceId) {
+                        case D_ANIMATION_CONTENTS_SERVICE_ID:
+                            // リモコンUIのリスナーを設定
                             createRemoteControllerView(true);
                             mIsControllerVisible = true;
-                            mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner_dtv, null));
+                            mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
+                                    R.drawable.remote_watch_by_tv_bottom_corner_d_anime, null));
                             setStartRemoteControllerUIListener(this);
-                        }
-                    } else if (serviceId == DTV_CHANNEL_CONTENTS_SERVICE_ID) {
-                        createRemoteControllerView(true);
-                        mIsControllerVisible = true;
-                        mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
-                                R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
-                        setStartRemoteControllerUIListener(this);
+                            break;
+                        case DTV_CONTENTS_SERVICE_ID: //「serviceId」が「15」(dTVコンテンツ)の場合
+                            // 「reserved1」が「1」STB視聴不可
+                            if (!CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved1())) {
+                                createRemoteControllerView(true);
+                                mIsControllerVisible = true;
+                                mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
+                                        R.drawable.remote_watch_by_tv_bottom_corner_dtv, null));
+                                setStartRemoteControllerUIListener(this);
+                            }
+                            break;
+                        case DTV_CHANNEL_CONTENTS_SERVICE_ID:
+                            createRemoteControllerView(true);
+                            mIsControllerVisible = true;
+                            mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
+                                    R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
+                            setStartRemoteControllerUIListener(this);
+                            break;
+                        default:
+                            break;
                     }
                 } else {
                     createRemoteControllerView(true);
@@ -2080,19 +2088,24 @@ public class ContentDetailActivity extends BaseActivity implements
                     //配信前 m/d（曜日）から
                     date = DateUtils.getContentsDateString(this, mDetailFullData.getAvail_start_date(), true);
                 } else {
-                    if (contentsType == ContentUtils.ContentsType.VOD) {
-                        //VOD(m/d（曜日）まで)
-                        date = DateUtils.getContentsDetailVodDate(this, mDetailFullData.getAvail_end_date());
-                    } else if (contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_OVER_31) {
-                        //VOD(見逃し)
-                        date = StringUtils.getConnectStrings(
-                                getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
-                    } else if (contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
-                        //VOD(見逃し | m/d（曜日）まで)
-                        date = DateUtils.getContentsDetailVodDate(this, mDetailFullData.getmVod_end_date());
-                        date = StringUtils.getConnectStrings(
-                                getString(R.string.contents_detail_hikari_d_channel_miss_viewing_separation),
-                                date);
+                    switch (contentsType) {
+                        case VOD:
+                            //VOD(m/d（曜日）まで)
+                            date = DateUtils.getContentsDetailVodDate(this, mDetailFullData.getAvail_end_date());
+                            break;
+                        case DCHANNEL_VOD_OVER_31:
+                            //VOD(見逃し)
+                            date = StringUtils.getConnectStrings(
+                                    getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
+                            break;
+                        case DCHANNEL_VOD_31:
+                            //VOD(見逃し | m/d（曜日）まで)
+                            date = DateUtils.getContentsDetailVodDate(this, mDetailFullData.getmVod_end_date());
+                            date = StringUtils.getConnectStrings(getString(
+                                    R.string.contents_detail_hikari_d_channel_miss_viewing_separation), date);
+                            break;
+                        default:
+                            break;
                     }
                 }
             }

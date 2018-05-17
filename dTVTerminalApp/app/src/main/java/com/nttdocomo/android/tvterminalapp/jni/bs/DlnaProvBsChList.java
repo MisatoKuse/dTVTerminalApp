@@ -59,7 +59,7 @@ public class DlnaProvBsChList {
      * @param imageQuality 画質設定
      * @return 成功true
      */
-    public boolean browseChListDms(int imageQuality) {
+    public boolean browseChListDms(final int imageQuality) {
         DlnaInterface di = DlnaInterface.getInstance();
 //        if(null != di){
 //            return di.browseBsChListDms();

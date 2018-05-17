@@ -7,27 +7,40 @@ package com.nttdocomo.android.tvterminalapp.jni.hikari;
 
 import android.support.annotation.Nullable;
 
+import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsInfo;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
 
 /**
  * 多チャンネル
  * 機能：DlnaからActivityに多チャンネル一覧を提供するクラス.
  */
-public class DlnaProvHikariChList implements DlnaHikariChListListener{
-
+public class DlnaProvHikariChList implements DlnaHikariChListListener {
+    /**
+     * callbackリスナー.
+     */
     public interface OnApiCallbackListener {
-        void itemFindCallback(@Nullable DlnaHikariChListItem resultItem);
+        /**
+         * 処理完了callback.
+         * @param resultItem resultItem
+         */
+        void itemFindCallback(@Nullable final DlnaHikariChListItem resultItem);
     }
 
+    /**
+     * チャンネル番号.
+     */
     private String mChannelNr = "";
+    /**
+     * callback.
+     */
     private OnApiCallbackListener mOnApiCallbackListener;
 
     /**
      * 機能：DlnaProvHikariVideoを構造.
+     * @param onApiCallbackListener  onApiCallbackListener
      */
-    public DlnaProvHikariChList(OnApiCallbackListener onApiCallbackListener) {
+    public DlnaProvHikariChList(final OnApiCallbackListener onApiCallbackListener) {
         mOnApiCallbackListener = onApiCallbackListener;
     }
 
@@ -46,9 +59,10 @@ public class DlnaProvHikariChList implements DlnaHikariChListListener{
      * 機能：DMSデバイスを取り始める.
      * @param item item
      * @param imageQuality 画質設定
+     *@param channelNr チャンネル番号
      * @return 成功true
      */
-    public boolean start(final DlnaDmsItem item, final String channelNr, int imageQuality) {
+    public boolean start(final DlnaDmsItem item, final String channelNr, final int imageQuality) {
         DlnaInterface di = DlnaInterface.getInstance();
         if (null == di) {
             return false;
@@ -70,13 +84,13 @@ public class DlnaProvHikariChList implements DlnaHikariChListListener{
      * @param imageQuality 画質設定
      * @return 成功true
      */
-    public boolean browseChListDms(int imageQuality) {
+    public boolean browseChListDms(final int imageQuality) {
         DlnaInterface di = DlnaInterface.getInstance();
         return null != di && di.browseHikariChListDms(imageQuality);
     }
 
     @Override
-    public void onListUpdate(DlnaHikariChListInfo curInfo) {
+    public void onListUpdate(final DlnaHikariChListInfo curInfo) {
         DlnaHikariChListItem resultItem = null;
         for (int i = 0; i < curInfo.size(); ++i) {
             DlnaHikariChListItem item = curInfo.get(i);
@@ -89,12 +103,12 @@ public class DlnaProvHikariChList implements DlnaHikariChListListener{
     }
 
     @Override
-    public void onDeviceLeave(DlnaDmsInfo curInfo, String leaveDmsUdn) {
+    public void onDeviceLeave(final DlnaDmsInfo curInfo, final String leaveDmsUdn) {
 
     }
 
     @Override
-    public void onError(String msg) {
+    public void onError(final String msg) {
 
     }
 

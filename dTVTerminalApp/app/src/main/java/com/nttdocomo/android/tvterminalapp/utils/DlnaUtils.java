@@ -56,6 +56,7 @@ public class DlnaUtils {
     /**
      * アクティベーションのチェック、実行.
      * @param context コンテキスト
+     * @return チェック結果
      */
     public static boolean getActivationState(final Context context) {
         final String deviceKey = getPrivateDataHomePath(context);
@@ -76,10 +77,17 @@ public class DlnaUtils {
     /**
      * アクティベーションパス（devicekeyPath）取得.
      * @param context コンテキスト
+     * @return アクティベーションパス
      */
     public static String getPrivateDataHomePath(final Context context) {
         return EnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.PLAYER);
     }
+
+    /**
+     * DiRAGコンフィグファイルパス取得.
+     * @param context コンテキスト
+     * @return DiRAGコンフィグファイルパス
+     */
     public static String getDiragConfileFilePath(final Context context) {
         return getPrivateDataHomePath(context).concat(DIRAG_CONF_FILE);
     }
