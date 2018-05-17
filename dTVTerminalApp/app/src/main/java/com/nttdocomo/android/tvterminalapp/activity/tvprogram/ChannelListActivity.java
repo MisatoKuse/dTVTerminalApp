@@ -156,6 +156,8 @@ public class ChannelListActivity extends BaseActivity implements
     /** ひかりTV for docomoタブの連続更新防止用. */
     private long beforeGetHikariData;
 
+    /** ウェイト表示時のフラグメントを退避しておく. */
+    private ChannelListFragment mWaitFragment = null;
 
     /**
      * Hikariデータスレッド.
@@ -597,7 +599,8 @@ public class ChannelListActivity extends BaseActivity implements
     }
 
     @Override
-    public void onClickChannelItem(final int pos, final ChannelListDataType type) {
+    public void onClickChannelItem(final int pos, final ChannelListDataType type,
+                                   ChannelListFragment fragment) {
         DTVTLogger.warning("pos = " + pos);
         ChannelInfo channelInfo = null;
             switch (type) {
@@ -610,6 +613,12 @@ public class ChannelListActivity extends BaseActivity implements
                         DTVTLogger.error("pos = " + pos + " is invalid mHikariTvChannelList.size() = " + mHikariTvChannelList.size());
                         return;
                     }
+
+                    //ウェイト表示を開始
+                    fragment.showProgressBar(true);
+                    //ウェイト表示時のフラグメントを退避
+                    mWaitFragment = fragment;
+
                     channelInfo = mHikariTvChannelList.get(pos);
                     mHikariTvChannelDataProvider.getNowOnAirProgram(channelInfo.getChannelNo());
                     break;
@@ -618,6 +627,12 @@ public class ChannelListActivity extends BaseActivity implements
                         DTVTLogger.error("pos = " + pos + " is invalid mdTvChannelList.size() = " + mdTvChannelList.size());
                         return;
                     }
+
+                    //ウェイト表示を開始
+                    fragment.showProgressBar(true);
+                    //ウェイト表示時のフラグメントを退避
+                    mWaitFragment = fragment;
+
                     channelInfo = mdTvChannelList.get(pos);
                     mHikariTvChannelDataProvider.getNowOnAirProgram(channelInfo.getChannelNo());
                     break;
@@ -626,6 +641,12 @@ public class ChannelListActivity extends BaseActivity implements
 
     @Override
     public void onContentDataGet(final ContentsData data) {
+        //ウェイト表示が行われていた場合は止める
+        if(mWaitFragment != null) {
+            mWaitFragment.showProgressBar(false);
+        }
+        //初期化して再度のウェイト停止を回避
+        mWaitFragment = null;
 
         if (data == null) {
             //Now On Airコンテンツがない場合はダイアログ表示

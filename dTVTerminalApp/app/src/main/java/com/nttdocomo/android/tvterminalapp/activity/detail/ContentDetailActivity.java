@@ -325,6 +325,10 @@ public class ContentDetailActivity extends BaseActivity implements
     public static final String CONTENT_TYPE_FLAG_THREE = "3";
     /** flg(0).*/
     private static final int FLAG_ZERO = 0;
+    /** 16進数から10進数への変換時の指定値. */
+    private static final int SOURCE_HEXADECIMAL = 16;
+    /** サービスIDをひかりTV用のチャンネル番号に変換する際の倍率. */
+    private static final int CONVERT_SEARVICE_ID_TO_CHANNEL_NUMBER = 10;
     /*ひかりTV起動*/
 
     /* player start */
@@ -2021,6 +2025,12 @@ public class ContentDetailActivity extends BaseActivity implements
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     @Override
     public void onContentsDetailInfoCallback(final VodMetaFullData contentsDetailInfo, final boolean clipStatus) {
+        //アクティビティの終了後に呼ばれる場合があったので、終了をチェックする
+        if(isFinishing()) {
+            //既に終了していた場合は、以後の処理はスキップ
+            DTVTLogger.debug("already finising");
+            return;
+        }
 
         //詳細情報取得して、更新する
         if (contentsDetailInfo != null) {
@@ -3368,9 +3378,12 @@ public class ContentDetailActivity extends BaseActivity implements
                     });
                     DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
                     if (dlnaDmsItem != null) {
-                        provider.start(dlnaDmsItem, String.valueOf(mChannel.getChannelNo()), DlnaUtils.getImageQualitySetting(getApplicationContext()));
-                        //TODO チャンネル番号が"1010"でないとデータの取得ができないため暫定的に固定値を設定する場合は次のように実装すること
-//                    provider.start(dlnaDmsItem, "1010");
+                        //この場合に使用するチャンネル番号を取得する
+                        int convertedChannelNumber = convertChannelNumber(mChannel);
+
+                        //変換後のチャンネルIDを使用して呼び出す
+                        provider.start(dlnaDmsItem, String.valueOf(convertedChannelNumber),
+                                DlnaUtils.getImageQualitySetting(getApplicationContext()));
                     } else {
                         DTVTLogger.error("dlnaDmsItem == null");
                     }
@@ -3379,6 +3392,33 @@ public class ContentDetailActivity extends BaseActivity implements
                 }
             }
         }
+    }
+
+    /**
+     * ひかりTVのNowOnAir用のチャンネル情報を算出する.
+     *
+     * @param channelInfo チャンネルメタ情報
+     * @return 変換後チャンネル番号
+     */
+    private int convertChannelNumber(ChannelInfo channelInfo) {
+        //サービスIDを取得
+        String serviceId = channelInfo.getServiceId();
+
+        //サービスIDを10進数にした物を格納する
+        int serviceIdDecimal = 0;
+
+        try {
+            //サービスIDを10進数に変換する
+            serviceIdDecimal = Integer.parseInt(serviceId, SOURCE_HEXADECIMAL);
+        } catch(NumberFormatException exception) {
+            //メタ情報に誤りが無ければ、ここに来る事は無い。フェールセーフ用
+            DTVTLogger.debug(exception);
+        }
+
+        //10進変換後のサービスIDを10倍する
+        serviceIdDecimal *= CONVERT_SEARVICE_ID_TO_CHANNEL_NUMBER;
+
+        return serviceIdDecimal;
     }
 
     /**

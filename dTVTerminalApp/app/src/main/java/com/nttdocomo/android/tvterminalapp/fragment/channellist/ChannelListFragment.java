@@ -73,11 +73,14 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
      */
     public interface OnClickChannelItemListener {
         /**
-         * callback.
+         * チャンネルがタップされた場合のコールバック.
+         *
          * @param pos タップされたポジション.
          * @param type チャンネルリストのタイプ
+         * @param fragment タップされた時のフラグメント
          */
-        void onClickChannelItem(int pos, ChannelListActivity.ChannelListDataType type);
+        void onClickChannelItem(int pos, ChannelListActivity.ChannelListDataType type,
+                                ChannelListFragment fragment);
     }
     /**
      * コンテキスト.
@@ -300,9 +303,11 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
     }
 
     @Override
-    public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
+    public void onItemClick(final AdapterView<?> adapterView, final View view, final int i,
+                            final long l) {
         if (mOnClickChannelItemListener != null) {
-            mOnClickChannelItemListener.onClickChannelItem(i, mChannelListDataType);
+            //フラグメントも伝えるように変更
+            mOnClickChannelItemListener.onClickChannelItem(i, mChannelListDataType, this);
         }
         if (null == mData || i < 0) {
             return;
