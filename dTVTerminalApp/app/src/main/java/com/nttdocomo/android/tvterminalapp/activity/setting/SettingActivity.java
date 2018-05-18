@@ -22,6 +22,7 @@ import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DeviceStateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.MainSettingUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -269,7 +270,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             }
         }
         if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_REMOTE])) {
-            UserInfoUtils.PairingState pairingState = UserInfoUtils.getPairingState(this, getStbStatus());
+            DeviceStateUtils.PairingState pairingState = DeviceStateUtils.getPairingState(this, getStbStatus());
             switch (pairingState) {
                 case NO_PAIRING:
                     //未ペアリングならダイアログ表示

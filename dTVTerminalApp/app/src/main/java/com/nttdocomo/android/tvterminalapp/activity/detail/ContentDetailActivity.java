@@ -94,6 +94,7 @@ import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DeviceStateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -164,8 +165,6 @@ public class ContentDetailActivity extends BaseActivity implements
     private static final int SCREEN_RATIO_WIDTH_4 = 4;
     /** アスペクト比(4:3)の3.*/
     private static final int SCREEN_RATIO_HEIGHT_3 = 3;
-    /**先頭のメタデータを取得用.*/
-    private static final int FIRST_VOD_META_DATA = 0;
 
     /** コンテンツ詳細 start HorizontalScrollView.*/
     private TabItemLayout mTabLayout = null;
@@ -643,9 +642,9 @@ public class ContentDetailActivity extends BaseActivity implements
         Object object = mIntent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
         if (object instanceof RecordedContentsDetailData) { //プレイヤーで再生できるコンテンツ
             mDisplayState = PLAYER_ONLY;
-            UserInfoUtils.PairingState pairingState = UserInfoUtils.getPairingState(this, getStbStatus());
+            DeviceStateUtils.PairingState pairingState = DeviceStateUtils.getPairingState(this, getStbStatus());
             //宅内のみ再生準備
-            if (pairingState.equals(UserInfoUtils.PairingState.INSIDE_HOUSE)) {
+            if (pairingState.equals(DeviceStateUtils.PairingState.INSIDE_HOUSE)) {
                 initPlayer();
                 //外部出力および画面キャプチャ制御
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
@@ -1272,7 +1271,7 @@ public class ContentDetailActivity extends BaseActivity implements
                 startAppIcon.setVisibility(View.GONE);
                 ImageView imageView = findViewById(R.id.dtv_contents_view_button);
                 if (content.isEmpty()) {
-                    if (UserInfoUtils.getPairingState(this, getStbStatus()).equals(UserInfoUtils.PairingState.NO_PAIRING)) {
+                    if (DeviceStateUtils.getPairingState(this, getStbStatus()).equals(DeviceStateUtils.PairingState.NO_PAIRING)) {
                         ContentUtils.ContentsType contentsType = mDetailFullData.getContentsType();
                         //未ペアリングかつひかりTV状態の時はサムネイルにメッセージとペアリングボタンを表示する
                         switch (contentsType) {
@@ -1284,6 +1283,7 @@ public class ContentDetailActivity extends BaseActivity implements
                                 startAppIcon.setText(content);
                                 imageView.setVisibility(View.GONE);
                                 Button button = findViewById(R.id.contract_leading_button);
+                                setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
                                 button.setText(R.string.contents_detail_pairing_button);
                                 button.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -1307,7 +1307,7 @@ public class ContentDetailActivity extends BaseActivity implements
                 } else {
                     if (mDetailFullData != null
                             && mDetailFullData.getContentsType().equals(ContentUtils.ContentsType.HIKARI_TV_VOD)
-                            && UserInfoUtils.getPairingState(this, getStbStatus()).equals(UserInfoUtils.PairingState.NO_PAIRING)
+                            && DeviceStateUtils.getPairingState(this, getStbStatus()).equals(DeviceStateUtils.PairingState.NO_PAIRING)
                             && UserInfoUtils.isContract(this)) {
                         playNowOnAir();
                     } else {
@@ -1328,6 +1328,7 @@ public class ContentDetailActivity extends BaseActivity implements
     private void loginNgDisplay() {
         TextView contractLeadingText = findViewById(R.id.contract_leading_text);
         Button contractLeadingButton = findViewById(R.id.contract_leading_button);
+        setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
         DTVTLogger.debug("userState:---" + UserState.LOGIN_NG);
         String message = getString(R.string.main_setting_logon_request_error_message);
         String buttonText = getString(R.string.contents_detail_login_button);
@@ -1346,9 +1347,10 @@ public class ContentDetailActivity extends BaseActivity implements
      * 未契約状態のサムネイル描画.
      */
     private void noAgreementDisplay() {
-        UserInfoUtils.PairingState pairingState = UserInfoUtils.getPairingState(this, getStbStatus());
+        DeviceStateUtils.PairingState pairingState = DeviceStateUtils.getPairingState(this, getStbStatus());
         TextView contractLeadingText = findViewById(R.id.contract_leading_text);
         Button contractLeadingButton = findViewById(R.id.contract_leading_button);
+        setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
         String message = "";
         String buttonText = "";
         switch (pairingState) {
@@ -2023,7 +2025,7 @@ public class ContentDetailActivity extends BaseActivity implements
         mContentsDetailPagerAdapter.notifyDataSetChanged();
     }
     //region ContentsDetailDataProvider.ApiDataProviderCallback
-    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod", "EnumSwitchStatementWhichMissesCases"})
     @Override
     public void onContentsDetailInfoCallback(final VodMetaFullData contentsDetailInfo, final boolean clipStatus) {
         //アクティビティの終了後に呼ばれる場合があったので、終了をチェックする
@@ -2146,10 +2148,6 @@ public class ContentDetailActivity extends BaseActivity implements
                     mThumbnailBtn.setVisibility(View.GONE);
                     mContractLeadingView.setVisibility(View.VISIBLE);
                     setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
-                    TextView contractLeadingText = findViewById(R.id.contract_leading_text);
-                    Button contractLeadingButton = findViewById(R.id.contract_leading_button);
-                    String message;
-                    String buttonText;
                     if (userState.equals(UserState.LOGIN_NG)) {
                         loginNgDisplay();
                     } else {
@@ -3300,7 +3298,7 @@ public class ContentDetailActivity extends BaseActivity implements
      */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
     private void playNowOnAir() {
-        if (UserInfoUtils.getPairingState(this, getStbStatus()).equals(UserInfoUtils.PairingState.NO_PAIRING)
+        if (DeviceStateUtils.getPairingState(this, getStbStatus()).equals(DeviceStateUtils.PairingState.NO_PAIRING)
                 && UserInfoUtils.isContract(this)) {
             ContentUtils.ContentsType contentsType = mDetailFullData.getContentsType();
             TextView startAppIcon = findViewById(R.id.view_contents_button_text);
@@ -3317,7 +3315,7 @@ public class ContentDetailActivity extends BaseActivity implements
                     contractLeadingText.setText(R.string.contents_detail_pairing_request);
                     imageView.setVisibility(View.GONE);
                     Button button = findViewById(R.id.contract_leading_button);
-                    button.setVisibility(View.VISIBLE);
+                    setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
                     button.setText(R.string.contents_detail_pairing_button);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -3334,9 +3332,9 @@ public class ContentDetailActivity extends BaseActivity implements
             }
         } else {
             if (mDetailFullData.getContentsType().equals(ContentUtils.ContentsType.HIKARI_TV_NOW_ON_AIR)) {
-                UserInfoUtils.PairingState pairingState = UserInfoUtils.getPairingState(this, getStbStatus());
+                DeviceStateUtils.PairingState pairingState = DeviceStateUtils.getPairingState(this, getStbStatus());
                 //宅内のみ自動再生
-                if (pairingState.equals(UserInfoUtils.PairingState.INSIDE_HOUSE)) {
+                if (pairingState.equals(DeviceStateUtils.PairingState.INSIDE_HOUSE)) {
                     //放送中番組
                     DlnaProvHikariChList provider = new DlnaProvHikariChList(new DlnaProvHikariChList.OnApiCallbackListener() {
                         @Override
@@ -3426,9 +3424,9 @@ public class ContentDetailActivity extends BaseActivity implements
      * リモート視聴用の再生ボタン表示.
      */
     private void setRemotePlayArrow() {
-        UserInfoUtils.PairingState userState = UserInfoUtils.getPairingState(this, getStbStatus());
+        DeviceStateUtils.PairingState userState = DeviceStateUtils.getPairingState(this, getStbStatus());
         //再生ボタンは宅外かつ契約があるときのみ表示
-        if (userState.equals(UserInfoUtils.PairingState.OUTSIDE_HOUSE) && UserInfoUtils.isContract(this)) {
+        if (userState.equals(DeviceStateUtils.PairingState.OUTSIDE_HOUSE) && UserInfoUtils.isContract(this)) {
             mThumbnailBtn.setVisibility(View.VISIBLE);
             ImageView imageView = findViewById(R.id.dtv_contents_view_button);
             Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.mediacontrol_icon_tap_play_arrow2);
@@ -3451,7 +3449,7 @@ public class ContentDetailActivity extends BaseActivity implements
     private void changeUIBasedContractInfo() {
         DtvContentsDetailFragment detailFragment = getDetailFragment();
         boolean isVisibleRecordButton = mRecordingReservationContentsDetailInfo != null;
-        UserInfoUtils.PairingState pairingState;
+        DeviceStateUtils.PairingState pairingState;
         switch (mViewIngType) {
             case ENABLE_WATCH:
                 //再生導線表示
@@ -3476,8 +3474,9 @@ public class ContentDetailActivity extends BaseActivity implements
                 //契約導線を表示 (VOD)
                 TextView vodTextView = findViewById(R.id.contract_leading_text);
                 Button vodButton = findViewById(R.id.contract_leading_button);
+                setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
                 // 宅内の場合契約導線表示
-                pairingState = UserInfoUtils.getPairingState(this, getStbStatus());
+                pairingState = DeviceStateUtils.getPairingState(this, getStbStatus());
                 switch (pairingState) {
                     case INSIDE_HOUSE:
                         mContractLeadingView.setVisibility(View.VISIBLE);
@@ -3490,9 +3489,6 @@ public class ContentDetailActivity extends BaseActivity implements
                     case OUTSIDE_HOUSE:
                         mContractLeadingView.setVisibility(View.VISIBLE);
                         vodTextView.setText(getString(R.string.contents_detail_hikari_vod_inside_home));
-                        vodButton.setVisibility(View.GONE);
-                        //サムネイルにシャドウをかける
-                        setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
                         //宅外の場合は契約ボタンを表示しない
                         vodButton.setVisibility(View.GONE);
                         break;
@@ -3512,7 +3508,7 @@ public class ContentDetailActivity extends BaseActivity implements
                 TextView chTextView = findViewById(R.id.contract_leading_text);
                 Button chButton = findViewById(R.id.contract_leading_button);
                 // 宅内の場合契約導線表示
-                pairingState = UserInfoUtils.getPairingState(this, getStbStatus());
+                pairingState = DeviceStateUtils.getPairingState(this, getStbStatus());
                 switch (pairingState) {
                     case INSIDE_HOUSE:
                         mContractLeadingView.setVisibility(View.VISIBLE);
@@ -3527,8 +3523,6 @@ public class ContentDetailActivity extends BaseActivity implements
                         chTextView.setText(getString(R.string.contents_detail_contract_text_ch));
                         //宅外の場合は契約ボタンを表示しない
                         chButton.setVisibility(View.GONE);
-                        //サムネイルにシャドウをかける
-                        setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
                         break;
                     default:
                         //宅外の場合は契約ボタンを表示しない
@@ -3550,7 +3544,7 @@ public class ContentDetailActivity extends BaseActivity implements
                 isVisibleRecordButton = false;
                 //サムネイル上のdTVで視聴、dアニメストアで視聴を非表示
                 if (mThumbnailBtn != null) {
-                    if (UserInfoUtils.getPairingState(this, getStbStatus()).equals(UserInfoUtils.PairingState.NO_PAIRING)) {
+                    if (DeviceStateUtils.getPairingState(this, getStbStatus()).equals(DeviceStateUtils.PairingState.NO_PAIRING)) {
                         mThumbnailBtn.setVisibility(View.GONE);
                         noAgreementDisplay();
                     } else {

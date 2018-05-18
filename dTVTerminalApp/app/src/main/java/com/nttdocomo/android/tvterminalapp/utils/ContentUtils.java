@@ -538,7 +538,7 @@ public class ContentUtils {
                                                 return ContentsType.HIKARI_IN_DCH_MISS;
                                             } else {
                                                 //VOD配信日時(vod_start_date) > 現在時刻 -> ひかりTV内dTVチャンネル_番組
-                                                return ContentsType.HIKARI_IN_DCH;
+                                                return ContentsType.HIKARI_IN_DCH_TV;
                                             }
                                         case ContentDetailActivity.CONTENT_TYPE_FLAG_THREE:
                                             //contentsType=3 -> ひかりTV内dTVチャンネル_関連VOD
@@ -686,8 +686,7 @@ public class ContentUtils {
      * @param channelInfo  Channelメタデータ
      * @return 視聴可否ステータス
      */
-    public static ViewIngType getViewingType( String contractInfo, final VodMetaFullData metaFullData, final ChannelInfo channelInfo) {
-        contractInfo = UserInfoUtils.CONTRACT_INFO_H4D;
+    public static ViewIngType getViewingType(final String contractInfo, final VodMetaFullData metaFullData, final ChannelInfo channelInfo) {
         if (contractInfo == null || contractInfo.isEmpty() || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo)) {
             //契約情報が未設定、または"none"の場合は視聴不可(契約導線を表示)
             DTVTLogger.debug("Unviewable(Not contract)");
