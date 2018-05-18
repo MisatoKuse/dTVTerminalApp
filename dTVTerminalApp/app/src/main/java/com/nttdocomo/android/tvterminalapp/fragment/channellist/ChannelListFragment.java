@@ -209,7 +209,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         mListView.setOnScrollListener(this);
         mListView.setOnItemClickListener(this);
 
-        mChannelListAdapter = new ChannelListAdapter(getContext(), mData, R.layout.channel_list_item);
+        mChannelListAdapter = new ChannelListAdapter(getContext(), mData);
         mListView.setAdapter(mChannelListAdapter);
     }
 

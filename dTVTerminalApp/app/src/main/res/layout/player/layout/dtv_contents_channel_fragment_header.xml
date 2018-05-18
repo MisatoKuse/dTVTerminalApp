@@ -25,8 +25,11 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toEndOf="@id/dtv_contents_channel_header_img"
+            android:layout_marginEnd="16dp"
+            android:maxLines="2"
             android:textColor="@color/white_text"
             android:textSize="@dimen/contents_detail_channel_txt_size"
+            android:ellipsize="end"
             android:textStyle="bold" />
     </RelativeLayout>
 

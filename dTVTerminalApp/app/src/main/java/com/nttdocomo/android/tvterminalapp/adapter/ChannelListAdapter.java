@@ -39,10 +39,6 @@ public class ChannelListAdapter extends BaseAdapter {
      */
     private final List mData;
     /**
-     * 表示するレイアウトのリソースID.
-     */
-    private final int mLayoutId;
-    /**
      * サムネイル取得用プロパイダー.
      */
     private final ThumbnailProvider mThumbnailProvider;
@@ -78,12 +74,10 @@ public class ChannelListAdapter extends BaseAdapter {
      *
      * @param context コンテキスト
      * @param data コンテンツデータ
-     * @param id リソースID
      */
-    public ChannelListAdapter(final Context context, final List data, final int id) {
+    public ChannelListAdapter(final Context context, final List data) {
         this.mContext = context;
         this.mData = data;
-        this.mLayoutId = id;
         this.mThumbnailProvider = new ThumbnailProvider(context, ThumbnailDownloadTask.ImageSizeType.CHANNEL);
     }
 
@@ -123,7 +117,7 @@ public class ChannelListAdapter extends BaseAdapter {
         ViewHolder holder;
         if (convertView == null) {
             holder = new ViewHolder();
-            view = View.inflate(mContext, mLayoutId, null);
+            view = View.inflate(mContext, R.layout.channel_list_item, null);
             holder.mThumbnail = view.findViewById(R.id.channel_list_item_thumb_iv);
             holder.mChannelName = view.findViewById(R.id.channel_list_item_title_tv);
             switch (mChannelListDataType) {

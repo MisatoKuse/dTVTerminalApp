@@ -104,6 +104,10 @@ public class TvProgramListActivity extends BaseActivity implements
      */
     private static final int TIME_LINE_WIDTH = 44;
     /**
+     * タイムライン高さ.
+     */
+    private static final int TIME_LINE_HEIGHT = 56;
+    /**
      * チャンネルリサイクルビュー丈.
      */
     private static final int CH_VIEW_HEIGHT = 44;
@@ -492,7 +496,7 @@ public class TvProgramListActivity extends BaseActivity implements
     private void setTagView() {
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                 dip2px(TIME_LINE_WIDTH),
-                dip2px(TIME_LINE_WIDTH));
+                dip2px(TIME_LINE_HEIGHT));
         mTagImageView.setLayoutParams(layoutParams);
         mTagImageView.setImageResource(R.drawable.tv_program_list_cur_time_btn_selector);
     }

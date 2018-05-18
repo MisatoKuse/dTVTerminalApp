@@ -34,6 +34,7 @@ public class ProgramChannelAdapter extends
     private int mScreenWidth = 0;
     /**タイムラインWidth.*/
     private static final int TIME_LINE_WIDTH = 44;
+    private static final int TIME_LINE_HEIGHT = 56;
 
     /**
      * コンストラクタ.
@@ -58,7 +59,7 @@ public class ProgramChannelAdapter extends
                 viewGroup, false);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 (mScreenWidth - mContext.dip2px(TIME_LINE_WIDTH)) / 2,
-                mContext.dip2px(TIME_LINE_WIDTH));
+                mContext.dip2px(TIME_LINE_HEIGHT));
         layoutParams.gravity = Gravity.CENTER;
         view.setLayoutParams(layoutParams);
         ViewHolder viewHolder = new ViewHolder(view);

@@ -25,7 +25,7 @@
 		android:layout_toEndOf="@id/channel_list_item_thumb_iv"
 		android:ellipsize="end"
 		android:gravity="center_vertical"
-		android:maxLines="1"
+		android:maxLines="2"
 		android:textColor="@color/white_text"
 		android:textSize="@dimen/channel_list_text_size" />
 
