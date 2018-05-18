@@ -20,6 +20,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.jni.bs.DlnaBsChListItem;
 import com.nttdocomo.android.tvterminalapp.jni.ter.DlnaTerChListItem;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
+import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,7 +84,7 @@ public class ChannelListAdapter extends BaseAdapter {
         this.mContext = context;
         this.mData = data;
         this.mLayoutId = id;
-        this.mThumbnailProvider = new ThumbnailProvider(context);
+        this.mThumbnailProvider = new ThumbnailProvider(context, ThumbnailDownloadTask.ImageSizeType.CHANNEL);
     }
 
     /**

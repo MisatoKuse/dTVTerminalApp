@@ -32,6 +32,7 @@ import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.RatingBarLayout;
+import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
 import java.util.List;
 
@@ -267,7 +268,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         mInflater = LayoutInflater.from(mContext);
         this.mListData = listData;
         this.mType = type;
-        mThumbnailProvider = new ThumbnailProvider(mContext);
+        mThumbnailProvider = new ThumbnailProvider(mContext, ThumbnailDownloadTask.ImageSizeType.LIST);
     }
 
     /**
@@ -280,7 +281,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
-     * コンストラクタ.
+     * コンストラクタ(録画一覧専用)リファクタ対象.
      *
      * @param mContext Activity
      * @param listData リストデータ
@@ -293,7 +294,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         mInflater = LayoutInflater.from(mContext);
         this.mListData = listData;
         this.mType = type;
-        mThumbnailProvider = new ThumbnailProvider(mContext);
+        mThumbnailProvider = new ThumbnailProvider(mContext, ThumbnailDownloadTask.ImageSizeType.LIST);
         mDownloadCallback = callback;
     }
 

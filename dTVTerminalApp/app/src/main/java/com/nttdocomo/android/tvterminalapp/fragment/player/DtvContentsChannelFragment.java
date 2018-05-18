@@ -31,6 +31,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapter
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -167,7 +168,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
             mChannelTxt.setText(info.getTitle());
         }
         if (!TextUtils.isEmpty(info.getThumbnail())) {
-            ThumbnailProvider mThumbnailProvider = new ThumbnailProvider(getContext());
+            ThumbnailProvider mThumbnailProvider = new ThumbnailProvider(getContext(), ThumbnailDownloadTask.ImageSizeType.CHANNEL);
             mChannelImg.setTag(info.getThumbnail());
             Bitmap bitmap = mThumbnailProvider.getThumbnailImage(mChannelImg, info.getThumbnail());
             if (bitmap != null) {
