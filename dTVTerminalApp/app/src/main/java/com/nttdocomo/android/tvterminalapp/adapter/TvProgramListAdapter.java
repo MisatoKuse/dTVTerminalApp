@@ -31,6 +31,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetail
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -183,7 +184,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         mScreenWidth = mContext.getResources().getDisplayMetrics().widthPixels;
         UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
         mAgeReq = userInfoDataProvider.getUserAge();
-        mThumbnailProvider = new ThumbnailProvider(mContext);
+        mThumbnailProvider = new ThumbnailProvider(mContext, ThumbnailDownloadTask.ImageSizeType.TV_PROGRAM_LIST);
         getCurTime();
         for (int i = 0; i < mProgramList.size(); i++) {
             ChannelInfo itemChannel = mProgramList.get(i);
@@ -221,7 +222,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         mScreenWidth = mContext.getResources().getDisplayMetrics().widthPixels;
         UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
         mAgeReq = userInfoDataProvider.getUserAge();
-        mThumbnailProvider = new ThumbnailProvider(mContext);
+        mThumbnailProvider = new ThumbnailProvider(mContext, ThumbnailDownloadTask.ImageSizeType.TV_PROGRAM_LIST);
         getCurTime();
         for (int i = 0; i < mProgramList.size(); i++) {
             ChannelInfo itemChannel = mProgramList.get(i);

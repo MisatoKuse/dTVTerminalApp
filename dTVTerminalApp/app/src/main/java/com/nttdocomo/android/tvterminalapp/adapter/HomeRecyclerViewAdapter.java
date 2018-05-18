@@ -28,6 +28,7 @@ import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -216,7 +217,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         this.mContentList = contentsDataList;
         this.mContext = context;
         this.mIndex = index;
-        mThumbnailProvider = new ThumbnailProvider(context);
+        mThumbnailProvider = new ThumbnailProvider(context, ThumbnailDownloadTask.ImageSizeType.HOME_LIST);
     }
 
     /**

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.support.annotation.IdRes;
 import android.widget.ImageView;
 
 import com.nttdocomo.android.ocsplib.OcspURLConnection;
@@ -32,6 +33,14 @@ import javax.net.ssl.SSLPeerUnverifiedException;
  * サムネイル画像取得タスク.
  */
 public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
+    public enum ImageSizeType {
+        CONTENT_DETAIL,
+        HOME_LIST,
+        TV_PROGRAM_LIST,
+        LIST,
+        CHANNEL,
+    }
+
     /** サムネイルのURL. */
     private String mImageUrl;
     /** 取得したサムネイルを表示するImageView. */
@@ -45,6 +54,7 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
     /** 通信停止フラグ. */
     private boolean mIsStop = false;
 
+    private ImageSizeType mImageSizeType;
     /**
      * サムネイルダウンロードのコンストラクタ.
      *
@@ -53,11 +63,10 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
      * @param context コンテキスト
      */
     public ThumbnailDownloadTask(final ImageView imageView, final ThumbnailProvider thumbnailProvider,
-                                 final Context context) {
-        this.mImageView = imageView;
-        this.mThumbnailProvider = thumbnailProvider;
-
-        //コンテキストの退避
+                                 final Context context, final ImageSizeType type) {
+        mImageView = imageView;
+        mThumbnailProvider = thumbnailProvider;
+        mImageSizeType = type;
         mContext = context;
 
         //コネクション蓄積が存在しなければ作成する
@@ -148,10 +157,9 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
                 if (mImageView.getTag() != null && mImageUrl.equals(mImageView.getTag())) {
                     mImageView.setImageBitmap(result);
                 }
-            } else {
-                // 画像取得失敗のケース
+            } else { // 画像取得失敗
                 if (mImageView.getTag() != null && mImageUrl.equals(mImageView.getTag())) {
-                    mImageView.setImageResource(R.mipmap.error_scroll);
+                    setErrorImageResource(mImageView);
                 }
             }
         }
@@ -178,27 +186,49 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
     /**
      * 全ての通信を遮断する.
      */
-     public synchronized void stopAllConnections() {
-         mIsStop = true;
-         if (mUrlConnections == null) {
-             return;
-         }
+    public synchronized void stopAllConnections() {
+        mIsStop = true;
+        if (mUrlConnections == null) {
+            return;
+        }
 
-         //全てのコネクションにdisconnectを送る
-         Iterator<HttpURLConnection> iterator = mUrlConnections.iterator();
-         while (iterator.hasNext()) {
-             final HttpURLConnection stopConnection = iterator.next();
+        //全てのコネクションにdisconnectを送る
+        Iterator<HttpURLConnection> iterator = mUrlConnections.iterator();
+        while (iterator.hasNext()) {
+            final HttpURLConnection stopConnection = iterator.next();
 
-             Thread thread = new Thread(new Runnable() {
-                 @Override
-                 public void run() {
-                     if (stopConnection != null) {
-                         stopConnection.disconnect();
-                     }
-                 }
-             });
-             thread.start();
-         }
-         mUrlConnections.clear();
-     }
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (stopConnection != null) {
+                        stopConnection.disconnect();
+                    }
+                }
+            });
+            thread.start();
+        }
+        mUrlConnections.clear();
+    }
+
+    private void setErrorImageResource(final ImageView dst) {
+        int resId = R.mipmap.error_scroll;
+        switch (mImageSizeType) {
+            case CONTENT_DETAIL:
+                resId = R.mipmap.error_movie;
+                break;
+            case HOME_LIST:
+                resId = R.mipmap.error_scroll;
+                break;
+            case TV_PROGRAM_LIST:
+                resId = R.mipmap.error_ch_mini;
+                break;
+            case LIST:
+                resId = R.mipmap.error_list;
+                break;
+            case CHANNEL:
+                resId = R.mipmap.error_ch_mini;
+                break;
+        }
+        dst.setImageResource(resId);
+    }
 }

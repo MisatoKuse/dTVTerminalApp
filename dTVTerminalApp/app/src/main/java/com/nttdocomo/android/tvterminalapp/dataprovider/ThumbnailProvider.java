@@ -49,18 +49,17 @@ public class ThumbnailProvider {
 	 * ダウンロードキャンセルフラグ.
 	 */
 	private boolean mIsCancel = false;
-
+	private ThumbnailDownloadTask.ImageSizeType mImageSizeType;
 	/**
 	 * コンストラクタ.
 	 *
 	 * @param context コンテキスト
 	 */
-	public ThumbnailProvider(final Context context) {
+	public ThumbnailProvider(final Context context, final ThumbnailDownloadTask.ImageSizeType imageSizeType) {
 		thumbnailCacheManager = new ThumbnailCacheManager(context);
 		mListUrl = new LinkedHashMap<>();
 		thumbnailCacheManager.initMemCache();
-
-		//コンテキストの退避
+		mImageSizeType = imageSizeType;
 		mContext = context;
 	}
 
@@ -92,7 +91,7 @@ public class ThumbnailProvider {
             //queue処理を追加
             if (MAX_QUEUE_COUNT > currentQueueCount) {
                 ++currentQueueCount;
-                mDownloadTask = new ThumbnailDownloadTask(imageView, this, mContext);
+                mDownloadTask = new ThumbnailDownloadTask(imageView, this, mContext, mImageSizeType);
                 mDownloadTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, imageUrl);
             } else {
 				//url重複がある場合
@@ -119,7 +118,7 @@ public class ThumbnailProvider {
 			++currentQueueCount;
 			String imageUrl = mListUrl.entrySet().iterator().next().getKey();
 			ImageView imageView = mListUrl.get(imageUrl);
-			new ThumbnailDownloadTask(imageView, this, mContext).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, imageUrl);
+			new ThumbnailDownloadTask(imageView, this, mContext, mImageSizeType).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, imageUrl);
 			mListUrl.remove(imageUrl);
 		}
 

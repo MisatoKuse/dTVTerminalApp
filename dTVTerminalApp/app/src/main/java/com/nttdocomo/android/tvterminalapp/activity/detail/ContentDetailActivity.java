@@ -102,6 +102,7 @@ import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
+import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SendOperateLog;
 
 import java.io.File;
@@ -1391,7 +1392,7 @@ public class ContentDetailActivity extends BaseActivity implements
         setThumbnail();
         if (!TextUtils.isEmpty(url)) {
             if (mThumbnailProvider == null) {
-                mThumbnailProvider = new ThumbnailProvider(this);
+                mThumbnailProvider = new ThumbnailProvider(this, ThumbnailDownloadTask.ImageSizeType.CONTENT_DETAIL);
             }
             if (!mIsDownloadStop) {
                 mThumbnail.setTag(url);
@@ -1635,7 +1636,7 @@ public class ContentDetailActivity extends BaseActivity implements
     private void setPlayerLogoThumbnail(final String url) {
         if (!TextUtils.isEmpty(url)) {
             if (mThumbnailProvider == null) {
-                mThumbnailProvider = new ThumbnailProvider(this);
+                mThumbnailProvider = new ThumbnailProvider(this, ThumbnailDownloadTask.ImageSizeType.CHANNEL);
             }
             mTvLogo.setTag(url);
             Bitmap bitmap = mThumbnailProvider.getThumbnailImage(mTvLogo, url);
