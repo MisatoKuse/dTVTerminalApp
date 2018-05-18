@@ -71,7 +71,7 @@ public class ChildContentListJsonParser extends AsyncTask<String, Object, Object
      * メタリストをパースする（user情報を見てclip状態も反映する）.
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void parseMetaList(final JSONObject jsonObj) {
+    private void parseMetaList(final JSONObject jsonObj) {
         try {
             ArrayList<VodMetaFullData> vodMetaFullDataList = new ArrayList<VodMetaFullData>();
             if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {

@@ -134,8 +134,8 @@ public class RecommendActivity extends BaseActivity implements
         sRecommendViewPager = null;
         if (mIsMenuLaunch) {
             startPageNo = RECOMMEND_LIST_PAGE_NO_OF_TV;
-            enableHeaderBackIcon(true);
         }
+        enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
@@ -577,11 +577,8 @@ public class RecommendActivity extends BaseActivity implements
         DTVTLogger.start();
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                if (mIsMenuLaunch) {
-                    //メニューから起動の場合ホーム画面に戻る
-                    contentsDetailBackKey(null);
-                    return false;
-                }
+                contentsDetailBackKey(null);
+                return false;
             default:
                 break;
         }

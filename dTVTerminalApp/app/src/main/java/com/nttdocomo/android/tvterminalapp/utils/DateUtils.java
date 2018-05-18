@@ -266,7 +266,7 @@ public class DateUtils {
     /**
      * 1日のエポック秒.
      */
-    public static final long EPOCH_TIME_ONE_DAY = 86400;
+    private static final long EPOCH_TIME_ONE_DAY = 86400;
 
     /**
      * 1時間のエポック秒.
@@ -1217,7 +1217,7 @@ public class DateUtils {
      * @param contentsType コンテンツタイプ
      * @return 加工後日付
      */
-    public static String addDateLimitVod(final Context context, final ContentsData contentsData, final ContentUtils.ContentsType contentsType) {
+    private static String addDateLimitVod(final Context context, final ContentsData contentsData, final ContentUtils.ContentsType contentsType) {
         String date = "";
         long availEndDate = contentsData.getAvailEndDate();
         switch (contentsType) {

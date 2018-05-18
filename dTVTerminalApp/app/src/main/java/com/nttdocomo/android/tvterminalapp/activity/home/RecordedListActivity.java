@@ -83,10 +83,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      */
     private ProgressBar progressBar;
     /**
-     * 遷移先（メニュー）.
-     */
-    private Boolean mIsMenuLaunch = false;
-    /**
      * DLNA 関連クラス.
      */
     private DlnaProvRecVideo mDlnaProvRecVideo = null;
@@ -129,11 +125,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         DTVTLogger.start();
         setContentView(R.layout.record_list_main_layout);
         setTitleText(getString(R.string.nav_menu_item_recorder_program));
-        Intent intent = getIntent();
-        mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
-        if (mIsMenuLaunch) {
-            enableHeaderBackIcon(true);
-        }
+        enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
@@ -811,11 +803,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         DTVTLogger.start();
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                if (mIsMenuLaunch) {
-                    //メニューから起動の場合ホーム画面に戻る
-                    contentsDetailBackKey(null);
-                    return false;
-                }
+                contentsDetailBackKey(null);
+                return false;
             default:
                 break;
         }

@@ -452,6 +452,7 @@ public class BaseActivity extends FragmentActivity implements
         if (null != mHeaderBackIcon) {
             if (isOn) {
                 mHeaderBackIcon.setVisibility(View.VISIBLE);
+                mHeaderBackIcon.setOnClickListener(this);
             } else {
                 mHeaderBackIcon.setVisibility(View.INVISIBLE);
             }
@@ -1346,7 +1347,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param view 戻るボタンのビュー
      */
-    public void contentsDetailBackKey(final View view) {
+    protected void contentsDetailBackKey(final View view) {
         if (this instanceof RecommendActivity
                 || this instanceof SearchTopActivity
                 || this instanceof TvProgramListActivity
@@ -1456,6 +1457,8 @@ public class BaseActivity extends FragmentActivity implements
                     displayGlobalMenu();
                 }
             }
+        } else if (mHeaderBackIcon == view) {
+            contentsDetailBackKey(null);
         }
     }
 

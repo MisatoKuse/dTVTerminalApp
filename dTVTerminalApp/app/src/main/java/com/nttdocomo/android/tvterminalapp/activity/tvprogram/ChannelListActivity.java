@@ -142,9 +142,6 @@ public class ChannelListActivity extends BaseActivity implements
     private static final float sScrollThreshold = 20.0f;
     /** 上にスクロール. */
     private boolean mIsScrollUp = false;
-    /** メニュー起動. */
-    private Boolean mIsMenuLaunch = false;
-
     /** タブ延長タイム. */
     private final int CHANNEL_LIST_TAB_DELAY_TIME = 1300;
     /** 現在タイプ. */
@@ -229,11 +226,7 @@ public class ChannelListActivity extends BaseActivity implements
 
         //Headerの設定
         setTitleText(getString(R.string.channel_list_activity_title));
-        Intent intent = getIntent();
-        mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
-        if (mIsMenuLaunch) {
-            enableHeaderBackIcon(true);
-        }
+        enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
         enableStbStatusIcon(true);
 
@@ -642,7 +635,7 @@ public class ChannelListActivity extends BaseActivity implements
     @Override
     public void onContentDataGet(final ContentsData data) {
         //ウェイト表示が行われていた場合は止める
-        if(mWaitFragment != null) {
+        if (mWaitFragment != null) {
             mWaitFragment.showProgressBar(false);
         }
         //初期化して再度のウェイト停止を回避
@@ -963,11 +956,8 @@ public class ChannelListActivity extends BaseActivity implements
         DTVTLogger.start();
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                if (mIsMenuLaunch) {
-                    //メニューから起動の場合ホーム画面に戻る
-                    contentsDetailBackKey(null);
-                    return false;
-                }
+                contentsDetailBackKey(null);
+                return false;
             default:
                 break;
         }

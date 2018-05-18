@@ -57,7 +57,7 @@ public class ClipKeyListJsonParser {
      *  statusの値を正常時レスポンスデータオブジェクトに格納.
      * @param jsonObj 解析前ステータス
      */
-    public void sendStatus(final JSONObject jsonObj) {
+    private void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
             if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {
@@ -79,7 +79,7 @@ public class ClipKeyListJsonParser {
      * コンテンツのList<HashMap>をオブジェクトクラスに格納.
      * @param arrayList JSONArray
      */
-    public void sendVcList(final JSONArray arrayList) {
+    private void sendVcList(final JSONArray arrayList) {
         try {
             List<HashMap<String, String>> list = new ArrayList<>();
             for (int i = 0; i < arrayList.length(); i++) {
