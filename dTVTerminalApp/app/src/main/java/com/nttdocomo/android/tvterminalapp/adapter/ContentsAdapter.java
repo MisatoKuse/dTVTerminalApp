@@ -40,6 +40,7 @@ import java.util.List;
  */
 public class ContentsAdapter extends BaseAdapter implements OnClickListener {
 
+    //region variable
     /**
      * 各Activityインスタンス.
      */
@@ -157,6 +158,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * ダウンロード禁止判定フラグ.
      */
     private boolean isDownloadStop = false;
+    //endregion variable
 
     /**
      * 機能
