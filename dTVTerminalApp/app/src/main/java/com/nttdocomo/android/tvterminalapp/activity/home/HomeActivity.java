@@ -183,7 +183,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private boolean mIsSearchDone = false;
 
     /**
-     * ホーム画面表示時にdアカウントが取得できていなかった場合に、その取得後にユーザー情報を取得しに行くフラグ.
+     * ホーム画面表示時にdアカウントが取得できていなかった場合に、取得後にユーザー情報を取得しに行くフラグ.
      */
     private boolean mUserInfoGetRequest = false;
 
@@ -297,10 +297,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     + SharedPreferencesUtils.getSharedPreferencesDaccountId(this));
             DTVTLogger.debug("userInfo Timeout?=" + mUserInfoDataProvider.isUserInfoTimeOut());
 
-            //dアカウントが取れていないので、取れたときのコールバックにユーザー情報取得を依頼する
-            mUserInfoGetRequest = true;
-
             if (!mIsSearchDone) {
+                //dアカウントが取れていないので、取れたときのコールバックにユーザー情報取得を依頼する
+                mUserInfoGetRequest = true;
+
                 //起動時はプログレスダイアログを表示
                 requestHomeData();
             }
@@ -320,6 +320,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         if(mUserInfoGetRequest) {
             //依頼が出ているので、ユーザー情報の取得を開始
             getUserInfo();
+
+            //取得を開始したので、フラグはクリア
+            mUserInfoGetRequest = false;
         }
 
         DTVTLogger.end();
