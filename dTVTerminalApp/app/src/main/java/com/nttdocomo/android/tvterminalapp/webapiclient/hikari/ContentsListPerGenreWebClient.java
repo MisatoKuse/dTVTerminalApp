@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -70,7 +71,7 @@ public class ContentsListPerGenreWebClient
                 mContentsListPerGenreJsonParserCallback, returnCode.extraData, mGenreId);
 
         //JSONをパースして、データを返す
-        videoRankJsonParser.execute(returnCode.bodyData);
+        videoRankJsonParser.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode.bodyData);
     }
 
     /**

@@ -394,7 +394,7 @@ public class DaccountControl implements
 
         //キャッシュ削除タスクを呼び出す
         CacheClearTask clearTask = new CacheClearTask();
-        clearTask.execute(context);
+        clearTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, context);
 
         //次回実行する為にフラグをリセット
         onceControl.setExecOnce(false, daccountGetOtt, context);
@@ -467,7 +467,7 @@ public class DaccountControl implements
     public void stopCommunication() {
         mIsCancel = true;
         StopDaccountConnect stopConnect = new StopDaccountConnect();
-        stopConnect.execute(this);
+        stopConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, this);
     }
 
     /**

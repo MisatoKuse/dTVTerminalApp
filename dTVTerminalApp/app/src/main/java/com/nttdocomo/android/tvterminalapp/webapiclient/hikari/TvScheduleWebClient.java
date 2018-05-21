@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
@@ -63,7 +64,7 @@ public class TvScheduleWebClient
     @Override
     public void onAnswer(final ReturnCode returnCode) {
         //JSONをパースして、データを返す
-        new TvScheduleJsonParser(mTvScheduleJsonParserCallback).execute(returnCode.bodyData);
+        new TvScheduleJsonParser(mTvScheduleJsonParserCallback).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode.bodyData);
     }
 
     /**

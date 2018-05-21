@@ -522,7 +522,7 @@ public class WebApiBasePlala {
         ReturnCode returnCode = new ReturnCode();
 
         //通信本体の開始
-        mCommunicationTaskAPI.execute(returnCode);
+        mCommunicationTaskAPI.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode);
     }
 
     /**
@@ -566,7 +566,7 @@ public class WebApiBasePlala {
         ReturnCode returnCode = new ReturnCode();
 
         //通信本体の開始
-        mCommunicationTaskExtra.execute(returnCode);
+        mCommunicationTaskExtra.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode);
     }
 
     /**
@@ -612,7 +612,7 @@ public class WebApiBasePlala {
             mCommunicationTaskOtt.setOneTimeToken(mOneTimeTokenData.getOneTimeToken());
             ReturnCode returnCode = new ReturnCode();
             DTVTLogger.debug("******mCommunicationTaskOtt.execute at openUrlAddOtt");
-            mCommunicationTaskOtt.execute(returnCode);
+            mCommunicationTaskOtt.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode);
         }
     }
 
@@ -636,7 +636,7 @@ public class WebApiBasePlala {
         ReturnCode returnCode = new ReturnCode();
 
         //通信本体の開始
-        communicationTask.execute(returnCode);
+        communicationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode);
 
         DTVTLogger.end();
     }
@@ -667,7 +667,7 @@ public class WebApiBasePlala {
 
                     //ワンタイムトークンの取得結果を元にして、通信を開始する
                     DTVTLogger.debug("******mCommunicationTaskOtt.execute at getOttCallBack");
-                    mCommunicationTaskOtt.execute(returnCode);
+                    mCommunicationTaskOtt.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode);
                     return;
                 }
 
@@ -708,7 +708,7 @@ public class WebApiBasePlala {
                             //既に実行されたかどうかの判定
                             if (communicationTask.getStatus().equals(AsyncTask.Status.PENDING)) {
                                 //実行されていないので、ワンタイムトークンの取得結果を元にして、通信を開始する
-                                communicationTask.execute(returnCode);
+                                communicationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode);
                             } else {
                                 //既に実行されていたので、処理をスキップ
                                 //(2重起動はsuccessFlagがfalseの場合にしか確認していないので、実行されない筈ですが)
@@ -745,7 +745,7 @@ public class WebApiBasePlala {
             DTVTLogger.debug("communicationTask answer false = " + communicationTask);
 
             //ワンタイムトークンは取得できなかったので、そのまま通信を開始する
-            communicationTask.execute(returnCode);
+            communicationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode);
         }
     }
 

@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.activity.ranking;
 
 import android.content.ComponentName;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -437,9 +438,10 @@ public class RankingTopActivity extends BaseActivity
         //通信を止める
         showProgressBar(false);
         StopRankingTopDataConnect stopRankingTopDataConnect = new StopRankingTopDataConnect();
-        stopRankingTopDataConnect.execute(mRankingTopDataProvider);
+
+        stopRankingTopDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,mRankingTopDataProvider);
         StopHomeRecyclerViewAdapterConnect stopHomeRecyclerViewAdapterConnect = new StopHomeRecyclerViewAdapterConnect();
-        stopHomeRecyclerViewAdapterConnect.execute(mHorizontalViewAdapterToday,
+        stopHomeRecyclerViewAdapterConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,mHorizontalViewAdapterToday,
                 mHorizontalViewAdapterWeekly, mHorizontalViewAdapterVod);
     }
 }
