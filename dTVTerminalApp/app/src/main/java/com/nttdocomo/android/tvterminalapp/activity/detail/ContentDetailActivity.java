@@ -2446,7 +2446,8 @@ public class ContentDetailActivity extends BaseActivity implements
                 hideCtrlViewAfterOperate();
                 break;
             case R.id.dtv_contents_detail_main_layout_thumbnail_btn:
-                if (mViewIngType.equals(ContentUtils.ViewIngType.DISABLE_WATCH_AGREEMENT_DISPLAY)) {
+                if (mViewIngType != null
+                        && mViewIngType.equals(ContentUtils.ViewIngType.DISABLE_WATCH_AGREEMENT_DISPLAY)) {
                     //未契約時は契約導線を表示
                     leadingContract();
                     return;
@@ -3085,7 +3086,8 @@ public class ContentDetailActivity extends BaseActivity implements
     @Override
     public void onClickRecordingReservationIcon(final View view) {
         //未契約時は契約導線を表示
-        if (mViewIngType.equals(ContentUtils.ViewIngType.DISABLE_WATCH_AGREEMENT_DISPLAY)) {
+        if (mViewIngType != null
+                && mViewIngType.equals(ContentUtils.ViewIngType.DISABLE_WATCH_AGREEMENT_DISPLAY)) {
             leadingContract();
             return;
         }
