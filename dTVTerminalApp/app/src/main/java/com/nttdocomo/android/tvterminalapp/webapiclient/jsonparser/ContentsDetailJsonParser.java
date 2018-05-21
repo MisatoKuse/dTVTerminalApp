@@ -66,7 +66,7 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
      * @param jsonStr ジャンル毎コンテンツ数取得一覧Jsonデータ
      * @return ジャンル毎コンテンツ数取得一覧取得：正常時レスポンスデータ
      */
-    public ContentsDetailGetResponse contentsDetailSender(final String jsonStr) {
+    private ContentsDetailGetResponse contentsDetailSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         mContentsDetailGetResponse = new ContentsDetailGetResponse();
@@ -89,7 +89,7 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendStatus(final JSONObject jsonObj) {
+    private void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得しセットする
             if (!jsonObj.isNull(ContentsDetailGetResponse.GENRE_COUNT_GET_RESPONSE_STATUS)) {

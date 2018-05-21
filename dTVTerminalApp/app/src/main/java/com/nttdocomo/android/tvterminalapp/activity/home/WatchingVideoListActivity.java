@@ -51,10 +51,6 @@ public class WatchingVideoListActivity extends BaseActivity implements
      * 接続状態フラグ.
      */
     private boolean mIsCommunicating = false;
-    /**
-     * メニュー開始フラグ.
-     */
-    private Boolean mIsMenuLaunch = false;
 
     /**
      * スクロール位置の記録.
@@ -121,11 +117,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
         setContentView(R.layout.watching_video_list_main_layout);
 
         setTitleText(getString(R.string.str_watching_video_activity_title));
-        Intent intent = getIntent();
-        mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
-        if (mIsMenuLaunch) {
-            enableHeaderBackIcon(true);
-        }
+        enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
@@ -436,11 +428,8 @@ public class WatchingVideoListActivity extends BaseActivity implements
         DTVTLogger.start();
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                if (mIsMenuLaunch) {
-                    //メニューから起動の場合ホーム画面に戻る
-                    contentsDetailBackKey(null);
-                    return false;
-                }
+                contentsDetailBackKey(null);
+                return false;
             default:
                 break;
         }
