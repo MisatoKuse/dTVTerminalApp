@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -908,7 +909,12 @@ public class ContentDetailActivity extends BaseActivity implements
                             mTvTitle.setVisibility(View.VISIBLE);
                             mTvLogo.setVisibility(View.VISIBLE);
                         }
-                        mSecureVideoPlayer.setBackgroundResource(R.mipmap.thumb_material_mask_overlay_gradation);
+                        int orientation = getResources().getConfiguration().orientation;
+                        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                            mSecureVideoPlayer.setBackgroundResource(R.mipmap.movie_material_mask_overlay_gradation_portrait);
+                        } else {
+                            mSecureVideoPlayer.setBackgroundResource(R.mipmap.movie_material_mask_overlay_gradation_landscape);
+                        }
                         //setPlayEvent();
                     }
                     hideCtrlViewAfterOperate();
@@ -1305,16 +1311,9 @@ public class ContentDetailActivity extends BaseActivity implements
                         mContractLeadingView.setVisibility(View.GONE);
                     }
                 } else {
-                    if (mDetailFullData != null
-                            && mDetailFullData.getContentsType().equals(ContentUtils.ContentsType.HIKARI_TV_VOD)
-                            && DeviceStateUtils.getPairingState(this, getStbStatus()).equals(DeviceStateUtils.PairingState.NO_PAIRING)
-                            && UserInfoUtils.isContract(this)) {
-                        playNowOnAir();
-                    } else {
-                        mThumbnailBtn.setVisibility(View.VISIBLE);
-                        startAppIcon.setVisibility(View.VISIBLE);
-                        startAppIcon.setText(content);
-                    }
+                    mThumbnailBtn.setVisibility(View.VISIBLE);
+                    startAppIcon.setVisibility(View.VISIBLE);
+                    startAppIcon.setText(content);
                 }
             } else {
                 noAgreementDisplay();
@@ -1405,7 +1404,7 @@ public class ContentDetailActivity extends BaseActivity implements
             }
         }
     }
-    
+
     /**
      * データの初期化.
      */
