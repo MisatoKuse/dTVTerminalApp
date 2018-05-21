@@ -1391,7 +1391,6 @@ public class ContentDetailActivity extends BaseActivity implements
         if (!TextUtils.isEmpty(title)) {
             setTitleText(title);
         }
-        setThumbnail();
         if (!TextUtils.isEmpty(url)) {
             if (mThumbnailProvider == null) {
                 mThumbnailProvider = new ThumbnailProvider(this, ThumbnailDownloadTask.ImageSizeType.CONTENT_DETAIL);
@@ -1406,18 +1405,7 @@ public class ContentDetailActivity extends BaseActivity implements
             }
         }
     }
-
-    /**
-     * サムネイル画像を表示する.
-     */
-    private void setThumbnail() {
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                getWidthDensity(), getWidthDensity() / SCREEN_RATIO_WIDTH_16 * SCREEN_RATIO_HEIGHT_9);
-        Bitmap bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.error_movie);
-        mThumbnail.setLayoutParams(layoutParams);
-        mThumbnail.setImageBitmap(bitmap);
-    }
-
+    
     /**
      * データの初期化.
      */
@@ -2175,7 +2163,7 @@ public class ContentDetailActivity extends BaseActivity implements
             showErrorDialog(ErrorType.contentDetailGet);
             // 他サービス
             if (!mIsOtherService) {
-                setThumbnail();
+                mThumbnail.setImageResource(R.mipmap.error_movie);
             }
         }
         sendOperateLog();
