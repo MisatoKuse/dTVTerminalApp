@@ -95,7 +95,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
         //アプリ起動時のサービストークン削除を行う
         SharedPreferencesUtils.deleteOneTimeTokenData(getApplicationContext());
-        DlnaManager.shared().launch(this);
+        DlnaManager.shared().launch(getApplicationContext());
         boolean isDlnaOk = startDlna();
         if (!isDlnaOk) {
             DTVTLogger.debug("BaseActivity");

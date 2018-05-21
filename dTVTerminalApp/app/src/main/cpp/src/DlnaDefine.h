@@ -99,7 +99,7 @@ struct ContentInfo {
     char rating[256];
 };
 enum eDiragConnectStatus {
-    DiragConnectStatusNone
+    DiragConnectStatusUnknown
     , DiragConnectStatusReady
     , DiragConnectStatusConnected
     , DiragConnectStatusDetectedDisconnection
