@@ -24,6 +24,8 @@ public:
     /** NW環境変更時にコール*/
     bool restartDirag(DMP *d);
 
+    bool stopDirag();
+
     bool requestLocalRegistration(DMP *d, const du_uchar* udn, const du_uchar* registerName);
     
     const char* getRemoteDeviceExpireDate(const du_uchar* udn);
