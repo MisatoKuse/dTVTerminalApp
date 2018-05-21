@@ -7,6 +7,8 @@ package com.nttdocomo.android.tvterminalapp.activity.ranking;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -17,6 +19,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewAdapter;
+import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewItemDecoration;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
@@ -148,9 +151,14 @@ public class RankingTopActivity extends BaseActivity
         //各ランキングリストのUIをあらかじめ用意する
         for (int i = 0; i < CONTENT_LIST_COUNT; i++) {
             View view = View.inflate(this, R.layout.home_main_layout_item, null);
+            mLinearLayout.addView(view);
             view.setTag(i);
             view.setVisibility(View.GONE);
-            mLinearLayout.addView(view);
+            RecyclerView recyclerView = view.findViewById(R.id.home_main_item_recyclerview);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+            linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+            recyclerView.setLayoutManager(linearLayoutManager);
+            recyclerView.addItemDecoration(new HomeRecyclerViewItemDecoration(this));
         }
     }
 

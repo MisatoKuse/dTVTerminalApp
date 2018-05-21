@@ -85,6 +85,8 @@
     <dimen name="home_contents_item_name_bottom_margin">16dp</dimen>
     <dimen name="home_contents_left_margin">16dp</dimen>
     <dimen name="home_contents_right_margin">10dp</dimen>
+    <dimen name="home_contents_service_margin">8dp</dimen>
+    <dimen name="home_contents_item_left_margin">16dp</dimen>
     <dimen name="home_contents_item_name_text_size">16dp</dimen>
     <dimen name="home_contents_item_num_right_margin">4dp</dimen>
     <dimen name="home_contents_item_num_text_size">14dp</dimen>

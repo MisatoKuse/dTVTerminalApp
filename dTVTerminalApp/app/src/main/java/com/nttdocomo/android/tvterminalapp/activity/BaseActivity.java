@@ -71,6 +71,7 @@ import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActiv
 import com.nttdocomo.android.tvterminalapp.activity.video.VideoTopActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewAdapter;
+import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewItemDecoration;
 import com.nttdocomo.android.tvterminalapp.application.TvtApplication;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
@@ -2665,9 +2666,6 @@ public class BaseActivity extends FragmentActivity implements
         } else if (mActivity instanceof RankingTopActivity) {
             i = HomeRecyclerViewAdapter.RANKING_CONTENTES_TODAY_SORT;
         }
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        recyclerView.setLayoutManager(linearLayoutManager);
         HomeRecyclerViewAdapter horizontalViewAdapter = new HomeRecyclerViewAdapter(
                 this, contentsDataList, index + i);
         horizontalViewAdapter.setOnItemClickCallBack(this);
