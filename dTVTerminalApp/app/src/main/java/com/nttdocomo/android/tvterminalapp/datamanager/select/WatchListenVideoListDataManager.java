@@ -50,6 +50,7 @@ public class WatchListenVideoListDataManager {
 
         //ホーム画面に必要な列を列挙する
         String[] columns = {JsonConstants.META_RESPONSE_THUMB_448, JsonConstants.META_RESPONSE_TITLE,
+                JsonConstants.META_RESPONSE_DTV_THUMB_448, JsonConstants.META_RESPONSE_DTV_THUMB_640,
                 JsonConstants.META_RESPONSE_DISPLAY_START_DATE, JsonConstants.META_RESPONSE_RATING,
                 JsonConstants.META_RESPONSE_SEARCH_OK, JsonConstants.META_RESPONSE_CRID,
                 JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_EVENT_ID,

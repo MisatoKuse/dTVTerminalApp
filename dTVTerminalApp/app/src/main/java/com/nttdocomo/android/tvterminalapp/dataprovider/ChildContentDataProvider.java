@@ -18,6 +18,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChildContentListGetWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
@@ -172,8 +173,13 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
             data.setTitle(title);
             //エポック秒から文字に変換
             data.setRatStar(String.valueOf(vodMetaFullData.getRating()));
-            data.setThumURL(vodMetaFullData.getmThumb_448_252());
-            data.setThumDetailURL(vodMetaFullData.getmThumb_640_360());
+            if (ContentUtils.IS_DTV_FLAG.equals(dtv)) {
+                data.setThumURL(vodMetaFullData.getmDtv_thumb_448_252());
+                data.setThumDetailURL(vodMetaFullData.getmDtv_thumb_640_360());
+            } else {
+                data.setThumURL(vodMetaFullData.getmThumb_448_252());
+                data.setThumDetailURL(vodMetaFullData.getmThumb_640_360());
+            }
             data.setSearchOk(searchOk);
             data.setContentsType(vodMetaFullData.getmContent_type());
             data.setDtv(dtv);

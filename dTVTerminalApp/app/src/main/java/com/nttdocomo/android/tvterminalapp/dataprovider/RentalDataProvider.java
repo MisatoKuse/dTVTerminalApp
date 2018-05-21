@@ -23,6 +23,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListRes
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
@@ -286,6 +287,8 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
             vodMetaFullData.setTitle(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_TITLE));
             vodMetaFullData.setmThumb_448_252(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_THUMB_448));
             vodMetaFullData.setmThumb_640_360(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_THUMB_640));
+            vodMetaFullData.setmDtv_thumb_448_252(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_DTV_THUMB_448));
+            vodMetaFullData.setmDtv_thumb_640_360(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_DTV_THUMB_640));
             vodMetaFullData.setAvail_start_date(Long.parseLong(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
             vodMetaFullData.setAvail_end_date(Long.parseLong(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
             vodMetaFullData.setDisp_type(dispType);
@@ -369,8 +372,13 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
                 data.setTitle(title);
                 //エポック秒から文字に変換
                 data.setRatStar(String.valueOf(vodMetaFullData.getRating()));
-                data.setThumURL(vodMetaFullData.getmThumb_448_252());
-                data.setThumDetailURL(vodMetaFullData.getmThumb_640_360());
+                if (ContentUtils.IS_DTV_FLAG.equals(dtv)) {
+                    data.setThumURL(vodMetaFullData.getmDtv_thumb_448_252());
+                    data.setThumDetailURL(vodMetaFullData.getmDtv_thumb_640_360());
+                } else {
+                    data.setThumURL(vodMetaFullData.getmThumb_448_252());
+                    data.setThumDetailURL(vodMetaFullData.getmThumb_640_360());
+                }
                 data.setSearchOk(searchOk);
                 data.setContentsType(vodMetaFullData.getmContent_type());
                 data.setDtv(dtv);

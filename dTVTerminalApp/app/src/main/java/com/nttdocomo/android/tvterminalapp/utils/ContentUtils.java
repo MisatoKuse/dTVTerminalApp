@@ -64,7 +64,7 @@ public class ContentUtils {
     /** チャンネルタイプ premium_ch.*/
     private static final String CH_TYPE_PREMIUM = "premium_ch";
     /** DTVフラグ 1.*/
-    private static final String IS_DTV_FLAG = "1";
+    public static final String IS_DTV_FLAG = "1";
     /** DTVフラグ 0.*/
     private static final String NOT_DTV_FLAG = "0";
     /** BVフラグ 1.*/

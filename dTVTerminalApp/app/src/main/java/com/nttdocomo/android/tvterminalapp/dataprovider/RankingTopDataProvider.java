@@ -33,6 +33,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
@@ -664,8 +665,13 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 String dtvType = map.get(JsonConstants.META_RESPONSE_DTV_TYPE);
                 String chNo = map.get(JsonConstants.META_RESPONSE_CHNO);
                 rankingContentInfo.setRank(String.valueOf(i + 1));
-                rankingContentInfo.setThumURL(map.get(JsonConstants.META_RESPONSE_THUMB_448));
-                rankingContentInfo.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_THUMB_640));
+                if (ContentUtils.IS_DTV_FLAG.equals(dtv)) {
+                    rankingContentInfo.setThumURL(map.get(JsonConstants.META_RESPONSE_DTV_THUMB_448));
+                    rankingContentInfo.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_DTV_THUMB_640));
+                } else {
+                    rankingContentInfo.setThumURL(map.get(JsonConstants.META_RESPONSE_THUMB_448));
+                    rankingContentInfo.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_THUMB_640));
+                }
                 rankingContentInfo.setTitle(title);
                 rankingContentInfo.setSearchOk(searchOk);
                 rankingContentInfo.setRank(String.valueOf(i + 1));
