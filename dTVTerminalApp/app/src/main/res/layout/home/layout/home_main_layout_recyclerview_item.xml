@@ -2,8 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/home_contents_thumbnail_width"
     android:layout_height="@dimen/home_contents_thumbnail_height"
-    android:background="@color/colorAccent">
-    <!--android:background="@color/home_main_background_color"-->
+    android:background="@color/home_main_background_color"
+    >
+
     <ImageView
         android:id="@+id/home_main_recyclerview_item_iv"
         android:layout_width="match_parent"
@@ -12,6 +13,7 @@
         android:src="@mipmap/loading_scroll"
         android:scaleType="fitCenter"
         android:contentDescription="@null"/>
+
     <!-- Newアイコン-->
     <ImageView
         android:id="@+id/home_main_recyclerview_item_iv_new"
