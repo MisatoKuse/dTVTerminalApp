@@ -1872,6 +1872,10 @@ public class ContentDetailActivity extends BaseActivity implements
     private void initContentsView() {
         //サムネイル取得
         mThumbnail = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                getWidthDensity(), getWidthDensity() / SCREEN_RATIO_WIDTH_16 * SCREEN_RATIO_HEIGHT_9);
+        mThumbnail.setLayoutParams(layoutParams);
+
         mThumbnailBtn = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail_btn);
         mThumbnailBtn.setOnClickListener(this);
         switch (mDisplayState) {
