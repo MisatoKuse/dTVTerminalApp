@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
@@ -60,7 +61,7 @@ public class ChildContentListGetWebClient extends WebApiBasePlala implements
      */
     @Override
     public void onAnswer(final ReturnCode returnCode) {
-        new ChildContentListJsonParser(mContext, mJsonParserCallback).execute(returnCode.bodyData);
+        new ChildContentListJsonParser(mContext, mJsonParserCallback).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode.bodyData);
     }
 
     /**

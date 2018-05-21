@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
@@ -55,7 +56,7 @@ public class RentalVodListWebClient
         if (mRentalVodListJsonParserCallback != null) {
             //JSONをパースして、データを返す
             new RentalVodListJsonParser(mContext, mRentalVodListJsonParserCallback)
-                    .execute(returnCode.bodyData);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode.bodyData);
         }
     }
 

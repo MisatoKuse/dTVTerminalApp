@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.tvprogram;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -142,7 +143,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
         DTVTLogger.start();
         //マイ番組表設定通信を止める
         StopMyProgramListDataConnect stopMyConnect = new StopMyProgramListDataConnect();
-        stopMyConnect.execute(mMyChannelDataProvider);
+        stopMyConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mMyChannelDataProvider);
     }
     // endregion
 

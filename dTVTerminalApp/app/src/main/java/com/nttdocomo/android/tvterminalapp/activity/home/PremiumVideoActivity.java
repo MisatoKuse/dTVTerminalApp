@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -230,9 +231,9 @@ public class PremiumVideoActivity extends BaseActivity implements
         DTVTLogger.start();
         //通信を止める
         StopRentalDataConnect stopConnect = new StopRentalDataConnect();
-        stopConnect.execute(mRentalDataProvider);
+        stopConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mRentalDataProvider);
         StopContentsAdapterConnect stopAdapterConnect = new StopContentsAdapterConnect();
-        stopAdapterConnect.execute(mContentsAdapter);
+        stopAdapterConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mContentsAdapter);
     }
 
 }

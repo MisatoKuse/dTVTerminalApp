@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.fragment.cliplist;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -301,7 +302,7 @@ public class ClipListBaseFragment extends Fragment
      */
     public void stopContentsAdapterConnect() {
         StopContentsAdapterConnect stopAdapterConnect = new StopContentsAdapterConnect();
-        stopAdapterConnect.execute(mClipMainAdapter);
+        stopAdapterConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mClipMainAdapter);
     }
 
     /**

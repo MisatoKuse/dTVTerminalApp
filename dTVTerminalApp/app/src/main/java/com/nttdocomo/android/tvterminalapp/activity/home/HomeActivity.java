@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.activity.home;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -296,11 +297,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         //通信を止める
         if (mHomeDataProvider != null) {
             StopHomeDataConnect stopHomeDataConnect = new StopHomeDataConnect();
-            stopHomeDataConnect.execute(mHomeDataProvider);
+            stopHomeDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mHomeDataProvider);
         }
+
         if (mUserInfoDataProvider != null) {
             StopUserInfoDataConnect stopUserInfoDataConnect = new StopUserInfoDataConnect();
-            stopUserInfoDataConnect.execute(mUserInfoDataProvider);
+            stopUserInfoDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mUserInfoDataProvider);
         }
     }
 

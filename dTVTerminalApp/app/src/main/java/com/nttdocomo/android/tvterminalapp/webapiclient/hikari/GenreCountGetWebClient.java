@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
@@ -83,7 +84,8 @@ public class GenreCountGetWebClient
         if (mGenreCountGetJsonParserCallback != null) {
             //JSONをパースして、データを返す
             new GenreCountGetJsonParser(
-                    mGenreCountGetJsonParserCallback).execute(returnCode.bodyData);
+                    mGenreCountGetJsonParserCallback)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode.bodyData);
         }
     }
 

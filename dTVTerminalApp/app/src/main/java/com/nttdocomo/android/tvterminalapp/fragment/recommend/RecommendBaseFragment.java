@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.fragment.recommend;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -352,7 +353,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
         showProgressBar(false);
         StopContentsAdapterConnect stopContentsAdapterConnect = new StopContentsAdapterConnect();
         if (mRecommendListBaseAdapter != null) {
-            stopContentsAdapterConnect.execute(mRecommendListBaseAdapter);
+            stopContentsAdapterConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mRecommendListBaseAdapter);
         }
     }
 

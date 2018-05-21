@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -59,7 +60,7 @@ public class ClipDeleteWebClient
     @Override
     public void onAnswer(final ReturnCode returnCode) {
         //JSONをパースして、データを返す
-        new ClipDeleteJsonParser(mClipDeleteJsonParserCallback).execute(returnCode.bodyData);
+        new ClipDeleteJsonParser(mClipDeleteJsonParserCallback).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode.bodyData);
     }
 
     /**

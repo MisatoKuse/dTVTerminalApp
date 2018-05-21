@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.tvprogram;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -193,6 +194,6 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
         DTVTLogger.start();
         //チャンネルリスト通信を止める
         StopScaledProListDataConnect stopTvConnect = new StopScaledProListDataConnect();
-        stopTvConnect.execute(mScaledDownProgramListDataProvider);
+        stopTvConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mScaledDownProgramListDataProvider);
     }
 }

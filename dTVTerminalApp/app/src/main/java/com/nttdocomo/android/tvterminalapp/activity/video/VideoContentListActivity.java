@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.video;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -401,8 +402,9 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         //通信を止める
         showProgressBar(false);
         StopVideoContentConnect stopConnect = new StopVideoContentConnect();
-        stopConnect.execute(mVideoContentProvider);
+        stopConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mVideoContentProvider);
         StopContentsAdapterConnect stopAdapterConnect = new StopContentsAdapterConnect();
-        stopAdapterConnect.execute(mContentsAdapter);
+        stopAdapterConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                 mContentsAdapter);
     }
 }
