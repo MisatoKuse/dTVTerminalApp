@@ -65,7 +65,7 @@
 
                 <LinearLayout
                     android:id="@+id/dtv_content_detail_fragment_detail_area"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_gravity="center_vertical"
@@ -104,7 +104,6 @@
 
                 <RelativeLayout
                     android:id="@+id/dtv_contents_detail_fragment_iv_area"
-                    android:layout_weight="3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical">

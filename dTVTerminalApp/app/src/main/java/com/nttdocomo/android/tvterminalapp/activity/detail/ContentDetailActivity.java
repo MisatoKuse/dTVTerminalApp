@@ -3471,7 +3471,7 @@ public class ContentDetailActivity extends BaseActivity implements
                 switch (pairingState) {
                     case INSIDE_HOUSE:
                         mContractLeadingView.setVisibility(View.VISIBLE);
-                        vodTextView.setText(getString(R.string.contents_detail_hikari_vod_inside_home));
+                        vodTextView.setText(getString(R.string.contents_detail_hikari_vod_agreement));
                         vodButton.setText(getString(R.string.contents_detail_contract_leading_button));
                         vodButton.setAllCaps(false);
                         //サムネイルにシャドウをかける
@@ -3479,7 +3479,7 @@ public class ContentDetailActivity extends BaseActivity implements
                         break;
                     case OUTSIDE_HOUSE:
                         mContractLeadingView.setVisibility(View.VISIBLE);
-                        vodTextView.setText(getString(R.string.contents_detail_hikari_vod_inside_home));
+                        vodTextView.setText(getString(R.string.contents_detail_hikari_vod_agreement));
                         //宅外の場合は契約ボタンを表示しない
                         vodButton.setVisibility(View.GONE);
                         break;
