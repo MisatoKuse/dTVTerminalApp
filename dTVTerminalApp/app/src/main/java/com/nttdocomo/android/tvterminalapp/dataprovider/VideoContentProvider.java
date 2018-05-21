@@ -16,6 +16,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
@@ -165,8 +166,13 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
             String dtvType = map.get(JsonConstants.META_RESPONSE_DTV_TYPE);
 
             contentsData.setCrid(map.get(JsonConstants.META_RESPONSE_CRID));
-            contentsData.setThumURL(map.get(JsonConstants.META_RESPONSE_THUMB_448));
-            contentsData.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_THUMB_640));
+            if (ContentUtils.IS_DTV_FLAG.equals(dtv)) {
+                contentsData.setThumURL(map.get(JsonConstants.META_RESPONSE_DTV_THUMB_448));
+                contentsData.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_DTV_THUMB_640));
+            } else {
+                contentsData.setThumURL(map.get(JsonConstants.META_RESPONSE_THUMB_448));
+                contentsData.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_THUMB_640));
+            }
             contentsData.setTitle(map.get(JsonConstants.META_RESPONSE_TITLE));
             contentsData.setRatStar(map.get(JsonConstants.META_RESPONSE_RATING));
             contentsData.setContentsType(map.get(JsonConstants.META_RESPONSE_CONTENT_TYPE));

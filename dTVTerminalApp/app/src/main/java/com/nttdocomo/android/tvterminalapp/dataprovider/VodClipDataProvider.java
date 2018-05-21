@@ -17,6 +17,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
@@ -182,8 +183,13 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
             String dtvType = map.get(JsonConstants.META_RESPONSE_DTV_TYPE);
 
             clipContentInfo.setRank(String.valueOf(i + 1));
-            clipContentInfo.setThumURL(map.get(JsonConstants.META_RESPONSE_THUMB_448));
-            clipContentInfo.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_THUMB_640));
+            if (ContentUtils.IS_DTV_FLAG.equals(dtv)) {
+                clipContentInfo.setThumURL(map.get(JsonConstants.META_RESPONSE_DTV_THUMB_448));
+                clipContentInfo.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_DTV_THUMB_640));
+            } else {
+                clipContentInfo.setThumURL(map.get(JsonConstants.META_RESPONSE_THUMB_448));
+                clipContentInfo.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_THUMB_640));
+            }
             clipContentInfo.setTitle(title);
             clipContentInfo.setSearchOk(searchOk);
             clipContentInfo.setRatStar(map.get(JsonConstants.META_RESPONSE_RATING));
