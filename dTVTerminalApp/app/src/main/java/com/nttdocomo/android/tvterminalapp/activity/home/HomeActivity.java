@@ -182,6 +182,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private boolean mIsSearchDone = false;
 
+    /**
+     * ホーム画面表示時にdアカウントが取得できていなかった場合に、その取得後にユーザー情報を取得しに行くフラグ.
+     */
+    private boolean mUserInfoGetRequest = false;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -258,9 +263,27 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onResume() {
         super.onResume();
+
+        //ユーザー情報取得開始
+        getUserInfoStart();
+    }
+
+    /**
+     * ホーム画面表示時のユーザー情報取得部.
+     *
+     * (複数個所から呼ばれることになったので、をonResumeから分離)
+     */
+    private void getUserInfoStart() {
+        DTVTLogger.start();
+
+        //ユーザー情報リクエストをリセット
+        mUserInfoGetRequest = false;
+
         mUserInfoDataProvider = new UserInfoDataProvider(this, this);
+
         //アプリ起動時のデータ取得ユーザ情報未取得又は時間切れ又はonCreateから開始した場合はユーザ情報取得から
-        if (mUserInfoDataProvider.isUserInfoTimeOut() && !TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(this))) {
+        if (mUserInfoDataProvider.isUserInfoTimeOut() &&
+                !TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(this))) {
             if (networkCheck()) {
                 getUserInfo();
             } else {
@@ -270,11 +293,36 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 }
             }
         } else {
+            DTVTLogger.debug("getDaccount="
+                    + SharedPreferencesUtils.getSharedPreferencesDaccountId(this));
+            DTVTLogger.debug("userInfo Timeout?=" + mUserInfoDataProvider.isUserInfoTimeOut());
+
+            //dアカウントが取れていないので、取れたときのコールバックにユーザー情報取得を依頼する
+            mUserInfoGetRequest = true;
+
             if (!mIsSearchDone) {
                 //起動時はプログレスダイアログを表示
                 requestHomeData();
             }
         }
+
+        DTVTLogger.end();
+    }
+
+    @Override
+    protected void onDaccountOttGetComplete(final boolean result) {
+        //dアカウントの取得が終わった際に呼ばれるコールバック
+        super.onDaccountOttGetComplete(result);
+
+        DTVTLogger.start();
+
+        //ユーザー情報取得依頼をチェック
+        if(mUserInfoGetRequest) {
+            //依頼が出ているので、ユーザー情報の取得を開始
+            getUserInfo();
+        }
+
+        DTVTLogger.end();
     }
 
     @Override
@@ -663,9 +711,15 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * ユーザ情報取得処理.
      */
     private void getUserInfo() {
-        //ユーザー情報の変更検知
-        showProgessBar(true);
-        mUserInfoDataProvider.getUserInfo();
+        //dアカウント取得後のコールバックからも呼ばれるようになったので、UIスレッド対応
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //ユーザー情報の変更検知
+                showProgessBar(true);
+                mUserInfoDataProvider.getUserInfo();
+            }
+        });
     }
 
     /**
