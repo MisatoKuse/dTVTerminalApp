@@ -239,7 +239,9 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
 
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
-        ContentsData contentsData = mContentsData.get(i);
+        //ヘッダービューを除く
+        int position = i - 1;
+        ContentsData contentsData = mContentsData.get(position);
         ContentDetailActivity contentDetailActivity = (ContentDetailActivity) mActivity;
         if (ContentUtils.isChildContentList(contentsData)) {
             contentDetailActivity.startChildContentListActivity(contentsData);
