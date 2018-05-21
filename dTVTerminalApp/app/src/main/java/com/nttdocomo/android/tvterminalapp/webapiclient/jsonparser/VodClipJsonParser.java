@@ -25,7 +25,7 @@ public class VodClipJsonParser {
     /**オブジェクトクラスの定義.*/
     private VodClipList mVodClipList;
     /**ページャーパラメータキー.*/
-    public static final String[] PAGER_PARA = {JsonConstants.META_RESPONSE_UPPER_LIMIT,
+    private static final String[] PAGER_PARA = {JsonConstants.META_RESPONSE_UPPER_LIMIT,
             JsonConstants.META_RESPONSE_LOWER_LIMIT, JsonConstants.META_RESPONSE_OFFSET,
             JsonConstants.META_RESPONSE_COUNT};
 
@@ -59,7 +59,7 @@ public class VodClipJsonParser {
      * statusの値をMapに格納.
      * @param jsonObj 解析前のJsonデータ
      */
-    public void sendStatus(final JSONObject jsonObj) {
+    private void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
             HashMap<String, String> map = new HashMap<>();
@@ -90,7 +90,7 @@ public class VodClipJsonParser {
      * コンテンツのList<HashMap>をオブジェクトクラスに格納.
      * @param arrayList ArrayList
      */
-    public void sendVcList(final JSONArray arrayList) {
+    private void sendVcList(final JSONArray arrayList) {
         try {
             List<HashMap<String, String>> vcList = new ArrayList<>();
             // リストの数だけまわす

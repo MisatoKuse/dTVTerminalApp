@@ -7,7 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.daccount;
 /**
  * 外部IF向け定数定義.
  */
-public class IDimDefines {
+class IDimDefines {
 
     /**
      * <pre>
@@ -214,7 +214,7 @@ public class IDimDefines {
      * 呼び出し元フラグ.
      * </pre>
      */
-    public class CallerFlag {
+    private class CallerFlag {
         /**
          * <pre>
          * 初期設定アプリ :1.
@@ -235,7 +235,7 @@ public class IDimDefines {
      * 除外理由.
      * </pre>
      */
-    public class DeleteAppReason {
+    private class DeleteAppReason {
         /**
          * <pre>
          * ユーザ操作による除去 :0.
@@ -256,7 +256,7 @@ public class IDimDefines {
      * IDの設定状態.
      * </pre>
      */
-    public class IdState {
+    private class IdState {
         /**
          * <pre>
          * ID設定済み :0.
@@ -277,7 +277,7 @@ public class IDimDefines {
      * 生体認証の設定状態.
      * </pre>
      */
-    public class BioState {
+    private class BioState {
         /**
          * <pre>
          * 生体認証設定済み :0.
@@ -312,7 +312,7 @@ public class IDimDefines {
      * セキュリティコード認証の認証オプション.
      * </pre>
      */
-    public class SecCodeOption {
+    private class SecCodeOption {
         /**
          * <pre>
          * 任意認証 :0.

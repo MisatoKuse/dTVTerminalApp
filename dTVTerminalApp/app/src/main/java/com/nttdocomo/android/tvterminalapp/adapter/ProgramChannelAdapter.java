@@ -34,6 +34,7 @@ public class ProgramChannelAdapter extends
     private int mScreenWidth = 0;
     /**タイムラインWidth.*/
     private static final int TIME_LINE_WIDTH = 44;
+    /**タイムラインHeight.*/
     private static final int TIME_LINE_HEIGHT = 56;
 
     /**

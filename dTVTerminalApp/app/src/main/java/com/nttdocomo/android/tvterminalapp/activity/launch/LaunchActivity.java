@@ -275,7 +275,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     /**
      * ダイアログが表示されている場合は、まだ画面遷移を行わないようにするスタートアクティビティ.
      */
-    void startActivityWait() {
+    private void startActivityWait() {
 
         //設定ファイルダイアログ表示を次の画面に依頼するかを確認
         if (mIsSettingErrorNextAvctivity) {

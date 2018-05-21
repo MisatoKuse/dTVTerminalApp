@@ -17,7 +17,7 @@ public class RelayServiceResponseMessage implements Serializable {
     /**result_error.*/
     public static final int RELAY_RESULT_ERROR = 1;
     /**result_success.*/
-    public static final int RELAY_RESULT_SUCCESS = 0;
+    private static final int RELAY_RESULT_SUCCESS = 0;
     /**internal_error.*/
     public static final int RELAY_RESULT_INTERNAL_ERROR = 11;
     /**application_not_install.*/
@@ -29,13 +29,13 @@ public class RelayServiceResponseMessage implements Serializable {
     /**version_code_incompatible.*/
     public static final int RELAY_RESULT_VERSION_CODE_INCOMPATIBLE = 15;
     /**contents_id_notexist.*/
-    public static final int RELAY_RESULT_CONTENTS_ID_NOTEXIST = 16;
+    private static final int RELAY_RESULT_CONTENTS_ID_NOTEXIST = 16;
     /**crid_notexist.*/
-    public static final int RELAY_RESULT_CRID_NOTEXIST = 17;
+    private static final int RELAY_RESULT_CRID_NOTEXIST = 17;
     /**chno_notexist.*/
-    public static final int RELAY_RESULT_CHNO_NOTEXIST = 18;
+    private static final int RELAY_RESULT_CHNO_NOTEXIST = 18;
     /**command_argument_notexist.*/
-    public static final int RELAY_RESULT_COMMAND_ARGUMENT_NOTEXIST = 19;
+    private static final int RELAY_RESULT_COMMAND_ARGUMENT_NOTEXIST = 19;
     /**not_registered_service.*/
     public static final int RELAY_RESULT_NOT_REGISTERED_SERVICE = 21;
     /**unregistered_user_id.*/
@@ -49,7 +49,7 @@ public class RelayServiceResponseMessage implements Serializable {
     /**distination_unreachable.*/
     public static final int RELAY_RESULT_DISTINATION_UNREACHABLE = 26;
     /**service_category_type_notexist.*/
-    public static final int RELAY_RESULT_SERVICE_CATEGORY_TYPE_NOTEXIST = 27;
+    private static final int RELAY_RESULT_SERVICE_CATEGORY_TYPE_NOTEXIST = 27;
     /**dtvt_application_version_incompatible.*/
     public static final int RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE = 28;
     /**stb_relay_service_version_incompatible.*/

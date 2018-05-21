@@ -189,7 +189,7 @@ public class DownloadService extends Service implements DownloadListener {
     /**
      * ダウンロード開始.
      */
-    public void startService() {
+    private void startService() {
         startForeground(DOWNLOAD_SERVICE_ID, getNotification(getResources().getString(R.string.record_download_notification), 0));
     }
 

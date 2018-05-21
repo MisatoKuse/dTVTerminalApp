@@ -192,7 +192,7 @@ enum OttGetQueue {
      *
      * @param disconnectionFlag trueならば通信切断
      */
-    protected void setDisconnectionFlag(final boolean disconnectionFlag) {
+void setDisconnectionFlag(final boolean disconnectionFlag) {
         DTVTLogger.start();
         mDisconnectionFlag = disconnectionFlag;
         DTVTLogger.debug("disconnect flag = " + mDisconnectionFlag);
@@ -208,7 +208,7 @@ enum OttGetQueue {
     /**
      * 今あるワンタイムトークン取得タスクは停止する.
      */
-    protected void cancelConnection() {
+void cancelConnection() {
         if (mDaccountGetOtt == null) {
             //まだクラスの準備ができていないので、以下の処理は無用
             return;

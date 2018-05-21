@@ -130,15 +130,15 @@ public class DlnaManager {
     /** 再接続失敗. */
     private static final int REMOTE_CONNECT_STATUS_RECONNECTION = 6;
     /** dms検出リスナー. */
-    public DlnaManagerListener mDlnaManagerListener = null;
+    private DlnaManagerListener mDlnaManagerListener = null;
     /** ローカルレジストレーションリスナー. */
     public LocalRegisterListener mLocalRegisterListener = null;
     /** リモート接続リスナー. */
-    public RemoteConnectStatusChangeListener mRemoteConnectStatusChangeListener = null;
+    private RemoteConnectStatusChangeListener mRemoteConnectStatusChangeListener = null;
     /** 接続ステータス. */
-    public RemoteConnectStatus remoteConnectStatus = RemoteConnectStatus.OTHER;
+    private RemoteConnectStatus remoteConnectStatus = RemoteConnectStatus.OTHER;
     /** コンテキスト. */
-    public Context mContext;
+    private Context mContext;
 
     /**
      * launch.
@@ -211,7 +211,7 @@ public class DlnaManager {
     /**
      * Diragを停止.
      */
-    public void StopDirag() {
+    private void StopDirag() {
         stopDirag();
     }
 

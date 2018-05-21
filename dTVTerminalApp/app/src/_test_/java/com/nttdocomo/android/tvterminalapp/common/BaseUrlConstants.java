@@ -7,7 +7,7 @@ package com.nttdocomo.android.tvterminalapp.common;
 /**
  * BaseUrlConstants.
  */
-public class BaseUrlConstants {
+class BaseUrlConstants {
 
     /**
      * 検索サーバAPIのURL.
@@ -33,7 +33,7 @@ public class BaseUrlConstants {
     // ステージング
 //        private static final String PLALA_BASE_URL = "https://zif.hikaritv-docomo.jp/";
     // ラボ
-    public static final String PLALA_BASE_URL = "https://tif.hikaritv-docomo.jp/";
+    private static final String PLALA_BASE_URL = "https://tif.hikaritv-docomo.jp/";
 
     /**
      * APIアクセスプロキシパス.

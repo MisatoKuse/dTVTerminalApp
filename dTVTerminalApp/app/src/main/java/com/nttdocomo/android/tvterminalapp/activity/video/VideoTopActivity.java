@@ -121,7 +121,7 @@ public class VideoTopActivity extends BaseActivity implements
     }
 
     @Override
-    public void contentsDetailBackKey(final View view) {
+    protected void contentsDetailBackKey(final View view) {
         if (mIsMenuLaunch) {
             //メニューから起動の場合ホーム画面に戻る
             super.contentsDetailBackKey(null);

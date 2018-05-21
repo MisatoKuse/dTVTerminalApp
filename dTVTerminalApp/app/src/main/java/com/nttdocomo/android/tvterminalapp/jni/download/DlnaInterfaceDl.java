@@ -17,7 +17,7 @@ import java.io.File;
 /**
  * 機能：For Dlna download.
  */
-public class DlnaInterfaceDl {
+class DlnaInterfaceDl {
     //private Handler mHandler= new Handler();
 
     //Download

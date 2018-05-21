@@ -12,13 +12,13 @@ import com.nttdocomo.android.tvterminalapp.struct.SearchNarrowCondition;
  */
 public class SearchDubbedType extends SearchFilterTypeMappable {
     /**2：吹替のみ.*/
-    public final int dubbed = SearchNarrowCondition.getNextOrdinal();
+    private final int mDubbed = SearchNarrowCondition.getNextOrdinal();
     /**1：字幕のみ.*/
-    public final int subtitle = SearchNarrowCondition.getNextOrdinal();
+    private final int mSubtitle = SearchNarrowCondition.getNextOrdinal();
     /**3：字幕/吹替両対応.*/
-    public final int both = SearchNarrowCondition.getNextOrdinal();
+    private final int mBoth = SearchNarrowCondition.getNextOrdinal();
     /**検索条件初期値.*/
-    private int self = SearchNarrowCondition.sEnumOrdinalNil;
+    private int mSelf = SearchNarrowCondition.sEnumOrdinalNil;
 
     /**
      *コンストラクタ.
@@ -26,21 +26,21 @@ public class SearchDubbedType extends SearchFilterTypeMappable {
      */
     public SearchDubbedType(final String name) {
         if ("SearchDubbedTypeDubbed".equals(name)) {
-            self = dubbed;
+            mSelf = mDubbed;
         } else if ("SearchDubbedTypeSubtitle".equals(name)) {
-            self = subtitle;
+            mSelf = mSubtitle;
         } else if ("SearchDubbedTypeBoth".equals(name)) {
-            self = both;
+            mSelf = mBoth;
         }
     }
 
     @Override
     public SearchFilterType searchFilterType() {
-        if (dubbed == self) {
+        if (mDubbed == mSelf) {
             return SearchFilterType.dubbedDubbed;
-        } else if (subtitle == self) {
+        } else if (mSubtitle == mSelf) {
             return SearchFilterType.dubbedText;
-        } else if (both == self) {
+        } else if (mBoth == mSelf) {
             return SearchFilterType.dubbedTextAndDubbing;
         }
 

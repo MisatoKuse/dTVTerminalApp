@@ -465,7 +465,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     /**
      * おすすめDTVチャンネル取得.
      */
-    void getDtvChRecommend() {
+    private void getDtvChRecommend() {
         //DB保存履歴と、有効期間を確認
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.RECOMMEND_DCHANNEL_LAST_INSERT);
@@ -494,7 +494,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     /**
      * おすすめDTV取得.
      */
-    void getDtvRecommend() {
+    private void getDtvRecommend() {
 
         //DB保存履歴と、有効期間を確認
         DateUtils dateUtils = new DateUtils(mContext);
@@ -524,7 +524,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     /**
      * おすすめDアニメ取得.
      */
-    void getDAnimationRecommend() {
+    private void getDAnimationRecommend() {
         //DB保存履歴と、有効期間を確認
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.RECOMMEND_DANIME_LAST_INSERT);

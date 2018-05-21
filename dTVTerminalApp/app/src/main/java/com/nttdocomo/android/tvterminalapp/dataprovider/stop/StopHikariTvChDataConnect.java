@@ -13,7 +13,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.HikariTvChannelDataProvi
  * おすすめ番組・ビデオ取得で行っている通信を止める.
  */
 
-public class StopHikariTvChDataConnect extends AsyncTask<HikariTvChannelDataProvider, Void, Void> {
+class StopHikariTvChDataConnect extends AsyncTask<HikariTvChannelDataProvider, Void, Void> {
     /**
      * コンストラクタ.
      */

@@ -94,7 +94,7 @@ public class RecommendActivity extends BaseActivity implements
     /**
      * タブポジション(dTVチャンネル).
      */
-    public static final int RECOMMEND_LIST_PAGE_NO_OF_DTV_CHANNEL = 3;
+    private static final int RECOMMEND_LIST_PAGE_NO_OF_DTV_CHANNEL = 3;
     /**
      * 表示開始タブ指定キー.
      */
@@ -271,7 +271,7 @@ public class RecommendActivity extends BaseActivity implements
      *
      * @param resultInfoList レコメンド情報
      */
-    public void recommendDataProviderSuccess(final List<ContentsData> resultInfoList) {
+    private void recommendDataProviderSuccess(final List<ContentsData> resultInfoList) {
         RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
         if (baseFragment == null) {
             return;
@@ -346,7 +346,7 @@ public class RecommendActivity extends BaseActivity implements
     /**
      * フラグメントクリア.
      */
-    public void clearAllFragment() {
+    private void clearAllFragment() {
 
         if (null != sRecommendViewPager) {
             int sum = mRecommendFragmentFactory.getFragmentCount();

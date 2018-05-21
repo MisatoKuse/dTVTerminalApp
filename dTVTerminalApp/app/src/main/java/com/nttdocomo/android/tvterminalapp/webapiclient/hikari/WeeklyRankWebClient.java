@@ -26,7 +26,7 @@ public class WeeklyRankWebClient
     /**
      * ジャンルID送信用キー.
      */
-    public static final String WEEKLY_RANK_CLIENT_BUNDLE_KEY = "genreId";
+    private static final String WEEKLY_RANK_CLIENT_BUNDLE_KEY = "genreId";
 
     /**
      * リクエストジャンル.

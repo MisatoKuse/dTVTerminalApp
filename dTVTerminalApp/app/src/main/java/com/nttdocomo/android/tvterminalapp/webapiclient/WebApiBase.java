@@ -38,7 +38,7 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
      * @param callback   終了コールバック
      * @param context    コンテキスト
      */
-    public void getNoPassword(final String urlString, final LinkedHashMap<String, String> queryItems,
+    protected void getNoPassword(final String urlString, final LinkedHashMap<String, String> queryItems,
                               final WebApiCallback callback, final Context context) {
         final Handler handler = new Handler();
         final String url = createUrlComponents(urlString, queryItems);
@@ -83,7 +83,7 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
      * @param queryItems 呼び出し用パラメータ
      * @return 統合後文字列
      */
-    protected String createUrlComponents(final String url, final Map<String, String> queryItems) {
+    private String createUrlComponents(final String url, final Map<String, String> queryItems) {
         StringBuffer stringBuffer = new StringBuffer("");
         if (null != url) {
 

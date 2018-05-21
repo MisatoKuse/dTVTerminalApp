@@ -87,7 +87,7 @@ public abstract class DownloadParam {
      * 機能：Sub Classで実現し、パラメーター有効かを戻す.
      * @return true or false
      */
-    public boolean isParamValid() {
+    boolean isParamValid() {
         if (null == mContext || null == mSavePath || 1 > mSavePath.length() || null == mSaveFileName || 1 > mSaveFileName.length()) {
             return false;
         }

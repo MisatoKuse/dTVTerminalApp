@@ -7,7 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 /**
  * 検索レコメンドAPI用リクエストキー.
  */
-public class SearchRequestKey {
+class SearchRequestKey {
     //request key
     /**?query.*/
     public static final String kQuery = "?query";

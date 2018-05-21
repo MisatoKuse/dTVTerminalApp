@@ -47,11 +47,11 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     /**
      * コンテキストファイル.
      */
-    protected Context mContext;
+    Context mContext;
     /**
      * クリップキーリスト.
      */
-    protected boolean mRequiredClipKeyList = false;
+    boolean mRequiredClipKeyList = false;
     /**
      * レスポンス終了フラグ.
      */
@@ -174,7 +174,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      *
      * @param request リクエストパラメータ
      */
-    public void getClipKeyList(final ClipKeyListRequest request) {
+    void getClipKeyList(final ClipKeyListRequest request) {
         DTVTLogger.start();
         if (!mIsCancel) {
             mResponseEndFlag = false;
@@ -478,7 +478,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * @param tvService    tvService
      * @return クリップ状態
      */
-    protected boolean getClipStatus(
+    boolean getClipStatus(
             final String dispType, final String contentsType, final String dTv, final String crid,
             final String serviceId, final String eventId, final String titleId, final String tvService) {
         boolean clipStatus = false;

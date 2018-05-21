@@ -49,10 +49,13 @@ public class ThumbnailProvider {
 	 * ダウンロードキャンセルフラグ.
 	 */
 	private boolean mIsCancel = false;
+	/**
+	 * 画像サイズ種類.
+	 */
 	private ThumbnailDownloadTask.ImageSizeType mImageSizeType;
 	/**
 	 * コンストラクタ.
-	 *
+	 * @param imageSizeType 画像サイズ種類
 	 * @param context コンテキスト
 	 */
 	public ThumbnailProvider(final Context context, final ThumbnailDownloadTask.ImageSizeType imageSizeType) {
