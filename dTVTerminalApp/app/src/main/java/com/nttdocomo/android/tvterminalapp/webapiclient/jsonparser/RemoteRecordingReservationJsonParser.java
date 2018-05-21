@@ -55,7 +55,7 @@ public class RemoteRecordingReservationJsonParser extends AsyncTask<Object, Obje
      * @param jsonStr 録画予約一覧Jsonデータ
      * @return 録画予約一覧取得：正常時レスポンスデータ
      */
-    public RemoteRecordingReservationResultResponse remoteRecordingReservationResultSender(final String jsonStr) {
+    private RemoteRecordingReservationResultResponse remoteRecordingReservationResultSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         mRemoteRecordingReservationResultResponse = null;
@@ -80,7 +80,7 @@ public class RemoteRecordingReservationJsonParser extends AsyncTask<Object, Obje
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendStatus(final JSONObject jsonObj) {
+    private void sendStatus(final JSONObject jsonObj) {
         try {
             String status = null;
             String errorNo = null;

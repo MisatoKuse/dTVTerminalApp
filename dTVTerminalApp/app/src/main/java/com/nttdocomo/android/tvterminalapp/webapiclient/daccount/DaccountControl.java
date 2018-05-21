@@ -388,7 +388,7 @@ public class DaccountControl implements
      * @param context        コンテキスト
      * @param daccountGetOtt ワンタイムトークン取得クラス
      */
-    static void cacheClear(final Context context, final DaccountGetOtt daccountGetOtt) {
+    private static void cacheClear(final Context context, final DaccountGetOtt daccountGetOtt) {
         DTVTLogger.start();
         DaccountControlOnce onceControl = DaccountControlOnce.getInstance();
 

@@ -65,7 +65,7 @@ public class DlnaRecVideoInfo {
      * @param index index
      * @return Item
      */
-    public DlnaRecVideoItem get(final int index) {
+    private DlnaRecVideoItem get(final int index) {
         int destIndex = index;
         if (index < 0) {
             destIndex = 0;

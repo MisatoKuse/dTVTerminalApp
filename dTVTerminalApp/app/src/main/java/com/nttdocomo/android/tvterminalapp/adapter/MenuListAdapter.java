@@ -5,12 +5,9 @@
 package com.nttdocomo.android.tvterminalapp.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
-import android.support.annotation.IdRes;
 import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.View;
@@ -269,9 +266,9 @@ public class MenuListAdapter extends BaseAdapter {
     }
 
     /**
-     * dstのImagetViewに画像を表示にしてresIdのリソースを設定する
-     * @param dst
-     * @param resId
+     * dstのImagetViewに画像を表示にしてresIdのリソースを設定する.
+     * @param dst ImageView
+     * @param resId 画像ResourceId
      */
     private void setImageResource(final ImageView dst, final @DrawableRes int resId) {
         dst.setVisibility(View.VISIBLE);

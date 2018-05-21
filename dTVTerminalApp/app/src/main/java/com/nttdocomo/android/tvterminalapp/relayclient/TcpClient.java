@@ -21,7 +21,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * TCPクライアント.
  */
-public class TcpClient {
+class TcpClient {
     /**Socket.*/
     private Socket mSocket = null;
     /**RemoteIp.*/

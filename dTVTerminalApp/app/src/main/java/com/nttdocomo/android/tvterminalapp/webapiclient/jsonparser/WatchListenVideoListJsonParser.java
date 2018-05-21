@@ -58,7 +58,7 @@ public class WatchListenVideoListJsonParser {
      * statusの値をMapに格納.
      * @param jsonObj 解析前のJsonデータ
      */
-    public void sendStatus(final JSONObject jsonObj) {
+    private void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
             HashMap<String, String> map = new HashMap<>();
@@ -89,7 +89,7 @@ public class WatchListenVideoListJsonParser {
      * コンテンツのList<HashMap>をオブジェクトクラスに格納.
      * @param arrayList ArrayList
      */
-    public void sendVcList(final JSONArray arrayList) {
+    private void sendVcList(final JSONArray arrayList) {
         try {
             List<HashMap<String, String>> vcList = new ArrayList<>();
             // リストの数だけまわす

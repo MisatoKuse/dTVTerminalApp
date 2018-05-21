@@ -33,7 +33,7 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
     /**オブジェクトクラスの定義.*/
     private VideoRankList mVideoRankList;
     /**ページャーパラメータキー.*/
-    public static final String[] PAGER_PARA = {JsonConstants.META_RESPONSE_PAGER_LIMIT, JsonConstants.META_RESPONSE_OFFSET,
+    private static final String[] PAGER_PARA = {JsonConstants.META_RESPONSE_PAGER_LIMIT, JsonConstants.META_RESPONSE_OFFSET,
             JsonConstants.META_RESPONSE_COUNT, JsonConstants.META_RESPONSE_TOTAL};
 
     /**
@@ -95,7 +95,7 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
      * @param jsonStr 　String形式のJSONデータ
      * @return List<VideoRankList> ObjectクラスをList形式で返却
      */
-    public List<VideoRankList> VideoRankListSender(final String jsonStr) {
+    private List<VideoRankList> VideoRankListSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         mVideoRankList = new VideoRankList();
@@ -155,7 +155,7 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
      *
      * @param arrayList ArrayList
      */
-    public void sendVrList(final JSONArray arrayList) {
+    private void sendVrList(final JSONArray arrayList) {
         try {
             List<HashMap<String, String>> vrList = new ArrayList<>();
             for (int i = 0; i < arrayList.length(); i++) {

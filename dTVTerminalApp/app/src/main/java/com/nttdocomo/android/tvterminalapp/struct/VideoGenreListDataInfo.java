@@ -74,7 +74,7 @@ public class VideoGenreListDataInfo implements Parcelable {
      * コンストラクタ.
      * @param in source
      */
-    protected VideoGenreListDataInfo(final Parcel in) {
+    private VideoGenreListDataInfo(final Parcel in) {
         this.mGenreId = (String) in.readSerializable();
         this.mContentsTree = new HashMap<String, VideoGenreList>();
         in.readMap(this.mContentsTree, getClass().getClassLoader());

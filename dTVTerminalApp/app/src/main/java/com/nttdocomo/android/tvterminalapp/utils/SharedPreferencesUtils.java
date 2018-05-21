@@ -116,7 +116,7 @@ public class SharedPreferencesUtils {
     /**
      * ユーザ情報永続化キー.
      */
-    public static final String USER_INFO_SERIALIZABLE_DATA_KEY
+    private static final String USER_INFO_SERIALIZABLE_DATA_KEY
             = "user_info_serializable_data_key";
     /**
      * 設定ファイル取得日時.
@@ -172,7 +172,7 @@ public class SharedPreferencesUtils {
     /**
      * 初回dアカウント取得フラグの、強制設定値.
      */
-    public static final int FIRST_D_ACCOUNT_FORCE_RESET = 3;
+    private static final int FIRST_D_ACCOUNT_FORCE_RESET = 3;
 
     /**
      * 独自の削除メソッドがある接続済みSTB情報以外の、dアカウントユーザー切り替え時の削除対象
@@ -572,7 +572,7 @@ public class SharedPreferencesUtils {
      * @param context コンテキスト
      * @param getTime 取得日時
      */
-    public static void setSharedPreferencesUserInfoDate(final Context context, final long getTime) {
+    private static void setSharedPreferencesUserInfoDate(final Context context, final long getTime) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 LAST_USER_INFO_DATE, Context.MODE_PRIVATE);

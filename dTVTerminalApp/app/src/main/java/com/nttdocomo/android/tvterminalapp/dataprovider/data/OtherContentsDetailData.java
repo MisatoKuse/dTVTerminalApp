@@ -944,7 +944,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
      * コンストラクタ.
      * @param in source
      */
-    protected OtherContentsDetailData(final Parcel in) {
+    private OtherContentsDetailData(final Parcel in) {
         super(in);
         this.mThumb = in.readString();
         this.mChannelDate = in.readString();

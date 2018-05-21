@@ -12,7 +12,7 @@ import com.nttdocomo.android.tvterminalapp.struct.SearchNarrowCondition;
  */
 public class SearchOtherType extends SearchFilterTypeMappable {
     /**HD作品.*/
-    public final int HDContent = SearchNarrowCondition.getNextOrdinal();
+    private final int HDContent = SearchNarrowCondition.getNextOrdinal();
     /**検索条件初期値.*/
     private int self = SearchNarrowCondition.sEnumOrdinalNil;
 

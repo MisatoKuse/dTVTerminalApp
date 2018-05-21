@@ -59,7 +59,7 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
      * @param jsonStr 録画予約一覧Jsonデータ
      * @return 録画予約一覧取得：正常時レスポンスデータ
      */
-    public RecordingReservationListResponse recordingReservationListSender(final String jsonStr) {
+    private RecordingReservationListResponse recordingReservationListSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         mRecordingReservationListResponse = new RecordingReservationListResponse();
@@ -84,7 +84,7 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendStatus(final JSONObject jsonObj) {
+    private void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得しセットする
             if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {
@@ -117,7 +117,7 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendRecordingReservationListResponse(final JSONObject jsonObj) {
+    private void sendRecordingReservationListResponse(final JSONObject jsonObj) {
         try {
             ArrayList<RecordingReservationMetaData> recordingReservationMetaDataList =
                     new ArrayList<RecordingReservationMetaData>();

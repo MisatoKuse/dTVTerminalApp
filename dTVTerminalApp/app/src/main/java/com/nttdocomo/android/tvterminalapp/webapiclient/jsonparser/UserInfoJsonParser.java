@@ -28,7 +28,7 @@ public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
     /**r登録されてるアカウント.*/
     public static final String USER_INFO_LIST_LOGGEDIN_ACCOUNT = "loggedin_account";
     /**h4d契約アカウント.*/
-    public static final String USER_INFO_LIST_H4D_CONTRACTED_ACCOUNT = "h4d_contracted_account";
+    private static final String USER_INFO_LIST_H4D_CONTRACTED_ACCOUNT = "h4d_contracted_account";
     /**契約ステータス.*/
     public static final String USER_INFO_LIST_CONTRACT_STATUS = "contract_status";
     /**dch視聴年齢値キー.*/

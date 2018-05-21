@@ -16,11 +16,11 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 public class NetWorkUtils {
 
     /** ネットワーク状態（NONE）. */
-    public static final int NETWORK_NONE = -1;
+    private static final int NETWORK_NONE = -1;
     /** ネットワーク状態（MOBILE）.*/
-    public static final int NETWORK_MOBILE = 0;
+    private static final int NETWORK_MOBILE = 0;
     /** ネットワーク状態（WIFI）. */
-    public static final int NETWORK_WIFI = 1;
+    private static final int NETWORK_WIFI = 1;
 
     /**
      * 通信可能確認.

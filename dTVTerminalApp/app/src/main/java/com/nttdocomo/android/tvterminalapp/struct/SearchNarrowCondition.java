@@ -28,7 +28,7 @@ public class SearchNarrowCondition {
         return ++sEnumOrdinal;
     }
     /**検索条件ArrayList.*/
-    ArrayList<SearchFilterTypeMappable> conditionArray;
+   final ArrayList<SearchFilterTypeMappable> conditionArray;
 
     /**
      * コンストラクタ.

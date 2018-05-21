@@ -31,7 +31,7 @@ public class RecommendChannelXmlParser extends AsyncTask<Object, Object, Object>
      */
     private RecommendChWebClient.RecommendChannelCallback mRecommendChannelCallback;
     /**レコメンドコンテンツリスト.*/
-    public static final String RECOMMENDCHANNEL_LIST_RECOMMENDCONTENT = "RecommendContent";
+    private static final String RECOMMENDCHANNEL_LIST_RECOMMENDCONTENT = "RecommendContent";
     /**おすすめ順.*/
     public static final String RECOMMENDCHANNEL_LIST_RECOMMENDORDER = "recommendOrder";
     /**サービスID.*/

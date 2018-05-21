@@ -341,7 +341,7 @@ public class DtvContentsDetailFragment extends Fragment {
      * パラメータ名「adinfo_array」を参照(音声).
      * @param labelStatusList ラベルステータス画像リスト
      */
-    public void setAdtype(final List<Integer> labelStatusList) {
+    private void setAdtype(final List<Integer> labelStatusList) {
         String[] adinfoArray = mOtherContentsDetailData.getAdinfoArray();
         if (adinfoArray != null && adinfoArray.length > 0) {
             int adtype = 0;
@@ -365,7 +365,7 @@ public class DtvContentsDetailFragment extends Fragment {
      * パラメータ名「copy」を参照(コピー制限).
      * @param labelStatusList ラベルステータス画像リスト
      */
-    public void setCopy(final List<Integer> labelStatusList) {
+    private void setCopy(final List<Integer> labelStatusList) {
         String copy = mOtherContentsDetailData.getCopy();
         if (copy != null) {
             switch (copy) {
@@ -389,7 +389,7 @@ public class DtvContentsDetailFragment extends Fragment {
      * パラメータ名「r_value」を参照(R指定).
      * @param labelStatusList ラベルステータス画像リスト
      */
-    public void setRvalue(final List<Integer> labelStatusList) {
+    private void setRvalue(final List<Integer> labelStatusList) {
         String rValue = mOtherContentsDetailData.getRvalue();
         if (rValue != null) {
             switch (rValue) {

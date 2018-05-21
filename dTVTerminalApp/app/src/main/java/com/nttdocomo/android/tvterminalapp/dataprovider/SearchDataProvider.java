@@ -163,7 +163,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
      * TODO :検索中止処理開始用.
      * 検索中止処理.
      */
-    public void cancelSearch() {
+    private void cancelSearch() {
         setSearchState(SearchState.canceled);
         DTVTLogger.debug("SearchDataProvider::cancelSearch()");
     }

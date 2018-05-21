@@ -59,7 +59,7 @@ public class RoleListJsonParser extends AsyncTask<String, Object, Object> {
      * @param jsonStr ジジャンル一覧Jsonデータ
      * @return ジャンル一覧取得：正常時レスポンスデータ
      */
-    public RoleListResponse roleListSender(final String jsonStr) {
+    private RoleListResponse roleListSender(final String jsonStr) {
 
 //        DTVTLogger.debugHttp(jsonStr); //jsonを把握したい場合
         mRoleListResponse = new RoleListResponse();
@@ -82,7 +82,7 @@ public class RoleListJsonParser extends AsyncTask<String, Object, Object> {
      *
      * @param jsonArray APIレスポンス Jsonデータ
      */
-    public void sendRoleListResponse(final JSONArray jsonArray) {
+    private void sendRoleListResponse(final JSONArray jsonArray) {
         String id = "";
         String name = "";
         try {

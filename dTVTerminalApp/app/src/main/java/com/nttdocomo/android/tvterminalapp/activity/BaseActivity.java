@@ -500,7 +500,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param isOn true: 表示  false: 非表示
      */
-    public void enableGlobalMenuIcon(final boolean isOn) {
+    protected void enableGlobalMenuIcon(final boolean isOn) {
         if (null != mMenuImageViewForBase) {
             if (isOn) {
                 mMenuImageViewForBase.setVisibility(View.VISIBLE);
@@ -1707,7 +1707,7 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * コンテンツ詳細画面から契約するのリモコン表示.
      */
-    public void contentDetailRemoteController() {
+    protected void contentDetailRemoteController() {
         DTVTLogger.debug("Start RemoteControl");
         createRemoteControllerView(true);
         getRemoteControllerView().startRemoteUI(false);
@@ -2428,7 +2428,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param contentsCount ContentsPosition
      * @return ContentView
      */
-    public View setContentsView(final int contentsCount) {
+    protected View setContentsView(final int contentsCount) {
         View view = LayoutInflater.from(this).inflate(R.layout.home_main_layout_item, null, false);
         view.setTag(contentsCount);
         view.setVisibility(View.GONE);
@@ -2438,7 +2438,7 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * データが取得失敗した時のトースト表示.
      */
-    public void showGetDataFailedToast() {
+    protected void showGetDataFailedToast() {
         Toast.makeText(
                 this, R.string.common_get_data_failed_message, Toast.LENGTH_SHORT).show();
     }
@@ -2448,7 +2448,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param message トースト表示するメッセージ
      */
-    public void showGetDataFailedToast(final String message) {
+    protected void showGetDataFailedToast(final String message) {
         if (TextUtils.isEmpty(message)) {
             //メッセージが空文字ならば、既存のメッセージ表示を呼び出す
             showGetDataFailedToast();
@@ -2465,7 +2465,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param context コンテキスト
      * @param message メッセージ
      */
-    public void showDialogToClose(final Context context, final String message) {
+    protected void showDialogToClose(final Context context, final String message) {
         CustomDialog closeDialog = new CustomDialog(context, CustomDialog.DialogType.ERROR);
         closeDialog.setContent(message);
         closeDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
@@ -2494,7 +2494,7 @@ public class BaseActivity extends FragmentActivity implements
      * データが取得失敗した時のダイアログ表示.
      * @param context コンテキスト
      */
-    public void showDialogToClose(final Context context) {
+    protected void showDialogToClose(final Context context) {
         //文字列リソースを取得して、メッセージ指定側に処理を移譲
         showDialogToClose(this, getApplicationContext().getString(
                 R.string.common_get_data_failed_message));
@@ -2592,7 +2592,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param url 起動URL
      */
-    public void startBrowser(final String url) {
+    protected void startBrowser(final String url) {
         Intent intent = new Intent();
         intent.setAction("android.intent.action.VIEW");
         Uri content_url = Uri.parse(url);
@@ -2825,7 +2825,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @return キューの個数。ダイアログが無い場合はゼロ
      */
-    public int getDialogQurCount() {
+    protected int getDialogQurCount() {
         if (mShowDialog == null) {
             //ダイアログが存在していないならばゼロを返す
             return 0;

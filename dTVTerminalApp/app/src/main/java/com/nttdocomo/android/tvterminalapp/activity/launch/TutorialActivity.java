@@ -75,7 +75,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
     /**
      * チュートリアルページアダプタ.
      */
-    TutorialPagerAdapter mAdapter;
+    private TutorialPagerAdapter mAdapter;
     /**
      * アダプタにセットするビューリスト.
      */

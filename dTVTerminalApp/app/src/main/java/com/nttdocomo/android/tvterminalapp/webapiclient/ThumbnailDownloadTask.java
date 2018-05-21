@@ -8,7 +8,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.support.annotation.IdRes;
 import android.widget.ImageView;
 
 import com.nttdocomo.android.ocsplib.OcspURLConnection;
@@ -23,7 +22,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.net.ssl.SSLHandshakeException;
@@ -33,11 +31,17 @@ import javax.net.ssl.SSLPeerUnverifiedException;
  * サムネイル画像取得タスク.
  */
 public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
+    /**画像サイズ種類.*/
     public enum ImageSizeType {
+        /**コンテンツ詳細.*/
         CONTENT_DETAIL,
+        /**ホーム.*/
         HOME_LIST,
+        /**番組表.*/
         TV_PROGRAM_LIST,
+        /**録画一覧.*/
         LIST,
+        /**チャンネル一覧.*/
         CHANNEL,
     }
 
@@ -53,7 +57,7 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
     private volatile static List<HttpURLConnection> mUrlConnections = null;
     /** 通信停止フラグ. */
     private boolean mIsStop = false;
-
+    /**画像サイズ種類.*/
     private ImageSizeType mImageSizeType;
     /**
      * サムネイルダウンロードのコンストラクタ.
@@ -61,6 +65,7 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
      * @param imageView イメージビュー
      * @param thumbnailProvider サムネイルプロバイダー
      * @param context コンテキスト
+     * @param type 画像サイズ種類
      */
     public ThumbnailDownloadTask(final ImageView imageView, final ThumbnailProvider thumbnailProvider,
                                  final Context context, final ImageSizeType type) {
@@ -193,10 +198,7 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
         }
 
         //全てのコネクションにdisconnectを送る
-        Iterator<HttpURLConnection> iterator = mUrlConnections.iterator();
-        while (iterator.hasNext()) {
-            final HttpURLConnection stopConnection = iterator.next();
-
+        for (final HttpURLConnection stopConnection : mUrlConnections) {
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -209,7 +211,10 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
         }
         mUrlConnections.clear();
     }
-
+    /**
+     * 画像取得失敗時のエラー画像Resource.
+     * @param dst ImageView
+     */
     private void setErrorImageResource(final ImageView dst) {
         int resId = R.mipmap.error_scroll;
         switch (mImageSizeType) {

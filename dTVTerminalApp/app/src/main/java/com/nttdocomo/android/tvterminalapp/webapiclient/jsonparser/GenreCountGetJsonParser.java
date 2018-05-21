@@ -60,7 +60,7 @@ public class GenreCountGetJsonParser extends AsyncTask<Object, Object, Object> {
      * @param jsonStr ジャンル毎コンテンツ数取得一覧Jsonデータ
      * @return ジャンル毎コンテンツ数取得一覧取得：正常時レスポンスデータ
      */
-    public GenreCountGetResponse genreCountGetSender(final String jsonStr) {
+    private GenreCountGetResponse genreCountGetSender(final String jsonStr) {
 
         DTVTLogger.debugHttp(jsonStr);
         mGenreCountGetResponse = new GenreCountGetResponse();
@@ -85,7 +85,7 @@ public class GenreCountGetJsonParser extends AsyncTask<Object, Object, Object> {
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendStatus(final JSONObject jsonObj) {
+    private void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得しセットする
             if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {
@@ -104,7 +104,7 @@ public class GenreCountGetJsonParser extends AsyncTask<Object, Object, Object> {
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendGenreCountGetResponse(final JSONObject jsonObj) {
+    private void sendGenreCountGetResponse(final JSONObject jsonObj) {
         try {
             ArrayList<GenreCountGetMetaData> genreCountGetMetaDataList =
                     new ArrayList<GenreCountGetMetaData>();

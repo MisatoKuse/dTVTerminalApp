@@ -31,7 +31,7 @@ public class RecommendVideoXmlParser extends AsyncTask<Object, Object, Object> {
      */
     private RecommendVdWebClient.RecommendVideoCallback mRecommendVideoCallback;
     /**レコメンドコンテンツリスト.*/
-    public static final String RECOMMENDVIDEO_LIST_RECOMMENDCONTENT = "RecommendContent";
+    private static final String RECOMMENDVIDEO_LIST_RECOMMENDCONTENT = "RecommendContent";
     /**おすすめ順.*/
     public static final String RECOMMENDVIDEO_LIST_RECOMMENDORDER = "recommendOrder";
     /**サービスID.*/

@@ -10,7 +10,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
  */
 public class SearchGenreType extends SearchFilterTypeMappable {
     /**各絞込み条件における設定内容：映画.*/
-    public static final String active_001 = "映画";  //TODO : ジャンルタイプリスト仕様が決まり次第、追加する
+    private static final String active_001 = "映画";  //TODO : ジャンルタイプリスト仕様が決まり次第、追加する
     /**タイプ.*/
     private String mType = "";
 
