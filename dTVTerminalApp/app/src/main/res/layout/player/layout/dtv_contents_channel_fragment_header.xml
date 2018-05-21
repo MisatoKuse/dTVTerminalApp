@@ -16,6 +16,7 @@
             android:layout_width="@dimen/contents_detail_channel_img_width"
             android:layout_height="match_parent"
             android:padding="@dimen/contents_detail_channel_img_padding"
+            android:src="@mipmap/loading_ch_mini"
             android:contentDescription="@null"
             android:scaleType="fitStart"/>
 

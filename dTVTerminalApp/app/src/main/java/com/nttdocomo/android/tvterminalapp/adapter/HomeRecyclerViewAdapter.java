@@ -600,7 +600,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         super.onViewRecycled(viewHolder);
         if (viewHolder.mImage != null) {
             //サムネイルの取得が遅い時、前のViewが残っている事がある現象の対処
-            viewHolder.mImage.setImageResource(android.R.color.transparent);
+            viewHolder.mImage.setImageResource(R.mipmap.loading_scroll);
         }
     }
 

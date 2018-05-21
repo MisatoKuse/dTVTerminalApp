@@ -10,7 +10,7 @@
         android:layout_height="@dimen/home_contents_thumbnail_height"
         android:layout_centerHorizontal="true"
         android:adjustViewBounds="true"
-        android:background="@color/home_item_contents_background_color"
+        android:src="@mipmap/loading_scroll"
         android:layout_marginEnd="@dimen/home_contents_thumbnail_right_padding"
         android:scaleType="fitCenter"
         android:contentDescription="@null"/>

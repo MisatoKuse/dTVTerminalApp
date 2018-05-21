@@ -864,8 +864,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      */
     private void setThumbnailData(final ViewHolder holder, final ContentsData listContentInfo) {
         DTVTLogger.start();
-        //スクロール時にリサイクル前の画像が表示され続けないように一旦画像を消去する
-        holder.iv_thumbnail.setImageResource(0);
+
+        holder.iv_thumbnail.setImageResource(R.mipmap.loading_list);
         if (!TextUtils.isEmpty(listContentInfo.getThumURL())) { //サムネイル
             if (!isDownloadStop) {
                 holder.rl_thumbnail.setVisibility(View.VISIBLE);
@@ -876,8 +876,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 }
             }
         } else {
-            //URLがない場合はサムネイル取得失敗の画像を表示
-            holder.iv_thumbnail.setBackgroundResource(R.mipmap.error_list);
+            holder.iv_thumbnail.setImageResource(R.mipmap.error_list);
         }
     }
 
