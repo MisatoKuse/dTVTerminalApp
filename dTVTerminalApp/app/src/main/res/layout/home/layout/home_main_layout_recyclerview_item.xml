@@ -2,19 +2,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/home_contents_thumbnail_width"
     android:layout_height="@dimen/home_contents_thumbnail_height"
-    android:background="@color/home_main_background_color">
-
+    android:background="@color/colorAccent">
+    <!--android:background="@color/home_main_background_color"-->
     <ImageView
         android:id="@+id/home_main_recyclerview_item_iv"
-        android:layout_width="@dimen/home_contents_thumbnail_width"
-        android:layout_height="@dimen/home_contents_thumbnail_height"
-        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:adjustViewBounds="true"
         android:src="@mipmap/loading_scroll"
-        android:layout_marginEnd="@dimen/home_contents_thumbnail_right_padding"
         android:scaleType="fitCenter"
         android:contentDescription="@null"/>
-
+    <!-- Newアイコン-->
     <ImageView
         android:id="@+id/home_main_recyclerview_item_iv_new"
         android:layout_width="@dimen/home_contents_thumbnail_new_label_width"
@@ -24,29 +22,33 @@
         android:src="@mipmap/label_status_new"
         android:visibility="gone"
         android:contentDescription="@null"/>
+    <!-- サービス名アイコン -->
 
     <LinearLayout
+        android:layout_marginTop="@dimen/home_contents_service_margin"
+        android:layout_marginEnd="@dimen/home_contents_service_margin"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/home_contents_thumbnail_service_label_height"
         android:orientation="horizontal"
-        android:layout_alignParentEnd="true"
-        android:padding="@dimen/home_contents_thumbnail_service_label_padding">
+        android:layout_alignParentEnd="true">
 
         <ImageView
             android:id="@+id/home_main_recyclerview_item_iv_service_icon_first"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/home_contents_thumbnail_service_label_height"
+            android:layout_marginEnd="@dimen/home_contents_service_margin"
+            android:layout_height="match_parent"
             android:visibility="gone"
             android:contentDescription="@null"/>
 
         <ImageView
             android:id="@+id/home_main_recyclerview_item_iv_service_icon_second"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/home_contents_thumbnail_service_label_height"
+            android:layout_height="match_parent"
             android:visibility="gone"
             android:contentDescription="@null"/>
     </LinearLayout>
 
+    <!-- ランキング -->
     <TextView
         android:id="@+id/home_main_recyclerview_item_iv_rank_num"
         android:layout_width="@dimen/home_contents_thumbnail_rank_num_label_width"
@@ -61,10 +63,11 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitXY"
-        android:src="@mipmap/overlay_gradation"
-        android:contentDescription="@null"/>
+        android:contentDescription="@null"
+        android:scaleType="fitEnd"
+        android:src="@mipmap/overlay_gradation" />
 
+    <!-- コンテンツ -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -91,7 +94,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/home_item_contents_text_color"
             android:textSize="@dimen/home_contents_thumbnail_state_text_size"
-            android:maxLines="2"
+            android:maxLines="1"
             android:ellipsize="end"/>
     </LinearLayout>
 </RelativeLayout>

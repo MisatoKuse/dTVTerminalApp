@@ -12,6 +12,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Display;
@@ -29,6 +31,7 @@ import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivi
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewAdapter;
+import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewItemDecoration;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
@@ -385,7 +388,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
         //各コンテンツのビューを作成する
         for (int i = HOME_CONTENTS_LIST_START_INDEX; i < HOME_CONTENTS_LIST_COUNT + HOME_CONTENTS_LIST_START_INDEX; i++) {
-            mLinearLayout.addView(setContentsView(i));
+            final View view = setContentsView(i);
+            mLinearLayout.addView(view);
+            RecyclerView recyclerView = view.findViewById(R.id.home_main_item_recyclerview);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+            linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+            recyclerView.setLayoutManager(linearLayoutManager);
+            recyclerView.addItemDecoration(new HomeRecyclerViewItemDecoration(this));
         }
     }
 

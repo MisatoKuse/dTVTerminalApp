@@ -340,10 +340,6 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
                 ContentUtils.setPeriodText(mContext, viewHolder.mTime, contentsData);
                 break;
             default:
-                //上記以外 (タイトルが2行)
-                if (viewHolder.mContent != null) {
-                    viewHolder.mContent.setMaxLines(2);
-                }
                 if (viewHolder.mTime != null) {
                     viewHolder.mTime.setVisibility(View.GONE);
                 }
