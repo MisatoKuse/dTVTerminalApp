@@ -267,12 +267,13 @@ public class DlnaManager {
                                  final String controlUrl, final String eventSubscriptionUrl) {
         DTVTLogger.warning("friendlyName = " + friendlyName + ", udn = " + udn + ", location = " + location
                 + ", controlUrl = " + controlUrl + ", eventSubscriptionUrl = " + eventSubscriptionUrl);
-        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
-        if (dlnaDmsItem != null) {
-            if (dlnaDmsItem.mUdn.equals(udn)) {
-                updateConnectStatus();
-            }
-        }
+        //TODO 宅外、宅内の実装が必要があるため、いったんコメントアウトして、次回のスプリントでやるつもりです
+//        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
+//        if (dlnaDmsItem != null) {
+//            if (dlnaDmsItem.mUdn.equals(udn)) {
+//                updateConnectStatus();
+//            }
+//        }
         DlnaManagerListener listener = DlnaManager.shared().mDlnaManagerListener;
         if (listener != null) {
             URL hostUrl = null;

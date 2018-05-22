@@ -357,16 +357,16 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             @Override
             public void onOKCallback(final boolean isOK) {
                 if (isOK) {
+                    setRemoteProgressVisible(View.VISIBLE);
                     boolean result = DlnaUtils.getActivationState(SettingActivity.this);
                     if (result) {
-                        setRemoteProgressVisible(View.VISIBLE);
-                        DlnaManager manager = DlnaManager.shared();
-                        manager.mLocalRegisterListener = SettingActivity.this;
-                        manager.StartDtcp();
-                        manager.RestartDirag();
+                        DlnaManager.shared().mLocalRegisterListener = SettingActivity.this;
+                        DlnaManager.shared().StartDtcp();
+                        DlnaManager.shared().RestartDirag();
                         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(SettingActivity.this);
-                        manager.RequestLocalRegistration(dlnaDmsItem.mUdn);
+                        DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn);
                     } else {
+                        setRemoteProgressVisible(View.GONE);
                         showErrorDialog("アクティベーション実行失敗しました。");
                     }
                 }

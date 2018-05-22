@@ -356,19 +356,18 @@ public class ChannelListActivity extends BaseActivity implements
      */
     private boolean requestConnect() {
         boolean result = false;
-        DlnaManager manager = DlnaManager.shared();
         // 宅内
         if (mIsStbConnected) {
             result = true;
         } else {
             // 宅外
-            if (manager.remoteConnectStatus == DlnaManager.RemoteConnectStatus.CONNECTED) {
+            if (DlnaManager.shared().remoteConnectStatus == DlnaManager.RemoteConnectStatus.CONNECTED) {
                 result = true;
             } else {
-                manager.mRemoteConnectStatusChangeListener = this;
-                manager.mContext = this;
-                manager.StartDtcp();
-                manager.RestartDirag();
+                DlnaManager.shared().mRemoteConnectStatusChangeListener = this;
+                DlnaManager.shared().mContext = this;
+                DlnaManager.shared().StartDtcp();
+                DlnaManager.shared().RestartDirag();
             }
         }
         return result;
