@@ -104,13 +104,10 @@ public class DtcpDownloadParam extends DownloadParam {
 
     @Override
     public boolean isParamValid() {
-        if (null == mDtcp1host || 7 > mDtcp1host.length()
+        return !(null == mDtcp1host || 7 > mDtcp1host.length()
                 || 0 == mDtcp1port
                 || null == mUrl || 1 > mUrl.length()
-                || null == mXmlToDownLoad || mXmlToDownLoad.isEmpty()) {
-            return false;
-        }
-        return super.isParamValid();
+                || null == mXmlToDownLoad || mXmlToDownLoad.isEmpty()) && super.isParamValid();
     }
 
     /**

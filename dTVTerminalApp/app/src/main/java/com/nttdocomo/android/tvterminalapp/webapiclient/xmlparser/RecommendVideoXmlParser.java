@@ -29,7 +29,7 @@ public class RecommendVideoXmlParser extends AsyncTask<Object, Object, Object> {
     /**
      * おすすめビデオパーサーコールバック.
      */
-    private RecommendVdWebClient.RecommendVideoCallback mRecommendVideoCallback;
+    private final RecommendVdWebClient.RecommendVideoCallback mRecommendVideoCallback;
     /**レコメンドコンテンツリスト.*/
     private static final String RECOMMENDVIDEO_LIST_RECOMMENDCONTENT = "RecommendContent";
     /**おすすめ順.*/
@@ -84,7 +84,7 @@ public class RecommendVideoXmlParser extends AsyncTask<Object, Object, Object> {
 
     @Override
     protected void onPostExecute(final Object s) {
-        mRecommendVideoCallback.RecommendVideoCallback((RecommendVideoList) s);
+        mRecommendVideoCallback.onRecommendVideoCallback((RecommendVideoList) s);
     }
 
     @Override

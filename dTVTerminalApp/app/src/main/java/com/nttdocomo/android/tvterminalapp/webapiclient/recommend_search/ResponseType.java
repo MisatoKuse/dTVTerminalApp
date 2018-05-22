@@ -9,5 +9,5 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
  */
 public enum ResponseType {
     /**XML.*/
-    xml;    //plus 1 when this is used for android
+    xml    //plus 1 when this is used for android
 }

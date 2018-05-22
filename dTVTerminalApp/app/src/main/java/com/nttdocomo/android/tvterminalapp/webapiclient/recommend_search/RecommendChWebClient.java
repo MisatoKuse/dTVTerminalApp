@@ -38,7 +38,7 @@ public class RecommendChWebClient extends WebApiBase implements WebApiCallback {
          * コールバック.
          * @param mRecommendChannelList  おすすめ番組データ
          */
-        void RecommendChannelCallback(RecommendChannelList mRecommendChannelList);
+        void onRecommendChannelCallback(RecommendChannelList mRecommendChannelList);
     }
 
     /**
@@ -90,7 +90,7 @@ public class RecommendChWebClient extends WebApiBase implements WebApiCallback {
     /**
      * 通信終了後に呼ばれるコールバック.
      *
-     * @param responseData
+     * @param responseData responseData
      */
     @Override
     public void onFinish(final String responseData) {

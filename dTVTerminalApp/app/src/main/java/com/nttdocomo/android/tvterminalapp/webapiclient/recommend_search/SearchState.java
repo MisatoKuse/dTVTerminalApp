@@ -16,5 +16,5 @@ public enum SearchState {
     /**完了.*/
     finished,
     /**中止.*/
-    canceled;
+    canceled
 }

@@ -593,7 +593,7 @@ public class ChannelListActivity extends BaseActivity implements
 
     @Override
     public void onClickChannelItem(final int pos, final ChannelListDataType type,
-                                   ChannelListFragment fragment) {
+                                   final ChannelListFragment fragment) {
         DTVTLogger.warning("pos = " + pos);
         ChannelInfo channelInfo = null;
             switch (type) {

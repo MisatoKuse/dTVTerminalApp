@@ -68,11 +68,7 @@ public class DlnaUtils {
             return true;
         } else {
             int result = activationHelper.activation(deviceKey);
-            if (result == ActivationHelper.ACTC_OK) {
-                return true;
-            } else {
-                return false;
-            }
+            return result == ActivationHelper.ACTC_OK;
         }
     }
 

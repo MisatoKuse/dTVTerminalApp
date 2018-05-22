@@ -438,7 +438,7 @@ public class DlnaInterface {
 
         for (DlnaRecVideoItem item: info.getRecordVideoLists()) {
             if (null != item) {
-                item.mTitle = aribExternalCharConverter.getConverted(item.mTitle);
+                item.mTitle = AribExternalCharConverter.getConverted(item.mTitle);
             }
         }
     }

@@ -11,20 +11,27 @@ import android.view.View;
 
 import com.nttdocomo.android.tvterminalapp.R;
 
-
+/**
+ * ホーム画面リサイクラービューアイテムスペース値設定用アクティビティ.
+ */
 public class HomeRecyclerViewItemDecoration extends RecyclerView.ItemDecoration {
 
-    private int space;
-    public HomeRecyclerViewItemDecoration(Context context) {
-        space = context.getResources().getDimensionPixelSize(R.dimen.home_contents_item_left_margin);
+    /**スペースサイズ.*/
+    private final int mSpace;
+    /**
+     * コンストラクタ.
+     * @param context コンテキスト
+     */
+    public HomeRecyclerViewItemDecoration(final Context context) {
+        mSpace = context.getResources().getDimensionPixelSize(R.dimen.home_contents_item_left_margin);
     }
     @Override
-    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+    public void getItemOffsets(final Rect outRect, final View view, final RecyclerView parent, final RecyclerView.State state) {
         int position = parent.getChildAdapterPosition(view);
         if (position == 0) {
-            outRect.left = space;
+            outRect.left = mSpace;
         } else {
-            outRect.left = space/2;
+            outRect.left = mSpace / 2;
         }
 
     }

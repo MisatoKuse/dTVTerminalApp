@@ -310,11 +310,7 @@ public class ClipRequestData {
                 } else if (contentsType != null
                         && ((contentsType.equals(CONTENT_TYPE_DCH_PROGRAM_1)) || (contentsType.equals(CONTENT_TYPE_DCH_PROGRAM_2)))) {
                     //contents_typeが1or2(dCh番組)なら見逃し判定を行い、見逃し化している物は視聴通知はoffにする
-                    if (vodStartDate <= DateUtils.getNowTimeFormatEpoch()) {
-                        mIsNotify = false;
-                    } else {
-                        mIsNotify = true;
-                    }
+                    mIsNotify = vodStartDate > DateUtils.getNowTimeFormatEpoch();
                 } else {
                     //contents_typeが未設定やその他は番組扱いする
                     mIsNotify = true;

@@ -283,8 +283,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mUserInfoDataProvider = new UserInfoDataProvider(this, this);
 
         //アプリ起動時のデータ取得ユーザ情報未取得又は時間切れ又はonCreateから開始した場合はユーザ情報取得から
-        if (mUserInfoDataProvider.isUserInfoTimeOut() &&
-                !TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(this))) {
+        if (mUserInfoDataProvider.isUserInfoTimeOut()
+                && !TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(this))) {
             if (networkCheck()) {
                 getUserInfo();
             } else {
@@ -318,7 +318,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         DTVTLogger.start();
 
         //ユーザー情報取得依頼をチェック
-        if(mUserInfoGetRequest) {
+        if (mUserInfoGetRequest) {
             //依頼が出ているので、ユーザー情報の取得を開始
             getUserInfo();
 

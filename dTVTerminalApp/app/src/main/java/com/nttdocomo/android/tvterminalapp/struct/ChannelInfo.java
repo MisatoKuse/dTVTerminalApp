@@ -261,9 +261,7 @@ public class ChannelInfo {
      * @return true:同じ false:違う
      */
     public boolean equalTo(final ChannelInfo ch2) {
-        if (null == ch2 || null == this.mTitle || null == ch2.mTitle) {
-            return false;
-        }
-        return this.mChannelNo == ch2.mChannelNo && this.mTitle.equals(ch2.mTitle);
+        return !(null == ch2 || null == this.mTitle || null == ch2.mTitle)
+                && this.mChannelNo == ch2.mChannelNo && this.mTitle.equals(ch2.mTitle);
     }
 }

@@ -11,5 +11,5 @@ public enum SearchResultError {
     /**システムエラー(エラーID:ERMD08002).*/
     systemError,
     /**リクエストエラー(エラーID:ERMD08001).*/
-    requestError;
+    requestError
 }

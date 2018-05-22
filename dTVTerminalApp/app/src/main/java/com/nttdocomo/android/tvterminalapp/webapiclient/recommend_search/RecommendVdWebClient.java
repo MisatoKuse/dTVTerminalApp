@@ -39,7 +39,7 @@ public class RecommendVdWebClient extends WebApiBase implements WebApiCallback {
          * RecommendVideoCallback.
          * @param mRecommendVideoList おすすめビデオ一覧リスト
          */
-        void RecommendVideoCallback(RecommendVideoList mRecommendVideoList);
+        void onRecommendVideoCallback(RecommendVideoList mRecommendVideoList);
     }
 
     /**

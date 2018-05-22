@@ -140,7 +140,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
     /**
      * アニメーションハンドラー.
      */
-    private android.os.Handler mHandle = new android.os.Handler();
+    private final android.os.Handler mHandle = new android.os.Handler();
     /**アニメーション.*/
     private final Runnable mRunnableAnimation = new Runnable() {
         @Override

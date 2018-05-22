@@ -209,7 +209,7 @@ class DlnaInterfaceDl {
         DlnaDlStatus statusEnum;
         try {
             int i = Integer.parseInt(status);
-            statusEnum = DlnaDlStatus.values()[i];;
+            statusEnum = DlnaDlStatus.values()[i];
         } catch (Exception e) {
             DTVTLogger.debug(e.getMessage());
             DTVTLogger.end();
