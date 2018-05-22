@@ -110,8 +110,8 @@ public class ClipListActivity extends BaseActivity implements
         mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
         if (mIsMenuLaunch) {
             mStartPageNo = CLIP_LIST_PAGE_NO_OF_TV;
-            enableHeaderBackIcon(true);
         }
+        enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
@@ -326,6 +326,7 @@ public class ClipListActivity extends BaseActivity implements
 
     /**
      * タブポジションを取得.
+     * @return タブポジション
      */
     private int getCurrentPosition() {
         return mViewPager.getCurrentItem();

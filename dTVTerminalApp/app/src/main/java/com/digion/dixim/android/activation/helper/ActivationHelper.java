@@ -69,20 +69,20 @@ public class ActivationHelper {
 	 * @param level level
 	 */
 	@SuppressWarnings("JniMissingFunction")
-	public native static  void setLogLevel(int level);
+	public native static void setLogLevel(int level);
 
 	/**
 	 * activationInit.
 	 * @return true or false
 	 */
 	@SuppressWarnings("JniMissingFunction")
-	private native  boolean activationInit();
+	private native boolean activationInit();
 
 	/**
 	 * activationTerm.
 	 */
 	@SuppressWarnings("JniMissingFunction")
-	private native  void activationTerm();
+	private native void activationTerm();
 
 	/**
 	 * コンストラクタ.

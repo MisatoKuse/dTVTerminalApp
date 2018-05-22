@@ -572,8 +572,11 @@ public class RecommendActivity extends BaseActivity implements
         DTVTLogger.start();
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                contentsDetailBackKey(null);
-                return false;
+                if (mIsMenuLaunch) {
+                    //メニューから起動の場合ホーム画面に戻る
+                    contentsDetailBackKey(null);
+                    return false;
+                }
             default:
                 break;
         }

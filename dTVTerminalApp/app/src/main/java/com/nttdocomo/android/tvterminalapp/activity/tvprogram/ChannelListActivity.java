@@ -154,6 +154,10 @@ public class ChannelListActivity extends BaseActivity implements
 
     /** 宅外判定宅内. */
     private boolean mIsRemote = false;
+    /**
+     * メニュー表示フラグ.
+     */
+    private Boolean mIsMenuLaunch = false;
 
     /** ひかりTV for docomoタブの連続更新防止用. */
     private long beforeGetHikariData;
@@ -231,6 +235,8 @@ public class ChannelListActivity extends BaseActivity implements
 
         //Headerの設定
         setTitleText(getString(R.string.channel_list_activity_title));
+        Intent intent = getIntent();
+        mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
         enableStbStatusIcon(true);
@@ -346,6 +352,7 @@ public class ChannelListActivity extends BaseActivity implements
 
     /**
      * リモート接続処理.
+     * @return 接続状態:true
      */
     private boolean requestConnect() {
         boolean result = false;
@@ -722,7 +729,7 @@ public class ChannelListActivity extends BaseActivity implements
     @Override
     public void onContentDataGet(final ContentsData data) {
         //ウェイト表示が行われていた場合は止める
-        if(mWaitFragment != null) {
+        if (mWaitFragment != null) {
             mWaitFragment.showProgressBar(false);
         }
         //初期化して再度のウェイト停止を回避
@@ -1043,8 +1050,11 @@ public class ChannelListActivity extends BaseActivity implements
         DTVTLogger.start();
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                contentsDetailBackKey(null);
-                return false;
+                if (mIsMenuLaunch) {
+                    //メニューから起動の場合ホーム画面に戻る
+                    contentsDetailBackKey(null);
+                    return false;
+                }
             default:
                 break;
         }

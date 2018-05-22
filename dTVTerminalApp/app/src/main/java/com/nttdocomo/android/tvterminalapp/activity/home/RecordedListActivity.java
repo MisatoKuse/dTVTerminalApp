@@ -27,6 +27,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragment;
@@ -82,6 +83,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      */
     private ProgressBar progressBar;
     /**
+     * 遷移先（メニュー）.
+     */
+    private Boolean mIsMenuLaunch = false;
+    /**
      * DLNA 関連クラス.
      */
     private DlnaProvRecVideo mDlnaProvRecVideo = null;
@@ -124,6 +129,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         DTVTLogger.start();
         setContentView(R.layout.record_list_main_layout);
         setTitleText(getString(R.string.nav_menu_item_recorder_program));
+        Intent intent = getIntent();
+        mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
         enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
@@ -802,8 +809,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         DTVTLogger.start();
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                contentsDetailBackKey(null);
-                return false;
+                if (mIsMenuLaunch) {
+                    //メニューから起動の場合ホーム画面に戻る
+                    contentsDetailBackKey(null);
+                    return false;
+                }
             default:
                 break;
         }

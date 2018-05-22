@@ -234,6 +234,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             initLaunchView();
         } else if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
             setContentView(R.layout.stb_select_device_list_setting);
+            enableHeaderBackIcon(true);
             initSettingView();
         }
         mDlnaDmsItemList = new ArrayList<>();
@@ -635,6 +636,8 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             intent.putExtra(PairingHelpActivity.START_WHERE, PairingHelpActivity.ParingHelpFromMode.
                     ParingHelpFromMode_Setting.ordinal());
             startActivity(intent);
+        } else if (v.getId() == R.id.header_layout_back) {
+            finish();
         }
         DTVTLogger.end();
     }

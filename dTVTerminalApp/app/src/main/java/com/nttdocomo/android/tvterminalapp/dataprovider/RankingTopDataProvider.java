@@ -663,7 +663,6 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 String dispType = map.get(JsonConstants.META_RESPONSE_DISP_TYPE);
                 String dtv = map.get(JsonConstants.META_RESPONSE_DTV);
                 String dtvType = map.get(JsonConstants.META_RESPONSE_DTV_TYPE);
-                String chNo = map.get(JsonConstants.META_RESPONSE_CHNO);
                 rankingContentInfo.setRank(String.valueOf(i + 1));
                 if (ContentUtils.IS_DTV_FLAG.equals(dtv)) {
                     rankingContentInfo.setThumURL(map.get(JsonConstants.META_RESPONSE_DTV_THUMB_448));
@@ -686,29 +685,14 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 rankingContentInfo.setChannelNo(map.get(JsonConstants.META_RESPONSE_CHNO));
                 rankingContentInfo.setPublishStartDate(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE));
                 rankingContentInfo.setPublishEndDate(map.get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE));
-                if (channels != null && !TextUtils.isEmpty(chNo)) {
-                    for (ChannelInfo channelInfo : channels) {
-                        if (chNo.equals(String.valueOf(channelInfo.getChannelNo()))) {
-                            rankingContentInfo.setChannelName(channelInfo.getTitle());
-                            break;
-                        }
-                    }
-                }
+                setChannelInfo(map, rankingContentInfo, channels);
                 rankingContentInfo.setAvailStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
                 rankingContentInfo.setAvailEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
                 rankingContentInfo.setVodStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_START_DATE)));
                 rankingContentInfo.setVodEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_END_DATE)));
                 //クリップリクエストデータ作成
                 ClipRequestData requestData = new ClipRequestData();
-                requestData.setCrid(map.get(JsonConstants.META_RESPONSE_CRID));
-                requestData.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
-                requestData.setEventId(map.get(JsonConstants.META_RESPONSE_EVENT_ID));
-                requestData.setTitleId(map.get(JsonConstants.META_RESPONSE_TITLE_ID));
-                requestData.setTitle(title);
-                requestData.setRValue(map.get(JsonConstants.META_RESPONSE_R_VALUE));
-                requestData.setLinearStartDate(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE));
-                requestData.setLinearEndDate(map.get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE));
-                requestData.setSearchOk(searchOk);
+                setClipRequestData(map, requestData, title, searchOk);
                 //視聴通知判定生成
                 String contentsType = map.get(JsonConstants.META_RESPONSE_CONTENT_TYPE);
                 String tvService = map.get(JsonConstants.META_RESPONSE_TV_SERVICE);

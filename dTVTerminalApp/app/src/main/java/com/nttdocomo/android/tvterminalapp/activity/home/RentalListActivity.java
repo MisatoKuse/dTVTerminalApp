@@ -73,9 +73,7 @@ public class RentalListActivity extends BaseActivity implements
         setTitleText(getString(R.string.rental_title));
         Intent intent = getIntent();
         mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
-        if (mIsMenuLaunch) {
-            enableHeaderBackIcon(true);
-        }
+        enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);

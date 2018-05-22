@@ -71,9 +71,7 @@ public class PremiumVideoActivity extends BaseActivity implements
         setTitleText(getString(R.string.nav_menu_item_premium_video));
         Intent intent = getIntent();
         mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
-        if (mIsMenuLaunch) {
-            enableHeaderBackIcon(true);
-        }
+        enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
