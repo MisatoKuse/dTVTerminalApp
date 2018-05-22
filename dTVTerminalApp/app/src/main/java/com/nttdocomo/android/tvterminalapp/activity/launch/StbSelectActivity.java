@@ -118,6 +118,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private TextView mCheckboxText;
     /**
+     * 次回表示しないTextView表示フラグ.
+     */
+    private boolean mIsShowCheckboxText = false;
+    /**
      * DMSリストビュー.
      */
     private ListView mDeviceListView;
@@ -425,6 +429,13 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             }
         }
 
+        if (mIsShowCheckboxText) {
+            //次回表示しないTextView再表示する
+            mIsShowCheckboxText = false;
+            mCheckBox.setVisibility(View.VISIBLE);
+            mCheckboxText.setVisibility(View.VISIBLE);
+        }
+
         setDevListener();
         DTVTLogger.end();
     }
@@ -571,6 +582,8 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
 
             mCheckBox.setVisibility(View.GONE);
             mCheckboxText.setVisibility(View.GONE);
+            //次回表示しないTextView表示フラグをTRUEにする
+            mIsShowCheckboxText = true;
         } else if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
 
             if (mParingDevice.getVisibility() == View.VISIBLE && mCheckMark.getVisibility() == View.VISIBLE) {
