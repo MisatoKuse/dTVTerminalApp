@@ -56,7 +56,7 @@ public class NetWorkUtils {
      * @param context コンテキスト
      * @return WIFI、MOBILE、NONE
      */
-    public static int getNetWorkState(final Context context) {
+    public static int getNetworkState(final Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager

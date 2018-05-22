@@ -134,11 +134,11 @@ public class DlnaManager {
     /** ローカルレジストレーションリスナー. */
     public LocalRegisterListener mLocalRegisterListener = null;
     /** リモート接続リスナー. */
-    private RemoteConnectStatusChangeListener mRemoteConnectStatusChangeListener = null;
+    public RemoteConnectStatusChangeListener mRemoteConnectStatusChangeListener = null;
     /** 接続ステータス. */
-    private RemoteConnectStatus remoteConnectStatus = RemoteConnectStatus.OTHER;
+    public RemoteConnectStatus remoteConnectStatus = RemoteConnectStatus.OTHER;
     /** コンテキスト. */
-    private Context mContext;
+    public Context mContext;
 
     /**
      * launch.
@@ -363,6 +363,7 @@ public class DlnaManager {
      */
     private void updateConnectStatus() {
         StopDirag();
+        DlnaManager.shared().remoteConnectStatus = RemoteConnectStatus.OTHER;
     }
 
     // region native method
