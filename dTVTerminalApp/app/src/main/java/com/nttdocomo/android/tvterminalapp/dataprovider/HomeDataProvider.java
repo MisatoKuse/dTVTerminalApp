@@ -790,7 +790,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             contentInfo.setTime(mapList.get(i).get(JsonConstants.META_RESPONSE_DISPLAY_START_DATE));
             contentInfo.setTitle(mapList.get(i).get(JsonConstants.META_RESPONSE_TITLE));
             contentInfo.setDtv(mapList.get(i).get(JsonConstants.META_RESPONSE_DTV));
-            if (ContentUtils.IS_DTV_FLAG.equals(contentInfo.getDtv())){
+            if (ContentUtils.IS_DTV_FLAG.equals(contentInfo.getDtv())) {
                 contentInfo.setThumURL(mapList.get(i).get(JsonConstants.META_RESPONSE_DTV_THUMB_448));
                 contentInfo.setThumDetailURL(mapList.get(i).get(JsonConstants.META_RESPONSE_DTV_THUMB_640));
             } else {

@@ -20,7 +20,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -71,7 +70,6 @@ import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActiv
 import com.nttdocomo.android.tvterminalapp.activity.video.VideoTopActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewAdapter;
-import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewItemDecoration;
 import com.nttdocomo.android.tvterminalapp.application.TvtApplication;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;

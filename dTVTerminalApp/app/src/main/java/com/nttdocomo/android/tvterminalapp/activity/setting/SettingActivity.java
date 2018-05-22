@@ -21,7 +21,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
-import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DeviceStateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.MainSettingUtils;
@@ -162,7 +162,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
 
         if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_D_ACCOUNT])) {
             //Dアカウント設定
-            DAccountUtils.startDAccountApplication(SettingActivity.this);
+            DaccountUtils.startDAccountApplication(SettingActivity.this);
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_PAIRING])) {
             if (isSettingPossible(false, tappedItemName)) {
                 //ペアリング設定

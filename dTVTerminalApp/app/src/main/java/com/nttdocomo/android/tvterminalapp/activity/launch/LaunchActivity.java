@@ -152,11 +152,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     private boolean startDlna() {
         DlnaInterface di = DlnaInterface.getInstance();
         boolean ret;
-        if (null == di) {
-            ret = false;
-        } else {
-            ret = di.startDlna();
-        }
+        ret = null != di && di.startDlna();
         return ret;
     }
 
@@ -330,12 +326,9 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         }
 
         //設定ファイルの処理が続行中か、そもそも実行されていなければ遷移不可
-        if ((mCheckSetting != null && mCheckSetting.isBusy())
-                || mCheckSetting == null) {
-            return false;
-        }
+        return !((mCheckSetting != null && mCheckSetting.isBusy())
+                || mCheckSetting == null);
 
-        return true;
     }
 
     @Override

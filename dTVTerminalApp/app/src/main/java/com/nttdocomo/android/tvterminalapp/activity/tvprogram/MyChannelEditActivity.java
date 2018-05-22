@@ -287,7 +287,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void onClick(final View view) {
-        if (view.getId() == R.id.header_layout_menu) {
+        if (view.getId() == R.id.header_layout_menu || view.getId() == R.id.header_layout_back) {
             super.onClick(view);
         }
     }

@@ -439,9 +439,9 @@ public class RankingTopActivity extends BaseActivity
         showProgressBar(false);
         StopRankingTopDataConnect stopRankingTopDataConnect = new StopRankingTopDataConnect();
 
-        stopRankingTopDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,mRankingTopDataProvider);
+        stopRankingTopDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mRankingTopDataProvider);
         StopHomeRecyclerViewAdapterConnect stopHomeRecyclerViewAdapterConnect = new StopHomeRecyclerViewAdapterConnect();
-        stopHomeRecyclerViewAdapterConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,mHorizontalViewAdapterToday,
+        stopHomeRecyclerViewAdapterConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mHorizontalViewAdapterToday,
                 mHorizontalViewAdapterWeekly, mHorizontalViewAdapterVod);
     }
 }

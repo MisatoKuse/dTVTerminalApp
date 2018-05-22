@@ -18,7 +18,7 @@ public enum SearchFunctionType {
      * コンストラクタ.
      * @param value 検索機能タイプ値
      */
-    private SearchFunctionType(final int value) {
+     SearchFunctionType(final int value) {
         this.value = value;
     }
 

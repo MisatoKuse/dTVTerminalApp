@@ -93,7 +93,7 @@ import com.nttdocomo.android.tvterminalapp.struct.RecordingReservationContentsDe
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
-import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DeviceStateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
@@ -297,7 +297,7 @@ public class ContentDetailActivity extends BaseActivity implements
     /** disp_type(video_package).*/
     public static final String VIDEO_PACKAGE = "video_package";
     /** disp_type(WIZARD).*/
-    public static final String WIZARD = "wizard";
+    private static final String WIZARD = "wizard";
     /** disp_type(video_series).*/
     public static final String VIDEO_SERIES = "video_series";
     /** disp_type(subscription_package).*/
@@ -1334,7 +1334,7 @@ public class ContentDetailActivity extends BaseActivity implements
         contractLeadingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                DAccountUtils.startDAccountApplication(ContentDetailActivity.this);
+                DaccountUtils.startDAccountApplication(ContentDetailActivity.this);
             }
         });
         mContractLeadingView.setVisibility(View.VISIBLE);
@@ -2020,7 +2020,7 @@ public class ContentDetailActivity extends BaseActivity implements
     @Override
     public void onContentsDetailInfoCallback(final VodMetaFullData contentsDetailInfo, final boolean clipStatus) {
         //アクティビティの終了後に呼ばれる場合があったので、終了をチェックする
-        if(isFinishing()) {
+        if (isFinishing()) {
             //既に終了していた場合は、以後の処理はスキップ
             DTVTLogger.debug("already finising");
             return;
@@ -3392,7 +3392,7 @@ public class ContentDetailActivity extends BaseActivity implements
      * @param channelInfo チャンネルメタ情報
      * @return 変換後チャンネル番号
      */
-    private int convertChannelNumber(ChannelInfo channelInfo) {
+    private int convertChannelNumber(final ChannelInfo channelInfo) {
         //サービスIDを取得
         String serviceId = channelInfo.getServiceId();
 
@@ -3402,7 +3402,7 @@ public class ContentDetailActivity extends BaseActivity implements
         try {
             //サービスIDを10進数に変換する
             serviceIdDecimal = Integer.parseInt(serviceId, SOURCE_HEXADECIMAL);
-        } catch(NumberFormatException exception) {
+        } catch (NumberFormatException exception) {
             //メタ情報に誤りが無ければ、ここに来る事は無い。フェールセーフ用
             DTVTLogger.debug(exception);
         }

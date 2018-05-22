@@ -16,7 +16,7 @@ import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 /**
  * DAccountに関する共通処理を記載する.
  */
-public class DAccountUtils {
+public class DaccountUtils {
 
     /**
      * Dアカウントアプリ Package名.

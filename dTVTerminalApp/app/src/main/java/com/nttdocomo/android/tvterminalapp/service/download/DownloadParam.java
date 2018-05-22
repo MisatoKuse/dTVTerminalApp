@@ -88,10 +88,7 @@ public abstract class DownloadParam {
      * @return true or false
      */
     boolean isParamValid() {
-        if (null == mContext || null == mSavePath || 1 > mSavePath.length() || null == mSaveFileName || 1 > mSaveFileName.length()) {
-            return false;
-        }
-        return true;
+        return !(null == mContext || null == mSavePath || 1 > mSavePath.length() || null == mSaveFileName || 1 > mSaveFileName.length());
     }
 
     /**

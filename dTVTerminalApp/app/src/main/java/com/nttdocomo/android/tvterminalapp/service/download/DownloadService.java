@@ -364,9 +364,6 @@ public class DownloadService extends Service implements DownloadListener {
      * @return true or false
      */
     public synchronized boolean isDownloading() {
-        if (null == mDownloaderBase) {
-            return false;
-        }
-        return mDownloaderBase.isDownloading();
+        return null != mDownloaderBase && mDownloaderBase.isDownloading();
     }
 }

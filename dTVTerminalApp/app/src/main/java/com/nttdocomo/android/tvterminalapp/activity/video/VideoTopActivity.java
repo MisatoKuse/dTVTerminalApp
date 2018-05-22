@@ -115,10 +115,7 @@ public class VideoTopActivity extends BaseActivity implements
             default:
                 break;
         }
-        if (checkRemoteControllerView()) {
-            return false;
-        }
-        return super.onKeyDown(keyCode, event);
+        return !checkRemoteControllerView() && super.onKeyDown(keyCode, event);
     }
 
     @Override

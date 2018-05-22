@@ -267,7 +267,7 @@ public class DownloadData {
 
     /**
      * Getter.
-     * @return メディアのビットレート(Byte/sec)
+     * @return メディアのビットレート;(Byte/sec)
      */
     public String getBitrate() {
         return mBitrate;
@@ -275,7 +275,7 @@ public class DownloadData {
 
     /**
      * Setter.
-     * @param mBitrate メディアのビットレート(Byte/sec)
+     * @param mBitrate メディアのビットレート;(Byte/sec)
      */
     public void setBitrate(final String mBitrate) {
         this.mBitrate = mBitrate;
