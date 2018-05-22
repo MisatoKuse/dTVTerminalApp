@@ -4,6 +4,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.search;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -718,7 +719,7 @@ public class SearchTopActivity extends BaseActivity
 
         //検索の通信を止める
         StopSearchDataConnect stopSearchDataConnect = new StopSearchDataConnect();
-        stopSearchDataConnect.execute(mSearchDataProvider);
+        stopSearchDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mSearchDataProvider);
 
         //FragmentにContentsAdapterの通信を止めるように通知する
         SearchBaseFragment baseFragment = mFragmentFactory.createFragment(mTabIndex, this);

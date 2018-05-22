@@ -92,13 +92,14 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      */
     private int mDeletePosition = 0;
     // endregion
+
     // region Activity LifeCycle
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_channel_edit_main_layout);
-        //Headerの設定
+
         setTitleText(getString(R.string.my_channel_list_setting));
         enableHeaderBackIcon(true);
         enableStbStatusIcon(true);

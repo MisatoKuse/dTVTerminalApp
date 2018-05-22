@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.common;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -169,9 +170,9 @@ public class ChildContentListActivity extends BaseActivity implements
         DTVTLogger.start();
         //通信を止める
         StopChildContentDataConnect stopChildContentDataConnect = new StopChildContentDataConnect();
-        stopChildContentDataConnect.execute(mChildContentDataProvider);
+        stopChildContentDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mChildContentDataProvider);
         StopContentsAdapterConnect stopContentsAdapterConnect = new StopContentsAdapterConnect();
-        stopContentsAdapterConnect.execute(mContentsAdapter);
+        stopContentsAdapterConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mContentsAdapter);
     }
 
     @Override

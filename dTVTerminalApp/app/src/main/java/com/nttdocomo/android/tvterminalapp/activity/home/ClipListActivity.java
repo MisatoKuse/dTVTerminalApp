@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -628,9 +629,9 @@ public class ClipListActivity extends BaseActivity implements
         DTVTLogger.start();
         //通信を止める
         StopVodClipDataConnect stopVodClipDataConnect = new StopVodClipDataConnect();
-        stopVodClipDataConnect.execute(mVodClipDataProvider);
+        stopVodClipDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mVodClipDataProvider);
         StopTvClipDataConnect stopTvClipDataConnect = new StopTvClipDataConnect();
-        stopTvClipDataConnect.execute(mTvClipDataProvider);
+        stopTvClipDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mTvClipDataProvider);
         ClipListBaseFragment fragment = getCurrentFragment();
         if (fragment != null) {
             fragment.stopContentsAdapterConnect();

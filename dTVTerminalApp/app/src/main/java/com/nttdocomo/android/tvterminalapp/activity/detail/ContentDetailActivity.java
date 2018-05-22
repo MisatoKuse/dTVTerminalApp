@@ -15,6 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -561,11 +562,11 @@ public class ContentDetailActivity extends BaseActivity implements
                 //通信を止める
                 if (mContentsDetailDataProvider != null) {
                     StopContentDetailDataConnect stopContentDetailDataConnect = new StopContentDetailDataConnect();
-                    stopContentDetailDataConnect.execute(mContentsDetailDataProvider);
+                    stopContentDetailDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mContentsDetailDataProvider);
                 }
                 if (mScaledDownProgramListDataProvider != null) {
                     StopScaledProListDataConnect stopScaledProListDataConnect = new StopScaledProListDataConnect();
-                    stopScaledProListDataConnect.execute(mScaledDownProgramListDataProvider);
+                    stopScaledProListDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mScaledDownProgramListDataProvider);
                 }
                 if (mSendOperateLog != null) {
                     mSendOperateLog.stopConnection();
