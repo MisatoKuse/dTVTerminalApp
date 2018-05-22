@@ -1312,6 +1312,11 @@ public class ContentDetailActivity extends BaseActivity implements
                         mContractLeadingView.setVisibility(View.GONE);
                     }
                 } else {
+                    if (mDetailFullData != null
+                            && mDetailFullData.getContentsType().equals(ContentUtils.ContentsType.HIKARI_TV_VOD)) {
+                        //TODO テレビアイコン未着のためボタンを非表示にする
+                        imageView.setVisibility(View.GONE);
+                    }
                     mThumbnailBtn.setVisibility(View.VISIBLE);
                     startAppIcon.setVisibility(View.VISIBLE);
                     startAppIcon.setText(content);
