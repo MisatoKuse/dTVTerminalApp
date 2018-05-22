@@ -141,6 +141,7 @@ public class ChildContentListActivity extends BaseActivity implements
         setTitleText(mTitle);
         enableStbStatusIcon(true);
         setHeaderColor(false);
+        enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
         changeGlobalMenuIcon(false);
         setStatusBarColor(R.color.contents_header_background);
