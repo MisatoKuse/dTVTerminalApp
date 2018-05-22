@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.activity.ranking;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -282,8 +283,8 @@ public class DailyTvRankingActivity extends BaseActivity implements
         DTVTLogger.start();
         //通信を止める
         StopRankingTopDataConnect stopRankingTopDataConnect = new StopRankingTopDataConnect();
-        stopRankingTopDataConnect.execute(mRankingTopDataProvider);
+        stopRankingTopDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mRankingTopDataProvider);
         StopContentsAdapterConnect stopContentsAdapterConnect = new StopContentsAdapterConnect();
-        stopContentsAdapterConnect.execute(mContentsAdapter);
+        stopContentsAdapterConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mContentsAdapter);
     }
 }

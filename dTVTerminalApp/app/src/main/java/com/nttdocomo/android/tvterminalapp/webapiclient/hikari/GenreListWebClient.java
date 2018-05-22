@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
@@ -51,7 +52,7 @@ public class GenreListWebClient extends WebApiBasePlala
     public void onAnswer(final ReturnCode returnCode) {
         if (mGenreListJsonParserCallback != null) {
             //JSONをパースして、データを返す
-            new GenreListJsonParser(mGenreListJsonParserCallback).execute(returnCode.bodyData);
+            new GenreListJsonParser(mGenreListJsonParserCallback).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode.bodyData);
         }
     }
 

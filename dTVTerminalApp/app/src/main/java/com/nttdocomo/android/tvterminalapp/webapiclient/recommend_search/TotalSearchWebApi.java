@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
 
 import android.content.Context;
+import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
@@ -222,7 +223,7 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
         if (null == responseData || 0 == responseData.length()) {
             str = "";
         }
-        new SearchXmlParser(this).execute(str);
+        new SearchXmlParser(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, str);
     }
 
     @Override

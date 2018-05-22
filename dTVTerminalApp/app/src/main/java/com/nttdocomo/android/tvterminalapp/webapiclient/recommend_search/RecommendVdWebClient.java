@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
@@ -90,6 +91,6 @@ public class RecommendVdWebClient extends WebApiBase implements WebApiCallback {
     @Override
     public void onFinish(final String responseData) {
         //得られたXMLのパースを行って、データを返す
-        new RecommendVideoXmlParser(mRecommendVideoCallback).execute(responseData);
+        new RecommendVideoXmlParser(mRecommendVideoCallback).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, responseData);
     }
 }

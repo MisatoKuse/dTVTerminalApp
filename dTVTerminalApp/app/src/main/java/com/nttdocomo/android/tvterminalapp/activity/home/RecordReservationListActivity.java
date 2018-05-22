@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -370,8 +371,8 @@ public class RecordReservationListActivity extends BaseActivity
         //通信を止める
         StopRecordingReservationListDataConnect stopRecordingReservationListDataConnect =
                 new StopRecordingReservationListDataConnect();
-        stopRecordingReservationListDataConnect.execute(mProvider);
+        stopRecordingReservationListDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mProvider);
         StopContentsAdapterConnect stopContentsAdapterConnect = new StopContentsAdapterConnect();
-        stopContentsAdapterConnect.execute(mContentsAdapter);
+        stopContentsAdapterConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mContentsAdapter);
     }
 }

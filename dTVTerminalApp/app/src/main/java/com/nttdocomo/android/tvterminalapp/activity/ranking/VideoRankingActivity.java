@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.ranking;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
@@ -103,9 +104,9 @@ public class VideoRankingActivity extends BaseActivity implements
         DTVTLogger.start();
         //通信を止める
         StopGenreListDataConnect stopVideoGenreConnect = new StopGenreListDataConnect();
-        stopVideoGenreConnect.execute(mVideoGenreProvider);
+        stopVideoGenreConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mVideoGenreProvider);
         StopRankingTopDataConnect stopRankingTopDataConnect = new StopRankingTopDataConnect();
-        stopRankingTopDataConnect.execute(mRankingDataProvider);
+        stopRankingTopDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mRankingDataProvider);
 
         //FragmentにContentsAdapterの通信を止めるように通知する
         RankingBaseFragment baseFragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);

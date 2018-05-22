@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.activity.home;
 
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -626,12 +627,12 @@ public class RecommendActivity extends BaseActivity implements
 
         //おすすめ番組・ビデオの通信を止める
         StopRecommendDataConnect stopRecommendDataConnect = new StopRecommendDataConnect();
-        stopRecommendDataConnect.execute(mRecommendDataProvider);
+        stopRecommendDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mRecommendDataProvider);
 
         //チャンネル情報の通信を止める
         if (mScaledDownProgramListDataProvider != null) {
             StopScaledProListDataConnect stopScaledProListDataConnect = new StopScaledProListDataConnect();
-            stopScaledProListDataConnect.execute(mScaledDownProgramListDataProvider);
+            stopScaledProListDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mScaledDownProgramListDataProvider);
         }
 
         //FragmentにContentsAdapterの通信を止めるように通知する
