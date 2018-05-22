@@ -165,6 +165,9 @@ public class ChannelListActivity extends BaseActivity implements
     /** ウェイト表示時のフラグメントを退避しておく. */
     private ChannelListFragment mWaitFragment = null;
 
+    /** 別画面からの復帰時のウェイト表示用にフラグメントを控えておく. */
+    private ChannelListFragment mResumeFragment = null;
+
     /**
      * Hikariデータスレッド.
      */
@@ -255,6 +258,17 @@ public class ChannelListActivity extends BaseActivity implements
         super.onStart();
         if (mIsRemote) {
             DlnaManager.shared().StartDmp();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //別画面からの帰りではウェイト表示を行う
+        if(mResumeFragment != null) {
+            mResumeFragment.showProgressBar(true);
+            mResumeFragment = null;
         }
     }
 
@@ -689,6 +703,10 @@ public class ChannelListActivity extends BaseActivity implements
                                    final ChannelListFragment fragment) {
         DTVTLogger.warning("pos = " + pos);
         ChannelInfo channelInfo = null;
+
+        //別画面から戻った場合にウェイト表示を行うために退避
+        mResumeFragment = fragment;
+
             switch (type) {
                 case CH_LIST_DATA_TYPE_BS:
                 case CH_LIST_DATA_TYPE_TDB:
