@@ -10,9 +10,7 @@ import android.os.Build;
 
 import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
-import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -282,7 +280,7 @@ public class DlnaManager {
                 hostUrl = new URL(location);
                 hostString = hostUrl.getHost();
             } catch (MalformedURLException e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
             listener.joinDms(friendlyName, hostString, udn, controlUrl, eventSubscriptionUrl);
         } else {

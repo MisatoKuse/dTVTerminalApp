@@ -266,7 +266,7 @@ public class ChannelListActivity extends BaseActivity implements
         super.onResume();
 
         //別画面からの帰りではウェイト表示を行う
-        if(mResumeFragment != null) {
+        if (mResumeFragment != null) {
             mResumeFragment.showProgressBar(true);
             mResumeFragment = null;
         }

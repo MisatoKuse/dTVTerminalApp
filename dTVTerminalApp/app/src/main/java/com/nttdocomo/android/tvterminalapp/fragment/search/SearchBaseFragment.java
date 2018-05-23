@@ -254,12 +254,13 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
 
     /**
      * リストのデータをクリアする.
+     * @param context コンテキスト
      */
-    public void clear() {
+    public void clear(final Context context) {
         if (null != mData) {
             mData.clear();
         }
-        notifyDataSetChanged(getResources().getString(R.string.keyword_search_default_count),
+        notifyDataSetChanged(context.getResources().getString(R.string.keyword_search_default_count),
                 PAGE_NO_OF_SERVICE_CLEAR);
         showProgressBar(false);
     }

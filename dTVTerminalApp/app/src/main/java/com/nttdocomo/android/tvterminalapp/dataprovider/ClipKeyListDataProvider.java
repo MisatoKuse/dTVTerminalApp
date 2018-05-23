@@ -700,7 +700,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * @param title タイトル
      * @param searchOk クリップ可否
      */
-    protected void setClipRequestData(final Map<String, String> map, final ClipRequestData requestData,
+    void setClipRequestData(final Map<String, String> map, final ClipRequestData requestData,
                                     final String title, final String searchOk) {
         requestData.setCrid(map.get(JsonConstants.META_RESPONSE_CRID));
         requestData.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
@@ -719,7 +719,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * @param dispType 表示タイプ.
      * @param contentsType コンテンツタイプ
      */
-    protected void setRequestType(final ClipRequestData requestData, final String dispType, final String contentsType) {
+    void setRequestType(final ClipRequestData requestData, final String dispType, final String contentsType) {
         requestData.setDispType(dispType);
         requestData.setContentType(contentsType);
     }
@@ -730,7 +730,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * @param contentInfo  クリップデータ一覧
      * @param channels チャンネル情報
      */
-    protected void setChannelInfo(final Map<String, String> map, final ContentsData contentInfo, final ArrayList<ChannelInfo> channels) {
+    void setChannelInfo(final Map<String, String> map, final ContentsData contentInfo, final ArrayList<ChannelInfo> channels) {
         String chNo = map.get(JsonConstants.META_RESPONSE_CHNO);
         if (channels != null && !TextUtils.isEmpty(chNo)) {
             for (ChannelInfo channelInfo : channels) {
@@ -747,7 +747,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * @param contentInfo クリップデータ一覧
      * @param map コンテンツ一覧用マップ
      */
-    protected void setResponseId(final ContentsData contentInfo, final Map<String, String> map) {
+    void setResponseId(final ContentsData contentInfo, final Map<String, String> map) {
         contentInfo.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
         contentInfo.setEventId(map.get(JsonConstants.META_RESPONSE_EVENT_ID));
     }
