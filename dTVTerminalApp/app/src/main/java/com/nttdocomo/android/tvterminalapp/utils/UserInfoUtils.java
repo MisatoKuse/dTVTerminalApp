@@ -37,24 +37,6 @@ public class UserInfoUtils {
     public static final String CONTRACT_INFO_H4D = "002";
 
     /**
-     * ペアリング状態.
-     */
-    public enum PairingState {
-        /**
-         * 宅内.
-         */
-        INSIDE_HOUSE,
-        /**
-         * 宅外.
-         */
-        OUTSIDE_HOUSE,
-        /**
-         * 未ペアリング.
-         */
-        NO_PAIRING
-    }
-
-    /**
      * レコメンドサーバ用に、ユーザ年齢情報を＋3して返却する.
      *
      * @param userAge ユーザ情報
@@ -258,24 +240,6 @@ public class UserInfoUtils {
         }
         DTVTLogger.end();
         return param;
-    }
-
-    /**
-     * ペアリング済みかどうか判定.
-     *
-     * @param context コンテキストファイル
-     * @param stbStatus STB接続状態
-     * @return ペアリング状態
-     */
-    public static PairingState getPairingState(final Context context, final boolean stbStatus) {
-        boolean isParingSettled = SharedPreferencesUtils.getSharedPreferencesDecisionParingSettled(context);
-        if (stbStatus && isParingSettled) {
-            return PairingState.INSIDE_HOUSE;
-        } else if (!stbStatus && isParingSettled) {
-            return PairingState.OUTSIDE_HOUSE;
-        } else {
-            return PairingState.NO_PAIRING;
-        }
     }
 
     /**

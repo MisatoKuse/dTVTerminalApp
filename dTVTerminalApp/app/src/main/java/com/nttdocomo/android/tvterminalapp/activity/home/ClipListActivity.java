@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -109,8 +110,8 @@ public class ClipListActivity extends BaseActivity implements
         mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
         if (mIsMenuLaunch) {
             mStartPageNo = CLIP_LIST_PAGE_NO_OF_TV;
-            enableHeaderBackIcon(true);
         }
+        enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
@@ -270,7 +271,9 @@ public class ClipListActivity extends BaseActivity implements
 
     @Override
     public void tvClipListCallback(final List<ContentsData> clipContentInfo) {
-
+        if (getCurrentPosition() != CLIP_LIST_PAGE_NO_OF_TV) {
+            return;
+        }
         ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
         if (null == clipContentInfo) {
             //通信とJSON Parseに関してerror処理
@@ -321,9 +324,19 @@ public class ClipListActivity extends BaseActivity implements
         fragment.showProgressBar(false);
     }
 
+    /**
+     * タブポジションを取得.
+     * @return タブポジション
+     */
+    private int getCurrentPosition() {
+        return mViewPager.getCurrentItem();
+    }
+
     @Override
     public void vodClipListCallback(final List<ContentsData> clipContentInfo) {
-
+        if (getCurrentPosition() != CLIP_LIST_PAGE_NO_OF_VOD) {
+            return;
+        }
         ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
 
         if (null == clipContentInfo) {
@@ -435,7 +448,7 @@ public class ClipListActivity extends BaseActivity implements
                 setCommunicatingStatus(true);
 
                 //非同期中にタブ移動することがあるため、ここでスクロール開始タブ位置を保持しておく
-                final int TAB_POSITION = mViewPager.getCurrentItem();
+                final int TAB_POSITION = getCurrentPosition();
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -520,7 +533,7 @@ public class ClipListActivity extends BaseActivity implements
                 //タブ移動時にページリセット
                 resetPaging();
 
-                switch (mViewPager.getCurrentItem()) {
+                switch (getCurrentPosition()) {
                     case CLIP_LIST_PAGE_NO_OF_TV:
                         mStartPageNo = CLIP_LIST_PAGE_NO_OF_TV;
                         setTv();
@@ -579,9 +592,7 @@ public class ClipListActivity extends BaseActivity implements
      * @return Fragment
      */
     private ClipListBaseFragment getCurrentFragment() {
-
-        int i = mViewPager.getCurrentItem();
-        return mClipListFragmentFactory.createFragment(i, this);
+        return mClipListFragmentFactory.createFragment(getCurrentPosition(), this);
     }
 
     @Override
@@ -628,9 +639,9 @@ public class ClipListActivity extends BaseActivity implements
         DTVTLogger.start();
         //通信を止める
         StopVodClipDataConnect stopVodClipDataConnect = new StopVodClipDataConnect();
-        stopVodClipDataConnect.execute(mVodClipDataProvider);
+        stopVodClipDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mVodClipDataProvider);
         StopTvClipDataConnect stopTvClipDataConnect = new StopTvClipDataConnect();
-        stopTvClipDataConnect.execute(mTvClipDataProvider);
+        stopTvClipDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mTvClipDataProvider);
         ClipListBaseFragment fragment = getCurrentFragment();
         if (fragment != null) {
             fragment.stopContentsAdapterConnect();

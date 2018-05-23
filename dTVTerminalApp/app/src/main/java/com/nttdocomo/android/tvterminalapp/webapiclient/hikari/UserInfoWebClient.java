@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
@@ -53,7 +54,7 @@ public class UserInfoWebClient
     @Override
     public void onAnswer(final ReturnCode returnCode) {
         //JSONをパースして、データを返す
-        new UserInfoJsonParser(mUserInfoJsonParserCallback).execute(returnCode.bodyData);
+        new UserInfoJsonParser(mUserInfoJsonParserCallback).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode.bodyData);
     }
 
     /**

@@ -68,9 +68,6 @@ public class RuntimePermissionUtils {
      * @return falseであれば「今後は確認しない」にチェックが入っている
      */
     public static boolean shouldShowRequestPermissionRationale(final Activity activity, final String permission) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return activity.shouldShowRequestPermissionRationale(permission);
-        }
-        return true;
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M || activity.shouldShowRequestPermissionRationale(permission);
     }
 }

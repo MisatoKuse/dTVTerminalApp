@@ -118,6 +118,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private TextView mCheckboxText;
     /**
+     * 次回表示しないTextView表示フラグ.
+     */
+    private boolean mIsShowCheckboxText = false;
+    /**
      * DMSリストビュー.
      */
     private ListView mDeviceListView;
@@ -234,6 +238,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             initLaunchView();
         } else if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
             setContentView(R.layout.stb_select_device_list_setting);
+            enableHeaderBackIcon(true);
             initSettingView();
         }
         mDlnaDmsItemList = new ArrayList<>();
@@ -424,6 +429,13 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             }
         }
 
+        if (mIsShowCheckboxText) {
+            //次回表示しないTextView再表示する
+            mIsShowCheckboxText = false;
+            mCheckBox.setVisibility(View.VISIBLE);
+            mCheckboxText.setVisibility(View.VISIBLE);
+        }
+
         setDevListener();
         DTVTLogger.end();
     }
@@ -570,6 +582,8 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
 
             mCheckBox.setVisibility(View.GONE);
             mCheckboxText.setVisibility(View.GONE);
+            //次回表示しないTextView表示フラグをTRUEにする
+            mIsShowCheckboxText = true;
         } else if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
 
             if (mParingDevice.getVisibility() == View.VISIBLE && mCheckMark.getVisibility() == View.VISIBLE) {
@@ -635,6 +649,8 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             intent.putExtra(PairingHelpActivity.START_WHERE, PairingHelpActivity.ParingHelpFromMode.
                     ParingHelpFromMode_Setting.ordinal());
             startActivity(intent);
+        } else if (v.getId() == R.id.header_layout_back) {
+            finish();
         }
         DTVTLogger.end();
     }
@@ -683,11 +699,13 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         //鍵交換
         exchangeKey();
     }
-
+    /**
+     * 鍵交換.
+     */
     private void exchangeKey() {
         CipherApi cipherApi = new CipherApi(new CipherApi.CipherApiCallback() {
             @Override
-            public void apiCallback(boolean result, String data) {
+            public void apiCallback(final boolean result, final String data) {
                 if (result) {
                     checkDAccountApp();
                 } else {

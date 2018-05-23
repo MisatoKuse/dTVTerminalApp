@@ -131,9 +131,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         setTitleText(getString(R.string.nav_menu_item_recorder_program));
         Intent intent = getIntent();
         mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
-        if (mIsMenuLaunch) {
-            enableHeaderBackIcon(true);
-        }
+        enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);

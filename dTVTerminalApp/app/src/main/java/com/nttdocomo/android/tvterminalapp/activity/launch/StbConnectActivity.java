@@ -90,7 +90,7 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
     /**
      * STB接続できたら、ホーム画面に自動遷移する.
      */
-    private Runnable runnable = new Runnable() {
+    private final Runnable runnable = new Runnable() {
         @Override
         public void run() {
             SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
@@ -144,16 +144,16 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
             @Override
             public void onOKCallback(final boolean isOK) {
                 if (isOK) {
+                    setRemoteProgressVisible(View.VISIBLE);
                     boolean result = DlnaUtils.getActivationState(StbConnectActivity.this);
                     if (result) {
-                        setRemoteProgressVisible(View.VISIBLE);
-                        DlnaManager manager = DlnaManager.shared();
-                        manager.mLocalRegisterListener = StbConnectActivity.this;
-                        manager.StartDtcp();
-                        manager.RestartDirag();
+                        DlnaManager.shared().mLocalRegisterListener = StbConnectActivity.this;
+                        DlnaManager.shared().StartDtcp();
+                        DlnaManager.shared().RestartDirag();
                         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(StbConnectActivity.this);
-                        manager.RequestLocalRegistration(dlnaDmsItem.mUdn);
+                        DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn);
                     } else {
+                        setRemoteProgressVisible(View.GONE);
                         showActivationErrorDialog();
                     }
                 }

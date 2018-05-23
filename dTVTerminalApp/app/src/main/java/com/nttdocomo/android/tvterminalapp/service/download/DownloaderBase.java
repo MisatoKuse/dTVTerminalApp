@@ -45,7 +45,7 @@ public abstract class DownloaderBase {
      * ダウンロードパラメータ取得.
      * @return ダウンロードパラメータ
      */
-    public DownloadParam getDownloadParam() {
+    DownloadParam getDownloadParam() {
         return mDownloadParam;
     }
 
@@ -80,7 +80,7 @@ public abstract class DownloaderBase {
     /**
      * ダウンロードステータスをリセット.
      */
-    protected void reset() {
+    private void reset() {
         mDownloadedBytes = 0;
         mTotalBytes = 0;
         mError = DownloadListener.DownLoadError.DLError_NoError;
@@ -141,7 +141,7 @@ public abstract class DownloaderBase {
     /**
      * Sub Classでダウンロード成功したとき、この関数をコール.
      */
-    protected void onSuccess() {
+    void onSuccess() {
         if (null != mDownloadListener) {
             String path = getFullFilePath();
             mDownloadListener.onSuccess(path);
@@ -152,7 +152,7 @@ public abstract class DownloaderBase {
      * ダウンロード進捗.
      * @param everyTimeBytes everyTimeBytes
      */
-    protected void onProgress(final int everyTimeBytes) {
+    void onProgress(final int everyTimeBytes) {
         mDownloadedBytes += everyTimeBytes;
         if (null != mDownloadListener && null != mDownloadParam) {
             int total = mDownloadParam.getTotalSizeToDl();
@@ -173,7 +173,7 @@ public abstract class DownloaderBase {
     /**
      * DownLoadThread.
      */
-    class DownLoadThread extends Thread {
+    private class DownLoadThread extends Thread {
         @Override
         public void run() {
             setDownloading(true);
@@ -247,7 +247,7 @@ public abstract class DownloaderBase {
     /**
      * ダウンロード容量不足.
      */
-    void setLowStorageSpace() {
+    private void setLowStorageSpace() {
         if (null != mDownloadListener) {
             if (null != mDownloadParam) {
                 String path = getFullFilePath();
@@ -269,7 +269,7 @@ public abstract class DownloaderBase {
      * Sub Classでダウンロード成功したとき、この関数をコール.
      * @param error error
      */
-    protected void onFail(final DownloadListener.DownLoadError error) {
+    void onFail(final DownloadListener.DownLoadError error) {
         setDownloading(false);
         if (null != mDownloadListener && null != mDownloadParam) {
             final String savePath = mDownloadParam.getSavePath() + File.separator + mDownloadParam.getSaveFileName();
@@ -280,7 +280,7 @@ public abstract class DownloaderBase {
     /**
      *ダウンロードをキャンセルする.
      */
-    protected void onCancel() {
+    void onCancel() {
         setDownloading(false);
         if (null != mDownloadListener && null != mDownloadParam) {
             final String savePath = mDownloadParam.getSavePath() + File.separator + mDownloadParam.getSaveFileName();
@@ -352,7 +352,7 @@ public abstract class DownloaderBase {
      * @param context コンテキスト
      * @return DmpFolderName
      */
-    public static String getDmpFolderName(final Context context) {
+    private static String getDmpFolderName(final Context context) {
         if (null == context) {
             return null;
         }

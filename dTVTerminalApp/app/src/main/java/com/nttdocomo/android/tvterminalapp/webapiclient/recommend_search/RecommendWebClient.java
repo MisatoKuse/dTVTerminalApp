@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
@@ -37,7 +38,7 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
     /**
      * リクエスト用・サービスID.
      */
-    public static final String SERVICE_ID = "serviceId";
+    private static final String SERVICE_ID = "serviceId";
     /**
      * リクエスト用・カテゴリーID.
      * ※本パラメータ指定時は、"サービスID:カテゴリーID"のように、コロンで挟んで一組となるので注意。
@@ -47,7 +48,7 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
     /**
      * リクエスト用・１ページの件数.
      */
-    public static final String GET_PAGE = "getPage";
+    private static final String GET_PAGE = "getPage";
     /**
      * リクエスト用・開始位置.
      * ※maxResultの値を指定した際は、こちらは省略できないので注意
@@ -185,7 +186,7 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
     @Override
     public void onFinish(final String responseData) {
         //得られたXMLのパースを行って、データを返す
-        new RecommendWebXmlParser(mRecommendCallback).execute(responseData);
+        new RecommendWebXmlParser(mRecommendCallback).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, responseData);
     }
 
     /**

@@ -17,7 +17,7 @@ import java.io.File;
 /**
  * 機能：For Dlna download.
  */
-public class DlnaInterfaceDl {
+class DlnaInterfaceDl {
     //private Handler mHandler= new Handler();
 
     //Download
@@ -209,7 +209,7 @@ public class DlnaInterfaceDl {
         DlnaDlStatus statusEnum;
         try {
             int i = Integer.parseInt(status);
-            statusEnum = DlnaDlStatus.values()[i];;
+            statusEnum = DlnaDlStatus.values()[i];
         } catch (Exception e) {
             DTVTLogger.debug(e.getMessage());
             DTVTLogger.end();

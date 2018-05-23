@@ -16,20 +16,20 @@ import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 /**
  * DAccountに関する共通処理を記載する.
  */
-public class DAccountUtils {
+public class DaccountUtils {
 
     /**
      * Dアカウントアプリ Package名.
      */
-    public static final String D_ACCOUNT_APP_PACKAGE_NAME = "com.nttdocomo.android.idmanager";
+    private static final String D_ACCOUNT_APP_PACKAGE_NAME = "com.nttdocomo.android.idmanager";
     /**
      * Dアカウントアプリ Activity名.
      */
-    public static final String D_ACCOUNT_APP_ACTIVITY_NAME = ".activity.DocomoIdTopActivity";
+    private static final String D_ACCOUNT_APP_ACTIVITY_NAME = ".activity.DocomoIdTopActivity";
     /**
      * DアカウントアプリURI.
      */
-    public static final String D_ACCOUNT_APP_URI = "market://details?id=com.nttdocomo.android.idmanager";
+    private static final String D_ACCOUNT_APP_URI = "market://details?id=com.nttdocomo.android.idmanager";
 
     /**
      * Dアカウント設定アプリがインストールされているか判定を行う.

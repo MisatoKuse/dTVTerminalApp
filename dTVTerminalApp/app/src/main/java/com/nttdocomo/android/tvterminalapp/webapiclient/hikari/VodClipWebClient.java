@@ -181,10 +181,7 @@ public class VodClipWebClient extends WebApiBasePlala implements
         }
 
         //コールバックが含まれていないならばエラー
-        if (vodClipJsonParserCallback == null) {
-            return false;
-        }
-        return true;
+        return vodClipJsonParserCallback != null;
     }
 
     /**

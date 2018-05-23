@@ -62,6 +62,8 @@
                 android:id="@+id/dtv_contents_detail_main_layout_thumbnail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:src="@mipmap/loading_movie"
+                android:adjustViewBounds="true"
                 android:contentDescription="@string/contents_info_thumbnail_text"
                 android:scaleType="fitCenter" />
 

@@ -13,13 +13,16 @@ import com.nttdocomo.android.tvterminalapp.relayclient.StbConnectRelayClient;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * 暗号化API
+ * 暗号化API.
  */
 public class CipherApi {
+    /**
+     * callback.
+     */
     public interface CipherApiCallback {
        //STBがbusyの場合false.
         /**
-         * callback.
+         * 処理完了callback.
          * @param result result
          * @param data data
          */

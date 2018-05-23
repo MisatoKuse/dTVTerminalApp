@@ -28,6 +28,7 @@ import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -216,7 +217,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         this.mContentList = contentsDataList;
         this.mContext = context;
         this.mIndex = index;
-        mThumbnailProvider = new ThumbnailProvider(context);
+        mThumbnailProvider = new ThumbnailProvider(context, ThumbnailDownloadTask.ImageSizeType.HOME_LIST);
     }
 
     /**
@@ -339,10 +340,6 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
                 ContentUtils.setPeriodText(mContext, viewHolder.mTime, contentsData);
                 break;
             default:
-                //上記以外 (タイトルが2行)
-                if (viewHolder.mContent != null) {
-                    viewHolder.mContent.setMaxLines(2);
-                }
                 if (viewHolder.mTime != null) {
                     viewHolder.mTime.setVisibility(View.GONE);
                 }
@@ -487,13 +484,16 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         } else {
             channelName = "";
         }
-        if (contentsType == ContentUtils.ContentsType.TV || contentsType == ContentUtils.ContentsType.OTHER) {
-            date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(startTime)),
-                    DateUtils.formatEpochToStringOpeLog(Long.parseLong(endTime)), channelName);
-        } else {
-            date = StringUtils.getConnectStrings(
-                    DateUtils.addDateLimit(
-                            mContext, contentsData, contentsType), channelName);
+        switch (contentsType) {
+            case TV:
+            case OTHER:
+                date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(startTime)),
+                        DateUtils.formatEpochToStringOpeLog(Long.parseLong(endTime)), channelName);
+                break;
+            default:
+                date = StringUtils.getConnectStrings(DateUtils.addDateLimit(
+                        mContext, contentsData, contentsType), channelName);
+                break;
         }
         //表示情報がすべて取得できないときは非表示にする
         if (date == null || date.isEmpty()) {
@@ -596,7 +596,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         super.onViewRecycled(viewHolder);
         if (viewHolder.mImage != null) {
             //サムネイルの取得が遅い時、前のViewが残っている事がある現象の対処
-            viewHolder.mImage.setImageResource(android.R.color.transparent);
+            viewHolder.mImage.setImageResource(R.mipmap.loading_scroll);
         }
     }
 

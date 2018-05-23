@@ -5,10 +5,9 @@
 package com.nttdocomo.android.tvterminalapp.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.DrawableRes;
 import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.View;
@@ -239,60 +238,25 @@ public class MenuListAdapter extends BaseAdapter {
             if (title.equals(mContext.getString(R.string.nav_menu_item_hikari_tv_none_action))) {
                 int intHikariSettingIconLeftMargin = mContext.getResources().getDimensionPixelSize(
                         R.dimen.global_menu_list_item_default_title_left_margin);
-                imageView.setVisibility(View.VISIBLE);
-                Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.logo_hikaritv);
-                Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, false);
-                drawable = new BitmapDrawable(mContext.getResources(), resizedBitmap);
-                imageView.setBackground(drawable);
+                setImageResource(imageView, R.mipmap.logo_hikaritv);
                 marginLayoutParams.setMargins(intHikariSettingIconLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_hikari_tv))) {
-                imageView.setVisibility(View.VISIBLE);
-                Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.logo_hikaritv);
-                Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, false);
-                drawable = new BitmapDrawable(mContext.getResources(), resizedBitmap);
-                imageView.setBackground(drawable);
+                setImageResource(imageView, R.mipmap.logo_hikaritv);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_dtv_channel))) {
-                imageView.setVisibility(View.VISIBLE);
-                Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.logo_dtvch);
-                Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, false);
-                drawable = new BitmapDrawable(mContext.getResources(), resizedBitmap);
-                imageView.setBackground(drawable);
+                setImageResource(imageView, R.mipmap.logo_dtvch);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_dtv))) {
-                imageView.setVisibility(View.VISIBLE);
-                Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.logo_dtv);
-                Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, false);
-                drawable = new BitmapDrawable(mContext.getResources(), resizedBitmap);
-                imageView.setBackground(drawable);
+                setImageResource(imageView, R.mipmap.logo_dtv);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_d_animation))) {
-                imageView.setVisibility(View.VISIBLE);
-                Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.logo_danime);
-                Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, false);
-                drawable = new BitmapDrawable(mContext.getResources(), resizedBitmap);
-                imageView.setBackground(drawable);
+                setImageResource(imageView, R.mipmap.logo_danime);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_dtv_channel))) {
-                imageView.setVisibility(View.VISIBLE);
-                Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.logo_dtvch);
-                Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, false);
-                drawable = new BitmapDrawable(mContext.getResources(), resizedBitmap);
-                imageView.setBackground(drawable);
+                setImageResource(imageView, R.mipmap.logo_dtvch);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_dazn))) {
-                imageView.setVisibility(View.VISIBLE);
-                Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.logo_dazn);
-                Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, false);
-                drawable = new BitmapDrawable(mContext.getResources(), resizedBitmap);
-                imageView.setBackground(drawable);
+                setImageResource(imageView, R.mipmap.logo_dazn);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else {
                 //その他サブアイテムのカスタマイズ
@@ -301,6 +265,16 @@ public class MenuListAdapter extends BaseAdapter {
         }
     }
 
+    /**
+     * dstのImagetViewに画像を表示にしてresIdのリソースを設定する.
+     * @param dst ImageView
+     * @param resId 画像ResourceId
+     */
+    private void setImageResource(final ImageView dst, final @DrawableRes int resId) {
+        dst.setVisibility(View.VISIBLE);
+        Drawable drawable = ContextCompat.getDrawable(mContext, resId);
+        dst.setImageDrawable(drawable);
+    }
     /**
      * ViewHolder.
      */

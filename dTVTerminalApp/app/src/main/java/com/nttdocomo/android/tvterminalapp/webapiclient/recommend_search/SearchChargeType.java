@@ -12,9 +12,9 @@ import com.nttdocomo.android.tvterminalapp.struct.SearchNarrowCondition;
  */
 public class SearchChargeType extends SearchFilterTypeMappable {
     /**0：見放題.*/
-    public final int free = SearchNarrowCondition.getNextOrdinal();
+    private final int free = SearchNarrowCondition.getNextOrdinal();
     /**1：レンタル.*/
-    public final int rental = SearchNarrowCondition.getNextOrdinal();
+    private final int rental = SearchNarrowCondition.getNextOrdinal();
     /**検索条件初期値.*/
     private int self = SearchNarrowCondition.sEnumOrdinalNil;
 

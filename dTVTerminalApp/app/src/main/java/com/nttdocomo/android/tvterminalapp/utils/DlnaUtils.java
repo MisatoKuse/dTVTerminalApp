@@ -12,6 +12,8 @@ import com.digion.dixim.android.activation.helper.ActivationHelper;
 import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -56,6 +58,7 @@ public class DlnaUtils {
     /**
      * アクティベーションのチェック、実行.
      * @param context コンテキスト
+     * @return チェック結果
      */
     public static boolean getActivationState(final Context context) {
         final String deviceKey = getPrivateDataHomePath(context);
@@ -65,21 +68,24 @@ public class DlnaUtils {
             return true;
         } else {
             int result = activationHelper.activation(deviceKey);
-            if (result == ActivationHelper.ACTC_OK) {
-                return true;
-            } else {
-                return false;
-            }
+            return result == ActivationHelper.ACTC_OK;
         }
     }
 
     /**
      * アクティベーションパス（devicekeyPath）取得.
      * @param context コンテキスト
+     * @return アクティベーションパス
      */
     public static String getPrivateDataHomePath(final Context context) {
         return EnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.PLAYER);
     }
+
+    /**
+     * DiRAGコンフィグファイルパス取得.
+     * @param context コンテキスト
+     * @return DiRAGコンフィグファイルパス
+     */
     public static String getDiragConfileFilePath(final Context context) {
         return getPrivateDataHomePath(context).concat(DIRAG_CONF_FILE);
     }
@@ -225,6 +231,24 @@ public class DlnaUtils {
             DTVTLogger.debug(e);
         }
         return result;
+    }
+
+    /**
+     * ローカルレジストレーション成功且つ期間のチェック.
+     *
+     * @param context コンテキスト
+     * @return true:成功且つ期間内 false:成功or期間外
+     */
+    public static boolean getLocalRegisterSuccess(final Context context) {
+        boolean isSuccess = false;
+        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(context);
+        if (dlnaDmsItem != null) {
+            String expireDate =  DlnaManager.shared().GetRemoteDeviceExpireDate(dlnaDmsItem.mUdn);
+            if (!TextUtils.isEmpty(expireDate)) { //TODO 期間内の判定追加必要（3か月）
+                isSuccess = true;
+            }
+        }
+        return isSuccess;
     }
 
     /**

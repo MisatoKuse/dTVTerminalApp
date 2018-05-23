@@ -44,10 +44,11 @@ typedef struct ake_handler_info {
 } ake_handler_info;
 
 void dcp_connect_status_handler(drag_cp_connect_status status, void* arg) {
-    eDiragConnectStatus retStatus = DiragConnectStatusNone;
+    eDiragConnectStatus retStatus;
     switch(status) {
         case DRAG_CP_CONNECT_STATUS_UNKNOWN:
             LOG_WITH("DRAG_CP_CONNECT_STATUS_UNKNOWN");
+            retStatus = DiragConnectStatusUnknown;
             break;
         case DRAG_CP_CONNECT_STATUS_READY:
             LOG_WITH(">>> DRAG_CP_CONNECT_STATUS_READY <<<");
@@ -94,6 +95,11 @@ bool DlnaRemoteConnect::restartDirag(DMP *d) {
     } while (false);
     LOG_WITH_BOOL_PARAM(result, "");
     return result;
+}
+
+bool DlnaRemoteConnect::stopDirag() {
+    drag_cp_rasys_stop(); // remote access system
+    drag_cp_lrsys_stop(); // LR sub-system
 }
 
 void DlnaRemoteConnect::finalizeDirag() {

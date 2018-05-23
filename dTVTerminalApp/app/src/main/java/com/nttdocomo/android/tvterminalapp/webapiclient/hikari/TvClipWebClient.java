@@ -184,11 +184,8 @@ public class TvClipWebClient
         }
 
         //コールバックが含まれていないならばエラー
-        if (tvClipJsonParserCallback == null) {
-            return false;
-        }
+        return tvClipJsonParserCallback != null;
 
-        return true;
     }
 
     /**

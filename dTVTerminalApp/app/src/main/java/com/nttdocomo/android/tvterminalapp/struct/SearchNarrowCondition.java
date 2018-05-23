@@ -28,14 +28,14 @@ public class SearchNarrowCondition {
         return ++sEnumOrdinal;
     }
     /**検索条件ArrayList.*/
-    ArrayList<SearchFilterTypeMappable> conditionArray;
+    private final ArrayList<SearchFilterTypeMappable> mConditionArray;
 
     /**
      * コンストラクタ.
      * @param conditionArray 検索条件
      */
     public SearchNarrowCondition(final ArrayList<SearchFilterTypeMappable> conditionArray) {
-        this.conditionArray = conditionArray;
+        this.mConditionArray = conditionArray;
     }
 
     /**
@@ -44,7 +44,7 @@ public class SearchNarrowCondition {
      */
     public ArrayList<SearchFilterType> searchFilterList() {
         ArrayList<SearchFilterType> ret = new ArrayList<SearchFilterType>();
-        for (SearchFilterTypeMappable map: conditionArray) {
+        for (SearchFilterTypeMappable map: mConditionArray) {
             ret.add(map.searchFilterType());
         }
         return ret;

@@ -9,7 +9,6 @@
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_marginStart="@dimen/main_header_back_icon_left_margin"
-        android:onClick="contentsDetailBackKey"
         android:visibility="visible"
         android:src="@mipmap/header_material_icon_arrow_left" />
 

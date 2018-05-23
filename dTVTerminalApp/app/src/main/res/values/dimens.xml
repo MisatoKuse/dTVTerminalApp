@@ -85,6 +85,8 @@
     <dimen name="home_contents_item_name_bottom_margin">16dp</dimen>
     <dimen name="home_contents_left_margin">16dp</dimen>
     <dimen name="home_contents_right_margin">10dp</dimen>
+    <dimen name="home_contents_service_margin">8dp</dimen>
+    <dimen name="home_contents_item_left_margin">16dp</dimen>
     <dimen name="home_contents_item_name_text_size">16dp</dimen>
     <dimen name="home_contents_item_num_right_margin">4dp</dimen>
     <dimen name="home_contents_item_num_text_size">14dp</dimen>
@@ -279,7 +281,7 @@
     <dimen name="tv_program_list_cur_time_padding">10dp</dimen>
     <dimen name="tv_program_list_margin_between_ch">1dp</dimen>
     <dimen name="tv_program_list_ch_title_margin">16dp</dimen>
-    <dimen name="tv_program_list_ch_title_text_size">14dp</dimen>
+    <dimen name="tv_program_list_ch_title_text_size">11dp</dimen>
     <dimen name="tv_program_list_gap_between_programs">1dp</dimen>
     <dimen name="tv_program_list_gap_left_time">1dp</dimen>
     <dimen name="panel_start_time_margin_top">12dp</dimen>
@@ -298,7 +300,7 @@
     <dimen name="tv_program_list_main_layout_calendar_arrow_height">24dp</dimen>
     <dimen name="tv_program_item_panel_clip_width">15dp</dimen>
     <dimen name="tv_program_item_panel_clip_side">30dp</dimen>
-    <dimen name="tv_program_channel_height">44dp</dimen>
+    <dimen name="tv_program_channel_height">56dp</dimen>
 
     <!--アプリケーション情報-->
     <dimen name="application_info_image_width">128dp</dimen>

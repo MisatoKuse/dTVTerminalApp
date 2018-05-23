@@ -33,6 +33,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDat
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.fragment.channellist.ChannelListFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.channellist.ChannelListFragmentFactory;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.bs.DlnaBsChListInfo;
 import com.nttdocomo.android.tvterminalapp.jni.bs.DlnaBsChListListener;
@@ -63,7 +64,8 @@ public class ChannelListActivity extends BaseActivity implements
         HikariTvChannelDataProvider.ContentsDataCallback,
 
         DlnaTerChListListener,
-        DlnaBsChListListener {
+        DlnaBsChListListener,
+        DlnaManager.RemoteConnectStatusChangeListener {
 
 
 
@@ -142,9 +144,6 @@ public class ChannelListActivity extends BaseActivity implements
     private static final float sScrollThreshold = 20.0f;
     /** 上にスクロール. */
     private boolean mIsScrollUp = false;
-    /** メニュー起動. */
-    private Boolean mIsMenuLaunch = false;
-
     /** タブ延長タイム. */
     private final int CHANNEL_LIST_TAB_DELAY_TIME = 1300;
     /** 現在タイプ. */
@@ -153,9 +152,21 @@ public class ChannelListActivity extends BaseActivity implements
     /** 画面表示時のSTB接続状態. */
     private boolean mIsStbConnected;
 
+    /** 宅外判定宅内. */
+    private boolean mIsRemote = false;
+    /**
+     * メニュー表示フラグ.
+     */
+    private Boolean mIsMenuLaunch = false;
+
     /** ひかりTV for docomoタブの連続更新防止用. */
     private long beforeGetHikariData;
 
+    /** ウェイト表示時のフラグメントを退避しておく. */
+    private ChannelListFragment mWaitFragment = null;
+
+    /** 別画面からの復帰時のウェイト表示用にフラグメントを控えておく. */
+    private ChannelListFragment mResumeFragment = null;
 
     /**
      * Hikariデータスレッド.
@@ -229,15 +240,44 @@ public class ChannelListActivity extends BaseActivity implements
         setTitleText(getString(R.string.channel_list_activity_title));
         Intent intent = getIntent();
         mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
-        if (mIsMenuLaunch) {
-            enableHeaderBackIcon(true);
-        }
+        enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
         enableStbStatusIcon(true);
 
         mIsStbConnected = getStbStatus();
+        //リモート処理のチェック
+        if (!mIsStbConnected) {
+           mIsRemote = DlnaUtils.getLocalRegisterSuccess(this);
+        }
         initView();
         initData();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mIsRemote) {
+            DlnaManager.shared().StartDmp();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //別画面からの帰りではウェイト表示を行う
+        if (mResumeFragment != null) {
+            mResumeFragment.showProgressBar(true);
+            mResumeFragment = null;
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mIsRemote) {
+            DlnaManager.shared().StopDmp();
+        }
     }
 
     @Override
@@ -325,6 +365,29 @@ public class ChannelListActivity extends BaseActivity implements
     }
 
     /**
+     * リモート接続処理.
+     * @return 接続状態:true
+     */
+    private boolean requestConnect() {
+        boolean result = false;
+        // 宅内
+        if (mIsStbConnected) {
+            result = true;
+        } else {
+            // 宅外
+            if (DlnaManager.shared().remoteConnectStatus == DlnaManager.RemoteConnectStatus.CONNECTED) {
+                result = true;
+            } else {
+                DlnaManager.shared().mRemoteConnectStatusChangeListener = this;
+                DlnaManager.shared().mContext = this;
+                DlnaManager.shared().StartDtcp();
+                DlnaManager.shared().RestartDirag();
+            }
+        }
+        return result;
+    }
+
+    /**
      * Clear for all frames data.
      */
     private void clearAllFrames() {
@@ -381,18 +444,22 @@ public class ChannelListActivity extends BaseActivity implements
      * Bsデータを取得.
      */
     private void getBsData() {
-        DTVTLogger.start();
-        mDataProviderHandler.postDelayed(mRunnableBs, CHANNEL_LIST_TAB_DELAY_TIME);
-        DTVTLogger.end();
+        if (requestConnect()) {
+            DTVTLogger.start();
+            mDataProviderHandler.postDelayed(mRunnableBs, CHANNEL_LIST_TAB_DELAY_TIME);
+            DTVTLogger.end();
+        }
     }
 
     /**
      * Terデータ取得.
      */
     private void getTerData() {
-        DTVTLogger.start();
-        mDataProviderHandler.postDelayed(mRunnableTer, CHANNEL_LIST_TAB_DELAY_TIME);
-        DTVTLogger.end();
+        if (requestConnect()) {
+            DTVTLogger.start();
+            mDataProviderHandler.postDelayed(mRunnableTer, CHANNEL_LIST_TAB_DELAY_TIME);
+            DTVTLogger.end();
+        }
     }
 
     /**
@@ -482,7 +549,7 @@ public class ChannelListActivity extends BaseActivity implements
      */
     private void initChannelListTab() {
         Resources res = getResources();
-        if (mIsStbConnected
+        if ((mIsStbConnected || mIsRemote)
                 && (UserInfoUtils.getUserState(this).equals(UserState.CONTRACT_OK_PAIRING_NG)
                 || UserInfoUtils.getUserState(this).equals(UserState.CONTRACT_OK_PARING_OK))) {
             mTabNames = res.getStringArray(R.array.channel_list_tab_names);
@@ -498,6 +565,41 @@ public class ChannelListActivity extends BaseActivity implements
             tabRelativeLayout.addView(mTabLayout);
         } else {
             mTabLayout.resetTabView(mTabNames);
+        }
+    }
+
+    @Override
+    public void onRemoteConnectStatusCallBack(final DlnaManager.RemoteConnectStatus connectStatus) {
+        switch (connectStatus) {
+            case CONNECTED:
+                switch (mCurrentType) {
+                    case CH_LIST_DATA_TYPE_BS:
+                        mDataProviderHandler.postDelayed(mRunnableBs, CHANNEL_LIST_TAB_DELAY_TIME);
+                        break;
+                    case CH_LIST_DATA_TYPE_TDB:
+                        mDataProviderHandler.postDelayed(mRunnableTer, CHANNEL_LIST_TAB_DELAY_TIME);
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case READY:
+                DlnaManager manager = DlnaManager.shared();
+                DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+                manager.RequestRemoteConnect(dlnaDmsItem.mUdn);
+                break;
+            case GAVEUP_RECONNECTION:
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int pos = mViewPager.getCurrentItem();
+                        ChannelListDataType chType = getTypeFromViewPagerIndex(pos);
+                        ChannelListFragment fragment = mFactory.createFragment(pos, ChannelListActivity.this, chType, ChannelListActivity.this);
+                        fragment.showProgressBar(false);
+                        showErrorDialog("リモート接続失敗しました。");
+                    }
+                });
+                break;
         }
     }
 
@@ -597,9 +699,14 @@ public class ChannelListActivity extends BaseActivity implements
     }
 
     @Override
-    public void onClickChannelItem(final int pos, final ChannelListDataType type) {
+    public void onClickChannelItem(final int pos, final ChannelListDataType type,
+                                   final ChannelListFragment fragment) {
         DTVTLogger.warning("pos = " + pos);
         ChannelInfo channelInfo = null;
+
+        //別画面から戻った場合にウェイト表示を行うために退避
+        mResumeFragment = fragment;
+
             switch (type) {
                 case CH_LIST_DATA_TYPE_BS:
                 case CH_LIST_DATA_TYPE_TDB:
@@ -610,6 +717,12 @@ public class ChannelListActivity extends BaseActivity implements
                         DTVTLogger.error("pos = " + pos + " is invalid mHikariTvChannelList.size() = " + mHikariTvChannelList.size());
                         return;
                     }
+
+                    //ウェイト表示を開始
+                    fragment.showProgressBar(true);
+                    //ウェイト表示時のフラグメントを退避
+                    mWaitFragment = fragment;
+
                     channelInfo = mHikariTvChannelList.get(pos);
                     mHikariTvChannelDataProvider.getNowOnAirProgram(channelInfo.getChannelNo());
                     break;
@@ -618,6 +731,12 @@ public class ChannelListActivity extends BaseActivity implements
                         DTVTLogger.error("pos = " + pos + " is invalid mdTvChannelList.size() = " + mdTvChannelList.size());
                         return;
                     }
+
+                    //ウェイト表示を開始
+                    fragment.showProgressBar(true);
+                    //ウェイト表示時のフラグメントを退避
+                    mWaitFragment = fragment;
+
                     channelInfo = mdTvChannelList.get(pos);
                     mHikariTvChannelDataProvider.getNowOnAirProgram(channelInfo.getChannelNo());
                     break;
@@ -626,6 +745,12 @@ public class ChannelListActivity extends BaseActivity implements
 
     @Override
     public void onContentDataGet(final ContentsData data) {
+        //ウェイト表示が行われていた場合は止める
+        if (mWaitFragment != null) {
+            mWaitFragment.showProgressBar(false);
+        }
+        //初期化して再度のウェイト停止を回避
+        mWaitFragment = null;
 
         if (data == null) {
             //Now On Airコンテンツがない場合はダイアログ表示
@@ -757,7 +882,7 @@ public class ChannelListActivity extends BaseActivity implements
     private ChannelListDataType getTypeFromViewPagerIndex(final int viewPagerIndex) {
         DTVTLogger.start();
         ChannelListDataType ret;
-        if (mIsStbConnected
+        if ((mIsStbConnected || mIsRemote)
                 && (UserInfoUtils.getUserState(this).equals(UserState.CONTRACT_OK_PAIRING_NG)
                 || UserInfoUtils.getUserState(this).equals(UserState.CONTRACT_OK_PARING_OK))) {
             ret = CHANNEL_LIST_TAB_CONNECT_STB_LIST[viewPagerIndex];

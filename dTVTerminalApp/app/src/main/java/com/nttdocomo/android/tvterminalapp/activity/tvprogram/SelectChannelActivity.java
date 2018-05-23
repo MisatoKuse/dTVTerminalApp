@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.tvprogram;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -139,7 +140,7 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
             channels.removeAll(rmChannels);
             mSelectList.addAll(channels);
             ChannelListAdapter mChannelListAdapter = new ChannelListAdapter(
-                    this, mSelectList, R.layout.channel_list_item);
+                    this, mSelectList);
             mChannelListAdapter.setChannelListDataType(ChannelListActivity.ChannelListDataType.CH_LIST_DATA_TYPE_HIKARI);
             mSelectListView.setAdapter(mChannelListAdapter);
             mChannelListAdapter.notifyDataSetChanged();
@@ -193,6 +194,6 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
         DTVTLogger.start();
         //チャンネルリスト通信を止める
         StopScaledProListDataConnect stopTvConnect = new StopScaledProListDataConnect();
-        stopTvConnect.execute(mScaledDownProgramListDataProvider);
+        stopTvConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mScaledDownProgramListDataProvider);
     }
 }

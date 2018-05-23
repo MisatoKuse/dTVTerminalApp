@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -31,6 +32,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapter
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -167,7 +169,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
             mChannelTxt.setText(info.getTitle());
         }
         if (!TextUtils.isEmpty(info.getThumbnail())) {
-            ThumbnailProvider mThumbnailProvider = new ThumbnailProvider(getContext());
+            ThumbnailProvider mThumbnailProvider = new ThumbnailProvider(getContext(), ThumbnailDownloadTask.ImageSizeType.CHANNEL);
             mChannelImg.setTag(info.getThumbnail());
             Bitmap bitmap = mThumbnailProvider.getThumbnailImage(mChannelImg, info.getThumbnail());
             if (bitmap != null) {
@@ -238,7 +240,9 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
 
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
-        ContentsData contentsData = mContentsData.get(i);
+        //ヘッダービューを除く
+        int position = i - 1;
+        ContentsData contentsData = mContentsData.get(position);
         ContentDetailActivity contentDetailActivity = (ContentDetailActivity) mActivity;
         if (ContentUtils.isChildContentList(contentsData)) {
             contentDetailActivity.startChildContentListActivity(contentsData);
@@ -258,7 +262,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
         DTVTLogger.start();
         StopContentsAdapterConnect stopContentsAdapterConnect = new StopContentsAdapterConnect();
         if (mContentsAdapter != null) {
-            stopContentsAdapterConnect.execute(mContentsAdapter);
+            stopContentsAdapterConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mContentsAdapter);
         }
     }
 

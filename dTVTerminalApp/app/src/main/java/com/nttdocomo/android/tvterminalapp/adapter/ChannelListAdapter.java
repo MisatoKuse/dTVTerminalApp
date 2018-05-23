@@ -20,6 +20,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.jni.bs.DlnaBsChListItem;
 import com.nttdocomo.android.tvterminalapp.jni.ter.DlnaTerChListItem;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
+import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,10 +38,6 @@ public class ChannelListAdapter extends BaseAdapter {
      * 表示するデータのリスト.
      */
     private final List mData;
-    /**
-     * 表示するレイアウトのリソースID.
-     */
-    private final int mLayoutId;
     /**
      * サムネイル取得用プロパイダー.
      */
@@ -77,13 +74,11 @@ public class ChannelListAdapter extends BaseAdapter {
      *
      * @param context コンテキスト
      * @param data コンテンツデータ
-     * @param id リソースID
      */
-    public ChannelListAdapter(final Context context, final List data, final int id) {
+    public ChannelListAdapter(final Context context, final List data) {
         this.mContext = context;
         this.mData = data;
-        this.mLayoutId = id;
-        this.mThumbnailProvider = new ThumbnailProvider(context);
+        this.mThumbnailProvider = new ThumbnailProvider(context, ThumbnailDownloadTask.ImageSizeType.CHANNEL);
     }
 
     /**
@@ -122,7 +117,7 @@ public class ChannelListAdapter extends BaseAdapter {
         ViewHolder holder;
         if (convertView == null) {
             holder = new ViewHolder();
-            view = View.inflate(mContext, mLayoutId, null);
+            view = View.inflate(mContext, R.layout.channel_list_item, null);
             holder.mThumbnail = view.findViewById(R.id.channel_list_item_thumb_iv);
             holder.mChannelName = view.findViewById(R.id.channel_list_item_title_tv);
             switch (mChannelListDataType) {

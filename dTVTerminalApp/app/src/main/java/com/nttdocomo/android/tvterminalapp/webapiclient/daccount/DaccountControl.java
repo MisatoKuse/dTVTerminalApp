@@ -11,7 +11,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.ThumbnailCacheManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
-import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
@@ -170,7 +170,7 @@ public class DaccountControl implements
         }
         mDaccountControlCallBack = daccountControlCallBackSource;
 
-        if (DAccountUtils.checkDAccountIsExist() == null) {
+        if (DaccountUtils.checkDAccountIsExist() == null) {
             //dアカウント設定アプリが存在しないので帰る。ここで帰れば、単体実行フラグがセットされず、別のアクティビティの実行時に自動的に実行される。
             //後ほど、dアカウント設定アプリがダウンロードされた場合、その直後のアクティビティの起動時に呼び出されるので、意図的にダウンロード直後に処理を
             //挿入する必要はない。
@@ -388,13 +388,13 @@ public class DaccountControl implements
      * @param context        コンテキスト
      * @param daccountGetOtt ワンタイムトークン取得クラス
      */
-    static void cacheClear(final Context context, final DaccountGetOtt daccountGetOtt) {
+    private static void cacheClear(final Context context, final DaccountGetOtt daccountGetOtt) {
         DTVTLogger.start();
         DaccountControlOnce onceControl = DaccountControlOnce.getInstance();
 
         //キャッシュ削除タスクを呼び出す
         CacheClearTask clearTask = new CacheClearTask();
-        clearTask.execute(context);
+        clearTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, context);
 
         //次回実行する為にフラグをリセット
         onceControl.setExecOnce(false, daccountGetOtt, context);
@@ -467,7 +467,7 @@ public class DaccountControl implements
     public void stopCommunication() {
         mIsCancel = true;
         StopDaccountConnect stopConnect = new StopDaccountConnect();
-        stopConnect.execute(this);
+        stopConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, this);
     }
 
     /**

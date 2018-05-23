@@ -95,7 +95,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
         //アプリ起動時のサービストークン削除を行う
         SharedPreferencesUtils.deleteOneTimeTokenData(getApplicationContext());
-        DlnaManager.shared().launch(this);
+        DlnaManager.shared().launch(getApplicationContext());
         boolean isDlnaOk = startDlna();
         if (!isDlnaOk) {
             DTVTLogger.debug("BaseActivity");
@@ -152,11 +152,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     private boolean startDlna() {
         DlnaInterface di = DlnaInterface.getInstance();
         boolean ret;
-        if (null == di) {
-            ret = false;
-        } else {
-            ret = di.startDlna();
-        }
+        ret = null != di && di.startDlna();
         return ret;
     }
 
@@ -275,7 +271,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     /**
      * ダイアログが表示されている場合は、まだ画面遷移を行わないようにするスタートアクティビティ.
      */
-    void startActivityWait() {
+    private void startActivityWait() {
 
         //設定ファイルダイアログ表示を次の画面に依頼するかを確認
         if (mIsSettingErrorNextAvctivity) {
@@ -330,12 +326,9 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         }
 
         //設定ファイルの処理が続行中か、そもそも実行されていなければ遷移不可
-        if ((mCheckSetting != null && mCheckSetting.isBusy())
-                || mCheckSetting == null) {
-            return false;
-        }
+        return !((mCheckSetting != null && mCheckSetting.isBusy())
+                || mCheckSetting == null);
 
-        return true;
     }
 
     @Override

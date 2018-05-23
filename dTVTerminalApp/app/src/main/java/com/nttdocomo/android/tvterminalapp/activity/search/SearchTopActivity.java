@@ -4,6 +4,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.search;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -310,7 +311,8 @@ public class SearchTopActivity extends BaseActivity
             }
         });
         mSearchView.setFocusable(false);
-        setEditTextUnFocus();
+        //ユーザー操作の簡略化のため、遷移時キーボードを表示する
+        searchAutoComplete.requestFocus();
         searchAutoComplete.setHint(R.string.keyword_search_hint);
         searchAutoComplete.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
     }
@@ -413,7 +415,7 @@ public class SearchTopActivity extends BaseActivity
         if (!TextUtils.isEmpty(searchText)) {
             SearchBaseFragment baseFragment = mFragmentFactory.createFragment(mTabIndex, this);
             if (null != baseFragment) {
-                baseFragment.clear();
+                baseFragment.clear(this);
                 //連続検索を行うと一瞬0件と表示される対策として、前回の検索結果件数を持たせる
                 String totalCountText = getResultString();
                 baseFragment.notifyDataSetChanged(totalCountText, mTabIndex);
@@ -505,7 +507,7 @@ public class SearchTopActivity extends BaseActivity
                 baseFragment.displayLoadMore(false);
                 setPagingStatus(false);
             } else {
-                baseFragment.clear();
+                baseFragment.clear(this);
             }
         }
         baseFragment.setResultTextVisibility(true);
@@ -540,7 +542,7 @@ public class SearchTopActivity extends BaseActivity
             for (int i = 0; i < sum; ++i) {
                 SearchBaseFragment baseFragment = mFragmentFactory.createFragment(i, this);
                 baseFragment.setResultTextVisibility(false);
-                baseFragment.clear();
+                baseFragment.clear(this);
             }
         }
     }
@@ -718,7 +720,7 @@ public class SearchTopActivity extends BaseActivity
 
         //検索の通信を止める
         StopSearchDataConnect stopSearchDataConnect = new StopSearchDataConnect();
-        stopSearchDataConnect.execute(mSearchDataProvider);
+        stopSearchDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mSearchDataProvider);
 
         //FragmentにContentsAdapterの通信を止めるように通知する
         SearchBaseFragment baseFragment = mFragmentFactory.createFragment(mTabIndex, this);

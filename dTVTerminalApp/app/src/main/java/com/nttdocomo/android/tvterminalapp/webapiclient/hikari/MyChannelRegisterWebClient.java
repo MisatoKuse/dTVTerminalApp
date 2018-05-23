@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -61,7 +62,7 @@ public class MyChannelRegisterWebClient
         if (myChannelRegisterJsonParserCallback != null) {
             //JSONをパースして、データを返す
             new MyChannelRegisterJsonParser(myChannelRegisterJsonParserCallback)
-                    .execute(returnCode.bodyData);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode.bodyData);
         }
     }
 

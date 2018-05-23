@@ -679,7 +679,7 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
             if (ds.isUiRunning()) {
                 sDownloadDataProvider.sendBroadcast(DownloadService.DOWNLOAD_ON_CANCEL_ALL);
             } else {
-                List<DownloadData> downloadDataQue = ds.getDlDataQue();
+                List<DownloadData> downloadDataQue = DownloadService.getDlDataQue();
                 for (DownloadData d : downloadDataQue) {
                     String path = getCurrentDlFullPath(d);
                     if (null != path) {
@@ -700,9 +700,6 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
      */
     public synchronized boolean isDownloading() {
         DownloadService ds = getDownloadService();
-        if (null != ds) {
-            return ds.isDownloading();
-        }
-        return false;
+        return null != ds && ds.isDownloading();
     }
 }

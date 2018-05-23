@@ -64,7 +64,7 @@ public class ClipKeyListInsertDataManager {
             //DB保存前に前回取得したデータを消去する
             try {
                 clipKeyListDao.delete(type);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 DTVTLogger.debug("ClipKeyListInsertDataManager::insertClipKeyListInsert, e.cause=" + e.getCause());
             }
 

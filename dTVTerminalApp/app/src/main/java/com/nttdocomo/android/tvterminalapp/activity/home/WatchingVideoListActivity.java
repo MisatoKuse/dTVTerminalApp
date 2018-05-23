@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.activity.home;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -123,9 +124,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
         setTitleText(getString(R.string.str_watching_video_activity_title));
         Intent intent = getIntent();
         mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
-        if (mIsMenuLaunch) {
-            enableHeaderBackIcon(true);
-        }
+        enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
@@ -472,8 +471,9 @@ public class WatchingVideoListActivity extends BaseActivity implements
         DTVTLogger.start();
         //通信を止める
         StopWatchListenVideoListDataConnect stopConnect = new StopWatchListenVideoListDataConnect();
-        stopConnect.execute(mWatchListenVideoListDataProvider);
+        stopConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mWatchListenVideoListDataProvider);
         StopContentsAdapterConnect stopAdapterConnect = new StopContentsAdapterConnect();
-        stopAdapterConnect.execute(mWatchListenVideoBaseAdapter);
+        stopAdapterConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                 mWatchListenVideoBaseAdapter);
     }
 }

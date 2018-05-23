@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.video;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -100,7 +101,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     /**
      * ビデオ一覧（コンテンツツリー）からののIntent KEY.
      */
-    public static final String VIDEO_CONTENTS_BUNDLE_KEY = "videoContentKey";
+    private static final String VIDEO_CONTENTS_BUNDLE_KEY = "videoContentKey";
     /**
      * リスト0件メッセージ.
      */
@@ -114,6 +115,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         mMenuImageView = findViewById(R.id.header_layout_menu);
         mMenuImageView.setVisibility(View.VISIBLE);
         mMenuImageView.setOnClickListener(this);
+        enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         setStatusBarColor(true);
 
@@ -401,8 +403,9 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         //通信を止める
         showProgressBar(false);
         StopVideoContentConnect stopConnect = new StopVideoContentConnect();
-        stopConnect.execute(mVideoContentProvider);
+        stopConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mVideoContentProvider);
         StopContentsAdapterConnect stopAdapterConnect = new StopContentsAdapterConnect();
-        stopAdapterConnect.execute(mContentsAdapter);
+        stopAdapterConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                 mContentsAdapter);
     }
 }

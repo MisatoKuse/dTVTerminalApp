@@ -20,13 +20,14 @@ import com.nttdocomo.android.tvterminalapp.adapter.MainSettingListAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
-import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
-import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
-import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
-import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DeviceStateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.MainSettingUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
+import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -161,7 +162,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
 
         if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_D_ACCOUNT])) {
             //Dアカウント設定
-            DAccountUtils.startDAccountApplication(SettingActivity.this);
+            DaccountUtils.startDAccountApplication(SettingActivity.this);
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_PAIRING])) {
             if (isSettingPossible(false, tappedItemName)) {
                 //ペアリング設定
@@ -252,9 +253,10 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
      * ユーザ状態判定.
      *
      * @param isDisplay 表示フラグ
+     * @param tappedItemName tappedItemName
      * @return 設定操作可否
      */
-    private boolean isSettingPossible(final boolean isDisplay, String tappedItemName) {
+    private boolean isSettingPossible(final boolean isDisplay, final String tappedItemName) {
         UserState userState = UserInfoUtils.getUserState(this);
         if (userState.equals(UserState.LOGIN_NG)) {
             //未ログインならダイアログ表示
@@ -268,7 +270,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             }
         }
         if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_REMOTE])) {
-            UserInfoUtils.PairingState pairingState = UserInfoUtils.getPairingState(this, getStbStatus());
+            DeviceStateUtils.PairingState pairingState = DeviceStateUtils.getPairingState(this, getStbStatus());
             switch (pairingState) {
                 case NO_PAIRING:
                     //未ペアリングならダイアログ表示
@@ -355,16 +357,16 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             @Override
             public void onOKCallback(final boolean isOK) {
                 if (isOK) {
+                    setRemoteProgressVisible(View.VISIBLE);
                     boolean result = DlnaUtils.getActivationState(SettingActivity.this);
                     if (result) {
-                        setRemoteProgressVisible(View.VISIBLE);
-                        DlnaManager manager = DlnaManager.shared();
-                        manager.mLocalRegisterListener = SettingActivity.this;
-                        manager.StartDtcp();
-                        manager.RestartDirag();
+                        DlnaManager.shared().mLocalRegisterListener = SettingActivity.this;
+                        DlnaManager.shared().StartDtcp();
+                        DlnaManager.shared().RestartDirag();
                         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(SettingActivity.this);
-                        manager.RequestLocalRegistration(dlnaDmsItem.mUdn);
+                        DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn);
                     } else {
+                        setRemoteProgressVisible(View.GONE);
                         showErrorDialog("アクティベーション実行失敗しました。");
                     }
                 }
@@ -386,7 +388,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
 
     /**
      * ローカルレジストレーションの処理結果.
-     *
+     * @param errorType errorType
      * @param isSuccess true 成功 false 失敗
      */
     private void showRegistResultDialog(final boolean isSuccess, final DlnaManager.LocalRegistrationErrorType errorType) {
@@ -400,7 +402,8 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
                     resultDialog.setContent(getString(R.string.common_text_regist_over_error));
                     break;
                 default:
-                    resultDialog.setContent(getString(R.string.common_text_regist_other_error));break;
+                    resultDialog.setContent(getString(R.string.common_text_regist_other_error));
+                    break;
             }
             resultDialog.setConfirmText(R.string.common_text_close);
         }

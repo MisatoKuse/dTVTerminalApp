@@ -22,7 +22,7 @@ public class DaccountReceiver extends BroadcastReceiver {
     private static long sBeforeReceiveTime = 0;
 
     /**連続通信扱い時間・5秒とする.*/
-    static final long REPEAT_RECIEVE_TIME = 5000L;
+    private static final long REPEAT_RECIEVE_TIME = 5000L;
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
@@ -103,6 +103,7 @@ public class DaccountReceiver extends BroadcastReceiver {
                 break;
             default:
                 //アナライザー対策なので無処理
+                break;
         }
     }
 }

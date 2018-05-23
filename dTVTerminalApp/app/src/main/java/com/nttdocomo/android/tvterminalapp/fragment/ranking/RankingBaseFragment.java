@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.fragment.ranking;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -138,10 +139,15 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
      * 各ランキングページを判定.
      */
     private void initRankingView() {
-        if (ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK.equals(mRankingMode)) { // 週間
-            initWeeklyContentListView();
-        } else if (ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK.equals(mRankingMode)) { // ビデオ
-            initVideoContentListView();
+        switch (mRankingMode) {
+            case TYPE_WEEKLY_RANK:
+                initWeeklyContentListView();
+                break;
+            case TYPE_VIDEO_RANK:
+                initVideoContentListView();
+                break;
+            default:
+                break;
         }
     }
 
@@ -225,7 +231,7 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
         DTVTLogger.start();
         StopContentsAdapterConnect stopContentsAdapterConnect = new StopContentsAdapterConnect();
         if (mContentsAdapter != null) {
-            stopContentsAdapterConnect.execute(mContentsAdapter);
+            stopContentsAdapterConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mContentsAdapter);
         }
         showProgressBar(false);
     }

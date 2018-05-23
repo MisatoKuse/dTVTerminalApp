@@ -34,7 +34,7 @@ public class RatingBarLayout extends LinearLayout {
     /**
      * 最大評価値.
      */
-    private final static int numStars = 5;
+    private final static int sNumStars = 5;
     /**
      * 評価最小基準値.
      */
@@ -54,7 +54,7 @@ public class RatingBarLayout extends LinearLayout {
     /**
      * 区別フラグ（一覧と詳細）.
      */
-    private boolean isMini = true;
+    private boolean mIsMini = true;
     /**
      * 一覧画面のナンバーのテキストサイズ.
      */
@@ -103,7 +103,7 @@ public class RatingBarLayout extends LinearLayout {
      * @param isMini 画面区別フラグ.
      */
     public void setMiniFlg(final boolean isMini) {
-        this.isMini = isMini;
+        this.mIsMini = isMini;
     }
 
     /**
@@ -129,7 +129,7 @@ public class RatingBarLayout extends LinearLayout {
             setProgressNumbers(FORMAT_NUMBER_0);
             return;
         }
-        for (int i = START_NUMBER_START_INDEX; i <= numStars; i++) {
+        for (int i = START_NUMBER_START_INDEX; i <= sNumStars; i++) {
             if (i == fullStar + START_NUMBER_START_INDEX && dec >= BASE_VALUE) {
                 setProgressStars(dec);
             } else {
@@ -153,7 +153,7 @@ public class RatingBarLayout extends LinearLayout {
         layoutParams.setMargins((int) getResources().getDimension(R.dimen.rating_star_numbers_margin), PIXEL0, PIXEL0, PIXEL0);
         textView.setText(progressNumbers);
         textView.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, isMini ? MINI_NUMBER_TEXT_SIZE : NUMBER_TEXT_SIZE);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mIsMini ? MINI_NUMBER_TEXT_SIZE : NUMBER_TEXT_SIZE);
         textView.setLayoutParams(layoutParams);
         textView.setGravity(Gravity.TOP);
         this.addView(textView);
@@ -192,7 +192,7 @@ public class RatingBarLayout extends LinearLayout {
      * @return starの高さ、幅さ
      */
     private float getStarHeightWidth() {
-        if (isMini) {
+        if (mIsMini) {
             return getResources().getDimension(R.dimen.rating_star_mini_width_height);
         } else {
             return getResources().getDimension(R.dimen.rating_star_width_height);
@@ -204,7 +204,7 @@ public class RatingBarLayout extends LinearLayout {
      * @return numberの幅さ
      */
     private int getNumWidth() {
-        if (isMini) {
+        if (mIsMini) {
             return (int) getResources().getDimension(R.dimen.rating_star_mini_numbers_width);
         } else {
             return (int) getResources().getDimension(R.dimen.rating_star_numbers_width);

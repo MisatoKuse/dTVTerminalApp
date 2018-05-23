@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.tvprogram;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -91,13 +92,14 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      */
     private int mDeletePosition = 0;
     // endregion
+
     // region Activity LifeCycle
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_channel_edit_main_layout);
-        //Headerの設定
+
         setTitleText(getString(R.string.my_channel_list_setting));
         enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
@@ -142,7 +144,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
         DTVTLogger.start();
         //マイ番組表設定通信を止める
         StopMyProgramListDataConnect stopMyConnect = new StopMyProgramListDataConnect();
-        stopMyConnect.execute(mMyChannelDataProvider);
+        stopMyConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mMyChannelDataProvider);
     }
     // endregion
 
@@ -286,7 +288,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void onClick(final View view) {
-        if (view.getId() == R.id.header_layout_menu) {
+        if (view.getId() == R.id.header_layout_menu || view.getId() == R.id.header_layout_back) {
             super.onClick(view);
         }
     }

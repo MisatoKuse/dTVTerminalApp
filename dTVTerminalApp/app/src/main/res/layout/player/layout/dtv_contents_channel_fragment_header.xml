@@ -16,6 +16,7 @@
             android:layout_width="@dimen/contents_detail_channel_img_width"
             android:layout_height="match_parent"
             android:padding="@dimen/contents_detail_channel_img_padding"
+            android:src="@mipmap/loading_ch_mini"
             android:contentDescription="@null"
             android:scaleType="fitStart"/>
 
@@ -25,8 +26,11 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toEndOf="@id/dtv_contents_channel_header_img"
+            android:layout_marginEnd="16dp"
+            android:maxLines="2"
             android:textColor="@color/white_text"
             android:textSize="@dimen/contents_detail_channel_txt_size"
+            android:ellipsize="end"
             android:textStyle="bold" />
     </RelativeLayout>
 

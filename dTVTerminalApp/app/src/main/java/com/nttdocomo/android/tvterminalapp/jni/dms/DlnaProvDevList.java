@@ -37,10 +37,7 @@ public class DlnaProvDevList {
      */
     public boolean isDmsAvailable(final String udn) {
         DlnaInterface di = DlnaInterface.getInstance();
-        if (null == di) {
-            return false;
-        }
-        return di.isDmsAvailable(udn);
+        return null != di && di.isDmsAvailable(udn);
     }
 
     /**

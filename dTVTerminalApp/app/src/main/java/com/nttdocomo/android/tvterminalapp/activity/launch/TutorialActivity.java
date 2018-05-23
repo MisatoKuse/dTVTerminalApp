@@ -47,15 +47,15 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
     /**
      * 画面の素材（上）.
      */
-    private int[] mWalkthroughsAbove = {R.drawable.walkthrough_01,
-            R.drawable.walkthrough_02_01, R.drawable.walkthrough_03_01,
-            R.drawable.walkthrough_04_01, R.drawable.walkthrough_05_01 };
+    private int[] mWalkthroughsAbove = {R.mipmap.walkthrough_01,
+            R.mipmap.walkthrough_02_01, R.mipmap.walkthrough_03_01,
+            R.mipmap.walkthrough_04_01, R.mipmap.walkthrough_05_01 };
     /**
      * 画面の素材（下）.
      */
-    private int[] mWalkthroughsBelow = {R.drawable.walkthrough_01,
-            R.drawable.walkthrough_02_02, R.drawable.walkthrough_03_02,
-            R.drawable.walkthrough_04_02, R.drawable.walkthrough_05_02 };
+    private int[] mWalkthroughsBelow = {R.mipmap.walkthrough_01,
+            R.mipmap.walkthrough_02_02, R.mipmap.walkthrough_03_02,
+            R.mipmap.walkthrough_04_02, R.mipmap.walkthrough_05_02 };
     /**
      * 画像編集用.
      */
@@ -75,7 +75,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
     /**
      * チュートリアルページアダプタ.
      */
-    TutorialPagerAdapter mAdapter;
+    private TutorialPagerAdapter mAdapter;
     /**
      * アダプタにセットするビューリスト.
      */
@@ -140,7 +140,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
     /**
      * アニメーションハンドラー.
      */
-    private android.os.Handler mHandle = new android.os.Handler();
+    private final android.os.Handler mHandle = new android.os.Handler();
     /**アニメーション.*/
     private final Runnable mRunnableAnimation = new Runnable() {
         @Override
@@ -417,18 +417,18 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
      */
     private static class TutorialPagerAdapter extends PagerAdapter {
         /**リストビュー.*/
-        private List<View> views;
+        private List<View> mViews;
 
         /**チュートリアルページアダプタ.
          * @param views ビュー
          */
         private TutorialPagerAdapter(final List<View> views) {
-            this.views = views;
+            this.mViews = views;
         }
 
         @Override
         public int getCount() {
-            return views.size();
+            return mViews.size();
         }
 
         @Override
@@ -448,13 +448,13 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
 
         @Override
         public Object instantiateItem(final ViewGroup container, final int position) {
-            container.addView(views.get(position));
-            return views.get(position);
+            container.addView(mViews.get(position));
+            return mViews.get(position);
         }
 
         @Override
         public void destroyItem(final ViewGroup container, final int position, final Object object) {
-            container.removeView(views.get(position));
+            container.removeView(mViews.get(position));
         }
 
     }

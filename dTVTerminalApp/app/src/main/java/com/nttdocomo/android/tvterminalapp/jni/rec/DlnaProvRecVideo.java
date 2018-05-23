@@ -5,8 +5,8 @@
 package com.nttdocomo.android.tvterminalapp.jni.rec;
 
 
-import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 
 /**
  * 録画一覧
@@ -59,7 +59,7 @@ public class DlnaProvRecVideo {
      * @param imageQuality 画質設定
      * @return 成功true
      */
-    public boolean browseRecVideoDms(int imageQuality) {
+    public boolean browseRecVideoDms(final int imageQuality) {
         DlnaInterface di = DlnaInterface.getInstance();
 //        if(null!=di){
 //            return di.browseRecVideoDms();

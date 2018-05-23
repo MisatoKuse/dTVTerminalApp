@@ -336,7 +336,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     /**
      * ページャー設定  .
      */
-    public void setPager() {
+    private void setPager() {
         LayoutInflater lf = LayoutInflater.from(this.getContext());
         View inflate1 = lf.inflate(R.layout.remote_controller_player_ui_layout, this, false);
         View inflate = lf.inflate(R.layout.remote_controller_channel_ui_layout, this, false);
@@ -723,7 +723,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     /**
      * リモコンUI画面を閉じた際にplayer操作画面に戻す.
      */
-    public void setDefaultPage() {
+    private void setDefaultPage() {
         mViewPager.setCurrentItem(0);
     }
 }

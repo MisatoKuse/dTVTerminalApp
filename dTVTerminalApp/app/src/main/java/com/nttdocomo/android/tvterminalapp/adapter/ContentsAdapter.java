@@ -32,6 +32,7 @@ import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.RatingBarLayout;
+import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
 import java.util.List;
 
@@ -40,6 +41,7 @@ import java.util.List;
  */
 public class ContentsAdapter extends BaseAdapter implements OnClickListener {
 
+    //region variable
     /**
      * 各Activityインスタンス.
      */
@@ -157,6 +159,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * ダウンロード禁止判定フラグ.
      */
     private boolean isDownloadStop = false;
+    //endregion variable
 
     /**
      * 機能
@@ -265,7 +268,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         mInflater = LayoutInflater.from(mContext);
         this.mListData = listData;
         this.mType = type;
-        mThumbnailProvider = new ThumbnailProvider(mContext);
+        mThumbnailProvider = new ThumbnailProvider(mContext, ThumbnailDownloadTask.ImageSizeType.LIST);
     }
 
     /**
@@ -278,7 +281,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
-     * コンストラクタ.
+     * コンストラクタ(録画一覧専用)リファクタ対象.
      *
      * @param mContext Activity
      * @param listData リストデータ
@@ -291,7 +294,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         mInflater = LayoutInflater.from(mContext);
         this.mListData = listData;
         this.mType = type;
-        mThumbnailProvider = new ThumbnailProvider(mContext);
+        mThumbnailProvider = new ThumbnailProvider(mContext, ThumbnailDownloadTask.ImageSizeType.LIST);
         mDownloadCallback = callback;
     }
 
@@ -861,8 +864,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      */
     private void setThumbnailData(final ViewHolder holder, final ContentsData listContentInfo) {
         DTVTLogger.start();
-        //スクロール時にリサイクル前の画像が表示され続けないように一旦画像を消去する
-        holder.iv_thumbnail.setImageResource(0);
+
+        holder.iv_thumbnail.setImageResource(R.mipmap.loading_list);
         if (!TextUtils.isEmpty(listContentInfo.getThumURL())) { //サムネイル
             if (!isDownloadStop) {
                 holder.rl_thumbnail.setVisibility(View.VISIBLE);
@@ -873,8 +876,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 }
             }
         } else {
-            //URLがない場合はサムネイル取得失敗の画像を表示
-            holder.iv_thumbnail.setBackgroundResource(R.mipmap.error_scroll);
+            holder.iv_thumbnail.setImageResource(R.mipmap.error_list);
         }
     }
 

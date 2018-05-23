@@ -64,7 +64,7 @@ public class ContentUtils {
     /** チャンネルタイプ premium_ch.*/
     private static final String CH_TYPE_PREMIUM = "premium_ch";
     /** DTVフラグ 1.*/
-    private static final String IS_DTV_FLAG = "1";
+    public static final String IS_DTV_FLAG = "1";
     /** DTVフラグ 0.*/
     private static final String NOT_DTV_FLAG = "0";
     /** BVフラグ 1.*/
@@ -538,7 +538,7 @@ public class ContentUtils {
                                                 return ContentsType.HIKARI_IN_DCH_MISS;
                                             } else {
                                                 //VOD配信日時(vod_start_date) > 現在時刻 -> ひかりTV内dTVチャンネル_番組
-                                                return ContentsType.HIKARI_IN_DCH;
+                                                return ContentsType.HIKARI_IN_DCH_TV;
                                             }
                                         case ContentDetailActivity.CONTENT_TYPE_FLAG_THREE:
                                             //contentsType=3 -> ひかりTV内dTVチャンネル_関連VOD
@@ -571,7 +571,7 @@ public class ContentUtils {
      * @return ContentsType
      */
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
-    public static ContentsType getRecommendContentsType(OtherContentsDetailData detailData) {
+    public static ContentsType getRecommendContentsType(final OtherContentsDetailData detailData) {
         int serviceId = detailData.getServiceId();
         String categoryId = detailData.getCategoryId();
         switch (serviceId) {
@@ -686,8 +686,7 @@ public class ContentUtils {
      * @param channelInfo  Channelメタデータ
      * @return 視聴可否ステータス
      */
-    public static ViewIngType getViewingType( String contractInfo, final VodMetaFullData metaFullData, final ChannelInfo channelInfo) {
-        contractInfo = UserInfoUtils.CONTRACT_INFO_H4D;
+    public static ViewIngType getViewingType(final String contractInfo, final VodMetaFullData metaFullData, final ChannelInfo channelInfo) {
         if (contractInfo == null || contractInfo.isEmpty() || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo)) {
             //契約情報が未設定、または"none"の場合は視聴不可(契約導線を表示)
             DTVTLogger.debug("Unviewable(Not contract)");

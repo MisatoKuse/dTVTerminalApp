@@ -189,7 +189,7 @@ public class DownloadService extends Service implements DownloadListener {
     /**
      * ダウンロード開始.
      */
-    public void startService() {
+    private void startService() {
         startForeground(DOWNLOAD_SERVICE_ID, getNotification(getResources().getString(R.string.record_download_notification), 0));
     }
 
@@ -364,9 +364,6 @@ public class DownloadService extends Service implements DownloadListener {
      * @return true or false
      */
     public synchronized boolean isDownloading() {
-        if (null == mDownloaderBase) {
-            return false;
-        }
-        return mDownloaderBase.isDownloading();
+        return null != mDownloaderBase && mDownloaderBase.isDownloading();
     }
 }

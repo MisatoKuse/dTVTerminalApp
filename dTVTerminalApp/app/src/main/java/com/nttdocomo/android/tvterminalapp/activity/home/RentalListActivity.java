@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -72,9 +73,7 @@ public class RentalListActivity extends BaseActivity implements
         setTitleText(getString(R.string.rental_title));
         Intent intent = getIntent();
         mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
-        if (mIsMenuLaunch) {
-            enableHeaderBackIcon(true);
-        }
+        enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
@@ -105,9 +104,9 @@ public class RentalListActivity extends BaseActivity implements
         DTVTLogger.start();
         //通信を止める
         StopRentalDataConnect stopConnect = new StopRentalDataConnect();
-        stopConnect.execute(mRentalDataProvider);
+        stopConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mRentalDataProvider);
         StopContentsAdapterConnect stopAdapterConnect = new StopContentsAdapterConnect();
-        stopAdapterConnect.execute(mContentsAdapter);
+        stopAdapterConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mContentsAdapter);
     }
     // endregion Activity LifeCycle
 

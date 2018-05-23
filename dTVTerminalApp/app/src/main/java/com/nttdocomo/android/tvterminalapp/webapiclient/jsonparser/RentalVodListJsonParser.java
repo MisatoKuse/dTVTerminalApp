@@ -110,7 +110,7 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendPurchasedVodListResponse(final JSONObject jsonObj) {
+    private void sendPurchasedVodListResponse(final JSONObject jsonObj) {
         try {
             ArrayList<VodMetaFullData> vodMetaFullDataList = new ArrayList<VodMetaFullData>();
             if (!jsonObj.isNull(JsonConstants.META_RESPONSE_METADATE_LIST)) {
@@ -140,7 +140,7 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendActiveListResponse(final JSONObject jsonObj) {
+    private void sendActiveListResponse(final JSONObject jsonObj) {
         try {
             ArrayList<ActiveData> vodActiveDataList =
                     new ArrayList<ActiveData>();

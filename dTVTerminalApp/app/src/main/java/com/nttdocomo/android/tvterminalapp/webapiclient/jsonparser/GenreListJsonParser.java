@@ -59,7 +59,7 @@ public class GenreListJsonParser extends AsyncTask<String, Object, Object> {
      * @param jsonStr ジジャンル一覧Jsonデータ
      * @return ジャンル一覧取得：正常時レスポンスデータ
      */
-    public GenreListResponse genreListSender(final String jsonStr) {
+    private GenreListResponse genreListSender(final String jsonStr) {
 
 //        DTVTLogger.debugHttp(jsonStr); ログを確認したい場合に使用
         mGenreListResponse = new GenreListResponse();
@@ -83,7 +83,7 @@ public class GenreListJsonParser extends AsyncTask<String, Object, Object> {
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendUpdateDate(final JSONObject jsonObj) {
+    private void sendUpdateDate(final JSONObject jsonObj) {
         try {
             // UpdateDateの値を取得しセットする
             if (!jsonObj.isNull(GenreListResponse.GENRE_LIST_RESPONSE_UPDATE_DATE)) {
@@ -103,7 +103,7 @@ public class GenreListJsonParser extends AsyncTask<String, Object, Object> {
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendGenreListResponse(final JSONObject jsonObj) {
+    private void sendGenreListResponse(final JSONObject jsonObj) {
         try {
             ArrayList<GenreListMetaData> genreListMetaDataList;
             Iterator<String> iterator_key = jsonObj.keys();

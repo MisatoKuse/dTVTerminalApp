@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.fragment.search;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -253,12 +254,13 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
 
     /**
      * リストのデータをクリアする.
+     * @param context コンテキスト
      */
-    public void clear() {
+    public void clear(final Context context) {
         if (null != mData) {
             mData.clear();
         }
-        notifyDataSetChanged(getResources().getString(R.string.keyword_search_default_count),
+        notifyDataSetChanged(context.getResources().getString(R.string.keyword_search_default_count),
                 PAGE_NO_OF_SERVICE_CLEAR);
         showProgressBar(false);
     }
@@ -336,7 +338,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         DTVTLogger.start();
         StopContentsAdapterConnect stopContentsAdapterConnect = new StopContentsAdapterConnect();
         if (mContentsAdapter != null) {
-            stopContentsAdapterConnect.execute(mContentsAdapter);
+            stopContentsAdapterConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mContentsAdapter);
         }
     }
 

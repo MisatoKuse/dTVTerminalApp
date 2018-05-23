@@ -21,7 +21,7 @@ import java.io.StringReader;
 /**
  * 検索結果Parser.
  */
-public class SearchXmlParser extends AsyncTask<String, Integer, String> {
+class SearchXmlParser extends AsyncTask<String, Integer, String> {
 
     /**
      * 検索結果返却用データ.
@@ -357,7 +357,7 @@ public class SearchXmlParser extends AsyncTask<String, Integer, String> {
     /**
      * parse終了時の処理.
      */
-    public void parserDidEndDocument() {
+    private void parserDidEndDocument() {
         DTVTLogger.debug("xml parse finished");
     }
 

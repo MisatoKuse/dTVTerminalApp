@@ -31,7 +31,7 @@ public class SearchConstants {
     /**
      * レコメンド情報.
      */
-    public static class RecommendList {
+    private static class RecommendList {
         /**レコメンド情報検索結果返却数.*/
         public static final int requestMaxCount_Recommend = 20;
 
@@ -49,7 +49,7 @@ public class SearchConstants {
     /**
      * レコメンド情報レスポンスエラーID.
      */
-    public static class RecommendResponseErrorId {
+    private static class RecommendResponseErrorId {
         /**個々のサービスIDの桁数が不一致の場合はERMD08001（リクエストエラー）.*/
         public static final String requestError_Recommend = "ERMD08001";
         /**範囲を超えている場合はERMD08002（システムエラー）.*/

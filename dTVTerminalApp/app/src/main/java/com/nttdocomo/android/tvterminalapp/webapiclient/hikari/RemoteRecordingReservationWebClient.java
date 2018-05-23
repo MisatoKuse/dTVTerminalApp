@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
@@ -57,7 +58,7 @@ public class RemoteRecordingReservationWebClient
             //JSONをパースして、データを返す
             new RemoteRecordingReservationJsonParser(
                     mRemoteRecordingReservationJsonParserCallback)
-                    .execute(returnCode.bodyData);
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode.bodyData);
         }
     }
 

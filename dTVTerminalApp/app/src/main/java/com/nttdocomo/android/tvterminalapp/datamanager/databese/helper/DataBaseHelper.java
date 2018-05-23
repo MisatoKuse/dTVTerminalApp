@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.datamanager.databese.helper;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -163,39 +164,45 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_ROLE_LIST_SQL);
         try {
             sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_WATCH_LISTEN_VIDEO_SQL);   //クリップ一覧画面用
-        } catch (Exception e) {
-            DTVTLogger.debug("HomeDBHelper::onCreate, create " + DataBaseConstants.CREATE_TABLE_WATCH_LISTEN_VIDEO_SQL + " table failed, cause=" + e.getCause());
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("HomeDBHelper::onCreate, create " + DataBaseConstants.
+                    CREATE_TABLE_WATCH_LISTEN_VIDEO_SQL + " table failed, cause=" + e.getCause());
         }
         try {
             sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_RENTAL_LIST_SQL);   //レンタル一覧画面用
-        } catch (Exception e) {
-            DTVTLogger.debug("HomeDBHelper::onCreate, create " + DataBaseConstants.CREATE_TABLE_RENTAL_LIST_SQL + " table failed, cause=" + e.getCause());
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("HomeDBHelper::onCreate, create " + DataBaseConstants.
+                    CREATE_TABLE_RENTAL_LIST_SQL + " table failed, cause=" + e.getCause());
         }
         try {
             sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_RENTAL_ACTIVE_LIST_SQL);   //レンタルのactive_list一覧用
-        } catch (Exception e) {
-            DTVTLogger.debug("HomeDBHelper::onCreate, create " + DataBaseConstants.CREATE_TABLE_RENTAL_ACTIVE_LIST_SQL + " table failed, cause=" + e.getCause());
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("HomeDBHelper::onCreate, create " + DataBaseConstants.
+                    CREATE_TABLE_RENTAL_ACTIVE_LIST_SQL + " table failed, cause=" + e.getCause());
         }
         try {
             sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_RENTAL_CHANNEL_LIST_SQL);   //購入済みCH一覧用
-        } catch (Exception e) {
-            DTVTLogger.debug("HomeDBHelper::onCreate, create " + DataBaseConstants.CREATE_TABLE_RENTAL_CHANNEL_LIST_SQL + " table failed, cause=" + e.getCause());
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("HomeDBHelper::onCreate, create " + DataBaseConstants.
+                    CREATE_TABLE_RENTAL_CHANNEL_LIST_SQL + " table failed, cause=" + e.getCause());
         }
         try {
             sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_RENTAL_CHANNEL_ACTIVE_LIST_SQL);   //購入済みCHのactive_lis一覧用
-        } catch (Exception e) {
+        } catch (SQLiteException e) {
             DTVTLogger.debug("HomeDBHelper::onCreate, create " + DataBaseConstants.CREATE_TABLE_RENTAL_CHANNEL_ACTIVE_LIST_SQL
                     + " table failed, cause=" + e.getCause());
         }
         try {
             sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_TV_CLIP_KEY_LIST_SQL); // クリップキー一覧(TV)
-        } catch (Exception e) {
-            DTVTLogger.debug("HomeDBHelper::onCreate, create " + DataBaseConstants.CREATE_TABLE_TV_CLIP_KEY_LIST_SQL + " table failed, cause=" + e.getCause());
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("HomeDBHelper::onCreate, create " + DataBaseConstants.
+                    CREATE_TABLE_TV_CLIP_KEY_LIST_SQL + " table failed, cause=" + e.getCause());
         }
         try {
             sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL); // クリップキー一覧(VOD)
-        } catch (Exception e) {
-            DTVTLogger.debug("HomeDBHelper::onCreate, create " + DataBaseConstants.CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL + " table failed, cause=" + e.getCause());
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("HomeDBHelper::onCreate, create " + DataBaseConstants.
+                    CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL + " table failed, cause=" + e.getCause());
         }
 
     }

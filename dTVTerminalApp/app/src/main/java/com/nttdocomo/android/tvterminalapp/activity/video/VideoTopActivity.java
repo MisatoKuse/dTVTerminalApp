@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.video;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -96,7 +97,7 @@ public class VideoTopActivity extends BaseActivity implements
         super.onPause();
         DTVTLogger.start();
         StopGenreListDataConnect stopConnect = new StopGenreListDataConnect();
-        stopConnect.execute(mVideoGenreProvider);
+        stopConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mVideoGenreProvider);
         DTVTLogger.end();
     }
     // endregion Activity LifeCycle
@@ -114,14 +115,11 @@ public class VideoTopActivity extends BaseActivity implements
             default:
                 break;
         }
-        if (checkRemoteControllerView()) {
-            return false;
-        }
-        return super.onKeyDown(keyCode, event);
+        return !checkRemoteControllerView() && super.onKeyDown(keyCode, event);
     }
 
     @Override
-    public void contentsDetailBackKey(final View view) {
+    protected void contentsDetailBackKey(final View view) {
         if (mIsMenuLaunch) {
             //メニューから起動の場合ホーム画面に戻る
             super.contentsDetailBackKey(null);

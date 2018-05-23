@@ -20,6 +20,8 @@ import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActiv
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.video.VideoContentListActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
@@ -32,7 +34,11 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetail
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
+import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipKeyListWebClient;
 
 import java.util.ArrayList;
@@ -47,11 +53,11 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     /**
      * コンテキストファイル.
      */
-    protected Context mContext;
+    Context mContext;
     /**
      * クリップキーリスト.
      */
-    protected boolean mRequiredClipKeyList = false;
+    boolean mRequiredClipKeyList = false;
     /**
      * レスポンス終了フラグ.
      */
@@ -174,7 +180,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      *
      * @param request リクエストパラメータ
      */
-    public void getClipKeyList(final ClipKeyListRequest request) {
+    void getClipKeyList(final ClipKeyListRequest request) {
         DTVTLogger.start();
         if (!mIsCancel) {
             mResponseEndFlag = false;
@@ -478,7 +484,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * @param tvService    tvService
      * @return クリップ状態
      */
-    protected boolean getClipStatus(
+    boolean getClipStatus(
             final String dispType, final String contentsType, final String dTv, final String crid,
             final String serviceId, final String eventId, final String titleId, final String tvService) {
         boolean clipStatus = false;
@@ -610,6 +616,140 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         }
         DTVTLogger.end();
         return list;
+    }
+
+
+    /**
+     * 取得したリストマップをContentsDataクラスへ入れる.
+     *
+     * @param contentMapList コンテンツリストデータ
+     * @param channels チャンネル情報
+     * @return ListView表示用データ
+     */
+    List<ContentsData> setContentData(final List<Map<String, String>> contentMapList, final ArrayList<ChannelInfo> channels) {
+        List<ContentsData> contentsDataList = new ArrayList<>();
+
+        ContentsData contentInfo;
+
+        UserState userState = UserInfoUtils.getUserState(mContext);
+        for (int i = 0; i < contentMapList.size(); i++) {
+            contentInfo = new ContentsData();
+
+            Map<String, String> map = contentMapList.get(i);
+            String title = map.get(JsonConstants.META_RESPONSE_TITLE);
+            String searchOk = map.get(JsonConstants.META_RESPONSE_SEARCH_OK);
+            String dispType = map.get(JsonConstants.META_RESPONSE_DISP_TYPE);
+            String dtv = map.get(JsonConstants.META_RESPONSE_DTV);
+            String dtvType = map.get(JsonConstants.META_RESPONSE_DTV_TYPE);
+
+            contentInfo.setRank(String.valueOf(i + 1));
+            if (ContentUtils.IS_DTV_FLAG.equals(dtv)) {
+                contentInfo.setThumURL(map.get(JsonConstants.META_RESPONSE_DTV_THUMB_448));
+                contentInfo.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_DTV_THUMB_640));
+            } else {
+                contentInfo.setThumURL(map.get(JsonConstants.META_RESPONSE_THUMB_448));
+                contentInfo.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_THUMB_640));
+            }
+            contentInfo.setTitle(title);
+            contentInfo.setSearchOk(searchOk);
+            contentInfo.setRatStar(map.get(JsonConstants.META_RESPONSE_RATING));
+            contentInfo.setTvService(map.get(JsonConstants.META_RESPONSE_TV_SERVICE));
+            contentInfo.setContentsType(map.get(JsonConstants.META_RESPONSE_CONTENT_TYPE));
+            contentInfo.setDtv(dtv);
+            contentInfo.setDtvType(dtvType);
+            contentInfo.setDispType(dispType);
+            setResponseId(contentInfo, map);
+            contentInfo.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
+            contentInfo.setEventId(map.get(JsonConstants.META_RESPONSE_EVENT_ID));
+            contentInfo.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
+            contentInfo.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
+            contentInfo.setPublishStartDate(String.valueOf(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE))));
+            contentInfo.setAvailStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
+            contentInfo.setAvailEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
+            contentInfo.setVodStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_START_DATE)));
+            contentInfo.setVodEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_END_DATE)));
+            setChannelInfo(map, contentInfo, channels);
+            //クリップリクエストデータ作成
+            ClipRequestData requestData = new ClipRequestData();
+            setClipRequestData(map, requestData, title, searchOk);
+            //視聴通知判定生成
+            String contentsType = map.get(JsonConstants.META_RESPONSE_CONTENT_TYPE);
+            String tvService = map.get(JsonConstants.META_RESPONSE_TV_SERVICE);
+            String dTv = map.get(JsonConstants.META_RESPONSE_DTV);
+            requestData.setIsNotify(dispType, contentsType, contentInfo.getVodStartDate(), tvService, dTv);
+            setRequestType(requestData, dispType, contentsType);
+            contentInfo.setRequestData(requestData);
+            DTVTLogger.debug("RankingContentInfo " + contentInfo.getRank());
+            if (mRequiredClipKeyList) {
+                // クリップ状態をコンテンツリストに格納
+                contentInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv,
+                        requestData.getCrid(), requestData.getServiceId(),
+                        requestData.getEventId(), requestData.getTitleId(), tvService));
+            }
+            //生成した contentInfo をリストに格納する
+            contentsDataList.add(contentInfo);
+        }
+
+        return contentsDataList;
+    }
+
+    /**
+     * クリップリクエストデータを設定する.
+     * @param map コンテンツ一覧用マップ
+     * @param requestData クリップリクエストデータ
+     * @param title タイトル
+     * @param searchOk クリップ可否
+     */
+    void setClipRequestData(final Map<String, String> map, final ClipRequestData requestData,
+                                    final String title, final String searchOk) {
+        requestData.setCrid(map.get(JsonConstants.META_RESPONSE_CRID));
+        requestData.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
+        requestData.setEventId(map.get(JsonConstants.META_RESPONSE_EVENT_ID));
+        requestData.setTitleId(map.get(JsonConstants.META_RESPONSE_TITLE_ID));
+        requestData.setTitle(title);
+        requestData.setRValue(map.get(JsonConstants.META_RESPONSE_R_VALUE));
+        requestData.setLinearStartDate(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE));
+        requestData.setLinearEndDate(map.get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE));
+        requestData.setSearchOk(searchOk);
+    }
+
+    /**
+     * リクエストタイプ設定する.
+     * @param requestData クリップリクエストデータ
+     * @param dispType 表示タイプ.
+     * @param contentsType コンテンツタイプ
+     */
+    void setRequestType(final ClipRequestData requestData, final String dispType, final String contentsType) {
+        requestData.setDispType(dispType);
+        requestData.setContentType(contentsType);
+    }
+
+    /**
+     * チャンネル情報設定する.
+     * @param map コンテンツ一覧用マップ
+     * @param contentInfo  クリップデータ一覧
+     * @param channels チャンネル情報
+     */
+    void setChannelInfo(final Map<String, String> map, final ContentsData contentInfo, final ArrayList<ChannelInfo> channels) {
+        String chNo = map.get(JsonConstants.META_RESPONSE_CHNO);
+        if (channels != null && !TextUtils.isEmpty(chNo)) {
+            for (ChannelInfo channelInfo : channels) {
+                if (chNo.equals(String.valueOf(channelInfo.getChannelNo()))) {
+                    contentInfo.setChannelName(channelInfo.getTitle());
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * レスポンスIDデータを設定する.
+     * @param contentInfo クリップデータ一覧
+     * @param map コンテンツ一覧用マップ
+     */
+    void setResponseId(final ContentsData contentInfo, final Map<String, String> map) {
+        contentInfo.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
+        contentInfo.setEventId(map.get(JsonConstants.META_RESPONSE_EVENT_ID));
     }
 
     /**

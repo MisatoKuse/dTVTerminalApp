@@ -20,6 +20,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WatchListenVideoWebClient;
@@ -213,8 +214,13 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
             String dtvType = map.get(JsonConstants.META_RESPONSE_DTV_TYPE);
 
             contentInfo.setRank(String.valueOf(i + 1));
-            contentInfo.setThumURL(map.get(JsonConstants.META_RESPONSE_THUMB_448));
-            contentInfo.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_THUMB_640));
+            if (ContentUtils.IS_DTV_FLAG.equals(dtv)) {
+                contentInfo.setThumURL(map.get(JsonConstants.META_RESPONSE_DTV_THUMB_448));
+                contentInfo.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_DTV_THUMB_640));
+            } else {
+                contentInfo.setThumURL(map.get(JsonConstants.META_RESPONSE_THUMB_448));
+                contentInfo.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_THUMB_640));
+            }
             contentInfo.setTitle(title);
             contentInfo.setTime(map.get(JsonConstants.META_RESPONSE_DISPLAY_START_DATE));
             contentInfo.setSearchOk(searchOk);

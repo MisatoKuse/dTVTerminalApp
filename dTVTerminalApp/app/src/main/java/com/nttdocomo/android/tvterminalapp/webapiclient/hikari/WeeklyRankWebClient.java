@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -26,7 +27,7 @@ public class WeeklyRankWebClient
     /**
      * ジャンルID送信用キー.
      */
-    public static final String WEEKLY_RANK_CLIENT_BUNDLE_KEY = "genreId";
+    private static final String WEEKLY_RANK_CLIENT_BUNDLE_KEY = "genreId";
 
     /**
      * リクエストジャンル.
@@ -70,7 +71,7 @@ public class WeeklyRankWebClient
                 mWeeklyRankJsonParserCallback, returnCode.extraData, mGenreId);
 
         //JSONをパースして、データを返す
-        weeklyRankJsonParser.execute(returnCode.bodyData);
+        weeklyRankJsonParser.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode.bodyData);
     }
 
     /**

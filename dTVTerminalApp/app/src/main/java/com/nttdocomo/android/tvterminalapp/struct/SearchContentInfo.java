@@ -11,7 +11,7 @@ public class SearchContentInfo {
     /**
      * クリップフラグ.
      */
-    public boolean mClipFlag;
+    private boolean mClipFlag;
     /**
      * コンテンツID.
      */
@@ -31,7 +31,7 @@ public class SearchContentInfo {
     /**
      * サムネイルURL2.
      */
-    public String mContentPictureUrl2;
+    private String mContentPictureUrl2;
     /**
      * タイトル.
      */
@@ -83,7 +83,7 @@ public class SearchContentInfo {
     /**
      *  viewAbleAge.
      */
-    public String mViewAbleAge;
+    private String mViewAbleAge;
     /**
      *  reserved1.
      */

@@ -21,5 +21,5 @@ public enum SearchFilterType {
     /**「課金方法」:レンタル.*/
     chargeRental,
     /**「その他絞込み条件」：HD作品.*/
-    otherHdWork;
+    otherHdWork
 }

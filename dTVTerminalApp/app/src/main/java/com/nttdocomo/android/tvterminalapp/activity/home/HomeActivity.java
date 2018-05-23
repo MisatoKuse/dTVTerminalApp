@@ -7,11 +7,14 @@ package com.nttdocomo.android.tvterminalapp.activity.home;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Display;
@@ -29,6 +32,7 @@ import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivi
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewAdapter;
+import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewItemDecoration;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
@@ -179,6 +183,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private boolean mIsSearchDone = false;
 
+    /**
+     * ホーム画面表示時にdアカウントが取得できていなかった場合に、取得後にユーザー情報を取得しに行くフラグ.
+     */
+    private boolean mUserInfoGetRequest = false;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -255,9 +264,27 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onResume() {
         super.onResume();
+
+        //ユーザー情報取得開始
+        getUserInfoStart();
+    }
+
+    /**
+     * ホーム画面表示時のユーザー情報取得部.
+     *
+     * (複数個所から呼ばれることになったので、をonResumeから分離)
+     */
+    private void getUserInfoStart() {
+        DTVTLogger.start();
+
+        //ユーザー情報リクエストをリセット
+        mUserInfoGetRequest = false;
+
         mUserInfoDataProvider = new UserInfoDataProvider(this, this);
+
         //アプリ起動時のデータ取得ユーザ情報未取得又は時間切れ又はonCreateから開始した場合はユーザ情報取得から
-        if (mUserInfoDataProvider.isUserInfoTimeOut() && !TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(this))) {
+        if (mUserInfoDataProvider.isUserInfoTimeOut()
+                && !TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(this))) {
             if (networkCheck()) {
                 getUserInfo();
             } else {
@@ -267,11 +294,39 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 }
             }
         } else {
+            DTVTLogger.debug("getDaccount="
+                    + SharedPreferencesUtils.getSharedPreferencesDaccountId(this));
+            DTVTLogger.debug("userInfo Timeout?=" + mUserInfoDataProvider.isUserInfoTimeOut());
+
             if (!mIsSearchDone) {
+                //dアカウントが取れていないので、取れたときのコールバックにユーザー情報取得を依頼する
+                mUserInfoGetRequest = true;
+
                 //起動時はプログレスダイアログを表示
                 requestHomeData();
             }
         }
+
+        DTVTLogger.end();
+    }
+
+    @Override
+    protected void onDaccountOttGetComplete(final boolean result) {
+        //dアカウントの取得が終わった際に呼ばれるコールバック
+        super.onDaccountOttGetComplete(result);
+
+        DTVTLogger.start();
+
+        //ユーザー情報取得依頼をチェック
+        if (mUserInfoGetRequest) {
+            //依頼が出ているので、ユーザー情報の取得を開始
+            getUserInfo();
+
+            //取得を開始したので、フラグはクリア
+            mUserInfoGetRequest = false;
+        }
+
+        DTVTLogger.end();
     }
 
     @Override
@@ -293,11 +348,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         //通信を止める
         if (mHomeDataProvider != null) {
             StopHomeDataConnect stopHomeDataConnect = new StopHomeDataConnect();
-            stopHomeDataConnect.execute(mHomeDataProvider);
+            stopHomeDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mHomeDataProvider);
         }
+
         if (mUserInfoDataProvider != null) {
             StopUserInfoDataConnect stopUserInfoDataConnect = new StopUserInfoDataConnect();
-            stopUserInfoDataConnect.execute(mUserInfoDataProvider);
+            stopUserInfoDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mUserInfoDataProvider);
         }
     }
 
@@ -385,7 +441,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
         //各コンテンツのビューを作成する
         for (int i = HOME_CONTENTS_LIST_START_INDEX; i < HOME_CONTENTS_LIST_COUNT + HOME_CONTENTS_LIST_START_INDEX; i++) {
-            mLinearLayout.addView(setContentsView(i));
+            final View view = setContentsView(i);
+            mLinearLayout.addView(view);
+            RecyclerView recyclerView = view.findViewById(R.id.home_main_item_recyclerview);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+            linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+            recyclerView.setLayoutManager(linearLayoutManager);
+            recyclerView.addItemDecoration(new HomeRecyclerViewItemDecoration(this));
         }
     }
 
@@ -654,9 +716,15 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * ユーザ情報取得処理.
      */
     private void getUserInfo() {
-        //ユーザー情報の変更検知
-        showProgessBar(true);
-        mUserInfoDataProvider.getUserInfo();
+        //dアカウント取得後のコールバックからも呼ばれるようになったので、UIスレッド対応
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //ユーザー情報の変更検知
+                showProgessBar(true);
+                mUserInfoDataProvider.getUserInfo();
+            }
+        });
     }
 
     /**

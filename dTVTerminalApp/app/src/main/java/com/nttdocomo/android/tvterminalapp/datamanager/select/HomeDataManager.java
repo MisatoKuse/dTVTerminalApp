@@ -56,6 +56,9 @@ public class HomeDataManager {
         //ホーム画面に必要な列を列挙する
         String[] columns = {JsonConstants.META_RESPONSE_THUMB_448,
                 JsonConstants.META_RESPONSE_THUMB_640,
+                JsonConstants.META_RESPONSE_DTV_THUMB_448,
+                JsonConstants.META_RESPONSE_DTV_THUMB_640,
+                JsonConstants.META_RESPONSE_DTV,
                 JsonConstants.META_RESPONSE_AVAIL_START_DATE,
                 JsonConstants.META_RESPONSE_AVAIL_END_DATE,
                 JsonConstants.META_RESPONSE_TITLE,

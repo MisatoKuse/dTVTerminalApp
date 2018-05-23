@@ -59,7 +59,7 @@ public class TvClipJsonParser {
      * statusの値をMapでオブジェクトクラスに渡す.
      * @param jsonObj APIレスポンス Jsonデータ
      */
-    public void sendStatus(final JSONObject jsonObj) {
+    private void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
             HashMap<String, String> map = new HashMap<String, String>();
@@ -89,7 +89,7 @@ public class TvClipJsonParser {
      * コンテンツのList<HashMap>をオブジェクトクラスに格納.
      * @param arrayList ArrayList
      */
-    public void sendVcList(final JSONArray arrayList) {
+    private void sendVcList(final JSONArray arrayList) {
         try {
             List<HashMap<String, String>> tcList = new ArrayList<>();
             for (int i = 0; i < arrayList.length(); i++) {

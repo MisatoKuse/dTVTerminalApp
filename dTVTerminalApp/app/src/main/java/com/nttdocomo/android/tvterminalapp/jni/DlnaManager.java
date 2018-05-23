@@ -15,29 +15,99 @@ import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+/**
+ * DLNAマネージャー.
+ */
 public class DlnaManager {
+    /**エラータイプ.*/
     public enum LocalRegistrationErrorType {
+        /**NONE.*/
         NONE,
+        /**OVER.*/
         OVER,
+        /**UNKNOWN.*/
         UNKNOWN
     }
 
+    /**リモート接続ステータス.*/
+    public enum RemoteConnectStatus {
+        /** 不明. */
+        UNKNOWN,
+        /** 接続準備環境. */
+        READY,
+        /** 接続中. */
+        CONNECTED,
+        /** 切断. */
+        DETECTED_DISCONNECTION,
+        /** 再接続失敗. */
+        GAVEUP_RECONNECTION,
+        /** 其の他. */
+        OTHER
+    }
+
     // region Listener declaration
+
+    /**
+     * DlnaManagerListener.
+     */
     public interface DlnaManagerListener {
-        void joinDms(String name, String host, String udn, String controlUrl, String eventSubscriptionUrl);
+        /**
+         * joinDms.
+         * @param name name
+         * @param host host
+         * @param udn udn
+         * @param controlUrl controlUrl
+         * @param eventSubscriptionUrl eventSubscriptionUrl
+         */
+        void joinDms(final String name, final String host, final String udn, final String controlUrl,
+                     final String eventSubscriptionUrl);
+
+        /**
+         * leaveDms.
+         * @param udn udn
+         */
         void leaveDms(String udn);
     }
+
+    /**
+     * LocalRegisterListener.
+     */
     public interface LocalRegisterListener {
-        void onRegisterCallBack(boolean result, LocalRegistrationErrorType errorType);
+        /**
+         * onRegisterCallBack.
+         * @param result result
+         * @param errorType errorType
+         */
+        void onRegisterCallBack(final boolean result, final LocalRegistrationErrorType errorType);
+    }
+
+    /**
+     * リモート接続リスナー.
+     */
+    public interface RemoteConnectStatusChangeListener {
+        /**
+         * リモート接続コールバック.
+         * @param connectStatus 接続状態
+         */
+        void onRemoteConnectStatusCallBack(RemoteConnectStatus connectStatus);
     }
     // endregion Listener declaration
 
-    // singletone
+    /**
+     * singletone.
+     */
     private static DlnaManager sInstance = new DlnaManager();
 
+    /**
+     * DlnaManager.
+     */
     private DlnaManager() {
     }
 
+    /**
+     * shared.
+     * @return Instance
+     */
     public static DlnaManager shared() {
         return sInstance;
     }
@@ -45,13 +115,33 @@ public class DlnaManager {
     static {
         System.loadLibrary("dtvtlib");
     }
-
+    /**　エラータイプ:OVER.*/
     private static final int LOCAL_REGISTRATION_ERROR_TYPE_OVER = 1;
-
-    public DlnaManagerListener mDlnaManagerListener = null;
+    /** 不明. */
+    private static final int REMOTE_CONNECT_STATUS_UNKOWN = 2;
+    /** 接続準備環境. */
+    private static final int REMOTE_CONNECT_STATUS_READY = 3;
+    /** 接続中. */
+    private static final int REMOTE_CONNECT_STATUS_CONNECTED = 4;
+    /** 切断. */
+    private static final int REMOTE_CONNECT_STATUS_DISCONNECTION = 5;
+    /** 再接続失敗. */
+    private static final int REMOTE_CONNECT_STATUS_RECONNECTION = 6;
+    /** dms検出リスナー. */
+    private DlnaManagerListener mDlnaManagerListener = null;
+    /** ローカルレジストレーションリスナー. */
     public LocalRegisterListener mLocalRegisterListener = null;
-    private Context mContext;
+    /** リモート接続リスナー. */
+    public RemoteConnectStatusChangeListener mRemoteConnectStatusChangeListener = null;
+    /** 接続ステータス. */
+    public RemoteConnectStatus remoteConnectStatus = RemoteConnectStatus.OTHER;
+    /** コンテキスト. */
+    public Context mContext;
 
+    /**
+     * launch.
+     * @param context コンテキスト
+     */
     public void launch(final Context context) {
         mContext = context;
         DTVTLogger.start();
@@ -70,40 +160,89 @@ public class DlnaManager {
         DTVTLogger.end();
     }
 
+    /**
+     * StartDmp.
+     */
     public void StartDmp() {
         startDmp();
     }
 
+    /**
+     * StopDmp.
+     */
     public void StopDmp() {
         stopDmp();
     }
 
-    public void ConnectDmsWithUdn(String udn) {
+    /**
+     * ConnectDmsWithUdn.
+     * @param udn udn
+     */
+    public void ConnectDmsWithUdn(final String udn) {
         connectDmsWithUdn(udn);
     }
 
-    public void BrowseContentWithContainerId(int offset, int limit, String containerId) {
+    /**
+     * BrowseContentWithContainerId.
+     * @param offset offset
+     * @param limit limit
+     * @param containerId containerId
+     */
+    public void BrowseContentWithContainerId(final int offset, final int limit, final String containerId) {
         browseContentWithContainerId(offset, limit, containerId);
     }
 
+    /**
+     * StartDtcp.
+     */
     public void StartDtcp() {
         startDtcp();
     }
 
+    /**
+     * RestartDirag.
+     */
     public void RestartDirag() {
         restartDirag();
     }
 
+    /**
+     * Diragを停止.
+     */
+    private void StopDirag() {
+        stopDirag();
+    }
+
+    /**
+     * RequestLocalRegistration.
+     * @param udn udn
+     */
     public void RequestLocalRegistration(final String udn) {
         requestLocalRegistration(udn, Build.MODEL);
     }
 
-    public String GetRemoteDeviceExpireDate(String udn) {
+    /**
+     * リモート接続を行う.
+     * @param udn udn
+     */
+    public void RequestRemoteConnect(final String udn) {
+        requestRemoteConnect(udn);
+    }
+
+    /**
+     * GetRemoteDeviceExpireDate.
+     * @param udn udn
+     * @return RemoteDeviceExpireDate
+     */
+    public String GetRemoteDeviceExpireDate(final String udn) {
         String result = getRemoteDeviceExpireDate(udn);
         return result;
     }
-
-    // call from jni
+    // region call from jni
+    /**
+     * getUniqueId(call from jni).
+     * @return uniqueId
+     */
     public String getUniqueId() {
         if (null == mContext) {
             DTVTLogger.warning("mContext is null!");
@@ -114,9 +253,25 @@ public class DlnaManager {
         return uniqueId;
     }
 
-    // callback
-    public void DmsFoundCallback(String friendlyName, String udn, String location, String controlUrl, String eventSubscriptionUrl) {
-        DTVTLogger.warning("friendlyName = " + friendlyName + ", udn = " + udn + ", location = " + location + ", controlUrl = " + controlUrl + ", eventSubscriptionUrl = " + eventSubscriptionUrl);
+    /**
+     *  dms検出(call from jni).
+     * @param friendlyName friendlyName
+     * @param udn udn
+     * @param location location
+     * @param controlUrl controlUrl
+     * @param eventSubscriptionUrl eventSubscriptionUrl
+     */
+    public void DmsFoundCallback(final String friendlyName, final  String udn, final String location,
+                                 final String controlUrl, final String eventSubscriptionUrl) {
+        DTVTLogger.warning("friendlyName = " + friendlyName + ", udn = " + udn + ", location = " + location
+                + ", controlUrl = " + controlUrl + ", eventSubscriptionUrl = " + eventSubscriptionUrl);
+        //TODO 宅外、宅内の実装が必要があるため、いったんコメントアウトして、次回のスプリントでやるつもりです
+//        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
+//        if (dlnaDmsItem != null) {
+//            if (dlnaDmsItem.mUdn.equals(udn)) {
+//                updateConnectStatus();
+//            }
+//        }
         DlnaManagerListener listener = DlnaManager.shared().mDlnaManagerListener;
         if (listener != null) {
             URL hostUrl = null;
@@ -125,7 +280,7 @@ public class DlnaManager {
                 hostUrl = new URL(location);
                 hostString = hostUrl.getHost();
             } catch (MalformedURLException e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
             listener.joinDms(friendlyName, hostString, udn, controlUrl, eventSubscriptionUrl);
         } else {
@@ -133,7 +288,11 @@ public class DlnaManager {
         }
     }
 
-    public void DmsLeaveCallback(String udn) {
+    /**
+     * dms消えた(call from jni).
+     * @param udn  udn
+     */
+    public void DmsLeaveCallback(final String udn) {
         DTVTLogger.warning("udn = " + udn);
         DlnaManagerListener listener = DlnaManager.shared().mDlnaManagerListener;
         if (listener != null) {
@@ -143,12 +302,17 @@ public class DlnaManager {
         }
     }
 
-    public void RegistResultCallBack(boolean result, int errorType) {
+    /**
+     * ローカルレジストレーション結果コールバック（call from jni）.
+     * @param result 結果
+     * @param errorType エラータイプ
+     */
+    public void RegistResultCallBack(final boolean result, final int errorType) {
         DTVTLogger.warning("result = " + result);
         LocalRegisterListener listener = DlnaManager.shared().mLocalRegisterListener;
         if (listener != null) {
             LocalRegistrationErrorType localRegistrationErrorType = LocalRegistrationErrorType.NONE;
-            if (errorType == LOCAL_REGISTRATION_ERROR_TYPE_OVER){
+            if (errorType == LOCAL_REGISTRATION_ERROR_TYPE_OVER) {
                 localRegistrationErrorType = LocalRegistrationErrorType.OVER;
             }
             listener.onRegisterCallBack(result, localRegistrationErrorType);
@@ -157,22 +321,132 @@ public class DlnaManager {
         }
     }
 
+    /**
+     * リモート接続コールバック.
+     * @param connectStatus 接続ステータス
+     */
+    public void RemoteConnectStatusCallBack(final int connectStatus) {
+        DTVTLogger.warning("connectStatus = " + connectStatus);
+        RemoteConnectStatusChangeListener listener = DlnaManager.shared().mRemoteConnectStatusChangeListener;
+        if (listener != null) {
+            RemoteConnectStatus status;
+            switch (connectStatus) {
+                case REMOTE_CONNECT_STATUS_UNKOWN:
+                default:
+                    status = RemoteConnectStatus.UNKNOWN;
+                    break;
+                case REMOTE_CONNECT_STATUS_READY:
+                    status = RemoteConnectStatus.READY;
+                    break;
+                case REMOTE_CONNECT_STATUS_CONNECTED:
+                    status = RemoteConnectStatus.CONNECTED;
+                    break;
+                case REMOTE_CONNECT_STATUS_DISCONNECTION:
+                    status = RemoteConnectStatus.DETECTED_DISCONNECTION;
+                    break;
+                case REMOTE_CONNECT_STATUS_RECONNECTION:
+                    status = RemoteConnectStatus.GAVEUP_RECONNECTION;
+                    break;
+            }
+            DlnaManager.shared().remoteConnectStatus = status;
+            listener.onRemoteConnectStatusCallBack(status);
+        } else {
+            DTVTLogger.error("no callback");
+        }
+    }
+
+    // endregion call from jni
+
+    /**
+     * リモート接続のリセット.
+     */
+    private void updateConnectStatus() {
+        StopDirag();
+        DlnaManager.shared().remoteConnectStatus = RemoteConnectStatus.OTHER;
+    }
+
     // region native method
+
+    /**
+     * secureIoGlobalCreate.
+     */
     private native void secureIoGlobalCreate();
+
+    /**
+     * cipherFileContextGlobalCreate.
+     * @param privateDataPath privateDataPath
+     */
     private native void cipherFileContextGlobalCreate(String privateDataPath);
+
+    /**
+     * initDmp.
+     * @param configFilePath configFilePath
+     */
     private native void initDmp(String configFilePath);
+
+    /**
+     * initDirag.
+     * @param configFilePath configFilePath
+     */
     private native void initDirag(String configFilePath);
 
+    /**
+     * startDmp.
+     */
     private native void startDmp();
+
+    /**
+     * stopDmp.
+     */
     private native void stopDmp();
 
+    /**
+     * connectDmsWithUdn.
+     * @param udn udn
+     */
     private native void connectDmsWithUdn(String udn);
-    private native void browseContentWithContainerId(int offset, int limit, String containerId);
 
+    /**
+     * browseContentWithContainerId.
+     * @param offset offset
+     * @param limit limit
+     * @param containerId containerId
+     */
+    private native void browseContentWithContainerId(final int offset, final int limit, final String containerId);
+
+    /**
+     * startDtcp.
+     */
     private native void startDtcp();
-    private native void restartDirag();
-    private native void requestLocalRegistration(String udn, String deviceName);
-    private native String getRemoteDeviceExpireDate(String udn);
-    // endregion native method
 
+    /**
+     * Diragを再起動.
+     */
+    private native void restartDirag();
+
+    /**
+     * Diragを停止.
+     */
+    private native void stopDirag();
+
+    /**
+     * requestLocalRegistration.
+     * @param udn udn
+     * @param deviceName deviceName
+     */
+    private native void requestLocalRegistration(String udn, String deviceName);
+
+    /**
+     * リモート接続処理を行う.
+     * @param udn udn
+     */
+    private native void requestRemoteConnect(String udn);
+
+    /**
+     * ローカルレジストレーションの開始時間取得.
+     * @param udn udn
+     * @return DeviceExpireDate
+     */
+    private native String getRemoteDeviceExpireDate(final String udn);
+    // endregion native method
 }

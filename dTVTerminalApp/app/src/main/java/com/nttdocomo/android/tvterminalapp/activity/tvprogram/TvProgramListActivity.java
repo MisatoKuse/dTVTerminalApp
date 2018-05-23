@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.activity.tvprogram;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -103,6 +104,10 @@ public class TvProgramListActivity extends BaseActivity implements
      * タイムライン幅.
      */
     private static final int TIME_LINE_WIDTH = 44;
+    /**
+     * タイムライン高さ.
+     */
+    private static final int TIME_LINE_HEIGHT = 56;
     /**
      * チャンネルリサイクルビュー丈.
      */
@@ -492,7 +497,7 @@ public class TvProgramListActivity extends BaseActivity implements
     private void setTagView() {
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                 dip2px(TIME_LINE_WIDTH),
-                dip2px(TIME_LINE_WIDTH));
+                dip2px(TIME_LINE_HEIGHT));
         mTagImageView.setLayoutParams(layoutParams);
         mTagImageView.setImageResource(R.drawable.tv_program_list_cur_time_btn_selector);
     }
@@ -979,12 +984,12 @@ public class TvProgramListActivity extends BaseActivity implements
         DTVTLogger.start();
         //マイ番組表通信を止める
         StopMyProgramListDataConnect stopMyConnect = new StopMyProgramListDataConnect();
-        stopMyConnect.execute(mMyChannelDataProvider);
+        stopMyConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mMyChannelDataProvider);
         //番組表通信を止める
         StopScaledProListDataConnect stopTvConnect = new StopScaledProListDataConnect();
-        stopTvConnect.execute(mScaledDownProgramListDataProvider);
+        stopTvConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mScaledDownProgramListDataProvider);
         //サムネルタスクを止める
         StopMyProgramListAdapterConnect stopAdapterConnect = new StopMyProgramListAdapterConnect();
-        stopAdapterConnect.execute(mTvProgramListAdapter);
+        stopAdapterConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mTvProgramListAdapter);
     }
 }

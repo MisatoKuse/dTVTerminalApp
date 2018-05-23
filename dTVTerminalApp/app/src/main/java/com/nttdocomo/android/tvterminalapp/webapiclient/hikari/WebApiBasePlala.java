@@ -99,11 +99,11 @@ public class WebApiBasePlala {
     /**
      * リクエスト種別・基本はPOST・子クラスで使われるのでプロテクテッド.
      */
-    protected static final String REQUEST_METHOD_POST = "POST";
+    private static final String REQUEST_METHOD_POST = "POST";
     /**
      * リダイレクト処理用にGETも定義・子クラスで使われるのでプロテクテッド.
      */
-    protected static final String REQUEST_METHOD_GET = "GET";
+    static final String REQUEST_METHOD_GET = "GET";
     /**
      * 文字種別 UTF-8.
      */
@@ -206,11 +206,11 @@ public class WebApiBasePlala {
     /**
      * フィルター用指定文字列・testa.
      */
-    public static final String FILTER_TESTA = "testa";
+    static final String FILTER_TESTA = "testa";
     /**
      * フィルター用指定文字列・demo.
      */
-    public static final String FILTER_DEMO = "demo";
+    static final String FILTER_DEMO = "demo";
     /**
      * フィルター用指定文字列・ssvod.
      */
@@ -218,32 +218,32 @@ public class WebApiBasePlala {
     /**
      * フィルター用指定文字列・フィルターのパラメータ名.
      */
-    public static final String FILTER_PARAM = "filter";
+    static final String FILTER_PARAM = "filter";
 
     /**
      * タイプ用指定文字列・ｄCh.
      */
-    public static final String TYPE_D_CHANNEL = "dch";
+    static final String TYPE_D_CHANNEL = "dch";
     /**
      * タイプ用指定文字列・ひかりTV.
      */
-    public static final String TYPE_HIKARI_TV = "hikaritv";
+    static final String TYPE_HIKARI_TV = "hikaritv";
     /**
      * タイプ用指定文字列・ひかりTVのVOD.
      */
-    public static final String TYPE_HIKARI_TV_VOD = "hikaritv_vod";
+    static final String TYPE_HIKARI_TV_VOD = "hikaritv_vod";
     /**
      * タイプ用指定文字列・dTVのVOD.
      */
-    public static final String TYPE_DTV_VOD = "dtv_vod";
+    static final String TYPE_DTV_VOD = "dtv_vod";
     /**
      * タイプ用指定文字列・ひかりTVのVODとdTVのVOD.
      */
-    public static final String TYPE_HIKARI_TV_AND_DTV_VOD = "hikaritv_and_dtv_vod";
+    static final String TYPE_HIKARI_TV_AND_DTV_VOD = "hikaritv_and_dtv_vod";
     /**
      * タイプ用指定文字列・全て（指定なしは全てになる）.
      */
-    public static final String TYPE_ALL = "";
+    static final String TYPE_ALL = "";
 
     /**
      * 日付指定文字列・現在時刻指定.
@@ -253,29 +253,29 @@ public class WebApiBasePlala {
     /**
      * ソート用文字列・タイトルルビ昇順.
      */
-    public static final String SORT_TITLE_RUBY_ASC = "titleruby_asc";
+    static final String SORT_TITLE_RUBY_ASC = "titleruby_asc";
     /**
      * ソート用文字列・配信開始日昇順.
      */
-    public static final String SORT_AVAIL_S_ASC = "avail_s_asc";
+    static final String SORT_AVAIL_S_ASC = "avail_s_asc";
     /**
      * ソート用文字列・配信終了日降順.
      */
-    public static final String SORT_AVAIL_E_DESC = "avail_e_desc";
+    static final String SORT_AVAIL_E_DESC = "avail_e_desc";
     /**
      * ソート用文字列・人気順（前日の視聴回数数降順）.
      */
-    public static final String SORT_PLAY_COUNT_DESC = "play_count_desc";
+    static final String SORT_PLAY_COUNT_DESC = "play_count_desc";
 
     /**
      * age_req(年齢設定値)の最小値.
      */
-    public static final int AGE_LOW_VALUE = 1;
+    static final int AGE_LOW_VALUE = 1;
 
     /**
      * age_req(年齢設定値)の最大値.
      */
-    public static final int AGE_HIGH_VALUE = 17;
+    static final int AGE_HIGH_VALUE = 17;
 
     /**
      * マイチャンネル登録位置の上限値.
@@ -290,7 +290,7 @@ public class WebApiBasePlala {
     /**
      * チャンネルのアダルトタイプ(空値).
      */
-    protected static final String MY_CHANNEL_ADULT_TYPE_EMPTY = "";
+    static final String MY_CHANNEL_ADULT_TYPE_EMPTY = "";
 
     /**
      * チャンネルのパレンタル設定値(G).
@@ -300,22 +300,22 @@ public class WebApiBasePlala {
     /**
      * チャンネルのパレンタル設定値(PG-12).
      */
-    protected static final String MY_CHANNEL_R_VALUE_PG_12 = "PG-12";
+    static final String MY_CHANNEL_R_VALUE_PG_12 = "PG-12";
 
     /**
      * チャンネルのパレンタル設定値(R-15).
      */
-    protected static final String MY_CHANNEL_R_VALUE_PG_15 = "R-15";
+    static final String MY_CHANNEL_R_VALUE_PG_15 = "R-15";
 
     /**
      * チャンネルのパレンタル設定値(R-18).
      */
-    protected static final String MY_CHANNEL_R_VALUE_PG_18 = "R-18";
+    static final String MY_CHANNEL_R_VALUE_PG_18 = "R-18";
 
     /**
      * チャンネルのパレンタル設定値(R-20).
      */
-    protected static final String MY_CHANNEL_R_VALUE_PG_20 = "R-20";
+    static final String MY_CHANNEL_R_VALUE_PG_20 = "R-20";
 
     /**
      * age_req(年齢設定値)のパラメータ作成用文字列.
@@ -330,7 +330,7 @@ public class WebApiBasePlala {
     /**
      * リスト作成文字列.
      */
-    public static final String LIST_STRING = "list";
+    static final String LIST_STRING = "list";
 
     /**
      * h4d_iptv：多チャンネル.
@@ -355,7 +355,7 @@ public class WebApiBasePlala {
     /**
      * ワンタイムトークン設定のキー名.
      */
-    public static final String ONE_TIME_TOKEN_KEY = "x-service-token";
+    private static final String ONE_TIME_TOKEN_KEY = "x-service-token";
 
 
     /**
@@ -396,7 +396,7 @@ public class WebApiBasePlala {
      *
      * @param context コンテキスト
      */
-    public WebApiBasePlala(final Context context) {
+    WebApiBasePlala(final Context context) {
         //コンテキストの退避
         mContext = context;
 
@@ -510,7 +510,7 @@ public class WebApiBasePlala {
      * @param receivedParameters      API呼び出し用パラメータ
      * @param webApiBasePlalaCallback コールバック
      */
-    public void openUrl(final String sourceUrl, final String receivedParameters,
+    void openUrl(final String sourceUrl, final String receivedParameters,
                         final WebApiBasePlalaCallback webApiBasePlalaCallback) {
 
         mCommunicationTaskAPI = new CommunicationTask(sourceUrl, receivedParameters, getRequestMethod());
@@ -522,7 +522,7 @@ public class WebApiBasePlala {
         ReturnCode returnCode = new ReturnCode();
 
         //通信本体の開始
-        mCommunicationTaskAPI.execute(returnCode);
+        mCommunicationTaskAPI.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode);
     }
 
     /**
@@ -533,7 +533,7 @@ public class WebApiBasePlala {
      * @param timeOut                   タイムアウト時間指定(0はAPIデフォルト指定とする)
      * @param webApiBasePlalaCallback コールバック
      */
-    public void openUrl(final String sourceUrl, final String receivedParameters,
+    void openUrl(final String sourceUrl, final String receivedParameters,
                         final int timeOut,
                         final WebApiBasePlalaCallback webApiBasePlalaCallback) {
         //タイムアウト時間を指定する
@@ -552,7 +552,7 @@ public class WebApiBasePlala {
          * @param webApiBasePlalaCallback 結果のコールバック
          * @param extraDataSrc            拡張情報
          */
-    public void openUrlWithExtraData(final String sourceUrl, final String receivedParameters,
+    void openUrlWithExtraData(final String sourceUrl, final String receivedParameters,
                                      final WebApiBasePlalaCallback webApiBasePlalaCallback,
                                      final Bundle extraDataSrc) {
         //拡張情報もセットする
@@ -566,7 +566,7 @@ public class WebApiBasePlala {
         ReturnCode returnCode = new ReturnCode();
 
         //通信本体の開始
-        mCommunicationTaskExtra.execute(returnCode);
+        mCommunicationTaskExtra.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode);
     }
 
     /**
@@ -577,7 +577,7 @@ public class WebApiBasePlala {
      * @param webApiBasePlalaCallback 結果のコールバック
      * @param extraDataSrc            拡張情報（使用しないときはヌルをセット）
      */
-    public void openUrlAddOtt(final String sourceUrl, final String receivedParameters,
+    void openUrlAddOtt(final String sourceUrl, final String receivedParameters,
                               final WebApiBasePlalaCallback webApiBasePlalaCallback,
                               final Bundle extraDataSrc) {
         //タスクを作成する
@@ -612,7 +612,7 @@ public class WebApiBasePlala {
             mCommunicationTaskOtt.setOneTimeToken(mOneTimeTokenData.getOneTimeToken());
             ReturnCode returnCode = new ReturnCode();
             DTVTLogger.debug("******mCommunicationTaskOtt.execute at openUrlAddOtt");
-            mCommunicationTaskOtt.execute(returnCode);
+            mCommunicationTaskOtt.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode);
         }
     }
 
@@ -623,7 +623,7 @@ public class WebApiBasePlala {
      * @param receivedParameters      API呼び出し用パラメータ
      * @param webApiBasePlalaCallback コールバック
      */
-    public void openOneTimeTokenGetUrl(final String receivedParameters,
+    void openOneTimeTokenGetUrl(final String receivedParameters,
                                        final WebApiBasePlalaCallback webApiBasePlalaCallback) {
         DTVTLogger.start();
 
@@ -636,7 +636,7 @@ public class WebApiBasePlala {
         ReturnCode returnCode = new ReturnCode();
 
         //通信本体の開始
-        communicationTask.execute(returnCode);
+        communicationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode);
 
         DTVTLogger.end();
     }
@@ -667,7 +667,7 @@ public class WebApiBasePlala {
 
                     //ワンタイムトークンの取得結果を元にして、通信を開始する
                     DTVTLogger.debug("******mCommunicationTaskOtt.execute at getOttCallBack");
-                    mCommunicationTaskOtt.execute(returnCode);
+                    mCommunicationTaskOtt.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode);
                     return;
                 }
 
@@ -686,7 +686,7 @@ public class WebApiBasePlala {
      * @param oneTimePassword   ワンタイムパスワード
      * @param serviceTokenErrorCallback サービストークンエラーコールバック
      */
-    public static void getServiceToken(final Context context,
+    private static void getServiceToken(final Context context,
                                        final CommunicationTask communicationTask,
                                        final String oneTimePassword,
                                        final ServiceTokenErrorCallback serviceTokenErrorCallback) {
@@ -708,7 +708,7 @@ public class WebApiBasePlala {
                             //既に実行されたかどうかの判定
                             if (communicationTask.getStatus().equals(AsyncTask.Status.PENDING)) {
                                 //実行されていないので、ワンタイムトークンの取得結果を元にして、通信を開始する
-                                communicationTask.execute(returnCode);
+                                communicationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode);
                             } else {
                                 //既に実行されていたので、処理をスキップ
                                 //(2重起動はsuccessFlagがfalseの場合にしか確認していないので、実行されない筈ですが)
@@ -745,7 +745,7 @@ public class WebApiBasePlala {
             DTVTLogger.debug("communicationTask answer false = " + communicationTask);
 
             //ワンタイムトークンは取得できなかったので、そのまま通信を開始する
-            communicationTask.execute(returnCode);
+            communicationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode);
         }
     }
 
@@ -951,7 +951,7 @@ public class WebApiBasePlala {
      *
      * @return メソッド名
      */
-    protected String getRequestMethod() {
+    String getRequestMethod() {
         return REQUEST_METHOD_POST;
     }
 
