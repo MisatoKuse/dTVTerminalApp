@@ -16,71 +16,42 @@ import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
-import com.nttdocomo.android.tvterminalapp.jni.bs.DlnaBsChListInfo;
-import com.nttdocomo.android.tvterminalapp.jni.bs.DlnaBsChListListener;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
-import com.nttdocomo.android.tvterminalapp.jni.rec.DlnaRecVideoInfo;
-import com.nttdocomo.android.tvterminalapp.jni.rec.DlnaRecVideoListener;
-import com.nttdocomo.android.tvterminalapp.jni.ter.DlnaTerChListInfo;
-import com.nttdocomo.android.tvterminalapp.jni.ter.DlnaTerChListListener;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 /**
  * アプリ起動時に最初に呼び出されるActivity.
  */
-public class LaunchActivity extends BaseActivity implements View.OnClickListener,
-        DlnaRecVideoListener, DlnaTerChListListener, DlnaBsChListListener {
-    /**
-     * 最初の待ち時間の2秒.
-     */
+public class LaunchActivity extends BaseActivity implements View.OnClickListener {
+    /** 最初の待ち時間の2秒. */
     private static final long FIRST_WAIT_TIME = 2000L;
-    /**
-     * タイムアウトの待ち時間の8秒(最初の2秒と合わせて10秒).
-     */
+    /** タイムアウトの待ち時間の8秒(最初の2秒と合わせて10秒). */
     private static final long TIME_OUT_WAIT_TIME = 8000L;
-    /**
-     * 初回起動判定Flag.
-     */
+    /** 初回起動判定Flag. */
     private static boolean sIsFirstRun = true;
-    /**
-     * 次のアクティビティ情報.
-     */
+    /** 次のアクティビティ情報. */
     private Intent mNextActivity = null;
-    /**
-     * アプリ起動直後のdアカウントエラーの状況.
-     */
+    /** アプリ起動直後のdアカウントエラーの状況. */
     private boolean mDaccountStatus = false;
-
-    /**
-     * 次の画面でdアカウントエラーを出すならtrueにする.
-     */
+    /** 次の画面でdアカウントエラーを出すならtrueにする. */
     private boolean mIsDAccountErrorNextAvctivity = false;
-    /**
-     * 次の画面で設定画面エラーを出すならtrueにする.
-     */
+    /** 次の画面で設定画面エラーを出すならtrueにする. */
     private boolean mIsSettingErrorNextAvctivity = false;
-    /**
-     * 待ち時間タイマー用ハンドラー.
-     */
+
+    /** 待ち時間タイマー用ハンドラー. */
     private Handler mTimerHandler;
-    /**
-     * 待ち時間タイマー用ランナブル.
-     */
+    /** 待ち時間タイマー用ランナブル. */
     private Runnable mTimerRunnable;
     /**
      * タイムアウトタイマー用ハンドラー.
      * (dアカウントなどの処理終了時の即時次画面遷移の判定にも使うので、ヌルを明示)
      */
     private Handler mTimeoutHandler = null;
-    /**
-     * タイムアウトタイマー用ランナブル.
-     */
+    /** タイムアウトタイマー用ランナブル. */
     private Runnable mTimeoutRunnable;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.launch_main_layout);
         setTitleText(getString(R.string.str_launch_title));
         enableHeaderBackIcon(false);
@@ -95,14 +66,14 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
         //アプリ起動時のサービストークン削除を行う
         SharedPreferencesUtils.deleteOneTimeTokenData(getApplicationContext());
-        DlnaManager.shared().launch(getApplicationContext());
-        boolean isDlnaOk = startDlna();
-        if (!isDlnaOk) {
-            DTVTLogger.debug("BaseActivity");
-            /*
-             * to do: DLNA起動失敗の場合、仕様はないので、ここで将来対応
-             */
-        }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                DlnaManager.shared().launch(getApplicationContext());
+            }
+        }).start();
+
         sIsFirstRun = !SharedPreferencesUtils.getSharedPreferencesIsDisplayedTutorial(this);
 
         //次に遷移する画面を選択する
@@ -142,23 +113,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     protected void dismissDialogOnPause() {
         //dissmissを行わない事を明示する為コメント化
         //dismissDialog();
-    }
-
-    /**
-     * 機能： Dlnaを開始.
-     *
-     * @return true: 成功　　false: 失敗
-     */
-    private boolean startDlna() {
-        DlnaInterface di = DlnaInterface.getInstance();
-        boolean ret;
-        ret = null != di && di.startDlna();
-        return ret;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     /**
@@ -211,16 +165,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-    }
-
-    @Override
-    public String getScreenId() {
-        return getString(R.string.str_launch_title);
-    }
-
-    @Override
-    public String getScreenTitle() {
-        return getString(R.string.str_launch_title);
     }
 
     @Override
@@ -329,26 +273,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         return !((mCheckSetting != null && mCheckSetting.isBusy())
                 || mCheckSetting == null);
 
-    }
-
-    @Override
-    public void onVideoBrows(final DlnaRecVideoInfo curInfo) {
-
-    }
-
-    @Override
-    public void onListUpdate(final DlnaTerChListInfo curInfo) {
-
-    }
-
-    @Override
-    public void onListUpdate(final DlnaBsChListInfo curInfo) {
-
-    }
-
-    @Override
-    public String getCurrentDmsUdn() {
-        return null;
     }
 
     @Override

@@ -10,7 +10,10 @@ import android.os.Build;
 
 import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -128,7 +131,7 @@ public class DlnaManager {
     /** 再接続失敗. */
     private static final int REMOTE_CONNECT_STATUS_RECONNECTION = 6;
     /** dms検出リスナー. */
-    private DlnaManagerListener mDlnaManagerListener = null;
+    public DlnaManagerListener mDlnaManagerListener = null;
     /** ローカルレジストレーションリスナー. */
     public LocalRegisterListener mLocalRegisterListener = null;
     /** リモート接続リスナー. */
@@ -184,6 +187,7 @@ public class DlnaManager {
 
     /**
      * BrowseContentWithContainerId.
+     * 録画一覧ではページング処理があるため、offsetとlimitと公開
      * @param offset offset
      * @param limit limit
      * @param containerId containerId
@@ -191,7 +195,13 @@ public class DlnaManager {
     public void BrowseContentWithContainerId(final int offset, final int limit, final String containerId) {
         browseContentWithContainerId(offset, limit, containerId);
     }
-
+    /**
+     * BrowseContentWithContainerId.
+     * @param containerId containerId
+     */
+    public void BrowseContentWithContainerId(final String containerId) {
+        browseContentWithContainerId(0, DtvtConstants.REQUEST_LIMIT_300, containerId);
+    }
     /**
      * StartDtcp.
      */
@@ -265,13 +275,14 @@ public class DlnaManager {
                                  final String controlUrl, final String eventSubscriptionUrl) {
         DTVTLogger.warning("friendlyName = " + friendlyName + ", udn = " + udn + ", location = " + location
                 + ", controlUrl = " + controlUrl + ", eventSubscriptionUrl = " + eventSubscriptionUrl);
-        //TODO 宅外、宅内の実装が必要があるため、いったんコメントアウトして、次回のスプリントでやるつもりです
-//        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
-//        if (dlnaDmsItem != null) {
-//            if (dlnaDmsItem.mUdn.equals(udn)) {
+
+        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
+        if (dlnaDmsItem != null) {
+            if (dlnaDmsItem.mUdn.equals(udn)) {
+                connectDmsWithUdn(udn);
 //                updateConnectStatus();
-//            }
-//        }
+            }
+        }
         DlnaManagerListener listener = DlnaManager.shared().mDlnaManagerListener;
         if (listener != null) {
             URL hostUrl = null;

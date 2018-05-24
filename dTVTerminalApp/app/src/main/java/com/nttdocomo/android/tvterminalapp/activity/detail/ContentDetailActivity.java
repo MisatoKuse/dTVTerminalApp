@@ -1058,7 +1058,6 @@ public class ContentDetailActivity extends BaseActivity implements
                 File file = new File(dlFile);
                 if (!file.exists()) {
                     DTVTLogger.debug(file  + " not exists");
-                    onError("再生するファイルは存在しません");
                     return false;
                 }
                 uri = Uri.parse(LOCAL_FILE_PATH + dlFile);

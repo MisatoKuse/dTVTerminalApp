@@ -317,16 +317,6 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
     }
 
     @Override
-    public String getScreenTitle() {
-        return getString(R.string.str_tutorial_title);
-    }
-
-    @Override
-    public String getScreenId() {
-        return "";
-    }
-
-    @Override
     public void onClick(final View view) {
         switch (view.getId()) {
             case R.id.tutorial_show_agreement:

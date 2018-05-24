@@ -79,11 +79,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetail
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.SettingFileMetaData;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingFragmentFactory;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
-import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDevListListener;
-import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsInfo;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
-import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessage;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadDataProvider;
@@ -115,7 +111,6 @@ import java.util.List;
  */
 @SuppressLint("Registered")
 public class BaseActivity extends FragmentActivity implements
-        DlnaDevListListener,
         View.OnClickListener,
         RemoteControllerView.OnStartRemoteControllerUIListener,
         ClipRegistWebClient.ClipRegistJsonParserCallback,
@@ -158,10 +153,6 @@ public class BaseActivity extends FragmentActivity implements
      * ペアリングアイコン.
      */
     private ImageView mStbStatusIcon = null;
-    /**
-     * DLNA一覧提供クラス.
-     */
-    private DlnaProvDevList mDlnaProvDevListForBase = null;
     /**
      * メニューアイコン.
      */
@@ -305,29 +296,6 @@ public class BaseActivity extends FragmentActivity implements
      * アダプタ内でのリスト識別用定数.
      */
     private final static int HOME_CONTENTS_DISTINCTION_ADAPTER = 10;
-
-    /**
-     * 関数機能：
-     * 「Activity」の「画面ID」を戻す.
-     * 各ActivityにてOverrideする関数である.
-     *
-     * @return 「Activity」の「画面ID」を戻す
-     */
-    public String getScreenId() {
-        return "";
-    }
-
-    /**
-     * Created on 2017/09/21.
-     * 関数機能：
-     * 「Activity」の「画面タイトル」を戻す。
-     * 各ActivityにてOverrideする関数である。
-     *
-     * @return 「Activity」の「画面タイトル」を戻す。
-     */
-    public String getScreenTitle() {
-        return "";
-    }
 
     /**
      * 関数機能：
@@ -742,11 +710,6 @@ public class BaseActivity extends FragmentActivity implements
 
         //STB接続状態を反映.
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-        if (null != dlnaDmsItem) {
-            // 未ペアリング時はそもそも状態反映しない.
-            mDlnaProvDevListForBase = new DlnaProvDevList();
-            mIsStbStatusOn = mDlnaProvDevListForBase.isDmsAvailable(dlnaDmsItem.mUdn);
-        }
         if (null != dlnaDmsItem && dlnaDmsItem.mIPAddress != null && dlnaDmsItem.mIPAddress.length() > 0) {
             mRemoteControlRelayClient.setRemoteIp(dlnaDmsItem.mIPAddress);
         }
@@ -844,7 +807,6 @@ public class BaseActivity extends FragmentActivity implements
         TvtApplication app = (TvtApplication) getApplication();
         if (app.getIsChangeApplicationInvisible()) {
             // FG → BG になったためDlnaをstopする
-            DlnaInterface.dlnaOnStop();
             DTVTLogger.debug("do dlnaOnStop");
         }
         DTVTLogger.end();
@@ -862,25 +824,9 @@ public class BaseActivity extends FragmentActivity implements
             DTVTLogger.end();
             return;
         }
-        mDlnaProvDevListForBase = new DlnaProvDevList();
-        mDlnaProvDevListForBase.start(this);
         DTVTLogger.end();
     }
 
-    /**
-     * 機能：ActivityのSTB接続アイコン.
-     */
-    private void unregisterDevListDlna() {
-        DTVTLogger.start();
-        if (this instanceof StbSelectActivity) {
-            DTVTLogger.end();
-            return;
-        }
-        if (null != mDlnaProvDevListForBase) {
-            mDlnaProvDevListForBase.stopListen();
-        }
-        DTVTLogger.end();
-    }
 
     /**
      * STB送信ハンドラ.
@@ -1388,56 +1334,8 @@ public class BaseActivity extends FragmentActivity implements
         }
     }
 
-    /**
-     * 機能：DMSを加入する場合コールされる.
-     *
-     * @param curInfo カレントDlnaDmsInfo
-     * @param newItem 新しいDms情報
-     */
-    @Override
-    public void onDeviceJoin(final DlnaDmsInfo curInfo, final DlnaDmsItem newItem) {
-        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-        if (null == dlnaDmsItem) {
-            setStbStatus(false);
-            return;
-        }
-        if (dlnaDmsItem.mUdn.equals(newItem.mUdn)) {
-            SharedPreferencesUtils.setSharedPreferencesStbInfo(this, newItem);
-            //IPアドレス変わった場合、IPアドレスを設定し直す
-            if (!dlnaDmsItem.mIPAddress.equals(newItem.mIPAddress)) {
-                mRemoteControlRelayClient.setRemoteIp(newItem.mIPAddress);
-            }
-            setStbStatus(true);
-        }
-    }
 
-    /**
-     * 機能：DMSをなくなる場合コールされる.
-     *
-     * @param curInfo     　　　カレントDlnaDmsInfo
-     * @param leaveDmsUdn 　消えるDmsのudn名
-     */
-    @Override
-    public void onDeviceLeave(final DlnaDmsInfo curInfo, final String leaveDmsUdn) {
-        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-        if (null == dlnaDmsItem) {
-            setStbStatus(false);
-            return;
-        }
-        if (dlnaDmsItem.mUdn.equals(leaveDmsUdn)) {
-            setStbStatus(false);
-        }
-    }
 
-    /**
-     * 機能：DLNAはerrorを発生する場合コールされる.
-     *
-     * @param msg エラー情報
-     */
-    @Override
-    public void onError(final String msg) {
-        DTVTLogger.debug("BaseActivity.onError, dlna err message: " + msg);
-    }
 
     /**
      * 機能：onClick event for menu.
@@ -2280,7 +2178,6 @@ public class BaseActivity extends FragmentActivity implements
         DTVTLogger.start();
         resetRelayClientHandler(true);
         mRemoteControlRelayClient.stopConnect();
-        unregisterDevListDlna();
         // dアカウント通信を止める
         if (mDAccountControl != null) {
             mDAccountControl.stopCommunication();
@@ -2300,14 +2197,9 @@ public class BaseActivity extends FragmentActivity implements
      */
     protected void onStartCommunication() {
         DTVTLogger.start();
-        registerDevListDlna();
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
         if (null == dlnaDmsItem) {
             return;
-        }
-        if (null != mDlnaProvDevListForBase) {
-            boolean isAvai = mDlnaProvDevListForBase.isDmsAvailable(dlnaDmsItem.mUdn);
-            setStbStatus(isAvai);
         }
 
         DTVTLogger.debug("RestartFlag check "
@@ -2337,10 +2229,6 @@ public class BaseActivity extends FragmentActivity implements
         DTVTLogger.start();
         setRelayClientHandler();
         mRemoteControlRelayClient.resetIsCancel();
-        boolean r = DlnaInterface.dlnaOnResume();
-        if (!r) {
-            DTVTLogger.debug("BaseActivity.onResume, dlnaOnResume failed");
-        }
         if (mNecessaryDAccountRegistService) {
             setDaccountControl();
         }

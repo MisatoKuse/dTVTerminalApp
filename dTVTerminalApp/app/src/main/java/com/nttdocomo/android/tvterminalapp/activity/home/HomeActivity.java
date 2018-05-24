@@ -57,6 +57,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopHomeDataConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopUserInfoDataConnect;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
@@ -198,6 +199,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         enableStbStatusIcon(true);
         setStatusBarColor(true);
         initView();
+
+        DlnaManager.shared().StartDmp();
     }
 
     /**
