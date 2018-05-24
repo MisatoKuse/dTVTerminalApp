@@ -188,6 +188,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private boolean mUserInfoGetRequest = false;
 
+    /**
+     * dアカウントの取得が行えない事が確定した場合はtrueに変更する.
+     */
+    private boolean mIsDaccountGetNg = false;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -299,7 +304,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             DTVTLogger.debug("userInfo Timeout?=" + mUserInfoDataProvider.isUserInfoTimeOut());
 
             if (!mIsSearchDone) {
-                //dアカウントが取れていないので、取れたときのコールバックにユーザー情報取得を依頼する
+                //dアカウントが取れていないので、取得後のコールバックにユーザー情報取得を依頼する
                 mUserInfoGetRequest = true;
 
                 //起動時はプログレスダイアログを表示
@@ -318,13 +323,24 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         DTVTLogger.start();
 
         //ユーザー情報取得依頼をチェック
-        if (mUserInfoGetRequest) {
-            //依頼が出ているので、ユーザー情報の取得を開始
+        if (mUserInfoGetRequest && result) {
+            //依頼が出ているので、dアカウントの取得に成功していればユーザー情報の取得を開始
             getUserInfo();
+        } else if(!result) {
+            //dアカウントが取得できない事が確定したので、バナーの表示を行う
+            mIsDaccountGetNg = true;
 
-            //取得を開始したので、フラグはクリア
-            mUserInfoGetRequest = false;
+            //バナー表示の更新の為、UIタスクに処理を移譲
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showHomeBanner();
+                }
+            });
         }
+
+        //ユーザー情報取得依頼フラグをクリア（ユーザー情報取得側でも行っているが、dアカウント取得に失敗した時の為にここでもクリア）
+        mUserInfoGetRequest = false;
 
         DTVTLogger.end();
     }
@@ -386,8 +402,18 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 mPrImageView.setVisibility(View.GONE);
                 break;
             case LOGIN_NG:
+                //dアカウント取得前と取得失敗の場合
+                if(mIsDaccountGetNg) {
+                    //dアカウントが取得できない事が確定したので、PR画像のバナーを表示する
+                    mAgreementRl.setVisibility(View.GONE);
+                    mPrImageView.setVisibility(View.VISIBLE);
+                    break;
+                }
+                //確定前はバナーを表示しないので、ここでbreakは行わない
             default:
-                mPrImageView.setVisibility(View.VISIBLE);
+                //情報の取得前は各バナーは表示しないように変更
+                mAgreementRl.setVisibility(View.GONE);
+                mPrImageView.setVisibility(View.GONE);
                 break;
         }
     }
@@ -723,6 +749,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 //ユーザー情報の変更検知
                 showProgessBar(true);
                 mUserInfoDataProvider.getUserInfo();
+                //ユーザー情報取得開始を行ったので、フラグはクリア
+                mUserInfoGetRequest = false;
             }
         });
     }
