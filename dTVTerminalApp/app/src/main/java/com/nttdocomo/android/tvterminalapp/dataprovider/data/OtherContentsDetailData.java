@@ -6,6 +6,8 @@ package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 import android.os.Parcel;
 
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+
 import java.util.List;
 
 
@@ -110,6 +112,8 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
     private String mCopy = "";
     /**視聴制限.*/
     private String mRvalue = "";
+    /**コンテンツ種別.*/
+    private ContentUtils.ContentsType mContentCategory = null;
 
     /**
      * 日付取得.
@@ -877,12 +881,28 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         this.mRvalue = mRvalue;
     }
 
+    /**
+     * コンテンツ種別取得.
+     * @return コンテンツ種別
+     */
+    public ContentUtils.ContentsType getContentCategory() {
+        return mContentCategory;
+    }
+
+    /**
+     * コンテンツ種別設定.
+     * @param mContentCategory コンテンツ種別
+     */
+    public void setContentCategory(final ContentUtils.ContentsType mContentCategory) {
+        this.mContentCategory = mContentCategory;
+    }
 
     @Override
     public int describeContents() {
         return 0;
     }
 
+    @SuppressWarnings("OverlyLongMethod")
     @Override
     public void writeToParcel(final Parcel dest, final int flags) {
         super.writeToParcel(dest, flags);
@@ -934,6 +954,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         dest.writeStringArray(this.mAdinfoArray);
         dest.writeString(this.mCopy);
         dest.writeString(this.mRvalue);
+        dest.writeInt(this.mContentCategory == null ? -1 : this.mContentCategory.ordinal());
     }
 
     /**コンストラクタ.*/
@@ -944,6 +965,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
      * コンストラクタ.
      * @param in source
      */
+    @SuppressWarnings("OverlyLongMethod")
     private OtherContentsDetailData(final Parcel in) {
         super(in);
         this.mThumb = in.readString();
@@ -994,6 +1016,8 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         this.mAdinfoArray = in.createStringArray();
         this.mCopy = in.readString();
         this.mRvalue = in.readString();
+        int tmpMContentCategory = in.readInt();
+        this.mContentCategory = tmpMContentCategory == -1 ? null : ContentUtils.ContentsType.values()[tmpMContentCategory];
     }
 
     /**CREATOR構造初期化.*/

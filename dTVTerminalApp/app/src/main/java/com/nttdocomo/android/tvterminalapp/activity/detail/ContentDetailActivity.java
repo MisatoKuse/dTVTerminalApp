@@ -1273,7 +1273,6 @@ public class ContentDetailActivity extends BaseActivity implements
             loginNgDisplay();
         } else {
             if (UserInfoUtils.isContract(this) || mIsOtherService) {
-                setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
                 TextView startAppIcon = findViewById(R.id.view_contents_button_text);
                 startAppIcon.setVisibility(View.GONE);
                 ImageView imageView = findViewById(R.id.dtv_contents_view_button);
@@ -2080,10 +2079,12 @@ public class ContentDetailActivity extends BaseActivity implements
             detailFragment.mOtherContentsDetailData.setEventId(mDetailFullData.getmEvent_id());
             detailFragment.mOtherContentsDetailData.setTitleId(mDetailFullData.getTitle_id());
             detailFragment.mOtherContentsDetailData.setRvalue(mDetailFullData.getR_value());
+            detailFragment.mOtherContentsDetailData.setRating(mDetailFullData.getRating());
             detailFragment.mOtherContentsDetailData.setCopy(mDetailFullData.getmCopy());
             detailFragment.mOtherContentsDetailData.setM4kflg(mDetailFullData.getM4kflg());
             detailFragment.mOtherContentsDetailData.setAdinfoArray(mDetailFullData.getmAdinfo_array());
             detailFragment.mOtherContentsDetailData.setmStartDate(String.valueOf(mDetailFullData.getPublish_start_date()));
+            detailFragment.mOtherContentsDetailData.setContentCategory(mDetailFullData.getContentsType());
             String date = null;
             ContentUtils.ContentsType contentsType = ContentUtils.getContentsTypeByPlala(mDetailFullData.getDisp_type(),
                     mDetailFullData.getmTv_service(), mDetailFullData.getmContent_type(), mDetailFullData.getAvail_end_date(),
@@ -2144,7 +2145,6 @@ public class ContentDetailActivity extends BaseActivity implements
                     DTVTLogger.debug("contractInfo:---" + contractInfo);
                     mThumbnailBtn.setVisibility(View.GONE);
                     mContractLeadingView.setVisibility(View.VISIBLE);
-                    setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
                     if (userState.equals(UserState.LOGIN_NG)) {
                         loginNgDisplay();
                     } else {
@@ -3473,7 +3473,6 @@ public class ContentDetailActivity extends BaseActivity implements
                 //契約導線を表示 (VOD)
                 TextView vodTextView = findViewById(R.id.contract_leading_text);
                 Button vodButton = findViewById(R.id.contract_leading_button);
-                setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
                 // 宅内の場合契約導線表示
                 pairingState = DeviceStateUtils.getPairingState(this, getStbStatus());
                 switch (pairingState) {
