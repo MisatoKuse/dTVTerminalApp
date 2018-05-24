@@ -435,6 +435,10 @@ public class ContentDetailActivity extends BaseActivity implements
     private String mServiceId = null;
     /** 視聴可否ステータス.*/
     private ContentUtils.ViewIngType mViewIngType = null;
+    /** destroyになったコンテンツ詳細fragmentを保存する.*/
+    private DtvContentsDetailFragment mDetailFragment;
+    /** 保存するキー名.*/
+    private static final String DETAIL_FRAGMENT_KEY = "detailFragment";
 
     /**
      *　コントロールビューを非表示にする.
@@ -500,6 +504,11 @@ public class ContentDetailActivity extends BaseActivity implements
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            mDetailFragment = (DtvContentsDetailFragment) getSupportFragmentManager().
+                    getFragment(savedInstanceState, DETAIL_FRAGMENT_KEY);
+            savedInstanceState.clear();
+        }
         setTheme(R.style.AppThemeBlack);
         setContentView(R.layout.dtv_contents_detail_main_layout);
         DTVTLogger.start();
@@ -535,6 +544,9 @@ public class ContentDetailActivity extends BaseActivity implements
             case CONTENTS_DETAIL_ONLY:
                 //BG復帰時にクリップボタンの更新を行う
                 DtvContentsDetailFragment dtvContentsDetailFragment = getDetailFragment();
+                if (mDetailFragment != null && mDetailFragment.getView() != null) {
+                    dtvContentsDetailFragment = mDetailFragment;
+                }
                 ContentsDetailDataProvider contentsDetailDataProvider = new ContentsDetailDataProvider(this);
                 dtvContentsDetailFragment.mOtherContentsDetailData = contentsDetailDataProvider.
                         checkClipStatus(dtvContentsDetailFragment.mOtherContentsDetailData);
@@ -544,6 +556,14 @@ public class ContentDetailActivity extends BaseActivity implements
                 break;
         }
         DTVTLogger.end();
+    }
+
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        if (getDetailFragment().isAdded()) {
+            getSupportFragmentManager().putFragment(outState, DETAIL_FRAGMENT_KEY, getDetailFragment());
+        }
+        super.onSaveInstanceState(outState);
     }
 
     @Override
