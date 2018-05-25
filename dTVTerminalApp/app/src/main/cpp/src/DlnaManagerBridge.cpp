@@ -15,16 +15,27 @@
 
 #define PackageName "com/nttdocomo/android/tvterminalapp/jni/"
 #define DlnaManagerClassName "DlnaManager"
+#define DlnaObjectClassName "DlnaObject"
 
 // processing callback to handler class
 typedef struct MyContext {
     JavaVM *javaVM;
     jclass jniHelperClz;
     jobject jniHelperObj;
+
 } MyContext;
+
+struct JniStruct{
+    jclass cls;
+    jmethodID constructorId;
+
+    jfieldID nameId;
+};
+
 
 //for java
 MyContext g_ctx;
+JniStruct jniModelStruct;
 
 //for c/cpp
 DlnaBase *dlnaBase;
@@ -47,13 +58,20 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
 
     jclass clz = env->FindClass(PackageName DlnaManagerClassName);
     g_ctx.jniHelperClz = (jclass) env->NewGlobalRef(clz);
-
+    //TODO:sharedでもらわないとアクセスが1回増える
     jmethodID jniHelperCtor = env->GetMethodID(g_ctx.jniHelperClz, "<init>", "()V");
     jobject handler = env->NewObject(g_ctx.jniHelperClz, jniHelperCtor);
     g_ctx.jniHelperObj = env->NewGlobalRef(handler);
 
+    jclass modelClz = env->FindClass(PackageName DlnaObjectClassName);
+    jniModelStruct.cls = (jclass) env->NewGlobalRef(modelClz);
+    jniModelStruct.constructorId = env->GetMethodID(jniModelStruct.cls, "<init>", "()V");
+
+    jniModelStruct.nameId = env->GetFieldID(jniModelStruct.cls, "name", "Ljava/lang/String;");
+
     return JNI_VERSION_1_6;
 }
+
 
 // region call from java
 JNIEXPORT void JNICALL
@@ -69,7 +87,12 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_cipherFileContextGlobal
     cipher_file_context_global_create(secure_io_global_get_instance(), DU_UCHAR(pathString));
 }
 
-//private native void cipherFileContextGlobalCreate(String privateDataPath);
+void fillContentInfoIntoJni(JNIEnv *env, const ContentInfo *src, jobject &dst) {
+    jstring nameString = env->NewStringUTF(src->name);
+    env->SetObjectField(dst, jniModelStruct.nameId, nameString);
+    env->DeleteLocalRef(nameString);
+}
+
 JNIEXPORT void JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jobject thiz, jstring path) {
     LOG_WITH("");
@@ -78,6 +101,8 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
     dlnaBase = new DlnaBase();
     dlnaDmsBrowse = new DlnaDmsBrowse();
     dlnaRemoteConnect = new DlnaRemoteConnect();
+
+    //region dlnaBase callback
     dlnaBase->DmsFoundCallback = [](const char* friendlyName, const char* udn, const char* location, const char* controlUrl, const char* eventSubscriptionUrl) {
         LOG_WITH("friendlyName = %s", friendlyName);
         JNIEnv *_env = NULL;
@@ -97,8 +122,6 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
         jstring locationString = _env->NewStringUTF(location);
         jstring controlUrlString = _env->NewStringUTF(controlUrl);
         jstring eventSubscriptionString = _env->NewStringUTF(eventSubscriptionUrl);
-//        jstring modelNameString = _env->NewStringUTF(friendlyName);
-//        jstring manufacturerString = _env->NewStringUTF(friendlyName);
 
         jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "DmsFoundCallback", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
 
@@ -134,7 +157,40 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
             g_ctx.javaVM->DetachCurrentThread();
         }
     };
+    //endregion dlnaBase callback
 
+    //region dlnaDmsBrowse callback
+    dlnaDmsBrowse->ContentBrowseCallback = [](std::vector<ContentInfo> contentList, const char* containerId) {
+        JNIEnv *_env = NULL;
+        int status = g_ctx.javaVM->GetEnv((void **) &_env, JNI_VERSION_1_6);
+        bool isAttached = false;
+        if (status < 0) {
+            status = g_ctx.javaVM->AttachCurrentThread(&_env, NULL);
+            if (status < 0 || NULL == _env) {
+                return;
+            }
+            isAttached = true;
+        }
+
+        jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "ContentBrowseCallback", "([Lcom/nttdocomo/android/tvterminalapp/jni/DlnaObject;)V");
+        jobjectArray returnArray = _env->NewObjectArray((jsize)contentList.size(), jniModelStruct.cls, nullptr);
+        for (size_t i = 0 ; i < contentList.size() ; ++i) {
+            auto *item = &contentList.at(i);
+            jobject jobj = _env->NewObject(jniModelStruct.cls, jniModelStruct.constructorId);
+            fillContentInfoIntoJni(_env, item, jobj);
+            _env->SetObjectArrayElement(returnArray, i, jobj);
+            _env->DeleteLocalRef(jobj);
+        }
+        _env->CallVoidMethod(g_ctx.jniHelperObj, methodID, returnArray);
+        _env->DeleteLocalRef(returnArray);
+
+        if (isAttached) {
+            g_ctx.javaVM->DetachCurrentThread();
+        }
+    };
+    //endregion dlnaDmsBrowse callback
+
+    //region dlnaRemoteConnect callback
     dlnaRemoteConnect->LocalRegistrationCallback = [](bool result, eLocalRegistrationResultType resultType) {
         JNIEnv *_env = NULL;
         int status = g_ctx.javaVM->GetEnv((void **) &_env, JNI_VERSION_1_6);
@@ -223,14 +279,7 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
             g_ctx.javaVM->DetachCurrentThread();
         }
     };
-    dlnaDmsBrowse->ContentBrowseCallback = [](std::vector<ContentInfo> contentList, const char* containerId) {
-        for (auto item : contentList) {
-            LOG_WITH("item.name = %s ", item.name);
-        }
-//            jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "ContentBrowseCallback", "(contentList;Ljava/lang/String;)V");
-//            _env->CallVoidMethod(g_ctx.jniHelperObj, methodID, nameString, udnString, locationString, controlUrlString, eventSubscriptionString);
-//            _env->CallVoidMethod(g_ctx.jniHelperObj, methodID, contentList, containerId);
-    };
+    //endregion dlnaRemoteConnect callback
 
     bool resultDmp = dlnaBase->initDmp(dmp);
     LOG_WITH_BOOL(resultDmp, "resultDmp");

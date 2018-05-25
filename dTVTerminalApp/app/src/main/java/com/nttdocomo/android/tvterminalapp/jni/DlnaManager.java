@@ -299,6 +299,12 @@ public class DlnaManager {
         }
     }
 
+    public void ContentBrowseCallback(final DlnaObject[] objs) {
+        for (DlnaObject obj: objs) {
+            DTVTLogger.warning("obj.name = " + obj.name);
+        }
+    }
+
     /**
      * dms消えた(call from jni).
      * @param udn  udn

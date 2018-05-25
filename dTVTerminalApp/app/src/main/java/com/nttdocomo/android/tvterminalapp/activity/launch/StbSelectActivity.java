@@ -699,6 +699,9 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     private void storeSTBData() {
         DTVTLogger.start();
         do {
+            if (mCallbackTimer == null) {
+                break;
+            }
             if (mCallbackTimer.getTimerStatus() == TimerStatus.TIMER_STATUS_DURING_STARTUP) {
                 break;
             }
