@@ -48,8 +48,10 @@ public class RecordedContentsDetailData implements Parcelable {
     private int mDownLoadStatus;
     /**ダウンロードコンテンツ格納パスー.*/
     private String mDlFileFullPath;
-    /**isLive.*/
+    /**放送中フラグ.*/
     private boolean mIsLive = false;
+    /**リモートフラグ.*/
+    private boolean mIsRemote = false;
 
     /**
      *isLive取得.
@@ -65,6 +67,22 @@ public class RecordedContentsDetailData implements Parcelable {
      */
     public void setIsLive(final boolean mIsLive) {
         this.mIsLive = mIsLive;
+    }
+
+    /**
+     *リモートフラグ取得.
+     * @return リモート
+     */
+    public boolean isRemote() {
+        return mIsRemote;
+    }
+
+    /**
+     * リモートフラグ設定.
+     * @param mIsRemote リモート
+     */
+    public void setIsRemote(final boolean mIsRemote) {
+        this.mIsRemote = mIsRemote;
     }
 
     /**
@@ -296,6 +314,7 @@ public class RecordedContentsDetailData implements Parcelable {
         dest.writeInt(this.mDownLoadStatus);
         dest.writeString(this.mDlFileFullPath);
         dest.writeByte(this.mIsLive ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.mIsRemote ? (byte) 1 : (byte) 0);
     }
     /**コンストラクタ.*/
     public RecordedContentsDetailData() {
@@ -321,6 +340,7 @@ public class RecordedContentsDetailData implements Parcelable {
         this.mDownLoadStatus = in.readInt();
         this.mDlFileFullPath = in.readString();
         this.mIsLive = in.readByte() != 0;
+        this.mIsRemote = in.readByte() != 0;
     }
     /**コンストラクタ.*/
     public static final Creator<RecordedContentsDetailData> CREATOR = new Creator<RecordedContentsDetailData>() {

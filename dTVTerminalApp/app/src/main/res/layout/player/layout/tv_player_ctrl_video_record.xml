@@ -20,7 +20,8 @@
         android:background="@drawable/contents_provider_shape_corner"
         android:text="@string/now_on_air"
         android:textColor="@color/contents_player_now_on_air_text_color"
-        android:textSize="@dimen/contents_detail_player_now_on_air_text_size" />
+        android:textSize="@dimen/contents_detail_player_now_on_air_text_size"
+        android:visibility="gone"/>
 
     <FrameLayout
         android:id="@+id/tv_player_ctrl_video_record_player_pause_fl"

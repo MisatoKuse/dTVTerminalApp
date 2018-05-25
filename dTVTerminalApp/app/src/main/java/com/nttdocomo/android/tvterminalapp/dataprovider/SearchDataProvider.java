@@ -100,7 +100,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
      *
      * @return 検索状態
      */
-    private SearchState getSearchState() {
+    public SearchState getSearchState() {
         synchronized (this) {
             return mState;
         }
@@ -111,7 +111,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
      *
      * @param newSearchState 検索状態
      */
-    private void setSearchState(final SearchState newSearchState) {
+    public void setSearchState(final SearchState newSearchState) {
         synchronized (this) {
             mState = newSearchState;
         }

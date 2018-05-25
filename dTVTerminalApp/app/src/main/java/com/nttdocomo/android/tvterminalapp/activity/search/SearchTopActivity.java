@@ -41,6 +41,7 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchD
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchFilterTypeMappable;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchGenreType;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchResultError;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchState;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.TotalSearchContentInfo;
 
 import java.util.ArrayList;
@@ -239,6 +240,9 @@ public class SearchTopActivity extends BaseActivity
                         @Override
                         public boolean onQueryTextChange(final String searchText) {
                             // 検索フォームに文字が入力された時
+                            if (mSearchDataProvider.getSearchState() == SearchState.finished) {
+                                mSearchDataProvider.setSearchState(SearchState.inital);
+                            }
                             setEditTextUnFocus();
                             // 空白でインクリメンタル検索を行うと、以後の検索で0件と表示され続けるため除外
                             if (searchText.trim().length() == 0 && searchText.length() > 0) {
@@ -300,11 +304,11 @@ public class SearchTopActivity extends BaseActivity
                         }
                     });
                 } else {
-                    if (mTimer != null) {
+                    // フォーカスが外れた時
+                    if (mTimer != null && mSearchDataProvider.getSearchState() == SearchState.finished) {
                         mTimer.cancel();
                         mTimer = null;
                     }
-                    // フォーカスが外れた時
                     setEditTextUnFocus();
                     mSearchView.clearFocus();
                 }

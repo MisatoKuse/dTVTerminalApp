@@ -332,7 +332,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         if (mUserInfoGetRequest && result) {
             //依頼が出ているので、dアカウントの取得に成功していればユーザー情報の取得を開始
             getUserInfo();
-        } else if(!result) {
+        } else if (!result) {
             DTVTLogger.debug("onDaccountOttGetComplete result=false");
 
             //dアカウントが取得できない事が確定したので、バナーの表示を行う
@@ -416,7 +416,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             case LOGIN_NG:
                 DTVTLogger.debug("showHomeBanner_LOGIN_NG");
                 //dアカウント取得前と取得失敗の場合
-                if(mIsDaccountGetNg) {
+                if (mIsDaccountGetNg) {
                     DTVTLogger.debug("showHomeBanner_mIsDaccountGetNg");
                     //dアカウントが取得できない事が確定したので、PR画像のバナーを表示する
                     mAgreementRl.setVisibility(View.GONE);

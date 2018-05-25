@@ -1124,4 +1124,35 @@ public class ContentUtils {
             return ViewIngType.DISABLE_VOD_WATCH_AGREEMENT_DISPLAY;
         }
     }
+
+    /**
+     * 機能：「duration="0:00:42.000"」/「duration="0:00:42"」からmsへ変換.
+     *
+     * @param durationStr durationStr
+     * @return duration in ms
+     */
+    public static long getDuration(final String durationStr) {
+        DTVTLogger.start();
+        long ret = 0;
+        String[] strs1 = durationStr.split(":");
+        if (3 == strs1.length) {
+            ret = 60 * 60 * 1000 * Integer.parseInt(strs1[0]) + 60 * 1000 * Integer.parseInt(strs1[1]);
+            String ss = strs1[2];
+            int i = ss.indexOf('.');
+            if (i <= 0) {
+                ret += 1000L * Integer.parseInt(ss);
+            } else {
+                String ss1 = ss.substring(0, i);
+                String ss2 = ss.substring(i + 1, ss.length());
+                ret += 1000L * Integer.parseInt(ss1);
+                try {
+                    ret += Integer.parseInt(ss2);
+                } catch (Exception e2) {
+                    DTVTLogger.debug("TvPlayerActivity::getDuration(), skip ms");
+                }
+            }
+        }
+        DTVTLogger.end();
+        return ret;
+    }
 }

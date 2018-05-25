@@ -22,41 +22,11 @@
             android:layout_height="wrap_content"
             android:visibility="visible">
 
-            <RelativeLayout
+            <com.nttdocomo.android.tvterminalapp.view.PlayerViewLayout
                 android:id="@+id/dtv_contents_detail_main_layout_player_rl"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="gone">
-
-                <com.digion.dixim.android.secureplayer.SecureVideoView
-                    android:id="@+id/dtv_contents_detail_main_layout_player_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerInParent="true"/>
-
-                <TextView
-                    android:id="@+id/tv_player_main_layout_video_ctrl_player_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="@dimen/contents_detail_player_title_text_start_margin"
-                    android:layout_marginEnd="@dimen/contents_detail_player_title_text_end_margin"
-                    android:layout_marginTop="@dimen/contents_detail_player_title_text_top_margin"
-                    android:maxLines="2"
-                    android:ellipsize="end"
-                    android:textStyle="bold"
-                    android:textColor="@color/contents_player_landscape_title_text_color"
-                    android:textSize="@dimen/contents_detail_player_media_controller_text_size" />
-
-                <ImageView
-                    android:id="@+id/tv_player_main_layout_video_ctrl_player_logo"
-                    android:layout_width="@dimen/contents_detail_player_logo_width"
-                    android:layout_height="@dimen/contents_detail_player_logo_height"
-                    android:layout_marginStart="@dimen/contents_detail_player_logo_start_margin"
-                    android:layout_marginTop="@dimen/contents_detail_player_logo_top_margin"
-                    android:background="@color/contents_logo_background_default_color"
-                    android:contentDescription="@null"/>
-            </RelativeLayout>
+                android:visibility="gone"/>
 
             <ImageView
                 android:id="@+id/dtv_contents_detail_main_layout_thumbnail"
