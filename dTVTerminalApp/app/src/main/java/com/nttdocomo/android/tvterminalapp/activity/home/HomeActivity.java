@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.Preference;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -268,10 +269,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     protected void onResume() {
-        super.onResume();
-
-        //ユーザー情報取得開始
+        //ユーザー情報取得開始(super.onResumeで行われるdアカウントの取得よりも先に行う事で、
+        // dアカウントが未取得だった場合のユーザー情報再取得への流れを明確化する)
         getUserInfoStart();
+
+        super.onResume();
     }
 
     /**
@@ -320,13 +322,19 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         //dアカウントの取得が終わった際に呼ばれるコールバック
         super.onDaccountOttGetComplete(result);
 
-        DTVTLogger.start("this is home");
+        DTVTLogger.start("this is home. result = " + result
+                + "/mUserInfoGetRequest = " + mUserInfoGetRequest);
+        DTVTLogger.debug("onDaccountOttGetComplete daccount = "
+                + SharedPreferencesUtils.getSharedPreferencesDaccountId(
+                getApplicationContext()));
 
         //ユーザー情報取得依頼をチェック
         if (mUserInfoGetRequest && result) {
             //依頼が出ているので、dアカウントの取得に成功していればユーザー情報の取得を開始
             getUserInfo();
         } else if(!result) {
+            DTVTLogger.debug("onDaccountOttGetComplete result=false");
+
             //dアカウントが取得できない事が確定したので、バナーの表示を行う
             mIsDaccountGetNg = true;
 
@@ -334,6 +342,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    DTVTLogger.debug("onDaccountOttGetComplete call showHomeBanner");
                     showHomeBanner();
                 }
             });

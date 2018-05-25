@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.daccount;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.ThumbnailCacheManager;
@@ -182,11 +183,24 @@ public class DaccountControl implements
         mOnceControl = DaccountControlOnce.getInstance();
         if (mOnceControl.isExecOnce()) {
             //既にサービスを登録済みとなる。
-            DTVTLogger.end("registService already exec");
+            DTVTLogger.debug("registService already exec");
 
             //設定画面でdアカウントを切り替えた際は、ホーム画面の情報切り替えの為に、サービス登録済みでもコールバックが必要となる
-            //成功で返した場合、ホーム画面以外は特に処理は行わないので、問題は無い
-            mDaccountControlCallBack.daccountControlCallBack(true);
+            //登録済みでも、dアカウントの取得に失敗している場合があったので、存在の有無で処理を変更する
+            if(TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(context))) {
+                DTVTLogger.debug("Daccount get retry");
+
+                //dアカウントは取れていないので、再取得
+                mContext = context;
+                mDaccountGetOtt = new DaccountGetOtt();
+                mDaccountGetOtt.execDaccountGetOTT(mContext, this);
+                //クラスの識別値を設定
+                mResultClass = CheckLastClassEnum.ONE_TIME_PASS_WORD;
+            } else {
+                DTVTLogger.debug("Daccount true return");
+                //dアカウントは取れているので、trueを返す
+                mDaccountControlCallBack.daccountControlCallBack(true);
+            }
 
             return;
         }
