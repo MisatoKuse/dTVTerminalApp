@@ -320,7 +320,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         //dアカウントの取得が終わった際に呼ばれるコールバック
         super.onDaccountOttGetComplete(result);
 
-        DTVTLogger.start();
+        DTVTLogger.start("this is home");
 
         //ユーザー情報取得依頼をチェック
         if (mUserInfoGetRequest && result) {
@@ -393,17 +393,22 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         UserState userState = UserInfoUtils.getUserState(this);
         switch (userState) {
             case LOGIN_OK_CONTRACT_NG:
+                DTVTLogger.debug("showHomeBanner_LOGIN_OK_CONTRACT_NG");
                 mAgreementRl.setVisibility(View.VISIBLE);
                 mPrImageView.setVisibility(View.VISIBLE);
                 break;
             case CONTRACT_OK_PAIRING_NG:
+                DTVTLogger.debug("showHomeBanner_CONTRACT_OK_PAIRING_NG");
             case CONTRACT_OK_PARING_OK:
+                DTVTLogger.debug("showHomeBanner_CONTRACT_OK_PARING_OK");
                 mAgreementRl.setVisibility(View.GONE);
                 mPrImageView.setVisibility(View.GONE);
                 break;
             case LOGIN_NG:
+                DTVTLogger.debug("showHomeBanner_LOGIN_NG");
                 //dアカウント取得前と取得失敗の場合
                 if(mIsDaccountGetNg) {
+                    DTVTLogger.debug("showHomeBanner_mIsDaccountGetNg");
                     //dアカウントが取得できない事が確定したので、PR画像のバナーを表示する
                     mAgreementRl.setVisibility(View.GONE);
                     mPrImageView.setVisibility(View.VISIBLE);
@@ -411,6 +416,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 }
                 //確定前はバナーを表示しないので、ここでbreakは行わない
             default:
+                DTVTLogger.debug("showHomeBanner_default");
                 //情報の取得前は各バナーは表示しないように変更
                 mAgreementRl.setVisibility(View.GONE);
                 mPrImageView.setVisibility(View.GONE);

@@ -1823,12 +1823,16 @@ public class BaseActivity extends FragmentActivity implements
      * dアカウントの切り替えや無効化を受信できるように設定を行う.
      */
     protected void setDaccountControl() {
+        DTVTLogger.start();
+
         //UIスレッド上の動作である間にエラー用ダイアログ表示準備を行う
         mFirstDaccountErrorHandler = new Handler();
 
         //dアカウント関連の処理を依頼する
         mDAccountControl = new DaccountControl();
         mDAccountControl.registService(getApplicationContext(), this);
+
+        DTVTLogger.end();
     }
 
     /**
@@ -1837,6 +1841,8 @@ public class BaseActivity extends FragmentActivity implements
      * @param result 正常終了ならばtrue
      */
     protected void onDaccountOttGetComplete(final boolean result) {
+        DTVTLogger.start("this = " + this);
+        DTVTLogger.end();
     }
 
     @Override

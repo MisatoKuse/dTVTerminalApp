@@ -181,8 +181,13 @@ public class DaccountControl implements
 
         mOnceControl = DaccountControlOnce.getInstance();
         if (mOnceControl.isExecOnce()) {
-            //既に実行済みなので帰る。コールバックは既に実行済みのところで行うので、無用。
+            //既にサービスを登録済みとなる。
             DTVTLogger.end("registService already exec");
+
+            //設定画面でdアカウントを切り替えた際は、ホーム画面の情報切り替えの為に、サービス登録済みでもコールバックが必要となる
+            //成功で返した場合、ホーム画面以外は特に処理は行わないので、問題は無い
+            mDaccountControlCallBack.daccountControlCallBack(true);
+
             return;
         }
 

@@ -399,6 +399,9 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         super.onResume();
         DTVTLogger.start();
 
+        //別途BaseActivityの物は禁止してあるので、こちらで呼び出す
+        setDaccountControl();
+
         initView();
         if (mIsAppDL) {
             //dアカウントアプリDLからの戻り時、各種Viewを初期状態に戻す
