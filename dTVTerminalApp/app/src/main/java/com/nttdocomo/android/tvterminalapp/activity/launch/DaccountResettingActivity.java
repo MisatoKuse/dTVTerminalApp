@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -116,6 +117,27 @@ public class DaccountResettingActivity extends BaseActivity implements View.OnCl
      */
     private void onReturnButton() {
         finish();
+    }
+
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                setFinishActivity();
+                break;
+            default:
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    /**
+     * アニメーションを付加してアクティビティを終了する.
+     */
+    private void setFinishActivity() {
+        super.finish();
+        //アニメーションを付加する
+        overridePendingTransition(R.anim.in_righttoleft, R.anim.out_lefttoright);
     }
 
     /**
