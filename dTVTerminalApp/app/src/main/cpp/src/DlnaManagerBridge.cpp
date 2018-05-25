@@ -24,12 +24,14 @@ typedef struct MyContext {
     jobject jniHelperObj;
 
 } MyContext;
-
+/**
+ * 共通モデルクラスのidとfieldIdを格納
+ */
 struct JniStruct{
     jclass cls;
     jmethodID constructorId;
 
-    jfieldID nameId;
+    jfieldID nameId;//増やす
 };
 
 
@@ -68,6 +70,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     jniModelStruct.constructorId = env->GetMethodID(jniModelStruct.cls, "<init>", "()V");
 
     jniModelStruct.nameId = env->GetFieldID(jniModelStruct.cls, "name", "Ljava/lang/String;");
+    //増やす
 
     return JNI_VERSION_1_6;
 }
@@ -91,6 +94,11 @@ void fillContentInfoIntoJni(JNIEnv *env, const ContentInfo *src, jobject &dst) {
     jstring nameString = env->NewStringUTF(src->name);
     env->SetObjectField(dst, jniModelStruct.nameId, nameString);
     env->DeleteLocalRef(nameString);
+
+    //増やす
+//    jstring nameString = env->NewStringUTF(src->name);
+//    env->SetObjectField(dst, jniModelStruct.nameId, nameString);
+//    env->DeleteLocalRef(nameString);
 }
 
 JNIEXPORT void JNICALL

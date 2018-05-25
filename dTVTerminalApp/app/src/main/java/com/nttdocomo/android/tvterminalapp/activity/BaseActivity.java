@@ -530,7 +530,7 @@ public class BaseActivity extends FragmentActivity implements
      * @return true: stb接続中   false: stb未接続
      */
     public boolean getStbStatus() {
-        return mIsStbStatusOn;
+        return true;
     }
 
     /**

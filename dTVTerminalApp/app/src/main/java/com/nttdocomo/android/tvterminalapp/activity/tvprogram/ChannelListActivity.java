@@ -409,6 +409,7 @@ public class ChannelListActivity extends BaseActivity implements
                 switch (mCurrentType) {
                     case CH_LIST_DATA_TYPE_BS:
 //                        mDataProviderHandler.postDelayed(mRunnableBs, CHANNEL_LIST_TAB_DELAY_TIME);
+//                        DlnaManager.shared().BrowseContentWithContainerId(BS);
                         break;
                     case CH_LIST_DATA_TYPE_TDB:
 //                        mDataProviderHandler.postDelayed(mRunnableTer, CHANNEL_LIST_TAB_DELAY_TIME);

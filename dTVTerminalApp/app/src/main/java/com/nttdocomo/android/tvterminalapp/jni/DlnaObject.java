@@ -6,4 +6,5 @@ package com.nttdocomo.android.tvterminalapp.jni;
 
 public class DlnaObject {
     public String name;
+    //増やす
 }
