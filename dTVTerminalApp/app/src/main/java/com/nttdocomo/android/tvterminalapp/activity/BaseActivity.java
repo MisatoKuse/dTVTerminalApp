@@ -1696,6 +1696,7 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * リモコン表示時にScrollViewにマージンを設ける.
+     * レイアウトファイルの変更で対応できなかったためリモコンボタンの表示領域確保を本メソッドで行う.
      *
      * @param visibility 表示状態
      */

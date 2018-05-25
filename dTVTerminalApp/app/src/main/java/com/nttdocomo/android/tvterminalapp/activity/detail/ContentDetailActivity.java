@@ -523,6 +523,8 @@ public class ContentDetailActivity extends BaseActivity implements
     protected void onResume() {
         DTVTLogger.start();
         super.onResume();
+        DtvContentsDetailFragment dtvContentsDetailFragment;
+        ContentsDetailDataProvider contentsDetailDataProvider;
         switch (mDisplayState) {
             case PLAYER_ONLY:
                 if (!mIsOncreateOk) {
@@ -541,13 +543,23 @@ public class ContentDetailActivity extends BaseActivity implements
                 initSecurePlayer();
                 setPlayerEvent();
                 setUserAgeInfo();
-            case CONTENTS_DETAIL_ONLY:
                 //BG復帰時にクリップボタンの更新を行う
-                DtvContentsDetailFragment dtvContentsDetailFragment = getDetailFragment();
+                dtvContentsDetailFragment = getDetailFragment();
                 if (mDetailFragment != null && mDetailFragment.getView() != null) {
                     dtvContentsDetailFragment = mDetailFragment;
                 }
-                ContentsDetailDataProvider contentsDetailDataProvider = new ContentsDetailDataProvider(this);
+                contentsDetailDataProvider = new ContentsDetailDataProvider(this);
+                dtvContentsDetailFragment.mOtherContentsDetailData = contentsDetailDataProvider.
+                        checkClipStatus(dtvContentsDetailFragment.mOtherContentsDetailData);
+                dtvContentsDetailFragment.resumeClipButton();
+                break;
+            case CONTENTS_DETAIL_ONLY:
+                //BG復帰時にクリップボタンの更新を行う
+                dtvContentsDetailFragment = getDetailFragment();
+                if (mDetailFragment != null && mDetailFragment.getView() != null) {
+                    dtvContentsDetailFragment = mDetailFragment;
+                }
+                contentsDetailDataProvider = new ContentsDetailDataProvider(this);
                 dtvContentsDetailFragment.mOtherContentsDetailData = contentsDetailDataProvider.
                         checkClipStatus(dtvContentsDetailFragment.mOtherContentsDetailData);
                 dtvContentsDetailFragment.resumeClipButton();
@@ -1142,7 +1154,7 @@ public class ContentDetailActivity extends BaseActivity implements
      */
     private void showMessage(final String msg) {
         DTVTLogger.start();
-        CustomDialog customDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        CustomDialog customDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.ERROR);
         customDialog.setContent(msg);
         customDialog.showDialog();
         DTVTLogger.end();
@@ -1909,6 +1921,10 @@ public class ContentDetailActivity extends BaseActivity implements
                 break;
             case PLAYER_AND_CONTENTS_DETAIL:
                 setPlayerScroll();
+                mViewPager = findViewById(R.id.dtv_contents_detail_main_layout_vp);
+                initContentData();
+                initTab();
+                break;
             case CONTENTS_DETAIL_ONLY:
                 mViewPager = findViewById(R.id.dtv_contents_detail_main_layout_vp);
                 initContentData();
@@ -2480,7 +2496,7 @@ public class ContentDetailActivity extends BaseActivity implements
                 }
                 //DTVの場合
                 if (mDetailData != null && mDetailData.getServiceId() == DTV_CONTENTS_SERVICE_ID) {
-                    CustomDialog startAppDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+                    CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
                     startAppDialog.setContent(getResources().getString(R.string.dtv_content_service_start_dialog));
                     startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                         @Override
@@ -2513,7 +2529,7 @@ public class ContentDetailActivity extends BaseActivity implements
                     });
                     startAppDialog.showDialog();
                 } else if (mDetailData != null && mDetailData.getServiceId() == D_ANIMATION_CONTENTS_SERVICE_ID) {
-                    CustomDialog startAppDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+                    CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
                     startAppDialog.setContent(getResources().getString(R.string.d_anime_store_content_service_start_dialog));
                     startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                         @Override
@@ -2535,7 +2551,7 @@ public class ContentDetailActivity extends BaseActivity implements
                     });
                     startAppDialog.showDialog();
                 } else if (mDetailData != null && mDetailData.getServiceId() == DTV_CHANNEL_CONTENTS_SERVICE_ID) {
-                    final CustomDialog startAppDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+                    final CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
                     startAppDialog.setContent(getResources().getString(R.string.dtv_channel_service_start_dialog));
                     startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                         @Override
@@ -2573,7 +2589,7 @@ public class ContentDetailActivity extends BaseActivity implements
                                 || VIDEO_PACKAGE.equals(mDetailFullData.getDisp_type())
                                 || SUBSCRIPTION_PACKAGE.equals(mDetailFullData.getDisp_type())
                                 || SERIES_SVOD.equals(mDetailFullData.getDisp_type())) {
-                            CustomDialog startAppDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+                            CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
                             startAppDialog.setContent(getResources().getString(R.string.dtv_content_service_start_dialog));
                             startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                                 @Override
@@ -2602,7 +2618,7 @@ public class ContentDetailActivity extends BaseActivity implements
                             });
                             startAppDialog.showDialog();
                         } else if (TV_PROGRAM.equals(mDetailFullData.getDisp_type())) { //ひかりTV中にdtvチャンネルの場合 DREM-1100
-                            final CustomDialog startAppDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+                            final CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
                             startAppDialog.setContent(getResources().getString(R.string.dtv_channel_service_start_dialog));
                             startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                                 @Override
@@ -2955,7 +2971,7 @@ public class ContentDetailActivity extends BaseActivity implements
      */
     private void showDialogToConfirmClose() {
         mPlayerController.stop();
-        CustomDialog closeDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        CustomDialog closeDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.ERROR);
         closeDialog.setContent(getApplicationContext().getString(R.string.contents_detail_parental_check_fail));
         closeDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
@@ -3133,7 +3149,7 @@ public class ContentDetailActivity extends BaseActivity implements
 //    // TODO 繰り返し予約処理追加時に使用
 //    private CustomDialog createRecordingReservationDialog() {
 //        DTVTLogger.start();
-//        CustomDialog recDialog = new CustomDialog(this, CustomDialog.DialogType.SELECT);
+//        CustomDialog recDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.SELECT);
 //        // Callback
 //        recDialog.setItemSelectCallback(mItemSelectCallback);
 //        // Title
@@ -3172,7 +3188,7 @@ public class ContentDetailActivity extends BaseActivity implements
      * 録画予約成功時ダイアログ表示.
      */
     private void showCompleteDialog() {
-        CustomDialog completeRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        CustomDialog completeRecordingReservationDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.ERROR);
         completeRecordingReservationDialog.setContent(getResources().getString(R.string.recording_reservation_complete_dialog_msg));
         completeRecordingReservationDialog.setConfirmText(R.string.recording_reservation_complete_dialog_ok);
         // Cancelable
@@ -3186,7 +3202,7 @@ public class ContentDetailActivity extends BaseActivity implements
      * @return 録画予約失敗エラーダイアログ
      */
     private CustomDialog createErrorDialog() {
-        CustomDialog failedRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        CustomDialog failedRecordingReservationDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.ERROR);
         failedRecordingReservationDialog.setContent(getResources().getString(R.string.recording_reservation_failed_dialog_msg));
         failedRecordingReservationDialog.setCancelText(R.string.recording_reservation_failed_dialog_confirm);
         // Cancelable
@@ -3226,7 +3242,7 @@ public class ContentDetailActivity extends BaseActivity implements
      */
     private CustomDialog createRecordingReservationConfirmDialog() {
         CustomDialog recordingReservationConfirmDialog =
-                new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+                new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
         //タイトル指定
         recordingReservationConfirmDialog.setTitle(getResources().getString(
                 R.string.recording_reservation_confirm_dialog_title));
@@ -3587,7 +3603,7 @@ public class ContentDetailActivity extends BaseActivity implements
      */
     public void leadingContract() {
         //契約誘導ダイアログを表示
-        CustomDialog customDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+        CustomDialog customDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
         customDialog.setContent(getString(R.string.contents_detail_contract_text));
         customDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
@@ -3763,7 +3779,7 @@ public class ContentDetailActivity extends BaseActivity implements
         }
 
         //契約誘導ダイアログを表示
-        CustomDialog customDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        CustomDialog customDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.ERROR);
         customDialog.setContent(errorState.getErrorMessage());
         if (okCallback != null) {
             customDialog.setOkCallBack(okCallback);
