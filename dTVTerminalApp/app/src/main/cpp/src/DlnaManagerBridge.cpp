@@ -80,7 +80,6 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     jniModelStruct.resUrl = env->GetFieldID(jniModelStruct.cls, "mResUrl", "Ljava/lang/String;");
     jniModelStruct.size = env->GetFieldID(jniModelStruct.cls, "mSize", "Ljava/lang/String;");
     jniModelStruct.videoType = env->GetFieldID(jniModelStruct.cls, "mVideoType", "Ljava/lang/String;");
-    //増やす
 
     return JNI_VERSION_1_6;
 }
@@ -116,11 +115,6 @@ void fillContentInfoIntoJni(JNIEnv *env, const ContentInfo *src, jobject &dst) {
     jstring videoTypeString = env->NewStringUTF(src->protocolInfo);
     env->SetObjectField(dst, jniModelStruct.videoType, videoTypeString);
     env->DeleteLocalRef(videoTypeString);
-
-    //増やす
-//    jstring nameString = env->NewStringUTF(src->name);
-//    env->SetObjectField(dst, jniModelStruct.nameId, nameString);
-//    env->DeleteLocalRef(nameString);
 }
 
 JNIEXPORT void JNICALL
@@ -202,7 +196,7 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
             isAttached = true;
         }
 
-        jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "ContentBrowseCallback", "([Lcom/nttdocomo/android/tvterminalapp/jni/DlnaObject;)V");
+        jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "ContentBrowseCallback", "(Ljava/lang/String;[Lcom/nttdocomo/android/tvterminalapp/jni/DlnaObject;)V");
         jobjectArray returnArray = _env->NewObjectArray((jsize)contentList.size(), jniModelStruct.cls, nullptr);
         for (size_t i = 0 ; i < contentList.size() ; ++i) {
             auto *item = &contentList.at(i);
@@ -211,8 +205,10 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
             _env->SetObjectArrayElement(returnArray, i, jobj);
             _env->DeleteLocalRef(jobj);
         }
-        _env->CallVoidMethod(g_ctx.jniHelperObj, methodID, returnArray);
+        jstring containerIdString = _env->NewStringUTF(containerId);
+        _env->CallVoidMethod(g_ctx.jniHelperObj, methodID, containerIdString, returnArray);
         _env->DeleteLocalRef(returnArray);
+        _env->DeleteLocalRef(containerIdString);
 
         if (isAttached) {
             g_ctx.javaVM->DetachCurrentThread();

@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.jni;
 
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.NonNull;
 
 import com.digion.dixim.android.util.AribExternalCharConverter;
 import com.digion.dixim.android.util.EnvironmentUtil;
@@ -315,9 +316,10 @@ public class DlnaManager {
      *  コンテンツブラウズコールバック.
      * @param objs コンテンツリスト
      */
-    public void ContentBrowseCallback(final DlnaObject[] objs) {
+    public void ContentBrowseCallback(@NonNull final String containerId, @NonNull final DlnaObject[] objs) {
+        DTVTLogger.warning("containerId = " + containerId + ", objs.length = " + objs.length);
         BrowseListener listener = DlnaManager.shared().mBrowseListener;
-        if (null != objs) {
+        if (listener != null) {
             aribConvertBs(objs);
             listener.onContentBrowseCallback(objs);
         }
@@ -327,20 +329,15 @@ public class DlnaManager {
      * ARIB変換.
      * @param info info
      */
-    private void aribConvertBs(final DlnaObject[] info) {
+    private void aribConvertBs(@NonNull final DlnaObject[] info) {
         AribExternalCharConverter aribExternalCharConverter = AribExternalCharConverter.getInstance();
         if (null == aribExternalCharConverter) {
             DTVTLogger.debug("get AribExternalCharConverter instance failed");
             return;
         }
-        if (null == info || 0 == info.length) {
-            return;
-        }
-
+        
         for (DlnaObject obj: info) {
-            if (null != obj) {
-                obj.mChannelName = AribExternalCharConverter.getConverted(obj.mChannelName);
-            }
+            obj.mChannelName = AribExternalCharConverter.getConverted(obj.mChannelName);
         }
     }
 
