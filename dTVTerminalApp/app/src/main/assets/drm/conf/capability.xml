@@ -14,6 +14,15 @@
         <format nonDlnaContentsSupport="1">
             <priority>1</priority>
             <protocol>http-get</protocol>
+            <mimeType>application/x-dtcp1</mimeType>
+            <supportedParam>
+                <op>00</op>
+                <flags>8C100000000000000000000000000000</flags>
+            </supportedParam>
+        </format>
+        <format nonDlnaContentsSupport="1">
+            <priority>1</priority>
+            <protocol>http-get</protocol>
             <mimeType>video/mpeg,application/octet-stream</mimeType>
             <supportedParam>
                 <pn>MPEG1,MPEG_PS_NTSC,MPEG_PS_NTSC_XAC3,MPEG_PS_PAL,MPEG_PS_PAL_XAC3,MPEG_TS_SD_NA_ISO,MPEG_TS_HD_NA_ISO,MPEG_TS_SD_EU_ISO,MPEG_TS_HD_NA_XAC3_ISO,MPEG_TS_SD_NA_XAC3_ISO</pn>
@@ -36,16 +45,6 @@
             <protocol>http-get</protocol>
             <mimeType>video/mp4</mimeType>
             <supportedParam>
-                <op>00</op>
-                <flags>8C100000000000000000000000000000</flags>
-            </supportedParam>
-        </format>
-        <format nonDlnaContentsSupport="1">
-            <priority>1</priority>
-            <protocol>http-get</protocol>
-            <mimeType>application/dtcp</mimeType>
-            <supportedParam>
-                <pn>DTCP_MPEG_TS_JP_T,DTCP_MPEG_TS_SD_JP_MPEG1_L2_T,DTCP_AVC_TS_JP_AAC_T</pn>
                 <op>00</op>
                 <flags>8C100000000000000000000000000000</flags>
             </supportedParam>
@@ -280,3 +279,4 @@
         </format>
     </thumbnail>
 </capability>
+

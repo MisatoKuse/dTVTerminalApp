@@ -21,7 +21,7 @@
 
 #define READ_TIMEOUT_MS 30000
 
-//#define MY_LOG_FLAG
+#define MY_LOG_FLAG
 #ifdef MY_LOG_FLAG
     #define MY_LOG(fmt, ...) LOG_WITH(fmt, ##__VA_ARGS__)
 #else
