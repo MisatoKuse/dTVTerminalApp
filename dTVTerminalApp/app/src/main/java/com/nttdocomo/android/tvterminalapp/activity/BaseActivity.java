@@ -1371,7 +1371,9 @@ public class BaseActivity extends FragmentActivity implements
         mRemoteControllerView.init(this);
         mRemoteControllerView.setIsFirstVisible(isFirstVisible);
         mRemoteControllerView.setOnStartRemoteControllerUI(this);
-        layout.setVisibility(View.VISIBLE);
+        int visibility = View.VISIBLE;
+        setRemoteControllerViewMargin(visibility);
+        layout.setVisibility(visibility);
     }
 
     @Override
@@ -1585,7 +1587,29 @@ public class BaseActivity extends FragmentActivity implements
      */
     protected void setRemoteControllerViewVisibility(final int visibility) {
         if (mRemoteControllerView != null) {
+            setRemoteControllerViewMargin(visibility);
             findViewById(R.id.base_remote_controller_rl).setVisibility(visibility);
+        }
+    }
+
+    /**
+     * リモコン表示時にScrollViewにマージンを設ける.
+     * レイアウトファイルの変更で対応できなかったためリモコンボタンの表示領域確保を本メソッドで行う.
+     *
+     * @param visibility 表示状態
+     */
+    private void setRemoteControllerViewMargin(final int visibility) {
+        DTVTLogger.start();
+        //TODO 横画面の情報がないため縦画面の時のみ実装
+        if (visibility == View.VISIBLE) {
+            //リモコン表示時にScrollViewにマージンを設ける
+            Resources resources = getResources();
+            int remoteButtonMargin = resources.getDimensionPixelSize(R.dimen.remote_control_display_button_height)
+                    + resources.getDimensionPixelSize(R.dimen.remote_control_display_button_top_margin);
+            mBaseLinearLayout.setPadding(0, 0, 0, remoteButtonMargin);
+            mBaseLinearLayout.setBackgroundResource(R.color.dtv_contents_detail_tab_background_color);
+        } else {
+            mBaseLinearLayout.setPadding(0, 0, 0, 0);
         }
     }
 
@@ -1698,12 +1722,16 @@ public class BaseActivity extends FragmentActivity implements
      * dアカウントの切り替えや無効化を受信できるように設定を行う.
      */
     protected void setDaccountControl() {
+        DTVTLogger.start();
+
         //UIスレッド上の動作である間にエラー用ダイアログ表示準備を行う
         mFirstDaccountErrorHandler = new Handler();
 
         //dアカウント関連の処理を依頼する
         mDAccountControl = new DaccountControl();
         mDAccountControl.registService(getApplicationContext(), this);
+
+        DTVTLogger.end();
     }
 
     /**
@@ -1712,6 +1740,8 @@ public class BaseActivity extends FragmentActivity implements
      * @param result 正常終了ならばtrue
      */
     protected void onDaccountOttGetComplete(final boolean result) {
+        DTVTLogger.start("this = " + this);
+        DTVTLogger.end();
     }
 
     @Override
@@ -1971,6 +2001,8 @@ public class BaseActivity extends FragmentActivity implements
         detailData.setReserved4(info.getReserved4());
         detailData.setContentsId(info.getContentsId());
         detailData.setDispType(info.getDispType());
+        detailData.setDtv(info.getDtv());
+        detailData.setTvService(info.getTvService());
         detailData.setContentsType(info.getContentsType());
         detailData.setChannelId(info.getChannelId());
         detailData.setRecommendOrder(info.getRecommendOrder());

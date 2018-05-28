@@ -382,8 +382,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     public void onResume() {
         super.onResume();
         DTVTLogger.start();
-        //dアカウント情報取得
+
+        //別途BaseActivityの物は禁止してあるので、こちらで呼び出す
         setDaccountControl();
+
         initView();
         if (mIsAppDL) {
             //dアカウントアプリDLからの戻り時、各種Viewを初期状態に戻す
@@ -551,7 +553,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     /**
      * ペアリング中画面表示を設定.
      */
-    private void showPairingeView() {
+    private void showParingView() {
         DTVTLogger.start();
         if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
             TextView statusTextView = findViewById(R.id.stb_select_status_text);
@@ -672,7 +674,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         //IPアドレスを設定する
         mRemoteControlRelayClient.setRemoteIp(mDlnaDmsItemList.get(i).mIPAddress);
         //ペアリング中画面を出す
-        showPairingeView();
+        showParingView();
         //鍵交換
         exchangeKey();
     }
