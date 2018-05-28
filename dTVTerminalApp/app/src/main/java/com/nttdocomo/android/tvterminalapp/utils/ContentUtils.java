@@ -20,7 +20,6 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChannelListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
@@ -571,8 +570,12 @@ public class ContentUtils {
      * @return ContentsType
      */
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
-    public static ContentsType getRecommendContentsType(final OtherContentsDetailData detailData) {
-        int serviceId = detailData.getServiceId();
+    public static ContentsType getRecommendContentsType(final ContentsData detailData) {
+        String strServiceId = detailData.getServiceId();
+        int serviceId = -1;
+        if (strServiceId != null && DataBaseUtils.isNumber(strServiceId)) {
+            serviceId = Integer.parseInt(detailData.getServiceId());
+        }
         String categoryId = detailData.getCategoryId();
         switch (serviceId) {
             //serviceId = 44

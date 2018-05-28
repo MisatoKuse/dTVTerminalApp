@@ -19,7 +19,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.ClipListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
@@ -28,6 +27,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetail
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
@@ -278,7 +278,7 @@ public class ClipListBaseFragment extends Fragment
                 mContentsDetailDisplay = true;
                 Intent intent = new Intent(mContext, ContentDetailActivity.class);
                 intent.putExtra(DtvtConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
-                OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(contentsData, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
+                OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(contentsData, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
                 intent.putExtra(detailData.getRecommendFlg(), detailData);
                 clipListActivity.startActivity(intent);
             }

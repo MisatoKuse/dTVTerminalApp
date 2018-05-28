@@ -26,6 +26,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetail
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
@@ -405,7 +406,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         } else {
             recommendFlg = ContentDetailActivity.PLALA_INFO_BUNDLE_KEY;
         }
-        final OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(contentsData, recommendFlg);
+        final OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(contentsData, recommendFlg);
         viewHolder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {

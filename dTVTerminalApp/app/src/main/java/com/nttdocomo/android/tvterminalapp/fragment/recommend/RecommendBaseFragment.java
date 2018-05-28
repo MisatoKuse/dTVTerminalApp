@@ -22,10 +22,10 @@ import com.nttdocomo.android.tvterminalapp.activity.home.RecommendActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.view.RecommendListView;
 
@@ -307,42 +307,9 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
             Intent intent = new Intent(mActivity, ContentDetailActivity.class);
             intent.putExtra(DtvtConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
             intent.putExtra(ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY,
-                    getOtherContentsDetailData(info));
+                    DataConverter.getOtherContentsDetailData(info, ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY));
             recommendActivity.startActivity(intent);
         }
-    }
-
-    /**
-     * コンテンツ詳細に必要なデータを返す.
-     *
-     * @param info レコメンド情報
-     * @return コンテンツ情報
-     */
-    private OtherContentsDetailData getOtherContentsDetailData(final ContentsData info) {
-        OtherContentsDetailData detailData = new OtherContentsDetailData();
-        detailData.setTitle(info.getTitle());
-        detailData.setThumb(info.getThumURL());
-        detailData.setDetail(info.getSynop());
-        detailData.setServiceId(Integer.parseInt(info.getServiceId()));
-        detailData.setMobileViewingFlg(info.getMobileViewingFlg());
-        detailData.setReserved4(info.getReserved4());
-        detailData.setReserved1(info.getReserved1());
-        detailData.setReserved2(info.getReserved2());
-
-        //コンテンツIDの受け渡しを追加
-        detailData.setContentsId(info.getContentsId());
-        detailData.setChannelId(info.getChannelId());
-        detailData.setChannelName(info.getChannelName());
-        detailData.setRecommendOrder(info.getRecommendOrder());
-        detailData.setPageId(info.getPageId());
-        detailData.setGroupId(info.getGroupId());
-        detailData.setRecommendMethodId(info.getRecommendMethodId());
-        detailData.setCategoryId(info.getCategoryId());
-        detailData.setRecommendFlg(ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY);
-
-        detailData.setmStartDate(info.getStartViewing());
-        detailData.setmEndDate(info.getEndViewing());
-        return detailData;
     }
 
     /**

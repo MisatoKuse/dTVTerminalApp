@@ -22,7 +22,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -32,6 +31,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapter
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
 import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
 import java.util.ArrayList;
@@ -249,7 +249,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
         } else {
             Intent intent = new Intent();
             intent.setClass(mActivity, ContentDetailActivity.class);
-            OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(contentsData, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
+            OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(contentsData, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
             intent.putExtra(detailData.getRecommendFlg(), detailData);
             contentDetailActivity.startActivity(intent);
         }

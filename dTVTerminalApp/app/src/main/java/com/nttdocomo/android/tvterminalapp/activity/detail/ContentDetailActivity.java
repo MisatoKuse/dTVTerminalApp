@@ -879,7 +879,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             }
 
             //コンテンツタイプ取得
-            ContentUtils.ContentsType type = ContentUtils.getRecommendContentsType(mDetailData);
+            ContentUtils.ContentsType type = mDetailData.getContentCategory();
 
             switch (type) {
                 case PURE_DTV:
