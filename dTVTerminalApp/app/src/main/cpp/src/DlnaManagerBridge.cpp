@@ -31,7 +31,12 @@ struct JniStruct{
     jclass cls;
     jmethodID constructorId;
 
-    jfieldID nameId;//増やす
+    jfieldID bitrate;
+    jfieldID channelName;
+    jfieldID duration;
+    jfieldID resUrl;
+    jfieldID size;
+    jfieldID videoType;
 };
 
 
@@ -69,7 +74,12 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     jniModelStruct.cls = (jclass) env->NewGlobalRef(modelClz);
     jniModelStruct.constructorId = env->GetMethodID(jniModelStruct.cls, "<init>", "()V");
 
-    jniModelStruct.nameId = env->GetFieldID(jniModelStruct.cls, "name", "Ljava/lang/String;");
+    jniModelStruct.bitrate = env->GetFieldID(jniModelStruct.cls, "mBitrate", "Ljava/lang/String;");
+    jniModelStruct.channelName = env->GetFieldID(jniModelStruct.cls, "mChannelName", "Ljava/lang/String;");
+    jniModelStruct.duration = env->GetFieldID(jniModelStruct.cls, "mDuration", "Ljava/lang/String;");
+    jniModelStruct.resUrl = env->GetFieldID(jniModelStruct.cls, "mResUrl", "Ljava/lang/String;");
+    jniModelStruct.size = env->GetFieldID(jniModelStruct.cls, "mSize", "Ljava/lang/String;");
+    jniModelStruct.videoType = env->GetFieldID(jniModelStruct.cls, "mVideoType", "Ljava/lang/String;");
     //増やす
 
     return JNI_VERSION_1_6;
@@ -92,8 +102,20 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_cipherFileContextGlobal
 
 void fillContentInfoIntoJni(JNIEnv *env, const ContentInfo *src, jobject &dst) {
     jstring nameString = env->NewStringUTF(src->name);
-    env->SetObjectField(dst, jniModelStruct.nameId, nameString);
+    env->SetObjectField(dst, jniModelStruct.channelName, nameString);
     env->DeleteLocalRef(nameString);
+    jstring durationString = env->NewStringUTF(src->duration);
+    env->SetObjectField(dst, jniModelStruct.duration, durationString);
+    env->DeleteLocalRef(durationString);
+    jstring resUrlString = env->NewStringUTF(src->contentPath);
+    env->SetObjectField(dst, jniModelStruct.resUrl, resUrlString);
+    env->DeleteLocalRef(resUrlString);
+    jstring sizeString = env->NewStringUTF(src->size);
+    env->SetObjectField(dst, jniModelStruct.size, sizeString);
+    env->DeleteLocalRef(sizeString);
+    jstring videoTypeString = env->NewStringUTF(src->protocolInfo);
+    env->SetObjectField(dst, jniModelStruct.videoType, videoTypeString);
+    env->DeleteLocalRef(videoTypeString);
 
     //増やす
 //    jstring nameString = env->NewStringUTF(src->name);

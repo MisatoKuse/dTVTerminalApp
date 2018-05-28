@@ -34,6 +34,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetail
 import com.nttdocomo.android.tvterminalapp.fragment.channellist.ChannelListFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.channellist.ChannelListFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaObject;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
@@ -57,7 +58,7 @@ public class ChannelListActivity extends BaseActivity implements
 
         ScaledDownProgramListDataProvider.ApiDataProviderCallback,
         HikariTvChannelDataProvider.ContentsDataCallback,
-
+        DlnaManager.BrowseListener,
         DlnaManager.RemoteConnectStatusChangeListener {
 
     // region declaration
@@ -172,7 +173,7 @@ public class ChannelListActivity extends BaseActivity implements
            mIsRemote = DlnaUtils.getLocalRegisterSuccess(this);
         }
         DTVTLogger.warning("mIsStbConnected = " + mIsStbConnected + ", mIsRemote = " + mIsRemote);
-
+        DlnaManager.shared().mBrowseListener = this;
         initView();
         initData();
     }
@@ -340,7 +341,8 @@ public class ChannelListActivity extends BaseActivity implements
 //            mDataProviderHandler.postDelayed(mRunnableTer, 0);
 //            DTVTLogger.end();
 //        }
-        DlnaManager.shared().BrowseContentWithContainerId("0/smartphone/tb");
+        //DlnaManager.shared().BrowseContentWithContainerId("0/smartphone/tb");
+        DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(getApplicationContext(), DlnaUtils.DLNA_DMS_TER_CHANNEL));
     }
 
     /** Bsデータを取得. */
@@ -350,7 +352,7 @@ public class ChannelListActivity extends BaseActivity implements
 //            mDataProviderHandler.postDelayed(mRunnableBs, 0);
 //            DTVTLogger.end();
 //        }
-        DlnaManager.shared().BrowseContentWithContainerId("0/smartphone/bs");
+        DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(getApplicationContext(), DlnaUtils.DLNA_DMS_BS_CHANNEL));
     }
 
     /**
@@ -401,6 +403,21 @@ public class ChannelListActivity extends BaseActivity implements
         }
     }
 
+    @Override
+    public void onContentBrowseCallback(final DlnaObject[] objs) {
+        DTVTLogger.start();
+        int pos = mViewPager.getCurrentItem();
+        final ChannelListFragment fragment = mFactory.createFragment(pos, this, mCurrentType, null);
+        ArrayList<Object> tmp = new ArrayList<>();
+        for (int i = 0; i < objs.length; ++i) {
+            Object item = objs[i];
+            tmp.add(item);
+        }
+        paging(fragment, tmp);
+        updateUi(fragment);
+        DTVTLogger.end();
+    }
+
     //TODO: コンテンツブラウズの整理後、再度処理を結合する
     @Override
     public void onRemoteConnectStatusCallBack(final DlnaManager.RemoteConnectStatus connectStatus) {
@@ -409,8 +426,8 @@ public class ChannelListActivity extends BaseActivity implements
                 switch (mCurrentType) {
                     case CH_LIST_DATA_TYPE_BS:
 //                        mDataProviderHandler.postDelayed(mRunnableBs, CHANNEL_LIST_TAB_DELAY_TIME);
-//                        DlnaManager.shared().BrowseContentWithContainerId(BS);
-                        break;
+//                        DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(getApplicationContext(), DlnaUtils.DLNA_DMS_BS_CHANNEL));
+                    break;
                     case CH_LIST_DATA_TYPE_TDB:
 //                        mDataProviderHandler.postDelayed(mRunnableTer, CHANNEL_LIST_TAB_DELAY_TIME);
                         break;

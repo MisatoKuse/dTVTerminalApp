@@ -288,7 +288,7 @@ void printObject(DMP* d, const xmlNodePtr element, du_uint32 index, du_bool is_c
     contentInfo.isContainer = is_container;
     contentInfo.index = index;
     snprintf(contentInfo.name, sizeof(contentInfo.name), "%s",du_uchar_array_get(&ua));
-    
+
     // date
     *dc_date = 0;
     if (dav_didl_libxml_get_content_by_name(element->children, dav_didl_element_dc_date(), &ua)) {

@@ -53,6 +53,22 @@ public class DlnaUtils {
     private static final int IMAGE_QUALITY_MIDDLE = 2;
     /** 標準画質.*/
     private static final int IMAGE_QUALITY_LOW = 3;
+    /** デフォルト.*/
+    private static final String IMAGE_QUALITY_DEFAULT_URL = "0/smartphone/";
+    /** 最高画質.*/
+    private static final String IMAGE_QUALITY_HIGH_URL = "0/remote1/";
+    /** 高画質.*/
+    private static final String IMAGE_QUALITY_MIDDLE_URL = "0/remote2/";
+    /** 標準画質.*/
+    private static final String IMAGE_QUALITY_LOW_URL = "0/remote3/";
+    /** 録画一覧.*/
+    public static final String DLNA_DMS_RECORD_LIST = "rec/all";
+    /** 多チャンネル.*/
+    public static final String DLNA_DMS_MULTI_CHANNEL = "ip";
+    /** 地上デジタル.*/
+    public static final String DLNA_DMS_TER_CHANNEL = "tb";
+    /** BSデジタル.*/
+    public static final String DLNA_DMS_BS_CHANNEL = "bs";
     /*視聴画質設定*/
 
     /**
@@ -255,10 +271,38 @@ public class DlnaUtils {
      * 設定した画質を取得.
      *
      * @param context コンテキスト
+     * @param channel チャンネル種別
+     * @return 設定した画質のURL
+     */
+    public static String getContainerIdByImageQuality(final Context context, String channel) {
+        // TODO リモート視聴設定状態取得処理追加、仮で固定値「false」に設定
+        boolean isRemote = false;
+        if (context == null) {
+            return IMAGE_QUALITY_DEFAULT_URL + channel;
+        }
+        String imageQualitySetting = SharedPreferencesUtils.getSharedPreferencesImageQuality(context);
+        if (!isRemote || TextUtils.isEmpty(imageQualitySetting)) {
+            return IMAGE_QUALITY_DEFAULT_URL+ channel;
+        } else {
+            if (imageQualitySetting.equals(context.getString(R.string.main_setting_image_quality_high))) {
+                return IMAGE_QUALITY_HIGH_URL + channel;
+            } else if (imageQualitySetting.equals(context.getString(R.string.main_setting_image_quality_middle))) {
+                return IMAGE_QUALITY_MIDDLE_URL + channel;
+            } else if (imageQualitySetting.equals(context.getString(R.string.main_setting_image_quality_low))) {
+                return IMAGE_QUALITY_LOW_URL + channel;
+            }
+        }
+        return IMAGE_QUALITY_DEFAULT_URL + channel;
+    }
+
+    /**
+     * 設定した画質を取得.
+     *
+     * @param context コンテキスト
      * @return 設定した画質
      */
+    // TODO コンテンツブラウズのマージが終わったら消します
     public static int getImageQualitySetting(final Context context) {
-        // TODO リモート視聴設定状態取得処理追加、仮で固定値「false」に設定
         boolean isRemote = false;
         if (context == null) {
             return IMAGE_QUALITY_DEFAULT;

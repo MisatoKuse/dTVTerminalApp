@@ -8,6 +8,7 @@ package com.nttdocomo.android.tvterminalapp.jni;
 import android.content.Context;
 import android.os.Build;
 
+import com.digion.dixim.android.util.AribExternalCharConverter;
 import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
@@ -95,7 +96,16 @@ public class DlnaManager {
         void onRemoteConnectStatusCallBack(RemoteConnectStatus connectStatus);
     }
     // endregion Listener declaration
-
+    /**
+     * コンテンツブラウズリスナー.
+     */
+    public interface BrowseListener {
+        /**
+         * コンテンツブラウズコールバック.
+         * @param objs コンテンツリスト
+         */
+        void onContentBrowseCallback(final DlnaObject[] objs);
+    }
     /**
      * singletone.
      */
@@ -136,6 +146,8 @@ public class DlnaManager {
     public LocalRegisterListener mLocalRegisterListener = null;
     /** リモート接続リスナー. */
     public RemoteConnectStatusChangeListener mRemoteConnectStatusChangeListener = null;
+    /** コンテンツブラウズリスナー. */
+    public BrowseListener mBrowseListener = null;
     /** 接続ステータス. */
     public RemoteConnectStatus remoteConnectStatus = RemoteConnectStatus.OTHER;
     /** コンテキスト. */
@@ -299,9 +311,36 @@ public class DlnaManager {
         }
     }
 
+    /**
+     *  コンテンツブラウズコールバック.
+     * @param objs コンテンツリスト
+     */
     public void ContentBrowseCallback(final DlnaObject[] objs) {
-        for (DlnaObject obj: objs) {
-            DTVTLogger.warning("obj.name = " + obj.name);
+        BrowseListener listener = DlnaManager.shared().mBrowseListener;
+        if (null != objs) {
+            aribConvertBs(objs);
+            listener.onContentBrowseCallback(objs);
+        }
+    }
+
+    /**
+     * ARIB変換.
+     * @param info info
+     */
+    private void aribConvertBs(final DlnaObject[] info) {
+        AribExternalCharConverter aribExternalCharConverter = AribExternalCharConverter.getInstance();
+        if (null == aribExternalCharConverter) {
+            DTVTLogger.debug("get AribExternalCharConverter instance failed");
+            return;
+        }
+        if (null == info || 0 == info.length) {
+            return;
+        }
+
+        for (DlnaObject obj: info) {
+            if (null != obj) {
+                obj.mChannelName = AribExternalCharConverter.getConverted(obj.mChannelName);
+            }
         }
     }
 

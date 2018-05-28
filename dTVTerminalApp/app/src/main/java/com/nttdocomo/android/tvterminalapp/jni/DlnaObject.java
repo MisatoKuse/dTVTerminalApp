@@ -5,6 +5,13 @@
 package com.nttdocomo.android.tvterminalapp.jni;
 
 public class DlnaObject {
-    public String name;
+    public String mBitrate;
+    public String mChannelName;
+    public String mDuration;
+    public String mResolution;
+    public String mResUrl;
+    public String mSize;
+    public String mVideoType;
     //増やす
+    //public String name;
 }
