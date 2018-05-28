@@ -322,7 +322,10 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
                     return;
                 }
             }
-            showDialogToClose(this);
+            //対象のActivityが有効な状態になっているかを確認
+            if (!isFinishing()) {
+                showDialogToClose(this);
+            }
             return;
         }
         //既にデータが取得された場合表示しない
