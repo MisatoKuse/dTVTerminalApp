@@ -21,7 +21,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -333,6 +332,7 @@ public class DtvContentsDetailFragment extends Fragment {
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
     private void setRatingBar() {
         //評価値の表示非表示判定
+        //TODO おすすめ・検索からの遷移については、現状データが不足しているため未実装
         ContentUtils.ContentsType contentsType = mOtherContentsDetailData.getContentCategory();
         if (contentsType != null) {
             switch (contentsType) {
@@ -600,15 +600,6 @@ public class DtvContentsDetailFragment extends Fragment {
      */
     public void changeVisibilityRecordingReservationIcon(final int visibility) {
         DTVTLogger.start("setVisibility:" + visibility);
-        //クリップボタンがGONEになっていると、録画ボタンが表示位置を見失ってしまうため、改めて表示位置を設定しなおす
-        if (mClipButton.getVisibility() == View.GONE) {
-            //クリップボタンが非表示の時は右詰めに設定する
-            RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            param.addRule(RelativeLayout.ALIGN_PARENT_END);
-            param.addRule(RelativeLayout.CENTER_VERTICAL);
-            mRecordButton.setLayoutParams(param);
-        }
         mRecordButton.setVisibility(visibility);
         DTVTLogger.end();
     }
