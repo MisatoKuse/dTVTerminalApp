@@ -47,6 +47,7 @@ import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ContentsDetailDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
@@ -63,9 +64,9 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopScaledProListDa
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsChannelFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragmentFactory;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaObject;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
-import com.nttdocomo.android.tvterminalapp.jni.hikari.DlnaHikariChListItem;
-import com.nttdocomo.android.tvterminalapp.jni.hikari.DlnaProvHikariChList;
+import com.nttdocomo.android.tvterminalapp.jni.hikari.DlnaContentMultiChannelDataProvider;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.struct.CalendarComparator;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
@@ -78,7 +79,6 @@ import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DeviceStateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -2483,11 +2483,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 //宅内のみ自動再生
                 if (pairingState.equals(DeviceStateUtils.PairingState.INSIDE_HOUSE)) {
                     //放送中番組
-                    DlnaProvHikariChList provider = new DlnaProvHikariChList(new DlnaProvHikariChList.OnApiCallbackListener() {
+                    DlnaContentMultiChannelDataProvider provider = new DlnaContentMultiChannelDataProvider(this,
+                            new DlnaContentMultiChannelDataProvider.OnMultiChCallbackListener() {
                         @Override
-                        public void itemFindCallback(@Nullable final DlnaHikariChListItem resultItem) {
-                            DTVTLogger.error(" <<< ");
-                            if (resultItem != null) {
+                        public void multiChannelFindCallback(final DlnaObject dlnaObject) {
+                            if (dlnaObject != null) {
                                 //Threadクラスからのコールバックのため、UIスレッド化する
                                 runOnUiThread(new Runnable() {
                                     @Override
@@ -2498,19 +2498,16 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                         mDisplayState = PLAYER_AND_CONTENTS_DETAIL;
                                         RecordedContentsDetailData data = new RecordedContentsDetailData();
                                         data.setUpnpIcon("");
-                                        data.setResUrl(resultItem.mResUrl);
-                                        data.setSize(resultItem.mSize);
-                                        data.setDuration(resultItem.mDuration);
-                                        data.setVideoType(resultItem.mVideoType);
-                                        data.setBitrate(resultItem.mBitrate);
-                                        data.setTitle(resultItem.mTitle);
+                                        data.setResUrl(dlnaObject.mResUrl);
+                                        data.setSize(dlnaObject.mSize);
+                                        data.setDuration(dlnaObject.mDuration);
+                                        data.setVideoType(dlnaObject.mVideoType);
+                                        data.setBitrate(dlnaObject.mBitrate);
                                         data.setIsLive(true);
                                         initPlayer(data);
                                         onResume();
                                     }
                                 });
-                            } else {
-                                DTVTLogger.error("resultItem == null");
                             }
                         }
                     });
@@ -2518,10 +2515,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     if (dlnaDmsItem != null) {
                         //この場合に使用するチャンネル番号を取得する
                         int convertedChannelNumber = convertChannelNumber(mChannel);
-
                         //変換後のチャンネルIDを使用して呼び出す
-                        provider.start(dlnaDmsItem, String.valueOf(convertedChannelNumber),
-                                DlnaUtils.getImageQualitySetting(getApplicationContext()));
+                        provider.findChannelByChannelNo(String.valueOf(convertedChannelNumber));
                     } else {
                         DTVTLogger.error("dlnaDmsItem == null");
                     }
@@ -2813,5 +2808,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             customDialog.setOkCallBack(okCallback);
         }
         customDialog.showDialog();
+    }
+
+    private boolean getStbStatus() {
+        return StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_IN;
     }
 }

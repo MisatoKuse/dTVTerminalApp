@@ -72,11 +72,6 @@ public class DaccountResettingActivity extends BaseActivity implements View.OnCl
         //super.onBackPressed();
     }
 
-    @Override
-    public String getScreenTitle() {
-        return getString(R.string.str_d_account_resetting_title);
-    }
-
     /**
      * 各クリックリスナーを登録する.
      */

@@ -30,6 +30,15 @@
         android:resizeableActivity="false"
         tools:targetApi="24">
 
+        <activity
+            android:name=".activity.launch.LaunchActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <!-- ====================================== Home グループ Begin ====================================== -->
         <activity
             android:name=".activity.home.HomeActivity"
@@ -79,14 +88,6 @@
             android:name=".activity.launch.DaccountInductionActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
-        <activity
-            android:name=".activity.launch.LaunchActivity"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".activity.launch.StbConnectActivity"
             android:screenOrientation="portrait"
@@ -158,7 +159,6 @@
             android:screenOrientation="portrait"
             android:exported="false"
 	        android:hardwareAccelerated="false"/>
-
         <activity
             android:name=".activity.common.ChildContentListActivity"
             android:screenOrientation="portrait"

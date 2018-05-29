@@ -202,22 +202,4 @@ public class StbConnectRelayClient {
         mRemoteIp = remoteIp;
     }
 
-    /**
-     * Socket通信の送信先の受信ポート.
-     *
-     * @param remoteSocketPort remoteSocketPort
-     */
-    public void setRemoteSocketPort(final int remoteSocketPort) {
-        mRemoteSocketPort = remoteSocketPort;
-    }
-
-    /**
-     * Datagram通信の送信先の受信ポート.
-     *
-     * @param remoteDatagramPort remoteDatagramPort
-     */
-    public void setRemoteDatagramPort(final int remoteDatagramPort) {
-        mRemoteDatagramPort = remoteDatagramPort;
-    }
-
 }

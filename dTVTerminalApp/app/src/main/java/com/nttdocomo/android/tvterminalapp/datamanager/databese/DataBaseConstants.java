@@ -1122,4 +1122,39 @@ public class DataBaseConstants {
             JsonConstants.META_RESPONSE_ADINFO_ARRAY, TEXT_WITH_COMMA_TEXT,
             JsonConstants.META_RESPONSE_RELATIONAL_ID_ARRAY, TEXT_WITHOUT_COMMA_TEXT,
             CLOSE_BRACKETS_TEXT);
+
+    /**
+     * DLNAコンテンツブラウズテーブルカラム名.
+     */
+    public static final String DLNA_BROWSE_COLUM_NO = "no";
+    public static final String DLNA_BROWSE_COLUM_BITRATE = "bitrate";
+    public static final String DLNA_BROWSE_COLUM_CHANNEL_NAME = "channelName";
+    public static final String DLNA_BROWSE_COLUM_DURATION = "duration";
+    public static final String DLNA_BROWSE_COLUM_RESOLUTION = "resolution";
+    public static final String DLNA_BROWSE_COLUM_RES_URL = "resUrl";
+    public static final String DLNA_BROWSE_COLUM_SIZE = "size";
+    public static final String DLNA_BROWSE_COLUM_VIDEO_TYPE = "videoType";
+    public static final String DLNA_BROWSE_COLUM_CONTAINER_ID = "containerId";
+
+    /**
+     * DLNAコンテンツブラウズテーブル名.
+     */
+    public static final String DLNA_BROWSE_TABLE_NAME = "dlna_browse_table_name";
+
+    /**
+     * コンテンツブラウズテーブル作成SQL文.
+     */
+    public static final String CREATE_TABLE_DLNA_BROWSE_SQL = StringUtils.getConnectStrings(
+            CREATE_TABLE_TEXT, DLNA_BROWSE_TABLE_NAME, OPEN_BRACKETS_TEXT,
+            ID_COLUMN, CREATE_TABLE_PRIMARY_TEXT,
+            DLNA_BROWSE_COLUM_BITRATE, TEXT_WITH_COMMA_TEXT,
+            DLNA_BROWSE_COLUM_CHANNEL_NAME, TEXT_WITH_COMMA_TEXT,
+            DLNA_BROWSE_COLUM_DURATION, TEXT_WITH_COMMA_TEXT,
+            DLNA_BROWSE_COLUM_RESOLUTION, TEXT_WITH_COMMA_TEXT,
+            DLNA_BROWSE_COLUM_RES_URL, TEXT_WITH_COMMA_TEXT,
+            DLNA_BROWSE_COLUM_SIZE, TEXT_WITH_COMMA_TEXT,
+            DLNA_BROWSE_COLUM_VIDEO_TYPE, TEXT_WITH_COMMA_TEXT,
+            DLNA_BROWSE_COLUM_CONTAINER_ID, TEXT_WITH_COMMA_TEXT,
+            UPDATE_DATE, TEXT_WITHOUT_COMMA_TEXT,
+            CLOSE_BRACKETS_TEXT);
 }

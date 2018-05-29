@@ -7,13 +7,23 @@ package com.nttdocomo.android.tvterminalapp.jni;
 
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
+import com.digion.dixim.android.util.AribExternalCharConverter;
 import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
+import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
+import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 /**
  * DLNAマネージャー.
@@ -92,7 +102,16 @@ public class DlnaManager {
         void onRemoteConnectStatusCallBack(RemoteConnectStatus connectStatus);
     }
     // endregion Listener declaration
-
+    /**
+     * コンテンツブラウズリスナー.
+     */
+    public interface BrowseListener {
+        /**
+         * コンテンツブラウズコールバック.
+         * @param objs コンテンツリスト
+         */
+        void onContentBrowseCallback(final DlnaObject[] objs);
+    }
     /**
      * singletone.
      */
@@ -115,6 +134,7 @@ public class DlnaManager {
     static {
         System.loadLibrary("dtvtlib");
     }
+
     /**　エラータイプ:OVER.*/
     private static final int LOCAL_REGISTRATION_ERROR_TYPE_OVER = 1;
     /** 不明. */
@@ -128,21 +148,27 @@ public class DlnaManager {
     /** 再接続失敗. */
     private static final int REMOTE_CONNECT_STATUS_RECONNECTION = 6;
     /** dms検出リスナー. */
-    private DlnaManagerListener mDlnaManagerListener = null;
+    public DlnaManagerListener mDlnaManagerListener = null;
+
     /** ローカルレジストレーションリスナー. */
     public LocalRegisterListener mLocalRegisterListener = null;
     /** リモート接続リスナー. */
     public RemoteConnectStatusChangeListener mRemoteConnectStatusChangeListener = null;
+    /** コンテンツブラウズリスナー. */
+    public BrowseListener mBrowseListener = null;
     /** 接続ステータス. */
     public RemoteConnectStatus remoteConnectStatus = RemoteConnectStatus.OTHER;
     /** コンテキスト. */
     public Context mContext;
+
+    boolean isStarted = false;
 
     /**
      * launch.
      * @param context コンテキスト
      */
     public void launch(final Context context) {
+        isStarted = false;
         mContext = context;
         DTVTLogger.start();
 
@@ -161,6 +187,36 @@ public class DlnaManager {
     }
 
     /**
+     * NW変更時などにコールする
+     */
+    public void Start() {
+        DTVTLogger.warning("isStarted = " + isStarted);
+        //if start then stop
+        if (isStarted) {
+
+        } else {
+            isStarted = true;
+            StbConnectionManager.shared().initializeState();
+            StbConnectionManager.ConnectionStatus connectionStatus = StbConnectionManager.shared().getConnectionStatus();
+            DTVTLogger.warning("connectionStatus = " + connectionStatus);
+            switch (connectionStatus) {
+                case HOME_OUT:
+
+                    //1.dアカウントチェックしたかを確認してなかったらチェック
+                    startDmp();
+                    startDtcp();
+                    restartDirag();
+                    break;
+                case NONE_LOCAL_REGISTRATION:
+
+                    startDmp();
+                    break;
+            }
+        }
+
+    }
+
+    /**
      * StartDmp.
      */
     public void StartDmp() {
@@ -175,23 +231,12 @@ public class DlnaManager {
     }
 
     /**
-     * ConnectDmsWithUdn.
-     * @param udn udn
-     */
-    public void ConnectDmsWithUdn(final String udn) {
-        connectDmsWithUdn(udn);
-    }
-
-    /**
      * BrowseContentWithContainerId.
-     * @param offset offset
-     * @param limit limit
      * @param containerId containerId
      */
-    public void BrowseContentWithContainerId(final int offset, final int limit, final String containerId) {
-        browseContentWithContainerId(offset, limit, containerId);
+    public void BrowseContentWithContainerId(final String containerId) {
+        browseContentWithContainerId(0, DtvtConstants.REQUEST_LIMIT_300, containerId);
     }
-
     /**
      * StartDtcp.
      */
@@ -209,10 +254,12 @@ public class DlnaManager {
     /**
      * Diragを停止.
      */
-    private void StopDirag() {
+    public void StopDirag() {
         stopDirag();
     }
-
+    public void StopDtcp() {
+        stopDtcp();
+    }
     /**
      * RequestLocalRegistration.
      * @param udn udn
@@ -238,6 +285,7 @@ public class DlnaManager {
         String result = getRemoteDeviceExpireDate(udn);
         return result;
     }
+
     // region call from jni
     /**
      * getUniqueId(call from jni).
@@ -265,13 +313,9 @@ public class DlnaManager {
                                  final String controlUrl, final String eventSubscriptionUrl) {
         DTVTLogger.warning("friendlyName = " + friendlyName + ", udn = " + udn + ", location = " + location
                 + ", controlUrl = " + controlUrl + ", eventSubscriptionUrl = " + eventSubscriptionUrl);
-        //TODO 宅外、宅内の実装が必要があるため、いったんコメントアウトして、次回のスプリントでやるつもりです
-//        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
-//        if (dlnaDmsItem != null) {
-//            if (dlnaDmsItem.mUdn.equals(udn)) {
-//                updateConnectStatus();
-//            }
-//        }
+
+        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
+        updateJoinConnectStatus(dlnaDmsItem, udn, location);
         DlnaManagerListener listener = DlnaManager.shared().mDlnaManagerListener;
         if (listener != null) {
             URL hostUrl = null;
@@ -284,7 +328,7 @@ public class DlnaManager {
             }
             listener.joinDms(friendlyName, hostString, udn, controlUrl, eventSubscriptionUrl);
         } else {
-            DTVTLogger.error("no callback");
+            DTVTLogger.warning("no dms callback");
         }
     }
 
@@ -295,10 +339,27 @@ public class DlnaManager {
     public void DmsLeaveCallback(final String udn) {
         DTVTLogger.warning("udn = " + udn);
         DlnaManagerListener listener = DlnaManager.shared().mDlnaManagerListener;
+
+        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
+        updateLeaveConnectStatus(dlnaDmsItem, udn);
+
         if (listener != null) {
             listener.leaveDms(udn);
         } else {
             DTVTLogger.error("no callback");
+        }
+    }
+
+    /**
+     *  コンテンツブラウズコールバック.
+     * @param objs コンテンツリスト
+     */
+    public void ContentBrowseCallback(@NonNull final String containerId, @NonNull final DlnaObject[] objs) {
+        DTVTLogger.warning("containerId = " + containerId + ", objs.length = " + objs.length);
+        BrowseListener listener = DlnaManager.shared().mBrowseListener;
+        if (listener != null) {
+            aribConvertBs(objs);
+            listener.onContentBrowseCallback(objs);
         }
     }
 
@@ -351,19 +412,81 @@ public class DlnaManager {
             DlnaManager.shared().remoteConnectStatus = status;
             listener.onRemoteConnectStatusCallBack(status);
         } else {
-            DTVTLogger.error("no callback");
+            DTVTLogger.warning("no callback");
+        }
+    }
+    // endregion call from jni
+
+    // region priavte method
+    /**
+     * ARIB変換.
+     * @param info info
+     */
+    private void aribConvertBs(@NonNull final DlnaObject[] info) {
+        AribExternalCharConverter aribExternalCharConverter = AribExternalCharConverter.getInstance();
+        if (null == aribExternalCharConverter) {
+            DTVTLogger.debug("get AribExternalCharConverter instance failed");
+            return;
+        }
+
+        for (DlnaObject obj: info) {
+            obj.mChannelName = AribExternalCharConverter.getConverted(obj.mChannelName);
+            try {
+                Integer.parseInt(obj.mSize);
+            } catch (NumberFormatException e) {
+                obj.mSize = "0";
+            }
         }
     }
 
-    // endregion call from jni
+    private void updateJoinConnectStatus(@Nullable DlnaDmsItem item, final @NonNull String udn, final @NonNull String location) {
+        if (item == null || !udn.equals(item.mUdn)) {
+            return;
+        }
+        DTVTLogger.error(">>> STB接続");
+        connectDmsWithUdn(udn);
 
-    /**
-     * リモート接続のリセット.
-     */
-    private void updateConnectStatus() {
-        StopDirag();
-        DlnaManager.shared().remoteConnectStatus = RemoteConnectStatus.OTHER;
+        String localHostAddress = null;
+        try {
+            localHostAddress = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            DTVTLogger.debug(e);
+        }
+        URL locationHostUrl;
+        String locationHostString = "";
+        try {
+            locationHostUrl = new URL(location);
+            locationHostString = locationHostUrl.getHost();
+        } catch (MalformedURLException e) {
+            DTVTLogger.debug(e);
+        }
+        if (!TextUtils.isEmpty(localHostAddress) && localHostAddress.equals(locationHostString)) {
+            StbConnectionManager.shared().setConnectionStatus(StbConnectionManager.ConnectionStatus.HOME_OUT_CONNECT);
+        } else {
+            if (StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_OUT) {
+                stopDtcp();
+                stopDirag();
+            }
+            StbConnectionManager.shared().setConnectionStatus(StbConnectionManager.ConnectionStatus.HOME_IN);
+        }
     }
+
+    private void updateLeaveConnectStatus(@Nullable DlnaDmsItem item, final @NonNull String udn) {
+        if (item == null || !udn.equals(item.mUdn)) {
+            return;
+        }
+        DTVTLogger.warning("STB切断 <<<");
+        switch (StbConnectionManager.shared().getConnectionStatus()) {
+            case HOME_IN:
+                StbConnectionManager.shared().initializeState();
+                break;
+            case HOME_OUT_CONNECT:
+                StbConnectionManager.shared().setConnectionStatus(StbConnectionManager.ConnectionStatus.HOME_OUT);
+                break;
+        }
+    }
+
+    // endregion priavte method
 
     // region native method
 
@@ -418,6 +541,7 @@ public class DlnaManager {
      * startDtcp.
      */
     private native void startDtcp();
+    private native void stopDtcp();
 
     /**
      * Diragを再起動.

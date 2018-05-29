@@ -87,6 +87,7 @@ struct ContentInfo {
     du_bool isContainer;
     
     // item of info
+    char bitrate[256];
     char contentPath[256];
     char duration[256];
     char size[256];

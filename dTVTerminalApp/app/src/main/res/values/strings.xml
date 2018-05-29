@@ -152,6 +152,9 @@
         <item>すべて</item>
         <item>ダウンロード済み</item>
     </string-array>
+    <string-array name="record_list_tab_name_only_dl">
+        <item>ダウンロード済み</item>
+    </string-array>
     <string name="record_download_percent_mark">%</string>
     <string name="record_download_error_message">ダウンロードに失敗しました</string>
     <string name="record_download_delete_title">削除しますか？</string>

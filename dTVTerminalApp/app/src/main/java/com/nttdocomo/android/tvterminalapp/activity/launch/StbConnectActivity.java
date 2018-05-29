@@ -46,16 +46,15 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         DlnaManager.shared().StartDmp();
     }
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         DlnaManager.shared().StopDmp();
     }
-
     @Override
     public void onBackPressed() {
     }
@@ -214,6 +213,8 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
             }
             resultDialog.setConfirmText(R.string.common_text_close);
         }
+        DlnaManager.shared().StopDtcp();
+        DlnaManager.shared().StopDirag();
         resultDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
