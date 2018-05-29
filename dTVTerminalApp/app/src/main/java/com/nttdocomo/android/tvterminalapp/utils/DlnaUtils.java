@@ -276,7 +276,7 @@ public class DlnaUtils {
      * @return 設定した画質のURL
      */
     public static String getContainerIdByImageQuality(final Context context, String channel) {
-        boolean isRemote = StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_OUT_CONNECT;
+        boolean isRemote = StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_OUT;
         if (context == null) {
             return IMAGE_QUALITY_DEFAULT_URL + channel;
         }

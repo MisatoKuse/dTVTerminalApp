@@ -296,7 +296,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
         super.onResume();
 
-        DlnaManager.shared().Start();
+        DlnaManager.shared().Start(getApplicationContext());
     }
 
     /**

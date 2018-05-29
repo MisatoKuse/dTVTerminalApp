@@ -97,6 +97,17 @@ bool DlnaRemoteConnect::restartDirag(DMP *d) {
     return result;
 }
 
+bool DlnaRemoteConnect::startDirag(DMP *d) {
+    bool result = false;
+    do {
+        BREAK_IF(!drag_cp_lrsys_start());
+        BREAK_IF(!drag_cp_rasys_start(dcp_connect_status_handler, d));
+        result = true;
+    } while (false);
+    LOG_WITH_BOOL_PARAM(result, "");
+    return result;
+}
+
 bool DlnaRemoteConnect::stopDirag() {
     drag_cp_lrsys_stop(); // LR sub-system
     drag_cp_rasys_stop(); // remote access system

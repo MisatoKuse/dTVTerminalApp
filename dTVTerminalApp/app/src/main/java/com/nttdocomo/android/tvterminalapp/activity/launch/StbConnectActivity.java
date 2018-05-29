@@ -148,7 +148,7 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
                     if (result) {
                         DlnaManager.shared().mLocalRegisterListener = StbConnectActivity.this;
                         DlnaManager.shared().StartDtcp();
-                        DlnaManager.shared().RestartDirag();
+                        DlnaManager.shared().StartDirag();
                         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(StbConnectActivity.this);
                         DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn);
                     } else {

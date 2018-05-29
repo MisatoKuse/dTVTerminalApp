@@ -162,7 +162,7 @@ public class DlnaManager {
     public Context mContext;
 
     boolean isStarted = false;
-
+    private String mUdn = "";
     /**
      * launch.
      * @param context コンテキスト
@@ -189,7 +189,8 @@ public class DlnaManager {
     /**
      * NW変更時などにコールする
      */
-    public void Start() {
+    public void Start(final Context context) {
+        mContext = context;
         DTVTLogger.warning("isStarted = " + isStarted);
         //if start then stop
         if (isStarted) {
@@ -201,11 +202,12 @@ public class DlnaManager {
             DTVTLogger.warning("connectionStatus = " + connectionStatus);
             switch (connectionStatus) {
                 case HOME_OUT:
-
+                    DlnaDmsItem item = SharedPreferencesUtils.getSharedPreferencesStbInfo(mContext);
+                    mUdn = item.mUdn;
                     //1.dアカウントチェックしたかを確認してなかったらチェック
                     startDmp();
                     startDtcp();
-                    restartDirag();
+                    startDirag();
                     break;
                 case NONE_LOCAL_REGISTRATION:
 
@@ -229,13 +231,35 @@ public class DlnaManager {
     public void StopDmp() {
         stopDmp();
     }
-
+    boolean waitForReady = false;
+    String requestContainerId = "";
     /**
      * BrowseContentWithContainerId.
      * @param containerId containerId
      */
     public void BrowseContentWithContainerId(final String containerId) {
-        browseContentWithContainerId(0, DtvtConstants.REQUEST_LIMIT_300, containerId);
+        DTVTLogger.warning("StbConnectionManager.shared().getConnectionStatus() = " + StbConnectionManager.shared().getConnectionStatus());
+        switch (StbConnectionManager.shared().getConnectionStatus()) {
+            case HOME_OUT:
+                DTVTLogger.warning("remoteConnectStatus = " + remoteConnectStatus);
+                if (DlnaManager.shared().remoteConnectStatus == RemoteConnectStatus.READY) {
+                    requestRemoteConnect(mUdn);
+                    requestContainerId = containerId;
+                } else {
+                    waitForReady = true;
+                    requestContainerId = containerId;
+                }
+
+                break;
+            case HOME_OUT_CONNECT:
+                browseContentWithContainerId(0, DtvtConstants.REQUEST_LIMIT_300, containerId);
+                break;
+            default:
+                DTVTLogger.warning("default");
+                break;
+        }
+        DTVTLogger.warning("containerId = " + containerId);
+
     }
     /**
      * StartDtcp.
@@ -250,7 +274,9 @@ public class DlnaManager {
     public void RestartDirag() {
         restartDirag();
     }
-
+    public void StartDirag() {
+        startDirag();
+    }
     /**
      * Diragを停止.
      */
@@ -388,28 +414,35 @@ public class DlnaManager {
      */
     public void RemoteConnectStatusCallBack(final int connectStatus) {
         DTVTLogger.warning("connectStatus = " + connectStatus);
-        RemoteConnectStatusChangeListener listener = DlnaManager.shared().mRemoteConnectStatusChangeListener;
+        DlnaManager manager = DlnaManager.shared();
+        RemoteConnectStatusChangeListener listener = manager.mRemoteConnectStatusChangeListener;
+        RemoteConnectStatus status;
+        switch (connectStatus) {
+            case REMOTE_CONNECT_STATUS_UNKOWN:
+            default:
+                status = RemoteConnectStatus.UNKNOWN;
+                break;
+            case REMOTE_CONNECT_STATUS_READY:
+                status = RemoteConnectStatus.READY;
+                if (manager.waitForReady) {
+                    manager.waitForReady = false;
+                    manager.RequestRemoteConnect(manager.mUdn);
+                }
+                break;
+            case REMOTE_CONNECT_STATUS_CONNECTED:
+                status = RemoteConnectStatus.CONNECTED;
+                break;
+            case REMOTE_CONNECT_STATUS_DISCONNECTION:
+                status = RemoteConnectStatus.DETECTED_DISCONNECTION;
+                break;
+            case REMOTE_CONNECT_STATUS_RECONNECTION:
+                status = RemoteConnectStatus.GAVEUP_RECONNECTION;
+                break;
+        }
+        manager.remoteConnectStatus = status;
+        DTVTLogger.warning("status = " + status);
+
         if (listener != null) {
-            RemoteConnectStatus status;
-            switch (connectStatus) {
-                case REMOTE_CONNECT_STATUS_UNKOWN:
-                default:
-                    status = RemoteConnectStatus.UNKNOWN;
-                    break;
-                case REMOTE_CONNECT_STATUS_READY:
-                    status = RemoteConnectStatus.READY;
-                    break;
-                case REMOTE_CONNECT_STATUS_CONNECTED:
-                    status = RemoteConnectStatus.CONNECTED;
-                    break;
-                case REMOTE_CONNECT_STATUS_DISCONNECTION:
-                    status = RemoteConnectStatus.DETECTED_DISCONNECTION;
-                    break;
-                case REMOTE_CONNECT_STATUS_RECONNECTION:
-                    status = RemoteConnectStatus.GAVEUP_RECONNECTION;
-                    break;
-            }
-            DlnaManager.shared().remoteConnectStatus = status;
             listener.onRemoteConnectStatusCallBack(status);
         } else {
             DTVTLogger.warning("no callback");
@@ -462,10 +495,18 @@ public class DlnaManager {
         }
         if (!TextUtils.isEmpty(localHostAddress) && localHostAddress.equals(locationHostString)) {
             StbConnectionManager.shared().setConnectionStatus(StbConnectionManager.ConnectionStatus.HOME_OUT_CONNECT);
+
+            DlnaManager manager = DlnaManager.shared();
+            DTVTLogger.warning("requestContainerId = " + manager.requestContainerId);
+            if (!TextUtils.isEmpty(manager.requestContainerId)) {
+                manager.BrowseContentWithContainerId(manager.requestContainerId);
+                manager.requestContainerId = "";
+            }
+
         } else {
             if (StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_OUT) {
-                stopDtcp();
-                stopDirag();
+//                DlnaManager.shared().StopDtcp();SIGILL
+//                DlnaManager.shared().StopDirag();
             }
             StbConnectionManager.shared().setConnectionStatus(StbConnectionManager.ConnectionStatus.HOME_IN);
         }
@@ -547,6 +588,8 @@ public class DlnaManager {
      * Diragを再起動.
      */
     private native void restartDirag();
+
+    private native void startDirag();
 
     /**
      * Diragを停止.

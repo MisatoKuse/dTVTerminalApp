@@ -397,6 +397,12 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_stopDtcp(JNIEnv *env, j
 }
 
 JNIEXPORT void JNICALL
+Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_startDirag(JNIEnv *env, jobject thiz) {
+    LOG_WITH("");
+    dlnaRemoteConnect->startDirag(dmp);
+}
+
+JNIEXPORT void JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_restartDirag(JNIEnv *env, jobject thiz) {
     LOG_WITH("");
     dlnaRemoteConnect->restartDirag(dmp);
