@@ -2085,17 +2085,20 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     //endregion
 
     /**
-     * 年齢制限ダイアログを表示.
+     * プレイヤーエラーダイアログを表示.
+     *
+     * @param errorMessage エラーメッセージ
      */
-    private void showDialogToConfirmClose() {
+    private void showDialogToConfirmClose(final String errorMessage) {
         CustomDialog closeDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.ERROR);
-        closeDialog.setContent(getApplicationContext().getString(R.string.contents_detail_parental_check_fail));
+        closeDialog.setContent(errorMessage);
         closeDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
                 contentsDetailCloseKey(null);
             }
         });
+        closeDialog.setOnTouchOutside(false);
         closeDialog.setCancelable(false);
         closeDialog.showDialog();
     }
@@ -2393,24 +2396,36 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void onErrorCallBack(final PlayerViewLayout.PlayerErrorType mPlayerErrorType) {
+        showProgressBar(false);
+        String msg = null;
         switch (mPlayerErrorType) {
             case REMOTE:
-                showErrorDialog(getString(R.string.contents_detail_out_house_player_error_msg));
+                msg = getString(R.string.contents_detail_out_house_player_error_msg);
                 break;
             case ACTIVATION:
-                showErrorDialog(getString(R.string.activation_failed_msg));
+                msg = getString(R.string.activation_failed_msg);
                 break;
             case EXTERNAL:
-                showErrorDialog(getString(R.string.contents_detail_external_display_dialog_msg));
+                msg = getString(R.string.contents_detail_external_display_dialog_msg);
                 break;
             case AGE:
-                showDialogToConfirmClose();
+                msg = getString(R.string.contents_detail_parental_check_fail);
                 break;
             case NONE:
             default:
                 break;
         }
+        if (msg != null) {
+            showDialogToConfirmClose(msg);
+        }
+    }
+
+    @Override
+    public void onPlayerErrorCallBack(final int errorCode) {
         showProgressBar(false);
+        String errorMsg = getString(R.string.contents_player_fail_msg);
+        String format = getString(R.string.contents_player_fail_error_code_format);
+        showDialogToConfirmClose(errorMsg.replace(format, String.valueOf(errorCode)));
     }
 
     @Override

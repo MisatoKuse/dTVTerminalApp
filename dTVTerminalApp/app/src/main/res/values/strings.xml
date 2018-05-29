@@ -292,6 +292,8 @@
     <string name="contents_detail_parental_check_fail">年齢制限のため視聴できません</string>
     <string name="contents_detail_response_ok">OK</string>
     <string name="contents_player_bad_contents_info">再生できませんでした</string>
+    <string name="contents_player_fail_msg">再生に失敗しました（MP-XXXX）</string>
+    <string name="contents_player_fail_error_code_format">XXXX</string>
     <string name="contents_detail_adinfo_array_pipe">"\\|"</string>
     <string name="contents_detail_date_left_">"\\|"</string>
     <string name="contents_detail_pairing_request">ドコモテレビターミナルとのペアリングが必要です</string>
