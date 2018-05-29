@@ -28,10 +28,14 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
+import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.dlna.DlnaContentRecordedDataProvider;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedFragmentFactory;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaObject;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsInfo;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.download.DlnaProvDownload;
@@ -64,70 +68,42 @@ import java.util.Map;
  * 録画番組.
  */
 public class RecordedListActivity extends BaseActivity implements View.OnClickListener,
-        DlnaRecVideoListener, TabItemLayout.OnClickTabTextListener {
+        TabItemLayout.OnClickTabTextListener,
 
-    /**
-     * タブ名.
-     */
+        DlnaContentRecordedDataProvider.CallbackListener {
+
+    /** タブ名. */
     private String[] mTabNames = null;
-    /**
-     * タブレイアウト.
-     */
+    /** タブレイアウト. */
     private TabItemLayout mTabLayout = null;
-    /**
-     * viewpager.
-     */
+    /** viewpager. */
     private ViewPager mViewPager = null;
-    /**
-     * 進捗バー.
-     */
+    /** 進捗バー. */
     private ProgressBar progressBar;
-    /**
-     * 遷移先（メニュー）.
-     */
+    /** 遷移先（メニュー）. */
     private Boolean mIsMenuLaunch = false;
-    /**
-     * DLNA 関連クラス.
-     */
-    private DlnaProvRecVideo mDlnaProvRecVideo = null;
-    /**
-     * Fragment作成クラス.
-     */
+
+    private DlnaContentRecordedDataProvider mDlnaContentRecordedDataProvider;
+    /** Fragment作成クラス. */
     private RecordedFragmentFactory mRecordedFragmentFactory = null;
-    /**
-     * 値渡すキー.
-     */
+    /** 値渡すキー. */
     public static final String RECORD_LIST_KEY = "recordListKey";
-    /**
-     * 日付フォーマット.
-     */
+    /** 日付フォーマット. */
     public static final String sMinus = "-";
-    /**
-     * タブ名.
-     */
-	public static final String RLA_FragmentName_All = "all";
-    /**
-     * リスト0件メッセージ.
-     */
+    /** タブ名. */
+    public static final String RLA_FragmentName_All = "all";
+    /** リスト0件メッセージ. */
     private TextView mNoDataMessage;
-    /**
-     * すべて.
-     */
+    /** すべて. */
     private static final int ALL_RECORD_LIST = 0;
-    /**
-     * ダウンロード済み.
-     */
+    /** ダウンロード済み. */
     private static final int DOWNLOAD_OVER = 1;
-    /**
-     * エラーを返すハンドラー.
-     */
-    private Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DTVTLogger.start();
         setContentView(R.layout.record_list_main_layout);
+
         setTitleText(getString(R.string.nav_menu_item_recorder_program));
         Intent intent = getIntent();
         mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
@@ -140,8 +116,79 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         initView();
         initTabVIew();
         setPagerAdapter();
-
+        mDlnaContentRecordedDataProvider = new DlnaContentRecordedDataProvider();
         DTVTLogger.end();
+    }
+
+    @Override
+    public void onStartCommunication() {
+        super.onStartCommunication();
+        showProgressBar();
+        mNoDataMessage.setVisibility(View.GONE);
+        initDl();
+        getData();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mDlnaContentRecordedDataProvider.stopListen();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(downloadReceiver);
+        boolean isRunning = isDownloadServiceRunning();
+        if (!isRunning) {
+            DlnaProvDownload.uninitGlobalDl();
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+        DTVTLogger.start();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                if (mIsMenuLaunch) {
+                    //メニューから起動の場合ホーム画面に戻る
+                    contentsDetailBackKey(null);
+                    return false;
+                }
+            default:
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onClickTab(final int position) {
+        mViewPager.setCurrentItem(position);
+    }
+
+    @Override
+    public void callback(DlnaObject[] objs) {
+        setProgressBarGone();
+        if (objs.length == 0) {
+            mNoDataMessage.setVisibility(View.VISIBLE);
+            return;
+        }
+        ArrayList<DlnaRecVideoItem> dstList = new ArrayList<>();
+        for(DlnaObject dlnaObject: objs) {
+            DlnaRecVideoItem item = new DlnaRecVideoItem();
+            item.mItemId = dlnaObject.mObjectId;
+            item.mSize = "0";
+            item.mResUrl = dlnaObject.mResUrl;
+            item.mResolution = dlnaObject.mResolution;
+            item.mBitrate = "0";
+            item.mDuration = dlnaObject.mDuration;
+            item.mTitle = dlnaObject.mTitle;
+            item.mVideoType = dlnaObject.mVideoType;
+            item.mClearTextSize = "0";
+            dstList.add(item);
+        }
+        setVideoBrows(dstList);
     }
 
     /**
@@ -165,7 +212,15 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         mViewPager = findViewById(R.id.record_list_main_layout_viewpagger);
-        mTabNames = getResources().getStringArray(R.array.record_list_tab_names);
+        switch (StbConnectionManager.shared().getConnectionStatus()) {
+            case NONE_LOCAL_REGISTRATION:
+                mTabNames = getResources().getStringArray(R.array.record_list_tab_name_only_dl);
+                break;
+            default:
+                mTabNames = getResources().getStringArray(R.array.record_list_tab_names);
+                break;
+        }
+
         mRecordedFragmentFactory = new RecordedFragmentFactory();
         progressBar = findViewById(R.id.record_list_main_layout_progress);
         mNoDataMessage = findViewById(R.id.recorded_list_no_items);
@@ -193,25 +248,13 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      */
     private void initTabVIew() {
         DTVTLogger.start();
-        if (mTabLayout == null) {
-            mTabLayout = new TabItemLayout(this);
-            mTabLayout.setTabClickListener(this);
-            mTabLayout.initTabView(mTabNames, TabItemLayout.ActivityType.RECORDED_LIST_ACTIVITY);
-            RelativeLayout tabRelativeLayout = findViewById(R.id.rl_recorded_list_tab);
-            tabRelativeLayout.addView(mTabLayout);
-        } else {
-            mTabLayout.resetTabView(mTabNames);
-        }
-        DTVTLogger.end();
-    }
 
-    @Override
-    public void onClickTab(final int position) {
-        if (null != mViewPager) {
-            DTVTLogger.debug("viewpager not null");
-            DTVTLogger.start("position = " + position);
-            mViewPager.setCurrentItem(position);
-        }
+        mTabLayout = new TabItemLayout(this);
+        mTabLayout.setTabClickListener(this);
+        mTabLayout.initTabView(mTabNames, TabItemLayout.ActivityType.RECORDED_LIST_ACTIVITY);
+        RelativeLayout tabRelativeLayout = findViewById(R.id.rl_recorded_list_tab);
+        tabRelativeLayout.addView(mTabLayout);
+
         DTVTLogger.end();
     }
 
@@ -248,9 +291,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         if (!NetWorkUtils.isOnline(this)) {
             return;
         }
-        if (progressBar != null) {
-            progressBar.setVisibility(View.VISIBLE);
-        }
+
+        progressBar.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -289,7 +331,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                             contentsData.setDlFileFullPath(fullPath);
                             list.add(contentsData);
                             RecordedContentsDetailData detailData = new RecordedContentsDetailData();
-							detailData.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
+                            detailData.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
                             detailData.setDlFileFullPath(fullPath);
                             detailData.setItemId(itemId);
                             detailData.setUpnpIcon(upnpIcon);
@@ -313,14 +355,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         progressBar.setVisibility(View.GONE);
     }
 
-    @Override
-    protected void onPause() {
-        if (mDlnaProvRecVideo != null) {
-            mDlnaProvRecVideo.stopListen();
-        }
-        super.onPause();
-    }
-
     /**
      * DMSデバイスを取り始める.
      */
@@ -332,20 +366,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             mNoDataMessage.setVisibility(View.VISIBLE);
             setProgressBarGone();
         } else {
-            if (mDlnaProvRecVideo == null) {
-                mDlnaProvRecVideo = new DlnaProvRecVideo();
-            }
-            if (mDlnaProvRecVideo.start(dlnaDmsItem, this)) {
-                clearFragment(0);
-                boolean res = mDlnaProvRecVideo.browseRecVideoDms(DlnaUtils.getImageQualitySetting(getApplicationContext()));
-                if (!res) {
-                    DTVTLogger.debug("browseRecVideoDms false");
-                }
-            } else {
-                showGetDataFailedToast();
-                mNoDataMessage.setVisibility(View.VISIBLE);
-                setProgressBarGone();
-            }
+            mDlnaContentRecordedDataProvider.listen(this);
+            mDlnaContentRecordedDataProvider.browse(this);
+            clearFragment(0);
         }
     }
 
@@ -393,17 +416,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
-    @Override
-    public void onVideoBrows(final DlnaRecVideoInfo curInfo) {
-        if (curInfo != null && curInfo.getRecordVideoLists() != null) {
-            setVideoBrows(curInfo.getRecordVideoLists());
-        } else {
-            showGetDataFailedToast();
-            mNoDataMessage.setVisibility(View.VISIBLE);
-        }
-        setProgressBarGone();
-    }
-
     /**
      * 進捗バー閉じる.
      */
@@ -438,35 +450,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     /**
-     * ダウンロードキューセット.
-     *
-     * @param baseFragment baseFragment
-     * @param dlnaRecVideoItems アイテム
-     * @param resultList コンテンツリスト
-     */
-    private void setDownLoadQue(final RecordedBaseFragment baseFragment,
-                                final ArrayList<DlnaRecVideoItem> dlnaRecVideoItems, final List<Map<String, String>> resultList) {
-        if (resultList != null) {
-            for (Map<String, String> hashMap : resultList) {
-                String itemId = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
-                for (int t = 0; t < dlnaRecVideoItems.size(); t++) {
-                    String allItemId = dlnaRecVideoItems.get(t).mItemId;
-                    if (!TextUtils.isEmpty(allItemId) && !allItemId.startsWith(DownloaderBase.sDlPrefix)) {
-                        allItemId = DownloaderBase.getFileNameById(dlnaRecVideoItems.get(t).mItemId);
-                    }
-                    if (itemId.equals(allItemId)) {
-                        String downloadStatus = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
-                        if (TextUtils.isEmpty(downloadStatus)) {
-                            baseFragment.mQueueIndex.add(t);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * VideoBrowsの設定.
      *
      * @param dlnaRecVideoItems 録画ビデオアイテム
@@ -474,7 +457,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @SuppressWarnings("OverlyLongMethod")
     private void setVideoBrows(final ArrayList<DlnaRecVideoItem> dlnaRecVideoItems) {
         final RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
-		baseFragment.setFragmentName(RLA_FragmentName_All);
+        baseFragment.setFragmentName(RLA_FragmentName_All);
         baseFragment.mContentsList = new ArrayList<>();
         List<Map<String, String>> resultList = getDownloadListFromDb();
         setTakeOutContentsToAll(dlnaRecVideoItems, resultList);
@@ -534,6 +517,37 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 }
             }
         });
+    }
+
+    /**
+     * ダウンロードキューセット.
+     *
+     * @param baseFragment baseFragment
+     * @param dlnaRecVideoItems アイテム
+     * @param resultList コンテンツリスト
+     */
+    private void setDownLoadQue(final RecordedBaseFragment baseFragment,
+                                final ArrayList<DlnaRecVideoItem> dlnaRecVideoItems, final List<Map<String, String>> resultList) {
+        if (resultList == null) {
+            return;
+        }
+
+        for (Map<String, String> hashMap : resultList) {
+            String itemId = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
+            for (int t = 0; t < dlnaRecVideoItems.size(); t++) {
+                String allItemId = dlnaRecVideoItems.get(t).mItemId;
+                if (!TextUtils.isEmpty(allItemId) && !allItemId.startsWith(DownloaderBase.sDlPrefix)) {
+                    allItemId = DownloaderBase.getFileNameById(dlnaRecVideoItems.get(t).mItemId);
+                }
+                if (itemId.equals(allItemId)) {
+                    String downloadStatus = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
+                    if (TextUtils.isEmpty(downloadStatus)) {
+                        baseFragment.mQueueIndex.add(t);
+                        break;
+                    }
+                }
+            }
+        }// for resultList
     }
 
     /**
@@ -602,26 +616,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
-    @Override
-    public void onStartCommunication() {
-        super.onStartCommunication();
-        showProgressBar();
-        mNoDataMessage.setVisibility(View.GONE);
-        initDl();
-        getData();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(downloadReceiver);
-        boolean isRunning = isDownloadServiceRunning();
-        if (!isRunning) {
-            DlnaProvDownload.uninitGlobalDl();
-        }
-    }
-
     /**
      * レシーバー登録.
      */
@@ -644,7 +638,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      */
     private BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
         @Override
-	    public void onReceive(final Context context, final Intent intent) {
+        public void onReceive(final Context context, final Intent intent) {
             if (DownloadService.DOWNLOAD_ON_PROGRESS.equals(intent.getAction())) {
                 int progress = intent.getIntExtra(DownloadService.DOWNLOAD_PARAM_INT, 0);
                 RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
@@ -682,44 +676,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             }
         }
     };
-
-    @Override
-    public void onDeviceLeave(final DlnaDmsInfo curInfo, final String leaveDmsUdn) {
-        DTVTLogger.start();
-    }
-    @Override
-    public void onError(final String msg) {
-        DTVTLogger.start(msg);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        showMessage(getApplicationContext().getString(R.string.common_get_data_failed_message));
-                    }
-                });
-                mNoDataMessage.setVisibility(View.VISIBLE);
-                setProgressBarGone();
-            }
-        });
-    }
-
-    /**
-     * showMessage.
-     * @param msg msg
-     */
-    private void showMessage(final String msg) {
-        DTVTLogger.start();
-        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
-        DTVTLogger.end();
-    }
-
-    @Override
-    public String getCurrentDmsUdn() {
-        DTVTLogger.start();
-        return null;
-    }
 
     /**
      * 検索結果タブ専用アダプター.
@@ -804,22 +760,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         return allList;
     }
 
-    @Override
-    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-        DTVTLogger.start();
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_BACK:
-                if (mIsMenuLaunch) {
-                    //メニューから起動の場合ホーム画面に戻る
-                    contentsDetailBackKey(null);
-                    return false;
-                }
-            default:
-                break;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
     /**
      * フラグメント作成.
      *
@@ -835,8 +775,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             if (fra == thiz) {
                 return;
             }
-			fra.setFragmentName(RLA_FragmentName_All);
+            fra.setFragmentName(RLA_FragmentName_All);
             fra.delItemData(dlPath);
         }
     }
+
 }

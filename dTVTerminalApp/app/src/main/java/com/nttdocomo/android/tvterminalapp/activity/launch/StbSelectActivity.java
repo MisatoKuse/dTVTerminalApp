@@ -448,11 +448,11 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                     mCallbackTimer.cancel();
                     mCallbackTimer = null;
                 }
-                DlnaManager.shared().mDlnaManagerListener = null;
-                mDlnaDmsInfo.clear();
-                DlnaManager.shared().StopDmp();
             }
         });
+        DlnaManager.shared().mDlnaManagerListener = null;
+        mDlnaDmsInfo.clear();
+        DlnaManager.shared().StopDmp();
     }
 
     /**

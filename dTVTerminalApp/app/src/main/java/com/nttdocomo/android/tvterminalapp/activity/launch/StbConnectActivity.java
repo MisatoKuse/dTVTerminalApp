@@ -46,16 +46,15 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         DlnaManager.shared().StartDmp();
     }
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         DlnaManager.shared().StopDmp();
     }
-
     @Override
     public void onBackPressed() {
     }

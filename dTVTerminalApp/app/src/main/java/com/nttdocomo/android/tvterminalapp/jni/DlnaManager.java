@@ -78,12 +78,7 @@ public class DlnaManager {
          */
         void leaveDms(String udn);
     }
-    /**
-     * DlnaManagerListener.
-     */
-    public interface DlnaConnectionListener {
-        void connectionCallback(boolean isConnected);
-    }
+
     /**
      * LocalRegisterListener.
      */
@@ -154,7 +149,7 @@ public class DlnaManager {
     private static final int REMOTE_CONNECT_STATUS_RECONNECTION = 6;
     /** dms検出リスナー. */
     public DlnaManagerListener mDlnaManagerListener = null;
-    public DlnaConnectionListener mConnectionListener = null;
+
     /** ローカルレジストレーションリスナー. */
     public LocalRegisterListener mLocalRegisterListener = null;
     /** リモート接続リスナー. */
@@ -166,11 +161,14 @@ public class DlnaManager {
     /** コンテキスト. */
     public Context mContext;
 
+    boolean isStarted = false;
+
     /**
      * launch.
      * @param context コンテキスト
      */
     public void launch(final Context context) {
+        isStarted = false;
         mContext = context;
         DTVTLogger.start();
 
@@ -187,7 +185,7 @@ public class DlnaManager {
 
         DTVTLogger.end();
     }
-    boolean isStarted = false;
+
     /**
      * NW変更時などにコールする
      */
@@ -200,13 +198,17 @@ public class DlnaManager {
             isStarted = true;
             StbConnectionManager.shared().initializeState();
             StbConnectionManager.ConnectionStatus connectionStatus = StbConnectionManager.shared().getConnectionStatus();
+            DTVTLogger.warning("connectionStatus = " + connectionStatus);
             switch (connectionStatus) {
                 case HOME_OUT:
+
                     //1.dアカウントチェックしたかを確認してなかったらチェック
                     startDmp();
+                    startDtcp();
                     restartDirag();
                     break;
                 case NONE_LOCAL_REGISTRATION:
+
                     startDmp();
                     break;
             }
@@ -228,24 +230,6 @@ public class DlnaManager {
         stopDmp();
     }
 
-    /**
-     * ConnectDmsWithUdn.
-     * @param udn udn
-     */
-    public void ConnectDmsWithUdn(final String udn) {
-        connectDmsWithUdn(udn);
-    }
-
-    /**
-     * BrowseContentWithContainerId.
-     * 録画一覧ではページング処理があるため、offsetとlimitと公開
-     * @param offset offset
-     * @param limit limit
-     * @param containerId containerId
-     */
-    public void BrowseContentWithContainerId(final int offset, final int limit, final String containerId) {
-        browseContentWithContainerId(offset, limit, containerId);
-    }
     /**
      * BrowseContentWithContainerId.
      * @param containerId containerId
@@ -344,7 +328,7 @@ public class DlnaManager {
             }
             listener.joinDms(friendlyName, hostString, udn, controlUrl, eventSubscriptionUrl);
         } else {
-            DTVTLogger.error("no dms callback");
+            DTVTLogger.warning("no dms callback");
         }
     }
 
@@ -428,7 +412,7 @@ public class DlnaManager {
             DlnaManager.shared().remoteConnectStatus = status;
             listener.onRemoteConnectStatusCallBack(status);
         } else {
-            DTVTLogger.error("no callback");
+            DTVTLogger.warning("no callback");
         }
     }
     // endregion call from jni
@@ -459,7 +443,7 @@ public class DlnaManager {
         if (item == null || !udn.equals(item.mUdn)) {
             return;
         }
-        DTVTLogger.warning(">>> STB接続");
+        DTVTLogger.error(">>> STB接続");
         connectDmsWithUdn(udn);
 
         String localHostAddress = null;
@@ -479,8 +463,11 @@ public class DlnaManager {
         if (!TextUtils.isEmpty(localHostAddress) && localHostAddress.equals(locationHostString)) {
             StbConnectionManager.shared().setConnectionStatus(StbConnectionManager.ConnectionStatus.HOME_OUT_CONNECT);
         } else {
+            if (StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_OUT) {
+                stopDtcp();
+                stopDirag();
+            }
             StbConnectionManager.shared().setConnectionStatus(StbConnectionManager.ConnectionStatus.HOME_IN);
-            stopDirag();
         }
     }
 

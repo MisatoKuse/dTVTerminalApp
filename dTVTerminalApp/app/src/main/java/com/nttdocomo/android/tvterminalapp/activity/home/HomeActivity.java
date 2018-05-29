@@ -205,8 +205,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         enableStbStatusIcon(true);
         setStatusBarColor(true);
         initView();
-
-        DlnaManager.shared().Start();
     }
 
     /**
@@ -277,6 +275,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         getUserInfoStart();
 
         super.onResume();
+
+        DlnaManager.shared().Start();
     }
 
     /**

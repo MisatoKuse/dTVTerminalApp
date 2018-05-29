@@ -13,7 +13,12 @@ import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
-public class StbConnectionManager implements DlnaManager.DlnaConnectionListener{
+public class StbConnectionManager {
+
+    public interface ConnectionListener {
+        void onConnectionChangeCallback(boolean isStbConnectedHomeNetwork);
+    }
+
     /**
      * shared.
      * @return Instance
@@ -28,7 +33,6 @@ public class StbConnectionManager implements DlnaManager.DlnaConnectionListener{
     private StbConnectionManager() {
     }
 
-
     public enum ConnectionStatus {
         NONE_PAIRING, // ペアリングもしてない
 
@@ -42,10 +46,11 @@ public class StbConnectionManager implements DlnaManager.DlnaConnectionListener{
     }
 
 
-
     // region variable
     private ConnectionStatus connectionStatus = ConnectionStatus.NONE_PAIRING;
     private Context mContext;
+
+    public ConnectionListener mConnectionListener = null;
     // endregion variable
 
     // region method
@@ -56,7 +61,6 @@ public class StbConnectionManager implements DlnaManager.DlnaConnectionListener{
         boolean connected = SharedPreferencesUtils.getSharedPreferencesStbConnect(context);
         if (connected) {
             connectionStatus = ConnectionStatus.HOME_OUT;
-            DlnaManager.shared().mConnectionListener = this;
         }
     }
 
@@ -77,6 +81,7 @@ public class StbConnectionManager implements DlnaManager.DlnaConnectionListener{
             }
         }
         DTVTLogger.info("after connectionStatus = " + connectionStatus);
+        setConnectionStatus(connectionStatus);
     }
 
     public ConnectionStatus getConnectionStatus() {
@@ -84,13 +89,18 @@ public class StbConnectionManager implements DlnaManager.DlnaConnectionListener{
     }
 
     public void setConnectionStatus(ConnectionStatus connectionStatus) {
+        DTVTLogger.warning("before connectionStatus = " + this.connectionStatus + ", after connectionStatus = " + connectionStatus);
         this.connectionStatus = connectionStatus;
+        if (mConnectionListener != null) {
+            mConnectionListener.onConnectionChangeCallback(connectionStatus == ConnectionStatus.HOME_IN);
+        } else {
+            DTVTLogger.warning("mConnectionListener == null");
+        }
     }
 
 
     public void networkStatusChanged(NetWorkUtils.NetworkState networkState) {
-        DTVTLogger.warning("networkState.ordinal() = " + networkState.ordinal());
-
+        DTVTLogger.warning("networkState = " + networkState);
         switch (networkState) {
             case NONE:
 
@@ -108,12 +118,4 @@ public class StbConnectionManager implements DlnaManager.DlnaConnectionListener{
     }
     // endregion method
 
-    // region callback method
-    @Override
-    public void connectionCallback(boolean isConnected) {
-        if (connectionStatus != ConnectionStatus.HOME_IN) {
-            connectionStatus = isConnected ?  ConnectionStatus.HOME_OUT_CONNECT : ConnectionStatus.HOME_OUT;
-        }
-    }
-    // endregion callback method
 }
