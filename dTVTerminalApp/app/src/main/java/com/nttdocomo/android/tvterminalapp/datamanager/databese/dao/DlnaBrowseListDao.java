@@ -59,7 +59,7 @@ public class DlnaBrowseListDao {
                 new  String[]{containerId},
                 null,
                 null,
-                DataBaseConstants.DLNA_BROWSE_COLUM_NO);
+                null);
 
         //参照先を一番始めに
         boolean isEof = cursor.moveToFirst();
@@ -90,15 +90,15 @@ public class DlnaBrowseListDao {
     }
 
     /**
-     * データの削除by tab.
+     * データの削除by containerId.
      *
-     * @param tab タブ
+     * @param containerId containerId
      * @return 削除リターン
      */
-    public int deleteByContainerId(final String tab) {
+    public int deleteByContainerId(final String containerId) {
         String deleteSelection = StringUtils.getConnectStrings(
                 DataBaseConstants.DLNA_BROWSE_COLUM_CONTAINER_ID, "=? ");
-        return mSQLiteDatabase.delete(DataBaseConstants.DLNA_BROWSE_TABLE_NAME, deleteSelection, new String[]{tab});
+        return mSQLiteDatabase.delete(DataBaseConstants.DLNA_BROWSE_TABLE_NAME, deleteSelection, new String[]{containerId});
     }
 
 }
