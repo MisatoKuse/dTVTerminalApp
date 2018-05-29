@@ -12,6 +12,7 @@ import com.digion.dixim.android.activation.helper.ActivationHelper;
 import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 
@@ -275,8 +276,7 @@ public class DlnaUtils {
      * @return 設定した画質のURL
      */
     public static String getContainerIdByImageQuality(final Context context, String channel) {
-        // TODO リモート視聴設定状態取得処理追加、仮で固定値「false」に設定
-        boolean isRemote = false;
+        boolean isRemote = StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_OUT_CONNECT;
         if (context == null) {
             return IMAGE_QUALITY_DEFAULT_URL + channel;
         }

@@ -117,7 +117,7 @@ public class BaseActivity extends FragmentActivity implements
         ClipRegistWebClient.ClipRegistJsonParserCallback,
         ClipDeleteWebClient.ClipDeleteJsonParserCallback,
         DaccountControl.DaccountControlCallBack,
-        CustomDialog.DismissCallback, HomeRecyclerViewAdapter.ItemClickCallback {
+        CustomDialog.DismissCallback, HomeRecyclerViewAdapter.ItemClickCallback, StbConnectionManager.ConnectionListener {
     /**
      * ヘッダーBaseレイアウト.
      */
@@ -724,6 +724,7 @@ public class BaseActivity extends FragmentActivity implements
             onStartCommunication();
         }
 
+        StbConnectionManager.shared().mConnectionListener = this;
         DTVTLogger.end();
     }
 
@@ -2728,6 +2729,17 @@ public class BaseActivity extends FragmentActivity implements
     @Override
     public void onItemClickCallBack(final ContentsData contentsData, final OtherContentsDetailData detailData) {
 
+    }
+
+    @Override
+    public void onConnectionChangeCallback(final boolean isStbConnectedHomeNetwork) {
+        DTVTLogger.warning("isStbConnectedHomeNetwork = " + isStbConnectedHomeNetwork);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mStbStatusIcon.setImageResource(isStbConnectedHomeNetwork ? R.mipmap.header_material_icon_tv : R.mipmap.header_material_icon_tv_active);
+            }
+        });
     }
     // endregion callback
 }
