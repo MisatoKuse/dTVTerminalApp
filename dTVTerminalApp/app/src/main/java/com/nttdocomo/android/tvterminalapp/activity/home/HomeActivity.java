@@ -19,11 +19,13 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -101,6 +103,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * PR枠画像.
      */
     private ImageView mPrImageView = null;
+    /**
+     * ホーム画面のスクロール部
+     */
+    private ScrollView mScrollView = null;
     /**
      * エラーダイアログが表示されているかのフラグ.
      */
@@ -194,6 +200,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * dアカウントの取得が行えない事が確定した場合はtrueに変更する.
      */
     private boolean mIsDaccountGetNg = false;
+    /**
+     * ユーザーがスクロール操作を行ったならばtrueにして、以後のスクロール位置補正をスキップさせる.
+     */
+    private boolean mAlreadyScroll = false;
+    /**
+     * ユーザーのスクロールを検知する為の、以前のスクロール位置.
+     */
+    private int mOldScrollPosition = 0;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -265,6 +279,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         } else {
             mLinearLayout.setVisibility(View.VISIBLE);
             mRelativeLayout.setVisibility(View.GONE);
+
+            //プログレスの解除＝新情報の追加なので、スクロール位置の補正を行う
+            if(!mAlreadyScroll) {
+                //既にユーザー操作によるスクロールがまだ行われていない場合は、補正を行う
+                mScrollView.setScrollY(0);
+            }
         }
     }
 
@@ -470,6 +490,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         agreementTextView.setOnClickListener(this);
         mPrImageView.setOnClickListener(this);
 
+        //スクロールビューの操作を行う
+        initScrollView();
+
         //縦横比を維持したまま幅100%に拡大縮小
         Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.home_pr);
         int drawableWidth = drawable.getIntrinsicWidth();
@@ -493,6 +516,42 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.addItemDecoration(new HomeRecyclerViewItemDecoration(this));
         }
+    }
+
+    /**
+     * ホーム画面の主要情報を表示するスクロールビューの初期化処理を行う.
+     */
+    private void initScrollView() {
+        //スクロール実行フラグの初期化
+        mAlreadyScroll = false;
+
+        //スクロールビューの取得
+        mScrollView = findViewById(R.id.home_main_layout_scroll_view);
+
+        //スクロール検知の実装
+        mScrollView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        //スクロールの縦位置を取得
+                        mOldScrollPosition = view.getScrollY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        // 現在の縦位置と以前の縦位置を比較して違いがあれば、スクロールが発生
+                        if (mOldScrollPosition != view.getScrollY()) {
+                            DTVTLogger.debug("scrolling");
+                            //スクロールを行ったスイッチをセット。以後のスクロール位置補正は、最上段にはならない
+                            mAlreadyScroll = true;
+                        }
+
+                        //今の位置を代入する
+                        mOldScrollPosition = view.getScrollY();
+                        break;
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -765,7 +824,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             @Override
             public void run() {
                 //ユーザー情報の変更検知
-                showProgessBar(true);
                 mUserInfoDataProvider.getUserInfo();
                 //ユーザー情報取得開始を行ったので、フラグはクリア
                 mUserInfoGetRequest = false;

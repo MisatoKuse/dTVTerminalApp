@@ -1798,40 +1798,6 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     /**
-     * コンテンツ詳細に必要なデータを返す.
-     *
-     * @param info         レコメンド情報
-     * @param recommendFlg レコメンドフラグ
-     * @return コンテンツ情報
-     */
-    public static OtherContentsDetailData getOtherContentsDetailData(final ContentsData info, final String recommendFlg) {
-        OtherContentsDetailData detailData = new OtherContentsDetailData();
-        detailData.setTitle(info.getTitle());
-        detailData.setDetail(info.getSynop());
-        if (ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY.equals(recommendFlg)) {
-            detailData.setServiceId(Integer.parseInt(info.getServiceId()));
-            detailData.setThumb(info.getThumURL());
-        } else {
-            detailData.setThumb(info.getThumDetailURL());
-        }
-        detailData.setReserved4(info.getReserved4());
-        detailData.setContentsId(info.getContentsId());
-        detailData.setDispType(info.getDispType());
-        detailData.setDtv(info.getDtv());
-        detailData.setTvService(info.getTvService());
-        detailData.setContentsType(info.getContentsType());
-        detailData.setChannelId(info.getChannelId());
-        detailData.setRecommendOrder(info.getRecommendOrder());
-        detailData.setPageId(info.getPageId());
-        detailData.setGroupId(info.getGroupId());
-        detailData.setRecommendMethodId(info.getRecommendMethodId());
-        detailData.setCategoryId(info.getCategoryId());
-        detailData.setRecommendFlg(recommendFlg);
-
-        return detailData;
-    }
-
-    /**
      * SIM情報取得permission取得 / 海外通信判定実行.
      */
     private void permissionCheckExec() {

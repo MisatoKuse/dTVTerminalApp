@@ -201,6 +201,11 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
          */
         void onErrorCallBack(final PlayerErrorType mPlayerErrorType);
         /**
+         * エラーコールバック.
+         * @param errorCode エラーコード
+         */
+        void onPlayerErrorCallBack(final int errorCode);
+        /**
          * 横、縦チェンジコールバック.
          * @param isLandscape 横
          */
@@ -419,8 +424,8 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     }
 
     @Override
-    public void onError(final MediaPlayerController mediaPlayerController, final int i, final long l) {
-
+    public void onError(final MediaPlayerController mediaPlayerController, final int what, final long arg) {
+        mPlayerStateListener.onPlayerErrorCallBack(what);
     }
 
     @Override

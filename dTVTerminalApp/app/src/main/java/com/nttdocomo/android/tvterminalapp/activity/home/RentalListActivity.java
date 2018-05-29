@@ -28,6 +28,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapter
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRentalDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
@@ -156,7 +157,7 @@ public class RentalListActivity extends BaseActivity implements
         } else {
             Intent intent = new Intent(this, ContentDetailActivity.class);
             intent.putExtra(DtvtConstants.SOURCE_SCREEN, getComponentName().getClassName());
-            OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(contentsData, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
+            OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(contentsData, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
             intent.putExtra(detailData.getRecommendFlg(), detailData);
             startActivity(intent);
         }

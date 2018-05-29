@@ -316,6 +316,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private ChannelInfo mChannel = null;
     /** 視聴可能期限.*/
     private long mEndDate = 0L;
+    /** Vod視聴可能期限.*/
+    private long mVodEndDate = 0L;
+    /** Vod視聴可能期限文字列.*/
+    private String mVodEndDateText = null;
     /** 一ヶ月(30日).*/
     public static final int ONE_MONTH = 30;
     /** サムネイルにかけるシャドウのアルファ値.*/
@@ -879,7 +883,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             }
 
             //コンテンツタイプ取得
-            ContentUtils.ContentsType type = ContentUtils.getRecommendContentsType(mDetailData);
+            ContentUtils.ContentsType type = mDetailData.getContentCategory();
 
             switch (type) {
                 case PURE_DTV:
@@ -1291,7 +1295,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             detailFragment.mOtherContentsDetailData.setAdinfoArray(mDetailFullData.getmAdinfo_array());
             detailFragment.mOtherContentsDetailData.setmStartDate(String.valueOf(mDetailFullData.getPublish_start_date()));
             detailFragment.mOtherContentsDetailData.setContentCategory(mDetailFullData.getContentsType());
-            String date = null;
+            String date = "";
             ContentUtils.ContentsType contentsType = ContentUtils.getContentsTypeByPlala(mDetailFullData.getDisp_type(),
                     mDetailFullData.getmTv_service(), mDetailFullData.getmContent_type(), mDetailFullData.getAvail_end_date(),
                     mDetailFullData.getmVod_start_date(), mDetailFullData.getmVod_end_date(), mDetailFullData.getEstFlag(),
@@ -1307,25 +1311,32 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 } else {
                     switch (contentsType) {
                         case VOD:
+                            //Vodの場合は視聴可否判定結果取得後に表示判定を行うため値を保存するのみとする
                             //VOD(m/d（曜日）まで)
-                            date = DateUtils.getContentsDetailVodDate(this, mDetailFullData.getAvail_end_date());
+                            mVodEndDate = mDetailFullData.getAvail_end_date();
+                            mVodEndDateText = DateUtils.getContentsDetailVodDate(this, mDetailFullData.getAvail_end_date());
                             break;
                         case DCHANNEL_VOD_OVER_31:
+                            //Vodの場合は視聴可否判定結果取得後に表示判定を行うため値を保存するのみとする
                             //VOD(見逃し)
-                            date = StringUtils.getConnectStrings(
+                            mVodEndDate = mDetailFullData.getmVod_end_date();
+                            mVodEndDateText = StringUtils.getConnectStrings(
                                     getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
                             break;
                         case DCHANNEL_VOD_31:
+                            //Vodの場合は視聴可否判定結果取得後に表示判定を行うため値を保存するのみとする
                             //VOD(見逃し | m/d（曜日）まで)
-                            date = DateUtils.getContentsDetailVodDate(this, mDetailFullData.getmVod_end_date());
-                            date = StringUtils.getConnectStrings(getString(
-                                    R.string.contents_detail_hikari_d_channel_miss_viewing_separation), date);
+                            mVodEndDate = mDetailFullData.getmVod_end_date();
+                            String limit = DateUtils.getContentsDetailVodDate(this, mDetailFullData.getmVod_end_date());
+                            mVodEndDateText = StringUtils.getConnectStrings(getString(
+                                    R.string.contents_detail_hikari_d_channel_miss_viewing_separation), limit);
                             break;
                         default:
                             break;
                     }
                 }
             }
+            DTVTLogger.debug("display limit date:---" + date);
             detailFragment.mOtherContentsDetailData.setChannelDate(date);
             detailFragment.noticeRefresh();
             String[] credit_array = mDetailFullData.getmCredit_array();
@@ -2074,17 +2085,20 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     //endregion
 
     /**
-     * 年齢制限ダイアログを表示.
+     * プレイヤーエラーダイアログを表示.
+     *
+     * @param errorMessage エラーメッセージ
      */
-    private void showDialogToConfirmClose() {
+    private void showDialogToConfirmClose(final String errorMessage) {
         CustomDialog closeDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.ERROR);
-        closeDialog.setContent(getApplicationContext().getString(R.string.contents_detail_parental_check_fail));
+        closeDialog.setContent(errorMessage);
         closeDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
                 contentsDetailCloseKey(null);
             }
         });
+        closeDialog.setOnTouchOutside(false);
         closeDialog.setCancelable(false);
         closeDialog.showDialog();
     }
@@ -2321,6 +2335,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             case ENABLE_WATCH_LIMIT_THIRTY:
                 //期限まで30日以内表示内容設定
                 mEndDate = mDetailFullData.getPublish_end_date();
+                displayLimitDate();
                 break;
             default:
                 break;
@@ -2337,6 +2352,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
         ArrayList<ActiveData> vodActiveData = response.getVodActiveData();
         mEndDate = ContentUtils.getRentalVodValidEndDate(mDetailFullData, vodActiveData);
+        displayLimitDate();
         DTVTLogger.debug("get rental vod end date:" + mEndDate);
         mViewIngType = ContentUtils.getRentalVodViewingType(mDetailFullData, mEndDate);
         DTVTLogger.debug("get rental vod viewing type:" + mViewIngType);
@@ -2353,32 +2369,63 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         }
 
         mEndDate = ContentUtils.getRentalChannelValidEndDate(response, mChannel);
+        displayLimitDate();
         DTVTLogger.debug("get rental vod end date:" + mEndDate);
         mViewIngType = ContentUtils.getRentalChannelViewingType(mDetailFullData, mEndDate);
         DTVTLogger.debug("get rental vod viewing type:" + mViewIngType);
         changeUIBasedContractInfo();
     }
 
+    /**
+     * 短い方の視聴可能期限を表示する.
+     */
+    private void displayLimitDate() {
+        DTVTLogger.start();
+        DtvContentsDetailFragment detailFragment = getDetailFragment();
+        if (mEndDate != 0L && mEndDate < mVodEndDate) {
+            String date = DateUtils.formatUntilMinuteTimeString(mEndDate);
+            String untilDate = StringUtils.getConnectStrings(date, getString(R.string.common_until));
+            DTVTLogger.debug("display limit date:---" + untilDate);
+            detailFragment.mOtherContentsDetailData.setChannelDate(untilDate);
+        } else {
+            DTVTLogger.debug("display limit date:---" + mVodEndDateText);
+            detailFragment.mOtherContentsDetailData.setChannelDate(mVodEndDateText);
+        }
+        detailFragment.noticeRefresh();
+    }
+
     @Override
     public void onErrorCallBack(final PlayerViewLayout.PlayerErrorType mPlayerErrorType) {
+        showProgressBar(false);
+        String msg = null;
         switch (mPlayerErrorType) {
             case REMOTE:
-                showErrorDialog(getString(R.string.contents_detail_out_house_player_error_msg));
+                msg = getString(R.string.contents_detail_out_house_player_error_msg);
                 break;
             case ACTIVATION:
-                showErrorDialog(getString(R.string.activation_failed_msg));
+                msg = getString(R.string.activation_failed_msg);
                 break;
             case EXTERNAL:
-                showErrorDialog(getString(R.string.contents_detail_external_display_dialog_msg));
+                msg = getString(R.string.contents_detail_external_display_dialog_msg);
                 break;
             case AGE:
-                showDialogToConfirmClose();
+                msg = getString(R.string.contents_detail_parental_check_fail);
                 break;
             case NONE:
             default:
                 break;
         }
+        if (msg != null) {
+            showDialogToConfirmClose(msg);
+        }
+    }
+
+    @Override
+    public void onPlayerErrorCallBack(final int errorCode) {
         showProgressBar(false);
+        String errorMsg = getString(R.string.contents_player_fail_msg);
+        String format = getString(R.string.contents_player_fail_error_code_format);
+        showDialogToConfirmClose(errorMsg.replace(format, String.valueOf(errorCode)));
     }
 
     @Override
@@ -2540,15 +2587,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         DeviceStateUtils.PairingState pairingState;
         switch (mViewIngType) {
             case ENABLE_WATCH:
+            case ENABLE_WATCH_LIMIT_THIRTY:
                 //再生導線表示
                 playNowOnAir();
-                break;
-            case ENABLE_WATCH_LIMIT_THIRTY:
-                playNowOnAir();
-                //「〇〇日まで」を表示
-                if (mEndDate != 0L) {
-                    detailFragment.displayEndDate(mEndDate);
-                }
                 break;
             case DISABLE_WATCH_AGREEMENT_DISPLAY:
                 //再生、クリップ、録画、評価、ダウンロード、番組表編集 の操作時に契約導線を表示
