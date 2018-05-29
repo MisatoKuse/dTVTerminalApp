@@ -99,10 +99,10 @@ public class DlnaContentTerChennelDataProvider implements DlnaManager.BrowseList
                         objs[i] = obj;
                     }
 
-                    DlnaManager.BrowseListener listener = DlnaManager.shared().mBrowseListener;
-                    if (listener != null) {
-                        listener.onContentBrowseCallback(objs);
+                    if (mCallback != null) {
+                        mCallback.onContentBrowseCallback(objs);
                     }
+
                     break;
                 default:
                     break;
