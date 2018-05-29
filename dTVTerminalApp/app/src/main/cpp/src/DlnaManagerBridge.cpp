@@ -115,6 +115,9 @@ void fillContentInfoIntoJni(JNIEnv *env, const ContentInfo *src, jobject &dst) {
     jstring videoTypeString = env->NewStringUTF(src->protocolInfo);
     env->SetObjectField(dst, jniModelStruct.videoType, videoTypeString);
     env->DeleteLocalRef(videoTypeString);
+    jstring bitrateString = env->NewStringUTF(src->bitrate);
+    env->SetObjectField(dst, jniModelStruct.bitrate, bitrateString);
+    env->DeleteLocalRef(bitrateString);
 }
 
 JNIEXPORT void JNICALL

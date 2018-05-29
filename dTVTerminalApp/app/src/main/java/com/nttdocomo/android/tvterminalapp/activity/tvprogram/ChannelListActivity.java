@@ -31,6 +31,8 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.DtvChannelDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.HikariTvChannelDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.dlna.DlnaContentBsChannelDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.dlna.DlnaContentTerChennelDataProvider;
 import com.nttdocomo.android.tvterminalapp.fragment.channellist.ChannelListFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.channellist.ChannelListFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
@@ -58,7 +60,8 @@ public class ChannelListActivity extends BaseActivity implements
 
         ScaledDownProgramListDataProvider.ApiDataProviderCallback,
         HikariTvChannelDataProvider.ContentsDataCallback,
-        DlnaManager.BrowseListener,
+        DlnaContentBsChannelDataProvider.ContentsDataCallback,
+        DlnaContentTerChennelDataProvider.ContentsDataCallback,
         DlnaManager.RemoteConnectStatusChangeListener {
 
     // region declaration
@@ -112,9 +115,10 @@ public class ChannelListActivity extends BaseActivity implements
     private HikariTvChannelDataProvider mHikariTvChannelDataProvider = null;
     /** dTVチャンネルプロバイダー. */
     private DtvChannelDataProvider mDtvChannelDataProvider = null;
-
-    /** 地上波一覧. */
-    /** BSデジタル一覧. */
+    /** 地上波一覧プロバイダー. */
+    private DlnaContentTerChennelDataProvider mDlnaContentTerChennelDataProvider = null;
+    /** BSデジタル一覧プロバイダー. */
+    private DlnaContentBsChannelDataProvider mDlnaContentBsChannelDataProvider = null;
 
     /** ハンドラー(DataProvider). */
     private final Handler mDataProviderHandler = new Handler();
@@ -173,7 +177,6 @@ public class ChannelListActivity extends BaseActivity implements
            mIsRemote = DlnaUtils.getLocalRegisterSuccess(this);
         }
         DTVTLogger.warning("mIsStbConnected = " + mIsStbConnected + ", mIsRemote = " + mIsRemote);
-        DlnaManager.shared().mBrowseListener = this;
         initView();
         initData();
     }
@@ -190,6 +193,12 @@ public class ChannelListActivity extends BaseActivity implements
         }
         mDtvChannelDataProvider.enableConnect();
 
+        if (null == mDlnaContentBsChannelDataProvider) {
+            mDlnaContentBsChannelDataProvider = new DlnaContentBsChannelDataProvider(this);
+        }
+        if (null == mDlnaContentTerChennelDataProvider) {
+            mDlnaContentTerChennelDataProvider = new DlnaContentTerChennelDataProvider(this);
+        }
 //        if (null == mDlnaProvBsChList) {
 //            mDlnaProvBsChList = new DlnaProvBsChList();
 //        }
@@ -342,7 +351,8 @@ public class ChannelListActivity extends BaseActivity implements
 //            DTVTLogger.end();
 //        }
         //DlnaManager.shared().BrowseContentWithContainerId("0/smartphone/tb");
-        DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(getApplicationContext(), DlnaUtils.DLNA_DMS_TER_CHANNEL));
+        //DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(getApplicationContext(), DlnaUtils.DLNA_DMS_TER_CHANNEL));
+        mDlnaContentTerChennelDataProvider.browseContentWithContainerId(this);
     }
 
     /** Bsデータを取得. */
@@ -352,7 +362,8 @@ public class ChannelListActivity extends BaseActivity implements
 //            mDataProviderHandler.postDelayed(mRunnableBs, 0);
 //            DTVTLogger.end();
 //        }
-        DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(getApplicationContext(), DlnaUtils.DLNA_DMS_BS_CHANNEL));
+        //DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(getApplicationContext(), DlnaUtils.DLNA_DMS_BS_CHANNEL));
+        mDlnaContentBsChannelDataProvider.browseContentWithContainerId(this);
     }
 
     /**

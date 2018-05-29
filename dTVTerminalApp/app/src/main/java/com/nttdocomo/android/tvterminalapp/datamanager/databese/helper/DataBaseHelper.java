@@ -151,6 +151,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(final SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_CHANNEL_SQL);
+        sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_DLNA_BROWSE_SQL);
         sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_DAILY_RANK_SQL);
         sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_TV_SCHEDULE_SQL);
         sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_USER_INFO_SQL);
@@ -213,6 +214,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         if (oldVersion < newVersion) {
             DateUtils.clearLastDate(mContext);
             sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_CHANNEL_SQL);
+            sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_DLNA_BROWSE_SQL);
             sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_DAILY_RANK_SQL);
             sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_RECOMMEND_CHANNEL_SQL);
             sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_RECOMMEND_VIDEO_SQL);

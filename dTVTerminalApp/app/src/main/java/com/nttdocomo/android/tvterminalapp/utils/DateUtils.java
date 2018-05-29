@@ -122,6 +122,11 @@ public class DateUtils {
     public static final String CHANNEL_LAST_UPDATE = "ChannelLastUpdate";
 
     /**
+     * DLNAブラウズ取得日付キー.
+     */
+    public static final String DLNA_BROWSE_UPDATE = "DlnaBrowseLastUpdate";
+
+    /**
      * ロールリスト取得日付キー.
      */
     public static final String ROLELIST_LAST_UPDATE = "RoleListLastUpdate";

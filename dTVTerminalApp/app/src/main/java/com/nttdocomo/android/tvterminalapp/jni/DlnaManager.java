@@ -447,6 +447,11 @@ public class DlnaManager {
 
         for (DlnaObject obj: info) {
             obj.mChannelName = AribExternalCharConverter.getConverted(obj.mChannelName);
+            try {
+                Integer.parseInt(obj.mSize);
+            } catch (NumberFormatException e) {
+                obj.mSize = "0";
+            }
         }
     }
 
