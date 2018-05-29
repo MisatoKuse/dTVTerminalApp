@@ -214,6 +214,8 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
             }
             resultDialog.setConfirmText(R.string.common_text_close);
         }
+        DlnaManager.shared().StopDtcp();
+        DlnaManager.shared().StopDirag();
         resultDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {

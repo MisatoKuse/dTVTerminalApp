@@ -202,7 +202,9 @@ void lr_register_response_handler(du_uint32 requeseted_id, local_registration_er
         }
     }
     if (DlnaRemoteConnect::LocalRegistrationCallback != nullptr) {
+        LOG_WITH("before callback");
         DlnaRemoteConnect::LocalRegistrationCallback(result, resultType);
+        LOG_WITH("after callback");
     }
 }
 

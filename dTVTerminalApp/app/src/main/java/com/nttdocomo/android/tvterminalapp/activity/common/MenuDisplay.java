@@ -39,6 +39,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.adapter.MenuListAdapter;
 
@@ -364,8 +365,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
         //お知らせ、設定
         setFooterMenuItem();
-
-        if (mActivity.getStbStatus()) {
+        if (StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_IN) {
             //テレビアプリを起動する
             mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_premium_tv_app_start_common));
             mMenuItemCount.add(INT_NONE_COUNT_STATUS);

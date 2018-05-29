@@ -19,12 +19,14 @@ import com.nttdocomo.android.tvterminalapp.activity.tvprogram.MyChannelEditActiv
 import com.nttdocomo.android.tvterminalapp.adapter.MainSettingListAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DeviceStateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.MainSettingUtils;
+import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
@@ -270,19 +272,19 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             }
         }
         if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_REMOTE])) {
-            DeviceStateUtils.PairingState pairingState = DeviceStateUtils.getPairingState(this, getStbStatus());
-            switch (pairingState) {
-                case NO_PAIRING:
-                    //未ペアリングならダイアログ表示
+            StbConnectionManager.ConnectionStatus connectionStatus = StbConnectionManager.shared().getConnectionStatus();
+            switch (connectionStatus) {
+                case NONE_PAIRING: //未ペアリングならダイアログ表示
                     settingErrorDialog(R.string.contents_detail_pairing_request);
                     return false;
-                case OUTSIDE_HOUSE:
+                case HOME_IN:
+                    break;
+                case HOME_OUT:
+                case NONE_LOCAL_REGISTRATION:
+                case HOME_OUT_CONNECT:
                     //宅外ならダイアログ表示
                     settingErrorDialog(R.string.main_setting_stb_not_connected_message);
                     return false;
-                case INSIDE_HOUSE:
-                default:
-                    break;
             }
         }
         return true;

@@ -58,6 +58,7 @@ public:
     bool startDmp(DMP *dmp);
 
     bool startDtcp(DMP *dmp, JavaVM *vm, jobject object, jmethodID mid);
+    bool stopDtcp(DMP *dmp);
 
     /**
      dmpを中止する

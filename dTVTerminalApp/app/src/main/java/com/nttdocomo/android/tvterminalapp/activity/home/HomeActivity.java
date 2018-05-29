@@ -206,7 +206,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         setStatusBarColor(true);
         initView();
 
-        DlnaManager.shared().StartDmp();
+        DlnaManager.shared().Start();
     }
 
     /**

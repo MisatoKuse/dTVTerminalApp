@@ -167,7 +167,7 @@ public class ChannelListActivity extends BaseActivity implements
         enableGlobalMenuIcon(true);
         enableStbStatusIcon(true);
 
-        mIsStbConnected = getStbStatus();
+//        mIsStbConnected = getStbStatus();
         //リモート処理のチェック
         if (!mIsStbConnected) {
            mIsRemote = DlnaUtils.getLocalRegisterSuccess(this);

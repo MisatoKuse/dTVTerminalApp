@@ -31,9 +31,7 @@ import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsInfo;
-import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
-import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessage;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherApi;
@@ -322,7 +320,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             //初回起動時
             enableHeaderBackIcon(false);
             setTitleText(getString(R.string.str_app_title));
-            setStbStatusIconVisibility(false);
+            enableStbStatusIcon(false);
             enableGlobalMenuIcon(false);
             return;
         } else if (mStartMode == (StbSelectFromMode.StbSelectFromMode_Setting.ordinal())) {
@@ -331,7 +329,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             //設定画面からの遷移
             enableHeaderBackIcon(true);
             setTitleText(getString(R.string.str_stb_paring_setting_title));
-            setStbStatusIconVisibility(true);
+            enableStbStatusIcon(true);
             enableGlobalMenuIcon(true);
 
             TextView stbSearchFailed = findViewById(R.id.stb_device_search_result);

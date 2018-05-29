@@ -274,6 +274,20 @@ bool DlnaBase::startDtcp(DMP *dmp, JavaVM *vm, jobject object, jmethodID mid) {
     return result;
 }
 
+bool DlnaBase::stopDtcp(DMP *dmp) {
+    bool result = false;
+    do {
+        auto ret = ddtcp_shutdown(dmp->dtcp);
+        if (DDTCP_FAILED(ret)) {
+            du_log_mark_w(0);
+            break;
+        }
+        result = true;
+    } while (false);
+
+    return result;
+}
+
 void DlnaBase::stopDmp(DMP *dmp) {
     dupnp_cp_evtmgr_stop(&dmp->eventManager);
     dupnp_stop(&dmp->upnpInstance);

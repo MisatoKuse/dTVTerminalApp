@@ -73,6 +73,7 @@ import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewAdapter;
 import com.nttdocomo.android.tvterminalapp.application.TvtApplication;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
@@ -189,10 +190,6 @@ public class BaseActivity extends FragmentActivity implements
      * クリップ実行中フラグ.
      */
     private boolean mClipRunTime = false;
-    /**
-     * stb status icon状態.
-     */
-    private boolean mIsStbStatusOn = false;
     /**
      * GoogleAnalytics用.
      */
@@ -432,33 +429,26 @@ public class BaseActivity extends FragmentActivity implements
      * @param isOn true: 表示  false: 非表示
      */
     protected void enableStbStatusIcon(final boolean isOn) {
-        if (this instanceof LaunchActivity
-            //|| this instanceof RecordedListActivity
-                ) {
-            return;
-        }
-        if (null != mStbStatusIcon) {
-            if (isOn) {
-                mStbStatusIcon.setVisibility(View.VISIBLE);
-            } else {
-                mStbStatusIcon.setVisibility(View.INVISIBLE);
-            }
+        if (mStbStatusIcon != null) {
+            mStbStatusIcon.setVisibility(isOn ? View.VISIBLE : View.INVISIBLE);
         }
     }
 
     /**
-     * 機能：STB接続アイコンを表示.
+     * 機能：STBステータスを変更.
      *
-     * @param isOn true: 表示  false: 非表示
+     * @param isOn true: stb接続中   false: stb未接続
      */
-    protected void setStbStatusIconVisibility(final boolean isOn) {
-        if (null != mStbStatusIcon) {
-            if (isOn) {
-                mStbStatusIcon.setVisibility(View.VISIBLE);
-            } else {
-                mStbStatusIcon.setVisibility(View.INVISIBLE);
-            }
+    private void setStbStatus(final boolean isOn) {
+        if (mStbStatusIcon == null) {
+            return;
         }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mStbStatusIcon.setImageResource(R.mipmap.header_material_icon_tv_active);
+            }
+        });
     }
 
     /**
@@ -492,45 +482,6 @@ public class BaseActivity extends FragmentActivity implements
                 mMenuImageViewForBase.setTag(HEADER_ICON_CLOSE);
             }
         }
-    }
-
-    /**
-     * 機能：STBステータスを変更.
-     *
-     * @param isOn true: stb接続中   false: stb未接続
-     */
-    private void setStbStatus(final boolean isOn) {
-        if (null != mStbStatusIcon) {
-            mStbStatusIcon.post(new Runnable() {
-                @Override
-                public void run() {
-                    synchronized (this) {
-                        if (isOn) {
-                            DTVTLogger.debug("STB icon ON");
-                            mStbStatusIcon.setImageResource(R.mipmap.header_material_icon_tv);
-                            //ペアリングアイコンがOFF→ON(点灯)になった際にdアカチェックを行う
-                            if (!mIsStbStatusOn) {
-                                checkDAccountOnRestart();
-                            }
-
-                        } else {
-                            DTVTLogger.debug("STB icon OFF");
-                            mStbStatusIcon.setImageResource(R.mipmap.header_material_icon_tv_active);
-                        }
-                        mIsStbStatusOn = isOn;
-                    }
-                }
-            });
-        }
-    }
-
-    /**
-     * 機能：STB接続ステータスを戻す.
-     *
-     * @return true: stb接続中   false: stb未接続
-     */
-    public boolean getStbStatus() {
-        return true;
     }
 
     /**
@@ -789,10 +740,9 @@ public class BaseActivity extends FragmentActivity implements
      */
     protected void checkDAccountOnRestart() {
         //BGからFGに遷移するときにdアカチェックを行う
-        if (getStbStatus()) {
+        if (StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_IN) {
             RemoteControlRelayClient.getInstance().isUserAccountExistRequest(getApplicationContext());
         }
-        DTVTLogger.end();
     }
 
     /**
@@ -925,7 +875,7 @@ public class BaseActivity extends FragmentActivity implements
     private void switchOtherResultCode(final int resultCode) {
         switch (resultCode) {
             case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
-                if (getStbStatus()) {
+                if (StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_IN) {
                     showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
                     //ペアリングアイコンをOFFにする
                     setStbStatus(false);
@@ -1337,27 +1287,7 @@ public class BaseActivity extends FragmentActivity implements
 
 
 
-    /**
-     * 機能：onClick event for menu.
-     *
-     * @param view メニューアイコンのビュー
-     */
-    @Override
-    public void onClick(final View view) {
-        if (mMenuImageViewForBase == view) {
-            if (HEADER_ICON_CLOSE.equals(mMenuImageViewForBase.getTag())) {
-                // コンテンツ詳細画面の×ボタン時はコンテンツ詳細画面を閉じる
-                contentsDetailCloseKey(view);
-            } else {
-                //ダブルクリックを防ぐ
-                if (isFastClick()) {
-                    displayGlobalMenu();
-                }
-            }
-        } else if (mHeaderBackIcon == view) {
-            contentsDetailBackKey(null);
-        }
-    }
+
 
     /**
      * リモコン画面を生成する.
@@ -1538,7 +1468,7 @@ public class BaseActivity extends FragmentActivity implements
         public void onClick(final View v) {
             switch (v.getId()) {
                 case R.id.header_stb_status_icon:
-                    if (getStbStatus()) {
+                    if (StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_IN) {
                         DTVTLogger.debug("Start RemoteControl");
                         if (v.getContext() instanceof ContentDetailActivity) {
                             if (((ContentDetailActivity) v.getContext()).getControllerVisible()) {
@@ -1562,23 +1492,6 @@ public class BaseActivity extends FragmentActivity implements
             }
         }
     };
-
-    @Override
-    public void onStartRemoteControl(final boolean isFromHeader) {
-        DTVTLogger.debug("base_start_control");
-        View base = findViewById(R.id.base_motion_detection_rl);
-        base.setOnClickListener(mRemoteControllerOnClickListener);
-        base.setVisibility(View.VISIBLE);
-        setRelayClientHandler();
-    }
-
-    @Override
-    public void onEndRemoteControl() {
-        DTVTLogger.debug("base_end_control");
-        View base = findViewById(R.id.base_motion_detection_rl);
-        base.setOnClickListener(null);
-        base.setVisibility(View.GONE);
-    }
 
     /**
      * リモートコントローラーViewのVisibilityを変更.
@@ -1617,7 +1530,7 @@ public class BaseActivity extends FragmentActivity implements
      * グローバルメニューからのリモコン表示.
      */
     private void menuRemoteController() {
-        if (getStbStatus()) {
+        if (StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_IN) {
             DTVTLogger.debug("Start RemoteControl");
             createRemoteControllerView(false);
             getRemoteControllerView().startRemoteUI(true);
@@ -1685,39 +1598,6 @@ public class BaseActivity extends FragmentActivity implements
         mClipRunTime = false;
     }
 
-    @Override
-    public void onClipRegistResult() {
-        mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
-        mClipButton.setTag(CLIP_ACTIVE_STATUS);
-        showClipToast(R.string.clip_regist_result_message);
-
-        //DB登録開始
-        ClipKeyListDataProvider clipKeyListDataProvider = new ClipKeyListDataProvider(this);
-        clipKeyListDataProvider.clipResultInsert(mClipRequestData);
-
-    }
-
-    @Override
-    public void onClipRegistFailure() {
-        showClipToast(R.string.clip_regist_error_message);
-    }
-
-    @Override
-    public void onClipDeleteResult() {
-        mClipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
-        showClipToast(R.string.clip_delete_result_message);
-        mClipButton.setTag(CLIP_OPACITY_STATUS);
-
-        //DB削除開始
-        ClipKeyListDataProvider clipKeyListDataProvider = new ClipKeyListDataProvider(this);
-        clipKeyListDataProvider.clipResultDelete(mClipRequestData);
-    }
-
-    @Override
-    public void onClipDeleteFailure() {
-        showClipToast(R.string.clip_delete_error_message);
-    }
-
     /**
      * dアカウントの切り替えや無効化を受信できるように設定を行う.
      */
@@ -1744,65 +1624,6 @@ public class BaseActivity extends FragmentActivity implements
         DTVTLogger.end();
     }
 
-    @Override
-    public void daccountControlCallBack(final boolean result) {
-        DTVTLogger.start();
-
-        //エラー表示を行うかどうかのスイッチ
-        boolean firstDaccountError = false;
-
-        //初回dアカウント取得かどうかの判定
-        if (SharedPreferencesUtils.isFirstDaccountGetProcess(getApplicationContext()) && !result) {
-            //初回のdアカウント取得かつ問題が発生していた場合はtrueにする
-            firstDaccountError = true;
-        } else {
-            //初回以外はダイアログを出さないので、処理中フラグはリセット
-            mDAccountControl.setDAccountBusy(false);
-        }
-
-        //初回dアカウント取得が行われていた場合は終わらせる
-        SharedPreferencesUtils.setFirstExecEnd(getApplicationContext());
-
-        onDaccountOttGetComplete(result);
-        //dアカウントの登録結果を受け取るコールバック
-        if (result) {
-            //処理に成功したので、帰る
-            DTVTLogger.end("normal end");
-            return;
-        }
-
-        //dアカウント処理クラスがヌルか、初回起動時にdアカウント取得で問題が発生したかどうかを確認
-        if (mDAccountControl == null || firstDaccountError) {
-            //処理には失敗したが、動作の続行ができないので、ここで終わらせる。ただ、このコールバックを受けている以上、ヌルになることありえないはず
-            //今はUIスレッドではないので、ダイアログの処理を移譲する
-            mFirstDaccountErrorHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    //初回実行時に限り、エラーダイアログを表示する。
-                    showDAccountErrorDialog();
-
-                    //ダイアログを出す場合はここで処理中フラグをリセット
-                    mDAccountControl.setDAccountBusy(false);
-                }
-            });
-
-            DTVTLogger.end("null end or first daccount get error");
-            return;
-        }
-
-        if (mDAccountControl.isOneTimePass() || mDAccountControl.isCheckService()) {
-            //エラーが発生したのはワンタイムパスワード取得かチェックサービスとなる。dアカウント未認証なので、本処理ではなにもしない
-            DTVTLogger.end("d account not regist");
-            return;
-        }
-
-        //サービスチェックに成功したが、ブロードキャストの登録に失敗した場合。チェック後に急に通信不全になるような事が無ければ発生しないはず。
-        //発生時は次のアクティビティ表示時のリトライにゆだねる。
-        //また、"dcmEval20150128.keystore"の署名ファイルが付加されずに実行された場合もこちらになる。署名ファイル無しではブロードキャストの
-        //登録はできないので、こちらに来るのは自然な動作となる。
-        DTVTLogger.end("d account error. no signature?");
-    }
-
     /**
      * dアカウントダイアログ表示を行う.
      *
@@ -1824,12 +1645,6 @@ public class BaseActivity extends FragmentActivity implements
 
         //showDialogの代わり・重複ダイアログ実現用
         offerDialog(errorDialog);
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 
     /**
@@ -2762,6 +2577,138 @@ public class BaseActivity extends FragmentActivity implements
         //それら以外はゼロを返す
         return 0;
     }
+    // region callback
+    /**
+     * 機能：onClick event for menu.
+     *
+     * @param view メニューアイコンのビュー
+     */
+    @Override
+    public void onClick(final View view) {
+        if (mMenuImageViewForBase == view) {
+            if (HEADER_ICON_CLOSE.equals(mMenuImageViewForBase.getTag())) {
+                // コンテンツ詳細画面の×ボタン時はコンテンツ詳細画面を閉じる
+                contentsDetailCloseKey(view);
+            } else {
+                //ダブルクリックを防ぐ
+                if (isFastClick()) {
+                    displayGlobalMenu();
+                }
+            }
+        } else if (mHeaderBackIcon == view) {
+            contentsDetailBackKey(null);
+        }
+    }
+
+    @Override
+    public void onStartRemoteControl(final boolean isFromHeader) {
+        DTVTLogger.debug("base_start_control");
+        View base = findViewById(R.id.base_motion_detection_rl);
+        base.setOnClickListener(mRemoteControllerOnClickListener);
+        base.setVisibility(View.VISIBLE);
+        setRelayClientHandler();
+    }
+
+    @Override
+    public void onEndRemoteControl() {
+        DTVTLogger.debug("base_end_control");
+        View base = findViewById(R.id.base_motion_detection_rl);
+        base.setOnClickListener(null);
+        base.setVisibility(View.GONE);
+    }
+
+
+    @Override
+    public void onClipRegistResult() {
+        mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+        mClipButton.setTag(CLIP_ACTIVE_STATUS);
+        showClipToast(R.string.clip_regist_result_message);
+
+        //DB登録開始
+        ClipKeyListDataProvider clipKeyListDataProvider = new ClipKeyListDataProvider(this);
+        clipKeyListDataProvider.clipResultInsert(mClipRequestData);
+
+    }
+
+    @Override
+    public void onClipRegistFailure() {
+        showClipToast(R.string.clip_regist_error_message);
+    }
+
+    @Override
+    public void onClipDeleteResult() {
+        mClipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
+        showClipToast(R.string.clip_delete_result_message);
+        mClipButton.setTag(CLIP_OPACITY_STATUS);
+
+        //DB削除開始
+        ClipKeyListDataProvider clipKeyListDataProvider = new ClipKeyListDataProvider(this);
+        clipKeyListDataProvider.clipResultDelete(mClipRequestData);
+    }
+
+    @Override
+    public void onClipDeleteFailure() {
+        showClipToast(R.string.clip_delete_error_message);
+    }
+
+    @Override
+    public void daccountControlCallBack(final boolean result) {
+        DTVTLogger.start();
+
+        //エラー表示を行うかどうかのスイッチ
+        boolean firstDaccountError = false;
+
+        //初回dアカウント取得かどうかの判定
+        if (SharedPreferencesUtils.isFirstDaccountGetProcess(getApplicationContext()) && !result) {
+            //初回のdアカウント取得かつ問題が発生していた場合はtrueにする
+            firstDaccountError = true;
+        } else {
+            //初回以外はダイアログを出さないので、処理中フラグはリセット
+            mDAccountControl.setDAccountBusy(false);
+        }
+
+        //初回dアカウント取得が行われていた場合は終わらせる
+        SharedPreferencesUtils.setFirstExecEnd(getApplicationContext());
+
+        onDaccountOttGetComplete(result);
+        //dアカウントの登録結果を受け取るコールバック
+        if (result) {
+            //処理に成功したので、帰る
+            DTVTLogger.end("normal end");
+            return;
+        }
+
+        //dアカウント処理クラスがヌルか、初回起動時にdアカウント取得で問題が発生したかどうかを確認
+        if (mDAccountControl == null || firstDaccountError) {
+            //処理には失敗したが、動作の続行ができないので、ここで終わらせる。ただ、このコールバックを受けている以上、ヌルになることありえないはず
+            //今はUIスレッドではないので、ダイアログの処理を移譲する
+            mFirstDaccountErrorHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    //初回実行時に限り、エラーダイアログを表示する。
+                    showDAccountErrorDialog();
+
+                    //ダイアログを出す場合はここで処理中フラグをリセット
+                    mDAccountControl.setDAccountBusy(false);
+                }
+            });
+
+            DTVTLogger.end("null end or first daccount get error");
+            return;
+        }
+
+        if (mDAccountControl.isOneTimePass() || mDAccountControl.isCheckService()) {
+            //エラーが発生したのはワンタイムパスワード取得かチェックサービスとなる。dアカウント未認証なので、本処理ではなにもしない
+            DTVTLogger.end("d account not regist");
+            return;
+        }
+
+        //サービスチェックに成功したが、ブロードキャストの登録に失敗した場合。チェック後に急に通信不全になるような事が無ければ発生しないはず。
+        //発生時は次のアクティビティ表示時のリトライにゆだねる。
+        //また、"dcmEval20150128.keystore"の署名ファイルが付加されずに実行された場合もこちらになる。署名ファイル無しではブロードキャストの
+        //登録はできないので、こちらに来るのは自然な動作となる。
+        DTVTLogger.end("d account error. no signature?");
+    }
 
     @Override
     public void allDismissCallback() {
@@ -2782,4 +2729,5 @@ public class BaseActivity extends FragmentActivity implements
     public void onItemClickCallBack(final ContentsData contentsData, final OtherContentsDetailData detailData) {
 
     }
+    // endregion callback
 }

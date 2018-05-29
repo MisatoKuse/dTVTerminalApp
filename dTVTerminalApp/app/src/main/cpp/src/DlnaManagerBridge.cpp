@@ -233,8 +233,10 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
         if (resultType == LocalRegistrationResultTypeRegistrationOverError) {
             resultTypeNumber = 1;
         }
+        LOG_WITH("before GetMethodID");
         jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "RegistResultCallBack", "(ZI)V");
         _env->CallVoidMethod(g_ctx.jniHelperObj, methodID, result, resultTypeNumber);
+        LOG_WITH("after CallVoidMethod");
 
         if (isAttached) {
             g_ctx.javaVM->DetachCurrentThread();
@@ -358,12 +360,17 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_browseContentWithContai
 JNIEXPORT void JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_startDtcp(JNIEnv *env, jobject thiz) {
     LOG_WITH("");
-
     jclass clazz = env->GetObjectClass(thiz);
     jmethodID mid = env->GetMethodID(clazz, "getUniqueId", "()Ljava/lang/String;");
     dlnaBase->startDtcp(dmp, g_ctx.javaVM, thiz, mid);
-
 }
+
+JNIEXPORT void JNICALL
+Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_stopDtcp(JNIEnv *env, jobject thiz) {
+    LOG_WITH("");
+    dlnaBase->stopDtcp(dmp);
+}
+
 JNIEXPORT void JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_restartDirag(JNIEnv *env, jobject thiz) {
     LOG_WITH("");
