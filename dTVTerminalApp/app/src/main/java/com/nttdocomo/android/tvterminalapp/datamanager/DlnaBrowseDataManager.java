@@ -65,7 +65,6 @@ public class DlnaBrowseDataManager {
             for (int i = 0; i < channelList.length; i++) {
                 //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
                 ContentValues values = new ContentValues();
-                values.put(DataBaseConstants.DLNA_BROWSE_COLUM_NO, i);
                 values.put(DataBaseConstants.DLNA_BROWSE_COLUM_BITRATE, channelList[i].mBitrate);
                 values.put(DataBaseConstants.DLNA_BROWSE_COLUM_CHANNEL_NAME, channelList[i].mChannelName);
                 values.put(DataBaseConstants.DLNA_BROWSE_COLUM_DURATION, channelList[i].mDuration);
