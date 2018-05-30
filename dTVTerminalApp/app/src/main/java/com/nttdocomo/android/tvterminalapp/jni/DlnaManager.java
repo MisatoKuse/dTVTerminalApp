@@ -251,6 +251,7 @@ public class DlnaManager {
                 }
 
                 break;
+            case HOME_IN:
             case HOME_OUT_CONNECT:
                 browseContentWithContainerId(0, DtvtConstants.REQUEST_LIMIT_300, containerId);
                 break;
