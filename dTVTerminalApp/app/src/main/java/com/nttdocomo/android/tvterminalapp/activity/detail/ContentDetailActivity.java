@@ -363,6 +363,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         // プログレスバー表示中でもxボタンクリック可能にする
         findViewById(R.id.base_progress_rl).setClickable(false);
         showProgressBar(true);
+
+        mThumbnailBtn = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail_btn);
+        mThumbnail = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail);
         initView();
     }
 
