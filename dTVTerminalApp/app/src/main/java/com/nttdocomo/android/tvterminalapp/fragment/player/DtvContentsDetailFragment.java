@@ -643,21 +643,6 @@ public class DtvContentsDetailFragment extends Fragment {
     }
 
     /**
-     * 〇〇日までという視聴期限を表示する.
-     *
-     * @param endDate 視聴期限文字列
-     */
-    public void displayEndDate(final long endDate) {
-        DTVTLogger.start();
-        String date = DateUtils.formatUntilMinuteTimeString(endDate);
-
-        if (mTxtChannelDate != null) {
-            String untilDate = StringUtils.getConnectStrings(date, getString(R.string.common_until));
-            mTxtChannelDate.setText(untilDate);
-        }
-    }
-
-    /**
      * 契約情報を更新する.
      *
      * @param isContract 契約情報

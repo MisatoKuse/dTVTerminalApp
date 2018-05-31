@@ -39,6 +39,7 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/home_main_layout_top_wire_area_text"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/home_no_contract_text_height"
                     android:layout_marginTop="@dimen/home_no_contract_text_top_margin"
