@@ -1273,20 +1273,26 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         if (holder.tv_clip != null && listContentInfo != null) {
             holder.tv_clip.setTag(position);
             holder.tv_clip.setOnClickListener(this);
-            switch (listContentInfo.getDownloadFlg()) {
-                case DOWNLOAD_STATUS_ALLOW:
-                    holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_normal_download);
-                    break;
-                case DOWNLOAD_STATUS_LOADING:
-                    holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_cancel);
-                    break;
-                case DOWNLOAD_STATUS_COMPLETED:
-                    holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_normal_download_check);
-                    break;
-                default:
-                    break;
+            holder.tv_clip.setVisibility(View.VISIBLE);
+            if (listContentInfo.isDownloadBtnHide()) {
+                holder.tv_clip.setVisibility(View.INVISIBLE);
+            } else {
+                switch (listContentInfo.getDownloadFlg()) {
+                    case DOWNLOAD_STATUS_ALLOW:
+                        holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_normal_download);
+                        break;
+                    case DOWNLOAD_STATUS_LOADING:
+                        holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_cancel);
+                        break;
+                    case DOWNLOAD_STATUS_COMPLETED:
+                        holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_normal_download_check);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
+
         if (holder.tv_recorded_ch_name != null && holder.tv_recorded_hyphen != null && listContentInfo != null) {
             if (!TextUtils.isEmpty(listContentInfo.getDownloadStatus())) {
                 holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);

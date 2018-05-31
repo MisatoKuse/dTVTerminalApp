@@ -271,15 +271,19 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         }
         showProgressBar();
         mNoDataMessage.setVisibility(View.GONE);
-        switch (mViewPager.getCurrentItem()) {
-            case ALL_RECORD_LIST:
-                getData();
-                break;
-            case DOWNLOAD_OVER:
-                setRecordedTakeOutContents();
-                break;
-            default:
-                break;
+        if (mTabNames.length == 1) {
+            setRecordedTakeOutContents();
+        } else {
+            switch (mViewPager.getCurrentItem()) {
+                case ALL_RECORD_LIST:
+                    getData();
+                    break;
+                case DOWNLOAD_OVER:
+                    setRecordedTakeOutContents();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -470,6 +474,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         }
         baseFragment.mQueueIndex.clear();
         setDownLoadQue(baseFragment, dlnaRecVideoItems, resultList);
+        final boolean hideDownloadBtn = StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.NONE_LOCAL_REGISTRATION;
         for (int i = 0; i < dlnaRecVideoItems.size(); i++) {
             DlnaRecVideoItem itemData = dlnaRecVideoItems.get(i);
             RecordedContentsDetailData detailData = new RecordedContentsDetailData();
@@ -506,7 +511,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 }
             }
             baseFragment.mContentsList.add(detailData);
-            setNotifyData(baseFragment, itemData, i, detailData.getDlFileFullPath());
+            setNotifyData(baseFragment, itemData, i, detailData.getDlFileFullPath(), hideDownloadBtn);
         }
         runOnUiThread(new Runnable() {
             @Override
@@ -559,7 +564,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * @param fullDlPath フルパス
      */
     private void setNotifyData(final RecordedBaseFragment baseFragment, final DlnaRecVideoItem dlnaRecVideoItem,
-                               final int i, final String fullDlPath) {
+                               final int i, final String fullDlPath, final boolean hideDownloadBtn) {
         SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
         // TODO 年齢取得未実装の為、固定値を返却
         boolean isAge = true;
@@ -604,7 +609,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 sb.append(" ");
                 sb.append(channelName);
             }
-
+            contentsData.setDownloadBtnHide(hideDownloadBtn);
             //duration && channel name end
             contentsData.setTime(sb.toString());
             contentsData.setDownloadFlg(baseFragment.mContentsList.get(i).getDownLoadStatus());

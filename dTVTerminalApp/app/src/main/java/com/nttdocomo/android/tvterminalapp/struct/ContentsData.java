@@ -109,6 +109,9 @@ public class ContentsData {
     /**ダウンロードパス.*/
     private String mDlFileFullPath = null;
 
+    /**ダウンロードボタンを隠すフラグ.*/
+    private boolean mDownloadBtnHide = false;
+
     /**チャンネルID.*/
     private String mChannelId = null;
     /**チャンネルNo.*/
@@ -859,6 +862,14 @@ public class ContentsData {
      */
     public void setDownloadStatus(final String mDownloadStatus) {
         this.mDownloadStatus = mDownloadStatus;
+    }
+
+    public boolean isDownloadBtnHide() {
+        return mDownloadBtnHide;
+    }
+
+    public void setDownloadBtnHide(boolean downloadBtnHide) {
+        this.mDownloadBtnHide = downloadBtnHide;
     }
 
     /**
