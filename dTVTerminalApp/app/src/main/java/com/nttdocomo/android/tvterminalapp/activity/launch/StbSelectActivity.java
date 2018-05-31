@@ -39,6 +39,8 @@ import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -355,7 +357,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 }
             });
 
-            if (null == dlnaDmsItem) {
+            if (TextUtils.isEmpty(dlnaDmsItem.mUdn)) {
                 //未ペアリング
                 return;
             } else {

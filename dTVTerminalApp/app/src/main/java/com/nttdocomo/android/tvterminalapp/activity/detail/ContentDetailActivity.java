@@ -544,13 +544,14 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         Object object = mIntent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
         if (object instanceof RecordedContentsDetailData) { //プレイヤーで再生できるコンテンツ
             mDisplayState = PLAYER_ONLY;
-            DeviceStateUtils.PairingState pairingState = DeviceStateUtils.getPairingState(this, getStbStatus());
-            //宅内のみ再生準備
-            if (pairingState.equals(DeviceStateUtils.PairingState.INSIDE_HOUSE)) {
-                RecordedContentsDetailData datas = mIntent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
-                initPlayer(datas);
-            } else {
-                setRemotePlayArrow();
+            switch (StbConnectionManager.shared().getConnectionStatus()) {
+                case HOME_IN:
+                    RecordedContentsDetailData datas = mIntent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
+                    initPlayer(datas);
+                    break;
+                default:
+                    setRemotePlayArrow();
+                    break;
             }
         }
         //ヘッダーの設定
@@ -2561,9 +2562,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * リモート視聴用の再生ボタン表示.
      */
     private void setRemotePlayArrow() {
-        DeviceStateUtils.PairingState userState = DeviceStateUtils.getPairingState(this, getStbStatus());
         //再生ボタンは宅外かつ契約があるときのみ表示
-        if (userState.equals(DeviceStateUtils.PairingState.OUTSIDE_HOUSE) && UserInfoUtils.isContract(this)) {
+        if (UserInfoUtils.isContract(this)) {
             mThumbnailBtn.setVisibility(View.VISIBLE);
             ImageView imageView = findViewById(R.id.dtv_contents_view_button);
             Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.mediacontrol_icon_tap_play_arrow2);
@@ -2574,7 +2574,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             mThumbnailBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View view) {
-                    //TODO リモート視聴機能(2018/5/8現在 未実装のためコメントのみ記載)
+                    RecordedContentsDetailData datas = mIntent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
+                    initPlayer(datas);
+                    onResume();
                 }
             });
         }

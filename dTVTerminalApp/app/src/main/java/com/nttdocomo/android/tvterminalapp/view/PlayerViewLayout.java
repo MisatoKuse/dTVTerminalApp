@@ -973,6 +973,9 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         String durationStr = playerData.getDuration();
         long duration = ContentUtils.getDuration(durationStr);
         String type = playerData.getVideoType();
+        if (TextUtils.isEmpty(playerData.getBitrate())) {
+            playerData.setBitrate("0");
+        }
         int bitRate = Integer.parseInt(playerData.getBitrate());
         String title = playerData.getTitle();
         //setTitleText(title);

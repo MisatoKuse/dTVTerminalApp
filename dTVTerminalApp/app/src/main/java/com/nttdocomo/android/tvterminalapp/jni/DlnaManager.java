@@ -163,6 +163,13 @@ public class DlnaManager {
 
     boolean isStarted = false;
     private String mUdn = "";
+
+    private boolean waitForReady = false;
+    private String requestContainerId = "";
+
+    private boolean startedDmp = false;
+    private boolean startedDtcp = false;
+
     /**
      * launch.
      * @param context コンテキスト
@@ -205,13 +212,12 @@ public class DlnaManager {
                     DlnaDmsItem item = SharedPreferencesUtils.getSharedPreferencesStbInfo(mContext);
                     mUdn = item.mUdn;
                     //1.dアカウントチェックしたかを確認してなかったらチェック
-                    startDmp();
-                    startDtcp();
-                    startDirag();
+                    StartDmp();
+                    StartDtcp();
+                    RestartDirag();
                     break;
                 case NONE_LOCAL_REGISTRATION:
-
-                    startDmp();
+                    StartDmp();
                     break;
             }
         }
@@ -222,17 +228,22 @@ public class DlnaManager {
      * StartDmp.
      */
     public void StartDmp() {
-        startDmp();
+        if (!startedDmp) {
+            startedDmp = true;
+            startDmp();
+        }
     }
 
     /**
      * StopDmp.
      */
     public void StopDmp() {
-        stopDmp();
+        if (startedDmp) {
+            startedDmp = false;
+            stopDmp();
+        }
     }
-    boolean waitForReady = false;
-    String requestContainerId = "";
+
     /**
      * BrowseContentWithContainerId.
      * @param containerId containerId
@@ -266,7 +277,10 @@ public class DlnaManager {
      * StartDtcp.
      */
     public void StartDtcp() {
-        startDtcp();
+        if (!startedDtcp) {
+            startedDtcp = true;
+            startDtcp();
+        }
     }
 
     /**
@@ -275,6 +289,7 @@ public class DlnaManager {
     public void RestartDirag() {
         restartDirag();
     }
+
     public void StartDirag() {
         startDirag();
     }
@@ -285,7 +300,11 @@ public class DlnaManager {
         stopDirag();
     }
     public void StopDtcp() {
-        stopDtcp();
+        if (startedDtcp) {
+            startedDtcp = false;
+            stopDtcp();
+        }
+
     }
     /**
      * RequestLocalRegistration.
