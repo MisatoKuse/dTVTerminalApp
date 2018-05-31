@@ -153,6 +153,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
                 DTVTLogger.debug("PremiumVideoActivity::Clip Status Update");
             }
         }
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_watching_video));
         DTVTLogger.end();
     }
 

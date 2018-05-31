@@ -140,6 +140,12 @@ public class RankingTopActivity extends BaseActivity
         mVideoErrorState = null;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_ranking));
+    }
+
     /**
      * 機能.
      * ビューの初期化処理

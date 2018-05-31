@@ -295,7 +295,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         getUserInfoStart();
 
         super.onResume();
-
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_home));
         DlnaManager.shared().Start(getApplicationContext());
     }
 

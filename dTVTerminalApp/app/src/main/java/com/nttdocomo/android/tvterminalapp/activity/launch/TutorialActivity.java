@@ -307,6 +307,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
         if (mCurPos != PAGE_1) {
             mHandle.postDelayed(mRunnableAnimation, ANIMATION_TIME_WAIT);
         }
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_tutorial));
     }
 
     @Override

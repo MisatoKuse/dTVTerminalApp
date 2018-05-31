@@ -82,6 +82,16 @@ public class PairingHelpActivity extends BaseActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (mFromMode == ParingHelpFromMode.ParingHelpFromMode_Launch.ordinal()) {
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_paring_help_first_time));
+        } else if (mFromMode == ParingHelpFromMode.ParingHelpFromMode_Setting.ordinal()) {
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_paring_help));
+        }
+    }
+
+    @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (mFirstPairingHelpWebView.canGoBack()) {

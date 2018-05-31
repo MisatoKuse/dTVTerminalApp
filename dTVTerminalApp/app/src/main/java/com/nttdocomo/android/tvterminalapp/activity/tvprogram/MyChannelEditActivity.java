@@ -109,6 +109,12 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
         loadData();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_channel_edit_menu));
+    }
+
     /**
      * チャンネル選択画面からのデータを渡す.
      *

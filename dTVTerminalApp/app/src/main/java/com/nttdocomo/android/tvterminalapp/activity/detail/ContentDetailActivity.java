@@ -345,6 +345,19 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     /* player end */
     /** ハンドラー.*/
     private final Handler loadHandler = new Handler();
+
+    // google analytics
+    /** コンテンツ詳細・タブ　作品情報.*/
+    private static final String TAB_CONTENTS_INFO = "作品情報";
+    /** コンテンツ詳細・タブ　番組詳細.*/
+    private static final String TAB_PROGRAM_DETAIL = "番組詳細";
+    /** コンテンツ詳細・タブ　チャンネル.*/
+    private static final String TAB_NAME_CHANNEL = "チャンネル";
+    /** コンテンツ詳細・タブ　エピソード.*/
+    private static final String TAB_NAME_EPISODE = "エピソード";
+
+    // contents type(tv or video)
+    private boolean mIsHikariVod = false;
     // endregion
 
     //region Activity LifeCycle
@@ -384,6 +397,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 mPlayerViewLayout.initSecurePlayer();
                 mPlayerViewLayout.setPlayerEvent();
                 mPlayerViewLayout.setUserAgeInfo();
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_player));
                 break;
             case PLAYER_AND_CONTENTS_DETAIL:
                 if (!mIsOncreateOk) {
@@ -402,6 +416,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 dtvContentsDetailFragment.mOtherContentsDetailData = contentsDetailDataProvider.
                         checkClipStatus(dtvContentsDetailFragment.mOtherContentsDetailData);
                 dtvContentsDetailFragment.resumeClipButton();
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_player));
                 break;
             case CONTENTS_DETAIL_ONLY:
                 //BG復帰時にクリップボタンの更新を行う
@@ -417,6 +432,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             default:
                 break;
         }
+        sendScreenViewForPosition(mViewPager.getCurrentItem());
         DTVTLogger.end();
     }
 
@@ -436,8 +452,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         }
         switch (mDisplayState) {
             case PLAYER_ONLY:
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_player));
                 break;
             case PLAYER_AND_CONTENTS_DETAIL:
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_player));
             case CONTENTS_DETAIL_ONLY:
                 //通信を止める
                 if (mContentsDetailDataProvider != null) {
@@ -963,6 +981,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 // スクロールによるタブ切り替え
                 super.onPageSelected(position);
                 mTabLayout.setTab(position);
+                sendScreenViewForPosition(position);
                 if (position == 1) {
                     getChannelFragment().initLoad();
                 }
@@ -1161,6 +1180,31 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     /**
+     * 表示中タブの内容によってスクリーン情報を送信する
+     */
+    private void sendScreenViewForPosition(int position) {
+        String tabName = mTabNames[position];
+        switch (tabName) {
+            case TAB_CONTENTS_INFO:
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_content_detail_other));
+                break;
+            case TAB_PROGRAM_DETAIL:
+                if (mIsHikariVod) {
+                    super.sendScreenView(getString(R.string.google_analytics_screen_name_content_detail_h4d_vod_program_detail));
+                } else {
+                    super.sendScreenView(getString(R.string.google_analytics_screen_name_content_detail_h4d_broadcast_program_detail));
+                }
+                break;
+            case TAB_NAME_CHANNEL:
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_content_detail_h4d_broadcast_channel));
+                break;
+            case TAB_NAME_EPISODE:
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_content_detail_h4d_vod_episode));
+                break;
+        }
+    }
+
+    /**
      * コンテンツ詳細用ページャアダプター.
      */
     private class ContentsDetailPagerAdapter extends FragmentStatePagerAdapter {
@@ -1262,13 +1306,24 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         if (comparisonStartTime()) {
                             //VOD配信日時(vod_start_date) > 現在時刻
                             setRecordingData(detailFragment);
+                        } else {
+                            mIsHikariVod = true;
                         }
-                    } else {
+                    }
+                } else {
                         //contents_typeは0又は未設定の場合
                         setRecordingData(detailFragment);
-                    }
                 }
+            } else {
+                mIsHikariVod = true;
             }
+
+            if (mIsHikariVod) {
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_content_detail_h4d_vod_program_detail));
+            } else {
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_content_detail_h4d_broadcast_program_detail));
+            }
+
             String dispType = mDetailFullData.getDisp_type();
             String searchOk = mDetailFullData.getmSearch_ok();
             String dTv = mDetailFullData.getDtv();

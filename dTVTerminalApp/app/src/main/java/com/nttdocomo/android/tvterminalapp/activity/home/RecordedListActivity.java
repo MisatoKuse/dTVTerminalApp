@@ -98,6 +98,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private static final int ALL_RECORD_LIST = 0;
     /** ダウンロード済み. */
     private static final int DOWNLOAD_OVER = 1;
+    /** タブ名　すべて. */
+    private static final String TAB_NAME_ALL = "すべて";
+    /** タブ名　ダウンロード済み. */
+    private static final String TAB_NAME_DOWONLOAD_COMPLETED = "ダウンロード済み";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -118,6 +122,12 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         setPagerAdapter();
         mDlnaContentRecordedDataProvider = new DlnaContentRecordedDataProvider();
         DTVTLogger.end();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sendScreenViewForPosition(getCurrentPosition());
     }
 
     @Override
@@ -238,8 +248,24 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             public void onPageSelected(final int position) {
                 super.onPageSelected(position);
                 setTab(position);
+                sendScreenViewForPosition(position);
             }
         });
+    }
+
+    /**
+     * 表示中タブの内容によってスクリーン情報を送信する
+     */
+    private void sendScreenViewForPosition(int position) {
+        String tabName = mTabNames[position];
+        switch (tabName) {
+            case TAB_NAME_ALL:
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_recording_list));
+                break;
+            case TAB_NAME_DOWONLOAD_COMPLETED:
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_recording_list_takeout));
+                break;
+        }
     }
 
     /**

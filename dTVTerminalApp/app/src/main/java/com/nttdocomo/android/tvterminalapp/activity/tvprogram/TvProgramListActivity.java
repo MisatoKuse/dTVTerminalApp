@@ -191,6 +191,18 @@ public class TvProgramListActivity extends BaseActivity implements
      */
     private static final String DATE_LINE = "-";
     /**
+     * タブ名　マイ番組表.
+     */
+    private static final String TAB_NAME_MY_PROGRAM = "マイ番組表";
+    /**
+     * タブ名　ひかりTV for docomo.
+     */
+    private static final String TAB_NAME_HIKARI = "ひかりTV for docomo";
+    /**
+     * タブ名　dTVチャンネル.
+     */
+    private static final String TAB_NAME_DTV = "dTVチャンネル";
+    /**
      * マイ番組表データプロバイダー.
      */
     private MyChannelDataProvider mMyChannelDataProvider;
@@ -250,6 +262,7 @@ public class TvProgramListActivity extends BaseActivity implements
 //                mTvProgramListAdapter.notifyDataSetChanged();
 //            }
 //        }
+        sendScreenViewForPosition(mTabIndex);
     }
 
     /**
@@ -429,9 +442,28 @@ public class TvProgramListActivity extends BaseActivity implements
         DTVTLogger.start("position = " + position);
         if (mTabIndex != position) {
             mTabIndex = position;
+            sendScreenViewForPosition(mTabIndex);
             clearData();
             getChannelData();
             DTVTLogger.end();
+        }
+    }
+
+    /**
+     * 表示中タブの内容によってスクリーン情報を送信する
+     */
+    private void sendScreenViewForPosition(int position) {
+        String tabName = mProgramTabNames[position];
+        switch (tabName) {
+            case TAB_NAME_MY_PROGRAM:
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_program_list_mine));
+                break;
+            case TAB_NAME_HIKARI:
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_program_list_h4d));
+                break;
+            case TAB_NAME_DTV:
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_program_list_dtv_channel));
+                break;
         }
     }
 

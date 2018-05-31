@@ -41,6 +41,12 @@ public class StbSelectErrorActivity extends BaseActivity {
         setContents();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_fail));
+    }
+
     /**
      * 画面上に表示するコンテンツを設定する.
      */

@@ -155,6 +155,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
 
         checkIsPairing();
         checkImageQuality();
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_setting));
     }
 
     @SuppressWarnings("OverlyComplexMethod")

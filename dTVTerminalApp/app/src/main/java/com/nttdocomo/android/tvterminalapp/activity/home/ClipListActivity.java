@@ -95,6 +95,15 @@ public class ClipListActivity extends BaseActivity implements
      */
     public static final String CLIP_LIST_START_PAGE = "clipListStartPage";
     /**
+     * タブ名　番組.
+     */
+    public static final String TAB_NAME_TV = "番組";
+    /**
+     * タブ名　ビデオ.
+     */
+    public static final String TAB_NAME_VIDEO = "ビデオ";
+
+    /**
      * リスト0件メッセージ.
      */
     private TextView mNoDataMessage;
@@ -143,7 +152,23 @@ public class ClipListActivity extends BaseActivity implements
                 DTVTLogger.debug("ClipListActivity::Clip Status Update");
             }
         }
+        sendScreenViewForPosition(getCurrentPosition());
         DTVTLogger.end();
+    }
+
+    /**
+     * 表示中タブの内容によってスクリーン情報を送信する
+     */
+    private void sendScreenViewForPosition(int position) {
+        String tabName = mTabNames[position];
+        switch (tabName) {
+            case TAB_NAME_TV:
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_clip_tv));
+                break;
+            case TAB_NAME_VIDEO:
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_clip_video));
+                break;
+        }
     }
 
     /**
@@ -530,6 +555,7 @@ public class ClipListActivity extends BaseActivity implements
             public void onPageSelected(final int position) {
                 super.onPageSelected(position);
                 mTabLayout.setTab(position);
+                sendScreenViewForPosition(position);
                 //タブ移動時にページリセット
                 resetPaging();
 

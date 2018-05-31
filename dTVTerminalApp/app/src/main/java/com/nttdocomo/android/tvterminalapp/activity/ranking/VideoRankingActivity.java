@@ -95,6 +95,7 @@ public class VideoRankingActivity extends BaseActivity implements
                 DTVTLogger.debug("VideoRankingActivity::Clip Status Update");
             }
         }
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_video_ranking));
         DTVTLogger.end();
     }
 

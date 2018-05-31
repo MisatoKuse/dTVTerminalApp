@@ -59,6 +59,12 @@ public class ApplicationInfoActivity extends BaseActivity {
         settingView();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_application_info));
+    }
+
     /**
      * ビューに値に設置する.
      */

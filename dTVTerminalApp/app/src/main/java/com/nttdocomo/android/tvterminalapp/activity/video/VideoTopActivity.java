@@ -73,6 +73,8 @@ public class VideoTopActivity extends BaseActivity implements
 
     /**ジャンルIDのIntent KEY.*/
     private static final String VIDEO_GENRE_ID_BUNDLE_KEY = "videoContentKey";
+    /**ジャンル・トップ・タイトル.*/
+    private static final String VIDEO_GENRE_TOP_TITLE = "ビデオジャンル";
     // endregion variable
 
     // region Activity LifeCycle
@@ -90,6 +92,19 @@ public class VideoTopActivity extends BaseActivity implements
         setStatusBarColor(true);
 
         initView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        String title = mTitleTextView.getText().toString();
+
+        if (title.equals(VIDEO_GENRE_TOP_TITLE)) {
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_video_top));
+        } else {
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_video_sub_genre));
+        }
     }
 
     @Override

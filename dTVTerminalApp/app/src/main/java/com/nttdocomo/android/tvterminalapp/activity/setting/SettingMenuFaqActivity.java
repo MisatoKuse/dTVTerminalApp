@@ -52,6 +52,12 @@ public class SettingMenuFaqActivity extends BaseActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_faq));
+    }
+
+    @Override
     protected void onRestart() {
         super.onRestart();
         DTVTLogger.start();

@@ -150,6 +150,26 @@ public class SearchTopActivity extends BaseActivity
      */
     private static final int TEXT_SIZE = 14;
     /**
+     * タブ名　テレビ.
+     */
+    private static final String TAB_NAME_TV = "テレビ";
+    /**
+     * タブ名　ビデオ.
+     */
+    private static final String TAB_NAME_VIDEO = "ビデオ";
+    /**
+     * タブ名　dTV.
+     */
+    private static final String TAB_NAME_DTV = "dTV";
+    /**
+     * タブ名　dTVチャンネル.
+     */
+    private static final String TAB_NAME_DTV_CHANNEL = "dTVチャンネル";
+    /**
+     * タブ名　dアニメストア.
+     */
+    private static final String TAB_NAME_DANIME = "dアニメストア";
+    /**
      * 最後に表示したタブindex.
      */
     protected int mTabIndex = 0;
@@ -173,6 +193,16 @@ public class SearchTopActivity extends BaseActivity
         initData();
         initView();
         setSearchViewState();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (sCurrentSearchText.isEmpty()) {
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_search));
+        } else {
+            sendScreenViewForPosition(mTabIndex);
+        }
     }
 
     /**
@@ -298,6 +328,7 @@ public class SearchTopActivity extends BaseActivity
                                 // tabViewの非表示
                                 findViewById(R.id.rl_search_tab).setVisibility(View.GONE);
                                 clearAllFragment();
+                                SearchTopActivity.super.sendScreenView(getString(R.string.google_analytics_screen_name_search));
                             }
                             //setSearchData(s);
                             return false;
@@ -484,6 +515,31 @@ public class SearchTopActivity extends BaseActivity
 
         DTVTLogger.end();
     }
+
+    /**
+     * 表示中タブの内容によってスクリーン情報を送信する
+     */
+    private void sendScreenViewForPosition(int position) {
+        String tabName = mTabNames[position];
+        switch (tabName) {
+            case TAB_NAME_TV:
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_search_result_tv));
+                break;
+            case TAB_NAME_VIDEO:
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_search_result_video));
+                break;
+            case TAB_NAME_DTV:
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_search_result_dtv));
+                break;
+            case TAB_NAME_DTV_CHANNEL:
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_search_result_dtv_channel));
+                break;
+            case TAB_NAME_DANIME:
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_search_result_danime));
+                break;
+        }
+    }
+
     @Override
     public void onClickTab(final int position) {
         DTVTLogger.start("position = " + position);
@@ -505,6 +561,8 @@ public class SearchTopActivity extends BaseActivity
         if (null == baseFragment) {
             return;
         }
+
+        sendScreenViewForPosition(mTabIndex);
 
         synchronized (this) {
             if (mIsPaging) {
@@ -566,6 +624,8 @@ public class SearchTopActivity extends BaseActivity
         SearchBaseFragment baseFragment = mFragmentFactory.createFragment(mTabIndex, this);
         baseFragment.showProgressBar(false);
         baseFragment.displayLoadMore(false);
+
+        sendScreenViewForPosition(mTabIndex);
 
         setSearchStart(false);
         showErrorMessage();

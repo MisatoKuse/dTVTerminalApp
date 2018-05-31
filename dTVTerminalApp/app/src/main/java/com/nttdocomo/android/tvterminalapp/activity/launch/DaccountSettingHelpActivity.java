@@ -51,6 +51,12 @@ public class DaccountSettingHelpActivity extends BaseActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_daccount_login_help));
+    }
+
+    @Override
     protected void onRestart() {
         super.onRestart();
         DTVTLogger.start();

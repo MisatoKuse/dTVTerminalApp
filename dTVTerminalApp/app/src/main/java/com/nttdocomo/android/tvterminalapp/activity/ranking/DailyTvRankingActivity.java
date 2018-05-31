@@ -103,6 +103,7 @@ public class DailyTvRankingActivity extends BaseActivity implements
                 DTVTLogger.debug("DailyTvRankingActivity::Clip Status Update");
             }
         }
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_daily_ranking));
         DTVTLogger.end();
     }
 
