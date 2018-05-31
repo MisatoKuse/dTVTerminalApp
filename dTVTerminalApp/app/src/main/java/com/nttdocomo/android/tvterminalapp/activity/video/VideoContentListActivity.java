@@ -32,6 +32,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopVideoContentCon
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.VideoGenreListDataInfo;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
@@ -298,7 +299,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         } else {
             Intent intent = new Intent(this, ContentDetailActivity.class);
             intent.putExtra(DtvtConstants.SOURCE_SCREEN, getComponentName().getClassName());
-            OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(contentsData, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
+            OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(contentsData, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
             intent.putExtra(detailData.getRecommendFlg(), detailData);
             startActivity(intent);
         }
@@ -322,7 +323,10 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
                     return;
                 }
             }
-            showDialogToClose(this);
+            //対象のActivityが有効な状態になっているかを確認
+            if (!isFinishing()) {
+                showDialogToClose(this);
+            }
             return;
         }
         //既にデータが取得された場合表示しない

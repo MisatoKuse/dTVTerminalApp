@@ -20,7 +20,6 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChannelListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
@@ -571,8 +570,12 @@ public class ContentUtils {
      * @return ContentsType
      */
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
-    public static ContentsType getRecommendContentsType(final OtherContentsDetailData detailData) {
-        int serviceId = detailData.getServiceId();
+    public static ContentsType getRecommendContentsType(final ContentsData detailData) {
+        String strServiceId = detailData.getServiceId();
+        int serviceId = -1;
+        if (strServiceId != null && DataBaseUtils.isNumber(strServiceId)) {
+            serviceId = Integer.parseInt(detailData.getServiceId());
+        }
         String categoryId = detailData.getCategoryId();
         switch (serviceId) {
             //serviceId = 44
@@ -1123,5 +1126,36 @@ public class ContentUtils {
             //視聴不可(契約導線を表示する)
             return ViewIngType.DISABLE_VOD_WATCH_AGREEMENT_DISPLAY;
         }
+    }
+
+    /**
+     * 機能：「duration="0:00:42.000"」/「duration="0:00:42"」からmsへ変換.
+     *
+     * @param durationStr durationStr
+     * @return duration in ms
+     */
+    public static long getDuration(final String durationStr) {
+        DTVTLogger.start();
+        long ret = 0;
+        String[] strs1 = durationStr.split(":");
+        if (3 == strs1.length) {
+            ret = 60 * 60 * 1000 * Integer.parseInt(strs1[0]) + 60 * 1000 * Integer.parseInt(strs1[1]);
+            String ss = strs1[2];
+            int i = ss.indexOf('.');
+            if (i <= 0) {
+                ret += 1000L * Integer.parseInt(ss);
+            } else {
+                String ss1 = ss.substring(0, i);
+                String ss2 = ss.substring(i + 1, ss.length());
+                ret += 1000L * Integer.parseInt(ss1);
+                try {
+                    ret += Integer.parseInt(ss2);
+                } catch (Exception e2) {
+                    DTVTLogger.debug("TvPlayerActivity::getDuration(), skip ms");
+                }
+            }
+        }
+        DTVTLogger.end();
+        return ret;
     }
 }

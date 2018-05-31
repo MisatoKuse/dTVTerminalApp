@@ -30,6 +30,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -264,7 +265,6 @@ public class DtvContentsDetailFragment extends Fragment {
     /**
      * 各Viewにコンテンツの詳細情報を渡す.
      */
-    @SuppressWarnings("OverlyLongMethod")
     private void setDetailData() {
         //タイトル
         mTextHeader.setText(mOtherContentsDetailData.getTitle());
@@ -284,20 +284,9 @@ public class DtvContentsDetailFragment extends Fragment {
         if (ContentDetailActivity.DTV_FLAG_ONE.equals(dtv)) {
             mImgServiceIconDtv.setVisibility(View.VISIBLE);
             mImgServiceIconDtv.setImageResource(R.mipmap.label_service_dtv_white);
-            mRatingBar.setVisibility(View.GONE);
-        } else {
-            //VODの場合
-            if (mOtherContentsDetailData.getServiceId() == 0
-                    && (ContentDetailActivity.VIDEO_SERIES.equals(mOtherContentsDetailData.getDispType())
-                    || ContentDetailActivity.VIDEO_PROGRAM.equals(mOtherContentsDetailData.getDispType()))) {
-                //評価
-                mRatingBar.setMiniFlg(false);
-                mRatingBar.setRating((float) mOtherContentsDetailData.getRating());
-                mTxtChannelName.setVisibility(View.GONE);
-            } else {
-                mRatingBar.setVisibility(View.GONE);
-            }
         }
+        //評価値設定
+        setRatingBar();
         //チャンネル名
         if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelName())) {
             mTxtChannelName.setVisibility(View.VISIBLE);
@@ -335,6 +324,35 @@ public class DtvContentsDetailFragment extends Fragment {
             mTxtTitleAllDetail.setText(replaceString);
         }
         setClipButton(mClipButton);
+    }
+
+    /**
+     * 評価値レイアウト設定.
+     */
+    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
+    private void setRatingBar() {
+        //評価値の表示非表示判定
+        //TODO おすすめ・検索からの遷移については、現状データが不足しているため未実装
+        ContentUtils.ContentsType contentsType = mOtherContentsDetailData.getContentCategory();
+        if (contentsType != null) {
+            switch (contentsType) {
+                //VODの場合
+                case HIKARI_TV_VOD:
+                case HIKARI_IN_DTV:
+                case HIKARI_IN_DCH_MISS:
+                case HIKARI_IN_DCH_RELATION:
+                case DCHANNEL_VOD_OVER_31:
+                case DCHANNEL_VOD_31:
+                    //評価
+                    mRatingBar.setVisibility(View.VISIBLE);
+                    mRatingBar.setMiniFlg(false);
+                    mRatingBar.setRating((float) mOtherContentsDetailData.getRating());
+                    break;
+                default:
+                    mRatingBar.setVisibility(View.GONE);
+                    break;
+            }
+        }
     }
 
     /**

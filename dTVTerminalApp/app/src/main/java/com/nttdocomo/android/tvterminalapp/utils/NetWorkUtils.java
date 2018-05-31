@@ -14,13 +14,11 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
  * ネットワーク関連のUtilsクラス.
  */
 public class NetWorkUtils {
-
-    /** ネットワーク状態（NONE）. */
-    private static final int NETWORK_NONE = -1;
-    /** ネットワーク状態（MOBILE）.*/
-    private static final int NETWORK_MOBILE = 0;
-    /** ネットワーク状態（WIFI）. */
-    private static final int NETWORK_WIFI = 1;
+    public enum NetworkState {
+        NONE,
+        MOBILE,
+        WIFI,
+    }
 
     /**
      * 通信可能確認.
@@ -56,20 +54,20 @@ public class NetWorkUtils {
      * @param context コンテキスト
      * @return WIFI、MOBILE、NONE
      */
-    public static int getNetworkState(final Context context) {
+    public static NetworkState getNetworkState(final Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager
                 .getActiveNetworkInfo();
         if (activeNetworkInfo != null && activeNetworkInfo.isConnected()) {
             if (activeNetworkInfo.getType() == (ConnectivityManager.TYPE_WIFI)) {
-                return NETWORK_WIFI;
+                return NetworkState.WIFI;
             } else if (activeNetworkInfo.getType() == (ConnectivityManager.TYPE_MOBILE)) {
-                return NETWORK_MOBILE;
+                return NetworkState.MOBILE;
             }
         } else {
-            return NETWORK_NONE;
+            return NetworkState.NONE;
         }
-        return NETWORK_NONE;
+        return NetworkState.NONE;
     }
 }

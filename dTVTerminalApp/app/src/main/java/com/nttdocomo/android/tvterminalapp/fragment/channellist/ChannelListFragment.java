@@ -23,8 +23,7 @@ import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivit
 import com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
-import com.nttdocomo.android.tvterminalapp.jni.bs.DlnaBsChListItem;
-import com.nttdocomo.android.tvterminalapp.jni.ter.DlnaTerChListItem;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaObject;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
@@ -340,7 +339,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
                 case CH_LIST_DATA_TYPE_DCH:
                     return null;
                 case CH_LIST_DATA_TYPE_BS:
-                    DlnaBsChListItem bsI = (DlnaBsChListItem) mData.get(i);
+                    DlnaObject bsI = (DlnaObject) mData.get(i);
                     ret.setUpnpIcon(null);
                     ret.setSize(bsI.mSize);
                     ret.setResUrl(bsI.mResUrl);
@@ -353,7 +352,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
                     ret.setIsLive(true);
                     break;
                 case CH_LIST_DATA_TYPE_TDB:
-                    DlnaTerChListItem bsT = (DlnaTerChListItem) mData.get(i);
+                    DlnaObject bsT = (DlnaObject) mData.get(i);
                     ret.setUpnpIcon(null);
                     ret.setSize(bsT.mSize);
                     ret.setResUrl(bsT.mResUrl);

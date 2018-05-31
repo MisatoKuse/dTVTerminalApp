@@ -17,8 +17,7 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
-import com.nttdocomo.android.tvterminalapp.jni.bs.DlnaBsChListItem;
-import com.nttdocomo.android.tvterminalapp.jni.ter.DlnaTerChListItem;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaObject;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
@@ -180,19 +179,11 @@ public class ChannelListAdapter extends BaseAdapter {
         if (null != mData && mData.size() > 0) {
             switch (mChannelListDataType) {
                 case CH_LIST_DATA_TYPE_BS:
-                    if (mData.get(position) instanceof DlnaBsChListItem) {
-                        DlnaBsChListItem bsItem = (DlnaBsChListItem) mData.get(position);
-                        if (null != bsItem) {
-                            chName = bsItem.mChannelName;
-                            thumbnail = null;
-                        }
-                    }
-                    break;
                 case CH_LIST_DATA_TYPE_TDB:
-                    if (mData.get(position) instanceof DlnaTerChListItem) {
-                        DlnaTerChListItem terItem = (DlnaTerChListItem) mData.get(position);
-                        if (null != terItem) {
-                            chName = terItem.mChannelName;
+                    if (mData.get(position) instanceof DlnaObject) {
+                        DlnaObject listItem = (DlnaObject) mData.get(position);
+                        if (null != listItem) {
+                            chName = listItem.mChannelName;
                             thumbnail = null;
                         }
                     }

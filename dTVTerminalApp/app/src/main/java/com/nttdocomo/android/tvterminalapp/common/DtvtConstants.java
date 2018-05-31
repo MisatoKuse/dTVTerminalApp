@@ -68,6 +68,8 @@ public class DtvtConstants {
 
     /** limitがない場合の初期値.*/
     public static final int REQUEST_LIMIT_50 = 50;
+    /** STBに対するチャンネルリスト取得時のlimit. */
+    public static final int REQUEST_LIMIT_300 = 300;
     //==================================== 定数定義 End ===================================
 
     /**

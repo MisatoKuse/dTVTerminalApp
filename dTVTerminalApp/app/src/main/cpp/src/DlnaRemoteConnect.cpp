@@ -97,14 +97,25 @@ bool DlnaRemoteConnect::restartDirag(DMP *d) {
     return result;
 }
 
+bool DlnaRemoteConnect::startDirag(DMP *d) {
+    bool result = false;
+    do {
+        BREAK_IF(!drag_cp_lrsys_start());
+        BREAK_IF(!drag_cp_rasys_start(dcp_connect_status_handler, d));
+        result = true;
+    } while (false);
+    LOG_WITH_BOOL_PARAM(result, "");
+    return result;
+}
+
 bool DlnaRemoteConnect::stopDirag() {
-    drag_cp_rasys_stop(); // remote access system
     drag_cp_lrsys_stop(); // LR sub-system
+    drag_cp_rasys_stop(); // remote access system
 }
 
 void DlnaRemoteConnect::finalizeDirag() {
-    drag_cp_rasys_stop(); // remote access system
     drag_cp_lrsys_stop(); // LR sub-system
+    drag_cp_rasys_stop(); // remote access system
     drag_cp_finalize();
 }
 
@@ -202,7 +213,9 @@ void lr_register_response_handler(du_uint32 requeseted_id, local_registration_er
         }
     }
     if (DlnaRemoteConnect::LocalRegistrationCallback != nullptr) {
+        LOG_WITH("before callback");
         DlnaRemoteConnect::LocalRegistrationCallback(result, resultType);
+        LOG_WITH("after callback");
     }
 }
 
@@ -294,8 +307,8 @@ const char* DlnaRemoteConnect::getRemoteDeviceExpireDate(const du_uchar* udn) {
     dms_info* info;
     du_uint32 i;
     du_uint32 len;
-    char date[64] = {0};
 
+    char date[64] = "";
     dms_info_array_init(&dia);
     if (!drag_cp_get_dms_list(&dia)) goto error;
     

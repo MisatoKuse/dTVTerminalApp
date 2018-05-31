@@ -46,16 +46,15 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         DlnaManager.shared().StartDmp();
     }
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         DlnaManager.shared().StopDmp();
     }
-
     @Override
     public void onBackPressed() {
     }
@@ -146,10 +145,11 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
                 if (isOK) {
                     setRemoteProgressVisible(View.VISIBLE);
                     boolean result = DlnaUtils.getActivationState(StbConnectActivity.this);
+                    DTVTLogger.warning("result = " + result);
                     if (result) {
                         DlnaManager.shared().mLocalRegisterListener = StbConnectActivity.this;
                         DlnaManager.shared().StartDtcp();
-                        DlnaManager.shared().RestartDirag();
+                        DlnaManager.shared().StartDirag();
                         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(StbConnectActivity.this);
                         DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn);
                     } else {

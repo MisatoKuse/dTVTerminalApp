@@ -29,16 +29,17 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsInfo;
-import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
-import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessage;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherApi;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,21 +51,20 @@ import java.util.TimerTask;
  * ペアリング、再ペアリングするためのクラス.
  */
 public class StbSelectActivity extends BaseActivity implements View.OnClickListener,
-        AdapterView.OnItemClickListener, DlnaDevListListener {
+        AdapterView.OnItemClickListener,
+        DlnaManager.DlnaManagerListener {
 
     // region variable
     /**
      * DMSリスト.
      */
-    private List<DlnaDmsItem> mDlnaDmsItemList;
+    private List<DlnaDmsItem> mDlnaDmsItemList = new ArrayList<>();
+    private DlnaDmsInfo mDlnaDmsInfo = new DlnaDmsInfo();
     /**
      * プログレスバー.
      */
     private ProgressBar mLoadMoreView = null;
-    /**
-     * DMSデバイス一覧を提供するクラス.
-     */
-    private DlnaProvDevList mDlnaProvDevList = null;
+
     /**
      * タイムアウト設定クラス.
      */
@@ -241,7 +241,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             enableHeaderBackIcon(true);
             initSettingView();
         }
-        mDlnaDmsItemList = new ArrayList<>();
         // dアカウントチェック処理はonResumeで自身で呼び出しているため不要
         setUnnecessaryDaccountRegistService();
         DTVTLogger.end();
@@ -323,7 +322,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             //初回起動時
             enableHeaderBackIcon(false);
             setTitleText(getString(R.string.str_app_title));
-            setStbStatusIconVisibility(false);
+            enableStbStatusIcon(false);
             enableGlobalMenuIcon(false);
             return;
         } else if (mStartMode == (StbSelectFromMode.StbSelectFromMode_Setting.ordinal())) {
@@ -332,7 +331,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             //設定画面からの遷移
             enableHeaderBackIcon(true);
             setTitleText(getString(R.string.str_stb_paring_setting_title));
-            setStbStatusIconVisibility(true);
+            enableStbStatusIcon(true);
             enableGlobalMenuIcon(true);
 
             TextView stbSearchFailed = findViewById(R.id.stb_device_search_result);
@@ -358,14 +357,12 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 }
             });
 
-            if (null == dlnaDmsItem) {
+            if (TextUtils.isEmpty(dlnaDmsItem.mUdn)) {
                 //未ペアリング
                 return;
             } else {
                 //ペアリング済み
-                DlnaDmsInfo info = new DlnaDmsInfo();
-                info.add(dlnaDmsItem);
-                updateDeviceList(info);
+                updateDeviceList();
                 mTextDivider1.setVisibility(View.VISIBLE);
                 mParingDevice.setText(dlnaDmsItem.mFriendlyName);
                 if (!mParingDevice.getText().toString().isEmpty()) {
@@ -381,25 +378,14 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.end();
     }
 
-    /**
-     * デバイスListenerを設定する.
-     */
-    private void setDevListener() {
-        DTVTLogger.start();
-        if (null == mDlnaProvDevList) {
-            mDlnaProvDevList = new DlnaProvDevList();
-        }
-        mDlnaProvDevList.start(this);
-        updateDeviceList(mDlnaProvDevList.getDlnaDmsInfo());
-        DTVTLogger.end();
-    }
-
     @Override
     public void onResume() {
         super.onResume();
         DTVTLogger.start();
-        //dアカウント情報取得
+
+        //別途BaseActivityの物は禁止してあるので、こちらで呼び出す
         setDaccountControl();
+
         initView();
         if (mIsAppDL) {
             //dアカウントアプリDLからの戻り時、各種Viewを初期状態に戻す
@@ -436,26 +422,18 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             mCheckboxText.setVisibility(View.VISIBLE);
         }
 
-        setDevListener();
         DTVTLogger.end();
+        DlnaManager.shared().mDlnaManagerListener = this;
+        DlnaManager.shared().StartDmp();
     }
 
     @Override
     public void onPause() {
-        DTVTLogger.start();
-        leaveActivity();
-        displayMoreData(false);
-        DTVTLogger.end();
         super.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
         DTVTLogger.start();
         leaveActivity();
         displayMoreData(false);
         DTVTLogger.end();
-        super.onDestroy();
     }
 
     /**
@@ -472,10 +450,11 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                     mCallbackTimer.cancel();
                     mCallbackTimer = null;
                 }
-                mDlnaProvDevList.stopListen();
             }
         });
-        DTVTLogger.end();
+        DlnaManager.shared().mDlnaManagerListener = null;
+        mDlnaDmsInfo.clear();
+        DlnaManager.shared().StopDmp();
     }
 
     /**
@@ -574,7 +553,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     /**
      * ペアリング中画面表示を設定.
      */
-    private void showPairingeView() {
+    private void showParingView() {
         DTVTLogger.start();
         if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
             TextView statusTextView = findViewById(R.id.stb_select_status_text);
@@ -660,7 +639,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void onUseWithoutPairingButton() {
         DTVTLogger.start();
-        mDlnaProvDevList.stopListen();
+        DlnaManager.shared().mDlnaManagerListener = null;
         //STB選択画面"次回以降表示しない" 状態をSharedPreferenceに保存
         if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
             SharedPreferencesUtils.setSharedPreferencesStbSelect(this, mIsNextTimeHide);
@@ -670,7 +649,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         } else if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
             if (mParingDevice.getVisibility() == View.VISIBLE) {
                 //ペアリング解除する場合、すべてのSTBキャッシュデータを削除して、ホーム画面に遷移する
-                mDlnaProvDevList.dmsRemove();
+                DlnaManager.shared().StopDmp();
                 SharedPreferencesUtils.resetSharedPreferencesStbInfo(this);
                 Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
 
@@ -695,7 +674,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         //IPアドレスを設定する
         mRemoteControlRelayClient.setRemoteIp(mDlnaDmsItemList.get(i).mIPAddress);
         //ペアリング中画面を出す
-        showPairingeView();
+        showParingView();
         //鍵交換
         exchangeKey();
     }
@@ -718,100 +697,83 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
 
     /**
      * 選択されたSTBを保存して画面遷移を行う.
-     *
-     * @param selectDevice 選択されたSTB
      */
-    private void storeSTBData(final int selectDevice) {
+    private void storeSTBData() {
         DTVTLogger.start();
-        if (mCallbackTimer.getTimerStatus() != TimerStatus.TIMER_STATUS_DURING_STARTUP) {
-            if (mDlnaDmsItemList != null) {
-                if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()
-                        && mParingDevice.getVisibility() == View.VISIBLE) {
-                    this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mCheckMark.setVisibility(View.GONE);
-                        }
-                    });
-
-                }
+        do {
+            if (mCallbackTimer == null) {
+                break;
             }
-        }
+            if (mCallbackTimer.getTimerStatus() == TimerStatus.TIMER_STATUS_DURING_STARTUP) {
+                break;
+            }
+            if (mStartMode != StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
+                break;
+            }
+            if (mParingDevice.getVisibility() != View.VISIBLE) {
+                break;
+            }
+            DTVTLogger.debug("mCheckMark.setVisibility(View.GONE)");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mCheckMark.setVisibility(View.GONE);
+                }
+            });
+        } while (false);
         DTVTLogger.end();
     }
-
-    /**
-     * 新しいデバイスが見つかった時にリストに追加する.
-     *
-     * @param curInfo カレントDlnaDmsInfo.
-     * @param newItem 新しいDms情報
-     */
     @Override
-    public void onDeviceJoin(final DlnaDmsInfo curInfo, final DlnaDmsItem newItem) {
-        super.onDeviceJoin(curInfo, newItem);
-        DTVTLogger.start();
-        updateDeviceList(curInfo);
-        DTVTLogger.end();
+    public void joinDms(String name, String host, String udn, String controlUrl, String eventSubscriptionUrl) {
+        DlnaDmsItem item = new DlnaDmsItem();
+        item.mFriendlyName = name;
+        item.mIPAddress = host;
+        item.mUdn = udn;
+        item.mControlUrl = controlUrl;
+        item.mHttp = host;
+        mDlnaDmsInfo.add(item);
+        updateDeviceList();
     }
 
-    /**
-     * デバイスが消える時リストから削除する.
-     *
-     * @param curInfo     　カレントDlnaDmsInfo
-     * @param leaveDmsUdn 　消えるDmsのudn名
-     */
     @Override
-    public void onDeviceLeave(final DlnaDmsInfo curInfo, final String leaveDmsUdn) {
-        super.onDeviceLeave(curInfo, leaveDmsUdn);
-        DTVTLogger.start();
-        updateDeviceList(curInfo);
-        DTVTLogger.end();
-    }
-
-    /**
-     * エラー発生時のログ出力.
-     *
-     * @param msg エラー情報
-     */
-    @Override
-    public void onError(final String msg) {
-        DTVTLogger.error("DevListListener error msg" + msg);
+    public void leaveDms(String udn) {
+        mDlnaDmsInfo.remove(udn);
+        updateDeviceList();
     }
 
     /**
      * デバイスリスト情報を更新する.
-     *
-     * @param info デバイスリスト情報
      */
-    private void updateDeviceList(final DlnaDmsInfo info) {
+    private void updateDeviceList() {
         DTVTLogger.start();
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
 
         mContentsList.clear();
         mDlnaDmsItemList.clear();
-        for (int i = 0; i < info.size(); i++) {
-
-            DTVTLogger.debug("ContentsList.mSize = " + info.get(i).mFriendlyName);
-            DTVTLogger.debug("DlnaDmsInfo.mIPAddress = " + info.get(i).mIPAddress);
-            DTVTLogger.debug("DlnaDmsInfo.mUdn = " + info.get(i).mUdn);
+        
+        for (int i = 0; i < mDlnaDmsInfo.size(); i++) {
+            DlnaDmsItem item = mDlnaDmsInfo.get(i);
+            DTVTLogger.debug("item.mFriendlyName = " + item.mFriendlyName);
+            DTVTLogger.debug("item.mIPAddress = " + item.mIPAddress);
+            DTVTLogger.debug("item.mUdn = " + item.mUdn);
             boolean flag = false;
             if (dlnaDmsItem != null && !TextUtils.isEmpty(dlnaDmsItem.mUdn)) {
-                if (dlnaDmsItem.mUdn.equals(info.get(i).mUdn)) {
+                if (dlnaDmsItem.mUdn.equals(item.mUdn)) {
                     flag = true;
                 }
             }
             if (!flag) {
                 HashMap<String, String> hashMap = new HashMap<>();
                 // Todo: 試験のために以下のように一時的に変更する。試験後はコメントアウトした内容に戻すこと
-                hashMap.put(DEVICE_NAME_KEY, StringUtils.getConnectString(new String[]{info.get(i).mFriendlyName, "_", info.get(i).mIPAddress}));
-//                hashMap.put(DEVICE_NAME_KEY, info.get(i).mFriendlyName);
-                hashMap.put(info.get(i).mUdn, info.get(i).mUdn);
+                hashMap.put(DEVICE_NAME_KEY, StringUtils.getConnectString(new String[]{item.mFriendlyName, "_", item.mIPAddress}));
+//                hashMap.put(DEVICE_NAME_KEY, item.mFriendlyName);
+                hashMap.put(item.mUdn, item.mUdn);
                 if (mContentsList.size() > 0) {
                     //0以上の場合重複チェック
                     for (HashMap<String, String> oldHashMap : mContentsList) {
-                        if (!oldHashMap.containsKey(info.get(i).mUdn)) {
+                        if (!oldHashMap.containsKey(item.mUdn)) {
                             mContentsList.add(hashMap);
-                            mDlnaDmsItemList.add(info.get(i));
+                            mDlnaDmsItemList.add(item);
                             //デバイス追加されたらbreak
                             break;
                         }
@@ -819,7 +781,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 } else {
                     //0件の場合そのままリストに追加する
                     mContentsList.add(hashMap);
-                    mDlnaDmsItemList.add(info.get(i));
+                    mDlnaDmsItemList.add(item);
                 }
             }
 
@@ -900,7 +862,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     private void showTimeoutView() {
         DTVTLogger.start();
         displayMoreData((false));
-        mDlnaProvDevList.stopListen();
+        DlnaManager.shared().mDlnaManagerListener = null;
         if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
             startActivity(StbSelectErrorActivity.class, null);
         } else {
@@ -1046,8 +1008,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             if (isDAccountFlag) {
                 setRelayClientHandler();
                 RemoteControlRelayClient.getInstance().isUserAccountExistRequest(this);
-
-                storeSTBData(mSelectDevice);
+                storeSTBData();
             } else {
                 //端末内にdアカウントアプリがある場合はアプリ起動
                 startActivity(intent);

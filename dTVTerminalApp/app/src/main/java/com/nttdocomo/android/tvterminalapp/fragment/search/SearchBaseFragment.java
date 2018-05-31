@@ -24,10 +24,10 @@ import com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.ArrayList;
@@ -292,43 +292,9 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
             Intent intent = new Intent(mContext, ContentDetailActivity.class);
             intent.putExtra(DtvtConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
             intent.putExtra(ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY,
-                    getOtherContentsDetailData(info));
+                    DataConverter.getOtherContentsDetailData(info, ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY));
             searchTopActivity.startActivity(intent);
         }
-    }
-
-    /**
-     * コンテンツ詳細に必要なデータを返す.
-     *
-     * @param info レコメンド情報
-     * @return コンテンツ情報
-     */
-    private OtherContentsDetailData getOtherContentsDetailData(final ContentsData info) {
-        OtherContentsDetailData detailData = new OtherContentsDetailData();
-        detailData.setTitle(info.getTitle());
-        detailData.setThumb(info.getThumURL());
-        detailData.setDetail(info.getSynop());
-        detailData.setServiceId(Integer.parseInt(info.getServiceId()));
-        detailData.setMobileViewingFlg(info.getMobileViewingFlg());
-        detailData.setmStartDate(info.getStartViewing());
-        detailData.setmEndDate(info.getEndViewing());
-        detailData.setCategoryId(info.getCategoryId());
-        detailData.setChannelId(info.getChannelId());
-        detailData.setChannelName(info.getChannelName());
-        detailData.setReserved1(info.getReserved1());
-        detailData.setReserved2(info.getReserved2());
-        detailData.setReserved3(info.getReserved3());
-        detailData.setReserved4(info.getReserved4());
-        detailData.setReserved5(info.getReserved5());
-        detailData.setDescription1(info.getDescription1());
-        detailData.setDescription2(info.getDescription2());
-        detailData.setDescription3(info.getDescription3());
-
-        //コンテンツIDの受け渡しを追加
-        detailData.setContentsId(info.getContentsId());
-        detailData.setRecommendOrder(info.getRecommendOrder());
-
-        return detailData;
     }
 
     /**

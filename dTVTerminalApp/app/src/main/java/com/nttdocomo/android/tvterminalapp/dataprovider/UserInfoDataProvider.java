@@ -258,8 +258,8 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
             }
         }
 
-        //結果を返すコールバックを呼ぶ
-        mUserDataProviderCallback.userInfoListCallback(isChangeAge, userInfoLists);
+        //結果を返すコールバックを呼ぶ(userInfoListsはfinal付与の余波でヌルのままになる場合があるので、ここはtmpUserInfoListsを指定)
+        mUserDataProviderCallback.userInfoListCallback(isChangeAge, tmpUserInfoLists);
 
         DTVTLogger.end();
     }

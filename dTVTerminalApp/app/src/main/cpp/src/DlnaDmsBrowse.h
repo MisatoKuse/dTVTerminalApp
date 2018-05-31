@@ -29,6 +29,7 @@ public:
     
     /** Container選択*/
     du_bool selectContainer(DMP* d, du_uint32 index);
+    /** offsetは 0からスタート*/
     bool selectContainerWithContainerId(DMP *dmp, du_uint32 offset, du_uint32 limit, const du_uchar* containerId);
     
 private:

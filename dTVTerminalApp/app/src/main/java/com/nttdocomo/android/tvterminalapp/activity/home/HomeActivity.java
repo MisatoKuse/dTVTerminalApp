@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.Preference;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,11 +19,13 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -57,6 +60,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopHomeDataConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopUserInfoDataConnect;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
@@ -99,6 +103,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * PR枠画像.
      */
     private ImageView mPrImageView = null;
+    /**
+     * ホーム画面のスクロール部
+     */
+    private ScrollView mScrollView = null;
     /**
      * エラーダイアログが表示されているかのフラグ.
      */
@@ -188,6 +196,19 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private boolean mUserInfoGetRequest = false;
 
+    /**
+     * dアカウントの取得が行えない事が確定した場合はtrueに変更する.
+     */
+    private boolean mIsDaccountGetNg = false;
+    /**
+     * ユーザーがスクロール操作を行ったならばtrueにして、以後のスクロール位置補正をスキップさせる.
+     */
+    private boolean mAlreadyScroll = false;
+    /**
+     * ユーザーのスクロールを検知する為の、以前のスクロール位置.
+     */
+    private int mOldScrollPosition = 0;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -258,15 +279,24 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         } else {
             mLinearLayout.setVisibility(View.VISIBLE);
             mRelativeLayout.setVisibility(View.GONE);
+
+            //プログレスの解除＝新情報の追加なので、スクロール位置の補正を行う
+            if(!mAlreadyScroll) {
+                //既にユーザー操作によるスクロールがまだ行われていない場合は、補正を行う
+                mScrollView.setScrollY(0);
+            }
         }
     }
 
     @Override
     protected void onResume() {
+        //ユーザー情報取得開始(super.onResumeで行われるdアカウントの取得よりも先に行う事で、
+        // dアカウントが未取得だった場合のユーザー情報再取得への流れを明確化する)
+        getUserInfoStart();
+
         super.onResume();
 
-        //ユーザー情報取得開始
-        getUserInfoStart();
+        DlnaManager.shared().Start(getApplicationContext());
     }
 
     /**
@@ -299,7 +329,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             DTVTLogger.debug("userInfo Timeout?=" + mUserInfoDataProvider.isUserInfoTimeOut());
 
             if (!mIsSearchDone) {
-                //dアカウントが取れていないので、取れたときのコールバックにユーザー情報取得を依頼する
+                //dアカウントが取れていないので、取得後のコールバックにユーザー情報取得を依頼する
                 mUserInfoGetRequest = true;
 
                 //起動時はプログレスダイアログを表示
@@ -315,16 +345,34 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         //dアカウントの取得が終わった際に呼ばれるコールバック
         super.onDaccountOttGetComplete(result);
 
-        DTVTLogger.start();
+        DTVTLogger.start("this is home. result = " + result
+                + "/mUserInfoGetRequest = " + mUserInfoGetRequest);
+        DTVTLogger.debug("onDaccountOttGetComplete daccount = "
+                + SharedPreferencesUtils.getSharedPreferencesDaccountId(
+                getApplicationContext()));
 
         //ユーザー情報取得依頼をチェック
-        if (mUserInfoGetRequest) {
-            //依頼が出ているので、ユーザー情報の取得を開始
+        if (mUserInfoGetRequest && result) {
+            //依頼が出ているので、dアカウントの取得に成功していればユーザー情報の取得を開始
             getUserInfo();
+        } else if (!result) {
+            DTVTLogger.debug("onDaccountOttGetComplete result=false");
 
-            //取得を開始したので、フラグはクリア
-            mUserInfoGetRequest = false;
+            //dアカウントが取得できない事が確定したので、バナーの表示を行う
+            mIsDaccountGetNg = true;
+
+            //バナー表示の更新の為、UIタスクに処理を移譲
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    DTVTLogger.debug("onDaccountOttGetComplete call showHomeBanner");
+                    showHomeBanner();
+                }
+            });
         }
+
+        //ユーザー情報取得依頼フラグをクリア（ユーザー情報取得側でも行っているが、dアカウント取得に失敗した時の為にここでもクリア）
+        mUserInfoGetRequest = false;
 
         DTVTLogger.end();
     }
@@ -377,17 +425,33 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         UserState userState = UserInfoUtils.getUserState(this);
         switch (userState) {
             case LOGIN_OK_CONTRACT_NG:
+                DTVTLogger.debug("showHomeBanner_LOGIN_OK_CONTRACT_NG");
                 mAgreementRl.setVisibility(View.VISIBLE);
                 mPrImageView.setVisibility(View.VISIBLE);
                 break;
             case CONTRACT_OK_PAIRING_NG:
+                DTVTLogger.debug("showHomeBanner_CONTRACT_OK_PAIRING_NG");
             case CONTRACT_OK_PARING_OK:
+                DTVTLogger.debug("showHomeBanner_CONTRACT_OK_PARING_OK");
                 mAgreementRl.setVisibility(View.GONE);
                 mPrImageView.setVisibility(View.GONE);
                 break;
             case LOGIN_NG:
+                DTVTLogger.debug("showHomeBanner_LOGIN_NG");
+                //dアカウント取得前と取得失敗の場合
+                if (mIsDaccountGetNg) {
+                    DTVTLogger.debug("showHomeBanner_mIsDaccountGetNg");
+                    //dアカウントが取得できない事が確定したので、PR画像のバナーを表示する
+                    mAgreementRl.setVisibility(View.GONE);
+                    mPrImageView.setVisibility(View.VISIBLE);
+                    break;
+                }
+                //確定前はバナーを表示しないので、ここでbreakは行わない
             default:
-                mPrImageView.setVisibility(View.VISIBLE);
+                DTVTLogger.debug("showHomeBanner_default");
+                //情報の取得前は各バナーは表示しないように変更
+                mAgreementRl.setVisibility(View.GONE);
+                mPrImageView.setVisibility(View.GONE);
                 break;
         }
     }
@@ -426,6 +490,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         agreementTextView.setOnClickListener(this);
         mPrImageView.setOnClickListener(this);
 
+        //スクロールビューの操作を行う
+        initScrollView();
+
         //縦横比を維持したまま幅100%に拡大縮小
         Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.home_pr);
         int drawableWidth = drawable.getIntrinsicWidth();
@@ -449,6 +516,42 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.addItemDecoration(new HomeRecyclerViewItemDecoration(this));
         }
+    }
+
+    /**
+     * ホーム画面の主要情報を表示するスクロールビューの初期化処理を行う.
+     */
+    private void initScrollView() {
+        //スクロール実行フラグの初期化
+        mAlreadyScroll = false;
+
+        //スクロールビューの取得
+        mScrollView = findViewById(R.id.home_main_layout_scroll_view);
+
+        //スクロール検知の実装
+        mScrollView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        //スクロールの縦位置を取得
+                        mOldScrollPosition = view.getScrollY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        // 現在の縦位置と以前の縦位置を比較して違いがあれば、スクロールが発生
+                        if (mOldScrollPosition != view.getScrollY()) {
+                            DTVTLogger.debug("scrolling");
+                            //スクロールを行ったスイッチをセット。以後のスクロール位置補正は、最上段にはならない
+                            mAlreadyScroll = true;
+                        }
+
+                        //今の位置を代入する
+                        mOldScrollPosition = view.getScrollY();
+                        break;
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -721,8 +824,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             @Override
             public void run() {
                 //ユーザー情報の変更検知
-                showProgessBar(true);
                 mUserInfoDataProvider.getUserInfo();
+                //ユーザー情報取得開始を行ったので、フラグはクリア
+                mUserInfoGetRequest = false;
             }
         });
     }

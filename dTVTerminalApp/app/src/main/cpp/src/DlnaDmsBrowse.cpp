@@ -288,7 +288,7 @@ void printObject(DMP* d, const xmlNodePtr element, du_uint32 index, du_bool is_c
     contentInfo.isContainer = is_container;
     contentInfo.index = index;
     snprintf(contentInfo.name, sizeof(contentInfo.name), "%s",du_uchar_array_get(&ua));
-    
+
     // date
     *dc_date = 0;
     if (dav_didl_libxml_get_content_by_name(element->children, dav_didl_element_dc_date(), &ua)) {
@@ -349,14 +349,14 @@ void printObject(DMP* d, const xmlNodePtr element, du_uint32 index, du_bool is_c
                 snprintf(contentInfo.size, sizeof(contentInfo.size), "%s" , du_uchar_array_get(&ua));
                 MY_LOG("   size: %s", du_uchar_array_get(&ua));
             }
-            
+
             // protocol_info
             if (dav_didl_libxml_get_attribute_value_by_name(p, dav_didl_attribute_protocol_info(), &ua)) {
                 if (!du_uchar_array_cat0(&ua)) goto error;
                 snprintf(contentInfo.protocolInfo, sizeof(contentInfo.protocolInfo), "%s" , du_uchar_array_get(&ua));
                 MY_LOG("   protocol_info: %s", du_uchar_array_get(&ua));
             }
-            
+
             // objectId
             if (dav_didl_libxml_get_attribute_value_by_name(element, dav_didl_attribute_id(), &ua)) {
                 if (!du_uchar_array_cat0(&ua)) goto error;
@@ -398,6 +398,14 @@ void printObject(DMP* d, const xmlNodePtr element, du_uint32 index, du_bool is_c
                 snprintf(contentInfo.rating, sizeof(contentInfo.rating), "%s" , du_uchar_array_get(&ua));
                 LOG_WITH("   rating : %s", du_uchar_array_get(&ua));
             }
+
+            // bitrate
+            if (dav_didl_libxml_get_attribute_value_by_name(p, dav_didl_attribute_bitrate(), &ua)) {
+                if (!du_uchar_array_cat0(&ua)) goto error;
+                snprintf(contentInfo.bitrate, sizeof(contentInfo.bitrate), "%s" , du_uchar_array_get(&ua));
+                MY_LOG("   bitrate: %s", du_uchar_array_get(&ua));
+            }
+
         } else {
             MY_LOG("   Unsupported Format.");
         }

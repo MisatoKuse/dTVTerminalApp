@@ -198,7 +198,8 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
         }
 
         //全てのコネクションにdisconnectを送る
-        for (final HttpURLConnection stopConnection : mUrlConnections) {
+        for (int i = 0; i < mUrlConnections.size(); i++) {
+            final HttpURLConnection stopConnection = mUrlConnections.get(i);
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {

@@ -5,7 +5,9 @@
 package com.nttdocomo.android.tvterminalapp.utils;
 
 
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 
 import java.util.Map;
@@ -49,4 +51,57 @@ public class DataConverter {
         return contentInfo;
     }
 
+    /**
+     * コンテンツ詳細に必要なデータを返す.
+     *
+     * @param info         レコメンド情報
+     * @param recommendFlg Bundleキー
+     * @return コンテンツ情報
+     */
+    public static OtherContentsDetailData getOtherContentsDetailData(final ContentsData info, final String recommendFlg) {
+        OtherContentsDetailData detailData = new OtherContentsDetailData();
+        detailData.setTitle(info.getTitle());
+        detailData.setDetail(info.getSynop());
+
+        //レコメンド独自のデータ設定
+        if (ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY.equals(recommendFlg)) {
+            detailData.setServiceId(Integer.parseInt(info.getServiceId()));
+            detailData.setContentCategory(ContentUtils.getRecommendContentsType(info));
+            detailData.setThumb(info.getThumURL());
+        } else {
+            detailData.setThumb(info.getThumDetailURL());
+            detailData.setContentCategory(ContentUtils.ContentsType.OTHER);
+        }
+
+        detailData.setMobileViewingFlg(info.getMobileViewingFlg());
+        detailData.setmStartDate(info.getStartViewing());
+        detailData.setmEndDate(info.getEndViewing());
+        detailData.setCategoryId(info.getCategoryId());
+        detailData.setChannelId(info.getChannelId());
+        detailData.setChannelName(info.getChannelName());
+        detailData.setPageId(info.getPageId());
+        detailData.setGroupId(info.getGroupId());
+        detailData.setRecommendMethodId(info.getRecommendMethodId());
+        detailData.setRecommendFlg(recommendFlg);
+        detailData.setReserved1(info.getReserved1());
+        detailData.setReserved2(info.getReserved2());
+        detailData.setReserved3(info.getReserved3());
+        detailData.setReserved4(info.getReserved4());
+        detailData.setReserved5(info.getReserved5());
+        detailData.setDescription1(info.getDescription1());
+        detailData.setDescription2(info.getDescription2());
+        detailData.setDescription3(info.getDescription3());
+
+        //コンテンツIDの受け渡しを追加
+        detailData.setContentsId(info.getContentsId());
+        detailData.setRecommendOrder(info.getRecommendOrder());
+
+        //ひかりサーバデータ
+        detailData.setDispType(info.getDispType());
+        detailData.setDtv(info.getDtv());
+        detailData.setTvService(info.getTvService());
+        detailData.setContentsType(info.getContentsType());
+
+        return detailData;
+    }
 }
