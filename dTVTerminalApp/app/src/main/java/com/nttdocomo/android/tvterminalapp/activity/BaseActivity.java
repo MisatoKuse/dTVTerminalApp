@@ -89,6 +89,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.DeviceStateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.RuntimePermissionUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
@@ -704,6 +705,13 @@ public class BaseActivity extends FragmentActivity implements
                 return;
             }
             permissionCheckExec();
+            if (!(this instanceof LaunchActivity)) {
+                //リモート視聴設定期限表示
+                String msg = (DlnaUtils.getLocalRegisterExpireDateCheckMessage(this));
+                if (!TextUtils.isEmpty(msg)) {
+                    showErrorDialogOffer(msg);
+                }
+            }
         } else {
             // 通常のライフサイクル
             if (mNecessaryDAccountRegistService) {

@@ -1353,4 +1353,22 @@ public class DateUtils {
         return activeDataDate - DateUtils.getNowTimeFormatEpoch()
                 < DateUtils.EPOCH_TIME_ONE_DAY * ContentDetailActivity.ONE_MONTH;
     }
+
+    /**
+     * 残日数計算.
+     *
+     * @param expireDate 満期日(yyyy-MM-dd HH:mm:ss形式)
+     * @return 残日数
+     */
+    public static int getRemainingDays (final String expireDate) {
+        Calendar expireCalendar = Calendar.getInstance();
+        expireCalendar.setTimeInMillis(getHyphenEpochTime(expireDate) * 1000);
+        expireCalendar.set(Calendar.HOUR_OF_DAY, 0);
+        expireCalendar.set(Calendar.MINUTE, 0);
+        expireCalendar.set(Calendar.SECOND, 0);
+        expireCalendar.set(Calendar.MILLISECOND, 0);
+        Calendar nowCal = Calendar.getInstance();
+
+        return (int) ((expireCalendar.getTimeInMillis() - nowCal.getTimeInMillis()) / (EPOCH_TIME_ONE_DAY * 1000));
+    }
 }

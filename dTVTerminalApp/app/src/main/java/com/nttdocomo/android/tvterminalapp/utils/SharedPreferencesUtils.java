@@ -173,6 +173,11 @@ public class SharedPreferencesUtils {
      * 初回dアカウント取得フラグの、強制設定値.
      */
     private static final int FIRST_D_ACCOUNT_FORCE_RESET = 3;
+    /**
+     * ローカルレジストレーション期限表示ダイアログフラグ.
+     */
+    private static final String REGISTER_EXPIREDATE_DIALOG_FLG
+            = "REGISTER_EXPIREDATE_DIALOG_FLG";
 
     /**
      * 独自の削除メソッドがある接続済みSTB情報以外の、dアカウントユーザー切り替え時の削除対象
@@ -1106,4 +1111,36 @@ public class SharedPreferencesUtils {
 
         return data.getBoolean(PERMISSION_DIALOG_DISPLAYED_TWICE, false);
     }
+
+    /**
+     * ローカルレジストレーション期限表示ダイアログフラグを保存.
+     *
+     * @param context コンテキスト
+     * @param dialogFlg ローカルレジストレーション期限表示ダイアログフラグ
+     */
+    public static void setRegisterExpiredateDialogFlg(final Context context, final int dialogFlg) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                REGISTER_EXPIREDATE_DIALOG_FLG, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putInt(REGISTER_EXPIREDATE_DIALOG_FLG, dialogFlg);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * ローカルレジストレーション期限表示ダイアログを取得.
+     *
+     * @param context コンテキスト
+     * @return ローカルレジストレーション期限表示ダイアログフラグ
+     */
+    public static int getRegisterExpiredateDialogFlg(final Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                REGISTER_EXPIREDATE_DIALOG_FLG, Context.MODE_PRIVATE);
+
+        //保存したローカルレジストレーション期限表示ダイアログを返却
+        return data.getInt(REGISTER_EXPIREDATE_DIALOG_FLG, 0);
+    }
+
 }

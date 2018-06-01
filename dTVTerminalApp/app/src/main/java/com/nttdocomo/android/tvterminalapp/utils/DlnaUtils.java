@@ -71,6 +71,24 @@ public class DlnaUtils {
     /** BSデジタル.*/
     public static final String DLNA_DMS_BS_CHANNEL = "bs";
     /*視聴画質設定*/
+    /*ローカルレジストレーション期限表示*/
+    /** 残日数0.*/
+    private static final int REMAINING_ZERO_DAYS = 0;
+    /** 残日数1.*/
+    private static final int REMAINING_ONE_DAYS = 1;
+    /** 残日数7.*/
+    private static final int REMAINING_SEVEN_DAYS = 7;
+    /** 残日数14.*/
+    private static final int REMAINING_FOURTEEN_DAYS = 14;
+    /** ダイアログ表示フラグ1.*/
+    private static final int REGISTER_EXPIREDATE_DIALOG_FLG_ONE = 1;
+    /** ダイアログ表示フラグ2.*/
+    private static final int REGISTER_EXPIREDATE_DIALOG_FLG_TWO = 2;
+    /** ダイアログ表示フラグ3.*/
+    private static final int REGISTER_EXPIREDATE_DIALOG_FLG_THREE = 3;
+    /** ダイアログ表示フラグ4.*/
+    private static final int REGISTER_EXPIREDATE_DIALOG_FLG_FOUR = 4;
+    /*ローカルレジストレーション期限表示*/
 
     /**
      * アクティベーションのチェック、実行.
@@ -269,20 +287,61 @@ public class DlnaUtils {
     }
 
     /**
+     * ローカルレジストレーション期限表示ダイアログメッセージ.
+     *
+     * @param context コンテキスト
+     * @return msg 期限表示ダイアログメッセージ
+     */
+    public static String getLocalRegisterExpireDateCheckMessage(final Context context) {
+        String msg = "";
+        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(context);
+        int dialogFlg = SharedPreferencesUtils.getRegisterExpiredateDialogFlg(context);
+        if (dlnaDmsItem != null) {
+            String expireDate = DlnaManager.shared().GetRemoteDeviceExpireDate(dlnaDmsItem.mUdn);
+            if (!TextUtils.isEmpty(expireDate)) {
+                int remainingDays = DateUtils.getRemainingDays(expireDate);
+                String[] strings = {context.getString(R.string.remote_remaining_days_message_begin),
+                        Integer.toString(remainingDays),
+                        context.getString(R.string.remote_remaining_days_message_end)};
+                if (REMAINING_SEVEN_DAYS < remainingDays
+                        && remainingDays <= REMAINING_FOURTEEN_DAYS
+                        && dialogFlg != REGISTER_EXPIREDATE_DIALOG_FLG_ONE) {
+                    msg = StringUtils.getConnectString(strings);
+                    SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_ONE);
+                } else if (REMAINING_ONE_DAYS < remainingDays
+                        && remainingDays <= REMAINING_SEVEN_DAYS
+                        && dialogFlg != REGISTER_EXPIREDATE_DIALOG_FLG_TWO) {
+                    msg = StringUtils.getConnectString(strings);
+                    SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_TWO);
+                } else if (remainingDays == REMAINING_ONE_DAYS
+                        && dialogFlg != REGISTER_EXPIREDATE_DIALOG_FLG_THREE) {
+                    msg = StringUtils.getConnectString(strings);
+                    SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_THREE);
+                } else if (remainingDays < REMAINING_ZERO_DAYS
+                        && dialogFlg != REGISTER_EXPIREDATE_DIALOG_FLG_FOUR) {
+                    msg = context.getString(R.string.remote_expired_message);
+                    SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_FOUR);
+                }
+            }
+        }
+        return msg;
+    }
+
+    /**
      * 設定した画質を取得.
      *
      * @param context コンテキスト
      * @param channel チャンネル種別
      * @return 設定した画質のURL
      */
-    public static String getContainerIdByImageQuality(final Context context, String channel) {
+    public static String getContainerIdByImageQuality(final Context context, final String channel) {
         boolean isRemote = StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_OUT;
         if (context == null) {
             return IMAGE_QUALITY_DEFAULT_URL + channel;
         }
         String imageQualitySetting = SharedPreferencesUtils.getSharedPreferencesImageQuality(context);
         if (!isRemote || TextUtils.isEmpty(imageQualitySetting)) {
-            return IMAGE_QUALITY_DEFAULT_URL+ channel;
+            return IMAGE_QUALITY_DEFAULT_URL + channel;
         } else {
             if (imageQualitySetting.equals(context.getString(R.string.main_setting_image_quality_high))) {
                 return IMAGE_QUALITY_HIGH_URL + channel;

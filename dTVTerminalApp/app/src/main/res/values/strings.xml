@@ -473,4 +473,9 @@
     <string name="google_analytics_screen_name_stb_select_loading">STB選択ローディング</string>
     <string name="google_analytics_screen_name_agreement">初回起動時に表示する規約画面</string>
     <string name="google_analytics_screen_name_contract">契約ページ</string>
+
+    <!-- リモート視聴設定（期限表示） -->
+    <string name="remote_remaining_days_message_begin">リモート視聴の有効期限が残り</string>
+    <string name="remote_remaining_days_message_end">日となっています。\nドコモテレビターミナルが接続されているWi-Fiに接続した状態で「メニュー＞設定＞リモート視聴設定」を行ってください。</string>
+    <string name="remote_expired_message">リモート視聴の有効期限が切れました。\n再度リモート視聴をする場合は、ドコモテレビターミナルが接続されているWi-Fiに接続した状態で「メニュー＞設定＞リモート視聴設定」を行ってください。</string>
 </resources>
