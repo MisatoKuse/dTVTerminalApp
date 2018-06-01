@@ -98,6 +98,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
                 DTVTLogger.debug("WeeklyRankingActivity::Clip Status Update");
             }
         }
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_weekly_ranking));
         DTVTLogger.end();
     }
 

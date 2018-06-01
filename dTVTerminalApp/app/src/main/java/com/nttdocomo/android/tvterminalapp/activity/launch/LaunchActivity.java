@@ -84,6 +84,12 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         setUnnecessaryDaccountRegistService();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_splash));
+    }
+
     /**
      * 最初の2秒経過後の処理.
      */

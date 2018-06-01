@@ -101,6 +101,12 @@ public class RecordReservationListActivity extends BaseActivity
         initView();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_recording_reservation));
+    }
+
     /**
      * Viewの初期化.
      */

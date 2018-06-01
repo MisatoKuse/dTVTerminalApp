@@ -191,10 +191,6 @@ public class BaseActivity extends FragmentActivity implements
      */
     private boolean mClipRunTime = false;
     /**
-     * GoogleAnalytics用.
-     */
-    private Tracker mTracker;
-    /**
      * GooglePlayのドコテレアプリページ.
      * 現在
      */
@@ -699,14 +695,6 @@ public class BaseActivity extends FragmentActivity implements
         super.onResume();
         DTVTLogger.start();
         TvtApplication app = (TvtApplication) getApplication();
-
-        //Googleアナリティクスに画面名を送信する
-        mTracker = app.getDefaultTracker();
-        //TODO : 難読化を行うと、getClassがランダムな名前になる模様。その前に個別の画面名の設定が必要になる。
-        //TODO : 近いうちのスプリントで詳細な情報出力設定が行われる筈なので、ひとまず問題は無い。
-        mTracker.setScreenName(this.getClass().getSimpleName());
-        mTracker.send(
-                new com.google.android.gms.analytics.HitBuilders.ScreenViewBuilder().build());
 
         // BG → FG でのonResumeかを判定
         if (app.getIsChangeApplicationVisible()) {
@@ -1484,6 +1472,7 @@ public class BaseActivity extends FragmentActivity implements
                             createRemoteControllerView(false);
                         }
                         getRemoteControllerView().startRemoteUI(true);
+                        sendScreenView(getString(R.string.google_analytics_screen_name_remote_control));
                     }
                     break;
                 default:
@@ -1535,6 +1524,7 @@ public class BaseActivity extends FragmentActivity implements
             DTVTLogger.debug("Start RemoteControl");
             createRemoteControllerView(false);
             getRemoteControllerView().startRemoteUI(true);
+            sendScreenView(getString(R.string.google_analytics_screen_name_remote_control));
         }
     }
 
@@ -1545,6 +1535,7 @@ public class BaseActivity extends FragmentActivity implements
         DTVTLogger.debug("Start RemoteControl");
         createRemoteControllerView(true);
         getRemoteControllerView().startRemoteUI(false);
+        sendScreenView(getString(R.string.google_analytics_screen_name_remote_control));
     }
 
     /**
@@ -2706,6 +2697,18 @@ public class BaseActivity extends FragmentActivity implements
                 mStbStatusIcon.setImageResource(isStbConnectedHomeNetwork ? R.mipmap.header_material_icon_tv : R.mipmap.header_material_icon_tv_active);
             }
         });
+    }
+
+    /**
+     * スクリーン・ビューを送る
+     *
+     * @param screenName スクリーン名
+     */
+    public void sendScreenView(String screenName) {
+        TvtApplication app = (TvtApplication) getApplication();
+        Tracker tracker = app.getDefaultTracker();
+        tracker.setScreenName(screenName);
+        tracker.send(new com.google.android.gms.analytics.HitBuilders.ScreenViewBuilder().build());
     }
     // endregion callback
 }

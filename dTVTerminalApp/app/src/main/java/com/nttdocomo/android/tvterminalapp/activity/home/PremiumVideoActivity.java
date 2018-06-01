@@ -92,6 +92,7 @@ public class PremiumVideoActivity extends BaseActivity implements
             mContentsAdapter.notifyDataSetChanged();
             DTVTLogger.debug("PremiumVideoActivity::Clip Status Update");
         }
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_premium_video));
     }
 
     /**

@@ -38,6 +38,12 @@ public class DaccountInductionActivity extends BaseActivity {
         setContents();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_daccount_invitation));
+    }
+
     /**
      *画面っ上に表示するコンテンツをセット.
      */

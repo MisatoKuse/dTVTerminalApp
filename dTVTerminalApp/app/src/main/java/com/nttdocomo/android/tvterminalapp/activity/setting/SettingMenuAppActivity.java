@@ -55,6 +55,12 @@ public class SettingMenuAppActivity extends BaseActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_application_privacy_policy));
+    }
+
+    @Override
     protected void onRestart() {
         super.onRestart();
         DTVTLogger.start();

@@ -56,6 +56,12 @@ public class NewsActivity extends BaseActivity implements View.OnClickListener {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_news));
+    }
+
+    @Override
     protected void onRestart() {
         super.onRestart();
         DTVTLogger.start();

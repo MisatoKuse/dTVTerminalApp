@@ -96,6 +96,7 @@ public class RentalListActivity extends BaseActivity implements
                 DTVTLogger.debug("RentalListActivity::Clip Status Update");
             }
         }
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_rental));
         DTVTLogger.end();
     }
 

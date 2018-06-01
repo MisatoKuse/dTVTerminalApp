@@ -68,6 +68,12 @@ public class DaccountResettingActivity extends BaseActivity implements View.OnCl
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_daccount_resetting));
+    }
+
+    @Override
     public void onBackPressed() {
         //super.onBackPressed();
     }

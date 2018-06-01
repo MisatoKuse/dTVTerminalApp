@@ -196,4 +196,10 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
         StopScaledProListDataConnect stopTvConnect = new StopScaledProListDataConnect();
         stopTvConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mScaledDownProgramListDataProvider);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_channel_edit_menu_channel_select));
+    }
 }

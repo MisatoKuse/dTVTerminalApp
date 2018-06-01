@@ -387,12 +387,11 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         setDaccountControl();
 
         initView();
+        TextView statusTextView = findViewById(R.id.stb_select_status_text);
         if (mIsAppDL) {
             //dアカウントアプリDLからの戻り時、各種Viewを初期状態に戻す
             mIsAppDL = false;
             if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-
-                TextView statusTextView = findViewById(R.id.stb_select_status_text);
 
                 //Android5.0未満の表示問題対策
                 fixStatusTextView(statusTextView);
@@ -403,6 +402,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 mCheckboxText.setVisibility(View.VISIBLE);
                 mDeviceListView.setVisibility(View.VISIBLE);
                 mParingTextView.setText(R.string.str_stb_no_pair_use_text);
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading));
             } else {
                 RelativeLayout relativeLayout = findViewById(R.id.stb_icon_relative_layout_setting);
                 relativeLayout.setVisibility(View.GONE);
@@ -412,6 +412,13 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 mDeviceSelectText.setVisibility(View.VISIBLE);
                 mTextDivider2.setVisibility(View.VISIBLE);
                 mDeviceListView.setVisibility(View.VISIBLE);
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring));
+            }
+        } else {
+            if (statusTextView.isActivated()) {
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading));
+            } else {
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select));
             }
         }
 
@@ -474,6 +481,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             // STBが見つかるまで非表示
             TextView checkBoxText = findViewById(R.id.useWithoutPairingSTBParingInvitation);
             checkBoxText.setVisibility(View.VISIBLE);
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading));
         } else if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
             //プログレスビューを初期状態に戻る
             RelativeLayout parentLayout = findViewById(R.id.paring_select_text_relative_layout);
