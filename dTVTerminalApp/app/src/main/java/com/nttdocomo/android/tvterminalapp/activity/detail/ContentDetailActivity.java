@@ -1343,8 +1343,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             detailFragment.mOtherContentsDetailData.setDetail(mDetailFullData.getSynop());
             // コンテンツ状態を反映
             detailFragment.mOtherContentsDetailData.setClipStatus(clipStatus);
-            detailFragment.mOtherContentsDetailData.setClipExec(ClipUtils.isCanClip(
-                    UserInfoUtils.getUserState(this), dispType, searchOk, dTv, dTvType));
+            detailFragment.mOtherContentsDetailData.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dTv, dTvType));
             detailFragment.mOtherContentsDetailData.setDispType(dispType);
             detailFragment.mOtherContentsDetailData.setSearchOk(searchOk);
             detailFragment.mOtherContentsDetailData.setDtv(dTv);

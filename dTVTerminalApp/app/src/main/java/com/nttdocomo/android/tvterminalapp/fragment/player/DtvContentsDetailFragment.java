@@ -5,6 +5,8 @@
 package com.nttdocomo.android.tvterminalapp.fragment.player;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -34,6 +36,7 @@ import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.RatingBarLayout;
 
 import java.io.File;
@@ -200,12 +203,38 @@ public class DtvContentsDetailFragment extends Fragment {
         if (mOtherContentsDetailData != null) {
             if (mOtherContentsDetailData.isClipExec()) {
                 clipButton.setVisibility(View.VISIBLE);
-                if (mOtherContentsDetailData.isClipStatus()) {
-                    clipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
-                    clipButton.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
+                if (!UserInfoUtils.getClipActive(getActivity())) {
+                    //未ログイン又は未契約時はクリップボタンを非活性にする
+                    clipButton.setBackgroundResource(R.mipmap.icon_tap_circle_normal_clip);
                 } else {
-                    clipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
-                    clipButton.setTag(BaseActivity.CLIP_OPACITY_STATUS);
+                    if (mOtherContentsDetailData.isClipStatus()) {
+                        clipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                        clipButton.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
+                    } else {
+                        clipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
+                        clipButton.setTag(BaseActivity.CLIP_OPACITY_STATUS);
+                    }
+
+                    clipButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(final View view) {
+                            //クリップボタンイベント
+                            if (mIsContract) {
+                                ClipRequestData data = setClipData(mOtherContentsDetailData.getVodMetaFullData());
+                                //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、タグでクリップ済/未を判定する
+                                Object clipTag = mClipButton.getTag();
+                                if (clipTag.equals(BaseActivity.CLIP_ACTIVE_STATUS)) {
+                                    data.setClipStatus(true);
+                                } else {
+                                    data.setClipStatus(false);
+                                }
+                                ((BaseActivity) mActivity).sendClipRequest(data, clipButton);
+                            } else {
+                                //未契約時は契約導線を表示するためActivityに通知
+                                ((ContentDetailActivity) mActivity).leadingContract();
+                            }
+                        }
+                    });
                 }
             } else {
                 clipButton.setVisibility(View.GONE);
@@ -213,27 +242,6 @@ public class DtvContentsDetailFragment extends Fragment {
         } else {
             clipButton.setVisibility(View.GONE);
         }
-
-        clipButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                //クリップボタンイベント
-                if (mIsContract) {
-                    ClipRequestData data = setClipData(mOtherContentsDetailData.getVodMetaFullData());
-                    //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、タグでクリップ済/未を判定する
-                    Object clipTag = mClipButton.getTag();
-                    if (clipTag.equals(BaseActivity.CLIP_ACTIVE_STATUS)) {
-                        data.setClipStatus(true);
-                    } else {
-                        data.setClipStatus(false);
-                    }
-                    ((BaseActivity) mActivity).sendClipRequest(data, clipButton);
-                } else {
-                    //未契約時は契約導線を表示するためActivityに通知
-                    ((ContentDetailActivity) mActivity).leadingContract();
-                }
-            }
-        });
     }
 
     /**
@@ -600,6 +608,11 @@ public class DtvContentsDetailFragment extends Fragment {
      */
     public void changeVisibilityRecordingReservationIcon(final int visibility) {
         DTVTLogger.start("setVisibility:" + visibility);
+        //未ログイン又は未契約時は録画ボタンを非活性
+        if (!UserInfoUtils.getClipActive(getActivity())) {
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.icon_tap_circle_normal_rec);
+            mRecordButton.setImageBitmap(bitmap);
+        }
         mRecordButton.setVisibility(visibility);
         DTVTLogger.end();
     }
@@ -611,7 +624,8 @@ public class DtvContentsDetailFragment extends Fragment {
      */
     public void setRecordingReservationIconListener(final RecordingReservationIconListener listener) {
         DTVTLogger.start();
-        if (listener != null) {
+        //未ログイン又は未契約時は録画ボタンを非活性
+        if (listener != null && UserInfoUtils.getClipActive(getActivity())) {
             DTVTLogger.debug("setOnClickListener");
             mIconClickListener = listener;
             mRecordButton.setOnClickListener(new View.OnClickListener() {

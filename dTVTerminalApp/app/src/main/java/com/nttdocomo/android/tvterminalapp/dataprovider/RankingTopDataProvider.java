@@ -15,7 +15,6 @@ import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
@@ -36,7 +35,6 @@ import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
@@ -653,7 +651,6 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         DTVTLogger.start();
         List<ContentsData> rankingContentsDataList = new ArrayList<>();
         ContentsData rankingContentInfo;
-        UserState userState = UserInfoUtils.getUserState(mContext);
         if (dailyRankMapList != null) {
             for (int i = 0; i < dailyRankMapList.size(); i++) {
                 rankingContentInfo = new ContentsData();
@@ -680,7 +677,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 rankingContentInfo.setDtvType(dtvType);
                 rankingContentInfo.setDispType(dispType);
                 rankingContentInfo.setTvService(map.get(JsonConstants.META_RESPONSE_TV_SERVICE));
-                rankingContentInfo.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
+                rankingContentInfo.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
                 rankingContentInfo.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
                 rankingContentInfo.setChannelNo(map.get(JsonConstants.META_RESPONSE_CHNO));
                 rankingContentInfo.setPublishStartDate(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE));
@@ -986,6 +983,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         }
     }
 
+    @SuppressWarnings("OverlyLongMethod")
     @Override
     public List<Map<String, String>> dbOperation(final int operationId) {
         HomeDataManager homeDataManager;
