@@ -30,6 +30,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.MyChannelDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
@@ -39,6 +40,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopScaledProListDa
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.ProgramRecyclerView;
 import com.nttdocomo.android.tvterminalapp.view.ProgramScrollView;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
@@ -71,7 +73,7 @@ public class TvProgramListActivity extends BaseActivity implements
     /**
      * マイチャンネルタブインデックス.
      */
-    private static final int INDEX_TAB_MY_CHANNEL = 0;
+    private int mMyChannelTabNo = -1;
     /**
      * 番組パネルリサイクルビュー.
      */
@@ -424,7 +426,15 @@ public class TvProgramListActivity extends BaseActivity implements
      */
     private void setTabView() {
         DTVTLogger.start();
-        mProgramTabNames = getResources().getStringArray(R.array.tv_program_list_tab_names);
+        UserState userState = UserInfoUtils.getUserState(TvProgramListActivity.this);
+        //未ログイン状態ではマイ番組表タブを表示しない
+        if (userState.equals(UserState.LOGIN_NG)) {
+            mProgramTabNames = getResources().getStringArray(R.array.tv_program_list_no_login_tab_names);
+        } else {
+            mProgramTabNames = getResources().getStringArray(R.array.tv_program_list_tab_names);
+        }
+        //マイ番組表タブ位置取得
+        mMyChannelTabNo = getMyChannelTabNo(mProgramTabNames);
         if (mTabLayout == null) {
             mTabLayout = new TabItemLayout(this);
             mTabLayout.setTabClickListener(this);
@@ -435,6 +445,22 @@ public class TvProgramListActivity extends BaseActivity implements
             mTabLayout.resetTabView(mProgramTabNames);
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * マイ番組表タブの位置を取得する.
+     * @param tabNames タブ名配列
+     * @return マイ番組表タブ位置
+     */
+    private int getMyChannelTabNo(final String[] tabNames) {
+        int tabNo = -1;
+        for (int i = 0; i < tabNames.length; i++) {
+            if (tabNames[i].equals(getString(R.string.common_my_channel))) {
+                tabNo = i;
+                break;
+            }
+        }
+        return tabNo;
     }
 
     @Override
@@ -597,7 +623,7 @@ public class TvProgramListActivity extends BaseActivity implements
      * チャンネルデータ取得.
      */
     private void getChannelData() {
-        if (mTabIndex != INDEX_TAB_MY_CHANNEL) { //ひかり、dTVチャンネル
+        if (mTabIndex != mMyChannelTabNo) { //ひかり、dTVチャンネル
             mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
             mScaledDownProgramListDataProvider.getChannelList(0, 0, "", mTabIndex);
         } else { //MY番組表
@@ -730,7 +756,7 @@ public class TvProgramListActivity extends BaseActivity implements
         //TODO :★ここでAdaptor生成する
         //TODO :★Adaptorはチャンネルリストに対して、取得した番組情報をMappingして溜めていく
         //TODO :★また初回として先頭○○チャンネル分だけ番組データをリクエストする。○○はRecyclerのキャッシュと同じ分
-        if (mTabIndex == INDEX_TAB_MY_CHANNEL) {
+        if (mTabIndex == mMyChannelTabNo) {
             //MY番組表
             if (channels != null && channels.size() > 0) {
 //                sort(channels);
@@ -801,7 +827,7 @@ public class TvProgramListActivity extends BaseActivity implements
             mScaledDownProgramListDataProvider.getProgram(channelNos, dateList);
         } else {
             //「マイ番組が設定されていません」と表示される
-            if (mTabIndex == INDEX_TAB_MY_CHANNEL) {
+            if (mTabIndex == mMyChannelTabNo) {
                 showMyChannelNoItem(true);
             }
         }
@@ -896,7 +922,7 @@ public class TvProgramListActivity extends BaseActivity implements
                 }
             }
             //MY番組表情報がなければMY番組表を設定していないとする(データないので、特にタイムライン表示必要がない)
-            if (mTabIndex == INDEX_TAB_MY_CHANNEL) {
+            if (mTabIndex == mMyChannelTabNo) {
                 showMyChannelNoItem(true);
             } else {
                 mNoDataMessage.setVisibility(View.VISIBLE);
