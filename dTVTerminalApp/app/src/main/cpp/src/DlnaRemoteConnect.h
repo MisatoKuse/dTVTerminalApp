@@ -17,7 +17,7 @@ public:
     
     // callback
 public:
-    static std::function<void(eDiragConnectStatus status)> DiragConnectStatusChangeCallback;
+    static std::function<void(eDiragConnectStatus status, du_uint32 errorCode)> DiragConnectStatusChangeCallback;
     static std::function<void(bool result, eLocalRegistrationResultType resultType)> LocalRegistrationCallback;
     static std::function<void(ddtcp_ret ddtcpSinkAkeEndRet)> DdtcpSinkAkeEndCallback;
 

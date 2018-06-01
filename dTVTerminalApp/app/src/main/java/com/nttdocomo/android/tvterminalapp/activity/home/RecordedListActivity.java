@@ -284,6 +284,13 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         DTVTLogger.end();
     }
 
+    @Override
+    public void onConnectErrorCallback(final int errorCode) {
+        String errorMsg = getString(R.string.common_text_remote_fail_msg);
+        String format = getString(R.string.common_text_remote_fail_error_code_format);
+        showErrorDialog(errorMsg.replace(format, String.valueOf(errorCode)));
+    }
+
     /**
      * 機能
      * タブを切り替え.

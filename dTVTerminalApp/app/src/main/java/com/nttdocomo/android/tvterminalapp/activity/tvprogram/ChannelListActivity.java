@@ -382,6 +382,13 @@ public class ChannelListActivity extends BaseActivity implements
     }
 
     @Override
+    public void onConnectErrorCallback(final int errorCode) {
+        String errorMsg = getString(R.string.common_text_remote_fail_msg);
+        String format = getString(R.string.common_text_remote_fail_error_code_format);
+        showErrorDialog(errorMsg.replace(format, String.valueOf(errorCode)));
+    }
+
+    @Override
     public void onClickTab(final int position) {
         DTVTLogger.debug("position = " + position);
         if (null != mViewPager) {

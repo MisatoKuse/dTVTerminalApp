@@ -97,9 +97,9 @@ public class DlnaManager {
     public interface RemoteConnectStatusChangeListener {
         /**
          * リモート接続コールバック.
-         * @param connectStatus 接続状態
+         * @param errorCode エラーコード
          */
-        void onRemoteConnectStatusCallBack(RemoteConnectStatus connectStatus);
+        void onRemoteConnectStatusCallBack(int errorCode);
     }
     // endregion Listener declaration
     /**
@@ -431,8 +431,9 @@ public class DlnaManager {
     /**
      * リモート接続コールバック.
      * @param connectStatus 接続ステータス
+     * @param errorCode エラーコード
      */
-    public void RemoteConnectStatusCallBack(final int connectStatus) {
+    public void RemoteConnectStatusCallBack(final int connectStatus, final int errorCode) {
         DTVTLogger.warning("connectStatus = " + connectStatus);
         DlnaManager manager = DlnaManager.shared();
         RemoteConnectStatusChangeListener listener = manager.mRemoteConnectStatusChangeListener;
@@ -457,16 +458,13 @@ public class DlnaManager {
                 break;
             case REMOTE_CONNECT_STATUS_RECONNECTION:
                 status = RemoteConnectStatus.GAVEUP_RECONNECTION;
+                if (listener != null) {
+                    listener.onRemoteConnectStatusCallBack(errorCode);
+                }
                 break;
         }
         manager.remoteConnectStatus = status;
         DTVTLogger.warning("status = " + status);
-
-        if (listener != null) {
-            listener.onRemoteConnectStatusCallBack(status);
-        } else {
-            DTVTLogger.warning("no callback");
-        }
     }
     // endregion call from jni
 

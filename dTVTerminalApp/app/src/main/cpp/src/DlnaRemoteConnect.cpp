@@ -23,7 +23,7 @@
     #define DDTCP_CRYPTO_SHA1_DIGEST_SIZE 20
 #endif
 
-std::function<void(eDiragConnectStatus status)> DlnaRemoteConnect::DiragConnectStatusChangeCallback = nullptr;
+std::function<void(eDiragConnectStatus status, du_uint32 errorCode)> DlnaRemoteConnect::DiragConnectStatusChangeCallback = nullptr;
 std::function<void(bool result, eLocalRegistrationResultType resultType)> DlnaRemoteConnect::LocalRegistrationCallback = nullptr;
 std::function<void(ddtcp_ret ddtcpSinkAkeEndRet)> DlnaRemoteConnect::DdtcpSinkAkeEndCallback = nullptr;
 
@@ -45,6 +45,7 @@ typedef struct ake_handler_info {
 
 void dcp_connect_status_handler(drag_cp_connect_status status, void* arg) {
     eDiragConnectStatus retStatus;
+    drag_error_code errorCode = 0;
     switch(status) {
         case DRAG_CP_CONNECT_STATUS_UNKNOWN:
             LOG_WITH("DRAG_CP_CONNECT_STATUS_UNKNOWN");
@@ -65,10 +66,11 @@ void dcp_connect_status_handler(drag_cp_connect_status status, void* arg) {
         case DRAG_CP_CONNECT_STATUS_GAVEUP_RECONNECTION:
             LOG_WITH(">>> DRAG_CP_CONNECT_STATUS_GAVEUP_RECONNECTION <<<");
             retStatus = DiragConnectStatusGaveupReconnection;
+            errorCode = drag_cp_get_last_error();
             break;
     }
     if (DlnaRemoteConnect::DiragConnectStatusChangeCallback != nullptr) {
-        DlnaRemoteConnect::DiragConnectStatusChangeCallback(retStatus);
+        DlnaRemoteConnect::DiragConnectStatusChangeCallback(retStatus, errorCode);
     }
 }
 
