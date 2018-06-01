@@ -11,7 +11,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.Preference;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -63,6 +62,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopUserInfoDataCon
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -92,10 +92,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private LinearLayout mLinearLayout = null;
     /**
-     * 表示するコンテンツを内包するLinearLayout.
-     */
-    private RelativeLayout mRelativeLayout = null;
-    /**
      * 未契約者導線.
      */
     private LinearLayout mAgreementRl = null;
@@ -104,7 +100,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private ImageView mPrImageView = null;
     /**
-     * ホーム画面のスクロール部
+     * ホーム画面のスクロール部.
      */
     private ScrollView mScrollView = null;
     /**
@@ -272,16 +268,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mIsSearchDone = !showProgessBar;
         enableGlobalMenuIcon(!showProgessBar);
         mLinearLayout = findViewById(R.id.home_main_layout_linearLayout);
-        mRelativeLayout = findViewById(R.id.home_main_layout_progress_bar_Layout);
+        RelativeLayout relativeLayout = findViewById(R.id.home_main_layout_progress_bar_Layout);
         if (showProgessBar) {
             mLinearLayout.setVisibility(View.GONE);
-            mRelativeLayout.setVisibility(View.VISIBLE);
+            relativeLayout.setVisibility(View.VISIBLE);
         } else {
             mLinearLayout.setVisibility(View.VISIBLE);
-            mRelativeLayout.setVisibility(View.GONE);
+            relativeLayout.setVisibility(View.GONE);
 
             //プログレスの解除＝新情報の追加なので、スクロール位置の補正を行う
-            if(!mAlreadyScroll) {
+            if (!mAlreadyScroll) {
                 //既にユーザー操作によるスクロールがまだ行われていない場合は、補正を行う
                 mScrollView.setScrollY(0);
             }
@@ -441,8 +437,20 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 //dアカウント取得前と取得失敗の場合
                 if (mIsDaccountGetNg) {
                     DTVTLogger.debug("showHomeBanner_mIsDaccountGetNg");
+                    //バナーのテキストを書き換える
+                    TextView textView = findViewById(R.id.home_main_layout_top_wire_area_text);
+                    textView.setText(getString(R.string.home_no_login_info_text));
+                    TextView loginButton = findViewById(R.id.home_main_layout_kytv);
+                    loginButton.setText(getString(R.string.home_login_button));
+                    loginButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(final View v) {
+                            //Dアカウント設定
+                            DaccountUtils.startDAccountApplication(HomeActivity.this);
+                        }
+                    });
                     //dアカウントが取得できない事が確定したので、PR画像のバナーを表示する
-                    mAgreementRl.setVisibility(View.GONE);
+                    mAgreementRl.setVisibility(View.VISIBLE);
                     mPrImageView.setVisibility(View.VISIBLE);
                     break;
                 }

@@ -100,6 +100,7 @@
     <string name="get_user_info_error_message">ひかりTV for docomoの契約情報取得に失敗しました</string>
     <string name="get_contents_data_error_message">情報の取得に失敗したため、一部のコンテンツのみ表示します。\nしばらく経ってから再度お試しください。</string>
     <string name="home_no_contract_info_text">ご利用中のdアカウントでひかりTV for docomoの契約がありません</string>
+    <string name="home_no_login_info_text">dアカウントでログインしてください</string>
     <string name="home_contract_button_text">契約する</string>
     <string name="home_contents_pipe">" | "</string>
     <string name="home_contents_hyphen">" - "</string>
@@ -110,6 +111,7 @@
     <string name="home_label_recommend_program">おすすめ番組</string>
     <string name="home_label_recommend_video">おすすめビデオ</string>
     <string name="home_label_now_on_air">NOW ON AIR</string>
+    <string name="home_login_button">ログイン</string>
 
     <!-- クリップ一覧 -->
     <string name="str_clip_activity_title">クリップ</string>
