@@ -293,7 +293,7 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
             g_ctx.javaVM->DetachCurrentThread();
         }
     };
-    dlnaRemoteConnect->DiragConnectStatusChangeCallback = [](eDiragConnectStatus connectStatus) {
+    dlnaRemoteConnect->DiragConnectStatusChangeCallback = [](eDiragConnectStatus connectStatus, du_uint32 errorCode) {
         JNIEnv *_env = NULL;
         int status = g_ctx.javaVM->GetEnv((void **) &_env, JNI_VERSION_1_6);
         bool isAttached = false;
@@ -325,8 +325,9 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
             default:
                 break;
         }
-        jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "RemoteConnectStatusCallBack", "(I)V");
-        _env->CallVoidMethod(g_ctx.jniHelperObj, methodID, connectStatusType);
+        jint errorResult = errorCode;
+        jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "RemoteConnectStatusCallBack", "(II)V");
+        _env->CallVoidMethod(g_ctx.jniHelperObj, methodID, connectStatusType, errorResult);
 
         if (isAttached) {
             g_ctx.javaVM->DetachCurrentThread();

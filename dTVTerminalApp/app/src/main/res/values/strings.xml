@@ -48,6 +48,8 @@
     <string name="common_text_regist_progress_done">完了しました</string>
     <string name="common_text_regist_over_error">ペアリングの台数が上限に達しました。\nドコモテレビターミナルでペアリングを解除してください。解除方法はヘルプをご覧ください。リモート設定は、「メニュー＞設定＞リモート設定」であとから設定できます。</string>
     <string name="common_text_regist_other_error">リモート視聴設定に失敗しました</string>
+    <string name="common_text_remote_fail_msg">リモート接続に失敗しました（MP-XXXX）</string>
+    <string name="common_text_remote_fail_error_code_format">XXXX</string>
 
 
     <!-- Launch -->

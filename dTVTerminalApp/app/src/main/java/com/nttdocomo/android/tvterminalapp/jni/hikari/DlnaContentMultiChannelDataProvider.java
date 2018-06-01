@@ -14,7 +14,7 @@ import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
  * 多チャンネル
  * 機能：DlnaからActivityに多チャンネル一覧を提供するクラス.
  */
-public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseListener {
+public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseListener, DlnaManager.RemoteConnectStatusChangeListener {
 
     /**
      * callbackリスナー.
@@ -25,6 +25,11 @@ public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseLi
          * @param dlnaObject 多チャンネル再生情報
          */
         void multiChannelFindCallback(final DlnaObject dlnaObject);
+        /**
+         * 接続できない場合のエラーコールバック.
+         * @param errorCode エラーコード
+         */
+        void onConnectErrorCallback(final int errorCode);
     }
 
     /** チャンネル番号. */
@@ -53,6 +58,7 @@ public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseLi
     public void findChannelByChannelNo(final String mChannelNr) {
         this.mChannelNr = mChannelNr;
         DlnaManager.shared().mBrowseListener = this;
+        DlnaManager.shared().mRemoteConnectStatusChangeListener = this;
         DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(mContext, DlnaUtils.DLNA_DMS_MULTI_CHANNEL));
     }
 
@@ -67,5 +73,10 @@ public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseLi
         mOnMultiChCallbackListener.multiChannelFindCallback(null);
     }
 
-
+    @Override
+    public void onRemoteConnectStatusCallBack(final int errorCode) {
+        if (mOnMultiChCallbackListener != null) {
+            mOnMultiChCallbackListener.onConnectErrorCallback(errorCode);
+        }
+    }
 }

@@ -21,7 +21,10 @@ import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import java.util.List;
 import java.util.Map;
 
-public class DlnaContentBsChannelDataProvider implements DlnaManager.BrowseListener,
+/**
+ * BSデータプロバイダー.
+ */
+public class DlnaContentBsChannelDataProvider implements DlnaManager.BrowseListener, DlnaManager.RemoteConnectStatusChangeListener,
         DataBaseThread.DataBaseOperation {
 
     // declaration
@@ -34,14 +37,20 @@ public class DlnaContentBsChannelDataProvider implements DlnaManager.BrowseListe
          * @param objs コンテンツリスト
          */
         void onContentBrowseCallback(final DlnaObject[] objs);
+        /**
+         * 接続できない場合のエラーコールバック.
+         * @param errorCode エラーコード
+         */
+        void onConnectErrorCallback(final int errorCode);
     }
 
-    /**
-     * チャンネル検索.
-     */
+    /** チャンネル検索.*/
     private static final int CHANNEL_SELECT = 0;
+    /** チャンネル更新.*/
     private static final int CHANNEL_UPDATE = 1;
+    /** チャンネルリスト(BS).*/
     private DlnaObject[] mChannelList = null;
+    /** URL取得区別用.*/
     private String mContainerId = null;
     /**コールバック.*/
     private ContentsDataCallback mCallback = null;
@@ -75,6 +84,13 @@ public class DlnaContentBsChannelDataProvider implements DlnaManager.BrowseListe
             }
         } else {
             DTVTLogger.error("no ContentBrowseCallback");
+        }
+    }
+
+    @Override
+    public void onRemoteConnectStatusCallBack(final int errorCode) {
+        if (mCallback != null) {
+            mCallback.onConnectErrorCallback(errorCode);
         }
     }
 
@@ -134,6 +150,7 @@ public class DlnaContentBsChannelDataProvider implements DlnaManager.BrowseListe
      */
     public void browseContentWithContainerId(final Context context) {
         DlnaManager.shared().mBrowseListener = this;
+        DlnaManager.shared().mRemoteConnectStatusChangeListener = this;
         DlnaManager.shared().mContext = context;
         mContainerId = DlnaUtils.getContainerIdByImageQuality(context, DlnaUtils.DLNA_DMS_BS_CHANNEL);
         DateUtils dateUtils = new DateUtils(DlnaManager.shared().mContext);

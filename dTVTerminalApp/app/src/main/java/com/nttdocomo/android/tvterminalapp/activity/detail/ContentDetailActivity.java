@@ -562,13 +562,13 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         Object object = mIntent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
         if (object instanceof RecordedContentsDetailData) { //プレイヤーで再生できるコンテンツ
             mDisplayState = PLAYER_ONLY;
+            RecordedContentsDetailData playerData = mIntent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
             switch (StbConnectionManager.shared().getConnectionStatus()) {
                 case HOME_IN:
-                    RecordedContentsDetailData datas = mIntent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
-                    initPlayer(datas);
+                    initPlayer(playerData);
                     break;
                 default:
-                    setRemotePlayArrow();
+                    setRemotePlayArrow(playerData);
                     break;
             }
         }
@@ -2500,6 +2500,65 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     /**
+     * ひかりTV多チャンネルデータ取得.
+     */
+    private void getMultiChannelData() {
+        //放送中番組
+        DlnaContentMultiChannelDataProvider provider = new DlnaContentMultiChannelDataProvider(this,
+                new DlnaContentMultiChannelDataProvider.OnMultiChCallbackListener() {
+                    @Override
+                    public void multiChannelFindCallback(final DlnaObject dlnaObject) {
+                        if (dlnaObject != null) {
+                            //Threadクラスからのコールバックのため、UIスレッド化する
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    DTVTLogger.error("resultItem != null");
+                                    //player start
+                                    //放送中ひかりTVコンテンツの時は自動再生する
+                                    mDisplayState = PLAYER_AND_CONTENTS_DETAIL;
+                                    RecordedContentsDetailData data = new RecordedContentsDetailData();
+                                    data.setUpnpIcon("");
+                                    data.setResUrl(dlnaObject.mResUrl);
+                                    data.setSize(dlnaObject.mSize);
+                                    data.setDuration(dlnaObject.mDuration);
+                                    data.setVideoType(dlnaObject.mVideoType);
+                                    data.setBitrate(dlnaObject.mBitrate);
+                                    data.setIsLive(true);
+                                    switch (StbConnectionManager.shared().getConnectionStatus()) {
+                                        case HOME_IN:
+                                            data.setIsRemote(false);
+                                            break;
+                                        default:
+                                            data.setIsRemote(true);
+                                            break;
+                                    }
+                                    initPlayer(data);
+                                    onResume();
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onConnectErrorCallback(final int errorCode) {
+                        String errorMsg = getString(R.string.common_text_remote_fail_msg);
+                        String format = getString(R.string.common_text_remote_fail_error_code_format);
+                        showErrorDialog(errorMsg.replace(format, String.valueOf(errorCode)));
+                    }
+                });
+        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+        if (dlnaDmsItem != null) {
+            //この場合に使用するチャンネル番号を取得する
+            int convertedChannelNumber = convertChannelNumber(mChannel);
+            //変換後のチャンネルIDを使用して呼び出す
+            provider.findChannelByChannelNo(String.valueOf(convertedChannelNumber));
+        } else {
+            DTVTLogger.error("dlnaDmsItem == null");
+        }
+    }
+
+    /**
      * ひかりTV Now On Air の時のみ自動再生する.
      */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
@@ -2538,49 +2597,13 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             }
         } else {
             if (mDetailFullData.getContentsType().equals(ContentUtils.ContentsType.HIKARI_TV_NOW_ON_AIR)) {
-                DeviceStateUtils.PairingState pairingState = DeviceStateUtils.getPairingState(this, getStbStatus());
-                //宅内のみ自動再生
-                if (pairingState.equals(DeviceStateUtils.PairingState.INSIDE_HOUSE)) {
-                    //放送中番組
-                    DlnaContentMultiChannelDataProvider provider = new DlnaContentMultiChannelDataProvider(this,
-                            new DlnaContentMultiChannelDataProvider.OnMultiChCallbackListener() {
-                        @Override
-                        public void multiChannelFindCallback(final DlnaObject dlnaObject) {
-                            if (dlnaObject != null) {
-                                //Threadクラスからのコールバックのため、UIスレッド化する
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        DTVTLogger.error("resultItem != null");
-                                        //player start
-                                        //放送中ひかりTVコンテンツの時は自動再生する
-                                        mDisplayState = PLAYER_AND_CONTENTS_DETAIL;
-                                        RecordedContentsDetailData data = new RecordedContentsDetailData();
-                                        data.setUpnpIcon("");
-                                        data.setResUrl(dlnaObject.mResUrl);
-                                        data.setSize(dlnaObject.mSize);
-                                        data.setDuration(dlnaObject.mDuration);
-                                        data.setVideoType(dlnaObject.mVideoType);
-                                        data.setBitrate(dlnaObject.mBitrate);
-                                        data.setIsLive(true);
-                                        initPlayer(data);
-                                        onResume();
-                                    }
-                                });
-                            }
-                        }
-                    });
-                    DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-                    if (dlnaDmsItem != null) {
-                        //この場合に使用するチャンネル番号を取得する
-                        int convertedChannelNumber = convertChannelNumber(mChannel);
-                        //変換後のチャンネルIDを使用して呼び出す
-                        provider.findChannelByChannelNo(String.valueOf(convertedChannelNumber));
-                    } else {
-                        DTVTLogger.error("dlnaDmsItem == null");
-                    }
-                } else {
-                    setRemotePlayArrow();
+                switch (StbConnectionManager.shared().getConnectionStatus()) {
+                    case HOME_IN:
+                        getMultiChannelData();
+                        break;
+                    default:
+                        setRemotePlayArrow(null);
+                        break;
                 }
             }
         }
@@ -2615,8 +2638,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
     /**
      * リモート視聴用の再生ボタン表示.
+     *
+     * @param playData 再生用情報
      */
-    private void setRemotePlayArrow() {
+    private void setRemotePlayArrow(final RecordedContentsDetailData playData) {
         //再生ボタンは宅外かつ契約があるときのみ表示
         if (UserInfoUtils.isContract(this)) {
             mThumbnailBtn.setVisibility(View.VISIBLE);
@@ -2625,13 +2650,15 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             imageView.setImageBitmap(bmp);
             int pixelSize = getResources().getDimensionPixelSize(R.dimen.contents_detail_player_media_controller_size);
             imageView.setLayoutParams(new LinearLayout.LayoutParams(pixelSize, pixelSize));
-            //TODO クリックイベントを無効にするためにここでonClickListenerを生成(本実装ではクラス内のonClickメソッド内で実装することを想定)
             mThumbnailBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View view) {
-                    RecordedContentsDetailData datas = mIntent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
-                    initPlayer(datas);
-                    onResume();
+                    if (playData == null) {
+                        getMultiChannelData();
+                    } else {
+                        initPlayer(playData);
+                        onResume();
+                    }
                 }
             });
         }
