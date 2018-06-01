@@ -76,7 +76,6 @@ public class VideoTopActivity extends BaseActivity implements
     /**ジャンル・トップ・タイトル.*/
     private static final String VIDEO_GENRE_TOP_TITLE = "ビデオジャンル";
     // endregion variable
-
     // region Activity LifeCycle
     @Override
     protected void onCreate(final Bundle savedInstanceState) {

@@ -150,25 +150,25 @@ public class SearchTopActivity extends BaseActivity
      */
     private static final int TEXT_SIZE = 14;
     /**
-     * タブ名　テレビ.
+     * タブインデックス　テレビ.
      */
-    private static final String TAB_NAME_TV = "テレビ";
+    private static final int TAB_INDEX_TV = 0;
     /**
-     * タブ名　ビデオ.
+     * タブインデックス　ビデオ.
      */
-    private static final String TAB_NAME_VIDEO = "ビデオ";
+    private static final int TAB_INDEX_VIDEO = 1;
     /**
-     * タブ名　dTV.
+     * タブインデックス　dTV.
      */
-    private static final String TAB_NAME_DTV = "dTV";
+    private static final int TAB_INDEX_DTV = 2;
     /**
-     * タブ名　dTVチャンネル.
+     * タブインデックス　dTVチャンネル.
      */
-    private static final String TAB_NAME_DTV_CHANNEL = "dTVチャンネル";
+    private static final int TAB_INDEX_DTV_CHANNEL = 3;
     /**
-     * タブ名　dアニメストア.
+     * タブインデックス　dアニメストア.
      */
-    private static final String TAB_NAME_DANIME = "dアニメストア";
+    private static final int TAB_INDEX_DANIME = 4;
     /**
      * 最後に表示したタブindex.
      */
@@ -520,21 +520,20 @@ public class SearchTopActivity extends BaseActivity
      * 表示中タブの内容によってスクリーン情報を送信する
      */
     private void sendScreenViewForPosition(int position) {
-        String tabName = mTabNames[position];
-        switch (tabName) {
-            case TAB_NAME_TV:
+        switch (position) {
+            case TAB_INDEX_TV:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_search_result_tv));
                 break;
-            case TAB_NAME_VIDEO:
+            case TAB_INDEX_VIDEO:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_search_result_video));
                 break;
-            case TAB_NAME_DTV:
+            case TAB_INDEX_DTV:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_search_result_dtv));
                 break;
-            case TAB_NAME_DTV_CHANNEL:
+            case TAB_INDEX_DTV_CHANNEL:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_search_result_dtv_channel));
                 break;
-            case TAB_NAME_DANIME:
+            case TAB_INDEX_DANIME:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_search_result_danime));
                 break;
         }

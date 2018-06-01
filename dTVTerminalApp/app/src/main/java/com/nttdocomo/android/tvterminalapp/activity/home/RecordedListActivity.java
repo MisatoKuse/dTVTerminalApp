@@ -98,10 +98,18 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private static final int ALL_RECORD_LIST = 0;
     /** ダウンロード済み. */
     private static final int DOWNLOAD_OVER = 1;
-    /** タブ名　すべて. */
-    private static final String TAB_NAME_ALL = "すべて";
-    /** タブ名　ダウンロード済み. */
-    private static final String TAB_NAME_DOWONLOAD_COMPLETED = "ダウンロード済み";
+    /**
+     * エラーを返すハンドラー.
+     */
+    private Handler mHandler = new Handler();
+    /**
+     * タブインデックス　すべて.
+     */
+    private static final int TAB_INDEX_ALL = 0;
+    /**
+     * タブインデックス　ダウンロード済み.
+     */
+    private static final int TAB_INDEX_DOWONLOAD_COMPLETED = 1;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -257,12 +265,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * 表示中タブの内容によってスクリーン情報を送信する
      */
     private void sendScreenViewForPosition(int position) {
-        String tabName = mTabNames[position];
-        switch (tabName) {
-            case TAB_NAME_ALL:
+        switch (position) {
+            case TAB_INDEX_ALL:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_recording_list));
                 break;
-            case TAB_NAME_DOWONLOAD_COMPLETED:
+            case TAB_INDEX_DOWONLOAD_COMPLETED:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_recording_list_takeout));
                 break;
         }
@@ -304,19 +311,15 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         }
         showProgressBar();
         mNoDataMessage.setVisibility(View.GONE);
-        if (mTabNames.length == 1) {
-            setRecordedTakeOutContents();
-        } else {
-            switch (mViewPager.getCurrentItem()) {
-                case ALL_RECORD_LIST:
-                    getData();
-                    break;
-                case DOWNLOAD_OVER:
-                    setRecordedTakeOutContents();
-                    break;
-                default:
-                    break;
-            }
+        switch (mViewPager.getCurrentItem()) {
+            case ALL_RECORD_LIST:
+                getData();
+                break;
+            case DOWNLOAD_OVER:
+                setRecordedTakeOutContents();
+                break;
+            default:
+                break;
         }
     }
 

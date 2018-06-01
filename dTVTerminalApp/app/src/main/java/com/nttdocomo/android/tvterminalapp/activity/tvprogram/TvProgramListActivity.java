@@ -191,17 +191,17 @@ public class TvProgramListActivity extends BaseActivity implements
      */
     private static final String DATE_LINE = "-";
     /**
-     * タブ名　マイ番組表.
+     * タブインデックス　マイ番組表.
      */
-    private static final String TAB_NAME_MY_PROGRAM = "マイ番組表";
+    private static final int TAB_INDEX_MY_PROGRAM = 0;
     /**
-     * タブ名　ひかりTV for docomo.
+     * タブインデックス　ひかりTV for docomo.
      */
-    private static final String TAB_NAME_HIKARI = "ひかりTV for docomo";
+    private static final int TAB_INDEX_HIKARI = 1;
     /**
-     * タブ名　dTVチャンネル.
+     * タブインデックス　dTVチャンネル.
      */
-    private static final String TAB_NAME_DTV = "dTVチャンネル";
+    private static final int TAB_INDEX_DTV = 2;
     /**
      * マイ番組表データプロバイダー.
      */
@@ -442,7 +442,7 @@ public class TvProgramListActivity extends BaseActivity implements
         DTVTLogger.start("position = " + position);
         if (mTabIndex != position) {
             mTabIndex = position;
-            sendScreenViewForPosition(mTabIndex);
+            sendScreenViewForPosition(position);
             clearData();
             getChannelData();
             DTVTLogger.end();
@@ -453,15 +453,14 @@ public class TvProgramListActivity extends BaseActivity implements
      * 表示中タブの内容によってスクリーン情報を送信する
      */
     private void sendScreenViewForPosition(int position) {
-        String tabName = mProgramTabNames[position];
-        switch (tabName) {
-            case TAB_NAME_MY_PROGRAM:
+        switch (position) {
+            case TAB_INDEX_MY_PROGRAM:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_program_list_mine));
                 break;
-            case TAB_NAME_HIKARI:
+            case TAB_INDEX_HIKARI:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_program_list_h4d));
                 break;
-            case TAB_NAME_DTV:
+            case TAB_INDEX_DTV:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_program_list_dtv_channel));
                 break;
         }
@@ -479,8 +478,8 @@ public class TvProgramListActivity extends BaseActivity implements
             @Override
             public void onScrolled(final RecyclerView recyclerView, final int dx, final int dy) {
                 if (recyclerView.getScrollState() != RecyclerView.SCROLL_STATE_IDLE) {
-                        programList.stopScroll();
-                        programList.scrollBy(dx, dy);
+                    programList.stopScroll();
+                    programList.scrollBy(dx, dy);
                 }
             }
 
@@ -495,8 +494,8 @@ public class TvProgramListActivity extends BaseActivity implements
             public void onScrolled(final RecyclerView recyclerView, final int dx, final int dy) {
                 mScrollOffset = dx;
                 if (recyclerView.getScrollState() != RecyclerView.SCROLL_STATE_IDLE) {
-                        channelList.stopScroll();
-                        channelList.scrollBy(dx, dy);
+                    channelList.stopScroll();
+                    channelList.scrollBy(dx, dy);
                 }
             }
 
@@ -645,7 +644,7 @@ public class TvProgramListActivity extends BaseActivity implements
                 linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
                 mProgramRecyclerView.setLayoutManager(linearLayoutManager);
             }
-        //以前のアダプタに設定されている値を取得して追加.
+            //以前のアダプタに設定されている値を取得して追加.
 //        if (mTvProgramListAdapter != null) {
 //            List<ChannelInfo> oldChannelInfo = mTvProgramListAdapter.getProgramList();
 //            for (ChannelInfo oldChannel : oldChannelInfo) {
@@ -796,7 +795,7 @@ public class TvProgramListActivity extends BaseActivity implements
             channelNos[i] = channelList.get(i).getChannelNo();
         }
         if (channelNos.length != 0) {
-        	//マイ番組表設定されていない場合、通信しない
+            //マイ番組表設定されていない場合、通信しない
             String dateStr = mSelectDateStr.replace("-", "");
             String[] dateList = {dateStr};
             mScaledDownProgramListDataProvider.getProgram(channelNos, dateList);

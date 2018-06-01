@@ -33,6 +33,7 @@ import com.nttdocomo.android.tvterminalapp.fragment.cliplist.ClipListFragmentFac
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -160,14 +161,10 @@ public class ClipListActivity extends BaseActivity implements
      * 表示中タブの内容によってスクリーン情報を送信する
      */
     private void sendScreenViewForPosition(int position) {
-        String tabName = mTabNames[position];
-        switch (tabName) {
-            case TAB_NAME_TV:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_clip_tv));
-                break;
-            case TAB_NAME_VIDEO:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_clip_video));
-                break;
+        if (position == 0) {
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_clip_tv));
+        } else {
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_clip_video));
         }
     }
 
@@ -573,7 +570,7 @@ public class ClipListActivity extends BaseActivity implements
                 }
             }
         });
-       mTabLayout = initTabData(mTabLayout, mTabNames);
+        mTabLayout = initTabData(mTabLayout, mTabNames);
     }
 
     /**

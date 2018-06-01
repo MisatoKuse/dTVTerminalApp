@@ -388,6 +388,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
 
         initView();
         TextView statusTextView = findViewById(R.id.stb_select_status_text);
+
         if (mIsAppDL) {
             //dアカウントアプリDLからの戻り時、各種Viewを初期状態に戻す
             mIsAppDL = false;
@@ -758,7 +759,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
 
         mContentsList.clear();
         mDlnaDmsItemList.clear();
-        
+
         for (int i = 0; i < mDlnaDmsInfo.size(); i++) {
             DlnaDmsItem item = mDlnaDmsInfo.get(i);
             DTVTLogger.debug("item.mFriendlyName = " + item.mFriendlyName);
@@ -1102,6 +1103,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                                 Intent homeIntent = new Intent(this, HomeActivity.class);
                                 homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(homeIntent);
+
                                 break;
                             default:
                                 break;

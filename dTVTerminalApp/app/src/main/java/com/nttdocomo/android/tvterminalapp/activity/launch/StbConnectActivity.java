@@ -52,7 +52,8 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
         Intent intent = getIntent();
         if (intent != null) {
             int startMode = intent.getIntExtra(StbSelectActivity.FROM_WHERE, -1);
-            if (startMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
+            if (startMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal())
+            {
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_paring_completed));
             } else {
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring_completed));

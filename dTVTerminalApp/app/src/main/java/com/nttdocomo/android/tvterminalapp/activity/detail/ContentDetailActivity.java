@@ -41,6 +41,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectActivity;
+import com.nttdocomo.android.tvterminalapp.application.TvtApplication;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
@@ -97,6 +98,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -509,6 +511,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             case PLAYER_ONLY:
                 break;
             case PLAYER_AND_CONTENTS_DETAIL:
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_player));
             case CONTENTS_DETAIL_ONLY:
                 if (mContentsDetailDataProvider != null) {
                     mContentsDetailDataProvider.enableConnect();
@@ -1180,28 +1183,30 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     /**
-     * 表示中タブの内容によってスクリーン情報を送信する
+     * 表示中タブの内容によってスクリーン情報を送信する.
      */
     private void sendScreenViewForPosition(int position) {
         String tabName = mTabNames[position];
-        switch (tabName) {
-            case TAB_CONTENTS_INFO:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_content_detail_other));
-                break;
-            case TAB_PROGRAM_DETAIL:
-                if (mIsHikariVod) {
-                    super.sendScreenView(getString(R.string.google_analytics_screen_name_content_detail_h4d_vod_program_detail));
-                } else {
-                    super.sendScreenView(getString(R.string.google_analytics_screen_name_content_detail_h4d_broadcast_program_detail));
-                }
-                break;
-            case TAB_NAME_CHANNEL:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_content_detail_h4d_broadcast_channel));
-                break;
-            case TAB_NAME_EPISODE:
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_content_detail_h4d_vod_episode));
-                break;
+
+        String screenName = getScreenNameMap().get(tabName);
+        super.sendScreenView(screenName);
+    }
+
+    /**
+     * スクリーン名マップを取得する.
+     */
+    private HashMap<String, String> getScreenNameMap() {
+        HashMap<String, String> screenNameMap = new HashMap<>();
+        screenNameMap.put(getString(R.string.contents_detail_tab_contents_info), getString(R.string.google_analytics_screen_name_content_detail_other));
+        if (mIsHikariVod) {
+            screenNameMap.put(getString(R.string.contents_detail_tab_program_detail), getString(R.string.google_analytics_screen_name_content_detail_h4d_vod_program_detail));
+        } else {
+            screenNameMap.put(getString(R.string.contents_detail_tab_program_detail), getString(R.string.google_analytics_screen_name_content_detail_h4d_broadcast_program_detail));
         }
+        screenNameMap.put(getString(R.string.contents_detail_tab_channel), getString(R.string.google_analytics_screen_name_content_detail_h4d_broadcast_channel));
+        screenNameMap.put(getString(R.string.contents_detail_tab_episode), getString(R.string.google_analytics_screen_name_content_detail_h4d_vod_episode));
+
+        return screenNameMap;
     }
 
     /**

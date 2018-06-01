@@ -98,6 +98,23 @@ public class ChannelListActivity extends BaseActivity implements
             };
 
     /**
+     * タブインデックス　ひかりTV for docomo.
+     */
+    private static final int TAB_INDEX_HIKARI = 0;
+    /**
+     * タブインデックス　地上波.
+     */
+    private static final int TAB_INDEX_TER = 1;
+    /**
+     * タブインデックス　BS.
+     */
+    private static final int TAB_INDEX_BS = 2;
+    /**
+     * タブインデックス　dTVチャンネル.
+     */
+    private static final int TAB_INDEX_DTV = 3;
+
+    /**
      * ひかりTV for docomoタブの連続更新防止用実行間隔.
      * これより短い間隔で呼ばれた場合は、スキップする
      */
@@ -402,18 +419,17 @@ public class ChannelListActivity extends BaseActivity implements
      * 表示中タブの内容によってスクリーン情報を送信する
      */
     private void sendScreenViewForPosition(int position) {
-        String tabName = mTabNames[position];
-        switch (tabName) {
-            case TAB_NAME_HIKARI:
+        switch (position) {
+            case TAB_INDEX_HIKARI:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_channel_list_h4d));
                 break;
-            case TAB_NAME_TER:
+            case TAB_INDEX_TER:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_channel_list_ter));
                 break;
-            case TAB_NAME_BS:
+            case TAB_INDEX_BS:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_channel_list_bs));
                 break;
-            case TAB_NAME_DTV:
+            case TAB_INDEX_DTV:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_channel_list_dtv));
                 break;
         }
