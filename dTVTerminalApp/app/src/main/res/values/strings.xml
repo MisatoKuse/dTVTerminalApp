@@ -50,6 +50,9 @@
     <string name="common_text_regist_other_error">リモート視聴設定に失敗しました</string>
     <string name="common_text_remote_fail_msg">リモート接続に失敗しました（MP-XXXX）</string>
     <string name="common_text_remote_fail_error_code_format">XXXX</string>
+    <string name="common_my_channel">マイ番組表</string>
+    <string name="common_hikari_tv_for_docomo">ひかりTV for docomo</string>
+    <string name="common_dtv_channel">dTVチャンネル</string>
 
 
     <!-- Launch -->
@@ -144,10 +147,14 @@
     <string name="str_watching_video_activity_title">視聴中ビデオ</string>
 
     <!-- TvProgram -->
+    <string-array name="tv_program_list_no_login_tab_names">
+        <item>@string/common_hikari_tv_for_docomo</item>
+        <item>@string/common_dtv_channel</item>
+    </string-array>
     <string-array name="tv_program_list_tab_names">
-        <item>マイ番組表</item>
-        <item>ひかりTV for docomo</item>
-        <item>dTVチャンネル</item>
+        <item>@string/common_my_channel</item>
+        <item>@string/common_hikari_tv_for_docomo</item>
+        <item>@string/common_dtv_channel</item>
     </string-array>
     <string name="tv_program_tip">マイ番組が設定されていません</string>
 
