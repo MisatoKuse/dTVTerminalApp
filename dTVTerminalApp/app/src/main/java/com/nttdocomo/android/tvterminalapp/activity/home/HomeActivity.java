@@ -35,6 +35,7 @@ import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewAdapter;
 import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewItemDecoration;
+import com.nttdocomo.android.tvterminalapp.application.TvtApplication;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
@@ -205,6 +206,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private int mOldScrollPosition = 0;
 
+    /**
+     * ホーム画面でOTTチェック処理フラグ
+     */
+    private boolean isOttChecked = false;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -286,6 +292,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     protected void onResume() {
+        //TODO: dアカウントチェック、serviceToken取得、契約情報取得一連化実装対応必要ですが、暫定的にdアカウントチェックのみ実装
+        if (!isOttChecked) {
+            isOttChecked = true;
+            setDaccountControl();
+        }
+
         //ユーザー情報取得開始(super.onResumeで行われるdアカウントの取得よりも先に行う事で、
         // dアカウントが未取得だった場合のユーザー情報再取得への流れを明確化する)
         getUserInfoStart();
