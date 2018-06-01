@@ -102,8 +102,8 @@ public class RemoteControlRelayClient {
     private static final String KEYCODE_TV_DATA_SERVICE = "KEYCODE_TV_DATA_SERVICE";
     /**keycode_power.*/
     private static final String KEYCODE_POWER = "KEYCODE_POWER";
-    /**keycode_rec_list.*/
-    private static final String KEYCODE_REC_LIST = "KEYCODE_REC_LIST";
+    /**keycode_record_list.*/
+    private static final String KEYCODE_RECORD_LIST = "KEYCODE_RECORD_LIST";
 
     /**
      * 受信キーコード名に対応する STBキーコード.
@@ -144,7 +144,7 @@ public class RemoteControlRelayClient {
             put(R.id.remote_controller_bt_notice, KEYCODE_INFO); // お知らせ
             put(R.id.remote_controller_bt_ddata, KEYCODE_TV_DATA_SERVICE); // dデータ
             put(R.id.remote_controller_iv_power, KEYCODE_POWER); // 電源
-            put(R.id.remote_controller_bt_record_list, KEYCODE_REC_LIST); // 録画リスト
+            put(R.id.remote_controller_bt_record_list, KEYCODE_RECORD_LIST); // 録画リスト
         }
     };
 
