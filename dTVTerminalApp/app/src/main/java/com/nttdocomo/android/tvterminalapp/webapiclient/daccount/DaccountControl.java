@@ -64,7 +64,7 @@ public class DaccountControl implements
     /**
      * 実行クラスの識別用固定値.
      */
-    private enum CheckLastClassEnum {
+    public enum CheckLastClassEnum {
         /**
          * サービス登録チェック.
          */

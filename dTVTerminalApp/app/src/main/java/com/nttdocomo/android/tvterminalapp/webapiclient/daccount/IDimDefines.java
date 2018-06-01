@@ -12,6 +12,13 @@ public class IDimDefines {
     /**
      * <pre>
      * 処理結果定義.
+     *     RemoteException.
+     * </pre>
+     */
+    public static final int RESULT_REMOTE_EXCEPTION = -15;
+    /**
+     * <pre>
+     * 処理結果定義.
      *     ユーザ状態異常.
      * </pre>
      */

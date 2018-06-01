@@ -318,7 +318,8 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     private void setShowVideoContent(final List<ContentsData> videoContentInfo) {
         if (null == videoContentInfo) {
             displayMoreData(false);
-
+            mNoDataMessage.setVisibility(View.VISIBLE);
+            mNoDataMessage.setText(getResources().getString(R.string.common_get_data_failed_message));
             //エラーメッセージを取得する
             ErrorState errorState = mVideoContentProvider.getError();
             if (errorState != null) {
@@ -328,10 +329,6 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
                     showDialogToClose(this, message);
                     return;
                 }
-            }
-            //対象のActivityが有効な状態になっているかを確認
-            if (!isFinishing()) {
-                showDialogToClose(this);
             }
             return;
         }

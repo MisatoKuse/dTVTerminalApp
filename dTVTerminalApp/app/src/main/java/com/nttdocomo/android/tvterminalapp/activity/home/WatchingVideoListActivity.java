@@ -281,6 +281,8 @@ public class WatchingVideoListActivity extends BaseActivity implements
                     ErrorState errorState = mWatchListenVideoListDataProvider.getError();
                     if (errorState != null) {
                         String message = errorState.getApiErrorMessage(getApplicationContext());
+                        mNoDataMessage.setVisibility(View.VISIBLE);
+                        mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
                         //有無で処理を分ける
                         if (!TextUtils.isEmpty(message)) {
                             showDialogToClose(context, message);

@@ -290,7 +290,7 @@ public class VideoTopActivity extends BaseActivity implements
             showProgressBar(false);
             //データ無しを表示
             mNoDataMessage.setVisibility(View.VISIBLE);
-
+            mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
             return;
         }
 

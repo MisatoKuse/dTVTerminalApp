@@ -163,6 +163,8 @@ public class PremiumVideoActivity extends BaseActivity implements
         ErrorState errorState = mRentalDataProvider.getError();
         if (errorState != null) {
             String message = errorState.getApiErrorMessage(getApplicationContext());
+            mNoDataMessage.setVisibility(View.VISIBLE);
+            mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
             if (!TextUtils.isEmpty(message)) {
                 showDialogToClose(this, message);
                 return;

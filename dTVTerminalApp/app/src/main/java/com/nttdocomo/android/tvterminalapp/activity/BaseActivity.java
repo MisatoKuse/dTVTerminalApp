@@ -1000,16 +1000,30 @@ public class BaseActivity extends FragmentActivity implements
             case RelayServiceResponseMessage.RELAY_RESULT_APPLICATION_NOT_INSTALL:
                 switch (appId) {
                     case DTV:
+                        message = getResources().getString(R.string.common_start_dtv_application_uninstall_error);
+                        showErrorDialog(message);
+                        break;
                     case DANIMESTORE:
+                        message = getResources().getString(R.string.common_start_d_animation_application_uninstall_error);
+                        showErrorDialog(message);
+                        break;
                     case DTVCHANNEL:
+                        message = getResources().getString(R.string.common_start_dtv_channel__application_uninstall_error);
+                        showErrorDialog(message);
+                        break;
                     case HIKARITV:
+                        message = getResources().getString(R.string.common_start_hikari_application_uninstall_error);
+                        showErrorDialog(message);
+                        break;
                     case DAZN:
-                        message = getResources().getString(R.string.main_setting_stb_application_launch_fail);
+                        message = getResources().getString(R.string.common_start_dazn_application_uninstall_error);
                         showErrorDialog(message);
                         break;
                     //ENUMをSwitchで使用する場合、未使用項目も記載しなければアナライザーがエラー扱いにしてしまうのでUNKNOWNを追加した、
                     case UNKNOWN:
                     default:
+                        message = getResources().getString(R.string.main_setting_stb_application_launch_fail);
+                        showErrorDialog(message);
                         break;
                 }
                 break;
@@ -1106,7 +1120,7 @@ public class BaseActivity extends FragmentActivity implements
         final Activity activity = this;
 
         //出力メッセージのデフォルトはdアカウント用
-        String printMessage = getString(R.string.d_account_chamge_message);
+        String printMessage = getString(R.string.d_account_change_message);
 
         //引数がある場合はその先頭を使用する
         if (message != null && message.length > 0) {
@@ -1705,13 +1719,49 @@ public class BaseActivity extends FragmentActivity implements
         //現状エラー文言は1種類なので、文言切り替えは必要ない
         CustomDialog errorDialog = new CustomDialog(
                 BaseActivity.this, CustomDialog.DialogType.ERROR);
-
+        int errorCode = 0;
+        DaccountControl.CheckLastClassEnum checkLastClassEnum = DaccountControl.CheckLastClassEnum.CHECK_SERVICE;
         //失敗原因コードを取得
         if (mDAccountControl != null) {
-            DTVTLogger.debug("daccount error code = " + mDAccountControl.getResult());
+            errorCode = mDAccountControl.getResult();
+            checkLastClassEnum =  mDAccountControl.getmResultClass();
         }
-
-        errorDialog.setContent(getString(R.string.d_account_regist_error));
+        if (DaccountControl.CheckLastClassEnum.REGIST_SERVICE.equals(checkLastClassEnum)
+                || DaccountControl.CheckLastClassEnum.CHECK_SERVICE.equals(checkLastClassEnum)
+                || DaccountControl.CheckLastClassEnum.ONE_TIME_PASS_WORD.equals(checkLastClassEnum)) {
+            switch (errorCode) {
+                case IDimDefines.RESULT_USER_INVALID_STATE:
+                    errorDialog.setContent(getString(R.string.d_account_user_abnormality_error));
+                    break;
+                case IDimDefines.RESULT_NETWORK_ERROR:
+                    errorDialog.setContent(getString(R.string.d_account_network_error));
+                    break;
+                case IDimDefines.RESULT_USER_TIMEOUT:
+                    errorDialog.setContent(getString(R.string.d_account_user_timeout_error));
+                    break;
+                case IDimDefines.RESULT_USER_CANCEL:
+                    errorDialog.setContent(getString(R.string.d_account_user_interruption_error));
+                    break;
+                case IDimDefines.RESULT_SERVER_ERROR:
+                    errorDialog.setContent(getString(R.string.d_account_server_error));
+                    break;
+                case IDimDefines.RESULT_INVALID_ID:
+                    errorDialog.setContent(getString(R.string.d_account_authentication_invalid_error));
+                    break;
+                case IDimDefines.RESULT_INTERNAL_ERROR:
+                    errorDialog.setContent(getString(R.string.d_account_internal_error));
+                    break;
+                case IDimDefines.RESULT_NOT_REGISTERED_SERVICE:
+                    errorDialog.setContent(getString(R.string.d_account_service_unregistered_error));
+                    break;
+                case IDimDefines.RESULT_REMOTE_EXCEPTION:
+                    errorDialog.setContent(getString((R.string.d_account_remote_exception_error)));
+                    break;
+                default:
+                    errorDialog.setContent(getString(R.string.d_account_regist_error));
+                    break;
+            }
+        }
         //次のダイアログを呼ぶ為の処理
         errorDialog.setDialogDismissCallback(BaseActivity.this);
 

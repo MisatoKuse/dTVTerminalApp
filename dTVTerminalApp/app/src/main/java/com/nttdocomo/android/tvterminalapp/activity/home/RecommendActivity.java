@@ -749,7 +749,7 @@ public class RecommendActivity extends BaseActivity implements
             //エラーメッセージを取得する
             String message = mScaledDownProgramListDataProvider.
                     getChannelError().getErrorMessage();
-
+            mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
             //有無で処理を分ける
             if (TextUtils.isEmpty(message)) {
                 showGetDataFailedToast();

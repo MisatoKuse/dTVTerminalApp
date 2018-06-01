@@ -122,7 +122,7 @@ class DaccountRegistService {
             } catch (RemoteException e) {
                 DTVTLogger.debug(e);
                 //例外が発生した場合は、自前で内部エラーにする
-                result = IDimDefines.RESULT_INTERNAL_ERROR;
+                result = IDimDefines.RESULT_REMOTE_EXCEPTION;
             }
 
             //結果コードを判定

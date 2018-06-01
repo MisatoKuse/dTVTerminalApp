@@ -302,6 +302,8 @@ public class ClipListActivity extends BaseActivity implements
             DTVTLogger.debug("ClipListActivity::TvClipListCallback, get data failed.");
             // ネットワークエラーの取得
             String message = mTvClipDataProvider.getNetworkError().getErrorMessage();
+            mNoDataMessage.setVisibility(View.VISIBLE);
+            mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
 
             //メッセージの有無で表示方法を分ける
             if (TextUtils.isEmpty(message)) {

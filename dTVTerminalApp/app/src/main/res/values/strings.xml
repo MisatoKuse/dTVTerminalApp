@@ -45,9 +45,23 @@
     <string name="common_until">まで</string>
     <string name="common_date_format_start_str">" から"</string>
     <string name="common_date_format_end_str">" まで"</string>
-    <string name="common_text_regist_progress_done">完了しました</string>
-    <string name="common_text_regist_over_error">ペアリングの台数が上限に達しました。\nドコモテレビターミナルでペアリングを解除してください。解除方法はヘルプをご覧ください。リモート設定は、「メニュー＞設定＞リモート設定」であとから設定できます。</string>
-    <string name="common_text_regist_other_error">リモート視聴設定に失敗しました</string>
+    <string name="common_text_regist_progress_done">設定を完了しました</string>
+    <string name="common_text_regist_over_error">リモート視聴可能な台数が上限に達しました。\nドコモテレビターミナルでペアリングを解除してください。\n解除方法はヘルプをご覧ください。</string>
+    <string name="common_text_regist_other_error">リモート視聴設定に失敗しました。</string>
+    <string name="common_start_dtv_application_uninstall_error">ドコモテレビターミナルにdTVアプリがインストールされていないため、起動に失敗しました</string>
+    <string name="common_start_d_animation_application_uninstall_error">ドコモテレビターミナルにdアニメストアアプリがインストールされていないため、起動に失敗しました</string>
+    <string name="common_start_dtv_channel__application_uninstall_error">ドコモテレビターミナルにdTVチャンネルアプリがインストールされていないため、起動に失敗しました</string>
+    <string name="common_start_hikari_application_uninstall_error">ドコモテレビターミナルにひかりTV for docomoアプリがインストールされていないため、起動に失敗しました</string>
+    <string name="common_start_dazn_application_uninstall_error">ドコモテレビターミナルにDAZN for docomoアプリがインストールされていないため、起動に失敗しました</string>
+    <string name="common_user_switch_key_code_power_internal_error">ドコモテレビターミナルのアプリの起動に失敗しました（A-11）</string>
+    <string name="common_user_switch_key_code_power_user_invalid_state_error">ドコモテレビターミナルのアプリの起動に失敗しました（A-12）</string>
+    <string name="common_user_switch_not_registered_service_error">ドコモテレビターミナルのアプリの起動に失敗しました（A-13）</string>
+    <string name="common_user_account_exist_user_invalid_state_error">ドコモテレビターミナルのアプリの起動に失敗しました（A-14）</string>
+    <string name="common_start_application_user_invalid_state_error">ドコモテレビターミナルのアプリの起動に失敗しました（A-15）</string>
+    <string name="common_default_error_message">ドコモテレビターミナルのアプリの起動に失敗しました（A-16）</string>
+    <string name="common_user_account_exist_internal_error">ドコモテレビターミナルのアプリの起動に失敗しました（A-17）</string>
+    <string name="common_start_application_internal_error">ドコモテレビターミナルのアプリの起動に失敗しました（A-18）</string>
+    <string name="common_title_detail_internal">ドコモテレビターミナルのアプリの起動に失敗しました（A-19）</string>
     <string name="common_text_remote_fail_msg">リモート接続に失敗しました（MP-XXXX）</string>
     <string name="common_text_remote_fail_error_code_format">XXXX</string>
     <string name="common_my_channel">マイ番組表</string>
@@ -74,18 +88,18 @@
     <string name="str_stb_select_result_text_failed">ペアリング可能なドコモテレビターミナルが\n見つかりませんでした</string>
     <string name="str_stb_select_result_text_search">ペアリング可能なドコモテレビターミナルを\n探しています</string>
     <string name="str_stb_search_failed_paring_again">再度ペアリングを実行する</string>
-    <string name="str_stb_not_registration_account_message">ドコモテレビターミナルに\ndアカウントが登録されていません</string>
+    <string name="str_stb_not_registration_account_message">ドコモテレビターミナルに\nログイン中のdアカウントが登録されていません</string>
     <string name="str_stb_login_other_account">別のdアカウントでログインする</string>
     <string name="str_stb_d_account_registration_help">ドコモテレビターミナルに\ndアカウントを登録するには</string>
     <string name="str_stb_input_activation_code">ペアリングコードを入力する</string>
-    <string name="str_stb_again_pairing">再度ペアリングを実行する</string>
+    <string name="str_stb_again_pairing">再度ペアリングを行う</string>
 
     <string name="str_stb_pairing">ドコモテレビターミナルとペアリング中です</string>
-    <string name="str_stb_stb_error">dアカウントの処理に失敗しました</string>
+    <string name="str_launch_stb_communication_failed_error">ドコモテレビターミナルとの通信に失敗しました（A-10）</string>
 
     <!-- リモコン-->
     <string name="remote_controller_viewpager_watch_by_tv">テレビで視聴する</string>
-    <string name="remote_controller_viewpager_text_use_remote">リモコンを使う</string>
+    <string name="remote_controller_viewpager_text_use_remote">リモコンを表示する</string>
     <!-- Home -->
     <string name="recommend_list_title">おすすめ番組・ビデオ</string>
     <string name="home_now_on_air_channel_list">チャンネルリスト</string>
@@ -184,7 +198,7 @@
     <string name="video_list_genre_dtv">dTV</string>
 
     <!-- Search -->
-    <string name="keyword_search_title">キーワード検索</string>
+    <string name="keyword_search_title">キーワードで探す</string>
     <string name="keyword_search_hint">検索するキーワードを入力</string>
     <string name="keyword_search_default_count">検索結果:0件</string>
     <string name="keyword_search_result">検索結果:</string>
@@ -295,7 +309,7 @@
     <string name="recording_reservation_failed_dialog_over">登録件数が上限に達したため録画予約に失敗しました</string>
     <string name="recording_reservation_failed_dialog_no_agreement">未契約エラー</string>
     <string name="recording_reservation_confirm_dialog_title">録画予約しますか？</string>
-    <string name="recording_reservation_confirm_dialog_msg">録画予約依頼を行います。録画予約が受け付けられるまで、時間がかかる場合がありますのでご注意ください。</string>
+    <string name="recording_reservation_confirm_dialog_msg">録画予約を行います。録画予約が受け付けられるまで、時間がかかる場合がありますのでご注意ください。</string>
     <string name="recording_reservation_confirm_dialog_confirm">録画予約する</string>
     <string name="recording_reservation_confirm_dialog_cancel">キャンセル</string>
     <string name="contents_detail_contract_text_vod">ご覧になるにはコンテンツの契約が必要です。\nドコモテレビターミナルで契約してください。</string>
@@ -334,13 +348,14 @@
     <string name="main_setting_quality_setting_header">外出先視聴時の画質設定</string>
     <string name="main_setting_application_info_header">アプリケーション情報</string>
     <string name="main_setting_quality_status">status</string>
+    <string name="main_setting_remote_paring_request">ペアリングしてください</string>
     <string name="main_setting_stb_application_launch_fail">ドコモテレビターミナルのアプリの起動に失敗しました</string>
     <string name="main_setting_stb_application_launch_fail_id_notexist">本アプリでログインしているdアカウントのユーザーをドコモテレビターミナル（テレビ側）に登録してください。</string>
-    <string name="main_setting_dtv_update_message">ドコモテレビターミナルのdTVアプリのバージョンアップが必要です</string>
-    <string name="main_setting_d_anime_store_update_message">ドコモテレビターミナルのdアニメストアアプリのバージョンアップが必要です</string>
-    <string name="main_setting_dtv_channel_update_message">ドコモテレビターミナルのdTVチャンネルアプリのバージョンアップが必要です</string>
-    <string name="main_setting_hikari_tv_update_message">ドコモテレビターミナルのひかりTV for docomoアプリのバージョンアップが必要です</string>
-    <string name="main_setting_dazn_update_message">ドコモテレビターミナルのダ・ゾーンのバージョンアップが必要です。</string>
+    <string name="main_setting_dtv_update_message">ドコモテレビターミナルのdTVアプリを最新バージョンにアップデートしてください</string>
+    <string name="main_setting_d_anime_store_update_message">ドコモテレビターミナルのdアニメストアアプリを最新バージョンにアップデートしてください</string>
+    <string name="main_setting_dtv_channel_update_message">ドコモテレビターミナルのdTVチャンネルアプリを最新バージョンにアップデートしてください</string>
+    <string name="main_setting_hikari_tv_update_message">ドコモテレビターミナルのひかりTV for docomoアプリを最新バージョンにアップデートしてください</string>
+    <string name="main_setting_dazn_update_message">ドコモテレビターミナルのDAZN for docomoアプリを最新バージョンにアップデートしてください</string>
     <string name="main_setting_connect_error_message">ドコモテレビターミナルとの通信に失敗しました</string>
     <string name="main_setting_stb_busy_error_message">ドコモテレビターミナルが処理中です</string>
     <string name="main_setting_logon_request_error_message">ログインしてください</string>
@@ -348,7 +363,8 @@
     <string name="main_setting_stb_not_connected_message">ドコモテレビターミナルとの通信が確認できないため\nご利用になれません。</string>
     <string name="main_setting_menu_title_faq_list">FAQ</string>
     <string name="main_setting_remote_start">main_setting_remote_start</string>
-    <string name="main_setting_remote_confirm_message">外出先でも視聴できるリモート視聴設定を有効にしますか？リモート設定は、「メニュー＞設定＞リモート設定」であとから設定できます。</string>
+    <string name="main_setting_remote_confirm_message_setting">外出先でも視聴できるリモート視聴設定を有効にしますか？</string>
+    <string name="main_setting_remote_confirm_message_first_start">外出先でも視聴できるリモート視聴設定を有効にしますか？リモート設定は、「メニュー＞設定＞リモート視聴設定」であとからも設定できます</string>
     <string name="main_setting_menu_title_license">ライセンス情報</string>
     <string name="main_setting_menu_title_privacy_policy">プライバシーポリシー</string>
     <string name="main_setting_menu_title_app">アプリケーション・プライバシーポリシー</string>
@@ -371,12 +387,21 @@
     <string name="my_channel_list_setting">マイ番組表設定</string>
     <string name="my_channel_list_setting_select_channel">チャンネルを選択</string>
     <string name="my_channel_list_setting_failed_dialog_content_register">マイ番組表の登録に失敗しました</string>
-    <string name="my_channel_list_setting_failed_dialog_content_unregister">マイ番組表の削除に失敗しました</string>
+    <string name="my_channel_list_setting_failed_dialog_content_unregister">マイ番組表からの解除に失敗しました</string>
     <string name="my_channel_list_setting_dialog_content_unregister">をマイ番組表から解除しますか？</string>
 
     <!-- dアカウント登録 -->
     <string name="d_account_regist_error">dアカウントの処理に失敗しました</string>
-    <string name="d_account_chamge_message">dアカウントが変更されたため、ホーム画面に戻ります</string>
+    <string name="d_account_remote_exception_error">dアカウントの処理に失敗しました（A-1）</string>
+    <string name="d_account_service_unregistered_error">dアカウントの処理に失敗しました（A-2）</string>
+    <string name="d_account_authentication_invalid_error">dアカウントの処理に失敗しました（A-3）</string>
+    <string name="d_account_user_timeout_error">dアカウントの処理に失敗しました（A-4）</string>
+    <string name="d_account_user_interruption_error">dアカウントの処理に失敗しました（A-5）</string>
+    <string name="d_account_user_abnormality_error">dアカウントの処理に失敗しました（A-6）</string>
+    <string name="d_account_server_error">dアカウントの処理に失敗しました（A-7）</string>
+    <string name="d_account_network_error">dアカウントの処理に失敗しました（A-8）</string>
+    <string name="d_account_internal_error">dアカウントの処理に失敗しました（A-9）</string>
+    <string name="d_account_change_message">dアカウントが変更されたため、ホーム画面に戻ります</string>
 
     <!-- お知らせ -->
     <string name="information_title">お知らせ</string>
@@ -394,11 +419,15 @@
     <!-- TODO: ネットワークエラー（仮）ワーディングが確定するまでの文言 -->
     <!-- メッセージ自体は細分化せず、2種類に留める予定 -->
     <string name="nw_error_message">通信時に問題が発生しました</string>
-    <string name="nw_error_ssl_message">SSL証明書に問題が発生しました</string>
+    <string name="network_server_error_message">サーバとの接続に失敗しました</string>
+    <string name="network_token_error_message">ユーザ情報の取得に失敗しました</string>
+    <string name="network_nw_error_message">ネットワークに接続されていません。ネットワーク接続をご確認ください</string>
+    <string name="network_ssl_error_message">SSL通信に失敗しました</string>
+    <string name="network_http_error_message">サーバとの通信に失敗しました</string>
 
     <!-- TODO: 設定ファイル動作制御用仮ワーディング -->
-    <string name="setting_file_force_download">新しいバージョンのアプリがリリースされたので、ダウンロードを行います</string>
-    <string name="setting_file_download">新しいバージョンのアプリがリリースされました。ダウンロードを行いますか？</string>
+    <string name="setting_file_force_download">ドコモテレビターミナルアプリの新バージョンがあります。アップデートを行います。</string>
+    <string name="setting_file_download">ドコモテレビターミナルアプリの新バージョンが存在します。アップデートを行いますか？</string>
     <string name="setting_file_stop_apli">アプリの動作が行えませんでした</string>
 
     <!-- チュートリアル -->
