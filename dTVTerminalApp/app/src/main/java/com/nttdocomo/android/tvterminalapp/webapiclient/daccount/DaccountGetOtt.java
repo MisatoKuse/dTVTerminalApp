@@ -15,6 +15,7 @@ import com.nttdocomo.android.idmanager.IDimServiceAppCallbacks;
 import com.nttdocomo.android.idmanager.IDimServiceAppService;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DaccountConstants;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 /**
  * dアカウント連携・OTT取得.
@@ -40,6 +41,11 @@ public class DaccountGetOtt {
      * dアカウント設定アプリの接続用のクラス.
      */
     private IDimServiceAppService mService = null;
+
+    /**
+     * OTT取得時再認証設定するかフラグ
+     */
+    private boolean isReauthorization = false;
 
     /**
      * 結果を返すコールバック.
@@ -133,8 +139,20 @@ public class DaccountGetOtt {
 
             //呼び出し用のパラメータの設定
             String serviceKey = DaccountConstants.getDaccountServiceKey();
-            //自動再認証OFFの設定
-            int option = IDimDefines.CertOption.RESERVE;
+            //自動再認証の設定
+            int option;
+            if (isReauthorization) {
+                String docomoId = SharedPreferencesUtils.getSharedPreferencesDaccountId(mContext);
+                if (docomoId == null || docomoId.isEmpty()) {
+                    //未ログインの時に、再認証はしない
+                    option = IDimDefines.CertOption.RESERVE;
+                } else {
+                    option = IDimDefines.CertOption.DEFAULT;
+                }
+            } else {
+                option = IDimDefines.CertOption.RESERVE;
+            }
+
             String appCheckKey = "";
 
             try {
@@ -181,15 +199,19 @@ public class DaccountGetOtt {
      *
      * (OTT取得処理重複実行防止付き)
      * @param context                コンテキスト
+     * @param isReauthorization      再認証するかフラグ
      * @param daccountGetOttCallBack 結果を返すコールバック
      */
     public synchronized void execDaccountGetOTT(
             final Context context,
+            final boolean isReauthorization,
             final DaccountGetOttCallBack daccountGetOttCallBack) {
         DTVTLogger.start();
         DTVTLogger.debug("DaccountGetOttCallBack = " + daccountGetOttCallBack);
+        this.isReauthorization = isReauthorization;
+        this.mDaccountGetOttCallBack = daccountGetOttCallBack;
         //同時に複数個実行されないようにする
-        mOttGetQueue.getOttAddOrExec(context, daccountGetOttCallBack);
+        mOttGetQueue.getOttAddOrExec(context, this);
         DTVTLogger.end();
     }
 
@@ -197,16 +219,13 @@ public class DaccountGetOtt {
      * OTT取得処理開始の実処理.
      *
      * @param context                コンテキスト
-     * @param daccountGetOttCallBack 結果を返すコールバック
      */
     synchronized void execDaccountGetOttReal(
-            final Context context,
-            final DaccountGetOttCallBack daccountGetOttCallBack) {
+            final Context context) {
         DTVTLogger.start();
 
         //コンテキストとコールバックの取得
         mContext = context;
-        mDaccountGetOttCallBack = daccountGetOttCallBack;
 
         //OTT取得処理の開始
         bindDimServiceAppService();

@@ -90,6 +90,20 @@ public class DaccountControl implements
     private boolean mIsCancel = false;
 
     /**
+     * OTTチェックが終了しているかどうか.
+     */
+    private boolean mIsOTTCheckFinished = false;
+
+    /**
+     * コールバックは失敗と成功しか返さないので、エラーの値が欲しい場合はこれで取得.
+     *
+     * @return OTTチェックの終了の値
+     */
+    public boolean getIsOTTCheckFinished() {
+        return mIsOTTCheckFinished;
+    }
+
+    /**
      * コールバックは失敗と成功しか返さないので、エラーの値が欲しい場合はこれで取得.
      *
      * @return エラーの値
@@ -176,6 +190,7 @@ public class DaccountControl implements
             //後ほど、dアカウント設定アプリがダウンロードされた場合、その直後のアクティビティの起動時に呼び出されるので、意図的にダウンロード直後に処理を
             //挿入する必要はない。
             DTVTLogger.end("not install idmanager");
+            mIsOTTCheckFinished = true;
             mDaccountControlCallBack.daccountControlCallBack(false);
             return;
         }
@@ -193,11 +208,12 @@ public class DaccountControl implements
                 //dアカウントは取れていないので、再取得
                 mContext = context;
                 mDaccountGetOtt = new DaccountGetOtt();
-                mDaccountGetOtt.execDaccountGetOTT(mContext, this);
+                mDaccountGetOtt.execDaccountGetOTT(mContext, true, this);
                 //クラスの識別値を設定
                 mResultClass = CheckLastClassEnum.ONE_TIME_PASS_WORD;
             } else {
                 DTVTLogger.debug("Daccount true return");
+                mIsOTTCheckFinished = true;
                 //dアカウントは取れているので、trueを返す
                 mDaccountControlCallBack.daccountControlCallBack(true);
             }
@@ -210,6 +226,7 @@ public class DaccountControl implements
 
         //ヌルではないコンテキストは後で使いまわす為に控える
         if (context == null) {
+            mIsOTTCheckFinished = true;
             //コンテキストが無いので、エラーで帰る
             mDaccountControlCallBack.daccountControlCallBack(false);
             DTVTLogger.end("no context");
@@ -250,6 +267,7 @@ public class DaccountControl implements
             //クラスの識別値を控える
             mResultClass = CheckLastClassEnum.REGIST_SERVICE;
         } else {
+            mIsOTTCheckFinished = true;
             //実行失敗なので、エラーを返す
             mDaccountControlCallBack.daccountControlCallBack(false);
 
@@ -275,10 +293,11 @@ public class DaccountControl implements
                 || result == IDimDefines.RESULT_RESULT_REGISTERED) {
             // 登録結果が登録/更新成功か、既に登録済みならば、ワンタイムパスワードの取得を行う
             mDaccountGetOtt = new DaccountGetOtt();
-            mDaccountGetOtt.execDaccountGetOTT(mContext, this);
+            mDaccountGetOtt.execDaccountGetOTT(mContext, true, this);
             //クラスの識別値を控える
             mResultClass = CheckLastClassEnum.ONE_TIME_PASS_WORD;
         } else {
+            mIsOTTCheckFinished = true;
             //実行失敗なので、エラーを返す
             // ここでサービス登録に失敗するのが、ワーディングリストの「サービス未登録」になる
             mDaccountControlCallBack.daccountControlCallBack(false);
@@ -305,6 +324,7 @@ public class DaccountControl implements
         // RESULT_INVALID_ID/RESULT_USER_TIMEOUT/RESULT_USER_CANCEL/RESULT_USER_INVALID_STATE/
         // RESULT_SERVER_ERROR/RESULT_NETWORK_ERROR/RESULT_INTERNAL_ERROR
         if (oneTimePassword == null || oneTimePassword.isEmpty()) {
+            mIsOTTCheckFinished = true;
             //ワンタイムトークン取得失敗
             //実行失敗なので、エラーを返す
             mDaccountControlCallBack.daccountControlCallBack(false);
@@ -336,6 +356,7 @@ public class DaccountControl implements
             //IDが変更されていた場合は、キャッシュクリアを呼ぶ
             DaccountControl.cacheClear(mContext, mDaccountGetOtt);
 
+            mIsOTTCheckFinished = true;
             //エラーを返す
             mDaccountControlCallBack.daccountControlCallBack(false);
 
@@ -352,6 +373,7 @@ public class DaccountControl implements
         //処理が正常に終わったので、フラグは初期化
         mDAccountBusy = false;
 
+        mIsOTTCheckFinished = true;
         //実行に成功したので、trueを返す
         mDaccountControlCallBack.daccountControlCallBack(true);
         DTVTLogger.end();
@@ -394,7 +416,7 @@ public class DaccountControl implements
      *
      * @param context コンテキスト
      */
-    static void cacheClear(final Context context) {
+    public static void cacheClear(final Context context) {
         //ワンタイムトークン取得クラスは未使用なのでヌル
         cacheClear(context, null);
     }

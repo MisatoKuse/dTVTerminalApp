@@ -124,7 +124,7 @@ public class SendOperateLog extends WebApiBase {
             if (!TextUtils.isEmpty(mCategoryId)) {
                 //dアカウントのワンタイムパスワードの取得を行う
                 mGetOtt = new DaccountGetOtt();
-                mGetOtt.execDaccountGetOTT(mContext, new DaccountGetOtt.DaccountGetOttCallBack() {
+                mGetOtt.execDaccountGetOTT(mContext, false, new DaccountGetOtt.DaccountGetOttCallBack() {
                     @Override
                     public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
                         //ワンタイムパスワードの取得後に呼び出す

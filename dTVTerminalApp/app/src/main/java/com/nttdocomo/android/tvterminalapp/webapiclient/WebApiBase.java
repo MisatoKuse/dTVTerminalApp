@@ -66,7 +66,7 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
         //Log.d(DCommon.LOG_DEF_TAG, "WebApiBase::get, url= " + url);
         //dアカウントのワンタイムパスワードの取得を行う
         final DaccountGetOtt getOtt = new DaccountGetOtt();
-        getOtt.execDaccountGetOTT(context, new DaccountGetOtt.DaccountGetOttCallBack() {
+        getOtt.execDaccountGetOTT(context, false, new DaccountGetOtt.DaccountGetOttCallBack() {
             @Override
             public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
                 //ワンタイムパスワードの取得後に呼び出す

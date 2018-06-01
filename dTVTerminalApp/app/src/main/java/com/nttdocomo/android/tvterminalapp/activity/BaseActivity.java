@@ -100,6 +100,7 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOtt;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipDeleteWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.IDimDefines;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -713,10 +714,6 @@ public class BaseActivity extends FragmentActivity implements
                 }
             }
         } else {
-            // 通常のライフサイクル
-            if (mNecessaryDAccountRegistService) {
-                setDaccountControl();
-            }
             onStartCommunication();
         }
 
@@ -1607,6 +1604,11 @@ public class BaseActivity extends FragmentActivity implements
         //UIスレッド上の動作である間にエラー用ダイアログ表示準備を行う
         mFirstDaccountErrorHandler = new Handler();
 
+        //dアカウント関連処理中
+        if (mDAccountControl != null && !mDAccountControl.getIsOTTCheckFinished()) {
+            return;
+        }
+
         //dアカウント関連の処理を依頼する
         mDAccountControl = new DaccountControl();
         mDAccountControl.registService(getApplicationContext(), this);
@@ -1622,6 +1624,76 @@ public class BaseActivity extends FragmentActivity implements
     protected void onDaccountOttGetComplete(final boolean result) {
         DTVTLogger.start("this = " + this);
         DTVTLogger.end();
+    }
+
+
+    @Override
+    public void daccountControlCallBack(final boolean result) {
+        DTVTLogger.start();
+
+        //エラー表示を行うかどうかのスイッチ
+        boolean firstDaccountError = false;
+
+        //初回dアカウント取得かどうかの判定
+        if (SharedPreferencesUtils.isFirstDaccountGetProcess(getApplicationContext()) && !result) {
+            //初回のdアカウント取得かつ問題が発生していた場合はtrueにする
+            firstDaccountError = true;
+        } else {
+            //初回以外はダイアログを出さないので、処理中フラグはリセット
+            mDAccountControl.setDAccountBusy(false);
+        }
+
+        //初回dアカウント取得が行われていた場合は終わらせる
+        SharedPreferencesUtils.setFirstExecEnd(getApplicationContext());
+
+        onDaccountOttGetComplete(result);
+        //dアカウントの登録結果を受け取るコールバック
+        if (result) {
+            //処理に成功したので、帰る
+            DTVTLogger.end("normal end");
+            return;
+        }
+
+        if (mDAccountControl != null && mDAccountControl.getResult() == IDimDefines.RESULT_USER_CANCEL && mFirstDaccountErrorHandler != null) {
+
+            mFirstDaccountErrorHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    showLogoutDialog();
+                }
+            });
+        }
+
+        //dアカウント処理クラスがヌルか、初回起動時にdアカウント取得で問題が発生したかどうかを確認
+        if (mDAccountControl == null || firstDaccountError) {
+            //処理には失敗したが、動作の続行ができないので、ここで終わらせる。ただ、このコールバックを受けている以上、ヌルになることありえないはず
+            //今はUIスレッドではないので、ダイアログの処理を移譲する
+            mFirstDaccountErrorHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    //初回実行時に限り、エラーダイアログを表示する。
+                    showDAccountErrorDialog();
+
+                    //ダイアログを出す場合はここで処理中フラグをリセット
+                    mDAccountControl.setDAccountBusy(false);
+                }
+            });
+
+            DTVTLogger.end("null end or first daccount get error");
+            return;
+        }
+
+        if (mDAccountControl.isOneTimePass() || mDAccountControl.isCheckService()) {
+            //エラーが発生したのはワンタイムパスワード取得かチェックサービスとなる。dアカウント未認証なので、本処理ではなにもしない
+            DTVTLogger.end("d account not regist");
+            return;
+        }
+
+        //サービスチェックに成功したが、ブロードキャストの登録に失敗した場合。チェック後に急に通信不全になるような事が無ければ発生しないはず。
+        //発生時は次のアクティビティ表示時のリトライにゆだねる。
+        //また、"dcmEval20150128.keystore"の署名ファイルが付加されずに実行された場合もこちらになる。署名ファイル無しではブロードキャストの
+        //登録はできないので、こちらに来るのは自然な動作となる。
+        DTVTLogger.end("d account error. no signature?");
     }
 
     /**
@@ -1645,6 +1717,41 @@ public class BaseActivity extends FragmentActivity implements
 
         //showDialogの代わり・重複ダイアログ実現用
         offerDialog(errorDialog);
+    }
+
+    private void showLogoutDialog() {
+
+        CustomDialog logoutDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.CONFIRM);
+        logoutDialog.setContent(this.getResources().getString(R.string.logout_messsage));
+
+        logoutDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @SuppressWarnings("OverlyLongMethod")
+            @Override
+            public void onOKCallback(final boolean isOK) {
+
+                DaccountControl.cacheClear(BaseActivity.this);
+                reStartApplication();
+            }
+
+        });
+
+        logoutDialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
+            @Override
+            public void onCancelCallback() {
+                mDAccountControl = new DaccountControl();
+                mDAccountControl.registService(getApplicationContext(), BaseActivity.this);
+            }
+        });
+
+        logoutDialog.setDialogDismissCallback(this);
+
+        offerDialog(logoutDialog);
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     /**
@@ -2615,65 +2722,6 @@ public class BaseActivity extends FragmentActivity implements
     @Override
     public void onClipDeleteFailure() {
         showClipToast(R.string.clip_delete_error_message);
-    }
-
-    @Override
-    public void daccountControlCallBack(final boolean result) {
-        DTVTLogger.start();
-
-        //エラー表示を行うかどうかのスイッチ
-        boolean firstDaccountError = false;
-
-        //初回dアカウント取得かどうかの判定
-        if (SharedPreferencesUtils.isFirstDaccountGetProcess(getApplicationContext()) && !result) {
-            //初回のdアカウント取得かつ問題が発生していた場合はtrueにする
-            firstDaccountError = true;
-        } else {
-            //初回以外はダイアログを出さないので、処理中フラグはリセット
-            mDAccountControl.setDAccountBusy(false);
-        }
-
-        //初回dアカウント取得が行われていた場合は終わらせる
-        SharedPreferencesUtils.setFirstExecEnd(getApplicationContext());
-
-        onDaccountOttGetComplete(result);
-        //dアカウントの登録結果を受け取るコールバック
-        if (result) {
-            //処理に成功したので、帰る
-            DTVTLogger.end("normal end");
-            return;
-        }
-
-        //dアカウント処理クラスがヌルか、初回起動時にdアカウント取得で問題が発生したかどうかを確認
-        if (mDAccountControl == null || firstDaccountError) {
-            //処理には失敗したが、動作の続行ができないので、ここで終わらせる。ただ、このコールバックを受けている以上、ヌルになることありえないはず
-            //今はUIスレッドではないので、ダイアログの処理を移譲する
-            mFirstDaccountErrorHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    //初回実行時に限り、エラーダイアログを表示する。
-                    showDAccountErrorDialog();
-
-                    //ダイアログを出す場合はここで処理中フラグをリセット
-                    mDAccountControl.setDAccountBusy(false);
-                }
-            });
-
-            DTVTLogger.end("null end or first daccount get error");
-            return;
-        }
-
-        if (mDAccountControl.isOneTimePass() || mDAccountControl.isCheckService()) {
-            //エラーが発生したのはワンタイムパスワード取得かチェックサービスとなる。dアカウント未認証なので、本処理ではなにもしない
-            DTVTLogger.end("d account not regist");
-            return;
-        }
-
-        //サービスチェックに成功したが、ブロードキャストの登録に失敗した場合。チェック後に急に通信不全になるような事が無ければ発生しないはず。
-        //発生時は次のアクティビティ表示時のリトライにゆだねる。
-        //また、"dcmEval20150128.keystore"の署名ファイルが付加されずに実行された場合もこちらになる。署名ファイル無しではブロードキャストの
-        //登録はできないので、こちらに来るのは自然な動作となる。
-        DTVTLogger.end("d account error. no signature?");
     }
 
     @Override

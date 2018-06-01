@@ -651,7 +651,7 @@ public class WebApiBasePlala {
                                     final ServiceTokenErrorCallback serviceTokenErrorCallback) {
         //ワンタイムパスワードの取得
         mGetOtt = new DaccountGetOtt();
-        mGetOtt.execDaccountGetOTT(context, new DaccountGetOtt.DaccountGetOttCallBack() {
+        mGetOtt.execDaccountGetOTT(context, false, new DaccountGetOtt.DaccountGetOttCallBack() {
             @Override
             public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
                 //ワンタイムトークンが期限内ならば、そのまま使用する

@@ -27,12 +27,7 @@ enum OttGetQueue {
     /**
      * OTT取得開始に必要な、取得後のコールバックを蓄積するキュー.
      */
-    Queue<DaccountGetOtt.DaccountGetOttCallBack> mTaskQueue = null;
-
-    /**
-     * OTT取得クラス.
-     */
-    DaccountGetOtt mDaccountGetOtt = null;
+    Queue<DaccountGetOtt> mTaskQueue = null;
 
     /**
      * 通信中止フラグ.
@@ -84,12 +79,11 @@ enum OttGetQueue {
      * @param nextTask 実行するコールバック
      */
     public void getOttAddOrExec(final Context context,
-                                final DaccountGetOtt.DaccountGetOttCallBack nextTask) {
+                                final DaccountGetOtt nextTask) {
         DTVTLogger.start();
         //初回ならば各種初期化
-        if (mDaccountGetOtt == null) {
+        if (mTaskQueue == null) {
             mTaskQueue = new ArrayDeque<>();
-            mDaccountGetOtt = new DaccountGetOtt();
             mTaskExecFlag = 0;
             mDisconnectionFlag = false;
         }
@@ -105,7 +99,7 @@ enum OttGetQueue {
         // (ただし通常は、時間経過ではなくallowNextメソッドでmTaskExecFlagをゼロにすることで動く)
         if (mTaskExecFlag + MAX_WAIT_TIME <= System.currentTimeMillis()) {
             //実行
-            mDaccountGetOtt.execDaccountGetOttReal(context, nextTask);
+            nextTask.execDaccountGetOttReal(context);
             //現在時刻を記録して、OTTを使い終わるまでは情報をキューに蓄積させるようにする
             mTaskExecFlag = System.currentTimeMillis();
         } else {
@@ -175,11 +169,11 @@ enum OttGetQueue {
         // (ただし通常は、時間経過ではなくallowNextメソッドでmTaskExecFlagをゼロにすることで動く)
         if (mTaskExecFlag + MAX_WAIT_TIME <= System.currentTimeMillis()) {
             //OTT取得に必要なコールバックを取得する（蓄積されていなければヌルになる）
-            DaccountGetOtt.DaccountGetOttCallBack nextTask = mTaskQueue.poll();
+            DaccountGetOtt nextTask = mTaskQueue.poll();
 
             if (nextTask != null) {
                 //コールバックが取得できたので、OTT取得を呼び出す
-                mDaccountGetOtt.execDaccountGetOttReal(context, nextTask);
+                nextTask.execDaccountGetOttReal(context);
 
                 //現在時刻を記録して、OTTを使い終わるまでは情報をキューに蓄積させるようにする
                 mTaskExecFlag = System.currentTimeMillis();
@@ -209,7 +203,7 @@ void setDisconnectionFlag(final boolean disconnectionFlag) {
      * 今あるワンタイムトークン取得タスクは停止する.
      */
 void cancelConnection() {
-        if (mDaccountGetOtt == null) {
+        if (mTaskQueue == null) {
             //まだクラスの準備ができていないので、以下の処理は無用
             return;
         }

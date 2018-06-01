@@ -7,7 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.daccount;
 /**
  * 外部IF向け定数定義.
  */
-class IDimDefines {
+public class IDimDefines {
 
     /**
      * <pre>
