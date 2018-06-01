@@ -10,7 +10,6 @@ import android.os.Handler;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.WatchListenVideoDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.WatchListenVideoListDataManager;
@@ -22,7 +21,6 @@ import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WatchListenVideoWebClient;
 
 import java.util.ArrayList;
@@ -202,7 +200,6 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
 
         ContentsData contentInfo;
 
-        UserState userState = UserInfoUtils.getUserState(mContext);
         for (int i = 0; i < mapList.size(); i++) {
             contentInfo = new ContentsData();
 
@@ -230,7 +227,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
             contentInfo.setDtv(dtv);
             contentInfo.setDtvType(dtvType);
             contentInfo.setDispType(dispType);
-            contentInfo.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
+            contentInfo.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
             contentInfo.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
             contentInfo.setAvailStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
             contentInfo.setAvailEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));

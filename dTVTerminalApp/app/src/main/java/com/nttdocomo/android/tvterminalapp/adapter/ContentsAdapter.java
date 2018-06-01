@@ -31,6 +31,7 @@ import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.RatingBarLayout;
 import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
@@ -371,19 +372,22 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             final ClipRequestData requestData = listContentInfo.getRequestData();
             final ImageView clipButton = contentView.findViewById(R.id.item_common_result_clip_tv);
             listContentInfo.setClipButton(clipButton);
-            clipButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(final View view) {
-                    //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、タグでクリップ済/未を判定する
-                    Object clipTag = clipButton.getTag();
-                    if (clipTag.equals(BaseActivity.CLIP_ACTIVE_STATUS)) {
-                        requestData.setClipStatus(true);
-                    } else {
-                        requestData.setClipStatus(false);
+            //クリップ活性時のみリスナー登録する
+            if (UserInfoUtils.getClipActive(mContext)) {
+                clipButton.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(final View view) {
+                        //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、タグでクリップ済/未を判定する
+                        Object clipTag = clipButton.getTag();
+                        if (clipTag.equals(BaseActivity.CLIP_ACTIVE_STATUS)) {
+                            requestData.setClipStatus(true);
+                        } else {
+                            requestData.setClipStatus(false);
+                        }
+                        ((BaseActivity) mContext).sendClipRequest(requestData, clipButton);
                     }
-                    ((BaseActivity) mContext).sendClipRequest(requestData, clipButton);
-                }
-            });
+                });
+            }
         } else {
             setDownloadStatus(holder, listContentInfo, position);
         }
@@ -610,6 +614,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * @param listContentInfo 行データー
      * @param contentView contentView
      */
+    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
     private void setNowOnAirData(final ViewHolder holder, final ContentsData listContentInfo, final View contentView) {
         switch (mType) {
             case TYPE_RECOMMEND_LIST://おすすめ番組・ビデオ
@@ -640,6 +645,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * @param isPlala   true:ぷらら false:レコメンド
      * @param contentView   contentView
      */
+    @SuppressWarnings("OverlyComplexMethod")
     private void checkNowOnAir(final ViewHolder holder, final ContentsData listContentInfo, final View contentView, final boolean isPlala) {
         boolean result = false;
         if (isPlala) {
@@ -1241,12 +1247,16 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                                     }
                                 }
                             }
-                            if (listContentInfo.isClipStatus()) {
-                                holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_clip);
-                                holder.tv_clip.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
+                            if (!UserInfoUtils.getClipActive(mContext)) {
+                                holder.tv_clip.setBackgroundResource(R.mipmap.icon_tap_circle_normal_clip);
                             } else {
-                                holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
-                                holder.tv_clip.setTag(BaseActivity.CLIP_OPACITY_STATUS);
+                                if (listContentInfo.isClipStatus()) {
+                                    holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                                    holder.tv_clip.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
+                                } else {
+                                    holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
+                                    holder.tv_clip.setTag(BaseActivity.CLIP_OPACITY_STATUS);
+                                }
                             }
                         } else {
                             holder.tv_clip.setVisibility(View.GONE);

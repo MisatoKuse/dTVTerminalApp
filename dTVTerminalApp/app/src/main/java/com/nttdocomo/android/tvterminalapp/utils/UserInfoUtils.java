@@ -201,6 +201,16 @@ public class UserInfoUtils {
     }
 
     /**
+     * クリップ非活性表示フラグ(未ログイン又は未契約)取得.
+     *
+     * @param context コンテキストファイル
+     * @return クリップ非活性(true)/非活性(false)
+     */
+    public static boolean getClipActive(final Context context) {
+        return !(getUserState(context).equals(UserState.LOGIN_NG) || !isContract(context));
+    }
+
+    /**
      * ユーザ状態取得.
      *
      * @param context コンテキストファイル

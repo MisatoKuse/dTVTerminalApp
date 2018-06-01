@@ -11,7 +11,6 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RentalListInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.RentalListDataManager;
@@ -26,7 +25,6 @@ import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
-import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalVodListWebClient;
 
 import java.util.ArrayList;
@@ -359,7 +357,6 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
         ArrayList<ActiveData> activeDataList = response.getVodActiveData();
         //activeDataListとmetaFullDataは別系統のJsonから取得するため、サイズチェックを入れる
         DTVTLogger.warning("metaFullData.mSize() = " + metaFullData.size() + ", activeDataList.mSize() = " + activeDataList.size());
-        UserState userState = UserInfoUtils.getUserState(mContext);
         for (int i = 0; i < metaFullData.size(); i++) { //indexをactiveDataListで使うため、foreachを使いません
             VodMetaFullData vodMetaFullData = metaFullData.get(i);
             if (displayFlg(vodMetaFullData)) {
@@ -384,7 +381,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
                 data.setDtv(dtv);
                 data.setDtvType(dtvType);
                 data.setDispType(dispType);
-                data.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
+                data.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
                 data.setContentsId(vodMetaFullData.getCrid());
                 data.setCrid(vodMetaFullData.getCrid());
                 data.setEstFlg(vodMetaFullData.getEstFlag());

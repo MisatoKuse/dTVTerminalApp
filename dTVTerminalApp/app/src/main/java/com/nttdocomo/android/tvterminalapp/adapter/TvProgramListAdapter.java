@@ -31,6 +31,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetail
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
 import java.text.ParseException;
@@ -651,13 +652,17 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             if (clipHeight < CLIP_BUTTON_SIZE) {
                 itemViewHolder.mClipButton.setVisibility(View.INVISIBLE);
             } else {
-
-                if (isClipStatus) {
-                    itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_normal_clip_schedule_end);
-                    itemViewHolder.mClipButton.setTag(BaseActivity.CLIP_OPACITY_STATUS);
+                if (!UserInfoUtils.getClipActive(mContext)) {
+                    //未ログイン又は未契約時はクリップボタンを非活性にする
+                    itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_tap_circle_normal_clip);
                 } else {
-                    itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip_schedule_end);
-                    itemViewHolder.mClipButton.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
+                    if (isClipStatus) {
+                        itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_normal_clip_schedule_end);
+                        itemViewHolder.mClipButton.setTag(BaseActivity.CLIP_OPACITY_STATUS);
+                    } else {
+                        itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip_schedule_end);
+                        itemViewHolder.mClipButton.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
+                    }
                 }
             }
         } else {

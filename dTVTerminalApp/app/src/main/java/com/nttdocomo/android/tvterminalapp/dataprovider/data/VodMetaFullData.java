@@ -1221,7 +1221,7 @@ public class VodMetaFullData implements Serializable {
                 for (String item : mRootPara) {
                     if (!jsonObj.isNull(item)) {
                         setMember(item, jsonObj.get(item));
-                        setClipExec(ClipUtils.isCanClip(userState, getDisp_type(), getmSearch_ok(), getDtv(), getDtvType()));
+                        setClipExec(ClipUtils.isCanClip(getDisp_type(), getmSearch_ok(), getDtv(), getDtvType()));
                     }
                 }
 

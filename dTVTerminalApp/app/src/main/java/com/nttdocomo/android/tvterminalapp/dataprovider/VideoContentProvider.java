@@ -9,7 +9,6 @@ import android.content.Context;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
@@ -18,7 +17,6 @@ import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
@@ -154,7 +152,6 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
 
         ContentsData contentsData;
 
-        UserState userState = UserInfoUtils.getUserState(mContext);
         for (int i = 0; i < videoContentMapList.size(); i++) {
             contentsData = new ContentsData();
 
@@ -179,7 +176,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
             contentsData.setDtv(dtv);
             contentsData.setDtvType(dtvType);
             contentsData.setDispType(dispType);
-            contentsData.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
+            contentsData.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
             contentsData.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
             contentsData.setAvailStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
             contentsData.setAvailEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));

@@ -185,7 +185,7 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
             data.setDtv(dtv);
             data.setDtvType(dtvType);
             data.setDispType(dispType);
-            data.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
+            data.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
             data.setContentsId(vodMetaFullData.getCrid());
             data.setEstFlg(vodMetaFullData.getEstFlag());
             data.setChsVod(vodMetaFullData.getmChsvod());
