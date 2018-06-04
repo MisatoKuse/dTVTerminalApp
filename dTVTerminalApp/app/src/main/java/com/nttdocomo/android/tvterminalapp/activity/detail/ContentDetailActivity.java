@@ -344,6 +344,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private static final String DETAIL_FRAGMENT_KEY = "detailFragment";
     /** プレイヤーレイアウト.*/
     private PlayerViewLayout mPlayerViewLayout;
+    /** プレイヤー前回のポジション.*/
+    private static final String SAVEDVARIABLE_PLAY_START_POSITION = "playStartPosition";
+    /** プレイヤー前回のポジション.*/
+    private int mPlayStartPosition;
     /* player end */
     /** ハンドラー.*/
     private final Handler loadHandler = new Handler();
@@ -378,7 +382,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         // プログレスバー表示中でもxボタンクリック可能にする
         findViewById(R.id.base_progress_rl).setClickable(false);
         showProgressBar(true);
-
+        if (savedInstanceState != null) {
+            mPlayStartPosition = savedInstanceState
+                    .getInt(SAVEDVARIABLE_PLAY_START_POSITION);
+        }
         mThumbnailBtn = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail_btn);
         mThumbnail = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail);
         initView();
@@ -396,7 +403,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     DTVTLogger.end();
                     return;
                 }
-                mPlayerViewLayout.initSecurePlayer();
+                mPlayerViewLayout.initSecurePlayer(mPlayStartPosition);
                 mPlayerViewLayout.setPlayerEvent();
                 mPlayerViewLayout.setUserAgeInfo();
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_player));
@@ -406,7 +413,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     DTVTLogger.end();
                     return;
                 }
-                mPlayerViewLayout.initSecurePlayer();
+                mPlayerViewLayout.initSecurePlayer(mPlayStartPosition);
                 mPlayerViewLayout.setPlayerEvent();
                 mPlayerViewLayout.setUserAgeInfo();
                 //BG復帰時にクリップボタンの更新を行う
@@ -440,10 +447,16 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
     @Override
     protected void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
         if (getDetailFragment().isAdded()) {
             getSupportFragmentManager().putFragment(outState, DETAIL_FRAGMENT_KEY, getDetailFragment());
         }
-        super.onSaveInstanceState(outState);
+        if (mPlayerViewLayout != null) {
+            if (mPlayerViewLayout.mPlayStartPosition < 0) {
+                mPlayerViewLayout.mPlayStartPosition = 0;
+            }
+            outState.putInt(SAVEDVARIABLE_PLAY_START_POSITION, mPlayerViewLayout.mPlayStartPosition);
+        }
     }
 
     @Override

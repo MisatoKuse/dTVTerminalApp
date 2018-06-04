@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.SystemClock;
 import android.support.v4.content.ContextCompat;
 import android.text.TextPaint;
 import android.text.TextUtils;
@@ -37,6 +38,7 @@ import com.digion.dixim.android.secureplayer.SecureVideoView;
 import com.digion.dixim.android.secureplayer.SecuredMediaPlayerController;
 import com.digion.dixim.android.secureplayer.helper.CaptionDrawCommands;
 import com.digion.dixim.android.util.ExternalDisplayHelper;
+import com.digion.dixim.android.util.SafetyRunnable;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.common.ProcessSettingFile;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
@@ -123,6 +125,10 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     private boolean mCanPlay = false;
     /**操作アイコン表示か.*/
     private boolean mIsHideOperate = true;
+    /**再生開始フラグ.*/
+    private boolean mAlreadyRendered = false;
+    /**完了フラグ.*/
+    private boolean mIsCompleted = false;
     /** 外部出力制御.*/
     private ExternalDisplayHelper mExternalDisplayHelper;
     /** 外部出力制御判定フラグ.*/
@@ -145,6 +151,20 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     private static final int FULL_SCREEN_BUTTON_RIGHT_MARGIN = 16;
     /**コントローラービューを非表示になるまでの待ち時間.*/
     private static final long HIDE_IN_3_SECOND = 3 * 1000;
+    /**secureplayer-core 側でもタイムアウト待ちが発生するので実質90秒ほどになる.*/
+    private static final long REMOTEACCESS_RECONNECT_TIMEOUT = 1000 * 60;
+    /**secureplayer-core 側でもタイムアウト待ちが発生するので実質90秒ほどになる.*/
+    private static final long REMOTEACCESS_DMS_DISCONNECT_TIMEOUT = 1000 * 30;
+    /**リトライ回数.*/
+    private static final int OPEN_SECURE_VIDEO_RETRY_TIME = 25;
+    /**再接続開始時間.*/
+    private volatile long mReconnectStartTime;
+    /**切断時間.*/
+    private volatile long mDmsDisconnectedTime;
+    /**ビデオサイズ.*/
+    private long mTotalDuration = 0;
+    /**前回のポジション.*/
+    public int mPlayStartPosition;
     /**再発火.*/
     private static final int REFRESH_VIDEO_VIEW = 0;
     /** 巻き戻す10s.*/
@@ -175,6 +195,8 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     private static final Handler sCtrlHandler = new Handler(Looper.getMainLooper());
     /**再生コールバック.*/
     private PlayerStateListener mPlayerStateListener;
+    /**ヘッダー.*/
+    private Map<String, String> additionalHeaders;
     /**
      *　コントロールビューを非表示にする.
      */
@@ -299,6 +321,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
 
     /**
      * スクリーン幅さ.
+     * @return スクリーン幅
      */
     private int getWidthDensity() {
         return mScreenWidth;
@@ -306,6 +329,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
 
     /**
      * スクリーン高さ.
+     * @return スクリーン高
      */
     private int getHeightDensity() {
         return mScreenHeight;
@@ -313,6 +337,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
 
     /**
      * スクリーン幅さ+ NavigationBar.
+     * @return スクリーン高+ナビゲーション
      */
     private int getScreenNavHeight() {
         return mScreenNavHeight;
@@ -320,6 +345,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
 
     /**
      * スクリーン高さ+ NavigationBar.
+     * @return スクリーン幅+ナビゲーション
      */
     private int getScreenNavWidth() {
         return mScreenNavWidth;
@@ -366,6 +392,130 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             }
 
         };
+    }
+
+    /**
+     * VideoSeekBar利用できるのチェック.
+     * @return シークバー有効チェック
+     */
+    private boolean isSeekable() {
+        return mTotalDuration > 0;
+    }
+
+    /**
+     * 前回のポジションから再生開始.
+     * @param point 再生開始ポジション
+     * @return true:正常再生 false:異常
+     */
+    private boolean openVideoView(final int point) {
+        int position = point;
+        mAlreadyRendered = false;
+        mIsCompleted = false;
+        if (position < 0 || mTotalDuration < position) {
+            position = 0;
+            mPlayStartPosition = 0;
+        }
+        return openSecurePlayer(position);
+    }
+
+    /**
+     * 前回のポジションから再生開始.
+     * @param startMS 開始ポジション
+     * @return true:正常open false:異常発生
+     */
+    private boolean openSecurePlayer(final int startMS) {
+        if (mPlayerController == null) {
+            return false;
+        }
+        if (mActivity.isFinishing()) {
+            return false;
+        }
+        try {
+            mPlayerController.setDataSource(mCurrentMediaInfo, additionalHeaders, startMS);
+        } catch (IOException e) {
+            return false;
+        }
+        mPlayerController.setScreenOnWhilePlaying(true);
+        return true;
+    }
+
+    /**
+     * リトライ処理.
+     * @param errorCode エラーコード
+     * @return true:リトライする false:リトライしない
+     */
+    private boolean needRetry(final int errorCode) {
+        if (mCurrentMediaInfo == null) {
+            return false;
+        }
+        if (!mCurrentMediaInfo.isRemote()) {
+            return false;
+        }
+        if (errorCode != MediaPlayerDefinitions.SP_SOURCE_CONNECTION_ERROR
+                && errorCode != MediaPlayerDefinitions.SP_SOURCE_DTCP_AKE_ERROR) {
+            return false;
+        }
+        // まだ再生が始まっていない場合はリトライしない。
+        if (!mAlreadyRendered) {
+            return false;
+        }
+        final long elapsedRealtime = SystemClock.elapsedRealtime();
+        if (mReconnectStartTime == 0) {
+            mReconnectStartTime = elapsedRealtime;
+        }
+
+        if (elapsedRealtime - mReconnectStartTime > REMOTEACCESS_RECONNECT_TIMEOUT) {
+            return false;
+        }
+        if (mDmsDisconnectedTime != 0) {
+            if (elapsedRealtime - mDmsDisconnectedTime > REMOTEACCESS_DMS_DISCONNECT_TIMEOUT) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 再生ポジション取得.
+     * @return  再生ポジション
+     */
+    private int getCurrentPosition() {
+        if (mPlayerController != null) {
+            return mPlayerController.getCurrentPosition();
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * 再生をopen.
+     * @param pos 再生開始ポジション
+     * @param successHandler ハンドラー
+     * @param errorHandler runnable
+     */
+    private void tryOpenVideo(final int pos, final Runnable successHandler,
+                              final Runnable errorHandler) {
+        getHandler().post(new SafetyRunnable(mContext) {
+            int retry = OPEN_SECURE_VIDEO_RETRY_TIME;
+
+            @Override
+            protected void main() {
+                if (openVideoView(pos)) {
+                    if (mSecureVideoPlayer != null) {
+                        mSecureVideoPlayer.setVisibility(View.VISIBLE);
+                    }
+                    if (successHandler != null) {
+                        successHandler.run();
+                    }
+                    return;
+                }
+                if (--retry == 0) {
+                    errorHandler.run();
+                } else {
+                    getHandler().postDelayed(this, 200);
+                }
+            }
+        });
     }
 
     /**
@@ -425,6 +575,21 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
 
     @Override
     public void onError(final MediaPlayerController mediaPlayerController, final int what, final long arg) {
+        if (mPlayerController != null && isSeekable()) {
+            if (!mIsCompleted && isSeekable() && mReconnectStartTime == 0) {
+                mPlayStartPosition = getCurrentPosition();
+                mIsCompleted = true;
+            }
+            if (needRetry(what)) {
+                tryOpenVideo(mPlayStartPosition, null, new Runnable() {
+                    @Override
+                    public void run() {
+                        mPlayerStateListener.onPlayerErrorCallBack(what);
+                    }
+                });
+                return;
+            }
+        }
         mPlayerStateListener.onPlayerErrorCallBack(what);
     }
 
@@ -448,14 +613,19 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 playButton(true);
                 break;
             case MediaPlayerDefinitions.PE_COMPLETED:
+                mIsCompleted = true;
+                mPlayStartPosition = 0;
                 playButton(false);
                 break;
             case MediaPlayerDefinitions.PE_START_NETWORK_CONNECTION:
             case MediaPlayerDefinitions.PE_START_AUTHENTICATION:
             case MediaPlayerDefinitions.PE_START_BUFFERING:
             case MediaPlayerDefinitions.PE_START_RENDERING:
+                mReconnectStartTime = 0;
+                mDmsDisconnectedTime = 0;
                 break;
             case MediaPlayerDefinitions.PE_FIRST_FRAME_RENDERED:
+                mAlreadyRendered = true;
                 mPlayerStateListener.onErrorCallBack(PlayerErrorType.NONE);
                 break;
             default:
@@ -552,14 +722,13 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
      * (リモート視聴の再生開始可否の為に、リネーム後に前チェックを追加)
      */
     private void playStartOrigin() {
-        DTVTLogger.start();
+        mIsCompleted = false;
         synchronized (this) {
             if (mCanPlay) {
                 playButton(true);
                 mPlayerController.start();
             }
         }
-        DTVTLogger.end();
     }
 
     /**
@@ -783,8 +952,9 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
 
     /**
      * initView player.
+     * @param playStartPosition 再生開始ポジション
      */
-    public void initSecurePlayer() {
+    public void initSecurePlayer(final int playStartPosition) {
         DTVTLogger.start();
         setCanPlay(false);
         mPlayerController = new SecuredMediaPlayerController(mContext, true, true, true);
@@ -794,6 +964,8 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         mPlayerController.setOnErrorListener(this);
         mPlayerController.setCaptionDataListener(this);
         mPlayerController.setCurrentCaption(0); // start caption.
+        mReconnectStartTime = 0;
+        mDmsDisconnectedTime = 0;
         boolean result = DlnaUtils.getActivationState(mContext);
         if (!result) {
             mPlayerStateListener.onErrorCallBack(PlayerErrorType.ACTIVATION);
@@ -807,18 +979,19 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             }
         }
         mPlayerStateListener.onErrorCallBack(PlayerErrorType.NONE);
-        preparePlayer();
+        preparePlayer(playStartPosition);
         DTVTLogger.end();
     }
 
     /**
-     * prepair player.
+     * 再生準備開始.
+     * @param playStartPosition 再生開始ポジション
      */
-    private void preparePlayer() {
+    private void preparePlayer(final int playStartPosition) {
         DTVTLogger.start();
-        final Map<String, String> additionalHeaders = new HashMap<>();
+        additionalHeaders = new HashMap<>();
         try {
-            mPlayerController.setDataSource(mCurrentMediaInfo, additionalHeaders, 0);
+            mPlayerController.setDataSource(mCurrentMediaInfo, additionalHeaders, playStartPosition);
         } catch (IOException e) {
             DTVTLogger.debug(e);
             setCanPlay(false);
@@ -938,8 +1111,9 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         DTVTLogger.start();
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onProgressChanged(final SeekBar seekBar, final int i, final boolean b) {
-                mVideoCurTime.setText(DateUtils.time2TextViewFormat(i));
+            public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
+                mIsCompleted = false;
+                mVideoCurTime.setText(DateUtils.time2TextViewFormat(progress));
             }
 
             @Override
@@ -964,6 +1138,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     /**
      * 再生パラメータ設定.
      * @param playerData 再生用のデータ
+     * @return true 再生待ち　false:再生できない
      */
     private boolean setCurrentMediaInfo(final RecordedContentsDetailData playerData) {
         String url = playerData.getResUrl();
@@ -1038,6 +1213,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 title,                           //メディアのタイトル
                 contentFormat                    //DIDLのres protocolInfoの3番目のフィールド
         );
+        mTotalDuration = mCurrentMediaInfo.getDurationMs();
         DTVTLogger.end();
         return true;
     }
@@ -1045,12 +1221,15 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     /**
      * 再生パラメータ設定.
      * @param playerData 再生用のデータ
+     * @return 再生の初期化（true:成功、false:失敗）
      */
     public boolean initMediaInfo(final RecordedContentsDetailData playerData) {
         boolean result = setCurrentMediaInfo(playerData);
         if (result) {
             setPlayerTouchEvent();
         }
+        mReconnectStartTime = 0;
+        mDmsDisconnectedTime = 0;
         return result;
     }
 
