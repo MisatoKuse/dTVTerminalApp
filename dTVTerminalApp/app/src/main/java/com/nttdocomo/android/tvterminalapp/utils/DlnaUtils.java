@@ -47,14 +47,6 @@ public class DlnaUtils {
     private static final int BUF_SIZE = 1024;
     /*視聴画質設定*/
     /** デフォルト.*/
-    private static final int IMAGE_QUALITY_DEFAULT = 0;
-    /** 最高画質.*/
-    private static final int IMAGE_QUALITY_HIGH = 1;
-    /** 高画質.*/
-    private static final int IMAGE_QUALITY_MIDDLE = 2;
-    /** 標準画質.*/
-    private static final int IMAGE_QUALITY_LOW = 3;
-    /** デフォルト.*/
     private static final String IMAGE_QUALITY_DEFAULT_URL = "0/smartphone/";
     /** 最高画質.*/
     private static final String IMAGE_QUALITY_HIGH_URL = "0/remote1/";
@@ -335,7 +327,9 @@ public class DlnaUtils {
      * @return 設定した画質のURL
      */
     public static String getContainerIdByImageQuality(final Context context, final String channel) {
-        boolean isRemote = StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_OUT;
+        StbConnectionManager.ConnectionStatus connectionStatus = StbConnectionManager.shared().getConnectionStatus();
+        boolean isRemote = connectionStatus == StbConnectionManager.ConnectionStatus.HOME_OUT
+                || connectionStatus == StbConnectionManager.ConnectionStatus.HOME_OUT_CONNECT;
         if (context == null) {
             return IMAGE_QUALITY_DEFAULT_URL + channel;
         }
@@ -352,32 +346,5 @@ public class DlnaUtils {
             }
         }
         return IMAGE_QUALITY_DEFAULT_URL + channel;
-    }
-
-    /**
-     * 設定した画質を取得.
-     *
-     * @param context コンテキスト
-     * @return 設定した画質
-     */
-    // TODO コンテンツブラウズのマージが終わったら消します
-    public static int getImageQualitySetting(final Context context) {
-        boolean isRemote = false;
-        if (context == null) {
-            return IMAGE_QUALITY_DEFAULT;
-        }
-        String imageQualitySetting = SharedPreferencesUtils.getSharedPreferencesImageQuality(context);
-        if (!isRemote || TextUtils.isEmpty(imageQualitySetting)) {
-            return IMAGE_QUALITY_DEFAULT;
-        } else {
-            if (imageQualitySetting.equals(context.getString(R.string.main_setting_image_quality_high))) {
-                return IMAGE_QUALITY_HIGH;
-            } else if (imageQualitySetting.equals(context.getString(R.string.main_setting_image_quality_middle))) {
-                return IMAGE_QUALITY_MIDDLE;
-            } else if (imageQualitySetting.equals(context.getString(R.string.main_setting_image_quality_low))) {
-                return IMAGE_QUALITY_LOW;
-            }
-        }
-        return IMAGE_QUALITY_DEFAULT;
     }
 }
