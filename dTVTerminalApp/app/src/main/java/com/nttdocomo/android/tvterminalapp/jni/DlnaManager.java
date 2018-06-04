@@ -422,6 +422,10 @@ public class DlnaManager {
             if (errorType == LOCAL_REGISTRATION_ERROR_TYPE_OVER) {
                 localRegistrationErrorType = LocalRegistrationErrorType.OVER;
             }
+            if (result) {
+                //リモート視聴設定期限ダイアログ表示フラグをリセットする
+                SharedPreferencesUtils.setRegisterExpiredateDialogFlg(DlnaManager.shared().mContext, 0);
+            }
             listener.onRegisterCallBack(result, localRegistrationErrorType);
         } else {
             DTVTLogger.error("no callback");
