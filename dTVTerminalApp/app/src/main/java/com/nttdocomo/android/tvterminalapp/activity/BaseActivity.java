@@ -429,6 +429,14 @@ public class BaseActivity extends FragmentActivity implements
     protected void enableStbStatusIcon(final boolean isOn) {
         if (mStbStatusIcon != null) {
             mStbStatusIcon.setVisibility(isOn ? View.VISIBLE : View.INVISIBLE);
+            switch (StbConnectionManager.shared().getConnectionStatus()) {
+                case HOME_IN:
+                    setStbStatus(true);
+                    break;
+                default:
+                    setStbStatus(false);
+                    break;
+            }
         }
     }
 
@@ -444,7 +452,11 @@ public class BaseActivity extends FragmentActivity implements
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mStbStatusIcon.setImageResource(R.mipmap.header_material_icon_tv_active);
+                if (isOn) {
+                    mStbStatusIcon.setImageResource(R.mipmap.header_material_icon_tv);
+                } else {
+                    mStbStatusIcon.setImageResource(R.mipmap.header_material_icon_tv_active);
+                }
             }
         });
     }
@@ -2842,12 +2854,7 @@ public class BaseActivity extends FragmentActivity implements
     @Override
     public void onConnectionChangeCallback(final boolean isStbConnectedHomeNetwork) {
         DTVTLogger.warning("isStbConnectedHomeNetwork = " + isStbConnectedHomeNetwork);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mStbStatusIcon.setImageResource(isStbConnectedHomeNetwork ? R.mipmap.header_material_icon_tv : R.mipmap.header_material_icon_tv_active);
-            }
-        });
+        setStbStatus(isStbConnectedHomeNetwork);
     }
 
     /**

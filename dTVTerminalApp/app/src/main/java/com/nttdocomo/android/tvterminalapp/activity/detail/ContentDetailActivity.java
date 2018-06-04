@@ -386,8 +386,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             mPlayStartPosition = savedInstanceState
                     .getInt(SAVEDVARIABLE_PLAY_START_POSITION);
         }
-        mThumbnailBtn = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail_btn);
-        mThumbnail = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail);
         initView();
     }
 
@@ -554,6 +552,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * @param playerData 再生データ
      */
     private void initPlayer(final RecordedContentsDetailData playerData) {
+        mThumbnailBtn.setVisibility(View.GONE);
+        mContractLeadingView.setVisibility(View.GONE);
+        mThumbnail.setVisibility(View.GONE);
         mPlayerViewLayout = findViewById(R.id.dtv_contents_detail_main_layout_player_rl);
         mPlayerViewLayout.setPlayerStateListener(this);
         mPlayerViewLayout.setScreenSize(getWidthDensity(), getHeightDensity());
@@ -573,6 +574,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      */
     private void initView() {
         mIntent = getIntent();
+        mThumbnailBtn = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail_btn);
+        mThumbnail = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail);
         mThumbnailRelativeLayout = findViewById(R.id.dtv_contents_detail_layout);
         mContractLeadingView = findViewById(R.id.contract_leading_view);
         Object object = mIntent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
@@ -584,6 +587,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     initPlayer(playerData);
                     break;
                 default:
+                    playerData.setIsRemote(true);
                     setRemotePlayArrow(playerData);
                     break;
             }
