@@ -1098,7 +1098,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * @param object データ情報.
      */
     private void showPartDataGetFailedDialog(final Object object) {
-        if (mIsCloseDialog && object == null && !mPartDataGetFailed) {
+        if (!mIsCloseDialog && object == null && !mPartDataGetFailed) {
             mPartDataGetFailed = true;
             errorDialog(getString(R.string.get_contents_data_error_message), R.string.common_text_retry);
         }

@@ -1772,7 +1772,7 @@ public class BaseActivity extends FragmentActivity implements
     private void showLogoutDialog() {
 
         CustomDialog logoutDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.CONFIRM);
-        logoutDialog.setContent(this.getResources().getString(R.string.logout_messsage));
+        logoutDialog.setContent(this.getResources().getString(R.string.logout_message));
 
         logoutDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @SuppressWarnings("OverlyLongMethod")

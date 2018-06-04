@@ -46,8 +46,8 @@
     <string name="common_date_format_start_str">" から"</string>
     <string name="common_date_format_end_str">" まで"</string>
     <string name="common_text_regist_progress_done">設定を完了しました</string>
-    <string name="common_text_regist_over_error">リモート視聴可能な台数が上限に達しました。\nドコモテレビターミナルでペアリングを解除してください。\n解除方法はヘルプをご覧ください。</string>
-    <string name="common_text_regist_other_error">リモート視聴設定に失敗しました。</string>
+    <string name="common_text_regist_over_error">リモート視聴可能な台数が上限に達しました。\nドコモテレビターミナルでペアリングを解除してください。\n解除方法はFAQをご覧ください。</string>
+    <string name="common_text_regist_other_error">リモート視聴設定に失敗しました</string>
     <string name="common_start_dtv_application_uninstall_error">ドコモテレビターミナルにdTVアプリがインストールされていないため、起動に失敗しました</string>
     <string name="common_start_d_animation_application_uninstall_error">ドコモテレビターミナルにdアニメストアアプリがインストールされていないため、起動に失敗しました</string>
     <string name="common_start_dtv_channel__application_uninstall_error">ドコモテレビターミナルにdTVチャンネルアプリがインストールされていないため、起動に失敗しました</string>
@@ -268,13 +268,13 @@
     <string name="contents_detail_hikari_d_channel_miss_viewing_separation">"見逃し | "</string>
     <string name="contents_detail_contract_text">ひかりTV for docomoの契約が必要です。契約済みの方はdアカウントでログインしてください。</string>
     <string name="dtv_content_service_start_text">dTVで視聴</string>
-    <string name="dtv_content_service_start_dialog">dTVを起動します。</string>
+    <string name="dtv_content_service_start_dialog">dTVを起動します</string>
     <string name="dtv_content_service_update_dialog">dTVアプリのアップデートが必要です</string>
     <string name="d_anime_store_content_service_start_text">dアニメストアで視聴</string>
-    <string name="d_anime_store_content_service_start_dialog">dアニメストアを起動します。</string>
+    <string name="d_anime_store_content_service_start_dialog">dアニメストアを起動します</string>
     <string name="d_anime_store_content_service_update_dialog">dアニメストアアプリのアップデートが必要です</string>
     <string name="dtv_channel_service_start_text">dTVチャンネルで視聴</string>
-    <string name="dtv_channel_service_start_dialog">dTVチャンネルを起動します。</string>
+    <string name="dtv_channel_service_start_dialog">dTVチャンネルを起動します</string>
     <string name="dtv_channel_service_update_dialog">ｄTVチャンネルアプリのアップデートが必要です</string>
     <string name="d_tv_terminal_application_version_update_dialog">ドコモテレビターミナルアプリのアップデートが必要です</string>
     <string name="stb_application_version_update">ご利用のドコモテレビターミナルでアプリのアップデートが必要です。\nドコモテレビターミナルを起動し、設定＞ドコモサービス設定＞ドコモアプリ管理　から「ドコモテレビターミナルアプリ用アプリ」をアップデートしてください。</string>
@@ -314,7 +314,7 @@
     <string name="recording_reservation_confirm_dialog_cancel">キャンセル</string>
     <string name="contents_detail_contract_text_vod">ご覧になるにはコンテンツの契約が必要です。\nドコモテレビターミナルで契約してください。</string>
     <string name="contents_detail_contract_button_vod">ドコモテレビターミナルで購入する</string>
-    <string name="contents_detail_contract_text_ch">このチャンネルをご覧になるには\nドコモテレビターミナルでの契約が必要です</string>
+    <string name="contents_detail_contract_text_ch">このコンテンツをご覧になるには\nドコモテレビターミナルでの契約が必要です</string>
     <string name="contents_detail_contract_button_ch">ドコモテレビターミナルで契約する</string>
     <string name="contents_detail_external_display_dialog_msg">外部出力が検出されたので、再生を停止しました</string>
     <string name="contents_detail_parental_check_fail">年齢制限のため視聴できません</string>
@@ -360,7 +360,7 @@
     <string name="main_setting_stb_busy_error_message">ドコモテレビターミナルが処理中です</string>
     <string name="main_setting_logon_request_error_message">ログインしてください</string>
     <string name="main_setting_h4d_not_signed_message">ひかりTV for docomoの契約状態が確認できないため\nご利用になれません。</string>
-    <string name="main_setting_stb_not_connected_message">ドコモテレビターミナルとの通信が確認できないため\nご利用になれません。</string>
+    <string name="main_setting_stb_not_connected_message">ドコモテレビターミナルが接続されているWi-Fiに接続した状態で再度実施してください</string>
     <string name="main_setting_menu_title_faq_list">FAQ</string>
     <string name="main_setting_remote_start">main_setting_remote_start</string>
     <string name="main_setting_remote_confirm_message_setting">外出先でも視聴できるリモート視聴設定を有効にしますか？</string>
@@ -516,6 +516,6 @@
     <string name="remote_expired_message">リモート視聴の有効期限が切れました。\n再度リモート視聴をする場合は、ドコモテレビターミナルが接続されているWi-Fiに接続した状態で「メニュー＞設定＞リモート視聴設定」を行ってください。</string>
 
     <!-- ログアウト -->
-    <string name="logout_messsage">ログアウトしますか</string>
+    <string name="logout_message">ログアウトしますか</string>
 
 </resources>
