@@ -936,10 +936,10 @@ public class BaseActivity extends FragmentActivity implements
                 showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_SET_DEFAULT_USER_ACCOUNT_REJECTED: // 要求受付失敗
-                showErrorDialogOffer(getResources().getString(R.string.common_user_switch_key_code_power_internal_error));
+                showErrorDialogOffer(getResources().getString(R.string.common_request_acceptance_failure_error));
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE: // サービス未登録、又は、署名による呼び出し元不正
-                showErrorDialogOffer(getResources().getString(R.string.common_user_switch_not_registered_service_error));
+                showErrorDialogOffer(getResources().getString(R.string.common_service_unregistered_error));
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID: // 指定ユーザIDなし
                 // チェック処理の状態で処理を分岐する
@@ -948,25 +948,25 @@ public class BaseActivity extends FragmentActivity implements
                 showDAccountRegDialog();
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USER_ID_CHANGED: // 要求時とは別docomoIDで指定ユーザに切り替え成功 ※本来は正常終了だが異常終了とする
-                showErrorDialogOffer(getResources().getString(R.string.common_user_switch_key_code_power_user_invalid_state_error));
+                showErrorDialogOffer(getResources().getString(R.string.common_different_user_switch_successfully_error));
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USER_TIMEOUT: // ユーザタイムアウト
-                showErrorDialogOffer(getResources().getString(R.string.common_user_account_exist_user_invalid_state_error));
+                showErrorDialogOffer(getResources().getString(R.string.common_user_time_out_error));
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USER_CANCEL: // ユーザ中断
-                showErrorDialogOffer(getResources().getString(R.string.common_start_application_user_invalid_state_error));
+                showErrorDialogOffer(getResources().getString(R.string.common_user_cancel_error));
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USER_INVALID_STATE: // ユーザ状態異常
-                showErrorDialogOffer(getResources().getString(R.string.common_default_error_message));
+                showErrorDialogOffer(getResources().getString(R.string.common_user_state_abnormality_error));
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USERACCOUNT_SERVER_ERROR: // ユーザアカウント切り替えのサーバエラー
-                showErrorDialogOffer(getResources().getString(R.string.common_start_application_internal_error));
+                showErrorDialogOffer(getResources().getString(R.string.common_switch_user_account_server_error));
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USERACCOUNT_NETWORK_ERROR: // ユーザアカウント切り替えのネットワークエラー
-                showErrorDialogOffer(getResources().getString(R.string.common_user_account_exist_internal_error));
+                showErrorDialogOffer(getResources().getString(R.string.common_switch_user_account_network_error));
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USERACCOUNT_INTERNAL_ERROR: // ユーザアカウント切り替えの内部エラー
-                showErrorDialogOffer(getResources().getString(R.string.common_title_detail_internal));
+                showErrorDialogOffer(getResources().getString(R.string.common_switch_user_account_internal_error));
                 break;
             default:
                 break;
@@ -983,34 +983,34 @@ public class BaseActivity extends FragmentActivity implements
                 showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_SET_DEFAULT_USER_ACCOUNT_REJECTED: // 要求受付失敗
-                showErrorDialogOffer(getResources().getString(R.string.common_user_switch_key_code_power_internal_error));
+                showErrorDialogOffer(getResources().getString(R.string.common_request_acceptance_failure_error));
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE: // サービス未登録、又は、署名による呼び出し元不正
-                showErrorDialogOffer(getResources().getString(R.string.common_user_switch_not_registered_service_error));
+                showErrorDialogOffer(getResources().getString(R.string.common_service_unregistered_error));
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID: // 指定ユーザIDなし
                 showDAccountRegDialog();
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USER_ID_CHANGED: // 要求時とは別docomoIDで指定ユーザに切り替え成功 ※本来は正常終了だが異常終了とする
-                showErrorDialogOffer(getResources().getString(R.string.common_user_switch_key_code_power_user_invalid_state_error));
+                showErrorDialogOffer(getResources().getString(R.string.common_different_user_switch_successfully_error));
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USER_TIMEOUT: // ユーザタイムアウト
-                showErrorDialogOffer(getResources().getString(R.string.common_user_account_exist_user_invalid_state_error));
+                showErrorDialogOffer(getResources().getString(R.string.common_user_time_out_error));
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USER_CANCEL: // ユーザ中断
-                showErrorDialogOffer(getResources().getString(R.string.common_start_application_user_invalid_state_error));
+                showErrorDialogOffer(getResources().getString(R.string.common_user_cancel_error));
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USER_INVALID_STATE: // ユーザ状態異常
-                showErrorDialogOffer(getResources().getString(R.string.common_default_error_message));
+                showErrorDialogOffer(getResources().getString(R.string.common_user_state_abnormality_error));
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USERACCOUNT_SERVER_ERROR: // ユーザアカウント切り替えのサーバエラー
-                showErrorDialogOffer(getResources().getString(R.string.common_start_application_internal_error));
+                showErrorDialogOffer(getResources().getString(R.string.common_switch_user_account_server_error));
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USERACCOUNT_NETWORK_ERROR: // ユーザアカウント切り替えのネットワークエラー
-                showErrorDialogOffer(getResources().getString(R.string.common_user_account_exist_internal_error));
+                showErrorDialogOffer(getResources().getString(R.string.common_switch_user_account_network_error));
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_USERACCOUNT_INTERNAL_ERROR: // ユーザアカウント切り替えの内部エラー
-                showErrorDialogOffer(getResources().getString(R.string.common_title_detail_internal));
+                showErrorDialogOffer(getResources().getString(R.string.common_switch_user_account_internal_error));
                 break;
             default:
                 break;
