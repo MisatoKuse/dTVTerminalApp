@@ -1157,7 +1157,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      * エラーダイアログ表示.
      */
     private void createUnKnownDialog() {
-        CustomDialog failedRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        CustomDialog failedRecordingReservationDialog = new CustomDialog(StbSelectActivity.this, CustomDialog.DialogType.ERROR);
         failedRecordingReservationDialog.setContent(getResources().getString(R.string.main_setting_connect_error_message));
         failedRecordingReservationDialog.setCancelText(R.string.recording_reservation_failed_dialog_confirm);
         // Cancelable

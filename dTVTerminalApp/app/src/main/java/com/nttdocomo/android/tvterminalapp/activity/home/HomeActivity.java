@@ -6,22 +6,16 @@ package com.nttdocomo.android.tvterminalapp.activity.home;
 
 import android.content.ComponentName;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -35,7 +29,6 @@ import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewAdapter;
 import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewItemDecoration;
-import com.nttdocomo.android.tvterminalapp.application.TvtApplication;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
@@ -97,10 +90,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private LinearLayout mAgreementRl = null;
     /**
-     * PR枠画像.
-     */
-    private ImageView mPrImageView = null;
-    /**
      * ホーム画面のスクロール部.
      */
     private ScrollView mScrollView = null;
@@ -119,7 +108,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     /**
      * ヘッダのmargin.
      */
-    private final static int HOME_CONTENTS_LIST_START_INDEX = 2;
+    private final static int HOME_CONTENTS_LIST_START_INDEX = 1;
     /**
      * UIの上下表示順(NOW ON AIR).
      */
@@ -440,14 +429,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             case LOGIN_OK_CONTRACT_NG:
                 DTVTLogger.debug("showHomeBanner_LOGIN_OK_CONTRACT_NG");
                 mAgreementRl.setVisibility(View.VISIBLE);
-                mPrImageView.setVisibility(View.VISIBLE);
                 break;
             case CONTRACT_OK_PAIRING_NG:
                 DTVTLogger.debug("showHomeBanner_CONTRACT_OK_PAIRING_NG");
             case CONTRACT_OK_PARING_OK:
                 DTVTLogger.debug("showHomeBanner_CONTRACT_OK_PARING_OK");
                 mAgreementRl.setVisibility(View.GONE);
-                mPrImageView.setVisibility(View.GONE);
                 break;
             case LOGIN_NG:
                 DTVTLogger.debug("showHomeBanner_LOGIN_NG");
@@ -468,7 +455,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     });
                     //dアカウントが取得できない事が確定したので、PR画像のバナーを表示する
                     mAgreementRl.setVisibility(View.VISIBLE);
-                    mPrImageView.setVisibility(View.VISIBLE);
                     break;
                 }
                 //確定前はバナーを表示しないので、ここでbreakは行わない
@@ -476,7 +462,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 DTVTLogger.debug("showHomeBanner_default");
                 //情報の取得前は各バナーは表示しないように変更
                 mAgreementRl.setVisibility(View.GONE);
-                mPrImageView.setVisibility(View.GONE);
                 break;
         }
     }
@@ -485,7 +470,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public void onClick(final View view) {
         super.onClick(view);
         switch (view.getId()) {
-            case R.id.home_main_layout_pr:
             case R.id.home_main_layout_kytv:
                 if (isFastClick()) {
                     startBrowser(UrlConstants.WebUrl.PR_URL);
@@ -509,27 +493,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mLinearLayout.setVisibility(View.GONE);
         TextView agreementTextView = findViewById(R.id.home_main_layout_kytv);
         mAgreementRl = findViewById(R.id.home_main_layout_kyrl);
-        mPrImageView = findViewById(R.id.home_main_layout_pr);
         mAgreementRl.setVisibility(View.GONE);
-        mPrImageView.setVisibility(View.GONE);
         agreementTextView.setOnClickListener(this);
-        mPrImageView.setOnClickListener(this);
 
         //スクロールビューの操作を行う
         initScrollView();
-
-        //縦横比を維持したまま幅100%に拡大縮小
-        Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.home_pr);
-        int drawableWidth = drawable.getIntrinsicWidth();
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        WindowManager wm = getWindowManager();
-        Display display = wm.getDefaultDisplay();
-        display.getMetrics(displaymetrics);
-        float ratio = ((float) displaymetrics.widthPixels / (float) drawableWidth);
-        LinearLayout.LayoutParams imgIp = new LinearLayout.LayoutParams(
-                displaymetrics.widthPixels,
-                (int) (drawable.getIntrinsicHeight() * ratio));
-        mPrImageView.setLayoutParams(imgIp);
 
         //各コンテンツのビューを作成する
         for (int i = HOME_CONTENTS_LIST_START_INDEX; i < HOME_CONTENTS_LIST_COUNT + HOME_CONTENTS_LIST_START_INDEX; i++) {
@@ -595,7 +563,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             countTextView.setText(getString(R.string.home_now_on_air_channel_list));
         }
     }
-   @Override
+    @Override
     protected String getContentTypeName(final int tag) {
         super.getContentTypeName(tag);
         String typeName = "";

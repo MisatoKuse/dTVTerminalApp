@@ -71,14 +71,6 @@
                     android:textColor="@color/home_contract_button_text_color"
                     android:textSize="@dimen/home_no_contract_text_size"/>
             </LinearLayout>
-
-            <ImageView
-                android:id="@+id/home_main_layout_pr"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@mipmap/home_pr"
-                android:contentDescription="@null"
-                android:scaleType="fitCenter" />
         </LinearLayout>
 
     </ScrollView>
