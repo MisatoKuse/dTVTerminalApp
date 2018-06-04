@@ -322,6 +322,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
         switch (view.getId()) {
             case R.id.tutorial_show_agreement:
                 //TODO 遷移画面未確定
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_agreement));
                 startActivity(SettingMenuTermsOfServiceActivity.class, null);
                 break;
             case R.id.skipOrFinishTutorialAcivity:

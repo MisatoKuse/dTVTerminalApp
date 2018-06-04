@@ -403,7 +403,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 mCheckboxText.setVisibility(View.VISIBLE);
                 mDeviceListView.setVisibility(View.VISIBLE);
                 mParingTextView.setText(R.string.str_stb_no_pair_use_text);
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading));
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select));
             } else {
                 RelativeLayout relativeLayout = findViewById(R.id.stb_icon_relative_layout_setting);
                 relativeLayout.setVisibility(View.GONE);
@@ -416,10 +416,14 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring));
             }
         } else {
-            if (statusTextView != null && statusTextView.isActivated()) {
+            if (mLoadMoreView != null && mLoadMoreView.getVisibility() == View.VISIBLE) {
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading));
             } else {
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select));
+                if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
+                    super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select));
+                } else {
+                    super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring));
+                }
             }
         }
 
@@ -567,6 +571,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
             TextView statusTextView = findViewById(R.id.stb_select_status_text);
             statusTextView.setText(R.string.str_stb_pairing);
+            super.sendScreenView(getString(R.string.str_stb_pairing));
 
             mCheckBox.setVisibility(View.GONE);
             mCheckboxText.setVisibility(View.GONE);
@@ -607,6 +612,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         mParingTextView.setVisibility(View.INVISIBLE);
         mDeviceListView.setVisibility(View.GONE);
         mLoadMoreView.setVisibility(View.VISIBLE);
+        super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading));
         DTVTLogger.end();
     }
 
@@ -835,8 +841,14 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start("displayMoreData:" + b);
         if (b) {
             mLoadMoreView.setVisibility(View.VISIBLE);
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading));
         } else {
             mLoadMoreView.setVisibility(View.GONE);
+            if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select));
+            } else {
+                super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring));
+            }
         }
         DTVTLogger.end();
     }
