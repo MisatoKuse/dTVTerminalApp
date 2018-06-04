@@ -416,7 +416,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring));
             }
         } else {
-            if (statusTextView.isActivated()) {
+            if (statusTextView != null && statusTextView.isActivated()) {
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading));
             } else {
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select));

@@ -2761,10 +2761,14 @@ public class BaseActivity extends FragmentActivity implements
      * @param screenName スクリーン名
      */
     public void sendScreenView(String screenName) {
+        DTVTLogger.start("sendScreenName: " + screenName);
+
         TvtApplication app = (TvtApplication) getApplication();
         Tracker tracker = app.getDefaultTracker();
         tracker.setScreenName(screenName);
         tracker.send(new com.google.android.gms.analytics.HitBuilders.ScreenViewBuilder().build());
+
+        DTVTLogger.end();
     }
     // endregion callback
 }
