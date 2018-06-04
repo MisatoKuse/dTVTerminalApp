@@ -778,7 +778,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         Button contractLeadingButton = findViewById(R.id.contract_leading_button);
         setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
         DTVTLogger.debug("userState:---" + UserState.LOGIN_NG);
-        String message = getString(R.string.main_setting_logon_request_error_message);
+        String message = getString(R.string.contents_detail_login_message);
         String buttonText = getString(R.string.contents_detail_login_button);
         contractLeadingButton.setOnClickListener(new View.OnClickListener() {
             @Override

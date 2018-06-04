@@ -134,7 +134,6 @@
                         android:contentDescription="@null"
                         android:gravity="center_vertical"
                         android:scaleType="fitXY"
-                        android:src="@mipmap/icon_circle_opacity_clip"
                         android:visibility="gone" />
                 </LinearLayout>
             </RelativeLayout>

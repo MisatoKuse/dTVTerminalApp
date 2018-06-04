@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
@@ -94,7 +93,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     /**
      * カテゴリ NOW ON AIR(ホーム).
      */
-    private final static int HOME_CONTENTS_SORT_CHANNEL = 12;
+    private final static int HOME_CONTENTS_SORT_CHANNEL = 11;
     /**
      * カテゴリ おすすめ番組(ホーム).
      */
