@@ -920,19 +920,50 @@ public class BaseActivity extends FragmentActivity implements
      */
     private void switchDefaultAccountCode(final int resultCode) {
         switch (resultCode) {
-            case RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
-                //サーバエラー
-            case RelayServiceResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE:
-                //ユーザアカウントチェックサービス未登録
-            case RelayServiceResponseMessage.RELAY_RESULT_USER_INVALID_STATE:
-                //STBの中継アプリ~応答が無かった場合(要求はできたのでSTBとの通信はOK)
+            case RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR: // 中継アプリの内部エラー
+                // TODO: ワーディングリストの対応要
                 showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
                 break;
-            case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
+            case RelayServiceResponseMessage.RELAY_RESULT_SET_DEFAULT_USER_ACCOUNT_REJECTED: // 要求受付失敗
+                // TODO: ワーディングリストの対応要
+                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                break;
+            case RelayServiceResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE: // サービス未登録、又は、署名による呼び出し元不正
+                // TODO: ワーディングリストの対応要
+                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                break;
+            case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID: // 指定ユーザIDなし
                 // チェック処理の状態で処理を分岐する
                 SharedPreferencesUtils.resetSharedPreferencesStbInfo(getApplicationContext());
                 // TODO アプリのキャッシュをきれいにクリアする処理が必要
                 showDAccountRegDialog();
+                break;
+            case RelayServiceResponseMessage.RELAY_RESULT_USER_ID_CHANGED: // 要求時とは別docomoIDで指定ユーザに切り替え成功 ※本来は正常終了だが異常終了とする
+                // TODO: ワーディングリストの対応要
+                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                break;
+            case RelayServiceResponseMessage.RELAY_RESULT_USER_TIMEOUT: // ユーザタイムアウト
+                // TODO: ワーディングリストの対応要
+                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                break;
+            case RelayServiceResponseMessage.RELAY_RESULT_USER_CANCEL: // ユーザ中断
+                // TODO: ワーディングリストの対応要
+                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                break;
+            case RelayServiceResponseMessage.RELAY_RESULT_USER_INVALID_STATE: // ユーザ状態異常
+                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                break;
+            case RelayServiceResponseMessage.RELAY_RESULT_USERACCOUNT_SERVER_ERROR: // ユーザアカウント切り替えのサーバエラー
+                // TODO: ワーディングリストの対応要
+                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                break;
+            case RelayServiceResponseMessage.RELAY_RESULT_USERACCOUNT_NETWORK_ERROR: // ユーザアカウント切り替えのネットワークエラー
+                // TODO: ワーディングリストの対応要
+                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                break;
+            case RelayServiceResponseMessage.RELAY_RESULT_USERACCOUNT_INTERNAL_ERROR: // ユーザアカウント切り替えの内部エラー
+                // TODO: ワーディングリストの対応要
+                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
                 break;
             default:
                 break;
@@ -945,14 +976,47 @@ public class BaseActivity extends FragmentActivity implements
      */
     private void switchAccountExistCode(final int resultCode) {
         switch (resultCode) {
-            case RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
-                //サーバエラー
-            case RelayServiceResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE:
-                //ユーザアカウントチェックサービス未登録
+            case RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR: // 中継アプリの内部エラー
+                // TODO: ワーディングリストの対応要
                 showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
                 break;
-            case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
+            case RelayServiceResponseMessage.RELAY_RESULT_SET_DEFAULT_USER_ACCOUNT_REJECTED: // 要求受付失敗
+                // TODO: ワーディングリストの対応要
+                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                break;
+            case RelayServiceResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE: // サービス未登録、又は、署名による呼び出し元不正
+                // TODO: ワーディングリストの対応要
+                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                break;
+            case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID: // 指定ユーザIDなし
                 showDAccountRegDialog();
+                break;
+            case RelayServiceResponseMessage.RELAY_RESULT_USER_ID_CHANGED: // 要求時とは別docomoIDで指定ユーザに切り替え成功 ※本来は正常終了だが異常終了とする
+                // TODO: ワーディングリストの対応要
+                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                break;
+            case RelayServiceResponseMessage.RELAY_RESULT_USER_TIMEOUT: // ユーザタイムアウト
+                // TODO: ワーディングリストの対応要
+                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                break;
+            case RelayServiceResponseMessage.RELAY_RESULT_USER_CANCEL: // ユーザ中断
+                // TODO: ワーディングリストの対応要
+                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                break;
+            case RelayServiceResponseMessage.RELAY_RESULT_USER_INVALID_STATE: // ユーザ状態異常
+                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                break;
+            case RelayServiceResponseMessage.RELAY_RESULT_USERACCOUNT_SERVER_ERROR: // ユーザアカウント切り替えのサーバエラー
+                // TODO: ワーディングリストの対応要
+                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                break;
+            case RelayServiceResponseMessage.RELAY_RESULT_USERACCOUNT_NETWORK_ERROR: // ユーザアカウント切り替えのネットワークエラー
+                // TODO: ワーディングリストの対応要
+                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                break;
+            case RelayServiceResponseMessage.RELAY_RESULT_USERACCOUNT_INTERNAL_ERROR: // ユーザアカウント切り替えの内部エラー
+                // TODO: ワーディングリストの対応要
+                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
                 break;
             default:
                 break;
@@ -1055,11 +1119,10 @@ public class BaseActivity extends FragmentActivity implements
                         break;
                 }
                 break;
-            case RelayServiceResponseMessage.RELAY_RESULT_CONNECTION_TIMEOUT:
+            case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
                 //dTV アプリが STBの中継アプリに接続できない場合
                 setStbStatus(false);
                 break;
-            case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
             case RelayServiceResponseMessage.RELAY_RESULT_APPLICATION_ID_NOTEXIST:
             case RelayServiceResponseMessage.RELAY_RESULT_APPLICATION_START_FAILED:
             case RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR:

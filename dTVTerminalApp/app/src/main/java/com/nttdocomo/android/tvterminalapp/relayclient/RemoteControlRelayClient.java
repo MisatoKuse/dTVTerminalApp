@@ -451,22 +451,39 @@ public class RemoteControlRelayClient {
     static final String RELAY_RESULT_COMMAND_ARGUMENT_NOTEXIST = "COMMAND_ARGUMENT_NOTEXIST";
     /**command_argument_notexist.*/
     static final String RELAY_RESULT_SERVICE_CATEGORY_TYPE_NOTEXIST = "SERVICE_CATEGORY_TYPE_NOTEXIST";
-    /**ユーザ切替サービス未登録.*/
+
+    // ユーザアカウント切り替え要求のエラー応答.
+    /**要求受付失敗.*/
+    static final String RELAY_RESULT_SET_DEFAULT_USER_ACCOUNT_REJECTED = "SET_DEFAULT_USER_ACCOUNT_REJECTED";
+    /**ユーザ切替サービス未登録、又は、署名による呼び出し元不正.*/
     static final String RELAY_RESULT_NOT_REGISTERED_SERVICE = "NOT_REGISTERED_SERVICE";
     /**指定ユーザIDなし.*/
     static final String RELAY_RESULT_UNREGISTERED_USER_ID = "UNREGISTERED_USER_ID";
-    /**接続タイムアウト.*/
-    static final String RELAY_RESULT_CONNECTION_TIMEOUT = "CONNECTION_TIMEOUT";
-    /**サービス多忙.*/
-    static final String RELAY_RESULT_RELAY_SERVICE_BUSY = "SERVICE_BUSY";
-    /**ユーザー無効状態.*/
+    /**要求時とは別docomoIDで指定ユーザに切り替え成功 ※本来は正常終了だが異常終了とする.*/
+    static final String RELAY_RESULT_USER_ID_CHANGED = "USER_ID_CHANGED";
+    /**ユーザタイムアウト.*/
+    static final String RELAY_RESULT_USER_TIMEOUT = "USER_TIMEOUT";
+    /**ユーザ中断.*/
+    static final String RELAY_RESULT_USER_CANCEL = "USER_CANCEL";
+    /**ユーザ状態異常.*/
     static final String RELAY_RESULT_USER_INVALID_STATE = "USER_INVALID_STATE";
+    /**サーバエラー.*/
+    static final String RELAY_RESULT_USERACCOUNT_SERVER_ERROR = "USERACCOUNT_SERVER_ERROR";
+    /**ネットワークエラー.*/
+    static final String RELAY_RESULT_USERACCOUNT_NETWORK_ERROR = "USERACCOUNT_NETWORK_ERROR";
+    /**内部エラー.*/
+    static final String RELAY_RESULT_USERACCOUNT_INTERNAL_ERROR = "USERACCOUNT_INTERNAL_ERROR";
+
+    /**接続タイムアウト.*/
+    static final String RELAY_RESULT_DISTINATION_UNREACHABLE = "DISTINATION_UNREACHABLE";
+    /**他の端末の要求処理中.*/
+    static final String RELAY_RESULT_RELAY_SERVICE_BUSY = "SERVICE_BUSY";
     /**dTVTアプリのバージョンコード不適合.*/
     static final String RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE = "dTVT_APPLICATION_VERSION_INCOMPATIBLE"; // dTVTアプリのバージョンコード不適合
     /**中継アプリのバージョンコード不適合.*/
     static final String RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE = "STB_RELAY_SERVICE_VERSION_INCOMPATIBLE"; // 中継アプリのバージョンコード不適合
     /**中継アプリの鍵不一致.*/
-    private static final String RELAY_RESULT_STB_RELAY_KEY_ERROR = "KEY_ERROR";
+    static final String RELAY_RESULT_STB_RELAY_KEY_ERROR = "KEY_ERROR";
     // URLエンコード対応文字
     /**asterisk.*/
     private static final String URL_ENCODED_ASTERISK = "%2a";
@@ -1285,12 +1302,7 @@ public class RemoteControlRelayClient {
                                 resultErrorCode = response.mResultCodeMap.get(errorCodeStr);
                                 response.setResultCode(resultErrorCode);
                             } else {
-                                if (errorCodeStr.equals(RELAY_RESULT_STB_RELAY_KEY_ERROR)) {
-                                    response.setResultCode(RelayServiceResponseMessage.RELAY_RESULT_STB_KEY_MISMATCH);
-                                    return response;
-                                } else {
-                                    return response;
-                                }
+                                return response;
                             }
                         } else {
                             return response;

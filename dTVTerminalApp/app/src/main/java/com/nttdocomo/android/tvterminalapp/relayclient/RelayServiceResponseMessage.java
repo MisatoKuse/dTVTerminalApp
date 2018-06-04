@@ -36,26 +36,42 @@ public class RelayServiceResponseMessage implements Serializable {
     private static final int RELAY_RESULT_CHNO_NOTEXIST = 18;
     /**command_argument_notexist.*/
     private static final int RELAY_RESULT_COMMAND_ARGUMENT_NOTEXIST = 19;
-    /**not_registered_service.*/
+
+    // ユーザアカウント切り替え要求のエラー応答.
+    /**要求受付失敗.*/
+    public static final int RELAY_RESULT_SET_DEFAULT_USER_ACCOUNT_REJECTED = 20;
+    /**ユーザ切替サービス未登録、又は、署名による呼び出し元不正.*/
     public static final int RELAY_RESULT_NOT_REGISTERED_SERVICE = 21;
-    /**unregistered_user_id.*/
+    /**指定ユーザIDなし.*/
     public static final int RELAY_RESULT_UNREGISTERED_USER_ID = 22;
-    /**connection_timeout.*/
-    public static final int RELAY_RESULT_CONNECTION_TIMEOUT = 23;
-    /**relay_service_busy.*/
-    public static final int RELAY_RESULT_RELAY_SERVICE_BUSY = 24;
-    /**user_invalid_state.*/
-    public static final int RELAY_RESULT_USER_INVALID_STATE = 25;
-    /**distination_unreachable.*/
-    public static final int RELAY_RESULT_DISTINATION_UNREACHABLE = 26;
+    /**要求時とは別docomoIDで指定ユーザに切り替え成功 ※本来は正常終了だが異常終了とする.*/
+    public static final int RELAY_RESULT_USER_ID_CHANGED = 23;
+    /**ユーザタイムアウト.*/
+    public static final int RELAY_RESULT_USER_TIMEOUT = 24;
+    /**ユーザ中断.*/
+    public static final int RELAY_RESULT_USER_CANCEL = 25;
+    /**ユーザ状態異常.*/
+    public static final int RELAY_RESULT_USER_INVALID_STATE = 26;
+    /**ユーザアカウント切り替えのサーバエラー.*/
+    public static final int RELAY_RESULT_USERACCOUNT_SERVER_ERROR = 27;
+    /**ユーザアカウント切り替えのネットワークエラー.*/
+    public static final int RELAY_RESULT_USERACCOUNT_NETWORK_ERROR = 28;
+    /**ユーザアカウント切り替えの内部エラー.*/
+    public static final int RELAY_RESULT_USERACCOUNT_INTERNAL_ERROR = 29;
+
+    /**他の端末の要求処理中.*/
+    public static final int RELAY_RESULT_RELAY_SERVICE_BUSY = 31;
+    /**接続タイムアウト.*/
+    public static final int RELAY_RESULT_DISTINATION_UNREACHABLE = 32;
     /**service_category_type_notexist.*/
-    private static final int RELAY_RESULT_SERVICE_CATEGORY_TYPE_NOTEXIST = 27;
+    private static final int RELAY_RESULT_SERVICE_CATEGORY_TYPE_NOTEXIST = 33;
     /**dtvt_application_version_incompatible.*/
-    public static final int RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE = 28;
+    public static final int RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE = 34;
     /**stb_relay_service_version_incompatible.*/
-    public static final int RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE = 29;
+    public static final int RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE = 35;
     /** STB側の鍵不一致.*/
-    public static final int RELAY_RESULT_STB_KEY_MISMATCH = RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE + 1;
+    public static final int RELAY_RESULT_STB_KEY_MISMATCH = 36;
+
     private static final long serialVersionUID = -6651018925196027761L;
     /**result初期化.*/
     private int mResult = RELAY_RESULT_OK;
@@ -98,14 +114,22 @@ public class RelayServiceResponseMessage implements Serializable {
             put(RemoteControlRelayClient.RELAY_RESULT_COMMAND_ARGUMENT_NOTEXIST, RELAY_RESULT_COMMAND_ARGUMENT_NOTEXIST);
             put(RemoteControlRelayClient.RELAY_RESULT_APPLICATION_START_FAILED, RELAY_RESULT_APPLICATION_START_FAILED);
             put(RemoteControlRelayClient.RELAY_RESULT_VERSION_CODE_INCOMPATIBLE, RELAY_RESULT_VERSION_CODE_INCOMPATIBLE);
+            put(RemoteControlRelayClient.RELAY_RESULT_SET_DEFAULT_USER_ACCOUNT_REJECTED, RELAY_RESULT_SET_DEFAULT_USER_ACCOUNT_REJECTED);
             put(RemoteControlRelayClient.RELAY_RESULT_NOT_REGISTERED_SERVICE, RELAY_RESULT_NOT_REGISTERED_SERVICE);
             put(RemoteControlRelayClient.RELAY_RESULT_UNREGISTERED_USER_ID, RELAY_RESULT_UNREGISTERED_USER_ID);
-            put(RemoteControlRelayClient.RELAY_RESULT_CONNECTION_TIMEOUT, RELAY_RESULT_CONNECTION_TIMEOUT);
-            put(RemoteControlRelayClient.RELAY_RESULT_RELAY_SERVICE_BUSY, RELAY_RESULT_RELAY_SERVICE_BUSY);
+            put(RemoteControlRelayClient.RELAY_RESULT_USER_ID_CHANGED, RELAY_RESULT_USER_ID_CHANGED);
+            put(RemoteControlRelayClient.RELAY_RESULT_USER_TIMEOUT, RELAY_RESULT_USER_TIMEOUT);
+            put(RemoteControlRelayClient.RELAY_RESULT_USER_CANCEL, RELAY_RESULT_USER_CANCEL);
             put(RemoteControlRelayClient.RELAY_RESULT_USER_INVALID_STATE, RELAY_RESULT_USER_INVALID_STATE);
+            put(RemoteControlRelayClient.RELAY_RESULT_USERACCOUNT_SERVER_ERROR, RELAY_RESULT_USERACCOUNT_SERVER_ERROR);
+            put(RemoteControlRelayClient.RELAY_RESULT_USERACCOUNT_NETWORK_ERROR, RELAY_RESULT_USERACCOUNT_NETWORK_ERROR);
+            put(RemoteControlRelayClient.RELAY_RESULT_USERACCOUNT_INTERNAL_ERROR, RELAY_RESULT_USERACCOUNT_INTERNAL_ERROR);
+            put(RemoteControlRelayClient.RELAY_RESULT_DISTINATION_UNREACHABLE, RELAY_RESULT_DISTINATION_UNREACHABLE);
+            put(RemoteControlRelayClient.RELAY_RESULT_RELAY_SERVICE_BUSY, RELAY_RESULT_RELAY_SERVICE_BUSY);
             put(RemoteControlRelayClient.RELAY_RESULT_SERVICE_CATEGORY_TYPE_NOTEXIST, RELAY_RESULT_SERVICE_CATEGORY_TYPE_NOTEXIST);
             put(RemoteControlRelayClient.RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE, RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE);
             put(RemoteControlRelayClient.RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE, RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE);
+            put(RemoteControlRelayClient.RELAY_RESULT_STB_RELAY_KEY_ERROR, RELAY_RESULT_STB_KEY_MISMATCH);
         }
     };
     /**
