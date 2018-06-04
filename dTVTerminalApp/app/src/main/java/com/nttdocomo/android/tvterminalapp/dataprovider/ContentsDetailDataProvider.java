@@ -302,6 +302,8 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
             }
             if (mRoleListInfo != null) {
                 mApiDataProviderCallback.onRoleListCallback(mRoleListInfo);
+            } else {
+                mApiDataProviderCallback.onRoleListCallback(null);
             }
         } else {
             //TODO :WEBAPIを取得できなかった時の処理を記載予定

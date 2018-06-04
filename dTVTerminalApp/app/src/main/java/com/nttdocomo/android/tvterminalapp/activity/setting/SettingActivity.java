@@ -137,10 +137,10 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         //設定画面に表示するデータを設定する
         initData();
         //ペアリング完了から遷移する場合リモート視聴設定処理を呼び出す
-        if (getIntent().getBooleanExtra(getResources().getString(R.string.main_setting_remote_confirm_message), false)) {
+        if (getIntent().getBooleanExtra(getResources().getString(R.string.main_setting_remote_confirm_message_setting), false)) {
             // TODO リモート視聴設定処理呼び出す;
             setRemoteProgressVisible(View.VISIBLE);
-            getIntent().putExtra(getResources().getString(R.string.main_setting_remote_confirm_message), false);
+            getIntent().putExtra(getResources().getString(R.string.main_setting_remote_confirm_message_setting), false);
         }
     }
 
@@ -276,7 +276,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             StbConnectionManager.ConnectionStatus connectionStatus = StbConnectionManager.shared().getConnectionStatus();
             switch (connectionStatus) {
                 case NONE_PAIRING: //未ペアリングならダイアログ表示
-                    settingErrorDialog(R.string.contents_detail_pairing_request);
+                    settingErrorDialog(R.string.main_setting_remote_paring_request);
                     return false;
                 case HOME_IN:
                     break;
@@ -352,7 +352,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
      */
     private void showRemoteConfirmDialog() {
         CustomDialog remoteConfirmDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-        remoteConfirmDialog.setContent(getResources().getString(R.string.main_setting_remote_confirm_message));
+        remoteConfirmDialog.setContent(getResources().getString(R.string.main_setting_remote_confirm_message_setting));
         remoteConfirmDialog.setConfirmText(R.string.positive_response);
         remoteConfirmDialog.setCancelText(R.string.negative_response);
         remoteConfirmDialog.setOnTouchOutside(false);

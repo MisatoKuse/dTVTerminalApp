@@ -191,6 +191,8 @@ public class DailyTvRankingActivity extends BaseActivity implements
                     //エラー情報が存在すれば、DBにデータが無く、通信も失敗しているので、エラーメッセージを出して帰る
                     String message = errorState.getApiErrorMessage(
                             getApplication().getApplicationContext());
+                    mNoDataMessage.setVisibility(View.VISIBLE);
+                    mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
 
                     //メッセージの有無を確認
                     if (TextUtils.isEmpty(message)) {

@@ -67,6 +67,11 @@ public class ErrorState {
     private static final String XML_RESULT_STRING = "id";
 
     /**
+     * エラーコード.
+     */
+    private static final String NETWORK_ERROR_CODE = "NW-";
+
+    /**
      * コンストラクタ.
      */
     public ErrorState() {
@@ -112,6 +117,7 @@ public class ErrorState {
             answer = StringUtils.getConnectStrings(
                     mErrorMessage,
                     openString,
+                    NETWORK_ERROR_CODE,
                     mErrorCode,
                     closeString);
         }
@@ -156,7 +162,7 @@ public class ErrorState {
                 break;
             case SSL_ERROR:
                 //SSLエラー用メッセージの取得
-                mErrorMessage = context.getString(R.string.nw_error_ssl_message);
+                mErrorMessage = context.getString(R.string.network_ssl_error_message);
 
                 //トースト用
                 mToastErrorMessage = context.getString(
@@ -165,17 +171,29 @@ public class ErrorState {
             case NETWORK_ERROR:
                 //通信不能用のメッセージ
                 mErrorMessage = context.getString(
-                        R.string.activity_start_network_error_message);
+                        R.string.network_nw_error_message);
 
                 //トースト用
                 mToastErrorMessage = context.getString(
                         R.string.common_get_data_failed_message);
                 break;
             case SERVER_ERROR:
+                //ネットワークエラー(サーバエラー)
+                mErrorMessage = context.getString(R.string.network_server_error_message);
+                //トースト用
+                mToastErrorMessage = context.getString(
+                        R.string.common_get_data_failed_message);
+                break;
             case TOKEN_ERROR:
+                //ネットワークエラー(トークン取得エラー)
+                mErrorMessage = context.getString(R.string.network_token_error_message);
+                //トースト用
+                mToastErrorMessage = context.getString(
+                        R.string.common_get_data_failed_message);
+                break;
             case HTTP_ERROR:
                 //その他Lエラー用メッセージの取得
-                mErrorMessage = context.getString(R.string.common_get_data_failed_message);
+                mErrorMessage = context.getString(R.string.network_http_error_message);
 
                 //トースト用
                 mToastErrorMessage = context.getString(

@@ -60,7 +60,7 @@
         android:background="@color/stb_select_white_color"
         android:gravity="center"
         android:textStyle="bold"
-        android:text="@string/str_stb_search_failed_paring_again"
+        android:text="@string/str_stb_again_pairing"
         android:textSize="@dimen/launch_device_search_error_help_button_text"
         android:textColor="@color/stb_select_black_color" />
     <CheckBox

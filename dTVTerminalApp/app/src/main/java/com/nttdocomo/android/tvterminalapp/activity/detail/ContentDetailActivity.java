@@ -2201,19 +2201,19 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 // TODO エラー番号が判明次第エラーダイアログのタイトルを設定して表示
 //            switch (response.getErrorNo()) {
 //                case "0": // トークン不一致
-//                    dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_token));
+//                    dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_msg));
 //                    break;
 //                case "1": // その他異常
-//                    dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_other));
+//                    dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_msg));
 //                    break;
 //                case "2": // リクエストパラメータ
-//                    dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_param));
+//                    dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_msg));
 //                    break;
 //                case "3": // 登録件数超過
 //                    dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_over));
 //                    break;
 //                case "4": // 未契約エラー
-//                    dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_no_agreement));
+//                    dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_msg));
 //                    break;
 //                default: // 基本的には通らない
 //                    break;
@@ -2222,12 +2222,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 dialog.showDialog();
             } else {
                 // 成功
-                showCompleteDialog();
+                Toast.makeText(this, getResources().getString(R.string.recording_reservation_complete_dialog_msg), Toast.LENGTH_SHORT).show();
             }
         } else {
             // コンテンツ詳細取得データに失敗があった場合
             CustomDialog dialog = createErrorDialog();
-            dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_param));
+            dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_msg));
             dialog.showDialog();
         }
         DTVTLogger.end();
@@ -2290,18 +2290,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     mRecordingReservationContentsDetailInfo.getStartTime() - (DateUtils.EPOCH_TIME_ONE_HOUR * 2);
         }
         return !(nowTimeEpoch >= canRecordingReservationTime);
-    }
-
-    /**
-     * 録画予約成功時ダイアログ表示.
-     */
-    private void showCompleteDialog() {
-        CustomDialog completeRecordingReservationDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.ERROR);
-        completeRecordingReservationDialog.setContent(getResources().getString(R.string.recording_reservation_complete_dialog_msg));
-        completeRecordingReservationDialog.setConfirmText(R.string.recording_reservation_complete_dialog_ok);
-        // Cancelable
-        completeRecordingReservationDialog.setCancelable(false);
-        completeRecordingReservationDialog.showDialog();
     }
 
     /**

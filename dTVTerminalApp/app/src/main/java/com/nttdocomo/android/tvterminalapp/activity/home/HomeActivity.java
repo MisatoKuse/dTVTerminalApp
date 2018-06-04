@@ -189,6 +189,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private boolean mIsSearchDone = false;
 
     /**
+     * 情報取得に失敗したときのフラグ.
+     */
+    private boolean mPartDataGetFailed = false;
+
+    /**
      * ホーム画面表示時にdアカウントが取得できていなかった場合に、取得後にユーザー情報を取得しに行くフラグ.
      */
     private boolean mUserInfoGetRequest = false;
@@ -934,7 +939,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private boolean networkCheck() {
         if (!NetWorkUtils.isOnline(this)) {
-            String message = getResources().getString(R.string.activity_start_network_error_message);
+            String message = getResources().getString(R.string.network_nw_error_message);
             errorDialog(message, R.string.custom_dialog_ok);
             return false;
         } else {
@@ -1029,6 +1034,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void watchListenVideoListCallback(final List<ContentsData> clipContentInfo) {
+        showPartDataGetFailedDialog(clipContentInfo);
         //callbackが帰ってきたらProgressDialogを消す
         showProgessBar(false);
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
@@ -1037,12 +1043,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public void genreListCallback(@Nullable final List<GenreCountGetMetaData> listData) {
         //callbackが帰ってきたらProgressDialogを消す
+        showPartDataGetFailedDialog(listData);
         showProgessBar(false);
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
     @Override
     public void genreListMapCallback(final Map<String, VideoGenreList> map, final List<String> firstGenreIdList) {
+        showPartDataGetFailedDialog(firstGenreIdList);
         //callbackが帰ってきたらProgressDialogを消す
         showProgessBar(false);
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
@@ -1057,6 +1065,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onRoleListCallback(final ArrayList<RoleListMetaData> roleListInfo) {
+        showPartDataGetFailedDialog(roleListInfo);
         //callbackが帰ってきたらProgressDialogを消す
         showProgessBar(false);
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
@@ -1071,6 +1080,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onRentalVodListCallback(final PurchasedVodListResponse response) {
+        showPartDataGetFailedDialog(response);
         //callbackが帰ってきたらProgressDialogを消す
         showProgessBar(false);
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
@@ -1078,8 +1088,19 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onRentalChListCallback(final PurchasedChannelListResponse response) {
+        showPartDataGetFailedDialog(response);
         //callbackが帰ってきたらProgressDialogを消す
         showProgessBar(false);
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+    }
+    /**
+     * 一部データ取得失敗時に表示するエラーダイアログ.
+     * @param object データ情報.
+     */
+    private void showPartDataGetFailedDialog(final Object object) {
+        if (mIsCloseDialog && object == null && !mPartDataGetFailed) {
+            mPartDataGetFailed = true;
+            errorDialog(getString(R.string.get_contents_data_error_message), R.string.common_text_retry);
+        }
     }
 }

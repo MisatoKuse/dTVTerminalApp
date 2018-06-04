@@ -1183,7 +1183,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void run() {
                 CustomDialog failedRecordingReservationDialog = new CustomDialog(StbSelectActivity.this, CustomDialog.DialogType.ERROR);
-                failedRecordingReservationDialog.setContent(getResources().getString(R.string.str_stb_stb_error));
+                failedRecordingReservationDialog.setContent(getResources().getString(R.string.str_launch_stb_communication_failed_error));
                 failedRecordingReservationDialog.setCancelText(R.string.recording_reservation_failed_dialog_confirm);
                 // Cancelable
                 failedRecordingReservationDialog.setCancelable(false);
@@ -1209,7 +1209,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         final Activity activity = this;
 
         //出力メッセージのデフォルトはdアカウント用
-        String printMessage = getString(R.string.d_account_chamge_message);
+        String printMessage = getString(R.string.d_account_change_message);
 
         //引数がある場合はその先頭を使用する
         if (message != null && message.length > 0) {
