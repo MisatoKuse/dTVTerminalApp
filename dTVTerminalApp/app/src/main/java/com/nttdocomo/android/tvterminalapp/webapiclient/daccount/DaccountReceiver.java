@@ -11,6 +11,7 @@ import android.os.Bundle;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DaccountConstants;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 import java.util.Set;
 
@@ -34,6 +35,9 @@ public class DaccountReceiver extends BroadcastReceiver {
 
     /**連続通信扱い時間・5秒とする.*/
     private static final long REPEAT_RECIEVE_TIME = 5000L;
+
+    /**通知Intentのextrasのキー名.*/
+    private static final String DOCOMO_ID = "DOCOMO_ID";
 
     public static DaccountChangedCallBack dAccountChangedCallBack;
 
@@ -72,6 +76,7 @@ public class DaccountReceiver extends BroadcastReceiver {
             }
         }
 
+        Object docomoIdObject = intentBundle.get(DaccountReceiver.DOCOMO_ID);
         //内容で処理を振り分ける
         switch (role) {
             case DaccountConstants.SET_ID_RECEIVER:
@@ -89,8 +94,13 @@ public class DaccountReceiver extends BroadcastReceiver {
                 //ユーザー認証通知を受け取った。
                 DTVTLogger.debug("USER_AUTH_RECEIVER");
 
-                //ユーザーが登録された場合は、キャッシュクリアを呼ぶ。
-                DaccountControl.cacheClear(context);
+                if (docomoIdObject != null && docomoIdObject.toString().equals(SharedPreferencesUtils.getSharedPreferencesDaccountId(context))) {
+                    //TODO: ServiceToken使い回す実装された時に、ServiceTokenをクリアする必要がある。
+                } else {
+                    //再認証されたdocomoIdとDTVTアプリで使われているIdが違う場合に、キャッシュクリアを呼ぶ。
+                    DaccountControl.cacheClear(context);
+
+                }
                 if (dAccountChangedCallBack != null) {
                     dAccountChangedCallBack.onChanged();
                 }
@@ -100,10 +110,12 @@ public class DaccountReceiver extends BroadcastReceiver {
                 //ユーザー削除通知を受け取った。
                 DTVTLogger.debug("DELETE_ID_RECEIVER");
 
-                //ユーザーが削除されていた場合は、キャッシュクリアを呼ぶ。
-                DaccountControl.cacheClear(context);
-                if (dAccountChangedCallBack != null) {
-                    dAccountChangedCallBack.onChanged();
+                //DTVTアプリログインしているユーザーが削除されていた場合のみ、キャッシュクリアを呼ぶ。
+                if (docomoIdObject != null && docomoIdObject.toString().equals(SharedPreferencesUtils.getSharedPreferencesDaccountId(context))) {
+                    DaccountControl.cacheClear(context);
+                    if (dAccountChangedCallBack != null) {
+                        dAccountChangedCallBack.onChanged();
+                    }
                 }
 
                 break;
