@@ -96,6 +96,8 @@
 
     <string name="str_stb_pairing">ドコモテレビターミナルとペアリング中です</string>
     <string name="str_launch_stb_communication_failed_error">ドコモテレビターミナルとの通信に失敗しました（A-10）</string>
+    <string name="str_stb_registration_device_name_os">Android</string>
+    <string name="str_stb_registration_device_name_regist">登録</string>
 
     <!-- リモコン-->
     <string name="remote_controller_viewpager_watch_by_tv">テレビで視聴する</string>

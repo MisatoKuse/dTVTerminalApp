@@ -161,7 +161,8 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
                         DlnaManager.shared().StartDtcp();
                         DlnaManager.shared().StartDirag();
                         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(StbConnectActivity.this);
-                        DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn);
+                        DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn
+                                , getApplicationContext());
                     } else {
                         setRemoteProgressVisible(View.GONE);
                         showActivationErrorDialog();
@@ -192,6 +193,11 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
 
     @Override
     public void onRegisterCallBack(final boolean result, final DlnaManager.LocalRegistrationErrorType errorType) {
+        if (result) {
+            //ローカルレジストレーションが成功したので日時を蓄積する
+            SharedPreferencesUtils.setRegistTime(getApplicationContext());
+        }
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
