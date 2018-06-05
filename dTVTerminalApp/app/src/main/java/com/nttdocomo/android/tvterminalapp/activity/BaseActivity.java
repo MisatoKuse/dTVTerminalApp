@@ -99,6 +99,7 @@ import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOtt;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountReceiver;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipDeleteWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.IDimDefines;
@@ -120,7 +121,10 @@ public class BaseActivity extends FragmentActivity implements
         ClipRegistWebClient.ClipRegistJsonParserCallback,
         ClipDeleteWebClient.ClipDeleteJsonParserCallback,
         DaccountControl.DaccountControlCallBack,
-        CustomDialog.DismissCallback, HomeRecyclerViewAdapter.ItemClickCallback, StbConnectionManager.ConnectionListener {
+        CustomDialog.DismissCallback,
+        HomeRecyclerViewAdapter.ItemClickCallback,
+        StbConnectionManager.ConnectionListener,
+        DaccountReceiver.DaccountChangedCallBack {
     /**
      * ヘッダーBaseレイアウト.
      */
@@ -711,6 +715,8 @@ public class BaseActivity extends FragmentActivity implements
         DTVTLogger.start();
         TvtApplication app = (TvtApplication) getApplication();
 
+        DaccountReceiver.dAccountChangedCallBack = this;
+
         // BG → FG でのonResumeかを判定
         if (app.getIsChangeApplicationVisible()) {
             if (DeviceStateUtils.isRootDevice()) {
@@ -1192,6 +1198,7 @@ public class BaseActivity extends FragmentActivity implements
         restartDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
+                SharedPreferencesUtils.setSharedPreferencesRestartFlag(getApplicationContext(), false);
                 //OKが押されたので、ホーム画面の表示
                 reStartApplication();
             }
@@ -1384,6 +1391,7 @@ public class BaseActivity extends FragmentActivity implements
 
         //ワンタイムトークン取得のキャンセル
         cancelOttConnection();
+        DaccountReceiver.dAccountChangedCallBack = null;
     }
 
     /**
@@ -1846,12 +1854,28 @@ public class BaseActivity extends FragmentActivity implements
         logoutDialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
             @Override
             public void onCancelCallback() {
-                mDAccountControl = new DaccountControl();
-                mDAccountControl.registService(getApplicationContext(), BaseActivity.this);
             }
         });
 
-        logoutDialog.setDialogDismissCallback(this);
+        logoutDialog.setDialogDismissCallback(new CustomDialog.DismissCallback() {
+            @Override
+            public void allDismissCallback() {
+                if (mShowDialog != null) {
+                    //次のダイアログの判定の為に、今のダイアログの文言をクリアする
+                    mShowDialog.clearContentText();
+                }
+
+                pollDialog();
+
+                mDAccountControl = new DaccountControl();
+                mDAccountControl.registService(getApplicationContext(), BaseActivity.this);
+            }
+
+            @Override
+            public void otherDismissCallback() {
+
+            }
+        });
 
         offerDialog(logoutDialog);
     }
@@ -2915,5 +2939,15 @@ public class BaseActivity extends FragmentActivity implements
             //ローカルレジストレーション見送りのログ出力
             DTVTLogger.debug("less than 24 hours local registration is not done.");
         }
+    }
+
+    public void onChanged() {
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                restartMessageDialog();
+            }
+        });
     }
 }

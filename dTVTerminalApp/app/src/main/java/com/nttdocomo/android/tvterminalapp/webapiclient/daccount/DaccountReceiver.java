@@ -18,11 +18,24 @@ import java.util.Set;
  * dアカウントで状況の変化が発生した場合の通知を受け取るレシーバー.
  */
 public class DaccountReceiver extends BroadcastReceiver {
+
+    /**
+     * 結果を返すコールバック.
+     */
+    public interface DaccountChangedCallBack {
+        /**
+         * dアカ変更があった時に通知する.
+         */
+        void onChanged();
+    }
+
     /**前回受信時間.*/
     private static long sBeforeReceiveTime = 0;
 
     /**連続通信扱い時間・5秒とする.*/
     private static final long REPEAT_RECIEVE_TIME = 5000L;
+
+    public static DaccountChangedCallBack dAccountChangedCallBack;
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
@@ -67,6 +80,9 @@ public class DaccountReceiver extends BroadcastReceiver {
 
                 //ユーザーが登録された場合は、キャッシュクリアを呼ぶ。
                 DaccountControl.cacheClear(context);
+                if (dAccountChangedCallBack != null) {
+                    dAccountChangedCallBack.onChanged();
+                }
 
                 break;
             case DaccountConstants.USER_AUTH_RECEIVER:
@@ -75,6 +91,9 @@ public class DaccountReceiver extends BroadcastReceiver {
 
                 //ユーザーが登録された場合は、キャッシュクリアを呼ぶ。
                 DaccountControl.cacheClear(context);
+                if (dAccountChangedCallBack != null) {
+                    dAccountChangedCallBack.onChanged();
+                }
 
                 break;
             case DaccountConstants.DELETE_ID_RECEIVER:
@@ -83,6 +102,9 @@ public class DaccountReceiver extends BroadcastReceiver {
 
                 //ユーザーが削除されていた場合は、キャッシュクリアを呼ぶ。
                 DaccountControl.cacheClear(context);
+                if (dAccountChangedCallBack != null) {
+                    dAccountChangedCallBack.onChanged();
+                }
 
                 break;
             case DaccountConstants.INVALIDATE_ID_RECEIVER:
