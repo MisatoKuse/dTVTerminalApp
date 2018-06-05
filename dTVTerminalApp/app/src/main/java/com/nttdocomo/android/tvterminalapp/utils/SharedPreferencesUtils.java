@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist.SerializablePreferencesData;
@@ -486,7 +487,7 @@ public class SharedPreferencesUtils {
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_IMAGE_QUALITY, Context.MODE_PRIVATE);
 
-        return data.getString(SHARED_KEY_IMAGE_QUALITY, "");
+        return data.getString(SHARED_KEY_IMAGE_QUALITY, context.getString(R.string.main_setting_image_quality_high));
     }
 
     /**
