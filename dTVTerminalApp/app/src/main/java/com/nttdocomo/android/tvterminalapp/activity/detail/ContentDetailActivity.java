@@ -352,18 +352,18 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     /** ハンドラー.*/
     private final Handler loadHandler = new Handler();
 
-    // google analytics
-    /** コンテンツ詳細・タブ　作品情報.*/
-    private static final String TAB_CONTENTS_INFO = "作品情報";
-    /** コンテンツ詳細・タブ　番組詳細.*/
-    private static final String TAB_PROGRAM_DETAIL = "番組詳細";
-    /** コンテンツ詳細・タブ　チャンネル.*/
-    private static final String TAB_NAME_CHANNEL = "チャンネル";
-    /** コンテンツ詳細・タブ　エピソード.*/
-    private static final String TAB_NAME_EPISODE = "エピソード";
+    /** コンテンツタイプ(Google Analytics用).*/
+    private enum ContentTypeForGoogleAnalytics {
+        /** テレビ.*/
+        TV,
+        /** ビデオ.*/
+        VOD,
+        /** その他.*/
+        OTHER
+    }
 
-    // contents type(tv or video)
-    private boolean mIsHikariVod = false;
+    /** コンテンツタイプ(Google Analytics用).*/
+    private ContentTypeForGoogleAnalytics contentType = null;
     // endregion
 
     //region Activity LifeCycle
@@ -439,7 +439,13 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             default:
                 break;
         }
-        sendScreenViewForPosition(mViewPager.getCurrentItem());
+        if (contentType != null) {
+            if (mViewPager != null) {
+                sendScreenViewForPosition(mViewPager.getCurrentItem());
+            } else {
+                sendScreenViewForPosition(0);
+            }
+        }
         DTVTLogger.end();
     }
 
@@ -886,6 +892,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     || serviceId == DTV_CHANNEL_CONTENTS_SERVICE_ID) {
                 // 他サービス(dtv/dtvチャンネル/dアニメ)フラグを立てる
                 mIsOtherService = true;
+                contentType = ContentTypeForGoogleAnalytics.OTHER;
             }
             // STBに接続している　「テレビで視聴」が表示
             if (getStbStatus()) {
@@ -1212,10 +1219,13 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     /**
      * スクリーン名マップを取得する.
      */
+
+
     private HashMap<String, String> getScreenNameMap() {
         HashMap<String, String> screenNameMap = new HashMap<>();
         screenNameMap.put(getString(R.string.contents_detail_tab_contents_info), getString(R.string.google_analytics_screen_name_content_detail_other));
-        if (mIsHikariVod) {
+
+        if (contentType == ContentTypeForGoogleAnalytics.VOD) {
             screenNameMap.put(getString(R.string.contents_detail_tab_program_detail), getString(R.string.google_analytics_screen_name_content_detail_h4d_vod_program_detail));
         } else {
             screenNameMap.put(getString(R.string.contents_detail_tab_program_detail), getString(R.string.google_analytics_screen_name_content_detail_h4d_broadcast_program_detail));
@@ -1315,6 +1325,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         if (contentsDetailInfo != null) {
             DtvContentsDetailFragment detailFragment = getDetailFragment();
             mDetailFullData = contentsDetailInfo;
+            contentType = ContentTypeForGoogleAnalytics.TV;
             if (TV_PROGRAM.equals(mDetailFullData.getDisp_type())) {
                 //tv_programの場合
                 if (TV_SERVICE_FLAG_HIKARI.equals(mDetailFullData.getmTv_service())) {
@@ -1329,7 +1340,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             //VOD配信日時(vod_start_date) > 現在時刻
                             setRecordingData(detailFragment);
                         } else {
-                            mIsHikariVod = true;
+                            contentType = ContentTypeForGoogleAnalytics.VOD;
                         }
                     }
                 } else {
@@ -1337,10 +1348,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         setRecordingData(detailFragment);
                 }
             } else {
-                mIsHikariVod = true;
+                contentType = ContentTypeForGoogleAnalytics.VOD;
             }
 
-            if (mIsHikariVod) {
+            if (contentType == ContentTypeForGoogleAnalytics.VOD) {
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_content_detail_h4d_vod_program_detail));
             } else {
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_content_detail_h4d_broadcast_program_detail));
