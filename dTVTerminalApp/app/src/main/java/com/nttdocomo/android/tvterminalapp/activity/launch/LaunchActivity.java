@@ -171,11 +171,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     }
 
     @Override
-    public void onBackPressed() {
-        //super.onBackPressed();
-    }
-
-    @Override
     protected void onDaccountOttGetComplete(final boolean result) {
         super.onDaccountOttGetComplete(result);
         this.runOnUiThread(new Runnable() {
@@ -257,6 +252,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
                 mCheckSetting.setGooglePlay(false);
 
                 if (mDaccountStatus) {
+
                     //この場合は、dアカウントフラグのクリアを行う
                     SharedPreferencesUtils.setFirstExecFlag(getApplicationContext(),
                             SharedPreferencesUtils.FIRST_D_ACCOUNT_GET_BEFORE);
