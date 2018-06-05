@@ -1020,6 +1020,7 @@ public class BaseActivity extends FragmentActivity implements
                 showErrorDialogOffer(getResources().getString(R.string.common_switch_user_account_internal_error));
                 break;
             default:
+                showErrorDialogOffer(getResources().getString(R.string.main_setting_stb_application_launch_fail));
                 break;
         }
     }
@@ -1128,8 +1129,6 @@ public class BaseActivity extends FragmentActivity implements
             case RelayServiceResponseMessage.RELAY_RESULT_APPLICATION_START_FAILED:
             default:
                 switchAccountExistCode(resultCode);
-                message = getResources().getString(R.string.main_setting_stb_application_launch_fail);
-                showErrorDialog(message);
                 break;
         }
     }
@@ -2890,11 +2889,11 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     /**
-     * スクリーン・ビューを送る
+     * スクリーン・ビューを送る.
      *
      * @param screenName スクリーン名
      */
-    public void sendScreenView(String screenName) {
+    public void sendScreenView(final String screenName) {
         DTVTLogger.start("sendScreenName: " + screenName);
 
         TvtApplication app = (TvtApplication) getApplication();
@@ -2907,7 +2906,7 @@ public class BaseActivity extends FragmentActivity implements
     // endregion callback
 
     /**
-     * 自動ローカルレジストレーションの処理
+     * 自動ローカルレジストレーションの処理.
      */
     private void execAutoLocalRegistration() {
         //前回のレジストレーションから24時間経過しているかどうかのチェック
@@ -2915,7 +2914,7 @@ public class BaseActivity extends FragmentActivity implements
             //24時間経過していたので、再度ローカルレジストレーションを行う
             DlnaManager.shared().mLocalRegisterListener = new DlnaManager.LocalRegisterListener() {
                 @Override
-                public void onRegisterCallBack(boolean result, DlnaManager.LocalRegistrationErrorType errorType) {
+                public void onRegisterCallBack(final boolean result, final DlnaManager.LocalRegistrationErrorType errorType) {
                     if (result) {
                         //ローカルレジストレーションが成功したので日時を蓄積する
                         SharedPreferencesUtils.setRegistTime(getApplicationContext());
@@ -2933,8 +2932,7 @@ public class BaseActivity extends FragmentActivity implements
 
             //Udnを取得し、再ローカルレジストレーションを行う
             DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-            DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn
-                    , getApplicationContext());
+            DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn, getApplicationContext());
         } else {
             //ローカルレジストレーション見送りのログ出力
             DTVTLogger.debug("less than 24 hours local registration is not done.");
