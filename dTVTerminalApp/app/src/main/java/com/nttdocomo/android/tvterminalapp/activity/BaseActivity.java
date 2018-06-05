@@ -1154,7 +1154,9 @@ public class BaseActivity extends FragmentActivity implements
     protected void showErrorDialog(final String errorMessage) {
         CustomDialog errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
         errorDialog.setContent(errorMessage);
-        errorDialog.showDialog();
+        if (!isFinishing()) {
+            errorDialog.showDialog();
+        }
     }
 
     /**

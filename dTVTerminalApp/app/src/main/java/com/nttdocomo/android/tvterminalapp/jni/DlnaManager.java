@@ -257,6 +257,10 @@ public class DlnaManager {
             case HOME_OUT:
                 DTVTLogger.warning("remoteConnectStatus = " + remoteConnectStatus);
                 if (DlnaManager.shared().remoteConnectStatus == RemoteConnectStatus.READY) {
+                    if (TextUtils.isEmpty(mUdn)) {
+                        DlnaDmsItem item = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
+                        mUdn = item.mUdn;
+                    }
                     requestRemoteConnect(mUdn);
                     requestContainerId = containerId;
                 } else {
