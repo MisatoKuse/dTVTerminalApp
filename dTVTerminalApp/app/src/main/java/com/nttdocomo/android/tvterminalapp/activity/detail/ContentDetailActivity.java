@@ -401,9 +401,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     DTVTLogger.end();
                     return;
                 }
-                mPlayerViewLayout.initSecurePlayer(mPlayStartPosition);
-                mPlayerViewLayout.setPlayerEvent();
-                mPlayerViewLayout.setUserAgeInfo();
+                if (mPlayerViewLayout != null) {
+                    mPlayerViewLayout.initSecurePlayer(mPlayStartPosition);
+                    mPlayerViewLayout.setPlayerEvent();
+                    mPlayerViewLayout.setUserAgeInfo();
+                }
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_player));
                 break;
             case PLAYER_AND_CONTENTS_DETAIL:
@@ -411,9 +413,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     DTVTLogger.end();
                     return;
                 }
-                mPlayerViewLayout.initSecurePlayer(mPlayStartPosition);
-                mPlayerViewLayout.setPlayerEvent();
-                mPlayerViewLayout.setUserAgeInfo();
+                if (mPlayerViewLayout != null) {
+                    mPlayerViewLayout.initSecurePlayer(mPlayStartPosition);
+                    mPlayerViewLayout.setPlayerEvent();
+                    mPlayerViewLayout.setUserAgeInfo();
+                }
                 //BG復帰時にクリップボタンの更新を行う
                 dtvContentsDetailFragment = getDetailFragment();
                 if (mDetailFragment != null && mDetailFragment.getView() != null) {
@@ -581,7 +585,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private void initView() {
         mIntent = getIntent();
         mThumbnailBtn = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail_btn);
+        mThumbnailBtn.setOnClickListener(this);
         mThumbnail = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                getWidthDensity(), getWidthDensity() / SCREEN_RATIO_WIDTH_16 * SCREEN_RATIO_HEIGHT_9);
+        mThumbnail.setLayoutParams(layoutParams);
         mThumbnailRelativeLayout = findViewById(R.id.dtv_contents_detail_layout);
         mContractLeadingView = findViewById(R.id.contract_leading_view);
         Object object = mIntent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
@@ -1131,20 +1139,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * 詳細Viewの初期化.
      */
     private void initContentsView() {
-        //サムネイル取得
-        mThumbnail = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail);
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                getWidthDensity(), getWidthDensity() / SCREEN_RATIO_WIDTH_16 * SCREEN_RATIO_HEIGHT_9);
-        mThumbnail.setLayoutParams(layoutParams);
-
-        mThumbnailBtn = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail_btn);
-        mThumbnailBtn.setOnClickListener(this);
         switch (mDisplayState) {
-            case PLAYER_ONLY:
-                setPlayerScroll();
-                break;
             case PLAYER_AND_CONTENTS_DETAIL:
-                setPlayerScroll();
                 mViewPager = findViewById(R.id.dtv_contents_detail_main_layout_vp);
                 initContentData();
                 initTab();
@@ -1154,29 +1150,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 initContentData();
                 initTab();
                 break;
+            case PLAYER_ONLY:
             default:
                 break;
         }
-    }
-
-    /**
-     * プレイヤーの場合スクロールできない.
-     */
-    private void setPlayerScroll() {
-        LinearLayout parentLayout = findViewById(R.id.dtv_contents_detail_main_layout_ll);
-        LinearLayout scrollLayout = findViewById(R.id.contents_detail_scroll_layout);
-        scrollLayout.removeViewAt(0);
-        parentLayout.addView(mThumbnailRelativeLayout, 0);
-        setThumbnailInvisible();
-    }
-
-    /**
-     * サムネイル画像の非表示.
-     */
-    private void setThumbnailInvisible() {
-        findViewById(R.id.rl_dtv_contents_detail_tab).setVisibility(View.GONE);
-        mThumbnail.setVisibility(View.GONE);
-        mThumbnailBtn.setVisibility(View.GONE);
     }
 
     /**
@@ -1189,6 +1166,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             mTabLayout.setTabClickListener(this);
             mTabLayout.initTabView(mTabNames, TabItemLayout.ActivityType.DTV_CONTENTS_DETAIL_ACTIVITY);
             RelativeLayout tabRelativeLayout = findViewById(R.id.rl_dtv_contents_detail_tab);
+            tabRelativeLayout.setVisibility(View.VISIBLE);
             tabRelativeLayout.addView(mTabLayout);
         } else {
             mTabLayout.resetTabView(mTabNames);
@@ -2562,9 +2540,14 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
                     @Override
                     public void onConnectErrorCallback(final int errorCode) {
-                        String errorMsg = getString(R.string.common_text_remote_fail_msg);
-                        String format = getString(R.string.common_text_remote_fail_error_code_format);
-                        showErrorDialog(errorMsg.replace(format, String.valueOf(errorCode)));
+                        final String errorMsg = getString(R.string.common_text_remote_fail_msg);
+                        final String format = getString(R.string.common_text_remote_fail_error_code_format);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                showErrorDialog(errorMsg.replace(format, String.valueOf(errorCode)));
+                            }
+                        });
                     }
                 });
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);

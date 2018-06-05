@@ -293,9 +293,14 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void onConnectErrorCallback(final int errorCode) {
-        String errorMsg = getString(R.string.common_text_remote_fail_msg);
-        String format = getString(R.string.common_text_remote_fail_error_code_format);
-        showErrorDialog(errorMsg.replace(format, String.valueOf(errorCode)));
+        final String errorMsg = getString(R.string.common_text_remote_fail_msg);
+        final String format = getString(R.string.common_text_remote_fail_error_code_format);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                showErrorDialog(errorMsg.replace(format, String.valueOf(errorCode)));
+            }
+        });
     }
 
     /**
