@@ -610,12 +610,26 @@ public class TvProgramListActivity extends BaseActivity implements
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mChannelRecyclerView.setLayoutManager(linearLayoutManager);
-        mProgramChannelAdapter = new ProgramChannelAdapter(this, channels);
+        mProgramChannelAdapter = new ProgramChannelAdapter(this, getChannelNameList(channels));
         mTvProgramListAdapter = new TvProgramListAdapter(this, channels);
         mChannelRecyclerView.setAdapter(mProgramChannelAdapter);
         mProgramRecyclerView.setAdapter(mTvProgramListAdapter);
         scrollToCurTime();
         refreshTimeLine();
+    }
+
+    /**
+     * 番組表に渡すチャンネル名リストを作成する.
+     *
+     * @param channels 番組情報
+     * @return チャンネル名リスト.
+     */
+    private ArrayList<String> getChannelNameList(final ArrayList<ChannelInfo> channels) {
+        ArrayList<String> list = new ArrayList<>();
+        for (int i = 0; i < channels.size(); i++) {
+            list.add(channels.get(i).getTitle());
+        }
+        return list;
     }
 
     /**

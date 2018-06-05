@@ -643,12 +643,12 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * クリップ表示.
      *
      * @param itemViewHolder ビューホルダー
-     * @param isParental     年齢制限フラグ
+     * @param isClipHide     年齢制限フラグ
      * @param isClipStatus   クリップ状態
      */
-    private void displayProgramClip(final ItemViewHolder itemViewHolder, final boolean isParental, final boolean isClipStatus) {
+    private void displayProgramClip(final ItemViewHolder itemViewHolder, final boolean isClipHide, final boolean isClipStatus) {
         int clipHeight = itemViewHolder.mClipButton.getHeight();
-        if (!isParental) {
+        if (!isClipHide) {
             if (clipHeight < CLIP_BUTTON_SIZE) {
                 itemViewHolder.mClipButton.setVisibility(View.INVISIBLE);
             } else {

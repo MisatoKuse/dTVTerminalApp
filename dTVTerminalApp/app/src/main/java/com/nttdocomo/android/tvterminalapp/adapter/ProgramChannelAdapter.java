@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity;
-import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 
 import java.util.ArrayList;
 
@@ -29,7 +28,7 @@ public class ProgramChannelAdapter extends
     /**LayoutInflater.*/
     private final LayoutInflater mInflater;
     /**チャンネル情報.*/
-    private final ArrayList<ChannelInfo> mChannelList;
+    private final ArrayList<String> mChannelList;
     /**スクリーンWidth.*/
     private int mScreenWidth = 0;
     /**タイムラインWidth.*/
@@ -42,7 +41,7 @@ public class ProgramChannelAdapter extends
      * @param context コンテキスト
      * @param channelList チャンネル一覧
      */
-    public ProgramChannelAdapter(final Context context, final ArrayList<ChannelInfo> channelList) {
+    public ProgramChannelAdapter(final Context context, final ArrayList<String> channelList) {
         mInflater = LayoutInflater.from(context);
         this.mChannelList = channelList;
         this.mContext = (TvProgramListActivity) context;
@@ -71,7 +70,7 @@ public class ProgramChannelAdapter extends
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final int i) {
         if (viewHolder.channelText != null) {
-            viewHolder.channelText.setText(mChannelList.get(i).getTitle());
+            viewHolder.channelText.setText(mChannelList.get(i));
         }
     }
 

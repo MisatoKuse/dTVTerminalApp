@@ -24,8 +24,8 @@
 
 		<ImageView
 			android:id="@+id/tv_program_item_panel_clip_iv"
-			android:layout_width="@dimen/tv_program_item_panel_clip_width"
-			android:layout_height="@dimen/tv_program_item_panel_clip_width"
+			android:layout_width="@dimen/tv_program_item_panel_clip_button_size"
+			android:layout_height="@dimen/tv_program_item_panel_clip_button_size"
 			android:layout_below="@id/tv_program_item_panel_clip_tv"
 			android:layout_centerHorizontal="true"
 			android:layout_marginTop="@dimen/panel_clip_margin_top"
