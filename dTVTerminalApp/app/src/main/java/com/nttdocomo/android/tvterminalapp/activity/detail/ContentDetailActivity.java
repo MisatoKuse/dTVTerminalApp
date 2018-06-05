@@ -2506,12 +2506,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 new DlnaContentMultiChannelDataProvider.OnMultiChCallbackListener() {
                     @Override
                     public void multiChannelFindCallback(final DlnaObject dlnaObject) {
-                        if (dlnaObject != null) {
-                            //Threadクラスからのコールバックのため、UIスレッド化する
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    DTVTLogger.error("resultItem != null");
+                        //Threadクラスからのコールバックのため、UIスレッド化する
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (dlnaObject != null) {
                                     //player start
                                     //放送中ひかりTVコンテンツの時は自動再生する
                                     mDisplayState = PLAYER_AND_CONTENTS_DETAIL;
@@ -2533,9 +2532,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                     }
                                     initPlayer(data);
                                     onResume();
+                                } else {
+                                    showErrorDialog(getString(R.string.contents_detail_now_on_air_get_now_on_air_error));
                                 }
-                            });
-                        }
+                            }
+                        });
                     }
 
                     @Override
