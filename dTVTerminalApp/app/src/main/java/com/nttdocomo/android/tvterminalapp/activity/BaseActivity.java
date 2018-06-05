@@ -1382,10 +1382,6 @@ public class BaseActivity extends FragmentActivity implements
 
     @Override
     protected void onPause() {
-        if (mRemoteControllerView != null && mRemoteControllerView.isTopRemoteControllerUI()) {
-            // onPause時にリモコンUIを閉じる
-            mRemoteControllerView.closeRemoteControllerUI();
-        }
 
         dismissDialogOnPause();
         super.onPause();
@@ -1590,7 +1586,7 @@ public class BaseActivity extends FragmentActivity implements
     private void setRemoteControllerViewMargin(final int visibility) {
         DTVTLogger.start();
         //TODO 横画面の情報がないため縦画面の時のみ実装
-        if (visibility == View.VISIBLE) {
+        if (visibility == View.VISIBLE && this instanceof ContentDetailActivity) {
             //リモコン表示時にScrollViewにマージンを設ける
             Resources resources = getResources();
             int remoteButtonMargin = resources.getDimensionPixelSize(R.dimen.remote_control_display_button_height)
