@@ -78,6 +78,8 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
     public void onMyChannelDeleteJsonParsed(final MyChannelDeleteResponse myChannelDeleteResponse) {
         if (myChannelDeleteResponse != null) {
             mApiDataProviderCallback.onMyChannelDeleteCallback(myChannelDeleteResponse.getStatus());
+        } else {
+            mApiDataProviderCallback.onMyChannelDeleteCallback(null);
         }
     }
 
