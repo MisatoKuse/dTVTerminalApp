@@ -16,11 +16,11 @@
 
         <ImageView
             android:id="@+id/paring_search_image_induction"
-            android:layout_width="@dimen/launch_stb_start_up_icon1_width"
-            android:layout_height="@dimen/launch_stb_start_up_icon1_high"
+            android:layout_width="@dimen/launch_stb_start_up_icon2_width"
+            android:layout_height="@dimen/launch_stb_start_up_icon2_high"
             android:layout_marginBottom="@dimen/paring_setting_search_image_margin_top"
             android:baselineAlignBottom="true"
-            android:src="@mipmap/startup_icon_04"
+            android:src="@mipmap/startup_icon_02"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true" />
 
