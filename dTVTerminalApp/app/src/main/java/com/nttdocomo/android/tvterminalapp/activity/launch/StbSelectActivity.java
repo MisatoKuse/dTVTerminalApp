@@ -686,8 +686,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
         //選択されたSTB番号を保持
         mSelectDevice = i;
-        //IPアドレスを設定する
-        mRemoteControlRelayClient.setRemoteIp(mDlnaDmsItemList.get(i).mIPAddress);
+        if (mDlnaDmsItemList != null) {
+            //IPアドレスを設定する
+            mRemoteControlRelayClient.setRemoteIp(mDlnaDmsItemList.get(i).mIPAddress);
+        }
         //ペアリング中画面を出す
         showParingView();
         //鍵交換
