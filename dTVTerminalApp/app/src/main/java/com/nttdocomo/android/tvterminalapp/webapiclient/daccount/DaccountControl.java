@@ -433,9 +433,25 @@ public class DaccountControl implements
         DTVTLogger.start();
         DaccountControlOnce onceControl = DaccountControlOnce.getInstance();
 
-        //キャッシュ削除タスクを呼び出す
-        CacheClearTask clearTask = new CacheClearTask();
-        clearTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, context);
+        //プリファレンスユーティリティの配下のデータを、ユーザー切り替え後も残す一部を除き削除
+        SharedPreferencesUtils.clearAlmostSharedPreferences(context);
+
+        //日付ユーティリティの配下のプリファレンスを削除
+        DateUtils.clearDataSave(context);
+
+        //サムネイルのキャッシュファイルを削除する
+        ThumbnailCacheManager.clearThumbnailCache(context);
+
+        //DBを丸ごと削除する
+        boolean deleteDatabaseExeced = context.deleteDatabase(DataBaseConstants.DATABASE_NAME);
+
+        DTVTLogger.debug("deleteDatabase Answer = " + deleteDatabaseExeced);
+
+        //DBを新造する・インスタンスを作ると自動で作成される
+        new DataBaseHelper(context);
+
+        // 再起動フラグの設定
+        SharedPreferencesUtils.setSharedPreferencesRestartFlag(context, true);
 
         //次回実行する為にフラグをリセット
         onceControl.setExecOnce(false, daccountGetOtt, context);
@@ -443,64 +459,6 @@ public class DaccountControl implements
         DTVTLogger.end();
     }
 
-    /**
-     * キャッシュ削除処理の実体.
-     * おそらく必要はないが、一応ファイル削除やDB削除なので、AsyncTaskとする
-     */
-    private static class CacheClearTask extends AsyncTask<Context, Void, Void> {
-        /**
-         * 退避用コンテキスト.
-         */
-        Context mContext = null;
-
-        @Override
-        protected synchronized Void doInBackground(final Context... contexts) {
-            DTVTLogger.start();
-
-            //コンテキストの退避
-            mContext = contexts[0];
-            if (mContext == null) {
-                return null;
-            }
-
-            //プリファレンスユーティリティの配下のデータを、ユーザー切り替え後も残す一部を除き削除
-            SharedPreferencesUtils.clearAlmostSharedPreferences(mContext);
-
-            //日付ユーティリティの配下のプリファレンスを削除
-            DateUtils.clearDataSave(mContext);
-
-            //サムネイルのキャッシュファイルを削除する
-            ThumbnailCacheManager.clearThumbnailCache(mContext);
-
-            //DBを丸ごと削除する
-            boolean deleteDatabaseExeced = mContext.deleteDatabase(DataBaseConstants.DATABASE_NAME);
-
-            DTVTLogger.debug("deleteDatabase Answer = " + deleteDatabaseExeced);
-
-            //DBを新造する・インスタンスを作ると自動で作成される
-            new DataBaseHelper(mContext);
-
-            DTVTLogger.end();
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(final Void aVoid) {
-            super.onPostExecute(aVoid);
-            DTVTLogger.start();
-
-            if (mContext == null) {
-                //コンテキストがヌルならば帰る
-                DTVTLogger.end();
-                return;
-            }
-
-            // 再起動フラグの設定
-            SharedPreferencesUtils.setSharedPreferencesRestartFlag(mContext, true);
-
-            DTVTLogger.end();
-        }
-    }
 
     /**
      * 通信停止タスク実行.
