@@ -80,6 +80,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetail
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.SettingFileMetaData;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingFragmentFactory;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessage;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
@@ -2246,6 +2247,13 @@ public class BaseActivity extends FragmentActivity implements
         //ワンタイムトークンに通信可能を通知する
         setOttDisconnectionFlag(false);
 
+        //宅内判定を行う
+        if (StbConnectionManager.shared().getConnectionStatus()
+                == StbConnectionManager.ConnectionStatus.HOME_IN) {
+            //再ローカルレジストレーション判定を呼び出す
+            execAutoLocalRegistration();
+        }
+
         DTVTLogger.end();
     }
 
@@ -2873,4 +2881,39 @@ public class BaseActivity extends FragmentActivity implements
         DTVTLogger.end();
     }
     // endregion callback
+
+    /**
+     * 自動ローカルレジストレーションの処理
+     */
+    private void execAutoLocalRegistration() {
+        //前回のレジストレーションから24時間経過しているかどうかのチェック
+        if (SharedPreferencesUtils.isLocalRegistAfter24Hour(getApplicationContext())) {
+            //24時間経過していたので、再度ローカルレジストレーションを行う
+            DlnaManager.shared().mLocalRegisterListener = new DlnaManager.LocalRegisterListener() {
+                @Override
+                public void onRegisterCallBack(boolean result, DlnaManager.LocalRegistrationErrorType errorType) {
+                    if (result) {
+                        //ローカルレジストレーションが成功したので日時を蓄積する
+                        SharedPreferencesUtils.setRegistTime(getApplicationContext());
+                    }
+
+                    DTVTLogger.start("result = " + result + "/ ErrorType = " + errorType);
+                    //自動ローカルレジストレーションでは、結果とは無関係にメッセージなどは表示しない
+                    DTVTLogger.end();
+                }
+            };
+
+            //DLNAの下準備
+            DlnaManager.shared().StartDtcp();
+            DlnaManager.shared().RestartDirag();
+
+            //Udnを取得し、再ローカルレジストレーションを行う
+            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+            DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn
+                    , getApplicationContext());
+        } else {
+            //ローカルレジストレーション見送りのログ出力
+            DTVTLogger.debug("less than 24 hours local registration is not done.");
+        }
+    }
 }

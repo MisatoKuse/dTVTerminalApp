@@ -269,9 +269,9 @@ public class DateUtils {
     public static final int DAY_OF_WEEK_SATURDAY = 7;
 
     /**
-     * 1日のエポック秒.
+     * 1日のエポック秒(用途ができたので、public化).
      */
-    private static final long EPOCH_TIME_ONE_DAY = 86400;
+    public static final long EPOCH_TIME_ONE_DAY = 86400;
 
     /**
      * 1時間のエポック秒.

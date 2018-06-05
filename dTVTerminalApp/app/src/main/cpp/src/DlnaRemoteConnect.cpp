@@ -264,12 +264,8 @@ bool DlnaRemoteConnect::requestLocalRegistration(DMP *d, const du_uchar* udn, co
     du_uint32 version;
     du_uint8 deviceIdHash[DDTCP_CRYPTO_SHA1_DIGEST_SIZE];
     
-    // TODO: 登録名が決まってないため臨時作成uniqueId
-    time_t now = time(NULL);
-    char deviceNameBuffer[256];
-    struct tm *pNow = localtime(&now);
-    snprintf(deviceNameBuffer, sizeof(deviceNameBuffer), "[%s][%d-%d-%d_%d:%d:%d]",registerName, pNow->tm_year + 1900, pNow->tm_mon + 1, pNow->tm_mday, pNow->tm_hour, pNow->tm_min, pNow->tm_sec);
-    
+    // 登録名の作成はJava側で完了するように変更
+
     du_byte_zero((du_uint8*)&context, sizeof(context));
     du_byte_zero((du_uint8*)&deviceIdHash, DDTCP_CRYPTO_SHA1_DIGEST_SIZE);
     
@@ -291,7 +287,8 @@ bool DlnaRemoteConnect::requestLocalRegistration(DMP *d, const du_uchar* udn, co
         BREAK_IF(!du_uchar_array_cat0(&hash));
 
         BREAK_IF(!drag_cp_service_init(&deviceId, version)); // シミュレーターではここで失敗するためローカルレジストレーションできない
-        BREAK_IF(!local_registration_register(&d->upnpInstance, dmp_get_user_agent(), context.control_url, du_uchar_array_get(&deviceId),  DU_UCHAR_CONST(deviceNameBuffer), du_uchar_array_get(&hash), lr_register_response_handler, &id, version));
+        BREAK_IF(!local_registration_register(&d->upnpInstance, dmp_get_user_agent(), context.control_url, du_uchar_array_get(&deviceId),
+                                              DU_UCHAR_CONST(registerName), du_uchar_array_get(&hash), lr_register_response_handler, &id, version));
         result = true;
     } while (false);
     LOG_WITH_BOOL_PARAM(result, "");

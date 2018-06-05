@@ -178,6 +178,10 @@ public class SharedPreferencesUtils {
      */
     private static final String REGISTER_EXPIREDATE_DIALOG_FLG
             = "REGISTER_EXPIREDATE_DIALOG_FLG";
+    /**
+     * ローカルレジストレーションの成功日時.
+     */
+    private static final String LOCAL_REGIST_SUCCCES_TIME = "LOCAL_REGIST_SUCCCES_TIME";
 
     /**
      * 独自の削除メソッドがある接続済みSTB情報以外の、dアカウントユーザー切り替え時の削除対象
@@ -243,7 +247,11 @@ public class SharedPreferencesUtils {
             //  設定ファイル任意アップデートバージョン
             LAST_SETTING_FILE_OPTIONAL_UPDATE,
             // パーミッションチェックダイアログの表示設定
-            PERMISSION_DIALOG_DISPLAYED_TWICE
+            PERMISSION_DIALOG_DISPLAYED_TWICE,
+            //ローカルレジストレーション期限表示ダイアログフラグ
+            REGISTER_EXPIREDATE_DIALOG_FLG,
+            //ローカルレジストレーションの成功日時
+            LOCAL_REGIST_SUCCCES_TIME,
     };
 
 
@@ -1143,4 +1151,70 @@ public class SharedPreferencesUtils {
         return data.getInt(REGISTER_EXPIREDATE_DIALOG_FLG, 0);
     }
 
+    /**
+     * ローカルレジストレーションが成功したので、現在時刻を記録する.
+     *
+     * @param context コンテキスト
+     */
+    public static void setRegistTime(final Context context) {
+        DTVTLogger.start();
+
+        if (context != null) {
+            SharedPreferences data = context.getSharedPreferences(
+                    LOCAL_REGIST_SUCCCES_TIME, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = data.edit();
+            editor.putLong(LOCAL_REGIST_SUCCCES_TIME, DateUtils.getNowTimeFormatEpoch());
+            editor.apply();
+        }
+
+        DTVTLogger.end();
+    }
+
+    /**
+     * ローカルレジストレーション時刻を削除する.
+     *
+     * @param context コンテキスト
+     */
+    public static void deleteRegistTime(final Context context) {
+        DTVTLogger.start();
+        SharedPreferences deleteData = context.getSharedPreferences(
+                LOCAL_REGIST_SUCCCES_TIME, Context.MODE_PRIVATE);
+        deleteData.edit().clear().apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * 前回ローカルレジストから24時間経過しているかどうかを見る.
+     *
+     * @param context コンテキスト
+     * @return 前回ローカルレジストから24時間以上経過していればtrue
+     */
+    public static boolean isLocalRegistAfter24Hour(Context context) {
+        DTVTLogger.start();
+
+        //結果
+        boolean answer = false;
+
+        //比較用のエポック秒を取得
+        long epochNowTime = DateUtils.getNowTimeFormatEpoch();
+
+        //前回のローカルレジスト成功時間を取得(値が無かった場合は、ローカルレジストを行わないように、現在日時-1時間を設定)
+        SharedPreferences data = context.getSharedPreferences(
+                LOCAL_REGIST_SUCCCES_TIME, Context.MODE_PRIVATE);
+        long beforeTime = data.getLong(LOCAL_REGIST_SUCCCES_TIME,
+                epochNowTime - DateUtils.EPOCH_TIME_ONE_HOUR);
+
+        if (beforeTime + DateUtils.EPOCH_TIME_ONE_DAY < epochNowTime ||
+                beforeTime > epochNowTime) {
+            // 前回成功時から24時間経過した場合は、trueにする。
+            // また、前回成功時の時刻が今より未来の場合、端末の時刻の操作が行われたのでtrueとする
+            answer = true;
+
+            //日時を削除する
+            deleteRegistTime(context);
+        }
+
+        DTVTLogger.end();
+        return answer;
+    }
 }

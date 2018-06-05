@@ -367,7 +367,8 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
                         DlnaManager.shared().StartDtcp();
                         DlnaManager.shared().RestartDirag();
                         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(SettingActivity.this);
-                        DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn);
+                        DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn
+                                ,getApplicationContext());
                     } else {
                         setRemoteProgressVisible(View.GONE);
                         showErrorDialog("アクティベーション実行失敗しました。");
@@ -380,6 +381,11 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
 
     @Override
     public void onRegisterCallBack(final boolean result, final DlnaManager.LocalRegistrationErrorType errorType) {
+        if (result) {
+            //ローカルレジストレーションが成功したので日時を蓄積する
+            SharedPreferencesUtils.setRegistTime(getApplicationContext());
+        }
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

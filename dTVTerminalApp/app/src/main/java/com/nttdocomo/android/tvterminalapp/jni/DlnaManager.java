@@ -13,12 +13,15 @@ import android.text.TextUtils;
 
 import com.digion.dixim.android.util.AribExternalCharConverter;
 import com.digion.dixim.android.util.EnvironmentUtil;
+import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -306,12 +309,27 @@ public class DlnaManager {
         }
 
     }
+
     /**
-     * RequestLocalRegistration.
+     * ローカルレジストレーションの依頼を行う.
+     *
      * @param udn udn
+     * @param context コンテキスト
      */
-    public void RequestLocalRegistration(final String udn) {
-        requestLocalRegistration(udn, Build.MODEL);
+    public void RequestLocalRegistration(final String udn, final Context context) {
+        //現在の年月日の文字列を取得
+        String nowDate = DateUtils.formatEpochToString(DateUtils.getNowTimeFormatEpoch()
+                , DateUtils.DATE_YYYY_MM_DD_J);
+
+        //登録名にはOSバージョンや年月日も含めた完成状態で送り出す。（代わりにC言語側では無編集に変更)
+        String storeName = StringUtils.getConnectStrings(Build.MODEL," "
+                , context.getString(R.string.str_stb_registration_device_name_os)
+                , Build.VERSION.RELEASE
+                , " ", context.getString(R.string.home_contents_slash), " ", nowDate
+                , context.getString(R.string.str_stb_registration_device_name_regist));
+
+        //ローカルレジストレーションの呼び出し
+        requestLocalRegistration(udn, storeName);
     }
 
     /**
@@ -416,6 +434,12 @@ public class DlnaManager {
      */
     public void RegistResultCallBack(final boolean result, final int errorType) {
         DTVTLogger.warning("result = " + result);
+
+        if (result) {
+            //ローカルレジストレーションが成功したので日時を蓄積する
+            SharedPreferencesUtils.setRegistTime(mContext);
+        }
+
         LocalRegisterListener listener = DlnaManager.shared().mLocalRegisterListener;
         if (listener != null) {
             LocalRegistrationErrorType localRegistrationErrorType = LocalRegistrationErrorType.NONE;
@@ -632,9 +656,10 @@ public class DlnaManager {
     private native void requestRemoteConnect(String udn);
 
     /**
-     * ローカルレジストレーションの開始時間取得.
+     * ローカルレジストレーションの有効期限日.
+     *
      * @param udn udn
-     * @return DeviceExpireDate
+     * @return DeviceExpireDate 有効期限日
      */
     private native String getRemoteDeviceExpireDate(final String udn);
     // endregion native method
