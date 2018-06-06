@@ -441,7 +441,7 @@ public class DlnaManager {
 
         if (result) {
             //ローカルレジストレーションが成功したので日時を蓄積する
-            SharedPreferencesUtils.setRegistTime(mContext);
+            SharedPreferencesUtils.setRegistTime(DlnaManager.shared().mContext);
         }
 
         LocalRegisterListener listener = DlnaManager.shared().mLocalRegisterListener;

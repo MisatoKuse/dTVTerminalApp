@@ -1210,9 +1210,6 @@ public class SharedPreferencesUtils {
             // 前回成功時から24時間経過した場合は、trueにする。
             // また、前回成功時の時刻が今より未来の場合、端末の時刻の操作が行われたのでtrueとする
             answer = true;
-
-            //日時を削除する
-            deleteRegistTime(context);
         }
 
         DTVTLogger.end();

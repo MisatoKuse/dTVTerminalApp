@@ -2268,12 +2268,8 @@ public class BaseActivity extends FragmentActivity implements
         //ワンタイムトークンに通信可能を通知する
         setOttDisconnectionFlag(false);
 
-        //宅内判定を行う
-        if (StbConnectionManager.shared().getConnectionStatus()
-                == StbConnectionManager.ConnectionStatus.HOME_IN) {
-            //再ローカルレジストレーション判定を呼び出す
-            execAutoLocalRegistration();
-        }
+        //再ローカルレジストレーション判定を呼び出す
+        execAutoLocalRegistration();
 
         DTVTLogger.end();
     }
@@ -2918,22 +2914,40 @@ public class BaseActivity extends FragmentActivity implements
                         SharedPreferencesUtils.setRegistTime(getApplicationContext());
                     }
 
-                    DTVTLogger.start("result = " + result + "/ ErrorType = " + errorType);
+                    DTVTLogger.start("auto local registration result = " + result + "/ ErrorType = " + errorType);
                     //自動ローカルレジストレーションでは、結果とは無関係にメッセージなどは表示しない
                     DTVTLogger.end();
                 }
             };
 
-            //DLNAの下準備
-            DlnaManager.shared().StartDtcp();
-            DlnaManager.shared().RestartDirag();
+            //宅内判定を行う
+            if (StbConnectionManager.shared().getConnectionStatus()
+                    == StbConnectionManager.ConnectionStatus.HOME_IN) {
 
-            //Udnを取得し、再ローカルレジストレーションを行う
-            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-            DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn, getApplicationContext());
+                // RestartDiragの実行に時間がかかるのでスレッド化
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //DLNAの下準備
+                        DlnaManager.shared().StartDtcp();
+                        DlnaManager.shared().RestartDirag();
+
+                        //Udnを取得し、再ローカルレジストレーションを行う
+                        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils
+                                .getSharedPreferencesStbInfo(mContext.getApplicationContext());
+                        DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn
+                                , getApplicationContext());
+                        DTVTLogger.debug("auto local registration start.");
+                    }
+                }).start();
+
+            } else {
+                //宅外なので、再ローカルレジストレーションは行わない
+                DTVTLogger.debug("local registration is not done.(not HOME_IN)");
+            }
         } else {
             //ローカルレジストレーション見送りのログ出力
-            DTVTLogger.debug("less than 24 hours local registration is not done.");
+            DTVTLogger.debug("less than 24 hours local registration is not done.(Off hours)");
         }
     }
 
