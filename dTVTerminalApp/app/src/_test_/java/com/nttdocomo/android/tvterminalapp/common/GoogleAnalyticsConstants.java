@@ -5,11 +5,11 @@
 package com.nttdocomo.android.tvterminalapp.common;
 
 /**
- * 商用Googleアナリティクス.
+ * 検証用Googleアナリティクス.
  */
-public class GoogleAnalytics {
+public class GoogleAnalyticsConstants {
     /**
      * Googleアナリティクス用のID.
      */
-    public static final String GOOGLE_ANALYTICS_ID = "UA-117251314-1";
+    public static final String GOOGLE_ANALYTICS_ID = "UA-117255147-1";
 }

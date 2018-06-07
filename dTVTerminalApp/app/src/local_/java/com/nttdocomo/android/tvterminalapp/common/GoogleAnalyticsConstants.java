@@ -5,9 +5,9 @@
 package com.nttdocomo.android.tvterminalapp.common;
 
 /**
- * 検証用Googleアナリティクス.
+ * ローカルGoogleアナリティクス.
  */
-public class GoogleAnalytics {
+public class GoogleAnalyticsConstants {
     /**
      * Googleアナリティクス用のID.
      */

@@ -143,6 +143,14 @@ public class RecommendActivity extends BaseActivity implements
      * チャンネル情報取得用ハンドラー.
      */
     final private Handler mHandle = new Handler();
+    /**
+     * FG→BGに遷移する前のポジション.
+     */
+    private  int mViewPagerPosition;
+    /**
+     * FG→BGに遷移する前のポジション.
+     */
+    private static final String RECOMMEND_VIEWPAGER_POSITION = "recommend_viewpager_position";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -169,8 +177,16 @@ public class RecommendActivity extends BaseActivity implements
         //初回起動フラグをONにする
         mIsFirst = true;
         //初回表示のみ前画面からのタブ指定を反映する
-        mRecommendViewPager.setCurrentItem(startPageNo);
-        mTabLayout.setTab(startPageNo);
+        if (savedInstanceState != null) {
+            mViewPagerPosition = savedInstanceState
+                    .getInt(RECOMMEND_VIEWPAGER_POSITION);
+            mRecommendViewPager.setCurrentItem(mViewPagerPosition);
+            mTabLayout.setTab(mViewPagerPosition);
+            savedInstanceState.clear();
+        } else {
+            mRecommendViewPager.setCurrentItem(startPageNo);
+            mTabLayout.setTab(startPageNo);
+        }
     }
 
     @Override
@@ -272,9 +288,9 @@ public class RecommendActivity extends BaseActivity implements
     }
 
     /**
-     * 表示中タブの内容によってスクリーン情報を送信する
+     * 表示中タブの内容によってスクリーン情報を送信する.
      */
-    private void sendScreenViewForPosition(int position) {
+    private void sendScreenViewForPosition(final int position) {
         switch (position) {
             case TAB_INDEX_TV:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_recommend_tv));
@@ -659,6 +675,17 @@ public class RecommendActivity extends BaseActivity implements
         System.gc();
     }
 
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mTabLayout != null) {
+            if (mSelectedTabIndex < 0) {
+                mSelectedTabIndex = 0;
+            }
+            outState.putInt(RECOMMEND_VIEWPAGER_POSITION, mSelectedTabIndex);
+        }
+
+    }
 
     @Override
     public void onStartCommunication() {
