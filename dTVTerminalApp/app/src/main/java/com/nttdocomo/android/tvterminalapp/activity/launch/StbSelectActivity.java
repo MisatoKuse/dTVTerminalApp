@@ -781,9 +781,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             }
             if (!flag) {
                 HashMap<String, String> hashMap = new HashMap<>();
-                // Todo: 試験のために以下のように一時的に変更する。試験後はコメントアウトした内容に戻すこと
-                hashMap.put(DEVICE_NAME_KEY, StringUtils.getConnectString(new String[]{item.mFriendlyName, "_", item.mIPAddress}));
-//                hashMap.put(DEVICE_NAME_KEY, item.mFriendlyName);
+                hashMap.put(DEVICE_NAME_KEY, item.mFriendlyName);
                 hashMap.put(item.mUdn, item.mUdn);
                 if (mContentsList.size() > 0) {
                     //0以上の場合重複チェック
