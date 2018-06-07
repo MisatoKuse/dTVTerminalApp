@@ -12,10 +12,10 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 
-import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.nttdocomo.android.tvterminalapp.broadcastreceiver.NetworkBroadcastReceiver;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.GoogleAnalytics;
 
 /**
  * クラス機能：
@@ -23,10 +23,6 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
  */
 
 public class TvtApplication extends Application implements Application.ActivityLifecycleCallbacks {
-    /**
-     * Googleアナリティクス用のID.
-     */
-    private static final String GOOGLE_ANALYTICS_ID = "UA-117255147-1";
     /**
      * Started状態のActivityの数.
      */
@@ -38,7 +34,7 @@ public class TvtApplication extends Application implements Application.ActivityL
     /**
      * GoogleAnalytics用クラス(Google提示の設定例がどちらもstaticになっている).
      */
-    private static GoogleAnalytics sAnalytics;
+    private static com.google.android.gms.analytics.GoogleAnalytics sAnalytics;
     /**
      * Tracker.
      */
@@ -53,7 +49,7 @@ public class TvtApplication extends Application implements Application.ActivityL
         super.onCreate();
         //Googleアナリティクスの情報収集
         registReceiver();
-        sAnalytics = GoogleAnalytics.getInstance(this);
+        sAnalytics = com.google.android.gms.analytics.GoogleAnalytics.getInstance(this);
         registerActivityLifecycleCallbacks(this);
         DTVTLogger.debug("application onCreate");
     }
@@ -151,7 +147,7 @@ public class TvtApplication extends Application implements Application.ActivityL
     synchronized public Tracker getDefaultTracker() {
         //トラッカーがヌルならば新たに取得
        if (sTracker == null) {
-            sTracker = sAnalytics.newTracker(GOOGLE_ANALYTICS_ID);
+            sTracker = sAnalytics.newTracker(GoogleAnalytics.GOOGLE_ANALYTICS_ID);
         }
         return sTracker;
     }
