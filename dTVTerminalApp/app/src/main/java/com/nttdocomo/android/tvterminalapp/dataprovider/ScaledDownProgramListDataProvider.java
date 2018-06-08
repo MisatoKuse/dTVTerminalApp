@@ -4,8 +4,12 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -20,11 +24,13 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
+import com.nttdocomo.android.tvterminalapp.service.TvProgramIntentService;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.ServiceUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
@@ -75,11 +81,11 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     /**
      * チャンネル更新(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
      */
-    private static final int CHANNEL_UPDATE = 5;
+    public static final int CHANNEL_UPDATE = 5;
     /**
      * 番組更新(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
      */
-    private static final int SCHEDULE_UPDATE = 6;
+    public static final int SCHEDULE_UPDATE = 6;
     /**
      * チャンネル検索.
      */
@@ -99,13 +105,13 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      */
     private static final String PROGRAM_LIST_CHANNEL_PROGRAM_FILTER_RELEASE = "release";
     /**
-     * testa.
+     * チャンネルリスト送受信用キー.
      */
-    private static final String PROGRAM_LIST_CHANNEL_PROGRAM_FILTER_TESTA = "testa";
+    public static final String SEND_CHANNEL_LIST = "com.nttdocomo.android.idmanager.action.SEND_CHANNEL_LIST";
     /**
-     * demo.
+     * 番組表リスト送受信用キー.
      */
-    private static final String PROGRAM_LIST_CHANNEL_PROGRAM_FILTER_DEMO = "demo";
+    public static final String SEND_SCHEDULE_LIST = "com.nttdocomo.android.idmanager.action.SEND_SCHEDULE_LIST";
 
     /**
      * tvコンテンツのクリップキーリスト取得済み判定.
@@ -725,6 +731,30 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     }
 
     /**
+     * TvProgramIntentServiceを開始する.
+     */
+    public void startTvProgramIntentService() {
+        //TvProgramIntentServiceが実行していない場合のみ開始する
+        if (!ServiceUtils.isRunningService(mContext, TvProgramIntentService.class.getName())) {
+            TvProgramIntentService.startTvProgramService(mContext);
+            mContext.registerReceiver(receiver, new IntentFilter(SEND_CHANNEL_LIST));
+            mContext.registerReceiver(receiver, new IntentFilter(SEND_SCHEDULE_LIST));
+        }
+    }
+
+    /**
+     * TvProgramIntentServiceを終了する.
+     */
+    public void stopTvProgramIntentService() {
+        //TvProgramIntentServiceが実行している場合のみ終了する
+        if (ServiceUtils.isRunningService(mContext, TvProgramIntentService.class.getName())) {
+            Intent intent = new Intent(mContext, TvProgramIntentService.class);
+            mContext.unregisterReceiver(receiver);
+            mContext.stopService(intent);
+        }
+    }
+
+    /**
      * 通信を止める.
      */
     public void stopConnect() {
@@ -751,4 +781,35 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             mTvScheduleWebClient.enableConnection();
         }
     }
+
+    /**
+     * TvProgramIntentServiceからのBroadcastレシーバー.
+     */
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            DTVTLogger.start();
+            String key = intent.getAction();
+            Handler handler = new Handler(Looper.getMainLooper());
+            DataBaseThread thread;
+            switch (key) {
+                case SEND_CHANNEL_LIST:
+                    DTVTLogger.debug("ScaledDownProgramListDataProvider BroadcastReceiver CHANNEL_UPDATE");
+                    mChannelList = intent.getParcelableExtra(SEND_CHANNEL_LIST);
+                    thread = new DataBaseThread(handler, ScaledDownProgramListDataProvider.this, CHANNEL_UPDATE);
+                    thread.start();
+                    break;
+                case SEND_SCHEDULE_LIST:
+                    DTVTLogger.debug("ScaledDownProgramListDataProvider BroadcastReceiver SCHEDULE_UPDATE");
+                    mChannelsInfoList = intent.getParcelableExtra(SEND_SCHEDULE_LIST);
+                    thread = new DataBaseThread(handler, ScaledDownProgramListDataProvider.this, SCHEDULE_UPDATE);
+                    thread.start();
+                    break;
+                default:
+                    break;
+            }
+            mContext.unregisterReceiver(receiver);
+            DTVTLogger.end();
+        }
+    };
 }

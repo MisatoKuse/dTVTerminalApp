@@ -568,6 +568,17 @@ public class DateUtils {
     }
 
     /**
+     * エポック秒を yyyyMMddHH かつString値に変換.
+     *
+     * @param epochTime エポック秒
+     * @return YYYYMMDD日付
+     */
+    public static String formatEpochToSimpleDate(final long epochTime) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_NOMARK_YYYYMMDD);
+        return dateFormat.format(new Date(epochTime * 1000));
+    }
+
+    /**
      * 現在日時エポック秒を取得.
      *
      * @return 現在日時のエポック秒

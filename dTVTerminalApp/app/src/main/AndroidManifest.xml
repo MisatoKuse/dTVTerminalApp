@@ -246,11 +246,15 @@
                 <action android:name="com.nttdocomo.android.idmanager.action.DOCOMOID_REMOVED" />
                 <action android:name="com.nttdocomo.android.idmanager.action.DOCOMOID_INVALIDATE" />
                 <action android:name="com.nttdocomo.android.idmanager.action.DOCOMOID_LINKED_LINE" />
+                <action android:name="com.nttdocomo.android.idmanager.action.SEND_CHANNEL_LIST" />
+                <action android:name="com.nttdocomo.android.idmanager.action.SEND_SCHEDULE_LIST" />
             </intent-filter>
         </receiver>
 
         <service android:name=".service.download.DownloadService"
             android:exported="false" />
+        <service
+            android:name=".service.TvProgramIntentService"
+            android:exported="false"/>
     </application>
-
 </manifest>

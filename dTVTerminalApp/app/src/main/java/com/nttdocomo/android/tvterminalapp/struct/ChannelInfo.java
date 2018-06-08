@@ -4,13 +4,16 @@
 
 package com.nttdocomo.android.tvterminalapp.struct;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
 /**
  * チャンネルクラス.
  * 　　機能： チャンネルクラスである
  */
-public class ChannelInfo {
+public class ChannelInfo implements Parcelable {
 
     /**
      * Scheduleの配列を保存.
@@ -264,4 +267,58 @@ public class ChannelInfo {
         return !(null == ch2 || null == this.mTitle || null == ch2.mTitle)
                 && this.mChannelNo == ch2.mChannelNo && this.mTitle.equals(ch2.mTitle);
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeList(this.mSchedules);
+        dest.writeString(this.mTitle);
+        dest.writeInt(this.mChannelNo);
+        dest.writeString(this.mServiceId);
+        dest.writeString(this.mStartDate);
+        dest.writeString(this.mEndDate);
+        dest.writeString(this.mThumbnail);
+        dest.writeString(this.mChannelType);
+        dest.writeString(this.mPurchaseId);
+        dest.writeString(this.mSubPurchaseId);
+        dest.writeString(this.mChannelPackPurchaseId);
+        dest.writeString(this.mChannelPackSubPurchaseId);
+        dest.writeString(this.mService);
+    }
+
+    public ChannelInfo() {
+    }
+
+    protected ChannelInfo(Parcel in) {
+        this.mSchedules = new ArrayList<ScheduleInfo>();
+        in.readList(this.mSchedules, ScheduleInfo.class.getClassLoader());
+        this.mTitle = in.readString();
+        this.mChannelNo = in.readInt();
+        this.mServiceId = in.readString();
+        this.mStartDate = in.readString();
+        this.mEndDate = in.readString();
+        this.mThumbnail = in.readString();
+        this.mChannelType = in.readString();
+        this.mPurchaseId = in.readString();
+        this.mSubPurchaseId = in.readString();
+        this.mChannelPackPurchaseId = in.readString();
+        this.mChannelPackSubPurchaseId = in.readString();
+        this.mService = in.readString();
+    }
+
+    public static final Parcelable.Creator<ChannelInfo> CREATOR = new Parcelable.Creator<ChannelInfo>() {
+        @Override
+        public ChannelInfo createFromParcel(Parcel source) {
+            return new ChannelInfo(source);
+        }
+
+        @Override
+        public ChannelInfo[] newArray(int size) {
+            return new ChannelInfo[size];
+        }
+    };
 }

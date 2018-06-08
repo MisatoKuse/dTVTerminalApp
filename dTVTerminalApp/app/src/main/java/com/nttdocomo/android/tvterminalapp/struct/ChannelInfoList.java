@@ -5,6 +5,9 @@
 package com.nttdocomo.android.tvterminalapp.struct;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,7 +16,7 @@ import java.util.List;
  * 複数チャンネルクラス.
  * 　　機能： 複数チャンネルを管理するクラスである
  */
-public class ChannelInfoList {
+public class ChannelInfoList implements Parcelable {
 
     /**チャンネルの配列.*/
     private List<ChannelInfo> mChannels = null;
@@ -40,4 +43,30 @@ public class ChannelInfoList {
     public void addChannel(final ChannelInfo ch) {
         mChannels.add(ch);
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeTypedList(this.mChannels);
+    }
+
+    protected ChannelInfoList(Parcel in) {
+        this.mChannels = in.createTypedArrayList(ChannelInfo.CREATOR);
+    }
+
+    public static final Parcelable.Creator<ChannelInfoList> CREATOR = new Parcelable.Creator<ChannelInfoList>() {
+        @Override
+        public ChannelInfoList createFromParcel(Parcel source) {
+            return new ChannelInfoList(source);
+        }
+
+        @Override
+        public ChannelInfoList[] newArray(int size) {
+            return new ChannelInfoList[size];
+        }
+    };
 }

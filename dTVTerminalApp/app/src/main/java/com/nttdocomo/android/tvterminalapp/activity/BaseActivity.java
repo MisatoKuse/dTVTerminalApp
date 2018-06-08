@@ -75,6 +75,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.SettingFileMetaData;
@@ -87,6 +88,7 @@ import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadDataProvider;
 import com.nttdocomo.android.tvterminalapp.struct.CalendarComparator;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.DeviceStateUtils;
@@ -124,6 +126,7 @@ public class BaseActivity extends FragmentActivity implements
         CustomDialog.DismissCallback,
         HomeRecyclerViewAdapter.ItemClickCallback,
         StbConnectionManager.ConnectionListener,
+        ScaledDownProgramListDataProvider.ApiDataProviderCallback,
         DaccountReceiver.DaccountChangedCallBack {
     /**
      * ヘッダーBaseレイアウト.
@@ -732,6 +735,10 @@ public class BaseActivity extends FragmentActivity implements
                     showErrorDialogOffer(msg);
                 }
             }
+            // BG → FG でのonResumeで TvProgramIntentService を開始
+            DTVTLogger.debug("do TvProgramIntentService start");
+            ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(BaseActivity.this);
+            scaledDownProgramListDataProvider.startTvProgramIntentService();
         } else {
             onStartCommunication();
         }
@@ -771,6 +778,10 @@ public class BaseActivity extends FragmentActivity implements
         if (app.getIsChangeApplicationInvisible()) {
             // FG → BG になったためDlnaをstopする
             DTVTLogger.debug("do dlnaOnStop");
+            // FG → BG になったため TvProgramIntentService を stop する
+            DTVTLogger.debug("do TvProgramIntentService stop");
+            ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(BaseActivity.this);
+            scaledDownProgramListDataProvider.stopTvProgramIntentService();
         }
         DTVTLogger.end();
     }
@@ -2959,5 +2970,15 @@ public class BaseActivity extends FragmentActivity implements
                 restartMessageDialog();
             }
         });
+    }
+
+    @Override
+    public void channelInfoCallback(final ChannelInfoList channelsInfo) {
+        //Nop 仕様上実装が必要なため空メソッドとして定義
+    }
+
+    @Override
+    public void channelListCallback(final ArrayList<ChannelInfo> channels) {
+        //Nop 仕様上実装が必要なため空メソッドとして定義
     }
 }
