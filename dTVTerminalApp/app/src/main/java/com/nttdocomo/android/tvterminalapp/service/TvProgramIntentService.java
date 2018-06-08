@@ -12,6 +12,9 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClientSync;
+
+import java.util.List;
 
 /**
  * アプリ起動時の番組表取得サービス.
@@ -70,8 +73,12 @@ public class TvProgramIntentService extends IntentService {
         ChannelList channelList = new ChannelList();
         //最終日付チェックした後に取得
 
+        //非同期処理のチャンネルリスト取得を、同期処理として実行する
+        ChannelWebClientSync channelWebClientSync = new ChannelWebClientSync();
+        List<ChannelList> channelLists = channelWebClientSync.getChannelApi(getApplicationContext(),1,1,"","");
+
         //取得したチャンネルリストを送信
-        sendChannelList(channelList);
+        sendChannelList(channelLists.get(0));
         DTVTLogger.end();
     }
 
