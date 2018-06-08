@@ -115,7 +115,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.record_list_main_layout);
-
+        if (savedInstanceState != null) {
+            savedInstanceState.clear();
+        }
         setTitleText(getString(R.string.nav_menu_item_recorder_program));
         Intent intent = getIntent();
         mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
@@ -145,6 +147,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         mNoDataMessage.setVisibility(View.GONE);
         initDl();
         getData();
+    }
+
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     @Override
