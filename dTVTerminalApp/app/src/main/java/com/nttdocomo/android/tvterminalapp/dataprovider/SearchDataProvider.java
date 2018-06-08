@@ -75,6 +75,9 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
      */
     private static final int PAGE_NO_OF_SERVICE_DANIME = PAGE_NO_OF_SERVICE_TELEVISION + 4;
 
+    private static final String CONTENTS_DETAIL_GET_SEARCH_FIELDS = "contentsId";
+    private static final String CONTENTS_DETAIL_GET_DISPLAY_ID = "getDetail";
+
     /**
      * 検索データプロバイダリスナーインターフェース.
      */
@@ -158,6 +161,36 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             DTVTLogger.error("SearchDataProvider is stopping connection");
         }
     }
+
+    /**
+     * 検索サーバからコンテンツメタ情報を取得
+     * @param contentsId　コンテンツId
+     * @param serviceId   サービスId
+     * @param context context
+     */
+    public void getContentDetailInfo(final String contentsId, final String serviceId, final Context context) {
+
+        if (!mIsCancel) {
+            TotalSearchRequestData request = new TotalSearchRequestData();
+            try {
+                request.query = URLEncoder.encode(contentsId, "utf-8");
+            } catch (UnsupportedEncodingException e) {
+                DTVTLogger.debug(e);
+            }
+
+            request.serviceId = serviceId;
+            request.searchFields = CONTENTS_DETAIL_GET_SEARCH_FIELDS;
+            request.displayId = CONTENTS_DETAIL_GET_DISPLAY_ID;
+
+            mTotalSearchWebApi = new TotalSearchWebApi(context);
+            mTotalSearchWebApi.setDelegate(this);
+            mSearchDataProviderListener = (SearchDataProviderListener) context;
+            mTotalSearchWebApi.requestContentDetail(request);
+        } else {
+            DTVTLogger.error("GetContentDetailInfo is stopping connection");
+        }
+    }
+
 
     /**
      * TODO :検索中止処理開始用.

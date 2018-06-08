@@ -61,16 +61,21 @@ public class DataConverter {
     public static OtherContentsDetailData getOtherContentsDetailData(final ContentsData info, final String recommendFlg) {
         OtherContentsDetailData detailData = new OtherContentsDetailData();
         detailData.setTitle(info.getTitle());
-        detailData.setDetail(info.getSynop());
 
         //レコメンド独自のデータ設定
         if (ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY.equals(recommendFlg)) {
-            detailData.setServiceId(Integer.parseInt(info.getServiceId()));
+            int servieId = Integer.parseInt(info.getServiceId());
+            detailData.setServiceId(servieId);
             detailData.setContentCategory(ContentUtils.getRecommendContentsType(info));
             detailData.setThumb(info.getThumURL());
+            if (servieId != ContentDetailActivity.DTV_HIKARI_CONTENTS_SERVICE_ID) {
+                detailData.setDetail(info.getSynopFromDescription());
+            }
+
         } else {
             detailData.setThumb(info.getThumDetailURL());
             detailData.setContentCategory(ContentUtils.ContentsType.OTHER);
+            detailData.setDetail(info.getSynop());
         }
 
         detailData.setMobileViewingFlg(info.getMobileViewingFlg());

@@ -51,6 +51,7 @@ import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ContentsDetailDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.SearchDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
@@ -74,6 +75,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.RecordingReservationContentsDetailInfo;
+import com.nttdocomo.android.tvterminalapp.struct.ResultType;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
@@ -89,7 +91,9 @@ import com.nttdocomo.android.tvterminalapp.view.PlayerViewLayout;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchResultError;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SendOperateLog;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.TotalSearchContentInfo;
 
 import java.io.File;
 import java.text.ParseException;
@@ -115,7 +119,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         ScaledDownProgramListDataProvider.ApiDataProviderCallback,
         RemoteControllerView.OnStartRemoteControllerUIListener,
         DtvContentsDetailFragment.RecordingReservationIconListener,
-        DtvContentsChannelFragment.ChangedScrollLoadListener {
+        DtvContentsChannelFragment.ChangedScrollLoadListener,
+        SearchDataProvider.SearchDataProviderListener {
 
     /** エラータイプ.*/
     private enum ErrorType {
@@ -149,6 +154,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private ContentsDetailDataProvider mContentsDetailDataProvider = null;
     /** 縮小番組表データプロバイダー .*/
     private ScaledDownProgramListDataProvider mScaledDownProgramListDataProvider = null;
+    /** 検索データプロバイダー .*/
+    private SearchDataProvider mSearchDataProvider = null;
     /** サムネイルプロバイダー .*/
     private ThumbnailProvider mThumbnailProvider = null;
     /** サムネイル取得処理ストップフラグ .*/
@@ -1036,6 +1043,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 sendOperateLog();
                 showProgressBar(false);
             }
+
+            if (!mDetailData.getIsTranslateFromSearchFlag()) {
+                showProgressBar(true);
+                getContentDetailInfoFromSearchServer();
+            }
         }
     }
 
@@ -1276,6 +1288,21 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
         }
         mScaledDownProgramListDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_ALL);
+    }
+
+    /**
+     * 他サビースあらすじ取得
+     */
+    private void getContentDetailInfoFromSearchServer() {
+
+        if (mSearchDataProvider == null) {
+            mSearchDataProvider = new SearchDataProvider();
+        }
+
+        if (mDetailData != null) {
+            mSearchDataProvider.getContentDetailInfo(mDetailData.getContentsId(),String.valueOf(mDetailData.getServiceId()),this);
+        }
+
     }
 
     /**
@@ -2904,4 +2931,30 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private boolean getStbStatus() {
         return StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_IN;
     }
+
+    @Override
+    public void onSearchDataProviderFinishOk(ResultType<TotalSearchContentInfo> resultType) {
+
+        TotalSearchContentInfo result = resultType.getResultType();
+
+        if (result.getContentsDataList().size() > 0) {
+            ContentsData info = result.getContentsDataList().get(0);
+            DtvContentsDetailFragment detailFragment = getDetailFragment();
+            detailFragment.mOtherContentsDetailData.setDescription1(info.getDescription1());
+            detailFragment.mOtherContentsDetailData.setDescription2(info.getDescription2());
+            detailFragment.mOtherContentsDetailData.setDescription3(info.getDescription3());
+            detailFragment.mOtherContentsDetailData.setDetail(info.getSynopFromDescription());
+            detailFragment.refreshDescription();
+        }
+        showProgressBar(false);
+
+    }
+
+    @Override
+    public void onSearchDataProviderFinishNg(ResultType<SearchResultError> resultType) {
+
+        showProgressBar(false);
+        showErrorDialog(ErrorType.contentDetailGet);
+    }
+
 }

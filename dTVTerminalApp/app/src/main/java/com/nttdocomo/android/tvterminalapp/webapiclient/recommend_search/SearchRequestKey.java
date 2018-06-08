@@ -25,4 +25,6 @@ class SearchRequestKey {
     public static final String kFilterViewableAge = "&filterViewableAge";
     /**&displayId.*/
     public static final String kDisplayId = "&displayId";
+    /**&searchFields.*/
+    public static final String kSearchFields = "&searchFields";
 }

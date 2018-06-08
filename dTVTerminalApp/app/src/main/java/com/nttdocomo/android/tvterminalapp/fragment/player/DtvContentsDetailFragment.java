@@ -565,6 +565,18 @@ public class DtvContentsDetailFragment extends Fragment {
     }
 
     /**
+     * あらすじ情報の更新
+     */
+    public void refreshDescription() {
+        String contentsDetailInfo = selectDetail();
+        if (!TextUtils.isEmpty(contentsDetailInfo)) {
+            final String replaceString = contentsDetailInfo.replace("\\n", "\n");
+            mTxtTitleShortDetail.setText(replaceString);
+            mTxtTitleAllDetail.setText(replaceString);
+        }
+    }
+
+    /**
      * チャンネル情報の更新.
      */
     public void refreshChannelInfo() {
