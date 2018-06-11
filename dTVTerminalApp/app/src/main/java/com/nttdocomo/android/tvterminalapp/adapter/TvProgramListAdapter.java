@@ -450,7 +450,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private void setView(final ItemViewHolder itemViewHolder, final ScheduleInfo itemSchedule) {
 
         //年齢制限フラグ
-        boolean isParental = setParental(StringUtils.convertRValueToAgeReq(mContext, itemSchedule.getRValue()));
+        boolean isParental = StringUtils.isParental(mAgeReq, itemSchedule.getRValue());
 
         String startTime = itemSchedule.getStartTime();
         String endTime = itemSchedule.getEndTime();

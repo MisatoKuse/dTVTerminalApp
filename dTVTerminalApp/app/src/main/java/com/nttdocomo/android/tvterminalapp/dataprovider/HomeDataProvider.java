@@ -171,6 +171,14 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * レンタル、プレミアムビデオ一覧取得.
      */
     private static final int SELECT_PREMIUM_VIDEO_LIST = 1;
+    /**
+     * NOW ON AIR対象チャンネル最大件数.
+     */
+    private static final int NOW_ON_AIR_CHANNEL_LIMIT = 30;
+    /**
+     * 表示するコンテンツの最大件数.
+     */
+    private static final int MAX_CONTENTS_COUNT_FOR_SHOW = 10;
 
     /**
      * 購入済みCh一覧取得クラス.
@@ -306,7 +314,13 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         DTVTLogger.start();
         if (tvScheduleList != null && tvScheduleList.size() > 0) {
             TvScheduleList list = tvScheduleList.get(0);
-            setStructDB(list);
+
+            mTvScheduleList = list;
+            if (mTvScheduleList != null && mTvScheduleList.geTvsList() != null) {
+                List<Map<String, String>> map = mTvScheduleList.geTvsList();
+                List<ContentsData> contentsData = setHomeContentData(map, false);
+                sendTvScheduleListData(setChannelName(contentsData, mChannelList, true));
+            }
         } else {
             //ここに来てもヌルではない場合があるので、確認する
             if (tvScheduleList == null) {
@@ -664,8 +678,32 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     private void sendTvScheduleListData(final List<ContentsData> list) {
         //契約ありの場合のみ「NOW ON AIR」を表示する(番組表表示のためデータをDB保存する必要があるためActivityへのデータ送信抑制のみ実施)
         if (UserInfoUtils.isContract(mContext)) {
-            mApiDataProviderCallback.tvScheduleListCallback(list);
+            List<ContentsData> matchDataList = getContentsDataListMatchAgeInfo(list);
+            mApiDataProviderCallback.tvScheduleListCallback(matchDataList);
         }
+    }
+
+    /**
+     * 年齢情報に該当し、且つ画面表示に必要件数分の情報を戻す.
+     *
+     * @param list 番組リスト
+     * @return 条件に該当する番組リスト
+     */
+    private List<ContentsData> getContentsDataListMatchAgeInfo(final List<ContentsData> list) {
+        List<ContentsData> baseList = new ArrayList();
+        int userAge = UserInfoUtils.getUserAgeInfoWrapper(SharedPreferencesUtils.getSharedPreferencesUserInfo(mContext));
+
+        for (ContentsData data : list) {
+            if (!StringUtils.isParental(userAge, data.getRValue())) {
+                baseList.add(data);
+            }
+
+            if (baseList.size() >= MAX_CONTENTS_COUNT_FOR_SHOW) {
+                break;
+            }
+        }
+
+        return baseList;
     }
 
     /**
@@ -844,7 +882,15 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param channelList チャンネル情報
      */
     private void getTvScheduleFromChInfo(final ChannelList channelList) {
-        List<HashMap<String, String>> channelInfoList = channelList.getChannelList();
+        List<HashMap<String, String>> channelInfoList;
+
+        // 最大30チャンネルを対象にする
+        if (channelList.getChannelList().size() >= NOW_ON_AIR_CHANNEL_LIMIT) {
+            channelInfoList = channelList.getChannelList().subList(0, NOW_ON_AIR_CHANNEL_LIMIT);
+        } else {
+            channelInfoList = channelList.getChannelList();
+        }
+
         List<String> chNoList = new ArrayList<>();
         for (HashMap<String, String> hashMap : channelInfoList) {
             String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
@@ -869,27 +915,18 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         String lastDate = dateUtils.getLastDate(DateUtils.TV_SCHEDULE_LAST_INSERT);
 
         List<Map<String, String>> list = new ArrayList<>();
-        //NO ON AIR一覧のDB保存履歴と、有効期間を確認
-        if ((lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate))
-                || !NetWorkUtils.isOnline(mContext)) {
-            //データをDBから取得する
-            Handler handler = new Handler(Looper.getMainLooper());
-            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, SELECT_TV_SCHEDULE_LIST);
-            dataBaseThread.start();
-        } else {
-            if (!mIsStop) {
-                //通信クラスにデータ取得要求を出す
-                mTvScheduleWebClient = new TvScheduleWebClient(mContext);
-                int[] chNos = new int[chNo.length];
-                for (int i = 0; i < chNo.length; i++) {
-                    chNos[i] = Integer.parseInt(chNo[i]);
-                }
-                String[] channelInfoDate = new String[]{WebApiBasePlala.DATE_NOW};
-                String lowerPageLimit = "";
-                mTvScheduleWebClient.getTvScheduleApi(chNos, channelInfoDate, lowerPageLimit, this);
-            } else {
-                DTVTLogger.error("TvScheduleWebClient is stopping connect");
+        if (!mIsStop) {
+            //通信クラスにデータ取得要求を出す
+            mTvScheduleWebClient = new TvScheduleWebClient(mContext);
+            int[] chNos = new int[chNo.length];
+            for (int i = 0; i < chNo.length; i++) {
+                chNos[i] = Integer.parseInt(chNo[i]);
             }
+            String[] channelInfoDate = new String[]{WebApiBasePlala.DATE_NOW};
+            String lowerPageLimit = "";
+            mTvScheduleWebClient.getTvScheduleApi(chNos, channelInfoDate, lowerPageLimit, this);
+        } else {
+            DTVTLogger.error("TvScheduleWebClient is stopping connect");
         }
         DTVTLogger.end();
     }
@@ -1177,26 +1214,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         }
         // TODO :Homeでこのデータを使用する場合はオフライン時等にキャッシュ取得等の対応が必要
         // ビデオ系は使ってない番組(IPTV)でつかうかな？
-        DTVTLogger.end();
-    }
-
-    /**
-     * 番組一覧データをDBに格納する.
-     *
-     * @param tvScheduleList 番組一覧データ
-     */
-    private void setStructDB(final TvScheduleList tvScheduleList) {
-        DTVTLogger.start();
-        mTvScheduleList = tvScheduleList;
-        if (mTvScheduleList != null && mTvScheduleList.geTvsList() != null) {
-            List<Map<String, String>> map = tvScheduleList.geTvsList();
-            List<ContentsData> contentsData = setHomeContentData(map, false);
-            sendTvScheduleListData(setChannelName(contentsData, mChannelList, true));
-            //DB保存
-            Handler handler = new Handler(Looper.getMainLooper());
-            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, TV_SCHEDULE_LIST);
-            dataBaseThread.start();
-        }
         DTVTLogger.end();
     }
 
