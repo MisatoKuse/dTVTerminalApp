@@ -33,7 +33,6 @@ import com.nttdocomo.android.tvterminalapp.fragment.cliplist.ClipListFragmentFac
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -103,7 +102,10 @@ public class ClipListActivity extends BaseActivity implements
      * タブ名　ビデオ.
      */
     public static final String TAB_NAME_VIDEO = "ビデオ";
-
+    /**
+     *  前回のポジション.
+     */
+    private static final String TAB_INDEX = "tabIndex";
     /**
      * リスト0件メッセージ.
      */
@@ -120,6 +122,10 @@ public class ClipListActivity extends BaseActivity implements
         mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
         if (mIsMenuLaunch) {
             mStartPageNo = CLIP_LIST_PAGE_NO_OF_TV;
+        }
+        if (savedInstanceState != null) {
+            mStartPageNo = savedInstanceState.getInt(TAB_INDEX);
+            savedInstanceState.clear();
         }
         enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
@@ -157,10 +163,16 @@ public class ClipListActivity extends BaseActivity implements
         DTVTLogger.end();
     }
 
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(TAB_INDEX, mStartPageNo);
+    }
+
     /**
-     * 表示中タブの内容によってスクリーン情報を送信する
+     * 表示中タブの内容によってスクリーン情報を送信する.
      */
-    private void sendScreenViewForPosition(int position) {
+    private void sendScreenViewForPosition(final int position) {
         if (position == 0) {
             super.sendScreenView(getString(R.string.google_analytics_screen_name_clip_tv));
         } else {
