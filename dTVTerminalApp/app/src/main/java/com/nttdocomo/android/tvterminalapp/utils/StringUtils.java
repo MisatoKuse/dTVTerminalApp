@@ -80,15 +80,15 @@ public class StringUtils {
      */
     public static final int USER_AGE_REQ_R20 = 17;
     /**
-     * PG-X or R-Xのチェック用正規表現式
+     * PG-X or R-Xのチェック用正規表現式.
      */
-    private static final String R_VALUE_PG_R_MATCH_PATTERN = "[(PG)R]-[0-9]{1,2}";
+    private static final String R_VALUE_PG_R_MATCH_PATTERN = "(PG)|R-[0-9]{1,2}";
     /**
-     * 年齢取得用正規表現式
+     * 年齢取得用正規表現式.
      */
     private static final String R_VALUE_AGE_MATCH_PATTERN = "[0-9]{1,2}";
     /**
-     * 年齢取得用正規表現式
+     * 年齢取得用正規表現式.
      */
     private static final int VALUE_OF_CHANGE_RVALUE_TO_AGE = 3;
     /**
@@ -331,7 +331,11 @@ public class StringUtils {
 
         if (matcher.find()) {
             Pattern agePattern = Pattern.compile(R_VALUE_AGE_MATCH_PATTERN);
-            int contentsAge = Integer.getInteger(agePattern.matcher(contentsRvalue).group());
+            Matcher ageMatcher = agePattern.matcher(contentsRvalue);
+            int contentsAge = DEFAULT_USER_AGE_REQ;
+            if (ageMatcher.find()) {
+                contentsAge = Integer.parseInt(ageMatcher.group());
+            }
             return userAge < (contentsAge - VALUE_OF_CHANGE_RVALUE_TO_AGE);
         } else {
             return false;

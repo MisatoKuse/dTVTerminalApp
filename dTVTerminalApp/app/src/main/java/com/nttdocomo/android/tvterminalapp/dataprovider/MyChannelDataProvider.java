@@ -134,6 +134,8 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
         switch (reqCode) {
             case R.layout.tv_program_list_main_layout:
             case R.layout.my_channel_edit_main_layout:
+                //作業
+                //日付チェックして一時間以内ならDBキャッシュからチャンネル一覧を直接取得してCallback
                 //通信してデータ取得
                 mMyChannelListWebClient = new MyChannelWebClient(mContext);
                 mMyChannelListWebClient.getMyChanelListApi(this);

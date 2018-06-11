@@ -776,6 +776,8 @@ public class TvProgramListActivity extends BaseActivity implements
 //                sort(channels);
                 showMyChannelNoItem(false);
                 this.mHikariChannels = channels;
+                //作業
+                //↓のchannelListをDB保存
                 ArrayList<ChannelInfo> channelList = executeMapping();
                 setChannelContentsView(channelList);
                 loadMyChannel(channelList);
@@ -822,6 +824,7 @@ public class TvProgramListActivity extends BaseActivity implements
         }
     }
 
+    //作業箇所
     /**
      * My番組表ロード.
      * @param channelList チャンネルリスト
@@ -834,6 +837,8 @@ public class TvProgramListActivity extends BaseActivity implements
         for (int i = 0; i < channelList.size(); i++) {
             channelNos[i] = channelList.get(i).getChannelNo();
         }
+        //作業
+        //期限見てDBからデータ取得処理
         if (channelNos.length != 0) {
             //マイ番組表設定されていない場合、通信しない
             String dateStr = mSelectDateStr.replace("-", "");

@@ -565,6 +565,10 @@ public class JsonConstants {
      */
     public static final String[] DISPLAY_TYPE = {"", "hikaritv", "dch"};
     /**
+     * チャンネル一覧取得タイプindex(マイチャンネル).
+     */
+    public static final int CH_SERVICE_TYPE_INDEX_MY_CHANNEL = -1;
+    /**
      * チャンネル一覧取得タイプindex(全て).
      */
     public static final int CH_SERVICE_TYPE_INDEX_ALL = 0;

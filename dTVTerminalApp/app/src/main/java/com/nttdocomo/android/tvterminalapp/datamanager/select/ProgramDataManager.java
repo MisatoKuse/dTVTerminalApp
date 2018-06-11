@@ -38,7 +38,10 @@ public class ProgramDataManager {
      */
     private final Context mContext;
 
-
+    /**
+     * チャンネルメタ service値（マイチャンネル）.
+     */
+    public static final String CH_SERVICE_MY_CHANNEL = "MY_CHANNEL";
     /**
      * チャンネルメタ service値（ひかり）.
      */
@@ -93,6 +96,10 @@ public class ProgramDataManager {
             ChannelListDao channelListDao = new ChannelListDao(database);
 
             switch (service) {
+                case JsonConstants.CH_SERVICE_TYPE_INDEX_MY_CHANNEL:
+                    // マイチャンネル
+                    list = channelListDao.findByService(columns, CH_SERVICE_MY_CHANNEL);
+                    break;
                 case JsonConstants.CH_SERVICE_TYPE_INDEX_ALL:
                     // ひかり・DTV
                     list = channelListDao.findById(columns);

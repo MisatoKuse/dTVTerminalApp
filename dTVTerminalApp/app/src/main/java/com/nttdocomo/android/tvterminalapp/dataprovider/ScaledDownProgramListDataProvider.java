@@ -81,11 +81,11 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     /**
      * チャンネル更新(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
      */
-    public static final int CHANNEL_UPDATE = 5;
+    private static final int CHANNEL_UPDATE = 5;
     /**
      * 番組更新(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
      */
-    public static final int SCHEDULE_UPDATE = 6;
+    private static final int SCHEDULE_UPDATE = 6;
     /**
      * チャンネル検索.
      */
@@ -532,14 +532,14 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 setScheduleInfo(hashMap, channelsInfo, userState);
             }
             mChannelsInfoList = channelsInfo;
-//            Handler handler = new Handler();
-//            //番組情報更新
-//            try {
-//                DataBaseThread t = new DataBaseThread(handler, this, SCHEDULE_UPDATE);
-//                t.start();
-//            } catch (Exception e) {
-//                DTVTLogger.debug(e);
-//            }
+            Handler handler = new Handler();
+            //番組情報更新
+            try {
+                DataBaseThread t = new DataBaseThread(handler, this, SCHEDULE_UPDATE);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
         }
         return channelsInfo;
     }
@@ -687,46 +687,46 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         //dateListのサイズは1.
         mProgramSelectDate = dateList[0];
         //前回のデータ取得日時を取得
-//        String[] lastDate = dateUtils.getChLastDate(chList, mProgramSelectDate);
-//        //DBから取得するチャンネル情報とWebAPiから取得するチャンネル番号を分ける.
-//        List<Integer> fromWebAPI = new ArrayList<>();
-//
-//        for (int i = 0; i < lastDate.length; i++) {
-//            if (dateUtils.isBeforeLimitChDate(lastDate[i])) {
-//                fromWebAPI.add(chList[i]);
-//            } else {
-//                mFromDB.add(String.valueOf(chList[i]));
-//            }
-//        }
-//
-//        //データをDBから取得する
-//        if (mFromDB.mSize() > 0) {
-//            Handler handler = new Handler();
-//            //チャンネル情報更新
-//            try {
-//                DataBaseThread t = new DataBaseThread(handler, this, SCHEDULE_SELECT);
-//                t.start();
-//            } catch (Exception e) {
-//                DTVTLogger.debug(e);
-//            }
-//        }
-//
-//        //データをWebAPIから取得する
-//        if (!isStop) {
-//            mTvScheduleWebClient = new TvScheduleWebClient(mContext);
-//            int[] chNos = new int[fromWebAPI.size()];
-//            for (int i = 0; i < fromWebAPI.size(); i++) {
-//                chNos[i] = fromWebAPI.get(i);
-//            }
-//            mTvScheduleWebClient.getTvScheduleApi(chNos, dateList, filter, this);
-//        } else {
-//            DTVTLogger.error("ScaledDownProgramListDataProvider is stopping connect");
-//        }
+        String[] lastDate = dateUtils.getChLastDate(chList, mProgramSelectDate);
+        //DBから取得するチャンネル情報とWebAPiから取得するチャンネル番号を分ける.
+        List<Integer> fromWebAPI = new ArrayList<>();
+
+        for (int i = 0; i < lastDate.length; i++) {
+            if (dateUtils.isBeforeLimitChDate(lastDate[i])) {
+                fromWebAPI.add(chList[i]);
+            } else {
+                mFromDB.add(String.valueOf(chList[i]));
+            }
+        }
+
+        //データをDBから取得する
+        if (mFromDB.size() > 0) {
+            Handler handler = new Handler();
+            //チャンネル情報更新
+            try {
+                DataBaseThread t = new DataBaseThread(handler, this, SCHEDULE_SELECT);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
+        }
+
+        //データをWebAPIから取得する
+        if (!mIsStop) {
+            mTvScheduleWebClient = new TvScheduleWebClient(mContext);
+            int[] chNos = new int[fromWebAPI.size()];
+            for (int i = 0; i < fromWebAPI.size(); i++) {
+                chNos[i] = fromWebAPI.get(i);
+            }
+            mTvScheduleWebClient.getTvScheduleApi(chNos, dateList, filter, this);
+        } else {
+            DTVTLogger.error("ScaledDownProgramListDataProvider is stopping connect");
+        }
         mTvScheduleWebClient = new TvScheduleWebClient(mContext);
-//        int[] chNos = new int[fromWebAPI.size()];
-//        for (int i = 0; i < fromWebAPI.size(); i++) {
-//            chNos[i] = fromWebAPI.get(i);
-//        }
+        int[] chNos = new int[fromWebAPI.size()];
+        for (int i = 0; i < fromWebAPI.size(); i++) {
+            chNos[i] = fromWebAPI.get(i);
+        }
         mTvScheduleWebClient.getTvScheduleApi(chList, dateList, filter, this);
     }
 
