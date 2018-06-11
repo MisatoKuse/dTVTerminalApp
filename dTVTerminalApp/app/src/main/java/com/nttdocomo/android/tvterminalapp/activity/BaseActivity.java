@@ -2962,6 +2962,7 @@ public class BaseActivity extends FragmentActivity implements
         }
     }
 
+    @Override
     public void onChanged() {
 
         runOnUiThread(new Runnable() {

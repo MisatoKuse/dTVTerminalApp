@@ -117,6 +117,32 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
     }
 
     /**
+     *  コンテンツメタ情報の検索リクエスト.
+     * @param requestData リクエストデータ
+     */
+    public void requestContentDetail(final TotalSearchRequestData requestData) {
+        DTVTLogger.debug("request");
+
+        if (!mIsCancel) {
+            TotalSearchRequestData data = requestData;
+
+            LinkedHashMap<String, String> queryItems = new LinkedHashMap<>();
+
+            queryItems.put(SearchRequestKey.kQuery, data.query);
+
+            String serviceId = data.serviceId;
+            queryItems.put(SearchRequestKey.kServiceId, serviceId);
+            queryItems.put(SearchRequestKey.kSearchFields, data.searchFields);
+
+            queryItems.put(SearchRequestKey.kDisplayId, data.displayId);
+
+            getNoPassword(UrlConstants.WebApiUrl.TOTAL_SEARCH_URL, queryItems, this, mContext);
+        } else {
+            DTVTLogger.error("TotalSearchWebApi is stopping connection");
+        }
+    }
+
+    /**
      * フィルタ文字列の連結.
      *
      * @return 連結した文字列.
