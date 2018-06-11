@@ -35,6 +35,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -77,6 +79,18 @@ public class StringUtils {
      * 年齢制限値=R20.
      */
     public static final int USER_AGE_REQ_R20 = 17;
+    /**
+     * PG-X or R-Xのチェック用正規表現式
+     */
+    private static final String R_VALUE_PG_R_MATCH_PATTERN = "[(PG)R]-[0-9]{1,2}";
+    /**
+     * 年齢取得用正規表現式
+     */
+    private static final String R_VALUE_AGE_MATCH_PATTERN = "[0-9]{1,2}";
+    /**
+     * 年齢取得用正規表現式
+     */
+    private static final int VALUE_OF_CHANGE_RVALUE_TO_AGE = 3;
     /**
      * カンマ.
      */
@@ -304,27 +318,24 @@ public class StringUtils {
     }
 
     /**
-     * 年齢パレンタル値(R_VALUE)を数値に変換.
+     * ユーザー年齢及びコンテンツのパレンタル情報を持って、チェックする.
      *
-     * @param context  コンテクストファイル
-     * @param ageValue 年齢パレンタル値(R_VALUE)
-     * @return 年齢情報
+     * @param userAge ユーザー年齢情報
+     * @param contentsRvalue コンテンツのパレンタル情報
+     * @return パレンタルチェック結果
      */
-    public static int convertRValueToAgeReq(final Context context, final String ageValue) {
+    public static boolean isParental(final int userAge, final String contentsRvalue) {
 
-        int ageReq = DEFAULT_R_VALUE;
-        if (ageValue != null) {
-            if (ageValue.equals(context.getString(R.string.parental_pg_12))) {
-                ageReq = USER_AGE_REQ_PG12;
-            } else if (ageValue.equals(context.getString(R.string.parental_r_15))) {
-                ageReq = USER_AGE_REQ_R15;
-            } else if (ageValue.equals(context.getString(R.string.parental_r_18))) {
-                ageReq = USER_AGE_REQ_R18;
-            } else if (ageValue.equals(context.getString(R.string.parental_r_20))) {
-                ageReq = USER_AGE_REQ_R20;
-            }
+        Pattern checkPattern = Pattern.compile(R_VALUE_PG_R_MATCH_PATTERN);
+        Matcher matcher = checkPattern.matcher(contentsRvalue);
+
+        if (matcher.find()) {
+            Pattern agePattern = Pattern.compile(R_VALUE_AGE_MATCH_PATTERN);
+            int contentsAge = Integer.getInteger(agePattern.matcher(contentsRvalue).group());
+            return userAge < (contentsAge - VALUE_OF_CHANGE_RVALUE_TO_AGE);
+        } else {
+            return false;
         }
-        return ageReq;
     }
 
     /**
