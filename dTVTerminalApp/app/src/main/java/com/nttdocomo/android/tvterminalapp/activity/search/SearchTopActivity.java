@@ -31,11 +31,11 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopSearchDataConne
 import com.nttdocomo.android.tvterminalapp.fragment.search.SearchBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.search.SearchBaseFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.fragment.search.SearchFragmentFactory;
-import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.struct.ResultType;
 import com.nttdocomo.android.tvterminalapp.struct.SearchNarrowCondition;
 import com.nttdocomo.android.tvterminalapp.struct.SearchSortKind;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchDubbedType;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchFilterTypeMappable;
@@ -173,12 +173,28 @@ public class SearchTopActivity extends BaseActivity
      * 最後に表示したタブindex.
      */
     protected int mTabIndex = 0;
+    /**
+     * 最後に表示したタブindex.
+     */
+    private static final String TAB_INDEX = "tabIndex";
+    /**
+     * 最後に表示した検索キーワード.
+     */
+    private CharSequence mCharSequence;
+    /**
+     * 最後に表示した検索キーワード.
+     */
+    private static final String CHAR_SEQUENCE = "query";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_top_main_layout);
-
+        if (savedInstanceState != null) {
+            mTabIndex = savedInstanceState.getInt(TAB_INDEX);
+            mCharSequence = savedInstanceState.getCharSequence(CHAR_SEQUENCE);
+            savedInstanceState.clear();
+        }
         //Headerの設定
         setTitleText(getString(R.string.keyword_search_title));
         Intent intent = getIntent();
@@ -203,6 +219,14 @@ public class SearchTopActivity extends BaseActivity
         } else {
             sendScreenViewForPosition(mTabIndex);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(TAB_INDEX, mTabIndex);
+        CharSequence query = mSearchView.getQuery();
+        outState.putCharSequence(CHAR_SEQUENCE, query);
     }
 
     /**
@@ -349,6 +373,9 @@ public class SearchTopActivity extends BaseActivity
         //ユーザー操作の簡略化のため、遷移時キーボードを表示する
         searchAutoComplete.requestFocus();
         searchAutoComplete.setHint(R.string.keyword_search_hint);
+        if (mCharSequence != null && mCharSequence.length() > 0) {
+            searchAutoComplete.setText(mCharSequence.toString());
+        }
         searchAutoComplete.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
     }
 
