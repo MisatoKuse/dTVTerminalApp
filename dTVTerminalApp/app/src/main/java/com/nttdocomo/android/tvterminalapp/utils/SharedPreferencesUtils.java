@@ -458,6 +458,8 @@ public class SharedPreferencesUtils {
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_SELECTED_STB_DATA_INFOMATION, Context.MODE_PRIVATE);
         data.edit().clear().apply();
+        SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(context, false);
+        SharedPreferencesUtils.setSharedPreferencesStbConnect(context, false);
     }
 
     /**
