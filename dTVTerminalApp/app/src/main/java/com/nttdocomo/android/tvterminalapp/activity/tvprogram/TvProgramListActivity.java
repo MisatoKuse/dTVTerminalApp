@@ -39,6 +39,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopMyProgramListDa
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopScaledProListDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
+import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.ProgramRecyclerView;
@@ -476,9 +477,11 @@ public class TvProgramListActivity extends BaseActivity implements
     }
 
     /**
-     * 表示中タブの内容によってスクリーン情報を送信する
+     * 表示中タブの内容によってスクリーン情報を送信する.
+     *
+     * @param position ポジション
      */
-    private void sendScreenViewForPosition(int position) {
+    private void sendScreenViewForPosition(final int position) {
         switch (position) {
             case TAB_INDEX_MY_PROGRAM:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_program_list_mine));
@@ -776,9 +779,9 @@ public class TvProgramListActivity extends BaseActivity implements
 //                sort(channels);
                 showMyChannelNoItem(false);
                 this.mHikariChannels = channels;
-                //作業
-                //↓のchannelListをDB保存
-                ArrayList<ChannelInfo> channelList = executeMapping();
+                //TODO 作業(https://agile.apccloud.jp/jira/browse/DREM-2508)
+                //TODO ↓のchannelListをDB保存
+                ArrayList<ChannelInfo> channelList = DataConverter.executeMapping(mMyChannelDataList, mHikariChannels);
                 setChannelContentsView(channelList);
                 loadMyChannel(channelList);
             } else {
@@ -824,7 +827,7 @@ public class TvProgramListActivity extends BaseActivity implements
         }
     }
 
-    //作業箇所
+    //TODO 作業箇所(https://agile.apccloud.jp/jira/browse/DREM-2508)
     /**
      * My番組表ロード.
      * @param channelList チャンネルリスト
@@ -837,8 +840,8 @@ public class TvProgramListActivity extends BaseActivity implements
         for (int i = 0; i < channelList.size(); i++) {
             channelNos[i] = channelList.get(i).getChannelNo();
         }
-        //作業
-        //期限見てDBからデータ取得処理
+        //TODO 作業(https://agile.apccloud.jp/jira/browse/DREM-2508)
+        //TODO 期限見てDBからデータ取得処理
         if (channelNos.length != 0) {
             //マイ番組表設定されていない場合、通信しない
             String dateStr = mSelectDateStr.replace("-", "");
@@ -871,28 +874,6 @@ public class TvProgramListActivity extends BaseActivity implements
             mMyChannelNoDataTxT.setVisibility(View.INVISIBLE);
         }
     }
-
-    /**
-     * チャンネルリストからマッピングデータを抽出する.
-     *
-     * @return マイ番組表に表示するチャンネル情報
-     */
-    private ArrayList<ChannelInfo> executeMapping() {
-        ArrayList<ChannelInfo> myChannels = new ArrayList<>();
-        if (mMyChannelDataList != null) {
-            for (int i = 0; i < mMyChannelDataList.size(); i++) {
-                for (int j = 0; j < mHikariChannels.size(); j++) {
-                    //サービスIDでマッピング
-                    if (mMyChannelDataList.get(i).getServiceId().equals(mHikariChannels.get(j).getServiceId())) {
-                        myChannels.add(mHikariChannels.get(j));
-                    }
-                }
-            }
-        }
-        return myChannels;
-    }
-
-
 
     /**
      * MY番組表情報取得.

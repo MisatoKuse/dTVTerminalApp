@@ -7,9 +7,13 @@ package com.nttdocomo.android.tvterminalapp.utils;
 
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.select.ProgramDataManager;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -108,5 +112,30 @@ public class DataConverter {
         detailData.setContentsType(info.getContentsType());
 
         return detailData;
+    }
+
+    /**
+     * チャンネルリストからマッピングデータを抽出する.
+     * ※マイ番組一覧に、番組情報が存在しないため、通常の番組一覧から番組表用のマイ番組一覧を作成する.
+     *
+     * @param myChannelDataList マイチャンネル一覧
+     * @param hikariChannels チャンネル一覧
+     * @return マイ番組表に表示するチャンネル情報
+     */
+    public static ArrayList<ChannelInfo> executeMapping(final ArrayList<MyChannelMetaData> myChannelDataList, final ArrayList<ChannelInfo> hikariChannels) {
+        ArrayList<ChannelInfo> myChannels = new ArrayList<>();
+        if (myChannelDataList != null) {
+            for (int i = 0; i < myChannelDataList.size(); i++) {
+                for (int j = 0; j < hikariChannels.size(); j++) {
+                    //サービスIDでマッピング
+                    if (myChannelDataList.get(i).getServiceId().equals(hikariChannels.get(j).getServiceId())) {
+                        //マイ番組表を作成する際に、マイ番組表のタグを追加する
+                        hikariChannels.get(j).setService(ProgramDataManager.CH_SERVICE_MY_CHANNEL);
+                        myChannels.add(hikariChannels.get(j));
+                    }
+                }
+            }
+        }
+        return myChannels;
     }
 }
