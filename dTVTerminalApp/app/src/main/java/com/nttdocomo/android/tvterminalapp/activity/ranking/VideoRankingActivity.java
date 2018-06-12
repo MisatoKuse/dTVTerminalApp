@@ -42,7 +42,10 @@ public class VideoRankingActivity extends BaseActivity implements
      // region variable
     /** 標準タブ数. */
     private static final int DEFAULT_TAB_MAX = 4;
-
+    /** 最後に表示したタブindex. */
+    private static final String TAB_INDEX = "tabIndex";
+    /** 最後に表示したタブindex. */
+    private int mTabIndex = 0;
     /** FragmentFactory. */
     private RankingFragmentFactory mRankingFragmentFactory = null;
     /** タブ用レイアウト. */
@@ -78,6 +81,7 @@ public class VideoRankingActivity extends BaseActivity implements
 
         initView();
         if (savedInstanceState != null) {
+            mTabIndex = savedInstanceState.getInt(TAB_INDEX);
             savedInstanceState.clear();
         }
         resetPaging(mViewPager, mRankingFragmentFactory);
@@ -123,6 +127,7 @@ public class VideoRankingActivity extends BaseActivity implements
     protected void onSaveInstanceState(final Bundle outState) {
         DTVTLogger.start();
         super.onSaveInstanceState(outState);
+        outState.putInt(TAB_INDEX, mViewPager.getCurrentItem());
         DTVTLogger.end();
     }
 
@@ -322,6 +327,8 @@ public class VideoRankingActivity extends BaseActivity implements
             }
         });
         mTabLayout = initTabData(mTabLayout, mTabNames);
+        mViewPager.setCurrentItem(mTabIndex);
+        mTabLayout.setTab(mTabIndex);
         getGenreData();
     }
 

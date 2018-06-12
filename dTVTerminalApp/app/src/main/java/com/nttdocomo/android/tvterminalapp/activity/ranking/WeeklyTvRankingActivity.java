@@ -43,7 +43,10 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
      // region variable
     /** 標準タブ数. */
     private static final int DEFAULT_TAB_MAX = 4;
-
+    /** 最後に表示したタブindex. */
+    private static final String TAB_INDEX = "tabIndex";
+    /** 最後に表示したタブindex. */
+    private int mTabIndex = 0;
     /** フラグメント作成クラス. */
     private RankingFragmentFactory mRankingFragmentFactory = null;
     /** タブ用レイアウト. */
@@ -72,6 +75,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         menuImageView.setVisibility(View.VISIBLE);
         menuImageView.setOnClickListener(this);
         if (savedInstanceState != null) {
+            mTabIndex = savedInstanceState.getInt(TAB_INDEX);
             savedInstanceState.clear();
         }
 
@@ -89,6 +93,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
     @Override
     protected void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putInt(TAB_INDEX, mViewPager.getCurrentItem());
     }
 
     @Override
@@ -284,6 +289,8 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
             }
         });
         mTabLayout = initTabData(mTabLayout, mTabNames);
+        mViewPager.setCurrentItem(mTabIndex);
+        mTabLayout.setTab(mTabIndex);
         getGenreData();
     }
     /**
