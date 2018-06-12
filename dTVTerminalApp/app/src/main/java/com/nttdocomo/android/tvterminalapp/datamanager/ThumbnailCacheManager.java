@@ -43,6 +43,16 @@ public class ThumbnailCacheManager {
     private final static int THUMBNAIL_FILE_CACHE_LIMIT = 100;
 
     /**
+     * メモリキャッシュ算出時の比率.
+     */
+    private final static int THUMBNAIL_MEMORY_CACHE_RATE = 8;
+
+    /**
+     * メモリキャッシュ最小値.
+     */
+    private final static int THUMBNAIL_MEMORY_CACHE_MINIMUM_SIZE = 1000;
+
+    /**
      * サムネイルキャッシュ保存するフォルダ.
      */
     private static final String THUMBNAIL_CACHE = "/thumbnail_cache/";
@@ -60,9 +70,27 @@ public class ThumbnailCacheManager {
      * メモリキャッシュ初期化.
      */
     public void initMemCache() {
-        int maxMemory = (int) Runtime.getRuntime().maxMemory();
-        int cacheSize = maxMemory / 8;
-        //メモリキャッシュサイズ
+        //現在の空き容量の8分の1をキャッシュに割り当てる
+        long freeMemory = Runtime.getRuntime().freeMemory();
+        int cacheSize = (int) (freeMemory / THUMBNAIL_MEMORY_CACHE_RATE);
+
+        //メモリの断片化が進み、まとまったメモリが確保できずにゼロだった場合の確認
+        if(cacheSize <= 0) {
+            //ガベージコレクションを試す（2回行うのはAndroidのソースでも行われている正当な方法です）
+            System.gc();
+            System.gc();
+
+            //再度メモリ量を計算する
+            freeMemory = Runtime.getRuntime().freeMemory();
+            cacheSize = (int) (freeMemory / THUMBNAIL_MEMORY_CACHE_RATE);
+        }
+
+        //それでもゼロだった場合、LruCacheはゼロバイトを認めないので、若干数を割り当てる。
+        if(cacheSize <= 0) {
+            cacheSize = THUMBNAIL_MEMORY_CACHE_MINIMUM_SIZE;
+        }
+
+        //メモリ使用量の最大サイズを指定してキャッシュを作成する
         mMemCache = new LruCache<String, Bitmap>(cacheSize) {
             @Override
             protected int sizeOf(final String key, final Bitmap bitmap) {
