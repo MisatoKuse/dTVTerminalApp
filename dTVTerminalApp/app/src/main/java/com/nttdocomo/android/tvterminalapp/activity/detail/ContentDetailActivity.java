@@ -16,7 +16,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -41,7 +40,6 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectActivity;
-import com.nttdocomo.android.tvterminalapp.application.TvtApplication;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
@@ -345,10 +343,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private String mServiceId = null;
     /** 視聴可否ステータス.*/
     private ContentUtils.ViewIngType mViewIngType = null;
-    /** destroyになったコンテンツ詳細fragmentを保存する.*/
-    private DtvContentsDetailFragment mDetailFragment;
-    /** 保存するキー名.*/
-    private static final String DETAIL_FRAGMENT_KEY = "detailFragment";
     /** プレイヤーレイアウト.*/
     private PlayerViewLayout mPlayerViewLayout;
     /** プレイヤー前回のポジション.*/
@@ -378,8 +372,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
-            mDetailFragment = (DtvContentsDetailFragment) getSupportFragmentManager().
-                    getFragment(savedInstanceState, DETAIL_FRAGMENT_KEY);
             savedInstanceState.clear();
         }
         setTheme(R.style.AppThemeBlack);
@@ -427,9 +419,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 }
                 //BG復帰時にクリップボタンの更新を行う
                 dtvContentsDetailFragment = getDetailFragment();
-                if (mDetailFragment != null && mDetailFragment.getView() != null) {
-                    dtvContentsDetailFragment = mDetailFragment;
-                }
                 contentsDetailDataProvider = new ContentsDetailDataProvider(this);
                 dtvContentsDetailFragment.mOtherContentsDetailData = contentsDetailDataProvider.
                         checkClipStatus(dtvContentsDetailFragment.mOtherContentsDetailData);
@@ -439,9 +428,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             case CONTENTS_DETAIL_ONLY:
                 //BG復帰時にクリップボタンの更新を行う
                 dtvContentsDetailFragment = getDetailFragment();
-                if (mDetailFragment != null && mDetailFragment.getView() != null) {
-                    dtvContentsDetailFragment = mDetailFragment;
-                }
                 contentsDetailDataProvider = new ContentsDetailDataProvider(this);
                 dtvContentsDetailFragment.mOtherContentsDetailData = contentsDetailDataProvider.
                         checkClipStatus(dtvContentsDetailFragment.mOtherContentsDetailData);
@@ -463,9 +449,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     @Override
     protected void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (getDetailFragment().isAdded()) {
-            getSupportFragmentManager().putFragment(outState, DETAIL_FRAGMENT_KEY, getDetailFragment());
-        }
         if (mPlayerViewLayout != null) {
             if (mPlayerViewLayout.mPlayStartPosition < 0) {
                 mPlayerViewLayout.mPlayStartPosition = 0;
@@ -1198,8 +1181,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
     /**
      * 表示中タブの内容によってスクリーン情報を送信する.
+     * @param position 表示中タブ
      */
-    private void sendScreenViewForPosition(int position) {
+    private void sendScreenViewForPosition(final int position) {
         String tabName = mTabNames[position];
 
         String screenName = getScreenNameMap().get(tabName);
@@ -1208,19 +1192,21 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
     /**
      * スクリーン名マップを取得する.
+     * @return スクリーン名マップ
      */
-
-
     private HashMap<String, String> getScreenNameMap() {
         HashMap<String, String> screenNameMap = new HashMap<>();
         screenNameMap.put(getString(R.string.contents_detail_tab_contents_info), getString(R.string.google_analytics_screen_name_content_detail_other));
 
         if (contentType == ContentTypeForGoogleAnalytics.VOD) {
-            screenNameMap.put(getString(R.string.contents_detail_tab_program_detail), getString(R.string.google_analytics_screen_name_content_detail_h4d_vod_program_detail));
+            screenNameMap.put(getString(R.string.contents_detail_tab_program_detail), getString(
+                    R.string.google_analytics_screen_name_content_detail_h4d_vod_program_detail));
         } else {
-            screenNameMap.put(getString(R.string.contents_detail_tab_program_detail), getString(R.string.google_analytics_screen_name_content_detail_h4d_broadcast_program_detail));
+            screenNameMap.put(getString(R.string.contents_detail_tab_program_detail), getString(
+                    R.string.google_analytics_screen_name_content_detail_h4d_broadcast_program_detail));
         }
-        screenNameMap.put(getString(R.string.contents_detail_tab_channel), getString(R.string.google_analytics_screen_name_content_detail_h4d_broadcast_channel));
+        screenNameMap.put(getString(R.string.contents_detail_tab_channel), getString(
+                R.string.google_analytics_screen_name_content_detail_h4d_broadcast_channel));
         screenNameMap.put(getString(R.string.contents_detail_tab_episode), getString(R.string.google_analytics_screen_name_content_detail_h4d_vod_episode));
 
         return screenNameMap;
@@ -1291,7 +1277,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     /**
-     * 他サビースあらすじ取得
+     * 他サビースあらすじ取得.
      */
     private void getContentDetailInfoFromSearchServer() {
 
@@ -1300,7 +1286,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         }
 
         if (mDetailData != null) {
-            mSearchDataProvider.getContentDetailInfo(mDetailData.getContentsId(),String.valueOf(mDetailData.getServiceId()),this);
+            mSearchDataProvider.getContentDetailInfo(mDetailData.getContentsId(), String.valueOf(mDetailData.getServiceId()), this);
         }
 
     }
@@ -2933,7 +2919,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     @Override
-    public void onSearchDataProviderFinishOk(ResultType<TotalSearchContentInfo> resultType) {
+    public void onSearchDataProviderFinishOk(final ResultType<TotalSearchContentInfo> resultType) {
 
         TotalSearchContentInfo result = resultType.getResultType();
 
@@ -2951,7 +2937,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     @Override
-    public void onSearchDataProviderFinishNg(ResultType<SearchResultError> resultType) {
+    public void onSearchDataProviderFinishNg(final ResultType<SearchResultError> resultType) {
 
         showProgressBar(false);
         showErrorDialog(ErrorType.contentDetailGet);

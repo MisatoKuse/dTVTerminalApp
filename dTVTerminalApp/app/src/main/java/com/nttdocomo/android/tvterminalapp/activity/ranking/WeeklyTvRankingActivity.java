@@ -71,6 +71,9 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         ImageView menuImageView = findViewById(R.id.header_layout_menu);
         menuImageView.setVisibility(View.VISIBLE);
         menuImageView.setOnClickListener(this);
+        if (savedInstanceState != null) {
+            savedInstanceState.clear();
+        }
 
         //Headerの設定
         setTitleText(getString(R.string.weekly_tv_ranking_title));
@@ -81,6 +84,11 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
 
         initView();
         resetPaging(mViewPager, mRankingFragmentFactory);
+    }
+
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     @Override

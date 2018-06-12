@@ -706,7 +706,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             try {
                 DataBaseThread t = new DataBaseThread(handler, this, SCHEDULE_SELECT);
                 t.start();
-            } catch (Exception e) {
+            } catch (IllegalThreadStateException e) {
                 DTVTLogger.debug(e);
             }
         }

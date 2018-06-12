@@ -221,6 +221,10 @@ public class TvProgramListActivity extends BaseActivity implements
      * スクロールオフセット.
      */
     private int mScrollOffset = 0;
+    /**
+     * 前回のタブポジション.
+     */
+    private final static String TAB_INDEX = "tabIndex";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -242,6 +246,11 @@ public class TvProgramListActivity extends BaseActivity implements
         setTvProgramTitleArrowVisibility(true);
         //タブ設定
         setTabView();
+        if (savedInstanceState != null) {
+            mTabIndex = savedInstanceState.getInt(TAB_INDEX);
+            mTabLayout.setTab(mTabIndex);
+            savedInstanceState.clear();
+        }
         //タグ設定
         setTagView();
         //時間帯設定
@@ -266,6 +275,12 @@ public class TvProgramListActivity extends BaseActivity implements
 //            }
 //        }
         sendScreenViewForPosition(mTabIndex);
+    }
+
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(TAB_INDEX, mTabIndex);
     }
 
     /**

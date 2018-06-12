@@ -77,6 +77,9 @@ public class VideoRankingActivity extends BaseActivity implements
         setStatusBarColor(true);
 
         initView();
+        if (savedInstanceState != null) {
+            savedInstanceState.clear();
+        }
         resetPaging(mViewPager, mRankingFragmentFactory);
     }
 
@@ -114,6 +117,13 @@ public class VideoRankingActivity extends BaseActivity implements
         if (baseFragment != null) {
             baseFragment.stopContentsAdapterCommunication();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        DTVTLogger.start();
+        super.onSaveInstanceState(outState);
+        DTVTLogger.end();
     }
 
     @Override
