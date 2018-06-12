@@ -231,15 +231,12 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      */
     @Override
     public void onMyChannelRegisterCallback(final String result) {
-        switch (result) {
-            case JsonConstants.META_RESPONSE_STATUS_OK:
-                //そのまま通信してデータ取得
-                loadData();
-                break;
-            default:
-                showFailedDialog(getResources().getString(R.string
-                        .my_channel_list_setting_failed_dialog_content_register));
-                break;
+        if (JsonConstants.META_RESPONSE_STATUS_OK.equals(result)) {
+            //そのまま通信してデータ取得
+            loadData();
+        } else {
+            showFailedDialog(getResources().getString(R.string
+                    .my_channel_list_setting_failed_dialog_content_register));
         }
     }
 

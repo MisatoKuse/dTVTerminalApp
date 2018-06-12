@@ -87,6 +87,8 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
     public void onMyChannelRegisterJsonParsed(final MyChannelRegisterResponse myChannelRegisterResponse) {
         if (myChannelRegisterResponse != null) {
             mApiDataProviderCallback.onMyChannelRegisterCallback(myChannelRegisterResponse.getStatus());
+        } else {
+            mApiDataProviderCallback.onMyChannelRegisterCallback(null);
         }
     }
 

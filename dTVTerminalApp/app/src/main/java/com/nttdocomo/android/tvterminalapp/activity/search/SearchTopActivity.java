@@ -180,7 +180,7 @@ public class SearchTopActivity extends BaseActivity
     /**
      * 最後に表示した検索キーワード.
      */
-    private CharSequence mCharSequence;
+    private CharSequence mCharSequence = null;
     /**
      * 最後に表示した検索キーワード.
      */

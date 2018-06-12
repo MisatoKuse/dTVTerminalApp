@@ -110,14 +110,15 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * タブインデックス　ダウンロード済み.
      */
     private static final int TAB_INDEX_DOWONLOAD_COMPLETED = 1;
+    /**
+     * 前回のタブポジション.
+     */
+    private static final String START_TAB_POSITION = "startTabPosition";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.record_list_main_layout);
-        if (savedInstanceState != null) {
-            savedInstanceState.clear();
-        }
         setTitleText(getString(R.string.nav_menu_item_recorder_program));
         Intent intent = getIntent();
         mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
@@ -130,6 +131,12 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         initView();
         initTabVIew();
         setPagerAdapter();
+        if (savedInstanceState != null) {
+            int startPageNo = savedInstanceState.getInt(START_TAB_POSITION);
+            savedInstanceState.clear();
+            mViewPager.setCurrentItem(startPageNo);
+            mTabLayout.setTab(startPageNo);
+        }
         mDlnaContentRecordedDataProvider = new DlnaContentRecordedDataProvider();
         DTVTLogger.end();
     }
@@ -152,6 +159,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @Override
     protected void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putInt(START_TAB_POSITION, getCurrentPosition());
     }
 
     @Override
