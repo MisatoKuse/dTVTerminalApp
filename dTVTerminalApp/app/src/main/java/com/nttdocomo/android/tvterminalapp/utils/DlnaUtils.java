@@ -47,8 +47,7 @@ public class DlnaUtils {
     private static final int BUF_SIZE = 1024;
     /*視聴画質設定*/
     /** デフォルト.*/
-    private static final String IMAGE_QUALITY_DEFAULT_OLD_URL = "0/smartphone/";
-    private static final String IMAGE_QUALITY_DEFAULT_URL = "0/hikariBOX/";
+    private static final String IMAGE_QUALITY_DEFAULT_URL = "0/smartphone/";
     /** 最高画質.*/
     private static final String IMAGE_QUALITY_HIGH_URL = "0/remote1/";
     /** 高画質.*/
