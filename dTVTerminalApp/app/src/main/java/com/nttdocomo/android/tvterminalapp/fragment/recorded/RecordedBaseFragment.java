@@ -134,7 +134,9 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         mContentsAdapter = new ContentsAdapter(getContext(),
                 mContentsData, ContentsAdapter.ActivityTypeItem.TYPE_RECORDED_LIST, this);
         mRecordedListView.setAdapter(mContentsAdapter);
-
+        if (((RecordedListActivity) mActivity).getTabCount() == 1) {
+            ((RecordedListActivity) mActivity).setRecordedTakeOutContents();
+        }
         return mRecordedFragmentView;
     }
 

@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -74,7 +73,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private ProgressBar progressBar;
     /** 遷移先（メニュー）. */
     private Boolean mIsMenuLaunch = false;
-
+    /** プロバイダー. */
     private DlnaContentRecordedDataProvider mDlnaContentRecordedDataProvider;
     /** Fragment作成クラス. */
     private RecordedFragmentFactory mRecordedFragmentFactory = null;
@@ -90,21 +89,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private static final int ALL_RECORD_LIST = 0;
     /** ダウンロード済み. */
     private static final int DOWNLOAD_OVER = 1;
-    /**
-     * エラーを返すハンドラー.
-     */
-    private Handler mHandler = new Handler();
-    /**
-     * タブインデックス　すべて.
-     */
+    /** タブインデックス　すべて.*/
     private static final int TAB_INDEX_ALL = 0;
-    /**
-     * タブインデックス　ダウンロード済み.
-     */
+    /** タブインデックス　ダウンロード済み.*/
     private static final int TAB_INDEX_DOWONLOAD_COMPLETED = 1;
-    /**
-     * 前回のタブポジション.
-     */
+    /** 前回のタブポジション.*/
     private static final String START_TAB_POSITION = "startTabPosition";
 
     @Override
@@ -144,7 +133,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         super.onStartCommunication();
         showProgressBar();
         mNoDataMessage.setVisibility(View.GONE);
-//        initDl();
         getData();
     }
 
@@ -223,19 +211,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     /**
-     * 初期化処理.
-     */
-    private void initDl() {
-//        boolean isRunning = isDownloadServiceRunning();
-//        if (!isRunning) {
-//            boolean res = DlnaProvDownload.initGlobalDl(DownloaderBase.getDownloadPath(this));
-//            if (!res) {
-//                DTVTLogger.debug("initGlobalDl failed");
-//            }
-//        }
-    }
-
-    /**
      * 画面描画.
      */
     private void initView() {
@@ -275,9 +250,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     /**
-     * 表示中タブの内容によってスクリーン情報を送信する
+     * 表示中タブの内容によってスクリーン情報を送信する.
+     * @param position タブインデックス
      */
-    private void sendScreenViewForPosition(int position) {
+    private void sendScreenViewForPosition(final int position) {
         switch (position) {
             case TAB_INDEX_ALL:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_recording_list));
@@ -317,9 +293,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     /**
-     * 機能
      * タブを切り替え.
-     *
      * @param position タブインデックス
      */
     private void setTab(final int position) {
@@ -329,16 +303,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         }
         showProgressBar();
         mNoDataMessage.setVisibility(View.GONE);
-        switch (mViewPager.getCurrentItem()) {
-            case ALL_RECORD_LIST:
-                getData();
-                break;
-            case DOWNLOAD_OVER:
-                setRecordedTakeOutContents();
-                break;
-            default:
-                break;
-        }
+        getData();
     }
 
     /**
@@ -349,7 +314,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         if (!NetWorkUtils.isOnline(this)) {
             return;
         }
-
         progressBar.setVisibility(View.VISIBLE);
     }
 
@@ -417,17 +381,35 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * DMSデバイスを取り始める.
      */
     private void getData() {
-        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-        // 未ペアリング時
-        if (dlnaDmsItem.mControlUrl.isEmpty()) {
-            showGetDataFailedToast();
-            mNoDataMessage.setVisibility(View.VISIBLE);
-            setProgressBarGone();
-        } else {
-            mDlnaContentRecordedDataProvider.listen(this);
-            mDlnaContentRecordedDataProvider.browse(this);
-            clearFragment(0);
+        switch (mViewPager.getCurrentItem()) {
+            case ALL_RECORD_LIST:
+                if (getTabCount() == 2) {
+                    DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+                    // 未ペアリング時
+                    if (dlnaDmsItem.mControlUrl.isEmpty()) {
+                        showGetDataFailedToast();
+                        mNoDataMessage.setVisibility(View.VISIBLE);
+                        setProgressBarGone();
+                    } else {
+                        mDlnaContentRecordedDataProvider.listen(this);
+                        mDlnaContentRecordedDataProvider.browse(this);
+                        clearFragment(0);
+                    }
+                }
+                break;
+            case DOWNLOAD_OVER:
+                setRecordedTakeOutContents();
+                break;
+            default:
+                break;
         }
+    }
+
+    /**
+     * タブサイズ取得.
+     */
+    public int getTabCount() {
+        return mTabNames.length;
     }
 
     /**
@@ -528,7 +510,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         }
         baseFragment.mQueueIndex.clear();
         setDownLoadQue(baseFragment, dlnaRecVideoItems, resultList);
-        final boolean hideDownloadBtn = StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.NONE_LOCAL_REGISTRATION;
+        final boolean hideDownloadBtn = StbConnectionManager.shared().getConnectionStatus() != StbConnectionManager.ConnectionStatus.HOME_IN;
         for (int i = 0; i < dlnaRecVideoItems.size(); i++) {
             DlnaRecVideoItem itemData = dlnaRecVideoItems.get(i);
             RecordedContentsDetailData detailData = new RecordedContentsDetailData();
@@ -607,7 +589,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                     }
                 }
             }
-        }// for resultList
+        } // for resultList
     }
 
     /**

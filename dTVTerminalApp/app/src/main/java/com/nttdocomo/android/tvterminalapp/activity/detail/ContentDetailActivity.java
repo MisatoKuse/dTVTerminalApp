@@ -40,6 +40,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectActivity;
+import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
@@ -591,8 +592,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     initPlayer(playerData);
                     break;
                 default:
-                    playerData.setIsRemote(true);
-                    setRemotePlayArrow(playerData);
+                    if (ContentsAdapter.DOWNLOAD_STATUS_COMPLETED == playerData.getDownLoadStatus()) {
+                        initPlayer(playerData);
+                    } else {
+                        playerData.setIsRemote(true);
+                        setRemotePlayArrow(playerData);
+                    }
                     break;
             }
         }
