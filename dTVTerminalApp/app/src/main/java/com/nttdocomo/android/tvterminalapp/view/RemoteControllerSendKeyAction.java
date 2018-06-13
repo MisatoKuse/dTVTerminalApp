@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Viewに長押しでクリックを繰り返す処理を追加する.
@@ -34,6 +35,10 @@ public class RemoteControllerSendKeyAction {
     private RemoteControlRelayClient mRemoteControlRelayClient = null;
     /**連続送信タイマークラスインタフェース.*/
     private RepeatStateManagement mRepeatStateManagement = null;
+    /** 暗号化処理の鍵交換を同期処理で実行する. */
+    private CountDownLatch mLatch = null;
+    /** 暗号化処理の鍵交換の同期カウンター. */
+    private static int LATCH_COUNT_MAX = 1;
     /**RemoteControllerChannelViewHolder.*/
     private RemoteControllerChannelViewHolder mChannelViewHolder = null;
     /**RemoteControllerPlayerViewHolder.*/
@@ -486,19 +491,34 @@ public class RemoteControllerSendKeyAction {
      * @param context コンテキスト
      */
     private void sendKeyCode(final int viewId, final int action, final boolean isCancelFlg, final Context context) {
-        if (CipherUtil.hasShareKey()) {
-            mRemoteControlRelayClient.sendKeycode(viewId, action, isCancelFlg, context);
-        } else {
+
+        if (!CipherUtil.hasShareKey()) {
             CipherApi api = new CipherApi(new CipherApi.CipherApiCallback() {
                 @Override
                 public void apiCallback(final boolean result, final String data) {
-                    mRemoteControlRelayClient.sendKeycode(viewId, action, isCancelFlg, context);
+                    // 鍵交換処理同期ラッチカウンターを解除する
+                    mLatch.countDown();
                 }
             });
+            DTVTLogger.debug("sending public key");
             api.requestSendPublicKey();
+            // 鍵交換処理が終わるまでキーコード送信を待機をさせる.
+            // ※この同期を行わないと連続したリモコンキーのタップにより初めの鍵交換が終了するまでに
+            // 　次の鍵交換の送信が開始されキーコード送信が失敗する
+            mLatch = new CountDownLatch(LATCH_COUNT_MAX);
+            try {
+                DTVTLogger.debug("sync to completion of public key transmission");
+                mLatch.await();
+                DTVTLogger.debug("completion of public key transmission");
+            } catch (InterruptedException e) {
+                DTVTLogger.debug(e);
+                return;
+            }
+        }
+        if (CipherUtil.hasShareKey()) {
+            mRemoteControlRelayClient.sendKeycode(viewId, action, isCancelFlg, context);
         }
     }
-
 
     /**
      * 連続送信タイマークラス.

@@ -171,11 +171,10 @@ public class StbConnectRelayClient {
                     return;
                 }
                 byte[] buff = CipherUtil.encodeData(data);
-                int buffLength = 0;
-                if (buff != null) {
-                    buffLength = buff.length;
+                if (buff == null) {
+                    return;
                 }
-                DatagramPacket packet = new DatagramPacket(buff, buffLength, new InetSocketAddress(mRemoteIp, mRemoteDatagramPort));
+                DatagramPacket packet = new DatagramPacket(buff, buff.length, new InetSocketAddress(mRemoteIp, mRemoteDatagramPort));
                 dataSocket = new DatagramSocket();
                 try {
                     dataSocket.send(packet);
