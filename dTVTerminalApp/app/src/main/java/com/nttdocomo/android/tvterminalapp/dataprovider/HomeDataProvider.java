@@ -1471,6 +1471,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     //Db処理を一括でまとめたメソッドのため60行以上の処理としています
     @Override
     public List<Map<String, String>> dbOperation(final int operationId) {
+        super.dbOperation(operationId);
         HomeDataManager homeDataManager;
         List<ContentsData> resultList;
         RecommendListDataManager recommendDataManager;

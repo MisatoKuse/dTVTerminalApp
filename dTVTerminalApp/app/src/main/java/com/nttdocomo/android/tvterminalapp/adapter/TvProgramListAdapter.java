@@ -348,20 +348,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             mLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
             mInUsage = false;
             mClipButton = mView.findViewById(R.id.tv_program_item_panel_clip_iv);
-            mClipButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View view) {
-                    //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、タグでクリップ済/未を判定する
-                    Object clipTag = mClipButton.getTag();
-                    if (clipTag.equals(BaseActivity.CLIP_ACTIVE_STATUS)) {
-                        schedule.getClipRequestData().setClipStatus(true);
-                    } else {
-                        schedule.getClipRequestData().setClipStatus(false);
-                    }
-                    //クリップボタンイベント
-                    ((BaseActivity) mContext).sendClipRequest(schedule.getClipRequestData(), mClipButton);
-                }
-            });
         }
     }
 
@@ -518,7 +504,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         }
         String detail = itemSchedule.getDetail();
         itemViewHolder.mDetail.setText(detail);
-        changeProgramInfoInOrderToShow(itemViewHolder, isParental, isClipHide, itemSchedule.isClipStatus());
+        changeProgramInfoInOrderToShow(itemViewHolder, isParental, isClipHide, itemSchedule);
         itemViewHolder.mContent.setText(title);
     }
 
@@ -564,10 +550,10 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * @param itemViewHolder ビューホルダー
      * @param isParental 年齢制限フラグ
      * @param isClipHide クリップの表示判定
-     * @param isClipStatus クリップの状態
+     * @param itemSchedule 番組情報
      */
     private void changeProgramInfoInOrderToShow(final ItemViewHolder itemViewHolder, final boolean isParental,
-                                                final boolean isClipHide, final boolean isClipStatus) {
+                                                final boolean isClipHide, final ScheduleInfo itemSchedule) {
         itemViewHolder.mContent.getViewTreeObserver()//タイトル
                 .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                     @Override
@@ -598,7 +584,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     public boolean onPreDraw() {
                         itemViewHolder.mClipButton.getViewTreeObserver().removeOnPreDrawListener(this);
                         if (!itemViewHolder.isClipDraw) {
-                            displayProgramClip(itemViewHolder, isClipHide, isClipStatus);
+                            displayProgramClip(itemViewHolder, isClipHide, itemSchedule);
                             itemViewHolder.isClipDraw = true;
                         }
                         return true;
@@ -644,9 +630,10 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      *
      * @param itemViewHolder ビューホルダー
      * @param isClipHide     年齢制限フラグ
-     * @param isClipStatus   クリップ状態
+     * @param itemSchedule   クリップ状態
      */
-    private void displayProgramClip(final ItemViewHolder itemViewHolder, final boolean isClipHide, final boolean isClipStatus) {
+    private void displayProgramClip(final ItemViewHolder itemViewHolder, final boolean isClipHide, final ScheduleInfo itemSchedule) {
+        DTVTLogger.start();
         int clipHeight = itemViewHolder.mClipButton.getHeight();
         if (!isClipHide) {
             if (clipHeight < CLIP_BUTTON_SIZE) {
@@ -656,13 +643,28 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     //未ログイン又は未契約時はクリップボタンを非活性にする
                     itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_tap_circle_normal_clip);
                 } else {
-                    if (isClipStatus) {
-                        itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_normal_clip_schedule_end);
-                        itemViewHolder.mClipButton.setTag(BaseActivity.CLIP_OPACITY_STATUS);
-                    } else {
+                    if (itemSchedule.isClipStatus()) {
                         itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip_schedule_end);
                         itemViewHolder.mClipButton.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
+                    } else {
+                        itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_normal_clip_schedule_end);
+                        itemViewHolder.mClipButton.setTag(BaseActivity.CLIP_OPACITY_STATUS);
                     }
+                    itemViewHolder.mClipButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(final View view) {
+                            //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、タグでクリップ済/未を判定する
+                            Object clipTag = itemViewHolder.mClipButton.getTag();
+                            if (clipTag.equals(BaseActivity.CLIP_ACTIVE_STATUS)) {
+                                itemSchedule.getClipRequestData().setClipStatus(true);
+                            } else {
+                                itemSchedule.getClipRequestData().setClipStatus(false);
+                            }
+                            //クリップボタンイベント
+                            ((BaseActivity) mContext).sendClipRequest(itemSchedule.getClipRequestData(), itemViewHolder.mClipButton);
+                        }
+                    });
+
                 }
             }
         } else {
