@@ -61,24 +61,24 @@ du_bool browse_set_container_id(BrowseInfo* b, const du_uchar* id) {
     return du_str_clone(id, &b->containerId);
 }
 
-du_bool browse_set_response(BrowseInfo* b, const du_uchar* soap_response, du_uint32 soap_response_len) {
-    du_str_array param_array;
-    const du_uchar* result;
+du_bool browse_set_response(BrowseInfo* b, const du_uchar* result) {
+//    du_str_array param_array;
+//    const du_uchar* result;
     xmlNodePtr root;
-    du_uint32 number_returned;
-    du_uint32 update_id;
+//    du_uint32 number_returned;
+//    du_uint32 update_id;
     xmlDoc* didl_doc = 0;
     xmlNodePtr n = 0;
     xmlNodePtr n2 = 0;
 
     // parse browse response
-    du_str_array_init(&param_array);
-    if (!dav_cds_parse_browse_response(soap_response, soap_response_len, &param_array, &result, &number_returned, &b->totalMatches, &update_id)) goto error;
-
-    if (b->requestedCount < number_returned) goto error;
-
-    b->updateId = update_id;
-    b->numberReturned += number_returned;
+//    du_str_array_init(&param_array);
+//    if (!dav_cds_parse_browse_response(soap_response, soap_response_len, &param_array, &result, &number_returned, &b->totalMatches, &update_id)) goto error;
+//
+//    if (b->requestedCount < number_returned) goto error;
+//
+//    b->updateId = update_id;
+//    b->numberReturned += number_returned;
 
     didl_doc = dav_didl_libxml_make_doc(result, du_str_len(result));
     if (!didl_doc) goto error;
@@ -102,11 +102,11 @@ du_bool browse_set_response(BrowseInfo* b, const du_uchar* soap_response, du_uin
     }
 
     if (didl_doc) xmlFreeDoc(didl_doc);
-    du_str_array_free(&param_array);
+//    du_str_array_free(&param_array);
     return 1;
 
 error:
-    du_str_array_free(&param_array);
+//    du_str_array_free(&param_array);
     if (didl_doc) xmlFreeDoc(didl_doc);
     if (n2) xmlFreeNodeList(n2);
     b->numberReturned = 0;

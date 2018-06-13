@@ -16,7 +16,8 @@
 #include "LocalRegistration/local_registration.h"
 
 #include "DlnaMacro.h"
-
+#include <ddtcp_plus.h>
+#include <ddtcp_plus_source.h>
 #include <time.h>//TODO:tmp
 
 #ifndef DDTCP_CRYPTO_SHA1_DIGEST_SIZE
@@ -263,6 +264,7 @@ bool DlnaRemoteConnect::requestLocalRegistration(DMP *d, const du_uchar* udn, co
     du_uint32 id;
     du_uint32 version;
     du_uint8 deviceIdHash[DDTCP_CRYPTO_SHA1_DIGEST_SIZE];
+    ddtcp_source_listen listen_ra;
     
     // 登録名の作成はJava側で完了するように変更
 
@@ -275,13 +277,14 @@ bool DlnaRemoteConnect::requestLocalRegistration(DMP *d, const du_uchar* udn, co
     context.udn = udn;
     
     do {
+//        ddtcp_ret ret = ddtcp_enable_remote_access_source(d);
+//        ddtcp_ret ret = ddtcp_source_listen_ra_ake(d, du_ip_str_any4(), 58293 , 0, 0, 0, 0, &listen_ra);
         BREAK_IF(!dupnp_cp_dvcmgr_visit_device_type(&d->deviceManager, dmp_get_dms_type(), regist_dms_visitor, &context));
         BREAK_IF(!context.found);
         BREAK_IF(!context.succeeded);
         version = context.is_v2 ? 2 : 1; // set DLPA version
         //現在対応STB1号機では常に失敗しているがローカルレジストレーションには影響なさそう
         BREAK_IF(!local_registration_prepare_registration(&d->upnpInstance, dmp_get_user_agent(), context.control_url, prepare_lr_register_response_handler, &id, version));
-
         BREAK_IF(!sink_ra_register(d, context.dtcp1_host, context.dtcp1_port));
         BREAK_IF(!getDeviceIdHash(d, &hash));
         BREAK_IF(!du_uchar_array_cat0(&hash));

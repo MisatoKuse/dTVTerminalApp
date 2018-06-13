@@ -49,7 +49,9 @@ public class DlnaRecVideoItem {
     /**ClearTextSize.*/
     public String mClearTextSize = "";
     /**channelName.*/
-    public String mChannelName = "";    //upnp:channelName
+    public String mChannelName = "";
+    /**xml.*/
+    public String mXml = "";  //upnp:channelName
 
     /**
      * 機能：DlnaRecVideoItem情報クラスを構造.

@@ -10,18 +10,17 @@ import android.support.v4.content.ContextCompat;
 
 import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.activation.NewEnvironmentUtil;
 
 import java.io.File;
 
 /**
- * DownloaderBaseクラス.
+ * ダウンロード基底クラス.
  */
 public abstract class DownloaderBase {
     /**ダウンロードパラメータ.*/
     private DownloadParam mDownloadParam;
-    /**ダウンロードしたサイズ(Bytes).*/
-    private int mDownloadedBytes;
     /**トータルBytesサイズ.*/
     private int mTotalBytes;
     /**エラー.*/
@@ -32,14 +31,6 @@ public abstract class DownloaderBase {
     public static final String sDlPrefix = "d_";
     /**ダウンロード中なのか.*/
     private boolean mIsDownloading = false;
-
-    /**
-     * ダウンロードしたサイズ(Bytes)設定.
-     * @param bytesDone ダウンロードしたサイズ(Bytes)設定
-     */
-    protected void setDownloadedBytes(final int bytesDone) {
-        mDownloadedBytes = bytesDone;
-    }
 
     /**
      * ダウンロードパラメータ取得.
@@ -55,10 +46,6 @@ public abstract class DownloaderBase {
      * @param downloadListener リスナー
      */
     DownloaderBase(final DownloadParam param, final DownloadListener downloadListener) {
-        if (null == param) {
-            DTVTLogger.error("DownloaderBase.DownloaderBase, param is null");
-            return;
-        }
         mDownloadParam = param;
         mDownloadListener = downloadListener;
         reset();
@@ -81,7 +68,6 @@ public abstract class DownloaderBase {
      * ダウンロードステータスをリセット.
      */
     private void reset() {
-        mDownloadedBytes = 0;
         mTotalBytes = 0;
         mError = DownloadListener.DownLoadError.DLError_NoError;
         setDownloading(false);
@@ -153,20 +139,8 @@ public abstract class DownloaderBase {
      * @param everyTimeBytes everyTimeBytes
      */
     void onProgress(final int everyTimeBytes) {
-        mDownloadedBytes += everyTimeBytes;
         if (null != mDownloadListener && null != mDownloadParam) {
-            int total = mDownloadParam.getTotalSizeToDl();
-            if (0 == total) {
-                return;
-            }
-            int ff = (int) (((float) mDownloadedBytes) / ((float) total) * 100);
-            if (100 < ff) {
-                ff = 100;
-            }
-            if (ff < 0) {
-                ff = 0;
-            }
-            mDownloadListener.onProgress(mDownloadedBytes, ff);
+            mDownloadListener.onProgress(everyTimeBytes);
         }
     }
 
@@ -183,25 +157,6 @@ public abstract class DownloaderBase {
     }
 
     /**
-     * ダウンロード進捗取得.
-     * @return  ダウンロード進捗
-     */
-    int getProgressBytes() {
-        return mDownloadedBytes;
-    }
-
-    /**
-     * ダウンロード進捗通知.
-     * @return ダウンロード進捗
-     */
-    float getProgressPercent() {
-        if (0 == mTotalBytes) {
-            return 0.0f;
-        }
-        return ((float) mDownloadedBytes) / ((float) mTotalBytes);
-    }
-
-    /**
      * ダウンロードエラー発生の時、コールされる.
      * @return ダウンロードエラー取得.
      */
@@ -214,7 +169,7 @@ public abstract class DownloaderBase {
      */
     void cancel() {
         synchronized (this) {
-            cancelImpl();
+            DlnaManager.shared().DownloadCancel();
         }
     }
 
@@ -237,12 +192,6 @@ public abstract class DownloaderBase {
         }
         return null;
     }
-
-
-    /**
-     * Sub Classでダウンロード成功したとき、この関数をコール.
-     */
-    protected abstract void cancelImpl();
 
     /**
      * ダウンロード容量不足.

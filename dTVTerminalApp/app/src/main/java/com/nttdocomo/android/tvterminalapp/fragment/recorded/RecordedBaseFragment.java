@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.StbConnectActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
@@ -35,6 +36,7 @@ import com.nttdocomo.android.tvterminalapp.service.download.DownloadParam;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
 import com.nttdocomo.android.tvterminalapp.service.download.DtcpDownloadParam;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
@@ -79,8 +81,16 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     private String mFragmentName = null;
     /**録画フラグメントビュー.*/
     private View mRecordedFragmentView;
-    /**r録画リストビュー.*/
+    /**録画リストビュー.*/
     private ListView mRecordedListView;
+    /**ダウンロードXML取得フォーマット.*/
+    private static final String TAG_ITEM_START = "<item id=\"";
+    /**ダウンロードXML取得フォーマット.*/
+    private static final String TAG_ITEM_END = "</item>";
+    /**ダウンロードXML取得フォーマット.*/
+    private static final String TAG_DIDL_START = "<DIDL-Lite";
+    /**ダウンロードXML取得フォーマット.*/
+    private static final String TAG_DIDL_END = "</DIDL-Lite>";
 
     @Override
     public Context getContext() {
@@ -237,9 +247,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                     return;
                 }
             }
-            if (mDownloadDataProvider != null) {
-                mDownloadDataProvider.setUiRunning(true);
-            }
+            mDownloadDataProvider.setUiRunning(true);
         }
     }
 
@@ -495,8 +503,24 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         return null;
     }
 
+    /**
+     * アクティベーションのエラー表示.
+     */
+    private void showActivationErrorDialog() {
+        CustomDialog resultDialog = new CustomDialog(mContext, CustomDialog.DialogType.ERROR);
+        resultDialog.setOnTouchOutside(false);
+        resultDialog.setCancelable(false);
+        resultDialog.setContent(getString(R.string.activation_failed_msg));
+        resultDialog.setConfirmText(R.string.common_text_close);
+        resultDialog.showDialog();
+    }
+
     @Override
     public void downloadClick(final View view) {
+        boolean result = DlnaUtils.getActivationState(mContext);
+        if (!result) {
+            showActivationErrorDialog();
+        }
         int index = (int) view.getTag();
         switch (mContentsData.get(index).getDownloadFlg()) {
             case ContentsAdapter.DOWNLOAD_STATUS_ALLOW :
@@ -569,7 +593,31 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      * @return xmlパラメータ
      */
     private String getXmlToDl(final String itemId) {
-        return DlnaInterface.getXmlToDl(itemId);
+        String xml = mContentsList.get(0).getXml();
+        if (!TextUtils.isEmpty(xml)) {
+            int startDp = xml.indexOf(TAG_DIDL_START);
+            if (startDp == -1) {
+                return null;
+            }
+            int startIt = xml.indexOf(TAG_ITEM_START);
+            if (startIt == -1) {
+                return null;
+            }
+            String result = xml.substring(startDp, startIt);
+            String begin = TAG_ITEM_START + itemId;
+            int startSelectIt = xml.indexOf(begin);
+            if (startSelectIt == -1) {
+                return null;
+            }
+            xml = xml.substring(startSelectIt);
+            int endIt = xml.indexOf(TAG_ITEM_END);
+            if (endIt == -1) {
+                return null;
+            }
+            result = result + xml.substring(0, endIt);
+            return result + TAG_ITEM_END + TAG_DIDL_END;
+        }
+        return null;
     }
 
     /**
@@ -585,12 +633,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
             return false;
         }
         String dlPath = DownloaderBase.getDownloadPath(context);
-        RecordedContentsDetailData item;
-        item = mContentsList.get(index);
-        if (null == item) {
-            showMessage();
-            return false;
-        }
+        RecordedContentsDetailData item = mContentsList.get(index);
         String dlFileName = DownloaderBase.getFileNameById(item.getItemId());
         DlnaDmsItem dmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(context);
         if (null == dmsItem.mUdn || dmsItem.mUdn.isEmpty()) {
@@ -672,7 +715,12 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         }
         if (mQueueIndex.size() > 0) {
             mCanBeCanceled = true;
-            setDownloadStatus(mQueueIndex.get(0), percent);
+            mActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setDownloadStatus(mQueueIndex.get(0), percent);
+                }
+            });
         }
     }
 
@@ -686,7 +734,12 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
             return;
         }
         mCanBeCanceled = false;
-        setSuccessStatus(fullPath);
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setSuccessStatus(fullPath);
+            }
+        });
     }
 
     /**
@@ -698,6 +751,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         if (null == fullPath || fullPath.isEmpty()) {
             return;
         }
+        showMessage();
         mCanBeCanceled = false;
         if (mDownloadDataProvider != null) {
             mDownloadDataProvider.cancelDownLoadStatus(fullPath);

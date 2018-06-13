@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.jni;
 
 public class DlnaObject {
     public String mObjectId;
+    public String mXml;
     public String mTitle;
     public String mBitrate;
     public String mChannelName;

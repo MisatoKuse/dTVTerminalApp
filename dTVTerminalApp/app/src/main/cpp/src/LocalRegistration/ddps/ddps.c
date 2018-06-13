@@ -10,7 +10,7 @@
 #include <du_str.h>
 
 const du_uchar* ddps_action_name_prepare_registration() {
-    return DU_UCHAR_CONST("PrepareRegistion");
+    return DU_UCHAR_CONST("PrepareRegistration");
 }
 
 const du_uchar* ddps_action_name_register_device() {
@@ -18,7 +18,7 @@ const du_uchar* ddps_action_name_register_device() {
 }
 
 du_bool ddps_make_prepare_registration(du_uchar_array* xml, du_uint32 ver) {
-    static const du_uchar* action_name = DU_UCHAR_CONST("PrepareRegistion");
+    static const du_uchar* action_name = DU_UCHAR_CONST("PrepareRegistration");
 
     du_uchar_array_truncate(xml);
     if (!du_soap_envelope_start(xml)) return 0;

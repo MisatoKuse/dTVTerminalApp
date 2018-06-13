@@ -7,13 +7,13 @@
 #include <ddtcp.h>
 #include <ddtcp_source.h>
 #include <ddtcp_private.h>
-#include "DlnaDownload.h"
 #include "../DTVTLogger.h"
+#include <jni.h>
 
-#ifdef DTCP_PLUS
+//#ifdef DTCP_PLUS
 #include <ddtcp_plus.h>
 #include <ddtcp_plus_source.h>
-#endif
+//#endif
 
 namespace dixim {
     namespace dmsp {
@@ -24,14 +24,14 @@ namespace dixim {
             struct dtcp {
                 ddtcp d;
                 ddtcp_source_listen listen;
-#ifdef DTCP_PLUS
+//#ifdef DTCP_PLUS
                 ddtcp_source_listen listen_ra;
-#endif
+//#endif
 
                 du_uint16 ake_port;
-#ifdef DTCP_PLUS
+//#ifdef DTCP_PLUS
                 du_uint16 ake_ra_port;
-#endif
+//#endif
                 std::string private_data_home;
 
                 du_bool running;
@@ -46,10 +46,10 @@ namespace dixim {
                     ret = ddtcp_set_source_connection_timeout(d, 1000*10);
                     if (DDTCP_FAILED(ret)) { du_log_ev(LOG_CATEGORY, DU_UCHAR_CONST("Failed to set listen max ake connection: ret=%x."), ret); goto error2; }
 
-#ifdef DTCP_PLUS
+//#ifdef DTCP_PLUS
                     ret = ddtcp_enable_remote_access_source(d);
         if (DDTCP_FAILED(ret)) { du_log_ev(LOG_CATEGORY, DU_UCHAR_CONST("Failed to enable remote access: ret=%x."), ret); goto error2; }
-#endif
+//#endif
 
                     ret = ddtcp_set_ecc_timing_back();
 
@@ -74,7 +74,7 @@ namespace dixim {
                     }
                 }
 
-                du_bool start(JavaVM *vm, jobject instance, dtvt::DlnaDownload *myDlnaClass) {
+                du_bool start(JavaVM *vm, jobject instance) {
                     DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start enter");
                     JNIEnv *env = NULL;
                     bool isAttached=false;
@@ -166,7 +166,7 @@ namespace dixim {
                         goto error2;
                     }
 
-#ifdef DTCP_PLUS
+//#ifdef DTCP_PLUS
                     ret = ddtcp_source_listen_ra_ake(d, du_ip_str_any4(), ake_ra_port, 0, 0, 0, 0, &listen_ra);
         if (DDTCP_FAILED(ret)) {
             du_log_ev(LOG_CATEGORY, DU_UCHAR_CONST("Failed to source listen ra ake: ret=%x."), ret);
@@ -175,7 +175,7 @@ namespace dixim {
             env->DeleteLocalRef(strObj);
             goto error3;
         }
-#endif
+//#endif
 
                     running = 1;
 
@@ -187,10 +187,10 @@ namespace dixim {
                     DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start exit true");
                     return 1;
 
-#ifdef DTCP_PLUS
+//#ifdef DTCP_PLUS
                     ddtcp_source_close_listen_ake(&listen_ra);
     error3:
-#endif
+//#endif
                     ddtcp_source_close_listen_ake(&listen);
                     error2:
                     ddtcp_shutdown(d);
@@ -208,9 +208,9 @@ namespace dixim {
 
                     if (!running) return;
 
-#ifdef DTCP_PLUS
+//#ifdef DTCP_PLUS
                     ddtcp_source_close_listen_ake(&listen_ra);
-#endif
+//#endif
                     ddtcp_source_close_listen_ake(&listen);
                     ddtcp_shutdown(d);
                     running = 0;

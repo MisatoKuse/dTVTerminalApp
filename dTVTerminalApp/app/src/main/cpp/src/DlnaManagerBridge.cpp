@@ -7,11 +7,14 @@
 #include <android/log.h>
 #include <assert.h>
 #include <secure_io_global.h>
+#include <du_signal.h>
 #include <cipher_file_context_global.h>
 #include "DlnaMacro.h"
 #include "DlnaBase.h"
 #include "DlnaDmsBrowse.h"
 #include "DlnaRemoteConnect.h"
+#include "DlnaDownload.h"
+#include "download/downloader.h"
 
 #define PackageName "com/nttdocomo/android/tvterminalapp/jni/"
 #define DlnaManagerClassName "DlnaManager"
@@ -32,6 +35,7 @@ struct JniStruct{
     jmethodID constructorId;
 
     jfieldID objectId;
+    jfieldID xml;
     jfieldID title;
     jfieldID bitrate;
     jfieldID channelName;
@@ -51,6 +55,7 @@ JniStruct jniModelStruct;
 DlnaBase *dlnaBase;
 DlnaDmsBrowse *dlnaDmsBrowse;
 DlnaRemoteConnect *dlnaRemoteConnect;
+DlnaDownload *dlnaDownload;
 DMP *dmp;
 
 extern "C" {
@@ -78,6 +83,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     jniModelStruct.constructorId = env->GetMethodID(jniModelStruct.cls, "<init>", "()V");
 
     jniModelStruct.objectId = env->GetFieldID(jniModelStruct.cls, "mObjectId", "Ljava/lang/String;");
+    jniModelStruct.xml = env->GetFieldID(jniModelStruct.cls, "mXml", "Ljava/lang/String;");
     jniModelStruct.title = env->GetFieldID(jniModelStruct.cls, "mTitle", "Ljava/lang/String;");
     jniModelStruct.bitrate = env->GetFieldID(jniModelStruct.cls, "mBitrate", "Ljava/lang/String;");
     jniModelStruct.channelName = env->GetFieldID(jniModelStruct.cls, "mChannelName", "Ljava/lang/String;");
@@ -110,6 +116,10 @@ void fillContentInfoIntoJni(JNIEnv *env, const ContentInfo *src, jobject &dst) {
     env->SetObjectField(dst, jniModelStruct.objectId, objectIdString);
     env->DeleteLocalRef(objectIdString);
 
+    jstring xmlString = env->NewStringUTF(src->xml);
+    env->SetObjectField(dst, jniModelStruct.xml, xmlString);
+    env->DeleteLocalRef(xmlString);
+
     jstring nameString = env->NewStringUTF(src->name);
     env->SetObjectField(dst, jniModelStruct.title, nameString);
     env->DeleteLocalRef(nameString);
@@ -137,6 +147,7 @@ void fillContentInfoIntoJni(JNIEnv *env, const ContentInfo *src, jobject &dst) {
     jstring videoTypeString = env->NewStringUTF(src->protocolInfo);
     env->SetObjectField(dst, jniModelStruct.videoType, videoTypeString);
     env->DeleteLocalRef(videoTypeString);
+
     jstring bitrateString = env->NewStringUTF(src->bitrate);
     env->SetObjectField(dst, jniModelStruct.bitrate, bitrateString);
     env->DeleteLocalRef(bitrateString);
@@ -150,6 +161,7 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
     dlnaBase = new DlnaBase();
     dlnaDmsBrowse = new DlnaDmsBrowse();
     dlnaRemoteConnect = new DlnaRemoteConnect();
+    dlnaDownload = new DlnaDownload();
 
     //region dlnaBase callback
     dlnaBase->DmsFoundCallback = [](const char* friendlyName, const char* udn, const char* location, const char* controlUrl, const char* eventSubscriptionUrl) {
@@ -334,6 +346,66 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
         }
     };
     //endregion dlnaRemoteConnect callback
+    dlnaDownload->DownloadProgressCallBack = [](int progress) {
+        JNIEnv *_env = NULL;
+        int status = g_ctx.javaVM->GetEnv((void **) &_env, JNI_VERSION_1_6);
+        bool isAttached = false;
+        if (status < 0) {
+            status = g_ctx.javaVM->AttachCurrentThread(&_env, NULL);
+            if (status < 0 || NULL == _env) {
+                return;
+            }
+            isAttached = true;
+        }
+        jint progressResult = progress;
+        jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "DownloadProgressCallBack", "(I)V");
+        _env->CallVoidMethod(g_ctx.jniHelperObj, methodID, progressResult);
+
+        if (isAttached) {
+            g_ctx.javaVM->DetachCurrentThread();
+        }
+    };
+    dlnaDownload->DownloadStatusCallBack = [](downloader_status downloadStatus) {
+        JNIEnv *_env = NULL;
+        int status = g_ctx.javaVM->GetEnv((void **) &_env, JNI_VERSION_1_6);
+        bool isAttached = false;
+        if (status < 0) {
+            status = g_ctx.javaVM->AttachCurrentThread(&_env, NULL);
+            if (status < 0 || NULL == _env) {
+                return;
+            }
+            isAttached = true;
+        }
+        jint downloadStatusType = 10;
+        switch(downloadStatus) {
+            case DOWNLOADER_STATUS_UNKNOWN:
+                downloadStatusType = 11;
+                break;
+            case DOWNLOADER_STATUS_MOVING:
+                downloadStatusType = 12;
+                break;
+            case DOWNLOADER_STATUS_COMPLETED:
+                downloadStatusType = 13;
+                break;
+            case DOWNLOADER_STATUS_CANCELLED:
+                downloadStatusType = 14;
+                break;
+            case DOWNLOADER_STATUS_ERROR_OCCURED:
+                downloadStatusType = 15;
+                break;
+            default:
+                break;
+        }
+        jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "DownloadStatusCallBack", "(I)V");
+        _env->CallVoidMethod(g_ctx.jniHelperObj, methodID, downloadStatusType);
+
+        if (isAttached) {
+            g_ctx.javaVM->DetachCurrentThread();
+        }
+    };
+    //region dlnadownload callback
+
+    //endregion dlnadownload callback
 
     bool resultDmp = dlnaBase->initDmp(dmp);
     LOG_WITH_BOOL(resultDmp, "resultDmp");
@@ -442,6 +514,35 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_getRemoteDeviceExpireDa
     return jstrBuf;
 }
 
+JNIEXPORT jboolean JNICALL
+Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_downLoadStartDtcp(JNIEnv *env, jobject thiz) {
+    LOG_WITH("");
+    jclass clazz = env->GetObjectClass(thiz);
+    jmethodID mid = env->GetMethodID(clazz, "getUniqueId", "()Ljava/lang/String;");
+    bool result = dlnaDownload->start(dmp, g_ctx.javaVM, thiz, mid);
+    return (jboolean) result;
+}
+
+JNIEXPORT void JNICALL
+Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_download(JNIEnv *env, jobject thiz, jstring fileNameToSave_, jstring dtcp1host_, int dtcp1port, jstring url_, int cleartextSize, jstring xml_) {
+    const char *fileNameToSave = env->GetStringUTFChars(fileNameToSave_, 0);
+    const char *dtcp1host = env->GetStringUTFChars(dtcp1host_, 0);
+    const char *url = env->GetStringUTFChars(url_, 0);
+    const char *xml = env->GetStringUTFChars(xml_, 0);
+    dlnaDownload->startDownload(fileNameToSave, dtcp1host, dtcp1port, url, cleartextSize, xml);
+}
+
+JNIEXPORT void JNICALL
+Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_downloadCancel(JNIEnv *env, jobject thiz) {
+    LOG_WITH("");
+    dlnaDownload->downloadCancel();
+}
+
+JNIEXPORT void JNICALL
+Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_downloadStop(JNIEnv *env, jobject thiz) {
+    LOG_WITH("");
+    dlnaDownload->stop();
+}
 // endregion call from java
 
 }

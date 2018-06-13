@@ -188,30 +188,6 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
     }
 
     /**
-     * ダウンロード進捗通知.
-     * @return 進捗値.
-     */
-    public int getProgressBytes() {
-        DownloadService ds = getDownloadService();
-        if (null != ds) {
-            return ds.getProgressBytes();
-        }
-        return 0;
-    }
-
-    /**
-     * ダウンロード進捗通知.
-     * @return  進捗値.
-     */
-    public float getProgressPercent() {
-        DownloadService ds = getDownloadService();
-        if (null != ds) {
-            return ds.getProgressPercent();
-        }
-        return 0.0f;
-    }
-
-    /**
      * ダウンロードエラー発生の時、コールされる.
      * @return エラータイプ
      */
@@ -255,7 +231,7 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
     }
 
     @Override
-    public void onProgress(final int receivedBytes, final int percent) {
+    public void onProgress(final int percent) {
         sendBroadcast(DownloadService.DOWNLOAD_ON_PROGRESS, DownloadService.DOWNLOAD_PARAM_INT, percent);
     }
 

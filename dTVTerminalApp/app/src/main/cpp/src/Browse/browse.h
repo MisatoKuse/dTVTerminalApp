@@ -23,7 +23,7 @@ extern const du_uchar* browse_get_control_url(BrowseInfo* b);
 extern const du_uchar* browse_get_event_sub_url(BrowseInfo* b);
     
 extern du_bool browse_set_container_id(BrowseInfo* b, const du_uchar* id);
-extern du_bool browse_set_response(BrowseInfo* b, const du_uchar* soap_response, du_uint32 soap_response_len);
+extern du_bool browse_set_response(BrowseInfo* b, const du_uchar* result);
     
 
 

@@ -12,12 +12,9 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.jni.download.DlnaProvDownload;
 
 import java.util.ArrayList;
 import java.util.List;
-
-//import android.support.v7.app.NotificationCompat;
 
 /**
  * ダウンロードサービスクラス.
@@ -27,8 +24,6 @@ public class DownloadService extends Service implements DownloadListener {
     private DownloadServiceListener mDownloadServiceListener;
     /**DownloaderBase.*/
     private DownloaderBase mDownloaderBase;
-    /**data.*/
-    private String mData;
     /**ダウンロードサービスID.*/
     private static final int DOWNLOAD_SERVICE_ID = 1;
     /**ダウンロードデータキュー.*/
@@ -124,28 +119,6 @@ public class DownloadService extends Service implements DownloadListener {
     }
 
     /**
-     * ダウンロード進捗通知.
-     * @return  ダウンロード進捗
-     */
-    public int getProgressBytes() {
-        if (null != mDownloaderBase) {
-            return mDownloaderBase.getProgressBytes();
-        }
-        return 0;
-    }
-
-    /**
-     * ダウンロード進捗通知.
-     * @return ダウンロード進捗
-     */
-    public float getProgressPercent() {
-        if (null != mDownloaderBase) {
-            return mDownloaderBase.getProgressPercent();
-        }
-        return 0.0f;
-    }
-
-    /**
      * ダウンロードエラー発生の時、コールされる.
      * @return ダウンロードエラータイプ
      */
@@ -220,7 +193,6 @@ public class DownloadService extends Service implements DownloadListener {
         stopSelf();
         boolean isUiRunning = isUiRunning();
         if (!isUiRunning) {
-            DlnaProvDownload.uninitGlobalDl();
             DownloadDataProvider.releaseInstance();
         }
     }
@@ -253,10 +225,6 @@ public class DownloadService extends Service implements DownloadListener {
         super.onDestroy();
     }
 
-    /**
-     * コールバック.
-     * @param totalFileByteSize totalFileByteSize
-     */
     @Override
     public void onStart(final int totalFileByteSize) {
         if (null != mDownloadServiceListener) {
@@ -264,22 +232,13 @@ public class DownloadService extends Service implements DownloadListener {
         }
     }
 
-    /**
-     * コールバック.
-     * @param receivedBytes receivedBytes
-     * @param percent 0-100
-     */
     @Override
-    public void onProgress(final int receivedBytes, final int percent) {
+    public void onProgress(final int percent) {
         if (null != mDownloadServiceListener) {
-            mDownloadServiceListener.onProgress(receivedBytes, percent);
+            mDownloadServiceListener.onProgress(percent);
         }
     }
 
-    /**
-     * コールバック.
-     * @param error　error
-     */
     @Override
     public void onFail(final DownLoadError error, final String savePath) {
         if (null != mDownloadServiceListener) {
@@ -287,10 +246,6 @@ public class DownloadService extends Service implements DownloadListener {
         }
     }
 
-    /**
-     * コールバック.
-     * @param fullPath　fullPath
-     */
     @Override
     public void onSuccess(final String fullPath) {
         if (null != mDownloadServiceListener) {
@@ -298,9 +253,6 @@ public class DownloadService extends Service implements DownloadListener {
         }
     }
 
-    /**
-     * コールバック.
-     */
     @Override
     public void onCancel(final String filePath) {
         if (null != mDownloadServiceListener) {
@@ -308,9 +260,6 @@ public class DownloadService extends Service implements DownloadListener {
         }
     }
 
-    /**
-     * コールバック.
-     */
     @Override
     public void onLowStorageSpace(final String fullPath) {
         if (null != mDownloadServiceListener) {
@@ -322,13 +271,6 @@ public class DownloadService extends Service implements DownloadListener {
      * Binderクラス.
      */
     public class Binder extends android.os.Binder {
-        /**
-         * setData.
-         * @param data data
-         */
-        public void setData(final String data) {
-            DownloadService.this.mData = data;
-        }
 
         /**
          * DownloadService取得.

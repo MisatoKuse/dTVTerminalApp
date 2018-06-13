@@ -98,6 +98,7 @@ struct ContentInfo {
     char channelName[256];
     char channelNr[256];
     char rating[256];
+    char* xml;
 };
 enum eDiragConnectStatus {
     DiragConnectStatusUnknown

@@ -1292,7 +1292,7 @@ namespace dtvt {
         mRecursionXmlParser=mDlnaRecVideoXmlParser;
 
         mDlnaXmlContainer.cleanAll();
-        mDlnaXmlContainer.setMsgId(DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST);
+//        mDlnaXmlContainer.setMsgId(DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST);
 
         #if defined(DLNA_KARI_DMS_UNIVERSAL)
             return sendSoap(controlUrl, "0");

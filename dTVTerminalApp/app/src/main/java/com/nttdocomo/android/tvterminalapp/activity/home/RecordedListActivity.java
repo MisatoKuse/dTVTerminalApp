@@ -21,7 +21,6 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -34,22 +33,15 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDet
 import com.nttdocomo.android.tvterminalapp.dataprovider.dlna.DlnaContentRecordedDataProvider;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedFragmentFactory;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaObject;
-import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsInfo;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
-import com.nttdocomo.android.tvterminalapp.jni.download.DlnaProvDownload;
-import com.nttdocomo.android.tvterminalapp.jni.rec.DlnaProvRecVideo;
-import com.nttdocomo.android.tvterminalapp.jni.rec.DlnaRecVideoInfo;
 import com.nttdocomo.android.tvterminalapp.jni.rec.DlnaRecVideoItem;
-import com.nttdocomo.android.tvterminalapp.jni.rec.DlnaRecVideoListener;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadDataProvider;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadListener;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -152,7 +144,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         super.onStartCommunication();
         showProgressBar();
         mNoDataMessage.setVisibility(View.GONE);
-        initDl();
+//        initDl();
         getData();
     }
 
@@ -175,7 +167,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         LocalBroadcastManager.getInstance(this).unregisterReceiver(downloadReceiver);
         boolean isRunning = isDownloadServiceRunning();
         if (!isRunning) {
-            DlnaProvDownload.uninitGlobalDl();
+//            DlnaProvDownload.uninitGlobalDl();
         }
     }
 
@@ -201,14 +193,19 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     @Override
-    public void callback(DlnaObject[] objs) {
+    public void callback(final DlnaObject[] objs) {
         setProgressBarGone();
         if (objs.length == 0) {
-            mNoDataMessage.setVisibility(View.VISIBLE);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mNoDataMessage.setVisibility(View.VISIBLE);
+                }
+            });
             return;
         }
         ArrayList<DlnaRecVideoItem> dstList = new ArrayList<>();
-        for(DlnaObject dlnaObject: objs) {
+        for (DlnaObject dlnaObject: objs) {
             DlnaRecVideoItem item = new DlnaRecVideoItem();
             item.mItemId = dlnaObject.mObjectId;
             item.mSize = "0";
@@ -219,6 +216,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             item.mTitle = dlnaObject.mTitle;
             item.mVideoType = dlnaObject.mVideoType;
             item.mClearTextSize = "0";
+            item.mXml = dlnaObject.mXml;
             dstList.add(item);
         }
         setVideoBrows(dstList);
@@ -228,13 +226,13 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * 初期化処理.
      */
     private void initDl() {
-        boolean isRunning = isDownloadServiceRunning();
-        if (!isRunning) {
-            boolean res = DlnaProvDownload.initGlobalDl(DownloaderBase.getDownloadPath(this));
-            if (!res) {
-                DTVTLogger.debug("initGlobalDl failed");
-            }
-        }
+//        boolean isRunning = isDownloadServiceRunning();
+//        if (!isRunning) {
+//            boolean res = DlnaProvDownload.initGlobalDl(DownloaderBase.getDownloadPath(this));
+//            if (!res) {
+//                DTVTLogger.debug("initGlobalDl failed");
+//            }
+//        }
     }
 
     /**
@@ -544,6 +542,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             detailData.setTitle(itemData.mTitle);
             detailData.setVideoType(itemData.mVideoType);
             detailData.setClearTextSize(itemData.mClearTextSize);
+            detailData.setXml(itemData.mXml);
             if (resultList != null && resultList.size() > 0) {
                 for (Map<String, String> hashMap : resultList) {
                     String itemId = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);

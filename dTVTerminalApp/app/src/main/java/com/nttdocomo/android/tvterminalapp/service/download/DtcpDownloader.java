@@ -6,20 +6,18 @@ package com.nttdocomo.android.tvterminalapp.service.download;
 
 import android.content.Context;
 
+import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.jni.download.DlnaDlListener;
-import com.nttdocomo.android.tvterminalapp.jni.download.DlnaDlStatus;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
+import com.nttdocomo.android.tvterminalapp.jni.activation.NewEnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.jni.download.DlnaDownloadRet;
-import com.nttdocomo.android.tvterminalapp.jni.download.DlnaProvDownload;
 
 import java.io.File;
 
 /**
  * tcpダウンローダークラス.
  */
-public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
-    /**DlnaProvDownloadインスタンス.*/
-    private DlnaProvDownload mDlnaProvDownload;
+public class DtcpDownloader extends DownloaderBase implements DlnaManager.DownloadStatusListener {
 
     /**
      * Dtcpダウンローダー.
@@ -29,8 +27,6 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
      */
     DtcpDownloader(final DownloadParam param, final DownloadListener downloadListener) {
         super(param, downloadListener);
-        DtcpDownloadParam p = (DtcpDownloadParam) param;
-        mDlnaProvDownload = new DlnaProvDownload(p.getSavePath());
     }
 
     @Override
@@ -63,14 +59,34 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
             return;
         }
 
-        DlnaDownloadRet res = mDlnaProvDownload.startListen(this, context, param.getSavePath(), param.getPercentToNotity());
-        if (DlnaDownloadRet.DownloadRet_Succeed != res) {
-            errors(res);
-            return;
+        DlnaManager.shared().mDownloadStatusListener = this;
+        if (DlnaManager.shared().initDownload()) {
+            String homeParent = getParentDir(param.getSavePath());
+            int ret = NewEnvironmentUtil.copyDeviceKeyFromOtherCMWork(context, homeParent, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
+            if (1 != ret && 3 != ret) {
+                onFail(DownloadListener.DownLoadError.DLError_CopyKeyFileFailed);
+                return;
+            }
+            DlnaManager.shared().downloadStart(param);
+        } else {
+            onFail(DownloadListener.DownLoadError.DLError_Other);
         }
+    }
 
-        res = mDlnaProvDownload.download(param);
-        errors(res);
+    /**
+     * getParentDir.
+     * @param dir dir
+     * @return Parent path
+     */
+    private String getParentDir(final String dir) {
+        File f = new File(dir);
+        if (!f.exists()) {
+            boolean r = f.mkdirs();
+            if (!r) {
+                return "";
+            }
+        }
+        return f.getParent();
     }
 
     /**
@@ -102,43 +118,25 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
         if (null == param) {
             return true;
         }
-        try {
-            DtcpDownloadParam dp = (DtcpDownloadParam) param;
-            String path = dp.getSavePath();
-            if (null == path || path.isEmpty()) {
+        DtcpDownloadParam dp = (DtcpDownloadParam) param;
+        String path = dp.getSavePath();
+        if (null == path || path.isEmpty()) {
+            return true;
+        }
+        File f = new File(path);
+        if (!f.exists()) {
+            if (!f.mkdirs()) {
                 return true;
             }
-            File f = new File(path);
-            if (!f.exists()) {
-                if (!f.mkdirs()) {
-                    return true;
-                }
-            }
-            long usableSpace = (f.getUsableSpace() / 1024) / 1024;  //-->MB
-            long safeSpace = getInnerStorageSafeSpaceMB();
-            int dlSize = (dp.getCleartextSize() / 1024) / 1024; //-->MB
-            return (usableSpace - dlSize) < safeSpace;
-        } catch (Exception e) {
-            //TODO :汎用例外catchは削除する事.必要な例外をキャッチして必要な処理を記載する事.
-            DTVTLogger.debug(e);
         }
-        return true;
+        long usableSpace = (f.getUsableSpace() / 1024) / 1024;  //-->MB
+        long safeSpace = getInnerStorageSafeSpaceMB();
+        int dlSize = (dp.getCleartextSize() / 1024) / 1024; //-->MB
+        return (usableSpace - dlSize) < safeSpace;
     }
 
     @Override
-    protected void cancelImpl() {
-        if (null != mDlnaProvDownload) {
-            mDlnaProvDownload.cancel();
-        }
-    }
-
-    @Override
-    public void dlProgress(final int sizeFinished) {
-        onProgress(sizeFinished);
-    }
-
-    @Override
-    public void dlStatus(final DlnaDlStatus status) {
+    public void onDownloadStatusCallBack(final DlnaManager.DownLoadStatus status) {
         switch (status) {
             case DOWNLOADER_STATUS_COMPLETED:
                 onSuccess();
@@ -156,35 +154,34 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
                 break;
             case DOWNLOADER_STATUS_MOVING:
                 break;
-            //TODO :必ずdefault文を記載する事.
+            default:
+                break;
         }
+    }
+
+    @Override
+    public void onDownloadProgressCallBack(final int progress) {
+        onProgress(progress);
     }
 
     /**
      *ダウンロードパスーを出力する.
      */
     private void printDlPathFiles() {
-        try {
-            DtcpDownloadParam dp = (DtcpDownloadParam) getDownloadParam();
-            if (null != dp) {
-                String path = dp.getSavePath();
-                if (null != path) {
-                    File f = new File(path);
-                    File[] files = f.listFiles();
-                    DTVTLogger.debug("------------------------");
-                    if (null != files) {
-                        for (File f2 : files) {
-                            if (null != f2) {
-                                DTVTLogger.debug(f2.getAbsolutePath() + ", mSize=" + f2.length());
-                            }
+        DtcpDownloadParam dp = (DtcpDownloadParam) getDownloadParam();
+        if (null != dp) {
+            String path = dp.getSavePath();
+            if (null != path) {
+                File f = new File(path);
+                File[] files = f.listFiles();
+                if (null != files) {
+                    for (File f2 : files) {
+                        if (null != f2) {
+                            DTVTLogger.debug(f2.getAbsolutePath() + ", mSize=" + f2.length());
                         }
                     }
-                    DTVTLogger.debug("------------------------");
                 }
             }
-        } catch (Exception e) {
-            //TODO :汎用例外catchは削除する事.必要な例外をキャッチして必要な処理を記載する事.
-            DTVTLogger.debug(e);
         }
     }
 
@@ -196,16 +193,8 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
         printDlPathFiles();
     }
 
-    /**
-     * 機能：.
-     *      １．Download Uiがなくなる場合、且サービスにqueueはない場合、必ずこれをコールする
-     *      ２．Download Uiがない場合、Serviceは閉じる時、必ずこれをコールする
-     */
     @Override
     public void stop() {
-        if (null == mDlnaProvDownload) {
-            return;
-        }
-        mDlnaProvDownload.stopListen();
+        DlnaManager.shared().DownloadStop();
     }
 }

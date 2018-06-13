@@ -18,11 +18,13 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.service.download.DtcpDownloadParam;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -43,7 +45,7 @@ public class DlnaManager {
     }
 
     /**リモート接続ステータス.*/
-    public enum RemoteConnectStatus {
+    private enum RemoteConnectStatus {
         /** 不明. */
         UNKNOWN,
         /** 接続準備環境. */
@@ -56,6 +58,20 @@ public class DlnaManager {
         GAVEUP_RECONNECTION,
         /** 其の他. */
         OTHER
+    }
+
+    /**ダウンロードステータ.*/
+    public enum DownLoadStatus {
+        /**UNKNOWN.*/
+        DOWNLOADER_STATUS_UNKNOWN,
+        /**MOVING.*/
+        DOWNLOADER_STATUS_MOVING,
+        /**COMPLETED.*/
+        DOWNLOADER_STATUS_COMPLETED,
+        /**CANCELLED.*/
+        DOWNLOADER_STATUS_CANCELLED,
+        /**ERROR_OCCURED.*/
+        DOWNLOADER_STATUS_ERROR_OCCURED
     }
 
     // region Listener declaration
@@ -104,6 +120,22 @@ public class DlnaManager {
          */
         void onRemoteConnectStatusCallBack(int errorCode);
     }
+
+    /**
+     * リモート接続リスナー.
+     */
+    public interface DownloadStatusListener {
+        /**
+         * ダウンロード接続コールバック.
+         * @param status ダウンロードステータ
+         */
+        void onDownloadStatusCallBack(DownLoadStatus status);
+        /**
+         * ダウンロード進捗コールバック.
+         * @param progress ダウンロード進捗
+         */
+        void onDownloadProgressCallBack(int progress);
+    }
     // endregion Listener declaration
     /**
      * コンテンツブラウズリスナー.
@@ -150,6 +182,16 @@ public class DlnaManager {
     private static final int REMOTE_CONNECT_STATUS_DISCONNECTION = 5;
     /** 再接続失敗. */
     private static final int REMOTE_CONNECT_STATUS_RECONNECTION = 6;
+    /** UNKNOWN. */
+    private static final int DOWNLOADER_STATUS_UNKNOWN = 11;
+    /** MOVING. */
+    private static final int DOWNLOADER_STATUS_MOVING = 12;
+    /** COMPLETED. */
+    private static final int DOWNLOADER_STATUS_COMPLETED = 13;
+    /** CANCELLED. */
+    private static final int DOWNLOADER_STATUS_CANCELLED = 14;
+    /** ERROR_OCCURED. */
+    private static final int DOWNLOADER_STATUS_ERROR_OCCURED = 15;
     /** dms検出リスナー. */
     public DlnaManagerListener mDlnaManagerListener = null;
 
@@ -159,18 +201,23 @@ public class DlnaManager {
     public RemoteConnectStatusChangeListener mRemoteConnectStatusChangeListener = null;
     /** コンテンツブラウズリスナー. */
     public BrowseListener mBrowseListener = null;
+    /** ダウンロードリスナー. */
+    public DownloadStatusListener mDownloadStatusListener = null;
     /** 接続ステータス. */
     public RemoteConnectStatus remoteConnectStatus = RemoteConnectStatus.OTHER;
     /** コンテキスト. */
     public Context mContext;
-
-    boolean isStarted = false;
+    /** 接続スタートフラグ. */
+    private boolean isStarted = false;
+    /** udn. */
     private String mUdn = "";
-
+    /** 接続（ready）フラグ. */
     private boolean waitForReady = false;
+    /** ブラウズパス指定. */
     private String requestContainerId = "";
-
+    /** dmp開始フラグ. */
     private boolean startedDmp = false;
+    /** dtcp開始フラグ. */
     private boolean startedDtcp = false;
 
     /**
@@ -197,15 +244,14 @@ public class DlnaManager {
     }
 
     /**
-     * NW変更時などにコールする
+     * NW変更時などにコールする.
+     * @param context コンテキスト
      */
     public void Start(final Context context) {
         mContext = context;
         DTVTLogger.warning("isStarted = " + isStarted);
         //if start then stop
-        if (isStarted) {
-
-        } else {
+        if (!isStarted) {
             isStarted = true;
             StbConnectionManager.shared().initializeState();
             StbConnectionManager.ConnectionStatus connectionStatus = StbConnectionManager.shared().getConnectionStatus();
@@ -224,7 +270,6 @@ public class DlnaManager {
                     break;
             }
         }
-
     }
 
     /**
@@ -297,6 +342,9 @@ public class DlnaManager {
         restartDirag();
     }
 
+    /**
+     * Diragを開始.
+     */
     public void StartDirag() {
         startDirag();
     }
@@ -306,6 +354,10 @@ public class DlnaManager {
     public void StopDirag() {
         stopDirag();
     }
+
+    /**
+     * Dtcpを停止.
+     */
     public void StopDtcp() {
         if (startedDtcp) {
             startedDtcp = false;
@@ -350,8 +402,38 @@ public class DlnaManager {
      * @return RemoteDeviceExpireDate
      */
     public String GetRemoteDeviceExpireDate(final String udn) {
-        String result = getRemoteDeviceExpireDate(udn);
-        return result;
+        return getRemoteDeviceExpireDate(udn);
+    }
+
+    /**
+     * ダウンロードdtcp起動.
+     */
+    public boolean initDownload() {
+        return downLoadStartDtcp();
+    }
+
+    /**
+     * ダウンロードをキャンセル.
+     */
+    public void DownloadCancel() {
+        downloadCancel();
+    }
+
+    /**
+     * ダウンロードをストップ.
+     */
+    public void DownloadStop() {
+        downloadStop();
+    }
+
+    /**
+     * ダウンロード.
+     * @param param ダウンロードパラメータ
+     */
+    public void downloadStart(final DtcpDownloadParam param) {
+        String path = param.getSavePath() + File.separator + param.getSaveFileName();
+        download(path, param.getDtcp1host(), param.getDtcp1port(),
+                param.getUrl(), param.getCleartextSize(), param.getXmlToDownLoad());
     }
 
     // region call from jni
@@ -498,6 +580,48 @@ public class DlnaManager {
         manager.remoteConnectStatus = status;
         DTVTLogger.warning("status = " + status);
     }
+
+    /**
+     * ダウンロードコールバック.
+     * @param downloadStatus ダウンロードステータス
+     */
+    public void DownloadStatusCallBack(final int downloadStatus) {
+        DownLoadStatus downLoadStatus = null;
+        switch (downloadStatus) {
+            case DOWNLOADER_STATUS_UNKNOWN:
+                downLoadStatus = DownLoadStatus.DOWNLOADER_STATUS_UNKNOWN;
+                break;
+            case DOWNLOADER_STATUS_MOVING:
+                downLoadStatus = DownLoadStatus.DOWNLOADER_STATUS_MOVING;
+                break;
+            case DOWNLOADER_STATUS_COMPLETED:
+                downLoadStatus = DownLoadStatus.DOWNLOADER_STATUS_COMPLETED;
+                break;
+            case DOWNLOADER_STATUS_CANCELLED:
+                downLoadStatus = DownLoadStatus.DOWNLOADER_STATUS_CANCELLED;
+                break;
+            case DOWNLOADER_STATUS_ERROR_OCCURED:
+                downLoadStatus = DownLoadStatus.DOWNLOADER_STATUS_ERROR_OCCURED;
+                break;
+            default:
+                break;
+        }
+        DownloadStatusListener listener = DlnaManager.shared().mDownloadStatusListener;
+        if (listener != null) {
+            listener.onDownloadStatusCallBack(downLoadStatus);
+        }
+    }
+
+    /**
+     * ダウンロードコールバック.
+     * @param progress ダウンロード進捗
+     */
+    public void DownloadProgressCallBack(final int progress) {
+        DownloadStatusListener listener = DlnaManager.shared().mDownloadStatusListener;
+        if (listener != null) {
+            listener.onDownloadProgressCallBack(progress);
+        }
+    }
     // endregion call from jni
 
     // region priavte method
@@ -627,25 +751,16 @@ public class DlnaManager {
      * @param containerId containerId
      */
     private native void browseContentWithContainerId(final int offset, final int limit, final String containerId);
-
-    /**
-     * startDtcp.
-     */
+    /** dtcpを開始.*/
     private native void startDtcp();
+    /** dtcpを停止.*/
     private native void stopDtcp();
-
-    /**
-     * Diragを再起動.
-     */
+    /** Diragを再起動.*/
     private native void restartDirag();
-
+    /** Diragを起動.*/
     private native void startDirag();
-
-    /**
-     * Diragを停止.
-     */
+    /** Diragを停止.*/
     private native void stopDirag();
-
     /**
      * requestLocalRegistration.
      * @param udn udn
@@ -658,7 +773,6 @@ public class DlnaManager {
      * @param udn udn
      */
     private native void requestRemoteConnect(String udn);
-
     /**
      * ローカルレジストレーションの有効期限日.
      *
@@ -666,5 +780,23 @@ public class DlnaManager {
      * @return DeviceExpireDate 有効期限日
      */
     private native String getRemoteDeviceExpireDate(final String udn);
+    /** ダウンロード開始前のddtcpスタート.*/
+    private native boolean downLoadStartDtcp();
+     /** ダウンロードをキャンセル.*/
+    private native boolean downloadCancel();
+    /** ダウンロードをキャンセル.*/
+    private native boolean downloadStop();
+    /**
+     * ダウンロード.
+     * @param savePath 保存先
+     * @param dtcp1host host
+     * @param dtcp1port port
+     * @param url url
+     * @param cleartextSize サイズ
+     * @param itemId itemId
+     */
+    private native void download(String savePath, String dtcp1host, int dtcp1port, String url, int cleartextSize, String itemId);
+
     // endregion native method
 }
+

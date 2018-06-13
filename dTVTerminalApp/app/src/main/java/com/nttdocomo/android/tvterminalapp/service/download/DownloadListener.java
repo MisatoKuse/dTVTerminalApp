@@ -42,11 +42,10 @@ public interface DownloadListener {
     void onStart(int totalFileByteSize);
 
     /**
-     * ダウンロード進捗通知の時、コールされる.
-     * @param receivedBytes receivedBytes
-     *  @param percent 0-100
+     * ダウンロード進捗通知.
+     *  @param percent ダウンロード進捗
      */
-    void onProgress(int receivedBytes, int percent);
+    void onProgress(int percent);
 
     /**
      * ダウンロードエラー発生の時、コールされる.

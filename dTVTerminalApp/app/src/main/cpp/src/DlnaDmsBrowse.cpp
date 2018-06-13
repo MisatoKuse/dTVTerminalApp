@@ -410,7 +410,7 @@ void printObject(DMP* d, const xmlNodePtr element, du_uint32 index, du_bool is_c
             MY_LOG("   Unsupported Format.");
         }
     }
-    
+
     du_uchar_array_free(&ua);
     return;
     
@@ -420,7 +420,7 @@ error:
     LOG_WITH("print_unexpected_error_occurred");
 }
 
-void listObject(DMP* d) {
+void listObject(DMP* d, const du_uchar* result) {
     du_uint32 i;
     du_uint32 number_returned;
     xmlNodePtr root;
@@ -451,6 +451,9 @@ void listObject(DMP* d) {
         ContentInfo content;
         memset(&content, 0x0, sizeof(ContentInfo));
         printObject(d, node, d->browseInfo.startingIndex + i, is_container, cls, content);
+        if (i == 0) {
+            content.xml = (char*)result;
+        }
         contentList.push_back(content);
         ++i;
         if (i == number_returned) break;
@@ -468,28 +471,49 @@ void listObject(DMP* d) {
     return;
 }
 
-void browseDirectChildrenResponseHandler(dupnp_http_response* response, void* arg) {
+void DlnaDmsBrowse::browseDirectChildrenResponseHandler(dupnp_http_response* response, void* arg) {
     LOG_WITH(">>> response->url = %s", response->url);
     LOG_WITH("START response->body = %s", response->body);// 実際のxmlを確認したい場合にコメントアウトを外してください。
     DMP* d = static_cast<DMP*>(arg);
     
     du_mutex_lock(&d->soapInfo.mutex);
     d->soapInfo.taskId = DUPNP_INVALID_ID;
-    
+    DlnaDmsBrowse *thiz = (DlnaDmsBrowse *) arg;
+    du_str_array param_array;
+    du_str_array_init(&param_array);
+    const du_uchar* soap_response = response->body;
+    du_uint32 soap_response_len = response->body_size;
+    const du_uchar* result;
+    du_uint32 number_returned;
+    BrowseInfo* b = &d->browseInfo;
+    du_uint32 update_id;
+
     if (!checkSoapResponseError(response)) goto error;
-    
-    if (!browse_set_response(&d->browseInfo, response->body, response->body_size)) goto error;
-    
+
+    // parse browse response
+    if (!dav_cds_parse_browse_response(soap_response, soap_response_len, &param_array, &result, &number_returned, &b->totalMatches, &update_id)) goto error1;
+    if (b->requestedCount < number_returned) goto error1;
+    b->updateId = update_id;
+    b->numberReturned += number_returned;
+
+    if (!browse_set_response(&d->browseInfo, result)) goto error;
     if (d->browseInfo.startingIndex + d->browseInfo.numberReturned < d->browseInfo.totalMatches && d->browseInfo.numberReturned < d->browseInfo.requestedCount) {
         browseDirectChildren2(d);
     } else {
-        listObject(d);
+        listObject(d, result);
     }
-    
+    du_str_array_free(&param_array);
     du_sync_notify(&d->soapInfo.sync);
     du_mutex_unlock(&d->soapInfo.mutex);
     LOG_WITH("<<<");
     return;
+error1:
+    du_sync_notify(&d->soapInfo.sync);
+    du_mutex_unlock(&d->soapInfo.mutex);
+    du_str_array_free(&param_array);
+    b->numberReturned = 0;
+    b->totalMatches = 0;
+    b->updateId = 0;
 error:
     LOG_WITH("<<< ERROR");
     du_sync_notify(&d->soapInfo.sync);
@@ -516,7 +540,7 @@ du_bool browseDirectChildren2(DMP* d) {
     
     if (!dupnp_soap_header_set_soapaction(&d->soapInfo.requestHeader, dav_urn_cds(1), DU_UCHAR_CONST("Browse"))) goto error;
     LOG_WITH("d->browseInfo.dms->cds.control_url = %s", d->browseInfo.dmsInfo->cdsInfo.controlUrl);
-    if (!dupnp_http_soap(&d->upnpInstance, d->browseInfo.dmsInfo->cdsInfo.controlUrl, &d->soapInfo.requestHeader, du_uchar_array_get(&request_body), du_uchar_array_length(&request_body), READ_TIMEOUT_MS, browseDirectChildrenResponseHandler, d, &d->soapInfo.taskId)) goto error;
+    if (!dupnp_http_soap(&d->upnpInstance, d->browseInfo.dmsInfo->cdsInfo.controlUrl, &d->soapInfo.requestHeader, du_uchar_array_get(&request_body), du_uchar_array_length(&request_body), READ_TIMEOUT_MS, DlnaDmsBrowse::browseDirectChildrenResponseHandler, d, &d->soapInfo.taskId)) goto error;
 //    LOG_WITH("request_body = %s", du_uchar_array_get(&request_body)); //soapリクエストの中身を見たい場合に使ってください。
     du_mutex_unlock(&d->soapInfo.mutex);
     du_uchar_array_free(&request_body);

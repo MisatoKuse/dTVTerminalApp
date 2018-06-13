@@ -358,13 +358,12 @@ add_library(
     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DmsInfo.c
     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaBSDigitalXmlParser.cpp
     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaXmlContainer.cpp
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaDownload.cpp
 
     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/android_log_handler.c
 
     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/downloader.cc
     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/dmspu_cipher_file.cc
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/DlnaDownload.cpp
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/DlnaJniCastDl.cpp
 
     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaManagerBridge.cpp
     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaBase.cpp

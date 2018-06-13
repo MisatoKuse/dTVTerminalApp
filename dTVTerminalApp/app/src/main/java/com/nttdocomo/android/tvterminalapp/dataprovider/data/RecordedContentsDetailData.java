@@ -48,6 +48,8 @@ public class RecordedContentsDetailData implements Parcelable {
     private int mDownLoadStatus;
     /**ダウンロードコンテンツ格納パスー.*/
     private String mDlFileFullPath;
+    /**ダウンロードパラメーター.*/
+    private String mXml;
     /**放送中フラグ.*/
     private boolean mIsLive = false;
     /**リモートフラグ.*/
@@ -291,6 +293,20 @@ public class RecordedContentsDetailData implements Parcelable {
      */
     public void setDlFileFullPath(final String dlFileFullPath) {
         this.mDlFileFullPath = dlFileFullPath;
+    }
+    /**
+     * ダウンロードxml取得.
+     * @return ダウンロードxml
+     */
+    public String getXml() {
+        return mXml;
+    }
+    /**
+     * ダウンロードxml取得を設定.
+     * @param mXml xml
+     */
+    public void setXml(final String mXml) {
+        this.mXml = mXml;
     }
 
     @Override
