@@ -35,6 +35,7 @@ import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessage;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherApi;
+import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherUtil;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
@@ -46,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * ペアリング、再ペアリングするためのクラス.
@@ -188,6 +190,12 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      * デバイスを選択してDアカウントを登録フラグ.
      */
     private boolean mDaccountFlag = false;
+
+    /** 暗号化処理の鍵交換を同期処理で実行する. */
+    private CountDownLatch mLatch = null;
+    /** 暗号化処理の鍵交換の同期カウンター. */
+    private static int LATCH_COUNT_MAX = 1;
+
     /**
      * タイマーステータス.
      */
@@ -699,17 +707,37 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      * 鍵交換.
      */
     private void exchangeKey() {
-        CipherApi cipherApi = new CipherApi(new CipherApi.CipherApiCallback() {
+        syncRequestPublicKey();
+        if (CipherUtil.hasShareKey()) { // 鍵交換に成功
+            checkDAccountApp();
+        } else {
+            createErrorDialog();
+        }
+    }
+
+    /**
+     * 鍵交換処理を同期処理で実行する.
+     */
+    private void syncRequestPublicKey() {
+        CipherApi api = new CipherApi(new CipherApi.CipherApiCallback() {
             @Override
             public void apiCallback(final boolean result, final String data) {
-                if (result) {
-                    checkDAccountApp();
-                } else {
-                    createErrorDialog();
-                }
+                // 鍵交換処理同期ラッチカウンターを解除する
+                mLatch.countDown();
             }
         });
-        cipherApi.requestSendPublicKey();
+        DTVTLogger.debug("sending public key");
+        api.requestSendPublicKey();
+        // 鍵交換処理が終わるまでキーコード送信を待機をさせる.
+        mLatch = new CountDownLatch(LATCH_COUNT_MAX);
+        try {
+            DTVTLogger.debug("sync to completion of public key transmission");
+            mLatch.await();
+            DTVTLogger.debug("completion of public key transmission");
+        } catch (InterruptedException e) {
+            DTVTLogger.debug(e);
+            return;
+        }
     }
 
     /**
