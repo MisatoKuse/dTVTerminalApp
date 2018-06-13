@@ -16,8 +16,6 @@
 #include "LocalRegistration/local_registration.h"
 
 #include "DlnaMacro.h"
-#include <ddtcp_plus.h>
-#include <ddtcp_plus_source.h>
 #include <time.h>//TODO:tmp
 
 #ifndef DDTCP_CRYPTO_SHA1_DIGEST_SIZE
@@ -264,7 +262,6 @@ bool DlnaRemoteConnect::requestLocalRegistration(DMP *d, const du_uchar* udn, co
     du_uint32 id;
     du_uint32 version;
     du_uint8 deviceIdHash[DDTCP_CRYPTO_SHA1_DIGEST_SIZE];
-    ddtcp_source_listen listen_ra;
     
     // 登録名の作成はJava側で完了するように変更
 
@@ -277,8 +274,6 @@ bool DlnaRemoteConnect::requestLocalRegistration(DMP *d, const du_uchar* udn, co
     context.udn = udn;
     
     do {
-//        ddtcp_ret ret = ddtcp_enable_remote_access_source(d);
-//        ddtcp_ret ret = ddtcp_source_listen_ra_ake(d, du_ip_str_any4(), 58293 , 0, 0, 0, 0, &listen_ra);
         BREAK_IF(!dupnp_cp_dvcmgr_visit_device_type(&d->deviceManager, dmp_get_dms_type(), regist_dms_visitor, &context));
         BREAK_IF(!context.found);
         BREAK_IF(!context.succeeded);

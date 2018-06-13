@@ -347,17 +347,7 @@ set_target_properties(libssl
 add_library(
     dtvtlib # dynamic lib name
     SHARED  # share
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaBSDigitalXmlParser.cpp
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaTerChXmlParser.cpp
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaHikariChXmlParser.cpp
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaJniCast.cpp
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/Dlna.cpp
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaXmlParserBase.cpp
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaDevXmlParser.cpp
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaRecVideoXmlParser.cpp
     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DmsInfo.c
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaBSDigitalXmlParser.cpp
-    ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaXmlContainer.cpp
     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaDownload.cpp
 
     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/android_log_handler.c
