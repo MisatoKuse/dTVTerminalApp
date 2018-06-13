@@ -226,6 +226,7 @@ public class DlnaManager {
      */
     public void launch(final Context context) {
         isStarted = false;
+        startedDmp = false;
         mContext = context;
         DTVTLogger.start();
 
