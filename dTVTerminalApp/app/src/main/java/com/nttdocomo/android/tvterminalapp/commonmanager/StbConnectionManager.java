@@ -8,8 +8,6 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
-import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
@@ -65,15 +63,14 @@ public class StbConnectionManager {
     }
 
     /**
-     * ホーム初回遷移時やwifi切り替え時にConnectionStatusを初期化し、再度チェックをする
+     * ホーム初回遷移時やwifi切り替え時にConnectionStatusを初期化し、再度チェックをする.
      */
     public void initializeState() {
         DTVTLogger.info("before connectionStatus = " + connectionStatus);
         connectionStatus = ConnectionStatus.NONE_PAIRING;
         boolean connected = SharedPreferencesUtils.getSharedPreferencesStbConnect(mContext);
         if (connected) { // ペアリング済みであればRLを確認
-            DlnaDmsItem item = SharedPreferencesUtils.getSharedPreferencesStbInfo(mContext);
-            String remoteDeviceExpireDate = DlnaManager.shared().GetRemoteDeviceExpireDate(item.mUdn);
+            String remoteDeviceExpireDate = SharedPreferencesUtils.getRemoteDeviceExpireDate(mContext);
             if (TextUtils.isEmpty(remoteDeviceExpireDate)) {
                 connectionStatus = ConnectionStatus.NONE_LOCAL_REGISTRATION;
             } else {

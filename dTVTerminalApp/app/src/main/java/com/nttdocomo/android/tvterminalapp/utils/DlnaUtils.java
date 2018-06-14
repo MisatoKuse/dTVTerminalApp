@@ -261,24 +261,6 @@ public class DlnaUtils {
     }
 
     /**
-     * ローカルレジストレーション成功且つ期間のチェック.
-     *
-     * @param context コンテキスト
-     * @return true:成功且つ期間内 false:成功or期間外
-     */
-    public static boolean getLocalRegisterSuccess(final Context context) {
-        boolean isSuccess = false;
-        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(context);
-        if (dlnaDmsItem != null) {
-            String expireDate =  DlnaManager.shared().GetRemoteDeviceExpireDate(dlnaDmsItem.mUdn);
-            if (!TextUtils.isEmpty(expireDate)) { //TODO 期間内の判定追加必要（3か月）
-                isSuccess = true;
-            }
-        }
-        return isSuccess;
-    }
-
-    /**
      * ローカルレジストレーション期限表示ダイアログメッセージ.
      *
      * @param context コンテキスト
@@ -289,7 +271,7 @@ public class DlnaUtils {
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(context);
         int dialogFlg = SharedPreferencesUtils.getRegisterExpiredateDialogFlg(context);
         if (dlnaDmsItem != null) {
-            String expireDate = DlnaManager.shared().GetRemoteDeviceExpireDate(dlnaDmsItem.mUdn);
+            String expireDate = SharedPreferencesUtils.getRemoteDeviceExpireDate(context);
             if (!TextUtils.isEmpty(expireDate)) {
                 int remainingDays = DateUtils.getRemainingDays(expireDate);
                 String[] strings = {context.getString(R.string.remote_remaining_days_message_begin),

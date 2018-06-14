@@ -219,6 +219,9 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
         resultDialog.setCancelable(false);
         if (isSuccess) {
             resultDialog.setContent(getString(R.string.common_text_regist_progress_done));
+            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(StbConnectActivity.this);
+            String expireDate = DlnaManager.shared().GetRemoteDeviceExpireDate(dlnaDmsItem.mUdn);
+            SharedPreferencesUtils.setRemoteDeviceExpireDate(StbConnectActivity.this, expireDate);
         } else {
             switch (errorType) {
                 case OVER:
