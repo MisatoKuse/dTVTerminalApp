@@ -680,7 +680,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         } else {
             DlnaDmsItem item = SharedPreferencesUtils.getSharedPreferencesStbInfo(mContext);
             if (item != null) {
-                String remoteExpireDate = DlnaManager.shared().GetRemoteDeviceExpireDate(item.mUdn);
+                String remoteExpireDate = SharedPreferencesUtils.getRemoteDeviceExpireDate(mContext);
                 if (TextUtils.isEmpty(remoteExpireDate)) {
                     mPlayerStateListener.onErrorCallBack(PlayerErrorType.REMOTE);
                     return;

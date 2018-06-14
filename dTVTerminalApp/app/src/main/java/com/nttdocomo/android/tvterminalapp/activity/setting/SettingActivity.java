@@ -405,6 +405,9 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         resultDialog.setOnTouchOutside(false);
         if (isSuccess) {
             resultDialog.setContent(getString(R.string.common_text_regist_progress_done));
+            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(SettingActivity.this);
+            String expireDate = DlnaManager.shared().GetRemoteDeviceExpireDate(dlnaDmsItem.mUdn);
+            SharedPreferencesUtils.setRemoteDeviceExpireDate(SettingActivity.this, expireDate);
         } else {
             switch (errorType) {
                 case OVER:

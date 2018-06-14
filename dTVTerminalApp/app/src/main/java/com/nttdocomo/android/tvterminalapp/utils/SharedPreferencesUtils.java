@@ -83,6 +83,10 @@ public class SharedPreferencesUtils {
      */
     private static final String SHARED_KEY_IMAGE_QUALITY = "image_quality";
     /**
+     * ローカルレジストレーション有効期限.
+     */
+    private static final String SHARED_KEY_EXPIREDATE = "remote_expire_date";
+    /**
      * 持ち出しコンテンツダウンロード先 ture:内部 false:外部.
      */
     private static final String SHARED_KEY_STORAGE_PATH = "storage_path";
@@ -416,6 +420,35 @@ public class SharedPreferencesUtils {
         item.mIPAddress = data.getString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_IPADDRESS, SHARED_GET_STRING_DEFAULT);
 
         return item;
+    }
+
+    /**
+     * ローカルレジストレーション有効期限を保存.
+     *
+     * @param context コンテキスト
+     * @param expireDate 有効期限
+     */
+    public static void setRemoteDeviceExpireDate(final Context context, final String expireDate) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(SHARED_KEY_SELECTED_STB_DATA_INFOMATION, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putString(SHARED_KEY_EXPIREDATE, expireDate);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * ローカルレジストレーション有効期限を取得.
+     *
+     * @param context コンテキスト
+     * @return 有効期限
+     */
+    public static String getRemoteDeviceExpireDate(final Context context) {
+        DTVTLogger.debug("getSharedPreferencesIsDisplayedTutorial");
+        SharedPreferences data = context.getSharedPreferences(
+                SHARED_KEY_SELECTED_STB_DATA_INFOMATION, Context.MODE_PRIVATE);
+
+        return data.getString(SHARED_KEY_EXPIREDATE, null);
     }
 
     /**
