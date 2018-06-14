@@ -266,15 +266,15 @@ public class TvProgramListActivity extends BaseActivity implements
     protected void onResume() {
         super.onResume();
         //BG→FG復帰時に各アイテムのクリップ状態が変更されている可能性があるためonResumeのタイミングでチェックする
-//        if (mTvProgramListAdapter != null) {
-//            List<ChannelInfo> infoList = mTvProgramListAdapter.getProgramList();
-//            if (infoList != null) {
-//                List<ChannelInfo> list;
-//                list = mScaledDownProgramListDataProvider.checkTvProgramClipStatus(infoList);
-//                mTvProgramListAdapter.setProgramList(list);
-//                mTvProgramListAdapter.notifyDataSetChanged();
-//            }
-//        }
+        if (mTvProgramListAdapter != null) {
+            List<ChannelInfo> infoList = mTvProgramListAdapter.getProgramList();
+            if (infoList != null) {
+                List<ChannelInfo> list;
+                list = mScaledDownProgramListDataProvider.checkTvProgramClipStatus(infoList);
+                mTvProgramListAdapter.setProgramList(list);
+                mTvProgramListAdapter.notifyDataSetChanged();
+            }
+        }
         sendScreenViewForPosition(mTabIndex);
     }
 
@@ -550,13 +550,16 @@ public class TvProgramListActivity extends BaseActivity implements
                 switch (newState) {
                     case SCROLL_STATE_IDLE:
                         if (mScrollOffset > 0) {
-                            String dateStr = mSelectDateStr.replace("-", "");
-                            String[] dateList = {dateStr};
-                            int[] chList = mTvProgramListAdapter.getNeedProgramChannels();
-                            if (chList != null && chList.length > 0) {
-                                mScaledDownProgramListDataProvider.getProgram(chList, dateList);
+                            if (mTvProgramListAdapter != null) {
+                                String dateStr = mSelectDateStr.replace("-", "");
+                                String[] dateList = {dateStr};
+
+                                int[] chList = mTvProgramListAdapter.getNeedProgramChannels();
+                                if (chList != null && chList.length > 0) {
+                                    mScaledDownProgramListDataProvider.getProgram(chList, dateList);
+                                }
+                                mScrollOffset = 0;
                             }
-                            mScrollOffset = 0;
                         }
                         break;
                     default:

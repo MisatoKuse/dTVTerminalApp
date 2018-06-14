@@ -521,7 +521,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             itemViewHolder.mView.setBackgroundResource(R.drawable.program_missed_gray);
             itemViewHolder.mView.setTag(VIEW_HOLDER_TAG_ONE);
         } else {
-        //関連VOD(なし)
+            //関連VOD(なし)
             itemViewHolder.mView.setBackgroundResource(R.drawable.program_end_gray);
             itemViewHolder.mStartM.setTextColor(ContextCompat.getColor(mContext, R.color.tv_program_miss_vod));
             itemViewHolder.mContent.setTextColor(ContextCompat.getColor(mContext, R.color.tv_program_miss_vod));
@@ -900,6 +900,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * @param newProgramList 番組表
      */
     public void setProgramList(final List<ChannelInfo> newProgramList) {
+        mProgramList = newProgramList;
         // TODO　:★部分的なデータが来ることになるので自身で記憶しているチャンネルリストへMappingするようにする
         // TODO　:★また、描画反映が必要なので、ViewHolderを調べて該当のチャンネルがあれば、描画反映する
         if (newProgramList != null) {

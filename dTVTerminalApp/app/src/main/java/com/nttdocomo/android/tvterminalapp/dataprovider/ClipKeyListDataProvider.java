@@ -548,7 +548,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
                 String titleId = scheduleInfo.getTitleId();
 
                 //判定はgetClipStatusに一任
-//                scheduleInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv, crid, serviceId, eventId, titleId, tvService));
+                scheduleInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv, crid, serviceId, eventId, titleId, tvService));
                 scheduleInfoArrayList.add(scheduleInfo);
             }
             resultList.get(i).setSchedules(scheduleInfoArrayList);
