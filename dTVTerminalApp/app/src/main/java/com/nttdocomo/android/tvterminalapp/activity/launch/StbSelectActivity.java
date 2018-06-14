@@ -441,10 +441,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             mCheckBox.setVisibility(View.VISIBLE);
             mCheckboxText.setVisibility(View.VISIBLE);
         }
-
-        DTVTLogger.end();
         DlnaManager.shared().mDlnaManagerListener = this;
         DlnaManager.shared().StartDmp();
+        updateDeviceList();
+        DTVTLogger.end();
     }
 
     @Override
