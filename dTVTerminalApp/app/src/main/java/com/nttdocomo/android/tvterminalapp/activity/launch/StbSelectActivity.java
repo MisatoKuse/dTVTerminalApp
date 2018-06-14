@@ -442,9 +442,9 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             mCheckboxText.setVisibility(View.VISIBLE);
         }
 
-        DTVTLogger.end();
         DlnaManager.shared().mDlnaManagerListener = this;
         DlnaManager.shared().StartDmp();
+        DTVTLogger.end();
     }
 
     @Override
@@ -703,16 +703,23 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         //鍵交換
         exchangeKey();
     }
+
     /**
-     * 鍵交換.
+     * 鍵交換処理を行い画面遷移する.
      */
     private void exchangeKey() {
-        syncRequestPublicKey();
-        if (CipherUtil.hasShareKey()) { // 鍵交換に成功
-            checkDAccountApp();
-        } else {
-            createErrorDialog();
-        }
+        Handler handler = new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                syncRequestPublicKey();
+                if (CipherUtil.hasShareKey()) { // 鍵交換に成功
+                    checkDAccountApp();
+                } else {
+                    createErrorDialog();
+                }
+            }
+        });
     }
 
     /**
@@ -1213,6 +1220,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onOKCallback(final boolean isOK) {
                 //初期状態に戻る
+                resetDmpForResume();
                 onResume();
                 if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
                     initLaunchView();
@@ -1237,12 +1245,27 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 failedRecordingReservationDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                     @Override
                     public void onOKCallback(final boolean isOK) {
-                        revertSelectStbState();
+                        resetDmpForResume();
+                        onResume();
+                        if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
+                            initLaunchView();
+                        }
                     }
                 });
                 failedRecordingReservationDialog.showDialog();
             }
         });
+    }
+
+    /**
+     * STBとのペアリングエラー時からのペアリング選択画面の再起動処理.
+     */
+    private void resetDmpForResume() {
+        DlnaManager.shared().mDlnaManagerListener = null;
+        mContentsList.clear();
+        mDlnaDmsItemList.clear();
+        mDlnaDmsInfo.clear();
+        DlnaManager.shared().StopDmp();
     }
 
     /**

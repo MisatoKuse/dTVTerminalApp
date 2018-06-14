@@ -129,7 +129,6 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
-        DlnaManager.shared().StartDmp();
 
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
@@ -156,6 +155,13 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         checkIsPairing();
         checkImageQuality();
         super.sendScreenView(getString(R.string.google_analytics_screen_name_setting));
+        DlnaManager.shared().StartDmp();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        DlnaManager.shared().StopDmp();
     }
 
     @SuppressWarnings("OverlyComplexMethod")
