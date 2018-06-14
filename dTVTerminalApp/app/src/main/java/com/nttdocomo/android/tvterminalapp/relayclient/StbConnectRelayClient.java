@@ -99,6 +99,10 @@ public class StbConnectRelayClient {
             CipherUtil.writeInt(CipherConfig.ACTION_COMMON, actionBytes);
 
             byte[] encodedData = CipherUtil.encodeData(data);
+            if (encodedData == null) {
+                DTVTLogger.debug("encodedData is null. not send.");
+                return false;
+            }
             byte[] sum = new byte[actionBytes.length + encodedData.length];
             System.arraycopy(actionBytes, 0, sum, 0, actionBytes.length);
             System.arraycopy(encodedData, 0, sum, actionBytes.length, encodedData.length);
