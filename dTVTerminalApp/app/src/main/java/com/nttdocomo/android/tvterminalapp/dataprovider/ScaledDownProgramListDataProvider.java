@@ -449,6 +449,12 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     private void sendChannelList() {
         DTVTLogger.start();
         ChannelInfoList channelInfoList = setProgramListContentData();
+
+        if(channelInfoList == null) {
+            //メモリ解放の強化でヌルの場合が存在するので、帰る
+            return;
+        }
+
         List<ChannelInfo> infoList = channelInfoList.getChannels();
         List<HashMap<String, String>> tvClipMapList = mTvClipKeyList.getCkList();
         List<HashMap<String, String>> vodClipMapList = mVodClipKeyList.getCkList();
@@ -622,6 +628,12 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      */
     private ChannelInfoList setProgramListContentData() {
         ChannelInfoList channelsInfo = null;
+
+        if(mTvScheduleList == null) {
+            //解放処理の強化によりヌルの場合が発生したので、ヌルならば帰る
+            return null;
+        }
+
         List<Map<String, String>> mChannelProgramList = mTvScheduleList.geTvsList();
         if (mChannelProgramList != null) {
             channelsInfo = new ChannelInfoList();

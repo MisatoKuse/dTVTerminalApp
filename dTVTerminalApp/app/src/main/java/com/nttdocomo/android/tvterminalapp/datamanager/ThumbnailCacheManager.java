@@ -123,6 +123,11 @@ public class ThumbnailCacheManager {
      * @return bitmap ディスクから取得画像
      */
     public Bitmap getBitmapFromDisk(final String fileName) {
+        //コンテキストがヌルの場合は帰る
+        if(mContext == null) {
+            return null;
+        }
+
         //ファイルパス
         String dir = mContext.getCacheDir() + THUMBNAIL_CACHE + String.valueOf(fileName.hashCode());
         File file = new File(dir);
@@ -164,6 +169,11 @@ public class ThumbnailCacheManager {
      * @return result 保存成功、失敗の結果
      */
     public boolean saveBitmapToDisk(final String fileName, final Bitmap bitmap) {
+        //コンテキストがヌルの場合は取得失敗で帰る
+        if(mContext ==null) {
+            return false;
+        }
+
         //フォルダーパス
         String localPath = mContext.getCacheDir() + THUMBNAIL_CACHE;
         int quality = 100;
@@ -292,15 +302,5 @@ public class ThumbnailCacheManager {
         System.gc();
 
         DTVTLogger.end();
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        //明示的にremoveAllが呼び出されない場合のフェールセーフ
-        try{
-            super.finalize();
-        }finally{
-            removeAll();
-        }
     }
 }

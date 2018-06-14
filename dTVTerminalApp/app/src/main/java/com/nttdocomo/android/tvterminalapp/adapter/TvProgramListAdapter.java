@@ -803,7 +803,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                                 itemViewHolder.mThumbnail.setImageResource(R.mipmap.error_ch_mini);
                                 //URLによって、サムネイル取得
                                 String thumbnailURL = itemSchedule.getImageUrl();
-                                if (!TextUtils.isEmpty(thumbnailURL) && !mIsDownloadStop) {
+                                if (!TextUtils.isEmpty(thumbnailURL) && !mIsDownloadStop && mThumbnailProvider != null) {
                                     itemViewHolder.mThumbnail.setTag(thumbnailURL);
                                     Bitmap bitmap = mThumbnailProvider.getThumbnailImage(itemViewHolder.mThumbnail, thumbnailURL);
                                     if (bitmap != null) {
