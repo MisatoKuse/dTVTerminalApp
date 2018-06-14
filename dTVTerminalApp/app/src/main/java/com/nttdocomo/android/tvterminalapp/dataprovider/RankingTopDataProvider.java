@@ -678,6 +678,11 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 rankingContentInfo.setDispType(dispType);
                 rankingContentInfo.setTvService(map.get(JsonConstants.META_RESPONSE_TV_SERVICE));
                 rankingContentInfo.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
+                rankingContentInfo.setCrid(map.get(JsonConstants.META_RESPONSE_CRID));
+                rankingContentInfo.setTitleId(map.get(JsonConstants.META_RESPONSE_TITLE_ID));
+                rankingContentInfo.setEventId(map.get(JsonConstants.META_RESPONSE_EVENT_ID));
+                rankingContentInfo.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
+                rankingContentInfo.setContentsType(map.get(JsonConstants.META_RESPONSE_CONTENT_TYPE));
                 rankingContentInfo.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
                 rankingContentInfo.setChannelNo(map.get(JsonConstants.META_RESPONSE_CHNO));
                 rankingContentInfo.setPublishStartDate(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE));
@@ -986,6 +991,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
     @SuppressWarnings("OverlyLongMethod")
     @Override
     public List<Map<String, String>> dbOperation(final int operationId) {
+        super.dbOperation(operationId);
         HomeDataManager homeDataManager;
         switch (operationId) {
             case INSERT_DAILY_RANKING_DATA:

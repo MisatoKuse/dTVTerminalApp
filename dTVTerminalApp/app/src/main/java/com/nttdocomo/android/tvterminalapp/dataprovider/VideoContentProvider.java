@@ -182,6 +182,10 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
             contentsData.setAvailEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
             contentsData.setVodStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_START_DATE)));
             contentsData.setVodEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_END_DATE)));
+            contentsData.setTitleId(map.get(JsonConstants.META_RESPONSE_TITLE_ID));
+            contentsData.setEventId(map.get(JsonConstants.META_RESPONSE_EVENT_ID));
+            contentsData.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
+            contentsData.setTvService(map.get(JsonConstants.META_RESPONSE_TV_SERVICE));
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
 

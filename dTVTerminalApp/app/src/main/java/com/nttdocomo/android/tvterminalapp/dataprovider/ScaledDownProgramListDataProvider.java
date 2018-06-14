@@ -301,9 +301,10 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     }
 
     @Override
-    public List<Map<String, String>> dbOperation(final int mOperationId) {
+    public List<Map<String, String>> dbOperation(final int operationId) {
+        super.dbOperation(operationId);
         List<Map<String, String>> resultSet = null;
-        switch (mOperationId) {
+        switch (operationId) {
             case CHANNEL_UPDATE://サーバーから取得したチャンネルデータをDBに保存する
                 ChannelInsertDataManager channelInsertDataManager = new ChannelInsertDataManager(mContext);
                 channelInsertDataManager.insertChannelInsertList(mChannelList);
@@ -473,7 +474,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     public static void setClipStatus(final ScheduleInfo scheduleInfo, final List<HashMap<String, String>> mapList) {
         DTVTLogger.start();
         ClipKeyListDao.ContentTypeEnum contentType = searchContentsType(
-                scheduleInfo.getDispType(), scheduleInfo.getContentType(), scheduleInfo.getDtv(), scheduleInfo.getTvService());
+                scheduleInfo.getDispType(), scheduleInfo.getDtv(), scheduleInfo.getTvService());
         if (contentType != null) {
             DTVTLogger.debug("setClipStatus start contentType != null");
             switch (contentType) {

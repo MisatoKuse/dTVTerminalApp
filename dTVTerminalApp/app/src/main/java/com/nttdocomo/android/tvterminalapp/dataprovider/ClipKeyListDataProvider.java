@@ -121,9 +121,13 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      */
     private static final String META_DISPLAY_TYPE_SERIES_SVOD = "series_svod";
     /**
-     * tv_serviceフラグ.
+     * コンテンツ種別判定1.
      */
-    private static final String META_TV_SERVICE_FLAG_TRUE = "1";
+    private static final String CONTENTS_TYPE_FLAG_ONE = "1";
+    /**
+     * コンテンツ種別判定2.
+     */
+    private static final String CONTENTS_TYPE_FLAG_TWO = "2";
 
     @Override
     public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
@@ -273,25 +277,24 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * メソッド内の処理はコンテンツタイプの判定のみのためメンテナンス性に影響なし
      *
      * @param dispType    dispType
-     * @param contentType contentType
      * @param dTv         dTvフラグ
      * @param tvService   tvServiceフラグ
      * @return コンテンツタイプ
      */
     @SuppressWarnings("OverlyComplexMethod")
-    public static ClipKeyListDao.ContentTypeEnum searchContentsType(
-            final String dispType, final String contentType, final String dTv, final String tvService) {
+    static ClipKeyListDao.ContentTypeEnum searchContentsType(
+            final String dispType, final String dTv, final String tvService) {
         //ぷららサーバ対応
         if (dispType != null) {
-            //「disp_type」が tv_program でかつ「tv_service」が「0」
+            //「disp_type」が tv_program でかつ「tv_service」が「1」となります。
             if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
-                    && tvService != null && ClipKeyListDao.META_DTV_FLAG_FALSE.equals(tvService)) {
+                    && tvService != null && CONTENTS_TYPE_FLAG_ONE.equals(tvService)) {
                 return ClipKeyListDao.ContentTypeEnum.TV;
             }
-            //「disp_type」が tv_program でかつ「tv_service」が「1」
+            //「tv_program」かつ「tv_service」が「2」
             if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
-                    && tvService != null && META_TV_SERVICE_FLAG_TRUE.equals(tvService)) {
-                return ClipKeyListDao.ContentTypeEnum.DTV;
+                    && tvService != null && CONTENTS_TYPE_FLAG_TWO.equals(tvService)) {
+                return ClipKeyListDao.ContentTypeEnum.VOD;
             }
             //「disp_type」が video_program・video_series・video_package・subscription_package・series_svodのいずれか、 かつ「dtv」が0または未設定
             if (getVodStatus(dispType)
@@ -300,7 +303,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
             }
             //「disp_type」が video_program・video_series・video_package・subscription_package・series_svodのいずれか、 かつ「dtv」が1
             if (getVodStatus(dispType)
-                    && (dTv != null || META_TV_SERVICE_FLAG_TRUE.equals(dTv))) {
+                    && (dTv != null || CONTENTS_TYPE_FLAG_ONE.equals(dTv))) {
                 return ClipKeyListDao.ContentTypeEnum.DTV;
             }
             //「video_program・video_series・video_package・subscription_package・series_svodのいずれか」
@@ -342,7 +345,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         if (dispType == null) {
             return null;
         }
-        if (TextUtils.isEmpty(contentType)
+        if ((contentType == null || contentType.isEmpty())
                 && ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)) {
             return ClipKeyListDao.TableTypeEnum.TV;
         }
@@ -371,15 +374,14 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * @param tableType tableType
      * @param serviceId serviceId
      * @param eventId   eventId
-     * @param type      type
      * @return ListView表示用データ
      */
     private boolean findDbTvClipKeyData(
             final ClipKeyListDao.TableTypeEnum tableType, final String serviceId,
-            final String eventId, final String type) {
+            final String eventId) {
 //        DTVTLogger.start();//必要な時にコメントを解除して使用
         ClipKeyListDataManager dataManager = new ClipKeyListDataManager(mContext);
-        List<Map<String, String>> clipKeyList = dataManager.selectClipKeyDbTvData(tableType, serviceId, eventId, type);
+        List<Map<String, String>> clipKeyList = dataManager.selectClipKeyDbTvData(tableType, serviceId, eventId);
 //        DTVTLogger.end();//必要な時にコメントを解除して使用
 
         return clipKeyList != null && clipKeyList.size() > 0;
@@ -492,13 +494,12 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
             final String dispType, final String contentsType, final String dTv, final String crid,
             final String serviceId, final String eventId, final String titleId, final String tvService) {
         boolean clipStatus = false;
-        ClipKeyListDao.ContentTypeEnum contentType = searchContentsType(dispType, contentsType, dTv, tvService);
+        ClipKeyListDao.ContentTypeEnum contentType = searchContentsType(dispType, dTv, tvService);
         ClipKeyListDao.TableTypeEnum tableType = decisionTableType(dispType, contentsType);
         if (contentType != null && tableType != null) {
             switch (contentType) {
                 case TV:
-                    clipStatus = findDbTvClipKeyData(tableType,
-                            serviceId, eventId, CLIP_KEY_LIST_TYPE_OTHER_CHANNEL);
+                    clipStatus = findDbTvClipKeyData(tableType, serviceId, eventId);
                     break;
                 case VOD:
                     clipStatus = findDbVodClipKeyData(tableType, crid);
@@ -630,6 +631,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * @param channels チャンネル情報
      * @return ListView表示用データ
      */
+    @SuppressWarnings("OverlyLongMethod")
     List<ContentsData> setContentData(final List<Map<String, String>> contentMapList, final ArrayList<ChannelInfo> channels) {
         List<ContentsData> contentsDataList = new ArrayList<>();
 
@@ -645,6 +647,9 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
             String dispType = map.get(JsonConstants.META_RESPONSE_DISP_TYPE);
             String dtv = map.get(JsonConstants.META_RESPONSE_DTV);
             String dtvType = map.get(JsonConstants.META_RESPONSE_DTV_TYPE);
+            String crId = map.get(JsonConstants.META_RESPONSE_CRID);
+            String contentsType = map.get(JsonConstants.META_RESPONSE_CONTENT_TYPE);
+            String tvService = map.get(JsonConstants.META_RESPONSE_TV_SERVICE);
 
             contentInfo.setRank(String.valueOf(i + 1));
             if (ContentUtils.IS_DTV_FLAG.equals(dtv)) {
@@ -657,7 +662,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
             contentInfo.setTitle(title);
             contentInfo.setSearchOk(searchOk);
             contentInfo.setRatStar(map.get(JsonConstants.META_RESPONSE_RATING));
-            contentInfo.setTvService(map.get(JsonConstants.META_RESPONSE_TV_SERVICE));
+            contentInfo.setTvService(tvService);
             contentInfo.setContentsType(map.get(JsonConstants.META_RESPONSE_CONTENT_TYPE));
             contentInfo.setDtv(dtv);
             contentInfo.setDtvType(dtvType);
@@ -666,7 +671,10 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
             contentInfo.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
             contentInfo.setEventId(map.get(JsonConstants.META_RESPONSE_EVENT_ID));
             contentInfo.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
-            contentInfo.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
+            contentInfo.setContentsId(crId);
+            contentInfo.setCrid(crId);
+            contentInfo.setContentsType(contentsType);
+            contentInfo.setTitleId(map.get(JsonConstants.META_RESPONSE_TITLE_ID));
             contentInfo.setPublishStartDate(String.valueOf(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE))));
             contentInfo.setAvailStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
             contentInfo.setAvailEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
@@ -677,8 +685,6 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
             ClipRequestData requestData = new ClipRequestData();
             setClipRequestData(map, requestData, title, searchOk);
             //視聴通知判定生成
-            String contentsType = map.get(JsonConstants.META_RESPONSE_CONTENT_TYPE);
-            String tvService = map.get(JsonConstants.META_RESPONSE_TV_SERVICE);
             String dTv = map.get(JsonConstants.META_RESPONSE_DTV);
             requestData.setIsNotify(dispType, contentsType, contentInfo.getVodStartDate(), tvService, dTv);
             setRequestType(requestData, dispType, contentsType);
