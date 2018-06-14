@@ -26,6 +26,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * キーコードをSTBへ送信する.
@@ -568,6 +569,11 @@ public class RemoteControlRelayClient {
      * 通信停止判定.
      */
     private boolean mIsCancel = false;
+
+    /** 暗号化処理の鍵交換を同期処理で実行する. */
+    private CountDownLatch mLatch = null;
+    /** 暗号化処理の鍵交換の同期カウンター. */
+    private static int LATCH_COUNT_MAX = 1;
 
     /**
      * 最後にSTBへアプリケーション要求したシステム時刻からの経過時間.
@@ -1189,71 +1195,90 @@ public class RemoteControlRelayClient {
          */
         @Override
         public void run() {
-            DTVTLogger.warning(" >>>");
+            RelayServiceResponseMessage response = null;
             if (mRequestParam == null) {
                 DTVTLogger.warning("mRequestParam == null");
+                sendResponseMessage(setResultInternalError());
                 return;
             }
-
-            if (!CipherUtil.hasShareKey()) { //鍵がないため、鍵交換後、通信する
-                DTVTLogger.warning("need to exchange key");
-                CipherApi api = new CipherApi(new CipherApi.CipherApiCallback() {
-                    @Override
-                    public void apiCallback(final boolean result, final String data) {
-                        if (result) {
-                            run();
-                        } else {
-                            RelayServiceResponseMessage response = new RelayServiceResponseMessage();
-                            response.setResult(RelayServiceResponseMessage.RELAY_RESULT_ERROR);
-                            response.setResultCode(RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE);
-                            response.setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
-                            sendResponseMessage(response);
+            if (!CipherUtil.hasShareKey()) { // 鍵交換が必要
+                syncRequestPublicKey();
+            }
+            if (!CipherUtil.hasShareKey()) { // 鍵交換に失敗
+                response = setResultDistinationUnreachable();
+            } else {
+                StbConnectRelayClient stbConnection = StbConnectRelayClient.getInstance();  // Socket通信
+                String recvData;
+                // アプリ起動要求をSTBへ送信して処理結果応答を取得する
+                if (stbConnection.connect()) {
+                    if (stbConnection.send(mRequestParam)) {
+                        recvData = stbConnection.receive();
+                        DTVTLogger.debug("recvData:" + recvData);
+                        response = setResponse(recvData);
+                    }
+                    stbConnection.disconnect();
+                    // 鍵交換に失敗
+                    if (response.getResultCode() == RelayServiceResponseMessage.RELAY_RESULT_STB_KEY_MISMATCH) {
+                        syncRequestPublicKey();
+                        if (!CipherUtil.hasShareKey()) { // 鍵交換に失敗
+                            response = setResultDistinationUnreachable();
                         }
                     }
-                });
-                api.requestSendPublicKey();
-                return;
-            }
-
-            StbConnectRelayClient stbConnection = StbConnectRelayClient.getInstance();  // Socket通信
-            String recvData;
-            RelayServiceResponseMessage response = new RelayServiceResponseMessage();
-            // アプリ起動要求をSTBへ送信して処理結果応答を取得する
-            if (stbConnection.connect()) {
-                if (stbConnection.send(mRequestParam)) {
-                    recvData = stbConnection.receive();
-                    DTVTLogger.debug("recvData:" + recvData);
-                    response = setResponse(recvData);
+                } else {
+                    DTVTLogger.debug("failed to connect to the STB");
+                    response = setResultDistinationUnreachable();
                 }
-                stbConnection.disconnect();
-
-                if (response.getResultCode() == RelayServiceResponseMessage.RELAY_RESULT_STB_KEY_MISMATCH) {
-                    DTVTLogger.warning("need to exchange key");
-                    CipherApi api = new CipherApi(new CipherApi.CipherApiCallback() {
-                        @Override
-                        public void apiCallback(final boolean result, final String data) {
-                            if (result) {
-                                run();
-                            } else {
-                                RelayServiceResponseMessage response = new RelayServiceResponseMessage();
-                                response.setResult(RelayServiceResponseMessage.RELAY_RESULT_ERROR);
-                                response.setResultCode(RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE);
-                                response.setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
-                                sendResponseMessage(response);
-                            }
-                        }
-                    });
-                    api.requestSendPublicKey();
-                    return;
-                }
-
-            } else {
-                DTVTLogger.debug("failed to connect to the STB");
-                response.setResult(RelayServiceResponseMessage.RELAY_RESULT_ERROR);
-                response.setResultCode(RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE);
-                response.setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
             }
             sendResponseMessage(response);
+        }
+
+        /**
+         * 鍵交換処理を同期処理で実行する.
+         */
+        private void syncRequestPublicKey() {
+            CipherApi api = new CipherApi(new CipherApi.CipherApiCallback() {
+                @Override
+                public void apiCallback(final boolean result, final String data) {
+                    // 鍵交換処理同期ラッチカウンターを解除する
+                    mLatch.countDown();
+                }
+            });
+            DTVTLogger.debug("sending public key");
+            api.requestSendPublicKey();
+            // 鍵交換処理が終わるまでキーコード送信を待機をさせる.
+            mLatch = new CountDownLatch(LATCH_COUNT_MAX);
+            try {
+                DTVTLogger.debug("sync to completion of public key transmission");
+                mLatch.await();
+                DTVTLogger.debug("completion of public key transmission");
+            } catch (InterruptedException e) {
+                DTVTLogger.debug(e);
+                return;
+            }
+        }
+
+        /**
+         * 接続タイムアウト レスポンス メッセージを返す.
+         * @return RelayServiceResponseMessage
+         */
+        private RelayServiceResponseMessage setResultDistinationUnreachable() {
+            RelayServiceResponseMessage response = new RelayServiceResponseMessage();
+            response.setResult(RelayServiceResponseMessage.RELAY_RESULT_ERROR);
+            response.setResultCode(RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE);
+            response.setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
+            return response;
+        }
+
+        /**
+         * 内部エラー レスポンス メッセージを返す.
+         * @return RelayServiceResponseMessage
+         */
+        private RelayServiceResponseMessage setResultInternalError() {
+            RelayServiceResponseMessage response = new RelayServiceResponseMessage();
+            response.setResult(RelayServiceResponseMessage.RELAY_RESULT_ERROR);
+            response.setResultCode(RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
+            response.setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
+            return response;
         }
 
         /**
@@ -1279,12 +1304,8 @@ public class RemoteControlRelayClient {
             int resultErrorCode;
             STB_REQUEST_COMMAND_TYPES requestCommand = STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN;
 
-            RelayServiceResponseMessage response = new RelayServiceResponseMessage();
+            RelayServiceResponseMessage response = setResultInternalError(); // 初期化
             try {
-                // 初期化
-                response.setResult(RelayServiceResponseMessage.RELAY_RESULT_ERROR);
-                response.setResultCode(RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
-                response.setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
                 if (null == recvResult) {
                     return response;
                 }
@@ -1366,9 +1387,7 @@ public class RemoteControlRelayClient {
                 }
             } catch (JSONException e) {
                 DTVTLogger.debug(e);
-                response.setResult(RelayServiceResponseMessage.RELAY_RESULT_ERROR);
-                response.setResultCode(RelayServiceResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
-                response.setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
+                response = setResultInternalError();
             }
             return response;
         }
