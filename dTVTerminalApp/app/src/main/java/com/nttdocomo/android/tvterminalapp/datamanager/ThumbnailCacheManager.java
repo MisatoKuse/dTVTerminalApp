@@ -36,7 +36,10 @@ public class ThumbnailCacheManager {
      * メモリキャッシュ.
      */
     private LruCache<String, Bitmap> mMemCache = null;
-
+    /**
+     * キャッシュから取り除かれたビットマップのリスト.
+     */
+    private List<Bitmap> mMemChaeBuf = null;
     /**
      * ディスクキャッシュ件数.
      */
@@ -63,7 +66,7 @@ public class ThumbnailCacheManager {
      * @param context コンテクスト
      */
     public ThumbnailCacheManager(final Context context) {
-        this.mContext = context;
+        this.mContext = context.getApplicationContext();
     }
 
     /**
@@ -95,6 +98,20 @@ public class ThumbnailCacheManager {
             @Override
             protected int sizeOf(final String key, final Bitmap bitmap) {
                 return bitmap.getByteCount();
+            }
+
+            @Override
+            protected void entryRemoved(boolean evicted, String key, Bitmap oldValue, Bitmap newValue) {
+                //キャッシュから古いデータが排除される場合の処理
+
+                //解放ビットマップリストが無いならば作成する
+                if(mMemChaeBuf == null) {
+                    mMemChaeBuf = new ArrayList();
+                }
+
+                //本来ここで"oldValue.recycle()"を行うべきだが、既に各ビューに渡してしまった画像が、
+                //リサイクル済みとなってしまい異常終了する。そこで、後でまとめてリサイクルを行う為に蓄積を行う
+                mMemChaeBuf.add(oldValue);
             }
         };
     }
@@ -133,7 +150,10 @@ public class ThumbnailCacheManager {
      * @param bitmap 画像
      */
     public void putBitmapToMem(final String url, final Bitmap bitmap) {
-        mMemCache.put(url, bitmap);
+        if(url != null && bitmap != null && mMemCache != null) {
+            //格納先と格納情報がそろっていた場合に蓄積を行う
+            mMemCache.put(url, bitmap);
+        }
     }
 
     /**
@@ -238,6 +258,49 @@ public class ThumbnailCacheManager {
                 //削除が行えなくても、特に対策は無いので次へ進む
                 DTVTLogger.debug(e);
             }
+        }
+    }
+
+    /**
+     * メモリキャッシュを解放する.
+     */
+    public void removeAll() {
+        DTVTLogger.start();
+        //解放済みビットマップリストの存在確認
+        if(mMemChaeBuf != null) {
+            //リストが存在するならばまとめてリサイクルを行う
+            for(Bitmap bitmap : mMemChaeBuf) {
+                if(!bitmap.isRecycled()) {
+                    bitmap.recycle();
+                    bitmap = null;
+                }
+            }
+            //リストのクリア
+            mMemChaeBuf.clear();
+            mMemChaeBuf = null;
+        }
+
+        //本来のキャッシュのクリア
+        if(mMemCache != null) {
+            mMemCache.evictAll();
+            mMemCache = null;
+        }
+
+        mContext = null;
+
+        System.gc();
+        System.gc();
+
+        DTVTLogger.end();
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        //明示的にremoveAllが呼び出されない場合のフェールセーフ
+        try{
+            super.finalize();
+        }finally{
+            removeAll();
         }
     }
 }

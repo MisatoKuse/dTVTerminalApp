@@ -711,6 +711,35 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     }
 
     /**
+     * 後始末を行い、ガベージコレクションされやすくする.
+     */
+    public void clearData() {
+        if (mTvScheduleList != null) {
+            mTvScheduleList.clearData();
+            mTvScheduleList = null;
+        }
+
+        if (mChannelsInfoList != null) {
+            mChannelsInfoList.clearData();
+            mChannelsInfoList = null;
+        }
+        if (mChannelWebClient != null) {
+            mChannelWebClient = null;
+        }
+        if (mTvScheduleWebClient != null) {
+            mTvScheduleWebClient = null;
+        }
+        if (mFromDB != null) {
+            mFromDB.clear();
+            mFromDB = null;
+        }
+        if(mResultSets != null) {
+            mResultSets.clear();
+            mResultSets = null;
+        }
+    }
+
+    /**
      * 画面用データを返却するためのコールバック.
      */
     public interface ApiDataProviderCallback {

@@ -398,7 +398,7 @@ public class WebApiBasePlala {
      */
     WebApiBasePlala(final Context context) {
         //コンテキストの退避
-        mContext = context;
+        mContext = context.getApplicationContext();
 
         //コネクション蓄積が存在しなければ作成する
         if (mUrlConnections == null) {

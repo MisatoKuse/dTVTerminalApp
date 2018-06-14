@@ -72,7 +72,7 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
         mImageView = imageView;
         mThumbnailProvider = thumbnailProvider;
         mImageSizeType = type;
-        mContext = context;
+        mContext = context.getApplicationContext();
 
         //コネクション蓄積が存在しなければ作成する
         if (mUrlConnections == null) {
@@ -236,5 +236,12 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
                 break;
         }
         dst.setImageResource(resId);
+    }
+
+    /**
+     * メモリーキャッシュをクリアして、ガベージコレクションされやすくする.
+     */
+    public void removeMemoryCache() {
+        mThumbnailProvider.removeMemoryCache();
     }
 }

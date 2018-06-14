@@ -321,7 +321,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * @param mContext コンテキスト
      */
     public RecommendDataProvider(final Context mContext) {
-        this.mContext = mContext;
+        this.mContext = mContext.getApplicationContext();
         this.mApiDataProviderCallback = (RecommendApiDataProviderCallback) mContext;
     }
 
