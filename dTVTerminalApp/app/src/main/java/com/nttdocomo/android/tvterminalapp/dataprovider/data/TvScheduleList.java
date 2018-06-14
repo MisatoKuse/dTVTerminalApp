@@ -58,4 +58,16 @@ public class TvScheduleList {
     public void setTvsList(final List<Map<String, String>> tvsList) {
         this.mTvsList = tvsList;
     }
+
+    /**
+     * データをクリアして、ガベージコレクションされやすくする
+     */
+    public void clearData() {
+        if(mTvsMap != null) {
+            mTvsMap.clear();
+        }
+        if(mTvsList != null) {
+            mTvsList.clear();
+        }
+    }
 }

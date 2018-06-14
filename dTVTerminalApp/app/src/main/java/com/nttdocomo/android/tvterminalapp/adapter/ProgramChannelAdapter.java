@@ -24,11 +24,11 @@ import java.util.ArrayList;
 public class ProgramChannelAdapter extends
         RecyclerView.Adapter<ProgramChannelAdapter.ViewHolder> {
     /**コンテキスト.*/
-    private final TvProgramListActivity mContext;
+    private TvProgramListActivity mContext = null;
     /**LayoutInflater.*/
-    private final LayoutInflater mInflater;
+    private LayoutInflater mInflater = null;
     /**チャンネル情報.*/
-    private final ArrayList<String> mChannelList;
+    private ArrayList<String> mChannelList = null;
     /**スクリーンWidth.*/
     private int mScreenWidth = 0;
     /**タイムラインWidth.*/
@@ -72,6 +72,19 @@ public class ProgramChannelAdapter extends
         if (viewHolder.channelText != null) {
             viewHolder.channelText.setText(mChannelList.get(i));
         }
+    }
+
+    /**
+     * ガベージコレクションされやすくするために、ヌルを格納する.
+     */
+    public void removeData() {
+        if(mChannelList != null) {
+            mChannelList.clear();
+            mChannelList = null;
+        }
+
+        mContext = null;
+        mInflater = null;
     }
 
     /**
