@@ -460,7 +460,9 @@ public class WebApiBasePlala {
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    stopConnection.disconnect();
+                    if (stopConnection != null) {
+                        stopConnection.disconnect();
+                    }
                 }
             });
             thread.start();

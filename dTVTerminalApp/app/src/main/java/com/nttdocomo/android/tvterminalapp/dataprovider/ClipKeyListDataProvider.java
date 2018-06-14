@@ -279,34 +279,33 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * @return コンテンツタイプ
      */
     @SuppressWarnings("OverlyComplexMethod")
-    private ClipKeyListDao.ContentTypeEnum searchContentsType(
+    public static ClipKeyListDao.ContentTypeEnum searchContentsType(
             final String dispType, final String contentType, final String dTv, final String tvService) {
         //ぷららサーバ対応
-        if (dispType != null && tvService != null) {
+        if (dispType != null) {
+            //「disp_type」が tv_program でかつ「tv_service」が「0」
             if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
-                    && (contentType == null || contentType.isEmpty())) {
+                    && tvService != null && ClipKeyListDao.META_DTV_FLAG_FALSE.equals(tvService)) {
                 return ClipKeyListDao.ContentTypeEnum.TV;
-            }
-            //「disp_type」が tv_program 以外、 かつ「dtv」が0
-            if (!ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
-                    && (dTv != null && ClipKeyListDao.META_DTV_FLAG_FALSE.equals(dTv))) {
-                return ClipKeyListDao.ContentTypeEnum.VOD;
-            }
-            //「disp_type」が tv_program で contents_typeあり、　かつ「dtv」が0
-            if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
-                    && (contentType != null && !contentType.isEmpty())
-                    && (dTv != null && ClipKeyListDao.META_DTV_FLAG_FALSE.equals(dTv))) {
-                return ClipKeyListDao.ContentTypeEnum.VOD;
             }
             //「disp_type」が tv_program でかつ「tv_service」が「1」
             if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
-                    && META_TV_SERVICE_FLAG_TRUE.equals(tvService)) {
+                    && tvService != null && META_TV_SERVICE_FLAG_TRUE.equals(tvService)) {
                 return ClipKeyListDao.ContentTypeEnum.DTV;
             }
             //「disp_type」が video_program・video_series・video_package・subscription_package・series_svodのいずれか、 かつ「dtv」が0または未設定
             if (getVodStatus(dispType)
                     && (dTv == null || dTv.isEmpty() || ClipKeyListDao.META_DTV_FLAG_FALSE.equals(dTv))) {
+                return ClipKeyListDao.ContentTypeEnum.VOD;
+            }
+            //「disp_type」が video_program・video_series・video_package・subscription_package・series_svodのいずれか、 かつ「dtv」が1
+            if (getVodStatus(dispType)
+                    && (dTv != null || META_TV_SERVICE_FLAG_TRUE.equals(dTv))) {
                 return ClipKeyListDao.ContentTypeEnum.DTV;
+            }
+            //「video_program・video_series・video_package・subscription_package・series_svodのいずれか」
+            if (getVodStatus(dispType)) {
+                return ClipKeyListDao.ContentTypeEnum.VOD;
             }
         }
         return null;
@@ -318,7 +317,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * @param dispType dispType
      * @return VOD判定結果
      */
-    private boolean getVodStatus(final String dispType) {
+    private static boolean getVodStatus(final String dispType) {
         switch (dispType) {
             case META_DISPLAY_TYPE_VIDEO_PROGRAM:
             case META_DISPLAY_TYPE_VIDEO_SERIES:
@@ -460,12 +459,17 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
                     case CLIP_ROW_INSERT:
                         dataManager.insertRowSqlStart(tableType, crid, serviceId, eventId, titleId);
                         break;
-                    case CLIP_ALL_INSERT:
-                        dataManager.insertClipKeyListInsert(mTableType, mClipKeyListResponse);
-                        break;
                     default:
                         break;
                 }
+            }
+        } else if (mClipKeyListResponse != null) {
+            switch (operationId) {
+                case CLIP_ALL_INSERT:
+                    dataManager.insertClipKeyListInsert(mTableType, mClipKeyListResponse);
+                    break;
+                default:
+                    break;
             }
         }
         return null;
@@ -543,7 +547,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
                 String titleId = scheduleInfo.getTitleId();
 
                 //判定はgetClipStatusに一任
-                scheduleInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv, crid, serviceId, eventId, titleId, tvService));
+//                scheduleInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv, crid, serviceId, eventId, titleId, tvService));
                 scheduleInfoArrayList.add(scheduleInfo);
             }
             resultList.get(i).setSchedules(scheduleInfoArrayList);

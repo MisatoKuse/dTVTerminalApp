@@ -735,10 +735,11 @@ public class BaseActivity extends FragmentActivity implements
                     showErrorDialogOffer(msg);
                 }
             }
+            //TODO 6/12作業保留のためコメントアウト
             // BG → FG でのonResumeで TvProgramIntentService を開始
-            DTVTLogger.debug("do TvProgramIntentService start");
-            ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(BaseActivity.this);
-            scaledDownProgramListDataProvider.startTvProgramIntentService();
+//            DTVTLogger.debug("do TvProgramIntentService start");
+//            ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(BaseActivity.this);
+//            scaledDownProgramListDataProvider.startTvProgramIntentService();
         } else {
             onStartCommunication();
         }
@@ -778,10 +779,11 @@ public class BaseActivity extends FragmentActivity implements
         if (app.getIsChangeApplicationInvisible()) {
             // FG → BG になったためDlnaをstopする
             DTVTLogger.debug("do dlnaOnStop");
+            //TODO 6/12作業保留のためコメントアウト
             // FG → BG になったため TvProgramIntentService を stop する
-            DTVTLogger.debug("do TvProgramIntentService stop");
-            ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(BaseActivity.this);
-            scaledDownProgramListDataProvider.stopTvProgramIntentService();
+//            DTVTLogger.debug("do TvProgramIntentService stop");
+//            ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(BaseActivity.this);
+//            scaledDownProgramListDataProvider.stopTvProgramIntentService();
         }
         DTVTLogger.end();
     }

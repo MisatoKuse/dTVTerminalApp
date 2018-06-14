@@ -16,6 +16,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvScheduleInsertDataManager;
@@ -153,6 +154,16 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     private ErrorState mTvScheduleError = null;
 
     /**
+     * クリップキーリスト(TV).
+     */
+    private ClipKeyListResponse mTvClipKeyList = null;
+
+    /**
+     * クリップキーリスト(VOD).
+     */
+    private ClipKeyListResponse mVodClipKeyList = null;
+
+    /**
      * コンストラクタ.
      *
      * @param mContext TvProgramListActivity
@@ -274,7 +285,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                             //setScheduleInfoのやり方を踏襲.
                             ChannelInfo channel = new ChannelInfo();
                             channel.setChannelNo(Integer.parseInt(scheduleInfoList.get(0).getChNo()));
-//                            channel.setTitle(scheduleInfoList.get(0).getTitle());
+                            channel.setTitle(scheduleInfoList.get(0).getTitle());
                             channel.setSchedules(scheduleInfoList);
                             channelsInfo.addChannel(channel);
                         }
@@ -380,17 +391,16 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         if (tvScheduleList != null) {
             //チャンネルデータ
             mTvScheduleList = tvScheduleList.get(0);
-//            if (mRequiredClipKeyList) {
-//                // クリップキーリストを取得
-//                tvClipKeyListResponse = false;
-//                vodClipKeyListResponse = false;
-//                getClipKeyList();
-//            } else {
-//                if (null != mApiDataProviderCallback) {
-//                    mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
-//                }
-//            }
-            mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
+            if (mRequiredClipKeyList) {
+                // クリップキーリストを取得
+                mTvClipKeyListResponse = false;
+                mVodClipKeyListResponse = false;
+                getClipKeyList();
+            } else {
+                if (null != mApiDataProviderCallback) {
+                    mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
+                }
+            }
         } else {
             //データが取得できなかったので、エラーを取得する
             mTvScheduleError = mTvScheduleWebClient.getError();
@@ -406,9 +416,10 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     @Override
     public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         super.onTvClipKeyListJsonParsed(clipKeyListResponse);
+        mTvClipKeyList = clipKeyListResponse;
         if (mVodClipKeyListResponse) {
             if (null != mApiDataProviderCallback) {
-//                mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
+                sendChannelList();
                 DTVTLogger.debug("null != mApiDataProviderCallback");
             }
         } else {
@@ -419,14 +430,92 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     @Override
     public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
+        mVodClipKeyList = clipKeyListResponse;
         if (mTvClipKeyListResponse) {
             if (null != mApiDataProviderCallback) {
-//                mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
+                sendChannelList();
                 DTVTLogger.debug("null != mApiDataProviderCallback");
             }
         } else {
             mVodClipKeyListResponse = true;
         }
+    }
+
+    /**
+     * チャンネルリストをActivityに送る.
+     */
+    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
+    private void sendChannelList() {
+        DTVTLogger.start();
+        ChannelInfoList channelInfoList = setProgramListContentData();
+        List<ChannelInfo> infoList = channelInfoList.getChannels();
+        List<HashMap<String, String>> tvClipMapList = mTvClipKeyList.getCkList();
+        List<HashMap<String, String>> vodClipMapList = mVodClipKeyList.getCkList();
+        for (int i = 0; i < infoList.size(); i++) {
+            ChannelInfo channelInfo = infoList.get(i);
+            ArrayList<ScheduleInfo> scheduleInfoArrayList = channelInfo.getSchedules();
+            for (int j = 0; j < scheduleInfoArrayList.size(); j++) {
+                ScheduleInfo scheduleInfo = scheduleInfoArrayList.get(j);
+                setClipStatus(scheduleInfo, tvClipMapList);
+                setClipStatus(scheduleInfo, vodClipMapList);
+            }
+        }
+        mApiDataProviderCallback.channelInfoCallback(channelInfoList);
+        DTVTLogger.end();
+    }
+
+    /**
+     * クリップキーリストと番組情報を比較してクリップ状態を設定する.
+     * @param scheduleInfo 番組表情報
+     * @param mapList クリップキーリスト
+     */
+    @SuppressWarnings("OverlyComplexMethod")
+    public static void setClipStatus(final ScheduleInfo scheduleInfo, final List<HashMap<String, String>> mapList) {
+        DTVTLogger.start();
+        ClipKeyListDao.ContentTypeEnum contentType = searchContentsType(
+                scheduleInfo.getDispType(), scheduleInfo.getContentType(), scheduleInfo.getDtv(), scheduleInfo.getTvService());
+        if (contentType != null) {
+            DTVTLogger.debug("setClipStatus start contentType != null");
+            switch (contentType) {
+                case TV:
+                    for (int k = 0; k < mapList.size(); k++) {
+                        String serviceId = mapList.get(k).get(JsonConstants.META_RESPONSE_SERVICE_ID);
+                        String eventId = mapList.get(k).get(JsonConstants.META_RESPONSE_EVENT_ID);
+                        String type = mapList.get(k).get(JsonConstants.META_RESPONSE_TYPE);
+                        if (serviceId != null && serviceId.equals(scheduleInfo.getServiceId())
+                                && eventId != null && eventId.equals(scheduleInfo.getEventId())
+                                && type != null && type.equals(CLIP_KEY_LIST_TYPE_OTHER_CHANNEL)) {
+                            scheduleInfo.setClipStatus(true);
+                        } else {
+                            scheduleInfo.setClipStatus(false);
+                        }
+                    }
+                    break;
+                case VOD:
+                    for (int k = 0; k < mapList.size(); k++) {
+                        String crId = mapList.get(k).get(JsonConstants.META_RESPONSE_CRID);
+                        if (crId != null && crId.equals(scheduleInfo.getCrId())) {
+                            scheduleInfo.setClipStatus(true);
+                        } else {
+                            scheduleInfo.setClipStatus(false);
+                        }
+                    }
+                    break;
+                case DTV:
+                    for (int k = 0; k < mapList.size(); k++) {
+                        String crId = mapList.get(k).get(JsonConstants.META_RESPONSE_CRID);
+                        if (crId != null && crId.equals(scheduleInfo.getCrId())) {
+                            scheduleInfo.setClipStatus(true);
+                        } else {
+                            scheduleInfo.setClipStatus(false);
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        DTVTLogger.end();
     }
 
     /**
@@ -472,6 +561,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      * @param userState ユーザ情報
      * @return ScheduleInfo情報
      */
+    @SuppressWarnings("OverlyLongMethod")
     private ScheduleInfo convertScheduleInfo(final Map<String, String> map, final UserState userState) {
         ScheduleInfo mSchedule = new ScheduleInfo();
         String startDate = map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE);
@@ -487,6 +577,10 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         String searchOk = map.get(JsonConstants.META_RESPONSE_SEARCH_OK);
         String dtv = map.get(JsonConstants.META_RESPONSE_DTV);
         String dtvType = map.get(JsonConstants.META_RESPONSE_DTV_TYPE);
+        String eventId = map.get(JsonConstants.META_RESPONSE_EVENT_ID);
+        String serviceId = map.get(JsonConstants.META_RESPONSE_SERVICE_ID);
+        String titleId = map.get(JsonConstants.META_RESPONSE_TITLE_ID);
+        String tvService = map.get(JsonConstants.META_RESPONSE_TV_SERVICE);
         mSchedule.setStartTime(startDate);
         mSchedule.setEndTime(endDate);
         mSchedule.setImageUrl(thumb);
@@ -503,15 +597,20 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         mSchedule.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
         mSchedule.setTitleId(map.get(JsonConstants.META_RESPONSE_TITLE_ID));
         mSchedule.setCrId(map.get(JsonConstants.META_RESPONSE_CRID));
-//        mSchedule.setClipExec(ClipUtils.isCanClip(userState, dispType, searchOk, dtv, dtvType));
-//        mSchedule.setClipRequestData(setClipData(map));
-//        mSchedule.setClipStatus(getClipStatus(dispType, contentType, dtv,
+        mSchedule.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
+        mSchedule.setClipRequestData(setClipData(map));
+        mSchedule.setEventId(eventId);
+        mSchedule.setServiceId(serviceId);
+        mSchedule.setContentType(contentType);
+        mSchedule.setTitleId(titleId);
+        mSchedule.setTvService(tvService);
+//        mSchedule.sendChannelList(getClipStatus(dispType, contentType, dtv,
 //                map.get(JsonConstants.META_RESPONSE_CRID),
-//                map.get(JsonConstants.META_RESPONSE_SERVICE_ID),
-//                map.get(JsonConstants.META_RESPONSE_EVENT_ID),
-//                map.get(JsonConstants.META_RESPONSE_TITLE_ID),
-//                map.get(JsonConstants.META_RESPONSE_TV_SERVICE)));
-//        mSchedule.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
+//                serviceId,
+//                eventId,
+//                titleId,
+//                tvService));
+        mSchedule.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
         return mSchedule;
     }
 
@@ -537,7 +636,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             try {
                 DataBaseThread t = new DataBaseThread(handler, this, SCHEDULE_UPDATE);
                 t.start();
-            } catch (RuntimeException e) {
+            } catch (IllegalThreadStateException e) {
                 DTVTLogger.debug(e);
             }
         }
@@ -560,8 +659,8 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         requestData.setTitleId(map.get(JsonConstants.META_RESPONSE_TITLE_ID));
         requestData.setTitle(map.get(JsonConstants.META_RESPONSE_TITLE));
         requestData.setRValue(map.get(JsonConstants.META_RESPONSE_R_VALUE));
-        requestData.setLinearStartDate(String.valueOf(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE)));
-        requestData.setLinearEndDate(String.valueOf(map.get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE)));
+        requestData.setLinearStartDate(String.valueOf(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE))));
+        requestData.setLinearEndDate(String.valueOf(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE))));
         requestData.setSearchOk(map.get(JsonConstants.META_RESPONSE_SEARCH_OK));
         requestData.setIsNotify(dispType, contentsType,
                 DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_START_DATE)),
