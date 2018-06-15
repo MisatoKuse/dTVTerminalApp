@@ -350,6 +350,11 @@ public class SharedPreferencesUtils {
      * @return true:完了済み false:未完了
      */
     public static boolean getSharedPreferencesStbConnect(final Context context) {
+        if(context == null) {
+            //コンテキストの指定が無ければ無条件で未完了にする
+            return false;
+        }
+
         DTVTLogger.debug("getSharedPreferencesStbConnect");
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
