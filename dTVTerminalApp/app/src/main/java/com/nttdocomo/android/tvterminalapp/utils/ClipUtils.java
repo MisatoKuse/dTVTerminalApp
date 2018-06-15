@@ -4,6 +4,15 @@
 
 package com.nttdocomo.android.tvterminalapp.utils;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
+import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
+
+import java.util.List;
+import java.util.Map;
+
 /**
  * クリップ関連のUtilクラス.
  */
@@ -115,5 +124,52 @@ public class ClipUtils {
             default:
                 return false;
         }
+    }
+
+    /**
+     * クリップキーリストと番組情報を比較してクリップ状態を設定する.
+     * @param scheduleInfo 番組表情報
+     * @param mapList クリップキーリスト
+     */
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
+    public static boolean setClipStatusFromMap(final ScheduleInfo scheduleInfo, final List<Map<String, String>> mapList) {
+        DTVTLogger.start();
+        ClipKeyListDao.ContentTypeEnum contentType = ClipKeyListDataProvider.searchContentsType(
+                scheduleInfo.getDispType(), scheduleInfo.getDtv(), scheduleInfo.getTvService());
+        if (contentType != null) {
+            DTVTLogger.debug("setClipStatusFromMap start contentType != null");
+            switch (contentType) {
+                case TV:
+                    for (int k = 0; k < mapList.size(); k++) {
+                        String serviceId = mapList.get(k).get(JsonConstants.META_RESPONSE_SERVICE_ID);
+                        String eventId = mapList.get(k).get(JsonConstants.META_RESPONSE_EVENT_ID);
+                        if (serviceId != null && serviceId.equals(scheduleInfo.getServiceId())
+                                && eventId != null && eventId.equals(scheduleInfo.getEventId())) {
+                            return true;
+                        }
+                    }
+                    break;
+                case VOD:
+                    for (int k = 0; k < mapList.size(); k++) {
+                        String crId = mapList.get(k).get(JsonConstants.META_RESPONSE_CRID);
+                        if (crId != null && crId.equals(scheduleInfo.getCrId())) {
+                            return true;
+                        }
+                    }
+                    break;
+                case DTV:
+                    for (int k = 0; k < mapList.size(); k++) {
+                        String crId = mapList.get(k).get(JsonConstants.META_RESPONSE_CRID);
+                        if (crId != null && crId.equals(scheduleInfo.getCrId())) {
+                            return true;
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        DTVTLogger.end();
+        return false;
     }
 }

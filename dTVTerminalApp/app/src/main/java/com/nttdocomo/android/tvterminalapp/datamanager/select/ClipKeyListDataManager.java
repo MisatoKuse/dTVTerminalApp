@@ -155,8 +155,19 @@ public class ClipKeyListDataManager {
      * @param tableType テーブル種別
      * @return クリップキーリスト
      */
-    public List<Map<String, String>> selectListData(
+    private List<Map<String, String>> selectListData(
             final ClipKeyListDao.TableTypeEnum tableType) {
         return selectClipKeyListData(tableType, null, null);
+    }
+
+    /**
+     * 全てのクリップキーリストを取得.
+     *
+     * @return クリップキーリスト
+     */
+    public List<Map<String, String>> selectClipAllList() {
+        List<Map<String, String>> list = selectListData(ClipKeyListDao.TableTypeEnum.TV);
+        list.addAll(selectListData(ClipKeyListDao.TableTypeEnum.VOD));
+        return list;
     }
 }

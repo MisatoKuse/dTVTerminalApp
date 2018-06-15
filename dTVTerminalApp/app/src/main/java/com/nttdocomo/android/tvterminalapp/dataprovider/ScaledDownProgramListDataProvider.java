@@ -16,10 +16,10 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvScheduleInsertDataManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.select.ClipKeyListDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.ProgramDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
@@ -274,12 +274,14 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                     break;
                 case SCHEDULE_SELECT:
                     ChannelInfoList channelsInfo = new ChannelInfoList();
+                    ClipKeyListDataManager keyListDataManager = new ClipKeyListDataManager(mContext);
+                    List<Map<String, String>> clipKeyList = keyListDataManager.selectClipAllList();
                     for (List<Map<String, String>> channelInfos : mResultSets) {
                         if (channelInfos != null && channelInfos.size() > 0) {
                             ArrayList<ScheduleInfo> scheduleInfoList = new ArrayList<>();
                             for (int i = 0; i < channelInfos.size(); i++) { //番組データ取得して整形する
                                 HashMap<String, String> hashMap =  (HashMap<String, String>) channelInfos.get(i);
-                                ScheduleInfo mSchedule = convertScheduleInfo(hashMap, userState);
+                                ScheduleInfo mSchedule = convertScheduleInfo(hashMap, clipKeyList);
                                 scheduleInfoList.add(mSchedule);
                             }
                             //setScheduleInfoのやり方を踏襲.
@@ -421,8 +423,6 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         if (mVodClipKeyListResponse) {
             if (null != mApiDataProviderCallback) {
                 mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
-                //TODO クリップキー一覧をonメモリーにする場合の処理を一旦コメントアウト
-//                sendChannelList();
                 DTVTLogger.debug("null != mApiDataProviderCallback");
             }
         } else {
@@ -437,8 +437,6 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         if (mTvClipKeyListResponse) {
             if (null != mApiDataProviderCallback) {
                 mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
-                //TODO クリップキー一覧をonメモリーにする場合の処理を一旦コメントアウト
-//                sendChannelList();
                 DTVTLogger.debug("null != mApiDataProviderCallback");
             }
         } else {
@@ -447,100 +445,14 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     }
 
     /**
-     * チャンネルリストをActivityに送る.
-     */
-    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
-    private void sendChannelList() {
-        //TODO クリップキー一覧をonメモリーにする場合の処理を一旦不使用にしています
-        DTVTLogger.start();
-        ChannelInfoList channelInfoList = setProgramListContentData();
-
-        if(channelInfoList == null) {
-            //メモリ解放の強化でヌルの場合が存在するので、帰る
-            return;
-        }
-
-        List<ChannelInfo> infoList = channelInfoList.getChannels();
-        List<HashMap<String, String>> tvClipMapList = mTvClipKeyList.getCkList();
-        List<HashMap<String, String>> vodClipMapList = mVodClipKeyList.getCkList();
-        tvClipMapList.addAll(vodClipMapList);
-        for (int i = 0; i < infoList.size(); i++) {
-            ChannelInfo channelInfo = infoList.get(i);
-            ArrayList<ScheduleInfo> scheduleInfoArrayList = channelInfo.getSchedules();
-            for (int j = 0; j < scheduleInfoArrayList.size(); j++) {
-                ScheduleInfo scheduleInfo = scheduleInfoArrayList.get(j);
-                setClipStatus(scheduleInfo, tvClipMapList);
-            }
-        }
-        mApiDataProviderCallback.channelInfoCallback(channelInfoList);
-        DTVTLogger.end();
-    }
-
-    /**
-     * クリップキーリストと番組情報を比較してクリップ状態を設定する.
-     * @param scheduleInfo 番組表情報
-     * @param mapList クリップキーリスト
-     */
-    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
-    public static void setClipStatus(final ScheduleInfo scheduleInfo, final List<HashMap<String, String>> mapList) {
-        //TODO クリップキー一覧をonメモリーにする場合の処理を一旦不使用にしています(クリップ判定に改修の必要あり)
-        DTVTLogger.start();
-        ClipKeyListDao.ContentTypeEnum contentType = searchContentsType(
-                scheduleInfo.getDispType(), scheduleInfo.getDtv(), scheduleInfo.getTvService());
-        if (contentType != null) {
-            DTVTLogger.debug("setClipStatus start contentType != null");
-            switch (contentType) {
-                case TV:
-                    for (int k = 0; k < mapList.size(); k++) {
-                        String serviceId = mapList.get(k).get(JsonConstants.META_RESPONSE_SERVICE_ID);
-                        String eventId = mapList.get(k).get(JsonConstants.META_RESPONSE_EVENT_ID);
-                        if (serviceId != null && serviceId.equals(scheduleInfo.getServiceId())
-                                && eventId != null && eventId.equals(scheduleInfo.getEventId())) {
-                            scheduleInfo.setClipStatus(true);
-                            break;
-                        } else {
-                            scheduleInfo.setClipStatus(false);
-                        }
-                    }
-                    break;
-                case VOD:
-                    for (int k = 0; k < mapList.size(); k++) {
-                        String crId = mapList.get(k).get(JsonConstants.META_RESPONSE_CRID);
-                        if (crId != null && crId.equals(scheduleInfo.getCrId())) {
-                            scheduleInfo.setClipStatus(true);
-                            break;
-                        } else {
-                            scheduleInfo.setClipStatus(false);
-                        }
-                    }
-                    break;
-                case DTV:
-                    for (int k = 0; k < mapList.size(); k++) {
-                        String crId = mapList.get(k).get(JsonConstants.META_RESPONSE_CRID);
-                        if (crId != null && crId.equals(scheduleInfo.getCrId())) {
-                            scheduleInfo.setClipStatus(true);
-                            break;
-                        } else {
-                            scheduleInfo.setClipStatus(false);
-                        }
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-        DTVTLogger.end();
-    }
-
-    /**
      * 番組表をチャンネルに入れる.
      *
      * @param hashMap 番組情報
      * @param channelsInfo チャンネル情報
-     * @param userState ユーザー状態
+     * @param clipKeyList クリップキーリスト
      */
-    private void setScheduleInfo(final Map<String, String> hashMap, final ChannelInfoList channelsInfo, final UserState userState) {
-        ScheduleInfo mSchedule = convertScheduleInfo(hashMap, userState);
+    private void setScheduleInfo(final Map<String, String> hashMap, final ChannelInfoList channelsInfo, final List<Map<String, String>> clipKeyList) {
+        ScheduleInfo mSchedule = convertScheduleInfo(hashMap, clipKeyList);
 
         if (!TextUtils.isEmpty(mSchedule.getChNo())) { //CH毎番組データ取得して、整形する
             List<ChannelInfo> oldChannelList = channelsInfo.getChannels();
@@ -572,11 +484,11 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      * hashMap情報からScheduleInfo情報を組み立てる.
      *
      * @param map マップ
-     * @param userState ユーザ情報
+     * @param clipKeyList クリップキーリスト
      * @return ScheduleInfo情報
      */
     @SuppressWarnings("OverlyLongMethod")
-    private ScheduleInfo convertScheduleInfo(final Map<String, String> map, final UserState userState) {
+    private ScheduleInfo convertScheduleInfo(final Map<String, String> map, final List<Map<String, String>> clipKeyList) {
         ScheduleInfo mSchedule = new ScheduleInfo();
         String startDate = map.get(JsonConstants.META_RESPONSE_PUBLISH_START_DATE);
         String endDate = map.get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE);
@@ -618,13 +530,8 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         mSchedule.setContentType(contentType);
         mSchedule.setTitleId(titleId);
         mSchedule.setTvService(tvService);
-        mSchedule.setClipStatus(getClipStatus(dispType, contentType, dtv,
-                map.get(JsonConstants.META_RESPONSE_CRID),
-                serviceId,
-                eventId,
-                titleId,
-                tvService));
         mSchedule.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
+        mSchedule.setClipStatus(ClipUtils.setClipStatusFromMap(mSchedule, clipKeyList));
         return mSchedule;
     }
 
@@ -645,10 +552,12 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         if (mChannelProgramList != null) {
             channelsInfo = new ChannelInfoList();
             UserState userState = UserInfoUtils.getUserState(mContext);
+            ClipKeyListDataManager keyListDataManager = new ClipKeyListDataManager(mContext);
+            List<Map<String, String>> clipKeyList = keyListDataManager.selectClipAllList();
             for (int i = 0; i < mChannelProgramList.size(); i++) {
                 //CH毎番組データ取得して、整形する
                 Map<String, String> hashMap = mChannelProgramList.get(i);
-                setScheduleInfo(hashMap, channelsInfo, userState);
+                setScheduleInfo(hashMap, channelsInfo, clipKeyList);
             }
             mChannelsInfoList = channelsInfo;
             Handler handler = new Handler();

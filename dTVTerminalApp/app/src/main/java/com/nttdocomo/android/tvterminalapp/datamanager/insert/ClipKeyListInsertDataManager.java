@@ -148,8 +148,7 @@ public class ClipKeyListInsertDataManager {
 
             String query = StringUtils.getConnectStrings(JsonConstants.META_RESPONSE_CRID, "=? OR ",
                     JsonConstants.META_RESPONSE_SERVICE_ID, "=? AND ",
-                    JsonConstants.META_RESPONSE_EVENT_ID, "=? AND ",
-                    JsonConstants.META_RESPONSE_TYPE, "=? OR ",
+                    JsonConstants.META_RESPONSE_EVENT_ID, "=? OR ",
                     JsonConstants.META_RESPONSE_TITLE_ID, "=?");
 
             String[] columns = {crId, serviceId, eventId, ClipKeyListDataProvider.CLIP_KEY_LIST_TYPE_OTHER_CHANNEL, titleId};

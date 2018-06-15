@@ -255,6 +255,8 @@ public class DtvContentsDetailFragment extends Fragment {
         if (metaFullData != null) {
             //コンテンツ詳細は、メタデータを丸ごと持っているため、そのまま利用する
             requestData = new ClipRequestData();
+            requestData.setDispType(metaFullData.getDisp_type());
+            requestData.setContentType(metaFullData.getmContent_type());
             requestData.setCrid(metaFullData.getCrid());
             requestData.setServiceId(metaFullData.getmService_id());
             requestData.setEventId(metaFullData.getmEvent_id());
