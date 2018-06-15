@@ -145,4 +145,11 @@ public class ThumbnailProvider {
 	public void enableConnect() {
 		mIsCancel = false;
 	}
+
+	/**
+	 * メモリキャッシュを解放させる.
+	 */
+	public void removeMemoryCache() {
+		thumbnailCacheManager.removeAll();
+	}
 }

@@ -145,7 +145,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
      */
     public DataBaseHelper(final Context context) {
         super(context, DataBaseConstants.DATABASE_NAME, null, DATABASE_VERSION);
-        mContext = context;
+        mContext = context.getApplicationContext();
     }
 
     @Override

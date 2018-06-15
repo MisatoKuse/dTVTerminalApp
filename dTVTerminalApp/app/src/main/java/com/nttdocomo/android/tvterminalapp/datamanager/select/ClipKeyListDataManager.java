@@ -94,8 +94,6 @@ public class ClipKeyListDataManager {
                 strBuilder.append(JsonConstants.META_RESPONSE_SERVICE_ID)
                         .append(" = ? AND ")
                         .append(JsonConstants.META_RESPONSE_EVENT_ID)
-                        .append(" = ? AND ")
-                        .append(JsonConstants.META_RESPONSE_TYPE)
                         .append(" = ? ");
                 break;
             case DTV:
@@ -112,13 +110,12 @@ public class ClipKeyListDataManager {
      * @param tableType テーブル種別
      * @param serviceId serviceId
      * @param eventId eventId
-     * @param type type
      * @return クリップキーリスト
      */
     public List<Map<String, String>> selectClipKeyDbTvData(
             final ClipKeyListDao.TableTypeEnum tableType, final String serviceId,
-            final String eventId, final String type) {
-        String[] args = {serviceId, eventId, type};
+            final String eventId) {
+        String[] args = {serviceId, eventId};
         String selection = getSQLWhereString(ClipKeyListDao.ContentTypeEnum.TV);
         return selectClipKeyListData(tableType, selection, args);
     }

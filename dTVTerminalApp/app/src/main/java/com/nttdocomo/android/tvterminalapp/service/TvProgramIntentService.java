@@ -77,9 +77,10 @@ public class TvProgramIntentService extends IntentService {
         ChannelWebClientSync channelWebClientSync = new ChannelWebClientSync();
         List<ChannelList> channelLists = channelWebClientSync.getChannelApi(getApplicationContext(),1,1,"","");
 
-        //取得したチャンネルリストを送信
-        //TODO ネットワークOFF状態でサービス起動すると↓でNullPoが出るため一旦コメントアウト(6/12作業保留のため)
-//        sendChannelList(channelLists.get(0));
+        if(channelLists != null) {
+            //取得に成功したチャンネルリストを送信
+            sendChannelList(channelLists.get(0));
+        }
         DTVTLogger.end();
     }
 

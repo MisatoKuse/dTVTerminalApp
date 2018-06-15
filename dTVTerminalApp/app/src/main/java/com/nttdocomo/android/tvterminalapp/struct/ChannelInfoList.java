@@ -58,6 +58,15 @@ public class ChannelInfoList implements Parcelable {
         this.mChannels = in.createTypedArrayList(ChannelInfo.CREATOR);
     }
 
+    /**
+     * データのクリアを行い、ガベージコレクションされやすくする.
+     */
+    public void clearData() {
+        if (mChannels != null) {
+            mChannels.clear();
+        }
+    }
+
     public static final Parcelable.Creator<ChannelInfoList> CREATOR = new Parcelable.Creator<ChannelInfoList>() {
         @Override
         public ChannelInfoList createFromParcel(Parcel source) {

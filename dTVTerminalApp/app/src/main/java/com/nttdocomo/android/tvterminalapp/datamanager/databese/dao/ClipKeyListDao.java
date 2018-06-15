@@ -39,11 +39,11 @@ public class ClipKeyListDao {
      * コンテンツの種類.それぞれでキーになる情報が異なる.
      */
     public enum ContentTypeEnum {
-        /** EPGコンテンツ. */
+        /** 多チャンネル放送. */
         TV,
-        /** VODコンテンツ. */
+        /** ひかりTVビデオ、dTVチャンネル. */
         VOD,
-        /** DTVコンテンツ. */
+        /** DTV. */
         DTV
     }
 

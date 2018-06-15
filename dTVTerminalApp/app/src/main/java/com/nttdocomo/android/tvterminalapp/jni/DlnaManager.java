@@ -302,16 +302,19 @@ public class DlnaManager {
         switch (StbConnectionManager.shared().getConnectionStatus()) {
             case HOME_OUT:
                 DTVTLogger.warning("remoteConnectStatus = " + remoteConnectStatus);
+                if (TextUtils.isEmpty(DlnaManager.shared().mUdn)) {
+                    DlnaDmsItem item = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
+                    DlnaManager.shared().mUdn = item.mUdn;
+                }
                 if (DlnaManager.shared().remoteConnectStatus == RemoteConnectStatus.READY) {
-                    if (TextUtils.isEmpty(mUdn)) {
-                        DlnaDmsItem item = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
-                        mUdn = item.mUdn;
-                    }
-                    requestRemoteConnect(mUdn);
+                    requestRemoteConnect(DlnaManager.shared().mUdn);
                     requestContainerId = containerId;
                 } else {
                     waitForReady = true;
                     requestContainerId = containerId;
+                    StartDmp();
+                    StartDtcp();
+                    RestartDirag();
                 }
 
                 break;
@@ -783,7 +786,7 @@ public class DlnaManager {
     private native String getRemoteDeviceExpireDate(final String udn);
     /** ダウンロード開始前のddtcpスタート.*/
     private native boolean downLoadStartDtcp();
-     /** ダウンロードをキャンセル.*/
+    /** ダウンロードをキャンセル.*/
     private native boolean downloadCancel();
     /** ダウンロードをキャンセル.*/
     private native boolean downloadStop();

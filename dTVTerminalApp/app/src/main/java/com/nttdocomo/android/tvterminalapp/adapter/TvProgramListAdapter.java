@@ -32,6 +32,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
+import com.nttdocomo.android.tvterminalapp.utils.ViewUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
 import java.text.ParseException;
@@ -520,7 +521,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             itemViewHolder.mView.setBackgroundResource(R.drawable.program_missed_gray);
             itemViewHolder.mView.setTag(VIEW_HOLDER_TAG_ONE);
         } else {
-        //関連VOD(なし)
+            //関連VOD(なし)
             itemViewHolder.mView.setBackgroundResource(R.drawable.program_end_gray);
             itemViewHolder.mStartM.setTextColor(ContextCompat.getColor(mContext, R.color.tv_program_miss_vod));
             itemViewHolder.mContent.setTextColor(ContextCompat.getColor(mContext, R.color.tv_program_miss_vod));
@@ -742,7 +743,13 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
 
     @Override
     public int getItemCount() {
-        return mProgramList.size();
+        //解放処理の強化により、このタイミングで番組データが存在しない場合が発生
+        if(mProgramList == null) {
+            //番組データが無いのでゼロを返す
+            return 0;
+        } else {
+            return mProgramList.size();
+        }
     }
 
     /**
@@ -796,7 +803,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                                 itemViewHolder.mThumbnail.setImageResource(R.mipmap.error_ch_mini);
                                 //URLによって、サムネイル取得
                                 String thumbnailURL = itemSchedule.getImageUrl();
-                                if (!TextUtils.isEmpty(thumbnailURL) && !mIsDownloadStop) {
+                                if (!TextUtils.isEmpty(thumbnailURL) && !mIsDownloadStop && mThumbnailProvider != null) {
                                     itemViewHolder.mThumbnail.setTag(thumbnailURL);
                                     Bitmap bitmap = mThumbnailProvider.getThumbnailImage(itemViewHolder.mThumbnail, thumbnailURL);
                                     if (bitmap != null) {
@@ -893,6 +900,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * @param newProgramList 番組表
      */
     public void setProgramList(final List<ChannelInfo> newProgramList) {
+        mProgramList = newProgramList;
         // TODO　:★部分的なデータが来ることになるので自身で記憶しているチャンネルリストへMappingするようにする
         // TODO　:★また、描画反映が必要なので、ViewHolderを調べて該当のチャンネルがあれば、描画反映する
         if (newProgramList != null) {
@@ -924,5 +932,44 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private void setItemView(final ArrayList<ScheduleInfo> itemSchedules, final MyViewHolder holder) {
         DTVTLogger.start("ChNo:" + holder.chNo);
         holder.startAddContentViews(itemSchedules);
+    }
+
+    /**
+     * ガベージコレクションされやすくなるように各部にヌルを格納する.
+     */
+    public void removeData() {
+        if(mThumbnailProvider != null) {
+            mThumbnailProvider.removeMemoryCache();
+            mThumbnailProvider = null;
+        }
+
+        if(mMyViewHolder != null) {
+            mMyViewHolder.clear();
+            mMyViewHolder = null;
+        }
+
+        if(mProgramList != null) {
+            mProgramList.clear();
+            mProgramList = null;
+        }
+
+        if(mItemViews != null) {
+            for (ItemViewHolder view : mItemViews) {
+                ViewUtils.cleanAllViews(view.mView);
+                ViewUtils.cleanAllViews(view.mClipButton);
+                ViewUtils.cleanAllViews(view.mContent);
+                ViewUtils.cleanAllViews(view.mDetail);
+                ViewUtils.cleanAllViews(view.mStartM);
+                ViewUtils.cleanAllViews(view.mThumbnail);
+                view.mView = null;
+                view.mClipButton = null;
+                view.mContent = null;
+                view.mDetail = null;
+                view.mStartM = null;
+                view.mThumbnail = null;
+            }
+
+            System.gc();
+        }
     }
 }

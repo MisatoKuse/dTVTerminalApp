@@ -233,6 +233,11 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
             contentInfo.setAvailEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
             contentInfo.setVodStartDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_START_DATE)));
             contentInfo.setVodEndDate(DateUtils.getSecondEpochTime(map.get(JsonConstants.META_RESPONSE_VOD_END_DATE)));
+            contentInfo.setCrid(map.get(JsonConstants.META_RESPONSE_CRID));
+            contentInfo.setEventId(map.get(JsonConstants.META_RESPONSE_EVENT_ID));
+            contentInfo.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
+            contentInfo.setTitleId(map.get(JsonConstants.META_RESPONSE_TITLE_ID));
+            contentInfo.setTvService(map.get(JsonConstants.META_RESPONSE_TV_SERVICE));
 
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
@@ -310,6 +315,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
 
     @Override
     public List<Map<String, String>> dbOperation(final int operationId) {
+        super.dbOperation(operationId);
         switch (operationId) {
             case WATCH_LISTEN_VIDEO_INSERT:
                 DateUtils dateUtils = new DateUtils(mContext);

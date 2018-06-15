@@ -301,9 +301,10 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     }
 
     @Override
-    public List<Map<String, String>> dbOperation(final int mOperationId) {
+    public List<Map<String, String>> dbOperation(final int operationId) {
+        super.dbOperation(operationId);
         List<Map<String, String>> resultSet = null;
-        switch (mOperationId) {
+        switch (operationId) {
             case CHANNEL_UPDATE://サーバーから取得したチャンネルデータをDBに保存する
                 ChannelInsertDataManager channelInsertDataManager = new ChannelInsertDataManager(mContext);
                 channelInsertDataManager.insertChannelInsertList(mChannelList);
@@ -419,7 +420,9 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         mTvClipKeyList = clipKeyListResponse;
         if (mVodClipKeyListResponse) {
             if (null != mApiDataProviderCallback) {
-                sendChannelList();
+                mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
+                //TODO クリップキー一覧をonメモリーにする場合の処理を一旦コメントアウト
+//                sendChannelList();
                 DTVTLogger.debug("null != mApiDataProviderCallback");
             }
         } else {
@@ -433,7 +436,9 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         mVodClipKeyList = clipKeyListResponse;
         if (mTvClipKeyListResponse) {
             if (null != mApiDataProviderCallback) {
-                sendChannelList();
+                mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
+                //TODO クリップキー一覧をonメモリーにする場合の処理を一旦コメントアウト
+//                sendChannelList();
                 DTVTLogger.debug("null != mApiDataProviderCallback");
             }
         } else {
@@ -446,18 +451,25 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
     private void sendChannelList() {
+        //TODO クリップキー一覧をonメモリーにする場合の処理を一旦不使用にしています
         DTVTLogger.start();
         ChannelInfoList channelInfoList = setProgramListContentData();
+
+        if(channelInfoList == null) {
+            //メモリ解放の強化でヌルの場合が存在するので、帰る
+            return;
+        }
+
         List<ChannelInfo> infoList = channelInfoList.getChannels();
         List<HashMap<String, String>> tvClipMapList = mTvClipKeyList.getCkList();
         List<HashMap<String, String>> vodClipMapList = mVodClipKeyList.getCkList();
+        tvClipMapList.addAll(vodClipMapList);
         for (int i = 0; i < infoList.size(); i++) {
             ChannelInfo channelInfo = infoList.get(i);
             ArrayList<ScheduleInfo> scheduleInfoArrayList = channelInfo.getSchedules();
             for (int j = 0; j < scheduleInfoArrayList.size(); j++) {
                 ScheduleInfo scheduleInfo = scheduleInfoArrayList.get(j);
                 setClipStatus(scheduleInfo, tvClipMapList);
-                setClipStatus(scheduleInfo, vodClipMapList);
             }
         }
         mApiDataProviderCallback.channelInfoCallback(channelInfoList);
@@ -469,11 +481,12 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      * @param scheduleInfo 番組表情報
      * @param mapList クリップキーリスト
      */
-    @SuppressWarnings("OverlyComplexMethod")
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     public static void setClipStatus(final ScheduleInfo scheduleInfo, final List<HashMap<String, String>> mapList) {
+        //TODO クリップキー一覧をonメモリーにする場合の処理を一旦不使用にしています(クリップ判定に改修の必要あり)
         DTVTLogger.start();
         ClipKeyListDao.ContentTypeEnum contentType = searchContentsType(
-                scheduleInfo.getDispType(), scheduleInfo.getContentType(), scheduleInfo.getDtv(), scheduleInfo.getTvService());
+                scheduleInfo.getDispType(), scheduleInfo.getDtv(), scheduleInfo.getTvService());
         if (contentType != null) {
             DTVTLogger.debug("setClipStatus start contentType != null");
             switch (contentType) {
@@ -481,11 +494,10 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                     for (int k = 0; k < mapList.size(); k++) {
                         String serviceId = mapList.get(k).get(JsonConstants.META_RESPONSE_SERVICE_ID);
                         String eventId = mapList.get(k).get(JsonConstants.META_RESPONSE_EVENT_ID);
-                        String type = mapList.get(k).get(JsonConstants.META_RESPONSE_TYPE);
                         if (serviceId != null && serviceId.equals(scheduleInfo.getServiceId())
-                                && eventId != null && eventId.equals(scheduleInfo.getEventId())
-                                && type != null && type.equals(CLIP_KEY_LIST_TYPE_OTHER_CHANNEL)) {
+                                && eventId != null && eventId.equals(scheduleInfo.getEventId())) {
                             scheduleInfo.setClipStatus(true);
+                            break;
                         } else {
                             scheduleInfo.setClipStatus(false);
                         }
@@ -496,6 +508,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                         String crId = mapList.get(k).get(JsonConstants.META_RESPONSE_CRID);
                         if (crId != null && crId.equals(scheduleInfo.getCrId())) {
                             scheduleInfo.setClipStatus(true);
+                            break;
                         } else {
                             scheduleInfo.setClipStatus(false);
                         }
@@ -506,6 +519,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                         String crId = mapList.get(k).get(JsonConstants.META_RESPONSE_CRID);
                         if (crId != null && crId.equals(scheduleInfo.getCrId())) {
                             scheduleInfo.setClipStatus(true);
+                            break;
                         } else {
                             scheduleInfo.setClipStatus(false);
                         }
@@ -604,12 +618,12 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         mSchedule.setContentType(contentType);
         mSchedule.setTitleId(titleId);
         mSchedule.setTvService(tvService);
-//        mSchedule.sendChannelList(getClipStatus(dispType, contentType, dtv,
-//                map.get(JsonConstants.META_RESPONSE_CRID),
-//                serviceId,
-//                eventId,
-//                titleId,
-//                tvService));
+        mSchedule.setClipStatus(getClipStatus(dispType, contentType, dtv,
+                map.get(JsonConstants.META_RESPONSE_CRID),
+                serviceId,
+                eventId,
+                titleId,
+                tvService));
         mSchedule.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
         return mSchedule;
     }
@@ -621,6 +635,12 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      */
     private ChannelInfoList setProgramListContentData() {
         ChannelInfoList channelsInfo = null;
+
+        if(mTvScheduleList == null) {
+            //解放処理の強化によりヌルの場合が発生したので、ヌルならば帰る
+            return null;
+        }
+
         List<Map<String, String>> mChannelProgramList = mTvScheduleList.geTvsList();
         if (mChannelProgramList != null) {
             channelsInfo = new ChannelInfoList();
@@ -707,6 +727,35 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 channel.setService(service);
                 channels.add(channel);
             }
+        }
+    }
+
+    /**
+     * 後始末を行い、ガベージコレクションされやすくする.
+     */
+    public void clearData() {
+        if (mTvScheduleList != null) {
+            mTvScheduleList.clearData();
+            mTvScheduleList = null;
+        }
+
+        if (mChannelsInfoList != null) {
+            mChannelsInfoList.clearData();
+            mChannelsInfoList = null;
+        }
+        if (mChannelWebClient != null) {
+            mChannelWebClient = null;
+        }
+        if (mTvScheduleWebClient != null) {
+            mTvScheduleWebClient = null;
+        }
+        if (mFromDB != null) {
+            mFromDB.clear();
+            mFromDB = null;
+        }
+        if(mResultSets != null) {
+            mResultSets.clear();
+            mResultSets = null;
         }
     }
 

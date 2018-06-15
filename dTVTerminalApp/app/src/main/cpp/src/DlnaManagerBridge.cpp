@@ -508,9 +508,12 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_getRemoteDeviceExpireDa
     LOG_WITH("udnString = %s", udnString);
     auto expireDate = dlnaRemoteConnect->getRemoteDeviceExpireDate(DU_UCHAR(udnString));
     LOG_WITH("expireDate = %s", expireDate);
-    char buf[64];
-    strncpy(buf, expireDate, sizeof(buf));
-    jstring jstrBuf = env->NewStringUTF(buf);
+    jstring jstrBuf = nullptr;
+    if (expireDate != nullptr) {
+        char buf[64];
+        strncpy(buf, expireDate, sizeof(buf));
+        jstrBuf = env->NewStringUTF(buf);
+    }
     return jstrBuf;
 }
 
