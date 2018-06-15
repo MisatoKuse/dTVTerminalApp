@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
@@ -37,10 +38,7 @@ import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherApi;
 import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherUtil;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,7 +80,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     /**
      * 選択されたSTBデバイス番号.
      */
-    private int mSelectDevice;
+    private int mSelectDevice = SELECT_DEVICE_ITEM_DEFAULT;
     /**
      * 次回表示しないフラグ.
      */
@@ -190,6 +188,18 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      * デバイスを選択してDアカウントを登録フラグ.
      */
     private boolean mDaccountFlag = false;
+    /**
+     * OTT処理完了フラグ.
+     */
+    private boolean mOttGetComplete = false;
+    /**
+     * デバイスがクリック.
+     */
+    private boolean mIsItemClicked = false;
+    /**
+     * デバイス選択デフォルト値.
+     */
+    private static final int SELECT_DEVICE_ITEM_DEFAULT = -1;
 
     /** 暗号化処理の鍵交換を同期処理で実行する. */
     private CountDownLatch mLatch = null;
@@ -443,6 +453,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         }
         DlnaManager.shared().mDlnaManagerListener = this;
         DlnaManager.shared().StartDmp();
+        updateDeviceList();
         DTVTLogger.end();
     }
 
@@ -699,15 +710,30 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         }
         //ペアリング中画面を出す
         showParingView();
-        //鍵交換
-        exchangeKey();
+        if (mOttGetComplete) {
+            //鍵交換
+            exchangeKey();
+        } else {
+            mIsItemClicked = true;
+        }
+    }
+    @Override
+    protected void onDaccountOttGetComplete(final boolean result) {
+        DTVTLogger.start();
+        //OTT取得終わったのでtrueにする
+        mOttGetComplete = true;
+        if (mIsItemClicked) {
+            mIsItemClicked = false;
+            exchangeKey();
+        }
+        DTVTLogger.end();
     }
 
     /**
      * 鍵交換処理を行い画面遷移する.
      */
     private void exchangeKey() {
-        Handler handler = new Handler();
+        Handler handler = new Handler(Looper.getMainLooper());
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -783,7 +809,9 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         item.mControlUrl = controlUrl;
         item.mHttp = host;
         mDlnaDmsInfo.add(item);
-        updateDeviceList();
+        if (mSelectDevice == SELECT_DEVICE_ITEM_DEFAULT) {
+            updateDeviceList();
+        }
     }
 
     @Override
@@ -1120,6 +1148,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_ERROR:
                 int resultCode = ((RelayServiceResponseMessage) msg.obj).getResultCode();
+                mSelectDevice = SELECT_DEVICE_ITEM_DEFAULT;
                 DTVTLogger.debug("resultCode: " + resultCode);
                 switch (requestCommand) {
                     case KEYEVENT_KEYCODE_POWER:

@@ -338,7 +338,7 @@
     <string name="channel_list_activity_title">チャンネルリスト</string>
 
     <!-- ペアリング設定画面 -->
-    <string name="paring_setting_search_failed_text">ペアリング可能なデバイスが見つかりませんでした</string>
+    <string name="paring_setting_search_failed_text">ペアリング可能なドコモテレビターミナルが\n見つかりませんでした</string>
     <string name="paring_setting_search_help_text">ドコモテレビターミナルとペアリングするには</string>
     <string name="paring_setting_select_text">ペアリングするドコモテレビターミナルを選択</string>
 
