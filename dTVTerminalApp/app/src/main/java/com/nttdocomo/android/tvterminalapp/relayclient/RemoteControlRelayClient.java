@@ -1245,7 +1245,7 @@ public class RemoteControlRelayClient {
             });
             DTVTLogger.debug("sending public key");
             api.requestSendPublicKey();
-            // 鍵交換処理が終わるまでキーコード送信を待機をさせる.
+            // 鍵交換処理が終わるまで待機する.
             mLatch = new CountDownLatch(LATCH_COUNT_MAX);
             try {
                 DTVTLogger.debug("sync to completion of public key transmission");
