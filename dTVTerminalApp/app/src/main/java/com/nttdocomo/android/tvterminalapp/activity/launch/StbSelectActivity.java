@@ -46,7 +46,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Delayed;
 
 /**
  * ペアリング、再ペアリングするためのクラス.
@@ -193,9 +192,9 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private static final String DEVICE_NAME_KEY = "DEVICE_NAME_KEY";
     /**
-     * DMP STARTの実行を遅らせる時間.
+     * BGからFGへの遷移時に、リストビューにアダプターをセットを遅らせる時間.
      */
-    private static final int DMP_START_DELAY_TIME = 1000;
+    private static final int LISTVIEW_SET_ADAPTER_DELAY_TIME = 1000;
     /**
      * デバイスを選択してDアカウントを登録フラグ.
      */
@@ -474,31 +473,38 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             mCheckBox.setVisibility(View.VISIBLE);
             mCheckboxText.setVisibility(View.VISIBLE);
         }
-        updateDeviceList();
-        DTVTLogger.end();
-    }
 
-    @Override
-    public void onWindowFocusChanged(final boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        final DlnaManager.DlnaManagerListener listener = this;
-        //onResumeではSTB検索開始が早すぎる場合があるので、アプリがフォーカスを得るまで待つ
-        if (hasFocus) {
-            //さらに遅延させる
+        //STB検索開始
+        DlnaManager.shared().mDlnaManagerListener = this;
+        DlnaManager.shared().StartDmp();
+
+        //STB検索タイムアウト用タイマーの開始
+        startCallbackTimer();
+
+        //デバイスリストの更新
+        updateDeviceList();
+
+        //この時点で設定されているアダプターがヌルだった場合は、BG→FG遷移時の再表示なので、再設定処理を行う
+        if (mDeviceListView.getAdapter() == null) {
+            //リストビューの内容が元のままなので、クリアする
+            mContentsList.clear();
+            mDeviceListView.invalidate();
+
+            //アダプターの再設定をonResumeで行うと、稀にリストビューで不具合が発生するので遅らせる必要がある。
             delayDmpStartHandler = new Handler();
             delayDmpStartHandler.postDelayed(delayDmpStartRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    //STB検索開始
-                    DlnaManager.shared().mDlnaManagerListener = listener;
-                    DlnaManager.shared().StartDmp();
-
-                    //後始末を行う
+                    //デバイスリストにアダプターをセットする
+                    mDeviceListView.setAdapter(mDeviceAdapter);
+                    //遅延処理の後始末を行う
                     delayDmpStartHandler = null;
                     delayDmpStartRunnable = null;
                 }
-            }, DMP_START_DELAY_TIME);
+            }, LISTVIEW_SET_ADAPTER_DELAY_TIME);
         }
+
+        DTVTLogger.end();
     }
 
     @Override
@@ -516,7 +522,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     private void leaveActivity() {
         DTVTLogger.start();
 
-        //Dmp Startの遅延実行処理が未実行の場合は無効化する
+        //アダプターセットの遅延実行処理が未実行の場合は無効化する
         if (delayDmpStartHandler != null) {
             delayDmpStartHandler.removeCallbacks(delayDmpStartRunnable);
             delayDmpStartHandler = null;
@@ -537,6 +543,9 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         DlnaManager.shared().mDlnaManagerListener = null;
         mDlnaDmsInfo.clear();
         DlnaManager.shared().StopDmp();
+
+        //BG→FG遷移時のリストビューへのアクセスを防止する為に、アダプターを一旦解除する
+        mDeviceListView.setAdapter(null);
     }
 
     /**
@@ -682,6 +691,8 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         mDeviceListView.setVisibility(View.GONE);
         mLoadMoreView.setVisibility(View.VISIBLE);
         super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading));
+        //ペアリング設定用タイムアウト用タイマーの開始
+        startCallbackTimer();
         DTVTLogger.end();
     }
 
@@ -934,7 +945,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                         mDeviceAdapter.notifyDataSetChanged();
                     }
                     displayMoreData(true);
-                    startCallbackTimer();
                     DTVTLogger.debug("ContentsList.size <= 0 ");
                 } else if (mCallbackTimer.getTimerStatus() != TimerStatus.TIMER_STATUS_EXECUTION) { // 30秒以内にSTBの通知あり
                     displayMoreData(false);
