@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Delayed;
 
 /**
  * ペアリング、再ペアリングするためのクラス.
@@ -142,6 +143,14 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      * ステータス表示の高さの初期値.
      */
     private int mFirstStatusHeight = 0;
+    /**
+     * dmpStart遅延実行用ハンドラー
+     */
+    private Handler delayDmpStartHandler = null;
+    /**
+     * dmpStart遅延実行用ランナブル
+     */
+    private Runnable delayDmpStartRunnable = null;
 
     /**
      * ステータス表示の高さの補正値.
@@ -183,7 +192,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      * デバイスFriendNameキー名.
      */
     private static final String DEVICE_NAME_KEY = "DEVICE_NAME_KEY";
-
+    /**
+     * DMP STARTの実行を遅らせる時間
+     */
+    private static final int DMP_START_DELAY_TIME = 1000;
     /**
      * デバイスを選択してDアカウントを登録フラグ.
      */
@@ -401,6 +413,15 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         super.onResume();
         DTVTLogger.start();
 
+        if (mDeviceListView.getAdapter() == null) {
+            //この時点で設定されているアダプターがヌルだった場合は、再表示なので、再設定を行う
+            mContentsList.clear();
+            mDeviceListView.setAdapter(mDeviceAdapter);
+            mDeviceListView.invalidate();
+            //再開時はウェイト表示を復活させる
+            displayMoreData(true);
+        }
+
         //別途BaseActivityの物は禁止してあるので、こちらで呼び出す
         setDaccountControl();
 
@@ -451,10 +472,31 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             mCheckBox.setVisibility(View.VISIBLE);
             mCheckboxText.setVisibility(View.VISIBLE);
         }
-        DlnaManager.shared().mDlnaManagerListener = this;
-        DlnaManager.shared().StartDmp();
-        updateDeviceList();
+
         DTVTLogger.end();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        final DlnaManager.DlnaManagerListener listener = this;
+        //onResumeではSTB検索開始が早すぎる場合があるので、アプリがフォーカスを得るまで待つ
+        if(hasFocus) {
+            //さらに遅延させる
+            delayDmpStartHandler = new Handler();
+            delayDmpStartHandler.postDelayed(delayDmpStartRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    //STB検索開始
+                    DlnaManager.shared().mDlnaManagerListener = listener;
+                    DlnaManager.shared().StartDmp();
+
+                    //後始末を行う
+                    delayDmpStartHandler = null;
+                    delayDmpStartRunnable = null;
+                }
+            },DMP_START_DELAY_TIME);
+        }
     }
 
     @Override
@@ -471,20 +513,31 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void leaveActivity() {
         DTVTLogger.start();
+
+        //Dmp Startの遅延実行処理が未実行の場合は無効化する
+        if(delayDmpStartHandler != null) {
+            delayDmpStartHandler.removeCallbacks(delayDmpStartRunnable);
+            delayDmpStartHandler = null;
+            delayDmpStartRunnable = null;
+        }
+
         Handler handler = new Handler();
         handler.post(new Runnable() {
             @Override
             public void run() {
-                if (mCallbackTimer != null) {
+                if (mCallbackTimer != null
+                    && mCallbackTimer.getTimerStatus() != TimerStatus.TIMER_STATUS_CANCEL) {
+                    //タイマー停止処理・飛び先でcancel等を行っているので、ここにcancel()等の処理は無用
                     stopCallbackTimer();
-                    mCallbackTimer.cancel();
-                    mCallbackTimer = null;
                 }
             }
         });
         DlnaManager.shared().mDlnaManagerListener = null;
         mDlnaDmsInfo.clear();
         DlnaManager.shared().StopDmp();
+
+        //不用意な画面更新が発生しないようにアダプターを一旦解除する
+        mDeviceListView.setAdapter(null);
     }
 
     /**
@@ -864,16 +917,24 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
 
         }
         DTVTLogger.debug("ContentsList.size = " + mContentsList.size());
+        DTVTLogger.debug("mDlnaDmsItemList.size = " + mDlnaDmsItemList.size());
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-
-                if (mCallbackTimer == null) {
+                DTVTLogger.debug("runOnUiThread start");
+                if (mCallbackTimer == null
+                        || mCallbackTimer.getTimerStatus() == TimerStatus.TIMER_STATUS_CANCEL) {
+                    if(mCallbackTimer != null) {
+                        DTVTLogger.debug("timer canceled remake");
+                    }
+                    //タイマーが存在しないか既にキャンセル済みだった場合は、新たに作成する
                     mCallbackTimer = new StbInfoCallBackTimer(new Handler());
                 }
                 // 0件の場合タイムアウトを設定する
                 if (mContentsList.size() <= 0) {
-                    mDeviceAdapter.notifyDataSetChanged();
+                    if (null != mDeviceAdapter) {
+                        mDeviceAdapter.notifyDataSetChanged();
+                    }
                     displayMoreData(true);
                     startCallbackTimer();
                     DTVTLogger.debug("ContentsList.size <= 0 ");
@@ -889,6 +950,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                     // nop.
                     DTVTLogger.debug("TimerTaskExecuted");
                 }
+                DTVTLogger.debug("runOnUiThread end");
             }
         });
         DTVTLogger.end();
@@ -921,7 +983,9 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     private void startCallbackTimer() {
         DTVTLogger.start();
         showSearchingView();
-        if (mCallbackTimer == null) {
+        if (mCallbackTimer == null
+                || mCallbackTimer.getTimerStatus() == TimerStatus.TIMER_STATUS_CANCEL) {
+            //タイマーが存在しないか既にキャンセル済みだった場合は、新たに作成する
             mCallbackTimer = new StbInfoCallBackTimer(new Handler());
         }
         mCallbackTimer.executeTimerTask();
@@ -933,8 +997,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void stopCallbackTimer() {
         DTVTLogger.start();
-        if (mCallbackTimer.getTimerStatus() == TimerStatus.TIMER_STATUS_DURING_STARTUP) {
+        if (mCallbackTimer != null
+              && mCallbackTimer.getTimerStatus() == TimerStatus.TIMER_STATUS_DURING_STARTUP) {
             mCallbackTimer.cancel();
+            mCallbackTimer = null;
         }
         DTVTLogger.end();
     }
