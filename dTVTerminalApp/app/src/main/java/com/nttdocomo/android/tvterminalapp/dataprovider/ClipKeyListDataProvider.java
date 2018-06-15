@@ -282,7 +282,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * @return コンテンツタイプ
      */
     @SuppressWarnings("OverlyComplexMethod")
-    static ClipKeyListDao.ContentTypeEnum searchContentsType(
+    public static ClipKeyListDao.ContentTypeEnum searchContentsType(
             final String dispType, final String dTv, final String tvService) {
         //ぷららサーバ対応
         if (dispType != null) {
@@ -531,25 +531,32 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         if (resultList == null || resultList.size() < 1) {
             return resultList;
         }
+        ClipKeyListDataManager keyListDataManager = new ClipKeyListDataManager(mContext);
+        List<Map<String, String>> mapList = keyListDataManager.selectClipAllList();
 
         for (int i = 0; i < channelInfoList.size(); i++) {
             ArrayList<ScheduleInfo> scheduleInfoList = channelInfoList.get(i).getSchedules();
             ArrayList<ScheduleInfo> scheduleInfoArrayList = new ArrayList<>();
-            for (int j = 0; j < scheduleInfoList.size(); j++) {
-                ScheduleInfo scheduleInfo = scheduleInfoList.get(j);
-                //使用データ抽出
-                String dispType = scheduleInfo.getDispType();
-                String contentsType = scheduleInfo.getContentType();
-                String dTv = scheduleInfo.getDtv();
-                String tvService = scheduleInfo.getTvService();
-                String serviceId = scheduleInfo.getServiceId();
-                String eventId = scheduleInfo.getEventId();
-                String crid = scheduleInfo.getCrId();
-                String titleId = scheduleInfo.getTitleId();
+            if (scheduleInfoList != null) {
+                scheduleInfoArrayList = new ArrayList<>();
+                for (int j = 0; j < scheduleInfoList.size(); j++) {
+                    ScheduleInfo scheduleInfo = scheduleInfoList.get(j);
+                    //使用データ抽出
+                    String dispType = scheduleInfo.getDispType();
+                    String contentsType = scheduleInfo.getContentType();
+                    String dTv = scheduleInfo.getDtv();
+                    String tvService = scheduleInfo.getTvService();
+                    String serviceId = scheduleInfo.getServiceId();
+                    String eventId = scheduleInfo.getEventId();
+                    String crid = scheduleInfo.getCrId();
+                    String titleId = scheduleInfo.getTitleId();
 
-                //判定はgetClipStatusに一任
-                scheduleInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv, crid, serviceId, eventId, titleId, tvService));
-                scheduleInfoArrayList.add(scheduleInfo);
+                    //判定はgetClipStatusに一任
+//                    scheduleInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv, crid, serviceId, eventId, titleId, tvService));
+                    scheduleInfo.setClipStatus(ClipUtils.setClipStatusFromMap(scheduleInfo, mapList));
+
+                    scheduleInfoArrayList.add(scheduleInfo);
+                }
             }
             resultList.get(i).setSchedules(scheduleInfoArrayList);
         }
@@ -711,7 +718,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * @param searchOk クリップ可否
      */
     void setClipRequestData(final Map<String, String> map, final ClipRequestData requestData,
-                                    final String title, final String searchOk) {
+                            final String title, final String searchOk) {
         requestData.setCrid(map.get(JsonConstants.META_RESPONSE_CRID));
         requestData.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
         requestData.setEventId(map.get(JsonConstants.META_RESPONSE_EVENT_ID));

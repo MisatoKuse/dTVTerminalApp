@@ -900,7 +900,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * @param newProgramList 番組表
      */
     public void setProgramList(final List<ChannelInfo> newProgramList) {
-        mProgramList = newProgramList;
         // TODO　:★部分的なデータが来ることになるので自身で記憶しているチャンネルリストへMappingするようにする
         // TODO　:★また、描画反映が必要なので、ViewHolderを調べて該当のチャンネルがあれば、描画反映する
         if (newProgramList != null) {
