@@ -26,7 +26,6 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
-import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.DtvChannelDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.HikariTvChannelDataProvider;
@@ -36,16 +35,11 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.dlna.DlnaContentBsChanne
 import com.nttdocomo.android.tvterminalapp.dataprovider.dlna.DlnaContentTerChennelDataProvider;
 import com.nttdocomo.android.tvterminalapp.fragment.channellist.ChannelListFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.channellist.ChannelListFragmentFactory;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaObject;
-import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
-import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
-import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
-import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
 import java.util.ArrayList;
@@ -158,28 +152,8 @@ public class ChannelListActivity extends BaseActivity implements
     private boolean mIsScrollUp = false;
     /** 現在タイプ. */
     private ChannelListDataType mCurrentType = ChannelListDataType.CH_LIST_DATA_TYPE_HIKARI;
-
-    /**
-     * メニュー表示フラグ.
-     */
+    /** メニュー表示フラグ.*/
     private Boolean mIsMenuLaunch = false;
-
-    /**
-     * タブ名　ひかりTV for docomo.
-     */
-    private static final String TAB_NAME_HIKARI = "ひかりTV for docomo";
-    /**
-     * タブ名　地上波.
-     */
-    private static final String TAB_NAME_TER = "地上波";
-    /**
-     * タブ名　BS.
-     */
-    private static final String TAB_NAME_BS = "BS";
-    /**
-     * タブ名　dTVチャンネル.
-     */
-    private static final String TAB_NAME_DTV = "dTVチャンネル";
 
     /** ひかりTV for docomoタブの連続更新防止用. */
     private long beforeGetHikariData;
@@ -409,6 +383,9 @@ public class ChannelListActivity extends BaseActivity implements
     public void onConnectErrorCallback(final int errorCode) {
         final String errorMsg = getString(R.string.common_text_remote_fail_msg);
         final String format = getString(R.string.common_text_remote_fail_error_code_format);
+        int pos = mViewPager.getCurrentItem();
+        final ChannelListFragment fragment = mFactory.createFragment(pos, this, mCurrentType, null);
+        updateUi(fragment);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -428,9 +405,10 @@ public class ChannelListActivity extends BaseActivity implements
     }
 
     /**
-     * 表示中タブの内容によってスクリーン情報を送信する
+     * 表示中タブの内容によってスクリーン情報を送信する.
+     * @param position ポジション
      */
-    private void sendScreenViewForPosition(int position) {
+    private void sendScreenViewForPosition(final int position) {
         switch (position) {
             case TAB_INDEX_HIKARI:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_channel_list_h4d));
