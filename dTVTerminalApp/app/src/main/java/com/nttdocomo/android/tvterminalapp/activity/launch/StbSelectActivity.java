@@ -443,7 +443,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         }
         DlnaManager.shared().mDlnaManagerListener = this;
         DlnaManager.shared().StartDmp();
-        updateDeviceList();
         DTVTLogger.end();
     }
 
