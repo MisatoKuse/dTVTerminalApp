@@ -193,7 +193,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private static final String DEVICE_NAME_KEY = "DEVICE_NAME_KEY";
     /**
-     * DMP STARTの実行を遅らせる時間
+     * DMP STARTの実行を遅らせる時間.
      */
     private static final int DMP_START_DELAY_TIME = 1000;
     /**
@@ -356,6 +356,12 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             enableGlobalMenuIcon(false);
             return;
         } else if (mStartMode == (StbSelectFromMode.StbSelectFromMode_Setting.ordinal())) {
+            RelativeLayout pairingRelativeLayout = findViewById(R.id.stb_icon_relative_layout_setting);
+            TextView statusSetting = findViewById(R.id.stb_select_status_text_setting);
+            if (pairingRelativeLayout.getVisibility() == View.VISIBLE && statusSetting.getVisibility() == View.VISIBLE) {
+                pairingRelativeLayout.setVisibility(View.GONE);
+                statusSetting.setVisibility(View.GONE);
+            }
             mParingTextView.setVisibility(View.VISIBLE);
             mLoadMoreView = findViewById(R.id.stb_device_setting_progressbar);
             //設定画面からの遷移
@@ -370,6 +376,11 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             if (stbSearchFailed.getVisibility() == View.VISIBLE && stbSearchHelp.getVisibility() == View.VISIBLE) {
                 stbSearchFailed.setVisibility(View.GONE);
                 stbSearchHelp.setVisibility(View.GONE);
+            }
+            if (mDeviceSelectText.getVisibility() == View.GONE && mTextDivider1.getVisibility() == View.GONE && mTextDivider2.getVisibility() == View.GONE) {
+                mDeviceSelectText.setVisibility(View.VISIBLE);
+                mTextDivider1.setVisibility(View.VISIBLE);
+                mTextDivider2.setVisibility(View.VISIBLE);
             }
             mDeviceListView.setVisibility(View.VISIBLE);
             //sharedPreferencesからSTB情報を取得する
@@ -412,15 +423,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     public void onResume() {
         super.onResume();
         DTVTLogger.start();
-
-        if (mDeviceListView.getAdapter() == null) {
-            //この時点で設定されているアダプターがヌルだった場合は、再表示なので、再設定を行う
-            mContentsList.clear();
-            mDeviceListView.setAdapter(mDeviceAdapter);
-            mDeviceListView.invalidate();
-            //再開時はウェイト表示を復活させる
-            displayMoreData(true);
-        }
 
         //別途BaseActivityの物は禁止してあるので、こちらで呼び出す
         setDaccountControl();
@@ -472,16 +474,16 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             mCheckBox.setVisibility(View.VISIBLE);
             mCheckboxText.setVisibility(View.VISIBLE);
         }
-
+        updateDeviceList();
         DTVTLogger.end();
     }
 
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
+    public void onWindowFocusChanged(final boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         final DlnaManager.DlnaManagerListener listener = this;
         //onResumeではSTB検索開始が早すぎる場合があるので、アプリがフォーカスを得るまで待つ
-        if(hasFocus) {
+        if (hasFocus) {
             //さらに遅延させる
             delayDmpStartHandler = new Handler();
             delayDmpStartHandler.postDelayed(delayDmpStartRunnable = new Runnable() {
@@ -495,7 +497,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                     delayDmpStartHandler = null;
                     delayDmpStartRunnable = null;
                 }
-            },DMP_START_DELAY_TIME);
+            }, DMP_START_DELAY_TIME);
         }
     }
 
@@ -515,7 +517,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
 
         //Dmp Startの遅延実行処理が未実行の場合は無効化する
-        if(delayDmpStartHandler != null) {
+        if (delayDmpStartHandler != null) {
             delayDmpStartHandler.removeCallbacks(delayDmpStartRunnable);
             delayDmpStartHandler = null;
             delayDmpStartRunnable = null;
@@ -535,9 +537,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         DlnaManager.shared().mDlnaManagerListener = null;
         mDlnaDmsInfo.clear();
         DlnaManager.shared().StopDmp();
-
-        //不用意な画面更新が発生しないようにアダプターを一旦解除する
-        mDeviceListView.setAdapter(null);
     }
 
     /**
@@ -649,7 +648,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             //次回表示しないTextView表示フラグをTRUEにする
             mIsShowCheckboxText = true;
         } else if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
-
             if (mParingDevice.getVisibility() == View.VISIBLE && mCheckMark.getVisibility() == View.VISIBLE) {
                 mCheckMark.setVisibility(View.GONE);
                 mParingDevice.setVisibility(View.GONE);
@@ -1161,6 +1159,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             } else {
                 //端末内にdアカウントアプリがある場合はアプリ起動
                 startActivity(intent);
+                mSelectDevice = SELECT_DEVICE_ITEM_DEFAULT;
                 mDaccountFlag = true;
             }
             //ログイン後にユーザ操作でこの画面に戻ってきた際には再度STB選択を行わせる
@@ -1251,7 +1250,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                                 Intent homeIntent = new Intent(this, HomeActivity.class);
                                 homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(homeIntent);
-
                                 break;
                             default:
                                 break;
