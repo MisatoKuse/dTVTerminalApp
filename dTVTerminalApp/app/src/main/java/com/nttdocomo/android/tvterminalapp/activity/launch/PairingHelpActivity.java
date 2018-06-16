@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -92,12 +93,16 @@ public class PairingHelpActivity extends BaseActivity {
     }
 
     @Override
+    protected void contentsDetailBackKey(final View view) {
+       super.finish();
+        overridePendingTransition(R.anim.in_righttoleft, R.anim.out_lefttoright);
+    }
+
+    @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (mFirstPairingHelpWebView.canGoBack()) {
-                mFirstPairingHelpWebView.goBack();
-                return false;
-            }
+            contentsDetailBackKey(null);
+            return false;
         }
         return super.onKeyDown(keyCode, event);
     }
