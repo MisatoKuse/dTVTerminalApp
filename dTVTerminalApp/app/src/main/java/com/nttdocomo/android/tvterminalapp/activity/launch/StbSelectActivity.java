@@ -481,9 +481,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         //STB検索メッセージの出力
         showSearchingView();
 
-        //STB検索タイムアウト用タイマーの開始
-        startCallbackTimer();
-
         //デバイスリストの更新
         updateDeviceList();
 
@@ -694,8 +691,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         mDeviceListView.setVisibility(View.GONE);
         mLoadMoreView.setVisibility(View.VISIBLE);
         super.sendScreenView(getString(R.string.google_analytics_screen_name_stb_select_loading));
-        //ペアリング設定用タイムアウト用タイマーの開始
-        startCallbackTimer();
         DTVTLogger.end();
     }
 
@@ -948,6 +943,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                         mDeviceAdapter.notifyDataSetChanged();
                     }
                     displayMoreData(true);
+                    startCallbackTimer();
                     DTVTLogger.debug("ContentsList.size <= 0 ");
                 } else if (mCallbackTimer.getTimerStatus() != TimerStatus.TIMER_STATUS_EXECUTION) { // 30秒以内にSTBの通知あり
                     displayMoreData(false);
@@ -993,6 +989,9 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void startCallbackTimer() {
         DTVTLogger.start();
+        //STB検索メッセージの出力
+        showSearchingView();
+
         if (mCallbackTimer == null
                 || mCallbackTimer.getTimerStatus() == TimerStatus.TIMER_STATUS_CANCEL) {
             //タイマーが存在しないか既にキャンセル済みだった場合は、新たに作成する
@@ -1370,6 +1369,8 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         mDlnaDmsItemList.clear();
         mDlnaDmsInfo.clear();
         DlnaManager.shared().StopDmp();
+        //タイムアウト用のタイマーは停止させる
+        stopCallbackTimer();
     }
 
     /**
