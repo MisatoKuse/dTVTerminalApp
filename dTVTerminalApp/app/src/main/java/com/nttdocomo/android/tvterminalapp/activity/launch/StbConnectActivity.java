@@ -159,7 +159,8 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
                     if (result) {
                         DlnaManager.shared().mLocalRegisterListener = StbConnectActivity.this;
                         DlnaManager.shared().StartDtcp();
-                        DlnaManager.shared().StartDirag();
+                        //初回使用からRestartで良いとの事なので、StartDiragへの変更は無用
+                        DlnaManager.shared().RestartDirag();
                         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(StbConnectActivity.this);
                         DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn
                                 , getApplicationContext());
