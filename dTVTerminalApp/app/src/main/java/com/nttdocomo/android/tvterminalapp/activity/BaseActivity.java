@@ -60,6 +60,7 @@ import com.nttdocomo.android.tvterminalapp.activity.launch.PairingHelpActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.StbConnectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectErrorActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.TutorialActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.RankingTopActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActivity;
@@ -787,6 +788,7 @@ public class BaseActivity extends FragmentActivity implements
         TvtApplication app = (TvtApplication) getApplication();
         if (app.getIsChangeApplicationInvisible()) {
             // FG → BG になったためDlnaをstopする
+            DlnaManager.shared().StopDmp();
             DTVTLogger.debug("do dlnaOnStop");
             //TODO 6/12作業保留のためコメントアウト
             // FG → BG になったため TvProgramIntentService を stop する
@@ -804,11 +806,15 @@ public class BaseActivity extends FragmentActivity implements
         DTVTLogger.start();
         if (this instanceof StbSelectActivity
                 || this instanceof LaunchActivity
-            //|| this instanceof RecordedListActivity
+                || this instanceof StbConnectActivity
+                || this instanceof TutorialActivity
+                || this instanceof StbSelectErrorActivity
+                || this instanceof DaccountResettingActivity
                 ) {
             DTVTLogger.end();
             return;
         }
+        DlnaManager.shared().StartDmp();
         DTVTLogger.end();
     }
 
@@ -2263,6 +2269,7 @@ public class BaseActivity extends FragmentActivity implements
      */
     protected void onStartCommunication() {
         DTVTLogger.start();
+        registerDevListDlna();
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
         if (null == dlnaDmsItem) {
             return;
