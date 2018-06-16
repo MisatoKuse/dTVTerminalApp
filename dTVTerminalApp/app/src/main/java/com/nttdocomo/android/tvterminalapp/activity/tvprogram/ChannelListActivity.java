@@ -793,4 +793,9 @@ public class ChannelListActivity extends BaseActivity implements
         mLastY = 0;
         mIsScrollUp = false;
     }
+
+    @Override
+    public void clipKeyResult() {
+        //Nop 仕様により実装のみ
+    }
 }

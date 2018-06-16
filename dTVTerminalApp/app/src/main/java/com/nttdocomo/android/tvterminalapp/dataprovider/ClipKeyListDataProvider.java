@@ -9,15 +9,14 @@ import android.os.Handler;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.activity.common.ChildContentListActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.ClipListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RentalListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.WatchingVideoListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActivity;
-import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.video.VideoContentListActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
@@ -167,6 +166,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      */
     public void getClipKeyList() {
         DTVTLogger.start();
+        DTVTLogger.debug("research tv program display speed getClipKeyList");
         if (!mIsCancel) {
             // TVクリップキー一覧を取得
             getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.TV));
@@ -186,6 +186,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      */
     void getClipKeyList(final ClipKeyListRequest request) {
         DTVTLogger.start();
+        DTVTLogger.debug("research tv program display speed getClipKeyList");
         if (!mIsCancel) {
             mResponseEndFlag = false;
             request.setIsForce(!isCachingClipKeyListRecord(request.getType()));
@@ -238,7 +239,6 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
                 || context instanceof RentalListActivity
                 || context instanceof WatchingVideoListActivity
                 || context instanceof ContentDetailActivity
-                || context instanceof TvProgramListActivity
                 || context instanceof VideoContentListActivity
                 || context instanceof ChildContentListActivity) {
             DTVTLogger.debug("Need Getting ClipKeyList");
@@ -541,20 +541,9 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
                 scheduleInfoArrayList = new ArrayList<>();
                 for (int j = 0; j < scheduleInfoList.size(); j++) {
                     ScheduleInfo scheduleInfo = scheduleInfoList.get(j);
-                    //使用データ抽出
-                    String dispType = scheduleInfo.getDispType();
-                    String contentsType = scheduleInfo.getContentType();
-                    String dTv = scheduleInfo.getDtv();
-                    String tvService = scheduleInfo.getTvService();
-                    String serviceId = scheduleInfo.getServiceId();
-                    String eventId = scheduleInfo.getEventId();
-                    String crid = scheduleInfo.getCrId();
-                    String titleId = scheduleInfo.getTitleId();
 
                     //判定はgetClipStatusに一任
-//                    scheduleInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv, crid, serviceId, eventId, titleId, tvService));
                     scheduleInfo.setClipStatus(ClipUtils.setClipStatusFromMap(scheduleInfo, mapList));
-
                     scheduleInfoArrayList.add(scheduleInfo);
                 }
             }

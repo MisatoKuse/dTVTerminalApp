@@ -1000,7 +1000,6 @@ public class DataBaseConstants {
             JsonConstants.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
             JsonConstants.META_RESPONSE_SERVICE_ID, TEXT_WITH_COMMA_TEXT,
             JsonConstants.META_RESPONSE_EVENT_ID, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_TYPE, TEXT_WITH_COMMA_TEXT,
             JsonConstants.META_RESPONSE_TITLE_ID, TEXT_WITHOUT_COMMA_TEXT,
             CLOSE_BRACKETS_TEXT
     };
@@ -1026,7 +1025,6 @@ public class DataBaseConstants {
             JsonConstants.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
             JsonConstants.META_RESPONSE_SERVICE_ID, TEXT_WITH_COMMA_TEXT,
             JsonConstants.META_RESPONSE_EVENT_ID, TEXT_WITH_COMMA_TEXT,
-            JsonConstants.META_RESPONSE_TYPE, TEXT_WITH_COMMA_TEXT,
             JsonConstants.META_RESPONSE_TITLE_ID, TEXT_WITHOUT_COMMA_TEXT,
             CLOSE_BRACKETS_TEXT
     };

@@ -154,16 +154,6 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     private ErrorState mTvScheduleError = null;
 
     /**
-     * クリップキーリスト(TV).
-     */
-    private ClipKeyListResponse mTvClipKeyList = null;
-
-    /**
-     * クリップキーリスト(VOD).
-     */
-    private ClipKeyListResponse mVodClipKeyList = null;
-
-    /**
      * コンストラクタ.
      *
      * @param mContext TvProgramListActivity
@@ -314,6 +304,8 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             case SCHEDULE_UPDATE://サーバーから取得した番組データをDBに保存する
                 TvScheduleInsertDataManager scheduleInsertDataManager = new TvScheduleInsertDataManager(mContext);
                 scheduleInsertDataManager.insertTvScheduleInsertList(mChannelsInfoList, mProgramSelectDate);
+                //番組表の保存と番組表描画を並行して実行するとフリーズするため、DBへのInsertが終了してから描画を開始する
+                mApiDataProviderCallback.channelInfoCallback(mChannelsInfoList);
                 break;
             case CHANNEL_SELECT://DBからチャンネルデータを取得して、画面に返却する
                 ProgramDataManager channelDataManager = new ProgramDataManager(mContext);
@@ -401,7 +393,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 getClipKeyList();
             } else {
                 if (null != mApiDataProviderCallback) {
-                    mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
+                    setProgramListContentData();
                 }
             }
         } else {
@@ -419,8 +411,8 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     @Override
     public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         super.onTvClipKeyListJsonParsed(clipKeyListResponse);
-        mTvClipKeyList = clipKeyListResponse;
         if (mVodClipKeyListResponse) {
+            mApiDataProviderCallback.clipKeyResult();
             if (null != mApiDataProviderCallback) {
                 mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
                 DTVTLogger.debug("null != mApiDataProviderCallback");
@@ -433,8 +425,8 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     @Override
     public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
-        mVodClipKeyList = clipKeyListResponse;
         if (mTvClipKeyListResponse) {
+            mApiDataProviderCallback.clipKeyResult();
             if (null != mApiDataProviderCallback) {
                 mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
                 DTVTLogger.debug("null != mApiDataProviderCallback");
@@ -551,7 +543,6 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         List<Map<String, String>> mChannelProgramList = mTvScheduleList.geTvsList();
         if (mChannelProgramList != null) {
             channelsInfo = new ChannelInfoList();
-            UserState userState = UserInfoUtils.getUserState(mContext);
             ClipKeyListDataManager keyListDataManager = new ClipKeyListDataManager(mContext);
             List<Map<String, String>> clipKeyList = keyListDataManager.selectClipAllList();
             for (int i = 0; i < mChannelProgramList.size(); i++) {
@@ -686,6 +677,11 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
          * @param channels 　画面に渡すチャンネル情報
          */
         void channelListCallback(ArrayList<ChannelInfo> channels);
+
+        /**
+         * クリップキー取得終了callback.
+         */
+        void clipKeyResult();
     }
 
     /**
@@ -779,12 +775,12 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         } else {
             DTVTLogger.error("ScaledDownProgramListDataProvider is stopping connect");
         }
-        mTvScheduleWebClient = new TvScheduleWebClient(mContext);
-        int[] chNos = new int[fromWebAPI.size()];
-        for (int i = 0; i < fromWebAPI.size(); i++) {
-            chNos[i] = fromWebAPI.get(i);
-        }
-        mTvScheduleWebClient.getTvScheduleApi(chList, dateList, filter, this);
+//        mTvScheduleWebClient = new TvScheduleWebClient(mContext);
+//        int[] chNos = new int[fromWebAPI.size()];
+//        for (int i = 0; i < fromWebAPI.size(); i++) {
+//            chNos[i] = fromWebAPI.get(i);
+//        }
+//        mTvScheduleWebClient.getTvScheduleApi(chList, dateList, filter, this);
     }
 
     /**

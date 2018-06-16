@@ -59,7 +59,6 @@ public class ClipKeyListDataManager {
         String[] columns = {JsonConstants.META_RESPONSE_CRID,
                 JsonConstants.META_RESPONSE_SERVICE_ID,
                 JsonConstants.META_RESPONSE_EVENT_ID,
-                JsonConstants.META_RESPONSE_TYPE,
                 JsonConstants.META_RESPONSE_TITLE_ID};
 
         //Daoクラス使用準備

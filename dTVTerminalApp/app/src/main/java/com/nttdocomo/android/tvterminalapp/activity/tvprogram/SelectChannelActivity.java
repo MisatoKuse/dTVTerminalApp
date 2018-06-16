@@ -202,4 +202,9 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
         super.onResume();
         super.sendScreenView(getString(R.string.google_analytics_screen_name_channel_edit_menu_channel_select));
     }
+
+    @Override
+    public void clipKeyResult() {
+        //Nop 仕様により実装のみ
+    }
 }

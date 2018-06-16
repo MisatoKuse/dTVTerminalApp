@@ -13,7 +13,6 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
-import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -114,7 +113,6 @@ public class ClipKeyListInsertDataManager {
             values.put(JsonConstants.META_RESPONSE_CRID, crId);
             values.put(JsonConstants.META_RESPONSE_SERVICE_ID, serviceId);
             values.put(JsonConstants.META_RESPONSE_EVENT_ID, eventId);
-            values.put(JsonConstants.META_RESPONSE_TYPE, ClipKeyListDataProvider.CLIP_KEY_LIST_TYPE_OTHER_CHANNEL);
             values.put(JsonConstants.META_RESPONSE_TITLE_ID, titleId);
             clipKeyListDao.insert(tableType, values);
         } catch (SQLiteException e) {
@@ -151,7 +149,7 @@ public class ClipKeyListInsertDataManager {
                     JsonConstants.META_RESPONSE_EVENT_ID, "=? OR ",
                     JsonConstants.META_RESPONSE_TITLE_ID, "=?");
 
-            String[] columns = {crId, serviceId, eventId, ClipKeyListDataProvider.CLIP_KEY_LIST_TYPE_OTHER_CHANNEL, titleId};
+            String[] columns = {crId, serviceId, eventId, titleId};
             clipKeyListDao.deleteRowData(tableType, query, columns);
         } catch (SQLiteException e) {
             DTVTLogger.debug("ClipKeyListInsertDataManager::deleteRowSqlStart, e.cause=" + e.getCause());
