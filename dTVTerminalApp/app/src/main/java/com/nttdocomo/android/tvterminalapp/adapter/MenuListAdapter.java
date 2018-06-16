@@ -138,7 +138,7 @@ public class MenuListAdapter extends BaseAdapter {
                 textView.setTextColor(ContextCompat.getColor(mContext, R.color.list_item_background));
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_premium_tv_app_start_common))) {
                 //テレビアプリを起動するの設定
-                textView.setTextColor(ContextCompat.getColor(mContext, R.color.stb_start_title));
+                textView.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
                 textView.setTypeface(Typeface.DEFAULT);
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
