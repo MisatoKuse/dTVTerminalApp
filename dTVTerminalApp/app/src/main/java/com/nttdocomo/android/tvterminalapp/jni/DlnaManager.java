@@ -237,11 +237,7 @@ public class DlnaManager {
         String privateDataPath = DlnaUtils.getPrivateDataHomePath(context);
         cipherFileContextGlobalCreate(privateDataPath);
         initDmp(privateDataPath);
-        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(context);
         StbConnectionManager.shared().initializeState();
-        if (!TextUtils.isEmpty(dlnaDmsItem.mUdn)) {
-            DlnaManager.shared().StartDmp();
-        }
         String diragConfigFilePath = DlnaUtils.getDiragConfileFilePath(context);
         initDirag(diragConfigFilePath);
 
@@ -286,9 +282,11 @@ public class DlnaManager {
      * StartDmp.
      */
     public void StartDmp() {
+        stopDmp();
+        startDmp();
         if (!startedDmp) {
             startedDmp = true;
-            startDmp();
+//            startDmp();
         }
     }
 
@@ -296,9 +294,10 @@ public class DlnaManager {
      * StopDmp.
      */
     public void StopDmp() {
+        stopDmp();
         if (startedDmp) {
             startedDmp = false;
-            stopDmp();
+//            stopDmp();
         }
     }
 
