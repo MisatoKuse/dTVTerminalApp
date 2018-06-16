@@ -472,6 +472,8 @@ public class BaseActivity extends FragmentActivity implements
             public void run() {
                 if (isOn) {
                     mStbStatusIcon.setImageResource(R.mipmap.header_material_icon_tv);
+                    //ペアリングアイコンがOFF→ON(点灯)になった際にdアカチェックを行う
+                    checkDAccountOnRestart();
                 } else {
                     mStbStatusIcon.setImageResource(R.mipmap.header_material_icon_tv_active);
                 }
