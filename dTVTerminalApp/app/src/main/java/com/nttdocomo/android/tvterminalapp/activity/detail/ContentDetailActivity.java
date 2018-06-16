@@ -2950,4 +2950,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         showErrorDialog(ErrorType.contentDetailGet);
     }
 
+    @Override
+    public void clipKeyResult() {
+        //Nop 仕様により実装のみ
+    }
 }

@@ -3034,4 +3034,9 @@ public class BaseActivity extends FragmentActivity implements
     public void channelListCallback(final ArrayList<ChannelInfo> channels) {
         //Nop 仕様上実装が必要なため空メソッドとして定義
     }
+
+    @Override
+    public void clipKeyResult() {
+        //Nop 仕様により実装のみ
+    }
 }

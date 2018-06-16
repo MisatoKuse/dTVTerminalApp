@@ -243,6 +243,7 @@ public class TvScheduleInsertDataManager {
                 }
             }
         }
+        DTVTLogger.end();
     }
 
     /**

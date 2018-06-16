@@ -259,7 +259,7 @@ public class TvProgramListActivity extends BaseActivity implements
         //タイトル設定
         setTitle();
         //チャンネルデータ取得
-        getChannelData();
+        getClipKeyList();
     }
 
     @Override
@@ -655,10 +655,27 @@ public class TvProgramListActivity extends BaseActivity implements
     }
 
     /**
+     * クリップキーリスト取得.
+     */
+    private void getClipKeyList() {
+        DTVTLogger.start();
+        mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
+        mScaledDownProgramListDataProvider.getClipKeyList();
+        DTVTLogger.end();
+    }
+
+    @Override
+    public void clipKeyResult() {
+        super.clipKeyResult();
+        getChannelData();
+    }
+
+    /**
      * 機能
      * チャンネルデータ取得.
      */
     private void getChannelData() {
+        DTVTLogger.start();
         if (mTabIndex != mMyChannelTabNo) { //ひかり、dTVチャンネル
             mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
             mScaledDownProgramListDataProvider.getChannelList(0, 0, "", mTabIndex);
@@ -666,6 +683,7 @@ public class TvProgramListActivity extends BaseActivity implements
             mMyChannelDataProvider = new MyChannelDataProvider(this);
             mMyChannelDataProvider.getMyChannelList(R.layout.tv_program_list_main_layout);
         }
+        DTVTLogger.end();
     }
 
     @Override
@@ -811,12 +829,17 @@ public class TvProgramListActivity extends BaseActivity implements
         //TODO :★Adaptorはチャンネルリストに対して、取得した番組情報をMappingして溜めていく。
         //TODO :★ちなみに現状、上部のチャンネルの表示はチャンネルリストを元に表示しているが、
         //TODO :★ここで受け取るデータは番組のないチャンネルはデータ上含まれないのでチャンネルと番組欄にズレが起きる。
-        if (channelsInfo != null && channelsInfo.getChannels() != null) {
-            List<ChannelInfo> channels = channelsInfo.getChannels();
-            channelSort(channels);
-            mChannelInfo = channels;
-            setProgramRecyclerView(channels);
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (channelsInfo != null && channelsInfo.getChannels() != null) {
+                    List<ChannelInfo> channels = channelsInfo.getChannels();
+                    channelSort(channels);
+                    mChannelInfo = channels;
+                    setProgramRecyclerView(channels);
+                }
+            }
+        });
     }
 
     @Override

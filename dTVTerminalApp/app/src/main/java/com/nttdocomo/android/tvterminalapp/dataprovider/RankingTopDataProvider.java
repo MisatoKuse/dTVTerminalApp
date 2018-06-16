@@ -1042,4 +1042,9 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         }
         return null;
     }
+
+    @Override
+    public void clipKeyResult() {
+        //Nop 仕様により実装のみ
+    }
 }

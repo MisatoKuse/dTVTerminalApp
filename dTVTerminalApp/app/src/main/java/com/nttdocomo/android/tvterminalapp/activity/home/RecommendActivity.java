@@ -807,4 +807,9 @@ public class RecommendActivity extends BaseActivity implements
 
         DTVTLogger.end();
     }
+
+    @Override
+    public void clipKeyResult() {
+        //Nop 仕様により実装のみ
+    }
 }

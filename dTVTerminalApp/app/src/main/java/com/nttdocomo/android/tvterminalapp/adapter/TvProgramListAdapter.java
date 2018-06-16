@@ -369,12 +369,14 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
+        DTVTLogger.start();
         ChannelInfo itemChannel = mProgramList.get(position);
         holder.chNo = itemChannel.getChannelNo();
         DTVTLogger.debug("mProgramList size ===============>" + mProgramList.size());
         DTVTLogger.debug("onBindViewHolder position===============>" + position + " ChNo:" + holder.chNo);
         DTVTLogger.debug("channel Name ===============>" + itemChannel.getTitle());
         setSchedule(itemChannel.getSchedules(), holder);
+        DTVTLogger.end();
     }
 
     @Override
@@ -392,6 +394,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * @param holder holder
      */
     private void setSchedule(final ArrayList<ScheduleInfo> itemSchedule, final MyViewHolder holder) {
+        DTVTLogger.start();
         if (itemSchedule != null) {
             setItemView(itemSchedule, holder);
 
@@ -425,6 +428,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
 //                }
 //            }
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -435,7 +439,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * @param itemSchedule   番組情報
      */
     private void setView(final ItemViewHolder itemViewHolder, final ScheduleInfo itemSchedule) {
-
+        DTVTLogger.start();
         //年齢制限フラグ
         boolean isParental = StringUtils.isParental(mAgeReq, itemSchedule.getRValue());
 
@@ -507,6 +511,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         itemViewHolder.mDetail.setText(detail);
         changeProgramInfoInOrderToShow(itemViewHolder, isParental, isClipHide, itemSchedule);
         itemViewHolder.mContent.setText(title);
+        DTVTLogger.end();
     }
 
     /**
@@ -786,6 +791,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
          * @param itemSchedules  itemSchedules　itemSchedules
          */
         public void startAddContentViews(final ArrayList<ScheduleInfo> itemSchedules) {
+            DTVTLogger.start();
             final int itemNum = itemSchedules.size();
             TimerTask task = new TimerTask() {
                 int count = 0;
@@ -835,6 +841,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 t.schedule(task, 0, 50);
             }
             mIsRunning = true;
+            DTVTLogger.end();
         }
 
         /**
@@ -900,6 +907,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * @param newProgramList 番組表
      */
     public void setProgramList(final List<ChannelInfo> newProgramList) {
+        DTVTLogger.start();
         // TODO　:★部分的なデータが来ることになるので自身で記憶しているチャンネルリストへMappingするようにする
         // TODO　:★また、描画反映が必要なので、ViewHolderを調べて該当のチャンネルがあれば、描画反映する
         if (newProgramList != null) {
@@ -920,6 +928,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 }
             }
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -931,6 +940,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private void setItemView(final ArrayList<ScheduleInfo> itemSchedules, final MyViewHolder holder) {
         DTVTLogger.start("ChNo:" + holder.chNo);
         holder.startAddContentViews(itemSchedules);
+        DTVTLogger.end();
     }
 
     /**

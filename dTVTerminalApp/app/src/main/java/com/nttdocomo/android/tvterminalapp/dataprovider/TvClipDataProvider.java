@@ -249,4 +249,9 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
     public ErrorState getNetworkError() {
         return mNetworkError;
     }
+
+    @Override
+    public void clipKeyResult() {
+        //Nop 仕様により実装のみ
+    }
 }
