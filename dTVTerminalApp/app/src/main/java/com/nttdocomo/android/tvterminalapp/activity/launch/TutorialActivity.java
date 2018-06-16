@@ -228,33 +228,36 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
 
             @Override
             public void onPageSelected(final int position) {
-                mHandle.removeCallbacks(mRunnableAnimation);
-                mTutorialTextView.setVisibility(View.GONE);
-                mSkipOrFinishTutorialAcivity.setVisibility(View.GONE);
-                mDotsLayout.setVisibility(View.VISIBLE);
-                mCurDot.setVisibility(View.VISIBLE);
-                moveCursorTo(position);
-                if (position == mWalkthroughsAbove.length - 1) {
-                    //  最後のページ
-                    mTutorialTextView.setVisibility(View.VISIBLE);
-                    mSkipOrFinishTutorialAcivity.setVisibility(View.VISIBLE);
-                    mDotsLayout.setVisibility(View.GONE);
-                    mCurDot.setVisibility(View.GONE);
-                }
-                mCurPos = position;
-                mIsAbove = true;
-                mWalkthroughsViewPager.getChildAt(mCurPos).findViewById(R.id.tutorial_walkthroughs_above).setVisibility(View.VISIBLE);
-                if (position != PAGE_1) {
-                    mHandle.postDelayed(mRunnableAnimation, ANIMATION_TIME_WAIT);
+            }
+
+            @Override
+            public void onPageScrolled(final int position, final float positionOffset, final int positionOffsetPixels) {
+                //ページが切り替わったら処理を行う
+                if(mCurPos != position){
+                    mHandle.removeCallbacks(mRunnableAnimation);
+                    mTutorialTextView.setVisibility(View.GONE);
+                    mSkipOrFinishTutorialAcivity.setVisibility(View.GONE);
+                    mDotsLayout.setVisibility(View.VISIBLE);
+                    mCurDot.setVisibility(View.VISIBLE);
+                    moveCursorTo(position);
+                    if (position == mWalkthroughsAbove.length - 1) {
+                        //  最後のページ
+                        mTutorialTextView.setVisibility(View.VISIBLE);
+                        mSkipOrFinishTutorialAcivity.setVisibility(View.VISIBLE);
+                        mDotsLayout.setVisibility(View.GONE);
+                        mCurDot.setVisibility(View.GONE);
+                    }
+                    mCurPos = position;
+                    mIsAbove = true;
+                    mWalkthroughsViewPager.getChildAt(mCurPos).findViewById(R.id.tutorial_walkthroughs_above).setVisibility(View.VISIBLE);
+                    if (position != PAGE_1) {
+                        mHandle.postDelayed(mRunnableAnimation, ANIMATION_TIME_WAIT);
+                    }
                 }
             }
 
             @Override
-            public void onPageScrolled(final int arg0, final float arg1, final int arg2) {
-            }
-
-            @Override
-            public void onPageScrollStateChanged(final int arg0) {
+            public void onPageScrollStateChanged(final int position) {
             }
 
         });
