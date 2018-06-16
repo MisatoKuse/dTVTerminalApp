@@ -478,6 +478,9 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         DlnaManager.shared().mDlnaManagerListener = this;
         DlnaManager.shared().StartDmp();
 
+        //STB検索メッセージの出力
+        showSearchingView();
+
         //STB検索タイムアウト用タイマーの開始
         startCallbackTimer();
 
@@ -986,11 +989,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     }
 
     /**
-     * STB情報取得のタイムアウト時間を設定.
+     * タイムアウト時間を設定.
      */
     private void startCallbackTimer() {
         DTVTLogger.start();
-        showSearchingView();
         if (mCallbackTimer == null
                 || mCallbackTimer.getTimerStatus() == TimerStatus.TIMER_STATUS_CANCEL) {
             //タイマーが存在しないか既にキャンセル済みだった場合は、新たに作成する
