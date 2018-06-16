@@ -166,9 +166,8 @@ public class DlnaContentBsChannelDataProvider implements DlnaManager.BrowseListe
                 DTVTLogger.debug(e);
                 //TODO　:エラー返却した上でUI上に通知が必要
             }
-        } else {
-            DlnaManager.shared().BrowseContentWithContainerId(mContainerId);
         }
+        DlnaManager.shared().BrowseContentWithContainerId(mContainerId);
     }
 
 }

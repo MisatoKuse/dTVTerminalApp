@@ -2493,6 +2493,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         if (msg != null) {
             showDialogToConfirmClose(msg);
         }
+        mPlayerViewLayout.showPlayingProgress(false);
     }
 
     @Override
@@ -2666,6 +2667,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private void setRemotePlayArrow(final RecordedContentsDetailData playData) {
         //再生ボタンは宅外かつ契約があるときのみ表示
         if (UserInfoUtils.isContract(this)) {
+            setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
             mThumbnailBtn.setVisibility(View.VISIBLE);
             ImageView imageView = findViewById(R.id.dtv_contents_view_button);
             Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.mediacontrol_icon_tap_play_arrow2);

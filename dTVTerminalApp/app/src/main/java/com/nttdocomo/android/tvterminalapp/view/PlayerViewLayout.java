@@ -28,6 +28,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -45,7 +46,6 @@ import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.struct.MediaVideoInfo;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
@@ -119,6 +119,8 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     private ImageView mVideoRewind10 = null;
     /**早送りImageView.*/
     private ImageView mVideoFast30 = null;
+    /**再生前くるくる処理.*/
+    private ProgressBar mProgressBar;
     /** 放送中フラグ.*/
     private boolean mIsVideoBroadcast = false;
     /**再生開始可否.*/
@@ -519,6 +521,26 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     }
 
     /**
+     * 再生中のくるくる処理.
+     * @param isShow true 表示　false 非表示
+     */
+    public void showPlayingProgress(final boolean isShow) {
+        if (mProgressBar == null) {
+            mProgressBar = new ProgressBar(mContext, null, android.R.attr.progressBarStyle);
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                    LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+            mProgressBar.setLayoutParams(layoutParams);
+            this.addView(mProgressBar);
+        }
+        if (isShow) {
+            mProgressBar.setVisibility(View.VISIBLE);
+        } else {
+            mProgressBar.setVisibility(View.GONE);
+        }
+    }
+
+    /**
      * 外部出力制御リスナー.
      */
     private static final ExternalDisplayHelper.OnDisplayEventListener DISPLAY_EVENT_LISTENER = new ExternalDisplayHelper.OnDisplayEventListener() {
@@ -616,6 +638,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 mIsCompleted = true;
                 mPlayStartPosition = 0;
                 playButton(false);
+                showPlayingProgress(false);
                 break;
             case MediaPlayerDefinitions.PE_START_NETWORK_CONNECTION:
             case MediaPlayerDefinitions.PE_START_AUTHENTICATION:
@@ -727,6 +750,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             if (mCanPlay) {
                 playButton(true);
                 mPlayerController.start();
+                showPlayingProgress(true);
             }
         }
     }

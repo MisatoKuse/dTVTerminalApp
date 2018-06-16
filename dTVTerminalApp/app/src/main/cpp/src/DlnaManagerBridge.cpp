@@ -449,10 +449,11 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_connectDmsWithUdn(JNIEn
 }
 
 JNIEXPORT void JNICALL
-Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_browseContentWithContainerId(JNIEnv *env, jobject thiz, jint offset, jint limit, jstring containerId) {
+Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_browseContentWithContainerId(JNIEnv *env, jobject thiz, jint offset, jint limit, jstring containerId, jstring controlUrl) {
     LOG_WITH("");
     const char *containerIdString = env->GetStringUTFChars(containerId, 0);
-    dlnaDmsBrowse->selectContainerWithContainerId(dmp, offset, limit, DU_UCHAR(containerIdString));
+    const char *controlUrlString = env->GetStringUTFChars(controlUrl, 0);
+    dlnaDmsBrowse->selectContainerWithContainerId(dmp, offset, limit, DU_UCHAR(containerIdString), DU_UCHAR(controlUrlString));
 }
 
 JNIEXPORT void JNICALL

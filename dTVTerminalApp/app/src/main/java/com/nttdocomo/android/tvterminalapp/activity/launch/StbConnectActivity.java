@@ -15,6 +15,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
@@ -42,29 +43,24 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
         setContentView(R.layout.stb_connect_main_layout);
         //SharedPreferenceにSTB接続完了をセット
         SharedPreferencesUtils.setSharedPreferencesStbConnect(this, true);
+        StbConnectionManager.shared().setConnectionStatus(StbConnectionManager.ConnectionStatus.HOME_IN);
         setContents();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        DlnaManager.shared().StartDmp();
         Intent intent = getIntent();
         if (intent != null) {
             int startMode = intent.getIntExtra(StbSelectActivity.FROM_WHERE, -1);
-            if (startMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal())
-            {
+            if (startMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_paring_completed));
             } else {
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring_completed));
             }
         }
     }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        DlnaManager.shared().StopDmp();
-    }
+
     @Override
     public void onBackPressed() {
     }
@@ -162,8 +158,7 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
                         //初回使用からRestartで良いとの事なので、StartDiragへの変更は無用
                         DlnaManager.shared().RestartDirag();
                         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(StbConnectActivity.this);
-                        DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn
-                                , getApplicationContext());
+                        DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn, getApplicationContext());
                     } else {
                         setRemoteProgressVisible(View.GONE);
                         showActivationErrorDialog();

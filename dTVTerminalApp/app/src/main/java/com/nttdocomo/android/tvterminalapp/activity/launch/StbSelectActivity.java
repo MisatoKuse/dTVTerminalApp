@@ -30,6 +30,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsInfo;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
@@ -535,7 +536,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         });
         DlnaManager.shared().mDlnaManagerListener = null;
         mDlnaDmsInfo.clear();
-        DlnaManager.shared().StopDmp();
 
         //BG→FG遷移時のリストビューへのアクセスを防止する為に、アダプターを一旦解除する
         mDeviceListView.setAdapter(null);
@@ -735,8 +735,9 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         } else if (mStartMode == StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
             if (mParingDevice.getVisibility() == View.VISIBLE) {
                 //ペアリング解除する場合、すべてのSTBキャッシュデータを削除して、ホーム画面に遷移する
-                DlnaManager.shared().StopDmp();
                 SharedPreferencesUtils.resetSharedPreferencesStbInfo(this);
+                StbConnectionManager.shared().setConnectionStatus(StbConnectionManager.ConnectionStatus.NONE_PAIRING);
+                DlnaManager.shared().isStarted = false;
                 Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
 
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -1345,7 +1346,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         mContentsList.clear();
         mDlnaDmsItemList.clear();
         mDlnaDmsInfo.clear();
-        DlnaManager.shared().StopDmp();
         //タイムアウト用のタイマーは停止させる
         stopCallbackTimer();
     }

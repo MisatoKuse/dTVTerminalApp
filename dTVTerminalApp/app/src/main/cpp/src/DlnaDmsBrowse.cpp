@@ -33,16 +33,16 @@ std::function<void(std::vector<ContentInfo> contentList, const char* containerId
 std::function<void(const char* containerId, eDlnaErrorType error)> DlnaDmsBrowse::ContentBrowseErrorCallback = nullptr;
 std::function<void(const char* containerUpdateIds)> DlnaDmsBrowse::EventHandlerCallback = nullptr;
 
-extern du_bool browseDirectChildren2(DMP* d);
+extern du_bool browseDirectChildren2(DMP* d, const du_uchar* controlUrl);
 
 const du_uchar* BDC_FILTER = DU_UCHAR_CONST("@id=\"\",@restricted=\"0\",dc:title,upnp:class,res,res@protocolInfo,res@duration,res@dlna:cleartextSize,upnp:genre,arib:objectType,upnp:rating,upnp:channelName,upnp:channelNr,dc:date,@res@allowedUse,upnp:lastPlaybackPosition,res@bitrate");
 
-bool DlnaDmsBrowse::selectContainerWithContainerId(DMP *dmp, du_uint32 offset, du_uint32 limit, const du_uchar* containerId) {
+bool DlnaDmsBrowse::selectContainerWithContainerId(DMP *dmp, du_uint32 offset, du_uint32 limit, const du_uchar* containerId, const du_uchar* controlUrlString) {
     LOG_WITH_PARAM("containerId = %s, offset = %u, limit = %u", containerId, offset, limit);
     du_alloc_free(dmp->browseInfo.containerId);
     dmp->browseInfo.containerId = 0;
     du_str_clone(containerId, &dmp->browseInfo.containerId);
-    return browseDirectChildren(dmp, offset, limit);
+    return browseDirectChildren(dmp, offset, controlUrlString, limit);
 }
 
 du_bool DlnaDmsBrowse::selectContainer(DMP* d, du_uint32 index) {
@@ -498,7 +498,7 @@ void DlnaDmsBrowse::browseDirectChildrenResponseHandler(dupnp_http_response* res
 
     if (!browse_set_response(&d->browseInfo, result)) goto error;
     if (d->browseInfo.startingIndex + d->browseInfo.numberReturned < d->browseInfo.totalMatches && d->browseInfo.numberReturned < d->browseInfo.requestedCount) {
-        browseDirectChildren2(d);
+        browseDirectChildren2(d, nullptr);
     } else {
         listObject(d, result);
     }
@@ -525,7 +525,7 @@ error:
     }
 }
 
-du_bool browseDirectChildren2(DMP* d) {
+du_bool browseDirectChildren2(DMP* d, const du_uchar* controlUrl) {
     LOG_WITH(">>>");
     du_uchar_array request_body;
     
@@ -539,8 +539,12 @@ du_bool browseDirectChildren2(DMP* d) {
     if (!dav_cds_make_browse(&request_body, 1, containerId, DU_UCHAR_CONST("BrowseDirectChildren"), BDC_FILTER, startingIndex, requestedCount, sortCriteria)) goto error;
     
     if (!dupnp_soap_header_set_soapaction(&d->soapInfo.requestHeader, dav_urn_cds(1), DU_UCHAR_CONST("Browse"))) goto error;
-    LOG_WITH("d->browseInfo.dms->cds.control_url = %s", d->browseInfo.dmsInfo->cdsInfo.controlUrl);
-    if (!dupnp_http_soap(&d->upnpInstance, d->browseInfo.dmsInfo->cdsInfo.controlUrl, &d->soapInfo.requestHeader, du_uchar_array_get(&request_body), du_uchar_array_length(&request_body), READ_TIMEOUT_MS, DlnaDmsBrowse::browseDirectChildrenResponseHandler, d, &d->soapInfo.taskId)) goto error;
+//    LOG_WITH("d->browseInfo.dms->cds.control_url = %s", d->browseInfo.dmsInfo->cdsInfo.controlUrl);
+    if (d->browseInfo.dmsInfo != nullptr) {
+        controlUrl = d->browseInfo.dmsInfo->cdsInfo.controlUrl;
+    }
+        LOG_WITH("d->browseInfo.dms->cds.control_url = %s", controlUrl);
+    if (!dupnp_http_soap(&d->upnpInstance, controlUrl, &d->soapInfo.requestHeader, du_uchar_array_get(&request_body), du_uchar_array_length(&request_body), READ_TIMEOUT_MS, DlnaDmsBrowse::browseDirectChildrenResponseHandler, d, &d->soapInfo.taskId)) goto error;
 //    LOG_WITH("request_body = %s", du_uchar_array_get(&request_body)); //soapリクエストの中身を見たい場合に使ってください。
     du_mutex_unlock(&d->soapInfo.mutex);
     du_uchar_array_free(&request_body);
@@ -567,7 +571,7 @@ DlnaDmsBrowse::~DlnaDmsBrowse() {
     DlnaDmsBrowse::EventHandlerCallback = nullptr;
 }
 
-bool DlnaDmsBrowse::browseDirectChildren(DMP* d, du_uint32 offset, du_uint32 limit) {
+bool DlnaDmsBrowse::browseDirectChildren(DMP* d, du_uint32 offset, const du_uchar* controlUrlString, du_uint32 limit) {
     bool result = false;
     LOG_WITH_PARAM(">>>");
     cancelIfInProgress(d);
@@ -580,7 +584,7 @@ bool DlnaDmsBrowse::browseDirectChildren(DMP* d, du_uint32 offset, du_uint32 lim
     }
     d->browseInfo.didlDoc = 0;
     do {
-        BREAK_IF(!browseDirectChildren2(d));
+        BREAK_IF(!browseDirectChildren2(d, controlUrlString));
         result = true;
     } while (false);
     LOG_WITH_BOOL_PARAM(result, " <<<");
@@ -620,5 +624,5 @@ bool DlnaDmsBrowse::connectDmsDirect(DMP *dmp, const char* friendlyName, const c
 }
 
 void DlnaDmsBrowse::browse() {
-    browseDirectChildren(_context.dmp, 0);
+//    browseDirectChildren(_context.dmp, 0);
 }

@@ -30,10 +30,10 @@ public:
     /** Container選択*/
     du_bool selectContainer(DMP* d, du_uint32 index);
     /** offsetは 0からスタート*/
-    bool selectContainerWithContainerId(DMP *dmp, du_uint32 offset, du_uint32 limit, const du_uchar* containerId);
+    bool selectContainerWithContainerId(DMP *dmp, du_uint32 offset, du_uint32 limit, const du_uchar* containerId, const du_uchar* controlUrlString);
     static void browseDirectChildrenResponseHandler(dupnp_http_response *response, void *arg);
 private:
-    bool browseDirectChildren(DMP* d, du_uint32 offset, du_uint32 limit = DLNA_LIMITMAX);
+    bool browseDirectChildren(DMP* d, du_uint32 offset, const du_uchar* controlUrl, du_uint32 limit = DLNA_LIMITMAX);
     SelectDmsContext _context;
 };
 

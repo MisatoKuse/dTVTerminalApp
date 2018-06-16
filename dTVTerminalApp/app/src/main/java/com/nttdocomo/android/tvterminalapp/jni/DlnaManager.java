@@ -208,7 +208,7 @@ public class DlnaManager {
     /** コンテキスト. */
     public Context mContext;
     /** 接続スタートフラグ. */
-    private boolean isStarted = false;
+    public boolean isStarted = false;
     /** udn. */
     private String mUdn = "";
     /** 接続（ready）フラグ. */
@@ -237,7 +237,11 @@ public class DlnaManager {
         String privateDataPath = DlnaUtils.getPrivateDataHomePath(context);
         cipherFileContextGlobalCreate(privateDataPath);
         initDmp(privateDataPath);
-
+        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(context);
+        StbConnectionManager.shared().initializeState();
+        if (!TextUtils.isEmpty(dlnaDmsItem.mUdn)) {
+            DlnaManager.shared().StartDmp();
+        }
         String diragConfigFilePath = DlnaUtils.getDiragConfileFilePath(context);
         initDirag(diragConfigFilePath);
 
@@ -249,25 +253,30 @@ public class DlnaManager {
      * @param context コンテキスト
      */
     public void Start(final Context context) {
-        mContext = context;
+        DlnaManager.shared().mContext = context;
         DTVTLogger.warning("isStarted = " + isStarted);
         //if start then stop
         if (!isStarted) {
             isStarted = true;
-            StbConnectionManager.shared().initializeState();
             StbConnectionManager.ConnectionStatus connectionStatus = StbConnectionManager.shared().getConnectionStatus();
             DTVTLogger.warning("connectionStatus = " + connectionStatus);
             switch (connectionStatus) {
                 case HOME_OUT:
-                    DlnaDmsItem item = SharedPreferencesUtils.getSharedPreferencesStbInfo(mContext);
+                    DlnaDmsItem item = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
                     mUdn = item.mUdn;
                     //1.dアカウントチェックしたかを確認してなかったらチェック
-                    StartDmp();
-                    StartDtcp();
-                    RestartDirag();
+                    DlnaManager.shared().StartDmp();
+                    DlnaManager.shared().StartDtcp();
+                    DlnaManager.shared().RestartDirag();
                     break;
-                case NONE_LOCAL_REGISTRATION:
-                    StartDmp();
+                case HOME_IN:
+                    DlnaManager.shared().stopDirag();
+                    break;
+                case NONE_PAIRING:
+                    DlnaManager.shared().StopDmp();
+                    break;
+                default:
+                    DlnaManager.shared().StartDmp();
                     break;
             }
         }
@@ -312,7 +321,6 @@ public class DlnaManager {
                 } else {
                     waitForReady = true;
                     requestContainerId = containerId;
-                    StartDmp();
                     StartDtcp();
                     RestartDirag();
                 }
@@ -320,7 +328,8 @@ public class DlnaManager {
                 break;
             case HOME_IN:
             case HOME_OUT_CONNECT:
-                browseContentWithContainerId(0, DtvtConstants.REQUEST_LIMIT_300, containerId);
+                DlnaDmsItem item = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
+                browseContentWithContainerId(0, DtvtConstants.REQUEST_LIMIT_300, containerId, item.mControlUrl);
                 break;
             default:
                 DTVTLogger.warning("default");
@@ -506,6 +515,7 @@ public class DlnaManager {
 
     /**
      *  コンテンツブラウズコールバック.
+     * @param containerId コンテンツリスト
      * @param objs コンテンツリスト
      */
     public void ContentBrowseCallback(@NonNull final String containerId, @NonNull final DlnaObject[] objs) {
@@ -682,9 +692,8 @@ public class DlnaManager {
             }
 
         } else {
-            if (StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_OUT) {
-//                DlnaManager.shared().StopDtcp();SIGILL
-//                DlnaManager.shared().StopDirag();
+            if (StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_OUT_CONNECT) {
+                DlnaManager.shared().StopDirag();
             }
             StbConnectionManager.shared().setConnectionStatus(StbConnectionManager.ConnectionStatus.HOME_IN);
         }
@@ -753,8 +762,9 @@ public class DlnaManager {
      * @param offset offset
      * @param limit limit
      * @param containerId containerId
+     * @param controlUrl controlUrl
      */
-    private native void browseContentWithContainerId(final int offset, final int limit, final String containerId);
+    private native void browseContentWithContainerId(final int offset, final int limit, final String containerId, final String controlUrl);
     /** dtcpを開始.*/
     private native void startDtcp();
     /** dtcpを停止.*/

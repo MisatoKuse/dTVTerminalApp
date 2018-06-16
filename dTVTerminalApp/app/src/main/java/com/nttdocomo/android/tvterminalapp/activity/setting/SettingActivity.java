@@ -155,13 +155,6 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         checkIsPairing();
         checkImageQuality();
         super.sendScreenView(getString(R.string.google_analytics_screen_name_setting));
-        DlnaManager.shared().StartDmp();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        DlnaManager.shared().StopDmp();
     }
 
     @SuppressWarnings("OverlyComplexMethod")
@@ -373,8 +366,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
                         DlnaManager.shared().StartDtcp();
                         DlnaManager.shared().RestartDirag();
                         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(SettingActivity.this);
-                        DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn
-                                ,getApplicationContext());
+                        DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn, getApplicationContext());
                     } else {
                         setRemoteProgressVisible(View.GONE);
                         showErrorDialog("アクティベーション実行失敗しました。");
