@@ -491,29 +491,11 @@ public class RemoteControllerSendKeyAction {
      * @param context コンテキスト
      */
     private void sendKeyCode(final int viewId, final int action, final boolean isCancelFlg, final Context context) {
-
         if (!CipherUtil.hasShareKey()) {
-            CipherApi api = new CipherApi(new CipherApi.CipherApiCallback() {
-                @Override
-                public void apiCallback(final boolean result, final String data) {
-                    // 鍵交換処理同期ラッチカウンターを解除する
-                    mLatch.countDown();
-                }
-            });
-            DTVTLogger.debug("sending public key");
-            api.requestSendPublicKey();
             // 鍵交換処理が終わるまでキーコード送信を待機をさせる.
             // ※この同期を行わないと連続したリモコンキーのタップにより初めの鍵交換が終了するまでに
             // 　次の鍵交換の送信が開始されキーコード送信が失敗する
-            mLatch = new CountDownLatch(LATCH_COUNT_MAX);
-            try {
-                DTVTLogger.debug("sync to completion of public key transmission");
-                mLatch.await();
-                DTVTLogger.debug("completion of public key transmission");
-            } catch (InterruptedException e) {
-                DTVTLogger.debug(e);
-                return;
-            }
+            CipherUtil.syncRequestPublicKey();
         }
         if (CipherUtil.hasShareKey()) {
             mRemoteControlRelayClient.sendKeycode(viewId, action, isCancelFlg, context);

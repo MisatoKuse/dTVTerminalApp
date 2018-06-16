@@ -18,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.concurrent.CountDownLatch;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -47,6 +48,11 @@ public class CipherUtil {
     private static final int IV_SIZE = 16;
     /** LockObject.*/
     private static final Object sLockObject = new Object();
+
+    /** 暗号化処理の鍵交換を同期処理で実行する. */
+    private static CountDownLatch mLatch = null;
+    /** 暗号化処理の鍵交換の同期カウンター. */
+    private static int LATCH_COUNT_MAX = 1;
 
     /**
      * 共通鍵あるかをチェック.
@@ -190,4 +196,30 @@ public class CipherUtil {
         tempValue >>>= 8;
         writeBuffer[0] = (byte) tempValue;
     }
+
+    /**
+     * 鍵交換処理を同期処理で実行する.
+     */
+    public static void syncRequestPublicKey() {
+        CipherApi api = new CipherApi(new CipherApi.CipherApiCallback() {
+            @Override
+            public void apiCallback(final boolean result, final String data) {
+                // 鍵交換処理同期ラッチカウンターを解除する
+                mLatch.countDown();
+            }
+        });
+        DTVTLogger.debug("sending public key");
+        api.requestSendPublicKey();
+        // 鍵交換処理が終わるまで待機する.
+        mLatch = new CountDownLatch(LATCH_COUNT_MAX);
+        try {
+            DTVTLogger.debug("sync to completion of public key transmission");
+            mLatch.await();
+            DTVTLogger.debug("completion of public key transmission");
+        } catch (InterruptedException e) {
+            DTVTLogger.debug(e);
+            return;
+        }
+    }
+
 }

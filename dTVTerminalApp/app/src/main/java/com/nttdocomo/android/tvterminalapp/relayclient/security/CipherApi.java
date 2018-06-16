@@ -40,46 +40,52 @@ public class CipherApi {
     }
 
     /**
-     *
+     * 鍵交換処理.
      */
     public void requestSendPublicKey() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                CipherData cipherData;
-                try {
-                    cipherData = CipherUtil.generatePublicKey();
-                } catch (NoSuchAlgorithmException e) {
-                    DTVTLogger.debug(e);
-                    mCallback.apiCallback(false, null);
-                    return;
-                }
-
-                byte[] exponent = cipherData.getExponentData();
-                byte[] module = cipherData.getModuleData();
-
-                StbConnectRelayClient stbConnection = StbConnectRelayClient.getInstance();
-                boolean connectResult = stbConnection.connect();
-                DTVTLogger.debug("connectResult = " + connectResult);
-
-                byte[] actionBytes = new byte[CipherConfig.BYTE_LENGTH_ACTION];
-                CipherUtil.writeInt(CipherConfig.ACTION_EXCHANGE_KEY, actionBytes);
-
-                byte[] sum = new byte[actionBytes.length + exponent.length + module.length];
-                System.arraycopy(actionBytes, 0, sum, 0, actionBytes.length);
-                System.arraycopy(exponent, 0, sum, actionBytes.length, exponent.length);
-                System.arraycopy(module, 0, sum, actionBytes.length + exponent.length, module.length);
-
-                boolean sendResult = stbConnection.send(sum, sum.length);
-                DTVTLogger.debug("sendResult = " + sendResult);
-                if (sendResult) {
-                    boolean exchangeKeyResult = stbConnection.receiveExchangeKey();
-                    DTVTLogger.debug("exchangeKeyResult = " + exchangeKeyResult);
-                }
-                stbConnection.disconnect();
-                mCallback.apiCallback(sendResult, null);
+                syncronizeRequestSendPublicKey();
             }
         }).start();
     }
 
+    /**
+     * 鍵交換の同期処理.
+     */
+    private synchronized void syncronizeRequestSendPublicKey() {
+        CipherData cipherData;
+        try {
+            cipherData = CipherUtil.generatePublicKey();
+        } catch (NoSuchAlgorithmException e) {
+            DTVTLogger.debug(e);
+            mCallback.apiCallback(false, null);
+            return;
+        }
+
+        byte[] exponent = cipherData.getExponentData();
+        byte[] module = cipherData.getModuleData();
+
+        StbConnectRelayClient stbConnection = StbConnectRelayClient.getInstance();
+        boolean connectResult = stbConnection.connect();
+        DTVTLogger.debug("connectResult = " + connectResult);
+
+        byte[] actionBytes = new byte[CipherConfig.BYTE_LENGTH_ACTION];
+        CipherUtil.writeInt(CipherConfig.ACTION_EXCHANGE_KEY, actionBytes);
+
+        byte[] sum = new byte[actionBytes.length + exponent.length + module.length];
+        System.arraycopy(actionBytes, 0, sum, 0, actionBytes.length);
+        System.arraycopy(exponent, 0, sum, actionBytes.length, exponent.length);
+        System.arraycopy(module, 0, sum, actionBytes.length + exponent.length, module.length);
+
+        boolean sendResult = stbConnection.send(sum, sum.length);
+        DTVTLogger.debug("sendResult = " + sendResult);
+        if (sendResult) {
+            boolean exchangeKeyResult = stbConnection.receiveExchangeKey();
+            DTVTLogger.debug("exchangeKeyResult = " + exchangeKeyResult);
+        }
+        stbConnection.disconnect();
+        mCallback.apiCallback(sendResult, null);
+    }
 }
