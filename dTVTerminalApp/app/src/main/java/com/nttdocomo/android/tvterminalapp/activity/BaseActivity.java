@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -85,6 +86,8 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessage;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
+import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherApi;
+import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherUtil;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadDataProvider;
 import com.nttdocomo.android.tvterminalapp.struct.CalendarComparator;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
@@ -110,6 +113,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * クラス機能：
@@ -299,6 +303,11 @@ public class BaseActivity extends FragmentActivity implements
      * アダプタ内でのリスト識別用定数.
      */
     private final static int HOME_CONTENTS_DISTINCTION_ADAPTER = 10;
+
+    /** 暗号化処理の鍵交換を同期処理で実行する. */
+    private CountDownLatch mLatch = null;
+    /** 暗号化処理の鍵交換の同期カウンター. */
+    private static int LATCH_COUNT_MAX = 1;
 
     /**
      * 関数機能：
@@ -1370,11 +1379,6 @@ public class BaseActivity extends FragmentActivity implements
             DTVTLogger.debug(e);
         }
     }
-
-
-
-
-
 
     /**
      * リモコン画面を生成する.
@@ -2818,6 +2822,48 @@ public class BaseActivity extends FragmentActivity implements
         }
     }
 
+    /**
+     * 鍵交換処理を行う.
+     * 他のドコテレアプリによる鍵交換が行われていた場合に交換済みの鍵が無効になる場合があるためリモコン使用時に必要
+     */
+    private void exchangeKey() {
+        DTVTLogger.start();
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                syncRequestPublicKey();
+                DTVTLogger.debug(String.format("public key exchange processing result = %s", CipherUtil.hasShareKey())); // 鍵交換処理結果
+            }
+        });
+        DTVTLogger.end();
+    }
+
+    /**
+     * 鍵交換処理を同期処理で実行する.
+     */
+    public void syncRequestPublicKey() {
+        CipherApi api = new CipherApi(new CipherApi.CipherApiCallback() {
+            @Override
+            public void apiCallback(final boolean result, final String data) {
+                // 鍵交換処理同期ラッチカウンターを解除する
+                mLatch.countDown();
+            }
+        });
+        DTVTLogger.debug("sending public key");
+        api.requestSendPublicKey();
+        // 鍵交換処理が終わるまで待機する.
+        mLatch = new CountDownLatch(LATCH_COUNT_MAX);
+        try {
+            DTVTLogger.debug("sync to completion of public key transmission");
+            mLatch.await();
+            DTVTLogger.debug("completion of public key transmission");
+        } catch (InterruptedException e) {
+            DTVTLogger.debug(e);
+            return;
+        }
+    }
+
     @Override
     public void onStartRemoteControl(final boolean isFromHeader) {
         DTVTLogger.debug("base_start_control");
@@ -2825,6 +2871,10 @@ public class BaseActivity extends FragmentActivity implements
         base.setOnClickListener(mRemoteControllerOnClickListener);
         base.setVisibility(View.VISIBLE);
         setRelayClientHandler();
+        // TODO: exchangeKey() でリモコン表示がカク付くため、リモコン画面の表示完了（完全に表示された）の
+        // タイミングで onStartRemoteControl がコールされるように RemoteControllerView を修正後に
+        // exchangeKey() 処理をコメントインしてください。
+//        exchangeKey();
     }
 
     @Override
