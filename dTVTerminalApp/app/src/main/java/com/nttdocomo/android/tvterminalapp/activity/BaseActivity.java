@@ -113,7 +113,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * クラス機能：
@@ -303,11 +302,6 @@ public class BaseActivity extends FragmentActivity implements
      * アダプタ内でのリスト識別用定数.
      */
     private final static int HOME_CONTENTS_DISTINCTION_ADAPTER = 10;
-
-    /** 暗号化処理の鍵交換を同期処理で実行する. */
-    private CountDownLatch mLatch = null;
-    /** 暗号化処理の鍵交換の同期カウンター. */
-    private static int LATCH_COUNT_MAX = 1;
 
     /**
      * 関数機能：
@@ -2828,40 +2822,15 @@ public class BaseActivity extends FragmentActivity implements
      */
     private void exchangeKey() {
         DTVTLogger.start();
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
+        // 鍵交換処理の同期処理のためにリモコン表示が停止しないようにスレッドを使用する
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                syncRequestPublicKey();
+                CipherUtil.syncRequestPublicKey();
                 DTVTLogger.debug(String.format("public key exchange processing result = %s", CipherUtil.hasShareKey())); // 鍵交換処理結果
             }
-        });
+        }).start();
         DTVTLogger.end();
-    }
-
-    /**
-     * 鍵交換処理を同期処理で実行する.
-     */
-    public void syncRequestPublicKey() {
-        CipherApi api = new CipherApi(new CipherApi.CipherApiCallback() {
-            @Override
-            public void apiCallback(final boolean result, final String data) {
-                // 鍵交換処理同期ラッチカウンターを解除する
-                mLatch.countDown();
-            }
-        });
-        DTVTLogger.debug("sending public key");
-        api.requestSendPublicKey();
-        // 鍵交換処理が終わるまで待機する.
-        mLatch = new CountDownLatch(LATCH_COUNT_MAX);
-        try {
-            DTVTLogger.debug("sync to completion of public key transmission");
-            mLatch.await();
-            DTVTLogger.debug("completion of public key transmission");
-        } catch (InterruptedException e) {
-            DTVTLogger.debug(e);
-            return;
-        }
     }
 
     @Override
@@ -2871,10 +2840,7 @@ public class BaseActivity extends FragmentActivity implements
         base.setOnClickListener(mRemoteControllerOnClickListener);
         base.setVisibility(View.VISIBLE);
         setRelayClientHandler();
-        // TODO: exchangeKey() でリモコン表示がカク付くため、リモコン画面の表示完了（完全に表示された）の
-        // タイミングで onStartRemoteControl がコールされるように RemoteControllerView を修正後に
-        // exchangeKey() 処理をコメントインしてください。
-//        exchangeKey();
+        exchangeKey();
     }
 
     @Override

@@ -782,7 +782,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         handler.post(new Runnable() {
             @Override
             public void run() {
-                syncRequestPublicKey();
+                CipherUtil.syncRequestPublicKey();
                 if (CipherUtil.hasShareKey()) { // 鍵交換に成功
                     checkDAccountApp();
                 } else {

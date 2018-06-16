@@ -741,7 +741,13 @@ public class RemoteControlRelayClient {
          */
         @Override
         public void run() {
-            DTVTLogger.warning(" >>>");
+            sendMessage();
+        }
+
+        /**
+         * キーコード送信の同期処理.
+         */
+        private synchronized void sendMessage() {
             StbConnectRelayClient stbDatagram = StbConnectRelayClient.getInstance();  // Socket通信
             if (mKeycodeRequest != null) {
                 stbDatagram.sendDatagram(mKeycodeRequest);
@@ -1202,7 +1208,7 @@ public class RemoteControlRelayClient {
                 return;
             }
             if (!CipherUtil.hasShareKey()) { // 鍵交換が必要
-                syncRequestPublicKey();
+                CipherUtil.syncRequestPublicKey();
             }
             if (!CipherUtil.hasShareKey()) { // 鍵交換に失敗
                 response = setResultDistinationUnreachable();
@@ -1219,9 +1225,18 @@ public class RemoteControlRelayClient {
                     stbConnection.disconnect();
                     // 鍵交換に失敗
                     if (response.getResultCode() == RelayServiceResponseMessage.RELAY_RESULT_STB_KEY_MISMATCH) {
-                        syncRequestPublicKey();
+                        CipherUtil.syncRequestPublicKey();
                         if (!CipherUtil.hasShareKey()) { // 鍵交換に失敗
                             response = setResultDistinationUnreachable();
+                        } else {
+                            if (stbConnection.connect()) {
+                                if (stbConnection.send(mRequestParam)) {
+                                    recvData = stbConnection.receive();
+                                    DTVTLogger.debug("recvData:" + recvData);
+                                    response = setResponse(recvData);
+                                }
+                                stbConnection.disconnect();
+                            }
                         }
                     }
                 } else {
@@ -1230,31 +1245,6 @@ public class RemoteControlRelayClient {
                 }
             }
             sendResponseMessage(response);
-        }
-
-        /**
-         * 鍵交換処理を同期処理で実行する.
-         */
-        private void syncRequestPublicKey() {
-            CipherApi api = new CipherApi(new CipherApi.CipherApiCallback() {
-                @Override
-                public void apiCallback(final boolean result, final String data) {
-                    // 鍵交換処理同期ラッチカウンターを解除する
-                    mLatch.countDown();
-                }
-            });
-            DTVTLogger.debug("sending public key");
-            api.requestSendPublicKey();
-            // 鍵交換処理が終わるまで待機する.
-            mLatch = new CountDownLatch(LATCH_COUNT_MAX);
-            try {
-                DTVTLogger.debug("sync to completion of public key transmission");
-                mLatch.await();
-                DTVTLogger.debug("completion of public key transmission");
-            } catch (InterruptedException e) {
-                DTVTLogger.debug(e);
-                return;
-            }
         }
 
         /**
