@@ -35,7 +35,6 @@ import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsInfo;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessage;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
-import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherApi;
 import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherUtil;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
@@ -211,11 +210,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      * デバイス選択デフォルト値.
      */
     private static final int SELECT_DEVICE_ITEM_DEFAULT = -1;
-
-    /** 暗号化処理の鍵交換を同期処理で実行する. */
-    private CountDownLatch mLatch = null;
-    /** 暗号化処理の鍵交換の同期カウンター. */
-    private static int LATCH_COUNT_MAX = 1;
 
     /**
      * タイマーステータス.
@@ -805,31 +799,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 }
             }
         });
-    }
-
-    /**
-     * 鍵交換処理を同期処理で実行する.
-     */
-    private void syncRequestPublicKey() {
-        CipherApi api = new CipherApi(new CipherApi.CipherApiCallback() {
-            @Override
-            public void apiCallback(final boolean result, final String data) {
-                // 鍵交換処理同期ラッチカウンターを解除する
-                mLatch.countDown();
-            }
-        });
-        DTVTLogger.debug("sending public key");
-        api.requestSendPublicKey();
-        // 鍵交換処理が終わるまで待機する.
-        mLatch = new CountDownLatch(LATCH_COUNT_MAX);
-        try {
-            DTVTLogger.debug("sync to completion of public key transmission");
-            mLatch.await();
-            DTVTLogger.debug("completion of public key transmission");
-        } catch (InterruptedException e) {
-            DTVTLogger.debug(e);
-            return;
-        }
     }
 
     /**
