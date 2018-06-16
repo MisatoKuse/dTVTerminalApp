@@ -45,7 +45,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * ペアリング、再ペアリングするためのクラス.
@@ -142,14 +141,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      * ステータス表示の高さの初期値.
      */
     private int mFirstStatusHeight = 0;
-    /**
-     * dmpStart遅延実行用ハンドラー
-     */
-    private Handler delayDmpStartHandler = null;
-    /**
-     * dmpStart遅延実行用ランナブル
-     */
-    private Runnable delayDmpStartRunnable = null;
 
     /**
      * ステータス表示の高さの補正値.
@@ -191,10 +182,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      * デバイスFriendNameキー名.
      */
     private static final String DEVICE_NAME_KEY = "DEVICE_NAME_KEY";
-    /**
-     * BGからFGへの遷移時に、リストビューにアダプターをセットを遅らせる時間.
-     */
-    private static final int LISTVIEW_SET_ADAPTER_DELAY_TIME = 1000;
     /**
      * デバイスを選択してDアカウントを登録フラグ.
      */
@@ -477,27 +464,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
 
         //デバイスリストの更新
         updateDeviceList(null, false);
-
-        //この時点で設定されているアダプターがヌルだった場合は、BG→FG遷移時の再表示なので、再設定処理を行う
-        if (mDeviceListView.getAdapter() == null) {
-            //リストビューの内容が元のままなので、クリアする
-            mContentsList.clear();
-            mDeviceListView.invalidate();
-
-            //アダプターの再設定をonResumeで行うと、稀にリストビューで不具合が発生するので遅らせる必要がある。
-            delayDmpStartHandler = new Handler();
-            delayDmpStartHandler.postDelayed(delayDmpStartRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    //デバイスリストにアダプターをセットする
-                    mDeviceListView.setAdapter(mDeviceAdapter);
-                    //遅延処理の後始末を行う
-                    delayDmpStartHandler = null;
-                    delayDmpStartRunnable = null;
-                }
-            }, LISTVIEW_SET_ADAPTER_DELAY_TIME);
-        }
-
         DTVTLogger.end();
     }
 
@@ -515,14 +481,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void leaveActivity() {
         DTVTLogger.start();
-
-        //アダプターセットの遅延実行処理が未実行の場合は無効化する
-        if (delayDmpStartHandler != null) {
-            delayDmpStartHandler.removeCallbacks(delayDmpStartRunnable);
-            delayDmpStartHandler = null;
-            delayDmpStartRunnable = null;
-        }
-
         Handler handler = new Handler();
         handler.post(new Runnable() {
             @Override
@@ -536,9 +494,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         });
         DlnaManager.shared().mDlnaManagerListener = null;
         mDlnaDmsInfo.clear();
-
-        //BG→FG遷移時のリストビューへのアクセスを防止する為に、アダプターを一旦解除する
-        mDeviceListView.setAdapter(null);
     }
 
     /**
@@ -917,9 +872,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 }
                 // 0件の場合タイムアウトを設定する
                 if (mContentsList.size() <= 0) {
-                    if (null != mDeviceAdapter) {
-                        mDeviceAdapter.notifyDataSetChanged();
-                    }
+                    mDeviceAdapter.notifyDataSetChanged();
                     displayMoreData(true);
                     startCallbackTimer();
                     DTVTLogger.debug("ContentsList.size <= 0 ");
