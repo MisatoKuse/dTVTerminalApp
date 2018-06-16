@@ -396,7 +396,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 return;
             } else {
                 //ペアリング済み
-                updateDeviceList();
                 mTextDivider1.setVisibility(View.VISIBLE);
                 mParingDevice.setText(dlnaDmsItem.mFriendlyName);
                 if (!mParingDevice.getText().toString().isEmpty()) {
@@ -476,7 +475,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         showSearchingView();
 
         //デバイスリストの更新
-        updateDeviceList();
+        updateDeviceList(null, false);
 
         //この時点で設定されているアダプターがヌルだった場合は、BG→FG遷移時の再表示なので、再設定処理を行う
         if (mDeviceListView.getAdapter() == null) {
@@ -830,77 +829,86 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.end();
     }
     @Override
-    public void joinDms(String name, String host, String udn, String controlUrl, String eventSubscriptionUrl) {
+    public void joinDms(final String name, final  String host, final  String udn, final String controlUrl, final String eventSubscriptionUrl) {
         DlnaDmsItem item = new DlnaDmsItem();
         item.mFriendlyName = name;
         item.mIPAddress = host;
         item.mUdn = udn;
         item.mControlUrl = controlUrl;
         item.mHttp = host;
-        mDlnaDmsInfo.add(item);
         if (mSelectDevice == SELECT_DEVICE_ITEM_DEFAULT) {
-            updateDeviceList();
+            updateDeviceList(item, true);
         }
     }
 
     @Override
-    public void leaveDms(String udn) {
-        mDlnaDmsInfo.remove(udn);
-        updateDeviceList();
+    public void leaveDms(final String udn) {
+        DlnaDmsItem item = new DlnaDmsItem();
+        item.mUdn = udn;
+        updateDeviceList(item, false);
     }
 
     /**
      * デバイスリスト情報を更新する.
+     * @param deviceItem DMS
+     * @param isAdd joinまたはleave
      */
-    private void updateDeviceList() {
+    private void updateDeviceList(final DlnaDmsItem deviceItem, final boolean isAdd) {
         DTVTLogger.start();
-        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
 
-        mContentsList.clear();
-        mDlnaDmsItemList.clear();
-
-        for (int i = 0; i < mDlnaDmsInfo.size(); i++) {
-            DlnaDmsItem item = mDlnaDmsInfo.get(i);
-            DTVTLogger.debug("item.mFriendlyName = " + item.mFriendlyName);
-            DTVTLogger.debug("item.mIPAddress = " + item.mIPAddress);
-            DTVTLogger.debug("item.mUdn = " + item.mUdn);
-            boolean flag = false;
-            if (dlnaDmsItem != null && !TextUtils.isEmpty(dlnaDmsItem.mUdn)) {
-                if (dlnaDmsItem.mUdn.equals(item.mUdn)) {
-                    flag = true;
-                }
-            }
-            if (!flag) {
-                HashMap<String, String> hashMap = new HashMap<>();
-                hashMap.put(DEVICE_NAME_KEY, item.mFriendlyName);
-                hashMap.put(item.mUdn, item.mUdn);
-                if (mContentsList.size() > 0) {
-                    //0以上の場合重複チェック
-                    for (HashMap<String, String> oldHashMap : mContentsList) {
-                        if (!oldHashMap.containsKey(item.mUdn)) {
-                            mContentsList.add(hashMap);
-                            mDlnaDmsItemList.add(item);
-                            //デバイス追加されたらbreak
-                            break;
-                        }
-                    }
-                } else {
-                    //0件の場合そのままリストに追加する
-                    mContentsList.add(hashMap);
-                    mDlnaDmsItemList.add(item);
-                }
-            }
-
-        }
-        DTVTLogger.debug("ContentsList.size = " + mContentsList.size());
-        DTVTLogger.debug("mDlnaDmsItemList.size = " + mDlnaDmsItemList.size());
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (isAdd) {
+                    mDlnaDmsInfo.add(deviceItem);
+                } else {
+                    if (deviceItem != null) {
+                        mDlnaDmsInfo.remove(deviceItem.mUdn);
+                    }
+                }
                 DTVTLogger.debug("runOnUiThread start");
+                DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(StbSelectActivity.this);
+
+                mContentsList.clear();
+                mDlnaDmsItemList.clear();
+
+                for (int i = 0; i < mDlnaDmsInfo.size(); i++) {
+                    DlnaDmsItem item = mDlnaDmsInfo.get(i);
+                    DTVTLogger.debug("item.mFriendlyName = " + item.mFriendlyName);
+                    DTVTLogger.debug("item.mIPAddress = " + item.mIPAddress);
+                    DTVTLogger.debug("item.mUdn = " + item.mUdn);
+                    boolean flag = false;
+                    if (dlnaDmsItem != null && !TextUtils.isEmpty(dlnaDmsItem.mUdn)) {
+                        if (dlnaDmsItem.mUdn.equals(item.mUdn)) {
+                            flag = true;
+                        }
+                    }
+                    if (!flag) {
+                        HashMap<String, String> hashMap = new HashMap<>();
+                        hashMap.put(DEVICE_NAME_KEY, item.mFriendlyName);
+                        hashMap.put(item.mUdn, item.mUdn);
+                        if (mContentsList.size() > 0) {
+                            //0以上の場合重複チェック
+                            for (HashMap<String, String> oldHashMap : mContentsList) {
+                                if (!oldHashMap.containsKey(item.mUdn)) {
+                                    mContentsList.add(hashMap);
+                                    mDlnaDmsItemList.add(item);
+                                    //デバイス追加されたらbreak
+                                    break;
+                                }
+                            }
+                        } else {
+                            //0件の場合そのままリストに追加する
+                            mContentsList.add(hashMap);
+                            mDlnaDmsItemList.add(item);
+                        }
+                    }
+                }
+                DTVTLogger.debug("ContentsList.size = " + mContentsList.size());
+                DTVTLogger.debug("mDlnaDmsItemList.size = " + mDlnaDmsItemList.size());
                 if (mCallbackTimer == null
                         || mCallbackTimer.getTimerStatus() == TimerStatus.TIMER_STATUS_CANCEL) {
-                    if(mCallbackTimer != null) {
+                    if (mCallbackTimer != null) {
                         DTVTLogger.debug("timer canceled remake");
                     }
                     //タイマーが存在しないか既にキャンセル済みだった場合は、新たに作成する
