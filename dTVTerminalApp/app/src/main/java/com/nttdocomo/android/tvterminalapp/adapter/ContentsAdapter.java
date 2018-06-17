@@ -337,9 +337,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder = new ViewHolder();
                 contentView = mInflater.inflate(R.layout.item_wizard_cell, parent, false);
                 setWizardItem(holder, contentView);
-            }
-            if (!holder.isCommonContent && !listContentInfo.hasChildContentList()) {
-                holder = new ViewHolder();
+            } else {
                 contentView = mInflater.inflate(R.layout.item_common_result, parent, false);
                 setListItemPattern(holder, contentView);
             }
@@ -982,10 +980,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     private void setChannelName(final ViewHolder holder, final ContentsData listContentInfo) {
         DTVTLogger.start();
         if (!TextUtils.isEmpty(listContentInfo.getChannelName()) && mTabType != TabTypeItem.TAB_DEFAULT) { //ランク
-            holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
-            holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
-            holder.tv_recorded_ch_name.setText(listContentInfo.getChannelName());
-            holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.content_time_text));
+            ContentUtils.setChannelNameOrMissedText(mContext, holder.tv_recorded_hyphen, holder.tv_recorded_ch_name, listContentInfo);
             if (mType == ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST) {
                 holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.record_download_status_color));
             }
