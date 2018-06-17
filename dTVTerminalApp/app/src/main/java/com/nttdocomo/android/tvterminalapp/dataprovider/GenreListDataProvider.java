@@ -236,7 +236,8 @@ public class GenreListDataProvider implements
             //通信クラスにデータ取得要求を出す
             mWebClient = new GenreCountGetWebClient(mContext);
             String filter = "";
-            int ageReq = 1;
+            UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
+            int ageReq = userInfoDataProvider.getUserAge();
             if (!mWebClient.getGenreCountGetApi(filter, ageReq, genreId, this)) {
                 mApiDataProviderCallback.genreListCallback(null);
             }
