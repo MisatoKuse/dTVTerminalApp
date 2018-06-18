@@ -133,6 +133,8 @@ public class ContentsData {
     private boolean mClipStatus = false;
     /**クリップ状態に変更があった場合に真.*/
     private boolean mIsClipStatusUpdate = false;
+    /**期限切れコンテンツフラグ(クリップ(VOD)のみ.*/
+    private boolean mIsAfterLimitContents = false;
     /**サブタイトル.*/
     private String mSubTitle = null;
     /**description1.*/
@@ -1114,6 +1116,24 @@ public class ContentsData {
      */
     public void setClipStatusUpdate(final boolean mClipStatusUpdate) {
         this.mIsClipStatusUpdate = mClipStatusUpdate;
+    }
+
+    /**
+     * 期限切れコンテンツフラグ取得.
+     *
+     * @return 期限切れコンテンツフラグ
+     */
+    public boolean isIsAfterLimitContents() {
+        return mIsAfterLimitContents;
+    }
+
+    /**
+     * 期限切れコンテンツフラグ設定.
+     *
+     * @param mIsAfterLimitContents 期限切れコンテンツフラグ
+     */
+    public void setIsAfterLimitContents(final boolean mIsAfterLimitContents) {
+        this.mIsAfterLimitContents = mIsAfterLimitContents;
     }
 
     /**

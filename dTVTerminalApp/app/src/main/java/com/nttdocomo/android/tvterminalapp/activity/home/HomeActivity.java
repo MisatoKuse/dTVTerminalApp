@@ -227,7 +227,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         //重複表示防止
         if (!mIsCloseDialog) {
             mIsCloseDialog = true;
-            CustomDialog failedRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+            CustomDialog failedRecordingReservationDialog = new CustomDialog(HomeActivity.this, CustomDialog.DialogType.ERROR);
             failedRecordingReservationDialog.setContent(message);
             failedRecordingReservationDialog.setConfirmText(confirmTextId);
             // Cancelable

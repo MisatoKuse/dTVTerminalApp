@@ -150,7 +150,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
      * @param list Vodクリップリスト
      */
     private void sendVodClipListData(final List<Map<String, String>> list) {
-        mApiDataProviderCallback.vodClipListCallback(setContentData(list, null));
+        mApiDataProviderCallback.vodClipListCallback(setContentData(list, null, true));
     }
 
     @Override

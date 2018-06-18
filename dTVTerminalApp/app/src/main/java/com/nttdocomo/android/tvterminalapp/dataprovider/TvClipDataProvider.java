@@ -184,7 +184,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
      */
     private void sendTvClipListData(final List<Map<String, String>> list, final ArrayList<ChannelInfo> channels) {
         if (channels != null) {
-            mApiDataProviderCallback.tvClipListCallback(setContentData(list, channels));
+            mApiDataProviderCallback.tvClipListCallback(setContentData(list, channels, false));
         } else {
             getChannelList();
         }

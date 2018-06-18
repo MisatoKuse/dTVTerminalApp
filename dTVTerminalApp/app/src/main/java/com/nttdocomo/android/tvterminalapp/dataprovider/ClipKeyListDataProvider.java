@@ -20,7 +20,6 @@ import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActiv
 import com.nttdocomo.android.tvterminalapp.activity.video.VideoContentListActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
@@ -37,7 +36,6 @@ import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipKeyListWebClient;
 
 import java.util.ArrayList;
@@ -625,15 +623,15 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      *
      * @param contentMapList コンテンツリストデータ
      * @param channels チャンネル情報
+     * @param isVodClipData クリップ(ビデオ)フラグ
      * @return ListView表示用データ
      */
     @SuppressWarnings("OverlyLongMethod")
-    List<ContentsData> setContentData(final List<Map<String, String>> contentMapList, final ArrayList<ChannelInfo> channels) {
+    List<ContentsData> setContentData(final List<Map<String, String>> contentMapList, final ArrayList<ChannelInfo> channels, final boolean isVodClipData) {
         List<ContentsData> contentsDataList = new ArrayList<>();
 
         ContentsData contentInfo;
 
-        UserState userState = UserInfoUtils.getUserState(mContext);
         for (int i = 0; i < contentMapList.size(); i++) {
             contentInfo = new ContentsData();
 
@@ -691,6 +689,13 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
                 contentInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv,
                         requestData.getCrid(), requestData.getServiceId(),
                         requestData.getEventId(), requestData.getTitleId(), tvService));
+            }
+            if (isVodClipData && dispType == null) {
+                //DREM-1882 期限切れコンテンツのクリップ対応により dispType==nullなら一律クリップ可なのでフラグを立てる
+                //対象はクリップ一覧(ビデオ)のみ
+                contentInfo.setIsAfterLimitContents(true);
+                contentInfo.setClipExec(true);
+                requestData.setIsAfterLimitContents(true);
             }
             //生成した contentInfo をリストに格納する
             contentsDataList.add(contentInfo);
