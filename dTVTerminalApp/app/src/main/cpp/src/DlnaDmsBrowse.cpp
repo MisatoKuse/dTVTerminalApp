@@ -344,9 +344,16 @@ void printObject(DMP* d, const xmlNodePtr element, du_uint32 index, du_bool is_c
             }
             
             // size
-            if (dav_didl_libxml_get_attribute_value_by_name(p, (du_uchar*)"dlna:cleartextSize", &ua)) {
+            if (dav_didl_libxml_get_attribute_value_by_name(p, dav_didl_attribute_size(), &ua)) {
                 if (!du_uchar_array_cat0(&ua)) goto error;
                 snprintf(contentInfo.size, sizeof(contentInfo.size), "%s" , du_uchar_array_get(&ua));
+                MY_LOG("   size: %s", du_uchar_array_get(&ua));
+            }
+
+            // cleartextSize
+            if (dav_didl_libxml_get_attribute_value_by_name(p, dav_didl_attribute_dlna_cleartext_size(), &ua)) {
+                if (!du_uchar_array_cat0(&ua)) goto error;
+                snprintf(contentInfo.cleartextSize, sizeof(contentInfo.cleartextSize), "%s" , du_uchar_array_get(&ua));
                 MY_LOG("   size: %s", du_uchar_array_get(&ua));
             }
 

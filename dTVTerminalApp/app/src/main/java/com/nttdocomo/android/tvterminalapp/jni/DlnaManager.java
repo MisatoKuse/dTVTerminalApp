@@ -282,11 +282,9 @@ public class DlnaManager {
      * StartDmp.
      */
     public void StartDmp() {
-        stopDmp();
-        startDmp();
         if (!startedDmp) {
             startedDmp = true;
-//            startDmp();
+            startDmp();
         }
     }
 
@@ -294,10 +292,9 @@ public class DlnaManager {
      * StopDmp.
      */
     public void StopDmp() {
-        stopDmp();
         if (startedDmp) {
             startedDmp = false;
-//            stopDmp();
+            stopDmp();
         }
     }
 

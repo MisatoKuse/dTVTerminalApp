@@ -91,6 +91,7 @@ struct ContentInfo {
     char contentPath[256];
     char duration[256];
     char size[256];
+    char cleartextSize[256];
     char protocolInfo[512];
     char objectId[256];
     char genre[256];
