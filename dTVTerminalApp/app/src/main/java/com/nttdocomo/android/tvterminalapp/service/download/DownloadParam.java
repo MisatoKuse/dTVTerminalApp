@@ -18,6 +18,8 @@ public abstract class DownloadParam {
     private String mSaveFileName;
     /**通知の頻度.*/
     private int mPercentToNotify;
+    /**タイトル.*/
+    private String mTitle;
 
     /**
      * 通知の頻度設定.
@@ -65,6 +67,22 @@ public abstract class DownloadParam {
      */
     public void setSavePath(final String savePath) {
         this.mSavePath = savePath;
+    }
+
+    /**
+     * Getter.
+     * @return mTitle
+     */
+    public String getTitle() {
+        return mTitle;
+    }
+
+    /**
+     * Setter.
+     * @param title title
+     */
+    public void setTitle(final String title) {
+        this.mTitle = title;
     }
 
     /**

@@ -4,14 +4,13 @@
 
 package com.nttdocomo.android.tvterminalapp.service.download;
 
-import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +25,10 @@ public class DownloadService extends Service implements DownloadListener {
     private DownloaderBase mDownloaderBase;
     /**ダウンロードサービスID.*/
     private static final int DOWNLOAD_SERVICE_ID = 1;
+    /**ダウンロード失敗通知ID.*/
+    private static int sDownloadFailId = DOWNLOAD_SERVICE_ID + 1;
+    /**タイトル.*/
+    private String mTitle;
     /**ダウンロードデータキュー.*/
     private static List<DownloadData> sDownloadDataQue = new ArrayList<>();
     /**UI更新あるか.*/
@@ -115,6 +118,9 @@ public class DownloadService extends Service implements DownloadListener {
     public void start() {
         if (null != mDownloaderBase) {
             mDownloaderBase.start();
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            notificationManager.notify(DOWNLOAD_SERVICE_ID, DlnaUtils.getNotification(getTitle(),
+                    getResources().getString(R.string.record_download_notification), this));
         }
     }
 
@@ -163,26 +169,8 @@ public class DownloadService extends Service implements DownloadListener {
      * ダウンロード開始.
      */
     private void startService() {
-        startForeground(DOWNLOAD_SERVICE_ID, getNotification(getResources().getString(R.string.record_download_notification), 0));
-    }
-
-    /**
-     * 通知表示.
-     * @param title ダウンロード中番組タイトル.
-     * @param progress  ダウンロード進捗.
-     * @return 通知
-     */
-    private Notification getNotification(final String title, final int progress) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "");
-        builder.setSmallIcon(R.mipmap.icd_app_tvterminal);
-        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.icd_app_tvterminal));
-        builder.setContentTitle(title);
-        builder.setPriority(NotificationCompat.PRIORITY_HIGH);
-        if (progress > 0) {
-            builder.setContentText(progress + "%");
-            builder.setProgress(100, progress, false);
-        }
-        return builder.build();
+        startForeground(DOWNLOAD_SERVICE_ID, DlnaUtils.getNotification(getTitle(),
+                getResources().getString(R.string.record_download_notification), this));
     }
 
     /**
@@ -210,11 +198,21 @@ public class DownloadService extends Service implements DownloadListener {
      * @param param param
      */
     public void setDlParam(final DownloadParam param) {
+        mTitle = param.getTitle();
+        ++sDownloadFailId;
         if (null == mDownloaderBase) {
             mDownloaderBase = new DtcpDownloader(param, this);
         } else {
             mDownloaderBase.reset(param);
         }
+    }
+
+    /**
+     * ダウンロード中コンテンツタイトル取得.
+     * @return title タイトル
+     */
+    private String getTitle() {
+        return mTitle;
     }
 
     /**
@@ -241,6 +239,11 @@ public class DownloadService extends Service implements DownloadListener {
 
     @Override
     public void onFail(final DownLoadError error, final String savePath) {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(sDownloadFailId,
+                DlnaUtils.getNotification(getTitle(),
+                        getResources().getString(R.string.record_download_error_message),
+                        this));
         if (null != mDownloadServiceListener) {
             mDownloadServiceListener.onFail(error, savePath);
         }

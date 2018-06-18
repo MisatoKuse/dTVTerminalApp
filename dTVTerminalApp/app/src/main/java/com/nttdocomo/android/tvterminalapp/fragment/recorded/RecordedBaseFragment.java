@@ -377,6 +377,11 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
             }
             mDownloadDataProvider.setDownloadParam(mDownloadParam);
             mDownloadDataProvider.start();
+        } else {
+            if (mDownloadDataProvider.getIsRegistered()) {
+                mDownloadDataProvider.endProvider();
+            }
+            mDownloadDataProvider.stopService();
         }
     }
 
@@ -529,6 +534,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                     if (!isOk) {
                         return;
                     }
+                    mDownloadDataProvider.beginProvider(getActivity());
                     mCanBeCanceled = false;
                 }
                 DownloadData downloadData = setDlData(index);
@@ -537,7 +543,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                     mCanBeCanceled = false;
                     enqueue(index, downloadData);
                     setDownloadStatus(index, 0);
-                    mDownloadDataProvider.start();
+                    //mDownloadDataProvider.start();
                 }
                 break;
             case ContentsAdapter.DOWNLOAD_STATUS_LOADING :
@@ -665,6 +671,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         dtcpDownloadParam.setContext(context);
         dtcpDownloadParam.setSavePath(dlPath);
         dtcpDownloadParam.setSaveFileName(dlFileName);
+        dtcpDownloadParam.setTitle(item.getTitle());
         dtcpDownloadParam.setDtcp1host(ip);
         dtcpDownloadParam.setDtcp1port(portInt);
         dtcpDownloadParam.setUrl(url);
@@ -677,7 +684,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
             return false;
         }
         dtcpDownloadParam.setXmlToDownLoad(xml);
-        mDownloadDataProvider.beginProvider(getActivity());
+        //mDownloadDataProvider.beginProvider(getActivity());
 
         return true;
     }
@@ -751,12 +758,12 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         if (null == fullPath || fullPath.isEmpty()) {
             return;
         }
-        showMessage();
+        //showMessage();
         mCanBeCanceled = false;
         if (mDownloadDataProvider != null) {
             mDownloadDataProvider.cancelDownLoadStatus(fullPath);
         }
-        setNextDownLoad();
+        setCancelStatus(fullPath);
     }
 
     /**
@@ -1020,7 +1027,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         }
         mCanBeCanceled = false;
         if (mActivity != null) {
-            showMessage();
+            //showMessage();
             setCancelStatus(fullPath);
         }
     }

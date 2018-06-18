@@ -211,7 +211,7 @@ public abstract class DownloaderBase {
      * @return MB.
      */
     long getInnerStorageSafeSpaceMB() {
-        return 300;
+        return 500;
     }
 
     /**

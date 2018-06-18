@@ -369,7 +369,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
                         DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn, getApplicationContext());
                     } else {
                         setRemoteProgressVisible(View.GONE);
-                        showErrorDialog("アクティベーション実行失敗しました。");
+                        showErrorDialog(getString(R.string.activation_failed_msg));
                     }
                 }
             }

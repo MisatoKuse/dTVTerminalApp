@@ -188,6 +188,7 @@
     <string name="record_download_cancel_title">ダウンロードを取りやめますか？</string>
     <string name="record_download_cancel_confirm">取りやめる</string>
     <string name="record_download_notification">録画番組をダウンロード中</string>
+    <string name="record_download_notification_channel_name">ダウンロード状況</string>
     <string name="activation_file_path_create_file_msg">アクティベーションファイルパス作成失敗しました。</string>
     <string name="activation_failed_msg">アクティベーション失敗しました。</string>
     <string name="dtcp_init_failed_msg">dtcp init 失敗しました。</string>
