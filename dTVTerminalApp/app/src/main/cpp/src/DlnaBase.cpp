@@ -290,8 +290,8 @@ bool DlnaBase::stopDtcp(DMP *dmp) {
 
 void DlnaBase::stopDmp(DMP *dmp) {
     dupnp_cp_evtmgr_stop(&dmp->eventManager);
-    dupnp_cp_dvcmgr_stop(&dmp->deviceManager);
     dupnp_stop(&dmp->upnpInstance);
+    dupnp_cp_dvcmgr_stop(&dmp->deviceManager);
 }
 
 //DiRAGのfreeも持ってくる

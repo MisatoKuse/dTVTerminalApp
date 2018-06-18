@@ -467,7 +467,6 @@ public class BaseActivity extends FragmentActivity implements
                 if (isOn) {
                     mStbStatusIcon.setImageResource(R.mipmap.header_material_icon_tv);
                     //ペアリングアイコンがOFF→ON(点灯)になった際にdアカチェックを行う
-//                    checkDAccountOnRestart();
                 } else {
                     mStbStatusIcon.setImageResource(R.mipmap.header_material_icon_tv_active);
                 }
@@ -806,6 +805,7 @@ public class BaseActivity extends FragmentActivity implements
                 || this instanceof TutorialActivity
                 || this instanceof StbSelectErrorActivity
                 || this instanceof DaccountResettingActivity
+                || this instanceof PairingHelpActivity
                 ) {
             DTVTLogger.end();
             return;
@@ -2918,6 +2918,9 @@ public class BaseActivity extends FragmentActivity implements
     public void onConnectionChangeCallback(final boolean isStbConnectedHomeNetwork) {
         DTVTLogger.warning("isStbConnectedHomeNetwork = " + isStbConnectedHomeNetwork);
         setStbStatus(isStbConnectedHomeNetwork);
+        if (isStbConnectedHomeNetwork) {
+            checkDAccountOnRestart();
+        }
     }
 
     /**

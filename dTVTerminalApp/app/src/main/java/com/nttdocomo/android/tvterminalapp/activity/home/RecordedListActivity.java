@@ -196,14 +196,14 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         for (DlnaObject dlnaObject: objs) {
             DlnaRecVideoItem item = new DlnaRecVideoItem();
             item.mItemId = dlnaObject.mObjectId;
-            item.mSize = "0";
+            item.mSize = dlnaObject.mSize;
             item.mResUrl = dlnaObject.mResUrl;
             item.mResolution = dlnaObject.mResolution;
-            item.mBitrate = "0";
+            item.mBitrate = dlnaObject.mBitrate;
             item.mDuration = dlnaObject.mDuration;
             item.mTitle = dlnaObject.mTitle;
             item.mVideoType = dlnaObject.mVideoType;
-            item.mClearTextSize = "0";
+            item.mClearTextSize = dlnaObject.mCleartextSize;
             item.mXml = dlnaObject.mXml;
             dstList.add(item);
         }

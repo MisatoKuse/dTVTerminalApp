@@ -255,7 +255,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         // dアカウントチェック処理はonResumeで自身で呼び出しているため不要
         setUnnecessaryDaccountRegistService();
         DTVTLogger.end();
-        DlnaManager.shared().StopDmp();
     }
 
     /**
@@ -455,7 +454,8 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             mCheckBox.setVisibility(View.VISIBLE);
             mCheckboxText.setVisibility(View.VISIBLE);
         }
-
+        DlnaManager.shared().StopDmp();
+        DlnaManager.shared().mDlnaManagerListener = null;
         //STB検索開始
         DlnaManager.shared().mDlnaManagerListener = this;
         DlnaManager.shared().StartDmp();
