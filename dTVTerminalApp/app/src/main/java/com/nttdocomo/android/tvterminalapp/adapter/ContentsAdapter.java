@@ -1245,7 +1245,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                             if (!UserInfoUtils.getClipActive(mContext)) {
                                 holder.tv_clip.setBackgroundResource(R.mipmap.icon_tap_circle_normal_clip);
                             } else {
-                                if (listContentInfo.isClipStatus()) {
+                                //DREM-1882 期限切れコンテンツのクリップ対応により、期限切れクリップコンテンツは一律でアクティブボタンを表示
+                                if (listContentInfo.isClipStatus() || listContentInfo.isIsAfterLimitContents()) {
                                     holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_clip);
                                     holder.tv_clip.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
                                 } else {

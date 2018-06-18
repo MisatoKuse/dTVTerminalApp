@@ -271,16 +271,18 @@ public class ClipListBaseFragment extends Fragment
 
         if (mContext != null) {
             ContentsData contentsData = mClipListData.get(i);
-            ClipListActivity clipListActivity = (ClipListActivity) mContext;
-            if (ContentUtils.isChildContentList(contentsData)) {
-                clipListActivity.startChildContentListActivity(contentsData);
-            } else {
-                mContentsDetailDisplay = true;
-                Intent intent = new Intent(mContext, ContentDetailActivity.class);
-                intent.putExtra(DtvtConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
-                OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(contentsData, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
-                intent.putExtra(detailData.getRecommendFlg(), detailData);
-                clipListActivity.startActivity(intent);
+            if (!contentsData.isIsAfterLimitContents()) {
+                ClipListActivity clipListActivity = (ClipListActivity) mContext;
+                if (ContentUtils.isChildContentList(contentsData)) {
+                    clipListActivity.startChildContentListActivity(contentsData);
+                } else {
+                    mContentsDetailDisplay = true;
+                    Intent intent = new Intent(mContext, ContentDetailActivity.class);
+                    intent.putExtra(DtvtConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
+                    OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(contentsData, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
+                    intent.putExtra(detailData.getRecommendFlg(), detailData);
+                    clipListActivity.startActivity(intent);
+                }
             }
         }
     }

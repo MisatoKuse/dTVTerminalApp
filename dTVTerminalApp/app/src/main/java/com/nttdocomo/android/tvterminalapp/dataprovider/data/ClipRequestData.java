@@ -43,6 +43,8 @@ public class ClipRequestData {
     private boolean mIsNotify = false;
     /**クリップ未/済.*/
     private boolean mClipStatus = false;
+    /**期限切れコンテンツフラグ.*/
+    private boolean mIsAfterLimitContents = false;
     /**disp_type値 tv_program.*/
     private static final String DISP_TYPE_TV_PROGRAM = "tv_program";
     /**tv_service値 h4d_iptv.*/
@@ -281,6 +283,23 @@ public class ClipRequestData {
     public void setClipStatus(final boolean mClipStatus) {
         this.mClipStatus = mClipStatus;
     }
+
+    /**
+     * 期限切れクリップコンテンツフラグ取得.
+     * @return 期限切れクリップコンテンツフラグ
+     */
+    public boolean isIsAfterLimitContents() {
+        return mIsAfterLimitContents;
+    }
+
+    /**
+     * 期限切れクリップコンテンツフラグ設定.
+     * @param mIsAfterLimitContents 期限切れクリップコンテンツフラグ
+     */
+    public void setIsAfterLimitContents(final boolean mIsAfterLimitContents) {
+        this.mIsAfterLimitContents = mIsAfterLimitContents;
+    }
+
     /**
      * 視聴通知とクリップコンテンツタイプを判断して設定する.
      *

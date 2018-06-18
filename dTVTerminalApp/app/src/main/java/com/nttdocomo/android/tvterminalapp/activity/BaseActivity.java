@@ -1657,6 +1657,14 @@ public class BaseActivity extends FragmentActivity implements
 
             boolean isParamCheck;
 
+            //DREM-1882 期限切れコンテンツのクリップ対応により、期限切れコンテンツをクリップ登録しようとした場合にはエラーダイアログを表示する
+            if (!data.isClipStatus() && data.isIsAfterLimitContents()) {
+                String message = getString(R.string.str_clip_execution_after_limit_contents);
+                showErrorDialogOffer(message);
+                mClipRunTime = false;
+                return;
+            }
+
             //クリップ状態によりクリップ登録/削除実行
             if (data.isClipStatus()) {
                 ClipDeleteWebClient deleteWebClient = new ClipDeleteWebClient(getApplicationContext());

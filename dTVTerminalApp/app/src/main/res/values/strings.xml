@@ -137,6 +137,7 @@
     <!-- クリップ一覧 -->
     <string name="str_clip_activity_title">クリップ</string>
     <string name="str_clip_list_no_content">クリップしたコンテンツがありません</string>
+    <string name="str_clip_execution_after_limit_contents">配信が終了しているためクリップできません</string>
     <string-array name="tab_clip_names">
         <item>番組</item>
         <item>ビデオ</item>
