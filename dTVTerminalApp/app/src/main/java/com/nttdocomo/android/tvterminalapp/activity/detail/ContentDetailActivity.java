@@ -52,6 +52,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ContentsDetailDataProvid
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.SearchDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChannelListResponse;
@@ -632,7 +633,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             DTVTLogger.debug("contentId:" + mDetailData.getContentsId());
             cRid = new String[1];
             cRid[cRid.length - 1] = mDetailData.getContentsId();
-            int ageReq = mDetailData.getAge();
+            UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(this);
+            int ageReq = userInfoDataProvider.getUserAge();
             mContentsDetailDataProvider.getContentsDetailData(cRid, "", ageReq);
         } else {
             DTVTLogger.debug("contentId取得失敗しました。");
