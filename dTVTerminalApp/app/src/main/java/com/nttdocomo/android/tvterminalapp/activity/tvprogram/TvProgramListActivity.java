@@ -57,6 +57,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
+import static android.util.TypedValue.COMPLEX_UNIT_DIP;
 import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE;
 
 /**
@@ -607,6 +608,7 @@ public class TvProgramListActivity extends BaseActivity implements
             if (curTime >= STANDARD_TIME) {
                 curTime = curTime - STANDARD_TIME;
             }
+            tabTextView.setTextSize(COMPLEX_UNIT_DIP, 14);
             tabTextView.setText(String.valueOf(curTime));
             tabTextView.setPadding(0, (int) density * 8, 0, 0);
             tabTextView.setBackgroundColor(Color.BLACK);
