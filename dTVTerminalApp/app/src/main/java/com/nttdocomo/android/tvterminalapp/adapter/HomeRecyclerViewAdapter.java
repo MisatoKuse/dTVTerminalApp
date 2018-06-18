@@ -282,6 +282,8 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         viewHolder.mImage = view.findViewById(R.id.home_main_recyclerview_item_iv);
         viewHolder.mContent = view.findViewById(R.id.home_main_recyclerview_item_tv_content);
         viewHolder.mTime = view.findViewById(R.id.home_main_recyclerview_item_tv_time);
+        viewHolder.mHyphen = view.findViewById(R.id.home_main_recyclerview_item_hyphen);
+        viewHolder.mChannel = view.findViewById(R.id.home_main_recyclerview_item_tv_channel_or_missed);
         viewHolder.mNew = view.findViewById(R.id.home_main_recyclerview_item_iv_new);
         viewHolder.mRankNum = view.findViewById(R.id.home_main_recyclerview_item_iv_rank_num);
         viewHolder.mServiceIconFirst = view.findViewById(R.id.home_main_recyclerview_item_iv_service_icon_first);
@@ -338,6 +340,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             case HOME_CONTENTS_SORT_VIDEO:
                 //配信期限の設定
                 ContentUtils.setPeriodText(mContext, viewHolder.mTime, contentsData);
+                ContentUtils.setChannelNameOrMissedText(mContext, viewHolder.mHyphen, viewHolder.mChannel, contentsData);
                 break;
             default:
                 if (viewHolder.mTime != null) {
@@ -655,6 +658,14 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
          * コンテンツ日時.
          */
         TextView mTime;
+        /**
+         * 区切り文字（ハイフン）.
+         */
+        TextView mHyphen;
+        /**
+         * チャンネル名、見逃し.
+         */
+        TextView mChannel;
         /**
          * Newアイコン.
          */

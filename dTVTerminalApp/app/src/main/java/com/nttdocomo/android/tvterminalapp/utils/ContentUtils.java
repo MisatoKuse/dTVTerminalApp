@@ -403,15 +403,9 @@ public class ContentUtils {
                     if (periodContentsType ==  ContentsType.VOD) {
                         //VOD(m/d（曜日）まで)
                         viewingPeriod = DateUtils.getContentsDetailVodDate(context, availEndDate);
-                    } else if (periodContentsType == ContentsType.DCHANNEL_VOD_OVER_31) {
-                        //「見逃し」
-                        viewingPeriod = context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing);
-                    } else if (periodContentsType == ContentsType.DCHANNEL_VOD_31) {
+                    } else if (periodContentsType == ContentsType.DCHANNEL_VOD_31 || periodContentsType == ContentsType.DCHANNEL_VOD_OVER_31) {
                         //VOD(m/d（曜日）まで)
                         viewingPeriod = DateUtils.getContentsDetailVodDate(context, vodEndDate);
-                        //「見逃し」
-                        viewingPeriod = StringUtils.getConnectStrings(viewingPeriod, context.getString(R.string.home_contents_hyphen),
-                                context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
                     }
                 }
                 break;
@@ -422,13 +416,7 @@ public class ContentUtils {
                 if (!TextUtils.isEmpty(startDate) && DataBaseUtils.isNumber(startDate)) {
                     start = Long.parseLong(listContentInfo.getPublishStartDate());
                 }
-                if (!TextUtils.isEmpty(listContentInfo.getChannelName())) {
-                    viewingPeriod = StringUtils.getConnectStrings(DateUtils.getContentsDateString(start),
-                            context.getString(R.string.home_contents_hyphen),
-                            listContentInfo.getChannelName());
-                } else {
-                    viewingPeriod = DateUtils.getContentsDateString(start);
-                }
+                viewingPeriod = DateUtils.getContentsDateString(start);
                 break;
             default:
                 break;
@@ -441,23 +429,67 @@ public class ContentUtils {
             case DCHANNEL_VOD_OVER_31:
             case DCHANNEL_VOD_31:
                 if (!TextUtils.isEmpty(viewingPeriod)) {
+                    textView.setText(viewingPeriod);
                     textView.setVisibility(View.VISIBLE);
-                    SpannableString spannableString = new SpannableString(viewingPeriod);
-                    int subStart = 0;
-                    int subEnd = 0;
-                    if (viewingPeriod.contains(context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing))) {
-                        subStart = viewingPeriod.indexOf(context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
-                        subEnd = spannableString.length();
-                    }
-                    //「見逃し」は黄色文字で表示する
-                    spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(context, R.color.contents_detail_video_miss_color)),
-                            subStart, subEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    textView.setText(spannableString);
                 }
             case OTHER:
                 break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * チャンネル名表示を別メソッド化 DREM-2570
+     * @param context           コンテキスト
+     * @param hyphenTextView 「-」表示ビュー
+     * @param channelTextView チャンネル名表示ビュー
+     * @param listContentInfo 行データ
+     */
+    public static void setChannelNameOrMissedText(final Context context,
+                                                  final TextView hyphenTextView,
+                                                  final TextView channelTextView,
+                                                  final ContentsData listContentInfo) {
+        final String dispType = listContentInfo.getDispType();
+        final String tvService = listContentInfo.getTvService();
+        final String contentsType = listContentInfo.getContentsType();
+        final String estFlg = listContentInfo.getEstFlg();
+        final String chsVod = listContentInfo.getChsVod();
+        final long availEndDate = listContentInfo.getAvailEndDate();
+        final long vodStartDate = listContentInfo.getVodStartDate();
+        final long vodEndDate = listContentInfo.getVodEndDate();
+
+        final ContentsType periodContentsType = getContentsTypeByPlala(dispType, tvService, contentsType, availEndDate, vodStartDate, vodEndDate,
+                estFlg, chsVod);
+
+        String viewingChannelName = "";
+        if (periodContentsType == ContentsType.DCHANNEL_VOD_OVER_31 || periodContentsType == ContentsType.DCHANNEL_VOD_31) {
+            //「見逃し」
+            viewingChannelName = context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing);
+
+        } else if (periodContentsType == ContentsType.TV) {
+            viewingChannelName = listContentInfo.getChannelName();
+
+        }
+
+        // 表示
+        if (periodContentsType == ContentsType.TV || periodContentsType == ContentsType.VOD || periodContentsType == ContentsType.DCHANNEL_VOD_OVER_31 || periodContentsType == ContentsType.DCHANNEL_VOD_31) {
+            if (!TextUtils.isEmpty(viewingChannelName)) {
+                hyphenTextView.setVisibility(View.VISIBLE);
+                channelTextView.setVisibility(View.VISIBLE);
+                SpannableString spannableString = new SpannableString(viewingChannelName);
+                int subStart = 0;
+                int subEnd = 0;
+                if (viewingChannelName.contains(context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing))) {
+                    subStart = viewingChannelName.indexOf(context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
+                    subEnd = spannableString.length();
+
+                    //「見逃し」は黄色文字で表示する
+                    spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(context, R.color.contents_detail_video_miss_color)),
+                            subStart, subEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+                channelTextView.setText(spannableString);
+            }
         }
     }
 
