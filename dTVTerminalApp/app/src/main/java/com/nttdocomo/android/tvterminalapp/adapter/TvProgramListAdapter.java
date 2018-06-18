@@ -712,7 +712,12 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             int thumbnailHeight = ((TvProgramListActivity) mContext).dip2px(THUMBNAIL_HEIGHT) * thumbnailWidth
                     / ((TvProgramListActivity) mContext).dip2px(THUMBNAIL_WIDTH);
             if (availableSpace - titleSpace <= ((TvProgramListActivity) mContext).dip2px(THUMB_MARGIN_TOP_TITLE)) {
-                itemViewHolder.mThumbnail.setVisibility(View.INVISIBLE);
+                //表示画像がない場合は、サムネイルを非表示にする
+                if (itemViewHolder.mThumbnail.getDrawable() != null) {
+                    itemViewHolder.mThumbnail.setVisibility(View.INVISIBLE);
+                } else {
+                    itemViewHolder.mThumbnail.setVisibility(View.GONE);
+                }
                 itemViewHolder.mDetail.setVisibility(View.INVISIBLE);
             } else {
                 if (availableSpace - titleSpace - ((TvProgramListActivity) mContext)
@@ -806,7 +811,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                                 ItemViewHolder itemViewHolder = new ItemViewHolder(itemSchedules.get(count));
                                 setView(itemViewHolder, itemSchedule);
                                 layout.addView(itemViewHolder.mView);
-                                itemViewHolder.mThumbnail.setImageResource(R.mipmap.error_ch_mini);
                                 //URLによって、サムネイル取得
                                 String thumbnailURL = itemSchedule.getImageUrl();
                                 if (!TextUtils.isEmpty(thumbnailURL) && !mIsDownloadStop && mThumbnailProvider != null) {
