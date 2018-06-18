@@ -48,8 +48,15 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        DlnaManager.shared().StopDmp();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        DlnaManager.shared().StartDmp();
         Intent intent = getIntent();
         if (intent != null) {
             int startMode = intent.getIntExtra(StbSelectActivity.FROM_WHERE, -1);
