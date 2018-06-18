@@ -467,7 +467,7 @@ public class BaseActivity extends FragmentActivity implements
                 if (isOn) {
                     mStbStatusIcon.setImageResource(R.mipmap.header_material_icon_tv);
                     //ペアリングアイコンがOFF→ON(点灯)になった際にdアカチェックを行う
-                    checkDAccountOnRestart();
+//                    checkDAccountOnRestart();
                 } else {
                     mStbStatusIcon.setImageResource(R.mipmap.header_material_icon_tv_active);
                 }
@@ -741,7 +741,7 @@ public class BaseActivity extends FragmentActivity implements
                     showErrorDialogOffer(msg);
                 }
             }
-            //TODO 6/12作業保留のためコメントアウト
+            //TODO 6/12作業保留(今後の対応とする)のためコメントアウト
             // BG → FG でのonResumeで TvProgramIntentService を開始
 //            DTVTLogger.debug("do TvProgramIntentService start");
 //            ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(BaseActivity.this);

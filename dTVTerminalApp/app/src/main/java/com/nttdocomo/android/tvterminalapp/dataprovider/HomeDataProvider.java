@@ -469,7 +469,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         ErrorState errorState = getError(selectGetError);
 
         //原因がタイムアウトならばこの場でヌルを指定したコールバックを返して、ウェイト表示を終わらせる
-        if (errorState.isTimeout()) {
+        if (errorState != null && errorState.isTimeout()) {
             mApiDataProviderCallback.tvScheduleListCallback(null);
         }
     }

@@ -1137,11 +1137,13 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                         // ※RELAY_RESULT_OK 応答時は requestCommand に START_APPLICATION/TITLE_DETAIL は設定されない
                         break;
                     case IS_USER_ACCOUNT_EXIST:
-                        //TODO ナスネとペアリングしたいときは以下をコメントアウト　SharedPreferencesにSTBデータを保存
-                        SharedPreferencesUtils.setSharedPreferencesStbInfo(this, mDlnaDmsItemList.get(mSelectDevice));
-                        Intent intent = new Intent(this, StbConnectActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
+                        //ナスネとペアリングしたいときは以下をコメントアウト　SharedPreferencesにSTBデータを保存
+                        if (mSelectDevice != SELECT_DEVICE_ITEM_DEFAULT) {
+                            SharedPreferencesUtils.setSharedPreferencesStbInfo(this, mDlnaDmsItemList.get(mSelectDevice));
+                            Intent intent = new Intent(this, StbConnectActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                        }
                         break;
                     case SET_DEFAULT_USER_ACCOUNT:
                     case CHECK_APPLICATION_VERSION_COMPATIBILITY:
