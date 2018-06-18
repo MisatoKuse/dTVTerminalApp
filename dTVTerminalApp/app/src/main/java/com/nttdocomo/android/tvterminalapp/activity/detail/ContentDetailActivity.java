@@ -994,7 +994,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     }
                 }
                 // コンテンツ詳細(VODの場合、タブ一つに設定する)
-                mTabNames = getResources().getStringArray(R.array.contents_detail_tab_vod);
+                mTabNames = getResources().getStringArray(R.array.contents_detail_tab_other_service);
             }
             mDetailData.setChannelDate(date);
         } else {
