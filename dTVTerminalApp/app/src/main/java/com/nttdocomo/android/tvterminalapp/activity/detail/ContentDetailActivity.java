@@ -2762,7 +2762,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     case INSIDE_HOUSE:
                         mContractLeadingView.setVisibility(View.VISIBLE);
                         vodTextView.setText(getString(R.string.contents_detail_hikari_vod_agreement));
-                        vodButton.setText(getString(R.string.contents_detail_contract_leading_button));
+                        vodButton.setText(getString(R.string.contents_detail_contract_button_vod));
                         vodButton.setAllCaps(false);
                         //サムネイルにシャドウをかける
                         setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
@@ -2794,7 +2794,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     case INSIDE_HOUSE:
                         mContractLeadingView.setVisibility(View.VISIBLE);
                         chTextView.setText(getString(R.string.contents_detail_contract_text_ch));
-                        chButton.setText(getString(R.string.contents_detail_contract_leading_button));
+                        chButton.setText(getString(R.string.contents_detail_contract_button_ch));
                         chButton.setAllCaps(false);
                         //サムネイルにシャドウをかける
                         setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
