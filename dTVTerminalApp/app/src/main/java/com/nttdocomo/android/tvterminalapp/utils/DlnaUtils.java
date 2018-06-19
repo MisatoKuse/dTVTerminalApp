@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * DLNA共通Utilクラス.
@@ -88,6 +90,23 @@ public class DlnaUtils {
     /*ローカルレジストレーション期限表示*/
     /**ダウンロード通知チャンネルID.*/
     public static final String DOWNLOAD_NOTIFICATION_ID = "downloadProgress";
+
+    /**
+     * アクティベーションのチェック、実行.
+     * @param location location
+     * @return ホスト
+     */
+    public static String getHost(final String location) {
+        URL hostUrl;
+        String hostString = "";
+        try {
+            hostUrl = new URL(location);
+            hostString = hostUrl.getHost();
+        } catch (MalformedURLException e) {
+            DTVTLogger.debug(e);
+        }
+        return hostString;
+    }
 
     /**
      * アクティベーションのチェック、実行.
