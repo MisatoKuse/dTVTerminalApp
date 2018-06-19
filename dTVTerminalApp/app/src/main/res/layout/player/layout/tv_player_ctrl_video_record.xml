@@ -80,6 +80,7 @@
             android:layout_marginBottom="@dimen/contents_detail_player_media_controller_time_bottom_margin"
             android:background="@color/contents_player_now_on_air_cur_text_backgroud_color"
             android:textColor="@color/contents_player_media_controller_time_text"
+            android:textSize="14dp"
             android:visibility="invisible"/>
 
         <ImageView
@@ -103,6 +104,7 @@
             android:layout_marginBottom="@dimen/contents_detail_player_media_controller_time_bottom_margin"
             android:background="@color/contents_player_now_on_air_total_text_backgroud_color"
             android:textColor="@color/contents_player_media_controller_time_text"
+            android:textSize="14dp"
             android:visibility="invisible"/>
 
         <RelativeLayout

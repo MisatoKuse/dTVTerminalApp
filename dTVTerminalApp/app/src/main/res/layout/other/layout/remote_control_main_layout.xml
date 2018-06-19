@@ -124,6 +124,7 @@
                     android:id="@+id/remocon_bottom"
                     android:layout_alignParentBottom="true"
                     android:layout_width="match_parent"
+                    android:textSize="14dp"
                     android:layout_height="16dp"/>
 
                 <LinearLayout

@@ -146,6 +146,7 @@
                 android:ellipsize="end"
                 android:lineSpacingExtra="@dimen/contents_detail_content_line_space"
                 android:maxLines="4"
+                android:textSize="14dp"
                 android:textColor="@color/white_text" />
 
             <TextView
@@ -154,6 +155,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/contents_text_info_margin"
                 android:lineSpacingExtra="@dimen/contents_detail_content_line_space"
+                android:textSize="14dp"
                 android:textColor="@color/white_text" />
 
             <TextView
@@ -163,6 +165,7 @@
                 android:clickable="true"
                 android:gravity="end"
                 android:text="@string/contents_info_more_text"
+                android:textSize="14dp"
                 android:textColor="@color/white_text" />
 
             <LinearLayout
