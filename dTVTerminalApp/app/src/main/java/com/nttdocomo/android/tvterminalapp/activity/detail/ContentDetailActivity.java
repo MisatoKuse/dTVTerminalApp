@@ -1588,14 +1588,15 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             sort(channels);
             if (channels.size() > 0) {
                 if (mViewPager.getCurrentItem() == 1) {
-                    DtvContentsChannelFragment channelFragment = getChannelFragment();
+                    final DtvContentsChannelFragment channelFragment = getChannelFragment();
                     ChannelInfo channelInfo = channels.get(0);
                     ArrayList<ScheduleInfo> scheduleInfos = channelInfo.getSchedules();
                     if (mDateIndex == 1 && channelFragment.mContentsData != null) {
                         channelFragment.mContentsData.clear();
                     }
                     boolean isFirst = false;
-                    for (ScheduleInfo scheduleInfo : scheduleInfos) {
+                    for (int i = 0; i < scheduleInfos.size(); i++) {
+                        ScheduleInfo scheduleInfo = scheduleInfos.get(i);
                         String endTime = scheduleInfo.getEndTime();
                         String startTime = scheduleInfo.getStartTime();
                         String start = startTime.substring(0, 10) + startTime.substring(11, 19);
@@ -1626,7 +1627,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     if (mDateIndex == 1) {
                         getChannelDetailByPageNo();
                     } else {
-                        channelFragment.setNotifyDataChanged();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                channelFragment.setNotifyDataChanged();
+                            }
+                        });
                     }
                 }
             }
