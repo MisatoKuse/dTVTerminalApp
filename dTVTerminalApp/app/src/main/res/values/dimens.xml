@@ -169,7 +169,7 @@
     <dimen name="remote_watch_by_tv_bottom_corners">8dp</dimen>
     <dimen name="remote_watch_by_tv_bottom_width">8dp</dimen>
     <dimen name="remote_control_display_button_height">52dp</dimen>
-    <dimen name="remote_control_display_button_top_margin">36dp</dimen>
+    <dimen name="remote_control_display_button_top_margin">10dp</dimen>
 
     <!-- WatchingVideoActivity -->
     <dimen name="watch_listen_video_divider_high">1dp</dimen>
