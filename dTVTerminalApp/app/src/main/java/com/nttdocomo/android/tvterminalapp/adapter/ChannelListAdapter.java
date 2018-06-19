@@ -153,7 +153,9 @@ public class ChannelListAdapter extends BaseAdapter {
         if (null != holder.mChannelName && null != chName) {
             holder.mChannelName.setText(chName);
         }
-
+        if (holder.mThumbnail.getVisibility() == View.VISIBLE) {
+            holder.mThumbnail.setImageResource(R.mipmap.loading_ch_mini);
+        }
         if (null != holder.mThumbnail && null != thumbnail) {
             holder.mThumbnail.setTag(thumbnail);
             Bitmap bp = mThumbnailProvider.getThumbnailImage(holder.mThumbnail, thumbnail);
