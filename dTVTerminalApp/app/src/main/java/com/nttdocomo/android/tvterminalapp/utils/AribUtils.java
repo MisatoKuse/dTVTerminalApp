@@ -6,6 +6,8 @@ package com.nttdocomo.android.tvterminalapp.utils;
 
 import android.util.SparseArray;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+
 /**
  * Arib外字変換のUtils クラス.
  */
@@ -132,6 +134,13 @@ public class AribUtils {
      * @return 変換後の文字列
      */
     public String convertAribGaiji(String source) {
+        DTVTLogger.start();
+
+        //変換元がヌルならば、ヌルを返す
+        if (source == null) {
+            return null;
+        }
+
         //変換結果用
         StringBuilder convertedString = new StringBuilder();
 
@@ -161,6 +170,7 @@ public class AribUtils {
             }
         }
 
+        DTVTLogger.end();
         //処理後の文字列を返却
         return convertedString.toString();
     }
