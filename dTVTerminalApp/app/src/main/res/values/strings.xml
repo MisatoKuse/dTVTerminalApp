@@ -274,12 +274,15 @@
     <string name="dtv_content_service_start_text">dTVで視聴</string>
     <string name="dtv_content_service_start_dialog">dTVを起動します</string>
     <string name="dtv_content_service_update_dialog">dTVアプリのアップデートが必要です</string>
+    <string name="dtv_content_service_application_not_install">dTVアプリがインストールされていません。\nインストールしますか？</string>
     <string name="d_anime_store_content_service_start_text">dアニメストアで視聴</string>
     <string name="d_anime_store_content_service_start_dialog">dアニメストアを起動します</string>
     <string name="d_anime_store_content_service_update_dialog">dアニメストアアプリのアップデートが必要です</string>
+    <string name="d_anime_store_application_not_install_dialog">dアニメストアアプリがインストールされていません。\nインストールしますか？</string>
     <string name="dtv_channel_service_start_text">dTVチャンネルで視聴</string>
     <string name="dtv_channel_service_start_dialog">dTVチャンネルを起動します</string>
     <string name="dtv_channel_service_update_dialog">ｄTVチャンネルアプリのアップデートが必要です</string>
+    <string name="dtv_channel_service_application_not_install_dialog">dTVチャンネルアプリがインストールされていません。\nインストールしますか？</string>
     <string name="d_tv_terminal_application_version_update_dialog">ドコモテレビターミナルアプリのアップデートが必要です</string>
     <string name="stb_application_version_update">ご利用のドコモテレビターミナルでアプリのアップデートが必要です。\nドコモテレビターミナルを起動し、設定＞ドコモサービス設定＞ドコモアプリ管理　から「ドコモテレビターミナルアプリ用アプリ」をアップデートしてください。</string>
     <string name="contents_detail_thumbnail_text_no_pair">ドコモテレビターミナルに接続してください</string>
