@@ -15,12 +15,7 @@
     <string name="clip_regist_error_message">クリップに失敗しました</string>
     <string name="clip_delete_result_message">クリップを解除しました</string>
     <string name="clip_delete_error_message">クリップの解除に失敗しました</string>
-    <string name="clip_data_get_error_message">クリップデータ取得失敗</string>
-    <string name="epg_contents_message">番組</string>
-    <string name="vod_contents_message">ビデオ</string>
-    <string name="app_finish_dialog_message">アプリを終了しますか？</string>
     <string name="message_three_asterisk">＊＊＊</string>
-    <string name="dtvt_contents_data_error_request">リクエストエラー(リクエストは空である)</string>
     <string name="parental_pg_12">PG12</string>
     <string name="parental_r_15">R15</string>
     <string name="parental_r_18">R18</string>
@@ -72,22 +67,18 @@
     <!-- Launch -->
     <string name="str_app_title">ドコモテレビターミナル</string>
     <string name="str_launch_title">起動画面</string>
-    <string name="str_tutorial_title">チュートリアル画面</string>
-    <string name="str_tutorial_skip">スキップ</string>
     <string name="str_stb_next_not_display_text">以後、表示しない</string>
     <string name="str_stb_connect_success_text">ドコモテレビターミナルとペアリングしました</string>
     <string name="str_stb_no_pair_use_text">ペアリングをしないで利用する</string>
     <string name="str_stb_no_login_use_text">ログインしないで利用する</string>
     <string name="str_stb_paring_cancel_text">ペアリングを解除する</string>
     <string name="str_stb_paring_setting_title">ペアリング設定</string>
-    <string name="str_d_account_resetting_title">dアカウント再設定</string>
     <string name="str_d_account_setting_help_title">ドコテレ画像</string>
     <string name="str_d_account_app_not_install">ドコモテレビターミナルとペアリングするには\ndアカウントでのログインが必要です</string>
     <string name="str_d_account_app_download">dアカウント設定アプリをダウンロードする</string>
     <string name="str_stb_select_result_text">ペアリング可能なドコモテレビターミナルが\n見つかりました</string>
     <string name="str_stb_select_result_text_failed">ペアリング可能なドコモテレビターミナルが\n見つかりませんでした</string>
     <string name="str_stb_select_result_text_search">ペアリング可能なドコモテレビターミナルを\n探しています</string>
-    <string name="str_stb_search_failed_paring_again">再度ペアリングを実行する</string>
     <string name="str_stb_not_registration_account_message">ドコモテレビターミナルに\nログイン中のdアカウントが登録されていません</string>
     <string name="str_stb_login_other_account">別のdアカウントでログインする</string>
     <string name="str_stb_d_account_registration_help">ドコモテレビターミナルに\ndアカウントを登録するには</string>
@@ -113,7 +104,6 @@
         <item>dアニメストア</item>
     </string-array>
     <string name="recording_reservation_list_title">録画予約</string>
-    <string name="recording_reservation_list_error_toast">録画予約一覧取得失敗</string>
     <string name="recording_reservation_status_accepting">受付中</string>
     <string name="recording_reservation_status_accept_failure">受付失敗</string>
     <string name="recording_reservation_list_update_time">現在</string>
@@ -138,6 +128,7 @@
     <string name="str_clip_activity_title">クリップ</string>
     <string name="str_clip_list_no_content">クリップしたコンテンツがありません</string>
     <string name="str_clip_execution_after_limit_contents">配信が終了しているためクリップできません</string>
+    <string name="str_clip_subtitle_delivery_end">配信終了</string>
     <string-array name="tab_clip_names">
         <item>番組</item>
         <item>ビデオ</item>
@@ -190,9 +181,7 @@
     <string name="record_download_cancel_confirm">取りやめる</string>
     <string name="record_download_notification">録画番組をダウンロード中</string>
     <string name="record_download_notification_channel_name">ダウンロード状況</string>
-    <string name="activation_file_path_create_file_msg">アクティベーションファイルパス作成失敗しました。</string>
     <string name="activation_failed_msg">アクティベーション失敗しました。</string>
-    <string name="dtcp_init_failed_msg">dtcp init 失敗しました。</string>
 
     <!-- ビデオ一覧 -->
     <string name="video_content_top_title">ビデオジャンル</string>
@@ -208,7 +197,6 @@
     <string name="keyword_search_result">検索結果:</string>
     <string name="keyword_search_result_num">件</string>
     <string name="keyword_search_result_no">の</string>
-    <string name="keyword_search_empty_data_message">該当の番組はありません</string>
     <string-array name="tab_names">
         <item>テレビ</item>
         <item>ビデオ</item>
@@ -259,7 +247,6 @@
 
     <!-- レンタル -->
     <string name="rental_title">レンタルビデオ</string>
-    <string name="delivery_end_message">配信終了</string>
 
     <!--コンテンツ詳細-->
     <string name="contents_info_more_text">more</string>
@@ -267,7 +254,6 @@
     <string name="contents_info_thumbnail_button">コンテンツ詳細のサムネイル画像上のボタン</string>
     <string name="contents_detail_tv_staff">キャスト・スタッフ</string>
     <string name="contents_detail_tv_staff_recommend">おすすめ作品</string>
-    <string name="contents_detail_until_date">まで</string>
     <string name="contents_detail_hikari_d_channel_miss_viewing">見逃し</string>
     <string name="contents_detail_hikari_d_channel_miss_viewing_separation">"見逃し | "</string>
     <string name="contents_detail_contract_text">ひかりTV for docomoの契約が必要です。契約済みの方はdアカウントでログインしてください。</string>
@@ -293,7 +279,7 @@
     <string name="contents_detail_tab_episode">エピソード</string>
     <string name="contents_detail_tab_contents_info">作品情報</string>
     <string name="contents_detail_hikari_vod_inside_home">テレビで視聴できます</string>
-    <string name="contents_detail_hikari_vod_agreement">ご覧になるにはコンテンツの契約が必要です。\nドコモテレビターミナルで契約してください</string>
+    <string name="contents_detail_hikari_vod_agreement">ご覧になるにはコンテンツの契約が必要です。\nドコモテレビターミナルで契約してください。</string>
     <string name="contents_detail_no_agreement">視聴いただくには契約が必要です</string>
     <string-array name="contents_detail_tab_vod">
         <item>@string/contents_detail_tab_program_detail</item>
@@ -305,24 +291,14 @@
         <item>@string/contents_detail_tab_program_detail</item>
         <item>@string/contents_detail_tab_channel</item>
     </string-array>
-    <string-array name="contents_detail_tabs_tv_episode">
-        <item>@string/contents_detail_tab_program_detail</item>
-        <item>@string/contents_detail_tab_episode</item>
-    </string-array>
     <string name="recording_reservation_complete_dialog_msg">録画予約依頼を受け付けました</string>
-    <string name="recording_reservation_complete_dialog_ok">OK</string>
     <string name="recording_reservation_failed_dialog_msg">録画予約に失敗しました</string>
     <string name="recording_reservation_failed_dialog_confirm">OK</string>
-    <string name="recording_reservation_failed_dialog_token">トークン不一致</string>
-    <string name="recording_reservation_failed_dialog_other">その他の異常</string>
-    <string name="recording_reservation_failed_dialog_param">リクエストパラメータ不正</string>
-    <string name="recording_reservation_failed_dialog_over">登録件数が上限に達したため録画予約に失敗しました</string>
-    <string name="recording_reservation_failed_dialog_no_agreement">未契約エラー</string>
+    <string name="recording_reservation_failed_dialog_over">録画予約件数が上限に達したため録画予約に失敗しました</string>
     <string name="recording_reservation_confirm_dialog_title">録画予約しますか？</string>
     <string name="recording_reservation_confirm_dialog_msg">録画予約を行います。録画予約が受け付けられるまで、時間がかかる場合がありますのでご注意ください。</string>
     <string name="recording_reservation_confirm_dialog_confirm">録画予約する</string>
     <string name="recording_reservation_confirm_dialog_cancel">キャンセル</string>
-    <string name="contents_detail_contract_text_vod">ご覧になるにはコンテンツの契約が必要です。\nドコモテレビターミナルで契約してください。</string>
     <string name="contents_detail_contract_button_vod">ドコモテレビターミナルで購入する</string>
     <string name="contents_detail_contract_text_ch">このコンテンツをご覧になるには\nドコモテレビターミナルでの契約が必要です</string>
     <string name="contents_detail_contract_button_ch">ドコモテレビターミナルで契約する</string>
@@ -333,7 +309,6 @@
     <string name="contents_player_fail_msg">再生に失敗しました（MP-XXXX）</string>
     <string name="contents_player_fail_error_code_format">XXXX</string>
     <string name="contents_detail_adinfo_array_pipe">"\\|"</string>
-    <string name="contents_detail_date_left_">"\\|"</string>
     <string name="contents_detail_pairing_request">ドコモテレビターミナルとのペアリングが必要です</string>
     <string name="contents_detail_login_button">ログインする</string>
     <string name="contents_detail_login_message">dアカウントでログインしてください\nログイン後は、ホーム画面に移動します</string>
@@ -374,7 +349,6 @@
     <string name="main_setting_h4d_not_signed_message">ひかりTV for docomoの契約状態が確認できないため\nご利用になれません</string>
     <string name="main_setting_stb_not_connected_message">ドコモテレビターミナルが接続されているWi-Fiに接続した状態で再度実施してください</string>
     <string name="main_setting_menu_title_faq_list">FAQ</string>
-    <string name="main_setting_remote_start">main_setting_remote_start</string>
     <string name="main_setting_remote_confirm_message_setting">外出先でも視聴できるリモート視聴設定を有効にしますか？</string>
     <string name="main_setting_remote_confirm_message_first_start">外出先でも視聴できるリモート視聴設定を有効にしますか？リモート設定は、「メニュー＞設定＞リモート視聴設定」であとからも設定できます</string>
     <string name="main_setting_menu_title_license">ライセンス情報</string>
@@ -428,9 +402,7 @@
     <string name="application_info_application_version">バージョン</string>
     <string name="application_info_application_provider_value">株式会社NTTドコモ</string>
 
-    <!-- TODO: ネットワークエラー（仮）ワーディングが確定するまでの文言 -->
     <!-- メッセージ自体は細分化せず、2種類に留める予定 -->
-    <string name="nw_error_message">通信時に問題が発生しました</string>
     <string name="network_server_error_message">サーバとの接続に失敗しました</string>
     <string name="network_token_error_message">ユーザ情報の取得に失敗しました</string>
     <string name="network_nw_error_message">ネットワークに接続されていません。ネットワーク接続をご確認ください</string>

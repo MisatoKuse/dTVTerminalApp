@@ -33,7 +33,6 @@
     <dimen name="launch_stb_account_error_margin_top">40dp</dimen>
 
     <dimen name="clip_button_size">30dp</dimen>
-    <dimen name="clip_common_margin">8dp</dimen>
 
     <dimen name="search_load_more_margin">10dp</dimen>
 
@@ -58,11 +57,9 @@
     <dimen name="main_header_icon_size">44dp</dimen>
     <dimen name="main_header_back_icon_left_margin">8dp</dimen>
     <dimen name="main_header_menu_padding_end">8dp</dimen>
-    <dimen name="main_header_title_text_width">182dp</dimen>
     <dimen name="main_header_title_image_width">176dp</dimen>
     <dimen name="header_title_text_size">16dp</dimen>
     <dimen name="list_item_time_text_size">12dp</dimen>
-    <dimen name="list_item_today_ranking_time_size">12dp</dimen>
     <dimen name="list_item_rank_num_text_size">10dp</dimen>
     <dimen name="list_item_time_start_margin">5dp</dimen>
     <dimen name="list_divider_height">1dp</dimen>
@@ -95,7 +92,6 @@
     <dimen name="home_contents_item_more_arrow_width">80dp</dimen>
     <dimen name="home_contents_thumbnail_width">243dp</dimen>
     <dimen name="home_contents_thumbnail_height">137dp</dimen>
-    <dimen name="home_contents_thumbnail_right_padding">8dp</dimen>
     <dimen name="home_contents_thumbnail_title_left_margin">16dp</dimen>
     <dimen name="home_contents_thumbnail_title_right_margin">16dp</dimen>
     <dimen name="home_contents_thumbnail_text_bottom_margin">10dp</dimen>
@@ -107,7 +103,6 @@
     <dimen name="home_contents_thumbnail_new_label_margin_left">8dp</dimen>
     <dimen name="home_contents_thumbnail_new_label_margin_top">8dp</dimen>
     <dimen name="home_contents_thumbnail_service_label_height">18dp</dimen>
-    <dimen name="home_contents_thumbnail_service_label_padding">8dp</dimen>
     <dimen name="home_contents_thumbnail_rank_num_label_width">24dp</dimen>
     <dimen name="home_contents_thumbnail_rank_num_label_height">18dp</dimen>
     <dimen name="home_contents_thumbnail_rank_num_text_size">11dp</dimen>
@@ -149,7 +144,6 @@
     <dimen name="contents_detail_player_now_on_air_top_margin">8dp</dimen>
     <dimen name="contents_detail_player_now_on_air_text_size">12dp</dimen>
     <dimen name="contents_detail_player_media_controller_size">56dp</dimen>
-    <dimen name="contents_detail_player_media_controller_text_size">16dp</dimen>
     <dimen name="contents_detail_player_media_controller_replay_right_margin">35dp</dimen>
     <dimen name="contents_detail_player_media_controller_forward_right_margin">34dp</dimen>
     <dimen name="contents_detail_player_media_controller_time_left_margin">8dp</dimen>
@@ -338,14 +332,6 @@
     <dimen name="search_result_count_text_margin_left">16dp</dimen>
     <dimen name="search_result_count_text_margin_right">0dp</dimen>
     <dimen name="search_result_count_text_size">14dp</dimen>
-
-    <!-- おすすめ番組・ビデオ -->
-    <dimen name="recommend_list_0dp">0dp</dimen>
-    <dimen name="recommend_list_tv_video_margin_top">2dp</dimen>
-    <dimen name="recommend_list_dtv_danime_margin_top">13dp</dimen>
-    <dimen name="recommend_list_general_margine">10dp</dimen>
-    <dimen name="recommend_list_left_margine">5dp</dimen>
-    <dimen name="recommend_list_right_margine">15dp</dimen>
 
     <!-- チュートリアル -->
     <dimen name="tutorial_dots_paddingBottom">24dp</dimen>
