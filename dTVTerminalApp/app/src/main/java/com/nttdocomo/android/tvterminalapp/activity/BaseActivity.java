@@ -931,7 +931,7 @@ public class BaseActivity extends FragmentActivity implements
      * アプリケーションバージョンチェック（エラー応答時）.
      * @param resultCode resultCode
      */
-    private void switchApplicationVersionCode(final int resultCode) {
+    protected void switchApplicationVersionCode(final int resultCode) {
         switch (resultCode) {
             case RelayServiceResponseMessage.RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE:
                 CustomDialog dTVTUpDateDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
@@ -939,6 +939,7 @@ public class BaseActivity extends FragmentActivity implements
                 dTVTUpDateDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                     @Override
                     public void onOKCallback(final boolean isOK) {
+                        DTVTLogger.debug("Application version check incompatible dialog [ok] to GooglePlay");
                         toGooglePlay(DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL);
                     }
                 });

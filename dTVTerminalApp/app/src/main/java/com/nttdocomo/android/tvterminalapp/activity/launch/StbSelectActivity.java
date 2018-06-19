@@ -198,6 +198,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      * デバイス選択デフォルト値.
      */
     private static final int SELECT_DEVICE_ITEM_DEFAULT = -1;
+    /**
+     * アプリケーションバージョンチェックダイアログ表示中フラグ.
+     */
+    private boolean mIsApplicationVersionCheckIncompatibleDialogFlag = false;
 
     /**
      * タイマーステータス.
@@ -1205,24 +1209,9 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                         // ※RELAY_RESULT_ERROR 応答時は requestCommand に SET_DEFAULT_USER_ACCOUNT は設定されない
                         break;
                     case CHECK_APPLICATION_VERSION_COMPATIBILITY:
-                        switch (resultCode) {
-                            case RelayServiceResponseMessage.RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE:
-                                CustomDialog dTVTUpDateDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-                                dTVTUpDateDialog.setContent(getResources().getString(R.string.d_tv_terminal_application_version_update_dialog));
-                                dTVTUpDateDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                                    @Override
-                                    public void onOKCallback(final boolean isOK) {
-                                        toGooglePlay(DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL);
-                                    }
-                                });
-                                dTVTUpDateDialog.showDialog();
-                                break;
-                            case RelayServiceResponseMessage.RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE:
-                                showErrorDialog(getResources().getString(R.string.stb_application_version_update));
-                                break;
-                            default:
-                                break;
-                        }
+                        // アプリケーションバージョンチェックのエラーダイアログを表示する
+                        mIsApplicationVersionCheckIncompatibleDialogFlag = true;
+                        switchApplicationVersionCode(resultCode);
                         break;
                     case CHECK_APPLICATION_REQUEST_PROCESSING:
                         //中継アプリからの応答待ち中に新しい要求を行った場合
@@ -1243,6 +1232,23 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             default:
                 break;
         }
+    }
+
+    /**
+     * アプリケーションバージョンチェックのエラーダイアログのクローズ.
+     */
+    @Override
+    protected void startNextProcess() {
+        if (mIsApplicationVersionCheckIncompatibleDialogFlag) {
+            DTVTLogger.debug("Application version check incompatible dialog closed");
+            //初期状態に戻る
+            resetDmpForResume();
+            onResume();
+            if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
+                initLaunchView();
+            }
+        }
+        mIsApplicationVersionCheckIncompatibleDialogFlag = false;
     }
 
     /**
