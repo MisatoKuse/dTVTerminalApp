@@ -305,6 +305,13 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         if (viewHolder.mTime != null) {
             viewHolder.mTime.setVisibility(View.GONE);
         }
+        if (viewHolder.mHyphen != null) {
+            // チャンネル名表示があった場合に
+            viewHolder.mHyphen.setVisibility(View.GONE);
+        }
+        if (viewHolder.mChannel != null) {
+            viewHolder.mChannel.setVisibility(View.GONE);
+        }
         if (TextUtils.isEmpty(title)) {
             title = contentsData.getTitle();
         }
@@ -345,6 +352,12 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             default:
                 if (viewHolder.mTime != null) {
                     viewHolder.mTime.setVisibility(View.GONE);
+                }
+                if (viewHolder.mHyphen != null) {
+                    viewHolder.mHyphen.setVisibility(View.GONE);
+                }
+                if (viewHolder.mChannel != null) {
+                    viewHolder.mChannel.setVisibility(View.GONE);
                 }
                 break;
         }
