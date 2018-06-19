@@ -398,7 +398,7 @@ public class RecommendActivity extends BaseActivity implements
         }
 
         //チャンネル名検索
-        for (int ct = 0; ct <= mChannels.size(); ct++) {
+        for (int ct = 0; ct < mChannels.size(); ct++) {
             if (!TextUtils.isEmpty(channelId)
                     && mChannels.get(ct).getServiceId().equals(channelId)) {
                 //チャンネルIDが見つかった

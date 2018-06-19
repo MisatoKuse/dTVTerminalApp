@@ -1741,15 +1741,13 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 }
                 //DTVの場合
                 if (mDetailData != null && mDetailData.getServiceId() == DTV_CONTENTS_SERVICE_ID) {
-                    CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
-                    startAppDialog.setContent(getResources().getString(R.string.dtv_content_service_start_dialog));
-                    startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                        @Override
-                        public void onOKCallback(final boolean isOK) {
-                            int localVersionCode = getVersionCode(DTV_PACKAGE_NAME);
-                            //端末にDTVアプリはすでに存在した場合
-                            if (isAppInstalled(ContentDetailActivity.this, DTV_PACKAGE_NAME)) {
-                                //バージョンチェック
+                    if (isAppInstalled(ContentDetailActivity.this, DTV_PACKAGE_NAME)) {
+                        CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
+                        startAppDialog.setContent(getResources().getString(R.string.dtv_content_service_start_dialog));
+                        startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                            @Override
+                            public void onOKCallback(final boolean isOK) {
+                                int localVersionCode = getVersionCode(DTV_PACKAGE_NAME);
                                 if (localVersionCode < DTV_VERSION_STANDARD) {
                                     mErrorMessage = getResources().getString(R.string.dtv_content_service_update_dialog);
                                     showErrorDialog(mErrorMessage);
@@ -1766,22 +1764,28 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                         startApp(UrlConstants.WebUrl.TITTLE_START_TYPE + mDetailData.getContentsId());
                                     }
                                 }
-                                //DTVアプリ存在しない場合
-                            } else {
+                            }
+                        });
+                        startAppDialog.showDialog();
+                    } else {
+                        CustomDialog installAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
+                        installAppDialog.setContent(getResources().getString(R.string.dtv_content_service_application_not_install));
+                        installAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                            @Override
+                            public void onOKCallback(final boolean isOK) {
                                 toGooglePlay(UrlConstants.WebUrl.GOOGLEPLAY_DOWNLOAD_URL);
                             }
-                        }
-                    });
-                    startAppDialog.showDialog();
+                        });
+                        installAppDialog.showDialog();
+                    }
                 } else if (mDetailData != null && mDetailData.getServiceId() == D_ANIMATION_CONTENTS_SERVICE_ID) {
-                    CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
-                    startAppDialog.setContent(getResources().getString(R.string.d_anime_store_content_service_start_dialog));
-                    startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                        @Override
-                        public void onOKCallback(final boolean isOK) {
-                            int localVersionCode = getVersionCode(DANIMESTORE_PACKAGE_NAME);
-                            //端末にdアニメストアアプリはすでに存在した場合
-                            if (isAppInstalled(ContentDetailActivity.this, DANIMESTORE_PACKAGE_NAME)) {
+                    if (isAppInstalled(ContentDetailActivity.this, DANIMESTORE_PACKAGE_NAME)) {
+                        CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
+                        startAppDialog.setContent(getResources().getString(R.string.d_anime_store_content_service_start_dialog));
+                        startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                            @Override
+                            public void onOKCallback(final boolean isOK) {
+                                int localVersionCode = getVersionCode(DANIMESTORE_PACKAGE_NAME);
                                 //バージョンチェック
                                 if (localVersionCode < DANIMESTORE_VERSION_STANDARD) {
                                     mErrorMessage = getResources().getString(R.string.d_anime_store_content_service_update_dialog);
@@ -1789,19 +1793,27 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                 } else {
                                     startApp(UrlConstants.WebUrl.DANIMESTORE_START_URL + mDetailData.getContentsId());
                                 }
-                            } else {
+                            }
+                        });
+                        startAppDialog.showDialog();
+                    } else {
+                        CustomDialog installAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
+                        installAppDialog.setContent(getResources().getString(R.string.d_anime_store_application_not_install_dialog));
+                        installAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                            @Override
+                            public void onOKCallback(final boolean isOK) {
                                 toGooglePlay(UrlConstants.WebUrl.DANIMESTORE_GOOGLEPLAY_DOWNLOAD_URL);
                             }
-                        }
-                    });
-                    startAppDialog.showDialog();
+                        });
+                        installAppDialog.showDialog();
+                    }
                 } else if (mDetailData != null && mDetailData.getServiceId() == DTV_CHANNEL_CONTENTS_SERVICE_ID) {
-                    final CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
-                    startAppDialog.setContent(getResources().getString(R.string.dtv_channel_service_start_dialog));
-                    startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                        @Override
-                        public void onOKCallback(final boolean isOK) {
-                            if (isAppInstalled(ContentDetailActivity.this, DTVCHANNEL_PACKAGE_NAME)) {
+                    if (isAppInstalled(ContentDetailActivity.this, DTVCHANNEL_PACKAGE_NAME)) {
+                        final CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
+                        startAppDialog.setContent(getResources().getString(R.string.dtv_channel_service_start_dialog));
+                        startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                            @Override
+                            public void onOKCallback(final boolean isOK) {
                                 //バージョンコードは15
                                 int localVersionCode = getVersionCode(DTVCHANNEL_PACKAGE_NAME);
                                 if (localVersionCode < DTVCHANNEL_VERSION_STANDARD) {
@@ -1818,12 +1830,20 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                         DTVTLogger.debug("ContentId :----" + mDetailData.getContentsId());
                                     }
                                 }
-                            } else {
+                            }
+                        });
+                        startAppDialog.showDialog();
+                    } else {
+                        CustomDialog installAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
+                        installAppDialog.setContent(getResources().getString(R.string.dtv_channel_service_application_not_install_dialog));
+                        installAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                            @Override
+                            public void onOKCallback(final boolean isOK) {
                                 toGooglePlay(UrlConstants.WebUrl.DTVCHANNEL_GOOGLEPLAY_DOWNLOAD_URL);
                             }
-                        }
-                    });
-                    startAppDialog.showDialog();
+                        });
+                        installAppDialog.showDialog();
+                    }
                 } else {
                     //ぷらら
                     if (mDetailFullData != null) {
@@ -1834,15 +1854,14 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                 || VIDEO_PACKAGE.equals(mDetailFullData.getDisp_type())
                                 || SUBSCRIPTION_PACKAGE.equals(mDetailFullData.getDisp_type())
                                 || SERIES_SVOD.equals(mDetailFullData.getDisp_type())) {
-                            CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
-                            startAppDialog.setContent(getResources().getString(R.string.dtv_content_service_start_dialog));
-                            startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                                @Override
-                                public void onOKCallback(final boolean isOK) {
-                                    int localVersionCode = getVersionCode(DTV_PACKAGE_NAME);
-                                    //端末にDTVアプリはすでに存在した場合
-                                    if (isAppInstalled(ContentDetailActivity.this, DTV_PACKAGE_NAME)) {
-                                        //バージョンチェック
+                            //端末にDTVアプリはすでに存在した場合
+                            if (isAppInstalled(ContentDetailActivity.this, DTV_PACKAGE_NAME)) {
+                                CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
+                                startAppDialog.setContent(getResources().getString(R.string.dtv_content_service_start_dialog));
+                                startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                                    @Override
+                                    public void onOKCallback(final boolean isOK) {
+                                        int localVersionCode = getVersionCode(DTV_PACKAGE_NAME);
                                         if (localVersionCode < DTV_VERSION_STANDARD) {
                                             mErrorMessage = getResources().getString(R.string.dtv_content_service_update_dialog);
                                             showErrorDialog(mErrorMessage);
@@ -1855,21 +1874,28 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                                 startApp(UrlConstants.WebUrl.TITTLE_START_TYPE + mDetailFullData.getTitle_id());
                                             }
                                         }
-                                        //DTVアプリ存在しない場合
-                                    } else {
+                                    }
+                                });
+                                startAppDialog.showDialog();
+                            } else {
+                                //DTVアプリ存在しない場合
+                                CustomDialog installAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
+                                installAppDialog.setContent(getResources().getString(R.string.dtv_content_service_application_not_install));
+                                installAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                                    @Override
+                                    public void onOKCallback(final boolean isOK) {
                                         toGooglePlay(UrlConstants.WebUrl.GOOGLEPLAY_DOWNLOAD_URL);
                                     }
-                                }
-                            });
-                            startAppDialog.showDialog();
+                                });
+                                installAppDialog.showDialog();
+                            }
                         } else if (TV_PROGRAM.equals(mDetailFullData.getDisp_type())) { //ひかりTV中にdtvチャンネルの場合 DREM-1100
-                            final CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
-                            startAppDialog.setContent(getResources().getString(R.string.dtv_channel_service_start_dialog));
-                            startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                                @Override
-                                public void onOKCallback(final boolean isOK) {
-                                    if (isAppInstalled(ContentDetailActivity.this, DTVCHANNEL_PACKAGE_NAME)) {
-                                        //バージョンコードは15
+                            if (isAppInstalled(ContentDetailActivity.this, DTVCHANNEL_PACKAGE_NAME)) {
+                                final CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
+                                startAppDialog.setContent(getResources().getString(R.string.dtv_channel_service_start_dialog));
+                                startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                                    @Override
+                                    public void onOKCallback(final boolean isOK) {
                                         int localVersionCode = getVersionCode(DTVCHANNEL_PACKAGE_NAME);
                                         if (localVersionCode < DTVCHANNEL_VERSION_STANDARD) {
                                             mErrorMessage = getResources().getString(R.string.dtv_channel_service_update_dialog);
@@ -1891,12 +1917,20 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                                 }
                                             }
                                         }
-                                    } else {
+                                    }
+                                });
+                                startAppDialog.showDialog();
+                            } else {
+                                CustomDialog installAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
+                                installAppDialog.setContent(getResources().getString(R.string.dtv_channel_service_application_not_install_dialog));
+                                installAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                                    @Override
+                                    public void onOKCallback(final boolean isOK) {
                                         toGooglePlay(UrlConstants.WebUrl.DTVCHANNEL_GOOGLEPLAY_DOWNLOAD_URL);
                                     }
-                                }
-                            });
-                            startAppDialog.showDialog();
+                                });
+                                installAppDialog.showDialog();
+                            }
                         }
                     }
                 }
