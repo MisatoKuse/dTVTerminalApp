@@ -304,6 +304,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         }
         if (genreMetaDataList != null
                 && genreMetaDataList.size() > 0) {
+            mNoDataMessage.setVisibility(View.GONE);
             mRankingDataProvider.getWeeklyRankingData(genreMetaDataList.get(mViewPager.getCurrentItem()).getId());
         }
         DTVTLogger.end();
