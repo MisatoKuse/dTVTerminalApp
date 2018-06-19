@@ -97,6 +97,10 @@ public class WebApiBasePlala {
      */
     private CookieManager mCookieManager;
     /**
+     * クッキー退避領域.
+     */
+    private List<HttpCookie> mCookies;
+    /**
      * リクエスト種別・基本はPOST・子クラスで使われるのでプロテクテッド.
      */
     private static final String REQUEST_METHOD_POST = "POST";
@@ -165,6 +169,10 @@ public class WebApiBasePlala {
      * SSL失効チェック時にコンテキストが存在しない場合の例外用テキスト.
      */
     private static final String NO_CONTEXT_ERROR = "No context";
+    /**
+     * リダイレクト時の飛び先URLが無い場合の例外用テキスト.
+     */
+    private static final String NO_REDIRECT_URL_ERROR = "No redirect url";
 
     /**
      * データ受け渡しコールバック.
@@ -968,7 +976,7 @@ public class WebApiBasePlala {
         /**
          * 送るパラメータ.
          */
-        final String mSendParameter;
+        String mSendParameter;
         /**
          * 拡張データ.
          */
@@ -1367,54 +1375,58 @@ public class WebApiBasePlala {
         private void gotoRedirect(final String newUrlString, final String parameter) {
             DTVTLogger.start();
 
-            HttpsURLConnection httpsConnection = null;
+            mSendParameter = parameter;
 
             //タイムアウト判定用
             boolean isTimeout = false;
             long startTime = System.currentTimeMillis();
 
+            HttpsURLConnection urlConnection = null;
             try {
-                //指定された名前であらたなコネクションを開く
-                httpsConnection = (HttpsURLConnection) new URL(newUrlString).openConnection();
-                httpsConnection.setDoInput(true);
+                //指定された名前でURLを作成する
+                URL url = new URL(newUrlString);
 
-                //接続タイムアウト
-                httpsConnection.setConnectTimeout(DtvtConstants.SERVER_CONNECT_TIMEOUT);
-                //読み込みタイムアウト
-                httpsConnection.setReadTimeout(DtvtConstants.SERVER_READ_TIMEOUT);
+                //指定された名前で開く
+                urlConnection = (HttpsURLConnection) url.openConnection();
 
-                //DTVTLogger.debug("newHeader=" + httpsConnection.getHeaderFields().toString());
-                //コンテントタイプの設定
-                httpsConnection.setRequestProperty(CONTENT_TYPE_KEY_TEXT,
-                        ONE_TIME_TOKEN_GET_CONTENT_TYPE);
-                if (TextUtils.isEmpty(parameter)) {
-                    //パラメータをgetで送る
-                    httpsConnection.setRequestMethod(REQUEST_METHOD_GET);
+                //事前設定パラメータのセット
+                setParametersRedirect(urlConnection);
+
+                //コンテキストがあればSSL証明書失効チェックを行う
+                if (mContext != null) {
+                    DTVTLogger.debug(mSourceUrl);
+                    //SSL証明書失効チェックライブラリの初期化を行う
+                    OcspUtil.init(mContext);
+
+                    //通信開始時にSSL証明書失効チェックを併せて行う
+                    OcspURLConnection ocspURLConnection = new OcspURLConnection(urlConnection);
+                    ocspURLConnection.connect();
                 } else {
-                    httpsConnection.setDoOutput(true);
-                    //送る文字列長の算出
-                    byte[] sendParameterByte = parameter.getBytes(StandardCharsets.UTF_8);
-                    int sendParameterLength = sendParameterByte.length;
-                    httpsConnection.setFixedLengthStreamingMode(sendParameterLength);
-
-                    //パラメータをpostで送る
-                    setHttpsPostData(httpsConnection, parameter);
-                    httpsConnection.setRequestMethod(getRequestMethod());
+                    DTVTLogger.debug("SSL check error");
+                    //コンテキストが無くて証明書チェックが行えないならば、SSLチェック初期化失敗の例外を投げる
+                    throw new SSLPeerUnverifiedException(NO_CONTEXT_ERROR);
                 }
 
-                //自動リダイレクトを有効化する
-                HttpsURLConnection.setDefaultAllowUserInteraction(true);
-                httpsConnection.setInstanceFollowRedirects(true);
+                if(!TextUtils.isEmpty(mSendParameter)) {
+                    //パラメータを送る
+                    setPostDataRedirect(urlConnection);
+                }
 
-                //SSL失効チェック
-                checkSsl(httpsConnection);
-
-                //ステータスを取得する
-                int status = httpsConnection.getResponseCode();
-                DTVTLogger.debug("status=" + status);
+                //結果を読み込む
+                int status = urlConnection.getResponseCode();
 
                 //新たな飛び先を取得する
-                String newUrl = httpsConnection.getHeaderField(REDIRECT_JUMP_URL_GET);
+                String newUrl = urlConnection.getHeaderField(REDIRECT_JUMP_URL_GET);
+
+                //newUrlがヌルならば、以後の続行は不能となる。通常は発生しない。
+                if(newUrl == null) {
+                    DTVTLogger.debug("newUrl = null");
+                    CookieStore cookieStore = mCookieManager.getCookieStore();
+                    mCookies = cookieStore.getCookies();
+                    DTVTLogger.debug("cookies="+mCookies);
+
+                    throw new ConnectException(NO_REDIRECT_URL_ERROR);
+                }
 
                 DTVTLogger.debug("newUrl=" + newUrl);
 
@@ -1425,22 +1437,23 @@ public class WebApiBasePlala {
                         //リダイレクトで、ロケーションがOKかNGに指定したURLならば、サービストークン取得処理へ遷移
                         getServiceTokenAnswer(newUrl);
                         //コネクションを閉じる
-                        httpsConnection.disconnect();
+                        urlConnection.disconnect();
+                        removeConnections(urlConnection);
                     } else {
+                        //クッキーの退避
+                        CookieStore cookieStore = mCookieManager.getCookieStore();
+                        mCookies = cookieStore.getCookies();
+
+                        //コネクションを閉じる
+                        urlConnection.disconnect();
+                        removeConnections(urlConnection);
+
                         //リダイレクトかつ、OKとNGのURLではないならば、取得したURLで再度呼び出し
                         gotoRedirect(newUrl, "");
-                        httpsConnection.disconnect();
                     }
                 }
 
-            } catch (SSLHandshakeException e) {
-                //SSL証明書が失効している
-                mReturnCode.errorState.setErrorType(DtvtConstants.ErrorType.SSL_ERROR);
-                DTVTLogger.debug(e);
-            } catch (SSLPeerUnverifiedException e) {
-                //SSLチェックライブラリの初期化が行われていない
-                mReturnCode.errorState.setErrorType(DtvtConstants.ErrorType.SSL_ERROR);
-                DTVTLogger.debug(e);
+                removeConnections(urlConnection);
             } catch (ConnectException e) {
                 DTVTLogger.warning("ConnectException");
                 //通信エラー扱いとする
@@ -1459,9 +1472,21 @@ public class WebApiBasePlala {
                 }
                 //タイムアウトエラーの設定
                 mReturnCode.errorState.setIsTimeout(isTimeout);
+            } catch (SSLHandshakeException e) {
+                DTVTLogger.warning("SSLHandshakeException");
+                //SSL証明書が失効している
+                mReturnCode.errorState.setErrorType(DtvtConstants.ErrorType.SSL_ERROR);
+                DTVTLogger.debug(e);
+            } catch (SSLPeerUnverifiedException e) {
+                DTVTLogger.warning("SSLPeerUnverifiedException");
+                //SSLチェックライブラリの初期化が行われていない
+                mReturnCode.errorState.setErrorType(DtvtConstants.ErrorType.SSL_ERROR);
+                DTVTLogger.debug(e);
             } catch (SocketTimeoutException e) {
                 //タイムアウトを明示して取得
-                DTVTLogger.warning("SocketTimeoutException:" + e.getMessage());
+                DTVTLogger.warning("SocketTimeoutException");
+                DTVTLogger.debug("SocketTimeoutException normal ConnectException:"
+                        + e.getMessage());
                 //サーバーエラー扱いとする
                 mReturnCode.errorState.setErrorType(
                         DtvtConstants.ErrorType.SERVER_ERROR);
@@ -1469,50 +1494,114 @@ public class WebApiBasePlala {
                 mReturnCode.errorState.setIsTimeout(true);
                 DTVTLogger.debug(e);
             } catch (IOException e) {
+                DTVTLogger.warning("IOException");
+                //サーバーエラー扱いとする
+                mReturnCode.errorState.setErrorType(
+                        DtvtConstants.ErrorType.SERVER_ERROR);
                 DTVTLogger.debug(e);
-                //エラーコードを設定
-                mReturnCode.errorState.setErrorType(DtvtConstants.ErrorType.SERVER_ERROR);
             } catch (OcspParameterException e) {
                 //SSLチェックの初期化に失敗している・通常は発生しないとの事
+                DTVTLogger.warning("OcspParameterException");
                 mReturnCode.errorState.setErrorType(DtvtConstants.ErrorType.SSL_ERROR);
                 DTVTLogger.debug(e);
             } finally {
-                //通信の切断処理
-                if (httpsConnection != null) {
-                    httpsConnection.disconnect();
+                if(urlConnection != null) {
+                    urlConnection.disconnect();
                 }
-                //ヌルを入れてガベージコレクションの動作を助ける
-                httpsConnection = null;
+
+                //最後なので初期化
+                urlConnection = null;
+            }
+
+            DTVTLogger.end();
+        }
+
+        /**
+         * HTTPリクエスト用のパラメータを指定する.
+         *
+         * @param urlConnection コネクション
+         * @throws ProtocolException プロトコルエクセプション
+         */
+        void setParametersRedirect(final HttpURLConnection urlConnection) throws ProtocolException {
+            if(TextUtils.isEmpty(mSendParameter)) {
+                //パラメータをgetで送る
+                urlConnection.setRequestMethod(REQUEST_METHOD_GET);
+
+                //コンテントタイプを指定する
+                urlConnection.setRequestProperty(CONTENT_TYPE_KEY_TEXT,
+                        ONE_TIME_TOKEN_GET_CONTENT_TYPE);
+            } else {
+                urlConnection.setRequestMethod(REQUEST_METHOD_POST);
+                //コンテントタイプを指定する
+                urlConnection.setRequestProperty(CONTENT_TYPE_KEY_TEXT,
+                        ONE_TIME_TOKEN_GET_CONTENT_TYPE);
+
+                //送る文字列長の算出
+                byte[] sendParameterByte = mSendParameter.getBytes(StandardCharsets.UTF_8);
+                int sendParameterLength = sendParameterByte.length;
+
+                urlConnection.setDoInput(true);
+                urlConnection.setFixedLengthStreamingMode(sendParameterLength);
+            }
+
+            //接続タイムアウト
+            urlConnection.setConnectTimeout(DtvtConstants.SERVER_CONNECT_TIMEOUT);
+            //読み込みタイムアウト
+            urlConnection.setReadTimeout(DtvtConstants.SERVER_READ_TIMEOUT);
+
+            //自動リダイレクトを無効化する
+            HttpsURLConnection.setDefaultAllowUserInteraction(false);
+            urlConnection.setInstanceFollowRedirects(false);
+
+            //クッキー情報の有無を検査
+            if (mCookies != null) {
+                //蓄積してあるクッキー情報を書き込む
+                CookieStore cookieStore = mCookieManager.getCookieStore();
+                for (int counter = 0; counter < mCookies.size(); counter++) {
+                    DTVTLogger.debug("Cookie(" + counter + ")=" + mCookies.get(counter));
+                    cookieStore.add(null, mCookies.get(counter));
+                }
+
+                //次に備えてクッキー情報は初期化する
+                mCookies = null;
             }
         }
 
         /**
-         * SSL失効チェック.
+         * パラメータをストリームに書き込む.
          *
-         * @param httpsConnection HTTPSコネクション
-         * @throws OcspParameterException SSL証明書失効例外
-         * @throws IOException            IO例外
+         * @param urlConnection 書き込み対象のコネクション
          */
-        private void checkSsl(final HttpsURLConnection httpsConnection) throws OcspParameterException, IOException {
-            //コンテキストがあればSSL証明書失効チェックを行う
-            if (mContext != null) {
-                DTVTLogger.debug(httpsConnection.getURL().toString());
-                //SSL証明書失効チェックライブラリの初期化を行う
-                OcspUtil.init(mContext);
-
-                //通信開始時にSSL証明書失効チェックを併せて行う
-                OcspURLConnection ocspURLConnection = new OcspURLConnection(httpsConnection);
-                ocspURLConnection.connect();
-                DTVTLogger.debug("SSL checked");
-            } else {
-                //既にSSL専用なので、コンテキストが無くて証明書チェックが行えないならばエラーとする
-                //SSLチェック初期化失敗の例外を投げる
-                DTVTLogger.debug("SSL NO CONTEXT ERROR");
-                throw new SSLPeerUnverifiedException(NO_CONTEXT_ERROR);
+        void setPostDataRedirect(final HttpsURLConnection urlConnection) {
+            if (urlConnection == null) {
+                return;
             }
 
-            DTVTLogger.debug("header=" + httpsConnection.getHeaderFields().toString());
+            if(mSendParameter == null) {
+                return;
+            }
 
+            // POSTデータ送信処理
+            DataOutputStream dataOutputStream = null;
+            try {
+                dataOutputStream = new DataOutputStream(urlConnection.getOutputStream());
+                DTVTLogger.debug(String.format("RequestMethod[%s] mSendParameter[%s] size[%s]",
+                        urlConnection.getRequestMethod(), mSendParameter, mSendParameter.length()));
+                dataOutputStream.write(mSendParameter.getBytes(UTF8_CHARACTER_SET));
+                dataOutputStream.flush();
+            } catch (IOException e) {
+                // POST送信エラー
+                DTVTLogger.debug(e);
+                //result="POST送信エラー";
+            } finally {
+                if (dataOutputStream != null) {
+                    try {
+                        dataOutputStream.close();
+                    } catch (IOException e1) {
+                        DTVTLogger.debug(e1);
+                    }
+                }
+            }
         }
 
         /**
@@ -1553,6 +1642,8 @@ public class WebApiBasePlala {
 
                         //プリファレンスに書き込み
                         SharedPreferencesUtils.setOneTimeTokenData(mContext, oneTimeTokenData);
+
+                        DTVTLogger.debug("Service Token Get");
                         break;
                     }
                 }
