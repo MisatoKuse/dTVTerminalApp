@@ -83,7 +83,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
     /**
      * 選択中インジケータ表示位置計算用.
      */
-    private int mOffset;
+    private float mOffset;
     /**
      * 選択中ページ.
      */
@@ -122,10 +122,6 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
     private final static int ANIMATION_TIME_WAIT = 2000;
     /** アニメーション待ち時間.*/
     private final static int ANIMATION_TIME_MOVE_CURSOR = 300;
-    /**
-     * インジケータマージン.
-     */
-    private final static int DOTS_MARGIN = 3;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -215,7 +211,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
                 new ViewTreeObserver.OnPreDrawListener() {
                     @Override
                     public boolean onPreDraw() {
-                        mOffset = mCurDot.getWidth() + (int) getDensity() * DOTS_MARGIN;
+                        mOffset = mCurDot.getWidth() + getResources().getDimensionPixelSize(R.dimen.tutorial_dots_margin);
                         return true;
                     }
                 });
