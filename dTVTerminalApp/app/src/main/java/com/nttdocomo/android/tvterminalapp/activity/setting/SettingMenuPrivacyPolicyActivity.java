@@ -41,6 +41,7 @@ public class SettingMenuPrivacyPolicyActivity extends BaseActivity {
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
         webSettings.setAllowUniversalAccessFromFileURLs(false);
         webSettings.setAllowFileAccessFromFileURLs(false);
+        webSettings.setTextZoom(100);
         mPrivacyPolicyWebView.loadUrl(UrlConstants.WebUrl.SETTING_MENU_PRIVACY_POLICY_URL);
 
         //テレビアイコンをタップされたらリモコンを起動する

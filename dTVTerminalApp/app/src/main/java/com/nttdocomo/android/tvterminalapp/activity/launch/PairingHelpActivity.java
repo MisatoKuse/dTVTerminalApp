@@ -64,6 +64,7 @@ public class PairingHelpActivity extends BaseActivity {
         WebSettings webSettings = mFirstPairingHelpWebView.getSettings();
         webSettings.setJavaScriptEnabled(false);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        webSettings.setTextZoom(100);
         mFirstPairingHelpWebView.setBackgroundColor(Color.TRANSPARENT);
         if (mFromMode == ParingHelpFromMode.ParingHelpFromMode_Launch.ordinal()) {
             mFirstPairingHelpWebView.loadUrl(UrlConstants.WebUrl.SETTING_HELP_PAIRING_URL);

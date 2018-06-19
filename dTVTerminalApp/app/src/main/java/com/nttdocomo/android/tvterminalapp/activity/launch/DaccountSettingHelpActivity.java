@@ -39,6 +39,7 @@ public class DaccountSettingHelpActivity extends BaseActivity {
         WebSettings webSettings = dAccountHelpPageWebView.getSettings();
         webSettings.setJavaScriptEnabled(false);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        webSettings.setTextZoom(100);
         dAccountHelpPageWebView.loadUrl(UrlConstants.WebUrl.STB_REGIST_D_ACCOUNT_URL);
 
         //Headerの設定

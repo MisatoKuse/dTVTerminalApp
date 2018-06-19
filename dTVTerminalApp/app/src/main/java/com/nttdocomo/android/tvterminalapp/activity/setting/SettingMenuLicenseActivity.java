@@ -37,6 +37,7 @@ public class SettingMenuLicenseActivity extends BaseActivity {
         WebSettings webSettings = mLicenseWebView.getSettings();
         webSettings.setJavaScriptEnabled(false);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        webSettings.setTextZoom(100);
 
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
