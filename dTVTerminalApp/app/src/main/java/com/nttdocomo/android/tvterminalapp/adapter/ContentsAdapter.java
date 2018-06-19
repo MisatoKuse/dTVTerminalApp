@@ -776,7 +776,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 if (listContentInfo.isIsAfterLimitContents()) {
                     //期限切れコンテンツの場合は「配信終了」を表示　※VODクリップのみ
                     holder.tv_time.setVisibility(View.VISIBLE);
-                    holder.tv_time.setText(mContext.getString(R.string.delivery_end_message));
+                    holder.tv_time.setText(mContext.getString(R.string.str_clip_subtitle_delivery_end));
                 } else {
                     ContentUtils.setPeriodText(mContext, holder.tv_time, listContentInfo);
                 }
