@@ -36,6 +36,7 @@ public class SettingMenuTermsOfServiceActivity extends BaseActivity {
         WebSettings webSettings = mTermsOfServiceWebView.getSettings();
         webSettings.setJavaScriptEnabled(false);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        webSettings.setTextZoom(100);
         mTermsOfServiceWebView.loadUrl(UrlConstants.WebUrl.SETTING_MENU_TERMS_OF_SERVICE_HTML);
 
         //テレビアイコンをタップされたらリモコンを起動する

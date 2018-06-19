@@ -38,6 +38,7 @@ public class SettingMenuFaqActivity extends BaseActivity {
         mFaqWebView.setWebViewClient(new WebViewClient());
         mFaqWebView.getSettings().setJavaScriptEnabled(false);
         mFaqWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+        mFaqWebView.getSettings().setTextZoom(100);
         mFaqWebView.loadUrl(UrlConstants.WebUrl.SETTING_MENU_FAQ_URL);
 
         //テレビアイコンをタップされたらリモコンを起動する
