@@ -772,11 +772,19 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_SEARCH_LIST://検索
                 setTabTimeData(holder, listContentInfo);
                 break;
+            case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
+                if (listContentInfo.isIsAfterLimitContents()) {
+                    //期限切れコンテンツの場合は「配信終了」を表示　※VODクリップのみ
+                    holder.tv_time.setVisibility(View.VISIBLE);
+                    holder.tv_time.setText(mContext.getString(R.string.delivery_end_message));
+                } else {
+                    ContentUtils.setPeriodText(mContext, holder.tv_time, listContentInfo);
+                }
+                break;
             case TYPE_RENTAL_RANK: // レンタル一覧
             case TYPE_PREMIUM_VIDEO_LIST: //プレミアムビデオ
             case TYPE_VIDEO_RANK: // ビデオランキング
             case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
-            case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
             case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
             case TYPE_DAILY_RANK: // 今日の番組ランキング

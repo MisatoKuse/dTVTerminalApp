@@ -694,6 +694,9 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
                 //DREM-1882 期限切れコンテンツのクリップ対応により dispType==nullなら一律クリップ可なのでフラグを立てる
                 //対象はクリップ一覧(ビデオ)のみ
                 contentInfo.setIsAfterLimitContents(true);
+                //期限切れコンテンツの評価値とサムネイルURLを再設定する
+                contentInfo.setThumURL("");
+                contentInfo.setRatStar("");
                 contentInfo.setClipExec(true);
                 requestData.setIsAfterLimitContents(true);
             }

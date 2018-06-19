@@ -911,10 +911,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private void getTvScheduleListData(final String[] chNo) {
         DTVTLogger.start();
-        DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(DateUtils.TV_SCHEDULE_LAST_INSERT);
-
-        List<Map<String, String>> list = new ArrayList<>();
         if (!mIsStop) {
             //通信クラスにデータ取得要求を出す
             mTvScheduleWebClient = new TvScheduleWebClient(mContext);
@@ -1005,7 +1001,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if ((lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate))
                 || !NetWorkUtils.isOnline(mContext)) {
             //データをDBから取得する
-            HomeDataManager homeDataManager = new HomeDataManager(mContext);
             Handler handler = new Handler(Looper.getMainLooper());
             DataBaseThread dataBaseThread = new DataBaseThread(handler, this, SELECT_DAILY_RANK_LIST);
             dataBaseThread.start();
@@ -1040,7 +1035,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         DTVTLogger.start();
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.VIDEO_RANK_LAST_INSERT);
-        List<Map<String, String>> list = new ArrayList<>();
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
         if ((!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate))
                 || !NetWorkUtils.isOnline(mContext)) {
@@ -1294,9 +1288,28 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private void setStructDB(final VodClipList vodClipList) {
         DTVTLogger.start();
-        List<Map<String, String>> vcList = vodClipList.getVcList();
+        List<Map<String, String>> vcList = deleteAfterLimitVodClipData(vodClipList.getVcList());
         sendVodClipListData(vcList);
         DTVTLogger.end();
+    }
+
+    /**
+     * Vodクリップ一覧から期限切れコンテンツを除去(disp_typeの設定がないもの).
+     *
+     * @param vodClipLists クリップ一覧データ
+     * @return 加工済みクリップ一覧
+     */
+    private List<HashMap<String, String>> deleteAfterLimitVodClipData(final List<HashMap<String, String>> vodClipLists) {
+        List<HashMap<String, String>> list = new ArrayList<>();
+        if (vodClipLists != null && vodClipLists.size() > 0) {
+            for (int i = 0; i < vodClipLists.size(); i++) {
+                String dispType = vodClipLists.get(i).get(JsonConstants.META_RESPONSE_DISP_TYPE);
+                if (dispType != null && !dispType.isEmpty()) {
+                    list.add(vodClipLists.get(i));
+                }
+            }
+        }
+        return list;
     }
 
     /**
