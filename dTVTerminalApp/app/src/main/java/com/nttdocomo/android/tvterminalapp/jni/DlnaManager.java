@@ -219,6 +219,8 @@ public class DlnaManager {
     private boolean startedDmp = false;
     /** dtcp開始フラグ. */
     private boolean startedDtcp = false;
+    /** dtcp開始フラグ. */
+    private String mHomeOutControlUrl = null;
 
     /**
      * launch.
@@ -323,9 +325,11 @@ public class DlnaManager {
 
                 break;
             case HOME_IN:
-            case HOME_OUT_CONNECT:
                 DlnaDmsItem item = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
                 browseContentWithContainerId(0, DtvtConstants.REQUEST_LIMIT_300, containerId, item.mControlUrl);
+                break;
+            case HOME_OUT_CONNECT:
+                browseContentWithContainerId(0, DtvtConstants.REQUEST_LIMIT_300, containerId, DlnaManager.shared().mHomeOutControlUrl);
                 break;
             default:
                 DTVTLogger.warning("default");
@@ -474,18 +478,10 @@ public class DlnaManager {
                 + ", controlUrl = " + controlUrl + ", eventSubscriptionUrl = " + eventSubscriptionUrl);
 
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
-        updateJoinConnectStatus(dlnaDmsItem, udn, location);
+        updateJoinConnectStatus(dlnaDmsItem, friendlyName, udn, location, controlUrl);
         DlnaManagerListener listener = DlnaManager.shared().mDlnaManagerListener;
         if (listener != null) {
-            URL hostUrl = null;
-            String hostString = "";
-            try {
-                hostUrl = new URL(location);
-                hostString = hostUrl.getHost();
-            } catch (MalformedURLException e) {
-                DTVTLogger.debug(e);
-            }
-            listener.joinDms(friendlyName, hostString, udn, controlUrl, eventSubscriptionUrl);
+            listener.joinDms(friendlyName, DlnaUtils.getHost(location), udn, controlUrl, eventSubscriptionUrl);
         } else {
             DTVTLogger.warning("no dms callback");
         }
@@ -656,7 +652,8 @@ public class DlnaManager {
         }
     }
 
-    private void updateJoinConnectStatus(@Nullable DlnaDmsItem item, final @NonNull String udn, final @NonNull String location) {
+    private void updateJoinConnectStatus(@Nullable final DlnaDmsItem item, final @NonNull String friendName, final @NonNull String udn, final @NonNull String location,
+                                         final @NonNull String controlUrl) {
         if (item == null || !udn.equals(item.mUdn)) {
             return;
         }
@@ -679,8 +676,8 @@ public class DlnaManager {
         }
         if (!TextUtils.isEmpty(localHostAddress) && localHostAddress.equals(locationHostString)) {
             StbConnectionManager.shared().setConnectionStatus(StbConnectionManager.ConnectionStatus.HOME_OUT_CONNECT);
-
             DlnaManager manager = DlnaManager.shared();
+            manager.mHomeOutControlUrl = controlUrl;
             DTVTLogger.warning("requestContainerId = " + manager.requestContainerId);
             if (!TextUtils.isEmpty(manager.requestContainerId)) {
                 manager.BrowseContentWithContainerId(manager.requestContainerId);
@@ -692,6 +689,16 @@ public class DlnaManager {
                 DlnaManager.shared().StopDirag();
             }
             StbConnectionManager.shared().setConnectionStatus(StbConnectionManager.ConnectionStatus.HOME_IN);
+            String host = DlnaUtils.getHost(location);
+            if (!item.mIPAddress.equals(host)) {
+                DlnaDmsItem newItem = new DlnaDmsItem();
+                newItem.mFriendlyName = friendName;
+                newItem.mIPAddress = host;
+                newItem.mUdn = udn;
+                newItem.mControlUrl = controlUrl;
+                newItem.mHttp = host;
+                SharedPreferencesUtils.setSharedPreferencesStbInfo(DlnaManager.shared().mContext, newItem);
+            }
         }
     }
 
