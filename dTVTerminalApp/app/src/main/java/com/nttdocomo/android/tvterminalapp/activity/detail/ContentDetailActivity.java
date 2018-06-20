@@ -787,6 +787,15 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             && mDetailFullData.getContentsType().equals(ContentUtils.ContentsType.HIKARI_TV_VOD)) {
                         //TODO テレビアイコン未着のためボタンを非表示にする
                         imageView.setVisibility(View.GONE);
+
+                        // 連携アイコン非表示のためクリック抑止
+                        mThumbnailBtn.setClickable(false);
+                    } else if (content.equals(getResources().getString(R.string.contents_detail_thumbnail_text_unable_viewing)) ||
+                            content.equals(getResources().getString(R.string.contents_detail_thumbnail_text))) {
+                        imageView.setVisibility(View.GONE);
+
+                        // 連携アイコン非表示のためクリック抑止
+                        mThumbnailBtn.setClickable(false);
                     }
                     mThumbnailBtn.setVisibility(View.VISIBLE);
                     startAppIcon.setVisibility(View.VISIBLE);
@@ -941,8 +950,20 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
             switch (type) {
                 case PURE_DTV:
-                    //「mobileViewingFlg」が「0」の場合モバイル視聴不可
-                    if (MOBILEVIEWINGFLG_FLAG_ZERO.equals(mDetailData.getMobileViewingFlg())) {
+                    if (CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved1()) &&
+                            CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved2())) {
+                        // 「reserved1」が「1」STB視聴不可
+                        // 「reserved2」が「1」Android視聴不可
+                        // どちらも不可なので"お使いの端末では視聴できません"を表示
+                        setThumbnailText(getResources().getString(
+                                R.string.contents_detail_thumbnail_text_unable_viewing));
+                    } else if (CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved2())) {
+                        // 「reserved2」が「1」Android視聴不可
+                        // モバイル視聴不可なので、"テレビで視聴できます"を表示
+                        setThumbnailText(getResources().getString(
+                                R.string.contents_detail_thumbnail_text));
+                    } else if (MOBILEVIEWINGFLG_FLAG_ZERO.equals(mDetailData.getMobileViewingFlg())) {
+                        //「mobileViewingFlg」が「0」の場合モバイル視聴不可
                         //モバイル視聴不可なので、"テレビで視聴できます"を表示
                         setThumbnailText(getResources().getString(
                                 R.string.contents_detail_thumbnail_text));
