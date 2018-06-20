@@ -91,7 +91,7 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
         mSelectList = new ArrayList<>();
         mServiceIds = getIntent().getStringArrayExtra(SERVICE_IDS);
         mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
-        mScaledDownProgramListDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_ALL);
+        mScaledDownProgramListDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_HIKARI);
     }
 
     /**

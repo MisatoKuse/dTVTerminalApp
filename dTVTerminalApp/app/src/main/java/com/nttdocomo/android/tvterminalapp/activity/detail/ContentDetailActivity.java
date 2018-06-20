@@ -798,6 +798,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         mThumbnailBtn.setClickable(false);
                     }
                     mThumbnailBtn.setVisibility(View.VISIBLE);
+                    setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
                     startAppIcon.setVisibility(View.VISIBLE);
                     startAppIcon.setText(content);
                 }
@@ -972,14 +973,17 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         setThumbnailText(getResources().getString(
                                 R.string.dtv_content_service_start_text));
                     }
+                    setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
                     break;
                 case PURE_DTV_CHANNEL:
                 case PURE_DTV_CHANNEL_MISS:
                 case PURE_DTV_CHANNEL_RELATION:
                     setThumbnailText(getResources().getString(R.string.dtv_channel_service_start_text));
+                    setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
                     break;
                 case D_ANIME_STORE:
                     setThumbnailText(getResources().getString(R.string.d_anime_store_content_service_start_text));
+                    setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
                     break;
                 default:
                     break;
