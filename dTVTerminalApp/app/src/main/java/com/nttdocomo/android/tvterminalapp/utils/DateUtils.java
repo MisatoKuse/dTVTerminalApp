@@ -979,8 +979,18 @@ public class DateUtils {
         Date startDate;
         Date endDate;
         if (isPlala) {
-            long start = Long.parseLong(startTime);
-            long end = Long.parseLong(endTime);
+            long start = 0;
+            long end = 0;
+            try {
+                start = Long.parseLong(startTime);
+                end = Long.parseLong(endTime);
+            } catch (NumberFormatException e) {
+                //サーバーから送られてきたstartTime及びendTimeが、浮動小数点形式となっている場合があった。
+                //その場合、long型へのパースで例外が発生する。
+                //恐らくサーバー側の一時的な不具合なので、この例外処理で何もせず、startとendはゼロのままとする
+                DTVTLogger.debug("NumberFormatException,pattern of the publish_date");
+            }
+
             cal.setTimeInMillis(start * 1000);
             startDate = cal.getTime();
             cal.setTimeInMillis(end * 1000);
