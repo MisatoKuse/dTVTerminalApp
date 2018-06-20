@@ -22,7 +22,7 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.SettingFileWebCli
 /**
  * 設定ファイルを読み込み、それに応じて、アプリ実行中断かアプリバージョンアップへの誘導を行う.
  * <p>
- * 必ずベースアクティビティから呼ばれる
+ * ベースアクティビティと再生画面（リモート再生）から呼ばれる
  */
 public class ProcessSettingFile {
     /**
@@ -124,10 +124,16 @@ public class ProcessSettingFile {
             mProcessSettingFileCallBack = callBack;
         }
 
-        //まず、前回の読み込みから1時間(java時間は桁が多いので、エポック秒は千倍する)が経過したかどうかを見る
+        //前回の読み込み時間の取得
         long lastDate = SharedPreferencesUtils.getSharedPreferencesSettingFileDate(mContext);
-        if (lastDate + (DateUtils.EPOCH_TIME_ONE_HOUR * 1000) > System.currentTimeMillis()) {
-            //1時間以内なので、前回の値を使用する
+        //前回のファイル読み込みの成否を取得
+        boolean isLastReadFail =
+                SharedPreferencesUtils.getSharedPreferencesSettingFileIsReadFail(mContext);
+
+        //前回の読み込みから1時間(java時間は桁が多いので、エポック秒は千倍する)が経過したか、前回読み込みが成功したかどうかを見る
+        if (lastDate + (DateUtils.EPOCH_TIME_ONE_HOUR * 1000) > System.currentTimeMillis()
+                && !isLastReadFail) {
+            //1時間以内かつ前回読み込みは成功しているので、前回の値を使用する
             mSettingData.setIsStop(
                     SharedPreferencesUtils.getSharedPreferencesSettingFileIsStop(mContext));
             mSettingData.setDescription(
@@ -137,9 +143,8 @@ public class ProcessSettingFile {
             mSettingData.setOptionalUpdateVersion(
                     SharedPreferencesUtils.getSharedPreferencesSettingFileOptionalUpdate(
                             mContext));
-            mSettingData.setIsFileReadError(
-                    SharedPreferencesUtils.getSharedPreferencesSettingFileIsReadFail(
-                            mContext));
+            //読み込みに成功しているので、ファイル取得エラーフラグはfalse
+            mSettingData.setIsFileReadError(false);
 
             //実際の制御がすぐ開始できる
             processControl();
@@ -169,6 +174,10 @@ public class ProcessSettingFile {
                     //現在日時を設定する
                     SharedPreferencesUtils.setSharedPreferencesSettingFileDate(
                             mContext, System.currentTimeMillis());
+
+                    //ファイルの読み込みに成功しているので、次回の処理に備えたフラグをセット
+                    SharedPreferencesUtils.setSharedPreferencesSettingFileIsReadFail(
+                            mContext,false);
                 } else {
                     //ファイル未発見の場合は、ファイル取得エラーをONにする
                     mSettingData.setIsFileReadError(true);
@@ -177,6 +186,9 @@ public class ProcessSettingFile {
                     //終了メッセージも読めていないのでクリア
                     mSettingData.setDescription("");
 
+                    //ファイルの読み込みに成功しているので、次回の処理に備えたフラグをセット
+                    SharedPreferencesUtils.setSharedPreferencesSettingFileIsReadFail(
+                            mContext,true);
                     //現在日時は設定しないので、次回も読み込む
                 }
 
@@ -204,8 +216,11 @@ public class ProcessSettingFile {
         //処理は終わったので、フラグをリセット
         mBusy = false;
 
-        //ダイアログスイッチ
+        //ダイアログ表示スイッチ
         boolean dialogSwitch = false;
+
+        //キャンセル付きダイアログの表示指定
+        boolean dialogWithCancel = false;
 
         //停止の有無を見る
         if (mSettingData.isIsStop()) {
@@ -217,6 +232,9 @@ public class ProcessSettingFile {
         } else if (mIsRemote && mSettingData.isFileReadError()) {
             //リモート視聴判定の場合は、ファイルアクセス失敗の場合もエラーを出す
             stopAllActivityDialog();
+            //ダイアログを表示する分岐に入ったのでtrue
+            dialogSwitch = true;
+
         } else if (mSettingData.getForceUpdateVersion() > BuildConfig.VERSION_CODE) {
             //強制アップデートのバージョンの方が新しいので、GooglePlayダイアログをキャンセル無しで呼び出す
             showGooglePlayDialog(false);
@@ -228,11 +246,15 @@ public class ProcessSettingFile {
             showGooglePlayDialog(true);
             //ダイアログを表示する分岐に入ったのでtrue
             dialogSwitch = true;
+            //キャンセル付きなので、trueをセットする
+            dialogWithCancel = true;
 
         }
 
-        //何も問題は無かったので、コールバックが指定されていればそこへ飛ぶ
-        if (mProcessSettingFileCallBack != null) {
+        //コールバックが指定されていて、キャンセル付きのダイアログでなければそこへ飛ぶ
+        //(通常、showGooglePlayDialog(true)を呼ぶ際は、コールバックが無いので、ここは呼ばれない。
+        //(コールバックがあるリモート視聴時のダイアログでも呼ばれないようにした)
+        if (mProcessSettingFileCallBack != null && !dialogWithCancel) {
             mProcessSettingFileCallBack.onCallBack(dialogSwitch);
         }
     }
@@ -258,6 +280,9 @@ public class ProcessSettingFile {
 
         //ダイアログを、キャンセル無しにする
         CustomDialog dialog = new CustomDialog(mActivity, CustomDialog.DialogType.ERROR);
+
+        //このダイアログは、枠外のタッチでは終わらせないようにする
+        dialog.setOnTouchOutside(false);
 
         String printMessage;
         //指定の文字列があるかどうかを見る
@@ -330,6 +355,9 @@ public class ProcessSettingFile {
                 DTVTLogger.end();
             }
         });
+
+        //ダイアログの外側のタッチは無効化する
+        dialog.setOnTouchOutside(false);
 
         if (isCancel) {
             //キャンセル付きの場合はキャンセルのコールバックを用意
