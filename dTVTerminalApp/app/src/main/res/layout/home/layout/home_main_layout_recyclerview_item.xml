@@ -101,7 +101,8 @@
                 android:textColor="@color/home_item_contents_text_color"
                 android:textSize="@dimen/home_contents_thumbnail_state_text_size"
                 android:maxLines="1"
-                android:ellipsize="end"/>
+                android:ellipsize="end"
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/home_main_recyclerview_item_hyphen"
@@ -121,7 +122,8 @@
                 android:textColor="@color/home_item_contents_text_color"
                 android:textSize="@dimen/home_contents_thumbnail_state_text_size"
                 android:maxLines="1"
-                android:ellipsize="end"/>
+                android:ellipsize="end"
+                android:visibility="gone"/>
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
