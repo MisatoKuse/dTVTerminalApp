@@ -15,7 +15,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -87,7 +86,6 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessage;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
-import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherApi;
 import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherUtil;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadDataProvider;
 import com.nttdocomo.android.tvterminalapp.struct.CalendarComparator;
@@ -131,6 +129,8 @@ public class BaseActivity extends FragmentActivity implements
         HomeRecyclerViewAdapter.ItemClickCallback,
         StbConnectionManager.ConnectionListener,
         ScaledDownProgramListDataProvider.ApiDataProviderCallback,
+//TODO 1/19 1/5時点での実装後に仕様の再検討が発生したためコメントアウト
+//        UserInfoDataProvider.UserDataProviderCallback,
         DaccountReceiver.DaccountChangedCallBack {
     /**
      * ヘッダーBaseレイアウト.
@@ -690,6 +690,14 @@ public class BaseActivity extends FragmentActivity implements
 
         //インテントにダイアログ表示依頼があるかどうかを見る
         checkDialogShowRequest();
+
+        //TODO 1/19 1/5時点での実装後に仕様の再検討が発生したためコメントアウト
+        //TODO 現状、このタイミングで実行するとHome画面でエラーになる(Home画面開始前にProgressBarを表示しようとするため)
+        //TODO onResumeに移動すれば一応動作するが、確認が必要
+        //ユーザー情報の変更検知
+//        UserInfoDataProvider dataProvider = new UserInfoDataProvider(getApplicationContext(), this);
+//        dataProvider.getUserInfo();
+
 
         DTVTLogger.end();
     }
@@ -1919,7 +1927,7 @@ public class BaseActivity extends FragmentActivity implements
         mRemoteControlRelayClient.setHandler(mRelayClientHandler);
     }
 
-//    TODO 検討中
+//TODO 1/19 1/5時点での実装後に仕様の再検討が発生したためコメントアウト
 //    @Override
 //    public void userInfoListCallback(boolean isChange, List<UserInfoList> list) {
 //        //年齢情報に変化があったのでホーム画面に飛ぶ。ただし、初回実行時はチュートリアル等のスキップを防ぐために、必ずfalseになる
