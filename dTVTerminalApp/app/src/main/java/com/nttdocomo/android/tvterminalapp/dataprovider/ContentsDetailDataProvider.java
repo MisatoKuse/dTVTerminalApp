@@ -32,6 +32,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.struct.RecordingReservationContentsDetailInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
+import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsDetailGetWebClient;
@@ -236,15 +237,29 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     @Override
     public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         super.onTvClipKeyListJsonParsed(clipKeyListResponse);
-        mApiDataProviderCallback.onContentsDetailInfoCallback(
-                mVodMetaFullData, getContentsDetailClipStatus(mVodMetaFullData));
+        addClipStatus(clipKeyListResponse);
     }
 
     @Override
     public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
+        addClipStatus(clipKeyListResponse);
+    }
+
+    /**
+     * クリップ状態取得後にコンテンツ詳細情報を送信.
+     *
+     * @param clipKeyListResponse クリップキーレスポンス
+     */
+    private void addClipStatus(final ClipKeyListResponse clipKeyListResponse) {
+        //クリップ状態取得
+        boolean isClipStatus = false;
+        if (clipKeyListResponse != null) {
+            List<Map<String, String>> mapList = clipKeyListResponse.getCkList();
+            isClipStatus = ClipUtils.setClipStatusVodMetaData(mVodMetaFullData, mapList);
+        }
         mApiDataProviderCallback.onContentsDetailInfoCallback(
-                mVodMetaFullData, getContentsDetailClipStatus(mVodMetaFullData));
+                mVodMetaFullData, isClipStatus);
     }
 
     @Override
@@ -271,7 +286,6 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     public void onRentalChListJsonParsed(final PurchasedChannelListResponse purchasedChannelListResponse) {
         mPurchasedChannelListResponse = purchasedChannelListResponse;
         if (mPurchasedChannelListResponse != null) {
-            DateUtils dateUtils = new DateUtils(mContext);
             Handler handler = new Handler(); //チャンネル情報更新
             try {
                 DataBaseThread dataBaseThread = new DataBaseThread(handler, this, RENTAL_CHANNEL_UPDATE);

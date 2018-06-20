@@ -15,7 +15,6 @@ import android.text.TextUtils;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvScheduleInsertDataManager;
@@ -33,7 +32,6 @@ import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ServiceUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
-import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClient;
 
@@ -201,7 +199,6 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                                       final List<Map<String, String>> resultSet,
                                       final int operationId) {
         if (isSuccessful) {
-            UserState userState = UserInfoUtils.getUserState(mContext);
             switch (operationId) {
                 case CHANNEL_SELECT:
                     ArrayList<ChannelInfo> channels = new ArrayList<>();
@@ -523,7 +520,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         mSchedule.setTitleId(titleId);
         mSchedule.setTvService(tvService);
         mSchedule.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
-        mSchedule.setClipStatus(ClipUtils.setClipStatusFromMap(mSchedule, clipKeyList));
+        mSchedule.setClipStatus(ClipUtils.setClipStatusScheduleInfo(mSchedule, clipKeyList));
         return mSchedule;
     }
 
@@ -535,7 +532,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     private ChannelInfoList setProgramListContentData() {
         ChannelInfoList channelsInfo = null;
 
-        if(mTvScheduleList == null) {
+        if (mTvScheduleList == null) {
             //解放処理の強化によりヌルの場合が発生したので、ヌルならば帰る
             return null;
         }
