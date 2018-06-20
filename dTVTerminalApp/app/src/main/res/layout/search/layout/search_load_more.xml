@@ -16,5 +16,6 @@
 		android:layout_height="wrap_content"
 		android:layout_marginStart="@dimen/search_load_more_margin"
 		android:text="@string/search_loading"
+		android:textSize="14dp"
 		android:textColor="@android:color/white"/>
 </LinearLayout>

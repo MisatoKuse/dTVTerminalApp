@@ -67,6 +67,7 @@
         android:textColor="@color/stb_select_black_color"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:textSize="14dp"
         android:layout_marginBottom="@dimen/launch_image_bottom_margin"/>
 
 </RelativeLayout>

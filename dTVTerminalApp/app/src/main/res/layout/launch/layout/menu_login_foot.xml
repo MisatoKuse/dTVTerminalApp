@@ -12,6 +12,7 @@
 		android:background="@android:color/darker_gray"
 		android:padding="10dp"
 		android:text="アカウント名"
+		android:textSize="14dp"
 		android:textColor="@android:color/white"/>
 
 </RelativeLayout>
