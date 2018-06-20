@@ -8,7 +8,7 @@
         android:id="@+id/main_setting_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@color/setting_list_divider_color"
+        android:divider="@drawable/setting_list_divider"
         android:dividerHeight="@dimen/main_setting_list_divider_height"
         android:background="@color/setting_list_background_color">
     </ListView>
