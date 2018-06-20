@@ -11,7 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.digion.dixim.android.util.AribExternalCharConverter;
 import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -19,6 +18,7 @@ import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.service.download.DtcpDownloadParam;
+import com.nttdocomo.android.tvterminalapp.utils.AribUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -221,6 +221,8 @@ public class DlnaManager {
     private boolean startedDtcp = false;
     /** dtcp開始フラグ. */
     private String mHomeOutControlUrl = null;
+    /** ARIB外字変換クラス. */
+    private AribUtils mAribUtils = null;
 
     /**
      * launch.
@@ -242,6 +244,9 @@ public class DlnaManager {
         StbConnectionManager.shared().initializeState();
         String diragConfigFilePath = DlnaUtils.getDiragConfileFilePath(context);
         initDirag(diragConfigFilePath);
+
+        //ARIB外字変換クラスの宣言
+        mAribUtils = new AribUtils();
 
         DTVTLogger.end();
     }
@@ -636,14 +641,15 @@ public class DlnaManager {
      * @param info info
      */
     private void aribConvertBs(@NonNull final DlnaObject[] info) {
-        AribExternalCharConverter aribExternalCharConverter = AribExternalCharConverter.getInstance();
-        if (null == aribExternalCharConverter) {
-            DTVTLogger.debug("get AribExternalCharConverter instance failed");
+
+        if (null == DlnaManager.shared().mAribUtils) {
+            DTVTLogger.debug("get AribUtils instance failed");
             return;
         }
 
         for (DlnaObject obj: info) {
-            obj.mChannelName = AribExternalCharConverter.getConverted(obj.mChannelName);
+            obj.mChannelName = DlnaManager.shared().mAribUtils.convertAribGaiji(
+                    obj.mChannelName);
             try {
                 Integer.parseInt(obj.mSize);
             } catch (NumberFormatException e) {
