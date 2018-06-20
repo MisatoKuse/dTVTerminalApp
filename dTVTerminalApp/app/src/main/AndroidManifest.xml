@@ -113,7 +113,7 @@
 
         <!-- ====================================== Other グループ Begin ====================================== -->
         <activity
-            android:name=".activity.setting.NewsActivity"
+            android:name=".activity.setting.NoticeActivity"
             android:screenOrientation="portrait"
             android:exported="false"
             android:hardwareAccelerated="false"
