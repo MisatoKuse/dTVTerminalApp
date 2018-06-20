@@ -496,7 +496,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         String date;
         //channelNameが取得成功したときのみ区切り文字を追加する
         if (channelName != null && !channelName.isEmpty()) {
-            channelName = StringUtils.getConnectStrings(mContext.getString(R.string.home_contents_pipe), channelName);
+            channelName = StringUtils.getConnectStrings(channelName, mContext.getString(R.string.home_contents_pipe));
         } else {
             channelName = "";
         }
@@ -507,8 +507,8 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
                         DateUtils.formatEpochToStringOpeLog(Long.parseLong(endTime)), channelName);
                 break;
             default:
-                date = StringUtils.getConnectStrings(DateUtils.addDateLimit(
-                        mContext, contentsData, contentsType), channelName);
+                date = StringUtils.getConnectStrings(channelName,
+                        DateUtils.addDateLimit(mContext, contentsData, contentsType));
                 break;
         }
         //表示情報がすべて取得できないときは非表示にする
@@ -602,9 +602,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         timeMinuteOnePlace = endTime.substring(START_TIME_MINUTE_SEPARATE, START_TIME_MINUTE_END);
         String endMinute = StringUtils.getConnectStrings(timeMinuteTensPlace, timeMinuteOnePlace);
 
-       return StringUtils.getConnectStrings(startHour, mContext.getString(R.string.home_contents_colon), startMinute,
+       return StringUtils.getConnectStrings(channelName, startHour, mContext.getString(R.string.home_contents_colon), startMinute,
                 mContext.getString(R.string.home_contents_hyphen), endHour,
-                mContext.getString(R.string.home_contents_colon), endMinute, channelName);
+                mContext.getString(R.string.home_contents_colon), endMinute);
     }
 
     @Override
