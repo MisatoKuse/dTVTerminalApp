@@ -266,7 +266,7 @@ public class VideoTopActivity extends BaseActivity implements
             DTVTLogger.debug("ジャンル情報取得後はリストを更新");
             VideoGenreList videoGenreList = new VideoGenreList();
             videoGenreList.setTitle(this.getResources().getString(R.string.video_list_genre_all));
-            videoGenreList.setContentCount("");
+            videoGenreList.setContentCount(String.valueOf(mVideoGenreListDataInfo.getVideoGenreListData(mVideoGenreListDataInfo.getGenreId()).getContentCount()));
             videoGenreList.setGenreId(mVideoGenreListDataInfo.getGenreId());
             mShowContentsList.add(0, videoGenreList);
         }
