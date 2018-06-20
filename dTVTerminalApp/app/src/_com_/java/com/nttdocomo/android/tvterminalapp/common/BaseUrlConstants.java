@@ -57,5 +57,5 @@ class BaseUrlConstants {
      * (現状は、ジャンル一覧と設定ファイルで使用)
      */
     public static final String PLALA_FIXED_FILE_BASE_URL
-            = "https://tconf.hikaritv-docomo.jp/";
+            = "https://conf.hikaritv-docomo.jp/";
 }

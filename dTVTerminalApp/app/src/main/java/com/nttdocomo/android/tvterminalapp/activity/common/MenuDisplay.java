@@ -28,7 +28,7 @@ import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RentalListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.WatchingVideoListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectActivity;
-import com.nttdocomo.android.tvterminalapp.activity.setting.NewsActivity;
+import com.nttdocomo.android.tvterminalapp.activity.setting.NoticeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.setting.SettingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.RankingTopActivity;
 import com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity;
@@ -233,8 +233,8 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                 intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
                 mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_notice))) {
-                    if (!(mActivity instanceof NewsActivity)) {
-                        intent.setClass(mActivity, NewsActivity.class);
+                    if (!(mActivity instanceof NoticeActivity)) {
+                        intent.setClass(mActivity, NoticeActivity.class);
                         intent.setFlags(0);
                         mActivity.startActivity(intent);
                     }

@@ -15,7 +15,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -65,7 +64,7 @@ import com.nttdocomo.android.tvterminalapp.activity.ranking.RankingTopActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity;
-import com.nttdocomo.android.tvterminalapp.activity.setting.NewsActivity;
+import com.nttdocomo.android.tvterminalapp.activity.setting.NoticeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.setting.SettingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity;
@@ -87,7 +86,6 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessage;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
-import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherApi;
 import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherUtil;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadDataProvider;
 import com.nttdocomo.android.tvterminalapp.struct.CalendarComparator;
@@ -1354,7 +1352,7 @@ public class BaseActivity extends FragmentActivity implements
                 || this instanceof PremiumVideoActivity
                 || this instanceof RentalListActivity
                 || this instanceof RecordReservationListActivity
-                || this instanceof NewsActivity
+                || this instanceof NoticeActivity
                 || this instanceof SettingActivity) {
             Intent intent = mActivity.getIntent();
             intent.setClass(mActivity, HomeActivity.class);

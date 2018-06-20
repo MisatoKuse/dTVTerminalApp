@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.activity.setting;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -33,6 +34,7 @@ public class SettingMenuLicenseActivity extends BaseActivity {
         mLicenseWebView = findViewById(R.id.setting_menu_main_webview);
         mLicenseWebView.setWebViewClient(new WebViewClient());
         mLicenseWebView.setBackgroundColor(Color.TRANSPARENT);
+        mLicenseWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         mLicenseWebView.loadUrl(UrlConstants.WebUrl.SETTING_MENU_LICENSE_URL);
         WebSettings webSettings = mLicenseWebView.getSettings();
         webSettings.setJavaScriptEnabled(false);

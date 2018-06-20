@@ -22,10 +22,9 @@ public class UrlConstants {
         public static final String PR_URL = "https://www.hikaritv.net/video";
 
         /**
-         * 表示するWebPageのURL.
-         * TODO 仮のHTMLファイル
+         * dアカウント登録ヘルプのURL.
          */
-        public static final String STB_REGIST_D_ACCOUNT_URL = "file:///android_asset/first_pairing_d_account_help.html";
+        public static final String STB_REGIST_D_ACCOUNT_URL = "https://apl.d.dmkt-sp.jp/dtv2/tvt_sp/support/idRegist.html";
 
         /**
          * DTVグーグルショップ起動URL.
@@ -67,38 +66,38 @@ public class UrlConstants {
         public static final String DTVCHANNEL_GOOGLEPLAY_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=com.nttdocomo.dch";
 
         /**
-         * 設定画面 プライバシーポリシー URL TODO 仮のURL.
+         * 設定画面 プライバシーポリシー のURL.
          */
-        public final static String SETTING_MENU_PRIVACY_POLICY_URL = "https://www.nttdocomo.co.jp/";
+        public final static String SETTING_MENU_PRIVACY_POLICY_URL = "https://www.nttdocomo.co.jp/utility/privacy/";
 
         /**
-         * 利用規約 URL TODO のHTMLファイル.
+         * 利用規約のURL.
          */
-        public final static String SETTING_MENU_TERMS_OF_SERVICE_HTML = "file:///android_asset/terms_of_service.html";
+        public final static String SETTING_MENU_AGREEMENT_HTML = "https://apl.d.dmkt-sp.jp/dtv2/tvt_sp/docs/agreement.html";
 
         /**
-         * ライセンス URL TODO 仮のHTMLファイル.
+         * ライセンス情報のローカル HTMLファイル.
          */
-        public final static String SETTING_MENU_LICENSE_URL = "file:///android_asset/osslicense.html";
+        public final static String SETTING_MENU_LICENSE_URL = "file:///android_asset/licenses/oss_licenses.html";
 
         /**
-         * FAQ画面 TODO 仮のURL.
+         * FAQ画面のURL.
          */
-        public final static String SETTING_MENU_FAQ_URL = "https://www.nttdocomo.co.jp/";
+        public final static String SETTING_MENU_FAQ_URL = "https://apl.d.dmkt-sp.jp/dtv2/tvt_sp/support/faqList.html";
 
         /**
-         * APP画面 TODO 仮のURL.
+         * APP画面のURL.
          */
-        public final static String SETTING_MENU_APP_URL = "https://www.nttdocomo.co.jp/";
+        public final static String SETTING_MENU_APP_URL = "https://apl.d.dmkt-sp.jp/dtv2/tvt_sp/docs/app_tvt_sp.html";
 
         /**
-         * お知らせ画面.
-         * TODO 仮のHTMLファイル
+         * お知らせ画面のURL.
          */
-        public final static String NEWS_URL = "https://www.nttdocomo.co.jp/";
+        public final static String NOTICE_URL = "https://apl.d.dmkt-sp.jp/dtv2/tvt_sp/notice/noticeList.html";
 
         /**
-         * 初回起動ペアリング(ヘルプページ) TODO 仮のHTMLファイル.
+         * 初回起動ペアリング(ヘルプページ) .
+         * TODO: 仮のHTMLファイル
          */
         public final static String SETTING_HELP_PAIRING_URL = "file:///android_asset/first_pairing_help.html";
 
@@ -108,16 +107,15 @@ public class UrlConstants {
         public final static String SETTING_SUPPORT_PAIRING_URL = "https://apl.d.dmkt-sp.jp/dtv2/tvt_sp/support/pairing.html";
 
         /**
-         * 自分グーグルショップ起動URL.
-         * TODO : 今はひとまず、DTVのアドレスを指定
+         * ドコテレアプリのGoogle Play ストア‎URL.
+         * TODO: ドコテレアプリのアプリURLが未済のため、仮のURLを指定
          */
         public static final String GOOGLEPLAY_DOWNLOAD_MY_URL = "https://play.google.com/store/apps/details?id=jp.co.nttdocomo.dtv";
 
         /**
-         * 契約URL.
-         * TODO : 仮の契約URL
+         * 契約ページのURL.
          */
-        public static final String CONTRACT_URL = "http://www.google.co.jp";
+        public static final String CONTRACT_URL = "https://www.hikaritv-docomo.jp/";
     }
 
     /**
