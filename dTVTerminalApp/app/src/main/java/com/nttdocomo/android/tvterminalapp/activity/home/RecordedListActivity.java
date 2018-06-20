@@ -195,7 +195,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         ArrayList<DlnaRecVideoItem> dstList = new ArrayList<>();
         for (DlnaObject dlnaObject: objs) {
             DlnaRecVideoItem item = new DlnaRecVideoItem();
-            item.mItemId = dlnaObject.mObjectId;
+            item.mItemId = modifyObjectId(dlnaObject.mObjectId);
             item.mSize = dlnaObject.mSize;
             item.mResUrl = dlnaObject.mResUrl;
             item.mResolution = dlnaObject.mResolution;
@@ -208,6 +208,19 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             dstList.add(item);
         }
         setVideoBrows(dstList);
+    }
+
+    /**
+     * オブジェクトIDを編集する.
+     *
+     * @param objectId オブジェクトID
+     * @return objectId 編集後のオブジェクトID
+     */
+    private String modifyObjectId(String objectId) {
+        if (TextUtils.isEmpty(objectId)) {
+            return objectId;
+        }
+        return objectId.replace("remote1", "smartphone").replace("remote2", "smartphone").replace("remote3", "smartphone");
     }
 
     /**
@@ -347,7 +360,20 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
                         String fullPath = path + File.separator + itemId;
                         File file = new File(fullPath);
-                        if (file.exists()) {
+                        boolean isExist = false;
+                        for (int i = 0; i < baseFragment.mContentsList.size(); i++) {
+                            RecordedContentsDetailData detailDataInList = baseFragment.mContentsList.get(i);
+                            if (itemId.equals(detailDataInList.getItemId())) {
+                                isExist = true;
+                                //外部ストレージ優先表示
+//                                if (DownloaderBase.getDownloadPath(getApplication()).equals(path)) {
+//                                    baseFragment.mContentsList.remove(i);
+//                                    isExist = false;
+//                                }
+                                break;
+                            }
+                        }
+                        if (file.exists() && !isExist) {
                             ContentsData contentsData = new ContentsData();
                             contentsData.setTitle(title);
                             contentsData.setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
@@ -539,8 +565,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                         if (itemId.equals(allItemId)) {
                             String downloadStatus = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
                             if (!TextUtils.isEmpty(downloadStatus)) {
-                                detailData.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
-                                detailData.setDlFileFullPath(fullPath);
+                                File file = new File(fullPath);
+                                if (file.exists()) {
+                                    detailData.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
+                                    detailData.setDlFileFullPath(fullPath);
+                                }
                             } else {
                                 detailData.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_LOADING);
                             }

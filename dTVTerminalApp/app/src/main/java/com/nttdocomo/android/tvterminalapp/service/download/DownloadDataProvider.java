@@ -18,6 +18,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DownLoadListDataManager;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -244,7 +245,7 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
             return;
         }
         if (!ds.isUiRunning()) {
-            cancelDownLoadStatus(savePath);
+            cancelDownLoadStatus(savePath, false);
             setNextDownLoad();
         }
     }
@@ -480,7 +481,7 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
      * ダウンロードキャンセル.
      * @param path パスー
      */
-    public void cancelDownLoadStatus(final String path) {
+    public void cancelDownLoadStatus(final String path, final boolean completed) {
         if (null == path || path.isEmpty()) {
             return;
         }
@@ -489,29 +490,57 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
             String[] ids = path.split(sSeparator);
             String itemId = ids[paths.length - 1];
             if (!TextUtils.isEmpty(itemId)) {
-                DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
-                downLoadListDataManager.deleteDownloadContentByItemId(itemId);
-                //ディスクからコンテンツを削除する
-                File file = new File(path);
-                if (file.exists()) {
-                    File[] files = file.listFiles();
-                    if (null != files) {
-                        for (File file1 : files) {
-                            if (null != file1) {
-                                if (!file1.delete()) {
-                                    DTVTLogger.debug("delete cacel file fail path:" + path);
+                List <String> pathList = getPathListById(itemId, path, completed);
+                if (pathList != null && pathList.size() > 0){
+                    for (String savePath : pathList) {
+                        DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
+                        downLoadListDataManager.deleteDownloadContentByItemId(itemId, savePath, completed);
+                        //ディスクからコンテンツを削除する
+                        File file = new File(StringUtils.getConnectStrings(savePath, sSeparator, itemId));
+                        if (file.exists()) {
+                            File[] files = file.listFiles();
+                            if (null != files) {
+                                for (File file1 : files) {
+                                    if (null != file1) {
+                                        if (!file1.delete()) {
+                                            DTVTLogger.debug("delete cacel file fail path:" + path);
+                                        }
+                                    }
                                 }
                             }
-                        }
-                    }
-                    if (file.exists()) {
-                        if (!file.delete()) {
-                            DTVTLogger.debug("delete cacel directory fail path:" + path);
+                            if (file.exists()) {
+                                if (!file.delete()) {
+                                    DTVTLogger.debug("delete cacel directory fail path:" + path);
+                                }
+                            }
                         }
                     }
                 }
             }
         }
+    }
+
+    /**
+     * 該当コンテンツIDのパスリストを取得.
+     * @param itemId コンテンツID
+     * @param path パス
+     * @param completed ダウンロード完了フラグ
+     * @return pathList パスリスト
+     */
+    private List<String> getPathListById(final String itemId, final String path, final boolean completed) {
+        List <String> pathList = new ArrayList<>();
+        DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
+        if (completed) {
+            List<Map<String, String>> resultList = downLoadListDataManager.selectDownLoadListById(itemId);
+            if (resultList != null && resultList.size() > 0) {
+                for (Map<String, String> hashMap : resultList) {
+                    pathList.add(hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_SAVE_URL));
+                }
+            }
+        } else {
+            pathList.add(path.substring(0, path.lastIndexOf(sSeparator)));
+        }
+        return pathList;
     }
 
     /**
@@ -661,7 +690,7 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
                 for (DownloadData d : downloadDataQue) {
                     String path = getCurrentDlFullPath(d);
                     if (null != path) {
-                        sDownloadDataProvider.cancelDownLoadStatus(path);
+                        sDownloadDataProvider.cancelDownLoadStatus(path, false);
                     }
                 }
                 for (int i = downloadDataQue.size() - 1; i > -1; --i) {
