@@ -349,7 +349,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
+        super.onBackPressed();
     }
     /**
      *チュートリアル画面をスキップまたは終了するボタンがタップされた時の処理.
