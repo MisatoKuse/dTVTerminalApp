@@ -719,9 +719,11 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         processSettingFile.controlAtSettingFile(new ProcessSettingFile.ProcessSettingFileCallBack() {
             @Override
             public void onCallBack(final boolean dialogSwitch) {
-                //今回は確実に通常ダイアログなので、dialogSwitchの内容は無視していい
-                //設定ファイルの内容に問題は無かったので、再生を行う
-                playStartOrigin();
+                //ここは、エラーダイアログの表示と同時に呼び出される。ここでダイアログを表示する場合、アプリ終了ダイアログのみとなる。
+                //終了ダイアログの表示中に動画が再生される事が無いように、playStartOriginの呼び出しはdialogSwitchがfalseの場合のみとなる。
+                if(!dialogSwitch) {
+                    playStartOrigin();
+                }
             }
         });
     }
