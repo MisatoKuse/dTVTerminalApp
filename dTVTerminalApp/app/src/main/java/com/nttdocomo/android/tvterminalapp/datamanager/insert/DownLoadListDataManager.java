@@ -56,7 +56,7 @@ public class DownLoadListDataManager {
             DownLoadListDao downloadListDao = new DownLoadListDao(database);
 
             //DB保存前に前回取得したデータは全消去する
-            downloadListDao.deleteByItemId(downloadData.getItemId());
+            downloadListDao.deleteByItemId(downloadData.getItemId(), downloadData.getSaveFile(), false);
 
             //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
             ContentValues values = new ContentValues();
@@ -104,8 +104,10 @@ public class DownLoadListDataManager {
     /**
      * 持ち出しのダウンロード情報をDBに格納する.
      * @param itemId  アイテムID.
+     * @param path  パス.
+     * @param completed  ダウンロード完了フラグ.
      */
-    public void deleteDownloadContentByItemId(final String itemId) {
+    public void deleteDownloadContentByItemId(final String itemId, final String path, final boolean completed) {
 
         try {
             //各種オブジェクト作成
@@ -116,7 +118,7 @@ public class DownLoadListDataManager {
             database.acquireReference();
             DownLoadListDao downloadListDao = new DownLoadListDao(database);
 
-            downloadListDao.deleteByItemId(itemId);
+            downloadListDao.deleteByItemId(itemId, path, completed);
         } catch (SQLiteException e) {
             DTVTLogger.debug("DownLoadListDataManager::deleteDownloadContentByItemId, e.cause=" + e.getCause());
         } finally {
@@ -213,6 +215,35 @@ public class DownLoadListDataManager {
             list = downLoadListDao.findAllDownloadList(columns);
         } catch (SQLiteException e) {
             DTVTLogger.debug("DownLoadListDataManager::selectDownLoadList, e.cause=" + e.getCause());
+        } finally {
+            DataBaseManager.getInstance().closeDownloadDatabase();
+        }
+        return list;
+    }
+
+    /**
+     * 該当コンテンツIDのデータを返却する.
+     *
+     * @return list ダウンロードした該当コンテンツIDのデータ
+     */
+    public List<Map<String, String>> selectDownLoadListById(final String itemId) {
+        List<Map<String, String>> list = null;
+        try {
+            String[] columns = {DataBaseConstants.DOWNLOAD_LIST_COLUM_ITEM_ID,
+                    DataBaseConstants.DOWNLOAD_LIST_COLUM_SAVE_URL};
+
+            //Daoクラス使用準備
+            DataBaseHelperDownload downLoadListDBHelper = new DataBaseHelperDownload(mContext);
+            DataBaseManager.clearDownloadInfo();
+            DataBaseManager.initializeInstance(downLoadListDBHelper);
+            SQLiteDatabase database = DataBaseManager.getDownloadInstance().openDownloadDatabase();
+            database.acquireReference();
+            DownLoadListDao downLoadListDao = new DownLoadListDao(database);
+
+            //持ち出し画面用データ取得
+            list = downLoadListDao.findByItemId(columns, itemId);
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("DownLoadListDataManager::selectDownLoadListById, e.cause=" + e.getCause());
         } finally {
             DataBaseManager.getInstance().closeDownloadDatabase();
         }

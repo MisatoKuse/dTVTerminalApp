@@ -525,6 +525,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         boolean result = DlnaUtils.getActivationState(mContext);
         if (!result) {
             showActivationErrorDialog();
+            return;
         }
         int index = (int) view.getTag();
         switch (mContentsData.get(index).getDownloadFlg()) {
@@ -761,7 +762,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         //showMessage();
         mCanBeCanceled = false;
         if (mDownloadDataProvider != null) {
-            mDownloadDataProvider.cancelDownLoadStatus(fullPath);
+            mDownloadDataProvider.cancelDownLoadStatus(fullPath, false);
         }
         setCancelStatus(fullPath);
     }
@@ -815,7 +816,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                                 for (int i = 0; i < mQueueIndex.size(); i++) {
                                     if (num == mQueueIndex.get(i)) {
                                         String path = getCurrentDlFullPath(i);
-                                        mDownloadDataProvider.cancelDownLoadStatus(path);
+                                        mDownloadDataProvider.cancelDownLoadStatus(path, completed);
                                         unQueue(i);
                                         break;
                                     }
@@ -839,7 +840,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                                 showMessage();
                             }
                         }
-                        mDownloadDataProvider.cancelDownLoadStatus(path.toString());
+                        mDownloadDataProvider.cancelDownLoadStatus(path.toString(), completed);
                         noticeActDel(path.toString());
                     }
                     setDownloadStatusClear(view);
@@ -863,7 +864,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     private void cancelCurrentDl() {
         mDownloadDataProvider.cancel();
         String path = getCurrentDlFullPath(0);
-        mDownloadDataProvider.cancelDownLoadStatus(path);
+        mDownloadDataProvider.cancelDownLoadStatus(path, false);
     }
 
     /**
@@ -948,7 +949,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                             mDownloadDataProvider.cancel();
                         }
                         setCancelStatusOnly(fullPath, i);
-                        mDownloadDataProvider.cancelDownLoadStatus(fullPath);
+                        mDownloadDataProvider.cancelDownLoadStatus(fullPath, false);
                     }
                 }
                 for (int i = 0; i < mQueue.size(); ++i) {
