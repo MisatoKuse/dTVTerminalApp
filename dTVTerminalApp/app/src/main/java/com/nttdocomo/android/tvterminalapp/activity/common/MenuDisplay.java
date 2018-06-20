@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.activity.common;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -38,6 +39,7 @@ import com.nttdocomo.android.tvterminalapp.activity.video.VideoTopActivity;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
@@ -239,15 +241,21 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                         mActivity.startActivity(intent);
                     }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_setting))) {
-                    if (!(mActivity instanceof SettingActivity)) {
-                        if (mActivity instanceof StbSelectActivity) {
-                            mActivity.finish();
-                        } else {
-                            intent.setClass(mActivity, SettingActivity.class);
-                            intent.setFlags(0);
-                            mActivity.startActivity(intent);
-                        }
+                if (!(mActivity instanceof SettingActivity)) {
+                    if (mActivity instanceof StbSelectActivity) {
+                        mActivity.finish();
+                    } else {
+                        intent.setClass(mActivity, SettingActivity.class);
+                        intent.setFlags(0);
+                        mActivity.startActivity(intent);
                     }
+                }
+            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_d_anime_copyright))) {
+                //dアニメストアのコピーライト表記サイトを表示する為、外部ブラウザを呼び出す
+                Uri uri = Uri.parse(UrlConstants.WebUrl.D_ANIME_COPYRIGHT_SITE_URL);
+                intent = new Intent(Intent.ACTION_VIEW, uri);
+                mActivity.startActivity(intent);
+
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_hikari_tv))) {
                     // TVアプリ起動導線(ひかりTV)
                     mActivity.setRelayClientHandler();
@@ -515,7 +523,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     }
 
     /**
-     * お知らせ、設定は共通のため、このメソッドに統一.
+     * お知らせ、設定、dアニメストアのコピーライトは共通のため、このメソッドに統一.
      */
     private void setFooterMenuItem() {
         //お知らせ
@@ -524,6 +532,10 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
         //設定
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_setting));
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
+
+        //dアニメストアコピーライト表記
+        mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_d_anime_copyright));
         mMenuItemCount.add(INT_NONE_COUNT_STATUS);
     }
 }

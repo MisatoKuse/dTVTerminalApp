@@ -116,6 +116,11 @@ public class UrlConstants {
          * 契約ページのURL.
          */
         public static final String CONTRACT_URL = "https://www.hikaritv-docomo.jp/";
+
+        /**
+         * dアニメストア用コピーライト表記サイトのURL.
+         */
+        public static final String D_ANIME_COPYRIGHT_SITE_URL = "https://anime.dmkt-sp.jp/animestore/CF/copyrights";
     }
 
     /**

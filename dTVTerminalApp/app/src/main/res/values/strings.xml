@@ -233,6 +233,7 @@
     <string name="nav_menu_item_keyword_search">キーワードで探す</string>
     <string name="nav_menu_item_notice">お知らせ</string>
     <string name="nav_menu_item_setting">設定</string>
+    <string name="nav_menu_item_d_anime_copyright">dアニメストア　コピーライト表記</string>
     <string name="nav_menu_item_hikari_tv_none_action">ひかりＴＶ　</string>
     <string name="nav_menu_item_hikari_tv">ひかりＴＶ</string>
     <string name="nav_menu_item_dtv_channel">dTVチャンネル</string>

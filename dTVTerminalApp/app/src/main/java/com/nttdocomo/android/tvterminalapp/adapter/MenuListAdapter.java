@@ -146,7 +146,8 @@ public class MenuListAdapter extends BaseAdapter {
                     || title.equals(mContext.getString(R.string.nav_menu_item_recommend_program_video))
                     || title.equals(mContext.getString(R.string.nav_menu_item_keyword_search))
                     || title.equals(mContext.getString(R.string.nav_menu_item_notice))
-                    || title.equals(mContext.getString(R.string.nav_menu_item_setting))) {
+                    || title.equals(mContext.getString(R.string.nav_menu_item_setting))
+                    || title.equals(mContext.getString(R.string.nav_menu_item_d_anime_copyright))) {
                 //通常アイテムの設定
                 textView.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
                 textView.setTypeface(Typeface.DEFAULT);
@@ -187,7 +188,8 @@ public class MenuListAdapter extends BaseAdapter {
                     || title.equals(mContext.getString(R.string.nav_menu_item_recommend_program_video))
                     || title.equals(mContext.getString(R.string.nav_menu_item_keyword_search))
                     || title.equals(mContext.getString(R.string.nav_menu_item_notice))
-                    || title.equals(mContext.getString(R.string.nav_menu_item_setting))) {
+                    || title.equals(mContext.getString(R.string.nav_menu_item_setting))
+                    || title.equals(mContext.getString(R.string.nav_menu_item_d_anime_copyright))) {
                 //通常アイテムの設定
                 imageView.setVisibility(View.VISIBLE);
                 ViewGroup.LayoutParams lp = imageView.getLayoutParams();

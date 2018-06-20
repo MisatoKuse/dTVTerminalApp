@@ -186,7 +186,7 @@ public class ProcessSettingFile {
                     //終了メッセージも読めていないのでクリア
                     mSettingData.setDescription("");
 
-                    //ファイルの読み込みに成功しているので、次回の処理に備えたフラグをセット
+                    //ファイルの読み込みに失敗しているので、次回の処理に備えたフラグをセット
                     SharedPreferencesUtils.setSharedPreferencesSettingFileIsReadFail(
                             mContext,true);
                     //現在日時は設定しないので、次回も読み込む
