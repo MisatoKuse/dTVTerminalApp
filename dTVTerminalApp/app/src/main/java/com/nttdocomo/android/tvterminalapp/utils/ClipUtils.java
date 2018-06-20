@@ -8,6 +8,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 
 import java.util.List;
@@ -126,41 +127,98 @@ public class ClipUtils {
         }
     }
 
+
+    /**
+     * クリップキーリストとコンテンツ情報を比較してクリップ状態を設定する.
+     * @param vodMetaFullData コンテンツ情報
+     * @param mapList クリップ状態
+     */
+    public static boolean setClipStatusVodMetaData(final VodMetaFullData vodMetaFullData, final List<Map<String, String>> mapList) {
+        return setClipStatusFromMap(mapList,
+                vodMetaFullData.getDisp_type(),
+                vodMetaFullData.getDtv(),
+                vodMetaFullData.getmTv_service(),
+                vodMetaFullData.getmService_id(),
+                vodMetaFullData.getmEvent_id(),
+                vodMetaFullData.getCrid(),
+                vodMetaFullData.getTitle_id());
+    }
+
     /**
      * クリップキーリストと番組情報を比較してクリップ状態を設定する.
      * @param scheduleInfo 番組表情報
+     * @param mapList クリップ状態
+     */
+    public static boolean setClipStatusScheduleInfo(final ScheduleInfo scheduleInfo, final List<Map<String, String>> mapList) {
+        return setClipStatusFromMap(mapList,
+                scheduleInfo.getDispType(),
+                scheduleInfo.getDtv(),
+                scheduleInfo.getTvService(),
+                scheduleInfo.getServiceId(),
+                scheduleInfo.getEventId(),
+                scheduleInfo.getCrId(),
+                scheduleInfo.getTitleId());
+    }
+
+    /**
+     * クリップキーリストと各種情報を比較してクリップ状態を設定する.
+     *
      * @param mapList クリップキーリスト
+     * @param dispType dispType
+     * @param dtv dtvフラグ
+     * @param tvService tvService
+     * @param serviceId serviceId
+     * @param eventId eventId
+     * @param crId crId
+     * @param titleId titleId
+     * @return クリップ状態
      */
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
-    public static boolean setClipStatusFromMap(final ScheduleInfo scheduleInfo, final List<Map<String, String>> mapList) {
+    public static boolean setClipStatusFromMap(final List<Map<String, String>> mapList,
+                                               final String dispType,
+                                               final String dtv,
+                                               final String tvService,
+                                               final String serviceId,
+                                               final String eventId,
+                                               final String crId,
+                                               final String titleId) {
         DTVTLogger.start();
-        ClipKeyListDao.ContentTypeEnum contentType = ClipKeyListDataProvider.searchContentsType(
-                scheduleInfo.getDispType(), scheduleInfo.getDtv(), scheduleInfo.getTvService());
+
+        //クリップキーリストがない場合はfalseを返却
+        if (mapList == null || mapList.size() < 1) {
+            return false;
+        }
+
+        ClipKeyListDao.ContentTypeEnum contentType
+                = ClipKeyListDataProvider.searchContentsType(dispType, dtv, tvService);
         if (contentType != null) {
             DTVTLogger.debug("setClipStatusFromMap start contentType != null");
             switch (contentType) {
                 case TV:
+                    //多チャンネル放送の場合 service_id、event_id
                     for (int k = 0; k < mapList.size(); k++) {
-                        String serviceId = mapList.get(k).get(JsonConstants.META_RESPONSE_SERVICE_ID);
-                        String eventId = mapList.get(k).get(JsonConstants.META_RESPONSE_EVENT_ID);
-                        if (serviceId != null && serviceId.equals(scheduleInfo.getServiceId())
-                                && eventId != null && eventId.equals(scheduleInfo.getEventId())) {
+                        String mapServiceId = mapList.get(k).get(JsonConstants.META_RESPONSE_SERVICE_ID);
+                        String mapEventId = mapList.get(k).get(JsonConstants.META_RESPONSE_EVENT_ID);
+                        if (mapServiceId != null && mapServiceId.equals(serviceId)
+                                && mapEventId != null && mapEventId.equals(eventId)) {
                             return true;
                         }
                     }
                     break;
                 case VOD:
+                    //ひかりＴＶビデオ、dTVチャンネル場合 crid
                     for (int k = 0; k < mapList.size(); k++) {
-                        String crId = mapList.get(k).get(JsonConstants.META_RESPONSE_CRID);
-                        if (crId != null && crId.equals(scheduleInfo.getCrId())) {
+                        String mapCrId = mapList.get(k).get(JsonConstants.META_RESPONSE_CRID);
+                        if (mapCrId != null && mapCrId.equals(crId)) {
                             return true;
                         }
                     }
                     break;
                 case DTV:
+                    //dTVの場合 title_id
                     for (int k = 0; k < mapList.size(); k++) {
-                        String crId = mapList.get(k).get(JsonConstants.META_RESPONSE_CRID);
-                        if (crId != null && crId.equals(scheduleInfo.getCrId())) {
+                        String mapTitleId = mapList.get(k).get(JsonConstants.META_RESPONSE_TITLE_ID);
+                        if (mapTitleId != null && mapTitleId.equals(titleId)) {
                             return true;
                         }
                     }
