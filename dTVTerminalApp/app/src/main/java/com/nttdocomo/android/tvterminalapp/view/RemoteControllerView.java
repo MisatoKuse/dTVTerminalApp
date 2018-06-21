@@ -562,6 +562,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * @param isFromHeader isFromHeader
      */
     private void startRemoteControl(final boolean isFromHeader) {
+        DTVTLogger.debug(String.format("mIsTop:%s isFromHeader:%s", mIsTop, isFromHeader));
         if (mStartUIListener != null && mIsTop) {
             DTVTLogger.debug("StartUIListener.onStartRemoteControl");
             mStartUIListener.onStartRemoteControl(isFromHeader);

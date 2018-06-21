@@ -305,6 +305,20 @@ public class BaseActivity extends FragmentActivity implements
     private final static int HOME_CONTENTS_DISTINCTION_ADAPTER = 10;
 
     /**
+     * リモコン表示時の鍵交換処理フラグ.
+     * ※コンテンツ詳細画面からのサービスアプリ起動要求時は鍵交換を行わない（false）
+     */
+    private static boolean mKeyExchangeFlag = true;
+
+    /**
+     * リモコン表示時の鍵交換の必要性.
+     */
+    private static boolean isKeyExchangeRequired() {
+        DTVTLogger.debug(String.format("isKeyExchangeRequired:%s", mKeyExchangeFlag));
+        return mKeyExchangeFlag;
+    }
+
+    /**
      * 関数機能：
      * Activityを起動する.
      *
@@ -1406,6 +1420,15 @@ public class BaseActivity extends FragmentActivity implements
         int visibility = View.VISIBLE;
         setRemoteControllerViewMargin(visibility);
         layout.setVisibility(visibility);
+    }
+
+    /**
+     * リモコン表示時の鍵交換処理フラグの設定.
+     * ※コンテンツ詳細画面からのサービスアプリ起動要求時のリモコン画面表示時（false）
+     */
+    protected void setKeyExchangeFlag(final boolean isKeyExchangeRequired) {
+        DTVTLogger.debug(String.format("isKeyExchangeRequired:%s", isKeyExchangeRequired));
+        mKeyExchangeFlag = isKeyExchangeRequired;
     }
 
     @Override
@@ -2842,23 +2865,6 @@ public class BaseActivity extends FragmentActivity implements
         }
     }
 
-    /**
-     * 鍵交換処理を行う.
-     * 他のドコテレアプリによる鍵交換が行われていた場合に交換済みの鍵が無効になる場合があるためリモコン使用時に必要
-     */
-    private void exchangeKey() {
-        DTVTLogger.start();
-        // 鍵交換処理の同期処理のためにリモコン表示が停止しないようにスレッドを使用する
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                CipherUtil.syncRequestPublicKey();
-                DTVTLogger.debug(String.format("public key exchange processing result = %s", CipherUtil.hasShareKey())); // 鍵交換処理結果
-            }
-        }).start();
-        DTVTLogger.end();
-    }
-
     @Override
     public void onStartRemoteControl(final boolean isFromHeader) {
         DTVTLogger.debug("base_start_control");
@@ -2866,7 +2872,9 @@ public class BaseActivity extends FragmentActivity implements
         base.setOnClickListener(mRemoteControllerOnClickListener);
         base.setVisibility(View.VISIBLE);
         setRelayClientHandler();
-        exchangeKey();
+        if (isKeyExchangeRequired()) {
+            CipherUtil.exchangeKey();
+        }
     }
 
     @Override
@@ -2876,7 +2884,6 @@ public class BaseActivity extends FragmentActivity implements
         base.setOnClickListener(null);
         base.setVisibility(View.GONE);
     }
-
 
     @Override
     public void onClipRegistResult() {

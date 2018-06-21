@@ -396,6 +396,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         super.onResume();
         DtvContentsDetailFragment dtvContentsDetailFragment;
         ContentsDetailDataProvider contentsDetailDataProvider;
+        setKeyExchangeFlag(false);
         switch (mDisplayState) {
             case PLAYER_ONLY:
                 if (!mIsOncreateOk) {
@@ -2081,6 +2082,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     break;
             }
         }
+        if (isFromHeader) {
+            setKeyExchangeFlag(true); // 鍵交換処理が必要
+        }
         super.onStartRemoteControl(isFromHeader);
         DTVTLogger.end();
 
@@ -2208,12 +2212,19 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void onEndRemoteControl() {
+        DTVTLogger.debug(String.format("mIsFromHeader:%s", mIsFromHeader));
         if (!mIsFromHeader) {
             mIsSend = true;
             RemoteControllerView mRemoteControllerView = getRemoteControllerView();
             if (mRemoteControllerView != null) {
                 TextView mTextView = mRemoteControllerView.findViewById(R.id.watch_by_tv);
                 mTextView.setText(getString(R.string.remote_controller_viewpager_text_use_remote));
+            }
+            setKeyExchangeFlag(true); // 次回リモコン表示時に鍵交換処理が必要
+        } else {
+            DTVTLogger.debug(String.format("mIsSend:%s", mIsSend));
+            if (!mIsSend) {
+                setKeyExchangeFlag(false); // 「テレビで視聴する」によるリモコン表示は鍵交換処理が不要
             }
         }
         if (mDetailData != null) {

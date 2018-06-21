@@ -222,4 +222,21 @@ public class CipherUtil {
         }
     }
 
+    /**
+     * 鍵交換処理を行う.
+     * 他のドコテレアプリによる鍵交換が行われていた場合に交換済みの鍵が無効になる場合があるためリモコン使用時に必要
+     */
+    public static void exchangeKey() {
+        DTVTLogger.start();
+        // 鍵交換処理の同期処理のためにリモコン表示が停止しないようにスレッドを使用する
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                syncRequestPublicKey();
+                DTVTLogger.debug(String.format("public key exchange processing result = %s", CipherUtil.hasShareKey())); // 鍵交換処理結果
+            }
+        }).start();
+        DTVTLogger.end();
+    }
+
 }
