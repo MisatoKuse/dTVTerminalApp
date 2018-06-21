@@ -683,7 +683,7 @@ public class BaseActivity extends FragmentActivity implements
     protected void onCreate(final Bundle savedInstanceState) {
         DTVTLogger.start();
 
-        // TODO 認証付きアプリのデバッグ時に有効化すると、デバッグのアタッチが行われるまでここで停止する。最終的には削除を行う事
+        // 認証付きアプリのデバッグ時に有効化すると、デバッグのアタッチが行われるまでここで停止する。デバッグ時に有効化して利用。
         //android.os.Debug.waitForDebugger();
 
         super.onCreate(savedInstanceState);

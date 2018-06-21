@@ -56,7 +56,6 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     private static MenuDisplay sMenuDisplay = new MenuDisplay();
     /**ユーザーステータス.*/
     private UserState mUserState = UserState.LOGIN_NG;
-    // TODO BaseActivityを持つことは実装的に望ましくない
     /**BaseActivity.*/
     private BaseActivity mActivity = null;
     /**コンテキスト.*/
@@ -72,7 +71,6 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     /**メニューアイテムカウント.*/
     private List mMenuItemCount = null;
 
-    //TODO :メニュー表示種別.
     /** メニュー表示種別 .*/
     public static final int INT_NONE_COUNT_STATUS = -1;
     /**
@@ -405,7 +403,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
             mMenuItemCount.add(INT_NONE_COUNT_STATUS);
         }
     }
-    /** 未契約ログインメニューリストアイテム. */
+    /** 契約未ペアリングメニューリストアイテム. */
     private void setMenuItemSignedUnpaired() {
         //ホーム～チャンネルリスト
         setHeaderMenuItem();
@@ -427,6 +425,33 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
         //お知らせ、設定
         setFooterMenuItem();
+
+        //ペアリング済みで宅内
+        if (StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_IN) {
+            //テレビアプリを起動する
+            mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_premium_tv_app_start_common));
+            mMenuItemCount.add(INT_NONE_COUNT_STATUS);
+
+            //ひかりTV
+            mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_hikari_tv));
+            mMenuItemCount.add(INT_NONE_COUNT_STATUS);
+
+            //dTVチャンネル
+            mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_dtv_channel));
+            mMenuItemCount.add(INT_NONE_COUNT_STATUS);
+
+            //dTV
+            mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_dtv));
+            mMenuItemCount.add(INT_NONE_COUNT_STATUS);
+
+            //dアニメ
+            mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_d_animation));
+            mMenuItemCount.add(INT_NONE_COUNT_STATUS);
+
+            //DAZN
+            mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_dazn));
+            mMenuItemCount.add(INT_NONE_COUNT_STATUS);
+        }
     }
 
     /**
