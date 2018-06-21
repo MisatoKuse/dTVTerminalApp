@@ -40,7 +40,7 @@
             android:layout_height="@dimen/home_contents_item_right_arrow_size"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:src="@mipmap/icon_normal_arrow_next_prev" />
+            android:src="@mipmap/icon_gray_arrow_right" />
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
