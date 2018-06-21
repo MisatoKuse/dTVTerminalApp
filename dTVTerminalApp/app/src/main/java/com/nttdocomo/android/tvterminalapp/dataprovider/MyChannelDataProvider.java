@@ -9,6 +9,7 @@ import android.content.Context;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelDeleteResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
@@ -66,7 +67,8 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
             return;
         }
 
-        if (myChannelListResponse != null && myChannelListResponse.getMyChannelMetaData() != null) {
+        if (myChannelListResponse != null && myChannelListResponse.getMyChannelMetaData() != null
+                && myChannelListResponse.getStatus().equals(JsonConstants.META_RESPONSE_STATUS_OK)) {
             ArrayList<MyChannelMetaData> myChannelMetaData = myChannelListResponse.getMyChannelMetaData();
             mApiDataProviderCallback.onMyChannelListCallback(myChannelMetaData);
         } else {
