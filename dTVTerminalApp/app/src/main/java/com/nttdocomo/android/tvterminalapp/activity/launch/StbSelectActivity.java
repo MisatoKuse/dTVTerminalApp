@@ -742,6 +742,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         //OTT取得終わったのでtrueにする
         mOttGetComplete = true;
         if (mIsItemClicked) {
+            checkDAccountApp();
             mIsItemClicked = false;
         }
         DTVTLogger.end();
