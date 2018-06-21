@@ -541,9 +541,11 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
             return otherContentsDetailData;
         }
 
+        ClipKeyListDataManager manager = new ClipKeyListDataManager(mContext);
+        List<Map<String, String>> clipList = manager.selectClipAllList();
+
         //使用データ抽出
         String dispType = otherContentsDetailData.getDispType();
-        String contentsType = otherContentsDetailData.getContentsType();
         String dTv = otherContentsDetailData.getDtv();
         String tvService = otherContentsDetailData.getTvService();
         String serviceId = String.valueOf(otherContentsDetailData.getServiceId());
@@ -552,13 +554,21 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         String titleId = otherContentsDetailData.getTitleId();
 
         //判定はgetClipStatusに一任
-        otherContentsDetailData.setClipStatus(getClipStatus(dispType, contentsType, dTv, crid, serviceId, eventId, titleId, tvService));
+        otherContentsDetailData.setClipStatus(ClipUtils.setClipStatusFromMap(clipList,
+                dispType,
+                dTv,
+                tvService,
+                serviceId,
+                eventId,
+                crid,
+                titleId));
         DTVTLogger.end();
         return otherContentsDetailData;
     }
 
     /**
      * ClipStatus チェック.
+     * ※クリップ状態変更後の戻る遷移等、クリップキー取得処理が動作しない状態でクリップ状態判定が必要な場合に使用する
      *
      * @param contentsDataList コンテンツデータリスト
      * @return Status変更済みコンテンツデータリスト
@@ -567,6 +577,8 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         DTVTLogger.start();
         List<ContentsData> list = new ArrayList<>();
 
+        ClipKeyListDataManager manager = new ClipKeyListDataManager(mContext);
+        List<Map<String, String>> clipList = manager.selectClipAllList();
         //Nullチェック
         if (contentsDataList == null || contentsDataList.size() < 1) {
             return contentsDataList;
@@ -574,18 +586,8 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
 
         for (int i = 0; i < contentsDataList.size(); i++) {
             ContentsData contentsData = contentsDataList.get(i);
-            //使用データ抽出
-            String dispType = contentsData.getDispType();
-            String contentsType = contentsData.getContentsType();
-            String dTv = contentsData.getDtv();
-            String tvService = contentsData.getTvService();
-            String serviceId = contentsData.getServiceId();
-            String eventId = contentsData.getEventId();
-            String crid = contentsData.getCrid();
-            String titleId = contentsData.getTitleId();
-
-            //判定はgetClipStatusに一任
-            contentsData.setClipStatus(getClipStatus(dispType, contentsType, dTv, crid, serviceId, eventId, titleId, tvService));
+            //クリップ状態の判定
+            contentsData.setClipStatus(ClipUtils.setClipStatusContentsData(contentsData, clipList));
             list.add(contentsData);
         }
         DTVTLogger.end();
@@ -597,15 +599,24 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * 取得したリストマップをContentsDataクラスへ入れる.
      *
      * @param contentMapList コンテンツリストデータ
+     * @param clipList クリップリストデータ
      * @param channels チャンネル情報
      * @param isVodClipData クリップ(ビデオ)フラグ
      * @return ListView表示用データ
      */
     @SuppressWarnings("OverlyLongMethod")
-    List<ContentsData> setContentData(final List<Map<String, String>> contentMapList, final ArrayList<ChannelInfo> channels, final boolean isVodClipData) {
+    List<ContentsData> setContentData(final List<Map<String, String>> contentMapList,
+                                      final List<Map<String, String>> clipList,
+                                      final ArrayList<ChannelInfo> channels,
+                                      final boolean isVodClipData) {
         List<ContentsData> contentsDataList = new ArrayList<>();
 
         ContentsData contentInfo;
+        List<Map<String, String>> clipMapList = clipList;
+        if (clipList == null || clipList.size() < 1) {
+            ClipKeyListDataManager manager = new ClipKeyListDataManager(mContext);
+            clipMapList = manager.selectClipAllList();
+        }
 
         for (int i = 0; i < contentMapList.size(); i++) {
             contentInfo = new ContentsData();
@@ -659,12 +670,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
             setRequestType(requestData, dispType, contentsType);
             contentInfo.setRequestData(requestData);
             DTVTLogger.debug("RankingContentInfo " + contentInfo.getRank());
-            if (mRequiredClipKeyList) {
-                // クリップ状態をコンテンツリストに格納
-                contentInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv,
-                        requestData.getCrid(), requestData.getServiceId(),
-                        requestData.getEventId(), requestData.getTitleId(), tvService));
-            }
+            contentInfo.setClipStatus(ClipUtils.setClipStatusContentsData(contentInfo, clipMapList));
             if (isVodClipData && dispType == null) {
                 //DREM-1882 期限切れコンテンツのクリップ対応により dispType==nullなら一律クリップ可なのでフラグを立てる
                 //対象はクリップ一覧(ビデオ)のみ

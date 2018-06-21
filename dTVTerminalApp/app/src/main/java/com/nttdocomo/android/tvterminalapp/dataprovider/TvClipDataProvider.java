@@ -45,7 +45,14 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
      * callback.
      */
     private final TvClipDataProviderCallback mApiDataProviderCallback;
-
+    /**
+     * クリップ一覧データ取得位置.
+     */
+    private int mPagerOffset = 0;
+    /**
+     * クリップキーリストレスポンス.
+     */
+    private ClipKeyListResponse mClipKeyListResponse = null;
     /**
      * 通信禁止判定フラグ.
      */
@@ -54,10 +61,6 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
      * 視聴中ビデオリスト取得WebClient.
      */
     private TvClipWebClient mWebClient = null;
-    /**
-     * クリップキー一覧取得プロバイダ.
-     */
-    private ClipKeyListDataProvider mClipKeyListDataProvider = null;
     /**
      * チャンネルプロバイダー.
      */
@@ -69,15 +72,16 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
 
     @Override
     public void onTvClipJsonParsed(final List<TvClipList> tvClipLists) {
+        DTVTLogger.start();
         if (tvClipLists != null) {
             mClipMapList = tvClipLists.get(0).getVcList();
             if (mClipMapList != null) {
                     if (!mRequiredClipKeyList
                             || mResponseEndFlag) {
-                        sendTvClipListData(mClipMapList, mChannels);
+                        sendTvClipListData(mClipMapList, mChannels, mClipKeyListResponse);
                     } else {
                         //TODO ClipKeyListDataProviderの不具合により、クリップキーリストのコールバックが取得できないための暫定対応
-                        sendTvClipListData(mClipMapList, mChannels);
+                        sendTvClipListData(mClipMapList, mChannels, mClipKeyListResponse);
                     }
             } else {
                 if (null != mApiDataProviderCallback) {
@@ -95,6 +99,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
                 mApiDataProviderCallback.tvClipListCallback(null);
             }
         }
+        DTVTLogger.end();
     }
 
     @Override
@@ -104,20 +109,18 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
 
     @Override
     public void channelListCallback(final ArrayList<ChannelInfo> channels) {
+        DTVTLogger.start();
         this.mChannels = channels;
-        if (mClipMapList != null) {
-            sendTvClipListData(mClipMapList, mChannels);
-        }
+        sendTvClipListData(mClipMapList, mChannels, mClipKeyListResponse);
+        DTVTLogger.end();
     }
 
     @Override
     public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
         super.onTvClipKeyListJsonParsed(clipKeyListResponse);
-        // コールバック判定
-        if (mClipMapList != null) {
-            sendTvClipListData(mClipMapList, mChannels);
-        }
+        mClipKeyListResponse = clipKeyListResponse;
+        getTvClipListData(mPagerOffset);
         DTVTLogger.end();
     }
 
@@ -150,19 +153,20 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
      * @param pagerOffset ページオフセット
      */
     public void getClipData(final int pagerOffset) {
+        DTVTLogger.start();
+        mPagerOffset = pagerOffset;
         if (!mIsCancel) {
             // クリップキー一覧を取得
             if (mRequiredClipKeyList) {
-                mClipKeyListDataProvider = new ClipKeyListDataProvider(mContext);
-                mClipKeyListDataProvider.getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.TV));
+                getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.TV));
             }
-            getTvClipListData(pagerOffset);
         } else {
             DTVTLogger.error("TvClipDataProvider is stopping connection");
             if (null != mApiDataProviderCallback) {
                 mApiDataProviderCallback.tvClipListCallback(null);
             }
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -181,13 +185,20 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
      *
      * @param list Tvクリップリスト
      * @param channels チャンネル情報
+     * @param response クリップキーリスト
      */
-    private void sendTvClipListData(final List<Map<String, String>> list, final ArrayList<ChannelInfo> channels) {
+    private void sendTvClipListData(final List<Map<String, String>> list, final ArrayList<ChannelInfo> channels, final ClipKeyListResponse response) {
+        DTVTLogger.start();
         if (channels != null) {
-            mApiDataProviderCallback.tvClipListCallback(setContentData(list, channels, false));
+            List<Map<String, String>> mapList = null;
+            if (response != null) {
+                mapList = response.getCkList();
+            }
+            mApiDataProviderCallback.tvClipListCallback(setContentData(list, mapList, channels, false));
         } else {
             getChannelList();
         }
+        DTVTLogger.end();
     }
     /**
      * Tvクリップリストデータ取得開始.
@@ -219,9 +230,8 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
     public void stopConnect() {
         DTVTLogger.start();
         mIsCancel = true;
-        if (mClipKeyListDataProvider != null) {
-            mClipKeyListDataProvider.stopConnection();
-        }
+        //親クラスで止める
+        stopConnection();
         if (mWebClient != null) {
             mWebClient.stopConnection();
         }
@@ -233,9 +243,8 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
     public void enableConnect() {
         DTVTLogger.start();
         mIsCancel = false;
-        if (mClipKeyListDataProvider != null) {
-            mClipKeyListDataProvider.enableConnection();
-        }
+        //親クラスで再開
+        enableConnection();
         if (mWebClient != null) {
             mWebClient.enableConnection();
         }

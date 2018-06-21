@@ -30,8 +30,8 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingRese
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
-import com.nttdocomo.android.tvterminalapp.struct.RecordingReservationContentsDetailInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
+import com.nttdocomo.android.tvterminalapp.struct.RecordingReservationContentsDetailInfo;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
@@ -140,6 +140,10 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
      * ロールリスト情報を保持.
      */
     private ArrayList<RoleListMetaData> mRoleListInfo = null;
+    /**
+     * クリップキーレスポンス保持.
+     */
+    private ClipKeyListResponse mClipKeyListResponse = null;
 
     /**
      * チャンネル検索(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
@@ -193,6 +197,14 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
      * 通信禁止判定フラグ.
      */
     private boolean isStop = false;
+    /**
+     * tvコンテンツのクリップキーリスト取得済み判定.
+     */
+    private boolean mTvClipKeyListResponse = false;
+    /**
+     * vodコンテンツのクリップキーリスト取得済み判定.
+     */
+    private boolean mVodClipKeyListResponse = false;
 
     // endregion
     /**
@@ -237,13 +249,27 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     @Override
     public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         super.onTvClipKeyListJsonParsed(clipKeyListResponse);
-        addClipStatus(clipKeyListResponse);
+        DTVTLogger.start();
+        if (mVodClipKeyListResponse) {
+            addClipStatus(clipKeyListResponse);
+        } else {
+            mTvClipKeyListResponse = true;
+            mClipKeyListResponse = clipKeyListResponse;
+        }
+        DTVTLogger.end();
     }
 
     @Override
     public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
-        addClipStatus(clipKeyListResponse);
+        DTVTLogger.start();
+        if (mTvClipKeyListResponse) {
+            addClipStatus(clipKeyListResponse);
+        } else {
+            mVodClipKeyListResponse = true;
+            mClipKeyListResponse = clipKeyListResponse;
+        }
+        DTVTLogger.end();
     }
 
     /**
@@ -252,14 +278,19 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
      * @param clipKeyListResponse クリップキーレスポンス
      */
     private void addClipStatus(final ClipKeyListResponse clipKeyListResponse) {
+        DTVTLogger.start();
         //クリップ状態取得
         boolean isClipStatus = false;
         if (clipKeyListResponse != null) {
             List<Map<String, String>> mapList = clipKeyListResponse.getCkList();
+            if (mClipKeyListResponse != null) {
+                mapList.addAll(mClipKeyListResponse.getCkList());
+            }
             isClipStatus = ClipUtils.setClipStatusVodMetaData(mVodMetaFullData, mapList);
         }
         mApiDataProviderCallback.onContentsDetailInfoCallback(
                 mVodMetaFullData, isClipStatus);
+        DTVTLogger.end();
     }
 
     @Override
@@ -700,23 +731,14 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
      * @param metaFullData コンテンツ詳細データ
      */
     private void requestGetClipKeyList(final VodMetaFullData metaFullData) {
+        DTVTLogger.start();
         ClipKeyListDao.TableTypeEnum tableType = decisionTableType(metaFullData.getDisp_type(), metaFullData.getmContent_type());
-        if (tableType != null) {
-            switch (tableType) {
-                case TV:
-                    getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.TV));
-                    break;
-                case VOD:
-                    getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
-                    break;
-                default:
-                    break;
-            }
-        } else {
-            //データの読み込みが行われても、テーブルタイプがヌルならば、エラー扱いとする
-            mApiDataProviderCallback.onContentsDetailInfoCallback(null, false);
-        }
+        mTvClipKeyListResponse = false;
+        mVodClipKeyListResponse = false;
+        //番組でも見逃し等VODデータが入ってい来ることがあるので、全件取得する
+        getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.TV));
+        getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
+        DTVTLogger.end();
     }
     // endregion
-
 }
