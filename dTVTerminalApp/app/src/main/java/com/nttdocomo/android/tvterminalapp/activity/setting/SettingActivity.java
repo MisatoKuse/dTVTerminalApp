@@ -78,19 +78,19 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
     private static final int SETTING_MENU_INDEX_MY_PROGRAM = 2;
 
     /**
+     * メニュー項目index（リモート視聴設定）.
+     */
+    private static final int SETTING_MENU_INDEX_REMOTE = 3;
+
+    /**
      * メニュー項目index（外出先視聴時の画質設定）.
      */
-    private static final int SETTING_MENU_INDEX_QUALITY = 3;
+    private static final int SETTING_MENU_INDEX_QUALITY = 4;
 
     /**
      * メニュー項目index（FAQ）.
      */
-    private static final int SETTING_MENU_INDEX_FAQ = 4;
-
-    /**
-     * メニュー項目index（リモート視聴設定）.
-     */
-    private static final int SETTING_MENU_INDEX_REMOTE = 5;
+    private static final int SETTING_MENU_INDEX_FAQ = 5;
 
     /**
      * メニュー項目index（アプリケーション情報）.
@@ -177,6 +177,11 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
                 //マイ番組表設定
                 startActivity(MyChannelEditActivity.class, null);
             }
+        } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_REMOTE])) {
+            if (isSettingPossible(true, tappedItemName)) {
+                //ローカルレジストレーションを促すダイアログを表示
+                showRemoteConfirmDialog();
+            }
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_QUALITY])) {
             if (isSettingPossible(true, tappedItemName)) {
                 //外出先視聴時の画質設定画面への遷移
@@ -187,11 +192,6 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_FAQ])) {
             //FAQ
             startActivity(SettingMenuFaqActivity.class, null);
-        } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_REMOTE])) {
-            if (isSettingPossible(true, tappedItemName)) {
-                //ローカルレジストレーションを促すダイアログを表示
-                showRemoteConfirmDialog();
-            }
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_APP_INFO])) {
             //アプリケーション情報への遷移
             startActivity(ApplicationInfoActivity.class, null);
@@ -241,9 +241,9 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_D_ACCOUNT], BLANK));
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_PAIRING], isParing));
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_MY_PROGRAM], BLANK));
+        mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_REMOTE], BLANK));
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_QUALITY], imageQuality));
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_FAQ], BLANK));
-        mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_REMOTE], BLANK));
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_APP_INFO], BLANK));
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_LICENCE], BLANK));
         mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_PRIVACY_POLICY], BLANK));
