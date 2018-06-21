@@ -308,22 +308,22 @@ public class WebApiBasePlala {
     /**
      * チャンネルのパレンタル設定値(PG-12).
      */
-    static final String MY_CHANNEL_R_VALUE_PG_12 = "PG-12";
+    public static final String MY_CHANNEL_R_VALUE_PG_12 = "PG-12";
 
     /**
      * チャンネルのパレンタル設定値(R-15).
      */
-    static final String MY_CHANNEL_R_VALUE_PG_15 = "R-15";
+    public static final String MY_CHANNEL_R_VALUE_PG_15 = "R-15";
 
     /**
      * チャンネルのパレンタル設定値(R-18).
      */
-    static final String MY_CHANNEL_R_VALUE_PG_18 = "R-18";
+    public static final String MY_CHANNEL_R_VALUE_PG_18 = "R-18";
 
     /**
      * チャンネルのパレンタル設定値(R-20).
      */
-    static final String MY_CHANNEL_R_VALUE_PG_20 = "R-20";
+    public static final String MY_CHANNEL_R_VALUE_PG_20 = "R-20";
 
     /**
      * age_req(年齢設定値)のパラメータ作成用文字列.

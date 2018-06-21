@@ -2458,8 +2458,14 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             public void onOKCallback(final boolean isOK) {
                 DTVTLogger.debug("Request RecordingReservation");
                 DTVTLogger.debug(mRecordingReservationContentsDetailInfo.toString());
-                mContentsDetailDataProvider.requestRecordingReservation(
-                        mRecordingReservationContentsDetailInfo);
+                if (!mContentsDetailDataProvider.requestRecordingReservation(
+                        mRecordingReservationContentsDetailInfo)) {
+                    //APIの実行が行えなかった場合は即座にfalseが返却されるので、エラーとする
+                    CustomDialog dialog = createErrorDialog();
+                    dialog.setTitle(getResources().getString(
+                            R.string.recording_reservation_failed_dialog_msg));
+                    dialog.showDialog();
+                }
             }
         });
         return recordingReservationConfirmDialog;

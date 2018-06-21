@@ -318,6 +318,30 @@ public class StringUtils {
     }
 
     /**
+     * 年齢パレンタル値(R_VALUE)を数値に変換.
+     *
+     * (isParental実装時に一旦削除されましたが、用途が発生したので一部改変して復帰)
+     * @param ageValue 年齢パレンタル値(R_VALUE)
+     * @return 年齢情報(実年齢マイナス3の値となる ただしGはゼロとする)
+     */
+    public static int convertRValueToAgeReq(final String ageValue) {
+
+        int ageReq = DEFAULT_R_VALUE;
+        if (ageValue != null) {
+            if (ageValue.equals(WebApiBasePlala.MY_CHANNEL_R_VALUE_PG_12)) {
+                ageReq = USER_AGE_REQ_PG12;
+            } else if (ageValue.equals(WebApiBasePlala.MY_CHANNEL_R_VALUE_PG_15)) {
+                ageReq = USER_AGE_REQ_R15;
+            } else if (ageValue.equals(WebApiBasePlala.MY_CHANNEL_R_VALUE_PG_18)) {
+                ageReq = USER_AGE_REQ_R18;
+            } else if (ageValue.equals(WebApiBasePlala.MY_CHANNEL_R_VALUE_PG_20)) {
+                ageReq = USER_AGE_REQ_R20;
+            }
+        }
+        return ageReq;
+    }
+
+    /**
      * ユーザー年齢及びコンテンツのパレンタル情報を持って、チェックする.
      *
      * @param userAge ユーザー年齢情報
