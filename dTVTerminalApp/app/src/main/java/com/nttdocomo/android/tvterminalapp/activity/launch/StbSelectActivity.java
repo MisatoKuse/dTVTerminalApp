@@ -726,12 +726,16 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         //ペアリング中画面を出す
         showParingView();
         if (mOttGetComplete) {
-            //鍵交換
-            exchangeKey();
+            checkDAccountApp();
         } else {
             mIsItemClicked = true;
         }
     }
+
+    /**
+     * dアカウントのOTT取得完了.
+     * @param result 正常終了ならばtrue
+     */
     @Override
     protected void onDaccountOttGetComplete(final boolean result) {
         DTVTLogger.start();
@@ -739,27 +743,8 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         mOttGetComplete = true;
         if (mIsItemClicked) {
             mIsItemClicked = false;
-            exchangeKey();
         }
         DTVTLogger.end();
-    }
-
-    /**
-     * 鍵交換処理を行い画面遷移する.
-     */
-    private void exchangeKey() {
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                CipherUtil.syncRequestPublicKey();
-                if (CipherUtil.hasShareKey()) { // 鍵交換に成功
-                    checkDAccountApp();
-                } else {
-                    createErrorDialog();
-                }
-            }
-        });
     }
 
     /**
