@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -17,6 +18,7 @@ import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -59,7 +61,7 @@ import java.util.Map;
  * 録画番組.
  */
 public class RecordedListActivity extends BaseActivity implements View.OnClickListener,
-        TabItemLayout.OnClickTabTextListener,
+        TabItemLayout.OnClickTabTextListener, RecordedBaseFragment.ScrollListenerCallBack,
 
         DlnaContentRecordedDataProvider.CallbackListener {
 
@@ -95,6 +97,12 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private static final int TAB_INDEX_DOWONLOAD_COMPLETED = 1;
     /** 前回のタブポジション.*/
     private static final String START_TAB_POSITION = "startTabPosition";
+    /** ハンドラー(ScrollView関連). */
+    private final Handler mHandler = new Handler();
+    /** 上にスクロール. */
+    private boolean mIsLoading = false;
+    /** ページングインデックス.*/
+    private int mPageIndex;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -110,15 +118,31 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
         registReceiver();
         initView();
-        initTabVIew();
+        initTabView();
         setPagerAdapter();
         if (savedInstanceState != null) {
             int startPageNo = savedInstanceState.getInt(START_TAB_POSITION);
             savedInstanceState.clear();
             mViewPager.setCurrentItem(startPageNo);
             mTabLayout.setTab(startPageNo);
+        } else {
+            int startPageNo;
+            switch (StbConnectionManager.shared().getConnectionStatus()) {
+                case NONE_PAIRING:
+                case NONE_LOCAL_REGISTRATION:
+                    startPageNo = 1;
+                    break;
+                default:
+                    startPageNo = 0;
+                    break;
+            }
+            mViewPager.setCurrentItem(startPageNo);
+            mTabLayout.setTab(startPageNo);
         }
         mDlnaContentRecordedDataProvider = new DlnaContentRecordedDataProvider();
+        showProgressBar();
+        mNoDataMessage.setVisibility(View.GONE);
+        getData();
         DTVTLogger.end();
     }
 
@@ -131,9 +155,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onStartCommunication() {
         super.onStartCommunication();
-        showProgressBar();
-        mNoDataMessage.setVisibility(View.GONE);
-        getData();
     }
 
     @Override
@@ -146,6 +167,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     protected void onPause() {
         super.onPause();
         mDlnaContentRecordedDataProvider.stopListen();
+        if (mIsLoading) {
+            final RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+            baseFragment.loadComplete();
+            mIsLoading = false;
+        }
     }
 
     @Override
@@ -177,20 +203,20 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void onClickTab(final int position) {
+        mPageIndex = 0;
         mViewPager.setCurrentItem(position);
     }
 
     @Override
     public void callback(final DlnaObject[] objs) {
         setProgressBarGone();
-        if (objs.length == 0) {
+        if (objs.length == 0 && mPageIndex == 0) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     mNoDataMessage.setVisibility(View.VISIBLE);
                 }
             });
-            return;
         }
         ArrayList<DlnaRecVideoItem> dstList = new ArrayList<>();
         for (DlnaObject dlnaObject: objs) {
@@ -216,7 +242,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * @param objectId オブジェクトID
      * @return objectId 編集後のオブジェクトID
      */
-    private String modifyObjectId(String objectId) {
+    private String modifyObjectId(final String objectId) {
         if (TextUtils.isEmpty(objectId)) {
             return objectId;
         }
@@ -231,15 +257,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         mViewPager = findViewById(R.id.record_list_main_layout_viewpagger);
-        switch (StbConnectionManager.shared().getConnectionStatus()) {
-            case NONE_LOCAL_REGISTRATION:
-                mTabNames = getResources().getStringArray(R.array.record_list_tab_name_only_dl);
-                break;
-            default:
-                mTabNames = getResources().getStringArray(R.array.record_list_tab_names);
-                break;
-        }
-
+        mTabNames = getResources().getStringArray(R.array.record_list_tab_names);
         mRecordedFragmentFactory = new RecordedFragmentFactory();
         progressBar = findViewById(R.id.record_list_main_layout_progress);
         mNoDataMessage = findViewById(R.id.recorded_list_no_items);
@@ -256,6 +274,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void onPageSelected(final int position) {
                 super.onPageSelected(position);
+                mPageIndex = 0;
                 setTab(position);
                 sendScreenViewForPosition(position);
             }
@@ -281,7 +300,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * 機能
      * タブの設定.
      */
-    private void initTabVIew() {
+    private void initTabView() {
         DTVTLogger.start();
 
         mTabLayout = new TabItemLayout(this);
@@ -410,16 +429,16 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private void getData() {
         switch (mViewPager.getCurrentItem()) {
             case ALL_RECORD_LIST:
-                if (getTabCount() == 2) {
-                    DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-                    // 未ペアリング時
-                    if (dlnaDmsItem.mControlUrl.isEmpty()) {
-                        showGetDataFailedToast();
-                        mNoDataMessage.setVisibility(View.VISIBLE);
-                        setProgressBarGone();
-                    } else {
-                        mDlnaContentRecordedDataProvider.listen(this);
-                        mDlnaContentRecordedDataProvider.browse(this);
+                DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+                // 未ペアリング時
+                if (dlnaDmsItem.mControlUrl.isEmpty()) {
+                    showGetDataFailedToast();
+                    mNoDataMessage.setVisibility(View.VISIBLE);
+                    setProgressBarGone();
+                } else {
+                    mDlnaContentRecordedDataProvider.listen(this);
+                    mDlnaContentRecordedDataProvider.browse(this, mPageIndex);
+                    if (mPageIndex == 0 && !mIsLoading) {
                         clearFragment(0);
                     }
                 }
@@ -435,8 +454,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     /**
      * タブサイズ取得.
      */
-    public int getTabCount() {
-        return mTabNames.length;
+    public int getTabPosition() {
+        return mViewPager.getCurrentItem();
     }
 
     /**
@@ -525,11 +544,13 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private void setVideoBrows(final ArrayList<DlnaRecVideoItem> dlnaRecVideoItems) {
         final RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
         baseFragment.setFragmentName(RLA_FragmentName_All);
-        baseFragment.mContentsList = new ArrayList<>();
+        if (baseFragment.mContentsList == null) {
+            baseFragment.mContentsList = new ArrayList<>();
+        }
         List<Map<String, String>> resultList = getDownloadListFromDb();
         setTakeOutContentsToAll(dlnaRecVideoItems, resultList);
         List<ContentsData> listData = baseFragment.getContentsData();
-        if (null != listData) {
+        if (null != listData && mPageIndex == 0 && !mIsLoading) {
             listData.clear();
         }
         if (baseFragment.mQueueIndex == null) {
@@ -584,6 +605,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void run() {
                 baseFragment.notifyDataSetChanged();
+                if (mPageIndex != 0) {
+                    baseFragment.loadComplete();
+                    mIsLoading = false;
+                }
+                mPageIndex++;
                 if (baseFragment.mQueueIndex.size() > 0) {
                     baseFragment.bindServiceFromBackground();
                 }
@@ -769,6 +795,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 RecordedBaseFragment f = mRecordedFragmentFactory.createFragment(position);
                 if (0 == position && null != f) {
                     f.setFragmentName(RLA_FragmentName_All);
+                    f.setScrollListener(RecordedListActivity.this);
                 }
                 return f;
             }
@@ -852,4 +879,32 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
+    @Override
+    public void onScroll(final RecordedBaseFragment fragment, final AbsListView absListView, final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
+
+    }
+
+    @Override
+    public void onScrollStateChanged(final RecordedBaseFragment fragment, final AbsListView absListView, final int scrollState) {
+        if (mViewPager.getCurrentItem() == 1) {
+            return;
+        }
+        synchronized (this) {
+            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
+                    && absListView.getLastVisiblePosition() == fragment.getDataCount() - 1
+                    && !mIsLoading) {
+                mIsLoading = true;
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mNoDataMessage.setVisibility(View.GONE);
+                        if (mViewPager.getCurrentItem() == ALL_RECORD_LIST) {
+                            fragment.loadStart();
+                            getData();
+                        }
+                    }
+                });
+            }
+        }
+    }
 }

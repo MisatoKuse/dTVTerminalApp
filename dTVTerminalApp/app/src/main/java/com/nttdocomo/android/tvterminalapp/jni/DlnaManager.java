@@ -215,6 +215,8 @@ public class DlnaManager {
     private boolean waitForReady = false;
     /** ブラウズパス指定. */
     private String requestContainerId = "";
+    /** ページングインデックス. */
+    private int mPageIndex = 0;
     /** dmp開始フラグ. */
     private boolean startedDmp = false;
     /** dtcp開始フラグ. */
@@ -308,8 +310,9 @@ public class DlnaManager {
     /**
      * BrowseContentWithContainerId.
      * @param containerId containerId
+     * @param pageIndex ページングインデックス
      */
-    public void BrowseContentWithContainerId(final String containerId) {
+    public void BrowseContentWithContainerId(final String containerId, final int pageIndex) {
         DTVTLogger.warning("StbConnectionManager.shared().getConnectionStatus() = " + StbConnectionManager.shared().getConnectionStatus());
         switch (StbConnectionManager.shared().getConnectionStatus()) {
             case HOME_OUT:
@@ -320,10 +323,12 @@ public class DlnaManager {
                 }
                 if (DlnaManager.shared().remoteConnectStatus == RemoteConnectStatus.READY) {
                     requestRemoteConnect(DlnaManager.shared().mUdn);
-                    requestContainerId = containerId;
+                    DlnaManager.shared().requestContainerId = containerId;
+                    DlnaManager.shared().mPageIndex = pageIndex;
                 } else {
-                    waitForReady = true;
-                    requestContainerId = containerId;
+                    DlnaManager.shared().waitForReady = true;
+                    DlnaManager.shared().requestContainerId = containerId;
+                    DlnaManager.shared().mPageIndex = pageIndex;
                     StartDtcp();
                     RestartDirag();
                 }
@@ -331,10 +336,10 @@ public class DlnaManager {
                 break;
             case HOME_IN:
                 DlnaDmsItem item = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
-                browseContentWithContainerId(0, DtvtConstants.REQUEST_LIMIT_300, containerId, item.mControlUrl);
+                browseContentWithContainerId(pageIndex * DtvtConstants.REQUEST_DLNA_LIMIT_50, DtvtConstants.REQUEST_DLNA_LIMIT_50, containerId, item.mControlUrl);
                 break;
             case HOME_OUT_CONNECT:
-                browseContentWithContainerId(0, DtvtConstants.REQUEST_LIMIT_300, containerId, DlnaManager.shared().mHomeOutControlUrl);
+                browseContentWithContainerId(pageIndex * DtvtConstants.REQUEST_DLNA_LIMIT_50, DtvtConstants.REQUEST_DLNA_LIMIT_50, containerId, DlnaManager.shared().mHomeOutControlUrl);
                 break;
             default:
                 DTVTLogger.warning("default");
@@ -583,7 +588,7 @@ public class DlnaManager {
                 break;
             case REMOTE_CONNECT_STATUS_RECONNECTION:
                 status = RemoteConnectStatus.GAVEUP_RECONNECTION;
-                if (listener != null) {
+                if (listener != null && StbConnectionManager.shared().getConnectionStatus() != StbConnectionManager.ConnectionStatus.HOME_IN) {
                     listener.onRemoteConnectStatusCallBack(errorCode);
                 }
                 break;
@@ -685,9 +690,11 @@ public class DlnaManager {
             DlnaManager manager = DlnaManager.shared();
             manager.mHomeOutControlUrl = controlUrl;
             DTVTLogger.warning("requestContainerId = " + manager.requestContainerId);
+            DTVTLogger.warning("pageIndex = " + manager.mPageIndex);
             if (!TextUtils.isEmpty(manager.requestContainerId)) {
-                manager.BrowseContentWithContainerId(manager.requestContainerId);
+                manager.BrowseContentWithContainerId(manager.requestContainerId, mPageIndex);
                 manager.requestContainerId = "";
+                manager.mPageIndex = 0;
             }
 
         } else {

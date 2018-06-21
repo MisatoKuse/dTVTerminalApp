@@ -147,27 +147,28 @@ public class DlnaContentBsChannelDataProvider implements DlnaManager.BrowseListe
     /**
      * BrowseContentWithContainerId.
      * @param context コンテキスト
+     * @param pageIndex ページングインデックス
      */
-    public void browseContentWithContainerId(final Context context) {
+    public void browseContentWithContainerId(final Context context, final int pageIndex) {
         DlnaManager.shared().mBrowseListener = this;
         DlnaManager.shared().mRemoteConnectStatusChangeListener = this;
         DlnaManager.shared().mContext = context;
         mContainerId = DlnaUtils.getContainerIdByImageQuality(context, DlnaUtils.DLNA_DMS_BS_CHANNEL);
-        DateUtils dateUtils = new DateUtils(DlnaManager.shared().mContext);
-        String lastDate = dateUtils.getLastDate(DateUtils.DLNA_BROWSE_UPDATE + mContainerId);
-        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
-            //データをDBから取得する
-            Handler handler = new Handler(DlnaManager.shared().mContext.getMainLooper());
-            //チャンネル情報更新
-            try {
-                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, CHANNEL_SELECT);
-                dataBaseThread.start();
-            } catch (IllegalThreadStateException e) {
-                DTVTLogger.debug(e);
-                //TODO　:エラー返却した上でUI上に通知が必要
-            }
-        }
-        DlnaManager.shared().BrowseContentWithContainerId(mContainerId);
+        // TODO BSはキャシュデータをコメントアウト、必要があればコメントアウトを外す
+//        DateUtils dateUtils = new DateUtils(DlnaManager.shared().mContext);
+//        String lastDate = dateUtils.getLastDate(DateUtils.DLNA_BROWSE_UPDATE + mContainerId);
+//        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
+//            //データをDBから取得する
+//            Handler handler = new Handler(DlnaManager.shared().mContext.getMainLooper());
+//            //チャンネル情報更新
+//            try {
+//                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, CHANNEL_SELECT);
+//                dataBaseThread.start();
+//            } catch (IllegalThreadStateException e) {
+//                DTVTLogger.debug(e);
+//            }
+//        }
+        DlnaManager.shared().BrowseContentWithContainerId(mContainerId, pageIndex);
     }
 
 }

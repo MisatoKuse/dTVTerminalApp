@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -49,7 +50,7 @@ import java.util.Set;
  * 録画一覧フラグメント.
  */
 public class RecordedBaseFragment extends Fragment implements AdapterView.OnItemClickListener,
-        ContentsAdapter.DownloadCallback {
+        ContentsAdapter.DownloadCallback, AbsListView.OnScrollListener {
     /**コンテキスト.*/
     private Context mContext;
     /**コンテンツデータ.*/
@@ -81,6 +82,10 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     private View mRecordedFragmentView;
     /**録画リストビュー.*/
     private ListView mRecordedListView;
+    /**フッタービュー.*/
+    private View mFootView;
+    /**コールバックリスナー.*/
+    private ScrollListenerCallBack mScrollListenerCallBack;
     /**ダウンロードXML取得フォーマット.*/
     private static final String TAG_ITEM_START = "<item id=\"";
     /**ダウンロードXML取得フォーマット.*/
@@ -89,6 +94,40 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     private static final String TAG_DIDL_START = "<DIDL-Lite";
     /**ダウンロードXML取得フォーマット.*/
     private static final String TAG_DIDL_END = "</DIDL-Lite>";
+
+    /**
+     * コールバックリスナー.
+     */
+    public interface ScrollListenerCallBack {
+        /**
+         * スクロール時のコールバック.
+         *
+         * @param fragment         fragment
+         * @param absListView      absListView
+         * @param firstVisibleItem firstVisibleItem
+         * @param visibleItemCount visibleItemCount
+         * @param totalItemCount   totalItemCount
+         */
+        void onScroll(RecordedBaseFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount);
+
+        /**
+         * スクロール状態が変化した時のコールバック.
+         *
+         * @param fragment    fragment
+         * @param absListView absListView
+         * @param scrollState スクロール状態
+         */
+        void onScrollStateChanged(RecordedBaseFragment fragment, AbsListView absListView, int scrollState);
+    }
+
+    /**
+     * スクロールに対するリスナーを設定する.
+     *
+     * @param mScrollListenerCallBack リスナー
+     */
+    public void setScrollListener(final ScrollListenerCallBack mScrollListenerCallBack) {
+        this.mScrollListenerCallBack = mScrollListenerCallBack;
+    }
 
     @Override
     public Context getContext() {
@@ -127,6 +166,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
             mRecordedListView = mRecordedFragmentView.findViewById(R.id.recorded_contents_result);
 
             mRecordedListView.setOnItemClickListener(this);
+            mRecordedListView.setOnScrollListener(this);
 
             getContext();
         }
@@ -134,7 +174,11 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         mContentsAdapter = new ContentsAdapter(getContext(),
                 mContentsData, ContentsAdapter.ActivityTypeItem.TYPE_RECORDED_LIST, this);
         mRecordedListView.setAdapter(mContentsAdapter);
-        if (((RecordedListActivity) mActivity).getTabCount() == 1) {
+        if (((RecordedListActivity) mActivity).getTabPosition() == 0) {
+            if (null == mFootView) {
+                mFootView = View.inflate(getContext(), R.layout.search_load_more, null);
+            }
+        } else {
             ((RecordedListActivity) mActivity).setRecordedTakeOutContents();
         }
         return mRecordedFragmentView;
@@ -1051,5 +1095,47 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                 }
             }
         });
+    }
+
+    /**
+     * ローディング処理（ページング）.
+     */
+    public void loadComplete() {
+        mRecordedListView.removeFooterView(mFootView);
+    }
+
+    /**
+     * ローディング開始.
+     */
+    public void loadStart() {
+        mRecordedListView.addFooterView(mFootView);
+        mRecordedListView.setSelection(mRecordedListView.getMaxScrollAmount());
+        mRecordedListView.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * 表示しているコンテンツ数を返却する.
+     *
+     * @return コンテンツ数
+     */
+    public int getDataCount() {
+        if (null == mContentsData) {
+            return 0;
+        }
+        return mContentsData.size();
+    }
+
+    @Override
+    public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
+        if (null != mScrollListenerCallBack) {
+            mScrollListenerCallBack.onScrollStateChanged(this, absListView, scrollState);
+        }
+    }
+
+    @Override
+    public void onScroll(final AbsListView absListView, final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
+        if (null != mScrollListenerCallBack) {
+            mScrollListenerCallBack.onScroll(this, absListView, firstVisibleItem, visibleItemCount, totalItemCount);
+        }
     }
 }

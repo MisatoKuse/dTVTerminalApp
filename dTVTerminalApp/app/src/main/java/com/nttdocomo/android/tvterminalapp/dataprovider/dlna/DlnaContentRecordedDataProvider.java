@@ -53,13 +53,14 @@ public class DlnaContentRecordedDataProvider implements DlnaManager.BrowseListen
     /**
      * ブラウズ処理.
      * @param context コンテキスト
+     * @param pageIndex ページングインデックス
      */
-    public boolean browse(final Context context) {
+    public boolean browse(final Context context, final int pageIndex) {
         String containerId = DlnaUtils.getContainerIdByImageQuality(context, DlnaUtils.DLNA_DMS_RECORD_LIST);
         DTVTLogger.warning(">>> containerId = " + containerId);
         DlnaManager.shared().mBrowseListener = this;
         DlnaManager.shared().mRemoteConnectStatusChangeListener = this;
-        DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(context, DlnaUtils.DLNA_DMS_RECORD_LIST));
+        DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(context, DlnaUtils.DLNA_DMS_RECORD_LIST), pageIndex);
         return true;
     }
 
