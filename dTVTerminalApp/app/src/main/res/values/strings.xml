@@ -339,7 +339,7 @@
     <string name="main_setting_quality_status">status</string>
     <string name="main_setting_remote_paring_request">ペアリングしてください</string>
     <string name="main_setting_stb_application_launch_fail">ドコモテレビターミナルのアプリの起動に失敗しました</string>
-    <string name="main_setting_stb_application_launch_fail_id_notexist">本アプリでログインしているdアカウントのユーザーをドコモテレビターミナル（テレビ側）に登録してください。</string>
+    <string name="main_setting_stb_application_launch_fail_id_notexist">本アプリでログインしているdアカウントのユーザーをドコモテレビターミナル（テレビ側）に登録してください</string>
     <string name="main_setting_dtv_update_message">ドコモテレビターミナルのdTVアプリを最新バージョンにアップデートしてください</string>
     <string name="main_setting_d_anime_store_update_message">ドコモテレビターミナルのdアニメストアアプリを最新バージョンにアップデートしてください</string>
     <string name="main_setting_dtv_channel_update_message">ドコモテレビターミナルのdTVチャンネルアプリを最新バージョンにアップデートしてください</string>
@@ -361,9 +361,9 @@
         <item>dアカウント設定</item>
         <item>ペアリング設定</item>
         <item>マイ番組表設定</item>
+        <item>リモート視聴設定</item>
         <item>外出先視聴時の画質設定</item>
         <item>FAQ</item>
-        <item>リモート視聴設定</item>
         <item>アプリケーション情報</item>
         <item>ライセンス情報</item>
         <item>プライバシーポリシー</item>
