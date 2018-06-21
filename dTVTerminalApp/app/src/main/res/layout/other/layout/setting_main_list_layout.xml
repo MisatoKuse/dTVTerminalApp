@@ -15,7 +15,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="@dimen/main_setting_view_margin"
-        android:src="@mipmap/icon_normal_arrow_next_prev"
+        android:src="@mipmap/icon_normal_arrow_right"
         android:contentDescription="@null"/>
     <TextView
         android:id="@+id/setting_state_text"

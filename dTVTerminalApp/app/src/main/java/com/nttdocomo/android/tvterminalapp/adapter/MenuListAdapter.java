@@ -197,7 +197,7 @@ public class MenuListAdapter extends BaseAdapter {
                 lp.width = dip2px(RIGHT_ARROW_ICON_SIZE);
                 ((ViewGroup.MarginLayoutParams) lp).setMargins(0, 0, dip2px(RIGHT_ARROW_RIGHT_MARGIN), 0);
                 imageView.setLayoutParams(lp);
-                imageView.setBackgroundResource(R.mipmap.icon_gray_arrow_right);
+                imageView.setBackgroundResource(R.mipmap.icon_normal_arrow_right);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_hikari_tv))
                     || title.equals(mContext.getString(R.string.nav_menu_item_dtv_channel))
                     || title.equals(mContext.getString(R.string.nav_menu_item_dtv))
