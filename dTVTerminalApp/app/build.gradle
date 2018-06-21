@@ -34,7 +34,7 @@ android {
 
     // ★マイナーリリース毎にインクリメントするVersionNameのリビジョン数値(下2桁)
     // ※バージョンが上がったら0リセットすること
-    def revison_end_num = "02"
+    def revison_end_num = "03"
 
     signingConfigs {
         dcmeval {
