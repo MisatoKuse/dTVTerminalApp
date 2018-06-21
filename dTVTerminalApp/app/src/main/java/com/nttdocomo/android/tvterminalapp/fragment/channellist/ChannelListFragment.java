@@ -117,6 +117,10 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
      * リスナー.
      */
     private OnClickChannelItemListener mOnClickChannelItemListener;
+    /**
+     * フッタービュー.
+     */
+    private View mFootView;
 
     /**
      * コンストラクタ.
@@ -203,6 +207,9 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
     private void initContentListView(final View rootView) {
         mListView = rootView.findViewById(R.id.channel_list_content_body_lv);
         mRelativeLayout = rootView.findViewById(R.id.channel_list_progress);
+        if (null == mFootView) {
+            mFootView = View.inflate(getContext(), R.layout.search_load_more, null);
+        }
         showProgressBar(true);
 
         mListView.setOnScrollListener(this);
@@ -210,6 +217,22 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
 
         mChannelListAdapter = new ChannelListAdapter(getContext(), mData);
         mListView.setAdapter(mChannelListAdapter);
+    }
+
+    /**
+     * ローディング処理（ページング）.
+     */
+    public void loadComplete() {
+        mListView.removeFooterView(mFootView);
+    }
+
+    /**
+     * ローディング開始.
+     */
+    public void loadStart() {
+        mListView.addFooterView(mFootView);
+        mListView.setSelection(mListView.getMaxScrollAmount());
+        mFootView.setVisibility(View.VISIBLE);
     }
 
     /**

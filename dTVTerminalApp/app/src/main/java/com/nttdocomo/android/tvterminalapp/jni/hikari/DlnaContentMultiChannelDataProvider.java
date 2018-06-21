@@ -38,6 +38,8 @@ public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseLi
     private Context mContext;
     /** コールバック. */
     private OnMultiChCallbackListener mOnMultiChCallbackListener;
+    /** ページインデックス. */
+    private int mPageIndex;
 
     /**
      * 機能：DlnaProvHikariVideoを構造.
@@ -52,14 +54,13 @@ public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseLi
 
     /**
      * 機能：チャンネル情報を探す.
-     *
      * @param mChannelNr  チャンネル番号
      */
     public void findChannelByChannelNo(final String mChannelNr) {
         this.mChannelNr = mChannelNr;
         DlnaManager.shared().mBrowseListener = this;
         DlnaManager.shared().mRemoteConnectStatusChangeListener = this;
-        DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(mContext, DlnaUtils.DLNA_DMS_MULTI_CHANNEL));
+        DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(mContext, DlnaUtils.DLNA_DMS_MULTI_CHANNEL), mPageIndex);
     }
 
     @Override
@@ -70,7 +71,11 @@ public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseLi
                 return;
             }
         }
-        mOnMultiChCallbackListener.multiChannelFindCallback(null);
+        if (objs.length == 0) {
+            mOnMultiChCallbackListener.multiChannelFindCallback(null);
+        } else {
+            DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(mContext, DlnaUtils.DLNA_DMS_MULTI_CHANNEL), mPageIndex++);
+        }
     }
 
     @Override
