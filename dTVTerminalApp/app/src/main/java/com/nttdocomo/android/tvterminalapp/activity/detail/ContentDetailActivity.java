@@ -890,6 +890,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     mThumbnail.setImageBitmap(bitmap);
                 }
             }
+        } else {
+            mThumbnail.setImageResource(R.mipmap.error_movie);
         }
     }
 
