@@ -598,7 +598,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         setRatStarData(holder, listContentInfo);
         setRecodingReservationStatusData(holder, listContentInfo);
         setChannelName(holder, listContentInfo);
-        setRecordedDownloadIcon(holder, listContentInfo);
+        setClipIcon(holder, listContentInfo);
         setNowOnAirData(holder, listContentInfo, contentView);
         if (ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST.equals(mType)) {
             setSubTitle(holder, listContentInfo);
@@ -935,38 +935,13 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
-     * ダウンロードアイコンの設定（録画番組用チャンネル名）.
+     * クリップボタンの設定.
      *
      * @param holder          ViewHolder
      * @param listContentInfo ContentsData
      */
-    private void setRecordedDownloadIcon(final ViewHolder holder, final ContentsData listContentInfo) {
+    private void setClipIcon(final ViewHolder holder, final ContentsData listContentInfo) {
         DTVTLogger.start();
-        //TODO :録画予約一覧等、クリップボタンを表示しない画面はここで外す
-        if (!mType.equals(ActivityTypeItem.TYPE_RECORDING_RESERVATION_LIST)) {
-            if (holder.tv_clip != null) {
-                int downloadFlg = listContentInfo.getDownloadFlg();
-                if (downloadFlg != -1) {
-                    // ダウンロード済み
-                    holder.tv_clip.setVisibility(View.VISIBLE);
-                    holder.tv_clip.setBackgroundColor(
-                            ContextCompat.getColor(mContext, R.color.ranking_list_border));
-                } else {
-                    // 未ダウンロード
-                    int allowedUse = listContentInfo.getAllowedUse();
-                    if (ALLOWED_USE == allowedUse) {
-                        // ダウンロード回数無 && ダウンロード禁止
-                        holder.tv_clip.setVisibility(View.GONE);
-                    } else {
-                        // ダウンロード回数の残数有り
-                        holder.tv_clip.setVisibility(View.VISIBLE);
-                        holder.tv_clip.setBackgroundColor(
-                                ContextCompat.getColor(mContext, R.color.recording_reservation_status_background_red));
-                    }
-                }
-            }
-        }
-
         if (!ActivityTypeItem.TYPE_RECORDED_LIST.equals(mType)) {
             if (ActivityTypeItem.TYPE_RECOMMEND_LIST.equals(mType) || ActivityTypeItem.TYPE_SEARCH_LIST.equals(mType)) {
                 holder.tv_clip.setVisibility(View.GONE);

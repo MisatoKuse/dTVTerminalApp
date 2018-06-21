@@ -1611,63 +1611,63 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void channelInfoCallback(final ChannelInfoList channelsInfo) {
-        if (channelsInfo != null && channelsInfo.getChannels() != null) {
-            List<ChannelInfo> channels = channelsInfo.getChannels();
-            sort(channels);
-            if (channels.size() > 0) {
-                if (mViewPager.getCurrentItem() == 1) {
-                    final DtvContentsChannelFragment channelFragment = getChannelFragment();
-                    ChannelInfo channelInfo = channels.get(0);
-                    ArrayList<ScheduleInfo> scheduleInfos = channelInfo.getSchedules();
-                    if (mDateIndex == 1 && channelFragment.mContentsData != null) {
-                        channelFragment.mContentsData.clear();
-                    }
-                    boolean isFirst = false;
-                    for (int i = 0; i < scheduleInfos.size(); i++) {
-                        ScheduleInfo scheduleInfo = scheduleInfos.get(i);
-                        String endTime = scheduleInfo.getEndTime();
-                        String startTime = scheduleInfo.getStartTime();
-                        String start = startTime.substring(0, 10) + startTime.substring(11, 19);
-                        String end = endTime.substring(0, 10) + endTime.substring(11, 19);
-                        if (!isLastDate(end)) {
-                            if (mDateList != null) {
-                                ContentsData contentsData = new ContentsData();
-                                if (!isFirst) {
-                                    if (mDateIndex == 1) {
-                                        if (isNowOnAir(start, end)) {
-                                            //NOW ON AIR の判断
-                                            contentsData.setChannelName(getString(R.string.home_label_now_on_air));
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (channelsInfo != null && channelsInfo.getChannels() != null) {
+                    List<ChannelInfo> channels = channelsInfo.getChannels();
+                    sort(channels);
+                    if (channels.size() > 0) {
+                        if (mViewPager.getCurrentItem() == 1) {
+                            final DtvContentsChannelFragment channelFragment = getChannelFragment();
+                            ChannelInfo channelInfo = channels.get(0);
+                            ArrayList<ScheduleInfo> scheduleInfos = channelInfo.getSchedules();
+                            if (mDateIndex == 1 && channelFragment.mContentsData != null) {
+                                channelFragment.mContentsData.clear();
+                            }
+                            boolean isFirst = false;
+                            for (int i = 0; i < scheduleInfos.size(); i++) {
+                                ScheduleInfo scheduleInfo = scheduleInfos.get(i);
+                                String endTime = scheduleInfo.getEndTime();
+                                String startTime = scheduleInfo.getStartTime();
+                                String start = startTime.substring(0, 10) + startTime.substring(11, 19);
+                                String end = endTime.substring(0, 10) + endTime.substring(11, 19);
+                                if (!isLastDate(end)) {
+                                    if (mDateList != null) {
+                                        ContentsData contentsData = new ContentsData();
+                                        if (!isFirst) {
+                                            if (mDateIndex == 1) {
+                                                if (isNowOnAir(start, end)) {
+                                                    //NOW ON AIR の判断
+                                                    contentsData.setChannelName(getString(R.string.home_label_now_on_air));
+                                                }
+                                            }
+                                            contentsData.setSubTitle(getDate());
+                                            isFirst = true;
                                         }
+                                        contentsData.setTitle(scheduleInfo.getTitle());
+                                        contentsData.setContentsId(scheduleInfo.getCrId());
+                                        contentsData.setRequestData(scheduleInfo.getClipRequestData());
+                                        contentsData.setThumURL(scheduleInfo.getImageUrl());
+                                        contentsData.setTime(DateUtils.getContentsDetailChannelHmm(scheduleInfo.getStartTime()));
+                                        contentsData.setClipExec(scheduleInfo.isClipExec());
+                                        channelFragment.mContentsData.add(contentsData);
                                     }
-                                    contentsData.setSubTitle(getDate());
-                                    isFirst = true;
                                 }
-                                contentsData.setTitle(scheduleInfo.getTitle());
-                                contentsData.setContentsId(scheduleInfo.getCrId());
-                                contentsData.setRequestData(scheduleInfo.getClipRequestData());
-                                contentsData.setThumURL(scheduleInfo.getImageUrl());
-                                contentsData.setTime(DateUtils.getContentsDetailChannelHmm(scheduleInfo.getStartTime()));
-                                contentsData.setClipExec(scheduleInfo.isClipExec());
-                                channelFragment.mContentsData.add(contentsData);
+                            }
+                            if (mDateIndex == 1) {
+                                getChannelDetailByPageNo();
+                            } else {
+                                channelFragment.setNotifyDataChanged();
                             }
                         }
                     }
-                    if (mDateIndex == 1) {
-                        getChannelDetailByPageNo();
-                    } else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                channelFragment.setNotifyDataChanged();
-                            }
-                        });
-                    }
+                    channelLoadCompleted();
+                } else {
+                    showErrorDialog(ErrorType.tvScheduleListGet);
                 }
             }
-            channelLoadCompleted();
-        } else {
-            showErrorDialog(ErrorType.tvScheduleListGet);
-        }
+        });
     }
 
     /**
