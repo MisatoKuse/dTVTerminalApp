@@ -439,10 +439,20 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                             mNoDataMessage.setVisibility(View.VISIBLE);
                             setProgressBarGone();
                         } else {
-                            mDlnaContentRecordedDataProvider.listen(RecordedListActivity.this);
-                            mDlnaContentRecordedDataProvider.browse(RecordedListActivity.this, mPageIndex);
-                            if (mPageIndex == 0 && !mIsLoading) {
-                                clearFragment(0);
+                            switch (StbConnectionManager.shared().getConnectionStatus()) {
+                                case HOME_OUT:
+                                case HOME_IN:
+                                case HOME_OUT_CONNECT:
+                                    mDlnaContentRecordedDataProvider.listen(RecordedListActivity.this);
+                                    mDlnaContentRecordedDataProvider.browse(RecordedListActivity.this, mPageIndex);
+                                    if (mPageIndex == 0 && !mIsLoading) {
+                                        clearFragment(0);
+                                    }
+                                    break;
+                                default:
+                                    mNoDataMessage.setVisibility(View.VISIBLE);
+                                    setProgressBarGone();
+                                    break;
                             }
                         }
                         break;
