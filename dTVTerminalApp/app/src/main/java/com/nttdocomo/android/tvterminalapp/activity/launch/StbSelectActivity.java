@@ -1173,7 +1173,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                             case RelayServiceResponseMessage.RELAY_RESULT_USERACCOUNT_NETWORK_ERROR: // ユーザアカウント切り替えのネットワークエラー
                             case RelayServiceResponseMessage.RELAY_RESULT_USERACCOUNT_INTERNAL_ERROR: // ユーザアカウント切り替えの内部エラー
                             case RelayServiceResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY: // 中継アプリからの応答待ち中に新しい要求を行った場合／中継アプリの処理中の場合
-                                createErrorDialog();
+                                createErrorDialog(getResources().getString(R.string.str_launch_stb_communication_failed_error));
                                 break;
                             case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
                                 // チェック処理の状態で処理を分岐する
@@ -1204,9 +1204,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                     case COMMAND_UNKNOWN:
                         switch (resultCode) {
                             case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
+                                createErrorDialog(getResources().getString(R.string.str_launch_stb_communication_failed_error));
+                                break;
                             case RelayServiceResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY: // 他の端末の要求処理中
-                                // TODO STBと接続しないとHOMEにいけない為、本体側のSTB機能が搭載されるまでは一旦ホームに遷移させておく.
-                                createUnKnownDialog();
+                                createErrorDialog(getResources().getString(R.string.main_setting_stb_busy_error_message));
                                 break;
                             default:
                                 break;
@@ -1239,10 +1240,11 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
 
     /**
      * エラーダイアログ表示.
+     * @param errorMessage エラーメッセージ.
      */
-    private void createUnKnownDialog() {
+    private void createErrorDialog(final String errorMessage) {
         CustomDialog failedRecordingReservationDialog = new CustomDialog(StbSelectActivity.this, CustomDialog.DialogType.ERROR);
-        failedRecordingReservationDialog.setContent(getResources().getString(R.string.main_setting_connect_error_message));
+        failedRecordingReservationDialog.setContent(errorMessage);
         failedRecordingReservationDialog.setCancelText(R.string.recording_reservation_failed_dialog_confirm);
         // Cancelable
         failedRecordingReservationDialog.setCancelable(false);
@@ -1259,34 +1261,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         });
         failedRecordingReservationDialog.showDialog();
     }
-
-    /**
-     * エラーダイアログ表示.
-     */
-    private void createErrorDialog() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                CustomDialog failedRecordingReservationDialog = new CustomDialog(StbSelectActivity.this, CustomDialog.DialogType.ERROR);
-                failedRecordingReservationDialog.setContent(getResources().getString(R.string.str_launch_stb_communication_failed_error));
-                failedRecordingReservationDialog.setCancelText(R.string.recording_reservation_failed_dialog_confirm);
-                // Cancelable
-                failedRecordingReservationDialog.setCancelable(false);
-                failedRecordingReservationDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                    @Override
-                    public void onOKCallback(final boolean isOK) {
-                        resetDmpForResume();
-                        onResume();
-                        if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-                            initLaunchView();
-                        }
-                    }
-                });
-                failedRecordingReservationDialog.showDialog();
-            }
-        });
-    }
-
     /**
      * STBとのペアリングエラー時からのペアリング選択画面の再起動処理.
      */
