@@ -18,6 +18,7 @@ import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.MyChannelEditActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.MainSettingListAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
@@ -200,7 +201,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             startActivity(SettingMenuLicenseActivity.class, null);
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_PRIVACY_POLICY])) {
             //プライバシーポリシー
-            startActivity(SettingMenuPrivacyPolicyActivity.class, null);
+            startBrowser(UrlConstants.WebUrl.SETTING_MENU_PRIVACY_POLICY_URL);
         } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_APP_PRIVACY_POLICY])) {
             //APP
             startActivity(SettingMenuAppActivity.class, null);

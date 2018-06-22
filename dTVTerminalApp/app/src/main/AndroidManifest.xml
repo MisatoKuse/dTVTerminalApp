@@ -150,11 +150,6 @@
             android:exported="false"
 	        android:hardwareAccelerated="false"/>
         <activity
-            android:name=".activity.setting.SettingMenuPrivacyPolicyActivity"
-            android:screenOrientation="portrait"
-            android:exported="false"
-	        android:hardwareAccelerated="false"/>
-        <activity
             android:name=".activity.setting.SettingMenuTermsOfServiceActivity"
             android:screenOrientation="portrait"
             android:exported="false"
