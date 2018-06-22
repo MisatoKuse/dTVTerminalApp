@@ -80,6 +80,10 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
      */
     private boolean mIsCommunicating = false;
     /**
+     * コンテンツ詳細表示フラグ.
+     */
+    private boolean mContentsDetailDisplay = false;
+    /**
      * ジャンルID.
      */
     private String mGenreId;
@@ -138,6 +142,17 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     protected void onResume() {
         super.onResume();
         super.sendScreenView(getString(R.string.google_analytics_screen_name_video_content_list));
+        DTVTLogger.start();
+        //コンテンツ詳細から戻ってきたときのみクリップ状態をチェックする
+        if (mContentsDetailDisplay) {
+            mContentsDetailDisplay = false;
+            if (null != mContentsAdapter) {
+                List<ContentsData> list = mVideoContentProvider.checkClipStatus(mContentsList);
+                mContentsAdapter.setListData(list);
+                mContentsAdapter.notifyDataSetChanged();
+            }
+        }
+        DTVTLogger.end();
     }
 
     /**
@@ -299,6 +314,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         if (mLoadMoreView == view) {
             return;
         }
+        mContentsDetailDisplay = true;
         ContentsData contentsData = mContentsList.get(position);
         if (ContentUtils.isChildContentList(contentsData)) {
             startChildContentListActivity(contentsData);

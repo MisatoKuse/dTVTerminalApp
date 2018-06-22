@@ -26,7 +26,7 @@ public class ClipKeyListJsonParser {
     /**クリップキー一覧パラメータキー.*/
     private static final String[] LIST_PARAM = {JsonConstants.META_RESPONSE_CRID,
             JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_EVENT_ID,
-            JsonConstants.META_RESPONSE_TYPE, JsonConstants.META_RESPONSE_TITLE_ID};
+            JsonConstants.META_RESPONSE_TITLE_ID};
 
     /**
      * クリップ一覧Jsonデータを解析する.

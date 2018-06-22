@@ -1237,6 +1237,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                                     holder.tv_clip.setTag(BaseActivity.CLIP_OPACITY_STATUS);
                                 }
                             }
+                            holder.tv_clip.setVisibility(View.VISIBLE);
                         } else {
                             holder.tv_clip.setVisibility(View.GONE);
                         }
