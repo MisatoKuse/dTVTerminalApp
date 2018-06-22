@@ -289,6 +289,14 @@ public class BaseActivity extends FragmentActivity implements
      */
     public static final String CLIP_OPACITY_STATUS = "opacity";
     /**
+     * クリップ状態.
+     */
+    public static final String CLIP_SCHEDULE_END_ACTIVE_STATUS = "schedule_end_active";
+    /**
+     * 未クリップ状態.
+     */
+    public static final String CLIP_SCHEDULE_END_OPACITY_STATUS = "schedule_end_opacity";
+    /**
      * アダプタ内でのリスト識別用定数.
      */
     private final static int HOME_CONTENTS_DISTINCTION_ADAPTER = 10;
@@ -2975,6 +2983,23 @@ public class BaseActivity extends FragmentActivity implements
         //それら以外はゼロを返す
         return 0;
     }
+
+    /**
+     * クリップ操作時のクリップボタンのViewを取得する.
+     * @return クリップボタンのビュー
+     */
+    protected ImageView getClipButton() {
+        return mClipButton;
+    }
+
+    /**
+     * クリップ要求時のリクエストデータを返却する.
+     * @return クリップ登録/解除要求時のリクエストデータ
+     */
+    protected ClipRequestData getClipRequestData() {
+        return mClipRequestData;
+    }
+
     // region callback
     /**
      * 機能：onClick event for menu.
@@ -3025,7 +3050,7 @@ public class BaseActivity extends FragmentActivity implements
         ClipKeyListDataProvider clipKeyListDataProvider = new ClipKeyListDataProvider(this);
         clipKeyListDataProvider.clipResultInsert(mClipRequestData);
 
-        mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+        mClipButton.setBackgroundResource(R.drawable.common_clip_active_selector);
         mClipButton.setTag(CLIP_ACTIVE_STATUS);
         showClipToast(R.string.clip_regist_result_message);
     }
@@ -3041,7 +3066,7 @@ public class BaseActivity extends FragmentActivity implements
         ClipKeyListDataProvider clipKeyListDataProvider = new ClipKeyListDataProvider(this);
         clipKeyListDataProvider.clipResultDelete(mClipRequestData);
 
-        mClipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
+        mClipButton.setBackgroundResource(R.drawable.common_clip_normal_selector);
         showClipToast(R.string.clip_delete_result_message);
         mClipButton.setTag(CLIP_OPACITY_STATUS);
     }

@@ -208,10 +208,10 @@ public class DtvContentsDetailFragment extends Fragment {
                     clipButton.setBackgroundResource(R.mipmap.icon_tap_circle_normal_clip);
                 } else {
                     if (mOtherContentsDetailData.isClipStatus()) {
-                        clipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                        clipButton.setBackgroundResource(R.drawable.common_clip_active_selector);
                         clipButton.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
                     } else {
-                        clipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
+                        clipButton.setBackgroundResource(R.drawable.common_clip_normal_selector);
                         clipButton.setTag(BaseActivity.CLIP_OPACITY_STATUS);
                     }
 

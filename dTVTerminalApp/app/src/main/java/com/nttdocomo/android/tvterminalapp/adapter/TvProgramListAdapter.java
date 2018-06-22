@@ -640,6 +640,19 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      */
     private void displayProgramClip(final ItemViewHolder itemViewHolder, final boolean isClipHide, final ScheduleInfo itemSchedule) {
         DTVTLogger.start();
+
+        String endTime = itemSchedule.getEndTime();
+        String end = slash2Hyphen(endTime);
+        Date endDate = new Date();
+        Date curDate = new Date();
+        SimpleDateFormat format = new SimpleDateFormat(CUR_TIME_FORMAT, Locale.JAPAN);
+        try {
+            endDate = format.parse(end);
+            curDate = format.parse(mCurDate);
+        } catch (ParseException e) {
+            DTVTLogger.debug(e);
+        }
+
         int clipHeight = itemViewHolder.mClipButton.getHeight();
         if (!isClipHide) {
             if (clipHeight < CLIP_BUTTON_SIZE) {
@@ -647,21 +660,40 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             } else {
                 if (!UserInfoUtils.getClipActive(mContext)) {
                     //未ログイン又は未契約時はクリップボタンを非活性にする
-                    itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_tap_circle_normal_clip);
+                    if (endDate.compareTo(curDate) == DATE_COMPARE_TO_LOW) {
+                        // 放送終了
+                        itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_tap_circle_normal_clip_schedule_end);
+                    } else {
+                        itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_tap_circle_normal_clip);
+                    }
                 } else {
                     if (itemSchedule.isClipStatus()) {
-                        itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip_schedule_end);
-                        itemViewHolder.mClipButton.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
+                        if (endDate.compareTo(curDate) == DATE_COMPARE_TO_LOW &&
+                                !(MISS_CUT_OUT.equals(itemSchedule.getContentType()) || MISS_COMPLETE.equals(itemSchedule.getContentType()))) {
+                            // 放送終了
+                            itemViewHolder.mClipButton.setBackgroundResource(R.drawable.tv_program_schedule_end_clip_active_selector);
+                            itemViewHolder.mClipButton.setTag(BaseActivity.CLIP_SCHEDULE_END_ACTIVE_STATUS);
+                        } else {
+                            itemViewHolder.mClipButton.setBackgroundResource(R.drawable.common_clip_active_selector);
+                            itemViewHolder.mClipButton.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
+                        }
                     } else {
-                        itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_normal_clip_schedule_end);
-                        itemViewHolder.mClipButton.setTag(BaseActivity.CLIP_OPACITY_STATUS);
+                        if (endDate.compareTo(curDate) == DATE_COMPARE_TO_LOW &&
+                                !(MISS_CUT_OUT.equals(itemSchedule.getContentType()) || MISS_COMPLETE.equals(itemSchedule.getContentType()))) {
+                            // 放送終了
+                            itemViewHolder.mClipButton.setBackgroundResource(R.drawable.tv_program_schedule_end_clip_normal_selector);
+                            itemViewHolder.mClipButton.setTag(BaseActivity.CLIP_SCHEDULE_END_OPACITY_STATUS);
+                        } else {
+                            itemViewHolder.mClipButton.setBackgroundResource(R.drawable.tv_program_schedule_clip_normal_selector);
+                            itemViewHolder.mClipButton.setTag(BaseActivity.CLIP_OPACITY_STATUS);
+                        }
                     }
                     itemViewHolder.mClipButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(final View view) {
                             //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、タグでクリップ済/未を判定する
                             Object clipTag = itemViewHolder.mClipButton.getTag();
-                            if (clipTag.equals(BaseActivity.CLIP_ACTIVE_STATUS)) {
+                            if (clipTag.equals(BaseActivity.CLIP_ACTIVE_STATUS) || clipTag.equals(BaseActivity.CLIP_SCHEDULE_END_ACTIVE_STATUS)) {
                                 itemSchedule.getClipRequestData().setClipStatus(true);
                             } else {
                                 itemSchedule.getClipRequestData().setClipStatus(false);

@@ -31,8 +31,10 @@ import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.MyChannelDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopMyProgramListAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopMyProgramListDataConnect;
@@ -1284,5 +1286,55 @@ public class TvProgramListActivity extends BaseActivity implements
         //サムネルタスクを止める
         StopMyProgramListAdapterConnect stopAdapterConnect = new StopMyProgramListAdapterConnect();
         stopAdapterConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mTvProgramListAdapter);
+    }
+
+    @Override
+    public void onClipRegistResult() {
+        ClipRequestData clipRequestData = getClipRequestData();
+        ImageView clipButton = getClipButton();
+        if (clipRequestData != null && clipButton != null) {
+            //DB登録開始
+            ClipKeyListDataProvider clipKeyListDataProvider = new ClipKeyListDataProvider(this);
+            clipKeyListDataProvider.clipResultInsert(clipRequestData);
+
+            if ((DateUtils.getHyphenEpochTime(clipRequestData.getLinearEndDate()) < DateUtils.getNowTimeFormatEpoch())
+                    && (clipButton.getTag() != null && clipButton.getTag().equals(CLIP_SCHEDULE_END_OPACITY_STATUS))) {
+                // 放送が終了しているためクリップボタンを放送終了用アイコンに変更
+                clipButton.setBackgroundResource(R.drawable.tv_program_schedule_end_clip_active_selector);
+                clipButton.setTag(CLIP_SCHEDULE_END_ACTIVE_STATUS);
+            } else {
+                clipButton.setBackgroundResource(R.drawable.common_clip_active_selector);
+                clipButton.setTag(CLIP_ACTIVE_STATUS);
+            }
+            showClipToast(R.string.clip_regist_result_message);
+        } else {
+            // フェールセーフで元処理に戻す
+            super.onClipRegistResult();
+        }
+    }
+
+    @Override
+    public void onClipDeleteResult() {
+        ClipRequestData clipRequestData = getClipRequestData();
+        ImageView clipButton = getClipButton();
+        if (clipRequestData != null && clipButton != null) {
+            //DB削除開始
+            ClipKeyListDataProvider clipKeyListDataProvider = new ClipKeyListDataProvider(this);
+            clipKeyListDataProvider.clipResultDelete(clipRequestData);
+
+            if ((DateUtils.getHyphenEpochTime(clipRequestData.getLinearEndDate()) < DateUtils.getNowTimeFormatEpoch())
+                    && (clipButton.getTag() != null && clipButton.getTag().equals(CLIP_SCHEDULE_END_ACTIVE_STATUS))) {
+                // 放送が終了しているためクリップボタンを放送終了用アイコンに変更
+                clipButton.setBackgroundResource(R.drawable.tv_program_schedule_end_clip_normal_selector);
+                clipButton.setTag(CLIP_SCHEDULE_END_OPACITY_STATUS);
+            } else {
+                clipButton.setBackgroundResource(R.drawable.tv_program_schedule_clip_normal_selector);
+                clipButton.setTag(CLIP_OPACITY_STATUS);
+            }
+            showClipToast(R.string.clip_delete_result_message);
+        } else {
+            // フェールセーフで元処理に戻す
+            super.onClipDeleteResult();
+        }
     }
 }
