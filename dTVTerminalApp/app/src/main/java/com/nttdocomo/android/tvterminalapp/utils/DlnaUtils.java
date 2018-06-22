@@ -54,13 +54,13 @@ public class DlnaUtils {
     private static final int BUF_SIZE = 1024;
     /*視聴画質設定*/
     /** デフォルト.*/
-    private static final String IMAGE_QUALITY_DEFAULT_URL = "0/smartphone/";
+    public static final String IMAGE_QUALITY_DEFAULT_URL = "0/smartphone/";
     /** 最高画質.*/
-    private static final String IMAGE_QUALITY_HIGH_URL = "0/remote1/";
+    public static final String IMAGE_QUALITY_HIGH_URL = "0/remote1/";
     /** 高画質.*/
-    private static final String IMAGE_QUALITY_MIDDLE_URL = "0/remote2/";
+    public static final String IMAGE_QUALITY_MIDDLE_URL = "0/remote2/";
     /** 標準画質.*/
-    private static final String IMAGE_QUALITY_LOW_URL = "0/remote3/";
+    public static final String IMAGE_QUALITY_LOW_URL = "0/remote3/";
     /** 録画一覧.*/
     public static final String DLNA_DMS_RECORD_LIST = "rec/all";
     /** 多チャンネル.*/
