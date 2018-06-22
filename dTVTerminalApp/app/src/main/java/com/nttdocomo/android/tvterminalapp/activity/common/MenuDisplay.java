@@ -255,10 +255,12 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                 mActivity.startActivity(intent);
 
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_hikari_tv))) {
+                mActivity.setRemoteProgressVisible(View.VISIBLE);
                     // TVアプリ起動導線(ひかりTV)
                     mActivity.setRelayClientHandler();
                     RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.HIKARITV, mContext);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dtv_channel))) {
+                mActivity.setRemoteProgressVisible(View.VISIBLE);
                     // TVアプリ起動導線(dTVチャンネル)
                     mActivity.setRelayClientHandler();
                     RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL, mContext);
@@ -275,6 +277,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                     RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, mContext);
 
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dazn))) {
+                mActivity.setRemoteProgressVisible(View.VISIBLE);
                     // TVアプリ起動導線(DAZN)
                     mActivity.setRelayClientHandler();
                     RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DAZN, mContext);
