@@ -69,6 +69,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         SharedPreferencesUtils.deleteOneTimeTokenData(getApplicationContext());
 
         StbConnectionManager.shared().launch(getApplicationContext());
+        StbConnectionManager.shared().initializeState();
         new Thread(new Runnable() {
             @Override
             public void run() {

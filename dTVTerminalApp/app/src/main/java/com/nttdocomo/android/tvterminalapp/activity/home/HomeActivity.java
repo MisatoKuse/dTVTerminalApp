@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -1070,5 +1071,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             mPartDataGetFailed = true;
             errorDialog(getString(R.string.get_contents_data_error_message), R.string.common_text_retry);
         }
+    }
+
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            DlnaManager.shared().StopDmp();
+            finish();
+        }
+        return false;
     }
 }

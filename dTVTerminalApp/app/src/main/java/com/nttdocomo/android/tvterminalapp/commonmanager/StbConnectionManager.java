@@ -75,7 +75,7 @@ public class StbConnectionManager {
      * @param context コンテキスト
      */
     public void launch(final Context context) {
-        mContext = context;
+        StbConnectionManager.shared().mContext = context;
 
         boolean connected = SharedPreferencesUtils.getSharedPreferencesStbConnect(context);
         if (connected) {
@@ -89,9 +89,9 @@ public class StbConnectionManager {
     public void initializeState() {
         DTVTLogger.info("before connectionStatus = " + connectionStatus);
         connectionStatus = ConnectionStatus.NONE_PAIRING;
-        boolean connected = SharedPreferencesUtils.getSharedPreferencesStbConnect(DlnaManager.shared().mContext);
+        boolean connected = SharedPreferencesUtils.getSharedPreferencesStbConnect(StbConnectionManager.shared().mContext);
         if (connected) { // ペアリング済みであればRLを確認
-            String remoteDeviceExpireDate = SharedPreferencesUtils.getRemoteDeviceExpireDate(DlnaManager.shared().mContext);
+            String remoteDeviceExpireDate = SharedPreferencesUtils.getRemoteDeviceExpireDate(StbConnectionManager.shared().mContext);
             if (TextUtils.isEmpty(remoteDeviceExpireDate)) {
                 connectionStatus = ConnectionStatus.NONE_LOCAL_REGISTRATION;
             } else {
