@@ -22,6 +22,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.ClipListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
@@ -127,6 +128,7 @@ public class ClipListBaseFragment extends Fragment
      * テレビタブコンテンツ初期化.
      */
     private void initContentListView() {
+        DTVTLogger.start();
         mTvListView = mTvFragmentView
                 .findViewById(R.id.clip_list_lv_searched_result);
         mRelativeLayout = mTvFragmentView.findViewById(R.id.clip_list_progress);
@@ -145,6 +147,7 @@ public class ClipListBaseFragment extends Fragment
         }
         mClipMainAdapter = new ContentsAdapter(getContext(), mClipListData, type);
         mTvListView.setAdapter(mClipMainAdapter);
+        DTVTLogger.end();
     }
 
     /**
@@ -153,6 +156,7 @@ public class ClipListBaseFragment extends Fragment
      * @param showProgressBar プロセスバーを表示するかどうか
      */
     public void showProgressBar(final boolean showProgressBar) {
+        DTVTLogger.start();
         //Viewが生成にActivityから直接呼ばれたとき用
         if (mTvFragmentView == null) {
             return;
@@ -168,6 +172,7 @@ public class ClipListBaseFragment extends Fragment
             mTvListView.setVisibility(View.VISIBLE);
             mRelativeLayout.setVisibility(View.GONE);
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -185,6 +190,7 @@ public class ClipListBaseFragment extends Fragment
      * @param loadFlag ページングフラグ
      */
     public void displayMoreData(final boolean loadFlag) {
+        DTVTLogger.start();
         if (null != mTvListView) {
             if (loadFlag) {
                 mTvListView.addFooterView(mLoadMoreView);
@@ -195,6 +201,7 @@ public class ClipListBaseFragment extends Fragment
                 mTvListView.removeFooterView(mLoadMoreView);
             }
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -211,6 +218,7 @@ public class ClipListBaseFragment extends Fragment
 
     @Override
     public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
+        DTVTLogger.start();
         if (null != mClipListBaseFragmentScrollListener) {
             //スクロール位置がリストの先頭で上スクロールだった場合は、更新をせずに帰る
             if (mFirstVisibleItem == 0 && mLastScrollUp) {
@@ -219,11 +227,13 @@ public class ClipListBaseFragment extends Fragment
 
             mClipListBaseFragmentScrollListener.onScrollStateChanged(this, absListView, scrollState);
         }
+        DTVTLogger.end();
     }
 
     @Override
     public void onScroll(final AbsListView absListView, final int firstVisibleItem,
                          final int visibleItemCount, final int totalItemCount) {
+        DTVTLogger.start();
         if (null != mClipListBaseFragmentScrollListener) {
             //現在のスクロール位置の記録
             mFirstVisibleItem = firstVisibleItem;
@@ -231,6 +241,7 @@ public class ClipListBaseFragment extends Fragment
             mClipListBaseFragmentScrollListener.onScroll(this, absListView, firstVisibleItem,
                     visibleItemCount, totalItemCount);
         }
+        DTVTLogger.end();
     }
 
     @Override

@@ -390,6 +390,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         initView();
     }
 
+    @SuppressWarnings("OverlyLongMethod")
     @Override
     protected void onResume() {
         DTVTLogger.start();
@@ -444,8 +445,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 sendScreenViewForPosition(mViewPager.getCurrentItem());
             } else {
                 sendScreenViewForPosition(0);
-    }
-}
+            }
+        }
         DTVTLogger.end();
     }
 
@@ -575,6 +576,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     /**
      * ビュー初期化.
      */
+    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
     private void initView() {
         mIntent = getIntent();
         mThumbnailBtn = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail_btn);
@@ -738,8 +740,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      *
      * @param content 表示内容
      */
-    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
+    @SuppressWarnings({"EnumSwitchStatementWhichMissesCases", "OverlyLongMethod"})
     private void setThumbnailText(final String content) {
+        DTVTLogger.start();
         UserState userState = UserInfoUtils.getUserState(this);
 
         if (userState.equals(UserState.LOGIN_NG) && !mIsOtherService) {
@@ -807,6 +810,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 noAgreementDisplay();
             }
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -900,6 +904,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      */
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod", "EnumSwitchStatementWhichMissesCases"})
     private void initContentData() {
+        DTVTLogger.start();
         mFrameLayout = findViewById(R.id.header_watch_by_tv);
         // タブ数を先に決定するため、コンテンツ詳細のデータを最初に取得しておく
         mDetailData = mIntent.getParcelableExtra(RECOMMEND_INFO_BUNDLE_KEY);
@@ -1067,6 +1072,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 getContentDetailInfoFromSearchServer();
             }
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -1340,6 +1346,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod", "EnumSwitchStatementWhichMissesCases"})
     @Override
     public void onContentsDetailInfoCallback(final VodMetaFullData contentsDetailInfo, final boolean clipStatus) {
+        DTVTLogger.start();
         //アクティビティの終了後に呼ばれる場合があったので、終了をチェックする
         if (isFinishing()) {
             //既に終了していた場合は、以後の処理はスキップ
@@ -1370,8 +1377,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         }
                     }
                 } else {
-                        //contents_typeは0又は未設定の場合
-                        setRecordingData(detailFragment);
+                    //contents_typeは0又は未設定の場合
+                    setRecordingData(detailFragment);
                 }
             } else {
                 contentType = ContentTypeForGoogleAnalytics.VOD;
@@ -1514,6 +1521,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         if (getStbStatus()) {
             findViewById(R.id.remote_control_view).setVisibility(View.VISIBLE);
         }
+        DTVTLogger.end();
     }
 
     //endregion
@@ -2672,6 +2680,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
     private void playNowOnAir() {
+        DTVTLogger.start();
         if (DeviceStateUtils.getPairingState(this, getStbStatus()).equals(DeviceStateUtils.PairingState.NO_PAIRING)
                 && UserInfoUtils.isContract(this)) {
             ContentUtils.ContentsType contentsType = mDetailFullData.getContentsType();
@@ -2716,6 +2725,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 }
             }
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -2751,6 +2761,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * @param playData 再生用情報
      */
     private void setRemotePlayArrow(final RecordedContentsDetailData playData) {
+        DTVTLogger.start();
         //再生ボタンは宅外かつ契約があるときのみ表示
         if (UserInfoUtils.isContract(this)) {
             setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
@@ -2773,12 +2784,14 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             });
         }
         showProgressBar(false);
+        DTVTLogger.end();
     }
     /**
      * 視聴可否判定に基づいてUIの操作などを行う.
      */
     @SuppressWarnings({"OverlyLongMethod", "OverlyComplexMethod", "EnumSwitchStatementWhichMissesCases"})
     private void changeUIBasedContractInfo() {
+        DTVTLogger.start();
         DtvContentsDetailFragment detailFragment = getDetailFragment();
         boolean isVisibleRecordButton = mRecordingReservationContentsDetailInfo != null;
         DeviceStateUtils.PairingState pairingState;
@@ -2887,6 +2900,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 break;
         }
         detailFragment.changeVisibilityRecordingReservationIcon(isVisibleRecordButton ? View.VISIBLE : View.INVISIBLE);
+        DTVTLogger.end();
     }
 
     /**

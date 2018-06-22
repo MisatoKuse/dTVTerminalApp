@@ -2607,28 +2607,28 @@ public class BaseActivity extends FragmentActivity implements
      * @param tag 遷移先
      * @param linearLayout linearLayout
      */
-   protected void setRecyclerView(final List<ContentsData> contentsDataList, final int tag, final LinearLayout linearLayout) {
-       String typeContentName = getContentTypeName(tag);
-       View view = linearLayout.getChildAt(tag);
-       view.setVisibility(View.VISIBLE);
-       TextView typeTextView = view.findViewById(R.id.home_main_item_type_tx);
-       ImageView rightArrowImageView = view.findViewById(R.id.home_main_item_right_arrow);
-       //各一覧を遷移すること
+    protected void setRecyclerView(final List<ContentsData> contentsDataList, final int tag, final LinearLayout linearLayout) {
+        String typeContentName = getContentTypeName(tag);
+        View view = linearLayout.getChildAt(tag);
+        view.setVisibility(View.VISIBLE);
+        TextView typeTextView = view.findViewById(R.id.home_main_item_type_tx);
+        ImageView rightArrowImageView = view.findViewById(R.id.home_main_item_right_arrow);
+        //各一覧を遷移すること
 
-       rightArrowImageView.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(final View view) {
-               startTo(tag);
-           }
-       });
-       RecyclerView recyclerView = view.findViewById(R.id.home_main_item_recyclerview);
-       //コンテンツタイプを設定
-       setCountTextView(typeContentName, view, tag);
-       typeTextView.setText(typeContentName);
-       //リサイクルビューデータ設定
-       setRecyclerViewData(recyclerView, contentsDataList, tag);
+        rightArrowImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                startTo(tag);
+            }
+        });
+        RecyclerView recyclerView = view.findViewById(R.id.home_main_item_recyclerview);
+        //コンテンツタイプを設定
+        setCountTextView(typeContentName, view, tag);
+        typeTextView.setText(typeContentName);
+        //リサイクルビューデータ設定
+        setRecyclerViewData(recyclerView, contentsDataList, tag);
 
-   }
+    }
 
     /**
      * コンテンツタイプを設定（NOW ON AIR）.
@@ -2890,14 +2890,13 @@ public class BaseActivity extends FragmentActivity implements
 
     @Override
     public void onClipRegistResult() {
-        mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
-        mClipButton.setTag(CLIP_ACTIVE_STATUS);
-        showClipToast(R.string.clip_regist_result_message);
-
         //DB登録開始
         ClipKeyListDataProvider clipKeyListDataProvider = new ClipKeyListDataProvider(this);
         clipKeyListDataProvider.clipResultInsert(mClipRequestData);
 
+        mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+        mClipButton.setTag(CLIP_ACTIVE_STATUS);
+        showClipToast(R.string.clip_regist_result_message);
     }
 
     @Override
@@ -2907,13 +2906,13 @@ public class BaseActivity extends FragmentActivity implements
 
     @Override
     public void onClipDeleteResult() {
-        mClipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
-        showClipToast(R.string.clip_delete_result_message);
-        mClipButton.setTag(CLIP_OPACITY_STATUS);
-
         //DB削除開始
         ClipKeyListDataProvider clipKeyListDataProvider = new ClipKeyListDataProvider(this);
         clipKeyListDataProvider.clipResultDelete(mClipRequestData);
+
+        mClipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
+        showClipToast(R.string.clip_delete_result_message);
+        mClipButton.setTag(CLIP_OPACITY_STATUS);
     }
 
     @Override

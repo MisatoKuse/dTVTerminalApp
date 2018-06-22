@@ -113,6 +113,7 @@ public class ClipListActivity extends BaseActivity implements
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DTVTLogger.start();
         setContentView(R.layout.clip_list_main);
         mNoDataMessage = findViewById(R.id.clip_list_no_items);
         //Headerの設定
@@ -142,6 +143,7 @@ public class ClipListActivity extends BaseActivity implements
         if (mStartPageNo == CLIP_LIST_PAGE_NO_OF_TV) {
             setTv();
         }
+        DTVTLogger.end();
     }
 
     @Override
@@ -305,6 +307,7 @@ public class ClipListActivity extends BaseActivity implements
 
     @Override
     public void tvClipListCallback(final List<ContentsData> clipContentInfo) {
+        DTVTLogger.start();
         if (getCurrentPosition() != CLIP_LIST_PAGE_NO_OF_TV) {
             return;
         }
@@ -358,6 +361,7 @@ public class ClipListActivity extends BaseActivity implements
         resetCommunication();
         fragment.noticeRefresh();
         fragment.showProgressBar(false);
+        DTVTLogger.end();
     }
 
     /**
@@ -370,6 +374,7 @@ public class ClipListActivity extends BaseActivity implements
 
     @Override
     public void vodClipListCallback(final List<ContentsData> clipContentInfo) {
+        DTVTLogger.start();
         if (getCurrentPosition() != CLIP_LIST_PAGE_NO_OF_VOD) {
             return;
         }
@@ -421,6 +426,7 @@ public class ClipListActivity extends BaseActivity implements
         resetCommunication();
         fragment.noticeRefresh();
         fragment.showProgressBar(false);
+        DTVTLogger.end();
     }
 
     /**
@@ -461,7 +467,7 @@ public class ClipListActivity extends BaseActivity implements
     public void onScrollStateChanged(final ClipListBaseFragment fragment,
                                      final AbsListView absListView, final int scrollState) {
         synchronized (this) {
-
+            DTVTLogger.start();
             ClipListBaseFragment baseFragment = getCurrentFragment();
             if (null == baseFragment || null == fragment.getClipMainAdapter()) {
                 return;
@@ -479,7 +485,6 @@ public class ClipListActivity extends BaseActivity implements
 
                 DTVTLogger.debug("onScrollStateChanged, do paging");
 
-
                 fragment.displayMoreData(true);
                 setCommunicatingStatus(true);
 
@@ -490,6 +495,7 @@ public class ClipListActivity extends BaseActivity implements
                     @Override
                     public void run() {
 
+                        DTVTLogger.debug("onScrollStateChanged, paging thread start");
                         int offset = 0;
                         if (null != fragment.mClipListData) {
                             offset = fragment.mClipListData.size();
@@ -505,10 +511,12 @@ public class ClipListActivity extends BaseActivity implements
                             default:
                                 break;
                         }
+                        DTVTLogger.debug("onScrollStateChanged, paging thread end");
                     }
                 }, LOAD_PAGE_DELAY_TIME);
             }
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -565,6 +573,7 @@ public class ClipListActivity extends BaseActivity implements
             @Override
             public void onPageSelected(final int position) {
                 super.onPageSelected(position);
+                DTVTLogger.debug("init view onPageSelected");
                 mTabLayout.setTab(position);
                 sendScreenViewForPosition(position);
                 //タブ移動時にページリセット

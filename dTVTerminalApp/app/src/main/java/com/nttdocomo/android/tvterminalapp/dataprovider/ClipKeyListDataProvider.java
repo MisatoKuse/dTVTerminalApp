@@ -5,7 +5,6 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
-import android.os.Handler;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.activity.common.ChildContentListActivity;
@@ -74,14 +73,6 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * クリップリクエスト用Webクライアント.
      */
     private ClipKeyListWebClient mClient = null;
-    /**
-     * クリップDBタイプ.
-     */
-    private ClipKeyListDao.TableTypeEnum mTableType = null;
-    /**
-     * クリップレスポンス.
-     */
-    private ClipKeyListResponse mClipKeyListResponse = null;
 
     /**
      * クリップ削除種別用定数.
@@ -91,10 +82,6 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * クリップ登録種別用定数.
      */
     private static final int CLIP_ROW_INSERT = 1;
-    /**
-     * クリップ登録種別用定数.
-     */
-    private static final int CLIP_ALL_INSERT = 2;
     /**
      * video_program.
      */
@@ -208,16 +195,8 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      */
     private void setStructDataBase(final ClipKeyListDao.TableTypeEnum type, final ClipKeyListResponse response) {
         DTVTLogger.start();
-        mTableType = type;
-        mClipKeyListResponse = response;
-        //DB操作
-        Handler handler = new Handler(); //チャンネル情報更新
-        try {
-            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, CLIP_ALL_INSERT);
-            dataBaseThread.start();
-        } catch (RuntimeException e) {
-            DTVTLogger.debug(e);
-        }
+        ClipKeyListInsertDataManager dataManager = new ClipKeyListInsertDataManager(mContext);
+        dataManager.insertClipKeyListInsert(type, response);
         DTVTLogger.end();
     }
 
@@ -381,15 +360,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * @param data リクエストデータ
      */
     public void clipResultDelete(final ClipRequestData data) {
-        mClipRequestData = data;
-        //DB操作
-        Handler handler = new Handler(); //チャンネル情報更新
-        try {
-            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, CLIP_ROW_DELETE);
-            dataBaseThread.start();
-        } catch (RuntimeException e) {
-            DTVTLogger.debug(e);
-        }
+        clipExecute(CLIP_ROW_DELETE, data);
     }
 
     /**
@@ -398,32 +369,23 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * @param data リクエストデータ
      */
     public void clipResultInsert(final ClipRequestData data) {
-        mClipRequestData = data;
-        //DB操作
-        Handler handler = new Handler(); //チャンネル情報更新
-        try {
-            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, CLIP_ROW_INSERT);
-            dataBaseThread.start();
-        } catch (RuntimeException e) {
-            DTVTLogger.debug(e);
-        }
+        clipExecute(CLIP_ROW_INSERT, data);
     }
 
-    @Override
-    public void onDbOperationFinished(final boolean isSuccessful, final List<Map<String, String>> resultSet, final int operationId) {
-        //TODO :DB保存後の処理があればここに記載
-    }
-
-    @Override
-    public List<Map<String, String>> dbOperation(final int operationId) {
+    /**
+     * クリップ
+     * @param operationId
+     * @param data
+     */
+    private void clipExecute(final int operationId, final ClipRequestData data) {
         ClipKeyListInsertDataManager dataManager = new ClipKeyListInsertDataManager(mContext);
-        if (mClipRequestData != null) {
-            String crid = mClipRequestData.getCrid();
-            String dispType = mClipRequestData.getDispType();
-            String contentType = mClipRequestData.getContentType();
-            String serviceId = mClipRequestData.getServiceId();
-            String eventId = mClipRequestData.getEventId();
-            String titleId = mClipRequestData.getTitleId();
+        if (data != null) {
+            String crid = data.getCrid();
+            String dispType = data.getDispType();
+            String contentType = data.getContentType();
+            String serviceId = data.getServiceId();
+            String eventId = data.getEventId();
+            String titleId = data.getTitleId();
             ClipKeyListDao.TableTypeEnum tableType = decisionTableType(dispType, contentType);
 
             if (tableType != null) {
@@ -438,15 +400,17 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
                         break;
                 }
             }
-        } else if (mClipKeyListResponse != null) {
-            switch (operationId) {
-                case CLIP_ALL_INSERT:
-                    dataManager.insertClipKeyListInsert(mTableType, mClipKeyListResponse);
-                    break;
-                default:
-                    break;
-            }
         }
+    }
+
+    @Override
+    public void onDbOperationFinished(final boolean isSuccessful, final List<Map<String, String>> resultSet, final int operationId) {
+        //TODO :DB保存後の処理があればここに記載
+    }
+
+    @Override
+    public List<Map<String, String>> dbOperation(final int operationId) {
+        //子クラスで使用するために実装のみ
         return null;
     }
 
