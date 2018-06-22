@@ -446,6 +446,12 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_stopDmp(JNIEnv *env, jo
     LOG_WITH("");
     dlnaBase->stopDmp(dmp);
 }
+
+JNIEXPORT void JNICALL
+Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_freeDmp(JNIEnv *env, jobject thiz) {
+    LOG_WITH("");
+    dlnaBase->freeDmp(dmp);
+}
 //connectDmsWithUdn
 JNIEXPORT void JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_connectDmsWithUdn(JNIEnv *env, jobject thiz, jstring udn) {

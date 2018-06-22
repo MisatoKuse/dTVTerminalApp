@@ -231,8 +231,8 @@ public class DlnaManager {
      * @param context コンテキスト
      */
     public void launch(final Context context) {
-        isStarted = false;
-        startedDmp = false;
+        DlnaManager.shared().isStarted = false;
+        DlnaManager.shared().startedDmp = false;
         mContext = context;
         DTVTLogger.start();
 
@@ -242,8 +242,7 @@ public class DlnaManager {
         secureIoGlobalCreate();
         String privateDataPath = DlnaUtils.getPrivateDataHomePath(context);
         cipherFileContextGlobalCreate(privateDataPath);
-        initDmp(privateDataPath);
-        StbConnectionManager.shared().initializeState();
+        // initDmp(privateDataPath);
         String diragConfigFilePath = DlnaUtils.getDiragConfileFilePath(context);
         initDirag(diragConfigFilePath);
 
@@ -261,8 +260,8 @@ public class DlnaManager {
         DlnaManager.shared().mContext = context;
         DTVTLogger.warning("isStarted = " + isStarted);
         //if start then stop
-        if (!isStarted) {
-            isStarted = true;
+        if (!DlnaManager.shared().isStarted) {
+            DlnaManager.shared().isStarted = true;
             StbConnectionManager.ConnectionStatus connectionStatus = StbConnectionManager.shared().getConnectionStatus();
             DTVTLogger.warning("connectionStatus = " + connectionStatus);
             switch (connectionStatus) {
@@ -291,9 +290,12 @@ public class DlnaManager {
      * StartDmp.
      */
     public void StartDmp() {
-        if (!startedDmp) {
-            startedDmp = true;
+        if (!DlnaManager.shared().startedDmp) {
+            String privateDataPath = DlnaUtils.getPrivateDataHomePath(DlnaManager.shared().mContext);
+            initDmp(privateDataPath);
             startDmp();
+            DTVTLogger.warning("native call >>>> StartDmp");
+            DlnaManager.shared().startedDmp = true;
         }
     }
 
@@ -301,9 +303,11 @@ public class DlnaManager {
      * StopDmp.
      */
     public void StopDmp() {
-        if (startedDmp) {
-            startedDmp = false;
+        if (DlnaManager.shared().startedDmp) {
             stopDmp();
+            freeDmp();
+            DTVTLogger.warning("native call >>>> StopDmp");
+            DlnaManager.shared().startedDmp = false;
         }
     }
 
@@ -766,6 +770,11 @@ public class DlnaManager {
      * stopDmp.
      */
     private native void stopDmp();
+
+    /**
+     * freeDmp.
+     */
+    private native void freeDmp();
 
     /**
      * connectDmsWithUdn.
