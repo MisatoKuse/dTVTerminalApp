@@ -260,27 +260,32 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                     }
                     break;
                 case SCHEDULE_SELECT:
-                    ChannelInfoList channelsInfo = new ChannelInfoList();
-                    ClipKeyListDataManager keyListDataManager = new ClipKeyListDataManager(mContext);
-                    List<Map<String, String>> clipKeyList = keyListDataManager.selectClipAllList();
-                    for (List<Map<String, String>> channelInfos : mResultSets) {
-                        if (channelInfos != null && channelInfos.size() > 0) {
-                            ArrayList<ScheduleInfo> scheduleInfoList = new ArrayList<>();
-                            for (int i = 0; i < channelInfos.size(); i++) { //番組データ取得して整形する
-                                HashMap<String, String> hashMap =  (HashMap<String, String>) channelInfos.get(i);
-                                ScheduleInfo mSchedule = convertScheduleInfo(hashMap, clipKeyList);
-                                scheduleInfoList.add(mSchedule);
+                    //非同期なので、タブ切替時にこの処理に入ってしまわないようにNullチェックを追加
+                    if (mResultSets != null) {
+                        ChannelInfoList channelsInfo = new ChannelInfoList();
+                        ClipKeyListDataManager keyListDataManager = new ClipKeyListDataManager(mContext);
+                        List<Map<String, String>> clipKeyList = keyListDataManager.selectClipAllList();
+                        for (List<Map<String, String>> channelInfos : mResultSets) {
+                            if (channelInfos != null && channelInfos.size() > 0) {
+                                ArrayList<ScheduleInfo> scheduleInfoList = new ArrayList<>();
+                                for (int i = 0; i < channelInfos.size(); i++) { //番組データ取得して整形する
+                                    HashMap<String, String> hashMap = (HashMap<String, String>) channelInfos.get(i);
+                                    ScheduleInfo mSchedule = convertScheduleInfo(hashMap, clipKeyList);
+                                    scheduleInfoList.add(mSchedule);
+                                }
+                                //setScheduleInfoのやり方を踏襲.
+                                ChannelInfo channel = new ChannelInfo();
+                                channel.setChannelNo(Integer.parseInt(scheduleInfoList.get(0).getChNo()));
+                                channel.setTitle(scheduleInfoList.get(0).getTitle());
+                                channel.setSchedules(scheduleInfoList);
+                                channelsInfo.addChannel(channel);
                             }
-                            //setScheduleInfoのやり方を踏襲.
-                            ChannelInfo channel = new ChannelInfo();
-                            channel.setChannelNo(Integer.parseInt(scheduleInfoList.get(0).getChNo()));
-                            channel.setTitle(scheduleInfoList.get(0).getTitle());
-                            channel.setSchedules(scheduleInfoList);
-                            channelsInfo.addChannel(channel);
                         }
-                    }
-                    if (null != mApiDataProviderCallback) {
-                        mApiDataProviderCallback.channelInfoCallback(channelsInfo);
+                        if (null != mApiDataProviderCallback) {
+                            mApiDataProviderCallback.channelInfoCallback(channelsInfo);
+                        }
+                    } else {
+                        mApiDataProviderCallback.channelInfoCallback(null);
                     }
                     break;
                 default:
