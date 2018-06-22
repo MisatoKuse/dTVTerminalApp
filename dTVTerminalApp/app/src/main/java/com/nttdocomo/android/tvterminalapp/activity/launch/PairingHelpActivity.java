@@ -65,7 +65,6 @@ public class PairingHelpActivity extends BaseActivity {
         webSettings.setJavaScriptEnabled(false);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
         webSettings.setTextZoom(100);
-        mFirstPairingHelpWebView.setBackgroundColor(Color.TRANSPARENT);
         if (mFromMode == ParingHelpFromMode.ParingHelpFromMode_Launch.ordinal()) {
             mFirstPairingHelpWebView.loadUrl(UrlConstants.WebUrl.SETTING_HELP_PAIRING_URL);
         } else if (mFromMode == ParingHelpFromMode.ParingHelpFromMode_Setting.ordinal()) {
@@ -73,7 +72,6 @@ public class PairingHelpActivity extends BaseActivity {
             webSettings.setAllowFileAccessFromFileURLs(false);
             mFirstPairingHelpWebView.loadUrl(UrlConstants.WebUrl.SETTING_SUPPORT_PAIRING_URL);
         }
-        mFirstPairingHelpWebView.setWebViewClient(new WebViewClient());
 
         //Headerの設定
         setTitleText(getString(R.string.str_app_title));
