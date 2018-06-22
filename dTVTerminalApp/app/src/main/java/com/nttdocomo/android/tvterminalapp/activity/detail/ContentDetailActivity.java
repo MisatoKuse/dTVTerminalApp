@@ -444,8 +444,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 sendScreenViewForPosition(mViewPager.getCurrentItem());
             } else {
                 sendScreenViewForPosition(0);
-            }
-        }
+    }
+}
         DTVTLogger.end();
     }
 
@@ -2995,14 +2995,24 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             default:
                 break;
         }
+
+        //ダイアログの準備
+        CustomDialog customDialog = new CustomDialog(ContentDetailActivity.this
+                , CustomDialog.DialogType.ERROR);
+
+        //表示するダイアログの切り替え判定
         if (errorState == null || errorState.getErrorType() == DtvtConstants.ErrorType.SUCCESS) {
-            return;
+            //そもそも通信が行われていないか、通信自体には成功しその上でデータが無いならば、コンテンツが無い事を表示
+            customDialog.setContent(getString(R.string.common_empty_data_message));
+        } else {
+            //契約誘導ダイアログを表示
+            customDialog.setContent(errorState.getApiErrorMessage(this));
         }
-        //契約誘導ダイアログを表示
-        CustomDialog customDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.ERROR);
-        customDialog.setContent(errorState.getApiErrorMessage(this));
+
         if (okCallback != null) {
             customDialog.setOkCallBack(okCallback);
+            //OKボタンによる詳細画面表示終了の為、ダイアログの枠外のタッチは無視する
+            customDialog.setOnTouchOutside(false);
         }
         customDialog.showDialog();
     }
