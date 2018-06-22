@@ -131,6 +131,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             switch (StbConnectionManager.shared().getConnectionStatus()) {
                 case NONE_PAIRING:
                 case NONE_LOCAL_REGISTRATION:
+                case HOME_OUT:
                     startPageNo = 1;
                     break;
                 default:
