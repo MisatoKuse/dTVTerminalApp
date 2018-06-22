@@ -32,7 +32,6 @@ public class SettingMenuTermsOfServiceActivity extends BaseActivity {
 
         mTermsOfServiceWebView = findViewById(R.id.setting_menu_main_webview);
         mTermsOfServiceWebView.setWebViewClient(new WebViewClient());
-        mTermsOfServiceWebView.setBackgroundColor(Color.TRANSPARENT);
         WebSettings webSettings = mTermsOfServiceWebView.getSettings();
         webSettings.setJavaScriptEnabled(false);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
