@@ -25,6 +25,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ContentsDetailDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
@@ -53,7 +54,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
     /**
      * チャンネルリストアダプター.
      */
-    private ContentsAdapter mContentsAdapter = null;
+    public ContentsAdapter mContentsAdapter = null;
     /**
      * チャンネルリストデータ.
      */
@@ -274,5 +275,14 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
         if (mContentsAdapter != null) {
             mContentsAdapter.enableConnect();
         }
+    }
+
+    /**
+     * クリップステータスチェック.
+     */
+    public void checkChannelClipStatus() {
+        ContentsDetailDataProvider provider = new ContentsDetailDataProvider(getActivity());
+        mContentsData = provider.checkClipStatus(mContentsData);
+        DTVTLogger.debug("DtvContentsChannelFragment::Clip Status Update");
     }
 }
