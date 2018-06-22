@@ -606,11 +606,12 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
      * 録画予約一覧取得.
      *
      * @param info 録画予約コンテンツ詳細
+     * @return パラメータエラー等でAPIの実行が行えなかった場合はfalse
      */
-    public void requestRecordingReservation(final RecordingReservationContentsDetailInfo info) {
+    public boolean requestRecordingReservation(final RecordingReservationContentsDetailInfo info) {
         RemoteRecordingReservationWebClient client =
                 new RemoteRecordingReservationWebClient(mContext);
-        client.getRemoteRecordingReservationApi(info, this);
+        return client.getRemoteRecordingReservationApi(info, this);
     }
 
     /**

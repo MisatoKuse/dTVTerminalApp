@@ -140,13 +140,13 @@ public class RemoteRecordingReservationWebClient
             DTVTLogger.debug("Title:error");
             return false;
         }
-        // 開始時間が設定されていない場合はfalse
-        if (contentsDetailInfo.getStartTime() <= 0) {
+        // 開始時間は0以上が有効なので負数の場合はfalse
+        if (contentsDetailInfo.getStartTime() < 0) {
             DTVTLogger.debug("StartTime:error");
             return false;
         }
-        // 予約時間の長さが設定されていない場合はfalse
-        if (contentsDetailInfo.getDuration() <= 0) {
+        // 予約時間の長さは0以上が有効なので負数の場合はfalse
+        if (contentsDetailInfo.getDuration() < 0) {
             DTVTLogger.debug("Duration:error");
             return false;
         }
