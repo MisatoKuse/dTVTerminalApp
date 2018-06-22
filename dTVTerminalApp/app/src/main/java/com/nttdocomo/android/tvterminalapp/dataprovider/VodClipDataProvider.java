@@ -39,7 +39,14 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
      * callback.
      */
     private ApiDataProviderCallback mApiDataProviderCallback;
-
+    /**
+     * クリップ一覧データ取得位置.
+     */
+    private int mPagerOffset = 0;
+    /**
+     * クリップキーリストレスポンス.
+     */
+    private ClipKeyListResponse mClipKeyListResponse = null;
     /**
      * 通信禁止判定フラグ.
      */
@@ -49,26 +56,23 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
      */
     private VodClipWebClient mWebClient = null;
     /**
-     * クリップキー一覧取得プロバイダ.
-     */
-    private ClipKeyListDataProvider mClipKeyListDataProvider = null;
-    /**
      * ネットワークエラーの控え.
      */
     private ErrorState mNetworkError = null;
 
     @Override
     public void onVodClipJsonParsed(final List<VodClipList> vodClipLists) {
+        DTVTLogger.start();
         if (vodClipLists != null) {
             List vclist = vodClipLists.get(0).getVcList();
             if (vclist != null) {
                 VodClipList list = vodClipLists.get(0);
                 if (!mRequiredClipKeyList
                         || mResponseEndFlag) {
-                    sendVodClipListData(list.getVcList());
+                    sendVodClipListData(list.getVcList(), mClipKeyListResponse);
                 } else {
                     mClipList = list;
-                    sendVodClipListData(list.getVcList());
+                    sendVodClipListData(list.getVcList(), mClipKeyListResponse);
                 }
             } else {
                 if (null != mApiDataProviderCallback) {
@@ -86,16 +90,15 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
                 mApiDataProviderCallback.vodClipListCallback(null);
             }
         }
+        DTVTLogger.end();
     }
 
     @Override
     public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
-        DTVTLogger.start();
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
-        // コールバック判定
-        if (mClipList != null) {
-            sendVodClipListData(mClipList.getVcList());
-        }
+        DTVTLogger.start();
+        mClipKeyListResponse = clipKeyListResponse;
+        getVodClipListData(mPagerOffset);
         DTVTLogger.end();
     }
 
@@ -128,29 +131,37 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
      * @param pagerOffset ページオフセット
      */
     public void getClipData(final int pagerOffset) {
+        DTVTLogger.start();
         mClipList = null;
+        mPagerOffset = pagerOffset;
         if (!mIsCancel) {
             // クリップキー一覧を取得
             if (mRequiredClipKeyList) {
-                mClipKeyListDataProvider = new ClipKeyListDataProvider(mContext);
-                mClipKeyListDataProvider.getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
+                getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
             }
-            getVodClipListData(pagerOffset);
         } else {
             DTVTLogger.error("VodClipDataProvider is stopping connection");
             if (null != mApiDataProviderCallback) {
                 mApiDataProviderCallback.vodClipListCallback(null);
             }
         }
+        DTVTLogger.end();
     }
 
     /**
      * VodクリップリストをActivityに送る.
      *
      * @param list Vodクリップリスト
+     * @param clipKeyListResponse クリップキーリスト
      */
-    private void sendVodClipListData(final List<Map<String, String>> list) {
-        mApiDataProviderCallback.vodClipListCallback(setContentData(list, null, true));
+    private void sendVodClipListData(final List<Map<String, String>> list, final ClipKeyListResponse clipKeyListResponse) {
+        DTVTLogger.start();
+        List<Map<String, String>> clipList = null;
+        if (clipKeyListResponse != null) {
+            clipList = clipKeyListResponse.getCkList();
+        }
+        mApiDataProviderCallback.vodClipListCallback(setContentData(list, clipList, null, true));
+        DTVTLogger.end();
     }
 
     @Override
@@ -201,9 +212,8 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
     public void stopConnect() {
         DTVTLogger.start();
         mIsCancel = true;
-        if (mClipKeyListDataProvider != null) {
-            mClipKeyListDataProvider.stopConnection();
-        }
+        //親クラスのstopConnectionで止める
+        stopConnection();
         if (mWebClient != null) {
             mWebClient.stopConnection();
         }
@@ -215,9 +225,8 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
     public void enableConnect() {
         DTVTLogger.start();
         mIsCancel = false;
-        if (mClipKeyListDataProvider != null) {
-            mClipKeyListDataProvider.enableConnection();
-        }
+        //親クラスのenableConnectionで再開
+        enableConnection();
         if (mWebClient != null) {
             mWebClient.enableConnection();
         }

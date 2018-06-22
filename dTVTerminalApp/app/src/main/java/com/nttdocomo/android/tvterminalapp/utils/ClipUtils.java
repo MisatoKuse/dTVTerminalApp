@@ -9,6 +9,7 @@ import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 
 import java.util.List;
@@ -127,7 +128,6 @@ public class ClipUtils {
         }
     }
 
-
     /**
      * クリップキーリストとコンテンツ情報を比較してクリップ状態を設定する.
      * @param vodMetaFullData コンテンツ情報
@@ -158,6 +158,22 @@ public class ClipUtils {
                 scheduleInfo.getEventId(),
                 scheduleInfo.getCrId(),
                 scheduleInfo.getTitleId());
+    }
+
+    /**
+     * クリップキーリストとコンテンツ情報を比較してクリップ状態を設定する.
+     * @param contentsData コンテンツ情報
+     * @param mapList クリップ状態
+     */
+    public static boolean setClipStatusContentsData(final ContentsData contentsData, final List<Map<String, String>> mapList) {
+        return setClipStatusFromMap(mapList,
+                contentsData.getDispType(),
+                contentsData.getDtv(),
+                contentsData.getTvService(),
+                contentsData.getServiceId(),
+                contentsData.getEventId(),
+                contentsData.getCrid(),
+                contentsData.getTitleId());
     }
 
     /**

@@ -519,7 +519,6 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         mSchedule.setContentType(contentType);
         mSchedule.setTitleId(titleId);
         mSchedule.setTvService(tvService);
-        mSchedule.setContentsId(map.get(JsonConstants.META_RESPONSE_CRID));
         mSchedule.setClipStatus(ClipUtils.setClipStatusScheduleInfo(mSchedule, clipKeyList));
         return mSchedule;
     }
