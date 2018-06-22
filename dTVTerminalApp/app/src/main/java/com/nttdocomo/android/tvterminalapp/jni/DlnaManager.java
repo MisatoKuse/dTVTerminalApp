@@ -292,6 +292,7 @@ public class DlnaManager {
     public void StartDmp() {
         if (!DlnaManager.shared().startedDmp) {
             String privateDataPath = DlnaUtils.getPrivateDataHomePath(DlnaManager.shared().mContext);
+            DTVTLogger.warning("native call >>>> privateDataPath" + privateDataPath);
             initDmp(privateDataPath);
             startDmp();
             DTVTLogger.warning("native call >>>> StartDmp");
@@ -320,7 +321,7 @@ public class DlnaManager {
         DTVTLogger.warning("StbConnectionManager.shared().getConnectionStatus() = " + StbConnectionManager.shared().getConnectionStatus());
         switch (StbConnectionManager.shared().getConnectionStatus()) {
             case HOME_OUT:
-                DTVTLogger.warning("remoteConnectStatus = " + remoteConnectStatus);
+                DTVTLogger.warning("remoteConnectStatus = " + DlnaManager.shared().remoteConnectStatus);
                 if (TextUtils.isEmpty(DlnaManager.shared().mUdn)) {
                     DlnaDmsItem item = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
                     DlnaManager.shared().mUdn = item.mUdn;
@@ -696,7 +697,7 @@ public class DlnaManager {
             DTVTLogger.warning("requestContainerId = " + manager.requestContainerId);
             DTVTLogger.warning("pageIndex = " + manager.mPageIndex);
             if (!TextUtils.isEmpty(manager.requestContainerId)) {
-                manager.BrowseContentWithContainerId(manager.requestContainerId, mPageIndex);
+                manager.BrowseContentWithContainerId(manager.requestContainerId, manager.mPageIndex);
                 manager.requestContainerId = "";
                 manager.mPageIndex = 0;
             }

@@ -22,6 +22,7 @@ import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
+import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaObject;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
@@ -81,46 +82,28 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         void onClickChannelItem(int pos, ChannelListActivity.ChannelListDataType type,
                                 ChannelListFragment fragment);
     }
-    /**
-     * コンテキスト.
-     */
+    /**コンテキスト.*/
     private Context mContext;
-    /**
-     * 表示するデータ.
-     */
+    /** 表示するデータ.*/
     private List mData = null;
-    /**
-     * ChannelListLayout.
-     */
+    /** 親ビュー.*/
     private View mRootView = null;
-    /**
-     * 表示するListView自体.
-     */
+    /** 表示するListView自体.*/
     private ListView mListView;
-    /**
-     * 表示するProgressDialog.
-     */
+    /** 表示するProgressDialog.*/
     private RelativeLayout mRelativeLayout;
-    /**
-     * Listにセットするアダプタ.
-     */
+    /** Listにセットするアダプタ.*/
     private ChannelListAdapter mChannelListAdapter;
-    /**
-     * リストスクロールのコールバックリスナー.
-     */
+    /** リストスクロールのコールバックリスナー.*/
     private ChannelListFragmentListener mScrollListener;
-    /**
-     * データタイプ.
-     */
+    /** データタイプ.*/
     private ChannelListActivity.ChannelListDataType mChannelListDataType;
-    /**
-     * リスナー.
-     */
+    /** リスナー.*/
     private OnClickChannelItemListener mOnClickChannelItemListener;
-    /**
-     * フッタービュー.
-     */
+    /** フッタービュー.*/
     private View mFootView;
+    /** 宅内、宅外区分.*/
+    public boolean mIsRemote;
 
     /**
      * コンストラクタ.
@@ -271,6 +254,14 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
     }
 
     /**
+     * 接続ステータス取得.
+     * @return true:宅外　false:宅内
+     */
+    public boolean getConnectionStatus() {
+        return StbConnectionManager.shared().getConnectionStatus() != StbConnectionManager.ConnectionStatus.HOME_IN;
+    }
+
+    /**
      * 表示するデータを設定する.
      *
      * @param item 表示するデータ
@@ -280,6 +271,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
             mData = new ArrayList();
         }
         mData.add(item);
+        mIsRemote = getConnectionStatus();
     }
 
     /**

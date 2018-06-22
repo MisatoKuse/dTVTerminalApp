@@ -92,10 +92,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private static final int ALL_RECORD_LIST = 0;
     /** ダウンロード済み. */
     private static final int DOWNLOAD_OVER = 1;
-    /** タブインデックス　すべて.*/
-    private static final int TAB_INDEX_ALL = 0;
-    /** タブインデックス　ダウンロード済み.*/
-    private static final int TAB_INDEX_DOWONLOAD_COMPLETED = 1;
     /** 前回のタブポジション.*/
     private static final String START_TAB_POSITION = "startTabPosition";
     /** ハンドラー(ScrollView関連). */
@@ -132,10 +128,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 case NONE_PAIRING:
                 case NONE_LOCAL_REGISTRATION:
                 case HOME_OUT:
-                    startPageNo = 1;
+                    startPageNo = DOWNLOAD_OVER;
                     break;
                 default:
-                    startPageNo = 0;
+                    startPageNo = ALL_RECORD_LIST;
                     break;
             }
             mViewPager.setCurrentItem(startPageNo);
@@ -291,10 +287,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      */
     private void sendScreenViewForPosition(final int position) {
         switch (position) {
-            case TAB_INDEX_ALL:
+            case ALL_RECORD_LIST:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_recording_list));
                 break;
-            case TAB_INDEX_DOWONLOAD_COMPLETED:
+            case DOWNLOAD_OVER:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_recording_list_takeout));
                 break;
         }
@@ -431,28 +427,33 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * DMSデバイスを取り始める.
      */
     private void getData() {
-        switch (mViewPager.getCurrentItem()) {
-            case ALL_RECORD_LIST:
-                DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-                // 未ペアリング時
-                if (dlnaDmsItem.mControlUrl.isEmpty()) {
-                    showGetDataFailedToast();
-                    mNoDataMessage.setVisibility(View.VISIBLE);
-                    setProgressBarGone();
-                } else {
-                    mDlnaContentRecordedDataProvider.listen(this);
-                    mDlnaContentRecordedDataProvider.browse(this, mPageIndex);
-                    if (mPageIndex == 0 && !mIsLoading) {
-                        clearFragment(0);
-                    }
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                switch (mViewPager.getCurrentItem()) {
+                    case ALL_RECORD_LIST:
+                        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(RecordedListActivity.this);
+                        // 未ペアリング時
+                        if (dlnaDmsItem.mControlUrl.isEmpty()) {
+                            showGetDataFailedToast();
+                            mNoDataMessage.setVisibility(View.VISIBLE);
+                            setProgressBarGone();
+                        } else {
+                            mDlnaContentRecordedDataProvider.listen(RecordedListActivity.this);
+                            mDlnaContentRecordedDataProvider.browse(RecordedListActivity.this, mPageIndex);
+                            if (mPageIndex == 0 && !mIsLoading) {
+                                clearFragment(0);
+                            }
+                        }
+                        break;
+                    case DOWNLOAD_OVER:
+                        setRecordedTakeOutContents();
+                        break;
+                    default:
+                        break;
                 }
-                break;
-            case DOWNLOAD_OVER:
-                setRecordedTakeOutContents();
-                break;
-            default:
-                break;
-        }
+            }
+        });
     }
 
     /**
@@ -540,6 +541,14 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     /**
+     * 接続ステータス取得.
+     * @return true:宅外　false:宅内
+     */
+    private boolean getConnectionStatus() {
+        return StbConnectionManager.shared().getConnectionStatus() != StbConnectionManager.ConnectionStatus.HOME_IN;
+    }
+
+    /**
      * VideoBrowsの設定.
      *
      * @param dlnaRecVideoItems 録画ビデオアイテム
@@ -556,13 +565,14 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         List<ContentsData> listData = baseFragment.getContentsData();
         if (null != listData && mPageIndex == 0 && !mIsLoading) {
             listData.clear();
+            baseFragment.mContentsList.clear();
         }
         if (baseFragment.mQueueIndex == null) {
             baseFragment.mQueueIndex = new ArrayList<>();
         }
         baseFragment.mQueueIndex.clear();
         setDownLoadQue(baseFragment, dlnaRecVideoItems, resultList);
-        final boolean hideDownloadBtn = StbConnectionManager.shared().getConnectionStatus() != StbConnectionManager.ConnectionStatus.HOME_IN;
+        final boolean hideDownloadBtn = getConnectionStatus();
         for (int i = 0; i < dlnaRecVideoItems.size(); i++) {
             DlnaRecVideoItem itemData = dlnaRecVideoItems.get(i);
             RecordedContentsDetailData detailData = new RecordedContentsDetailData();
@@ -577,6 +587,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             detailData.setVideoType(itemData.mVideoType);
             detailData.setClearTextSize(itemData.mClearTextSize);
             detailData.setXml(itemData.mXml);
+            if (hideDownloadBtn) {
+                detailData.setIsRemote(true);
+            }
             if (resultList != null && resultList.size() > 0) {
                 for (Map<String, String> hashMap : resultList) {
                     String itemId = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
@@ -897,17 +910,17 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
                     && absListView.getLastVisiblePosition() == fragment.getDataCount() - 1
                     && !mIsLoading) {
-                mIsLoading = true;
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
+                if (mViewPager.getCurrentItem() == ALL_RECORD_LIST) {
+                    if (fragment.mContentsList.size() > 0 && (fragment.mContentsList.get(0).isRemote() == getConnectionStatus())) {
+                        mIsLoading = true;
                         mNoDataMessage.setVisibility(View.GONE);
-                        if (mViewPager.getCurrentItem() == ALL_RECORD_LIST) {
-                            fragment.loadStart();
-                            getData();
-                        }
+                        fragment.loadStart();
+                        getData();
+                    } else {
+                        mPageIndex = 0;
+                        setTab(0);
                     }
-                });
+                }
             }
         }
     }

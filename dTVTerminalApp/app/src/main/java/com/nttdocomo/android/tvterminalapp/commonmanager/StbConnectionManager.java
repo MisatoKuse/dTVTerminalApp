@@ -8,7 +8,6 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
@@ -79,7 +78,7 @@ public class StbConnectionManager {
 
         boolean connected = SharedPreferencesUtils.getSharedPreferencesStbConnect(context);
         if (connected) {
-            connectionStatus = ConnectionStatus.HOME_OUT;
+            StbConnectionManager.shared().connectionStatus = ConnectionStatus.HOME_OUT;
         }
     }
 
@@ -88,18 +87,18 @@ public class StbConnectionManager {
      */
     public void initializeState() {
         DTVTLogger.info("before connectionStatus = " + connectionStatus);
-        connectionStatus = ConnectionStatus.NONE_PAIRING;
+        StbConnectionManager.shared().connectionStatus = ConnectionStatus.NONE_PAIRING;
         boolean connected = SharedPreferencesUtils.getSharedPreferencesStbConnect(StbConnectionManager.shared().mContext);
         if (connected) { // ペアリング済みであればRLを確認
             String remoteDeviceExpireDate = SharedPreferencesUtils.getRemoteDeviceExpireDate(StbConnectionManager.shared().mContext);
             if (TextUtils.isEmpty(remoteDeviceExpireDate)) {
-                connectionStatus = ConnectionStatus.NONE_LOCAL_REGISTRATION;
+                StbConnectionManager.shared().connectionStatus = ConnectionStatus.NONE_LOCAL_REGISTRATION;
             } else {
-                connectionStatus = ConnectionStatus.HOME_OUT;
+                StbConnectionManager.shared().connectionStatus = ConnectionStatus.HOME_OUT;
             }
         }
         DTVTLogger.info("after connectionStatus = " + connectionStatus);
-        setConnectionStatus(connectionStatus);
+        setConnectionStatus(StbConnectionManager.shared().connectionStatus);
     }
 
     /**
@@ -107,7 +106,7 @@ public class StbConnectionManager {
      * @return 接続ステータス
      */
     public ConnectionStatus getConnectionStatus() {
-        return connectionStatus;
+        return StbConnectionManager.shared().connectionStatus;
     }
 
     /**
@@ -138,8 +137,8 @@ public class StbConnectionManager {
 
                 break;
         }
-        if (connectionStatus != ConnectionStatus.NONE_PAIRING) {
-            connectionStatus = ConnectionStatus.HOME_OUT;
+        if (StbConnectionManager.shared().connectionStatus != ConnectionStatus.NONE_PAIRING) {
+            StbConnectionManager.shared().connectionStatus = ConnectionStatus.HOME_OUT;
         }
     }
     // endregion method

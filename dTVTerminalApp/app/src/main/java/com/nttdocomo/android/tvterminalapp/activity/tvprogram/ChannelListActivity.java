@@ -461,11 +461,23 @@ public class ChannelListActivity extends BaseActivity implements
                         mNoDataMessage.setVisibility(View.GONE);
                         switch (fragment.getChListDataType()) {
                             case CH_LIST_DATA_TYPE_BS:
-                                fragment.loadStart();
+                                if (fragment.getConnectionStatus() == fragment.mIsRemote) {
+                                    fragment.loadStart();
+                                } else {
+                                    mPageIndex = 0;
+                                    fragment.showProgressBar(true);
+                                    fragment.clearDatas();
+                                }
                                 getBsData();
                                 break;
                             case CH_LIST_DATA_TYPE_TDB:
-                                fragment.loadStart();
+                                if (fragment.getConnectionStatus() == fragment.mIsRemote) {
+                                    fragment.loadStart();
+                                } else {
+                                    mPageIndex = 0;
+                                    fragment.showProgressBar(true);
+                                    fragment.clearDatas();
+                                }
                                 getTerData();
                                 break;
                             case CH_LIST_DATA_TYPE_HIKARI:
@@ -694,7 +706,7 @@ public class ChannelListActivity extends BaseActivity implements
                 if (null == fragment || null == list) {
                     return;
                 }
-                if (!isFromDLNA) {
+                if (!isFromDLNA || mPageIndex == 0) {
                     fragment.clearDatas();
                 } else {
                     if (mPageIndex > 0) {
@@ -707,9 +719,8 @@ public class ChannelListActivity extends BaseActivity implements
                 noticeRefresh(fragment);
                 if (mPageIndex == 0 && list.size() == 0) {
                     mNoDataMessage.setVisibility(View.VISIBLE);
-                } else {
-                    mPageIndex++;
                 }
+                mPageIndex++;
                 fragment.showProgressBar(false);
             }
         });

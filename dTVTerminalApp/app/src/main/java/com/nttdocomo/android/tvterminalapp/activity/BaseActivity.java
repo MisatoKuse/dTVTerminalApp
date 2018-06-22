@@ -832,6 +832,9 @@ public class BaseActivity extends FragmentActivity implements
             DTVTLogger.end();
             return;
         }
+        if (DlnaManager.shared().mContext == null) {
+            DlnaManager.shared().mContext = this;
+        }
         DlnaManager.shared().StartDmp();
         DTVTLogger.end();
     }
