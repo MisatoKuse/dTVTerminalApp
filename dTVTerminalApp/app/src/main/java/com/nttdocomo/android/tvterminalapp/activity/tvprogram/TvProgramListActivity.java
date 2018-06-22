@@ -41,6 +41,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ViewUtils;
 import com.nttdocomo.android.tvterminalapp.view.ProgramRecyclerView;
@@ -953,6 +954,34 @@ public class TvProgramListActivity extends BaseActivity implements
             mTimeLine.setVisibility(View.VISIBLE);
             mMyChannelNoDataTxT.setVisibility(View.INVISIBLE);
         }
+
+        //端末に設定された日付と現在番組表で設定されている日付を比較する
+        if(!compareNowDate(mSelectDateStr)) {
+            //違っていたので、これまでの条件とは無関係に、NOW表示は透明にする
+            mTimeLine.setVisibility(View.INVISIBLE);
+        }
+
+    }
+
+    /**
+     * 指定された日付が、現在の日付と一致するかどうかを見る.
+     *
+     * @param compareDate 比較対象の日付(YYYY-MM-DD形式)
+     * @return 指定した日付と現在の日付が一致すればtrue
+     */
+    boolean compareNowDate(String compareDate) {
+        //念の為に数字だけにする
+        String compareTemporary = StringUtils.deleteExceptNumbers(compareDate);
+
+        //現在の日付を取得する
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                DateUtils.DATE_NOMARK_YYYYMMDD, Locale.JAPAN);
+        String nowDate;
+        Calendar calendar = Calendar.getInstance();
+        nowDate = dateFormat.format(calendar.getTime());
+
+        //比較して結果を返す
+        return nowDate.equals(compareTemporary);
     }
 
     /**
