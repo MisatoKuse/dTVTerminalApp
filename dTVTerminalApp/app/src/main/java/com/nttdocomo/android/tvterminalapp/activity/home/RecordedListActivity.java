@@ -43,6 +43,7 @@ import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -237,16 +238,18 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     /**
-     * オブジェクトIDを編集する.
+     * リモート視聴の場合もオブジェクトID統一するようを編集.
      *
      * @param objectId オブジェクトID
-     * @return objectId 編集後のオブジェクトID
+     * @return 編集後のオブジェクトID
      */
     private String modifyObjectId(final String objectId) {
         if (TextUtils.isEmpty(objectId)) {
             return objectId;
         }
-        return objectId.replace("remote1", "smartphone").replace("remote2", "smartphone").replace("remote3", "smartphone");
+        return objectId.replace(DlnaUtils.IMAGE_QUALITY_HIGH_URL, DlnaUtils.IMAGE_QUALITY_DEFAULT_URL)
+                .replace(DlnaUtils.IMAGE_QUALITY_MIDDLE_URL, DlnaUtils.IMAGE_QUALITY_DEFAULT_URL)
+                .replace(DlnaUtils.IMAGE_QUALITY_LOW_URL, DlnaUtils.IMAGE_QUALITY_DEFAULT_URL);
     }
 
     /**
@@ -846,7 +849,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                         String title = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_TITLE);
                         String totalSize = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_SIZE);
                         DlnaRecVideoItem dlnaRecVideoItem = new DlnaRecVideoItem();
-                        dlnaRecVideoItem.mItemId = itemId;
+                        dlnaRecVideoItem.mItemId = itemId.replaceFirst(DownloaderBase.sDlPrefix, "");
                         dlnaRecVideoItem.mClearTextSize = totalSize;
                         dlnaRecVideoItem.mTitle = title;
                         dlnaRecVideoItem.mDuration = duration;
