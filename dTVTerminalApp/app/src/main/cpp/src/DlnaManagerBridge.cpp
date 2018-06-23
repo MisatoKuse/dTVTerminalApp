@@ -452,6 +452,24 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_freeDmp(JNIEnv *env, jo
     LOG_WITH("");
     dlnaBase->freeDmp(dmp);
 }
+
+JNIEXPORT void JNICALL
+Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_resetdmp(JNIEnv *env, jobject thiz, jstring path) {
+    if (dmp == nullptr) {
+        dmp = new DMP();
+    }
+    bool resultDmp = dlnaBase->initDmp(dmp);
+    LOG_WITH_BOOL(resultDmp, "resultDmp");
+
+    const char *pathString = env->GetStringUTFChars(path, 0);
+    char buffer[256];
+    snprintf(buffer, sizeof(buffer), "%s/%s", pathString, "capability.xml");
+    bool resultDavCapability = dlnaBase->initDavCapability(dmp, buffer);
+    LOG_WITH_BOOL(resultDavCapability, "resultDavCapability");
+    LOG_WITH("pathString %s ", pathString);
+    bool resultDtcp = dlnaBase->initDtcp(dmp, pathString);
+    LOG_WITH_BOOL(resultDtcp, "resultDtcp");
+}
 //connectDmsWithUdn
 JNIEXPORT void JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_connectDmsWithUdn(JNIEnv *env, jobject thiz, jstring udn) {
