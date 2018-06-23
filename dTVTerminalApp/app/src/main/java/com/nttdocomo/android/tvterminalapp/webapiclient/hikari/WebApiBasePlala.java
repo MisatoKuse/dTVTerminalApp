@@ -662,16 +662,17 @@ public class WebApiBasePlala {
             @Override
             public void getOttCallBack(int result, final String id,
                                        final String oneTimePassword) {
-                //ワンタイムパスワードが取得できたかどうかを見る
-                if (result != IDimDefines.RESULT_COMPLETE) {
-                    //リザルトのコードがゼロ以外なので、トークンエラーにする
-                    DTVTLogger.debug("d Account one time token get fail");
-                    ReturnCode returnCode = new ReturnCode();
-                    returnCode.errorState.setErrorType(
-                            DtvtConstants.ErrorType.TOKEN_ERROR);
-                    serviceTokenErrorCallback.onTokenError(returnCode);
-                    return;
-                }
+                //TODO: 既存処理に悪影響があるので、一旦この処理は無効化
+//                //ワンタイムパスワードが取得できたかどうかを見る
+//                if (result != IDimDefines.RESULT_COMPLETE) {
+//                    //リザルトのコードがゼロ以外なので、トークンエラーにする
+//                    DTVTLogger.debug("d Account one time token get fail");
+//                    ReturnCode returnCode = new ReturnCode();
+//                    returnCode.errorState.setErrorType(
+//                            DtvtConstants.ErrorType.TOKEN_ERROR);
+//                    serviceTokenErrorCallback.onTokenError(returnCode);
+//                    return;
+//                }
 
                 //ワンタイムトークンが期限内ならば、そのまま使用する
                 OneTimeTokenData tokenData = SharedPreferencesUtils.getOneTimeTokenData(mContext);
