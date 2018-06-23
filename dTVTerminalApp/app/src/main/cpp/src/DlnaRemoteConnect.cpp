@@ -298,6 +298,11 @@ void DlnaRemoteConnect::connectRemote(const du_uchar* udn){
     LOG_WITH_BOOL_PARAM(result, "udn = %s", udn);
 }
 
+void DlnaRemoteConnect::disconnectRemote(const du_uchar* udn){
+    bool disResult = drag_cp_disconnect_from_dms(DU_UCHAR(udn));
+    LOG_WITH_BOOL_PARAM(disResult, "udn = %s", udn);
+}
+
 const char* DlnaRemoteConnect::getRemoteDeviceExpireDate(const du_uchar* udn) {
     LOG_WITH_PARAM(">>>");
     dms_info_array dia;

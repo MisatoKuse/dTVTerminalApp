@@ -327,7 +327,7 @@ public class DlnaManager {
                     DlnaManager.shared().mUdn = item.mUdn;
                 }
                 if (DlnaManager.shared().remoteConnectStatus == RemoteConnectStatus.READY) {
-                    requestRemoteConnect(DlnaManager.shared().mUdn);
+                    RequestRemoteConnect(DlnaManager.shared().mUdn);
                     DlnaManager.shared().requestContainerId = containerId;
                     DlnaManager.shared().mPageIndex = pageIndex;
                 } else {
@@ -420,8 +420,16 @@ public class DlnaManager {
      * リモート接続を行う.
      * @param udn udn
      */
-    public void RequestRemoteConnect(final String udn) {
+    private void RequestRemoteConnect(final String udn) {
         requestRemoteConnect(udn);
+    }
+
+    /**
+     * リモート切断を行う.
+     * @param udn udn
+     */
+    public void RequestRemoteDisconnect(final String udn) {
+        requestRemoteDisconnect(udn);
     }
 
     /**
@@ -731,6 +739,8 @@ public class DlnaManager {
                 break;
             case HOME_OUT_CONNECT:
                 StbConnectionManager.shared().setConnectionStatus(StbConnectionManager.ConnectionStatus.HOME_OUT);
+                DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
+                RequestRemoteDisconnect(dlnaDmsItem.mUdn);
                 break;
         }
     }
@@ -813,6 +823,11 @@ public class DlnaManager {
      * @param udn udn
      */
     private native void requestRemoteConnect(String udn);
+    /**
+     * リモート切断処理を行う.
+     * @param udn udn
+     */
+    private native void requestRemoteDisconnect(String udn);
     /**
      * ローカルレジストレーションの有効期限日.
      *

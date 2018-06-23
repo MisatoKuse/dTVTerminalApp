@@ -519,6 +519,13 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_requestRemoteConnect(JN
     dlnaRemoteConnect->connectRemote(DU_UCHAR(udnString));
 }
 
+JNIEXPORT void JNICALL
+Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_requestRemoteDisconnect(JNIEnv *env, jobject thiz, jstring udn) {
+    const char *udnString = env->GetStringUTFChars(udn, 0);
+    LOG_WITH("udnString = %s", udnString);
+    dlnaRemoteConnect->disconnectRemote(DU_UCHAR(udnString));
+}
+
 JNIEXPORT jstring JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_getRemoteDeviceExpireDate(JNIEnv *env, jobject thiz, jstring udn) {
     const char *udnString = env->GetStringUTFChars(udn, 0);
