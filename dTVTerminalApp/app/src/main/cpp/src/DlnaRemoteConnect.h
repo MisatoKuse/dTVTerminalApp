@@ -32,6 +32,7 @@ public:
     const char* getRemoteDeviceExpireDate(const du_uchar* udn);
     
     void connectRemote(const du_uchar* udn);
+    void disconnectRemote(const du_uchar* udn);
     void finalizeDirag();
     
 private:
