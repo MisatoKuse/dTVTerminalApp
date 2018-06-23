@@ -896,7 +896,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         }
         RecordedBaseFragment fra = mRecordedFragmentFactory.createFragment(0);
         if (null != fra) {
-            if (fra == thiz) {
+            if (fra.equals(thiz)) {
                 return;
             }
             fra.setFragmentName(RLA_FragmentName_All);

@@ -2864,7 +2864,7 @@ public class BaseActivity extends FragmentActivity implements
      */
     @Override
     public void onClick(final View view) {
-        if (mMenuImageViewForBase == view) {
+        if (view != null && view.equals(mMenuImageViewForBase)) {
             if (HEADER_ICON_CLOSE.equals(mMenuImageViewForBase.getTag())) {
                 // コンテンツ詳細画面の×ボタン時はコンテンツ詳細画面を閉じる
                 contentsDetailCloseKey(view);
@@ -2874,7 +2874,7 @@ public class BaseActivity extends FragmentActivity implements
                     displayGlobalMenu();
                 }
             }
-        } else if (mHeaderBackIcon == view) {
+        } else if (view != null && view.equals(mHeaderBackIcon)) {
             contentsDetailBackKey(null);
         }
     }

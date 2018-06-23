@@ -432,7 +432,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
         @Override
         public boolean isViewFromObject(final View view, final Object object) {
-            return view == object;
+            return view.equals(object);
         }
 
         @Override

@@ -311,7 +311,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
 
     @Override
     public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-        if (mLoadMoreView == view) {
+        if (view != null && view.equals(mLoadMoreView)) {
             return;
         }
         mContentsDetailDisplay = true;
