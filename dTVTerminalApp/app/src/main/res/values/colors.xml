@@ -101,6 +101,7 @@
     <color name="remote_watch_by_tv_bottom_corners_dtv">#D3052C</color>
     <color name="remote_watch_by_tv_bottom_corners_d_anime">#DD5e30</color>
     <color name="remote_watch_by_tv_bottom_corners_dtvchannel_and_hikari">#00A2E6</color>
+    <color name="remote_controller_background">#F5F5F5</color>
     <!--//チャンネルリスト-->
     <color name="list_view_divider">#333333</color>
 
