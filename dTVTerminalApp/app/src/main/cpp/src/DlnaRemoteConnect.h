@@ -25,11 +25,11 @@ public:
     bool restartDirag(DMP *d);
 
     bool startDirag(DMP *d);
-    bool stopDirag();
+    void stopDirag();
 
     bool requestLocalRegistration(DMP *d, const du_uchar* udn, const du_uchar* registerName);
     
-    const char* getRemoteDeviceExpireDate(const du_uchar* udn);
+    const char* getRemoteDeviceExpireDate(const du_uchar* udn, char *date, int length);
     
     void connectRemote(const du_uchar* udn);
     void disconnectRemote(const du_uchar* udn);

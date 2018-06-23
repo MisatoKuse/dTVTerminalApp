@@ -841,8 +841,8 @@ public class BaseActivity extends FragmentActivity implements
         if (StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.NONE_PAIRING) {
             return;
         }
-        if (DlnaManager.shared().mContext == null) {
-            DlnaManager.shared().mContext = this;
+        if (DlnaManager.shared().getContext() == null) {
+            DlnaManager.shared().setContext(getApplicationContext());
         }
         DlnaManager.shared().StartDmp();
         DTVTLogger.end();
