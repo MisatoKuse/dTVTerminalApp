@@ -832,6 +832,9 @@ public class BaseActivity extends FragmentActivity implements
             DTVTLogger.end();
             return;
         }
+        if (StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.NONE_PAIRING) {
+            return;
+        }
         if (DlnaManager.shared().mContext == null) {
             DlnaManager.shared().mContext = this;
         }
