@@ -49,7 +49,7 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
     /**
      * SSLチェック用コンテキスト.
      */
-    private Context mContext;
+    private final Context mContext;
     /**
      * 通信禁止判定フラグ.
      */

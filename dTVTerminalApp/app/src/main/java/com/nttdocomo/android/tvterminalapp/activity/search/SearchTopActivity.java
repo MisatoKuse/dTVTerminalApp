@@ -111,7 +111,7 @@ public class SearchTopActivity extends BaseActivity
     /**
      * 検索時のソート種別.
      */
-    private SearchSortKind mSearchSortKind = new SearchSortKind(SearchSortKind.SearchSortKindEnum.SEARCH_SORT_KIND_NONE);
+    private final SearchSortKind mSearchSortKind = new SearchSortKind(SearchSortKind.SearchSortKindEnum.SEARCH_SORT_KIND_NONE);
     /**
      * fragment factory.
      */
@@ -172,7 +172,7 @@ public class SearchTopActivity extends BaseActivity
     /**
      * 最後に表示したタブindex.
      */
-    protected int mTabIndex = 0;
+    private int mTabIndex = 0;
     /**
      * 最後に表示したタブindex.
      */
@@ -266,7 +266,7 @@ public class SearchTopActivity extends BaseActivity
                     setEditTextFocus();
                     // フォーカスが当たった時
                     mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                        Handler handler = new Handler();
+                        final Handler handler = new Handler();
                         // 次回検索日時
                         long searchTime = 0;
                         // 前回文字列
@@ -580,7 +580,7 @@ public class SearchTopActivity extends BaseActivity
     @Override
     public void onSearchDataProviderFinishOk(final ResultType<TotalSearchContentInfo> resultType) {
         TotalSearchContentInfo content = resultType.getResultType();
-        mSearchTotalCount = content.totalCount;
+        mSearchTotalCount = content.getTotalCount();
         mIsScroll = false;
 
         SearchBaseFragment baseFragment = mFragmentFactory.createFragment(mTabIndex, this);
@@ -604,10 +604,10 @@ public class SearchTopActivity extends BaseActivity
             baseFragment.setNoDataMessageVisibility(false);
             //画面表示用のデータセット
             for (int i = 0; i < content.getContentsDataList().size(); ++i) {
-                baseFragment.mData.add(content.getContentsDataList().get(i));
+                baseFragment.addContentData(content.getContentsDataList().get(i));
             }
 
-            DTVTLogger.debug("baseFragment.mData.size = " + baseFragment.mData.size());
+            DTVTLogger.debug("baseFragment.mData.size = " + baseFragment.getContentDataSize());
 
             baseFragment.notifyDataSetChanged(getResultString(), mTabIndex);
             baseFragment.invalidateViews();

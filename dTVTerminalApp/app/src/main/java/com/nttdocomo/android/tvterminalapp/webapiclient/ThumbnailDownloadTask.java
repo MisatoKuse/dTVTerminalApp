@@ -48,17 +48,17 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
     /** サムネイルのURL. */
     private String mImageUrl;
     /** 取得したサムネイルを表示するImageView. */
-    private ImageView mImageView;
+    private final ImageView mImageView;
     /** サムネイルプロバイダー. */
-    private ThumbnailProvider mThumbnailProvider;
+    private final ThumbnailProvider mThumbnailProvider;
     /** SSLチェック用コンテキスト. */
-    private Context mContext;
+    private final Context mContext;
     /** 通信停止用コネクション蓄積. */
     private volatile static List<HttpURLConnection> mUrlConnections = null;
     /** 通信停止フラグ. */
     private boolean mIsStop = false;
     /**画像サイズ種類.*/
-    private ImageSizeType mImageSizeType;
+    private final ImageSizeType mImageSizeType;
     /**
      * サムネイルダウンロードのコンストラクタ.
      *

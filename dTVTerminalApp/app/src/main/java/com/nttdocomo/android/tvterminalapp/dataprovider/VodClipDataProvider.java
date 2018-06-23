@@ -29,7 +29,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
     /**
      * コンテキスト.
      */
-    private Context mContext;
+    private final Context mContext;
     /**
      * クリップ一覧データ.
      */
@@ -38,7 +38,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
     /**
      * callback.
      */
-    private ApiDataProviderCallback mApiDataProviderCallback;
+    private final ApiDataProviderCallback mApiDataProviderCallback;
     /**
      * クリップ一覧データ取得位置.
      */

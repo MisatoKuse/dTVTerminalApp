@@ -27,10 +27,10 @@ public class RecommendVdWebClient extends WebApiBase implements WebApiCallback {
             //ホーム画面におすすめビデオを表示する為のカテゴリー（仮の値から実際の値に昇格）
             "15:01,15:02,17:01,43:02,43:03,44:05,44:06,44:08,44:10&";
     /**RecommendVideoCallback.*/
-    private RecommendVideoCallback mRecommendVideoCallback;
+    private final RecommendVideoCallback mRecommendVideoCallback;
 
     /**SSLチェック用コンテキスト.*/
-    private Context mContext;
+    private final Context mContext;
 
     /**
      * おすすめビデオ一覧用callback.

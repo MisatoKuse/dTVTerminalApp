@@ -14,11 +14,11 @@ public class RecordingReservationContentsDetailInfo {
     /**
      * 放送種別 1:多チャンネル放送.
      */
-    private int mPlatformType = 1;
+    private final int mPlatformType = 1;
     /**
      * サービスID.
      */
-    private String mServiceId;
+    private final String mServiceId;
     /**
      * イベントID(番組指定予約の場合必須).
      */
@@ -26,15 +26,15 @@ public class RecordingReservationContentsDetailInfo {
     /**
      * 番組タイトル（STB予約リストに表示するタイトル）.
      */
-    private String mTitle;
+    private final String mTitle;
     /**
      * 録画予約開始時間.
      */
-    private long mStartTime;
+    private final long mStartTime;
     /**
      * 予約時間の長さ.
      */
-    private long mDuration;
+    private final long mDuration;
     /**
      * 定期予約指定値:0～10（イベントIDありの場合0固定）.
      */
@@ -42,7 +42,7 @@ public class RecordingReservationContentsDetailInfo {
     /**
      * パレンタル設定値.
      */
-    private String mRValue;
+    private final String mRValue;
 
     /**
      * コンストラク.

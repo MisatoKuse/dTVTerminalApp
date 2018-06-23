@@ -59,7 +59,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     /**Scroller.*/
     private Scroller mScroller = null;
     /**リストビュー.*/
-    private List<View> mViewList = new ArrayList<>();
+    private final List<View> mViewList = new ArrayList<>();
     /**ViewPager.*/
     private ViewPager mViewPager = null;
     /**FrameLayout.*/
@@ -458,7 +458,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     /**
      * リモコンUI画面 onFling処理.
      */
-    private GestureDetector.OnGestureListener mGestureListener = new GestureDetector.SimpleOnGestureListener() {
+    private final GestureDetector.OnGestureListener mGestureListener = new GestureDetector.SimpleOnGestureListener() {
         @Override
         public boolean onFling(final MotionEvent e1, final MotionEvent e2, final float velocityX, final float velocityY) {
             DTVTLogger.start();
@@ -480,7 +480,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     /**
      * リモコンUI画面のonFlingを取得する.
      */
-    private OnTouchListener mOnTouchListener = new OnTouchListener() {
+    private final OnTouchListener mOnTouchListener = new OnTouchListener() {
         @Override
         public boolean onTouch(final View v, final MotionEvent event) {
             return mGestureDetector.onTouchEvent(event);
@@ -489,7 +489,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     /**
      * キーボタン上でFlingした際にonFling処理.
      */
-    private OnTouchListener mParentOnTouchListener = new OnTouchListener() {
+    private final OnTouchListener mParentOnTouchListener = new OnTouchListener() {
         @Override
         public boolean onTouch(final View v, final MotionEvent event) {
             DTVTLogger.start();

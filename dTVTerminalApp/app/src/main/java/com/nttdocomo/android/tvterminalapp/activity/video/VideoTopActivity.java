@@ -364,7 +364,7 @@ public class VideoTopActivity extends BaseActivity implements
         }
         DTVTLogger.start("list size : " + list.size());
         mContentsList = list;
-        mVideoGenreAdapter.mData = mContentsList;
+        mVideoGenreAdapter.setData(mContentsList);
         mVideoGenreAdapter.notifyDataSetChanged();
 
         DTVTLogger.end();

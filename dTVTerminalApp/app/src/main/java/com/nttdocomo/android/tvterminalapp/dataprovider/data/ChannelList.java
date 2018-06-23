@@ -74,7 +74,7 @@ public class ChannelList implements Parcelable {
     public ChannelList() {
     }
 
-    protected ChannelList(Parcel in) {
+    private ChannelList(Parcel in) {
         this.mResponseInfoMap = (HashMap<String, String>) in.readSerializable();
         this.mChannelList = new ArrayList<HashMap<String, String>>();
         //TODO 自動生成したのにビルドエラーが出るので一時的にコメントアウト(対策は後回し)

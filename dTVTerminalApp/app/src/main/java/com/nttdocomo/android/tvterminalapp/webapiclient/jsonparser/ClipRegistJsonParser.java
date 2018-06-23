@@ -19,7 +19,7 @@ import org.json.JSONObject;
 public class ClipRegistJsonParser extends AsyncTask<Object, Object, String> {
 
     /** callback.*/
-    private ClipRegistWebClient.ClipRegistJsonParserCallback mClipJsonParserCallback;
+    private final ClipRegistWebClient.ClipRegistJsonParserCallback mClipJsonParserCallback;
 
     /**クリップ登録/削除成功判定用.*/
     private static final String CLIP_RESULT_STATUS_OK = "OK";

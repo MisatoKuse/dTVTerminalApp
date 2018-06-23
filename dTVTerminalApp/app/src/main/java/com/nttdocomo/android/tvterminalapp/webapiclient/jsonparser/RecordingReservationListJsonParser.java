@@ -23,7 +23,7 @@ import java.util.ArrayList;
  */
 public class RecordingReservationListJsonParser extends AsyncTask<Object, Object, Object> {
     /**callback.*/
-    private RecordingReservationListWebClient.RecordingReservationListJsonParserCallback
+    private final RecordingReservationListWebClient.RecordingReservationListJsonParserCallback
             mRecordingReservationListJsonParserCallback;
     /**オブジェクトクラスの定義.*/
     private RecordingReservationListResponse mRecordingReservationListResponse;

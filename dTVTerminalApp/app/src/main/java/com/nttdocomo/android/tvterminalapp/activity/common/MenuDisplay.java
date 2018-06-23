@@ -53,7 +53,7 @@ import java.util.List;
  */
 public class MenuDisplay implements AdapterView.OnItemClickListener {
     /**Singleton.*/
-    private static MenuDisplay sMenuDisplay = new MenuDisplay();
+    private static final MenuDisplay sMenuDisplay = new MenuDisplay();
     /**ユーザーステータス.*/
     private UserState mUserState = UserState.LOGIN_NG;
     /**BaseActivity.*/

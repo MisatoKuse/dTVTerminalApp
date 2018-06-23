@@ -10,8 +10,10 @@ import java.util.ArrayList;
 /**
  *　検索リクエストデータクラス.
  */
+@SuppressWarnings("PublicField")
 public class TotalSearchRequestData {
 
+    //※単純な構造体としてのクラスのため、メンバはpublic属性とする
     //required
     /**ユーザーID.*/
     public String userId = null;

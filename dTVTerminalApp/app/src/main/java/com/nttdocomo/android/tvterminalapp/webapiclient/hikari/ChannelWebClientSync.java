@@ -30,7 +30,7 @@ public class ChannelWebClientSync implements ChannelWebClient.ChannelJsonParserC
     private CountDownLatch mLatch = null;
 
     /** 停止クラスの初期値. */
-    private static int LATCH_COUNT_MAX = 1;
+    private static final int LATCH_COUNT_MAX = 1;
 
 
     @Override

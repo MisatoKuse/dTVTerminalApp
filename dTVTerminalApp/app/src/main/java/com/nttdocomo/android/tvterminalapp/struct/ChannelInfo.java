@@ -293,7 +293,7 @@ public class ChannelInfo implements Parcelable {
     public ChannelInfo() {
     }
 
-    protected ChannelInfo(Parcel in) {
+    private ChannelInfo(Parcel in) {
         this.mSchedules = new ArrayList<ScheduleInfo>();
         in.readList(this.mSchedules, ScheduleInfo.class.getClassLoader());
         this.mTitle = in.readString();

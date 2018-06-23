@@ -43,7 +43,7 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
     /**
      * コンテンツ詳細データのリスト.
      */
-    public List<ContentsData> mData = null;
+    private List<ContentsData> mData = null;
     /**
      * 各タブのView.
      */
@@ -56,18 +56,20 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
      * 各タブのProgressBar.
      */
     private RelativeLayout mRelativeLayout = null;
+
     /**
      * リスト表示用アダプタ.
      */
-    public ContentsAdapter mContentsAdapter;
+    private ContentsAdapter mContentsAdapter;
     /**
      * ランキング種別.
      */
     private ContentsAdapter.ActivityTypeItem mRankingMode;
+
     /**
      * コンテンツ詳細表示フラグ.
      */
-    public boolean mContentsDetailDisplay = false;
+    private boolean mContentsDetailDisplay = false;
 
     /**
      * コンストラクタ.
@@ -257,5 +259,73 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
     public void updateContentsList(final List<ContentsData> contentsDataList) {
         mContentsAdapter.setListData(contentsDataList);
         noticeRefresh();
+    }
+
+    /**
+     * コンテンツデータ取得.
+     *
+     * @return コンテンツリスト
+     */
+    public List<ContentsData> getData() {
+        return mData;
+    }
+
+    /**
+     * コンテンツ数取得.
+     *
+     * @return コンテンツ数
+     */
+    public int getDataSize() {
+        if (mData != null) {
+            return mData.size();
+        }
+        return 0;
+    }
+
+    /**
+     * コンテンツデータ追加.
+     *
+     * @param content コンテンツデータ
+     */
+    public void addData(final ContentsData content) {
+        if (mData != null) {
+            mData.add(content);
+        }
+    }
+
+    /**
+     * コンテンツデータクリア.
+     */
+    public void clearData() {
+        if (mData != null) {
+            mData.clear();
+        }
+    }
+
+    /**
+     * コンテンツ詳細表示フラグ取得.
+     *
+     * @return コンテンツ詳細表示フラグ
+     */
+    public boolean isContentsDetailDisplay() {
+        return mContentsDetailDisplay;
+    }
+
+    /**
+     * コンテンツ詳細表示フラグ設定.
+     *
+     * @param contentsDetailDisplay コンテンツ詳細表示フラグ
+     */
+    public void setContentsDetailDisplay(final boolean contentsDetailDisplay) {
+        this.mContentsDetailDisplay = contentsDetailDisplay;
+    }
+
+    /**
+     * リスト表示用アダプタ取得.
+     *
+     * @return リスト表示用アダプタ
+     */
+    public ContentsAdapter getContentsAdapter() {
+        return mContentsAdapter;
     }
 }

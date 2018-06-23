@@ -175,7 +175,7 @@ public class TvProgramListActivity extends BaseActivity implements
     /**
      * マイ番組表データ.
      */
-    private ArrayList<MyChannelMetaData> mMyChannelDataList = new ArrayList<>();
+    private final ArrayList<MyChannelMetaData> mMyChannelDataList = new ArrayList<>();
     /**
      * レッドタイムライン.
      */

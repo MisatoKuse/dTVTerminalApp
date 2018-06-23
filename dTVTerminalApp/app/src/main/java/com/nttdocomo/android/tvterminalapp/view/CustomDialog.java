@@ -363,7 +363,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     /**
      * バックキー押下時の動作.
      */
-    private static OnKeyListener sKeyListener = new OnKeyListener() {
+    private static final OnKeyListener sKeyListener = new OnKeyListener() {
         @Override
         public boolean onKey(final DialogInterface dialog, final int keyCode, final KeyEvent event) {
             if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0

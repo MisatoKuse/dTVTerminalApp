@@ -20,7 +20,7 @@ import org.json.JSONObject;
  */
 public class MyChannelRegisterJsonParser extends AsyncTask<Object, Object, Object> {
     /**callback.*/
-    private MyChannelRegisterWebClient.MyChannelRegisterJsonParserCallback
+    private final MyChannelRegisterWebClient.MyChannelRegisterJsonParserCallback
             myChannelRegisterJsonParserCallback;
     /**オブジェクトクラスの定義　.*/
     private MyChannelRegisterResponse myChannelRegisterResponse;

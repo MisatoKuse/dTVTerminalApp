@@ -8,46 +8,89 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
  * レコメンド取得用パラメータ.
  */
 public class RecommendRequestData {
+
     /**
      * 取得対象サービスID.
      */
-    public String serviceId;
-    /**
+    private final String mServiceId;
+
+   /**
      * 取得対象サービスID:カテゴリーID.
      */
-    public String serviceCategoryId;
+    private String mServiceCategoryId;
+
     /**
      * レコメンド取得ページ.
      */
-    public String getPage;
+    private final String mGetPage;
+
     /**
      * レコメンド取得開始位置.
      */
-    public String startIndex;
+    private String mStartIndex;
+
     /**
      * レコメンド取得最大件数.
      */
-    public String maxResult;
+    private String mMaxResult;
+
     /**
      * 画面ID.
      */
-    public String pageId;
+    private final String mPageId;
     /**
      * 放送時間考慮.
      */
-    public String airtime;
+    private final String mAirtime;
 
     /**
      * コンストラクタ.
      */
     public RecommendRequestData() {
         //初期化
-        serviceId = "";
-        serviceCategoryId = "";
-        getPage = "";
-        startIndex = "";
-        maxResult = "";
-        pageId = "";
-        airtime = "";
+        mServiceId = "";
+        mServiceCategoryId = "";
+        mGetPage = "";
+        mStartIndex = "";
+        mMaxResult = "";
+        mPageId = "";
+        mAirtime = "";
     }
+
+    public String getServiceId() {
+        return mServiceId;
+    }
+
+    public String getServiceCategoryId() {
+        return mServiceCategoryId;
+    }
+
+    public void setStartIndex(String startIndex) {
+        this.mStartIndex = startIndex;
+    }
+
+    public void setMaxResult(String maxResult) {
+        this.mMaxResult = maxResult;
+    }
+
+    public void setServiceCategoryId(String serviceCategoryId) {
+        this.mServiceCategoryId = serviceCategoryId;
+    }
+
+    public String getPageId() {
+        return mPageId;
+    }
+
+    public String getMaxResult() {
+        return mMaxResult;
+    }
+
+    public String getStartIndex() {
+        return mStartIndex;
+    }
+
+    public String getGetPage() {
+        return mGetPage;
+    }
+
 }

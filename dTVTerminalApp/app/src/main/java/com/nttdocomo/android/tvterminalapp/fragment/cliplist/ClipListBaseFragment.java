@@ -47,7 +47,7 @@ public class ClipListBaseFragment extends Fragment
     private ClipListBaseFragmentScrollListener mClipListBaseFragmentScrollListener = null;
 
     /** コンテンツリストデータ. */
-    public List<ContentsData> mClipListData = new ArrayList<>();
+    private List<ContentsData> mClipListData = new ArrayList<>();
 
     /** フッター追加用View. */
     private View mLoadMoreView = null;
@@ -59,7 +59,7 @@ public class ClipListBaseFragment extends Fragment
     private RelativeLayout mRelativeLayout = null;
 
     /** コンテンツリストアダプター. */
-    public ContentsAdapter mClipMainAdapter = null;
+    private ContentsAdapter mClipMainAdapter = null;
 
     /** スクロール位置の記録. */
     private int mFirstVisibleItem = 0;
@@ -68,7 +68,7 @@ public class ClipListBaseFragment extends Fragment
     /** 最後のスクロール方向が上ならばtrue. */
     private boolean mLastScrollUp = false;
     /**コンテンツ詳細表示フラグ. */
-    public boolean mContentsDetailDisplay = false;
+    private boolean mContentsDetailDisplay = false;
 
     /** コンストラクタ. */
     public ClipListBaseFragment() {
@@ -89,15 +89,6 @@ public class ClipListBaseFragment extends Fragment
     }
 
     /**
-     * スクロールリスナ.
-     *
-     * @param lis リスナ
-     */
-    public void setClipListBaseFragmentScrollListener(final ClipListBaseFragmentScrollListener lis) {
-        mClipListBaseFragmentScrollListener = lis;
-    }
-
-    /**
      * 各タブ画面は別々に実現して表示されること.
      * @param container container
      * @return タブ画面
@@ -113,15 +104,6 @@ public class ClipListBaseFragment extends Fragment
         initContentListView();
         showProgressBar(true);
         return mTvFragmentView;
-    }
-
-    /**
-     * アダプタ取得.
-     *
-     * @return ContentsAdapter
-     */
-    public ContentsAdapter getClipMainAdapter() {
-        return mClipMainAdapter;
     }
 
     /**
@@ -148,6 +130,80 @@ public class ClipListBaseFragment extends Fragment
         mClipMainAdapter = new ContentsAdapter(getContext(), mClipListData, type);
         mTvListView.setAdapter(mClipMainAdapter);
         DTVTLogger.end();
+    }
+
+    /**
+     * スクロールリスナ.
+     *
+     * @param lis リスナ
+     */
+    public void setClipListBaseFragmentScrollListener(final ClipListBaseFragmentScrollListener lis) {
+        mClipListBaseFragmentScrollListener = lis;
+    }
+
+    /**
+     * コンテンツ詳細表示フラグ設定.
+     *
+     * @param contentsDetailDisplay コンテンツ詳細表示フラグ
+     */
+    public void setContentsDetailDisplay(final boolean contentsDetailDisplay) {
+        mContentsDetailDisplay = contentsDetailDisplay;
+    }
+
+    /**
+     * コンテンツ詳細表示フラグ取得.
+     *
+     * @return コンテンツ詳細表示フラグ
+     */
+    public boolean getContentsDetailDisplay() {
+        return mContentsDetailDisplay;
+    }
+
+    /**
+     * アダプタ取得.
+     *
+     * @return ContentsAdapter
+     */
+    public ContentsAdapter getClipMainAdapter() {
+        return mClipMainAdapter;
+    }
+
+    /**
+     * コンテンツリストデータ取得.
+     * @return コンテンツリストデータ
+     */
+    public List<ContentsData> getClipListData() {
+        return mClipListData;
+    }
+
+    /**
+     * コンテンツリストデータサイズ取得.
+     * @return コンテンツリストデータサイズ
+     */
+    public int getClipListDataSize() {
+        if (mClipListData != null) {
+            return mClipListData.size();
+        }
+        return 0;
+    }
+
+    /**
+     * コンテンツリストデータ追加.
+     * @param content コンテンツリストデータ
+     */
+    public void addClipListData(final ContentsData content) {
+        if (mClipListData != null) {
+            mClipListData.add(content);
+        }
+    }
+
+    /**
+     * コンテンツリストデータクリア.
+     */
+    public void clearClipListData() {
+        if (mClipListData != null) {
+            mClipListData.clear();
+        }
     }
 
     /**

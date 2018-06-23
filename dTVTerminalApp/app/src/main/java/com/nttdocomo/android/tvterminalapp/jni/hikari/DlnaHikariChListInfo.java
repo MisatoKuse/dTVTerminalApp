@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class DlnaHikariChListInfo {
     /**ひかりチャンネルリスト.*/
-    private ArrayList<DlnaHikariChListItem> mLists = new ArrayList<>();
+    private final ArrayList<DlnaHikariChListItem> mLists = new ArrayList<>();
 
     /**
      * addItem.

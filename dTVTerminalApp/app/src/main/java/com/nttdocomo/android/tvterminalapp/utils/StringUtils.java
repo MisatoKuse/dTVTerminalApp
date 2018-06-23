@@ -104,15 +104,15 @@ public class StringUtils {
     /**
      * 暗号化方法(AES).
      */
-    private static String CIPHER_TYPE = "AES";
+    private static final String CIPHER_TYPE = "AES";
     /**
      * 暗号化方法(AES/ECB/PKCS5Padding).
      */
-    private static String CIPHER_DATA = "AES/ECB/PKCS5Padding";
+    private static final String CIPHER_DATA = "AES/ECB/PKCS5Padding";
     /**
      * 暗号化キーの長さ.
      */
-    private static int CIPHER_KEY_LENGTH = 16;
+    private static final int CIPHER_KEY_LENGTH = 16;
     /**
      * ハッシュアルゴリズム指定.
      */

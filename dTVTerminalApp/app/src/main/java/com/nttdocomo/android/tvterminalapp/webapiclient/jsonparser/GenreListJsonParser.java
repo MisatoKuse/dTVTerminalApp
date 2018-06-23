@@ -24,7 +24,7 @@ import java.util.Iterator;
  */
 public class GenreListJsonParser extends AsyncTask<String, Object, Object> {
     /**GenreListJsonParserCallback.*/
-    private GenreListWebClient.GenreListJsonParserCallback
+    private final GenreListWebClient.GenreListJsonParserCallback
             mGenreListJsonParserCallback;
     /**オブジェクトクラスの定義　.*/
     private GenreListResponse mGenreListResponse;

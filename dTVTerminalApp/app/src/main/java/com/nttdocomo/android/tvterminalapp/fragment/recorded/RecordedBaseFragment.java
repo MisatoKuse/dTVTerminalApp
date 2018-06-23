@@ -151,6 +151,33 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         DTVTLogger.start();
         mContentsData = new ArrayList<>();
 		mChannelNameCache = new HashSet<>();
+        mContentsList = new ArrayList<>();
+    }
+
+    public void clearContentsList() {
+        if (mContentsList != null) {
+            mContentsList.clear();
+        }
+    }
+
+    public int getContentsListSize() {
+        if (mContentsList != null) {
+            return mContentsList.size();
+        }
+        return 0;
+    }
+
+    public void addContentsList(final RecordedContentsDetailData data) {
+        if (mContentsList != null) {
+            mContentsList.add(data);
+        }
+    }
+
+    public RecordedContentsDetailData getContentsListElement(int index) {
+        if (mContentsList != null) {
+            return mContentsList.get(index);
+        }
+        return null;
     }
 
     /**

@@ -29,7 +29,7 @@ public class RecommendChannelXmlParser extends AsyncTask<Object, Object, Object>
     /**
      * おすすめ番組パーサーコールバック.
      */
-    private RecommendChWebClient.RecommendChannelCallback mRecommendChannelCallback;
+    private final RecommendChWebClient.RecommendChannelCallback mRecommendChannelCallback;
     /**レコメンドコンテンツリスト.*/
     private static final String RECOMMENDCHANNEL_LIST_RECOMMENDCONTENT = "RecommendContent";
     /**おすすめ順.*/

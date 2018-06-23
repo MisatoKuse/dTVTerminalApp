@@ -54,7 +54,7 @@ public class DtvContentsDetailFragment extends Fragment {
     /** フラグメントビュー.*/
     private View mView = null;
     /** 詳細情報.*/
-    public OtherContentsDetailData mOtherContentsDetailData = null;
+    private OtherContentsDetailData mOtherContentsDetailData = null;
     /** スタッフビュー.*/
     private LinearLayout mStaffLayout = null;
     /** タイトル/詳細一部文字.*/
@@ -679,4 +679,23 @@ public class DtvContentsDetailFragment extends Fragment {
         DTVTLogger.start();
         mIsContract = isContract;
     }
+
+    /**
+     * 詳細情報を更新する.
+     *
+     * @return 詳細情報
+     */
+    public OtherContentsDetailData getOtherContentsDetailData() {
+        return mOtherContentsDetailData;
+    }
+
+    /**
+     * 詳細情報を設定する.
+     *
+     * @param otherContentsDetailData 詳細情報
+     */
+    public void setOtherContentsDetailData(final OtherContentsDetailData otherContentsDetailData) {
+        mOtherContentsDetailData = otherContentsDetailData;
+    }
+
 }

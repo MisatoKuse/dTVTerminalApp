@@ -131,42 +131,42 @@ public class TotalSearchResponseData {
     }
 
     /**
-     * コンストラクタ.
-     */
-    public TotalSearchResponseData() {
-        serviceCountList = new ArrayList<>();
-        contentList = new ArrayList<>();
-    }
-
-    /**
      * 処理結果.
      */
-    public String status;
+    private String mSatus;
+
     /**
      * 検索結果合計件数.
      */
-    public int totalCount;
+    private int mTotalCount;
     /**
      * クエリ.
      */
-    public String query;
+    private String query;
     /**
      * 検索結果返却開始位置.
      */
-    public int startIndex;
+    private int mStartIndex;
     /**
-     * resultCount.
+     * 返却結果数.
      */
-    public int resultCount;
-
+    private int mResultCount;
     /**
      * serviceCountの配列.
      */
-    public ArrayList<ServiceCount> serviceCountList;
+    private final ArrayList<ServiceCount> mServiceCountList;
     /**
      * contentListの配列.
      */
-    public ArrayList<Content> contentList;
+    private final ArrayList<Content> mContentList;
+
+    /**
+     * コンストラクタ.
+     */
+    public TotalSearchResponseData() {
+        mServiceCountList = new ArrayList<>();
+        mContentList = new ArrayList<>();
+    }
 
     /**
      * 検索結果からコンテンツ情報をリストにセットする.
@@ -181,7 +181,7 @@ public class TotalSearchResponseData {
         } else {
             tmpSearchContentInfoArray.clear();
         }
-        for (Content content: contentList) {
+        for (Content content: mContentList) {
             SearchContentInfo info = new SearchContentInfo(false, content.mContentsId, content.mServiceId, content.mCategoryId,
                     content.mCtPicURL1, content.mCtPicURL2, content.mTitle, content.mRank, content.mMobileViewingFlg,
                     content.mStartViewing, content.mEndViewing, content.mChannelName, content.mChannelId,
@@ -197,13 +197,71 @@ public class TotalSearchResponseData {
      * serviceCountを増やす.
      */
     public void appendServiceCount() {
-        serviceCountList.add(new ServiceCount());
+        mServiceCountList.add(new ServiceCount());
     }
 
     /**
      * contentを増やす.
      */
     public void appendContent() {
-        contentList.add(new Content());
+        mContentList.add(new Content());
+    }
+
+    /**
+     * contentの数取得.
+     */
+    public int getContentListSize() {
+        return mContentList.size();
+    }
+
+    /**
+     * serviceCountの数取得.
+     */
+    public int getServiceCountListSize() {
+        return mServiceCountList.size();
+    }
+
+    public void setStatus(String status) {
+        this.mSatus = status;
+    }
+
+    public void setTotalCount(int totalCount) {
+        this.mTotalCount = totalCount;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
+    public void setStartIndex(final int startIndex) {
+        this.mStartIndex = startIndex;
+    }
+
+    public void setResultCount(final int resultCount) {
+        this.mResultCount = resultCount;
+    }
+
+    public int getTotalCount() {
+        return mTotalCount;
+    }
+
+    public Content getContentListIndex(int index) {
+        return mContentList.get(index);
+    }
+
+    public ServiceCount getServiceCountListIndex(int index) {
+        return mServiceCountList.get(index);
+    }
+
+    public void setContentListElement(int index, Content content) {
+        mContentList.set(index, content);
+    }
+
+    public void setServiceCountListElement(int index, ServiceCount serviceCount) {
+        mServiceCountList.set(index, serviceCount);
     }
 }

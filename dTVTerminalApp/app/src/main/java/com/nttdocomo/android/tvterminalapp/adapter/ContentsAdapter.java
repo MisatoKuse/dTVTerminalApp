@@ -1332,7 +1332,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         /**
          * サブタイトル.
          */
-        public TextView tv_time;
+        private TextView tv_time;
         /**
          * メインタイトル.
          */

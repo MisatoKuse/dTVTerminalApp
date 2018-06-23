@@ -34,11 +34,11 @@ public class HikariTvChannelDataProvider extends ScaledDownProgramListDataProvid
         void onContentDataGet(ContentsData data);
     }
     /**コンテキスト.*/
-    private Context mContext;
+    private final Context mContext;
     /**番組表情報WebClient.*/
     private TvScheduleWebClient mTvScheduleWebClient;
     /**callback.*/
-    private ContentsDataCallback mContentsDataCallback;
+    private final ContentsDataCallback mContentsDataCallback;
     /**エラーステータス.*/
     private ErrorState mErrorState;
     /**

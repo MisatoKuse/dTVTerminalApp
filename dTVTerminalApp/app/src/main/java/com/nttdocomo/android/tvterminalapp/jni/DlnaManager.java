@@ -150,7 +150,7 @@ public class DlnaManager {
     /**
      * singletone.
      */
-    private static DlnaManager sInstance = new DlnaManager();
+    private static final DlnaManager sInstance = new DlnaManager();
 
     /**
      * DlnaManager.
@@ -204,7 +204,7 @@ public class DlnaManager {
     /** ダウンロードリスナー. */
     public DownloadStatusListener mDownloadStatusListener = null;
     /** 接続ステータス. */
-    public RemoteConnectStatus remoteConnectStatus = RemoteConnectStatus.OTHER;
+    private RemoteConnectStatus remoteConnectStatus = RemoteConnectStatus.OTHER;
     /** コンテキスト. */
     public Context mContext;
     /** 接続スタートフラグ. */
@@ -379,7 +379,7 @@ public class DlnaManager {
     /**
      * Diragを停止.
      */
-    public void StopDirag() {
+    private void StopDirag() {
         stopDirag();
     }
 

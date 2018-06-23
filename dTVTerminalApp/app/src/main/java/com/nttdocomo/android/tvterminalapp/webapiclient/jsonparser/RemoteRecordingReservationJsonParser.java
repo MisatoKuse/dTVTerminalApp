@@ -20,7 +20,7 @@ import org.json.JSONObject;
  */
 public class RemoteRecordingReservationJsonParser extends AsyncTask<Object, Object, Object> {
     /**callback.*/
-    private RemoteRecordingReservationWebClient.RemoteRecordingReservationJsonParserCallback
+    private final RemoteRecordingReservationWebClient.RemoteRecordingReservationJsonParserCallback
             mRemoteRecordingReservationJsonParserCallback;
     /**オブジェクトクラスの定義.*/
     private RemoteRecordingReservationResultResponse mRemoteRecordingReservationResultResponse;

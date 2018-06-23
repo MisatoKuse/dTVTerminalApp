@@ -25,7 +25,7 @@ import java.util.ArrayList;
  */
 public class MyChannelListJsonParser extends AsyncTask<Object, Object, Object> {
     /**callback.*/
-    private MyChannelWebClient.MyChannelListJsonParserCallback
+    private final MyChannelWebClient.MyChannelListJsonParserCallback
             myChannelListJsonParserCallback;
     /**オブジェクトクラスの定義　.*/
     private MyChannelListResponse myChannelListResponse;

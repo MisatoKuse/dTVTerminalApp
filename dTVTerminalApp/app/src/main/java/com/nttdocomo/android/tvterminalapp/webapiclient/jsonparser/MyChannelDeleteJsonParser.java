@@ -20,7 +20,7 @@ import org.json.JSONObject;
  */
 public class MyChannelDeleteJsonParser extends AsyncTask<Object, Object, Object> {
     /**マイチャンネル削除JsonParser コールバック.*/
-    private MyChannelDeleteWebClient.MyChannelDeleteJsonParserCallback
+    private final MyChannelDeleteWebClient.MyChannelDeleteJsonParserCallback
             myChannelDeleteJsonParserCallback;
     /**オブジェクトクラスの定義.*/
     private MyChannelDeleteResponse myChannelDeleteResponse;

@@ -120,12 +120,12 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
         mFirstParameter = true;
 
         //パラメータの追加
-        itemAdder(queryItems, SERVICE_ID, recommendRequestData.serviceId);
-        itemAdder(queryItems, SERVICE_CATEGORY_ID, recommendRequestData.serviceCategoryId);
-        itemAdder(queryItems, GET_PAGE, recommendRequestData.getPage);
-        itemAdder(queryItems, START_INDEX, recommendRequestData.startIndex);
-        itemAdder(queryItems, MAX_RESULT, recommendRequestData.maxResult);
-        itemAdder(queryItems, PAGE_ID, recommendRequestData.pageId);
+        itemAdder(queryItems, SERVICE_ID, recommendRequestData.getServiceId());
+        itemAdder(queryItems, SERVICE_CATEGORY_ID, recommendRequestData.getServiceCategoryId());
+        itemAdder(queryItems, GET_PAGE, recommendRequestData.getGetPage());
+        itemAdder(queryItems, START_INDEX, recommendRequestData.getStartIndex());
+        itemAdder(queryItems, MAX_RESULT, recommendRequestData.getMaxResult());
+        itemAdder(queryItems, PAGE_ID, recommendRequestData.getPageId());
 
         if (!queryItems.isEmpty()) {
             //通信停止中ならば通信処理への遷移は行わない

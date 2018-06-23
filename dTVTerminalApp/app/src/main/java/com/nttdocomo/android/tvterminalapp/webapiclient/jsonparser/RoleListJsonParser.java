@@ -24,7 +24,7 @@ import java.util.ArrayList;
  */
 public class RoleListJsonParser extends AsyncTask<String, Object, Object> {
     /**callback.*/
-    private RoleListWebClient.RoleListJsonParserCallback
+    private final RoleListWebClient.RoleListJsonParserCallback
             mRoleListJsonParserCallback;
     /**オブジェクトクラスの定義　.*/
     private RoleListResponse mRoleListResponse;

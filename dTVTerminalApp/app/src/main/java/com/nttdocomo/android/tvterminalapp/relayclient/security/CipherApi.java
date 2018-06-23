@@ -29,7 +29,7 @@ public class CipherApi {
         void apiCallback(boolean result, @Nullable String data);
     }
     /**callback.*/
-    private CipherApiCallback mCallback;
+    private final CipherApiCallback mCallback;
 
     /**
      * 構造体.

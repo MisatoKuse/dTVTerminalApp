@@ -24,7 +24,7 @@ public class ThumbnailProvider {
 	/**
 	 * キャッシュマネージャー.
 	 */
-	public ThumbnailCacheManager thumbnailCacheManager;
+	public final ThumbnailCacheManager thumbnailCacheManager;
 	/**
 	 * Queue.
 	 */
@@ -40,7 +40,7 @@ public class ThumbnailProvider {
 	/**
 	 * コンテキスト.
 	 */
-	private Context mContext;
+	private final Context mContext;
 	/**
 	 * サムネイルダウンロードのタスク.
 	 */
@@ -52,7 +52,7 @@ public class ThumbnailProvider {
 	/**
 	 * 画像サイズ種類.
 	 */
-	private ThumbnailDownloadTask.ImageSizeType mImageSizeType;
+	private final ThumbnailDownloadTask.ImageSizeType mImageSizeType;
 	/**
 	 * コンストラクタ.
 	 * @param imageSizeType 画像サイズ種類

@@ -64,10 +64,11 @@ public class RecordingReservationListDataProvider implements
      * チャンネル一覧.
      */
     private List<HashMap<String, String>> mTvScheduleList = null;
+
     /**
      * 録画予約情報受信時刻.
      */
-    public String mReservationTime = null;
+    private String mReservationTime = null;
 
     // 録画予約ステータスの固定値
     /**
@@ -1002,4 +1003,10 @@ public class RecordingReservationListDataProvider implements
     public ErrorState getError() {
         return mError;
     }
+
+
+    public String getReservationTime() {
+        return mReservationTime;
+    }
+
 }

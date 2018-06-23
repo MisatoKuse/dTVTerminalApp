@@ -461,7 +461,7 @@ public class ChannelListActivity extends BaseActivity implements
                         mNoDataMessage.setVisibility(View.GONE);
                         switch (fragment.getChListDataType()) {
                             case CH_LIST_DATA_TYPE_BS:
-                                if (fragment.getConnectionStatus() == fragment.mIsRemote) {
+                                if (fragment.getConnectionStatus() == fragment.isRemote()) {
                                     fragment.loadStart();
                                 } else {
                                     mPageIndex = 0;
@@ -471,7 +471,7 @@ public class ChannelListActivity extends BaseActivity implements
                                 getBsData();
                                 break;
                             case CH_LIST_DATA_TYPE_TDB:
-                                if (fragment.getConnectionStatus() == fragment.mIsRemote) {
+                                if (fragment.getConnectionStatus() == fragment.isRemote()) {
                                     fragment.loadStart();
                                 } else {
                                     mPageIndex = 0;

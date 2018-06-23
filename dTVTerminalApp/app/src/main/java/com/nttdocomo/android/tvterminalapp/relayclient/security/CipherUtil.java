@@ -52,7 +52,7 @@ public class CipherUtil {
     /** 暗号化処理の鍵交換を同期処理で実行する. */
     private static CountDownLatch mLatch = null;
     /** 暗号化処理の鍵交換の同期カウンター. */
-    private static int LATCH_COUNT_MAX = 1;
+    private static final int LATCH_COUNT_MAX = 1;
 
     /**
      * 共通鍵あるかをチェック.

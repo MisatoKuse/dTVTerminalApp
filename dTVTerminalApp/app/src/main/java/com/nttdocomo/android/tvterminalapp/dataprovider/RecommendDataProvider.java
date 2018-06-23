@@ -49,7 +49,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     /**
      * ページング判定.
      */
-    private boolean mIsPaging = false;
+    private final boolean mIsPaging = false;
 
     /**
      * コールバック.
@@ -384,9 +384,9 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
             if (!mIsStop) {
                 // RequestDataのインスタンス生成
                 RecommendRequestData requestData = new RecommendRequestData();
-                requestData.maxResult = String.valueOf(MAX_SHOW_LIST_SIZE);
-                requestData.startIndex = String.valueOf(RECOMMEND_START_INDEX);
-                requestData.serviceCategoryId = getTerebiRequestSCIdStr();
+                requestData.setMaxResult(String.valueOf(MAX_SHOW_LIST_SIZE));
+                requestData.setStartIndex(String.valueOf(RECOMMEND_START_INDEX));
+                requestData.setServiceCategoryId(getTerebiRequestSCIdStr());
                 // サーバへリクエストを送信
                 mTvWebClient = new RecommendWebClient(this, mContext);
                 mTvWebClient.getRecommendApi(requestData);
@@ -415,9 +415,9 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
             if (!mIsStop) {
                 // RequestDataのインスタンス生成
                 RecommendRequestData requestData = new RecommendRequestData();
-                requestData.maxResult = String.valueOf(MAX_SHOW_LIST_SIZE);
-                requestData.startIndex = String.valueOf(RECOMMEND_START_INDEX);
-                requestData.serviceCategoryId = getTerebiRequestSCIdStr();
+                requestData.setMaxResult(String.valueOf(MAX_SHOW_LIST_SIZE));
+                requestData.setStartIndex(String.valueOf(RECOMMEND_START_INDEX));
+                requestData.setServiceCategoryId(getTerebiRequestSCIdStr());
                 // サーバへリクエストを送信
                 mRecommendWebClient = new RecommendWebClient(this, mContext);
                 mRecommendWebClient.getRecommendApi(requestData);
@@ -445,9 +445,9 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
             if (!mIsStop) {
                 // RequestDataのインスタンス生成
                 RecommendRequestData requestData = new RecommendRequestData();
-                requestData.maxResult = String.valueOf(MAX_SHOW_LIST_SIZE);
-                requestData.startIndex = String.valueOf(RECOMMEND_START_INDEX);
-                requestData.serviceCategoryId = getVideoRequestSCIdStr();
+                requestData.setMaxResult(String.valueOf(MAX_SHOW_LIST_SIZE));
+                requestData.setStartIndex(String.valueOf(RECOMMEND_START_INDEX));
+                requestData.setServiceCategoryId(getVideoRequestSCIdStr());
                 // サーバへリクエストを送信
                 mVodWebClient = new RecommendWebClient(this, mContext);
                 mVodWebClient.getRecommendApi(requestData);
@@ -474,9 +474,9 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
             if (!mIsStop) {
                 // RequestDataのインスタンス生成
                 RecommendRequestData requestData = new RecommendRequestData();
-                requestData.maxResult = String.valueOf(MAX_SHOW_LIST_SIZE);
-                requestData.startIndex = String.valueOf(RECOMMEND_START_INDEX);
-                requestData.serviceCategoryId = getDCHRequestSCIdStr();
+                requestData.setMaxResult(String.valueOf(MAX_SHOW_LIST_SIZE));
+                requestData.setStartIndex(String.valueOf(RECOMMEND_START_INDEX));
+                requestData.setServiceCategoryId(getDCHRequestSCIdStr());
                 // サーバへリクエストを送信
                 mRecommendWebClient = new RecommendWebClient(this, mContext);
                 mRecommendWebClient.getRecommendApi(requestData);
@@ -504,9 +504,9 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
             if (!mIsStop) {
                 // RequestDataのインスタンス生成
                 RecommendRequestData requestData = new RecommendRequestData();
-                requestData.maxResult = String.valueOf(MAX_SHOW_LIST_SIZE);
-                requestData.startIndex = String.valueOf(RECOMMEND_START_INDEX);
-                requestData.serviceCategoryId = getDTVRequestSCIdStr();
+                requestData.setMaxResult(String.valueOf(MAX_SHOW_LIST_SIZE));
+                requestData.setStartIndex(String.valueOf(RECOMMEND_START_INDEX));
+                requestData.setServiceCategoryId(getDTVRequestSCIdStr());
                 // サーバへリクエストを送信
                 mRecommendWebClient = new RecommendWebClient(this, mContext);
                 mRecommendWebClient.getRecommendApi(requestData);
@@ -533,9 +533,9 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
             if (!mIsStop) {
                 // RequestDataのインスタンス生成
                 RecommendRequestData requestData = new RecommendRequestData();
-                requestData.maxResult = String.valueOf(MAX_SHOW_LIST_SIZE);
-                requestData.startIndex = String.valueOf(RECOMMEND_START_INDEX);
-                requestData.serviceCategoryId = getDAnimeRequestSCIdStr();
+                requestData.setMaxResult(String.valueOf(MAX_SHOW_LIST_SIZE));
+                requestData.setStartIndex(String.valueOf(RECOMMEND_START_INDEX));
+                requestData.setServiceCategoryId(getDAnimeRequestSCIdStr());
                 // サーバへリクエストを送信
                 mRecommendWebClient = new RecommendWebClient(this, mContext);
                 mRecommendWebClient.getRecommendApi(requestData);

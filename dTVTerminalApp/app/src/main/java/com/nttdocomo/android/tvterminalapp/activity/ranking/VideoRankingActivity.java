@@ -93,11 +93,11 @@ public class VideoRankingActivity extends BaseActivity implements
         DTVTLogger.start();
         //コンテンツ詳細から戻ってきたときのみクリップ状態をチェックする
         RankingBaseFragment baseFragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
-        if (baseFragment != null && baseFragment.mContentsDetailDisplay) {
-            baseFragment.mContentsDetailDisplay = false;
-            if (null != baseFragment.mContentsAdapter) {
+        if (baseFragment != null && baseFragment.isContentsDetailDisplay()) {
+            baseFragment.setContentsDetailDisplay(false);
+            if (null != baseFragment.getContentsAdapter()) {
                 List<ContentsData> list;
-                list = mRankingDataProvider.checkClipStatus(baseFragment.mData);
+                list = mRankingDataProvider.checkClipStatus(baseFragment.getData());
                 baseFragment.updateContentsList(list);
                 DTVTLogger.debug("VideoRankingActivity::Clip Status Update");
             }
@@ -150,7 +150,7 @@ public class VideoRankingActivity extends BaseActivity implements
                 RankingBaseFragment baseFragment = mRankingFragmentFactory.createFragment(
                         ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK, i);
                 if (null != baseFragment) {
-                    baseFragment.mData.clear();
+                    baseFragment.clearData();
                 }
             }
         }
@@ -202,7 +202,7 @@ public class VideoRankingActivity extends BaseActivity implements
 
         RankingBaseFragment baseFragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
         if (baseFragment != null) {
-            if (baseFragment.mData.size() == 0) {
+            if (baseFragment.getDataSize() == 0) {
                 //Fragmentがデータを保持していない場合は再取得を行う
                 mVideoGenreProvider = new GenreListDataProvider(this, this,
                         ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
@@ -367,16 +367,14 @@ public class VideoRankingActivity extends BaseActivity implements
                 mViewPager.getCurrentItem());
 
         //既に元のデータ以上の件数があれば足す物は無いので、更新せずに帰る
-        if (null != fragment.mData && fragment.mData.size() >= videoRankMapList.size()) {
+        if (fragment.getDataSize() >= videoRankMapList.size()) {
             return;
         }
 
         for (ContentsData videoRankData : videoRankMapList) {
-            fragment.mData.add(videoRankData);
+            fragment.addData(videoRankData);
         }
-        if (fragment.mData != null) {
-            DTVTLogger.debug("Fragment.mData.size :" + String.valueOf(fragment.mData.size()));
-        }
+        DTVTLogger.debug("Fragment.mData.size :" + String.valueOf(fragment.getDataSize()));
         fragment.noticeRefresh();
         DTVTLogger.end();
     }

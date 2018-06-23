@@ -364,10 +364,10 @@ public class RecommendActivity extends BaseActivity implements
                 //チャンネル名を付加
                 info.setChannelName(searchChannelName(info.getChannelId()));
 
-                baseFragment.mData.add(info);
+                baseFragment.addData(info);
             }
 
-            DTVTLogger.debug("baseFragment.mData.mSize = " + baseFragment.mData.size());
+            DTVTLogger.debug("baseFragment.mData.mSize = " + baseFragment.getDataSize());
 
             // フラグメントの更新
             baseFragment.notifyDataSetChanged(mRecommendViewPager.getCurrentItem());
@@ -792,14 +792,16 @@ public class RecommendActivity extends BaseActivity implements
         mChannels = channels;
 
         RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
-        if (baseFragment != null && baseFragment.mData != null) {
+        if (baseFragment != null && baseFragment.getData() != null) {
             //おすすめ情報にはチャンネル名が無いので、取得したチャンネル名をIDで検索して設定を行う
-            for (int count = 0; count < baseFragment.mData.size(); count++) {
-                baseFragment.mData.get(count).setChannelName(
-                        searchChannelName(baseFragment.mData.get(count).getChannelId()));
+            for (int count = 0; count < baseFragment.getDataSize(); count++) {
+                if (baseFragment.getData() != null) {
+                    baseFragment.getData().get(count).setChannelName(
+                            searchChannelName(baseFragment.getData().get(count).getChannelId()));
+                }
             }
 
-            if (baseFragment.mData.size() > 0) {
+            if (baseFragment.getDataSize() > 0) {
                 //処理を行ったデータが存在するならば再描画
                 baseFragment.notifyDataSetChanged(mRecommendViewPager.getCurrentItem());
             }

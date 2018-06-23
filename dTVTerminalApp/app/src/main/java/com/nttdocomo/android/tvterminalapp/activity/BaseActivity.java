@@ -208,7 +208,7 @@ public class BaseActivity extends FragmentActivity implements
      * GooglePlayのドコテレアプリページ.
      * 現在
      */
-    protected static final String DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL =
+    private static final String DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL =
             "https://www.nttdocomo.co.jp/product/docomo_select/tt01/index.html";
     /** DialogQue. **/
     private final LinkedList<CustomDialog> mLinkedList = new LinkedList<>();
@@ -462,6 +462,10 @@ public class BaseActivity extends FragmentActivity implements
                 case HOME_IN:
                     setStbStatus(true);
                     break;
+                case NONE_PAIRING:
+                case NONE_LOCAL_REGISTRATION:
+                case HOME_OUT:
+                case HOME_OUT_CONNECT:
                 default:
                     setStbStatus(false);
                     break;
@@ -542,7 +546,6 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * タイトル内容を設定.
      * ドコモテレビターミナル画像を出す場合は空文字を指定し、enableStbStatusIcon()より後に呼ぶ必要がある.
-     * //TODO タイトルとSTBアイコンが重なった場合の処理
      *
      * @param text 設定する文字列
      */
@@ -748,7 +751,7 @@ public class BaseActivity extends FragmentActivity implements
         DTVTLogger.start();
         TvtApplication app = (TvtApplication) getApplication();
 
-        DaccountReceiver.dAccountChangedCallBack = this;
+        DaccountReceiver.setDaccountChangedCallBack(this);
 
         // BG → FG でのonResumeかを判定
         if (app.getIsChangeApplicationVisible()) {
@@ -774,7 +777,7 @@ public class BaseActivity extends FragmentActivity implements
             onStartCommunication();
         }
 
-        StbConnectionManager.shared().mConnectionListener = this;
+        StbConnectionManager.shared().setConnectionListener(this);
         DTVTLogger.end();
     }
 
@@ -1448,7 +1451,7 @@ public class BaseActivity extends FragmentActivity implements
 
         //ワンタイムトークン取得のキャンセル
         cancelOttConnection();
-        DaccountReceiver.dAccountChangedCallBack = null;
+        DaccountReceiver.setDaccountChangedCallBack(null);
     }
 
     /**
@@ -2665,7 +2668,6 @@ public class BaseActivity extends FragmentActivity implements
      * @param contentsDataList コンテンツ情報
      * @param index 遷移先
      */
-
     private void setRecyclerViewData(final RecyclerView recyclerView, final  List<ContentsData> contentsDataList, final int index) {
         int i = 0;
         if (mActivity instanceof HomeActivity) {
@@ -2725,6 +2727,7 @@ public class BaseActivity extends FragmentActivity implements
         }
         return mContentsList.size() / NUM_PER_PAGE;
     }
+
     /**
      * ソートを行う.
      *
@@ -2758,12 +2761,13 @@ public class BaseActivity extends FragmentActivity implements
     protected void resetPaging(final ViewPager viewPager, final RankingFragmentFactory rankingFragmentFactory) {
         synchronized (this) {
             RankingBaseFragment baseFragment = getCurrentFragment(viewPager, rankingFragmentFactory);
-            if (null != baseFragment && null != baseFragment.mData) {
-                baseFragment.mData.clear();
+            if (null != baseFragment) {
+                baseFragment.clearData();
                 baseFragment.noticeRefresh();
             }
         }
     }
+
     /**
      * Fragmentの取得.
      * @param viewPager viewPager
@@ -2782,6 +2786,7 @@ public class BaseActivity extends FragmentActivity implements
         }
         return null;
     }
+
     /**
      * tabの関連Viewを初期化.
      * @param tabLayout tabLayout
@@ -2960,7 +2965,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param screenName スクリーン名
      */
-    public void sendScreenView(final String screenName) {
+    protected void sendScreenView(final String screenName) {
         DTVTLogger.start("sendScreenName: " + screenName);
 
         TvtApplication app = (TvtApplication) getApplication();

@@ -377,7 +377,7 @@ class SearchXmlParser extends AsyncTask<String, Integer, String> {
                 case STATUS:
                     if (STATUS_OK.equals(value)) {
                         DTVTLogger.debug("parseProc, " + STATUS_OK);
-                        searchResponse.status = STATUS_OK;
+                        searchResponse.setStatus(STATUS_OK);
                     } else if (STATUS_NG.equals(value)) {
                         DTVTLogger.debug("parseProc, " + STATUS_NG);
                         ifNullCreate();
@@ -385,16 +385,16 @@ class SearchXmlParser extends AsyncTask<String, Integer, String> {
                     }
                     break;
                 case TOTAL_COUNT:
-                    searchResponse.totalCount = Integer.parseInt(value);
+                    searchResponse.setTotalCount(Integer.parseInt(value));
                     break;
                 case QUERY:
-                    searchResponse.query = value;
+                    searchResponse.setQuery(value);
                     break;
                 case START_INDEX:
-                    searchResponse.startIndex = Integer.parseInt(value);
+                    searchResponse.setStartIndex(Integer.parseInt(value));
                     break;
                 case RESULT_COUNT:
-                    searchResponse.resultCount = Integer.parseInt(value);
+                    searchResponse.setResultCount(Integer.parseInt(value));
                     break;
                 case SERVICE_COUNT:
                     if (null == value) {
@@ -407,142 +407,142 @@ class SearchXmlParser extends AsyncTask<String, Integer, String> {
                     }
                     break;
                 case SERVICE_ID:
-                    if (searchResponse.contentList.size() > 0) { //parse content serviceId
-                        int currentContentListIndex = searchResponse.contentList.size() - 1;
-                        TotalSearchResponseData.Content content = searchResponse.contentList.get(currentContentListIndex);
+                    if (searchResponse.getContentListSize() > 0) { //parse content serviceId
+                        int currentContentListIndex = searchResponse.getContentListSize() - 1;
+                        TotalSearchResponseData.Content content = searchResponse.getContentListIndex(currentContentListIndex);
                         content.mServiceId = Integer.parseInt(value);
-                        searchResponse.contentList.set(currentContentListIndex, content);
+                        searchResponse.setContentListElement(currentContentListIndex, content);
                     } else {
-                        int currentServiceCountListIndex = searchResponse.serviceCountList.size() - 1;
-                        TotalSearchResponseData.ServiceCount serviceCount = searchResponse.serviceCountList.get(currentServiceCountListIndex);
+                        int currentServiceCountListIndex = searchResponse.getServiceCountListSize() - 1;
+                        TotalSearchResponseData.ServiceCount serviceCount = searchResponse.getServiceCountListIndex(currentServiceCountListIndex);
                         serviceCount.mServiceId = Integer.parseInt(value);
-                        searchResponse.serviceCountList.set(currentServiceCountListIndex, serviceCount);
+                        searchResponse.setServiceCountListElement(currentServiceCountListIndex, serviceCount);
                     }
                     break;
                 case CONTENT_COUNT:
-                    int currentServiceCountListIndex = searchResponse.serviceCountList.size() - 1;
-                    TotalSearchResponseData.ServiceCount serviceCount = searchResponse.serviceCountList.get(currentServiceCountListIndex);
+                    int currentServiceCountListIndex = searchResponse.getServiceCountListSize() - 1;
+                    TotalSearchResponseData.ServiceCount serviceCount = searchResponse.getServiceCountListIndex(currentServiceCountListIndex);
                     serviceCount.mContentCount = Integer.parseInt(value);
-                    searchResponse.serviceCountList.set(currentServiceCountListIndex, serviceCount);
+                    searchResponse.setServiceCountListElement(currentServiceCountListIndex, serviceCount);
                     break;
                 case RANK:
-                    int currentRankIndex = searchResponse.contentList.size() - 1;
-                    TotalSearchResponseData.Content rankContent = searchResponse.contentList.get(currentRankIndex);
+                    int currentRankIndex = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content rankContent = searchResponse.getContentListIndex(currentRankIndex);
                     rankContent.mRank = Integer.parseInt(value);
-                    searchResponse.contentList.set(currentRankIndex, rankContent);
+                    searchResponse.setContentListElement(currentRankIndex, rankContent);
                     break;
                 case COUNTENTS_ID:
-                    int currentContentIdIndex = searchResponse.contentList.size() - 1;
-                    TotalSearchResponseData.Content contentIdContent = searchResponse.contentList.get(currentContentIdIndex);
+                    int currentContentIdIndex = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentIdContent = searchResponse.getContentListIndex(currentContentIdIndex);
                     contentIdContent.mContentsId = value;
-                    searchResponse.contentList.set(currentContentIdIndex, contentIdContent);
+                    searchResponse.setContentListElement(currentContentIdIndex, contentIdContent);
                     break;
                 case CTPICURL1:
-                    int currentCtPicURL1Index = searchResponse.contentList.size() - 1;
-                    TotalSearchResponseData.Content contentCtPicURL1 = searchResponse.contentList.get(currentCtPicURL1Index);
+                    int currentCtPicURL1Index = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentCtPicURL1 = searchResponse.getContentListIndex(currentCtPicURL1Index);
                     contentCtPicURL1.mCtPicURL1 = value;
-                    searchResponse.contentList.set(currentCtPicURL1Index, contentCtPicURL1);
+                    searchResponse.setContentListElement(currentCtPicURL1Index, contentCtPicURL1);
                     break;
                 case CTPICURL2:
-                    int currentCtPicURL2Index = searchResponse.contentList.size() - 1;
-                    TotalSearchResponseData.Content contentCtPicURL2 = searchResponse.contentList.get(currentCtPicURL2Index);
+                    int currentCtPicURL2Index = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentCtPicURL2 = searchResponse.getContentListIndex(currentCtPicURL2Index);
                     contentCtPicURL2.mCtPicURL2 = value;
-                    searchResponse.contentList.set(currentCtPicURL2Index, contentCtPicURL2);
+                    searchResponse.setContentListElement(currentCtPicURL2Index, contentCtPicURL2);
                     break;
                 case TITLE:
-                    int currentTitleIndex = searchResponse.contentList.size() - 1;
-                    TotalSearchResponseData.Content contentTitle = searchResponse.contentList.get(currentTitleIndex);
+                    int currentTitleIndex = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentTitle = searchResponse.getContentListIndex(currentTitleIndex);
                     contentTitle.mTitle = value;
-                    searchResponse.contentList.set(currentTitleIndex, contentTitle);
+                    searchResponse.setContentListElement(currentTitleIndex, contentTitle);
                     break;
                 case MOBILEVIEWINGFLG:
-                    int currentMobileIndex = searchResponse.contentList.size() - 1;
-                    TotalSearchResponseData.Content contentMoble = searchResponse.contentList.get(currentMobileIndex);
+                    int currentMobileIndex = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentMoble = searchResponse.getContentListIndex(currentMobileIndex);
                     contentMoble.mMobileViewingFlg = value;
                     break;
                 case STARTVIEWING:
-                    int currentStartViewingIndex = searchResponse.contentList.size() - 1;
-                    TotalSearchResponseData.Content contentStartViewing = searchResponse.contentList.get(currentStartViewingIndex);
+                    int currentStartViewingIndex = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentStartViewing = searchResponse.getContentListIndex(currentStartViewingIndex);
                     contentStartViewing.mStartViewing = value;
                     break;
                 case ENDVIEWING:
-                    int currentEndViewingIndex = searchResponse.contentList.size() - 1;
-                    TotalSearchResponseData.Content contentEndViewing = searchResponse.contentList.get(currentEndViewingIndex);
+                    int currentEndViewingIndex = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentEndViewing = searchResponse.getContentListIndex(currentEndViewingIndex);
                     contentEndViewing.mEndViewing = value;
                     break;
                 case CHANNEL_NAME:
-                    int currentChannelNameIndex = searchResponse.contentList.size() - 1;
-                    TotalSearchResponseData.Content contentChannelName = searchResponse.contentList.get(currentChannelNameIndex);
+                    int currentChannelNameIndex = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentChannelName = searchResponse.getContentListIndex(currentChannelNameIndex);
                     contentChannelName.mChannelName = value;
                     break;
                 case CHANNEL_ID:
-                    int currentChannelIdIndex = searchResponse.contentList.size() - 1;
-                    TotalSearchResponseData.Content contentChannelId = searchResponse.contentList.get(currentChannelIdIndex);
+                    int currentChannelIdIndex = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentChannelId = searchResponse.getContentListIndex(currentChannelIdIndex);
                     contentChannelId.mChannelId = value;
                     break;
                 case VIEWABLE_AGE:
-                    int currentAgeIndex = searchResponse.contentList.size() - 1;
-                    TotalSearchResponseData.Content contentAge = searchResponse.contentList.get(currentAgeIndex);
+                    int currentAgeIndex = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentAge = searchResponse.getContentListIndex(currentAgeIndex);
                     contentAge.mViewableAge = value;
                     break;
                 case CATEGORY_ID:
-                    int currentCategoryIdIndex = searchResponse.contentList.size() - 1;
-                    TotalSearchResponseData.Content contentCategoryId = searchResponse.contentList.get(currentCategoryIdIndex);
+                    int currentCategoryIdIndex = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentCategoryId = searchResponse.getContentListIndex(currentCategoryIdIndex);
                     contentCategoryId.mCategoryId = value;
                     break;
                 case DESCRIPTION1:
-                    int currentDescription1Index = searchResponse.contentList.size() - 1;
-                    TotalSearchResponseData.Content contentDescription1 = searchResponse.contentList.get(currentDescription1Index);
+                    int currentDescription1Index = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentDescription1 = searchResponse.getContentListIndex(currentDescription1Index);
                     contentDescription1.mDescription1 = value;
                     break;
                 case DESCRIPTION2:
-                    int currentDescription2Index = searchResponse.contentList.size() - 1;
-                    TotalSearchResponseData.Content contentDescription2 = searchResponse.contentList.get(currentDescription2Index);
+                    int currentDescription2Index = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentDescription2 = searchResponse.getContentListIndex(currentDescription2Index);
                     contentDescription2.mDescription2 = value;
                     break;
                 case DESCRIPTION3:
-                    int currentDescription3Index = searchResponse.contentList.size() - 1;
-                    TotalSearchResponseData.Content contentDescription3 = searchResponse.contentList.get(currentDescription3Index);
+                    int currentDescription3Index = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentDescription3 = searchResponse.getContentListIndex(currentDescription3Index);
                     contentDescription3.mDescription3 = value;
                     break;
                 case RESERVED1:
-                    int currentReserved1Index = searchResponse.contentList.size() - 1;
-                    TotalSearchResponseData.Content contentReserved1 = searchResponse.contentList.get(currentReserved1Index);
+                    int currentReserved1Index = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentReserved1 = searchResponse.getContentListIndex(currentReserved1Index);
                     contentReserved1.mReserved1 = value;
                     break;
                 case RESERVED2:
-                    int currentReserved2Index = searchResponse.contentList.size() - 1;
-                    TotalSearchResponseData.Content contentReserved2 = searchResponse.contentList.get(currentReserved2Index);
+                    int currentReserved2Index = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentReserved2 = searchResponse.getContentListIndex(currentReserved2Index);
                     contentReserved2.mReserved2 = value;
                     break;
                 case RESERVED3:
-                    int currentReserved3Index = searchResponse.contentList.size() - 1;
-                    TotalSearchResponseData.Content contentReserved3 = searchResponse.contentList.get(currentReserved3Index);
+                    int currentReserved3Index = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentReserved3 = searchResponse.getContentListIndex(currentReserved3Index);
                     contentReserved3.mReserved3 = value;
                     break;
                 case RESERVED4:
-                    int currentReserved4Index = searchResponse.contentList.size() - 1;
-                    TotalSearchResponseData.Content contentReserved4 = searchResponse.contentList.get(currentReserved4Index);
+                    int currentReserved4Index = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentReserved4 = searchResponse.getContentListIndex(currentReserved4Index);
                     contentReserved4.mReserved4 = value;
                     break;
                 case RESERVED5:
-                    int currentReserved5Index = searchResponse.contentList.size() - 1;
-                    TotalSearchResponseData.Content contentReserved5 = searchResponse.contentList.get(currentReserved5Index);
+                    int currentReserved5Index = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentReserved5 = searchResponse.getContentListIndex(currentReserved5Index);
                     contentReserved5.mReserved5 = value;
                     break;
                 case GENRE_NAME:
-                    int currentGenreNameIndex = searchResponse.contentList.size() - 1;
-                    TotalSearchResponseData.Content contentGenreName = searchResponse.contentList.get(currentGenreNameIndex);
+                    int currentGenreNameIndex = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentGenreName = searchResponse.getContentListIndex(currentGenreNameIndex);
                     contentGenreName.mGenreName = value;
                     break;
                 case PAYMENT_FLG:
-                    int currentPaymentFlgIndex = searchResponse.contentList.size() - 1;
-                    TotalSearchResponseData.Content contentPaymentFlg = searchResponse.contentList.get(currentPaymentFlgIndex);
+                    int currentPaymentFlgIndex = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentPaymentFlg = searchResponse.getContentListIndex(currentPaymentFlgIndex);
                     contentPaymentFlg.mPaymentFlg = value;
                     break;
                 case CAST:
-                    int currentCastIndex = searchResponse.contentList.size() - 1;
-                    TotalSearchResponseData.Content contentCast = searchResponse.contentList.get(currentCastIndex);
+                    int currentCastIndex = searchResponse.getContentListSize() - 1;
+                    TotalSearchResponseData.Content contentCast = searchResponse.getContentListIndex(currentCastIndex);
                     contentCast.mCast = value;
                     break;
                 case ID:

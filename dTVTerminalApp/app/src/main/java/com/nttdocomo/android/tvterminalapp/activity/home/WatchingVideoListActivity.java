@@ -75,7 +75,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
     /**
      * ContentsDataList.
      */
-    private List<ContentsData> mWatchingVideoListData = new ArrayList<>();
+    private final List<ContentsData> mWatchingVideoListData = new ArrayList<>();
 
     /**
      * 指を置いたY座標.

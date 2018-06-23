@@ -39,7 +39,8 @@ public class DaccountReceiver extends BroadcastReceiver {
     /**通知Intentのextrasのキー名.*/
     private static final String DOCOMO_ID = "DOCOMO_ID";
 
-    public static DaccountChangedCallBack dAccountChangedCallBack;
+    /**コールバッククラス.*/
+    private static DaccountChangedCallBack sDaccountChangedCallBack;
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
@@ -85,8 +86,8 @@ public class DaccountReceiver extends BroadcastReceiver {
 
                 //ユーザーが登録された場合は、キャッシュクリアを呼ぶ。
                 DaccountControl.cacheClear(context);
-                if (dAccountChangedCallBack != null) {
-                    dAccountChangedCallBack.onChanged();
+                if (sDaccountChangedCallBack != null) {
+                    sDaccountChangedCallBack.onChanged();
                 }
 
                 break;
@@ -95,14 +96,14 @@ public class DaccountReceiver extends BroadcastReceiver {
                 DTVTLogger.debug("USER_AUTH_RECEIVER");
 
                 if (docomoIdObject != null && docomoIdObject.toString().equals(SharedPreferencesUtils.getSharedPreferencesDaccountId(context))) {
-                    //TODO: ServiceToken使い回す実装された時に、ServiceTokenをクリアする必要がある。
+                    //ServiceTokenを使い回す実装をする場合、ServiceTokenをここでクリアする必要がある。
                 } else {
                     //再認証されたdocomoIdとDTVTアプリで使われているIdが違う場合に、キャッシュクリアを呼ぶ。
                     DaccountControl.cacheClear(context);
 
                 }
-                if (dAccountChangedCallBack != null) {
-                    dAccountChangedCallBack.onChanged();
+                if (sDaccountChangedCallBack != null) {
+                    sDaccountChangedCallBack.onChanged();
                 }
 
                 break;
@@ -113,8 +114,8 @@ public class DaccountReceiver extends BroadcastReceiver {
                 //DTVTアプリログインしているユーザーが削除されていた場合のみ、キャッシュクリアを呼ぶ。
                 if (docomoIdObject != null && docomoIdObject.toString().equals(SharedPreferencesUtils.getSharedPreferencesDaccountId(context))) {
                     DaccountControl.cacheClear(context);
-                    if (dAccountChangedCallBack != null) {
-                        dAccountChangedCallBack.onChanged();
+                    if (sDaccountChangedCallBack != null) {
+                        sDaccountChangedCallBack.onChanged();
                     }
                 }
 
@@ -137,5 +138,13 @@ public class DaccountReceiver extends BroadcastReceiver {
                 //アナライザー対策なので無処理
                 break;
         }
+    }
+
+    /**
+     * コールバック設定/解除.
+     * @param callback コールバッククラス
+     */
+    public static void setDaccountChangedCallBack(final DaccountChangedCallBack callback) {
+        sDaccountChangedCallBack = callback;
     }
 }

@@ -26,7 +26,7 @@ public abstract class DownloaderBase {
     /**エラー.*/
     private DownloadListener.DownLoadError mError;
     /**ダウンロードリスナー.*/
-    private DownloadListener mDownloadListener;
+    private final DownloadListener mDownloadListener;
     /**d_.*/
     public static final String sDlPrefix = "d_";
     /**ダウンロード中なのか.*/

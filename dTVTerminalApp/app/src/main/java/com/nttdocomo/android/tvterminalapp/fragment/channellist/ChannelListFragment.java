@@ -103,7 +103,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
     /** フッタービュー.*/
     private View mFootView;
     /** 宅内、宅外区分.*/
-    public boolean mIsRemote;
+    private boolean mIsRemote;
 
     /**
      * コンストラクタ.
@@ -254,11 +254,19 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
     }
 
     /**
-     * 接続ステータス取得.
+     * 最新の接続ステータス取得.
      * @return true:宅外　false:宅内
      */
     public boolean getConnectionStatus() {
         return StbConnectionManager.shared().getConnectionStatus() != StbConnectionManager.ConnectionStatus.HOME_IN;
+    }
+
+    /**
+     * 元の接続ステータス取得.getConnectionStatusとは違い、元々動作していた際のステータスを返却する(変化があるかの確認用)
+     * @return true:宅外　false:宅内
+     */
+    public boolean isRemote() {
+        return mIsRemote;
     }
 
     /**
