@@ -47,11 +47,6 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     private static final String SEPARATOR = ":";
 
     /**
-     * ページング判定.
-     */
-    private final boolean mIsPaging = false;
-
-    /**
      * コールバック.
      */
     private RecommendApiDataProviderCallback mApiDataProviderCallback = null;
@@ -703,7 +698,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      */
     private void setStructDB(final RecommendChannelList recommendChannelList, final String cacheDateKey, final int tagPageNo) {
         RecommendListDataManager dataManager = new RecommendListDataManager(mContext);
-        dataManager.insertRecommendInsertList(recommendChannelList, mIsPaging, tagPageNo, cacheDateKey);
+        dataManager.insertRecommendInsertList(recommendChannelList, false, tagPageNo, cacheDateKey);
     }
 
     /**

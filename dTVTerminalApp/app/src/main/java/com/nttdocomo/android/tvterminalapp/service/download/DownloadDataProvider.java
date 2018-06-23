@@ -490,8 +490,8 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
             String[] ids = path.split(sSeparator);
             String itemId = ids[paths.length - 1];
             if (!TextUtils.isEmpty(itemId)) {
-                List <String> pathList = getPathListById(itemId, path, completed);
-                if (pathList != null && pathList.size() > 0){
+                List<String> pathList = getPathListById(itemId, path, completed);
+                if (pathList != null && pathList.size() > 0) {
                     for (String savePath : pathList) {
                         DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
                         downLoadListDataManager.deleteDownloadContentByItemId(itemId, savePath, completed);
@@ -528,7 +528,7 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
      * @return pathList パスリスト
      */
     private List<String> getPathListById(final String itemId, final String path, final boolean completed) {
-        List <String> pathList = new ArrayList<>();
+        List<String> pathList = new ArrayList<>();
         DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
         if (completed) {
             List<Map<String, String>> resultList = downLoadListDataManager.selectDownLoadListById(itemId);

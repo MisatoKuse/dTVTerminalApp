@@ -350,7 +350,7 @@ public class SharedPreferencesUtils {
      * @return true:完了済み false:未完了
      */
     public static boolean getSharedPreferencesStbConnect(final Context context) {
-        if(context == null) {
+        if (context == null) {
             //コンテキストの指定が無ければ無条件で未完了にする
             return false;
         }
@@ -1230,7 +1230,7 @@ public class SharedPreferencesUtils {
      * @param context コンテキスト
      * @return 前回ローカルレジストから24時間以上経過していればtrue
      */
-    public static boolean isLocalRegistAfter24Hour(Context context) {
+    public static boolean isLocalRegistAfter24Hour(final Context context) {
         DTVTLogger.start();
 
         //結果
@@ -1245,8 +1245,8 @@ public class SharedPreferencesUtils {
         long beforeTime = data.getLong(LOCAL_REGIST_SUCCCES_TIME,
                 epochNowTime - DateUtils.EPOCH_TIME_ONE_HOUR);
 
-        if (beforeTime + DateUtils.EPOCH_TIME_ONE_DAY < epochNowTime ||
-                beforeTime > epochNowTime) {
+        if (beforeTime + DateUtils.EPOCH_TIME_ONE_DAY < epochNowTime
+                || beforeTime > epochNowTime) {
             // 前回成功時から24時間経過した場合は、trueにする。
             // また、前回成功時の時刻が今より未来の場合、端末の時刻の操作が行われたのでtrueとする
             answer = true;

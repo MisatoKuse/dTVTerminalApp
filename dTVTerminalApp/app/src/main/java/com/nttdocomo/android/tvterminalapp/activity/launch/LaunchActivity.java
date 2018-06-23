@@ -33,8 +33,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     private Intent mNextActivity = null;
     /** アプリ起動直後のdアカウントエラーの状況. */
     private boolean mDaccountStatus = false;
-    /** 次の画面でdアカウントエラーを出すならtrueにする. */
-    private boolean mIsDAccountErrorNextAvctivity = false;
     /** 次の画面で設定画面エラーを出すならtrueにする. */
     private boolean mIsSettingErrorNextAvctivity = false;
 
@@ -316,15 +314,5 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         });
 
         DTVTLogger.end();
-    }
-
-    /**
-     * ベースアクティビティのdアカウントエラー表示を置き換える.
-     */
-    @Override
-    protected void showDAccountErrorDialog() {
-        //dアカウントのダイアログはここでは表示しないので、superは呼ばない
-        //ダイアログ表示フラグをONにする
-        mIsDAccountErrorNextAvctivity = true;
     }
 }

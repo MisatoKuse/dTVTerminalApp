@@ -53,10 +53,6 @@ public class RecordReservationListActivity extends BaseActivity
      */
     private ListView mListView = null;
     /**
-     * 録画予約ProgressDialog表示用リスト.
-     */
-    private RelativeLayout mRelativeLayout = null;
-    /**
      * 録画予約詳細データリスト.
      */
     private List<ContentsData> mContentsList = null;
@@ -141,17 +137,17 @@ public class RecordReservationListActivity extends BaseActivity
      */
     private void showProgressBar(final boolean showProgressBar) {
         mListView = findViewById(R.id.record_reservation_list_view);
-        mRelativeLayout = findViewById(R.id.record_reservation_progress);
+        RelativeLayout relativeLayout = findViewById(R.id.record_reservation_progress);
         if (showProgressBar) {
             //オフライン時は表示しない
             if (!NetWorkUtils.isOnline(this)) {
                 return;
             }
             mListView.setVisibility(View.GONE);
-            mRelativeLayout.setVisibility(View.VISIBLE);
+            relativeLayout.setVisibility(View.VISIBLE);
         } else {
             mListView.setVisibility(View.VISIBLE);
-            mRelativeLayout.setVisibility(View.GONE);
+            relativeLayout.setVisibility(View.GONE);
         }
     }
 

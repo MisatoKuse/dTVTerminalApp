@@ -60,13 +60,13 @@ public class TvScheduleList {
     }
 
     /**
-     * データをクリアして、ガベージコレクションされやすくする
+     * データをクリアして、ガベージコレクションされやすくする.
      */
     public void clearData() {
-        if(mTvsMap != null) {
+        if (mTvsMap != null) {
             mTvsMap.clear();
         }
-        if(mTvsList != null) {
+        if (mTvsList != null) {
             mTvsList.clear();
         }
     }

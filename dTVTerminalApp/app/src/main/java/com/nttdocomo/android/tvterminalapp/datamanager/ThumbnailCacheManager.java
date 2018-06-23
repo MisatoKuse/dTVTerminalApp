@@ -78,7 +78,7 @@ public class ThumbnailCacheManager {
         int cacheSize = (int) (freeMemory / THUMBNAIL_MEMORY_CACHE_RATE);
 
         //メモリの断片化が進み、まとまったメモリが確保できずにゼロだった場合の確認
-        if(cacheSize <= 0) {
+        if (cacheSize <= 0) {
             //ガベージコレクションを試す（2回行うのはAndroidのソースでも行われている正当な方法です）
             System.gc();
             System.gc();
@@ -89,7 +89,7 @@ public class ThumbnailCacheManager {
         }
 
         //それでもゼロだった場合、LruCacheはゼロバイトを認めないので、若干数を割り当てる。
-        if(cacheSize <= 0) {
+        if (cacheSize <= 0) {
             cacheSize = THUMBNAIL_MEMORY_CACHE_MINIMUM_SIZE;
         }
 
@@ -101,11 +101,11 @@ public class ThumbnailCacheManager {
             }
 
             @Override
-            protected void entryRemoved(boolean evicted, String key, Bitmap oldValue, Bitmap newValue) {
+            protected void entryRemoved(final boolean evicted, final String key, final Bitmap oldValue, final Bitmap newValue) {
                 //キャッシュから古いデータが排除される場合の処理
 
                 //解放ビットマップリストが無いならば作成する
-                if(mMemChaeBuf == null) {
+                if (mMemChaeBuf == null) {
                     mMemChaeBuf = new ArrayList();
                 }
 
@@ -124,7 +124,7 @@ public class ThumbnailCacheManager {
      */
     public Bitmap getBitmapFromDisk(final String fileName) {
         //コンテキストがヌルの場合は帰る
-        if(mContext == null) {
+        if (mContext == null) {
             return null;
         }
 
@@ -155,7 +155,7 @@ public class ThumbnailCacheManager {
      * @param bitmap 画像
      */
     public void putBitmapToMem(final String url, final Bitmap bitmap) {
-        if(url != null && bitmap != null && mMemCache != null) {
+        if (url != null && bitmap != null && mMemCache != null) {
             //格納先と格納情報がそろっていた場合に蓄積を行う
             mMemCache.put(url, bitmap);
         }
@@ -170,7 +170,7 @@ public class ThumbnailCacheManager {
      */
     public boolean saveBitmapToDisk(final String fileName, final Bitmap bitmap) {
         //コンテキストがヌルの場合は取得失敗で帰る
-        if(mContext ==null) {
+        if (mContext == null) {
             return false;
         }
 
@@ -277,10 +277,10 @@ public class ThumbnailCacheManager {
     public void removeAll() {
         DTVTLogger.start();
         //解放済みビットマップリストの存在確認
-        if(mMemChaeBuf != null) {
+        if (mMemChaeBuf != null) {
             //リストが存在するならばまとめてリサイクルを行う
-            for(Bitmap bitmap : mMemChaeBuf) {
-                if(!bitmap.isRecycled()) {
+            for (Bitmap bitmap : mMemChaeBuf) {
+                if (!bitmap.isRecycled()) {
                     bitmap.recycle();
                     bitmap = null;
                 }
@@ -291,7 +291,7 @@ public class ThumbnailCacheManager {
         }
 
         //本来のキャッシュのクリア
-        if(mMemCache != null) {
+        if (mMemCache != null) {
             mMemCache.evictAll();
             mMemCache = null;
         }

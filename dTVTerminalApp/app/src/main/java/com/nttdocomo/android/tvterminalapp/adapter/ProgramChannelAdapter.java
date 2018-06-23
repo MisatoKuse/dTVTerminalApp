@@ -78,7 +78,7 @@ public class ProgramChannelAdapter extends
      * ガベージコレクションされやすくするために、ヌルを格納する.
      */
     public void removeData() {
-        if(mChannelList != null) {
+        if (mChannelList != null) {
             mChannelList.clear();
             mChannelList = null;
         }

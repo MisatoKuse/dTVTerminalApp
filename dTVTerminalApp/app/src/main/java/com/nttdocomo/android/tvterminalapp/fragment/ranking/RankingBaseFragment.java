@@ -143,15 +143,10 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
      */
     private void initRankingView() {
         if (mRankingMode != null) {
-            switch (mRankingMode) {
-                case TYPE_WEEKLY_RANK:
-                    initWeeklyContentListView();
-                    break;
-                case TYPE_VIDEO_RANK:
-                    initVideoContentListView();
-                    break;
-                default:
-                    break;
+            if (mRankingMode == ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK) {
+                initWeeklyContentListView();
+            } else if (mRankingMode == ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK) {
+                initVideoContentListView();
             }
         }
     }

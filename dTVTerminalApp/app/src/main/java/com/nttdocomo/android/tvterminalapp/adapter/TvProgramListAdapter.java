@@ -754,7 +754,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     @Override
     public int getItemCount() {
         //解放処理の強化により、このタイミングで番組データが存在しない場合が発生
-        if(mProgramList == null) {
+        if (mProgramList == null) {
             //番組データが無いのでゼロを返す
             return 0;
         } else {
@@ -951,22 +951,22 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * ガベージコレクションされやすくなるように各部にヌルを格納する.
      */
     public void removeData() {
-        if(mThumbnailProvider != null) {
+        if (mThumbnailProvider != null) {
             mThumbnailProvider.removeMemoryCache();
             mThumbnailProvider = null;
         }
 
-        if(mMyViewHolder != null) {
+        if (mMyViewHolder != null) {
             mMyViewHolder.clear();
             mMyViewHolder = null;
         }
 
-        if(mProgramList != null) {
+        if (mProgramList != null) {
             mProgramList.clear();
             mProgramList = null;
         }
 
-        if(mItemViews != null) {
+        if (mItemViews != null) {
             for (ItemViewHolder view : mItemViews) {
                 ViewUtils.cleanAllViews(view.mView);
                 ViewUtils.cleanAllViews(view.mClipButton);

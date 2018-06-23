@@ -14,7 +14,7 @@ public class RecordingReservationContentsDetailInfo {
     /**
      * 放送種別 1:多チャンネル放送.
      */
-    private final int mPlatformType = 1;
+    private static final int PLATFORM_TYPE = 1;
     /**
      * サービスID.
      */
@@ -91,7 +91,7 @@ public class RecordingReservationContentsDetailInfo {
      * @return 放送種別
      */
     public int getPlatformType() {
-        return mPlatformType;
+        return PLATFORM_TYPE;
     }
 
     /**

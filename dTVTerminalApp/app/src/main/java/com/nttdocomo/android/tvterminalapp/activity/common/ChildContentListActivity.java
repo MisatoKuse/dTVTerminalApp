@@ -99,10 +99,6 @@ public class ChildContentListActivity extends BaseActivity implements
      */
     private String mCrid;
     /**
-     * タイトル.
-     */
-    private String mTitle;
-    /**
      * タイプ.
      */
     private String mDispType;
@@ -135,11 +131,11 @@ public class ChildContentListActivity extends BaseActivity implements
         Intent intent = getIntent();
 
         mCrid = intent.getStringExtra(INTENT_KEY_CRID);
-        mTitle = intent.getStringExtra(INTENT_KEY_TITLE);
+        String title = intent.getStringExtra(INTENT_KEY_TITLE);
         mDispType = intent.getStringExtra(INTENT_KEY_DISP_TYPE);
 
-        DTVTLogger.debug("mCrid = " + mCrid + ", mTitle = " + mTitle);
-        setTitleText(mTitle);
+        DTVTLogger.debug("mCrid = " + mCrid + ", title = " + title);
+        setTitleText(title);
         enableStbStatusIcon(true);
         setHeaderColor(false);
         enableHeaderBackIcon(true);

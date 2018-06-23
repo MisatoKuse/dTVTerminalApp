@@ -500,17 +500,15 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         } else {
             channelName = "";
         }
-        switch (contentsType) {
-            case TV:
-            case OTHER:
-                date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(startTime)),
-                        DateUtils.formatEpochToStringOpeLog(Long.parseLong(endTime)), channelName);
-                break;
-            default:
-                date = StringUtils.getConnectStrings(channelName,
-                        DateUtils.addDateLimit(mContext, contentsData, contentsType));
-                break;
+
+        if (contentsType == ContentUtils.ContentsType.TV || contentsType == ContentUtils.ContentsType.OTHER) {
+            date = structDateStrings(DateUtils.formatEpochToStringOpeLog(Long.parseLong(startTime)),
+                    DateUtils.formatEpochToStringOpeLog(Long.parseLong(endTime)), channelName);
+        } else {
+            date = StringUtils.getConnectStrings(channelName,
+                    DateUtils.addDateLimit(mContext, contentsData, contentsType));
         }
+
         //表示情報がすべて取得できないときは非表示にする
         if (date == null || date.isEmpty()) {
             viewHolder.mTime.setVisibility(View.GONE);

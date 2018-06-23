@@ -274,7 +274,7 @@ public class ChannelInfo implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    public void writeToParcel(final Parcel dest, final int flags) {
         dest.writeList(this.mSchedules);
         dest.writeString(this.mTitle);
         dest.writeInt(this.mChannelNo);
@@ -293,7 +293,7 @@ public class ChannelInfo implements Parcelable {
     public ChannelInfo() {
     }
 
-    private ChannelInfo(Parcel in) {
+    private ChannelInfo(final Parcel in) {
         this.mSchedules = new ArrayList<ScheduleInfo>();
         in.readList(this.mSchedules, ScheduleInfo.class.getClassLoader());
         this.mTitle = in.readString();
@@ -312,12 +312,12 @@ public class ChannelInfo implements Parcelable {
 
     public static final Parcelable.Creator<ChannelInfo> CREATOR = new Parcelable.Creator<ChannelInfo>() {
         @Override
-        public ChannelInfo createFromParcel(Parcel source) {
+        public ChannelInfo createFromParcel(final Parcel source) {
             return new ChannelInfo(source);
         }
 
         @Override
-        public ChannelInfo[] newArray(int size) {
+        public ChannelInfo[] newArray(final int size) {
             return new ChannelInfo[size];
         }
     };

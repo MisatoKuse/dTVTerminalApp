@@ -28,10 +28,6 @@ public class StbConnectRelayClient {
     private static final int REMOTE_DATAGRAM_PORT = 1026;
     /**charset_utf8.*/
     private static final String CHARSET_UTF8 = "UTF-8";
-    /**SocketPort.*/
-    private final int mRemoteSocketPort = REMOTE_SOCKET_PORT;
-    /**datagram port.*/
-    private final int mRemoteDatagramPort = REMOTE_DATAGRAM_PORT;
     /**TcpClient.*/
     private TcpClient mTcpClient;
 
@@ -67,7 +63,7 @@ public class StbConnectRelayClient {
         this.disconnect();
 
         mTcpClient = new TcpClient();
-        return mTcpClient.connect(mRemoteIp, mRemoteSocketPort);
+        return mTcpClient.connect(mRemoteIp, REMOTE_SOCKET_PORT);
     }
 
     /**
@@ -89,7 +85,7 @@ public class StbConnectRelayClient {
         }
 
         mTcpClient = new TcpClient();
-        return mTcpClient.connect(mRemoteIp, mRemoteSocketPort, timeout);
+        return mTcpClient.connect(mRemoteIp, REMOTE_SOCKET_PORT, timeout);
     }
 
     /**
@@ -198,7 +194,7 @@ public class StbConnectRelayClient {
                 if (buff == null) {
                     return;
                 }
-                DatagramPacket packet = new DatagramPacket(buff, buff.length, new InetSocketAddress(mRemoteIp, mRemoteDatagramPort));
+                DatagramPacket packet = new DatagramPacket(buff, buff.length, new InetSocketAddress(mRemoteIp, REMOTE_DATAGRAM_PORT));
                 dataSocket = new DatagramSocket();
                 try {
                     dataSocket.send(packet);

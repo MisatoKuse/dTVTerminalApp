@@ -72,97 +72,51 @@ public class ContentUtils {
      * コンテンツタイプ.
      */
     public enum ContentsType {
-        /**
-         * テレビ.
-         */
+        /**テレビ.*/
         TV,
-        /**
-         * ビデオ.
-         */
+        /**ビデオ.*/
         VOD,
-        /**
-         * 地デジ.
-         */
+        /**地デジ.*/
         DIGITAL_TERRESTRIAL_BROADCASTING,
-        /**
-         * BS.
-         */
+        /**BS.*/
         BROADCASTING_SATELLITE,
-        /**
-         * ひかりTV(番組).
-         */
+        /**ひかりTV(番組).*/
         HIKARI_TV,
-        /**
-         * ひかりTV(Now On Air).
-         */
+        /**ひかりTV(Now On Air).*/
         HIKARI_TV_NOW_ON_AIR,
-        /**
-         * ひかり内dTVCh(番組).
-         */
+        /**ひかり内dTVCh(番組).*/
         HIKARI_IN_DCH_TV,
-        /**
-         * ひかりTV(VOD).
-         */
+        /**ひかりTV(VOD).*/
         HIKARI_TV_VOD,
-        /**
-         * ひかり内dTVCh.
-         */
+        /**ひかり内dTVCh.*/
         HIKARI_IN_DCH,
-        /**
-         * ひかり内dTV.
-         */
+        /**ひかり内dTV.*/
         HIKARI_IN_DTV,
-        /**
-         * ひかり内dTVCh(見逃し).
-         */
+        /**ひかり内dTVCh(見逃し).*/
         HIKARI_IN_DCH_MISS,
-        /**
-         * ひかり内dTVCh(関連).
-         */
+        /**ひかり内dTVCh(関連).*/
         HIKARI_IN_DCH_RELATION,
-        /**
-         * ひかり(録画).
-         */
+        /**ひかり(録画).*/
         HIKARI_RECORDED,
-        /**
-         * ひかりTV内dch_見逃し(３２以上).
-         */
+        /**ひかりTV内dch_見逃し(３２以上).*/
         DCHANNEL_VOD_OVER_31,
-        /**
-         * ひかりTV内dch_見逃し(３1以内).
-         */
+        /**ひかりTV内dch_見逃し(３1以内).*/
         DCHANNEL_VOD_31,
-        /**
-         * レンタル.
-         */
+        /**レンタル.*/
         RENTAL,
-        /**
-         * プレミアム.
-         */
+        /**プレミアム.*/
         PREMIUM,
-        /**
-         * PureDTV.
-         */
+        /**PureDTV.*/
         PURE_DTV,
-        /**
-         * PureDTVCh.
-         */
+        /**PureDTVCh.*/
         PURE_DTV_CHANNEL,
-        /**
-         * PureDTVCh(見逃し).
-         */
+        /**PureDTVCh(見逃し).*/
         PURE_DTV_CHANNEL_MISS,
-        /**
-         * PureDTVCh(関連番組).
-         */
+        /**PureDTVCh(関連番組).*/
         PURE_DTV_CHANNEL_RELATION,
-        /**
-         * dアニメストア.
-         */
+        /**dアニメストア.*/
         D_ANIME_STORE,
-        /**
-         * その他.
-         */
+        /**その他.*/
         OTHER
     }
 
@@ -170,53 +124,29 @@ public class ContentUtils {
      * 視聴可否種別.
      */
     public enum ViewIngType {
-        /**
-         * 視聴可能.
-         */
+        /**視聴可能.*/
         ENABLE_WATCH,
-        /**
-         * 視聴可能(期限30日以内なので視聴可能期限表示).
-         */
+        /**視聴可能(期限30日以内なので視聴可能期限表示).*/
         ENABLE_WATCH_LIMIT_THIRTY,
-        /**
-         * 視聴可能(期限30日以内なので視聴可能期限表示) ※複数期限があり、期限が一番長いのを基準にする場合.
-         */
+        /**視聴可能(期限30日以内なので視聴可能期限表示) ※複数期限があり、期限が一番長いのを基準にする場合.*/
         ENABLE_WATCH_LIMIT_THIRTY_LONGEST,
-        /**
-         * 視聴可能(期限30日超、視聴期限非表示).
-         */
+        /**視聴可能(期限30日超、視聴期限非表示).*/
         ENABLE_WATCH_LIMIT_THIRTY_OVER,
-        /**
-         * 視聴不可(再生導線非表示).
-         */
+        /**視聴不可(再生導線非表示).*/
         DISABLE_WATCH_AND_PLAY,
-        /**
-         * 視聴不可契約導線表示.
-         */
+        /**視聴不可契約導線表示.*/
         DISABLE_WATCH_AGREEMENT_DISPLAY,
-        /**
-         * 視聴不可契約導線表示(購入CH判定時).
-         */
+        /**視聴不可契約導線表示(購入CH判定時).*/
         DISABLE_CHANNEL_WATCH_AGREEMENT_DISPLAY,
-        /**
-         * 視聴不可契約導線表示(購入VOD判定時).
-         */
+        /**視聴不可契約導線表示(購入VOD判定時).*/
         DISABLE_VOD_WATCH_AGREEMENT_DISPLAY,
-        /**
-         * 視聴不可.
-         */
+        /**視聴不可.*/
         DISABLE_WATCH,
-        /**
-         * 購入済みCH判定開始.
-         */
+        /**購入済みCH判定開始.*/
         PREMIUM_CHECK_START,
-        /**
-         * 購入済みVOD判定開始.
-         */
+        /**購入済みVOD判定開始.*/
         SUBSCRIPTION_CHECK_START,
-        /**
-         * 視聴可否判定外ステータス ※サーバレスポンスが正常ならこの状態にはならない想定.
-         */
+        /**視聴可否判定外ステータス ※サーバレスポンスが正常ならこの状態にはならない想定.*/
         NONE_STATUS
     }
     /**
@@ -440,7 +370,7 @@ public class ContentUtils {
     }
 
     /**
-     * チャンネル名表示を別メソッド化 DREM-2570
+     * チャンネル名表示を別メソッド化.
      * @param context           コンテキスト
      * @param hyphenTextView 「-」表示ビュー
      * @param channelTextView チャンネル名表示ビュー
@@ -473,7 +403,8 @@ public class ContentUtils {
         }
 
         // 表示
-        if (periodContentsType == ContentsType.TV || periodContentsType == ContentsType.VOD || periodContentsType == ContentsType.DCHANNEL_VOD_OVER_31 || periodContentsType == ContentsType.DCHANNEL_VOD_31) {
+        if (periodContentsType == ContentsType.TV || periodContentsType == ContentsType.VOD
+                || periodContentsType == ContentsType.DCHANNEL_VOD_OVER_31 || periodContentsType == ContentsType.DCHANNEL_VOD_31) {
             if (!TextUtils.isEmpty(viewingChannelName)) {
                 hyphenTextView.setVisibility(View.VISIBLE);
                 channelTextView.setVisibility(View.VISIBLE);

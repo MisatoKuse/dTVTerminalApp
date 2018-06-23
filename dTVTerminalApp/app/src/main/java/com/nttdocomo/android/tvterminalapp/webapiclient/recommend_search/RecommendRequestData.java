@@ -38,10 +38,6 @@ public class RecommendRequestData {
      * 画面ID.
      */
     private final String mPageId;
-    /**
-     * 放送時間考慮.
-     */
-    private final String mAirtime;
 
     /**
      * コンストラクタ.
@@ -54,7 +50,6 @@ public class RecommendRequestData {
         mStartIndex = "";
         mMaxResult = "";
         mPageId = "";
-        mAirtime = "";
     }
 
     public String getServiceId() {
@@ -65,15 +60,15 @@ public class RecommendRequestData {
         return mServiceCategoryId;
     }
 
-    public void setStartIndex(String startIndex) {
+    public void setStartIndex(final String startIndex) {
         this.mStartIndex = startIndex;
     }
 
-    public void setMaxResult(String maxResult) {
+    public void setMaxResult(final String maxResult) {
         this.mMaxResult = maxResult;
     }
 
-    public void setServiceCategoryId(String serviceCategoryId) {
+    public void setServiceCategoryId(final String serviceCategoryId) {
         this.mServiceCategoryId = serviceCategoryId;
     }
 

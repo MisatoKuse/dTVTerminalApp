@@ -340,6 +340,9 @@ public class ChannelListActivity extends BaseActivity implements
             case NONE_LOCAL_REGISTRATION:
                 mTabNames = res.getStringArray(R.array.channel_list_tab_names_no_paring);
                 break;
+            case HOME_OUT:
+            case HOME_OUT_CONNECT:
+            case HOME_IN:
             default:
                 mTabNames = res.getStringArray(R.array.channel_list_tab_names);
                 break;

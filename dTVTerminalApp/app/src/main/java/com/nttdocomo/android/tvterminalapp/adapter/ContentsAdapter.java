@@ -167,62 +167,33 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * 共通アダプター使う.
      */
     public enum ActivityTypeItem {
-        /**
-         * 今日のテレビランキング.
-         */
+        /**今日のテレビランキング.*/
         TYPE_DAILY_RANK,
-        /**
-         * 週間テレビランキング.
-         */
+        /**週間テレビランキング.*/
         TYPE_WEEKLY_RANK,
-        /**
-         * ビデオランキング.
-         */
+        /**ビデオランキング.*/
         TYPE_VIDEO_RANK,
-        /**
-         * レンタル.
-         */
+        /**レンタル.*/
         TYPE_RENTAL_RANK,
-        /**
-         * プレミアムビデオ.
-         */
+        /**プレミアムビデオ.*/
         TYPE_PREMIUM_VIDEO_LIST,
-
-        /**
-         * 録画予約一覧.
-         */
+        /**録画予約一覧.*/
         TYPE_RECORDING_RESERVATION_LIST,
-        /**
-         * ビデオコンテンツ一覧.
-         */
+        /**ビデオコンテンツ一覧.*/
         TYPE_VIDEO_CONTENT_LIST,
-        /**
-         * 録画番組一覧.
-         */
+        /**録画番組一覧.*/
         TYPE_RECORDED_LIST,
-        /**
-         * 視聴中ビデオ一覧.
-         */
+        /**視聴中ビデオ一覧.*/
         TYPE_WATCHING_VIDEO_LIST,
-        /**
-         * TVタブ(クリップ).
-         */
+        /**TVタブ(クリップ).*/
         TYPE_CLIP_LIST_MODE_TV,
-        /**
-         * ビデオタブ(クリップ).
-         */
+        /**ビデオタブ(クリップ).*/
         TYPE_CLIP_LIST_MODE_VIDEO,
-        /**
-         * 検索.
-         */
+        /**検索.*/
         TYPE_SEARCH_LIST,
-        /**
-         * // コンテンツ詳細チャンネル一覧.
-         */
+        /**コンテンツ詳細チャンネル一覧.*/
         TYPE_CONTENT_DETAIL_CHANNEL_LIST,
-        /**
-         * おすすめ番組・ビデオ.
-         */
+        /**おすすめ番組・ビデオ.*/
         TYPE_RECOMMEND_LIST
     }
 

@@ -294,7 +294,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
             intent.putExtra(DtvtConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
             OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(info, ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY);
             detailData.setIsTranslateFromSearchFlag(true);
-            intent.putExtra(ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY,detailData);
+            intent.putExtra(ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY, detailData);
             searchTopActivity.startActivity(intent);
         }
     }

@@ -49,7 +49,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     /**
      * コンテキストファイル.
      */
-    protected final Context mContext;
+    final Context mContext;
     /**
      * クリップキーリスト.
      */
@@ -399,7 +399,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     }
 
     /**
-     * クリップ
+     * クリップ.
      * @param operationId
      * @param data
      */

@@ -721,7 +721,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             public void onCallBack(final boolean dialogSwitch) {
                 //ここは、エラーダイアログの表示と同時に呼び出される。ここでダイアログを表示する場合、アプリ終了ダイアログのみとなる。
                 //終了ダイアログの表示中に動画が再生される事が無いように、playStartOriginの呼び出しはdialogSwitchがfalseの場合のみとなる。
-                if(!dialogSwitch) {
+                if (!dialogSwitch) {
                     playStartOrigin();
                 }
             }
@@ -1409,11 +1409,11 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     }
 
     /**
-     * 前回のポ再生位置設定.
+     * 前回の再生位置設定.
      *
      * @param playStartPosition 前回の再生位置
      */
-    public void setPlayStartPosition(int playStartPosition) {
+    public void setPlayStartPosition(final int playStartPosition) {
         this.mPlayStartPosition = playStartPosition;
     }
 

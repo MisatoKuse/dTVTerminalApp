@@ -24,10 +24,8 @@ import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
-import com.nttdocomo.android.tvterminalapp.utils.DeviceStateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.MainSettingUtils;
-import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
@@ -412,6 +410,8 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
                 case OVER:
                     resultDialog.setContent(getString(R.string.common_text_regist_over_error));
                     break;
+                case NONE:
+                case UNKNOWN:
                 default:
                     resultDialog.setContent(getString(R.string.common_text_regist_other_error));
                     break;

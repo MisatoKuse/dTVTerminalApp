@@ -7,7 +7,6 @@ package com.nttdocomo.android.tvterminalapp.dataprovider.dlna;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.DlnaBrowseDataManager;
@@ -15,7 +14,6 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstant
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaObject;
-import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 
 import java.util.List;

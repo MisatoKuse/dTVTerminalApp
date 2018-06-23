@@ -911,7 +911,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
      * 検索画面から遷移フラグ設定.
      * @param mIsTranslateFromSearch 検索画面から遷移フラグ
      */
-    public void setIsTranslateFromSearchFlag(boolean mIsTranslateFromSearch) {
+    public void setIsTranslateFromSearchFlag(final boolean mIsTranslateFromSearch) {
         this.mIsTranslateFromSearch = mIsTranslateFromSearch;
     }
 

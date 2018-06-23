@@ -5,7 +5,6 @@
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -21,11 +20,6 @@ import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
  * 初回起動ペアリング(ヘルプページ) 画面.
  */
 public class PairingHelpActivity extends BaseActivity {
-
-    /**
-     * WebView.
-     */
-    private WebView mFirstPairingHelpWebView = null;
 
     /**
      * 起動元判定キー.
@@ -59,18 +53,18 @@ public class PairingHelpActivity extends BaseActivity {
             mFromMode = intent.getIntExtra(START_WHERE, -1);
         }
         setContentView(R.layout.setting_menu_item_main_view);
-        mFirstPairingHelpWebView = findViewById(R.id.setting_menu_main_webview);
-        mFirstPairingHelpWebView.setWebViewClient(new WebViewClient());
-        WebSettings webSettings = mFirstPairingHelpWebView.getSettings();
+        WebView firstPairingHelpWebView = findViewById(R.id.setting_menu_main_webview);
+        firstPairingHelpWebView.setWebViewClient(new WebViewClient());
+        WebSettings webSettings = firstPairingHelpWebView.getSettings();
         webSettings.setJavaScriptEnabled(false);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
         webSettings.setTextZoom(100);
         if (mFromMode == ParingHelpFromMode.ParingHelpFromMode_Launch.ordinal()) {
-            mFirstPairingHelpWebView.loadUrl(UrlConstants.WebUrl.SETTING_HELP_PAIRING_URL);
+            firstPairingHelpWebView.loadUrl(UrlConstants.WebUrl.SETTING_HELP_PAIRING_URL);
         } else if (mFromMode == ParingHelpFromMode.ParingHelpFromMode_Setting.ordinal()) {
             webSettings.setAllowUniversalAccessFromFileURLs(false);
             webSettings.setAllowFileAccessFromFileURLs(false);
-            mFirstPairingHelpWebView.loadUrl(UrlConstants.WebUrl.SETTING_SUPPORT_PAIRING_URL);
+            firstPairingHelpWebView.loadUrl(UrlConstants.WebUrl.SETTING_SUPPORT_PAIRING_URL);
         }
 
         //Headerの設定

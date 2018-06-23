@@ -38,7 +38,7 @@ public class ChannelWebClientSync implements ChannelWebClient.ChannelJsonParserC
         DTVTLogger.start();
 
         //コールバックが返ってきた
-        if(channelLists != null) {
+        if (channelLists != null) {
             //値が返ってきたので格納する
             mChannelLists = channelLists;
         } else {
@@ -53,7 +53,7 @@ public class ChannelWebClientSync implements ChannelWebClient.ChannelJsonParserC
     }
 
     /**
-     * 蓄積されているエラーを返す
+     * 蓄積されているエラーを返す.
      * @return エラー情報
      */
     public ErrorState getError() {
@@ -70,14 +70,14 @@ public class ChannelWebClientSync implements ChannelWebClient.ChannelJsonParserC
      * @param type dch：dチャンネル・hikaritv：ひかりTVの多ch・指定なし：全て
      * @return チャンネル一覧情報
      */
-    public List<ChannelList> getChannelApi(Context context,final int pagetLimit, final int pagerOffset,
+    public List<ChannelList> getChannelApi(final Context context, final int pagetLimit, final int pagerOffset,
                          final String filter, final String type) {
         DTVTLogger.start();
 
         mChannelWebClient = new ChannelWebClient(context);
         boolean answer = mChannelWebClient.getChannelApi(pagetLimit, pagerOffset, filter, type, this);
 
-        if(!answer) {
+        if (!answer) {
             //パラメータエラーだったので、そのまま帰る
             DTVTLogger.end("web api param error");
             return null;
@@ -93,7 +93,7 @@ public class ChannelWebClientSync implements ChannelWebClient.ChannelJsonParserC
         }
 
         //ここにたどり着いたときは、既に処理済みとなっている
-        if(mChannelLists == null) {
+        if (mChannelLists == null) {
             //ヌルならば、エラーとして処理
             mChannelError = mChannelWebClient.getError();
             DTVTLogger.end("web api error");

@@ -298,6 +298,8 @@ public class DlnaManager {
                 case NONE_PAIRING:
                     DlnaManager.shared().StopDmp();
                     break;
+                case NONE_LOCAL_REGISTRATION:
+                case HOME_OUT_CONNECT:
                 default:
                     DlnaManager.shared().StartDmp();
                     break;
@@ -360,11 +362,15 @@ public class DlnaManager {
                 break;
             case HOME_IN:
                 DlnaDmsItem item = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
-                browseContentWithContainerId(pageIndex * DtvtConstants.REQUEST_DLNA_LIMIT_50, DtvtConstants.REQUEST_DLNA_LIMIT_50, containerId, item.mControlUrl);
+                browseContentWithContainerId(pageIndex * DtvtConstants.REQUEST_DLNA_LIMIT_50,
+                        DtvtConstants.REQUEST_DLNA_LIMIT_50, containerId, item.mControlUrl);
                 break;
             case HOME_OUT_CONNECT:
-                browseContentWithContainerId(pageIndex * DtvtConstants.REQUEST_DLNA_LIMIT_50, DtvtConstants.REQUEST_DLNA_LIMIT_50, containerId, DlnaManager.shared().mHomeOutControlUrl);
+                browseContentWithContainerId(pageIndex * DtvtConstants.REQUEST_DLNA_LIMIT_50,
+                        DtvtConstants.REQUEST_DLNA_LIMIT_50, containerId, DlnaManager.shared().mHomeOutControlUrl);
                 break;
+            case NONE_LOCAL_REGISTRATION:
+            case NONE_PAIRING:
             default:
                 DTVTLogger.warning("default");
                 break;
@@ -782,6 +788,11 @@ public class DlnaManager {
                 StbConnectionManager.shared().setConnectionStatus(StbConnectionManager.ConnectionStatus.HOME_OUT);
                 DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
                 RequestRemoteDisconnect(dlnaDmsItem.mUdn);
+                break;
+            case NONE_LOCAL_REGISTRATION:
+            case NONE_PAIRING:
+            case HOME_OUT:
+            default:
                 break;
         }
     }

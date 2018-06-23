@@ -567,7 +567,7 @@ public class DtvContentsDetailFragment extends Fragment {
     }
 
     /**
-     * あらすじ情報の更新
+     * あらすじ情報の更新.
      */
     public void refreshDescription() {
         String contentsDetailInfo = selectDetail();

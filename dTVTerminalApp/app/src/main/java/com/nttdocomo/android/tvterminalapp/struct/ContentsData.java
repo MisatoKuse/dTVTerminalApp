@@ -682,7 +682,7 @@ public class ContentsData {
     }
 
     /**
-     * Descriptionからあらすじを取得
+     * Descriptionからあらすじを取得.
      * @return あらすじ
      */
     public String getSynopFromDescription() {
@@ -888,7 +888,7 @@ public class ContentsData {
         return mDownloadBtnHide;
     }
 
-    public void setDownloadBtnHide(boolean downloadBtnHide) {
+    public void setDownloadBtnHide(final boolean downloadBtnHide) {
         this.mDownloadBtnHide = downloadBtnHide;
     }
 

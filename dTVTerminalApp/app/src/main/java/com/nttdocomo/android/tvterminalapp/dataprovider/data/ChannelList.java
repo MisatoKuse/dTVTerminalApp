@@ -66,7 +66,7 @@ public class ChannelList implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    public void writeToParcel(final Parcel dest, final int flags) {
         dest.writeSerializable(this.mResponseInfoMap);
         dest.writeList(this.mChannelList);
     }
@@ -74,7 +74,7 @@ public class ChannelList implements Parcelable {
     public ChannelList() {
     }
 
-    private ChannelList(Parcel in) {
+    private ChannelList(final Parcel in) {
         this.mResponseInfoMap = (HashMap<String, String>) in.readSerializable();
         this.mChannelList = new ArrayList<HashMap<String, String>>();
         //TODO 自動生成したのにビルドエラーが出るので一時的にコメントアウト(対策は後回し)

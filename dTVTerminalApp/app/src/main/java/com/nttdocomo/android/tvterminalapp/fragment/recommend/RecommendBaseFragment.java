@@ -72,10 +72,6 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      */
     private RecommendBaseFragmentScrollListener mRecommendBaseFragmentScrollListener = null;
     /**
-     * チャンネルデータ.
-     */
-    private List<Map<String, String>> mChannelMap;
-    /**
      * テレビ（タブインデックス）.
      */
     private static final int POSITION_TV = 0;
@@ -227,29 +223,6 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     public void invalidateViews() {
         if (null != mRecommendListView) {
             mRecommendListView.invalidateViews();
-        }
-    }
-
-    /**
-     * チャンネルリストを受け取り、アダプターに渡す.
-     *
-     * @param channelData チャンネル情報
-     */
-    public void setChannelData(final List<Map<String, String>> channelData) {
-        if (channelData == null || channelData.size() <= 0) {
-            //データが無いならば即座に帰る
-            return;
-        }
-
-        //チャンネル情報の蓄積
-        mChannelMap = channelData;
-
-        //さらにアダプターに横流しする
-//        mRecommendListBaseAdapter.setChannel(mChannelMap);
-
-        //リストにチャンネル情報を反映させる為に再描画する
-        if (mRecommendListBaseAdapter != null) {
-            mRecommendListBaseAdapter.notifyDataSetChanged();
         }
     }
 

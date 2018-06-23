@@ -13,7 +13,6 @@ import android.view.View;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherApi;
 import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherUtil;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -34,9 +33,8 @@ import java.util.concurrent.CountDownLatch;
 public class RemoteControlRelayClient {
     /**keycode_unknown.*/
     private static final int KEYCODE_UNKNOWN = 0;
-    // TODO　: STBがDMSとして動作しないためDMS機能が実装されるまで固定IPを使用する
-    /**固定IP.*/
-    private String mRemoteHost = "192.168.11.23";
+
+//    private String mRemoteHost = "192.168.11.23";// STBがDMSとして動作しない状態での確認用
     /**keycode_dpad_up.*/
     private static final String KEYCODE_DPAD_UP = "KEYCODE_DPAD_UP";
     /**keycode_dpad_down.*/
@@ -1619,14 +1617,13 @@ public class RemoteControlRelayClient {
 
     /**
      * Socket通信／データグラム送信の送信先のIPアドレスを設定.
-     * TODO デバッグ用
      *
      * @param remoteIp IPアドレス
      */
     public void setRemoteIp(final String remoteIp) {
         DTVTLogger.warning("remoteIp = " + remoteIp);
         StbConnectRelayClient.getInstance().setRemoteIp(remoteIp);
-        mRemoteHost = remoteIp;
+//        mRemoteHost = remoteIp; //デバッグ用
     }
 
     /**

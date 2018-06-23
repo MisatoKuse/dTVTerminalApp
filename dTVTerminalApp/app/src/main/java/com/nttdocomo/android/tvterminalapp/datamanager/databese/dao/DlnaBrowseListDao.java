@@ -41,7 +41,7 @@ public class DlnaBrowseListDao {
      * @param strings 取得したいテーブル名の配列
      * @return チャンネルリスト情報.
      */
-    public List<Map<String, String>> findByContainerId(final String[] strings, String containerId) {
+    public List<Map<String, String>> findByContainerId(final String[] strings, final String containerId) {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
         String selection = null;

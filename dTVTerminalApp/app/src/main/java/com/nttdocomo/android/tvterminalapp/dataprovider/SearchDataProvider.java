@@ -163,9 +163,9 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
     }
 
     /**
-     * 検索サーバからコンテンツメタ情報を取得
-     * @param contentsId　コンテンツId
-     * @param serviceId   サービスId
+     * 検索サーバからコンテンツメタ情報を取得.
+     * @param contentsId コンテンツId
+     * @param serviceId  サービスId
      * @param context context
      */
     public void getContentDetailInfo(final String contentsId, final String serviceId, final Context context) {

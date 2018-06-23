@@ -130,6 +130,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 case HOME_OUT:
                     startPageNo = DOWNLOAD_OVER;
                     break;
+                case HOME_OUT_CONNECT:
+                case HOME_IN:
                 default:
                     startPageNo = ALL_RECORD_LIST;
                     break;
@@ -451,6 +453,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                                         clearFragment(0);
                                     }
                                     break;
+                                case NONE_LOCAL_REGISTRATION:
+                                case NONE_PAIRING:
                                 default:
                                     mNoDataMessage.setVisibility(View.VISIBLE);
                                     setProgressBarGone();
@@ -759,7 +763,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     /**
      * ダウンロード状態通知.
      */
-    private BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, final Intent intent) {
             if (DownloadService.DOWNLOAD_ON_PROGRESS.equals(intent.getAction())) {
@@ -905,7 +909,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     @Override
-    public void onScroll(final RecordedBaseFragment fragment, final AbsListView absListView, final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
+    public void onScroll(final RecordedBaseFragment fragment, final AbsListView absListView,
+                         final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
 
     }
 

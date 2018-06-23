@@ -75,9 +75,9 @@ public class TvProgramIntentService extends IntentService {
 
         //非同期処理のチャンネルリスト取得を、同期処理として実行する
         ChannelWebClientSync channelWebClientSync = new ChannelWebClientSync();
-        List<ChannelList> channelLists = channelWebClientSync.getChannelApi(getApplicationContext(),1,1,"","");
+        List<ChannelList> channelLists = channelWebClientSync.getChannelApi(getApplicationContext(), 1, 1, "", "");
 
-        if(channelLists != null) {
+        if (channelLists != null) {
             //取得に成功したチャンネルリストを送信
             sendChannelList(channelLists.get(0));
         }

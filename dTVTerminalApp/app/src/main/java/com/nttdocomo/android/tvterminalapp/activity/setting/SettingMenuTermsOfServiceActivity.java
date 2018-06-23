@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.setting;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.webkit.WebSettings;

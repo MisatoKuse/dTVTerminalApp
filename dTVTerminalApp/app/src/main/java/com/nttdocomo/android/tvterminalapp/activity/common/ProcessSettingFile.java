@@ -39,10 +39,6 @@ public class ProcessSettingFile {
      */
     private SettingFileMetaData mSettingData;
     /**
-     * 設定ファイル読み込みAPI.
-     */
-    private SettingFileWebClient mSettingFileWebClient = null;
-    /**
      * コールバック用のインスタンス.
      */
     private ProcessSettingFileCallBack mProcessSettingFileCallBack = null;
@@ -152,8 +148,8 @@ public class ProcessSettingFile {
         }
 
         //データが無いか、1時間以上経過しているので、設定ファイルを読み込みを開始する
-        mSettingFileWebClient = new SettingFileWebClient(mContext);
-        mSettingFileWebClient.getSettingFileApi(new SettingFileWebClient.SettingFileJsonParserCallback() {
+        SettingFileWebClient client = new SettingFileWebClient(mContext);
+        client.getSettingFileApi(new SettingFileWebClient.SettingFileJsonParserCallback() {
             @Override
             public void onSettingFileJsonParsed(final SettingFileResponse settingFileResponse) {
                 //読み込み終了のコールバック
@@ -177,7 +173,7 @@ public class ProcessSettingFile {
 
                     //ファイルの読み込みに成功しているので、次回の処理に備えたフラグをセット
                     SharedPreferencesUtils.setSharedPreferencesSettingFileIsReadFail(
-                            mContext,false);
+                            mContext, false);
                 } else {
                     //ファイル未発見の場合は、ファイル取得エラーをONにする
                     mSettingData.setIsFileReadError(true);
@@ -188,7 +184,7 @@ public class ProcessSettingFile {
 
                     //ファイルの読み込みに失敗しているので、次回の処理に備えたフラグをセット
                     SharedPreferencesUtils.setSharedPreferencesSettingFileIsReadFail(
-                            mContext,true);
+                            mContext, true);
                     //現在日時は設定しないので、次回も読み込む
                 }
 

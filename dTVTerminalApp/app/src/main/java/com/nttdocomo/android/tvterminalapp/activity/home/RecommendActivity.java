@@ -146,10 +146,6 @@ public class RecommendActivity extends BaseActivity implements
     /**
      * FG→BGに遷移する前のポジション.
      */
-    private  int mViewPagerPosition;
-    /**
-     * FG→BGに遷移する前のポジション.
-     */
     private static final String RECOMMEND_VIEWPAGER_POSITION = "recommend_viewpager_position";
 
     @Override
@@ -178,10 +174,10 @@ public class RecommendActivity extends BaseActivity implements
         mIsFirst = true;
         //初回表示のみ前画面からのタブ指定を反映する
         if (savedInstanceState != null) {
-            mViewPagerPosition = savedInstanceState
+            int viewPagerPosition = savedInstanceState
                     .getInt(RECOMMEND_VIEWPAGER_POSITION);
-            mRecommendViewPager.setCurrentItem(mViewPagerPosition);
-            mTabLayout.setTab(mViewPagerPosition);
+            mRecommendViewPager.setCurrentItem(viewPagerPosition);
+            mTabLayout.setTab(viewPagerPosition);
             savedInstanceState.clear();
         } else {
             mRecommendViewPager.setCurrentItem(startPageNo);

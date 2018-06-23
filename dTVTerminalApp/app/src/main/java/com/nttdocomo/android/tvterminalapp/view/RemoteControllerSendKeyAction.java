@@ -14,7 +14,6 @@ import android.widget.ImageView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
-import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherApi;
 import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherUtil;
 
 import java.util.HashMap;
@@ -314,6 +313,8 @@ public class RemoteControllerSendKeyAction {
                             mRepeatStateManagement.setRepeatTaskStatus(RepeatTaskStatus.REPEAT_STATUS_STAND_BY);
                             DTVTLogger.debug("sendKeyCode");
                             break;
+                        case REPEAT_STATUS_DEFAULT:
+                        case REPEAT_STATUS_STAND_BY:
                         default:
                             DTVTLogger.debug("nop");
                             break;

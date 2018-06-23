@@ -654,7 +654,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             mFromDB.clear();
             mFromDB = null;
         }
-        if(mResultSets != null) {
+        if (mResultSets != null) {
             mResultSets.clear();
             mResultSets = null;
         }

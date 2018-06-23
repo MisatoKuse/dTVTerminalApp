@@ -202,7 +202,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private int mOldScrollPosition = 0;
 
     /**
-     * ホーム画面でOTTチェック処理フラグ
+     * ホーム画面でOTTチェック処理フラグ.
      */
     private boolean isOttChecked = false;
 
@@ -525,7 +525,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         //スクロール検知の実装
         mScrollView.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
+            public boolean onTouch(final View view, final MotionEvent motionEvent) {
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         //スクロールの縦位置を取得

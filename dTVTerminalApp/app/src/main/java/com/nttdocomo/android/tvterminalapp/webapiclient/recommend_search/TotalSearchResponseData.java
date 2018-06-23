@@ -133,7 +133,7 @@ public class TotalSearchResponseData {
     /**
      * 処理結果.
      */
-    private String mSatus;
+    private String mStatus;
 
     /**
      * 検索結果合計件数.
@@ -221,11 +221,11 @@ public class TotalSearchResponseData {
         return mServiceCountList.size();
     }
 
-    public void setStatus(String status) {
-        this.mSatus = status;
+    public void setStatus(final String status) {
+        this.mStatus = status;
     }
 
-    public void setTotalCount(int totalCount) {
+    public void setTotalCount(final int totalCount) {
         this.mTotalCount = totalCount;
     }
 
@@ -233,7 +233,7 @@ public class TotalSearchResponseData {
         return query;
     }
 
-    public void setQuery(String query) {
+    public void setQuery(final String query) {
         this.query = query;
     }
 
@@ -249,19 +249,19 @@ public class TotalSearchResponseData {
         return mTotalCount;
     }
 
-    public Content getContentListIndex(int index) {
+    public Content getContentListIndex(final int index) {
         return mContentList.get(index);
     }
 
-    public ServiceCount getServiceCountListIndex(int index) {
+    public ServiceCount getServiceCountListIndex(final int index) {
         return mServiceCountList.get(index);
     }
 
-    public void setContentListElement(int index, Content content) {
+    public void setContentListElement(final int index, final Content content) {
         mContentList.set(index, content);
     }
 
-    public void setServiceCountListElement(int index, ServiceCount serviceCount) {
+    public void setServiceCountListElement(final int index, final ServiceCount serviceCount) {
         mServiceCountList.set(index, serviceCount);
     }
 }

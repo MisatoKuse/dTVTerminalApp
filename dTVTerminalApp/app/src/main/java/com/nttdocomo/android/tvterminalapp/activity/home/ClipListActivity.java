@@ -229,7 +229,7 @@ public class ClipListActivity extends BaseActivity implements
      */
     private boolean isSkipTv(final List<ContentsData> tvClipContentInfo) {
         ClipListBaseFragment baseFragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
-        if (null == baseFragment || 0 == baseFragment.getClipListDataSize() || null == baseFragment.getClipListData() ) {
+        if (null == baseFragment || 0 == baseFragment.getClipListDataSize() || null == baseFragment.getClipListData()) {
             return false;
         }
 
@@ -250,7 +250,7 @@ public class ClipListActivity extends BaseActivity implements
      */
     private boolean isSkipVod(final List<ContentsData> vodClipContentInfo) {
         ClipListBaseFragment baseFragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
-        if (null == baseFragment || 0 == baseFragment.getClipListDataSize() || null == baseFragment.getClipListData() ) {
+        if (null == baseFragment || 0 == baseFragment.getClipListDataSize() || null == baseFragment.getClipListData()) {
             return false;
         }
 
@@ -258,7 +258,7 @@ public class ClipListActivity extends BaseActivity implements
             return true;
         }
 
-        ContentsData item1 = baseFragment.getClipListData().get(baseFragment.getClipListDataSize()- 1);
+        ContentsData item1 = baseFragment.getClipListData().get(baseFragment.getClipListDataSize() - 1);
         ContentsData item2 = vodClipContentInfo.get(vodClipContentInfo.size() - 1);
         return isContentEqual(item1, item2);
     }

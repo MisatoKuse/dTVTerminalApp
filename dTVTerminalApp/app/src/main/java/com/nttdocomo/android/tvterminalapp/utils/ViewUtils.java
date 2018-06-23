@@ -10,7 +10,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 /**
@@ -22,7 +21,7 @@ public class ViewUtils {
      *
      * @param view 解放されやすくしたいビュー
      */
-    public static void cleanAllViews(View view) {
+    public static void cleanAllViews(final View view) {
         //各ビューの個別操作を行う
         if (view instanceof ImageButton) {
             ImageButton imageButton = (ImageButton) view;
@@ -31,8 +30,8 @@ public class ViewUtils {
             ImageView imageView = (ImageView) view;
             imageView.destroyDrawingCache();
             imageView.setImageDrawable(null);
-        } else if(view instanceof ListView) {
-            ListView listView = (ListView)view;
+        } else if (view instanceof ListView) {
+            ListView listView = (ListView) view;
             listView.setAdapter(null);
         } else {
             DTVTLogger.debug("cleanAllViews other view");

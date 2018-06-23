@@ -41,7 +41,7 @@ public class DlnaBrowseDataManager {
      * @param channelList  チャンネルリスト情報
      * @param containerId  containerId
      */
-    public void insertChannelInsertList(final DlnaObject[] channelList, String containerId) {
+    public void insertChannelInsertList(final DlnaObject[] channelList, final String containerId) {
 
         DTVTLogger.start();
 
@@ -94,7 +94,7 @@ public class DlnaBrowseDataManager {
      * @param
      * @return list チャンネルデータ
      */
-    public List<Map<String, String>> selectChannelListProgramData(String containerId) {
+    public List<Map<String, String>> selectChannelListProgramData(final String containerId) {
 
         List<Map<String, String>> list = new ArrayList<>();
 

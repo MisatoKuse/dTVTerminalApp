@@ -1264,6 +1264,19 @@ public class DateUtils {
                 date = StringUtils.getConnectStrings(date, context.getString(R.string.home_contents_hyphen),
                         context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
                 break;
+            case DIGITAL_TERRESTRIAL_BROADCASTING:
+            case BROADCASTING_SATELLITE:
+            case HIKARI_TV_NOW_ON_AIR:
+            case HIKARI_IN_DCH_TV:
+            case HIKARI_IN_DTV:
+            case HIKARI_IN_DCH_MISS:
+            case HIKARI_IN_DCH_RELATION:
+            case PURE_DTV:
+            case PURE_DTV_CHANNEL:
+            case PURE_DTV_CHANNEL_MISS:
+            case PURE_DTV_CHANNEL_RELATION:
+            case D_ANIME_STORE:
+            case OTHER:
             default:
                 break;
         }
@@ -1381,7 +1394,7 @@ public class DateUtils {
      * @param expireDate 満期日(yyyy-MM-dd HH:mm:ss形式)
      * @return 残日数
      */
-    public static int getRemainingDays (final String expireDate) {
+    public static int getRemainingDays(final String expireDate) {
         Calendar expireCalendar = Calendar.getInstance();
         expireCalendar.setTimeInMillis(getHyphenEpochTime(expireDate) * 1000);
         expireCalendar.set(Calendar.HOUR_OF_DAY, 0);

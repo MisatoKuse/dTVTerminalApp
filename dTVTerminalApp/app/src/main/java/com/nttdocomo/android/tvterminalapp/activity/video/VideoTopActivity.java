@@ -49,9 +49,6 @@ public class VideoTopActivity extends BaseActivity implements
     // view
     /** ビデオジャンルのListView. **/
     private ListView mListView = null;
-
-    /** ヘッダImageView. **/
-    private ImageView mMenuImageView;
     /** ビデオジャンルのProgressDialog. **/
     private RelativeLayout mRelativeLayout = null;
     /** リスト0件メッセージ. */
@@ -81,9 +78,9 @@ public class VideoTopActivity extends BaseActivity implements
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.video_genre_main_layout);
-        mMenuImageView = findViewById(R.id.header_layout_menu);
-        mMenuImageView.setVisibility(View.VISIBLE);
-        mMenuImageView.setOnClickListener(this);
+        ImageView menuImageView = findViewById(R.id.header_layout_menu);
+        menuImageView.setVisibility(View.VISIBLE);
+        menuImageView.setOnClickListener(this);
 
         enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
@@ -266,7 +263,8 @@ public class VideoTopActivity extends BaseActivity implements
             DTVTLogger.debug("ジャンル情報取得後はリストを更新");
             VideoGenreList videoGenreList = new VideoGenreList();
             videoGenreList.setTitle(this.getResources().getString(R.string.video_list_genre_all));
-            videoGenreList.setContentCount(String.valueOf(mVideoGenreListDataInfo.getVideoGenreListData(mVideoGenreListDataInfo.getGenreId()).getContentCount()));
+            videoGenreList.setContentCount(
+                    String.valueOf(mVideoGenreListDataInfo.getVideoGenreListData(mVideoGenreListDataInfo.getGenreId()).getContentCount()));
             videoGenreList.setGenreId(mVideoGenreListDataInfo.getGenreId());
             mShowContentsList.add(0, videoGenreList);
         }

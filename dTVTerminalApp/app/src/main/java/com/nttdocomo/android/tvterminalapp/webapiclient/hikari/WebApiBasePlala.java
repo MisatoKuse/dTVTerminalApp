@@ -86,10 +86,6 @@ public class WebApiBasePlala {
      */
     private String mAnswerBuffer = "";
     /**
-     * ワンタイムトークン情報.
-     */
-    private OneTimeTokenData mOneTimeTokenData = null;
-    /**
      * ワンタイムトークン取得クラス.
      */
     private DaccountGetOtt mGetOtt = null;
@@ -611,16 +607,16 @@ public class WebApiBasePlala {
         };
 
         //ワンタイムトークンの情報を取得する
-        mOneTimeTokenData = SharedPreferencesUtils.getOneTimeTokenData(mContext);
+        OneTimeTokenData oneTimeTokenData = SharedPreferencesUtils.getOneTimeTokenData(mContext);
 
         //ワンタイムトークンの期限切れ確認
-        if (mOneTimeTokenData.getOneTimeTokenGetTime()
+        if (oneTimeTokenData.getOneTimeTokenGetTime()
                 < DateUtils.getNowTimeFormatEpoch()) {
             //期限切れなので、ワンタイムパスワードの取得を起動
             getOneTimePassword(mContext, serviceTokenErrorCallback);
         } else {
             //有効なワンタイムトークンなので、そのまま使用して処理を呼び出す
-            mCommunicationTaskOtt.setOneTimeToken(mOneTimeTokenData.getOneTimeToken());
+            mCommunicationTaskOtt.setOneTimeToken(oneTimeTokenData.getOneTimeToken());
             ReturnCode returnCode = new ReturnCode();
             DTVTLogger.debug("******mCommunicationTaskOtt.execute at openUrlAddOtt");
             mCommunicationTaskOtt.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode);
@@ -1420,7 +1416,7 @@ public class WebApiBasePlala {
                     throw new SSLPeerUnverifiedException(NO_CONTEXT_ERROR);
                 }
 
-                if(!TextUtils.isEmpty(mSendParameter)) {
+                if (!TextUtils.isEmpty(mSendParameter)) {
                     //パラメータを送る
                     setPostDataRedirect(urlConnection);
                 }
@@ -1432,11 +1428,11 @@ public class WebApiBasePlala {
                 String newUrl = urlConnection.getHeaderField(REDIRECT_JUMP_URL_GET);
 
                 //newUrlがヌルならば、以後の続行は不能となる。通常は発生しない。
-                if(newUrl == null) {
+                if (newUrl == null) {
                     DTVTLogger.debug("newUrl = null");
                     CookieStore cookieStore = mCookieManager.getCookieStore();
                     mCookies = cookieStore.getCookies();
-                    DTVTLogger.debug("cookies="+mCookies);
+                    DTVTLogger.debug("cookies=" + mCookies);
 
                     throw new ConnectException(NO_REDIRECT_URL_ERROR);
                 }
@@ -1518,7 +1514,7 @@ public class WebApiBasePlala {
                 mReturnCode.errorState.setErrorType(DtvtConstants.ErrorType.SSL_ERROR);
                 DTVTLogger.debug(e);
             } finally {
-                if(urlConnection != null) {
+                if (urlConnection != null) {
                     urlConnection.disconnect();
                 }
 
@@ -1536,7 +1532,7 @@ public class WebApiBasePlala {
          * @throws ProtocolException プロトコルエクセプション
          */
         void setParametersRedirect(final HttpURLConnection urlConnection) throws ProtocolException {
-            if(TextUtils.isEmpty(mSendParameter)) {
+            if (TextUtils.isEmpty(mSendParameter)) {
                 //パラメータをgetで送る
                 urlConnection.setRequestMethod(REQUEST_METHOD_GET);
 
@@ -1590,7 +1586,7 @@ public class WebApiBasePlala {
                 return;
             }
 
-            if(mSendParameter == null) {
+            if (mSendParameter == null) {
                 return;
             }
 

@@ -50,11 +50,11 @@ public class ChannelInfoList implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    public void writeToParcel(final Parcel dest, final int flags) {
         dest.writeTypedList(this.mChannels);
     }
 
-    private ChannelInfoList(Parcel in) {
+    private ChannelInfoList(final Parcel in) {
         this.mChannels = in.createTypedArrayList(ChannelInfo.CREATOR);
     }
 
@@ -69,12 +69,12 @@ public class ChannelInfoList implements Parcelable {
 
     public static final Parcelable.Creator<ChannelInfoList> CREATOR = new Parcelable.Creator<ChannelInfoList>() {
         @Override
-        public ChannelInfoList createFromParcel(Parcel source) {
+        public ChannelInfoList createFromParcel(final Parcel source) {
             return new ChannelInfoList(source);
         }
 
         @Override
-        public ChannelInfoList[] newArray(int size) {
+        public ChannelInfoList[] newArray(final int size) {
             return new ChannelInfoList[size];
         }
     };

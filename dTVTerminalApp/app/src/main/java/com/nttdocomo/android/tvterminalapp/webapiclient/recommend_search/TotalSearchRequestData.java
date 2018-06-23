@@ -45,9 +45,9 @@ public class TotalSearchRequestData {
     /**ユーザ年齢フィルタリング情報.*/
     public String filterViewableAge = null;
 
-    /**検索対象項目*/
+    /**検索対象項目.*/
     public String searchFields = null;
 
-    /**呼び出し画面Id*/
+    /**呼び出し画面Id.*/
     public String displayId = null;
 }

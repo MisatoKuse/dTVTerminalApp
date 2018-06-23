@@ -97,7 +97,7 @@ public class StringUtils {
     private static final String COMMA_SEPARATOR = ",";
 
     /**
-     * 数字以外は置き換える為の正規表現
+     * 数字以外は置き換える為の正規表現.
      */
     private static final String REPLACE_ANYTHING_EXCEPT_NUMBERS = "[^0-9]";
 
@@ -838,7 +838,7 @@ public class StringUtils {
      * @param source 任意の文字列
      * @return 任意の文字列から数字以外は削除を行った文字列
      */
-    public static String deleteExceptNumbers(String source) {
+    public static String deleteExceptNumbers(final String source) {
         return source.replaceAll(REPLACE_ANYTHING_EXCEPT_NUMBERS, "");
     }
 }

@@ -48,10 +48,6 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         AbsListView.OnTouchListener {
 
     /**
-     * メニュー.
-     */
-    private ImageView mMenuImageView;
-    /**
      * ビデオコンテンツ一覧用ビデオコンテンツプロバイダー.
      */
     private VideoContentProvider mVideoContentProvider;
@@ -117,9 +113,9 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.daily_tv_ranking_main_layout);
         mContentsList = new ArrayList<>();
-        mMenuImageView = findViewById(R.id.header_layout_menu);
-        mMenuImageView.setVisibility(View.VISIBLE);
-        mMenuImageView.setOnClickListener(this);
+        ImageView menuImageView = findViewById(R.id.header_layout_menu);
+        menuImageView.setVisibility(View.VISIBLE);
+        menuImageView.setOnClickListener(this);
         enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         setStatusBarColor(true);

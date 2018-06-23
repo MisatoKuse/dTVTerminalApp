@@ -262,7 +262,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
     }
 
     /**
-     * 元の接続ステータス取得.getConnectionStatusとは違い、元々動作していた際のステータスを返却する(変化があるかの確認用)
+     * 元の接続ステータス取得.getConnectionStatusとは違い、元々動作していた際のステータスを返却する(変化があるかの確認用).
      * @return true:宅外　false:宅内
      */
     public boolean isRemote() {

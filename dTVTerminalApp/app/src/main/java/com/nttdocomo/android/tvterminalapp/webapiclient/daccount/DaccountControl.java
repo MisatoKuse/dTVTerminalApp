@@ -204,7 +204,7 @@ public class DaccountControl implements
 
             //設定画面でdアカウントを切り替えた際は、ホーム画面の情報切り替えの為に、サービス登録済みでもコールバックが必要となる
             //登録済みでも、dアカウントの取得に失敗している場合があったので、存在の有無で処理を変更する
-            if(TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(context))) {
+            if (TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(context))) {
                 DTVTLogger.debug("Daccount get retry");
 
                 //dアカウントは取れていないので、再取得

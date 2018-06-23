@@ -56,7 +56,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     /**コンテンツデータ.*/
     private List<ContentsData> mContentsData;
     /**録画コンテンツ詳細.*/
-    private List<RecordedContentsDetailData> mContentsList = new ArrayList<>();
+    private final List<RecordedContentsDetailData> mContentsList = new ArrayList<>();
     /**コンテンツアダプター.*/
     private ContentsAdapter mContentsAdapter = null;
     /**データプロバイダー.*/
@@ -66,7 +66,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     /**キュー.*/
     private final List<DownloadData> mQueue = new ArrayList<>();
     /**キューインデックス.*/
-    private List<Integer> mQueueIndex = new ArrayList<>();
+    private final List<Integer> mQueueIndex = new ArrayList<>();
     //private Handler mHandler;
     /**PercentToUpdateUi.*/
     private static final int mPercentToUpdateUi = 1;
@@ -154,48 +154,31 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     }
 
     public void clearContentsList() {
-        if (mContentsList != null) {
-            mContentsList.clear();
-        }
+        mContentsList.clear();
     }
 
     public void clearQueueIndex() {
-        if (mQueueIndex != null) {
-            mQueueIndex.clear();
-        }
+        mQueueIndex.clear();
     }
 
     public int getContentsListSize() {
-        if (mContentsList != null) {
-            return mContentsList.size();
-        }
-        return 0;
+        return mContentsList.size();
     }
 
     public int getQueueIndexSize() {
-        if (mQueueIndex != null) {
-            return mQueueIndex.size();
-        }
-        return 0;
+        return mQueueIndex.size();
     }
 
     public void addContentsList(final RecordedContentsDetailData data) {
-        if (mContentsList != null) {
-            mContentsList.add(data);
-        }
+        mContentsList.add(data);
     }
 
-    public void addQueueIndex(final  Integer index) {
-        if (mQueueIndex != null) {
-            mQueueIndex.add(index);
-        }
+    public void addQueueIndex(final Integer index) {
+        mQueueIndex.add(index);
     }
 
-    public RecordedContentsDetailData getContentsListElement(int index) {
-        if (mContentsList != null) {
-            return mContentsList.get(index);
-        }
-        return null;
+    public RecordedContentsDetailData getContentsListElement(final int index) {
+        return mContentsList.get(index);
     }
 
     /**

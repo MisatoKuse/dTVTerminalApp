@@ -43,7 +43,7 @@ public class DaccountGetOtt {
     private IDimServiceAppService mService = null;
 
     /**
-     * OTT取得時再認証設定するかフラグ
+     * OTT取得時再認証設定するかフラグ.
      */
     private boolean isReauthorization = false;
 

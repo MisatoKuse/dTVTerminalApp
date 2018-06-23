@@ -73,10 +73,6 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
      */
     private ImageView mCurDot;
     /**
-     * チュートリアルページアダプタ.
-     */
-    private TutorialPagerAdapter mAdapter;
-    /**
      * アダプタにセットするビューリスト.
      */
     private final List<View> mWalkthroughsViews = new ArrayList<>();
@@ -216,10 +212,10 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
                     }
                 });
 
-        mAdapter = new TutorialPagerAdapter(mWalkthroughsViews);
+        TutorialPagerAdapter adapter = new TutorialPagerAdapter(mWalkthroughsViews);
         mWalkthroughsViewPager = findViewById(R.id.tutorial_walkthroughs);
         mWalkthroughsViewPager.setOffscreenPageLimit(mWalkthroughsAbove.length);
-        mWalkthroughsViewPager.setAdapter(mAdapter);
+        mWalkthroughsViewPager.setAdapter(adapter);
         mWalkthroughsViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 
             @Override
@@ -229,7 +225,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
             @Override
             public void onPageScrolled(final int position, final float positionOffset, final int positionOffsetPixels) {
                 //ページが切り替わったら処理を行う
-                if(mCurPos != position){
+                if (mCurPos != position) {
                     mHandle.removeCallbacks(mRunnableAnimation);
                     mTutorialTextView.setVisibility(View.GONE);
                     mSkipOrFinishTutorialAcivity.setVisibility(View.GONE);

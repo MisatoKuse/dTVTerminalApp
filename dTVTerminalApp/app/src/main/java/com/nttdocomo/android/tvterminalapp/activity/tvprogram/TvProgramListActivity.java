@@ -354,8 +354,8 @@ public class TvProgramListActivity extends BaseActivity implements
         } catch (ParseException e) {
             DTVTLogger.debug(e);
         }
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this, onDateSetListener
-                , curYear, curMonth, curDay);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, onDateSetListener,
+                curYear, curMonth, curDay);
         //日付の選択できる範囲を設定
         DatePicker datePicker = datePickerDialog.getDatePicker();
         GregorianCalendar gc = new GregorianCalendar();
@@ -784,15 +784,15 @@ public class TvProgramListActivity extends BaseActivity implements
             mTvProgramListAdapter = null;
         }
 
-        if(mHikariChannels != null) {
+        if (mHikariChannels != null) {
             mHikariChannels.clear();
         }
 
-        if(mChannelInfo != null) {
+        if (mChannelInfo != null) {
             mChannelInfo.clear();
         }
 
-        if(mScaledDownProgramListDataProvider != null) {
+        if (mScaledDownProgramListDataProvider != null) {
             mScaledDownProgramListDataProvider.clearData();
             mScaledDownProgramListDataProvider = null;
         }
@@ -956,7 +956,7 @@ public class TvProgramListActivity extends BaseActivity implements
         }
 
         //端末に設定された日付と現在番組表で設定されている日付を比較する
-        if(!compareNowDate(mSelectDateStr)) {
+        if (!compareNowDate(mSelectDateStr)) {
             //違っていたので、これまでの条件とは無関係に、NOW表示は透明にする
             mTimeLine.setVisibility(View.INVISIBLE);
         }
@@ -969,7 +969,7 @@ public class TvProgramListActivity extends BaseActivity implements
      * @param compareDate 比較対象の日付(YYYY-MM-DD形式)
      * @return 指定した日付と現在の日付が一致すればtrue
      */
-    boolean compareNowDate(String compareDate) {
+    private boolean compareNowDate(final String compareDate) {
         //念の為に数字だけにする
         String compareTemporary = StringUtils.deleteExceptNumbers(compareDate);
 

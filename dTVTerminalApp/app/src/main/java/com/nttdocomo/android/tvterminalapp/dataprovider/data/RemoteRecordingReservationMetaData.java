@@ -314,7 +314,7 @@ public class RemoteRecordingReservationMetaData implements Serializable {
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_R_VALUE:
                     //パレンタル情報の"G"や"PG-12"を数値に変換。
-                    int parentalRate = StringUtils.convertRValueToAgeReq((String)data);
+                    int parentalRate = StringUtils.convertRValueToAgeReq((String) data);
 
                     //対になる予約一覧取得API側の仕様に合わせてパレンタルレートの加工を行う
                     if (parentalRate != 0) {

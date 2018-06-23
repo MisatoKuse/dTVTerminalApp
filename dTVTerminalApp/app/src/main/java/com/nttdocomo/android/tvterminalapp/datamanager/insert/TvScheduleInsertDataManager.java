@@ -160,7 +160,7 @@ public class TvScheduleInsertDataManager {
                     //ContentValuesに変換してDBに保存する.
                     ArrayList<ScheduleInfo> scheduleInformation = channelInfo.getSchedules();
                     //イテレーターのループはここでは問題が発生する場合があった。FindBugs等の指摘があっても変更無用
-                    for (int counter = 0;counter < scheduleInformation.size(); counter++) {
+                    for (int counter = 0; counter < scheduleInformation.size(); counter++) {
                         ScheduleInfo scheduleInfo = scheduleInformation.get(counter);
                         ContentValues values = convertScheduleInfoToContentValues(scheduleInfo);
                         tvScheduleListDao.insert(values);

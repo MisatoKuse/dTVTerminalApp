@@ -116,7 +116,7 @@ public class AribUtils {
     private SparseArray<String> mAribConvert = null;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      */
     public AribUtils() {
         //変換のキーと値の配列を検索可能にして蓄積する
@@ -133,7 +133,7 @@ public class AribUtils {
      * @param source 変換元の文字列
      * @return 変換後の文字列
      */
-    public String convertAribGaiji(String source) {
+    public String convertAribGaiji(final String source) {
         DTVTLogger.start();
 
         //変換元がヌルならば、ヌルを返す

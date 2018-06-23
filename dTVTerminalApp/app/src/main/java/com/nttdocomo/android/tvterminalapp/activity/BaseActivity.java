@@ -73,6 +73,7 @@ import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewAdapter;
 import com.nttdocomo.android.tvterminalapp.application.TvtApplication;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
@@ -204,35 +205,24 @@ public class BaseActivity extends FragmentActivity implements
      * クリップ実行中フラグ.
      */
     private boolean mClipRunTime = false;
-    /**
-     * GooglePlayのドコテレアプリページ.
-     * 現在
-     */
-    private static final String DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL =
-            "https://www.nttdocomo.co.jp/product/docomo_select/tt01/index.html";
     /** DialogQue. **/
     private final LinkedList<CustomDialog> mLinkedList = new LinkedList<>();
-
     /**
      * タイムアウト時間.
      */
     protected static final int LOAD_PAGE_DELAY_TIME = 1000;
-
     /**
      * ページング単位.
      */
     protected static final int NUM_PER_PAGE = 50;
-
     /**
      * webViewの読み込み完了値.
      */
     protected final static int PROGRESS_FINISH = 100;
-
     /**
      * ダブルクリック抑止用 DELAY.
      */
     private static final int MIN_CLICK_DELAY_TIME = 500;
-
     /**
      * スプラッシュ画面用のファイル設定ファイル用ダイアログ表示識別文字列.
      */
@@ -242,7 +232,6 @@ public class BaseActivity extends FragmentActivity implements
      */
     protected final static String SHOW_SETTING_FILE_DIALOG_DATA
             = "SHOW_SETTING_FILE_DIALOG_DATA";
-
     /**
      * dアカウント設定アプリ登録処理.
      */
@@ -251,12 +240,10 @@ public class BaseActivity extends FragmentActivity implements
      * 初回dアカウント取得失敗時のダイアログを呼び出すハンドラー.
      */
     private Handler mFirstDaccountErrorHandler = null;
-
     /**
      * 詳細画面起動元Classを保存.
      */
     private static String sSourceScreenClass = "";
-
     /**
      * ヘッダーに表示されているアイコンがメニューアイコンか×ボタンアイコンかを判別するタグ(menu).
      */
@@ -289,7 +276,6 @@ public class BaseActivity extends FragmentActivity implements
      * dアカウント関連処理の必要有無判定.
      */
     private boolean mNecessaryDAccountRegistService = true;
-
     /**
      * クリップ状態.
      */
@@ -298,12 +284,10 @@ public class BaseActivity extends FragmentActivity implements
      * 未クリップ状態.
      */
     public static final String CLIP_OPACITY_STATUS = "opacity";
-
     /**
      * アダプタ内でのリスト識別用定数.
      */
     private final static int HOME_CONTENTS_DISTINCTION_ADAPTER = 10;
-
     /**
      * リモコン表示時の鍵交換処理フラグ.
      * ※コンテンツ詳細画面からのサービスアプリ起動要求時は鍵交換を行わない（false）
@@ -974,7 +958,7 @@ public class BaseActivity extends FragmentActivity implements
                     @Override
                     public void onOKCallback(final boolean isOK) {
                         DTVTLogger.debug("Application version check incompatible dialog [ok] to GooglePlay");
-                        toGooglePlay(DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL);
+                        toGooglePlay(UrlConstants.WebUrl.GOOGLEPLAY_DOWNLOAD_MY_URL);
                     }
                 });
                 //次のダイアログを呼ぶ為の処理
@@ -3013,8 +2997,8 @@ public class BaseActivity extends FragmentActivity implements
                         //Udnを取得し、再ローカルレジストレーションを行う
                         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils
                                 .getSharedPreferencesStbInfo(mContext.getApplicationContext());
-                        DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn
-                                , getApplicationContext());
+                        DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn,
+                                getApplicationContext());
                         DTVTLogger.debug("auto local registration start.");
                     }
                 }).start();

@@ -544,9 +544,11 @@ public class SearchTopActivity extends BaseActivity
     }
 
     /**
-     * 表示中タブの内容によってスクリーン情報を送信する
+     * 表示中タブの内容によってスクリーン情報を送信する.
+     *
+     * @param position タブ位置
      */
-    private void sendScreenViewForPosition(int position) {
+    private void sendScreenViewForPosition(final int position) {
         switch (position) {
             case TAB_INDEX_TV:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_search_result_tv));

@@ -27,8 +27,6 @@ public class TcpClient {
     private Socket mSocket = null;
     /**RemoteIp.*/
     private String mRemoteIp = null;
-    /**RemotePort.*/
-    private int mRemotePort = 0;
 
     /**STBスタンバイ状態からの電源ONとユーザアカウント切り替えに必要な最大待ち時間（ミリ秒）.*/
     public static final int SEND_RECIEVE_TIMEOUT = 15000;
@@ -61,10 +59,9 @@ public class TcpClient {
             timeout = sendRecieveTimeout[0];
         }
         mRemoteIp = remoteIp;
-        mRemotePort = remotePort;
         DTVTLogger.debug(String.format(Locale.US, "remote: IP address [%s:%d] connection timeout %dms",
-                mRemoteIp, mRemotePort, timeout));
-        SocketAddress remoteAddress = new InetSocketAddress(mRemoteIp, mRemotePort);
+                mRemoteIp, remotePort, timeout));
+        SocketAddress remoteAddress = new InetSocketAddress(mRemoteIp, remotePort);
         mSocket = new Socket();
 
         try {

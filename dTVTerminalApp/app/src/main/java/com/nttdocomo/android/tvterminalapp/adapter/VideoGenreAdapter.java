@@ -87,7 +87,7 @@ public class VideoGenreAdapter extends BaseAdapter {
         TextView contentCount;
     }
 
-    public void setData(List<VideoGenreList> data) {
+    public void setData(final List<VideoGenreList> data) {
         this.mData = data;
     }
 }

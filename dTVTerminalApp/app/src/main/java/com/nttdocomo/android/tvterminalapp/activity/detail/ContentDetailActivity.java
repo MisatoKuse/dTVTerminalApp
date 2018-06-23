@@ -800,8 +800,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
                         // 連携アイコン非表示のためクリック抑止
                         mThumbnailBtn.setClickable(false);
-                    } else if (content.equals(getResources().getString(R.string.contents_detail_thumbnail_text_unable_viewing)) ||
-                            content.equals(getResources().getString(R.string.contents_detail_thumbnail_text))) {
+                    } else if (content.equals(getResources().getString(R.string.contents_detail_thumbnail_text_unable_viewing))
+                            || content.equals(getResources().getString(R.string.contents_detail_thumbnail_text))) {
                         imageView.setVisibility(View.GONE);
 
                         // 連携アイコン非表示のためクリック抑止
@@ -965,8 +965,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
             switch (type) {
                 case PURE_DTV:
-                    if (CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved1()) &&
-                            CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved2())) {
+                    if (CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved1())
+                            && CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved2())) {
                         // 「reserved1」が「1」STB視聴不可
                         // 「reserved2」が「1」Android視聴不可
                         // どちらも不可なので"お使いの端末では視聴できません"を表示
@@ -3044,8 +3044,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         }
 
         //ダイアログの準備
-        CustomDialog customDialog = new CustomDialog(ContentDetailActivity.this
-                , CustomDialog.DialogType.ERROR);
+        CustomDialog customDialog = new CustomDialog(ContentDetailActivity.this,
+                CustomDialog.DialogType.ERROR);
 
         //表示するダイアログの切り替え判定
         if (errorState == null || errorState.getErrorType() == DtvtConstants.ErrorType.SUCCESS) {

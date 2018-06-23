@@ -28,7 +28,6 @@ import com.nttdocomo.android.tvterminalapp.activity.home.RecordReservationListAc
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RentalListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.WatchingVideoListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.setting.NoticeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.setting.SettingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.RankingTopActivity;
@@ -154,7 +153,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
             //「ひかりTV for docomo」、「テレビアプリを起動する」のClickは無効
             if (menuName.equals(mActivity.getString(R.string.nav_menu_item_hikari_tv_none_action))
-                || menuName.equals(mActivity.getString(R.string.nav_menu_item_premium_tv_app_start_common)) ){
+                || menuName.equals(mActivity.getString(R.string.nav_menu_item_premium_tv_app_start_common))) {
                 return;
             }
 

@@ -142,7 +142,7 @@ public class StbConnectionManager {
         }
     }
 
-    public void setConnectionListener(ConnectionListener listener) {
+    public void setConnectionListener(final ConnectionListener listener) {
         mConnectionListener = listener;
     }
     // endregion method
