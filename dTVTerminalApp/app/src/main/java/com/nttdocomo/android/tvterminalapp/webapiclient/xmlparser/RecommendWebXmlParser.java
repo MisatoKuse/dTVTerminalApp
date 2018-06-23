@@ -26,7 +26,7 @@ import java.util.Map;
  */
 public class RecommendWebXmlParser extends AsyncTask<Object, Object, Object> {
     /**callback.*/
-    private RecommendWebClient.RecommendCallback mRecommendCallback;
+    private final RecommendWebClient.RecommendCallback mRecommendCallback;
     /**レコメンドコンテンツ.*/
     private static final String RECOMMENDCHANNEL_LIST_RECOMMENDCONTENT = "RecommendContent";
     /**おすすめ順.*/

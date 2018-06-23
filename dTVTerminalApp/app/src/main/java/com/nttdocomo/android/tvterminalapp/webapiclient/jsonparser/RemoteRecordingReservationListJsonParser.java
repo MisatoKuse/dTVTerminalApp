@@ -24,7 +24,7 @@ import java.util.ArrayList;
  */
 public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, Object, Object> {
     /**callback.*/
-    private RemoteRecordingReservationListWebClient.RemoteRecordingReservationListJsonParserCallback
+    private final RemoteRecordingReservationListWebClient.RemoteRecordingReservationListJsonParserCallback
                                      mRemoteRecordingReservationListJsonParserCallback;
 
     /**オブジェクトクラスの定義.*/

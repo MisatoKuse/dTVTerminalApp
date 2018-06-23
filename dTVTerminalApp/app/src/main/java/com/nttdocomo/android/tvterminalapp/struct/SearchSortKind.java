@@ -22,7 +22,7 @@ public class SearchSortKind {
         SEARCH_SORT_KIND_TITLE
     }
     /**インスタンス.*/
-    private SearchSortKindEnum mSearchSortKindEnum;
+    private final SearchSortKindEnum mSearchSortKindEnum;
 
     /**
      * コンストラクタ.

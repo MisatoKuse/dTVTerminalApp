@@ -54,11 +54,11 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
     /**
      * チャンネルリストアダプター.
      */
-    public ContentsAdapter mContentsAdapter = null;
+    private ContentsAdapter mContentsAdapter = null;
     /**
      * チャンネルリストデータ.
      */
-    public List<ContentsData> mContentsData;
+    private List<ContentsData> mContentsData;
     /**
      * Activity.
      */
@@ -284,5 +284,24 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
         ContentsDetailDataProvider provider = new ContentsDetailDataProvider(getActivity());
         mContentsData = provider.checkClipStatus(mContentsData);
         DTVTLogger.debug("DtvContentsChannelFragment::Clip Status Update");
+    }
+
+    /**
+     * コンテンツデータクリア.
+     */
+    public void clearContentsData() {
+        if (mContentsData != null) {
+            mContentsData.clear();
+        }
+    }
+
+    /**
+     * コンテンツデータ追加.
+     * @param content コンテンツ情報
+     */
+    public void addContentsData(final ContentsData content) {
+        if (mContentsData != null) {
+            mContentsData.add(content);
+        }
     }
 }

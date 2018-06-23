@@ -38,7 +38,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     /**
      * コンテキスト.
      */
-    private Context mContext;
+    private final Context mContext;
     /**
      * 視聴中ビデオ一覧データ.
      */
@@ -47,7 +47,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     /**
      * callback.
      */
-    private WatchListenVideoListProviderCallback mApiDataProviderCallback;
+    private final WatchListenVideoListProviderCallback mApiDataProviderCallback;
 
     /**
      * 通信禁止判定フラグ.

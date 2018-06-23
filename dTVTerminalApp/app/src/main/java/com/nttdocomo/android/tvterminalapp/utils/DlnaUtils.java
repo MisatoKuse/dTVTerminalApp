@@ -89,7 +89,7 @@ public class DlnaUtils {
     private static final int REGISTER_EXPIREDATE_DIALOG_FLG_FOUR = 4;
     /*ローカルレジストレーション期限表示*/
     /**ダウンロード通知チャンネルID.*/
-    public static final String DOWNLOAD_NOTIFICATION_ID = "downloadProgress";
+    private static final String DOWNLOAD_NOTIFICATION_ID = "downloadProgress";
 
     /**
      * アクティベーションのチェック、実行.

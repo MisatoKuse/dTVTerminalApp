@@ -28,7 +28,7 @@ import java.util.concurrent.CountDownLatch;
  */
 public class RemoteControllerSendKeyAction {
     /**ハンドラー.*/
-    private Handler mHandler = new Handler();
+    private final Handler mHandler = new Handler();
     /**コンテキスト.*/
     private Context mContext = null;
     /**RemoteControlRelayClientインタフェース.*/
@@ -292,7 +292,7 @@ public class RemoteControllerSendKeyAction {
     /**
      *  OnTouchListener.
      */
-    private View.OnTouchListener mListener = new View.OnTouchListener() {
+    private final View.OnTouchListener mListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(final View v, final MotionEvent event) {
             DTVTLogger.start();
@@ -525,11 +525,11 @@ public class RemoteControllerSendKeyAction {
         /**
          * 実行間隔.
          */
-        private long EXECUTION_INTERVAL = 50;
+        private final long EXECUTION_INTERVAL = 50;
         /**
          * 遅延時間.
          */
-        private long DELAY_TIME = 500;
+        private final long DELAY_TIME = 500;
 
         /**
          * コンストラクタ.

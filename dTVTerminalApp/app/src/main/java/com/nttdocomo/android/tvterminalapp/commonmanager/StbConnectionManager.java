@@ -36,7 +36,7 @@ public class StbConnectionManager {
     }
 
     /** singletone. */
-    private static StbConnectionManager sInstance = new StbConnectionManager();
+    private static final StbConnectionManager sInstance = new StbConnectionManager();
     /** StbConnectionManager. */
     private StbConnectionManager() {
     }
@@ -62,9 +62,9 @@ public class StbConnectionManager {
     /** 接続ステータス. */
     private ConnectionStatus connectionStatus = ConnectionStatus.NONE_PAIRING;
     /** コンテキスト. */
-    public Context mContext;
+    private Context mContext;
     /** 接続リスナー. */
-    public ConnectionListener mConnectionListener = null;
+    private ConnectionListener mConnectionListener = null;
     // endregion variable
 
     // region method
@@ -140,6 +140,10 @@ public class StbConnectionManager {
         if (StbConnectionManager.shared().connectionStatus != ConnectionStatus.NONE_PAIRING) {
             StbConnectionManager.shared().connectionStatus = ConnectionStatus.HOME_OUT;
         }
+    }
+
+    public void setConnectionListener(ConnectionListener listener) {
+        mConnectionListener = listener;
     }
     // endregion method
 

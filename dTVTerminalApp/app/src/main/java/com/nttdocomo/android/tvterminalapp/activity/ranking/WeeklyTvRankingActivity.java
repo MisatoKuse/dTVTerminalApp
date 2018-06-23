@@ -102,11 +102,11 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         DTVTLogger.start();
         //コンテンツ詳細から戻ってきたときのみクリップ状態をチェックする
         RankingBaseFragment baseFragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
-        if (baseFragment != null && baseFragment.mContentsDetailDisplay) {
-            baseFragment.mContentsDetailDisplay = false;
-            if (null != baseFragment.mContentsAdapter) {
+        if (baseFragment != null && baseFragment.isContentsDetailDisplay()) {
+            baseFragment.setContentsDetailDisplay(false);
+            if (null != baseFragment.getContentsAdapter()) {
                 List<ContentsData> list;
-                list = mRankingDataProvider.checkClipStatus(baseFragment.mData);
+                list = mRankingDataProvider.checkClipStatus(baseFragment.getData());
                 baseFragment.updateContentsList(list);
                 DTVTLogger.debug("WeeklyRankingActivity::Clip Status Update");
             }
@@ -149,7 +149,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
                 RankingBaseFragment b = mRankingFragmentFactory.createFragment(
                         ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK, i);
                 if (null != b) {
-                    b.mData.clear();
+                    b.clearData();
                 }
             }
         }
@@ -244,7 +244,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
 
         RankingBaseFragment baseFragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
         if (baseFragment != null) {
-            if (baseFragment.mData.size() == 0) { //Fragmentがデータを保持していない場合は再取得を行う
+            if (baseFragment.getDataSize() == 0) { //Fragmentがデータを保持していない場合は再取得を行う
                 requestgetGenreList();
                 return;
             }
@@ -344,18 +344,14 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
                 ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK, mViewPager.getCurrentItem());
 
         //既に元のデータ以上の件数があれば足す物は無いので、更新せずに帰る
-        if (null != fragment.mData && fragment.mData.size() >= contentsDataList.size()) {
+        if (fragment.getDataSize() >= contentsDataList.size()) {
             return;
         }
 
         for (ContentsData info : contentsDataList) {
-            if (null != fragment.mData) {
-                fragment.mData.add(info);
-            }
+            fragment.addData(info);
         }
-        if (fragment.mData != null) {
-            DTVTLogger.end("Fragment.mData.size :" + String.valueOf(fragment.mData.size()));
-        }
+        DTVTLogger.end("Fragment.mData.size :" + String.valueOf(fragment.getDataSize()));
         fragment.noticeRefresh();
         DTVTLogger.end();
     }

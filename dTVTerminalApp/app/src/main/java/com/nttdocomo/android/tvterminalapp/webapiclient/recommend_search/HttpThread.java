@@ -106,7 +106,7 @@ public class HttpThread extends Thread {
     /**
      * ワンタイムパスワード.
      */
-    private String mOneTimePassword;
+    private final String mOneTimePassword;
     /**
      * ワンタイムパスワード制御クラス.
      *

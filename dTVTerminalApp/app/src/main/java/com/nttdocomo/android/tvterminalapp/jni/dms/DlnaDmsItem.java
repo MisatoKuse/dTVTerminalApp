@@ -14,14 +14,19 @@ public class DlnaDmsItem {
     // １．JNIのC側で操作便利
     // ２．フィールドは追加すると、setとget方法をjavaとc側両方で増やさないよう
     /**デバイスのudn名.*/
+    @SuppressWarnings("PublicField")
     public String mUdn = "";
     /**デバイスのコントロールurl.*/
+    @SuppressWarnings("PublicField")
     public String mControlUrl = "";
     /**デバイスのhttp.*/
+    @SuppressWarnings("PublicField")
     public String mHttp = "";
     /**Friendly名.*/
+    @SuppressWarnings("PublicField")
     public String mFriendlyName = "";
     /**IPアドレス.*/
+    @SuppressWarnings("PublicField")
     public String mIPAddress = "";
 
     //to do: 使用する必要があれば、新しいフィールドをここで追加

@@ -19,38 +19,51 @@ public class DlnaRecVideoItem {
      */
 
     //mItemId
+    @SuppressWarnings("PublicField")
     public String mItemId = "";
     /**録画のタイトル.*/
+    @SuppressWarnings("PublicField")
     public String mTitle = "";
     //protocolInfo start
     /**コンテンツサイズ.*/
+    @SuppressWarnings("PublicField")
     public String mSize = "";
     /**総再生時間.*/
+    @SuppressWarnings("PublicField")
     public String mDuration = "";     //e.g.  "00:26:54"
     /**解像度.*/
+    @SuppressWarnings("PublicField")
     public String mResolution = "";
     /**ビット毎秒.*/
+    @SuppressWarnings("PublicField")
     public String mBitrate = "";
     /**ダウンロードUrl.*/
+    @SuppressWarnings("PublicField")
     public String mResUrl = "";
     /**UpnpIcon.*/
-    public String mUpnpIcon = "";
+    @SuppressWarnings("PublicField")
+    public final String mUpnpIcon = "";
     //protocolInfo end
     //録画の日付
     /**録画の日付.*/
-    public String mDate = "";
+    @SuppressWarnings("PublicField")
+    public final String mDate = "";
 
     //to do: 使用する必要があれば、新しいフィールドをここで追加
-    //TODO コピー残り回数（まだ取得できない為ダミー）
     /**コピー残り回数.*/
-    public int mAllowedUse = 0;
+    @SuppressWarnings("PublicField")
+    public final int mAllowedUse = 0;
     /**ビデオタイプ.*/
+    @SuppressWarnings("PublicField")
     public String mVideoType = "";
     /**ClearTextSize.*/
+    @SuppressWarnings("PublicField")
     public String mClearTextSize = "";
     /**channelName.*/
-    public String mChannelName = "";
+    @SuppressWarnings("PublicField")
+    public final String mChannelName = "";
     /**xml.*/
+    @SuppressWarnings("PublicField")
     public String mXml = "";  //upnp:channelName
 
     /**

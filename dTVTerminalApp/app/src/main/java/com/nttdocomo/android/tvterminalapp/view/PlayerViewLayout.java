@@ -166,7 +166,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     /**ビデオサイズ.*/
     private long mTotalDuration = 0;
     /**前回のポジション.*/
-    public int mPlayStartPosition;
+    private int mPlayStartPosition = 0;
     /**再発火.*/
     private static final int REFRESH_VIDEO_VIEW = 0;
     /** 巻き戻す10s.*/
@@ -1398,5 +1398,24 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         mPlayerLogo.setBackgroundColor(ContextCompat.getColor(mContext, R.color.contents_logo_background_default_color));
         this.addView(mPlayerLogo);
     }
+
+    /**
+     * 前回の再生位置取得.
+     *
+     * @return 前回の再生位置
+     */
+    public int getPlayStartPosition() {
+        return mPlayStartPosition;
+    }
+
+    /**
+     * 前回のポ再生位置設定.
+     *
+     * @param playStartPosition 前回の再生位置
+     */
+    public void setPlayStartPosition(int playStartPosition) {
+        this.mPlayStartPosition = playStartPosition;
+    }
+
 
 }

@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 public class RentalVodListJsonParserTest
         implements RentalVodListWebClient.RentalVodListJsonParserCallback {
 
-    private String mJson_data = "{\n" +
+    private final String mJson_data = "{\n" +
             "  \"status\": \"OK\",\n" +
             "  \"list\": [\n" +
             "    {\n" +
@@ -157,7 +157,7 @@ public class RentalVodListJsonParserTest
             "  ]\n" +
             "}\n";
 
-    PurchasedVodListResponse mPurchasedVodListResponse;
+    private PurchasedVodListResponse mPurchasedVodListResponse;
 
     /**
      * テスト用ダミーコールバック(不使用)
@@ -168,7 +168,7 @@ public class RentalVodListJsonParserTest
     public void onRentalVodListJsonParsed(PurchasedVodListResponse RentalVodListResponse) {
     }
 
-    RentalVodListJsonParser mRentalVodListJsonParser;
+    private RentalVodListJsonParser mRentalVodListJsonParser;
     // RentalVodListJsonParser をテスト
     @Before
     public void setUp() throws Exception {

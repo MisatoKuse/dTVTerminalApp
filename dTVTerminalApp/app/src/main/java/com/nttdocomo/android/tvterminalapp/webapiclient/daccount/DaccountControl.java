@@ -494,7 +494,7 @@ public class DaccountControl implements
         /**
          * 初回のみ実行用のインスタンス.
          */
-        private static DaccountControlOnce sDaccountControlOnce = new DaccountControlOnce();
+        private static final DaccountControlOnce sDaccountControlOnce = new DaccountControlOnce();
 
         /**
          * 実行状況を保持する.

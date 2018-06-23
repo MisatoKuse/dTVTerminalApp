@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
     /**callback.*/
-    private ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback mContentsListPerGenreJsonParserCallback;
+    private final ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback mContentsListPerGenreJsonParserCallback;
     /**オブジェクトクラスの定義.*/
     private VideoRankList mVideoRankList;
     /**ページャーパラメータキー.*/

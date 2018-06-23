@@ -20,7 +20,7 @@ public class ChildContentListGetResponse {
     /**
      * ページャー.
      */
-    private Pager mPager;
+    private final Pager mPager;
     /**
      * フルメタデータリスト.
      */

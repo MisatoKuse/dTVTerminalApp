@@ -50,7 +50,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
     /**
      * 表示するコンテンツデータリスト.
      */
-    public List<ContentsData> mData;
+    private List<ContentsData> mData;
     /**
      * 検索結果件数.
      */
@@ -318,5 +318,26 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         if (mContentsAdapter != null) {
             mContentsAdapter.enableConnect();
         }
+    }
+
+    /**
+     * コンテンツ情報追加.
+     *
+     * @param content コンテンツ
+     */
+    public void addContentData(final ContentsData content) {
+        if (mData != null) {
+            mData.add(content);
+        }
+    }
+
+    /**
+     * コンテンツ数取得.
+     */
+    public int getContentDataSize() {
+        if (mData != null) {
+            return mData.size();
+        }
+        return 0;
     }
 }

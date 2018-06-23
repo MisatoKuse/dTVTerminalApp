@@ -57,8 +57,8 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     /**
      * DMSリスト.
      */
-    private List<DlnaDmsItem> mDlnaDmsItemList = new ArrayList<>();
-    private DlnaDmsInfo mDlnaDmsInfo = new DlnaDmsInfo();
+    private final List<DlnaDmsItem> mDlnaDmsItemList = new ArrayList<>();
+    private final DlnaDmsInfo mDlnaDmsInfo = new DlnaDmsInfo();
     /**
      * プログレスバー.
      */

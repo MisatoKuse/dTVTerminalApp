@@ -165,7 +165,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     /** ビューページャアダプター.*/
     private ContentsDetailPagerAdapter mContentsDetailPagerAdapter;
     /**購入済みVODレスポンス.*/
-    private PurchasedVodListResponse mResponse = null;
+    private final PurchasedVodListResponse mResponse = null;
     /** タブー名.*/
     private String[] mTabNames = null;
     /**表示状態.*/
@@ -309,7 +309,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     /**FrameLayout.*/
     private FrameLayout mFrameLayout = null;
     /**TvLogo.*/
-    private ImageView mTvLogo = null;
+    private final ImageView mTvLogo = null;
     /**プレイヤー生成フラグ.*/
     private boolean mIsOncreateOk = false;
     /**録画予約コンテンツ詳細情報.*/
@@ -426,8 +426,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 //BG復帰時にクリップボタンの更新を行う
                 dtvContentsDetailFragment = getDetailFragment();
                 contentsDetailDataProvider = new ContentsDetailDataProvider(this);
-                dtvContentsDetailFragment.mOtherContentsDetailData = contentsDetailDataProvider.
-                        checkClipStatus(dtvContentsDetailFragment.mOtherContentsDetailData);
+                dtvContentsDetailFragment.setOtherContentsDetailData(contentsDetailDataProvider.
+                        checkClipStatus(dtvContentsDetailFragment.getOtherContentsDetailData()));
                 dtvContentsDetailFragment.resumeClipButton();
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_player));
                 break;
@@ -435,8 +435,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 //BG復帰時にクリップボタンの更新を行う
                 dtvContentsDetailFragment = getDetailFragment();
                 contentsDetailDataProvider = new ContentsDetailDataProvider(this);
-                dtvContentsDetailFragment.mOtherContentsDetailData = contentsDetailDataProvider.
-                        checkClipStatus(dtvContentsDetailFragment.mOtherContentsDetailData);
+                dtvContentsDetailFragment.setOtherContentsDetailData(contentsDetailDataProvider.
+                        checkClipStatus(dtvContentsDetailFragment.getOtherContentsDetailData()));
                 dtvContentsDetailFragment.resumeClipButton();
                 break;
             default:
@@ -460,10 +460,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     protected void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
         if (mPlayerViewLayout != null) {
-            if (mPlayerViewLayout.mPlayStartPosition < 0) {
-                mPlayerViewLayout.mPlayStartPosition = 0;
+            if (mPlayerViewLayout.getPlayStartPosition() < 0) {
+                mPlayerViewLayout.setPlayStartPosition(0);
             }
-            outState.putInt(SAVEDVARIABLE_PLAY_START_POSITION, mPlayerViewLayout.mPlayStartPosition);
+            outState.putInt(SAVEDVARIABLE_PLAY_START_POSITION, mPlayerViewLayout.getPlayStartPosition());
         }
     }
 
@@ -1400,31 +1400,32 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             String searchOk = mDetailFullData.getmSearch_ok();
             String dTv = mDetailFullData.getDtv();
             String dTvType = mDetailFullData.getDtvType();
-            detailFragment.mOtherContentsDetailData.setTitle(mDetailFullData.getTitle());
+            OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
+            detailData.setTitle(mDetailFullData.getTitle());
             if (DTV_FLAG_ONE.equals(dTv)) {
                 setTitleAndThumbnail(mDetailFullData.getTitle(), mDetailFullData.getmDtv_thumb_640_360());
             } else {
                 setTitleAndThumbnail(mDetailFullData.getTitle(), mDetailFullData.getmThumb_640_360());
             }
-            detailFragment.mOtherContentsDetailData.setVodMetaFullData(contentsDetailInfo);
-            detailFragment.mOtherContentsDetailData.setDetail(mDetailFullData.getSynop());
+            detailData.setVodMetaFullData(contentsDetailInfo);
+            detailData.setDetail(mDetailFullData.getSynop());
             // コンテンツ状態を反映
-            detailFragment.mOtherContentsDetailData.setClipStatus(clipStatus);
-            detailFragment.mOtherContentsDetailData.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dTv, dTvType));
-            detailFragment.mOtherContentsDetailData.setDispType(dispType);
-            detailFragment.mOtherContentsDetailData.setSearchOk(searchOk);
-            detailFragment.mOtherContentsDetailData.setDtv(dTv);
-            detailFragment.mOtherContentsDetailData.setDtvType(dTvType);
-            detailFragment.mOtherContentsDetailData.setCrId(mDetailFullData.getCrid());
-            detailFragment.mOtherContentsDetailData.setEventId(mDetailFullData.getmEvent_id());
-            detailFragment.mOtherContentsDetailData.setTitleId(mDetailFullData.getTitle_id());
-            detailFragment.mOtherContentsDetailData.setRvalue(mDetailFullData.getR_value());
-            detailFragment.mOtherContentsDetailData.setRating(mDetailFullData.getRating());
-            detailFragment.mOtherContentsDetailData.setCopy(mDetailFullData.getmCopy());
-            detailFragment.mOtherContentsDetailData.setM4kflg(mDetailFullData.getM4kflg());
-            detailFragment.mOtherContentsDetailData.setAdinfoArray(mDetailFullData.getmAdinfo_array());
-            detailFragment.mOtherContentsDetailData.setmStartDate(String.valueOf(mDetailFullData.getPublish_start_date()));
-            detailFragment.mOtherContentsDetailData.setContentCategory(mDetailFullData.getContentsType());
+            detailData.setClipStatus(clipStatus);
+            detailData.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dTv, dTvType));
+            detailData.setDispType(dispType);
+            detailData.setSearchOk(searchOk);
+            detailData.setDtv(dTv);
+            detailData.setDtvType(dTvType);
+            detailData.setCrId(mDetailFullData.getCrid());
+            detailData.setEventId(mDetailFullData.getmEvent_id());
+            detailData.setTitleId(mDetailFullData.getTitle_id());
+            detailData.setRvalue(mDetailFullData.getR_value());
+            detailData.setRating(mDetailFullData.getRating());
+            detailData.setCopy(mDetailFullData.getmCopy());
+            detailData.setM4kflg(mDetailFullData.getM4kflg());
+            detailData.setAdinfoArray(mDetailFullData.getmAdinfo_array());
+            detailData.setmStartDate(String.valueOf(mDetailFullData.getPublish_start_date()));
+            detailData.setContentCategory(mDetailFullData.getContentsType());
             String date = "";
             ContentUtils.ContentsType contentsType = ContentUtils.getContentsTypeByPlala(mDetailFullData.getDisp_type(),
                     mDetailFullData.getmTv_service(), mDetailFullData.getmContent_type(), mDetailFullData.getAvail_end_date(),
@@ -1467,7 +1468,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 }
             }
             DTVTLogger.debug("display limit date:---" + date);
-            detailFragment.mOtherContentsDetailData.setChannelDate(date);
+            detailData.setChannelDate(date);
+            detailFragment.setOtherContentsDetailData(detailData);
             detailFragment.noticeRefresh();
             String[] credit_array = mDetailFullData.getmCredit_array();
             if (credit_array != null && credit_array.length > 0) {
@@ -1500,13 +1502,13 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 } else { //ひかりTV契約者の場合
                     // サムネイル表示メッセージ取得
                     String thumbnailMessage = StringUtils.getContentsDetailThumbnailString(
-                            detailFragment.mOtherContentsDetailData, this, mDetailFullData.getContentsType());
+                            detailFragment.getOtherContentsDetailData(), this, mDetailFullData.getContentsType());
                     setThumbnailText(thumbnailMessage);
                 }
             } else { //レコメンドサーバー以外のひかりTV
                 // サムネイル表示メッセージ取得
                 String thumbnailMessage = StringUtils.getContentsDetailThumbnailString(
-                        detailFragment.mOtherContentsDetailData, this, mDetailFullData.getContentsType());
+                        detailFragment.getOtherContentsDetailData(), this, mDetailFullData.getContentsType());
                 setThumbnailText(thumbnailMessage);
                 if (getStbStatus()) {
                     createRemoteControllerView(true);
@@ -1540,8 +1542,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 String[] credit_array = mDetailFullData.getmCredit_array();
                 List<String> staffList = getRoleList(credit_array, roleListInfo);
                 if (staffList.size() > 0) {
-                    detailFragment.mOtherContentsDetailData.setStaffList(staffList);
-                    detailFragment.refreshStaff();
+                    OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
+                    if (detailData != null) {
+                        detailData.setStaffList(staffList);
+                        detailFragment.setOtherContentsDetailData(detailData);
+                        detailFragment.refreshStaff();
+                    }
                 }
             }
         } else {
@@ -1606,8 +1612,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (mServiceId.equals(channel.getServiceId())) {
                     mChannel = channel;
                     String channelName = channel.getTitle();
-                    if (detailFragment.mOtherContentsDetailData != null) {
-                        detailFragment.mOtherContentsDetailData.setChannelName(channelName);
+                    OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
+                    if (detailData != null) {
+                        detailData.setChannelName(channelName);
+                        detailFragment.setOtherContentsDetailData(detailData);
                     }
                     break;
                 }
@@ -1637,8 +1645,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             mChannelFragment = getChannelFragment();
                             ChannelInfo channelInfo = channels.get(0);
                             ArrayList<ScheduleInfo> scheduleInfos = channelInfo.getSchedules();
-                            if (mDateIndex == 1 && mChannelFragment.mContentsData != null) {
-                                mChannelFragment.mContentsData.clear();
+                            if (mDateIndex == 1) {
+                                mChannelFragment.clearContentsData();
                             }
                             boolean isFirst = false;
                             for (int i = 0; i < scheduleInfos.size(); i++) {
@@ -1673,7 +1681,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                         contentsData.setEventId(scheduleInfo.getEventId());
                                         contentsData.setCrid(scheduleInfo.getCrId());
                                         contentsData.setTitleId(scheduleInfo.getTitleId());
-                                        mChannelFragment.mContentsData.add(contentsData);
+                                        mChannelFragment.addContentsData(contentsData);
                                     }
                                 }
                             }
@@ -2570,10 +2578,19 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             String date = DateUtils.formatUntilMinuteTimeString(mEndDate);
             String untilDate = StringUtils.getConnectStrings(date, getString(R.string.common_until));
             DTVTLogger.debug("display limit date:---" + untilDate);
-            detailFragment.mOtherContentsDetailData.setChannelDate(untilDate);
+
+            OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
+            if (detailData != null) {
+                detailData.setChannelDate(untilDate);
+                detailFragment.setOtherContentsDetailData(detailData);
+            }
         } else {
             DTVTLogger.debug("display limit date:---" + mVodEndDateText);
-            detailFragment.mOtherContentsDetailData.setChannelDate(mVodEndDateText);
+            OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
+            if (detailData != null) {
+                detailData.setChannelDate(mVodEndDateText);
+                detailFragment.setOtherContentsDetailData(detailData);
+            }
         }
         detailFragment.noticeRefresh();
     }
@@ -3059,11 +3076,16 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         if (result.getContentsDataList().size() > 0) {
             ContentsData info = result.getContentsDataList().get(0);
             DtvContentsDetailFragment detailFragment = getDetailFragment();
-            detailFragment.mOtherContentsDetailData.setDescription1(info.getDescription1());
-            detailFragment.mOtherContentsDetailData.setDescription2(info.getDescription2());
-            detailFragment.mOtherContentsDetailData.setDescription3(info.getDescription3());
-            detailFragment.mOtherContentsDetailData.setDetail(info.getSynopFromDescription());
-            detailFragment.refreshDescription();
+
+            OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
+            if (detailData != null) {
+                detailData.setDescription1(info.getDescription1());
+                detailData.setDescription2(info.getDescription2());
+                detailData.setDescription3(info.getDescription3());
+                detailData.setDetail(info.getSynopFromDescription());
+                detailFragment.setOtherContentsDetailData(detailData);
+                detailFragment.refreshDescription();
+            }
         }
         showProgressBar(false);
 

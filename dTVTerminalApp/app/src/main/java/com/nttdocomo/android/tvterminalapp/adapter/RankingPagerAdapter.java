@@ -28,7 +28,7 @@ public class RankingPagerAdapter extends FragmentStatePagerAdapter {
     /**
      * 表示項目のタイプ.
      */
-    private ContentsAdapter.ActivityTypeItem mType;
+    private final ContentsAdapter.ActivityTypeItem mType;
 
     /**
      * コンストラクタ.

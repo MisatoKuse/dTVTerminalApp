@@ -101,7 +101,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     /**
      * NOW ON AIR用チャンネル一覧.
      */
-    private ChannelList mChannelList = null;
+    private final ChannelList mChannelList = null;
     /**
      * コンテンツ一覧数.
      */
@@ -669,7 +669,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     /**
      * コンテンツ情報取得ハンドラ.
      */
-    private Handler mHandler = new Handler() {
+    private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(final Message msg) {
             setRecyclerView((List) msg.obj, msg.what, mLinearLayout);

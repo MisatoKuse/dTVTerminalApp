@@ -35,9 +35,9 @@ public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseLi
     /** チャンネル番号. */
     private String mChannelNr = "";
     /** コンテキスト. */
-    private Context mContext;
+    private final Context mContext;
     /** コールバック. */
-    private OnMultiChCallbackListener mOnMultiChCallbackListener;
+    private final OnMultiChCallbackListener mOnMultiChCallbackListener;
     /** ページインデックス. */
     private int mPageIndex;
 

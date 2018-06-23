@@ -152,11 +152,11 @@ public class ClipListActivity extends BaseActivity implements
         DTVTLogger.start();
         //コンテンツ詳細から戻ってきたときのみクリップ状態をチェックする
         ClipListBaseFragment baseFragment = getCurrentFragment();
-        if (baseFragment != null && baseFragment.mContentsDetailDisplay) {
-            baseFragment.mContentsDetailDisplay = false;
-            if (null != baseFragment.mClipMainAdapter) {
+        if (baseFragment != null && baseFragment.getContentsDetailDisplay()) {
+            baseFragment.setContentsDetailDisplay(false);
+            if (null != baseFragment.getClipMainAdapter()) {
                 List<ContentsData> list;
-                list = mTvClipDataProvider.checkClipStatus(baseFragment.mClipListData);
+                list = mTvClipDataProvider.checkClipStatus(baseFragment.getClipListData());
                 baseFragment.updateContentsList(list);
                 DTVTLogger.debug("ClipListActivity::Clip Status Update");
             }
@@ -189,8 +189,8 @@ public class ClipListActivity extends BaseActivity implements
         synchronized (this) {
             setCommunicatingStatus(false);
             ClipListBaseFragment baseFragment = getCurrentFragment();
-            if (null != baseFragment && null != baseFragment.mClipListData) {
-                baseFragment.mClipListData.clear();
+            if (null != baseFragment) {
+                baseFragment.clearClipListData();
                 baseFragment.noticeRefresh();
                 baseFragment.showProgressBar(true);
             }
@@ -215,10 +215,10 @@ public class ClipListActivity extends BaseActivity implements
      */
     private int getCurrentNumber() {
         ClipListBaseFragment baseFragment = getCurrentFragment();
-        if (null == baseFragment || null == baseFragment.mClipListData || 0 == baseFragment.mClipListData.size()) {
+        if (null == baseFragment) {
             return 0;
         }
-        return baseFragment.mClipListData.size() / NUM_PER_PAGE;
+        return baseFragment.getClipListDataSize() / NUM_PER_PAGE;
     }
 
     /**
@@ -229,7 +229,7 @@ public class ClipListActivity extends BaseActivity implements
      */
     private boolean isSkipTv(final List<ContentsData> tvClipContentInfo) {
         ClipListBaseFragment baseFragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
-        if (null == baseFragment || null == baseFragment.mClipListData || 0 == baseFragment.mClipListData.size()) {
+        if (null == baseFragment || 0 == baseFragment.getClipListDataSize() || null == baseFragment.getClipListData() ) {
             return false;
         }
 
@@ -237,7 +237,7 @@ public class ClipListActivity extends BaseActivity implements
             return true;
         }
 
-        ContentsData item1 = baseFragment.mClipListData.get(baseFragment.mClipListData.size() - 1);
+        ContentsData item1 = baseFragment.getClipListData().get(baseFragment.getClipListDataSize() - 1);
         ContentsData item2 = tvClipContentInfo.get(tvClipContentInfo.size() - 1);
         return isContentEqual(item1, item2);
     }
@@ -250,7 +250,7 @@ public class ClipListActivity extends BaseActivity implements
      */
     private boolean isSkipVod(final List<ContentsData> vodClipContentInfo) {
         ClipListBaseFragment baseFragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
-        if (null == baseFragment || null == baseFragment.mClipListData || 0 == baseFragment.mClipListData.size()) {
+        if (null == baseFragment || 0 == baseFragment.getClipListDataSize() || null == baseFragment.getClipListData() ) {
             return false;
         }
 
@@ -258,7 +258,7 @@ public class ClipListActivity extends BaseActivity implements
             return true;
         }
 
-        ContentsData item1 = baseFragment.mClipListData.get(baseFragment.mClipListData.size() - 1);
+        ContentsData item1 = baseFragment.getClipListData().get(baseFragment.getClipListDataSize()- 1);
         ContentsData item2 = vodClipContentInfo.get(vodClipContentInfo.size() - 1);
         return isContentEqual(item1, item2);
     }
@@ -299,7 +299,7 @@ public class ClipListActivity extends BaseActivity implements
             for (int i = 0; i < sum; ++i) {
                 ClipListBaseFragment baseFragment = mClipListFragmentFactory.createFragment(i, this);
                 if (null != baseFragment) {
-                    baseFragment.mClipListData.clear();
+                    baseFragment.clearClipListData();
                 }
             }
         }
@@ -328,7 +328,7 @@ public class ClipListActivity extends BaseActivity implements
             }
             fragment.showProgressBar(false);
 
-            if (fragment.mClipListData == null || fragment.mClipListData.size() == 0) {
+            if (fragment.getClipListDataSize() == 0) {
                 mNoDataMessage.setVisibility(View.VISIBLE);
             }
             return;
@@ -336,7 +336,7 @@ public class ClipListActivity extends BaseActivity implements
 
         if (0 == clipContentInfo.size()) {
             //doing
-            if (fragment.mClipListData == null || fragment.mClipListData.size() == 0) {
+            if (fragment.getClipListDataSize() == 0) {
                 mNoDataMessage.setVisibility(View.VISIBLE);
             }
             fragment.showProgressBar(false);
@@ -351,9 +351,7 @@ public class ClipListActivity extends BaseActivity implements
 
         int pageNumber = getCurrentNumber();
         for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE && i < clipContentInfo.size(); ++i) {
-            if (null != fragment.mClipListData) {
-                fragment.mClipListData.add(clipContentInfo.get(i));
-            }
+            fragment.addClipListData(clipContentInfo.get(i));
         }
 
         DTVTLogger.debug("tvClipListCallback");
@@ -392,7 +390,7 @@ public class ClipListActivity extends BaseActivity implements
             } else {
                 showGetDataFailedToast(message);
             }
-            if (fragment.mClipListData == null || fragment.mClipListData.size() == 0) {
+            if (fragment.getClipListDataSize() == 0) {
                 mNoDataMessage.setVisibility(View.VISIBLE);
             }
             fragment.showProgressBar(false);
@@ -401,7 +399,7 @@ public class ClipListActivity extends BaseActivity implements
 
         if (0 == clipContentInfo.size()) {
             //doing
-            if (fragment.mClipListData == null || fragment.mClipListData.size() == 0) {
+            if (fragment.getClipListDataSize() == 0) {
                 mNoDataMessage.setVisibility(View.VISIBLE);
             }
             fragment.showProgressBar(false);
@@ -416,9 +414,7 @@ public class ClipListActivity extends BaseActivity implements
 
         int pageNumber = getCurrentNumber();
         for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE && i < clipContentInfo.size(); ++i) {
-            if (null != fragment.mClipListData) {
-                fragment.mClipListData.add(clipContentInfo.get(i));
-            }
+            fragment.addClipListData(clipContentInfo.get(i));
         }
 
         DTVTLogger.debug("vodClipListCallback");
@@ -496,10 +492,7 @@ public class ClipListActivity extends BaseActivity implements
                     public void run() {
 
                         DTVTLogger.debug("onScrollStateChanged, paging thread start");
-                        int offset = 0;
-                        if (null != fragment.mClipListData) {
-                            offset = fragment.mClipListData.size();
-                        }
+                        int offset = fragment.getClipListDataSize();
                         mNoDataMessage.setVisibility(View.GONE);
                         switch (TAB_POSITION) {
                             case CLIP_LIST_PAGE_NO_OF_TV:

@@ -22,8 +22,9 @@ import java.util.List;
 public class VideoGenreAdapter extends BaseAdapter {
     /**コンテキスト.*/
     private Context mContext = null;
+
     /**ビデオジャンル一覧.*/
-    public List<VideoGenreList> mData = null;
+    private List<VideoGenreList> mData = null;
 
     /**
      * コンストラクタ.
@@ -84,5 +85,9 @@ public class VideoGenreAdapter extends BaseAdapter {
         TextView genreTitle;
         /**コンテンツ数.*/
         TextView contentCount;
+    }
+
+    public void setData(List<VideoGenreList> data) {
+        this.mData = data;
     }
 }

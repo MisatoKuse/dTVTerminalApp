@@ -212,7 +212,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
                 ResultType<TotalSearchContentInfo> resultType = new ResultType<>();
                 TotalSearchContentInfo totalSearchContentInfo = new TotalSearchContentInfo();
-                totalSearchContentInfo.init(result.totalCount, contentArray);
+                totalSearchContentInfo.init(result.getTotalCount(), contentArray);
                 resultType.success(totalSearchContentInfo);
 
                 if (null != mSearchDataProviderListener) {
@@ -235,10 +235,10 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
         List<ContentsData> contentsDataList = new ArrayList<>();
 
-        int thisTimeTotal = content.searchContentInfo.size();
+        int thisTimeTotal = content.getContentsDataListSize();
         for (int i = 0; i < thisTimeTotal; ++i) {
             ContentsData contentsData = new ContentsData();
-            SearchContentInfo ci = content.searchContentInfo.get(i);
+            SearchContentInfo ci = content.getSearchContentInfoIndex(i);
 
             //画面表示用データ設定
             contentsData.setContentsId(ci.mContentsId);

@@ -46,7 +46,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     /**
      * リストデータ.
      */
-    public List<ContentsData> mData = null;
+    private List<ContentsData> mData = null;
     /**
      * リストフッタービュー.
      */
@@ -331,6 +331,47 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
         DTVTLogger.start();
         if (mRecommendListBaseAdapter != null) {
             mRecommendListBaseAdapter.enableConnect();
+        }
+    }
+
+    /**
+     * コンテンツデータ取得.
+     *
+     * @return コンテンツリスト
+     */
+    public List<ContentsData> getData() {
+        return mData;
+    }
+
+    /**
+     * コンテンツ数取得.
+     *
+     * @return コンテンツ数
+     */
+    public int getDataSize() {
+        if (mData != null) {
+            return mData.size();
+        }
+        return 0;
+    }
+
+    /**
+     * コンテンツデータ追加.
+     *
+     * @param content コンテンツデータ
+     */
+    public void addData(final ContentsData content) {
+        if (mData != null) {
+            mData.add(content);
+        }
+    }
+
+    /**
+     * コンテンツデータクリア.
+     */
+    public void clearData() {
+        if (mData != null) {
+            mData.clear();
         }
     }
 }

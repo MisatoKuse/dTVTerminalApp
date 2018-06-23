@@ -7,63 +7,65 @@ package com.nttdocomo.android.tvterminalapp.struct;
 /**
  * 検索結果詳細クラス.
  */
+@SuppressWarnings("PublicField")
 public class SearchContentInfo {
+    //単純な構造体としての役割のクラスの為、メンバはpublicとする
     /**
      * クリップフラグ.
      */
-    private boolean mClipFlag;
+    public final boolean mClipFlag;
     /**
      * コンテンツID.
      */
-    public String mContentsId;
+    public final String mContentsId;
     /**
      * サービスID.
      */
-    public int mServiceId;
+    public final int mServiceId;
     /**
      * カテゴリーID.
      */
-    public String mCategoryId;
+    public final String mCategoryId;
     /**
      * サムネイルURL1.
      */
-    public String mContentPictureUrl1;
+    public final String mContentPictureUrl1;
     /**
      * サムネイルURL2.
      */
-    private String mContentPictureUrl2;
+    public final String mContentPictureUrl2;
     /**
      * タイトル.
      */
-    public String mTitle;
+    public final String mTitle;
     /**
      * ランク.
      */
-    public String mRank;
+    public final String mRank;
     /**
      *  mobileViewingFlg.
      */
-    public String mMobileViewingFlg;
+    public final String mMobileViewingFlg;
     /**
      *  開始時刻.
      */
-    public String mStartViewing;
+    public final String mStartViewing;
     /**
      *  終了時刻.
      */
-    public String mEndViewing;
+    public final String mEndViewing;
     /**
      *  チャンネル名.
      */
-    public String mChannelName;
+    public final String mChannelName;
     /**
      *  チャンネルId.
      */
-    public String mChannelId;
+    public final String mChannelId;
     /**
      *  種類名.
      */
-    public String mGenreName;
+    public final String mGenreName;
     /**
      *  cast.
      */
@@ -71,39 +73,39 @@ public class SearchContentInfo {
     /**
      *  description1.
      */
-    public String mDescription1;
+    public final String mDescription1;
     /**
      *  description2.
      */
-    public String mDescription2;
+    public final String mDescription2;
     /**
      *  description3.
      */
-    public String mDescription3;
+    public final String mDescription3;
     /**
      *  viewAbleAge.
      */
-    private String mViewAbleAge;
+    public final String mViewAbleAge;
     /**
      *  reserved1.
      */
-    public String mReserved1;
+    public final String mReserved1;
     /**
      *  reserved2.
      */
-    public String mReserved2;
+    public final String mReserved2;
     /**
      *  mReserved3.
      */
-    public String mReserved3;
+    public final String mReserved3;
     /**
      *  mReserved4.
      */
-    public String mReserved4;
+    public final String mReserved4;
     /**
      *  mReserved5.
      */
-    public String mReserved5;
+    public final String mReserved5;
 
     /**
      * コンストラクタ.

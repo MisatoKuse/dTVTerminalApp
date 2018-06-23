@@ -29,9 +29,9 @@ public class StbConnectRelayClient {
     /**charset_utf8.*/
     private static final String CHARSET_UTF8 = "UTF-8";
     /**SocketPort.*/
-    private int mRemoteSocketPort = REMOTE_SOCKET_PORT;
+    private final int mRemoteSocketPort = REMOTE_SOCKET_PORT;
     /**datagram port.*/
-    private int mRemoteDatagramPort = REMOTE_DATAGRAM_PORT;
+    private final int mRemoteDatagramPort = REMOTE_DATAGRAM_PORT;
     /**TcpClient.*/
     private TcpClient mTcpClient;
 

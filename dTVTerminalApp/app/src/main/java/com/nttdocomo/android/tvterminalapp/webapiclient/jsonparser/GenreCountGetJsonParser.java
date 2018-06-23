@@ -24,7 +24,7 @@ import java.util.ArrayList;
  */
 public class GenreCountGetJsonParser extends AsyncTask<Object, Object, Object> {
     /**コールバック.*/
-    private GenreCountGetWebClient.GenreCountGetJsonParserCallback
+    private final GenreCountGetWebClient.GenreCountGetJsonParserCallback
             mGenreCountGetJsonParserCallback;
     /**オブジェクトクラスの定義　.*/
     private GenreCountGetResponse mGenreCountGetResponse;

@@ -54,7 +54,7 @@ public class ChannelInfoList implements Parcelable {
         dest.writeTypedList(this.mChannels);
     }
 
-    protected ChannelInfoList(Parcel in) {
+    private ChannelInfoList(Parcel in) {
         this.mChannels = in.createTypedArrayList(ChannelInfo.CREATOR);
     }
 

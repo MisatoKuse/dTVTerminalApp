@@ -45,7 +45,7 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
 
     // region variable
     /**子コンテンツ一覧取得ウェブクライアント.*/
-    private ChildContentListGetWebClient mWebClient;
+    private final ChildContentListGetWebClient mWebClient;
     /**コールバック.*/
     private DataCallback mCallback = null;
     /**子コンテンツ一覧取得レスポンス.*/

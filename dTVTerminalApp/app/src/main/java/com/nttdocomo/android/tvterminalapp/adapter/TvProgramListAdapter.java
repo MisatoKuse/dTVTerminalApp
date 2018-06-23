@@ -130,7 +130,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     /**
      * アイテムの配列.
      */
-    private List<ItemViewHolder> mItemViews = new ArrayList<>();
+    private final List<ItemViewHolder> mItemViews = new ArrayList<>();
     /**
      * 番組データ.
      */
@@ -309,7 +309,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      */
     private class ItemViewHolder {
         /**レイアウトインフレーター.*/
-        public View mView = null;
+        private View mView = null;
         /**同じビュー使用されてるか.*/
         private boolean mInUsage = false;
         /**開始時間TextView.*/

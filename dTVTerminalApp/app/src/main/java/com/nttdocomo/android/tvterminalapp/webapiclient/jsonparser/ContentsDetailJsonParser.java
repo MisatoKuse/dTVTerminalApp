@@ -26,7 +26,7 @@ import java.util.ArrayList;
  */
 public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> {
     /**コンテキスト.*/
-    private Context mContext;
+    private final Context mContext;
     /**コールバック.*/
     private final ContentsDetailGetWebClient.ContentsDetailJsonParserCallback
             mContentsDetailJsonParserCallback;

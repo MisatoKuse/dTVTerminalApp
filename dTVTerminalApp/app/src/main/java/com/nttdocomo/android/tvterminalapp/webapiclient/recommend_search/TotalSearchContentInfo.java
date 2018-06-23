@@ -17,9 +17,9 @@ import java.util.List;
  */
 public class TotalSearchContentInfo {
     /**トータル数.*/
-    public int totalCount;
+    private int mTotalCount;
     /**検索結果詳細.*/
-    public ArrayList<SearchContentInfo> searchContentInfo;
+    private ArrayList<SearchContentInfo> mSearchContentInfoList;
     /**.*/
     private ResultType mResultType;
     /**コンテンツデータ.*/
@@ -27,12 +27,12 @@ public class TotalSearchContentInfo {
 
     /**
      *init.
-     * @param totalCount  totalCount
-     * @param searchContentInfo  searchContentInfo
+     * @param totalCount トータル数
+     * @param searchContentList  検索結果詳細
      */
-    public void init(final int totalCount, final ArrayList<SearchContentInfo> searchContentInfo) {
-        this.totalCount = totalCount;
-        this.searchContentInfo = searchContentInfo;
+    public void init(final int totalCount, final ArrayList<SearchContentInfo> searchContentList) {
+        this.mTotalCount = totalCount;
+        this.mSearchContentInfoList = searchContentList;
     }
 
     /**
@@ -52,10 +52,26 @@ public class TotalSearchContentInfo {
     }
 
     /**
+     * 検索結果詳細データ数取得.
+     * @return 検索結果詳細データ数
+     */
+    public int getContentsDataListSize() {
+        return mSearchContentInfoList.size();
+    }
+
+    /**
      * コンテンツデータ設定.
      * @param mContentsDataList コンテンツデータ
      */
     public void setContentsDataList(final List<ContentsData> mContentsDataList) {
         this.mContentsDataList = mContentsDataList;
+    }
+
+    public SearchContentInfo getSearchContentInfoIndex(final int index) {
+        return mSearchContentInfoList.get(index);
+    }
+
+    public int getTotalCount() {
+        return mTotalCount;
     }
 }

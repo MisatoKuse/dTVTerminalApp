@@ -379,7 +379,7 @@ public class WebApiBasePlala {
         /**
          * 通信時エラー情報.
          */
-        ErrorState errorState;
+        final ErrorState errorState;
         /**
          * 本体データ.
          */

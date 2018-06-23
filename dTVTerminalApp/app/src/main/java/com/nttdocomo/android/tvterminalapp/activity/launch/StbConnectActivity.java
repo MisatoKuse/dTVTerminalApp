@@ -36,7 +36,7 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
     /** 遅延時間.*/
     private static final int DELAYED_TIME = 3000;
     /**ハンドラー.*/
-    private Handler mHandler = new Handler();
+    private final Handler mHandler = new Handler();
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

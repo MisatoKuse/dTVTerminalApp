@@ -358,7 +358,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         DTVTLogger.start();
         RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment();
         List<ContentsData> list = baseFragment.getContentsData();
-        baseFragment.mContentsList = new ArrayList<>();
+
+        baseFragment.clearContentsList();
+
         if (list != null) {
             list.clear();
             List<Map<String, String>> resultList = getDownloadListFromDb();
@@ -380,8 +382,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                         String fullPath = path + File.separator + itemId;
                         File file = new File(fullPath);
                         boolean isExist = false;
-                        for (int i = 0; i < baseFragment.mContentsList.size(); i++) {
-                            RecordedContentsDetailData detailDataInList = baseFragment.mContentsList.get(i);
+                        for (int i = 0; i < baseFragment.getContentsListSize(); i++) {
+                            RecordedContentsDetailData detailDataInList = baseFragment.getContentsListElement(i);
                             if (itemId.equals(detailDataInList.getItemId())) {
                                 isExist = true;
                                 //外部ストレージ優先表示
@@ -411,7 +413,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                             detailData.setTitle(title);
                             detailData.setVideoType(videoType);
                             detailData.setClearTextSize(totalSize);
-                            baseFragment.mContentsList.add(detailData);
+                            baseFragment.addContentsList(detailData);
                         }
                     }
                 }

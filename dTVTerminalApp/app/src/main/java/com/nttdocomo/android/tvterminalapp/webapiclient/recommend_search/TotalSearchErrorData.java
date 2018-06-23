@@ -12,11 +12,13 @@ import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 /**
  *検索エラー情報.
  */
+@SuppressWarnings("PublicField")
 public class TotalSearchErrorData {
+    //単純な構造体としての役割のクラスの為、メンバはpublicとする
     /**.*/
     public String status;
     /**エラー情報.*/
-    public ErrorResultData error;
+    public final ErrorResultData error;
 
     /**
      * エラー結果データクラス.

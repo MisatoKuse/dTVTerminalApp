@@ -47,13 +47,13 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
     /**
      * 画面の素材（上）.
      */
-    private int[] mWalkthroughsAbove = {R.mipmap.walkthrough_01,
+    private final int[] mWalkthroughsAbove = {R.mipmap.walkthrough_01,
             R.mipmap.walkthrough_02_01, R.mipmap.walkthrough_03_01,
             R.mipmap.walkthrough_04_01, R.mipmap.walkthrough_05_01 };
     /**
      * 画面の素材（下）.
      */
-    private int[] mWalkthroughsBelow = {R.mipmap.walkthrough_01,
+    private final int[] mWalkthroughsBelow = {R.mipmap.walkthrough_01,
             R.mipmap.walkthrough_02_02, R.mipmap.walkthrough_03_02,
             R.mipmap.walkthrough_04_02, R.mipmap.walkthrough_05_02 };
     /**
@@ -79,7 +79,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
     /**
      * アダプタにセットするビューリスト.
      */
-    private List<View> mWalkthroughsViews = new ArrayList<>();
+    private final List<View> mWalkthroughsViews = new ArrayList<>();
     /**
      * 選択中インジケータ表示位置計算用.
      */
@@ -408,7 +408,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
      */
     private static class TutorialPagerAdapter extends PagerAdapter {
         /**リストビュー.*/
-        private List<View> mViews;
+        private final List<View> mViews;
 
         /**チュートリアルページアダプタ.
          * @param views ビュー
