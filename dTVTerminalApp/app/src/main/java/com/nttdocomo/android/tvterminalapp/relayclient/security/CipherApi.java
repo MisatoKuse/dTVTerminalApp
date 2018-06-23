@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.relayclient.StbConnectRelayClient;
+import com.nttdocomo.android.tvterminalapp.relayclient.TcpClient;
 
 import java.security.NoSuchAlgorithmException;
 
@@ -68,7 +69,7 @@ public class CipherApi {
         byte[] module = cipherData.getModuleData();
 
         StbConnectRelayClient stbConnection = StbConnectRelayClient.getInstance();
-        boolean connectResult = stbConnection.connect();
+        boolean connectResult = stbConnection.connect(TcpClient.KEY_EXCHANGE_TIMEOUT);
         DTVTLogger.debug("connectResult = " + connectResult);
 
         byte[] actionBytes = new byte[CipherConfig.BYTE_LENGTH_ACTION];

@@ -57,19 +57,39 @@ public class StbConnectRelayClient {
 
     /**
      * STBとSocket通信を開始する.
-     * Socketに送受信タイムアウト（接続タイムアウト含む）を設定する
-     *
      * @return 成功:true
      */
     public boolean connect() {
         if (mRemoteIp == null) {
-            DTVTLogger.warning("mRemoteIp is null!");
+            DTVTLogger.warning("remote IP address is null!");
             return false;
         }
         this.disconnect();
 
         mTcpClient = new TcpClient();
         return mTcpClient.connect(mRemoteIp, mRemoteSocketPort);
+    }
+
+    /**
+     * STBとSocket通信を開始する.
+     * Socketに送受信タイムアウト（接続タイムアウト含む）を設定する
+     *
+     * @return 成功:true
+     */
+    public boolean connect(final int... sendRecieveTimeout) {
+        if (mRemoteIp == null) {
+            DTVTLogger.warning("remote IP address is null!");
+            return false;
+        }
+        this.disconnect();
+
+        int timeout = TcpClient.SEND_RECIEVE_TIMEOUT;
+        if (sendRecieveTimeout != null && sendRecieveTimeout.length > 0 && sendRecieveTimeout[0] > 0) {
+            timeout = sendRecieveTimeout[0];
+        }
+
+        mTcpClient = new TcpClient();
+        return mTcpClient.connect(mRemoteIp, mRemoteSocketPort, timeout);
     }
 
     /**
