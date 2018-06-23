@@ -56,7 +56,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     /**コンテンツデータ.*/
     private List<ContentsData> mContentsData;
     /**録画コンテンツ詳細.*/
-    public List<RecordedContentsDetailData> mContentsList;
+    private List<RecordedContentsDetailData> mContentsList = new ArrayList<>();
     /**コンテンツアダプター.*/
     private ContentsAdapter mContentsAdapter = null;
     /**データプロバイダー.*/
@@ -66,7 +66,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     /**キュー.*/
     private final List<DownloadData> mQueue = new ArrayList<>();
     /**キューインデックス.*/
-    public List<Integer> mQueueIndex = new ArrayList<>();
+    private List<Integer> mQueueIndex = new ArrayList<>();
     //private Handler mHandler;
     /**PercentToUpdateUi.*/
     private static final int mPercentToUpdateUi = 1;
@@ -151,12 +151,17 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         DTVTLogger.start();
         mContentsData = new ArrayList<>();
 		mChannelNameCache = new HashSet<>();
-        mContentsList = new ArrayList<>();
     }
 
     public void clearContentsList() {
         if (mContentsList != null) {
             mContentsList.clear();
+        }
+    }
+
+    public void clearQueueIndex() {
+        if (mQueueIndex != null) {
+            mQueueIndex.clear();
         }
     }
 
@@ -167,9 +172,22 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         return 0;
     }
 
+    public int getQueueIndexSize() {
+        if (mQueueIndex != null) {
+            return mQueueIndex.size();
+        }
+        return 0;
+    }
+
     public void addContentsList(final RecordedContentsDetailData data) {
         if (mContentsList != null) {
             mContentsList.add(data);
+        }
+    }
+
+    public void addQueueIndex(final  Integer index) {
+        if (mQueueIndex != null) {
+            mQueueIndex.add(index);
         }
     }
 
@@ -241,6 +259,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         if (null != mContentsData) {
             mContentsData.clear();
         }
+        clearContentsList();
     }
 
     /**

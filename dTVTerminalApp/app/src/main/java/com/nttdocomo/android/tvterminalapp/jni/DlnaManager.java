@@ -34,6 +34,12 @@ import java.net.UnknownHostException;
  * DLNAマネージャー.
  */
 public class DlnaManager {
+
+    /**
+     * singletone.
+     */
+    private static final DlnaManager sInstance = new DlnaManager();
+
     /**エラータイプ.*/
     public enum LocalRegistrationErrorType {
         /**NONE.*/
@@ -73,6 +79,62 @@ public class DlnaManager {
         /**ERROR_OCCURED.*/
         DOWNLOADER_STATUS_ERROR_OCCURED
     }
+
+    /**　エラータイプ:OVER.*/
+    private static final int LOCAL_REGISTRATION_ERROR_TYPE_OVER = 1;
+    /** 不明. */
+    private static final int REMOTE_CONNECT_STATUS_UNKOWN = 2;
+    /** 接続準備環境. */
+    private static final int REMOTE_CONNECT_STATUS_READY = 3;
+    /** 接続中. */
+    private static final int REMOTE_CONNECT_STATUS_CONNECTED = 4;
+    /** 切断. */
+    private static final int REMOTE_CONNECT_STATUS_DISCONNECTION = 5;
+    /** 再接続失敗. */
+    private static final int REMOTE_CONNECT_STATUS_RECONNECTION = 6;
+    /** UNKNOWN. */
+    private static final int DOWNLOADER_STATUS_UNKNOWN = 11;
+    /** MOVING. */
+    private static final int DOWNLOADER_STATUS_MOVING = 12;
+    /** COMPLETED. */
+    private static final int DOWNLOADER_STATUS_COMPLETED = 13;
+    /** CANCELLED. */
+    private static final int DOWNLOADER_STATUS_CANCELLED = 14;
+    /** ERROR_OCCURED. */
+    private static final int DOWNLOADER_STATUS_ERROR_OCCURED = 15;
+    /** dms検出リスナー. */
+    public DlnaManagerListener mDlnaManagerListener = null;
+
+    /** ローカルレジストレーションリスナー. */
+    public LocalRegisterListener mLocalRegisterListener = null;
+    /** リモート接続リスナー. */
+    public RemoteConnectStatusChangeListener mRemoteConnectStatusChangeListener = null;
+    /** コンテンツブラウズリスナー. */
+    public BrowseListener mBrowseListener = null;
+    /** ダウンロードリスナー. */
+    public DownloadStatusListener mDownloadStatusListener = null;
+    /** 接続ステータス. */
+    private RemoteConnectStatus remoteConnectStatus = RemoteConnectStatus.OTHER;
+    /** コンテキスト. */
+    public Context mContext;
+    /** 接続スタートフラグ. */
+    private boolean mIsStarted = false;
+    /** udn. */
+    private String mUdn = "";
+    /** 接続（ready）フラグ. */
+    private boolean waitForReady = false;
+    /** ブラウズパス指定. */
+    private String requestContainerId = "";
+    /** ページングインデックス. */
+    private int mPageIndex = 0;
+    /** dmp開始フラグ. */
+    private boolean startedDmp = false;
+    /** dtcp開始フラグ. */
+    private boolean startedDtcp = false;
+    /** dtcp開始フラグ. */
+    private String mHomeOutControlUrl = null;
+    /** ARIB外字変換クラス. */
+    private AribUtils mAribUtils = null;
 
     // region Listener declaration
 
@@ -147,10 +209,6 @@ public class DlnaManager {
          */
         void onContentBrowseCallback(final DlnaObject[] objs);
     }
-    /**
-     * singletone.
-     */
-    private static final DlnaManager sInstance = new DlnaManager();
 
     /**
      * DlnaManager.
@@ -170,68 +228,12 @@ public class DlnaManager {
         System.loadLibrary("dtvtlib");
     }
 
-    /**　エラータイプ:OVER.*/
-    private static final int LOCAL_REGISTRATION_ERROR_TYPE_OVER = 1;
-    /** 不明. */
-    private static final int REMOTE_CONNECT_STATUS_UNKOWN = 2;
-    /** 接続準備環境. */
-    private static final int REMOTE_CONNECT_STATUS_READY = 3;
-    /** 接続中. */
-    private static final int REMOTE_CONNECT_STATUS_CONNECTED = 4;
-    /** 切断. */
-    private static final int REMOTE_CONNECT_STATUS_DISCONNECTION = 5;
-    /** 再接続失敗. */
-    private static final int REMOTE_CONNECT_STATUS_RECONNECTION = 6;
-    /** UNKNOWN. */
-    private static final int DOWNLOADER_STATUS_UNKNOWN = 11;
-    /** MOVING. */
-    private static final int DOWNLOADER_STATUS_MOVING = 12;
-    /** COMPLETED. */
-    private static final int DOWNLOADER_STATUS_COMPLETED = 13;
-    /** CANCELLED. */
-    private static final int DOWNLOADER_STATUS_CANCELLED = 14;
-    /** ERROR_OCCURED. */
-    private static final int DOWNLOADER_STATUS_ERROR_OCCURED = 15;
-    /** dms検出リスナー. */
-    public DlnaManagerListener mDlnaManagerListener = null;
-
-    /** ローカルレジストレーションリスナー. */
-    public LocalRegisterListener mLocalRegisterListener = null;
-    /** リモート接続リスナー. */
-    public RemoteConnectStatusChangeListener mRemoteConnectStatusChangeListener = null;
-    /** コンテンツブラウズリスナー. */
-    public BrowseListener mBrowseListener = null;
-    /** ダウンロードリスナー. */
-    public DownloadStatusListener mDownloadStatusListener = null;
-    /** 接続ステータス. */
-    private RemoteConnectStatus remoteConnectStatus = RemoteConnectStatus.OTHER;
-    /** コンテキスト. */
-    public Context mContext;
-    /** 接続スタートフラグ. */
-    public boolean isStarted = false;
-    /** udn. */
-    private String mUdn = "";
-    /** 接続（ready）フラグ. */
-    private boolean waitForReady = false;
-    /** ブラウズパス指定. */
-    private String requestContainerId = "";
-    /** ページングインデックス. */
-    private int mPageIndex = 0;
-    /** dmp開始フラグ. */
-    private boolean startedDmp = false;
-    /** dtcp開始フラグ. */
-    private boolean startedDtcp = false;
-    /** dtcp開始フラグ. */
-    private String mHomeOutControlUrl = null;
-    /** ARIB外字変換クラス. */
-    private AribUtils mAribUtils = null;
-
     /**
      * launch.
      * @param context コンテキスト
      */
     public void launch(final Context context) {
-        DlnaManager.shared().isStarted = false;
+        DlnaManager.shared().mIsStarted = false;
         DlnaManager.shared().startedDmp = false;
         mContext = context;
         DTVTLogger.start();
@@ -258,10 +260,10 @@ public class DlnaManager {
      */
     public void Start(final Context context) {
         DlnaManager.shared().mContext = context;
-        DTVTLogger.warning("isStarted = " + isStarted);
+        DTVTLogger.warning("mIsStarted = " + mIsStarted);
         //if start then stop
-        if (!DlnaManager.shared().isStarted) {
-            DlnaManager.shared().isStarted = true;
+        if (!DlnaManager.shared().mIsStarted) {
+            DlnaManager.shared().mIsStarted = true;
             StbConnectionManager.ConnectionStatus connectionStatus = StbConnectionManager.shared().getConnectionStatus();
             DTVTLogger.warning("connectionStatus = " + connectionStatus);
             switch (connectionStatus) {
@@ -395,6 +397,13 @@ public class DlnaManager {
     }
 
     /**
+     * 開始フラグ初期化(停止状態にセット).
+     */
+    public void setStop() {
+        mIsStarted = false;
+    }
+
+    /**
      * ローカルレジストレーションの依頼を行う.
      *
      * @param udn udn
@@ -402,15 +411,15 @@ public class DlnaManager {
      */
     public void RequestLocalRegistration(final String udn, final Context context) {
         //現在の年月日の文字列を取得
-        String nowDate = DateUtils.formatEpochToString(DateUtils.getNowTimeFormatEpoch()
-                , DateUtils.DATE_YYYY_MM_DD_J);
+        String nowDate = DateUtils.formatEpochToString(DateUtils.getNowTimeFormatEpoch(),
+                DateUtils.DATE_YYYY_MM_DD_J);
 
         //登録名にはOSバージョンや年月日も含めた完成状態で送り出す。（代わりにC言語側では無編集に変更)
-        String storeName = StringUtils.getConnectStrings(Build.MODEL," "
-                , context.getString(R.string.str_stb_registration_device_name_os)
-                , Build.VERSION.RELEASE
-                , " ", context.getString(R.string.home_contents_slash), " ", nowDate
-                , context.getString(R.string.str_stb_registration_device_name_regist));
+        String storeName = StringUtils.getConnectStrings(Build.MODEL, " ",
+                context.getString(R.string.str_stb_registration_device_name_os),
+                Build.VERSION.RELEASE,
+                " ", context.getString(R.string.home_contents_slash), " ", nowDate,
+                context.getString(R.string.str_stb_registration_device_name_regist));
 
         //ローカルレジストレーションの呼び出し
         requestLocalRegistration(udn, storeName);

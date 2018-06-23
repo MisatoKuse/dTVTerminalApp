@@ -233,27 +233,20 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                 intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
                 mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_notice))) {
-                    if (!(mActivity instanceof NoticeActivity)) {
-                        intent.setClass(mActivity, NoticeActivity.class);
-                        intent.setFlags(0);
-                        mActivity.startActivity(intent);
-                    }
+                intent.setClass(mActivity, NoticeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
+                mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_setting))) {
-                if (!(mActivity instanceof SettingActivity)) {
-                    if (mActivity instanceof StbSelectActivity) {
-                        mActivity.finish();
-                    } else {
-                        intent.setClass(mActivity, SettingActivity.class);
-                        intent.setFlags(0);
-                        mActivity.startActivity(intent);
-                    }
-                }
+                intent.setClass(mActivity, SettingActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, true);
+                mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_d_anime_copyright))) {
                 //dアニメストアのコピーライト表記サイトを表示する為、外部ブラウザを呼び出す
                 Uri uri = Uri.parse(UrlConstants.WebUrl.D_ANIME_COPYRIGHT_SITE_URL);
                 intent = new Intent(Intent.ACTION_VIEW, uri);
                 mActivity.startActivity(intent);
-
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_hikari_tv))) {
                 mActivity.setRemoteProgressVisible(View.VISIBLE);
                     // TVアプリ起動導線(ひかりTV)

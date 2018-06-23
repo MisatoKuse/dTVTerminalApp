@@ -569,20 +569,16 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private void setVideoBrows(final ArrayList<DlnaRecVideoItem> dlnaRecVideoItems) {
         final RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
         baseFragment.setFragmentName(RLA_FragmentName_All);
-        if (baseFragment.mContentsList == null) {
-            baseFragment.mContentsList = new ArrayList<>();
-        }
+
         List<Map<String, String>> resultList = getDownloadListFromDb();
         setTakeOutContentsToAll(dlnaRecVideoItems, resultList);
         List<ContentsData> listData = baseFragment.getContentsData();
         if (null != listData && mPageIndex == 0 && !mIsLoading) {
             listData.clear();
-            baseFragment.mContentsList.clear();
+            baseFragment.clearContentsList();
         }
-        if (baseFragment.mQueueIndex == null) {
-            baseFragment.mQueueIndex = new ArrayList<>();
-        }
-        baseFragment.mQueueIndex.clear();
+
+        baseFragment.clearQueueIndex();
         setDownLoadQue(baseFragment, dlnaRecVideoItems, resultList);
         final boolean hideDownloadBtn = getConnectionStatus();
         for (int i = 0; i < dlnaRecVideoItems.size(); i++) {
@@ -627,7 +623,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                     }
                 }
             }
-            baseFragment.mContentsList.add(detailData);
+            baseFragment.addContentsList(detailData);
             setNotifyData(baseFragment, itemData, i, detailData.getDlFileFullPath(), hideDownloadBtn);
         }
         runOnUiThread(new Runnable() {
@@ -639,7 +635,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                     mIsLoading = false;
                 }
                 mPageIndex++;
-                if (baseFragment.mQueueIndex.size() > 0) {
+                if (baseFragment.getQueueIndexSize() > 0) {
                     baseFragment.bindServiceFromBackground();
                 }
             }
@@ -669,7 +665,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 if (itemId.equals(allItemId)) {
                     String downloadStatus = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
                     if (TextUtils.isEmpty(downloadStatus)) {
-                        baseFragment.mQueueIndex.add(t);
+                        baseFragment.addQueueIndex(t);
                         break;
                     }
                 }
@@ -734,7 +730,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             contentsData.setDownloadBtnHide(hideDownloadBtn);
             //duration && channel name end
             contentsData.setTime(sb.toString());
-            contentsData.setDownloadFlg(baseFragment.mContentsList.get(i).getDownLoadStatus());
+            contentsData.setDownloadFlg(baseFragment.getContentsListElement(i).getDownLoadStatus());
             contentsData.setDlFileFullPath(fullDlPath);
             List<ContentsData> l = baseFragment.getContentsData();
             if (null != l) {
@@ -923,7 +919,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                     && absListView.getLastVisiblePosition() == fragment.getDataCount() - 1
                     && !mIsLoading) {
                 if (mViewPager.getCurrentItem() == ALL_RECORD_LIST) {
-                    if (fragment.mContentsList.size() > 0 && (fragment.mContentsList.get(0).isRemote() == getConnectionStatus())) {
+                    if (fragment.getContentsListSize() > 0 && (fragment.getContentsListElement(0).isRemote() == getConnectionStatus())) {
                         mIsLoading = true;
                         mNoDataMessage.setVisibility(View.GONE);
                         fragment.loadStart();

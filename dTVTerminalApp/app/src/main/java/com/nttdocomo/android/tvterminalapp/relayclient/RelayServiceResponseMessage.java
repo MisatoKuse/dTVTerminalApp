@@ -158,8 +158,9 @@ public class RelayServiceResponseMessage implements Serializable {
     };
 
     /**
-     * アプリ名シンボルに対するアプリ起動要求種別.
+     * アプリ名シンボルに対するアプリ起動要求種別.固定Mapクラス定義でClientで外部参照される前提のためpublic.
      */
+    @SuppressWarnings("PublicField")
     public final Map<String, RemoteControlRelayClient.STB_APPLICATION_TYPES> mStbApplicationEnumMap
             = new HashMap<String, RemoteControlRelayClient.STB_APPLICATION_TYPES>() {
         {

@@ -168,7 +168,7 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
                 }
             }
         }
-        --mThumbnailProvider.currentQueueCount;
+        mThumbnailProvider.decrementCurrentQueueCount();
         mThumbnailProvider.checkQueueList();
     }
 

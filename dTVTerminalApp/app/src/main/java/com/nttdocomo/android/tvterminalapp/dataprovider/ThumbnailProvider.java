@@ -28,7 +28,7 @@ public class ThumbnailProvider {
 	/**
 	 * Queue.
 	 */
-	public int currentQueueCount = 0;
+	private int mCurrentQueueCount = 0;
 	/**
 	 * Queueの最大数.
 	 */
@@ -92,8 +92,8 @@ public class ThumbnailProvider {
 			// サーバからQueueで取得
             imageView.setTag(imageUrl);
             //queue処理を追加
-            if (MAX_QUEUE_COUNT > currentQueueCount) {
-                ++currentQueueCount;
+            if (MAX_QUEUE_COUNT > mCurrentQueueCount) {
+                ++mCurrentQueueCount;
                 mDownloadTask = new ThumbnailDownloadTask(imageView, this, mContext, mImageSizeType);
                 mDownloadTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, imageUrl);
             } else {
@@ -116,9 +116,9 @@ public class ThumbnailProvider {
 		if (mIsCancel) {
 			return;
 		}
-		if (MAX_QUEUE_COUNT > currentQueueCount
+		if (MAX_QUEUE_COUNT > mCurrentQueueCount
 				&& mListUrl.size() > 0) {
-			++currentQueueCount;
+			++mCurrentQueueCount;
 			String imageUrl = mListUrl.entrySet().iterator().next().getKey();
 			ImageView imageView = mListUrl.get(imageUrl);
 			new ThumbnailDownloadTask(imageView, this, mContext, mImageSizeType).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, imageUrl);
@@ -151,5 +151,14 @@ public class ThumbnailProvider {
 	 */
 	public void removeMemoryCache() {
 		thumbnailCacheManager.removeAll();
+	}
+
+	/**
+	 * カウントデクリメント.
+	 */
+	public void decrementCurrentQueueCount() {
+		if (mCurrentQueueCount >= 1) {
+			--mCurrentQueueCount;
+		}
 	}
 }

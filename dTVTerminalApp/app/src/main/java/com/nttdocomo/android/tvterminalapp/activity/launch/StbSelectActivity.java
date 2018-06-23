@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
@@ -36,7 +35,6 @@ import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsInfo;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessage;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
-import com.nttdocomo.android.tvterminalapp.relayclient.security.CipherUtil;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 
@@ -698,7 +696,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 //ペアリング解除する場合、すべてのSTBキャッシュデータを削除して、ホーム画面に遷移する
                 SharedPreferencesUtils.resetSharedPreferencesStbInfo(this);
                 StbConnectionManager.shared().setConnectionStatus(StbConnectionManager.ConnectionStatus.NONE_PAIRING);
-                DlnaManager.shared().isStarted = false;
+                DlnaManager.shared().setStop();
                 Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
 
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
