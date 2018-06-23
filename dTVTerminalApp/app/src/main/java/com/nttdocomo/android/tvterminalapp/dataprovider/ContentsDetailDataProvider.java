@@ -16,6 +16,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListD
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RentalListInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RoleListInsertDataManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.select.ClipKeyListDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.HomeDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.ProgramDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.RentalListDataManager;
@@ -251,7 +252,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
         super.onTvClipKeyListJsonParsed(clipKeyListResponse);
         DTVTLogger.start();
         if (mVodClipKeyListResponse) {
-            addClipStatus(clipKeyListResponse);
+            addClipStatus();
         } else {
             mTvClipKeyListResponse = true;
             mClipKeyListResponse = clipKeyListResponse;
@@ -264,7 +265,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
         DTVTLogger.start();
         if (mTvClipKeyListResponse) {
-            addClipStatus(clipKeyListResponse);
+            addClipStatus();
         } else {
             mVodClipKeyListResponse = true;
             mClipKeyListResponse = clipKeyListResponse;
@@ -275,19 +276,14 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     /**
      * クリップ状態取得後にコンテンツ詳細情報を送信.
      *
-     * @param clipKeyListResponse クリップキーレスポンス
      */
-    private void addClipStatus(final ClipKeyListResponse clipKeyListResponse) {
+    private void addClipStatus() {
         DTVTLogger.start();
         //クリップ状態取得
         boolean isClipStatus = false;
-        if (clipKeyListResponse != null) {
-            List<Map<String, String>> mapList = clipKeyListResponse.getCkList();
-            if (mClipKeyListResponse != null) {
-                mapList.addAll(mClipKeyListResponse.getCkList());
-            }
+            ClipKeyListDataManager manager = new ClipKeyListDataManager(mContext);
+            List<Map<String, String>> mapList = manager.selectClipAllList();
             isClipStatus = ClipUtils.setClipStatusVodMetaData(mVodMetaFullData, mapList);
-        }
         mApiDataProviderCallback.onContentsDetailInfoCallback(
                 mVodMetaFullData, isClipStatus);
         DTVTLogger.end();

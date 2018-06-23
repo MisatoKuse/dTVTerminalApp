@@ -19,6 +19,7 @@ import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActiv
 import com.nttdocomo.android.tvterminalapp.activity.video.VideoContentListActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ClipKeyListInsertDataManager;
@@ -32,6 +33,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipKeyListWebClient;
 
@@ -173,7 +175,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         if (!mIsCancel) {
             mResponseEndFlag = false;
             //クリップキーリストは常に全件取得
-            request.setIsForce(true);
+            request.setIsForce(!isCachingClipKeyListRecord(request.getType()));
             mClient = new ClipKeyListWebClient(mContext);
             // リクエストによってコールバックを変える
             if (ClipKeyListRequest.CLIP_KEY_LIST_REQUEST_TYPE_TV.equals(request.getType())) {
@@ -222,6 +224,30 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         }
         DTVTLogger.debug("Not Required ClipKeyList");
         return false;
+    }
+
+    /**
+     * クリップキー一覧キャッシュ中判定.
+     *
+     * @param type クリップコンテンツ種別
+     * @return DB保存フラグ
+     */
+    private boolean isCachingClipKeyListRecord(final String type) {
+        DTVTLogger.start();
+        String tableName = null;
+        // キャッシュを確認するDBのテーブル名を取得
+        switch (type) {
+            case ClipKeyListRequest.CLIP_KEY_LIST_REQUEST_TYPE_TV:
+                tableName = DataBaseConstants.TV_CLIP_KEY_LIST_TABLE_NAME;
+                break;
+            case ClipKeyListRequest.CLIP_KEY_LIST_REQUEST_TYPE_VOD:
+                tableName = DataBaseConstants.VOD_CLIP_KEY_LIST_TABLE_NAME;
+                break;
+            default:
+                break;
+        }
+        DTVTLogger.end();
+        return DataBaseUtils.isCachingRecord(mContext, tableName);
     }
 
     /**

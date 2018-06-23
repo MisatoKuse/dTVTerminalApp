@@ -354,6 +354,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     /* player end */
     /** ハンドラー.*/
     private final Handler loadHandler = new Handler();
+    /** チャンネルリストフラグメント.*/
+    private DtvContentsChannelFragment mChannelFragment = null;
 
     /** コンテンツタイプ(Google Analytics用).*/
     private enum ContentTypeForGoogleAnalytics {
@@ -446,6 +448,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             } else {
                 sendScreenViewForPosition(0);
             }
+        }
+        if (mChannelFragment != null) {
+            mChannelFragment.checkChannelClipStatus();
+            mChannelFragment.setNotifyDataChanged();
         }
         DTVTLogger.end();
     }
@@ -1620,6 +1626,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     @Override
     public void channelInfoCallback(final ChannelInfoList channelsInfo) {
         runOnUiThread(new Runnable() {
+            @SuppressWarnings("OverlyLongMethod")
             @Override
             public void run() {
                 if (channelsInfo != null && channelsInfo.getChannels() != null) {
@@ -1627,11 +1634,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     sort(channels);
                     if (channels.size() > 0) {
                         if (mViewPager.getCurrentItem() == 1) {
-                            final DtvContentsChannelFragment channelFragment = getChannelFragment();
+                            mChannelFragment = getChannelFragment();
                             ChannelInfo channelInfo = channels.get(0);
                             ArrayList<ScheduleInfo> scheduleInfos = channelInfo.getSchedules();
-                            if (mDateIndex == 1 && channelFragment.mContentsData != null) {
-                                channelFragment.mContentsData.clear();
+                            if (mDateIndex == 1 && mChannelFragment.mContentsData != null) {
+                                mChannelFragment.mContentsData.clear();
                             }
                             boolean isFirst = false;
                             for (int i = 0; i < scheduleInfos.size(); i++) {
@@ -1659,14 +1666,22 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                         contentsData.setThumURL(scheduleInfo.getImageUrl());
                                         contentsData.setTime(DateUtils.getContentsDetailChannelHmm(scheduleInfo.getStartTime()));
                                         contentsData.setClipExec(scheduleInfo.isClipExec());
-                                        channelFragment.mContentsData.add(contentsData);
+                                        contentsData.setDispType(scheduleInfo.getDispType());
+                                        contentsData.setDtv(scheduleInfo.getDtv());
+                                        contentsData.setTvService(scheduleInfo.getTvService());
+                                        contentsData.setServiceId(scheduleInfo.getServiceId());
+                                        contentsData.setEventId(scheduleInfo.getEventId());
+                                        contentsData.setCrid(scheduleInfo.getCrId());
+                                        contentsData.setTitleId(scheduleInfo.getTitleId());
+                                        mChannelFragment.mContentsData.add(contentsData);
                                     }
                                 }
                             }
                             if (mDateIndex == 1) {
                                 getChannelDetailByPageNo();
                             } else {
-                                channelFragment.setNotifyDataChanged();
+                                mChannelFragment.checkChannelClipStatus();
+                                mChannelFragment.setNotifyDataChanged();
                             }
                         }
                     }
@@ -2621,6 +2636,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     public void multiChannelFindCallback(final DlnaObject dlnaObject) {
                         //Threadクラスからのコールバックのため、UIスレッド化する
                         runOnUiThread(new Runnable() {
+                            @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
                             @Override
                             public void run() {
                                 if (dlnaObject != null) {
