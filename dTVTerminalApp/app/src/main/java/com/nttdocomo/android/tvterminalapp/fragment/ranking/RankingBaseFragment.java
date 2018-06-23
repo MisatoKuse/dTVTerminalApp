@@ -64,7 +64,7 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
     /**
      * ランキング種別.
      */
-    private ContentsAdapter.ActivityTypeItem mRankingMode;
+    private ContentsAdapter.ActivityTypeItem mRankingMode = null;
 
     /**
      * コンテンツ詳細表示フラグ.

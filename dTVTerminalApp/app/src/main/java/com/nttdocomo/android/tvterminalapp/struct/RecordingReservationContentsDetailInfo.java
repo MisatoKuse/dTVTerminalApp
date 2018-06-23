@@ -75,18 +75,6 @@ public class RecordingReservationContentsDetailInfo {
     }
 
     /**
-     * 定期予約指定値:0～10（イベントIDありの場合0固定）設定.
-     * @param loopTypeNum  定期予約指定値:0～10（イベントIDありの場合0固定）
-     */
-    public void setLoopTypeNum(final int loopTypeNum) {
-        // 0以外の場合、開始時間は0時00分00秒からの時間となる
-        if (loopTypeNum != 0) {
-            DateUtils.getCalculationRecordingReservationStartTime(mStartTime);
-        }
-        mLoopTypeNum = loopTypeNum;
-    }
-
-    /**
      * 放送種別 1:多チャンネル放送取得.
      * @return 放送種別
      */

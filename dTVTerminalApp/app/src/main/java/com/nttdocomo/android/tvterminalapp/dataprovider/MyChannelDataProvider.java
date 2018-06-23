@@ -41,7 +41,7 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
     /**
      * マイ番組表ウェブクライアント.
      */
-    private MyChannelWebClient mMyChannelListWebClient;
+    private MyChannelWebClient mMyChannelListWebClient = null;
     /**
      * My番組表登録ウェブクライアント.
      */
@@ -99,7 +99,11 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
      * @return エラーステータス
      */
     public ErrorState getMyChannelListError() {
-        return mMyChannelListWebClient.getError();
+        ErrorState errorState = null;
+        if(mMyChannelListWebClient != null) {
+            errorState = mMyChannelListWebClient.getError();
+        }
+        return errorState;
     }
 
     /**

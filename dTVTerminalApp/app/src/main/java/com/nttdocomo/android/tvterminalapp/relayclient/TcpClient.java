@@ -145,14 +145,16 @@ public class TcpClient {
                 DTVTLogger.warning("inputStream.available() = " + inputStream.available());
 
                 byte[] bytes = new byte[inputStream.available()];
-                inputStream.read(bytes, 0, inputStream.available());
+                int readByte = inputStream.read(bytes, 0, inputStream.available());
 
-                String decodeString = CipherUtil.decodeData(bytes);
-                if (null != decodeString) {
-                    DTVTLogger.warning("decodeString = " + decodeString);
-                    recvdata = decodeString;
-                } else {
-                    recvdata = new String(bytes);
+                if(readByte == inputStream.available()) {
+                    String decodeString = CipherUtil.decodeData(bytes);
+                    if (null != decodeString) {
+                        DTVTLogger.warning("decodeString = " + decodeString);
+                        recvdata = decodeString;
+                    } else {
+                        recvdata = new String(bytes);
+                    }
                 }
                 break;
             }
@@ -182,9 +184,11 @@ public class TcpClient {
                     continue;
                 }
                 byte[] dataBytes = new byte[inputStream.available()];
-                inputStream.read(dataBytes, 0, dataBytes.length);
-                result = CipherUtil.setShareKey(dataBytes);
-                break;
+                int readByte = inputStream.read(dataBytes, 0, dataBytes.length);
+                if(readByte == inputStream.available()) {
+                    result = CipherUtil.setShareKey(dataBytes);
+                    break;
+                }
             }
         } catch (NullPointerException | IOException e) {
             // SocketException はIOExceptionに含まれる

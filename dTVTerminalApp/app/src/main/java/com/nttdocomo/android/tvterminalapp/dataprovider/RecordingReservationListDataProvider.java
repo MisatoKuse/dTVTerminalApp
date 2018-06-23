@@ -194,15 +194,15 @@ public class RecordingReservationListDataProvider implements
     /**
      * STB側録画予約一覧取得用Webクライアント.
      */
-    private RemoteRecordingReservationListWebClient mStbWebClient;
+    private RemoteRecordingReservationListWebClient mStbWebClient = null;
     /**
      * dリモート側録画予約一覧取得用Webクライアント.
      */
-    private RecordingReservationListWebClient mDRemoteWebClient;
+    private RecordingReservationListWebClient mDRemoteWebClient = null;
     /**
      * チャンネルリスト取得用Webクライアント.
      */
-    private ChannelWebClient mWebClient;
+    private ChannelWebClient mWebClient = null;
     /**
      * 録画予約一覧用エラー情報バッファ.
      */
@@ -311,7 +311,9 @@ public class RecordingReservationListDataProvider implements
         } else {
             DTVTLogger.error("response is null");
             //データが取得できなかったので、エラーを取得する
-            mError = mStbWebClient.getError();
+            if(mStbWebClient != null) {
+                mError = mStbWebClient.getError();
+            }
             mApiDataProviderCallback.recordingReservationListCallback(null);
         }
         DTVTLogger.end();
@@ -334,7 +336,9 @@ public class RecordingReservationListDataProvider implements
         } else {
             DTVTLogger.error("response is null");
             //データが取得できなかったので、エラーを取得する
-            mError = mDRemoteWebClient.getError();
+            if (mDRemoteWebClient != null) {
+                mError = mDRemoteWebClient.getError();
+            }
             mApiDataProviderCallback.recordingReservationListCallback(null);
         }
         DTVTLogger.end();
@@ -355,7 +359,9 @@ public class RecordingReservationListDataProvider implements
         } else {
             DTVTLogger.error("response is null");
             //データが取得できなかったので、エラーを取得する
-            mError = mWebClient.getError();
+            if(mWebClient != null) {
+                mError = mWebClient.getError();
+            }
             mApiDataProviderCallback.recordingReservationListCallback(null);
         }
         DTVTLogger.end();

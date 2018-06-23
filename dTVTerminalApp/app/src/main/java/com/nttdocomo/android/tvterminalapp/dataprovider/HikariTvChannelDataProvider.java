@@ -36,11 +36,11 @@ public class HikariTvChannelDataProvider extends ScaledDownProgramListDataProvid
     /**コンテキスト.*/
     private final Context mContext;
     /**番組表情報WebClient.*/
-    private TvScheduleWebClient mTvScheduleWebClient;
+    private TvScheduleWebClient mTvScheduleWebClient = null;
     /**callback.*/
     private final ContentsDataCallback mContentsDataCallback;
     /**エラーステータス.*/
-    private ErrorState mErrorState;
+    private ErrorState mErrorState = null;
     /**
      * コンストラクタ.
      *
@@ -76,7 +76,9 @@ public class HikariTvChannelDataProvider extends ScaledDownProgramListDataProvid
     @Override
     public void onTvScheduleJsonParsed(final List<TvScheduleList> tvScheduleList) {
         if (tvScheduleList == null) { //networkエラー
-            mErrorState = mTvScheduleWebClient.getError();
+            if(mTvScheduleWebClient != null) {
+                mErrorState = mTvScheduleWebClient.getError();
+            }
             DTVTLogger.error("1");
             return;
         }

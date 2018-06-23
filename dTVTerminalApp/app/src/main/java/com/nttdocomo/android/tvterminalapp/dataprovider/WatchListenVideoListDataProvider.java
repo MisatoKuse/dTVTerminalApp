@@ -56,7 +56,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     /**
      * 視聴中ビデオリスト取得WebClient.
      */
-    private WatchListenVideoWebClient mWebClient;
+    private WatchListenVideoWebClient mWebClient = null;
 
     /**
      * デフォルトのページ取得位置.
@@ -81,7 +81,9 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     public void onWatchListenVideoJsonParsed(final List<WatchListenVideoList> watchListenVideoList) {
         WatchListenVideoListDataManager videoListDataManager = new WatchListenVideoListDataManager(mContext);
         if (watchListenVideoList == null) {
-            mError = mWebClient.getError();
+            if(mWebClient != null) {
+                mError = mWebClient.getError();
+            }
             mApiDataProviderCallback.watchListenVideoListCallback(null);
             DTVTLogger.error("watchListenVideoList is null");
             return;
