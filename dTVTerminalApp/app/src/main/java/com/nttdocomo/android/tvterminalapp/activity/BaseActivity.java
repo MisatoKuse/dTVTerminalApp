@@ -455,6 +455,9 @@ public class BaseActivity extends FragmentActivity implements
     protected void enableStbStatusIcon(final boolean isOn) {
         if (mStbStatusIcon != null) {
             mStbStatusIcon.setVisibility(isOn ? View.VISIBLE : View.INVISIBLE);
+            if (!isOn) {
+                return;
+            }
             switch (StbConnectionManager.shared().getConnectionStatus()) {
                 case HOME_IN:
                     setStbStatus(true);
