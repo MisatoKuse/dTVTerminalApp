@@ -109,7 +109,7 @@ bool DlnaRemoteConnect::startDirag(DMP *d) {
     return result;
 }
 
-bool DlnaRemoteConnect::stopDirag() {
+void DlnaRemoteConnect::stopDirag() {
     drag_cp_lrsys_stop(); // LR sub-system
     drag_cp_rasys_stop(); // remote access system
 }
@@ -303,14 +303,14 @@ void DlnaRemoteConnect::disconnectRemote(const du_uchar* udn){
     LOG_WITH_BOOL_PARAM(disResult, "udn = %s", udn);
 }
 
-const char* DlnaRemoteConnect::getRemoteDeviceExpireDate(const du_uchar* udn) {
+const char* DlnaRemoteConnect::getRemoteDeviceExpireDate(const du_uchar* udn, char *date, int length) {
     LOG_WITH_PARAM(">>>");
     dms_info_array dia;
     dms_info* info;
     du_uint32 i;
     du_uint32 len;
 
-    char date[64] = "";
+//    char date[64] = "";
     dms_info_array_init(&dia);
     if (!drag_cp_get_dms_list(&dia)) goto error;
     
@@ -319,9 +319,9 @@ const char* DlnaRemoteConnect::getRemoteDeviceExpireDate(const du_uchar* udn) {
 
     for (i = 0; i < len; ++i, ++info) {
         if (du_str_diff(udn, info->udn) == 0) {
-            time_t t = info->expire_date;
+            time_t t = (time_t)info->expire_date;
             struct tm *tm = localtime(&t);
-            strftime(date, sizeof(date), "%Y-%m-%d %H:%I:%S", tm);
+            strftime(date, length * sizeof(date), "%Y-%m-%d %H:%I:%S", tm);
             LOG_WITH_PARAM("%d. %s ExpireDate:[%s]", i, info->friendly_name, date);
             break;
         }

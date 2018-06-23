@@ -124,11 +124,11 @@ public class DlnaContentTerChennelDataProvider implements DlnaManager.BrowseList
         List<Map<String, String>> resultSet = null;
         switch (mOperationId) {
             case CHANNEL_UPDATE://サーバーから取得したチャンネルデータをDBに保存する
-                DlnaBrowseDataManager dlnaBrowseInsertDataManager = new DlnaBrowseDataManager(DlnaManager.shared().mContext);
+                DlnaBrowseDataManager dlnaBrowseInsertDataManager = new DlnaBrowseDataManager(DlnaManager.shared().getContext());
                 dlnaBrowseInsertDataManager.insertChannelInsertList(mChannelList, mContainerId);
                 break;
             case CHANNEL_SELECT://DBからチャンネルデータを取得して、画面に返却する
-                DlnaBrowseDataManager dlnaBrowseDataManager = new DlnaBrowseDataManager(DlnaManager.shared().mContext);
+                DlnaBrowseDataManager dlnaBrowseDataManager = new DlnaBrowseDataManager(DlnaManager.shared().getContext());
                 resultSet = dlnaBrowseDataManager.selectChannelListProgramData(mContainerId);
                 break;
             default:
@@ -145,7 +145,6 @@ public class DlnaContentTerChennelDataProvider implements DlnaManager.BrowseList
     public void browseContentWithContainerId(final Context context, final int pageIndex) {
         DlnaManager.shared().mBrowseListener = this;
         DlnaManager.shared().mRemoteConnectStatusChangeListener = this;
-        DlnaManager.shared().mContext = context;
         mContainerId = DlnaUtils.getContainerIdByImageQuality(context, DlnaUtils.DLNA_DMS_TER_CHANNEL);
         // TODO 地上波はキャシュデータをコメントアウト、必要があればコメントアウトを外す
 //        DateUtils dateUtils = new DateUtils(DlnaManager.shared().mContext);

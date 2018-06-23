@@ -530,14 +530,14 @@ JNIEXPORT jstring JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_getRemoteDeviceExpireDate(JNIEnv *env, jobject thiz, jstring udn) {
     const char *udnString = env->GetStringUTFChars(udn, 0);
     LOG_WITH("udnString = %s", udnString);
-    auto expireDate = dlnaRemoteConnect->getRemoteDeviceExpireDate(DU_UCHAR(udnString));
+    char *expireDate = new char[64];
+    dlnaRemoteConnect->getRemoteDeviceExpireDate(DU_UCHAR(udnString), expireDate, 64);
     LOG_WITH("expireDate = %s", expireDate);
     jstring jstrBuf = nullptr;
-    if (expireDate != nullptr) {
-        char buf[64];
-        strncpy(buf, expireDate, sizeof(buf));
-        jstrBuf = env->NewStringUTF(buf);
-    }
+    char buf[64];
+    strncpy(buf, expireDate, sizeof(buf));
+    jstrBuf = env->NewStringUTF(buf);
+    delete[](expireDate);
     return jstrBuf;
 }
 

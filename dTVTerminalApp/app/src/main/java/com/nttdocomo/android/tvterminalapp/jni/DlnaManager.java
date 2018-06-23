@@ -116,7 +116,7 @@ public class DlnaManager {
     /** 接続ステータス. */
     private RemoteConnectStatus remoteConnectStatus = RemoteConnectStatus.OTHER;
     /** コンテキスト. */
-    public Context mContext;
+    private Context mContext;
     /** 接続スタートフラグ. */
     private boolean mIsStarted = false;
     /** udn. */
@@ -235,7 +235,7 @@ public class DlnaManager {
     public void launch(final Context context) {
         DlnaManager.shared().mIsStarted = false;
         DlnaManager.shared().startedDmp = false;
-        mContext = context;
+        DlnaManager.shared().mContext = context;
         DTVTLogger.start();
 
         DlnaUtils.copyDiragConfigFile(context);
@@ -255,11 +255,28 @@ public class DlnaManager {
     }
 
     /**
+     * コンテキスト取得.
+     */
+    public Context getContext() {
+        return DlnaManager.shared().mContext;
+    }
+
+    /**
+     * コンテキスト設定.
+     * @param context コンテキスト
+     */
+    public void setContext(final Context context) {
+        DlnaManager.shared().mContext = context;
+    }
+
+    /**
      * NW変更時などにコールする.
      * @param context コンテキスト
      */
     public void Start(final Context context) {
-        DlnaManager.shared().mContext = context;
+        if (DlnaManager.shared().getContext() == null) {
+            DlnaManager.shared().setContext(context);
+        }
         DTVTLogger.warning("mIsStarted = " + mIsStarted);
         //if start then stop
         if (!DlnaManager.shared().mIsStarted) {
@@ -400,7 +417,7 @@ public class DlnaManager {
      * 開始フラグ初期化(停止状態にセット).
      */
     public void setStop() {
-        mIsStarted = false;
+        DlnaManager.shared().mIsStarted = false;
     }
 
     /**
@@ -437,7 +454,7 @@ public class DlnaManager {
      * リモート切断を行う.
      * @param udn udn
      */
-    public void RequestRemoteDisconnect(final String udn) {
+    private void RequestRemoteDisconnect(final String udn) {
         requestRemoteDisconnect(udn);
     }
 
@@ -487,11 +504,11 @@ public class DlnaManager {
      * @return uniqueId
      */
     public String getUniqueId() {
-        if (null == mContext) {
+        if (null == DlnaManager.shared().mContext) {
             DTVTLogger.warning("mContext is null!");
             return "";
         }
-        String uniqueId = EnvironmentUtil.getCalculatedUniqueId(mContext, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
+        String uniqueId = EnvironmentUtil.getCalculatedUniqueId(DlnaManager.shared().mContext, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
         DTVTLogger.warning("uniqueId = " + uniqueId);
         return uniqueId;
     }
@@ -685,8 +702,16 @@ public class DlnaManager {
         }
     }
 
-    private void updateJoinConnectStatus(@Nullable final DlnaDmsItem item, final @NonNull String friendName, final @NonNull String udn, final @NonNull String location,
-                                         final @NonNull String controlUrl) {
+    /**
+     * DMS検出チェック.
+     * @param item 前回のページング情報
+     * @param friendName friendName
+     * @param udn udn
+     * @param location ロケーション
+     * @param controlUrl ブラウズパス
+     */
+    private void updateJoinConnectStatus(@Nullable final DlnaDmsItem item, final @NonNull String friendName, final @NonNull String udn,
+                                         final @NonNull String location, final @NonNull String controlUrl) {
         if (item == null || !udn.equals(item.mUdn)) {
             return;
         }
@@ -722,6 +747,8 @@ public class DlnaManager {
         } else {
             if (StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_OUT_CONNECT) {
                 DlnaManager.shared().StopDirag();
+                DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
+                RequestRemoteDisconnect(dlnaDmsItem.mUdn);
             }
             StbConnectionManager.shared().setConnectionStatus(StbConnectionManager.ConnectionStatus.HOME_IN);
             String host = DlnaUtils.getHost(location);
@@ -737,7 +764,12 @@ public class DlnaManager {
         }
     }
 
-    private void updateLeaveConnectStatus(@Nullable DlnaDmsItem item, final @NonNull String udn) {
+    /**
+     * DMS切断チェック.
+     * @param item 前回のページング情報
+     * @param udn udn
+     */
+    private void updateLeaveConnectStatus(final @Nullable DlnaDmsItem item, final @NonNull String udn) {
         if (item == null || !udn.equals(item.mUdn)) {
             return;
         }
@@ -758,9 +790,7 @@ public class DlnaManager {
 
     // region native method
 
-    /**
-     * secureIoGlobalCreate.
-     */
+    /** secureIoGlobalCreate.*/
     private native void secureIoGlobalCreate();
 
     /**
@@ -781,19 +811,11 @@ public class DlnaManager {
      */
     private native void initDirag(String configFilePath);
 
-    /**
-     * startDmp.
-     */
+    /** startDmp.*/
     private native void startDmp();
-
-    /**
-     * stopDmp.
-     */
+    /** stopDmp.*/
     private native void stopDmp();
-
-    /**
-     * freeDmp.
-     */
+    /** freeDmp.*/
     private native void freeDmp();
 
     /**
