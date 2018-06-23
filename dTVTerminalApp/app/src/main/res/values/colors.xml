@@ -31,6 +31,10 @@
 
     <!--スプラッシュ画面-->
     <color name="launch_background_color_red">#cc0033</color>
+    <color name="launch_terms_service_layout_normal">#e8e8e8</color>
+    <color name="launch_terms_service_layout_pressed">#c3c3c3</color>
+    <color name="launch_terms_service_divider_one_background_color">#bfbfbf</color>
+    <color name="launch_terms_service_divider_two_background_color">#a0a0a0</color>
     <!--Home画面-->
     <color name="home_main_background_color">#1d1d1d</color>
     <color name="home_no_contract_info_background_color">#ffffff</color>

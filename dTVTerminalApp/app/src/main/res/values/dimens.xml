@@ -341,4 +341,14 @@
     <dimen name="tutorial_button_margin_right_left">40dp</dimen>
     <dimen name="tutorial_button_height">48dp</dimen>
     <dimen name="tutorial_button_marginBottom">16dp</dimen>
+    <dimen name="launch_terms_of_service_title">17sp</dimen>
+    <dimen name="launch_terms_of_service_text">15sp</dimen>
+    <dimen name="launch_terms_of_service_text_margin">14dp</dimen>
+    <dimen name="launch_terms_of_service_layout_margin">30dp</dimen>
+    <dimen name="launch_terms_of_service_text_padding">10dp</dimen>
+    <dimen name="launch_terms_of_service_title_margin">42dp</dimen>
+    <dimen name="launch_terms_of_service_button_padding">20dp</dimen>
+    <dimen name="launch_terms_of_service_open_icon_margin">6dp</dimen>
+    <dimen name="launch_terms_of_service_margin_top">18dp</dimen>
+    <dimen name="launch_terms_of_service_button_corner">5.0dp</dimen>
 </resources>

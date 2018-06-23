@@ -101,6 +101,9 @@
             android:name=".activity.launch.TutorialActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
+        <activity android:name=".activity.launch.LaunchTermsOfServiceActivity"
+            android:screenOrientation="portrait"
+            android:exported="false" />
         <activity android:name=".activity.launch.PairingHelpActivity"
             android:screenOrientation="portrait"
             android:exported="false" />

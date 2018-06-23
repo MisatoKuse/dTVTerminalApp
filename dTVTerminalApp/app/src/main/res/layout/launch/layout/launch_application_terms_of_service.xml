@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/basic_text_color_white">
+
+    <LinearLayout
+        android:id="@+id/agree_to_terms_start_use_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/list_divider_height"
+            android:background="@color/launch_terms_service_divider_two_background_color" />
+
+        <LinearLayout
+            android:id="@+id/agree_to_terms_start_use"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/launch_terms_of_service_button_padding"
+            android:layout_marginStart="@dimen/launch_terms_of_service_button_padding"
+            android:gravity="center_horizontal">
+
+            <Button
+                android:id="@+id/agree_to_terms_start_use_button"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/tutorial_button_height"
+                android:layout_marginBottom="@dimen/launch_text_left_padding"
+                android:layout_marginTop="@dimen/launch_text_left_padding"
+                android:background="@drawable/launch_terms_service_corner_button"
+                android:paddingEnd="@dimen/launch_terms_of_service_button_padding"
+                android:paddingStart="@dimen/launch_terms_of_service_button_padding"
+                android:text="@string/str_launch_agree_to_terms_start_use_button"
+                android:textColor="@color/basic_text_color_white"
+                android:textSize="@dimen/tutorial_button_text_size"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/application_terms_of_service_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/agree_to_terms_start_use_layout">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/agree_to_terms_text_tile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/launch_text_left_padding"
+                android:gravity="center_horizontal"
+                android:text="@string/str_launch_agree_to_terms_text_tile"
+                android:textColor="@color/basic_text_color_black"
+                android:textSize="@dimen/launch_terms_of_service_title"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/agree_to_terms_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/agree_to_terms_text_tile"
+                android:layout_marginEnd="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginStart="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginTop="@dimen/launch_text_left_padding"
+                android:text="@string/str_launch_agree_to_terms_text_view"
+                android:textColor="@color/basic_text_color_black"
+                android:textSize="@dimen/launch_terms_of_service_text" />
+
+            <TextView
+                android:id="@+id/text_divider_line1"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/list_divider_height"
+                android:layout_below="@id/agree_to_terms_text_view"
+                android:layout_marginEnd="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginStart="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginTop="@dimen/launch_text_left_padding"
+                android:background="@color/launch_terms_service_divider_one_background_color"
+                android:textSize="@dimen/launch_terms_of_service_title" />
+
+            <TextView
+                android:id="@+id/application_privacy_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text_divider_line1"
+                android:layout_marginEnd="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginStart="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginTop="@dimen/launch_text_left_padding"
+                android:text="@string/str_launch_application_privacy_title"
+                android:textColor="@color/basic_text_color_black"
+                android:textSize="@dimen/launch_terms_of_service_title"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/application_privacy_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/application_privacy_title"
+                android:layout_marginEnd="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginStart="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginTop="@dimen/launch_text_left_padding"
+                android:text="@string/str_launch_application_privacy_text"
+                android:textColor="@color/basic_text_color_black"
+                android:textSize="@dimen/launch_terms_of_service_text" />
+
+            <LinearLayout
+                android:id="@+id/externally_transmit_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/application_privacy_text"
+                android:layout_marginStart="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginEnd="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginTop="@dimen/launch_terms_of_service_layout_margin"
+                android:background="@drawable/launch_terms_service_layout_selector"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/externally_transmit_title"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center|start"
+                    android:paddingBottom="@dimen/launch_terms_of_service_text_padding"
+                    android:paddingEnd="@dimen/launch_text_end_padding"
+                    android:paddingStart="@dimen/launch_terms_of_service_text_padding"
+                    android:paddingTop="@dimen/launch_terms_of_service_text_padding"
+                    android:text="@string/str_launch_externally_transmit_title"
+                    android:textColor="@color/basic_text_color_black"
+                    android:textSize="@dimen/launch_terms_of_service_text" />
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/externally_transmit_open_image"
+                        android:layout_width="@dimen/launch_text_left_padding"
+                        android:layout_height="@dimen/launch_text_left_padding"
+                        android:layout_marginEnd="@dimen/launch_terms_of_service_open_icon_margin"
+                        android:layout_marginStart="@dimen/launch_terms_of_service_text_padding"
+                        android:src="@mipmap/ic_bar_open" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/externally_transmit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/externally_transmit_layout"
+                android:layout_marginEnd="@dimen/launch_text_left_padding"
+                android:layout_marginStart="@dimen/launch_text_left_padding"
+                android:layout_marginTop="@dimen/launch_terms_of_service_margin_top"
+                android:text="@string/str_launch_externally_transmit_text"
+                android:textColor="@color/basic_text_color_black"
+                android:textSize="@dimen/launch_terms_of_service_text"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/purpose_of_use_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/externally_transmit_text"
+                android:layout_marginStart="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginEnd="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginTop="@dimen/launch_terms_of_service_margin_top"
+                android:background="@drawable/launch_terms_service_layout_selector"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/purpose_of_use_title"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center|start"
+                    android:paddingBottom="@dimen/launch_terms_of_service_text_padding"
+                    android:paddingEnd="@dimen/launch_text_end_padding"
+                    android:paddingStart="@dimen/launch_terms_of_service_text_padding"
+                    android:paddingTop="@dimen/launch_terms_of_service_text_padding"
+                    android:text="@string/str_launch_purpose_of_use_title"
+                    android:textColor="@color/basic_text_color_black"
+                    android:textSize="@dimen/launch_terms_of_service_text" />
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/purpose_of_use_open_image"
+                        android:layout_width="@dimen/launch_text_left_padding"
+                        android:layout_height="@dimen/launch_text_left_padding"
+                        android:layout_marginEnd="@dimen/launch_terms_of_service_open_icon_margin"
+                        android:layout_marginStart="@dimen/launch_terms_of_service_text_padding"
+                        android:src="@mipmap/ic_bar_open" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/purpose_of_use_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/purpose_of_use_layout"
+                android:layout_marginEnd="@dimen/launch_text_left_padding"
+                android:layout_marginStart="@dimen/launch_text_left_padding"
+                android:layout_marginTop="@dimen/launch_terms_of_service_margin_top"
+                android:text="@string/str_launch_purpose_of_use_text"
+                android:textColor="@color/basic_text_color_black"
+                android:textSize="@dimen/launch_terms_of_service_text"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/third_party_offerings_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/purpose_of_use_text"
+                android:layout_marginStart="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginEnd="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginTop="@dimen/launch_terms_of_service_margin_top"
+                android:background="@drawable/launch_terms_service_layout_selector"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/third_party_offerings_title"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center|start"
+                    android:paddingBottom="@dimen/launch_terms_of_service_text_padding"
+                    android:paddingEnd="@dimen/launch_text_end_padding"
+                    android:paddingStart="@dimen/launch_terms_of_service_text_padding"
+                    android:paddingTop="@dimen/launch_terms_of_service_text_padding"
+                    android:text="@string/str_launch_third_party_offerings_title"
+                    android:textColor="@color/basic_text_color_black"
+                    android:textSize="@dimen/launch_terms_of_service_text" />
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/third_party_offerings_image"
+                        android:layout_width="@dimen/launch_text_left_padding"
+                        android:layout_height="@dimen/launch_text_left_padding"
+                        android:layout_marginEnd="@dimen/launch_terms_of_service_open_icon_margin"
+                        android:layout_marginStart="@dimen/launch_terms_of_service_text_padding"
+                        android:src="@mipmap/ic_bar_open" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/third_party_offerings_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/third_party_offerings_layout"
+                android:layout_marginEnd="@dimen/launch_text_left_padding"
+                android:layout_marginStart="@dimen/launch_text_left_padding"
+                android:layout_marginTop="@dimen/launch_terms_of_service_margin_top"
+                android:text="@string/str_launch_third_party_offerings_text"
+                android:textColor="@color/basic_text_color_black"
+                android:textSize="@dimen/launch_terms_of_service_text"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/application_privacy_all_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/third_party_offerings_text"
+                android:layout_marginStart="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginEnd="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginTop="@dimen/launch_text_left_padding"
+                android:gravity="center|start"
+                android:text="@string/str_launch_application_privacy_all_text"
+                android:textColor="@color/basic_text_color_black"
+                android:textSize="@dimen/launch_terms_of_service_text" />
+
+            <TextView
+                android:id="@+id/all_text_detail_confirm_link"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/application_privacy_all_text"
+                android:layout_marginStart="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginTop="@dimen/launch_text_left_padding"
+                android:gravity="center|start"
+                android:text="@string/str_launch_all_text_detail_confirm_link"
+                android:textColor="@color/basic_text_color_black"
+                android:textSize="@dimen/launch_terms_of_service_text" />
+
+            <TextView
+                android:id="@+id/text_divider_line2"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/list_divider_height"
+                android:layout_below="@id/all_text_detail_confirm_link"
+                android:layout_marginEnd="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginStart="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginTop="@dimen/launch_terms_of_service_title_margin"
+                android:background="@color/launch_terms_service_divider_one_background_color" />
+
+            <TextView
+                android:id="@+id/docomo_terminal_terms_of_service_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text_divider_line2"
+                android:layout_marginStart="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginEnd="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginTop="@dimen/launch_text_left_padding"
+                android:text="@string/str_launch_docomo_terminal_terms_of_service_title"
+                android:textColor="@color/basic_text_color_black"
+                android:textSize="@dimen/launch_terms_of_service_title"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/confirm_to_start_use_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/docomo_terminal_terms_of_service_title"
+                android:layout_marginStart="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginEnd="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginTop="@dimen/launch_text_left_padding"
+                android:text="@string/str_launch_confirm_to_start_use_text"
+                android:textColor="@color/basic_text_color_black"
+                android:textSize="@dimen/launch_terms_of_service_text" />
+
+            <TextView
+                android:id="@+id/confirm_application_terms_of_service_link"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/confirm_to_start_use_text"
+                android:layout_marginBottom="@dimen/launch_terms_of_service_title_margin"
+                android:layout_marginStart="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginEnd="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginTop="@dimen/launch_text_left_padding"
+                android:text="@string/str_launch_confirm_application_terms_of_service_link"
+                android:textColor="@color/basic_text_color_black"
+                android:textSize="@dimen/launch_terms_of_service_text" />
+        </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>
