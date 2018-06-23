@@ -244,7 +244,7 @@ public class DlnaManager {
         secureIoGlobalCreate();
         String privateDataPath = DlnaUtils.getPrivateDataHomePath(context);
         cipherFileContextGlobalCreate(privateDataPath);
-        // initDmp(privateDataPath);
+        initDmp(privateDataPath);
         String diragConfigFilePath = DlnaUtils.getDiragConfileFilePath(context);
         initDirag(diragConfigFilePath);
 
@@ -314,7 +314,8 @@ public class DlnaManager {
         if (!DlnaManager.shared().startedDmp) {
             String privateDataPath = DlnaUtils.getPrivateDataHomePath(DlnaManager.shared().mContext);
             DTVTLogger.warning("native call >>>> privateDataPath" + privateDataPath);
-            initDmp(privateDataPath);
+            //initDmp(privateDataPath);
+            resetdmp(privateDataPath);
             startDmp();
             DTVTLogger.warning("native call >>>> StartDmp");
             DlnaManager.shared().startedDmp = true;
@@ -328,6 +329,7 @@ public class DlnaManager {
         if (DlnaManager.shared().startedDmp) {
             stopDmp();
             freeDmp();
+            DlnaManager.shared().startedDtcp = false;
             DTVTLogger.warning("native call >>>> StopDmp");
             DlnaManager.shared().startedDmp = false;
         }
@@ -382,8 +384,8 @@ public class DlnaManager {
      * StartDtcp.
      */
     public void StartDtcp() {
-        if (!startedDtcp) {
-            startedDtcp = true;
+        if (!DlnaManager.shared().startedDtcp) {
+            DlnaManager.shared().startedDtcp = true;
             startDtcp();
         }
     }
@@ -815,7 +817,11 @@ public class DlnaManager {
      * @param configFilePath configFilePath
      */
     private native void initDmp(String configFilePath);
-
+    /**
+     * resetdmp.
+     * @param configFilePath configFilePath
+     */
+    private native void resetdmp(String configFilePath);
     /**
      * initDirag.
      * @param configFilePath configFilePath
