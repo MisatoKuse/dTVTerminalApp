@@ -17,11 +17,12 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
 /**
  * TCPクライアント.
  */
-class TcpClient {
+public class TcpClient {
     /**Socket.*/
     private Socket mSocket = null;
     /**RemoteIp.*/
@@ -30,7 +31,14 @@ class TcpClient {
     private int mRemotePort = 0;
 
     /**STBスタンバイ状態からの電源ONとユーザアカウント切り替えに必要な最大待ち時間（ミリ秒）.*/
-    public static final int SEND_RECV_TIMEOUT = 15000;
+    public static final int SEND_RECIEVE_TIMEOUT = 15000;
+    /**
+     * 鍵交換の送受信タイムアウト.
+     * ※鍵交換は電文の送信前にメインスレッドから同期処理で通信が開始されるため
+     * 　必要十分な短い時間（1000ms以下）を設定する。
+     * 　鍵交換処理は通常は 500ms 以内で終了する。
+     */
+    public static final int KEY_EXCHANGE_TIMEOUT = 1000;
 
     /**
      * コンストラクタ.
@@ -47,19 +55,23 @@ class TcpClient {
      * @param remotePort remotePort
      * @return 成功:true
      */
-    public boolean connect(final String remoteIp, final int remotePort) {
+    public boolean connect(final String remoteIp, final int remotePort, final int... sendRecieveTimeout) {
+        int timeout = SEND_RECIEVE_TIMEOUT;
+        if (sendRecieveTimeout != null && sendRecieveTimeout.length > 0 && sendRecieveTimeout[0] > 0) {
+            timeout = sendRecieveTimeout[0];
+        }
         mRemoteIp = remoteIp;
         mRemotePort = remotePort;
-        DTVTLogger.debug("mRemoteIp:" + mRemoteIp);
-        DTVTLogger.debug("mRemotePort:" + mRemotePort);
+        DTVTLogger.debug(String.format(Locale.US, "remote: IP address [%s:%d] connection timeout %dms",
+                mRemoteIp, mRemotePort, timeout));
         SocketAddress remoteAddress = new InetSocketAddress(mRemoteIp, mRemotePort);
         mSocket = new Socket();
 
         try {
-            mSocket.connect(remoteAddress, SEND_RECV_TIMEOUT);
+            mSocket.connect(remoteAddress, timeout);
             // アプリ起動時にここで mSocket が null になる場合がある
             if (null == mSocket) {
-                DTVTLogger.debug("connect is null!");
+                DTVTLogger.debug("mSocket is null!");
                 disconnect();
                 return false;
             }
@@ -70,6 +82,7 @@ class TcpClient {
                 return false;
             }
         } catch (SocketTimeoutException e) {
+            DTVTLogger.debug(String.format(Locale.US, "connection timeout %dms", timeout));
             DTVTLogger.debug(e);
             this.disconnect();
             return false;
@@ -77,7 +90,9 @@ class TcpClient {
             DTVTLogger.debug(e);
             this.disconnect();
             return false;
-        } catch (IOException e) {
+        } catch (NullPointerException | IOException e) {
+            // SocketException はIOExceptionに含まれる
+            // 非同期処理で同時に TcpClient が使用されると mSocket が null になることを想定した Fail safe
             DTVTLogger.debug(e);
             this.disconnect();
             return false;
@@ -91,16 +106,18 @@ class TcpClient {
     public void disconnect() {
         if (mSocket != null) {
             DTVTLogger.debug("disconnecting");
-            if (mSocket.isConnected()) {
-                DTVTLogger.debug("isConnected() is true");
-                try {
-                    DTVTLogger.debug("Socket.close()");
+            try {
+                if (mSocket.isConnected()) {
+                    DTVTLogger.debug("socket is connected.");
+                    DTVTLogger.debug("socket close.");
                     mSocket.close();
-                } catch (IOException e) {
-                    DTVTLogger.debug(e);
                 }
+            }  catch (NullPointerException | IOException e) {
+                // SocketException はIOExceptionに含まれる
+                // 非同期処理で同時に TcpClient が使用されると mSocket が null になることを想定した Fail safe
+                DTVTLogger.debug(e);
             }
-            DTVTLogger.debug("Socket is set null");
+            DTVTLogger.debug("socket is set null");
             mSocket = null;
         }
     }
@@ -172,7 +189,9 @@ class TcpClient {
                 result = CipherUtil.setShareKey(dataBytes);
                 break;
             }
-        } catch (IOException e) {
+        } catch (NullPointerException | IOException e) {
+            // SocketException はIOExceptionに含まれる
+            // 非同期処理で同時に TcpClient が使用されると mSocket が null になることを想定した Fail safe
             DTVTLogger.debug(e);
         }
         return result;
@@ -185,7 +204,7 @@ class TcpClient {
      */
     public boolean send(final String data) {
         if (mSocket == null) {
-            DTVTLogger.debug("mSocket is null!");
+            DTVTLogger.debug("socket is null!");
             return false;
         }
 
@@ -196,7 +215,9 @@ class TcpClient {
             out.write(data);
             out.flush();
 
-        } catch (IOException e) {
+        } catch (NullPointerException | IOException e) {
+            // SocketException はIOExceptionに含まれる
+            // 非同期処理で同時に TcpClient が使用されると mSocket が null になることを想定した Fail safe
             DTVTLogger.debug(e);
             return false;
         }
@@ -210,11 +231,11 @@ class TcpClient {
      * @return 成功:true
      */
     public boolean send(final byte[] data, final int length) {
+        DTVTLogger.start();
         if (mSocket == null) {
-            DTVTLogger.debug("mSocket is null!");
+            DTVTLogger.debug("socket is null!");
             return false;
         }
-        DTVTLogger.debug(" >>>");
 
         boolean result = false;
         OutputStream out;
@@ -223,10 +244,13 @@ class TcpClient {
             out.write(data, 0, length);
             out.flush();
             result = true;
-        } catch (IOException e) {
+        } catch (NullPointerException | IOException e) {
+            // SocketException はIOExceptionに含まれる
+            // 非同期処理で同時に TcpClient が使用されると mSocket が null になることを想定した Fail safe
             DTVTLogger.debug(e);
         }
-        DTVTLogger.debug(" <<< result = " + result);
+        DTVTLogger.debug("result = " + result);
+        DTVTLogger.end();
         return result;
     }
 }
