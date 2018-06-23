@@ -21,6 +21,7 @@ import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOtt;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.IDimDefines;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -663,7 +664,19 @@ public class WebApiBasePlala {
         mGetOtt = new DaccountGetOtt();
         mGetOtt.execDaccountGetOTT(context, false, new DaccountGetOtt.DaccountGetOttCallBack() {
             @Override
-            public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
+            public void getOttCallBack(int result, final String id,
+                                       final String oneTimePassword) {
+                //ワンタイムパスワードが取得できたかどうかを見る
+                if (result != IDimDefines.RESULT_COMPLETE) {
+                    //リザルトのコードがゼロ以外なので、トークンエラーにする
+                    DTVTLogger.debug("d Account one time token get fail");
+                    ReturnCode returnCode = new ReturnCode();
+                    returnCode.errorState.setErrorType(
+                            DtvtConstants.ErrorType.TOKEN_ERROR);
+                    serviceTokenErrorCallback.onTokenError(returnCode);
+                    return;
+                }
+
                 //ワンタイムトークンが期限内ならば、そのまま使用する
                 OneTimeTokenData tokenData = SharedPreferencesUtils.getOneTimeTokenData(mContext);
 

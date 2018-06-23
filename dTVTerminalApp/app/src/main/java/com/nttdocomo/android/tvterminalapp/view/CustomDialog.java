@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.view;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -302,6 +303,12 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
             mDialog.setMessage("");
         } else {
             mDialog.setMessage(mContent);
+        }
+
+        //表示対象のアクティビティが既に終わっているかどうかの判定
+        if(mContext instanceof Activity && ((Activity) mContext).isFinishing()) {
+            //ダイアログは表示できず、OKやキャンセルボタンのコールバックの飛び先も既に存在していない可能性があるので、帰る。
+            return;
         }
 
         mDialog.show();
