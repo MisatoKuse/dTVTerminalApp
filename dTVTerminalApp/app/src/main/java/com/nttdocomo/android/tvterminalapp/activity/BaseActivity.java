@@ -455,6 +455,9 @@ public class BaseActivity extends FragmentActivity implements
     protected void enableStbStatusIcon(final boolean isOn) {
         if (mStbStatusIcon != null) {
             mStbStatusIcon.setVisibility(isOn ? View.VISIBLE : View.INVISIBLE);
+            if (!isOn) {
+                return;
+            }
             switch (StbConnectionManager.shared().getConnectionStatus()) {
                 case HOME_IN:
                     setStbStatus(true);
@@ -830,6 +833,9 @@ public class BaseActivity extends FragmentActivity implements
                 || this instanceof PairingHelpActivity
                 ) {
             DTVTLogger.end();
+            return;
+        }
+        if (StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.NONE_PAIRING) {
             return;
         }
         if (DlnaManager.shared().mContext == null) {

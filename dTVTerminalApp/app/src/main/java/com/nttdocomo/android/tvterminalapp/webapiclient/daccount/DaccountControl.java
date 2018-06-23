@@ -9,9 +9,11 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.ThumbnailCacheManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -435,6 +437,11 @@ public class DaccountControl implements
 
         //プリファレンスユーティリティの配下のデータを、ユーザー切り替え後も残す一部を除き削除
         SharedPreferencesUtils.clearAlmostSharedPreferences(context);
+
+        if (StbConnectionManager.shared().getConnectionStatus() != StbConnectionManager.ConnectionStatus.NONE_PAIRING) {
+            DlnaManager.shared().StopDmp();
+            StbConnectionManager.shared().setConnectionStatus(StbConnectionManager.ConnectionStatus.NONE_PAIRING);
+        }
 
         //日付ユーティリティの配下のプリファレンスを削除
         DateUtils.clearDataSave(context);
