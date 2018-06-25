@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * Viewに長押しでクリックを繰り返す処理を追加する.
@@ -34,10 +33,6 @@ public class RemoteControllerSendKeyAction {
     private RemoteControlRelayClient mRemoteControlRelayClient = null;
     /**連続送信タイマークラスインタフェース.*/
     private RepeatStateManagement mRepeatStateManagement = null;
-    /** 暗号化処理の鍵交換を同期処理で実行する. */
-    private CountDownLatch mLatch = null;
-    /** 暗号化処理の鍵交換の同期カウンター. */
-    private static int LATCH_COUNT_MAX = 1;
     /**RemoteControllerChannelViewHolder.*/
     private RemoteControllerChannelViewHolder mChannelViewHolder = null;
     /**RemoteControllerPlayerViewHolder.*/

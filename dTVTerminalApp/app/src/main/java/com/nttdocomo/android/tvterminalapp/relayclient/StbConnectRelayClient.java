@@ -168,6 +168,7 @@ public class StbConnectRelayClient {
      * @return 成功:true
      */
     public boolean receiveExchangeKey() {
+        DTVTLogger.start();
         boolean result = false;
         if (mTcpClient == null) {
             DTVTLogger.debug("mTcpClient is null!");
@@ -175,6 +176,7 @@ public class StbConnectRelayClient {
         }
         result = mTcpClient.receiveExchangeKey();
         DTVTLogger.debug("result = " + result);
+        DTVTLogger.end();
         return result;
     }
     /**
