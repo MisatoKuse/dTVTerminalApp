@@ -636,7 +636,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         getVideoRankListData(UPPER_PAGE_LIMIT, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, "",
                 JsonConstants.GENRE_PER_CONTENTS_SORT_PLAY_COUNT_DESC);
 
-        //TODO :生データ保存のみ(DB保存までの処理を新設するか検討中)
         //ジャンルID(ビデオ一覧)一覧取得
         getGenreListDataRequest();
 
@@ -651,7 +650,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
 
         if (userInfoDataProvider.isH4dUser()) {
             //H4dユーザに必要なデータ取得開始
-            //クリップキー一覧(今日のテレビランキングにまとめられてるので省略するか検討中)
+            // クリップキー一覧を取得
+            getAllClipKey();
+
             //TVクリップ一覧
             getTvClipListData();
 
@@ -668,6 +669,17 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             getRentalData();
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * クリップキー全取得.
+     */
+    private void getAllClipKey() {
+        // クリップキー一覧を取得
+        if (mRequiredClipKeyList) {
+            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
+            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.TV));
+        }
     }
 
     /**
@@ -1090,11 +1102,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.WATCHING_VIDEO_LIST_LAST_INSERT);
 
-        // クリップキー一覧を取得
-        if (mRequiredClipKeyList) {
-            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
-        }
-
         //視聴中ビデオ一覧のDB保存履歴と、有効期間を確認(DBにデータが不在の時もデータ再取得)
         if ((lastDate == null || lastDate.length() < 1 || dateUtils.isBeforeLimitDate(lastDate)
                 || !DataBaseUtils.isCachingRecord(mContext, DataBaseConstants.WATCH_LISTEN_VIDEO_TABLE_NAME))
@@ -1127,10 +1134,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     private void getRentalData() {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
-        // クリップキー一覧を取得
-        if (mRequiredClipKeyList) {
-            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
-        }
         if ((lastDate == null || lastDate.length() < 1 || dateUtils.isBeforeLimitDate(lastDate))
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
