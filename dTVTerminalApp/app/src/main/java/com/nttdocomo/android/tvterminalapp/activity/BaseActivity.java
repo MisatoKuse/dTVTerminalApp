@@ -55,6 +55,7 @@ import com.nttdocomo.android.tvterminalapp.activity.launch.DaccountInductionActi
 import com.nttdocomo.android.tvterminalapp.activity.launch.DaccountResettingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.DaccountSettingHelpActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchTermsOfServiceActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.PairingHelpActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.StbConnectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectActivity;
@@ -2077,7 +2078,7 @@ public class BaseActivity extends FragmentActivity implements
             if (callName.contains(StbSelectActivity.class.getSimpleName())
                     || callName.contains(StbSelectErrorActivity.class.getSimpleName())) {
                 //ただし、チュートリアル画面と設定画面から呼ばれた場合はアニメーションは行うので帰らない
-                if (!(this instanceof SettingActivity) && !(this instanceof TutorialActivity)) {
+                if (!(this instanceof SettingActivity) && !(this instanceof TutorialActivity) && !(this instanceof LaunchTermsOfServiceActivity)) {
                     return;
                 }
             }

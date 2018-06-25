@@ -41,7 +41,6 @@ public class LaunchTermsOfServiceActivity extends BaseActivity {
      */
     private void setContent() {
         DTVTLogger.start();
-        setTheme(R.style.AppThemeBlack);
         setTitleVisibility(false);
         setStatusBarColor(false);
         Button agreeToStart =  findViewById(R.id.agree_to_terms_start_use_button);

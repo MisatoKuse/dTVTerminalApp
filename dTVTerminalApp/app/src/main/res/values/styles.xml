@@ -44,6 +44,7 @@
     <!--Activity遷移時トランザクションをなくす -->
     <style name="STBTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:windowAnimationStyle">@style/Animation</item>
+        <item name="android:windowDisablePreview">true</item>
         <item name="android:windowNoTitle">true</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/header_background_color_red</item>
