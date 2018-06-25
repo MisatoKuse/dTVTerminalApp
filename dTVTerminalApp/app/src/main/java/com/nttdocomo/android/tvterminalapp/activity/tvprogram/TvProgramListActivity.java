@@ -122,10 +122,18 @@ public class TvProgramListActivity extends BaseActivity implements
      * 1時間帯基準値.
      */
     private static final int ONE_HOUR_UNIT = 180;
+
+    //時間を4時に設定する値
+    private static final int HOUR_4 = 4;
+
     /**
      * 選択中日付.
      */
     private String mSelectDateStr = null;
+    /**
+     * 選択中日付(JAVAのエポック秒版).
+     */
+    private long mSelectDate = 0;
     /**
      * today.
      */
@@ -409,7 +417,9 @@ public class TvProgramListActivity extends BaseActivity implements
         selectDate.append(month.toString());
         selectDate.append(DATE_LINE);
         selectDate.append(day);
-        mSelectDateStr = DateUtils.getSystemTimeAndCheckHour(selectDate.toString());
+
+        //日付選択カレンダーの選択日付をそのまま使用する
+        mSelectDateStr = selectDate.toString();
         SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYYMMDD, Locale.JAPAN);
         try {
             Date date = sdf.parse(mSelectDateStr);
@@ -418,6 +428,9 @@ public class TvProgramListActivity extends BaseActivity implements
             setTitleText(newDate.substring(5));
             SimpleDateFormat formatDialog = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DD_J, Locale.JAPAN);
             mToDay = formatDialog.format(date.getTime());
+
+            //NOW表示との比較用に文字列化前の日付を控えておく
+            mSelectDate = date.getTime();
         } catch (ParseException e) {
             DTVTLogger.debug(e);
         }
@@ -437,6 +450,9 @@ public class TvProgramListActivity extends BaseActivity implements
         mToDay = sdf.format(c.getTime());
         setTitleText(mToDay.substring(5));
         mSelectDateStr = DateUtils.getSystemTimeAndCheckHour(null);
+
+        //NOW表示との比較用に文字列化前の日付を控えておく
+        mSelectDate = c.getTimeInMillis();
     }
 
     /**
@@ -955,8 +971,8 @@ public class TvProgramListActivity extends BaseActivity implements
             mMyChannelNoDataTxT.setVisibility(View.INVISIBLE);
         }
 
-        //端末に設定された日付と現在番組表で設定されている日付を比較する
-        if (!compareNowDate(mSelectDateStr)) {
+        //端末に設定された日時と現在番組表で設定されている日時を比較する
+        if(!compareNowDate(mSelectDate)) {
             //違っていたので、これまでの条件とは無関係に、NOW表示は透明にする
             mTimeLine.setVisibility(View.INVISIBLE);
         }
@@ -966,22 +982,38 @@ public class TvProgramListActivity extends BaseActivity implements
     /**
      * 指定された日付が、現在の日付と一致するかどうかを見る.
      *
-     * @param compareDate 比較対象の日付(YYYY-MM-DD形式)
+     * ただし、番組表の表示範囲を考慮して、指定日の午前4時から次の日の午前3時59分までの範囲かどうかの比較となる
+     * @param compareDate Javaのエポック秒
      * @return 指定した日付と現在の日付が一致すればtrue
      */
-    private boolean compareNowDate(final String compareDate) {
-        //念の為に数字だけにする
-        String compareTemporary = StringUtils.deleteExceptNumbers(compareDate);
-
-        //現在の日付を取得する
-        SimpleDateFormat dateFormat = new SimpleDateFormat(
-                DateUtils.DATE_NOMARK_YYYYMMDD, Locale.JAPAN);
-        String nowDate;
+    boolean compareNowDate(final long compareDate) {
+        //現在の日時を取得する
         Calendar calendar = Calendar.getInstance();
-        nowDate = dateFormat.format(calendar.getTime());
+        Long nowTime = calendar.getTimeInMillis();
+
+        //比較開始日時（指定された日の午前4時のJavaのエポック秒）
+        calendar.setTimeInMillis(compareDate);
+        calendar.set(Calendar.HOUR_OF_DAY,HOUR_4);
+        calendar.set(Calendar.MINUTE,0);
+        calendar.set(Calendar.SECOND,0);
+        calendar.set(Calendar.MILLISECOND,0);
+        long startTime = calendar.getTimeInMillis();
+
+        //1日加算後に1ミリ秒減算する事で、比較終了日時である翌日の3時59分になる
+        calendar.add(Calendar.DAY_OF_MONTH,1);
+        calendar.add(Calendar.MILLISECOND,-1);
+
+        //比較終了日時（指定された日の次の日の3時59分のJavaのエポック秒）
+        long endTime = calendar.getTimeInMillis();
 
         //比較して結果を返す
-        return nowDate.equals(compareTemporary);
+        if(startTime <= nowTime && endTime >= nowTime) {
+            //指定された時間が本日の午前4時から明日の3時59分の間なので、true
+            return true;
+        }
+
+        //指定時間はNOWの範囲外なのでfalse
+        return false;
     }
 
     /**
