@@ -975,6 +975,12 @@ public class TvProgramListActivity extends BaseActivity implements
         if(!compareNowDate(mSelectDate)) {
             //違っていたので、これまでの条件とは無関係に、NOW表示は透明にする
             mTimeLine.setVisibility(View.INVISIBLE);
+
+            //NOWボタンも非表示にする(レイアウト側で消える仕組みになっている)
+            mTagImageView.setEnabled(false);
+        } else {
+            //NOWボタンを表示する
+            mTagImageView.setEnabled(true);
         }
 
     }
