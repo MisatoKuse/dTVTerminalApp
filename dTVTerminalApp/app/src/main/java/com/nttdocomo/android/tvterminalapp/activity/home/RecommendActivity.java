@@ -275,6 +275,7 @@ public class RecommendActivity extends BaseActivity implements
                 sendScreenViewForPosition(position);
                 clearAllFragment();
                 setPagingStatus(false);
+                showProgressBar(true);
                 mSearchLastItem = 0;
                 //ここでフラグをクリアしないと、以後の更新が行われなくなる場合がある
                 setSearchStart(false);
@@ -312,6 +313,7 @@ public class RecommendActivity extends BaseActivity implements
         if (null != mRecommendViewPager) {
             DTVTLogger.debug("viewpager not null");
             mRecommendViewPager.setCurrentItem(position);
+            showProgressBar(true);
         }
         DTVTLogger.end();
     }
@@ -809,5 +811,17 @@ public class RecommendActivity extends BaseActivity implements
     @Override
     public void clipKeyResult() {
         //Nop 仕様により実装のみ
+    }
+
+    /**
+     * 読み込みアイコンの表示切替
+     * @param showProgressBar
+     */
+    private void showProgressBar(final boolean showProgressBar) {
+        RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
+        if (baseFragment != null) {
+            baseFragment.showProgressBar(showProgressBar);
+
+        }
     }
 }
