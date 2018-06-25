@@ -66,6 +66,8 @@ public class DtvtConstants {
             DISP_TYPE_VIDEO_PACKAGE = "video_package",
             DISP_TYPE_SUBSCRIPTION_PACKAGE = "subscription_package";
 
+    /** limitがない場合のLowerPagerLimit初期値.*/
+    public static final int REQUEST_LIMIT_1 = 1;
     /** limitがない場合の初期値.*/
     public static final int REQUEST_LIMIT_50 = 50;
     /** STBに対するDLNAデータ取得時のlimit. */

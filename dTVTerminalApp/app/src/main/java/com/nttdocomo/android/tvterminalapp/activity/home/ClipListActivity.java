@@ -349,8 +349,7 @@ public class ClipListActivity extends BaseActivity implements
             return;
         }
 
-        int pageNumber = getCurrentNumber();
-        for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE && i < clipContentInfo.size(); ++i) {
+        for (int i = 0; i < NUM_PER_PAGE && i < clipContentInfo.size(); i++) {
             fragment.addClipListData(clipContentInfo.get(i));
         }
 
@@ -412,8 +411,7 @@ public class ClipListActivity extends BaseActivity implements
             return;
         }
 
-        int pageNumber = getCurrentNumber();
-        for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE && i < clipContentInfo.size(); ++i) {
+        for (int i = 0; i < NUM_PER_PAGE && i < clipContentInfo.size(); i++) {
             fragment.addClipListData(clipContentInfo.get(i));
         }
 
@@ -492,7 +490,7 @@ public class ClipListActivity extends BaseActivity implements
                     public void run() {
 
                         DTVTLogger.debug("onScrollStateChanged, paging thread start");
-                        int offset = fragment.getClipListDataSize();
+                        int offset = fragment.getClipListDataSize() + 1;
                         mNoDataMessage.setVisibility(View.GONE);
                         switch (TAB_POSITION) {
                             case CLIP_LIST_PAGE_NO_OF_TV:
