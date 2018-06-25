@@ -12,6 +12,7 @@ import com.nttdocomo.android.tvterminalapp.relayclient.StbConnectRelayClient;
 import com.nttdocomo.android.tvterminalapp.relayclient.TcpClient;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * 暗号化API.
@@ -31,13 +32,15 @@ public class CipherApi {
     }
     /**callback.*/
     private final CipherApiCallback mCallback;
+    private final CountDownLatch mLatch;
 
     /**
      * 構造体.
      * @param callback callback
      */
-    public CipherApi(final CipherApiCallback callback) {
+    public CipherApi(final CipherApiCallback callback, final CountDownLatch latch) {
         mCallback = callback;
+        mLatch = latch;
     }
 
     /**
@@ -62,6 +65,7 @@ public class CipherApi {
         } catch (NoSuchAlgorithmException e) {
             DTVTLogger.debug(e);
             mCallback.apiCallback(false, null);
+            mLatch.countDown();
             return;
         }
 
@@ -88,5 +92,6 @@ public class CipherApi {
         }
         stbConnection.disconnect();
         mCallback.apiCallback(sendResult, null);
+        mLatch.countDown();
     }
 }

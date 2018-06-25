@@ -33,10 +33,10 @@ public class TcpClient {
     /**
      * 鍵交換の送受信タイムアウト.
      * ※鍵交換は電文の送信前にメインスレッドから同期処理で通信が開始されるため
-     * 　必要十分な短い時間（1000ms以下）を設定する。
+     * 　必要十分な短い時間（1500ms以下）を設定する。
      * 　鍵交換処理は通常は 500ms 以内で終了する。
      */
-    public static final int KEY_EXCHANGE_TIMEOUT = 1000;
+    public static final int KEY_EXCHANGE_TIMEOUT = 1500;
 
     /**
      * コンストラクタ.
@@ -126,11 +126,11 @@ public class TcpClient {
      * @return 応答メッセージ
      */
     public synchronized String receive() {
-        String recvdata = null;
+        DTVTLogger.start();
+        String receiveData = null;
 
-        DTVTLogger.debug("receive start");
         if (mSocket == null) {
-            DTVTLogger.debug("mSocket is null!");
+            DTVTLogger.warning("mSocket is null!");
             return null;
         }
         try {
@@ -138,23 +138,25 @@ public class TcpClient {
             InputStream inputStream = mSocket.getInputStream();
 
             while (inputStream.available() >= 0) {
+                int availableSize = inputStream.available();
                 // 受信待ち
-                if (inputStream.available() == 0) {
+                if (availableSize == 0) {
                     continue;
                 }
-                DTVTLogger.warning("inputStream.available() = " + inputStream.available());
+                DTVTLogger.debug("inputStream.available() = " + availableSize);
 
-                byte[] bytes = new byte[inputStream.available()];
-                int readByte = inputStream.read(bytes, 0, inputStream.available());
-
-                if(readByte == inputStream.available()) {
+                byte[] bytes = new byte[availableSize];
+                int readSize = inputStream.read(bytes, 0, availableSize);
+                // 受信バイト数が264バイト以下のため要求したバイト数よりも少ないバイト数を読み出した場合を想定しません。一旦無視します。
+                if (readSize == availableSize) {
                     String decodeString = CipherUtil.decodeData(bytes);
                     if (null != decodeString) {
-                        DTVTLogger.warning("decodeString = " + decodeString);
-                        recvdata = decodeString;
-                    } else {
-                        recvdata = new String(bytes);
+                        DTVTLogger.debug("decodeString = " + decodeString);
+                        receiveData = decodeString;
                     }
+                } else {
+                    DTVTLogger.warning(String.format(Locale.US, "readSize :%dbytes is not availableSize:%dbytes!",
+                            readSize, availableSize));
                 }
                 break;
             }
@@ -162,8 +164,9 @@ public class TcpClient {
             // SocketException はIOExceptionに含まれる
             DTVTLogger.debug(String.format("??? :%s", e.getMessage()));
         }
-        DTVTLogger.error("recvdata = " + recvdata);
-        return recvdata;
+        DTVTLogger.debug("receiveData = " + receiveData);
+        DTVTLogger.end();
+        return receiveData;
     }
     /**
      * 鍵交換Socket通信のメッセージを受信し、共有鍵を設定する.
@@ -171,22 +174,30 @@ public class TcpClient {
      * @return 成功:true
      */
     public synchronized boolean receiveExchangeKey() {
+        DTVTLogger.start();
         boolean result = false;
         if (mSocket == null) {
-            DTVTLogger.warning("mSocket == null");
+            DTVTLogger.warning("mSocket is null!");
             return false;
         }
         try {
             InputStream inputStream = mSocket.getInputStream();
             while (inputStream.available() >= 0) {
+                int availableSize = inputStream.available();
                 // 受信待ち
-                if (inputStream.available() == 0) {
+                if (availableSize == 0) {
                     continue;
                 }
-                byte[] dataBytes = new byte[inputStream.available()];
-                int readByte = inputStream.read(dataBytes, 0, dataBytes.length);
-                if(readByte == inputStream.available()) {
+                byte[] dataBytes = new byte[availableSize];
+                int readSize = inputStream.read(dataBytes, 0, dataBytes.length);
+                DTVTLogger.debug(String.format(Locale.US, "readSize :%dbytes", readSize));
+                // 受信バイト数が264バイト以下のため要求したバイト数よりも少ないバイト数を読み出した場合を想定しません。一旦無視します。
+                if (readSize == availableSize) {
                     result = CipherUtil.setShareKey(dataBytes);
+                    break;
+                } else {
+                    DTVTLogger.warning(String.format(Locale.US, "readSize :%dbytes is not availableSize:%dbytes!",
+                            readSize, availableSize));
                     break;
                 }
             }
@@ -195,6 +206,8 @@ public class TcpClient {
             // 非同期処理で同時に TcpClient が使用されると mSocket が null になることを想定した Fail safe
             DTVTLogger.debug(e);
         }
+        DTVTLogger.debug(String.format("result = %s", result));
+        DTVTLogger.end();
         return result;
     }
     /**
@@ -204,6 +217,7 @@ public class TcpClient {
      * @return true 送信した場合
      */
     public boolean send(final String data) {
+        DTVTLogger.start();
         if (mSocket == null) {
             DTVTLogger.debug("socket is null!");
             return false;
@@ -222,6 +236,7 @@ public class TcpClient {
             DTVTLogger.debug(e);
             return false;
         }
+        DTVTLogger.end();
         return true;
     }
 

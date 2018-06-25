@@ -25,7 +25,6 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * キーコードをSTBへ送信する.
@@ -567,11 +566,6 @@ public class RemoteControlRelayClient {
      * 通信停止判定.
      */
     private boolean mIsCancel = false;
-
-    /** 暗号化処理の鍵交換を同期処理で実行する. */
-    private CountDownLatch mLatch = null;
-    /** 暗号化処理の鍵交換の同期カウンター. */
-    private static int LATCH_COUNT_MAX = 1;
 
     /**
      * 最後にSTBへアプリケーション要求したシステム時刻からの経過時間.

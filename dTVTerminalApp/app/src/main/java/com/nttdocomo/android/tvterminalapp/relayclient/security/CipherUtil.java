@@ -49,8 +49,6 @@ public class CipherUtil {
     /** LockObject.*/
     private static final Object sLockObject = new Object();
 
-    /** 暗号化処理の鍵交換を同期処理で実行する. */
-    private static CountDownLatch mLatch = null;
     /** 暗号化処理の鍵交換の同期カウンター. */
     private static final int LATCH_COUNT_MAX = 1;
 
@@ -201,25 +199,27 @@ public class CipherUtil {
      * 鍵交換処理を同期処理で実行する.
      */
     public static void syncRequestPublicKey() {
+        DTVTLogger.start();
+        // 暗号化処理の鍵交換を同期処理で実行する.
+        final CountDownLatch mLatch = new CountDownLatch(LATCH_COUNT_MAX);
+
         CipherApi api = new CipherApi(new CipherApi.CipherApiCallback() {
             @Override
             public void apiCallback(final boolean result, final String data) {
-                // 鍵交換処理同期ラッチカウンターを解除する
-                mLatch.countDown();
+                // 鍵交換処理に同期ラッチカウンターを使用するためコールバック処理は不要
             }
-        });
+        }, mLatch);
         DTVTLogger.debug("sending public key");
         api.requestSendPublicKey();
-        // 鍵交換処理が終わるまで待機する.
-        mLatch = new CountDownLatch(LATCH_COUNT_MAX);
         try {
             DTVTLogger.debug("sync to completion of public key transmission");
-            mLatch.await();
+            mLatch.await(); // 同期ラッチの待ち合わせ
             DTVTLogger.debug("completion of public key transmission");
         } catch (InterruptedException e) {
             DTVTLogger.debug(e);
             return;
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -233,7 +233,8 @@ public class CipherUtil {
             @Override
             public void run() {
                 syncRequestPublicKey();
-                DTVTLogger.debug(String.format("public key exchange processing result = %s", CipherUtil.hasShareKey())); // 鍵交換処理結果
+                DTVTLogger.debug(String.format("public key exchange processing result = %s",
+                        CipherUtil.hasShareKey())); // 鍵交換処理結果
             }
         }).start();
         DTVTLogger.end();
