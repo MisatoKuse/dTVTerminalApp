@@ -78,7 +78,9 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         /**年齢制限.*/
         AGE,
         /**なし.*/
-        NONE
+        NONE,
+        /**初期化成功.*/
+        INIT_SUCCESS
     }
 
     /** コンストラクタ.*/
@@ -531,11 +533,12 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                     LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
             layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
             mProgressBar.setLayoutParams(layoutParams);
-            this.addView(mProgressBar);
         }
         if (isShow) {
+            this.addView(mProgressBar);
             mProgressBar.setVisibility(View.VISIBLE);
         } else {
+            this.removeView(mProgressBar);
             mProgressBar.setVisibility(View.GONE);
         }
     }
@@ -1004,7 +1007,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 return;
             }
         }
-        mPlayerStateListener.onErrorCallBack(PlayerErrorType.NONE);
+        mPlayerStateListener.onErrorCallBack(PlayerErrorType.INIT_SUCCESS);
         preparePlayer(playStartPosition);
         DTVTLogger.end();
     }
@@ -1340,6 +1343,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             mPlayerController.release();
             mPlayerController = null;
         }
+        showPlayingProgress(false);
     }
 
     /**

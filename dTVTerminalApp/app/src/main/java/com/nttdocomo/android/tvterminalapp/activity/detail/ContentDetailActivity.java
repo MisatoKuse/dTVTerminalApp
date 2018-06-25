@@ -2599,6 +2599,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     public void onErrorCallBack(final PlayerViewLayout.PlayerErrorType mPlayerErrorType) {
         showProgressBar(false);
         String msg = null;
+        boolean isInit = false;
         switch (mPlayerErrorType) {
             case REMOTE:
                 msg = getString(R.string.contents_detail_out_house_player_error_msg);
@@ -2612,6 +2613,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             case AGE:
                 msg = getString(R.string.contents_detail_parental_check_fail);
                 break;
+            case INIT_SUCCESS:
+                isInit = true;
+                break;
             case NONE:
             default:
                 break;
@@ -2619,7 +2623,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         if (msg != null) {
             showDialogToConfirmClose(msg);
         }
-        mPlayerViewLayout.showPlayingProgress(false);
+        if (!isInit) {
+            mPlayerViewLayout.showPlayingProgress(false);
+        }
     }
 
     @Override
