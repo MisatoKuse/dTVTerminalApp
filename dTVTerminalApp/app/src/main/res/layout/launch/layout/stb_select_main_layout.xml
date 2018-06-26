@@ -70,8 +70,9 @@
 
     <TextView
         android:id="@+id/launch_select_check_box_text"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="@dimen/launch_stb_checkbox_high"
+        android:maxLines="1"
         android:text="@string/str_stb_next_not_display_text"
         android:textSize="@dimen/launch_text_size"
         android:paddingStart="@dimen/launch_stb_checkbox_right_margin"
