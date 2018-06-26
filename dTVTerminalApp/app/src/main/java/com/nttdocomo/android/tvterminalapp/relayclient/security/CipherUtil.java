@@ -53,6 +53,22 @@ public class CipherUtil {
     private static final int LATCH_COUNT_MAX = 1;
 
     /**
+     * CipherUtil.decodeData の例外状態取得.
+     * ※デコード実行時に発生する error:1e00007b:Cipher functions:OPENSSL_internal:WRONG_FINAL_BLOCK_LENGTH
+     */
+    public static boolean isCipherDecodeError() {
+        return mCipherDecodeError;
+    }
+
+    /**CipherUtil.decodeData の例外状態設定.*/
+    private static void setCipherDecodeError(final boolean cipherDecodeError) {
+        mCipherDecodeError = cipherDecodeError;
+    }
+
+    /**CipherUtil.decodeData の例外.*/
+    private static boolean mCipherDecodeError = false;
+
+    /**
      * 共通鍵あるかをチェック.
      * @return true or false
      */
@@ -95,14 +111,18 @@ public class CipherUtil {
      * @return 設定結果
      */
     public static boolean setShareKey(final byte[] shareKey) {
+        DTVTLogger.start();
         synchronized (sLockObject) {
             try {
                 Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
                 cipher.init(Cipher.DECRYPT_MODE, sPrivateKey);
                 sSecureDigest = cipher.doFinal(shareKey);
                 sShareKey = new SecretKeySpec(sSecureDigest, "AES");
+                DTVTLogger.end();
                 return true;
-            } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | InvalidKeyException | BadPaddingException e) {
+            } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException
+                    | InvalidKeyException | BadPaddingException e) {
+                DTVTLogger.error(e.getMessage());
                 return false;
             }
         }
@@ -116,13 +136,14 @@ public class CipherUtil {
      * @return 変換結果Byte配列 or null
      */
     public static @Nullable byte[] encodeData(final String srcDataString) {
+        DTVTLogger.start();
         byte[] encodeByteStream = null;
         byte[] resultByteStream = null;
         byte[] ivCode = null;
 
         synchronized (sLockObject) {
             if (sShareKey == null) {
-                DTVTLogger.warning("Key has not been generated.");
+                DTVTLogger.warning("ShareKey has not been generated!");
                 return null;
             }
             try {
@@ -143,6 +164,8 @@ public class CipherUtil {
         resultByteStream = new byte[(ivCode.length + encodeByteStream.length)];
         System.arraycopy(ivCode, 0, resultByteStream, 0, ivCode.length);
         System.arraycopy(encodeByteStream, 0, resultByteStream, ivCode.length, encodeByteStream.length);
+        DTVTLogger.debug(String.format("encoded byte stream length = %s", resultByteStream.length));
+        DTVTLogger.end();
         return resultByteStream;
     }
 
@@ -152,18 +175,19 @@ public class CipherUtil {
      * @return 変換後データ
      */
     public static String decodeData(final byte[] srcData) {
+        DTVTLogger.start();
         byte[] encodeByteStream = new byte[srcData.length - IV_SIZE];
         byte[] decodeByteStream;
 
         byte[] ivCode = new byte[IV_SIZE];
         System.arraycopy(srcData, 0, ivCode, 0, IV_SIZE);
         System.arraycopy(srcData, IV_SIZE, encodeByteStream, 0, encodeByteStream.length);
+        DTVTLogger.debug(String.format("encoded byte stream length = %s", encodeByteStream.length));
 
         String decodeString = null;
-        DTVTLogger.debug(" >>>");
         synchronized (sLockObject) {
             if (sShareKey == null) {
-                DTVTLogger.warning("mShareKey == null");
+                DTVTLogger.warning("ShareKey is null!");
                 return null;
             }
             try {
@@ -171,9 +195,12 @@ public class CipherUtil {
                 cipher.init(Cipher.DECRYPT_MODE, sShareKey, new IvParameterSpec(ivCode));
                 decodeByteStream = cipher.doFinal(encodeByteStream);
                 decodeString = new String(decodeByteStream, "UTF-8");
+                DTVTLogger.end();
                 return decodeString;
             } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | BadPaddingException
                     | InvalidAlgorithmParameterException | IllegalBlockSizeException | UnsupportedEncodingException e) {
+                DTVTLogger.debug("decoding failed.");
+                setCipherDecodeError(true);
                 DTVTLogger.error(e.getMessage());
                 return null;
             }

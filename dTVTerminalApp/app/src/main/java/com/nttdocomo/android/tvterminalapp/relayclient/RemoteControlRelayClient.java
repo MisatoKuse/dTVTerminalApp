@@ -1206,7 +1206,7 @@ public class RemoteControlRelayClient {
                 response = setResultDistinationUnreachable();
             } else {
                 StbConnectRelayClient stbConnection = StbConnectRelayClient.getInstance();  // Socket通信
-                String recvData;
+                String recvData = null;
                 // アプリ起動要求をSTBへ送信して処理結果応答を取得する
                 if (stbConnection.connect()) {
                     if (stbConnection.send(mRequestParam)) {
@@ -1215,8 +1215,13 @@ public class RemoteControlRelayClient {
                         response = setResponse(recvData);
                     }
                     stbConnection.disconnect();
-                    // 鍵交換に失敗
-                    if (response.getResultCode() == RelayServiceResponseMessage.RELAY_RESULT_STB_KEY_MISMATCH) {
+                    // 鍵交換の失敗、または復号に失敗
+                    if (stbConnection.isCipherDecodeError()
+                            || response.getResultCode() == RelayServiceResponseMessage.RELAY_RESULT_STB_KEY_MISMATCH) {
+                        DTVTLogger.debug(String.format("key exchange error = %s"
+                                , response.getResultCode() == RelayServiceResponseMessage.RELAY_RESULT_STB_KEY_MISMATCH));
+                        DTVTLogger.debug(String.format("decoding error = %s", stbConnection.isCipherDecodeError()));
+                        // 鍵交換を再実行（復号失敗の原因でもある）
                         CipherUtil.syncRequestPublicKey();
                         if (!CipherUtil.hasShareKey()) { // 鍵交換に失敗
                             response = setResultDistinationUnreachable();

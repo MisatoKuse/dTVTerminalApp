@@ -39,6 +39,13 @@ public class TcpClient {
     public static final int KEY_EXCHANGE_TIMEOUT = 1500;
 
     /**
+     * Cipher デコードエラーの取得.
+     */
+    public boolean isCipherDecodeError() {
+        return CipherUtil.isCipherDecodeError();
+    }
+
+    /**
      * コンストラクタ.
      */
     public TcpClient() {
