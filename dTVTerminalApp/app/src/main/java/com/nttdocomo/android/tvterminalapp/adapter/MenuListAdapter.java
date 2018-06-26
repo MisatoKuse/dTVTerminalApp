@@ -135,7 +135,7 @@ public class MenuListAdapter extends BaseAdapter {
         if (title != null) {
             if (title.equals(mContext.getString(R.string.nav_menu_item_hikari_tv_none_action))) {
                 //ひかりTVメインの設定
-                textView.setTextColor(ContextCompat.getColor(mContext, R.color.list_item_background));
+                textView.setTextColor(ContextCompat.getColor(mContext, R.color.global_menu_transparent_text_color));
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_premium_tv_app_start_common))) {
                 //テレビアプリを起動するの設定
                 textView.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
@@ -158,7 +158,7 @@ public class MenuListAdapter extends BaseAdapter {
                     || title.equals(mContext.getString(R.string.nav_menu_item_dtv))
                     || title.equals(mContext.getString(R.string.nav_menu_item_d_animation))
                     || title.equals(mContext.getString(R.string.nav_menu_item_dazn))) {
-                textView.setTextColor(ContextCompat.getColor(mContext, R.color.list_item_background));
+                textView.setTextColor(ContextCompat.getColor(mContext, R.color.global_menu_transparent_text_color));
             } else {
                 //その他サブアイテムのカスタマイズ
                 textView.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
