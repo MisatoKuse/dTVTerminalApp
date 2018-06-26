@@ -8,7 +8,6 @@ import android.app.Presentation;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -16,11 +15,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
-import android.support.v4.content.ContextCompat;
-import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -114,10 +110,6 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     private TextView mVideoCurTime = null;
     /**video全長.*/
     private TextView mVideoTotalTime = null;
-    /**プレイヤービュー(タイトル).*/
-    private TextView mPlayerTxt;
-    /**プレイヤービュー(ロゴ).*/
-    private ImageView mPlayerLogo;
     /**全画面再生.*/
     private ImageView mVideoFullScreen = null;
     /**巻き戻しImageView.*/
@@ -126,8 +118,6 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     private ImageView mVideoFast30 = null;
     /**再生前くるくる処理.*/
     private ProgressBar mProgressBar;
-    /**NOW ON AIRレイアウト.*/
-    private RelativeLayout mLiveLayout;
     /**NOW ON AIRアイコン.*/
     private ImageView mPortraitLayout;
     /**チャンネル情報.*/
@@ -160,12 +150,6 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     private boolean mExternalDisplayFlg = false;
     /**vローカルファイルパスー.*/
     private static final String LOCAL_FILE_PATH = "file://";
-    /** 0.*/
-    private static final int ZERO = 0;
-    /** maxline.*/
-    private static final int MAXLINES = 2;
-    /** テキストサイズ.*/
-    private static final int TEXT_SIZE = 16;
     /** プレイヤー横画面時のシークバーの下マージン.*/
     private static final int SEEKBAR_BOTTOM_MARGIN = 4;
     /** プレイヤー横画面時のコントロールバーの下マージン.*/
@@ -799,10 +783,6 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
      * initPlayerView mView.
      */
     private void initPlayerView() {
-        //プレイヤータイトル
-        createSecureVideoViewTitle();
-        //プレイヤーロゴ
-        createSecureVideoViewLogo();
         this.removeView(mRecordCtrlView);
         this.getKeepScreenOn();
         mRecordCtrlView = (RelativeLayout) View.inflate(mContext, R.layout.tv_player_ctrl_video_record, null);
@@ -818,6 +798,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         mProgressLayout = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_progress_ll);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 mScreenWidth, mScreenHeight);
+        initLiveLayout();
         setScreenSize(mActivity.getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE, layoutParams);
         mVideoPlayPause.setOnClickListener(this);
         mVideoFullScreen.setOnClickListener(this);
@@ -849,8 +830,8 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         mVideoRewind10.setVisibility(View.INVISIBLE);
         mVideoFast30.setVisibility(View.INVISIBLE);
         mVideoCtrlBar.setVisibility(View.INVISIBLE);
-        mPlayerTxt.setVisibility(View.INVISIBLE);
-        mPlayerLogo.setVisibility(View.INVISIBLE);
+        mPortraitLayout.setVisibility(INVISIBLE);
+        mLandscapeLayout.setVisibility(INVISIBLE);
         mSecureVideoPlayer.setBackgroundResource(0);
         DTVTLogger.end();
     }
@@ -974,7 +955,6 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 mProgressLayout.addView(mVideoFullScreen, 2);
                 mProgressLayout.addView(mVideoTotalTime, 3);
             }
-            showLiveLayout(true);
         } else {
             //端末縦向き
             if (mProgressLayout.getChildCount() > 1) {
@@ -985,10 +965,19 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 mVideoCtrlBar.addView(mVideoFullScreen);
                 mVideoCtrlBar.addView(mVideoTotalTime);
             }
-            if (mIsVideoBroadcast) {
-                showLiveLayout(false);
-            }
         }
+    }
+
+    /**
+     * NOW ON AIR レイアウト初期化.
+     */
+    private void initLiveLayout() {
+        RelativeLayout mLiveLayout = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_now_on_air_rl);
+        mPortraitLayout = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_now_on_air_portrait);
+        mLandscapeLayout = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_now_on_air_landscape);
+        mChannellogo = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_chanel_logo);
+        mChanneltitle = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_chanel_title);
+        mLiveLayout.setVisibility(VISIBLE);
     }
 
     /**
@@ -997,19 +986,15 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
      * @param isLandscape 端末の縦横判定
      */
     private void showLiveLayout(final boolean isLandscape) {
-        mLiveLayout = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_now_on_air_rl);
-        mPortraitLayout = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_now_on_air_portrait);
-        mLandscapeLayout = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_now_on_air_landscape);
-        mChannellogo = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_chanel_logo);
-        mChanneltitle = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_chanel_title);
-        mLiveLayout.setVisibility(VISIBLE);
         if (isLandscape) {
             mPortraitLayout.setVisibility(INVISIBLE);
             mLandscapeLayout.setVisibility(VISIBLE);
             setLogoAndTitle(mTxtChannellogo, mTxtChanneltitle);
         } else {
             mLandscapeLayout.setVisibility(INVISIBLE);
-            mPortraitLayout.setVisibility(VISIBLE);
+            if (mIsVideoBroadcast) {
+                mPortraitLayout.setVisibility(VISIBLE);
+            }
         }
     }
 
@@ -1206,8 +1191,9 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                         }
                         mVideoCtrlBar.setVisibility(View.VISIBLE);
                         if (mActivity.getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-                            mPlayerTxt.setVisibility(View.VISIBLE);
-                            mPlayerLogo.setVisibility(View.VISIBLE);
+                            showLiveLayout(true);
+                        } else {
+                            showLiveLayout(false);
                         }
                         int orientation = getResources().getConfiguration().orientation;
                         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -1456,47 +1442,6 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
      */
     public void onDestory() {
         mExternalDisplayHelper = null;
-    }
-
-    /**
-     * プレイヤービュー(タイトル)作成.
-     */
-    private void createSecureVideoViewTitle() {
-        mPlayerTxt = new TextView(mContext);
-        LayoutParams layoutParams = new LayoutParams(
-                LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT);
-        Resources resources = mContext.getResources();
-        layoutParams.setMargins((int) resources.getDimension(R.dimen.contents_detail_player_title_text_start_margin),
-                (int) resources.getDimension(R.dimen.contents_detail_player_title_text_top_margin),
-                (int) resources.getDimension(R.dimen.contents_detail_player_title_text_end_margin),
-                ZERO);
-        mPlayerTxt.setLayoutParams(layoutParams);
-        mPlayerTxt.setMaxLines(MAXLINES);
-        mPlayerTxt.setEllipsize(TextUtils.TruncateAt.END);
-        mPlayerTxt.setTextColor(ContextCompat.getColor(mContext, R.color.contents_player_landscape_title_text_color));
-        mPlayerTxt.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
-        TextPaint tp = mPlayerTxt.getPaint();
-        tp.setFakeBoldText(true);
-        this.addView(mPlayerTxt);
-    }
-
-    /**
-     * プレイヤービュー(ロゴ)作成.
-     */
-    private void createSecureVideoViewLogo() {
-        mPlayerLogo = new ImageView(mContext);
-        Resources resources = mContext.getResources();
-        LayoutParams layoutParams = new LayoutParams(
-                (int) resources.getDimension(R.dimen.contents_detail_player_logo_width),
-                (int) resources.getDimension(R.dimen.contents_detail_player_logo_height));
-        layoutParams.setMargins((int) resources.getDimension(R.dimen.contents_detail_player_logo_start_margin),
-                (int) resources.getDimension(R.dimen.contents_detail_player_logo_top_margin),
-                ZERO,
-                ZERO);
-        mPlayerLogo.setLayoutParams(layoutParams);
-        mPlayerLogo.setBackgroundColor(ContextCompat.getColor(mContext, R.color.contents_logo_background_default_color));
-        this.addView(mPlayerLogo);
     }
 
     /**
