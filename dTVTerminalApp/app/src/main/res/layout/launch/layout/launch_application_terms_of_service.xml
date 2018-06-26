@@ -290,6 +290,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/application_privacy_all_text"
                 android:layout_marginStart="@dimen/launch_terms_of_service_text_margin"
+                android:layout_marginEnd="@dimen/launch_terms_of_service_text_margin"
                 android:layout_marginTop="@dimen/launch_text_left_padding"
                 android:gravity="center|start"
                 android:text="@string/str_launch_all_text_detail_confirm_link"

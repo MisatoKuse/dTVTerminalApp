@@ -49,7 +49,8 @@ import java.util.TimerTask;
  */
 public class StbSelectActivity extends BaseActivity implements View.OnClickListener,
         AdapterView.OnItemClickListener,
-        DlnaManager.DlnaManagerListener {
+        DlnaManager.DlnaManagerListener,
+        CustomDialog.DismissCallback {
 
     // region variable
     /**
@@ -405,7 +406,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     public void onResume() {
         super.onResume();
         DTVTLogger.start();
-
+        mSelectDevice = SELECT_DEVICE_ITEM_DEFAULT;
         //別途BaseActivityの物は禁止してあるので、こちらで呼び出す
         setDaccountControl();
 
@@ -1310,5 +1311,21 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             }
         });
         restartDialog.showDialog();
+    }
+
+    @Override
+    protected void showDAccountErrorDialog() {
+        super.showDAccountErrorDialog();
+        //ダイアログ表示のタイミングでタイマ停止
+        stopCallbackTimer();
+        DTVTLogger.end();
+    }
+
+    @Override
+    public void allDismissCallback() {
+        //ダイアログを閉じたタイミングでSTB未検出ならタイマ開始
+        if (mDlnaDmsInfo.size() <= 0) {
+            startCallbackTimer();
+        }
     }
 }
