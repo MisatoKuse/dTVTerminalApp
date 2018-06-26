@@ -129,7 +129,7 @@
     <dimen name="contents_detail_contract_leading_button_height">32dp</dimen>
     <dimen name="contents_detail_contract_leading_button_text_size">12dp</dimen>
     <dimen name="contents_detail_contract_leading_button_radius">5dp</dimen>
-    <dimen name="contents_detail_player_title_text_start_margin">80dp</dimen>
+    <dimen name="contents_detail_player_title_text_start_margin">16dp</dimen>
     <dimen name="contents_detail_player_title_text_end_margin">24dp</dimen>
     <dimen name="contents_detail_player_title_text_top_margin">16dp</dimen>
     <dimen name="contents_detail_player_logo_width">48dp</dimen>
@@ -144,6 +144,7 @@
     <dimen name="contents_detail_player_now_on_air_top_margin">8dp</dimen>
     <dimen name="contents_detail_player_now_on_air_text_size">12dp</dimen>
     <dimen name="contents_detail_player_media_controller_size">56dp</dimen>
+    <dimen name="contents_detail_player_media_controller_text_size">16dp</dimen>
     <dimen name="contents_detail_player_media_controller_replay_right_margin">35dp</dimen>
     <dimen name="contents_detail_player_media_controller_forward_right_margin">34dp</dimen>
     <dimen name="contents_detail_player_media_controller_time_left_margin">8dp</dimen>

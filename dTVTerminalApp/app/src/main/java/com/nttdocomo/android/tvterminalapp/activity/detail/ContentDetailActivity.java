@@ -530,9 +530,15 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         super.onStartCommunication();
         switch (mDisplayState) {
             case PLAYER_ONLY:
+                if (mPlayerViewLayout != null) {
+                    mPlayerViewLayout.enableThumbnailConnect();
+                }
                 break;
             case PLAYER_AND_CONTENTS_DETAIL:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_player));
+                if (mPlayerViewLayout != null) {
+                    mPlayerViewLayout.enableThumbnailConnect();
+                }
             case CONTENTS_DETAIL_ONLY:
                 if (mContentsDetailDataProvider != null) {
                     mContentsDetailDataProvider.enableConnect();
@@ -2667,7 +2673,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                     //放送中ひかりTVコンテンツの時は自動再生する
                                     mDisplayState = PLAYER_AND_CONTENTS_DETAIL;
                                     RecordedContentsDetailData data = new RecordedContentsDetailData();
-                                    data.setUpnpIcon("");
+                                    data.setUpnpIcon(mChannel.getThumbnail());
+                                    data.setTitle(mChannel.getTitle());
                                     data.setResUrl(dlnaObject.mResUrl);
                                     data.setSize(dlnaObject.mSize);
                                     data.setDuration(dlnaObject.mDuration);

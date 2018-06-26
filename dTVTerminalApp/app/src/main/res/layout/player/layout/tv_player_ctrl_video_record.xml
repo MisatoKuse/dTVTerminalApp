@@ -8,20 +8,54 @@
     android:layout_height="match_parent"
     android:background="@color/contents_player_background_color">
 
-    <TextView
-        android:id="@+id/tv_player_main_layout_video_ctrl_player_now_on_air_tv"
-        android:layout_width="@dimen/contents_detial_player_now_on_air_width"
-        android:layout_height="@dimen/contents_detial_player_now_on_air_height"
-        android:layout_marginStart="@dimen/contents_detail_player_now_on_air_start_margin"
-        android:layout_marginTop="@dimen/contents_detail_player_now_on_air_top_margin"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:gravity="center"
-        android:background="@drawable/contents_provider_shape_corner"
-        android:text="@string/now_on_air"
-        android:textColor="@color/contents_player_now_on_air_text_color"
-        android:textSize="@dimen/contents_detail_player_now_on_air_text_size"
-        android:visibility="gone"/>
+    <RelativeLayout
+        android:id="@+id/tv_player_ctrl_video_record_now_on_air_rl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/tv_player_ctrl_video_record_now_on_air_portrait"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/contents_detail_player_now_on_air_start_margin"
+            android:layout_marginTop="@dimen/contents_detail_player_now_on_air_start_margin"
+            android:background="@color/contents_logo_background_default_color"
+            android:src="@mipmap/label_now_on_air"
+            android:contentDescription="@null"
+            android:visibility="gone"/>
+
+        <RelativeLayout
+            android:id="@+id/tv_player_ctrl_video_record_now_on_air_landscape"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/contents_detail_player_title_text_end_margin"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/tv_player_ctrl_video_record_chanel_logo"
+                android:layout_width="@dimen/contents_detail_player_logo_width"
+                android:layout_height="@dimen/contents_detail_player_logo_height"
+                android:layout_marginStart="@dimen/contents_detail_player_logo_start_margin"
+                android:layout_centerVertical="true"
+                android:background="@color/contents_logo_background_default_color"
+                android:contentDescription="@null"/>
+
+            <TextView
+                android:id="@+id/tv_player_ctrl_video_record_chanel_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/tv_player_ctrl_video_record_chanel_logo"
+                android:layout_marginStart="@dimen/contents_detail_player_title_text_start_margin"
+                android:layout_marginTop="@dimen/contents_detail_player_title_text_top_margin"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:textStyle="bold"
+                android:layout_centerVertical="true"
+                android:textColor="@color/contents_player_landscape_title_text_color"
+                android:textSize="@dimen/contents_detail_player_media_controller_text_size"/>
+        </RelativeLayout>
+    </RelativeLayout>
 
     <FrameLayout
         android:id="@+id/tv_player_ctrl_video_record_player_pause_fl"
