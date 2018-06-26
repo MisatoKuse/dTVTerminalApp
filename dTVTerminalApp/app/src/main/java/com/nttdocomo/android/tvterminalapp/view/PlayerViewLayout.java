@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -45,6 +46,7 @@ import com.nttdocomo.android.tvterminalapp.activity.common.ProcessSettingFile;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.struct.MediaVideoInfo;
@@ -53,6 +55,7 @@ import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
+import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -123,6 +126,24 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     private ImageView mVideoFast30 = null;
     /**再生前くるくる処理.*/
     private ProgressBar mProgressBar;
+    /**NOW ON AIRレイアウト.*/
+    private RelativeLayout mLiveLayout;
+    /**NOW ON AIRアイコン.*/
+    private ImageView mPortraitLayout;
+    /**チャンネル情報.*/
+    private RelativeLayout mLandscapeLayout;
+    /**チャンネルロゴ.*/
+    private ImageView mChannellogo;
+    /**チャンネル名.*/
+    private TextView mChanneltitle;
+    /**チャンネルアイコンURL.*/
+    private String mTxtChannellogo;
+    /**チャンネル名.*/
+    private String mTxtChanneltitle;
+    /**サムネイルプロバイダー.*/
+    private ThumbnailProvider mThumbnailProvider;
+    /** サムネイル取得処理ストップフラグ .*/
+    private boolean mIsDownloadStop = false;
     /** 放送中フラグ.*/
     private boolean mIsVideoBroadcast = false;
     /**再生開始可否.*/
@@ -953,6 +974,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 mProgressLayout.addView(mVideoFullScreen, 2);
                 mProgressLayout.addView(mVideoTotalTime, 3);
             }
+            showLiveLayout(true);
         } else {
             //端末縦向き
             if (mProgressLayout.getChildCount() > 1) {
@@ -963,6 +985,79 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 mVideoCtrlBar.addView(mVideoFullScreen);
                 mVideoCtrlBar.addView(mVideoTotalTime);
             }
+            if (mIsVideoBroadcast) {
+                showLiveLayout(false);
+            }
+        }
+    }
+
+    /**
+     * NOW ON AIR レイアウト表示.
+     *
+     * @param isLandscape 端末の縦横判定
+     */
+    private void showLiveLayout(final boolean isLandscape) {
+        mLiveLayout = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_now_on_air_rl);
+        mPortraitLayout = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_now_on_air_portrait);
+        mLandscapeLayout = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_now_on_air_landscape);
+        mChannellogo = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_chanel_logo);
+        mChanneltitle = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_chanel_title);
+        mLiveLayout.setVisibility(VISIBLE);
+        if (isLandscape) {
+            mPortraitLayout.setVisibility(INVISIBLE);
+            mLandscapeLayout.setVisibility(VISIBLE);
+            setLogoAndTitle(mTxtChannellogo, mTxtChanneltitle);
+        } else {
+            mLandscapeLayout.setVisibility(INVISIBLE);
+            mPortraitLayout.setVisibility(VISIBLE);
+        }
+    }
+
+    /**
+     * サムネイル取得処理を止める.
+     */
+    private void stopThumbnailConnect() {
+        DTVTLogger.start();
+        mIsDownloadStop = true;
+        if (mThumbnailProvider != null) {
+            mThumbnailProvider.stopConnect();
+        }
+    }
+
+    /**
+     * 止めたサムネイル取得処理を再度取得可能な状態にする.
+     */
+    public void enableThumbnailConnect() {
+        DTVTLogger.start();
+        mIsDownloadStop = false;
+        if (mThumbnailProvider != null) {
+            mThumbnailProvider.enableConnect();
+        }
+    }
+
+    /**
+     * チャンネル情報設定.
+     * @param url ロゴ
+     * @param title タイトル名
+     */
+    private void setLogoAndTitle(final String url, final String title) {
+        if (!TextUtils.isEmpty(title)) {
+            mChanneltitle.setText(title);
+        }
+        if (!TextUtils.isEmpty(url)) {
+            if (mThumbnailProvider == null) {
+                mThumbnailProvider = new ThumbnailProvider(mContext, ThumbnailDownloadTask.ImageSizeType.CHANNEL);
+            }
+            if (!mIsDownloadStop) {
+                mChannellogo.setTag(url);
+                Bitmap bitmap = mThumbnailProvider.getThumbnailImage(mChannellogo, url);
+                if (bitmap != null) {
+                    //サムネイル取得失敗時は取得失敗画像をセットする
+                    mChannellogo.setImageBitmap(bitmap);
+                }
+            }
+        } else {
+            mChannellogo.setImageResource(R.mipmap.error_ch_mini);
         }
     }
 
@@ -1171,7 +1266,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
      */
     private boolean setCurrentMediaInfo(final RecordedContentsDetailData playerData) {
         String url = playerData.getResUrl();
-        //String icon = playerData.getUpnpIcon();
+        mTxtChannellogo = playerData.getUpnpIcon();
         //setPlayerLogoThumbnail(icon);
         long size = Integer.parseInt(playerData.getSize());
         String durationStr = playerData.getDuration();
@@ -1181,7 +1276,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             playerData.setBitrate("0");
         }
         int bitRate = Integer.parseInt(playerData.getBitrate());
-        String title = playerData.getTitle();
+        mTxtChanneltitle = playerData.getTitle();
         //setTitleText(title);
         Uri uri = Uri.parse(url);
         String contentFormat = "CONTENTFORMAT";
@@ -1239,7 +1334,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 isAvailableConnectionStalling,   //DLNAのAvailableConnectionStallingかどうか
                 mIsVideoBroadcast,                //放送中コンテンツかどうか
                 isRemote,                        //リモートアクセスコンテンツかどうか
-                title,                           //メディアのタイトル
+                mTxtChanneltitle,                //メディアのタイトル
                 contentFormat                    //DIDLのres protocolInfoの3番目のフィールド
         );
         mTotalDuration = mCurrentMediaInfo.getDurationMs();
@@ -1344,6 +1439,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             mPlayerController = null;
         }
         showPlayingProgress(false);
+        stopThumbnailConnect();
     }
 
     /**
