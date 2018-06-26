@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.nttdocomo.android.ocsplib.bouncycastle.asn1.DLTaggedObject;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
@@ -108,6 +109,11 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
      */
     private TextView mNoDataMessage;
 
+    /**
+     * 読み込み中断フラグ
+     */
+    private boolean mCancelLoad = false;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -190,6 +196,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
             if (!NetWorkUtils.isOnline(this)) {
                 return;
             }
+            mCancelLoad = false;
             mListView.setVisibility(View.GONE);
             mRelativeLayout.setVisibility(View.VISIBLE);
         } else {
@@ -328,6 +335,13 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
      * @param videoContentInfo  ビデオコンテンツ情報
      */
     private void setShowVideoContent(final List<ContentsData> videoContentInfo) {
+
+        // 読み込み中断判定
+        if (mCancelLoad) {
+            resetCommunication();
+            return;
+        }
+
         if (null == videoContentInfo) {
             displayMoreData(false);
             mNoDataMessage.setVisibility(View.VISIBLE);
@@ -420,11 +434,12 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         super.onPause();
         DTVTLogger.start();
         //通信を止める
+        mCancelLoad = true;
         showProgressBar(false);
         StopVideoContentConnect stopConnect = new StopVideoContentConnect();
         stopConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mVideoContentProvider);
         StopContentsAdapterConnect stopAdapterConnect = new StopContentsAdapterConnect();
         stopAdapterConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                 mContentsAdapter);
+                mContentsAdapter);
     }
 }
