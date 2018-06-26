@@ -134,7 +134,7 @@ public class ClipUtils {
      * @param mapList クリップ状態
      */
     public static boolean setClipStatusVodMetaData(final VodMetaFullData vodMetaFullData, final List<Map<String, String>> mapList) {
-        return setClipStatusFromMap(mapList,
+        return vodMetaFullData != null && setClipStatusFromMap(mapList,
                 vodMetaFullData.getDisp_type(),
                 vodMetaFullData.getDtv(),
                 vodMetaFullData.getmTv_service(),
@@ -150,7 +150,7 @@ public class ClipUtils {
      * @param mapList クリップ状態
      */
     public static boolean setClipStatusScheduleInfo(final ScheduleInfo scheduleInfo, final List<Map<String, String>> mapList) {
-        return setClipStatusFromMap(mapList,
+        return scheduleInfo != null && setClipStatusFromMap(mapList,
                 scheduleInfo.getDispType(),
                 scheduleInfo.getDtv(),
                 scheduleInfo.getTvService(),
@@ -166,7 +166,7 @@ public class ClipUtils {
      * @param mapList クリップ状態
      */
     public static boolean setClipStatusContentsData(final ContentsData contentsData, final List<Map<String, String>> mapList) {
-        return setClipStatusFromMap(mapList,
+        return contentsData != null && setClipStatusFromMap(mapList,
                 contentsData.getDispType(),
                 contentsData.getDtv(),
                 contentsData.getTvService(),

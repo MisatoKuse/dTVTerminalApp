@@ -437,6 +437,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param isOn true: 表示  false: 非表示
      */
+    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
     protected void enableStbStatusIcon(final boolean isOn) {
         if (mStbStatusIcon != null) {
             mStbStatusIcon.setVisibility(isOn ? View.VISIBLE : View.INVISIBLE);
@@ -954,7 +955,7 @@ public class BaseActivity extends FragmentActivity implements
     protected void switchApplicationVersionCode(final int resultCode) {
         switch (resultCode) {
             case RelayServiceResponseMessage.RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE:
-                CustomDialog dTVTUpDateDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+                CustomDialog dTVTUpDateDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.CONFIRM);
                 dTVTUpDateDialog.setContent(getResources().getString(R.string.d_tv_terminal_application_version_update_dialog));
                 dTVTUpDateDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                     @Override
@@ -1721,7 +1722,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param msgId 各ステータスのメッセージID
      */
-    private void showClipToast(final int msgId) {
+    public void showClipToast(final int msgId) {
         //指定された文字リソースを表示する
         Toast.makeText(this, msgId, Toast.LENGTH_SHORT).show();
 
