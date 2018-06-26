@@ -5,7 +5,7 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 	<!-- 無効化された場合は、単なる灰色にして非表示にする -->
-	<item android:drawable="@color/my_channel_edit_main_root_bg"
+	<item android:drawable="@color/tv_program_list_cur_time_btn_bg"
 		android:state_enabled="false" />
 	<item android:drawable="@mipmap/icon_tap_grayout_calendar"
 	      android:state_pressed="true"/>
