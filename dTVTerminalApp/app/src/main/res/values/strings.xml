@@ -204,6 +204,7 @@
     <string name="record_download_cancel_confirm">取りやめる</string>
     <string name="record_download_notification">録画番組をダウンロード中</string>
     <string name="record_download_notification_channel_name">ダウンロード状況</string>
+    <string name="record_download_not_completed_msg">録画コンテンツのダウンロードに失敗しました。\n再度録画一覧よりダウンロードを行ってください。</string>
     <string name="activation_failed_msg">アクティベーション失敗しました。</string>
 
     <!-- ビデオ一覧 -->
