@@ -213,7 +213,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
             String pagerDirection = "";
             UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
             if (!mWebClient.getTvClipApi(userInfoDataProvider.getUserAge(), DtvtConstants.REQUEST_LIMIT_50,
-                    DtvtConstants.REQUEST_LIMIT_50, pagerOffset, pagerDirection, this)) {
+                    DtvtConstants.REQUEST_LIMIT_1, pagerOffset, pagerDirection, this)) {
                 mApiDataProviderCallback.tvClipListCallback(null);
             }
         } else {

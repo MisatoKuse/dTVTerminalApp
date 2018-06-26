@@ -195,7 +195,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
             String direction = "";
             UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
             if (!mWebClient.getVodClipApi(userInfoDataProvider.getUserAge(), DtvtConstants.REQUEST_LIMIT_50,
-                    DtvtConstants.REQUEST_LIMIT_50, pagerOffset, direction, this)) {
+                    DtvtConstants.REQUEST_LIMIT_1, pagerOffset, direction, this)) {
                 mApiDataProviderCallback.vodClipListCallback(null);
             }
         } else {
