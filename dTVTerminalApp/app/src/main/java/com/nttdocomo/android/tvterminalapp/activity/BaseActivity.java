@@ -2588,11 +2588,11 @@ public class BaseActivity extends FragmentActivity implements
      * @param url 起動URL
      */
     protected void startBrowser(final String url) {
-        Intent intent = new Intent();
-        intent.setAction("android.intent.action.VIEW");
-        Uri content_url = Uri.parse(url);
-        intent.setData(content_url);
-        startActivity(intent);
+        DTVTLogger.start();
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        DTVTLogger.debug(browserIntent.getDataString());
+        startActivity(browserIntent);
+        DTVTLogger.end();
     }
 
     /**

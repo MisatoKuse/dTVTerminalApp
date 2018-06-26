@@ -17,11 +17,6 @@ public class UrlConstants {
     public static class WebUrl {
 
         /**
-         * 外部ブラウザー遷移先URL.
-         */
-        public static final String PR_URL = "https://www.hikaritv.net/video";
-
-        /**
          * dアカウント登録ヘルプのURL.
          */
         public static final String STB_REGIST_D_ACCOUNT_URL = "https://apl.d.dmkt-sp.jp/dtv2/tvt_sp/support/idRegist.html";

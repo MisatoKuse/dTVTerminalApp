@@ -472,9 +472,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         super.onClick(view);
         switch (view.getId()) {
             case R.id.home_main_layout_kytv:
-                if (isFastClick()) {
-                    startBrowser(UrlConstants.WebUrl.PR_URL);
-                }
+                startBrowser(UrlConstants.WebUrl.CONTRACT_URL);
                 break;
             default:
                 break;
