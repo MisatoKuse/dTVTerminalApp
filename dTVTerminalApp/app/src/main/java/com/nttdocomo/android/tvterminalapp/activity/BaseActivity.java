@@ -760,6 +760,7 @@ public class BaseActivity extends FragmentActivity implements
 //            scaledDownProgramListDataProvider.startTvProgramIntentService();
         } else {
             onStartCommunication();
+            downloadStatusCheck();
         }
 
         StbConnectionManager.shared().setConnectionListener(this);
@@ -2129,6 +2130,18 @@ public class BaseActivity extends FragmentActivity implements
             }
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * ダウンロード状態チェック.
+     */
+    private void downloadStatusCheck() {
+        if (this instanceof HomeActivity) {
+            DownloadDataProvider mDownloadDataProvider = DownloadDataProvider.getInstance(mActivity);
+            if (!mDownloadDataProvider.isDownloading() && mDownloadDataProvider.deleteDownloadContentNotCompleted() > 0) {
+                showErrorDialogOffer(getResources().getString(R.string.record_download_not_completed_msg));
+            }
+        }
     }
 
     /**

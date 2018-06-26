@@ -423,14 +423,14 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         int idx = mQueueIndex.get(index);
         if (null == mRecordedListView) {
             return;
-        } else {
-            idx = idx - mRecordedListView.getFirstVisiblePosition();
         }
-        view = mRecordedListView.getChildAt(idx);
-        View tvView = view.findViewById(R.id.item_common_result_clip_tv);
-        if (null != tvView) {
-            tvView.setBackgroundResource(R.mipmap.icon_circle_normal_download);
-            setDownloadStatusClear(tvView);
+        view = mRecordedListView.getChildAt(idx - mRecordedListView.getFirstVisiblePosition());
+        if (view != null) {
+            View tvView = view.findViewById(R.id.item_common_result_clip_tv);
+            if (null != tvView) {
+                tvView.setBackgroundResource(R.mipmap.icon_circle_normal_download);
+                setDownloadStatusClear(tvView);
+            }
         }
         restoreChannelAndTime();
         mContentsData.get(idx).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_ALLOW);

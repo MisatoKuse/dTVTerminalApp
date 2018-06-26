@@ -570,6 +570,14 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
     }
 
     /**
+     * ダウンロード未完了コンテンツを全削除.
+     */
+    public int deleteDownloadContentNotCompleted() {
+        DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
+        return downLoadListDataManager.deleteDownloadContentNotCompleted();
+    }
+
+    /**
      * delete download file.
      * @param root ルート
      */

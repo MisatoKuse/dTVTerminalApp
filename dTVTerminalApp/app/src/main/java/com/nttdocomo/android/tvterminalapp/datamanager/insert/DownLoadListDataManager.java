@@ -29,7 +29,7 @@ public class DownLoadListDataManager {
     /**
      * ダウンロードOK.
      */
-    private final static String DOWNLOAD_OK = "OK";
+    public final static String DOWNLOAD_OK = "OK";
 
     /**
      * コンストラクタ.
@@ -74,7 +74,7 @@ public class DownLoadListDataManager {
         } catch (SQLiteException e) {
             DTVTLogger.debug("DownLoadListDataManager::insertDownload, e.cause=" + e.getCause());
         } finally {
-            DataBaseManager.getInstance().closeDownloadDatabase();
+            DataBaseManager.getDownloadInstance().closeDownloadDatabase();
         }
     }
 
@@ -97,12 +97,12 @@ public class DownLoadListDataManager {
         } catch (SQLiteException e) {
             DTVTLogger.debug("DownLoadListDataManager::deleteDownloadAllContents, e.cause=" + e.getCause());
         } finally {
-            DataBaseManager.getInstance().closeDownloadDatabase();
+            DataBaseManager.getDownloadInstance().closeDownloadDatabase();
         }
     }
 
     /**
-     * 持ち出しのダウンロード情報をDBに格納する.
+     * 持ち出しのダウンロード情報を削除する.
      * @param itemId  アイテムID.
      * @param path  パス.
      * @param completed  ダウンロード完了フラグ.
@@ -122,7 +122,31 @@ public class DownLoadListDataManager {
         } catch (SQLiteException e) {
             DTVTLogger.debug("DownLoadListDataManager::deleteDownloadContentByItemId, e.cause=" + e.getCause());
         } finally {
-            DataBaseManager.getInstance().closeDownloadDatabase();
+            DataBaseManager.getDownloadInstance().closeDownloadDatabase();
+        }
+    }
+
+    /**
+     * 持ち出し未完了ダウンロード情報を削除する.
+     *
+     * @return 削除した件数.
+     */
+    public int deleteDownloadContentNotCompleted() {
+        try {
+            //各種オブジェクト作成
+            DataBaseHelperDownload downLoadListDBHelper = new DataBaseHelperDownload(mContext);
+            DataBaseManager.clearDownloadInfo();
+            DataBaseManager.initializeInstance(downLoadListDBHelper);
+            SQLiteDatabase database = DataBaseManager.getDownloadInstance().openDownloadDatabase();
+            database.acquireReference();
+            DownLoadListDao downloadListDao = new DownLoadListDao(database);
+
+            return downloadListDao.deleteNotCompleted();
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("DownLoadListDataManager::deleteDownloadContentByStatus, e.cause=" + e.getCause());
+            return 0;
+        } finally {
+            DataBaseManager.getDownloadInstance().closeDownloadDatabase();
         }
     }
 
@@ -148,7 +172,7 @@ public class DownLoadListDataManager {
         } catch (SQLiteException e) {
             DTVTLogger.debug("DownLoadListDataManager::updateDownloadByItemId, e.cause=" + e.getCause());
         } finally {
-            DataBaseManager.getInstance().closeDownloadDatabase();
+            DataBaseManager.getDownloadInstance().closeDownloadDatabase();
         }
     }
 
@@ -177,7 +201,7 @@ public class DownLoadListDataManager {
         } catch (SQLiteException e) {
             DTVTLogger.debug("DownLoadListDataManager::selectDownLoadListVideoData, e.cause=" + e.getCause());
         } finally {
-            DataBaseManager.getInstance().closeDownloadDatabase();
+            DataBaseManager.getDownloadInstance().closeDownloadDatabase();
         }
         return list;
     }
@@ -216,7 +240,7 @@ public class DownLoadListDataManager {
         } catch (SQLiteException e) {
             DTVTLogger.debug("DownLoadListDataManager::selectDownLoadList, e.cause=" + e.getCause());
         } finally {
-            DataBaseManager.getInstance().closeDownloadDatabase();
+            DataBaseManager.getDownloadInstance().closeDownloadDatabase();
         }
         return list;
     }
@@ -245,7 +269,7 @@ public class DownLoadListDataManager {
         } catch (SQLiteException e) {
             DTVTLogger.debug("DownLoadListDataManager::selectDownLoadListById, e.cause=" + e.getCause());
         } finally {
-            DataBaseManager.getInstance().closeDownloadDatabase();
+            DataBaseManager.getDownloadInstance().closeDownloadDatabase();
         }
         return list;
     }

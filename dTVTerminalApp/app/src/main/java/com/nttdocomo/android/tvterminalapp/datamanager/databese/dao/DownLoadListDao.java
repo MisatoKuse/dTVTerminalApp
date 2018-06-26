@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.DownLoadListDataManager;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -192,6 +193,20 @@ public class DownLoadListDao {
                     DataBaseConstants.DOWNLOAD_LIST_COLUM_SAVE_URL, "=? ");
             Strings = new String[]{itemId, path};
         }
+        return mSQLiteDatabase.delete(DataBaseConstants.DOWNLOAD_LIST_TABLE_NAME, deleteSelection, Strings);
+    }
+
+    /**
+     * ダウンロード未完了データを削除.
+     *
+     * @return 削除リターン
+     */
+    public int deleteNotCompleted() {
+        String[] Strings = new String[]{DownLoadListDataManager.DOWNLOAD_OK};
+        String deleteSelection = StringUtils.getConnectStrings(
+                DataBaseConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS, "!=? OR ",
+                DataBaseConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS, " is null");
+
         return mSQLiteDatabase.delete(DataBaseConstants.DOWNLOAD_LIST_TABLE_NAME, deleteSelection, Strings);
     }
 }
