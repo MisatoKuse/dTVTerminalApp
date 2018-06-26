@@ -104,7 +104,7 @@ public class MyChannelEditAdapter extends BaseAdapter implements View.OnClickLis
         if (!TextUtils.isEmpty(channel.getServiceId())) { //登録
             noTv.setTextColor(ContextCompat.getColor(mContext, R.color.item_num_black));
             noTv.setBackgroundResource(R.mipmap.channel_num_active);
-            editBt.setBackgroundResource(R.mipmap.icon_circle_normal_minus);
+            editBt.setBackgroundResource(R.drawable.selector_my_ch_unregister_btn);
         } else { //解除
             noTv.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
             noTv.setBackgroundResource(R.mipmap.channel_num_normal);

@@ -4,7 +4,7 @@
   -->
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-	<item android:drawable="@mipmap/icon_circle_active_plus"
+	<item android:drawable="@mipmap/icon_tap_circle_normal_plus"
 	      android:state_pressed="true"/>
 	<item android:drawable="@mipmap/icon_circle_normal_plus"/>
 </selector>
