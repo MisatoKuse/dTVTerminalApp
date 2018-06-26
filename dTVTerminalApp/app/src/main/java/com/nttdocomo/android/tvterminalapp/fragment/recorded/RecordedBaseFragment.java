@@ -356,7 +356,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
             int idx0 = mQueueIndex.get(0) - mRecordedListView.getFirstVisiblePosition();
             View view = mRecordedListView.getChildAt(idx0);
             if (view != null) {
-                view.findViewById(R.id.item_common_result_clip_tv).setBackgroundResource(R.mipmap.icon_circle_normal_download_check);
+                view.findViewById(R.id.item_common_result_clip_tv).setBackgroundResource(R.drawable.icon_circle_normal_download_check_selector);
                 setDownloadStatusClear(view.findViewById(R.id.item_common_result_clip_tv));
 				restoreChannelAndTime();
             }
@@ -428,7 +428,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         if (view != null) {
             View tvView = view.findViewById(R.id.item_common_result_clip_tv);
             if (null != tvView) {
-                tvView.setBackgroundResource(R.mipmap.icon_circle_normal_download);
+                tvView.setBackgroundResource(R.drawable.icon_circle_normal_download_selector);
                 setDownloadStatusClear(tvView);
             }
         }
@@ -519,7 +519,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         switch (mContentsData.get(index).getDownloadFlg()) {
             case ContentsAdapter.DOWNLOAD_STATUS_ALLOW :
                 if (textView != null) {
-                    view.findViewById(R.id.item_common_result_clip_tv).setBackgroundResource(R.mipmap.icon_circle_active_cancel);
+                    view.findViewById(R.id.item_common_result_clip_tv).setBackgroundResource(R.drawable.icon_circle_active_cancel_selector);
                 }
                 mContentsData.get(index).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_LOADING);
                 break;
@@ -917,7 +917,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                         noticeActDel(path.toString());
                     }
                     setDownloadStatusClear(view);
-                    view.setBackgroundResource(R.mipmap.icon_circle_normal_download);
+                    view.setBackgroundResource(R.drawable.icon_circle_normal_download_selector);
                     mContentsData.get((Integer) view.getTag()).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_ALLOW);
                     mContentsData.get((Integer) view.getTag()).setDownloadStatus("");
                     if (((RecordedListActivity) mActivity).getCurrentPosition() == 1) {
