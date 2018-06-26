@@ -626,11 +626,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             case HOME_CONTENTS_SORT_RECOMMEND_PROGRAM:
             case HOME_CONTENTS_SORT_TODAY:
             case HOME_CONTENTS_SORT_VIDEO:
-            case HOME_CONTENTS_SORT_WATCHING_VIDEO:
             case HOME_CONTENTS_SORT_TV_CLIP:
-            case HOME_CONTENTS_SORT_VOD_CLIP:
-            case HOME_CONTENTS_SORT_PREMIUM_VIDEO:
-            case HOME_CONTENTS_SORT_RENTAL_VIDEO:
             case RANKING_CONTENTES_TODAY_SORT:
             case RANKING_CONTENTES_WEEK_SORT:
             case RANKING_CONTENTES_VIDEO_SORT:
