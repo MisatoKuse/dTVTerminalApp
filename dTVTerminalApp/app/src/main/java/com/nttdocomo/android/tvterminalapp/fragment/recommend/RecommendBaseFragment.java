@@ -156,7 +156,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      *
      * @param showProgressBar プロセスバーを表示するかどうか
      */
-    private void showProgressBar(final boolean showProgressBar) {
+    public void showProgressBar(final boolean showProgressBar) {
         if (mRecommendFragmentView == null) {
             return;
         }
