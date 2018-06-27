@@ -751,6 +751,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private void channelLoadCompleted() {
         DtvContentsChannelFragment channelFragment = getChannelFragment();
         channelFragment.loadComplete();
+        showChannelProgressBar(false);
     }
     //region ChangedScrollLoadListener
     @Override
@@ -1079,6 +1080,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 sendScreenViewForPosition(position);
                 if (position == 1) {
                     getChannelFragment().initLoad();
+                    showChannelProgressBar(true);
                 }
                 loadHandler.post(loadRunnable);
             }
@@ -3041,6 +3043,25 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         } else {
             setRemoteProgressVisible(View.INVISIBLE);
             findViewById(R.id.contents_detail_scroll_layout).setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * チャンネルエリアのプロセスバーを表示する
+     * @param showProgressBar プロセスバーを表示するかどうか
+     */
+    private void showChannelProgressBar(final boolean showProgressBar) {
+        if (mChannelFragment == null) {
+            mChannelFragment = getChannelFragment();
+        }
+        if (showProgressBar) {
+            // オフライン時は表示しない
+            if (!NetWorkUtils.isOnline(this)) {
+                return;
+            }
+            mChannelFragment.showProgress(showProgressBar);
+        } else {
+            mChannelFragment.showProgress(showProgressBar);
         }
     }
 
