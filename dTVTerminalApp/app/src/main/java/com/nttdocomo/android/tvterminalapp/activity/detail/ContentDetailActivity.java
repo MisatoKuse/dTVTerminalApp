@@ -2724,6 +2724,16 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     }
 
                     @Override
+                    public void multiChannelErrorCallback() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                showGetDataFailedToast();
+                            }
+                        });
+                    }
+
+                    @Override
                     public void onConnectErrorCallback(final int errorCode) {
                         final String errorMsg = getString(R.string.common_text_remote_fail_msg);
                         final String format = getString(R.string.common_text_remote_fail_error_code_format);

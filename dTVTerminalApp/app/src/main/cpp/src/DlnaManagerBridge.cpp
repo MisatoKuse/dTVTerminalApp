@@ -259,6 +259,30 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
     };
     //endregion dlnaDmsBrowse callback
 
+    //region dlnaDmsBrowse callback
+    dlnaDmsBrowse->ContentBrowseErrorCallback = [](const char* containerId, eDlnaErrorType error) {
+        JNIEnv *_env = NULL;
+        int status = g_ctx.javaVM->GetEnv((void **) &_env, JNI_VERSION_1_6);
+        bool isAttached = false;
+        if (status < 0) {
+            status = g_ctx.javaVM->AttachCurrentThread(&_env, NULL);
+            if (status < 0 || NULL == _env) {
+                return;
+            }
+            isAttached = true;
+        }
+        LOG_WITH("ContentBrowseErrorCallback containerId = %s", containerId);
+        LOG_WITH("before GetMethodID");
+        jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "ContentBrowseErrorCallback", "()V");
+        _env->CallVoidMethod(g_ctx.jniHelperObj, methodID);
+        LOG_WITH("after CallVoidMethod");
+
+        if (isAttached) {
+            g_ctx.javaVM->DetachCurrentThread();
+        }
+    };
+    //endregion dlnaDmsBrowse callback
+
     //region dlnaRemoteConnect callback
     dlnaRemoteConnect->LocalRegistrationCallback = [](bool result, eLocalRegistrationResultType resultType) {
         JNIEnv *_env = NULL;

@@ -208,7 +208,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     @Override
-    public void callback(final DlnaObject[] objs) {
+    public void onBrowseCallback(final DlnaObject[] objs) {
         setProgressBarGone();
         if (objs.length == 0 && mPageIndex == 0) {
             runOnUiThread(new Runnable() {
@@ -234,6 +234,18 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             dstList.add(item);
         }
         setVideoBrows(dstList);
+    }
+
+    @Override
+    public void onBrowseErrorCallback() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setProgressBarGone();
+                showGetDataFailedToast();
+                mNoDataMessage.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     /**

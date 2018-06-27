@@ -36,6 +36,10 @@ public class DlnaContentTerChennelDataProvider implements DlnaManager.BrowseList
          */
         void onContentBrowseCallback(final DlnaObject[] objs);
         /**
+         * コンテンツブラウズエラーコールバック.
+         */
+        void onContentBrowseErrorCallback();
+        /**
          * 接続できない場合のエラーコールバック.
          * @param errorCode エラーコード
          */
@@ -82,6 +86,13 @@ public class DlnaContentTerChennelDataProvider implements DlnaManager.BrowseList
             }
         } else {
             DTVTLogger.error("no ContentBrowseCallback");
+        }
+    }
+
+    @Override
+    public void onContentBrowseErrorCallback() {
+        if (mCallback != null) {
+            mCallback.onContentBrowseErrorCallback();
         }
     }
 
