@@ -234,6 +234,11 @@ public class BaseActivity extends FragmentActivity implements
     protected final static String SHOW_SETTING_FILE_DIALOG_DATA
             = "SHOW_SETTING_FILE_DIALOG_DATA";
     /**
+     * STB選択画面でログアウトが発生してランチャーを再起動する際のパラメータ
+     */
+    protected final static String STB_SELECT_ACTIVITY_RESTART
+            = "STB_SELECT_ACTIVITY_RESTART";
+    /**
      * dアカウント設定アプリ登録処理.
      */
     private DaccountControl mDAccountControl = null;
@@ -1896,6 +1901,16 @@ public class BaseActivity extends FragmentActivity implements
      * 各アクティビティで使われるようになったので、publicに変更
      */
     public void showLogoutDialog() {
+        //特別なコールバックは使用しないのでヌル
+        showLogoutDialog(null);
+    }
+
+    /**
+     * ログアウトダイアログ.
+     *
+     * @param dissmissCallBack キャンセル後の処理
+     */
+    public void showLogoutDialog(CustomDialog.DismissCallback dissmissCallBack) {
 
         CustomDialog logoutDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.CONFIRM);
         logoutDialog.setContent(this.getResources().getString(R.string.logout_message));
@@ -1904,7 +1919,7 @@ public class BaseActivity extends FragmentActivity implements
             @SuppressWarnings("OverlyLongMethod")
             @Override
             public void onOKCallback(final boolean isOK) {
-
+                //TODO:未認証状態続行のため、ログアウトでクリアしないならコメント化
                 DaccountControl.cacheClear(BaseActivity.this);
                 reStartApplication();
             }
@@ -1917,25 +1932,38 @@ public class BaseActivity extends FragmentActivity implements
             }
         });
 
-        logoutDialog.setDialogDismissCallback(new CustomDialog.DismissCallback() {
-            @Override
-            public void allDismissCallback() {
-                if (mShowDialog != null) {
-                    //次のダイアログの判定の為に、今のダイアログの文言をクリアする
-                    mShowDialog.clearContentText();
+        //コールバック指定の有無で処理を分ける
+        if(dissmissCallBack == null) {
+            //コールバックの指定が無かったので、通常の処理を行う
+            logoutDialog.setDialogDismissCallback(new CustomDialog.DismissCallback() {
+                @Override
+                public void allDismissCallback() {
+                    if (mShowDialog != null) {
+                        //次のダイアログの判定の為に、今のダイアログの文言をクリアする
+                        mShowDialog.clearContentText();
+                    }
+
+                    pollDialog();
+
+                    //STB選択画面かつランチャー起動だった場合の判定
+                    if (!(mActivity instanceof StbSelectActivity &&
+                            ((StbSelectActivity)mActivity).getmStartMode()
+                            == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal())) {
+                        //条件を満たさない通常時は、dアカウントの処理を行う
+                        mDAccountControl = new DaccountControl();
+                        mDAccountControl.registService(getApplicationContext(), BaseActivity.this);
+                    }
                 }
 
-                pollDialog();
+                @Override
+                public void otherDismissCallback() {
 
-                mDAccountControl = new DaccountControl();
-                mDAccountControl.registService(getApplicationContext(), BaseActivity.this);
-            }
-
-            @Override
-            public void otherDismissCallback() {
-
-            }
-        });
+                }
+            });
+        } else {
+            //指定があったので、コールバックを設定する
+            logoutDialog.setDialogDismissCallback(dissmissCallBack);
+        }
 
         offerDialog(logoutDialog);
     }
@@ -2050,7 +2078,25 @@ public class BaseActivity extends FragmentActivity implements
 
         //再起動処理を行う
         Intent intent = new Intent();
-        intent.setClass(this, HomeActivity.class);
+
+        //現在の画面に応じて、戻り先を変える
+        if (this instanceof StbSelectActivity && ((StbSelectActivity)this).getmStartMode()
+                == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
+            //ホーム画面より前に表示された時のSTB選択画面なので、STB選択画面を再実行する
+            intent.setClass(this, StbSelectActivity.class);
+            //ランチャーから起動したことにする設定
+            intent.putExtra(StbSelectActivity.FROM_WHERE,
+                    StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal());
+            //専用パラメータを付与して、dアカウント関連の処理をスキップさせる
+            intent.putExtra(STB_SELECT_ACTIVITY_RESTART,true);
+            //通常startActivity側で行う解放処理を、上記のパラメータでスキップするので自前で行う
+            if (mDAccountControl != null && mDAccountControl.getmDaccountGetOtt() != null) {
+                mDAccountControl.getmDaccountGetOtt().daccountServiceEnd();
+            }
+        } else {
+            //それ以外の場合はホーム画面に戻る
+            intent.setClass(this, HomeActivity.class);
+        }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
 
@@ -2068,12 +2114,17 @@ public class BaseActivity extends FragmentActivity implements
             //普通にアクティビティを起動する
             super.startActivity(intent);
 
-            //dアカウントアプリのバインドを解除する
-            final DaccountGetOtt getOtt = new DaccountGetOtt(getApplicationContext());
-            if (getOtt != null) {
-                DTVTLogger.debug("startActivity before unbind");
-                //他の画面に遷移する前に、dアカウントアプリとの連携を終わらせる
-                getOtt.daccountServiceEnd();
+            //STB再起動パラメータの取得
+            boolean stbRestart = intent.getBooleanExtra(STB_SELECT_ACTIVITY_RESTART,false);
+            //STB再起動パラメータがfalseの場合、dアカウント処理を行う
+            if (!stbRestart) {
+                //dアカウントアプリのバインドを解除する
+                final DaccountGetOtt getOtt = new DaccountGetOtt(getApplicationContext());
+                if (getOtt != null) {
+                    DTVTLogger.debug("startActivity before unbind");
+                    //他の画面に遷移する前に、dアカウントアプリとの連携を終わらせる
+                    getOtt.daccountServiceEnd();
+                }
             }
 
             //飛び先画面として指定されていた名前を取得する
@@ -2834,6 +2885,24 @@ public class BaseActivity extends FragmentActivity implements
     protected void startNextProcess() {
         DTVTLogger.start();
         DTVTLogger.end();
+    }
+
+    /**
+     * ダイアログ情報のゲッター.
+     *
+     * @return ダイアログ情報
+     */
+    public CustomDialog getmShowDialog() {
+        return mShowDialog;
+    }
+
+    /**
+     * Dアカウントコントロール処理のゲッター.
+     *
+     * @return Dアカウント処理のクラスのインスタンス
+     */
+    public DaccountControl getDAccountControl() {
+        return mDAccountControl;
     }
 
     /**

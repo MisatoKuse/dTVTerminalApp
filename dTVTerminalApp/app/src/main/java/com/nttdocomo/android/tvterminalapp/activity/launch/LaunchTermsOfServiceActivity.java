@@ -34,6 +34,8 @@ public class LaunchTermsOfServiceActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.launch_application_terms_of_service);
         setContent();
+        // dアカウント処理は不要
+        setUnnecessaryDaccountRegistService();
     }
 
     /**

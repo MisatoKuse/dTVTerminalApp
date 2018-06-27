@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.session.MediaSession;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,6 +38,7 @@ import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessa
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.IDimDefines;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -255,7 +257,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             enableHeaderBackIcon(true);
             initSettingView();
         }
-        // dアカウントチェック処理はonResumeで自身で呼び出しているため不要
+        // dアカウントチェック処理は後ほど自力で呼び出しているため不要を宣言
         setUnnecessaryDaccountRegistService();
         DTVTLogger.end();
     }
@@ -407,8 +409,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         super.onResume();
         DTVTLogger.start();
         mSelectDevice = SELECT_DEVICE_ITEM_DEFAULT;
-        //別途BaseActivityの物は禁止してあるので、こちらで呼び出す
-        setDaccountControl();
 
         initView();
         TextView statusTextView = findViewById(R.id.stb_select_status_text);
@@ -716,6 +716,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         DTVTLogger.start();
+
+        //STB選択画面起動時にdアカウント認証画面を表示しないために、ここでdアカウントの処理を開始する
+        setDaccountControl();
+
         //選択されたSTB番号を保持
         mSelectDevice = i;
         if (mDlnaDmsItemList != null) {
@@ -738,6 +742,12 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     @Override
     protected void onDaccountOttGetComplete(final boolean result) {
         DTVTLogger.start();
+
+        if (getDAccountControl().getResult() == IDimDefines.RESULT_USER_CANCEL) {
+            //dアカウント再認証がキャンセルされたのでここでは何もしない
+            return;
+        }
+
         //OTT取得終わったのでtrueにする
         mOttGetComplete = true;
         if (mIsItemClicked) {
@@ -1327,5 +1337,13 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         if (mDlnaDmsInfo.size() <= 0) {
             startCallbackTimer();
         }
+    }
+
+    /**
+     * 起動モードのゲッター
+     * @return 起動モードの値
+     */
+    public int getmStartMode() {
+        return mStartMode;
     }
 }

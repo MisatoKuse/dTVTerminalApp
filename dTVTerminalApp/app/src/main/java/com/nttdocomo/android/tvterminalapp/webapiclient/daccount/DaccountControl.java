@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
+import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.ThumbnailCacheManager;
@@ -151,6 +152,15 @@ public class DaccountControl implements
          * @param result trueならば成功
          */
         void daccountControlCallBack(boolean result);
+    }
+
+    /**
+     * DaccountGetOTTクラスのゲッター.
+     *
+     * @return DaccountGetOTTクラス
+     */
+    public DaccountGetOtt getmDaccountGetOtt() {
+        return mDaccountGetOtt;
     }
 
     /**

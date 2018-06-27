@@ -28,6 +28,8 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import java.util.ArrayList;
 
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants.ErrorType;
+
 /**
  * マイ番組表設定.
  */
@@ -91,6 +93,10 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      * 削除ポジション.
      */
     private int mDeletePosition = 0;
+    /**
+     * WebAPIのコールバックよりも前に2度目のWebAPIが呼び出されるのを防止する.
+     */
+    boolean getOk = true;
     // endregion
 
     // region Activity LifeCycle
@@ -106,6 +112,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
         initView();
+        getOk = true;
         loadData();
     }
 
@@ -168,8 +175,11 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      * データ初期化.
      */
     private void loadData() {
-        mMyChannelDataProvider = new MyChannelDataProvider(this);
-        mMyChannelDataProvider.getMyChannelList(R.layout.my_channel_edit_main_layout);
+        if (getOk) {
+            mMyChannelDataProvider = new MyChannelDataProvider(this);
+            mMyChannelDataProvider.getMyChannelList(R.layout.my_channel_edit_main_layout);
+            getOk = false;
+        }
     }
 
     /**
@@ -180,6 +190,9 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     @Override
     public void onMyChannelListCallback(final ArrayList<MyChannelMetaData> myChannelMetaData) {
         DTVTLogger.start();
+        //APIの実行が終わったので、再実行を許可
+        getOk = true;
+
         if (myChannelMetaData != null) {
             mEditList = new ArrayList<>();
             if (mEditList.size() == 0) {
@@ -219,7 +232,38 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
             mEditListView.setAdapter(myEditAdapter);
             myEditAdapter.notifyDataSetChanged();
         } else {
-            showErrorDialog();
+            //エラーの種別を取得
+            if (mMyChannelDataProvider.getMyChannelListError().getErrorType()
+                    == DtvtConstants.ErrorType.TOKEN_ERROR) {
+                //トークンエラーなので、ログアウトダイアログを表示
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showLogoutDialog(new CustomDialog.DismissCallback() {
+
+                            @Override
+                            public void allDismissCallback() {
+                                if (getmShowDialog() != null) {
+                                    //次のダイアログの判定の為に、今のダイアログの文言をクリアする
+                                    getmShowDialog().clearContentText();
+                                }
+
+                                //キャンセル後はロードを行う
+                                loadData();
+                            }
+
+                            @Override
+                            public void otherDismissCallback() {
+
+                            }
+                        });
+                    }
+                });
+
+            } else {
+                //その他のエラーなので、その他のエラーを表示
+                showErrorDialog();
+            }
         }
         DTVTLogger.end();
     }
@@ -366,7 +410,16 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
             mEditListView.invalidateViews();
         }
         if (mEditList == null || mEditList.size() == 0) {
-            loadData();
+            if (mMyChannelDataProvider != null
+                    && mMyChannelDataProvider.getMyChannelListError() != null &&
+                    mMyChannelDataProvider.getMyChannelListError().getErrorType()
+                    == DtvtConstants.ErrorType.TOKEN_ERROR) {
+                //トークンエラーならば、ログアウトダイアログを表示
+                showLogoutDialog();
+            } else {
+                //トークンエラー以外ならば再読み込み
+                loadData();
+            }
         }
     }
 
