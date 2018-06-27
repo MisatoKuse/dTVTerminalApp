@@ -32,6 +32,22 @@ public class StbConnectRelayClient {
     private TcpClient mTcpClient;
 
     /**
+     * CipherUtil.decodeData の例外状態取得.
+     * ※デコード実行時に発生する error:1e00007b:Cipher functions:OPENSSL_internal:WRONG_FINAL_BLOCK_LENGTH
+     */
+    public static boolean isCipherDecodeError() {
+        return mCipherDecodeError;
+    }
+
+    /**CipherUtil.decodeData の例外状態設定.*/
+    private static void setCipherDecodeError(final boolean cipherDecodeError) {
+        mCipherDecodeError = cipherDecodeError;
+    }
+
+    /**CipherUtil.decodeData の例外.*/
+    private static boolean mCipherDecodeError = false;
+
+    /**
      * TcpClient.
      */
     private static final StbConnectRelayClient mInstance = new StbConnectRelayClient();
@@ -154,11 +170,15 @@ public class StbConnectRelayClient {
      */
     public String receive() {
         String receivedData = null;
+        setCipherDecodeError(false);
         if (mTcpClient == null) {
             DTVTLogger.warning("mTcpClient is null!");
             return null;
         }
         receivedData = mTcpClient.receive();
+        if (null == receivedData) {
+            setCipherDecodeError(mTcpClient.isCipherDecodeError());
+        }
         DTVTLogger.debug("receivedData = " + receivedData);
         return receivedData;
     }
