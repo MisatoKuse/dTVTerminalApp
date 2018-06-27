@@ -375,6 +375,19 @@ public class ChannelListActivity extends BaseActivity implements
     }
 
     @Override
+    public void onContentBrowseErrorCallback() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                int pos = mViewPager.getCurrentItem();
+                ChannelListFragment fragment = mFactory.createFragment(pos, ChannelListActivity.this, mCurrentType, null);
+                fragment.showProgressBar(false);
+                showGetDataFailedToast();
+            }
+        });
+    }
+
+    @Override
     public void onConnectErrorCallback(final int errorCode) {
         final String errorMsg = getString(R.string.common_text_remote_fail_msg);
         final String format = getString(R.string.common_text_remote_fail_error_code_format);

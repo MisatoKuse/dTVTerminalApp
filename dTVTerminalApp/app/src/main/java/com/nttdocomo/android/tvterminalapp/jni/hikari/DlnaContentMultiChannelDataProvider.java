@@ -26,6 +26,10 @@ public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseLi
          */
         void multiChannelFindCallback(final DlnaObject dlnaObject);
         /**
+         * ブラウズエラーコールバック.
+         */
+        void multiChannelErrorCallback();
+        /**
          * 接続できない場合のエラーコールバック.
          * @param errorCode エラーコード
          */
@@ -75,6 +79,13 @@ public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseLi
             mOnMultiChCallbackListener.multiChannelFindCallback(null);
         } else {
             DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(mContext, DlnaUtils.DLNA_DMS_MULTI_CHANNEL), mPageIndex++);
+        }
+    }
+
+    @Override
+    public void onContentBrowseErrorCallback() {
+        if (mOnMultiChCallbackListener != null) {
+            mOnMultiChCallbackListener.multiChannelErrorCallback();
         }
     }
 

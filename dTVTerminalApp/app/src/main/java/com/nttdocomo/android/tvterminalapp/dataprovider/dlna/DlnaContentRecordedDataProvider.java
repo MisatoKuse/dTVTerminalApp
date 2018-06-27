@@ -25,7 +25,11 @@ public class DlnaContentRecordedDataProvider implements DlnaManager.BrowseListen
          * コンテンツブラウズコールバック.
          * @param objs コンテンツリスト
          */
-        void callback(DlnaObject[] objs);
+        void onBrowseCallback(DlnaObject[] objs);
+        /**
+         * コンテンツブラウズエラーコールバック.
+         */
+        void onBrowseErrorCallback();
         /**
          * 接続できない場合のエラーコールバック.
          * @param errorCode エラーコード
@@ -67,7 +71,14 @@ public class DlnaContentRecordedDataProvider implements DlnaManager.BrowseListen
     @Override
     public void onContentBrowseCallback(final DlnaObject[] objs) {
         if (mCallbackListener != null) {
-            mCallbackListener.callback(objs);
+            mCallbackListener.onBrowseCallback(objs);
+        }
+    }
+
+    @Override
+    public void onContentBrowseErrorCallback() {
+        if (mCallbackListener != null) {
+            mCallbackListener.onBrowseErrorCallback();
         }
     }
 

@@ -208,6 +208,10 @@ public class DlnaManager {
          * @param objs コンテンツリスト
          */
         void onContentBrowseCallback(final DlnaObject[] objs);
+        /**
+         * コンテンツブラウズエラーコールバック.
+         */
+        void onContentBrowseErrorCallback();
     }
 
     /**
@@ -573,6 +577,16 @@ public class DlnaManager {
         if (listener != null) {
             aribConvertBs(objs);
             listener.onContentBrowseCallback(objs);
+        }
+    }
+
+    /**
+     *  コンテンツブラウズエラーコールバック.
+     */
+    public void ContentBrowseErrorCallback() {
+        BrowseListener listener = DlnaManager.shared().mBrowseListener;
+        if (listener != null) {
+            listener.onContentBrowseErrorCallback();
         }
     }
 
