@@ -450,9 +450,10 @@ public class DtvContentsDetailFragment extends Fragment {
         labelStatus.removeAllViews();
         List<Integer> labelStatusList = new ArrayList<>();
         //NEW アイコン
-        if (DataBaseUtils.isNumber(mOtherContentsDetailData.getmStartDate())
-                && DateUtils.isInOneWeek(mOtherContentsDetailData.getmStartDate())) {
-            labelStatusList.add(R.mipmap.label_status_new);
+        if (DataBaseUtils.isNumber(mOtherContentsDetailData.getmStartDate())) {
+            if (DateUtils.isInOneWeek(Long.parseLong(mOtherContentsDetailData.getmStartDate()))) {
+                labelStatusList.add(R.mipmap.label_status_new);
+            }
         }
         //4Kアイコン
         if (LABEL_STATUS_4KFLG_1 == mOtherContentsDetailData.getM4kflg()) {

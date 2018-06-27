@@ -300,8 +300,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         final ContentsData contentsData = mContentList.get(i);
         String title = contentsData.getTitle();
         String rankNum = contentsData.getRank();
-        String startTime = contentsData.getPublishStartDate();
-        Boolean newFlag = newContentsCheck(startTime);
+        Boolean newFlag = newContentsCheck(contentsData);
         if (viewHolder.mTime != null) {
             viewHolder.mTime.setVisibility(View.GONE);
         }
@@ -369,13 +368,8 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         } else {
             viewHolder.mContent.setVisibility(View.GONE);
         }
-
-        if (!TextUtils.isEmpty(startTime)) {
-            if (newFlag) {
-                viewHolder.mNew.setVisibility(View.VISIBLE);
-            } else {
-                viewHolder.mNew.setVisibility(View.GONE);
-            }
+        if (newFlag) {
+            viewHolder.mNew.setVisibility(View.VISIBLE);
         } else {
             viewHolder.mNew.setVisibility(View.GONE);
         }
@@ -617,10 +611,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     /**
      * 開始時間と現在時刻の比較.
      * 配信開始から1週間以内のコンテンツを判定する
-     * @param startDate 配信開始 "yyyy/MM/dd HH:mm:ss"
+     * @param contentsData 配信開始 "yyyy/MM/dd HH:mm:ss"
      * @return 配信開始から1週間以内かどうか
      */
-    private boolean newContentsCheck(final String startDate) {
+    private boolean newContentsCheck(final ContentsData contentsData) {
         switch (mIndex) {
             case HOME_CONTENTS_SORT_CHANNEL:
             case HOME_CONTENTS_SORT_RECOMMEND_PROGRAM:
@@ -631,13 +625,17 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             case RANKING_CONTENTES_WEEK_SORT:
             case RANKING_CONTENTES_VIDEO_SORT:
                 return false;
+            case HOME_CONTENTS_SORT_RECOMMEND_VOD:
+                String startViewing = contentsData.getStartViewing();
+                return !TextUtils.isEmpty(startViewing) && DateUtils.isInOneWeek(startViewing);
             default:
-                // 現在時刻
-                long nowTimeEpoch = DateUtils.getNowTimeFormatEpoch();
-                long startTime = DateUtils.getSecondEpochTime(startDate);
-                // 現在時刻 - 開始日時
-                long differenceTime = nowTimeEpoch - startTime;
-                return differenceTime <= DateUtils.EPOCH_TIME_ONE_WEEK;
+                String startPublishDate = contentsData.getPublishStartDate();
+                if (!TextUtils.isEmpty(startPublishDate) && DataBaseUtils.isNumber(startPublishDate)) {
+                    long startDate = Long.parseLong(startPublishDate);
+                    return DateUtils.isInOneWeek(startDate);
+                } else {
+                    return false;
+                }
         }
     }
 
