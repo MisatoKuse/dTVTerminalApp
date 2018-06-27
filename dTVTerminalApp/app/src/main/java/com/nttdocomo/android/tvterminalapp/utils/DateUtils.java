@@ -279,11 +279,6 @@ public class DateUtils {
     public static final long EPOCH_TIME_ONE_HOUR = 3600;
 
     /**
-     * 1週間のエポック秒.
-     */
-    public static final long EPOCH_TIME_ONE_WEEK = EPOCH_TIME_ONE_DAY * 7;
-
-    /**
      * 配信期限(avail_end_date/vod_end_date)の判定基準.
      */
     private static final int AVAILABLE_BASE_DAY = 31;
@@ -944,10 +939,38 @@ public class DateUtils {
      * @return true 一週間以内、一週間超えた
      */
     public static boolean isInOneWeek(final String startPublishDate) {
-        if (TextUtils.isEmpty(startPublishDate) || !DataBaseUtils.isNumber(startPublishDate)) {
-            return false;
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date nowDate = cal.getTime();
+        Date startDate;
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DD_HH_MM_SS, Locale.JAPAN);
+        try {
+            startDate = sdf.parse(startPublishDate);
+            cal.setTime(startDate);
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+            startDate = cal.getTime();
+            cal.add(Calendar.DAY_OF_MONTH, +PUBLISH_BASE_DAY);
+            Date endDate = cal.getTime();
+            return nowDate.compareTo(startDate) != -1 && nowDate.compareTo(endDate) == -1;
+        } catch (ParseException e) {
+            DTVTLogger.debug(e);
         }
-        long startTime = Long.parseLong(startPublishDate);
+        return false;
+    }
+
+    /**
+     * 一週間以内判断.
+     *
+     * @param startTime 配信開始
+     * @return true 一週間以内、一週間超えた
+     */
+    public static boolean isInOneWeek(final long startTime) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
