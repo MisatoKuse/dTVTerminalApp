@@ -81,7 +81,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     public void onWatchListenVideoJsonParsed(final List<WatchListenVideoList> watchListenVideoList) {
         WatchListenVideoListDataManager videoListDataManager = new WatchListenVideoListDataManager(mContext);
         if (watchListenVideoList == null) {
-            if(mWebClient != null) {
+            if (mWebClient != null) {
                 mError = mWebClient.getError();
             }
             mApiDataProviderCallback.watchListenVideoListCallback(null);

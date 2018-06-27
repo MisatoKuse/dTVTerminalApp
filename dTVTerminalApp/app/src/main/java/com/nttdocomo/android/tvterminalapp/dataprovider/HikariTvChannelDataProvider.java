@@ -76,7 +76,7 @@ public class HikariTvChannelDataProvider extends ScaledDownProgramListDataProvid
     @Override
     public void onTvScheduleJsonParsed(final List<TvScheduleList> tvScheduleList) {
         if (tvScheduleList == null) { //networkエラー
-            if(mTvScheduleWebClient != null) {
+            if (mTvScheduleWebClient != null) {
                 mErrorState = mTvScheduleWebClient.getError();
             }
             DTVTLogger.error("1");

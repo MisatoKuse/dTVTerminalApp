@@ -311,7 +311,7 @@ public class RecordingReservationListDataProvider implements
         } else {
             DTVTLogger.error("response is null");
             //データが取得できなかったので、エラーを取得する
-            if(mStbWebClient != null) {
+            if (mStbWebClient != null) {
                 mError = mStbWebClient.getError();
             }
             mApiDataProviderCallback.recordingReservationListCallback(null);
@@ -359,7 +359,7 @@ public class RecordingReservationListDataProvider implements
         } else {
             DTVTLogger.error("response is null");
             //データが取得できなかったので、エラーを取得する
-            if(mWebClient != null) {
+            if (mWebClient != null) {
                 mError = mWebClient.getError();
             }
             mApiDataProviderCallback.recordingReservationListCallback(null);

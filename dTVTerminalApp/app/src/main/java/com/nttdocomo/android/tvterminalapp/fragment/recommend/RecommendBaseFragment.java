@@ -31,7 +31,6 @@ import com.nttdocomo.android.tvterminalapp.view.RecommendListView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * おすすめ番組・ビデオ（タブフラグメントクラス）.

@@ -1218,8 +1218,8 @@ public class RemoteControlRelayClient {
                     // 鍵交換の失敗、または復号に失敗
                     if (stbConnection.isCipherDecodeError()
                             || response.getResultCode() == RelayServiceResponseMessage.RELAY_RESULT_STB_KEY_MISMATCH) {
-                        DTVTLogger.debug(String.format("key exchange error = %s"
-                                , response.getResultCode() == RelayServiceResponseMessage.RELAY_RESULT_STB_KEY_MISMATCH));
+                        DTVTLogger.debug(String.format("key exchange error = %s",
+                                response.getResultCode() == RelayServiceResponseMessage.RELAY_RESULT_STB_KEY_MISMATCH));
                         DTVTLogger.debug(String.format("decoding error = %s", stbConnection.isCipherDecodeError()));
                         // 鍵交換を再実行（復号失敗の原因でもある）
                         CipherUtil.syncRequestPublicKey();
