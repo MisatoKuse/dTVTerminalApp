@@ -117,7 +117,7 @@ public class DaccountResettingActivity extends BaseActivity implements View.OnCl
      * ペアリングの再実行を行う.
      */
     private void onReturnButton() {
-        finish();
+       setFinishActivity();
     }
 
     @Override
