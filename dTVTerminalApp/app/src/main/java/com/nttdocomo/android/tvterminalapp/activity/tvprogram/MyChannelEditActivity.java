@@ -380,7 +380,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
         }
 
         CustomDialog customDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
-        customDialog.setContent(errorState.getErrorMessage());
+        customDialog.setContent(errorState.getApiErrorMessage(this));
         customDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
