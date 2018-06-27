@@ -78,8 +78,8 @@ public class CipherUtil {
         return result;
     }
     /**
-     * 公開鍵生成. 公開鍵生成済みであれば、生成のし直しは行わず、生成済みの公開鍵を返す. 再生成が必要な場合には、clearPublicKey()
-     * を呼び出し鍵情報をクリアすること.
+     * 公開鍵生成. 公開鍵生成済みであれば、生成のし直しは行わず、生成済みの公開鍵を返す.
+     * 再生成が必要な場合には、clearPublicKey() を呼び出し鍵情報をクリアすること.
      *
      * @return 鍵生成結果.
      * @throws NoSuchAlgorithmException 例外
@@ -129,11 +129,10 @@ public class CipherUtil {
     }
 
     /**
-     * Stringを暗号化してByte配列に変換する.
+     * 電文を暗号化してByte配列に変換する.
      *
-     * @param srcDataString
-     *            変換元文字列
-     * @return 変換結果Byte配列 or null
+     * @param srcDataString　平文文字列
+     * @return 暗号化データ or null
      */
     public static @Nullable byte[] encodeData(final String srcDataString) {
         DTVTLogger.start();
@@ -170,9 +169,9 @@ public class CipherUtil {
     }
 
     /**
-     * ディコードデータ.
-     * @param srcData 変換前srcData
-     * @return 変換後データ
+     * 暗号化データを復号して平文を返す.
+     * @param srcData 暗号化データ srcData
+     * @return 復号された平文 or null
      */
     public static String decodeData(final byte[] srcData) {
         DTVTLogger.start();
@@ -187,10 +186,12 @@ public class CipherUtil {
         String decodeString = null;
         synchronized (sLockObject) {
             if (sShareKey == null) {
+                setCipherDecodeError(true);
                 DTVTLogger.warning("ShareKey is null!");
                 return null;
             }
             try {
+                setCipherDecodeError(false);
                 Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
                 cipher.init(Cipher.DECRYPT_MODE, sShareKey, new IvParameterSpec(ivCode));
                 decodeByteStream = cipher.doFinal(encodeByteStream);
@@ -206,6 +207,7 @@ public class CipherUtil {
             }
         }
     }
+
     /**
      * writeInt.
      * @param value value
@@ -228,19 +230,19 @@ public class CipherUtil {
     public static void syncRequestPublicKey() {
         DTVTLogger.start();
         // 暗号化処理の鍵交換を同期処理で実行する.
-        final CountDownLatch mLatch = new CountDownLatch(LATCH_COUNT_MAX);
+        final CountDownLatch latch = new CountDownLatch(LATCH_COUNT_MAX);
 
         CipherApi api = new CipherApi(new CipherApi.CipherApiCallback() {
             @Override
             public void apiCallback(final boolean result, final String data) {
                 // 鍵交換処理に同期ラッチカウンターを使用するためコールバック処理は不要
             }
-        }, mLatch);
+        }, latch);
         DTVTLogger.debug("sending public key");
         api.requestSendPublicKey();
         try {
             DTVTLogger.debug("sync to completion of public key transmission");
-            mLatch.await(); // 同期ラッチの待ち合わせ
+            latch.await(); // 同期ラッチの待ち合わせ
             DTVTLogger.debug("completion of public key transmission");
         } catch (InterruptedException e) {
             DTVTLogger.debug(e);
@@ -251,7 +253,8 @@ public class CipherUtil {
 
     /**
      * 鍵交換処理を行う.
-     * 他のドコテレアプリによる鍵交換が行われていた場合に交換済みの鍵が無効になる場合があるためリモコン使用時に必要
+     * 他のドコテレアプリによる鍵交換が行われていた場合に交換済みの鍵が失効する場合があるため
+     * リモコン使用時は鍵交換を行う
      */
     public static void exchangeKey() {
         DTVTLogger.start();
