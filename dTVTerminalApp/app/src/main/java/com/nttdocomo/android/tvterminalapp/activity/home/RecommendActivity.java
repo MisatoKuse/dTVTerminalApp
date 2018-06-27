@@ -304,6 +304,8 @@ public class RecommendActivity extends BaseActivity implements
             case TAB_INDEX_DANIME:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_recommend_danime));
                 break;
+            default:
+                break;
         }
     }
 

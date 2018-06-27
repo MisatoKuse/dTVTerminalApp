@@ -473,12 +473,33 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         if (mPlayerViewLayout != null) {
             mPlayerViewLayout.onPause();
         }
+        DtvContentsChannelFragment channelFragment = null;
         switch (mDisplayState) {
             case PLAYER_ONLY:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_player));
                 break;
             case PLAYER_AND_CONTENTS_DETAIL:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_player));
+                //通信を止める
+                if (mContentsDetailDataProvider != null) {
+                    StopContentDetailDataConnect stopContentDetailDataConnect = new StopContentDetailDataConnect();
+                    stopContentDetailDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mContentsDetailDataProvider);
+                }
+                if (mScaledDownProgramListDataProvider != null) {
+                    StopScaledProListDataConnect stopScaledProListDataConnect = new StopScaledProListDataConnect();
+                    stopScaledProListDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mScaledDownProgramListDataProvider);
+                }
+                if (mSendOperateLog != null) {
+                    StopSendOperateLog stopSendOperateLog = new StopSendOperateLog();
+                    stopSendOperateLog.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mSendOperateLog);
+                }
+                stopThumbnailConnect();
+                //FragmentにContentsAdapterの通信を止めるように通知する
+                channelFragment = getChannelFragment();
+                if (channelFragment != null) {
+                    channelFragment.stopContentsAdapterCommunication();
+                }
+                break;
             case CONTENTS_DETAIL_ONLY:
                 //通信を止める
                 if (mContentsDetailDataProvider != null) {
@@ -495,7 +516,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 }
                 stopThumbnailConnect();
                 //FragmentにContentsAdapterの通信を止めるように通知する
-                DtvContentsChannelFragment channelFragment = getChannelFragment();
+                channelFragment = getChannelFragment();
                 if (channelFragment != null) {
                     channelFragment.stopContentsAdapterCommunication();
                 }
@@ -529,6 +550,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     public void onStartCommunication() {
         DTVTLogger.start();
         super.onStartCommunication();
+        DtvContentsChannelFragment channelFragment = null;
         switch (mDisplayState) {
             case PLAYER_ONLY:
                 if (mPlayerViewLayout != null) {
@@ -540,6 +562,22 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (mPlayerViewLayout != null) {
                     mPlayerViewLayout.enableThumbnailConnect();
                 }
+                if (mContentsDetailDataProvider != null) {
+                    mContentsDetailDataProvider.enableConnect();
+                }
+                if (mScaledDownProgramListDataProvider != null) {
+                    mScaledDownProgramListDataProvider.enableConnect();
+                }
+                if (mSendOperateLog != null) {
+                    mSendOperateLog.enableConnection();
+                }
+                enableThumbnailConnect();
+                //FragmentにContentsAdapterの通信を止めるように通知する
+                channelFragment = getChannelFragment();
+                if (channelFragment != null) {
+                    channelFragment.enableContentsAdapterCommunication();
+                }
+                break;
             case CONTENTS_DETAIL_ONLY:
                 if (mContentsDetailDataProvider != null) {
                     mContentsDetailDataProvider.enableConnect();
@@ -552,7 +590,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 }
                 enableThumbnailConnect();
                 //FragmentにContentsAdapterの通信を止めるように通知する
-                DtvContentsChannelFragment channelFragment = getChannelFragment();
+                channelFragment = getChannelFragment();
                 if (channelFragment != null) {
                     channelFragment.enableContentsAdapterCommunication();
                 }

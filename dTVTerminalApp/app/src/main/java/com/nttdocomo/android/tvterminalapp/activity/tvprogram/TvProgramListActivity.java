@@ -529,6 +529,8 @@ public class TvProgramListActivity extends BaseActivity implements
             case TAB_INDEX_DTV:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_program_list_dtv_channel));
                 break;
+            default:
+                break;
         }
     }
 

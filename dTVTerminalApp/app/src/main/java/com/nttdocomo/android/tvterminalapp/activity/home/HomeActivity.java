@@ -432,6 +432,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 break;
             case CONTRACT_OK_PAIRING_NG:
                 DTVTLogger.debug("showHomeBanner_CONTRACT_OK_PAIRING_NG");
+                mAgreementRl.setVisibility(View.GONE);
+                break;
             case CONTRACT_OK_PARING_OK:
                 DTVTLogger.debug("showHomeBanner_CONTRACT_OK_PARING_OK");
                 mAgreementRl.setVisibility(View.GONE);
@@ -538,6 +540,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
                         //今の位置を代入する
                         mOldScrollPosition = view.getScrollY();
+                        break;
+                    default:
                         break;
                 }
                 return false;
