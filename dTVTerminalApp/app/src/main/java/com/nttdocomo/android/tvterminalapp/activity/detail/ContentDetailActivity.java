@@ -1088,7 +1088,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 default:
                     break;
             }
-            setTitleAndThumbnail(mDetailData.getTitle(), mDetailData.getThumb());
+            if (mIsOtherService) {
+                setTitleAndThumbnail(mDetailData.getTitle(), mDetailData.getThumb());
+            }
         } else {  //plalaサーバーから
             mDetailData = mIntent.getParcelableExtra(PLALA_INFO_BUNDLE_KEY);
             if (getStbStatus()) {
