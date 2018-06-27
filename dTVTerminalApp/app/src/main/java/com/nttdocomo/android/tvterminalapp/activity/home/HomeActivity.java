@@ -287,7 +287,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     protected void onResume() {
-        //TODO: dアカウントチェック、serviceToken取得、契約情報取得一連化実装対応必要ですが、暫定的にdアカウントチェックのみ実装
         if (!isOttChecked) {
             isOttChecked = true;
             setDaccountControl();

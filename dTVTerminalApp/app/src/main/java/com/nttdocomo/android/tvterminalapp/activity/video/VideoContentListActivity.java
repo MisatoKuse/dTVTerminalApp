@@ -18,7 +18,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.nttdocomo.android.ocsplib.bouncycastle.asn1.DLTaggedObject;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
@@ -110,7 +109,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     private TextView mNoDataMessage;
 
     /**
-     * 読み込み中断フラグ
+     * 読み込み中断フラグ.
      */
     private boolean mCancelLoad = false;
 

@@ -660,7 +660,7 @@ public class WebApiBasePlala {
         mGetOtt = new DaccountGetOtt();
         mGetOtt.execDaccountGetOTT(context, false, new DaccountGetOtt.DaccountGetOttCallBack() {
             @Override
-            public void getOttCallBack(int result, final String id,
+            public void getOttCallBack(final int result, final String id,
                                        final String oneTimePassword) {
                 //TODO: 既存処理に悪影響があるので、一旦この処理は無効化・全て対処後に再有効化
 //                //ワンタイムパスワードが取得できたかどうかを見る

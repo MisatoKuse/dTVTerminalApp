@@ -1287,6 +1287,8 @@ public class DateUtils {
                 date = StringUtils.getConnectStrings(date, context.getString(R.string.home_contents_hyphen),
                         context.getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
                 break;
+            case TV:
+            case HIKARI_TV:
             case DIGITAL_TERRESTRIAL_BROADCASTING:
             case BROADCASTING_SATELLITE:
             case HIKARI_TV_NOW_ON_AIR:

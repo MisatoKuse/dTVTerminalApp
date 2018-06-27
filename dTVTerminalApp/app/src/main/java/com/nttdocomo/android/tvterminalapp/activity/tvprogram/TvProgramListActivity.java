@@ -853,7 +853,7 @@ public class TvProgramListActivity extends BaseActivity implements
         }
         DTVTLogger.debug("scrollDis = " + scrollDis);
         mTimeScrollView.smoothScrollTo(0, scrollDis);
-        if (programSwitch){
+        if (programSwitch) {
             //NOWボタンを押した際は、番組表本体のスクロール位置も設定しないと、失敗する場合がある
             mProgramScrollViewParent.smoothScrollTo(0, scrollDis);
         }
@@ -1001,7 +1001,7 @@ public class TvProgramListActivity extends BaseActivity implements
         }
 
         //端末に設定された日時と現在番組表で設定されている日時を比較する
-        if(!compareNowDate(mSelectDate)) {
+        if (!compareNowDate(mSelectDate)) {
             //違っていたので、これまでの条件とは無関係に、NOW表示は透明にする
             mTimeLine.setVisibility(View.INVISIBLE);
 
@@ -1028,21 +1028,21 @@ public class TvProgramListActivity extends BaseActivity implements
 
         //比較開始日時（指定された日の午前4時のJavaのエポック秒）
         calendar.setTimeInMillis(compareDate);
-        calendar.set(Calendar.HOUR_OF_DAY,HOUR_4);
-        calendar.set(Calendar.MINUTE,0);
-        calendar.set(Calendar.SECOND,0);
-        calendar.set(Calendar.MILLISECOND,0);
+        calendar.set(Calendar.HOUR_OF_DAY, HOUR_4);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
         long startTime = calendar.getTimeInMillis();
 
         //1日加算後に1ミリ秒減算する事で、比較終了日時である翌日の3時59分になる
-        calendar.add(Calendar.DAY_OF_MONTH,1);
-        calendar.add(Calendar.MILLISECOND,-1);
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        calendar.add(Calendar.MILLISECOND, -1);
 
         //比較終了日時（指定された日の次の日の3時59分のJavaのエポック秒）
         long endTime = calendar.getTimeInMillis();
 
         //比較して結果を返す
-        if(startTime <= nowTime && endTime >= nowTime) {
+        if (startTime <= nowTime && endTime >= nowTime) {
             //指定された時間が本日の午前4時から明日の3時59分の間なので、true
             return true;
         }

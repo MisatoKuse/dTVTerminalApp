@@ -814,7 +814,7 @@ public class RecommendActivity extends BaseActivity implements
     }
 
     /**
-     * 読み込みアイコンの表示切替
+     * 読み込みアイコンの表示切替.
      * @param showProgressBar
      */
     private void showProgressBar(final boolean showProgressBar) {

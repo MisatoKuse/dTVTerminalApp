@@ -34,7 +34,7 @@ public class ChannelWebClientSync implements ChannelWebClient.ChannelJsonParserC
 
 
     @Override
-    public void onChannelJsonParsed(List<ChannelList> channelLists) {
+    public void onChannelJsonParsed(final List<ChannelList> channelLists) {
         DTVTLogger.start();
 
         //コールバックが返ってきた

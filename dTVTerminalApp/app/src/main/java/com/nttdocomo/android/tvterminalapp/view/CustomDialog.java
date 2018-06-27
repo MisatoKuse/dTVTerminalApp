@@ -306,7 +306,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
         }
 
         //表示対象のアクティビティが既に終わっているかどうかの判定
-        if(mContext instanceof Activity && ((Activity) mContext).isFinishing()) {
+        if (mContext instanceof Activity && ((Activity) mContext).isFinishing()) {
             //ダイアログは表示できず、OKやキャンセルボタンのコールバックの飛び先も既に存在していない可能性があるので、帰る。
             return;
         }
