@@ -23,6 +23,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.TvClipDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VodClipDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopTvClipDataConnect;
@@ -311,53 +312,72 @@ public class ClipListActivity extends BaseActivity implements
         if (getCurrentPosition() != CLIP_LIST_PAGE_NO_OF_TV) {
             return;
         }
-        ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
-        if (null == clipContentInfo) {
-            //通信とJSON Parseに関してerror処理
-            DTVTLogger.debug("ClipListActivity::TvClipListCallback, get data failed.");
-            // ネットワークエラーの取得
-            String message = mTvClipDataProvider.getNetworkError().getErrorMessage();
-            mNoDataMessage.setVisibility(View.VISIBLE);
-            mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
 
-            //メッセージの有無で表示方法を分ける
-            if (TextUtils.isEmpty(message)) {
-                showGetDataFailedToast();
-            } else {
-                showGetDataFailedToast(message);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(
+                        CLIP_LIST_PAGE_NO_OF_TV, getClipListActivity());
+                if (null == clipContentInfo) {
+                    //通信とJSON Parseに関してerror処理
+                    DTVTLogger.debug("ClipListActivity::TvClipListCallback, get data failed.");
+                    // ネットワークエラーの取得
+                    ErrorState errorState = mTvClipDataProvider.getNetworkError();
+                    String message = "";
+                    if (errorState != null) {
+                        message = errorState.getErrorMessage();
+                    }
+
+                    mNoDataMessage.setVisibility(View.VISIBLE);
+                    mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
+
+                    //メッセージの有無で表示方法を分ける
+                    if (TextUtils.isEmpty(message)) {
+                        showGetDataFailedToast();
+                    } else {
+                        showGetDataFailedToast(message);
+                    }
+                    fragment.showProgressBar(false);
+
+                    if (fragment.getClipListDataSize() == 0) {
+                        mNoDataMessage.setVisibility(View.VISIBLE);
+                    }
+
+                    //トークンエラーの判定
+                    if (errorState != null && errorState.getErrorType()
+                            == DtvtConstants.ErrorType.TOKEN_ERROR) {
+                        //ここでトークンエラーならば、ログアウトのダイアログを出す
+                        showLogoutDialog();
+                    }
+                    return;
+                }
+
+	            if (0 == clipContentInfo.size()) {
+                    //doing
+                    if (fragment.getClipListDataSize() == 0) {
+                        mNoDataMessage.setVisibility(View.VISIBLE);
+                    }
+                    fragment.showProgressBar(false);
+                    resetCommunication();
+                    return;
+                }
+
+	            if (isSkipTv(clipContentInfo)) {
+                    resetCommunication();
+                    return;
+                }
+
+	            for (int i = 0; i < NUM_PER_PAGE && i < clipContentInfo.size(); i++) {
+                    fragment.addClipListData(clipContentInfo.get(i));
+                }
+
+	            DTVTLogger.debug("tvClipListCallback");
+
+                resetCommunication();
+	            fragment.noticeRefresh();
+	            fragment.showProgressBar(false);
             }
-            fragment.showProgressBar(false);
-
-            if (fragment.getClipListDataSize() == 0) {
-                mNoDataMessage.setVisibility(View.VISIBLE);
-            }
-            return;
-        }
-
-        if (0 == clipContentInfo.size()) {
-            //doing
-            if (fragment.getClipListDataSize() == 0) {
-                mNoDataMessage.setVisibility(View.VISIBLE);
-            }
-            fragment.showProgressBar(false);
-            resetCommunication();
-            return;
-        }
-
-        if (isSkipTv(clipContentInfo)) {
-            resetCommunication();
-            return;
-        }
-
-        for (int i = 0; i < NUM_PER_PAGE && i < clipContentInfo.size(); i++) {
-            fragment.addClipListData(clipContentInfo.get(i));
-        }
-
-        DTVTLogger.debug("tvClipListCallback");
-
-        resetCommunication();
-        fragment.noticeRefresh();
-        fragment.showProgressBar(false);
+        });
         DTVTLogger.end();
     }
 
@@ -375,51 +395,69 @@ public class ClipListActivity extends BaseActivity implements
         if (getCurrentPosition() != CLIP_LIST_PAGE_NO_OF_VOD) {
             return;
         }
-        ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
 
-        if (null == clipContentInfo) {
-            //通信とJSON Parseに関してerror処理
-            DTVTLogger.debug("ClipListActivity::VodClipListCallback, get data failed");
-            // ネットワークエラーの取得
-            String message = mVodClipDataProvider.getNetworkError().getErrorMessage();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(
+                        CLIP_LIST_PAGE_NO_OF_VOD, getClipListActivity());
 
-            //メッセージの有無で表示方法を分ける
-            if (TextUtils.isEmpty(message)) {
-                showGetDataFailedToast();
-            } else {
-                showGetDataFailedToast(message);
+                if (null == clipContentInfo) {
+                    //通信とJSON Parseに関してerror処理
+                    DTVTLogger.debug("ClipListActivity::VodClipListCallback, get data failed");
+                    // ネットワークエラーの取得
+                    ErrorState errorState = mTvClipDataProvider.getNetworkError();
+                    String message = "";
+                    if (errorState != null) {
+                        message = errorState.getErrorMessage();
+                    }
+
+                    //メッセージの有無で表示方法を分ける
+                    if (TextUtils.isEmpty(message)) {
+                        showGetDataFailedToast();
+                    } else {
+                        showGetDataFailedToast(message);
+                    }
+                    if (fragment.getClipListDataSize() == 0) {
+                        mNoDataMessage.setVisibility(View.VISIBLE);
+                    }
+                    fragment.showProgressBar(false);
+
+                    //トークンエラーの判定
+                    if (errorState.getErrorType() == DtvtConstants.ErrorType.TOKEN_ERROR) {
+                        //ここでトークンエラーならば、ログアウトのダイアログを出す
+                        showLogoutDialog();
+                    }
+                    return;
+                }
+
+                if (0 == clipContentInfo.size()) {
+                    //doing
+                    if (fragment.getClipListDataSize() == 0) {
+                        mNoDataMessage.setVisibility(View.VISIBLE);
+                    }
+                    fragment.showProgressBar(false);
+                    resetCommunication();
+                    return;
+                }
+
+                if (isSkipVod(clipContentInfo)) {
+                    resetCommunication();
+                    return;
+                }
+
+                for (int i = 0; i < NUM_PER_PAGE && i < clipContentInfo.size(); i++) {
+                    fragment.addClipListData(clipContentInfo.get(i));
+                }
+
+                DTVTLogger.debug("vodClipListCallback");
+
+                resetCommunication();
+                fragment.noticeRefresh();
+                fragment.showProgressBar(false);
             }
-            if (fragment.getClipListDataSize() == 0) {
-                mNoDataMessage.setVisibility(View.VISIBLE);
-            }
-            fragment.showProgressBar(false);
-            return;
-        }
+        });
 
-        if (0 == clipContentInfo.size()) {
-            //doing
-            if (fragment.getClipListDataSize() == 0) {
-                mNoDataMessage.setVisibility(View.VISIBLE);
-            }
-            fragment.showProgressBar(false);
-            resetCommunication();
-            return;
-        }
-
-        if (isSkipVod(clipContentInfo)) {
-            resetCommunication();
-            return;
-        }
-
-        for (int i = 0; i < NUM_PER_PAGE && i < clipContentInfo.size(); i++) {
-            fragment.addClipListData(clipContentInfo.get(i));
-        }
-
-        DTVTLogger.debug("vodClipListCallback");
-
-        resetCommunication();
-        fragment.noticeRefresh();
-        fragment.showProgressBar(false);
         DTVTLogger.end();
     }
 

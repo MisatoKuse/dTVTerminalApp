@@ -120,6 +120,15 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
         DTVTLogger.start();
         super.onTvClipKeyListJsonParsed(clipKeyListResponse);
         mClipKeyListResponse = clipKeyListResponse;
+
+        //レスポンスがヌルかどうかの判定
+        if (clipKeyListResponse == null) {
+            //既にエラーとなっているので、エラー処理を呼ぶ
+            mNetworkError = super.mClient.getError();
+            mApiDataProviderCallback.tvClipListCallback(null);
+            return;
+        }
+
         getTvClipListData(mPagerOffset);
         DTVTLogger.end();
     }

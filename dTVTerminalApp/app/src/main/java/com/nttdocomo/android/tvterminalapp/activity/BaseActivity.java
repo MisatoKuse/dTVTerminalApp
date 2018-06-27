@@ -1890,7 +1890,12 @@ public class BaseActivity extends FragmentActivity implements
         offerDialog(errorDialog);
     }
 
-    private void showLogoutDialog() {
+    /**
+     * ログアウトダイアログ.
+     *
+     * 各アクティビティで使われるようになったので、publicに変更
+     */
+    public void showLogoutDialog() {
 
         CustomDialog logoutDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.CONFIRM);
         logoutDialog.setContent(this.getResources().getString(R.string.logout_message));

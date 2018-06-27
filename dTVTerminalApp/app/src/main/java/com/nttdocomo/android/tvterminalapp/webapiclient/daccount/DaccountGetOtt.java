@@ -150,7 +150,8 @@ public class DaccountGetOtt {
                     option = IDimDefines.CertOption.DEFAULT;
                 }
             } else {
-                option = IDimDefines.CertOption.RESERVE;
+                //サービストークンの取得時も、dアカウント未認証の場合は再認証画面への遷移を行う
+                option = IDimDefines.CertOption.DEFAULT;
             }
 
             String appCheckKey = "";

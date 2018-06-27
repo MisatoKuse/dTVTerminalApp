@@ -662,7 +662,7 @@ public class WebApiBasePlala {
             @Override
             public void getOttCallBack(int result, final String id,
                                        final String oneTimePassword) {
-                //TODO: 既存処理に悪影響があるので、一旦この処理は無効化
+                //TODO: 既存処理に悪影響があるので、一旦この処理は無効化・全て対処後に再有効化
 //                //ワンタイムパスワードが取得できたかどうかを見る
 //                if (result != IDimDefines.RESULT_COMPLETE) {
 //                    //リザルトのコードがゼロ以外なので、トークンエラーにする

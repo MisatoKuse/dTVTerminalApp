@@ -74,7 +74,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     /**
      * クリップリクエスト用Webクライアント.
      */
-    private ClipKeyListWebClient mClient = null;
+    public ClipKeyListWebClient mClient = null;
 
     /**
      * クリップ削除種別用定数.
