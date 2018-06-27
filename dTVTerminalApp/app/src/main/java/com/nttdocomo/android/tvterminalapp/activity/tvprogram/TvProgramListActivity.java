@@ -41,7 +41,6 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ViewUtils;
 import com.nttdocomo.android.tvterminalapp.view.ProgramRecyclerView;
@@ -82,6 +81,10 @@ public class TvProgramListActivity extends BaseActivity implements
      * 番組パネルリサイクルビュー.
      */
     private ProgramRecyclerView mProgramRecyclerView = null;
+    /**
+     *  番組パネルスクロールビュー.
+     */
+    private ProgramScrollView mProgramScrollViewParent = null;
     /**
      * メニュー起動.
      */
@@ -305,7 +308,7 @@ public class TvProgramListActivity extends BaseActivity implements
         mChannelRecyclerView = findViewById(R.id.tv_program_list_main_layout_channel_rv);
         mProgramRecyclerView = findViewById(R.id.tv_program_list_main_layout_channeldetail_rv);
 
-        final ProgramScrollView programScrollView = findViewById(R.id.tv_program_list_main_layout_channeldetail_sl);
+        mProgramScrollViewParent = findViewById(R.id.tv_program_list_main_layout_channeldetail_sl);
         mTagImageView = findViewById(R.id.tv_program_list_main_layout_curtime_iv);
         mTimeLine = findViewById(R.id.tv_program_list_main_layout_time_line);
         mNowImage = findViewById(R.id.tv_program_list_main_layout_time_line_now);
@@ -317,15 +320,15 @@ public class TvProgramListActivity extends BaseActivity implements
         mTagImageView.setOnClickListener(this);
         mTitleTextView.setOnClickListener(this);
         mTitleArrowImage.setOnClickListener(this);
-        mTimeScrollView.setScrollView(programScrollView);
-        programScrollView.setScrollView(mTimeScrollView);
+        mTimeScrollView.setScrollView(mProgramScrollViewParent);
+        mProgramScrollViewParent.setScrollView(mTimeScrollView);
         mProgramRecyclerView.setHasFixedSize(true);
         mProgramRecyclerView.setItemViewCacheSize(20);
-        programScrollView.setOnTouchListener(new View.OnTouchListener() {
+        mProgramScrollViewParent.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(final View view, final MotionEvent motionEvent) {
                 MotionEvent e = MotionEvent.obtain(motionEvent);
-                e.setLocation(e.getX() + programScrollView.getScrollX(),
+                e.setLocation(e.getX() + mProgramScrollViewParent.getScrollX(),
                         e.getY() - mChannelRecyclerView.getHeight());
                 mProgramRecyclerView.forceToDispatchTouchEvent(e);
                 return false;
@@ -709,8 +712,17 @@ public class TvProgramListActivity extends BaseActivity implements
     public void onClick(final View v) {
         switch (v.getId()) {
             case R.id.tv_program_list_main_layout_curtime_iv:
+                //現在のスクロール位置をスクロール位置に指定して、縦スクロールを止める(ScrollToでは止まらない)
+                mProgramScrollViewParent.smoothScrollTo(
+                        mProgramScrollViewParent.getScrollX(),
+                        mProgramScrollViewParent.getScrollY());
+
+                //横スクロールを止める
+                mChannelRecyclerView.stopScroll();
+                mProgramRecyclerView.stopScroll();
+
                 //システム時間軸にスクロール
-                scrollToCurTime();
+                scrollToCurTime(true);
                 //現在時刻ラインの表示更新
                 refreshTimeLine();
                 break;
@@ -821,8 +833,10 @@ public class TvProgramListActivity extends BaseActivity implements
     /**
      * 機能
      * 現在時刻にスクロール.
+     *
+     * @param programSwitch 番組表本体のスクロールも行うならばtrue
      */
-    private void scrollToCurTime() {
+    private void scrollToCurTime(boolean programSwitch) {
         String curTime = new SimpleDateFormat(DateUtils.DATE_HHMMSS, Locale.JAPAN).format(new Date());
         int curClock = Integer.parseInt(curTime.substring(0, 2));
         int scrollDis;
@@ -837,7 +851,22 @@ public class TvProgramListActivity extends BaseActivity implements
                 scrollDis = mLinearLayout.getHeight();
             }
         }
+        DTVTLogger.debug("scrollDis = " + scrollDis);
         mTimeScrollView.smoothScrollTo(0, scrollDis);
+        if (programSwitch){
+            //NOWボタンを押した際は、番組表本体のスクロール位置も設定しないと、失敗する場合がある
+            mProgramScrollViewParent.smoothScrollTo(0, scrollDis);
+        }
+    }
+
+    /**
+     *  現在時刻にスクロール.
+     *
+     *  既存実装との互換性を取る為の物
+     */
+    private void scrollToCurTime() {
+        //引数無しで呼ばれた場合はfalseにする
+        scrollToCurTime(false);
     }
 
     @Override
