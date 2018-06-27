@@ -169,8 +169,8 @@ public class ClipDeleteWebClient
             listItemJsonObject.put(JsonConstants.META_RESPONSE_TYPE, type);
             listItemJsonObject.put(JsonConstants.META_RESPONSE_CRID, crid);
 
-            //タイトルIDはdtv_vodの時のみ必須。dtv_vodで空文字の場合は既にエラーになっているので、ここでは空文字判定だけで良い
-            if (!TextUtils.isEmpty(titleId)) {
+            //タイトルIDはdtv_vodの時のみ必須。dtv_vodで空文字の場合は既にエラーになっている
+            if (!TextUtils.isEmpty(titleId) && type.equals(TYPE_DTV_VOD)) {
                 listItemJsonObject.put(JsonConstants.META_RESPONSE_TITLE_ID, titleId);
             }
 

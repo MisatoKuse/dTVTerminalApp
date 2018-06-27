@@ -174,7 +174,6 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         DTVTLogger.debug("research tv program display speed getClipKeyList");
         if (!mIsCancel) {
             mResponseEndFlag = false;
-            //クリップキーリストは常に全件取得
             request.setIsForce(!isCachingClipKeyListRecord(request.getType()));
             mClient = new ClipKeyListWebClient(mContext);
             // リクエストによってコールバックを変える

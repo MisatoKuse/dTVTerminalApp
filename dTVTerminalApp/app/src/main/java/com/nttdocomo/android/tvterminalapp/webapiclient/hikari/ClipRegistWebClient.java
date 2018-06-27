@@ -254,17 +254,39 @@ public class ClipRegistWebClient
         String answerText;
         //リクエストパラメータ(Json)作成
         try {
-            putSelect(jsonObject, JsonConstants.META_RESPONSE_CRID, crid);
-            putSelect(jsonObject, JsonConstants.META_RESPONSE_SERVICE_ID, serviceId);
-            putSelect(jsonObject, JsonConstants.META_RESPONSE_TITLE_ID, titleId);
-            putSelect(jsonObject, JsonConstants.META_RESPONSE_TITLE, title);
+            //※仕様が複雑なため、確認を容易にするため判定条件に仕様書からコピペしたコメントを記載
+            //必須
             putSelect(jsonObject, JsonConstants.META_RESPONSE_TYPE, type);
-            putSelect(jsonObject, JsonConstants.META_RESPONSE_EVENT_ID, eventId);
-            putSelect(jsonObject, JsonConstants.META_RESPONSE_R_VALUE, rValue);
+            //必須
+            putSelect(jsonObject, JsonConstants.META_RESPONSE_CRID, crid);
+            //type=h4d_iptvの場合必須。is_notify=trueの場合必須。
+            if (type.equals(CLIP_TYPE_H4D_IPTV) || isNotify) {
+                putSelect(jsonObject, JsonConstants.META_RESPONSE_SERVICE_ID, serviceId);
+            }
+            //type=h4d_iptvの場合必須。
+            if (type.equals(CLIP_TYPE_H4D_IPTV)) {
+                putSelect(jsonObject, JsonConstants.META_RESPONSE_EVENT_ID, eventId);
+            }
+            //type=dtv_vodの場合必須。
+            if (type.equals(CLIP_TYPE_DTV_VOD)) {
+                putSelect(jsonObject, JsonConstants.META_RESPONSE_TITLE_ID, titleId);
+            }
+            //type=h4d_iptv、h4d_vodの場合必須。is_notify=trueの場合必須。
+            if (type.equals(CLIP_TYPE_H4D_IPTV) || type.equals(CLIP_TYPE_H4D_VOD) || isNotify) {
+                putSelect(jsonObject, JsonConstants.META_RESPONSE_TITLE, title);
+            }
+            //type=h4d_iptv、h4d_vodの場合必須。is_notify=trueの場合必須。
+            if (type.equals(CLIP_TYPE_H4D_IPTV) || type.equals(CLIP_TYPE_H4D_VOD) || isNotify) {
+                putSelect(jsonObject, JsonConstants.META_RESPONSE_R_VALUE, rValue);
+            }
+            //type=h4d_iptv、dchの場合必須。
+            if (type.equals(CLIP_TYPE_H4D_IPTV) || type.equals(CLIP_TYPE_DCH)) {
+                putSelect(jsonObject, JsonConstants.META_RESPONSE_LINEAR_START_DATE, linearStartDate);
+                //type=h4d_iptv、dchの場合必須。
+                putSelect(jsonObject, JsonConstants.META_RESPONSE_LINEAR_END_DATE, linearEndDate);
+            }
             //isNotifyは事実上無いことが無い
             jsonObject.put(JsonConstants.META_RESPONSE_IS_NOTIFY, isNotify);
-            putSelect(jsonObject, JsonConstants.META_RESPONSE_LINEAR_START_DATE, linearStartDate);
-            putSelect(jsonObject, JsonConstants.META_RESPONSE_LINEAR_END_DATE, linearEndDate);
 
             answerText = jsonObject.toString().replace("\\", "");
 
