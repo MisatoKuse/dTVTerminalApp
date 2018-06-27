@@ -99,6 +99,7 @@ public class MenuListAdapter extends BaseAdapter {
             holder.tv_count = itemProgramView.findViewById(R.id.tv_count);
             holder.tv_arrow = itemProgramView.findViewById(R.id.iv_arrow);
             holder.tv_title_icon = itemProgramView.findViewById(R.id.tv_title_icon);
+            holder.menu_item_divider = itemProgramView.findViewById(R.id.menu_item_divider);
             itemProgramView.setTag(holder);
         } else {
             itemProgramView = view;
@@ -106,7 +107,7 @@ public class MenuListAdapter extends BaseAdapter {
         }
         String title = String.valueOf(mData.get(i));
         holder.tv_title.setText(title);
-        setTextView(title, holder.tv_title);
+        setTextViewAndMenuDivider(title, holder.tv_title, holder.menu_item_divider);
         setImageView(title, holder.tv_arrow);
         setTitleNameImageView(title, holder.tv_title_icon);
         int cnt = (int) mDataCounts.get(i);
@@ -120,28 +121,33 @@ public class MenuListAdapter extends BaseAdapter {
     }
 
     /**
-     * TitleNameにより、TextView設定を変更する.
+     * TitleNameにより、TextViewとMenuDividerの設定を変更する.
      *
-     * @param title    タイトル
-     * @param textView タイトルView
+     * @param title        タイトル
+     * @param textView    タイトルView
+     * @param menuDivider メニュー区切り線View
      */
-    private void setTextView(final String title, final TextView textView) {
+    private void setTextViewAndMenuDivider(final String title, final TextView textView, final View menuDivider) {
         int intCustomTitleLeftMargin = mContext.getResources().getDimensionPixelSize(
                 R.dimen.global_menu_list_item_sub_title_left_margin);
         int intTitleLeftMargin = mContext.getResources().getDimensionPixelSize(
                 R.dimen.global_menu_list_item_default_title_left_margin);
         ViewGroup.LayoutParams layoutParams = textView.getLayoutParams();
         ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) layoutParams;
+        ViewGroup.LayoutParams dividerLayoutParams = menuDivider.getLayoutParams();
+        ViewGroup.MarginLayoutParams dividerMarginLayoutParams = (ViewGroup.MarginLayoutParams) dividerLayoutParams;
         if (title != null) {
             if (title.equals(mContext.getString(R.string.nav_menu_item_hikari_tv_none_action))) {
                 //ひかりTVメインの設定
                 textView.setTextColor(ContextCompat.getColor(mContext, R.color.global_menu_transparent_text_color));
+                dividerMarginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_premium_tv_app_start_common))) {
                 //テレビアプリを起動するの設定
                 textView.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
                 textView.setTypeface(Typeface.DEFAULT);
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
+                dividerMarginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_home))
                     || title.equals(mContext.getString(R.string.nav_menu_item_recommend_program_video))
                     || title.equals(mContext.getString(R.string.nav_menu_item_keyword_search))
@@ -153,20 +159,24 @@ public class MenuListAdapter extends BaseAdapter {
                 textView.setTypeface(Typeface.DEFAULT);
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
+                dividerMarginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_hikari_tv))
                     || title.equals(mContext.getString(R.string.nav_menu_item_dtv_channel))
                     || title.equals(mContext.getString(R.string.nav_menu_item_dtv))
                     || title.equals(mContext.getString(R.string.nav_menu_item_d_animation))
                     || title.equals(mContext.getString(R.string.nav_menu_item_dazn))) {
                 textView.setTextColor(ContextCompat.getColor(mContext, R.color.global_menu_transparent_text_color));
+                dividerMarginLayoutParams.setMargins(intCustomTitleLeftMargin, 0, 0, 0);
             } else {
                 //その他サブアイテムのカスタマイズ
                 textView.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
                 textView.setTypeface(Typeface.DEFAULT);
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
                 marginLayoutParams.setMargins(intCustomTitleLeftMargin, 0, 0, 0);
+                dividerMarginLayoutParams.setMargins(intCustomTitleLeftMargin, 0, 0, 0);
             }
             textView.setLayoutParams(marginLayoutParams);
+            menuDivider.setLayoutParams(dividerMarginLayoutParams);
         }
     }
 
@@ -297,6 +307,10 @@ public class MenuListAdapter extends BaseAdapter {
          * アプリアイコン.
          */
         ImageView tv_title_icon;
+        /**
+         * メニュー区切り線.
+         */
+        View menu_item_divider;
     }
 
     /**
