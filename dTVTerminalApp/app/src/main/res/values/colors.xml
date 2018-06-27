@@ -46,6 +46,7 @@
     <color name="home_item_contents_text_color">@color/basic_text_color_white</color>
     <!--Global Menu-->
     <color name="global_menu_popup_window_background_color">#ffffff</color>
+    <color name="global_menu_transparent_text_color">#00000000</color>
     <!-- キーワード検索 -->
     <color name="keyword_search_background_color">#1d1d1d</color>
     <color name="keyword_search_background_focus">#EEEEEE</color>
