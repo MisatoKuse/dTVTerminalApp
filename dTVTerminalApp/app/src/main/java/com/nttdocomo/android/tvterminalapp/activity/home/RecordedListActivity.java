@@ -383,20 +383,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
                         String fullPath = path + File.separator + itemId;
                         File file = new File(fullPath);
-                        boolean isExist = false;
-                        for (int i = 0; i < baseFragment.getContentsListSize(); i++) {
-                            RecordedContentsDetailData detailDataInList = baseFragment.getContentsListElement(i);
-                            if (itemId.equals(detailDataInList.getItemId())) {
-                                isExist = true;
-                                //外部ストレージ優先表示
-//                                if (DownloaderBase.getDownloadPath(getApplication()).equals(path)) {
-//                                    baseFragment.mContentsList.remove(i);
-//                                    isExist = false;
-//                                }
-                                break;
-                            }
-                        }
-                        if (file.exists() && !isExist) {
+                        if (file.exists() && !checkDataIsExist(itemId, baseFragment)) {
                             ContentsData contentsData = new ContentsData();
                             contentsData.setTitle(title);
                             contentsData.setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
@@ -569,7 +556,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      *
      * @param dlnaRecVideoItems 録画ビデオアイテム
      */
-    @SuppressWarnings("OverlyLongMethod")
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     private void setVideoBrows(final ArrayList<DlnaRecVideoItem> dlnaRecVideoItems) {
         final RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
         baseFragment.setFragmentName(RLA_FragmentName_All);
@@ -587,6 +574,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         final boolean hideDownloadBtn = getConnectionStatus();
         for (int i = 0; i < dlnaRecVideoItems.size(); i++) {
             DlnaRecVideoItem itemData = dlnaRecVideoItems.get(i);
+            if (checkDataIsExist(itemData.mItemId.replaceAll("[^a-z^A-Z^0-9]", "/"), baseFragment)) {
+                continue;
+            }
             RecordedContentsDetailData detailData = new RecordedContentsDetailData();
             detailData.setItemId(itemData.mItemId);
             detailData.setUpnpIcon(itemData.mUpnpIcon);
@@ -936,5 +926,28 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 }
             }
         }
+    }
+
+    /**
+     * コンテンツ存在チェック.
+     *
+     * @param itemID コンテンツID
+     * @param baseFragment フラグメント
+     * @return 存在の場合true
+     */
+    private boolean checkDataIsExist(final String itemID, final RecordedBaseFragment baseFragment) {
+        boolean isExist = false;
+        if (TextUtils.isEmpty(itemID)) {
+            isExist = true;
+            return isExist;
+        }
+        for (int i = 0; i < baseFragment.getContentsListSize(); i++) {
+            RecordedContentsDetailData detailDataInList = baseFragment.getContentsListElement(i);
+            if (itemID.equals(detailDataInList.getItemId())) {
+                isExist = true;
+                break;
+            }
+        }
+        return isExist;
     }
 }
