@@ -48,6 +48,7 @@ import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.select.ClipKeyListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ContentsDetailDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.SearchDataProvider;
@@ -105,6 +106,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -160,8 +162,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private ThumbnailProvider mThumbnailProvider = null;
     /** サムネイル取得処理ストップフラグ .*/
     private boolean mIsDownloadStop = false;
+    /** 初回表示フラグ .*/
+    private boolean mIsFirstDisplay = true;
     /** コンテンツ詳細フラグメントファクトリー.*/
     private DtvContentsDetailFragmentFactory mFragmentFactory = null;
+    /** コンテンツ詳細フラグメント.*/
+    private DtvContentsDetailFragment mContentsDetailFragment = null;
     /** ビューページャアダプター.*/
     private ContentsDetailPagerAdapter mContentsDetailPagerAdapter;
     /**購入済みVODレスポンス.*/
@@ -303,7 +309,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private static final int SOURCE_HEXADECIMAL = 16;
     /** サービスIDをひかりTV用のチャンネル番号に変換する際の倍率. */
     private static final int CONVERT_SEARVICE_ID_TO_CHANNEL_NUMBER = 10;
-    /*ひかりTV起動*/
+    /** 画面すべてのクリップボタンを更新.*/
+    private static final int CLIP_BUTTON_ALL_UPDATE = 0;
+    /** コンテンツ詳細のクリップボタンをのみを更新.*/
+    private static final int CLIP_BUTTON_DETAIL_UPDATE = 1;
+    /** チャンネルリストのクリップボタンをのみを更新.*/
+    private static final int CLIP_BUTTON_CHANNEL_UPDATE = 2;
 
     /* player start */
     /**FrameLayout.*/
@@ -423,21 +434,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     mPlayerViewLayout.setPlayerEvent();
                     mPlayerViewLayout.setUserAgeInfo();
                 }
-                //BG復帰時にクリップボタンの更新を行う
-                dtvContentsDetailFragment = getDetailFragment();
-                contentsDetailDataProvider = new ContentsDetailDataProvider(this);
-                dtvContentsDetailFragment.setOtherContentsDetailData(contentsDetailDataProvider.
-                        checkClipStatus(dtvContentsDetailFragment.getOtherContentsDetailData()));
-                dtvContentsDetailFragment.resumeClipButton();
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_player));
                 break;
             case CONTENTS_DETAIL_ONLY:
-                //BG復帰時にクリップボタンの更新を行う
-                dtvContentsDetailFragment = getDetailFragment();
-                contentsDetailDataProvider = new ContentsDetailDataProvider(this);
-                dtvContentsDetailFragment.setOtherContentsDetailData(contentsDetailDataProvider.
-                        checkClipStatus(dtvContentsDetailFragment.getOtherContentsDetailData()));
-                dtvContentsDetailFragment.resumeClipButton();
                 break;
             default:
                 break;
@@ -449,9 +448,78 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 sendScreenViewForPosition(0);
             }
         }
-        if (mChannelFragment != null) {
-            mChannelFragment.checkChannelClipStatus();
-            mChannelFragment.setNotifyDataChanged();
+        if (!mIsFirstDisplay) {
+            checkClipButton(CLIP_BUTTON_ALL_UPDATE);
+        } else {
+            mIsFirstDisplay = false;
+            checkClipButton(CLIP_BUTTON_CHANNEL_UPDATE);
+        }
+        DTVTLogger.end();
+    }
+
+    /**
+     * クリップボタンの更新.
+     *
+     * @param targetId 更新対象
+     */
+    private void checkClipButton(final int targetId) {
+        DTVTLogger.start();
+
+        ClipKeyListDataManager manager = new ClipKeyListDataManager(ContentDetailActivity.this);
+        List<Map<String, String>> mapList = manager.selectClipAllList();
+
+        switch (targetId) {
+            case CLIP_BUTTON_ALL_UPDATE:
+                checkDetailClipStatus(mapList);
+                checkChannelClipStatus(mapList);
+                break;
+            case CLIP_BUTTON_DETAIL_UPDATE:
+                checkChannelClipStatus(mapList);
+                break;
+            case CLIP_BUTTON_CHANNEL_UPDATE:
+                checkChannelClipStatus(mapList);
+                break;
+            default:
+                break;
+        }
+        DTVTLogger.end();
+    }
+
+    /**
+     * 詳細情報のクリップボタン更新.
+     *
+     * @param mapList クリップリスト(全件)
+     */
+    private void checkDetailClipStatus(final List<Map<String, String>> mapList) {
+        DTVTLogger.start();
+        DtvContentsDetailFragment dtvContentsDetailFragment = getDetailFragment();
+        OtherContentsDetailData detailData = dtvContentsDetailFragment.getOtherContentsDetailData();
+
+        if (detailData != null) {
+            detailData.setClipStatus(ClipUtils.setClipStatusVodMetaData(mDetailFullData, mapList));
+            dtvContentsDetailFragment.setOtherContentsDetailData(detailData);
+            dtvContentsDetailFragment.noticeRefresh();
+        }
+        DTVTLogger.end();
+    }
+
+    /**
+     * チャンネル情報のクリップボタン更新.
+     *
+     * @param mapList クリップリスト(全件)
+     */
+    private void checkChannelClipStatus(final List<Map<String, String>> mapList) {
+        DTVTLogger.start();
+        DtvContentsChannelFragment dtvContentsChannelFragment = getChannelFragment();
+        List<ContentsData> contentsDataList = dtvContentsChannelFragment.getContentsData();
+        ContentsData contentsData;
+        if (contentsDataList != null) {
+            for (int i = 0; i < contentsDataList.size(); i++) {
+                contentsData = contentsDataList.get(i);
+                contentsDataList.get(i).setClipStatus(ClipUtils.setClipStatusContentsData(contentsData, mapList));
+            }
+            dtvContentsChannelFragment.setContentsData(contentsDataList);
+            dtvContentsChannelFragment.setNotifyDataChanged();
         }
         DTVTLogger.end();
     }
@@ -661,8 +729,20 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * @return currentFragment
      */
     private DtvContentsChannelFragment getChannelFragment() {
-        Fragment currentFragment = mFragmentFactory.createFragment(1);
+        Fragment currentFragment = getFragmentFactory().createFragment(1);
         return (DtvContentsChannelFragment) currentFragment;
+    }
+
+    /**
+     * フラグメントファクトリー取得.
+     *
+     * @return DtvContentsDetailFragmentFactory
+     */
+    private DtvContentsDetailFragmentFactory getFragmentFactory() {
+        if (mFragmentFactory == null) {
+            mFragmentFactory = new DtvContentsDetailFragmentFactory();
+        }
+        return mFragmentFactory;
     }
 
     /**
@@ -1047,7 +1127,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             mTabNames = getResources().getStringArray(R.array.contents_detail_tabs_tv_ch);
         }
 
-        mFragmentFactory = new DtvContentsDetailFragmentFactory();
         mContentsDetailPagerAdapter
                 = new ContentsDetailPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mContentsDetailPagerAdapter);
@@ -1059,8 +1138,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 super.onPageSelected(position);
                 mTabLayout.setTab(position);
                 sendScreenViewForPosition(position);
-                if (position == 1) {
+                //タブ表示時にクリップ状態更新
+                if (position == 0) {
+                    checkClipButton(CLIP_BUTTON_DETAIL_UPDATE);
+                } else if (position == 1) {
                     getChannelFragment().initLoad();
+                    checkClipButton(CLIP_BUTTON_CHANNEL_UPDATE);
                 }
                 loadHandler.post(loadRunnable);
             }
@@ -1280,7 +1363,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
         @Override
         public Fragment getItem(final int position) {
-            Fragment fragment = mFragmentFactory.createFragment(position);
+            Fragment fragment = getFragmentFactory().createFragment(position);
             //Fragmentへデータを渡す
             Bundle args = new Bundle();
             args.putParcelable(RECOMMEND_INFO_BUNDLE_KEY, mDetailData);
@@ -1687,15 +1770,14 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                         contentsData.setEventId(scheduleInfo.getEventId());
                                         contentsData.setCrid(scheduleInfo.getCrId());
                                         contentsData.setTitleId(scheduleInfo.getTitleId());
-                                        mChannelFragment.addContentsData(contentsData);
+                                        getChannelFragment().addContentsData(contentsData);
                                     }
                                 }
                             }
                             if (mDateIndex == 1) {
                                 getChannelDetailByPageNo();
                             } else {
-                                mChannelFragment.checkChannelClipStatus();
-                                mChannelFragment.setNotifyDataChanged();
+                                checkClipButton(CLIP_BUTTON_CHANNEL_UPDATE);
                             }
                         }
                     }
@@ -1793,8 +1875,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * @return 現在表示しているfragment
      */
     private DtvContentsDetailFragment getDetailFragment() {
-        Fragment currentFragment = mFragmentFactory.createFragment(0);
-        return (DtvContentsDetailFragment) currentFragment;
+        if (mContentsDetailFragment == null) {
+            Fragment currentFragment = getFragmentFactory().createFragment(0);
+            mContentsDetailFragment = (DtvContentsDetailFragment) currentFragment;
+        }
+        return mContentsDetailFragment;
     }
 
     //region View.OnClickListener
@@ -3057,8 +3142,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         }
 
         //ダイアログの準備
-        CustomDialog customDialog = new CustomDialog(ContentDetailActivity.this,
-                CustomDialog.DialogType.ERROR);
+        CustomDialog customDialog = new CustomDialog(ContentDetailActivity.this
+                , CustomDialog.DialogType.ERROR);
 
         //表示するダイアログの切り替え判定
         if (errorState == null || errorState.getErrorType() == DtvtConstants.ErrorType.SUCCESS) {
@@ -3109,6 +3194,13 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
         showProgressBar(false);
         showErrorDialog(ErrorType.contentDetailGet);
+    }
+
+    @Override
+    public void showClipToast(final int msgId) {
+        super.showClipToast(msgId);
+        //クリップ処理が終わった時点で、コンテンツ詳細、チャンネルリストのクリップ状態を更新する
+        checkClipButton(CLIP_BUTTON_ALL_UPDATE);
     }
 
     @Override

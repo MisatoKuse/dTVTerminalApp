@@ -281,7 +281,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
      * クリップステータスチェック.
      */
     public void checkChannelClipStatus() {
-        ContentsDetailDataProvider provider = new ContentsDetailDataProvider(getActivity());
+        ContentsDetailDataProvider provider = new ContentsDetailDataProvider(getContext());
         mContentsData = provider.checkClipStatus(mContentsData);
         DTVTLogger.debug("DtvContentsChannelFragment::Clip Status Update");
     }
@@ -303,5 +303,23 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
         if (mContentsData != null) {
             mContentsData.add(content);
         }
+    }
+
+    /**
+     * チャンネルリストデータ取得.
+     *
+     * @return チャンネルリストデータ
+     */
+    public List<ContentsData> getContentsData() {
+        return mContentsData;
+    }
+
+    /**
+     * チャンネルリストデータ設定.
+     *
+     * @param contentsDataList チャンネルリストデータ
+     */
+    public void setContentsData(final List<ContentsData> contentsDataList) {
+        this.mContentsData = contentsDataList;
     }
 }

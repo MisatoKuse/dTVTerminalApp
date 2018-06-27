@@ -203,7 +203,7 @@ public class DtvContentsDetailFragment extends Fragment {
         if (mOtherContentsDetailData != null) {
             if (mOtherContentsDetailData.isClipExec()) {
                 clipButton.setVisibility(View.VISIBLE);
-                if (!UserInfoUtils.getClipActive(getActivity())) {
+                if (!UserInfoUtils.getClipActive(getContext())) {
                     //未ログイン又は未契約時はクリップボタンを非活性にする
                     clipButton.setBackgroundResource(R.mipmap.icon_tap_circle_normal_clip);
                 } else {
@@ -623,7 +623,7 @@ public class DtvContentsDetailFragment extends Fragment {
     public void changeVisibilityRecordingReservationIcon(final int visibility) {
         DTVTLogger.start("setVisibility:" + visibility);
         //未ログイン又は未契約時は録画ボタンを非活性
-        if (!UserInfoUtils.getClipActive(getActivity())) {
+        if (!UserInfoUtils.getClipActive(getContext())) {
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.icon_tap_circle_normal_rec);
             mRecordButton.setImageBitmap(bitmap);
         }
@@ -639,7 +639,7 @@ public class DtvContentsDetailFragment extends Fragment {
     public void setRecordingReservationIconListener(final RecordingReservationIconListener listener) {
         DTVTLogger.start();
         //未ログイン又は未契約時は録画ボタンを非活性
-        if (listener != null && UserInfoUtils.getClipActive(getActivity())) {
+        if (listener != null && UserInfoUtils.getClipActive(getContext())) {
             DTVTLogger.debug("setOnClickListener");
             mIconClickListener = listener;
             mRecordButton.setOnClickListener(new View.OnClickListener() {

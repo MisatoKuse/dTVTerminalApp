@@ -280,10 +280,10 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     private void addClipStatus() {
         DTVTLogger.start();
         //クリップ状態取得
-        boolean isClipStatus = false;
-            ClipKeyListDataManager manager = new ClipKeyListDataManager(mContext);
-            List<Map<String, String>> mapList = manager.selectClipAllList();
-            isClipStatus = ClipUtils.setClipStatusVodMetaData(mVodMetaFullData, mapList);
+        boolean isClipStatus;
+        ClipKeyListDataManager manager = new ClipKeyListDataManager(mContext);
+        List<Map<String, String>> mapList = manager.selectClipAllList();
+        isClipStatus = ClipUtils.setClipStatusVodMetaData(mVodMetaFullData, mapList);
         mApiDataProviderCallback.onContentsDetailInfoCallback(
                 mVodMetaFullData, isClipStatus);
         DTVTLogger.end();

@@ -165,8 +165,10 @@ public class ClipKeyListDataManager {
      * @return クリップキーリスト
      */
     public List<Map<String, String>> selectClipAllList() {
+        DTVTLogger.start();
         List<Map<String, String>> list = selectListData(ClipKeyListDao.TableTypeEnum.TV);
         list.addAll(selectListData(ClipKeyListDao.TableTypeEnum.VOD));
+        DTVTLogger.end();
         return list;
     }
 }
