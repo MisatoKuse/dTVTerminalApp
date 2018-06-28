@@ -77,6 +77,10 @@ public class DataBaseConstants {
      * closing brackets.
      */
     private static final String CLOSE_BRACKETS_TEXT = ")";
+    /**
+     * closing brackets.
+     */
+    public static final String DROP_TABLE_TEXT = "drop table ";
 
     /**
      * チャンネルリストDB作成SQL文.
