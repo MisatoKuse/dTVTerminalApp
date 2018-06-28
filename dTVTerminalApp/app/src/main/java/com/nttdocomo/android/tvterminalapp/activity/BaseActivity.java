@@ -871,12 +871,17 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * リモコンの表示.
+     * @param isFromDetail true コンテンツ詳細画面、false メニュー
      */
-    private void showRemoteControllerView() {
+    private void showRemoteControllerView(final boolean isFromDetail) {
         // グローバルメニューまたはコンテンツ詳細からのサービスアプリ連携の正常応答時にリモコンが表示されてない場合のみ表示する.
         if ((null != mRemoteControllerView && !mRemoteControllerView.isTopRemoteControllerUI())
                 || null == mRemoteControllerView) {
-            menuRemoteController();
+            if (isFromDetail) {
+                contentDetailRemoteController();
+            } else {
+                menuRemoteController();
+            }
         }
     }
 
@@ -1083,8 +1088,10 @@ public class BaseActivity extends FragmentActivity implements
     private void switchResultOkRequest(final RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES requestCommand) {
         switch (requestCommand) {
             case START_APPLICATION:
+                showRemoteControllerView(false);
+                break;
             case TITLE_DETAIL:
-                showRemoteControllerView();
+                showRemoteControllerView(true);
                 break;
             case IS_USER_ACCOUNT_EXIST:
                 // 処理なし
