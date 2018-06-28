@@ -116,15 +116,16 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
     }
 
     @Override
-    public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
+    public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse
+            ,final ErrorState errorState) {
         DTVTLogger.start();
-        super.onTvClipKeyListJsonParsed(clipKeyListResponse);
+        super.onTvClipKeyListJsonParsed(clipKeyListResponse,errorState);
         mClipKeyListResponse = clipKeyListResponse;
 
         //レスポンスがヌルかどうかの判定
         if (clipKeyListResponse == null) {
             //既にエラーとなっているので、エラー処理を呼ぶ
-            mNetworkError = super.mClient.getError();
+            mNetworkError = errorState;
             mApiDataProviderCallback.tvClipListCallback(null);
             return;
         }

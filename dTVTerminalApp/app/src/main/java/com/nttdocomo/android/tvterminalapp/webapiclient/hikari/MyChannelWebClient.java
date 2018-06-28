@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelListResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.MyChannelListJsonParser;
@@ -22,6 +23,11 @@ public class MyChannelWebClient
      * 通信禁止判定フラグ.
      */
     private boolean mIsCancel = false;
+
+    /**
+     * エラー情報.
+     */
+    private ErrorState mErrorState = null;
 
     /**
      * コールバック.
@@ -50,6 +56,15 @@ public class MyChannelWebClient
         super(context);
     }
 
+    /**
+     * エラー情報のゲッター.
+     *
+     * @return エラー情報
+     */
+    public ErrorState getErrorState() {
+        return mErrorState;
+    }
+
     @Override
     public void onAnswer(final ReturnCode returnCode) {
         if (myChannelListJsonParserCallback != null) {
@@ -66,6 +81,7 @@ public class MyChannelWebClient
      */
     @Override
     public void onError(final ReturnCode returnCode) {
+        mErrorState = getError();
         if (myChannelListJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             myChannelListJsonParserCallback.onMyChannelListJsonParsed(null);

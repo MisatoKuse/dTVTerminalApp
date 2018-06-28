@@ -69,8 +69,9 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
-        super.onVodClipKeyListJsonParsed(clipKeyListResponse);
+    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse
+            ,final ErrorState errorState) {
+        super.onVodClipKeyListJsonParsed(clipKeyListResponse,errorState);
         if (mChildContentListGetResponse != null) {
             sendData(mChildContentListGetResponse);
         }

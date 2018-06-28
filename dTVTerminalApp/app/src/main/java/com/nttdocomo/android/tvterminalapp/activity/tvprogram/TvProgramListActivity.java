@@ -887,6 +887,13 @@ public class TvProgramListActivity extends BaseActivity implements
                     channelSort(channels);
                     mChannelInfo = channels;
                     setProgramRecyclerView(channels);
+                } else if(mScaledDownProgramListDataProvider.getmTvScheduleError()
+                        .getErrorType() == DtvtConstants.ErrorType.TOKEN_ERROR) {
+                    //マイ番組データ無しの表示
+                    showMyChannelNoItem(true);
+
+                    //トークインエラーだったので、ログアウトのダイアログを表示
+                    showLogoutDialog();
                 }
             }
         });
@@ -989,31 +996,36 @@ public class TvProgramListActivity extends BaseActivity implements
      * @param isShowFlag マイ番組表の要素表示フラグ.
      */
     private void showMyChannelNoItem(final boolean isShowFlag) {
-        if (isShowFlag) {
-            mTimeScrollView.setVisibility(View.INVISIBLE);
-            mTagImageView.setVisibility(View.INVISIBLE);
-            mTimeLine.setVisibility(View.INVISIBLE);
-            mMyChannelNoDataTxT.setVisibility(View.VISIBLE);
-            mNoDataMessage.setVisibility(View.GONE);
-        } else {
-            mTimeScrollView.setVisibility(View.VISIBLE);
-            mTagImageView.setVisibility(View.VISIBLE);
-            mTimeLine.setVisibility(View.VISIBLE);
-            mMyChannelNoDataTxT.setVisibility(View.INVISIBLE);
-        }
+        //一部の処理で別スレッドで実行されたことによるエラーが発生していた。UIスレッドへ処理を移譲する
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (isShowFlag) {
+                    mTimeScrollView.setVisibility(View.INVISIBLE);
+                    mTagImageView.setVisibility(View.INVISIBLE);
+                    mTimeLine.setVisibility(View.INVISIBLE);
+                    mMyChannelNoDataTxT.setVisibility(View.VISIBLE);
+                    mNoDataMessage.setVisibility(View.GONE);
+                } else {
+                    mTimeScrollView.setVisibility(View.VISIBLE);
+                    mTagImageView.setVisibility(View.VISIBLE);
+                    mTimeLine.setVisibility(View.VISIBLE);
+                    mMyChannelNoDataTxT.setVisibility(View.INVISIBLE);
+                }
 
-        //端末に設定された日時と現在番組表で設定されている日時を比較する
-        if (!compareNowDate(mSelectDate)) {
-            //違っていたので、これまでの条件とは無関係に、NOW表示は透明にする
-            mTimeLine.setVisibility(View.INVISIBLE);
+                //端末に設定された日時と現在番組表で設定されている日時を比較する
+                if (!compareNowDate(mSelectDate)) {
+                    //違っていたので、これまでの条件とは無関係に、NOW表示は透明にする
+                    mTimeLine.setVisibility(View.INVISIBLE);
 
-            //NOWボタンも非表示にする(レイアウト側で消える仕組みになっている)
-            mTagImageView.setEnabled(false);
-        } else {
-            //NOWボタンを表示する
-            mTagImageView.setEnabled(true);
-        }
-
+                    //NOWボタンも非表示にする(レイアウト側で消える仕組みになっている)
+                    mTagImageView.setEnabled(false);
+                } else {
+                    //NOWボタンを表示する
+                    mTagImageView.setEnabled(true);
+                }
+            }
+        });
     }
 
     /**
@@ -1094,10 +1106,24 @@ public class TvProgramListActivity extends BaseActivity implements
                 errorState = mMyChannelDataProvider.getMyChannelListError();
             }
             if (errorState != null) {
-                String message = errorState.getErrorMessage();
-                //メッセージの有無で処理を分ける
-                if (!TextUtils.isEmpty(message)) {
-                    showGetDataFailedToast(message);
+                if (errorState.getErrorType() == DtvtConstants.ErrorType.TOKEN_ERROR) {
+                    //UI側スレッドへ処理を移譲する
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //マイ番組データ無しの表示
+                            showMyChannelNoItem(true);
+
+                            //トークンエラーなので、ダイアログを出す
+                            showLogoutDialog();
+                        }
+                    });
+                } else {
+                    String message = errorState.getErrorMessage();
+                    //メッセージの有無で処理を分ける
+                    if (!TextUtils.isEmpty(message)) {
+                        showGetDataFailedToast(message);
+                    }
                 }
             }
             //MY番組表情報がなければMY番組表を設定していないとする(データないので、特にタイムライン表示必要がない)

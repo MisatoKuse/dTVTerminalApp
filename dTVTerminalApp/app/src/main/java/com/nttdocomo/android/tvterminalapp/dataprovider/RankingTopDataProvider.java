@@ -297,9 +297,10 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
+    public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse
+        ,final ErrorState errorState) {
         DTVTLogger.start();
-        super.onTvClipKeyListJsonParsed(clipKeyListResponse);
+        super.onTvClipKeyListJsonParsed(clipKeyListResponse,errorState);
         // コールバック判定
         // 今日のテレビランキング
         if (mContext instanceof DailyTvRankingActivity) {
@@ -426,9 +427,10 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
+    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse
+            ,final ErrorState errorState) {
         DTVTLogger.start();
-        super.onVodClipKeyListJsonParsed(clipKeyListResponse);
+        super.onVodClipKeyListJsonParsed(clipKeyListResponse, errorState);
         // コールバック判定
         // 今日のテレビランキング
         if (mContext instanceof DailyTvRankingActivity) {

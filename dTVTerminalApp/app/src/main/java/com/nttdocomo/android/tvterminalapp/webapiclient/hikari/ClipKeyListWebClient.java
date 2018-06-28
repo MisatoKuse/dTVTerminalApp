@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
@@ -45,11 +46,13 @@ public class ClipKeyListWebClient
         }
         //パース後のデータを返す
         if (null != mTvClipKeyListJsonParserCallback) {
-            mTvClipKeyListJsonParserCallback.onTvClipKeyListJsonParsed((ClipKeyListResponse) parsedData);
+            mTvClipKeyListJsonParserCallback.onTvClipKeyListJsonParsed(
+                    (ClipKeyListResponse) parsedData,getError());
         }
         //パース後のデータを返す
         if (null != mVodClipKeyListJsonParserCallback) {
-            mVodClipKeyListJsonParserCallback.onVodClipKeyListJsonParsed((ClipKeyListResponse) parsedData);
+            mVodClipKeyListJsonParserCallback.onVodClipKeyListJsonParsed(
+                    (ClipKeyListResponse) parsedData,getError());
         }
     }
 
@@ -69,9 +72,12 @@ public class ClipKeyListWebClient
         /**
          * 正常に終了した場合に呼ばれるコールバック.
          *
+         * エラー情報がうまく伝わらない場合があったので、エラー情報を追加
          * @param clipKeyListResponse JSONパース後のデータ
+         * @param errorState エラー情報
          */
-        void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse);
+        void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse
+                ,final ErrorState errorState);
     }
 
     /**
@@ -81,9 +87,12 @@ public class ClipKeyListWebClient
         /**
          * 正常に終了した場合に呼ばれるコールバック.
          *
+         * エラー情報がうまく伝わらない場合があったので、エラー情報を追加
          * @param clipKeyListResponse JSONパース後のデータ
+         * @param errorState エラー情報
          */
-        void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse);
+        void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse
+                ,final ErrorState errorState);
     }
 
     /**
@@ -121,10 +130,10 @@ public class ClipKeyListWebClient
     public void onError(final ReturnCode returnCode) {
         //エラーが発生したのでレスポンスデータにnullを設定してを返す
         if (null != mTvClipKeyListJsonParserCallback) {
-            mTvClipKeyListJsonParserCallback.onTvClipKeyListJsonParsed(null);
+            mTvClipKeyListJsonParserCallback.onTvClipKeyListJsonParsed(null,getError());
         }
         if (null != mVodClipKeyListJsonParserCallback) {
-            mVodClipKeyListJsonParserCallback.onVodClipKeyListJsonParsed(null);
+            mVodClipKeyListJsonParserCallback.onVodClipKeyListJsonParsed(null,getError());
         }
     }
 
