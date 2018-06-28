@@ -752,16 +752,20 @@ public class ContentUtils {
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     private static ViewIngType  contractInfoTwo(final VodMetaFullData metaFullData, final ChannelInfo channelInfo) {
 
-        //チャンネル情報がnullなら判定不可
-        if (channelInfo == null) {
+        String dispType = metaFullData.getDisp_type();
+
+        String channelServiceId = null;
+        String chType = null;
+        //tv_programの場合、チャンネル情報がnullなら判定不可
+        if (ContentDetailActivity.TV_PROGRAM.equals(dispType) && channelInfo == null) {
             return ViewIngType.NONE_STATUS;
+        } else if (channelInfo != null) {
+            channelServiceId = channelInfo.getServiceId();
+            chType = channelInfo.getChannelType();
         }
 
-        String dispType = metaFullData.getDisp_type();
         String vodServiceId = metaFullData.getmService_id();
-        String channelServiceId = channelInfo.getServiceId();
         String tvService = metaFullData.getmTv_service();
-        String chType = channelInfo.getChannelType();
         long publishStartDate = metaFullData.getPublish_start_date();
         long publishEndDate = metaFullData.getPublish_end_date();
         long nowDate = DateUtils.getNowTimeFormatEpoch();
@@ -850,6 +854,7 @@ public class ContentUtils {
                     return ViewIngType.NONE_STATUS;
                 }
             case ContentDetailActivity.VIDEO_PROGRAM:
+            case ContentDetailActivity.VIDEO_SERIES:
                 //"dtv"の値を確認する
                 String dTv = metaFullData.getDtv();
                 DTVTLogger.debug("dtv: " + dTv);
@@ -891,13 +896,15 @@ public class ContentUtils {
                     } else {
                         //bvflgが1ではないので視聴不可
                         DTVTLogger.debug("Unviewable(bvflg != 1)");
-                        return ViewIngType.DISABLE_WATCH;
+                        return ViewIngType.SUBSCRIPTION_CHECK_START;
                     }
                 } else {
                     return ViewIngType.NONE_STATUS;
                 }
                 //メタレスポンス「disp_type」が「subscription_package」
             case ContentDetailActivity.SUBSCRIPTION_PACKAGE:
+            case ContentDetailActivity.SERIES_SVOD:
+            case ContentDetailActivity.VIDEO_PACKAGE:
                 return ViewIngType.SUBSCRIPTION_CHECK_START;
             default:
                 return ViewIngType.NONE_STATUS;

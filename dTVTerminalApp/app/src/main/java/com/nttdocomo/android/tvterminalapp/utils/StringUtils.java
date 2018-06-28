@@ -813,15 +813,15 @@ public class StringUtils {
                 //DTVコンテンツ　「reserved2」が「1」　Androidのモバイル視聴不可
                 if (reserve == null) {
                     //テレビで視聴できます
-                    return context.getString(R.string.contents_detail_thumbnail_text);
+                    return context.getString(R.string.dtv_content_service_start_text);
                 } else {
                     switch (reserve) {
                         case ContentDetailActivity.CONTENTS_DETAIL_RESERVEDID:
                             //dTVで視聴
-                            return context.getString(R.string.dtv_content_service_start_text);
+                            return context.getString(R.string.contents_detail_thumbnail_text);
                         default:
                             //テレビで視聴できます
-                            return context.getString(R.string.contents_detail_thumbnail_text);
+                            return context.getString(R.string.dtv_content_service_start_text);
                     }
                 }
             case D_ANIME_STORE:
