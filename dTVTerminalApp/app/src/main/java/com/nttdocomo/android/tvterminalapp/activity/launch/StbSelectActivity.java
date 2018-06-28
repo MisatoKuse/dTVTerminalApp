@@ -408,6 +408,15 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     public void onResume() {
         super.onResume();
         DTVTLogger.start();
+        initResumeView();
+        DTVTLogger.end();
+    }
+
+    /**
+     * 初期状態に戻る.
+     */
+    private void initResumeView() {
+        DTVTLogger.start();
         mSelectDevice = SELECT_DEVICE_ITEM_DEFAULT;
 
         initView();
@@ -600,6 +609,8 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void showParingView() {
         DTVTLogger.start();
+        //ペアリングしてるので、タイマーを解除する.
+        stopCallbackTimer();
         if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
             TextView statusTextView = findViewById(R.id.stb_select_status_text);
             statusTextView.setText(R.string.str_stb_pairing);
@@ -1239,7 +1250,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             DTVTLogger.debug("Application version check incompatible dialog closed");
             //初期状態に戻る
             resetDmpForResume();
-            onResume();
+            initResumeView();
             if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
                 initLaunchView();
             }
@@ -1262,7 +1273,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             public void onOKCallback(final boolean isOK) {
                 //初期状態に戻る
                 resetDmpForResume();
-                onResume();
+                initResumeView();
                 if (mStartMode == StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
                     initLaunchView();
                 }
@@ -1340,7 +1351,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     }
 
     /**
-     * 起動モードのゲッター
+     * 起動モードのゲッター.
      * @return 起動モードの値
      */
     public int getmStartMode() {
