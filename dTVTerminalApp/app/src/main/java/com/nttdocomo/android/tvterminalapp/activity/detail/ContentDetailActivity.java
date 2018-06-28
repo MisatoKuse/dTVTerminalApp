@@ -1570,10 +1570,13 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     setThumbnailText(thumbnailMessage);
                 }
             } else { //レコメンドサーバー以外のひかりTV
-                // サムネイル表示メッセージ取得
-                String thumbnailMessage = StringUtils.getContentsDetailThumbnailString(
-                        detailFragment.getOtherContentsDetailData(), this, mDetailFullData.getContentsType());
-                setThumbnailText(thumbnailMessage);
+                if (mDetailFullData != null) {
+                    checkWatchContents();
+                }
+                //コンテンツの視聴可否判定に基づいてUI操作を行う
+                if (mViewIngType != null) {
+                    changeUIBasedContractInfo();
+                }
                 if (getStbStatus()) {
                     createRemoteControllerView(true);
                     mIsControllerVisible = true;
@@ -2844,6 +2847,13 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         setRemotePlayArrow(null);
                         break;
                 }
+            } else if (mDetailFullData.getContentsType().equals(ContentUtils.ContentsType.HIKARI_TV_VOD)) {
+                mContractLeadingView.setVisibility(View.VISIBLE);
+                Button button = findViewById(R.id.contract_leading_button);
+                button.setVisibility(View.GONE);
+                TextView contractLeadingText = findViewById(R.id.contract_leading_text);
+                contractLeadingText.setText(R.string.contents_detail_hikari_vod_inside_home);
+                setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
             }
         }
         DTVTLogger.end();
@@ -2929,6 +2939,16 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
                 //クリップ押下時に契約導線を表示するため、Fragmentに未契約状態であることを通知する
                 detailFragment.setContractInfo(false);
+
+                if (mThumbnailBtn != null) {
+                    mThumbnailBtn.setVisibility(View.GONE);
+                    UserState userState = UserInfoUtils.getUserState(this);
+                    if (userState.equals(UserState.LOGIN_NG)) {
+                        loginNgDisplay();
+                    } else {
+                        noAgreementDisplay();
+                    }
+                }
                 break;
             case DISABLE_VOD_WATCH_AGREEMENT_DISPLAY:
                 //契約導線を表示 (VOD)
@@ -2950,6 +2970,22 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         vodTextView.setText(getString(R.string.contents_detail_hikari_vod_agreement));
                         //宅外の場合は契約ボタンを表示しない
                         vodButton.setVisibility(View.GONE);
+                        setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
+                        break;
+                    case NO_PAIRING:
+                        mContractLeadingView.setVisibility(View.VISIBLE);
+                        vodTextView.setText(getString(R.string.contents_detail_pairing_request));
+                        setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
+                        vodButton.setText(R.string.contents_detail_pairing_button);
+                        vodButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(final View v) {
+                                //ペアリング設定
+                                Intent intent = new Intent(getApplicationContext(), StbSelectActivity.class);
+                                intent.putExtra(StbSelectActivity.FROM_WHERE, StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Setting.ordinal());
+                                startActivity(intent);
+                            }
+                        });
                         break;
                     default:
                         //宅外の場合は契約ボタンを表示しない
@@ -2982,6 +3018,22 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         chTextView.setText(getString(R.string.contents_detail_contract_text_ch));
                         //宅外の場合は契約ボタンを表示しない
                         chButton.setVisibility(View.GONE);
+                        setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
+                        break;
+                    case NO_PAIRING:
+                        mContractLeadingView.setVisibility(View.VISIBLE);
+                        chTextView.setText(getString(R.string.contents_detail_pairing_request));
+                        setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
+                        chButton.setText(R.string.contents_detail_pairing_button);
+                        chButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(final View v) {
+                                //ペアリング設定
+                                Intent intent = new Intent(getApplicationContext(), StbSelectActivity.class);
+                                intent.putExtra(StbSelectActivity.FROM_WHERE, StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Setting.ordinal());
+                                startActivity(intent);
+                            }
+                        });
                         break;
                     default:
                         //宅外の場合は契約ボタンを表示しない

@@ -326,7 +326,7 @@
     <string name="recording_reservation_confirm_dialog_confirm">録画予約する</string>
     <string name="recording_reservation_confirm_dialog_cancel">キャンセル</string>
     <string name="contents_detail_contract_button_vod">ドコモテレビターミナルで購入する</string>
-    <string name="contents_detail_contract_text_ch">このコンテンツをご覧になるには\nドコモテレビターミナルでの契約が必要です</string>
+    <string name="contents_detail_contract_text_ch">このチャンネルをご覧になるには\nドコモテレビターミナルでの契約が必要です</string>
     <string name="contents_detail_contract_button_ch">ドコモテレビターミナルで契約する</string>
     <string name="contents_detail_external_display_dialog_msg">外部出力が検出されたので、再生を停止しました</string>
     <string name="contents_detail_parental_check_fail">年齢制限のため視聴できません</string>
