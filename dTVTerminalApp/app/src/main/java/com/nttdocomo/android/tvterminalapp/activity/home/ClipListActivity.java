@@ -530,14 +530,13 @@ public class ClipListActivity extends BaseActivity implements
                     public void run() {
 
                         DTVTLogger.debug("onScrollStateChanged, paging thread start");
-                        int offset = fragment.getClipListDataSize() + 1;
                         mNoDataMessage.setVisibility(View.GONE);
                         switch (TAB_POSITION) {
                             case CLIP_LIST_PAGE_NO_OF_TV:
-                                mTvClipDataProvider.getClipData(offset);
+                                mTvClipDataProvider.getClipData(mTvClipDataProvider.getPagerOffset());
                                 break;
                             case CLIP_LIST_PAGE_NO_OF_VOD:
-                                mVodClipDataProvider.getClipData(offset);
+                                mVodClipDataProvider.getClipData(mVodClipDataProvider.getPagerOffset());
                                 break;
                             default:
                                 break;

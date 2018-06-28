@@ -9,6 +9,7 @@ import android.content.Context;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
@@ -64,6 +65,14 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
     public void onVodClipJsonParsed(final List<VodClipList> vodClipLists) {
         DTVTLogger.start();
         if (vodClipLists != null) {
+            // 次のリクエストに使用するpagerOffsetを設定
+            Map<String, String> clipMap = vodClipLists.get(0).getVcMap();
+            Integer offset = Integer.parseInt(clipMap.get(JsonConstants.META_RESPONSE_OFFSET));
+            Integer count = Integer.parseInt(clipMap.get(JsonConstants.META_RESPONSE_COUNT));
+            if (offset >= 0 && count >= 0) {
+                mPagerOffset = offset + count;
+            }
+
             List vclist = vodClipLists.get(0).getVcList();
             if (vclist != null) {
                 VodClipList list = vodClipLists.get(0);
@@ -240,5 +249,14 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
      */
     public ErrorState getNetworkError() {
         return mNetworkError;
+    }
+
+    /**
+     * ページオフセットの取得
+     *
+     * @return ページオフセット
+     */
+    public int getPagerOffset() {
+        return mPagerOffset;
     }
 }
