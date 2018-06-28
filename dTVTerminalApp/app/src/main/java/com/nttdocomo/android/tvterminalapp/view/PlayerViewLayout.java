@@ -859,11 +859,14 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 }
             }
             if (playerParams.height > playerParams.width) {
-                playerParams.height = getWidthDensity();
+                playerParams.height = getScreenNavWidth();
                 if (mPlayerController != null) {
                     int widthRatio = mPlayerController.getVideoAspectRatioWidth();
                     int heightRatio = mPlayerController.getVideoAspectRatioHeight();
-                    playerParams.width = getWidthDensity() / heightRatio * widthRatio;
+                    playerParams.width = getScreenNavWidth() / heightRatio * widthRatio;
+                }
+                if (playerParams.width < getScreenNavHeight()) {
+                    playerParams.gravity = Gravity.CENTER_HORIZONTAL;
                 }
             }
             mScreenWidth = playerParams.width;
