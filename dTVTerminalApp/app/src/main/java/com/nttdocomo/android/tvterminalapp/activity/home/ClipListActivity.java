@@ -687,6 +687,17 @@ public class ClipListActivity extends BaseActivity implements
     }
 
     @Override
+    protected void contentsDetailBackKey(final View view) {
+        if (mIsMenuLaunch) {
+            //メニューから起動の場合ホーム画面に戻る
+            super.contentsDetailBackKey(view);
+        } else {
+            //ランチャーから起動の場合
+            finish();
+        }
+    }
+
+    @Override
     public void onStartCommunication() {
         super.onStartCommunication();
         DTVTLogger.start();
