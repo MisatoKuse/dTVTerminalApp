@@ -772,6 +772,8 @@ public class RemoteControlRelayClient {
         if (applicationId != null) {
             requestParam = setApplicationStartRequest(applicationId, userId);
             if (requestParam != null) {
+                // リクエスト開始時にリモコンを表示する ※レスポンスがエラー応答時にはリクエストコマンドを判別できないため
+                ((BaseActivity)context).showRemoteControllerViewWithStartApplication();
                 // アプリ起動要求を受信してインテントをSTBへ送信する
                 sendStartApplicationRequest(requestParam);
                 return true;
