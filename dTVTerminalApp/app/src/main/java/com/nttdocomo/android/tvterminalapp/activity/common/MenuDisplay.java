@@ -160,6 +160,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
             //GlobalMenuから開いたページはRootActivityとなるため、後ろのActivityは存在しない状態にする
             Intent intent = mActivity.getIntent();
 
+            mPopupWindow.dismiss(); // 閉じるアニメーションを見せてから遷移させる為、先に閉じる
             if (menuName.equals(mActivity.getString(R.string.nav_menu_item_home))) {
                 intent.setClass(mActivity, HomeActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -248,34 +249,30 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                 mActivity.startActivity(intent);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_hikari_tv))) {
                 mActivity.setRemoteProgressVisible(View.VISIBLE);
-                    // TVアプリ起動導線(ひかりTV)
-                    mActivity.setRelayClientHandler();
-                    RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.HIKARITV, mContext);
+                // TVアプリ起動導線(ひかりTV)
+                mActivity.setRelayClientHandler();
+                RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.HIKARITV, mContext);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dtv_channel))) {
                 mActivity.setRemoteProgressVisible(View.VISIBLE);
-                    // TVアプリ起動導線(dTVチャンネル)
-                    mActivity.setRelayClientHandler();
-                    RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL, mContext);
+                // TVアプリ起動導線(dTVチャンネル)
+                mActivity.setRelayClientHandler();
+                RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL, mContext);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dtv))) {
                 mActivity.setRemoteProgressVisible(View.VISIBLE);
-                    // TVアプリ起動導線(dTV)
-                    mActivity.setRelayClientHandler();
-                    RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV, mContext);
-
+                // TVアプリ起動導線(dTV)
+                mActivity.setRelayClientHandler();
+                RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV, mContext);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_d_animation))) {
                 mActivity.setRemoteProgressVisible(View.VISIBLE);
-                    // TVアプリ起動導線(dアニメ)
-                    mActivity.setRelayClientHandler();
-                    RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, mContext);
-
+                // TVアプリ起動導線(dアニメ)
+                mActivity.setRelayClientHandler();
+                RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, mContext);
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dazn))) {
                 mActivity.setRemoteProgressVisible(View.VISIBLE);
-                    // TVアプリ起動導線(DAZN)
-                    mActivity.setRelayClientHandler();
-                    RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DAZN, mContext);
-
+                // TVアプリ起動導線(DAZN)
+                mActivity.setRelayClientHandler();
+                RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DAZN, mContext);
             }
-            mPopupWindow.dismiss();
         }
     }
     /** ポップアップメニュークローズリスナー.*/
