@@ -248,8 +248,9 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     }
 
     @Override
-    public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
-        super.onTvClipKeyListJsonParsed(clipKeyListResponse);
+    public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse
+            ,final ErrorState errorState) {
+        super.onTvClipKeyListJsonParsed(clipKeyListResponse,errorState);
         DTVTLogger.start();
         if (mVodClipKeyListResponse) {
             addClipStatus();
@@ -261,8 +262,9 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
     }
 
     @Override
-    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
-        super.onVodClipKeyListJsonParsed(clipKeyListResponse);
+    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse
+            ,final ErrorState errorState) {
+        super.onVodClipKeyListJsonParsed(clipKeyListResponse,errorState);
         DTVTLogger.start();
         if (mTvClipKeyListResponse) {
             addClipStatus();

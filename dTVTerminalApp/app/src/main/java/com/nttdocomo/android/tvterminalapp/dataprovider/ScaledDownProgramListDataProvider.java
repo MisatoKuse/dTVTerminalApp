@@ -13,6 +13,7 @@ import android.os.Looper;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
@@ -411,8 +412,10 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     }
 
     @Override
-    public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
-        super.onTvClipKeyListJsonParsed(clipKeyListResponse);
+    public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse
+        ,final ErrorState errorState) {
+        mTvScheduleError = errorState;
+        super.onTvClipKeyListJsonParsed(clipKeyListResponse,errorState);
         if (mVodClipKeyListResponse) {
             mApiDataProviderCallback.clipKeyResult();
             if (null != mApiDataProviderCallback) {
@@ -421,12 +424,19 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             }
         } else {
             mTvClipKeyListResponse = true;
+            //トークンエラーならばコールバックを返して、ログアウトのダイアログを出してもらう
+            if (errorState.getErrorType() == DtvtConstants.ErrorType.TOKEN_ERROR) {
+                if (null != mApiDataProviderCallback) {
+                    mApiDataProviderCallback.channelInfoCallback(null);
+                }
+            }
         }
     }
 
     @Override
-    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
-        super.onVodClipKeyListJsonParsed(clipKeyListResponse);
+    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse
+            ,final ErrorState errorState) {
+        super.onVodClipKeyListJsonParsed(clipKeyListResponse, errorState);
         if (mTvClipKeyListResponse) {
             mApiDataProviderCallback.clipKeyResult();
             if (null != mApiDataProviderCallback) {
@@ -435,6 +445,13 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             }
         } else {
             mVodClipKeyListResponse = true;
+            //トークンエラーならばコールバックを返して、ログアウトのダイアログを出してもらう
+            if (errorState.getErrorType() == DtvtConstants.ErrorType.TOKEN_ERROR) {
+                if (null != mApiDataProviderCallback) {
+                    mApiDataProviderCallback.channelInfoCallback(null);
+                }
+            }
+
         }
     }
 

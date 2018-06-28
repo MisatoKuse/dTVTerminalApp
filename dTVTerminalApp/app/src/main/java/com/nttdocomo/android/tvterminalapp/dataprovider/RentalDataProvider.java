@@ -151,8 +151,9 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
     }
 
     @Override
-    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
-        super.onVodClipKeyListJsonParsed(clipKeyListResponse);
+    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse
+            ,final ErrorState errorState) {
+        super.onVodClipKeyListJsonParsed(clipKeyListResponse, errorState);
         // コールバック判定
         if (mPurchasedVodListResponse != null) {
             sendRentalListData(mPurchasedVodListResponse);

@@ -18,6 +18,7 @@ import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity
 import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.video.VideoContentListActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
@@ -114,7 +115,8 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     private static final String CONTENTS_TYPE_FLAG_TWO = "2";
 
     @Override
-    public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
+    public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse
+        , final ErrorState errorState) {
         DTVTLogger.start();
         mResponseEndFlag = true;
         if (clipKeyListResponse != null && clipKeyListResponse.getIsUpdate()) {
@@ -125,7 +127,8 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     }
 
     @Override
-    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
+    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse
+            ,final ErrorState errorState) {
         DTVTLogger.start();
         mResponseEndFlag = true;
         if (clipKeyListResponse != null && clipKeyListResponse.getIsUpdate()) {

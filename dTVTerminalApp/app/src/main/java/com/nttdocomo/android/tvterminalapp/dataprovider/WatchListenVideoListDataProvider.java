@@ -118,9 +118,10 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     }
 
     @Override
-    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
+    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse
+            ,final ErrorState errorState) {
         DTVTLogger.start();
-        super.onVodClipKeyListJsonParsed(clipKeyListResponse);
+        super.onVodClipKeyListJsonParsed(clipKeyListResponse, errorState);
         // コールバック判定
         if (mWatchListenVideoList != null) {
             sendWatchListenVideoListData(mWatchListenVideoList.getVcList());

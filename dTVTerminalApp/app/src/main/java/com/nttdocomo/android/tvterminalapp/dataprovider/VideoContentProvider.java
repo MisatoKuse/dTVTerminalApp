@@ -247,9 +247,10 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
+    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse
+            ,final ErrorState errorState) {
         DTVTLogger.start();
-        super.onVodClipKeyListJsonParsed(clipKeyListResponse);
+        super.onVodClipKeyListJsonParsed(clipKeyListResponse, errorState);
         // コールバック判定
         if (mVideoRankList != null) {
             sendContentListData(mVideoRankList.getVrList());
