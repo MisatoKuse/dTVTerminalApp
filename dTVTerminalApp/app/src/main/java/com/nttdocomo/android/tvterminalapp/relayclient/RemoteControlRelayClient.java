@@ -668,19 +668,20 @@ public class RemoteControlRelayClient {
         String requestParam;
         // 電源キーをフックする
         if (KEYCODE_POWER.equals(keycode)) {
-            DTVTLogger.debug(String.format(Locale.getDefault(), "KEYCODE_POWER, action:[%d] canceled:[%s]", action, canceled));
-            if (KeyEvent.ACTION_UP == action && !canceled) {
+            if (KeyEvent.ACTION_UP == action) {
                 //ユーザID取得
                 String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(context);
                 if (userId != null && !userId.isEmpty()) {
                     requestParam = setSwitchStbPowerRequest(userId);
                     if (requestParam != null) {
-                        DTVTLogger.debug(String.format(Locale.getDefault(), "KEYCODE_POWER, action:[%d] canceled:[%s] send", action, canceled));
+                        DTVTLogger.debug(String.format("send application request KeyEvent:[%s], action:[%s] canceled:[%s]",
+                                keycode, (KeyEvent.ACTION_UP == action)?RELAY_KEYEVENT_ACTION_UP:RELAY_KEYEVENT_ACTION_DOWN, canceled));
                         // STB電源ON/OFF要求をSTBへ送信する
                         sendStartApplicationRequest(requestParam);
                     }
                 }
             }
+            // KeyEvent.ACTION_DOWN は無視する
             return true;
         }
         return false;
@@ -695,17 +696,22 @@ public class RemoteControlRelayClient {
      * @param context    コンテキスト
      */
     public void sendKeycode(final int keycodeRid, final int action, final boolean canceled, final Context context) {
+        DTVTLogger.start();
         if (mIsCancel) {
             return;
         }
         String keycode = convertKeycode(keycodeRid);
         if (keycode != null && mKeyeventActionMap.containsKey(action)) {
+            DTVTLogger.debug(String.format("KeyEvent:[%s], action:[%s] canceled:[%s]",
+                    keycode, (KeyEvent.ACTION_UP == action)?RELAY_KEYEVENT_ACTION_UP:RELAY_KEYEVENT_ACTION_DOWN, canceled));
             if (switchStbPowerRequest(keycode, action, canceled, context)) {
+                DTVTLogger.end();
                 return;
             }
             // キーコード送信スレッドを開始
             new Thread(new KeycodeRerayTask(keycode, action, canceled)).start();
         }
+        DTVTLogger.end();
     }
 
     /**

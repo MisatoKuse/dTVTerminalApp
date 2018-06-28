@@ -293,7 +293,7 @@ public class RemoteControllerSendKeyAction {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_UP:
                     setTouchSelector(v.getId(), false);
-                    DTVTLogger.debug("MotionEvemt ACTION_UP");
+                    DTVTLogger.debug("MotionEvent ACTION_UP");
                     switch (mRepeatStateManagement.mStatus) {
                         case REPEAT_STATUS_EXECUTION:
                             // リピート実行中の場合
@@ -318,7 +318,7 @@ public class RemoteControllerSendKeyAction {
                 case MotionEvent.ACTION_DOWN:
                     setTouchSelector(v.getId(), true);
                     sendKeyCode(v.getId(), SEND_KEYCODE_PARAM_ACTION_DOWN, false, mContext);
-                    DTVTLogger.debug("MotionEvemt ACTION_DOWN");
+                    DTVTLogger.debug("MotionEvent ACTION_DOWN");
                     if (mRepeatStateManagement == null) {
                         mRepeatStateManagement = new RepeatStateManagement(mHandler, v.getId());
                         mRepeatStateManagement.executeTimerTask();
@@ -332,19 +332,19 @@ public class RemoteControllerSendKeyAction {
                 case MotionEvent.ACTION_CANCEL:
                     setTouchSelector(v.getId(), false);
                     sendKeyCode(v.getId(), SEND_KEYCODE_PARAM_ACTION_UP, true, mContext);
-                    DTVTLogger.debug("MotionEvemt ACTION_CANCEL");
+                    DTVTLogger.debug("MotionEvent ACTION_CANCEL");
                     if (null != mRepeatStateManagement) {
                         mRepeatStateManagement.repeatCancel();
                         mRepeatStateManagement.setRepeatTaskStatus(RepeatTaskStatus.REPEAT_STATUS_STAND_BY);
                     }
                     break;
                 case MotionEvent.ACTION_OUTSIDE:
-                    DTVTLogger.debug("MotionEvemt ACTION_OUTSIDE");
+                    DTVTLogger.debug("MotionEvent ACTION_OUTSIDE");
                     mRepeatStateManagement.repeatCancel();
                     mRepeatStateManagement.setRepeatTaskStatus(RepeatTaskStatus.REPEAT_STATUS_STAND_BY);
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    DTVTLogger.debug("MotionEvemt ACTION_MOVE");
+                    DTVTLogger.debug("MotionEvent ACTION_MOVE");
                     break;
                 default:
                     DTVTLogger.debug("MotionEvent Another");
@@ -356,6 +356,26 @@ public class RemoteControllerSendKeyAction {
             return true;
         }
     };
+
+    /**
+     * onTouch() MotionEvent.ACTION_MOVE 中に MotionEvent.ACTION_OUTSIDE 相当の判定を行う.
+     * ※ACTION_OUTSIDE 判定が必要な場合は MotionEvent.ACTION_UP の REPEAT_STATUS_EXECUTION で cancel フラグに反映する
+     *
+     * @param event
+     * @param view
+     * @return
+     */
+    private static boolean isTouchedInsideBounds(MotionEvent event, View view) {
+        if (event == null || view == null || view.getWidth() == 0 || view.getHeight() == 0) {
+            return false;
+        }
+        int[] viewLocation = new int[2];
+        view.getLocationOnScreen(viewLocation);
+        int viewMaxX = viewLocation[0] + view.getWidth() - 1;
+        int viewMaxY = viewLocation[1] + view.getHeight() - 1;
+        return (event.getRawX() <= viewMaxX && event.getRawX() >= viewLocation[0]
+                && event.getRawY() <= viewMaxY && event.getRawY() >= viewLocation[1]);
+    }
 
     /**
      * selector画像名に対応する STBキーコード.
