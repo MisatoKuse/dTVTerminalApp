@@ -167,6 +167,8 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         DTVTLogger.start("position = " + position);
         if (null != mViewPager) {
             DTVTLogger.debug("viewpager not null");
+            //タブ移動時にそれまでのデータ取得要求はキャンセルする
+            cancelDataProvider();
             mViewPager.setCurrentItem(position);
             mNoDataMessage.setVisibility(View.GONE);
         }
@@ -283,6 +285,8 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
             public void onPageSelected(final int position) {
                 // スクロールによるタブ切り替え
                 super.onPageSelected(position);
+                //タブ移動時にデータ取得要求をキャンセルする
+                cancelDataProvider();
                 resetPaging(mViewPager, mRankingFragmentFactory);
                 mTabLayout.setTab(position);
                 getGenreData();
@@ -293,6 +297,25 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         mTabLayout.setTab(mTabIndex);
         getGenreData();
     }
+
+    /**
+     * DataProviderキャンセル処理.
+     */
+    private void cancelDataProvider() {
+        if (mRankingDataProvider != null) {
+            mRankingDataProvider.stopConnect();
+            mRankingDataProvider.setWeeklyRankingApiCallback(null);
+            //キャンセル後に mRankingDataProvider の使いまわしを防ぐため null を設定
+            mRankingDataProvider = null;
+        }
+        if (mVideoGenreProvider != null) {
+            mVideoGenreProvider.stopConnect();
+            mVideoGenreProvider.setRankGenreListCallback(null);
+            //キャンセル後に mVideoGenreProvider の使いまわしを防ぐため null を設定
+            mVideoGenreProvider = null;
+        }
+    }
+
     /**
      * タブ毎にリクエストを行う.
      */
