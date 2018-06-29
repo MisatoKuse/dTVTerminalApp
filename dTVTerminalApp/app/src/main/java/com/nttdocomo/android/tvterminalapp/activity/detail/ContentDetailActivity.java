@@ -1591,7 +1591,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             }
         }
         sendOperateLog();
-        showProgressBar(false);
+        if (TextUtils.isEmpty(mServiceId)) {
+            showProgressBar(false);
+        }
         if (getStbStatus()) {
             findViewById(R.id.remote_control_view).setVisibility(View.VISIBLE);
         }
@@ -1664,8 +1666,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     //region ScaledDownProgramListDataProvider.ApiDataProviderCallback
     @Override
     public void channelListCallback(final ArrayList<ChannelInfo> channels) {
-        showProgressBar(false);
         if (channels == null || channels.isEmpty()) {
+            showProgressBar(false);
             showErrorDialog(ErrorType.channelListGet);
             return;
         }
@@ -1694,6 +1696,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         //コンテンツの視聴可否判定に基づいてUI操作を行う
         if (mViewIngType != null) {
             changeUIBasedContractInfo();
+            if (!mViewIngType.equals(ContentUtils.ViewIngType.PREMIUM_CHECK_START)
+                    && !mViewIngType.equals(ContentUtils.ViewIngType.SUBSCRIPTION_CHECK_START)) {
+                showProgressBar(false);
+            }
+        } else {
+            showProgressBar(false);
         }
     }
 
@@ -2602,6 +2610,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     public void onRentalVodListCallback(final PurchasedVodListResponse response) {
         DTVTLogger.start();
         if (response == null) {
+            showProgressBar(false);
             showErrorDialog(ErrorType.rentalVoidListGet);
             return;
         }
@@ -2613,6 +2622,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         mViewIngType = ContentUtils.getRentalVodViewingType(mDetailFullData, mEndDate);
         DTVTLogger.debug("get rental vod viewing type:" + mViewIngType);
         changeUIBasedContractInfo();
+        showProgressBar(false);
     }
 
     @Override
@@ -2620,6 +2630,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         //購入済みCH一覧取得からの戻り
         DTVTLogger.start();
         if (response == null) {
+            showProgressBar(false);
             showErrorDialog(ErrorType.rentalChannelListGet);
             return;
         }
@@ -2630,6 +2641,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         mViewIngType = ContentUtils.getRentalChannelViewingType(mDetailFullData, mEndDate);
         DTVTLogger.debug("get rental vod viewing type:" + mViewIngType);
         changeUIBasedContractInfo();
+        showProgressBar(false);
     }
 
     /**
