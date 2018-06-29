@@ -150,6 +150,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(final SQLiteDatabase sqLiteDatabase) {
+        DTVTLogger.start();
         sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_CHANNEL_SQL);
         sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_DLNA_BROWSE_SQL);
         sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_DAILY_RANK_SQL);
@@ -205,11 +206,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             DTVTLogger.debug("HomeDBHelper::onCreate, create " + DataBaseConstants.
                     CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL + " table failed, cause=" + e.getCause());
         }
-
+        DTVTLogger.end();
     }
 
     @Override
     public void onUpgrade(final SQLiteDatabase sqLiteDatabase, final int oldVersion, final int newVersion) {
+        DTVTLogger.start();
         //DB更新時に
         if (oldVersion < newVersion) {
             DateUtils.clearLastDate(mContext);
@@ -244,5 +246,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             RankingTopDataProvider rankingTopDataProvider = new RankingTopDataProvider(mContext);
             rankingTopDataProvider.getWeeklyRankingData("");
         }
+        DTVTLogger.end();
     }
 }

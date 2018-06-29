@@ -8,12 +8,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
-import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.ThumbnailCacheManager;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
@@ -169,6 +166,7 @@ public class DaccountControl implements
      * @param context                       コンテキスト
      * @param daccountControlCallBackSource 結果を返すコールバック
      */
+    @SuppressWarnings("OverlyLongMethod")
     public void registService(final Context context, final DaccountControlCallBack daccountControlCallBackSource) {
         DTVTLogger.start();
         if (mIsCancel) {
@@ -458,14 +456,6 @@ public class DaccountControl implements
 
         //サムネイルのキャッシュファイルを削除する
         ThumbnailCacheManager.clearThumbnailCache(context);
-
-        //DBを丸ごと削除する
-        boolean deleteDatabaseExeced = context.deleteDatabase(DataBaseConstants.DATABASE_NAME);
-
-        DTVTLogger.debug("deleteDatabase Answer = " + deleteDatabaseExeced);
-
-        //DBを新造する・インスタンスを作ると自動で作成される
-        new DataBaseHelper(context);
 
         // 再起動フラグの設定
         SharedPreferencesUtils.setSharedPreferencesRestartFlag(context, true);

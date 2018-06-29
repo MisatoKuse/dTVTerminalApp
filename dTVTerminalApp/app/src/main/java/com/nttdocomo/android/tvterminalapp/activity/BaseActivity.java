@@ -77,6 +77,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.RebuildDatabaseTableManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
@@ -1230,6 +1231,17 @@ public class BaseActivity extends FragmentActivity implements
 
         //ダイアログをキューにためる処理
         offerDialog(errorDialog);
+    }
+
+    /**
+     * dアカ変更前の再起動ダイアログ表示前にテーブルの再構築を実行する.
+     */
+    private void reBuildAllTable() {
+        DTVTLogger.start();
+        RebuildDatabaseTableManager tableManager = new RebuildDatabaseTableManager(this);
+        tableManager.allTableRebuild();
+        restartMessageDialog();
+        DTVTLogger.end();
     }
 
     /**
@@ -2390,7 +2402,7 @@ public class BaseActivity extends FragmentActivity implements
 
         // 再起動フラグがtrueならば、再起動メッセージを表示する
         if (SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext())) {
-            restartMessageDialog();
+            reBuildAllTable();
         }
 
         //再起動フラグをOFFにする
@@ -3115,7 +3127,7 @@ public class BaseActivity extends FragmentActivity implements
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                restartMessageDialog();
+                reBuildAllTable();
             }
         });
     }
