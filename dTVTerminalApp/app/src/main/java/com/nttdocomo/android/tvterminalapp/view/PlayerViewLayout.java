@@ -867,6 +867,14 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 }
                 if (playerParams.width < getScreenNavHeight()) {
                     playerParams.gravity = Gravity.CENTER_HORIZONTAL;
+                } else {
+                    playerParams.width = getScreenNavHeight();
+                    int widthRatio = mPlayerController.getVideoAspectRatioWidth();
+                    int heightRatio = mPlayerController.getVideoAspectRatioHeight();
+                    playerParams.height = getScreenNavHeight() / widthRatio * heightRatio;
+                    if (playerParams.height < getScreenNavWidth()) {
+                        playerParams.setMargins(0, (getScreenNavWidth() - playerParams.height) / 2, 0, 0);
+                    }
                 }
             }
             mScreenWidth = playerParams.width;
@@ -889,6 +897,15 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                     int widthRatio = mPlayerController.getVideoAspectRatioWidth();
                     int heightRatio = mPlayerController.getVideoAspectRatioHeight();
                     playerParams.height = getHeightDensity() / widthRatio * heightRatio;
+                }
+            }
+            if (playerParams.width < getScreenNavWidth()) {
+                playerParams.width = getScreenNavWidth();
+                int ratio = mPlayerController.getVideoAspectRatio();
+                if (ratio == SecureVideoView.RATIO_4x3) {
+                    playerParams.height = (getScreenNavWidth() * SCREEN_RATIO_HEIGHT_3 / SCREEN_RATIO_WIDTH_4);
+                } else {
+                    playerParams.height = (getScreenNavWidth() * SCREEN_RATIO_HEIGHT_9 / SCREEN_RATIO_WIDTH_16);
                 }
             }
             setPlayerProgressView(false);
