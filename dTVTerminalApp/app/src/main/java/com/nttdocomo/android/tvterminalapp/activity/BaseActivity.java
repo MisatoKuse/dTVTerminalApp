@@ -297,9 +297,9 @@ public class BaseActivity extends FragmentActivity implements
     private final static int HOME_CONTENTS_DISTINCTION_ADAPTER = 10;
     /**
      * リモコン表示時の鍵交換処理フラグ.
-     * ※コンテンツ詳細画面からのサービスアプリ起動要求時は鍵交換を行わない（false）
+     * ※ペアリングアイコンからのリモコン表示時のみ鍵交換を行う
      */
-    private static boolean mKeyExchangeFlag = true;
+    private static boolean mKeyExchangeFlag = false;
 
     /**
      * リモコン表示時の鍵交換の必要性.
@@ -884,6 +884,13 @@ public class BaseActivity extends FragmentActivity implements
                 menuRemoteController();
             }
         }
+    }
+
+    /**
+     * メニューからのサービスアプリ起動時にリモコンを表示する.
+     */
+    public void showRemoteControllerViewWithStartApplication() {
+        showRemoteControllerView(false);
     }
 
     /**
@@ -1626,6 +1633,8 @@ public class BaseActivity extends FragmentActivity implements
                         } else {
                             // コンテンツ詳細画面以外の場合
                             createRemoteControllerView(false);
+                            // 鍵交換処理が必要
+                            setKeyExchangeFlag(true);
                         }
                         getRemoteControllerView().startRemoteUI(true);
                         sendScreenView(getString(R.string.google_analytics_screen_name_remote_control));
@@ -2979,6 +2988,7 @@ public class BaseActivity extends FragmentActivity implements
         base.setVisibility(View.VISIBLE);
         setRelayClientHandler();
         if (isKeyExchangeRequired()) {
+            setKeyExchangeFlag(false);
             CipherUtil.exchangeKey();
         }
     }
