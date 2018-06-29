@@ -2163,9 +2163,11 @@ public class BaseActivity extends FragmentActivity implements
             }
             //飛び先がSTB選択の関連画面ならば、アニメは付加せず帰る
             if (callName.contains(StbSelectActivity.class.getSimpleName())
-                    || callName.contains(StbSelectErrorActivity.class.getSimpleName())) {
+                    || callName.contains(StbSelectErrorActivity.class.getSimpleName())
+                    || callName.contains(StbConnectActivity.class.getSimpleName())) {
                 //ただし、チュートリアル画面と設定画面から呼ばれた場合はアニメーションは行うので帰らない
                 if (!(this instanceof SettingActivity) && !(this instanceof TutorialActivity) && !(this instanceof LaunchTermsOfServiceActivity)) {
+                    overridePendingTransition(0, 0);
                     return;
                 }
             }
