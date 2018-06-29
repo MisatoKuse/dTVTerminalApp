@@ -96,10 +96,10 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
                     DataBaseThread dataBaseThread = new DataBaseThread(handler, this, MY_CHANNEL_INSERT);
                     dataBaseThread.start();
                 }
-                mApiDataProviderCallback.onMyChannelListCallback(myChannelMetaData);
+                sendMyChannelList(myChannelMetaData);
             }
         } else {
-            mApiDataProviderCallback.onMyChannelListCallback(null);
+            sendMyChannelList(null);
         }
     }
 
@@ -200,7 +200,7 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
                 break;
             case MY_CHANNEL_SELECT:
                 ArrayList<MyChannelMetaData> myChannelMetaData = getMyChannelMetaData(mMyChanelMapList);
-                mApiDataProviderCallback.onMyChannelListCallback(myChannelMetaData);
+                sendMyChannelList(myChannelMetaData);
                 break;
             default:
                 break;
@@ -328,5 +328,25 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
         if (mMyChannelDeleteStatus != null) {
             mMyChannelDeleteStatus.enableConnection();
         }
+    }
+
+    /**
+     * マイチャンネル一覧送信.
+     *
+     * @param myChannelMetaData マイチャンネル一覧
+     */
+    private void sendMyChannelList(final ArrayList<MyChannelMetaData> myChannelMetaData) {
+        if (mApiDataProviderCallback != null) {
+            mApiDataProviderCallback.onMyChannelListCallback(myChannelMetaData);
+        }
+    }
+
+    /**
+     * callbackキャンセル用.
+     *
+     * @param providerCallback callback(nullを設定)
+     */
+    public void setApiDataProviderCallback(final ApiDataProviderCallback providerCallback) {
+        this.mApiDataProviderCallback = providerCallback;
     }
 }

@@ -505,6 +505,16 @@ public class TvProgramListActivity extends BaseActivity implements
     public void onClickTab(final int position) {
         DTVTLogger.start("position = " + position);
         if (mTabIndex != position) {
+            if (mMyChannelDataProvider != null) {
+                //データプロバイダーキャンセル処理
+                mMyChannelDataProvider.stopConnect();
+                mMyChannelDataProvider.setApiDataProviderCallback(null);
+            }
+            if (mScaledDownProgramListDataProvider != null) {
+                //データプロバイダーキャンセル処理
+                mScaledDownProgramListDataProvider.stopConnect();
+                mScaledDownProgramListDataProvider.setApiDataProviderCallback(null);
+            }
             mTabIndex = position;
             sendScreenViewForPosition(position);
             clearData();
