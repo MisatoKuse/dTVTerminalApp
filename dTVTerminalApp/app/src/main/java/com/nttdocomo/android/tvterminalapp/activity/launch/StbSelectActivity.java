@@ -8,7 +8,6 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.session.MediaSession;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -1130,7 +1129,9 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.debug("not daccount app");
         //端末内にdアカウントアプリがない場合はdアカウントアプリDL誘導を行う
         mIsAppDL = true;
-        startActivity(DaccountInductionActivity.class, null);
+        Intent intent = new Intent(this, DaccountInductionActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        getApplicationContext().startActivity(intent);
     }
 
     @Override
