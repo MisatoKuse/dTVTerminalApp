@@ -147,6 +147,16 @@ public class RentalListActivity extends BaseActivity implements
         }
         return super.onKeyDown(keyCode, event);
     }
+    @Override
+    protected void contentsDetailBackKey(final View view) {
+        if (mIsMenuLaunch) {
+            //メニューから起動の場合ホーム画面に戻る
+            super.contentsDetailBackKey(view);
+        } else {
+            //ランチャーから起動の場合
+            finish();
+        }
+    }
 
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {

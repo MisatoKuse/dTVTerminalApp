@@ -777,6 +777,17 @@ public class ChannelListActivity extends BaseActivity implements
         return super.onKeyDown(keyCode, event);
     }
 
+    @Override
+    protected void contentsDetailBackKey(final View view) {
+        if (mIsMenuLaunch) {
+            //メニューから起動の場合ホーム画面に戻る
+            super.contentsDetailBackKey(view);
+        } else {
+            //ランチャーから起動の場合
+            finish();
+        }
+    }
+
     /**
      * type値設定.
      *
