@@ -345,8 +345,8 @@ public class ClipListActivity extends BaseActivity implements
 
                     //トークンエラーの判定
                     if (errorState != null && errorState.getErrorType()
-                            == DtvtConstants.ErrorType.TOKEN_ERROR) {
-                        //ここでトークンエラーならば、ログアウトのダイアログを出す
+                            == DtvtConstants.ErrorType.D_ACCOUNT_UNCERTIFIED) {
+                        //ここでdアカウント未認証エラーならば、ログアウトのダイアログを出す
                         showLogoutDialog();
                     }
                     return;
@@ -423,9 +423,11 @@ public class ClipListActivity extends BaseActivity implements
                     }
                     fragment.showProgressBar(false);
 
-                    //トークンエラーの判定
-                    if (errorState.getErrorType() == DtvtConstants.ErrorType.TOKEN_ERROR) {
-                        //ここでトークンエラーならば、ログアウトのダイアログを出す
+                    //dアカウント未認証エラーの判定
+                    if (errorState != null && errorState.getErrorType() != null
+                            && errorState.getErrorType()
+                            == DtvtConstants.ErrorType.D_ACCOUNT_UNCERTIFIED) {
+                        //ここでdアカウント未認証エラーならば、ログアウトのダイアログを出す
                         showLogoutDialog();
                     }
                     return;

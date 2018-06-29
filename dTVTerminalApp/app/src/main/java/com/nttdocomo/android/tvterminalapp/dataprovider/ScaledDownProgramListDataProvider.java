@@ -424,8 +424,8 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             }
         } else {
             mTvClipKeyListResponse = true;
-            //トークンエラーならばコールバックを返して、ログアウトのダイアログを出してもらう
-            if (errorState.getErrorType() == DtvtConstants.ErrorType.TOKEN_ERROR) {
+            //dアカウント未認証エラーならばコールバックを返して、ログアウトのダイアログを出してもらう
+            if (errorState.getErrorType() == DtvtConstants.ErrorType.D_ACCOUNT_UNCERTIFIED) {
                 if (null != mApiDataProviderCallback) {
                     mApiDataProviderCallback.channelInfoCallback(null);
                 }
@@ -445,8 +445,8 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             }
         } else {
             mVodClipKeyListResponse = true;
-            //トークンエラーならばコールバックを返して、ログアウトのダイアログを出してもらう
-            if (errorState.getErrorType() == DtvtConstants.ErrorType.TOKEN_ERROR) {
+            //dアカウント未認証エラーならばコールバックを返して、ログアウトのダイアログを出してもらう
+            if (errorState.getErrorType() == DtvtConstants.ErrorType.D_ACCOUNT_UNCERTIFIED) {
                 if (null != mApiDataProviderCallback) {
                     mApiDataProviderCallback.channelInfoCallback(null);
                 }

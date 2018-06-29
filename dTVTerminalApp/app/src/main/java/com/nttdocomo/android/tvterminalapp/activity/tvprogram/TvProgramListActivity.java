@@ -887,12 +887,16 @@ public class TvProgramListActivity extends BaseActivity implements
                     channelSort(channels);
                     mChannelInfo = channels;
                     setProgramRecyclerView(channels);
-                } else if(mScaledDownProgramListDataProvider.getmTvScheduleError()
-                        .getErrorType() == DtvtConstants.ErrorType.TOKEN_ERROR) {
+                } else if(mScaledDownProgramListDataProvider != null
+                        && mScaledDownProgramListDataProvider.getmTvScheduleError() != null
+                        && mScaledDownProgramListDataProvider.getmTvScheduleError()
+                        .getErrorType() != null &&
+                        mScaledDownProgramListDataProvider.getmTvScheduleError()
+                        .getErrorType() == DtvtConstants.ErrorType.D_ACCOUNT_UNCERTIFIED) {
                     //マイ番組データ無しの表示
                     showMyChannelNoItem(true);
 
-                    //トークインエラーだったので、ログアウトのダイアログを表示
+                    //dアカウント未認証エラーだったので、ログアウトのダイアログを表示
                     showLogoutDialog();
                 }
             }
@@ -1072,67 +1076,67 @@ public class TvProgramListActivity extends BaseActivity implements
      */
     @Override
     public void onMyChannelListCallback(final ArrayList<MyChannelMetaData> myChannelMetaData) {
-        this.mMyChannelDataList.clear();
-        if (myChannelMetaData != null && myChannelMetaData.size() > 0) {
-            // アプリとして編集が可能な index16 までで絞る(サーバからはindex順でレスポンスが来ているのでソートはしない)
-            for (int j = 0; j < myChannelMetaData.size(); j++) {
-                String index = myChannelMetaData.get(j).getIndex();
-                if (index != null && !index.isEmpty()) {
-                    int indexNum = 0;
-                    try {
-                        indexNum = Integer.parseInt(index);
-                    } catch (NumberFormatException e) {
-                        DTVTLogger.debug("MyChannel index is incorrect");
-                        DTVTLogger.debug(e);
-                        continue;
+        final TvProgramListActivity me = this;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                me.mMyChannelDataList.clear();
+                if (myChannelMetaData != null && myChannelMetaData.size() > 0) {
+                    // アプリとして編集が可能な index16 までで絞る(サーバからはindex順でレスポンスが来ているのでソートはしない)
+                    for (int j = 0; j < myChannelMetaData.size(); j++) {
+                        String index = myChannelMetaData.get(j).getIndex();
+                        if (index != null && !index.isEmpty()) {
+                            int indexNum = 0;
+                            try {
+                                indexNum = Integer.parseInt(index);
+                            } catch (NumberFormatException e) {
+                                DTVTLogger.debug("MyChannel index is incorrect");
+                                DTVTLogger.debug(e);
+                                continue;
+                            }
+                            if (1 <= indexNum && indexNum <= WebApiBasePlala.MY_CHANNEL_MAX_INDEX) {
+                                me.mMyChannelDataList.add(myChannelMetaData.get(j));
+                            }
+                        }
                     }
-                    if (1 <= indexNum && indexNum <= WebApiBasePlala.MY_CHANNEL_MAX_INDEX) {
-                        this.mMyChannelDataList.add(myChannelMetaData.get(j));
+                    //ひかりリストからチャンネル探すため
+                    if (mScaledDownProgramListDataProvider == null) {
+                        mScaledDownProgramListDataProvider =
+                                new ScaledDownProgramListDataProvider(me);
                     }
-                }
-            }
-            //ひかりリストからチャンネル探すため
-            if (mScaledDownProgramListDataProvider == null) {
-                mScaledDownProgramListDataProvider =
-                        new ScaledDownProgramListDataProvider(this);
-            }
-            mScaledDownProgramListDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_ALL);
-        } else {
-            //情報がヌルなので、ネットワークエラーメッセージを取得する
-            ErrorState errorState;
-            if (mScaledDownProgramListDataProvider != null) {
-                errorState = mScaledDownProgramListDataProvider.getChannelError();
-            } else {
-                errorState = mMyChannelDataProvider.getMyChannelListError();
-            }
-            if (errorState != null) {
-                if (errorState.getErrorType() == DtvtConstants.ErrorType.TOKEN_ERROR) {
-                    //UI側スレッドへ処理を移譲する
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
+                    mScaledDownProgramListDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_ALL);
+                } else {
+                    //情報がヌルなので、ネットワークエラーメッセージを取得する
+                    ErrorState errorState;
+                    if (mScaledDownProgramListDataProvider != null) {
+                        errorState = mScaledDownProgramListDataProvider.getChannelError();
+                    } else {
+                        errorState = mMyChannelDataProvider.getMyChannelListError();
+                    }
+                    if (errorState != null) {
+                        if (errorState.getErrorType() == DtvtConstants.ErrorType.D_ACCOUNT_UNCERTIFIED) {
                             //マイ番組データ無しの表示
                             showMyChannelNoItem(true);
 
-                            //トークンエラーなので、ダイアログを出す
+                            //dアカウント未認証エラーなので、ダイアログを出す
                             showLogoutDialog();
+                        } else {
+                            String message = errorState.getErrorMessage();
+                            //メッセージの有無で処理を分ける
+                            if (!TextUtils.isEmpty(message)) {
+                                showGetDataFailedToast(message);
+                            }
                         }
-                    });
-                } else {
-                    String message = errorState.getErrorMessage();
-                    //メッセージの有無で処理を分ける
-                    if (!TextUtils.isEmpty(message)) {
-                        showGetDataFailedToast(message);
+                    }
+                    //MY番組表情報がなければMY番組表を設定していないとする(データないので、特にタイムライン表示必要がない)
+                    if (mTabIndex == mMyChannelTabNo) {
+                        showMyChannelNoItem(true);
+                    } else {
+                        mNoDataMessage.setVisibility(View.VISIBLE);
                     }
                 }
             }
-            //MY番組表情報がなければMY番組表を設定していないとする(データないので、特にタイムライン表示必要がない)
-            if (mTabIndex == mMyChannelTabNo) {
-                showMyChannelNoItem(true);
-            } else {
-                mNoDataMessage.setVisibility(View.VISIBLE);
-            }
-        }
+        });
     }
 
     @Override

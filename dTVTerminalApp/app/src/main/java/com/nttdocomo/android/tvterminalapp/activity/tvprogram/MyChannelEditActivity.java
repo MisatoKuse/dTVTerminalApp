@@ -190,55 +190,55 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     @Override
     public void onMyChannelListCallback(final ArrayList<MyChannelMetaData> myChannelMetaData) {
         DTVTLogger.start();
-        //APIの実行が終わったので、再実行を許可
-        getOk = true;
+        final MyChannelEditActivity me = this;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //APIの実行が終わったので、再実行を許可
+                getOk = true;
 
-        if (myChannelMetaData != null) {
-            mEditList = new ArrayList<>();
-            if (mEditList.size() == 0) {
-                for (int i = 1; i <= EDIT_CHANNEL_LIST_COUNT; i++) {
-                    MyChannelMetaData myChannelItemData = null;
-                    for (int j = 0; j < myChannelMetaData.size(); j++) {
-                        MyChannelMetaData myChData = myChannelMetaData.get(j);
-                        int index = Integer.parseInt(myChData.getIndex());
-                        if (i == index) {
-                            myChannelItemData = myChData;
-                            break;
+                if (myChannelMetaData != null) {
+                    mEditList = new ArrayList<>();
+                    if (mEditList.size() == 0) {
+                        for (int i = 1; i <= EDIT_CHANNEL_LIST_COUNT; i++) {
+                            MyChannelMetaData myChannelItemData = null;
+                            for (int j = 0; j < myChannelMetaData.size(); j++) {
+                                MyChannelMetaData myChData = myChannelMetaData.get(j);
+                                int index = Integer.parseInt(myChData.getIndex());
+                                if (i == index) {
+                                    myChannelItemData = myChData;
+                                    break;
+                                }
+                            }
+                            if (myChannelItemData == null) {
+                                myChannelItemData = new MyChannelMetaData();
+                                myChannelItemData.setIndex(String.valueOf(i));
+                            }
+                            mEditList.add(myChannelItemData);
                         }
-                    }
-                    if (myChannelItemData == null) {
-                        myChannelItemData = new MyChannelMetaData();
-                        myChannelItemData.setIndex(String.valueOf(i));
-                    }
-                    mEditList.add(myChannelItemData);
-                }
-            } else {
-                ArrayList<MyChannelMetaData> rmList = new ArrayList<>();
-                for (int i = 0; i < myChannelMetaData.size(); i++) {
-                    for (int j = 0; j < mEditList.size(); j++) {
-                        String myChannelItemServiceId = myChannelMetaData.get(i).getServiceId();
-                        if (myChannelItemServiceId != null) {
-                            if (myChannelItemServiceId.equals(mEditList.get(j).getServiceId())) {
-                                rmList.add(myChannelMetaData.get(i));
-                                break;
+                    } else {
+                        ArrayList<MyChannelMetaData> rmList = new ArrayList<>();
+                        for (int i = 0; i < myChannelMetaData.size(); i++) {
+                            for (int j = 0; j < mEditList.size(); j++) {
+                                String myChannelItemServiceId = myChannelMetaData.get(i).getServiceId();
+                                if (myChannelItemServiceId != null) {
+                                    if (myChannelItemServiceId.equals(mEditList.get(j).getServiceId())) {
+                                        rmList.add(myChannelMetaData.get(i));
+                                        break;
+                                    }
+                                }
                             }
                         }
+                        myChannelMetaData.removeAll(rmList);
+                        mEditList.addAll(myChannelMetaData);
                     }
-                }
-                myChannelMetaData.removeAll(rmList);
-                mEditList.addAll(myChannelMetaData);
-            }
-            MyChannelEditAdapter myEditAdapter = new MyChannelEditAdapter(this, mEditList);
-            mEditListView.setAdapter(myEditAdapter);
-            myEditAdapter.notifyDataSetChanged();
-        } else {
-            //エラーの種別を取得
-            if (mMyChannelDataProvider.getMyChannelListError().getErrorType()
-                    == DtvtConstants.ErrorType.TOKEN_ERROR) {
-                //トークンエラーなので、ログアウトダイアログを表示
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+                    MyChannelEditAdapter myEditAdapter = new MyChannelEditAdapter(me, mEditList);
+                    mEditListView.setAdapter(myEditAdapter);
+                    myEditAdapter.notifyDataSetChanged();
+                } else {
+                    //エラーの種別を取得
+                    if (mMyChannelDataProvider.getMyChannelListError().getErrorType()
+                            == DtvtConstants.ErrorType.D_ACCOUNT_UNCERTIFIED) {
                         showLogoutDialog(new CustomDialog.DismissCallback() {
 
                             @Override
@@ -257,14 +257,13 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
 
                             }
                         });
+                    } else {
+                        //その他のエラーなので、その他のエラーを表示
+                        showErrorDialog();
                     }
-                });
-
-            } else {
-                //その他のエラーなので、その他のエラーを表示
-                showErrorDialog();
+                }
             }
-        }
+        });
         DTVTLogger.end();
     }
 
@@ -413,8 +412,8 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
             if (mMyChannelDataProvider != null
                     && mMyChannelDataProvider.getMyChannelListError() != null &&
                     mMyChannelDataProvider.getMyChannelListError().getErrorType()
-                    == DtvtConstants.ErrorType.TOKEN_ERROR) {
-                //トークンエラーならば、ログアウトダイアログを表示
+                    == DtvtConstants.ErrorType.D_ACCOUNT_UNCERTIFIED) {
+                //dアカウント未認証エラーならば、ログアウトダイアログを表示
                 showLogoutDialog();
             } else {
                 //トークンエラー以外ならば再読み込み

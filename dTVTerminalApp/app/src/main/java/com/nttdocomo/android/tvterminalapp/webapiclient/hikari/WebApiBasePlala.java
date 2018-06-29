@@ -665,11 +665,11 @@ public class WebApiBasePlala {
                 //TODO: 既存処理に悪影響があるので、一旦この処理は無効化・全て対処後に再有効化
 //                //ワンタイムパスワードが取得できたかどうかを見る
 //                if (result != IDimDefines.RESULT_COMPLETE) {
-//                    //リザルトのコードがゼロ以外なので、トークンエラーにする
+//                    //リザルトのコードがゼロ以外なので、dアカウント未認証エラーにする
 //                    DTVTLogger.debug("d Account one time token get fail");
 //                    ReturnCode returnCode = new ReturnCode();
 //                    returnCode.errorState.setErrorType(
-//                            DtvtConstants.ErrorType.TOKEN_ERROR);
+//                            DtvtConstants.ErrorType.D_ACCOUNT_UNCERTIFIED);
 //                    serviceTokenErrorCallback.onTokenError(returnCode);
 //                    return;
 //                }
@@ -1291,6 +1291,8 @@ public class WebApiBasePlala {
                 case HTTP_ERROR:
                     //その他のエラーなので、呼び出し元にはエラーを伝える
                     mWebApiBasePlalaCallback.onError(returnCode);
+                    break;
+                case D_ACCOUNT_UNCERTIFIED: //ここにはこのコードは来ない筈だが、警告が出るので追加。来ても無処理とする
                     break;
             }
 
