@@ -257,9 +257,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                             channels.add(channel);
                         }
                     }
-                    if (null != mApiDataProviderCallback) {
-                        mApiDataProviderCallback.channelListCallback(channels);
-                    }
+                    sendChannelInfoArray(channels);
                     break;
                 case SCHEDULE_SELECT:
                     //非同期なので、タブ切替時にこの処理に入ってしまわないようにNullチェックを追加
@@ -283,11 +281,9 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                                 channelsInfo.addChannel(channel);
                             }
                         }
-                        if (null != mApiDataProviderCallback) {
-                            mApiDataProviderCallback.channelInfoCallback(channelsInfo);
-                        }
+                        sendChannelInfoList(channelsInfo);
                     } else {
-                        mApiDataProviderCallback.channelInfoCallback(null);
+                        sendChannelInfoList(null);
                     }
                     break;
                 default:
@@ -309,7 +305,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 TvScheduleInsertDataManager scheduleInsertDataManager = new TvScheduleInsertDataManager(mContext);
                 scheduleInsertDataManager.insertTvScheduleInsertList(mChannelsInfoList, mProgramSelectDate);
                 //番組表の保存と番組表描画を並行して実行するとフリーズするため、DBへのInsertが終了してから描画を開始する
-                mApiDataProviderCallback.channelInfoCallback(mChannelsInfoList);
+                sendChannelInfoList(mChannelsInfoList);
                 break;
             case CHANNEL_SELECT://DBからチャンネルデータを取得して、画面に返却する
                 ProgramDataManager channelDataManager = new ProgramDataManager(mContext);
@@ -380,9 +376,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             }
         }
 
-        if (null != mApiDataProviderCallback) {
-            mApiDataProviderCallback.channelListCallback(dstChannels);
-        }
+        sendChannelInfoArray(dstChannels);
     }
 
     @Override
@@ -406,9 +400,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
 
             //Data取得時に、DBから取得するチャンネル番号とWebAPIから取得するチャンネル番号を分けて
             //データを取っているため、ここで改めてDBからデータを取得は行わない.
-            if (null != mApiDataProviderCallback) {
-                mApiDataProviderCallback.channelInfoCallback(null);
-            }
+            sendChannelInfoList(null);
         }
     }
 
@@ -418,18 +410,13 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         mTvScheduleError = errorState;
         super.onTvClipKeyListJsonParsed(clipKeyListResponse,errorState);
         if (mVodClipKeyListResponse) {
-            mApiDataProviderCallback.clipKeyResult();
-            if (null != mApiDataProviderCallback) {
-                mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
-                DTVTLogger.debug("null != mApiDataProviderCallback");
-            }
+            sendClipKeyResult();
+            sendChannelInfoList(setProgramListContentData());
         } else {
             mTvClipKeyListResponse = true;
             //dアカウント未認証エラーならばコールバックを返して、ログアウトのダイアログを出してもらう
             if (errorState.getErrorType() == DtvtConstants.ErrorType.D_ACCOUNT_UNCERTIFIED) {
-                if (null != mApiDataProviderCallback) {
-                    mApiDataProviderCallback.channelInfoCallback(null);
-                }
+                sendChannelInfoList(null);
             }
         }
     }
@@ -439,18 +426,13 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             ,final ErrorState errorState) {
         super.onVodClipKeyListJsonParsed(clipKeyListResponse, errorState);
         if (mTvClipKeyListResponse) {
-            mApiDataProviderCallback.clipKeyResult();
-            if (null != mApiDataProviderCallback) {
-                mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
-                DTVTLogger.debug("null != mApiDataProviderCallback");
-            }
+            sendClipKeyResult();
+            sendChannelInfoList(setProgramListContentData());
         } else {
             mVodClipKeyListResponse = true;
             //dアカウント未認証エラーならばコールバックを返して、ログアウトのダイアログを出してもらう
             if (errorState.getErrorType() == DtvtConstants.ErrorType.D_ACCOUNT_UNCERTIFIED) {
-                if (null != mApiDataProviderCallback) {
-                    mApiDataProviderCallback.channelInfoCallback(null);
-                }
+                sendChannelInfoList(null);
             }
 
         }
@@ -884,4 +866,52 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             DTVTLogger.end();
         }
     };
+
+    /**
+     * 複数チャンネルクラス送信.
+     *
+     * @param channelsInfo 複数チャンネルクラス
+     */
+    private void sendChannelInfoList(final ChannelInfoList channelsInfo) {
+        DTVTLogger.start();
+        if (null != mApiDataProviderCallback) {
+            DTVTLogger.debug("null != mApiDataProviderCallback");
+            mApiDataProviderCallback.channelInfoCallback(channelsInfo);
+        }
+        DTVTLogger.end();
+    }
+
+    /**
+     * チャンネルクラス送信.
+     * @param channels チャンネルクラス
+     */
+    private void sendChannelInfoArray(final ArrayList<ChannelInfo> channels) {
+        DTVTLogger.start();
+        if (null != mApiDataProviderCallback) {
+            DTVTLogger.debug("null != mApiDataProviderCallback");
+            mApiDataProviderCallback.channelListCallback(channels);
+        }
+        DTVTLogger.end();
+    }
+
+    /**
+     * クリップキー取得終了イベント送信.
+     */
+    private void sendClipKeyResult() {
+        DTVTLogger.start();
+        if (null != mApiDataProviderCallback) {
+            DTVTLogger.debug("get clip key result");
+            mApiDataProviderCallback.clipKeyResult();
+        }
+        DTVTLogger.end();
+    }
+
+    /**
+     * callbackキャンセル用.
+     *
+     * @param providerCallback callback(nullを設定)
+     */
+    public void setApiDataProviderCallback(final ApiDataProviderCallback providerCallback) {
+        this.mApiDataProviderCallback = providerCallback;
+    }
 }
