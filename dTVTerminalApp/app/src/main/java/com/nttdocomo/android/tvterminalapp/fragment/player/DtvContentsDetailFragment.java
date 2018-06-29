@@ -687,6 +687,9 @@ public class DtvContentsDetailFragment extends Fragment {
      * @return 詳細情報
      */
     public OtherContentsDetailData getOtherContentsDetailData() {
+        if (mOtherContentsDetailData == null) {
+            mOtherContentsDetailData = new OtherContentsDetailData();
+        }
         return mOtherContentsDetailData;
     }
 
