@@ -658,7 +658,7 @@ public class RecommendActivity extends BaseActivity implements
     protected void contentsDetailBackKey(final View view) {
         if (mIsMenuLaunch) {
             //メニューから起動の場合ホーム画面に戻る
-            super.contentsDetailBackKey(view);
+            startHomeActivity();
         } else {
             //ランチャーから起動の場合
             finish();
