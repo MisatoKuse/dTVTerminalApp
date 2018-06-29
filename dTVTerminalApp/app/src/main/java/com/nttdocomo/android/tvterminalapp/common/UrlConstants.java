@@ -92,9 +92,8 @@ public class UrlConstants {
 
         /**
          * 初回起動ペアリング(ヘルプページ) .
-         * TODO: 仮のHTMLファイル
          */
-        public final static String SETTING_HELP_PAIRING_URL = "file:///android_asset/first_pairing_help.html";
+        public final static String SETTING_HELP_PAIRING_URL = "file:///android_asset/pairing_help/dRM-18-008.html";
 
         /**
          * ペアリングヘルプHTTP URL.
