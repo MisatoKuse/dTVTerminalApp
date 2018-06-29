@@ -31,6 +31,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ServiceUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
@@ -715,7 +716,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
 
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.CHANNEL_LAST_UPDATE);
-        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
+        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate) || !NetWorkUtils.isOnline(mContext)) {
             //データをDBから取得する
             Handler handler = new Handler(mContext.getMainLooper());
             //チャンネル情報更新
@@ -783,7 +784,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         }
 
         //データをWebAPIから取得する
-        if (!mIsStop) {
+        if (!mIsStop && NetWorkUtils.isOnline(mContext)) {
             mTvScheduleWebClient = new TvScheduleWebClient(mContext);
             int[] chNos = new int[fromWebAPI.size()];
             for (int i = 0; i < fromWebAPI.size(); i++) {

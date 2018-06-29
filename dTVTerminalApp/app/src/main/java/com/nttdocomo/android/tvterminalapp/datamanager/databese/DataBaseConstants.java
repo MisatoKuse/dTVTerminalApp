@@ -34,6 +34,15 @@ public class DataBaseConstants {
      */
     public static final String UNDER_BAR_FOUR_K_FLG = "_4kflg";
 
+    /**
+     * index.
+     */
+    public static final String COLUMN_INDEX = "index";
+    /**
+     * Jsonのキー名がindexの時の対策用定数.
+     */
+    public static final String UNDER_COLUMN_INDEX = "_index";
+
     //Homeキャッシュデータ格納用テーブル
     /**
      * channel list.
@@ -140,6 +149,25 @@ public class DataBaseConstants {
             JsonConstants.META_RESPONSE_CHPACK, JsonConstants.UNDER_LINE,
             JsonConstants.META_RESPONSE_PU_END_DATE, TEXT_WITH_COMMA_TEXT,
             DATE_TYPE, TEXT_WITH_COMMA_TEXT, UPDATE_DATE, TEXT_WITHOUT_COMMA_TEXT,
+            CLOSE_BRACKETS_TEXT);
+
+    /**
+     * マイチャンネルリストテーブル名.
+     */
+    public static final String MY_CHANNEL_LIST_TABLE_NAME = "my_channel_list";
+
+    /**
+     * マイチャンネルリストDB作成SQL文.
+     */
+    public static final String CREATE_TABLE_MY_CHANNEL_SQL = StringUtils.getConnectStrings(
+            CREATE_TABLE_TEXT, MY_CHANNEL_LIST_TABLE_NAME, OPEN_BRACKETS_TEXT,
+            ID_COLUMN, CREATE_TABLE_PRIMARY_TEXT,
+            JsonConstants.META_RESPONSE_SERVICE_ID, TEXT_WITH_COMMA_TEXT,
+            JsonConstants.META_RESPONSE_TITLE, TEXT_WITH_COMMA_TEXT,
+            JsonConstants.META_RESPONSE_R_VALUE, TEXT_WITH_COMMA_TEXT,
+            JsonConstants.META_RESPONSE_ADULT_TYPE, TEXT_WITH_COMMA_TEXT,
+            //カラム名に"index"が使用できないため"_"をつける
+            UNDER_COLUMN_INDEX, TEXT_WITHOUT_COMMA_TEXT,
             CLOSE_BRACKETS_TEXT);
 
     /**

@@ -12,6 +12,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ChannelListDao;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.MyChannelListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvScheduleListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelperChannel;
@@ -33,23 +34,15 @@ import java.util.Map;
  */
 public class ProgramDataManager {
 
-    /**
-     * コンテキスト.
-     */
+    /** コンテキスト. */
     private final Context mContext;
 
-    /**
-     * チャンネルメタ service値（マイチャンネル）.
-     */
+    /** チャンネルメタ service値（マイチャンネル）. */
     public static final String CH_SERVICE_MY_CHANNEL = "MY_CHANNEL";
-    /**
-     * チャンネルメタ service値（ひかり）.
-     */
+    /** チャンネルメタ service値（ひかり）. */
     public static final String CH_SERVICE_HIKARI = "1";
 
-    /**
-     * チャンネルメタ service値（dCH）.
-     */
+    /** チャンネルメタ service値（dCH）. */
     public static final String CH_SERVICE_DCH = "2";
 
     /**
@@ -210,5 +203,49 @@ public class ProgramDataManager {
             DataBaseManager.getChInstance().closeChDatabase();
         }
         return lists;
+    }
+
+    /**
+     * マイチャンネル一覧データを返却する.
+     *
+     * @return list マイチャンネルデータ
+     */
+    public List<Map<String, String>> selectMyChannelListData() {
+
+        List<Map<String, String>> list = new ArrayList<>();
+
+        //ホーム画面に必要な列を列挙する
+        String[] columns = {
+                JsonConstants.META_RESPONSE_SERVICE_ID,
+                JsonConstants.META_RESPONSE_R_VALUE,
+                JsonConstants.META_RESPONSE_ADULT_TYPE,
+                //カラム名に"index"が使えないための対応
+                DataBaseUtils.indexConversion(JsonConstants.META_RESPONSE_INDEX),
+                JsonConstants.META_RESPONSE_TITLE};
+
+        try {
+            //Daoクラス使用準備
+            DataBaseHelper channelListDataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(channelListDataBaseHelper);
+            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+            database.acquireReference();
+
+            //データ存在チェック
+            if (!DataBaseUtils.isCachingRecord(database, DataBaseConstants.MY_CHANNEL_LIST_TABLE_NAME)) {
+                DataBaseManager.getInstance().closeDatabase();
+                return list;
+            }
+
+            MyChannelListDao myChannelListDao = new MyChannelListDao(database);
+
+            // マイチャンネル一覧取得
+            list = myChannelListDao.findById(columns);
+
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("ProgramDataManager::selectChannelListProgramData, e.cause=" + e.getCause());
+        } finally {
+            DataBaseManager.getInstance().closeDatabase();
+        }
+        return list;
     }
 }
