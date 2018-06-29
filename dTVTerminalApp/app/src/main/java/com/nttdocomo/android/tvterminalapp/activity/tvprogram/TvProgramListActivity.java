@@ -900,14 +900,9 @@ public class TvProgramListActivity extends BaseActivity implements
                 } else if(mScaledDownProgramListDataProvider != null
                         && mScaledDownProgramListDataProvider.getmTvScheduleError() != null
                         && mScaledDownProgramListDataProvider.getmTvScheduleError()
-                        .getErrorType() != null &&
-                        mScaledDownProgramListDataProvider.getmTvScheduleError()
-                        .getErrorType() == DtvtConstants.ErrorType.D_ACCOUNT_UNCERTIFIED) {
+                        .getErrorType() != null) {
                     //マイ番組データ無しの表示
                     showMyChannelNoItem(true);
-
-                    //dアカウント未認証エラーだったので、ログアウトのダイアログを表示
-                    showLogoutDialog();
                 }
             }
         });
@@ -1124,18 +1119,10 @@ public class TvProgramListActivity extends BaseActivity implements
                         errorState = mMyChannelDataProvider.getMyChannelListError();
                     }
                     if (errorState != null) {
-                        if (errorState.getErrorType() == DtvtConstants.ErrorType.D_ACCOUNT_UNCERTIFIED) {
-                            //マイ番組データ無しの表示
-                            showMyChannelNoItem(true);
-
-                            //dアカウント未認証エラーなので、ダイアログを出す
-                            showLogoutDialog();
-                        } else {
-                            String message = errorState.getErrorMessage();
-                            //メッセージの有無で処理を分ける
-                            if (!TextUtils.isEmpty(message)) {
-                                showGetDataFailedToast(message);
-                            }
+                        String message = errorState.getErrorMessage();
+                        //メッセージの有無で処理を分ける
+                        if (!TextUtils.isEmpty(message)) {
+                            showGetDataFailedToast(message);
                         }
                     }
                     //MY番組表情報がなければMY番組表を設定していないとする(データないので、特にタイムライン表示必要がない)

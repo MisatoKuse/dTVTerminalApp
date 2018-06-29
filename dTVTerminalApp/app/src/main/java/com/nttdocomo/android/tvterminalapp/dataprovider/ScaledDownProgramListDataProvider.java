@@ -414,10 +414,6 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             sendChannelInfoList(setProgramListContentData());
         } else {
             mTvClipKeyListResponse = true;
-            //dアカウント未認証エラーならばコールバックを返して、ログアウトのダイアログを出してもらう
-            if (errorState.getErrorType() == DtvtConstants.ErrorType.D_ACCOUNT_UNCERTIFIED) {
-                sendChannelInfoList(null);
-            }
         }
     }
 
@@ -430,11 +426,6 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             sendChannelInfoList(setProgramListContentData());
         } else {
             mVodClipKeyListResponse = true;
-            //dアカウント未認証エラーならばコールバックを返して、ログアウトのダイアログを出してもらう
-            if (errorState.getErrorType() == DtvtConstants.ErrorType.D_ACCOUNT_UNCERTIFIED) {
-                sendChannelInfoList(null);
-            }
-
         }
     }
 

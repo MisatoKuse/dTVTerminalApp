@@ -236,31 +236,8 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
                     mEditListView.setAdapter(myEditAdapter);
                     myEditAdapter.notifyDataSetChanged();
                 } else {
-                    //エラーの種別を取得
-                    if (mMyChannelDataProvider.getMyChannelListError().getErrorType()
-                            == DtvtConstants.ErrorType.D_ACCOUNT_UNCERTIFIED) {
-                        showLogoutDialog(new CustomDialog.DismissCallback() {
-
-                            @Override
-                            public void allDismissCallback() {
-                                if (getmShowDialog() != null) {
-                                    //次のダイアログの判定の為に、今のダイアログの文言をクリアする
-                                    getmShowDialog().clearContentText();
-                                }
-
-                                //キャンセル後はロードを行う
-                                loadData();
-                            }
-
-                            @Override
-                            public void otherDismissCallback() {
-
-                            }
-                        });
-                    } else {
-                        //その他のエラーなので、その他のエラーを表示
-                        showErrorDialog();
-                    }
+                    //その他のエラーなので、その他のエラーを表示
+                    showErrorDialog();
                 }
             }
         });
@@ -409,16 +386,8 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
             mEditListView.invalidateViews();
         }
         if (mEditList == null || mEditList.size() == 0) {
-            if (mMyChannelDataProvider != null
-                    && mMyChannelDataProvider.getMyChannelListError() != null &&
-                    mMyChannelDataProvider.getMyChannelListError().getErrorType()
-                    == DtvtConstants.ErrorType.D_ACCOUNT_UNCERTIFIED) {
-                //dアカウント未認証エラーならば、ログアウトダイアログを表示
-                showLogoutDialog();
-            } else {
-                //トークンエラー以外ならば再読み込み
-                loadData();
-            }
+            //トークンエラー以外ならば再読み込み
+            loadData();
         }
     }
 

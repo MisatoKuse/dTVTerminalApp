@@ -107,6 +107,7 @@ import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOtt;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountReceiver;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.OttGetAuthSwitch;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipDeleteWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.IDimDefines;
@@ -703,6 +704,9 @@ public class BaseActivity extends FragmentActivity implements
         //インテントにダイアログ表示依頼があるかどうかを見る
         checkDialogShowRequest();
 
+        //その画面の最初のワンタイムトークン取得処理では、認証画面を表示するようにフラグを初期化する
+        OttGetAuthSwitch.INSTANCE.setNowAuth(true,this);
+
         //TODO 1/19 1/5時点での実装後に仕様の再検討が発生したためコメントアウト
         //TODO 現状、このタイミングで実行するとHome画面でエラーになる(Home画面開始前にProgressBarを表示しようとするため)
         //TODO onResumeに移動すれば一応動作するが、確認が必要
@@ -1271,6 +1275,8 @@ public class BaseActivity extends FragmentActivity implements
 
         //ダイアログを、OKボタンのコールバックありに設定する
         CustomDialog restartDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        //枠外を押した時の操作を無視するように設定する
+        restartDialog.setOnTouchOutside(false);
         restartDialog.setContent(printMessage);
         //startAppDialog.setTitle(getString(R.string.dTV_content_service_start_dialog));
         restartDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
@@ -1948,6 +1954,9 @@ public class BaseActivity extends FragmentActivity implements
             @SuppressWarnings("OverlyLongMethod")
             @Override
             public void onOKCallback(final boolean isOK) {
+                //ログアウトのダイアログは閉じられたので、認証画面を再表示できるようにする
+                OttGetAuthSwitch.INSTANCE.setNowAuth(true);
+
                 //TODO:未認証状態続行のため、ログアウトでクリアしないならコメント化
                 DaccountControl.cacheClear(BaseActivity.this);
                 reStartApplication();
@@ -1958,6 +1967,8 @@ public class BaseActivity extends FragmentActivity implements
         logoutDialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
             @Override
             public void onCancelCallback() {
+                //ログアウトのダイアログは閉じられたので、認証画面を再表示できるようにする
+                OttGetAuthSwitch.INSTANCE.setNowAuth(true);
             }
         });
 
@@ -1967,6 +1978,9 @@ public class BaseActivity extends FragmentActivity implements
             logoutDialog.setDialogDismissCallback(new CustomDialog.DismissCallback() {
                 @Override
                 public void allDismissCallback() {
+                    //ログアウトのダイアログは閉じられたので、認証画面を再表示できるようにする
+                    OttGetAuthSwitch.INSTANCE.setNowAuth(true);
+
                     if (mShowDialog != null) {
                         //次のダイアログの判定の為に、今のダイアログの文言をクリアする
                         mShowDialog.clearContentText();
@@ -1990,13 +2004,15 @@ public class BaseActivity extends FragmentActivity implements
                 }
             });
         } else {
+            //ログアウトのダイアログは閉じられたので、認証画面を再表示できるようにする
+            OttGetAuthSwitch.INSTANCE.setNowAuth(true);
+
             //指定があったので、コールバックを設定する
             logoutDialog.setDialogDismissCallback(dissmissCallBack);
         }
 
         offerDialog(logoutDialog);
     }
-
 
     @Override
     protected void onDestroy() {
