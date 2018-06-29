@@ -74,6 +74,14 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
     public void onTvClipJsonParsed(final List<TvClipList> tvClipLists) {
         DTVTLogger.start();
         if (tvClipLists != null) {
+            // 次のリクエストに使用するpagerOffsetを設定
+            Map<String, String> clipMap = tvClipLists.get(0).getVcMap();
+            Integer offset = Integer.parseInt(clipMap.get(JsonConstants.META_RESPONSE_OFFSET));
+            Integer count = Integer.parseInt(clipMap.get(JsonConstants.META_RESPONSE_COUNT));
+            if (offset >= 0 && count >= 0) {
+                mPagerOffset = offset + count;
+            }
+
             mClipMapList = tvClipLists.get(0).getVcList();
             if (mClipMapList != null) {
                     if (!mRequiredClipKeyList
@@ -272,5 +280,14 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
     @Override
     public void clipKeyResult() {
         //Nop 仕様により実装のみ
+    }
+
+    /**
+     * ページオフセットの取得
+     *
+     * @return ページオフセット
+     */
+    public int getPagerOffset() {
+        return mPagerOffset;
     }
 }
