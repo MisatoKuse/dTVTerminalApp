@@ -53,7 +53,7 @@ public class HomeDataManager {
 
         List<Map<String, String>> list = new ArrayList<>();
 
-        //ホーム画面に必要な列を列挙する
+        //ホーム画面に必要な列とコンテンツ詳細へ連携する列を列挙する
         String[] columns = {JsonConstants.META_RESPONSE_THUMB_448,
                 JsonConstants.META_RESPONSE_THUMB_640,
                 JsonConstants.META_RESPONSE_DTV_THUMB_448,
@@ -61,6 +61,8 @@ public class HomeDataManager {
                 JsonConstants.META_RESPONSE_DTV,
                 JsonConstants.META_RESPONSE_AVAIL_START_DATE,
                 JsonConstants.META_RESPONSE_AVAIL_END_DATE,
+                JsonConstants.META_RESPONSE_CRID,
+                JsonConstants.META_RESPONSE_CONTENT_TYPE,
                 JsonConstants.META_RESPONSE_TITLE,
                 JsonConstants.META_RESPONSE_DISP_TYPE};
 
