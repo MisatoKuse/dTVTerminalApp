@@ -138,8 +138,9 @@ public class RentalListActivity extends BaseActivity implements
         DTVTLogger.start();
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                if (mIsMenuLaunch) { //メニューから起動の場合ホーム画面に戻る
-                    contentsDetailBackKey(null);
+                if (mIsMenuLaunch) {
+                    //メニューから起動の場合ホーム画面に戻る
+                    startHomeActivity();
                     return false;
                 }
             default:
@@ -151,7 +152,7 @@ public class RentalListActivity extends BaseActivity implements
     protected void contentsDetailBackKey(final View view) {
         if (mIsMenuLaunch) {
             //メニューから起動の場合ホーム画面に戻る
-            super.contentsDetailBackKey(view);
+            startHomeActivity();
         } else {
             //ランチャーから起動の場合
             finish();

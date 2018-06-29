@@ -197,7 +197,7 @@ public class PremiumVideoActivity extends BaseActivity implements
             case KeyEvent.KEYCODE_BACK:
                 if (mIsMenuLaunch) {
                     //メニューから起動の場合ホーム画面に戻る
-                    contentsDetailBackKey(null);
+                    startHomeActivity();
                     return false;
                 }
             default:
@@ -210,7 +210,7 @@ public class PremiumVideoActivity extends BaseActivity implements
     protected void contentsDetailBackKey(final View view) {
         if (mIsMenuLaunch) {
             //メニューから起動の場合ホーム画面に戻る
-            super.contentsDetailBackKey(view);
+            startHomeActivity();
         } else {
             //ランチャーから起動の場合
             finish();

@@ -1394,27 +1394,28 @@ public class BaseActivity extends FragmentActivity implements
      * @param view 戻るボタンのビュー
      */
     protected void contentsDetailBackKey(final View view) {
-        if (this instanceof RecommendActivity
-                || this instanceof SearchTopActivity
+        if (this instanceof SearchTopActivity
                 || this instanceof TvProgramListActivity
-                || this instanceof ChannelListActivity
                 || this instanceof RecordedListActivity
                 || this instanceof RankingTopActivity
-                || this instanceof WatchingVideoListActivity
-                || this instanceof ClipListActivity
                 || this instanceof VideoTopActivity
-                || this instanceof PremiumVideoActivity
-                || this instanceof RentalListActivity
                 || this instanceof RecordReservationListActivity
                 || this instanceof NoticeActivity
                 || this instanceof SettingActivity) {
-            Intent intent = mActivity.getIntent();
-            intent.setClass(mActivity, HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            startHomeActivity();
         } else {
             finish();
         }
+    }
+
+    /**
+     * ホームActivity起動.
+     */
+    protected void startHomeActivity() {
+        Intent intent = mActivity.getIntent();
+        intent.setClass(mActivity, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     /**
