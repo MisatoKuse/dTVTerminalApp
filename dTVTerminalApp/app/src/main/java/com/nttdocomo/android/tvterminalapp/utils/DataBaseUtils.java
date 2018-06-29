@@ -63,6 +63,20 @@ public class DataBaseUtils {
     }
 
     /**
+     * Jsonのキー名の"index"によるDBエラー回避用.
+     *
+     * @param string 検査用文字列
+     * @return 変換後文字列
+     */
+    public static String indexConversion(final String string) {
+        String s = string;
+        if (string.equals(DataBaseConstants.COLUMN_INDEX)) {
+            s = DataBaseConstants.UNDER_COLUMN_INDEX;
+        }
+        return s;
+    }
+
+    /**
      * 数値なのかを判定.
      *
      * @param num 　判定したい数値

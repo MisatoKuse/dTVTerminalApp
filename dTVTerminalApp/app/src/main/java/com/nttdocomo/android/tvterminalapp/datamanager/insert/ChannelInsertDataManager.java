@@ -14,8 +14,10 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ChannelListDao;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.MyChannelListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
@@ -92,6 +94,54 @@ public class ChannelInsertDataManager {
 
         } catch (SQLiteException e) {
             DTVTLogger.debug("ChannelInsertDataManager::insertChannelInsertList, e.cause=" + e.getCause());
+        } finally {
+            DataBaseManager.getInstance().closeDatabase();
+        }
+        DTVTLogger.end();
+    }
+
+    /**
+     * マイチャンネル一覧をDBに格納する.
+     *
+     * @param myChannelMetaData マイチャンネル一覧
+     */
+    public synchronized void insertMyChannelListInsert(final List<MyChannelMetaData> myChannelMetaData) {
+        DTVTLogger.start();
+
+        //取得データが空の場合は更新しないで、有効期限をクリアする
+        if (myChannelMetaData == null || myChannelMetaData.size() < 1) {
+            DateUtils.clearLastProgramDate(mContext, DateUtils.MY_CHANNEL_LIST_LAST_INSERT);
+            return;
+        }
+
+        try {
+            //各種オブジェクト作成
+            DataBaseHelper channelListDataBaseHelper = new DataBaseHelper(mContext);
+            DataBaseManager.initializeInstance(channelListDataBaseHelper);
+            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+            database.acquireReference();
+            MyChannelListDao myChannelListDao = new MyChannelListDao(database);
+
+            //DB保存前に前回取得したデータは全消去する
+            myChannelListDao.delete();
+
+            //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
+            for (int i = 0; i < myChannelMetaData.size(); i++) {
+                MyChannelMetaData myChannel = myChannelMetaData.get(i);
+                ContentValues values = new ContentValues();
+                values.put(JsonConstants.META_RESPONSE_SERVICE_ID, myChannel.getServiceId());
+                values.put(JsonConstants.META_RESPONSE_R_VALUE, myChannel.getRValue());
+                values.put(JsonConstants.META_RESPONSE_ADULT_TYPE, myChannel.getAdultType());
+                //カラム名に"index"が使えないための対応
+                values.put(DataBaseUtils.indexConversion(JsonConstants.META_RESPONSE_INDEX), myChannel.getIndex());
+                values.put(JsonConstants.META_RESPONSE_TITLE, myChannel.getTitle());
+                myChannelListDao.insert(values);
+            }
+            //データ保存日時を格納
+            DateUtils dateUtils = new DateUtils(mContext);
+            dateUtils.addLastDate(DateUtils.MY_CHANNEL_LIST_LAST_INSERT);
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("RoleListInsertDataManager::insertRoleList, e.cause=" + e.getCause());
         } finally {
             DataBaseManager.getInstance().closeDatabase();
         }
