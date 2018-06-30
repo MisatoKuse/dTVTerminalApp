@@ -24,7 +24,7 @@ public class WatchListenVideoList implements Serializable {
      * 視聴中ビデオ一覧データマップ取得.
      * @return 視聴中ビデオ一覧データマップ
      */
-    public HashMap getVcMap() {
+    public HashMap<String, String> getVcMap() {
         return mVcMap;
     }
 

@@ -50,6 +50,11 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     private final WatchListenVideoListProviderCallback mApiDataProviderCallback;
 
     /**
+     * 視聴中ビデオ一覧データ取得位置.
+     */
+    private int mPagerOffset = 0;
+
+    /**
      * 通信禁止判定フラグ.
      */
     private boolean mIsCancel = false;
@@ -90,6 +95,15 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
         }
         if (watchListenVideoList.size() > 0) {
             WatchListenVideoList list = watchListenVideoList.get(0);
+
+            // 次のリクエストに使用するpagerOffsetを設定
+            Map<String, String> clipMap = list.getVcMap();
+            Integer offset = Integer.parseInt(clipMap.get(JsonConstants.META_RESPONSE_OFFSET));
+            Integer count = Integer.parseInt(clipMap.get(JsonConstants.META_RESPONSE_COUNT));
+            if (offset >= 0 && count >= 0) {
+                mPagerOffset = offset + count;
+            }
+
             setStructDB(list);
             if (!mRequiredClipKeyList
                     || mResponseEndFlag) {
@@ -158,6 +172,8 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
      * @param pagerOffset 取得位置
      */
     public void getWatchListenVideoData(final int pagerOffset) {
+        mPagerOffset = pagerOffset;
+
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.WATCHING_VIDEO_LIST_LAST_INSERT);
 
@@ -176,7 +192,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
             String pagerDirection = "next";
 
             mWebClient.getWatchListenVideoApi(ageReq, UPPER_PAGE_LIMIT,
-                    lowerPageLimit, pagerOffset, pagerDirection, this);
+                    lowerPageLimit, mPagerOffset, pagerDirection, this);
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
             Handler handler = new Handler();
@@ -343,5 +359,14 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
      */
     public ErrorState getError() {
         return mError;
+    }
+
+    /**
+     * ページオフセットの取得
+     *
+     * @return ページオフセット
+     */
+    public int getPagerOffset() {
+        return mPagerOffset;
     }
 }

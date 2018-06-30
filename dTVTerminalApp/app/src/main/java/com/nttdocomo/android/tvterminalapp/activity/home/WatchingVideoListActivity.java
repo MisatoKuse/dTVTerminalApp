@@ -419,13 +419,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-
-                        int offset = 0;
-                        if (null != mWatchingVideoListData) {
-                            offset = mWatchingVideoListData.size() + 1;
-                        }
-                        mWatchListenVideoListDataProvider.getWatchListenVideoData(offset);
-
+                        mWatchListenVideoListDataProvider.getWatchListenVideoData(mWatchListenVideoListDataProvider.getPagerOffset());
                     }
                 }, LOAD_PAGE_DELAY_TIME);
             }
