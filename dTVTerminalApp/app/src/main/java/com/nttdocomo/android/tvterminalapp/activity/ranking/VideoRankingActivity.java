@@ -36,7 +36,6 @@ import java.util.List;
  */
 public class VideoRankingActivity extends BaseActivity implements
         TabItemLayout.OnClickTabTextListener,
-
         RankingTopDataProvider.VideoRankingApiDataProviderCallback,
         GenreListDataProvider.RankGenreListCallback {
      // region variable
@@ -222,6 +221,7 @@ public class VideoRankingActivity extends BaseActivity implements
         DTVTLogger.start("position = " + position);
         if (null != mViewPager) {
             DTVTLogger.debug("viewpager not null");
+            cancelDataProvider();
             mViewPager.setCurrentItem(position);
             mNoDataMessage.setVisibility(View.GONE);
         }
@@ -321,6 +321,7 @@ public class VideoRankingActivity extends BaseActivity implements
             public void onPageSelected(final int position) {
                 // スクロールによるタブ切り替え
                 super.onPageSelected(position);
+                cancelDataProvider();
                 resetPaging(mViewPager, mRankingFragmentFactory);
                 mTabLayout.setTab(position);
                 getGenreData();
@@ -330,6 +331,24 @@ public class VideoRankingActivity extends BaseActivity implements
         mViewPager.setCurrentItem(mTabIndex);
         mTabLayout.setTab(mTabIndex);
         getGenreData();
+    }
+
+    /**
+     * DataProviderキャンセル処理.
+     */
+    private void cancelDataProvider() {
+        if (mRankingDataProvider != null) {
+            mRankingDataProvider.stopConnect();
+            mRankingDataProvider.setVideoRankingApiDataProviderCallback(null);
+            //キャンセル後に mRankingDataProvider の使いまわしを防ぐため null を設定
+            mRankingDataProvider = null;
+        }
+        if (mVideoGenreProvider != null) {
+            mVideoGenreProvider.stopConnect();
+            mVideoGenreProvider.setRankGenreListCallback(null);
+            //キャンセル後に mVideoGenreProvider の使いまわしを防ぐため null を設定
+            mVideoGenreProvider = null;
+        }
     }
 
     /**
