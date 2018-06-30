@@ -168,7 +168,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         if (null != mViewPager) {
             DTVTLogger.debug("viewpager not null");
             //タブ移動時にそれまでのデータ取得要求はキャンセルする
-            cancelDataProvider();
             mViewPager.setCurrentItem(position);
             mNoDataMessage.setVisibility(View.GONE);
         }
@@ -302,6 +301,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
      * DataProviderキャンセル処理.
      */
     private void cancelDataProvider() {
+        DTVTLogger.start();
         if (mRankingDataProvider != null) {
             mRankingDataProvider.stopConnect();
             mRankingDataProvider.setWeeklyRankingApiCallback(null);
@@ -314,6 +314,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
             //キャンセル後に mVideoGenreProvider の使いまわしを防ぐため null を設定
             mVideoGenreProvider = null;
         }
+        DTVTLogger.end();
     }
 
     /**

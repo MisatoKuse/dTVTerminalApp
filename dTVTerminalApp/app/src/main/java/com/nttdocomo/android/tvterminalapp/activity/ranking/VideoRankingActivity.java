@@ -221,7 +221,6 @@ public class VideoRankingActivity extends BaseActivity implements
         DTVTLogger.start("position = " + position);
         if (null != mViewPager) {
             DTVTLogger.debug("viewpager not null");
-            cancelDataProvider();
             mViewPager.setCurrentItem(position);
             mNoDataMessage.setVisibility(View.GONE);
         }
@@ -337,6 +336,7 @@ public class VideoRankingActivity extends BaseActivity implements
      * DataProviderキャンセル処理.
      */
     private void cancelDataProvider() {
+        DTVTLogger.start();
         if (mRankingDataProvider != null) {
             mRankingDataProvider.stopConnect();
             mRankingDataProvider.setVideoRankingApiDataProviderCallback(null);
@@ -349,6 +349,7 @@ public class VideoRankingActivity extends BaseActivity implements
             //キャンセル後に mVideoGenreProvider の使いまわしを防ぐため null を設定
             mVideoGenreProvider = null;
         }
+        DTVTLogger.start();
     }
 
     /**
