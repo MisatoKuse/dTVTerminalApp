@@ -10,6 +10,8 @@ import android.os.Handler;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOtt;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.IDimDefines;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.OttGetAuthSwitch;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.HttpThread;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.WebApiCallback;
 
@@ -64,14 +66,23 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
         mWebApiCallback = callback;
         final WebApiBase webApiBase = this;
         //Log.d(DCommon.LOG_DEF_TAG, "WebApiBase::get, url= " + url);
-        //dアカウントのワンタイムパスワードの取得を行う
+        DTVTLogger.debug("”execDaccountGetOTT” getRecomendInfo");
+
+        //認証画面の表示状況のインスタンスの取得
+        final OttGetAuthSwitch ottGetAuthSwitch = OttGetAuthSwitch.INSTANCE;
+
+        //dアカウントのワンタイムパスワードの取得を行う(未認証時は認証画面へ遷移するように変更)
         final DaccountGetOtt getOtt = new DaccountGetOtt();
-        getOtt.execDaccountGetOTT(context, false, new DaccountGetOtt.DaccountGetOttCallBack() {
+        getOtt.execDaccountGetOTT(context, ottGetAuthSwitch.isNowAuth(), new DaccountGetOtt.DaccountGetOttCallBack() {
             @Override
             public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
-                //ワンタイムパスワードの取得後に呼び出す
-                mHttpThread = new HttpThread(url, webApiBase, context, oneTimePassword, getOtt);
-                mHttpThread.start();
+                if(result == IDimDefines.RESULT_USER_CANCEL) {
+                    ottGetAuthSwitch.showLogoutDialog();
+                } else {
+                    //ワンタイムパスワードの取得後に呼び出す
+                    mHttpThread = new HttpThread(url, webApiBase, context, oneTimePassword, getOtt);
+                    mHttpThread.start();
+                }
             }
         });
     }

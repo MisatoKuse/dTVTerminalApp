@@ -22,6 +22,7 @@ import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOtt;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.IDimDefines;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.OttGetAuthSwitch;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -656,23 +657,22 @@ public class WebApiBasePlala {
      */
     private void getOneTimePassword(final Context context,
                                     final ServiceTokenErrorCallback serviceTokenErrorCallback) {
-        //ワンタイムパスワードの取得
+        DTVTLogger.debug("”execDaccountGetOTT” getOneTimePassword");
+        //認証画面の表示状況のインスタンスの取得
+        final OttGetAuthSwitch ottGetAuthSwitch = OttGetAuthSwitch.INSTANCE;
+
+        //ワンタイムパスワードの取得(未認証時は認証画面への遷移を能動制御するように変更)
         mGetOtt = new DaccountGetOtt();
-        mGetOtt.execDaccountGetOTT(context, false, new DaccountGetOtt.DaccountGetOttCallBack() {
+        mGetOtt.execDaccountGetOTT(context, ottGetAuthSwitch.isNowAuth(), new DaccountGetOtt.DaccountGetOttCallBack() {
             @Override
             public void getOttCallBack(final int result, final String id,
                                        final String oneTimePassword) {
-                //TODO: 既存処理に悪影響があるので、一旦この処理は無効化・全て対処後に再有効化
-//                //ワンタイムパスワードが取得できたかどうかを見る
-//                if (result != IDimDefines.RESULT_COMPLETE) {
-//                    //リザルトのコードがゼロ以外なので、dアカウント未認証エラーにする
-//                    DTVTLogger.debug("d Account one time token get fail");
-//                    ReturnCode returnCode = new ReturnCode();
-//                    returnCode.errorState.setErrorType(
-//                            DtvtConstants.ErrorType.D_ACCOUNT_UNCERTIFIED);
-//                    serviceTokenErrorCallback.onTokenError(returnCode);
-//                    return;
-//                }
+                //ワンタイムパスワードが取得できたかどうかを見る
+                if (result == IDimDefines.RESULT_USER_CANCEL) {
+                    //キャンセルされたので、ログアウトダイアログを表示する
+                    ottGetAuthSwitch.showLogoutDialog();
+                    return;
+                }
 
                 //ワンタイムトークンが期限内ならば、そのまま使用する
                 OneTimeTokenData tokenData = SharedPreferencesUtils.getOneTimeTokenData(mContext);
@@ -1291,8 +1291,6 @@ public class WebApiBasePlala {
                 case HTTP_ERROR:
                     //その他のエラーなので、呼び出し元にはエラーを伝える
                     mWebApiBasePlalaCallback.onError(returnCode);
-                    break;
-                case D_ACCOUNT_UNCERTIFIED: //ここにはこのコードは来ない筈だが、警告が出るので追加。来ても無処理とする
                     break;
             }
 

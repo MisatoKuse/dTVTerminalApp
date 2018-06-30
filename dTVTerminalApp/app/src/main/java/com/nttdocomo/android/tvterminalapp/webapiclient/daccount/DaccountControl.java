@@ -213,12 +213,15 @@ public class DaccountControl implements
             //設定画面でdアカウントを切り替えた際は、ホーム画面の情報切り替えの為に、サービス登録済みでもコールバックが必要となる
             //登録済みでも、dアカウントの取得に失敗している場合があったので、存在の有無で処理を変更する
             if (TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(context))) {
-                DTVTLogger.debug("Daccount get retry");
+                DTVTLogger.debug("”execDaccountGetOTT” Daccount get retry");
+
+                //認証画面の表示状況のインスタンスの取得
+                OttGetAuthSwitch ottGetAuthSwitch = OttGetAuthSwitch.INSTANCE;
 
                 //dアカウントは取れていないので、再取得
                 mContext = context;
                 mDaccountGetOtt = new DaccountGetOtt();
-                mDaccountGetOtt.execDaccountGetOTT(mContext, true, this);
+                mDaccountGetOtt.execDaccountGetOTT(mContext, ottGetAuthSwitch.isNowAuth(), this);
                 //クラスの識別値を設定
                 mResultClass = CheckLastClassEnum.ONE_TIME_PASS_WORD;
             } else {
@@ -301,9 +304,13 @@ public class DaccountControl implements
         //サービス登録の結果
         if (result == IDimDefines.RESULT_COMPLETE
                 || result == IDimDefines.RESULT_RESULT_REGISTERED) {
+            //認証画面の表示状況のインスタンスの取得
+            OttGetAuthSwitch ottGetAuthSwitch = OttGetAuthSwitch.INSTANCE;
+
             // 登録結果が登録/更新成功か、既に登録済みならば、ワンタイムパスワードの取得を行う
+            DTVTLogger.debug("”execDaccountGetOTT” registServiceCallBack");
             mDaccountGetOtt = new DaccountGetOtt();
-            mDaccountGetOtt.execDaccountGetOTT(mContext, true, this);
+            mDaccountGetOtt.execDaccountGetOTT(mContext, ottGetAuthSwitch.isNowAuth(), this);
             //クラスの識別値を控える
             mResultClass = CheckLastClassEnum.ONE_TIME_PASS_WORD;
         } else {

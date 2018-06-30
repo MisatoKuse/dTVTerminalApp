@@ -343,12 +343,6 @@ public class ClipListActivity extends BaseActivity implements
                         mNoDataMessage.setVisibility(View.VISIBLE);
                     }
 
-                    //トークンエラーの判定
-                    if (errorState != null && errorState.getErrorType()
-                            == DtvtConstants.ErrorType.D_ACCOUNT_UNCERTIFIED) {
-                        //ここでdアカウント未認証エラーならば、ログアウトのダイアログを出す
-                        showLogoutDialog();
-                    }
                     return;
                 }
 
@@ -423,13 +417,6 @@ public class ClipListActivity extends BaseActivity implements
                     }
                     fragment.showProgressBar(false);
 
-                    //dアカウント未認証エラーの判定
-                    if (errorState != null && errorState.getErrorType() != null
-                            && errorState.getErrorType()
-                            == DtvtConstants.ErrorType.D_ACCOUNT_UNCERTIFIED) {
-                        //ここでdアカウント未認証エラーならば、ログアウトのダイアログを出す
-                        showLogoutDialog();
-                    }
                     return;
                 }
 

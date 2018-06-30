@@ -150,8 +150,8 @@ public class DaccountGetOtt {
                     option = IDimDefines.CertOption.DEFAULT;
                 }
             } else {
-                //サービストークンの取得時も、dアカウント未認証の場合は再認証画面への遷移を行う
-                option = IDimDefines.CertOption.DEFAULT;
+                //DEFAULTとRESERVEを能動制御するように変更したので、こちらでDEFAULTにして再認証画面を強要する必要がなくなったので、元に戻した
+                option = IDimDefines.CertOption.RESERVE;
             }
 
             String appCheckKey = "";

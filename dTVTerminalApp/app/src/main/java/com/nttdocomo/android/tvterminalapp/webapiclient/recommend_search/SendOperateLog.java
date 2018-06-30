@@ -16,6 +16,8 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOtt;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.IDimDefines;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.OttGetAuthSwitch;
 
 /**
  * ログ送信クラス.
@@ -122,15 +124,25 @@ public class SendOperateLog extends WebApiBase {
                 mCategoryId = mDetailData.getCategoryId();
             }
             if (!TextUtils.isEmpty(mCategoryId)) {
-                //dアカウントのワンタイムパスワードの取得を行う
+                DTVTLogger.debug("”execDaccountGetOTT” sendOpeLog");
+
+                //認証画面の表示状況のインスタンスの取得
+                final OttGetAuthSwitch ottGetAuthSwitch = OttGetAuthSwitch.INSTANCE;
+
+                //dアカウントのワンタイムパスワードの取得を行う(未認証時は認証画面へ遷移するように変更)
                 mGetOtt = new DaccountGetOtt();
-                mGetOtt.execDaccountGetOTT(mContext, false, new DaccountGetOtt.DaccountGetOttCallBack() {
+                mGetOtt.execDaccountGetOTT(mContext, ottGetAuthSwitch.isNowAuth(), new DaccountGetOtt.DaccountGetOttCallBack() {
                     @Override
                     public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
-                        //ワンタイムパスワードの取得後に呼び出す
-                        mHttpThread = new HttpThread(getUrl(mDetailData), null,
-                                mContext, oneTimePassword, mGetOtt);
-                        mHttpThread.start();
+                        if(result == IDimDefines.RESULT_USER_CANCEL) {
+                            //キャンセルならば、ログアウトのダイアログを呼び出す
+                            ottGetAuthSwitch.showLogoutDialog();
+                        } else {
+                            //ワンタイムパスワードの取得後に呼び出す
+                            mHttpThread = new HttpThread(getUrl(mDetailData), null,
+                                    mContext, oneTimePassword, mGetOtt);
+                            mHttpThread.start();
+                        }
                     }
                 });
             }

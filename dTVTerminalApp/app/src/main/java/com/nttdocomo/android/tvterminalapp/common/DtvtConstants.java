@@ -107,13 +107,6 @@ public class DtvtConstants {
          * HTTPエラー:その他通信エラー.
          */
         HTTP_ERROR,
-
-        /**
-         * dアカウント未認証:dアカウントが設定されているが、同ID使用端末増加などで認証状態では無くなった場合.
-         * (これはエラーメッセージではなく、認証画面が表示される)
-         */
-        D_ACCOUNT_UNCERTIFIED,
-
     }
 
 }
