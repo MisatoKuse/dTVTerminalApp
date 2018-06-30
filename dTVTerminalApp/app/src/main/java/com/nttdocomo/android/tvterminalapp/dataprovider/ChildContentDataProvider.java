@@ -85,8 +85,12 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
             }
             mCallback.childContentListCallback(null);
         } else {
-            mChildContentListGetResponse = response;
-            sendData(response);
+            if (!mRequiredClipKeyList
+                    || mResponseEndFlag) {
+                sendData(response);
+            } else { // clipキー一覧取得が終わってない場合は待つ
+                mChildContentListGetResponse = response;
+            }
         }
     }
 
@@ -188,6 +192,7 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
             data.setDispType(dispType);
             data.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
             data.setContentsId(vodMetaFullData.getCrid());
+            data.setCrid(vodMetaFullData.getCrid());
             data.setEstFlg(vodMetaFullData.getEstFlag());
             data.setChsVod(vodMetaFullData.getmChsvod());
             data.setAvailStartDate(vodMetaFullData.getAvail_start_date());

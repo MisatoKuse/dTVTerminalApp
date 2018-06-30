@@ -304,13 +304,22 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             }
         } else {
             holder = (ViewHolder) contentView.getTag();
-            if (holder.isCommonContent && listContentInfo.hasChildContentList()) {
-                holder = new ViewHolder();
-                contentView = mInflater.inflate(R.layout.item_wizard_cell, parent, false);
-                setWizardItem(holder, contentView);
+            if (listContentInfo.hasChildContentList()) {
+                if (!holder.isCommonContent) {
+                    setWizardItem(holder, contentView);
+                } else {
+                    holder = new ViewHolder();
+                    contentView = mInflater.inflate(R.layout.item_wizard_cell, parent, false);
+                    setWizardItem(holder, contentView);
+                }
             } else {
-                contentView = mInflater.inflate(R.layout.item_common_result, parent, false);
-                setListItemPattern(holder, contentView);
+                if (holder.isCommonContent) {
+                    setListItemPattern(holder, contentView);
+                } else {
+                    holder = new ViewHolder();
+                    contentView = mInflater.inflate(R.layout.item_common_result, parent, false);
+                    setListItemPattern(holder, contentView);
+                }
             }
         }
 
@@ -617,6 +626,9 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     @SuppressWarnings("OverlyComplexMethod")
     private void checkNowOnAir(final ViewHolder holder, final ContentsData listContentInfo, final View contentView, final boolean isPlala) {
         boolean result = false;
+        if (holder.tv_recorded_ch_name != null) {
+            holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.content_time_text));
+        }
         if (isPlala) {
             if (ContentDetailActivity.TV_PROGRAM.equals(listContentInfo.getDispType())) {
                 if (ContentDetailActivity.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(listContentInfo.getTvService())) {
@@ -727,6 +739,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         if (!TextUtils.isEmpty(listContentInfo.getTitle())) { //タイトル
             String title = listContentInfo.getTitle() + mContext.getResources().getString(R.string.common_ranking_enter);
             holder.tv_title.setText(title);
+        } else {
+            holder.tv_title.setText(mContext.getResources().getString(R.string.common_ranking_enter));
         }
     }
 
@@ -836,6 +850,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             //評価値が範囲外の場合は"-"を表示、星は非表示
             float ratNumber = Float.parseFloat(listContentInfo.getRatStar());
             holder.ll_rating.setRating(ratNumber);
+        } else {
+            holder.ll_rating.setRating(0);
         }
     }
 
@@ -913,6 +929,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      */
     private void setClipIcon(final ViewHolder holder, final ContentsData listContentInfo) {
         DTVTLogger.start();
+        holder.tv_clip.setVisibility(View.GONE);
         if (!ActivityTypeItem.TYPE_RECORDED_LIST.equals(mType)) {
             if (ActivityTypeItem.TYPE_RECOMMEND_LIST.equals(mType) || ActivityTypeItem.TYPE_SEARCH_LIST.equals(mType)) {
                 holder.tv_clip.setVisibility(View.GONE);
