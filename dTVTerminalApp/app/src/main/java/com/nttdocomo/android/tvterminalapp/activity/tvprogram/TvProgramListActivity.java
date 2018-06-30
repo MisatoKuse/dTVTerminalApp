@@ -577,6 +577,7 @@ public class TvProgramListActivity extends BaseActivity implements
             @Override
             public void onScrollStateChanged(final RecyclerView recyclerView, final int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
+                setProgramData(newState);
             }
         });
 
@@ -593,26 +594,32 @@ public class TvProgramListActivity extends BaseActivity implements
             @Override
             public void onScrollStateChanged(final RecyclerView recyclerView, final int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                switch (newState) {
-                    case SCROLL_STATE_IDLE:
-                        if (mScrollOffset > 0) {
-                            if (mTvProgramListAdapter != null) {
-                                String dateStr = mSelectDateStr.replace("-", "");
-                                String[] dateList = {dateStr};
-
-                                int[] chList = mTvProgramListAdapter.getNeedProgramChannels();
-                                if (chList != null && chList.length > 0) {
-                                    mScaledDownProgramListDataProvider.getProgram(chList, dateList);
-                                }
-                                mScrollOffset = 0;
-                            }
-                        }
-                        break;
-                    default:
-                        break;
-                }
+                setProgramData(newState);
             }
         });
+    }
+    /**
+     * 番組表データを画面に反映する.
+     * @param newState　スクロール終わった状態
+     */
+    private void setProgramData(final int newState) {
+        DTVTLogger.start();
+        switch (newState) {
+            case SCROLL_STATE_IDLE:
+                if (mScrollOffset > 0) {
+                    String dateStr = mSelectDateStr.replace("-", "");
+                    String[] dateList = {dateStr};
+                    int[] chList = mTvProgramListAdapter.getNeedProgramChannels();
+                    if (chList != null && chList.length > 0) {
+                        mScaledDownProgramListDataProvider.getProgram(chList, dateList);
+                    }
+                    mScrollOffset = 0;
+                }
+                break;
+            default:
+                break;
+        }
+        DTVTLogger.end();
     }
 
     /**
