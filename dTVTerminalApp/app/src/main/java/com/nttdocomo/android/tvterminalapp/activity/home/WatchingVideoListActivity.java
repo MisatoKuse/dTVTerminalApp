@@ -300,9 +300,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
                     return;
                 }
 
-                int pageNumber = getCurrentNumber();
-                for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE
-                        && i < watchListenVideoContentInfo.size(); ++i) { //mPageNumber
+                for (int i = 0; i < NUM_PER_PAGE && i < watchListenVideoContentInfo.size(); i++) {
                     mWatchingVideoListData.add(watchListenVideoContentInfo.get(i));
                 }
 
