@@ -792,7 +792,7 @@ public class StringUtils {
                         return "";
                     case HIKARI_TV_VOD:
                         //テレビで視聴できます
-                        return context.getString(R.string.contents_detail_hikari_vod_inside_home);
+                        return context.getString(R.string.contents_detail_thumbnail_text);
                     case HIKARI_IN_DCH_TV:
                     case HIKARI_IN_DCH:
                     case HIKARI_IN_DCH_MISS:

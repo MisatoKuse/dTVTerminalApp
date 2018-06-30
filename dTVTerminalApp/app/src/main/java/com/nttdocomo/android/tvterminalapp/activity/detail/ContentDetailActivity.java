@@ -2876,7 +2876,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 Button button = findViewById(R.id.contract_leading_button);
                 button.setVisibility(View.GONE);
                 TextView contractLeadingText = findViewById(R.id.contract_leading_text);
-                contractLeadingText.setText(R.string.contents_detail_hikari_vod_inside_home);
+                contractLeadingText.setText(R.string.contents_detail_thumbnail_text);
                 setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
             }
         }
