@@ -395,7 +395,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                     mApiDataProviderCallback.videoRankCallback(contentsDataList);
                 } else {
                     if (mVideoRankingApiDataProviderCallback != null) {
-                        mVideoRankingApiDataProviderCallback.onVideoRankListCallback(contentsDataList);
+                        sendVideoRankingApiCallback(contentsDataList);
                     }
                     DTVTLogger.end();
                 }
@@ -417,7 +417,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 //ビデオ情報が無いので、ヌルで帰る
                 mApiDataProviderCallback.videoRankCallback(null);
             } else if (mVideoRankingApiDataProviderCallback != null) {
-                mVideoRankingApiDataProviderCallback.onVideoRankListCallback(null);
+                sendVideoRankingApiCallback(null);
             }
         }
     }
@@ -844,7 +844,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                     if (mApiDataProviderCallback != null) {
                         mApiDataProviderCallback.videoRankCallback(null);
                     } else if (mVideoRankingApiDataProviderCallback != null) {
-                        mVideoRankingApiDataProviderCallback.onVideoRankListCallback(null);
+                        sendVideoRankingApiCallback(null);
                     }
                 }
             } else {
@@ -1045,6 +1045,25 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
      */
     public void setWeeklyRankingApiCallback(final WeeklyRankingApiDataProviderCallback providerCallback) {
         this.mWeeklyRankingApiCallback = providerCallback;
+    }
+
+    /**
+     * ビデオランキングリストをVideoRankingActivityに送る.
+     *
+     * @param contentsDataList ビデオランキングリスト
+     */
+    private void sendVideoRankingApiCallback(final List<ContentsData> contentsDataList) {
+        if (mVideoRankingApiDataProviderCallback != null) {
+            mVideoRankingApiDataProviderCallback.onVideoRankListCallback(contentsDataList);
+        }
+    }
+
+    /**
+     * callbackキャンセル用.
+     * @param providerCallback  callback(nullを設定)
+     */
+    public void setVideoRankingApiDataProviderCallback(final VideoRankingApiDataProviderCallback providerCallback) {
+        this.mVideoRankingApiDataProviderCallback = providerCallback;
     }
 
     @Override
