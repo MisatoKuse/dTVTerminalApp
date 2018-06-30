@@ -141,6 +141,8 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     private boolean mIsVideoBroadcast = false;
     /**再生開始可否.*/
     private boolean mCanPlay = false;
+    /**ダウンロード再生.*/
+    private boolean mIsLocalPlay = false;
     /**操作アイコン表示か.*/
     private boolean mIsHideOperate = true;
     /**再生開始フラグ.*/
@@ -535,6 +537,9 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
      * @param isShow true 表示　false 非表示
      */
     public void showPlayingProgress(final boolean isShow) {
+        if (mIsLocalPlay) {
+            return;
+        }
         if (mProgressBar == null) {
             mProgressBar = new ProgressBar(mContext, null, android.R.attr.progressBarStyle);
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
@@ -543,6 +548,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             mProgressBar.setLayoutParams(layoutParams);
         }
         if (isShow) {
+            this.removeView(mProgressBar);
             this.addView(mProgressBar);
             mProgressBar.setVisibility(View.VISIBLE);
         } else {
@@ -1335,6 +1341,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                     DTVTLogger.debug(file  + " not exists");
                     return false;
                 }
+                mIsLocalPlay = true;
                 uri = Uri.parse(LOCAL_FILE_PATH + dlFile);
             } else {
                 isAvailableConnectionStalling = true;
