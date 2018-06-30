@@ -269,7 +269,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                 }
                 //子ビューがタップされた場合
                 if (mDownY > mScrollHeight - mVisibilityHeight && mIsClick && !mIsTop) {
-                    mScroller.startScroll(0, -getScrollY(), 0, mScrollHeight - getScrollY());
+                    mScroller.startScroll(0, getScrollY(), 0, mScrollHeight - getScrollY());
                     postInvalidate();
                     setHeaderContent(false);
                     break;
