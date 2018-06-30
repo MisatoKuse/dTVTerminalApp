@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.activity.launch;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -30,7 +31,7 @@ public class DaccountInductionActivity extends BaseActivity {
     /**
      *DアカウントアプリURI.
      */
-    private static final String D_ACCOUNT_APP_URI = "market://details?id=com.nttdocomo.android.idmanager";
+    private static final String D_ACCOUNT_APP_URI = "https://play.google.com/store/apps/details?id=com.nttdocomo.android.idmanager";
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,5 +86,13 @@ public class DaccountInductionActivity extends BaseActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public boolean onKeyDown(final int keyCode, final  KeyEvent event) {
+        finish();
+        //アニメーションを付加する
+        overridePendingTransition(R.anim.in_righttoleft, R.anim.out_lefttoright);
+        return super.onKeyDown(keyCode, event);
     }
 }
