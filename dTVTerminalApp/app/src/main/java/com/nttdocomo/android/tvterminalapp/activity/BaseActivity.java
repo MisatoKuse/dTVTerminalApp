@@ -2686,8 +2686,13 @@ public class BaseActivity extends FragmentActivity implements
         DTVTLogger.start();
         DTVTLogger.debug("mLinkedList.size()=" + mLinkedList.size());
         if ((mShowDialog == null || !mShowDialog.isShowing()) && mLinkedList.size() > 0) {
-            mShowDialog = mLinkedList.poll();
-            mShowDialog.showDialog();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mShowDialog = mLinkedList.poll();
+                    mShowDialog.showDialog();
+                }
+            });
         } else {
             if (mShowDialog != null) {
                 startNextProcess();
