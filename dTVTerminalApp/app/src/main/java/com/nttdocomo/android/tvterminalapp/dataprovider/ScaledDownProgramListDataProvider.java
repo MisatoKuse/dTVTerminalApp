@@ -13,7 +13,6 @@ import android.os.Looper;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
@@ -396,7 +395,9 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             }
         } else {
             //データが取得できなかったので、エラーを取得する
-            mTvScheduleError = mTvScheduleWebClient.getError();
+            if (mTvScheduleWebClient != null) {
+                mTvScheduleError = mTvScheduleWebClient.getError();
+            }
 
             //Data取得時に、DBから取得するチャンネル番号とWebAPIから取得するチャンネル番号を分けて
             //データを取っているため、ここで改めてDBからデータを取得は行わない.

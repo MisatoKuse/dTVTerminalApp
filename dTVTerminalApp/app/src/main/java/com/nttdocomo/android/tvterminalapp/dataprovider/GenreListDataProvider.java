@@ -207,16 +207,12 @@ public class GenreListDataProvider implements
                     //SharedPreferences取得失敗時には通信で取得
                     mGenreListWebClient = new GenreListWebClient(mContext);
                     if (!mGenreListWebClient.getGenreListApi(this)) {
-                        if (mRankGenreListCallback != null) {
-                            sendRankGenreList(null);
-                        }
+                        sendRankGenreList(null);
                     }
                 } else {
                     DTVTLogger.error("GenreListDataProvider is stopping connection");
-                    if (mRankGenreListCallback != null) {
-                        //nullデータを返却する
-                        sendRankGenreList(null);
-                    }
+                    //nullデータを返却する
+                    sendRankGenreList(null);
                 }
             }
         }
@@ -426,12 +422,22 @@ public class GenreListDataProvider implements
         return mGenreListError;
     }
 
+    /**
+     * ジャンルリストcallbackを返す.
+     *
+     * @param genreMetaDataList ジャンルリスト
+     */
     private void sendRankGenreList(final ArrayList<GenreListMetaData> genreMetaDataList) {
         if (mRankGenreListCallback != null) {
             mRankGenreListCallback.onRankGenreListCallback(genreMetaDataList);
         }
     }
 
+    /**
+     * callbackキャンセル用.
+     *
+     * @param listCallback callback(nullを設定)
+     */
     public void setRankGenreListCallback(final RankGenreListCallback listCallback) {
         this.mRankGenreListCallback = listCallback;
     }

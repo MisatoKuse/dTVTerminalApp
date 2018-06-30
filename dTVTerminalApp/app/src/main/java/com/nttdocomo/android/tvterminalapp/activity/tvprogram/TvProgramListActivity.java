@@ -186,7 +186,7 @@ public class TvProgramListActivity extends BaseActivity implements
     /**
      * マイ番組表データ.
      */
-    private final ArrayList<MyChannelMetaData> mMyChannelDataList = new ArrayList<>();
+    private ArrayList<MyChannelMetaData> mMyChannelDataList = null;
     /**
      * レッドタイムライン.
      */
@@ -438,6 +438,8 @@ public class TvProgramListActivity extends BaseActivity implements
             DTVTLogger.debug(e);
         }
     }
+
+
     /**
      * 機能
      * タイトルの設定.
@@ -505,25 +507,32 @@ public class TvProgramListActivity extends BaseActivity implements
     public void onClickTab(final int position) {
         DTVTLogger.start("position = " + position);
         if (mTabIndex != position) {
-            if (mMyChannelDataProvider != null) {
-                //データプロバイダーキャンセル処理
-                mMyChannelDataProvider.stopConnect();
-                mMyChannelDataProvider.setApiDataProviderCallback(null);
-                //キャンセル後に mMyChannelDataProvider の使いまわしを防ぐため null を設定
-                mMyChannelDataProvider = null;
-            }
-            if (mScaledDownProgramListDataProvider != null) {
-                //データプロバイダーキャンセル処理
-                mScaledDownProgramListDataProvider.stopConnect();
-                mScaledDownProgramListDataProvider.setApiDataProviderCallback(null);
-                //キャンセル後に mScaledDownProgramListDataProvider の使いまわしを防ぐため null を設定
-                mScaledDownProgramListDataProvider = null;
-            }
+            cancelDataProvider();
             mTabIndex = position;
             sendScreenViewForPosition(position);
             clearData();
             getChannelData();
             DTVTLogger.end();
+        }
+    }
+
+    /**
+     * DataProviderキャンセル処理.
+     */
+    private void cancelDataProvider() {
+        if (mMyChannelDataProvider != null) {
+            //データプロバイダーキャンセル処理
+            mMyChannelDataProvider.stopConnect();
+            mMyChannelDataProvider.setApiDataProviderCallback(null);
+            //キャンセル後に mMyChannelDataProvider の使いまわしを防ぐため null を設定
+            mMyChannelDataProvider = null;
+        }
+        if (mScaledDownProgramListDataProvider != null) {
+            //データプロバイダーキャンセル処理
+            mScaledDownProgramListDataProvider.stopConnect();
+            mScaledDownProgramListDataProvider.setApiDataProviderCallback(null);
+            //キャンセル後に mScaledDownProgramListDataProvider の使いまわしを防ぐため null を設定
+            mScaledDownProgramListDataProvider = null;
         }
     }
 
@@ -901,12 +910,6 @@ public class TvProgramListActivity extends BaseActivity implements
                     channelSort(channels);
                     mChannelInfo = channels;
                     setProgramRecyclerView(channels);
-                } else if(mScaledDownProgramListDataProvider != null
-                        && mScaledDownProgramListDataProvider.getmTvScheduleError() != null
-                        && mScaledDownProgramListDataProvider.getmTvScheduleError()
-                        .getErrorType() != null) {
-                    //マイ番組データ無しの表示
-                    showMyChannelNoItem(true);
                 }
             }
         });
@@ -922,7 +925,7 @@ public class TvProgramListActivity extends BaseActivity implements
             //MY番組表
             if (channels != null && channels.size() > 0) {
 //                sort(channels);
-                showMyChannelNoItem(false);
+                showMyChannelNoItem(false, false);
                 this.mHikariChannels = channels;
                 //TODO 作業(https://agile.apccloud.jp/jira/browse/DREM-2508)
                 //TODO ↓のchannelListをDB保存
@@ -938,7 +941,7 @@ public class TvProgramListActivity extends BaseActivity implements
             //ひかり、dTVチャンネル
             if (channels != null && channels.size() > 0) {
 //                sort(channels);
-                showMyChannelNoItem(false);
+                showMyChannelNoItem(false, false);
                 this.mChannels = channels;
                 setChannelContentsView(mChannels);
                 if (mScaledDownProgramListDataProvider == null) {
@@ -995,11 +998,6 @@ public class TvProgramListActivity extends BaseActivity implements
             String dateStr = mSelectDateStr.replace("-", "");
             String[] dateList = {dateStr};
             mScaledDownProgramListDataProvider.getProgram(channelNos, dateList);
-        } else {
-            //「マイ番組が設定されていません」と表示される
-            if (mTabIndex == mMyChannelTabNo) {
-                showMyChannelNoItem(true);
-            }
         }
     }
 
@@ -1007,8 +1005,9 @@ public class TvProgramListActivity extends BaseActivity implements
      * マイ番組表Noチャンネル表示.
      *
      * @param isShowFlag マイ番組表の要素表示フラグ.
+     * @param isZeroData 0件取得フラグ.
      */
-    private void showMyChannelNoItem(final boolean isShowFlag) {
+    private void showMyChannelNoItem(final boolean isShowFlag, final boolean isZeroData) {
         //一部の処理で別スレッドで実行されたことによるエラーが発生していた。UIスレッドへ処理を移譲する
         runOnUiThread(new Runnable() {
             @Override
@@ -1017,6 +1016,12 @@ public class TvProgramListActivity extends BaseActivity implements
                     mTimeScrollView.setVisibility(View.INVISIBLE);
                     mTagImageView.setVisibility(View.INVISIBLE);
                     mTimeLine.setVisibility(View.INVISIBLE);
+                    //0件取得か否かで表示メッセージを変更する
+                    if (isZeroData) {
+                        mMyChannelNoDataTxT.setText(getString(R.string.tv_program_tip));
+                    } else {
+                        mMyChannelNoDataTxT.setText(getString(R.string.tv_program_tip_can_not_get_my_program));
+                    }
                     mMyChannelNoDataTxT.setVisibility(View.VISIBLE);
                     mNoDataMessage.setVisibility(View.GONE);
                 } else {
@@ -1085,13 +1090,13 @@ public class TvProgramListActivity extends BaseActivity implements
      */
     @Override
     public void onMyChannelListCallback(final ArrayList<MyChannelMetaData> myChannelMetaData) {
-        final TvProgramListActivity me = this;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                me.mMyChannelDataList.clear();
                 if (myChannelMetaData != null && myChannelMetaData.size() > 0) {
+                    showMyChannelNoItem(false, false);
                     // アプリとして編集が可能な index16 までで絞る(サーバからはindex順でレスポンスが来ているのでソートはしない)
+                    mMyChannelDataList = new ArrayList<>();
                     for (int j = 0; j < myChannelMetaData.size(); j++) {
                         String index = myChannelMetaData.get(j).getIndex();
                         if (index != null && !index.isEmpty()) {
@@ -1104,40 +1109,52 @@ public class TvProgramListActivity extends BaseActivity implements
                                 continue;
                             }
                             if (1 <= indexNum && indexNum <= WebApiBasePlala.MY_CHANNEL_MAX_INDEX) {
-                                me.mMyChannelDataList.add(myChannelMetaData.get(j));
+                                mMyChannelDataList.add(myChannelMetaData.get(j));
                             }
                         }
                     }
                     //ひかりリストからチャンネル探すため
                     if (mScaledDownProgramListDataProvider == null) {
                         mScaledDownProgramListDataProvider =
-                                new ScaledDownProgramListDataProvider(me);
+                                new ScaledDownProgramListDataProvider(TvProgramListActivity.this);
                     }
                     mScaledDownProgramListDataProvider.getChannelList(0, 0, "", JsonConstants.CH_SERVICE_TYPE_INDEX_ALL);
+                } else if (myChannelMetaData == null) {
+                    noMyChannelDataDisplay(false);
                 } else {
-                    //情報がヌルなので、ネットワークエラーメッセージを取得する
-                    ErrorState errorState;
-                    if (mScaledDownProgramListDataProvider != null) {
-                        errorState = mScaledDownProgramListDataProvider.getChannelError();
-                    } else {
-                        errorState = mMyChannelDataProvider.getMyChannelListError();
-                    }
-                    if (errorState != null) {
-                        String message = errorState.getErrorMessage();
-                        //メッセージの有無で処理を分ける
-                        if (!TextUtils.isEmpty(message)) {
-                            showGetDataFailedToast(message);
-                        }
-                    }
-                    //MY番組表情報がなければMY番組表を設定していないとする(データないので、特にタイムライン表示必要がない)
-                    if (mTabIndex == mMyChannelTabNo) {
-                        showMyChannelNoItem(true);
-                    } else {
-                        mNoDataMessage.setVisibility(View.VISIBLE);
-                    }
+                    //0件取得の場合はフラグを立てる
+                    noMyChannelDataDisplay(true);
                 }
             }
         });
+    }
+
+    /**
+     * マイ番組表取得失敗時の表示.
+     *
+     * @param isZeroData 0件フラグ(正常取得時)
+     */
+    private void noMyChannelDataDisplay(final boolean isZeroData) {
+        //情報がヌルなので、ネットワークエラーメッセージを取得する
+        ErrorState errorState;
+        if (mScaledDownProgramListDataProvider != null) {
+            errorState = mScaledDownProgramListDataProvider.getChannelError();
+        } else {
+            errorState = mMyChannelDataProvider.getMyChannelListError();
+        }
+        if (errorState != null) {
+            String message = errorState.getErrorMessage();
+            //メッセージの有無で処理を分ける
+            if (!TextUtils.isEmpty(message)) {
+                showGetDataFailedToast(message);
+            }
+        }
+        //MY番組表情報がなければMY番組表を設定していないとする(データないので、特にタイムライン表示必要がない)
+        if (mTabIndex == mMyChannelTabNo) {
+            showMyChannelNoItem(true, isZeroData);
+        } else {
+            mNoDataMessage.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
