@@ -359,9 +359,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 if (mApiDataProviderCallback != null) {
                     mApiDataProviderCallback.weeklyRankCallback(contentsDataList);
                 } else {
-                    if (mWeeklyRankingApiCallback != null) {
-                        mWeeklyRankingApiCallback.onWeeklyRankListCallback(contentsDataList);
-                    }
+                    sendWeeklyGenreRankList(contentsDataList);
                     DTVTLogger.end();
                 }
             } else {
@@ -374,9 +372,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             if (mApiDataProviderCallback != null) {
                 mApiDataProviderCallback.weeklyRankCallback(null);
             } else {
-                if (mWeeklyRankingApiCallback != null) {
-                    mWeeklyRankingApiCallback.onWeeklyRankListCallback(null);
-                }
+                sendWeeklyGenreRankList(null);
                 DTVTLogger.end();
             }
         }
@@ -476,9 +472,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             if (mApiDataProviderCallback != null) {
                 mApiDataProviderCallback.weeklyRankCallback(contentsDataList);
             } else {
-                if (mWeeklyRankingApiCallback != null) {
-                    mWeeklyRankingApiCallback.onWeeklyRankListCallback(contentsDataList);
-                }
+                sendWeeklyGenreRankList(contentsDataList);
                 DTVTLogger.end();
             }
         }
@@ -720,17 +714,6 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         }
         DTVTLogger.end();
         return rankingContentsDataList;
-    }
-
-    /**
-     * 週間ランキングリストをWeeklyRankingActivityに送る.
-     *
-     * @param contentsDataList 週間ランキングリスト
-     */
-    private void sendWeeklyGenreRankListData(final List<ContentsData> contentsDataList) {
-        if (contentsDataList != null) {
-            mWeeklyRankingApiCallback.onWeeklyRankListCallback(contentsDataList);
-        }
     }
 
     /**
@@ -1043,6 +1026,25 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 break;
         }
         return null;
+    }
+
+    /**
+     * 週間ランキングリストをWeeklyRankingActivityに送る.
+     *
+     * @param contentsDataList 週間ランキングリスト
+     */
+    private void sendWeeklyGenreRankList(final List<ContentsData> contentsDataList) {
+        if (mWeeklyRankingApiCallback != null) {
+            mWeeklyRankingApiCallback.onWeeklyRankListCallback(contentsDataList);
+        }
+    }
+
+    /**
+     * callbackキャンセル用.
+     * @param providerCallback  callback(nullを設定)
+     */
+    public void setWeeklyRankingApiCallback(final WeeklyRankingApiDataProviderCallback providerCallback) {
+        this.mWeeklyRankingApiCallback = providerCallback;
     }
 
     @Override

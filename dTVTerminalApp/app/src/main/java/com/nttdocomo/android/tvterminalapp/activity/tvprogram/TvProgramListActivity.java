@@ -509,11 +509,15 @@ public class TvProgramListActivity extends BaseActivity implements
                 //データプロバイダーキャンセル処理
                 mMyChannelDataProvider.stopConnect();
                 mMyChannelDataProvider.setApiDataProviderCallback(null);
+                //キャンセル後に mMyChannelDataProvider の使いまわしを防ぐため null を設定
+                mMyChannelDataProvider = null;
             }
             if (mScaledDownProgramListDataProvider != null) {
                 //データプロバイダーキャンセル処理
                 mScaledDownProgramListDataProvider.stopConnect();
                 mScaledDownProgramListDataProvider.setApiDataProviderCallback(null);
+                //キャンセル後に mScaledDownProgramListDataProvider の使いまわしを防ぐため null を設定
+                mScaledDownProgramListDataProvider = null;
             }
             mTabIndex = position;
             sendScreenViewForPosition(position);

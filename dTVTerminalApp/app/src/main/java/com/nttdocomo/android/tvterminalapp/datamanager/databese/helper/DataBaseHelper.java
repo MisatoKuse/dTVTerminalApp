@@ -42,11 +42,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String DROP_CHANNEL_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DataBaseConstants.CHANNEL_LIST_TABLE_NAME);
     /**
-     * 「my_channel_list」テーブルの削除用SQL.
-     */
-    private static final String DROP_MY_CHANNEL_TABLE_SQL = StringUtils.getConnectStrings(
-            DROP_TABLE_IF_EXISTS, DataBaseConstants.MY_CHANNEL_LIST_TABLE_NAME);
-    /**
      * 「コンテンツブラウズ」テーブルの削除用SQL.
      */
     private static final String DROP_DLNA_BROWSE_TABLE_SQL = StringUtils.getConnectStrings(
@@ -198,12 +193,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     CREATE_TABLE_CHANNEL_SQL + " table failed, cause=" + e.getCause());
         }
         try {
-            sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_MY_CHANNEL_SQL);
-        } catch (SQLiteException e) {
-            DTVTLogger.debug("DatabaseHelper::onCreate, create " + DataBaseConstants.
-                    CREATE_TABLE_MY_CHANNEL_SQL + " table failed, cause=" + e.getCause());
-        }
-        try {
             sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_DLNA_BROWSE_SQL);
         } catch (SQLiteException e) {
             DTVTLogger.debug("DatabaseHelper::onCreate, create " + DataBaseConstants.
@@ -331,12 +320,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL(DROP_CHANNEL_TABLE_SQL);
         } catch (SQLiteException e) {
             DTVTLogger.debug("DatabaseHelper::dropAllTable, drop " + DROP_CHANNEL_TABLE_SQL
-                    + " table failed, cause=" + e.getCause());
-        }
-        try {
-            sqLiteDatabase.execSQL(DROP_MY_CHANNEL_TABLE_SQL);
-        } catch (SQLiteException e) {
-            DTVTLogger.debug("DatabaseHelper::dropAllTable, drop " + DROP_MY_CHANNEL_TABLE_SQL
                     + " table failed, cause=" + e.getCause());
         }
         try {
