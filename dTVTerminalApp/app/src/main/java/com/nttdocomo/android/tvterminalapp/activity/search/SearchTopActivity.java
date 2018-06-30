@@ -524,6 +524,9 @@ public class SearchTopActivity extends BaseActivity
             @Override
             public void onPageSelected(final int position) {
                 super.onPageSelected(position);
+                cancelDataProvider();
+                //検索中フラグをクリア
+                setSearchStart(false);
                 mTabLayout.setTab(position);
                 mTabIndex = position;
 
@@ -540,6 +543,21 @@ public class SearchTopActivity extends BaseActivity
             }
         });
 
+        DTVTLogger.end();
+    }
+
+    /**
+     * DataProviderキャンセル処理.
+     */
+    private void cancelDataProvider() {
+        DTVTLogger.start();
+        if (mSearchDataProvider != null) {
+            mSearchDataProvider.stopConnect();
+            mSearchDataProvider.setSearchDataProviderListener(null);
+            //キャンセル後に mRankingDataProvider の使いまわしを防ぐため初期化する
+            mSearchDataProvider = null;
+            mSearchDataProvider = new SearchDataProvider();
+        }
         DTVTLogger.end();
     }
 

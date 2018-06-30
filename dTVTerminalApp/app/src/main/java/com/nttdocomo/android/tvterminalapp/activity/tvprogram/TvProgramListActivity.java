@@ -520,6 +520,7 @@ public class TvProgramListActivity extends BaseActivity implements
      * DataProviderキャンセル処理.
      */
     private void cancelDataProvider() {
+        DTVTLogger.start();
         if (mMyChannelDataProvider != null) {
             //データプロバイダーキャンセル処理
             mMyChannelDataProvider.stopConnect();
@@ -534,6 +535,7 @@ public class TvProgramListActivity extends BaseActivity implements
             //キャンセル後に mScaledDownProgramListDataProvider の使いまわしを防ぐため null を設定
             mScaledDownProgramListDataProvider = null;
         }
+        DTVTLogger.end();
     }
 
     /**

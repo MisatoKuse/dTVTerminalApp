@@ -216,7 +216,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
                 resultType.success(totalSearchContentInfo);
 
                 if (null != mSearchDataProviderListener) {
-                    mSearchDataProviderListener.onSearchDataProviderFinishOk(onSetClipRequestData(resultType));
+                    sendSearchOkApiCallback(onSetClipRequestData(resultType));
                 }
 
                 setSearchState(SearchState.finished);
@@ -284,7 +284,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
             //handler.init(resultType);
             if (null != mSearchDataProviderListener) {
-                mSearchDataProviderListener.onSearchDataProviderFinishNg(resultType);
+                sendSearchNgApiCallback(resultType);
             }
             //}
 
@@ -410,5 +410,36 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             errorState = mTotalSearchWebApi.getError();
         }
         return errorState;
+    }
+
+    /**
+     * 検索リクエスト成功結果をSearchTopActivityに送る.
+     *
+     * @param resultType 検索リクエスト成功結果
+     */
+    private void sendSearchOkApiCallback(final ResultType<TotalSearchContentInfo> resultType) {
+        if (mSearchDataProviderListener != null) {
+            mSearchDataProviderListener.onSearchDataProviderFinishOk(resultType);
+        }
+    }
+
+    /**
+     * 検索リクエスト失敗結果をSearchTopActivityに送る.
+     *
+     * @param resultType 検索リクエスト失敗結果
+     */
+    private void sendSearchNgApiCallback(final ResultType<SearchResultError> resultType) {
+        if (mSearchDataProviderListener != null) {
+            mSearchDataProviderListener.onSearchDataProviderFinishNg(resultType);
+        }
+    }
+
+    /**
+     * callbackキャンセル用.
+     *
+     * @param providerListener callback(nullを設定)
+     */
+    public void setSearchDataProviderListener(final SearchDataProviderListener providerListener) {
+        this.mSearchDataProviderListener = providerListener;
     }
 }
