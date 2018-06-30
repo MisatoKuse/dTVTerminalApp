@@ -408,8 +408,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     protected void onResume() {
         DTVTLogger.start();
         super.onResume();
-        DtvContentsDetailFragment dtvContentsDetailFragment;
-        ContentsDetailDataProvider contentsDetailDataProvider;
         switch (mDisplayState) {
             case PLAYER_ONLY:
                 if (!mIsOncreateOk) {
@@ -434,8 +432,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     mPlayerViewLayout.setUserAgeInfo();
                 }
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_player));
+                checkOnResumeClipStatus();
                 break;
             case CONTENTS_DETAIL_ONLY:
+                checkOnResumeClipStatus();
                 break;
             default:
                 break;
@@ -447,12 +447,18 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 sendScreenViewForPosition(0);
             }
         }
+        DTVTLogger.end();
+    }
+
+    /**
+     * onResume時のクリップ状態チェック.
+     */
+    private void checkOnResumeClipStatus() {
         if (!mIsFirstDisplay) {
             checkClipStatus(CLIP_BUTTON_ALL_UPDATE);
         } else {
             mIsFirstDisplay = false;
         }
-        DTVTLogger.end();
     }
 
     @Override
@@ -466,6 +472,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         }
     }
 
+    @SuppressWarnings("OverlyLongMethod")
     @Override
     protected void onPause() {
         super.onPause();
@@ -3241,7 +3248,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      */
     private void checkClipStatus(final int targetId) {
         DTVTLogger.start();
-
         ClipKeyListDataManager manager = new ClipKeyListDataManager(ContentDetailActivity.this);
         List<Map<String, String>> mapList = manager.selectClipAllList();
 
