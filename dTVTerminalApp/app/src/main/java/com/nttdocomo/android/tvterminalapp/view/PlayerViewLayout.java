@@ -49,6 +49,7 @@ import com.nttdocomo.android.tvterminalapp.struct.MediaVideoInfo;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
+import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
@@ -79,7 +80,9 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         /**なし.*/
         NONE,
         /**初期化成功.*/
-        INIT_SUCCESS
+        INIT_SUCCESS,
+        /**ネットワーク切断.*/
+        NETWORK
     }
 
     /** コンストラクタ.*/
@@ -640,7 +643,6 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     public void onPlayerEvent(final MediaPlayerController mediaPlayerController, final int event, final long arg) {
         switch (event) {
             case MediaPlayerDefinitions.PE_OPENED:
-                playButton(true);
                 break;
             case MediaPlayerDefinitions.PE_COMPLETED:
                 mIsCompleted = true;
@@ -649,6 +651,11 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 showPlayingProgress(false);
                 break;
             case MediaPlayerDefinitions.PE_START_NETWORK_CONNECTION:
+                if (!NetWorkUtils.isOnline(mContext)) {
+                    mPlayerStateListener.onErrorCallBack(PlayerErrorType.NETWORK);
+                    onPause();
+                }
+                break;
             case MediaPlayerDefinitions.PE_START_AUTHENTICATION:
             case MediaPlayerDefinitions.PE_START_BUFFERING:
             case MediaPlayerDefinitions.PE_START_RENDERING:
@@ -1133,7 +1140,11 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         mSecureVideoPlayer.init(mPlayerController);
         initPlayerView();
         setCanPlay(true);
-        playStart();
+        if (playStartPosition == 0) {
+            playStart();
+        } else {
+            playPause();
+        }
         DTVTLogger.end();
     }
 
@@ -1433,19 +1444,34 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     /**
      * Playを停止.
      */
-    public void onPause() {
+    public int onPause() {
+        int result = 0;
         //外部出力制御
         if (mExternalDisplayHelper != null) {
             mExternalDisplayHelper.onPause();
         }
         if (mPlayerController != null) {
-            setCanPlay(false);
-            mPlayerController.setCaptionDataListener(null);
-            mPlayerController.release();
-            mPlayerController = null;
+            if (!mIsVideoBroadcast) {
+                result = getCurrentPosition();
+                playPause();
+            } else {
+                release();
+            }
         }
+        viewRefresher.removeMessages(REFRESH_VIDEO_VIEW);
         showPlayingProgress(false);
         stopThumbnailConnect();
+        return result;
+    }
+
+    /**
+     * 再生停止.
+     */
+    private void release() {
+        setCanPlay(false);
+        mPlayerController.setCaptionDataListener(null);
+        mPlayerController.release();
+        mPlayerController = null;
     }
 
     /**
@@ -1462,6 +1488,9 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
      */
     public void onDestory() {
         mExternalDisplayHelper = null;
+        if (!mIsVideoBroadcast) {
+            release();
+        }
     }
 
     /**

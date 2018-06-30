@@ -321,8 +321,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private FrameLayout mFrameLayout = null;
     /**TvLogo.*/
     private final ImageView mTvLogo = null;
-    /**プレイヤー生成フラグ.*/
-    private boolean mIsOncreateOk = false;
     /**録画予約コンテンツ詳細情報.*/
     private RecordingReservationContentsDetailInfo mRecordingReservationContentsDetailInfo = null;
     /**録画予約ダイアログ.*/
@@ -367,6 +365,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private final Handler loadHandler = new Handler();
     /** チャンネルリストフラグメント.*/
     private DtvContentsChannelFragment mChannelFragment = null;
+    /** 再生用データ.*/
+    private RecordedContentsDetailData mPlayerData;
 
     /** コンテンツタイプ(Google Analytics用).*/
     private enum ContentTypeForGoogleAnalytics {
@@ -410,27 +410,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         super.onResume();
         switch (mDisplayState) {
             case PLAYER_ONLY:
-                if (!mIsOncreateOk) {
-                    DTVTLogger.end();
-                    return;
-                }
-                if (mPlayerViewLayout != null) {
-                    mPlayerViewLayout.initSecurePlayer(mPlayStartPosition);
-                    mPlayerViewLayout.setPlayerEvent();
-                    mPlayerViewLayout.setUserAgeInfo();
-                }
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_player));
                 break;
             case PLAYER_AND_CONTENTS_DETAIL:
-                if (!mIsOncreateOk) {
-                    DTVTLogger.end();
-                    return;
-                }
-                if (mPlayerViewLayout != null) {
-                    mPlayerViewLayout.initSecurePlayer(mPlayStartPosition);
-                    mPlayerViewLayout.setPlayerEvent();
-                    mPlayerViewLayout.setUserAgeInfo();
-                }
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_player));
                 checkOnResumeClipStatus();
                 break;
@@ -448,6 +430,34 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             }
         }
         DTVTLogger.end();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        initPlayerStart(true);
+    }
+
+    /**
+     * プレイヤー再生処理.
+     * @param isFromBack bg→fg
+     */
+    private void initPlayerStart(final boolean isFromBack) {
+        if (mPlayerViewLayout != null) {
+            if (isFromBack) {
+                if (mPlayerData == null || mPlayerData.isRemote()) {
+                    setRemotePlayArrow(mPlayerData);
+                } else {
+                    mPlayerViewLayout.initSecurePlayer(mPlayStartPosition);
+                    mPlayerViewLayout.setPlayerEvent();
+                    mPlayerViewLayout.setUserAgeInfo();
+                }
+            } else {
+                mPlayerViewLayout.initSecurePlayer(mPlayStartPosition);
+                mPlayerViewLayout.setPlayerEvent();
+                mPlayerViewLayout.setUserAgeInfo();
+            }
+        }
     }
 
     /**
@@ -477,7 +487,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     protected void onPause() {
         super.onPause();
         if (mPlayerViewLayout != null) {
-            mPlayerViewLayout.onPause();
+            mPlayStartPosition = mPlayerViewLayout.onPause();
         }
         DtvContentsChannelFragment channelFragment = null;
         switch (mDisplayState) {
@@ -622,11 +632,14 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         mPlayerViewLayout.setScreenNavigationBarSize(getScreenWidth(), getScreenHeight());
         mPlayerViewLayout.setParentLayout(mThumbnailRelativeLayout);
         mPlayerViewLayout.setDensity(getDensity());
-        mIsOncreateOk = mPlayerViewLayout.initMediaInfo(playerData);
-
+        boolean mIsOncreateOk = mPlayerViewLayout.initMediaInfo(playerData);
+        mPlayerData = playerData;
         //外部出力および画面キャプチャ制御
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
         mPlayerViewLayout.createExternalDisplayHelper();
+        if (mIsOncreateOk) {
+            initPlayerStart(false);
+        }
     }
 
     //region private method
@@ -2696,6 +2709,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             case AGE:
                 msg = getString(R.string.contents_detail_parental_check_fail);
                 break;
+            case NETWORK:
+                msg = getString(R.string.network_nw_error_message);
+                break;
             case INIT_SUCCESS:
                 isInit = true;
                 break;
@@ -2767,7 +2783,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                             break;
                                     }
                                     initPlayer(data);
-                                    onResume();
                                 } else {
                                     showErrorDialog(getString(R.string.contents_detail_now_on_air_get_now_on_air_error));
                                 }
@@ -2918,7 +2933,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         getMultiChannelData();
                     } else {
                         initPlayer(playData);
-                        onResume();
                     }
                 }
             });
