@@ -45,12 +45,9 @@ import com.nttdocomo.android.tvterminalapp.activity.common.ProcessSettingFile;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.ClipListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
-import com.nttdocomo.android.tvterminalapp.activity.home.PremiumVideoActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecommendActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordReservationListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.home.RentalListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.home.WatchingVideoListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.DaccountInductionActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.DaccountResettingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.DaccountSettingHelpActivity;
@@ -67,7 +64,6 @@ import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActiv
 import com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity;
 import com.nttdocomo.android.tvterminalapp.activity.setting.NoticeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.setting.SettingActivity;
-import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.video.VideoTopActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
@@ -107,10 +103,10 @@ import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOtt;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountReceiver;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.IDimDefines;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.OttGetAuthSwitch;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipDeleteWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClient;
-import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.IDimDefines;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -2208,15 +2204,13 @@ public class BaseActivity extends FragmentActivity implements
                     // ・パーミッション要求ダイアログが拒否された場合（「今後は確認しない」チェックなし）
                     // ・一度は許可したが設定アプリから拒否された場合
                     SharedPreferencesUtils.setSharedPreferencesIsDisplayedPermissionDialogTwice(mContext);
-                    mShowDialog = createPermissionDetailDialog();
-                    mShowDialog.showDialog();
+                    offerDialog(createPermissionDetailDialog());
                 } else {
                     // ・初めてパーミッション要求ダイアログが表示された場合
                     // ・パーミッション要求ダイアログが拒否された場合（「今後は確認しない」チェックあり）
                     if (!SharedPreferencesUtils.getSharedPreferencesIsDisplayedPermissionDialogTwice(mContext)) {
                         // 「今後は確認しない」チェックなし
-                        mShowDialog = createPermissionDetailDialog();
-                        mShowDialog.showDialog();
+                        offerDialog(createPermissionDetailDialog());
                     } else {
                         // 海外判定を行わず通信を行う
                         onReStartCommunication();

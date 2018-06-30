@@ -59,6 +59,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
@@ -206,6 +207,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private boolean isOttChecked = false;
 
+    /**
+     * 前回 onPause 時間.
+     */
+    private long mLastTimeOnPause = 0;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -336,6 +342,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
                 //起動時はプログレスダイアログを表示
                 requestHomeData();
+            } else {
+                //前回のonPause時の時間から30分経過又は未来の時間となっているときはホームデータを更新する
+                if (DateUtils.isThirtyMinutesAgo(mLastTimeOnPause)) {
+                    DateUtils.clearDataSave(this);
+                    requestHomeData();
+                }
             }
         }
 
@@ -395,6 +407,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onPause() {
         super.onPause();
+        //onPause時の時間を保存
+        mLastTimeOnPause = DateUtils.getNowTimeFormatEpoch();
         //通信を止める
         if (mHomeDataProvider != null) {
             StopHomeDataConnect stopHomeDataConnect = new StopHomeDataConnect();

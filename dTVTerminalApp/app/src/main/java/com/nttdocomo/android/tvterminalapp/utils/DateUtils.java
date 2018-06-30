@@ -272,6 +272,10 @@ public class DateUtils {
      * 1時間のエポック秒.
      */
     public static final long EPOCH_TIME_ONE_HOUR = 3600;
+    /**
+     * 30分のエポック秒.
+     */
+    public final static int EPOCH_TIME_THIRTY_MINUTES = 1800;
 
     /**
      * 配信期限(avail_end_date/vod_end_date)の判定基準.
@@ -1424,5 +1428,18 @@ public class DateUtils {
         Calendar nowCal = Calendar.getInstance();
 
         return (int) ((expireCalendar.getTimeInMillis() - nowCal.getTimeInMillis()) / (EPOCH_TIME_ONE_DAY * 1000));
+    }
+
+    /**
+     * 引数値が現在より30分以上経過又は引数値が未来の場合はtrue.
+     *
+     * @param lastTimeOnPause 判定対象のエポック秒
+     * @return 判定結果
+     */
+    public static boolean isThirtyMinutesAgo(final long lastTimeOnPause) {
+        long now = DateUtils.getNowTimeFormatEpoch();
+        long afterThirty = lastTimeOnPause + EPOCH_TIME_THIRTY_MINUTES;
+        //lastTimeOnPauseが0の時は初回表示時なのでfalseを返却すること
+        return (afterThirty < now || now < lastTimeOnPause) && lastTimeOnPause != 0;
     }
 }
