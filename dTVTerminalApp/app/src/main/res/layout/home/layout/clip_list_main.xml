@@ -15,17 +15,4 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/rl_clip_list_tab" />
-
-    <TextView
-        android:id="@+id/clip_list_no_items"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/list_no_items_text_left"
-        android:layout_marginTop="@dimen/list_no_items_text_top"
-        android:layout_below="@+id/rl_clip_list_tab"
-        android:textColor="@color/white_text"
-        android:textSize="@dimen/tab_text_size_14dp"
-        android:text="@string/str_clip_list_no_content"
-        android:visibility="gone"/>
-
 </RelativeLayout>

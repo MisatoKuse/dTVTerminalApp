@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
@@ -69,6 +71,10 @@ public class ClipListBaseFragment extends Fragment
     private boolean mLastScrollUp = false;
     /**コンテンツ詳細表示フラグ. */
     private boolean mContentsDetailDisplay = false;
+    /**
+     * リスト0件メッセージ.
+     */
+    private TextView mNoDataMessage;
 
     /** コンストラクタ. */
     public ClipListBaseFragment() {
@@ -102,7 +108,6 @@ public class ClipListBaseFragment extends Fragment
         mLoadMoreView = LayoutInflater.from(getActivity()).inflate(R.layout.search_load_more, container, false);
 
         initContentListView();
-        showProgressBar(true);
         return mTvFragmentView;
     }
 
@@ -114,6 +119,7 @@ public class ClipListBaseFragment extends Fragment
         mTvListView = mTvFragmentView
                 .findViewById(R.id.clip_list_lv_searched_result);
         mRelativeLayout = mTvFragmentView.findViewById(R.id.clip_list_progress);
+        mNoDataMessage = mTvFragmentView.findViewById(R.id.clip_list_no_items);
 
         mTvListView.setOnScrollListener(this);
         mTvListView.setOnItemClickListener(this);
@@ -124,6 +130,7 @@ public class ClipListBaseFragment extends Fragment
         ContentsAdapter.ActivityTypeItem type;
         if (position == 0) {
             type = ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_TV;
+            showProgressBar(true);
         } else {
             type = ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_VIDEO;
         }
@@ -207,6 +214,30 @@ public class ClipListBaseFragment extends Fragment
     }
 
     /**
+     * リスト0件メッセージを表示する.
+     * @param showNoDataMessage メッセージを表示するかどうか
+     * @param message メッセージに表示する文言
+     */
+    public void showNoDataMessage(final boolean showNoDataMessage, final String message) {
+        DTVTLogger.start();
+        //Viewが生成にActivityから直接呼ばれたとき用
+        if (mTvFragmentView == null) {
+            return;
+        }
+
+        if (showNoDataMessage) {
+            mNoDataMessage.setVisibility(View.VISIBLE);
+            if (!TextUtils.isEmpty(message)) {
+                // 取得に失敗した場合に指定される
+                mNoDataMessage.setText(message);
+            }
+        } else {
+            mNoDataMessage.setVisibility(View.GONE);
+        }
+        DTVTLogger.end();
+    }
+
+    /**
      * プロセスバーを表示する.
      *
      * @param showProgressBar プロセスバーを表示するかどうか
@@ -268,7 +299,6 @@ public class ClipListBaseFragment extends Fragment
     public void setMode(final ContentsAdapter.ActivityTypeItem mode) {
         if (null != mClipMainAdapter) {
             mClipMainAdapter.setMode(mode);
-            mClipListData.clear();
         }
     }
 
@@ -382,6 +412,5 @@ public class ClipListBaseFragment extends Fragment
     public void updateContentsList(final List<ContentsData> contentsDataList) {
         mClipMainAdapter.setListData(contentsDataList);
         noticeRefresh();
-        showProgressBar(false);
     }
 }

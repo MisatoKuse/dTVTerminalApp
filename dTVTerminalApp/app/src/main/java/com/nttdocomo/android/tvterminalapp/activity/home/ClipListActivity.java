@@ -16,7 +16,6 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -107,16 +106,12 @@ public class ClipListActivity extends BaseActivity implements
      *  前回のポジション.
      */
     private static final String TAB_INDEX = "tabIndex";
-    /**
-     * リスト0件メッセージ.
-     */
-    private TextView mNoDataMessage;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DTVTLogger.start();
         setContentView(R.layout.clip_list_main);
-        mNoDataMessage = findViewById(R.id.clip_list_no_items);
         //Headerの設定
         setTitleText(getString(R.string.str_clip_activity_title));
         Intent intent = getIntent();
@@ -191,7 +186,6 @@ public class ClipListActivity extends BaseActivity implements
             setCommunicatingStatus(false);
             ClipListBaseFragment baseFragment = getCurrentFragment();
             if (null != baseFragment) {
-                baseFragment.clearClipListData();
                 baseFragment.noticeRefresh();
                 baseFragment.showProgressBar(true);
             }
@@ -318,6 +312,10 @@ public class ClipListActivity extends BaseActivity implements
             public void run() {
                 ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(
                         CLIP_LIST_PAGE_NO_OF_TV, getClipListActivity());
+
+                if (fragment != null) {
+                    fragment.showProgressBar(false);
+                }
                 if (null == clipContentInfo) {
                     //通信とJSON Parseに関してerror処理
                     DTVTLogger.debug("ClipListActivity::TvClipListCallback, get data failed.");
@@ -328,19 +326,15 @@ public class ClipListActivity extends BaseActivity implements
                         message = errorState.getErrorMessage();
                     }
 
-                    mNoDataMessage.setVisibility(View.VISIBLE);
-                    mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
-
                     //メッセージの有無で表示方法を分ける
                     if (TextUtils.isEmpty(message)) {
                         showGetDataFailedToast();
                     } else {
                         showGetDataFailedToast(message);
                     }
-                    fragment.showProgressBar(false);
 
                     if (fragment.getClipListDataSize() == 0) {
-                        mNoDataMessage.setVisibility(View.VISIBLE);
+                        fragment.showNoDataMessage(true, getString(R.string.common_get_data_failed_message));
                     }
 
                     return;
@@ -349,9 +343,8 @@ public class ClipListActivity extends BaseActivity implements
 	            if (0 == clipContentInfo.size()) {
                     //doing
                     if (fragment.getClipListDataSize() == 0) {
-                        mNoDataMessage.setVisibility(View.VISIBLE);
+                        fragment.showNoDataMessage(true, getString(R.string.str_clip_list_no_content));
                     }
-                    fragment.showProgressBar(false);
                     resetCommunication();
                     return;
                 }
@@ -369,7 +362,6 @@ public class ClipListActivity extends BaseActivity implements
 
                 resetCommunication();
 	            fragment.noticeRefresh();
-	            fragment.showProgressBar(false);
             }
         });
         DTVTLogger.end();
@@ -395,6 +387,9 @@ public class ClipListActivity extends BaseActivity implements
             public void run() {
                 ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(
                         CLIP_LIST_PAGE_NO_OF_VOD, getClipListActivity());
+                if (fragment != null) {
+                    fragment.showProgressBar(false);
+                }
 
                 if (null == clipContentInfo) {
                     //通信とJSON Parseに関してerror処理
@@ -412,10 +407,10 @@ public class ClipListActivity extends BaseActivity implements
                     } else {
                         showGetDataFailedToast(message);
                     }
+
                     if (fragment.getClipListDataSize() == 0) {
-                        mNoDataMessage.setVisibility(View.VISIBLE);
+                        fragment.showNoDataMessage(true, getString(R.string.common_get_data_failed_message));
                     }
-                    fragment.showProgressBar(false);
 
                     return;
                 }
@@ -423,9 +418,8 @@ public class ClipListActivity extends BaseActivity implements
                 if (0 == clipContentInfo.size()) {
                     //doing
                     if (fragment.getClipListDataSize() == 0) {
-                        mNoDataMessage.setVisibility(View.VISIBLE);
+                        fragment.showNoDataMessage(true, getString(R.string.str_clip_list_no_content));
                     }
-                    fragment.showProgressBar(false);
                     resetCommunication();
                     return;
                 }
@@ -443,7 +437,6 @@ public class ClipListActivity extends BaseActivity implements
 
                 resetCommunication();
                 fragment.noticeRefresh();
-                fragment.showProgressBar(false);
             }
         });
 
@@ -517,7 +510,7 @@ public class ClipListActivity extends BaseActivity implements
                     public void run() {
 
                         DTVTLogger.debug("onScrollStateChanged, paging thread start");
-                        mNoDataMessage.setVisibility(View.GONE);
+                        fragment.showNoDataMessage(false, null);
                         switch (TAB_POSITION) {
                             case CLIP_LIST_PAGE_NO_OF_TV:
                                 mTvClipDataProvider.getClipData(mTvClipDataProvider.getPagerOffset());
@@ -622,8 +615,18 @@ public class ClipListActivity extends BaseActivity implements
         //スワイプ時にページング中のプログレスバーを非表示にする
         resetCommunication();
         fragment.setMode(ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_VIDEO);
-        mNoDataMessage.setVisibility(View.GONE);
-        mVodClipDataProvider.getClipData(1);
+        fragment.showNoDataMessage(false, null);
+        if (mViewPager != null && mViewPager.getAdapter() != null) {
+            if (fragment.getClipListDataSize() < 1) {
+                // ビューは設定されているが、前回取得時に0件だった場合は取得しにいく
+                mVodClipDataProvider.getClipData(1);
+            } else {
+                fragment.showProgressBar(false);
+            }
+        } else {
+            // 遷移後の初回表示時は取得しにいく
+            mVodClipDataProvider.getClipData(1);
+        }
     }
 
     /**
@@ -635,8 +638,18 @@ public class ClipListActivity extends BaseActivity implements
         //スワイプ時にページング中のプログレスバーを非表示にする
         resetCommunication();
         fragment.setMode(ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_TV);
-        mNoDataMessage.setVisibility(View.GONE);
-        mTvClipDataProvider.getClipData(1);
+        fragment.showNoDataMessage(false, null);
+        if (mViewPager != null && mViewPager.getAdapter() != null) {
+            if (fragment.getClipListDataSize() < 1) {
+                // ビューは設定されているが、前回取得時に0件だった場合は取得しにいく
+                mTvClipDataProvider.getClipData(1);
+            } else {
+                fragment.showProgressBar(false);
+            }
+        } else {
+            // 遷移後の初回表示時は取得しにいく
+            mTvClipDataProvider.getClipData(1);
+        }
     }
 
     @Override
