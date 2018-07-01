@@ -292,6 +292,7 @@
     <dimen name="panel_content_thumbnail_height">69dp</dimen>
 	<dimen name="panel_content_thumbnail_margin_top">16dp</dimen>
     <dimen name="tv_program_list_cur_time_height">1dp</dimen>
+    <dimen name="tv_program_list_program_eria_height">4320dp</dimen>
     <dimen name="panel_content_detail_margin_top">4dp</dimen>
     <dimen name="tv_program_list_main_layout_calendar_arrow_width">24dp</dimen>
     <dimen name="tv_program_list_main_layout_calendar_arrow_height">24dp</dimen>
