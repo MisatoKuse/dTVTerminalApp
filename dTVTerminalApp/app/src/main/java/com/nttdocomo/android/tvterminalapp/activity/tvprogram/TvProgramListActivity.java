@@ -313,18 +313,18 @@ public class TvProgramListActivity extends BaseActivity implements
         //チャンネル表示.
         mChannelRecyclerView = findViewById(R.id.tv_program_list_main_layout_channel_rv);
 
-        //番組表表表示.
+        //番組表表示.
         mProgramRecyclerView = findViewById(R.id.tv_program_list_main_layout_channeldetail_rv);
         mProgramScrollViewParent = findViewById(R.id.tv_program_list_main_layout_channeldetail_sl);
 
-        //縦軸を相互にスクロール動機
+        //縦軸を相互にスクロール同期.
         mTimeScrollView.setScrollView(mProgramScrollViewParent);
         mProgramScrollViewParent.setScrollView(mTimeScrollView);
 
         mProgramRecyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
-                // 初期表示Y位置を設定
+                // 初期表示Y位置を設定.
                 mProgramScrollViewParent.getViewTreeObserver().removeOnPreDrawListener(this);
                 int offsetY = calcCurTimeOffsetY();
                 mTimeScrollView.setScrollY(offsetY);
@@ -536,11 +536,11 @@ public class TvProgramListActivity extends BaseActivity implements
             sendScreenViewForPosition(position);
             clearData();
 
-            // 現在時刻への移動(アニメ無し)
+            // 現在時刻への移動(アニメあり).スクロール中にタブ切替すると慣性スクロールが止まらず
+            // setScrollYしてもかき消されるのでアニメありスクロールで上書きする.
             int offsetY = calcCurTimeOffsetY();
-            mTimeScrollView.setScrollY(offsetY);
-            mProgramScrollViewParent.setScrollY(offsetY);
-            mProgramRecyclerView.scrollTo(0, offsetY);
+            mTimeScrollView.smoothScrollTo(0, offsetY);
+            mProgramScrollViewParent.smoothScrollTo(0, offsetY);
 
             getChannelData();
             DTVTLogger.end();
@@ -912,17 +912,11 @@ public class TvProgramListActivity extends BaseActivity implements
     private int calcCurTimeOffsetY() {
         String curTime = new SimpleDateFormat(DateUtils.DATE_HHMMSS, Locale.JAPAN).format(new Date());
         int curClock = Integer.parseInt(curTime.substring(0, 2));
-        int scrollDis;
+        int scrollDis = 0;
         if (DateUtils.START_TIME <= curClock && curClock < STANDARD_TIME) {
             scrollDis = (curClock -  DateUtils.START_TIME) * mLinearLayout.getHeight() / STANDARD_TIME;
-        } else {
-            if (curClock == 0) {
-                scrollDis = (STANDARD_TIME -  DateUtils.START_TIME) * mLinearLayout.getHeight() / STANDARD_TIME;
-            } else if (curClock == 1) {
-                scrollDis = (STANDARD_TIME -  DateUtils.START_TIME + 1) * mLinearLayout.getHeight() / STANDARD_TIME;
-            } else {
-                scrollDis = mLinearLayout.getHeight();
-            }
+        } else if (curClock <= 3) {
+            scrollDis = (STANDARD_TIME -  DateUtils.START_TIME + curClock) * mLinearLayout.getHeight() / STANDARD_TIME;
         }
         DTVTLogger.debug("scrollDis = " + scrollDis);
         return scrollDis;
@@ -978,8 +972,6 @@ public class TvProgramListActivity extends BaseActivity implements
                 loadMyChannel(channelList);
             } else {
                 //ひかりTVデータなしの場合
-                scrollToCurTime();
-                refreshTimeLine();
             }
         } else {
             //ひかり、dTVチャンネル
@@ -1014,8 +1006,6 @@ public class TvProgramListActivity extends BaseActivity implements
                     }
                 }
                 mNoDataMessage.setVisibility(View.VISIBLE);
-                scrollToCurTime();
-                refreshTimeLine();
             }
         }
         DTVTLogger.end();
@@ -1227,11 +1217,9 @@ public class TvProgramListActivity extends BaseActivity implements
         if (DateUtils.START_TIME <= curClock && curClock < STANDARD_TIME) {
             timeLinePosition = (curClock -  DateUtils.START_TIME) * dip2px(ONE_HOUR_UNIT) + (
                     dip2px(ONE_HOUR_UNIT) + 0.5f) *  DateUtils.minSec2Hour(curMin, curSec) + channelRvHeight;
-        } else {
-            if (0 <= curClock && curClock <= 3) {
-                timeLinePosition = (STANDARD_TIME -  DateUtils.START_TIME + curClock) * dip2px(ONE_HOUR_UNIT) + (
-                        dip2px(ONE_HOUR_UNIT) + 0.5f) *  DateUtils.minSec2Hour(curMin, curSec) + channelRvHeight;
-            }
+        } else if (0 <= curClock && curClock <= 3) {
+            timeLinePosition = (STANDARD_TIME -  DateUtils.START_TIME + curClock) * dip2px(ONE_HOUR_UNIT) + (
+                    dip2px(ONE_HOUR_UNIT) + 0.5f) *  DateUtils.minSec2Hour(curMin, curSec) + channelRvHeight;
         }
         mTimeLine.setY(timeLinePosition - (float) mNowImage.getHeight() / 2 - offset);
     }
