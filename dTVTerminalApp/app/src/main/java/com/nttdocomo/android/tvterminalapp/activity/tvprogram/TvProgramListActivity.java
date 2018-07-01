@@ -16,6 +16,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -269,8 +270,6 @@ public class TvProgramListActivity extends BaseActivity implements
         }
         //タグ設定
         setTagView();
-        //時間帯設定
-        setLeftTimeContentsView();
         //タイトル設定
         setTitle();
         //チャンネルデータ取得
@@ -306,11 +305,36 @@ public class TvProgramListActivity extends BaseActivity implements
     private void initView() {
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
-        mTimeScrollView = findViewById(R.id.tv_program_list_main_layout_time_sl);
-        mChannelRecyclerView = findViewById(R.id.tv_program_list_main_layout_channel_rv);
-        mProgramRecyclerView = findViewById(R.id.tv_program_list_main_layout_channeldetail_rv);
 
+        //時間軸表示
+        mTimeScrollView = findViewById(R.id.tv_program_list_main_layout_time_sl);
+        setLeftTimeContentsView();
+
+        //チャンネル表示.
+        mChannelRecyclerView = findViewById(R.id.tv_program_list_main_layout_channel_rv);
+
+        //番組表表表示.
+        mProgramRecyclerView = findViewById(R.id.tv_program_list_main_layout_channeldetail_rv);
         mProgramScrollViewParent = findViewById(R.id.tv_program_list_main_layout_channeldetail_sl);
+
+        //縦軸を相互にスクロール動機
+        mTimeScrollView.setScrollView(mProgramScrollViewParent);
+        mProgramScrollViewParent.setScrollView(mTimeScrollView);
+
+        mProgramRecyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                // 初期表示Y位置を設定
+                mProgramScrollViewParent.getViewTreeObserver().removeOnPreDrawListener(this);
+                int offsetY = calcCurTimeOffsetY();
+                mTimeScrollView.setScrollY(offsetY);
+                mProgramScrollViewParent.setScrollY(offsetY);
+                mProgramRecyclerView.scrollTo(0, offsetY);
+                refreshTimeLine();
+                return false;
+            }
+        });
+
         mTagImageView = findViewById(R.id.tv_program_list_main_layout_curtime_iv);
         mTimeLine = findViewById(R.id.tv_program_list_main_layout_time_line);
         mNowImage = findViewById(R.id.tv_program_list_main_layout_time_line_now);
@@ -322,8 +346,6 @@ public class TvProgramListActivity extends BaseActivity implements
         mTagImageView.setOnClickListener(this);
         mTitleTextView.setOnClickListener(this);
         mTitleArrowImage.setOnClickListener(this);
-        mTimeScrollView.setScrollView(mProgramScrollViewParent);
-        mProgramScrollViewParent.setScrollView(mTimeScrollView);
         mProgramRecyclerView.setHasFixedSize(true);
         mProgramRecyclerView.setItemViewCacheSize(20);
         mProgramScrollViewParent.setOnTouchListener(new View.OnTouchListener() {
@@ -513,6 +535,13 @@ public class TvProgramListActivity extends BaseActivity implements
             mTabIndex = position;
             sendScreenViewForPosition(position);
             clearData();
+
+            // 現在時刻への移動(アニメ無し)
+            int offsetY = calcCurTimeOffsetY();
+            mTimeScrollView.setScrollY(offsetY);
+            mProgramScrollViewParent.setScrollY(offsetY);
+            mProgramRecyclerView.scrollTo(0, offsetY);
+
             getChannelData();
             DTVTLogger.end();
         }
@@ -611,11 +640,13 @@ public class TvProgramListActivity extends BaseActivity implements
         switch (newState) {
             case SCROLL_STATE_IDLE:
                 if (mScrollOffset > 0) {
-                    String dateStr = mSelectDateStr.replace("-", "");
-                    String[] dateList = {dateStr};
-                    int[] chList = mTvProgramListAdapter.getNeedProgramChannels();
-                    if (chList != null && chList.length > 0) {
-                        mScaledDownProgramListDataProvider.getProgram(chList, dateList);
+                    if (mTvProgramListAdapter != null) {
+                        String dateStr = mSelectDateStr.replace("-", "");
+                        String[] dateList = {dateStr};
+                        int[] chList = mTvProgramListAdapter.getNeedProgramChannels();
+                        if (chList != null && chList.length > 0) {
+                            mScaledDownProgramListDataProvider.getProgram(chList, dateList);
+                        }
                     }
                     mScrollOffset = 0;
                 }
@@ -792,18 +823,10 @@ public class TvProgramListActivity extends BaseActivity implements
                 linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
                 mProgramRecyclerView.setLayoutManager(linearLayoutManager);
             }
-            //以前のアダプタに設定されている値を取得して追加.
-//        if (mTvProgramListAdapter != null) {
-//            List<ChannelInfo> oldChannelInfo = mTvProgramListAdapter.getProgramList();
-//            for (ChannelInfo oldChannel : oldChannelInfo) {
-//                channelInfo.add(oldChannel);
-//            }
-//        }
             if (channelInfo.size() > 0) {
                 mTvProgramListAdapter.setProgramList(channelInfo);
                 mTvProgramListAdapter.notifyDataSetChanged();
             }
-            //        mProgramRecyclerView.setAdapter(mTvProgramListAdapter);
             //スクロール時、リスナー設置
             mTimeScrollView.setOnScrollOffsetListener(this);
         }
@@ -873,6 +896,20 @@ public class TvProgramListActivity extends BaseActivity implements
      * @param programSwitch 番組表本体のスクロールも行うならばtrue
      */
     private void scrollToCurTime(boolean programSwitch) {
+        int scrollDis = calcCurTimeOffsetY();
+        mTimeScrollView.smoothScrollTo(0, scrollDis);
+        if (programSwitch) {
+            //NOWボタンを押した際は、番組表本体のスクロール位置も設定しないと、失敗する場合がある
+            mProgramScrollViewParent.smoothScrollTo(0, scrollDis);
+        }
+    }
+
+    /**
+     * 現在時刻(Hour単位、分は切り捨て)の位置を求める.
+     *
+     * @return  現在時刻のY位置
+     */
+    private int calcCurTimeOffsetY() {
         String curTime = new SimpleDateFormat(DateUtils.DATE_HHMMSS, Locale.JAPAN).format(new Date());
         int curClock = Integer.parseInt(curTime.substring(0, 2));
         int scrollDis;
@@ -888,11 +925,7 @@ public class TvProgramListActivity extends BaseActivity implements
             }
         }
         DTVTLogger.debug("scrollDis = " + scrollDis);
-        mTimeScrollView.smoothScrollTo(0, scrollDis);
-        if (programSwitch) {
-            //NOWボタンを押した際は、番組表本体のスクロール位置も設定しないと、失敗する場合がある
-            mProgramScrollViewParent.smoothScrollTo(0, scrollDis);
-        }
+        return scrollDis;
     }
 
     /**
@@ -1238,7 +1271,6 @@ public class TvProgramListActivity extends BaseActivity implements
         }
         mTimeLine.setY(timeLinePosition - (float) mNowImage.getHeight() / 2);
     }
-
 
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
