@@ -50,7 +50,7 @@ public class DaccountResettingActivity extends BaseActivity implements View.OnCl
     /**
      * DアカウントアプリURI.
      */
-    private static final String D_ACCOUNT_APP_URI = "market://details?id=com.nttdocomo.android.idmanager";
+    private static final String D_ACCOUNT_APP_URI = "https://play.google.com/store/apps/details?id=com.nttdocomo.android.idmanager";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
