@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -19,14 +18,14 @@ import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.adapter.RankingPagerAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
-import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRankingTopDataConnect;
-import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopGenreListDataConnect;
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
-import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.GenreListDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopGenreListDataConnect;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRankingTopDataConnect;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingFragmentFactory;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
 import java.util.ArrayList;
@@ -53,8 +52,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
     private TabItemLayout mTabLayout;
     /** ViewPager. */
     private ViewPager mViewPager;
-    /** リスト0件メッセージ. */
-    private TextView mNoDataMessage;
 
     /** ランキングデータ取得用データプロパイダ. */
     private RankingTopDataProvider mRankingDataProvider;
@@ -169,7 +166,10 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
             DTVTLogger.debug("viewpager not null");
             //タブ移動時にそれまでのデータ取得要求はキャンセルする
             mViewPager.setCurrentItem(position);
-            mNoDataMessage.setVisibility(View.GONE);
+            RankingBaseFragment fragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
+            if (fragment != null) {
+                fragment.showNoDataMessage(false, null);
+            }
         }
         DTVTLogger.end();
     }
@@ -246,6 +246,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         RankingBaseFragment baseFragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
         if (baseFragment != null) {
             if (baseFragment.getDataSize() == 0) { //Fragmentがデータを保持していない場合は再取得を行う
+                baseFragment.showProgressBar(true);
                 requestgetGenreList();
                 return;
             }
@@ -263,7 +264,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         mViewPager = findViewById(R.id.vp_weekly_ranking_result);
-        mNoDataMessage = findViewById(R.id.weekly_ranking_no_items);
     }
 
     /**
@@ -286,7 +286,13 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
                 super.onPageSelected(position);
                 //タブ移動時にデータ取得要求をキャンセルする
                 cancelDataProvider();
-                resetPaging(mViewPager, mRankingFragmentFactory);
+                RankingBaseFragment fragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
+                if (fragment != null) {
+                    fragment.showProgressBar(false);
+                    if(fragment.getDataSize() < 1) {
+                        resetPaging(mViewPager, mRankingFragmentFactory);
+                    }
+                }
                 mTabLayout.setTab(position);
                 getGenreData();
             }
@@ -328,8 +334,15 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         }
         if (genreMetaDataList != null
                 && genreMetaDataList.size() > 0) {
-            mNoDataMessage.setVisibility(View.GONE);
-            mRankingDataProvider.getWeeklyRankingData(genreMetaDataList.get(mViewPager.getCurrentItem()).getId());
+            RankingBaseFragment fragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
+            if (fragment != null) {
+                if (fragment.getDataSize() < 1) {
+                    fragment.showProgressBar(true);
+                    mRankingDataProvider.getWeeklyRankingData(genreMetaDataList.get(mViewPager.getCurrentItem()).getId());
+                }
+            } else {
+                mRankingDataProvider.getWeeklyRankingData(genreMetaDataList.get(mViewPager.getCurrentItem()).getId());
+            }
         }
         DTVTLogger.end();
     }
@@ -341,15 +354,22 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
      */
     private void setShowWeeklyRanking(final List<ContentsData> contentsDataList) {
         DTVTLogger.start();
+        RankingBaseFragment fragment = mRankingFragmentFactory.createFragment(
+                ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK, mViewPager.getCurrentItem());
+        if (fragment != null) {
+            fragment.showProgressBar(false);
+        }
         if (null == contentsDataList) {
             //通信とJSON Parseに関してerror処理
             //エラーメッセージを取得する
-            mNoDataMessage.setVisibility(View.VISIBLE);
             ErrorState errorState = mRankingDataProvider.getWeeklyRankWebApiErrorState();
             if (errorState != null) {
                 String message = errorState.getErrorMessage();
-                mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
-                //有無で処理を分ける
+                if (fragment != null) {
+                    fragment.showNoDataMessage(true, getString(R.string.common_get_data_failed_message));
+                }
+
+               //有無で処理を分ける
                 if (!TextUtils.isEmpty(message)) {
                     showGetDataFailedToast(message);
                     return;
@@ -360,12 +380,11 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         }
 
         if (0 == contentsDataList.size()) {
-            mNoDataMessage.setVisibility(View.VISIBLE);
+            if (fragment != null) {
+                fragment.showNoDataMessage(true, getString(R.string.common_empty_data_message));
+            }
             return;
         }
-
-        RankingBaseFragment fragment = mRankingFragmentFactory.createFragment(
-                ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK, mViewPager.getCurrentItem());
 
         //既に元のデータ以上の件数があれば足す物は無いので、更新せずに帰る
         if (fragment.getDataSize() >= contentsDataList.size()) {
@@ -397,6 +416,13 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
             public void run() {
                 //エラーメッセージを取得する
                 ErrorState errorState = mVideoGenreProvider.getGenreListError();
+                RankingBaseFragment fragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
+                if (fragment != null) {
+                    fragment.showProgressBar(false);
+                    if (fragment.getDataSize() < 1) {
+                        fragment.showNoDataMessage(true, getString(R.string.get_contents_data_error_message));
+                    }
+                }
                 if (errorState != null) {
                     String message = errorState.getErrorMessage();
                     //有無で処理を分ける

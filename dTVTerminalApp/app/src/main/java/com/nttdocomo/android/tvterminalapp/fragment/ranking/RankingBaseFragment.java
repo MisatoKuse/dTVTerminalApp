@@ -9,12 +9,14 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -56,6 +58,10 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
      * 各タブのProgressBar.
      */
     private RelativeLayout mRelativeLayout = null;
+    /**
+     * リスト0件メッセージ.
+     */
+    private TextView mNoDataMessage;
 
     /**
      * リスト表示用アダプタ.
@@ -107,10 +113,10 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
                     R.layout.fragment_ranking_content, null);
             mRankingListView = mRankingFragmentView.findViewById(R.id.lv_ranking_list);
             mRelativeLayout = mRankingFragmentView.findViewById(R.id.lv_ranking_progress);
+            mNoDataMessage = mRankingFragmentView.findViewById(R.id.ranking_no_items);
 
             mRankingListView.setOnItemClickListener(this);
         }
-        showProgressBar(true);
         if (mContentsAdapter == null) {
             initRankingView();
         }
@@ -122,9 +128,12 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
      *
      * @param showProgressBar プロセスバーを表示するかどうか
      */
-    private void showProgressBar(final boolean showProgressBar) {
-        mRankingListView = mRankingFragmentView.findViewById(R.id.lv_ranking_list);
-        mRelativeLayout = mRankingFragmentView.findViewById(R.id.lv_ranking_progress);
+    public void showProgressBar(final boolean showProgressBar) {
+        DTVTLogger.start();
+        //Viewが生成にActivityから直接呼ばれたとき用
+        if (mRankingFragmentView == null) {
+            return;
+        }
         if (showProgressBar) {
             //オフライン時は表示しない
             if (!NetWorkUtils.isOnline(getActivity())) {
@@ -132,10 +141,34 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
             }
             mRankingListView.setVisibility(View.GONE);
             mRelativeLayout.setVisibility(View.VISIBLE);
+            showNoDataMessage(false, null);
         } else {
             mRankingListView.setVisibility(View.VISIBLE);
             mRelativeLayout.setVisibility(View.GONE);
         }
+        DTVTLogger.end();
+    }
+
+    /**
+     * リスト0件表示.
+     *
+     * @param showNoDataMessage プロセスバーを表示するかどうか
+     * @param message 0件表示の文言
+     */
+    public void showNoDataMessage(final boolean showNoDataMessage, final String message) {
+        DTVTLogger.start();
+        if (mNoDataMessage == null) {
+            return;
+        }
+        if (showNoDataMessage) {
+            if (!TextUtils.isEmpty(message)) {
+                mNoDataMessage.setText(message);
+            }
+            mNoDataMessage.setVisibility(View.VISIBLE);
+        } else {
+            mNoDataMessage.setVisibility(View.GONE);
+        }
+        DTVTLogger.end();
     }
 
     /**
@@ -202,7 +235,6 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
     public void noticeRefresh() {
         if (null != mContentsAdapter) {
             mContentsAdapter.notifyDataSetChanged();
-            showProgressBar(false);
         }
     }
 

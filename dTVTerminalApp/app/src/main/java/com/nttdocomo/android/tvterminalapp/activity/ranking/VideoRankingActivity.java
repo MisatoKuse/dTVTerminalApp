@@ -9,8 +9,6 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.View;
-import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -18,14 +16,14 @@ import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.adapter.RankingPagerAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
-import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRankingTopDataConnect;
-import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopGenreListDataConnect;
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
-import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.GenreListDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopGenreListDataConnect;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRankingTopDataConnect;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingFragmentFactory;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
 import java.util.ArrayList;
@@ -51,8 +49,6 @@ public class VideoRankingActivity extends BaseActivity implements
     private TabItemLayout mTabLayout;
     /** ViewPager. */
     private ViewPager mViewPager;
-    /** リスト0件メッセージ. */
-    private TextView mNoDataMessage;
 
     /** DataProvider. */
     private RankingTopDataProvider mRankingDataProvider;
@@ -203,6 +199,7 @@ public class VideoRankingActivity extends BaseActivity implements
         if (baseFragment != null) {
             if (baseFragment.getDataSize() == 0) {
                 //Fragmentがデータを保持していない場合は再取得を行う
+                baseFragment.showProgressBar(true);
                 mVideoGenreProvider = new GenreListDataProvider(this, this,
                         ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
                 mVideoGenreProvider.getGenreListDataRequest();
@@ -222,7 +219,10 @@ public class VideoRankingActivity extends BaseActivity implements
         if (null != mViewPager) {
             DTVTLogger.debug("viewpager not null");
             mViewPager.setCurrentItem(position);
-            mNoDataMessage.setVisibility(View.GONE);
+            RankingBaseFragment fragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
+            if (fragment != null) {
+                fragment.showNoDataMessage(false, null);
+            }
         }
         DTVTLogger.end();
     }
@@ -243,7 +243,10 @@ public class VideoRankingActivity extends BaseActivity implements
                     DTVTLogger.debug("videoRankList.size :" + videoRankList.size());
                     setShowVideoRanking(videoRankList);
                 } else {
-                    mNoDataMessage.setVisibility(View.VISIBLE);
+                    RankingBaseFragment fragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
+                    if (fragment != null) {
+                        fragment.showNoDataMessage(true, getString(R.string.get_contents_data_error_message));
+                    }
                     //エラーメッセージを取得する
                     ErrorState errorState = mRankingDataProvider.getContentsListPerGenreWebApiErrorState();
                     if (errorState != null) {
@@ -299,7 +302,6 @@ public class VideoRankingActivity extends BaseActivity implements
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         mViewPager = findViewById(R.id.vp_video_ranking_result);
-        mNoDataMessage = findViewById(R.id.video_ranking_no_items);
     }
 
     /**
@@ -361,8 +363,16 @@ public class VideoRankingActivity extends BaseActivity implements
                     new RankingTopDataProvider(this, ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
         }
         if (mGenreMetaDataList != null && mGenreMetaDataList.size() > 0) {
-            mNoDataMessage.setVisibility(View.GONE);
-            mRankingDataProvider.getVideoRankingData(mGenreMetaDataList.get(mViewPager.getCurrentItem()).getId());
+            RankingBaseFragment fragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
+            if (fragment != null) {
+                fragment.showNoDataMessage(false, null);
+                if (fragment.getDataSize() < 1) {
+                    fragment.showProgressBar(true);
+                    mRankingDataProvider.getVideoRankingData(mGenreMetaDataList.get(mViewPager.getCurrentItem()).getId());
+                }
+            } else {
+                mRankingDataProvider.getVideoRankingData(mGenreMetaDataList.get(mViewPager.getCurrentItem()).getId());
+            }
         }
     }
     /**
@@ -372,19 +382,24 @@ public class VideoRankingActivity extends BaseActivity implements
      */
     private void setShowVideoRanking(final List<ContentsData> videoRankMapList) {
         DTVTLogger.start();
+        RankingBaseFragment fragment = mRankingFragmentFactory.createFragment(
+        ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK,
+        mViewPager.getCurrentItem());
+
         if (null == videoRankMapList) {
             showGetDataFailedToast();
-            mNoDataMessage.setVisibility(View.VISIBLE);
-            return;
-        }
-        if (0 == videoRankMapList.size()) {
-            mNoDataMessage.setVisibility(View.VISIBLE);
-            return;
-        }
 
-        RankingBaseFragment fragment = mRankingFragmentFactory.createFragment(
-                ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK,
-                mViewPager.getCurrentItem());
+            if (fragment != null) {
+                fragment.showNoDataMessage(true, getString(R.string.get_contents_data_error_message));
+            }
+            return;
+        }
+        if (videoRankMapList.isEmpty()) {
+            if (fragment != null) {
+                fragment.showNoDataMessage(true, getString(R.string.common_empty_data_message));
+            }
+            return;
+        }
 
         //既に元のデータ以上の件数があれば足す物は無いので、更新せずに帰る
         if (fragment.getDataSize() >= videoRankMapList.size()) {
