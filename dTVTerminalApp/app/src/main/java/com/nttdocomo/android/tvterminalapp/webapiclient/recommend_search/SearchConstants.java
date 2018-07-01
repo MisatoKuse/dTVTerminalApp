@@ -74,6 +74,12 @@ public class SearchConstants {
         /**  dアニメ. */
         public static final int RECOMMEND_PAGE_NO_OF_SERVICE_DANIME =
                 RECOMMEND_PAGE_NO_OF_SERVICE_TV + 4;
+        /** ホームのおすすめ番組. */
+        public static final int RECOMMEND_PAGE_NO_OF_SERVICE_HOME_TV =
+                RECOMMEND_PAGE_NO_OF_SERVICE_TV + 50;
+        /** ホームのおすすめビデオ. */
+        public static final int RECOMMEND_PAGE_NO_OF_SERVICE_HOME_VIDEO =
+                RECOMMEND_PAGE_NO_OF_SERVICE_TV + 51;
         /** その他. */
         public static final int RECOMMEND_PAGE_NO_OF_SERVICE_UNKNOWN =
                 RECOMMEND_PAGE_NO_OF_SERVICE_TV + 99;

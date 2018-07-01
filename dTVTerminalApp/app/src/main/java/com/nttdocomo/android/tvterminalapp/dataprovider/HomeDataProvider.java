@@ -597,14 +597,14 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
          *
          * @param recChList おすすめ番組リスト
          */
-        void recommendChannelCallback(List<ContentsData> recChList);
+        void recommendHomeChannelCallback(List<ContentsData> recChList);
 
         /**
          * おすすめビデオ用コールバック.
          *
          * @param recVdList おすすめビデオリスト
          */
-        void recommendVideoCallback(List<ContentsData> recVdList);
+        void recommendHomeVideoCallback(List<ContentsData> recVdList);
     }
 
     /**
@@ -725,7 +725,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private void sendRecommendChListData(final List<ContentsData> list) {
         if (mChannelList != null) {
-            mApiDataProviderCallback.recommendChannelCallback(setChannelName(list, mChannelList, false));
+            mApiDataProviderCallback.recommendHomeChannelCallback(setChannelName(list, mChannelList, false));
         } else {
             mRecommendChData = list;
         }
@@ -737,7 +737,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param list おすすめビデオのコンテンツ情報
      */
     private void sendRecommendVdListData(final List<ContentsData> list) {
-        mApiDataProviderCallback.recommendVideoCallback(list);
+        mApiDataProviderCallback.recommendHomeVideoCallback(list);
     }
 
     /**
@@ -964,7 +964,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             mRecommendDataProvider = new RecommendDataProvider(
                     mContext.getApplicationContext(), this);
         }
-        mRecommendDataProvider.getVodRecommend();
+        mRecommendDataProvider.getHomeVodRecommend();
         DTVTLogger.end();
     }
 
@@ -1396,7 +1396,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param recommendContentInfoList テレビレコメンド情報
      */
     @Override
-    public void recommendChannelCallback(final List<ContentsData> recommendContentInfoList) {
+    public void recommendHomeChannelCallback(final List<ContentsData> recommendContentInfoList) {
         DTVTLogger.start();
         if (recommendContentInfoList != null && recommendContentInfoList.size() > 0) {
             //送られてきたデータをアクティビティに渡す
@@ -1417,7 +1417,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param recommendContentInfoList ビデオレコメンド情報
      */
     @Override
-    public void recommendVideoCallback(final List<ContentsData> recommendContentInfoList) {
+    public void recommendHomeVideoCallback(final List<ContentsData> recommendContentInfoList) {
         DTVTLogger.start();
         //ワンタイムパスワードが競合しないように、おすすめVOD取得後に動作を開始する
         //TODO :　競合は解消したので、ここでの動作は必要なくなった。最終的には上記コメントとログ出力も消去する
@@ -1433,6 +1433,26 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             dataBaseThread.start();
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * レコメンドのテレビ情報のコールバック.
+     *
+     * @param recommendContentInfoList テレビレコメンド情報
+     */
+    @Override
+    public void recommendChannelCallback(final List<ContentsData> recommendContentInfoList) {
+        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+    }
+
+    /**
+     * レコメンドのビデオ情報のコールバック.
+     *
+     * @param recommendContentInfoList ビデオレコメンド情報
+     */
+    @Override
+    public void recommendVideoCallback(final List<ContentsData> recommendContentInfoList) {
+        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
     /**
@@ -1568,14 +1588,14 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             case SELECT_RECOMMEND_CHANNEL_LIST:
                 recommendDataManager = new RecommendListDataManager(mContext);
                 resultList = recommendDataManager.selectRecommendList(
-                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV);
-                mApiDataProviderCallback.recommendChannelCallback(setChannelName(resultList, mChannelList, false));
+                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_HOME_TV);
+                mApiDataProviderCallback.recommendHomeChannelCallback(setChannelName(resultList, mChannelList, false));
                 break;
             case SELECT_RECOMMEND_VOD_LIST:
                 recommendDataManager = new RecommendListDataManager(mContext);
                 resultList = recommendDataManager.selectRecommendList(
-                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO);
-                mApiDataProviderCallback.recommendVideoCallback(resultList);
+                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_HOME_VIDEO);
+                mApiDataProviderCallback.recommendHomeVideoCallback(resultList);
                 break;
             case SELECT_RENTAL_VIDEO_LIST:
                 rentalDataProvider = new RentalDataProvider(mContext, RentalDataProvider.RentalType.RENTAL_LIST);

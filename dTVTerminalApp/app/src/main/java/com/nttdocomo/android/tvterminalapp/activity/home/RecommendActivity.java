@@ -511,6 +511,16 @@ public class RecommendActivity extends BaseActivity implements
         return isError;
     }
 
+    @Override
+    public void recommendHomeChannelCallback(List<ContentsData> recommendContentInfoList) {
+        //こちらは使用しない
+    }
+
+    @Override
+    public void recommendHomeVideoCallback(List<ContentsData> recommendContentInfoList) {
+        //こちらは使用しない
+    }
+
     /**
      * おすすめテレビ用コールバック.
      *

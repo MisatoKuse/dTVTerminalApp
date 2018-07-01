@@ -259,6 +259,12 @@ public class DataBaseUtils {
     public static String getRecommendTableName(final int tagPageNo) {
         String tableName = null;
         switch (tagPageNo) {
+            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_HOME_TV:
+                tableName = DataBaseConstants.RECOMMEND_HOME_CHANNEL_LIST_TABLE_NAME;
+                break;
+            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_HOME_VIDEO:
+                tableName = DataBaseConstants.RECOMMEND_HOME_VIDEO_LIST_TABLE_NAME;
+                break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV:
                 tableName = DataBaseConstants.RECOMMEND_CHANNEL_LIST_TABLE_NAME;
                 break;

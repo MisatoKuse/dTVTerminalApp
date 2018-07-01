@@ -37,7 +37,7 @@ public class RecommendRequestData {
     /**
      * 画面ID.
      */
-    private final String mPageId;
+    private String mPageId;
 
     /**
      * コンストラクタ.
@@ -70,6 +70,10 @@ public class RecommendRequestData {
 
     public void setServiceCategoryId(final String serviceCategoryId) {
         this.mServiceCategoryId = serviceCategoryId;
+    }
+
+    public void setPageId(String pageId) {
+        this.mPageId = pageId;
     }
 
     public String getPageId() {

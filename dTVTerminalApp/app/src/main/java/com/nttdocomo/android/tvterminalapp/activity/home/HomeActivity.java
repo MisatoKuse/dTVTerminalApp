@@ -789,7 +789,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void recommendChannelCallback(final List<ContentsData> redChList) {
+    public void recommendHomeChannelCallback(final List<ContentsData> redChList) {
         //DbThreadからのコールバックではUIスレッドとして扱われないため
         runOnUiThread(new Runnable() {
             @Override
@@ -807,7 +807,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void recommendVideoCallback(final List<ContentsData> redVdList) {
+    public void recommendHomeVideoCallback(final List<ContentsData> redVdList) {
         //DbThreadからのコールバックではUIスレッドとして扱われないため
         runOnUiThread(new Runnable() {
             @Override

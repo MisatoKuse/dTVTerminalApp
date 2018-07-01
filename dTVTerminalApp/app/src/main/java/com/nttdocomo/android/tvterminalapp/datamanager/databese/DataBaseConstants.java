@@ -416,6 +416,38 @@ public class DataBaseConstants {
             CLOSE_BRACKETS_TEXT);
 
     /**
+     * ホームのおすすめ番組データ格納用テーブル.
+     */
+    public static final String RECOMMEND_HOME_CHANNEL_LIST_TABLE_NAME = "recommend_channel_list";
+    /**
+     * ホームのおすすめ番組情報テーブル作成SQL文.
+     */
+    public static final String CREATE_TABLE_RECOMMEND_HOME_CHANNEL_SQL = ""
+            + "create table " + RECOMMEND_HOME_CHANNEL_LIST_TABLE_NAME + " ("
+            + ID_COLUMN + " integer primary key autoincrement, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1 + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL2 + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED1 + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED2 + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED3 + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4 + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED5 + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_AGREEMENT + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_VIEWABLE + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_PAGEID + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_GROUPID + " text, "
+            + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID + " text "
+            + ")";
+
+    /**
      * おすすめチャンネルデータ格納用テーブル.
      */
     public static final String RECOMMEND_CHANNEL_LIST_TABLE_NAME = "recommend_channel_list";
@@ -445,6 +477,39 @@ public class DataBaseConstants {
             + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_PAGEID + " text, "
             + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_GROUPID + " text, "
             + RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID + " text "
+            + ")";
+
+
+    /**
+     * ホームのおすすめビデオデータ格納用テーブル.
+     */
+    public static final String RECOMMEND_HOME_VIDEO_LIST_TABLE_NAME = "recommend_home_video_list";
+    /**
+     * ホームのおすすめビデオ情報テーブル作成SQL文.
+     */
+    public static final String CREATE_TABLE_RECOMMEND_HOME_VIDEO_SQL = ""
+            + "create table " + RECOMMEND_HOME_VIDEO_LIST_TABLE_NAME + " ("
+            + ID_COLUMN + " integer primary key autoincrement, "
+            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_RECOMMENDORDER + " text, "
+            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_SERVICEID + " text, "
+            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CATEGORYID + " text, "
+            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CHANNELID + " text, "
+            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CONTENTSID + " text, "
+            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_TITLE + " text, "
+            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CTPICURL1 + " text, "
+            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CTPICURL2 + " text, "
+            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_STARTVIEWING + " text, "
+            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_ENDVIEWING + " text, "
+            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_RESERVED1 + " text, "
+            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_RESERVED2 + " text, "
+            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_RESERVED3 + " text, "
+            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_RESERVED4 + " text, "
+            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_RESERVED5 + " text, "
+            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_AGREEMENT + " text, "
+            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_VIEWABLE + " text, "
+            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_PAGEID + " text, "
+            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_GROUPID + " text, "
+            + RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_RECOMMENDMETHODID + " text "
             + ")";
 
     /**
