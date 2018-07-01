@@ -109,6 +109,7 @@ public class ProcessSettingFile {
 
     /**
      * 設定ファイルの制御処理.
+     *
      * @param callBack コールバック.
      */
     public void controlAtSettingFile(final ProcessSettingFileCallBack callBack) {
@@ -126,19 +127,15 @@ public class ProcessSettingFile {
         boolean isLastReadFail =
                 SharedPreferencesUtils.getSharedPreferencesSettingFileIsReadFail(mContext);
 
-        //前回の読み込みから1時間(java時間は桁が多いので、エポック秒は千倍する)が経過したか、前回読み込みが成功したかどうかを見る
-        if (lastDate + (DateUtils.EPOCH_TIME_ONE_HOUR * 1000) > System.currentTimeMillis()
+        //前回の読み込みから1時間(java時間は桁が多いので、エポック秒は千倍する)が経過したか、
+        //端末の時計操作により、前回読み込み時の時間よりも、今が過去になっているか、
+        //前回読み込みが成功したかどうかを見る
+        if ((lastDate + (DateUtils.EPOCH_TIME_ONE_HOUR * 1000) > System.currentTimeMillis()
+                && lastDate <= System.currentTimeMillis())
                 && !isLastReadFail) {
-            //1時間以内かつ前回読み込みは成功しているので、前回の値を使用する
-            mSettingData.setIsStop(
-                    SharedPreferencesUtils.getSharedPreferencesSettingFileIsStop(mContext));
-            mSettingData.setDescription(
-                    SharedPreferencesUtils.getSharedPreferencesSettingFileStopMessage(mContext));
-            mSettingData.setForceUpdateVersion(
-                    SharedPreferencesUtils.getSharedPreferencesSettingFileForceUpdate(mContext));
-            mSettingData.setOptionalUpdateVersion(
-                    SharedPreferencesUtils.getSharedPreferencesSettingFileOptionalUpdate(
-                            mContext));
+            //1時間以内かつ前回読み込み時間は過去で読み込みは成功しているので、前回の値を使用する
+            getBeforeData();
+
             //読み込みに成功しているので、ファイル取得エラーフラグはfalse
             mSettingData.setIsFileReadError(false);
 
@@ -175,12 +172,13 @@ public class ProcessSettingFile {
                     SharedPreferencesUtils.setSharedPreferencesSettingFileIsReadFail(
                             mContext, false);
                 } else {
-                    //ファイル未発見の場合は、ファイル取得エラーをONにする
+                    //前回読み込んだデータがあるならば、それを使用する
+                    getBeforeData();
+
+                    //ファイル未発見なので、ファイル取得エラーをONにする
                     mSettingData.setIsFileReadError(true);
                     //通常処理では止めないので、こちらはfalse
                     mSettingData.setIsStop(false);
-                    //終了メッセージも読めていないのでクリア
-                    mSettingData.setDescription("");
 
                     //ファイルの読み込みに失敗しているので、次回の処理に備えたフラグをセット
                     SharedPreferencesUtils.setSharedPreferencesSettingFileIsReadFail(
@@ -195,7 +193,24 @@ public class ProcessSettingFile {
     }
 
     /**
+     * 前回読み込んだ値を取得する.
+     * <p>
+     * （前回読み込んだ値が存在しなければ、デフォルト値となる）
+     */
+    private void getBeforeData() {
+        mSettingData.setIsStop(
+                SharedPreferencesUtils.getSharedPreferencesSettingFileIsStop(mContext));
+        mSettingData.setDescription(
+                SharedPreferencesUtils.getSharedPreferencesSettingFileStopMessage(mContext));
+        mSettingData.setForceUpdateVersion(
+                SharedPreferencesUtils.getSharedPreferencesSettingFileForceUpdate(mContext));
+        mSettingData.setOptionalUpdateVersion(
+                SharedPreferencesUtils.getSharedPreferencesSettingFileOptionalUpdate(mContext));
+    }
+
+    /**
      * 単独でダイアログを表示させるために、状況を再現するメソッド.
+     *
      * @param settingMetaData 設定ファイル再現情報
      */
     public void processControlEmulate(final SettingFileMetaData settingMetaData) {
@@ -214,9 +229,6 @@ public class ProcessSettingFile {
 
         //ダイアログ表示スイッチ
         boolean dialogSwitch = false;
-
-        //キャンセル付きダイアログの表示指定
-        boolean dialogWithCancel = false;
 
         //停止の有無を見る
         if (mSettingData.isIsStop()) {
@@ -242,15 +254,13 @@ public class ProcessSettingFile {
             showGooglePlayDialog(true);
             //ダイアログを表示する分岐に入ったのでtrue
             dialogSwitch = true;
-            //キャンセル付きなので、trueをセットする
-            dialogWithCancel = true;
-
         }
 
-        //コールバックが指定されていて、キャンセル付きのダイアログでなければそこへ飛ぶ
-        //(通常、showGooglePlayDialog(true)を呼ぶ際は、コールバックが無いので、ここは呼ばれない。
-        //(コールバックがあるリモート視聴時のダイアログでも呼ばれないようにした)
-        if (mProcessSettingFileCallBack != null && !dialogWithCancel) {
+        //コールバックが指定されていた場合は、リモート視聴ならばコールバックはダイアログのキャンセルボタンを押した後の動画再生開始なので、
+        //ここでは呼び出さない。
+        //リモート視聴以外ならば、コールバックが指定されているのは、スプラッシュ画面になるので、ダイアログの表示を他の画面に依頼移譲する処理を動かすために、
+        //コールバックの処理をここで起動する
+        if (mProcessSettingFileCallBack != null && !mIsRemote) {
             mProcessSettingFileCallBack.onCallBack(dialogSwitch);
         }
     }
@@ -363,8 +373,8 @@ public class ProcessSettingFile {
                     DTVTLogger.start();
                     //キャンセルが押されたので、GooglePlayフラグはOFF
                     mGooglePlay = false;
-                    //ダウンロードしないので、コールバックが指定されていればそこへ飛ぶ
-                    if (mProcessSettingFileCallBack != null) {
+                    //ダウンロードしないので、リモート視聴の場合はコールバックが指定されていればそこへ飛ぶ
+                    if (mProcessSettingFileCallBack != null && mIsRemote) {
                         //今回はダイアログ表示後の処理なので、falseを指定
                         mProcessSettingFileCallBack.onCallBack(false);
                     }
@@ -390,8 +400,9 @@ public class ProcessSettingFile {
     }
 
     /**
-     *  googlePlayフラグ設定.
-     * @param googlePlaySwitch  googlePlay起動対象フラグ
+     * googlePlayフラグ設定.
+     *
+     * @param googlePlaySwitch googlePlay起動対象フラグ
      */
     public void setGooglePlay(final boolean googlePlaySwitch) {
         mGooglePlay = googlePlaySwitch;
@@ -399,6 +410,7 @@ public class ProcessSettingFile {
 
     /**
      * 設定ファイル状況を渡す.
+     *
      * @return 設定ファイル状況
      */
     public SettingFileMetaData getSettingData() {
