@@ -243,6 +243,11 @@ public class TvProgramListActivity extends BaseActivity implements
      */
     private final static String TAB_INDEX = "tabIndex";
 
+    /**
+     * NOWバーの時刻.
+     */
+    String mNowCurTime = null;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -725,8 +730,6 @@ public class TvProgramListActivity extends BaseActivity implements
         mTvProgramListAdapter = new TvProgramListAdapter(this, channels);
         mChannelRecyclerView.setAdapter(mProgramChannelAdapter);
         mProgramRecyclerView.setAdapter(mTvProgramListAdapter);
-        scrollToCurTime();
-        refreshTimeLine();
     }
 
     /**
@@ -1208,20 +1211,34 @@ public class TvProgramListActivity extends BaseActivity implements
      */
     @Override
     public void onScrollOffset(final int offset) {
-        String curTime = new SimpleDateFormat(DateUtils.DATE_HHMMSS, Locale.JAPAN).format(new Date());
-        int curClock = Integer.parseInt(curTime.substring(0, 2));
-        int curMin = Integer.parseInt(curTime.substring(2, 4));
-        int curSec = Integer.parseInt(curTime.substring(4, 6));
-        float channelRvHeight = (float) mChannelRecyclerView.getHeight();
+        if (mNowCurTime != null) {
+            float timeLinePosition = calcTimeLinePosition(mNowCurTime);
+            DTVTLogger.debug("onScrollOffset timeLinePosition:" + timeLinePosition + " mNowImage.getHeight():" + mNowImage.getHeight() + " offset:" + offset);
+            mTimeLine.setY(timeLinePosition - offset);
+        }
+    }
+
+    /**
+     * NOWバー位置の計算.
+     *
+     * @param date NOWを描画したい時刻
+     */
+    private float calcTimeLinePosition(String date) {
+        int curClock = Integer.parseInt(date.substring(0, 2));
+        int curMin = Integer.parseInt(date.substring(2, 4));
+        int curSec = Integer.parseInt(date.substring(4, 6));
         float timeLinePosition = 0;
+        float channelRvHeight = (float) dip2px(CH_VIEW_HEIGHT);
+        mTimeScrollView.getScrollY();
+
         if (DateUtils.START_TIME <= curClock && curClock < STANDARD_TIME) {
             timeLinePosition = (curClock -  DateUtils.START_TIME) * dip2px(ONE_HOUR_UNIT) + (
-                    dip2px(ONE_HOUR_UNIT) + 0.5f) *  DateUtils.minSec2Hour(curMin, curSec) + channelRvHeight;
+                    dip2px(ONE_HOUR_UNIT)) *  DateUtils.minSec2Hour(curMin, 0) + channelRvHeight;
         } else if (0 <= curClock && curClock <= 3) {
             timeLinePosition = (STANDARD_TIME -  DateUtils.START_TIME + curClock) * dip2px(ONE_HOUR_UNIT) + (
-                    dip2px(ONE_HOUR_UNIT) + 0.5f) *  DateUtils.minSec2Hour(curMin, curSec) + channelRvHeight;
+                    dip2px(ONE_HOUR_UNIT)) *  DateUtils.minSec2Hour(curMin, 0) + channelRvHeight;
         }
-        mTimeLine.setY(timeLinePosition - (float) mNowImage.getHeight() / 2 - offset);
+        return timeLinePosition;
     }
 
     /**
@@ -1229,35 +1246,10 @@ public class TvProgramListActivity extends BaseActivity implements
      * 現在時刻ラインの表示位置を更新.
      */
     private void refreshTimeLine() {
-        String curTime = new SimpleDateFormat(DateUtils.DATE_HHMMSS, Locale.JAPAN).format(new Date());
-        int curClock = Integer.parseInt(curTime.substring(0, 2));
-        int curMin = Integer.parseInt(curTime.substring(2, 4));
-        int curSec = Integer.parseInt(curTime.substring(4, 6));
-        float channelRvHeight = (float) dip2px(CH_VIEW_HEIGHT);
-        float timeLinePosition = 0;
-        if (mTimeScrollView.getHeight() / dip2px(ONE_HOUR_UNIT) >= 3) {
-            //タブレット(将来さらにチェック)
-            if (DateUtils.START_TIME <= curClock && curClock < STANDARD_TIME) {
-                timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) * DateUtils.minSec2Hour(curMin, curSec) + channelRvHeight;
-            } else {
-                if (0 <= curClock && curClock <= 3) {
-                    //底から完全に見える"1時間単位"をマーナイスする
-                    timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) *  DateUtils.minSec2Hour(curMin, curSec)
-                            + channelRvHeight + (mTimeScrollView.getHeight() - (DateUtils.START_TIME - curClock) * dip2px(ONE_HOUR_UNIT));
-                }
-            }
-        } else {
-            if (DateUtils.START_TIME <= curClock && curClock < STANDARD_TIME || curClock == 0 || curClock == 1) {
-                timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) *  DateUtils.minSec2Hour(curMin, curSec) + channelRvHeight;
-            } else {
-                if (2 <= curClock && curClock <= 3) {
-                    //底から完全に見える"1時間単位"をマーナイスする
-                    timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) *  DateUtils.minSec2Hour(curMin, curSec)
-                            + channelRvHeight + (mTimeScrollView.getHeight() - (DateUtils.START_TIME - curClock) * dip2px(ONE_HOUR_UNIT));
-                }
-            }
-        }
-        mTimeLine.setY(timeLinePosition - (float) mNowImage.getHeight() / 2);
+        mNowCurTime = new SimpleDateFormat(DateUtils.DATE_HHMMSS, Locale.JAPAN).format(new Date());
+        float timeLinePosition = calcTimeLinePosition(mNowCurTime);
+        DTVTLogger.debug("onScrollOffset timeLinePosition:" + timeLinePosition + "mTimeScrollView.getScrollY:" + mTimeScrollView.getScrollY());
+        mTimeLine.setY(timeLinePosition - mTimeScrollView.getScrollY());
     }
 
     @Override
