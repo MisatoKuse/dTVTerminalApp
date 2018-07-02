@@ -1389,7 +1389,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         mRecordingReservationContentsDetailInfo = new RecordingReservationContentsDetailInfo(
                 mDetailFullData.getmService_id(),
                 mDetailFullData.getTitle(),
-                mDetailFullData.getAvail_start_date(),
+                mDetailFullData.getPublish_start_date(),
                 mDetailFullData.getDur(),
                 mDetailFullData.getR_value());
         mRecordingReservationContentsDetailInfo.setEventId(mDetailFullData.getmEvent_id());
@@ -1451,22 +1451,23 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             if (TV_PROGRAM.equals(mDetailFullData.getDisp_type())) {
                 //tv_programの場合
                 if (TV_SERVICE_FLAG_HIKARI.equals(mDetailFullData.getmTv_service())) {
-                    //tv_serviceは0の場合
+                    //tv_serviceは0の場合(ひかりTV多ch)
                     setRecordingData(detailFragment);
                 } else if (TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(mDetailFullData.getmTv_service())) {
-                    //tv_serviceは1の場合
+                    //tv_serviceは1の場合(ひかり内dチャンネル)
                     if (CONTENT_TYPE_FLAG_ONE.equals(mDetailFullData.getmContent_type())
                             || CONTENT_TYPE_FLAG_TWO.equals(mDetailFullData.getmContent_type())) {
-                        //contents_typeは1又は2の場合
-                        if (comparisonStartTime()) {
-                            //VOD配信日時(vod_start_date) > 現在時刻
+                        //contents_typeは1又は2の場合(見逃し（切り出し）or見逃し（完パケ）)
+                        if (DateUtils.isBefore(mDetailFullData.getmVod_start_date())){
+                            // 見逃し配信前（=放送コンテンツ扱い)
                             setRecordingData(detailFragment);
                         } else {
+                            // 見逃し配信後又はdチャンネル関連VOD
                             contentType = ContentTypeForGoogleAnalytics.VOD;
                         }
                     }
                 } else {
-                    //contents_typeは0又は未設定の場合
+                    //contents_typeが0又は未設定の場合は放送コンテンツ扱い
                     setRecordingData(detailFragment);
                 }
             } else {
@@ -2509,13 +2510,17 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      *
      * @return 放送開始まで2時間以上あるかどうか
      */
-    private boolean comparisonStartTime() {
+    private boolean comparisonStartTime(RecordingReservationContentsDetailInfo recordInfo) {
+        if (recordInfo == null) {
+            return false;
+        }
         long nowTimeEpoch = DateUtils.getNowTimeFormatEpoch();
         long canRecordingReservationTime = 0;
-        if (mRecordingReservationContentsDetailInfo != null) {
+        if (recordInfo != null) {
             canRecordingReservationTime =
-                    mRecordingReservationContentsDetailInfo.getStartTime() - (DateUtils.EPOCH_TIME_ONE_HOUR * 2);
+                    recordInfo.getStartTime() - (DateUtils.EPOCH_TIME_ONE_HOUR * 2);
         }
+        DTVTLogger.debug("comparisonStartTime nowTimeEpoch:" + " canRecordingReservationTime:" + canRecordingReservationTime);
         return !(nowTimeEpoch >= canRecordingReservationTime);
     }
 
@@ -2947,7 +2952,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private void changeUIBasedContractInfo() {
         DTVTLogger.start();
         DtvContentsDetailFragment detailFragment = getDetailFragment();
-        boolean isVisibleRecordButton = mRecordingReservationContentsDetailInfo != null;
+        boolean isVisibleRecordButton = comparisonStartTime(mRecordingReservationContentsDetailInfo);
         DeviceStateUtils.PairingState pairingState;
         switch (mViewIngType) {
             case ENABLE_WATCH:
@@ -3027,6 +3032,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 Button chButton = findViewById(R.id.contract_leading_button);
                 // 宅内の場合契約導線表示
                 pairingState = DeviceStateUtils.getPairingState(this, getStbStatus());
+                //録画予約ボタンは非表示
+                isVisibleRecordButton = false;
                 switch (pairingState) {
                     case INSIDE_HOUSE:
                         mContractLeadingView.setVisibility(View.VISIBLE);
@@ -3070,12 +3077,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 }
                 break;
             case DISABLE_WATCH_AND_PLAY:
-                //再生導線を非表示にする
-
-                //TODO 再生、評価はコンテンツ毎の詳細画面の表示が行われてから対応する
-
-                //録画予約ボタンを非表示
-                isVisibleRecordButton = false;
                 //サムネイル上のdTVで視聴、dアニメストアで視聴を非表示
                 if (mThumbnailBtn != null) {
                     if (DeviceStateUtils.getPairingState(this, getStbStatus()).equals(DeviceStateUtils.PairingState.NO_PAIRING)) {
@@ -3087,6 +3088,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 }
                 break;
             case PREMIUM_CHECK_START:
+                //録画予約ボタンは一旦非表示
+                isVisibleRecordButton = false;
                 new ContentsDetailDataProvider(this).getChListData();
                 break;
             case SUBSCRIPTION_CHECK_START:
