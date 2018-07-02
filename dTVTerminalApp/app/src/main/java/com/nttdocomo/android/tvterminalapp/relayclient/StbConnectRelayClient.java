@@ -138,9 +138,10 @@ public class StbConnectRelayClient {
             byte[] sum = new byte[actionBytes.length + encodedData.length];
             System.arraycopy(actionBytes, 0, sum, 0, actionBytes.length);
             System.arraycopy(encodedData, 0, sum, actionBytes.length, encodedData.length);
-
             ret = mTcpClient.send(sum, sum.length);
+            DTVTLogger.debug(String.format("result = %s send data = %s", ret, data));
         } catch (EncoderException e) {
+            DTVTLogger.debug("faild to encode. not send.");
             DTVTLogger.debug(e);
         }
         return ret;
@@ -169,18 +170,18 @@ public class StbConnectRelayClient {
      * @return 成功:true
      */
     public String receive() {
-        String receivedData = null;
+        String receiveData = null;
         setCipherDecodeError(false);
         if (mTcpClient == null) {
             DTVTLogger.warning("mTcpClient is null!");
             return null;
         }
-        receivedData = mTcpClient.receive();
-        if (null == receivedData) {
+        receiveData = mTcpClient.receive();
+        if (null == receiveData) {
             setCipherDecodeError(mTcpClient.isCipherDecodeError());
         }
-        DTVTLogger.debug("receivedData = " + receivedData);
-        return receivedData;
+        DTVTLogger.debug(String.format("receive data = %s", receiveData));
+        return receiveData;
     }
     /**
      * 鍵交換リクエストの結果を受信する.
@@ -214,13 +215,16 @@ public class StbConnectRelayClient {
                 }
                 byte[] buff = CipherUtil.encodeData(data);
                 if (buff == null) {
+                    DTVTLogger.debug("encodedData is null. not send.");
                     return;
                 }
                 DatagramPacket packet = new DatagramPacket(buff, buff.length, new InetSocketAddress(mRemoteIp, REMOTE_DATAGRAM_PORT));
                 dataSocket = new DatagramSocket();
                 try {
                     dataSocket.send(packet);
+                    DTVTLogger.debug(String.format("send data = %s", data));
                 } catch (IOException e) {
+                    DTVTLogger.debug("faild to send.");
                     DTVTLogger.debug(e);
                 }
             }

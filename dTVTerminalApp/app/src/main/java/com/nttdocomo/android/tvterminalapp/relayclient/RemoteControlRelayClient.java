@@ -1203,44 +1203,63 @@ public class RemoteControlRelayClient {
         public void run() {
             RelayServiceResponseMessage response = null;
             if (mRequestParam == null) {
-                DTVTLogger.warning("mRequestParam == null");
+                DTVTLogger.warning("request data parameter is null!");
                 sendResponseMessage(setResultInternalError());
                 return;
             }
             if (!CipherUtil.hasShareKey()) { // 鍵交換が必要
+                DTVTLogger.debug("no valid share key exist. requesting share key exchange.");
                 CipherUtil.syncRequestPublicKey();
             }
             if (!CipherUtil.hasShareKey()) { // 鍵交換に失敗
+                DTVTLogger.debug("even after requesting share key exchange, no valid share key exist. aborting sending request.");
                 response = setResultDistinationUnreachable();
             } else {
                 StbConnectRelayClient stbConnection = StbConnectRelayClient.getInstance();  // Socket通信
-                String recvData = null;
+                String receiveData = null;
                 // アプリ起動要求をSTBへ送信して処理結果応答を取得する
                 if (stbConnection.connect()) {
+                    DTVTLogger.debug("sending application request.");
                     if (stbConnection.send(mRequestParam)) {
-                        recvData = stbConnection.receive();
-                        DTVTLogger.debug("recvData:" + recvData);
-                        response = setResponse(recvData);
+                        DTVTLogger.debug("sended application request.");
+                        receiveData = stbConnection.receive();
+                        DTVTLogger.debug("request result received.");
+                        response = setResponse(receiveData);
+                    } else {
+                        // 送信に失敗
+                        DTVTLogger.debug("failed to send application request.");
+                        response = setResultDistinationUnreachable();
                     }
                     stbConnection.disconnect();
-                    // 鍵交換の失敗、または復号に失敗
-                    if (stbConnection.isCipherDecodeError()
-                            || response.getResultCode() == RelayServiceResponseMessage.RELAY_RESULT_STB_KEY_MISMATCH) {
-                        DTVTLogger.debug(String.format("key exchange error = %s",
-                                response.getResultCode() == RelayServiceResponseMessage.RELAY_RESULT_STB_KEY_MISMATCH));
-                        DTVTLogger.debug(String.format("decoding error = %s", stbConnection.isCipherDecodeError()));
+                    // 鍵交換の失敗、または送信時の暗号化に失敗、または受信時の復号に失敗
+                    if (checkCipherError(stbConnection, response)) {
+                        DTVTLogger.debug("no valid share key exist to send or receive.");
                         // 鍵交換を再実行（復号失敗の原因でもある）
+                        DTVTLogger.debug("retrying exchange of share key for send or receive.");
                         CipherUtil.syncRequestPublicKey();
-                        if (!CipherUtil.hasShareKey()) { // 鍵交換に失敗
+                        // 再度、鍵交換に失敗
+                        if (!CipherUtil.hasShareKey()) {
+                            DTVTLogger.debug("even after requesting share key exchange, no valid share key exist. aborting sending request.");
                             response = setResultDistinationUnreachable();
                         } else {
                             if (stbConnection.connect()) {
+                                DTVTLogger.debug("retry to sending application request.");
                                 if (stbConnection.send(mRequestParam)) {
-                                    recvData = stbConnection.receive();
-                                    DTVTLogger.debug("recvData:" + recvData);
-                                    response = setResponse(recvData);
+                                    DTVTLogger.debug("application request was submitted.");
+                                    receiveData = stbConnection.receive();
+                                    DTVTLogger.debug("retryed request result received.");
+                                    response = setResponse(receiveData);
+                                } else {
+                                    // 再送信に失敗
+                                    DTVTLogger.debug("failed to resubmit application request.");
+                                    response = setResultDistinationUnreachable();
                                 }
                                 stbConnection.disconnect();
+                            }
+                            // 鍵交換の失敗、または復号に失敗
+                            if (checkCipherError(stbConnection, response)) {
+                                DTVTLogger.debug("finally no valid share key exist to send or receive.");
+                                response = setResultDistinationUnreachable();
                             }
                         }
                     }
@@ -1250,6 +1269,26 @@ public class RemoteControlRelayClient {
                 }
             }
             sendResponseMessage(response);
+        }
+
+        /**
+         * 鍵交換の失敗、または復号に失敗の検出.
+         *
+         * @param stbConnection
+         * @param response
+         * @return true 鍵交換の失敗、または復号に失敗を検出した場合
+         */
+        private boolean checkCipherError(StbConnectRelayClient stbConnection,
+                                         RelayServiceResponseMessage response) {
+            // 鍵交換の失敗、または復号に失敗
+            if (stbConnection.isCipherDecodeError()
+                    || response.getResultCode() == RelayServiceResponseMessage.RELAY_RESULT_STB_KEY_MISMATCH) {
+                DTVTLogger.debug(String.format("key exchange error = %s",
+                        response.getResultCode() == RelayServiceResponseMessage.RELAY_RESULT_STB_KEY_MISMATCH));
+                DTVTLogger.debug(String.format("decoding error = %s", stbConnection.isCipherDecodeError()));
+                return true;
+            }
+            return false;
         }
 
         /**
@@ -1630,7 +1669,6 @@ public class RemoteControlRelayClient {
     public void setRemoteIp(final String remoteIp) {
         DTVTLogger.warning("remoteIp = " + remoteIp);
         StbConnectRelayClient.getInstance().setRemoteIp(remoteIp);
-//        mRemoteHost = remoteIp; //デバッグ用
     }
 
     /**

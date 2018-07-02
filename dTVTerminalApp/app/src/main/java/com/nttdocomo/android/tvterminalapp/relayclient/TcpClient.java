@@ -141,7 +141,6 @@ public class TcpClient {
             return null;
         }
         try {
-            DTVTLogger.debug("getInputStream()");
             InputStream inputStream = mSocket.getInputStream();
 
             while (inputStream.available() >= 0) {
@@ -150,7 +149,6 @@ public class TcpClient {
                 if (availableSize == 0) {
                     continue;
                 }
-                DTVTLogger.debug("inputStream.available() = " + availableSize);
 
                 byte[] bytes = new byte[availableSize];
                 int readSize = inputStream.read(bytes, 0, availableSize);
@@ -158,7 +156,6 @@ public class TcpClient {
                 if (readSize == availableSize) {
                     String decodeString = CipherUtil.decodeData(bytes);
                     if (null != decodeString) {
-                        DTVTLogger.debug("decodeString = " + decodeString);
                         receiveData = decodeString;
                     }
                 } else {
@@ -167,11 +164,11 @@ public class TcpClient {
                 }
                 break;
             }
-        }  catch (NullPointerException | IOException e) {
+        } catch (NullPointerException | IOException e) {
             // SocketException はIOExceptionに含まれる
+            DTVTLogger.debug("aborted to receive.");
             DTVTLogger.debug(String.format("??? :%s", e.getMessage()));
         }
-        DTVTLogger.debug("receiveData = " + receiveData);
         DTVTLogger.end();
         return receiveData;
     }
@@ -232,14 +229,13 @@ public class TcpClient {
 
         OutputStreamWriter out = null;
         try {
-            DTVTLogger.debug("data:" + data);
             out = new OutputStreamWriter(mSocket.getOutputStream(), StandardCharsets.UTF_8);
             out.write(data);
             out.flush();
-
         } catch (NullPointerException | IOException e) {
             // SocketException はIOExceptionに含まれる
             // 非同期処理で同時に TcpClient が使用されると mSocket が null になることを想定した Fail safe
+            DTVTLogger.debug("aborted to send.");
             DTVTLogger.debug(e);
             return false;
         }
@@ -266,13 +262,14 @@ public class TcpClient {
             out = mSocket.getOutputStream();
             out.write(data, 0, length);
             out.flush();
+            DTVTLogger.debug(String.format("send data length = %s", length));
             result = true;
         } catch (NullPointerException | IOException e) {
             // SocketException はIOExceptionに含まれる
             // 非同期処理で同時に TcpClient が使用されると mSocket が null になることを想定した Fail safe
+            DTVTLogger.debug("aborted to send.");
             DTVTLogger.debug(e);
         }
-        DTVTLogger.debug("result = " + result);
         DTVTLogger.end();
         return result;
     }
