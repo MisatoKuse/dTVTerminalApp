@@ -2714,9 +2714,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             case AGE:
                 msg = getString(R.string.contents_detail_parental_check_fail);
                 break;
-            case NETWORK:
-                msg = getString(R.string.network_nw_error_message);
-                break;
             case INIT_SUCCESS:
                 isInit = true;
                 break;

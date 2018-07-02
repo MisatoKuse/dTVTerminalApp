@@ -80,9 +80,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         /**なし.*/
         NONE,
         /**初期化成功.*/
-        INIT_SUCCESS,
-        /**ネットワーク切断.*/
-        NETWORK
+        INIT_SUCCESS
     }
 
     /** コンストラクタ.*/
@@ -657,11 +655,6 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 showPlayingProgress(false);
                 break;
             case MediaPlayerDefinitions.PE_START_NETWORK_CONNECTION:
-                if (!NetWorkUtils.isOnline(mContext)) {
-                    mPlayerStateListener.onErrorCallBack(PlayerErrorType.NETWORK);
-                    onPause();
-                }
-                break;
             case MediaPlayerDefinitions.PE_START_AUTHENTICATION:
             case MediaPlayerDefinitions.PE_START_BUFFERING:
             case MediaPlayerDefinitions.PE_START_RENDERING:
