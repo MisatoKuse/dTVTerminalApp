@@ -491,7 +491,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
      * 再生ポジション取得.
      * @return  再生ポジション
      */
-    private int getCurrentPosition() {
+    public int getCurrentPosition() {
         if (mPlayerController != null) {
             return mPlayerController.getCurrentPosition();
         } else {

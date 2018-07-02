@@ -473,10 +473,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     protected void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
         if (mPlayerViewLayout != null) {
-            if (mPlayerViewLayout.getPlayStartPosition() < 0) {
+            if (mPlayerViewLayout.getCurrentPosition() < 0) {
                 mPlayerViewLayout.setPlayStartPosition(0);
             }
-            outState.putInt(SAVEDVARIABLE_PLAY_START_POSITION, mPlayerViewLayout.getPlayStartPosition());
+            outState.putInt(SAVEDVARIABLE_PLAY_START_POSITION, mPlayerViewLayout.getCurrentPosition());
         }
     }
 
