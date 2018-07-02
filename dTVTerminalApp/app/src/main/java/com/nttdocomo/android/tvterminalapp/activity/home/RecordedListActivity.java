@@ -459,6 +459,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                                 case NONE_LOCAL_REGISTRATION:
                                 case NONE_PAIRING:
                                 default:
+                                    clearFragment(0);
                                     mNoDataMessage.setVisibility(View.VISIBLE);
                                     setProgressBarGone();
                                     break;
