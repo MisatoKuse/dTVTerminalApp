@@ -29,7 +29,7 @@ public class TcpClient {
     private String mRemoteIp = null;
 
     /**STBスタンバイ状態からの電源ONとユーザアカウント切り替えに必要な最大待ち時間（ミリ秒）.*/
-    public static final int SEND_RECIEVE_TIMEOUT = 15000;
+    public static final int SEND_RECIEVE_TIMEOUT = 30000;
     /**
      * 鍵交換の送受信タイムアウト.
      * ※鍵交換は電文の送信前にメインスレッドから同期処理で通信が開始されるため

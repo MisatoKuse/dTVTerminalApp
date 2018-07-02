@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.activity.detail;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -3383,5 +3384,21 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     @Override
     public void clipKeyResult() {
         //Nop 仕様により実装のみ
+    }
+
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+        DTVTLogger.start();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE && mPlayerViewLayout != null) {
+                    mPlayerViewLayout.findViewById(R.id.tv_player_ctrl_now_on_air_full_screen_iv).callOnClick();
+                    return false;
+                }
+                break;
+            default:
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
