@@ -387,6 +387,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
+            mPlayStartPosition = savedInstanceState
+                    .getInt(SAVEDVARIABLE_PLAY_START_POSITION);
             savedInstanceState.clear();
         }
         setTheme(R.style.AppThemeBlack);
@@ -396,10 +398,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         // プログレスバー表示中でもxボタンクリック可能にする
         findViewById(R.id.base_progress_rl).setClickable(false);
         showProgressBar(true);
-        if (savedInstanceState != null) {
-            mPlayStartPosition = savedInstanceState
-                    .getInt(SAVEDVARIABLE_PLAY_START_POSITION);
-        }
         initView();
     }
 
