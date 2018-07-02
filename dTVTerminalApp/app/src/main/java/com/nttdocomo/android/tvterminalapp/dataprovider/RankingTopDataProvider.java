@@ -236,7 +236,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                     mContext, DataBaseConstants.WEEKLYRANK_LIST_TABLE_NAME);
             DTVTLogger.debug(DataBaseConstants.WEEKLYRANK_LIST_TABLE_NAME + " = " + isWeeklyData);
             //ここにたどり着いたならば、DB上のデータは存在しないか期限切れとなる。
-            if (mIsWeeklyRankWebApiError && !isWeeklyData) {
+            if ((mIsWeeklyRankWebApiError && !isWeeklyData) || !TextUtils.isEmpty(genreId)) {
                 // 通信に失敗し、DBにデータが存在しなければ、ネットワークエラーを取得する
                 mWeeklyRankWebApiErrorState = mWeeklyRankWebClient.getError();
                 //ヌルで帰る
@@ -276,7 +276,8 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             DTVTLogger.debug(DataBaseConstants.RANKING_VIDEO_LIST_TABLE_NAME + " = "
                     + isContentsListPerGenreData);
             //ここにたどり着いたならば、DB上のデータは存在しないか期限切れとなる。
-            if (mIsContentsListPerGenreWebApiError && !isContentsListPerGenreData) {
+            if ((mIsContentsListPerGenreWebApiError && !isContentsListPerGenreData)
+                    || !TextUtils.isEmpty(genreId)) {
                 // 通信に失敗し、DBにデータが存在しなければ、ネットワークエラーを取得する
                 mContentsListPerGenreWebApiErrorState =
                         mContentsListPerGenreWebClient.getError();
