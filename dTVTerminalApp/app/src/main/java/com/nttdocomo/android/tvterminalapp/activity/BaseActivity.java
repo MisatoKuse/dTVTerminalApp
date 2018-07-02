@@ -2176,6 +2176,11 @@ public class BaseActivity extends FragmentActivity implements
                 }
             }
 
+            //スプラッシュ画面からフェードアウト
+            if (this instanceof LaunchActivity) {
+                overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                return;
+            }
             //飛び先画面として指定されていた名前を取得する
             String callName = "";
             if (intent != null && intent.getComponent() != null) {
