@@ -98,6 +98,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private final Handler mHandler = new Handler();
     /** 上にスクロール. */
     private boolean mIsLoading = false;
+    /** ロード終了. */
+    private boolean mIsEndPage = false;
     /** ページングインデックス.*/
     private int mPageIndex;
 
@@ -204,6 +206,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onClickTab(final int position) {
         mPageIndex = 0;
+        mIsEndPage = false;
         mViewPager.setCurrentItem(position);
     }
 
@@ -289,6 +292,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             public void onPageSelected(final int position) {
                 super.onPageSelected(position);
                 mPageIndex = 0;
+                mIsEndPage = false;
                 setTab(position);
                 sendScreenViewForPosition(position);
             }
@@ -572,7 +576,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private void setVideoBrows(final ArrayList<DlnaRecVideoItem> dlnaRecVideoItems) {
         final RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
         baseFragment.setFragmentName(RLA_FragmentName_All);
-
+        if (dlnaRecVideoItems.size() < DtvtConstants.REQUEST_DLNA_LIMIT_50) {
+            mIsEndPage = true;
+        }
         List<Map<String, String>> resultList = getDownloadListFromDb();
         setTakeOutContentsToAll(dlnaRecVideoItems, resultList);
         List<ContentsData> listData = baseFragment.getContentsData();
@@ -918,7 +924,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void onScrollStateChanged(final RecordedBaseFragment fragment, final AbsListView absListView, final int scrollState) {
-        if (mViewPager.getCurrentItem() == 1) {
+        if (mViewPager.getCurrentItem() == 1 || mIsEndPage) {
             return;
         }
         synchronized (this) {

@@ -145,6 +145,8 @@ public class ChannelListActivity extends BaseActivity implements
     private Boolean mIsMenuLaunch = false;
     /** ページングインデックス.*/
     private int mPageIndex = 0;
+    /** ロード終了. */
+    private boolean mIsEndPage = false;
     /** ひかりTV for docomoタブの連続更新防止用. */
     private long beforeGetHikariData;
     // endregion variable
@@ -288,6 +290,7 @@ public class ChannelListActivity extends BaseActivity implements
                     public void onPageSelected(final int position) {
                         super.onPageSelected(position);
                         mPageIndex = 0;
+                        mIsEndPage = false;
                         mTabLayout.setTab(position);
                         sendScreenViewForPosition(position);
                         mFactory.createFragment(position, lis, ChannelListDataType.values()[position], getActivity()).showProgressBar(true);
@@ -408,6 +411,7 @@ public class ChannelListActivity extends BaseActivity implements
         if (null != mViewPager) {
             DTVTLogger.debug("viewpager not null");
             mPageIndex = 0;
+            mIsEndPage = false;
             mViewPager.setCurrentItem(position);
         }
         DTVTLogger.end();
@@ -466,6 +470,9 @@ public class ChannelListActivity extends BaseActivity implements
 
     @Override
     public void onScrollStateChanged(final ChannelListFragment fragment, final AbsListView absListView, final int scrollState) {
+        if (mIsEndPage) {
+            return;
+        }
         synchronized (this) {
             if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
                     && absListView.getLastVisiblePosition() == fragment.getDataCount() - 1
@@ -738,6 +745,9 @@ public class ChannelListActivity extends BaseActivity implements
                 }
                 mPageIndex++;
                 fragment.showProgressBar(false);
+                if (list.size() < DtvtConstants.REQUEST_DLNA_LIMIT_50) {
+                    mIsEndPage = true;
+                }
             }
         });
 
