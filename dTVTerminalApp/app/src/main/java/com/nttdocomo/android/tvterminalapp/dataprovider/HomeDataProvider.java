@@ -976,10 +976,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             //通信クラスにデータ取得要求を出す
             mTvClipWebClient = new TvClipWebClient(mContext);
             UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
-            String pagerDirection = "";
 
             mTvClipWebClient.getTvClipApi(userInfoDataProvider.getUserAge(), DtvtConstants.REQUEST_LIMIT_50,
-                    DtvtConstants.REQUEST_LIMIT_50, 1, pagerDirection, this);
+                    DtvtConstants.REQUEST_LIMIT_50, 1, DtvtConstants.CLIP_BODY_DIRECTION_NEXT, this);
         } else {
             DTVTLogger.error("TvClipWebClient is stopping connect");
         }
@@ -993,10 +992,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             //通信クラスにデータ取得要求を出す
             mVodClipWebClient = new VodClipWebClient(mContext);
             UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
-            String pagerDirection = "";
 
             mVodClipWebClient.getVodClipApi(userInfoDataProvider.getUserAge(), DtvtConstants.REQUEST_LIMIT_50,
-                    DtvtConstants.REQUEST_LIMIT_50, 1, pagerDirection, this);
+                    DtvtConstants.REQUEST_LIMIT_50, 1, DtvtConstants.CLIP_BODY_DIRECTION_NEXT, this);
         } else {
             DTVTLogger.error("VodClipWebClient is stopping connect");
         }
