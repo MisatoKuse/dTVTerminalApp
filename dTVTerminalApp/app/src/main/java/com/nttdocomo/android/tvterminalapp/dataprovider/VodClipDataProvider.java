@@ -202,10 +202,9 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
             //通信クラスにデータ取得要求を出す
             mWebClient = new VodClipWebClient(mContext);
 
-            String direction = "";
             UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
             if (!mWebClient.getVodClipApi(userInfoDataProvider.getUserAge(), DtvtConstants.REQUEST_LIMIT_50,
-                    DtvtConstants.REQUEST_LIMIT_1, pagerOffset, direction, this)) {
+                    DtvtConstants.REQUEST_LIMIT_1, pagerOffset, DtvtConstants.CLIP_BODY_DIRECTION_NEXT, this)) {
                 mApiDataProviderCallback.vodClipListCallback(null);
             }
         } else {

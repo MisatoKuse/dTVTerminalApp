@@ -228,10 +228,9 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
             //通信クラスにデータ取得要求を出す
             mWebClient = new TvClipWebClient(mContext);
 
-            String pagerDirection = "";
             UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
             if (!mWebClient.getTvClipApi(userInfoDataProvider.getUserAge(), DtvtConstants.REQUEST_LIMIT_50,
-                    DtvtConstants.REQUEST_LIMIT_1, pagerOffset, pagerDirection, this)) {
+                    DtvtConstants.REQUEST_LIMIT_1, pagerOffset, DtvtConstants.CLIP_BODY_DIRECTION_NEXT, this)) {
                 mApiDataProviderCallback.tvClipListCallback(null);
             }
         } else {
