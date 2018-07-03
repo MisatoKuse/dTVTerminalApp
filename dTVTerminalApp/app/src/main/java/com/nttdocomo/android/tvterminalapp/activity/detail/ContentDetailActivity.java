@@ -659,6 +659,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         if (object instanceof RecordedContentsDetailData) { //プレイヤーで再生できるコンテンツ
             mDisplayState = PLAYER_ONLY;
             RecordedContentsDetailData playerData = mIntent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
+            if (!TextUtils.isEmpty(playerData.getTitle())) {
+                setTitleText(playerData.getTitle());
+            }
             switch (StbConnectionManager.shared().getConnectionStatus()) {
                 case HOME_IN:
                     initPlayer(playerData);
