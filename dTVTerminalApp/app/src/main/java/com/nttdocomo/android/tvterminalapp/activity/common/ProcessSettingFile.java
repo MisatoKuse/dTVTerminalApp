@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.common;
 
 import android.content.Context;
+import android.os.Build;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.BuildConfig;
@@ -270,8 +271,16 @@ public class ProcessSettingFile {
      */
     private void stopAllActivity() {
         DTVTLogger.start();
-        //これで、アプリは終了する。
-        mActivity.finishAffinity();
+
+        //Androidバージョンで終了処理を使い分ける
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //Android5.0以降では、これでアプリ終了に加えてタスク一覧からも消える
+            mActivity.finishAndRemoveTask();
+        } else {
+            //4.4ではアプリ終了まで
+            mActivity.finishAffinity();
+        }
+
         DTVTLogger.end();
     }
 
