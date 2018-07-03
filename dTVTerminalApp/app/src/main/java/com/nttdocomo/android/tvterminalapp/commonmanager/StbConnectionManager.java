@@ -116,8 +116,8 @@ public class StbConnectionManager {
     public void setConnectionStatus(final ConnectionStatus connectionStatus) {
         DTVTLogger.warning("before connectionStatus = " + this.connectionStatus + ", after connectionStatus = " + connectionStatus);
         StbConnectionManager.shared().connectionStatus = connectionStatus;
-        if (mConnectionListener != null) {
-            mConnectionListener.onConnectionChangeCallback(connectionStatus == ConnectionStatus.HOME_IN);
+        if (StbConnectionManager.shared().mConnectionListener != null) {
+            StbConnectionManager.shared().mConnectionListener.onConnectionChangeCallback(StbConnectionManager.shared().connectionStatus == ConnectionStatus.HOME_IN);
         } else {
             DTVTLogger.warning("mConnectionListener == null");
         }
@@ -143,7 +143,7 @@ public class StbConnectionManager {
     }
 
     public void setConnectionListener(final ConnectionListener listener) {
-        mConnectionListener = listener;
+        StbConnectionManager.shared().mConnectionListener = listener;
     }
     // endregion method
 
