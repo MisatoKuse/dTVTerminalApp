@@ -49,7 +49,6 @@ import com.nttdocomo.android.tvterminalapp.struct.MediaVideoInfo;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
-import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
@@ -83,6 +82,18 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         INIT_SUCCESS
     }
 
+    /**再生操作種別.*/
+    private enum PlayerControlType {
+        /**初期値.*/
+        PLAYER_CONTROL_NONE,
+        /**10秒巻き戻し.*/
+        PLAYER_CONTROL_10_SEC_BACK,
+        /**30秒早送り.*/
+        PLAYER_CONTROL_30_SEC_SKIP,
+        /**再生・一時停止.*/
+        PLAYER_CONTROL_PLAY_PAUSE,
+    }
+
     /** コンストラクタ.*/
     private Context mContext = null;
     /** アクティビティ.*/
@@ -113,6 +124,10 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     private TextView mVideoTotalTime = null;
     /**全画面再生.*/
     private ImageView mVideoFullScreen = null;
+    /**再生ImageView.*/
+    private ImageView mVideoPlay = null;
+    /**一時停止ImageView.*/
+    private ImageView mVideoPause = null;
     /**巻き戻しImageView.*/
     private ImageView mVideoRewind10 = null;
     /**早送りImageView.*/
@@ -540,7 +555,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         }
         if (mProgressBar == null) {
             mProgressBar = new ProgressBar(mContext, null, android.R.attr.progressBarStyle);
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+            LayoutParams layoutParams = new LayoutParams(
                     LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
             layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
             mProgressBar.setLayoutParams(layoutParams);
@@ -677,22 +692,8 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
 
     @Override
     public void onClick(final View v) {
+        DTVTLogger.start();
         switch (v.getId()) {
-            case R.id.tv_player_ctrl_video_record_player_pause_fl:
-                if (!mPlayerController.isPlaying()) {
-                    playStart();
-                } else {
-                    playPause();
-                }
-                if (!mExternalDisplayFlg) {
-                    hideCtrlViewAfterOperate();
-                } else {
-                    //外部出力制御の場合
-                    initPlayerView();
-                    setPlayerEvent();
-                    mExternalDisplayFlg = false;
-                }
-                break;
             case R.id.tv_player_ctrl_now_on_air_full_screen_iv:
                 if (mActivity.getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
                     mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -704,15 +705,18 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 hideCtrlViewAfterOperate();
                 break;
         }
+        DTVTLogger.end();
     }
 
     /**
      * リモート視聴以外はそのまま再生を行う。リモート視聴の場合は再生可否のチェックを行う.
+     *
+     * @param isShow true くるくる表示　false 非表示
      */
-    private void playStart() {
+    private void playStart(final boolean isShow) {
         if (!mCurrentMediaInfo.isRemote()) {
             //リモート視聴ではないので、そのまま実行する
-            playStartOrigin();
+            playStartOrigin(isShow);
             return;
         } else {
             DlnaDmsItem item = SharedPreferencesUtils.getSharedPreferencesStbInfo(mContext);
@@ -736,7 +740,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 //ここは、エラーダイアログの表示と同時に呼び出される。ここでダイアログを表示する場合、アプリ終了ダイアログのみとなる。
                 //終了ダイアログの表示中に動画が再生される事が無いように、playStartOriginの呼び出しはdialogSwitchがfalseの場合のみとなる。
                 if (!dialogSwitch) {
-                    playStartOrigin();
+                    playStartOrigin(isShow);
                 }
             }
         });
@@ -759,14 +763,16 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     /**
      * 元の再生開始.
      * (リモート視聴の再生開始可否の為に、リネーム後に前チェックを追加)
+     *
+     * @param isShow true くるくる表示　false 非表示
      */
-    private void playStartOrigin() {
+    private void playStartOrigin(final boolean isShow) {
         mIsCompleted = false;
         synchronized (this) {
             if (mCanPlay) {
                 playButton(true);
                 mPlayerController.start();
-                showPlayingProgress(true);
+                showPlayingProgress(isShow);
             }
         }
     }
@@ -794,8 +800,14 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         mRecordCtrlView = (RelativeLayout) View.inflate(mContext, R.layout.tv_player_ctrl_video_record, null);
         mVideoPlayPause = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_player_pause_fl);
         RelativeLayout mVideoCtrlRootView = mRecordCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_player_video_root);
+        mVideoPlay = mRecordCtrlView.findViewById(R.id.tv_player_control_play);
+        mVideoPlay.setImageResource(R.mipmap.mediacontrol_icon_white_play_arrow);
+        mVideoPause = mRecordCtrlView.findViewById(R.id.tv_player_control_pause);
+        mVideoPause.setImageResource(R.mipmap.mediacontrol_icon_white_stop);
         mVideoRewind10 = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_10_tv);
+        mVideoRewind10.setImageResource(R.mipmap.mediacontrol_icon_white_replay_10);
         mVideoFast30 = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_30_tv);
+        mVideoFast30.setImageResource(R.mipmap.mediacontrol_icon_white_forward_30);
         mVideoCtrlBar = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_control_bar_iv);
         mVideoCurTime = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_cur_time_tv);
         mVideoFullScreen = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_full_screen_iv);
@@ -806,7 +818,6 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 mScreenWidth, mScreenHeight);
         initLiveLayout();
         setScreenSize(mActivity.getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE, layoutParams);
-        mVideoPlayPause.setOnClickListener(this);
         mVideoFullScreen.setOnClickListener(this);
         mVideoCtrlRootView.setOnClickListener(this);
         setSeekBarListener(mVideoSeekBar);
@@ -931,7 +942,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         if (isLandscape) {
             //端末横向き
             if (mIsVideoBroadcast) {
-                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                LayoutParams layoutParams = new LayoutParams(
                         LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
@@ -939,26 +950,26 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                         (int) density * FULL_SCREEN_BUTTON_RIGHT_MARGIN);
                 mVideoFullScreen.setLayoutParams(layoutParams);
             } else {
-                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                LayoutParams layoutParams = new LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
                 layoutParams.setMargins(0, 0, 0, (int) density * MEDIA_CONTROL_BAR_UNDER_MARGIN);
                 mProgressLayout.setLayoutParams(layoutParams);
 
-                layoutParams = new RelativeLayout.LayoutParams(
+                layoutParams = new LayoutParams(
                         LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_START);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                 layoutParams.setMargins((int) density * SEEKBAR_TIME_LATERAL_MARGIN, 0, 0, 0);
                 mVideoCurTime.setLayoutParams(layoutParams);
 
-                layoutParams = new RelativeLayout.LayoutParams(
+                layoutParams = new LayoutParams(
                         LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                 layoutParams.setMargins(0, 0, (int) density * FULL_SCREEN_BUTTON_RIGHT_MARGIN, 0);
                 mVideoFullScreen.setLayoutParams(layoutParams);
 
-                layoutParams = new RelativeLayout.LayoutParams(
+                layoutParams = new LayoutParams(
                         LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 layoutParams.addRule(RelativeLayout.START_OF, R.id.tv_player_ctrl_now_on_air_full_screen_iv);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
@@ -969,7 +980,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 mVideoCtrlBar.removeView(mVideoFullScreen);
                 mVideoCtrlBar.removeView(mVideoTotalTime);
 
-                layoutParams = new RelativeLayout.LayoutParams(
+                layoutParams = new LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 layoutParams.addRule(RelativeLayout.END_OF, R.id.tv_player_ctrl_now_on_air_cur_time_tv);
                 layoutParams.addRule(RelativeLayout.START_OF, R.id.tv_player_ctrl_now_on_air_total_time_tv);
@@ -1140,7 +1151,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         initPlayerView();
         setCanPlay(true);
         if (playStartPosition == 0) {
-            playStart();
+            playStart(true);
         } else {
             playPause();
         }
@@ -1198,7 +1209,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             DTVTLogger.end();
             return;
         }
-        mRecordCtrlView.setOnTouchListener(new View.OnTouchListener() {
+        mRecordCtrlView.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(final View view, final MotionEvent motionEvent) {
                 DTVTLogger.start();
@@ -1210,6 +1221,51 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                         if (mIsHideOperate) {
                             hideCtrlView();
                         }
+                        PlayerControlType controlType = getPlayerControlType(motionEvent);
+                        if (controlType == PlayerControlType.PLAYER_CONTROL_PLAY_PAUSE) {
+                            // 再生・一時停止ボタン長押し時の再生・一時停止処理.
+                            if (!mPlayerController.isPlaying()) {
+                                playStart(false);
+                            } else {
+                                playPause();
+                            }
+                            mVideoPlay.setImageResource(R.mipmap.mediacontrol_icon_white_play_arrow);
+                            mVideoPause.setImageResource(R.mipmap.mediacontrol_icon_white_stop);
+                            if (!mExternalDisplayFlg) {
+                                hideCtrlViewAfterOperate();
+                            } else {
+                                // 外部出力制御の場合.
+                                initPlayerView();
+                                setPlayerEvent();
+                                mExternalDisplayFlg = false;
+                            }
+                            mIsHideOperate = false;
+                        } else if (controlType == PlayerControlType.PLAYER_CONTROL_10_SEC_BACK) {
+                            int pos = mPlayerController.getCurrentPosition();
+                            pos -= REWIND_SECOND;
+                            if (pos < 0) {
+                                pos = 0;
+                                setProgress0();
+                            }
+                            mPlayerController.seekTo(pos);
+                            mIsHideOperate = false;
+                        } else if (controlType == PlayerControlType.PLAYER_CONTROL_30_SEC_SKIP) {
+                            int pos = mPlayerController.getCurrentPosition();
+                            pos += FAST_SECOND;
+                            //pos = pos > mPlayerController.getDuration() ? mPlayerController.getDuration() : pos;
+                            int allDu = mPlayerController.getDuration();
+                            if (pos >= allDu) {
+                                setProgress0();
+                                pos = 0;
+                            }
+                            mPlayerController.seekTo(pos);
+                            mIsHideOperate = false;
+                        }
+                        // タップアップ時点で操作処理は終わっているので各ボタン非タップアイコンに切り替える.
+                        mVideoPlay.setImageResource(R.mipmap.mediacontrol_icon_white_play_arrow);
+                        mVideoPause.setImageResource(R.mipmap.mediacontrol_icon_white_stop);
+                        mVideoRewind10.setImageResource(R.mipmap.mediacontrol_icon_white_replay_10);
+                        mVideoFast30.setImageResource(R.mipmap.mediacontrol_icon_white_forward_30);
                     } else {
                         if (!mIsVideoBroadcast) {
                             mVideoPlayPause.setVisibility(View.VISIBLE);
@@ -1234,12 +1290,56 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                         //setPlayEvent();
                     }
                     hideCtrlViewAfterOperate();
+                } else if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    if (mVideoCtrlBar.getVisibility() == View.VISIBLE) {
+                        // タップダウンした時に長押し処理を開始する.
+                        PlayerControlType controlType = getPlayerControlType(motionEvent);
+                        if (controlType == PlayerControlType.PLAYER_CONTROL_10_SEC_BACK) {
+                            mVideoRewind10.setImageResource(R.mipmap.mediacontrol_icon_tap_replay_10);
+                        } else if (controlType == PlayerControlType.PLAYER_CONTROL_30_SEC_SKIP) {
+                            mVideoFast30.setImageResource(R.mipmap.mediacontrol_icon_tap_forward_30);
+                        } else if (controlType == PlayerControlType.PLAYER_CONTROL_PLAY_PAUSE) {
+                            mVideoPlay.setImageResource(R.mipmap.mediacontrol_icon_tap_play_arrow);
+                            mVideoPause.setImageResource(R.mipmap.mediacontrol_icon_tap_stop);
+                        }
+                    }
+                } else if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
+                    if (mVideoCtrlBar.getVisibility() == View.VISIBLE) {
+                        // 長押ししている間にタップしているアイコンから離れたかどうか確認.
+                        hideCtrlViewAfterOperate();
+                        mIsHideOperate = false;
+                    }
                 }
                 DTVTLogger.end();
                 return true;
             }
         });
         DTVTLogger.end();
+    }
+
+    /**
+     * 再生操作種別取得.
+     *
+     * @param motionEvent モーションイベント
+     * @return 再生操作種別
+     */
+    private PlayerControlType getPlayerControlType(final MotionEvent motionEvent) {
+        PlayerControlType controlType = PlayerControlType.PLAYER_CONTROL_NONE;
+        // どのアイコンがタップ、長押しされているか判定.
+        if (motionEvent.getY() > (float) mRecordCtrlView.getHeight() / 3
+                && motionEvent.getY() < mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight() / 3) {
+            if (motionEvent.getX() < (float) (mScreenWidth / 2 - mVideoPlayPause.getWidth() / 2)
+                    && motionEvent.getX() > (float) mScreenWidth / 6) { //10秒戻し
+                controlType = PlayerControlType.PLAYER_CONTROL_10_SEC_BACK;
+            } else if (motionEvent.getX() > mScreenWidth / 2 + mVideoPlayPause.getWidth() / 2
+                    && motionEvent.getX() < mScreenWidth - mScreenWidth / 6) { //30秒送り
+                controlType = PlayerControlType.PLAYER_CONTROL_30_SEC_SKIP;
+            } else if (motionEvent.getX() > mScreenWidth / 2 - mVideoPlayPause.getWidth() / 2
+                    && motionEvent.getX() < mScreenWidth / 2 + mVideoPlayPause.getWidth() / 2) {
+                controlType = PlayerControlType.PLAYER_CONTROL_PLAY_PAUSE;
+            }
+        }
+        return controlType;
     }
 
     /**
@@ -1379,39 +1479,6 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
      */
     private void setPlayerTouchEvent() {
         mGestureDetector = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onSingleTapUp(final MotionEvent e) {
-                DTVTLogger.start();
-                if (e.getY() > (float) mRecordCtrlView.getHeight() / 3
-                        && e.getY() < mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight() / 3) {
-                    if (e.getX() < (float) (mScreenWidth / 2 - mVideoPlayPause.getWidth() / 2)
-                            && e.getX() > (float) mScreenWidth / 6) { //10秒戻し
-                        int pos = mPlayerController.getCurrentPosition();
-                        pos -= REWIND_SECOND;
-                        if (pos < 0) {
-                            pos = 0;
-                            setProgress0();
-                        }
-                        mPlayerController.seekTo(pos);
-                        mIsHideOperate = false;
-                    }
-                    if (e.getX() > mScreenWidth / 2 + mVideoPlayPause.getWidth() / 2
-                            && e.getX() < mScreenWidth - mScreenWidth / 6) { //30秒送り
-                        int pos = mPlayerController.getCurrentPosition();
-                        pos += FAST_SECOND;
-                        //pos = pos > mPlayerController.getDuration() ? mPlayerController.getDuration() : pos;
-                        int allDu = mPlayerController.getDuration();
-                        if (pos >= allDu) {
-                            setProgress0();
-                            pos = 0;
-                        }
-                        mPlayerController.seekTo(pos);
-                        mIsHideOperate = false;
-                    }
-                }
-                DTVTLogger.end();
-                return super.onSingleTapUp(e);
-            }
 
             @Override
             public boolean onFling(final MotionEvent e1, final MotionEvent e2,
@@ -1443,6 +1510,8 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
 
     /**
      * Playを停止.
+     *
+     * @return 停止結果
      */
     public int onPause() {
         int result = 0;
@@ -1510,6 +1579,5 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     public void setPlayStartPosition(final int playStartPosition) {
         this.mPlayStartPosition = playStartPosition;
     }
-
 
 }

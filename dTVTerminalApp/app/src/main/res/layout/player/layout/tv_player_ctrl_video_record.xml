@@ -65,15 +65,15 @@
         android:visibility="invisible">
 
         <ImageView
+            android:id="@+id/tv_player_control_play"
             android:layout_width="@dimen/contents_detail_player_media_controller_size"
             android:layout_height="@dimen/contents_detail_player_media_controller_size"
-            android:background="@mipmap/mediacontrol_icon_white_play_arrow"
             android:contentDescription="@null"/>
 
         <ImageView
+            android:id="@+id/tv_player_control_pause"
             android:layout_width="@dimen/contents_detail_player_media_controller_size"
             android:layout_height="@dimen/contents_detail_player_media_controller_size"
-            android:background="@mipmap/mediacontrol_icon_white_stop"
             android:visibility="gone"
             android:contentDescription="@null"/>
     </FrameLayout>
@@ -84,7 +84,6 @@
         android:layout_height="@dimen/contents_detail_player_media_controller_size"
         android:layout_toStartOf="@id/tv_player_ctrl_video_record_player_pause_fl"
         android:layout_centerVertical="true"
-        android:background="@mipmap/mediacontrol_icon_white_replay_10"
         android:layout_marginEnd="@dimen/contents_detail_player_media_controller_replay_right_margin"
         android:visibility="invisible"
         android:contentDescription="@null"/>
@@ -95,7 +94,6 @@
         android:layout_height="@dimen/contents_detail_player_media_controller_size"
         android:layout_toEndOf="@id/tv_player_ctrl_video_record_player_pause_fl"
         android:layout_centerVertical="true"
-        android:background="@mipmap/mediacontrol_icon_white_forward_30"
         android:layout_marginStart="@dimen/contents_detail_player_media_controller_forward_right_margin"
         android:visibility="invisible"
         android:contentDescription="@null"/>
