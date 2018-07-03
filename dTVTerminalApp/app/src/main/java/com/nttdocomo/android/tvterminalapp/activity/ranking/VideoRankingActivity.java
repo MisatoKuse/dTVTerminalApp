@@ -322,8 +322,15 @@ public class VideoRankingActivity extends BaseActivity implements
             public void onPageSelected(final int position) {
                 // スクロールによるタブ切り替え
                 super.onPageSelected(position);
+                //タブ移動時にデータ取得要求をキャンセルする
                 cancelDataProvider();
-                resetPaging(mViewPager, mRankingFragmentFactory);
+                RankingBaseFragment fragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
+                if (fragment != null) {
+                    fragment.showProgressBar(false);
+                    if(fragment.getDataSize() < 1) {
+                        resetPaging(mViewPager, mRankingFragmentFactory);
+                    }
+                }
                 mTabLayout.setTab(position);
                 getGenreData();
             }
@@ -385,7 +392,9 @@ public class VideoRankingActivity extends BaseActivity implements
         RankingBaseFragment fragment = mRankingFragmentFactory.createFragment(
         ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK,
         mViewPager.getCurrentItem());
-
+        if (fragment != null) {
+            fragment.showProgressBar(false);
+        }
         if (null == videoRankMapList) {
             showGetDataFailedToast();
 
