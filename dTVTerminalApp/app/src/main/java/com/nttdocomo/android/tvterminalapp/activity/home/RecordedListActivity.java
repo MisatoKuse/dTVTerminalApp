@@ -408,6 +408,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                         String upnpIcon = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_UPNP_ICON);
                         String bitrate = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_BITRATE);
                         String videoType = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_TYPE);
+                        String channelName = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_CHANNELNAME);
+                        String date = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_DATE);
 
                         String fullPath = path + File.separator + itemId;
                         File file = new File(fullPath);
@@ -416,6 +418,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                             contentsData.setTitle(title);
                             contentsData.setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
                             contentsData.setDlFileFullPath(fullPath);
+                            DlnaRecVideoItem dlnaRecVideoItem = new DlnaRecVideoItem();
+                            dlnaRecVideoItem.mDuration = duration;
+                            dlnaRecVideoItem.mDate = date;
+                            dlnaRecVideoItem.mChannelName = channelName;
+                            contentsData.setTime(getDownloadTitle(dlnaRecVideoItem));
                             list.add(contentsData);
                             RecordedContentsDetailData detailData = new RecordedContentsDetailData();
                             detailData.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
@@ -620,6 +627,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             detailData.setVideoType(itemData.mVideoType);
             detailData.setClearTextSize(itemData.mClearTextSize);
             detailData.setXml(itemData.mXml);
+            detailData.setChannelName(itemData.mChannelName);
+            detailData.setDate(itemData.mDate);
             if (hideDownloadBtn) {
                 detailData.setIsRemote(true);
             }
@@ -705,64 +714,70 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * @param dlnaRecVideoItem 録画ビデオアイテム
      * @param i i
      * @param fullDlPath フルパス
+     * @param hideDownloadBtn ダウンロードボタン表示非表示
      */
     private void setNotifyData(final RecordedBaseFragment baseFragment, final DlnaRecVideoItem dlnaRecVideoItem,
                                final int i, final String fullDlPath, final boolean hideDownloadBtn) {
-        SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
-        // TODO 年齢取得未実装の為、固定値を返却
-        boolean isAge = true;
         ContentsData contentsData = new ContentsData();
-        if (isAge) {
-            contentsData.setTitle(dlnaRecVideoItem.mTitle);
-            contentsData.setAllowedUse(dlnaRecVideoItem.mAllowedUse);
-            String selectDate = "";
-            if (!TextUtils.isEmpty(dlnaRecVideoItem.mDate)) {
-                String time = dlnaRecVideoItem.mDate.replaceAll(STR_HYPHEN, STR_SLASH).replace(STR_T, STR_BLANK);
-                try {
-                    Calendar calendar = Calendar.getInstance(Locale.JAPAN);
-                    calendar.setTime(sdf.parse(time));
-                    String[] strings = {String.valueOf(calendar.get(Calendar.MONTH)), STR_SLASH,
-                            String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)),
-                            getString(R.string.common_contents_front_bracket),
-                            DateUtils.STRING_DAY_OF_WEEK[calendar.get(Calendar.DAY_OF_WEEK)],
-                            getString(R.string.common_contents_end_bracket),
-                            DateUtils.getHmm(calendar)};
-                    int mon = Integer.parseInt(strings[0]);
-                    ++mon;
-                    strings[0] = String.valueOf(mon);
-                    selectDate = StringUtils.getConnectString(strings);
-                } catch (ParseException e) {
-                    DTVTLogger.debug(e);
-                }
-            }
-            //duration && channel name begin
-            String mins = dlnaRecVideoItem.getDurationInMinutes();
+        contentsData.setTitle(dlnaRecVideoItem.mTitle);
+        contentsData.setAllowedUse(dlnaRecVideoItem.mAllowedUse);
+        contentsData.setDownloadBtnHide(hideDownloadBtn);
+        //duration && channel name end
+        contentsData.setTime(getDownloadTitle(dlnaRecVideoItem));
+        contentsData.setDownloadFlg(baseFragment.getContentsListElement(i).getDownLoadStatus());
+        contentsData.setDlFileFullPath(fullDlPath);
+        List<ContentsData> l = baseFragment.getContentsData();
+        if (null != l) {
+            l.add(contentsData);
+        }
+    }
 
-            String channelName = dlnaRecVideoItem.mChannelName;
-            StringBuilder sb = new StringBuilder();
-            sb.append(selectDate);
-            if (null != mins) {
-                sb.append(getString(R.string.common_contents_front_bracket));
-                sb.append(mins);
-                sb.append(getString(R.string.common_contents_min));
-                sb.append(getString(R.string.common_contents_end_bracket));
-            }
-            if (null != channelName && !channelName.isEmpty()) {
-                sb.append(STR_SPACE);
-                sb.append(sMinus);
-                sb.append(STR_SPACE);
-                sb.append(channelName);
-            }
-            contentsData.setDownloadBtnHide(hideDownloadBtn);
-            //duration && channel name end
-            contentsData.setTime(sb.toString());
-            contentsData.setDownloadFlg(baseFragment.getContentsListElement(i).getDownLoadStatus());
-            contentsData.setDlFileFullPath(fullDlPath);
-            List<ContentsData> l = baseFragment.getContentsData();
-            if (null != l) {
-                l.add(contentsData);
+    /**
+     * レシーバー登録.
+     * @param dlnaRecVideoItem 録画ビデオアイテム
+     * @return タイトル
+     */
+    private String getDownloadTitle(final DlnaRecVideoItem dlnaRecVideoItem) {
+        String selectDate = "";
+        if (!TextUtils.isEmpty(dlnaRecVideoItem.mDate)) {
+            SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
+            String time = dlnaRecVideoItem.mDate.replaceAll(STR_HYPHEN, STR_SLASH).replace(STR_T, STR_BLANK);
+            try {
+                Calendar calendar = Calendar.getInstance(Locale.JAPAN);
+                calendar.setTime(sdf.parse(time));
+                String[] strings = {String.valueOf(calendar.get(Calendar.MONTH)), STR_SLASH,
+                        String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)),
+                        getString(R.string.common_contents_front_bracket),
+                        DateUtils.STRING_DAY_OF_WEEK[calendar.get(Calendar.DAY_OF_WEEK)],
+                        getString(R.string.common_contents_end_bracket),
+                        DateUtils.getHmm(calendar)};
+                int mon = Integer.parseInt(strings[0]);
+                ++mon;
+                strings[0] = String.valueOf(mon);
+                selectDate = StringUtils.getConnectString(strings);
+            } catch (ParseException e) {
+                DTVTLogger.debug(e);
             }
         }
+        //duration && channel name begin
+        String mins = dlnaRecVideoItem.getDurationInMinutes();
+
+        String channelName = dlnaRecVideoItem.mChannelName;
+        StringBuilder sb = new StringBuilder();
+        sb.append(selectDate);
+        if (null != mins) {
+            sb.append(getString(R.string.common_contents_front_bracket));
+            sb.append(mins);
+            sb.append(getString(R.string.common_contents_min));
+            sb.append(getString(R.string.common_contents_end_bracket));
+        }
+        if (null != channelName && !channelName.isEmpty()) {
+            sb.append(STR_SPACE);
+            sb.append(sMinus);
+            sb.append(STR_SPACE);
+            sb.append(channelName);
+        }
+        return sb.toString();
     }
 
     /**

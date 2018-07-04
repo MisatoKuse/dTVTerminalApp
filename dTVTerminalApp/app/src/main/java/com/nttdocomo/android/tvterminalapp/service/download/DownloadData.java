@@ -56,6 +56,10 @@ public class DownloadData {
     private String mPercentToNotify;
     /**ダウンロードパラメータ.*/
     private String mXmlToDownLoad;
+    /**チャンネル名.*/
+    private String mChannelName;
+    /**コンテンツ日付.*/
+    private String mDate;
 
     /**
      *Getter.
@@ -439,5 +443,37 @@ public class DownloadData {
      */
     public String getXmlToDownLoad() {
         return mXmlToDownLoad;
+    }
+
+    /**
+     * Getter.
+     * @return チャンネル名
+     */
+    public String getChannelName() {
+        return mChannelName;
+    }
+
+    /**
+     * Setter.
+     * @param mChannelName チャンネル名
+     */
+    public void setChannelName(final String mChannelName) {
+        this.mChannelName = mChannelName;
+    }
+
+    /**
+     * Getter.
+     * @return 日付
+     */
+    public String getDate() {
+        return mDate;
+    }
+
+    /**
+     * Setter.
+     * @param mDate 日付
+     */
+    public void setDate(final String mDate) {
+        this.mDate = mDate;
     }
 }

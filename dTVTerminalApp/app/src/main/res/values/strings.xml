@@ -62,7 +62,7 @@
     <string name="common_my_channel">マイ番組表</string>
     <string name="common_hikari_tv_for_docomo">ひかりTV for docomo</string>
     <string name="common_dtv_channel">dTVチャンネル</string>
-    <string name="common_contents_front_bracket">"（"</string>
+    <string name="common_contents_front_bracket">" ("</string>
     <string name="common_contents_end_bracket">") "</string>
     <string name="common_contents_min">分</string>
 

@@ -50,10 +50,46 @@ public class RecordedContentsDetailData implements Parcelable {
     private String mDlFileFullPath;
     /**ダウンロードパラメーター.*/
     private String mXml;
+    /**日付.*/
+    private String mDate;
+    /**チャンネル名.*/
+    private String mChannelName;
     /**放送中フラグ.*/
     private boolean mIsLive = false;
     /**リモートフラグ.*/
     private boolean mIsRemote = false;
+
+    /**
+     *日付取得.
+     * @return 日付
+     */
+    public String getDate() {
+        return mDate;
+    }
+
+    /**
+     * 日付設定.
+     * @param mDate 日付
+     */
+    public void setDate(final String mDate) {
+        this.mDate = mDate;
+    }
+
+    /**
+     *チャンネル名取得.
+     * @return チャンネル名
+     */
+    public String getChannelName() {
+        return mChannelName;
+    }
+
+    /**
+     * チャンネル名設定.
+     * @param mChannelName チャンネル名
+     */
+    public void setChannelName(final String mChannelName) {
+        this.mChannelName = mChannelName;
+    }
 
     /**
      *isLive取得.
@@ -329,6 +365,9 @@ public class RecordedContentsDetailData implements Parcelable {
         dest.writeString(this.mClearTextSize);
         dest.writeInt(this.mDownLoadStatus);
         dest.writeString(this.mDlFileFullPath);
+        dest.writeString(this.mXml);
+        dest.writeString(this.mDate);
+        dest.writeString(this.mChannelName);
         dest.writeByte(this.mIsLive ? (byte) 1 : (byte) 0);
         dest.writeByte(this.mIsRemote ? (byte) 1 : (byte) 0);
     }
@@ -355,6 +394,9 @@ public class RecordedContentsDetailData implements Parcelable {
         this.mClearTextSize = in.readString();
         this.mDownLoadStatus = in.readInt();
         this.mDlFileFullPath = in.readString();
+        this.mXml = in.readString();
+        this.mDate = in.readString();
+        this.mChannelName = in.readString();
         this.mIsLive = in.readByte() != 0;
         this.mIsRemote = in.readByte() != 0;
     }

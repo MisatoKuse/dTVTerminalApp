@@ -691,6 +691,14 @@ public class DataBaseConstants {
      */
     public static final String DOWNLOAD_LIST_COLUM_TYPE = "mimetype";
     /**
+     * channelName.
+     */
+    public static final String DOWNLOAD_LIST_COLUM_CHANNELNAME = "channelName";
+    /**
+     * date.
+     */
+    public static final String DOWNLOAD_LIST_COLUM_DATE = "date";
+    /**
      * download size.
      */
     public static final String DOWNLOAD_LIST_COLUM_DOWNLOAD_SIZE = "download_size";
@@ -766,6 +774,8 @@ public class DataBaseConstants {
             DOWNLOAD_LIST_COLUM_SAVE_PORT, TEXT_WITH_COMMA_TEXT,
             DOWNLOAD_LIST_COLUM_SAVE_URL, TEXT_WITH_COMMA_TEXT,
             DOWNLOAD_LIST_COLUM_TYPE, TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_CHANNELNAME, TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_DATE, TEXT_WITH_COMMA_TEXT,
             DOWNLOAD_LIST_COLUM_DOWNLOAD_SIZE, TEXT_WITH_COMMA_TEXT,
             DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS, TEXT_WITH_COMMA_TEXT,
             DOWNLOAD_LIST_COLUM_SIZE, TEXT_WITH_COMMA_TEXT,

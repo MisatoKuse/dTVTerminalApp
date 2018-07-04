@@ -70,6 +70,8 @@ public class DownLoadListDataManager {
             values.put(DataBaseConstants.DOWNLOAD_LIST_COLUM_UPNP_ICON, downloadData.getUpnpIcon());
             values.put(DataBaseConstants.DOWNLOAD_LIST_COLUM_SAVE_URL, downloadData.getSaveFile());
             values.put(DataBaseConstants.DOWNLOAD_LIST_COLUM_TYPE, downloadData.getVideoType());
+            values.put(DataBaseConstants.DOWNLOAD_LIST_COLUM_CHANNELNAME, downloadData.getChannelName());
+            values.put(DataBaseConstants.DOWNLOAD_LIST_COLUM_DATE, downloadData.getDate());
             downloadListDao.insert(values);
         } catch (SQLiteException e) {
             DTVTLogger.debug("DownLoadListDataManager::insertDownload, e.cause=" + e.getCause());
@@ -219,6 +221,7 @@ public class DownLoadListDataManager {
                     DataBaseConstants.DOWNLOAD_LIST_COLUM_SAVE_DIDL, DataBaseConstants.DOWNLOAD_LIST_COLUM_SAVE_HOST,
                     DataBaseConstants.DOWNLOAD_LIST_COLUM_SAVE_PORT, DataBaseConstants.DOWNLOAD_LIST_COLUM_SAVE_URL,
                     DataBaseConstants.DOWNLOAD_LIST_COLUM_TYPE, DataBaseConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_SIZE,
+                    DataBaseConstants.DOWNLOAD_LIST_COLUM_CHANNELNAME, DataBaseConstants.DOWNLOAD_LIST_COLUM_DATE,
                     DataBaseConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS, DataBaseConstants.DOWNLOAD_LIST_COLUM_SIZE,
                     DataBaseConstants.DOWNLOAD_LIST_COLUM_DURATION, DataBaseConstants.DOWNLOAD_LIST_COLUM_RESOLUTION,
                     DataBaseConstants.DOWNLOAD_LIST_COLUM_UPNP_ICON, DataBaseConstants.DOWNLOAD_LIST_COLUM_BITRATE,
