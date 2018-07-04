@@ -967,6 +967,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * @param url URL
      */
     private void setTitleAndThumbnail(final String title, final String url) {
+        DTVTLogger.start();
         if (!TextUtils.isEmpty(title)) {
             setTitleText(title);
         }
@@ -985,6 +986,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         } else {
             mThumbnail.setImageResource(R.mipmap.error_movie);
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -1613,12 +1615,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             }
         }
         sendOperateLog();
-        if (TextUtils.isEmpty(mServiceId)) {
-            showProgressBar(false);
-        }
         if (getStbStatus()) {
             findViewById(R.id.remote_control_view).setVisibility(View.VISIBLE);
         }
+        responseResultCheck();
         DTVTLogger.end();
     }
 
@@ -1640,8 +1640,22 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     }
                 }
             }
+            responseResultCheck();
         } else {
             showErrorDialog(ErrorType.roleListGet);
+        }
+    }
+
+    /**
+     * データ取得がすべて終了していたらIndicatorを非表示にする(対象はContentsDetailDataProviderのみ).
+     */
+    private void responseResultCheck() {
+        if (mContentsDetailDataProvider == null
+                || !mContentsDetailDataProvider.isIsInContentsDetailRequest()
+                && !mContentsDetailDataProvider.isIsInRentalChListRequest()
+                && !mContentsDetailDataProvider.isIsInRentalVodListRequest()
+                && !mContentsDetailDataProvider.isIsInRoleListRequest()) {
+            showProgressBar(false);
         }
     }
 
@@ -1689,7 +1703,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     @Override
     public void channelListCallback(final ArrayList<ChannelInfo> channels) {
         if (channels == null || channels.isEmpty()) {
-            showProgressBar(false);
             showErrorDialog(ErrorType.channelListGet);
             return;
         }
@@ -1718,13 +1731,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         //コンテンツの視聴可否判定に基づいてUI操作を行う
         if (mViewIngType != null) {
             changeUIBasedContractInfo();
-            if (!mViewIngType.equals(ContentUtils.ViewIngType.PREMIUM_CHECK_START)
-                    && !mViewIngType.equals(ContentUtils.ViewIngType.SUBSCRIPTION_CHECK_START)) {
-                showProgressBar(false);
-            }
-        } else {
-            showProgressBar(false);
         }
+        responseResultCheck();
     }
 
     @Override
@@ -2636,7 +2644,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     public void onRentalVodListCallback(final PurchasedVodListResponse response) {
         DTVTLogger.start();
         if (response == null) {
-            showProgressBar(false);
             showErrorDialog(ErrorType.rentalVoidListGet);
             return;
         }
@@ -2648,7 +2655,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         mViewIngType = ContentUtils.getRentalVodViewingType(mDetailFullData, mEndDate);
         DTVTLogger.debug("get rental vod viewing type:" + mViewIngType);
         changeUIBasedContractInfo();
-        showProgressBar(false);
     }
 
     @Override
@@ -2656,7 +2662,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         //購入済みCH一覧取得からの戻り
         DTVTLogger.start();
         if (response == null) {
-            showProgressBar(false);
             showErrorDialog(ErrorType.rentalChannelListGet);
             return;
         }
@@ -2667,7 +2672,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         mViewIngType = ContentUtils.getRentalChannelViewingType(mDetailFullData, mEndDate);
         DTVTLogger.debug("get rental vod viewing type:" + mViewIngType);
         changeUIBasedContractInfo();
-        showProgressBar(false);
     }
 
     /**
@@ -3097,6 +3101,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 break;
         }
         detailFragment.changeVisibilityRecordingReservationIcon(isVisibleRecordButton ? View.VISIBLE : View.INVISIBLE);
+        responseResultCheck();
         DTVTLogger.end();
     }
 
@@ -3144,10 +3149,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
     /**
      * プロセスバーを表示する.
-     * @param showProgessBar プロセスバーを表示するかどうか
+     * @param showProgressBar プロセスバーを表示するかどうか
      */
-    private void showProgressBar(final boolean showProgessBar) {
-        if (showProgessBar) {
+    private void showProgressBar(final boolean showProgressBar) {
+        if (showProgressBar) {
             //オフライン時は表示しない
             if (!NetWorkUtils.isOnline(this)) {
                 return;
@@ -3161,7 +3166,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     /**
-     * チャンネルエリアのプロセスバーを表示する
+     * チャンネルエリアのプロセスバーを表示する.
      * @param showProgressBar プロセスバーを表示するかどうか
      */
     private void showChannelProgressBar(final boolean showProgressBar) {
@@ -3195,6 +3200,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * @param errorType エラータイプ
      */
     private void showErrorDialog(final ErrorType errorType) {
+        DTVTLogger.start();
+        //エラーキャッチ時は必ずIndicatorを非表示にする
+        showProgressBar(false);
         ErrorState errorState = null;
         CustomDialog.ApiOKCallback okCallback = null;
         switch (errorType) {
@@ -3245,6 +3253,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             customDialog.setOnTouchOutside(false);
         }
         customDialog.showDialog();
+        DTVTLogger.end();
     }
 
     /**
@@ -3339,13 +3348,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             }
         }
         showProgressBar(false);
-
     }
 
     @Override
     public void onSearchDataProviderFinishNg(final ResultType<SearchResultError> resultType) {
 
-        showProgressBar(false);
         showErrorDialog(ErrorType.contentDetailGet);
     }
 

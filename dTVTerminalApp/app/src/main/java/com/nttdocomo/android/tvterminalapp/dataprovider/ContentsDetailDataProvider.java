@@ -112,99 +112,61 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
         void onRentalChListCallback(final PurchasedChannelListResponse response);
     }
 
+    /** コンテンツ詳細情報取得中. */
+    private boolean mIsInContentsDetailRequest = false;
+    /** ロールリスト取得中. */
+    private boolean mIsInRoleListRequest = false;
+    /** レンタルVodリスト取得中. */
+    private boolean mIsInRentalVodListRequest = false;
+    /** レンタルChリスト取得中. */
+    private boolean mIsInRentalChListRequest = false;
     // region variable
-    /**
-     * ApiDataProviderCallbackのインスタンス.
-     */
+    /** ApiDataProviderCallbackのインスタンス. */
     private ApiDataProviderCallback mApiDataProviderCallback = null;
-    /**
-     * コンテキスト.
-     */
+    /** コンテキスト. */
     private Context mContext = null;
-    /**
-     * 購入済みVODリスト情報を保持.
-     */
+    /** 購入済みVODリスト情報を保持. */
     private PurchasedVodListResponse mPurchasedVodListResponse = null;
-    /**
-     * 購入済みVODのactive_listの情報を保持.
-     */
+    /** 購入済みVODのactive_listの情報を保持. */
     private List<Map<String, String>> mPurchasedVodActiveList = null;
-    /**
-     * 購入済みチャンネルリスト情報を保持.
-     */
+    /** 購入済みチャンネルリスト情報を保持. */
     private PurchasedChannelListResponse mPurchasedChannelListResponse = null;
-    /**
-     * 購入済みチャンネルのactive_listの情報を保持.
-     */
+    /** 購入済みチャンネルのactive_listの情報を保持. */
     private List<Map<String, String>> mPurchasedChActiveList = null;
-    /**
-     * ロールリスト情報を保持.
-     */
+    /** ロールリスト情報を保持. */
     private ArrayList<RoleListMetaData> mRoleListInfo = null;
-    /**
-     * クリップキーレスポンス保持.
-     */
+    /** クリップキーレスポンス保持. */
     private ClipKeyListResponse mClipKeyListResponse = null;
 
-    /**
-     * チャンネル検索(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
-     */
+    /** チャンネル検索(親クラスのDbThreadで"0","1","2"を使用しているため使用しない). */
     private static final int CHANNEL_SELECT = 9;
-    /**
-     * ロールリスト更新.
-     */
+    /** ロールリスト更新. */
     private static final int ROLELIST_UPDATE = 3;
-    /**
-     * ロールリスト検索.
-     */
+    /** ロールリスト検索. */
     private static final int ROLELIST_SELECT = 4;
-    /**
-     * 購入済みチャンネルリスト更新.
-     */
+    /** 購入済みチャンネルリスト更新. */
     private static final int RENTAL_VOD_UPDATE = 5;
-    /**
-     * 購入済みチャンネルリスト取得.
-     */
+    /** 購入済みチャンネルリスト取得. */
     private static final int RENTAL_VOD_SELECT = 6;
-    /**
-     * 購入済みチャンネルリスト更新.
-     */
+    /** 購入済みチャンネルリスト更新. */
     private static final int RENTAL_CHANNEL_UPDATE = 7;
-    /**
-     * 購入済みチャンネルリスト取得.
-     */
+    /** 購入済みチャンネルリスト取得. */
     private static final int RENTAL_CHANNEL_SELECT = 8;
-    /**
-     * VodMetaFullData.
-     */
+    /** VodMetaFullData. */
     private VodMetaFullData mVodMetaFullData = null;
-    /**
-     * コンテンツ詳細取得WebClient.
-     */
+    /** コンテンツ詳細取得WebClient. */
     private ContentsDetailGetWebClient mDetailGetWebClient = null;
-    /**
-     * ロールリスト取得WebClient.
-     */
+    /** ロールリスト取得WebClient. */
     private RoleListWebClient mRoleListWebClient = null;
-    /**
-     * レンタルチャンネル一覧取得WebClient.
-     */
+    /** レンタルチャンネル一覧取得WebClient. */
     private RentalChListWebClient mRentalChListWebClient = null;
-    /**
-     * レンタルVOD一覧取得WebClient.
-     */
+    /** レンタルVOD一覧取得WebClient. */
     private RentalVodListWebClient mRentalVodListWebClient = null;
-    /**
-     * 通信禁止判定フラグ.
-     */
+    /** 通信禁止判定フラグ. */
     private boolean isStop = false;
-    /**
-     * tvコンテンツのクリップキーリスト取得済み判定.
-     */
+    /** tvコンテンツのクリップキーリスト取得済み判定. */
     private boolean mTvClipKeyListResponse = false;
-    /**
-     * vodコンテンツのクリップキーリスト取得済み判定.
-     */
+    /** vodコンテンツのクリップキーリスト取得済み判定. */
     private boolean mVodClipKeyListResponse = false;
 
     // endregion
@@ -229,21 +191,33 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                     mVodMetaFullData = detailListInfo.get(0);
                     mVodMetaFullData.setContentsType(ContentUtils.getHikariContentsType(mVodMetaFullData));
                     if (!mRequiredClipKeyList) {
-                        mApiDataProviderCallback.onContentsDetailInfoCallback(
+                        executeContentsDetailInfoCallback(
                                 mVodMetaFullData, getContentsDetailClipStatus(detailListInfo.get(0)));
                     } else {
                         requestGetClipKeyList(mVodMetaFullData);
                     }
                 } else {
                     //結果がOKでも0件ならば、エラー扱いとする
-                    mApiDataProviderCallback.onContentsDetailInfoCallback(null, false);
+                    executeContentsDetailInfoCallback(null, false);
                 }
             } else {
                 //status = "NG"の場合
-                mApiDataProviderCallback.onContentsDetailInfoCallback(null, false);
+                executeContentsDetailInfoCallback(null, false);
             }
         } else {
-            mApiDataProviderCallback.onContentsDetailInfoCallback(null, false);
+            executeContentsDetailInfoCallback(null, false);
+        }
+    }
+
+    /**
+     * コンテンツ詳細データcallback実行用.
+     * @param contentsDetailInfo コンテンツ詳細情報
+     * @param clipStatus　クリップ状態
+     */
+    private void executeContentsDetailInfoCallback(final VodMetaFullData contentsDetailInfo, boolean clipStatus) {
+        mIsInContentsDetailRequest = false;
+        if (mApiDataProviderCallback != null) {
+            mApiDataProviderCallback.onContentsDetailInfoCallback(contentsDetailInfo, clipStatus);
         }
     }
 
@@ -286,7 +260,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
         ClipKeyListDataManager manager = new ClipKeyListDataManager(mContext);
         List<Map<String, String>> mapList = manager.selectClipAllList();
         isClipStatus = ClipUtils.setClipStatusVodMetaData(mVodMetaFullData, mapList);
-        mApiDataProviderCallback.onContentsDetailInfoCallback(
+        executeContentsDetailInfoCallback(
                 mVodMetaFullData, isClipStatus);
         DTVTLogger.end();
     }
@@ -305,9 +279,20 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
             } catch (RuntimeException e) {
                 DTVTLogger.debug(e);
             }
-            mApiDataProviderCallback.onRentalVodListCallback(mPurchasedVodListResponse);
+            executeRentalVodListCallback(mPurchasedVodListResponse);
         } else {
-            mApiDataProviderCallback.onRentalVodListCallback(null);
+            executeRentalVodListCallback(null);
+        }
+    }
+
+    /**
+     * 購入済みVOD一覧返却用メソッド.
+     * @param response 購入済みVod一覧
+     */
+    private void executeRentalVodListCallback(final PurchasedVodListResponse response) {
+        mIsInRentalVodListRequest = false;
+        if (mApiDataProviderCallback != null) {
+            mApiDataProviderCallback.onRentalVodListCallback(response);
         }
     }
 
@@ -322,9 +307,20 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
             } catch (RuntimeException e) {
                 DTVTLogger.debug(e);
             }
-            mApiDataProviderCallback.onRentalChListCallback(purchasedChannelListResponse);
+            executeRentalChListCallback(purchasedChannelListResponse);
         } else {
-            mApiDataProviderCallback.onRentalChListCallback(null);
+            executeRentalChListCallback(null);
+        }
+    }
+
+    /**
+     * 購入済みCh一覧返却用メソッド.
+     * @param response 購入済みCh一覧
+     */
+    private void executeRentalChListCallback(final PurchasedChannelListResponse response) {
+        mIsInRentalChListRequest = false;
+        if (mApiDataProviderCallback != null) {
+            mApiDataProviderCallback.onRentalChListCallback(response);
         }
     }
 
@@ -343,14 +339,21 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                     DTVTLogger.debug(e);
                 }
             }
-            if (mRoleListInfo != null) {
-                mApiDataProviderCallback.onRoleListCallback(mRoleListInfo);
-            } else {
-                mApiDataProviderCallback.onRoleListCallback(null);
-            }
+            executeRoleListCallback(mRoleListInfo);
         } else {
             //TODO :WEBAPIを取得できなかった時の処理を記載予定
             DTVTLogger.debug("WEBAPIを取得できなかった時の処理を記載予定");
+        }
+    }
+
+    /**
+     * ロールリスト返却用メソッド.
+     * @param roleListInfo ロールリスト
+     */
+    private void executeRoleListCallback(final ArrayList<RoleListMetaData> roleListInfo) {
+        mIsInRoleListRequest = false;
+        if (mApiDataProviderCallback != null) {
+            mApiDataProviderCallback.onRoleListCallback(roleListInfo);
         }
     }
 
@@ -370,9 +373,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                         roleData.setName(name);
                         roleListData.add(roleData);
                     }
-                    if (null != mApiDataProviderCallback) {
-                        mApiDataProviderCallback.onRoleListCallback(roleListData);
-                    }
+                    executeRoleListCallback(roleListData);
                     break;
                 case RENTAL_VOD_SELECT:
                     PurchasedVodListResponse purchasedVodListData = new PurchasedVodListResponse();
@@ -390,7 +391,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                     }
                     purchasedVodListData.setVodActiveData(activeDatas);
                     if (null != mApiDataProviderCallback) {
-                        mApiDataProviderCallback.onRentalVodListCallback(purchasedVodListData);
+                        executeRentalVodListCallback(purchasedVodListData);
                     }
                     break;
                 case RENTAL_CHANNEL_SELECT:
@@ -425,7 +426,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                     }
                     purchasedChannelListResponse.setChActiveData(activeChDatas);
                     if (null != mApiDataProviderCallback) {
-                        mApiDataProviderCallback.onRentalChListCallback(purchasedChannelListResponse);
+                        executeRentalChListCallback(purchasedChannelListResponse);
                     }
                     break;
                 default:
@@ -528,6 +529,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
      * @param ageReq dch：dチャンネル, hikaritv：ひかりTVの多ch, 指定なしの場合：すべて
      */
     public void getContentsDetailData(final String[] crid, final String filter, final int ageReq) {
+        mIsInContentsDetailRequest = true;
         if (!isStop) {
             mDetailGetWebClient = new ContentsDetailGetWebClient(mContext);
             mDetailGetWebClient.getContentsDetailApi(crid, filter, ageReq, this);
@@ -540,6 +542,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
      * 購入済みVOD一覧取得.
      */
     public void getVodListData() {
+        mIsInRentalVodListRequest = true;
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
         if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
@@ -575,6 +578,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
      * 購入済みCH一覧取得.
      */
     public void getChListData() {
+        mIsInRentalChListRequest = true;
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.RENTAL_CHANNEL_LAST_UPDATE);
         if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
@@ -610,6 +614,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
      * ロールリスト取得.
      */
     public void getRoleListData() {
+        mIsInRoleListRequest = true;
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.ROLELIST_LAST_UPDATE);
         if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
@@ -738,6 +743,38 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
         getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.TV));
         getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
         DTVTLogger.end();
+    }
+
+    /**
+     * コンテンツ詳細リクエストステータスフラグ返却.
+     * @return リクエストステータス
+     */
+    public boolean isIsInContentsDetailRequest() {
+        return mIsInContentsDetailRequest;
+    }
+
+    /**
+     * ロールリストリクエストステータスフラグ返却.
+     * @return リクエストステータス
+     */
+    public boolean isIsInRoleListRequest() {
+        return mIsInRoleListRequest;
+    }
+
+    /**
+     * レンタルVodリストリクエストステータスフラグ返却.
+     * @return リクエストステータス
+     */
+    public boolean isIsInRentalVodListRequest() {
+        return mIsInRentalVodListRequest;
+    }
+
+    /**
+     * レンタルChリストリクエストステータスフラグ返却.
+     * @return リクエストステータス
+     */
+    public boolean isIsInRentalChListRequest() {
+        return mIsInRentalChListRequest;
     }
     // endregion
 }
