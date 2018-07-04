@@ -51,6 +51,7 @@ void DlnaDownload::downloaderStatusHandler(downloader_status status, const du_uc
     if(DOWNLOADER_STATUS_ERROR_OCCURED == status){
         if(sIsJustCanceled){
             sIsJustCanceled=false;
+            pthread_mutex_unlock(&gMutexIsJustCanceled);
             return;
         }
     }
