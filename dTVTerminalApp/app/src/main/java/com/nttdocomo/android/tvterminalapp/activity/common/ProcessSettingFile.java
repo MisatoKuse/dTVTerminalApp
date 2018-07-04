@@ -257,12 +257,20 @@ public class ProcessSettingFile {
             dialogSwitch = true;
         }
 
-        //コールバックが指定されていた場合は、リモート視聴ならばコールバックはダイアログのキャンセルボタンを押した後の動画再生開始なので、
-        //ここでは呼び出さない。
-        //リモート視聴以外ならば、コールバックが指定されているのは、スプラッシュ画面になるので、ダイアログの表示を他の画面に依頼移譲する処理を動かすために、
-        //コールバックの処理をここで起動する
-        if (mProcessSettingFileCallBack != null && !mIsRemote) {
-            mProcessSettingFileCallBack.onCallBack(dialogSwitch);
+        //ここでコールバックを呼び出す条件は、コールバックの指定がある事と、下記の条件が重なった場合となる
+        //・スプラッシュ画面で、設定ファイルの処理が終了した場合（スプラッシュ画面に結果を知らせる為、ダイアログの有無は問わない）
+        //・リモート視聴でダイアログを表示しない場合（動画再生）
+        //※コールバックが指定されていた場合でも、リモート視聴かつダウンロード通知ダイアログの場合、動画再生はキャンセルボタンを
+        //　押した後になるので、ここでは呼び出さない。強制ダウンロードダイアログの場合、そのままGooglePlayに遷移するので、動画は再生されないので、
+        //　ダイアログの有無の判定で良い。
+        if (mProcessSettingFileCallBack != null) {
+            if (!mIsRemote) {
+                //コールバック指定があり、リモート視聴の指定が無いならば、スプラッシュ画面となるので、ダイアログの有無を伝えて処理をしてもらう
+                mProcessSettingFileCallBack.onCallBack(dialogSwitch);
+            } else if (!dialogSwitch) {
+                //リモート視聴かつダイアログも出さないので、通常動画再生の為のコールバックを呼ぶ（ここで呼ぶ場合は、通常再生なので、すぐに実行されるようにダイアログフラグは常にfalse）
+                mProcessSettingFileCallBack.onCallBack(false);
+            }
         }
     }
 
