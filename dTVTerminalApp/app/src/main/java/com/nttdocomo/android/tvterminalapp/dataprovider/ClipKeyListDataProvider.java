@@ -197,7 +197,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * @param type     テーブル種別
      * @param response ClipKeyListレスポンスデータ
      */
-    private void setStructDataBase(final ClipKeyListDao.TableTypeEnum type, final ClipKeyListResponse response) {
+    private synchronized void setStructDataBase(final ClipKeyListDao.TableTypeEnum type, final ClipKeyListResponse response) {
         DTVTLogger.start();
         ClipKeyListInsertDataManager dataManager = new ClipKeyListInsertDataManager(mContext);
         dataManager.insertClipKeyListInsert(type, response);
@@ -402,10 +402,10 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
 
     /**
      * クリップ.
-     * @param operationId
-     * @param data
+     * @param operationId operationId
+     * @param data クリップリクエストデータ
      */
-    private void clipExecute(final int operationId, final ClipRequestData data) {
+    private synchronized void clipExecute(final int operationId, final ClipRequestData data) {
         ClipKeyListInsertDataManager dataManager = new ClipKeyListInsertDataManager(mContext);
         if (data != null) {
             String crid = data.getCrid();
