@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -59,6 +60,14 @@ public class MenuListAdapter extends BaseAdapter {
      * テレビアイコンのマージン右.
      */
     private static final int TV_ICON_RIGHT_MARGIN = 9;
+    /**
+     * imageアイコンのマージンTOP.
+     */
+    private static final int IMAGE_ICON_TOP_MARGIN = 24;
+    /**
+     * imageアイコンのマージンBOTTOM.
+     */
+    private static final int IMAGE_ICON_BOTTOM_MARGIN = 12;
 
     /**
      * コンストラクタ.
@@ -243,38 +252,52 @@ public class MenuListAdapter extends BaseAdapter {
      */
     private void setTitleNameImageView(final String title, final ImageView imageView) {
         if (title != null) {
-            ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
-            ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) layoutParams;
-            int intTitleLeftMargin = mContext.getResources().getDimensionPixelSize(
-                    R.dimen.global_menu_list_item_title_icon_left_margin);
             if (title.equals(mContext.getString(R.string.nav_menu_item_hikari_tv_none_action))) {
                 int intHikariSettingIconLeftMargin = mContext.getResources().getDimensionPixelSize(
                         R.dimen.global_menu_list_item_default_title_left_margin);
                 setImageResource(imageView, R.mipmap.logo_hikaritv);
-                marginLayoutParams.setMargins(intHikariSettingIconLeftMargin, 0, 0, 0);
+                int imageHeight = mContext.getResources().getDimensionPixelSize(R.dimen.global_menu_list_item_image_icon_height);
+                int imageWidth = mContext.getResources().getDimensionPixelOffset(R.dimen.global_menu_list_item_image_icon_width);
+                RelativeLayout.LayoutParams imageLayoutParams = new RelativeLayout.LayoutParams(imageWidth, imageHeight);
+                imageLayoutParams.setMargins(intHikariSettingIconLeftMargin, dip2px(IMAGE_ICON_TOP_MARGIN), 0, dip2px(IMAGE_ICON_BOTTOM_MARGIN));
+                imageView.setLayoutParams(imageLayoutParams);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_hikari_tv))) {
                 setImageResource(imageView, R.mipmap.logo_hikaritv);
-                marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
+                setImageLayoutParams(imageView);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_dtv_channel))) {
                 setImageResource(imageView, R.mipmap.logo_dtvch);
-                marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
+                setImageLayoutParams(imageView);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_dtv))) {
                 setImageResource(imageView, R.mipmap.logo_dtv);
-                marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
+                setImageLayoutParams(imageView);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_d_animation))) {
                 setImageResource(imageView, R.mipmap.logo_danime);
-                marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
+                setImageLayoutParams(imageView);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_dtv_channel))) {
                 setImageResource(imageView, R.mipmap.logo_dtvch);
-                marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
+                setImageLayoutParams(imageView);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_dazn))) {
                 setImageResource(imageView, R.mipmap.logo_dazn);
-                marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
+                setImageLayoutParams(imageView);
             } else {
                 //その他サブアイテムのカスタマイズ
                 imageView.setVisibility(View.GONE);
             }
         }
+    }
+
+    /**
+     * アイコンレイアウト.
+     * @param imageView アイコン
+     */
+    private void setImageLayoutParams(final ImageView imageView) {
+        int intTitleLeftMargin = mContext.getResources().getDimensionPixelSize(
+                R.dimen.global_menu_list_item_title_icon_left_margin);
+        RelativeLayout.LayoutParams imageLayoutParams = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        imageLayoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+        imageLayoutParams.setMarginStart(intTitleLeftMargin);
+        imageView.setLayoutParams(imageLayoutParams);
     }
 
     /**
