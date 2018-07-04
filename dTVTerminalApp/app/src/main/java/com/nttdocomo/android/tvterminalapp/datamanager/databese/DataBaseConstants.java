@@ -418,7 +418,7 @@ public class DataBaseConstants {
     /**
      * ホームのおすすめ番組データ格納用テーブル.
      */
-    public static final String RECOMMEND_HOME_CHANNEL_LIST_TABLE_NAME = "recommend_channel_list";
+    public static final String RECOMMEND_HOME_CHANNEL_LIST_TABLE_NAME = "recommend_home_channel_list";
     /**
      * ホームのおすすめ番組情報テーブル作成SQL文.
      */
