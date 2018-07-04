@@ -15,6 +15,8 @@ public class DlnaObject {
     @SuppressWarnings("PublicField")
     public String mCleartextSize;
     @SuppressWarnings("PublicField")
+    public String mDate;
+    @SuppressWarnings("PublicField")
     public String mXml;
     @SuppressWarnings("PublicField")
     public String mTitle;

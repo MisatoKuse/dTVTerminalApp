@@ -86,6 +86,16 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     public static final String sMinus = "-";
     /** タブ名. */
     public static final String RLA_FragmentName_All = "all";
+    /** string　format. */
+    private static final String STR_SPACE = " ";
+    /** string　format. */
+    private static final String STR_SLASH = "/";
+    /** string　format. */
+    private static final String STR_HYPHEN = "-";
+    /** string　format. */
+    private static final String STR_T = "T";
+    /** string　format. */
+    private static final String STR_BLANK = "";
     /** リスト0件メッセージ. */
     private TextView mNoDataMessage;
     /** すべて. */
@@ -234,6 +244,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             item.mVideoType = dlnaObject.mVideoType;
             item.mClearTextSize = dlnaObject.mCleartextSize;
             item.mXml = dlnaObject.mXml;
+            item.mChannelName = dlnaObject.mChannelName;
+            item.mDate = dlnaObject.mDate;
             dstList.add(item);
         }
         setVideoBrows(dstList);
@@ -705,16 +717,16 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             contentsData.setAllowedUse(dlnaRecVideoItem.mAllowedUse);
             String selectDate = "";
             if (!TextUtils.isEmpty(dlnaRecVideoItem.mDate)) {
-                String time = dlnaRecVideoItem.mDate.replaceAll("-", "/").replace("T", "");
+                String time = dlnaRecVideoItem.mDate.replaceAll(STR_HYPHEN, STR_SLASH).replace(STR_T, STR_BLANK);
                 try {
                     Calendar calendar = Calendar.getInstance(Locale.JAPAN);
                     calendar.setTime(sdf.parse(time));
-                    StringUtils util = new StringUtils();
-                    String[] strings = {String.valueOf(calendar.get(Calendar.MONTH)), "/",
-                            String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)), " (",
-                            DateUtils.STRING_DAY_OF_WEEK[calendar.get(Calendar.DAY_OF_WEEK)], ") ",
-                            String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)), ":",
-                            String.valueOf(calendar.get(Calendar.MINUTE))};
+                    String[] strings = {String.valueOf(calendar.get(Calendar.MONTH)), STR_SLASH,
+                            String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)),
+                            getString(R.string.common_contents_front_bracket),
+                            DateUtils.STRING_DAY_OF_WEEK[calendar.get(Calendar.DAY_OF_WEEK)],
+                            getString(R.string.common_contents_end_bracket),
+                            DateUtils.getHmm(calendar)};
                     int mon = Integer.parseInt(strings[0]);
                     ++mon;
                     strings[0] = String.valueOf(mon);
@@ -730,14 +742,15 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             StringBuilder sb = new StringBuilder();
             sb.append(selectDate);
             if (null != mins) {
-                sb.append("（");
+                sb.append(getString(R.string.common_contents_front_bracket));
                 sb.append(mins);
-                sb.append("分）");
+                sb.append(getString(R.string.common_contents_min));
+                sb.append(getString(R.string.common_contents_end_bracket));
             }
             if (null != channelName && !channelName.isEmpty()) {
-                sb.append(" ");
+                sb.append(STR_SPACE);
                 sb.append(sMinus);
-                sb.append(" ");
+                sb.append(STR_SPACE);
                 sb.append(channelName);
             }
             contentsData.setDownloadBtnHide(hideDownloadBtn);

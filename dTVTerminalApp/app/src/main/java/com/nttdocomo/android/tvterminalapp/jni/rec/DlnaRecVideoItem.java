@@ -42,12 +42,12 @@ public class DlnaRecVideoItem {
     public String mResUrl = "";
     /**UpnpIcon.*/
     @SuppressWarnings("PublicField")
-    public final String mUpnpIcon = "";
+    public String mUpnpIcon = "";
     //protocolInfo end
     //録画の日付
     /**録画の日付.*/
     @SuppressWarnings("PublicField")
-    public final String mDate = "";
+    public String mDate = "";
 
     //to do: 使用する必要があれば、新しいフィールドをここで追加
     /**コピー残り回数.*/
@@ -61,7 +61,7 @@ public class DlnaRecVideoItem {
     public String mClearTextSize = "";
     /**channelName.*/
     @SuppressWarnings("PublicField")
-    public final String mChannelName = "";
+    public String mChannelName = "";
     /**xml.*/
     @SuppressWarnings("PublicField")
     public String mXml = "";  //upnp:channelName

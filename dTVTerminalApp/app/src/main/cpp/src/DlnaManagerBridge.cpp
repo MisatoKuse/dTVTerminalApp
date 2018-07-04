@@ -36,6 +36,7 @@ struct JniStruct{
 
     jfieldID objectId;
     jfieldID xml;
+    jfieldID date;
     jfieldID cleartextSize;
     jfieldID title;
     jfieldID bitrate;
@@ -85,6 +86,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
 
     jniModelStruct.objectId = env->GetFieldID(jniModelStruct.cls, "mObjectId", "Ljava/lang/String;");
     jniModelStruct.xml = env->GetFieldID(jniModelStruct.cls, "mXml", "Ljava/lang/String;");
+    jniModelStruct.date = env->GetFieldID(jniModelStruct.cls, "mDate", "Ljava/lang/String;");
     jniModelStruct.cleartextSize = env->GetFieldID(jniModelStruct.cls, "mCleartextSize", "Ljava/lang/String;");
     jniModelStruct.title = env->GetFieldID(jniModelStruct.cls, "mTitle", "Ljava/lang/String;");
     jniModelStruct.bitrate = env->GetFieldID(jniModelStruct.cls, "mBitrate", "Ljava/lang/String;");
@@ -121,6 +123,10 @@ void fillContentInfoIntoJni(JNIEnv *env, const ContentInfo *src, jobject &dst) {
     jstring cleartextSizeString = env->NewStringUTF(src->cleartextSize);
     env->SetObjectField(dst, jniModelStruct.cleartextSize, cleartextSizeString);
     env->DeleteLocalRef(cleartextSizeString);
+
+    jstring dateString = env->NewStringUTF(src->date);
+    env->SetObjectField(dst, jniModelStruct.date, dateString);
+    env->DeleteLocalRef(dateString);
 
     jstring xmlString = env->NewStringUTF(src->xml);
     env->SetObjectField(dst, jniModelStruct.xml, xmlString);

@@ -1037,7 +1037,7 @@ public class DateUtils {
      * @param cal 日付
      * @return HHMM
      */
-    private static String getHmm(final Calendar cal) {
+    public static String getHmm(final Calendar cal) {
         int hour = cal.get(Calendar.HOUR_OF_DAY);
         int min = cal.get(Calendar.MINUTE);
         return String.format(Locale.getDefault(), "%d:%02d", hour, min);
