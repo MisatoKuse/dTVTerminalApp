@@ -284,6 +284,7 @@ public class TvProgramListActivity extends BaseActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+        DTVTLogger.start();
         //BG→FG復帰時に各アイテムのクリップ状態が変更されている可能性があるためonResumeのタイミングでチェックする
         if (mTvProgramListAdapter != null) {
             List<ChannelInfo> infoList = mTvProgramListAdapter.getProgramList();
@@ -295,6 +296,7 @@ public class TvProgramListActivity extends BaseActivity implements
             }
         }
         sendScreenViewForPosition(mTabIndex);
+        DTVTLogger.end();
     }
 
     @Override
@@ -548,8 +550,8 @@ public class TvProgramListActivity extends BaseActivity implements
             mProgramScrollViewParent.smoothScrollTo(0, offsetY);
 
             getChannelData();
-            DTVTLogger.end();
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -770,12 +772,28 @@ public class TvProgramListActivity extends BaseActivity implements
         DTVTLogger.start();
         if (mTabIndex != mMyChannelTabNo) { //ひかり、dTVチャンネル
             mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
-            mScaledDownProgramListDataProvider.getChannelList(0, 0, "", mTabIndex);
+            mScaledDownProgramListDataProvider.getChannelList(0, 0, "", typeConverter(mTabIndex));
         } else { //MY番組表
             mMyChannelDataProvider = new MyChannelDataProvider(this);
             mMyChannelDataProvider.getMyChannelList(R.layout.tv_program_list_main_layout);
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * 未ログイン時のリクエストパラメータ変換.
+     *
+     * @param tabIndex タブポジション
+     * @return 変換後のタブポジション
+     */
+    private int typeConverter(final int tabIndex) {
+        DTVTLogger.start();
+        int index = tabIndex;
+        UserState userState = UserInfoUtils.getUserState(getApplicationContext());
+        if (userState.equals(UserState.LOGIN_NG)) {
+            index++;
+        }
+        return index;
     }
 
     @Override
@@ -841,6 +859,7 @@ public class TvProgramListActivity extends BaseActivity implements
      * 番組表情報をクリア.
      */
     private void clearData() {
+        DTVTLogger.start();
         mChannelRecyclerView.setAdapter(null);
         mChannelRecyclerView.removeAllViews();
         mChannelRecyclerView.removeAllViewsInLayout();
@@ -890,6 +909,7 @@ public class TvProgramListActivity extends BaseActivity implements
         //各種操作でメモリーが解放されやすくなったはずなので、ガベージコレクションに期待する（2個連続は意図した通り）
         System.gc();
         System.gc();
+        DTVTLogger.end();
     }
 
     /**
@@ -898,7 +918,7 @@ public class TvProgramListActivity extends BaseActivity implements
      *
      * @param programSwitch 番組表本体のスクロールも行うならばtrue
      */
-    private void scrollToCurTime(boolean programSwitch) {
+    private void scrollToCurTime(final boolean programSwitch) {
         int scrollDis = calcCurTimeOffsetY();
         mTimeScrollView.smoothScrollTo(0, scrollDis);
         if (programSwitch) {
@@ -1020,6 +1040,7 @@ public class TvProgramListActivity extends BaseActivity implements
      * @param channelList チャンネルリスト
      */
     private void loadMyChannel(final ArrayList<ChannelInfo> channelList) {
+        DTVTLogger.start();
         if (mScaledDownProgramListDataProvider == null) {
             mScaledDownProgramListDataProvider =
                     new ScaledDownProgramListDataProvider(this);
@@ -1036,6 +1057,7 @@ public class TvProgramListActivity extends BaseActivity implements
             String[] dateList = {dateStr};
             mScaledDownProgramListDataProvider.getProgram(channelNos, dateList);
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -1045,6 +1067,7 @@ public class TvProgramListActivity extends BaseActivity implements
      * @param isZeroData 0件取得フラグ.
      */
     private void showMyChannelNoItem(final boolean isShowFlag, final boolean isZeroData) {
+        DTVTLogger.start();
         //一部の処理で別スレッドで実行されたことによるエラーが発生していた。UIスレッドへ処理を移譲する
         runOnUiThread(new Runnable() {
             @Override
@@ -1081,6 +1104,7 @@ public class TvProgramListActivity extends BaseActivity implements
                 }
             }
         });
+        DTVTLogger.end();
     }
 
     /**
@@ -1127,6 +1151,7 @@ public class TvProgramListActivity extends BaseActivity implements
      */
     @Override
     public void onMyChannelListCallback(final ArrayList<MyChannelMetaData> myChannelMetaData) {
+        DTVTLogger.start();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -1164,6 +1189,7 @@ public class TvProgramListActivity extends BaseActivity implements
                 }
             }
         });
+        DTVTLogger.end();
     }
 
     /**
@@ -1172,6 +1198,7 @@ public class TvProgramListActivity extends BaseActivity implements
      * @param isZeroData 0件フラグ(正常取得時)
      */
     private void noMyChannelDataDisplay(final boolean isZeroData) {
+        DTVTLogger.start();
         //情報がヌルなので、ネットワークエラーメッセージを取得する
         ErrorState errorState;
         if (mScaledDownProgramListDataProvider != null) {
@@ -1192,6 +1219,7 @@ public class TvProgramListActivity extends BaseActivity implements
         } else {
             mNoDataMessage.setVisibility(View.VISIBLE);
         }
+        DTVTLogger.end();
     }
 
     @Override
@@ -1271,6 +1299,7 @@ public class TvProgramListActivity extends BaseActivity implements
     @Override
     public void onStartCommunication() {
         super.onStartCommunication();
+        DTVTLogger.start();
         //マイ番組表通信許可
         if (mMyChannelDataProvider != null) {
             mMyChannelDataProvider.enableConnect();
@@ -1283,6 +1312,7 @@ public class TvProgramListActivity extends BaseActivity implements
         if (mTvProgramListAdapter != null) {
             mTvProgramListAdapter.enableConnect();
         }
+        DTVTLogger.end();
     }
 
     @Override
@@ -1298,10 +1328,12 @@ public class TvProgramListActivity extends BaseActivity implements
         //サムネルタスクを止める
         StopMyProgramListAdapterConnect stopAdapterConnect = new StopMyProgramListAdapterConnect();
         stopAdapterConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mTvProgramListAdapter);
+        DTVTLogger.end();
     }
 
     @Override
     public void onClipRegistResult() {
+        DTVTLogger.start();
         ClipRequestData clipRequestData = getClipRequestData();
         ImageView clipButton = getClipButton();
         if (clipRequestData != null && clipButton != null) {
@@ -1323,10 +1355,12 @@ public class TvProgramListActivity extends BaseActivity implements
             // フェールセーフで元処理に戻す
             super.onClipRegistResult();
         }
+        DTVTLogger.end();
     }
 
     @Override
     public void onClipDeleteResult() {
+        DTVTLogger.start();
         ClipRequestData clipRequestData = getClipRequestData();
         ImageView clipButton = getClipButton();
         if (clipRequestData != null && clipButton != null) {
@@ -1348,5 +1382,6 @@ public class TvProgramListActivity extends BaseActivity implements
             // フェールセーフで元処理に戻す
             super.onClipDeleteResult();
         }
+        DTVTLogger.end();
     }
 }
