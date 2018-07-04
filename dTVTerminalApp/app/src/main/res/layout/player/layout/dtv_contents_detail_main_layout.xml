@@ -92,6 +92,42 @@
             </LinearLayout>
         </RelativeLayout>
 
+        <LinearLayout
+            android:id="@+id/dtv_contents_detail_player_only"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/contents_text_info_margin"
+            android:layout_marginEnd="@dimen/contents_text_info_margin"
+            android:layout_marginTop="@dimen/contents_text_info_margin"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/dtv_contents_detail_player_only_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white_text"
+                android:textSize="@dimen/header_title_text_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/dtv_contents_detail_player_only_channel_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/contents_detail_contents_text_size"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:textColor="@color/contents_detail_schedule_detail_schedule_info"
+                android:textSize="@dimen/contents_detail_contents_text_size" />
+
+            <TextView
+                android:id="@+id/dtv_contents_detail_player_only_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/contents_detail_schedule_detail_schedule_info"
+                android:textSize="@dimen/contents_detail_contents_text_size" />
+        </LinearLayout>
+
         <RelativeLayout
             android:id="@+id/rl_dtv_contents_detail_tab"
             android:layout_width="match_parent"

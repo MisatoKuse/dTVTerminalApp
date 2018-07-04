@@ -290,6 +290,15 @@ public class DateUtils {
      */
     private static final String DATE_FORMAT_BLANK = " ";
 
+    /** string　format. */
+    private static final String STR_SLASH = "/";
+    /** string　format. */
+    private static final String STR_HYPHEN = "-";
+    /** string　format. */
+    private static final String STR_T = "T";
+    /** string　format. */
+    private static final String STR_BLANK = "";
+
     /**
      * 最初時.
      */
@@ -1441,5 +1450,37 @@ public class DateUtils {
         long afterThirty = lastTimeOnPause + EPOCH_TIME_THIRTY_MINUTES;
         //lastTimeOnPauseが0の時は初回表示時なのでfalseを返却すること
         return (afterThirty < now || now < lastTimeOnPause) && lastTimeOnPause != 0;
+    }
+
+    /**
+     * 日付format(M/d（曜日）HH：mm).
+     *
+     * @param date 日付(yyyy-MM-ddTHH:mm:ss)
+     * @param context コンテキスト
+     * @return M/d（曜日）HH：mm
+     */
+    public static String getDownloadDateFormat(final String date, final Context context) {
+        String result = "";
+        if (!TextUtils.isEmpty(date)) {
+            SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
+            String time = date.replaceAll(STR_HYPHEN, STR_SLASH).replace(STR_T, STR_BLANK);
+            try {
+                Calendar calendar = Calendar.getInstance(Locale.JAPAN);
+                calendar.setTime(sdf.parse(time));
+                String[] strings = {String.valueOf(calendar.get(Calendar.MONTH)), STR_SLASH,
+                        String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)),
+                        context.getString(R.string.common_contents_front_bracket),
+                        DateUtils.STRING_DAY_OF_WEEK[calendar.get(Calendar.DAY_OF_WEEK)],
+                        context.getString(R.string.common_contents_end_bracket),
+                        DateUtils.getHmm(calendar)};
+                int mon = Integer.parseInt(strings[0]);
+                ++mon;
+                strings[0] = String.valueOf(mon);
+                return StringUtils.getConnectString(strings);
+            } catch (ParseException e) {
+                DTVTLogger.debug(e);
+            }
+        }
+        return result;
     }
 }
