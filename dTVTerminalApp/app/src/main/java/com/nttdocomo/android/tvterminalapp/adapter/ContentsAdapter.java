@@ -1257,13 +1257,13 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             } else {
                 switch (listContentInfo.getDownloadFlg()) {
                     case DOWNLOAD_STATUS_ALLOW:
-                        holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_normal_download);
+                        holder.tv_clip.setBackgroundResource(R.drawable.icon_circle_normal_download_selector);
                         break;
                     case DOWNLOAD_STATUS_LOADING:
-                        holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_cancel);
+                        holder.tv_clip.setBackgroundResource(R.drawable.icon_circle_active_cancel_selector);
                         break;
                     case DOWNLOAD_STATUS_COMPLETED:
-                        holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_normal_download_check);
+                        holder.tv_clip.setBackgroundResource(R.drawable.icon_circle_normal_download_check_selector);
                         break;
                     default:
                         break;
