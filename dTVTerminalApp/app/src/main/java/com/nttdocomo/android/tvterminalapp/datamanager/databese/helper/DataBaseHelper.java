@@ -57,6 +57,16 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String DROP_USER_INFO_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DataBaseConstants.USER_INFO_LIST_TABLE_NAME);
     /**
+     * 「レコメンド（ホームおすすめ番組）」テーブルの削除用SQL.
+     */
+    private static final String DROP_RECOMMEND_HOME_CHANNEL_TABLE_SQL = StringUtils.getConnectStrings(
+            DROP_TABLE_IF_EXISTS, DataBaseConstants.RECOMMEND_HOME_CHANNEL_LIST_TABLE_NAME);
+    /**
+     * 「レコメンド（ホームおすすめ番組）」テーブルの削除用SQL.
+     */
+    private static final String DROP_RECOMMEND_HOME_VIDEO_TABLE_SQL = StringUtils.getConnectStrings(
+            DROP_TABLE_IF_EXISTS, DataBaseConstants.RECOMMEND_HOME_VIDEO_LIST_TABLE_NAME);
+    /**
      * 「おすすめチャンネル」テーブルの削除用SQL.
      */
     private static final String DROP_RECOMMEND_CHANNEL_TABLE_SQL = StringUtils.getConnectStrings(
@@ -223,10 +233,22 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     CREATE_TABLE_WEEKLYRANK_SQL + " table failed, cause=" + e.getCause());
         }
         try {
+            sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_RECOMMEND_HOME_CHANNEL_SQL);
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("DatabaseHelper::onCreate, create " + DataBaseConstants.
+                    CREATE_TABLE_RECOMMEND_HOME_CHANNEL_SQL + " table failed, cause=" + e.getCause());
+        }
+        try {
             sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_RECOMMEND_CHANNEL_SQL);
         } catch (SQLiteException e) {
             DTVTLogger.debug("DatabaseHelper::onCreate, create " + DataBaseConstants.
                     CREATE_TABLE_RECOMMEND_CHANNEL_SQL + " table failed, cause=" + e.getCause());
+        }
+        try {
+            sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_RECOMMEND_HOME_VIDEO_SQL);
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("DatabaseHelper::onCreate, create " + DataBaseConstants.
+                    CREATE_TABLE_RECOMMEND_HOME_VIDEO_SQL + " table failed, cause=" + e.getCause());
         }
         try {
             sqLiteDatabase.execSQL(DataBaseConstants.CREATE_TABLE_RECOMMEND_VIDEO_SQL);
@@ -350,6 +372,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL(DROP_WEEKLYRANK_TABLE_SQL);
         } catch (SQLiteException e) {
             DTVTLogger.debug("DatabaseHelper::dropAllTable, drop " + DROP_WEEKLYRANK_TABLE_SQL
+                    + " table failed, cause=" + e.getCause());
+        }
+        try {
+            sqLiteDatabase.execSQL(DROP_RECOMMEND_HOME_CHANNEL_TABLE_SQL);
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("DatabaseHelper::dropAllTable, drop " + DROP_RECOMMEND_HOME_CHANNEL_TABLE_SQL
+                    + " table failed, cause=" + e.getCause());
+        }
+        try {
+            sqLiteDatabase.execSQL(DROP_RECOMMEND_HOME_VIDEO_TABLE_SQL);
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("DatabaseHelper::dropAllTable, drop " + DROP_RECOMMEND_HOME_VIDEO_TABLE_SQL
                     + " table failed, cause=" + e.getCause());
         }
         try {

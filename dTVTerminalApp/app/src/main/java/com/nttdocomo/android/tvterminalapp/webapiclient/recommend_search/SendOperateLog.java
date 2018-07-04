@@ -212,12 +212,12 @@ public class SendOperateLog extends WebApiBase {
                             switch (mDetailFullData.getmContent_type() == null ? valueBlank : mDetailFullData.getmContent_type()) {
                                 case valueBlank:
                                 case ContentDetailActivity.CONTENT_TYPE_FLAG_ZERO:
-                                    return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_DTV_BLOADCAST.getCategoryId();
+                                    return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_DTVCHANNEL_BLOADCAST.getCategoryId();
                                 case ContentDetailActivity.CONTENT_TYPE_FLAG_ONE:
                                 case ContentDetailActivity.CONTENT_TYPE_FLAG_TWO:
-                                    return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_DTV_MISS.getCategoryId();
+                                    return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_DTVCHANNEL_MISS.getCategoryId();
                                 case ContentDetailActivity.CONTENT_TYPE_FLAG_THREE:
-                                    return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_DTV_RELATION.getCategoryId();
+                                    return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_DTVCHANNEL_RELATION.getCategoryId();
                                 default:
                                     break;
                             }

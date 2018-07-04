@@ -57,6 +57,16 @@ public class DateUtils {
     public static final String CHANNEL_LAST_INSERT = "ChannelLastInsert";
 
     /**
+     * ホームのおすすめ番組取得日付キー.
+     */
+    public static final String RECOMMEND_HOME_CH_LAST_INSERT = "RecommendHomeChLastInsert";
+
+    /**
+     * ホームのおすすめビデオ取得日付キー.
+     */
+    public static final String RECOMMEND_HOME_VD_LAST_INSERT = "RecommendHomeVdLastInsert";
+
+    /**
      * おすすめ番組取得日付キー.
      */
     public static final String RECOMMEND_CH_LAST_INSERT = "RecommendChLastInsert";

@@ -81,6 +81,14 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      */
     private static final int SELECT_RECOMMEND_D_ANIMATION_LIST = 4;
     /**
+     * ホームのおすすめ番組レコメンドデータキャッシュ取得用.
+     */
+    private static final int SELECT_RECOMMEND_HOME_CHANNEL_LIST = 5;
+    /**
+     * ホームのおすすめビデオレコメンドデータキャッシュ取得用.
+     */
+    private static final int SELECT_RECOMMEND_HOME_VOD_LIST = 6;
+    /**
      * レコメンドコンテンツ最大件数（システム制約）.
      */
     private static final int MAX_SHOW_LIST_SIZE = 100;
@@ -88,6 +96,13 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * レコメンドコンテンツ取得位置（システム制約）.
      */
     private static final int RECOMMEND_START_INDEX = 1;
+    private static final String RECOMMEND_PAGE_ID_HOME_PROGRAM = "107";
+    private static final String RECOMMEND_PAGE_ID_HOME_VOD = "108";
+    private static final String RECOMMEND_PAGE_ID_HIKARI_PROGRAM = "109";
+    private static final String RECOMMEND_PAGE_ID_HIKARI_VOD = "110";
+    private static final String RECOMMEND_PAGE_ID_DTV = "111";
+    private static final String RECOMMEND_PAGE_ID_DTVCHANNEL = "112";
+    private static final String RECOMMEND_PAGE_ID_DANIME = "113";
 
     /**
      * RecommendWebClient.
@@ -114,19 +129,41 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      */
     public static final int API_INDEX_OTHER = 2;
     /**
+     * ホームおすすめ番組カテゴリー一覧.
+     */
+    private final String[] RECOMMEND_CATEGORY_ID_HOME_TELEVI = {
+            RecommendRequestId.HIKARITV_DOCOMO_IPTV.getRequestSCId(),
+            RecommendRequestId.HIKARITV_DOCOMO_DTVCHANNEL_BLOADCAST.getRequestSCId(),
+            RecommendRequestId.DTVCHANNEL_BLOADCAST.getRequestSCId(),
+    };
+    /**
      * テレビカテゴリー一覧（dTVチャンネル　VOD（見逃し）が無くなった等の新情報を反映）.
      */
     private final String[] RECOMMEND_CATEGORY_ID_TELEVI = {
             RecommendRequestId.HIKARITV_DOCOMO_IPTV.getRequestSCId(),
-            RecommendRequestId.HIKARITV_DOCOMO_DTV_BLOADCAST.getRequestSCId(),
+            RecommendRequestId.HIKARITV_DOCOMO_DTVCHANNEL_BLOADCAST.getRequestSCId(),
     };
 
+    /**
+     * ホームおすすめビデオカテゴリー一覧.
+     */
+    private final String[] RECOMMEND_CATEGORY_ID_HOME_VIDEO = {
+            RecommendRequestId.HIKARITV_DOCOMO_DTVCHANNEL_MISS.getRequestSCId(),
+            RecommendRequestId.HIKARITV_DOCOMO_DTVCHANNEL_RELATION.getRequestSCId(),
+            RecommendRequestId.HIKARITV_DOCOMO_HIKARITV_VOD.getRequestSCId(),
+            RecommendRequestId.HIKARITV_DOCOMO_DTV_SVOD.getRequestSCId(),
+            RecommendRequestId.DTV_SVOD.getRequestSCId(),
+            RecommendRequestId.DTV_TVOD.getRequestSCId(),
+            RecommendRequestId.DTVCHANNEL_MISS.getRequestSCId(),
+            RecommendRequestId.DTVCHANNEL_RELATION.getRequestSCId(),
+            RecommendRequestId.DANIME.getRequestSCId(),
+    };
     /**
      * ビデオカテゴリー一覧（dTVチャンネル　VOD（見逃し）が追加された等の新情報を反映）.
      */
     private final String[] RECOMMEND_CATEGORY_ID_VIDEO = {
-            RecommendRequestId.HIKARITV_DOCOMO_DTV_MISS.getRequestSCId(),
-            RecommendRequestId.HIKARITV_DOCOMO_DTV_RELATION.getRequestSCId(),
+            RecommendRequestId.HIKARITV_DOCOMO_DTVCHANNEL_MISS.getRequestSCId(),
+            RecommendRequestId.HIKARITV_DOCOMO_DTVCHANNEL_RELATION.getRequestSCId(),
             RecommendRequestId.HIKARITV_DOCOMO_HIKARITV_VOD.getRequestSCId(),
             RecommendRequestId.HIKARITV_DOCOMO_DTV_SVOD.getRequestSCId(),
     };
@@ -167,11 +204,11 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         /**IPTV.*/
         HIKARITV_DOCOMO_IPTV("44", "03"),
         /**dTVチャンネル　放送.*/
-        HIKARITV_DOCOMO_DTV_BLOADCAST("44", "04"),
+        HIKARITV_DOCOMO_DTVCHANNEL_BLOADCAST("44", "04"),
         /**dTVチャンネル　VOD（見逃し）.*/
-        HIKARITV_DOCOMO_DTV_MISS("44", "05"),
+        HIKARITV_DOCOMO_DTVCHANNEL_MISS("44", "05"),
         /**dTVチャンネル　VOD（関連番組）.*/
-        HIKARITV_DOCOMO_DTV_RELATION("44", "06"),
+        HIKARITV_DOCOMO_DTVCHANNEL_RELATION("44", "06"),
         /**ひかりTV VOD.*/
         HIKARITV_DOCOMO_HIKARITV_VOD("44", "08"),
         /**dTV SVOD.*/
@@ -225,6 +262,14 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      */
     private enum RESP_DATA_SERVICE_TYPE {
         /**
+         * ホーム_おすすめ番組
+         */
+        HOME_TV,
+        /**
+         * ホームおすすめビデオ
+         */
+        HOME_VOD,
+        /**
          * ひかりTV_テレビ.
          */
         HIKARI_TV,
@@ -268,6 +313,19 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * Home画面用データを返却するためのコールバック.
      */
     public interface RecommendApiDataProviderCallback {
+        /**
+         * ホームのおすすめ番組用コールバック.
+         *
+         * @param recommendContentInfoList コンテンツ情報リスト
+         */
+        void recommendHomeChannelCallback(List<ContentsData> recommendContentInfoList);
+
+        /**
+         * ホームのおすすめビデオ用コールバック.
+         *
+         * @param recommendContentInfoList コンテンツ情報リスト
+         */
+        void recommendHomeVideoCallback(List<ContentsData> recommendContentInfoList);
 
         /**
          * おすすめ番組用コールバック.
@@ -368,12 +426,12 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     }
 
     /**
-     * おすすめテレビ取得.
+     * ホームのおすすめ番組取得.
      */
     void getHomeTvRecommend() {
         //DB保存履歴と、有効期間を確認
         DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(DateUtils.RECOMMEND_CH_LAST_INSERT);
+        String lastDate = dateUtils.getLastDate(DateUtils.RECOMMEND_HOME_CH_LAST_INSERT);
         if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeLimitDate(lastDate))
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
@@ -381,7 +439,8 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 RecommendRequestData requestData = new RecommendRequestData();
                 requestData.setMaxResult(String.valueOf(MAX_SHOW_LIST_SIZE));
                 requestData.setStartIndex(String.valueOf(RECOMMEND_START_INDEX));
-                requestData.setServiceCategoryId(getTerebiRequestSCIdStr());
+                requestData.setServiceCategoryId(getHomeTerebiRequestSCIdStr());
+                requestData.setPageId(RECOMMEND_PAGE_ID_HOME_PROGRAM);
                 // サーバへリクエストを送信
                 mTvWebClient = new RecommendWebClient(this, mContext);
                 mTvWebClient.getRecommendApi(requestData);
@@ -391,7 +450,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         } else {
             //DBキャッシュ取得
             Handler handler = new Handler(Looper.getMainLooper());
-            DataBaseThread t = new DataBaseThread(handler, this, SELECT_RECOMMEND_CHANNEL_LIST);
+            DataBaseThread t = new DataBaseThread(handler, this, SELECT_RECOMMEND_HOME_CHANNEL_LIST);
             t.start();
             //キャッシュ取得時はおすすめビデオ取得が呼び出されないため、ここで呼び出す
             getVodRecommend();
@@ -413,6 +472,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 requestData.setMaxResult(String.valueOf(MAX_SHOW_LIST_SIZE));
                 requestData.setStartIndex(String.valueOf(RECOMMEND_START_INDEX));
                 requestData.setServiceCategoryId(getTerebiRequestSCIdStr());
+                requestData.setPageId(RECOMMEND_PAGE_ID_HIKARI_PROGRAM);
                 // サーバへリクエストを送信
                 mRecommendWebClient = new RecommendWebClient(this, mContext);
                 mRecommendWebClient.getRecommendApi(requestData);
@@ -425,6 +485,36 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
             DataBaseThread t = new DataBaseThread(handler, this, SELECT_RECOMMEND_CHANNEL_LIST);
             t.start();
 
+        }
+    }
+
+    /**
+     * ホームのおすすめビデオ取得.
+     */
+    void getHomeVodRecommend() {
+        //DB保存履歴と、有効期間を確認
+        DateUtils dateUtils = new DateUtils(mContext);
+        String lastDate = dateUtils.getLastDate(DateUtils.RECOMMEND_HOME_VD_LAST_INSERT);
+        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeLimitDate(lastDate))
+                && NetWorkUtils.isOnline(mContext)) {
+            if (!mIsStop) {
+                // RequestDataのインスタンス生成
+                RecommendRequestData requestData = new RecommendRequestData();
+                requestData.setMaxResult(String.valueOf(MAX_SHOW_LIST_SIZE));
+                requestData.setStartIndex(String.valueOf(RECOMMEND_START_INDEX));
+                requestData.setServiceCategoryId(getHomeVideoRequestSCIdStr());
+                requestData.setPageId(RECOMMEND_PAGE_ID_HOME_VOD);
+                // サーバへリクエストを送信
+                mVodWebClient = new RecommendWebClient(this, mContext);
+                mVodWebClient.getRecommendApi(requestData);
+            } else {
+                DTVTLogger.error("RecommendDataProvider is stopping connect");
+            }
+        } else {
+            //DBキャッシュ取得
+            Handler handler = new Handler(Looper.getMainLooper());
+            DataBaseThread t = new DataBaseThread(handler, this, SELECT_RECOMMEND_HOME_VOD_LIST);
+            t.start();
         }
     }
 
@@ -443,6 +533,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 requestData.setMaxResult(String.valueOf(MAX_SHOW_LIST_SIZE));
                 requestData.setStartIndex(String.valueOf(RECOMMEND_START_INDEX));
                 requestData.setServiceCategoryId(getVideoRequestSCIdStr());
+                requestData.setPageId(RECOMMEND_PAGE_ID_HIKARI_VOD);
                 // サーバへリクエストを送信
                 mVodWebClient = new RecommendWebClient(this, mContext);
                 mVodWebClient.getRecommendApi(requestData);
@@ -472,6 +563,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 requestData.setMaxResult(String.valueOf(MAX_SHOW_LIST_SIZE));
                 requestData.setStartIndex(String.valueOf(RECOMMEND_START_INDEX));
                 requestData.setServiceCategoryId(getDCHRequestSCIdStr());
+                requestData.setPageId(RECOMMEND_PAGE_ID_DTVCHANNEL);
                 // サーバへリクエストを送信
                 mRecommendWebClient = new RecommendWebClient(this, mContext);
                 mRecommendWebClient.getRecommendApi(requestData);
@@ -502,6 +594,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 requestData.setMaxResult(String.valueOf(MAX_SHOW_LIST_SIZE));
                 requestData.setStartIndex(String.valueOf(RECOMMEND_START_INDEX));
                 requestData.setServiceCategoryId(getDTVRequestSCIdStr());
+                requestData.setPageId(RECOMMEND_PAGE_ID_DTV);
                 // サーバへリクエストを送信
                 mRecommendWebClient = new RecommendWebClient(this, mContext);
                 mRecommendWebClient.getRecommendApi(requestData);
@@ -531,6 +624,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 requestData.setMaxResult(String.valueOf(MAX_SHOW_LIST_SIZE));
                 requestData.setStartIndex(String.valueOf(RECOMMEND_START_INDEX));
                 requestData.setServiceCategoryId(getDAnimeRequestSCIdStr());
+                requestData.setPageId(RECOMMEND_PAGE_ID_DANIME);
                 // サーバへリクエストを送信
                 mRecommendWebClient = new RecommendWebClient(this, mContext);
                 mRecommendWebClient.getRecommendApi(requestData);
@@ -554,6 +648,12 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         DTVTLogger.debug("requestPageNo:" + requestPageNo);
 
         switch (requestPageNo) {
+            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_HOME_TV: //テレビ
+                getHomeTvRecommend();
+                break;
+            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_HOME_VIDEO: //ビデオ
+                getHomeVodRecommend();
+                break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV: //テレビ
                 getTvRecommend();
                 break;
@@ -591,11 +691,23 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
             recommendContentInfoList.add(data);
             if (respDataServiceType == RESP_DATA_SERVICE_TYPE.UNKNOWN) {
                 // レスポンスデータのサービスが確定するまで判定を続ける
-                respDataServiceType = decisionResponseDataType(data.getServiceId(), data.getCategoryId());
+                respDataServiceType = decisionResponseDataType(data);
             }
         }
 
         switch (respDataServiceType) {
+            case HOME_TV:
+                //ホームのおすすめ番組用データ
+                setStructDB(recChList, DateUtils.RECOMMEND_HOME_CH_LAST_INSERT,
+                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_HOME_TV);
+                mApiDataProviderCallback.recommendHomeChannelCallback(recommendContentInfoList);
+                break;
+            case HOME_VOD:
+                //ホームのおすすめビデオ用データ
+                setStructDB(recChList, DateUtils.RECOMMEND_HOME_VD_LAST_INSERT,
+                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_HOME_VIDEO);
+                mApiDataProviderCallback.recommendHomeVideoCallback(recommendContentInfoList);
+                break;
             case HIKARI_TV:
                 //テレビ用データ
                 setStructDB(recChList, DateUtils.RECOMMEND_CH_LAST_INSERT,
@@ -702,6 +814,27 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     }
 
     /**
+     * ホームのおすすめ番組の取得対象サービスID:カテゴリーID文字列生成.
+     *
+     * @return 取得対象サービスID:カテゴリーID文字列
+     */
+    private String getHomeTerebiRequestSCIdStr() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        //番組カテゴリー一覧の数だけループ
+        for (int counter = 0; counter < RECOMMEND_CATEGORY_ID_HOME_TELEVI.length; counter++) {
+            //カテゴリーIDとサービスIDを蓄積
+            stringBuilder.append(RECOMMEND_CATEGORY_ID_HOME_TELEVI[counter]);
+
+            if (counter != RECOMMEND_CATEGORY_ID_HOME_TELEVI.length - 1) {
+                //最後のデータ以外はカンマを入れる
+                stringBuilder.append(COMMA);
+            }
+        }
+        return stringBuilder.toString();
+    }
+
+    /**
      * おすすめテレビの取得対象サービスID:カテゴリーID文字列生成.
      *
      * @return 取得対象サービスID:カテゴリーID文字列
@@ -715,6 +848,27 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
             stringBuilder.append(RECOMMEND_CATEGORY_ID_TELEVI[counter]);
 
             if (counter != RECOMMEND_CATEGORY_ID_TELEVI.length - 1) {
+                //最後のデータ以外はカンマを入れる
+                stringBuilder.append(COMMA);
+            }
+        }
+        return stringBuilder.toString();
+    }
+
+    /**
+     * ホームのおすすめビデオの取得対象サービスID:カテゴリーID文字列生成.
+     *
+     * @return 取得対象サービスID:カテゴリーID文字列
+     */
+    private String getHomeVideoRequestSCIdStr() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        //ビデオカテゴリー一覧の数だけループ
+        for (int counter = 0; counter < RECOMMEND_CATEGORY_ID_HOME_VIDEO.length; counter++) {
+            //カテゴリーIDとサービスIDを蓄積
+            stringBuilder.append(RECOMMEND_CATEGORY_ID_HOME_VIDEO[counter]);
+
+            if (counter != RECOMMEND_CATEGORY_ID_HOME_VIDEO.length - 1) {
                 //最後のデータ以外はカンマを入れる
                 stringBuilder.append(COMMA);
             }
@@ -830,37 +984,41 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
 
     /**
      * レスポンスデータからサービスの種別を取得する.
-     * @param serviceId サービスID
-     * @param categoryId カテゴリID
+     * @param contentsData レコメンドデータ
      * @return サービス種別
      */
-    private RESP_DATA_SERVICE_TYPE decisionResponseDataType(final String serviceId, final String categoryId) {
-        DTVTLogger.start("ServiceId : " + serviceId + " CategoryId : " + categoryId);
-        RESP_DATA_SERVICE_TYPE result;
-
-        if (RecommendRequestId.HIKARITV_DOCOMO_IPTV.getServiceId().equals(serviceId)) {
-            // ServiceId == 44
-            if (RecommendRequestId.HIKARITV_DOCOMO_IPTV.getCategoryId().equals(categoryId)
-                    || RecommendRequestId.HIKARITV_DOCOMO_DTV_BLOADCAST.getCategoryId().equals(categoryId)) {
-                // CategoryId == 03 or 04
+    private RESP_DATA_SERVICE_TYPE decisionResponseDataType(final ContentsData contentsData) {
+        DTVTLogger.start();
+        RESP_DATA_SERVICE_TYPE result = RESP_DATA_SERVICE_TYPE.UNKNOWN;
+        switch (contentsData.getPageId()) {
+            case RECOMMEND_PAGE_ID_HOME_PROGRAM:
+                result = RESP_DATA_SERVICE_TYPE.HOME_TV;
+                break;
+            case RECOMMEND_PAGE_ID_HOME_VOD:
+                result = RESP_DATA_SERVICE_TYPE.HOME_VOD;
+                break;
+            case RECOMMEND_PAGE_ID_HIKARI_PROGRAM:
                 result = RESP_DATA_SERVICE_TYPE.HIKARI_TV;
-            } else {
+                break;
+            case RECOMMEND_PAGE_ID_HIKARI_VOD:
                 result = RESP_DATA_SERVICE_TYPE.HIKARI_VOD;
-            }
-        } else if (RecommendRequestId.DANIME.getServiceId().equals(serviceId)) {
-            // ServiceId == 17
-            result = RESP_DATA_SERVICE_TYPE.DANIME;
-        } else if (RecommendRequestId.DTV_SVOD.getServiceId().equals(serviceId)) {
-            // ServiceId == 15
-            result = RESP_DATA_SERVICE_TYPE.DTV;
-        } else if (RecommendRequestId.DTVCHANNEL_RELATION.getServiceId().equals(serviceId)) {
-            // ServiceId == 43
-            result = RESP_DATA_SERVICE_TYPE.DCHANNEL;
-        } else {
-            // DAZNの判定を行う予定
-            result = RESP_DATA_SERVICE_TYPE.UNKNOWN;
+                break;
+            case RECOMMEND_PAGE_ID_DTV:
+                result = RESP_DATA_SERVICE_TYPE.DTV;
+                break;
+            case RECOMMEND_PAGE_ID_DTVCHANNEL:
+                result = RESP_DATA_SERVICE_TYPE.DCHANNEL;
+                break;
+            case RECOMMEND_PAGE_ID_DANIME:
+                result = RESP_DATA_SERVICE_TYPE.DANIME;
+                break;
+            default:
+                // DAZNの判定を行う予定
+                result = RESP_DATA_SERVICE_TYPE.UNKNOWN;
+                break;
         }
 
+        DTVTLogger.debug(result.name());
         DTVTLogger.end();
         return result;
     }
@@ -875,6 +1033,18 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         RecommendListDataManager recommendDataManager;
         List<ContentsData> resultList;
         switch (operationId) {
+            case SELECT_RECOMMEND_HOME_CHANNEL_LIST:
+                recommendDataManager = new RecommendListDataManager(mContext);
+                resultList = recommendDataManager.selectRecommendList(
+                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_HOME_TV);
+                mApiDataProviderCallback.recommendHomeChannelCallback(resultList);
+                break;
+            case SELECT_RECOMMEND_HOME_VOD_LIST:
+                recommendDataManager = new RecommendListDataManager(mContext);
+                resultList = recommendDataManager.selectRecommendList(
+                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_HOME_VIDEO);
+                mApiDataProviderCallback.recommendHomeVideoCallback(resultList);
+                break;
             case SELECT_RECOMMEND_CHANNEL_LIST:
                 recommendDataManager = new RecommendListDataManager(mContext);
                 resultList = recommendDataManager.selectRecommendList(
