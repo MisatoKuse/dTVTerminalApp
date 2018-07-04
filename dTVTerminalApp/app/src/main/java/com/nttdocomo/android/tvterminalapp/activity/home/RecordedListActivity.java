@@ -88,14 +88,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     public static final String RLA_FragmentName_All = "all";
     /** string　format. */
     private static final String STR_SPACE = " ";
-    /** string　format. */
-    private static final String STR_SLASH = "/";
-    /** string　format. */
-    private static final String STR_HYPHEN = "-";
-    /** string　format. */
-    private static final String STR_T = "T";
-    /** string　format. */
-    private static final String STR_BLANK = "";
     /** リスト0件メッセージ. */
     private TextView mNoDataMessage;
     /** すべて. */
@@ -434,6 +426,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                             detailData.setResolution(resolution);
                             detailData.setBitrate(bitrate);
                             detailData.setDuration(duration);
+                            detailData.setChannelName(channelName);
+                            detailData.setDate(date);
                             detailData.setTitle(title);
                             detailData.setVideoType(videoType);
                             detailData.setClearTextSize(totalSize);
@@ -738,27 +732,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * @return タイトル
      */
     private String getDownloadTitle(final DlnaRecVideoItem dlnaRecVideoItem) {
-        String selectDate = "";
-        if (!TextUtils.isEmpty(dlnaRecVideoItem.mDate)) {
-            SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
-            String time = dlnaRecVideoItem.mDate.replaceAll(STR_HYPHEN, STR_SLASH).replace(STR_T, STR_BLANK);
-            try {
-                Calendar calendar = Calendar.getInstance(Locale.JAPAN);
-                calendar.setTime(sdf.parse(time));
-                String[] strings = {String.valueOf(calendar.get(Calendar.MONTH)), STR_SLASH,
-                        String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)),
-                        getString(R.string.common_contents_front_bracket),
-                        DateUtils.STRING_DAY_OF_WEEK[calendar.get(Calendar.DAY_OF_WEEK)],
-                        getString(R.string.common_contents_end_bracket),
-                        DateUtils.getHmm(calendar)};
-                int mon = Integer.parseInt(strings[0]);
-                ++mon;
-                strings[0] = String.valueOf(mon);
-                selectDate = StringUtils.getConnectString(strings);
-            } catch (ParseException e) {
-                DTVTLogger.debug(e);
-            }
-        }
+        String selectDate = DateUtils.getDownloadDateFormat(dlnaRecVideoItem.mDate, this);
         //duration && channel name begin
         String mins = dlnaRecVideoItem.getDurationInMinutes();
 

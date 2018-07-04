@@ -640,6 +640,20 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         }
     }
 
+    /**
+     * プレイヤーのみビューの設定.
+     * @param playerData 再生データ
+     */
+    private void showPlayerOnlyView(final RecordedContentsDetailData playerData) {
+        findViewById(R.id.dtv_contents_detail_player_only).setVisibility(View.VISIBLE);
+        TextView mPlayerOnlyTitle = findViewById(R.id.dtv_contents_detail_player_only_title);
+        TextView mPlayerOnlyChannelName = findViewById(R.id.dtv_contents_detail_player_only_channel_name);
+        TextView mPlayerOnlyDate = findViewById(R.id.dtv_contents_detail_player_only_date);
+        mPlayerOnlyTitle.setText(playerData.getTitle());
+        mPlayerOnlyChannelName.setText(playerData.getChannelName());
+        mPlayerOnlyDate.setText(DateUtils.getDownloadDateFormat(playerData.getDate(), this));
+    }
+
     //region private method
     /**
      * ビュー初期化.
@@ -674,6 +688,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         setRemotePlayArrow(playerData);
                     }
                     break;
+            }
+            if (!playerData.isIsLive()) {
+                showPlayerOnlyView(playerData);
             }
         }
         //ヘッダーの設定
