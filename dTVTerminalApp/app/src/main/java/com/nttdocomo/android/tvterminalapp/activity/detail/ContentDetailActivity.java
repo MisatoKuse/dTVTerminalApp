@@ -2883,6 +2883,13 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         }
                     });
                     break;
+                case HIKARI_IN_DTV:
+                    // サムネイル表示メッセージ取得
+                    DtvContentsDetailFragment detailFragment = getDetailFragment();
+                    String thumbnailMessage = StringUtils.getContentsDetailThumbnailString(
+                            detailFragment.getOtherContentsDetailData(), this, mDetailFullData.getContentsType());
+                    setThumbnailText(thumbnailMessage);
+                    break;
                 default:
                     break;
             }

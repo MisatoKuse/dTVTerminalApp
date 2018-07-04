@@ -768,6 +768,8 @@ public class ContentUtils {
         String tvService = metaFullData.getmTv_service();
         long publishStartDate = metaFullData.getPublish_start_date();
         long publishEndDate = metaFullData.getPublish_end_date();
+        long availStartDate = metaFullData.getAvail_start_date();
+        long availEndDate = metaFullData.getAvail_end_date();
         long nowDate = DateUtils.getNowTimeFormatEpoch();
         //メタレスポンス「disp_type」が「tv_program」
         switch (dispType) {
@@ -859,19 +861,19 @@ public class ContentUtils {
                 String dTv = metaFullData.getDtv();
                 DTVTLogger.debug("dtv: " + dTv);
                 if (dTv != null && IS_DTV_FLAG.equals(dTv)) {
-                    //メタレスポンス「publish_start_date」 <= 現在時刻 < 「publish_end_date」の場合
-                    if (publishStartDate <= nowDate && nowDate < publishEndDate) {
-                        //「publish_end_date」が現在日時から1か月以内
-                        if (DateUtils.isLimitThirtyDay(publishEndDate)) {
-                            //視聴可能期限(「publish_end_dateまで」)を表示
+                    //メタレスポンス「availStartDate」 <= 現在時刻 < 「availEndDate」の場合
+                    if (availStartDate <= nowDate && nowDate < availEndDate) {
+                        //「availStartDate」が現在日時から1か月以内
+                        if (DateUtils.isLimitThirtyDay(availEndDate)) {
+                            //視聴可能期限(「availEndDateまで」)を表示
                             return ViewIngType.ENABLE_WATCH_LIMIT_THIRTY;
                         } else {
-                            //「publish_end_date」が現在日時から1か月以上先
+                            //「availEndDate」が現在日時から1か月以上先
                             //視聴可能期限は非表示
                             return ViewIngType.ENABLE_WATCH;
                         }
-                        //メタレスポンス「publish_start_date」 > 現在時刻 または 現在時刻 >= 「publish_end_date」の場合
-                    } else if (publishStartDate > nowDate || nowDate >= publishEndDate) {
+                        //メタレスポンス「availStartDate」 > 現在時刻 または 現在時刻 >= 「availEndDate」の場合
+                    } else if (availStartDate > nowDate || nowDate >= availEndDate) {
                         //視聴不可
                         return ViewIngType.DISABLE_WATCH;
                     }
@@ -881,13 +883,13 @@ public class ContentUtils {
                     //「bvflg」が「1」
                     DTVTLogger.debug("bvflg: " + bvFlg);
                     if (IS_BV_FLAG.equals(bvFlg)) {
-                        //メタレスポンス「publish_start_date」 <= 現在時刻 < 「publish_end_date」
-                        if (publishStartDate <= nowDate && nowDate < publishEndDate) {
+                        //メタレスポンス「availStartDate」 <= 現在時刻 < 「availEndDate」
+                        if (availStartDate <= nowDate && nowDate < availEndDate) {
                             //「publish_end_date」が現在日時から1か月以内
-                            if (DateUtils.isLimitThirtyDay(publishEndDate)) {
-                                //視聴可能期限(「publish_end_dateまで」)を表示
+                            if (DateUtils.isLimitThirtyDay(availEndDate)) {
+                                //視聴可能期限(「availEndDateまで」)を表示
                                 return ViewIngType.ENABLE_WATCH_LIMIT_THIRTY;
-                                //「publish_end_date」が現在日時から1か月以上先
+                                //「availEndDate」が現在日時から1か月以上先
                             } else {
                                 //視聴可能期限は非表示
                                 return ViewIngType.ENABLE_WATCH;
