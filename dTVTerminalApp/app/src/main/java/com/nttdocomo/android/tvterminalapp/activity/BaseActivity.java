@@ -305,6 +305,10 @@ public class BaseActivity extends FragmentActivity implements
      * ※ペアリングアイコンからのリモコン表示時のみ鍵交換を行う
      */
     private static boolean mKeyExchangeFlag = false;
+    /**
+     * 終了後にタスク一覧からどこテレアプリを削除する場合に指定するフラグ
+     */
+    public static final  String FORCE_FINISH = "FORCE_FINISH";
 
     /**
      * リモコン表示時の鍵交換の必要性.
@@ -696,6 +700,9 @@ public class BaseActivity extends FragmentActivity implements
         initView();
         mRemoteControlRelayClient = RemoteControlRelayClient.getInstance();
 
+        //全アクティビティ終了とタスク一覧削除の仕上げの最終確認
+        checkForceFinishAndTaskRemove();
+
         //dアカウントの検知処理を追加する
         setRelayClientHandler();
 
@@ -741,6 +748,26 @@ public class BaseActivity extends FragmentActivity implements
         }
         DTVTLogger.end();
     }
+
+    /**
+     * アプリ起動不可状態で、最終的にタスク一覧から削除を行う処理
+     */
+    private void checkForceFinishAndTaskRemove() {
+        DTVTLogger.start();
+        Intent intent = getIntent();
+
+        //アプリ起動不可状態でホーム画面が起動されたかどうかの判定
+        if (intent.getBooleanExtra(FORCE_FINISH,false)) {
+            //Android4.4端末でここに来る事はないが、一応チェック
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                //アクティビティを終了し、タスク一覧から削除を行う
+                finishAndRemoveTask();
+            }
+        }
+
+        DTVTLogger.end();
+    }
+
     /**
      * 機能：onResume
      * Sub classにて、super.onResume()をコールする必要がある.
@@ -2148,6 +2175,27 @@ public class BaseActivity extends FragmentActivity implements
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+
+        DTVTLogger.end();
+    }
+
+    /**
+     * タスク一覧にアプリ情報を残さずに終了する為の準備
+     *
+     * @param context コンテキスト
+     */
+    public static void forceFinishAndTaskRemove(Context context) {
+        DTVTLogger.start();
+
+        //タスク情報を削除しつつホーム画面に飛ぶ設定・これで他のアクティビティは消えてホーム画面だけになる
+        Intent intent = new Intent();
+        intent.setClass(context, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        //ホーム画面起動後にfinishAndRemoveTaskを行わせるフラグのセット
+        intent.putExtra(FORCE_FINISH,true);
+
+        context.startActivity(intent);
 
         DTVTLogger.end();
     }

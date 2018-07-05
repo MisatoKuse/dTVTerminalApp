@@ -282,10 +282,11 @@ public class ProcessSettingFile {
 
         //Androidバージョンで終了処理を使い分ける
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            //Android5.0以降では、これでアプリ終了に加えてタスク一覧からも消える
-            mActivity.finishAndRemoveTask();
+            //finishAndRemoveTaskAPIは、タスク一覧から消すが、現在のアクティビティしか終了しない。そこでdアカウント更新時と同じように、
+            //タスク情報を消すオプションを付けてホーム画面に飛ぶ。これで画面がホーム一つに限定されるので、その後にfinishAndRemoveTaskを呼ぶ処理を行う
+            BaseActivity.forceFinishAndTaskRemove(mActivity.getApplicationContext());
         } else {
-            //4.4ではアプリ終了まで
+            //4.4ではfinishAndRemoveTaskが使えないので、この場でアプリを終了させる
             mActivity.finishAffinity();
         }
 
