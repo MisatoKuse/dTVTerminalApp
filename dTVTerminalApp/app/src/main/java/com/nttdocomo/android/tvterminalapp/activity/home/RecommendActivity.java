@@ -314,8 +314,14 @@ public class RecommendActivity extends BaseActivity implements
         DTVTLogger.start("position = " + position);
         if (null != mRecommendViewPager) {
             DTVTLogger.debug("viewpager not null");
-            mRecommendViewPager.setCurrentItem(position);
-            showProgressBar(true);
+
+            //現在選択されているタブと違うタブが押された場合に処理を行う
+            if (mRecommendViewPager.getCurrentItem() != position) {
+                mRecommendViewPager.setCurrentItem(position);
+                showProgressBar(true);
+            } else {
+                DTVTLogger.debug("viewpager same tab");
+            }
         }
         DTVTLogger.end();
     }
@@ -837,7 +843,8 @@ public class RecommendActivity extends BaseActivity implements
 
     /**
      * 読み込みアイコンの表示切替.
-     * @param showProgressBar
+     *
+     * @param showProgressBar ウェイト表示を行うならばtrue
      */
     private void showProgressBar(final boolean showProgressBar) {
         RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
