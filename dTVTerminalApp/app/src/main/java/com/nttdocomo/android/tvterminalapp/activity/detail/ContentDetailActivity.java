@@ -361,6 +361,16 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private static final String SAVEDVARIABLE_PLAY_START_POSITION = "playStartPosition";
     /** プレイヤー前回のポジション.*/
     private int mPlayStartPosition;
+
+    /**
+     * 前回リモートコントローラービュー表示フラグ.
+     */
+    private boolean mVisibility = false;
+    /**
+     * 前回リモートコントローラービュー表示フラグ.
+     */
+    private static final String REMOTE_CONTROLLER_VIEW_VISIBILITY = "visibility";
+
     /* player end */
     /** ハンドラー.*/
     private final Handler loadHandler = new Handler();
@@ -390,6 +400,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         if (savedInstanceState != null) {
             mPlayStartPosition = savedInstanceState
                     .getInt(SAVEDVARIABLE_PLAY_START_POSITION);
+            mVisibility = savedInstanceState.getBoolean(REMOTE_CONTROLLER_VIEW_VISIBILITY);
             savedInstanceState.clear();
         }
         setTheme(R.style.AppThemeBlack);
@@ -479,6 +490,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             }
             outState.putInt(SAVEDVARIABLE_PLAY_START_POSITION, mPlayerViewLayout.getCurrentPosition());
         }
+        outState.putBoolean(REMOTE_CONTROLLER_VIEW_VISIBILITY, mIsControllerVisible);
+        DTVTLogger.debug("===============================>" + mIsControllerVisible);
     }
 
     @SuppressWarnings("OverlyLongMethod")
@@ -1024,11 +1037,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 contentType = ContentTypeForGoogleAnalytics.OTHER;
             }
             // STBに接続している　「テレビで視聴」が表示
-            if (getStbStatus()) {
+            if (getStbStatus() || mVisibility) {
                 if (mIsOtherService) {
                     switch (serviceId) {
                         case D_ANIMATION_CONTENTS_SERVICE_ID:
                             // リモコンUIのリスナーを設定
+                            mVisibility = false;
                             createRemoteControllerView(true);
                             mIsControllerVisible = true;
                             mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
@@ -1038,6 +1052,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         case DTV_CONTENTS_SERVICE_ID: //「serviceId」が「15」(dTVコンテンツ)の場合
                             // 「reserved1」が「1」STB視聴不可
                             if (!CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved1())) {
+                                mVisibility = false;
                                 createRemoteControllerView(true);
                                 mIsControllerVisible = true;
                                 mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
@@ -1046,6 +1061,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             }
                             break;
                         case DTV_CHANNEL_CONTENTS_SERVICE_ID:
+                            mVisibility = false;
                             createRemoteControllerView(true);
                             mIsControllerVisible = true;
                             mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
@@ -1057,6 +1073,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     }
                 } else {
                     createRemoteControllerView(true);
+                    mIsControllerVisible = true;
                 }
             }
 
@@ -1107,8 +1124,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             }
         } else {  //plalaサーバーから
             mDetailData = mIntent.getParcelableExtra(PLALA_INFO_BUNDLE_KEY);
-            if (getStbStatus()) {
+            if (getStbStatus() || mVisibility) {
                 createRemoteControllerView(true);
+                mIsControllerVisible = true;
             }
         }
         boolean isTV = false;
@@ -1583,7 +1601,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 getChannelInfo();
             }
             if (DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
-                if (getStbStatus()) {
+                if (getStbStatus() || mVisibility) {
                     createRemoteControllerView(true);
                     mIsControllerVisible = true;
                     mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
@@ -1616,7 +1634,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (mViewIngType != null) {
                     changeUIBasedContractInfo();
                 }
-                if (getStbStatus()) {
+                if (getStbStatus() || mVisibility) {
                     createRemoteControllerView(true);
                     mIsControllerVisible = true;
                     setStartRemoteControllerUIListener(this);
@@ -1631,7 +1649,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             }
         }
         sendOperateLog();
-        if (getStbStatus()) {
+        if (getStbStatus() || mVisibility) {
+            mVisibility = false;
             findViewById(R.id.remote_control_view).setVisibility(View.VISIBLE);
         }
         responseResultCheck();
