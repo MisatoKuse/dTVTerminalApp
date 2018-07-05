@@ -143,6 +143,23 @@ public class StringUtils {
     }
 
     /**
+     * サービスID(dTV関連)に応じた他サービスであるかどうかを返す.
+     *
+     * @param id サービスID
+     * @return true：他サービス false：ひかり
+     */
+    public static boolean isOtherService(final int id) {
+        switch (id) {
+            case ContentDetailActivity.DTV_CONTENTS_SERVICE_ID:
+            case ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID:
+            case ContentDetailActivity.D_ANIMATION_CONTENTS_SERVICE_ID:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * 文字列を連結する.
      *
      * @param strings 連結したい文字列配列

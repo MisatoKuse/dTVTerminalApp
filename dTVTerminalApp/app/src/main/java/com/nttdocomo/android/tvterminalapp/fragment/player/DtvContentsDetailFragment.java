@@ -450,9 +450,21 @@ public class DtvContentsDetailFragment extends Fragment {
         labelStatus.removeAllViews();
         List<Integer> labelStatusList = new ArrayList<>();
         //NEW アイコン
-        if (DataBaseUtils.isNumber(mOtherContentsDetailData.getmStartDate())) {
-            if (DateUtils.isInOneWeek(Long.parseLong(mOtherContentsDetailData.getmStartDate()))) {
-                labelStatusList.add(R.mipmap.label_status_new);
+        if (StringUtils.isOtherService(mOtherContentsDetailData.getServiceId())) {
+            ContentUtils.ContentsType contentsType = ContentUtils.
+                    getContentsTypeByRecommend(mOtherContentsDetailData.getServiceId(), mOtherContentsDetailData.getCategoryId());
+            if (contentsType != ContentUtils.ContentsType.TV) {
+                if (!TextUtils.isEmpty(mOtherContentsDetailData.getmStartDate())) {
+                    if (DateUtils.isInOneWeek(mOtherContentsDetailData.getmStartDate())) {
+                        labelStatusList.add(R.mipmap.label_status_new);
+                    }
+                }
+            }
+        } else {
+            if (DataBaseUtils.isNumber(mOtherContentsDetailData.getmStartDate())) {
+                if (DateUtils.isInOneWeek(Long.parseLong(mOtherContentsDetailData.getmStartDate()))) {
+                    labelStatusList.add(R.mipmap.label_status_new);
+                }
             }
         }
         //4Kアイコン

@@ -1018,9 +1018,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         mDetailData = mIntent.getParcelableExtra(RECOMMEND_INFO_BUNDLE_KEY);
         if (mDetailData != null) {
             int serviceId = mDetailData.getServiceId();
-            if (serviceId == DTV_CONTENTS_SERVICE_ID
-                    || serviceId == D_ANIMATION_CONTENTS_SERVICE_ID
-                    || serviceId == DTV_CHANNEL_CONTENTS_SERVICE_ID) {
+            if (StringUtils.isOtherService(serviceId)) {
                 // 他サービス(dtv/dtvチャンネル/dアニメ)フラグを立てる
                 mIsOtherService = true;
                 contentType = ContentTypeForGoogleAnalytics.OTHER;
@@ -1479,7 +1477,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     if (CONTENT_TYPE_FLAG_ONE.equals(mDetailFullData.getmContent_type())
                             || CONTENT_TYPE_FLAG_TWO.equals(mDetailFullData.getmContent_type())) {
                         //contents_typeは1又は2の場合(見逃し（切り出し）or見逃し（完パケ）)
-                        if (DateUtils.isBefore(mDetailFullData.getmVod_start_date())){
+                        if (DateUtils.isBefore(mDetailFullData.getmVod_start_date())) {
                             // 見逃し配信前（=放送コンテンツ扱い)
                             setRecordingData(detailFragment);
                         } else {
@@ -1529,7 +1527,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             detailData.setCopy(mDetailFullData.getmCopy());
             detailData.setM4kflg(mDetailFullData.getM4kflg());
             detailData.setAdinfoArray(mDetailFullData.getmAdinfo_array());
-            detailData.setmStartDate(String.valueOf(mDetailFullData.getPublish_start_date()));
             detailData.setContentCategory(mDetailFullData.getContentsType());
             String date = "";
             ContentUtils.ContentsType contentsType = ContentUtils.getContentsTypeByPlala(mDetailFullData.getDisp_type(),
@@ -1540,6 +1537,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 //番組(m/d（曜日）h:ii - h:ii)
                 date = DateUtils.getContentsDateString(mDetailFullData.getPublish_start_date(), mDetailFullData.getPublish_end_date());
             } else {
+                detailData.setmStartDate(String.valueOf(mDetailFullData.getmVod_start_date()));
                 setViewPagerTab();
                 if (DateUtils.isBefore(mDetailFullData.getAvail_start_date())) {
                     //配信前 m/d（曜日）から
