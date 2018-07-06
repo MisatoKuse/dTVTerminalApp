@@ -491,7 +491,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             outState.putInt(SAVEDVARIABLE_PLAY_START_POSITION, mPlayerViewLayout.getCurrentPosition());
         }
         outState.putBoolean(REMOTE_CONTROLLER_VIEW_VISIBILITY, mIsControllerVisible);
-        DTVTLogger.debug("===============================>" + mIsControllerVisible);
     }
 
     @SuppressWarnings("OverlyLongMethod")
@@ -1042,7 +1041,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     switch (serviceId) {
                         case D_ANIMATION_CONTENTS_SERVICE_ID:
                             // リモコンUIのリスナーを設定
-                            mVisibility = false;
                             createRemoteControllerView(true);
                             mIsControllerVisible = true;
                             mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
@@ -1052,7 +1050,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         case DTV_CONTENTS_SERVICE_ID: //「serviceId」が「15」(dTVコンテンツ)の場合
                             // 「reserved1」が「1」STB視聴不可
                             if (!CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved1())) {
-                                mVisibility = false;
                                 createRemoteControllerView(true);
                                 mIsControllerVisible = true;
                                 mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
@@ -1061,7 +1058,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             }
                             break;
                         case DTV_CHANNEL_CONTENTS_SERVICE_ID:
-                            mVisibility = false;
                             createRemoteControllerView(true);
                             mIsControllerVisible = true;
                             mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
@@ -1650,7 +1646,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         }
         sendOperateLog();
         if (getStbStatus() || mVisibility) {
-            mVisibility = false;
             findViewById(R.id.remote_control_view).setVisibility(View.VISIBLE);
         }
         responseResultCheck();
