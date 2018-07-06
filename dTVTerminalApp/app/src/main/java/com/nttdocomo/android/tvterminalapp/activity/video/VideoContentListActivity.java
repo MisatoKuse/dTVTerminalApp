@@ -144,6 +144,8 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         super.onResume();
         super.sendScreenView(getString(R.string.google_analytics_screen_name_video_content_list));
         DTVTLogger.start();
+        //画面再表示時に読み込み中断フラグを降ろす
+        mCancelLoad = false;
         //コンテンツ詳細から戻ってきたときのみクリップ状態をチェックする
         if (mContentsDetailDisplay) {
             mContentsDetailDisplay = false;
@@ -371,6 +373,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
             }
         }
         resetCommunication();
+        mContentsAdapter.setListData(mContentsList);
         mContentsAdapter.notifyDataSetChanged();
     }
 
@@ -434,6 +437,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         DTVTLogger.start();
         //通信を止める
         mCancelLoad = true;
+        resetCommunication();
         showProgressBar(false);
         StopVideoContentConnect stopConnect = new StopVideoContentConnect();
         stopConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mVideoContentProvider);
