@@ -86,14 +86,6 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     private View mFootView;
     /**コールバックリスナー.*/
     private ScrollListenerCallBack mScrollListenerCallBack;
-    /**ダウンロードXML取得フォーマット.*/
-    private static final String TAG_ITEM_START = "<item id=\"";
-    /**ダウンロードXML取得フォーマット.*/
-    private static final String TAG_ITEM_END = "</item>";
-    /**ダウンロードXML取得フォーマット.*/
-    private static final String TAG_DIDL_START = "<DIDL-Lite";
-    /**ダウンロードXML取得フォーマット.*/
-    private static final String TAG_DIDL_END = "</DIDL-Lite>";
 
     /**
      * コールバックリスナー.
@@ -659,47 +651,12 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         downloadData.setHost(dmsItem.mIPAddress);
         downloadData.setPercentToNotify(String.valueOf(mPercentToUpdateUi));
 
-        String xml = getXmlToDl(itemData.getItemId());
-        if (null == xml) {
+        if (null == itemData.getXml()) {
             showMessage();
             return null;
         }
-        downloadData.setXmlToDownLoad(xml);
+        downloadData.setXmlToDownLoad(itemData.getXml());
         return downloadData;
-    }
-
-    /**
-     * xmlパラメータ取得.
-     *
-     * @param itemId アイテムID
-     * @return xmlパラメータ
-     */
-    private String getXmlToDl(final String itemId) {
-        String xml = mContentsList.get(0).getXml();
-        if (!TextUtils.isEmpty(xml)) {
-            int startDp = xml.indexOf(TAG_DIDL_START);
-            if (startDp == -1) {
-                return null;
-            }
-            int startIt = xml.indexOf(TAG_ITEM_START);
-            if (startIt == -1) {
-                return null;
-            }
-            String result = xml.substring(startDp, startIt);
-            String begin = TAG_ITEM_START + itemId;
-            int startSelectIt = xml.indexOf(begin);
-            if (startSelectIt == -1) {
-                return null;
-            }
-            xml = xml.substring(startSelectIt);
-            int endIt = xml.indexOf(TAG_ITEM_END);
-            if (endIt == -1) {
-                return null;
-            }
-            result = result + xml.substring(0, endIt);
-            return result + TAG_ITEM_END + TAG_DIDL_END;
-        }
-        return null;
     }
 
     /**
@@ -754,12 +711,11 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         dtcpDownloadParam.setCleartextSize(clearTextSizeInt);
         dtcpDownloadParam.setItemId(item.getItemId());
         dtcpDownloadParam.setPercentToNotify(mPercentToUpdateUi);
-        String xml = getXmlToDl(item.getItemId());
-        if (null == xml || 0 == xml.length()) {
+        if (null == item.getXml()) {
             showMessage();
             return false;
         }
-        dtcpDownloadParam.setXmlToDownLoad(xml);
+        dtcpDownloadParam.setXmlToDownLoad(item.getXml());
         //mDownloadDataProvider.beginProvider(getActivity());
 
         return true;
