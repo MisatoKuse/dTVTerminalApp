@@ -35,7 +35,6 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataBaseUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.RatingBarLayout;
 
@@ -284,10 +283,8 @@ public class DtvContentsDetailFragment extends Fragment {
         } else {
             mTextSubHeader.setVisibility(View.GONE);
         }
-        //画面表示
-        StringUtils util = new StringUtils();
         //サービスアイコン
-        int serviceIcon = util.getContentsServiceName(mOtherContentsDetailData.getServiceId());
+        int serviceIcon = ContentUtils.getContentsServiceName(mOtherContentsDetailData.getServiceId());
         mImgServiceIcon.setImageResource(serviceIcon);
         String dtv = mOtherContentsDetailData.getDtv();
         //dtvの場合
@@ -450,7 +447,7 @@ public class DtvContentsDetailFragment extends Fragment {
         labelStatus.removeAllViews();
         List<Integer> labelStatusList = new ArrayList<>();
         //NEW アイコン
-        if (StringUtils.isOtherService(mOtherContentsDetailData.getServiceId())) {
+        if (ContentUtils.isOtherService(mOtherContentsDetailData.getServiceId())) {
             ContentUtils.ContentsType contentsType = ContentUtils.
                     getContentsTypeByRecommend(mOtherContentsDetailData.getServiceId(), mOtherContentsDetailData.getCategoryId());
             if (contentsType != ContentUtils.ContentsType.TV) {

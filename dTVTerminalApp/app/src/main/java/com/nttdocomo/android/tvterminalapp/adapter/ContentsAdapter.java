@@ -163,7 +163,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     /**
      * 再利用のビュー最大count.
      */
-    private int MAXCOUNT = 0;
+    private int mMaxItemCount = 0;
     //endregion variable
 
     /**
@@ -305,7 +305,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder = new ViewHolder();
                 contentView = mInflater.inflate(R.layout.item_common_result, parent, false);
                 setListItemPattern(holder, contentView);
-                MAXCOUNT++;
+                mMaxItemCount++;
             }
         } else {
             holder = (ViewHolder) contentView.getTag();
@@ -324,7 +324,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                     holder = new ViewHolder();
                     contentView = mInflater.inflate(R.layout.item_common_result, parent, false);
                     setListItemPattern(holder, contentView);
-                    MAXCOUNT++;
+                    mMaxItemCount++;
                 }
             }
         }
@@ -875,7 +875,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             if (!isDownloadStop) {
                 holder.rl_thumbnail.setVisibility(View.VISIBLE);
                 holder.iv_thumbnail.setTag(listContentInfo.getThumURL());
-                mThumbnailProvider.setMaxQueueCount(MAXCOUNT);
+                mThumbnailProvider.setMaxQueueCount(mMaxItemCount);
                 Bitmap thumbnailImage = mThumbnailProvider.getThumbnailImage(holder.iv_thumbnail, listContentInfo.getThumURL());
                 if (thumbnailImage != null) {
                     holder.iv_thumbnail.setImageBitmap(thumbnailImage);
@@ -1421,6 +1421,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * 再利用のビュー最大countをリセット.
      */
     public void resetMaxItemCount() {
-        MAXCOUNT = 0;
+        mMaxItemCount = 0;
     }
 }

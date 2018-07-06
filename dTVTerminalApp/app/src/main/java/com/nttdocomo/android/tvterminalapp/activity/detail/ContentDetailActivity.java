@@ -1030,7 +1030,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         mDetailData = mIntent.getParcelableExtra(RECOMMEND_INFO_BUNDLE_KEY);
         if (mDetailData != null) {
             int serviceId = mDetailData.getServiceId();
-            if (StringUtils.isOtherService(serviceId)) {
+            if (ContentUtils.isOtherService(serviceId)) {
                 // 他サービス(dtv/dtvチャンネル/dアニメ)フラグを立てる
                 mIsOtherService = true;
                 contentType = ContentTypeForGoogleAnalytics.OTHER;
