@@ -20,6 +20,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 import java.util.List;
 
@@ -252,6 +254,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      *
      * @param dialogBuilder スクリーン
      */
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     private void initView(final AlertDialog.Builder dialogBuilder) {
         if (TextUtils.isEmpty(mConfirmText)) {
             mConfirmText = mContext.getString(R.string.custom_dialog_ok);
@@ -305,13 +308,32 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
             mDialog.setMessage(mContent);
         }
 
-        //表示対象のアクティビティが既に終わっているかどうかの判定
-        if (mContext instanceof Activity && ((Activity) mContext).isFinishing()) {
-            //ダイアログは表示できず、OKやキャンセルボタンのコールバックの飛び先も既に存在していない可能性があるので、帰る。
-            return;
-        }
+        //コンテキストがベースアクティビティから継承された物かどうかの判定
+        if (mContext instanceof BaseActivity) {
+            //ベースアクティビティだった
+            BaseActivity baseActivity = (BaseActivity) mContext;
 
-        mDialog.show();
+            if (baseActivity.isFinishing() || (!baseActivity.isActivityActive())) {
+                //該当アクティビティが既に終わっているか、非活性ならば、ダイアログ表示をスキップする
+                DTVTLogger.debug("initView: already activity("+ mContext.getClass() +") finish or pause:" + mContent);
+                return;
+            }
+
+            DTVTLogger.debug("initView: show dialog(" + mContext.getClass() + "):"+mContent);
+
+            //ダイアログを表示する
+            mDialog.show();
+        } else {
+            //ベースアクティビティ以外の場合のフェールセーフ処理
+            //本アプリのアクティビティは全てBaseアクティビティを継承しているのここは実行されない筈
+            DTVTLogger.debug("initView: not BaseActivity (" + mContext.getClass() + "):"+mContent);
+
+            //アクティビティかつ終了していないならばダイアログを表示する
+            if (mContext instanceof BaseActivity && !((Activity)mContext).isFinishing()) {
+                //ダイアログを表示する
+                mDialog.show();
+            }
+        }
     }
 
     /**
