@@ -306,6 +306,11 @@ public class BaseActivity extends FragmentActivity implements
      */
     private static boolean mKeyExchangeFlag = false;
     /**
+     * アクティビティが活性状態ならばtrue.
+     */
+    private boolean mActivityActive = false;
+
+    /**
      * 終了後にタスク一覧からどこテレアプリを削除する場合に指定するフラグ
      */
     public static final  String FORCE_FINISH = "FORCE_FINISH";
@@ -777,6 +782,9 @@ public class BaseActivity extends FragmentActivity implements
         super.onResume();
         DTVTLogger.start();
         TvtApplication app = (TvtApplication) getApplication();
+
+        //アクティビティが活性化したのでtrue
+        mActivityActive = true;
 
         DaccountReceiver.setDaccountChangedCallBack(this);
 
@@ -1501,11 +1509,23 @@ public class BaseActivity extends FragmentActivity implements
         mKeyExchangeFlag = isKeyExchangeRequired;
     }
 
+    /**
+     * 現在アクティビティが活性化しているかどうかを見る.
+     *
+     * @return 活性状態ならばtrue
+     */
+    public boolean isActivityActive() {
+        return mActivityActive;
+    }
+
     @Override
     protected void onPause() {
 
         dismissDialogOnPause();
         super.onPause();
+
+        //アクティビティが非活性化したのでfalse
+        mActivityActive = false;
 
         //ワンタイムトークン取得のキャンセル
         cancelOttConnection();
