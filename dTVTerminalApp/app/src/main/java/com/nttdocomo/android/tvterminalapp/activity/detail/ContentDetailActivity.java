@@ -968,10 +968,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             case OUTSIDE_HOUSE:
                 message = getString(R.string.contents_detail_no_agreement);
                 buttonText = getString(R.string.contents_detail_contract_leading_button);
+                getDetailFragment().setIsNotViewIng(true);
                 break;
             case NO_PAIRING:
                 message = getString(R.string.contents_detail_contract_text_ch);
                 buttonText = getString(R.string.contents_detail_contract_leading_button);
+                getDetailFragment().setIsNotViewIng(true);
                 break;
             default:
                 break;
@@ -1588,7 +1590,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             DTVTLogger.debug("display limit date:---" + date);
             detailData.setChannelDate(date);
             detailFragment.setOtherContentsDetailData(detailData);
-            detailFragment.noticeRefresh();
             String[] credit_array = mDetailFullData.getmCredit_array();
             if (credit_array != null && credit_array.length > 0) {
                 mContentsDetailDataProvider.getRoleListData();
@@ -1686,6 +1687,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 && !mContentsDetailDataProvider.isIsInRentalChListRequest()
                 && !mContentsDetailDataProvider.isIsInRentalVodListRequest()
                 && !mContentsDetailDataProvider.isIsInRoleListRequest()) {
+            getDetailFragment().noticeRefresh();
+            //録画ボタン表示に必要な情報がそろわない限り、ボタン表示処理はしない
+            if (mDetailFullData != null && mChannel != null) {
+                getDetailFragment().changeVisibilityRecordingReservationIcon();
+            }
             showProgressBar(false);
         }
     }
@@ -2687,6 +2693,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         mViewIngType = ContentUtils.getRentalVodViewingType(mDetailFullData, mEndDate);
         DTVTLogger.debug("get rental vod viewing type:" + mViewIngType);
         changeUIBasedContractInfo();
+        responseResultCheck();
     }
 
     @Override
@@ -2704,6 +2711,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         mViewIngType = ContentUtils.getRentalChannelViewingType(mDetailFullData, mEndDate);
         DTVTLogger.debug("get rental vod viewing type:" + mViewIngType);
         changeUIBasedContractInfo();
+        responseResultCheck();
     }
 
     /**
@@ -2730,7 +2738,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 detailFragment.setOtherContentsDetailData(detailData);
             }
         }
-        detailFragment.noticeRefresh();
+        DTVTLogger.end();
     }
 
     @Override
@@ -2898,14 +2906,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         }
                     });
                     break;
-                case HIKARI_IN_DTV:
+                default:
                     // サムネイル表示メッセージ取得
                     DtvContentsDetailFragment detailFragment = getDetailFragment();
                     String thumbnailMessage = StringUtils.getContentsDetailThumbnailString(
                             detailFragment.getOtherContentsDetailData(), this, mDetailFullData.getContentsType());
                     setThumbnailText(thumbnailMessage);
-                    break;
-                default:
                     break;
             }
         } else {
@@ -3140,7 +3146,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             default:
                 break;
         }
-        responseResultCheck();
         DTVTLogger.end();
     }
 
