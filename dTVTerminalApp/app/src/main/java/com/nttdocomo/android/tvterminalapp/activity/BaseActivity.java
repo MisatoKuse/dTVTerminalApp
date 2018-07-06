@@ -1747,7 +1747,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param data       クリップ処理用データ
      * @param clipButton クリップボタン
      */
-    public void sendClipRequest(final ClipRequestData data, final ImageView clipButton) {
+    public boolean sendClipRequest(final ClipRequestData data, final ImageView clipButton) {
 
         if (data != null && clipButton != null && !mClipRunTime) {
 
@@ -1764,7 +1764,7 @@ public class BaseActivity extends FragmentActivity implements
                 String message = getString(R.string.str_clip_execution_after_limit_contents);
                 showErrorDialogOffer(message);
                 mClipRunTime = false;
-                return;
+                return false;
             }
 
             //クリップ状態によりクリップ登録/削除実行
@@ -1784,8 +1784,12 @@ public class BaseActivity extends FragmentActivity implements
             //パラメータチェックではじかれたら失敗表示
             if (!isParamCheck) {
                 showClipToast(R.string.clip_regist_error_message);
+            } else {
+                data.setClipStatus(!data.isClipStatus());
+                return true;
             }
         }
+        return false;
     }
 
     /**

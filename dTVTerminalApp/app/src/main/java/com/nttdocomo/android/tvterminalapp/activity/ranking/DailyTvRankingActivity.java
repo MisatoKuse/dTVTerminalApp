@@ -181,6 +181,8 @@ public class DailyTvRankingActivity extends BaseActivity implements
     public void dailyRankListCallback(final List<ContentsData> contentsDataList) {
         //DbThreadからのコールバックではUIスレッドとして扱われないため
         final Context context = this;
+        // クリップ状態の判定Status変更済みコンテンツデータリスト
+        final List<ContentsData> clipStatusContentsDataList = mRankingTopDataProvider.checkClipStatus(contentsDataList);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -205,7 +207,7 @@ public class DailyTvRankingActivity extends BaseActivity implements
                     return;
                 }
 
-                setShowDailyRanking(contentsDataList);
+                setShowDailyRanking(clipStatusContentsDataList);
             }
         });
     }

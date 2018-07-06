@@ -355,14 +355,14 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 clipButton.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(final View view) {
-                        //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、タグでクリップ済/未を判定する
-                        Object clipTag = clipButton.getTag();
-                        if (clipTag.equals(BaseActivity.CLIP_ACTIVE_STATUS)) {
+                        if (listContentInfo.isClipStatus()) {
                             requestData.setClipStatus(true);
                         } else {
                             requestData.setClipStatus(false);
                         }
-                        ((BaseActivity) mContext).sendClipRequest(requestData, clipButton);
+                        if (((BaseActivity) mContext).sendClipRequest(requestData, clipButton)) {
+                            listContentInfo.setClipStatus(!listContentInfo.isClipStatus());
+                        }
                     }
                 });
             }
@@ -1201,36 +1201,20 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                     if (!mType.equals(ActivityTypeItem.TYPE_RECORDING_RESERVATION_LIST)) {
                         //クリップ状態が1以外の時は、非活性クリップボタンを表示
                         if (listContentInfo.isClipExec()) {
-                            //クリップ状態が再取得された場合はタグでの判定を使用しない
-                            if (!listContentInfo.isClipStatusUpdate()) {
-                                //クリップ操作後のボタン状態に応じてクリップのステータスを変更し、リスト再利用時のボタン書き換えを回避する
-                                Object clipButtonTag = holder.tv_clip.getTag();
-                                if (clipButtonTag != null) {
-                                    if (clipButtonTag.equals(BaseActivity.CLIP_ACTIVE_STATUS)) {
-                                        listContentInfo.setClipStatus(true);
-                                    } else {
-                                        listContentInfo.setClipStatus(false);
-                                    }
-                                }
-                            }
                             if (!UserInfoUtils.getClipActive(mContext)) {
                                 holder.tv_clip.setBackgroundResource(R.mipmap.icon_tap_circle_normal_clip);
                             } else {
                                 //DREM-1882 期限切れコンテンツのクリップ対応により、期限切れクリップコンテンツは一律でアクティブボタンを表示
                                 if (listContentInfo.isClipStatus() || listContentInfo.isIsAfterLimitContents()) {
                                     holder.tv_clip.setBackgroundResource(R.drawable.common_clip_active_selector);
-                                    holder.tv_clip.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
                                 } else {
                                     holder.tv_clip.setBackgroundResource(R.drawable.common_clip_normal_selector);
-                                    holder.tv_clip.setTag(BaseActivity.CLIP_OPACITY_STATUS);
                                 }
                             }
                             holder.tv_clip.setVisibility(View.VISIBLE);
                         } else {
                             holder.tv_clip.setVisibility(View.GONE);
                         }
-                        //クリップ状態判定後は更新フラグをfalseに戻す
-                        listContentInfo.setClipStatusUpdate(false);
                     }
                 }
             } else {
