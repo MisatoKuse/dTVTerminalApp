@@ -876,6 +876,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         //未ペアリングかつひかりTV状態の時はサムネイルにメッセージとペアリングボタンを表示する
                         switch (contentsType) {
                             case HIKARI_TV:
+                            case HIKARI_TV_WITHIN_AN_HOUR:
                             case HIKARI_TV_NOW_ON_AIR:
                             case HIKARI_TV_VOD:
                                 mThumbnailBtn.setVisibility(View.VISIBLE);
@@ -2864,7 +2865,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     /**
      * ひかりTV Now On Air の時のみ自動再生する.
      */
-    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
+    @SuppressWarnings({"EnumSwitchStatementWhichMissesCases", "OverlyLongMethod"})
     private void playNowOnAir() {
         DTVTLogger.start();
         if (DeviceStateUtils.getPairingState(this, getStbStatus()).equals(DeviceStateUtils.PairingState.NO_PAIRING)
@@ -2875,6 +2876,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             //未ペアリングかつひかりTV状態の時はサムネイルにメッセージとペアリングボタンを表示する
             switch (contentsType) {
                 case HIKARI_TV:
+                case HIKARI_TV_WITHIN_AN_HOUR:
                 case HIKARI_TV_NOW_ON_AIR:
                 case HIKARI_TV_VOD:
                     startAppIcon.setVisibility(View.GONE);
@@ -3138,7 +3140,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             default:
                 break;
         }
-        detailFragment.changeVisibilityRecordingReservationIcon(isVisibleRecordButton ? View.VISIBLE : View.INVISIBLE);
         responseResultCheck();
         DTVTLogger.end();
     }

@@ -567,6 +567,7 @@ public class DtvContentsDetailFragment extends Fragment {
      */
     public void noticeRefresh() {
         setDetailData();
+        changeVisibilityRecordingReservationIcon();
     }
 
     /**
@@ -628,16 +629,28 @@ public class DtvContentsDetailFragment extends Fragment {
     /**
      * 録画予約アイコンの 表示/非表示 を切り替え.
      *
-     * @param visibility 表示/非表示の指定
      */
-    public void changeVisibilityRecordingReservationIcon(final int visibility) {
-        DTVTLogger.start("setVisibility:" + visibility);
+    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
+    private void changeVisibilityRecordingReservationIcon() {
+        DTVTLogger.start();
         //未ログイン又は未契約時は録画ボタンを非活性
         if (!UserInfoUtils.getClipActive(getContext())) {
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.icon_tap_circle_normal_rec);
             mRecordButton.setImageBitmap(bitmap);
+        } else {
+            if (mOtherContentsDetailData.getContentCategory() != null) {
+                switch (mOtherContentsDetailData.getContentCategory()) {
+                    case HIKARI_TV:
+                    case HIKARI_IN_DCH_TV:
+                        mRecordButton.setVisibility(View.VISIBLE);
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                mRecordButton.setVisibility(View.GONE);
+            }
         }
-        mRecordButton.setVisibility(visibility);
         DTVTLogger.end();
     }
 
