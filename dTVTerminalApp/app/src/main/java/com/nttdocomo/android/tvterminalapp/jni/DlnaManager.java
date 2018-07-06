@@ -714,8 +714,12 @@ public class DlnaManager {
         }
 
         for (DlnaObject obj: info) {
+            //チャンネル名をARIB外字変換
             obj.mChannelName = DlnaManager.shared().mAribUtils.convertAribGaiji(
                     obj.mChannelName);
+            //タイトルをARIB外字変換
+            obj.mTitle = DlnaManager.shared().mAribUtils.convertAribGaiji(
+                    obj.mTitle);
             try {
                 Integer.parseInt(obj.mSize);
             } catch (NumberFormatException e) {
