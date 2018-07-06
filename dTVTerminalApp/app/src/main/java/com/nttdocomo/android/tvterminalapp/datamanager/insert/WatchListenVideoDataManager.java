@@ -9,6 +9,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
+import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WatchListenVideoListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DataBaseHelper;
@@ -70,7 +71,9 @@ public class WatchListenVideoDataManager {
             WatchListenVideoListDao watchListenVideoListDao = new WatchListenVideoListDao(database);
             @SuppressWarnings("unchecked")
             List<HashMap<String, String>> hashMaps = watchListenVideoList.getVcList();
-
+            if (hashMaps.size() > HomeActivity.HOME_CONTENTS_LIST_COUNT) {
+                hashMaps = hashMaps.subList(0, HomeActivity.HOME_CONTENTS_LIST_COUNT);
+            }
             //DB保存前に前回取得したデータは全消去する
             watchListenVideoListDao.delete();
 

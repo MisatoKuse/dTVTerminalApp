@@ -24,7 +24,6 @@ import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WatchListenVideoWebClient;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -84,7 +83,6 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
 
     @Override
     public void onWatchListenVideoJsonParsed(final List<WatchListenVideoList> watchListenVideoList) {
-        WatchListenVideoListDataManager videoListDataManager = new WatchListenVideoListDataManager(mContext);
         if (watchListenVideoList == null) {
             if (mWebClient != null) {
                 mError = mWebClient.getError();
@@ -95,7 +93,9 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
         }
         if (watchListenVideoList.size() > 0) {
             WatchListenVideoList list = watchListenVideoList.get(0);
-
+            if (mPagerOffset == DEFAULT_PAGE_OFFSET) {
+                setStructDB(list);
+            }
             // 次のリクエストに使用するpagerOffsetを設定
             Map<String, String> clipMap = list.getVcMap();
             Integer offset = Integer.parseInt(clipMap.get(JsonConstants.META_RESPONSE_OFFSET));
@@ -103,30 +103,10 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
             if (offset >= 0 && count >= 0) {
                 mPagerOffset = offset + count;
             }
-
-            setStructDB(list);
-            if (!mRequiredClipKeyList
-                    || mResponseEndFlag) {
-                List<HashMap<String, String>> vcList = list.getVcList();
-                if (vcList != null && vcList.size() > 0 && !vcList.get(0).isEmpty()) {
-                    sendWatchListenVideoListData(list.getVcList());
-                } else {
-                    //通信でデータ取得できないときはDBから取得
-                    Handler handler = new Handler();
-                    DataBaseThread dataBaseThread = new DataBaseThread(handler, this, WATCH_LISTEN_VIDEO_SELECT);
-                    dataBaseThread.start();
-                }
+            if (!mRequiredClipKeyList || mResponseEndFlag) {
+                sendWatchListenVideoListData(list.getVcList());
             } else {
                 mWatchListenVideoList = list;
-                //クリップ未取得の際は何もしないが、ダイアログを非表示にするため、コールバックを返す
-                mApiDataProviderCallback.watchListenVideoListCallback(null);
-            }
-        } else {
-            if (null != mApiDataProviderCallback) {
-                //通信でデータ取得できないときはDBから取得
-                Handler handler = new Handler();
-                DataBaseThread dataBaseThread = new DataBaseThread(handler, this, WATCH_LISTEN_VIDEO_SELECT);
-                dataBaseThread.start();
             }
         }
     }
@@ -173,32 +153,22 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
      */
     public void getWatchListenVideoData(final int pagerOffset) {
         mPagerOffset = pagerOffset;
-
-        DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(DateUtils.WATCHING_VIDEO_LIST_LAST_INSERT);
+        mWatchListenVideoList = null;
 
         // クリップキー一覧を取得
         if (!mIsCancel && mRequiredClipKeyList) {
             getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
         }
 
-        //視聴中ビデオ一覧のDB保存履歴と、有効期間を確認
-        if (!mIsCancel && (lastDate == null || lastDate.length() < 1 || dateUtils.isBeforeLimitDate(lastDate))) {
-            mWebClient = new WatchListenVideoWebClient(mContext);
+        mWebClient = new WatchListenVideoWebClient(mContext);
 
-            UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
-            int ageReq = userInfoDataProvider.getUserAge();
-            int lowerPageLimit = 1;
-            String pagerDirection = "next";
+        UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
+        int ageReq = userInfoDataProvider.getUserAge();
+        int lowerPageLimit = 1;
+        String pagerDirection = "next";
 
-            mWebClient.getWatchListenVideoApi(ageReq, UPPER_PAGE_LIMIT,
-                    lowerPageLimit, mPagerOffset, pagerDirection, this);
-        } else {
-            //WEBAPIを取得できなかった時はDBのデータを使用
-            Handler handler = new Handler();
-            DataBaseThread dataBaseThread = new DataBaseThread(handler, this, WATCH_LISTEN_VIDEO_SELECT);
-            dataBaseThread.start();
-        }
+        mWebClient.getWatchListenVideoApi(ageReq, UPPER_PAGE_LIMIT,
+                lowerPageLimit, mPagerOffset, pagerDirection, this);
     }
 
     /**

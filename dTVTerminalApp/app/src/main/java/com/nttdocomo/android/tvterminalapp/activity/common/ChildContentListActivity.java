@@ -296,11 +296,7 @@ public class ChildContentListActivity extends BaseActivity implements
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        int offset = 0;
-                        if (null != mContentsList) {
-                            offset = mContentsList.size() + 1;
-                        }
-                        mChildContentDataProvider.getChildContentList(mCrid, offset, mDispType);
+                        mChildContentDataProvider.getChildContentList(mCrid, mChildContentDataProvider.getPagerOffset(), mDispType);
                     }
                 }, LOAD_PAGE_DELAY_TIME);
             }

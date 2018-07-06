@@ -302,11 +302,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        int offset = 0;
-                        if (null != mContentsList) {
-                            offset = mContentsList.size() + 1;
-                        }
-                        mVideoContentProvider.getVideoContentData(mGenreId, offset);
+                        mVideoContentProvider.getVideoContentData(mGenreId, mVideoContentProvider.getPagerOffset());
                     }
                 }, LOAD_PAGE_DELAY_TIME);
             }

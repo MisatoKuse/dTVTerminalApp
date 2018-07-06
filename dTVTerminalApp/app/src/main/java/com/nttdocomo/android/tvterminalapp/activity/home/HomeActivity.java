@@ -106,7 +106,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     /**
      * コンテンツ一覧数.
      */
-    private final static int HOME_CONTENTS_LIST_COUNT = 10;
+    public final static int HOME_CONTENTS_LIST_COUNT = 10;
     /**
      * ヘッダのmargin.
      */

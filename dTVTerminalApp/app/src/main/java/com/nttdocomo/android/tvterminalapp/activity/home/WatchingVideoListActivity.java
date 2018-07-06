@@ -293,15 +293,15 @@ public class WatchingVideoListActivity extends BaseActivity implements
                     return;
                 }
 
-                if (0 == watchListenVideoContentInfo.size()) {
+                for (int i = 0; i < NUM_PER_PAGE && i < watchListenVideoContentInfo.size(); i++) {
+                    mWatchingVideoListData.add(watchListenVideoContentInfo.get(i));
+                }
+
+                if (0 == mWatchingVideoListData.size()) {
                     //doing
                     mNoDataMessage.setVisibility(View.VISIBLE);
                     resetCommunication();
                     return;
-                }
-
-                for (int i = 0; i < NUM_PER_PAGE && i < watchListenVideoContentInfo.size(); i++) {
-                    mWatchingVideoListData.add(watchListenVideoContentInfo.get(i));
                 }
 
                 //アナライザーの指摘によるヌルチェック

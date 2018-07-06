@@ -54,6 +54,8 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
     private ErrorState mError = null;
     /**通信止めるフラグ.*/
     private boolean mIsCancel = false;
+    /**子コンテンツ一覧データ取得位置.*/
+    private int mPagerOffset = 0;
 
     // endregion variable
 
@@ -85,6 +87,9 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
             }
             mCallback.childContentListCallback(null);
         } else {
+            if (response.getPager().getOffset() >= 0 && response.getPager().getCount() >= 0) {
+                mPagerOffset = response.getPager().getOffset() + response.getPager().getCount();
+            }
             if (!mRequiredClipKeyList
                     || mResponseEndFlag) {
                 sendData(response);
@@ -101,6 +106,8 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
      * @param dispType 表示タイプ
      */
     public void getChildContentList(final String crid, final int offset, final String dispType) {
+        mPagerOffset = offset;
+        mChildContentListGetResponse = null;
         if (!mIsCancel) {
             if (mRequiredClipKeyList) {
                 getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.RequestParamType.VOD));
@@ -241,5 +248,14 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
     private void sendData(final ChildContentListGetResponse response) {
         List<ContentsData> list = makeContentsData(response);
         mCallback.childContentListCallback(list);
+    }
+
+    /**
+     * ページオフセットの取得
+     *
+     * @return ページオフセット
+     */
+    public int getPagerOffset() {
+        return mPagerOffset;
     }
 }
