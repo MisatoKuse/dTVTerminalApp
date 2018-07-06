@@ -104,6 +104,14 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private boolean mIsEndPage = false;
     /** ページングインデックス.*/
     private int mPageIndex;
+    /**ダウンロードXML取得フォーマット.*/
+    private static final String TAG_ITEM_START = "<item id=\"";
+    /**ダウンロードXML取得フォーマット.*/
+    private static final String TAG_ITEM_END = "</item>";
+    /**ダウンロードXML取得フォーマット.*/
+    private static final String TAG_DIDL_START = "<DIDL-Lite";
+    /**ダウンロードXML取得フォーマット.*/
+    private static final String TAG_DIDL_END = "</DIDL-Lite>";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -582,6 +590,40 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     /**
+     * xmlパラメータ取得.
+     * @param xmlDidl xml
+     * @param itemId アイテムID
+     * @return ダウンロードパラメータ
+     */
+    private String getXmlToDl(final String xmlDidl, final String itemId) {
+        String xml = xmlDidl;
+        if (!TextUtils.isEmpty(xml)) {
+            int startDp = xml.indexOf(TAG_DIDL_START);
+            if (startDp == -1) {
+                return null;
+            }
+            int startIt = xml.indexOf(TAG_ITEM_START);
+            if (startIt == -1) {
+                return null;
+            }
+            String result = xml.substring(startDp, startIt);
+            String begin = TAG_ITEM_START + itemId;
+            int startSelectIt = xml.indexOf(begin);
+            if (startSelectIt == -1) {
+                return null;
+            }
+            xml = xml.substring(startSelectIt);
+            int endIt = xml.indexOf(TAG_ITEM_END);
+            if (endIt == -1) {
+                return null;
+            }
+            result = result + xml.substring(0, endIt);
+            return result + TAG_ITEM_END + TAG_DIDL_END;
+        }
+        return null;
+    }
+
+    /**
      * VideoBrowsの設定.
      *
      * @param dlnaRecVideoItems 録画ビデオアイテム
@@ -620,7 +662,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             detailData.setTitle(itemData.mTitle);
             detailData.setVideoType(itemData.mVideoType);
             detailData.setClearTextSize(itemData.mClearTextSize);
-            detailData.setXml(itemData.mXml);
+            detailData.setXml(getXmlToDl(dlnaRecVideoItems.get(0).mXml, itemData.mItemId));
             detailData.setChannelName(itemData.mChannelName);
             detailData.setDate(itemData.mDate);
             if (hideDownloadBtn) {
