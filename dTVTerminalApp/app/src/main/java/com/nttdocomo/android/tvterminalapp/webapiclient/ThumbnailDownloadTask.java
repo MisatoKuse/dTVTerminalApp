@@ -16,6 +16,7 @@ import com.nttdocomo.android.ocsplib.exception.OcspParameterException;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.utils.BitmapDecodeUtils;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -86,7 +87,7 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
         BufferedInputStream in = null;
         try {
             mImageUrl = params[0];
-            Bitmap bitmap = mThumbnailProvider.thumbnailCacheManager.getBitmapFromDisk(mImageUrl);
+            Bitmap bitmap = mThumbnailProvider.thumbnailCacheManager.getBitmapFromDisk(mImageUrl, mImageSizeType);
             if (bitmap != null) {
                 mThumbnailProvider.thumbnailCacheManager.putBitmapToMem(mImageUrl, bitmap);
                 return bitmap;
@@ -116,7 +117,11 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
             }
 
             in = new BufferedInputStream(urlConnection.getInputStream(), 8 * 1024);
-            bitmap = BitmapFactory.decodeStream(in);
+            if (mContext != null) {
+                bitmap = BitmapDecodeUtils.compressBitmap(mContext, in, mImageSizeType);
+            } else {
+                bitmap = BitmapFactory.decodeStream(in);
+            }
             // ディスクに保存する
             mThumbnailProvider.thumbnailCacheManager.saveBitmapToDisk(mImageUrl, bitmap);
             if (bitmap != null) {

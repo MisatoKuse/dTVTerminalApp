@@ -191,6 +191,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      * サービスアイコン　カテゴリーID判定条件(ひかりTV、dTV).
      */
     private final static String categoryId_Hikari_dtv = "10";
+    /**
+     * 再利用のビュー最大count.
+     */
+    private int MAXCOUNT = 0;
 
     /**
      * Itemクリック動作でコールバック.
@@ -288,6 +292,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         viewHolder.mRankNum = view.findViewById(R.id.home_main_recyclerview_item_iv_rank_num);
         viewHolder.mServiceIconFirst = view.findViewById(R.id.home_main_recyclerview_item_iv_service_icon_first);
         viewHolder.mServiceIconSecond = view.findViewById(R.id.home_main_recyclerview_item_iv_service_icon_second);
+        MAXCOUNT++;
         return viewHolder;
     }
 
@@ -400,6 +405,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         if (!TextUtils.isEmpty(thumbnail)) {
             if (!mIsDownloadStop) {
                 viewHolder.mImage.setTag(thumbnail);
+                mThumbnailProvider.setMaxQueueCount(MAXCOUNT);
                 Bitmap bitmap = mThumbnailProvider.getThumbnailImage(viewHolder.mImage, thumbnail);
                 if (bitmap != null) {
                     viewHolder.mImage.setImageBitmap(bitmap);
@@ -721,6 +727,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         mIsDownloadStop = true;
         if (mThumbnailProvider != null) {
             mThumbnailProvider.stopConnect();
+            mThumbnailProvider.removeAllMemoryCache();
         }
     }
 

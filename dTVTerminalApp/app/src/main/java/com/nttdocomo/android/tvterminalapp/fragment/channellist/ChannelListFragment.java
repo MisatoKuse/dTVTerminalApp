@@ -249,6 +249,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
     public void noticeRefresh() {
         if (null != mChannelListAdapter) {
             mChannelListAdapter.setChannelListDataType(mChannelListDataType);
+            mChannelListAdapter.resetMaxItemCount();
             mChannelListAdapter.notifyDataSetChanged();
         }
     }

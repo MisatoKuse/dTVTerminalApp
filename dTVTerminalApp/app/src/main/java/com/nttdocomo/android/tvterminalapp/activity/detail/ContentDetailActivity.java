@@ -2441,6 +2441,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             StopThumbnailConnect thumbnailConnect = new StopThumbnailConnect();
             thumbnailConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mThumbnailProvider);
             mThumbnailProvider.stopConnect();
+            mThumbnailProvider.removeAllMemoryCache();
         }
         DTVTLogger.end();
     }

@@ -267,6 +267,7 @@ public class ClipListBaseFragment extends Fragment
      */
     public void noticeRefresh() {
         if (null != mClipMainAdapter) {
+            mClipMainAdapter.resetMaxItemCount();
             mClipMainAdapter.notifyDataSetChanged();
         }
     }

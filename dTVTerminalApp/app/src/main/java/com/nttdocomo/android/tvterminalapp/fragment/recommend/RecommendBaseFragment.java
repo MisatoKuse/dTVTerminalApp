@@ -200,6 +200,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
                 default:
                     break;
             }
+            mRecommendListBaseAdapter.resetMaxItemCount();
             mRecommendListBaseAdapter.notifyDataSetChanged();
             showProgressBar(false);
         }
@@ -251,6 +252,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
 
         mData.clear();
         if (mRecommendListBaseAdapter != null) {
+            mRecommendListBaseAdapter.resetMaxItemCount();
             mRecommendListBaseAdapter.notifyDataSetChanged();
             showProgressBar(false);
         }

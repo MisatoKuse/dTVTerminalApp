@@ -67,6 +67,10 @@ public class ChannelListAdapter extends BaseAdapter {
      * サムネイル取得用定数.
      */
     private static final int POSITION_ONE = 1;
+    /**
+     * 再利用のビュー最大count.
+     */
+    private int MAXCOUNT = 0;
 
     /**
      * コンストラクタ.
@@ -135,6 +139,7 @@ public class ChannelListAdapter extends BaseAdapter {
                 case CH_LIST_DATA_TYPE_HIKARI:
                 case CH_LIST_DATA_TYPE_DCH:
                     holder.mThumbnail.setVisibility(View.VISIBLE);
+                    MAXCOUNT++;
                     break;
                 default:
                     break;
@@ -158,6 +163,7 @@ public class ChannelListAdapter extends BaseAdapter {
         }
         if (null != holder.mThumbnail && null != thumbnail) {
             holder.mThumbnail.setTag(thumbnail);
+            mThumbnailProvider.setMaxQueueCount(MAXCOUNT);
             Bitmap bp = mThumbnailProvider.getThumbnailImage(holder.mThumbnail, thumbnail);
             if (null != bp) {
                 holder.mThumbnail.setImageBitmap(bp);
@@ -214,6 +220,13 @@ public class ChannelListAdapter extends BaseAdapter {
         }
         nameThumbnailOut.add(chName);
         nameThumbnailOut.add(thumbnail);
+    }
+
+    /**
+     * 再利用のビュー最大countをリセット.
+     */
+    public void resetMaxItemCount() {
+        MAXCOUNT = 0;
     }
 
     /**
