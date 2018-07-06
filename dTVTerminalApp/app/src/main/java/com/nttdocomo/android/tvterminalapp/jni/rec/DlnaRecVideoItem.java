@@ -4,13 +4,14 @@
 
 package com.nttdocomo.android.tvterminalapp.jni.rec;
 
-
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+
+import java.io.Serializable;
 
 /**
  * 機能：録画情報を表示するクラス.
  */
-public class DlnaRecVideoItem {
+public class DlnaRecVideoItem implements Serializable {
 
     /**
      * このクラスにて、フィールドは「public」に設定している理由は、.
