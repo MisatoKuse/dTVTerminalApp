@@ -202,7 +202,10 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      * アプリケーションバージョンチェックダイアログ表示中フラグ.
      */
     private boolean mIsApplicationVersionCheckIncompatibleDialogFlag = false;
-
+    /**
+     * dアカウントエラーダイアログ表示中フラグ.
+     */
+    private boolean mIsDAccountErrorDialogShowing = false;
     /**
      * タイマーステータス.
      */
@@ -1269,6 +1272,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         failedRecordingReservationDialog.setCancelText(R.string.recording_reservation_failed_dialog_confirm);
         // Cancelable
         failedRecordingReservationDialog.setCancelable(false);
+        failedRecordingReservationDialog.setOnTouchOutside(false);
         failedRecordingReservationDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
@@ -1339,6 +1343,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     protected void showDAccountErrorDialog() {
         super.showDAccountErrorDialog();
         //ダイアログ表示のタイミングでタイマ停止
+        mIsDAccountErrorDialogShowing = true;
         stopCallbackTimer();
         DTVTLogger.end();
     }
@@ -1346,8 +1351,12 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void allDismissCallback() {
         //ダイアログを閉じたタイミングでSTB未検出ならタイマ開始
-        if (mDlnaDmsInfo.size() <= 0) {
+        if (mDlnaDmsInfo.size() <= 0 && mIsDAccountErrorDialogShowing) {
+            mIsDAccountErrorDialogShowing = false;
             startCallbackTimer();
+        } else {
+            //dアカウントエラーダイアログ以外の場合はそのまま閉じる
+            super.allDismissCallback();
         }
     }
 

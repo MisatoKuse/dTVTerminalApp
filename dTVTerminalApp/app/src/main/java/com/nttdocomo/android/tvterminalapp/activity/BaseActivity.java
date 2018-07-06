@@ -1270,6 +1270,8 @@ public class BaseActivity extends FragmentActivity implements
 
         //閉じたときに次のダイアログを呼ぶ処理
         errorDialog.setDialogDismissCallback(this);
+        //エラーダイアログ枠外タップ不可
+        errorDialog.setOnTouchOutside(false);
 
         //ダイアログをキューにためる処理
         offerDialog(errorDialog);
@@ -1956,6 +1958,7 @@ public class BaseActivity extends FragmentActivity implements
         }
         //次のダイアログを呼ぶ為の処理
         errorDialog.setDialogDismissCallback(BaseActivity.this);
+        errorDialog.setOnTouchOutside(false);
 
         //showDialogの代わり・重複ダイアログ実現用
         offerDialog(errorDialog);
