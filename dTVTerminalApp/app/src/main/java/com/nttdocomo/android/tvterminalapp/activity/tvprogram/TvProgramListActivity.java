@@ -93,6 +93,10 @@ public class TvProgramListActivity extends BaseActivity implements
      */
     private Boolean mIsMenuLaunch = false;
     /**
+     * マイ番組表非表示フラグ(未ログイン又は未契約状態).
+     */
+    private boolean mIsDisableMyChannel = false;
+    /**
      * 左側タイムスクロール.
      */
     private ProgramScrollView mTimeScrollView = null;
@@ -498,8 +502,9 @@ public class TvProgramListActivity extends BaseActivity implements
     private void setTabView() {
         DTVTLogger.start();
         UserState userState = UserInfoUtils.getUserState(getApplicationContext());
+        mIsDisableMyChannel = userState.equals(UserState.LOGIN_NG) || userState.equals(UserState.LOGIN_OK_CONTRACT_NG);
         //未ログイン状態ではマイ番組表タブを表示しない
-        if (userState.equals(UserState.LOGIN_NG)) {
+        if (mIsDisableMyChannel) {
             mProgramTabNames = getResources().getStringArray(R.array.tv_program_list_no_login_tab_names);
         } else {
             mProgramTabNames = getResources().getStringArray(R.array.tv_program_list_tab_names);
@@ -790,7 +795,7 @@ public class TvProgramListActivity extends BaseActivity implements
         DTVTLogger.start();
         int index = tabIndex;
         UserState userState = UserInfoUtils.getUserState(getApplicationContext());
-        if (userState.equals(UserState.LOGIN_NG)) {
+        if (mIsDisableMyChannel) {
             index++;
         }
         return index;
