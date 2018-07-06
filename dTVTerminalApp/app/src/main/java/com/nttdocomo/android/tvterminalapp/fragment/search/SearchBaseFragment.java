@@ -191,6 +191,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
                     mContentsAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_DEFAULT);
                     break;
             }
+            mContentsAdapter.resetMaxItemCount();
             mContentsAdapter.notifyDataSetChanged();
         }
         if (null != mCountText) {

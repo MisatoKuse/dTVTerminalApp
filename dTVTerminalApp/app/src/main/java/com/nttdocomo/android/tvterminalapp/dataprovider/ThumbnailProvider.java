@@ -50,6 +50,10 @@ public class ThumbnailProvider {
 	 */
 	private boolean mIsCancel = false;
 	/**
+	 * 最大Queue数.
+	 */
+	private int mMaxItemViewCount;
+	/**
 	 * 画像サイズ種類.
 	 */
 	private final ThumbnailDownloadTask.ImageSizeType mImageSizeType;
@@ -64,6 +68,14 @@ public class ThumbnailProvider {
 		thumbnailCacheManager.initMemCache();
 		mImageSizeType = imageSizeType;
 		mContext = context;
+	}
+
+	/**
+	 * コンストラクタ.
+	 * @param maxQueueCount 最大項目数
+	 */
+	public void setMaxQueueCount(final int maxQueueCount) {
+		mMaxItemViewCount = maxQueueCount;
 	}
 
 	/**
@@ -97,11 +109,16 @@ public class ThumbnailProvider {
                 mDownloadTask = new ThumbnailDownloadTask(imageView, this, mContext, mImageSizeType);
                 mDownloadTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, imageUrl);
             } else {
+				if (mMaxItemViewCount > 0 && mListUrl.size() > mMaxItemViewCount) {
+					String firstUrl = mListUrl.entrySet().iterator().next().getKey();
+					mListUrl.remove(firstUrl);
+				}
 				//url重複がある場合
                 if (mListUrl.containsKey(imageUrl)) {
-					mListUrl.remove(imageUrl);
-                }
-				mListUrl.put(imageUrl, imageView);
+					new ThumbnailDownloadTask(imageView, this, mContext, mImageSizeType).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, imageUrl);
+                } else {
+					mListUrl.put(imageUrl, imageView);
+				}
             }
 		} else {
             DTVTLogger.error("ThumbnailProvider is stopping connection");
@@ -144,6 +161,13 @@ public class ThumbnailProvider {
 	 */
 	public void enableConnect() {
 		mIsCancel = false;
+	}
+
+	/**
+	 * メモリキャッシュを解放させる.
+	 */
+	public void removeAllMemoryCache() {
+		thumbnailCacheManager.removeMemCache();
 	}
 
 	/**

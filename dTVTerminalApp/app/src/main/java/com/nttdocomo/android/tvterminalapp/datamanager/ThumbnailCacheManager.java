@@ -6,10 +6,11 @@ package com.nttdocomo.android.tvterminalapp.datamanager;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v4.util.LruCache;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.utils.BitmapDecodeUtils;
+import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -109,9 +110,13 @@ public class ThumbnailCacheManager {
                     mMemChaeBuf = new ArrayList();
                 }
 
+                if (oldValue != null && !oldValue.isRecycled()) {
+                    oldValue.isRecycled();
+                    System.gc();
+                }
                 //本来ここで"oldValue.recycle()"を行うべきだが、既に各ビューに渡してしまった画像が、
                 //リサイクル済みとなってしまい異常終了する。そこで、後でまとめてリサイクルを行う為に蓄積を行う
-                mMemChaeBuf.add(oldValue);
+//                mMemChaeBuf.add(oldValue);
             }
         };
     }
@@ -120,9 +125,10 @@ public class ThumbnailCacheManager {
      * ディスクからBitmap取得.
      *
      * @param fileName ファイル名
+     * @param mImageSizeType 画像タイプ
      * @return bitmap ディスクから取得画像
      */
-    public Bitmap getBitmapFromDisk(final String fileName) {
+    public Bitmap getBitmapFromDisk(final String fileName, final ThumbnailDownloadTask.ImageSizeType mImageSizeType) {
         //コンテキストがヌルの場合は帰る
         if (mContext == null) {
             return null;
@@ -133,7 +139,7 @@ public class ThumbnailCacheManager {
         File file = new File(dir);
         Bitmap bitmap = null;
         if (file.exists()) {
-            bitmap = BitmapFactory.decodeFile(dir);
+            bitmap = BitmapDecodeUtils.compressBitmap(mContext, dir, mImageSizeType);
         }
         return bitmap;
     }
@@ -145,7 +151,10 @@ public class ThumbnailCacheManager {
      * @return bitmap メモリから取得画像
      */
     public Bitmap getBitmapFromMem(final String url) {
-        return mMemCache.get(url);
+        if (mMemCache != null) {
+            return mMemCache.get(url);
+        }
+        return null;
     }
 
     /**
@@ -157,7 +166,9 @@ public class ThumbnailCacheManager {
     public void putBitmapToMem(final String url, final Bitmap bitmap) {
         if (url != null && bitmap != null && mMemCache != null) {
             //格納先と格納情報がそろっていた場合に蓄積を行う
-            mMemCache.put(url, bitmap);
+            if (mMemCache.get(url) == null) {
+                mMemCache.put(url, bitmap);
+            }
         }
     }
 
@@ -269,6 +280,19 @@ public class ThumbnailCacheManager {
                 DTVTLogger.debug(e);
             }
         }
+    }
+
+    /**
+     * メモリキャッシュを解放する.
+     */
+    public void removeMemCache() {
+        DTVTLogger.start();
+        //本来のキャッシュのクリア
+        if (mMemCache != null) {
+            mMemCache.evictAll();
+        }
+        System.gc();
+        DTVTLogger.end();
     }
 
     /**

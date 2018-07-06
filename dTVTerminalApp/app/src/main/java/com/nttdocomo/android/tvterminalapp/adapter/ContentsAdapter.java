@@ -160,6 +160,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * ダウンロード禁止判定フラグ.
      */
     private boolean isDownloadStop = false;
+    /**
+     * 再利用のビュー最大count.
+     */
+    private int MAXCOUNT = 0;
     //endregion variable
 
     /**
@@ -301,6 +305,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder = new ViewHolder();
                 contentView = mInflater.inflate(R.layout.item_common_result, parent, false);
                 setListItemPattern(holder, contentView);
+                MAXCOUNT++;
             }
         } else {
             holder = (ViewHolder) contentView.getTag();
@@ -319,6 +324,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                     holder = new ViewHolder();
                     contentView = mInflater.inflate(R.layout.item_common_result, parent, false);
                     setListItemPattern(holder, contentView);
+                    MAXCOUNT++;
                 }
             }
         }
@@ -869,6 +875,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             if (!isDownloadStop) {
                 holder.rl_thumbnail.setVisibility(View.VISIBLE);
                 holder.iv_thumbnail.setTag(listContentInfo.getThumURL());
+                mThumbnailProvider.setMaxQueueCount(MAXCOUNT);
                 Bitmap thumbnailImage = mThumbnailProvider.getThumbnailImage(holder.iv_thumbnail, listContentInfo.getThumURL());
                 if (thumbnailImage != null) {
                     holder.iv_thumbnail.setImageBitmap(thumbnailImage);
@@ -1380,6 +1387,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         isDownloadStop = true;
         if (mThumbnailProvider != null) {
             mThumbnailProvider.stopConnect();
+            mThumbnailProvider.removeAllMemoryCache();
         }
     }
 
@@ -1407,5 +1415,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 mListData.get(i).setClipStatusUpdate(true);
             }
         }
+    }
+
+    /**
+     * 再利用のビュー最大countをリセット.
+     */
+    public void resetMaxItemCount() {
+        MAXCOUNT = 0;
     }
 }
