@@ -112,6 +112,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private static final String TAG_DIDL_START = "<DIDL-Lite";
     /**ダウンロードXML取得フォーマット.*/
     private static final String TAG_DIDL_END = "</DIDL-Lite>";
+    /**前回のDLNAコンテンツリスト.*/
+    private ArrayList<DlnaRecVideoItem> mDlnaRecVideoItems = null;
+    /**前回のDLNAコンテンツリストキーワード.*/
+    private static final String ITEMS_MEMORY = "itemsMemory";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -131,6 +135,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         setPagerAdapter();
         if (savedInstanceState != null) {
             int startPageNo = savedInstanceState.getInt(START_TAB_POSITION);
+            mDlnaRecVideoItems = (ArrayList<DlnaRecVideoItem>) savedInstanceState.getSerializable(ITEMS_MEMORY);
             savedInstanceState.clear();
             mViewPager.setCurrentItem(startPageNo);
             mTabLayout.setTab(startPageNo);
@@ -173,6 +178,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     protected void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(START_TAB_POSITION, getCurrentPosition());
+        outState.putSerializable(ITEMS_MEMORY, mDlnaRecVideoItems);
     }
 
     @Override
@@ -248,6 +254,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             item.mDate = dlnaObject.mDate;
             dstList.add(item);
         }
+        mDlnaRecVideoItems = dstList;
         setVideoBrows(dstList);
     }
 
@@ -480,8 +487,12 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                                 case NONE_LOCAL_REGISTRATION:
                                 case NONE_PAIRING:
                                 default:
-                                    clearFragment(0);
-                                    mNoDataMessage.setVisibility(View.VISIBLE);
+                                    if (mDlnaRecVideoItems != null){
+                                        setVideoBrows(mDlnaRecVideoItems);
+                                    } else {
+                                        clearFragment(0);
+                                        mNoDataMessage.setVisibility(View.VISIBLE);
+                                    }
                                     setProgressBarGone();
                                     break;
                             }
