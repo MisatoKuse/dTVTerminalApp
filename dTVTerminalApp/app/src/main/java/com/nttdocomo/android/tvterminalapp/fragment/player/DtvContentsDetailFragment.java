@@ -5,8 +5,6 @@
 package com.nttdocomo.android.tvterminalapp.fragment.player;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -80,6 +78,8 @@ public class DtvContentsDetailFragment extends Fragment {
     private boolean mIsAllText = false;
     /** 契約フラグ.*/
     private boolean mIsContract = true;
+    /** 視聴可否判定結果. */
+    private boolean mIsNotViewIng = false;
     /** クリップボタン.*/
     private ImageView mClipButton = null;
     /** 録画ボタン.*/
@@ -116,7 +116,6 @@ public class DtvContentsDetailFragment extends Fragment {
     private final static String LABEL_STATUS_R_VALUE_R_18 = "R-18";
     /** r_value R-20.*/
     private final static String LABEL_STATUS_R_VALUE_R_20 = "R-20";
-
     @Override
     public Context getContext() {
         this.mActivity = getActivity();
@@ -567,7 +566,6 @@ public class DtvContentsDetailFragment extends Fragment {
      */
     public void noticeRefresh() {
         setDetailData();
-        changeVisibilityRecordingReservationIcon();
     }
 
     /**
@@ -631,17 +629,19 @@ public class DtvContentsDetailFragment extends Fragment {
      *
      */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
-    private void changeVisibilityRecordingReservationIcon() {
+    public void changeVisibilityRecordingReservationIcon() {
         DTVTLogger.start();
+        mRecordButton.setVisibility(View.GONE);
         //未ログイン又は未契約時は録画ボタンを非活性
-        if (!UserInfoUtils.getClipActive(getContext())) {
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.icon_tap_circle_normal_rec);
-            mRecordButton.setImageBitmap(bitmap);
+        if (!UserInfoUtils.getClipActive(getContext()) || mIsNotViewIng) {
+            mRecordButton.setBackgroundResource(R.mipmap.icon_tap_circle_normal_rec);
+            mRecordButton.setVisibility(View.VISIBLE);
         } else {
             if (mOtherContentsDetailData.getContentCategory() != null) {
                 switch (mOtherContentsDetailData.getContentCategory()) {
                     case HIKARI_TV:
                     case HIKARI_IN_DCH_TV:
+                        mRecordButton.setBackgroundResource(R.drawable.recording_reservation_rec_icon_selector);
                         mRecordButton.setVisibility(View.VISIBLE);
                         break;
                     default:
@@ -651,9 +651,13 @@ public class DtvContentsDetailFragment extends Fragment {
                 mRecordButton.setVisibility(View.GONE);
             }
         }
+        noticeRefresh();
         DTVTLogger.end();
     }
 
+    public void setVisible(){
+        mRecordButton.setVisibility(View.VISIBLE);
+    }
     /**
      * 録画予約アイコンにOnClickListenerを登録.
      *
@@ -724,4 +728,11 @@ public class DtvContentsDetailFragment extends Fragment {
         mOtherContentsDetailData = otherContentsDetailData;
     }
 
+    /**
+     * 視聴可否判定結果設定.
+     * @param mIsViewIng 視聴可否判定フラグ
+     */
+    public void setIsNotViewIng(final boolean mIsViewIng) {
+        this.mIsNotViewIng = mIsViewIng;
+    }
 }

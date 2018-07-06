@@ -120,7 +120,6 @@
                         android:layout_weight="1"
                         android:contentDescription="@null"
                         android:scaleType="fitXY"
-                        android:src="@drawable/recording_reservation_rec_icon_selector"
                         android:visibility="gone" />
 
                     <ImageView
