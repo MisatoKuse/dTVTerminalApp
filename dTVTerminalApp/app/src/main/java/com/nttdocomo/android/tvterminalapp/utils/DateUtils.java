@@ -1307,10 +1307,12 @@ public class DateUtils {
                 break;
             case TV:
             case HIKARI_TV:
+            case HIKARI_TV_WITHIN_AN_HOUR:
             case DIGITAL_TERRESTRIAL_BROADCASTING:
             case BROADCASTING_SATELLITE:
             case HIKARI_TV_NOW_ON_AIR:
             case HIKARI_IN_DCH_TV:
+            case HIKARI_IN_DCH_TV_WITHIN_AN_HOUR:
             case HIKARI_IN_DTV:
             case HIKARI_IN_DCH_MISS:
             case HIKARI_IN_DCH_RELATION:
@@ -1492,5 +1494,19 @@ public class DateUtils {
             }
         }
         return result;
+    }
+
+    /**
+     * 1時間以内判定.
+     *
+     * @param JudgmentTime  判定対象時刻
+     * @return 判定結果
+     */
+    public static boolean isWithInHour(final long JudgmentTime) {
+        boolean isWithInHour;
+        //判定時間が現在日時+1時間を超えていなければ1時間以内
+        isWithInHour = (DateUtils.getNowTimeFormatEpoch() + DateUtils.EPOCH_TIME_ONE_HOUR) > JudgmentTime;
+        DTVTLogger.end(String.valueOf(isWithInHour));
+        return isWithInHour;
     }
 }

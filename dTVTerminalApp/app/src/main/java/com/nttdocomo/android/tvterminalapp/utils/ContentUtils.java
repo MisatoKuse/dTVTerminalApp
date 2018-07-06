@@ -82,10 +82,14 @@ public class ContentUtils {
         BROADCASTING_SATELLITE,
         /**ひかりTV(番組).*/
         HIKARI_TV,
+        /**ひかりTV(番組)放送1時間以内.*/
+        HIKARI_TV_WITHIN_AN_HOUR,
         /**ひかりTV(Now On Air).*/
         HIKARI_TV_NOW_ON_AIR,
         /**ひかり内dTVCh(番組).*/
         HIKARI_IN_DCH_TV,
+        /**ひかり内dTVCh(番組)放送1時間以内.*/
+        HIKARI_IN_DCH_TV_WITHIN_AN_HOUR,
         /**ひかりTV(VOD).*/
         HIKARI_TV_VOD,
         /**ひかり内dTVCh.*/
@@ -479,6 +483,9 @@ public class ContentUtils {
                                 //tv_service=1 -> ひかりTV_番組
                                 if (isNowOnAir) {
                                     return ContentsType.HIKARI_TV_NOW_ON_AIR;
+                                } else if (DateUtils.isWithInHour(metaFullData.getPublish_start_date())) {
+                                    //配信開始が現在時刻の1時間以内のひかりTV
+                                    return ContentsType.HIKARI_TV_WITHIN_AN_HOUR;
                                 } else {
                                     return ContentsType.HIKARI_TV;
                                 }
@@ -488,6 +495,9 @@ public class ContentUtils {
                                     //contentsType=other -> ひかりTV_番組
                                     if (isNowOnAir) {
                                         return ContentsType.HIKARI_TV_NOW_ON_AIR;
+                                    } else if (DateUtils.isWithInHour(metaFullData.getPublish_start_date())) {
+                                        //配信開始が現在時刻の1時間以内のひかりTV
+                                        return ContentsType.HIKARI_TV_WITHIN_AN_HOUR;
                                     } else {
                                         return ContentsType.HIKARI_TV;
                                     }
@@ -498,6 +508,9 @@ public class ContentUtils {
                                             if (vodStartDate <= current) {
                                                 //VOD配信日時(vod_start_date) <= 現在時刻 -> ひかりTV内dTVチャンネル_見逃し
                                                 return ContentsType.HIKARI_IN_DCH_MISS;
+                                            } else if (DateUtils.isWithInHour(metaFullData.getPublish_start_date())) {
+                                                //現在時刻 + 1h > 放送開始日時(metaFullData.getPublish_start_date()) > 現在時刻 -> ひかりTV内dTVチャンネル_番組放送開始1時間以内
+                                                return ContentsType.HIKARI_IN_DCH_TV_WITHIN_AN_HOUR;
                                             } else {
                                                 //VOD配信日時(vod_start_date) > 現在時刻 -> ひかりTV内dTVチャンネル_番組
                                                 return ContentsType.HIKARI_IN_DCH_TV;
@@ -509,6 +522,9 @@ public class ContentUtils {
                                             //contentsType=other -> ひかりTV_番組
                                             if (isNowOnAir) {
                                                 return ContentsType.HIKARI_TV_NOW_ON_AIR;
+                                            } else if (DateUtils.isWithInHour(metaFullData.getPublish_start_date())) {
+                                                //配信開始が現在時刻の1時間以内のひかりTV
+                                                return ContentsType.HIKARI_TV_WITHIN_AN_HOUR;
                                             } else {
                                                 return ContentsType.HIKARI_TV;
                                             }
