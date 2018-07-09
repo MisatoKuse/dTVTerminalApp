@@ -38,6 +38,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
+        android:layout_marginStart="@dimen/main_setting_text_start_margin"
         android:layout_height="@dimen/main_setting_quality_list_separate"
         android:background="@color/setting_list_divider_color" />
 
@@ -70,6 +71,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
+        android:layout_marginStart="@dimen/main_setting_text_start_margin"
         android:layout_height="@dimen/main_setting_quality_list_separate"
         android:background="@color/setting_list_divider_color" />
 
@@ -102,6 +104,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
+        android:layout_marginStart="@dimen/main_setting_text_start_margin"
         android:layout_height="@dimen/main_setting_quality_list_separate"
         android:background="@color/setting_list_divider_color" />
 
