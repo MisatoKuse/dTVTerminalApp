@@ -214,7 +214,7 @@
     <!-- ビデオ一覧 -->
     <string name="video_content_top_title">ビデオジャンル</string>
     <string name="video_list_genre_all">すべて</string>
-    <string name="video_list_genre_all_contents">すべての作品</string>
+    <string name="video_list_genre_all_contents">すべて</string>
     <string name="video_list_genre_nod">NHKオンデマンド</string>
     <string name="video_list_genre_dtv">dTV</string>
 
