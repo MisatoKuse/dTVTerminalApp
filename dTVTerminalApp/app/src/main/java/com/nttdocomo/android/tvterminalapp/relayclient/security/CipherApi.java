@@ -62,7 +62,7 @@ public class CipherApi {
         CipherData cipherData;
         try {
             cipherData = CipherUtil.generatePublicKey();
-        } catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException | RuntimeException e) {
             DTVTLogger.debug(e);
             mCallback.apiCallback(false, null);
             mLatch.countDown();
