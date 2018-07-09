@@ -938,12 +938,17 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                         String duration = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_DURATION);
                         String title = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_TITLE);
                         String totalSize = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_SIZE);
+                        String channelName = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_CHANNELNAME);
+                        String date = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_DATE);
                         DlnaRecVideoItem dlnaRecVideoItem = new DlnaRecVideoItem();
                         dlnaRecVideoItem.mItemId = itemId.replaceFirst(DownloaderBase.sDlPrefix, "");
                         dlnaRecVideoItem.mClearTextSize = totalSize;
+                        dlnaRecVideoItem.mSize = totalSize;
                         dlnaRecVideoItem.mTitle = title;
                         dlnaRecVideoItem.mDuration = duration;
                         dlnaRecVideoItem.mBitrate = bitrate;
+                        dlnaRecVideoItem.mChannelName = channelName;
+                        dlnaRecVideoItem.mDate = date;
                         allList.add(dlnaRecVideoItem);
                     }
                 }
