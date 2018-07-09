@@ -894,27 +894,14 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * 未契約状態のサムネイル描画.
      */
     private void noAgreementDisplay() {
-        DeviceStateUtils.PairingState pairingState = DeviceStateUtils.getPairingState(this, getStbStatus());
         TextView contractLeadingText = findViewById(R.id.contract_leading_text);
         Button contractLeadingButton = findViewById(R.id.contract_leading_button);
         setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
         String message = "";
         String buttonText = "";
-        switch (pairingState) {
-            case INSIDE_HOUSE:
-            case OUTSIDE_HOUSE:
-                message = getString(R.string.contents_detail_no_agreement);
-                buttonText = getString(R.string.contents_detail_contract_leading_button);
-                getDetailFragment().setIsNotViewIng(true);
-                break;
-            case NO_PAIRING:
-                message = getString(R.string.contents_detail_contract_text_ch);
-                buttonText = getString(R.string.contents_detail_contract_leading_button);
-                getDetailFragment().setIsNotViewIng(true);
-                break;
-            default:
-                break;
-        }
+        message = getString(R.string.contents_detail_no_agreement);
+        buttonText = getString(R.string.contents_detail_contract_leading_button);
+        getDetailFragment().setIsNotViewIng(true);
         contractLeadingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
