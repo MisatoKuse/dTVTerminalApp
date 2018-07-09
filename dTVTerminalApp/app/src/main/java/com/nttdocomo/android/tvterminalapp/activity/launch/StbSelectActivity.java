@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -401,6 +402,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                 mParingDevice.setText(dlnaDmsItem.mFriendlyName);
                 if (!mParingDevice.getText().toString().isEmpty()) {
                     mParingDevice.setVisibility(View.VISIBLE);
+                    mParingDevice.setTypeface(Typeface.DEFAULT_BOLD);
                     mCheckMark.setVisibility(View.VISIBLE);
                     mParingDevice.setTextColor(Color.WHITE);
                     mParingTextView.setText(R.string.str_stb_paring_cancel_text);
