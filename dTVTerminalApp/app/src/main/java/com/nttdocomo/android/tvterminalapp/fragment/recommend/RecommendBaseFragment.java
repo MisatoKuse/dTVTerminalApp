@@ -280,8 +280,8 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
         } else {
             Intent intent = new Intent(mActivity, ContentDetailActivity.class);
             intent.putExtra(DtvtConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
-            intent.putExtra(ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY,
-                    DataConverter.getOtherContentsDetailData(info, ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY));
+            intent.putExtra(ContentUtils.RECOMMEND_INFO_BUNDLE_KEY,
+                    DataConverter.getOtherContentsDetailData(info, ContentUtils.RECOMMEND_INFO_BUNDLE_KEY));
             recommendActivity.startActivity(intent);
         }
     }

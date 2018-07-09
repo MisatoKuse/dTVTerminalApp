@@ -21,7 +21,6 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
@@ -636,15 +635,15 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.content_time_text));
         }
         if (isPlala) {
-            if (ContentDetailActivity.TV_PROGRAM.equals(listContentInfo.getDispType())) {
-                if (ContentDetailActivity.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(listContentInfo.getTvService())) {
-                    if (ContentDetailActivity.CONTENT_TYPE_FLAG_THREE.equals(listContentInfo.getContentsType())) {
+            if (ContentUtils.TV_PROGRAM.equals(listContentInfo.getDispType())) {
+                if (ContentUtils.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(listContentInfo.getTvService())) {
+                    if (ContentUtils.CONTENT_TYPE_FLAG_THREE.equals(listContentInfo.getContentsType())) {
                         if (DateUtils.isNowOnAirDate(listContentInfo.getPublishStartDate(),
                                 listContentInfo.getPublishEndDate(), true)) {
                             result = true;
                         }
-                    } else if (ContentDetailActivity.CONTENT_TYPE_FLAG_ONE.equals(listContentInfo.getContentsType())
-                            || ContentDetailActivity.CONTENT_TYPE_FLAG_TWO.equals(listContentInfo.getContentsType())) {
+                    } else if (ContentUtils.CONTENT_TYPE_FLAG_ONE.equals(listContentInfo.getContentsType())
+                            || ContentUtils.CONTENT_TYPE_FLAG_TWO.equals(listContentInfo.getContentsType())) {
                         if (DateUtils.isNowOnAirDate(listContentInfo.getPublishStartDate(),
                                 listContentInfo.getPublishEndDate(), true)) {
                             result = true;
@@ -655,7 +654,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                             result = true;
                         }
                     }
-                } else if (ContentDetailActivity.TV_SERVICE_FLAG_HIKARI.equals(listContentInfo.getTvService())) {
+                } else if (ContentUtils.TV_SERVICE_FLAG_HIKARI.equals(listContentInfo.getTvService())) {
                     if (DateUtils.isNowOnAirDate(listContentInfo.getPublishStartDate(),
                             listContentInfo.getPublishEndDate(), true)) {
                         result = true;
@@ -666,15 +665,15 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             if (!TextUtils.isEmpty(listContentInfo.getServiceId()) && DataBaseUtils.isNumber(listContentInfo.getServiceId())) {
                 int serviceId = Integer.parseInt(listContentInfo.getServiceId());
                 String categoryId = listContentInfo.getCategoryId();
-                if (ContentDetailActivity.DTV_HIKARI_CONTENTS_SERVICE_ID == serviceId
-                        && (ContentDetailActivity.H4D_CATEGORY_IPTV.equals(categoryId)
-                        || ContentDetailActivity.H4D_CATEGORY_DTV_CHANNEL_BROADCAST.equals(categoryId))) {
+                if (ContentUtils.DTV_HIKARI_CONTENTS_SERVICE_ID == serviceId
+                        && (ContentUtils.RECOMMEND_CATEGORY_ID_THREE.equals(categoryId)
+                        || ContentUtils.RECOMMEND_CATEGORY_ID_FOUR.equals(categoryId))) {
                     if (DateUtils.isNowOnAirDate(listContentInfo.getStartViewing(),
                             listContentInfo.getEndViewing(), false)) {
                         result = true;
                     }
-                } else if (ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID == serviceId
-                        && ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(categoryId)) {
+                } else if (ContentUtils.DTV_CHANNEL_CONTENTS_SERVICE_ID == serviceId
+                        && ContentUtils.RECOMMEND_CATEGORY_ID_ONE.equals(categoryId)) {
                     if (DateUtils.isNowOnAirDate(listContentInfo.getStartViewing(),
                             listContentInfo.getEndViewing(), false)) {
                         result = true;
@@ -972,8 +971,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             }
         }
         if (mTabType == TabTypeItem.TAB_D_CHANNEL) {
-            if (!Integer.toString(ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID).equals(listContentInfo.getServiceId())
-                    || !ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(listContentInfo.getCategoryId())) {
+            if (!Integer.toString(ContentUtils.DTV_CHANNEL_CONTENTS_SERVICE_ID).equals(listContentInfo.getServiceId())
+                    || !ContentUtils.RECOMMEND_CATEGORY_ID_ONE.equals(listContentInfo.getCategoryId())) {
                 holder.tv_recorded_hyphen.setVisibility(View.GONE);
                 holder.tv_recorded_ch_name.setVisibility(View.GONE);
             }

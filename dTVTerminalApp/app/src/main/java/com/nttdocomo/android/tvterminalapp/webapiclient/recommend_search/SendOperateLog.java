@@ -7,12 +7,12 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecommendDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOtt;
@@ -118,7 +118,7 @@ public class SendOperateLog extends WebApiBase {
     public void sendOpeLog(final OtherContentsDetailData mDetailData, final VodMetaFullData mDetailFullData) {
         DTVTLogger.start();
         if (!mIsCancel && mDetailData != null) {
-            if (ContentDetailActivity.DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId() || mDetailFullData != null) {
+            if (ContentUtils.DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId() || mDetailFullData != null) {
                 mCategoryId = getCategoryId(mDetailFullData);
             } else {
                 mCategoryId = mDetailData.getCategoryId();
@@ -168,7 +168,7 @@ public class SendOperateLog extends WebApiBase {
         mUrl.append(URL_TEXT_CID);
         mUrl.append(mDetailData.getContentsId());
         mUrl.append(URL_TEXT_OPERATE_KIND);
-        if (ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY.equals(mDetailData.getRecommendFlg())) {
+        if (ContentUtils.RECOMMEND_INFO_BUNDLE_KEY.equals(mDetailData.getRecommendFlg())) {
             mUrl.append(URL_TEXT_OPERATE_KIND_RECOMMEND);
         } else {
             mUrl.append(URL_TEXT_OPERATE_KIND_OTHERS);
@@ -204,19 +204,19 @@ public class SendOperateLog extends WebApiBase {
         final String valueBlank = "";
         if (mDetailFullData != null) {
             switch (mDetailFullData.getDisp_type() == null ? valueBlank : mDetailFullData.getDisp_type()) {
-                case ContentDetailActivity.TV_PROGRAM:
+                case ContentUtils.TV_PROGRAM:
                     switch (mDetailFullData.getmTv_service() == null ? valueBlank : mDetailFullData.getmTv_service()) {
-                        case ContentDetailActivity.TV_SERVICE_FLAG_HIKARI:
+                        case ContentUtils.TV_SERVICE_FLAG_HIKARI:
                             return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_IPTV.getCategoryId();
-                        case ContentDetailActivity.TV_SERVICE_FLAG_DCH_IN_HIKARI:
+                        case ContentUtils.TV_SERVICE_FLAG_DCH_IN_HIKARI:
                             switch (mDetailFullData.getmContent_type() == null ? valueBlank : mDetailFullData.getmContent_type()) {
                                 case valueBlank:
-                                case ContentDetailActivity.CONTENT_TYPE_FLAG_ZERO:
+                                case ContentUtils.CONTENT_TYPE_FLAG_ZERO:
                                     return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_DTVCHANNEL_BLOADCAST.getCategoryId();
-                                case ContentDetailActivity.CONTENT_TYPE_FLAG_ONE:
-                                case ContentDetailActivity.CONTENT_TYPE_FLAG_TWO:
+                                case ContentUtils.CONTENT_TYPE_FLAG_ONE:
+                                case ContentUtils.CONTENT_TYPE_FLAG_TWO:
                                     return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_DTVCHANNEL_MISS.getCategoryId();
-                                case ContentDetailActivity.CONTENT_TYPE_FLAG_THREE:
+                                case ContentUtils.CONTENT_TYPE_FLAG_THREE:
                                     return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_DTVCHANNEL_RELATION.getCategoryId();
                                 default:
                                     break;
@@ -227,9 +227,9 @@ public class SendOperateLog extends WebApiBase {
                 default:
                     switch (mDetailFullData.getDtv() == null ? valueBlank : mDetailFullData.getDtv()) {
                         case valueBlank:
-                        case ContentDetailActivity.DTV_FLAG_ZERO:
+                        case ContentUtils.DTV_FLAG_ZERO:
                             return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_HIKARITV_VOD.getCategoryId();
-                        case ContentDetailActivity.DTV_FLAG_ONE:
+                        case ContentUtils.DTV_FLAG_ONE:
                             return RecommendDataProvider.RecommendRequestId.HIKARITV_DOCOMO_DTV_SVOD.getCategoryId();
                         default:
                             break;

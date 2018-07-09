@@ -658,7 +658,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 String dtv = map.get(JsonConstants.META_RESPONSE_DTV);
                 String dtvType = map.get(JsonConstants.META_RESPONSE_DTV_TYPE);
                 rankingContentInfo.setRank(String.valueOf(i + 1));
-                if (ContentUtils.IS_DTV_FLAG.equals(dtv)) {
+                if (ContentUtils.DTV_FLAG_ONE.equals(dtv)) {
                     rankingContentInfo.setThumURL(map.get(JsonConstants.META_RESPONSE_DTV_THUMB_448));
                     rankingContentInfo.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_DTV_THUMB_640));
                 } else {

@@ -753,41 +753,24 @@ public class StringUtils {
             case BROADCASTING_SATELLITE:
             case HIKARI_RECORDED:
             case HIKARI_TV_NOW_ON_AIR:
-                //文言なし
-                return "";
             case HIKARI_TV:
             case HIKARI_TV_WITHIN_AN_HOUR:
+                //文言なし
+                return "";
             case HIKARI_TV_VOD:
+                //テレビで視聴できます
+                return context.getString(R.string.contents_detail_thumbnail_text);
             case HIKARI_IN_DCH_TV:
             case HIKARI_IN_DCH_TV_WITHIN_AN_HOUR:
             case HIKARI_IN_DCH:
             case HIKARI_IN_DCH_MISS:
             case HIKARI_IN_DCH_RELATION:
-            case HIKARI_IN_DTV:
-                switch (contentsType) {
-                    case HIKARI_TV:
-                    case HIKARI_TV_WITHIN_AN_HOUR:
-                        //文言なし
-                        return "";
-                    case HIKARI_TV_VOD:
-                        //テレビで視聴できます
-                        return context.getString(R.string.contents_detail_thumbnail_text);
-                    case HIKARI_IN_DCH_TV:
-                    case HIKARI_IN_DCH_TV_WITHIN_AN_HOUR:
-                    case HIKARI_IN_DCH:
-                    case HIKARI_IN_DCH_MISS:
-                    case HIKARI_IN_DCH_RELATION:
-                        //dTVチャンネルで視聴
-                        return context.getString(R.string.dtv_channel_service_start_text);
-                    case HIKARI_IN_DTV:
-                        //dTVで視聴
-                        return context.getString(R.string.dtv_content_service_start_text);
-                    default:
-                        return "";
-                }
             case PURE_DTV_CHANNEL:
                 //dTVチャンネルで視聴
                 return context.getString(R.string.dtv_channel_service_start_text);
+            case HIKARI_IN_DTV:
+                //dTVで視聴
+                return context.getString(R.string.dtv_content_service_start_text);
             case PURE_DTV:
                 String reserve = detailData.getReserved2();
                 //DTVコンテンツ　「reserved2」が「1」　Androidのモバイル視聴不可

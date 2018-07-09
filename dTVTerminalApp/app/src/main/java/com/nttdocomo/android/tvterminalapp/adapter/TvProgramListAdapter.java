@@ -30,6 +30,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ViewUtils;
@@ -499,7 +500,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                         Intent intent = new Intent();
                         intent.setClass(mContext, ContentDetailActivity.class);
                         intent.putExtra(DtvtConstants.SOURCE_SCREEN, ((TvProgramListActivity) mContext).getComponentName().getClassName());
-                        OtherContentsDetailData detailData = getOtherContentsDetailData(itemSchedule, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
+                        OtherContentsDetailData detailData = getOtherContentsDetailData(itemSchedule, ContentUtils.PLALA_INFO_BUNDLE_KEY);
                         intent.putExtra(detailData.getRecommendFlg(), detailData);
                         TvProgramListActivity tvProgramListActivity = (TvProgramListActivity) mContext;
                         tvProgramListActivity.startActivity(intent);

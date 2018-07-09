@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
@@ -37,23 +36,63 @@ import java.util.regex.Pattern;
  */
 public class ContentUtils {
     /** レコメンドのCategoryId 01. **/
-    private static final String RECOMMEND_CATEGORY_ID_ONE = "01";
+    public static final String RECOMMEND_CATEGORY_ID_ONE = "01";
     /** レコメンドのCategoryId 02. **/
-    private static final String RECOMMEND_CATEGORY_ID_TWO = "02";
+    public static final String RECOMMEND_CATEGORY_ID_TWO = "02";
     /** レコメンドのCategoryId 03. **/
-    private static final String RECOMMEND_CATEGORY_ID_THREE = "03";
+    public static final String RECOMMEND_CATEGORY_ID_THREE = "03";
     /** レコメンドのCategoryId 04. **/
-    private static final String RECOMMEND_CATEGORY_ID_FOUR = "04";
+    public static final String RECOMMEND_CATEGORY_ID_FOUR = "04";
     /** レコメンドのCategoryId 05. **/
-    private static final String RECOMMEND_CATEGORY_ID_FIVE = "05";
+    public static final String RECOMMEND_CATEGORY_ID_FIVE = "05";
     /** レコメンドのCategoryId 06. **/
-    private static final String RECOMMEND_CATEGORY_ID_SIX = "06";
+    public static final String RECOMMEND_CATEGORY_ID_SIX = "06";
     /** レコメンドのCategoryId 07. **/
-    private static final String RECOMMEND_CATEGORY_ID_SEVEN = "07";
+    public static final String RECOMMEND_CATEGORY_ID_SEVEN = "07";
     /** レコメンドのCategoryId 08. **/
-    private static final String RECOMMEND_CATEGORY_ID_EIGHT = "08";
+    public static final String RECOMMEND_CATEGORY_ID_EIGHT = "08";
     /** レコメンドのCategoryId 10. **/
-    private static final String RECOMMEND_CATEGORY_ID_TEN = "10";
+    public static final String RECOMMEND_CATEGORY_ID_TEN = "10";
+    /**DTVコンテンツサービスID.*/
+    public static final int DTV_CONTENTS_SERVICE_ID = 15;
+    /**DアニメコンテンツサービスID.*/
+    public static final int D_ANIMATION_CONTENTS_SERVICE_ID = 17;
+    /**DTVチャンネルコンテンツサービスID.*/
+    public static final int DTV_CHANNEL_CONTENTS_SERVICE_ID = 43;
+    /**DTVひかりコンテンツサービスID.*/
+    public static final int DTV_HIKARI_CONTENTS_SERVICE_ID = 44;
+    /**レコメンド情報キー.*/
+    public static final String RECOMMEND_INFO_BUNDLE_KEY = "recommendInfoKey";
+    /**ぷらら情報キー.*/
+    public static final String PLALA_INFO_BUNDLE_KEY = "plalaInfoKey";
+    /** disp_type(tv_program).*/
+    public static final String TV_PROGRAM = "tv_program";
+    /** disp_type(video_program).*/
+    public static final String VIDEO_PROGRAM = "video_program";
+    /** disp_type(video_package).*/
+    public static final String VIDEO_PACKAGE = "video_package";
+    /** disp_type(video_series).*/
+    public static final String VIDEO_SERIES = "video_series";
+    /** disp_type(subscription_package).*/
+    public static final String SUBSCRIPTION_PACKAGE = "subscription_package";
+    /** disp_type(series_svod).*/
+    public static final String SERIES_SVOD = "series_svod";
+    /** tv_service(0).*/
+    public static final String TV_SERVICE_FLAG_HIKARI = "1";
+    /** tv_service(1).*/
+    public static final String TV_SERVICE_FLAG_DCH_IN_HIKARI = "2";
+    /** contents_type(0).*/
+    public static final String CONTENT_TYPE_FLAG_ZERO = "0";
+    /** contents_type(1).*/
+    public static final String CONTENT_TYPE_FLAG_ONE = "1";
+    /** contents_type(2).*/
+    public static final String CONTENT_TYPE_FLAG_TWO = "2";
+    /** contents_type(3).*/
+    public static final String CONTENT_TYPE_FLAG_THREE = "3";
+    /** dtv(1).*/
+    public static final String DTV_FLAG_ONE = "1";
+    /** dtv(0).*/
+    public static final String DTV_FLAG_ZERO = "0";
     /** チャンネルタイプ kihon_ch.*/
     private static final String CH_TYPE_KIHON = "kihon_ch";
     /** チャンネルタイプ basic_ch.*/
@@ -62,12 +101,11 @@ public class ContentUtils {
     private static final String CH_TYPE_TRIAL = "trial_free";
     /** チャンネルタイプ premium_ch.*/
     private static final String CH_TYPE_PREMIUM = "premium_ch";
-    /** DTVフラグ 1.*/
-    public static final String IS_DTV_FLAG = "1";
-    /** DTVフラグ 0.*/
-    private static final String NOT_DTV_FLAG = "0";
     /** BVフラグ 1.*/
     private static final String IS_BV_FLAG = "1";
+    /** disp_type(WIZARD).*/
+    public static final String WIZARD = "wizard";
+
     /**
      * コンテンツタイプ.
      */
@@ -130,14 +168,20 @@ public class ContentUtils {
     public enum ViewIngType {
         /**視聴可能.*/
         ENABLE_WATCH,
+        /**視聴可能.dCHのみ契約*/
+        ENABLE_WATCH_001,
         /**視聴可能(期限30日以内なので視聴可能期限表示).*/
         ENABLE_WATCH_LIMIT_THIRTY,
+        /**視聴可能(期限30日以内なので視聴可能期限表示).dCHのみ契約*/
+        ENABLE_WATCH_LIMIT_THIRTY_001,
         /**視聴可能(期限30日以内なので視聴可能期限表示) ※複数期限があり、期限が一番長いのを基準にする場合.*/
         ENABLE_WATCH_LIMIT_THIRTY_LONGEST,
         /**視聴可能(期限30日超、視聴期限非表示).*/
         ENABLE_WATCH_LIMIT_THIRTY_OVER,
         /**視聴不可(再生導線非表示).*/
         DISABLE_WATCH_AND_PLAY,
+        /**視聴不可(再生導線非表示).dCHのみ契約*/
+        DISABLE_WATCH_AND_PLAY_001,
         /**視聴不可契約導線表示.*/
         DISABLE_WATCH_AGREEMENT_DISPLAY,
         /**視聴不可契約導線表示(購入CH判定時).*/
@@ -174,36 +218,36 @@ public class ContentUtils {
         ContentsType cType = ContentsType.OTHER;
         switch (serviceId) {
             //dTV
-            case ContentDetailActivity.DTV_CONTENTS_SERVICE_ID:
-                if (ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(categoryId)
-                        || ContentDetailActivity.H4D_CATEGORY_SATELLITE_BS.equals(categoryId)) {
+            case DTV_CONTENTS_SERVICE_ID:
+                if (RECOMMEND_CATEGORY_ID_ONE.equals(categoryId)
+                        || RECOMMEND_CATEGORY_ID_TWO.equals(categoryId)) {
                     cType = ContentsType.VOD;
                 }
                 break;
             //dアニメストア
-            case ContentDetailActivity.D_ANIMATION_CONTENTS_SERVICE_ID:
-                if (ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(categoryId)) {
+            case D_ANIMATION_CONTENTS_SERVICE_ID:
+                if (RECOMMEND_CATEGORY_ID_ONE.equals(categoryId)) {
                     cType = ContentsType.VOD;
                 }
                 break;
             //dTVチャンネル
-            case ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID:
-                if (ContentDetailActivity.H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(categoryId)) {
+            case DTV_CHANNEL_CONTENTS_SERVICE_ID:
+                if (RECOMMEND_CATEGORY_ID_ONE.equals(categoryId)) {
                     cType = ContentsType.TV;
-                } else if (ContentDetailActivity.H4D_CATEGORY_SATELLITE_BS.equals(categoryId)
-                        || ContentDetailActivity.H4D_CATEGORY_IPTV.equals(categoryId)) {
+                } else if (RECOMMEND_CATEGORY_ID_TWO.equals(categoryId)
+                        || RECOMMEND_CATEGORY_ID_THREE.equals(categoryId)) {
                     cType = ContentsType.VOD;
                 }
                 break;
             //ひかりTV for docomo
-            case ContentDetailActivity.DTV_HIKARI_CONTENTS_SERVICE_ID:
-                if (ContentDetailActivity.H4D_CATEGORY_IPTV.equals(categoryId)
-                        || ContentDetailActivity.H4D_CATEGORY_DTV_CHANNEL_BROADCAST.equals(categoryId)) {
+            case DTV_HIKARI_CONTENTS_SERVICE_ID:
+                if (RECOMMEND_CATEGORY_ID_THREE.equals(categoryId)
+                        || RECOMMEND_CATEGORY_ID_FOUR.equals(categoryId)) {
                     cType = ContentsType.TV;
-                } else if (ContentDetailActivity.H4D_CATEGORY_DTV_CHANNEL_MISSED.equals(categoryId)
-                        || ContentDetailActivity.H4D_CATEGORY_DTV_CHANNEL_RELATION.equals(categoryId)
-                        || ContentDetailActivity.H4D_CATEGORY_HIKARITV_VOD.equals(categoryId)
-                        || ContentDetailActivity.H4D_CATEGORY_HIKARI_DTV_SVOD.equals(categoryId)) {
+                } else if (RECOMMEND_CATEGORY_ID_FIVE.equals(categoryId)
+                        || RECOMMEND_CATEGORY_ID_SIX.equals(categoryId)
+                        || RECOMMEND_CATEGORY_ID_EIGHT.equals(categoryId)
+                        || RECOMMEND_CATEGORY_ID_TEN.equals(categoryId)) {
                     cType = ContentsType.VOD;
                 }
                 break;
@@ -232,20 +276,20 @@ public class ContentUtils {
                                                                 final long vodStartDate, final long vodEndDate, final String estflg,
                                                                 final String chsvod) {
         ContentsType cType = ContentsType.OTHER;
-        if (ContentDetailActivity.VIDEO_PROGRAM.equals(dispType)
-                || ContentDetailActivity.VIDEO_SERIES.equals(dispType)) {
+        if (VIDEO_PROGRAM.equals(dispType)
+                || VIDEO_SERIES.equals(dispType)) {
             //ひかりTV_VOD、ひかりTV内dTV
             cType = DateUtils.getContentsTypeByAvailEndDate(availEndDate);
-        } else if (ContentDetailActivity.TV_PROGRAM.equals(dispType)) {
-            if (ContentDetailActivity.TV_SERVICE_FLAG_HIKARI.equals(tvService)) {
+        } else if (TV_PROGRAM.equals(dispType)) {
+            if (TV_SERVICE_FLAG_HIKARI.equals(tvService)) {
                 //ひかりTV_番組
                 cType = ContentsType.TV;
-            } else if (ContentDetailActivity.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(tvService)) {
-                if (ContentDetailActivity.CONTENT_TYPE_FLAG_THREE.equals(contentsType)) {
+            } else if (TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(tvService)) {
+                if (CONTENT_TYPE_FLAG_THREE.equals(contentsType)) {
                     //ひかりTV内dTVチャンネル_関連VOD
                     cType = DateUtils.getContentsTypeByAvailEndDate(availEndDate);
-                } else if (ContentDetailActivity.CONTENT_TYPE_FLAG_ONE.equals(contentsType)
-                        || ContentDetailActivity.CONTENT_TYPE_FLAG_TWO.equals(contentsType)) {
+                } else if (CONTENT_TYPE_FLAG_ONE.equals(contentsType)
+                        || CONTENT_TYPE_FLAG_TWO.equals(contentsType)) {
                     Calendar cal = Calendar.getInstance();
                     Date nowDate = cal.getTime();
                     cal.setTimeInMillis(vodStartDate * 1000);
@@ -287,14 +331,14 @@ public class ContentUtils {
     private static ContentsType getContentsTypeRental(final String dispType, final String estFlg, final String chSod) {
         ContentsType cType = ContentsType.OTHER;
         final String ZERO_FLAG = "0";
-        if (ContentDetailActivity.VIDEO_PROGRAM.equals(dispType)
-                || ContentDetailActivity.VIDEO_PACKAGE.equals(dispType)) {
+        if (VIDEO_PROGRAM.equals(dispType)
+                || VIDEO_PACKAGE.equals(dispType)) {
             //レンタル
             if (estFlg == null || estFlg.isEmpty() || estFlg.equals(ZERO_FLAG)) {
                 cType = ContentsType.RENTAL;
             }
-        } else if (ContentDetailActivity.SUBSCRIPTION_PACKAGE.equals(dispType)
-                || ContentDetailActivity.SERIES_SVOD.equals(dispType)) {
+        } else if (SUBSCRIPTION_PACKAGE.equals(dispType)
+                || SERIES_SVOD.equals(dispType)) {
             if (chSod == null || chSod.isEmpty() || chSod.equals(ZERO_FLAG)) {
                 cType = ContentsType.PREMIUM;
             }
@@ -456,15 +500,15 @@ public class ContentUtils {
             return ContentsType.OTHER;
         } else {
             switch (dispType) {
-                case ContentDetailActivity.VIDEO_PROGRAM:
-                case ContentDetailActivity.VIDEO_SERIES:
+                case VIDEO_PROGRAM:
+                case VIDEO_SERIES:
                     //dispType=video_program || video_series
                     if (dTvFlag == null) {
                         //dTvFlag=0 || 未設定 -> ひかりTV_VOD
                         return ContentsType.HIKARI_TV_VOD;
                     } else {
                         switch (dTvFlag) {
-                            case ContentDetailActivity.DTV_FLAG_ONE:
+                            case DTV_FLAG_ONE:
                                 //dTvFlag=1 -> ひかりTV内dTV
                                 return ContentsType.HIKARI_IN_DTV;
                             default:
@@ -472,14 +516,14 @@ public class ContentUtils {
                                 return ContentsType.HIKARI_TV_VOD;
                         }
                     }
-                case ContentDetailActivity.TV_PROGRAM:
+                case TV_PROGRAM:
                     //dispType=tv_program
                     if (tvService == null) {
                         //tvService=other
                         return ContentsType.OTHER;
                     } else {
                         switch (tvService) {
-                            case ContentDetailActivity.CONTENT_TYPE_FLAG_ONE:
+                            case CONTENT_TYPE_FLAG_ONE:
                                 //tv_service=1 -> ひかりTV_番組
                                 if (isNowOnAir) {
                                     return ContentsType.HIKARI_TV_NOW_ON_AIR;
@@ -489,7 +533,7 @@ public class ContentUtils {
                                 } else {
                                     return ContentsType.HIKARI_TV;
                                 }
-                            case ContentDetailActivity.CONTENT_TYPE_FLAG_TWO:
+                            case CONTENT_TYPE_FLAG_TWO:
                                 //tv_service=2
                                 if (contentsType == null) {
                                     //contentsType=other -> ひかりTV_番組
@@ -503,8 +547,8 @@ public class ContentUtils {
                                     }
                                 } else {
                                     switch (contentsType) {
-                                        case ContentDetailActivity.CONTENT_TYPE_FLAG_ONE:
-                                        case ContentDetailActivity.CONTENT_TYPE_FLAG_TWO:
+                                        case CONTENT_TYPE_FLAG_ONE:
+                                        case CONTENT_TYPE_FLAG_TWO:
                                             if (vodStartDate <= current) {
                                                 //VOD配信日時(vod_start_date) <= 現在時刻 -> ひかりTV内dTVチャンネル_見逃し
                                                 return ContentsType.HIKARI_IN_DCH_MISS;
@@ -515,7 +559,7 @@ public class ContentUtils {
                                                 //VOD配信日時(vod_start_date) > 現在時刻 -> ひかりTV内dTVチャンネル_番組
                                                 return ContentsType.HIKARI_IN_DCH_TV;
                                             }
-                                        case ContentDetailActivity.CONTENT_TYPE_FLAG_THREE:
+                                        case CONTENT_TYPE_FLAG_THREE:
                                             //contentsType=3 -> ひかりTV内dTVチャンネル_関連VOD
                                             return ContentsType.HIKARI_IN_DCH_RELATION;
                                         default:
@@ -558,7 +602,7 @@ public class ContentUtils {
         String categoryId = detailData.getCategoryId();
         switch (serviceId) {
             //serviceId = 44
-            case ContentDetailActivity.DTV_HIKARI_CONTENTS_SERVICE_ID:
+            case DTV_HIKARI_CONTENTS_SERVICE_ID:
                 //serviceId = 44
                 if (categoryId == null) {
                     return ContentsType.OTHER;
@@ -605,7 +649,7 @@ public class ContentUtils {
                     }
                 }
                 //serviceId = 15
-            case ContentDetailActivity.DTV_CONTENTS_SERVICE_ID:
+            case DTV_CONTENTS_SERVICE_ID:
                 if (categoryId == null) {
                     return ContentsType.OTHER;
                 } else {
@@ -621,7 +665,7 @@ public class ContentUtils {
                     }
                 }
                 //serviceId = 43
-            case ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID:
+            case DTV_CHANNEL_CONTENTS_SERVICE_ID:
                 if (categoryId == null) {
                     return ContentsType.OTHER;
                 } else {
@@ -643,7 +687,7 @@ public class ContentUtils {
                     }
                 }
                 //serviceId = 17
-            case ContentDetailActivity.D_ANIMATION_CONTENTS_SERVICE_ID:
+            case D_ANIMATION_CONTENTS_SERVICE_ID:
                 if (categoryId == null) {
                     return ContentsType.OTHER;
                 } else {
@@ -692,11 +736,11 @@ public class ContentUtils {
     private static ViewIngType contractInfoOne(final VodMetaFullData metaFullData) {
         DTVTLogger.debug("disp_type: " + metaFullData.getDisp_type());
         //メタレスポンス「disp_type」が「tv_program」
-        if (ContentDetailActivity.TV_PROGRAM.equals(metaFullData.getDisp_type())) {
+        if (TV_PROGRAM.equals(metaFullData.getDisp_type())) {
             DTVTLogger.debug("tv_service: " + metaFullData.getmTv_service());
             String tvService = metaFullData.getmTv_service();
             //メタレスポンス「tv_service」が「2」
-            if (tvService != null && ContentDetailActivity.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(tvService)) {
+            if (tvService != null && TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(tvService)) {
                 long publishStartDate = metaFullData.getPublish_start_date();
                 long publishEndDate = metaFullData.getPublish_end_date();
                 long nowDate = DateUtils.getNowTimeFormatEpoch();
@@ -705,16 +749,16 @@ public class ContentUtils {
                     //「publish_end_date」が現在日時から1か月以内
                     if (DateUtils.isLimitThirtyDay(publishEndDate)) {
                         //視聴可能期限(「publish_end_dateまで」)を表示
-                        return ViewIngType.ENABLE_WATCH_LIMIT_THIRTY;
+                        return ViewIngType.ENABLE_WATCH_LIMIT_THIRTY_001;
                     } else {
                         //視聴可能期限は非表示
-                        return ViewIngType.ENABLE_WATCH;
+                        return ViewIngType.ENABLE_WATCH_001;
                     }
                     //メタレスポンス「publish_start_date」 >= 現在時刻
                 } else if (publishStartDate >= nowDate) {
                     //視聴不可(放送時間外のため再生導線を非表示)
                     DTVTLogger.debug("Unviewable(Hide playing method because outside broadcasting time)");
-                    return ViewIngType.DISABLE_WATCH_AND_PLAY;
+                    return ViewIngType.DISABLE_WATCH_AND_PLAY_001;
                     //メタレスポンス「publish_end_date」 <= 現在時刻
                 } else if (publishEndDate <= nowDate) {
                     long vodStartDate = metaFullData.getmVod_start_date();
@@ -727,9 +771,9 @@ public class ContentUtils {
                     } else if (vodStartDate <= nowDate && nowDate < vodEndDate) {
                         //「vod_end_date」が現在時刻から1か月以内の場合視聴可能期限(「vod_end_dateまで」)を表示
                         if (DateUtils.isLimitThirtyDay(vodEndDate)) {
-                            return ViewIngType.ENABLE_WATCH_LIMIT_THIRTY;
+                            return ViewIngType.ENABLE_WATCH_LIMIT_THIRTY_001;
                         } else {
-                            return ViewIngType.ENABLE_WATCH;
+                            return ViewIngType.ENABLE_WATCH_001;
                         }
                         //「vod_end_date」 <= 現在時刻
                     } else if (vodEndDate <= nowDate) {
@@ -744,7 +788,7 @@ public class ContentUtils {
                     return ViewIngType.NONE_STATUS;
                 }
                 //メタレスポンス「tv_service」が「1」または未設定
-            } else if (tvService == null || tvService.equals(ContentDetailActivity.TV_SERVICE_FLAG_HIKARI)) {
+            } else if (tvService == null || tvService.equals(TV_SERVICE_FLAG_HIKARI)) {
                 //視聴不可(視聴導線を非表示)
                 return ViewIngType.DISABLE_WATCH;
             } else {
@@ -773,7 +817,7 @@ public class ContentUtils {
         String channelServiceId = null;
         String chType = null;
         //tv_programの場合、チャンネル情報がnullなら判定不可
-        if (ContentDetailActivity.TV_PROGRAM.equals(dispType) && channelInfo == null) {
+        if (TV_PROGRAM.equals(dispType) && channelInfo == null) {
             return ViewIngType.NONE_STATUS;
         } else if (channelInfo != null) {
             channelServiceId = channelInfo.getServiceId();
@@ -789,9 +833,9 @@ public class ContentUtils {
         long nowDate = DateUtils.getNowTimeFormatEpoch();
         //メタレスポンス「disp_type」が「tv_program」
         switch (dispType) {
-            case ContentDetailActivity.TV_PROGRAM:
+            case TV_PROGRAM:
                 //メタレスポンス「tv_service」が「1」
-                if (ContentDetailActivity.TV_SERVICE_FLAG_HIKARI.equals(tvService)) {
+                if (TV_SERVICE_FLAG_HIKARI.equals(tvService)) {
                     //メタレスポンスの「service_id」とCH一覧取得IFで取得したチャンネルの「service_id」で番組に紐づくチャンネルを特定する
                     if (vodServiceId.equals(channelServiceId)) {
                         //チャンネルメタレスポンス「ch_type」が「kihon_ch」、「basic_ch」、「trial_free」
@@ -825,7 +869,7 @@ public class ContentUtils {
                         return ViewIngType.NONE_STATUS;
                     }
                     //メタレスポンス「tv_service」が「2」
-                } else if (ContentDetailActivity.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(tvService)) {
+                } else if (TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(tvService)) {
                     //メタレスポンス「publish_start_date」 <= 現在時刻 < 「publish_end_date」
                     if (publishStartDate <= nowDate && nowDate < publishEndDate) {
                         //「publish_end_date」が現在日時から1か月以内
@@ -871,12 +915,12 @@ public class ContentUtils {
                     //視聴可否範囲外
                     return ViewIngType.NONE_STATUS;
                 }
-            case ContentDetailActivity.VIDEO_PROGRAM:
-            case ContentDetailActivity.VIDEO_SERIES:
+            case VIDEO_PROGRAM:
+            case VIDEO_SERIES:
                 //"dtv"の値を確認する
                 String dTv = metaFullData.getDtv();
                 DTVTLogger.debug("dtv: " + dTv);
-                if (dTv != null && IS_DTV_FLAG.equals(dTv)) {
+                if (dTv != null && DTV_FLAG_ONE.equals(dTv)) {
                     //メタレスポンス「availStartDate」 <= 現在時刻 < 「availEndDate」の場合
                     if (availStartDate <= nowDate && nowDate < availEndDate) {
                         //「availStartDate」が現在日時から1か月以内
@@ -894,7 +938,7 @@ public class ContentUtils {
                         return ViewIngType.DISABLE_WATCH;
                     }
                     //メタレスポンス「dtv」が「0」か未設定の場合
-                } else if (dTv == null || dTv.equals(NOT_DTV_FLAG)) {
+                } else if (dTv == null || dTv.equals(DTV_FLAG_ZERO)) {
                     String bvFlg = metaFullData.getBvflg();
                     //「bvflg」が「1」
                     DTVTLogger.debug("bvflg: " + bvFlg);
@@ -920,9 +964,9 @@ public class ContentUtils {
                     return ViewIngType.NONE_STATUS;
                 }
                 //メタレスポンス「disp_type」が「subscription_package」
-            case ContentDetailActivity.SUBSCRIPTION_PACKAGE:
-            case ContentDetailActivity.SERIES_SVOD:
-            case ContentDetailActivity.VIDEO_PACKAGE:
+            case SUBSCRIPTION_PACKAGE:
+            case SERIES_SVOD:
+            case VIDEO_PACKAGE:
                 return ViewIngType.SUBSCRIPTION_CHECK_START;
             default:
                 return ViewIngType.NONE_STATUS;
@@ -1155,11 +1199,11 @@ public class ContentUtils {
      */
     public static int getContentsServiceName(final int id) {
         switch (id) {
-            case ContentDetailActivity.DTV_CONTENTS_SERVICE_ID:
+            case DTV_CONTENTS_SERVICE_ID:
                 return R.mipmap.label_service_dtv;
-            case ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID:
+            case DTV_CHANNEL_CONTENTS_SERVICE_ID:
                 return R.mipmap.label_service_dch;
-            case ContentDetailActivity.D_ANIMATION_CONTENTS_SERVICE_ID:
+            case D_ANIMATION_CONTENTS_SERVICE_ID:
                 return R.mipmap.label_service_danime;
         }
         return R.mipmap.label_service_hikari;
@@ -1173,9 +1217,9 @@ public class ContentUtils {
      */
     public static boolean isOtherService(final int id) {
         switch (id) {
-            case ContentDetailActivity.DTV_CONTENTS_SERVICE_ID:
-            case ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID:
-            case ContentDetailActivity.D_ANIMATION_CONTENTS_SERVICE_ID:
+            case DTV_CONTENTS_SERVICE_ID:
+            case DTV_CHANNEL_CONTENTS_SERVICE_ID:
+            case D_ANIMATION_CONTENTS_SERVICE_ID:
                 return true;
             default:
                 return false;

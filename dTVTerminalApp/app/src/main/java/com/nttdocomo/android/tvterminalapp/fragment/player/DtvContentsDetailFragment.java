@@ -125,7 +125,7 @@ public class DtvContentsDetailFragment extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         //コンテンツ詳細表示に必要なデータを取得する
-        mOtherContentsDetailData = getArguments().getParcelable(ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY);
+        mOtherContentsDetailData = getArguments().getParcelable(ContentUtils.RECOMMEND_INFO_BUNDLE_KEY);
         return initView(container);
     }
 
@@ -287,7 +287,7 @@ public class DtvContentsDetailFragment extends Fragment {
         mImgServiceIcon.setImageResource(serviceIcon);
         String dtv = mOtherContentsDetailData.getDtv();
         //dtvの場合
-        if (ContentDetailActivity.DTV_FLAG_ONE.equals(dtv)) {
+        if (ContentUtils.DTV_FLAG_ONE.equals(dtv)) {
             mImgServiceIconDtv.setVisibility(View.VISIBLE);
             mImgServiceIconDtv.setImageResource(R.mipmap.label_service_dtv_white);
         }

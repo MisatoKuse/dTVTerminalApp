@@ -39,6 +39,7 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaObject;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
@@ -556,7 +557,7 @@ public class ChannelListActivity extends BaseActivity implements
         Intent intent = new Intent(this, ContentDetailActivity.class);
         ComponentName componentName = this.getComponentName();
         intent.putExtra(DtvtConstants.SOURCE_SCREEN, componentName.getClassName());
-        OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(data, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
+        OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(data, ContentUtils.PLALA_INFO_BUNDLE_KEY);
         intent.putExtra(detailData.getRecommendFlg(), detailData);
         startActivity(intent);
     }

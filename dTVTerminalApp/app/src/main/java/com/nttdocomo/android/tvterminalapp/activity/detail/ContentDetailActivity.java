@@ -197,18 +197,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private ImageView mThumbnail = null;
     /**サムネイルアイコン、メッセージレイアウト.*/
     private LinearLayout mContractLeadingView = null;
-    /**レコメンド情報キー.*/
-    public static final String RECOMMEND_INFO_BUNDLE_KEY = "recommendInfoKey";
-    /**ぷらら情報キー.*/
-    public static final String PLALA_INFO_BUNDLE_KEY = "plalaInfoKey";
-    /**DTVコンテンツサービスID.*/
-    public static final int DTV_CONTENTS_SERVICE_ID = 15;
-    /**DアニメコンテンツサービスID.*/
-    public static final int D_ANIMATION_CONTENTS_SERVICE_ID = 17;
-    /**DTVチャンネルコンテンツサービスID.*/
-    public static final int DTV_CHANNEL_CONTENTS_SERVICE_ID = 43;
-    /**DTVひかりコンテンツサービスID.*/
-    public static final int DTV_HIKARI_CONTENTS_SERVICE_ID = 44;
     /**コンテンツ詳細予約済みID.*/
     public static final String CONTENTS_DETAIL_RESERVEDID = "1";
     /**モバイル視聴不可.*/
@@ -231,17 +219,13 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private static final String RESERVED4_TYPE8 = "8";
     /**DTVパッケージ名.*/
     private static final String DTV_PACKAGE_NAME = "jp.co.nttdocomo.dtv";
-    /**エラーメッセージ.*/
-    private String mErrorMessage;
-    /*DTV起動*/
 
     /**dアニメストアパッケージ名.*/
     private static final String DANIMESTORE_PACKAGE_NAME = "com.nttdocomo.android.danimeapp";
     /**dアニメストアバージョン.*/
     private static final int DANIMESTORE_VERSION_STANDARD = 132;
-    /*dアニメストア起動*/
 
-    /**dTVチャンネル起動.*/
+    /**dTVチャンネルパッケージ名.*/
     private static final String DTVCHANNEL_PACKAGE_NAME = "com.nttdocomo.dch";
     /**dTVチャンネルバージョン.*/
     private static final int DTVCHANNEL_VERSION_STANDARD = 15;
@@ -251,61 +235,14 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private static final String DTV_CHANNEL_CATEGORY_MISSED = "02";
     /**dTVチャンネルカテゴリー関連.*/
     private static final String DTV_CHANNEL_CATEGORY_RELATION = "03";
-    /*dTVチャンネル起動*/
 
-    /*ひかりTV起動*/
     /**他サービス起動リクエストコード.*/
     private static final int START_APPLICATION_REQUEST_CODE = 0;
-    /** カテゴリID(01).*/
-    public static final String H4D_CATEGORY_TERRESTRIAL_DIGITAL = "01";
-    /** カテゴリID(02).*/
-    public static final String H4D_CATEGORY_SATELLITE_BS = "02";
-    /** カテゴリID(03).*/
-    public static final String H4D_CATEGORY_IPTV = "03";
-    /** カテゴリID(04).*/
-    public static final String H4D_CATEGORY_DTV_CHANNEL_BROADCAST = "04";
-    /** カテゴリID(05).*/
-    public static final String H4D_CATEGORY_DTV_CHANNEL_MISSED = "05";
-    /** カテゴリID(06).*/
-    public static final String H4D_CATEGORY_DTV_CHANNEL_RELATION = "06";
-    /** カテゴリID(08).*/
-    public static final String H4D_CATEGORY_HIKARITV_VOD = "08";
-    /** カテゴリID(10).*/
-    public static final String H4D_CATEGORY_HIKARI_DTV_SVOD = "10";
-    /** disp_type(tv_program).*/
-    public static final String TV_PROGRAM = "tv_program";
-    /** disp_type(video_program).*/
-    public static final String VIDEO_PROGRAM = "video_program";
-    /** disp_type(video_package).*/
-    public static final String VIDEO_PACKAGE = "video_package";
-    /** disp_type(WIZARD).*/
-    private static final String WIZARD = "wizard";
-    /** disp_type(video_series).*/
-    public static final String VIDEO_SERIES = "video_series";
-    /** disp_type(subscription_package).*/
-    public static final String SUBSCRIPTION_PACKAGE = "subscription_package";
-    /** disp_type(series_svod).*/
-    public static final String SERIES_SVOD = "series_svod";
-    /** dtv(1).*/
-    public static final String DTV_FLAG_ONE = "1";
-    /** dtv(0).*/
-    public static final String DTV_FLAG_ZERO = "0";
+
     /** bvflg(1).*/
     private static final String BVFLG_FLAG_ONE = "1";
     /** bvflg(0).*/
     private static final String BVFLG_FLAG_ZERO = "0";
-    /** tv_service(0).*/
-    public static final String TV_SERVICE_FLAG_HIKARI = "1";
-    /** tv_service(1).*/
-    public static final String TV_SERVICE_FLAG_DCH_IN_HIKARI = "2";
-    /** contents_type(0).*/
-    public static final String CONTENT_TYPE_FLAG_ZERO = "0";
-    /** contents_type(1).*/
-    public static final String CONTENT_TYPE_FLAG_ONE = "1";
-    /** contents_type(2).*/
-    public static final String CONTENT_TYPE_FLAG_TWO = "2";
-    /** contents_type(3).*/
-    public static final String CONTENT_TYPE_FLAG_THREE = "3";
     /** flg(0).*/
     private static final int FLAG_ZERO = 0;
     /** 16進数から10進数への変換時の指定値. */
@@ -908,7 +845,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 } else {
                     if (mDetailFullData != null
                             && mDetailFullData.getContentsType().equals(ContentUtils.ContentsType.HIKARI_TV_VOD)) {
-                        //TODO テレビアイコン未着のためボタンを非表示にする
+
                         imageView.setVisibility(View.GONE);
 
                         // 連携アイコン非表示のためクリック抑止
@@ -1030,7 +967,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         DTVTLogger.start();
         mFrameLayout = findViewById(R.id.header_watch_by_tv);
         // タブ数を先に決定するため、コンテンツ詳細のデータを最初に取得しておく
-        mDetailData = mIntent.getParcelableExtra(RECOMMEND_INFO_BUNDLE_KEY);
+        mDetailData = mIntent.getParcelableExtra(ContentUtils.RECOMMEND_INFO_BUNDLE_KEY);
         if (mDetailData != null) {
             int serviceId = mDetailData.getServiceId();
             if (ContentUtils.isOtherService(serviceId)) {
@@ -1042,7 +979,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             if (getStbStatus() || mVisibility) {
                 if (mIsOtherService) {
                     switch (serviceId) {
-                        case D_ANIMATION_CONTENTS_SERVICE_ID:
+                        case ContentUtils.D_ANIMATION_CONTENTS_SERVICE_ID:
                             // リモコンUIのリスナーを設定
                             createRemoteControllerView(true);
                             mIsControllerVisible = true;
@@ -1050,7 +987,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                     R.drawable.remote_watch_by_tv_bottom_corner_d_anime, null));
                             setStartRemoteControllerUIListener(this);
                             break;
-                        case DTV_CONTENTS_SERVICE_ID: //「serviceId」が「15」(dTVコンテンツ)の場合
+                        case ContentUtils.DTV_CONTENTS_SERVICE_ID: //「serviceId」が「15」(dTVコンテンツ)の場合
                             // 「reserved1」が「1」STB視聴不可
                             if (!CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved1())) {
                                 createRemoteControllerView(true);
@@ -1060,7 +997,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                 setStartRemoteControllerUIListener(this);
                             }
                             break;
-                        case DTV_CHANNEL_CONTENTS_SERVICE_ID:
+                        case ContentUtils.DTV_CHANNEL_CONTENTS_SERVICE_ID:
                             createRemoteControllerView(true);
                             mIsControllerVisible = true;
                             mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
@@ -1079,6 +1016,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             //コンテンツタイプ取得
             ContentUtils.ContentsType type = mDetailData.getContentCategory();
 
+            //他サービスアプリスマホ連携表示
             switch (type) {
                 case PURE_DTV:
                     if (CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved1())
@@ -1090,12 +1028,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                 R.string.contents_detail_thumbnail_text_unable_viewing));
                     } else if (CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved2())) {
                         // 「reserved2」が「1」Android視聴不可
-                        // モバイル視聴不可なので、"テレビで視聴できます"を表示
+                        // モバイル視聴不可なので、"テレビで視聴できます"を表示(ペアリングは無関係)
                         setThumbnailText(getResources().getString(
                                 R.string.contents_detail_thumbnail_text));
                     } else if (MOBILEVIEWINGFLG_FLAG_ZERO.equals(mDetailData.getMobileViewingFlg())) {
                         //「mobileViewingFlg」が「0」の場合モバイル視聴不可
-                        //モバイル視聴不可なので、"テレビで視聴できます"を表示
+                        //モバイル視聴不可なので、"テレビで視聴できます"を表示(ペアリングは無関係)
                         setThumbnailText(getResources().getString(
                                 R.string.contents_detail_thumbnail_text));
                     } else {
@@ -1108,21 +1046,25 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 case PURE_DTV_CHANNEL:
                 case PURE_DTV_CHANNEL_MISS:
                 case PURE_DTV_CHANNEL_RELATION:
+                    // "dTVチャンネルで視聴"
                     setThumbnailText(getResources().getString(R.string.dtv_channel_service_start_text));
                     setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
                     break;
                 case D_ANIME_STORE:
+                    // "dアニメストアで視聴"
                     setThumbnailText(getResources().getString(R.string.d_anime_store_content_service_start_text));
                     setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
                     break;
                 default:
+                    // その他はひかりコンテンツ.ここでは何も表示させない
                     break;
             }
             if (mIsOtherService) {
+                // 他サービスはここでサムネイルとタイトルを表示しておく
                 setTitleAndThumbnail(mDetailData.getTitle(), mDetailData.getThumb());
             }
         } else {  //plalaサーバーから
-            mDetailData = mIntent.getParcelableExtra(PLALA_INFO_BUNDLE_KEY);
+            mDetailData = mIntent.getParcelableExtra(ContentUtils.PLALA_INFO_BUNDLE_KEY);
             if (getStbStatus() || mVisibility) {
                 createRemoteControllerView(true);
                 mIsControllerVisible = true;
@@ -1396,7 +1338,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             Fragment fragment = getFragmentFactory().createFragment(position);
             //Fragmentへデータを渡す
             Bundle args = new Bundle();
-            args.putParcelable(RECOMMEND_INFO_BUNDLE_KEY, mDetailData);
+            args.putParcelable(ContentUtils.RECOMMEND_INFO_BUNDLE_KEY, mDetailData);
             if (position == 1) {
                 ((DtvContentsChannelFragment) fragment).setScrollCallBack(ContentDetailActivity.this);
             }
@@ -1484,15 +1426,15 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             DtvContentsDetailFragment detailFragment = getDetailFragment();
             mDetailFullData = contentsDetailInfo;
             contentType = ContentTypeForGoogleAnalytics.TV;
-            if (TV_PROGRAM.equals(mDetailFullData.getDisp_type())) {
+            if (ContentUtils.TV_PROGRAM.equals(mDetailFullData.getDisp_type())) {
                 //tv_programの場合
-                if (TV_SERVICE_FLAG_HIKARI.equals(mDetailFullData.getmTv_service())) {
+                if (ContentUtils.TV_SERVICE_FLAG_HIKARI.equals(mDetailFullData.getmTv_service())) {
                     //tv_serviceは0の場合(ひかりTV多ch)
                     setRecordingData(detailFragment);
-                } else if (TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(mDetailFullData.getmTv_service())) {
+                } else if (ContentUtils.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(mDetailFullData.getmTv_service())) {
                     //tv_serviceは1の場合(ひかり内dチャンネル)
-                    if (CONTENT_TYPE_FLAG_ONE.equals(mDetailFullData.getmContent_type())
-                            || CONTENT_TYPE_FLAG_TWO.equals(mDetailFullData.getmContent_type())) {
+                    if (ContentUtils.CONTENT_TYPE_FLAG_ONE.equals(mDetailFullData.getmContent_type())
+                            || ContentUtils.CONTENT_TYPE_FLAG_TWO.equals(mDetailFullData.getmContent_type())) {
                         //contents_typeは1又は2の場合(見逃し（切り出し）or見逃し（完パケ）)
                         if (DateUtils.isBefore(mDetailFullData.getmVod_start_date())) {
                             // 見逃し配信前（=放送コンテンツ扱い)
@@ -1522,7 +1464,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             String dTvType = mDetailFullData.getDtvType();
             OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
             detailData.setTitle(mDetailFullData.getTitle());
-            if (DTV_FLAG_ONE.equals(dTv)) {
+            if (ContentUtils.DTV_FLAG_ONE.equals(dTv)) {
                 setTitleAndThumbnail(mDetailFullData.getTitle(), mDetailFullData.getmDtv_thumb_640_360());
             } else {
                 setTitleAndThumbnail(mDetailFullData.getTitle(), mDetailFullData.getmThumb_640_360());
@@ -1598,7 +1540,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 mServiceId = mDetailFullData.getmService_id();
                 getChannelInfo();
             }
-            if (DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
+            if (ContentUtils.DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
                 if (getStbStatus() || mVisibility) {
                     createRemoteControllerView(true);
                     mIsControllerVisible = true;
@@ -1949,199 +1891,29 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     leadingContract();
                     return;
                 }
-                //DTVの場合
-                if (mDetailData != null && mDetailData.getServiceId() == DTV_CONTENTS_SERVICE_ID) {
-                    if (isAppInstalled(ContentDetailActivity.this, DTV_PACKAGE_NAME)) {
-                        CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
-                        startAppDialog.setContent(getResources().getString(R.string.dtv_content_service_start_dialog));
-                        startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                            @Override
-                            public void onOKCallback(final boolean isOK) {
-                                int localVersionCode = getVersionCode(DTV_PACKAGE_NAME);
-                                if (localVersionCode < DTV_VERSION_STANDARD) {
-                                    mErrorMessage = getResources().getString(R.string.dtv_content_service_update_dialog);
-                                    showErrorDialog(mErrorMessage);
-                                } else {
-                                    //RESERVED4は4の場合
-                                    if (RESERVED4_TYPE4.equals(mDetailData.getReserved4())) {
-                                        startApp(UrlConstants.WebUrl.WORK_START_TYPE + mDetailData.getContentsId());
-                                        //RESERVED4は7,8の場合
-                                    } else if (RESERVED4_TYPE7.equals(mDetailData.getReserved4())
-                                            || RESERVED4_TYPE8.equals(mDetailData.getReserved4())) {
-                                        startApp(UrlConstants.WebUrl.SUPER_SPEED_START_TYPE + mDetailData.getContentsId());
-                                        //その他の場合
-                                    } else {
-                                        startApp(UrlConstants.WebUrl.TITTLE_START_TYPE + mDetailData.getContentsId());
-                                    }
-                                }
-                            }
-                        });
-                        startAppDialog.showDialog();
-                    } else {
-                        CustomDialog installAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
-                        installAppDialog.setContent(getResources().getString(R.string.dtv_content_service_application_not_install));
-                        installAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                            @Override
-                            public void onOKCallback(final boolean isOK) {
-                                toGooglePlay(UrlConstants.WebUrl.GOOGLEPLAY_DOWNLOAD_URL);
-                            }
-                        });
-                        installAppDialog.showDialog();
-                    }
-                } else if (mDetailData != null && mDetailData.getServiceId() == D_ANIMATION_CONTENTS_SERVICE_ID) {
-                    if (isAppInstalled(ContentDetailActivity.this, DANIMESTORE_PACKAGE_NAME)) {
-                        CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
-                        startAppDialog.setContent(getResources().getString(R.string.d_anime_store_content_service_start_dialog));
-                        startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                            @Override
-                            public void onOKCallback(final boolean isOK) {
-                                int localVersionCode = getVersionCode(DANIMESTORE_PACKAGE_NAME);
-                                //バージョンチェック
-                                if (localVersionCode < DANIMESTORE_VERSION_STANDARD) {
-                                    mErrorMessage = getResources().getString(R.string.d_anime_store_content_service_update_dialog);
-                                    showErrorDialog(mErrorMessage);
-                                } else {
-                                    startApp(UrlConstants.WebUrl.DANIMESTORE_START_URL + mDetailData.getContentsId());
-                                }
-                            }
-                        });
-                        startAppDialog.showDialog();
-                    } else {
-                        CustomDialog installAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
-                        installAppDialog.setContent(getResources().getString(R.string.d_anime_store_application_not_install_dialog));
-                        installAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                            @Override
-                            public void onOKCallback(final boolean isOK) {
-                                toGooglePlay(UrlConstants.WebUrl.DANIMESTORE_GOOGLEPLAY_DOWNLOAD_URL);
-                            }
-                        });
-                        installAppDialog.showDialog();
-                    }
-                } else if (mDetailData != null && mDetailData.getServiceId() == DTV_CHANNEL_CONTENTS_SERVICE_ID) {
-                    if (isAppInstalled(ContentDetailActivity.this, DTVCHANNEL_PACKAGE_NAME)) {
-                        final CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
-                        startAppDialog.setContent(getResources().getString(R.string.dtv_channel_service_start_dialog));
-                        startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                            @Override
-                            public void onOKCallback(final boolean isOK) {
-                                //バージョンコードは15
-                                int localVersionCode = getVersionCode(DTVCHANNEL_PACKAGE_NAME);
-                                if (localVersionCode < DTVCHANNEL_VERSION_STANDARD) {
-                                    mErrorMessage = getResources().getString(R.string.dtv_channel_service_update_dialog);
-                                    showErrorDialog(mErrorMessage);
-                                } else {    //テレビ再生  「categoryId」が「01」の場合
-                                    if (DTV_CHANNEL_CATEGORY_BROADCAST.equals(mDetailData.getCategoryId())) {
-                                        startApp(UrlConstants.WebUrl.DTVCHANNEL_TELEVISION_START_URL + mDetailData.getChannelId());
-                                        DTVTLogger.debug("channelId :----" + mDetailData.getChannelId());
-                                        //ビデオ再生  「categoryId」が「02」または「03」の場合
-                                    } else if (DTV_CHANNEL_CATEGORY_MISSED.equals(mDetailData.getCategoryId())
-                                            || DTV_CHANNEL_CATEGORY_RELATION.equals(mDetailData.getCategoryId())) {
-                                        startApp(UrlConstants.WebUrl.DTVCHANNEL_VIDEO_START_URL + mDetailData.getContentsId());
-                                        DTVTLogger.debug("ContentId :----" + mDetailData.getContentsId());
-                                    }
-                                }
-                            }
-                        });
-                        startAppDialog.showDialog();
-                    } else {
-                        CustomDialog installAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
-                        installAppDialog.setContent(getResources().getString(R.string.dtv_channel_service_application_not_install_dialog));
-                        installAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                            @Override
-                            public void onOKCallback(final boolean isOK) {
-                                toGooglePlay(UrlConstants.WebUrl.DTVCHANNEL_GOOGLEPLAY_DOWNLOAD_URL);
-                            }
-                        });
-                        installAppDialog.showDialog();
-                    }
-                } else {
-                    //ぷらら
-                    if (mDetailFullData != null) {
-                        //ひかりTV中にDTVの場合 DREM-895
-                        if (VIDEO_PROGRAM.equals(mDetailFullData.getDisp_type())
-                                || VIDEO_SERIES.equals(mDetailFullData.getDisp_type())
-                                || WIZARD.equals(mDetailFullData.getDisp_type())
-                                || VIDEO_PACKAGE.equals(mDetailFullData.getDisp_type())
-                                || SUBSCRIPTION_PACKAGE.equals(mDetailFullData.getDisp_type())
-                                || SERIES_SVOD.equals(mDetailFullData.getDisp_type())) {
-                            //端末にDTVアプリはすでに存在した場合
-                            if (isAppInstalled(ContentDetailActivity.this, DTV_PACKAGE_NAME)) {
-                                CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
-                                startAppDialog.setContent(getResources().getString(R.string.dtv_content_service_start_dialog));
-                                startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                                    @Override
-                                    public void onOKCallback(final boolean isOK) {
-                                        int localVersionCode = getVersionCode(DTV_PACKAGE_NAME);
-                                        if (localVersionCode < DTV_VERSION_STANDARD) {
-                                            mErrorMessage = getResources().getString(R.string.dtv_content_service_update_dialog);
-                                            showErrorDialog(mErrorMessage);
-                                        } else {
-                                            if (METARESPONSE1.equals(mDetailFullData.getDtvType())) {
-                                                startApp(UrlConstants.WebUrl.WORK_START_TYPE + mDetailFullData.getTitle_id());
-                                            } else if (METARESPONSE2.equals(mDetailFullData.getDtvType())) {
-                                                startApp(UrlConstants.WebUrl.SUPER_SPEED_START_TYPE + mDetailFullData.getTitle_id());
-                                            } else {
-                                                startApp(UrlConstants.WebUrl.TITTLE_START_TYPE + mDetailFullData.getTitle_id());
-                                            }
-                                        }
-                                    }
-                                });
-                                startAppDialog.showDialog();
-                            } else {
-                                //DTVアプリ存在しない場合
-                                CustomDialog installAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
-                                installAppDialog.setContent(getResources().getString(R.string.dtv_content_service_application_not_install));
-                                installAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                                    @Override
-                                    public void onOKCallback(final boolean isOK) {
-                                        toGooglePlay(UrlConstants.WebUrl.GOOGLEPLAY_DOWNLOAD_URL);
-                                    }
-                                });
-                                installAppDialog.showDialog();
-                            }
-                        } else if (TV_PROGRAM.equals(mDetailFullData.getDisp_type())) { //ひかりTV中にdtvチャンネルの場合 DREM-1100
-                            if (isAppInstalled(ContentDetailActivity.this, DTVCHANNEL_PACKAGE_NAME)) {
-                                final CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
-                                startAppDialog.setContent(getResources().getString(R.string.dtv_channel_service_start_dialog));
-                                startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                                    @Override
-                                    public void onOKCallback(final boolean isOK) {
-                                        int localVersionCode = getVersionCode(DTVCHANNEL_PACKAGE_NAME);
-                                        if (localVersionCode < DTVCHANNEL_VERSION_STANDARD) {
-                                            mErrorMessage = getResources().getString(R.string.dtv_channel_service_update_dialog);
-                                            showErrorDialog(mErrorMessage);
-                                        } else {
-                                            if (TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(mDetailFullData.getmTv_service())) {
-                                                //「contents_type」が「0」または未設定
-                                                if (CONTENT_TYPE_FLAG_ZERO.equals(mDetailFullData.getmContent_type())
-                                                        || null == mDetailFullData.getmContent_type()) {
-                                                    DTVTLogger.debug("contentsType :----" + mDetailFullData.getmContent_type());
-                                                    startApp(UrlConstants.WebUrl.DTVCHANNEL_TELEVISION_START_URL + mDetailFullData.getmService_id());
-                                                    DTVTLogger.debug("chno :----" + mDetailFullData.getmService_id());
-                                                    //ビデオ再生 「disp_type」が「tv_program」かつ「contents_type」が「1」または「2」または「3」
-                                                } else if (CONTENT_TYPE_FLAG_ONE.equals(mDetailFullData.getmContent_type())
-                                                        || CONTENT_TYPE_FLAG_TWO.equals(mDetailFullData.getmContent_type())
-                                                        || CONTENT_TYPE_FLAG_THREE.equals(mDetailFullData.getmContent_type())) {
-                                                    startApp(UrlConstants.WebUrl.DTVCHANNEL_VIDEO_START_URL + mDetailFullData.getCrid());
-                                                    DTVTLogger.debug("crid :----" + mDetailFullData.getCrid());
-                                                }
-                                            }
-                                        }
-                                    }
-                                });
-                                startAppDialog.showDialog();
-                            } else {
-                                CustomDialog installAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
-                                installAppDialog.setContent(getResources().getString(R.string.dtv_channel_service_application_not_install_dialog));
-                                installAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                                    @Override
-                                    public void onOKCallback(final boolean isOK) {
-                                        toGooglePlay(UrlConstants.WebUrl.DTVCHANNEL_GOOGLEPLAY_DOWNLOAD_URL);
-                                    }
-                                });
-                                installAppDialog.showDialog();
-                            }
-                        }
+
+                if (mDetailData != null && mDetailData.getServiceId() == ContentUtils.DTV_CONTENTS_SERVICE_ID) {
+                    //dTV起動
+                    startDtvApp(mDetailData);
+                } else if (mDetailData != null && mDetailData.getServiceId() == ContentUtils.D_ANIMATION_CONTENTS_SERVICE_ID) {
+                    //dアニメ起動
+                    startDAnimeApp(mDetailData);
+                } else if (mDetailData != null && mDetailData.getServiceId() == ContentUtils.DTV_CHANNEL_CONTENTS_SERVICE_ID) {
+                    //dチャンネル起動.
+                    startDtvChannelApp(mDetailData);
+                } else if (mDetailFullData != null) {
+                    //ひかりTV内DTVの場合
+                    if (ContentUtils.VIDEO_PROGRAM.equals(mDetailFullData.getDisp_type())
+                            || ContentUtils.VIDEO_SERIES.equals(mDetailFullData.getDisp_type())
+                            || ContentUtils.WIZARD.equals(mDetailFullData.getDisp_type())
+                            || ContentUtils.VIDEO_PACKAGE.equals(mDetailFullData.getDisp_type())
+                            || ContentUtils.SUBSCRIPTION_PACKAGE.equals(mDetailFullData.getDisp_type())
+                            || ContentUtils.SERIES_SVOD.equals(mDetailFullData.getDisp_type())) {
+                        //dTV起動
+                        startDtvApp(mDetailFullData);
+                    } else if (ContentUtils.TV_PROGRAM.equals(mDetailFullData.getDisp_type())) {
+                        startDtvChannelApp(mDetailFullData);
+
                     }
                 }
                 break;
@@ -2151,6 +1923,226 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         DTVTLogger.end();
     }
     //endregion
+
+    /**
+     * 機能：dTVAPP起動（検レコサーバ）.
+     *
+     * @param detailData 検レコサーバメタデータ
+     */
+    private void startDtvApp(final OtherContentsDetailData detailData) {
+            if (isAppInstalled(ContentDetailActivity.this, DTV_PACKAGE_NAME)) {
+            CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
+            startAppDialog.setContent(getResources().getString(R.string.dtv_content_service_start_dialog));
+            startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                @Override
+                public void onOKCallback(final boolean isOK) {
+                    int localVersionCode = getVersionCode(DTV_PACKAGE_NAME);
+                    if (localVersionCode < DTV_VERSION_STANDARD) {
+                        String errorMessage = getResources().getString(R.string.dtv_content_service_update_dialog);
+                        showErrorDialog(errorMessage);
+                    } else {
+                        //RESERVED4は4の場合
+                        if (RESERVED4_TYPE4.equals(detailData.getReserved4())) {
+                            startApp(UrlConstants.WebUrl.WORK_START_TYPE + detailData.getContentsId());
+                            //RESERVED4は7,8の場合
+                        } else if (RESERVED4_TYPE7.equals(detailData.getReserved4())
+                                || RESERVED4_TYPE8.equals(detailData.getReserved4())) {
+                            startApp(UrlConstants.WebUrl.SUPER_SPEED_START_TYPE + detailData.getContentsId());
+                            //その他の場合
+                        } else {
+                            startApp(UrlConstants.WebUrl.TITTLE_START_TYPE + detailData.getContentsId());
+                        }
+                    }
+                }
+            });
+            startAppDialog.showDialog();
+        } else {
+            CustomDialog installAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
+            installAppDialog.setContent(getResources().getString(R.string.dtv_content_service_application_not_install));
+            installAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                @Override
+                public void onOKCallback(final boolean isOK) {
+                    toGooglePlay(UrlConstants.WebUrl.GOOGLEPLAY_DOWNLOAD_URL);
+                }
+            });
+            installAppDialog.showDialog();
+        }
+    }
+
+    /**
+     * 機能：dアニメAPP起動（検レコサーバ）.
+     *
+     * * @param detailData 検レコサーバメタデータ
+     */
+    private void startDAnimeApp(final OtherContentsDetailData detailData) {
+        if (isAppInstalled(ContentDetailActivity.this, DANIMESTORE_PACKAGE_NAME)) {
+            CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
+            startAppDialog.setContent(getResources().getString(R.string.d_anime_store_content_service_start_dialog));
+            startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                @Override
+                public void onOKCallback(final boolean isOK) {
+                    int localVersionCode = getVersionCode(DANIMESTORE_PACKAGE_NAME);
+                    //バージョンチェック
+                    if (localVersionCode < DANIMESTORE_VERSION_STANDARD) {
+                        String errorMessage = getResources().getString(R.string.d_anime_store_content_service_update_dialog);
+                        showErrorDialog(errorMessage);
+                    } else {
+                        startApp(UrlConstants.WebUrl.DANIMESTORE_START_URL + detailData.getContentsId());
+                    }
+                }
+            });
+            startAppDialog.showDialog();
+        } else {
+            CustomDialog installAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
+            installAppDialog.setContent(getResources().getString(R.string.d_anime_store_application_not_install_dialog));
+            installAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                @Override
+                public void onOKCallback(final boolean isOK) {
+                    toGooglePlay(UrlConstants.WebUrl.DANIMESTORE_GOOGLEPLAY_DOWNLOAD_URL);
+                }
+            });
+            installAppDialog.showDialog();
+        }
+    }
+
+    /**
+     * 機能：dTVチャンネルAPP起動（検レコサーバ）.
+     *
+     * @param detailData 検レコサーバメタデータ
+     */
+    private void startDtvChannelApp(final OtherContentsDetailData detailData) {
+        if (isAppInstalled(ContentDetailActivity.this, DTVCHANNEL_PACKAGE_NAME)) {
+            final CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
+            startAppDialog.setContent(getResources().getString(R.string.dtv_channel_service_start_dialog));
+            startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                @Override
+                public void onOKCallback(final boolean isOK) {
+                    //バージョンコードは15
+                    int localVersionCode = getVersionCode(DTVCHANNEL_PACKAGE_NAME);
+                    if (localVersionCode < DTVCHANNEL_VERSION_STANDARD) {
+                        String errorMessage = getResources().getString(R.string.dtv_channel_service_update_dialog);
+                        showErrorDialog(errorMessage);
+                    } else {    //テレビ再生  「categoryId」が「01」の場合
+                        if (DTV_CHANNEL_CATEGORY_BROADCAST.equals(detailData.getCategoryId())) {
+                            startApp(UrlConstants.WebUrl.DTVCHANNEL_TELEVISION_START_URL + detailData.getChannelId());
+                            DTVTLogger.debug("channelId :----" + detailData.getChannelId());
+                            //ビデオ再生  「categoryId」が「02」または「03」の場合
+                        } else if (DTV_CHANNEL_CATEGORY_MISSED.equals(detailData.getCategoryId())
+                                || DTV_CHANNEL_CATEGORY_RELATION.equals(detailData.getCategoryId())) {
+                            startApp(UrlConstants.WebUrl.DTVCHANNEL_VIDEO_START_URL + detailData.getContentsId());
+                            DTVTLogger.debug("ContentId :----" + detailData.getContentsId());
+                        }
+                    }
+                }
+            });
+            startAppDialog.showDialog();
+        } else {
+            CustomDialog installAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
+            installAppDialog.setContent(getResources().getString(R.string.dtv_channel_service_application_not_install_dialog));
+            installAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                @Override
+                public void onOKCallback(final boolean isOK) {
+                    toGooglePlay(UrlConstants.WebUrl.DTVCHANNEL_GOOGLEPLAY_DOWNLOAD_URL);
+                }
+            });
+            installAppDialog.showDialog();
+        }
+    }
+
+    /**
+     * 機能：dTVAPP起動（ぷららサーバ）.
+     *
+     * @param detailData ぷららサーバメタデータ
+     */
+    private void startDtvApp(final VodMetaFullData detailData) {
+        //端末にDTVアプリはすでに存在した場合
+        if (isAppInstalled(ContentDetailActivity.this, DTV_PACKAGE_NAME)) {
+            CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
+            startAppDialog.setContent(getResources().getString(R.string.dtv_content_service_start_dialog));
+            startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                @Override
+                public void onOKCallback(final boolean isOK) {
+                    int localVersionCode = getVersionCode(DTV_PACKAGE_NAME);
+                    if (localVersionCode < DTV_VERSION_STANDARD) {
+                        String errorMessage = getResources().getString(R.string.dtv_content_service_update_dialog);
+                        showErrorDialog(errorMessage);
+                    } else {
+                        if (METARESPONSE1.equals(detailData.getDtvType())) {
+                            startApp(UrlConstants.WebUrl.WORK_START_TYPE + detailData.getTitle_id());
+                        } else if (METARESPONSE2.equals(detailData.getDtvType())) {
+                            startApp(UrlConstants.WebUrl.SUPER_SPEED_START_TYPE + detailData.getTitle_id());
+                        } else {
+                            startApp(UrlConstants.WebUrl.TITTLE_START_TYPE + detailData.getTitle_id());
+                        }
+                    }
+                }
+            });
+            startAppDialog.showDialog();
+        } else {
+            //DTVアプリ存在しない場合
+            CustomDialog installAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
+            installAppDialog.setContent(getResources().getString(R.string.dtv_content_service_application_not_install));
+            installAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                @Override
+                public void onOKCallback(final boolean isOK) {
+                    toGooglePlay(UrlConstants.WebUrl.GOOGLEPLAY_DOWNLOAD_URL);
+                }
+            });
+            installAppDialog.showDialog();
+        }
+    }
+
+    /**
+     * 機能：dTVチャンネルAPP起動（検レコサーバ）.
+     *
+     * @param detailData ぷららサーバメタデータ
+     */
+    private void startDtvChannelApp(final VodMetaFullData detailData) {
+        //ひかりTV内dtvチャンネルの場合
+        if (isAppInstalled(ContentDetailActivity.this, DTVCHANNEL_PACKAGE_NAME)) {
+            final CustomDialog startAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
+            startAppDialog.setContent(getResources().getString(R.string.dtv_channel_service_start_dialog));
+            startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                @Override
+                public void onOKCallback(final boolean isOK) {
+                    int localVersionCode = getVersionCode(DTVCHANNEL_PACKAGE_NAME);
+                    if (localVersionCode < DTVCHANNEL_VERSION_STANDARD) {
+                        String errorMessage = getResources().getString(R.string.dtv_channel_service_update_dialog);
+                        showErrorDialog(errorMessage);
+                    } else {
+                        if (ContentUtils.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(detailData.getmTv_service())) {
+                            //「contents_type」が「0」または未設定
+                            if (ContentUtils.CONTENT_TYPE_FLAG_ZERO.equals(detailData.getmContent_type())
+                                    || null == detailData.getmContent_type()) {
+                                DTVTLogger.debug("contentsType :----" + detailData.getmContent_type());
+                                startApp(UrlConstants.WebUrl.DTVCHANNEL_TELEVISION_START_URL + detailData.getmService_id());
+                                DTVTLogger.debug("chno :----" + detailData.getmService_id());
+                                //ビデオ再生 「disp_type」が「tv_program」かつ「contents_type」が「1」または「2」または「3」
+                            } else if (ContentUtils.CONTENT_TYPE_FLAG_ONE.equals(detailData.getmContent_type())
+                                    || ContentUtils.CONTENT_TYPE_FLAG_TWO.equals(detailData.getmContent_type())
+                                    || ContentUtils.CONTENT_TYPE_FLAG_THREE.equals(detailData.getmContent_type())) {
+                                startApp(UrlConstants.WebUrl.DTVCHANNEL_VIDEO_START_URL + detailData.getCrid());
+                                DTVTLogger.debug("crid :----" + detailData.getCrid());
+                            }
+                        }
+                    }
+                }
+            });
+            startAppDialog.showDialog();
+        } else {
+            CustomDialog installAppDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.CONFIRM);
+            installAppDialog.setContent(getResources().getString(R.string.dtv_channel_service_application_not_install_dialog));
+            installAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                @Override
+                public void onOKCallback(final boolean isOK) {
+                    toGooglePlay(UrlConstants.WebUrl.DTVCHANNEL_GOOGLEPLAY_DOWNLOAD_URL);
+                }
+            });
+            installAppDialog.showDialog();
+        }
+        DTVTLogger.end();
+    }
+
     /**
      * 機能：APP起動.
      *
@@ -2209,21 +2201,21 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         if (mDetailData != null && !mIsSend && !isFromHeader) {
             setRelayClientHandler();
             switch (mDetailData.getServiceId()) {
-                case DTV_CONTENTS_SERVICE_ID: // dTV
+                case ContentUtils.DTV_CONTENTS_SERVICE_ID: // dTV
                     if (!mIsFromHeader) {
                         setRemoteProgressVisible(View.VISIBLE);
                     }
                     requestStartApplication(
                             RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV, mDetailData.getContentsId());
                     break;
-                case D_ANIMATION_CONTENTS_SERVICE_ID: // dアニメ
+                case ContentUtils.D_ANIMATION_CONTENTS_SERVICE_ID: // dアニメ
                     if (!mIsFromHeader) {
                         setRemoteProgressVisible(View.VISIBLE);
                     }
                     requestStartApplication(
                             RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, mDetailData.getContentsId());
                     break;
-                case DTV_CHANNEL_CONTENTS_SERVICE_ID: // dチャンネル
+                case ContentUtils.DTV_CHANNEL_CONTENTS_SERVICE_ID: // dチャンネル
                     if (!mIsFromHeader) {
                         setRemoteProgressVisible(View.VISIBLE);
                     }
@@ -2251,7 +2243,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         }
                     }
                     break;
-                case DTV_HIKARI_CONTENTS_SERVICE_ID://ひかりTV
+                case ContentUtils.DTV_HIKARI_CONTENTS_SERVICE_ID://ひかりTV
                 default:
                     if (mDetailFullData == null) {
                         break;
@@ -2273,8 +2265,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         if (!mIsFromHeader) {
             setRemoteProgressVisible(View.VISIBLE);
         }
-        if (VIDEO_PROGRAM.equals(mDetailFullData.getDisp_type())) {
-            if (DTV_FLAG_ZERO.equals(mDetailFullData.getDtv()) || TextUtils.isEmpty(mDetailFullData.getDtv())
+        if (ContentUtils.VIDEO_PROGRAM.equals(mDetailFullData.getDisp_type())) {
+            if (ContentUtils.DTV_FLAG_ZERO.equals(mDetailFullData.getDtv()) || TextUtils.isEmpty(mDetailFullData.getDtv())
                     || FLAG_ZERO == mDetailFullData.getDtv().trim().length()) {
                 String[] liinfArray = mDetailFullData.getmLiinf_array();
                 String puid = mDetailFullData.getPuid();
@@ -2326,7 +2318,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         setRemoteProgressVisible(View.GONE);
                     }
                 }
-            } else if (DTV_FLAG_ONE.equals(mDetailFullData.getDtv())) {
+            } else if (ContentUtils.DTV_FLAG_ONE.equals(mDetailFullData.getDtv())) {
                 //ひかりTV内dTVのVOD,「episode_id」を通知する
                 requestStartApplicationHikariTvCategoryDtvVod(mDetailFullData.getEpisode_id());
             } else {
@@ -2335,25 +2327,25 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 }
             }
             //「disp_type」が「video_series」の場合
-        } else if (VIDEO_SERIES.equals(mDetailFullData.getDisp_type())) {
+        } else if (ContentUtils.VIDEO_SERIES.equals(mDetailFullData.getDisp_type())) {
             // ひかりTV内VOD(dTV含む)のシリーズ
             requestStartApplicationHikariTvCategoryDtvSvod(mDetailFullData.getCrid());
             //「disp_type」が「tv_program」の場合
-        } else if (TV_PROGRAM.equals(mDetailFullData.getDisp_type())) {
+        } else if (ContentUtils.TV_PROGRAM.equals(mDetailFullData.getDisp_type())) {
             //「tv_service」が「1」の場合 ひかりTVの番組
-            if (TV_SERVICE_FLAG_HIKARI.equals(mDetailFullData.getmTv_service())) {
+            if (ContentUtils.TV_SERVICE_FLAG_HIKARI.equals(mDetailFullData.getmTv_service())) {
                 //ひかりTVの番組
                 requestStartApplicationHikariTvCategoryTerrestrialDigital(mDetailFullData.getmChno());
                 //「tv_service」が「2」の場合
-            } else if (TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(mDetailFullData.getmTv_service())) {
+            } else if (ContentUtils.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(mDetailFullData.getmTv_service())) {
                 //「contents_type」が「0」または未設定の場合  ひかりTV内dTVチャンネルの番組
-                if (CONTENT_TYPE_FLAG_ZERO.equals(mDetailFullData.getmContent_type())
+                if (ContentUtils.CONTENT_TYPE_FLAG_ZERO.equals(mDetailFullData.getmContent_type())
                         || TextUtils.isEmpty(mDetailFullData.getmContent_type())) {
                     //中継アプリに「chno」を通知する
                     requestStartApplicationHikariTvCategoryDtvchannelBroadcast(mDetailFullData.getmChno());
-                } else if (CONTENT_TYPE_FLAG_ONE.equals(mDetailFullData.getmContent_type())
-                        || CONTENT_TYPE_FLAG_TWO.equals(mDetailFullData.getmContent_type())
-                        || CONTENT_TYPE_FLAG_THREE.equals(mDetailFullData.getmContent_type())) {
+                } else if (ContentUtils.CONTENT_TYPE_FLAG_ONE.equals(mDetailFullData.getmContent_type())
+                        || ContentUtils.CONTENT_TYPE_FLAG_TWO.equals(mDetailFullData.getmContent_type())
+                        || ContentUtils.CONTENT_TYPE_FLAG_THREE.equals(mDetailFullData.getmContent_type())) {
                     //「vod_start_date」> 現在時刻の場合  ひかりTV内dTVチャンネルの番組(見逃し、関連VOD予定だが未配信)
                     if (DateUtils.getNowTimeFormatEpoch() < mDetailFullData.getmVod_start_date()) {
                         //中継アプリに「chno」を通知する
@@ -2398,16 +2390,16 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         }
         if (mDetailData != null) {
             switch (mDetailData.getServiceId()) {
-                case DTV_CONTENTS_SERVICE_ID:
+                case ContentUtils.DTV_CONTENTS_SERVICE_ID:
                     mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
                             R.drawable.remote_watch_by_tv_bottom_corner_dtv, null));
                     break;
-                case D_ANIMATION_CONTENTS_SERVICE_ID:
+                case ContentUtils.D_ANIMATION_CONTENTS_SERVICE_ID:
                     mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
                             R.drawable.remote_watch_by_tv_bottom_corner_d_anime, null));
                     break;
-                case DTV_CHANNEL_CONTENTS_SERVICE_ID:
-                case DTV_HIKARI_CONTENTS_SERVICE_ID:
+                case ContentUtils.DTV_CHANNEL_CONTENTS_SERVICE_ID:
+                case ContentUtils.DTV_HIKARI_CONTENTS_SERVICE_ID:
                 default:
                     mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
                             R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
@@ -2669,6 +2661,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         mViewIngType = ContentUtils.getViewingType(contractInfo, mDetailFullData, mChannel);
         switch (mViewIngType) {
             case ENABLE_WATCH_LIMIT_THIRTY:
+            case ENABLE_WATCH_LIMIT_THIRTY_001:
                 //期限まで30日以内表示内容設定
                 mEndDate = mDetailFullData.getPublish_end_date();
                 displayLimitDate();
@@ -2907,7 +2900,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     });
                     break;
                 default:
-                    // サムネイル表示メッセージ取得
+                    // ひかり内のdChやdTVコンテンツはサムネイル表示メッセージ取得
                     DtvContentsDetailFragment detailFragment = getDetailFragment();
                     String thumbnailMessage = StringUtils.getContentsDetailThumbnailString(
                             detailFragment.getOtherContentsDetailData(), this, mDetailFullData.getContentsType());
@@ -2916,6 +2909,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             }
         } else {
             if (mDetailFullData.getContentsType().equals(ContentUtils.ContentsType.HIKARI_TV_NOW_ON_AIR)) {
+                //番組は、放送中でペアリングしている場合、宅内宅外で挙動を変える
                 switch (StbConnectionManager.shared().getConnectionStatus()) {
                     case HOME_IN:
                         getMultiChannelData();
@@ -2925,6 +2919,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         break;
                 }
             } else if (mDetailFullData.getContentsType().equals(ContentUtils.ContentsType.HIKARI_TV_VOD)) {
+                //VODは、ペアリングされていれば宅内宅外どちらでも「TVで視聴できます」表示
                 mContractLeadingView.setVisibility(View.VISIBLE);
                 Button button = findViewById(R.id.contract_leading_button);
                 button.setVisibility(View.GONE);
@@ -3000,7 +2995,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private void changeUIBasedContractInfo() {
         DTVTLogger.start();
         DtvContentsDetailFragment detailFragment = getDetailFragment();
-        boolean isVisibleRecordButton = comparisonStartTime(mRecordingReservationContentsDetailInfo);
         DeviceStateUtils.PairingState pairingState;
         switch (mViewIngType) {
             case ENABLE_WATCH:
@@ -3008,14 +3002,21 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 //再生導線表示
                 playNowOnAir();
                 break;
+            case ENABLE_WATCH_001:
+            case ENABLE_WATCH_LIMIT_THIRTY_001:
+            case DISABLE_WATCH_AND_PLAY_001:
+                //dCHのみ契約で視聴が可能なものもそうでないものも契約導線表示する(ひかり内dCH、放送時間内).
+                //未ログインの場合はこの判定にならない.
+                detailFragment.setContractInfo(false);
+                if (mThumbnailBtn != null) {
+                    mThumbnailBtn.setVisibility(View.GONE);
+                }
+                noAgreementDisplay();
+                break;
             case DISABLE_WATCH_AGREEMENT_DISPLAY:
                 //再生、クリップ、録画、評価、ダウンロード、番組表編集 の操作時に契約導線を表示
-
-                //TODO 再生、評価はコンテンツ毎の詳細画面の表示が行われてから対応する。
-
                 //クリップ押下時に契約導線を表示するため、Fragmentに未契約状態であることを通知する
                 detailFragment.setContractInfo(false);
-
                 if (mThumbnailBtn != null) {
                     mThumbnailBtn.setVisibility(View.GONE);
                     UserState userState = UserInfoUtils.getUserState(this);
@@ -3080,8 +3081,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 Button chButton = findViewById(R.id.contract_leading_button);
                 // 宅内の場合契約導線表示
                 pairingState = DeviceStateUtils.getPairingState(this, getStbStatus());
-                //録画予約ボタンは非表示
-                isVisibleRecordButton = false;
                 switch (pairingState) {
                     case INSIDE_HOUSE:
                         mContractLeadingView.setVisibility(View.VISIBLE);
@@ -3136,8 +3135,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 }
                 break;
             case PREMIUM_CHECK_START:
-                //録画予約ボタンは一旦非表示
-                isVisibleRecordButton = false;
                 new ContentsDetailDataProvider(this).getChListData();
                 break;
             case SUBSCRIPTION_CHECK_START:

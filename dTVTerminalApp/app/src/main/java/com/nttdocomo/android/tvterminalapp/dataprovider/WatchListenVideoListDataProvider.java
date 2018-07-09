@@ -200,7 +200,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
             String dtvType = map.get(JsonConstants.META_RESPONSE_DTV_TYPE);
 
             contentInfo.setRank(String.valueOf(i + 1));
-            if (ContentUtils.IS_DTV_FLAG.equals(dtv)) {
+            if (ContentUtils.DTV_FLAG_ONE.equals(dtv)) {
                 contentInfo.setThumURL(map.get(JsonConstants.META_RESPONSE_DTV_THUMB_448));
                 contentInfo.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_DTV_THUMB_640));
             } else {

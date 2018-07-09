@@ -185,7 +185,7 @@ public class ChildContentDataProvider extends ClipKeyListDataProvider implements
             data.setTitle(title);
             //エポック秒から文字に変換
             data.setRatStar(String.valueOf(vodMetaFullData.getRating()));
-            if (ContentUtils.IS_DTV_FLAG.equals(dtv)) {
+            if (ContentUtils.DTV_FLAG_ONE.equals(dtv)) {
                 data.setThumURL(vodMetaFullData.getmDtv_thumb_448_252());
                 data.setThumDetailURL(vodMetaFullData.getmDtv_thumb_640_360());
             } else {

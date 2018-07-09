@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
@@ -417,9 +416,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         }
         String recommendFlg;
         if (mIndex == HOME_CONTENTS_SORT_RECOMMEND_PROGRAM || mIndex == HOME_CONTENTS_SORT_RECOMMEND_PROGRAM + 1) {
-            recommendFlg = ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY;
+            recommendFlg = ContentUtils.RECOMMEND_INFO_BUNDLE_KEY;
         } else {
-            recommendFlg = ContentDetailActivity.PLALA_INFO_BUNDLE_KEY;
+            recommendFlg = ContentUtils.PLALA_INFO_BUNDLE_KEY;
         }
         final OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(contentsData, recommendFlg);
         viewHolder.mImage.setOnClickListener(new View.OnClickListener() {
@@ -446,7 +445,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             String categoryId = contentsData.getCategoryId();
             switch (Integer.parseInt(serviceId)) {
                 //ひかりTV
-                case ContentDetailActivity.DTV_HIKARI_CONTENTS_SERVICE_ID:
+                case ContentUtils.DTV_HIKARI_CONTENTS_SERVICE_ID:
                     List<String> list = Arrays.asList(categoryId_Hikari);
                     if (list.contains(categoryId)) {
                         viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
@@ -459,17 +458,17 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
                     }
                     break;
                 //dTV
-                case ContentDetailActivity.DTV_CONTENTS_SERVICE_ID:
+                case ContentUtils.DTV_CONTENTS_SERVICE_ID:
                     viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
                     viewHolder.mServiceIconFirst.setImageResource(R.mipmap.label_service_dtv);
                     break;
                 //アニメ
-                case ContentDetailActivity.D_ANIMATION_CONTENTS_SERVICE_ID:
+                case ContentUtils.D_ANIMATION_CONTENTS_SERVICE_ID:
                     viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
                     viewHolder.mServiceIconFirst.setImageResource(R.mipmap.label_service_danime);
                     break;
                 //dTVチャンネル
-                case ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID:
+                case ContentUtils.DTV_CHANNEL_CONTENTS_SERVICE_ID:
                     viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
                     viewHolder.mServiceIconFirst.setImageResource(R.mipmap.label_service_dch);
                     break;

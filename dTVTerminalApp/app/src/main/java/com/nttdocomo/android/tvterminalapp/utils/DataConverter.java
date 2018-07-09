@@ -5,7 +5,6 @@
 package com.nttdocomo.android.tvterminalapp.utils;
 
 
-import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.ProgramDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
@@ -67,12 +66,12 @@ public class DataConverter {
         detailData.setTitle(info.getTitle());
 
         //レコメンド独自のデータ設定
-        if (ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY.equals(recommendFlg)) {
+        if (ContentUtils.RECOMMEND_INFO_BUNDLE_KEY.equals(recommendFlg)) {
             int servieId = Integer.parseInt(info.getServiceId());
             detailData.setServiceId(servieId);
             detailData.setContentCategory(ContentUtils.getRecommendContentsType(info));
             detailData.setThumb(info.getThumURL());
-            if (servieId != ContentDetailActivity.DTV_HIKARI_CONTENTS_SERVICE_ID) {
+            if (servieId != ContentUtils.DTV_HIKARI_CONTENTS_SERVICE_ID) {
                 detailData.setDetail(info.getSynopFromDescription());
             }
 

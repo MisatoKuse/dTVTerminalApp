@@ -168,7 +168,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
             String dtvType = map.get(JsonConstants.META_RESPONSE_DTV_TYPE);
 
             contentsData.setCrid(map.get(JsonConstants.META_RESPONSE_CRID));
-            if (ContentUtils.IS_DTV_FLAG.equals(dtv)) {
+            if (ContentUtils.DTV_FLAG_ONE.equals(dtv)) {
                 contentsData.setThumURL(map.get(JsonConstants.META_RESPONSE_DTV_THUMB_448));
                 contentsData.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_DTV_THUMB_640));
             } else {
