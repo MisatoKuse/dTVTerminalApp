@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.utils;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
@@ -17,6 +18,8 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChannelListResponse;
@@ -197,6 +200,29 @@ public class ContentUtils {
         /**視聴可否判定外ステータス ※サーバレスポンスが正常ならこの状態にはならない想定.*/
         NONE_STATUS
     }
+
+    /**
+     * コンテンツ詳細ユーザタイプ.
+     */
+    public enum ContentsDetailUserType {
+        /** ペアリング済み 宅内 ひかりTV契約者(ひかりTV契約者(子)). */
+        PAIRING_INSIDE_HIKARI_CONTRACT,
+        /** ペアリング済み 宅内 ひかりTV未契約者(dch/dTV/dアニメストア：契約 dch/dTV/dアニメストア：未契約). */
+        PAIRING_INSIDE_HIKARI_NO_CONTRACT,
+        /** ペアリング済み 宅外 ひかりTV契約者(ひかりTV契約者(子)). */
+        PAIRING_OUTSIDE_HIKARI_CONTRACT,
+        /** ペアリング済み 宅外 ひかりTV未契約者(dch/dTV/dアニメストア：契約 dch/dTV/dアニメストア：未契約). */
+        PAIRING_OUTSIDE_HIKARI_NO_CONTRACT,
+        /** 未ペアリング 未ログイン. */
+        NO_PAIRING_LOGOUT,
+        /** 未ペアリング ひかりTV契約者(ひかりTV契約者(子)). */
+        NO_PAIRING_HIKARI_CONTRACT,
+        /** 未ペアリング ひかりTV未契約者(dch/dTV/dアニメストア：契約 dch/dTV/dアニメストア：未契約). */
+        NO_PAIRING_HIKARI_NO_CONTRACT,
+        /** ユーザタイプ判定に必要な情報が取得できていない時に返却するステータス. */
+        NONE_STATUS
+    }
+
     /**
      * 多階層コンテンツであるか判定する.
      * @param contentsData コンテンツデータ
@@ -1220,6 +1246,77 @@ public class ContentUtils {
             case DTV_CONTENTS_SERVICE_ID:
             case DTV_CHANNEL_CONTENTS_SERVICE_ID:
             case D_ANIMATION_CONTENTS_SERVICE_ID:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * ユーザ状態(ログイン、契約、ペアリング状態の総合)を取得.
+     *
+     * @param userState        ユーザ状態
+     * @param connectionStatus ペアリング状態
+     * @param contractState    契約状態
+     * @return ユーザ状態(ログイン 契約 ペアリング状態の総合)
+     */
+    public static ContentsDetailUserType getContentDetailUserType(@NonNull final UserState userState,
+                                                                  @NonNull final StbConnectionManager.ConnectionStatus connectionStatus,
+                                                                  @NonNull final String contractState) {
+        if (connectionStatus.equals(StbConnectionManager.ConnectionStatus.NONE_PAIRING)) {
+            if (userState.equals(UserState.LOGIN_NG)) {
+                return ContentsDetailUserType.NO_PAIRING_LOGOUT;
+            } else {
+                switch (contractState) {
+                    case UserInfoUtils.CONTRACT_INFO_H4D:
+                        return ContentsDetailUserType.NO_PAIRING_HIKARI_CONTRACT;
+                    case UserInfoUtils.CONTRACT_INFO_DTV:
+                    case UserInfoUtils.CONTRACT_INFO_NONE:
+                        return ContentsDetailUserType.NO_PAIRING_HIKARI_NO_CONTRACT;
+                    default:
+                        return ContentsDetailUserType.NONE_STATUS;
+                }
+            }
+        } else {
+            if (connectionStatus.equals(StbConnectionManager.ConnectionStatus.HOME_IN)) {
+                switch (contractState) {
+                    case UserInfoUtils.CONTRACT_INFO_H4D:
+                        return ContentsDetailUserType.PAIRING_INSIDE_HIKARI_CONTRACT;
+                    case UserInfoUtils.CONTRACT_INFO_DTV:
+                    case UserInfoUtils.CONTRACT_INFO_NONE:
+                        return ContentsDetailUserType.PAIRING_INSIDE_HIKARI_NO_CONTRACT;
+                    default:
+                        return ContentsDetailUserType.NONE_STATUS;
+                }
+            } else {
+                switch (contractState) {
+                    case UserInfoUtils.CONTRACT_INFO_H4D:
+                        return ContentsDetailUserType.PAIRING_OUTSIDE_HIKARI_CONTRACT;
+                    case UserInfoUtils.CONTRACT_INFO_DTV:
+                    case UserInfoUtils.CONTRACT_INFO_NONE:
+                        return ContentsDetailUserType.PAIRING_OUTSIDE_HIKARI_NO_CONTRACT;
+                    default:
+                        return ContentsDetailUserType.NONE_STATUS;
+                }
+            }
+        }
+    }
+
+    /**
+     * 視聴可否のみを返却する.
+     *
+     * @param viewIngType 視聴可否種別
+     * @return 視聴可否
+     */
+    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
+    public static boolean isEnableDisplay(final ContentUtils.ViewIngType viewIngType) {
+        switch (viewIngType) {
+            case ENABLE_WATCH:
+            case ENABLE_WATCH_001:
+            case ENABLE_WATCH_LIMIT_THIRTY:
+            case ENABLE_WATCH_LIMIT_THIRTY_001:
+            case ENABLE_WATCH_LIMIT_THIRTY_LONGEST:
+            case ENABLE_WATCH_LIMIT_THIRTY_OVER:
                 return true;
             default:
                 return false;

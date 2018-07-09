@@ -2913,9 +2913,97 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 TextView contractLeadingText = findViewById(R.id.contract_leading_text);
                 contractLeadingText.setText(R.string.contents_detail_thumbnail_text);
                 setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
+            } else {
+                ContentUtils.ContentsType contentsType = mDetailFullData.getContentsType();
+                displayHikariThumbnail(contentsType, mViewIngType);
             }
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * コンテンツ種別ごとのサムネイル部分の表示.
+     * ※視聴可否判定は終了済み又は不要な場合を想定
+     *
+     * @param contentsType コンテンツ種別
+     * @param viewIngType  視聴可否判定結果
+     */
+    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
+    private void displayHikariThumbnail(final ContentUtils.ContentsType contentsType, final ContentUtils.ViewIngType viewIngType) {
+        //TODO 最終的にはサムネイル部分の表示はこのメソッドのみで行う(playNowOnAir()等もこの中で実行する)
+        UserState userState = UserInfoUtils.getUserState(ContentDetailActivity.this);
+        StbConnectionManager.ConnectionStatus connectionStatus = StbConnectionManager.shared().getConnectionStatus();
+        String contractStatus = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(this));
+        ContentUtils.ContentsDetailUserType detailUserType = ContentUtils.getContentDetailUserType(userState, connectionStatus, contractStatus);
+        if (detailUserType.equals(ContentUtils.ContentsDetailUserType.NO_PAIRING_LOGOUT)) {
+            setThumbnailMessage(getString(R.string.contents_detail_login_message), getString(R.string.contents_detail_login_button), true, true);
+        } else {
+            switch (contentsType) {
+                case HIKARI_TV:
+                case HIKARI_TV_WITHIN_AN_HOUR:
+                case HIKARI_TV_NOW_ON_AIR:
+                case HIKARI_TV_VOD:
+                    //TODO playNowOnAir()以外のメソッドから呼び出す場合はここも実装する
+                    break;
+                case HIKARI_IN_DCH:
+                case HIKARI_IN_DCH_TV_WITHIN_AN_HOUR:
+                case HIKARI_IN_DCH_TV:
+                case HIKARI_IN_DCH_MISS:
+                case HIKARI_IN_DCH_RELATION:
+                    if ((detailUserType.equals(ContentUtils.ContentsDetailUserType.PAIRING_INSIDE_HIKARI_CONTRACT)
+                            || detailUserType.equals(ContentUtils.ContentsDetailUserType.PAIRING_OUTSIDE_HIKARI_CONTRACT)
+                            || detailUserType.equals(ContentUtils.ContentsDetailUserType.NO_PAIRING_HIKARI_CONTRACT))
+                            && ContentUtils.isEnableDisplay(viewIngType)) {
+                        setThumbnailMessage(getString(R.string.dtv_channel_service_start_text), "", false, true);
+                    } else {
+                        setThumbnailMessage(getString(R.string.contents_detail_hikari_vod_agreement), "", true, true);
+                    }
+                    break;
+                case HIKARI_IN_DTV:
+                    if ((detailUserType.equals(ContentUtils.ContentsDetailUserType.PAIRING_INSIDE_HIKARI_CONTRACT)
+                            || detailUserType.equals(ContentUtils.ContentsDetailUserType.PAIRING_OUTSIDE_HIKARI_CONTRACT)
+                            || detailUserType.equals(ContentUtils.ContentsDetailUserType.NO_PAIRING_HIKARI_CONTRACT))
+                            && ContentUtils.isEnableDisplay(viewIngType)) {
+                        setThumbnailMessage(getString(R.string.dtv_content_service_start_text), "", false, true);
+                    } else {
+                        setThumbnailMessage(getString(R.string.contents_detail_hikari_vod_agreement), "", true, true);
+                    }
+                    break;
+            }
+        }
+    }
+
+    /**
+     * サムネイル画像上の表示設定.
+     * @param message テキストエリアに表示するメッセージ
+     * @param buttonText ボタン上に表示するテキスト
+     * @param isContractView 契約導線表示フラグ
+     * @param isDisplayButton
+     */
+    private void setThumbnailMessage(final String message, final String buttonText, final boolean isContractView, final boolean isDisplayButton) {
+        if (isContractView) {
+            mThumbnailBtn.setVisibility(View.GONE);
+            mContractLeadingView.setVisibility(View.VISIBLE);
+            Button button = findViewById(R.id.contract_leading_button);
+            TextView contractLeadingText = findViewById(R.id.contract_leading_text);
+
+            if (isDisplayButton) {
+                button.setText(buttonText);
+            } else {
+                button.setVisibility(View.GONE);
+            }
+
+            contractLeadingText.setText(message);
+            setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
+        } else {
+            mContractLeadingView.setVisibility(View.GONE);
+            mThumbnailBtn.setVisibility(View.VISIBLE);
+            TextView contractLeadingText = findViewById(R.id.view_contents_button_text);
+            contractLeadingText.setText(message);
+            contractLeadingText.setVisibility(View.VISIBLE);
+
+            setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
+        }
     }
 
     /**
