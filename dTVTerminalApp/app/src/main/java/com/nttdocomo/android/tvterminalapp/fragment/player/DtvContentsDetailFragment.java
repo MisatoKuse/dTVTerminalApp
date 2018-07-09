@@ -79,7 +79,7 @@ public class DtvContentsDetailFragment extends Fragment {
     /** 契約フラグ.*/
     private boolean mIsContract = true;
     /** 視聴可否判定結果. */
-    private boolean mIsNotViewIng = false;
+    private boolean mIsAvailRecordReserve = false;
     /** クリップボタン.*/
     private ImageView mClipButton = null;
     /** 録画ボタン.*/
@@ -632,24 +632,26 @@ public class DtvContentsDetailFragment extends Fragment {
     public void changeVisibilityRecordingReservationIcon() {
         DTVTLogger.start();
         mRecordButton.setVisibility(View.GONE);
-        //未ログイン又は未契約時は録画ボタンを非活性
-        if (!UserInfoUtils.getClipActive(getContext()) || mIsNotViewIng) {
-            mRecordButton.setBackgroundResource(R.mipmap.icon_tap_circle_normal_rec);
-            mRecordButton.setVisibility(View.VISIBLE);
-        } else {
-            if (mOtherContentsDetailData.getContentCategory() != null) {
-                switch (mOtherContentsDetailData.getContentCategory()) {
-                    case HIKARI_TV:
-                    case HIKARI_IN_DCH_TV:
+
+        if (mOtherContentsDetailData.getContentCategory() != null) {
+            switch (mOtherContentsDetailData.getContentCategory()) {
+                case HIKARI_TV:
+                case HIKARI_IN_DCH_TV:
+                    //未ログイン又は未契約/未購入時は録画ボタンを非活性（クリップとは異なりチャンネルの購入判断がある）
+                    //なおdCHはH4d契約が無い限りは録画予約は不可とするとのこと
+                    if (!UserInfoUtils.getClipActive(getContext()) || mIsAvailRecordReserve) {
+                        mRecordButton.setBackgroundResource(R.mipmap.icon_tap_circle_normal_rec);
+                        mRecordButton.setVisibility(View.VISIBLE);
+                    } else {
                         mRecordButton.setBackgroundResource(R.drawable.recording_reservation_rec_icon_selector);
                         mRecordButton.setVisibility(View.VISIBLE);
-                        break;
-                    default:
-                        break;
-                }
-            } else {
-                mRecordButton.setVisibility(View.GONE);
+                    }
+                    break;
+                default:
+                    break;
             }
+        } else {
+            mRecordButton.setVisibility(View.GONE);
         }
         noticeRefresh();
         DTVTLogger.end();
@@ -729,10 +731,10 @@ public class DtvContentsDetailFragment extends Fragment {
     }
 
     /**
-     * 視聴可否判定結果設定.
-     * @param mIsViewIng 視聴可否判定フラグ
+     * 録画ボタン表示不可フラグ設定.
+     * @param isAvailRecordReserve 録画ボタン表示不可フラグ.契約状態・購入状態によって不可の場合にｔｒｕｅ設定する事.時刻による録画予約不可は別途処理.
      */
-    public void setIsNotViewIng(final boolean mIsViewIng) {
-        this.mIsNotViewIng = mIsViewIng;
+    public void setIsAvailRecordReserve(final boolean isAvailRecordReserve) {
+        this.mIsAvailRecordReserve = isAvailRecordReserve;
     }
 }

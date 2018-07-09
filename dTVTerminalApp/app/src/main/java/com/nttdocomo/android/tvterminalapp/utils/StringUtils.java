@@ -761,6 +761,7 @@ public class StringUtils {
                 //テレビで視聴できます
                 return context.getString(R.string.contents_detail_thumbnail_text);
             case HIKARI_IN_DCH_TV:
+            case HIKARI_IN_DCH_TV_NOW_ON_AIR:
             case HIKARI_IN_DCH_TV_WITHIN_AN_HOUR:
             case HIKARI_IN_DCH:
             case HIKARI_IN_DCH_MISS:

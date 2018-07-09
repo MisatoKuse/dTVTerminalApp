@@ -817,6 +817,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             case HIKARI_TV:
                             case HIKARI_TV_WITHIN_AN_HOUR:
                             case HIKARI_TV_NOW_ON_AIR:
+                            case HIKARI_IN_DCH_TV_NOW_ON_AIR:
                             case HIKARI_TV_VOD:
                                 mThumbnailBtn.setVisibility(View.VISIBLE);
                                 startAppIcon.setVisibility(View.VISIBLE);
@@ -903,7 +904,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         String buttonText = "";
         message = getString(R.string.contents_detail_no_agreement);
         buttonText = getString(R.string.contents_detail_contract_leading_button);
-        getDetailFragment().setIsNotViewIng(true);
         contractLeadingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
@@ -1403,210 +1403,241 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     @Override
     public void onContentsDetailInfoCallback(final VodMetaFullData contentsDetailInfo, final boolean clipStatus) {
         DTVTLogger.start();
-        //アクティビティの終了後に呼ばれる場合があったので、終了をチェックする
-        if (isFinishing()) {
-            //既に終了していた場合は、以後の処理はスキップ
-            DTVTLogger.debug("already finising");
-            return;
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                DTVTLogger.start();
+                if (isFinishing()) {
+                    //既に終了していた場合は、以後の処理はスキップ
+                    DTVTLogger.debug("already finising");
+                    return;
+                }
 
-        //詳細情報取得して、更新する
-        if (contentsDetailInfo != null) {
-            DtvContentsDetailFragment detailFragment = getDetailFragment();
-            mDetailFullData = contentsDetailInfo;
-            contentType = ContentTypeForGoogleAnalytics.TV;
-            if (ContentUtils.TV_PROGRAM.equals(mDetailFullData.getDisp_type())) {
-                //tv_programの場合
-                if (ContentUtils.TV_SERVICE_FLAG_HIKARI.equals(mDetailFullData.getmTv_service())) {
-                    //tv_serviceは0の場合(ひかりTV多ch)
-                    setRecordingData(detailFragment);
-                } else if (ContentUtils.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(mDetailFullData.getmTv_service())) {
-                    //tv_serviceは1の場合(ひかり内dチャンネル)
-                    if (ContentUtils.CONTENT_TYPE_FLAG_ONE.equals(mDetailFullData.getmContent_type())
-                            || ContentUtils.CONTENT_TYPE_FLAG_TWO.equals(mDetailFullData.getmContent_type())) {
-                        //contents_typeは1又は2の場合(見逃し（切り出し）or見逃し（完パケ）)
-                        if (DateUtils.isBefore(mDetailFullData.getmVod_start_date())) {
-                            // 見逃し配信前（=放送コンテンツ扱い)
+                //詳細情報取得して、更新する
+                if (contentsDetailInfo != null) {
+                    DtvContentsDetailFragment detailFragment = getDetailFragment();
+                    mDetailFullData = contentsDetailInfo;
+                    contentType = ContentTypeForGoogleAnalytics.TV;
+                    if (ContentUtils.TV_PROGRAM.equals(mDetailFullData.getDisp_type())) {
+                        //tv_programの場合
+                        if (ContentUtils.TV_SERVICE_FLAG_HIKARI.equals(mDetailFullData.getmTv_service())) {
+                            //tv_serviceは1の場合(ひかりTV多ch)
                             setRecordingData(detailFragment);
+                        } else if (ContentUtils.TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(mDetailFullData.getmTv_service())) {
+                            //tv_serviceは2の場合(ひかり内dチャンネル)
+                            if (mDetailFullData.getmContent_type() == null) {
+                                //contents_type未設定なら番組扱い
+                                setRecordingData(detailFragment);
+                            } else if (ContentUtils.CONTENT_TYPE_FLAG_ONE.equals(mDetailFullData.getmContent_type())
+                                    || ContentUtils.CONTENT_TYPE_FLAG_TWO.equals(mDetailFullData.getmContent_type())) {
+                                //contents_typeは1又は2の場合(見逃し（切り出し）or見逃し（完パケ）)
+                                if (DateUtils.isBefore(mDetailFullData.getmVod_start_date())) {
+                                    // 見逃し配信前（=放送コンテンツ扱い)
+                                    setRecordingData(detailFragment);
+                                } else {
+                                    // 見逃し配信後又はdチャンネル関連VOD
+                                    contentType = ContentTypeForGoogleAnalytics.VOD;
+                                }
+                            } else if (ContentUtils.CONTENT_TYPE_FLAG_ZERO.equals(mDetailFullData.getmContent_type())
+                                || ContentUtils.CONTENT_TYPE_FLAG_ZERO.equals(mDetailFullData.getmContent_type())) {
+                                // contents_typeが0は番組扱い
+                                setRecordingData(detailFragment);
+                            } else if (ContentUtils.CONTENT_TYPE_FLAG_THREE.equals(mDetailFullData.getmContent_type())) {
+                                // contents_typeが3は関連VOD
+                                contentType = ContentTypeForGoogleAnalytics.VOD;
+                            } else {
+                                // contents_typeがその他(異常値)はVOD扱いしておく
+                                DTVTLogger.debug("contents_type value Error!" + mDetailFullData.getmContent_type());
+                                contentType = ContentTypeForGoogleAnalytics.VOD;
+                            }
                         } else {
-                            // 見逃し配信後又はdチャンネル関連VOD
-                            contentType = ContentTypeForGoogleAnalytics.VOD;
+                            //tv_serviceがその他(異常値)はVOD扱いしておく
+                            DTVTLogger.debug("tv_service value Error!" + mDetailFullData.getmTv_service());
+                            setRecordingData(detailFragment);
+                        }
+                    } else {
+                        // disp_typeがtv_program以外なら一律VOD
+                        contentType = ContentTypeForGoogleAnalytics.VOD;
+                    }
+
+                    if (contentType == ContentTypeForGoogleAnalytics.VOD) {
+                        sendScreenView(getString(R.string.google_analytics_screen_name_content_detail_h4d_vod_program_detail));
+                    } else {
+                        sendScreenView(getString(R.string.google_analytics_screen_name_content_detail_h4d_broadcast_program_detail));
+                    }
+
+                    String dispType = mDetailFullData.getDisp_type();
+                    String searchOk = mDetailFullData.getmSearch_ok();
+                    String dTv = mDetailFullData.getDtv();
+                    String dTvType = mDetailFullData.getDtvType();
+                    OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
+                    detailData.setTitle(mDetailFullData.getTitle());
+                    if (ContentUtils.DTV_FLAG_ONE.equals(dTv)) {
+                        setTitleAndThumbnail(mDetailFullData.getTitle(), mDetailFullData.getmDtv_thumb_640_360());
+                    } else {
+                        setTitleAndThumbnail(mDetailFullData.getTitle(), mDetailFullData.getmThumb_640_360());
+                    }
+                    detailData.setVodMetaFullData(contentsDetailInfo);
+                    detailData.setDetail(mDetailFullData.getSynop());
+                    // コンテンツ状態を反映
+                    detailData.setClipStatus(clipStatus);
+                    detailData.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dTv, dTvType));
+                    detailData.setDispType(dispType);
+                    detailData.setSearchOk(searchOk);
+                    detailData.setDtv(dTv);
+                    detailData.setDtvType(dTvType);
+                    detailData.setCrId(mDetailFullData.getCrid());
+                    detailData.setEventId(mDetailFullData.getmEvent_id());
+                    detailData.setTitleId(mDetailFullData.getTitle_id());
+                    detailData.setRvalue(mDetailFullData.getR_value());
+                    detailData.setRating(mDetailFullData.getRating());
+                    detailData.setCopy(mDetailFullData.getmCopy());
+                    detailData.setM4kflg(mDetailFullData.getM4kflg());
+                    detailData.setAdinfoArray(mDetailFullData.getmAdinfo_array());
+                    detailData.setContentCategory(mDetailFullData.getContentsType());
+                    String date = "";
+                    ContentUtils.ContentsType contentsType = ContentUtils.getContentsTypeByPlala(mDetailFullData.getDisp_type(),
+                            mDetailFullData.getmTv_service(), mDetailFullData.getmContent_type(), mDetailFullData.getAvail_end_date(),
+                            mDetailFullData.getmVod_start_date(), mDetailFullData.getmVod_end_date(), mDetailFullData.getEstFlag(),
+                            mDetailFullData.getmChsvod());
+                    if (contentsType == ContentUtils.ContentsType.TV) {
+                        //番組(m/d（曜日）h:ii - h:ii)
+                        date = DateUtils.getContentsDateString(mDetailFullData.getPublish_start_date(), mDetailFullData.getPublish_end_date());
+                    } else {
+                        detailData.setmStartDate(String.valueOf(mDetailFullData.getmVod_start_date()));
+                        setViewPagerTab();
+                        if (DateUtils.isBefore(mDetailFullData.getAvail_start_date())) {
+                            //配信前 m/d（曜日）から
+                            date = DateUtils.getContentsDateString(getApplicationContext(), mDetailFullData.getAvail_start_date(), true);
+                        } else {
+                            switch (contentsType) {
+                                case VOD:
+                                    //Vodの場合は視聴可否判定結果取得後に表示判定を行うため値を保存するのみとする
+                                    //VOD(m/d（曜日）まで)
+                                    mVodEndDate = mDetailFullData.getAvail_end_date();
+                                    mVodEndDateText = DateUtils.getContentsDetailVodDate(getApplicationContext(), mDetailFullData.getAvail_end_date());
+                                    break;
+                                case DCHANNEL_VOD_OVER_31:
+                                    //Vodの場合は視聴可否判定結果取得後に表示判定を行うため値を保存するのみとする
+                                    //VOD(見逃し)
+                                    mVodEndDate = mDetailFullData.getmVod_end_date();
+                                    mVodEndDateText = StringUtils.getConnectStrings(
+                                            getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
+                                    break;
+                                case DCHANNEL_VOD_31:
+                                    //Vodの場合は視聴可否判定結果取得後に表示判定を行うため値を保存するのみとする
+                                    //VOD(見逃し | m/d（曜日）まで)
+                                    mVodEndDate = mDetailFullData.getmVod_end_date();
+                                    String limit = DateUtils.getContentsDetailVodDate(getApplicationContext(), mDetailFullData.getmVod_end_date());
+                                    mVodEndDateText = StringUtils.getConnectStrings(getString(
+                                            R.string.contents_detail_hikari_d_channel_miss_viewing_separation), limit);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                    DTVTLogger.debug("display limit date:---" + date);
+                    detailData.setChannelDate(date);
+                    detailFragment.setOtherContentsDetailData(detailData);
+                    String[] credit_array = mDetailFullData.getmCredit_array();
+                    if (credit_array != null && credit_array.length > 0) {
+                        mContentsDetailDataProvider.getRoleListData();
+                    }
+                    if (!TextUtils.isEmpty(mDetailFullData.getmService_id())) {
+                        mServiceId = mDetailFullData.getmService_id();
+                        getChannelInfo();
+                    }
+                    if (ContentUtils.DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
+                        if (getStbStatus() || mVisibility) {
+                            createRemoteControllerView(true);
+                            mIsControllerVisible = true;
+                            mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
+                                    R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
+                            setStartRemoteControllerUIListener(ContentDetailActivity.this);
+                        }
+                        String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(getApplicationContext()));
+                        UserState userState = UserInfoUtils.getUserState(ContentDetailActivity.this);
+                        //ひかりTV未契約の場合
+                        if (!UserInfoUtils.CONTRACT_INFO_H4D.equals(contractInfo)) {
+                            DTVTLogger.debug("contractInfo:---" + contractInfo);
+                            mThumbnailBtn.setVisibility(View.GONE);
+                            mContractLeadingView.setVisibility(View.VISIBLE);
+                            if (userState.equals(UserState.LOGIN_NG)) {
+                                loginNgDisplay();
+                            } else {
+                                noAgreementDisplay();
+                            }
+                        } else { //ひかりTV契約者の場合
+                            // サムネイル表示メッセージ取得
+                            String thumbnailMessage = StringUtils.getContentsDetailThumbnailString(
+                                    detailFragment.getOtherContentsDetailData(), ContentDetailActivity.this, mDetailFullData.getContentsType());
+                            setThumbnailText(thumbnailMessage);
+                        }
+                    } else { //レコメンドサーバー以外のひかりTV
+                        if (mDetailFullData != null) {
+                            checkWatchContents();
+                        }
+                        //コンテンツの視聴可否判定に基づいてUI操作を行う
+                        if (mViewIngType != null) {
+                            changeUIBasedContractInfo();
+                        }
+                        if (getStbStatus() || mVisibility) {
+                            createRemoteControllerView(true);
+                            mIsControllerVisible = true;
+                            setStartRemoteControllerUIListener(ContentDetailActivity.this);
                         }
                     }
                 } else {
-                    //contents_typeが0又は未設定の場合は放送コンテンツ扱い
-                    setRecordingData(detailFragment);
-                }
-            } else {
-                contentType = ContentTypeForGoogleAnalytics.VOD;
-            }
-
-            if (contentType == ContentTypeForGoogleAnalytics.VOD) {
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_content_detail_h4d_vod_program_detail));
-            } else {
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_content_detail_h4d_broadcast_program_detail));
-            }
-
-            String dispType = mDetailFullData.getDisp_type();
-            String searchOk = mDetailFullData.getmSearch_ok();
-            String dTv = mDetailFullData.getDtv();
-            String dTvType = mDetailFullData.getDtvType();
-            OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
-            detailData.setTitle(mDetailFullData.getTitle());
-            if (ContentUtils.DTV_FLAG_ONE.equals(dTv)) {
-                setTitleAndThumbnail(mDetailFullData.getTitle(), mDetailFullData.getmDtv_thumb_640_360());
-            } else {
-                setTitleAndThumbnail(mDetailFullData.getTitle(), mDetailFullData.getmThumb_640_360());
-            }
-            detailData.setVodMetaFullData(contentsDetailInfo);
-            detailData.setDetail(mDetailFullData.getSynop());
-            // コンテンツ状態を反映
-            detailData.setClipStatus(clipStatus);
-            detailData.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dTv, dTvType));
-            detailData.setDispType(dispType);
-            detailData.setSearchOk(searchOk);
-            detailData.setDtv(dTv);
-            detailData.setDtvType(dTvType);
-            detailData.setCrId(mDetailFullData.getCrid());
-            detailData.setEventId(mDetailFullData.getmEvent_id());
-            detailData.setTitleId(mDetailFullData.getTitle_id());
-            detailData.setRvalue(mDetailFullData.getR_value());
-            detailData.setRating(mDetailFullData.getRating());
-            detailData.setCopy(mDetailFullData.getmCopy());
-            detailData.setM4kflg(mDetailFullData.getM4kflg());
-            detailData.setAdinfoArray(mDetailFullData.getmAdinfo_array());
-            detailData.setContentCategory(mDetailFullData.getContentsType());
-            String date = "";
-            ContentUtils.ContentsType contentsType = ContentUtils.getContentsTypeByPlala(mDetailFullData.getDisp_type(),
-                    mDetailFullData.getmTv_service(), mDetailFullData.getmContent_type(), mDetailFullData.getAvail_end_date(),
-                    mDetailFullData.getmVod_start_date(), mDetailFullData.getmVod_end_date(), mDetailFullData.getEstFlag(),
-                    mDetailFullData.getmChsvod());
-            if (contentsType == ContentUtils.ContentsType.TV) {
-                //番組(m/d（曜日）h:ii - h:ii)
-                date = DateUtils.getContentsDateString(mDetailFullData.getPublish_start_date(), mDetailFullData.getPublish_end_date());
-            } else {
-                detailData.setmStartDate(String.valueOf(mDetailFullData.getmVod_start_date()));
-                setViewPagerTab();
-                if (DateUtils.isBefore(mDetailFullData.getAvail_start_date())) {
-                    //配信前 m/d（曜日）から
-                    date = DateUtils.getContentsDateString(this, mDetailFullData.getAvail_start_date(), true);
-                } else {
-                    switch (contentsType) {
-                        case VOD:
-                            //Vodの場合は視聴可否判定結果取得後に表示判定を行うため値を保存するのみとする
-                            //VOD(m/d（曜日）まで)
-                            mVodEndDate = mDetailFullData.getAvail_end_date();
-                            mVodEndDateText = DateUtils.getContentsDetailVodDate(this, mDetailFullData.getAvail_end_date());
-                            break;
-                        case DCHANNEL_VOD_OVER_31:
-                            //Vodの場合は視聴可否判定結果取得後に表示判定を行うため値を保存するのみとする
-                            //VOD(見逃し)
-                            mVodEndDate = mDetailFullData.getmVod_end_date();
-                            mVodEndDateText = StringUtils.getConnectStrings(
-                                    getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
-                            break;
-                        case DCHANNEL_VOD_31:
-                            //Vodの場合は視聴可否判定結果取得後に表示判定を行うため値を保存するのみとする
-                            //VOD(見逃し | m/d（曜日）まで)
-                            mVodEndDate = mDetailFullData.getmVod_end_date();
-                            String limit = DateUtils.getContentsDetailVodDate(this, mDetailFullData.getmVod_end_date());
-                            mVodEndDateText = StringUtils.getConnectStrings(getString(
-                                    R.string.contents_detail_hikari_d_channel_miss_viewing_separation), limit);
-                            break;
-                        default:
-                            break;
+                    setViewPagerTab();
+                    showErrorDialog(ErrorType.contentDetailGet);
+                    // 他サービス
+                    if (!mIsOtherService) {
+                        mThumbnail.setImageResource(R.mipmap.error_movie);
                     }
                 }
-            }
-            DTVTLogger.debug("display limit date:---" + date);
-            detailData.setChannelDate(date);
-            detailFragment.setOtherContentsDetailData(detailData);
-            String[] credit_array = mDetailFullData.getmCredit_array();
-            if (credit_array != null && credit_array.length > 0) {
-                mContentsDetailDataProvider.getRoleListData();
-            }
-            if (!TextUtils.isEmpty(mDetailFullData.getmService_id())) {
-                mServiceId = mDetailFullData.getmService_id();
-                getChannelInfo();
-            }
-            if (ContentUtils.DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
+                sendOperateLog();
                 if (getStbStatus() || mVisibility) {
-                    createRemoteControllerView(true);
-                    mIsControllerVisible = true;
-                    mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
-                            R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
-                    setStartRemoteControllerUIListener(this);
+                    findViewById(R.id.remote_control_view).setVisibility(View.VISIBLE);
                 }
-                String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(this));
-                UserState userState = UserInfoUtils.getUserState(this);
-                //ひかりTV未契約の場合
-                if (!UserInfoUtils.CONTRACT_INFO_H4D.equals(contractInfo)) {
-                    DTVTLogger.debug("contractInfo:---" + contractInfo);
-                    mThumbnailBtn.setVisibility(View.GONE);
-                    mContractLeadingView.setVisibility(View.VISIBLE);
-                    if (userState.equals(UserState.LOGIN_NG)) {
-                        loginNgDisplay();
-                    } else {
-                        noAgreementDisplay();
-                    }
-                } else { //ひかりTV契約者の場合
-                    // サムネイル表示メッセージ取得
-                    String thumbnailMessage = StringUtils.getContentsDetailThumbnailString(
-                            detailFragment.getOtherContentsDetailData(), this, mDetailFullData.getContentsType());
-                    setThumbnailText(thumbnailMessage);
-                }
-            } else { //レコメンドサーバー以外のひかりTV
-                if (mDetailFullData != null) {
-                    checkWatchContents();
-                }
-                //コンテンツの視聴可否判定に基づいてUI操作を行う
-                if (mViewIngType != null) {
-                    changeUIBasedContractInfo();
-                }
-                if (getStbStatus() || mVisibility) {
-                    createRemoteControllerView(true);
-                    mIsControllerVisible = true;
-                    setStartRemoteControllerUIListener(this);
-                }
+                responseResultCheck();
+                DTVTLogger.end();
             }
-        } else {
-            setViewPagerTab();
-            showErrorDialog(ErrorType.contentDetailGet);
-            // 他サービス
-            if (!mIsOtherService) {
-                mThumbnail.setImageResource(R.mipmap.error_movie);
-            }
-        }
-        sendOperateLog();
-        if (getStbStatus() || mVisibility) {
-            findViewById(R.id.remote_control_view).setVisibility(View.VISIBLE);
-        }
-        responseResultCheck();
+        });
         DTVTLogger.end();
     }
 
     //endregion
     @Override
     public void onRoleListCallback(final ArrayList<RoleListMetaData> roleListInfo) {
-        //スタッフ情報取得して、更新する
-        if (roleListInfo != null) {
-            DtvContentsDetailFragment detailFragment = getDetailFragment();
-            if (mDetailFullData != null) {
-                String[] credit_array = mDetailFullData.getmCredit_array();
-                List<String> staffList = getRoleList(credit_array, roleListInfo);
-                if (staffList.size() > 0) {
-                    OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
-                    if (detailData != null) {
-                        detailData.setStaffList(staffList);
-                        detailFragment.setOtherContentsDetailData(detailData);
-                        detailFragment.refreshStaff();
+        DTVTLogger.start();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                DTVTLogger.start();
+                //スタッフ情報取得して、更新する
+                if (roleListInfo != null) {
+                    DtvContentsDetailFragment detailFragment = getDetailFragment();
+                    if (mDetailFullData != null) {
+                        String[] credit_array = mDetailFullData.getmCredit_array();
+                        List<String> staffList = getRoleList(credit_array, roleListInfo);
+                        if (staffList.size() > 0) {
+                            OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
+                            if (detailData != null) {
+                                detailData.setStaffList(staffList);
+                                detailFragment.setOtherContentsDetailData(detailData);
+                                detailFragment.refreshStaff();
+                            }
+                        }
                     }
+                    responseResultCheck();
+                } else {
+                    showErrorDialog(ErrorType.roleListGet);
                 }
+                DTVTLogger.end();
             }
-            responseResultCheck();
-        } else {
-            showErrorDialog(ErrorType.roleListGet);
-        }
+        });
+        DTVTLogger.end();
     }
 
     /**
@@ -1670,37 +1701,46 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     //region ScaledDownProgramListDataProvider.ApiDataProviderCallback
     @Override
     public void channelListCallback(final ArrayList<ChannelInfo> channels) {
-        if (channels == null || channels.isEmpty()) {
-            showErrorDialog(ErrorType.channelListGet);
-            return;
-        }
-
-        //チャンネル情報取得して、更新する
-        if (!TextUtils.isEmpty(mServiceId)) {
-            DtvContentsDetailFragment detailFragment = getDetailFragment();
-            for (int i = 0; i < channels.size(); i++) {
-                ChannelInfo channel = channels.get(i);
-                if (mServiceId.equals(channel.getServiceId())) {
-                    mChannel = channel;
-                    String channelName = channel.getTitle();
-                    OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
-                    if (detailData != null) {
-                        detailData.setChannelName(channelName);
-                        detailFragment.setOtherContentsDetailData(detailData);
-                    }
-                    break;
+        DTVTLogger.start();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                DTVTLogger.start();
+                if (channels == null || channels.isEmpty()) {
+                    showErrorDialog(ErrorType.channelListGet);
+                    return;
                 }
+
+                //チャンネル情報取得して、更新する
+                if (!TextUtils.isEmpty(mServiceId)) {
+                    DtvContentsDetailFragment detailFragment = getDetailFragment();
+                    for (int i = 0; i < channels.size(); i++) {
+                        ChannelInfo channel = channels.get(i);
+                        if (mServiceId.equals(channel.getServiceId())) {
+                            mChannel = channel;
+                            String channelName = channel.getTitle();
+                            OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
+                            if (detailData != null) {
+                                detailData.setChannelName(channelName);
+                                detailFragment.setOtherContentsDetailData(detailData);
+                            }
+                            break;
+                        }
+                    }
+                    detailFragment.refreshChannelInfo();
+                }
+                if (mDetailFullData != null) {
+                    checkWatchContents();
+                }
+                //コンテンツの視聴可否判定に基づいてUI操作を行う
+                if (mViewIngType != null) {
+                    changeUIBasedContractInfo();
+                }
+                responseResultCheck();
+                DTVTLogger.end();
             }
-            detailFragment.refreshChannelInfo();
-        }
-        if (mDetailFullData != null) {
-            checkWatchContents();
-        }
-        //コンテンツの視聴可否判定に基づいてUI操作を行う
-        if (mViewIngType != null) {
-            changeUIBasedContractInfo();
-        }
-        responseResultCheck();
+        });
+        DTVTLogger.end();
     }
 
     @Override
@@ -1710,6 +1750,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             @SuppressWarnings("OverlyLongMethod")
             @Override
             public void run() {
+                DTVTLogger.start();
                 if (channelsInfo != null && channelsInfo.getChannels() != null) {
                     List<ChannelInfo> channels = channelsInfo.getChannels();
                     sort(channels);
@@ -1769,6 +1810,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 } else {
                     showErrorDialog(ErrorType.tvScheduleListGet);
                 }
+                DTVTLogger.end();
             }
         });
         DTVTLogger.end();
@@ -2454,26 +2496,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 // サーバからのエラー通知
                 DTVTLogger.debug("error" + response.getErrorNo());
                 CustomDialog dialog = createErrorDialog();
-                // TODO エラー番号が判明次第エラーダイアログのタイトルを設定して表示
-//            switch (response.getErrorNo()) {
-//                case "0": // トークン不一致
-//                    dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_msg));
-//                    break;
-//                case "1": // その他異常
-//                    dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_msg));
-//                    break;
-//                case "2": // リクエストパラメータ
-//                    dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_msg));
-//                    break;
-//                case "3": // 登録件数超過
-//                    dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_over));
-//                    break;
-//                case "4": // 未契約エラー
-//                    dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_msg));
-//                    break;
-//                default: // 基本的には通らない
-//                    break;
-//            }
+
                 dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_msg));
                 dialog.showDialog();
             } else {
@@ -2507,8 +2530,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         // リスト表示用のアラートダイアログを表示
         if (mRecordingReservationCustomtDialog == null) {
             DTVTLogger.debug("Create Dialog");
-            // TODO 繰り返し予約処理追加時に切り替え
-//            mRecordingReservationCustomtDialog = createRecordingReservationDialog();
             mRecordingReservationCustomtDialog = createRecordingReservationConfirmDialog();
         }
         mRecordingReservationCustomtDialog.showDialog();
@@ -2536,32 +2557,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         //制限時間経過以外ならばtrue
         return true;
     }
-
-//    /**
-//     * リモート録画予約ダイアログを生成.
-//     */
-//    // TODO 繰り返し予約処理追加時に使用
-//    private CustomDialog createRecordingReservationDialog() {
-//        DTVTLogger.start();
-//        CustomDialog recDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.SELECT);
-//        // Callback
-//        recDialog.setItemSelectCallback(mItemSelectCallback);
-//        // Title
-//        recDialog.setTitle(getResources().getString(R.string.recordiong_reservation_menu_dialog_title));
-//        // SelectItem
-//        String[] itemArray = getResources().getStringArray(R.array.recording_reservation_menu_dialog_item);
-//        List<String> list = new ArrayList<String>();
-//        for(String str : itemArray) {
-//            list.add(str);
-//        }
-//        recDialog.setSelectData(list);
-//        // Cancelable
-//        recDialog.setCancelable(false);
-//        recDialog.setCancelVisiblity(View.GONE);
-//        DTVTLogger.end();
-//
-//        return recDialog;
-//    }
 
     /**
      * 開始時間と現在時刻の比較.
@@ -2595,31 +2590,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         failedRecordingReservationDialog.setCancelable(false);
         return failedRecordingReservationDialog;
     }
-
-//    /**
-//     * 繰り返し録画予約ダイアログの項目選択時のコールバック.
-//     */
-//    private CustomDialog.ApiItemSelectCallback mItemSelectCallback = new CustomDialog.ApiItemSelectCallback() {
-//        @Override
-//        public void onItemSelectCallback(final AlertDialog dialog, final int position) {
-//            // リスト選択時の処理
-//            //TODO 定期予約実装時 1 は "繰り返し録画予約する"になる
-//            switch (position) {
-//                case RECORDING_RESERVATION_DIALOG_INDEX_0: // 録画予約するをタップ
-//                    mRecordingReservationContentsDetailInfo.setLoopTypeNum(
-//                            RecordingReservationContentsDetailInfo.REMOTE_RECORDING_RESERVATION_LOOP_TYPE_NUM_0);
-//                    createRecordingReservationConfirmDialog();
-//                    dialog.dismiss();
-//                    break;
-//                case RECORDING_RESERVATION_DIALOG_INDEX_1: // キャンセルをタップ
-//                    DTVTLogger.debug("Cancel RecordingReservation");
-//                    dialog.dismiss();
-//                    break;
-//                default:
-//                    break;
-//            }
-//        }
-//    };
 
     /**
      * 録画予約確認ダイアログを表示.
@@ -2693,37 +2663,53 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     @Override
     public void onRentalVodListCallback(final PurchasedVodListResponse response) {
         DTVTLogger.start();
-        if (response == null) {
-            showErrorDialog(ErrorType.rentalVoidListGet);
-            return;
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                DTVTLogger.start();
+                if (response == null) {
+                    showErrorDialog(ErrorType.rentalVoidListGet);
+                    return;
+                }
 
-        ArrayList<ActiveData> vodActiveData = response.getVodActiveData();
-        mEndDate = ContentUtils.getRentalVodValidEndDate(mDetailFullData, vodActiveData);
-        displayLimitDate();
-        DTVTLogger.debug("get rental vod end date:" + mEndDate);
-        mViewIngType = ContentUtils.getRentalVodViewingType(mDetailFullData, mEndDate);
-        DTVTLogger.debug("get rental vod viewing type:" + mViewIngType);
-        changeUIBasedContractInfo();
-        responseResultCheck();
+                ArrayList<ActiveData> vodActiveData = response.getVodActiveData();
+                mEndDate = ContentUtils.getRentalVodValidEndDate(mDetailFullData, vodActiveData);
+                displayLimitDate();
+                DTVTLogger.debug("get rental vod end date:" + mEndDate);
+                mViewIngType = ContentUtils.getRentalVodViewingType(mDetailFullData, mEndDate);
+                DTVTLogger.debug("get rental vod viewing type:" + mViewIngType);
+                changeUIBasedContractInfo();
+                responseResultCheck();
+                DTVTLogger.end();
+            }
+        });
+        DTVTLogger.end();
     }
 
     @Override
     public void onRentalChListCallback(final PurchasedChannelListResponse response) {
-        //購入済みCH一覧取得からの戻り
         DTVTLogger.start();
-        if (response == null) {
-            showErrorDialog(ErrorType.rentalChannelListGet);
-            return;
-        }
+        //購入済みCH一覧取得からの戻り
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                DTVTLogger.start();
+                if (response == null) {
+                    showErrorDialog(ErrorType.rentalChannelListGet);
+                    return;
+                }
 
-        mEndDate = ContentUtils.getRentalChannelValidEndDate(response, mChannel);
-        displayLimitDate();
-        DTVTLogger.debug("get rental vod end date:" + mEndDate);
-        mViewIngType = ContentUtils.getRentalChannelViewingType(mDetailFullData, mEndDate);
-        DTVTLogger.debug("get rental vod viewing type:" + mViewIngType);
-        changeUIBasedContractInfo();
-        responseResultCheck();
+                mEndDate = ContentUtils.getRentalChannelValidEndDate(response, mChannel);
+                displayLimitDate();
+                DTVTLogger.debug("get rental vod end date:" + mEndDate);
+                mViewIngType = ContentUtils.getRentalChannelViewingType(mDetailFullData, mEndDate);
+                DTVTLogger.debug("get rental vod viewing type:" + mViewIngType);
+                changeUIBasedContractInfo();
+                responseResultCheck();
+                DTVTLogger.end();
+            }
+        });
+        DTVTLogger.end();
     }
 
     /**
@@ -2978,6 +2964,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     //TODO playNowOnAir()以外のメソッドから呼び出す場合はここも実装する
                     break;
                 case HIKARI_IN_DCH:
+                case HIKARI_IN_DCH_TV_NOW_ON_AIR:
                 case HIKARI_IN_DCH_TV_WITHIN_AN_HOUR:
                 case HIKARI_IN_DCH_TV:
                 case HIKARI_IN_DCH_MISS:
@@ -3106,15 +3093,17 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         switch (mViewIngType) {
             case ENABLE_WATCH:
             case ENABLE_WATCH_LIMIT_THIRTY:
-                //再生導線表示
+                //契約有で視聴可能なものは再生導線表示
                 playNowOnAir();
                 break;
             case ENABLE_WATCH_001:
             case ENABLE_WATCH_LIMIT_THIRTY_001:
             case DISABLE_WATCH_AND_PLAY_001:
-                //dCHのみ契約で視聴が可能なものもそうでないものも契約導線表示する(ひかり内dCH、放送時間内).
-                //未ログインの場合はこの判定にならない.
+                //dCHのみ契約では、視聴が可能なものもそうでないものも契約導線表示する(ひかり内dCH、放送時間内).未ログインの場合はこの判定にならない.
+                //クリップ押下時に契約導線を表示するため、Fragmentに未契約状態であることを通知する
                 detailFragment.setContractInfo(false);
+                //録画ボタンは録画予約できるコンテンツでは非活性にする
+                detailFragment.setIsAvailRecordReserve(true);
                 if (mThumbnailBtn != null) {
                     mThumbnailBtn.setVisibility(View.GONE);
                 }
@@ -3124,6 +3113,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 //再生、クリップ、録画、評価、ダウンロード、番組表編集 の操作時に契約導線を表示
                 //クリップ押下時に契約導線を表示するため、Fragmentに未契約状態であることを通知する
                 detailFragment.setContractInfo(false);
+                //録画ボタンは録画予約できるコンテンツでは非活性にする
+                detailFragment.setIsAvailRecordReserve(true);
                 if (mThumbnailBtn != null) {
                     mThumbnailBtn.setVisibility(View.GONE);
                     UserState userState = UserInfoUtils.getUserState(this);
@@ -3188,6 +3179,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 Button chButton = findViewById(R.id.contract_leading_button);
                 // 宅内の場合契約導線表示
                 pairingState = DeviceStateUtils.getPairingState(this, getStbStatus());
+                //未購入チャンネルの場合は録画ボタンは録画予約できるコンテンツでは非活性にする
+                detailFragment.setIsAvailRecordReserve(true);
                 switch (pairingState) {
                     case INSIDE_HOUSE:
                         mContractLeadingView.setVisibility(View.VISIBLE);
@@ -3231,15 +3224,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 }
                 break;
             case DISABLE_WATCH_AND_PLAY:
-                //サムネイル上のdTVで視聴、dアニメストアで視聴を非表示
-                if (mThumbnailBtn != null) {
-                    if (DeviceStateUtils.getPairingState(this, getStbStatus()).equals(DeviceStateUtils.PairingState.NO_PAIRING)) {
-                        mThumbnailBtn.setVisibility(View.GONE);
-                        noAgreementDisplay();
-                    } else {
-                        mThumbnailBtn.setVisibility(View.GONE);
-                    }
-                }
+                // 放送時間外で視聴不可の場合、ひかりin dCh、dTVの時は連携導線を表示.
+                detailFragment = getDetailFragment();
+                String thumbnailMessage = StringUtils.getContentsDetailThumbnailString(
+                        detailFragment.getOtherContentsDetailData(), this, mDetailFullData.getContentsType());
+                setThumbnailText(thumbnailMessage);
                 break;
             case PREMIUM_CHECK_START:
                 new ContentsDetailDataProvider(this).getChListData();
@@ -3247,6 +3236,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             case SUBSCRIPTION_CHECK_START:
                 new ContentsDetailDataProvider(this).getVodListData();
                 break;
+            case DISABLE_WATCH:
             default:
                 break;
         }
@@ -3383,8 +3373,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         }
 
         //ダイアログの準備
-        CustomDialog customDialog = new CustomDialog(ContentDetailActivity.this
-                , CustomDialog.DialogType.ERROR);
+        CustomDialog customDialog = new CustomDialog(ContentDetailActivity.this,
+                CustomDialog.DialogType.ERROR);
 
         //表示するダイアログの切り替え判定
         if (errorState == null || errorState.getErrorType() == DtvtConstants.ErrorType.SUCCESS) {
@@ -3478,30 +3468,38 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void onSearchDataProviderFinishOk(final ResultType<TotalSearchContentInfo> resultType) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                TotalSearchContentInfo result = resultType.getResultType();
 
-        TotalSearchContentInfo result = resultType.getResultType();
+                if (result.getContentsDataList().size() > 0) {
+                    ContentsData info = result.getContentsDataList().get(0);
+                    DtvContentsDetailFragment detailFragment = getDetailFragment();
 
-        if (result.getContentsDataList().size() > 0) {
-            ContentsData info = result.getContentsDataList().get(0);
-            DtvContentsDetailFragment detailFragment = getDetailFragment();
-
-            OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
-            if (detailData != null) {
-                detailData.setDescription1(info.getDescription1());
-                detailData.setDescription2(info.getDescription2());
-                detailData.setDescription3(info.getDescription3());
-                detailData.setDetail(info.getSynopFromDescription());
-                detailFragment.setOtherContentsDetailData(detailData);
-                detailFragment.refreshDescription();
+                    OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
+                    if (detailData != null) {
+                        detailData.setDescription1(info.getDescription1());
+                        detailData.setDescription2(info.getDescription2());
+                        detailData.setDescription3(info.getDescription3());
+                        detailData.setDetail(info.getSynopFromDescription());
+                        detailFragment.setOtherContentsDetailData(detailData);
+                        detailFragment.refreshDescription();
+                    }
+                }
+                showProgressBar(false);
             }
-        }
-        showProgressBar(false);
+        });
     }
 
     @Override
     public void onSearchDataProviderFinishNg(final ResultType<SearchResultError> resultType) {
-
-        showErrorDialog(ErrorType.contentDetailGet);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                showErrorDialog(ErrorType.contentDetailGet);
+            }
+        });
     }
 
     @Override

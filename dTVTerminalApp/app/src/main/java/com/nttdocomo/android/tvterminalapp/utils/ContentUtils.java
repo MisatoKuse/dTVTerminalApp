@@ -129,11 +129,13 @@ public class ContentUtils {
         HIKARI_TV_NOW_ON_AIR,
         /**ひかり内dTVCh(番組).*/
         HIKARI_IN_DCH_TV,
+        /**ひかり内dTVCh(番組)(Now On Air).*/
+        HIKARI_IN_DCH_TV_NOW_ON_AIR,
         /**ひかり内dTVCh(番組)放送1時間以内.*/
         HIKARI_IN_DCH_TV_WITHIN_AN_HOUR,
         /**ひかりTV(VOD).*/
         HIKARI_TV_VOD,
-        /**ひかり内dTVCh.*/
+        /**ひかり内dTVCh.(検レコメタで判定)*/
         HIKARI_IN_DCH,
         /**ひかり内dTV.*/
         HIKARI_IN_DTV,
@@ -549,27 +551,27 @@ public class ContentUtils {
                         return ContentsType.OTHER;
                     } else {
                         switch (tvService) {
-                            case CONTENT_TYPE_FLAG_ONE:
+                            case TV_SERVICE_FLAG_HIKARI:
                                 //tv_service=1 -> ひかりTV_番組
                                 if (isNowOnAir) {
                                     return ContentsType.HIKARI_TV_NOW_ON_AIR;
-                                } else if (DateUtils.isWithInHour(metaFullData.getPublish_start_date())) {
-                                    //配信開始が現在時刻の1時間以内のひかりTV
+                                } else if (DateUtils.isWithInTwoHour(metaFullData.getPublish_start_date())) {
+                                    //配信開始が現在時刻の2時間以内のひかりTV
                                     return ContentsType.HIKARI_TV_WITHIN_AN_HOUR;
                                 } else {
                                     return ContentsType.HIKARI_TV;
                                 }
-                            case CONTENT_TYPE_FLAG_TWO:
+                            case TV_SERVICE_FLAG_DCH_IN_HIKARI:
                                 //tv_service=2
                                 if (contentsType == null) {
                                     //contentsType=other -> ひかりTV_番組
                                     if (isNowOnAir) {
-                                        return ContentsType.HIKARI_TV_NOW_ON_AIR;
-                                    } else if (DateUtils.isWithInHour(metaFullData.getPublish_start_date())) {
-                                        //配信開始が現在時刻の1時間以内のひかりTV
-                                        return ContentsType.HIKARI_TV_WITHIN_AN_HOUR;
+                                        return ContentsType.HIKARI_IN_DCH_TV_NOW_ON_AIR;
+                                    } else if (DateUtils.isWithInTwoHour(metaFullData.getPublish_start_date())) {
+                                        //配信開始が現在時刻の2時間以内のひかりTV
+                                        return ContentsType.HIKARI_IN_DCH_TV_WITHIN_AN_HOUR;
                                     } else {
-                                        return ContentsType.HIKARI_TV;
+                                        return ContentsType.HIKARI_IN_DCH_TV;
                                     }
                                 } else {
                                     switch (contentsType) {
@@ -578,8 +580,8 @@ public class ContentUtils {
                                             if (vodStartDate <= current) {
                                                 //VOD配信日時(vod_start_date) <= 現在時刻 -> ひかりTV内dTVチャンネル_見逃し
                                                 return ContentsType.HIKARI_IN_DCH_MISS;
-                                            } else if (DateUtils.isWithInHour(metaFullData.getPublish_start_date())) {
-                                                //現在時刻 + 1h > 放送開始日時(metaFullData.getPublish_start_date()) > 現在時刻 -> ひかりTV内dTVチャンネル_番組放送開始1時間以内
+                                            } else if (DateUtils.isWithInTwoHour(metaFullData.getPublish_start_date())) {
+                                                //現在時刻 + 2h > 放送開始日時(metaFullData.getPublish_start_date()) > 現在時刻 -> ひかりTV内dTVチャンネル_番組放送開始2時間以内
                                                 return ContentsType.HIKARI_IN_DCH_TV_WITHIN_AN_HOUR;
                                             } else {
                                                 //VOD配信日時(vod_start_date) > 現在時刻 -> ひかりTV内dTVチャンネル_番組
@@ -591,12 +593,12 @@ public class ContentUtils {
                                         default:
                                             //contentsType=other -> ひかりTV_番組
                                             if (isNowOnAir) {
-                                                return ContentsType.HIKARI_TV_NOW_ON_AIR;
-                                            } else if (DateUtils.isWithInHour(metaFullData.getPublish_start_date())) {
-                                                //配信開始が現在時刻の1時間以内のひかりTV
-                                                return ContentsType.HIKARI_TV_WITHIN_AN_HOUR;
+                                                return ContentsType.HIKARI_IN_DCH_TV_NOW_ON_AIR;
+                                            } else if (DateUtils.isWithInTwoHour(metaFullData.getPublish_start_date())) {
+                                                //配信開始が現在時刻の2時間以内のひかりTV
+                                                return ContentsType.HIKARI_IN_DCH_TV_WITHIN_AN_HOUR;
                                             } else {
-                                                return ContentsType.HIKARI_TV;
+                                                return ContentsType.HIKARI_IN_DCH_TV;
                                             }
                                     }
                                 }
@@ -898,20 +900,13 @@ public class ContentUtils {
                 } else if (TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(tvService)) {
                     //メタレスポンス「publish_start_date」 <= 現在時刻 < 「publish_end_date」
                     if (publishStartDate <= nowDate && nowDate < publishEndDate) {
-                        //「publish_end_date」が現在日時から1か月以内
-                        if (DateUtils.isLimitThirtyDay(publishEndDate)) {
-                            //視聴可能期限(「publish_end_dateまで」)を表示
-                            return ViewIngType.ENABLE_WATCH_LIMIT_THIRTY;
-                            //「publish_end_date」が現在日時から1か月以上先
-                        } else {
-                            //視聴可能期限は非表示
-                            return ViewIngType.ENABLE_WATCH;
-                        }
-                        //メタレスポンス「publish_start_date」 >= 現在時刻
+                        //視聴可能期限は非表示
+                        return ViewIngType.ENABLE_WATCH;
+                    //メタレスポンス「publish_start_date」 >= 現在時刻
                     } else if (publishStartDate >= nowDate) {
                         //視聴不可(放送時間外のため再生導線を非表示)
                         return ViewIngType.DISABLE_WATCH_AND_PLAY;
-                        //メタレスポンス「publish_end_date」 <= 現在時刻
+                    //メタレスポンス「publish_end_date」 <= 現在時刻
                     } else if (publishEndDate <= nowDate) {
                         long vodStartDate = (metaFullData.getmVod_start_date());
                         long vodEndDate = (metaFullData.getmVod_end_date());
