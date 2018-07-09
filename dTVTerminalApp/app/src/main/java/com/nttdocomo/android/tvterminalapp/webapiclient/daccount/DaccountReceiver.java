@@ -30,6 +30,17 @@ public class DaccountReceiver extends BroadcastReceiver {
         void onChanged();
     }
 
+    /**
+     * 結果を返すコールバック(STB選択画面用).
+     */
+    public interface DaccountChangedCallBackForStb {
+        /**
+         * dアカ変更があった時に通知する(STB画面用).
+         * @param dAccount dアカウント
+         */
+        void onChangeAndSendDaccount(String dAccount);
+    }
+
     /**前回受信時間.*/
     private static long sBeforeReceiveTime = 0;
 
@@ -41,6 +52,9 @@ public class DaccountReceiver extends BroadcastReceiver {
 
     /**コールバッククラス.*/
     private static DaccountChangedCallBack sDaccountChangedCallBack;
+
+    /**コールバッククラス(STB画面用).*/
+    private volatile static DaccountChangedCallBackForStb sDaccountChangedCallBackForStb;
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
@@ -89,6 +103,13 @@ public class DaccountReceiver extends BroadcastReceiver {
                 if (sDaccountChangedCallBack != null) {
                     sDaccountChangedCallBack.onChanged();
                 }
+                DTVTLogger.debug("sDaccountChangedCallBackForStb="
+                        + sDaccountChangedCallBackForStb);
+                //特殊な動きをするSTB選択画面に、dアカウントの変更を伝える（STB選択画面以外はコールバックがヌルなので、動作しない）
+                if (sDaccountChangedCallBackForStb != null && docomoIdObject != null) {
+                    sDaccountChangedCallBackForStb.onChangeAndSendDaccount(
+                            docomoIdObject.toString());
+                }
 
                 break;
             case DaccountConstants.USER_AUTH_RECEIVER:
@@ -106,6 +127,12 @@ public class DaccountReceiver extends BroadcastReceiver {
                     sDaccountChangedCallBack.onChanged();
                 }
 
+                //特殊な動きをするSTB選択画面に、dアカウントの変更を伝える（STB選択画面以外はコールバックがヌルなので、動作しない）
+                if (sDaccountChangedCallBackForStb != null) {
+                    sDaccountChangedCallBackForStb.onChangeAndSendDaccount(
+                            docomoIdObject.toString());
+                }
+
                 break;
             case DaccountConstants.DELETE_ID_RECEIVER:
                 //ユーザー削除通知を受け取った。
@@ -117,6 +144,12 @@ public class DaccountReceiver extends BroadcastReceiver {
                     if (sDaccountChangedCallBack != null) {
                         sDaccountChangedCallBack.onChanged();
                     }
+
+                    //特殊な動きをするSTB選択画面に、dアカウントの削除を伝える（STB選択画面以外はコールバックがヌルなので、動作しない）
+                    if (sDaccountChangedCallBackForStb != null) {
+                        sDaccountChangedCallBackForStb.onChangeAndSendDaccount("");
+                    }
+
                 }
 
                 break;
@@ -146,5 +179,18 @@ public class DaccountReceiver extends BroadcastReceiver {
      */
     public static void setDaccountChangedCallBack(final DaccountChangedCallBack callback) {
         sDaccountChangedCallBack = callback;
+    }
+
+
+    /**
+     * コールバック設定/解除(STB選択画面用).
+     * @param callback コールバッククラス
+     */
+    public static void setDaccountChangedCallBackForStb(
+            final DaccountChangedCallBackForStb callback) {
+        DTVTLogger.start("setDaccountChangedCallBackForStb="+callback);
+        //コールバックの指定・コールバック解除の場合ヌルが指定されるので、ここはヌルチェックは無用
+        sDaccountChangedCallBackForStb = callback;
+        DTVTLogger.end();
     }
 }
