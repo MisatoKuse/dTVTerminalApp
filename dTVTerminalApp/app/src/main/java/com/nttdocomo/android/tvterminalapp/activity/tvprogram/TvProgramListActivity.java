@@ -263,7 +263,6 @@ public class TvProgramListActivity extends BaseActivity implements
         if (mIsMenuLaunch) {
             enableHeaderBackIcon(true);
         }
-        enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
         initView();
@@ -289,6 +288,7 @@ public class TvProgramListActivity extends BaseActivity implements
     protected void onResume() {
         super.onResume();
         DTVTLogger.start();
+        enableStbStatusIcon(true);
         //BG→FG復帰時に各アイテムのクリップ状態が変更されている可能性があるためonResumeのタイミングでチェックする
         if (mTvProgramListAdapter != null) {
             List<ChannelInfo> infoList = mTvProgramListAdapter.getProgramList();

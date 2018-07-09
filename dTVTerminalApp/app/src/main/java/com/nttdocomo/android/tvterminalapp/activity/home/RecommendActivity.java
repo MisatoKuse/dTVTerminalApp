@@ -162,7 +162,6 @@ public class RecommendActivity extends BaseActivity implements
             startPageNo = RECOMMEND_LIST_PAGE_NO_OF_TV;
         }
         enableHeaderBackIcon(true);
-        enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
 
@@ -188,6 +187,7 @@ public class RecommendActivity extends BaseActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+        enableStbStatusIcon(true);
         sendScreenViewForPosition(mSelectedTabIndex);
     }
 

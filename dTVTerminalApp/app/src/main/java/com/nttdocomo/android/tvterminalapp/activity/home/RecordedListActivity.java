@@ -125,7 +125,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         Intent intent = getIntent();
         mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
         enableHeaderBackIcon(true);
-        enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
 
@@ -166,6 +165,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @Override
     protected void onResume() {
         super.onResume();
+        enableStbStatusIcon(true);
         sendScreenViewForPosition(getCurrentPosition());
     }
 

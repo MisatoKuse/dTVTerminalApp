@@ -124,7 +124,6 @@ public class RankingTopActivity extends BaseActivity
         if (mIsMenuLaunch) {
             enableHeaderBackIcon(true);
         }
-        enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
 
@@ -143,6 +142,7 @@ public class RankingTopActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
+        enableStbStatusIcon(true);
         super.sendScreenView(getString(R.string.google_analytics_screen_name_ranking));
     }
 

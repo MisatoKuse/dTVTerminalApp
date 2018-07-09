@@ -83,7 +83,6 @@ public class VideoTopActivity extends BaseActivity implements
         menuImageView.setOnClickListener(this);
 
         enableHeaderBackIcon(true);
-        enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
 
@@ -93,7 +92,7 @@ public class VideoTopActivity extends BaseActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-
+        enableStbStatusIcon(true);
         String title = mTitleTextView.getText().toString();
 
         if (title.equals(VIDEO_GENRE_TOP_TITLE)) {

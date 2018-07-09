@@ -45,7 +45,6 @@ public class SettingMenuLicenseActivity extends BaseActivity {
         //Headerの設定
         setTitleText(getString(R.string.main_setting_menu_title_license));
         enableHeaderBackIcon(true);
-        enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
     }
@@ -53,6 +52,7 @@ public class SettingMenuLicenseActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        enableStbStatusIcon(true);
         super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_license));
     }
 

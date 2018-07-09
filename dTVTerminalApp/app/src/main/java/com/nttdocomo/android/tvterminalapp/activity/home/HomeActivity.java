@@ -219,7 +219,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         setContentView(R.layout.home_main_layout);
         setTitleText(getString(R.string.str_app_title));
         enableHeaderBackIcon(false);
-        enableStbStatusIcon(true);
         setStatusBarColor(true);
         initView();
     }
@@ -293,6 +292,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     protected void onResume() {
+        enableStbStatusIcon(true);
         if (!isOttChecked) {
             isOttChecked = true;
             setDaccountControl();

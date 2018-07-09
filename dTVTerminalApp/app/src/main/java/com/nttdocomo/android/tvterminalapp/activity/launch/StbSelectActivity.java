@@ -340,7 +340,6 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
             //初回起動時
             enableHeaderBackIcon(false);
             setTitleText(getString(R.string.str_app_title));
-            enableStbStatusIcon(false);
             enableGlobalMenuIcon(false);
             return;
         } else if (mStartMode == (StbSelectFromMode.StbSelectFromMode_Setting.ordinal())) {

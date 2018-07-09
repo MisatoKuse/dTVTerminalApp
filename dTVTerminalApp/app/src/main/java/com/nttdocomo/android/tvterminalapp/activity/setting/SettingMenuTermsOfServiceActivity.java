@@ -43,7 +43,6 @@ public class SettingMenuTermsOfServiceActivity extends BaseActivity {
         //Headerの設定
         setTitleText(getString(R.string.main_setting_menu_title_terms_of_service));
         enableHeaderBackIcon(true);
-        enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
     }
@@ -51,6 +50,7 @@ public class SettingMenuTermsOfServiceActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        enableStbStatusIcon(true);
         super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_terms));
     }
 

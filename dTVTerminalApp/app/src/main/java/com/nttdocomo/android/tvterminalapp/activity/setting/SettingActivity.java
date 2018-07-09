@@ -125,7 +125,6 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         //Headerの設定
         setTitleText(getString(R.string.nav_menu_item_setting));
         enableHeaderBackIcon(true);
-        enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
 
@@ -145,7 +144,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
     @Override
     protected void onResume() {
         super.onResume();
-
+        enableStbStatusIcon(true);
         ListView mListView = findViewById(R.id.main_setting_list);
         mAdapter = new MainSettingListAdapter(this, R.layout.setting_main_list_layout, mSettingList);
         mListView.setAdapter(mAdapter);

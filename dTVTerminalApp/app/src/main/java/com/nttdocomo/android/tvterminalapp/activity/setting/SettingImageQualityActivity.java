@@ -46,7 +46,6 @@ public class SettingImageQualityActivity extends BaseActivity implements View.On
         //Headerの設定
         setTitleText(getString(R.string.main_setting_quality_setting_header));
         enableHeaderBackIcon(true);
-        enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
         //テレビアイコンをタップされたらリモコンを起動する
@@ -59,6 +58,7 @@ public class SettingImageQualityActivity extends BaseActivity implements View.On
     @Override
     protected void onResume() {
         super.onResume();
+        enableStbStatusIcon(true);
         RelativeLayout relativeLayoutHigh = findViewById(R.id.main_setting_relativelayout_quality_high);
         RelativeLayout relativeLayoutMiddle = findViewById(R.id.main_setting_relativelayout_quality_middle);
         RelativeLayout relativeLayoutLow = findViewById(R.id.main_setting_relativelayout_quality_low);

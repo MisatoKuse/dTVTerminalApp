@@ -125,7 +125,6 @@ public class ClipListActivity extends BaseActivity implements
             savedInstanceState.clear();
         }
         enableHeaderBackIcon(true);
-        enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
 
@@ -146,6 +145,7 @@ public class ClipListActivity extends BaseActivity implements
     protected void onResume() {
         super.onResume();
         DTVTLogger.start();
+        enableStbStatusIcon(true);
         //コンテンツ詳細から戻ってきたときのみクリップ状態をチェックする
         ClipListBaseFragment baseFragment = getCurrentFragment();
         if (baseFragment != null && baseFragment.getContentsDetailDisplay()) {

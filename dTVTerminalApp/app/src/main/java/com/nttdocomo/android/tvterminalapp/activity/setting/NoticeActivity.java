@@ -48,7 +48,6 @@ public class NoticeActivity extends BaseActivity implements View.OnClickListener
         //Headerの設定
         setTitleText(getString(R.string.information_title));
         enableHeaderBackIcon(true);
-        enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
 
@@ -59,6 +58,7 @@ public class NoticeActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onResume() {
         super.onResume();
+        enableStbStatusIcon(true);
         super.sendScreenView(getString(R.string.google_analytics_screen_name_news));
     }
 

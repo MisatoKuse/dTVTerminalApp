@@ -60,7 +60,6 @@ public class DaccountResettingActivity extends BaseActivity implements View.OnCl
         //Headerの設定
         setTitleText("");
         enableHeaderBackIcon(false);
-        enableStbStatusIcon(false);
         enableGlobalMenuIcon(false);
         setStatusBarColor(true);
 

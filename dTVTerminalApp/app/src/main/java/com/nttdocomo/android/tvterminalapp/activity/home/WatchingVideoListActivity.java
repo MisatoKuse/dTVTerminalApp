@@ -126,7 +126,6 @@ public class WatchingVideoListActivity extends BaseActivity implements
         Intent intent = getIntent();
         mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
         enableHeaderBackIcon(true);
-        enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
 
@@ -143,6 +142,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
     protected void onResume() {
         super.onResume();
         DTVTLogger.start();
+        enableStbStatusIcon(true);
         //コンテンツ詳細から戻ってきたときのみクリップ状態をチェックする
         if (mContentsDetailDisplay) {
             mContentsDetailDisplay = false;

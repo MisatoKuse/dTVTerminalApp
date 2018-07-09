@@ -202,7 +202,6 @@ public class SearchTopActivity extends BaseActivity
         if (mIsMenuLaunch) {
             enableHeaderBackIcon(true);
         }
-        enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
 
@@ -214,6 +213,7 @@ public class SearchTopActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
+        enableStbStatusIcon(true);
         if (sCurrentSearchText.isEmpty()) {
             super.sendScreenView(getString(R.string.google_analytics_screen_name_search));
         } else {

@@ -355,6 +355,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     protected void onResume() {
         DTVTLogger.start();
         super.onResume();
+        enableStbStatusIcon(true);
         switch (mDisplayState) {
             case PLAYER_ONLY:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_player));
@@ -654,7 +655,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             enableHeaderBackIcon(true);
         }
         setHeaderColor(false);
-        enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         changeGlobalMenuIcon(false);
         setStatusBarColor(false);

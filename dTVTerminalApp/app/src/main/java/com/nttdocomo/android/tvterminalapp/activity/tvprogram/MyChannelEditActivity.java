@@ -108,7 +108,6 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
 
         setTitleText(getString(R.string.my_channel_list_setting));
         enableHeaderBackIcon(true);
-        enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
         initView();
@@ -119,6 +118,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     @Override
     protected void onResume() {
         super.onResume();
+        enableStbStatusIcon(true);
         super.sendScreenView(getString(R.string.google_analytics_screen_name_channel_edit_menu));
     }
 

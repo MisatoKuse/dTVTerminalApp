@@ -122,7 +122,6 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         menuImageView.setVisibility(View.VISIBLE);
         menuImageView.setOnClickListener(this);
         enableHeaderBackIcon(true);
-        enableStbStatusIcon(true);
         setStatusBarColor(true);
 
         // コンテンツツリー画面からのデータ受け取り
@@ -144,6 +143,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         super.onResume();
         super.sendScreenView(getString(R.string.google_analytics_screen_name_video_content_list));
         DTVTLogger.start();
+        enableStbStatusIcon(true);
         //画面再表示時に読み込み中断フラグを降ろす
         mCancelLoad = false;
         //コンテンツ詳細から戻ってきたときのみクリップ状態をチェックする

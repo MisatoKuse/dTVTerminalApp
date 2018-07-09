@@ -50,7 +50,6 @@ public class SettingMenuAppActivity extends BaseActivity {
         //Headerの設定
         setTitleText(getString(R.string.main_setting_menu_title_app));
         enableHeaderBackIcon(true);
-        enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
     }
@@ -58,6 +57,7 @@ public class SettingMenuAppActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        enableStbStatusIcon(true);
         super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_application_privacy_policy));
     }
 

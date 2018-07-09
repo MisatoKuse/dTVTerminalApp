@@ -70,7 +70,6 @@ public class PairingHelpActivity extends BaseActivity {
         //Headerの設定
         setTitleText(getString(R.string.str_app_title));
         enableHeaderBackIcon(true);
-        enableStbStatusIcon(false);
         enableGlobalMenuIcon(false);
         setStatusBarColor(true);
     }

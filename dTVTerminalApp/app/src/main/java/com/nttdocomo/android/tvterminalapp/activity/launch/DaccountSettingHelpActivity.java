@@ -46,7 +46,6 @@ public class DaccountSettingHelpActivity extends BaseActivity {
         //TODO ヘッダーのタイトル名変更対応(BaseActivity側で変更予定のため仮)
         setTitleText(getResources().getString(R.string.str_d_account_setting_help_title));
         enableHeaderBackIcon(true);
-        enableStbStatusIcon(false);
         enableGlobalMenuIcon(false);
         setStatusBarColor(true);
     }

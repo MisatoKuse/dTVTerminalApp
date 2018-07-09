@@ -136,7 +136,6 @@ public class ChildContentListActivity extends BaseActivity implements
 
         DTVTLogger.debug("mCrid = " + mCrid + ", title = " + title);
         setTitleText(title);
-        enableStbStatusIcon(true);
         setHeaderColor(false);
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
@@ -150,6 +149,7 @@ public class ChildContentListActivity extends BaseActivity implements
     protected void onResume() {
         super.onResume();
         DTVTLogger.start();
+        enableStbStatusIcon(true);
         //コンテンツ詳細から戻ってきたときのみクリップ状態をチェックする
         if (mContentsDetailDisplay) {
             mContentsDetailDisplay = false;

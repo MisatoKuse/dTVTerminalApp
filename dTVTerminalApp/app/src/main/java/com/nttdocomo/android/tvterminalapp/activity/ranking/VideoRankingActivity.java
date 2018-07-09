@@ -70,7 +70,6 @@ public class VideoRankingActivity extends BaseActivity implements
         //Headerの設定
         setTitleText(getString(R.string.video_ranking_title));
         enableHeaderBackIcon(true);
-        enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
 
@@ -86,6 +85,7 @@ public class VideoRankingActivity extends BaseActivity implements
     protected void onResume() {
         super.onResume();
         DTVTLogger.start();
+        enableStbStatusIcon(true);
         //コンテンツ詳細から戻ってきたときのみクリップ状態をチェックする
         RankingBaseFragment baseFragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
         if (baseFragment != null && baseFragment.isContentsDetailDisplay()) {
