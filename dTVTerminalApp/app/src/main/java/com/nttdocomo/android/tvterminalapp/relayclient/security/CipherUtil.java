@@ -82,9 +82,9 @@ public class CipherUtil {
      * 再生成が必要な場合には、clearPublicKey() を呼び出し鍵情報をクリアすること.
      *
      * @return 鍵生成結果.
-     * @throws NoSuchAlgorithmException 例外
+     * @throws NoSuchAlgorithmException, RuntimeException 例外
      */
-    public static CipherData generatePublicKey() throws NoSuchAlgorithmException {
+    public static CipherData generatePublicKey() throws NoSuchAlgorithmException, RuntimeException {
         byte[] module = null;
         byte[] exponent = null;
         synchronized (sLockObject) {
@@ -121,7 +121,7 @@ public class CipherUtil {
                 DTVTLogger.end();
                 return true;
             } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException
-                    | InvalidKeyException | BadPaddingException e) {
+                    | InvalidKeyException | BadPaddingException | RuntimeException e) {
                 DTVTLogger.error(e.getMessage());
                 return false;
             }
@@ -155,7 +155,7 @@ public class CipherUtil {
                 ivCode = cipher.getIV();
             } catch (UnsupportedEncodingException | IllegalBlockSizeException | NoSuchAlgorithmException
                     | InvalidAlgorithmParameterException | InvalidKeyException | BadPaddingException
-                    | NoSuchPaddingException e) {
+                    | NoSuchPaddingException | RuntimeException e) {
                 DTVTLogger.error(e.getMessage());
                 return null;
             }
@@ -199,7 +199,8 @@ public class CipherUtil {
                 DTVTLogger.end();
                 return decodeString;
             } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | BadPaddingException
-                    | InvalidAlgorithmParameterException | IllegalBlockSizeException | UnsupportedEncodingException e) {
+                    | InvalidAlgorithmParameterException | IllegalBlockSizeException | UnsupportedEncodingException
+                    | RuntimeException e) {
                 DTVTLogger.debug("decoding failed.");
                 setCipherDecodeError(true);
                 DTVTLogger.error(e.getMessage());
