@@ -37,6 +37,7 @@ import com.nttdocomo.android.tvterminalapp.relayclient.RelayServiceResponseMessa
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountReceiver;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.IDimDefines;
 
 import java.util.ArrayList;
@@ -51,7 +52,8 @@ import java.util.TimerTask;
 public class StbSelectActivity extends BaseActivity implements View.OnClickListener,
         AdapterView.OnItemClickListener,
         DlnaManager.DlnaManagerListener,
-        CustomDialog.DismissCallback {
+        CustomDialog.DismissCallback,
+        DaccountReceiver.DaccountChangedCallBackForStb {
 
     // region variable
     /**
@@ -141,6 +143,11 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      * ステータス表示の高さの初期値.
      */
     private int mFirstStatusHeight = 0;
+
+    /**
+     * 新dアカウント設定フラグ.
+     */
+    private boolean mNewDaccountGet = false;
 
     /**
      * ステータス表示の高さの補正値.
@@ -409,7 +416,17 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
     public void onResume() {
         super.onResume();
         DTVTLogger.start();
+        //新しいdアカウントが送られていた場合は、STB選択画面の再起動を行う
+        if(mNewDaccountGet) {
+            reStartApplication();
+            return;
+        }
+
         initResumeView();
+
+        //dアカウント変更コールバックの設定
+        DaccountReceiver.setDaccountChangedCallBackForStb(this);
+
         DTVTLogger.end();
     }
 
@@ -487,6 +504,11 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
         leaveActivity();
         displayMoreData(false);
+
+        if(isFinishing()) {
+            //dアカウント受け取りコールバックの解除
+            DaccountReceiver.setDaccountChangedCallBackForStb(null);
+        }
         DTVTLogger.end();
     }
 
@@ -1365,5 +1387,20 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
      */
     public int getmStartMode() {
         return mStartMode;
+    }
+
+    /**
+     * 新dアカウントの受信.
+     *
+     * @param dAccount 送られてきたdアカウント
+     */
+    @Override
+    public void onChangeAndSendDaccount(String dAccount) {
+        //dアカウントが変更された際に送信されてくる
+        DTVTLogger.start("new dacount =" + dAccount);
+        //新しいdアカウントが来たことを知らせ、onResumeでSTB選択画面の再起動をさせる
+        //(送られてきたdアカウントは直接使用せず、既存のdアカウント取得処理に委ねる)
+        mNewDaccountGet = true;
+        DTVTLogger.end();
     }
 }

@@ -2185,6 +2185,7 @@ public class BaseActivity extends FragmentActivity implements
         //現在の画面に応じて、戻り先を変える
         if (this instanceof StbSelectActivity && ((StbSelectActivity)this).getmStartMode()
                 == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
+            DTVTLogger.debug("start StbSelectActivity");
             //ホーム画面より前に表示された時のSTB選択画面なので、STB選択画面を再実行する
             intent.setClass(this, StbSelectActivity.class);
             //ランチャーから起動したことにする設定

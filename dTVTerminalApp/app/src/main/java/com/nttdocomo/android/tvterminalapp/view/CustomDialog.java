@@ -313,8 +313,8 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
             //ベースアクティビティだった
             BaseActivity baseActivity = (BaseActivity) mContext;
 
-            if (baseActivity.isFinishing() || (!baseActivity.isActivityActive())) {
-                //該当アクティビティが既に終わっているか、非活性ならば、ダイアログ表示をスキップする
+            if (baseActivity.isFinishing()) {
+                //該当アクティビティが既に終わっているならば、ダイアログ表示をスキップする
                 DTVTLogger.debug("initView: already activity("+ mContext.getClass() +") finish or pause:" + mContent);
                 return;
             }
