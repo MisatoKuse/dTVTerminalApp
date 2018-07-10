@@ -137,6 +137,43 @@ public class BitmapDecodeUtils {
     }
 
     /**
+     * bitmapを縮小処理.
+     * @param context コンテキスト
+     * @param srcBitmap 縮小前のbitmap
+     * @param imageSizeType 画像のサイズ
+     * @return bitmap
+     */
+    public static Bitmap createScaleBitmap(final Context context, final Bitmap srcBitmap, final ThumbnailDownloadTask.ImageSizeType imageSizeType) {
+        int dstWidth = 0;
+        int dstHeight = 0;
+        switch (imageSizeType) {
+            case HOME_LIST:
+                dstWidth = (int) context.getResources().getDimension(R.dimen.home_contents_thumbnail_width);
+                dstHeight = (int) context.getResources().getDimension(R.dimen.home_contents_thumbnail_height);
+                break;
+            case TV_PROGRAM_LIST:
+                dstWidth = (int) context.getResources().getDimension(R.dimen.panel_content_thumbnail_width);
+                dstHeight = (int) context.getResources().getDimension(R.dimen.panel_content_thumbnail_height);
+                break;
+            case LIST:
+                dstWidth = (int) context.getResources().getDimension(R.dimen.watch_listen_thumbnail_high);
+                dstHeight = (int) context.getResources().getDimension(R.dimen.watch_listen_thumbnail_width);
+                break;
+            case CHANNEL:
+                dstWidth = (int) context.getResources().getDimension(R.dimen.channel_list_thumbnail_width);
+                dstHeight = (int) context.getResources().getDimension(R.dimen.channel_list_thumbnail_height);
+                break;
+            case CONTENT_DETAIL:
+            default:
+                break;
+        }
+        if (dstWidth > 0) {
+            return Bitmap.createScaledBitmap(srcBitmap, dstWidth, dstHeight, false);
+        }
+        return srcBitmap;
+    }
+
+    /**
      * 画像の比率縮小処理.
      * @param context コンテキスト
      * @param pathName キャッシュパス
