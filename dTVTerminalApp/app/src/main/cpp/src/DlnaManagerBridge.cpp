@@ -647,22 +647,22 @@ JNIEXPORT void JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_download(JNIEnv *env, jobject thiz, jstring fileNameToSave_, jstring dtcp1host_, int dtcp1port, jstring url_, int cleartextSize, jstring xml_) {
     if (NULL==fileNameToSave_) {
         LOG_WITH("download fileNameToSave_ is NULL");
-        dlnaDownload->startDownload("", "", dtcp1port, "", cleartextSize, "");
+        dlnaDownload->startDownload("", "", dtcp1port, "", cleartextSize, nullptr);
         return;
     }
     if (NULL==dtcp1host_) {
         LOG_WITH("download dtcp1host_ is NULL");
-        dlnaDownload->startDownload("", "", dtcp1port, "", cleartextSize, "");
+        dlnaDownload->startDownload("", "", dtcp1port, "", cleartextSize, nullptr);
         return;
     }
     if (NULL==url_) {
         LOG_WITH("download url_ is NULL");
-        dlnaDownload->startDownload("", "", dtcp1port, "", cleartextSize, "");
+        dlnaDownload->startDownload("", "", dtcp1port, "", cleartextSize, nullptr);
         return;
     }
     if (NULL==xml_) {
         LOG_WITH("download xml_ is NULL");
-        dlnaDownload->startDownload("", "", dtcp1port, "", cleartextSize, "");
+        dlnaDownload->startDownload("", "", dtcp1port, "", cleartextSize, nullptr);
         return;
     }
     const char *fileNameToSave = env->GetStringUTFChars(fileNameToSave_, 0);
