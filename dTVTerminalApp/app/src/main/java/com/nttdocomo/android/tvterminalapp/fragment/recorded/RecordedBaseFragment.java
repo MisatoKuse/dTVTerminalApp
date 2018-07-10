@@ -483,7 +483,10 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
             mActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    showMessage();
+                    showErrorDialog(getString(R.string.record_download_low_storage_space_msg) ,R.string.custom_dialog_ok);
+                    if (mDownloadDataProvider != null) {
+                        mDownloadDataProvider.cancelDownLoadStatus(fullPath, false);
+                    }
                     setCancelStatus(fullPath);
                 }
             });
@@ -574,14 +577,17 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     }
 
     /**
-     * アクティベーションのエラー表示.
+     * エラーダイアログ表示.
+     *
+     * @param msg エラーメッセージ
+     * @param confirmText 確定ボタン文言
      */
-    private void showActivationErrorDialog() {
+    private void showErrorDialog(final String msg, final int confirmText) {
         CustomDialog resultDialog = new CustomDialog(mContext, CustomDialog.DialogType.ERROR);
         resultDialog.setOnTouchOutside(false);
         resultDialog.setCancelable(false);
-        resultDialog.setContent(getString(R.string.activation_failed_msg));
-        resultDialog.setConfirmText(R.string.common_text_close);
+        resultDialog.setContent(msg);
+        resultDialog.setConfirmText(R.string.custom_dialog_ok);
         resultDialog.showDialog();
     }
 
@@ -589,7 +595,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     public void downloadClick(final View view) {
         boolean result = DlnaUtils.getActivationState(mContext);
         if (!result) {
-            showActivationErrorDialog();
+            showErrorDialog(getString(R.string.activation_failed_msg), R.string.custom_dialog_ok);
             return;
         }
         int index = (int) view.getTag();
@@ -1059,7 +1065,9 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         }
         mCanBeCanceled = false;
         if (mActivity != null) {
-            //showMessage();
+            if (mDownloadDataProvider != null) {
+                mDownloadDataProvider.cancelDownLoadStatus(fullPath, false);
+            }
             setCancelStatus(fullPath);
         }
     }
