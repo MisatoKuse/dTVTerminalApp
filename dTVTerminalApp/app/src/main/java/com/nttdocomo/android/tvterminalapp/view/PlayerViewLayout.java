@@ -158,6 +158,8 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     private boolean mIsLocalPlay = false;
     /**操作アイコン表示か.*/
     private boolean mIsHideOperate = true;
+    /**操作アイコン押せるか.*/
+    private boolean mIsOperateActivated = false;
     /**再生開始フラグ.*/
     private boolean mAlreadyRendered = false;
     /**完了フラグ.*/
@@ -850,6 +852,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         mPortraitLayout.setVisibility(INVISIBLE);
         mLandscapeLayout.setVisibility(INVISIBLE);
         mSecureVideoPlayer.setBackgroundResource(0);
+        mIsOperateActivated = false;
         DTVTLogger.end();
     }
 
@@ -1219,7 +1222,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                     mGestureDetector.onTouchEvent(motionEvent);
                 }
                 if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                    if (mVideoCtrlBar.getVisibility() == View.VISIBLE) {
+                    if (mVideoCtrlBar.getVisibility() == View.VISIBLE && mIsOperateActivated) {
                         if (mIsHideOperate) {
                             hideCtrlView();
                         }
@@ -1268,6 +1271,20 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                         mVideoPause.setImageResource(R.mipmap.mediacontrol_icon_white_stop);
                         mVideoRewind10.setImageResource(R.mipmap.mediacontrol_icon_white_replay_10);
                         mVideoFast30.setImageResource(R.mipmap.mediacontrol_icon_white_forward_30);
+                    }
+                    hideCtrlViewAfterOperate();
+                } else if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    if (mVideoCtrlBar.getVisibility() == View.VISIBLE && mIsOperateActivated) {
+                        // タップダウンした時に長押し処理を開始する.
+                        PlayerControlType controlType = getPlayerControlType(motionEvent);
+                        if (controlType == PlayerControlType.PLAYER_CONTROL_10_SEC_BACK) {
+                            mVideoRewind10.setImageResource(R.mipmap.mediacontrol_icon_tap_replay_10);
+                        } else if (controlType == PlayerControlType.PLAYER_CONTROL_30_SEC_SKIP) {
+                            mVideoFast30.setImageResource(R.mipmap.mediacontrol_icon_tap_forward_30);
+                        } else if (controlType == PlayerControlType.PLAYER_CONTROL_PLAY_PAUSE) {
+                            mVideoPlay.setImageResource(R.mipmap.mediacontrol_icon_tap_play_arrow);
+                            mVideoPause.setImageResource(R.mipmap.mediacontrol_icon_tap_stop);
+                        }
                     } else {
                         if (!mIsVideoBroadcast) {
                             mVideoPlayPause.setVisibility(View.VISIBLE);
@@ -1289,21 +1306,13 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                         } else {
                             mSecureVideoPlayer.setBackgroundResource(R.mipmap.movie_material_mask_overlay_gradation_landscape);
                         }
-                        //setPlayEvent();
-                    }
-                    hideCtrlViewAfterOperate();
-                } else if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    if (mVideoCtrlBar.getVisibility() == View.VISIBLE) {
-                        // タップダウンした時に長押し処理を開始する.
-                        PlayerControlType controlType = getPlayerControlType(motionEvent);
-                        if (controlType == PlayerControlType.PLAYER_CONTROL_10_SEC_BACK) {
-                            mVideoRewind10.setImageResource(R.mipmap.mediacontrol_icon_tap_replay_10);
-                        } else if (controlType == PlayerControlType.PLAYER_CONTROL_30_SEC_SKIP) {
-                            mVideoFast30.setImageResource(R.mipmap.mediacontrol_icon_tap_forward_30);
-                        } else if (controlType == PlayerControlType.PLAYER_CONTROL_PLAY_PAUSE) {
-                            mVideoPlay.setImageResource(R.mipmap.mediacontrol_icon_tap_play_arrow);
-                            mVideoPause.setImageResource(R.mipmap.mediacontrol_icon_tap_stop);
-                        }
+                        //ボタン押せるまで0.3秒置き
+                        getHandler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mIsOperateActivated = true;
+                            }
+                        }, 300);
                     }
                 } else if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
                     if (mVideoCtrlBar.getVisibility() == View.VISIBLE) {
@@ -1486,6 +1495,9 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             public boolean onFling(final MotionEvent e1, final MotionEvent e2,
                                    final float velocityX, final float velocityY) {
                 DTVTLogger.start();
+                if (!mIsOperateActivated) {
+                    return false;
+                }
                 if (e1.getY() > (float) mRecordCtrlView.getHeight() / 3
                         && e2.getY() > (float) mRecordCtrlView.getHeight() / 3
                         && e2.getY() < (float) (mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight() / 3)
