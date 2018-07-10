@@ -401,6 +401,7 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
             return;
         }
         if (!ds.isUiRunning()) {
+            cancelDownLoadStatus(filePath, false);
             setNextDownLoad();
         }
     }
@@ -413,6 +414,7 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
             return;
         }
         if (!ds.isUiRunning()) {
+            cancelDownLoadStatus(fullPath, false);
             setNextDownLoad();
         }
     }
