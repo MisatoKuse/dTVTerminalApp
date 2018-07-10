@@ -124,7 +124,7 @@ public class ContentUtils {
         /**ひかりTV(番組).*/
         HIKARI_TV,
         /**ひかりTV(番組)放送1時間以内.*/
-        HIKARI_TV_WITHIN_AN_HOUR,
+        HIKARI_TV_WITHIN_TWO_HOUR,
         /**ひかりTV(Now On Air).*/
         HIKARI_TV_NOW_ON_AIR,
         /**ひかり内dTVCh(番組).*/
@@ -132,7 +132,7 @@ public class ContentUtils {
         /**ひかり内dTVCh(番組)(Now On Air).*/
         HIKARI_IN_DCH_TV_NOW_ON_AIR,
         /**ひかり内dTVCh(番組)放送1時間以内.*/
-        HIKARI_IN_DCH_TV_WITHIN_AN_HOUR,
+        HIKARI_IN_DCH_TV_WITHIN_TWO_HOUR,
         /**ひかりTV(VOD).*/
         HIKARI_TV_VOD,
         /**ひかり内dTVCh.(検レコメタで判定)*/
@@ -557,7 +557,7 @@ public class ContentUtils {
                                     return ContentsType.HIKARI_TV_NOW_ON_AIR;
                                 } else if (DateUtils.isWithInTwoHour(metaFullData.getPublish_start_date())) {
                                     //配信開始が現在時刻の2時間以内のひかりTV
-                                    return ContentsType.HIKARI_TV_WITHIN_AN_HOUR;
+                                    return ContentsType.HIKARI_TV_WITHIN_TWO_HOUR;
                                 } else {
                                     return ContentsType.HIKARI_TV;
                                 }
@@ -569,7 +569,7 @@ public class ContentUtils {
                                         return ContentsType.HIKARI_IN_DCH_TV_NOW_ON_AIR;
                                     } else if (DateUtils.isWithInTwoHour(metaFullData.getPublish_start_date())) {
                                         //配信開始が現在時刻の2時間以内のひかりTV
-                                        return ContentsType.HIKARI_IN_DCH_TV_WITHIN_AN_HOUR;
+                                        return ContentsType.HIKARI_IN_DCH_TV_WITHIN_TWO_HOUR;
                                     } else {
                                         return ContentsType.HIKARI_IN_DCH_TV;
                                     }
@@ -582,7 +582,7 @@ public class ContentUtils {
                                                 return ContentsType.HIKARI_IN_DCH_MISS;
                                             } else if (DateUtils.isWithInTwoHour(metaFullData.getPublish_start_date())) {
                                                 //現在時刻 + 2h > 放送開始日時(metaFullData.getPublish_start_date()) > 現在時刻 -> ひかりTV内dTVチャンネル_番組放送開始2時間以内
-                                                return ContentsType.HIKARI_IN_DCH_TV_WITHIN_AN_HOUR;
+                                                return ContentsType.HIKARI_IN_DCH_TV_WITHIN_TWO_HOUR;
                                             } else {
                                                 //VOD配信日時(vod_start_date) > 現在時刻 -> ひかりTV内dTVチャンネル_番組
                                                 return ContentsType.HIKARI_IN_DCH_TV;
@@ -596,7 +596,7 @@ public class ContentUtils {
                                                 return ContentsType.HIKARI_IN_DCH_TV_NOW_ON_AIR;
                                             } else if (DateUtils.isWithInTwoHour(metaFullData.getPublish_start_date())) {
                                                 //配信開始が現在時刻の2時間以内のひかりTV
-                                                return ContentsType.HIKARI_IN_DCH_TV_WITHIN_AN_HOUR;
+                                                return ContentsType.HIKARI_IN_DCH_TV_WITHIN_TWO_HOUR;
                                             } else {
                                                 return ContentsType.HIKARI_IN_DCH_TV;
                                             }
@@ -741,14 +741,18 @@ public class ContentUtils {
      * @return 視聴可否ステータス
      */
     public static ViewIngType getViewingType(final String contractInfo, final VodMetaFullData metaFullData, final ChannelInfo channelInfo) {
-        if (contractInfo == null || contractInfo.isEmpty() || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo)) {
-            //契約情報が未設定、または"none"の場合は視聴不可(契約導線を表示)
-            DTVTLogger.debug("Unviewable(Not contract)");
-            return ViewIngType.DISABLE_WATCH_AGREEMENT_DISPLAY;
-        } else if (UserInfoUtils.CONTRACT_INFO_DTV.equals(contractInfo)) {
-            return ContentUtils.contractInfoOne(metaFullData);
-        } else if (UserInfoUtils.CONTRACT_INFO_H4D.equals(contractInfo)) {
-            return ContentUtils.contractInfoTwo(metaFullData, channelInfo);
+        if (metaFullData != null && channelInfo != null) {
+            if (contractInfo == null || contractInfo.isEmpty() || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo)) {
+                //契約情報が未設定、または"none"の場合は視聴不可(契約導線を表示)
+                DTVTLogger.debug("Unviewable(Not contract)");
+                return ViewIngType.DISABLE_WATCH_AGREEMENT_DISPLAY;
+            } else if (UserInfoUtils.CONTRACT_INFO_DTV.equals(contractInfo)) {
+                return ContentUtils.contractInfoOne(metaFullData);
+            } else if (UserInfoUtils.CONTRACT_INFO_H4D.equals(contractInfo)) {
+                return ContentUtils.contractInfoTwo(metaFullData, channelInfo);
+            } else {
+                return ViewIngType.NONE_STATUS;
+            }
         } else {
             return ViewIngType.NONE_STATUS;
         }
@@ -1312,6 +1316,45 @@ public class ContentUtils {
             case ENABLE_WATCH_LIMIT_THIRTY_001:
             case ENABLE_WATCH_LIMIT_THIRTY_LONGEST:
             case ENABLE_WATCH_LIMIT_THIRTY_OVER:
+            case DISABLE_WATCH_AND_PLAY:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * 視聴可否のみを返却する.
+     *
+     * @param contentsType コンテンツ種別
+     * @return 視聴可否
+     */
+    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
+    public static boolean isHikariTvProgram(final ContentUtils.ContentsType contentsType) {
+        switch (contentsType) {
+            case HIKARI_TV:
+            case HIKARI_TV_WITHIN_TWO_HOUR:
+            case HIKARI_TV_NOW_ON_AIR:
+            case HIKARI_IN_DCH_TV:
+            case HIKARI_IN_DCH_TV_NOW_ON_AIR:
+            case HIKARI_IN_DCH_TV_WITHIN_TWO_HOUR:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * コンテンツ種別から録画ボタン活性表示フラグを取得.
+     *
+     * @param contentsType コンテンツ種別
+     * @return 録画ボタン活性表示フラグ
+     */
+    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
+    public static boolean isRecordButtonDisplay(final ContentUtils.ContentsType contentsType) {
+        switch (contentsType) {
+            case HIKARI_TV:
+            case HIKARI_IN_DCH_TV:
                 return true;
             default:
                 return false;

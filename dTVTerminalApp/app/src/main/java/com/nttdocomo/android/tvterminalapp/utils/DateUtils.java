@@ -1316,7 +1316,7 @@ public class DateUtils {
             case HIKARI_TV_NOW_ON_AIR:
             case HIKARI_IN_DCH_TV:
             case HIKARI_IN_DCH_TV_NOW_ON_AIR:
-            case HIKARI_IN_DCH_TV_WITHIN_AN_HOUR:
+            case HIKARI_IN_DCH_TV_WITHIN_TWO_HOUR:
             case HIKARI_IN_DTV:
             case HIKARI_IN_DCH_MISS:
             case HIKARI_IN_DCH_RELATION:
