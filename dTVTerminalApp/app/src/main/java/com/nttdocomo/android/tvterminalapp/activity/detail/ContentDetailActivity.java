@@ -112,8 +112,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import static com.nttdocomo.android.tvterminalapp.utils.ContentUtils.getHikariContentsType;
-
 /**
  * コンテンツ詳細画面 Activity.
  * 視聴・録画再生も含めて全てのコンテンツはこのActivityで表示を行う.
@@ -2536,17 +2534,19 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     /**
-     * 詳細画面を開いている最中に制限時間を経過したかどうかの判定
+     * 詳細画面を長時間開いているうちに制限時間を経過したかどうかの判定.
+     *
      * @return 録画可能ならばtrue
      */
     private boolean checkRecordTime() {
         if (mDetailFullData != null) {
             ContentUtils.ContentsType contentsType =
                     ContentUtils.getHikariContentsType(mDetailFullData);
-            //取得を行ったコンテンツ種別が、判定時間以内の種別かどうかの確認
-            if (contentsType == ContentUtils.ContentsType.HIKARI_TV_WITHIN_AN_HOUR
-                    || contentsType == ContentUtils.ContentsType.HIKARI_IN_DCH_TV_WITHIN_AN_HOUR) {
-                //録画不能時間の種別だったので、録画不能のダイアログを出して、falseを返す
+            //取得を行ったコンテンツ種別が、録画ボタン表示対象以外かどうかの確認
+            //(H4d契約は成立しなければボタンは表示されないので、ここでは見なくて良いでしょう)
+            if (!(contentsType == ContentUtils.ContentsType.HIKARI_TV
+               || contentsType == ContentUtils.ContentsType.HIKARI_IN_DCH_TV)) {
+                //録画ボタン表示対象の種別以外ならば、録画可能時間外や放送中等なので、録画不能のダイアログを出して、falseを返す
                 CustomDialog dialog = createErrorDialog();
                 dialog.setTitle(getResources().getString(
                         R.string.recording_reservation_failed_dialog_msg));
