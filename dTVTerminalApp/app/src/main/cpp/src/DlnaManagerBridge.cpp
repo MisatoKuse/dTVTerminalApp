@@ -111,6 +111,10 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_secureIoGlobalCreate(JN
 JNIEXPORT void JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_cipherFileContextGlobalCreate(JNIEnv *env, jobject thiz, jstring path) {
     LOG_WITH("");
+    if (NULL==path) {
+        LOG_WITH("cipherFileContextGlobalCreate path is NULL");
+        return;
+    }
     const char *pathString = env->GetStringUTFChars(path, 0);
     cipher_file_context_global_create(secure_io_global_get_instance(), DU_UCHAR(pathString));
 }
@@ -168,7 +172,10 @@ void fillContentInfoIntoJni(JNIEnv *env, const ContentInfo *src, jobject &dst) {
 JNIEXPORT void JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jobject thiz, jstring path) {
     LOG_WITH("");
-
+    if (NULL==path) {
+        LOG_WITH("initDmp path is NULL");
+        return;
+    }
     dmp = new DMP();
     dlnaBase = new DlnaBase();
     dlnaDmsBrowse = new DlnaDmsBrowse();
@@ -459,6 +466,10 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
 
 JNIEXPORT void JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDirag(JNIEnv *env, jobject thiz, jstring path) {
+    if (NULL==path) {
+        LOG_WITH("initDirag path is NULL");
+        return;
+    }
     const char *diragPath = env->GetStringUTFChars(path, 0);
     LOG_WITH("diragPath = %s", diragPath);
     dlnaBase->initDirag(diragPath);
@@ -485,6 +496,10 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_freeDmp(JNIEnv *env, jo
 
 JNIEXPORT void JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_resetdmp(JNIEnv *env, jobject thiz, jstring path) {
+    if (NULL==path) {
+        LOG_WITH("resetdmp path is NULL");
+        return;
+    }
     if (dmp == nullptr) {
         dmp = new DMP();
     }
@@ -504,6 +519,10 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_resetdmp(JNIEnv *env, j
 JNIEXPORT void JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_connectDmsWithUdn(JNIEnv *env, jobject thiz, jstring udn) {
     LOG_WITH("");
+    if (NULL==udn) {
+        LOG_WITH("connectDmsWithUdn udn is NULL");
+        return;
+    }
     const char *udnString = env->GetStringUTFChars(udn, 0);
     dlnaDmsBrowse->connectDmsWithUdn(dmp, DU_UCHAR(udnString));
 }
@@ -554,6 +573,20 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_stopDirag(JNIEnv *env, 
 
 JNIEXPORT void JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_requestLocalRegistration(JNIEnv *env, jobject thiz, jstring udn, jstring deviceName) {
+    if (NULL==udn) {
+        LOG_WITH("requestLocalRegistration udn is NULL");
+        if (DlnaRemoteConnect::LocalRegistrationCallback != nullptr) {
+            DlnaRemoteConnect::LocalRegistrationCallback(false, LocalRegistrationResultTypeUnknownError);
+        }
+        return;
+    }
+    if (NULL==deviceName) {
+        LOG_WITH("requestLocalRegistration deviceName is NULL");
+        if (DlnaRemoteConnect::LocalRegistrationCallback != nullptr) {
+            DlnaRemoteConnect::LocalRegistrationCallback(false, LocalRegistrationResultTypeUnknownError);
+        }
+        return;
+    }
     const char *udnString = env->GetStringUTFChars(udn, 0);
     const char *deviceNameString = env->GetStringUTFChars(deviceName, 0);
     LOG_WITH("udnString = %s", udnString);
@@ -562,6 +595,10 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_requestLocalRegistratio
 
 JNIEXPORT void JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_requestRemoteConnect(JNIEnv *env, jobject thiz, jstring udn) {
+    if (NULL==udn) {
+        LOG_WITH("requestRemoteConnect udn is NULL");
+        return;
+    }
     const char *udnString = env->GetStringUTFChars(udn, 0);
     LOG_WITH("udnString = %s", udnString);
     dlnaRemoteConnect->connectRemote(DU_UCHAR(udnString));
@@ -569,6 +606,10 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_requestRemoteConnect(JN
 
 JNIEXPORT void JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_requestRemoteDisconnect(JNIEnv *env, jobject thiz, jstring udn) {
+    if (NULL==udn) {
+        LOG_WITH("requestRemoteDisconnect udn is NULL");
+        return;
+    }
     const char *udnString = env->GetStringUTFChars(udn, 0);
     LOG_WITH("udnString = %s", udnString);
     dlnaRemoteConnect->disconnectRemote(DU_UCHAR(udnString));
@@ -576,6 +617,10 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_requestRemoteDisconnect
 
 JNIEXPORT jstring JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_getRemoteDeviceExpireDate(JNIEnv *env, jobject thiz, jstring udn) {
+    if (NULL==udn) {
+        LOG_WITH("getRemoteDeviceExpireDate udn is NULL");
+        return NULL;
+    }
     const char *udnString = env->GetStringUTFChars(udn, 0);
     LOG_WITH("udnString = %s", udnString);
     char *expireDate = new char[64];
@@ -600,6 +645,26 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_downLoadStartDtcp(JNIEn
 
 JNIEXPORT void JNICALL
 Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_download(JNIEnv *env, jobject thiz, jstring fileNameToSave_, jstring dtcp1host_, int dtcp1port, jstring url_, int cleartextSize, jstring xml_) {
+    if (NULL==fileNameToSave_) {
+        LOG_WITH("download fileNameToSave_ is NULL");
+        dlnaDownload->startDownload("", "", dtcp1port, "", cleartextSize, "");
+        return;
+    }
+    if (NULL==dtcp1host_) {
+        LOG_WITH("download dtcp1host_ is NULL");
+        dlnaDownload->startDownload("", "", dtcp1port, "", cleartextSize, "");
+        return;
+    }
+    if (NULL==url_) {
+        LOG_WITH("download url_ is NULL");
+        dlnaDownload->startDownload("", "", dtcp1port, "", cleartextSize, "");
+        return;
+    }
+    if (NULL==xml_) {
+        LOG_WITH("download xml_ is NULL");
+        dlnaDownload->startDownload("", "", dtcp1port, "", cleartextSize, "");
+        return;
+    }
     const char *fileNameToSave = env->GetStringUTFChars(fileNameToSave_, 0);
     const char *dtcp1host = env->GetStringUTFChars(dtcp1host_, 0);
     const char *url = env->GetStringUTFChars(url_, 0);
