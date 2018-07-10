@@ -42,7 +42,9 @@ public class VideoRankingActivity extends BaseActivity implements
     /** 最後に表示したタブindex. */
     private static final String TAB_INDEX = "tabIndex";
     /** 最後に表示したタブindex. */
-    private int mTabIndex = 0;
+    private int mTabIndex = DEFAULT_TAB_INDEX;
+    /** 最後に表示したタブindex.*/
+    private static final int DEFAULT_TAB_INDEX = -1;
     /** FragmentFactory. */
     private RankingFragmentFactory mRankingFragmentFactory = null;
     /** タブ用レイアウト. */
@@ -58,6 +60,8 @@ public class VideoRankingActivity extends BaseActivity implements
     private ArrayList<GenreListMetaData> mGenreMetaDataList;
     /** タブ名. */
     private String[] mTabNames;
+    /**ビデオランキングページャーアダプター.*/
+    private RankingPagerAdapter mRankingPagerAdapter = null;
     // endregion
 
     // region Activity LifeCycle
@@ -311,11 +315,13 @@ public class VideoRankingActivity extends BaseActivity implements
         if (mRankingFragmentFactory == null) {
             mRankingFragmentFactory = new RankingFragmentFactory();
         }
-        RankingPagerAdapter rankingPagerAdapter = new RankingPagerAdapter(getSupportFragmentManager(),
-                ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
-        rankingPagerAdapter.setTabNames(mTabNames);
-        rankingPagerAdapter.setRankingFragmentFactory(mRankingFragmentFactory);
-        mViewPager.setAdapter(rankingPagerAdapter);
+        if (mRankingPagerAdapter == null) {
+            mRankingPagerAdapter = new RankingPagerAdapter(getSupportFragmentManager(),
+                    ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
+            mRankingPagerAdapter.setTabNames(mTabNames);
+            mRankingPagerAdapter.setRankingFragmentFactory(mRankingFragmentFactory);
+            mViewPager.setAdapter(mRankingPagerAdapter);
+        }
         mViewPager.addOnPageChangeListener(new ViewPager
                 .SimpleOnPageChangeListener() {
             @Override
@@ -327,7 +333,7 @@ public class VideoRankingActivity extends BaseActivity implements
                 RankingBaseFragment fragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
                 if (fragment != null) {
                     fragment.showProgressBar(false);
-                    if(fragment.getDataSize() < 1) {
+                    if (fragment.getDataSize() < 1) {
                         resetPaging(mViewPager, mRankingFragmentFactory);
                     }
                 }
@@ -336,8 +342,14 @@ public class VideoRankingActivity extends BaseActivity implements
             }
         });
         mTabLayout = initTabData(mTabLayout, mTabNames);
-        mViewPager.setCurrentItem(mTabIndex);
-        mTabLayout.setTab(mTabIndex);
+        if (mTabIndex >= 0) {
+            mViewPager.setCurrentItem(mTabIndex);
+            mTabLayout.setTab(mTabIndex);
+            mTabIndex = DEFAULT_TAB_INDEX;
+        } else {
+            mViewPager.setCurrentItem(mViewPager.getCurrentItem());
+            mTabLayout.setTab(mViewPager.getCurrentItem());
+        }
         getGenreData();
     }
 
