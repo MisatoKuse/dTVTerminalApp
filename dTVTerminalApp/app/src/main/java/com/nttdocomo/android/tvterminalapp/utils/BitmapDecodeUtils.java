@@ -144,6 +144,9 @@ public class BitmapDecodeUtils {
      * @return bitmap
      */
     public static Bitmap compressBitmap(final Context context, final String pathName, final ThumbnailDownloadTask.ImageSizeType imageSizeType) {
+        if (context == null) {
+            return null;
+        }
         InputStream is = null;
         try {
             is = new FileInputStream(pathName);
