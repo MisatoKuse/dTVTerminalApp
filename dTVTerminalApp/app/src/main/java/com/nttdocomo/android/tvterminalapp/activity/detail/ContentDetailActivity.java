@@ -112,6 +112,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static com.nttdocomo.android.tvterminalapp.utils.ContentUtils.getHikariContentsType;
+
 /**
  * コンテンツ詳細画面 Activity.
  * 視聴・録画再生も含めて全てのコンテンツはこのActivityで表示を行う.
@@ -2495,6 +2497,13 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             leadingContract();
             return;
         }
+
+        //詳細画面の表示中に制限時間以内になってしまったかどうかの検査
+        if (!checkRecordTime()) {
+            //録画は不能になったので帰る
+            return;
+        }
+
         // リスト表示用のアラートダイアログを表示
         if (mRecordingReservationCustomtDialog == null) {
             DTVTLogger.debug("Create Dialog");
@@ -2503,6 +2512,29 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             mRecordingReservationCustomtDialog = createRecordingReservationConfirmDialog();
         }
         mRecordingReservationCustomtDialog.showDialog();
+    }
+
+    /**
+     * 詳細画面を開いている最中に制限時間を経過したかどうかの判定
+     * @return 録画可能ならばtrue
+     */
+    private boolean checkRecordTime() {
+        if (mDetailFullData != null) {
+            ContentUtils.ContentsType contentsType =
+                    ContentUtils.getHikariContentsType(mDetailFullData);
+            //取得を行ったコンテンツ種別が、判定時間以内の種別かどうかの確認
+            if (contentsType == ContentUtils.ContentsType.HIKARI_TV_WITHIN_AN_HOUR
+                    || contentsType == ContentUtils.ContentsType.HIKARI_IN_DCH_TV_WITHIN_AN_HOUR) {
+                //録画不能時間の種別だったので、録画不能のダイアログを出して、falseを返す
+                CustomDialog dialog = createErrorDialog();
+                dialog.setTitle(getResources().getString(
+                        R.string.recording_reservation_failed_dialog_msg));
+                dialog.showDialog();
+                return false;
+            }
+        }
+        //制限時間経過以外ならばtrue
+        return true;
     }
 
 //    /**
