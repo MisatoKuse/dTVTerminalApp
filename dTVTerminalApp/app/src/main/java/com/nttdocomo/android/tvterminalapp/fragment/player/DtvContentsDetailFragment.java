@@ -274,6 +274,14 @@ public class DtvContentsDetailFragment extends Fragment {
      * 各Viewにコンテンツの詳細情報を渡す.
      */
     private void setDetailData() {
+        //ネットワーク接続が無い場合は通信処理は即座に終わるので、フラグメントの初期化終了前にここにきてしまう。
+        //その場合は、処理をスキップする判定
+        if(mTextHeader == null) {
+            //ヌルの場合は何もできないので帰る
+            DTVTLogger.debug("mTextHeader not init");
+            return;
+        }
+
         //タイトル
         mTextHeader.setText(mOtherContentsDetailData.getTitle());
         //サブタイトル
