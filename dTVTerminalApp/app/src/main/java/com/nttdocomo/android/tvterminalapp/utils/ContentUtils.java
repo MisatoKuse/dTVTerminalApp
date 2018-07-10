@@ -1308,7 +1308,7 @@ public class ContentUtils {
      * @return 視聴可否
      */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
-    public static boolean isEnableDisplay(final ContentUtils.ViewIngType viewIngType) {
+    public static boolean isEnableDisplay(@NonNull final ContentUtils.ViewIngType viewIngType) {
         switch (viewIngType) {
             case ENABLE_WATCH:
             case ENABLE_WATCH_001:
@@ -1330,7 +1330,7 @@ public class ContentUtils {
      * @return 視聴可否
      */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
-    public static boolean isHikariTvProgram(final ContentUtils.ContentsType contentsType) {
+    public static boolean isHikariTvProgram(@NonNull final ContentUtils.ContentsType contentsType) {
         switch (contentsType) {
             case HIKARI_TV:
             case HIKARI_TV_WITHIN_TWO_HOUR:
@@ -1351,11 +1351,60 @@ public class ContentUtils {
      * @return 録画ボタン活性表示フラグ
      */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
-    public static boolean isRecordButtonDisplay(final ContentUtils.ContentsType contentsType) {
+    public static boolean isRecordButtonDisplay(@NonNull final ContentUtils.ContentsType contentsType) {
         switch (contentsType) {
             case HIKARI_TV:
             case HIKARI_IN_DCH_TV:
                 return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * 契約導線表示状態を取得.
+     *
+     * @param viewIngType 視聴可否種別
+     * @return 契約導線表示フラグ
+     */
+    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
+    public static boolean isContractWireDisplay(@NonNull final ContentUtils.ViewIngType viewIngType) {
+        switch (viewIngType) {
+            case DISABLE_WATCH_AGREEMENT_DISPLAY:
+            case DISABLE_CHANNEL_WATCH_AGREEMENT_DISPLAY:
+            case DISABLE_VOD_WATCH_AGREEMENT_DISPLAY:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * 表示判定中を示すフラグを取得.
+     *
+     * @param viewIngType 視聴可否種別
+     * @return 表示判定中フラグ
+     */
+    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
+    public static boolean isSkipViewingType(@NonNull final ContentUtils.ViewIngType viewIngType, @NonNull final ContentUtils.ContentsType contentsType) {
+        switch (viewIngType) {
+            case PREMIUM_CHECK_START:
+            case SUBSCRIPTION_CHECK_START:
+                return true;
+            case NONE_STATUS:
+                switch (contentsType) {
+                    case HIKARI_IN_DCH:
+                    case HIKARI_IN_DCH_TV_NOW_ON_AIR:
+                    case HIKARI_IN_DCH_TV_WITHIN_TWO_HOUR:
+                    case HIKARI_IN_DCH_TV:
+                    case HIKARI_IN_DCH_MISS:
+                    case HIKARI_IN_DCH_RELATION:
+                    case HIKARI_IN_DTV:
+                    case HIKARI_TV_VOD:
+                        return false;
+                    default:
+                        return true;
+                }
             default:
                 return false;
         }
