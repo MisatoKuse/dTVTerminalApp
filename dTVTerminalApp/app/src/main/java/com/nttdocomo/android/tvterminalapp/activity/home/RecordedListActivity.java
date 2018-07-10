@@ -37,6 +37,7 @@ import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedFragmentFac
 import com.nttdocomo.android.tvterminalapp.jni.DlnaObject;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.rec.DlnaRecVideoItem;
+import com.nttdocomo.android.tvterminalapp.service.download.DownloadData;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadDataProvider;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadListener;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
@@ -46,16 +47,11 @@ import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
 import java.io.File;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -499,6 +495,15 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                         }
                         break;
                     case DOWNLOAD_OVER:
+                        //ダウンロードキューを保存する
+                        RecordedBaseFragment fragment = getCurrentRecordedBaseFragment(0);
+                        if (fragment != null) {
+                            DownloadDataProvider downloadDataProvider = fragment.getDownloadDataProvider();
+                            List<DownloadData> downloadQueue = fragment.getDownloadQueue();
+                            if (downloadDataProvider != null && downloadQueue != null && downloadQueue.size() > 0) {
+                                downloadDataProvider.setQue(downloadQueue);
+                            }
+                        }
                         setRecordedTakeOutContents();
                         break;
                     default:
