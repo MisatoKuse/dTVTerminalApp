@@ -118,7 +118,7 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
 
             in = new BufferedInputStream(urlConnection.getInputStream(), 8 * 1024);
             if (mContext != null) {
-                bitmap = BitmapDecodeUtils.compressBitmap(mContext, in, mImageSizeType);
+                bitmap = BitmapDecodeUtils.compressBitmap(mContext, in, ImageSizeType.CONTENT_DETAIL);
             } else {
                 bitmap = BitmapFactory.decodeStream(in);
             }
@@ -127,6 +127,9 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
             if (bitmap != null) {
                 // メモリにプッシュする
                 mThumbnailProvider.thumbnailCacheManager.putBitmapToMem(mImageUrl, bitmap);
+            }
+            if (mContext != null) {
+                bitmap = BitmapDecodeUtils.createScaleBitmap(mContext, bitmap, mImageSizeType);
             }
             return bitmap;
         } catch (SSLHandshakeException e) {
