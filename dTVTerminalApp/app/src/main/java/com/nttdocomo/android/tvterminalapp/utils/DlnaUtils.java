@@ -293,11 +293,13 @@ public class DlnaUtils {
      * @return msg 期限表示ダイアログメッセージ
      */
     public static String getLocalRegisterExpireDateCheckMessage(final Context context) {
+        DTVTLogger.start();
         String msg = "";
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(context);
         int dialogFlg = SharedPreferencesUtils.getRegisterExpiredateDialogFlg(context);
         if (dlnaDmsItem != null) {
             String expireDate = SharedPreferencesUtils.getRemoteDeviceExpireDate(context);
+            DTVTLogger.debug("ローカルレジストレーションの有効期限：" + expireDate);
             if (!TextUtils.isEmpty(expireDate)) {
                 int remainingDays = DateUtils.getRemainingDays(expireDate);
                 String[] strings = {context.getString(R.string.remote_remaining_days_message_begin),
@@ -324,6 +326,7 @@ public class DlnaUtils {
                 }
             }
         }
+        DTVTLogger.end();
         return msg;
     }
 
