@@ -317,6 +317,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private DtvContentsChannelFragment mChannelFragment = null;
     /** 再生用データ.*/
     private RecordedContentsDetailData mPlayerData;
+    /** 前回ViewPagerのタブ位置.*/
+    private int mViewPagerIndex = DEFAULT_TAB_INDEX;
+    /** 前回ViewPagerのタブ位置.*/
+    private static final int DEFAULT_TAB_INDEX = -1;
+    /** 前回ViewPagerのタブ位置.*/
+    private static final String VIEWPAGER_INDEX = "viewPagerIndex";
 
     /** コンテンツタイプ(Google Analytics用).*/
     private enum ContentTypeForGoogleAnalytics {
@@ -340,6 +346,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             mPlayStartPosition = savedInstanceState
                     .getInt(SAVEDVARIABLE_PLAY_START_POSITION);
             mVisibility = savedInstanceState.getBoolean(REMOTE_CONTROLLER_VIEW_VISIBILITY);
+            mViewPagerIndex = savedInstanceState.getInt(VIEWPAGER_INDEX);
             savedInstanceState.clear();
         }
         setTheme(R.style.AppThemeBlack);
@@ -431,6 +438,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             outState.putInt(SAVEDVARIABLE_PLAY_START_POSITION, mPlayerViewLayout.getCurrentPosition());
         }
         outState.putBoolean(REMOTE_CONTROLLER_VIEW_VISIBILITY, mIsControllerVisible);
+        outState.putInt(VIEWPAGER_INDEX, mViewPager.getCurrentItem());
     }
 
     @SuppressWarnings("OverlyLongMethod")
@@ -1705,6 +1713,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     @Override
     public void channelListCallback(final ArrayList<ChannelInfo> channels) {
         DTVTLogger.start();
+        if (mViewPagerIndex >= 0) {
+            mViewPager.setCurrentItem(mViewPagerIndex);
+            mViewPagerIndex = DEFAULT_TAB_INDEX;
+        }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
