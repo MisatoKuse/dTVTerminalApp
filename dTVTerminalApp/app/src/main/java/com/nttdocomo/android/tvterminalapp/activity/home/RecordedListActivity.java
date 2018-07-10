@@ -229,14 +229,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onBrowseCallback(final DlnaObject[] objs) {
         setProgressBarGone();
-        if (objs.length == 0 && mPageIndex == 0) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mNoDataMessage.setVisibility(View.VISIBLE);
-                }
-            });
-        }
         ArrayList<DlnaRecVideoItem> dstList = new ArrayList<>();
         for (DlnaObject dlnaObject: objs) {
             DlnaRecVideoItem item = new DlnaRecVideoItem();
@@ -648,6 +640,15 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         }
         List<Map<String, String>> resultList = getDownloadListFromDb();
         setTakeOutContentsToAll(dlnaRecVideoItems, resultList);
+        if (dlnaRecVideoItems.size() == 0 && mPageIndex == 0) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mNoDataMessage.setVisibility(View.VISIBLE);
+                }
+            });
+            return;
+        }
         List<ContentsData> listData = baseFragment.getContentsData();
         if (null != listData && mPageIndex == 0 && !mIsLoading) {
             listData.clear();
