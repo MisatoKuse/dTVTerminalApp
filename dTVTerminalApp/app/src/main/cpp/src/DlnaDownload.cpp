@@ -103,6 +103,10 @@ bool DlnaDownload::start(DMP *dmp, JavaVM *vm, jobject object, jmethodID mid) {
 }
 
 void DlnaDownload::startDownload(std::string fileNameToSave, std::string dtcp1host_, int dtcp1port_, std::string url_, int cleartextSize, const char *xml) {
+    if(fileNameToSave.empty() || fileNameToSave.empty() || fileNameToSave.empty() || fileNameToSave.empty()){
+        downloaderStatusHandler(DOWNLOADER_STATUS_ERROR_OCCURED, 0, this);
+        return;
+    }
     const du_uchar* dtcp1host = DU_UCHAR_CONST(dtcp1host_.c_str());
     du_uint16 dtcp1port = (du_uint16)dtcp1port_;
     const du_uchar* url = DU_UCHAR_CONST(url_.c_str());
