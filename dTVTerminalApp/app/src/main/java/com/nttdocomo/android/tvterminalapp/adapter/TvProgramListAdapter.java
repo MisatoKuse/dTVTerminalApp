@@ -937,6 +937,9 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      */
     public void enableConnect() {
         mIsDownloadStop = false;
+        if (mThumbnailProvider != null) {
+            mThumbnailProvider.enableConnect();
+        }
     }
 
     /**
