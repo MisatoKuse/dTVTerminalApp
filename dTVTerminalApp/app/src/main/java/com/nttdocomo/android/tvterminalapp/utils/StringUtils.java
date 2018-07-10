@@ -754,7 +754,7 @@ public class StringUtils {
             case HIKARI_RECORDED:
             case HIKARI_TV_NOW_ON_AIR:
             case HIKARI_TV:
-            case HIKARI_TV_WITHIN_AN_HOUR:
+            case HIKARI_TV_WITHIN_TWO_HOUR:
                 //文言なし
                 return "";
             case HIKARI_TV_VOD:
@@ -762,7 +762,7 @@ public class StringUtils {
                 return context.getString(R.string.contents_detail_thumbnail_text);
             case HIKARI_IN_DCH_TV:
             case HIKARI_IN_DCH_TV_NOW_ON_AIR:
-            case HIKARI_IN_DCH_TV_WITHIN_AN_HOUR:
+            case HIKARI_IN_DCH_TV_WITHIN_TWO_HOUR:
             case HIKARI_IN_DCH:
             case HIKARI_IN_DCH_MISS:
             case HIKARI_IN_DCH_RELATION:

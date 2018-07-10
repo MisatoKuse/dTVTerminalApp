@@ -435,6 +435,7 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
         }
     }
 
+    @SuppressWarnings("OverlyLongMethod")
     @Override
     public List<Map<String, String>> dbOperation(final int operationId) {
         super.dbOperation(operationId);
@@ -460,6 +461,11 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                 RentalListDataManager rentalListDataManager = new RentalListDataManager(mContext);
                 resultSet = rentalListDataManager.selectRentalListData();
                 mPurchasedVodActiveList = rentalListDataManager.selectRentalActiveListData();
+                if (mPurchasedVodActiveList == null || mPurchasedVodActiveList.size() < 1) {
+                    //DBから取得したデータがない場合は初期化したデータを渡す
+                    PurchasedVodListResponse purchasedVodListData = new PurchasedVodListResponse();
+                    executeRentalVodListCallback(purchasedVodListData);
+                }
                 break;
             case RENTAL_CHANNEL_UPDATE: //サーバーから取得した購入済みCHデータをDBに保存する
                 RentalListInsertDataManager rentalChListInsertDataManager = new RentalListInsertDataManager(mContext);
@@ -469,6 +475,11 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                 RentalListDataManager rentalChListDataManager = new RentalListDataManager(mContext);
                 resultSet = rentalChListDataManager.selectRentalChListData();
                 mPurchasedChActiveList = rentalChListDataManager.selectRentalChActiveListData();
+                if (mPurchasedChActiveList == null || mPurchasedChActiveList.size() < 1) {
+                    //DBから取得したデータがない場合は初期化したデータを渡す
+                    PurchasedChannelListResponse purchasedChannelListResponse = new PurchasedChannelListResponse();
+                    executeRentalChListCallback(purchasedChannelListResponse);
+                }
                 break;
             default:
                 break;
@@ -598,16 +609,6 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
                 DTVTLogger.error("ContentsDetailDataProvider is stopping connect");
             }
         }
-    }
-
-    /**
-     * 購入済みCH一覧を強制的にサーバーから取得.
-     */
-    public void getForceChListData() {
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastProgramDate(DateUtils.RENTAL_CHANNEL_LAST_UPDATE);
-        mRentalChListWebClient = new RentalChListWebClient(mContext);
-        mRentalChListWebClient.getRentalChListApi(this);
     }
 
     /**

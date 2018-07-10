@@ -627,39 +627,35 @@ public class DtvContentsDetailFragment extends Fragment {
     /**
      * 録画予約アイコンの 表示/非表示 を切り替え.
      *
+     * @param viewIngType 視聴可否判定結果
+     * @param contentsType コンテンツ種別
      */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
-    public void changeVisibilityRecordingReservationIcon() {
+    public void changeVisibilityRecordingReservationIcon(final ContentUtils.ViewIngType viewIngType, final ContentUtils.ContentsType contentsType) {
         DTVTLogger.start();
         mRecordButton.setVisibility(View.GONE);
-
-        if (mOtherContentsDetailData.getContentCategory() != null) {
-            switch (mOtherContentsDetailData.getContentCategory()) {
-                case HIKARI_TV:
-                case HIKARI_IN_DCH_TV:
-                    //未ログイン又は未契約/未購入時は録画ボタンを非活性（クリップとは異なりチャンネルの購入判断がある）
-                    //なおdCHはH4d契約が無い限りは録画予約は不可とするとのこと
-                    if (!UserInfoUtils.getClipActive(getContext()) || mIsAvailRecordReserve) {
-                        mRecordButton.setBackgroundResource(R.mipmap.icon_tap_circle_normal_rec);
-                        mRecordButton.setVisibility(View.VISIBLE);
-                    } else {
-                        mRecordButton.setBackgroundResource(R.drawable.recording_reservation_rec_icon_selector);
-                        mRecordButton.setVisibility(View.VISIBLE);
-                    }
-                    break;
-                default:
-                    break;
+        //視聴可否判定結果 コンテンツ種別取得済みかつひかりTV番組かつ放送二時間以上前の時のみ録画ボタンを表示
+        if (viewIngType != null
+                && !viewIngType.equals(ContentUtils.ViewIngType.NONE_STATUS)
+                && !viewIngType.equals(ContentUtils.ViewIngType.PREMIUM_CHECK_START)
+                && !viewIngType.equals(ContentUtils.ViewIngType.SUBSCRIPTION_CHECK_START)
+                && contentsType != null
+                && ContentUtils.isHikariTvProgram(contentsType)) {
+            //未ログイン又は未契約時は録画ボタンを非活性
+            if (!UserInfoUtils.getClipActive(getContext())
+                    || !ContentUtils.isEnableDisplay(viewIngType)
+                    || !ContentUtils.isRecordButtonDisplay(contentsType)) {
+                mRecordButton.setBackgroundResource(R.mipmap.icon_tap_circle_normal_rec);
+                mRecordButton.setVisibility(View.VISIBLE);
+            } else {
+                mRecordButton.setBackgroundResource(R.drawable.recording_reservation_rec_icon_selector);
+                mRecordButton.setVisibility(View.VISIBLE);
             }
-        } else {
-            mRecordButton.setVisibility(View.GONE);
         }
         noticeRefresh();
         DTVTLogger.end();
     }
 
-    public void setVisible(){
-        mRecordButton.setVisibility(View.VISIBLE);
-    }
     /**
      * 録画予約アイコンにOnClickListenerを登録.
      *
