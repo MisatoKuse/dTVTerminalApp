@@ -273,7 +273,6 @@ public class TvScheduleInsertDataManager {
 
     /**
      * ContentValuesに変換する.
-     * //TODO パラメータ要確認
      *
      * @param scheduleInfo ScheduleInfo
      * @return ContentValues
@@ -297,8 +296,7 @@ public class TvScheduleInsertDataManager {
         values.put(JsonConstants.META_RESPONSE_DTV, scheduleInfo.getDtv());
         values.put(JsonConstants.META_RESPONSE_TV_SERVICE, scheduleInfo.getTvService());
         values.put(JsonConstants.META_RESPONSE_DTV_TYPE, scheduleInfo.getDtvType());
-        values.put(JsonConstants.META_RESPONSE_EPITITLE, "");
-        values.put(JsonConstants.META_RESPONSE_CID, "");
+        values.put(JsonConstants.META_RESPONSE_SYNOP, scheduleInfo.getDetail());
         return values;
     }
 }
