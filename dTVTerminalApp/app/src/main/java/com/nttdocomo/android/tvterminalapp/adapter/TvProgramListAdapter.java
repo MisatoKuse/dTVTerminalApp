@@ -270,6 +270,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         boolean isClipDraw = false;
         /**あらすじ描画スペース.*/
         int mEpiSpace = 0;
+        /**サムネイルURL.*/
+        String mThumbnailURL = null;
 
         /**
          * 各画面部品初期化.
@@ -351,6 +353,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         DTVTLogger.start();
         //年齢制限フラグ
         boolean isParental = StringUtils.isParental(mAgeReq, itemSchedule.getRValue());
+        itemViewHolder.mThumbnailURL = itemSchedule.getImageUrl();
 
         String startTime = itemSchedule.getStartTime();
         String endTime = itemSchedule.getEndTime();
@@ -656,6 +659,16 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 if (availableSpace >= thumbnailHeight) {
                     //マージン含めたサムネイルの高さ以上の余白があればサムネイル表示
                     itemViewHolder.mThumbnail.setVisibility(View.VISIBLE);
+                    //URLによって、サムネイル取得
+                    String thumbnailURL = itemViewHolder.mThumbnailURL;
+                    if (!TextUtils.isEmpty(thumbnailURL) && !mIsDownloadStop && mThumbnailProvider != null) {
+                        itemViewHolder.mThumbnail.setTag(thumbnailURL);
+                        Bitmap bitmap = mThumbnailProvider.getThumbnailImage(itemViewHolder.mThumbnail, thumbnailURL);
+                        if (bitmap != null) {
+                            itemViewHolder.mThumbnail.setImageBitmap(bitmap);
+                        }
+                    }
+
                     //サムネイルを表示した上で、あらすじを残りスペースに配置する
                     availableSpace = availableSpace - thumbnailHeight;
                 } else {
@@ -744,24 +757,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                                 ItemViewHolder itemViewHolder = new ItemViewHolder(itemSchedules.get(count));
                                 setView(itemViewHolder, itemSchedule);
                                 layout.addView(itemViewHolder.mView);
-                                //URLによって、サムネイル取得
-                                String thumbnailURL = itemSchedule.getImageUrl();
-                                if (!TextUtils.isEmpty(thumbnailURL) && !mIsDownloadStop && mThumbnailProvider != null) {
-                                    itemViewHolder.mThumbnail.setTag(thumbnailURL);
-                                    Bitmap bitmap = mThumbnailProvider.getThumbnailImage(itemViewHolder.mThumbnail, thumbnailURL);
-                                    if (bitmap != null) {
-                                        int thumbnailWidth = itemViewHolder.mView.getWidth() - ((TvProgramListActivity) mContext).dip2px(30)
-                                                - ((TvProgramListActivity) mContext).dip2px(8);
-                                        int thumbnailHeight = ((TvProgramListActivity) mContext).dip2px(THUMBNAIL_HEIGHT) * thumbnailWidth
-                                                / ((TvProgramListActivity) mContext).dip2px(THUMBNAIL_WIDTH);
-                                        if (thumbnailWidth > 0 && thumbnailHeight > 0) {
-                                            bitmap.setWidth(thumbnailWidth);
-                                            bitmap.setHeight(thumbnailHeight);
-                                        }
-                                        itemViewHolder.mThumbnail.setScaleType(ImageView.ScaleType.FIT_XY);
-                                        itemViewHolder.mThumbnail.setImageBitmap(bitmap);
-                                    }
-                                }
+
                                 DTVTLogger.debug("addContentView! count:" + count + " ChNo:" + itemSchedule.getChNo());
                             }
                             count++;
