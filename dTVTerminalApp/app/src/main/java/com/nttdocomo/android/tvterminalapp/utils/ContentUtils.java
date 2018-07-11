@@ -1128,12 +1128,15 @@ public class ContentUtils {
             for (ActiveData activeData : activeList) {
                 String license_id = activeData.getLicenseId();
                 //対象VODのpuid、liinf_arrayのライセンスID（パイプ区切り）と購入済みＶＯＤ一覧取得IF「active_list」の「license_id」と比較して一致した場合
-                if (license_id.equals(column[0]) || license_id.equals(puid)) {
-                    long validEndDate = activeData.getValidEndDate();
-                    //一致した「active_list」の「valid_end_date」> 現在時刻の場合（一件でも条件を満たせば視聴可能）
-                    if (activeData.getValidEndDate() > nowDate) {
-                        if (vodLimitDate < validEndDate) {
-                            vodLimitDate = validEndDate;
+                if (column.length > 2 && (license_id.equals(column[0]) || license_id.equals(puid))) {
+                    //２カラム目 <= sysdate <= ３カラム目 であれば視聴可能。
+                    if (DateUtils.getEpochTime(column[1]) <= nowDate && nowDate <= DateUtils.getEpochTime(column[2])) {
+                        long validEndDate = activeData.getValidEndDate();
+                        //一致した「active_list」の「valid_end_date」> 現在時刻の場合（一件でも条件を満たせば視聴可能）
+                        if (activeData.getValidEndDate() > nowDate) {
+                            if (vodLimitDate < validEndDate) {
+                                vodLimitDate = validEndDate;
+                            }
                         }
                     }
                 }
@@ -1390,21 +1393,8 @@ public class ContentUtils {
         switch (viewIngType) {
             case PREMIUM_CHECK_START:
             case SUBSCRIPTION_CHECK_START:
-                return true;
             case NONE_STATUS:
-                switch (contentsType) {
-                    case HIKARI_IN_DCH:
-                    case HIKARI_IN_DCH_TV_NOW_ON_AIR:
-                    case HIKARI_IN_DCH_TV_WITHIN_TWO_HOUR:
-                    case HIKARI_IN_DCH_TV:
-                    case HIKARI_IN_DCH_MISS:
-                    case HIKARI_IN_DCH_RELATION:
-                    case HIKARI_IN_DTV:
-                    case HIKARI_TV_VOD:
-                        return false;
-                    default:
-                        return true;
-                }
+                return true;
             default:
                 return false;
         }

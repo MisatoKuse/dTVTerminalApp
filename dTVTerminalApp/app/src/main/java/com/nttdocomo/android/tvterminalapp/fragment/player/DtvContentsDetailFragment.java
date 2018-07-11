@@ -75,8 +75,6 @@ public class DtvContentsDetailFragment extends Fragment {
     private TextView mTxtChannelDate = null;
     /** 全文表示フラグ.*/
     private boolean mIsAllText = false;
-    /** 視聴可否判定結果. */
-    private boolean mIsAvailRecordReserve = false;
     /** クリップボタン.*/
     private ImageView mClipButton = null;
     /** 録画ボタン.*/
@@ -726,13 +724,5 @@ public class DtvContentsDetailFragment extends Fragment {
      */
     public void setOtherContentsDetailData(final OtherContentsDetailData otherContentsDetailData) {
         mOtherContentsDetailData = otherContentsDetailData;
-    }
-
-    /**
-     * 録画ボタン表示不可フラグ設定.
-     * @param isAvailRecordReserve 録画ボタン表示不可フラグ.契約状態・購入状態によって不可の場合にｔｒｕｅ設定する事.時刻による録画予約不可は別途処理.
-     */
-    public void setIsAvailRecordReserve(final boolean isAvailRecordReserve) {
-        this.mIsAvailRecordReserve = isAvailRecordReserve;
     }
 }
