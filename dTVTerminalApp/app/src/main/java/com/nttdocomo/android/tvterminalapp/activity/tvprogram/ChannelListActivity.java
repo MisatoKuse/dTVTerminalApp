@@ -150,13 +150,26 @@ public class ChannelListActivity extends BaseActivity implements
     private boolean mIsEndPage = false;
     /** ひかりTV for docomoタブの連続更新防止用. */
     private long beforeGetHikariData;
+    /** 前回のタブ位置.*/
+    private static final int DEFAULT_TAB_INDEX = -1;
+    /** 前回のタブ位置.*/
+    private int mTabIndex = DEFAULT_TAB_INDEX;
+    /** 前回のタブ位置.*/
+    private static final String TAB_INDEX_BEFORE = "tabIndex";
+    /** 前回リモートに接続したか.*/
+    private boolean mIsShowedBefore = false;
+    /** 前回リモートに接続したか.*/
+    private static final String IS_SHOWED_BEFORE = "isShowedBefore";
     // endregion variable
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DTVTLogger.start();
         setContentView(R.layout.channel_list_main_layout);
         if (savedInstanceState != null) {
+            mIsShowedBefore = savedInstanceState.getBoolean(IS_SHOWED_BEFORE);
+            mTabIndex = savedInstanceState.getInt(TAB_INDEX_BEFORE);
             savedInstanceState.clear();
         }
         setTitleText(getString(R.string.channel_list_activity_title));
@@ -167,6 +180,7 @@ public class ChannelListActivity extends BaseActivity implements
 
         initView();
         initData();
+        DTVTLogger.end();
     }
 
     @Override
@@ -179,6 +193,8 @@ public class ChannelListActivity extends BaseActivity implements
     @Override
     protected void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putBoolean(IS_SHOWED_BEFORE, mIsShowedBefore);
+        outState.putInt(TAB_INDEX_BEFORE, mViewPager.getCurrentItem());
     }
 
     @Override
@@ -342,13 +358,18 @@ public class ChannelListActivity extends BaseActivity implements
         switch (StbConnectionManager.shared().getConnectionStatus()) {
             case NONE_PAIRING:
             case NONE_LOCAL_REGISTRATION:
-                mTabNames = res.getStringArray(R.array.channel_list_tab_names_no_paring);
+                if (mIsShowedBefore) {
+                    mTabNames = res.getStringArray(R.array.channel_list_tab_names);
+                } else {
+                    mTabNames = res.getStringArray(R.array.channel_list_tab_names_no_paring);
+                }
                 break;
             case HOME_OUT:
             case HOME_OUT_CONNECT:
             case HOME_IN:
             default:
                 mTabNames = res.getStringArray(R.array.channel_list_tab_names);
+                mIsShowedBefore = true;
                 break;
         }
 
@@ -666,6 +687,11 @@ public class ChannelListActivity extends BaseActivity implements
 
     @Override
     public void channelListCallback(final ArrayList<ChannelInfo> channels) {
+        DTVTLogger.start();
+        if (mTabIndex >= 0) {
+            mViewPager.setCurrentItem(mTabIndex);
+            mTabIndex = DEFAULT_TAB_INDEX;
+        }
         int pos = mViewPager.getCurrentItem();
         ChannelListDataType chType = getTypeFromViewPagerIndex(pos);
         ChannelListFragment fragment = mFactory.createFragment(pos, this, chType, this);
