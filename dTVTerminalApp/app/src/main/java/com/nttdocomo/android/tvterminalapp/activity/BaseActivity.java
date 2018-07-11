@@ -315,6 +315,9 @@ public class BaseActivity extends FragmentActivity implements
      */
     public static final  String FORCE_FINISH = "FORCE_FINISH";
 
+    /** DisplayMetrics.*/
+    DisplayMetrics mDisplayMetrics = null;
+
     /**
      * リモコン表示時の鍵交換の必要性.
      */
@@ -1354,6 +1357,7 @@ public class BaseActivity extends FragmentActivity implements
      * @return 密度
      */
     protected float getDensity() {
+
         return getDisplayMetrics().density;
     }
 
@@ -1384,9 +1388,11 @@ public class BaseActivity extends FragmentActivity implements
      * @return ディスプレイインスタンス
      */
     private DisplayMetrics getDisplayMetrics() {
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return dm;
+        if (mDisplayMetrics == null) {
+            mDisplayMetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(mDisplayMetrics);
+        }
+        return mDisplayMetrics;
     }
 
     /**

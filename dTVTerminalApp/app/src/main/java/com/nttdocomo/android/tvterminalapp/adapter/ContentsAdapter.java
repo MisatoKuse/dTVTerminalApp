@@ -128,7 +128,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * ダウンロードStatus種別.
      */
     public final static int DOWNLOAD_STATUS_ALLOW = 0;
-
     /**
      * ダウンロードStatus種別.
      */
