@@ -350,7 +350,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             case HOME_CONTENTS_SORT_VIDEO:
                 //配信期限の設定
                 ContentUtils.setPeriodText(mContext, viewHolder.mTime, contentsData);
-                ContentUtils.setChannelNameOrMissedText(mContext, viewHolder.mHyphen, viewHolder.mChannel, contentsData);
+                ContentUtils.setChannelNameOrMissedText(mContext, viewHolder.mHyphen, viewHolder.mChannel, contentsData, null);
                 break;
             default:
                 if (viewHolder.mTime != null) {
