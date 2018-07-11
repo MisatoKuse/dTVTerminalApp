@@ -65,7 +65,7 @@ public class DownloadService extends Service implements DownloadListener {
      * @param downloadDataQue ダウンロードデータキュー
      */
     public synchronized static void setDlDataQue(final List<DownloadData> downloadDataQue) {
-        sDownloadDataQue = downloadDataQue;
+        sDownloadDataQue.addAll(downloadDataQue);
     }
     /**ダウンロードデータキュークリア.*/
     public synchronized static void setDlDataQueClear() {

@@ -587,7 +587,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         resultDialog.setOnTouchOutside(false);
         resultDialog.setCancelable(false);
         resultDialog.setContent(msg);
-        resultDialog.setConfirmText(R.string.custom_dialog_ok);
+        resultDialog.setConfirmText(confirmText);
         resultDialog.showDialog();
     }
 
@@ -595,7 +595,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     public void downloadClick(final View view) {
         boolean result = DlnaUtils.getActivationState(mContext);
         if (!result) {
-            showErrorDialog(getString(R.string.activation_failed_msg), R.string.custom_dialog_ok);
+            showErrorDialog(getString(R.string.activation_failed_msg), R.string.common_text_close);
             return;
         }
         int index = (int) view.getTag();
@@ -1118,6 +1118,24 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
             return 0;
         }
         return mContentsData.size();
+    }
+
+    /**
+     * データプロバイダーを返却する.
+     *
+     * @return データプロバイダー
+     */
+    public DownloadDataProvider getDownloadDataProvider() {
+        return mDownloadDataProvider;
+    }
+
+    /**
+     * ダウンロードキューを返却する.
+     *
+     * @return ダウンロードキュー
+     */
+    public List<DownloadData> getDownloadQueue() {
+        return mQueue;
     }
 
     @Override
