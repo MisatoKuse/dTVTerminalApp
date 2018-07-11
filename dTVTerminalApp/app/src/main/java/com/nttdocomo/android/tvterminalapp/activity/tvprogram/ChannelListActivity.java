@@ -164,7 +164,6 @@ public class ChannelListActivity extends BaseActivity implements
         mIsMenuLaunch = intent.getBooleanExtra(DtvtConstants.GLOBAL_MENU_LAUNCH, false);
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
-        enableStbStatusIcon(true);
 
         initView();
         initData();
@@ -173,6 +172,7 @@ public class ChannelListActivity extends BaseActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+        enableStbStatusIcon(true);
         sendScreenViewForPosition(mViewPager.getCurrentItem());
     }
 
