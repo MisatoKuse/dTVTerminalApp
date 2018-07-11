@@ -658,6 +658,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                         + ((TvProgramListActivity) mContext).dip2px(THUMB_MARGIN_TOP_TITLE);
                 if (availableSpace >= thumbnailHeight) {
                     //マージン含めたサムネイルの高さ以上の余白があればサムネイル表示
+                    itemViewHolder.mThumbnail.setImageResource(R.mipmap.loading_ch_mini);
                     itemViewHolder.mThumbnail.setVisibility(View.VISIBLE);
                     //URLによって、サムネイル取得
                     String thumbnailURL = itemViewHolder.mThumbnailURL;

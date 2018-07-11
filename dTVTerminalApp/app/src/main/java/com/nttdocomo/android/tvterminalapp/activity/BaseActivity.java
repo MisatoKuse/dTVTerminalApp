@@ -309,14 +309,12 @@ public class BaseActivity extends FragmentActivity implements
      * アクティビティが活性状態ならばtrue.
      */
     private boolean mActivityActive = false;
-
     /**
-     * 終了後にタスク一覧からどこテレアプリを削除する場合に指定するフラグ
+     * 終了後にタスク一覧からどこテレアプリを削除する場合に指定するフラグ.
      */
     public static final  String FORCE_FINISH = "FORCE_FINISH";
-
     /** DisplayMetrics.*/
-    DisplayMetrics mDisplayMetrics = null;
+    private DisplayMetrics mDisplayMetrics = null;
 
     /**
      * リモコン表示時の鍵交換の必要性.
@@ -724,7 +722,7 @@ public class BaseActivity extends FragmentActivity implements
         checkDialogShowRequest();
 
         //その画面の最初のワンタイムトークン取得処理では、認証画面を表示するようにフラグを初期化する
-        OttGetAuthSwitch.INSTANCE.setNowAuth(true,this);
+        OttGetAuthSwitch.INSTANCE.setNowAuth(true, this);
 
         //TODO 1/19 1/5時点での実装後に仕様の再検討が発生したためコメントアウト
         //TODO 現状、このタイミングで実行するとHome画面でエラーになる(Home画面開始前にProgressBarを表示しようとするため)
@@ -758,14 +756,14 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     /**
-     * アプリ起動不可状態で、最終的にタスク一覧から削除を行う処理
+     * アプリ起動不可状態で、最終的にタスク一覧から削除を行う処理.
      */
     private void checkForceFinishAndTaskRemove() {
         DTVTLogger.start();
         Intent intent = getIntent();
 
         //アプリ起動不可状態でホーム画面が起動されたかどうかの判定
-        if (intent.getBooleanExtra(FORCE_FINISH,false)) {
+        if (intent.getBooleanExtra(FORCE_FINISH, false)) {
             //Android4.4端末でここに来る事はないが、一応チェック
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 //アクティビティを終了し、タスク一覧から削除を行う
@@ -1402,7 +1400,7 @@ public class BaseActivity extends FragmentActivity implements
      * @return カレントユーザ名
      */
     public String getUserName() {
-        //TODO :実装中のため仮の値を返却
+        //TODO :2nd開発では未対応.仮の値を返却
         return "Test User";
     }
 
@@ -1734,7 +1732,7 @@ public class BaseActivity extends FragmentActivity implements
      */
     private void setRemoteControllerViewMargin(final int visibility) {
         DTVTLogger.start();
-        //TODO 横画面の情報がないため縦画面の時のみ実装
+        //TODO 2nd開発では横画面未対応のため縦画面の処理のみ実装
         if (visibility == View.VISIBLE && this instanceof ContentDetailActivity) {
             //リモコン表示時にScrollViewにマージンを設ける
             Resources resources = getResources();
@@ -2021,7 +2019,6 @@ public class BaseActivity extends FragmentActivity implements
                 //ログアウトのダイアログは閉じられたので、認証画面を再表示できるようにする
                 OttGetAuthSwitch.INSTANCE.setNowAuth(true);
 
-                //TODO:未認証状態続行のため、ログアウトでクリアしないならコメント化
                 DaccountControl.cacheClear(BaseActivity.this);
                 reStartApplication();
             }
