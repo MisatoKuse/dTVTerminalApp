@@ -656,7 +656,10 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 availableSpace = availableSpace - titleSpace;
                 int thumbnailHeight = ((TvProgramListActivity) mContext).dip2px(THUMBNAIL_HEIGHT)
                         + ((TvProgramListActivity) mContext).dip2px(THUMB_MARGIN_TOP_TITLE);
-                if (availableSpace >= thumbnailHeight) {
+                int thumbAvailableWidhSpace = itemViewHolder.mView.getWidth();
+                int clipWidth = (int) mContext.getResources().getDimension(R.dimen.tv_program_item_panel_clip_side);
+                int baseThumbWidth = (int) mContext.getResources().getDimension(R.dimen.panel_content_thumbnail_width);
+                if (availableSpace >= thumbnailHeight && (thumbAvailableWidhSpace - clipWidth) >= baseThumbWidth) {
                     //マージン含めたサムネイルの高さ以上の余白があればサムネイル表示
                     itemViewHolder.mThumbnail.setImageResource(R.mipmap.loading_ch_mini);
                     itemViewHolder.mThumbnail.setVisibility(View.VISIBLE);
@@ -668,6 +671,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                         if (bitmap != null) {
                             itemViewHolder.mThumbnail.setImageBitmap(bitmap);
                         }
+                    } else {
+                        itemViewHolder.mThumbnail.setVisibility(View.GONE);
                     }
 
                     //サムネイルを表示した上で、あらすじを残りスペースに配置する
