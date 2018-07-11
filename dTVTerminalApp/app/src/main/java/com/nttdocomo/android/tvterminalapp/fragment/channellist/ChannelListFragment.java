@@ -21,6 +21,7 @@ import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
@@ -224,10 +225,13 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
      * @param showProgressBar プロセスバーを表示するかどうか
      */
     public void showProgressBar(final boolean showProgressBar) {
+        DTVTLogger.start("showProgressBar = " + showProgressBar);
         //Activityから直接呼び出されるためNullチェック
         if (mRootView == null) {
             return;
         }
+
+        DTVTLogger.debug("mRootView = " + mRootView);
         mListView = mRootView.findViewById(R.id.channel_list_content_body_lv);
         mRelativeLayout = mRootView.findViewById(R.id.channel_list_progress);
         if (showProgressBar) {
@@ -241,6 +245,8 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
             mListView.setVisibility(View.VISIBLE);
             mRelativeLayout.setVisibility(View.GONE);
         }
+
+        DTVTLogger.end();
     }
 
     /**

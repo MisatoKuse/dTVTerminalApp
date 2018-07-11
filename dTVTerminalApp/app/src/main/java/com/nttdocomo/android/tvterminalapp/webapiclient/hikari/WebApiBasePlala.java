@@ -711,7 +711,7 @@ public class WebApiBasePlala {
                                        final String oneTimePassword,
                                        final ServiceTokenErrorCallback serviceTokenErrorCallback) {
         //ワンタイムトークンとその取得時間を取得する
-        ServiceTokenClient tokenClient = new ServiceTokenClient(context);
+        final ServiceTokenClient tokenClient = new ServiceTokenClient(context);
 
         boolean answer = tokenClient.getServiceTokenApi(oneTimePassword,
                 new ServiceTokenClient.TokenGetCallback() {
@@ -744,8 +744,18 @@ public class WebApiBasePlala {
                                 DTVTLogger.debug("token get failed ");
                                 //通信エラーのエラーコードを作成する
                                 ReturnCode returnCode = new ReturnCode();
-                                returnCode.errorState.setErrorType(
-                                        DtvtConstants.ErrorType.TOKEN_ERROR);
+
+                                //SSLエラーはSSLエラーとして返す
+                                if (tokenClient.getError().getErrorType()
+                                        == DtvtConstants.ErrorType.SSL_ERROR) {
+                                    //SSLエラーなのでSSLエラーとして返す
+                                    returnCode.errorState.setErrorType(
+                                            DtvtConstants.ErrorType.SSL_ERROR);
+                                } else {
+                                    //それ以外はトークンエラー
+                                    returnCode.errorState.setErrorType(
+                                            DtvtConstants.ErrorType.TOKEN_ERROR);
+                                }
                                 //呼び出し元にエラーを伝える
                                 serviceTokenErrorCallback.onTokenError(returnCode);
                             }

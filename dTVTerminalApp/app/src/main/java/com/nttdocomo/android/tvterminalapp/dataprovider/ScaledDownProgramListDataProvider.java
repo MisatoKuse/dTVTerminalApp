@@ -112,6 +112,10 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      * 番組表リスト送受信用キー.
      */
     public static final String SEND_SCHEDULE_LIST = "com.nttdocomo.android.idmanager.action.SEND_SCHEDULE_LIST";
+    /**
+     * 通信エラー時ウェイト処理
+     */
+    private static final long SLEEP_TIME = 100L;
 
     /**
      * tvコンテンツのクリップキーリスト取得済み判定.
@@ -881,6 +885,18 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         DTVTLogger.start();
         if (null != mApiDataProviderCallback) {
             DTVTLogger.debug("null != mApiDataProviderCallback");
+
+            if (channels == null) {
+                //channelsがヌルの場合は通信エラーになっている。実際の通信の前に通信エラーとなった場合、アクティビティ側の初期処理が終了するよりも早く
+                //結果が返る場合があり、動作に不整合が発生する場合があった。そこで、ウェイト時間を設ける事で対処する。アクティビティ側での対処では、
+                //例外処理が膨れ上がった上に信頼性も低かったので、これが最もシンプルな解決方法となる。
+                try {
+                    Thread.sleep(SLEEP_TIME);
+                } catch (InterruptedException e) {
+                    //割り込みがあっても特に何も行わない
+                }
+            }
+
             mApiDataProviderCallback.channelListCallback(channels);
         }
         DTVTLogger.end();
