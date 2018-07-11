@@ -593,8 +593,10 @@ public class DtvContentsDetailFragment extends Fragment {
     public void refreshChannelInfo() {
         if (mOtherContentsDetailData != null
                 && !TextUtils.isEmpty(mOtherContentsDetailData.getChannelName())) {
-            mTxtChannelName.setVisibility(View.VISIBLE);
-            mTxtChannelName.setText(mOtherContentsDetailData.getChannelName());
+            if (mTxtChannelName != null) {
+                mTxtChannelName.setVisibility(View.VISIBLE);
+                mTxtChannelName.setText(mOtherContentsDetailData.getChannelName());
+            }
         }
     }
 
@@ -633,23 +635,33 @@ public class DtvContentsDetailFragment extends Fragment {
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
     public void changeVisibilityRecordingReservationIcon(final ContentUtils.ViewIngType viewIngType, final ContentUtils.ContentsType contentsType) {
         DTVTLogger.start();
-        mRecordButton.setVisibility(View.GONE);
-        //視聴可否判定結果 コンテンツ種別取得済みかつひかりTV番組かつ放送二時間以上前の時のみ録画ボタンを表示
-        if (viewIngType != null
-                && !viewIngType.equals(ContentUtils.ViewIngType.NONE_STATUS)
-                && !viewIngType.equals(ContentUtils.ViewIngType.PREMIUM_CHECK_START)
-                && !viewIngType.equals(ContentUtils.ViewIngType.SUBSCRIPTION_CHECK_START)
-                && contentsType != null
-                && ContentUtils.isHikariTvProgram(contentsType)) {
-            //未ログイン又は未契約時は録画ボタンを非活性
-            if (!UserInfoUtils.getClipActive(getContext())
-                    || !ContentUtils.isEnableDisplay(viewIngType)
-                    || !ContentUtils.isRecordButtonDisplay(contentsType)) {
-                mRecordButton.setBackgroundResource(R.mipmap.icon_tap_circle_normal_rec);
-                mRecordButton.setVisibility(View.VISIBLE);
-            } else {
-                mRecordButton.setBackgroundResource(R.drawable.recording_reservation_rec_icon_selector);
-                mRecordButton.setVisibility(View.VISIBLE);
+        if (mRecordButton != null) {
+            mRecordButton.setVisibility(View.GONE);
+            //視聴可否判定結果 コンテンツ種別取得済みかつひかりTV番組のみ録画ボタンを表示
+            if (viewIngType != null
+                    && !viewIngType.equals(ContentUtils.ViewIngType.NONE_STATUS)
+                    && !viewIngType.equals(ContentUtils.ViewIngType.PREMIUM_CHECK_START)
+                    && !viewIngType.equals(ContentUtils.ViewIngType.SUBSCRIPTION_CHECK_START)
+                    && contentsType != null
+                    && ContentUtils.isHikariTvProgram(contentsType)) {
+                //未ログイン又は未契約時は録画ボタンを非活性
+                if (!UserInfoUtils.getClipActive(getContext())
+                        || !ContentUtils.isEnableDisplay(viewIngType)
+                        || !ContentUtils.isRecordButtonDisplay(contentsType)) {
+                    if (contentsType.equals(ContentUtils.ContentsType.HIKARI_TV_WITHIN_TWO_HOUR)
+                            || contentsType.equals(ContentUtils.ContentsType.HIKARI_TV_NOW_ON_AIR)
+                            || contentsType.equals(ContentUtils.ContentsType.HIKARI_IN_DCH_TV_WITHIN_TWO_HOUR)
+                            || contentsType.equals(ContentUtils.ContentsType.HIKARI_IN_DCH_TV_NOW_ON_AIR)) {
+                        //放送開始時間が2時間以内なら録画ボタン非表示
+                        mRecordButton.setVisibility(View.GONE);
+                    } else {
+                        mRecordButton.setBackgroundResource(R.mipmap.icon_tap_circle_normal_rec);
+                        mRecordButton.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    mRecordButton.setBackgroundResource(R.drawable.recording_reservation_rec_icon_selector);
+                    mRecordButton.setVisibility(View.VISIBLE);
+                }
             }
         }
         noticeRefresh();
