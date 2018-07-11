@@ -85,7 +85,6 @@ import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.DeviceStateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -810,7 +809,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         DTVTLogger.start();
         UserState userState = UserInfoUtils.getUserState(this);
 
-        if (userState.equals(UserState.LOGIN_NG) && !mIsOtherService) {
+        if (userState.equals(UserState.LOGIN_NG)) {
             loginNgDisplay();
         } else {
             if (UserInfoUtils.isContract(this) || mIsOtherService) {
@@ -818,41 +817,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 startAppIcon.setVisibility(View.GONE);
                 ImageView imageView = findViewById(R.id.dtv_contents_view_button);
                 if (content.isEmpty()) {
-                    if (DeviceStateUtils.getPairingState(this, getStbStatus()).equals(DeviceStateUtils.PairingState.NO_PAIRING)) {
-                        ContentUtils.ContentsType contentsType = mDetailFullData.getContentsType();
-                        //未ペアリングかつひかりTV状態の時はサムネイルにメッセージとペアリングボタンを表示する
-                        switch (contentsType) {
-                            case HIKARI_TV:
-                            case HIKARI_TV_WITHIN_TWO_HOUR:
-                            case HIKARI_TV_NOW_ON_AIR:
-                            case HIKARI_IN_DCH_TV_NOW_ON_AIR:
-                            case HIKARI_TV_VOD:
-                                mThumbnailBtn.setVisibility(View.VISIBLE);
-                                startAppIcon.setVisibility(View.VISIBLE);
-                                startAppIcon.setText(content);
-                                imageView.setVisibility(View.GONE);
-                                Button button = findViewById(R.id.contract_leading_button);
-                                setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
-                                button.setText(R.string.contents_detail_pairing_button);
-                                button.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(final View v) {
-                                        //ペアリング設定
-                                        Intent intent = new Intent(getApplicationContext(), StbSelectActivity.class);
-                                        intent.putExtra(StbSelectActivity.FROM_WHERE, StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Setting.ordinal());
-                                        startActivity(intent);
-                                    }
-                                });
-                                break;
-                            default:
-                                mThumbnailBtn.setVisibility(View.GONE);
-                                mContractLeadingView.setVisibility(View.GONE);
-                                break;
-                        }
-                    } else {
-                        mThumbnailBtn.setVisibility(View.GONE);
-                        mContractLeadingView.setVisibility(View.GONE);
-                    }
+                    mThumbnailBtn.setVisibility(View.GONE);
+                    mContractLeadingView.setVisibility(View.GONE);
                 } else {
                     if (mDetailFullData != null
                             && mDetailFullData.getContentsType().equals(ContentUtils.ContentsType.HIKARI_TV_VOD)) {
@@ -873,8 +839,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     startAppIcon.setVisibility(View.VISIBLE);
                     startAppIcon.setText(content);
                 }
-            } else {
-                noAgreementDisplay();
             }
         }
         DTVTLogger.end();
@@ -894,32 +858,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             @Override
             public void onClick(final View view) {
                 DaccountUtils.startDAccountApplication(ContentDetailActivity.this);
-            }
-        });
-        mContractLeadingView.setVisibility(View.VISIBLE);
-        contractLeadingText.setText(message);
-        contractLeadingButton.setText(buttonText);
-    }
-
-    /**
-     * 未契約状態のサムネイル描画.
-     */
-    private void noAgreementDisplay() {
-        TextView contractLeadingText = findViewById(R.id.contract_leading_text);
-        Button contractLeadingButton = findViewById(R.id.contract_leading_button);
-        setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
-        String message = "";
-        String buttonText = "";
-        message = getString(R.string.contents_detail_no_agreement);
-        buttonText = getString(R.string.contents_detail_contract_leading_button);
-        contractLeadingButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                if (getStbStatus()) {
-                    contentDetailRemoteController();
-                } else {
-                    startBrowser(UrlConstants.WebUrl.CONTRACT_URL);
-                }
             }
         });
         mContractLeadingView.setVisibility(View.VISIBLE);
@@ -962,6 +900,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod", "EnumSwitchStatementWhichMissesCases"})
     private void initContentData() {
         DTVTLogger.start();
+        mContentsDetailFragment = getDetailFragment();
         mFrameLayout = findViewById(R.id.header_watch_by_tv);
         // タブ数を先に決定するため、コンテンツ詳細のデータを最初に取得しておく
         mDetailData = mIntent.getParcelableExtra(ContentUtils.RECOMMEND_INFO_BUNDLE_KEY);
@@ -1152,24 +1091,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             }
         }
     };
-
-    /**
-     * set thumbnail(player).
-     *
-     * @param url URL
-     */
-    private void setPlayerLogoThumbnail(final String url) {
-        if (!TextUtils.isEmpty(url)) {
-            if (mThumbnailProvider == null) {
-                mThumbnailProvider = new ThumbnailProvider(this, ThumbnailDownloadTask.ImageSizeType.CHANNEL);
-            }
-            mTvLogo.setTag(url);
-            Bitmap bitmap = mThumbnailProvider.getThumbnailImage(mTvLogo, url);
-            if (bitmap != null) {
-                mTvLogo.setImageBitmap(bitmap);
-            }
-        }
-    }
 
     /**
      * ナビゲーションバーが表示されているか.
@@ -1429,7 +1350,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     //DBに保存されているUserInfoから契約情報を確認する
                     String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(ContentDetailActivity.this));
                     DTVTLogger.debug("contractInfo: " + contractInfo);
-                    mViewIngType = ContentUtils.getViewingType(contractInfo, mDetailFullData, mChannel);
+                    //コンテンツ種別ごとの視聴可否判定を実行
+                    getViewingTypeRequest(mContentsType, mDetailFullData.getmService_id());
                     contentType = ContentTypeForGoogleAnalytics.TV;
                     if (ContentUtils.TV_PROGRAM.equals(mDetailFullData.getDisp_type())) {
                         //tv_programの場合
@@ -1556,10 +1478,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     if (credit_array != null && credit_array.length > 0) {
                         mContentsDetailDataProvider.getRoleListData();
                     }
-                    if (!TextUtils.isEmpty(mDetailFullData.getmService_id())) {
-                        mServiceId = mDetailFullData.getmService_id();
-                        getChannelInfo();
-                    }
                     if (ContentUtils.DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
                         if (getStbStatus() || mVisibility) {
                             createRemoteControllerView(true);
@@ -1567,24 +1485,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(),
                                     R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
                             setStartRemoteControllerUIListener(ContentDetailActivity.this);
-                        }
-                        contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(getApplicationContext()));
-                        UserState userState = UserInfoUtils.getUserState(ContentDetailActivity.this);
-                        //ひかりTV未契約の場合
-                        if (!UserInfoUtils.CONTRACT_INFO_H4D.equals(contractInfo)) {
-                            DTVTLogger.debug("contractInfo:---" + contractInfo);
-                            mThumbnailBtn.setVisibility(View.GONE);
-                            mContractLeadingView.setVisibility(View.VISIBLE);
-                            if (userState.equals(UserState.LOGIN_NG)) {
-                                loginNgDisplay();
-                            } else {
-                                noAgreementDisplay();
-                            }
-                        } else { //ひかりTV契約者の場合
-                            // サムネイル表示メッセージ取得
-                            String thumbnailMessage = StringUtils.getContentsDetailThumbnailString(
-                                    detailFragment.getOtherContentsDetailData(), ContentDetailActivity.this, mDetailFullData.getContentsType());
-                            setThumbnailText(thumbnailMessage);
                         }
                     } else { //レコメンドサーバー以外のひかりTV
                         if (mDetailFullData != null) {
@@ -1617,6 +1517,43 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             }
         });
         DTVTLogger.end();
+    }
+
+    /**
+     * コンテンツ種別ごとに視聴可否リクエストを投げる.
+     *
+     * @param contentsType コンテンツ種別
+     * @param serviceId サービスID
+     */
+    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
+    private void getViewingTypeRequest(final ContentUtils.ContentsType contentsType, final String serviceId) {
+        //視聴可否判定前に初期値として可否判定前の値を設定する
+        mViewIngType = ContentUtils.ViewIngType.NONE_STATUS;
+        //未ペアリング時は視聴可否判定をしない
+        if (!StbConnectionManager.shared().getConnectionStatus().equals(StbConnectionManager.ConnectionStatus.NONE_PAIRING)) {
+            switch (contentsType) {
+                case TV:
+                case HIKARI_TV:
+                case HIKARI_TV_WITHIN_TWO_HOUR:
+                case HIKARI_TV_NOW_ON_AIR:
+                    if (!TextUtils.isEmpty(serviceId)) {
+                        mServiceId = serviceId;
+                        getChannelInfo();
+                    }
+                    break;
+                case VOD:
+                case HIKARI_TV_VOD:
+                    mContentsDetailDataProvider.getVodListData();
+                    break;
+                default:
+                    //視聴可否判定不要のコンテンツは一律視聴可
+                    mViewIngType = ContentUtils.ViewIngType.ENABLE_WATCH;
+                    break;
+            }
+        } else {
+            //未ペアリング時は視聴可否判定をしないので、すべて視聴可とする
+            mViewIngType = ContentUtils.ViewIngType.ENABLE_WATCH;
+        }
     }
 
     //endregion
@@ -1663,7 +1600,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 && !mContentsDetailDataProvider.isIsInRentalChListRequest()
                 && !mContentsDetailDataProvider.isIsInRentalVodListRequest()
                 && !mContentsDetailDataProvider.isIsInRoleListRequest()) {
-            displayHikariThumbnail(contentsType, mViewIngType);
+            displayThumbnail(contentsType, mViewIngType);
             getDetailFragment().changeVisibilityRecordingReservationIcon(viewIngType, contentsType);
             getDetailFragment().noticeRefresh();
             showProgressBar(false);
@@ -1714,14 +1651,14 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     @Override
     public void channelListCallback(final ArrayList<ChannelInfo> channels) {
         DTVTLogger.start();
-        if (mViewPagerIndex >= 0) {
-            mViewPager.setCurrentItem(mViewPagerIndex);
-            mViewPagerIndex = DEFAULT_TAB_INDEX;
-        }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 DTVTLogger.start();
+                if (mViewPagerIndex >= 0) {
+                    mViewPager.setCurrentItem(mViewPagerIndex);
+                    mViewPagerIndex = DEFAULT_TAB_INDEX;
+                }
                 if (channels == null || channels.isEmpty()) {
                     showErrorDialog(ErrorType.channelListGet);
                     return;
@@ -1830,6 +1767,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 } else {
                     showErrorDialog(ErrorType.tvScheduleListGet);
                 }
+                showProgressBar(false);
                 DTVTLogger.end();
             }
         });
@@ -2887,82 +2825,13 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     /**
-     * ひかりTV Now On Air の時のみ自動再生する.
-     */
-    @SuppressWarnings({"EnumSwitchStatementWhichMissesCases", "OverlyLongMethod"})
-    private void playNowOnAir() {
-        DTVTLogger.start();
-        if (DeviceStateUtils.getPairingState(this, getStbStatus()).equals(DeviceStateUtils.PairingState.NO_PAIRING)
-                && UserInfoUtils.isContract(this)) {
-            ContentUtils.ContentsType contentsType = mDetailFullData.getContentsType();
-            TextView startAppIcon = findViewById(R.id.view_contents_button_text);
-            ImageView imageView = findViewById(R.id.dtv_contents_view_button);
-            //未ペアリングかつひかりTV状態の時はサムネイルにメッセージとペアリングボタンを表示する
-            switch (contentsType) {
-                case HIKARI_TV:
-                case HIKARI_TV_WITHIN_TWO_HOUR:
-                case HIKARI_TV_NOW_ON_AIR:
-                case HIKARI_TV_VOD:
-                    startAppIcon.setVisibility(View.GONE);
-                    mContractLeadingView.setVisibility(View.VISIBLE);
-                    mThumbnailBtn.setVisibility(View.VISIBLE);
-                    TextView contractLeadingText = findViewById(R.id.contract_leading_text);
-                    contractLeadingText.setText(R.string.contents_detail_pairing_request);
-                    imageView.setVisibility(View.GONE);
-                    Button button = findViewById(R.id.contract_leading_button);
-                    setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
-                    button.setText(R.string.contents_detail_pairing_button);
-                    button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(final View v) {
-                            //ペアリング設定
-                            Intent intent = new Intent(getApplicationContext(), StbSelectActivity.class);
-                            intent.putExtra(StbSelectActivity.FROM_WHERE, StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Setting.ordinal());
-                            startActivity(intent);
-                        }
-                    });
-                    break;
-                default:
-                    // ひかり内のdChやdTVコンテンツはサムネイル表示メッセージ取得
-                    DtvContentsDetailFragment detailFragment = getDetailFragment();
-                    String thumbnailMessage = StringUtils.getContentsDetailThumbnailString(
-                            detailFragment.getOtherContentsDetailData(), this, mDetailFullData.getContentsType());
-                    setThumbnailText(thumbnailMessage);
-                    break;
-            }
-        } else {
-            if (mDetailFullData.getContentsType().equals(ContentUtils.ContentsType.HIKARI_TV_NOW_ON_AIR)) {
-                //番組は、放送中でペアリングしている場合、宅内宅外で挙動を変える
-                switch (StbConnectionManager.shared().getConnectionStatus()) {
-                    case HOME_IN:
-                        getMultiChannelData();
-                        break;
-                    default:
-                        setRemotePlayArrow(null);
-                        break;
-                }
-            } else if (mDetailFullData.getContentsType().equals(ContentUtils.ContentsType.HIKARI_TV_VOD)) {
-                //VODは、ペアリングされていれば宅内宅外どちらでも「TVで視聴できます」表示
-                mContractLeadingView.setVisibility(View.VISIBLE);
-                Button button = findViewById(R.id.contract_leading_button);
-                button.setVisibility(View.GONE);
-                TextView contractLeadingText = findViewById(R.id.contract_leading_text);
-                contractLeadingText.setText(R.string.contents_detail_thumbnail_text);
-                setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
-            }
-        }
-        DTVTLogger.end();
-    }
-
-    /**
      * コンテンツ種別ごとのサムネイル部分の表示.
-     * ※視聴可否判定は終了済み又は不要な場合を想定
      *
      * @param contentsType コンテンツ種別
      * @param viewIngType  視聴可否判定結果
      */
     @SuppressWarnings({"EnumSwitchStatementWhichMissesCases", "OverlyComplexMethod", "OverlyLongMethod"})
-    private void displayHikariThumbnail(final ContentUtils.ContentsType contentsType, final ContentUtils.ViewIngType viewIngType) {
+    private void displayThumbnail(final ContentUtils.ContentsType contentsType, final ContentUtils.ViewIngType viewIngType) {
         DTVTLogger.start();
         //ログアウト状態ならそのまま表示する
         UserState userState = UserInfoUtils.getUserState(ContentDetailActivity.this);
@@ -2978,6 +2847,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     DaccountUtils.startDAccountApplication(ContentDetailActivity.this);
                 }
             });
+            DTVTLogger.end("logout thumbnail display");
             return;
         }
         //必要なデータが揃わないうちは何もしない
@@ -3004,6 +2874,16 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                 }
                             }
                         });
+                    } else {
+                        //安全のため再生開始直前にも宅内宅外判定を入れる
+                        switch (StbConnectionManager.shared().getConnectionStatus()) {
+                            case HOME_IN:
+                                getMultiChannelData();
+                                break;
+                            default:
+                                setRemotePlayArrow(null);
+                                break;
+                        }
                     }
                 } else {
                     hikariTvThumbnailDisplay(detailUserType, viewIngType);
@@ -3039,7 +2919,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     } else {
                         setThumbnailMessage(getString(R.string.contents_detail_thumbnail_text), "", true, false);
                     }
-                    //未ペアリング契約有
+                    //未ペアリング契約有かつ視聴可否判定OK
                 } else if (detailUserType.equals(ContentUtils.ContentsDetailUserType.NO_PAIRING_HIKARI_CONTRACT)) {
                     Button button = setThumbnailMessage(getString(R.string.contents_detail_pairing_request), getString(R.string.contents_detail_pairing_button), true, true);
                     button.setOnClickListener(new View.OnClickListener() {
@@ -3253,156 +3133,18 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         DTVTLogger.end();
     }
     /**
-     * 視聴可否判定に基づいてUIの操作などを行う.
+     * 視聴可否判定種別により再リクエストを行う.
      */
     @SuppressWarnings({"OverlyLongMethod", "OverlyComplexMethod", "EnumSwitchStatementWhichMissesCases"})
     private void changeUIBasedContractInfo() {
         DTVTLogger.start();
-        DtvContentsDetailFragment detailFragment = getDetailFragment();
-        DeviceStateUtils.PairingState pairingState;
         switch (mViewIngType) {
-            case ENABLE_WATCH:
-            case ENABLE_WATCH_LIMIT_THIRTY:
-                //契約有で視聴可能なものは再生導線表示
-                playNowOnAir();
-                break;
-            case ENABLE_WATCH_001:
-            case ENABLE_WATCH_LIMIT_THIRTY_001:
-            case DISABLE_WATCH_AND_PLAY_001:
-                //dCHのみ契約では、視聴が可能なものもそうでないものも契約導線表示する(ひかり内dCH、放送時間内).未ログインの場合はこの判定にならない.
-                //録画ボタンは録画予約できるコンテンツでは非活性にする
-                detailFragment.setIsAvailRecordReserve(true);
-                if (mThumbnailBtn != null) {
-                    mThumbnailBtn.setVisibility(View.GONE);
-                }
-                noAgreementDisplay();
-                break;
-            case DISABLE_WATCH_AGREEMENT_DISPLAY:
-                //再生、クリップ、録画、評価、ダウンロード、番組表編集 の操作時に契約導線を表示
-                //録画ボタンは録画予約できるコンテンツでは非活性にする
-                detailFragment.setIsAvailRecordReserve(true);
-                if (mThumbnailBtn != null) {
-                    mThumbnailBtn.setVisibility(View.GONE);
-                    UserState userState = UserInfoUtils.getUserState(this);
-                    if (userState.equals(UserState.LOGIN_NG)) {
-                        loginNgDisplay();
-                    } else {
-                        noAgreementDisplay();
-                    }
-                }
-                break;
-            case DISABLE_VOD_WATCH_AGREEMENT_DISPLAY:
-                //契約導線を表示 (VOD)
-                TextView vodTextView = findViewById(R.id.contract_leading_text);
-                Button vodButton = findViewById(R.id.contract_leading_button);
-                // 宅内の場合契約導線表示
-                pairingState = DeviceStateUtils.getPairingState(this, getStbStatus());
-                switch (pairingState) {
-                    case INSIDE_HOUSE:
-                        mContractLeadingView.setVisibility(View.VISIBLE);
-                        vodTextView.setText(getString(R.string.contents_detail_hikari_vod_agreement));
-                        vodButton.setText(getString(R.string.contents_detail_contract_button_vod));
-                        vodButton.setAllCaps(false);
-                        //サムネイルにシャドウをかける
-                        setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
-                        break;
-                    case OUTSIDE_HOUSE:
-                        mContractLeadingView.setVisibility(View.VISIBLE);
-                        vodTextView.setText(getString(R.string.contents_detail_hikari_vod_agreement));
-                        //宅外の場合は契約ボタンを表示しない
-                        vodButton.setVisibility(View.GONE);
-                        setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
-                        break;
-                    case NO_PAIRING:
-                        mContractLeadingView.setVisibility(View.VISIBLE);
-                        vodTextView.setText(getString(R.string.contents_detail_pairing_request));
-                        setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
-                        vodButton.setText(R.string.contents_detail_pairing_button);
-                        vodButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(final View v) {
-                                //ペアリング設定
-                                Intent intent = new Intent(getApplicationContext(), StbSelectActivity.class);
-                                intent.putExtra(StbSelectActivity.FROM_WHERE, StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Setting.ordinal());
-                                startActivity(intent);
-                            }
-                        });
-                        break;
-                    default:
-                        //宅外の場合は契約ボタンを表示しない
-                        vodButton.setVisibility(View.GONE);
-                        break;
-                }
-
-                //サムネイル上のdTVで視聴、dアニメストアで視聴を非表示
-                if (mThumbnailBtn != null) {
-                    mThumbnailBtn.setVisibility(View.GONE);
-                }
-                break;
-            case DISABLE_CHANNEL_WATCH_AGREEMENT_DISPLAY:
-                //契約導線を表示 (CH)
-                TextView chTextView = findViewById(R.id.contract_leading_text);
-                Button chButton = findViewById(R.id.contract_leading_button);
-                // 宅内の場合契約導線表示
-                pairingState = DeviceStateUtils.getPairingState(this, getStbStatus());
-                //未購入チャンネルの場合は録画ボタンは録画予約できるコンテンツでは非活性にする
-                detailFragment.setIsAvailRecordReserve(true);
-                switch (pairingState) {
-                    case INSIDE_HOUSE:
-                        mContractLeadingView.setVisibility(View.VISIBLE);
-                        chTextView.setText(getString(R.string.contents_detail_contract_text_ch));
-                        chButton.setText(getString(R.string.contents_detail_contract_button_ch));
-                        chButton.setAllCaps(false);
-                        //サムネイルにシャドウをかける
-                        setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
-                        break;
-                    case OUTSIDE_HOUSE:
-                        mContractLeadingView.setVisibility(View.VISIBLE);
-                        chTextView.setText(getString(R.string.contents_detail_contract_text_ch));
-                        //宅外の場合は契約ボタンを表示しない
-                        chButton.setVisibility(View.GONE);
-                        setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
-                        break;
-                    case NO_PAIRING:
-                        mContractLeadingView.setVisibility(View.VISIBLE);
-                        chTextView.setText(getString(R.string.contents_detail_pairing_request));
-                        setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
-                        chButton.setText(R.string.contents_detail_pairing_button);
-                        chButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(final View v) {
-                                //ペアリング設定
-                                Intent intent = new Intent(getApplicationContext(), StbSelectActivity.class);
-                                intent.putExtra(StbSelectActivity.FROM_WHERE, StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Setting.ordinal());
-                                startActivity(intent);
-                            }
-                        });
-                        break;
-                    default:
-                        //宅外の場合は契約ボタンを表示しない
-                        chButton.setVisibility(View.GONE);
-                        break;
-                }
-
-                //サムネイル上のdTVで視聴、dアニメストアで視聴を非表示
-                if (mThumbnailBtn != null) {
-                    mThumbnailBtn.setVisibility(View.GONE);
-                }
-                break;
-            case DISABLE_WATCH_AND_PLAY:
-                // 放送時間外で視聴不可の場合、ひかりin dCh、dTVの時は連携導線を表示.
-                detailFragment = getDetailFragment();
-                String thumbnailMessage = StringUtils.getContentsDetailThumbnailString(
-                        detailFragment.getOtherContentsDetailData(), this, mDetailFullData.getContentsType());
-                setThumbnailText(thumbnailMessage);
-                break;
             case PREMIUM_CHECK_START:
                 new ContentsDetailDataProvider(this).getChListData();
                 break;
             case SUBSCRIPTION_CHECK_START:
                 new ContentsDetailDataProvider(this).getVodListData();
                 break;
-            case DISABLE_WATCH:
             default:
                 break;
         }
