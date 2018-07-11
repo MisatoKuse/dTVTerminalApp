@@ -365,6 +365,8 @@ public class RecordReservationListActivity extends BaseActivity
             //コンテンツ情報が無ければ取得を行う
             mProvider = new RecordingReservationListDataProvider(this);
             mProvider.requestRecordingReservationListData();
+        } else if (mContentsList != null && mContentsList.size() > 0) {
+            showProgressBar(false);
         }
     }
 
