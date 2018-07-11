@@ -299,6 +299,35 @@ public class VideoRankingActivity extends BaseActivity implements
             });
         }
     }
+
+    @Override
+    public void onClipRegistResult() {
+        DTVTLogger.start();
+        //コンテンツリストに登録ステータスを反映する.
+        setContentsListClipStatus(getContentsList());
+        super.onClipRegistResult();
+        DTVTLogger.end();
+    }
+
+    @Override
+    public void onClipDeleteResult() {
+        DTVTLogger.start();
+        //コンテンツリストに削除ステータスを反映する.
+        setContentsListClipStatus(getContentsList());
+        super.onClipDeleteResult();
+        DTVTLogger.end();
+    }
+
+    /**
+     * コンテンツリストを返す.
+     * @return List<ContentsData>
+     */
+    private List<ContentsData> getContentsList() {
+        RankingBaseFragment fragment = mRankingFragmentFactory.createFragment(
+                ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK, mViewPager.getCurrentItem());
+        return fragment.getData();
+    }
+
     /**
      * Viewの初期化.
      */
