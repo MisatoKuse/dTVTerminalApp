@@ -3270,8 +3270,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             case ENABLE_WATCH_LIMIT_THIRTY_001:
             case DISABLE_WATCH_AND_PLAY_001:
                 //dCHのみ契約では、視聴が可能なものもそうでないものも契約導線表示する(ひかり内dCH、放送時間内).未ログインの場合はこの判定にならない.
-                //クリップ押下時に契約導線を表示するため、Fragmentに未契約状態であることを通知する
-                detailFragment.setContractInfo(false);
                 //録画ボタンは録画予約できるコンテンツでは非活性にする
                 detailFragment.setIsAvailRecordReserve(true);
                 if (mThumbnailBtn != null) {
@@ -3281,8 +3279,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 break;
             case DISABLE_WATCH_AGREEMENT_DISPLAY:
                 //再生、クリップ、録画、評価、ダウンロード、番組表編集 の操作時に契約導線を表示
-                //クリップ押下時に契約導線を表示するため、Fragmentに未契約状態であることを通知する
-                detailFragment.setContractInfo(false);
                 //録画ボタンは録画予約できるコンテンツでは非活性にする
                 detailFragment.setIsAvailRecordReserve(true);
                 if (mThumbnailBtn != null) {

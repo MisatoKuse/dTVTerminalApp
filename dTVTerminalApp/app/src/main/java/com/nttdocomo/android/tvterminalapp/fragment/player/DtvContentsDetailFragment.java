@@ -25,7 +25,6 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
@@ -76,8 +75,6 @@ public class DtvContentsDetailFragment extends Fragment {
     private TextView mTxtChannelDate = null;
     /** 全文表示フラグ.*/
     private boolean mIsAllText = false;
-    /** 契約フラグ.*/
-    private boolean mIsContract = true;
     /** 視聴可否判定結果. */
     private boolean mIsAvailRecordReserve = false;
     /** クリップボタン.*/
@@ -217,20 +214,15 @@ public class DtvContentsDetailFragment extends Fragment {
                         @Override
                         public void onClick(final View view) {
                             //クリップボタンイベント
-                            if (mIsContract) {
-                                ClipRequestData data = setClipData(mOtherContentsDetailData.getVodMetaFullData());
-                                //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、タグでクリップ済/未を判定する
-                                Object clipTag = mClipButton.getTag();
-                                if (clipTag.equals(BaseActivity.CLIP_ACTIVE_STATUS)) {
-                                    data.setClipStatus(true);
-                                } else {
-                                    data.setClipStatus(false);
-                                }
-                                ((BaseActivity) mActivity).sendClipRequest(data, clipButton);
+                            ClipRequestData data = setClipData(mOtherContentsDetailData.getVodMetaFullData());
+                            //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、タグでクリップ済/未を判定する
+                            Object clipTag = mClipButton.getTag();
+                            if (clipTag.equals(BaseActivity.CLIP_ACTIVE_STATUS)) {
+                                data.setClipStatus(true);
                             } else {
-                                //未契約時は契約導線を表示するためActivityに通知
-                                ((ContentDetailActivity) mActivity).leadingContract();
+                                data.setClipStatus(false);
                             }
+                            ((BaseActivity) mActivity).sendClipRequest(data, clipButton);
                         }
                     });
                 }
@@ -701,16 +693,6 @@ public class DtvContentsDetailFragment extends Fragment {
          * @param v View
          */
         void onClickRecordingReservationIcon(View v);
-    }
-
-    /**
-     * 契約情報を更新する.
-     *
-     * @param isContract 契約情報
-     */
-    public void setContractInfo(final boolean isContract) {
-        DTVTLogger.start();
-        mIsContract = isContract;
     }
 
     /**
