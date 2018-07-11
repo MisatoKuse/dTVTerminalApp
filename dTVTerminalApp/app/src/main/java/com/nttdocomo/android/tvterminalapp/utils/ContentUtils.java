@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
@@ -451,11 +452,13 @@ public class ContentUtils {
      * @param hyphenTextView 「-」表示ビュー
      * @param channelTextView チャンネル名表示ビュー
      * @param listContentInfo 行データ
+     * @param type 機能タイプ
      */
     public static void setChannelNameOrMissedText(final Context context,
                                                   final TextView hyphenTextView,
                                                   final TextView channelTextView,
-                                                  final ContentsData listContentInfo) {
+                                                  final ContentsData listContentInfo,
+                                                  final ContentsAdapter.ActivityTypeItem type) {
         final String dispType = listContentInfo.getDispType();
         final String tvService = listContentInfo.getTvService();
         final String contentsType = listContentInfo.getContentsType();
@@ -465,8 +468,13 @@ public class ContentUtils {
         final long vodStartDate = listContentInfo.getVodStartDate();
         final long vodEndDate = listContentInfo.getVodEndDate();
 
-        final ContentsType periodContentsType = getContentsTypeByPlala(dispType, tvService, contentsType, availEndDate, vodStartDate, vodEndDate,
+        final ContentsType periodContentsType;
+        if (type == ContentsAdapter.ActivityTypeItem.TYPE_RECOMMEND_LIST || type == ContentsAdapter.ActivityTypeItem.TYPE_SEARCH_LIST) {
+            periodContentsType = getContentsTypeByRecommend(Integer.parseInt(listContentInfo.getServiceId()), listContentInfo.getCategoryId());
+        } else {
+            periodContentsType = getContentsTypeByPlala(dispType, tvService, contentsType, availEndDate, vodStartDate, vodEndDate,
                 estFlg, chsVod);
+        }
 
         String viewingChannelName = "";
         if (periodContentsType == ContentsType.DCHANNEL_VOD_OVER_31 || periodContentsType == ContentsType.DCHANNEL_VOD_31) {
