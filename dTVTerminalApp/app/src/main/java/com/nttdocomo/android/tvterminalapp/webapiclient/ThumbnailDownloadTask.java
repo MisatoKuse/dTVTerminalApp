@@ -127,9 +127,9 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
             if (bitmap != null) {
                 // メモリにプッシュする
                 mThumbnailProvider.thumbnailCacheManager.putBitmapToMem(mImageUrl, bitmap);
-            }
-            if (mContext != null) {
-                bitmap = BitmapDecodeUtils.createScaleBitmap(mContext, bitmap, mImageSizeType);
+                if (mContext != null) {
+                    bitmap = BitmapDecodeUtils.createScaleBitmap(mContext, bitmap, mImageSizeType);
+                }
             }
             return bitmap;
         } catch (SSLHandshakeException e) {

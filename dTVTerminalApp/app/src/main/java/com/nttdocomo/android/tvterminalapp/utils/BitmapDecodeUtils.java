@@ -167,7 +167,7 @@ public class BitmapDecodeUtils {
             default:
                 break;
         }
-        if (dstWidth > 0) {
+        if (dstWidth > 0 && srcBitmap != null) {
             return Bitmap.createScaledBitmap(srcBitmap, dstWidth, dstHeight, false);
         }
         return srcBitmap;
