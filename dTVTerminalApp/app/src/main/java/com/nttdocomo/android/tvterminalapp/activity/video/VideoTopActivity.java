@@ -255,10 +255,12 @@ public class VideoTopActivity extends BaseActivity implements
             }
         }
 
+        //判断条件にgenreListがヌルの場合を追加・通信エラーでgenreListがヌルになると、「すべて」が2行になってしまうのを避ける為
         if (mVideoGenreListDataInfo != null
                 && mVideoGenreListDataInfo.getGenreId() != null
                 && !GenreListMetaData.VIDEO_LIST_GENRE_ID_NOD.equals(mVideoGenreListDataInfo.getGenreId())
-                && !GenreListMetaData.VIDEO_LIST_GENRE_ID_DTV.equals(mVideoGenreListDataInfo.getGenreId())) { // ジャンル情報取得後はリストを更新
+                && !GenreListMetaData.VIDEO_LIST_GENRE_ID_DTV.equals(mVideoGenreListDataInfo.getGenreId())
+                && genreList != null) { // ジャンル情報取得後はリストを更新
             DTVTLogger.debug("ジャンル情報取得後はリストを更新");
             VideoGenreList videoGenreList = new VideoGenreList();
             videoGenreList.setTitle(this.getResources().getString(R.string.video_list_genre_all));
@@ -372,11 +374,24 @@ public class VideoTopActivity extends BaseActivity implements
      */
     private void showError() {
         ErrorState errorState = mVideoGenreProvider.getGenreListError();
-        if (errorState == null || TextUtils.isEmpty(errorState.getErrorMessage())) {
-            showGetDataFailedToast();
-        } else {
-            showGetDataFailedToast(errorState.getErrorMessage());
+
+        //デフォルトメッセージを指定
+        String errorMessage = getString(R.string.common_get_data_failed_message);
+
+        if (errorState != null && !TextUtils.isEmpty(errorState.getErrorMessage())) {
+            //メッセージが存在するので取得する
+            errorMessage = errorState.getApiErrorMessage(getApplicationContext());
         }
+
+        //タブ画面ではなく、ベースアクティビティ側でダイアログを出すので、こちらもトーストからダイアログに変更する
+        if(mVideoGenreListDataInfo.getGenreId() != null) {
+            //初回以外は、OKを押すと終わるダイアログで表示
+            showApFinishDialog(errorMessage);
+        } else {
+            //初回表示は、普通のダイアログで表示
+            showErrorDialog(errorMessage);
+        }
+
     }
     // endregion private mehtod
 

@@ -1208,6 +1208,11 @@ public class TvProgramListActivity extends BaseActivity implements
         ErrorState errorState;
         if (mScaledDownProgramListDataProvider != null) {
             errorState = mScaledDownProgramListDataProvider.getChannelError();
+
+            //縮小番組表側のエラー情報が取得できない場合は、マイチャンネル側のエラーを取得する
+            if (errorState == null && mMyChannelDataProvider != null) {
+                errorState = mMyChannelDataProvider.getMyChannelListError();
+            }
         } else {
             errorState = mMyChannelDataProvider.getMyChannelListError();
         }

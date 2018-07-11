@@ -2718,9 +2718,10 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * アプリ終了ダイアログ.
      *
+     * (ベースアクティビティ以外でも使用する為、パブリックに変更)
      * @param errorMessage エラーメッセージ
      */
-    private void showApFinishDialog(final String errorMessage) {
+    public void showApFinishDialog(final String errorMessage) {
         CustomDialog apFinishDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
         apFinishDialog.setContent(errorMessage);
         apFinishDialog.showDialog();
