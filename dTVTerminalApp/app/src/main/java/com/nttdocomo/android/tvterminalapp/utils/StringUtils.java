@@ -223,6 +223,11 @@ public class StringUtils {
             return ((Long) data).intValue();
         }
 
+        if (data instanceof Double) {
+            //Doubleなので整数に変換
+            return ((Double) data).intValue();
+        }
+
         //数字の文字列かどうかの判定
         if (data != null && data instanceof String && DataBaseUtils.isNumber((String) data)) {
             //数字文字列だったので、変換して返す
