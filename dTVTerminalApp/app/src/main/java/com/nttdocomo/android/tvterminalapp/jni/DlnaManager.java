@@ -368,17 +368,31 @@ public class DlnaManager {
                 break;
             case HOME_IN:
                 DlnaDmsItem item = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
-                browseContentWithContainerId(pageIndex * DtvtConstants.REQUEST_DLNA_LIMIT_50,
-                        DtvtConstants.REQUEST_DLNA_LIMIT_50, containerId, item.mControlUrl);
+                if (!browseContentWithContainerId(pageIndex * DtvtConstants.REQUEST_DLNA_LIMIT_50,
+                        DtvtConstants.REQUEST_DLNA_LIMIT_50, containerId, item.mControlUrl)) {
+                    BrowseListener listener = DlnaManager.shared().mBrowseListener;
+                    if (listener != null) {
+                        listener.onContentBrowseErrorCallback();
+                    }
+                }
                 break;
             case HOME_OUT_CONNECT:
-                browseContentWithContainerId(pageIndex * DtvtConstants.REQUEST_DLNA_LIMIT_50,
-                        DtvtConstants.REQUEST_DLNA_LIMIT_50, containerId, DlnaManager.shared().mHomeOutControlUrl);
+                if (!browseContentWithContainerId(pageIndex * DtvtConstants.REQUEST_DLNA_LIMIT_50,
+                        DtvtConstants.REQUEST_DLNA_LIMIT_50, containerId, DlnaManager.shared().mHomeOutControlUrl)) {
+                    BrowseListener listener = DlnaManager.shared().mBrowseListener;
+                    if (listener != null) {
+                        listener.onContentBrowseErrorCallback();
+                    }
+                }
                 break;
             case NONE_LOCAL_REGISTRATION:
             case NONE_PAIRING:
             default:
                 DTVTLogger.warning("default");
+                BrowseListener listener = DlnaManager.shared().mBrowseListener;
+                if (listener != null) {
+                    listener.onContentBrowseErrorCallback();
+                }
                 break;
         }
         DTVTLogger.warning("containerId = " + containerId);
@@ -866,7 +880,7 @@ public class DlnaManager {
      * @param containerId containerId
      * @param controlUrl controlUrl
      */
-    private native void browseContentWithContainerId(final int offset, final int limit, final String containerId, final String controlUrl);
+    private native boolean browseContentWithContainerId(final int offset, final int limit, final String containerId, final String controlUrl);
     /** dtcpを開始.*/
     private native void startDtcp();
     /** dtcpを停止.*/
