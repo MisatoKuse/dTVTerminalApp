@@ -364,9 +364,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                         } else {
                             requestData.setClipStatus(false);
                         }
-                        if (((BaseActivity) mContext).sendClipRequest(requestData, clipButton)) {
-                            listContentInfo.setClipStatus(!listContentInfo.isClipStatus());
-                        }
+                        ((BaseActivity) mContext).sendClipRequest(requestData, clipButton);
                     }
                 });
             }

@@ -1773,9 +1773,10 @@ public class BaseActivity extends FragmentActivity implements
      * @param data       クリップ処理用データ
      * @param clipButton クリップボタン
      */
-    public boolean sendClipRequest(final ClipRequestData data, final ImageView clipButton) {
+    public void sendClipRequest(final ClipRequestData data, final ImageView clipButton) {
 
         if (data != null && clipButton != null && !mClipRunTime) {
+            DTVTLogger.debug(String.format("clip request: crid [%s] clip status [%s]", data.getCrid(), data.isClipStatus()));
 
             //クリップ多重実行に対応していないため実行中フラグで管理
             mClipRunTime = true;
@@ -1790,7 +1791,7 @@ public class BaseActivity extends FragmentActivity implements
                 String message = getString(R.string.str_clip_execution_after_limit_contents);
                 showErrorDialogOffer(message);
                 mClipRunTime = false;
-                return false;
+                return;
             }
 
             //クリップ状態によりクリップ登録/削除実行
@@ -1812,10 +1813,26 @@ public class BaseActivity extends FragmentActivity implements
                 showClipToast(R.string.clip_regist_error_message);
             } else {
                 data.setClipStatus(!data.isClipStatus());
-                return true;
             }
         }
-        return false;
+    }
+
+    /**
+     * 各一覧画面のクリップ登録／解除リクエストの結果応答時にコンテンツリストに登録／削除ステータスを反映する.
+     * @param contentsList 各一覧画面のコンテンツリスト
+     */
+    protected void setContentsListClipStatus(List<ContentsData> contentsList) {
+        ClipRequestData clipRequestData = getClipRequestData(); //クリップ登録/削除リクエスト時のクリップ情報
+        if (null != contentsList && null != clipRequestData) {
+            for (ContentsData info : contentsList) {
+                if (clipRequestData.equals(info.getRequestData())) {
+                    //コンテンツリストに登録／削除ステータスを反映する.
+                    info.setClipStatus(clipRequestData.isClipStatus());
+                    DTVTLogger.debug(String.format("set clip result: crid [%s] clip status [%s]", info.getCrid(), info.isClipStatus()));
+                    break;
+                }
+            }
+        }
     }
 
     /**
