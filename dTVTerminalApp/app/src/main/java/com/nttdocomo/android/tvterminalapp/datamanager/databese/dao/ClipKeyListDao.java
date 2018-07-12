@@ -119,7 +119,6 @@ public class ClipKeyListDao {
      * @return SQLiteDatabaseクラスの戻り値(正常終了した場合はROWID,失敗した場合,マイナス1)
      */
     public long insert(final TableTypeEnum type, final ContentValues values) {
-        DTVTLogger.debug("Insert Data");
         return mSQLiteDatabase.insert(DataBaseUtils.getClipKeyTableName(type), null, values);
     }
 
