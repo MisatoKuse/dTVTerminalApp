@@ -359,12 +359,15 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 clipButton.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(final View view) {
-                        if (listContentInfo.isClipStatus()) {
-                            requestData.setClipStatus(true);
-                        } else {
-                            requestData.setClipStatus(false);
+                        //クリップ登録／解除実行中の2度押しによる誤動作の防止
+                        if (!((BaseActivity) mContext).isClipRunTime()) {
+                            if (listContentInfo.isClipStatus()) {
+                                requestData.setClipStatus(true);
+                            } else {
+                                requestData.setClipStatus(false);
+                            }
+                            ((BaseActivity) mContext).sendClipRequest(requestData, clipButton);
                         }
-                        ((BaseActivity) mContext).sendClipRequest(requestData, clipButton);
                     }
                 });
             }

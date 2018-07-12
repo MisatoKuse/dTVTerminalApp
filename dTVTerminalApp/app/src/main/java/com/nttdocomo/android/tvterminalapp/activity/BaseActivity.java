@@ -201,6 +201,13 @@ public class BaseActivity extends FragmentActivity implements
      */
     private ClipRequestData mClipRequestData = null;
     /**
+     * クリップ登録／解除実行中かを取得.
+     * @return クリップ登録／解除実行中状態
+     */
+    public boolean isClipRunTime() {
+        return mClipRunTime;
+    }
+    /**
      * クリップ実行中フラグ.
      */
     private boolean mClipRunTime = false;
@@ -1775,7 +1782,7 @@ public class BaseActivity extends FragmentActivity implements
      */
     public void sendClipRequest(final ClipRequestData data, final ImageView clipButton) {
 
-        if (data != null && clipButton != null && !mClipRunTime) {
+        if (data != null && clipButton != null && !isClipRunTime()) {
             DTVTLogger.debug(String.format("clip request: crid [%s] clip status [%s]", data.getCrid(), data.isClipStatus()));
 
             //クリップ多重実行に対応していないため実行中フラグで管理
@@ -1808,10 +1815,11 @@ public class BaseActivity extends FragmentActivity implements
                         data.getIsNotify(), this);
             }
 
-            //パラメータチェックではじかれたら失敗表示
             if (!isParamCheck) {
+                //パラメータチェックではじかれたら失敗表示とクリップ登録／解除実行中状態を解除
                 showClipToast(R.string.clip_regist_error_message);
             } else {
+                //クリップ登録／解除リクエストの結果応答時にコンテンツリストに反映するにクリップ登録／削除ステータスを設定.
                 data.setClipStatus(!data.isClipStatus());
             }
         }
