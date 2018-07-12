@@ -1251,7 +1251,7 @@ public class TvProgramListActivity extends BaseActivity implements
     public void onScrollOffset(final int offset) {
         if (mNowCurTime != null) {
             float timeLinePosition = calcTimeLinePosition(mNowCurTime);
-            DTVTLogger.debug("onScrollOffset timeLinePosition:" + timeLinePosition + " mNowImage.getHeight():" + mNowImage.getHeight() + " offset:" + offset);
+//            DTVTLogger.debug("onScrollOffset timeLinePosition:" + timeLinePosition + " mNowImage.getHeight():" + mNowImage.getHeight() + " offset:" + offset);
             mTimeLine.setY(timeLinePosition - offset);
         }
     }

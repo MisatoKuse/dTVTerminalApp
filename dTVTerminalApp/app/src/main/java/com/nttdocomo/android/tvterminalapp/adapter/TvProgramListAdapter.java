@@ -137,9 +137,13 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      */
     private List<ChannelInfo> mProgramList = null;
     /**
-     * クリップボタンサイズ.
+     * クリップボタンサイズ(dp).
      */
-    private final static int CLIP_BUTTON_SIZE = 32;
+    private final static int CLIP_BUTTON_SIZE = 16;
+    /**
+     * クリップボタン上マージン(dp).
+     */
+    private final static int CLIP_BUTTON_TOP_MARGIN_SIZE = 8;
     /**
      * チャンネルのWIDTH.
      */
@@ -272,7 +276,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         int mEpiSpace = 0;
         /**サムネイルURL.*/
         String mThumbnailURL = null;
-
         /**
          * 各画面部品初期化.
          *
@@ -290,6 +293,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             mLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
             mInUsage = false;
             mClipButton = mView.findViewById(R.id.tv_program_item_panel_clip_iv);
+            mClipButton.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -495,11 +499,11 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                         return true;
                     }
                 });
-        itemViewHolder.mClipButton.getViewTreeObserver()//クリップボタン
+        itemViewHolder.mStartM.getViewTreeObserver()//クリップボタン
                 .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                     @Override
                     public boolean onPreDraw() {
-                        itemViewHolder.mClipButton.getViewTreeObserver().removeOnPreDrawListener(this);
+                        itemViewHolder.mStartM.getViewTreeObserver().removeOnPreDrawListener(this);
                         if (!itemViewHolder.isClipDraw) {
                             displayProgramClip(itemViewHolder, isClipHide, itemSchedule);
                             itemViewHolder.isClipDraw = true;
@@ -557,10 +561,17 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             DTVTLogger.debug(e);
         }
 
-        int clipHeight = itemViewHolder.mClipButton.getHeight();
         if (!isClipHide) {
-            if (clipHeight < CLIP_BUTTON_SIZE) {
-                itemViewHolder.mClipButton.setVisibility(View.INVISIBLE);
+            // 番組の表示領域(上下マージン除く)
+            int availableSpace = itemViewHolder.mLayoutParams.height;
+            availableSpace = availableSpace - ((TvProgramListActivity) mContext).dip2px(PADDING_TOP) - ((TvProgramListActivity) mContext).dip2px(PADDING_BOTTOM);
+            // 分の表示分を除く
+            availableSpace = availableSpace - itemViewHolder.mStartM.getHeight();
+            // クリップボタンサイズ(上マージン込み)
+            int clipHeight = ((TvProgramListActivity) mContext).dip2px(CLIP_BUTTON_SIZE + CLIP_BUTTON_TOP_MARGIN_SIZE);
+            if (availableSpace < clipHeight) {
+                // 表示領域が足りない場合は非表示.
+                itemViewHolder.mClipButton.setVisibility(View.GONE);
             } else {
                 if (!UserInfoUtils.getClipActive(mContext)) {
                     //未ログイン又は未契約時はクリップボタンを非活性にする
@@ -606,8 +617,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                             ((BaseActivity) mContext).sendClipRequest(itemSchedule.getClipRequestData(), itemViewHolder.mClipButton);
                         }
                     });
-
                 }
+                itemViewHolder.mClipButton.setVisibility(View.VISIBLE);
             }
         } else {
             itemViewHolder.mClipButton.setVisibility(View.GONE);
@@ -622,7 +633,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      */
     private void displayProgramTitle(final ItemViewHolder itemViewHolder, final boolean isParental) {
         // 番組の表示領域(上下マージン除く)
-        int availableSpace = itemViewHolder.mView.getHeight()
+        int availableSpace = itemViewHolder.mLayoutParams.height
                 - ((TvProgramListActivity) mContext).dip2px(PADDING_TOP) - ((TvProgramListActivity) mContext).dip2px(PADDING_BOTTOM);
         // タイトル一行辺り高さ
         int titleLineHeight = itemViewHolder.mContent.getLineHeight();
@@ -671,12 +682,12 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                         if (bitmap != null) {
                             itemViewHolder.mThumbnail.setImageBitmap(bitmap);
                         }
+                        //サムネイルを表示した上で、あらすじを残りスペースに配置する
+                        availableSpace = availableSpace - thumbnailHeight;
                     } else {
                         itemViewHolder.mThumbnail.setVisibility(View.GONE);
                     }
 
-                    //サムネイルを表示した上で、あらすじを残りスペースに配置する
-                    availableSpace = availableSpace - thumbnailHeight;
                 } else {
                     //マージン含めたサムネイルの高さ以上の余白がなければサムネイル非表示
                     //サムネイルを非表示にした上で、あらすじを残りスペースに配置する
