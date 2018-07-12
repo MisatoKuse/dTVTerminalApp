@@ -2762,6 +2762,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
                             @Override
                             public void run() {
+                                showPlayerProgressBar(false);
                                 if (dlnaObject != null) {
                                     //player start
                                     //放送中ひかりTVコンテンツの時は自動再生する
@@ -2796,6 +2797,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                showPlayerProgressBar(false);
                                 showGetDataFailedToast();
                             }
                         });
@@ -2808,6 +2810,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                showPlayerProgressBar(false);
                                 showErrorDialog(errorMsg.replace(format, String.valueOf(errorCode)));
                             }
                         });
@@ -2820,6 +2823,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             //変換後のチャンネルIDを使用して呼び出す
             provider.findChannelByChannelNo(String.valueOf(convertedChannelNumber));
         } else {
+            showPlayerProgressBar(false);
             DTVTLogger.error("dlnaDmsItem == null");
         }
     }
@@ -3121,10 +3125,25 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             mThumbnailBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View view) {
-                    if (playData == null) {
-                        getMultiChannelData();
-                    } else {
-                        initPlayer(playData);
+                    if (isFastClick()) {
+                        switch (StbConnectionManager.shared().getConnectionStatus()) {
+                            case NONE_LOCAL_REGISTRATION:
+                                showErrorDialog(getString(R.string.contents_detail_out_house_player_error_msg));
+                                break;
+                            case HOME_OUT:
+                            case HOME_OUT_CONNECT:
+                            case HOME_IN:
+                                if (playData == null) {
+                                    showPlayerProgressBar(true);
+                                    getMultiChannelData();
+                                } else {
+                                    initPlayer(playData);
+                                }
+                                break;
+                            case NONE_PAIRING:
+                            default:
+                                break;
+                        }
                     }
                 }
             });
@@ -3133,7 +3152,20 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         DTVTLogger.end();
     }
     /**
-     * 視聴可否判定種別により再リクエストを行う.
+     * リモート接続、ブラウズ.
+     * @param showProgress プログレス進捗
+     */
+    private void showPlayerProgressBar(final boolean showProgress) {
+        if (showProgress) {
+            findViewById(R.id.dtv_contents_view_button).setVisibility(View.GONE);
+            findViewById(R.id.dtv_contents_view_progress).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.dtv_contents_view_progress).setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * 視聴可否判定に基づいてUIの操作などを行う.
      */
     @SuppressWarnings({"OverlyLongMethod", "OverlyComplexMethod", "EnumSwitchStatementWhichMissesCases"})
     private void changeUIBasedContractInfo() {

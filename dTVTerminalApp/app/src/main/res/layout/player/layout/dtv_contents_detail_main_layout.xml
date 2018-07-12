@@ -48,6 +48,13 @@
                     android:layout_height="@dimen/contents_detail_watch_dtv_image_height"
                     android:layout_gravity="center"
                     android:src="@mipmap/thumb_icon_cast" />
+                <ProgressBar
+                    android:id="@+id/dtv_contents_view_progress"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone"/>
                 <!--テキスト-->
                 <TextView
                     android:id="@+id/view_contents_button_text"
