@@ -316,14 +316,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                     setWizardItem(holder, contentView);
                 }
             } else {
-                if (holder.isCommonContent) {
-                    setListItemPattern(holder, contentView);
-                } else {
-                    holder = new ViewHolder();
-                    contentView = mInflater.inflate(R.layout.item_common_result, parent, false);
-                    setListItemPattern(holder, contentView);
-                    mMaxItemCount++;
-                }
+                //共通コンテンツでもholderをnewにする
+                holder = new ViewHolder();
+                contentView = mInflater.inflate(R.layout.item_common_result, parent, false);
+                setListItemPattern(holder, contentView);
+                mMaxItemCount++;
             }
         }
 
