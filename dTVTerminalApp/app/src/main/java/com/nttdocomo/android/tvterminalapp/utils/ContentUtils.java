@@ -746,10 +746,15 @@ public class ContentUtils {
      * @param contractInfo 　契約情報
      * @param metaFullData Vodメタデータ
      * @param channelInfo  Channelメタデータ
+     * @param vodFlag  ひかりTV VODフラグ
      * @return 視聴可否ステータス
      */
-    public static ViewIngType getViewingType(final String contractInfo, final VodMetaFullData metaFullData, final ChannelInfo channelInfo) {
-        if (metaFullData != null && channelInfo != null) {
+    public static ViewIngType getViewingType(final String contractInfo,
+                                             final VodMetaFullData metaFullData,
+                                             final ChannelInfo channelInfo,
+                                             final boolean vodFlag) {
+        //ひかりTV VODの時はchannelInfo不要
+        if (metaFullData != null && (channelInfo != null || vodFlag)) {
             if (contractInfo == null || contractInfo.isEmpty() || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo)) {
                 //契約情報が未設定、または"none"の場合は視聴不可(契約導線を表示)
                 DTVTLogger.debug("Unviewable(Not contract)");
