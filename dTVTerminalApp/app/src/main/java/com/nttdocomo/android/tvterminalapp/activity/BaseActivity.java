@@ -650,6 +650,15 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     /**
+     * グローバルメニューアイコンのインスタンスのゲッター.
+     *
+     * @return グローバルメニューのアイコンのビュー
+     */
+    protected View getMenuImageViewForBase() {
+        return mMenuImageViewForBase;
+    }
+
+    /**
      * タイトル内容を取得.
      *
      * @return タイトル内容
@@ -1511,15 +1520,6 @@ public class BaseActivity extends FragmentActivity implements
     protected void setKeyExchangeFlag(final boolean isKeyExchangeRequired) {
         DTVTLogger.debug(String.format("isKeyExchangeRequired:%s", isKeyExchangeRequired));
         mKeyExchangeFlag = isKeyExchangeRequired;
-    }
-
-    /**
-     * 現在アクティビティが活性化しているかどうかを見る.
-     *
-     * @return 活性状態ならばtrue
-     */
-    public boolean isActivityActive() {
-        return mActivityActive;
     }
 
     @Override

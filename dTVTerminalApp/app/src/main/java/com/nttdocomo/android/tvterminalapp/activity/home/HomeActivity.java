@@ -272,7 +272,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private void showProgessBar(final boolean showProgessBar) {
         mIsSearchDone = !showProgessBar;
-        enableGlobalMenuIcon(!showProgessBar);
+        enableGlobalMenuIconHome(!showProgessBar);
         mLinearLayout = findViewById(R.id.home_main_layout_linearLayout);
         RelativeLayout relativeLayout = findViewById(R.id.home_main_layout_progress_bar_Layout);
         if (showProgessBar) {
@@ -287,6 +287,29 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 //既にユーザー操作によるスクロールがまだ行われていない場合は、補正を行う
                 mScrollView.setScrollY(0);
             }
+        }
+    }
+
+    /**
+     * ホーム画面用のグローバルメニュー制御処理.
+     *
+     * @param isOn グローバルメニューを表示するならばtrue
+     */
+    private void enableGlobalMenuIconHome(final boolean isOn) {
+        //通常のグローバルメニュー制御を呼ぶ
+        enableGlobalMenuIcon(isOn);
+
+        //ユーザー情報を取得する
+        UserState userState = UserInfoUtils.getUserState(this);
+
+        //ユーザー状況の判定
+        if (userState == UserState.CONTRACT_OK_PARING_OK
+                || userState == UserState.CONTRACT_OK_PAIRING_NG) {
+            //契約済みを検知したならば、この時点でメニューを活性化する
+            setMenuIconEnabled(true);
+        } else {
+            //その他の場合は、ユーザー情報データプロバイダーの結果待ちとする
+            DTVTLogger.debug("CONTRACT or PARING NG GlobalMenu not enabled");
         }
     }
 
@@ -471,6 +494,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     });
                     //dアカウントが取得できない事が確定したので、PR画像のバナーを表示する
                     mAgreementRl.setVisibility(View.VISIBLE);
+
+                    //メニューも活性化する
+                    setMenuIconEnabled(true);
                     break;
                 }
                 //確定前はバナーを表示しないので、ここでbreakは行わない
@@ -522,6 +548,26 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.addItemDecoration(new HomeRecyclerViewItemDecoration(this));
+        }
+
+        //グローバルメニューを非活性にする
+        setMenuIconEnabled(false);
+    }
+
+    //グローバルメニューの活性化と非活性化を行う
+
+    /**
+     * グローバルメニューの活性化と非活性化を行う.
+     *
+     * @param enableSwitch 活性化するならばtrue
+     */
+    private void setMenuIconEnabled(boolean enableSwitch) {
+        //グローバルメニューのアイコンを取得
+        View menuIcon = getMenuImageViewForBase();
+
+        //指定された値を設定する
+        if (menuIcon != null) {
+            menuIcon.setEnabled(enableSwitch);
         }
     }
 
@@ -949,6 +995,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             //UserInfo取得済み
             requestHomeData();
         }
+
+        //ユーザー情報の取得が終わり、状況が確定したので、メニューボタンを有効化
+        setMenuIconEnabled(true);
     }
 
     @Override
