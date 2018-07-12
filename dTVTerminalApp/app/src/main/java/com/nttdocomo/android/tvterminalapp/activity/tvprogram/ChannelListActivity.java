@@ -526,11 +526,7 @@ public class ChannelListActivity extends BaseActivity implements
                                 getTerData();
                                 break;
                             case CH_LIST_DATA_TYPE_HIKARI:
-                                getHikariData();
-                                break;
                             case CH_LIST_DATA_TYPE_DCH:
-                                getDtvData();
-                                break;
                             default:
                                 break;
                         }
