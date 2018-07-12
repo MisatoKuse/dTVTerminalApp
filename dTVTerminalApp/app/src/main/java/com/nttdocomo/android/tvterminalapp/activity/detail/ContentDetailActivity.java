@@ -952,6 +952,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             //コンテンツタイプ取得
             ContentUtils.ContentsType type = mDetailData.getContentCategory();
 
+            DTVTLogger.debug("display thumbnail contents type = " + type);
+            DTVTLogger.debug("display thumbnail viewing type = recommend always enable");
             //他サービスアプリスマホ連携表示
             switch (type) {
                 case PURE_DTV:
@@ -1449,22 +1451,25 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                     //Vodの場合は視聴可否判定結果取得後に表示判定を行うため値を保存するのみとする
                                     //VOD(m/d（曜日）まで)
                                     mVodEndDate = mDetailFullData.getAvail_end_date();
-                                    mVodEndDateText = DateUtils.getContentsDetailVodDate(getApplicationContext(), mDetailFullData.getAvail_end_date());
+                                    date = DateUtils.getContentsDetailVodDate(getApplicationContext(), mDetailFullData.getAvail_end_date());
+                                    mVodEndDateText = date;
                                     break;
                                 case DCHANNEL_VOD_OVER_31:
                                     //Vodの場合は視聴可否判定結果取得後に表示判定を行うため値を保存するのみとする
                                     //VOD(見逃し)
                                     mVodEndDate = mDetailFullData.getmVod_end_date();
-                                    mVodEndDateText = StringUtils.getConnectStrings(
+                                    date = StringUtils.getConnectStrings(
                                             getString(R.string.contents_detail_hikari_d_channel_miss_viewing));
+                                    mVodEndDateText = date;
                                     break;
                                 case DCHANNEL_VOD_31:
                                     //Vodの場合は視聴可否判定結果取得後に表示判定を行うため値を保存するのみとする
                                     //VOD(見逃し | m/d（曜日）まで)
                                     mVodEndDate = mDetailFullData.getmVod_end_date();
                                     String limit = DateUtils.getContentsDetailVodDate(getApplicationContext(), mDetailFullData.getmVod_end_date());
-                                    mVodEndDateText = StringUtils.getConnectStrings(getString(
+                                    date = StringUtils.getConnectStrings(getString(
                                             R.string.contents_detail_hikari_d_channel_miss_viewing_separation), limit);
+                                    mVodEndDateText = date;
                                     break;
                                 default:
                                     break;
@@ -2861,6 +2866,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 || contentsType.equals(ContentUtils.ContentsType.OTHER)) {
             return;
         }
+        DTVTLogger.debug("display thumbnail contents type = " + contentsType);
+        DTVTLogger.debug("display thumbnail viewing type = " + viewIngType);
+        DTVTLogger.debug("display thumbnail contents detailUserType = " + detailUserType);
         switch (contentsType) {
             case HIKARI_TV_NOW_ON_AIR:
                 //ひかり Tv for ドコモ(放送中) ひかりTV契約有 宅内
@@ -2871,23 +2879,26 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         button.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(final View v) {
-                                if (getStbStatus()) {
-                                    contentDetailRemoteController();
-                                } else {
-                                    startBrowser(UrlConstants.WebUrl.CONTRACT_URL);
-                                }
+                                thumbnailContractButtonAction();
                             }
                         });
                     } else {
-                        //安全のため再生開始直前にも宅内宅外判定を入れる
-                        switch (StbConnectionManager.shared().getConnectionStatus()) {
-                            case HOME_IN:
-                                getMultiChannelData();
-                                break;
-                            default:
-                                setRemotePlayArrow(null);
-                                break;
-                        }
+                        playerSwitch();
+                    }
+                } else if (detailUserType.equals(ContentUtils.ContentsDetailUserType.PAIRING_OUTSIDE_HIKARI_CONTRACT)) {
+                    //※要購入の場合
+                    if (ContentUtils.isContractWireDisplay(viewIngType)) {
+                        Button button = setThumbnailMessage(
+                                getString(R.string.contents_detail_hikari_channel_agreement),
+                                getString(R.string.contents_detail_contract_leading_button), true, true);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(final View v) {
+                                thumbnailContractButtonAction();
+                            }
+                        });
+                    } else {
+                        playerSwitch();
                     }
                 } else {
                     hikariTvThumbnailDisplay(detailUserType, viewIngType);
@@ -2895,33 +2906,50 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 break;
             case HIKARI_TV:
             case HIKARI_TV_WITHIN_TWO_HOUR:
-                hikariTvThumbnailDisplay(detailUserType, viewIngType);
+                //ひかり Tv for ドコモ(放送中、放送前) ひかりTV契約有 宅外
+                if (detailUserType.equals(ContentUtils.ContentsDetailUserType.PAIRING_INSIDE_HIKARI_CONTRACT)
+                        || detailUserType.equals(ContentUtils.ContentsDetailUserType.PAIRING_OUTSIDE_HIKARI_CONTRACT)) {
+                    //HIKARI_TV_NOW_ON_AIRの場合はこの分岐の中には入ってこない想定
+                    //※要購入の場合
+                    if (ContentUtils.isContractWireDisplay(viewIngType)) {
+                        Button button = setThumbnailMessage(
+                                getString(R.string.contents_detail_hikari_channel_agreement),
+                                getString(R.string.contents_detail_contract_leading_button), true, true);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(final View v) {
+                                thumbnailContractButtonAction();
+                            }
+                        });
+                    }
+                    //未ペアリング契約有
+                } else {
+                    hikariTvThumbnailDisplay(detailUserType, viewIngType);
+                }
                 break;
             case HIKARI_TV_VOD:
                 //ひかり Tv for ドコモ(VOD) ひかりTV契約有 宅外
                 if (detailUserType.equals(ContentUtils.ContentsDetailUserType.PAIRING_INSIDE_HIKARI_CONTRACT)) {
                     //※要購入の場合
                     if (ContentUtils.isContractWireDisplay(viewIngType)) {
-                        Button button = setThumbnailMessage(getString(R.string.contents_detail_hikari_vod_agreement), "", true, false);
+                        Button button = setThumbnailMessage(
+                                getString(R.string.contents_detail_hikari_vod_agreement),
+                                getString(R.string.contents_detail_contract_leading_button), true, true);
                         button.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(final View v) {
-                                if (getStbStatus()) {
-                                    contentDetailRemoteController();
-                                } else {
-                                    startBrowser(UrlConstants.WebUrl.CONTRACT_URL);
-                                }
+                                thumbnailContractButtonAction();
                             }
                         });
                     } else {
-                        setThumbnailMessage(getString(R.string.contents_detail_thumbnail_text), "", true, false);
+                        setThumbnailMessage(getString(R.string.contents_detail_hikari_video_thumbnail_text), "", true, false);
                     }
                 } else if (detailUserType.equals(ContentUtils.ContentsDetailUserType.PAIRING_OUTSIDE_HIKARI_CONTRACT)) {
                     //※要購入の場合
                     if (ContentUtils.isContractWireDisplay(viewIngType)) {
                         setThumbnailMessage(getString(R.string.contents_detail_hikari_vod_agreement), "", true, false);
                     } else {
-                        setThumbnailMessage(getString(R.string.contents_detail_thumbnail_text), "", true, false);
+                        setThumbnailMessage(getString(R.string.contents_detail_hikari_video_thumbnail_text), "", true, false);
                     }
                     //未ペアリング契約有かつ視聴可否判定OK
                 } else if (detailUserType.equals(ContentUtils.ContentsDetailUserType.NO_PAIRING_HIKARI_CONTRACT)) {
@@ -2940,11 +2968,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(final View v) {
-                            if (getStbStatus()) {
-                                contentDetailRemoteController();
-                            } else {
-                                startBrowser(UrlConstants.WebUrl.CONTRACT_URL);
-                            }
+                            thumbnailContractButtonAction();
                         }
                     });
                 }
@@ -2965,11 +2989,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(final View v) {
-                            if (getStbStatus()) {
-                                contentDetailRemoteController();
-                            } else {
-                                startBrowser(UrlConstants.WebUrl.CONTRACT_URL);
-                            }
+                            thumbnailContractButtonAction();
                         }
                     });
                 }
@@ -2985,11 +3005,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(final View v) {
-                            if (getStbStatus()) {
-                                contentDetailRemoteController();
-                            } else {
-                                startBrowser(UrlConstants.WebUrl.CONTRACT_URL);
-                            }
+                            thumbnailContractButtonAction();
                         }
                     });
                 }
@@ -2999,25 +3015,29 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     /**
+     * 宅内宅外の状態により再生ボタン表示と自動再生を出しわける.
+     */
+    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
+    private void playerSwitch() {
+        //安全のため再生開始直前にも宅内宅外判定を入れる
+        switch (StbConnectionManager.shared().getConnectionStatus()) {
+            case HOME_IN:
+                getMultiChannelData();
+                break;
+            default:
+                setRemotePlayArrow(null);
+                break;
+        }
+    }
+
+    /**
      * ひかりコンテンツのサムネイル表示.
      *
      * @param detailUserType ユーザ状態
      * @param viewIngType    視聴可否種別
      */
     private void hikariTvThumbnailDisplay(final ContentUtils.ContentsDetailUserType detailUserType, final ContentUtils.ViewIngType viewIngType) {
-        //ひかり Tv for ドコモ(放送中、放送前) ひかりTV契約有 宅外
-        if (detailUserType.equals(ContentUtils.ContentsDetailUserType.PAIRING_OUTSIDE_HIKARI_CONTRACT)) {
-            //※要購入の場合
-            if (ContentUtils.isContractWireDisplay(viewIngType)) {
-                setThumbnailMessage(getString(R.string.contents_detail_hikari_channel_agreement), "", true, false);
-            } else {
-                //再生ボタン表示
-                if (mPlayerData == null || mPlayerData.isRemote()) {
-                    setRemotePlayArrow(mPlayerData);
-                }
-            }
-            //未ペアリング契約有
-        } else if (detailUserType.equals(ContentUtils.ContentsDetailUserType.NO_PAIRING_HIKARI_CONTRACT)
+        if (detailUserType.equals(ContentUtils.ContentsDetailUserType.NO_PAIRING_HIKARI_CONTRACT)
                 && ContentUtils.isEnableDisplay(viewIngType)) {
             Button button = setThumbnailMessage(getString(R.string.contents_detail_pairing_request), getString(R.string.contents_detail_pairing_button), true, true);
             button.setOnClickListener(new View.OnClickListener() {
@@ -3034,13 +3054,21 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    if (getStbStatus()) {
-                        contentDetailRemoteController();
-                    } else {
-                        startBrowser(UrlConstants.WebUrl.CONTRACT_URL);
-                    }
+                    thumbnailContractButtonAction();
                 }
             });
+        }
+    }
+
+    /**
+     * サムネイル上の契約するボタン内の動作.
+     */
+    private void thumbnailContractButtonAction() {
+        //STB接続がない場合(未ペアリング、宅外の場合)はブラウザ起動
+        if (getStbStatus()) {
+            contentDetailRemoteController();
+        } else {
+            startBrowser(UrlConstants.WebUrl.CONTRACT_URL);
         }
     }
 
