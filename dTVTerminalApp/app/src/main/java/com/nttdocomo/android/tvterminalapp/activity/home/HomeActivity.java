@@ -451,6 +451,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         //Home画面用データを取得
         if (networkCheck()) {
             showProgessBar(true);
+            initScrollView();
             showHomeBanner();
             mHomeDataProvider = new HomeDataProvider(this);
             mHomeDataProvider.getHomeData();
@@ -535,10 +536,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mAgreementRl = findViewById(R.id.home_main_layout_kyrl);
         mAgreementRl.setVisibility(View.GONE);
         agreementTextView.setOnClickListener(this);
-
-        //スクロールビューの操作を行う
-        initScrollView();
-
         //各コンテンツのビューを作成する
         for (int i = HOME_CONTENTS_LIST_START_INDEX; i < HOME_CONTENTS_LIST_COUNT + HOME_CONTENTS_LIST_START_INDEX; i++) {
             final View view = setContentsView(i);
