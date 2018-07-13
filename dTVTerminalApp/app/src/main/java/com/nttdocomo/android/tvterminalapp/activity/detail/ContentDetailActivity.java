@@ -2961,14 +2961,14 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             }
                         });
                     } else {
-                        setThumbnailMessage(getString(R.string.contents_detail_hikari_video_thumbnail_text), "", true, false);
+                        setThumbnailMessage(getString(R.string.contents_detail_thumbnail_text), "", true, false);
                     }
                 } else if (detailUserType.equals(ContentUtils.ContentsDetailUserType.PAIRING_OUTSIDE_HIKARI_CONTRACT)) {
                     //※要購入の場合
                     if (ContentUtils.isContractWireDisplay(viewIngType)) {
                         setThumbnailMessage(getString(R.string.contents_detail_hikari_vod_agreement), "", true, false);
                     } else {
-                        setThumbnailMessage(getString(R.string.contents_detail_hikari_video_thumbnail_text), "", true, false);
+                        setThumbnailMessage(getString(R.string.contents_detail_thumbnail_text), "", true, false);
                     }
                     //未ペアリング契約有かつ視聴可否判定OK
                 } else if (detailUserType.equals(ContentUtils.ContentsDetailUserType.NO_PAIRING_HIKARI_CONTRACT)) {
