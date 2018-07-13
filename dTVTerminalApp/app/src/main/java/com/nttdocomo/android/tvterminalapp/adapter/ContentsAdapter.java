@@ -956,6 +956,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      */
     private void setChannelName(final ViewHolder holder, final ContentsData listContentInfo) {
         DTVTLogger.start();
+
+        //ヌルチェック
+        if (holder.tv_recorded_ch_name == null || holder.tv_recorded_hyphen == null) {
+            return;
+        }
+
         if (!TextUtils.isEmpty(listContentInfo.getChannelName()) && mTabType != TabTypeItem.TAB_DEFAULT) { //ランク
             ContentUtils.setChannelNameOrMissedText(mContext, holder.tv_recorded_hyphen, holder.tv_recorded_ch_name, listContentInfo, mType);
             if (mType == ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST) {

@@ -13,6 +13,7 @@ import android.os.RemoteException;
 
 import com.nttdocomo.android.idmanager.IDimServiceAppCallbacks;
 import com.nttdocomo.android.idmanager.IDimServiceAppService;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DaccountConstants;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -68,6 +69,15 @@ public class DaccountGetOtt {
         @Override
         public void onCompleteGetOneTimePassword(final int appReqId, final int result, final String id,
                                                  final String oneTimePassword, final String appCheckKey) throws RemoteException {
+
+            // エラー判定を行う
+            if ((result == IDimDefines.RESULT_USER_CANCEL
+                    || result == IDimDefines.RESULT_INVALID_ID)) {
+                //キャンセルか認証状態無効だった場合は、いち早くベースアクティビティ側に知らせて、
+                //ログアウト等のダイアログを海外判定のダイアログよりも優先表示する
+                OttGetAuthSwitch.getInstance().setSkipPermission(true);
+            }
+
             //dアカウント設定アプリと切断する
             daccountServiceEnd();
 
@@ -148,6 +158,11 @@ public class DaccountGetOtt {
                     option = IDimDefines.CertOption.RESERVE;
                 } else {
                     option = IDimDefines.CertOption.DEFAULT;
+
+                    //自動再認証が発生する可能性があるので、パーミッションチェックをスキップする。
+                    //再認証画面のキャンセルボタンのコールバックより、BaseActivityのonResumeが先に動くので、
+                    //結果を待っていては、パーミッションチェックのダイアログの表示を防げないため
+                    OttGetAuthSwitch.getInstance().setSkipPermission(true);
                 }
             } else {
                 //DEFAULTとRESERVEを能動制御するように変更したので、こちらでDEFAULTにして再認証画面を強要する必要がなくなったので、元に戻した
