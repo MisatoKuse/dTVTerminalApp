@@ -1548,7 +1548,17 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     break;
                 case VOD:
                 case HIKARI_TV_VOD:
-                    mContentsDetailDataProvider.getVodListData();
+                    //DBに保存されているUserInfoから契約情報を確認する
+                    String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(ContentDetailActivity.this));
+                    DTVTLogger.debug("contractInfo: " + contractInfo);
+                    mViewIngType = ContentUtils.getViewingType(contractInfo, mDetailFullData, mChannel, true);
+
+                    //購入済みVOD判定開始
+                    if (mViewIngType.equals(ContentUtils.ViewIngType.SUBSCRIPTION_CHECK_START)) {
+                        mContentsDetailDataProvider.getVodListData();
+                    } else {
+                        responseResultCheck(mViewIngType, contentsType);
+                    }
                     break;
                 default:
                     //視聴可否判定不要のコンテンツは一律視聴可
@@ -1679,7 +1689,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             //DBに保存されているUserInfoから契約情報を確認する
                             String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(ContentDetailActivity.this));
                             DTVTLogger.debug("contractInfo: " + contractInfo);
-                            mViewIngType = ContentUtils.getViewingType(contractInfo, mDetailFullData, mChannel);
+                            mViewIngType = ContentUtils.getViewingType(contractInfo, mDetailFullData, mChannel, false);
                             String channelName = channel.getTitle();
                             OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
                             if (detailData != null) {
