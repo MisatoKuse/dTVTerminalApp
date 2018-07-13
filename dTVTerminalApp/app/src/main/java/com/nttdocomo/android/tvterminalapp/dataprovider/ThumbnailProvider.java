@@ -67,7 +67,7 @@ public class ThumbnailProvider {
 		mListUrl = new LinkedHashMap<>();
 		thumbnailCacheManager.initMemCache();
 		mImageSizeType = imageSizeType;
-		mContext = context;
+		mContext = context.getApplicationContext();
 	}
 
 	/**
