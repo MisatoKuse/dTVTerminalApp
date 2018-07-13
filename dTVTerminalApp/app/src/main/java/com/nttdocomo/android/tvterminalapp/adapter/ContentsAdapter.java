@@ -959,11 +959,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.record_download_status_color));
             }
         } else {
-            if (TextUtils.isEmpty(listContentInfo.getChannelName())) {
+            if (TextUtils.isEmpty(listContentInfo.getChannelName()) && holder.tv_recorded_ch_name != null
+                    && holder.tv_recorded_hyphen != null) {
                 holder.tv_recorded_ch_name.setText("");
                 holder.tv_recorded_hyphen.setVisibility(View.GONE);
             }
-            if (mType == ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST) {
+            if (mType == ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST && holder.tv_recorded_hyphen != null) {
                 holder.tv_recorded_hyphen.setVisibility(View.GONE);
                 holder.tv_recorded_ch_name.setVisibility(View.GONE);
             }
