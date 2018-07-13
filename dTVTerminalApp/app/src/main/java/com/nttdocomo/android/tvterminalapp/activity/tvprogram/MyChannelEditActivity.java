@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -35,68 +36,45 @@ import com.nttdocomo.android.tvterminalapp.common.DtvtConstants.ErrorType;
  */
 public class MyChannelEditActivity extends BaseActivity implements View.OnClickListener,
         MyChannelEditAdapter.EditMyChannelItemImpl,
-        MyChannelDataProvider.ApiDataProviderCallback {
+        MyChannelDataProvider.ApiDataProviderCallback, AbsListView.OnScrollListener {
 
     //region variable
-    /**
-     * マイ番組表数.
-     */
+    /** マイ番組表数.*/
     private static final int EDIT_CHANNEL_LIST_COUNT = WebApiBasePlala.MY_CHANNEL_MAX_INDEX;
-    /**
-     * マイ番組表データプロバイダー.
-     */
+    /** マイ番組表データプロバイダー.*/
     private MyChannelDataProvider mMyChannelDataProvider;
-    /**
-     * コンマ.
-     */
+    /** コンマ.*/
     private static final String COMMA = ",";
-
-    /**
-     * bracket left.
-     */
+    /** bracket left.*/
     private static final String BRACKET_LEFT = "[";
-
-    /**
-     * bracket right.
-     */
+    /** bracket right.*/
     private static final String BRACKET_RIGHT = "]";
-
-    /**
-     * チャンネル情報キー.
-     */
+    /** チャンネル情報キー.*/
     private static final String CHANNEL_INFO = "channel_info";
-    /**
-     * チャンネルサービスID.
-     */
+    /** チャンネルサービスID.*/
     private static final String SERVICE_ID = "service_id";
-    /**
-     * マイ番組表サービスIDキー.
-     */
+    /** マイ番組表サービスIDキー.*/
     private static final String SERVICE_IDS = "service_ids";
-    /**
-     * チャンネルタイトル.
-     */
+    /** チャンネルタイトル.*/
     private static final String TITLE = "title";
-    /**
-     * マイ番組表編集リスト.
-     */
+    /** マイ番組表編集リスト.*/
     private ListView mEditListView;
-    /**
-     * マイ番組表データコレクション.
-     */
+    /** マイ番組表データコレクション.*/
     private ArrayList<MyChannelMetaData> mEditList;
-    /**
-     * 追加ポジション.
-     */
+    /** 追加ポジション.*/
     private int mAddPosition = 0;
-    /**
-     * 削除ポジション.
-     */
+    /** 削除ポジション.*/
     private int mDeletePosition = 0;
-    /**
-     * WebAPIのコールバックよりも前に2度目のWebAPIが呼び出されるのを防止する.
-     */
+    /** WebAPIのコールバックよりも前に2度目のWebAPIが呼び出されるのを防止する.*/
     boolean getOk = true;
+    /** 先頭に表示したアイテムポジション.*/
+    private int mScrollPosition = 0;
+    /** 先頭に表示したアイテムポジション.*/
+    private static final String SCROLL_POSITION = "scrollPosition";
+    /** 上端からの距離.*/
+    private int mScrollTop = 0;
+    /** 上端からの距離.*/
+    private static final String SCROLL_TOP = "scrollTop";
     // endregion
 
     // region Activity LifeCycle
@@ -105,7 +83,11 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_channel_edit_main_layout);
-
+        if (savedInstanceState != null) {
+            mScrollPosition = savedInstanceState.getInt(SCROLL_POSITION);
+            mScrollTop = savedInstanceState.getInt(SCROLL_TOP);
+            savedInstanceState.clear();
+        }
         setTitleText(getString(R.string.my_channel_list_setting));
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
@@ -169,6 +151,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         findViewById(R.id.header_layout_menu).setOnClickListener(this);
         mEditListView = findViewById(R.id.my_channel_edit_main_layout_edit_lv);
+        mEditListView.setOnScrollListener(this);
     }
 
     /**
@@ -180,6 +163,13 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
             mMyChannelDataProvider.getMyChannelList(R.layout.my_channel_edit_main_layout);
             getOk = false;
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(SCROLL_POSITION, mScrollPosition);
+        outState.putInt(SCROLL_TOP, mScrollTop);
     }
 
     /**
@@ -241,6 +231,9 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
                 }
             }
         });
+        if (mEditListView != null) {
+            mEditListView.setSelectionFromTop(mScrollPosition, mScrollTop);
+        }
         DTVTLogger.end();
     }
 
@@ -409,5 +402,17 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
             }
         });
         customDialog.showDialog();
+    }
+    @Override
+    public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
+        if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+            mScrollPosition = mEditListView.getFirstVisiblePosition();
+        }
+        View v = mEditListView .getChildAt(0);
+        mScrollTop = (v == null) ? 0 : v.getTop();
+    }
+
+    @Override
+    public void onScroll(final AbsListView absListView, final  int i, final int i1, final  int i2) {
     }
 }
