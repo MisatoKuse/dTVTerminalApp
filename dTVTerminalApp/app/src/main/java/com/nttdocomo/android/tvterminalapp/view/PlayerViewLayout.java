@@ -1274,6 +1274,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                     }
                     hideCtrlViewAfterOperate();
                 } else if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    mIsHideOperate = false;
                     if (mVideoCtrlBar.getVisibility() == View.VISIBLE && mIsOperateActivated) {
                         // タップダウンした時に長押し処理を開始する.
                         PlayerControlType controlType = getPlayerControlType(motionEvent);
