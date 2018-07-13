@@ -1440,9 +1440,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     if (contentsType == ContentUtils.ContentsType.TV) {
                         //番組(m/d（曜日）h:ii - h:ii)
                         date = DateUtils.getContentsDateString(mDetailFullData.getPublish_start_date(), mDetailFullData.getPublish_end_date());
-                        if (mServiceId == null) {
-                            setViewPagerTab();
-                        }
                     } else {
                         detailData.setmStartDate(String.valueOf(mDetailFullData.getmVod_start_date()));
                         setViewPagerTab();
@@ -1522,11 +1519,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (getStbStatus() || mVisibility) {
                     findViewById(R.id.remote_control_view).setVisibility(View.VISIBLE);
                 }
-                if (!TextUtils.isEmpty(mDetailFullData.getmService_id())) {
+                if (mDetailFullData != null && !TextUtils.isEmpty(mDetailFullData.getmService_id())) {
                     mServiceId = mDetailFullData.getmService_id();
                     //チャンネル情報取得(取得後に視聴可否判定)
                     getChannelInfo();
                 } else {
+                    setViewPagerTab();
                     mViewIngType = ContentUtils.getViewingType(contractInfo, mDetailFullData, mChannel);
                     //コンテンツ種別ごとの視聴可否判定を実行
                     getViewingTypeRequest(mViewIngType);
@@ -1695,13 +1693,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             ChannelInfo channel = channels.get(i);
                             if (mServiceId.equals(channel.getServiceId())) {
                                 mChannel = channel;
-                                if (mContentsType.equals(ContentUtils.ContentsType.TV)
-                                        || mContentsType.equals(ContentUtils.ContentsType.HIKARI_TV)
-                                        || mContentsType.equals(ContentUtils.ContentsType.HIKARI_TV_WITHIN_TWO_HOUR)
-                                        || mContentsType.equals(ContentUtils.ContentsType.HIKARI_TV_NOW_ON_AIR)) {
-                                    //TV番組の場合はここで視聴可否判定する
-                                    mViewIngType = ContentUtils.getViewingType(contractInfo, mDetailFullData, channel);
-                                }
                                 String channelName = channel.getTitle();
                                 OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
                                 if (detailData != null) {

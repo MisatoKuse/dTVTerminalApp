@@ -1348,9 +1348,6 @@ public class ContentUtils {
             case HIKARI_TV:
             case HIKARI_TV_WITHIN_TWO_HOUR:
             case HIKARI_TV_NOW_ON_AIR:
-            case HIKARI_IN_DCH_TV:
-            case HIKARI_IN_DCH_TV_NOW_ON_AIR:
-            case HIKARI_IN_DCH_TV_WITHIN_TWO_HOUR:
                 return true;
             default:
                 return false;
