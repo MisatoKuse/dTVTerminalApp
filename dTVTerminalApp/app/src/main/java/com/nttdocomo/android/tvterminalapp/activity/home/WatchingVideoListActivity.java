@@ -315,6 +315,24 @@ public class WatchingVideoListActivity extends BaseActivity implements
         });
     }
 
+    @Override
+    public void onClipRegistResult() {
+        DTVTLogger.start();
+        //コンテンツリストに登録ステータスを反映する.
+        setContentsListClipStatus(mWatchingVideoListData);
+        super.onClipRegistResult();
+        DTVTLogger.end();
+    }
+
+    @Override
+    public void onClipDeleteResult() {
+        DTVTLogger.start();
+        //コンテンツリストに削除ステータスを反映する.
+        setContentsListClipStatus(mWatchingVideoListData);
+        super.onClipDeleteResult();
+        DTVTLogger.end();
+    }
+
     /**
      * 接続状態解除.
      */

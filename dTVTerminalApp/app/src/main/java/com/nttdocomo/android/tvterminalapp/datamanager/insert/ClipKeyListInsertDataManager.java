@@ -67,17 +67,28 @@ public class ClipKeyListInsertDataManager {
                 DTVTLogger.debug("ClipKeyListInsertDataManager::insertClipKeyListInsert, e.cause=" + e.getCause());
             }
 
-            //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
-            for (int i = 0; i < hashMaps.size(); i++) {
-                Iterator entries = hashMaps.get(i).entrySet().iterator();
-                ContentValues values = new ContentValues();
-                while (entries.hasNext()) {
-                    Map.Entry entry = (Map.Entry) entries.next();
-                    String keyName = (String) entry.getKey();
-                    String valName = (String) entry.getValue();
-                    values.put(DataBaseUtils.fourKFlgConversion(keyName), valName);
+            try {
+                DTVTLogger.debug("bulk insert start");
+                //DREM-2967の対応
+                database.beginTransaction();
+                //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
+                for (int i = 0; i < hashMaps.size(); i++) {
+                    Iterator entries = hashMaps.get(i).entrySet().iterator();
+                    ContentValues values = new ContentValues();
+                    while (entries.hasNext()) {
+                        Map.Entry entry = (Map.Entry) entries.next();
+                        String keyName = (String) entry.getKey();
+                        String valName = (String) entry.getValue();
+                        values.put(DataBaseUtils.fourKFlgConversion(keyName), valName);
+                    }
+                    clipKeyListDao.insert(type, values);
                 }
-                clipKeyListDao.insert(type, values);
+                database.setTransactionSuccessful();
+            } catch (SQLiteException e) {
+                DTVTLogger.debug("ClipKeyListInsertDataManager::insertClipKeyListInsert, e.cause=" + e.getCause());
+            } finally {
+                database.endTransaction();
+                DTVTLogger.debug("bulk insert end");
             }
         } catch (SQLiteException e) {
             DTVTLogger.debug("ClipKeyListInsertDataManager::insertClipKeyListInsert, e.cause=" + e.getCause());

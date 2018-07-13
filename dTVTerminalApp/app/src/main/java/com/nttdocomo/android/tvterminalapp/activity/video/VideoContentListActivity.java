@@ -363,7 +363,6 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         }
 
         for (int i = 0; i < videoContentInfo.size(); ++i) {
-            DTVTLogger.debug("i = " + i);
             if (null != mContentsList) {
                 mContentsList.add(videoContentInfo.get(i));
             }
@@ -371,6 +370,24 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         resetCommunication();
         mContentsAdapter.setListData(mContentsList);
         mContentsAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onClipRegistResult() {
+        DTVTLogger.start();
+        //コンテンツリストに登録ステータスを反映する.
+        setContentsListClipStatus(mContentsList);
+        super.onClipRegistResult();
+        DTVTLogger.end();
+    }
+
+    @Override
+    public void onClipDeleteResult() {
+        DTVTLogger.start();
+        //コンテンツリストに削除ステータスを反映する.
+        setContentsListClipStatus(mContentsList);
+        super.onClipDeleteResult();
+        DTVTLogger.end();
     }
 
     @Override

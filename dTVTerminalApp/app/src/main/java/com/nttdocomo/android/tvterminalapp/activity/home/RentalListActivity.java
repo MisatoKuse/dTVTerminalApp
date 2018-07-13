@@ -223,6 +223,24 @@ public class RentalListActivity extends BaseActivity implements
     }
     // region implement
 
+    @Override
+    public void onClipRegistResult() {
+        DTVTLogger.start();
+        //コンテンツリストに登録ステータスを反映する.
+        setContentsListClipStatus(mContentsList);
+        super.onClipRegistResult();
+        DTVTLogger.end();
+    }
+
+    @Override
+    public void onClipDeleteResult() {
+        DTVTLogger.start();
+        //コンテンツリストに削除ステータスを反映する.
+        setContentsListClipStatus(mContentsList);
+        super.onClipDeleteResult();
+        DTVTLogger.end();
+    }
+
     // region private method
     /**
      * アダプタを設定.
