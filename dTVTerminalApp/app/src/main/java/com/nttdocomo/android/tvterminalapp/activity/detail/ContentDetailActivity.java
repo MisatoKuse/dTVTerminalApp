@@ -1439,6 +1439,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     if (contentsType == ContentUtils.ContentsType.TV) {
                         //番組(m/d（曜日）h:ii - h:ii)
                         date = DateUtils.getContentsDateString(mDetailFullData.getPublish_start_date(), mDetailFullData.getPublish_end_date());
+                        if (mServiceId == null) {
+                            setViewPagerTab();
+                        }
                     } else {
                         detailData.setmStartDate(String.valueOf(mDetailFullData.getmVod_start_date()));
                         setViewPagerTab();
@@ -1675,6 +1678,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     mViewPagerIndex = DEFAULT_TAB_INDEX;
                 }
                 if (channels == null || channels.isEmpty()) {
+                    setViewPagerTab();
                     showErrorDialog(ErrorType.channelListGet);
                     return;
                 }
@@ -1700,6 +1704,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         }
                     }
                     detailFragment.refreshChannelInfo();
+                }
+                if (mChannel == null) {
+                    setViewPagerTab();
                 }
                 if (mDetailFullData != null) {
                     checkWatchContents(mViewIngType);
