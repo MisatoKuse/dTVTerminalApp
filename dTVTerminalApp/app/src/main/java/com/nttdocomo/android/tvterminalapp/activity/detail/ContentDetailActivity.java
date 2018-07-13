@@ -1344,16 +1344,17 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     return;
                 }
 
+                //DBに保存されているUserInfoから契約情報を確認する
+                String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(ContentDetailActivity.this));
+                DTVTLogger.debug("contractInfo: " + contractInfo);
+
                 //詳細情報取得して、更新する
                 if (contentsDetailInfo != null) {
                     DtvContentsDetailFragment detailFragment = getDetailFragment();
                     mDetailFullData = contentsDetailInfo;
+                    //メタデータ取得時にコンテンツ種別を取得する
                     mContentsType = ContentUtils.getHikariContentsType(mDetailFullData);
                     //DBに保存されているUserInfoから契約情報を確認する
-                    String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(ContentDetailActivity.this));
-                    DTVTLogger.debug("contractInfo: " + contractInfo);
-                    //コンテンツ種別ごとの視聴可否判定を実行
-                    getViewingTypeRequest(mContentsType, mDetailFullData.getmService_id());
                     contentType = ContentTypeForGoogleAnalytics.TV;
                     if (ContentUtils.TV_PROGRAM.equals(mDetailFullData.getDisp_type())) {
                         //tv_programの場合
@@ -1496,6 +1497,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         }
                     } else { //レコメンドサーバー以外のひかりTV
                         if (mDetailFullData != null) {
+                            mViewIngType = ContentUtils.getViewingType(contractInfo, mDetailFullData, mChannel);
                             checkWatchContents(mViewIngType);
                         }
                         //コンテンツの視聴可否判定に基づいてUI操作を行う
@@ -1520,7 +1522,15 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (getStbStatus() || mVisibility) {
                     findViewById(R.id.remote_control_view).setVisibility(View.VISIBLE);
                 }
-                responseResultCheck(mViewIngType, mContentsType);
+                if (!TextUtils.isEmpty(mDetailFullData.getmService_id())) {
+                    mServiceId = mDetailFullData.getmService_id();
+                    //チャンネル情報取得(取得後に視聴可否判定)
+                    getChannelInfo();
+                } else {
+                    mViewIngType = ContentUtils.getViewingType(contractInfo, mDetailFullData, mChannel);
+                    //コンテンツ種別ごとの視聴可否判定を実行
+                    getViewingTypeRequest(mViewIngType);
+                }
                 DTVTLogger.end();
             }
         });
@@ -1530,48 +1540,36 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     /**
      * コンテンツ種別ごとに視聴可否リクエストを投げる.
      *
-     * @param contentsType コンテンツ種別
-     * @param serviceId サービスID
+     * @param viewIngType 視聴可否種別種別
      */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
-    private void getViewingTypeRequest(final ContentUtils.ContentsType contentsType, final String serviceId) {
-        //視聴可否判定前に初期値として可否判定前の値を設定する
-        mViewIngType = ContentUtils.ViewIngType.NONE_STATUS;
+    private void getViewingTypeRequest(final ContentUtils.ViewIngType viewIngType) {
+        DTVTLogger.start();
         //未ペアリング時は視聴可否判定をしない
         if (!StbConnectionManager.shared().getConnectionStatus().equals(StbConnectionManager.ConnectionStatus.NONE_PAIRING)) {
-            switch (contentsType) {
-                case TV:
-                case HIKARI_TV:
-                case HIKARI_TV_WITHIN_TWO_HOUR:
-                case HIKARI_TV_NOW_ON_AIR:
-                    if (!TextUtils.isEmpty(serviceId)) {
-                        mServiceId = serviceId;
-                        getChannelInfo();
-                    }
+            //DBに保存されているUserInfoから契約情報を確認する
+            String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(ContentDetailActivity.this));
+            DTVTLogger.debug("contractInfo: " + contractInfo);
+            switch (viewIngType) {
+                case PREMIUM_CHECK_START:
+                    DTVTLogger.debug("premium channel check start");
+                    mContentsDetailDataProvider.getChListData();
                     break;
-                case VOD:
-                case HIKARI_TV_VOD:
-                    //DBに保存されているUserInfoから契約情報を確認する
-                    String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(ContentDetailActivity.this));
-                    DTVTLogger.debug("contractInfo: " + contractInfo);
-                    mViewIngType = ContentUtils.getViewingType(contractInfo, mDetailFullData, mChannel, true);
-
-                    //購入済みVOD判定開始
-                    if (mViewIngType.equals(ContentUtils.ViewIngType.SUBSCRIPTION_CHECK_START)) {
-                        mContentsDetailDataProvider.getVodListData();
-                    } else {
-                        responseResultCheck(mViewIngType, contentsType);
-                    }
+                case SUBSCRIPTION_CHECK_START:
+                    DTVTLogger.debug("subscription vod channel check start");
+                    mContentsDetailDataProvider.getVodListData();
                     break;
                 default:
-                    //視聴可否判定不要のコンテンツは一律視聴可
-                    mViewIngType = ContentUtils.ViewIngType.ENABLE_WATCH;
+                    responseResultCheck(viewIngType, mContentsType);
                     break;
             }
         } else {
-            //未ペアリング時は視聴可否判定をしないので、すべて視聴可とする
+            //未ペアリング時はログイン導線を出すため、すべて視聴可とする
             mViewIngType = ContentUtils.ViewIngType.ENABLE_WATCH;
+            responseResultCheck(viewIngType, mContentsType);
         }
+        DTVTLogger.debug("get viewing type = " + viewIngType);
+        DTVTLogger.end();
     }
 
     //endregion
@@ -1611,6 +1609,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * データ取得がすべて終了していたらIndicatorを非表示にする(対象はContentsDetailDataProviderのみ).
      *
      * @param viewIngType 視聴可否判定結果
+     * @param contentsType コンテンツ種別
      */
     private void responseResultCheck(final ContentUtils.ViewIngType viewIngType, final ContentUtils.ContentsType contentsType) {
         if (mContentsDetailDataProvider == null
@@ -1670,6 +1669,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     public void channelListCallback(final ArrayList<ChannelInfo> channels) {
         DTVTLogger.start();
         runOnUiThread(new Runnable() {
+            @SuppressWarnings("OverlyComplexMethod")
             @Override
             public void run() {
                 DTVTLogger.start();
@@ -1683,27 +1683,40 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     return;
                 }
 
-                //チャンネル情報取得して、更新する
-                if (!TextUtils.isEmpty(mServiceId)) {
-                    DtvContentsDetailFragment detailFragment = getDetailFragment();
-                    for (int i = 0; i < channels.size(); i++) {
-                        ChannelInfo channel = channels.get(i);
-                        if (mServiceId.equals(channel.getServiceId())) {
-                            mChannel = channel;
-                            //DBに保存されているUserInfoから契約情報を確認する
-                            String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(ContentDetailActivity.this));
-                            DTVTLogger.debug("contractInfo: " + contractInfo);
-                            mViewIngType = ContentUtils.getViewingType(contractInfo, mDetailFullData, mChannel, false);
-                            String channelName = channel.getTitle();
-                            OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
-                            if (detailData != null) {
-                                detailData.setChannelName(channelName);
-                                detailFragment.setOtherContentsDetailData(detailData);
+                //DBに保存されているUserInfoから契約情報を確認する
+                String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(ContentDetailActivity.this));
+                DTVTLogger.debug("contractInfo: " + contractInfo);
+
+                if (mContentsType != null) {
+                    //チャンネル情報取得して、更新する
+                    if (!TextUtils.isEmpty(mServiceId)) {
+                        DtvContentsDetailFragment detailFragment = getDetailFragment();
+                        for (int i = 0; i < channels.size(); i++) {
+                            ChannelInfo channel = channels.get(i);
+                            if (mServiceId.equals(channel.getServiceId())) {
+                                mChannel = channel;
+                                if (mContentsType.equals(ContentUtils.ContentsType.TV)
+                                        || mContentsType.equals(ContentUtils.ContentsType.HIKARI_TV)
+                                        || mContentsType.equals(ContentUtils.ContentsType.HIKARI_TV_WITHIN_TWO_HOUR)
+                                        || mContentsType.equals(ContentUtils.ContentsType.HIKARI_TV_NOW_ON_AIR)) {
+                                    //TV番組の場合はここで視聴可否判定する
+                                    mViewIngType = ContentUtils.getViewingType(contractInfo, mDetailFullData, channel);
+                                }
+                                String channelName = channel.getTitle();
+                                OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
+                                if (detailData != null) {
+                                    detailData.setChannelName(channelName);
+                                    detailFragment.setOtherContentsDetailData(detailData);
+                                }
+                                break;
                             }
-                            break;
                         }
+                        detailFragment.refreshChannelInfo();
                     }
-                    detailFragment.refreshChannelInfo();
+                }
+                //TV番組の視聴可否判定に入らなかったものはここで視聴可否判定する
+                if (mViewIngType == null || mViewIngType.equals(ContentUtils.ViewIngType.NONE_STATUS)) {
+                    mViewIngType = ContentUtils.getViewingType(contractInfo, mDetailFullData, mChannel);
                 }
                 if (mChannel == null) {
                     setViewPagerTab();
@@ -1711,11 +1724,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (mDetailFullData != null) {
                     checkWatchContents(mViewIngType);
                 }
-                //コンテンツの視聴可否判定に基づいてUI操作を行う
-                if (mViewIngType != null) {
-                    changeUIBasedContractInfo();
-                }
-                responseResultCheck(mViewIngType, mContentsType);
+                //コンテンツ種別ごとの視聴可否判定を実行
+                getViewingTypeRequest(mViewIngType);
                 DTVTLogger.end();
             }
         });
@@ -2881,6 +2891,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 || viewIngType == null
                 || ContentUtils.isSkipViewingType(viewIngType, contentsType)
                 || contentsType.equals(ContentUtils.ContentsType.OTHER)) {
+            DTVTLogger.debug("display thumbnail must data none");
             return;
         }
         DTVTLogger.debug("display thumbnail contents type = " + contentsType);
