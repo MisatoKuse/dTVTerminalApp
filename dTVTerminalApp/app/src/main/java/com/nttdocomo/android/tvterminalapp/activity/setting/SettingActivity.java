@@ -358,17 +358,27 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             public void onOKCallback(final boolean isOK) {
                 if (isOK) {
                     setRemoteProgressVisible(View.VISIBLE);
-                    boolean result = DlnaUtils.getActivationState(SettingActivity.this);
-                    if (result) {
-                        DlnaManager.shared().mLocalRegisterListener = SettingActivity.this;
-                        DlnaManager.shared().StartDtcp();
-                        DlnaManager.shared().RestartDirag();
-                        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(SettingActivity.this);
-                        DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn, getApplicationContext());
-                    } else {
-                        setRemoteProgressVisible(View.GONE);
-                        showErrorDialog(getString(R.string.activation_failed_msg));
-                    }
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            boolean result = DlnaUtils.getActivationState(SettingActivity.this);
+                            if (result) {
+                                DlnaManager.shared().mLocalRegisterListener = SettingActivity.this;
+                                DlnaManager.shared().StartDtcp();
+                                DlnaManager.shared().RestartDirag();
+                                DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(SettingActivity.this);
+                                DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn, getApplicationContext());
+                            } else {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        setRemoteProgressVisible(View.GONE);
+                                        showErrorDialog(getString(R.string.activation_failed_msg));
+                                    }
+                                });
+                            }
+                        }
+                    }).start();
                 }
             }
         });

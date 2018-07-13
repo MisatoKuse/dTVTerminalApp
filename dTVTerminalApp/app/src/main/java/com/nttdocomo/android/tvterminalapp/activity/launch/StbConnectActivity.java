@@ -157,19 +157,29 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
             public void onOKCallback(final boolean isOK) {
                 if (isOK) {
                     setRemoteProgressVisible(View.VISIBLE);
-                    boolean result = DlnaUtils.getActivationState(StbConnectActivity.this);
-                    DTVTLogger.warning("result = " + result);
-                    if (result) {
-                        DlnaManager.shared().mLocalRegisterListener = StbConnectActivity.this;
-                        DlnaManager.shared().StartDtcp();
-                        //初回使用からRestartで良いとの事なので、StartDiragへの変更は無用
-                        DlnaManager.shared().RestartDirag();
-                        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(StbConnectActivity.this);
-                        DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn, getApplicationContext());
-                    } else {
-                        setRemoteProgressVisible(View.GONE);
-                        showActivationErrorDialog();
-                    }
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            boolean result = DlnaUtils.getActivationState(StbConnectActivity.this);
+                            DTVTLogger.warning("result = " + result);
+                            if (result) {
+                                DlnaManager.shared().mLocalRegisterListener = StbConnectActivity.this;
+                                DlnaManager.shared().StartDtcp();
+                                //初回使用からRestartで良いとの事なので、StartDiragへの変更は無用
+                                DlnaManager.shared().RestartDirag();
+                                DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(StbConnectActivity.this);
+                                DlnaManager.shared().RequestLocalRegistration(dlnaDmsItem.mUdn, getApplicationContext());
+                            } else {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        setRemoteProgressVisible(View.GONE);
+                                        showActivationErrorDialog();
+                                    }
+                                });
+                            }
+                        }
+                    }).start();
                 }
             }
         });
