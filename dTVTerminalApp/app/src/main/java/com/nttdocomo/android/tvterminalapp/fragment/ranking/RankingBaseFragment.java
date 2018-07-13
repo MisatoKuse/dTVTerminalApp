@@ -234,7 +234,6 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
      */
     public void noticeRefresh() {
         if (null != mContentsAdapter) {
-            mContentsAdapter.resetMaxItemCount();
             mContentsAdapter.notifyDataSetChanged();
         }
     }

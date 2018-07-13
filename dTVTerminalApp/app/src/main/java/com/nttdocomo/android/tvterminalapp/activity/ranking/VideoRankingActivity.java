@@ -97,6 +97,7 @@ public class VideoRankingActivity extends BaseActivity implements
             if (null != baseFragment.getContentsAdapter()) {
                 List<ContentsData> list;
                 list = mRankingDataProvider.checkClipStatus(baseFragment.getData());
+                baseFragment.enableContentsAdapterCommunication();
                 baseFragment.updateContentsList(list);
                 DTVTLogger.debug("VideoRankingActivity::Clip Status Update");
             }
