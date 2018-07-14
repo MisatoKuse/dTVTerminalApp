@@ -582,7 +582,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         setThumbnailData(holder, listContentInfo);
         setRatStarData(holder, listContentInfo);
         setRecodingReservationStatusData(holder, listContentInfo);
-        setChannelName(holder, listContentInfo);
+        setChannelName(holder, listContentInfo, contentView);
         setClipIcon(holder, listContentInfo);
         setNowOnAirData(holder, listContentInfo, contentView);
         if (ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST.equals(mType)) {
@@ -953,8 +953,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      *
      * @param holder          ViewHolder
      * @param listContentInfo ContentsData
+     * @param contentView contentView
      */
-    private void setChannelName(final ViewHolder holder, final ContentsData listContentInfo) {
+    @SuppressWarnings("OverlyComplexMethod")
+    private void setChannelName(final ViewHolder holder, final ContentsData listContentInfo, final View contentView) {
         DTVTLogger.start();
 
         //ヌルチェック
@@ -963,6 +965,13 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         }
 
         if (!TextUtils.isEmpty(listContentInfo.getChannelName()) && mTabType != TabTypeItem.TAB_DEFAULT) { //ランク
+            //↓を判定条件に使っているため、直前する直前に初期化
+            if (holder.tv_recorded_hyphen == null) {
+                holder.tv_recorded_hyphen = contentView.findViewById(R.id.item_common_result_recorded_content_hyphen);
+            }
+            if (holder.tv_recorded_ch_name == null) {
+                holder.tv_recorded_ch_name = contentView.findViewById(R.id.item_common_result_recorded_content_channel_name);
+            }
             ContentUtils.setChannelNameOrMissedText(mContext, holder.tv_recorded_hyphen, holder.tv_recorded_ch_name, listContentInfo, mType);
             if (mType == ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST) {
                 holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.record_download_status_color));

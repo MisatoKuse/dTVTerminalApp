@@ -632,6 +632,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
                 contentInfo.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_THUMB_640));
             }
             contentInfo.setTitle(title);
+            contentInfo.setChannelName(title);
             contentInfo.setSearchOk(searchOk);
             contentInfo.setRatStar(map.get(JsonConstants.META_RESPONSE_RATING));
             contentInfo.setTvService(tvService);
