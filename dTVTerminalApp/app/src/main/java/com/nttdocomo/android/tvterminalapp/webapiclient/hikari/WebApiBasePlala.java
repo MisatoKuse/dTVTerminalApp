@@ -775,7 +775,14 @@ public class WebApiBasePlala {
             DTVTLogger.debug("communicationTask answer false = " + communicationTask);
 
             //ワンタイムトークンは取得できなかったので、そのまま通信を開始する
-            communicationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode);
+            //communicationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode);
+
+            //ワンタイムトークンが必要なAPIでトークンの取得に失敗した場合は、エラーとする
+            communicationTask.setOneTimeToken("");
+            //トークンエラーとする
+            returnCode.errorState.setErrorType(DtvtConstants.ErrorType.TOKEN_ERROR);
+            //呼び出し元にエラーを伝える
+            serviceTokenErrorCallback.onTokenError(returnCode);
         }
     }
 

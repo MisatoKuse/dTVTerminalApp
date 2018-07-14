@@ -56,6 +56,7 @@ public class DaccountReceiver extends BroadcastReceiver {
     /**コールバッククラス(STB画面用).*/
     private volatile static DaccountChangedCallBackForStb sDaccountChangedCallBackForStb;
 
+    @SuppressWarnings({"OverlyLongMethod", "OverlyComplexMethod"})
     @Override
     public void onReceive(final Context context, final Intent intent) {
         DTVTLogger.start();
@@ -157,7 +158,9 @@ public class DaccountReceiver extends BroadcastReceiver {
                 //ユーザー無効化通知を受け取った。
                 DTVTLogger.debug("INVALIDATE_ID_RECEIVER");
 
-                //ユーザーが無効化されていた場合は、次のOTT取得時にチェックするので、ここでは処理しない
+                //dアカウントのチェックをさせる為に、プリファレンスのdアカウント情報を削除する
+                SharedPreferencesUtils.setSharedPreferencesDaccountId(context,"");
+
                 break;
             case DaccountConstants.LINKED_LINE_RECEIVER:
                 //回線登録通知を受け取った。

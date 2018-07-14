@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.daccount;
 
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 /**
  * dアカウント認証画面の表示制御.
@@ -33,6 +34,11 @@ public enum OttGetAuthSwitch {
      * ダイアログを出すためのアクティビティ
      */
     private BaseActivity mActivity;
+
+    /**
+     * dアカウント認証キャンセル後のダイアログを、パーミッションチェックのダイアログよりも優先させるフラグ.
+     */
+    private boolean mSkipPermission = false;
 
     /**
      * コンストラクタ
@@ -114,4 +120,34 @@ public enum OttGetAuthSwitch {
             });
         }
     }
+
+    /**
+     * アクティビティのゲッター
+     * @return 取得済みアクティビティ
+     */
+    public BaseActivity getActivity() {
+        return mActivity;
+    }
+
+    /**
+     * パーミッションチェックスキップフラグのゲッター.
+     *
+     * @return パーミッションチェックスキップフラグの内容
+     */
+    public boolean isSkipPermission() {
+        DTVTLogger.start("get = " + mSkipPermission);
+        return mSkipPermission;
+    }
+
+    /**
+     * パーミッションチェックスキップフラグのセッター.
+     *
+     * @param skipPermission パーミッションチェックスキップフラグに入れたい内容
+     */
+    public void setSkipPermission(boolean skipPermission) {
+        DTVTLogger.start("set = " + skipPermission);
+        mSkipPermission = skipPermission;
+        DTVTLogger.end();
+    }
+
 }

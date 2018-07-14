@@ -805,8 +805,15 @@ public class BaseActivity extends FragmentActivity implements
 
         DaccountReceiver.setDaccountChangedCallBack(this);
 
+        //dアカウント認証画面の表示制御のインスタンスを取得
+        OttGetAuthSwitch ottGetAuthSwitch = OttGetAuthSwitch.getInstance();
+
         // BG → FG でのonResumeかを判定
-        if (app.getIsChangeApplicationVisible()) {
+        // dアカウント変更後の再起動フラグやパーミッションチェックスキップフラグが立っているならば、パーミッションチェックなどは行わない
+        if (app.getIsChangeApplicationVisible()
+                && !SharedPreferencesUtils.getSharedPreferencesRestartFlag(
+                        getApplicationContext())
+                && !ottGetAuthSwitch.isSkipPermission()) {
             if (DeviceStateUtils.isRootDevice()) {
                 showApFinishDialog(getString(R.string.common_root_device_detection_message));
                 //Root化を検知した時点で以降の処理はしない
@@ -828,6 +835,8 @@ public class BaseActivity extends FragmentActivity implements
         } else {
             onStartCommunication();
             downloadStatusCheck();
+            //パーミッションチェックフラグの効果は1度のみなので、リセットする
+            ottGetAuthSwitch.setSkipPermission(false);
         }
 
         StbConnectionManager.shared().setConnectionListener(this);
@@ -1887,7 +1896,6 @@ public class BaseActivity extends FragmentActivity implements
         DTVTLogger.end();
     }
 
-
     @Override
     public void daccountControlCallBack(final boolean result) {
         DTVTLogger.start();
@@ -1915,7 +1923,11 @@ public class BaseActivity extends FragmentActivity implements
             return;
         }
 
-        if (mDAccountControl != null && mDAccountControl.getResult() == IDimDefines.RESULT_USER_CANCEL && mFirstDaccountErrorHandler != null) {
+        if (mDAccountControl != null
+                && mDAccountControl.getResult() == IDimDefines.RESULT_USER_CANCEL
+                && mFirstDaccountErrorHandler != null) {
+            //dアカウント認証画面がキャンセルされたので、ログアウトダイアログを出すために、フラグを立てる
+            OttGetAuthSwitch.getInstance().setSkipPermission(true);
 
             mFirstDaccountErrorHandler.post(new Runnable() {
                 @Override
@@ -1962,6 +1974,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * (オーバーライドの為にprotected指定で分離)
      */
+    @SuppressWarnings("OverlyLongMethod")
     protected void showDAccountErrorDialog() {
         //現状エラー文言は1種類なので、文言切り替えは必要ない
         CustomDialog errorDialog = new CustomDialog(
