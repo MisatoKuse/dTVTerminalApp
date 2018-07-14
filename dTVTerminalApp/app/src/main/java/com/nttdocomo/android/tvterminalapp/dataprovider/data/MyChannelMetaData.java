@@ -129,7 +129,6 @@ public class MyChannelMetaData implements Serializable {
      * @param data キーの値
      */
     private void setMember(final String key, final Object data) {
-        DTVTLogger.start();
         if (!key.isEmpty()) {
             switch (key) {
                 case MY_CHANNEL_META_DATA_SERVICE_ID:
@@ -151,7 +150,6 @@ public class MyChannelMetaData implements Serializable {
 
             }
         }
-        DTVTLogger.end();
     }
 
     /**
@@ -187,7 +185,6 @@ public class MyChannelMetaData implements Serializable {
      * @param jsonObj Jsonオブジェクト
      */
     public void setData(final JSONObject jsonObj) {
-        DTVTLogger.start();
         if (jsonObj != null) {
             // 単一データ
             for (String item : mRootPara) {

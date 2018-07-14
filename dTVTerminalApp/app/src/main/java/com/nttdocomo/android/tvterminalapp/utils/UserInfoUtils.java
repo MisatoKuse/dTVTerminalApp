@@ -217,7 +217,6 @@ public class UserInfoUtils {
      * @return ユーザ状態
      */
     public static UserState getUserState(final Context context) {
-        DTVTLogger.start();
         UserState param;
         // dアカログイン状態取得
         String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(context);
@@ -248,7 +247,6 @@ public class UserInfoUtils {
                 }
             }
         }
-        DTVTLogger.end();
         return param;
     }
 
