@@ -1126,6 +1126,7 @@ public class WebApiBasePlala {
          * @param strings 不使用
          * @return 不使用
          */
+        @SuppressWarnings({"OverlyLongMethod", "OverlyComplexMethod"})
         @Override
         protected ReturnCode doInBackground(final Object... strings) {
             if (isCancelled() || mIsStop) {
@@ -1138,6 +1139,15 @@ public class WebApiBasePlala {
                 //そもそも通信のできない状態なので、ネットワークエラーとする
                 mReturnCode.errorState.setErrorType(
                         DtvtConstants.ErrorType.NETWORK_ERROR);
+
+                //以下の処理は行わずに帰る
+                return mReturnCode;
+            }
+
+            //ワンタイムトークンを使用する処理で値が存在しないならば、トークンエラーとする
+            if (mIsUseOtt && mOneTimeToken.isEmpty()) {
+                mReturnCode.errorState.setErrorType(
+                        DtvtConstants.ErrorType.TOKEN_ERROR);
 
                 //以下の処理は行わずに帰る
                 return mReturnCode;
@@ -1399,6 +1409,7 @@ public class WebApiBasePlala {
          * @param newUrlString 飛び先URL
          * @param parameter    使用するパラメータ・使用しない場合はヌルか空文字
          */
+        @SuppressWarnings("OverlyLongMethod")
         private void gotoRedirect(final String newUrlString, final String parameter) {
             DTVTLogger.start();
 
