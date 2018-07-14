@@ -490,6 +490,9 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         DlnaManager.shared().mDlnaManagerListener = null;
         //STB検索開始
         DlnaManager.shared().mDlnaManagerListener = this;
+        if (DlnaManager.shared().getContext() == null) {
+            DlnaManager.shared().setContext(getApplicationContext());
+        }
         DlnaManager.shared().StartDmp();
 
         //STB検索メッセージの出力
