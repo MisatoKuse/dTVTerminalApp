@@ -1702,6 +1702,10 @@ public class BaseActivity extends FragmentActivity implements
                 case R.id.header_stb_status_icon:
                     if (StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_IN) {
                         DTVTLogger.debug("Start RemoteControl");
+                        if (findViewById(R.id.base_progress_rl).getVisibility() == View.VISIBLE) {
+                            DTVTLogger.debug("Return RemoteControl");
+                            return;
+                        }
                         if (v.getContext() instanceof ContentDetailActivity) {
                             if (((ContentDetailActivity) v.getContext()).getControllerVisible()) {
                                 // コンテンツ詳細画面でコントローラのヘッダーを表示する場合

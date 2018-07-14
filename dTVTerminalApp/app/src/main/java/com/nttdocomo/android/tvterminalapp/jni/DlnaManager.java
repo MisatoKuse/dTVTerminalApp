@@ -447,6 +447,13 @@ public class DlnaManager {
     }
 
     /**
+     * Dlna起動されるかどうか.
+     */
+    public boolean dlnaIsStart() {
+        return DlnaManager.shared().mIsStarted;
+    }
+
+    /**
      * ローカルレジストレーションの依頼を行う.
      *
      * @param udn udn
