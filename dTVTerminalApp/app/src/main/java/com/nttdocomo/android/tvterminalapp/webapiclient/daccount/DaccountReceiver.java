@@ -158,9 +158,7 @@ public class DaccountReceiver extends BroadcastReceiver {
                 //ユーザー無効化通知を受け取った。
                 DTVTLogger.debug("INVALIDATE_ID_RECEIVER");
 
-                //dアカウントのチェックをさせる為に、プリファレンスのdアカウント情報を削除する
-                SharedPreferencesUtils.setSharedPreferencesDaccountId(context,"");
-
+                //ユーザーが無効化されていた場合は、次のOTT取得時にチェックするので、ここでは処理しない
                 break;
             case DaccountConstants.LINKED_LINE_RECEIVER:
                 //回線登録通知を受け取った。
