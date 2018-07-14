@@ -34,6 +34,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDet
 import com.nttdocomo.android.tvterminalapp.dataprovider.dlna.DlnaContentRecordedDataProvider;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedFragmentFactory;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaObject;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.rec.DlnaRecVideoItem;
@@ -123,7 +124,12 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         enableHeaderBackIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
-
+        if (!DlnaManager.shared().dlnaIsStart()) {
+            StbConnectionManager.shared().launch(getApplicationContext());
+            StbConnectionManager.shared().initializeState();
+            DlnaManager.shared().launch(getApplicationContext());
+            DlnaManager.shared().Start(getApplicationContext());
+        }
         registReceiver();
         initView();
         initTabView();
