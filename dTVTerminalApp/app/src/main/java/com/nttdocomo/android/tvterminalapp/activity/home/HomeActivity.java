@@ -282,8 +282,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             mLinearLayout.setVisibility(View.VISIBLE);
             relativeLayout.setVisibility(View.GONE);
 
-            //プログレスの解除＝新情報の追加なので、スクロール位置の補正を行う
-            if (!mAlreadyScroll) {
+            //プログレスの解除＝新情報の追加なので、スクロール位置の補正を行う(通信手段が無い場合、mScrollViewが未初期化でここに来る事があったので、ヌルチェックを追加)
+            if (!mAlreadyScroll && mScrollView != null) {
                 //既にユーザー操作によるスクロールがまだ行われていない場合は、補正を行う
                 mScrollView.setScrollY(0);
             }
@@ -317,8 +317,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     protected void onResume() {
         enableStbStatusIcon(true);
         if (!isOttChecked) {
-            isOttChecked = true;
-            setDaccountControl();
+            //この段階で通信不能だった場合はdアカウントの処理を呼び出さない。事実上ホーム画面は動作しないので、問題は無い
+            if(NetWorkUtils.isOnline(this)) {
+                isOttChecked = true;
+                setDaccountControl();
+            } else {
+                //dアカウントの処理を行わないとグローバルメニューを活性化する機会が失われるので、この時点で活性化する
+                setMenuIconEnabled(true);
+            }
         }
 
         //ユーザー情報取得開始(super.onResumeで行われるdアカウントの取得よりも先に行う事で、
