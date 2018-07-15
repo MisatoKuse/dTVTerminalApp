@@ -248,10 +248,13 @@ public class TvProgramListActivity extends BaseActivity implements
      */
     private final static String TAB_INDEX = "tabIndex";
     /**
-     * 番組RecyclerViewキャッシュサイズ.
+     * 番組RecyclerViewキャッシュサイズ.多いとViewが残りやすいがメモリを消費する.
      */
-    private final static int PROGRAM_RECYCLER_CACHE_SIZE = 10;
-
+    private final static int PROGRAM_RECYCLER_CACHE_SIZE = 14;
+    /**
+     * 番組RecyclerView PreDraw領域比率(ディスプレイ横幅に対する倍数).増やすと先読み数が増えるが重くなる.
+     */
+    private final static float PROGRAM_RECYCLER_EXTRA_WIDTH = 2.5f;
     /**
      * NOWバーの時刻.
      */
@@ -874,7 +877,7 @@ public class TvProgramListActivity extends BaseActivity implements
 
         public PreLoadLayoutManager(Context context) {
             super(context);
-            mDisplayWidth = context.getResources().getDisplayMetrics().widthPixels * 2;
+            mDisplayWidth = (int) (context.getResources().getDisplayMetrics().widthPixels * PROGRAM_RECYCLER_EXTRA_WIDTH);
         }
 
         @Override

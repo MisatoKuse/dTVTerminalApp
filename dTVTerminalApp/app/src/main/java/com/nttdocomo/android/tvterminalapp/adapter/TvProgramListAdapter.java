@@ -166,6 +166,15 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      */
     private final static int DATE_COMPARE_TO_LOW = -1;
     /**
+     * クリップ非活性フラグ.
+     */
+    private boolean mIsClipActive;
+    /**
+     * 番組描画間隔. 短いとスクロールが重くなるが描画が遅くなる
+     */
+    private final static int PROGRAM_DRAW_DURATION_TIME = 100;
+
+    /**
      * コンストラクタ.
      *
      * @param mContext     コンテクスト
@@ -197,6 +206,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 }
             }
         }
+        mIsClipActive = UserInfoUtils.getClipActive(mContext);
         DTVTLogger.end();
     }
 
@@ -228,6 +238,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         newChNo = new int[chNoList.size()];
         for (int j = 0; j < chNoList.size(); j++) {
             newChNo[j] = chNoList.get(j);
+            DTVTLogger.debug("###NeedChNo:"+ newChNo[j]);
         }
         return newChNo;
     }
@@ -311,7 +322,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
         DTVTLogger.start();
         ChannelInfo itemChannel = mProgramList.get(position);
-        DTVTLogger.debug("###onBindViewHolder position:" + position + ",old ChNo:" + holder.chNo + ",new ChNo:" + itemChannel.getChannelNo());
+        DTVTLogger.debug("###onBindViewHolder Pos:" + position + ",old ChNo:" + holder.chNo + ",new ChNo:" + itemChannel.getChannelNo());
         holder.chNo = itemChannel.getChannelNo();
         setSchedule(itemChannel.getSchedules(), holder);
         mMyViewHolder.add(holder);
@@ -321,9 +332,9 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     @Override
     public void onViewRecycled(final MyViewHolder holder) {
         super.onViewRecycled(holder);
+        DTVTLogger.debug("###onViewRecycled ChNo:" + holder.chNo + " Pos:" + holder.getAdapterPosition());
         holder.stopAddContentViews();
         holder.layout.removeAllViewsInLayout();
-        DTVTLogger.debug("###onViewRecycled chNo:" + holder.chNo);
         mMyViewHolder.remove(holder);
         holder.chNo = 0xFFFFFFFF;
     }
@@ -572,7 +583,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 // 表示領域が足りない場合は非表示.
                 itemViewHolder.mClipButton.setVisibility(View.GONE);
             } else {
-                if (!UserInfoUtils.getClipActive(mContext)) {
+                if (mIsClipActive) {
                     //未ログイン又は未契約時はクリップボタンを非活性にする
                     if (endDate.compareTo(curDate) == DATE_COMPARE_TO_LOW) {
                         // 放送終了
@@ -746,6 +757,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         boolean mIsRunning = false;
         /**描画完了フラグ.*/
         boolean mIsCompleted = false;
+        /**描画Timer.*/
+        Timer mTimer = null;
 
         /**
          * コンストラクタ.
@@ -762,7 +775,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         public void startAddContentViews(final ArrayList<ScheduleInfo> itemSchedules) {
             final int itemNum = itemSchedules.size();
             if(itemNum > 0) {
-                DTVTLogger.start("setItemView start ChNo:" + itemSchedules.get(0).getChNo());
+                DTVTLogger.start("###setItemView start ChNo:" + itemSchedules.get(0).getChNo() + " Pos:" + MyViewHolder.this.getAdapterPosition() + " obj:" + MyViewHolder.this.hashCode());
 
                 TimerTask task = new TimerTask() {
                     int count = 0;
@@ -773,35 +786,35 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                         mHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                if (mIsRunning) {
+                                if (mTimer != null) {
                                     if (count < itemNum) {
                                         ScheduleInfo itemSchedule = itemSchedules.get(count);
                                         ItemViewHolder itemViewHolder = new ItemViewHolder(itemSchedules.get(count));
                                         setView(itemViewHolder, itemSchedule);
                                         layout.addView(itemViewHolder.mView);
-
-                                        DTVTLogger.debug("addContentView! count:" + count + " ChNo:" + itemSchedule.getChNo());
+//                                        DTVTLogger.debug("###addContentView! count:" + count + " ChNo:" + itemSchedule.getChNo() + " Pos:" + MyViewHolder.this.getAdapterPosition() + " obj:" + MyViewHolder.this.hashCode());
                                     }
                                     count++;
                                     if (count >= itemNum) {
                                         // UIスレッド
-                                        cancel();
+                                        DTVTLogger.debug("###AddContentViews Complete! ChNo:" + itemSchedules.get(0).getChNo() + " Pos:" + MyViewHolder.this.getAdapterPosition() + " obj:" + MyViewHolder.this.hashCode());
                                         mIsCompleted = true;
-                                        mIsRunning = false;
-                                        DTVTLogger.debug("AddContentViews Complete! ChNo:" + itemSchedules.get(0).getChNo());
+                                        cancel();
+                                        mTimer.cancel();
+                                        mTimer = null;
                                     }
                                 } else {
+                                    DTVTLogger.debug("###AddContentViews Cancel! ChNo:" + itemSchedules.get(0).getChNo() + " Pos:" + MyViewHolder.this.getAdapterPosition() + " obj:" + MyViewHolder.this.hashCode());
                                     cancel();
                                 }
                             }
                         });
                     }
                 };
-                if (!mIsRunning) {
-                    Timer t = new Timer();
-                    t.schedule(task, 0, 50);
+                if (mTimer == null) {
+                    mTimer = new Timer();
+                    mTimer.schedule(task, 0, PROGRAM_DRAW_DURATION_TIME);
                 }
-                mIsRunning = true;
                 DTVTLogger.end();
             }
         }
@@ -810,9 +823,13 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
          *コンテンツビュー設定ストップ.
          */
         public void stopAddContentViews() {
+            if (mTimer != null) {
+                mTimer.cancel();
+                mTimer = null;
+            }
             mHandler.removeCallbacksAndMessages(null);
-            mIsRunning = false;
             mIsCompleted = false;
+            DTVTLogger.debug("###stopAddContentViews ! ChNo:" + chNo + " Pos:" + this.getAdapterPosition()  + " obj:" + this.hashCode());
         }
 
 
@@ -910,8 +927,10 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * @param holder チャンネル枠
      */
     private void setItemView(final ArrayList<ScheduleInfo> itemSchedules, final MyViewHolder holder) {
-        if (!holder.mIsRunning && !holder.mIsCompleted) {
+        if (holder.mTimer == null && !holder.mIsCompleted) {
             holder.startAddContentViews(itemSchedules);
+        } else {
+            DTVTLogger.debug("###Ch Now Drawing ChNo:" + holder.chNo);
         }
     }
 
