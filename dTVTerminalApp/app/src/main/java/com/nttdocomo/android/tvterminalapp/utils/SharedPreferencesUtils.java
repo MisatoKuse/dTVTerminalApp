@@ -399,7 +399,6 @@ public class SharedPreferencesUtils {
      * @return ペアリング状態
      */
     public static boolean getSharedPreferencesDecisionParingSettled(final Context context) {
-        DTVTLogger.debug("getSharedPreferencesDecisionParingSettled");
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
 
@@ -583,7 +582,6 @@ public class SharedPreferencesUtils {
      * @return dアカウント
      */
     public static String getSharedPreferencesDaccountId(final Context context) {
-        DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 LAST_D_ACCOUNT_ID, Context.MODE_PRIVATE);
 
@@ -848,7 +846,6 @@ public class SharedPreferencesUtils {
      * @return ユーザ情報
      */
     public static List<UserInfoList> getSharedPreferencesUserInfo(final Context context) {
-        DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 USER_INFO_SERIALIZABLE_DATA_KEY, Context.MODE_PRIVATE);
 

@@ -198,7 +198,6 @@ public class ClipUtils {
                                                final String eventId,
                                                final String crId,
                                                final String titleId) {
-        DTVTLogger.start();
 
         //クリップキーリストがない場合はfalseを返却
         if (mapList == null || mapList.size() < 1) {
@@ -243,7 +242,6 @@ public class ClipUtils {
                     break;
             }
         }
-        DTVTLogger.end();
         return false;
     }
 }

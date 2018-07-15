@@ -15,6 +15,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.ThumbnailCacheManager;
 import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
 import java.util.LinkedHashMap;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * サムネイル取得用プロパイダ.
@@ -52,7 +53,7 @@ public class ThumbnailProvider {
 	/**
 	 * 最大Queue数.
 	 */
-	private int mMaxItemViewCount;
+	private int mMaxItemViewCount = 0;
 	/**
 	 * 画像サイズ種類.
 	 */
@@ -138,7 +139,11 @@ public class ThumbnailProvider {
 			++mCurrentQueueCount;
 			String imageUrl = mListUrl.entrySet().iterator().next().getKey();
 			ImageView imageView = mListUrl.get(imageUrl);
-			new ThumbnailDownloadTask(imageView, this, mContext, mImageSizeType).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, imageUrl);
+			try {
+				new ThumbnailDownloadTask(imageView, this, mContext, mImageSizeType).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, imageUrl);
+			} catch (RejectedExecutionException e) {
+				DTVTLogger.debug(e);
+			}
 			mListUrl.remove(imageUrl);
 		}
 

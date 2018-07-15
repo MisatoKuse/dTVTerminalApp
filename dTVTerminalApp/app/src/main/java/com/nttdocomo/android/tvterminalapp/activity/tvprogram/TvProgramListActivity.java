@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.tvprogram;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -246,6 +247,10 @@ public class TvProgramListActivity extends BaseActivity implements
      * 前回のタブポジション.
      */
     private final static String TAB_INDEX = "tabIndex";
+    /**
+     * 番組RecyclerViewキャッシュサイズ.
+     */
+    private final static int PROGRAM_RECYCLER_CACHE_SIZE = 10;
 
     /**
      * NOWバーの時刻.
@@ -358,7 +363,8 @@ public class TvProgramListActivity extends BaseActivity implements
         mTitleTextView.setOnClickListener(this);
         mTitleArrowImage.setOnClickListener(this);
         mProgramRecyclerView.setHasFixedSize(true);
-        mProgramRecyclerView.setItemViewCacheSize(20);
+        mProgramRecyclerView.setItemViewCacheSize(PROGRAM_RECYCLER_CACHE_SIZE);
+
         mProgramScrollViewParent.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(final View view, final MotionEvent motionEvent) {
@@ -844,10 +850,10 @@ public class TvProgramListActivity extends BaseActivity implements
             DTVTLogger.debug("channelInfo size:" + channelInfo.size());
             DTVTLogger.debug("channelInfo :" + channelInfo.toString());
             if (mProgramRecyclerView.getLayoutManager() == null) {
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(
+                PreLoadLayoutManager preLoadLayoutManager = new PreLoadLayoutManager(
                         getApplicationContext());
-                linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-                mProgramRecyclerView.setLayoutManager(linearLayoutManager);
+                preLoadLayoutManager.setOrientation(PreLoadLayoutManager.HORIZONTAL);
+                mProgramRecyclerView.setLayoutManager(preLoadLayoutManager);
             }
             if (channelInfo.size() > 0) {
                 mTvProgramListAdapter.setProgramList(channelInfo);
@@ -857,6 +863,24 @@ public class TvProgramListActivity extends BaseActivity implements
             mTimeScrollView.setOnScrollOffsetListener(this);
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * 番組RecyclerView用の横幅拡張レイアウトManager（getExtraLayoutSpaceでの幅指定分PreLoadするようになる）.
+     */
+    public class PreLoadLayoutManager extends LinearLayoutManager {
+
+        private final int mDisplayWidth;
+
+        public PreLoadLayoutManager(Context context) {
+            super(context);
+            mDisplayWidth = context.getResources().getDisplayMetrics().widthPixels * 2;
+        }
+
+        @Override
+        protected int getExtraLayoutSpace(RecyclerView.State state) {
+            return mDisplayWidth;
+        }
     }
 
     /**
@@ -962,12 +986,11 @@ public class TvProgramListActivity extends BaseActivity implements
 
     @Override
     public void channelInfoCallback(final ChannelInfoList channelsInfo) {
-        //TODO :★ここでAdaptor生成するのではなく、チャンネルリストが取得できた時点でAdaptorを生成してしまう。
-        //TODO :★データの管理はAdaptor任せにして、必要なデータはAdaptorからActivity側に取得要求するようにする。
-        //TODO :★生成されているAdaptorへ番組データを渡す処理にする。
-        //TODO :★Adaptorはチャンネルリストに対して、取得した番組情報をMappingして溜めていく。
-        //TODO :★ちなみに現状、上部のチャンネルの表示はチャンネルリストを元に表示しているが、
-        //TODO :★ここで受け取るデータは番組のないチャンネルはデータ上含まれないのでチャンネルと番組欄にズレが起きる。
+        //ここでAdaptor生成するのではなく、チャンネルリストが取得できた時点でAdaptorを生成してしまう。
+        //★データの管理はAdaptor任せにして、必要なデータはAdaptorからActivity側に取得要求するようにする。
+        //★生成されているAdaptorへ番組データを渡す処理にする。
+        //★Adaptorはチャンネルリストに対して、取得した番組情報をMappingして溜めていく。
+        //★ここで受け取るデータは現状、番組のないチャンネルはデータ上含まれない。
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -984,9 +1007,9 @@ public class TvProgramListActivity extends BaseActivity implements
     @Override
     public void channelListCallback(final ArrayList<ChannelInfo> channels) {
         DTVTLogger.start();
-        //TODO :★ここでAdaptor生成する
-        //TODO :★Adaptorはチャンネルリストに対して、取得した番組情報をMappingして溜めていく
-        //TODO :★また初回として先頭○○チャンネル分だけ番組データをリクエストする。○○はRecyclerのキャッシュと同じ分
+        //★ここでAdaptor生成する
+        //★Adaptorはチャンネルリストに対して、取得した番組情報をMappingして溜めていく
+        //★また初回として先頭○○チャンネル分だけ番組データをリクエストする。○○はRecyclerのキャッシュと同じ分
         if (mTabIndex == mMyChannelTabNo) {
             //MY番組表
             if (channels != null && channels.size() > 0) {
@@ -1019,6 +1042,7 @@ public class TvProgramListActivity extends BaseActivity implements
                 }
                 for (int i = 0; i < channelNum; i++) {
                     channelNos[i] = channels.get(i).getChannelNo();
+                    DTVTLogger.debug("###set channelList ChNo:" + channels.get(i).getChannelNo() + " ChName:" + channels.get(i).getTitle());
                 }
                 String dateStr = mSelectDateStr.replace("-", "");
                 String[] dateList = {dateStr};
