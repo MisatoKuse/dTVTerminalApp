@@ -772,7 +772,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 channelLoadCompleted();
                 return;
             }
-            mScaledDownProgramListDataProvider.getProgram(channelNos, mDateList);
+            mScaledDownProgramListDataProvider.getProgram(channelNos, mDateList, false);
         } else {
             channelLoadCompleted();
         }
@@ -1724,7 +1724,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     @Override
-    public void channelInfoCallback(final ChannelInfoList channelsInfo) {
+    public void channelInfoCallback(final ChannelInfoList channelsInfo, final int[] chNo) {
         DTVTLogger.start();
         runOnUiThread(new Runnable() {
             @SuppressWarnings("OverlyLongMethod")

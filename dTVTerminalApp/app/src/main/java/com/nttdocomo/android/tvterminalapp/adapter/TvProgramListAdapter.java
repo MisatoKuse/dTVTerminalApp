@@ -31,9 +31,10 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetail
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
-import com.nttdocomo.android.tvterminalapp.utils.ViewUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
 import java.text.ParseException;
@@ -141,6 +142,10 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * クリップボタン上マージン(dp).
      */
     private final static int CLIP_BUTTON_TOP_MARGIN_SIZE = 8;
+    /**
+     * コンテンツ取得エラーテキストサイズ.
+     */
+    private final static int GET_CONTENT_ERROR_TEXT_SIZE = 11;
     /**
      * チャンネルのWIDTH.
      */
@@ -348,78 +353,112 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * @param itemViewHolder ビューホルダー
      * @param itemSchedule   番組情報
      */
+    @SuppressWarnings("OverlyLongMethod")
     private void setView(final ItemViewHolder itemViewHolder, final ScheduleInfo itemSchedule) {
-        //年齢制限フラグ
-        boolean isParental = StringUtils.isParental(mAgeReq, itemSchedule.getRValue());
-        itemViewHolder.mThumbnailURL = itemSchedule.getImageUrl();
-
-        String startTime = itemSchedule.getStartTime();
-        String endTime = itemSchedule.getEndTime();
-        if (!TextUtils.isEmpty(startTime)) {
-            itemViewHolder.mStartM.setText(startTime.substring(14, 16));
-        }
-        String start = slash2Hyphen(startTime);
-        String end = slash2Hyphen(endTime);
-        Date endDate = new Date();
-        Date curDate = new Date();
-        Date startData = new Date();
-        SimpleDateFormat format = new SimpleDateFormat(CUR_TIME_FORMAT, Locale.JAPAN);
-        try {
-            endDate = format.parse(end);
-            curDate = format.parse(mCurDate);
-            startData = format.parse(start);
-        } catch (ParseException e) {
-            DTVTLogger.debug(e);
-        }
-        float marginTop = itemSchedule.getMarginTop();
-        float myHeight = itemSchedule.getMyHeight();
-        itemViewHolder.mLayoutParams.height = (int) (myHeight * (((TvProgramListActivity) mContext).dip2px(ONE_HOUR_UNIT)));
-        itemViewHolder.mView.setLayoutParams(itemViewHolder.mLayoutParams);
-        itemViewHolder.mView.setY(marginTop * (((TvProgramListActivity) mContext).dip2px(ONE_HOUR_UNIT)));
         String contentType = itemSchedule.getContentType();
-        //放送済み
-        if (endDate.compareTo(curDate) == DATE_COMPARE_TO_LOW) {
-            watchByContentType(itemViewHolder, contentType);
-        } else {
-            //放送中
-            if (startData.compareTo(curDate) == DATE_COMPARE_TO_LOW) {
-                itemViewHolder.mView.setBackgroundResource(R.drawable.program_playing_gray);
-            } else {
-                //未放送
-                itemViewHolder.mView.setBackgroundResource(R.drawable.program_start_gray);
-            }
-            itemViewHolder.mView.setTag(VIEW_HOLDER_TAG_ONE);
-        }
+        String title;
 
         boolean isClipHide = false;
-        if (!itemSchedule.isClipExec() || isParental) {
-            isClipHide = true;
-        }
-
-        String title;
-        if (isParental) {
-            title = StringUtils.returnAsterisk(mContext);
-        } else {
+        RelativeLayout layout = itemViewHolder.mView.findViewById(R.id.tv_program_item_panel_clip_rv);
+        if (isFailedContent(itemSchedule)) {
+            layout.setVisibility(View.GONE);
+            itemViewHolder.mView.setBackgroundResource(R.drawable.program_start_gray);
             title = itemSchedule.getTitle();
-            itemViewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View view) {
-                    if ((int) view.getTag() == VIEW_HOLDER_TAG_ONE) {
-                        Intent intent = new Intent();
-                        intent.setClass(mContext, ContentDetailActivity.class);
-                        intent.putExtra(DtvtConstants.SOURCE_SCREEN, ((TvProgramListActivity) mContext).getComponentName().getClassName());
-                        OtherContentsDetailData detailData = getOtherContentsDetailData(itemSchedule, ContentUtils.PLALA_INFO_BUNDLE_KEY);
-                        intent.putExtra(detailData.getRecommendFlg(), detailData);
-                        TvProgramListActivity tvProgramListActivity = (TvProgramListActivity) mContext;
-                        tvProgramListActivity.startActivity(intent);
-                    }
+            changeProgramInfoInOrderToShow(itemViewHolder, false, true, itemSchedule);
+            ViewGroup.LayoutParams lp = itemViewHolder.mContent.getLayoutParams();
+            ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams)lp;
+            int startMargin = mContext.getResources().getDimensionPixelSize(R.dimen.tv_program_item_panel_margin_right);
+            mlp.setMargins(startMargin, 0, 0, 0);
+            //マージンを設定
+            itemViewHolder.mContent.setLayoutParams(mlp);
+            itemViewHolder.mContent.setTextSize(GET_CONTENT_ERROR_TEXT_SIZE);
+            itemViewHolder.mContent.setText(title);
+        } else {
+            layout.setVisibility(View.VISIBLE);
+            //年齢制限フラグ
+            boolean isParental = StringUtils.isParental(mAgeReq, itemSchedule.getRValue());
+            itemViewHolder.mThumbnailURL = itemSchedule.getImageUrl();
+
+            String startTime = DateUtils.formatDateCheckToEpoch(itemSchedule.getStartTime());
+            String endTime = DateUtils.formatDateCheckToEpoch(itemSchedule.getEndTime());
+            if (!TextUtils.isEmpty(startTime)) {
+                itemViewHolder.mStartM.setText(startTime.substring(14, 16));
+            }
+            String start = slash2Hyphen(startTime);
+            String end = slash2Hyphen(endTime);
+            Date endDate = new Date();
+            Date curDate = new Date();
+            Date startData = new Date();
+            SimpleDateFormat format = new SimpleDateFormat(CUR_TIME_FORMAT, Locale.JAPAN);
+            try {
+                endDate = format.parse(end);
+                curDate = format.parse(mCurDate);
+                startData = format.parse(start);
+            } catch (ParseException e) {
+                DTVTLogger.debug(e);
+            }
+            float marginTop = itemSchedule.getMarginTop();
+            float myHeight = itemSchedule.getMyHeight();
+            itemViewHolder.mLayoutParams.height = (int) (myHeight * (((TvProgramListActivity) mContext).dip2px(ONE_HOUR_UNIT)));
+            itemViewHolder.mView.setLayoutParams(itemViewHolder.mLayoutParams);
+            itemViewHolder.mView.setY(marginTop * (((TvProgramListActivity) mContext).dip2px(ONE_HOUR_UNIT)));
+            //放送済み
+            if (endDate.compareTo(curDate) == DATE_COMPARE_TO_LOW) {
+                watchByContentType(itemViewHolder, contentType);
+            } else {
+                //放送中
+                if (startData.compareTo(curDate) == DATE_COMPARE_TO_LOW) {
+                    itemViewHolder.mView.setBackgroundResource(R.drawable.program_playing_gray);
+                } else {
+                    //未放送
+                    itemViewHolder.mView.setBackgroundResource(R.drawable.program_start_gray);
                 }
-            });
+                itemViewHolder.mView.setTag(VIEW_HOLDER_TAG_ONE);
+            }
+
+            if (!itemSchedule.isClipExec() || isParental) {
+                isClipHide = true;
+            }
+
+            if (isParental) {
+                title = StringUtils.returnAsterisk(mContext);
+            } else {
+                title = itemSchedule.getTitle();
+                itemViewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View view) {
+                        if ((int) view.getTag() == VIEW_HOLDER_TAG_ONE) {
+                            Intent intent = new Intent();
+                            intent.setClass(mContext, ContentDetailActivity.class);
+                            intent.putExtra(DtvtConstants.SOURCE_SCREEN, ((TvProgramListActivity) mContext).getComponentName().getClassName());
+                            OtherContentsDetailData detailData = getOtherContentsDetailData(itemSchedule, ContentUtils.PLALA_INFO_BUNDLE_KEY);
+                            intent.putExtra(detailData.getRecommendFlg(), detailData);
+                            TvProgramListActivity tvProgramListActivity = (TvProgramListActivity) mContext;
+                            tvProgramListActivity.startActivity(intent);
+                        }
+                    }
+                });
+            }
+            String detail = itemSchedule.getDetail();
+            itemViewHolder.mDetail.setText(detail);
+            changeProgramInfoInOrderToShow(itemViewHolder, isParental, isClipHide, itemSchedule);
+            itemViewHolder.mContent.setText(title);
         }
-        String detail = itemSchedule.getDetail();
-        itemViewHolder.mDetail.setText(detail);
-        changeProgramInfoInOrderToShow(itemViewHolder, isParental, isClipHide, itemSchedule);
-        itemViewHolder.mContent.setText(title);
+    }
+
+    /**
+     * コンテンツデータ未取得判定.
+     *
+     * @param itemSchedule 番組表データ
+     * @return 未取得フラグ
+     */
+    private boolean isFailedContent(final ScheduleInfo itemSchedule) {
+        if (itemSchedule.getDispType().equals(DataConverter.FAILED_CONTENT_DATA)
+                || itemSchedule.getDispType().equals(DataConverter.NO_CONTENT_DATA)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -454,8 +493,10 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         if (TextUtils.isEmpty(time)) {
             return "";
         }
-        return time.substring(0, 4) + HYPHEN + time.substring(5, 7) + HYPHEN
-                + time.substring(8, 10) + time.substring(11, 19);
+        //将来のEpoch秒対応のため、ここでEpoch or 日付を吸収する
+        String convertTime = DateUtils.formatDateCheckToEpoch(time);
+        return convertTime.substring(0, 4) + HYPHEN + convertTime.substring(5, 7) + HYPHEN
+                + convertTime.substring(8, 10) + convertTime.substring(11, 19);
     }
 
     /**

@@ -35,6 +35,7 @@
     <string name="status_bar_height_deftype">dimen</string>
     <string name="status_bar_height_defpackage">android</string>
     <string name="common_empty_data_message">コンテンツがありません</string>
+    <string name="common_failed_data_message">データの取得に失敗しました</string>
     <string name="common_get_data_failed_message">取得に失敗しました</string>
     <string name="common_root_device_detection_message">Rootデバイスを検知したためアプリを終了します</string>
     <string name="common_until">まで</string>

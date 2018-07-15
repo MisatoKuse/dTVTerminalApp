@@ -965,7 +965,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         }
 
         if (!TextUtils.isEmpty(listContentInfo.getChannelName()) && mTabType != TabTypeItem.TAB_DEFAULT) { //ランク
-            //↓を判定条件に使っているため、直前する直前に初期化
+            //↓を判定条件に使っているため、直前に初期化
             if (holder.tv_recorded_hyphen == null) {
                 holder.tv_recorded_hyphen = contentView.findViewById(R.id.item_common_result_recorded_content_hyphen);
             }

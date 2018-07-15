@@ -3313,7 +3313,7 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     @Override
-    public void channelInfoCallback(final ChannelInfoList channelsInfo) {
+    public void channelInfoCallback(final ChannelInfoList channelsInfo, final int[] chNo) {
         //Nop 仕様上実装が必要なため空メソッドとして定義
     }
 
