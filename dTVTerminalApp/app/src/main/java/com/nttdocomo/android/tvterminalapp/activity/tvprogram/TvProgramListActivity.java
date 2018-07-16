@@ -75,10 +75,6 @@ public class TvProgramListActivity extends BaseActivity implements
         MyChannelDataProvider.ApiDataProviderCallback,
         TabItemLayout.OnClickTabTextListener {
     /**
-     * hikariタブインデックス.
-     */
-    private static final int INDEX_TAB_HIKARI = 1;
-    /**
      * マイチャンネルタブインデックス.
      */
     private int mMyChannelTabNo = -1;
@@ -189,10 +185,6 @@ public class TvProgramListActivity extends BaseActivity implements
      */
     private ArrayList<ChannelInfo> mHikariChannels;
     /**
-     * マイ番組表にマッピングされたデータ.
-     */
-    private ArrayList<ChannelInfo> mMappedMyChannelList;
-    /**
      * マイ番組表データ.
      */
     private ArrayList<MyChannelMetaData> mMyChannelDataList = null;
@@ -240,10 +232,6 @@ public class TvProgramListActivity extends BaseActivity implements
      * リスト0件メッセージ.
      */
     private TextView mNoDataMessage;
-    /**
-     * スクロールオフセット.
-     */
-    private int mScrollOffset = 0;
     /**
      * 前回のタブポジション.
      */
@@ -650,7 +638,6 @@ public class TvProgramListActivity extends BaseActivity implements
         programList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(final RecyclerView recyclerView, final int dx, final int dy) {
-                mScrollOffset = dx;
                 if (recyclerView.getScrollState() != RecyclerView.SCROLL_STATE_IDLE) {
                     channelList.stopScroll();
                     channelList.scrollBy(dx, dy);
@@ -669,19 +656,16 @@ public class TvProgramListActivity extends BaseActivity implements
      * @param newState　スクロール終わった状態
      */
     private void setProgramData(final int newState) {
-        DTVTLogger.start();
+        DTVTLogger.start("ScroolState:" + newState);
         switch (newState) {
             case SCROLL_STATE_IDLE:
-                if (mScrollOffset > 0) {
-                    if (mTvProgramListAdapter != null) {
-                        String dateStr = mSelectDateStr.replace("-", "");
-                        String[] dateList = {dateStr};
-                        int[] chList = mTvProgramListAdapter.getNeedProgramChannels();
-                        if (chList != null && chList.length > 0) {
-                            mScaledDownProgramListDataProvider.getProgram(chList, dateList, false);
-                        }
+                if (mTvProgramListAdapter != null) {
+                    String dateStr = mSelectDateStr.replace("-", "");
+                    String[] dateList = {dateStr};
+                    int[] chList = mTvProgramListAdapter.getNeedProgramChannels();
+                    if (chList != null && chList.length > 0) {
+                        mScaledDownProgramListDataProvider.getProgram(chList, dateList, false);
                     }
-                    mScrollOffset = 0;
                 }
                 break;
             default:
@@ -1311,6 +1295,9 @@ public class TvProgramListActivity extends BaseActivity implements
             float timeLinePosition = calcTimeLinePosition(mNowCurTime);
 //            DTVTLogger.debug("onScrollOffset timeLinePosition:" + timeLinePosition + " mNowImage.getHeight():" + mNowImage.getHeight() + " offset:" + offset);
             mTimeLine.setY(timeLinePosition - offset);
+        }
+        if(mTvProgramListAdapter != null) {
+            mTvProgramListAdapter.setProgramScrollY(mProgramScrollViewParent.getScrollY());
         }
     }
 
