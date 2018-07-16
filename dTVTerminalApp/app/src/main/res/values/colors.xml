@@ -44,6 +44,7 @@
     <color name="home_item_name_text_color">@color/basic_text_color_white</color>
     <color name="home_item_contents_num_text_color">#c9c9c9</color>
     <color name="home_item_contents_text_color">@color/basic_text_color_white</color>
+    <color name="home_item_progress_back_color">#c0101010</color>
     <!--Global Menu-->
     <color name="global_menu_popup_window_background_color">#ffffff</color>
     <color name="global_menu_transparent_text_color">#00000000</color>

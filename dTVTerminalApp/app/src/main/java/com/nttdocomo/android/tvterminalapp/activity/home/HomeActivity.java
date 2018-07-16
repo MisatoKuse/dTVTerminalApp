@@ -166,6 +166,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     public final static int HOME_CONTENTS_TV_SCHEDULE =
             HOME_CONTENTS_LIST_START_INDEX + 12;
+
+    /**
+     * 最後のデータ読み込みコールバックを受けてからタイムアウトが発動するまでの時間.
+     */
+    private final static long HOME_MENU_TIME_OUT_TIME = 10000L;
+
     /**
      * HomeDataProvider.
      */
@@ -198,6 +204,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private boolean mAlreadyScroll = false;
     /**
+     * 準備が整うまでは、メニューボタンの表示要求を無効化するフラグ
+     */
+    private boolean showProgessBarEnabled = false;
+    /**
      * ユーザーのスクロールを検知する為の、以前のスクロール位置.
      */
     private int mOldScrollPosition = 0;
@@ -211,6 +221,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * 前回 onPause 時間.
      */
     private long mLastTimeOnPause = 0;
+
+    /**
+     * メニュー表示制御タイムアウト制御用.
+     */
+    private Handler mMenuTimeOutHandler = null;
+    private Runnable mMenuTimeOutRunnable = null;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -280,7 +296,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             relativeLayout.setVisibility(View.VISIBLE);
         } else {
             mLinearLayout.setVisibility(View.VISIBLE);
-            relativeLayout.setVisibility(View.GONE);
+            //本当に表示準備が整うまでは、プログレスは消さないようにする
+            if (showProgessBarEnabled) {
+                relativeLayout.setVisibility(View.GONE);
+            }
 
             //プログレスの解除＝新情報の追加なので、スクロール位置の補正を行う(通信手段が無い場合、mScrollViewが未初期化でここに来る事があったので、ヌルチェックを追加)
             if (!mAlreadyScroll && mScrollView != null) {
@@ -288,6 +307,18 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 mScrollView.setScrollY(0);
             }
         }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        //契約情報を読みこむか、読めない事が確定するまで、操作を封じる
+        if (showProgessBarEnabled) {
+            //操作抑止が解除になったので、受け付けるようにする
+            return super.dispatchTouchEvent(event);
+        }
+
+        //操作抑止中なので、タッチイベントの流れをここで断ち切る
+        return true;
     }
 
     /**
@@ -305,11 +336,71 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         //ユーザー状況の判定
         if (userState == UserState.CONTRACT_OK_PARING_OK
                 || userState == UserState.CONTRACT_OK_PAIRING_NG) {
-            //契約済みを検知したならば、この時点でメニューを活性化する
+            //契約済みか契約無しを検知したならば、この時点でメニューを活性化する
             setMenuIconEnabled(true);
+
+            //以後はshowProgessBarでの制御も有効となる
+            showProgessBarEnabled = true;
         } else {
             //その他の場合は、ユーザー情報データプロバイダーの結果待ちとする
             DTVTLogger.debug("CONTRACT or PARING NG GlobalMenu not enabled");
+
+            //不正状態用のタイムアウトを設定する
+            setGlobalMenuTimeOut();
+        }
+    }
+
+    /**
+     * メニュー活性化条件が整わなかった場合に備えてタイムアウトを設定する.
+     */
+    private void setGlobalMenuTimeOut() {
+        //メニューが非表示の場合、タイムアウトを設定する
+        if (!showProgessBarEnabled) {
+            //既にタイムアウトが存在すれば解除する・解除しないとタイムアウト側で活性化させてしまう
+            if (mMenuTimeOutRunnable != null) {
+                mMenuTimeOutHandler.removeCallbacks(mMenuTimeOutRunnable);
+                mMenuTimeOutRunnable = null;
+            }
+
+            //情報の確定が終わっていないので、タイムアウト処理を準備する
+            mMenuTimeOutHandler = new Handler();
+            mMenuTimeOutHandler.postDelayed(mMenuTimeOutRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    //プログレス表示が非表示ではなかった場合は、表示を行う
+                    mLinearLayout = findViewById(R.id.home_main_layout_linearLayout);
+                    if (mLinearLayout.getVisibility() != View.VISIBLE) {
+                        DTVTLogger.debug("HOME ACTIVITY TIME OUT");
+                        //最後のコールバックから指定時間が経過して、まだメニューが非活性の場合は、メニューを活性化する
+                        showProgessBarEnabled = true;
+                        setMenuIconEnabled(true);
+
+                        //プログレスも消す
+                        showProgessBar(false);
+                    }
+
+                    //タイムアウト処理は初期化
+                    mMenuTimeOutHandler.removeCallbacks(mMenuTimeOutRunnable);
+                    mMenuTimeOutRunnable = null;
+                }
+            }, HOME_MENU_TIME_OUT_TIME);
+        }
+    }
+
+    /**
+     * オーバーライドを行い、元々あったメニューアイコンの表示非表示の制御は行わないようにする
+     *
+     * @param isOn true: 表示  false: 非表示
+     */
+    @Override
+    protected void enableGlobalMenuIcon(final boolean isOn) {
+        //ベースアクティビティから、メニューアイコンを取得する
+        View menuImageViewForBase = getMenuImageViewForBase();
+        if (null != menuImageViewForBase) {
+            if (isOn) {
+                //クリックリスナーをセット
+                menuImageViewForBase.setOnClickListener(this);
+            }
         }
     }
 
@@ -557,8 +648,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         setMenuIconEnabled(false);
     }
 
-    //グローバルメニューの活性化と非活性化を行う
-
     /**
      * グローバルメニューの活性化と非活性化を行う.
      *
@@ -570,7 +659,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
         //指定された値を設定する
         if (menuIcon != null) {
-            menuIcon.setEnabled(enableSwitch);
+            //表示非表示の制御をこちらに移設した
+            if (enableSwitch) {
+                menuIcon.setVisibility(View.VISIBLE);
+            } else {
+                menuIcon.setVisibility(View.INVISIBLE);
+            }
         }
     }
 
@@ -1000,7 +1094,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         }
 
         //ユーザー情報の取得が終わり、状況が確定したので、メニューボタンを有効化
-        setMenuIconEnabled(true);
+        enableGlobalMenuIconHome(true);
     }
 
     @Override
