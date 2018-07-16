@@ -574,7 +574,7 @@ public class ChannelListActivity extends BaseActivity implements
         Intent intent = new Intent(this, ContentDetailActivity.class);
         ComponentName componentName = this.getComponentName();
         intent.putExtra(DtvtConstants.SOURCE_SCREEN, componentName.getClassName());
-        OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(data, ContentUtils.PLALA_INFO_BUNDLE_KEY, true);
+        OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(data, ContentUtils.PLALA_INFO_BUNDLE_KEY);
         intent.putExtra(detailData.getRecommendFlg(), detailData);
         startActivity(intent);
     }
