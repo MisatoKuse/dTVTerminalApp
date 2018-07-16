@@ -166,7 +166,7 @@ public class ErrorState {
 
                 //トースト用
                 mToastErrorMessage = context.getString(
-                        R.string.common_get_data_failed_message);
+                        R.string.network_ssl_error_message);
                 break;
             case NETWORK_ERROR:
                 //通信不能用のメッセージ
@@ -175,21 +175,21 @@ public class ErrorState {
 
                 //トースト用
                 mToastErrorMessage = context.getString(
-                        R.string.common_get_data_failed_message);
+                        R.string.network_nw_error_message);
                 break;
             case SERVER_ERROR:
                 //ネットワークエラー(サーバエラー)
                 mErrorMessage = context.getString(R.string.network_server_error_message);
                 //トースト用
                 mToastErrorMessage = context.getString(
-                        R.string.common_get_data_failed_message);
+                        R.string.network_server_error_message);
                 break;
             case TOKEN_ERROR:
                 //ネットワークエラー(トークン取得エラー)
                 mErrorMessage = context.getString(R.string.network_token_error_message);
                 //トースト用
                 mToastErrorMessage = context.getString(
-                        R.string.common_get_data_failed_message);
+                        R.string.network_token_error_message);
                 break;
             case HTTP_ERROR:
                 //その他Lエラー用メッセージの取得
@@ -197,7 +197,7 @@ public class ErrorState {
 
                 //トースト用
                 mToastErrorMessage = context.getString(
-                        R.string.common_get_data_failed_message);
+                        R.string.network_http_error_message);
                 break;
             default:
                 break;
