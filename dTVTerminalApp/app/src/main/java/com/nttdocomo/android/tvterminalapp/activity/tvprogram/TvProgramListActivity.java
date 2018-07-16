@@ -395,6 +395,8 @@ public class TvProgramListActivity extends BaseActivity implements
             @Override
             public void onDateSet(final DatePicker datePicker, final int year,
                                   final int monthOfYear, final int dayOfMonth) {
+                // NOWバー位置更新
+                mNowCurTime = new SimpleDateFormat(DateUtils.DATE_HHMMSS, Locale.JAPAN).format(new Date());
                 setSelectedDate(year, monthOfYear, dayOfMonth);
                 clearData();
                 getChannelData();
@@ -555,6 +557,8 @@ public class TvProgramListActivity extends BaseActivity implements
         if (mTabIndex != position) {
             cancelDataProvider();
             mTabIndex = position;
+            // NOWバー位置更新
+            mNowCurTime = new SimpleDateFormat(DateUtils.DATE_HHMMSS, Locale.JAPAN).format(new Date());
             sendScreenViewForPosition(position);
             clearData();
 
