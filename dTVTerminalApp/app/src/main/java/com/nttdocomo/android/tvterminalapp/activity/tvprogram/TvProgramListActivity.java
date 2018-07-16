@@ -227,7 +227,7 @@ public class TvProgramListActivity extends BaseActivity implements
     /**
      * タブインデックス　dTVチャンネル.
      */
-    private static final int TAB_INDEX_DTV = 2;
+    private static final int TAB_INDEX_DTVCH = 2;
     /**
      * マイ番組表データプロバイダー.
      */
@@ -561,6 +561,13 @@ public class TvProgramListActivity extends BaseActivity implements
             mNowCurTime = new SimpleDateFormat(DateUtils.DATE_HHMMSS, Locale.JAPAN).format(new Date());
             sendScreenViewForPosition(position);
             clearData();
+            //dTVチャンネルタブ以外が選択された際、過去日付を表示していたら現在日付に補正する
+            if(position != TAB_INDEX_DTVCH) {
+                if (compareNowDate(mSelectDate) < 0) {
+                    //タイトル再設定
+                    setTitle();
+                }
+            }
 
             // 現在時刻への移動(アニメあり).スクロール中にタブ切替すると慣性スクロールが止まらず
             // setScrollYしてもかき消されるのでアニメありスクロールで上書きする.
@@ -608,7 +615,7 @@ public class TvProgramListActivity extends BaseActivity implements
             case TAB_INDEX_HIKARI:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_program_list_h4d));
                 break;
-            case TAB_INDEX_DTV:
+            case TAB_INDEX_DTVCH:
                 super.sendScreenView(getString(R.string.google_analytics_screen_name_program_list_dtv_channel));
                 break;
             default:
@@ -1145,7 +1152,7 @@ public class TvProgramListActivity extends BaseActivity implements
                 }
 
                 //端末に設定された日時と現在番組表で設定されている日時を比較する
-                if (!compareNowDate(mSelectDate)) {
+                if (compareNowDate(mSelectDate) != 0) {
                     //違っていたので、これまでの条件とは無関係に、NOW表示は透明にする
                     mTimeLine.setVisibility(View.INVISIBLE);
 
@@ -1165,9 +1172,10 @@ public class TvProgramListActivity extends BaseActivity implements
      *
      * ただし、番組表の表示範囲を考慮して、指定日の午前4時から次の日の午前3時59分までの範囲かどうかの比較となる
      * @param compareDate Javaのエポック秒
-     * @return 指定した日付と現在の日付が一致すればtrue
+     * @return 指定した日付と現在の日付が一致すれば0、そうでない場合は指定時刻の日付4:00と現在時刻の差分ミリ秒
+     * 　　　　 (過去の場合はマイナス値、未来の場合はプラス値になる)
      */
-    boolean compareNowDate(final long compareDate) {
+    private long compareNowDate(final long compareDate) {
         //現在の日時を取得する
         Calendar calendar = Calendar.getInstance();
         Long nowTime = calendar.getTimeInMillis();
@@ -1187,14 +1195,16 @@ public class TvProgramListActivity extends BaseActivity implements
         //比較終了日時（指定された日の次の日の3時59分のJavaのエポック秒）
         long endTime = calendar.getTimeInMillis();
 
-        //比較して結果を返す
-        if (startTime <= nowTime && endTime >= nowTime) {
-            //指定された時間が本日の午前4時から明日の3時59分の間なので、true
-            return true;
+        if (startTime > nowTime) {
+            //現在日より未来の日付なら差分（プラス値）
+            return (startTime - nowTime);
+        } else if ( endTime < nowTime) {
+            //現在日より過去の日付なら差分（マイナス値）
+            return (endTime - nowTime);
+        } else {
+            //指定された時間が本日の午前4時から明日の3時59分の間なので、当日(0)
+            return 0;
         }
-
-        //指定時間はNOWの範囲外なのでfalse
-        return false;
     }
 
     /**
