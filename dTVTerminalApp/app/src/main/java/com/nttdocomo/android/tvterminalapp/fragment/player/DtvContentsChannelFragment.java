@@ -250,7 +250,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
         } else {
             Intent intent = new Intent();
             intent.setClass(mActivity, ContentDetailActivity.class);
-            OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(contentsData, ContentUtils.PLALA_INFO_BUNDLE_KEY);
+            OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(contentsData, ContentUtils.PLALA_INFO_BUNDLE_KEY, false);
             intent.putExtra(detailData.getRecommendFlg(), detailData);
             contentDetailActivity.startActivity(intent);
         }

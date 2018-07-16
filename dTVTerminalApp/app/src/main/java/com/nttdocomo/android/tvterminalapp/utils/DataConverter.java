@@ -75,9 +75,10 @@ public class DataConverter {
      *
      * @param info         レコメンド情報
      * @param recommendFlg Bundleキー
+     * @param isLive 放送中コンテンツ
      * @return コンテンツ情報
      */
-    public static OtherContentsDetailData getOtherContentsDetailData(final ContentsData info, final String recommendFlg) {
+    public static OtherContentsDetailData getOtherContentsDetailData(final ContentsData info, final String recommendFlg, final boolean isLive) {
         OtherContentsDetailData detailData = new OtherContentsDetailData();
         detailData.setTitle(info.getTitle());
 
@@ -96,7 +97,7 @@ public class DataConverter {
             detailData.setContentCategory(ContentUtils.ContentsType.OTHER);
             detailData.setDetail(info.getSynop());
         }
-
+        detailData.setIsLive(isLive);
         detailData.setMobileViewingFlg(info.getMobileViewingFlg());
         detailData.setmStartDate(info.getStartViewing());
         detailData.setmEndDate(info.getEndViewing());
