@@ -377,7 +377,7 @@ public class ClipListBaseFragment extends Fragment
                     mContentsDetailDisplay = true;
                     Intent intent = new Intent(mContext, ContentDetailActivity.class);
                     intent.putExtra(DtvtConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
-                    OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(contentsData, ContentUtils.PLALA_INFO_BUNDLE_KEY, false);
+                    OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(contentsData, ContentUtils.PLALA_INFO_BUNDLE_KEY);
                     intent.putExtra(detailData.getRecommendFlg(), detailData);
                     clipListActivity.startActivity(intent);
                 }
