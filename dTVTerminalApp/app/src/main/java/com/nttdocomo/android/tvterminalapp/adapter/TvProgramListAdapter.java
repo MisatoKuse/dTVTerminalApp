@@ -96,6 +96,21 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * ハイフン.
      */
     private static final String HYPHEN = "-";
+
+    /**
+     * スペース.
+     */
+    private static final String SPACE = " ";
+    /**
+     * 00.
+     */
+    private static final String ZERO_MILLISECOND = "00";
+
+    /**
+     * 日付タイトル.
+     */
+
+    private String mDateTitleText = null;
     /**
      * 見逃し判定(あり)パラメータ.
      */
@@ -184,11 +199,13 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      *
      * @param mContext     コンテクスト
      * @param channels 番組表リスト
+     * @param mDateTitleText 番組表タイトル日付
      */
-    public TvProgramListAdapter(final Context mContext, final ArrayList<ChannelInfo> channels) {
+    public TvProgramListAdapter(final Context mContext, final ArrayList<ChannelInfo> channels, final String mDateTitleText) {
         DTVTLogger.start();
         this.mProgramList = channels;
         this.mContext = mContext;
+        this.mDateTitleText = mDateTitleText;
         mScreenWidth = mContext.getResources().getDisplayMetrics().widthPixels;
         UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
         mAgeReq = userInfoDataProvider.getUserAge();
@@ -408,8 +425,29 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             } catch (ParseException e) {
                 DTVTLogger.debug(e);
             }
-            float marginTop = itemSchedule.getMarginTop();
-            float myHeight = itemSchedule.getMyHeight();
+            float marginTop;
+            float myHeight;
+            if (compareStraddlingDate(startData.getTime())) {
+                String dataStartTime;
+                SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DD, Locale.JAPAN);
+                Date date = new Date();
+                try {
+                    dataStartTime = mDateTitleText.replace("-", "/");
+                    date = sdf.parse(dataStartTime);
+                } catch (ParseException e) {
+                    DTVTLogger.debug(e);
+                }
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
+                dataStartTime = sdf.format(calendar.getTime()) + SPACE + DateUtils.DATE_STANDARD_START;
+                itemViewHolder.mStartM.setText(ZERO_MILLISECOND);
+                marginTop = 0;
+                //日付またぐコンテンツなので、開始時間を番組表タイトル日付の4：00にする
+                itemSchedule.setStartTime(dataStartTime);
+            } else {
+                marginTop = itemSchedule.getMarginTop();
+            }
+            myHeight = itemSchedule.getMyHeight();
             itemViewHolder.mLayoutParams.height = (int) (myHeight * (((TvProgramListActivity) mContext).dip2px(ONE_HOUR_UNIT)));
             itemViewHolder.mView.setLayoutParams(itemViewHolder.mLayoutParams);
             itemViewHolder.mView.setY(marginTop * (((TvProgramListActivity) mContext).dip2px(ONE_HOUR_UNIT)));
@@ -455,6 +493,39 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             changeProgramInfoInOrderToShow(itemViewHolder, isParental, isClipHide, itemSchedule);
             itemViewHolder.mContent.setText(title);
         }
+    }
+
+    /**
+     * 日付またぐコンテンツなのか.
+     * @param compareStartDate 番組開始時間
+     * @return true or false
+     */
+    private boolean compareStraddlingDate(final long compareStartDate) {
+        //現在の日時を取得する
+        String curStartDay;
+        SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYYMMDD, Locale.JAPAN);
+        Date date = new Date();
+        try {
+            curStartDay = mDateTitleText.replace("/", "-");
+            date = sdf.parse(curStartDay);
+        } catch (ParseException e) {
+            DTVTLogger.debug(e);
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        curStartDay = sdf.format(calendar.getTime());
+        String standardStartTime = curStartDay + DateUtils.DATE_STANDARD_START;
+        Date startTime = DateUtils.stringToDate(standardStartTime);
+        DTVTLogger.debug("=============================>" + startTime);
+
+        //比較して結果を返す
+        if (compareStartDate < startTime.getTime()) {
+            //指定された時間が番組表タイトル日付の午前4時前からだったら、true
+            return true;
+        }
+
+        //指定時間はStraddlingの範囲外なのでfalse
+        return false;
     }
 
     /**

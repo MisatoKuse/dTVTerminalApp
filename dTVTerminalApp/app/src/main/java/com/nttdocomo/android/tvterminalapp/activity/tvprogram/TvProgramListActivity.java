@@ -744,7 +744,7 @@ public class TvProgramListActivity extends BaseActivity implements
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mChannelRecyclerView.setLayoutManager(linearLayoutManager);
         mProgramChannelAdapter = new ProgramChannelAdapter(this, getChannelNameList(channels));
-        mTvProgramListAdapter = new TvProgramListAdapter(this, channels);
+        mTvProgramListAdapter = new TvProgramListAdapter(this, channels, mSelectDateStr);
         mChannelRecyclerView.setAdapter(mProgramChannelAdapter);
         mProgramRecyclerView.setAdapter(mTvProgramListAdapter);
     }

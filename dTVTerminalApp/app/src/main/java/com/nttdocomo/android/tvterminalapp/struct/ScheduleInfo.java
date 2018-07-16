@@ -497,8 +497,8 @@ public class ScheduleInfo {
             }
             standardTime = curStartDay + DateUtils.DATE_STANDARD_START;
         }
-        Date startTime = stringToDate(standardTime);
-        Date endTime = stringToDate(getFormatDate(this.startTime));
+        Date startTime = DateUtils.stringToDate(standardTime);
+        Date endTime = DateUtils.stringToDate(getFormatDate(this.startTime));
         try {
             diffHours = (endTime.getTime() - startTime.getTime()) / FORMAT;
         } catch (Exception e) {
@@ -509,25 +509,6 @@ public class ScheduleInfo {
         }
         return diffHours;
     }
-
-    /**
-     * StringをDateに変換.
-     *
-     * @param strDate 日付
-     * @return date
-     */
-    private Date stringToDate(final String strDate) {
-        SimpleDateFormat format = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);  //2017-10-12T08:00:00+09:00
-        Date date = null;
-        try {
-            String replaceString = strDate.replace("-", "/");
-            date = format.parse(replaceString);
-        } catch (Exception e) {
-            DTVTLogger.debug(e);
-        }
-        return date;
-    }
-
     /**
      * Stringを切り取る.
      *
@@ -549,8 +530,8 @@ public class ScheduleInfo {
      * @return 高さ
      */
     public float getMyHeight() {
-        Date startTime = stringToDate(getFormatDate(this.startTime));
-        Date endTime = stringToDate(getFormatDate(this.endTime));
+        Date startTime = DateUtils.stringToDate(getFormatDate(this.startTime));
+        Date endTime = DateUtils.stringToDate(getFormatDate(this.endTime));
         if (startTime == null || endTime == null) {
             return 0L;
         }

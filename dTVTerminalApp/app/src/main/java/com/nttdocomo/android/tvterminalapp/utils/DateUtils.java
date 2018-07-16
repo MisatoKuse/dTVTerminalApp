@@ -1553,4 +1553,21 @@ public class DateUtils {
         DTVTLogger.end(String.valueOf(isWithInHour));
         return isWithInHour;
     }
+    /**
+     * StringをDateに変換.
+     *
+     * @param strDate 日付
+     * @return date
+     */
+    public static Date stringToDate(final String strDate) {
+        SimpleDateFormat format = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);  //2017-10-12T08:00:00+09:00
+        Date date = null;
+        try {
+            String replaceString = strDate.replace("-", "/");
+            date = format.parse(replaceString);
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
+        return date;
+    }
 }
