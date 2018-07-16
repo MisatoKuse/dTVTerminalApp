@@ -542,6 +542,9 @@ du_bool browseDirectChildren2(DMP* d, const du_uchar* controlUrl) {
     auto startingIndex = d->browseInfo.startingIndex + d->browseInfo.numberReturned;
     auto requestedCount = d->browseInfo.requestedCount - d->browseInfo.numberReturned;
     auto sortCriteria = DU_UCHAR_CONST("");
+    if (du_str_case_end(containerId, (const du_uchar*) "rec/all")) {
+        sortCriteria = DU_UCHAR_CONST("-dc:date");
+    }
     LOG_WITH("containerId = %s, startingIndex = %u, requestedCount = %d", containerId, startingIndex, requestedCount);
     if (!dav_cds_make_browse(&request_body, 1, containerId, DU_UCHAR_CONST("BrowseDirectChildren"), BDC_FILTER, startingIndex, requestedCount, sortCriteria)) goto error;
     
