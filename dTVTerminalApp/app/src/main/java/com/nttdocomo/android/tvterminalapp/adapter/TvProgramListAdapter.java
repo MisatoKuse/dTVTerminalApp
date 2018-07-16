@@ -427,25 +427,41 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             }
             float marginTop;
             float myHeight;
-            if (compareStraddlingDate(startData.getTime())) {
-                String dataStartTime;
-                SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DD, Locale.JAPAN);
-                Date date = new Date();
-                try {
-                    dataStartTime = mDateTitleText.replace("-", "/");
-                    date = sdf.parse(dataStartTime);
-                } catch (ParseException e) {
-                    DTVTLogger.debug(e);
-                }
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(date);
-                dataStartTime = sdf.format(calendar.getTime()) + SPACE + DateUtils.DATE_STANDARD_START;
+            String curStartDay;
+            String curEndDay;
+            SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYYMMDD, Locale.JAPAN);
+            Date date = new Date();
+            try {
+                curStartDay = mDateTitleText.replace("/", "-");
+                date = sdf.parse(curStartDay);
+            } catch (ParseException e) {
+                DTVTLogger.debug(e);
+            }
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            curStartDay = sdf.format(calendar.getTime());
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            curEndDay = sdf.format(calendar.getTime());
+            String standardStartTime = curStartDay + SPACE + DateUtils.DATE_STANDARD_START;
+            String standardEndTime = curEndDay + SPACE +  DateUtils.DATE_STANDARD_END;
+            Date startHyphenTime = DateUtils.stringToDate(standardStartTime);
+            Date endHyphenTime = DateUtils.stringToDate(standardEndTime);
+            String startSlashTime  = standardStartTime.replace("-", "/");
+            String endSlashTime = standardEndTime.replace("-", "/");
+
+            if (startData.getTime() < startHyphenTime.getTime()) {
+                //前日の日付またぐコンテンツ
                 itemViewHolder.mStartM.setText(ZERO_MILLISECOND);
                 marginTop = 0;
                 //日付またぐコンテンツなので、開始時間を番組表タイトル日付の4：00にする
-                itemSchedule.setStartTime(dataStartTime);
+                itemSchedule.setStartTime(startSlashTime);
             } else {
                 marginTop = itemSchedule.getMarginTop();
+            }
+            if (endDate.getTime() > endHyphenTime.getTime()) {
+                //明日の日付またぐコンテンツ.
+                //日付またぐコンテンツなので、終了時間を番組表タイトル日付明日の3：59：59にする
+                itemSchedule.setEndTime(endSlashTime);
             }
             myHeight = itemSchedule.getMyHeight();
             itemViewHolder.mLayoutParams.height = (int) (myHeight * (((TvProgramListActivity) mContext).dip2px(ONE_HOUR_UNIT)));
@@ -493,39 +509,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             changeProgramInfoInOrderToShow(itemViewHolder, isParental, isClipHide, itemSchedule);
             itemViewHolder.mContent.setText(title);
         }
-    }
-
-    /**
-     * 日付またぐコンテンツなのか.
-     * @param compareStartDate 番組開始時間
-     * @return true or false
-     */
-    private boolean compareStraddlingDate(final long compareStartDate) {
-        //現在の日時を取得する
-        String curStartDay;
-        SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYYMMDD, Locale.JAPAN);
-        Date date = new Date();
-        try {
-            curStartDay = mDateTitleText.replace("/", "-");
-            date = sdf.parse(curStartDay);
-        } catch (ParseException e) {
-            DTVTLogger.debug(e);
-        }
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        curStartDay = sdf.format(calendar.getTime());
-        String standardStartTime = curStartDay + DateUtils.DATE_STANDARD_START;
-        Date startTime = DateUtils.stringToDate(standardStartTime);
-        DTVTLogger.debug("=============================>" + startTime);
-
-        //比較して結果を返す
-        if (compareStartDate < startTime.getTime()) {
-            //指定された時間が番組表タイトル日付の午前4時前からだったら、true
-            return true;
-        }
-
-        //指定時間はStraddlingの範囲外なのでfalse
-        return false;
     }
 
     /**

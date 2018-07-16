@@ -227,7 +227,7 @@ public class DateUtils {
     /**
      * 日付フォーマット.
      */
-    public static final String DATE_STANDARD_END = "03:00:00";
+    public static final String DATE_STANDARD_END = "03:59:59";
 
     /**
      * DB保存期限.
