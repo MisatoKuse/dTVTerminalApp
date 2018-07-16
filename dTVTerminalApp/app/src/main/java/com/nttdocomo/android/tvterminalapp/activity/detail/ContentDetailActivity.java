@@ -3366,7 +3366,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         //表示するダイアログの切り替え判定
         if (errorState == null || errorState.getErrorType() == DtvtConstants.ErrorType.SUCCESS) {
             //そもそも通信が行われていないか、通信自体には成功しその上でデータが無いならば、コンテンツが無い事を表示
-            customDialog.setContent(getString(R.string.common_empty_data_message));
+            if (mDetailData.isIsLive()) {
+                customDialog.setContent(getString(R.string.contents_detail_now_on_air_contents_nothing));
+            } else {
+                customDialog.setContent(getString(R.string.common_empty_data_message));
+            }
         } else {
             //契約誘導ダイアログを表示
             customDialog.setContent(errorState.getApiErrorMessage(this));

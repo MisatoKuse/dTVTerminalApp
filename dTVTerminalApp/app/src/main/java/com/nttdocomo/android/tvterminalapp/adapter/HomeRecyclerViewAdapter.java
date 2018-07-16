@@ -420,7 +420,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         } else {
             recommendFlg = ContentUtils.PLALA_INFO_BUNDLE_KEY;
         }
-        final OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(contentsData, recommendFlg);
+        final OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(contentsData, recommendFlg, mIndex == HOME_CONTENTS_SORT_CHANNEL);
         viewHolder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {

@@ -171,7 +171,7 @@ public class DailyTvRankingActivity extends BaseActivity implements
         } else {
             Intent intent = new Intent(this, ContentDetailActivity.class);
             intent.putExtra(DtvtConstants.SOURCE_SCREEN, getComponentName().getClassName());
-            OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(contentsData, ContentUtils.PLALA_INFO_BUNDLE_KEY);
+            OtherContentsDetailData detailData = DataConverter.getOtherContentsDetailData(contentsData, ContentUtils.PLALA_INFO_BUNDLE_KEY, false);
             intent.putExtra(detailData.getRecommendFlg(), detailData);
             startActivity(intent);
         }
