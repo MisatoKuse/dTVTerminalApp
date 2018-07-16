@@ -397,7 +397,7 @@ public class BaseActivity extends FragmentActivity implements
             View view = new View(getApplicationContext());
             view.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             view.getLayoutParams().height = statusBarHeight;
-            ((ViewGroup) window.getDecorView()).addView(view);
+            ((ViewGroup) window.getDecorView()).addView(view, 0);
             if (isColorRed) {
                 view.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.header_background_color_red));
             } else {
@@ -417,7 +417,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param activity アクティビティ
      * @return ステータスバーの高さ
      */
-    private static int getStatusBarHeight(final Activity activity) {
+    public static int getStatusBarHeight(final Activity activity) {
         int result = 0;
         Resources res = activity.getResources();
         int resourceId = res.getIdentifier(

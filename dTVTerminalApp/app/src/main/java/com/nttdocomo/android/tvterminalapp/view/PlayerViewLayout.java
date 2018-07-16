@@ -22,6 +22,7 @@ import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -38,6 +39,7 @@ import com.digion.dixim.android.secureplayer.helper.CaptionDrawCommands;
 import com.digion.dixim.android.util.ExternalDisplayHelper;
 import com.digion.dixim.android.util.SafetyRunnable;
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.common.ProcessSettingFile;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
@@ -864,6 +866,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
      */
     private void setScreenSize(final boolean mIsLandscape, final LinearLayout.LayoutParams playerParams) {
         DTVTLogger.start();
+        setStatusBar(mIsLandscape);
         if (mIsLandscape) {
             mActivity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
@@ -933,6 +936,25 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         }
         mThumbnailRelativeLayout.setLayoutParams(playerParams);
         DTVTLogger.end();
+    }
+
+    /**
+     * 機能：ステータスバー設定(Android4.4用).
+     *
+     * @param mIsLandscape true:横画面 false:縦画面
+     */
+    private void setStatusBar(final boolean mIsLandscape) {
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+            int statusBarHeight = BaseActivity.getStatusBarHeight(mActivity);
+            if (mIsLandscape) {
+                statusBarHeight = 0;
+            }
+            ViewGroup contentView = (ViewGroup) mActivity.getWindow().getDecorView();
+            LinearLayout linearLayout = contentView.findViewById(R.id.baseStatusBarLayout);
+            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) linearLayout.getLayoutParams();
+            layoutParams.setMargins(0, statusBarHeight, 0, 0);
+            linearLayout.setLayoutParams(layoutParams);
+        }
     }
 
     /**

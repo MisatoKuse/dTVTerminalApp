@@ -437,7 +437,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             outState.putInt(SAVEDVARIABLE_PLAY_START_POSITION, mPlayerViewLayout.getCurrentPosition());
         }
         outState.putBoolean(REMOTE_CONTROLLER_VIEW_VISIBILITY, mIsControllerVisible);
-        outState.putInt(VIEWPAGER_INDEX, mViewPager.getCurrentItem());
+        if (mViewPager != null) {
+            outState.putInt(VIEWPAGER_INDEX, mViewPager.getCurrentItem());
+        }
     }
 
     @SuppressWarnings("OverlyLongMethod")
@@ -587,7 +589,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         mPlayerViewLayout = findViewById(R.id.dtv_contents_detail_main_layout_player_rl);
         mPlayerViewLayout.setPlayerStateListener(this);
         mPlayerViewLayout.setScreenSize(getWidthDensity(), getHeightDensity());
-        mPlayerViewLayout.setScreenNavigationBarSize(getScreenWidth(), getScreenHeight());
+        mPlayerViewLayout.setScreenNavigationBarSize(getWidthDensity(), getScreenHeight());
         mPlayerViewLayout.setParentLayout(mThumbnailRelativeLayout);
         mPlayerViewLayout.setDensity(getDensity());
         boolean mIsOncreateOk = mPlayerViewLayout.initMediaInfo(playerData);
@@ -1147,15 +1149,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      */
     private int getScreenHeight() {
         return getHeightDensity() + getNavigationBarHeight(true);
-    }
-
-    /**
-     * スクリーンのWidthを取得.
-     *
-     * @return Width
-     */
-    private int getScreenWidth() {
-        return getWidthDensity() + getNavigationBarHeight(false);
     }
 
     /**
