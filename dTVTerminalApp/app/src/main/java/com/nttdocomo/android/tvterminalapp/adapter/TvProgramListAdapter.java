@@ -653,9 +653,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 // 1行以上描画スペースがあればあらすじ描画する.
                 int maxLines = (itemViewHolder.mEpiSpace - ((TvProgramListActivity) mContext).dip2px(EPI_MARGIN_TOP_THUMB)) / epiLineHeight;
                 itemViewHolder.mDetail.setMaxLines(maxLines);
-                ViewGroup.LayoutParams layoutParam = itemViewHolder.mDetail.getLayoutParams();
-                layoutParam.height = maxLines * epiLineHeight;
-                itemViewHolder.mDetail.setLayoutParams(layoutParam);
                 itemViewHolder.mDetail.setVisibility(View.VISIBLE);
             }
         } else {
