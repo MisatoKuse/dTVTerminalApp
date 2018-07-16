@@ -861,7 +861,6 @@ public class TvProgramListActivity extends BaseActivity implements
             }
             if (channelInfo.size() > 0) {
                 mTvProgramListAdapter.setProgramList(channelInfo);
-                mTvProgramListAdapter.notifyDataSetChanged();
             }
             //スクロール時、リスナー設置
             mTimeScrollView.setOnScrollOffsetListener(this);

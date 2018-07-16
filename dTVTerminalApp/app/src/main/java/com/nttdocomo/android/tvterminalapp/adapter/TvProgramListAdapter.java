@@ -344,7 +344,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
         DTVTLogger.start();
         ChannelInfo itemChannel = mProgramList.get(position);
-        DTVTLogger.debug("###onBindViewHolder Pos:" + position + ",old ChNo:" + holder.chNo + ",new ChNo:" + itemChannel.getChannelNo());
+        DTVTLogger.debug("###onBindViewHolder Pos:" + position + ",old ChNo:" + holder.chNo + ",new ChNo:" + itemChannel.getChannelNo() + " obj:" + holder.hashCode());
         holder.chNo = itemChannel.getChannelNo();
         setSchedule(itemChannel.getSchedules(), holder);
         mMyViewHolder.add(holder);
@@ -354,7 +354,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     @Override
     public void onViewRecycled(final MyViewHolder holder) {
         super.onViewRecycled(holder);
-        DTVTLogger.debug("###onViewRecycled ChNo:" + holder.chNo + " Pos:" + holder.getAdapterPosition());
+        DTVTLogger.debug("###onViewRecycled ChNo:" + holder.chNo + " Pos:" + holder.getAdapterPosition() + " obj:" + holder.hashCode());
         holder.stopAddContentViews();
         holder.layout.removeAllViewsInLayout();
         mMyViewHolder.remove(holder);
@@ -390,7 +390,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         RelativeLayout layout = itemViewHolder.mView.findViewById(R.id.tv_program_item_panel_clip_rv);
         if (isFailedContent(itemSchedule)) {
             layout.setVisibility(View.GONE);
-            itemViewHolder.mView.setBackgroundResource(R.drawable.program_start_gray);
+            itemViewHolder.mView.setBackgroundResource(R.drawable.program_ng_black);
             title = itemSchedule.getTitle();
             changeProgramInfoInOrderToShow(itemViewHolder, false, true, itemSchedule);
             ViewGroup.LayoutParams lp = itemViewHolder.mContent.getLayoutParams();
