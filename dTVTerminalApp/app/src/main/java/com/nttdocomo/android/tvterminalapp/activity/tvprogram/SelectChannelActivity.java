@@ -110,7 +110,7 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
     }
 
     @Override
-    public void channelInfoCallback(final ChannelInfoList channelsInfo) {
+    public void channelInfoCallback(final ChannelInfoList channelsInfo, final int[] chNo) {
         //何もしない
     }
 

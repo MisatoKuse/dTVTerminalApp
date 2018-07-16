@@ -310,7 +310,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onTvScheduleJsonParsed(final List<TvScheduleList> tvScheduleList) {
+    public void onTvScheduleJsonParsed(final List<TvScheduleList> tvScheduleList, int[] chnos) {
         DTVTLogger.start();
         if (tvScheduleList != null && tvScheduleList.size() > 0) {
             TvScheduleList list = tvScheduleList.get(0);

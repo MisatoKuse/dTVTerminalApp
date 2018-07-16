@@ -477,6 +477,8 @@ public class ScheduleInfo {
         String standardTime = "";
         float diffHours = 0;
         if (startTime != null) {
+            //将来のEpoch秒対応のため、ここでEpoch or 日付を吸収する
+            startTime = DateUtils.formatDateCheckToEpoch(startTime);
             String curStartDay = startTime.substring(0, 10);
             int hour = Integer.parseInt(startTime.substring(11, 13));
             if (hour >= 0 && hour < 4) {
@@ -536,7 +538,9 @@ public class ScheduleInfo {
         if (TextUtils.isEmpty(date)) {
             return "";
         }
-        return date.substring(0, 10) + date.substring(11, 19);
+        //将来のEpoch秒対応のため、ここでEpoch or 日付を吸収する
+        String convertDate = DateUtils.formatDateCheckToEpoch(date);
+        return convertDate.substring(0, 10) + convertDate.substring(11, 19);
     }
 
     /**

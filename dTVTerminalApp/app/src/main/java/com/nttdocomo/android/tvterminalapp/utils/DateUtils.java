@@ -526,6 +526,22 @@ public class DateUtils {
     }
 
     /**
+     * Epoch秒文字列を日付(YYYY/MM/DD HH:mm:ss)に変換する.
+     *
+     * @param data Epoch秒文字列
+     * @return YYYY/MM/DD HH:mm:ss
+     */
+    public static String formatDateCheckToEpoch(final String data) {
+        String convertDate;
+        if (DataBaseUtils.isNumber(data)) {
+            convertDate = formatEpochToString(Long.parseLong(data));
+        } else {
+            convertDate = data;
+        }
+        return convertDate;
+    }
+
+    /**
      * エポック秒を YYYY/MM/DD HH:mm:ss かつString値に変換.
      *
      * @param epochTime エポック秒
@@ -620,6 +636,29 @@ public class DateUtils {
         nowTime.set(Calendar.MILLISECOND, 0);
 
         return (nowTime.getTimeInMillis() / 1000);
+    }
+
+    /**
+     * 当日の指定した時間のEpoch秒を取得する.
+     * @param designTime 指定時間
+     * @return Epoch秒
+     */
+    public static long getTodayDesignTimeFormatEpoch(final int designTime) {
+        Calendar nowTime = Calendar.getInstance();
+
+        //年月日データ以外をゼロにして、本日の0時0分0秒とする
+        nowTime.set(Calendar.HOUR_OF_DAY, designTime);
+        nowTime.set(Calendar.MINUTE, 0);
+        //何故か 4:00:00 きっかりのデータは表示できないため暫定対応
+        nowTime.set(Calendar.SECOND, 1);
+        nowTime.set(Calendar.MILLISECOND, 0);
+
+        long time = nowTime.getTimeInMillis() / 1000;
+        //01:00～03:59:59までは前日として扱う
+        if (isLastDay()) {
+            time = time - EPOCH_TIME_ONE_DAY;
+        }
+        return time;
     }
 
     /**
@@ -1288,6 +1327,7 @@ public class DateUtils {
      * @param contentsType コンテンツタイプ
      * @return 加工後日付
      */
+    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
     private static String addDateLimitVod(final Context context, final ContentsData contentsData, final ContentUtils.ContentsType contentsType) {
         String date = "";
         long availEndDate = contentsData.getAvailEndDate();

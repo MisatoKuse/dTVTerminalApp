@@ -36,20 +36,22 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
      * オブジェクトクラスの定義.
      */
     private TvScheduleList mTvScheduleList;
+    private int[] mChannelNoList;
 
     /**
      * コンストラクタ.
      *
      * @param mTvScheduleJsonParserCallback コールバック
      */
-    public TvScheduleJsonParser(final TvScheduleWebClient.TvScheduleJsonParserCallback mTvScheduleJsonParserCallback) {
+    public TvScheduleJsonParser(final TvScheduleWebClient.TvScheduleJsonParserCallback mTvScheduleJsonParserCallback, int[] chNo) {
         this.mTvScheduleJsonParserCallback = mTvScheduleJsonParserCallback;
+        mChannelNoList = chNo;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     protected void onPostExecute(final Object s) {
-        mTvScheduleJsonParserCallback.onTvScheduleJsonParsed((List<TvScheduleList>) s);
+        mTvScheduleJsonParserCallback.onTvScheduleJsonParsed((List<TvScheduleList>) s, mChannelNoList);
     }
 
     @Override

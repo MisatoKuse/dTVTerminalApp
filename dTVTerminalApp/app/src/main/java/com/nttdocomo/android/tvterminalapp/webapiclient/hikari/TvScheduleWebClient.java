@@ -25,10 +25,14 @@ import java.util.List;
 public class TvScheduleWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
-    /**
-     * 通信禁止判定フラグ.
-     */
+    /** 通信禁止判定フラグ.*/
     private boolean mIsCancel = false;
+    /** リクエストチャンネル番号.*/
+    private int[] mChannelNoList;
+    /** リクエスト日付リスト.*/
+    private String[] mRequestDateList;
+    /** リクエストフィルター.*/
+    private String mRequestFilter = null;
 
     /**
      * コンテキストを継承元のコンストラクタに送る.
@@ -48,7 +52,7 @@ public class TvScheduleWebClient
          *
          * @param tvScheduleList JSONパース後のデータ
          */
-        void onTvScheduleJsonParsed(final List<TvScheduleList> tvScheduleList);
+        void onTvScheduleJsonParsed(final List<TvScheduleList> tvScheduleList, final int[] chnos);
     }
 
     /**
@@ -64,7 +68,7 @@ public class TvScheduleWebClient
     @Override
     public void onAnswer(final ReturnCode returnCode) {
         //JSONをパースして、データを返す
-        new TvScheduleJsonParser(mTvScheduleJsonParserCallback).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode.bodyData);
+        new TvScheduleJsonParser(mTvScheduleJsonParserCallback, mChannelNoList).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, returnCode.bodyData);
     }
 
     /**
@@ -75,7 +79,29 @@ public class TvScheduleWebClient
     @Override
     public void onError(final ReturnCode returnCode) {
         //エラーが発生したのでヌルを返す
-        mTvScheduleJsonParserCallback.onTvScheduleJsonParsed(null);
+        mTvScheduleJsonParserCallback.onTvScheduleJsonParsed(null, mChannelNoList);
+    }
+
+    /**
+     * リクエストパラメータをあらかじめセットしておく(番組表用).
+     *
+     * @param channelNoList   チャンネル番号リスト
+     * @param requestDateList 日付リスト
+     * @param requestFilter   フィルター
+     */
+    public void setChannelNoList(final int[] channelNoList, final String[] requestDateList, final String requestFilter) {
+        mChannelNoList = channelNoList;
+        mRequestDateList = requestDateList;
+        mRequestFilter = requestFilter;
+    }
+
+    /**
+     * テレビ番組表用リクエストメソッド.
+     *
+     * @param callback callback
+     */
+    public void getTvScheduleApi(final TvScheduleJsonParserCallback callback) {
+        getTvScheduleApi(mChannelNoList, mRequestDateList, mRequestFilter, callback);
     }
 
     /**
@@ -110,6 +136,7 @@ public class TvScheduleWebClient
             return false;
         }
 
+        mChannelNoList = chno;
         //チャンネル毎番組一覧を呼び出す
         openUrl(UrlConstants.WebApiUrl.TV_SCHEDULE_LIST, sendParameter, this);
 
@@ -230,5 +257,4 @@ public class TvScheduleWebClient
         DTVTLogger.start();
         mIsCancel = false;
     }
-
 }

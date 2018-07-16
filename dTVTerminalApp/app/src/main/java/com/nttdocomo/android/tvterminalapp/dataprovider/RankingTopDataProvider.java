@@ -457,7 +457,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void channelInfoCallback(final ChannelInfoList channelsInfo) {
+    public void channelInfoCallback(final ChannelInfoList channelsInfo, final int[] chNo) {
 
     }
 

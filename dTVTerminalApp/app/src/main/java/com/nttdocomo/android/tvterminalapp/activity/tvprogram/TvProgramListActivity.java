@@ -43,6 +43,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopMyProgramListDa
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopScaledProListDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
+import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
@@ -666,7 +667,7 @@ public class TvProgramListActivity extends BaseActivity implements
                         String[] dateList = {dateStr};
                         int[] chList = mTvProgramListAdapter.getNeedProgramChannels();
                         if (chList != null && chList.length > 0) {
-                            mScaledDownProgramListDataProvider.getProgram(chList, dateList);
+                            mScaledDownProgramListDataProvider.getProgram(chList, dateList, false);
                         }
                     }
                     mScrollOffset = 0;
@@ -988,7 +989,7 @@ public class TvProgramListActivity extends BaseActivity implements
     }
 
     @Override
-    public void channelInfoCallback(final ChannelInfoList channelsInfo) {
+    public void channelInfoCallback(final ChannelInfoList channelsInfo, final int[] chNo) {
         //ここでAdaptor生成するのではなく、チャンネルリストが取得できた時点でAdaptorを生成してしまう。
         //★データの管理はAdaptor任せにして、必要なデータはAdaptorからActivity側に取得要求するようにする。
         //★生成されているAdaptorへ番組データを渡す処理にする。
@@ -1002,6 +1003,23 @@ public class TvProgramListActivity extends BaseActivity implements
                     channelSort(channels);
                     mChannelInfo = channels;
                     setProgramRecyclerView(channels);
+                } else {
+                    //Nullの時のダミーデータ生成
+                    if (chNo.length > 0) {
+                        //チャンネル番号がある時のみデータを生成する
+                        ChannelInfoList channelsInfoList = new ChannelInfoList();
+                        ArrayList<ScheduleInfo> scheduleInfoList = new ArrayList<>();
+                        ScheduleInfo mSchedule = DataConverter.convertScheduleInfo(DataConverter.getDummyContentMap(getApplicationContext(), chNo, true).get(0), null);
+                        scheduleInfoList.add(mSchedule);
+                        ChannelInfo channel = new ChannelInfo();
+                        channel.setChannelNo(Integer.parseInt(scheduleInfoList.get(0).getChNo()));
+                        channel.setTitle(scheduleInfoList.get(0).getTitle());
+                        channel.setSchedules(scheduleInfoList);
+                        channelsInfoList.addChannel(channel);
+                        List<ChannelInfo> channels = channelsInfo.getChannels();
+                        mChannelInfo = channels;
+                        setProgramRecyclerView(channels);
+                    }
                 }
             }
         });
@@ -1049,7 +1067,7 @@ public class TvProgramListActivity extends BaseActivity implements
                 }
                 String dateStr = mSelectDateStr.replace("-", "");
                 String[] dateList = {dateStr};
-                mScaledDownProgramListDataProvider.getProgram(channelNos, dateList);
+                mScaledDownProgramListDataProvider.getProgram(channelNos, dateList, false);
             } else {
                 //情報がヌルなので、ネットワークエラーメッセージを取得する
                 ErrorState errorState = mScaledDownProgramListDataProvider.getChannelError();
@@ -1087,7 +1105,7 @@ public class TvProgramListActivity extends BaseActivity implements
             //マイ番組表設定されていない場合、通信しない
             String dateStr = mSelectDateStr.replace("-", "");
             String[] dateList = {dateStr};
-            mScaledDownProgramListDataProvider.getProgram(channelNos, dateList);
+            mScaledDownProgramListDataProvider.getProgram(channelNos, dateList, false);
         }
         DTVTLogger.end();
     }
