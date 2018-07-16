@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.activity.setting;
 
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -86,5 +87,10 @@ public class SettingMenuFaqActivity extends BaseActivity {
             }
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void contentsDetailBackKey(final View view) {
+        webViewGoBackEvent(mFaqWebView);
     }
 }

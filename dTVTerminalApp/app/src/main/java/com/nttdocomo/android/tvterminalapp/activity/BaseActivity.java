@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
+import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -1476,11 +1477,26 @@ public class BaseActivity extends FragmentActivity implements
                 || this instanceof RankingTopActivity
                 || this instanceof VideoTopActivity
                 || this instanceof RecordReservationListActivity
-                || this instanceof NoticeActivity
                 || this instanceof SettingActivity) {
             startHomeActivity();
         } else {
             finish();
+        }
+    }
+
+    /**
+     * webViewGoBackEvent.
+     * @param webView webView
+     */
+    protected void webViewGoBackEvent(final WebView webView) {
+        if (webView != null && webView.canGoBack()) {
+            webView.goBack();
+        } else {
+            if (this instanceof NoticeActivity) {
+                startHomeActivity();
+            } else {
+                finish();
+            }
         }
     }
 
