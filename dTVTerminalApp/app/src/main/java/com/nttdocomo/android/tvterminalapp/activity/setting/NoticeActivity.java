@@ -82,15 +82,21 @@ public class NoticeActivity extends BaseActivity implements View.OnClickListener
     }
 
     @Override
+    protected void contentsDetailBackKey(final View view) {
+        webViewGoBackEvent(mNoticeWebView);
+    }
+
+    @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         DTVTLogger.start();
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_BACK:
-                //メニューから起動の場合ホーム画面に戻る
-                contentsDetailBackKey(null);
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (mNoticeWebView.canGoBack()) {
+                mNoticeWebView.goBack();
                 return false;
-            default:
-                break;
+            } else {
+                //ホーム画面に戻る
+                startHomeActivity();
+            }
         }
         return super.onKeyDown(keyCode, event);
     }
