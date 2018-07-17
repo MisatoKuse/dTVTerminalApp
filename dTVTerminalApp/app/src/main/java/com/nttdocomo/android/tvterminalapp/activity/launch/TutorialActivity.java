@@ -277,11 +277,16 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
         matrix.postScale(ratio * RESIZE_BITMAP_RATIO, ratio * RESIZE_BITMAP_RATIO);
         //画像を画面サイズに合わせて拡大縮小する
         int y = PIXEL0;
-        if (cutTop) {
-            y = mExBitmap.getHeight() - (int) (getHeightDensity() / ratio);
+        int height = (int) (getHeightDensity() / ratio);
+        if (mExBitmap.getHeight() > height) {
+            if (cutTop) {
+                y = mExBitmap.getHeight() - height;
+            }
+        } else {
+            height = mExBitmap.getHeight();
         }
         return Bitmap.createBitmap(mExBitmap, PIXEL0, y, mExBitmap.getWidth(),
-                (int) (getHeightDensity() / ratio), matrix, true);
+                height, matrix, true);
     }
 
     /**
