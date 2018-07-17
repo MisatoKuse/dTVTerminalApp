@@ -417,7 +417,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         } else {
             switch (errorType) {
                 case OVER:
-                    resultDialog.setContent(getString(R.string.common_text_regist_over_error));
+                    resultDialog.setContent(getString(R.string.common_text_regist_over_error_setting));
                     break;
                 case NONE:
                 case UNKNOWN:
