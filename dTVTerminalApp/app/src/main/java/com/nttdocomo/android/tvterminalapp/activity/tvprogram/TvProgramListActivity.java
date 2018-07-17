@@ -810,6 +810,11 @@ public class TvProgramListActivity extends BaseActivity implements
     public void onClick(final View v) {
         switch (v.getId()) {
             case R.id.tv_program_list_main_layout_curtime_iv:
+                if (!mSelectDateStr.equals(DateUtils.getSystemTimeAndCheckHour(null))) {
+                    setTitle();
+                    clearData();
+                    getChannelData();
+                }
                 //現在のスクロール位置をスクロール位置に指定して、縦スクロールを止める(ScrollToでは止まらない)
                 mProgramScrollViewParent.smoothScrollTo(
                         mProgramScrollViewParent.getScrollX(),
