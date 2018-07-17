@@ -785,14 +785,16 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
      * プレイヤービュー初期化.
      */
     private void initSecureVideoView() {
-        mSecureVideoPlayer = new SecureVideoView(mContext);
-        LayoutParams layoutParams = new LayoutParams(
-                LayoutParams.MATCH_PARENT,
-                LayoutParams.MATCH_PARENT);
-        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-        mSecureVideoPlayer.setLayoutParams(layoutParams);
-        this.addView(mSecureVideoPlayer);
-        this.setVisibility(View.VISIBLE);
+        if (mSecureVideoPlayer == null) {
+            mSecureVideoPlayer = new SecureVideoView(mContext);
+            LayoutParams layoutParams = new LayoutParams(
+                    LayoutParams.MATCH_PARENT,
+                    LayoutParams.MATCH_PARENT);
+            layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+            mSecureVideoPlayer.setLayoutParams(layoutParams);
+            this.addView(mSecureVideoPlayer);
+            this.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
