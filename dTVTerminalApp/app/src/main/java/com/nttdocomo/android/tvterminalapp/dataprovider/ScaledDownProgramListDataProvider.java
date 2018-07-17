@@ -725,24 +725,33 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         }
 
         //データをWebAPIから取得する
-        if (!mIsStop && NetWorkUtils.isOnline(mContext)) {
-            int[] chNos = new int[fromWebAPI.size()];
-            for (int i = 0; i < fromWebAPI.size(); i++) {
-                chNos[i] = fromWebAPI.get(i);
-            }
-            if (isTvProgramList) {
-                mTvScheduleWebClientLinkedList = new LinkedList<>();
-                for (int chNo : chNos) {
-                    mTvScheduleWebClient = new TvScheduleWebClient(mContext);
-                    mTvScheduleWebClient.setChannelNoList(new int[]{chNo}, dateList, filter);
-                    DTVTLogger.debug("TvScheduleWebClient offer execute date " + chNo);
-                    mTvScheduleWebClientLinkedList.offer(mTvScheduleWebClient);
+        if (!mIsStop) {
+            if (NetWorkUtils.isOnline(mContext)) {
+                int[] chNos = new int[fromWebAPI.size()];
+                for (int i = 0; i < fromWebAPI.size(); i++) {
+                    chNos[i] = fromWebAPI.get(i);
                 }
-                //キュー生成後に実行する
-                pollTvScheduleWebClient();
+                if (isTvProgramList) {
+                    mTvScheduleWebClientLinkedList = new LinkedList<>();
+                    for (int chNo : chNos) {
+                        mTvScheduleWebClient = new TvScheduleWebClient(mContext);
+                        mTvScheduleWebClient.setChannelNoList(new int[]{chNo}, dateList, filter);
+                        DTVTLogger.debug("TvScheduleWebClient offer execute date " + chNo);
+                        mTvScheduleWebClientLinkedList.offer(mTvScheduleWebClient);
+                    }
+                    //キュー生成後に実行する
+                    pollTvScheduleWebClient();
+                } else {
+                    mTvScheduleWebClient = new TvScheduleWebClient(mContext);
+                    mTvScheduleWebClient.getTvScheduleApi(chNos, dateList, filter, this);
+                }
+            } else if (isTvProgramList) {
+                //番組表レスポンスの時はチャンネルリスト数分のレスポンスを返却する
+                for (int aChList : chList) {
+                    mApiDataProviderCallback.channelInfoCallback(null, new int[]{aChList});
+                }
             } else {
-                mTvScheduleWebClient = new TvScheduleWebClient(mContext);
-                mTvScheduleWebClient.getTvScheduleApi(chNos, dateList, filter, this);
+                mApiDataProviderCallback.channelInfoCallback(null, chList);
             }
         } else {
             DTVTLogger.error("ScaledDownProgramListDataProvider is stopping connect");

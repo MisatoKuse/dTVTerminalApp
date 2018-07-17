@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -412,7 +413,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             mlp.setMargins(startMargin, 0, 0, 0);
             //マージンを設定
             itemViewHolder.mContent.setLayoutParams(mlp);
-            itemViewHolder.mContent.setTextSize(GET_CONTENT_ERROR_TEXT_SIZE);
+            itemViewHolder.mContent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, GET_CONTENT_ERROR_TEXT_SIZE);
+            itemViewHolder.mContent.setMaxLines(1);
             itemViewHolder.mContent.setText(title);
         } else {
             layout.setVisibility(View.VISIBLE);
