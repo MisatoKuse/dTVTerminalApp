@@ -464,7 +464,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(RecordedListActivity.this);
                         // 未ペアリング時
                         if (dlnaDmsItem.mControlUrl.isEmpty()) {
-                            showGetDataFailedToast();
                             mNoDataMessage.setVisibility(View.VISIBLE);
                             setProgressBarGone();
                         } else {
