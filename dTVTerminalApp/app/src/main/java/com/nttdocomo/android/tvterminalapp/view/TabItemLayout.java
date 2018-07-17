@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.view;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
@@ -19,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 /**
@@ -207,6 +209,9 @@ public class TabItemLayout extends HorizontalScrollView {
                     }
                 }
             });
+            if (mContext instanceof TvProgramListActivity) {
+                tabTextView.setTypeface(tabTextView.getTypeface(), Typeface.BOLD);
+            }
             mLinearLayout.addView(tabTextView);
         }
         mLinearLayout.setBackgroundResource(setBackgroundResourceIndicating(false));

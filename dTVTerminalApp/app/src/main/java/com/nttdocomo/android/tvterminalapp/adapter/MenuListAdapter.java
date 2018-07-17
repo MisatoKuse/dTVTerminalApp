@@ -5,11 +5,9 @@
 package com.nttdocomo.android.tvterminalapp.adapter;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
 import android.support.v4.content.ContextCompat;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -153,8 +151,6 @@ public class MenuListAdapter extends BaseAdapter {
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_premium_tv_app_start_common))) {
                 //テレビアプリを起動するの設定
                 textView.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
-                textView.setTypeface(Typeface.DEFAULT);
-                textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
                 dividerMarginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_home))
@@ -165,8 +161,6 @@ public class MenuListAdapter extends BaseAdapter {
                     || title.equals(mContext.getString(R.string.nav_menu_item_d_anime_copyright))) {
                 //通常アイテムの設定
                 textView.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
-                textView.setTypeface(Typeface.DEFAULT);
-                textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
                 dividerMarginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_hikari_tv))
@@ -179,8 +173,6 @@ public class MenuListAdapter extends BaseAdapter {
             } else {
                 //その他サブアイテムのカスタマイズ
                 textView.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
-                textView.setTypeface(Typeface.DEFAULT);
-                textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
                 marginLayoutParams.setMargins(intCustomTitleLeftMargin, 0, 0, 0);
                 dividerMarginLayoutParams.setMargins(intCustomTitleLeftMargin, 0, 0, 0);
             }

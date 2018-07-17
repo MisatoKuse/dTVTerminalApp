@@ -8,6 +8,7 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -512,7 +513,7 @@ public class TvProgramListActivity extends BaseActivity implements
         //マイ番組表タブ位置取得
         mMyChannelTabNo = getMyChannelTabNo(mProgramTabNames);
         if (mTabLayout == null) {
-            mTabLayout = new TabItemLayout(getApplicationContext());
+            mTabLayout = new TabItemLayout(this);
             mTabLayout.setTabClickListener(this);
             mTabLayout.initTabView(mProgramTabNames, TabItemLayout.ActivityType.PROGRAM_LIST_ACTIVITY);
             RelativeLayout tabRelativeLayout = findViewById(R.id.rl_tv_program_list_tab);
@@ -705,7 +706,8 @@ public class TvProgramListActivity extends BaseActivity implements
         int lineWidth = dip2px(TIME_LINE_WIDTH);
         int oneHourUnit = dip2px(ONE_HOUR_UNIT);
         for (int i = DateUtils.START_TIME; i < STANDARD_TIME + DateUtils.START_TIME; i++) {
-            TextView tabTextView = new TextView(getApplicationContext());
+            TextView tabTextView = new TextView(this);
+            tabTextView.setTypeface(tabTextView.getTypeface(), Typeface.BOLD);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(lineWidth, oneHourUnit);
             tabTextView.setLayoutParams(params);
             int curTime = i;
