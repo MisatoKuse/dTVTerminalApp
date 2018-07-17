@@ -664,7 +664,7 @@ public class TvProgramListActivity extends BaseActivity implements
                     String[] dateList = {dateStr};
                     int[] chList = mTvProgramListAdapter.getNeedProgramChannels();
                     if (chList != null && chList.length > 0) {
-                        mScaledDownProgramListDataProvider.getProgram(chList, dateList, false);
+                        mScaledDownProgramListDataProvider.getProgram(chList, dateList, true);
                     }
                 }
                 break;
@@ -1010,7 +1010,7 @@ public class TvProgramListActivity extends BaseActivity implements
                         channel.setTitle(scheduleInfoList.get(0).getTitle());
                         channel.setSchedules(scheduleInfoList);
                         channelsInfoList.addChannel(channel);
-                        List<ChannelInfo> channels = channelsInfo.getChannels();
+                        List<ChannelInfo> channels = channelsInfoList.getChannels();
                         mChannelInfo = channels;
                         setProgramRecyclerView(channels);
                     }
@@ -1061,7 +1061,7 @@ public class TvProgramListActivity extends BaseActivity implements
                 }
                 String dateStr = mSelectDateStr.replace("-", "");
                 String[] dateList = {dateStr};
-                mScaledDownProgramListDataProvider.getProgram(channelNos, dateList, false);
+                mScaledDownProgramListDataProvider.getProgram(channelNos, dateList, true);
             } else {
                 //情報がヌルなので、ネットワークエラーメッセージを取得する
                 ErrorState errorState = mScaledDownProgramListDataProvider.getChannelError();
@@ -1099,7 +1099,7 @@ public class TvProgramListActivity extends BaseActivity implements
             //マイ番組表設定されていない場合、通信しない
             String dateStr = mSelectDateStr.replace("-", "");
             String[] dateList = {dateStr};
-            mScaledDownProgramListDataProvider.getProgram(channelNos, dateList, false);
+            mScaledDownProgramListDataProvider.getProgram(channelNos, dateList, true);
         }
         DTVTLogger.end();
     }
