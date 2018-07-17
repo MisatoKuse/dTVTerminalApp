@@ -335,8 +335,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
         //ユーザー状況の判定
         if (userState == UserState.CONTRACT_OK_PARING_OK
-                || userState == UserState.CONTRACT_OK_PAIRING_NG) {
-            //契約済みか契約無しを検知したならば、この時点でメニューを活性化する
+                || userState == UserState.CONTRACT_OK_PAIRING_NG
+                || mAgreementRl.getVisibility() == View.VISIBLE) {
+            //契約済みか契約無しを検知したか、未ログインが確定して誘導バナーが表示されたならば、この時点でメニューを活性化する
             setMenuIconEnabled(true);
 
             //以後はshowProgessBarでの制御も有効となる
@@ -367,9 +368,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             mMenuTimeOutHandler.postDelayed(mMenuTimeOutRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    //プログレス表示が非表示ではなかった場合は、表示を行う
-                    mLinearLayout = findViewById(R.id.home_main_layout_linearLayout);
-                    if (mLinearLayout.getVisibility() != View.VISIBLE) {
+                    //プログレス表示が表示されていた場合は消し、メニュー表示を行う
+                    RelativeLayout relativeLayout = findViewById(R.id.home_main_layout_progress_bar_Layout);
+                    if (relativeLayout.getVisibility() == View.VISIBLE) {
                         DTVTLogger.debug("HOME ACTIVITY TIME OUT");
                         //最後のコールバックから指定時間が経過して、まだメニューが非活性の場合は、メニューを活性化する
                         showProgessBarEnabled = true;
@@ -594,7 +595,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     mAgreementRl.setVisibility(View.VISIBLE);
 
                     //メニューも活性化する
-                    setMenuIconEnabled(true);
+                    showProgessBar(false);
                     break;
                 }
                 //確定前はバナーを表示しないので、ここでbreakは行わない
