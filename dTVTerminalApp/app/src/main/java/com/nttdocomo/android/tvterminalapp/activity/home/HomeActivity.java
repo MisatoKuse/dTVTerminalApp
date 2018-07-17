@@ -414,8 +414,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 isOttChecked = true;
                 setDaccountControl();
             } else {
+                //以後の操作を有効にする
+                showProgessBarEnabled = true;
+
                 //dアカウントの処理を行わないとグローバルメニューを活性化する機会が失われるので、この時点で活性化する
                 setMenuIconEnabled(true);
+                enableGlobalMenuIcon(true);
             }
         }
 
