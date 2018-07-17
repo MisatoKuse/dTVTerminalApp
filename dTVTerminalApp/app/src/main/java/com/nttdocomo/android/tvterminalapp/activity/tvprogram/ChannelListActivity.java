@@ -41,6 +41,8 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
 import java.util.ArrayList;
@@ -355,22 +357,28 @@ public class ChannelListActivity extends BaseActivity implements
     private void initChannelListTab() {
         Resources res = getResources();
         DTVTLogger.warning("StbConnectionManager.shared().getConnectionStatus() = " + StbConnectionManager.shared().getConnectionStatus());
-        switch (StbConnectionManager.shared().getConnectionStatus()) {
-            case NONE_PAIRING:
-            case NONE_LOCAL_REGISTRATION:
-                if (mIsShowedBefore) {
+
+        String contractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(ChannelListActivity.this));
+        if (!UserInfoUtils.CONTRACT_INFO_H4D.equals(contractInfo)) {
+            mTabNames = res.getStringArray(R.array.channel_list_tab_names_no_paring);
+        } else {
+            switch (StbConnectionManager.shared().getConnectionStatus()) {
+                case NONE_PAIRING:
+                case NONE_LOCAL_REGISTRATION:
+                    if (mIsShowedBefore) {
+                        mTabNames = res.getStringArray(R.array.channel_list_tab_names);
+                    } else {
+                        mTabNames = res.getStringArray(R.array.channel_list_tab_names_no_paring);
+                    }
+                    break;
+                case HOME_OUT:
+                case HOME_OUT_CONNECT:
+                case HOME_IN:
+                default:
                     mTabNames = res.getStringArray(R.array.channel_list_tab_names);
-                } else {
-                    mTabNames = res.getStringArray(R.array.channel_list_tab_names_no_paring);
-                }
-                break;
-            case HOME_OUT:
-            case HOME_OUT_CONNECT:
-            case HOME_IN:
-            default:
-                mTabNames = res.getStringArray(R.array.channel_list_tab_names);
-                mIsShowedBefore = true;
-                break;
+                    mIsShowedBefore = true;
+                    break;
+            }
         }
 
         if (mTabLayout == null) {
