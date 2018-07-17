@@ -3323,9 +3323,24 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         showProgressBar(false);
         ErrorState errorState = null;
         CustomDialog.ApiOKCallback okCallback = null;
+
+        //状況に合わせてエラーの取得場所を選択し、ダイアログ表示を行う
         switch (errorType) {
             case contentDetailGet:
-                errorState = mContentsDetailDataProvider.getError(ContentsDetailDataProvider.ErrorType.contentsDetailGet);
+                //エラー値の取得元を切り替え
+                if (mContentsDetailDataProvider != null) {
+                    //コンテンツ詳細プロバイダーが存在すれば、そこからエラー値を取得する
+                    errorState = mContentsDetailDataProvider.getError(ContentsDetailDataProvider.ErrorType.contentsDetailGet);
+                } else if (mSearchDataProvider != null) {
+                    //検索データプロバイダーが存在すれば、そこからエラー値を取得する
+                    errorState = mSearchDataProvider.getError();
+                } else {
+                    //どちらのデータプロバイダーも無ければ、何もできないので帰る（ここに来るケースは無い筈）
+                    DTVTLogger.debug(
+                            "mScaledDownProgramListData mSearchData both null:"
+                                    + errorType);
+                    return;
+                }
                 okCallback = new CustomDialog.ApiOKCallback() {
                     @Override
                     public void onOKCallback(final boolean isOK) {
