@@ -42,10 +42,6 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
      */
     private ApiVideoContentDataProviderCallback mApiVideoContentDataProviderCallback = null;
     /**
-     * ビデオコンテンツデータ取得位置.
-     */
-    private int mPagerOffset = 0;
-    /**
      * ビデオランキングリスト.
      */
     private VideoRankList mVideoRankList = null;
@@ -92,7 +88,6 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
      * @param offset 取得位置
      */
     public void getVideoContentData(final String genreId, final int offset) {
-        mPagerOffset = offset;
         mVideoRankList = null;
         if (!mIsCancel) {
             if (mRequiredClipKeyList) {
@@ -231,15 +226,6 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
     public void onContentsListPerGenreJsonParsed(final List<VideoRankList> contentsListPerGenre, final String genreId) {
         if (contentsListPerGenre != null) {
             VideoRankList list = contentsListPerGenre.get(0);
-
-            // 次のリクエストに使用するpagerOffsetを設定
-            Map<String, String> clipMap = list.getVrMap();
-            Integer offset = Integer.parseInt(clipMap.get(JsonConstants.META_RESPONSE_OFFSET));
-            Integer count = Integer.parseInt(clipMap.get(JsonConstants.META_RESPONSE_COUNT));
-            if (offset >= 0 && count >= 0) {
-                mPagerOffset = offset + count;
-            }
-
             if (list != null) {
                 if (!mRequiredClipKeyList
                         || mResponseEndFlag) {
@@ -301,14 +287,5 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
      */
     public ErrorState getError() {
         return mError;
-    }
-
-    /**
-     * ページオフセットの取得
-     *
-     * @return ページオフセット
-     */
-    public int getPagerOffset() {
-        return mPagerOffset;
     }
 }

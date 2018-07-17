@@ -123,7 +123,7 @@ public class ProgramDataManager {
      * @param chInfoDate 取得要求日付
      * @return list 番組データ
      */
-    public List<List<Map<String, String>>> selectTvScheduleListProgramData(
+    public synchronized List<List<Map<String, String>>> selectTvScheduleListProgramData(
             final List<String> chNos, final String chInfoDate) {
         DTVTLogger.start();
         String chInfoGetDate = StringUtils.getChDateInfo(chInfoDate);
