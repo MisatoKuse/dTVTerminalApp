@@ -296,7 +296,7 @@ public class WebApiBasePlala {
     /**
      * チャンネルのアダルトタイプ(空値).
      */
-    static final String MY_CHANNEL_ADULT_TYPE_EMPTY = "";
+    public static final String MY_CHANNEL_ADULT_TYPE_EMPTY = "";
 
     /**
      * チャンネルのパレンタル設定値(G).

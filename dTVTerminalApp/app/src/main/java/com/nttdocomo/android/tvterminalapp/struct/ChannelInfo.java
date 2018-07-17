@@ -20,6 +20,10 @@ public class ChannelInfo implements Parcelable {
      */
     private ArrayList<ScheduleInfo> mSchedules = null;
     /**
+     * チャンネルのアダルトフラグ.
+     */
+    private String mAdult;
+    /**
      * チャンネルのタイトル.
      */
     private String mTitle;
@@ -67,6 +71,21 @@ public class ChannelInfo implements Parcelable {
      * チャンネルのサービス識別子.
      */
     private String mService;
+    /**
+     * Channelアダルトフラグを取得.
+     * @return mAdult アダルトフラグ
+     */
+    public String getAdult() {
+        return mAdult;
+    }
+
+    /**
+     * Channelアダルトフラグを設定.
+     * @param adult アダルトフラグ
+     */
+    public void setAdult(final String adult) {
+        this.mAdult = adult;
+    }
     /**
      * Channelタイトルを取得.
      * @return title タイトル

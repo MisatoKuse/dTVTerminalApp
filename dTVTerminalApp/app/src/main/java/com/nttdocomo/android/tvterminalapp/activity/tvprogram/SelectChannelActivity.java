@@ -48,6 +48,10 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
      */
     private static final String TITLE = "title";
     /**
+     * チャンネルアダルトフラグ.
+     */
+    private static final String ADULT = "adult";
+    /**
      * チャンネルリスト選択リスト.
      */
     private ListView mSelectListView;
@@ -167,6 +171,7 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
         Bundle info = new Bundle();
         info.putString(SERVICE_ID, channel.getServiceId());
         info.putString(TITLE, channel.getTitle());
+        info.putString(ADULT, channel.getAdult());
         intent.putExtra(CHANNEL_INFO, info);
         intent.putExtra(POSITION, position);
         SelectChannelActivity.this.setResult(RESULT_OK, intent);

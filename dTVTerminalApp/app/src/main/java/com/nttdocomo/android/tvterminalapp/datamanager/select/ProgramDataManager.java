@@ -70,7 +70,7 @@ public class ProgramDataManager {
                 JsonConstants.META_RESPONSE_CH_TYPE, JsonConstants.META_RESPONSE_PUID, JsonConstants.META_RESPONSE_SUB_PUID,
                 JsonConstants.META_RESPONSE_CHPACK + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_PUID,
                 JsonConstants.META_RESPONSE_CHPACK + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_SUB_PUID,
-                JsonConstants.META_RESPONSE_CID};
+                JsonConstants.META_RESPONSE_CID, JsonConstants.META_RESPONSE_ADULT};
 
         try {
             //Daoクラス使用準備

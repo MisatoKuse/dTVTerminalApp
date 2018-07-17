@@ -57,6 +57,10 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     private static final String SERVICE_IDS = "service_ids";
     /** チャンネルタイトル.*/
     private static final String TITLE = "title";
+    /** チャンネルアダルトフラグ.*/
+    private static final String ADULT = "adult";
+    /** チャンネルアダルトフラグ値"1".*/
+    private static final String ADULT_VALUE_ONE = "1";
     /** マイ番組表編集リスト.*/
     private ListView mEditListView;
     /** マイ番組表データコレクション.*/
@@ -124,6 +128,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
                 ChannelInfo channel = new ChannelInfo();
                 channel.setServiceId(info.getString(SERVICE_ID));
                 channel.setTitle(info.getString(TITLE));
+                channel.setAdult(info.getString(ADULT));
                 //MYチャンネル登録実行
                 executeMyChannelListRegister(mAddPosition, channel);
                 DTVTLogger.end();
@@ -290,7 +295,20 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
         mMyChannelDataProvider = new MyChannelDataProvider(this);
         mMyChannelDataProvider.getMyChannelRegisterStatus(channel.getServiceId(),
                 channel.getTitle(), WebApiBasePlala.MY_CHANNEL_R_VALUE_G,
-                WebApiBasePlala.MY_CHANNEL_ADULT_TYPE_ADULT, position + 1);
+                getAdultType(channel.getAdult()), position + 1);
+    }
+
+    /**
+     * チャンネルのアダルトタイプ取得.
+     *
+     * @param adult Channelアダルトフラグ
+     * @return チャンネルのアダルトタイプ
+     */
+    private String getAdultType(final String adult) {
+        if (ADULT_VALUE_ONE.equals(adult)) {
+            return WebApiBasePlala.MY_CHANNEL_ADULT_TYPE_ADULT;
+        }
+        return WebApiBasePlala.MY_CHANNEL_ADULT_TYPE_EMPTY;
     }
 
     @Override

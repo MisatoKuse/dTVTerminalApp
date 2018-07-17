@@ -216,6 +216,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                     for (int i = 0; i < resultSet.size(); i++) {
                         ArrayList<ScheduleInfo> mScheduleList;
                         Map<String, String> map = resultSet.get(i);
+                        String adult = map.get(JsonConstants.META_RESPONSE_ADULT);
                         String chNo = map.get(JsonConstants.META_RESPONSE_CHNO);
                         String title = map.get(JsonConstants.META_RESPONSE_TITLE);
                         String thumb = map.get(JsonConstants.META_RESPONSE_THUMB_448);
@@ -249,6 +250,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
 
                         if (!TextUtils.isEmpty(chNo)) {
                             ChannelInfo channel = new ChannelInfo();
+                            channel.setAdult(adult);
                             channel.setChannelNo(Integer.parseInt(chNo));
                             channel.setTitle(title);
                             channel.setThumbnail(thumb);
@@ -558,6 +560,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                                 final List<HashMap<String, String>> channelList) {
         for (int i = 0; i < channelList.size(); i++) {
             HashMap<String, String> hashMap = channelList.get(i);
+            String adult =  hashMap.get(JsonConstants.META_RESPONSE_ADULT);
             String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
             String title = hashMap.get(JsonConstants.META_RESPONSE_TITLE);
             String thumbnail = hashMap.get(JsonConstants.META_RESPONSE_THUMB_448);
@@ -572,6 +575,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                     + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_SUB_PUID);
             if (!TextUtils.isEmpty(chNo)) {
                 ChannelInfo channel = new ChannelInfo();
+                channel.setAdult(adult);
                 channel.setTitle(title);
                 channel.setChannelNo(Integer.parseInt(chNo));
                 channel.setThumbnail(thumbnail);
