@@ -30,6 +30,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
+import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfoComparator;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
@@ -41,6 +42,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -193,6 +195,10 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * 番組描画間隔. 短いとスクロールが重くなるが描画が遅くなる
      */
     private final static int PROGRAM_DRAW_DURATION_TIME = 100;
+    /**
+     * 最新の縦スクロールY位置（番組描画順序決定用、見えている位置から近いものを順に描画する）.
+     */
+    private int mProgramScrollY = 0;
 
     /**
      * コンストラクタ.
@@ -251,8 +257,15 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         for (MyViewHolder viewHolder :mMyViewHolder) {
             int chNo = viewHolder.chNo;
             for (ChannelInfo channelInfo : mProgramList) {
-                if (chNo == channelInfo.getChannelNo() && channelInfo.getSchedules() == null) {
-                    chNoList.add(chNo);
+                // Bind済みHolderにChnoが一致するものがある時だけ取得リストに入れる
+                if (chNo == channelInfo.getChannelNo()) {
+                    // すでに取得済みであれば取得リストに入れない
+                    if (channelInfo.getSchedules() == null) {
+                        chNoList.add(chNo);
+                    } else {
+                        DTVTLogger.debug("###Schedules already got ChNo:" + channelInfo.getChannelNo() + " size:" + channelInfo.getSchedules().size());
+                        break;
+                    }
                 }
             }
         }
@@ -866,9 +879,16 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
          */
         public void startAddContentViews(final ArrayList<ScheduleInfo> itemSchedules) {
             final int itemNum = itemSchedules.size();
+
             if(itemNum > 0) {
                 DTVTLogger.start("###setItemView start ChNo:" + itemSchedules.get(0).getChNo() + " Pos:" + MyViewHolder.this.getAdapterPosition() + " obj:" + MyViewHolder.this.hashCode());
-
+                // 見える物から描画するために現在表示している位置から近い番組から順にソート処理する.
+                // 各番組情報に最新Y位置からの概算オフセット絶対値を突っ込む.
+                for (ScheduleInfo itemSchedule :itemSchedules) {
+                    float offsetY = Math.abs(itemSchedule.getMarginTop() * (((TvProgramListActivity) mContext).dip2px(ONE_HOUR_UNIT)) - mProgramScrollY);
+                    itemSchedule.setDrawOffset((int) offsetY);
+                }
+                Collections.sort(itemSchedules, new ScheduleInfoComparator());
                 TimerTask task = new TimerTask() {
                     int count = 0;
 
@@ -889,7 +909,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                                     count++;
                                     if (count >= itemNum) {
                                         // UIスレッド
-                                        DTVTLogger.debug("###AddContentViews Complete! ChNo:" + itemSchedules.get(0).getChNo() + " Pos:" + MyViewHolder.this.getAdapterPosition() + " obj:" + MyViewHolder.this.hashCode());
+                                        DTVTLogger.debug("###AddContentViews Complete! count:" + count + " itemNum:" + itemNum + " ChNo:" + itemSchedules.get(0).getChNo() + " Pos:" + MyViewHolder.this.getAdapterPosition() + " obj:" + MyViewHolder.this.hashCode());
                                         mIsCompleted = true;
                                         cancel();
                                         mTimer.cancel();
@@ -994,13 +1014,10 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     if (newChannelInfo.getChannelNo() == mChannelInfo.getChannelNo()) {
                         if (newChannelInfo.getSchedules() != null && newChannelInfo.getSchedules().size() > 0) {
                             mProgramList.set(j, newChannelInfo);
-                            int pos = 0;
-                            boolean isDataSet = false;
-                            for (; pos < mMyViewHolder.size(); pos++) {
+                            for (int pos = 0; pos < mMyViewHolder.size(); pos++) {
                                 if (newChannelInfo.getChannelNo() == mMyViewHolder.get(pos).chNo) {
                                     DTVTLogger.start("setItemView start ChNo:" + mChannelInfo.getChannelNo());
                                     setItemView(newProgramList.get(i).getSchedules(), mMyViewHolder.get(pos));
-                                    isDataSet = true;
                                     break;
                                 }
                             }
@@ -1046,4 +1063,13 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         }
         System.gc();
     }
+
+    /**
+     * 最新の縦スクロールY位置設定.
+     * @param programScrollY 最新の縦スクロールY位置
+     */
+    public void setProgramScrollY(final int programScrollY) {
+        this.mProgramScrollY = programScrollY;
+    }
+
 }

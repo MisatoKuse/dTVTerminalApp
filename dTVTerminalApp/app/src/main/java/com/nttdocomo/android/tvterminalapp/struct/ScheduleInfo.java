@@ -117,6 +117,11 @@ public class ScheduleInfo {
     private String mContentsId = null;
 
     /**
+     * 描画順序最適化用オフセット位置(現在表示中Y位置からのオフセット絶対値).
+     */
+    private int mDrawOffset = 0;
+
+    /**
      * タイトルを取得する.
      * @return タイトル
      */
@@ -466,6 +471,22 @@ public class ScheduleInfo {
      */
     public void setCrId(final String mCrId) {
         this.mCrId = mCrId;
+    }
+
+    /**
+     * 描画順序最適化用オフセット位置設定.
+     * @return 描画順序最適化用オフセット
+     */
+    public int getDrawOffset() {
+        return mDrawOffset;
+    }
+
+    /**
+     * 描画順序最適化用オフセット位置取得.
+     * @param drawOffset 描画順序最適化用オフセット
+     */
+    public void setDrawOffset(final int drawOffset) {
+        this.mDrawOffset = drawOffset;
     }
 
     /**
