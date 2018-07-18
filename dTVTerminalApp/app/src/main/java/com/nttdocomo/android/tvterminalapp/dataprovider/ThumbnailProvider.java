@@ -116,7 +116,11 @@ public class ThumbnailProvider {
 				}
 				//url重複がある場合
                 if (mListUrl.containsKey(imageUrl)) {
-					new ThumbnailDownloadTask(imageView, this, mContext, mImageSizeType).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, imageUrl);
+					if (mImageSizeType == ThumbnailDownloadTask.ImageSizeType.TV_PROGRAM_LIST) {
+						new ThumbnailDownloadTask(imageView, this, mContext, mImageSizeType).execute(imageUrl);
+					} else {
+						new ThumbnailDownloadTask(imageView, this, mContext, mImageSizeType).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, imageUrl);
+					}
                 } else {
 					mListUrl.put(imageUrl, imageView);
 				}
@@ -140,7 +144,11 @@ public class ThumbnailProvider {
 			String imageUrl = mListUrl.entrySet().iterator().next().getKey();
 			ImageView imageView = mListUrl.get(imageUrl);
 			try {
-				new ThumbnailDownloadTask(imageView, this, mContext, mImageSizeType).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, imageUrl);
+				if (mImageSizeType == ThumbnailDownloadTask.ImageSizeType.TV_PROGRAM_LIST) {
+					new ThumbnailDownloadTask(imageView, this, mContext, mImageSizeType).execute(imageUrl);
+				} else {
+					new ThumbnailDownloadTask(imageView, this, mContext, mImageSizeType).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, imageUrl);
+				}
 			} catch (RejectedExecutionException e) {
 				DTVTLogger.debug(e);
 			}

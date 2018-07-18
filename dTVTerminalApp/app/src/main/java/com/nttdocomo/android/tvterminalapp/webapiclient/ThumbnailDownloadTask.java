@@ -118,18 +118,24 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
 
             in = new BufferedInputStream(urlConnection.getInputStream(), 8 * 1024);
             if (mContext != null) {
-                bitmap = BitmapDecodeUtils.compressBitmap(mContext, in, ImageSizeType.CONTENT_DETAIL);
+                if (mImageSizeType == ImageSizeType.TV_PROGRAM_LIST) {
+                    bitmap = BitmapDecodeUtils.compressBitmap(mContext, in, ImageSizeType.TV_PROGRAM_LIST);
+                } else {
+                    bitmap = BitmapDecodeUtils.compressBitmap(mContext, in, ImageSizeType.CONTENT_DETAIL);
+                }
             } else {
                 bitmap = BitmapFactory.decodeStream(in);
             }
-            // ディスクに保存する
-            mThumbnailProvider.thumbnailCacheManager.saveBitmapToDisk(mImageUrl, bitmap);
             if (bitmap != null) {
+                // ディスクに保存する
+                if (mImageSizeType != ImageSizeType.TV_PROGRAM_LIST) {
+                    mThumbnailProvider.thumbnailCacheManager.saveBitmapToDisk(mImageUrl, bitmap);
+                    if (mContext != null) {
+                        bitmap = BitmapDecodeUtils.createScaleBitmap(mContext, bitmap, mImageSizeType);
+                    }
+                }
                 // メモリにプッシュする
                 mThumbnailProvider.thumbnailCacheManager.putBitmapToMem(mImageUrl, bitmap);
-                if (mContext != null) {
-                    bitmap = BitmapDecodeUtils.createScaleBitmap(mContext, bitmap, mImageSizeType);
-                }
             }
             return bitmap;
         } catch (SSLHandshakeException e) {
