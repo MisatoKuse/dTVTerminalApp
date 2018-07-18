@@ -2674,8 +2674,19 @@ public class BaseActivity extends FragmentActivity implements
      * dアカウント処理が不要なクラスはこのメソッドを実行する.
      */
     protected void setUnnecessaryDaccountRegistService() {
-        // STBSelectActivity以前のActivityが対象
+        // STBSelectActivity以前のActivityとホーム画面の通信不能時が対象
         mNecessaryDAccountRegistService = false;
+    }
+
+    /**
+     * dアカウント処理が必要なクラスはこのメソッドを実行する.
+     *
+     * デフォルトでdアカウントの処理は行う事になっているので、setUnnecessaryDaccountRegistServiceで一旦不要と
+     * 宣言した後で、再び必要になった場合に使用します。
+     */
+    protected void setNecessaryDaccountRegistService() {
+        //ホーム画面の通信不能時の後で、通信が再開した場合が対象
+        mNecessaryDAccountRegistService = true;
     }
 
     /**
