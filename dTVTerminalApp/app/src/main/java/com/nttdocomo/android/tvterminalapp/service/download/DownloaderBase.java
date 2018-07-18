@@ -243,9 +243,7 @@ public abstract class DownloaderBase {
      * @return ret ret
      */
     public static String getFileNameById(final String id) {
-        String ret = id;
-        ret = ret.replaceAll("[^a-z^A-Z^0-9]", "_");
-        return sDlPrefix + (new StringBuilder(ret)).toString();
+        return  sDlPrefix + String.valueOf(id.hashCode());
     }
 
     /**
