@@ -14,6 +14,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetail
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOtt;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.IDimDefines;
@@ -117,6 +118,12 @@ public class SendOperateLog extends WebApiBase {
      */
     public void sendOpeLog(final OtherContentsDetailData mDetailData, final VodMetaFullData mDetailFullData) {
         DTVTLogger.start();
+
+        //通信手段が存在しないときはすぐに帰る
+        if (mContext != null && !NetWorkUtils.isOnline(mContext)) {
+            return;
+        }
+
         if (!mIsCancel && mDetailData != null) {
             if (ContentUtils.DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId() || mDetailFullData != null) {
                 mCategoryId = getCategoryId(mDetailFullData);
