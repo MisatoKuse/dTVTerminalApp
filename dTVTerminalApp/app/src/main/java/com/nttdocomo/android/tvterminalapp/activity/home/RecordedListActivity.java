@@ -44,6 +44,7 @@ import com.nttdocomo.android.tvterminalapp.service.download.DownloadListener;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.struct.DownloadComparator;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
@@ -52,6 +53,7 @@ import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -224,6 +226,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onClickTab(final int position) {
         mPageIndex = 0;
+        mDlnaRecVideoItems = null;
         mIsEndPage = false;
         mViewPager.setCurrentItem(position);
     }
@@ -259,7 +262,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             public void run() {
                 setProgressBarGone();
                 showGetDataFailedToast();
-                mNoDataMessage.setVisibility(View.VISIBLE);
+                setVideoBrows(null);
             }
         });
     }
@@ -305,6 +308,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             public void onPageSelected(final int position) {
                 super.onPageSelected(position);
                 mPageIndex = 0;
+                mDlnaRecVideoItems = null;
                 mIsEndPage = false;
                 setTab(position);
                 sendScreenViewForPosition(position);
@@ -424,6 +428,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                             dlnaRecVideoItem.mDate = date;
                             dlnaRecVideoItem.mChannelName = channelName;
                             contentsData.setTime(getDownloadTitle(dlnaRecVideoItem));
+                            contentsData.setPublishEndDate(date);
                             list.add(contentsData);
                             RecordedContentsDetailData detailData = new RecordedContentsDetailData();
                             detailData.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
@@ -445,11 +450,19 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                     }
                 }
             } else {
-                mNoDataMessage.setVisibility(View.VISIBLE);
+                if (DOWNLOAD_OVER == mViewPager.getCurrentItem()) {
+                    mNoDataMessage.setVisibility(View.VISIBLE);
+                }
             }
-            baseFragment.notifyDataSetChanged();
+            if (list.size() > 0) {
+                Collections.sort(list, new DownloadComparator());
+                Collections.sort(baseFragment.getContentsList(), new DownloadComparator());
+            }
         }
-        progressBar.setVisibility(View.GONE);
+        if (DOWNLOAD_OVER == mViewPager.getCurrentItem()) {
+            baseFragment.notifyDataSetChanged();
+            progressBar.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -471,21 +484,28 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                                 case HOME_OUT:
                                 case HOME_IN:
                                 case HOME_OUT_CONNECT:
-                                    mDlnaContentRecordedDataProvider.listen(RecordedListActivity.this);
-                                    mDlnaContentRecordedDataProvider.browse(RecordedListActivity.this, mPageIndex);
                                     if (mPageIndex == 0 && !mIsLoading) {
                                         clearFragment(0);
+                                        setRecordedTakeOutContents();
                                     }
+                                    mDlnaContentRecordedDataProvider.listen(RecordedListActivity.this);
+                                    mDlnaContentRecordedDataProvider.browse(RecordedListActivity.this, mPageIndex);
                                     break;
                                 case NONE_LOCAL_REGISTRATION:
-                                case NONE_PAIRING:
-                                default:
-                                    if (mDlnaRecVideoItems != null){
+                                    if (mDlnaRecVideoItems != null) {
+                                        setRecordedTakeOutContents();
                                         setVideoBrows(mDlnaRecVideoItems);
                                     } else {
                                         clearFragment(0);
-                                        mNoDataMessage.setVisibility(View.VISIBLE);
+                                        setRecordedTakeOutContents();
+                                        setVideoBrows(null);
                                     }
+                                    setProgressBarGone();
+                                    break;
+                                case NONE_PAIRING:
+                                default:
+                                    clearFragment(0);
+                                    mNoDataMessage.setVisibility(View.VISIBLE);
                                     setProgressBarGone();
                                     break;
                             }
@@ -644,83 +664,78 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     private void setVideoBrows(final ArrayList<DlnaRecVideoItem> dlnaRecVideoItems) {
         final RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
-        baseFragment.setFragmentName(RLA_FragmentName_All);
-        if (dlnaRecVideoItems.size() < DtvtConstants.REQUEST_DLNA_LIMIT_50) {
-            mIsEndPage = true;
-        }
-        List<Map<String, String>> resultList = getDownloadListFromDb();
-        setTakeOutContentsToAll(dlnaRecVideoItems, resultList);
-        if (dlnaRecVideoItems.size() == 0 && mPageIndex == 0) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mNoDataMessage.setVisibility(View.VISIBLE);
+        if (dlnaRecVideoItems != null) {
+            baseFragment.setFragmentName(RLA_FragmentName_All);
+            if (dlnaRecVideoItems.size() < DtvtConstants.REQUEST_DLNA_LIMIT_50) {
+                mIsEndPage = true;
+            }
+            List<Map<String, String>> resultList = getDownloadListFromDb();
+            if (dlnaRecVideoItems.size() == 0 && mPageIndex == 0) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mNoDataMessage.setVisibility(View.VISIBLE);
+                    }
+                });
+                return;
+            }
+            baseFragment.clearQueueIndex();
+            setDownLoadQue(baseFragment, dlnaRecVideoItems, resultList);
+            final boolean hideDownloadBtn = getConnectionStatus();
+            for (int i = 0; i < dlnaRecVideoItems.size(); i++) {
+                DlnaRecVideoItem itemData = dlnaRecVideoItems.get(i);
+                String checkItemId = itemData.mItemId;
+                if (!TextUtils.isEmpty(checkItemId) && !checkItemId.startsWith(DownloaderBase.sDlPrefix)) {
+                    checkItemId = DownloaderBase.getFileNameById(checkItemId);
                 }
-            });
-            return;
-        }
-        List<ContentsData> listData = baseFragment.getContentsData();
-        if (null != listData && mPageIndex == 0 && !mIsLoading) {
-            listData.clear();
-            baseFragment.clearContentsList();
-        }
-
-        baseFragment.clearQueueIndex();
-        setDownLoadQue(baseFragment, dlnaRecVideoItems, resultList);
-        final boolean hideDownloadBtn = getConnectionStatus();
-        for (int i = 0; i < dlnaRecVideoItems.size(); i++) {
-            DlnaRecVideoItem itemData = dlnaRecVideoItems.get(i);
-            if (checkDataIsExist(itemData.mItemId.replaceAll("[^a-z^A-Z^0-9]", "/"), baseFragment)) {
-                continue;
-            }
-            RecordedContentsDetailData detailData = new RecordedContentsDetailData();
-            detailData.setItemId(itemData.mItemId);
-            detailData.setUpnpIcon(itemData.mUpnpIcon);
-            detailData.setSize(itemData.mSize);
-            detailData.setResUrl(itemData.mResUrl);
-            detailData.setResolution(itemData.mResolution);
-            detailData.setBitrate(itemData.mBitrate);
-            detailData.setDuration(itemData.mDuration);
-            detailData.setTitle(itemData.mTitle);
-            detailData.setVideoType(itemData.mVideoType);
-            detailData.setClearTextSize(itemData.mClearTextSize);
-            detailData.setXml(getXmlToDl(dlnaRecVideoItems.get(0).mXml, itemData.mItemId));
-            detailData.setChannelName(itemData.mChannelName);
-            detailData.setDate(itemData.mDate);
-            if (hideDownloadBtn) {
-                detailData.setIsRemote(true);
-            }
-            if (resultList != null && resultList.size() > 0) {
-                for (Map<String, String> hashMap : resultList) {
-                    String itemId = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
-                    String path = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
-                    String fullPath = path + File.separator + itemId;
-                    if (!TextUtils.isEmpty(itemId)) {
-                        String allItemId = itemData.mItemId;
-                        if (!TextUtils.isEmpty(allItemId) && !allItemId.startsWith(DownloaderBase.sDlPrefix)) {
-                            allItemId = DownloaderBase.getFileNameById(itemData.mItemId);
-                        }
-                        if (itemId.equals(allItemId)) {
-                            String downloadStatus = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
-                            if (!TextUtils.isEmpty(downloadStatus)) {
-                                File file = new File(fullPath);
-                                if (file.exists()) {
-                                    detailData.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
-                                    detailData.setDlFileFullPath(fullPath);
+                if (checkDataIsExist(checkItemId, baseFragment)) {
+                    continue;
+                }
+                RecordedContentsDetailData detailData = new RecordedContentsDetailData();
+                detailData.setItemId(itemData.mItemId);
+                detailData.setUpnpIcon(itemData.mUpnpIcon);
+                detailData.setSize(itemData.mSize);
+                detailData.setResUrl(itemData.mResUrl);
+                detailData.setResolution(itemData.mResolution);
+                detailData.setBitrate(itemData.mBitrate);
+                detailData.setDuration(itemData.mDuration);
+                detailData.setTitle(itemData.mTitle);
+                detailData.setVideoType(itemData.mVideoType);
+                detailData.setClearTextSize(itemData.mClearTextSize);
+                detailData.setXml(getXmlToDl(dlnaRecVideoItems.get(0).mXml, itemData.mItemId));
+                detailData.setChannelName(itemData.mChannelName);
+                detailData.setDate(itemData.mDate);
+                if (hideDownloadBtn) {
+                    detailData.setIsRemote(true);
+                }
+                if (resultList != null && resultList.size() > 0) {
+                    for (Map<String, String> hashMap : resultList) {
+                        String itemId = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
+                        if (!TextUtils.isEmpty(itemId)) {
+                            String allItemId = itemData.mItemId;
+                            if (!TextUtils.isEmpty(allItemId) && !allItemId.startsWith(DownloaderBase.sDlPrefix)) {
+                                allItemId = DownloaderBase.getFileNameById(itemData.mItemId);
+                            }
+                            if (itemId.equals(allItemId)) {
+                                String downloadStatus = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
+                                if (TextUtils.isEmpty(downloadStatus)) {
+                                    detailData.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_LOADING);
                                 }
-                            } else {
-                                detailData.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_LOADING);
                             }
                         }
                     }
                 }
+                baseFragment.addContentsList(detailData);
+                setNotifyData(baseFragment, itemData, detailData.getDlFileFullPath(), detailData.getDownLoadStatus(), hideDownloadBtn);
             }
-            baseFragment.addContentsList(detailData);
-            setNotifyData(baseFragment, itemData, i, detailData.getDlFileFullPath(), hideDownloadBtn);
         }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (baseFragment.getContentsData().size() == 0) {
+                    mNoDataMessage.setVisibility(View.VISIBLE);
+                    return;
+                }
                 baseFragment.notifyDataSetChanged();
                 if (mPageIndex != 0) {
                     baseFragment.loadComplete();
@@ -770,19 +785,19 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      *
      * @param baseFragment baseFragment
      * @param dlnaRecVideoItem 録画ビデオアイテム
-     * @param i i
      * @param fullDlPath フルパス
+     * @param downloadStatus ダウンロードステータス
      * @param hideDownloadBtn ダウンロードボタン表示非表示
      */
     private void setNotifyData(final RecordedBaseFragment baseFragment, final DlnaRecVideoItem dlnaRecVideoItem,
-                               final int i, final String fullDlPath, final boolean hideDownloadBtn) {
+                               final String fullDlPath, final int downloadStatus, final boolean hideDownloadBtn) {
         ContentsData contentsData = new ContentsData();
         contentsData.setTitle(dlnaRecVideoItem.mTitle);
         contentsData.setAllowedUse(dlnaRecVideoItem.mAllowedUse);
         contentsData.setDownloadBtnHide(hideDownloadBtn);
         //duration && channel name end
         contentsData.setTime(getDownloadTitle(dlnaRecVideoItem));
-        contentsData.setDownloadFlg(baseFragment.getContentsListElement(i).getDownLoadStatus());
+        contentsData.setDownloadFlg(downloadStatus);
         contentsData.setDlFileFullPath(fullDlPath);
         List<ContentsData> l = baseFragment.getContentsData();
         if (null != l) {
@@ -919,56 +934,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     /**
-     * [すべて]のListと[持ち出し]Listをマージ.
-     *
-     * @param list すべてのリスト
-     * @param takeoutList 持ち出しリスト
-     * @return list　生成した[すべて]一覧に表示するリスト
-     */
-    private ArrayList<DlnaRecVideoItem> setTakeOutContentsToAll(final ArrayList<DlnaRecVideoItem> list,
-                                                                final List<Map<String, String>> takeoutList) {
-        // 返却するリスト
-        ArrayList<DlnaRecVideoItem> allList = list;
-        if (allList == null) {
-            allList = new ArrayList<>();
-        }
-        if (takeoutList != null) {
-            for (Map<String, String> hashMap : takeoutList) {
-                String itemId = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
-                boolean isExist = false;
-                if (!TextUtils.isEmpty(itemId)) {
-                    for (DlnaRecVideoItem dlnaRecVideoItem : allList) {
-                        String allItemId = DownloaderBase.getFileNameById(dlnaRecVideoItem.mItemId);
-                        if (itemId.equals(allItemId)) {
-                            isExist = true;
-                            break;
-                        }
-                    }
-                    if (!isExist) {
-                        String bitrate = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_BITRATE);
-                        String duration = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_DURATION);
-                        String title = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_TITLE);
-                        String totalSize = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_SIZE);
-                        String channelName = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_CHANNELNAME);
-                        String date = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_DATE);
-                        DlnaRecVideoItem dlnaRecVideoItem = new DlnaRecVideoItem();
-                        dlnaRecVideoItem.mItemId = itemId.replaceFirst(DownloaderBase.sDlPrefix, "");
-                        dlnaRecVideoItem.mClearTextSize = totalSize;
-                        dlnaRecVideoItem.mSize = totalSize;
-                        dlnaRecVideoItem.mTitle = title;
-                        dlnaRecVideoItem.mDuration = duration;
-                        dlnaRecVideoItem.mBitrate = bitrate;
-                        dlnaRecVideoItem.mChannelName = channelName;
-                        dlnaRecVideoItem.mDate = date;
-                        allList.add(dlnaRecVideoItem);
-                    }
-                }
-            }
-        }
-        return allList;
-    }
-
-    /**
      * フラグメント作成.
      *
      * @param dlPath dlPaht
@@ -996,7 +961,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void onScrollStateChanged(final RecordedBaseFragment fragment, final AbsListView absListView, final int scrollState) {
-        if (mViewPager.getCurrentItem() == 1 || mIsEndPage) {
+        if (mViewPager.getCurrentItem() == DOWNLOAD_OVER || mIsEndPage) {
             return;
         }
         synchronized (this) {

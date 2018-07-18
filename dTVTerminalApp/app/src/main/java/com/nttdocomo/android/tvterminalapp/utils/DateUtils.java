@@ -188,7 +188,7 @@ public class DateUtils {
     /**
      * 日付フォーマット.
      */
-    private static final String DATE_PATTERN_HYPHEN = "yyyy-MM-dd HH:mm:ss";
+    public static final String DATE_PATTERN_HYPHEN = "yyyy-MM-dd HH:mm:ss";
 
     /**
      * 日付フォーマット.

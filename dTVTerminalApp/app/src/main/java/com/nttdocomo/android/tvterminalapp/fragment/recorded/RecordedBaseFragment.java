@@ -54,7 +54,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     /**コンテキスト.*/
     private Context mContext;
     /**コンテンツデータ.*/
-    private List<ContentsData> mContentsData;
+    private List<ContentsData> mContentsData = new ArrayList<>();
     /**録画コンテンツ詳細.*/
     private final List<RecordedContentsDetailData> mContentsList = new ArrayList<>();
     /**コンテンツアダプター.*/
@@ -141,7 +141,6 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      */
     private void initData() {
         DTVTLogger.start();
-        mContentsData = new ArrayList<>();
 		mChannelNameCache = new HashSet<>();
     }
 
@@ -163,6 +162,10 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
 
     public void addContentsList(final RecordedContentsDetailData data) {
         mContentsList.add(data);
+    }
+
+    public List<RecordedContentsDetailData> getContentsList() {
+        return mContentsList;
     }
 
     public void addQueueIndex(final Integer index) {
