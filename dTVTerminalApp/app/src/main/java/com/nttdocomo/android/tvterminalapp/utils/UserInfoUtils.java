@@ -183,14 +183,14 @@ public class UserInfoUtils {
         int intAge = StringUtils.DEFAULT_USER_AGE_REQ;
         if (contractStatus != null) {
             if (contractStatus.equals(UserInfoDataProvider.CONTRACT_STATUS_DTV)) {
-                //H4Dの制限情報がないときはDCH側を使用
+                //001 ならdch_age_reqを参照する
+                age = infoMap.get(UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ);
+            } else if (contractStatus.equals(UserInfoDataProvider.CONTRACT_STATUS_H4D)) {
+                //002 ならh4d_age_reqを優先。ひかりが無いならdch_age_reqを参照する。
                 age = infoMap.get(UserInfoJsonParser.USER_INFO_LIST_H4D_AGE_REQ);
                 if (age == null || age.length() < 1) {
                     age = infoMap.get(UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ);
                 }
-            } else if (contractStatus.equals(UserInfoDataProvider.CONTRACT_STATUS_H4D)) {
-                //DCHの制限情報がないときはH4D DCH側を使用
-                age = infoMap.get(UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ);
             }
         }
         //年齢情報が数字ならINTに変換
