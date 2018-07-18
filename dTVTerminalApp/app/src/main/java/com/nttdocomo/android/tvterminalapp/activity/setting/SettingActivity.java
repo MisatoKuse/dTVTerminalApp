@@ -373,7 +373,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
                                     @Override
                                     public void run() {
                                         setRemoteProgressVisible(View.GONE);
-                                        showErrorDialog(getString(R.string.activation_failed_msg));
+                                        showErrorDialog(getString(R.string.activation_failed_error_local_registration));
                                     }
                                 });
                             }
