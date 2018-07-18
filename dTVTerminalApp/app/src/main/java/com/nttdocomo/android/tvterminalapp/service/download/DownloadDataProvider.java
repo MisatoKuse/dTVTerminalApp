@@ -453,7 +453,7 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
     }
 
     @Override
-    public List<Map<String, String>> dbOperation(final int operationId) {
+    public List<Map<String, String>> dbOperation(final DataBaseThread dataBaseThread, final int operationId) {
         List<Map<String, String>> resultSet = null;
         DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
         switch (operationId) {

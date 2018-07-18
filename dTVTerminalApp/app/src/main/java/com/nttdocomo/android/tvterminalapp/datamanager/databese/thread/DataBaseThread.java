@@ -4,9 +4,14 @@
 
 package com.nttdocomo.android.tvterminalapp.datamanager.databese.thread;
 
+import android.content.Context;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,18 +23,20 @@ import java.util.Map;
  */
 public class DataBaseThread extends Thread {
 
-    /**
-     * ハンドラ.
-     */
+    /** コンテキスト. */
+    private Context mContext = null;
+    /** ハンドラ. */
     private Handler mHandle = null;
-    /**
-     * callbackInterface.
-     */
+    /** callbackInterface. */
     private DataBaseOperation mDataBaseOperationFinish = null;
-    /**
-     * OperationId.
-     */
+    /** OperationId. */
     private int mOperationId = 0;
+    /** DBから取得するチャンネル番号を格納するリスト. */
+    private List<String> mFromDB = new ArrayList<>();
+    /** チャンネル番号で仕分けした番組データ. */
+    private ChannelInfoList mChannelsInfoList = null;
+    /** チャンネルデータ. */
+    private ChannelList mChannelList = null;
 
     /**
      * callbackInterface.
@@ -50,7 +57,7 @@ public class DataBaseThread extends Thread {
          * @param operationId operationId
          * @return DB取得結果
          */
-        List<Map<String, String>> dbOperation(final int operationId);
+        List<Map<String, String>> dbOperation(final DataBaseThread dataBaseThread, final int operationId);
     }
 
     /**
@@ -66,11 +73,11 @@ public class DataBaseThread extends Thread {
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
         List<Map<String, String>> ret = null;
 
         if (null != mDataBaseOperationFinish) {
-            ret = mDataBaseOperationFinish.dbOperation(mOperationId);
+            ret = mDataBaseOperationFinish.dbOperation(DataBaseThread.this, mOperationId);
         }
 
         final List<Map<String, String>> finalRet = ret;
@@ -87,5 +94,56 @@ public class DataBaseThread extends Thread {
                 }
             }
         });
+    }
+
+    /* DataBaseThread用 Getter/Setter */
+    /* DataBaseThread内でメンバ変数を参照する場合は 次のように Getter/Setter を使用すること */
+    /**
+     * DataBaseキャッシュから取得するチャンネル番号リスト.
+     * @return channel番号リスト
+     */
+    public List<String> getFromDB() {
+        return mFromDB;
+    }
+
+    /**
+     * チャンネル番号リストを返却.
+     * ※DatabaseThread内でメンバ変数を操作する場合はこのようにGetter/Setterを使用すること
+     * @param fromDB チャンネル番号リスト
+     */
+    public void setFromDB(final List<String> fromDB) {
+        this.mFromDB = fromDB;
+    }
+
+    /**
+     * DataBaseThread内で使用する複数チャンネルクラス.
+     * @return 複数チャンネルクラス
+     */
+    public ChannelInfoList getChannelsInfoList() {
+        return mChannelsInfoList;
+    }
+
+    /**
+     * 複数チャンネルクラスを返却.
+     * @param mChannelsInfoList 複数チャンネルクラス
+     */
+    public void setChannelsInfoList(final ChannelInfoList mChannelsInfoList) {
+        this.mChannelsInfoList = mChannelsInfoList;
+    }
+
+    /**
+     * チャンネルリスト.
+     * @return チャンネルリスト
+     */
+    public ChannelList getChannelList() {
+        return mChannelList;
+    }
+
+    /**
+     * チャンネルリストを返却.
+     * @param mChannelList チャンネルリスト
+     */
+    public void setChannelList(final ChannelList mChannelList) {
+        this.mChannelList = mChannelList;
     }
 }

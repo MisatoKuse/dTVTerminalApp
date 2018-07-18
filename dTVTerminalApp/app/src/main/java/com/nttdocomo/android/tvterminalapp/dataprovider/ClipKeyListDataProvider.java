@@ -437,7 +437,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     }
 
     @Override
-    public List<Map<String, String>> dbOperation(final int operationId) {
+    public List<Map<String, String>> dbOperation(final DataBaseThread dataBaseThread, final int operationId) {
         //子クラスで使用するために実装のみ
         return null;
     }

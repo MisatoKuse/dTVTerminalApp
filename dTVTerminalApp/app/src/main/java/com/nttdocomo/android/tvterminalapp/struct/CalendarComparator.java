@@ -22,12 +22,17 @@ public class CalendarComparator implements Comparator<ScheduleInfo>, Serializabl
 
     @Override
     public int compare(final ScheduleInfo s1, final ScheduleInfo s2) {
+
+        //将来のEpoch秒対応のため、ここでEpoch or 日付を吸収する
+        String s1StartTime = DateUtils.formatDateCheckToEpoch(s1.getStartTime());
+        String s2StartTime = DateUtils.formatDateCheckToEpoch(s2.getStartTime());
+
         StringBuilder time1 = new StringBuilder();
-        time1.append(s1.getStartTime().substring(0, 10));
-        time1.append(s1.getStartTime().substring(11, 19));
+        time1.append(s1StartTime.substring(0, 10));
+        time1.append(s1StartTime.substring(11, 19));
         StringBuilder time2 = new StringBuilder();
-        time2.append(s2.getStartTime().substring(0, 10));
-        time2.append(s2.getStartTime().substring(11, 19));
+        time2.append(s2StartTime.substring(0, 10));
+        time2.append(s2StartTime.substring(11, 19));
         SimpleDateFormat format = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
         Date date1 = new Date();
         Date date2 = new Date();

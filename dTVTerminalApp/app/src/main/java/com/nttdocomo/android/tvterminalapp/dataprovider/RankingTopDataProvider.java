@@ -976,8 +976,8 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
 
     @SuppressWarnings("OverlyLongMethod")
     @Override
-    public List<Map<String, String>> dbOperation(final int operationId) {
-        super.dbOperation(operationId);
+    public List<Map<String, String>> dbOperation(final DataBaseThread dataBaseThread, final int operationId) {
+        super.dbOperation(dataBaseThread, operationId);
         HomeDataManager homeDataManager;
         switch (operationId) {
             case INSERT_DAILY_RANKING_DATA:

@@ -1504,8 +1504,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     @SuppressWarnings({"OverlyLongMethod", "OverlyComplexMethod"})
     //Db処理を一括でまとめたメソッドのため60行以上の処理としています
     @Override
-    public List<Map<String, String>> dbOperation(final int operationId) {
-        super.dbOperation(operationId);
+    public List<Map<String, String>> dbOperation(final DataBaseThread dataBaseThread, final int operationId) {
+        super.dbOperation(dataBaseThread, operationId);
         HomeDataManager homeDataManager;
         List<ContentsData> resultList;
         RecommendListDataManager recommendDataManager;

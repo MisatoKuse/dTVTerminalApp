@@ -1028,8 +1028,9 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         //強制オーバーライド
     }
 
+    @SuppressWarnings("OverlyLongMethod")
     @Override
-    public List<Map<String, String>> dbOperation(final int operationId) {
+    public List<Map<String, String>> dbOperation(final DataBaseThread dataBaseThread, final int operationId) {
         RecommendListDataManager recommendDataManager;
         List<ContentsData> resultList;
         switch (operationId) {

@@ -437,8 +437,8 @@ public class ContentsDetailDataProvider extends ClipKeyListDataProvider implemen
 
     @SuppressWarnings("OverlyLongMethod")
     @Override
-    public List<Map<String, String>> dbOperation(final int operationId) {
-        super.dbOperation(operationId);
+    public List<Map<String, String>> dbOperation(final DataBaseThread dataBaseThread, final int operationId) {
+        super.dbOperation(dataBaseThread, operationId);
         List<Map<String, String>> resultSet = null;
         switch (operationId) {
             case ROLELIST_UPDATE: //サーバーから取得したロールリストデータをDBに保存する

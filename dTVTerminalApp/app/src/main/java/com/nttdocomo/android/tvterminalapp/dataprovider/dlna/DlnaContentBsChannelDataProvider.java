@@ -136,7 +136,7 @@ public class DlnaContentBsChannelDataProvider implements DlnaManager.BrowseListe
     }
 
     @Override
-    public List<Map<String, String>> dbOperation(final int mOperationId) {
+    public List<Map<String, String>> dbOperation(final DataBaseThread dataBaseThread, final int mOperationId) {
         List<Map<String, String>> resultSet = null;
         switch (mOperationId) {
             case CHANNEL_UPDATE://サーバーから取得したチャンネルデータをDBに保存する

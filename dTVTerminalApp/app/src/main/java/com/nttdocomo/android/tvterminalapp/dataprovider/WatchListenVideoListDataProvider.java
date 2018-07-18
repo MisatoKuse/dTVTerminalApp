@@ -303,8 +303,8 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     }
 
     @Override
-    public List<Map<String, String>> dbOperation(final int operationId) {
-        super.dbOperation(operationId);
+    public List<Map<String, String>> dbOperation(final DataBaseThread dataBaseThread, final int operationId) {
+        super.dbOperation(dataBaseThread, operationId);
         switch (operationId) {
             case WATCH_LISTEN_VIDEO_INSERT:
                 DateUtils dateUtils = new DateUtils(mContext);

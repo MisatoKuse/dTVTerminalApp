@@ -486,8 +486,8 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
     }
 
     @Override
-    public List<Map<String, String>> dbOperation(final int operationId) {
-        super.dbOperation(operationId);
+    public List<Map<String, String>> dbOperation(final DataBaseThread dataBaseThread, final int operationId) {
+        super.dbOperation(dataBaseThread, operationId);
         switch (operationId) {
             case RENTAL_VIDEO_LIST_INSERT:
                 RentalListInsertDataManager dataManager = new RentalListInsertDataManager(mContext);

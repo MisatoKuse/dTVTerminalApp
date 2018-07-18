@@ -50,116 +50,64 @@ import java.util.Map;
 public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider implements
         ChannelWebClient.ChannelJsonParserCallback,
         TvScheduleWebClient.TvScheduleJsonParserCallback {
-    /**
-     * データ取得結果コールバック.
-     */
+    /** データ取得結果コールバック. */
     private ApiDataProviderCallback mApiDataProviderCallback = null;
-    /**
-     * コンテキスト.
-     */
+    /** コンテキスト. */
     private Context mContext = null;
-    /**
-     * チャンネルデータ.
-     */
+    /** チャンネルデータ. */
     private ChannelList mChannelList = null;
-    /**
-     * 番組データ.
-     */
+    /** 番組データ. */
     private TvScheduleList mTvScheduleList = null;
-    /**
-     * チャンネル番号で仕分けした番組データ.
-     */
+    /** チャンネル番号で仕分けした番組データ. */
     private ChannelInfoList mChannelsInfoList = null;
-    /**
-     * チャンネルタイプ(dチャンネル、ひかりTV多ch、全て).
-     */
+    /** チャンネルタイプ(dチャンネル、ひかりTV多ch、全て). */
     private int mChannelServiceType = JsonConstants.CH_SERVICE_TYPE_INDEX_ALL;
-    /**
-     * 取得要求日付.
-     */
+    /** 取得要求日付. */
     private String mProgramSelectDate = null;
 
     //共通スレッド使う
-    /**
-     * チャンネル更新(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
-     */
+    /** チャンネル更新(親クラスのDbThreadで"0","1","2"を使用しているため使用しない). */
     private static final int CHANNEL_UPDATE = 5;
-    /**
-     * 番組更新(親クラスのDbThreadで"0","1","2"を使用しているため使用しない).
-     */
+    /** 番組更新(親クラスのDbThreadで"0","1","2"を使用しているため使用しない). */
     private static final int SCHEDULE_UPDATE = 6;
-    /**
-     * チャンネル検索.
-     */
+    /** チャンネル検索. */
     private static final int CHANNEL_SELECT = 3;
-    /**
-     * 番組検索.
-     */
+    /** 番組検索. */
     private static final int SCHEDULE_SELECT = 4;
-    /**
-     * 日付フォーマット.
-     */
+    /** 日付フォーマット. */
     private static final String DATE_FORMAT = "yyyyMMdd";
 
     //CH毎番組取得のフィルター
-    /**
-     * release.
-     */
+    /** release. */
     private static final String PROGRAM_LIST_CHANNEL_PROGRAM_FILTER_RELEASE = "release";
-    /**
-     * チャンネルリスト送受信用キー.
-     */
+    /** チャンネルリスト送受信用キー. */
     public static final String SEND_CHANNEL_LIST = "com.nttdocomo.android.idmanager.action.SEND_CHANNEL_LIST";
-    /**
-     * 番組表リスト送受信用キー.
-     */
+    /** 番組表リスト送受信用キー. */
     public static final String SEND_SCHEDULE_LIST = "com.nttdocomo.android.idmanager.action.SEND_SCHEDULE_LIST";
-    /**
-     * 通信エラー時ウェイト処理
-     */
+    /** 通信エラー時ウェイト処理. */
     private static final long SLEEP_TIME = 100L;
 
-    /**
-     * tvコンテンツのクリップキーリスト取得済み判定.
-     */
+    /** tvコンテンツのクリップキーリスト取得済み判定. */
     private boolean mTvClipKeyListResponse = false;
-    /**
-     * vodコンテンツのクリップキーリスト取得済み判定.
-     */
+    /** vodコンテンツのクリップキーリスト取得済み判定. */
     private boolean mVodClipKeyListResponse = false;
-    /**
-     * 通信禁止判定フラグ.
-     */
+    /** 通信禁止判定フラグ. */
     private boolean mIsStop = false;
-    /**
-     * チャンネルリスト取得WebClient.
-     */
+    /** チャンネルリスト取得WebClient. */
     private ChannelWebClient mChannelWebClient = null;
-    /**
-     * 番組リスト取得WebClient.
-     */
+    /** 番組リスト取得WebClient. */
     private TvScheduleWebClient mTvScheduleWebClient = null;
-    /**
-     * DBから取得するチャンネル番号を格納するリスト.
-     */
+    /** DBから取得するチャンネル番号を格納するリスト. */
     private List<String> mFromDB = new ArrayList<>();
-    /**
-     * DBから取得した複数チャンネルの情報を格納するリスト.
-     */
+    /** DBから取得した複数チャンネルの情報を格納するリスト. */
     private List<List<Map<String, String>>> mResultSets = null;
-    /**
-     * TvScheduleWebClientのキューリスト.
-     */
+    /** TvScheduleWebClientのキューリスト. */
     private LinkedList<TvScheduleWebClient> mTvScheduleWebClientLinkedList =null;
 
-    /**
-     * チャンネルリスト用エラー情報バッファ.
-     */
+    /** チャンネルリスト用エラー情報バッファ. */
     private ErrorState mChannelError = null;
 
-    /**
-     * 番組リスト用エラー情報バッファ.
-     */
+    /** 番組リスト用エラー情報バッファ. */
     private ErrorState mTvScheduleError = null;
 
     /**
@@ -304,17 +252,17 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     }
 
     @Override
-    public List<Map<String, String>> dbOperation(final int operationId) {
-        super.dbOperation(operationId);
+    public List<Map<String, String>> dbOperation(final DataBaseThread dataBaseThread, final int operationId) {
+        super.dbOperation(dataBaseThread, operationId);
         List<Map<String, String>> resultSet = null;
         switch (operationId) {
             case CHANNEL_UPDATE://サーバーから取得したチャンネルデータをDBに保存する
                 ChannelInsertDataManager channelInsertDataManager = new ChannelInsertDataManager(mContext);
-                channelInsertDataManager.insertChannelInsertList(mChannelList);
+                channelInsertDataManager.insertChannelInsertList(dataBaseThread.getChannelList());
                 break;
             case SCHEDULE_UPDATE://サーバーから取得した番組データをDBに保存する
                 TvScheduleInsertDataManager scheduleInsertDataManager = new TvScheduleInsertDataManager(mContext);
-                scheduleInsertDataManager.insertTvScheduleInsertList(mChannelsInfoList, mProgramSelectDate);
+                scheduleInsertDataManager.insertTvScheduleInsertList(dataBaseThread.getChannelsInfoList(), mProgramSelectDate);
                 //番組表の保存と番組表描画を並行して実行するとフリーズするため、DBへのInsertが終了してから描画を開始する
                 sendChannelInfoList(mChannelsInfoList, new int[0]);
                 break;
@@ -324,7 +272,8 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 break;
             case SCHEDULE_SELECT://DBから番組データを取得して、画面に返却する
                 ProgramDataManager scheduleDataManager = new ProgramDataManager(mContext);
-                mResultSets = scheduleDataManager.selectTvScheduleListProgramData(mFromDB, mProgramSelectDate);
+                dataBaseThread.getFromDB();
+                mResultSets = scheduleDataManager.selectTvScheduleListProgramData(dataBaseThread.getFromDB(), mProgramSelectDate);
                 mFromDB = new ArrayList<>();
                 resultSet = new ArrayList<>();
                 // 番組データがある場合はダミーで1件の結果セットを返す
@@ -350,6 +299,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             Handler handler = new Handler(); //チャンネル情報更新
             try {
                 DataBaseThread dataBaseThread = new DataBaseThread(handler, this, CHANNEL_UPDATE);
+                dataBaseThread.setChannelList(mChannelList);
                 dataBaseThread.start();
             } catch (IllegalThreadStateException e) {
                 DTVTLogger.debug(e);
@@ -514,6 +464,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             //番組情報更新
             try {
                 DataBaseThread t = new DataBaseThread(handler, this, SCHEDULE_UPDATE);
+                t.setChannelsInfoList(mChannelsInfoList);
                 t.start();
             } catch (IllegalThreadStateException e) {
                 DTVTLogger.debug(e);
@@ -722,6 +673,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             //チャンネル情報更新
             try {
                 DataBaseThread t = new DataBaseThread(handler, this, SCHEDULE_SELECT);
+                t.setFromDB(mFromDB);
                 t.start();
             } catch (IllegalThreadStateException e) {
                 DTVTLogger.debug(e);
@@ -848,12 +800,14 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                     DTVTLogger.debug("ScaledDownProgramListDataProvider BroadcastReceiver CHANNEL_UPDATE");
                     mChannelList = intent.getParcelableExtra(SEND_CHANNEL_LIST);
                     thread = new DataBaseThread(handler, ScaledDownProgramListDataProvider.this, CHANNEL_UPDATE);
+                    thread.setChannelList(mChannelList);
                     thread.start();
                     break;
                 case SEND_SCHEDULE_LIST:
                     DTVTLogger.debug("ScaledDownProgramListDataProvider BroadcastReceiver SCHEDULE_UPDATE");
                     mChannelsInfoList = intent.getParcelableExtra(SEND_SCHEDULE_LIST);
                     thread = new DataBaseThread(handler, ScaledDownProgramListDataProvider.this, SCHEDULE_UPDATE);
+                    thread.setChannelsInfoList(mChannelsInfoList);
                     thread.start();
                     break;
                 default:
