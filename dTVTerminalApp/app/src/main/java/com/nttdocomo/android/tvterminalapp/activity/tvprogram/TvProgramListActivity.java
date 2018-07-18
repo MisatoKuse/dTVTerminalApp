@@ -1131,7 +1131,7 @@ public class TvProgramListActivity extends BaseActivity implements
                     if (isZeroData) {
                         mMyChannelNoDataTxT.setText(getString(R.string.tv_program_tip));
                     } else {
-                        mMyChannelNoDataTxT.setText(getString(R.string.tv_program_tip_can_not_get_my_program));
+                        mMyChannelNoDataTxT.setText(getString(R.string.common_failed_data_message));
                     }
                     mMyChannelNoDataTxT.setVisibility(View.VISIBLE);
                     mNoDataMessage.setVisibility(View.GONE);

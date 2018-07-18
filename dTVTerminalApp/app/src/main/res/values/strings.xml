@@ -196,7 +196,6 @@
         <item>@string/common_dtv_channel</item>
     </string-array>
     <string name="tv_program_tip">マイ番組が設定されていません</string>
-    <string name="tv_program_tip_can_not_get_my_program">マイ番組の取得に失敗しました</string>
 
     <!-- 録画番組 -->
     <string-array name="record_list_tab_names">
