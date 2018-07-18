@@ -199,10 +199,12 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     private void displayMoreData(final boolean bool) {
         if (null != mListView) {
             if (bool) {
+                DTVTLogger.debug("display list view under indicator");
                 mListView.addFooterView(mLoadMoreView);
                 //スクロール位置を最下段にすることで、追加した更新フッターを画面内に入れる
                 mListView.setSelection(mListView.getMaxScrollAmount());
             } else {
+                DTVTLogger.debug("remove list view under indicator");
                 mListView.removeFooterView(mLoadMoreView);
             }
         }
@@ -320,12 +322,14 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
             displayMoreData(false);
             mNoDataMessage.setVisibility(View.VISIBLE);
             mNoDataMessage.setText(getResources().getString(R.string.common_get_data_failed_message));
+            DTVTLogger.debug("get video content data failed message = " + getResources().getString(R.string.common_get_data_failed_message));
             //エラーメッセージを取得する
             ErrorState errorState = mVideoContentProvider.getError();
             if (errorState != null) {
                 String message = errorState.getApiErrorMessage(getApplicationContext());
                 //有無で処理を分ける
                 if (!TextUtils.isEmpty(message)) {
+                    DTVTLogger.debug("get video content data error message = " + message);
                     showDialogToClose(VideoContentListActivity.this, message);
                     return;
                 }
