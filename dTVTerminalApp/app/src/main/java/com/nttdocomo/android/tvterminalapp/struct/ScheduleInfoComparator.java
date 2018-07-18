@@ -13,7 +13,10 @@ public class ScheduleInfoComparator implements Comparator<ScheduleInfo> {
 
     @Override
     public int compare(final ScheduleInfo c1, final ScheduleInfo c2) {
-        if (c1.getDrawOffset() < c2.getDrawOffset()) {
+
+        if (c1.getDrawOffset() == c2.getDrawOffset()) {
+            return 0;
+        } else if (c1.getDrawOffset() < c2.getDrawOffset()) {
             return -1;
         } else {
             return 1;
