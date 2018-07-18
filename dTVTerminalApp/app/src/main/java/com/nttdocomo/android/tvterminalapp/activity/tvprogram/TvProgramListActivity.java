@@ -1007,16 +1007,18 @@ public class TvProgramListActivity extends BaseActivity implements
                 } else {
                     //Nullの時のダミーデータ生成
                     if (chNo.length > 0) {
-                        //チャンネル番号がある時のみデータを生成する
                         ChannelInfoList channelsInfoList = new ChannelInfoList();
                         ArrayList<ScheduleInfo> scheduleInfoList = new ArrayList<>();
-                        ScheduleInfo mSchedule = DataConverter.convertScheduleInfo(DataConverter.getDummyContentMap(getApplicationContext(), chNo, true).get(0), null);
-                        scheduleInfoList.add(mSchedule);
                         ChannelInfo channel = new ChannelInfo();
-                        channel.setChannelNo(Integer.parseInt(scheduleInfoList.get(0).getChNo()));
-                        channel.setTitle(scheduleInfoList.get(0).getTitle());
-                        channel.setSchedules(scheduleInfoList);
-                        channelsInfoList.addChannel(channel);
+                        for (int aChNo : chNo) {
+                            //チャンネル番号がある時のみデータを生成する
+                            ScheduleInfo mSchedule = DataConverter.convertScheduleInfo(DataConverter.getDummyContentMap(getApplicationContext(), String.valueOf(aChNo), true), null);
+                            scheduleInfoList.add(mSchedule);
+                            channel.setChannelNo(Integer.parseInt(mSchedule.getChNo()));
+                            channel.setTitle(mSchedule.getTitle());
+                            channel.setSchedules(scheduleInfoList);
+                            channelsInfoList.addChannel(channel);
+                        }
                         List<ChannelInfo> channels = channelsInfoList.getChannels();
                         mChannelInfo = channels;
                         setProgramRecyclerView(channels);

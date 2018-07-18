@@ -215,7 +215,7 @@ public class DataConverter {
      * @param isNullResponse nullレスポンスフラグ
      * @return ダミーデータ
      */
-    public static List<Map<String, String>> getDummyContentMap(final Context context, final int[] chNo, final boolean isNullResponse) {
+    public static Map<String, String> getDummyContentMap(final Context context, final String chNo, final boolean isNullResponse) {
         Map<String, String> map = new HashMap<>();
         List<Map<String, String>> mapList = new ArrayList<>();
         map.put(JsonConstants.META_RESPONSE_CRID, "");
@@ -236,8 +236,7 @@ public class DataConverter {
         map.put(JsonConstants.META_RESPONSE_RATING, "");
         map.put(JsonConstants.META_RESPONSE_SERVICE_ID, "");
         map.put(JsonConstants.META_RESPONSE_EVENT_ID, "");
-        map.put(JsonConstants.META_RESPONSE_CHNO, String.valueOf(chNo[0]));
-        mapList.add(map);
-        return mapList;
+        map.put(JsonConstants.META_RESPONSE_CHNO, chNo);
+        return map;
     }
 }
