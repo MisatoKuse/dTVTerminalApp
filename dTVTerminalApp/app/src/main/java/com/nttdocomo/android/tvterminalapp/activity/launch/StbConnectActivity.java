@@ -264,7 +264,7 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
         CustomDialog resultDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
         resultDialog.setOnTouchOutside(false);
         resultDialog.setCancelable(false);
-        resultDialog.setContent(getString(R.string.activation_failed_msg));
+        resultDialog.setContent(getString(R.string.activation_failed_error_local_registration));
         resultDialog.setConfirmText(R.string.common_text_close);
         resultDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override

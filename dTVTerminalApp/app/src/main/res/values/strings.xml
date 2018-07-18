@@ -211,7 +211,9 @@
     <string name="record_download_notification_channel_name">ダウンロード状況</string>
     <string name="record_download_not_completed_msg">録画コンテンツのダウンロードに失敗しました。\n再度録画一覧よりダウンロードを行ってください。</string>
     <string name="record_download_low_storage_space_msg">端末の容量が不足しているため、ダウンロードできません</string>
-    <string name="activation_failed_msg">アクティベーション失敗しました。</string>
+    <string name="activation_failed_error_player">再生に失敗しました（AC-1）</string>
+    <string name="activation_failed_error_local_registration">リモート視聴設定に失敗しました（AC-1）</string>
+    <string name="activation_failed_error_download">ダウンロードに失敗しました（AC-1）</string>
 
     <!-- ビデオ一覧 -->
     <string name="video_content_top_title">ビデオジャンル</string>

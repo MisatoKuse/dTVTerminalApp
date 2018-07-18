@@ -598,7 +598,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     public void downloadClick(final View view) {
         boolean result = DlnaUtils.getActivationState(mContext);
         if (!result) {
-            showErrorDialog(getString(R.string.activation_failed_msg), R.string.common_text_close);
+            showErrorDialog(getString(R.string.activation_failed_error_download), R.string.common_text_close);
             return;
         }
         int index = (int) view.getTag();

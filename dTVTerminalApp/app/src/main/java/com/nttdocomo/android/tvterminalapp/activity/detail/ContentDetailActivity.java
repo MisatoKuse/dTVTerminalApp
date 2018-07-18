@@ -2749,7 +2749,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 msg = getString(R.string.contents_detail_out_house_player_error_msg);
                 break;
             case ACTIVATION:
-                msg = getString(R.string.activation_failed_msg);
+                msg = getString(R.string.activation_failed_error_player);
                 break;
             case EXTERNAL:
                 msg = getString(R.string.contents_detail_external_display_dialog_msg);
