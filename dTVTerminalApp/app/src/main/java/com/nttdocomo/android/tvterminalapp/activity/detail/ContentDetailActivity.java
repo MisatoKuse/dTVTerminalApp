@@ -194,6 +194,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private RelativeLayout mThumbnailRelativeLayout = null;
     /**サムネイルイメージビュー.*/
     private ImageView mThumbnail = null;
+    /** ひかりTVリトライ用のDLNAオブジェクト */
+    private DlnaObject mDlnaObject = null;
+    /** ひかりTVリトライ時にリモート扱いするかどうかのフラグ. */
+    private boolean mNotRemoteRetry = false;
     /**サムネイルアイコン、メッセージレイアウト.*/
     private LinearLayout mContractLeadingView = null;
     /**コンテンツ詳細予約済みID.*/
@@ -308,6 +312,14 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * 前回リモートコントローラービュー表示フラグ.
      */
     private static final String REMOTE_CONTROLLER_VIEW_VISIBILITY = "visibility";
+    /**
+     * ひかり放送中光コンテンツ再生失敗時にリトライを行うエラーコードの上限
+     */
+    private static final int RETRY_ERROR_START = 2000;
+    /**
+     * ひかり放送中光コンテンツ再生失敗時にリトライを行うエラーコードの下限
+     */
+    private static final int RETRY_ERROR_END = 2999;
 
     /* player end */
     /** ハンドラー.*/
@@ -407,6 +419,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     mPlayerViewLayout.initSecurePlayer(mPlayStartPosition);
                     mPlayerViewLayout.setPlayerEvent();
                     mPlayerViewLayout.setUserAgeInfo();
+                    mThumbnailBtn.setVisibility(View.GONE);
                 }
             } else {
                 mPlayerViewLayout.initSecurePlayer(mPlayStartPosition);
@@ -2418,6 +2431,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     /**
      * プレイヤーエラーダイアログを表示.
      *
+     * (ダイアログ終了後画面が終わるタイプ)
      * @param errorMessage エラーメッセージ
      */
     private void showDialogToConfirmClose(final String errorMessage) {
@@ -2429,6 +2443,20 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 contentsDetailCloseKey(null);
             }
         });
+        closeDialog.setOnTouchOutside(false);
+        closeDialog.setCancelable(false);
+        closeDialog.showDialog();
+    }
+
+    /**
+     * プレイヤーエラーダイアログを表示.
+     *
+     * (ダイアログ終了後画面が終わらないタイプ)
+     * @param errorMessage エラーメッセージ
+     */
+    private void showDialogToConfirm(final String errorMessage) {
+        CustomDialog closeDialog = new CustomDialog(ContentDetailActivity.this, CustomDialog.DialogType.ERROR);
+        closeDialog.setContent(errorMessage);
         closeDialog.setOnTouchOutside(false);
         closeDialog.setCancelable(false);
         closeDialog.showDialog();
@@ -2747,9 +2775,19 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     @Override
     public void onPlayerErrorCallBack(final int errorCode) {
         showProgressBar(false);
-        String errorMsg = getString(R.string.contents_player_fail_msg);
         String format = getString(R.string.contents_player_fail_error_code_format);
-        showDialogToConfirmClose(errorMsg.replace(format, String.valueOf(errorCode)));
+        String errorMsg = getString(R.string.contents_player_fail_msg);
+        errorMsg = errorMsg.replace(format, String.valueOf(errorCode));
+        if (errorCode >= RETRY_ERROR_START && errorCode <= RETRY_ERROR_END) {
+            DTVTLogger.debug("not close");
+            //自動再生コンテンツ再生準備
+            setPlayRetryArrow();
+            //OKで閉じないダイアログで表示
+            showDialogToConfirm(errorMsg);
+        } else {
+            DTVTLogger.debug("close");
+            showDialogToConfirmClose(errorMsg);
+        }
     }
 
     @Override
@@ -2780,27 +2818,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             public void run() {
                                 showPlayerProgressBar(false);
                                 if (dlnaObject != null) {
+                                    //リトライの時の為に控えておく
+                                    mDlnaObject = dlnaObject;
                                     //player start
                                     //放送中ひかりTVコンテンツの時は自動再生する
-                                    mDisplayState = PLAYER_AND_CONTENTS_DETAIL;
-                                    RecordedContentsDetailData data = new RecordedContentsDetailData();
-                                    data.setUpnpIcon(mChannel.getThumbnail());
-                                    data.setTitle(mChannel.getTitle());
-                                    data.setResUrl(dlnaObject.mResUrl);
-                                    data.setSize(dlnaObject.mSize);
-                                    data.setDuration(dlnaObject.mDuration);
-                                    data.setVideoType(dlnaObject.mVideoType);
-                                    data.setBitrate(dlnaObject.mBitrate);
-                                    data.setIsLive(true);
-                                    switch (StbConnectionManager.shared().getConnectionStatus()) {
-                                        case HOME_IN:
-                                            data.setIsRemote(false);
-                                            break;
-                                        default:
-                                            data.setIsRemote(true);
-                                            break;
-                                    }
-                                    initPlayer(data);
+                                    playAutoContents();
                                 } else {
                                     showErrorDialog(getString(R.string.contents_detail_now_on_air_get_now_on_air_error));
                                 }
@@ -2842,6 +2864,38 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             showPlayerProgressBar(false);
             DTVTLogger.error("dlnaDmsItem == null");
         }
+    }
+
+    /**
+     * 放送中ひかりコンテンツ再生.
+     */
+    void playAutoContents() {
+        mDisplayState = PLAYER_AND_CONTENTS_DETAIL;
+        RecordedContentsDetailData data = new RecordedContentsDetailData();
+        data.setUpnpIcon(mChannel.getThumbnail());
+        data.setTitle(mChannel.getTitle());
+        data.setResUrl(mDlnaObject.mResUrl);
+        data.setSize(mDlnaObject.mSize);
+        data.setDuration(mDlnaObject.mDuration);
+        data.setVideoType(mDlnaObject.mVideoType);
+        data.setBitrate(mDlnaObject.mBitrate);
+        data.setIsLive(true);
+        switch (StbConnectionManager.shared().getConnectionStatus()) {
+            case HOME_IN:
+                data.setIsRemote(false);
+                //リトライ時にリモートではない事を宣言する
+                mNotRemoteRetry = true;
+                break;
+            default:
+                if(mNotRemoteRetry) {
+                    //リモートではない場合のリトライなので、リモートではない
+                    data.setIsRemote(false);
+                } else {
+                    data.setIsRemote(true);
+                }
+                break;
+        }
+        initPlayer(data);
     }
 
     /**
@@ -3191,6 +3245,40 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         showProgressBar(false);
         DTVTLogger.end();
     }
+
+    /**
+     * 放送中光コンテンツ再生リトライ用再生ボタン表示.
+     */
+    private void setPlayRetryArrow() {
+        DTVTLogger.start();
+
+        setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
+        mThumbnailBtn.setVisibility(View.VISIBLE);
+        ImageView imageView = findViewById(R.id.dtv_contents_view_button);
+        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.mediacontrol_icon_tap_play_arrow2);
+        imageView.setImageBitmap(bmp);
+        int pixelSize = getResources().getDimensionPixelSize(R.dimen.contents_detail_player_media_controller_size);
+        imageView.setLayoutParams(new LinearLayout.LayoutParams(pixelSize, pixelSize));
+        mThumbnailBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                if (isFastClick()) {
+                    playAutoContents();
+                }
+            }
+        });
+
+        //各ウェイト表示を消す
+        showProgressBar(false);
+        showPlayerProgressBar(false);
+        showChannelProgressBar(false);
+        findViewById(R.id.dtv_contents_detail_player_only).setVisibility(View.GONE);
+        if (mPlayerViewLayout != null) {
+            mPlayerViewLayout.showPlayingProgress(false);
+        }
+        DTVTLogger.end();
+    }
+
     /**
      * リモート接続、ブラウズ.
      * @param showProgress プログレス進捗
