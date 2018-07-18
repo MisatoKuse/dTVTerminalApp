@@ -191,7 +191,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     /**
      * クリップ非活性フラグ.
      */
-    private boolean mIsClipActive;
+    private boolean mIsClipActive = false;
     /**
      * 番組描画間隔. 短いとスクロールが重くなるが描画が遅くなる
      */
@@ -690,7 +690,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 // 表示領域が足りない場合は非表示.
                 itemViewHolder.mClipButton.setVisibility(View.GONE);
             } else {
-                if (mIsClipActive) {
+                if (!mIsClipActive) {
                     //未ログイン又は未契約時はクリップボタンを非活性にする
                     if (endDate.compareTo(curDate) == DATE_COMPARE_TO_LOW) {
                         // 放送終了

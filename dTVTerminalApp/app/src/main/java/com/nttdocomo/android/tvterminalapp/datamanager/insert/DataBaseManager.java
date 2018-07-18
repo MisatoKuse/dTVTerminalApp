@@ -16,46 +16,34 @@ import java.util.concurrent.atomic.AtomicInteger;
  * DataBaseManager.
  */
 public class DataBaseManager {
-    /**
-     * DBの開閉回数を記録.
-     */
+    /** DBの開閉回数を記録. */
     private final AtomicInteger mOpenCounter = new AtomicInteger();
-    /**
-     * DBの開閉回数を記録(番組情報用).
-     */
+    /** DBの開閉回数を記録(番組情報用). */
     private final AtomicInteger mOpenCounterCh = new AtomicInteger();
-    /**
-     * DBの開閉回数を記録(番組情報用).
-     */
+    /** DBの開閉回数を記録(番組情報用). */
     private final AtomicInteger mOpenCounterDownload = new AtomicInteger();
-    /**
-     * DBManager.
-     */
+    /** DBManager. */
     private static DataBaseManager sInstance;
-    /**
-     * DBManage(番組情報用).
-     */
+    /** DBManage(番組情報用). */
     private static DataBaseManager sInstanceCh;
-    /**
-     * DBManage(持ち出し用).
-     */
+    /** DBManage(持ち出し用). */
     private static DataBaseManager sInstanceDownLoad;
-    /**
-     * DataBaseHelper.
-     */
+    /** DataBaseHelper. */
     private static DataBaseHelper sDatabaseHelper;
-    /**
-     * DataBaseHelper(番組情報用).
-     */
+    /** DataBaseHelper(番組情報用). */
     private static DataBaseHelperChannel sDatabaseChannelHelper;
-    /**
-     * DataBaseHelper(録画リスト用).
-     */
+    /** DataBaseHelper(録画リスト用). */
     private static DataBaseHelperDownload sDatabaseDownloadHelper;
-    /**
-     * Database.
-     */
+    /** Database. */
     private SQLiteDatabase mDatabase;
+    /** チャンネル用Database. */
+    private SQLiteDatabase mChannelDatabase;
+    /** ダウンロード用Database. */
+    private SQLiteDatabase mDownLoadDatabase;
+    /** Database Close 時の初期値. */
+    private static int ATOMIC_INTEGER_DEFAULT_CLOSE = 0;
+    /** Database Open 時の初期値. */
+    private static int ATOMIC_INTEGER_DEFAULT_OPEN = 1;
 
     /**
      * 初期化処理.
@@ -141,6 +129,10 @@ public class DataBaseManager {
         if (mOpenCounter.incrementAndGet() == 1) {
             // Opening new database
             mDatabase = sDatabaseHelper.getWritableDatabase();
+        } else if (mDatabase != null && !mDatabase.isOpen()) {
+            // mOpenCounter がずれた場合はここでキャッチする
+            mOpenCounter.set(ATOMIC_INTEGER_DEFAULT_OPEN);
+            mDatabase = sDatabaseHelper.getWritableDatabase();
         }
         return mDatabase;
     }
@@ -153,9 +145,13 @@ public class DataBaseManager {
     public synchronized SQLiteDatabase openChDatabase() {
         if (mOpenCounterCh.incrementAndGet() == 1) {
             // Opening new database
-            mDatabase = sDatabaseChannelHelper.getWritableDatabase();
+            mChannelDatabase = sDatabaseChannelHelper.getWritableDatabase();
+        } else if (mChannelDatabase != null && !mChannelDatabase.isOpen()) {
+            // mOpenCounterCh がずれた場合はここでキャッチする
+            mOpenCounterCh.set(ATOMIC_INTEGER_DEFAULT_OPEN);
+            mChannelDatabase = sDatabaseChannelHelper.getWritableDatabase();
         }
-        return mDatabase;
+        return mChannelDatabase;
     }
 
     /**
@@ -166,9 +162,13 @@ public class DataBaseManager {
     public synchronized SQLiteDatabase openDownloadDatabase() {
         if (mOpenCounterDownload.incrementAndGet() == 1) {
             // Opening new database
-            mDatabase = sDatabaseDownloadHelper.getWritableDatabase();
+            mDownLoadDatabase = sDatabaseDownloadHelper.getWritableDatabase();
+        } else if (mDownLoadDatabase != null && !mDownLoadDatabase.isOpen()) {
+            // mOpenCounterDownload がずれた場合はここでキャッチする
+            mOpenCounterDownload.set(ATOMIC_INTEGER_DEFAULT_OPEN);
+            mDownLoadDatabase = sDatabaseDownloadHelper.getWritableDatabase();
         }
-        return mDatabase;
+        return mDownLoadDatabase;
     }
 
     /**
@@ -178,7 +178,10 @@ public class DataBaseManager {
         if (mOpenCounter.decrementAndGet() == 0) {
             // Closing database
             mDatabase.close();
-
+        } else if (mDatabase != null && mDatabase.isOpen()) {
+            // mOpenCounter がずれた場合はここでキャッチする
+            mOpenCounter.set(ATOMIC_INTEGER_DEFAULT_CLOSE);
+            mDatabase.close();
         }
     }
 
@@ -188,7 +191,11 @@ public class DataBaseManager {
     public synchronized void closeChDatabase() {
         if (mOpenCounterCh.decrementAndGet() == 0) {
             // Closing database
-            mDatabase.close();
+            mChannelDatabase.close();
+        } else if (mChannelDatabase != null && mChannelDatabase.isOpen()) {
+            // mOpenCounterCh がずれた場合はここでキャッチする
+            mOpenCounterCh.set(ATOMIC_INTEGER_DEFAULT_CLOSE);
+            mChannelDatabase.close();
         }
     }
 
@@ -198,7 +205,11 @@ public class DataBaseManager {
     public synchronized void closeDownloadDatabase() {
         if (mOpenCounterDownload.decrementAndGet() == 0) {
             // Closing database
-            mDatabase.close();
+            mDownLoadDatabase.close();
+        } else if (mDownLoadDatabase != null && mDownLoadDatabase.isOpen()) {
+            // mOpenCounterDownload がずれた場合はここでキャッチする
+            mOpenCounterDownload.set(ATOMIC_INTEGER_DEFAULT_CLOSE);
+            mDownLoadDatabase.close();
         }
     }
 

@@ -47,70 +47,45 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         AbsListView.OnScrollListener, AdapterView.OnItemClickListener,
         AbsListView.OnTouchListener {
 
-    /**
-     * ビデオコンテンツ一覧用ビデオコンテンツプロバイダー.
-     */
+    /** ビデオコンテンツ一覧用ビデオコンテンツプロバイダー. */
     private VideoContentProvider mVideoContentProvider;
-    /**
-     * ビデオコンテンツ一覧用アダプター.
-     */
+    /** ビデオコンテンツ一覧用アダプター. */
     private ContentsAdapter mContentsAdapter;
-    /**
-     * 検索プログレスバー.
-     */
+    /** 検索プログレスバー. */
     private View mLoadMoreView;
-    /**
-     * ビデオコンテンツリストを表示するリスト.
-     */
+    /** ビデオコンテンツリストを表示するリスト. */
     private ListView mListView = null;
-    /**
-     * ビデオコンテンツリスト用.
-     */
+    /** ビデオコンテンツリスト用. */
     private RelativeLayout mRelativeLayout = null;
-    /**
-     * コンテンツデータ一覧のリスト.
-     */
+    /** コンテンツデータ一覧のリスト. */
     private List<ContentsData> mContentsList;
-    /**
-     * データの追加読み込み状態の識別フラグ.
-     */
+    /** データの追加読み込み状態の識別フラグ. */
     private boolean mIsCommunicating = false;
-    /**
-     * コンテンツ詳細表示フラグ.
-     */
+    /** コンテンツ詳細表示フラグ. */
     private boolean mContentsDetailDisplay = false;
-    /**
-     * ジャンルID.
-     */
+    /** ジャンルID. */
     private String mGenreId;
 
-    /**
-     * スクロール位置の記録.
-     */
+    /** スクロール位置の記録. */
     private int mFirstVisibleItem = 0;
 
-    /**
-     * 最後のスクロール方向が上ならばtrue.
-     */
+    /** オフセット位置の記録. */
+    private int mListItemLength = 0;
+    /** オフセットの調整用定数. */
+    private static int INTEGER_PAGER_OFFSET = 1;
+
+    /** 最後のスクロール方向が上ならばtrue. */
     private boolean mLastScrollUp = false;
 
-    /**
-     * 指を置いたY座標.
-     */
+    /** 指を置いたY座標. */
     private float mStartY = 0;
 
-    /**
-     * ビデオ一覧（コンテンツツリー）からののIntent KEY.
-     */
+    /** ビデオ一覧（コンテンツツリー）からののIntent KEY. */
     private static final String VIDEO_CONTENTS_BUNDLE_KEY = "videoContentKey";
-    /**
-     * リスト0件メッセージ.
-     */
+    /** リスト0件メッセージ. */
     private TextView mNoDataMessage;
 
-    /**
-     * 読み込み中断フラグ.
-     */
+    /** 読み込み中断フラグ. */
     private boolean mCancelLoad = false;
 
     @Override
@@ -153,6 +128,8 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
                 List<ContentsData> list = mVideoContentProvider.checkClipStatus(mContentsList);
                 mContentsAdapter.setListData(list);
                 mContentsAdapter.notifyDataSetChanged();
+                //リスト描画終了のタイミングで次回ページング開始位置を設定する
+                setListItemLength(list);
             }
         }
         DTVTLogger.end();
@@ -302,7 +279,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mVideoContentProvider.getVideoContentData(mGenreId, mVideoContentProvider.getPagerOffset());
+                        mVideoContentProvider.getVideoContentData(mGenreId, mListItemLength);
                     }
                 }, LOAD_PAGE_DELAY_TIME);
             }
@@ -349,7 +326,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
                 String message = errorState.getApiErrorMessage(getApplicationContext());
                 //有無で処理を分ける
                 if (!TextUtils.isEmpty(message)) {
-                    showDialogToClose(this, message);
+                    showDialogToClose(VideoContentListActivity.this, message);
                     return;
                 }
             }
@@ -370,6 +347,21 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         resetCommunication();
         mContentsAdapter.setListData(mContentsList);
         mContentsAdapter.notifyDataSetChanged();
+        //リスト描画終了のタイミングで次回ページング開始位置を設定する
+        setListItemLength(mContentsList);
+    }
+
+    /**
+     * 次回Paging時のオフセット位置設定.
+     *
+     * @param contentsList コンテンツリスト
+     */
+    public void setListItemLength(final List<ContentsData> contentsList) {
+        if (contentsList != null) {
+            mListItemLength = contentsList.size() + INTEGER_PAGER_OFFSET;
+        } else {
+            mListItemLength = INTEGER_PAGER_OFFSET;
+        }
     }
 
     @Override
@@ -440,7 +432,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         if (mContentsList == null || mContentsList.size() == 0) {
             //コンテンツ情報が無ければ取得を行う
             mVideoContentProvider = new VideoContentProvider(this);
-            mVideoContentProvider.getVideoContentData(mGenreId, 1);
+            mVideoContentProvider.getVideoContentData(mGenreId, INTEGER_PAGER_OFFSET);
         }
     }
 
