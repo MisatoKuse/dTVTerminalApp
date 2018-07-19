@@ -1421,6 +1421,14 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * 機能
+     * ディスプレイインスタンスを初期化.
+     */
+    protected void initDisplayMetrics() {
+        mDisplayMetrics = null;
+    }
+
+    /**
+     * 機能
      * カレントユーザ名を戻す.
      *
      * @return カレントユーザ名
