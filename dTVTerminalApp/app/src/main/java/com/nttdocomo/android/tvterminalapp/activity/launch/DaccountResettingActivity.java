@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -52,11 +53,19 @@ public class DaccountResettingActivity extends BaseActivity implements View.OnCl
      */
     private static final String D_ACCOUNT_APP_URI = "https://play.google.com/store/apps/details?id=com.nttdocomo.android.idmanager";
 
+    /**
+     * 起動モード初期値.
+     */
+    private int mStartMode = 0;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.daccount_resetting_main_layout);
-
+        Intent intent = getIntent();
+        if (intent != null) {
+           mStartMode = intent.getIntExtra(StbSelectActivity.FROM_WHERE, -1);
+        }
         //Headerの設定
         setTitleText("");
         enableHeaderBackIcon(false);
@@ -172,5 +181,36 @@ public class DaccountResettingActivity extends BaseActivity implements View.OnCl
             });
             dAccountUninstallDialog.showDialog();
         }
+    }
+
+    @Override
+    protected void restartMessageDialog(final String... message) {
+        //呼び出し用のアクティビティの退避
+        final Activity activity = this;
+
+        //出力メッセージのデフォルトはdアカウント用
+        String printMessage = getString(R.string.d_account_change_message);
+
+        //引数がある場合はその先頭を使用する
+        if (message != null && message.length > 0) {
+            printMessage = message[0];
+        }
+
+        //初期フローの場合はダイアログ出さない
+        if (mStartMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
+            return;
+        }
+        //ダイアログを、OKボタンのコールバックありに設定する
+        CustomDialog restartDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        restartDialog.setContent(printMessage);
+        //startAppDialog.setTitle(getString(R.string.dTV_content_service_start_dialog));
+        restartDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @Override
+            public void onOKCallback(final boolean isOK) {
+                //OKが押されたので、ホーム画面の表示
+                reStartApplication();
+            }
+        });
+        restartDialog.showDialog();
     }
 }

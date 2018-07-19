@@ -1226,7 +1226,9 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                             case RelayServiceResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
                                 // チェック処理の状態で処理を分岐する
                                 SharedPreferencesUtils.resetSharedPreferencesStbInfo(getApplicationContext());
-                                startActivity(DaccountResettingActivity.class, null);
+                                Intent dAccountResetIntent = new Intent(this, DaccountResettingActivity.class);
+                                dAccountResetIntent.putExtra(FROM_WHERE, mStartMode);
+                                startActivity(dAccountResetIntent);
                                 mParingTextView.setText(R.string.str_stb_no_pair_use_text);
                                 break;
                             case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
