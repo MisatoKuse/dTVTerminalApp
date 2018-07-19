@@ -422,8 +422,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 textMargin = STATUS_MARGIN_TOP17;
                 setTextAllMargin(THUMBNAIL_MARGIN_LEFT, textMargin, THUMBNAIL_MARGIN_BOTTOM,
                         textMargin, holder, contentView);
-                clipMargin = RECEPTION_MARGIN_TOP30;
-                setClipMargin(clipMargin, contentView);
                 break;
             //ENUMの値をswitch分岐すると、全ての値を書かないとアナライザーがエラーを出すので、caseを追加
             case TYPE_RECORDED_LIST:
@@ -901,9 +899,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                     // 受付中
                     holder.tv_recording_reservation.setVisibility(View.VISIBLE);
                     holder.tv_recording_reservation.setTextColor(
-                            ContextCompat.getColor(mContext, R.color.recording_reservation_status_text_color_red));
-                    holder.tv_recording_reservation.setBackgroundColor(
-                            ContextCompat.getColor(mContext, R.color.recording_reservation_status_background_white));
+                            ContextCompat.getColor(mContext, R.color.recording_reservation_status_text_color_white));
+                    holder.tv_recording_reservation.setBackgroundResource(R.drawable.record_reservation_textview_round_corner_gray);
                     holder.tv_recording_reservation.setText(R.string.recording_reservation_status_accepting);
                     break;
                 case RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_REFLECT_FAILURE:
@@ -911,8 +908,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                     holder.tv_recording_reservation.setVisibility(View.VISIBLE);
                     holder.tv_recording_reservation.setTextColor(
                             ContextCompat.getColor(mContext, R.color.recording_reservation_status_text_color_white));
-                    holder.tv_recording_reservation.setBackgroundColor(
-                            ContextCompat.getColor(mContext, R.color.recording_reservation_status_background_red));
+                    holder.tv_recording_reservation.setBackgroundResource(R.drawable.record_reservation_textview_round_corner_red);
                     holder.tv_recording_reservation.setText(R.string.recording_reservation_status_accept_failure);
                     break;
                 case RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_ALREADY_REFLECT:

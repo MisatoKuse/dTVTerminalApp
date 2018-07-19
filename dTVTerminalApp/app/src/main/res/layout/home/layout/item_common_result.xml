@@ -80,6 +80,7 @@
                 android:layout_width="@dimen/recording_reservation_list_status_width"
                 android:layout_height="@dimen/recording_reservation_list_status_height"
                 android:layout_marginEnd="@dimen/recording_reservation_list_status_margin_end"
+                android:layout_marginTop="@dimen/list_divider_height"
                 android:background="@color/list_item_background"
                 android:gravity="center_vertical|center_horizontal"
                 android:textSize="@dimen/list_item_recording_reservation_status_text_size"

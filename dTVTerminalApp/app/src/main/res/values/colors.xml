@@ -71,6 +71,8 @@
 
     <!--録画予約-->
     <color name="record_reservation_list_root_bg">#000000</color>
+    <color name="record_reservation_list_reservation_status_text_background_color">#979797</color>
+    <color name="record_reservation_list_failed_status_background_color">#fd0003</color>
 
     <!--コンテンツ詳細-->
     <color name="contents_header_background">#000000</color>

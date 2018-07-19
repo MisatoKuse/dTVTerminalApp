@@ -7,10 +7,8 @@ package com.nttdocomo.android.tvterminalapp.activity.home;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -56,10 +54,6 @@ public class RecordReservationListActivity extends BaseActivity
      * 録画予約詳細データリスト.
      */
     private List<ContentsData> mContentsList = null;
-    /**
-     * 追加読み込みビュー.
-     */
-    private View mLoadMoreView = null;
     /**
      * 先頭の区切り線.
      */
@@ -118,7 +112,6 @@ public class RecordReservationListActivity extends BaseActivity
         mContentsAdapter = new ContentsAdapter(this, mContentsList,
                 ContentsAdapter.ActivityTypeItem.TYPE_RECORDING_RESERVATION_LIST);
         mListView.setAdapter(mContentsAdapter);
-        mLoadMoreView = LayoutInflater.from(this).inflate(R.layout.search_load_more, null);
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(
                 mRemoteControllerOnClickListener);
@@ -194,71 +187,13 @@ public class RecordReservationListActivity extends BaseActivity
 
     @Override
     public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
-        synchronized (this) {
-            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
-                    && absListView.getLastVisiblePosition() == mListView.getAdapter().getCount() - 1) {
-
-                if (mIsCommunicating) {
-                    return;
-                }
-
-                DTVTLogger.debug("onScrollStateChanged, do paging");
-                mNoDataMessage.setVisibility(View.GONE);
-                displayMoreData(true);
-                setCommunicatingStatus(true);
-
-                //再読み込み処理
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mProvider.requestRecordingReservationListData();
-                    }
-                }, LOAD_PAGE_DELAY_TIME);
-            }
-        }
+       //何も処理しない
     }
-
-    /**
-     * 再読み込み時のダイアログ表示処理.
-     *
-     * @param bool フッター付加フラグ
-     */
-    private void displayMoreData(final boolean bool) {
-        if (null != mListView && null != mLoadMoreView) {
-            if (bool) {
-                mListView.addFooterView(mLoadMoreView);
-            } else {
-                mListView.removeFooterView(mLoadMoreView);
-            }
-        }
-    }
-
-    /**
-     * 再読み込み時の処理.
-     */
-    private void resetCommunication() {
-        displayMoreData(false);
-        setCommunicatingStatus(false);
-    }
-
-    /**
-     * 再読み込み実施フラグ設定.
-     *
-     * @param bool 再読み込み実施フラグ
-     */
-    private void setCommunicatingStatus(final boolean bool) {
-        synchronized (this) {
-            mIsCommunicating = bool;
-        }
-    }
-
     /**
      * ページングリセット.
      */
     private void resetPaging() {
         synchronized (this) {
-            setCommunicatingStatus(false);
             if (null != mContentsList) {
                 mContentsList.clear();
                 if (null != mContentsAdapter) {
@@ -294,7 +229,6 @@ public class RecordReservationListActivity extends BaseActivity
             //通信とJSON Parseに関してのerror処理
             DTVTLogger.debug("RecordingReservationListActivity::RecordingReservationListCallback, 録画予約一覧取得失敗");
             resetPaging();
-            resetCommunication();
             //エラーメッセージを取得する
             String message = mProvider.getError().getApiErrorMessage(getApplicationContext());
 
@@ -309,7 +243,6 @@ public class RecordReservationListActivity extends BaseActivity
 
         if (0 == dataList.size()) {
             mNoDataMessage.setVisibility(View.VISIBLE);
-            resetCommunication();
             return;
         }
 
@@ -322,7 +255,6 @@ public class RecordReservationListActivity extends BaseActivity
             }
         }
         DTVTLogger.debug("Callback, mData.size==" + mContentsList.size());
-        resetCommunication();
         mContentsAdapter.notifyDataSetChanged();
         DTVTLogger.end();
     }
