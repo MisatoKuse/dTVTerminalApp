@@ -369,6 +369,8 @@ public class RemoteControlRelayClient {
     private static final String RELAY_COMMAND_ARGUMENT_ARG4 = "ARG4";
     /**cid_hikaritv_arg4.*/
     private static final String RELAY_COMMAND_ARGUMENT_CID_HIKARITV_ARG4 = RELAY_COMMAND_ARGUMENT_ARG4;
+    /**crid_hikaritv_arg4.*/
+    private static final String RELAY_COMMAND_ARGUMENT_CRID_HIKARITV_ARG4 = RELAY_COMMAND_ARGUMENT_ARG4;
     // ひかりTVのタイトル詳細起動：電文パラメータ：カテゴリー分類毎に別のパラメータを意味する
     /**ARG5.*/
     private static final String RELAY_COMMAND_ARGUMENT_ARG5 = "ARG5";
@@ -983,12 +985,15 @@ public class RemoteControlRelayClient {
      * 　ひかりTV内 dTVのVOD
      *
      * @param episodeId エピソードID
+     * @param crid      CRID
      * @param context   コンテキスト
      * @return リクエスト成否
      */
-    public boolean startApplicationHikariTvCategoryDtvVodRequest(final String episodeId, final Context context) {
+    public boolean startApplicationHikariTvCategoryDtvVodRequest(final String episodeId,
+                                                                 final String crid, final Context context) {
         return startApplicationHikariTvCategoryRequest(
-                H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_VOD, context, rfc3986UrlEncode(episodeId));
+                H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_VOD, context, rfc3986UrlEncode(episodeId),
+                rfc3986UrlEncode(crid));
     }
 
     /**
@@ -1581,8 +1586,11 @@ public class RemoteControlRelayClient {
                     break;
                 case H4D_CATEGORY_DTV_VOD: // ひかりTV内 dTVのVOD
                     episodeId = args[0];
+                    crid = args[1];
                     requestJson.put(RELAY_COMMAND_ARGUMENT_EPISODE_ID_HIKARITV_ARG3, episodeId);
-                    DTVTLogger.debug(String.format("serviceCategoryType:[%s] episode_id:[%s]", serviceCategoryType, episodeId));
+                    requestJson.put(RELAY_COMMAND_ARGUMENT_CRID_HIKARITV_ARG4, crid);
+                    DTVTLogger.debug(String.format("serviceCategoryType:[%s] episode_id:[%s] crid:[%s]",
+                            serviceCategoryType, episodeId, crid));
                     break;
                 case H4D_CATEGORY_DTV_SVOD: // ひかりTV内VOD(dTV含む)のシリーズ
                     crid = args[0];

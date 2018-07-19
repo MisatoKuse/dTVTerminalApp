@@ -2338,8 +2338,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     }
                 }
             } else if (ContentUtils.DTV_FLAG_ONE.equals(mDetailFullData.getDtv())) {
-                //ひかりTV内dTVのVOD,「episode_id」を通知する
-                requestStartApplicationHikariTvCategoryDtvVod(mDetailFullData.getEpisode_id());
+                //ひかりTV内dTVのVOD,「episode_id」,「crid」を通知する
+                requestStartApplicationHikariTvCategoryDtvVod(mDetailFullData.getEpisode_id(),
+                        mDetailFullData.getCrid());
             } else {
                 if (!mIsFromHeader) {
                     setRemoteProgressVisible(View.GONE);

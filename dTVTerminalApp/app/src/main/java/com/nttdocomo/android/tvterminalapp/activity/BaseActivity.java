@@ -1631,9 +1631,10 @@ public class BaseActivity extends FragmentActivity implements
      * ひかりTV内dTVのVOD
      *
      * @param episodeId エピソードID
+     * @param crid      crid
      */
-    protected void requestStartApplicationHikariTvCategoryDtvVod(final String episodeId) {
-        mRemoteControllerView.sendStartApplicationHikariTvCategoryDtvVodRequest(episodeId);
+    protected void requestStartApplicationHikariTvCategoryDtvVod(final String episodeId, final String crid) {
+        mRemoteControllerView.sendStartApplicationHikariTvCategoryDtvVodRequest(episodeId, crid);
     }
 
     /**
