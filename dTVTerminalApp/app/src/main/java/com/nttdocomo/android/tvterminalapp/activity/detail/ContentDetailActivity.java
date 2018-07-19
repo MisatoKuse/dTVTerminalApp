@@ -597,8 +597,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         mThumbnail.setVisibility(View.GONE);
         mPlayerViewLayout = findViewById(R.id.dtv_contents_detail_main_layout_player_rl);
         mPlayerViewLayout.setPlayerStateListener(this);
-        mPlayerViewLayout.setScreenSize(getWidthDensity(), getHeightDensity());
-        mPlayerViewLayout.setScreenNavigationBarSize(getWidthDensity(), getScreenHeight());
+        initDisplayMetrics();
+        int width = getWidthDensity();
+        initDisplayMetrics();
+        int height = getHeightDensity();
+        mPlayerViewLayout.setScreenSize(width, height);
+        mPlayerViewLayout.setScreenNavigationBarSize(width, getScreenHeight());
         mPlayerViewLayout.setParentLayout(mThumbnailRelativeLayout);
         mPlayerViewLayout.setDensity(getDensity());
         boolean mIsOncreateOk = mPlayerViewLayout.initMediaInfo(playerData);
@@ -1157,6 +1161,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * @return Height
      */
     private int getScreenHeight() {
+        initDisplayMetrics();
         return getHeightDensity() + getNavigationBarHeight(true);
     }
 
@@ -2797,7 +2802,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             setTitleVisibility(true);
             setRemoteControllerViewVisibility(View.VISIBLE);
         }
-        mPlayerViewLayout.setScreenSize(getWidthDensity(), getHeightDensity());
+        initDisplayMetrics();
+        int width = getWidthDensity();
+        initDisplayMetrics();
+        int height = getHeightDensity();
+        mPlayerViewLayout.setScreenSize(width, height);
     }
 
     /**
