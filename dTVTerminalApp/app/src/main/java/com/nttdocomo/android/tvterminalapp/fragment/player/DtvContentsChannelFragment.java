@@ -324,18 +324,28 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
     }
 
     /**
-     * チャンネルデータ読み込み中アイコンの表示切替
-     * @param showProgress
+     * チャンネルデータ読み込み中アイコンの表示切替.
+     *
+     * @param showProgress 表示するならばtrue
      */
     public void showProgress(final boolean showProgress) {
+        //ヌルチェックの追加
+        if (mView == null) {
+            return;
+        }
+        View progressView = mView.findViewById(R.id.channel_progress_rl);
+        if (progressView == null) {
+            return;
+        }
+
         if (showProgress) {
             // 既にコンテンツデータがある場合は表示しない
             if (mContentsData != null && mContentsData.size() > 0) {
                 return;
             }
-            mView.findViewById(R.id.channel_progress_rl).setVisibility(View.VISIBLE);
+            progressView.setVisibility(View.VISIBLE);
         } else {
-            mView.findViewById(R.id.channel_progress_rl).setVisibility(View.GONE);
+            progressView.setVisibility(View.GONE);
         }
     }
 }

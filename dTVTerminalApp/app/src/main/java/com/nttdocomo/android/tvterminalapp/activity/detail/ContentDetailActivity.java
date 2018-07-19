@@ -3261,7 +3261,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             @Override
             public void onClick(final View view) {
                 if (isFastClick()) {
-                    playAutoContents();
+                    //再生情報があれば再再生を行う
+                    if (mPlayerData != null) {
+                        initPlayer(mPlayerData);
+                    }
                 }
             }
         });
@@ -3270,12 +3273,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         showProgressBar(false);
         showPlayerProgressBar(false);
         showChannelProgressBar(false);
-
-        //プログレスのヌルチェックを追加
-        View progressView = findViewById(R.id.dtv_contents_detail_player_only);
-        if (progressView != null) {
-            progressView.setVisibility(View.GONE);
-        }
 
         if (mPlayerViewLayout != null) {
             mPlayerViewLayout.showPlayingProgress(false);
