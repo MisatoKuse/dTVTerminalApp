@@ -693,10 +693,11 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * ・ひかりTV内 dTVのVOD
      *
      * @param episodeId エピソードID
+     * @param crid コンテンツ識別子
      */
-    public void sendStartApplicationHikariTvCategoryDtvVodRequest(final String episodeId) {
+    public void sendStartApplicationHikariTvCategoryDtvVodRequest(final String episodeId, final String crid) {
         DTVTLogger.start();
-        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvVodRequest(episodeId, mContext);
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvVodRequest(episodeId, crid, mContext);
         DTVTLogger.end();
     }
 
