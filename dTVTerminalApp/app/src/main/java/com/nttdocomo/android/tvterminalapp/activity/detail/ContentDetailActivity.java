@@ -313,13 +313,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      */
     private static final String REMOTE_CONTROLLER_VIEW_VISIBILITY = "visibility";
     /**
-     * ひかり放送中光コンテンツ再生失敗時にリトライを行うエラーコードの上限
+     * ひかり放送中光コンテンツ再生失敗時にリトライを行うエラーコードの開始値
      */
     private static final int RETRY_ERROR_START = 2000;
-    /**
-     * ひかり放送中光コンテンツ再生失敗時にリトライを行うエラーコードの下限
-     */
-    private static final int RETRY_ERROR_END = 2999;
 
     /* player end */
     /** ハンドラー.*/
@@ -2778,13 +2774,15 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         String format = getString(R.string.contents_player_fail_error_code_format);
         String errorMsg = getString(R.string.contents_player_fail_msg);
         errorMsg = errorMsg.replace(format, String.valueOf(errorCode));
-        if (errorCode >= RETRY_ERROR_START && errorCode <= RETRY_ERROR_END) {
+        //通信エラーの場合はリトライする
+        if (errorCode >= RETRY_ERROR_START) {
             DTVTLogger.debug("not close");
             //自動再生コンテンツ再生準備
             setPlayRetryArrow();
             //OKで閉じないダイアログで表示
             showDialogToConfirm(errorMsg);
         } else {
+            //再開不能エラーは従来通り終了するダイアログを使用する
             DTVTLogger.debug("close");
             showDialogToConfirmClose(errorMsg);
         }
@@ -3272,7 +3270,13 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         showProgressBar(false);
         showPlayerProgressBar(false);
         showChannelProgressBar(false);
-        findViewById(R.id.dtv_contents_detail_player_only).setVisibility(View.GONE);
+
+        //プログレスのヌルチェックを追加
+        View progressView = findViewById(R.id.dtv_contents_detail_player_only);
+        if (progressView != null) {
+            progressView.setVisibility(View.GONE);
+        }
+
         if (mPlayerViewLayout != null) {
             mPlayerViewLayout.showPlayingProgress(false);
         }
@@ -3284,11 +3288,18 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * @param showProgress プログレス進捗
      */
     private void showPlayerProgressBar(final boolean showProgress) {
+        //画面部品のヌルチェックを追加
+        View buttonView = findViewById(R.id.dtv_contents_view_button);
+        View progressView = findViewById(R.id.dtv_contents_view_progress);
+        if (buttonView == null || progressView == null) {
+            return;
+        }
+
         if (showProgress) {
-            findViewById(R.id.dtv_contents_view_button).setVisibility(View.GONE);
-            findViewById(R.id.dtv_contents_view_progress).setVisibility(View.VISIBLE);
+            buttonView.setVisibility(View.GONE);
+            progressView.setVisibility(View.VISIBLE);
         } else {
-            findViewById(R.id.dtv_contents_view_progress).setVisibility(View.GONE);
+            progressView.setVisibility(View.GONE);
         }
     }
 
@@ -3358,16 +3369,22 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * @param showProgressBar プロセスバーを表示するかどうか
      */
     private void showProgressBar(final boolean showProgressBar) {
+        //プログレスのヌルチェック
+        View view = findViewById(R.id.contents_detail_scroll_layout);
+        if (view == null) {
+            return;
+        }
+
         if (showProgressBar) {
             //オフライン時は表示しない
             if (!NetWorkUtils.isOnline(this)) {
                 return;
             }
-            findViewById(R.id.contents_detail_scroll_layout).setVisibility(View.INVISIBLE);
+            view.setVisibility(View.INVISIBLE);
             setRemoteProgressVisible(View.VISIBLE);
         } else {
             setRemoteProgressVisible(View.INVISIBLE);
-            findViewById(R.id.contents_detail_scroll_layout).setVisibility(View.VISIBLE);
+            view.setVisibility(View.VISIBLE);
         }
     }
 
@@ -3378,7 +3395,13 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private void showChannelProgressBar(final boolean showProgressBar) {
         if (mChannelFragment == null) {
             mChannelFragment = getChannelFragment();
+
+            //フラグメント取得失敗時のヌルチェックを追加
+            if (mChannelFragment == null) {
+                return;
+            }
         }
+
         if (showProgressBar) {
             // オフライン時は表示しない
             if (!NetWorkUtils.isOnline(this)) {

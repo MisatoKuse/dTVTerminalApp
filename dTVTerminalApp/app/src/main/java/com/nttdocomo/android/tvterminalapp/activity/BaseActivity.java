@@ -2218,7 +2218,11 @@ public class BaseActivity extends FragmentActivity implements
      * @param visible 表示値
      */
     public void setRemoteProgressVisible(final int visible) {
-        findViewById(R.id.base_progress_rl).setVisibility(visible);
+        //ヌルチェックを追加
+        View view = findViewById(R.id.base_progress_rl);
+        if (view != null) {
+            findViewById(R.id.base_progress_rl).setVisibility(visible);
+        }
     }
 
     /**
