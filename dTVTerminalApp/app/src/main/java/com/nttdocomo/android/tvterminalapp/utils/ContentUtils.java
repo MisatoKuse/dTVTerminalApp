@@ -506,6 +506,12 @@ public class ContentUtils {
                 channelTextView.setText(spannableString);
             }
         }
+        //録画予約一覧画面にチャンネル名を表示する
+        if (type == ContentsAdapter.ActivityTypeItem.TYPE_RECORDING_RESERVATION_LIST && !TextUtils.isEmpty(listContentInfo.getChannelName())) {
+            hyphenTextView.setVisibility(View.VISIBLE);
+            channelTextView.setVisibility(View.VISIBLE);
+            channelTextView.setText(listContentInfo.getChannelName());
+        }
     }
 
     /**
