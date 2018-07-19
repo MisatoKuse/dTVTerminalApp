@@ -409,21 +409,15 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     protected void onResume() {
         enableStbStatusIcon(true);
         if (!isOttChecked) {
+            //ワンタイムトークンチェックフラグを済みにする
+            isOttChecked = true;
+
+            setDaccountControl();
+
             //この段階で通信不能だった場合はdアカウントの処理を呼び出さない。事実上ホーム画面は動作しないので、問題は無い
-            if(NetWorkUtils.isOnline(this)) {
-                //通信可能なので、ワンタイムトークンチェックフラグを済みにする
-                isOttChecked = true;
-
-                //dアカウントの処理を開始することを宣言
-                setNecessaryDaccountRegistService();
-
-                setDaccountControl();
-            } else {
+            if(!NetWorkUtils.isOnline(this)) {
                 //通信不能なので、この時点で以後の操作を有効にする
                 showProgessBarEnabled = true;
-
-                //dアカウントの処理は行わない事を宣言
-                setUnnecessaryDaccountRegistService();
 
                 //dアカウントの処理を行わないとグローバルメニューを活性化する機会が失われるので、この時点で活性化する
                 setMenuIconEnabled(true);
