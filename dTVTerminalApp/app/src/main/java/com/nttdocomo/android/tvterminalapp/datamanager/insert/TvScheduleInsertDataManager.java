@@ -142,13 +142,13 @@ public class TvScheduleInsertDataManager {
             }
         }
 
-        try {
-            List<ChannelInfo> channelInformation = channelInfoList.getChannels();
-            synchronized (channelInformation) {
-                for (ChannelInfo channelInfo : channelInformation) {
-                    //DB名としてチャンネル番号を取得.
-                    String chNo = String.valueOf(channelInfo.getChannelNo());
+        List<ChannelInfo> channelInformation = channelInfoList.getChannels();
+        synchronized (channelInformation) {
+            for (ChannelInfo channelInfo : channelInformation) {
+                //DB名としてチャンネル番号を取得.
+                String chNo = String.valueOf(channelInfo.getChannelNo());
 
+                try {
                     //各種オブジェクト作成
                     DataBaseHelperChannel tvScheduleListDBHelper = new DataBaseHelperChannel(mContext, chNo);
                     DataBaseManager.clearChInfo();
@@ -159,54 +159,64 @@ public class TvScheduleInsertDataManager {
 
                     //ContentValuesに変換してDBに保存する.
                     ArrayList<ScheduleInfo> scheduleInformation = channelInfo.getSchedules();
-                    //イテレーターのループはここでは問題が発生する場合があった。FindBugs等の指摘があっても変更無用
-                    for (int counter = 0; counter < scheduleInformation.size(); counter++) {
-                        ScheduleInfo scheduleInfo = scheduleInformation.get(counter);
-                        ContentValues values = convertScheduleInfoToContentValues(scheduleInfo);
-                        tvScheduleListDao.insert(values);
-                    }
-
-                    //保存したDBを所定の場所へ移動する( HOME/database/channel/yyyyMMdd/ )
-                    String channelFilePath = StringUtils.getConnectStrings(filesDir, "/../databases/", chNo);
-                    File channelFile = new File(channelFilePath);
-                    File movedFile = new File(StringUtils.getConnectStrings(dbDir, "/", chNo));
-                    if (channelFile.isFile()) {
-                        try {
-                            if (!channelFile.renameTo(movedFile)) {
-                                DTVTLogger.error("Failed to move DB file");
-                                //移動に失敗したため元ファイルを削除する
-                                if (!channelFile.delete()) {
-                                    DTVTLogger.error("Failed to remove DB file");
-                                }
-                            }
-                        } catch (SecurityException | NullPointerException e) {
-                            DTVTLogger.error(e.toString());
+                    try {
+                        DTVTLogger.debug("bulk insert start");
+                        database.beginTransaction();
+                        //イテレーターのループはここでは問題が発生する場合があった。FindBugs等の指摘があっても変更無用
+                        for (int counter = 0; counter < scheduleInformation.size(); counter++) {
+                            ScheduleInfo scheduleInfo = scheduleInformation.get(counter);
+                            ContentValues values = convertScheduleInfoToContentValues(scheduleInfo);
+                            tvScheduleListDao.insert(values);
                         }
+                        database.setTransactionSuccessful();
+                    } catch (SQLiteException e) {
+                        DTVTLogger.debug("ClipKeyListInsertDataManager::insertClipKeyListInsert, e.cause=" + e.getCause());
+                    } finally {
+                        database.endTransaction();
+                        DTVTLogger.debug("bulk insert end");
                     }
+                } catch (SQLiteException e) {
+                    DTVTLogger.debug("ProgramDataManager::insertTvScheduleInsertList, e.cause=" + e.getCause());
+                } finally {
+                    DataBaseManager.getInstance().closeChDatabase();
+                }
 
-                    //journalファイルも同じ場所へ移動させる.
-                    String journalFilePath = StringUtils.getConnectStrings(filesDir, "/../databases/", chNo, "-journal");
-                    File journalFile = new File(journalFilePath);
-                    File movedJournalFile = new File(StringUtils.getConnectStrings(dbDir, "/", chNo, "-journal"));
-                    if (journalFile.isFile()) {
-                        try {
-                            if (!journalFile.renameTo(movedJournalFile)) {
-                                DTVTLogger.error("Failed to move journal file");
-                                //移動に失敗したため元ファイルを削除する
-                                if (!journalFile.delete()) {
-                                    DTVTLogger.error("Failed to remove journal file");
-                                }
+                //保存したDBを所定の場所へ移動する( HOME/database/channel/yyyyMMdd/ )
+                String channelFilePath = StringUtils.getConnectStrings(filesDir, "/../databases/", chNo);
+                File channelFile = new File(channelFilePath);
+                File movedFile = new File(StringUtils.getConnectStrings(dbDir, "/", chNo));
+                if (channelFile.isFile()) {
+                    try {
+                        if (!channelFile.renameTo(movedFile)) {
+                            DTVTLogger.error("Failed to move DB file");
+                            //移動に失敗したため元ファイルを削除する
+                            if (!channelFile.delete()) {
+                                DTVTLogger.error("Failed to remove DB file");
                             }
-                        } catch (SecurityException | NullPointerException e) {
-                            DTVTLogger.error(e.toString());
                         }
+                    } catch (SecurityException | NullPointerException e) {
+                        DTVTLogger.error(e.toString());
+                    }
+                }
+
+                //journalファイルも同じ場所へ移動させる.
+                String journalFilePath = StringUtils.getConnectStrings(filesDir, "/../databases/", chNo, "-journal");
+                File journalFile = new File(journalFilePath);
+                File movedJournalFile = new File(StringUtils.getConnectStrings(dbDir, "/", chNo, "-journal"));
+                if (journalFile.isFile()) {
+                    try {
+                        if (!journalFile.renameTo(movedJournalFile)) {
+                            DTVTLogger.error("Failed to move journal file");
+                            //移動に失敗したため元ファイルを削除する
+                            if (!journalFile.delete()) {
+                                DTVTLogger.error("Failed to remove journal file");
+                            }
+                        }
+                    } catch (SecurityException | NullPointerException e) {
+                        DTVTLogger.error(e.toString());
                     }
                 }
             }
-        } catch (SQLiteException e) {
-            DTVTLogger.debug("ProgramDataManager::insertTvScheduleInsertList, e.cause=" + e.getCause());
-        } finally {
-            DataBaseManager.getInstance().closeDatabase();
         }
 
         //古いDBファイルを削除するため、日付フォルダ一覧を取得
