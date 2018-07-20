@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <corners
+        android:bottomLeftRadius="@dimen/list_divider_height"
+        android:bottomRightRadius="@dimen/list_divider_height"
+        android:topRightRadius="@dimen/list_divider_height"
+        android:topLeftRadius="@dimen/list_divider_height"/>
+    <solid android:color="@color/record_reservation_list_reservation_status_text_background_color"/>
+
+</shape>
