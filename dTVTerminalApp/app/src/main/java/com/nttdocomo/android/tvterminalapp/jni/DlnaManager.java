@@ -206,12 +206,14 @@ public class DlnaManager {
         /**
          * コンテンツブラウズコールバック.
          * @param objs コンテンツリスト
+         * @param containerId パス
          */
-        void onContentBrowseCallback(final DlnaObject[] objs);
+        void onContentBrowseCallback(final DlnaObject[] objs, final String containerId);
         /**
          * コンテンツブラウズエラーコールバック.
+         * @param containerId パス
          */
-        void onContentBrowseErrorCallback();
+        void onContentBrowseErrorCallback(final String containerId);
     }
 
     /**
@@ -372,7 +374,7 @@ public class DlnaManager {
                         DtvtConstants.REQUEST_DLNA_LIMIT_50, containerId, item.mControlUrl)) {
                     BrowseListener listener = DlnaManager.shared().mBrowseListener;
                     if (listener != null) {
-                        listener.onContentBrowseErrorCallback();
+                        listener.onContentBrowseErrorCallback(containerId);
                     }
                 }
                 break;
@@ -381,7 +383,7 @@ public class DlnaManager {
                         DtvtConstants.REQUEST_DLNA_LIMIT_50, containerId, DlnaManager.shared().mHomeOutControlUrl)) {
                     BrowseListener listener = DlnaManager.shared().mBrowseListener;
                     if (listener != null) {
-                        listener.onContentBrowseErrorCallback();
+                        listener.onContentBrowseErrorCallback(containerId);
                     }
                 }
                 break;
@@ -391,7 +393,7 @@ public class DlnaManager {
                 DTVTLogger.warning("default");
                 BrowseListener listener = DlnaManager.shared().mBrowseListener;
                 if (listener != null) {
-                    listener.onContentBrowseErrorCallback();
+                    listener.onContentBrowseErrorCallback(containerId);
                 }
                 break;
         }
@@ -597,17 +599,18 @@ public class DlnaManager {
         BrowseListener listener = DlnaManager.shared().mBrowseListener;
         if (listener != null) {
             aribConvertBs(objs);
-            listener.onContentBrowseCallback(objs);
+            listener.onContentBrowseCallback(objs, containerId);
         }
     }
 
     /**
      *  コンテンツブラウズエラーコールバック.
+     * @param containerId コンテンツリスト
      */
-    public void ContentBrowseErrorCallback() {
+    public void ContentBrowseErrorCallback(@NonNull final String containerId) {
         BrowseListener listener = DlnaManager.shared().mBrowseListener;
         if (listener != null) {
-            listener.onContentBrowseErrorCallback();
+            listener.onContentBrowseErrorCallback(containerId);
         }
     }
 
@@ -684,6 +687,7 @@ public class DlnaManager {
      * @param downloadStatus ダウンロードステータス
      */
     public void DownloadStatusCallBack(final int downloadStatus) {
+        DTVTLogger.debug("DownloadStatusCallBack downloadStatus : " + downloadStatus);
         DownLoadStatus downLoadStatus = null;
         switch (downloadStatus) {
             case DOWNLOADER_STATUS_UNKNOWN:
