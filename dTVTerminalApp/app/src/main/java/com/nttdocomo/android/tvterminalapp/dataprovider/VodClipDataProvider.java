@@ -176,19 +176,27 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
 
     @Override
     protected void setResponseId(final ContentsData contentInfo, final  Map<String, String> map) {
-       DTVTLogger.start();
+        DTVTLogger.start();
+        // ClipKeyListDataProvider で使用される
+        super.setResponseId(contentInfo, map);
         DTVTLogger.end();
     }
 
     @Override
-    protected void setChannelInfo(final Map<String, String> map, final ContentsData contentInfo, final ArrayList<ChannelInfo> channels) {
+    protected void setChannelInfo(final Map<String, String> map, final ContentsData contentInfo,
+                                  final ArrayList<ChannelInfo> channels) {
         DTVTLogger.start();
+        // ClipKeyListDataProvider で使用される
+        super.setChannelInfo(map, contentInfo, channels);
         DTVTLogger.end();
     }
 
     @Override
-    protected void setRequestType(final ClipRequestData requestData, final String dispType, final String contentsType) {
+    protected void setRequestType(final ClipRequestData requestData, final String dispType,
+                                  final String contentsType) {
         DTVTLogger.start();
+        // ClipKeyListDataProvider で使用される
+        super.setRequestType(requestData, dispType, contentsType);
         DTVTLogger.end();
     }
 

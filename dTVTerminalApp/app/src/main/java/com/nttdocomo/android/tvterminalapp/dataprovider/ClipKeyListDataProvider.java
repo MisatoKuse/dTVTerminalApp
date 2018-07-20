@@ -641,8 +641,6 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
             contentInfo.setDtvType(dtvType);
             contentInfo.setDispType(dispType);
             setResponseId(contentInfo, map);
-            contentInfo.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
-            contentInfo.setEventId(map.get(JsonConstants.META_RESPONSE_EVENT_ID));
             contentInfo.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
             contentInfo.setContentsId(crId);
             contentInfo.setCrid(crId);
