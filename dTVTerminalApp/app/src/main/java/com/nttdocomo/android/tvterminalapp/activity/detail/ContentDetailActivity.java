@@ -822,38 +822,33 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     @SuppressWarnings({"EnumSwitchStatementWhichMissesCases", "OverlyLongMethod"})
     private void setThumbnailText(final String content) {
         DTVTLogger.start();
-        UserState userState = UserInfoUtils.getUserState(this);
 
-        if (userState.equals(UserState.LOGIN_NG)) {
-            loginNgDisplay();
-        } else {
-            if (UserInfoUtils.isContract(this) || mIsOtherService) {
-                TextView startAppIcon = findViewById(R.id.view_contents_button_text);
-                startAppIcon.setVisibility(View.GONE);
-                ImageView imageView = findViewById(R.id.dtv_contents_view_button);
-                if (content.isEmpty()) {
-                    mThumbnailBtn.setVisibility(View.GONE);
-                    mContractLeadingView.setVisibility(View.GONE);
-                } else {
-                    if (mDetailFullData != null
-                            && mDetailFullData.getContentsType().equals(ContentUtils.ContentsType.HIKARI_TV_VOD)) {
+        if (UserInfoUtils.isContract(this) || mIsOtherService) {
+            TextView startAppIcon = findViewById(R.id.view_contents_button_text);
+            startAppIcon.setVisibility(View.GONE);
+            ImageView imageView = findViewById(R.id.dtv_contents_view_button);
+            if (content.isEmpty()) {
+                mThumbnailBtn.setVisibility(View.GONE);
+                mContractLeadingView.setVisibility(View.GONE);
+            } else {
+                if (mDetailFullData != null
+                        && mDetailFullData.getContentsType().equals(ContentUtils.ContentsType.HIKARI_TV_VOD)) {
 
-                        imageView.setVisibility(View.GONE);
+                    imageView.setVisibility(View.GONE);
 
-                        // 連携アイコン非表示のためクリック抑止
-                        mThumbnailBtn.setClickable(false);
-                    } else if (content.equals(getResources().getString(R.string.contents_detail_thumbnail_text_unable_viewing))
-                            || content.equals(getResources().getString(R.string.contents_detail_thumbnail_text))) {
-                        imageView.setVisibility(View.GONE);
+                    // 連携アイコン非表示のためクリック抑止
+                    mThumbnailBtn.setClickable(false);
+                } else if (content.equals(getResources().getString(R.string.contents_detail_thumbnail_text_unable_viewing))
+                        || content.equals(getResources().getString(R.string.contents_detail_thumbnail_text))) {
+                    imageView.setVisibility(View.GONE);
 
-                        // 連携アイコン非表示のためクリック抑止
-                        mThumbnailBtn.setClickable(false);
-                    }
-                    mThumbnailBtn.setVisibility(View.VISIBLE);
-                    setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
-                    startAppIcon.setVisibility(View.VISIBLE);
-                    startAppIcon.setText(content);
+                    // 連携アイコン非表示のためクリック抑止
+                    mThumbnailBtn.setClickable(false);
                 }
+                mThumbnailBtn.setVisibility(View.VISIBLE);
+                setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
+                startAppIcon.setVisibility(View.VISIBLE);
+                startAppIcon.setText(content);
             }
         }
         DTVTLogger.end();
@@ -969,6 +964,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
             DTVTLogger.debug("display thumbnail contents type = " + type);
             DTVTLogger.debug("display thumbnail viewing type = recommend always enable");
+            mContentsType = type;
             //他サービスアプリスマホ連携表示
             switch (type) {
                 case PURE_DTV:
@@ -2870,6 +2866,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     /**
      * 放送中ひかりコンテンツ再生.
      */
+    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
     void playAutoContents() {
         mDisplayState = PLAYER_AND_CONTENTS_DETAIL;
         RecordedContentsDetailData data = new RecordedContentsDetailData();
@@ -2908,6 +2905,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     @SuppressWarnings({"EnumSwitchStatementWhichMissesCases", "OverlyComplexMethod", "OverlyLongMethod"})
     private void displayThumbnail(final ContentUtils.ContentsType contentsType, final ContentUtils.ViewIngType viewIngType) {
         DTVTLogger.start();
+        //Pure系コンテンツはサムネイル表示済みのため何もしない
+        if (ContentUtils.isPureContents(contentsType)) {
+            return;
+        }
         //ログアウト状態ならそのまま表示する
         UserState userState = UserInfoUtils.getUserState(ContentDetailActivity.this);
         StbConnectionManager.ConnectionStatus connectionStatus = StbConnectionManager.shared().getConnectionStatus();
@@ -3428,10 +3429,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * エラーダイアログを表示する.
      * @param errorType エラータイプ
      */
+    @SuppressWarnings("OverlyLongMethod")
     private void showErrorDialog(final ErrorType errorType) {
         DTVTLogger.start();
         //エラーキャッチ時は必ずIndicatorを非表示にする
         showProgressBar(false);
+        showChannelProgressBar(false);
         ErrorState errorState = null;
         CustomDialog.ApiOKCallback okCallback = null;
 
