@@ -2230,7 +2230,7 @@ public class BaseActivity extends FragmentActivity implements
         //ヌルチェックを追加
         View view = findViewById(R.id.base_progress_rl);
         if (view != null) {
-            findViewById(R.id.base_progress_rl).setVisibility(visible);
+            view.setVisibility(visible);
         }
     }
 
