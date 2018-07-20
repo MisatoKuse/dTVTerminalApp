@@ -770,35 +770,8 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         contentsData.setPageId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_PAGEID));
         contentsData.setGroupId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_GROUPID));
         contentsData.setRecommendMethodId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID));
-        contentsData.setRequestData(setClipResponse(map));
 
         return contentsData;
-    }
-
-    /**
-     * クリップ操作用レスポンスを作成.
-     *
-     * @param map サーバレスポンスデータ
-     * @return クリップ用リクエストデータ
-     */
-    private ClipRequestData setClipResponse(final Map<String, String> map) {
-        ClipRequestData requestData = new ClipRequestData();
-        String title = map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE);
-
-        //クリップ用データ設定
-        //TODO レスポンスがないため、ダミーデータを設定
-        requestData.setCrid("672017101601");
-        requestData.setServiceId("672017101601");
-        requestData.setEventId("14c2");
-        requestData.setTitleId("");
-        requestData.setTitle(title);
-        requestData.setRValue("G");
-        requestData.setLinearStartDate("1513071135");
-        requestData.setLinearEndDate("1513306982");
-        requestData.setSearchOk("0");
-        requestData.setIsNotify("disp_type", "content_type",
-                1513306982, "tv_service", "dtv");
-        return requestData;
     }
 
     /**
