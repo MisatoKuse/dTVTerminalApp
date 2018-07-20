@@ -440,6 +440,7 @@
     <string name="network_server_error_message">サーバとの接続に失敗しました</string>
     <string name="network_token_error_message">ユーザ情報の取得に失敗しました</string>
     <string name="network_nw_error_message">ネットワークに接続されていません。ネットワーク接続をご確認ください</string>
+    <string name="network_nw_error_message_dialog">ネットワークに接続できませんでした。\nネットワーク状態を確認してください。</string>
     <string name="network_ssl_error_message">SSL通信に失敗しました</string>
     <string name="network_http_error_message">サーバとの通信に失敗しました</string>
 
