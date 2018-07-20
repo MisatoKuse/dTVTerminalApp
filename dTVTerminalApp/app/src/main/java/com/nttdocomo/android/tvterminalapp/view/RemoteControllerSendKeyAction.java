@@ -297,7 +297,7 @@ public class RemoteControllerSendKeyAction {
                     switch (mRepeatStateManagement.mStatus) {
                         case REPEAT_STATUS_EXECUTION:
                             // リピート実行中の場合
-                            sendKeyCode(v.getId(), SEND_KEYCODE_PARAM_ACTION_UP, true, mContext);
+                            sendKeyCode(v.getId(), SEND_KEYCODE_PARAM_ACTION_UP, false, mContext);
                             mRepeatStateManagement.repeatCancel();
                             mRepeatStateManagement.setRepeatTaskStatus(RepeatTaskStatus.REPEAT_STATUS_STAND_BY);
                             break;
