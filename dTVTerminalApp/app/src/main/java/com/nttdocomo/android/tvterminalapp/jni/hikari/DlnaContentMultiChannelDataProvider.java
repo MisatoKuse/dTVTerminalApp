@@ -68,7 +68,7 @@ public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseLi
     }
 
     @Override
-    public void onContentBrowseCallback(final DlnaObject[] objs) {
+    public void onContentBrowseCallback(final DlnaObject[] objs, final String containerId) {
         for (DlnaObject obj: objs) {
             if (mChannelNr.equals(obj.mChannelNr)) {
                 mOnMultiChCallbackListener.multiChannelFindCallback(obj);
@@ -83,7 +83,7 @@ public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseLi
     }
 
     @Override
-    public void onContentBrowseErrorCallback() {
+    public void onContentBrowseErrorCallback(final String containerId) {
         if (mOnMultiChCallbackListener != null) {
             mOnMultiChCallbackListener.multiChannelErrorCallback();
         }

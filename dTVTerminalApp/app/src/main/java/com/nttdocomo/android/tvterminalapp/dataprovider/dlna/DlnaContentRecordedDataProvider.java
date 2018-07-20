@@ -69,14 +69,14 @@ public class DlnaContentRecordedDataProvider implements DlnaManager.BrowseListen
     }
 
     @Override
-    public void onContentBrowseCallback(final DlnaObject[] objs) {
+    public void onContentBrowseCallback(final DlnaObject[] objs, final String containerId) {
         if (mCallbackListener != null) {
             mCallbackListener.onBrowseCallback(objs);
         }
     }
 
     @Override
-    public void onContentBrowseErrorCallback() {
+    public void onContentBrowseErrorCallback(final String containerId) {
         if (mCallbackListener != null) {
             mCallbackListener.onBrowseErrorCallback();
         }

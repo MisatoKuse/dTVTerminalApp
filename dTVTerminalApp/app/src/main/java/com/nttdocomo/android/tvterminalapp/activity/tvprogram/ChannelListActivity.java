@@ -41,6 +41,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
+import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
@@ -319,12 +320,14 @@ public class ChannelListActivity extends BaseActivity implements
 
     /** 地上波データ取得. */
     private void getTerData() {
-        mDlnaContentTerChennelDataProvider.browseContentWithContainerId(this, mPageIndex);
+        mDlnaContentTerChennelDataProvider.browseContentWithContainerId(
+                DlnaUtils.getContainerIdByImageQuality(getApplicationContext(), DlnaUtils.DLNA_DMS_TER_CHANNEL), mPageIndex);
     }
 
     /** Bsデータを取得. */
     private void getBsData() {
-        mDlnaContentBsChannelDataProvider.browseContentWithContainerId(this, mPageIndex);
+        mDlnaContentBsChannelDataProvider.browseContentWithContainerId(
+                DlnaUtils.getContainerIdByImageQuality(getApplicationContext(), DlnaUtils.DLNA_DMS_BS_CHANNEL), mPageIndex);
     }
 
     /**
@@ -392,10 +395,33 @@ public class ChannelListActivity extends BaseActivity implements
         }
     }
 
+    /**
+     * 送信containerIdと表示中のタブ一致のチェック.
+     * @param pos タブポジション
+     * @param containerId パス
+     * @return  一致のチェック結果
+     */
+    private boolean checkRequestContainerId(final int pos, final String containerId) {
+        boolean result = true;
+        if (pos == TAB_INDEX_TER) {
+            if (!containerId.endsWith(DlnaUtils.DLNA_DMS_TER_CHANNEL)) {
+                result = false;
+            }
+        } else if (pos == TAB_INDEX_BS) {
+            if (!containerId.endsWith(DlnaUtils.DLNA_DMS_BS_CHANNEL)) {
+                result = false;
+            }
+        }
+        return result;
+    }
+
     @Override
-    public void onContentBrowseCallback(final DlnaObject[] objs) {
+    public void onContentBrowseCallback(final DlnaObject[] objs, final String containerId) {
         DTVTLogger.start();
         int pos = mViewPager.getCurrentItem();
+        if (!checkRequestContainerId(pos, containerId)) {
+            return;
+        }
         final ChannelListFragment fragment = mFactory.createFragment(pos, this, mCurrentType, null);
         ArrayList<Object> tmp = new ArrayList<>();
         for (int i = 0; i < objs.length; ++i) {
@@ -408,11 +434,14 @@ public class ChannelListActivity extends BaseActivity implements
     }
 
     @Override
-    public void onContentBrowseErrorCallback() {
+    public void onContentBrowseErrorCallback(final String containerId) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 int pos = mViewPager.getCurrentItem();
+                if (!checkRequestContainerId(pos, containerId)) {
+                    return;
+                }
                 ChannelListFragment fragment = mFactory.createFragment(pos, ChannelListActivity.this, mCurrentType, null);
                 fragment.showProgressBar(false);
                 showGetDataFailedToast();

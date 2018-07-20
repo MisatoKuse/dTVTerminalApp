@@ -286,8 +286,9 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
         }
         LOG_WITH("ContentBrowseErrorCallback containerId = %s", containerId);
         LOG_WITH("before GetMethodID");
-        jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "ContentBrowseErrorCallback", "()V");
-        _env->CallVoidMethod(g_ctx.jniHelperObj, methodID);
+        jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "ContentBrowseErrorCallback", "(Ljava/lang/String;)V");
+        jstring containerIdString = _env->NewStringUTF(containerId);
+        _env->CallVoidMethod(g_ctx.jniHelperObj, methodID, containerIdString);
         LOG_WITH("after CallVoidMethod");
 
         if (isAttached) {
