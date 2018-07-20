@@ -2498,8 +2498,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 // サーバからのエラー通知
                 DTVTLogger.debug("error" + response.getErrorNo());
                 CustomDialog dialog = createErrorDialog();
-
-                dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_msg));
                 dialog.showDialog();
             } else {
                 // 成功
@@ -2508,7 +2506,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         } else {
             // コンテンツ詳細取得データに失敗があった場合
             CustomDialog dialog = createErrorDialog();
-            dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_msg));
             dialog.showDialog();
         }
         DTVTLogger.end();
@@ -2552,8 +2549,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                || contentsType == ContentUtils.ContentsType.HIKARI_IN_DCH_TV)) {
                 //録画ボタン表示対象の種別以外ならば、録画可能時間外や放送中等なので、録画不能のダイアログを出して、falseを返す
                 CustomDialog dialog = createErrorDialog();
-                dialog.setTitle(getResources().getString(
-                        R.string.recording_reservation_failed_dialog_msg));
                 dialog.showDialog();
                 return false;
             }
@@ -2624,8 +2619,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         mRecordingReservationContentsDetailInfo)) {
                     //APIの実行が行えなかった場合は即座にfalseが返却されるので、エラーとする
                     CustomDialog dialog = createErrorDialog();
-                    dialog.setTitle(getResources().getString(
-                            R.string.recording_reservation_failed_dialog_msg));
                     dialog.showDialog();
                 }
             }
