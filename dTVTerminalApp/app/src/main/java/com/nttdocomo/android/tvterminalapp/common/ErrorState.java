@@ -169,9 +169,9 @@ public class ErrorState {
                         R.string.network_ssl_error_message);
                 break;
             case NETWORK_ERROR:
-                //通信不能用のメッセージ
+                //通信不能用のメッセージ ダイアログ用
                 mErrorMessage = context.getString(
-                        R.string.network_nw_error_message);
+                        R.string.network_nw_error_message_dialog);
 
                 //トースト用
                 mToastErrorMessage = context.getString(

@@ -1079,7 +1079,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private boolean networkCheck() {
         if (!NetWorkUtils.isOnline(this)) {
-            String message = getResources().getString(R.string.network_nw_error_message);
+            String message = getResources().getString(R.string.network_nw_error_message_dialog);
             errorDialog(message, R.string.custom_dialog_ok);
             return false;
         } else {
