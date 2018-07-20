@@ -258,6 +258,14 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                 showMessage();
             } else {
                 if (mActivity != null && null != mContentsList) {
+                    if (mContentsList.get(i).getDownLoadStatus() == ContentsAdapter.DOWNLOAD_STATUS_COMPLETED) {
+                        String dlFile = mContentsList.get(i).getDlFileFullPath();
+                        File file = new File(dlFile);
+                        if (!file.exists()) {
+                            showErrorDialog(getString(R.string.common_empty_data_message), R.string.common_text_close);
+                            return;
+                        }
+                    }
                     Intent intent = new Intent(mContext, ContentDetailActivity.class);
                     intent.putExtra(DtvtConstants.SOURCE_SCREEN, mActivity.getComponentName().getClassName());
                     intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, mContentsList.get(i));
@@ -701,9 +709,9 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         }
         String url = item.getResUrl();
         String clearTextSize = item.getClearTextSize();
-        int clearTextSizeInt;
+        long clearTextSizeInt;
         try {
-            clearTextSizeInt = Integer.parseInt(clearTextSize);
+            clearTextSizeInt = Long.parseLong(clearTextSize);
         } catch (NumberFormatException e) {
             showMessage();
             return false;
