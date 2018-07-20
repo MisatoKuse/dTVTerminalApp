@@ -619,6 +619,11 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
      */
     public void setDownloadData(final DownloadData downloadData) {
         this.mDownloadData = downloadData;
+        String itemId = downloadData.getItemId();
+        if (!TextUtils.isEmpty(itemId) && !itemId.startsWith(DownloaderBase.sDlPrefix)) {
+            itemId = DownloaderBase.getFileNameById(itemId);
+        }
+        cancelDownLoadStatus(downloadData.getSaveFile() + File.separator + itemId, false);
         dbOperationByThread(DOWNLOAD_INSERT);
     }
 
