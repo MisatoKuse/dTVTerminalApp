@@ -399,11 +399,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         if (list != null) {
             list.clear();
             List<Map<String, String>> resultList = getDownloadListFromDb();
+            List<String> pathList = DownloaderBase.getDownloadPathList(RecordedListActivity.this);
             if (resultList != null && resultList.size() > 0) {
                 for (Map<String, String> hashMap : resultList) {
                     String downloadStatus = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
                     if (!TextUtils.isEmpty(downloadStatus)) {
-                        String path = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
                         String itemId = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
                         String title = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_TITLE);
                         String url = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_URL);
@@ -416,9 +416,17 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                         String channelName = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_CHANNELNAME);
                         String date = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_DATE);
 
-                        String fullPath = path + File.separator + itemId;
-                        File file = new File(fullPath);
-                        if (file.exists() && !checkDataIsExist(itemId, baseFragment)) {
+                        String fullPath = "";
+                        boolean isExists = false;
+                        for (String dlFilePath : pathList) {
+                            File file = new File(dlFilePath + File.separator + itemId);
+                            if (file.exists()) {
+                                fullPath = dlFilePath + File.separator + itemId;
+                                isExists = true;
+                                break;
+                            }
+                        }
+                        if (isExists && !checkDataIsExist(itemId, baseFragment)) {
                             ContentsData contentsData = new ContentsData();
                             contentsData.setTitle(title);
                             contentsData.setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);

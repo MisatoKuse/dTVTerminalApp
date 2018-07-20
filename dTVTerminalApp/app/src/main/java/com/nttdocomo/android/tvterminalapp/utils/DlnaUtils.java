@@ -368,7 +368,7 @@ public class DlnaUtils {
      */
     public static Notification getNotification(final String title, final String text, final Context context) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "");
-        builder.setSmallIcon(R.mipmap.icd_app_tvterminal);
+        builder.setSmallIcon(R.mipmap.icon_normal_tv);
         builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.icd_app_tvterminal));
         builder.setContentTitle(title);
         builder.setContentText(text);

@@ -14,6 +14,8 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.jni.activation.NewEnvironmentUtil;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * ダウンロード基底クラス.
@@ -292,6 +294,34 @@ public abstract class DownloaderBase {
             }
         }
         return downLoadPath;
+    }
+
+    /**
+     * Get save path.
+     * @param context context
+     * @return pathList
+     */
+    public static List<String> getDownloadPathList(final Context context) {
+        List<String> pathList = new ArrayList<>();
+        String downLoadPath;
+        String dmp = DownloaderBase.getDmpFolderName(context);
+        if (null == dmp || dmp.isEmpty()) {
+            downLoadPath = NewEnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
+            pathList.add(downLoadPath);
+        }
+        File[] files = ContextCompat.getExternalFilesDirs(context, null);
+        if (files != null) {
+            if (files.length > 0) {
+                for (int i = 0; i < files.length; i++) {
+                    File file = files[i];
+                    if (file != null) {
+                        downLoadPath = file.getAbsolutePath() + File.separator + dmp;
+                        pathList.add(downLoadPath);
+                    }
+                }
+            }
+        }
+        return pathList;
     }
 
     /**

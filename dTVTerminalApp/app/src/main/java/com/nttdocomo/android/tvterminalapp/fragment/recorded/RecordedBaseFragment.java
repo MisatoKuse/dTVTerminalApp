@@ -258,22 +258,45 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                 showMessage();
             } else {
                 if (mActivity != null && null != mContentsList) {
-                    if (mContentsList.get(i).getDownLoadStatus() == ContentsAdapter.DOWNLOAD_STATUS_COMPLETED) {
-                        String dlFile = mContentsList.get(i).getDlFileFullPath();
-                        File file = new File(dlFile);
-                        if (!file.exists()) {
+                    RecordedContentsDetailData detailData = mContentsList.get(i);
+                    if (detailData.getDownLoadStatus() == ContentsAdapter.DOWNLOAD_STATUS_COMPLETED) {
+                        if (!isFileExist(detailData)) {
                             showErrorDialog(getString(R.string.common_empty_data_message), R.string.common_text_close);
                             return;
                         }
                     }
                     Intent intent = new Intent(mContext, ContentDetailActivity.class);
                     intent.putExtra(DtvtConstants.SOURCE_SCREEN, mActivity.getComponentName().getClassName());
-                    intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, mContentsList.get(i));
+                    intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, detailData);
                     RecordedListActivity recordedListActivity = (RecordedListActivity) mActivity;
                     recordedListActivity.startActivity(intent);
                 }
             }
         }
+    }
+
+    /**
+     * ファイル存在チェック.
+     *
+     * @param detailData コンテンツ詳細データ
+     * @return 存在の場合true
+     */
+    private boolean isFileExist(RecordedContentsDetailData detailData) {
+        String itemId = detailData.getItemId();
+        if (!TextUtils.isEmpty(itemId) && !itemId.startsWith(DownloaderBase.sDlPrefix)) {
+            itemId = DownloaderBase.getFileNameById(itemId);
+        }
+        List<String> pathList = DownloaderBase.getDownloadPathList(mActivity);
+        boolean isExist = false;
+        for (String dlFilePath : pathList) {
+            File file = new File(dlFilePath + File.separator + itemId);
+            if (file.exists()) {
+                detailData.setDlFileFullPath(dlFilePath + File.separator + itemId);
+                isExist = true;
+                break;
+            }
+        }
+        return isExist;
     }
 
     /**
