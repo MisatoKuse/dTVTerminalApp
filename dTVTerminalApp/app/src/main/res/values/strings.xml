@@ -347,7 +347,7 @@
     <string name="contents_detail_login_button">ログインする</string>
     <string name="contents_detail_login_message">dアカウントでログインしてください\nログイン後は、ホーム画面に移動します</string>
     <string name="contents_detail_now_on_air_contents_nothing">現在放送中のコンテンツがありません</string>
-    <string name="contents_detail_now_on_air_get_now_on_air_error">通信時に問題が発生しました</string>
+    <string name="contents_detail_player_no_channel">お使いの環境では、このコンテンツは視聴できません</string>
     <string name="contents_detail_out_house_player_error_msg">視聴いただくには、「リモート視聴設定」が必要です。\n設定＞リモート視聴設定　を行ってください。</string>
     <string name="contents_detail_pairing_button">ペアリングする</string>
 

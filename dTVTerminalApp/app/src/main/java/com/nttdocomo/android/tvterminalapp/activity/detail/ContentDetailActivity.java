@@ -2825,7 +2825,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                                     //放送中ひかりTVコンテンツの時は自動再生する
                                     playAutoContents();
                                 } else {
-                                    showErrorDialog(getString(R.string.contents_detail_now_on_air_get_now_on_air_error));
+                                    setThumbnailMessage(getString(R.string.contents_detail_player_no_channel), "", true, false);
                                 }
                             }
                         });
