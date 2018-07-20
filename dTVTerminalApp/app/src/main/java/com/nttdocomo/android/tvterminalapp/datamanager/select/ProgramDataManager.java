@@ -123,63 +123,62 @@ public class ProgramDataManager {
      * @param chInfoDate 取得要求日付
      * @return list 番組データ
      */
-    @SuppressWarnings("OverlyLongMethod")
     public synchronized List<List<Map<String, String>>> selectTvScheduleListProgramData(
             final List<String> chNos, final String chInfoDate) {
         DTVTLogger.start();
         String chInfoGetDate = StringUtils.getChDateInfo(chInfoDate);
 
         List<List<Map<String, String>>> lists = null;
-        lists = new ArrayList<>();
-        for (String chNo : chNos) {
-            //データ存在チェック
-            //ファイルのタイムスタンプより取得日時を取得済みのため、既に要求日付のフォルダは作成してある.
-            String filesDir = mContext.getFilesDir().getPath();
-            String databasePath = StringUtils.getConnectStrings(filesDir, "/../databases");
-            String dbFilePath = StringUtils.getConnectStrings(databasePath, "/channel/", chInfoGetDate, "/", chNo);
-            File dbFile = new File(dbFilePath);
-            if (!dbFile.isFile()) {
-                //対象の日付フォルダに対象のチャンネル番号DBが存在しない.
-                continue;
-            }
-
-            //androidではdatabaseフォルダのファイルのみ取り扱えるため、DBをdatabaseフォルダ(2階層上)へコピーする.
-            File databaseFile = new File(databasePath, chNo);
-            try {
-                if (!databaseFile.createNewFile()) {
-                    DTVTLogger.error("Failed to create copy file");
+        try {
+            lists = new ArrayList<>();
+            for (String chNo : chNos) {
+                //データ存在チェック
+                //ファイルのタイムスタンプより取得日時を取得済みのため、既に要求日付のフォルダは作成してある.
+                String filesDir = mContext.getFilesDir().getPath();
+                String databasePath = StringUtils.getConnectStrings(filesDir, "/../databases");
+                String dbFilePath = StringUtils.getConnectStrings(databasePath, "/channel/", chInfoGetDate, "/", chNo);
+                File dbFile = new File(dbFilePath);
+                if (!dbFile.isFile()) {
+                    //対象の日付フォルダに対象のチャンネル番号DBが存在しない.
                     continue;
                 }
-                FileChannel inCh = new FileInputStream(dbFile).getChannel();
-                FileChannel outCh = new FileOutputStream(databaseFile).getChannel();
-                inCh.transferTo(0, inCh.size(), outCh);
-            } catch (IOException e) {
-                DTVTLogger.error(e.toString());
-            }
 
-            //テーブルの存在チェック.
-            List<Map<String, String>> list;
-            if (!DataBaseUtils.isChCachingRecord(mContext, DataBaseConstants.TV_SCHEDULE_LIST_TABLE_NAME, chNo)) {
-                //databaseフォルダにコピーしたファイルを削除
-                if (!databaseFile.delete()) {
-                    DTVTLogger.error("Failed to delete copy DB file");
+                //androidではdatabaseフォルダのファイルのみ取り扱えるため、DBをdatabaseフォルダ(2階層上)へコピーする.
+                File databaseFile = new File(databasePath, chNo);
+                try {
+                    if (!databaseFile.createNewFile()) {
+                        DTVTLogger.error("Failed to create copy file");
+                        continue;
+                    }
+                    FileChannel inCh = new FileInputStream(dbFile).getChannel();
+                    FileChannel outCh = new FileOutputStream(databaseFile).getChannel();
+                    inCh.transferTo(0, inCh.size(), outCh);
+                } catch (IOException e) {
+                    DTVTLogger.error(e.toString());
                 }
-                continue;
-            }
 
-            //ホーム画面に必要な列を列挙する
-            String[] columns = {JsonConstants.META_RESPONSE_THUMB_448, JsonConstants.META_RESPONSE_TITLE,
-                    JsonConstants.META_RESPONSE_PUBLISH_START_DATE, JsonConstants.META_RESPONSE_PUBLISH_END_DATE,
-                    JsonConstants.META_RESPONSE_CHNO, JsonConstants.META_RESPONSE_DISP_TYPE,
-                    JsonConstants.META_RESPONSE_SEARCH_OK, JsonConstants.META_RESPONSE_CRID,
-                    JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_EVENT_ID,
-                    JsonConstants.META_RESPONSE_TITLE_ID, JsonConstants.META_RESPONSE_R_VALUE,
-                    JsonConstants.META_RESPONSE_CONTENT_TYPE, JsonConstants.META_RESPONSE_DTV,
-                    JsonConstants.META_RESPONSE_TV_SERVICE, JsonConstants.META_RESPONSE_DTV_TYPE,
-                    JsonConstants.META_RESPONSE_SYNOP, JsonConstants.META_RESPONSE_CID,
-                    JsonConstants.META_RESPONSE_THUMB_640};
+                //テーブルの存在チェック.
+                List<Map<String, String>> list;
+                if (!DataBaseUtils.isChCachingRecord(mContext, DataBaseConstants.TV_SCHEDULE_LIST_TABLE_NAME, chNo)) {
+                    //databaseフォルダにコピーしたファイルを削除
+                    if (!databaseFile.delete()) {
+                        DTVTLogger.error("Failed to delete copy DB file");
+                    }
+                    continue;
+                }
 
-            try {
+                //ホーム画面に必要な列を列挙する
+                String[] columns = {JsonConstants.META_RESPONSE_THUMB_448, JsonConstants.META_RESPONSE_TITLE,
+                        JsonConstants.META_RESPONSE_PUBLISH_START_DATE, JsonConstants.META_RESPONSE_PUBLISH_END_DATE,
+                        JsonConstants.META_RESPONSE_CHNO, JsonConstants.META_RESPONSE_DISP_TYPE,
+                        JsonConstants.META_RESPONSE_SEARCH_OK, JsonConstants.META_RESPONSE_CRID,
+                        JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_EVENT_ID,
+                        JsonConstants.META_RESPONSE_TITLE_ID, JsonConstants.META_RESPONSE_R_VALUE,
+                        JsonConstants.META_RESPONSE_CONTENT_TYPE, JsonConstants.META_RESPONSE_DTV,
+                        JsonConstants.META_RESPONSE_TV_SERVICE, JsonConstants.META_RESPONSE_DTV_TYPE,
+                        JsonConstants.META_RESPONSE_SYNOP, JsonConstants.META_RESPONSE_CID,
+                        JsonConstants.META_RESPONSE_THUMB_640};
+
                 //Daoクラス使用準備
                 DataBaseHelperChannel channelListDBHelper = new DataBaseHelperChannel(mContext, chNo);
                 DataBaseManager.clearChInfo();
@@ -187,29 +186,20 @@ public class ProgramDataManager {
                 SQLiteDatabase database = DataBaseManager.getChInstance().openChDatabase();
                 database.acquireReference();
                 TvScheduleListDao tvScheduleListDao = new TvScheduleListDao(database);
-                try {
-                    DTVTLogger.debug("bulk insert start");
-                    database.beginTransaction();
-                    //ホーム画面用データ取得
-                    list = tvScheduleListDao.findByTypeAndDate(columns);
-                    lists.add(list);
 
-                    //databaseフォルダにコピーしたファイルを削除
-                    if (!databaseFile.delete()) {
-                        DTVTLogger.error("Failed to delete copy DB file");
-                    }
-                    database.setTransactionSuccessful();
-                } catch (SQLiteException e) {
-                    DTVTLogger.debug("ClipKeyListInsertDataManager::insertClipKeyListInsert, e.cause=" + e.getCause());
-                } finally {
-                    database.endTransaction();
-                    DTVTLogger.debug("bulk insert end");
+                //ホーム画面用データ取得
+                list = tvScheduleListDao.findByTypeAndDate(columns);
+                lists.add(list);
+
+                //databaseフォルダにコピーしたファイルを削除
+                if (!databaseFile.delete()) {
+                    DTVTLogger.error("Failed to delete copy DB file");
                 }
-            } catch (SQLiteException e) {
-                DTVTLogger.debug("ProgramDataManager::selectTvScheduleListProgramData, e.cause=" + e.getCause());
-            } finally {
-                DataBaseManager.getChInstance().closeChDatabase();
             }
+        } catch (SQLiteException e) {
+            DTVTLogger.debug("ProgramDataManager::selectTvScheduleListProgramData, e.cause=" + e.getCause());
+        } finally {
+            DataBaseManager.getChInstance().closeChDatabase();
         }
         return lists;
     }
