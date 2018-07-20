@@ -64,6 +64,7 @@ public class DlnaContentRecordedDataProvider implements DlnaManager.BrowseListen
         DTVTLogger.warning(">>> containerId = " + containerId);
         DlnaManager.shared().mBrowseListener = this;
         DlnaManager.shared().mRemoteConnectStatusChangeListener = this;
+        DlnaManager.shared().clearQue();
         DlnaManager.shared().BrowseContentWithContainerId(containerId, pageIndex);
         return true;
     }

@@ -29,6 +29,8 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * DLNAマネージャー.
@@ -39,6 +41,11 @@ public class DlnaManager {
      * singletone.
      */
     private static final DlnaManager sInstance = new DlnaManager();
+
+    /**
+     * Queue.
+     */
+    private List<String> containerIds = new ArrayList<>();
 
     /**エラータイプ.*/
     public enum LocalRegistrationErrorType {
@@ -342,6 +349,13 @@ public class DlnaManager {
     }
 
     /**
+     * Queueをクリア.
+     */
+    public void clearQue() {
+        DlnaManager.shared().containerIds.clear();
+    }
+
+    /**
      * BrowseContentWithContainerId.
      * @param containerId containerId
      * @param pageIndex ページングインデックス
@@ -370,22 +384,10 @@ public class DlnaManager {
                 break;
             case HOME_IN:
                 DlnaDmsItem item = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
-                if (!browseContentWithContainerId(pageIndex * DtvtConstants.REQUEST_DLNA_LIMIT_50,
-                        DtvtConstants.REQUEST_DLNA_LIMIT_50, containerId, item.mControlUrl)) {
-                    BrowseListener listener = DlnaManager.shared().mBrowseListener;
-                    if (listener != null) {
-                        listener.onContentBrowseErrorCallback(containerId);
-                    }
-                }
+                requestBrowse(pageIndex, containerId, item.mControlUrl);
                 break;
             case HOME_OUT_CONNECT:
-                if (!browseContentWithContainerId(pageIndex * DtvtConstants.REQUEST_DLNA_LIMIT_50,
-                        DtvtConstants.REQUEST_DLNA_LIMIT_50, containerId, DlnaManager.shared().mHomeOutControlUrl)) {
-                    BrowseListener listener = DlnaManager.shared().mBrowseListener;
-                    if (listener != null) {
-                        listener.onContentBrowseErrorCallback(containerId);
-                    }
-                }
+                requestBrowse(pageIndex, containerId, DlnaManager.shared().mHomeOutControlUrl);
                 break;
             case NONE_LOCAL_REGISTRATION:
             case NONE_PAIRING:
@@ -398,8 +400,50 @@ public class DlnaManager {
                 break;
         }
         DTVTLogger.warning("containerId = " + containerId);
-
     }
+
+    /**
+     * BrowseContentWithContainerId.
+     * @param pageIndex ページングインデックス
+     * @param containerId containerId
+     * @param controlUrl controlUrl
+     */
+    private void requestBrowse(final int pageIndex, final String containerId, final String controlUrl) {
+        DTVTLogger.debug("requestBrowse containerIds size =" + DlnaManager.shared().containerIds.size());
+        if (DlnaManager.shared().containerIds.size() == 0) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (!browseContentWithContainerId(pageIndex * DtvtConstants.REQUEST_DLNA_LIMIT_50,
+                            DtvtConstants.REQUEST_DLNA_LIMIT_50, containerId, controlUrl)) {
+                        BrowseListener listener = DlnaManager.shared().mBrowseListener;
+                        if (listener != null) {
+                            listener.onContentBrowseErrorCallback(containerId);
+                        }
+                    }
+                }
+            }).start();
+        }
+        DlnaManager.shared().containerIds.add(containerId);
+    }
+
+    /**
+     * containerIdのチェック.
+     * @param containerId containerId
+     */
+    private boolean checkContainerId(final String containerId) {
+        boolean result = true;
+        if (DlnaManager.shared().containerIds.size() > 0) {
+            String newContainerId = DlnaManager.shared().containerIds.get(DlnaManager.shared().containerIds.size() - 1);
+            if (!newContainerId.equals(containerId)) {
+                DlnaManager.shared().clearQue();
+                BrowseContentWithContainerId(newContainerId, DlnaManager.shared().mPageIndex);
+                result = false;
+            }
+        }
+        return result;
+    }
+
     /**
      * StartDtcp.
      */
@@ -595,12 +639,17 @@ public class DlnaManager {
      * @param objs コンテンツリスト
      */
     public void ContentBrowseCallback(@NonNull final String containerId, @NonNull final DlnaObject[] objs) {
-        DTVTLogger.warning("containerId = " + containerId + ", objs.length = " + objs.length);
+        DTVTLogger.warning("ContentBrowseCallback containerId = " + containerId + ", objs.length = " + objs.length);
+        if (!checkContainerId(containerId)) {
+            DTVTLogger.warning("ContentBrowseCallback checkContainerId containerId = " + containerId);
+            return;
+        }
         BrowseListener listener = DlnaManager.shared().mBrowseListener;
         if (listener != null) {
             aribConvertBs(objs);
             listener.onContentBrowseCallback(objs, containerId);
         }
+        DlnaManager.shared().clearQue();
     }
 
     /**
@@ -608,10 +657,16 @@ public class DlnaManager {
      * @param containerId コンテンツリスト
      */
     public void ContentBrowseErrorCallback(@NonNull final String containerId) {
+        DTVTLogger.warning("ContentBrowseErrorCallback containerId = " + containerId);
+        if (!checkContainerId(containerId)) {
+            DTVTLogger.warning("ContentBrowseErrorCallback checkContainerId containerId = " + containerId);
+            return;
+        }
         BrowseListener listener = DlnaManager.shared().mBrowseListener;
         if (listener != null) {
             listener.onContentBrowseErrorCallback(containerId);
         }
+        DlnaManager.shared().clearQue();
     }
 
     /**
@@ -790,6 +845,7 @@ public class DlnaManager {
             DTVTLogger.warning("requestContainerId = " + manager.requestContainerId);
             DTVTLogger.warning("pageIndex = " + manager.mPageIndex);
             if (!TextUtils.isEmpty(manager.requestContainerId)) {
+                manager.clearQue();
                 manager.BrowseContentWithContainerId(manager.requestContainerId, manager.mPageIndex);
                 manager.requestContainerId = "";
                 manager.mPageIndex = 0;
@@ -941,7 +997,7 @@ public class DlnaManager {
      * @param cleartextSize サイズ
      * @param itemId itemId
      */
-    private native void download(String savePath, String dtcp1host, int dtcp1port, String url, int cleartextSize, String itemId);
+    private native void download(String savePath, String dtcp1host, int dtcp1port, String url, long cleartextSize, String itemId);
 
     // endregion native method
 }

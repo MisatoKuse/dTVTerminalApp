@@ -64,6 +64,7 @@ public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseLi
         this.mChannelNr = mChannelNr;
         DlnaManager.shared().mBrowseListener = this;
         DlnaManager.shared().mRemoteConnectStatusChangeListener = this;
+        DlnaManager.shared().clearQue();
         DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(mContext, DlnaUtils.DLNA_DMS_MULTI_CHANNEL), mPageIndex);
     }
 
@@ -78,6 +79,7 @@ public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseLi
         if (objs.length == 0) {
             mOnMultiChCallbackListener.multiChannelFindCallback(null);
         } else {
+            DlnaManager.shared().clearQue();
             DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(mContext, DlnaUtils.DLNA_DMS_MULTI_CHANNEL), mPageIndex++);
         }
     }
