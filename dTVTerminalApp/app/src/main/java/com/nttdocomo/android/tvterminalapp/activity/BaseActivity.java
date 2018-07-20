@@ -2076,8 +2076,11 @@ public class BaseActivity extends FragmentActivity implements
      */
     public void showLogoutDialog(CustomDialog.DismissCallback dissmissCallBack) {
 
-        CustomDialog logoutDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.CONFIRM);
+        final CustomDialog logoutDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.CONFIRM);
         logoutDialog.setContent(this.getResources().getString(R.string.logout_message));
+
+        //バックボタンをキャンセルボタンとして扱うように指示
+        logoutDialog.setBackKeyAsCancel(true);
 
         logoutDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @SuppressWarnings("OverlyLongMethod")
@@ -2106,6 +2109,11 @@ public class BaseActivity extends FragmentActivity implements
             logoutDialog.setDialogDismissCallback(new CustomDialog.DismissCallback() {
                 @Override
                 public void allDismissCallback() {
+                    if (!logoutDialog.isButtonTap()) {
+                        //ここでisButtonTapがfalseならば、電源ボタンで閉じられたので、何もせずに帰る
+                        return;
+                    }
+
                     //ログアウトのダイアログは閉じられたので、認証画面を再表示できるようにする
                     OttGetAuthSwitch.INSTANCE.setNowAuth(true);
 

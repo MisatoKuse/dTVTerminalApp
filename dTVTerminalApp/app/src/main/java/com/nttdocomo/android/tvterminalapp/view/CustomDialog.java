@@ -72,6 +72,15 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
 
     /** 画面外タップによるキャンセル判定値. */
     private boolean mCancelableOutside = true;
+    /** バックキーをキャンセルボタンとして扱うスイッチ. */
+    private boolean mBackKeyAsCancel = false;
+
+    /**
+     * 最後に扱ったキーコード.
+     *
+     * sKeyListenerがスタティック型なので、やむを得ずスタティック型とする
+     */
+    private volatile static int sLastKeyCode = 0;
 
     /**
      * OKボタン押下を返却するためのコールバック.
@@ -124,7 +133,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      * ボタンタップ以外でダイアログが閉じた時のコールバック.
      */
     public interface DismissCallback {
-        /** ボタンタップ以外でダイアログが閉じた場合時のコールバック. */
+        /** ダイアログが閉じた場合のコールバック. */
         void allDismissCallback();
         /** ボタンタップ以外でダイアログが閉じた場合時のコールバック. */
         void otherDismissCallback();
@@ -395,6 +404,9 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     private static final OnKeyListener sKeyListener = new OnKeyListener() {
         @Override
         public boolean onKey(final DialogInterface dialog, final int keyCode, final KeyEvent event) {
+            //キーコードを退避する
+            sLastKeyCode = keyCode;
+
             if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0
                     && event.getAction() != KeyEvent.ACTION_UP) {
                 dialog.dismiss();
@@ -484,6 +496,12 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     @Override
     public void onDismiss(final DialogInterface dialogInterface) {
         if (mDialogDismissCallback != null) {
+            //バックキーをキャンセルとして扱うスイッチが有効で、最後に押されたキーがバックボタンならば、
+            //キーではなくキャンセルボタンとして扱う
+            if(mBackKeyAsCancel && sLastKeyCode == KeyEvent.KEYCODE_BACK) {
+                mIsButtonTap = true;
+            }
+
             //ダイアログが閉じたときのコールバック
             mDialogDismissCallback.allDismissCallback();
             //ボタンタップ時は動作させない
@@ -493,6 +511,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
             }
         }
         mIsButtonTap = false;
+        sLastKeyCode = 0;
     }
 
     /**
@@ -502,5 +521,23 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      */
     public void setOnTouchOutside(final boolean cancelable) {
         mCancelableOutside = cancelable;
+    }
+
+    /**
+     * ダイアログのボタンが押されているかどうかを見る.
+     *
+     * @return ダイアログのボタンが押されていた場合はtrue
+     */
+    public boolean isButtonTap() {
+        return mIsButtonTap;
+    }
+
+    /**
+     * バックキーでのダイアログキャンセルを、ダイアログのキャンセルボタンとして扱うか否かを指定する
+     *
+     * @param setSwitch trueを指定すると、バックキーでのキャンセルがダイアログのキャンセルボタンと同じ扱いになる
+     */
+    public void setBackKeyAsCancel(boolean setSwitch) {
+        mBackKeyAsCancel = setSwitch;
     }
 }
