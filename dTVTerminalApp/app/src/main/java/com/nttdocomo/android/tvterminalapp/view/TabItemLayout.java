@@ -227,19 +227,35 @@ public class TabItemLayout extends HorizontalScrollView {
     public void setTab(final int position) {
         DTVTLogger.start();
         if (mLinearLayout != null) {
-            for (int i = 0; i < mTabNames.length; i++) {
-                TextView textView = (TextView) mLinearLayout.getChildAt(i);
-                if (position == i) {
-                    scrollOffsetCheck(textView);
-                    textView.setBackgroundResource(setBackgroundResourceIndicating(true));
-                    textView.setTextColor(ContextCompat.getColor(mContext, R.color.common_tab_select_text_color));
-                } else {
-                    textView.setTextColor(ContextCompat.getColor(mContext, R.color.common_tab_unselect_text_color));
-                    textView.setBackgroundResource(0);
+            mLinearLayout.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    mLinearLayout.getViewTreeObserver().removeOnPreDrawListener(this);
+                    setTabPosition(position);
+                    return true;
                 }
-            }
+            });
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * 親ビュー描画開始してからタブの位置を反映する.
+     * @param position タブポジション
+     */
+    private void setTabPosition(final int position) {
+
+        for (int i = 0; i < mTabNames.length; i++) {
+            TextView textView = (TextView) mLinearLayout.getChildAt(i);
+            if (position == i) {
+                scrollOffsetCheck(textView);
+                textView.setBackgroundResource(setBackgroundResourceIndicating(true));
+                textView.setTextColor(ContextCompat.getColor(mContext, R.color.common_tab_select_text_color));
+            } else {
+                textView.setTextColor(ContextCompat.getColor(mContext, R.color.common_tab_unselect_text_color));
+                textView.setBackgroundResource(0);
+            }
+        }
     }
 
     /**
