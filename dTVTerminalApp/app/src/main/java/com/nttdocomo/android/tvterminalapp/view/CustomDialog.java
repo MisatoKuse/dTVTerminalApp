@@ -74,13 +74,14 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     private boolean mCancelableOutside = true;
     /** バックキーをキャンセルボタンとして扱うスイッチ. */
     private boolean mBackKeyAsCancel = false;
+    /** バックキータップの可能／不可. */
+    private boolean mEnableBackkey = true;
 
     /**
      * 最後に扱ったキーコード.
      *
-     * sKeyListenerがスタティック型なので、やむを得ずスタティック型とする
      */
-    private volatile static int sLastKeyCode = 0;
+    private int mLastKeyCode = 0;
 
     /**
      * OKボタン押下を返却するためのコールバック.
@@ -401,19 +402,20 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     /**
      * バックキー押下時の動作.
      */
-    private static final OnKeyListener sKeyListener = new OnKeyListener() {
+    private final OnKeyListener sKeyListener = new OnKeyListener() {
         @Override
         public boolean onKey(final DialogInterface dialog, final int keyCode, final KeyEvent event) {
             //キーコードを退避する
-            sLastKeyCode = keyCode;
+            mLastKeyCode = keyCode;
 
             if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0
                     && event.getAction() != KeyEvent.ACTION_UP) {
-                dialog.dismiss();
-                return true;
-            } else {
-                return false;
+                if (mEnableBackkey) {
+                    dialog.dismiss();
+                    return true;
+                }
             }
+            return false;
         }
     };
 
@@ -498,7 +500,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
         if (mDialogDismissCallback != null) {
             //バックキーをキャンセルとして扱うスイッチが有効で、最後に押されたキーがバックボタンならば、
             //キーではなくキャンセルボタンとして扱う
-            if(mBackKeyAsCancel && sLastKeyCode == KeyEvent.KEYCODE_BACK) {
+            if(mBackKeyAsCancel && mLastKeyCode == KeyEvent.KEYCODE_BACK) {
                 mIsButtonTap = true;
             }
 
@@ -511,7 +513,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
             }
         }
         mIsButtonTap = false;
-        sLastKeyCode = 0;
+        mLastKeyCode = 0;
     }
 
     /**
@@ -521,6 +523,15 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      */
     public void setOnTouchOutside(final boolean cancelable) {
         mCancelableOutside = cancelable;
+    }
+
+    /**
+     * バックキータップの可能／不可を設定.
+     *
+     * @param  enable バックキーのタップが不可ならばfalse
+     */
+    public void setOnTouchBackkey(final boolean enable) {
+        mEnableBackkey = enable;
     }
 
     /**
