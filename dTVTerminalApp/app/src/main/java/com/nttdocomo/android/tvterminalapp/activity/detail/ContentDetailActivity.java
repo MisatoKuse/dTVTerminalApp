@@ -2370,11 +2370,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     if (DateUtils.getNowTimeFormatEpoch() < mDetailFullData.getmVod_start_date()) {
                         //中継アプリに「chno」を通知する
                         requestStartApplicationHikariTvCategoryDtvchannelBroadcast(mDetailFullData.getmChno());
-                        //「vod_start_date」 <= 現在時刻 < 「vod_end_date」の場合  //「tv_cid」を通知する
+                        //「vod_start_date」 <= 現在時刻 < 「vod_end_date」の場合 「crid」を通知する
                     } else if (DateUtils.getNowTimeFormatEpoch() >= mDetailFullData.getmVod_start_date()
                             && DateUtils.getNowTimeFormatEpoch() < mDetailFullData.getmVod_end_date()) {
-                        // ひかりTV内dTVチャンネル 見逃し
-                        requestStartApplicationHikariTvCategoryDtvchannelMissed(mDetailFullData.getmTv_cid());
+                        // ひかりTV内dTVチャンネル 見逃し／関連番組
+                        requestStartApplicationHikariTvCategoryDtvchannelMissed(mDetailFullData.getCrid());
                     } else {
                         if (!mIsFromHeader) {
                             setRemoteProgressVisible(View.GONE);

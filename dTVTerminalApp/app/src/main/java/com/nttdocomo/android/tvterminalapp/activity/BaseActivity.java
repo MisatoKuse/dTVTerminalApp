@@ -1660,22 +1660,12 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * STBのサービスアプリ起動リクエスト処理を実行.
-     * ひかりTV内dTVチャンネルのVOD（見逃し）
+     * ひかりTV内dTVチャンネルのVOD（見逃し／関連番組）
      *
-     * @param tvCid コンテンツID
+     * @param crid コンテンツID
      */
-    protected void requestStartApplicationHikariTvCategoryDtvchannelMissed(final String tvCid) {
-        mRemoteControllerView.sendStartApplicationHikariTvCategoryDtvchannelMissedRequest(tvCid);
-    }
-
-    /**
-     * STBのサービスアプリ起動リクエスト処理を実行.
-     * ひかりTV内 dTVチャンネル VOD（関連番組）
-     *
-     * @param tvCid コンテンツID
-     */
-    protected void requestStartApplicationHikariTvCategoryDtvchannelRelation(final String tvCid) {
-        mRemoteControllerView.sendStartApplicationHikariTvCategoryDtvchannelRelationRequest(tvCid);
+    protected void requestStartApplicationHikariTvCategoryDtvchannelMissed(final String crid) {
+        mRemoteControllerView.sendStartApplicationHikariTvCategoryDtvchannelMissedRequest(crid);
     }
 
     /**

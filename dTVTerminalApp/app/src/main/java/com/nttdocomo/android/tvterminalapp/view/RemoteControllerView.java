@@ -666,25 +666,13 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
     /**
      * 中継アプリ起動リクエスト処理を呼び出し.
-     * ・ひかりTV内 dTVチャンネル VOD（見逃し）
+     * ・ひかりTV内 dTVチャンネル VOD（見逃し／関連番組）
      *
-     * @param tvCid  ひかりTV内 dTVチャンネル VOD（見逃し）コンテンツID
+     * @param crid  ひかりTV内 dTVチャンネル VOD（見逃し／関連番組）コンテンツID
      */
-    public void sendStartApplicationHikariTvCategoryDtvchannelMissedRequest(final String tvCid) {
+    public void sendStartApplicationHikariTvCategoryDtvchannelMissedRequest(final String crid) {
         DTVTLogger.start();
-        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvchannelMissedRequest(tvCid, mContext);
-        DTVTLogger.end();
-    }
-
-    /**
-     * 中継アプリ起動リクエスト処理を呼び出し.
-     * ・ひかりTV内 dTVチャンネル VOD（関連番組）
-     *
-     * @param tvCid  ひかりTV内 dTVチャンネル VOD（見逃し）コンテンツID
-     */
-    public void sendStartApplicationHikariTvCategoryDtvchannelRelationRequest(final String tvCid) {
-        DTVTLogger.start();
-        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvchannelRelationRequest(tvCid, mContext);
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvchannelMissedRequest(crid, mContext);
         DTVTLogger.end();
     }
 
