@@ -350,25 +350,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         pollTvScheduleWebClient();
         if (tvScheduleList != null) {
             //チャンネルデータ
-            TvScheduleList scheduleList = tvScheduleList.get(0);
-
-            //扱いやすくするために一旦ArrayListに変換
-            ArrayList<String> chNoIntegerList = new ArrayList<>();
-            for (int i = 0; i < chNo.length; i++) {
-                chNoIntegerList.add(String.valueOf(chNo[i]));
-            }
-            List<Map<String, String>> mapList = scheduleList.geTvsList();
-
-            //番組データが存在するチャンネル番号を削除
-            for (int i = 0; i < mapList.size(); i++) {
-                chNoIntegerList.remove(mapList.get(i).get(JsonConstants.META_RESPONSE_CHNO));
-            }
-
-            //番組データがないチャンネル用のダミーデータを設定する
-            for (int i = 0; i < chNoIntegerList.size(); i++) {
-                mapList.add(DataConverter.getDummyContentMap(mContext, chNoIntegerList.get(i), false));
-            }
-            scheduleList.setTvsList(mapList);
+            mTvScheduleList = tvScheduleList.get(0);
 
             if (mRequiredClipKeyList) {
                 // クリップキーリストを取得
@@ -376,8 +358,26 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 mVodClipKeyListResponse = false;
                 getClipKeyList();
             } else {
+                TvScheduleList scheduleList = mTvScheduleList;
+                //扱いやすくするために一旦ArrayListに変換
+                ArrayList<String> chNoIntegerList = new ArrayList<>();
+                for (int aChNo : chNo) {
+                    chNoIntegerList.add(String.valueOf(aChNo));
+                }
+                List<Map<String, String>> mapList = scheduleList.geTvsList();
+
+                //番組データが存在するチャンネル番号を削除
+                for (int i = 0; i < mapList.size(); i++) {
+                    chNoIntegerList.remove(mapList.get(i).get(JsonConstants.META_RESPONSE_CHNO));
+                }
+
+                //番組データがないチャンネル用のダミーデータを設定する
+                for (int i = 0; i < chNoIntegerList.size(); i++) {
+                    mapList.add(DataConverter.getDummyContentMap(mContext, chNoIntegerList.get(i), false));
+                }
+                scheduleList.setTvsList(mapList);
+                mTvScheduleList = scheduleList;
                 if (null != mApiDataProviderCallback) {
-                    mTvScheduleList = scheduleList;
                     setProgramListContentData(scheduleList);
                 }
             }

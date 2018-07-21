@@ -1412,4 +1412,23 @@ public class ContentUtils {
                 return false;
         }
     }
+
+    /**
+     * Pure系コンテンツ判定.
+     * @param contentsType コンテンツタイプ
+     * @return 判定結果
+     */
+    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
+    public static boolean isPureContents(final ContentUtils.ContentsType contentsType){
+        switch (contentsType) {
+            case PURE_DTV:
+            case PURE_DTV_CHANNEL:
+            case PURE_DTV_CHANNEL_MISS:
+            case PURE_DTV_CHANNEL_RELATION:
+            case D_ANIME_STORE:
+                return true;
+            default:
+                return false;
+        }
+    }
 }

@@ -655,6 +655,7 @@ public class DtvContentsDetailFragment extends Fragment {
                     } else {
                         mRecordButton.setBackgroundResource(R.mipmap.icon_tap_circle_normal_rec);
                         mRecordButton.setVisibility(View.VISIBLE);
+                        mRecordButton.setOnClickListener(null);
                     }
                 } else {
                     mRecordButton.setBackgroundResource(R.drawable.recording_reservation_rec_icon_selector);
