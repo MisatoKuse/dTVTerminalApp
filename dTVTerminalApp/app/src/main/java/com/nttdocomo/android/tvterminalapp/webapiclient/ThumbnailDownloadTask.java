@@ -212,7 +212,7 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                synchronized (this) {
+                synchronized (ThumbnailDownloadTask.this) {
                     mIsStop = true;
                     //全てのコネクションにdisconnectを送る
                     for (int i = 0; i < mUrlConnections.size(); i++) {
