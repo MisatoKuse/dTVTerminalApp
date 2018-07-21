@@ -645,7 +645,7 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_downLoadStartDtcp(JNIEn
 }
 
 JNIEXPORT void JNICALL
-Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_download(JNIEnv *env, jobject thiz, jstring fileNameToSave_, jstring dtcp1host_, int dtcp1port, jstring url_, int cleartextSize, jstring xml_) {
+Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_download(JNIEnv *env, jobject thiz, jstring fileNameToSave_, jstring dtcp1host_, int dtcp1port, jstring url_, jlong cleartextSize, jstring xml_) {
     if (NULL==fileNameToSave_) {
         LOG_WITH("download fileNameToSave_ is NULL");
         dlnaDownload->startDownload("", "", dtcp1port, "", cleartextSize, nullptr);

@@ -39,7 +39,7 @@ public interface DownloadListener {
      * ダウンロード開始の時、コールされる.
      * @param totalFileByteSize totalFileByteSize
      */
-    void onStart(int totalFileByteSize);
+    void onStart(long totalFileByteSize);
 
     /**
      * ダウンロード進捗通知.

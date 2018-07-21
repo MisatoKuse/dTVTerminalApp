@@ -17,7 +17,7 @@ public class DtcpDownloadParam extends DownloadParam {
     /**Url.*/
     private String mUrl;    //e.g. "http://192.168.11.5:58890/web/video/pvr?id=15131320570000000041&quality=mobile"
     /**CleartextSize.*/
-    private int mCleartextSize;
+    private long mCleartextSize;
     /**ダウンロードするためのxml.*/
     private String mXmlToDownLoad;
 
@@ -90,7 +90,7 @@ public class DtcpDownloadParam extends DownloadParam {
      * ダウンロードサイズ取得.
      * @return ダウンロードサイズ
      */
-    public int getCleartextSize() {
+    public long getCleartextSize() {
         return mCleartextSize;
     }
 
@@ -98,7 +98,7 @@ public class DtcpDownloadParam extends DownloadParam {
      * ダウンロードサイズ設定.
      * @param mCleartextSize ダウンロードサイズ
      */
-    public void setCleartextSize(final int mCleartextSize) {
+    public void setCleartextSize(final long mCleartextSize) {
         this.mCleartextSize = mCleartextSize;
     }
 
@@ -131,7 +131,7 @@ public class DtcpDownloadParam extends DownloadParam {
      * @return dl size
      */
     @Override
-    public int getTotalSizeToDl() {
+    public long getTotalSizeToDl() {
         return getCleartextSize();
     }
 }

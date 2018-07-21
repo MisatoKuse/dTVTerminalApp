@@ -95,43 +95,47 @@ public class BitmapDecodeUtils {
      */
     public static Bitmap compressBitmap(final Context context, final InputStream is, final ThumbnailDownloadTask.ImageSizeType imageSizeType) {
         Bitmap bitmap = null;
-        int maxWidth = 0;
-        int maxHeight = 0;
-        switch (imageSizeType) {
-            case CONTENT_DETAIL:
-                maxWidth = context.getResources().getDisplayMetrics().widthPixels;
-                maxHeight = maxWidth / SCREEN_RATIO_WIDTH_16 * SCREEN_RATIO_HEIGHT_9;
-                break;
-            case HOME_LIST:
-                maxWidth = (int) context.getResources().getDimension(R.dimen.home_contents_thumbnail_width);
-                maxHeight = (int) context.getResources().getDimension(R.dimen.home_contents_thumbnail_height);
-                break;
-            case TV_PROGRAM_LIST:
-                maxWidth = (int) context.getResources().getDimension(R.dimen.panel_content_thumbnail_width);
-                maxHeight = (int) context.getResources().getDimension(R.dimen.panel_content_thumbnail_height);
-                break;
-            case LIST:
-                maxWidth = (int) context.getResources().getDimension(R.dimen.watch_listen_thumbnail_high);
-                maxHeight = (int) context.getResources().getDimension(R.dimen.watch_listen_thumbnail_width);
-                break;
-            case CHANNEL:
-                maxWidth = (int) context.getResources().getDimension(R.dimen.channel_list_thumbnail_width);
-                maxHeight = (int) context.getResources().getDimension(R.dimen.channel_list_thumbnail_height);
-                break;
-            default:
-                break;
-        }
-        byte[] data = readStream(is);
-        if (data != null) {
-            BitmapFactory.Options opt = new BitmapFactory.Options();
-            opt.inJustDecodeBounds = true;
-            BitmapFactory.decodeByteArray(data, 0, data.length, opt);
-            int height = opt.outHeight;
-            int width = opt.outWidth;
-            int sampleSize = computeSampleSize(width, height, maxWidth, maxHeight);
-            BitmapFactory.Options options = getBitmapOptions(context);
-            options.inSampleSize = sampleSize;
-            bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, options);
+        try {
+            int maxWidth = 0;
+            int maxHeight = 0;
+            switch (imageSizeType) {
+                case CONTENT_DETAIL:
+                    maxWidth = context.getResources().getDisplayMetrics().widthPixels;
+                    maxHeight = maxWidth / SCREEN_RATIO_WIDTH_16 * SCREEN_RATIO_HEIGHT_9;
+                    break;
+                case HOME_LIST:
+                    maxWidth = (int) context.getResources().getDimension(R.dimen.home_contents_thumbnail_width);
+                    maxHeight = (int) context.getResources().getDimension(R.dimen.home_contents_thumbnail_height);
+                    break;
+                case TV_PROGRAM_LIST:
+                    maxWidth = (int) context.getResources().getDimension(R.dimen.panel_content_thumbnail_width);
+                    maxHeight = (int) context.getResources().getDimension(R.dimen.panel_content_thumbnail_height);
+                    break;
+                case LIST:
+                    maxWidth = (int) context.getResources().getDimension(R.dimen.watch_listen_thumbnail_high);
+                    maxHeight = (int) context.getResources().getDimension(R.dimen.watch_listen_thumbnail_width);
+                    break;
+                case CHANNEL:
+                    maxWidth = (int) context.getResources().getDimension(R.dimen.channel_list_thumbnail_width);
+                    maxHeight = (int) context.getResources().getDimension(R.dimen.channel_list_thumbnail_height);
+                    break;
+                default:
+                    break;
+            }
+            byte[] data = readStream(is);
+            if (data != null) {
+                BitmapFactory.Options opt = new BitmapFactory.Options();
+                opt.inJustDecodeBounds = true;
+                BitmapFactory.decodeByteArray(data, 0, data.length, opt);
+                int height = opt.outHeight;
+                int width = opt.outWidth;
+                int sampleSize = computeSampleSize(width, height, maxWidth, maxHeight);
+                BitmapFactory.Options options = getBitmapOptions(context);
+                options.inSampleSize = sampleSize;
+                bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, options);
+            }
+        } catch (NullPointerException e) {
+            DTVTLogger.debug(e);
         }
         return bitmap;
     }
