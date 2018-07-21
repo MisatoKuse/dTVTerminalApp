@@ -243,6 +243,9 @@ public class DaccountGetOtt {
         //コンテキストとコールバックの取得
         mContext = context;
 
+        //現在残っているワンタイムパスワードは無効になるのでクリアしておく
+        SharedPreferencesUtils.setSharedPreferencesOneTimePass(mContext,"");
+
         //OTT取得処理の開始
         bindDimServiceAppService();
     }

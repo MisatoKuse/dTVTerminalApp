@@ -1943,12 +1943,12 @@ public class BaseActivity extends FragmentActivity implements
         }
 
         if (mDAccountControl != null
-                && mDAccountControl.getResult() == IDimDefines.RESULT_USER_CANCEL
-                && mFirstDaccountErrorHandler != null) {
+                && mDAccountControl.getResult() == IDimDefines.RESULT_USER_CANCEL) {
             //dアカウント認証画面がキャンセルされたので、ログアウトダイアログを出すために、フラグを立てる
-            OttGetAuthSwitch.getInstance().setSkipPermission(true);
+            OttGetAuthSwitch ottGetAuthSwitch = OttGetAuthSwitch.getInstance();
+            ottGetAuthSwitch.setSkipPermission(true);
 
-            mFirstDaccountErrorHandler.post(new Runnable() {
+            ottGetAuthSwitch.getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     showLogoutDialog();
@@ -2072,6 +2072,9 @@ public class BaseActivity extends FragmentActivity implements
         //バックボタンをキャンセルボタンとして扱うように指示
         logoutDialog.setBackKeyAsCancel(true);
 
+        //ダイアログ以外の部分を押した時に反応するのは禁止
+        logoutDialog.setOnTouchOutside(false);
+
         logoutDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @SuppressWarnings("OverlyLongMethod")
             @Override
@@ -2099,11 +2102,6 @@ public class BaseActivity extends FragmentActivity implements
             logoutDialog.setDialogDismissCallback(new CustomDialog.DismissCallback() {
                 @Override
                 public void allDismissCallback() {
-                    if (!logoutDialog.isButtonTap()) {
-                        //ここでisButtonTapがfalseならば、電源ボタンで閉じられたので、何もせずに帰る
-                        return;
-                    }
-
                     //ログアウトのダイアログは閉じられたので、認証画面を再表示できるようにする
                     OttGetAuthSwitch.INSTANCE.setNowAuth(true);
 
@@ -2118,6 +2116,7 @@ public class BaseActivity extends FragmentActivity implements
                     if (!(mActivity instanceof StbSelectActivity &&
                             ((StbSelectActivity)mActivity).getmStartMode()
                             == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal())) {
+                        DTVTLogger.debug("daccount recall");
                         //条件を満たさない通常時は、dアカウントの処理を行う
                         mDAccountControl = new DaccountControl();
                         mDAccountControl.registService(getApplicationContext(), BaseActivity.this);
@@ -2126,7 +2125,7 @@ public class BaseActivity extends FragmentActivity implements
 
                 @Override
                 public void otherDismissCallback() {
-
+                    DTVTLogger.debug("otherDismissCallback");
                 }
             });
         } else {
