@@ -1353,12 +1353,26 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
         }
         //ダイアログを、OKボタンのコールバックありに設定する
         CustomDialog restartDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        //枠外を押した時の操作を無視するように設定する
+        restartDialog.setOnTouchOutside(false);
         restartDialog.setContent(printMessage);
         //startAppDialog.setTitle(getString(R.string.dTV_content_service_start_dialog));
         restartDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
                 //OKが押されたので、ホーム画面の表示
+                reStartApplication();
+            }
+        });
+        restartDialog.setDialogDismissCallback(new CustomDialog.DismissCallback() {
+            @Override
+            public void allDismissCallback() {
+                //NOP
+            }
+
+            @Override
+            public void otherDismissCallback() {
+                //OKが押されたのと同じ、ホーム画面の表示
                 reStartApplication();
             }
         });

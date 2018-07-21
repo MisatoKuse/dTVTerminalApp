@@ -1355,6 +1355,19 @@ public class BaseActivity extends FragmentActivity implements
                 reStartApplication();
             }
         });
+        restartDialog.setDialogDismissCallback(new CustomDialog.DismissCallback() {
+            @Override
+            public void allDismissCallback() {
+                //NOP
+            }
+
+            @Override
+            public void otherDismissCallback() {
+                SharedPreferencesUtils.setSharedPreferencesRestartFlag(getApplicationContext(), false);
+                //OKが押されたのと同じ、ホーム画面の表示
+                reStartApplication();
+            }
+        });
         restartDialog.showDialog();
     }
 
