@@ -619,6 +619,16 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     /**
+     * ランキング情報の更新日付をクリア.
+     *
+     * 先行してデータを取得しているランキング情報の更新日付をクリアし、ユーザー情報取得後の情報で更新を行わせるため
+     */
+    public void clearPrecedingData() {
+        DateUtils.clearLastProgramDate(mContext,DateUtils.DAILY_RANK_LAST_INSERT);
+        DateUtils.clearLastProgramDate(mContext,DateUtils.VIDEO_RANK_LAST_INSERT);
+    }
+
+    /**
      * Activityからのデータ取得要求受付.
      */
     public void getHomeData() {
