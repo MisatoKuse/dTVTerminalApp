@@ -1523,22 +1523,24 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 if (!mIsOperateActivated) {
                     return false;
                 }
-                if (e1.getY() > (float) mRecordCtrlView.getHeight() / 3
-                        && e2.getY() > (float) mRecordCtrlView.getHeight() / 3
-                        && e2.getY() < (float) (mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight() / 3)
-                        && e1.getY() < (float) (mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight() / 3)) {
-                    if (e1.getX() > e2.getX() && e1.getX() < (float) (mScreenWidth / 2 - mVideoPlayPause.getWidth() / 2)) {
-                        int pos = mPlayerController.getCurrentPosition();
-                        pos -= REWIND_SECOND;
-                        pos = pos < 0 ? 0 : pos;
-                        mPlayerController.seekTo(pos);
-                        mIsHideOperate = false;
-                    } else if (e1.getX() < e2.getX() && e1.getX() > (float) (mScreenWidth / 2 + mVideoPlayPause.getWidth() / 2)) {
-                        int pos = mPlayerController.getCurrentPosition();
-                        pos += FAST_SECOND;
-                        pos = pos > mPlayerController.getDuration() ? mPlayerController.getDuration() : pos;
-                        mPlayerController.seekTo(pos);
-                        mIsHideOperate = false;
+                if (mRecordCtrlView != null && mVideoPlayPause != null && mPlayerController != null) {
+                    if (e1.getY() > (float) mRecordCtrlView.getHeight() / 3
+                            && e2.getY() > (float) mRecordCtrlView.getHeight() / 3
+                            && e2.getY() < (float) (mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight() / 3)
+                            && e1.getY() < (float) (mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight() / 3)) {
+                        if (e1.getX() > e2.getX() && e1.getX() < (float) (mScreenWidth / 2 - mVideoPlayPause.getWidth() / 2)) {
+                            int pos = mPlayerController.getCurrentPosition();
+                            pos -= REWIND_SECOND;
+                            pos = pos < 0 ? 0 : pos;
+                            mPlayerController.seekTo(pos);
+                            mIsHideOperate = false;
+                        } else if (e1.getX() < e2.getX() && e1.getX() > (float) (mScreenWidth / 2 + mVideoPlayPause.getWidth() / 2)) {
+                            int pos = mPlayerController.getCurrentPosition();
+                            pos += FAST_SECOND;
+                            pos = pos > mPlayerController.getDuration() ? mPlayerController.getDuration() : pos;
+                            mPlayerController.seekTo(pos);
+                            mIsHideOperate = false;
+                        }
                     }
                 }
                 DTVTLogger.end();
