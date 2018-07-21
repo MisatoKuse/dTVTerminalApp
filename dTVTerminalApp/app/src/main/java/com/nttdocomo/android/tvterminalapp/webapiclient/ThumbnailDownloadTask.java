@@ -92,50 +92,51 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
                 mThumbnailProvider.thumbnailCacheManager.putBitmapToMem(mImageUrl, bitmap);
                 return bitmap;
             }
-            if (isCancelled() || mIsStop) {
-                return null;
-            }
-
-            URL url = new URL(mImageUrl);
-            urlConnection = (HttpURLConnection) url.openConnection();
-
-            //コンテキストがあればSSL証明書失効チェックを行う
-            if (mContext != null) {
-
-                //SSL証明書失効チェックライブラリの初期化を行う
-                OcspUtil.init(mContext);
-
-                //SSL証明書失効チェックを行う
-                OcspURLConnection ocspURLConnection = new OcspURLConnection(urlConnection);
-                ocspURLConnection.connect();
-            }
-
-            int statusCode = urlConnection.getResponseCode();
-            if (statusCode == HttpURLConnection.HTTP_OK) {
-                //コネクトに成功したので、控えておく
-                addUrlConnections(urlConnection);
-            }
-
-            in = new BufferedInputStream(urlConnection.getInputStream(), 8 * 1024);
-            if (mContext != null) {
-                if (mImageSizeType == ImageSizeType.TV_PROGRAM_LIST) {
-                    bitmap = BitmapDecodeUtils.compressBitmap(mContext, in, ImageSizeType.TV_PROGRAM_LIST);
-                } else {
-                    bitmap = BitmapDecodeUtils.compressBitmap(mContext, in, ImageSizeType.CONTENT_DETAIL);
+            synchronized (this) {
+                if (isCancelled() || mIsStop) {
+                    return null;
                 }
-            } else {
-                bitmap = BitmapFactory.decodeStream(in);
-            }
-            if (bitmap != null) {
-                // ディスクに保存する
-                if (mImageSizeType != ImageSizeType.TV_PROGRAM_LIST) {
-                    mThumbnailProvider.thumbnailCacheManager.saveBitmapToDisk(mImageUrl, bitmap);
-                    if (mContext != null) {
-                        bitmap = BitmapDecodeUtils.createScaleBitmap(mContext, bitmap, mImageSizeType);
+                URL url = new URL(mImageUrl);
+                urlConnection = (HttpURLConnection) url.openConnection();
+
+                //コンテキストがあればSSL証明書失効チェックを行う
+                if (mContext != null) {
+
+                    //SSL証明書失効チェックライブラリの初期化を行う
+                    OcspUtil.init(mContext);
+
+                    //SSL証明書失効チェックを行う
+                    OcspURLConnection ocspURLConnection = new OcspURLConnection(urlConnection);
+                    ocspURLConnection.connect();
+                }
+
+                int statusCode = urlConnection.getResponseCode();
+                if (statusCode == HttpURLConnection.HTTP_OK) {
+                    //コネクトに成功したので、控えておく
+                    addUrlConnections(urlConnection);
+                }
+
+                in = new BufferedInputStream(urlConnection.getInputStream(), 8 * 1024);
+                if (mContext != null) {
+                    if (mImageSizeType == ImageSizeType.TV_PROGRAM_LIST) {
+                        bitmap = BitmapDecodeUtils.compressBitmap(mContext, in, ImageSizeType.TV_PROGRAM_LIST);
+                    } else {
+                        bitmap = BitmapDecodeUtils.compressBitmap(mContext, in, ImageSizeType.CONTENT_DETAIL);
                     }
+                } else {
+                    bitmap = BitmapFactory.decodeStream(in);
                 }
-                // メモリにプッシュする
-                mThumbnailProvider.thumbnailCacheManager.putBitmapToMem(mImageUrl, bitmap);
+                if (bitmap != null) {
+                    // ディスクに保存する
+                    if (mImageSizeType != ImageSizeType.TV_PROGRAM_LIST) {
+                        mThumbnailProvider.thumbnailCacheManager.saveBitmapToDisk(mImageUrl, bitmap);
+                        if (mContext != null) {
+                            bitmap = BitmapDecodeUtils.createScaleBitmap(mContext, bitmap, mImageSizeType);
+                        }
+                    }
+                    // メモリにプッシュする
+                    mThumbnailProvider.thumbnailCacheManager.putBitmapToMem(mImageUrl, bitmap);
+                }
             }
             return bitmap;
         } catch (SSLHandshakeException e) {
@@ -197,7 +198,6 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
             //既に削除されていたので、再度確保を行う
             mUrlConnections = new ArrayList<>();
         }
-
         //HTTPコネクションを追加する
         mUrlConnections.add(mUrlConnection);
     }
@@ -206,26 +206,28 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
      * 全ての通信を遮断する.
      */
     public synchronized void stopAllConnections() {
-        mIsStop = true;
         if (mUrlConnections == null) {
             return;
         }
-
-        //全てのコネクションにdisconnectを送る
-        for (int i = 0; i < mUrlConnections.size(); i++) {
-            final HttpURLConnection stopConnection = mUrlConnections.get(i);
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    if (stopConnection != null) {
-                        stopConnection.disconnect();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (this) {
+                    mIsStop = true;
+                    //全てのコネクションにdisconnectを送る
+                    for (int i = 0; i < mUrlConnections.size(); i++) {
+                        final HttpURLConnection stopConnection = mUrlConnections.get(i);
+                        if (stopConnection != null) {
+                            stopConnection.disconnect();
+                        }
                     }
+                    ThumbnailDownloadTask.mUrlConnections.clear();
                 }
-            });
-            thread.start();
-        }
-        mUrlConnections.clear();
+            }
+        });
+        thread.start();
     }
+
     /**
      * 画像取得失敗時のエラー画像Resource.
      * @param dst ImageView
