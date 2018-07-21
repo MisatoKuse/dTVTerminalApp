@@ -113,11 +113,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
                 DTVTLogger.debug("WeeklyRankingActivity::Clip Status Update");
             }
         }
-        if (baseFragment != null &&  baseFragment.getData().size() <= 0) {
-            baseFragment.setContentsDetailDisplay(false);
-            baseFragment.showProgressBar(false);
-            baseFragment.showNoDataMessage(true, getString(R.string.common_empty_data_message));
-        }
         super.sendScreenView(getString(R.string.google_analytics_screen_name_weekly_ranking));
         DTVTLogger.end();
     }
@@ -356,15 +351,9 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         DTVTLogger.start();
         if (mRankingDataProvider != null) {
             mRankingDataProvider.stopConnect();
-            mRankingDataProvider.setWeeklyRankingApiCallback(null);
-            //キャンセル後に mRankingDataProvider の使いまわしを防ぐため null を設定
-            mRankingDataProvider = null;
         }
         if (mVideoGenreProvider != null) {
             mVideoGenreProvider.stopConnect();
-            mVideoGenreProvider.setRankGenreListCallback(null);
-            //キャンセル後に mVideoGenreProvider の使いまわしを防ぐため null を設定
-            mVideoGenreProvider = null;
         }
         DTVTLogger.end();
     }
@@ -381,6 +370,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         if (genreMetaDataList != null
                 && genreMetaDataList.size() > 0) {
             RankingBaseFragment fragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
+            mRankingDataProvider.enableConnect();
             if (fragment != null) {
                 if (fragment.getDataSize() < 1) {
                     fragment.showProgressBar(true);
