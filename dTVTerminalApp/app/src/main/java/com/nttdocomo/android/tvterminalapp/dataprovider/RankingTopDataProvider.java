@@ -355,7 +355,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         DTVTLogger.start();
         boolean isError = false;
         if (weeklyRankList != null) {
-            if (weeklyRankList.getWeeklyRankList() != null && weeklyRankList.getWeeklyRankList().size() > 0) {
+            if (weeklyRankList.getWeeklyRankList() != null && weeklyRankList.getWeeklyRankList().size() >= 0) {
                 List<ContentsData> contentsDataList = setRankingContentData(weeklyRankList.getWeeklyRankList(), channels);
                 if (mApiDataProviderCallback != null) {
                     mApiDataProviderCallback.weeklyRankCallback(contentsDataList);
