@@ -147,13 +147,13 @@ public class TvScheduleInsertDataManager {
             for (ChannelInfo channelInfo : channelInformation) {
                 //DB名としてチャンネル番号を取得.
                 String chNo = String.valueOf(channelInfo.getChannelNo());
-
-                try {
+                DataBaseHelperChannel tvScheduleListDBHelper = new DataBaseHelperChannel(mContext, chNo);
+                DataBaseManager.clearChInfo();
+                DataBaseManager.initializeInstance(tvScheduleListDBHelper);
+                DataBaseManager databaseManager = DataBaseManager.getChInstance();
+                synchronized (databaseManager) {
                     //各種オブジェクト作成
-                    DataBaseHelperChannel tvScheduleListDBHelper = new DataBaseHelperChannel(mContext, chNo);
-                    DataBaseManager.clearChInfo();
-                    DataBaseManager.initializeInstance(tvScheduleListDBHelper);
-                    SQLiteDatabase database = DataBaseManager.getChInstance().openChDatabase();
+                    SQLiteDatabase database = databaseManager.openChDatabase();
                     database.acquireReference();
                     TvScheduleListDao tvScheduleListDao = new TvScheduleListDao(database);
 
@@ -170,17 +170,13 @@ public class TvScheduleInsertDataManager {
                         }
                         database.setTransactionSuccessful();
                     } catch (SQLiteException e) {
-                        DTVTLogger.debug("ClipKeyListInsertDataManager::insertClipKeyListInsert, e.cause=" + e.getCause());
+                        DTVTLogger.debug("insertTvScheduleInsertList, e.cause=" + e.getCause());
                     } finally {
                         database.endTransaction();
+                        DataBaseManager.getInstance().closeChDatabase();
                         DTVTLogger.debug("bulk insert end");
                     }
-                } catch (SQLiteException e) {
-                    DTVTLogger.debug("ProgramDataManager::insertTvScheduleInsertList, e.cause=" + e.getCause());
-                } finally {
-                    DataBaseManager.getInstance().closeChDatabase();
                 }
-
                 //保存したDBを所定の場所へ移動する( HOME/database/channel/yyyyMMdd/ )
                 String channelFilePath = StringUtils.getConnectStrings(filesDir, "/../databases/", chNo);
                 File channelFile = new File(channelFilePath);
