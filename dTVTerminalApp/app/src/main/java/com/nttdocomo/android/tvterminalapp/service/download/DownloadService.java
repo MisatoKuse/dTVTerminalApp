@@ -224,7 +224,7 @@ public class DownloadService extends Service implements DownloadListener {
     }
 
     @Override
-    public void onStart(final int totalFileByteSize) {
+    public void onStart(final long totalFileByteSize) {
         if (null != mDownloadServiceListener) {
             mDownloadServiceListener.onStart(totalFileByteSize);
         }

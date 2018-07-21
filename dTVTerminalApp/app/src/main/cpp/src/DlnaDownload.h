@@ -25,7 +25,7 @@ public:
 
     bool start(DMP *dmp, JavaVM *vm, jobject object, jmethodID mid);
 
-    void startDownload(std::string fileNameToSave, std::string dtcp1host_, int dtcp1port_, std::string url_, int cleartextSize, const char *xml);
+    void startDownload(std::string fileNameToSave, std::string dtcp1host_, int dtcp1port_, std::string url_, jlong cleartextSize, const char *xml);
 
     void downloadCancel();
 

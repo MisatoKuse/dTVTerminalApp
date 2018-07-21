@@ -24,7 +24,7 @@ public abstract class DownloaderBase {
     /**ダウンロードパラメータ.*/
     private DownloadParam mDownloadParam;
     /**トータルBytesサイズ.*/
-    private int mTotalBytes;
+    private long mTotalBytes;
     /**エラー.*/
     private DownloadListener.DownLoadError mError;
     /**ダウンロードリスナー.*/
@@ -79,7 +79,7 @@ public abstract class DownloaderBase {
      * Totalダウンロードサイズを戻す.
      * @return int
      */
-    protected abstract int calculateTotalBytes();
+    protected abstract long calculateTotalBytes();
 
     /**
      * ダウンロード開始.

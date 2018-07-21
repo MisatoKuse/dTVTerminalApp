@@ -227,7 +227,7 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
     }
 
     @Override
-    public void onStart(final int totalFileByteSize) {
+    public void onStart(final long totalFileByteSize) {
         sendBroadcast(DownloadService.DOWNLOAD_ON_START, DownloadService.DOWNLOAD_PARAM_INT, totalFileByteSize);
     }
 
@@ -314,6 +314,23 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
             LocalBroadcastManager.getInstance(ds).sendBroadcast(intent);
         }
     }
+
+    /**
+     *ダウンロード開始、ダウンロード中ブロードキャストsend.
+     * @param broad broad
+     * @param paramName paramName
+     * @param param param
+     */
+    private void sendBroadcast(final String broad, final String paramName, final long param) {
+        DownloadService ds = getDownloadService();
+        if (null != ds) {
+            Intent intent = new Intent();
+            intent.setAction(broad);
+            intent.putExtra(paramName, param);
+            LocalBroadcastManager.getInstance(ds).sendBroadcast(intent);
+        }
+    }
+
     /**separator.*/
     private static final String sSeparator = File.separator + "";
 

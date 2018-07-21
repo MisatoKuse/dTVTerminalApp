@@ -732,9 +732,9 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         }
         String url = item.getResUrl();
         String clearTextSize = item.getClearTextSize();
-        int clearTextSizeInt;
+        long clearTextSizeInt;
         try {
-            clearTextSizeInt = Integer.parseInt(clearTextSize);
+            clearTextSizeInt = Long.parseLong(clearTextSize);
         } catch (NumberFormatException e) {
             showMessage();
             return false;

@@ -30,8 +30,8 @@ public class DtcpDownloader extends DownloaderBase implements DlnaManager.Downlo
     }
 
     @Override
-    protected int calculateTotalBytes() {
-        int ret = 0;
+    protected long calculateTotalBytes() {
+        long ret = 0;
         DtcpDownloadParam param;
         try {
             param = (DtcpDownloadParam) getDownloadParam();
@@ -131,7 +131,7 @@ public class DtcpDownloader extends DownloaderBase implements DlnaManager.Downlo
         }
         long usableSpace = (f.getUsableSpace() / 1024) / 1024;  //-->MB
         long safeSpace = getInnerStorageSafeSpaceMB();
-        int dlSize = (dp.getCleartextSize() / 1024) / 1024; //-->MB
+        long dlSize = (dp.getCleartextSize() / 1024) / 1024; //-->MB
         return (usableSpace - dlSize) < safeSpace;
     }
 

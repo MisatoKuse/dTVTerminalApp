@@ -113,5 +113,5 @@ public abstract class DownloadParam {
      * Sub classesで実現し、DLサイズを戻す.
      * @return dl size
      */
-    public abstract int getTotalSizeToDl();
+    public abstract long getTotalSizeToDl();
 }
