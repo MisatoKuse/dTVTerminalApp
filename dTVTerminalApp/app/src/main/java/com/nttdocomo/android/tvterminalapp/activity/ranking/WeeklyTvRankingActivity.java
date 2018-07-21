@@ -113,6 +113,11 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
                 DTVTLogger.debug("WeeklyRankingActivity::Clip Status Update");
             }
         }
+        if (baseFragment != null &&  baseFragment.getData().size() <= 0) {
+            baseFragment.setContentsDetailDisplay(false);
+            baseFragment.showProgressBar(false);
+            baseFragment.showNoDataMessage(true, getString(R.string.common_empty_data_message));
+        }
         super.sendScreenView(getString(R.string.google_analytics_screen_name_weekly_ranking));
         DTVTLogger.end();
     }
