@@ -296,11 +296,24 @@ android {
 
 repositories { flatDir { dirs 'libs' } }
 
+configurations {
+    local_Signed_onCompile{}
+    _com_Signed_onCompile{}
+    _com_Unsigned_onCompile{}
+    _test__signed_onCompile{}
+    _test__unsigned_onCompile{}
+    _com_Signed_offCompile{}
+    _com_Unsigned_offCompile{}
+    _test__signed_offCompile{}
+    _test__unsigned_offCompile{}
+}
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+
     //Googleアナリティクス用ライブラリ
     compile 'com.google.android.gms:play-services-analytics:10.0.1'
     compile 'com.android.support:appcompat-v7:26.1.0'
@@ -308,18 +321,54 @@ dependencies {
     compile 'com.android.support:support-v4:26.1.0'
     compile 'com.android.support:design:26.1.0'
     testCompile 'junit:junit:4.12'
+
     //DiXiM SecurePlayer SDK Debug Version
-    //compile(name: 'dixim-android-activation-lib-debug', ext: 'aar')
-    compile(name: 'dixim-android-player-lib-debug', ext: 'aar')
-    compile(name: 'dixim-android-player-secure-nativecodec-debug', ext: 'aar')
-    compile(name: 'dixim-android-player-secure-openmaxal-debug', ext: 'aar')
-    compile(name: 'dixim-android-util2-debug', ext: 'aar')
+    local_Signed_onCompile(name: 'dixim-android-player-lib-debug', ext: 'aar')
+    local_Signed_onCompile(name: 'dixim-android-player-secure-nativecodec-debug', ext: 'aar')
+    local_Signed_onCompile(name: 'dixim-android-player-secure-openmaxal-debug', ext: 'aar')
+    local_Signed_onCompile(name: 'dixim-android-util2-debug', ext: 'aar')
+
+    _com_Signed_onCompile(name: 'dixim-android-player-lib-debug', ext: 'aar')
+    _com_Signed_onCompile(name: 'dixim-android-player-secure-nativecodec-debug', ext: 'aar')
+    _com_Signed_onCompile(name: 'dixim-android-player-secure-openmaxal-debug', ext: 'aar')
+    _com_Signed_onCompile(name: 'dixim-android-util2-debug', ext: 'aar')
+
+    _com_Unsigned_onCompile(name: 'dixim-android-player-lib-debug', ext: 'aar')
+    _com_Unsigned_onCompile(name: 'dixim-android-player-secure-nativecodec-debug', ext: 'aar')
+    _com_Unsigned_onCompile(name: 'dixim-android-player-secure-openmaxal-debug', ext: 'aar')
+    _com_Unsigned_onCompile(name: 'dixim-android-util2-debug', ext: 'aar')
+
+    _test__signed_onCompile(name: 'dixim-android-player-lib-debug', ext: 'aar')
+    _test__signed_onCompile(name: 'dixim-android-player-secure-nativecodec-debug', ext: 'aar')
+    _test__signed_onCompile(name: 'dixim-android-player-secure-openmaxal-debug', ext: 'aar')
+    _test__signed_onCompile(name: 'dixim-android-util2-debug', ext: 'aar')
+
+    _test__unsigned_onCompile(name: 'dixim-android-player-lib-debug', ext: 'aar')
+    _test__unsigned_onCompile(name: 'dixim-android-player-secure-nativecodec-debug', ext: 'aar')
+    _test__unsigned_onCompile(name: 'dixim-android-player-secure-openmaxal-debug', ext: 'aar')
+    _test__unsigned_onCompile(name: 'dixim-android-util2-debug', ext: 'aar')
+
     //DiXiM SecurePlayer SDK Release Version
-    //        compile(name: 'dixim-android-activation-lib', ext: 'aar')
-    //        compile(name: 'dixim-android-player-lib', ext: 'aar')
-    //        compile(name: 'dixim-android-player-secure-nativecodec', ext: 'aar')
-    //        compile(name: 'dixim-android-player-secure-openmaxal', ext: 'aar')
-    //        compile(name: 'dixim-android-util2', ext: 'aar')
+    _com_Signed_offCompile(name: 'dixim-android-player-lib', ext: 'aar')
+    _com_Signed_offCompile(name: 'dixim-android-player-secure-nativecodec', ext: 'aar')
+    _com_Signed_offCompile(name: 'dixim-android-player-secure-openmaxal', ext: 'aar')
+    _com_Signed_offCompile(name: 'dixim-android-util2', ext: 'aar')
+
+    _com_Unsigned_offCompile(name: 'dixim-android-player-lib', ext: 'aar')
+    _com_Unsigned_offCompile(name: 'dixim-android-player-secure-nativecodec', ext: 'aar')
+    _com_Unsigned_offCompile(name: 'dixim-android-player-secure-openmaxal', ext: 'aar')
+    _com_Unsigned_offCompile(name: 'dixim-android-util2', ext: 'aar')
+
+    _test__signed_offCompile(name: 'dixim-android-player-lib', ext: 'aar')
+    _test__signed_offCompile(name: 'dixim-android-player-secure-nativecodec', ext: 'aar')
+    _test__signed_offCompile(name: 'dixim-android-player-secure-openmaxal', ext: 'aar')
+    _test__signed_offCompile(name: 'dixim-android-util2', ext: 'aar')
+
+    _test__unsigned_offCompile(name: 'dixim-android-player-lib', ext: 'aar')
+    _test__unsigned_offCompile(name: 'dixim-android-player-secure-nativecodec', ext: 'aar')
+    _test__unsigned_offCompile(name: 'dixim-android-player-secure-openmaxal', ext: 'aar')
+    _test__unsigned_offCompile(name: 'dixim-android-util2', ext: 'aar')
+
     //SSLチェックライブラリ
     compile files('libs/ocsplib2.0.jar')
 }
