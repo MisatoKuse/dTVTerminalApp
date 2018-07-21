@@ -213,7 +213,8 @@ public class DaccountControl implements
 
             //設定画面でdアカウントを切り替えた際は、ホーム画面の情報切り替えの為に、サービス登録済みでもコールバックが必要となる
             //登録済みでも、dアカウントの取得に失敗している場合があったので、存在の有無で処理を変更する
-            if (TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(context))) {
+            if (TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(context))
+                    || TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesOneTimePass(context))) {
                 DTVTLogger.debug("”execDaccountGetOTT” Daccount get retry");
 
                 //認証画面の表示状況のインスタンスの取得
@@ -251,6 +252,9 @@ public class DaccountControl implements
             return;
         }
         mContext = context;
+
+        //現在残っているワンタイムパスワードは無効になるのでクリアしておく
+        SharedPreferencesUtils.setSharedPreferencesOneTimePass(mContext,"");
 
         //サービス確認の要求を行う
         mDaccountCheckService = new DaccountCheckService();
