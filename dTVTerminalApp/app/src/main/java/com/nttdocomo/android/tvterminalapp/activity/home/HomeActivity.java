@@ -549,6 +549,19 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     /**
+     * 契約情報取得後のホーム画面用データ取得開始.
+     *
+     * 先行取得データの削除を行ってから、ホーム画面用データを取得する
+     */
+    private void requestHomeDataClearPrecedingData() {
+        //先行して取得している、「今日の番組ランキング」と「ビデオランキング」の更新日付をリセットする
+        mHomeDataProvider.clearPrecedingData();
+
+        //あとは通常の処理に移譲する
+        requestHomeData();
+    }
+
+    /**
      * ホーム画面用データ取得開始.
      */
     private void requestHomeData() {
@@ -1093,7 +1106,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 getUserInfoErrorDialog();
             } else {
                 //契約情報取得成功
-                requestHomeData();
+                requestHomeDataClearPrecedingData();
             }
         } else {
             //UserInfo取得済み
