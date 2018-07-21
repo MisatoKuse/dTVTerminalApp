@@ -327,10 +327,13 @@ public class ClipListActivity extends BaseActivity implements
                     }
 
                     //メッセージの有無で表示方法を分ける
-                    if (TextUtils.isEmpty(message)) {
+                    if (TextUtils.isEmpty(message) && message.length() <= 0) {
                         showGetDataFailedToast();
                     } else {
-                        showGetDataFailedToast(message);
+                        if (errorState != null && errorState.getErrorType() == DtvtConstants.ErrorType.NETWORK_ERROR) {
+                            message = getResources().getString(R.string.network_nw_error_message_dialog);
+                        }
+                        showDialogToClose(ClipListActivity.this, message);
                     }
 
                     if (fragment.getClipListDataSize() == 0) {
@@ -395,17 +398,20 @@ public class ClipListActivity extends BaseActivity implements
                     //通信とJSON Parseに関してerror処理
                     DTVTLogger.debug("ClipListActivity::VodClipListCallback, get data failed");
                     // ネットワークエラーの取得
-                    ErrorState errorState = mTvClipDataProvider.getNetworkError();
+                    ErrorState errorState = mVodClipDataProvider.getNetworkError();
                     String message = "";
                     if (errorState != null) {
                         message = errorState.getErrorMessage();
                     }
 
                     //メッセージの有無で表示方法を分ける
-                    if (TextUtils.isEmpty(message)) {
+                    if (TextUtils.isEmpty(message) && message.length() <= 0) {
                         showGetDataFailedToast();
                     } else {
-                        showGetDataFailedToast(message);
+                        if (errorState != null && errorState.getErrorType() == DtvtConstants.ErrorType.NETWORK_ERROR) {
+                            message = getResources().getString(R.string.network_nw_error_message_dialog);
+                        }
+                        showDialogToClose(ClipListActivity.this, message);
                     }
 
                     if (fragment.getClipListDataSize() == 0) {

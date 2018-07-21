@@ -31,6 +31,14 @@ public class VodClipWebClient extends WebApiBasePlala implements
      * 通信禁止判定フラグ.
      */
     private boolean mIsCancel = false;
+    /**
+     * 通信status.
+     */
+    private static final String STATUS  = "status";
+    /**
+     * 通信status.
+     */
+    private static final String STATUS_NG  = "NG";
 
     /**
      * コンテキストを継承元のコンストラクタに送る.
@@ -81,13 +89,22 @@ public class VodClipWebClient extends WebApiBasePlala implements
      */
     @Override
     public void onAnswer(final ReturnCode returnCode) {
-        Handler handler = new Handler();
         try {
-            JsonParserThread t = new JsonParserThread(returnCode.bodyData, handler, this);
-            t.start();
-        } catch (Exception e) {
-            DTVTLogger.debug(e);
-            onError(returnCode);
+            JSONObject jsonObject = new JSONObject(returnCode.bodyData);
+            if (jsonObject.has(STATUS) && jsonObject.get(STATUS).equals(STATUS_NG)) {
+                onError(returnCode);
+            } else {
+                Handler handler = new Handler();
+                try {
+                    JsonParserThread t = new JsonParserThread(returnCode.bodyData, handler, this);
+                    t.start();
+                } catch (Exception e) {
+                    DTVTLogger.debug(e);
+                    onError(returnCode);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
