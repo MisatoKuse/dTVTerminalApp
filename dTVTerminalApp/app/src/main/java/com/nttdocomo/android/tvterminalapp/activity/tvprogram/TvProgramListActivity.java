@@ -240,11 +240,11 @@ public class TvProgramListActivity extends BaseActivity implements
     /**
      * 番組RecyclerViewキャッシュサイズ.多いとViewが残りやすいがメモリを消費する.
      */
-    private final static int PROGRAM_RECYCLER_CACHE_SIZE = 14;
+    private final static int PROGRAM_RECYCLER_CACHE_SIZE = 20;
     /**
      * 番組RecyclerView PreDraw領域比率(ディスプレイ横幅に対する倍数).増やすと先読み数が増えるが重くなる.
      */
-    private final static float PROGRAM_RECYCLER_EXTRA_WIDTH = 2.5f;
+    private final static float PROGRAM_RECYCLER_EXTRA_WIDTH = 1.5f;
     /**
      * NOWバーの時刻.
      */
