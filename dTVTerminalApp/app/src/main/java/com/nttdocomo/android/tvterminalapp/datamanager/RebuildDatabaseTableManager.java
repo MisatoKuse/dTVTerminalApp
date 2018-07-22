@@ -34,19 +34,24 @@ public class RebuildDatabaseTableManager {
     @SuppressWarnings("OverlyLongMethod")
     public void allTableRebuild() {
         DTVTLogger.start();
-        try {
-            //各種オブジェクト作成
-            DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
-            DataBaseManager.initializeInstance(dataBaseHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-            database.acquireReference();
-            DateUtils.clearLastDate(mContext);
+        //各種オブジェクト作成
+        DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
+        DataBaseManager.initializeInstance(dataBaseHelper);
+        DataBaseManager dataBaseManager = DataBaseManager.getInstance();
+        synchronized (dataBaseManager) {
+            try {
+                SQLiteDatabase database = dataBaseManager.openDatabase();
+                database.acquireReference();
+                DateUtils.clearLastDate(mContext);
 
-            //各種データベースの再構築
-            DataBaseHelper.dropAllTable(database);
-            DataBaseHelper.createAllTable(database);
-        } catch (SQLException e) {
-            DTVTLogger.debug("RebuildDatabaseTableManager::allTableRebuild, rebuild " + "table failed, cause=" + e.getCause());
+                //各種データベースの再構築
+                DataBaseHelper.dropAllTable(database);
+                DataBaseHelper.createAllTable(database);
+            } catch (SQLException e) {
+                DTVTLogger.debug("RebuildDatabaseTableManager::allTableRebuild, rebuild " + "table failed, cause=" + e.getCause());
+            } finally {
+                DataBaseManager.getInstance().closeDatabase();
+            }
         }
         DTVTLogger.end();
     }

@@ -62,38 +62,41 @@ public class WeeklyRankInsertDataManager {
             }
         }
 
-        try {
-            //各種オブジェクト作成
-            DataBaseHelper weeklyRankListDataBaseHelper = new DataBaseHelper(mContext);
-            DataBaseManager.initializeInstance(weeklyRankListDataBaseHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-            database.acquireReference();
-            WeeklyRankListDao weeklyRankListDao = new WeeklyRankListDao(database);
-            @SuppressWarnings("unchecked")
-            List<HashMap<String, String>> hashMaps = weeklyRankList.getWeeklyRankList();
+        //各種オブジェクト作成
+        DataBaseHelper weeklyRankListDataBaseHelper = new DataBaseHelper(mContext);
+        DataBaseManager.initializeInstance(weeklyRankListDataBaseHelper);
+        DataBaseManager dataBaseManager = DataBaseManager.getInstance();
+        synchronized (dataBaseManager) {
+            try {
+                SQLiteDatabase database = dataBaseManager.openDatabase();
+                database.acquireReference();
+                WeeklyRankListDao weeklyRankListDao = new WeeklyRankListDao(database);
+                @SuppressWarnings("unchecked")
+                List<HashMap<String, String>> hashMaps = weeklyRankList.getWeeklyRankList();
 
-            //DB保存前に前回取得したデータは全消去する
-            weeklyRankListDao.delete();
+                //DB保存前に前回取得したデータは全消去する
+                weeklyRankListDao.delete();
 
-            //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
-            for (int i = 0; i < hashMaps.size(); i++) {
-                Iterator entries = hashMaps.get(i).entrySet().iterator();
-                ContentValues values = new ContentValues();
-                while (entries.hasNext()) {
-                    Map.Entry entry = (Map.Entry) entries.next();
-                    String keyName = (String) entry.getKey();
-                    String valName = (String) entry.getValue();
-                    values.put(DataBaseUtils.fourKFlgConversion(keyName), valName);
+                //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
+                for (int i = 0; i < hashMaps.size(); i++) {
+                    Iterator entries = hashMaps.get(i).entrySet().iterator();
+                    ContentValues values = new ContentValues();
+                    while (entries.hasNext()) {
+                        Map.Entry entry = (Map.Entry) entries.next();
+                        String keyName = (String) entry.getKey();
+                        String valName = (String) entry.getValue();
+                        values.put(DataBaseUtils.fourKFlgConversion(keyName), valName);
+                    }
+                    weeklyRankListDao.insert(values);
                 }
-                weeklyRankListDao.insert(values);
+                //DB保存日時格納
+                DateUtils dateUtils = new DateUtils(mContext);
+                dateUtils.addLastDate(WEEKLY_RANK_LAST_INSERT);
+            } catch (SQLiteException e) {
+                DTVTLogger.debug("WeeklyRankInsertDataManager::insertWeeklyRankInsertList, e.cause=" + e.getCause());
+            } finally {
+                DataBaseManager.getInstance().closeDatabase();
             }
-            //DB保存日時格納
-            DateUtils dateUtils = new DateUtils(mContext);
-            dateUtils.addLastDate(WEEKLY_RANK_LAST_INSERT);
-        } catch (SQLiteException e) {
-            DTVTLogger.debug("WeeklyRankInsertDataManager::insertWeeklyRankInsertList, e.cause=" + e.getCause());
-        } finally {
-            DataBaseManager.getInstance().closeDatabase();
         }
     }
 }

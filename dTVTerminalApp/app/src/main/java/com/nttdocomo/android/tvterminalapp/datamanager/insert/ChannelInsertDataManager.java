@@ -57,43 +57,47 @@ public class ChannelInsertDataManager {
             return;
         }
 
-        try {
-            //各種オブジェクト作成
-            DataBaseHelper channelListDataBaseHelper = new DataBaseHelper(mContext);
-            DataBaseManager.initializeInstance(channelListDataBaseHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-            database.acquireReference();
-            ChannelListDao channelListDao = new ChannelListDao(database);
-            List<HashMap<String, String>> hashMaps = channelList.getChannelList();
+        DataBaseHelper channelListDataBaseHelper = new DataBaseHelper(mContext);
+        DataBaseManager.initializeInstance(channelListDataBaseHelper);
+        DataBaseManager databaseManager = DataBaseManager.getInstance();
 
-            //DB保存前に前回取得したデータは全消去する
-            //TODO 日付とチャンネルを管理し、それらが一致するデータだけを消す事.またキャッシュ期限もその単位で管理する必要があるのでDB再設計が必要
-            channelListDao.delete();
+        synchronized (databaseManager) {
+            try {
+                //各種オブジェクト作成
+                SQLiteDatabase database = databaseManager.openDatabase();
+                database.acquireReference();
+                ChannelListDao channelListDao = new ChannelListDao(database);
+                List<HashMap<String, String>> hashMaps = channelList.getChannelList();
 
-            //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
-            for (int i = 0; i < hashMaps.size(); i++) {
-                Iterator entries = hashMaps.get(i).entrySet().iterator();
+                //DB保存前に前回取得したデータは全消去する
+                //日付とチャンネルを管理し、それらが一致するデータだけを消す事.またキャッシュ期限もその単位で管理する
+                channelListDao.delete();
 
-                ContentValues values = new ContentValues();
-                while (entries.hasNext()) {
-                    Map.Entry entry = (Map.Entry) entries.next();
-                    String keyName = (String) entry.getKey();
-                    String valName = (String) entry.getValue();
-                    if (JsonConstants.META_RESPONSE_AVAIL_START_DATE.equals(keyName)) {
-                        values.put(DataBaseConstants.UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
+                //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
+                for (int i = 0; i < hashMaps.size(); i++) {
+                    Iterator entries = hashMaps.get(i).entrySet().iterator();
+
+                    ContentValues values = new ContentValues();
+                    while (entries.hasNext()) {
+                        Map.Entry entry = (Map.Entry) entries.next();
+                        String keyName = (String) entry.getKey();
+                        String valName = (String) entry.getValue();
+                        if (JsonConstants.META_RESPONSE_AVAIL_START_DATE.equals(keyName)) {
+                            values.put(DataBaseConstants.UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
+                        }
+                        values.put(DataBaseUtils.fourKFlgConversion(keyName), valName);
                     }
-                    values.put(DataBaseUtils.fourKFlgConversion(keyName), valName);
+                    channelListDao.insert(values);
                 }
-                channelListDao.insert(values);
-            }
-            //データ保存日時を格納
-            DateUtils dateUtils = new DateUtils(mContext);
-            dateUtils.addLastDate(DateUtils.CHANNEL_LAST_UPDATE);
+                //データ保存日時を格納
+                DateUtils dateUtils = new DateUtils(mContext);
+                dateUtils.addLastDate(DateUtils.CHANNEL_LAST_UPDATE);
 
-        } catch (SQLiteException e) {
-            DTVTLogger.debug("ChannelInsertDataManager::insertChannelInsertList, e.cause=" + e.getCause());
-        } finally {
-            DataBaseManager.getInstance().closeDatabase();
+            } catch (SQLiteException e) {
+                DTVTLogger.debug("ChannelInsertDataManager::insertChannelInsertList, e.cause=" + e.getCause());
+            } finally {
+                DataBaseManager.getInstance().closeDatabase();
+            }
         }
         DTVTLogger.end();
     }

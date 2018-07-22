@@ -68,41 +68,45 @@ public class TvScheduleInsertDataManager {
             return;
         }
 
-        try {
-            //各種オブジェクト作成
-            DataBaseHelper channelListDataBaseHelper = new DataBaseHelper(mContext);
-            DataBaseManager.initializeInstance(channelListDataBaseHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-            database.acquireReference();
-            TvScheduleListDao tvScheduleListDao = new TvScheduleListDao(database);
-            @SuppressWarnings("unchecked")
-            List<Map<String, String>> hashMaps = tvScheduleList.geTvsList();
+        //各種オブジェクト作成
+        DataBaseHelper channelListDataBaseHelper = new DataBaseHelper(mContext);
+        DataBaseManager.initializeInstance(channelListDataBaseHelper);
+        DataBaseManager dataBaseManager = DataBaseManager.getInstance();
 
-            //DB保存前に前回取得したデータは全消去する
-            tvScheduleListDao.delete();
+        synchronized (dataBaseManager) {
+            try {
+                SQLiteDatabase database = dataBaseManager.openDatabase();
+                database.acquireReference();
+                TvScheduleListDao tvScheduleListDao = new TvScheduleListDao(database);
+                @SuppressWarnings("unchecked")
+                List<Map<String, String>> hashMaps = tvScheduleList.geTvsList();
 
-            //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
-            for (int i = 0; i < hashMaps.size(); i++) {
-                Iterator entries = hashMaps.get(i).entrySet().iterator();
-                ContentValues values = new ContentValues();
-                while (entries.hasNext()) {
-                    Map.Entry entry = (Map.Entry) entries.next();
-                    String keyName = (String) entry.getKey();
-                    String valName = (String) entry.getValue();
-                    if (JsonConstants.META_RESPONSE_PUBLISH_START_DATE.equals(keyName)) {
-                        values.put(DataBaseConstants.UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
+                //DB保存前に前回取得したデータは全消去する
+                tvScheduleListDao.delete();
+
+                //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
+                for (int i = 0; i < hashMaps.size(); i++) {
+                    Iterator entries = hashMaps.get(i).entrySet().iterator();
+                    ContentValues values = new ContentValues();
+                    while (entries.hasNext()) {
+                        Map.Entry entry = (Map.Entry) entries.next();
+                        String keyName = (String) entry.getKey();
+                        String valName = (String) entry.getValue();
+                        if (JsonConstants.META_RESPONSE_PUBLISH_START_DATE.equals(keyName)) {
+                            values.put(DataBaseConstants.UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
+                        }
+                        values.put(DataBaseUtils.fourKFlgConversion(keyName), valName);
                     }
-                    values.put(DataBaseUtils.fourKFlgConversion(keyName), valName);
+                    tvScheduleListDao.insert(values);
                 }
-                tvScheduleListDao.insert(values);
+                //データ保存日時を格納
+                DateUtils dateUtils = new DateUtils(mContext);
+                dateUtils.addLastDate(DateUtils.TV_SCHEDULE_LAST_INSERT);
+            } catch (SQLiteException e) {
+                DTVTLogger.debug("TvScheduleInsertDataManager::insertTvScheduleInsertList, e.cause=" + e.getCause());
+            } finally {
+                DataBaseManager.getInstance().closeDatabase();
             }
-            //データ保存日時を格納
-            DateUtils dateUtils = new DateUtils(mContext);
-            dateUtils.addLastDate(DateUtils.TV_SCHEDULE_LAST_INSERT);
-        } catch (SQLiteException e) {
-            DTVTLogger.debug("TvScheduleInsertDataManager::insertTvScheduleInsertList, e.cause=" + e.getCause());
-        } finally {
-            DataBaseManager.getInstance().closeDatabase();
         }
     }
 

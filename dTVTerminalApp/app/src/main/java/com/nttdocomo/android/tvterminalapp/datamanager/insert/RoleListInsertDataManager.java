@@ -49,32 +49,35 @@ public class RoleListInsertDataManager {
             return;
         }
 
-        try {
-            //各種オブジェクト作成
-            DataBaseHelper channelListDataBaseHelper = new DataBaseHelper(mContext);
-            DataBaseManager.initializeInstance(channelListDataBaseHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-            database.acquireReference();
-            RoleListDao roleListDao = new RoleListDao(database);
+        //各種オブジェクト作成
+        DataBaseHelper channelListDataBaseHelper = new DataBaseHelper(mContext);
+        DataBaseManager.initializeInstance(channelListDataBaseHelper);
+        DataBaseManager dataBaseManager = DataBaseManager.getInstance();
+        synchronized (dataBaseManager) {
+            try {
+                SQLiteDatabase database = dataBaseManager.openDatabase();
+                database.acquireReference();
+                RoleListDao roleListDao = new RoleListDao(database);
 
-            //DB保存前に前回取得したデータは全消去する
-            roleListDao.delete();
+                //DB保存前に前回取得したデータは全消去する
+                roleListDao.delete();
 
-            //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
-            for (int i = 0; i < roleList.size(); i++) {
-                RoleListMetaData roleData = roleList.get(i);
-                ContentValues values = new ContentValues();
-                values.put(JsonConstants.META_RESPONSE_CONTENTS_ID, roleData.getId());
-                values.put(JsonConstants.META_RESPONSE_CONTENTS_NAME, roleData.getName());
-                roleListDao.insert(values);
+                //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
+                for (int i = 0; i < roleList.size(); i++) {
+                    RoleListMetaData roleData = roleList.get(i);
+                    ContentValues values = new ContentValues();
+                    values.put(JsonConstants.META_RESPONSE_CONTENTS_ID, roleData.getId());
+                    values.put(JsonConstants.META_RESPONSE_CONTENTS_NAME, roleData.getName());
+                    roleListDao.insert(values);
+                }
+                //データ保存日時を格納
+                DateUtils dateUtils = new DateUtils(mContext);
+                dateUtils.addLastDate(DateUtils.ROLELIST_LAST_UPDATE);
+            } catch (SQLiteException e) {
+                DTVTLogger.debug("RoleListInsertDataManager::insertRoleList, e.cause=" + e.getCause());
+            } finally {
+                DataBaseManager.getInstance().closeDatabase();
             }
-            //データ保存日時を格納
-            DateUtils dateUtils = new DateUtils(mContext);
-            dateUtils.addLastDate(DateUtils.ROLELIST_LAST_UPDATE);
-        } catch (SQLiteException e) {
-            DTVTLogger.debug("RoleListInsertDataManager::insertRoleList, e.cause=" + e.getCause());
-        } finally {
-            DataBaseManager.getInstance().closeDatabase();
         }
     }
 }

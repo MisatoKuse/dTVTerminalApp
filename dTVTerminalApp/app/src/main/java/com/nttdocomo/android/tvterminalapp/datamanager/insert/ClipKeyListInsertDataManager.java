@@ -49,11 +49,13 @@ public class ClipKeyListInsertDataManager {
      */
     public synchronized void insertClipKeyListInsert(final ClipKeyListDao.TableTypeEnum type, final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
-        try {
+
+        DataBaseHelper clipKeyListDataBaseHelper = new DataBaseHelper(mContext);
+        DataBaseManager.initializeInstance(clipKeyListDataBaseHelper);
+        DataBaseManager databaseManager = DataBaseManager.getInstance();
+        synchronized (databaseManager) {
             //各種オブジェクト作成
-            DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
-            DataBaseManager.initializeInstance(dataBaseHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+            SQLiteDatabase database = databaseManager.openDatabase();
             database.acquireReference();
 
             ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
@@ -88,12 +90,9 @@ public class ClipKeyListInsertDataManager {
                 DTVTLogger.debug("ClipKeyListInsertDataManager::insertClipKeyListInsert, e.cause=" + e.getCause());
             } finally {
                 database.endTransaction();
+                DataBaseManager.getInstance().closeDatabase();
                 DTVTLogger.debug("bulk insert end");
             }
-        } catch (SQLiteException e) {
-            DTVTLogger.debug("ClipKeyListInsertDataManager::insertClipKeyListInsert, e.cause=" + e.getCause());
-        } finally {
-            DataBaseManager.getInstance().closeDatabase();
         }
         DTVTLogger.end();
     }
@@ -111,25 +110,28 @@ public class ClipKeyListInsertDataManager {
             final ClipKeyListDao.TableTypeEnum tableType, final String crId, final String serviceId,
             final String eventId, final String titleId) {
         DTVTLogger.start();
-        try {
-            //各種オブジェクト作成
-            DataBaseHelper clipKeyListDataBaseHelper = new DataBaseHelper(mContext);
-            DataBaseManager.initializeInstance(clipKeyListDataBaseHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-            database.acquireReference();
-            ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
 
-            //コンテンツデータ作成
-            ContentValues values = new ContentValues();
-            values.put(JsonConstants.META_RESPONSE_CRID, crId);
-            values.put(JsonConstants.META_RESPONSE_SERVICE_ID, serviceId);
-            values.put(JsonConstants.META_RESPONSE_EVENT_ID, eventId);
-            values.put(JsonConstants.META_RESPONSE_TITLE_ID, titleId);
-            clipKeyListDao.insert(tableType, values);
-        } catch (SQLiteException e) {
-            DTVTLogger.debug("ClipKeyListInsertDataManager::insertRowSqlStart, e.cause=" + e.getCause());
-        } finally {
-            DataBaseManager.getInstance().closeDatabase();
+        DataBaseHelper clipKeyListDataBaseHelper = new DataBaseHelper(mContext);
+        DataBaseManager.initializeInstance(clipKeyListDataBaseHelper);
+        DataBaseManager databaseManager = DataBaseManager.getInstance();
+        synchronized (databaseManager) {
+            try {
+                SQLiteDatabase database = databaseManager.openDatabase();
+                database.acquireReference();
+                ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
+
+                //コンテンツデータ作成
+                ContentValues values = new ContentValues();
+                values.put(JsonConstants.META_RESPONSE_CRID, crId);
+                values.put(JsonConstants.META_RESPONSE_SERVICE_ID, serviceId);
+                values.put(JsonConstants.META_RESPONSE_EVENT_ID, eventId);
+                values.put(JsonConstants.META_RESPONSE_TITLE_ID, titleId);
+                clipKeyListDao.insert(tableType, values);
+            } catch (SQLiteException e) {
+                DTVTLogger.debug("ClipKeyListInsertDataManager::insertRowSqlStart, e.cause=" + e.getCause());
+            } finally {
+                DataBaseManager.getInstance().closeDatabase();
+            }
         }
         DTVTLogger.end();
     }
@@ -147,25 +149,28 @@ public class ClipKeyListInsertDataManager {
             final ClipKeyListDao.TableTypeEnum tableType, final String crId, final String serviceId,
             final String eventId, final String titleId) {
         DTVTLogger.start();
-        try {
-            //各種オブジェクト作成
-            DataBaseHelper clipKeyListDataBaseHelper = new DataBaseHelper(mContext);
-            DataBaseManager.initializeInstance(clipKeyListDataBaseHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-            database.acquireReference();
-            ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
 
-            String query = StringUtils.getConnectStrings(JsonConstants.META_RESPONSE_CRID, "=? OR ",
-                    JsonConstants.META_RESPONSE_SERVICE_ID, "=? AND ",
-                    JsonConstants.META_RESPONSE_EVENT_ID, "=? OR ",
-                    JsonConstants.META_RESPONSE_TITLE_ID, "=?");
+        DataBaseHelper clipKeyListDataBaseHelper = new DataBaseHelper(mContext);
+        DataBaseManager.initializeInstance(clipKeyListDataBaseHelper);
+        DataBaseManager databaseManager = DataBaseManager.getInstance();
+        synchronized (databaseManager) {
+            try {
+                SQLiteDatabase database = databaseManager.openDatabase();
+                database.acquireReference();
+                ClipKeyListDao clipKeyListDao = new ClipKeyListDao(database);
 
-            String[] columns = {crId, serviceId, eventId, titleId};
-            clipKeyListDao.deleteRowData(tableType, query, columns);
-        } catch (SQLiteException e) {
-            DTVTLogger.debug("ClipKeyListInsertDataManager::deleteRowSqlStart, e.cause=" + e.getCause());
-        } finally {
-            DataBaseManager.getInstance().closeDatabase();
+                String query = StringUtils.getConnectStrings(JsonConstants.META_RESPONSE_CRID, "=? OR ",
+                        JsonConstants.META_RESPONSE_SERVICE_ID, "=? AND ",
+                        JsonConstants.META_RESPONSE_EVENT_ID, "=? OR ",
+                        JsonConstants.META_RESPONSE_TITLE_ID, "=?");
+
+                String[] columns = {crId, serviceId, eventId, titleId};
+                clipKeyListDao.deleteRowData(tableType, query, columns);
+            } catch (SQLiteException e) {
+                DTVTLogger.debug("ClipKeyListInsertDataManager::deleteRowSqlStart, e.cause=" + e.getCause());
+            } finally {
+                DataBaseManager.getInstance().closeDatabase();
+            }
         }
         DTVTLogger.end();
     }

@@ -62,40 +62,43 @@ public class WatchListenVideoDataManager {
             }
         }
 
-        try {
-            //各種オブジェクト作成
-            DataBaseHelper watchListenVideoDataBaseHelper = new DataBaseHelper(mContext);
-            DataBaseManager.initializeInstance(watchListenVideoDataBaseHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-            database.acquireReference();
-            WatchListenVideoListDao watchListenVideoListDao = new WatchListenVideoListDao(database);
-            @SuppressWarnings("unchecked")
-            List<HashMap<String, String>> hashMaps = watchListenVideoList.getVcList();
-            if (hashMaps.size() > HomeActivity.HOME_CONTENTS_LIST_COUNT) {
-                hashMaps = hashMaps.subList(0, HomeActivity.HOME_CONTENTS_LIST_COUNT);
-            }
-            //DB保存前に前回取得したデータは全消去する
-            watchListenVideoListDao.delete();
-
-            //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
-            for (int i = 0; i < hashMaps.size(); i++) {
-                Iterator entries = hashMaps.get(i).entrySet().iterator();
-                ContentValues values = new ContentValues();
-                while (entries.hasNext()) {
-                    Map.Entry entry = (Map.Entry) entries.next();
-                    String keyName = (String) entry.getKey();
-                    String valName = (String) entry.getValue();
-                    values.put(DataBaseUtils.fourKFlgConversion(keyName), valName);
+        //各種オブジェクト作成
+        DataBaseHelper watchListenVideoDataBaseHelper = new DataBaseHelper(mContext);
+        DataBaseManager.initializeInstance(watchListenVideoDataBaseHelper);
+        DataBaseManager dataBaseManager = DataBaseManager.getInstance();
+        synchronized (dataBaseManager) {
+            try {
+                SQLiteDatabase database = dataBaseManager.openDatabase();
+                database.acquireReference();
+                WatchListenVideoListDao watchListenVideoListDao = new WatchListenVideoListDao(database);
+                @SuppressWarnings("unchecked")
+                List<HashMap<String, String>> hashMaps = watchListenVideoList.getVcList();
+                if (hashMaps.size() > HomeActivity.HOME_CONTENTS_LIST_COUNT) {
+                    hashMaps = hashMaps.subList(0, HomeActivity.HOME_CONTENTS_LIST_COUNT);
                 }
-                watchListenVideoListDao.insert(values);
+                //DB保存前に前回取得したデータは全消去する
+                watchListenVideoListDao.delete();
+
+                //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
+                for (int i = 0; i < hashMaps.size(); i++) {
+                    Iterator entries = hashMaps.get(i).entrySet().iterator();
+                    ContentValues values = new ContentValues();
+                    while (entries.hasNext()) {
+                        Map.Entry entry = (Map.Entry) entries.next();
+                        String keyName = (String) entry.getKey();
+                        String valName = (String) entry.getValue();
+                        values.put(DataBaseUtils.fourKFlgConversion(keyName), valName);
+                    }
+                    watchListenVideoListDao.insert(values);
+                }
+                //データ保存日時を格納
+                DateUtils dateUtils = new DateUtils(mContext);
+                dateUtils.addLastDate(DateUtils.WATCHING_VIDEO_LIST_LAST_INSERT);
+            } catch (SQLiteException e) {
+                DTVTLogger.debug("WatchListenVideoDataManager::insertWatchListenVideoInsertList, e.cause=" + e.getCause());
+            } finally {
+                DataBaseManager.getInstance().closeDatabase();
             }
-            //データ保存日時を格納
-            DateUtils dateUtils = new DateUtils(mContext);
-            dateUtils.addLastDate(DateUtils.WATCHING_VIDEO_LIST_LAST_INSERT);
-        } catch (SQLiteException e) {
-            DTVTLogger.debug("WatchListenVideoDataManager::insertWatchListenVideoInsertList, e.cause=" + e.getCause());
-        } finally {
-            DataBaseManager.getInstance().closeDatabase();
         }
     }
 }

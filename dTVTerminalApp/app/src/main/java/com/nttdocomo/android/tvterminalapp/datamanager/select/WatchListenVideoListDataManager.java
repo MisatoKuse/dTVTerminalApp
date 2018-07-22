@@ -62,27 +62,31 @@ public class WatchListenVideoListDataManager {
                 JsonConstants.META_RESPONSE_PUBLISH_START_DATE, JsonConstants.META_RESPONSE_PUBLISH_END_DATE,
                 JsonConstants.META_RESPONSE_CID, JsonConstants.META_RESPONSE_CHNO,
                 JsonConstants.META_RESPONSE_DUR};
-        try {
-            //Daoクラス使用準備
-            DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
-            DataBaseManager.initializeInstance(dataBaseHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-            database.acquireReference();
 
-            //データ存在チェック
-            if (!DataBaseUtils.isCachingRecord(database, DataBaseConstants.WATCH_LISTEN_VIDEO_TABLE_NAME)) {
+        //Daoクラス使用準備
+        DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
+        DataBaseManager.initializeInstance(dataBaseHelper);
+        DataBaseManager dataBaseManager = DataBaseManager.getInstance();
+        synchronized (dataBaseManager) {
+            try {
+                SQLiteDatabase database = dataBaseManager.openDatabase();
+                database.acquireReference();
+
+                //データ存在チェック
+                if (!DataBaseUtils.isCachingRecord(database, DataBaseConstants.WATCH_LISTEN_VIDEO_TABLE_NAME)) {
+                    DataBaseManager.getInstance().closeDatabase();
+                    return list;
+                }
+
+                WatchListenVideoListDao watchListenVideoListDao = new WatchListenVideoListDao(database);
+
+                //ホーム画面用データ取得
+                list = watchListenVideoListDao.findById(columns);
+            } catch (SQLiteException e) {
+                DTVTLogger.debug("WatchListenVideoListDataManager::selectWatchListenVideoData, e.cause=" + e.getCause());
+            } finally {
                 DataBaseManager.getInstance().closeDatabase();
-                return list;
             }
-
-            WatchListenVideoListDao watchListenVideoListDao = new WatchListenVideoListDao(database);
-
-            //ホーム画面用データ取得
-            list = watchListenVideoListDao.findById(columns);
-        } catch (SQLiteException e) {
-            DTVTLogger.debug("WatchListenVideoListDataManager::selectWatchListenVideoData, e.cause=" + e.getCause());
-        } finally {
-            DataBaseManager.getInstance().closeDatabase();
         }
         return list;
     }

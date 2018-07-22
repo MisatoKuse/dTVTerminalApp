@@ -72,46 +72,49 @@ public class ProgramDataManager {
                 JsonConstants.META_RESPONSE_CHPACK + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_SUB_PUID,
                 JsonConstants.META_RESPONSE_CID, JsonConstants.META_RESPONSE_ADULT};
 
-        try {
-            //Daoクラス使用準備
-            DataBaseHelper channelListDataBaseHelper = new DataBaseHelper(mContext);
-            DataBaseManager.initializeInstance(channelListDataBaseHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-            database.acquireReference();
+        //Daoクラス使用準備
+        DataBaseHelper channelListDataBaseHelper = new DataBaseHelper(mContext);
+        DataBaseManager.initializeInstance(channelListDataBaseHelper);
+        DataBaseManager dataBaseManager = DataBaseManager.getInstance();
+        synchronized (dataBaseManager) {
+            try {
+                SQLiteDatabase database = dataBaseManager.openDatabase();
+                database.acquireReference();
 
-            //データ存在チェック
-            if (!DataBaseUtils.isCachingRecord(database, DataBaseConstants.CHANNEL_LIST_TABLE_NAME)) {
+                //データ存在チェック
+                if (!DataBaseUtils.isCachingRecord(database, DataBaseConstants.CHANNEL_LIST_TABLE_NAME)) {
+                    DataBaseManager.getInstance().closeDatabase();
+                    return list;
+                }
+
+                ChannelListDao channelListDao = new ChannelListDao(database);
+
+                switch (service) {
+                    case JsonConstants.CH_SERVICE_TYPE_INDEX_MY_CHANNEL:
+                        // マイチャンネル
+                        list = channelListDao.findByService(columns, CH_SERVICE_MY_CHANNEL);
+                        break;
+                    case JsonConstants.CH_SERVICE_TYPE_INDEX_ALL:
+                        // ひかり・DTV
+                        list = channelListDao.findById(columns);
+                        break;
+                    case JsonConstants.CH_SERVICE_TYPE_INDEX_HIKARI:
+                        // ひかりのみ
+                        list = channelListDao.findByService(columns, CH_SERVICE_HIKARI);
+                        break;
+                    case JsonConstants.CH_SERVICE_TYPE_INDEX_DCH:
+                        // DCHのみ
+                        list = channelListDao.findByService(columns, CH_SERVICE_DCH);
+                        break;
+                    default:
+                        DTVTLogger.error("CH_SERVICE_TYPE is incorrect!");
+                        return null;
+                }
+            } catch (SQLiteException e) {
+                DTVTLogger.debug("ProgramDataManager::selectChannelListProgramData, e.cause=" + e.getCause());
+            } finally {
                 DataBaseManager.getInstance().closeDatabase();
-                return list;
             }
-
-            ChannelListDao channelListDao = new ChannelListDao(database);
-
-            switch (service) {
-                case JsonConstants.CH_SERVICE_TYPE_INDEX_MY_CHANNEL:
-                    // マイチャンネル
-                    list = channelListDao.findByService(columns, CH_SERVICE_MY_CHANNEL);
-                    break;
-                case JsonConstants.CH_SERVICE_TYPE_INDEX_ALL:
-                    // ひかり・DTV
-                    list = channelListDao.findById(columns);
-                    break;
-                case JsonConstants.CH_SERVICE_TYPE_INDEX_HIKARI:
-                    // ひかりのみ
-                    list = channelListDao.findByService(columns, CH_SERVICE_HIKARI);
-                    break;
-                case JsonConstants.CH_SERVICE_TYPE_INDEX_DCH:
-                    // DCHのみ
-                    list = channelListDao.findByService(columns, CH_SERVICE_DCH);
-                    break;
-                default:
-                    DTVTLogger.error("CH_SERVICE_TYPE is incorrect!");
-                    return null;
-            }
-        } catch (SQLiteException e) {
-            DTVTLogger.debug("ProgramDataManager::selectChannelListProgramData, e.cause=" + e.getCause());
-        } finally {
-            DataBaseManager.getInstance().closeDatabase();
         }
         return list;
     }

@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.datamanager.select;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.provider.ContactsContract;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
@@ -65,27 +66,31 @@ public class RentalListDataManager {
         };
         List<Map<String, String>> list = null;
 
-        try {
-            //Daoクラス使用準備
-            DataBaseHelper homeDataBaseHelper = new DataBaseHelper(mContext);
-            DataBaseManager.initializeInstance(homeDataBaseHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-            database.acquireReference();
+        //Daoクラス使用準備
+        DataBaseHelper rentalDataBaseHelper = new DataBaseHelper(mContext);
+        DataBaseManager.initializeInstance(rentalDataBaseHelper);
+        DataBaseManager dataBaseManager = DataBaseManager.getInstance();
+        synchronized (dataBaseManager) {
+            try {
+                SQLiteDatabase database = dataBaseManager.openDatabase();
+                database.acquireReference();
 
-            //データ存在チェック
-            list = new ArrayList<>();
-            if (!DataBaseUtils.isCachingRecord(database, DataBaseConstants.RENTAL_LIST_TABLE_NAME)) {
-                return list;
+                //データ存在チェック
+                list = new ArrayList<>();
+                if (!DataBaseUtils.isCachingRecord(database, DataBaseConstants.RENTAL_LIST_TABLE_NAME)) {
+                    DataBaseManager.getInstance().closeDatabase();
+                    return list;
+                }
+
+                RentalListDao rentalListDao = new RentalListDao(database);
+
+                //ホーム画面用データ取得
+                list = rentalListDao.findById(columns);
+            } catch (SQLiteException e) {
+                DTVTLogger.debug("RentalListDataManager::selectRentalListData, e.cause=" + e.getCause());
+            } finally {
+                DataBaseManager.getInstance().closeDatabase();
             }
-
-            RentalListDao rentalListDao = new RentalListDao(database);
-
-            //ホーム画面用データ取得
-            list = rentalListDao.findById(columns);
-        } catch (SQLiteException e) {
-            DTVTLogger.debug("RentalListDataManager::selectRentalListData, e.cause=" + e.getCause());
-        } finally {
-            DataBaseManager.getInstance().closeDatabase();
         }
         return list;
     }
@@ -102,20 +107,24 @@ public class RentalListDataManager {
         };
         List<Map<String, String>> list = null;
 
-        try {
-            //Daoクラス使用準備
-            DataBaseHelper homeDataBaseHelper = new DataBaseHelper(mContext);
-            DataBaseManager.initializeInstance(homeDataBaseHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-            database.acquireReference();
-            RentalListDao rentalListDao = new RentalListDao(database);
+        //Daoクラス使用準備
+        DataBaseHelper rentalDataBaseHelper = new DataBaseHelper(mContext);
+        DataBaseManager.initializeInstance(rentalDataBaseHelper);
+        DataBaseManager dataBaseManager = DataBaseManager.getInstance();
+        synchronized (dataBaseManager) {
+            try {
+                SQLiteDatabase database = dataBaseManager.openDatabase();
+                database.acquireReference();
 
-            //データ取得
-            list = rentalListDao.activeListFindById(activeColumns);
-        } catch (SQLiteException e) {
-            DTVTLogger.debug("RentalListDataManager::selectRentalActiveListData, e.cause=" + e.getCause());
-        } finally {
-            DataBaseManager.getInstance().closeDatabase();
+                RentalListDao rentalListDao = new RentalListDao(database);
+
+                //データ取得
+                list = rentalListDao.activeListFindById(activeColumns);
+            } catch (SQLiteException e) {
+                DTVTLogger.debug("RentalListDataManager::selectRentalActiveListData, e.cause=" + e.getCause());
+            } finally {
+                DataBaseManager.getInstance().closeDatabase();
+            }
         }
         return list;
     }
@@ -134,20 +143,23 @@ public class RentalListDataManager {
         };
         List<Map<String, String>> list = null;
 
-        try {
-            //Daoクラス使用準備
-            DataBaseHelper dataBaseHelper = new DataBaseHelper(mContext);
-            DataBaseManager.initializeInstance(dataBaseHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-            database.acquireReference();
-            RentalListDao rentalListDao = new RentalListDao(database);
+        //Daoクラス使用準備
+        DataBaseHelper rentalDataBaseHelper = new DataBaseHelper(mContext);
+        DataBaseManager.initializeInstance(rentalDataBaseHelper);
+        DataBaseManager dataBaseManager = DataBaseManager.getInstance();
+        synchronized (dataBaseManager) {
+            try {
+                SQLiteDatabase database = dataBaseManager.openDatabase();
+                database.acquireReference();
+                RentalListDao rentalListDao = new RentalListDao(database);
 
-            //データ取得
-            list = rentalListDao.chFindById(columns);
-        } catch (SQLiteException e) {
-            DTVTLogger.debug("RentalListDataManager::selectRentalChListData, e.cause=" + e.getCause());
-        } finally {
-            DataBaseManager.getInstance().closeDatabase();
+                //データ取得
+                list = rentalListDao.chFindById(columns);
+            } catch (SQLiteException e) {
+                DTVTLogger.debug("RentalListDataManager::selectRentalChListData, e.cause=" + e.getCause());
+            } finally {
+                DataBaseManager.getInstance().closeDatabase();
+            }
         }
         return list;
     }
@@ -164,20 +176,23 @@ public class RentalListDataManager {
         };
         List<Map<String, String>> list = null;
 
-        try {
-            //Daoクラス使用準備
-            DataBaseHelper homeDataBaseHelper = new DataBaseHelper(mContext);
-            DataBaseManager.initializeInstance(homeDataBaseHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-            database.acquireReference();
-            RentalListDao rentalListDao = new RentalListDao(database);
+        //Daoクラス使用準備
+        DataBaseHelper rentalDataBaseHelper = new DataBaseHelper(mContext);
+        DataBaseManager.initializeInstance(rentalDataBaseHelper);
+        DataBaseManager dataBaseManager = DataBaseManager.getInstance();
+        synchronized (dataBaseManager) {
+            try {
+                SQLiteDatabase database = dataBaseManager.openDatabase();
+                database.acquireReference();
+                RentalListDao rentalListDao = new RentalListDao(database);
 
-            //データ取得
-            list = rentalListDao.chActiveListFindById(activeColumns);
-        } catch (SQLiteException e) {
-            DTVTLogger.debug("RentalListDataManager::selectRentalChActiveListData, e.cause=" + e.getCause());
-        } finally {
-            DataBaseManager.getInstance().closeDatabase();
+                //データ取得
+                list = rentalListDao.chActiveListFindById(activeColumns);
+            } catch (SQLiteException e) {
+                DTVTLogger.debug("RentalListDataManager::selectRentalChActiveListData, e.cause=" + e.getCause());
+            } finally {
+                DataBaseManager.getInstance().closeDatabase();
+            }
         }
         return list;
     }

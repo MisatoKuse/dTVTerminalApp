@@ -60,38 +60,41 @@ public class VideoRankInsertDataManager {
             }
         }
 
-        try {
-            //各種オブジェクト作成
-            DataBaseHelper videoRankListDataBaseHelper = new DataBaseHelper(mContext);
-            DataBaseManager.initializeInstance(videoRankListDataBaseHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-            database.acquireReference();
-            VideoRankListDao videoRankListDao = new VideoRankListDao(database);
-            @SuppressWarnings("unchecked")
-            List<HashMap<String, String>> hashMaps = videoRankList.getVrList();
+        //各種オブジェクト作成
+        DataBaseHelper videoRankListDataBaseHelper = new DataBaseHelper(mContext);
+        DataBaseManager.initializeInstance(videoRankListDataBaseHelper);
+        DataBaseManager dataBaseManager = DataBaseManager.getInstance();
+        synchronized (dataBaseManager) {
+            try {
+                SQLiteDatabase database = dataBaseManager.openDatabase();
+                database.acquireReference();
+                VideoRankListDao videoRankListDao = new VideoRankListDao(database);
+                @SuppressWarnings("unchecked")
+                List<HashMap<String, String>> hashMaps = videoRankList.getVrList();
 
-            //DB保存前に前回取得したデータは全消去する
-            videoRankListDao.delete();
+                //DB保存前に前回取得したデータは全消去する
+                videoRankListDao.delete();
 
-            //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
-            for (int i = 0; i < hashMaps.size(); i++) {
-                Iterator entries = hashMaps.get(i).entrySet().iterator();
-                ContentValues values = new ContentValues();
-                while (entries.hasNext()) {
-                    Map.Entry entry = (Map.Entry) entries.next();
-                    String keyName = (String) entry.getKey();
-                    String valName = (String) entry.getValue();
-                    values.put(DataBaseUtils.fourKFlgConversion(keyName), valName);
+                //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
+                for (int i = 0; i < hashMaps.size(); i++) {
+                    Iterator entries = hashMaps.get(i).entrySet().iterator();
+                    ContentValues values = new ContentValues();
+                    while (entries.hasNext()) {
+                        Map.Entry entry = (Map.Entry) entries.next();
+                        String keyName = (String) entry.getKey();
+                        String valName = (String) entry.getValue();
+                        values.put(DataBaseUtils.fourKFlgConversion(keyName), valName);
+                    }
+                    videoRankListDao.insert(values);
                 }
-                videoRankListDao.insert(values);
+                //DB保存日時格納
+                DateUtils dateUtils = new DateUtils(mContext);
+                dateUtils.addLastDate(VIDEO_RANK_LAST_INSERT);
+            } catch (SQLiteException e) {
+                DTVTLogger.debug("VideoRankInsertDataManager::insertVideoRankInsertList, e.cause=" + e.getCause());
+            } finally {
+                DataBaseManager.getInstance().closeDatabase();
             }
-            //DB保存日時格納
-            DateUtils dateUtils = new DateUtils(mContext);
-            dateUtils.addLastDate(VIDEO_RANK_LAST_INSERT);
-        } catch (SQLiteException e) {
-            DTVTLogger.debug("VideoRankInsertDataManager::insertVideoRankInsertList, e.cause=" + e.getCause());
-        } finally {
-            DataBaseManager.getInstance().closeDatabase();
         }
     }
 }
