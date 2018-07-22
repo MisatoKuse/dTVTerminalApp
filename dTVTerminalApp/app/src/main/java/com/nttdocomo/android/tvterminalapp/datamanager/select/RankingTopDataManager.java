@@ -63,27 +63,31 @@ public class RankingTopDataManager {
                 JsonConstants.META_RESPONSE_CHNO, JsonConstants.META_RESPONSE_PUBLISH_START_DATE,
                 JsonConstants.META_RESPONSE_PUBLISH_END_DATE};
 
-        try {
-            //Daoクラス使用準備
-            DataBaseHelper videoRankListDataBaseHelper = new DataBaseHelper(mContext);
-            DataBaseManager.initializeInstance(videoRankListDataBaseHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-            database.acquireReference();
+        //Daoクラス使用準備
+        DataBaseHelper videoRankListDataBaseHelper = new DataBaseHelper(mContext);
+        DataBaseManager.initializeInstance(videoRankListDataBaseHelper);
+        DataBaseManager databaseManager = DataBaseManager.getInstance();
+        synchronized (databaseManager) {
+            try {
+                //Daoクラス使用準備
+                SQLiteDatabase database = databaseManager.openDatabase();
+                database.acquireReference();
 
-            //データ存在チェック
-            if (!DataBaseUtils.isCachingRecord(database, DataBaseConstants.RANKING_VIDEO_LIST_TABLE_NAME)) {
+                //データ存在チェック
+                if (!DataBaseUtils.isCachingRecord(database, DataBaseConstants.RANKING_VIDEO_LIST_TABLE_NAME)) {
+                    DataBaseManager.getInstance().closeDatabase();
+                    return list;
+                }
+
+                VideoRankListDao videoRankListDao = new VideoRankListDao(database);
+
+                //ビデオランクデータ取得
+                list = videoRankListDao.findById(columns);
+            } catch (SQLiteException e) {
+                DTVTLogger.debug("RankingTopDataManager::selectVideoRankListData, e.cause=" + e.getCause());
+            } finally {
                 DataBaseManager.getInstance().closeDatabase();
-                return list;
             }
-
-            VideoRankListDao videoRankListDao = new VideoRankListDao(database);
-
-            //ビデオランクデータ取得
-            list = videoRankListDao.findById(columns);
-        } catch (SQLiteException e) {
-            DTVTLogger.debug("RankingTopDataManager::selectVideoRankListData, e.cause=" + e.getCause());
-        } finally {
-            DataBaseManager.getInstance().closeDatabase();
         }
         return list;
     }
