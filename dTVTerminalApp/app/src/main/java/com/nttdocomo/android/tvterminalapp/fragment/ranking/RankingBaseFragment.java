@@ -61,7 +61,7 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
     /**
      * リスト0件メッセージ.
      */
-    private TextView mNoDataMessage;
+    private TextView mNoDataMessage = null;
 
     /**
      * リスト表示用アダプタ.

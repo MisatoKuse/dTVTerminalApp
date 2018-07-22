@@ -387,6 +387,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
             RankingBaseFragment fragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
             mRankingDataProvider.enableConnect();
             if (fragment != null) {
+                fragment.showNoDataMessage(false, null);
                 if (fragment.getDataSize() < 1) {
                     fragment.showProgressBar(true);
                     mRankingDataProvider.getWeeklyRankingData(mGenreMetaDataList.get(mViewPager.getCurrentItem()).getId());
