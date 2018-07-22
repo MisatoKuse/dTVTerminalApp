@@ -58,13 +58,13 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
     private RankingPagerAdapter mRankingPagerAdapter = null;
 
     /** ランキングデータ取得用データプロパイダ. */
-    private RankingTopDataProvider mRankingDataProvider;
-    /** ビデオジャンル取得用プロパイダ. */
+    private RankingTopDataProvider mRankingDataProvider = null;
+    /** ビデオ・テレビジャンル取得用プロパイダ. */
     private GenreListDataProvider mVideoGenreProvider = null;
     /** ジャンルデータリスト. */
-    private ArrayList<GenreListMetaData> genreMetaDataList;
+    private ArrayList<GenreListMetaData> mGenreMetaDataList = null;
     /** タブ名. */
-    private String[] mTabNames;
+    private String[] mTabNames = null;
     // endregion
 
     // region Activity LifeCycle
@@ -195,22 +195,37 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
 
     @Override
     public void onRankGenreListCallback(final ArrayList<GenreListMetaData> genreMetaDataList) {
-        DTVTLogger.start();
-        if (genreMetaDataList == null) {
-            DTVTLogger.warning("genreMetaDataList is null");
-            showErrorMessage();
-            return;
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                DTVTLogger.start();
+                if (genreMetaDataList != null) {
+                    mGenreMetaDataList = genreMetaDataList;
 
-        this.genreMetaDataList = genreMetaDataList;
+                    int totalSize = genreMetaDataList.size();
+                    DTVTLogger.debug("totalSize = " + totalSize);
+                    mTabNames = new String[totalSize];
+                    for (int i = 0; i < totalSize; i++) {
+                        mTabNames[i] = genreMetaDataList.get(i).getTitle();
+                    }
+                    WeeklyTvRankingActivity.this.initTab();
+                } else {
+                    //エラーメッセージを取得する
+                    ErrorState errorState = mVideoGenreProvider.getGenreListError();
+                    //ジャンル取得失敗時はタブ構成できないためエラーダイアログを表示して画面を閉じる
+                    if (errorState != null) {
+                        String message = errorState.getApiErrorMessage(WeeklyTvRankingActivity.this);
+                        //有無で処理を分ける
+                        if (!TextUtils.isEmpty(message)) {
+                            showDialogToClose(WeeklyTvRankingActivity.this, message);
+                            return;
+                        }
+                    }
+                    showDialogToClose(WeeklyTvRankingActivity.this);
+                }
+            }
+        });
 
-        int totalSize = genreMetaDataList.size();
-        DTVTLogger.debug("totalSize = " + totalSize);
-        mTabNames = new String[totalSize];
-        for (int i = 0; i < totalSize; i++) {
-            mTabNames[i] = genreMetaDataList.get(i).getTitle();
-        }
-        initTab();
         DTVTLogger.end();
     }
     // endregion
@@ -268,8 +283,8 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
             mRankingDataProvider = new RankingTopDataProvider(this,
                     ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK);
             //現在表示中のTabのデータ取得を行う
-            if (genreMetaDataList != null && mViewPager != null) {
-                mRankingDataProvider.getWeeklyRankingData(genreMetaDataList.get(mViewPager.getCurrentItem()).getId());
+            if (mGenreMetaDataList != null && mViewPager != null) {
+                mRankingDataProvider.getWeeklyRankingData(mGenreMetaDataList.get(mViewPager.getCurrentItem()).getId());
             } else { //ジャンルデータ or ViewPagerが存在しない場合はジャンルデータから取得しなおす
                 requestgetGenreList();
                 return;
@@ -367,17 +382,17 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
             mRankingDataProvider = new RankingTopDataProvider(
                     this, ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK);
         }
-        if (genreMetaDataList != null
-                && genreMetaDataList.size() > 0) {
+        if (mGenreMetaDataList != null
+                && mGenreMetaDataList.size() > 0) {
             RankingBaseFragment fragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
             mRankingDataProvider.enableConnect();
             if (fragment != null) {
                 if (fragment.getDataSize() < 1) {
                     fragment.showProgressBar(true);
-                    mRankingDataProvider.getWeeklyRankingData(genreMetaDataList.get(mViewPager.getCurrentItem()).getId());
+                    mRankingDataProvider.getWeeklyRankingData(mGenreMetaDataList.get(mViewPager.getCurrentItem()).getId());
                 }
             } else {
-                mRankingDataProvider.getWeeklyRankingData(genreMetaDataList.get(mViewPager.getCurrentItem()).getId());
+                mRankingDataProvider.getWeeklyRankingData(mGenreMetaDataList.get(mViewPager.getCurrentItem()).getId());
             }
         }
         DTVTLogger.end();

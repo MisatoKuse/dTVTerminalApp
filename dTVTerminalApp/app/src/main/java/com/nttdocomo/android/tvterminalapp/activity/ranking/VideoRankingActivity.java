@@ -250,7 +250,7 @@ public class VideoRankingActivity extends BaseActivity implements
                 } else {
                     RankingBaseFragment fragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
                     if (fragment != null) {
-                        fragment.showNoDataMessage(true, getString(R.string.get_contents_data_error_message));
+                        fragment.showNoDataMessage(true, getString(R.string.common_get_data_failed_message));
                     }
                     //エラーメッセージを取得する
                     ErrorState errorState = mRankingDataProvider.getContentsListPerGenreWebApiErrorState();
@@ -272,33 +272,34 @@ public class VideoRankingActivity extends BaseActivity implements
 
     @Override
     public void onRankGenreListCallback(final ArrayList<GenreListMetaData> genreMetaDataList) {
-        DTVTLogger.start();
-        if (genreMetaDataList != null) {
-            mGenreMetaDataList = genreMetaDataList;
-            int totalSize = mGenreMetaDataList.size();
-            mTabNames = new String[totalSize];
-            for (int i = 0; i < totalSize; i++) {
-                mTabNames[i] = mGenreMetaDataList.get(i).getTitle();
-            }
-            initTab();
-        } else {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                DTVTLogger.start();
+                if (genreMetaDataList != null) {
+                    mGenreMetaDataList = genreMetaDataList;
+                    int totalSize = mGenreMetaDataList.size();
+                    mTabNames = new String[totalSize];
+                    for (int i = 0; i < totalSize; i++) {
+                        mTabNames[i] = mGenreMetaDataList.get(i).getTitle();
+                    }
+                    initTab();
+                } else {
                     //エラーメッセージを取得する
                     ErrorState errorState = mVideoGenreProvider.getGenreListError();
+                    //ジャンル取得失敗時はタブ構成できないためエラーダイアログを表示して画面を閉じる
                     if (errorState != null) {
-                        String message = errorState.getErrorMessage();
+                        String message = errorState.getApiErrorMessage(VideoRankingActivity.this);
                         //有無で処理を分ける
                         if (!TextUtils.isEmpty(message)) {
-                            showGetDataFailedToast(message);
+                            showDialogToClose(VideoRankingActivity.this, message);
                             return;
                         }
                     }
-                    showGetDataFailedToast();
+                    showDialogToClose(VideoRankingActivity.this);
                 }
-            });
-        }
+            }
+        });
     }
 
     @Override
@@ -436,7 +437,7 @@ public class VideoRankingActivity extends BaseActivity implements
             showGetDataFailedToast();
 
             if (fragment != null) {
-                fragment.showNoDataMessage(true, getString(R.string.get_contents_data_error_message));
+                fragment.showNoDataMessage(true, getString(R.string.common_get_data_failed_message));
             }
             return;
         }
