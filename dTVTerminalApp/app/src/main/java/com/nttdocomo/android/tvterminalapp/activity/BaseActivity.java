@@ -323,6 +323,8 @@ public class BaseActivity extends FragmentActivity implements
     public static final  String FORCE_FINISH = "FORCE_FINISH";
     /** DisplayMetrics.*/
     private DisplayMetrics mDisplayMetrics = null;
+    /** Toast（連続して出さない為に保持）. */
+    public Toast mToast = null;
 
     /**
      * リモコン表示時の鍵交換の必要性.
@@ -1891,7 +1893,11 @@ public class BaseActivity extends FragmentActivity implements
      */
     public void showClipToast(final int msgId) {
         //指定された文字リソースを表示する
-        Toast.makeText(this, msgId, Toast.LENGTH_SHORT).show();
+        if (mToast != null) {
+            mToast.cancel();
+        }
+        mToast = Toast.makeText(this, msgId, Toast.LENGTH_SHORT);
+        mToast.show();
 
         //クリップ処理終了メッセージ後にフラグを実行中から終了に変更
         mClipRunTime = false;
@@ -2729,8 +2735,11 @@ public class BaseActivity extends FragmentActivity implements
      * データが取得失敗した時のトースト表示.
      */
     protected void showGetDataFailedToast() {
-        Toast.makeText(
-                this, R.string.common_get_data_failed_message, Toast.LENGTH_SHORT).show();
+        if (mToast != null) {
+            mToast.cancel();
+        }
+        mToast = Toast.makeText(this, R.string.common_get_data_failed_message, Toast.LENGTH_SHORT);
+        mToast.show();
     }
 
     /**
@@ -2743,9 +2752,12 @@ public class BaseActivity extends FragmentActivity implements
             //メッセージが空文字ならば、既存のメッセージ表示を呼び出す
             showGetDataFailedToast();
         } else {
+            if (mToast != null) {
+                mToast.cancel();
+            }
             //指定されたメッセージを表示する
-            Toast.makeText(
-                    this, message, Toast.LENGTH_SHORT).show();
+            mToast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+            mToast.show();
         }
     }
 

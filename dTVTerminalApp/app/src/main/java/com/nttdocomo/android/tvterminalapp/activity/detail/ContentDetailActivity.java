@@ -781,9 +781,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 DTVTLogger.debug(e);
             }
             if (channelNos.length == 0 || channelNos[0] == -1) {
-                //TODO channelNoが未指定の場合。エラー定義未決定のため一旦エラーを表示して戻る
                 DTVTLogger.error("No channel number");
-                Toast.makeText(this, "No channel number", Toast.LENGTH_SHORT).show();
                 channelLoadCompleted();
                 return;
             }
@@ -2502,8 +2500,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 CustomDialog dialog = createErrorDialog();
                 dialog.showDialog();
             } else {
+                if (mToast != null) {
+                    mToast.cancel();
+                }
                 // 成功
-                Toast.makeText(this, getResources().getString(R.string.recording_reservation_complete_dialog_msg), Toast.LENGTH_SHORT).show();
+                mToast = Toast.makeText(this, getResources().getString(R.string.recording_reservation_complete_dialog_msg), Toast.LENGTH_SHORT);
+                mToast.show();
             }
         } else {
             // コンテンツ詳細取得データに失敗があった場合
