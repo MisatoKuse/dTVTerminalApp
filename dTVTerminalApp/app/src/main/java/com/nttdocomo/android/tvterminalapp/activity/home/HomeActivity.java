@@ -566,13 +566,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private void requestHomeData() {
         //Home画面用データを取得
-        if (networkCheck()) {
-            showProgessBar(true);
-            initScrollView();
-            showHomeBanner();
-            mHomeDataProvider = new HomeDataProvider(this);
-            mHomeDataProvider.getHomeData();
-        }
+        //ネットワークエラーの場合も取得処理を走らせる（キャッシュ表示のため）
+        networkCheck();
+        showProgessBar(true);
+        initScrollView();
+        showHomeBanner();
+        mHomeDataProvider = new HomeDataProvider(this);
+        mHomeDataProvider.getHomeData();
     }
 
     /**
