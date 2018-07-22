@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.fragment.player;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.Layout;
@@ -44,7 +45,8 @@ import java.util.List;
  * コンテンツ詳細画面表示用Fragment.
  */
 public class DtvContentsDetailFragment extends Fragment {
-
+    /** Appコンテクスト.*/
+    private Context mContext = null;
     /** コンテクスト.*/
     private Context mActivity = null;
     /** フラグメントビュー.*/
@@ -111,6 +113,20 @@ public class DtvContentsDetailFragment extends Fragment {
     private final static String LABEL_STATUS_R_VALUE_R_18 = "R-18";
     /** r_value R-20.*/
     private final static String LABEL_STATUS_R_VALUE_R_20 = "R-20";
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mContext = getActivity().getApplicationContext();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mContext = null;
+        mActivity = null;
+    }
+
     @Override
     public Context getContext() {
         this.mActivity = getActivity();
@@ -196,7 +212,7 @@ public class DtvContentsDetailFragment extends Fragment {
         if (mOtherContentsDetailData != null) {
             if (mOtherContentsDetailData.isClipExec()) {
                 clipButton.setVisibility(View.VISIBLE);
-                if (!UserInfoUtils.getClipActive(getContext())) {
+                if (!UserInfoUtils.getClipActive(mContext)) {
                     //未ログイン又は未契約時はクリップボタンを非活性にする
                     clipButton.setBackgroundResource(R.mipmap.icon_tap_circle_normal_clip);
                 } else {
@@ -336,7 +352,6 @@ public class DtvContentsDetailFragment extends Fragment {
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
     private void setRatingBar() {
         //評価値の表示非表示判定
-        //TODO おすすめ・検索からの遷移については、現状データが不足しているため未実装
         ContentUtils.ContentsType contentsType = mOtherContentsDetailData.getContentCategory();
         if (contentsType != null) {
             switch (contentsType) {
@@ -643,7 +658,7 @@ public class DtvContentsDetailFragment extends Fragment {
                     && contentsType != null
                     && ContentUtils.isHikariTvProgram(contentsType)) {
                 //未ログイン又は未契約時は録画ボタンを非活性
-                if (!UserInfoUtils.getClipActive(getContext())
+                if (!UserInfoUtils.getClipActive(mContext)
                         || !ContentUtils.isEnableDisplay(viewIngType)
                         || !ContentUtils.isRecordButtonDisplay(contentsType)) {
                     if (contentsType.equals(ContentUtils.ContentsType.HIKARI_TV_WITHIN_TWO_HOUR)
@@ -675,7 +690,7 @@ public class DtvContentsDetailFragment extends Fragment {
     public void setRecordingReservationIconListener(final RecordingReservationIconListener listener) {
         DTVTLogger.start();
         //未ログイン又は未契約時は録画ボタンを非活性
-        if (listener != null && UserInfoUtils.getClipActive(getContext())) {
+        if (listener != null && UserInfoUtils.getClipActive(mContext)) {
             DTVTLogger.debug("setOnClickListener");
             mIconClickListener = listener;
             mRecordButton.setOnClickListener(new View.OnClickListener() {
