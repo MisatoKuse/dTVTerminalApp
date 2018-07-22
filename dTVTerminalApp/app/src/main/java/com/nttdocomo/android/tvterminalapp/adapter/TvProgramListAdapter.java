@@ -221,18 +221,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         for (int i = 0; i < mProgramList.size(); i++) {
             ChannelInfo itemChannel = mProgramList.get(i);
             if (itemChannel != null) {
-                ArrayList<ScheduleInfo> itemSchedules = itemChannel.getSchedules();
                 DTVTLogger.debug("###Channel pos=" + i + ",ChNo:" + itemChannel.getChannelNo() + ",ChName:" + itemChannel.getTitle());
-                if (itemSchedules == null || itemSchedules.size() == 0) {
-                    // 空のView(背景のみ)を追加
-                    ItemViewHolder itemViewHolder = new ItemViewHolder(null);
-                } else {
-                    for (int j = 0; j < itemSchedules.size(); j++) {
-                        ScheduleInfo itemSchedule = itemSchedules.get(j);
-                        ItemViewHolder itemViewHolder = new ItemViewHolder(itemSchedules.get(j));
-                        setView(itemViewHolder, itemSchedule);
-                    }
-                }
             }
         }
         mIsClipActive = UserInfoUtils.getClipActive(mContext);
@@ -250,7 +239,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     }
 
     /**
-     * 必要になっているチャンネル番号取得.
+     * 番組が必要なチャンネル番号取得.Bind済みViewHolderの中で番組が未取得なChを洗い出して返却する.
      * @return   チャンネル番号.
      */
     public int[] getNeedProgramChannels() {
@@ -258,14 +247,19 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         for (MyViewHolder viewHolder :mMyViewHolder) {
             int chNo = viewHolder.chNo;
             for (ChannelInfo channelInfo : mProgramList) {
-                // Bind済みHolderにChnoが一致するものがある時だけ取得リストに入れる
+                // Bind済みHolderにChnoが一致するものがある時だけ取得リストに入れる.
                 if (chNo == channelInfo.getChannelNo()) {
-                    // すでに取得済みであれば取得リストに入れない
+                    // すでに取得済みであれば取得リストに入れない.
+                    // 未取得または取得失敗ダミーデータの場合は取得リスト入り.
                     if (channelInfo.getSchedules() == null) {
                         chNoList.add(chNo);
-                    } else {
-                        DTVTLogger.debug("###Schedules already got ChNo:" + channelInfo.getChannelNo() + " size:" + channelInfo.getSchedules().size());
                         break;
+                    } else if (channelInfo.getSchedules().size() > 0) {
+                        String type = channelInfo.getSchedules().get(0).getDispType();
+                        if (type.equals(DataConverter.FAILED_CONTENT_DATA)) {
+                            chNoList.add(chNo);
+                            break;
+                        }
                     }
                 }
             }
@@ -1001,7 +995,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     }
 
     /**
-     * BG→FG復帰時のチャンネルリスト更新用.
+     * 番組情報セット.
      * @param newProgramList 番組表
      */
     public void setProgramList(final List<ChannelInfo> newProgramList) {
@@ -1016,11 +1010,11 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     if (newChannelInfo.getChannelNo() == mChannelInfo.getChannelNo()) {
                         if (newChannelInfo.getSchedules() != null && newChannelInfo.getSchedules().size() > 0) {
                             mProgramList.set(j, newChannelInfo);
+                            DTVTLogger.debug("###setProgramList ChNo:" + newChannelInfo.getChannelNo());
                             for (int pos = 0; pos < mMyViewHolder.size(); pos++) {
                                 if (newChannelInfo.getChannelNo() == mMyViewHolder.get(pos).chNo) {
                                     DTVTLogger.start("setItemView start ChNo:" + mChannelInfo.getChannelNo());
                                     setItemView(newProgramList.get(i).getSchedules(), mMyViewHolder.get(pos));
-                                    break;
                                 }
                             }
                         }
