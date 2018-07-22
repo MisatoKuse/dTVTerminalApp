@@ -116,74 +116,78 @@ public class RecommendListDataManager {
      * @return recommendContentInfoList
      */
     @SuppressWarnings("OverlyLongMethod")
-    public List<ContentsData> selectRecommendList(final int tagPageNo) {
+    public synchronized List<ContentsData> selectRecommendList(final int tagPageNo) {
 
         DTVTLogger.start();
         List<ContentsData> recommendContentInfoList = new ArrayList<>();
-        try {
-            DataBaseHelper deHelper = new DataBaseHelper(mContext);
-            DataBaseManager.initializeInstance(deHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-            database.acquireReference();
+        DataBaseHelper deHelper = new DataBaseHelper(mContext);
+        DataBaseManager.initializeInstance(deHelper);
+        DataBaseManager dataBaseManager = DataBaseManager.getInstance();
 
-            //データテーブル存在チェック
-            if (!DataBaseUtils.isCachingRecord(database, DataBaseUtils.getRecommendTableName(tagPageNo))) {
-                DTVTLogger.debug(String.format("Database table [%s] data not exist", DataBaseUtils.getRecommendTableName(tagPageNo)));
+        synchronized (dataBaseManager) {
+            try {
+                SQLiteDatabase database = dataBaseManager.openDatabase();
+                database.acquireReference();
+
+                //データテーブル存在チェック
+                if (!DataBaseUtils.isCachingRecord(database, DataBaseUtils.getRecommendTableName(tagPageNo))) {
+                    DTVTLogger.debug(String.format("Database table [%s] data not exist", DataBaseUtils.getRecommendTableName(tagPageNo)));
+                    DataBaseManager.getInstance().closeDatabase();
+                    return recommendContentInfoList;
+                }
+                RecommendListDao redListDao = new RecommendListDao(database);
+
+                //データテーブルに依らずカラム名は同一
+                String[] columns = {
+                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID,
+                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID,
+                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID,
+                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1,
+                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE,
+                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING,
+                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING,
+                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED1,
+                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED2,
+                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4,
+                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID,
+                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER,
+                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_PAGEID,
+                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_GROUPID,
+                        RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID
+                };
+                List<Map<String, String>> resultList
+                        = redListDao.findById(columns, tagPageNo);
+                recommendContentInfoList = new ArrayList<>();
+                if (resultList.size() == 0) {
+                    DTVTLogger.debug(String.format("Database table [%s] data size 0", DataBaseUtils.getRecommendTableName(tagPageNo)));
+                    return recommendContentInfoList;
+                }
+                DTVTLogger.debug(String.format("Database table [%s] resultList size[%s]", DataBaseUtils.getRecommendTableName(tagPageNo), resultList.size()));
+                for (int i = 0; i <= resultList.size() - 1; i++) {
+                    Map<String, String> map = resultList.get(i);
+                    ContentsData contentsData = new ContentsData();
+                    contentsData.setContentsId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID));
+                    contentsData.setCategoryId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID));
+                    contentsData.setServiceId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID));
+                    contentsData.setThumURL(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1));
+                    contentsData.setTitle(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE));
+                    contentsData.setStartViewing(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING));
+                    contentsData.setEndViewing(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING));
+                    contentsData.setReserved1(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED1));
+                    contentsData.setReserved2(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED2));
+                    contentsData.setReserved4(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4));
+                    contentsData.setChannelId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID));
+                    contentsData.setRecommendOrder(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER));
+                    contentsData.setPageId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_PAGEID));
+                    contentsData.setGroupId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_GROUPID));
+                    contentsData.setRecommendMethodId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID));
+                    recommendContentInfoList.add(contentsData);
+                }
+            } catch (SQLiteException e) {
+                DTVTLogger.debug("RecommendListDataManager::selectRecommendList, e.cause=" + e.getCause());
+            } finally {
                 DataBaseManager.getInstance().closeDatabase();
-                return recommendContentInfoList;
             }
-            RecommendListDao redListDao = new RecommendListDao(database);
-
-            //データテーブルに依らずカラム名は同一
-            String[] columns = {
-                    RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID,
-                    RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID,
-                    RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID,
-                    RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1,
-                    RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE,
-                    RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING,
-                    RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING,
-                    RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED1,
-                    RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED2,
-                    RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4,
-                    RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID,
-                    RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER,
-                    RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_PAGEID,
-                    RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_GROUPID,
-                    RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID
-            };
-            List<Map<String, String>> resultList
-                    = redListDao.findById(columns, tagPageNo);
-            recommendContentInfoList = new ArrayList<>();
-            if (resultList.size() == 0) {
-                DTVTLogger.debug(String.format("Database table [%s] data size 0", DataBaseUtils.getRecommendTableName(tagPageNo)));
-                return recommendContentInfoList;
-            }
-            DTVTLogger.debug(String.format("Database table [%s] resultList size[%s]", DataBaseUtils.getRecommendTableName(tagPageNo), resultList.size()));
-            for (int i = 0; i <= resultList.size() - 1; i++) {
-                Map<String, String> map = resultList.get(i);
-                ContentsData contentsData = new ContentsData();
-                contentsData.setContentsId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID));
-                contentsData.setCategoryId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID));
-                contentsData.setServiceId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID));
-                contentsData.setThumURL(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1));
-                contentsData.setTitle(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE));
-                contentsData.setStartViewing(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING));
-                contentsData.setEndViewing(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING));
-                contentsData.setReserved1(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED1));
-                contentsData.setReserved2(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED2));
-                contentsData.setReserved4(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4));
-                contentsData.setChannelId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID));
-                contentsData.setRecommendOrder(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER));
-                contentsData.setPageId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_PAGEID));
-                contentsData.setGroupId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_GROUPID));
-                contentsData.setRecommendMethodId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID));
-                recommendContentInfoList.add(contentsData);
-            }
-        } catch (SQLiteException e) {
-            DTVTLogger.debug("RecommendListDataManager::selectRecommendList, e.cause=" + e.getCause());
-        } finally {
-            DataBaseManager.getInstance().closeDatabase();
         }
         DTVTLogger.end();
         return recommendContentInfoList;
