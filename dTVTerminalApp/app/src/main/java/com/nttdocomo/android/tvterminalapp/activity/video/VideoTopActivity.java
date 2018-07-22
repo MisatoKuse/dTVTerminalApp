@@ -251,7 +251,6 @@ public class VideoTopActivity extends BaseActivity implements
                 showGenerListView(allContentsCnt);
             } else { // 初回表示の場合
                 showFirstGenreListView(allContentsCnt);
-                DTVTLogger.debug("初回表示");
             }
         }
 
@@ -261,7 +260,6 @@ public class VideoTopActivity extends BaseActivity implements
                 && !GenreListMetaData.VIDEO_LIST_GENRE_ID_NOD.equals(mVideoGenreListDataInfo.getGenreId())
                 && !GenreListMetaData.VIDEO_LIST_GENRE_ID_DTV.equals(mVideoGenreListDataInfo.getGenreId())
                 && genreList != null) { // ジャンル情報取得後はリストを更新
-            DTVTLogger.debug("ジャンル情報取得後はリストを更新");
             VideoGenreList videoGenreList = new VideoGenreList();
             videoGenreList.setTitle(this.getResources().getString(R.string.video_list_genre_all));
             videoGenreList.setContentCount(
@@ -383,15 +381,16 @@ public class VideoTopActivity extends BaseActivity implements
             errorMessage = errorState.getApiErrorMessage(getApplicationContext());
         }
 
-        //タブ画面ではなく、ベースアクティビティ側でダイアログを出すので、こちらもトーストからダイアログに変更する
+        //ジャンルや件数が取得できない場合はエラーダイアログで前画面に戻す.
+        //ジャンルのみ取得できていても、コンテンツ数が0ならジャンルは見せないようにする必要あり.
+        //それを代用してジャンル自体のR制限はチェックしていない.
         if(mVideoGenreListDataInfo.getGenreId() != null) {
-            //初回以外は、OKを押すと終わるダイアログで表示
+            //初回以外は、OKを押すと前画面遷移するダイアログで表示
             showApFinishDialog(errorMessage);
         } else {
-            //初回表示は、普通のダイアログで表示
-            showErrorDialog(errorMessage);
+            //初回表示は、ホーム遷移ダイアログで表示
+            showDialogToClose(this, errorMessage);
         }
-
     }
     // endregion private mehtod
 
@@ -425,7 +424,7 @@ public class VideoTopActivity extends BaseActivity implements
         DTVTLogger.debug("allContentsCount = " + allContentsCount);
         Iterator<VideoGenreList> iterator = mShowContentsList.iterator();
         if (allContentsCount == 0) { // 全部0件の場合
-            DTVTLogger.warning("表示項目のすべてが0件だった場合「すべて(VOD)」「NOD」「dTV」以外はすべて削除する + VOD?");
+            //表示項目のすべてが0件だった場合「すべて(VOD)」「NOD」「dTV」以外はすべて削除する + VOD?
             while (iterator.hasNext()) {
                 VideoGenreList list = iterator.next();
                 if (GenreListMetaData.VIDEO_LIST_GENRE_ID_ALL_CONTENTS.equals(list.getGenreId())
@@ -436,7 +435,7 @@ public class VideoTopActivity extends BaseActivity implements
                 iterator.remove();
             }
         } else {
-            DTVTLogger.warning("0件のコンテンツをリストから削除");
+            //0件のコンテンツをリストから削除
             while (iterator.hasNext()) {
                 VideoGenreList list = iterator.next();
                 if (GenreListMetaData.VIDEO_LIST_GENRE_ID_ALL_CONTENTS.equals(list.getGenreId())
@@ -446,12 +445,12 @@ public class VideoTopActivity extends BaseActivity implements
                 }
                 if (list.getContentCount() == null
                         || list.getContentCount().isEmpty()) {
-                    DTVTLogger.warning("削除データ list.getGenreId() = " + list.getGenreId());
+                    DTVTLogger.debug("list.getGenreId()=" + list.getGenreId());
                     iterator.remove();
                 }
             }
         }
-        DTVTLogger.warning("mShowContentsList.size() = " + mShowContentsList.size());
+        DTVTLogger.debug("mShowContentsList.size()=" + mShowContentsList.size());
     }
 
     /**
