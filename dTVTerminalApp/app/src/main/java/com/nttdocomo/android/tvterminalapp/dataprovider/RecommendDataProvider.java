@@ -55,11 +55,6 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      */
     private boolean mIsStop = false;
 
-    //TODO 検討中
-//    private String mCacheDateKey = null;
-//    private int mTagPageNo = -1;
-//    private RecommendChannelList mRecommendChList = null;
-
     /**
      * CHレコメンドデータキャッシュ取得用.
      */
@@ -297,13 +292,12 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     }
 
     @Override
-    public void recommendCallback(final RecommendChannelList mRecommendChannelList) {
-        if (mRecommendChannelList != null
-                && mRecommendChannelList.getmRcList() != null) {
-            sendRecommendChListData(mRecommendChannelList);
+    public void recommendCallback(final RecommendChannelList recommendChannelList) {
+        if (recommendChannelList != null
+                && recommendChannelList.getmRcList() != null) {
+            sendRecommendChListData(recommendChannelList);
         } else {
-            //TODO WEBAPIを取得できなかった時の処理を記載予定
-            if (!mIsStop) {
+            if (!mIsStop && mApiDataProviderCallback != null) {
                 mApiDataProviderCallback.recommendNGCallback();
             }
         }
@@ -464,8 +458,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         //DB保存履歴と、有効期間を確認
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.RECOMMEND_CH_LAST_INSERT);
-        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeLimitDate(lastDate))
-                && NetWorkUtils.isOnline(mContext)) {
+        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeLimitDate(lastDate))) {
             if (!mIsStop) {
                 // RequestDataのインスタンス生成
                 RecommendRequestData requestData = new RecommendRequestData();
@@ -525,8 +518,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         //DB保存履歴と、有効期間を確認
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.RECOMMEND_VD_LAST_INSERT);
-        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeLimitDate(lastDate))
-                && NetWorkUtils.isOnline(mContext)) {
+        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeLimitDate(lastDate))) {
             if (!mIsStop) {
                 // RequestDataのインスタンス生成
                 RecommendRequestData requestData = new RecommendRequestData();
@@ -555,8 +547,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         //DB保存履歴と、有効期間を確認
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.RECOMMEND_DCHANNEL_LAST_INSERT);
-        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeLimitDate(lastDate))
-                && NetWorkUtils.isOnline(mContext)) {
+        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeLimitDate(lastDate))) {
             if (!mIsStop) {
                 // RequestDataのインスタンス生成
                 RecommendRequestData requestData = new RecommendRequestData();
@@ -586,8 +577,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         //DB保存履歴と、有効期間を確認
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.RECOMMEND_DTV_LAST_INSERT);
-        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeLimitDate(lastDate))
-                && NetWorkUtils.isOnline(mContext)) {
+        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeLimitDate(lastDate))) {
             if (!mIsStop) {
                 // RequestDataのインスタンス生成
                 RecommendRequestData requestData = new RecommendRequestData();
@@ -616,8 +606,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         //DB保存履歴と、有効期間を確認
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.RECOMMEND_DANIME_LAST_INSERT);
-        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeLimitDate(lastDate))
-                && NetWorkUtils.isOnline(mContext)) {
+        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeLimitDate(lastDate))) {
             if (!mIsStop) {
                 // RequestDataのインスタンス生成
                 RecommendRequestData requestData = new RecommendRequestData();

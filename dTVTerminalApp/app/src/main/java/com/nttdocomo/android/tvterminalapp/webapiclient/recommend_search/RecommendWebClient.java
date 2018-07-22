@@ -87,9 +87,9 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
     public interface RecommendCallback {
         /**
          * コールバック.
-         * @param mRecommendChannelList mRecommendChannelList
+         * @param recommendChannelList mRecommendChannelList
          */
-        void recommendCallback(RecommendChannelList mRecommendChannelList);
+        void recommendCallback(RecommendChannelList recommendChannelList);
     }
 
     /**

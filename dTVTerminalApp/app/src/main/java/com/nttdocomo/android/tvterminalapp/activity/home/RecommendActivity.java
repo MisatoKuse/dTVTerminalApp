@@ -51,10 +51,6 @@ public class RecommendActivity extends BaseActivity implements
      */
     private String[] mTabNames = null;
     /**
-     * 通信中フラグ.
-     */
-    private boolean mIsSearching = false;
-    /**
      * 遷移元フラグ.
      */
     private Boolean mIsMenuLaunch = false;
@@ -74,10 +70,6 @@ public class RecommendActivity extends BaseActivity implements
      * タブポジション(テレビ).
      */
     private int mSearchLastItem = 0;
-    /**
-     * ページング判定.
-     */
-    private boolean mIsPaging = false;
     /**
      * アクティビティ初回起動フラグ.
      */
@@ -123,10 +115,6 @@ public class RecommendActivity extends BaseActivity implements
      */
     private int mSelectedTabIndex = 0;
     /**
-     * リスト0件メッセージ.
-     */
-    private TextView mNoDataMessage;
-    /**
      * フラグメント作成クラス.
      */
     private RecommendFragmentFactory mRecommendFragmentFactory = null;
@@ -167,7 +155,6 @@ public class RecommendActivity extends BaseActivity implements
 
         initData();
         initRecommendListView();
-        setSearchStart(false);
 
         //初回起動フラグをONにする
         mIsFirst = true;
@@ -212,38 +199,19 @@ public class RecommendActivity extends BaseActivity implements
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         mTabNames = getResources().getStringArray(R.array.recommend_list_tab_names);
-        mRecommendDataProvider = new RecommendDataProvider(this);
         mRecommendFragmentFactory = new RecommendFragmentFactory();
-
-    }
-
-    /**
-     * 検索中フラグの変更.
-     *
-     * @param searchingFlag 検索中フラグ
-     */
-    private void setSearchStart(final boolean searchingFlag) {
-        synchronized (this) {
-            mIsSearching = searchingFlag;
-        }
     }
 
     /**
      * データプロバイダへデータ取得要求.
      */
     private void requestRecommendData() {
-        mNoDataMessage.setVisibility(View.GONE);
-        if (null == mRecommendDataProvider) {
-            DTVTLogger.debug("RecommendActivity::setRecommendData, mRecommendDataProvider is null");
-            return;
+
+        if (mRecommendDataProvider != null) {
+            mRecommendDataProvider.stopConnect();
         }
-        synchronized (this) {
-            if (!mIsSearching) {
-                setSearchStart(true);
-            } else {
-                return;
-            }
-        }
+        mRecommendDataProvider = new RecommendDataProvider(this);
+
         if (null == mRecommendViewPager) {
             return;
         }
@@ -259,7 +227,6 @@ public class RecommendActivity extends BaseActivity implements
      */
     private void initRecommendListView() {
 
-        mNoDataMessage = findViewById(R.id.recommend_list_no_items);
         mTabLayout = initTabData(mTabLayout, mTabNames);
         mRecommendViewPager = findViewById(R.id.vp_recommend_list_items);
 
@@ -274,11 +241,8 @@ public class RecommendActivity extends BaseActivity implements
                 mSelectedTabIndex = position;
                 sendScreenViewForPosition(position);
                 clearAllFragment();
-                setPagingStatus(false);
                 showProgressBar(true);
                 mSearchLastItem = 0;
-                //ここでフラグをクリアしないと、以後の更新が行われなくなる場合がある
-                setSearchStart(false);
                 requestRecommendData();
             }
         });
@@ -318,7 +282,10 @@ public class RecommendActivity extends BaseActivity implements
             //現在選択されているタブと違うタブが押された場合に処理を行う
             if (mRecommendViewPager.getCurrentItem() != position) {
                 mRecommendViewPager.setCurrentItem(position);
-                showProgressBar(true);
+                RecommendBaseFragment fragment = getCurrentFragment(mRecommendViewPager, mRecommendFragmentFactory);
+                if (fragment != null) {
+                    fragment.showNoDataMessage(false, null);
+                }
             } else {
                 DTVTLogger.debug("viewpager same tab");
             }
@@ -350,21 +317,13 @@ public class RecommendActivity extends BaseActivity implements
             return;
         }
 
-        synchronized (this) {
-            if (mIsPaging) {
-                baseFragment.displayLoadMore(false);
-                setPagingStatus(false);
-            } else {
-                baseFragment.clear();
-            }
-        }
+        baseFragment.clear();
 
-        if (0 == resultInfoList.size()) {
-            if (!showErrorMessage(mRecommendViewPager.getCurrentItem())) {
-                mNoDataMessage.setVisibility(View.VISIBLE);
-            }
+        if (resultInfoList == null) {
+            baseFragment.showNoDataMessage(true, getString(R.string.common_get_data_failed_message));
+        } else if(resultInfoList.isEmpty() || resultInfoList.size() <= 0) {
+            baseFragment.showNoDataMessage(true, getString(R.string.common_get_data_failed_message));
         }
-
         if (0 < resultInfoList.size()) {
             for (ContentsData info : resultInfoList) {
                 //チャンネル名を付加
@@ -384,8 +343,6 @@ public class RecommendActivity extends BaseActivity implements
             }
 
             baseFragment.setSelection(mSearchLastItem);
-            baseFragment.displayLoadMore(false);
-            setSearchStart(false);
         }
     }
 
@@ -435,35 +392,19 @@ public class RecommendActivity extends BaseActivity implements
      */
     private void recommendDataProviderFinishNg() {
         //エラーメッセージを表示する
+        if (mRecommendViewPager != null) {
+            RecommendBaseFragment fragment = getCurrentFragment(mRecommendViewPager, mRecommendFragmentFactory);
+            if (fragment != null) {
+                fragment.showNoDataMessage(true, getString(R.string.common_get_data_failed_message));
+            }
+        }
         showErrorMessage(mRecommendViewPager.getCurrentItem());
-        mNoDataMessage.setVisibility(View.VISIBLE);
         RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
         if (baseFragment == null) {
             return;
         }
-        synchronized (this) {
-            // ページング処理判定
-            if (mIsPaging) {
-                baseFragment.displayLoadMore(false);
-                setPagingStatus(false);
-            } else {
-                baseFragment.clear();
-                clearAllFragment();
-            }
-        }
-        setSearchStart(false);
-        DTVTLogger.debug("onSearchDataProviderFinishNg");
-    }
 
-    /**
-     * ページング判定の変更.
-     *
-     * @param bool ページングの有無
-     */
-    private void setPagingStatus(final boolean bool) {
-        synchronized (this) {
-            mIsPaging = bool;
-        }
+        DTVTLogger.debug("onSearchDataProviderFinishNg");
     }
 
     /**
@@ -528,6 +469,20 @@ public class RecommendActivity extends BaseActivity implements
     }
 
     /**
+     * Fragmentの取得.
+     * @param viewPager viewPager
+     * @param recommendFragmentFactory RecommendFragmentFactory
+     * @return Fragment
+     */
+    protected RecommendBaseFragment getCurrentFragment(final ViewPager viewPager, final RecommendFragmentFactory recommendFragmentFactory) {
+        int i = viewPager.getCurrentItem();
+        if (recommendFragmentFactory != null) {
+            return recommendFragmentFactory.createFragment(i);
+        }
+        return null;
+    }
+
+    /**
      * おすすめテレビ用コールバック.
      *
      * @param recommendContentInfoList テレビタブ用情報
@@ -545,6 +500,12 @@ public class RecommendActivity extends BaseActivity implements
                         recommendDataProviderSuccess(recommendContentInfoList);
                     }
                 } else {
+                    if (mRecommendViewPager != null) {
+                        RecommendBaseFragment fragment = getCurrentFragment(mRecommendViewPager, mRecommendFragmentFactory);
+                        if (fragment != null) {
+                            fragment.showNoDataMessage(true, getString(R.string.common_get_data_failed_message));
+                        }
+                    }
                     showErrorMessage(RecommendDataProvider.API_INDEX_OTHER);
                 }
             }
@@ -569,6 +530,12 @@ public class RecommendActivity extends BaseActivity implements
                         recommendDataProviderSuccess(recommendContentInfoList);
                     }
                 } else {
+                    if (mRecommendViewPager != null) {
+                        RecommendBaseFragment fragment = getCurrentFragment(mRecommendViewPager, mRecommendFragmentFactory);
+                        if (fragment != null) {
+                            fragment.showNoDataMessage(true, getString(R.string.common_get_data_failed_message));
+                        }
+                    }
                     showErrorMessage(RecommendDataProvider.API_INDEX_TV);
                 }
             }
@@ -593,6 +560,12 @@ public class RecommendActivity extends BaseActivity implements
                         recommendDataProviderSuccess(recommendContentInfoList);
                     }
                 } else {
+                    if (mRecommendViewPager != null) {
+                        RecommendBaseFragment fragment = getCurrentFragment(mRecommendViewPager, mRecommendFragmentFactory);
+                        if (fragment != null) {
+                            fragment.showNoDataMessage(true, getString(R.string.common_get_data_failed_message));
+                        }
+                    }
                     showErrorMessage(RecommendDataProvider.API_INDEX_OTHER);
                 }
             }
@@ -617,6 +590,12 @@ public class RecommendActivity extends BaseActivity implements
                         recommendDataProviderSuccess(recommendContentInfoList);
                     }
                 } else {
+                    if (mRecommendViewPager != null) {
+                        RecommendBaseFragment fragment = getCurrentFragment(mRecommendViewPager, mRecommendFragmentFactory);
+                        if (fragment != null) {
+                            fragment.showNoDataMessage(true, getString(R.string.common_get_data_failed_message));
+                        }
+                    }
                     showErrorMessage(RecommendDataProvider.API_INDEX_OTHER);
                 }
             }
@@ -641,6 +620,12 @@ public class RecommendActivity extends BaseActivity implements
                         recommendDataProviderSuccess(recommendContentInfoList);
                     }
                 } else {
+                    if (mRecommendViewPager != null) {
+                        RecommendBaseFragment fragment = getCurrentFragment(mRecommendViewPager, mRecommendFragmentFactory);
+                        if (fragment != null) {
+                            fragment.showNoDataMessage(true, getString(R.string.common_get_data_failed_message));
+                        }
+                    }
                     showErrorMessage(RecommendDataProvider.API_INDEX_OTHER);
                 }
             }
@@ -727,7 +712,6 @@ public class RecommendActivity extends BaseActivity implements
         RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
         if (baseFragment != null) {
             baseFragment.enableContentsAdapterCommunication();
-            baseFragment.displayLoadMore(false);
             baseFragment.invalidateViews();
         }
     }
@@ -794,22 +778,19 @@ public class RecommendActivity extends BaseActivity implements
     @Override
     public void channelListCallback(final ArrayList<ChannelInfo> channels) {
         //チャンネル情報を受け取る
-
         DTVTLogger.start();
 
-        //取得できたかどうかの判断
         if (null == channels) {
+            //チャンネルリストが取得できなければ表示上不都合（チャンネル名が一切表示できない）なのでダイアログ表示で戻る
             //エラーメッセージを取得する
             String message = mScaledDownProgramListDataProvider.
-                    getChannelError().getErrorMessage();
-            mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
+                    getChannelError().getApiErrorMessage(this);
             //有無で処理を分ける
             if (TextUtils.isEmpty(message)) {
-                showGetDataFailedToast();
+                showDialogToClose(this);
             } else {
-                showGetDataFailedToast(message);
+                showDialogToClose(this, message);
             }
-
             DTVTLogger.end();
             return;
         }

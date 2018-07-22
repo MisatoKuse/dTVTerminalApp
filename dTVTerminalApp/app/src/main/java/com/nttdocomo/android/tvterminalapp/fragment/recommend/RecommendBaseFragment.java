@@ -9,12 +9,14 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
@@ -62,6 +64,10 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      * ProgressBar.
      */
     private RelativeLayout mRelativeLayout = null;
+    /**
+     * リスト0件メッセージ.
+     */
+    private TextView mNoDataMessage = null;
     /**
      * アダプター.
      */
@@ -161,6 +167,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
         }
         mRecommendListView = mRecommendFragmentView.findViewById(R.id.lv_recommend_list);
         mRelativeLayout = mRecommendFragmentView.findViewById(R.id.lv_recommend_progress);
+        mNoDataMessage = mRecommendFragmentView.findViewById(R.id.recommend_no_items);
         if (showProgressBar) {
             //オフライン時は表示しない
             if (!NetWorkUtils.isOnline(getActivity())) {
@@ -168,11 +175,35 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
             }
             mRecommendListView.setVisibility(View.GONE);
             mRelativeLayout.setVisibility(View.VISIBLE);
+            showNoDataMessage(false, null);
         } else {
             mRecommendListView.setVisibility(View.VISIBLE);
             mRelativeLayout.setVisibility(View.GONE);
         }
     }
+
+    /**
+     * リスト0件表示.
+     *
+     * @param showNoDataMessage プロセスバーを表示するかどうか
+     * @param message 0件表示の文言
+     */
+    public void showNoDataMessage(final boolean showNoDataMessage, final String message) {
+        DTVTLogger.start();
+        if (mNoDataMessage == null) {
+            return;
+        }
+        if (showNoDataMessage) {
+            if (!TextUtils.isEmpty(message)) {
+                mNoDataMessage.setText(message);
+            }
+            mNoDataMessage.setVisibility(View.VISIBLE);
+        } else {
+            mNoDataMessage.setVisibility(View.GONE);
+        }
+        DTVTLogger.end();
+    }
+
 
     /**
      * データの更新.
@@ -223,21 +254,6 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     public void invalidateViews() {
         if (null != mRecommendListView) {
             mRecommendListView.invalidateViews();
-        }
-    }
-
-    /**
-     * リストの最後に更新中の行を追加または追加した行を削除する.
-     *
-     * @param loadFlag ロード中フラグ
-     */
-    public void displayLoadMore(final boolean loadFlag) {
-        if (null != mRecommendListView && null != mLoadMoreView) {
-            if (loadFlag) {
-                mRecommendListView.addFooterView(mLoadMoreView);
-            } else {
-                mRecommendListView.removeFooterView(mLoadMoreView);
-            }
         }
     }
 
@@ -340,12 +356,4 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
         }
     }
 
-    /**
-     * コンテンツデータクリア.
-     */
-    public void clearData() {
-        if (mData != null) {
-            mData.clear();
-        }
-    }
 }

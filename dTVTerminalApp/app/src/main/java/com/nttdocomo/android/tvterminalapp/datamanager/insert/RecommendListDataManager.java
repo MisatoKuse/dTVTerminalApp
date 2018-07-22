@@ -51,7 +51,7 @@ public class RecommendListDataManager {
      * @param tagPageNo ページ番号
      * @param cacheDateKey キャッシュ対象ごとのキー
      */
-    public void insertRecommendInsertList(
+    public synchronized void insertRecommendInsertList(
             final RecommendChannelList redChList, final boolean addFlag, final int tagPageNo,
             final String cacheDateKey) {
 
@@ -62,51 +62,55 @@ public class RecommendListDataManager {
             return;
         }
 
-        try {
-            //各種オブジェクト作成
-            List<Map<String, String>> hashMaps = redChList.getmRcList();
-            DataBaseHelper deHelper = new DataBaseHelper(mContext);
-            DataBaseManager.initializeInstance(deHelper);
-            SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
-            database.acquireReference();
-            RecommendListDao redListDao = new RecommendListDao(database);
+        DataBaseHelper deHelper = new DataBaseHelper(mContext);
+        DataBaseManager.initializeInstance(deHelper);
+        DataBaseManager databaseManager = DataBaseManager.getInstance();
 
-            //DB保存前に前回取得したデータは全消去する
-            if (!addFlag) { // ページングの場合、削除しない
-                switch (tagPageNo) {
-                    case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_HOME_TV:
-                    case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_HOME_VIDEO:
-                    case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV:
-                    case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO:
-                    case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL:
-                    case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV:
-                    case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME:
-                        redListDao.delete(tagPageNo);
-                        break;
-                    default:
-                        break;
-                }
-            }
+        synchronized (databaseManager) {
+            try {
+                SQLiteDatabase database = databaseManager.openDatabase();
+                //各種オブジェクト作成
+                List<Map<String, String>> hashMaps = redChList.getmRcList();
+                database.acquireReference();
+                RecommendListDao redListDao = new RecommendListDao(database);
 
-            //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
-            for (int i = 0; i < hashMaps.size(); i++) {
-                Iterator entries = hashMaps.get(i).entrySet().iterator();
-                ContentValues values = new ContentValues();
-                while (entries.hasNext()) {
-                    Map.Entry entry = (Map.Entry) entries.next();
-                    String keyName = (String) entry.getKey();
-                    String valName = (String) entry.getValue();
-                    values.put(keyName, valName);
+                //DB保存前に前回取得したデータは全消去する
+                if (!addFlag) { // ページングの場合、削除しない
+                    switch (tagPageNo) {
+                        case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_HOME_TV:
+                        case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_HOME_VIDEO:
+                        case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV:
+                        case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO:
+                        case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL:
+                        case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV:
+                        case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME:
+                            redListDao.delete(tagPageNo);
+                            break;
+                        default:
+                            break;
+                    }
                 }
-                redListDao.insert(values, tagPageNo);
+
+                //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
+                for (int i = 0; i < hashMaps.size(); i++) {
+                    Iterator entries = hashMaps.get(i).entrySet().iterator();
+                    ContentValues values = new ContentValues();
+                    while (entries.hasNext()) {
+                        Map.Entry entry = (Map.Entry) entries.next();
+                        String keyName = (String) entry.getKey();
+                        String valName = (String) entry.getValue();
+                        values.put(keyName, valName);
+                    }
+                    redListDao.insert(values, tagPageNo);
+                }
+                DTVTLogger.debug(String.format("RecommendListDao.insert [%s] size[%s]", DataBaseUtils.getRecommendTableName(tagPageNo), hashMaps.size()));
+                DateUtils dateUtils = new DateUtils(mContext);
+                dateUtils.addLastDate(cacheDateKey);
+            } catch (SQLiteException e) {
+                DTVTLogger.debug("RecommendListDataManager::insertRecommendInsertList, e.cause=" + e.getCause());
+            } finally {
+                DataBaseManager.getInstance().closeDatabase();
             }
-            DTVTLogger.debug(String.format("RecommendListDao.insert [%s] size[%s]", DataBaseUtils.getRecommendTableName(tagPageNo), hashMaps.size()));
-            DateUtils dateUtils = new DateUtils(mContext);
-            dateUtils.addLastDate(cacheDateKey);
-        } catch (SQLiteException e) {
-            DTVTLogger.debug("RecommendListDataManager::insertRecommendInsertList, e.cause=" + e.getCause());
-        } finally {
-            DataBaseManager.getInstance().closeDatabase();
         }
     }
 
@@ -133,7 +137,7 @@ public class RecommendListDataManager {
                 if (!DataBaseUtils.isCachingRecord(database, DataBaseUtils.getRecommendTableName(tagPageNo))) {
                     DTVTLogger.debug(String.format("Database table [%s] data not exist", DataBaseUtils.getRecommendTableName(tagPageNo)));
                     DataBaseManager.getInstance().closeDatabase();
-                    return recommendContentInfoList;
+                    return null;
                 }
                 RecommendListDao redListDao = new RecommendListDao(database);
 
@@ -160,6 +164,7 @@ public class RecommendListDataManager {
                 recommendContentInfoList = new ArrayList<>();
                 if (resultList.size() == 0) {
                     DTVTLogger.debug(String.format("Database table [%s] data size 0", DataBaseUtils.getRecommendTableName(tagPageNo)));
+                    DataBaseManager.getInstance().closeDatabase();
                     return recommendContentInfoList;
                 }
                 DTVTLogger.debug(String.format("Database table [%s] resultList size[%s]", DataBaseUtils.getRecommendTableName(tagPageNo), resultList.size()));
