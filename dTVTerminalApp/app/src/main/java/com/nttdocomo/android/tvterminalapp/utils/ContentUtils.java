@@ -1420,6 +1420,10 @@ public class ContentUtils {
      */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
     public static boolean isPureContents(final ContentUtils.ContentsType contentsType){
+        if (contentsType == null) {
+            // コンテンツ取得に失敗していれば判定不可
+            return false;
+        }
         switch (contentsType) {
             case PURE_DTV:
             case PURE_DTV_CHANNEL:
