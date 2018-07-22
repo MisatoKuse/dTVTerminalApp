@@ -1047,6 +1047,7 @@ public class TvProgramListActivity extends BaseActivity implements
                 loadMyChannel(channelList);
             } else {
                 //ひかりTVデータなしの場合
+
             }
         } else {
             //ひかり、dTVチャンネル
@@ -1087,7 +1088,6 @@ public class TvProgramListActivity extends BaseActivity implements
         DTVTLogger.end();
     }
 
-    //TODO 作業箇所(https://agile.apccloud.jp/jira/browse/DREM-2508)
     /**
      * My番組表ロード.
      * @param channelList チャンネルリスト
@@ -1376,6 +1376,11 @@ public class TvProgramListActivity extends BaseActivity implements
         if (mTvProgramListAdapter != null) {
             mTvProgramListAdapter.enableConnect();
         }
+        //チャンネル情報未取得なら取得を動作させる
+        if (mMyChannelDataList == null || mHikariChannels == null) {
+            getChannelData();
+        }
+
         DTVTLogger.end();
     }
 
