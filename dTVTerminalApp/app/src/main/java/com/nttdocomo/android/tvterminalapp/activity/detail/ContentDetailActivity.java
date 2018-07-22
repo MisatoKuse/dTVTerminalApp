@@ -1065,8 +1065,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (position == 1) {
                     getChannelFragment().initLoad();
                     showChannelProgressBar(true);
+                    loadHandler.post(loadRunnable);                } else {
+                    //詳細タブで既に詳細データ取得が完了していればリクエストしない
+                    if (mDetailFullData == null) {
+                        loadHandler.post(loadRunnable);
+                    }
                 }
-                loadHandler.post(loadRunnable);
             }
         });
         //レコメンド（serviceId 44）若しくはぷららの場合
@@ -1614,10 +1618,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      */
     private void responseResultCheck(final ContentUtils.ViewIngType viewIngType, final ContentUtils.ContentsType contentsType) {
         if (mContentsDetailDataProvider == null
-                || !mContentsDetailDataProvider.isIsInContentsDetailRequest()
-                && !mContentsDetailDataProvider.isIsInRentalChListRequest()
-                && !mContentsDetailDataProvider.isIsInRentalVodListRequest()
-                && !mContentsDetailDataProvider.isIsInRoleListRequest()) {
+                || (!mContentsDetailDataProvider.isIsInContentsDetailRequest()
+                    && !mContentsDetailDataProvider.isIsInRentalChListRequest()
+                    && !mContentsDetailDataProvider.isIsInRentalVodListRequest()
+                    && !mContentsDetailDataProvider.isIsInRoleListRequest())) {
             displayThumbnail(contentsType, mViewIngType);
             getDetailFragment().changeVisibilityRecordingReservationIcon(viewIngType, contentsType);
             getDetailFragment().noticeRefresh();
