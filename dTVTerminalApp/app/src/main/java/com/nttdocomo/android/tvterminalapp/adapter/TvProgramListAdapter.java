@@ -289,8 +289,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private class ItemViewHolder {
         /**レイアウトインフレーター.*/
         private View mView = null;
-        /**同じビュー使用されてるか.*/
-        private boolean mInUsage = false;
         /**開始時間TextView.*/
         TextView mStartM = null;
         /**コンテンツ説明TextView.*/
@@ -328,7 +326,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             mDetail = mView.findViewById(R.id.tv_program_item_panel_content_detail_tv);
             mDetail.setVisibility(View.INVISIBLE);
             mLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-            mInUsage = false;
             mClipButton = mView.findViewById(R.id.tv_program_item_panel_clip_iv);
             mClipButton.setVisibility(View.INVISIBLE);
         }
@@ -405,10 +402,11 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams)lp;
             int startMargin = mContext.getResources().getDimensionPixelSize(R.dimen.tv_program_item_panel_margin_right);
             mlp.setMargins(startMargin, 0, 0, 0);
-            //マージンを設定
+            itemViewHolder.mLayoutParams.height = (int) ((((TvProgramListActivity) mContext).dip2px(ONE_HOUR_UNIT)));
+            itemViewHolder.mView.setLayoutParams(itemViewHolder.mLayoutParams);
+
             itemViewHolder.mContent.setLayoutParams(mlp);
             itemViewHolder.mContent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, GET_CONTENT_ERROR_TEXT_SIZE);
-            itemViewHolder.mContent.setMaxLines(1);
             itemViewHolder.mContent.setText(title);
         } else {
             layout.setVisibility(View.VISIBLE);
