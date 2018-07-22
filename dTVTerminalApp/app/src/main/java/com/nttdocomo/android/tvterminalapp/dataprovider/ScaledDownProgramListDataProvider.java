@@ -292,7 +292,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     @Override
     public void onChannelJsonParsed(final List<ChannelList> channelLists) {
         ArrayList<ChannelInfo> channels = null;
-        if (channelLists != null) {
+        if (channelLists != null && channelLists.size() > 0) {
             mChannelList = channelLists.get(0);
             List<HashMap<String, String>> channelList = mChannelList.getChannelList();
 
@@ -624,7 +624,14 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
 
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.CHANNEL_LAST_UPDATE);
-        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate) || !NetWorkUtils.isOnline(mContext)) {
+        if (TextUtils.isEmpty(lastDate) || (!dateUtils.isBeforeProgramLimitDate(lastDate) && NetWorkUtils.isOnline(mContext))) {
+            if (!mIsStop) {
+                mChannelWebClient = new ChannelWebClient(mContext);
+                mChannelWebClient.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], this);
+            } else {
+                DTVTLogger.error("ScaledDownProgramListDataProvider is stopping connect");
+            }
+        } else {
             //データをDBから取得する
             Handler handler = new Handler(mContext.getMainLooper());
             //チャンネル情報更新
@@ -633,14 +640,6 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 dataBaseThread.start();
             } catch (IllegalThreadStateException e) {
                 DTVTLogger.debug(e);
-                //TODO　:エラー返却した上でUI上に通知が必要
-            }
-        } else {
-            if (!mIsStop) {
-                mChannelWebClient = new ChannelWebClient(mContext);
-                mChannelWebClient.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], this);
-            } else {
-                DTVTLogger.error("ScaledDownProgramListDataProvider is stopping connect");
             }
         }
     }
