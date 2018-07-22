@@ -277,7 +277,6 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             case SCHEDULE_SELECT://DBから番組データを取得して、画面に返却する
                 ProgramDataManager scheduleDataManager = new ProgramDataManager(mContext);
                 mResultSets = scheduleDataManager.selectTvScheduleListProgramData(dataBaseThread.getFromDB(), mProgramSelectDate);
-                mFromDB = new ArrayList<>();
                 resultSet = new ArrayList<>();
                 // 番組データがある場合はダミーで1件の結果セットを返す
                 if (mResultSets != null && mResultSets.size() > 0) {
@@ -580,10 +579,6 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         if (mTvScheduleWebClient != null) {
             mTvScheduleWebClient = null;
         }
-        if (mFromDB != null) {
-            mFromDB.clear();
-            mFromDB = null;
-        }
         if (mResultSets != null) {
             mResultSets.clear();
             mResultSets = null;
@@ -677,22 +672,23 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         String[] lastDate = dateUtils.getChLastDate(chList, mProgramSelectDate);
         //DBから取得するチャンネル情報とWebAPiから取得するチャンネル番号を分ける.
         List<Integer> fromWebAPI = new ArrayList<>();
+        List<String> fromDB = new ArrayList<>();
 
         for (int i = 0; i < lastDate.length; i++) {
             if (dateUtils.isBeforeLimitChDate(lastDate[i])) {
                 fromWebAPI.add(chList[i]);
             } else {
-                mFromDB.add(String.valueOf(chList[i]));
+                fromDB.add(String.valueOf(chList[i]));
             }
         }
 
         //データをDBから取得する
-        if (mFromDB.size() > 0) {
+        if (fromDB.size() > 0) {
             Handler handler = new Handler();
             //チャンネル情報更新
             try {
                 DataBaseThread t = new DataBaseThread(handler, this, SCHEDULE_SELECT);
-                t.setFromDB(mFromDB);
+                t.setFromDB(fromDB);
                 t.start();
             } catch (IllegalThreadStateException e) {
                 DTVTLogger.debug(e);
