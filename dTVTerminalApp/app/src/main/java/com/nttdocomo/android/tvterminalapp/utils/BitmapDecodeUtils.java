@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -144,31 +145,33 @@ public class BitmapDecodeUtils {
      * @return bitmap
      */
     public static Bitmap createScaleBitmap(final Context context, final Bitmap srcBitmap, final ThumbnailDownloadTask.ImageSizeType imageSizeType) {
-        int dstWidth = 0;
-        int dstHeight = 0;
+        float dstWidth = 0;
         switch (imageSizeType) {
             case HOME_LIST:
                 dstWidth = (int) context.getResources().getDimension(R.dimen.home_contents_thumbnail_width);
-                dstHeight = (int) context.getResources().getDimension(R.dimen.home_contents_thumbnail_height);
                 break;
             case TV_PROGRAM_LIST:
                 dstWidth = (int) context.getResources().getDimension(R.dimen.panel_content_thumbnail_width);
-                dstHeight = (int) context.getResources().getDimension(R.dimen.panel_content_thumbnail_height);
                 break;
             case LIST:
                 dstWidth = (int) context.getResources().getDimension(R.dimen.watch_listen_thumbnail_high);
-                dstHeight = (int) context.getResources().getDimension(R.dimen.watch_listen_thumbnail_width);
                 break;
             case CHANNEL:
                 dstWidth = (int) context.getResources().getDimension(R.dimen.channel_list_thumbnail_width);
-                dstHeight = (int) context.getResources().getDimension(R.dimen.channel_list_thumbnail_height);
                 break;
             case CONTENT_DETAIL:
             default:
                 break;
         }
-        if (dstWidth > 0 && srcBitmap != null) {
-            return Bitmap.createScaledBitmap(srcBitmap, dstWidth, dstHeight, false);
+        float ratio = 0;
+        if (srcBitmap != null) {
+            ratio = srcBitmap.getWidth() / dstWidth;
+        }
+        if (ratio > 0) {
+            Matrix matrix = new Matrix();
+            matrix.postScale(ratio, ratio);
+            return Bitmap.createBitmap(srcBitmap, 0, 0, srcBitmap.getWidth(),
+                    srcBitmap.getHeight(), matrix, true);
         }
         return srcBitmap;
     }
