@@ -575,6 +575,13 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     }
 
     /**
+     * メッセージ発信を止める.
+     */
+    public void removeSendMessage() {
+        viewRefresher.removeMessages(REFRESH_VIDEO_VIEW);
+    }
+
+    /**
      * 外部出力制御リスナー.
      */
     private static final ExternalDisplayHelper.OnDisplayEventListener DISPLAY_EVENT_LISTENER = new ExternalDisplayHelper.OnDisplayEventListener() {
@@ -1129,7 +1136,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
      * initView player.
      * @param playStartPosition 再生開始ポジション
      */
-    public void initSecurePlayer(final int playStartPosition) {
+    public boolean initSecurePlayer(final int playStartPosition) {
         DTVTLogger.start();
         setCanPlay(false);
         mPlayerController = new SecuredMediaPlayerController(mContext, true, true, true);
@@ -1144,18 +1151,19 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         boolean result = DlnaUtils.getActivationState(mContext);
         if (!result) {
             mPlayerStateListener.onErrorCallBack(PlayerErrorType.ACTIVATION);
-            return;
+            return false;
         } else {
             String privateHomePath = DlnaUtils.getPrivateDataHomePath(mContext);
             int ret = mPlayerController.dtcpInit(privateHomePath);
             if (ret != MediaPlayerDefinitions.SP_SUCCESS) {
                 mPlayerStateListener.onErrorCallBack(PlayerErrorType.ACTIVATION);
-                return;
+                return false;
             }
         }
         mPlayerStateListener.onErrorCallBack(PlayerErrorType.INIT_SUCCESS);
         preparePlayer(playStartPosition);
         DTVTLogger.end();
+        return true;
     }
 
     /**
@@ -1395,7 +1403,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             @Override
             public void onStartTrackingTouch(final SeekBar seekBar) {
                 DTVTLogger.start();
-                viewRefresher.removeMessages(REFRESH_VIDEO_VIEW);
+                removeSendMessage();
                 DTVTLogger.end();
             }
 
@@ -1568,7 +1576,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 release();
             }
         }
-        viewRefresher.removeMessages(REFRESH_VIDEO_VIEW);
+        removeSendMessage();
         showPlayingProgress(false);
         stopThumbnailConnect();
         return result;

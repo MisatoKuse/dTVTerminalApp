@@ -412,15 +412,24 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (mPlayerData == null || mPlayerData.isRemote()) {
                     setRemotePlayArrow(mPlayerData);
                 } else {
-                    mPlayerViewLayout.initSecurePlayer(mPlayStartPosition);
+                    if (mPlayerViewLayout.initSecurePlayer(mPlayStartPosition)) {
+                        mThumbnailBtn.setVisibility(View.GONE);
+                        mContractLeadingView.setVisibility(View.GONE);
+                        mThumbnail.setVisibility(View.GONE);
+                        mPlayerViewLayout.setPlayerEvent();
+                        mPlayerViewLayout.setUserAgeInfo();
+                        mThumbnailBtn.setVisibility(View.GONE);
+                    }
+                }
+            } else {
+                if (mPlayerViewLayout.initSecurePlayer(mPlayStartPosition)) {
+                    mThumbnailBtn.setVisibility(View.GONE);
+                    mContractLeadingView.setVisibility(View.GONE);
+                    mThumbnail.setVisibility(View.GONE);
                     mPlayerViewLayout.setPlayerEvent();
                     mPlayerViewLayout.setUserAgeInfo();
                     mThumbnailBtn.setVisibility(View.GONE);
                 }
-            } else {
-                mPlayerViewLayout.initSecurePlayer(mPlayStartPosition);
-                mPlayerViewLayout.setPlayerEvent();
-                mPlayerViewLayout.setUserAgeInfo();
             }
         }
     }
@@ -592,9 +601,6 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * @param playerData 再生データ
      */
     private void initPlayer(final RecordedContentsDetailData playerData) {
-        mThumbnailBtn.setVisibility(View.GONE);
-        mContractLeadingView.setVisibility(View.GONE);
-        mThumbnail.setVisibility(View.GONE);
         mPlayerViewLayout = findViewById(R.id.dtv_contents_detail_main_layout_player_rl);
         mPlayerViewLayout.setPlayerStateListener(this);
         initDisplayMetrics();
@@ -2445,6 +2451,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         });
         closeDialog.setOnTouchOutside(false);
         closeDialog.setCancelable(false);
+        closeDialog.setOnTouchBackkey(false);
         closeDialog.showDialog();
     }
 
@@ -2762,10 +2769,15 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 break;
         }
         if (msg != null) {
-            showDialogToConfirmClose(msg);
+            if (mDetailFullData != null) {
+                showDialogToConfirm(msg);
+            } else {
+                showDialogToConfirmClose(msg);
+            }
         }
         if (!isInit) {
             mPlayerViewLayout.showPlayingProgress(false);
+            mPlayerViewLayout.removeSendMessage();
         }
     }
 
@@ -2787,6 +2799,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             DTVTLogger.debug("close");
             showDialogToConfirmClose(errorMsg);
         }
+        mPlayerViewLayout.removeSendMessage();
     }
 
     @Override
