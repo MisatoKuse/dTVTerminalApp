@@ -1008,13 +1008,13 @@ public class TvProgramListActivity extends BaseActivity implements
                     //Nullの時のダミーデータ生成
                     if (chNo.length > 0) {
                         ChannelInfoList channelsInfoList = new ChannelInfoList();
-                        ArrayList<ScheduleInfo> scheduleInfoList = new ArrayList<>();
-                        ChannelInfo channel = new ChannelInfo();
                         for (int aChNo : chNo) {
+                            ArrayList<ScheduleInfo> scheduleInfoList = new ArrayList<>();
+                            ChannelInfo channel = new ChannelInfo();
                             //チャンネル番号がある時のみデータを生成する
                             ScheduleInfo mSchedule = DataConverter.convertScheduleInfo(DataConverter.getDummyContentMap(getApplicationContext(), String.valueOf(aChNo), true), null);
                             scheduleInfoList.add(mSchedule);
-                            channel.setChannelNo(Integer.parseInt(mSchedule.getChNo()));
+                            channel.setChannelNo(aChNo);
                             channel.setTitle(mSchedule.getTitle());
                             channel.setSchedules(scheduleInfoList);
                             channelsInfoList.addChannel(channel);

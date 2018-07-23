@@ -316,7 +316,7 @@
     <string name="contents_detail_hikari_vod_agreement">ご覧になるにはコンテンツの契約が必要です。\nドコモテレビターミナルで契約してください。</string>
     <string name="contents_detail_no_agreement">視聴いただくには契約が必要です</string>
     <string-array name="contents_detail_tab_vod">
-        <item>@string/contents_detail_tab_program_detail</item>
+        <item>@string/contents_detail_tab_contents_info</item>
     </string-array>
     <string-array name="contents_detail_tab_other_service">
         <item>@string/contents_detail_tab_contents_info</item>

@@ -711,13 +711,8 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                         mTvScheduleWebClient = new TvScheduleWebClient(mContext);
                         mTvScheduleWebClient.getTvScheduleApi(chNos, dateList, filter, this);
                     }
-                } else if (isTvProgramList) {
-                    //番組表レスポンスの時はチャンネルリスト数分のレスポンスを返却する
-                    for (int aChList : chList) {
-                        mApiDataProviderCallback.channelInfoCallback(null, new int[]{aChList});
-                    }
                 } else {
-                    mApiDataProviderCallback.channelInfoCallback(null, chList);
+                    sendChannelInfoList(null, chList);
                 }
             }
         } else {
@@ -839,7 +834,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      */
     private void sendChannelInfoList(final ChannelInfoList channelsInfo, final int[] chNo) {
         DTVTLogger.start();
-        if (null != mApiDataProviderCallback) {
+        if (null != mApiDataProviderCallback && !mIsStop) {
             DTVTLogger.debug("null != mApiDataProviderCallback");
             mApiDataProviderCallback.channelInfoCallback(channelsInfo, chNo);
         }
@@ -852,7 +847,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      */
     private void sendChannelInfoArray(final ArrayList<ChannelInfo> channels) {
         DTVTLogger.start();
-        if (null != mApiDataProviderCallback) {
+        if (null != mApiDataProviderCallback && !mIsStop) {
             DTVTLogger.debug("null != mApiDataProviderCallback");
 
             if (channels == null) {

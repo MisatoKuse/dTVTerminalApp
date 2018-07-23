@@ -388,8 +388,13 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
 
     @Override
     public void videoContentCallback(final List<ContentsData> videoHashMap) {
-        showProgressBar(false);
-        setShowVideoContent(videoHashMap);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                showProgressBar(false);
+                setShowVideoContent(videoHashMap);
+            }
+        });
     }
 
     @Override

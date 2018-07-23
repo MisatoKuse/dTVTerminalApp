@@ -1023,17 +1023,14 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 mIsControllerVisible = true;
             }
         }
-        boolean isTV = false;
         if (mIsOtherService) {
             String date = "";
             ContentUtils.ContentsType contentsType = ContentUtils.
                     getContentsTypeByRecommend(mDetailData.getServiceId(), mDetailData.getCategoryId());
+            //日付表示は一覧系画面と同じように判定する
             if (contentsType == ContentUtils.ContentsType.TV) {
-                isTV = true;
                 //番組(m/d（曜日）h:ii - h:ii)
                 date = DateUtils.getContentsDateString(mDetailData.getmStartDate(), mDetailData.getmEndDate());
-                // コンテンツ詳細(TVの場合は、チャンネルタブを追加設定する)
-                mTabNames = getResources().getStringArray(R.array.contents_detail_tabs_tv_ch);
             } else {
                 if (contentsType == ContentUtils.ContentsType.VOD) {
                     if (DateUtils.isBefore(mDetailData.getmStartDate())) {
@@ -1046,9 +1043,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         }
                     }
                 }
-                // コンテンツ詳細(VODの場合、タブ一つに設定する)
-                mTabNames = getResources().getStringArray(R.array.contents_detail_tab_other_service);
             }
+            // コンテンツ詳細(他サービスの場合、タブ一つに設定する)
+            mTabNames = getResources().getStringArray(R.array.contents_detail_tab_other_service);
             mDetailData.setChannelDate(date);
         } else {
             // ディフォルトはチャンネルタブを付いて、コールバック来たら、再設定
@@ -1082,18 +1079,12 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             findViewById(R.id.remote_control_view).setVisibility(View.INVISIBLE);
             getScheduleDetailData();
         } else {
-            mServiceId = mDetailData.getChannelId();
-            if (isTV && !TextUtils.isEmpty(mServiceId)) {
-                showProgressBar(true);
-                getChannelInfo();
-            } else {
-                sendOperateLog();
-                showProgressBar(false);
-            }
-
+            sendOperateLog();
             if (!mDetailData.getIsTranslateFromSearchFlag()) {
                 showProgressBar(true);
                 getContentDetailInfoFromSearchServer();
+            } else {
+                showProgressBar(false);
             }
         }
         DTVTLogger.end();
