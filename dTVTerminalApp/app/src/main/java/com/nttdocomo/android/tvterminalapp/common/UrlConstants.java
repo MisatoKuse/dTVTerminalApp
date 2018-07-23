@@ -22,9 +22,9 @@ public class UrlConstants {
         public static final String STB_REGIST_D_ACCOUNT_URL = "https://apl.d.dmkt-sp.jp/dtv2/tvt_sp/support/idRegist.html";
 
         /**
-         * DTVグーグルショップ起動URL.
+         * DTVアプリGoogle Play ストア‎URL.
          */
-        public static final String GOOGLEPLAY_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=jp.co.nttdocomo.dtv";
+        public static final String DTV_GOOGLEPLAY_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=jp.co.nttdocomo.dtv";
         /**
          * DTV起動URL.
          */
@@ -39,7 +39,7 @@ public class UrlConstants {
         public static final String TITTLE_START_TYPE = "dmktvideosc:///openTitle?titleId=";
 
         /**
-         * dアニメストアグーグルショップ起動用URL.
+         * dアニメストアアプリGoogle Play ストア‎URL.
          */
         public static final String DANIMESTORE_GOOGLEPLAY_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=com.nttdocomo.android.danimeapp";
         /**
@@ -56,7 +56,7 @@ public class UrlConstants {
          */
         public static final String DTVCHANNEL_VIDEO_START_URL = "dch://android.dch.nttdocomo.com/viewing_video?crid=";
         /**
-         * dTVチャンネルグーグルショップ起動用URL.
+         * dTVチャンネルアプリGoogle Play ストア‎URL.
          */
         public static final String DTVCHANNEL_GOOGLEPLAY_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=com.nttdocomo.dch";
 
@@ -101,10 +101,9 @@ public class UrlConstants {
         public final static String SETTING_SUPPORT_PAIRING_URL = "https://apl.d.dmkt-sp.jp/dtv2/tvt_sp/support/pairing.html";
 
         /**
-         * ドコテレアプリのGoogle Play ストア‎URL.
-         * TODO: ドコテレアプリのアプリURLが未済のため、仮のURLを指定
+         * ドコテレアプリGoogle Play ストア‎URL.
          */
-        public static final String GOOGLEPLAY_DOWNLOAD_MY_URL = "https://play.google.com/store/apps/details?id=jp.co.nttdocomo.dtv";
+        public static final String DTVT_GOOGLEPLAY_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=com.nttdocomo.android.tvterminalapp";
 
         /**
          * 契約ページのURL.

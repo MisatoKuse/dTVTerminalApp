@@ -247,7 +247,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
             //GooglePlayの起動対象ならば、起動を行う
             if (mCheckSetting.isGooglePlay()) {
-                toGooglePlay(UrlConstants.WebUrl.GOOGLEPLAY_DOWNLOAD_MY_URL);
+                toGooglePlay(UrlConstants.WebUrl.DTVT_GOOGLEPLAY_DOWNLOAD_URL);
                 mCheckSetting.setGooglePlay(false);
 
                 if (mDaccountStatus) {
