@@ -120,6 +120,9 @@ public class ChildContentListActivity extends BaseActivity implements
      */
     private float mStartY = 0;
 
+    /** ロード終了. */
+    private boolean mIsEndPage = false;
+
     // endregion variable
 
     // region Activity LifeCycle
@@ -191,11 +194,10 @@ public class ChildContentListActivity extends BaseActivity implements
         DTVTLogger.start();
 
         //データプロパイダあれば通信を許可し、無ければ作成
-        if (mChildContentDataProvider != null) {
-            mChildContentDataProvider.enableConnect();
-        } else {
+        if (mChildContentDataProvider == null) {
             mChildContentDataProvider = new ChildContentDataProvider(this);
         }
+        mChildContentDataProvider.enableConnect();
 
         //アダプタがあれば更新を行い、無ければデータの取得を行う
         if (mContentsAdapter != null) {
@@ -273,6 +275,9 @@ public class ChildContentListActivity extends BaseActivity implements
 
     @Override
     public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
+        if (mIsEndPage) {
+            return;
+        }
         synchronized (this) {
             if (null == mContentsAdapter) {
                 return;
@@ -311,6 +316,9 @@ public class ChildContentListActivity extends BaseActivity implements
             @Override
             public void run() {
                 showProgressBar(false);
+                if (contentsDataList != null && clipStatusContentsDataList.size() < DtvtConstants.REQUEST_LIMIT_50) {
+                    mIsEndPage = true;
+                }
                 displayChildContentList(clipStatusContentsDataList);
             }
         });
