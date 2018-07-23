@@ -107,6 +107,11 @@ public class ClipListActivity extends BaseActivity implements
      */
     private static final String TAB_INDEX = "tabIndex";
 
+    /** ロード終了. */
+    private boolean mIsEndPageVOD = false;
+    /** ロード終了. */
+    private boolean mIsEndPageTV = false;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -343,6 +348,10 @@ public class ClipListActivity extends BaseActivity implements
                     return;
                 }
 
+                if (clipContentInfo.size() < DtvtConstants.REQUEST_LIMIT_50) {
+                    mIsEndPageTV = true;
+                }
+
 	            if (0 == clipContentInfo.size()) {
                     //doing
                     if (fragment.getClipListDataSize() == 0) {
@@ -419,6 +428,10 @@ public class ClipListActivity extends BaseActivity implements
                     }
 
                     return;
+                }
+
+                if (clipContentInfo.size() < DtvtConstants.REQUEST_LIMIT_50) {
+                    mIsEndPageVOD = true;
                 }
 
                 if (0 == clipContentInfo.size()) {
@@ -514,6 +527,10 @@ public class ClipListActivity extends BaseActivity implements
     @Override
     public void onScrollStateChanged(final ClipListBaseFragment fragment,
                                      final AbsListView absListView, final int scrollState) {
+        if ((getCurrentPosition() == CLIP_LIST_PAGE_NO_OF_VOD &&  mIsEndPageVOD)
+                || getCurrentPosition() == CLIP_LIST_PAGE_NO_OF_TV && mIsEndPageTV) {
+            return;
+        }
         synchronized (this) {
             DTVTLogger.start();
             ClipListBaseFragment baseFragment = getCurrentFragment();

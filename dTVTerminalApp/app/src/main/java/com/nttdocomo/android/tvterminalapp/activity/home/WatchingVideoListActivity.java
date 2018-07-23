@@ -116,6 +116,9 @@ public class WatchingVideoListActivity extends BaseActivity implements
      * リスト0件メッセージ.
      */
     private TextView mNoDataMessage;
+    /** ロード終了. */
+    private boolean mIsEndPage = false;
+
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -293,8 +296,12 @@ public class WatchingVideoListActivity extends BaseActivity implements
                     return;
                 }
 
-                for (int i = 0; i < NUM_PER_PAGE && i < watchListenVideoContentInfo.size(); i++) {
+                for (int i = 0; i < DtvtConstants.REQUEST_LIMIT_50 && i < watchListenVideoContentInfo.size(); i++) {
                     mWatchingVideoListData.add(watchListenVideoContentInfo.get(i));
+                }
+
+                if (watchListenVideoContentInfo.size() < DtvtConstants.REQUEST_LIMIT_50) {
+                    mIsEndPage = true;
                 }
 
                 if (0 == mWatchingVideoListData.size()) {
@@ -415,6 +422,9 @@ public class WatchingVideoListActivity extends BaseActivity implements
 
     @Override
     public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
+        if (mIsEndPage) {
+            return;
+        }
         synchronized (this) {
             if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
                     && absListView.getLastVisiblePosition() == mListView.getAdapter().getCount() - 1) {
