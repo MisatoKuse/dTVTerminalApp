@@ -33,6 +33,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -194,6 +195,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private RelativeLayout mThumbnailRelativeLayout = null;
     /**サムネイルイメージビュー.*/
     private ImageView mThumbnail = null;
+    /**再生アイコン.*/
+    private ImageView mPlayIcon;
+    /**再生前くるくる処理.*/
+    private ProgressBar mProgressBar;
     /** ひかりTVリトライ用のDLNAオブジェクト */
     private DlnaObject mDlnaObject = null;
     /** ひかりTVリトライ時にリモート扱いするかどうかのフラグ. */
@@ -413,7 +418,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     setRemotePlayArrow(mPlayerData);
                 } else {
                     if (mPlayerViewLayout.initSecurePlayer(mPlayStartPosition)) {
-                        mThumbnailBtn.setVisibility(View.GONE);
+                        showPlayIcon(false);
                         mContractLeadingView.setVisibility(View.GONE);
                         mThumbnail.setVisibility(View.GONE);
                         mPlayerViewLayout.setPlayerEvent();
@@ -423,7 +428,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 }
             } else {
                 if (mPlayerViewLayout.initSecurePlayer(mPlayStartPosition)) {
-                    mThumbnailBtn.setVisibility(View.GONE);
+                    showPlayIcon(false);
                     mContractLeadingView.setVisibility(View.GONE);
                     mThumbnail.setVisibility(View.GONE);
                     mPlayerViewLayout.setPlayerEvent();
@@ -602,6 +607,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      */
     private void initPlayer(final RecordedContentsDetailData playerData) {
         mPlayerViewLayout = findViewById(R.id.dtv_contents_detail_main_layout_player_rl);
+        mPlayerViewLayout.setVisibility(View.VISIBLE);
         mPlayerViewLayout.setPlayerStateListener(this);
         initDisplayMetrics();
         int width = getWidthDensity();
@@ -2823,7 +2829,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
                             @Override
                             public void run() {
-                                showPlayerProgressBar(false);
+                                showRemotePlayingProgress(false);
                                 if (dlnaObject != null) {
                                     //リトライの時の為に控えておく
                                     mDlnaObject = dlnaObject;
@@ -2842,7 +2848,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                showPlayerProgressBar(false);
+                                showRemotePlayingProgress(false);
                                 showGetDataFailedToast();
                             }
                         });
@@ -2855,8 +2861,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                showPlayerProgressBar(false);
+                                showRemotePlayingProgress(false);
                                 showErrorDialog(errorMsg.replace(format, String.valueOf(errorCode)));
+                                setRemotePlayArrow(null);
                             }
                         });
                     }
@@ -2868,7 +2875,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             //変換後のチャンネルIDを使用して呼び出す
             provider.findChannelByChannelNo(String.valueOf(convertedChannelNumber));
         } else {
-            showPlayerProgressBar(false);
+            showRemotePlayingProgress(false);
             DTVTLogger.error("dlnaDmsItem == null");
         }
     }
@@ -3221,26 +3228,34 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         DTVTLogger.start();
         //再生ボタンは宅外かつ契約があるときのみ表示
         if (UserInfoUtils.isContract(this)) {
+            if (mPlayerViewLayout != null) {
+                mPlayerViewLayout.setVisibility(View.GONE);
+            }
             setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
-            mThumbnailBtn.setVisibility(View.VISIBLE);
-            ImageView imageView = findViewById(R.id.dtv_contents_view_button);
-            Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.mediacontrol_icon_tap_play_arrow2);
-            imageView.setImageBitmap(bmp);
-            int pixelSize = getResources().getDimensionPixelSize(R.dimen.contents_detail_player_media_controller_size);
-            imageView.setLayoutParams(new LinearLayout.LayoutParams(pixelSize, pixelSize));
-            mThumbnailBtn.setOnClickListener(new View.OnClickListener() {
+            showPlayIcon(true);
+            mPlayIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(final View view) {
+                public void onClick(final View v) {
                     if (isFastClick()) {
                         switch (StbConnectionManager.shared().getConnectionStatus()) {
                             case NONE_LOCAL_REGISTRATION:
                                 showErrorDialog(getString(R.string.contents_detail_out_house_player_error_msg));
                                 break;
                             case HOME_OUT:
+                                if (mDetailFullData != null) {
+                                    mPlayerData = null;
+                                    showRemotePlayingProgress(true);
+                                    getMultiChannelData();
+                                } else {
+                                    if (playData != null) {
+                                        initPlayer(playData);
+                                    }
+                                }
+                                break;
                             case HOME_OUT_CONNECT:
                             case HOME_IN:
                                 if (playData == null) {
-                                    showPlayerProgressBar(true);
+                                    showRemotePlayingProgress(true);
                                     getMultiChannelData();
                                 } else {
                                     initPlayer(playData);
@@ -3265,13 +3280,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         DTVTLogger.start();
 
         setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
-        mThumbnailBtn.setVisibility(View.VISIBLE);
-        ImageView imageView = findViewById(R.id.dtv_contents_view_button);
-        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.mediacontrol_icon_tap_play_arrow2);
-        imageView.setImageBitmap(bmp);
-        int pixelSize = getResources().getDimensionPixelSize(R.dimen.contents_detail_player_media_controller_size);
-        imageView.setLayoutParams(new LinearLayout.LayoutParams(pixelSize, pixelSize));
-        mThumbnailBtn.setOnClickListener(new View.OnClickListener() {
+        showPlayIcon(true);
+        mPlayIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
                 if (isFastClick()) {
@@ -3285,7 +3295,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
         //各ウェイト表示を消す
         showProgressBar(false);
-        showPlayerProgressBar(false);
+        showRemotePlayingProgress(false);
         showChannelProgressBar(false);
 
         if (mPlayerViewLayout != null) {
@@ -3295,22 +3305,51 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     }
 
     /**
-     * リモート接続、ブラウズ.
-     * @param showProgress プログレス進捗
+     * 再生中のくるくる処理.
+     * @param isShow true 表示　false 非表示
      */
-    private void showPlayerProgressBar(final boolean showProgress) {
-        //画面部品のヌルチェックを追加
-        View buttonView = findViewById(R.id.dtv_contents_view_button);
-        View progressView = findViewById(R.id.dtv_contents_view_progress);
-        if (buttonView == null || progressView == null) {
-            return;
+    private void showRemotePlayingProgress(final boolean isShow) {
+        if (mProgressBar == null) {
+            mProgressBar = new ProgressBar(ContentDetailActivity.this, null, android.R.attr.progressBarStyle);
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+            mProgressBar.setLayoutParams(layoutParams);
         }
-
-        if (showProgress) {
-            buttonView.setVisibility(View.GONE);
-            progressView.setVisibility(View.VISIBLE);
+        if (isShow) {
+            showPlayIcon(false);
+            mThumbnailRelativeLayout.removeView(mProgressBar);
+            mThumbnailRelativeLayout.addView(mProgressBar);
+            mProgressBar.setVisibility(View.VISIBLE);
         } else {
-            progressView.setVisibility(View.GONE);
+            mThumbnailRelativeLayout.removeView(mProgressBar);
+            mProgressBar.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * 再生中のくるくる処理.
+     * @param isShow true 表示　false 非表示
+     */
+    private void showPlayIcon(final boolean isShow) {
+        if (mPlayIcon == null) {
+            mPlayIcon = new ImageView(getApplicationContext());
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                    (int) getResources().getDimension(R.dimen.contents_detail_player_media_controller_size),
+                    (int) getResources().getDimension(R.dimen.contents_detail_player_media_controller_size)
+            );
+            layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+            mPlayIcon.setLayoutParams(layoutParams);
+            mPlayIcon.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            mPlayIcon.setImageResource(R.mipmap.mediacontrol_icon_tap_play_arrow2);
+        }
+        if (isShow) {
+            mThumbnailRelativeLayout.removeView(mPlayIcon);
+            mThumbnailRelativeLayout.addView(mPlayIcon);
+            mPlayIcon.setVisibility(View.VISIBLE);
+        } else {
+            mThumbnailRelativeLayout.removeView(mPlayIcon);
+            mPlayIcon.setVisibility(View.GONE);
         }
     }
 

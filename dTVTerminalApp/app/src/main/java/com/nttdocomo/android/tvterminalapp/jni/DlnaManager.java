@@ -377,17 +377,31 @@ public class DlnaManager {
                     DlnaManager.shared().waitForReady = true;
                     DlnaManager.shared().requestContainerId = containerId;
                     DlnaManager.shared().mPageIndex = pageIndex;
-                    StartDtcp();
-                    RestartDirag();
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            StartDtcp();
+                            RestartDirag();
+                        }
+                    }).start();
                 }
 
                 break;
             case HOME_IN:
-                DlnaDmsItem item = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
-                requestBrowse(pageIndex, containerId, item.mControlUrl);
+                if (!TextUtils.isEmpty(containerId)) {
+                    DlnaDmsItem item = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
+                    requestBrowse(pageIndex, containerId, item.mControlUrl);
+                } else {
+                    DTVTLogger.warning("BrowseContentWithContainerId HOME_IN containerId = " + containerId);
+                }
                 break;
             case HOME_OUT_CONNECT:
-                requestBrowse(pageIndex, containerId, DlnaManager.shared().mHomeOutControlUrl);
+                if (!TextUtils.isEmpty(containerId)) {
+                    requestBrowse(pageIndex, containerId, DlnaManager.shared().mHomeOutControlUrl);
+                } else {
+                    DTVTLogger.warning("BrowseContentWithContainerId HOME_OUT_CONNECT containerId = " + containerId);
+                }
                 break;
             case NONE_LOCAL_REGISTRATION:
             case NONE_PAIRING:
