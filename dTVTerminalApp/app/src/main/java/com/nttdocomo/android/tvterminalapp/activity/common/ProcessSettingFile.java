@@ -375,7 +375,7 @@ public class ProcessSettingFile {
             public void onOKCallback(final boolean isOK) {
                 DTVTLogger.start();
                 //ダウンロードに遷移
-                mActivity.toGooglePlay(UrlConstants.WebUrl.GOOGLEPLAY_DOWNLOAD_MY_URL);
+                mActivity.toGooglePlay(UrlConstants.WebUrl.DTVT_GOOGLEPLAY_DOWNLOAD_URL);
                 DTVTLogger.end();
             }
         });

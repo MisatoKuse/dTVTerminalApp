@@ -1051,7 +1051,7 @@ public class BaseActivity extends FragmentActivity implements
                     @Override
                     public void onOKCallback(final boolean isOK) {
                         DTVTLogger.debug("Application version check incompatible dialog [ok] to GooglePlay");
-                        toGooglePlay(UrlConstants.WebUrl.GOOGLEPLAY_DOWNLOAD_MY_URL);
+                        toGooglePlay(UrlConstants.WebUrl.DTVT_GOOGLEPLAY_DOWNLOAD_URL);
                     }
                 });
                 //次のダイアログを呼ぶ為の処理

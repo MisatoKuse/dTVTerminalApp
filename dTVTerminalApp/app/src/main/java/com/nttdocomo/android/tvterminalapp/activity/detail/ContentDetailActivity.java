@@ -1979,7 +1979,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             installAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                 @Override
                 public void onOKCallback(final boolean isOK) {
-                    toGooglePlay(UrlConstants.WebUrl.GOOGLEPLAY_DOWNLOAD_URL);
+                    toGooglePlay(UrlConstants.WebUrl.DTV_GOOGLEPLAY_DOWNLOAD_URL);
                 }
             });
             installAppDialog.showDialog();
@@ -2102,7 +2102,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             installAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                 @Override
                 public void onOKCallback(final boolean isOK) {
-                    toGooglePlay(UrlConstants.WebUrl.GOOGLEPLAY_DOWNLOAD_URL);
+                    toGooglePlay(UrlConstants.WebUrl.DTV_GOOGLEPLAY_DOWNLOAD_URL);
                 }
             });
             installAppDialog.showDialog();
