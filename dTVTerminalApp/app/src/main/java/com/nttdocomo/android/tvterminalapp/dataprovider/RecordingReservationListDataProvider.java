@@ -142,9 +142,9 @@ public class RecordingReservationListDataProvider implements
      */
     private static final int RECORD_RESERVATION_LOOP_TYPE_NUM_SUN_FRI = 12;
     /**
-     * 毎月.
+     * 定期予約判定Default値.
      */
-    private static final int RECORD_RESERVATION_LOOP_TYPE_NUM_EV_MONTH = 13;
+    private static final int RECORD_RESERVATION_LOOP_TYPE_DEFAULT = 99;
 
     // 現在時刻と比較した次回録画予約日時の定数(MapのKey値)
     /**
@@ -483,40 +483,17 @@ public class RecordingReservationListDataProvider implements
      */
     private void buttRecordingReservationListData() {
         DTVTLogger.start();
-        DTVTLogger.debug("start buff");
         mBuffMatchList = new ArrayList<>();
         List<RemoteRecordingReservationMetaData> stbList = mStbResponse.getRemoteRecordingReservationMetaData();
         List<RecordingReservationMetaData> dRemoteList = mDRemoteResponse.getRecordingReservationMetaData();
+        //Stbリストをすべて格納
         for (RemoteRecordingReservationMetaData stbData : stbList) {
-            for (RecordingReservationMetaData dRemoteData : dRemoteList) {
-                if (stbData.getServiceId().equals(dRemoteData.getServiceId())
-                        && stbData.getEventId().equals(dRemoteData.getEventId())) {
-                    setRecordingReservationContentInfo(dRemoteData);
-                    DTVTLogger.debug("Match Data");
-                    break;
-                }
-            }
+            setRecordingReservationContentInfo(stbData);
         }
-        DTVTLogger.debug("end buff");
         List<RecordingReservationContentInfo> tmpBuffMatchArray = mBuffMatchList;
         DTVTLogger.debug("tmpBuffMatchArray.size() = " + tmpBuffMatchArray.size());
         boolean matchFlag;
-        // STB側データを格納
-        for (RemoteRecordingReservationMetaData stbData : stbList) {
-            matchFlag = false;
-            for (RecordingReservationContentInfo info : tmpBuffMatchArray) {
-                if (stbData.getServiceId().equals(info.getServiceId())
-                        && stbData.getEventId().equals(info.getEventId())) {
-                    matchFlag = true;
-                    DTVTLogger.debug("Match Data");
-                    break;
-                }
-            }
-            if (!matchFlag) {
-                setRecordingReservationContentInfo(stbData);
-            }
-        }
-        // dリモート側データを格納
+        // dリモート側データを格納(Stbリストに既に存在するものは格納しない)
         for (RecordingReservationMetaData dRemoteData : dRemoteList) {
             matchFlag = false;
             for (RecordingReservationContentInfo info : tmpBuffMatchArray) {
@@ -604,6 +581,7 @@ public class RecordingReservationListDataProvider implements
      * @param startTime   開始時間（0時00分00秒からの秒数）
      * @param info        コンテンツデータ
      */
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     private void putBuffMatchListMap(final int loopTypeNum, final long startTime,
                                      final RecordingReservationContentInfo info) {
         Long CONVERSION_ONE_DAY_TO_SEC = 86400L;
@@ -615,7 +593,7 @@ public class RecordingReservationListDataProvider implements
         long nowTimeEpoch = DateUtils.getNowTimeFormatEpoch();
         // レスポンスデータの日時（エポック秒：秒単位）
         long dataTimeEpoch = DateUtils.getTodayStartTimeFormatEpoch() + startTime;
-        int dayLater = 99;
+        int dayLater = RECORD_RESERVATION_LOOP_TYPE_DEFAULT;
         DTVTLogger.debug("toDayOfWeek = " + todayDayOfWeek);
         switch (loopTypeNum) {
             case RECORD_RESERVATION_LOOP_TYPE_NUM_EV_MONDAY: // 毎週月曜日
@@ -777,15 +755,11 @@ public class RecordingReservationListDataProvider implements
                     }
                 }
                 break;
-            case RECORD_RESERVATION_LOOP_TYPE_NUM_EV_MONTH: // 毎月
-                DTVTLogger.debug("case 13");
-                // TODO QA中 DREM-602　毎月の場合の開始時間のフォーマット
-                break;
             default:
                 DTVTLogger.debug("default");
-                return;
+                break;
         }
-        if (dayLater == 99) {
+        if (dayLater == RECORD_RESERVATION_LOOP_TYPE_DEFAULT) {
             int dataDayOfWeek = loopTypeNum + 1;
             DTVTLogger.debug("dataDayOfWeek = " + dataDayOfWeek);
             if (todayDayOfWeek < dataDayOfWeek) {
