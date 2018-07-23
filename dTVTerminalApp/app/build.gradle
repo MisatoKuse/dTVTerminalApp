@@ -9,7 +9,7 @@ android {
         applicationId "com.nttdocomo.android.tvterminalapp"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 12            //★バージョンコード. リリース毎に更新する事
+        versionCode 13            //★バージョンコード. リリース毎に更新する事
         versionName "01.00."    //★メジャーバージョン.マイナーバージョン. リリース毎に更新する事
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -34,7 +34,7 @@ android {
 
     // ★マイナーリリース毎にインクリメントするVersionNameのリビジョン数値(下2桁)
     // ※バージョンが上がったら0リセットすること
-    def revison_end_num = "08"
+    def revison_end_num = "09"
 
     signingConfigs {
         dcmeval {
