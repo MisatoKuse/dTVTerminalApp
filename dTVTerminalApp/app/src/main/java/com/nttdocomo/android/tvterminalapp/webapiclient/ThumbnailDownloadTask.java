@@ -55,7 +55,7 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
     /** SSLチェック用コンテキスト. */
     private final Context mContext;
     /** 通信停止用コネクション蓄積. */
-    private volatile static List<HttpURLConnection> mUrlConnections = null;
+    private volatile List<HttpURLConnection> mUrlConnections = null;
     /** 通信停止フラグ. */
     private boolean mIsStop = false;
     /**画像サイズ種類.*/
@@ -221,7 +221,7 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
                             stopConnection.disconnect();
                         }
                     }
-                    ThumbnailDownloadTask.mUrlConnections.clear();
+                    mUrlConnections.clear();
                 }
             }
         });

@@ -32,35 +32,26 @@ public class ThumbnailCacheManager {
      * コンテクスト.
      */
     private Context mContext = null;
-
     /**
      * メモリキャッシュ.
      */
     private LruCache<String, Bitmap> mMemCache = null;
     /**
-     * キャッシュから取り除かれたビットマップのリスト.
-     */
-    private List<Bitmap> mMemChaeBuf = null;
-    /**
      * ディスクキャッシュ件数.
      */
     private final static int THUMBNAIL_FILE_CACHE_LIMIT = 100;
-
     /**
      * メモリキャッシュ算出時の比率.
      */
     private final static int THUMBNAIL_MEMORY_CACHE_RATE = 8;
-
     /**
      * メモリキャッシュ最小値.
      */
     private final static int THUMBNAIL_MEMORY_CACHE_MINIMUM_SIZE = 1000;
-
     /**
      * サムネイルキャッシュ保存するフォルダ.
      */
     private static final String THUMBNAIL_CACHE = "/thumbnail_cache/";
-
     /**
      * コンストラクタ.
      *
@@ -73,7 +64,7 @@ public class ThumbnailCacheManager {
     /**
      * メモリキャッシュ初期化.
      */
-    public void initMemCache() {
+    public synchronized void initMemCache() {
         //現在の空き容量の8分の1をキャッシュに割り当てる
         long freeMemory = Runtime.getRuntime().freeMemory();
         int cacheSize = (int) (freeMemory / THUMBNAIL_MEMORY_CACHE_RATE);
@@ -102,21 +93,15 @@ public class ThumbnailCacheManager {
             }
 
             @Override
-            protected void entryRemoved(final boolean evicted, final String key, final Bitmap oldValue, final Bitmap newValue) {
-                //キャッシュから古いデータが排除される場合の処理
-
-                //解放ビットマップリストが無いならば作成する
-                if (mMemChaeBuf == null) {
-                    mMemChaeBuf = new ArrayList();
+            protected void entryRemoved(final boolean evicted, final String key, Bitmap oldValue, Bitmap newValue) {
+                synchronized (ThumbnailCacheManager.this) {
+                    //キャッシュから古いデータが排除される場合の処理
+                    if (oldValue != null && !oldValue.isRecycled()) {
+                        oldValue.recycle();
+                        oldValue = null;
+                        System.gc();
+                    }
                 }
-
-                if (oldValue != null && !oldValue.isRecycled()) {
-                    oldValue.isRecycled();
-                    System.gc();
-                }
-                //本来ここで"oldValue.recycle()"を行うべきだが、既に各ビューに渡してしまった画像が、
-                //リサイクル済みとなってしまい異常終了する。そこで、後でまとめてリサイクルを行う為に蓄積を行う
-//                mMemChaeBuf.add(oldValue);
             }
         };
     }
@@ -150,9 +135,12 @@ public class ThumbnailCacheManager {
      * @param url url
      * @return bitmap メモリから取得画像
      */
-    public Bitmap getBitmapFromMem(final String url) {
+    public synchronized Bitmap getBitmapFromMem(final String url) {
         if (mMemCache != null) {
-            return mMemCache.get(url);
+            Bitmap bitmap = mMemCache.get(url);
+            if (bitmap != null && !bitmap.isRecycled()) {
+                return bitmap.copy(Bitmap.Config.ARGB_8888, true);
+            }
         }
         return null;
     }
@@ -163,11 +151,12 @@ public class ThumbnailCacheManager {
      * @param url url
      * @param bitmap 画像
      */
-    public void putBitmapToMem(final String url, final Bitmap bitmap) {
+    public synchronized void putBitmapToMem(final String url, final Bitmap bitmap) {
         if (url != null && bitmap != null && mMemCache != null) {
             //格納先と格納情報がそろっていた場合に蓄積を行う
             if (mMemCache.get(url) == null) {
-                mMemCache.put(url, bitmap);
+                Bitmap copy = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+                mMemCache.put(url, copy);
             }
         }
     }
@@ -285,7 +274,7 @@ public class ThumbnailCacheManager {
     /**
      * メモリキャッシュを解放する.
      */
-    public void removeMemCache() {
+    public synchronized void removeMemCache() {
         DTVTLogger.start();
         //本来のキャッシュのクリア
         if (mMemCache != null) {
@@ -298,21 +287,8 @@ public class ThumbnailCacheManager {
     /**
      * メモリキャッシュを解放する.
      */
-    public void removeAll() {
+    public synchronized void removeAll() {
         DTVTLogger.start();
-        //解放済みビットマップリストの存在確認
-        if (mMemChaeBuf != null) {
-            //リストが存在するならばまとめてリサイクルを行う
-            for (Bitmap bitmap : mMemChaeBuf) {
-                if (!bitmap.isRecycled()) {
-                    bitmap.recycle();
-                    bitmap = null;
-                }
-            }
-            //リストのクリア
-            mMemChaeBuf.clear();
-            mMemChaeBuf = null;
-        }
 
         //本来のキャッシュのクリア
         if (mMemCache != null) {
