@@ -945,20 +945,25 @@ public class DateUtils {
      * @return true 31以内 false 其の他
      */
     public static boolean isIn31Day(final long date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(date * 1000);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        //放送終了日付
+        Date endDate = calendar.getTime();
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
+        //今の日付
         Date nowDate = cal.getTime();
-        cal.setTimeInMillis(date * 1000);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
         cal.add(Calendar.DAY_OF_MONTH, -AVAILABLE_BASE_DAY);
-        Date pre31Date = cal.getTime();
-        return nowDate.compareTo(pre31Date) == 1;
+        //今より31日前の日付
+        Date nowPre31Date = cal.getTime();
+        return (nowPre31Date.getTime() <= endDate.getTime() && endDate.getTime() <= nowDate.getTime());
     }
 
     /**
