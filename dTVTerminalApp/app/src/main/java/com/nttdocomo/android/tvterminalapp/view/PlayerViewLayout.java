@@ -1374,18 +1374,17 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     private PlayerControlType getPlayerControlType(final MotionEvent motionEvent) {
         PlayerControlType controlType = PlayerControlType.PLAYER_CONTROL_NONE;
         // どのアイコンがタップ、長押しされているか判定.
-        if (motionEvent.getY() > (float) mRecordCtrlView.getHeight() / 3
-                && motionEvent.getY() < mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight() / 3) {
-            if (motionEvent.getX() < (float) (mScreenWidth / 2 - mVideoPlayPause.getWidth() / 2)
-                    && motionEvent.getX() > (float) mScreenWidth / 6) { //10秒戻し
-                controlType = PlayerControlType.PLAYER_CONTROL_10_SEC_BACK;
-            } else if (motionEvent.getX() > mScreenWidth / 2 + mVideoPlayPause.getWidth() / 2
-                    && motionEvent.getX() < mScreenWidth - mScreenWidth / 6) { //30秒送り
-                controlType = PlayerControlType.PLAYER_CONTROL_30_SEC_SKIP;
-            } else if (motionEvent.getX() > mScreenWidth / 2 - mVideoPlayPause.getWidth() / 2
-                    && motionEvent.getX() < mScreenWidth / 2 + mVideoPlayPause.getWidth() / 2) {
-                controlType = PlayerControlType.PLAYER_CONTROL_PLAY_PAUSE;
-            }
+        float touchX = motionEvent.getX();
+        float touchY = motionEvent.getY();
+        if (touchX >= mVideoPlayPause.getX() && touchX <=  mVideoPlayPause.getX() + mVideoPlayPause.getWidth()
+                && touchY >= mVideoPlayPause.getY() && touchY <= mVideoPlayPause.getY() + mVideoPlayPause.getHeight()) {
+            controlType = PlayerControlType.PLAYER_CONTROL_PLAY_PAUSE;
+        } else if (touchX >= mVideoRewind10.getX() && touchX <=  mVideoRewind10.getX() + mVideoRewind10.getWidth()
+                && touchY >= mVideoRewind10.getY() && touchY <= mVideoRewind10.getY() + mVideoRewind10.getHeight()) {
+            controlType = PlayerControlType.PLAYER_CONTROL_10_SEC_BACK;
+        } else if (touchX >= mVideoFast30.getX() && touchX <=  mVideoFast30.getX() + mVideoFast30.getWidth()
+                && touchY >= mVideoFast30.getY() && touchY <= mVideoFast30.getY() + mVideoFast30.getHeight()) {
+            controlType = PlayerControlType.PLAYER_CONTROL_30_SEC_SKIP;
         }
         return controlType;
     }
