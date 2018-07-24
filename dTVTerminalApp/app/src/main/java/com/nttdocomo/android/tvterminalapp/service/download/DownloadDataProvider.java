@@ -572,19 +572,15 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
     }
     /**
      * ダウンロードしたコンテンツを全削除.
+     *
+     * @param context コンテキスト
      */
-    public void deleteAllDownLoadContents() {
-        DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
-        List<Map<String, String>> downLoadList = downLoadListDataManager.selectDownLoadList();
-        if (downLoadList != null && downLoadList.size() > 0) {
-            for (int i = 0; i < downLoadList.size(); i++) {
-                Map<String, String> hashMap = downLoadList.get(i);
-                String path = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
-                if (!TextUtils.isEmpty(path)) {
-                    deleteAllFiles(new File(path));
-                }
-            }
-            downLoadListDataManager.deleteDownloadAllContents();
+    public static void deleteAllDownLoadContents(final Context context) {
+        DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(context);
+        downLoadListDataManager.deleteDownloadAllContents();
+        List<String> pathList = DownloaderBase.getDownloadPathList(context);
+        for (String path : pathList) {
+            deleteAllFiles(new File(path));
         }
     }
 
@@ -600,7 +596,7 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
      * delete download file.
      * @param root ルート
      */
-    private void deleteAllFiles(final File root) {
+    private static void deleteAllFiles(final File root) {
         File[] files = root.listFiles();
         if (files != null) {
             for (File f : files) {

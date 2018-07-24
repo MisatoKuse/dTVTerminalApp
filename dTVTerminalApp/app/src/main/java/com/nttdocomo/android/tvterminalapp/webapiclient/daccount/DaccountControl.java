@@ -8,11 +8,11 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.ThumbnailCacheManager;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
+import com.nttdocomo.android.tvterminalapp.service.download.DownloadDataProvider;
 import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -457,7 +457,9 @@ public class DaccountControl implements
 
         //プリファレンスユーティリティの配下のデータを、ユーザー切り替え後も残す一部を除き削除
         SharedPreferencesUtils.clearAlmostSharedPreferences(context);
-
+        //ダウンロードしたコンテンツを削除
+        DownloadDataProvider.cancelAll();
+        DownloadDataProvider.deleteAllDownLoadContents(context);
         if (StbConnectionManager.shared().getConnectionStatus() != StbConnectionManager.ConnectionStatus.NONE_PAIRING) {
             DlnaManager.shared().StopDmp();
             StbConnectionManager.shared().setConnectionStatus(StbConnectionManager.ConnectionStatus.NONE_PAIRING);
