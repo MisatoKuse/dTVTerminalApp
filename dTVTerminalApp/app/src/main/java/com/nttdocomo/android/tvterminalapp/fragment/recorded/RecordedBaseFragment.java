@@ -86,6 +86,8 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     private View mFootView;
     /**コールバックリスナー.*/
     private ScrollListenerCallBack mScrollListenerCallBack;
+    /**UI更新あるか.*/
+    private boolean mIsUiRunning = true;
 
     /**
      * コールバックリスナー.
@@ -303,7 +305,9 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      * DlDataProvider使用開始.
      */
     public void onDlDataProviderAvailable() {
-        mDownloadDataProvider.setUiRunning(true);
+        if (mIsUiRunning) {
+            mDownloadDataProvider.setUiRunning(true);
+        }
         if (!mDownloadDataProvider.isDownloading()) {
             mDownloadDataProvider.setDownloadParam(mDownloadParam);
             mDownloadDataProvider.start();
@@ -322,6 +326,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         super.onPause();
         if (RecordedListActivity.RLA_FragmentName_All.equals(mFragmentName) && null != mDownloadDataProvider) {
             mDownloadDataProvider.setUiRunning(false);
+            mIsUiRunning = false;
             if (mDownloadDataProvider.getIsRegistered()) {
                 mDownloadDataProvider.endProvider();
             }
@@ -347,6 +352,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                 }
             }
             mDownloadDataProvider.setUiRunning(true);
+            mIsUiRunning = true;
         }
     }
 
@@ -469,6 +475,9 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      */
     private void setNextDownLoad() {
         unQueue(0);
+        if (!mIsUiRunning) {
+            return;
+        }
         if (mQueue.size() > 0) {
             boolean isOk = prepareDownLoad(mQueueIndex.get(0));
             if (!isOk) {
@@ -1113,7 +1122,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         if (null == mActivity) {
             return;
         }
-        if (mDownloadDataProvider != null) {
+        if (mDownloadDataProvider != null && mIsUiRunning) {
             mDownloadDataProvider.setUiRunning(true);
         }
         mActivity.runOnUiThread(new Runnable() {
