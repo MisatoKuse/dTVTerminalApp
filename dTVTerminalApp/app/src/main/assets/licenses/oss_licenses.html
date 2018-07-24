@@ -18,80 +18,64 @@
         }
         pre {
             overflow-x: hidden;
-            background-color: #f0f0f0;
-            color: #000000;
             margin-top: 0.2em;
             margin-bottom: 0.2em;
-            margin-left: -1.0em;
+            margin-left: 0.5em;
             margin-right: 0.2em;
             padding: 0.5em;
             white-space: pre-wrap;
-            border-radius: 5px;
             font-size: medium;
-        }
-        h3 {
-            margin-top: 0.2em;
-            margin-bottom: 0.2em;
         }
         hr {
-            width: 95%;
-            margin-top: 1.0em;
-            margin-bottom: 1.0em;
-        }
-        div.sdk-title {
-            font-size: medium;
+            width: 98%;
+            border-style: inset;
+            border-width: 1px;
             margin-top: 0em;
             margin-bottom: 0em;
-            padding-left: 0.5em;
-            margin-right: 0.5em;
         }
-        ul.sdk-version {
-            margin-top: 0.5em;
-            margin-bottom: 0.2em;
-            padding-left: 1.0em;
-            list-style-type: square;
-            list-style-position: outside;
-        }
-        ul.sdk-version li {
+        div.license-title {
             font-size: medium;
+            margin-top: 0.2em;
+            margin-bottom: 1.5em;
+            padding-left: 0.2em;
+            margin-right: 0.2em;
+        }
+        div.license-title h4 {
+            margin-top: 0.2em;
+            margin-bottom: 0.2em;
+            line-height: 2em;
         }
         ul.oss-item {
-            margin-top: 0.5em;
+            margin-top: 0.1em;
             margin-bottom: 0.1em;
+            padding-left: 0;
             list-style: none;
         }
         ul.oss-item li {
             margin-top: 0em;
             margin-bottom: 0em;
-            margin-left: -2.5em;
+            margin-left: 0.5em;
             margin-right: 0em;
         }
         span.oss-title {
             font-weight: bold;
             font-size: medium;
         }
-        span.oss-version {
-            display: inline-block;
-            padding-left: 0.8em;
-            font-size: small;
-        }
-
     </style>
 </head>
 <body>
-
-<div class="sdk-title">
-    <h3>Notices for DiXiM SDK</h3>
-    このプログラムには、下記のライセンス条項に基づいて使用許諾されたソフトウェアが含まれています。
-    <ul class="sdk-version">
-        <li>SDK Version PL5.0, PL6.0<br/>
-            <ul class="oss-item">
-                <li>
-                    <span class="oss-title">expat</span><br/>
-                    <span class="oss-version">Version 2.1.0</span><br/>
-                </li>
-            </ul>
-            <pre>
+<div class="license-title">
+    <h4>License Terms</h4>
+    <h4>Notices for TVTerminal.apk</h4>
+    The program includes software licensed under the license terms as specified below.
+</div>
+<hr>
+<ul class="oss-item">
+    <li>
+        <span class="oss-title">expat</span><br/>
+    </li>
+</ul>
+<pre>
 Copyright (c) 1998, 1999, 2000 Thai Open Source Software Center Ltd
                                and Clark Cooper
 Copyright (c) 2001, 2002, 2003, 2004, 2005, 2006 Expat maintainers.
@@ -114,14 +98,14 @@ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
 CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-            </pre>
-            <ul class="oss-item">
-                <li>
-                    <span class="oss-title">libxml2</span><br/>
-                    <span class="oss-version">Version 2.9.1, 2.9.2</span>
-                </li>
-            </ul>
-            <pre>
+    </pre>
+<hr>
+<ul class="oss-item">
+    <li>
+        <span class="oss-title">libxml2</span><br/>
+    </li>
+</ul>
+<pre>
 Except where otherwise noted in the source code (e.g. the files hash.c,
 list.c and the trio files, which are covered by a similar licence but
 with different Copyright notices) all the files are:
@@ -145,23 +129,23 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-            </pre>
-            <ul class="oss-item">
-                <li>
-                    <span class="oss-title">libiconv</span><br/>
-                    <span class="oss-version">Version 1.11.1</span>
-                </li>
-            </ul>
-            <pre>
+    </pre>
+<hr>
+<ul class="oss-item">
+    <li>
+        <span class="oss-title">libiconv</span><br/>
+    </li>
+</ul>
+<pre>
 これは LGPL 適用ソフトウェアであり、お客様にはこれらのソフトウェアのソースコードの入手、改変、再配布の権利があります。ソースコードの入手については、http://www.dixim.net/products/index.htmlをご覧ください。なお、ソースコードの内容についてのお問い合わせは、株式会社デジオンでは受け付けておりませんので、あらかじめご了承ください。LGPL 適用ソフトウェアにつきましては、GPL Version 2 項目および LGPL Version 2.1 項目の条件が適用されます。
-            </pre>
-            <ul class="oss-item">
-                <li>
-                    <span class="oss-title">oniguruma</span><br/>
-                    <span class="oss-version">Version 5.9.5</span>
-                </li>
-            </ul>
-            <pre>
+    </pre>
+<hr>
+<ul class="oss-item">
+    <li>
+        <span class="oss-title">oniguruma</span><br/>
+    </li>
+</ul>
+<pre>
 Copyright (c) 2002-2007  K.Kosako  &lt;sndgk393 AT ybb DOT ne DOT jp&gt;
 All rights reserved.
 
@@ -185,25 +169,24 @@ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
-            </pre>
-            <ul class="oss-item">
-                <li>
-                    <span class="oss-title">UniversalCharDet</span><br/>
-                    <span class="oss-version">Version 1.0.2</span>
-                </li>
-            </ul>
-            <pre>
+    </pre>
+<hr>
+<ul class="oss-item">
+    <li>
+        <span class="oss-title">UniversalCharDet</span><br/>
+    </li>
+</ul>
+<pre>
 これは MPL 適用ソフトウェアであり、お客様にはこれらのソフトウェアのソースコードの入手、改変、再配布の権利があります。ソースコードの入手については、http://www.dixim.net/products/index.htmlをご覧ください。なお、ソースコードの内容についてのお問い合わせは、株式会社デジオンでは受け付けておりませんので、あらかじめご了承ください。MPL 適用ソフトウェアにつきましては、MPL Version 1.1 項目の条件が適用されます。
-           </pre>
-        </li>
-        <li>SDK Version UPnPA 6.0<br/>
-            <ul class="oss-item">
-                <li>
-                    <span class="oss-title">jpeg</span><br/>
-                    <span class="oss-version">Version jpeg-9a</span>
-                </li>
-            </ul>
-            <pre>
+    </pre>
+<hr>
+
+<ul class="oss-item">
+    <li>
+        <span class="oss-title">jpeg</span><br/>
+    </li>
+</ul>
+<pre>
 The authors make NO WARRANTY or representation, either express or implied,
 with respect to this software, its quality, accuracy, merchantability, or
 fitness for a particular purpose.  This software is provided "AS IS", and you,
@@ -257,18 +240,18 @@ We are required to state that
     "The Graphics Interchange Format(c) is the Copyright property of
     CompuServe Incorporated.  GIF(sm) is a Service Mark property of
     CompuServe Incorporated."
-            </pre>
-            <ul class="oss-item">
-                <li>
-                    <span class="oss-title">libtiff</span><br/>
-                    <span class="oss-version">Version 4.0.3</span>
-                </li>
-            </ul>
-            <pre>
+    </pre>
+<hr>
+<ul class="oss-item">
+    <li>
+        <span class="oss-title">libtiff</span><br/>
+    </li>
+</ul>
+<pre>
 Copyright (c) 1988-1997 Sam Leffler
 Copyright (c) 1991-1997 Silicon Graphics, Inc.
 
-Permission to use, copy, modify, distribute, and sell this software and 
+Permission to use, copy, modify, distribute, and sell this software and
 its documentation for any purpose is hereby granted without fee, provided
 that (i) the above copyright notices and this permission notice appear in
 all copies of the software and related documentation, and (ii) the names of
@@ -276,24 +259,24 @@ Sam Leffler and Silicon Graphics may not be used in any advertising or
 publicity relating to the software without the specific, prior written
 permission of Sam Leffler and Silicon Graphics.
 
-THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
-EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
-WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
+EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
+WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 
 IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
 ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
 OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
-WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
-LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF
+LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
 OF THIS SOFTWARE.
-            </pre>
-            <ul class="oss-item">
-                <li>
-                    <span class="oss-title">giflib</span><br/>
-                    <span class="oss-version">Version 5.0.5</span>
-                </li>
-            </ul>
-            <pre>
+    </pre>
+<hr>
+<ul class="oss-item">
+    <li>
+        <span class="oss-title">giflib</span><br/>
+    </li>
+</ul>
+<pre>
 The GIFLIB distribution is Copyright (c) 1997  Eric S. Raymond
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -313,14 +296,14 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-            </pre>
-            <ul class="oss-item">
-                <li>
-                    <span class="oss-title">libflac</span><br/>
-                    <span class="oss-version">Version 1.3.1</span>
-                </li>
-            </ul>
-            <pre>
+    </pre>
+<hr>
+<ul class="oss-item">
+    <li>
+        <span class="oss-title">libflac</span><br/>
+    </li>
+</ul>
+<pre>
 Copyright (C) 2000-2009  Josh Coalson
 Copyright (C) 2011-2014  Xiph.Org Foundation
 
@@ -350,14 +333,14 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
 LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-            </pre>
-            <ul class="oss-item">
-                <li>
-                    <span class="oss-title">zlib</span><br/>
-                    <span class="oss-version">Version 1.2.8</span>
-                </li>
-            </ul>
-            <pre>
+    </pre>
+<hr>
+<ul class="oss-item">
+    <li>
+        <span class="oss-title">zlib</span><br/>
+    </li>
+</ul>
+<pre>
  (C) 1995-2013 Jean-loup Gailly and Mark Adler
 
   This software is provided 'as-is', without any express or implied
@@ -378,14 +361,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   Jean-loup Gailly        Mark Adler
   jloup@gzip.org          madler@alumni.caltech.edu
-            </pre>
-            <ul class="oss-item">
-                <li>
-                    <span class="oss-title">libpng</span><br/>
-                    <span class="oss-version">Version 1.5.22</span>
-                </li>
-            </ul>
-            <pre>
+    </pre>
+<hr>
+<ul class="oss-item">
+    <li>
+        <span class="oss-title">libpng</span><br/>
+    </li>
+</ul>
+<pre>
 libpng versions 1.2.6, August 15, 2004, through 1.5.22, March 26, 2015, are
 Copyright (c) 2004, 2006-2015 Glenn Randers-Pehrson, and are
 distributed according to the same disclaimer and license as libpng-1.2.5
@@ -469,14 +452,14 @@ fee, and encourage the use of this source code as a component to
 supporting the PNG file format in commercial products.  If you use this
 source code in a product, acknowledgment is not required but would be
 appreciated.
-            </pre>
-            <ul class="oss-item">
-                <li>
-                    <span class="oss-title">libogg</span><br/>
-                    <span class="oss-version">Version 1.3.1</span>
-                </li>
-            </ul>
-            <pre>
+    </pre>
+<hr>
+<ul class="oss-item">
+    <li>
+        <span class="oss-title">libogg</span><br/>
+    </li>
+</ul>
+<pre>
 Copyright (c) 2002, Xiph.org Foundation
 
 Redistribution and use in source and binary forms, with or without
@@ -505,14 +488,14 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-            </pre>
-            <ul class="oss-item">
-                <li>
-                    <span class="oss-title">libvoris</span><br/>
-                    <span class="oss-version">Version 1.3.3</span>
-                </li>
-            </ul>
-            <pre>
+    </pre>
+<hr>
+<ul class="oss-item">
+    <li>
+        <span class="oss-title">libvoris</span><br/>
+    </li>
+</ul>
+<pre>
 Copyright (c) 2002-2008 Xiph.org Foundation
 
 Redistribution and use in source and binary forms, with or without
@@ -541,14 +524,14 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-            </pre>
-            <ul class="oss-item">
-                <li>
-                    <span class="oss-title">sqlite</span><br/>
-                    <span class="oss-version">Version 3.8.11.1</span>
-                </li>
-            </ul>
-            <pre>
+    </pre>
+<hr>
+<ul class="oss-item">
+    <li>
+        <span class="oss-title">sqlite</span><br/>
+    </li>
+</ul>
+<pre>
 Copyright Release for Contributions To SQLite
 SQLite is software that implements an embeddable SQL database engine. SQLite is available for free download from http://www.sqlite.org/. The principal author and maintainer of SQLite has disclaimed all copyright interest in his contributions to SQLite and thus released his contributions into the public domain. In order to keep the SQLite software unencumbered by copyright claims, the principal author asks others who may from time to time contribute changes and enhancements to likewise disclaim their own individual copyright interest.
 
@@ -567,26 +550,18 @@ The header comments on the SQLite source files exhort the reader to share freely
     4. I agree never to publish any additional information to the SQLite website (by CVS, email, scp, FTP, or any other means) unless that information is an original work of authorship by me or is derived from prior published versions of SQLite. I agree never to copy and paste code into the SQLite code base from other sources. I agree never to publish on the SQLite website any information that would violate a law or breach a contract.
 
 Signature:
- 
+
 Date:
 Name (printed):
-            </pre>
-         </li>
-    </ul>
-</div>
+    </pre>
 <hr>
-<div class="sdk-title">
-    <h3>Notices for DiRAG SDK</h3>
-    このプログラムには、下記のライセンス条項に基づいて使用許諾されたソフトウェアが含まれています。
-    <ul class="sdk-version">
-        <li>SDK Version DiRAG 1.3<br/>
-            <ul class="oss-item">
-                <li>
-                    <span class="oss-title">boost</span><br/>
-                    <span class="oss-version">Version 1.55.0</span><br/>
-                </li>
-            </ul>
-            <pre>
+
+<ul class="oss-item">
+    <li>
+        <span class="oss-title">boost</span><br/>
+    </li>
+</ul>
+<pre>
 Boost Software License - Version 1.0 - August 17th, 2003
 
 Permission is hereby granted, free of charge, to any person or organization
@@ -610,47 +585,37 @@ SHALL THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE LIABLE
 FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
-            </pre>
-        </li>
-    </ul>
-</div>
+    </pre>
 <hr>
-<div class="sdk-title">
-    <h3>Notices for DTCP-IP, DRM SDK</h3>
-    このプログラムには、下記のライセンス条項に基づいて使用許諾されたソフトウェアが含まれています。
-    <ul class="sdk-version">
-        <li>SDK Version DTCP-IP 1.3<br/>
-            <ul class="oss-item">
-                <li>
-                    <span class="oss-title">libtomcrypt</span><br/>
-                    <span class="oss-version">Version 1.17</span><br/>
-                </li>
-            </ul>
-            <pre>
+
+<ul class="oss-item">
+    <li>
+        <span class="oss-title">libtomcrypt</span><br/>
+    </li>
+</ul>
+<pre>
 LibTomCrypt is public domain.  As should all quality software be.
 
 Tom St Denis
-            </pre>
-            <ul class="oss-item">
-                <li>
-                    <span class="oss-title">libtommath</span><br/>
-                    <span class="oss-version">Version 0.41</span><br/>
-                </li>
-            </ul>
-            <pre>
+    </pre>
+<hr>
+<ul class="oss-item">
+    <li>
+        <span class="oss-title">libtommath</span><br/>
+    </li>
+</ul>
+<pre>
 LibTomMath is public domain.  As should all quality software be.
 
 Tom St Denis
-            </pre>
-        </li>
-        <li>SDK Version DRM 1.3<br/>
-            <ul class="oss-item">
-                <li>
-                    <span class="oss-title">curl</span><br/>
-                    <span class="oss-version">Version 7.52.1</span><br/>
-                </li>
-            </ul>
-            <pre>
+    </pre>
+<hr>
+<ul class="oss-item">
+    <li>
+        <span class="oss-title">curl</span><br/>
+    </li>
+</ul>
+<pre>
 COPYRIGHT AND PERMISSION NOTICE
 
 Copyright (c) 1996 - 2018, Daniel Stenberg, daniel@haxx.se, and many contributors, see the THANKS file.
@@ -662,14 +627,14 @@ Permission to use, copy, modify, and distribute this software for any purpose wi
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF THIRD PARTY RIGHTS. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 Except as contained in this notice, the name of a copyright holder shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization of the copyright holder.
-            </pre>
-            <ul class="oss-item">
-                <li>
-                    <span class="oss-title">openssl</span><br/>
-                    <span class="oss-version">Version 1.0.2k</span><br/>
-                </li>
-            </ul>
-            <pre>
+    </pre>
+<hr>
+<ul class="oss-item">
+    <li>
+        <span class="oss-title">openssl</span><br/>
+    </li>
+</ul>
+<pre>
 OpenSSL License
   ---------------
 
@@ -786,23 +751,15 @@ OpenSSL License
  * copied and put under another distribution licence
  * [including the GNU Public Licence.]
  */
-            </pre>
-        </li>
-    </ul>
-</div>
+    </pre>
 <hr>
-<div class="sdk-title">
-    <h3>Notices for DiXiM Secure Player SDK</h3>
-    このプログラムには、下記のライセンス条項に基づいて使用許諾されたソフトウェアが含まれています。
-    <ul class="sdk-version">
-        <li>SDK Version Secure Player SDK 7.1.2<br/>
-            <ul class="oss-item">
-                <li>
-                    <span class="oss-title">IPAフォント</span><br/>
-                    <span class="oss-version">Version 003.03</span><br/>
-                </li>
-            </ul>
-            <pre>
+
+<ul class="oss-item">
+    <li>
+        <span class="oss-title">IPAフォント</span><br/>
+    </li>
+</ul>
+<pre>
 IPA Font License Agreement v1.0
 
 The Licensor provides the Licensed Program (as defined in Article 1 below) under the terms of this license agreement ("Agreement").  Any use, reproduction or distribution of the Licensed Program, or any exercise of rights under this Agreement by a Recipient (as defined in Article 1 below) constitutes the Recipient’s acceptance of this Agreement.
@@ -876,22 +833,15 @@ Article 5 (Governing Law)
 1.IPA may publish revised and/or new versions of this License. In such an event, the Recipient may select either this Agreement or any subsequent version of the Agreement in using, conducting the Reproduction and Other Exploitation of, or Redistributing the Licensed Program or a Derived Program. Other matters not specified above shall be subject to the Copyright Law of Japan and other related laws and regulations of Japan.
 
 2.This Agreement shall be construed under the laws of Japan.
-            </pre>
-        </li>
-    </ul>
-</div>
+    </pre>
 <hr>
-<div class="sdk-title">
-    <h3>Notices for License</h3>
-    このプログラムには、下記のライセンス条項に基づいて使用許諾されたソフトウェアが含まれています。
-    <ul class="sdk-version">
-        <li>GPL<br/>
-            <ul class="oss-item">
-                <li>
-                    <span class="oss-version">Version 2</span><br/>
-                </li>
-            </ul>
-            <pre>
+
+<ul class="oss-item">
+    <li>
+        <span class="oss-title">GPL</span><br/>
+    </li>
+</ul>
+<pre>
 GNU LIBRARY GENERAL PUBLIC LICENSE
 Version 2, June 1991
 Copyright (C) 1991 Free Software Foundation, Inc. 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
@@ -985,15 +935,15 @@ Yoyodyne, Inc., hereby disclaims all copyright interest in the library `Frob' (a
 &lt;signature of Ty Coon&gt;, 1 April 1990
 Ty Coon, President of Vice
 That's all there is to it!
-            </pre>
-        </li>
-        <li>LGPL<br/>
-            <ul class="oss-item">
-                <li>
-                    <span class="oss-version">Version 2.1</span><br/>
-                </li>
-            </ul>
-            <pre>
+    </pre>
+<hr>
+
+<ul class="oss-item">
+    <li>
+        <span class="oss-title">LGPL</span><br/>
+    </li>
+</ul>
+<pre>
 GNU LESSER GENERAL PUBLIC LICENSE
 Version 2.1, February 1999
 Copyright (C) 1991, 1999 Free Software Foundation, Inc. 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
@@ -1088,22 +1038,15 @@ library `Frob' (a library for tweaking knobs) written by James Random Hacker.
 &lt;signature of Ty Coon&gt;, 1 April 1990
 Ty Coon, President of Vice
 That's all there is to it!
-            </pre>
-        </li>
-    </ul>
-</div>
+    </pre>
 <hr>
-<div class="sdk-title">
-    <h3>Notices for file(s):</h3>
-    このプログラムには、下記のライセンス条項に基づいて使用許諾されたソフトウェアが含まれています。
-    <ul class="sdk-version">
-        <li>Bouncy Castle<br/>
-            <ul class="oss-item">
-                <li>
-                    <span class="oss-title">ocsplib.jar</span><br/>
-                </li>
-            </ul>
-            <pre>
+
+<ul class="oss-item">
+    <li>
+        <span class="oss-title">Bouncy Castle</span><br/>
+    </li>
+</ul>
+<pre>
 The program includes software licensed under the license terms as specified below.
 
 Copyright (C) 2016-2017 NTT DOCOMO, INC. All Rights Reserved.
@@ -1139,9 +1082,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-            </pre>
-        </li>
-    </ul>
-</div>
+    </pre>
+<hr>
 </body>
 </html>
