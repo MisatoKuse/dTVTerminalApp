@@ -977,7 +977,6 @@ public class BaseActivity extends FragmentActivity implements
         DTVTLogger.debug(String.format("msg.what:%s requestCommand:%s", msg.what, requestCommand));
         switch (msg.what) {
             case RelayServiceResponseMessage.RELAY_RESULT_OK:
-                switchResultOkRequest(requestCommand);
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_ERROR:
                 int resultCode = ((RelayServiceResponseMessage) msg.obj).getResultCode();
@@ -1157,33 +1156,6 @@ public class BaseActivity extends FragmentActivity implements
                 break;
             default:
                 showErrorDialogOffer(getResources().getString(R.string.main_setting_stb_application_launch_fail));
-                break;
-        }
-    }
-
-    /**
-     * result ok.
-     * @param requestCommand requestCommand
-     */
-    private void switchResultOkRequest(final RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES requestCommand) {
-        switch (requestCommand) {
-            case START_APPLICATION:
-            case TITLE_DETAIL:
-                break;
-            case IS_USER_ACCOUNT_EXIST:
-                // 処理なし
-                break;
-            case SET_DEFAULT_USER_ACCOUNT:
-            case CHECK_APPLICATION_VERSION_COMPATIBILITY:
-            case CHECK_APPLICATION_REQUEST_PROCESSING:
-                // STB_REQUEST_COMMAND_TYPES misses case 抑制.
-                // ※RELAY_RESULT_OK 応答時は requestCommand に SET_DEFAULT_USER_ACCOUNT
-                //   /CHECK_APPLICATION_VERSION_COMPATIBILITY /CHECK_APPLICATION_REQUEST_PROCESSING は設定されない
-            case KEYEVENT_KEYCODE_POWER:
-            case COMMAND_UNKNOWN:
-                // 処理なし
-                break;
-            default:
                 break;
         }
     }

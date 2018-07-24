@@ -300,6 +300,7 @@ public class ContentUtils {
      * @param chsvod CHSVOD(chsvod)
      * @return VOD、TV、DCHANNEL_VOD_OVER_31、DCHANNEL_VOD_31、その他
      */
+    @SuppressWarnings("OverlyComplexMethod")
     public static ContentsType getContentsTypeByPlala(final String dispType, final String tvService,
                                                                 final String contentsType, final long availEndDate,
                                                                 final long vodStartDate, final long vodEndDate, final String estflg,
@@ -390,6 +391,7 @@ public class ContentUtils {
         final String contentsType = listContentInfo.getContentsType();
         final String estFlg = listContentInfo.getEstFlg();
         final String chsVod = listContentInfo.getChsVod();
+        final long availStartDate = listContentInfo.getAvailStartDate();
         final long availEndDate = listContentInfo.getAvailEndDate();
         final long vodStartDate = listContentInfo.getVodStartDate();
         final long vodEndDate = listContentInfo.getVodEndDate();
@@ -400,6 +402,15 @@ public class ContentUtils {
         String viewingPeriod = "";
         switch (periodContentsType) {
             case VOD:// VOD
+                if (DateUtils.isBefore(vodStartDate)) { //から
+                    viewingPeriod = DateUtils.getContentsDetailVodDate(context, availStartDate);
+                    viewingPeriod = StringUtils.getConnectStrings(
+                            context.getString(R.string.common_date_format_start_str), viewingPeriod);
+                } else { //まで、見逃し
+                    //VOD(m/d（曜日）まで)
+                    viewingPeriod = DateUtils.getContentsDetailVodDate(context, availEndDate);
+                }
+                break;
             case DCHANNEL_VOD_OVER_31: // ひかりTV内dch_見逃し(３２日以上).
             case DCHANNEL_VOD_31: // ひかりTV内dch_見逃し(３1日以内).
                 if (DateUtils.isBefore(vodStartDate)) { //から
@@ -407,13 +418,8 @@ public class ContentUtils {
                     viewingPeriod = StringUtils.getConnectStrings(
                             context.getString(R.string.common_date_format_start_str), viewingPeriod);
                 } else { //まで、見逃し
-                    if (periodContentsType ==  ContentsType.VOD) {
-                        //VOD(m/d（曜日）まで)
-                        viewingPeriod = DateUtils.getContentsDetailVodDate(context, availEndDate);
-                    } else if (periodContentsType == ContentsType.DCHANNEL_VOD_31 || periodContentsType == ContentsType.DCHANNEL_VOD_OVER_31) {
-                        //VOD(m/d（曜日）まで)
-                        viewingPeriod = DateUtils.getContentsDetailVodDate(context, vodEndDate);
-                    }
+                    //VOD(m/d（曜日）まで)
+                    viewingPeriod = DateUtils.getContentsDetailVodDate(context, vodEndDate);
                 }
                 break;
             case TV:// TV
