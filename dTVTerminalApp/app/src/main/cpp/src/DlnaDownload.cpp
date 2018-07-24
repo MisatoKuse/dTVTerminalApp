@@ -126,7 +126,7 @@ void DlnaDownload::startDownload(std::string fileNameToSave, std::string dtcp1ho
     if(!xmlStrDu){
         goto error;
     }
-    if (!downloader_download(
+    downloader_download(
             dtcp->d,
             dtcp1host,
             dtcp1port,
@@ -138,9 +138,7 @@ void DlnaDownload::startDownload(std::string fileNameToSave, std::string dtcp1ho
             dixim_file,
             xmlStrDu,
             cleartext_size,
-            request_header)) {
-        goto error;
-    }
+            request_header);
     return;
     error:
     downloaderStatusHandler(DOWNLOADER_STATUS_ERROR_OCCURED, 0, this);
