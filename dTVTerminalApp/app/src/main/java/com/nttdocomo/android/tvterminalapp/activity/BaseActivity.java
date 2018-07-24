@@ -289,6 +289,10 @@ public class BaseActivity extends FragmentActivity implements
      */
     private boolean mNecessaryDAccountRegistService = true;
     /**
+     * ワンタイムトークン取得クラス（dアカウントチェック用）.
+     */
+    private DaccountGetOtt mGetOtt = null;
+    /**
      * クリップ状態.
      */
     public static final String CLIP_ACTIVE_STATUS = "active";
@@ -842,6 +846,12 @@ public class BaseActivity extends FragmentActivity implements
             ottGetAuthSwitch.setSkipPermission(false);
         }
 
+        //BGからFGに遷移した場合の検知
+        if (app.getIsChangeApplicationVisible()) {
+            //dアカウントチェックを呼ぶ
+            chkDaccountRegist();
+        }
+
         StbConnectionManager.shared().setConnectionListener(this);
         DTVTLogger.end();
     }
@@ -855,7 +865,7 @@ public class BaseActivity extends FragmentActivity implements
     }
 
     /**
-     * dアカウントチェックの再実行.
+     * dアカウントチェックの再実行(STB連絡用).
      */
     protected void checkDAccountOnRestart() {
         //BGからFGに遷移するときにdアカチェックを行う
@@ -2122,8 +2132,15 @@ public class BaseActivity extends FragmentActivity implements
                     OttGetAuthSwitch.INSTANCE.setNowAuth(true);
 
                     if (mShowDialog != null) {
-                        //次のダイアログの判定の為に、今のダイアログの文言をクリアする
+                        //次のダイアログの重複判定の為に、今のダイアログの文言をクリアする
                         mShowDialog.clearContentText();
+                    }
+
+                    //キャンセルボタンが押されたかどうかのチェック
+                    if (!logoutDialog.isButtonTap()) {
+                        logoutDialog.setButtonTap(true);
+                        //ダイアログが閉じた理由が電源ボタンやホームボタンなので、帰る
+                        return;
                     }
 
                     pollDialog();
@@ -2643,6 +2660,37 @@ public class BaseActivity extends FragmentActivity implements
         setOttDisconnectionFlag(false);
 
         DTVTLogger.end();
+    }
+
+    /**
+     * 有効なdアカウントが登録されているかどうかを見る.
+     */
+    private void chkDaccountRegist() {
+        //dアカウント制御クラスのインスタンスの取得
+        final DaccountControl daccountControl = getDAccountControl();
+
+        //制御クラスが取得できて、かつビジーではないかを調べる
+        if (daccountControl != null && (!daccountControl.isDAccountBusy())) {
+            //dアカウント取得クラスを未取得ならば取得する
+            if (mGetOtt == null) {
+                mGetOtt = new DaccountGetOtt();
+            }
+
+            //認証画面の表示状況のインスタンスの取得。認証画面の重複表示を防止用
+            final OttGetAuthSwitch ottGetAuthSwitch = OttGetAuthSwitch.INSTANCE;
+
+            //ワンタイムトークンの取得を行う事で、dアカウントのチェックとする。dアカウントが無効ならば認証画面に遷移する
+            mGetOtt.execDaccountGetOTT(getApplicationContext(),
+                    ottGetAuthSwitch.isNowAuth(), new DaccountGetOtt.DaccountGetOttCallBack() {
+                @Override
+                public void getOttCallBack(int result, String id, String oneTimePassword) {
+                    DTVTLogger.debug("ott" + oneTimePassword);
+                    //dアカウントの制御のワンタイムトークン処理を呼び出す。
+                    daccountControl.setResult(result);
+                    daccountControlCallBack(false);
+                }
+            });
+        }
     }
 
     /**

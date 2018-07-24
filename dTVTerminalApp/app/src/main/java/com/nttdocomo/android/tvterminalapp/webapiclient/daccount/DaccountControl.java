@@ -115,6 +115,16 @@ public class DaccountControl implements
     }
 
     /**
+     * BGからFG遷移時は自前のコールバックを使用するので、後続処理用にエラー値を設定する.
+     *
+     * @param result エラーの値
+     */
+    public void setResult(int result) {
+        //エラーの値をセット
+        mResult = result;
+    }
+
+    /**
      * エラーの値は同じ値でも実行する要求によって異なる場合があるので、実行クラス識別値を取得.
      *
      * @return 実行したクラスの識別値

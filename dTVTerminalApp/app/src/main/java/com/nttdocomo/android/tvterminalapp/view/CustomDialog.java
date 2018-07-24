@@ -544,6 +544,14 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     }
 
     /**
+     * ボタンが押されたかどうかの情報をセット
+     * @param isButton ボタンで押されていた場合はtrue
+     */
+    public void setButtonTap(boolean isButton) {
+        mIsButtonTap = isButton;
+    }
+
+    /**
      * バックキーでのダイアログキャンセルを、ダイアログのキャンセルボタンとして扱うか否かを指定する
      *
      * @param setSwitch trueを指定すると、バックキーでのキャンセルがダイアログのキャンセルボタンと同じ扱いになる
