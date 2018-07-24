@@ -184,6 +184,8 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
      */
     public void setNotifyDataChanged() {
         mContentsAdapter.notifyDataSetChanged();
+        // ChannelProgressBar をここで非表示にする(非表示漏れ対策)
+        showProgress(false);
         loadComplete();
     }
 

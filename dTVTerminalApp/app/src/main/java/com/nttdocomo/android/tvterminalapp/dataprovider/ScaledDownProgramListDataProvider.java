@@ -298,7 +298,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
 
             channels = new ArrayList<>();
             setChannelData(channels, channelList);
-            Handler handler = new Handler(); //チャンネル情報更新
+            Handler handler = new Handler(mContext.getMainLooper()); //チャンネル情報更新
             try {
                 DataBaseThread dataBaseThread = new DataBaseThread(handler, this, CHANNEL_UPDATE);
                 dataBaseThread.setChannelList(mChannelList);
@@ -478,7 +478,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 setScheduleInfo(hashMap, channelsInfo, clipKeyList);
             }
             mChannelsInfoList = channelsInfo;
-            Handler handler = new Handler();
+            Handler handler = new Handler(mContext.getMainLooper());
             //番組情報更新
             try {
                 DataBaseThread t = new DataBaseThread(handler, this, SCHEDULE_UPDATE);
@@ -683,7 +683,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
 
         //データをDBから取得する
         if (fromDB.size() > 0) {
-            Handler handler = new Handler();
+            Handler handler = new Handler(mContext.getMainLooper());
             //チャンネル情報更新
             try {
                 DataBaseThread t = new DataBaseThread(handler, this, SCHEDULE_SELECT);

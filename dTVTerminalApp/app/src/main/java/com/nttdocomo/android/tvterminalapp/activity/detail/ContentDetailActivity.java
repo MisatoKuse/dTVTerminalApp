@@ -10,7 +10,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -43,8 +42,8 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.StbSelectActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.DtvtConstants;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
@@ -261,6 +260,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private static final int CLIP_BUTTON_ALL_UPDATE = 0;
     /** チャンネルリストのクリップボタンをのみを更新.*/
     private static final int CLIP_BUTTON_CHANNEL_UPDATE = 1;
+    /** 番組詳細 or 作品情報タブ.*/
+    private static final int CONTENTS_DETAIL_INFO_TAB_POSITION = 0;
+    /** チャンネルタブ.*/
+    private static final int CONTENTS_DETAIL_CHANNEL_TAB_POSITION = 1;
 
     /* player start */
     /**FrameLayout.*/
@@ -395,7 +398,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             if (mViewPager != null) {
                 sendScreenViewForPosition(mViewPager.getCurrentItem());
             } else {
-                sendScreenViewForPosition(0);
+                sendScreenViewForPosition(CONTENTS_DETAIL_INFO_TAB_POSITION);
             }
         }
         DTVTLogger.end();
@@ -741,13 +744,15 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
     /**
      * コンテンツ詳細データ取得.
+     *
+     * @param channelInfo チャンネル情報
      */
-    private void getChannelDetailData() {
+    private void getChannelDetailData(final ChannelInfo channelInfo) {
         DTVTLogger.start();
         DtvContentsChannelFragment channelFragment = getChannelFragment();
         channelFragment.loadComplete();
-        if (mChannel != null) {
-            channelFragment.setChannelDataChanged(mChannel);
+        if (channelInfo != null) {
+            channelFragment.setChannelDataChanged(channelInfo);
             mDateIndex = 0;
             getChannelDetailByPageNo();
         }
@@ -1072,7 +1077,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (position == 1) {
                     getChannelFragment().initLoad();
                     showChannelProgressBar(true);
-                    loadHandler.post(loadRunnable);                } else {
+                    loadHandler.post(loadRunnable);
+                } else {
                     //詳細タブで既に詳細データ取得が完了していればリクエストしない
                     if (mDetailFullData == null) {
                         loadHandler.post(loadRunnable);
@@ -1102,10 +1108,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private final Runnable loadRunnable = new Runnable() {
         @Override
         public void run() {
-            if (mViewPager.getCurrentItem() == 0) {
+            if (mViewPager.getCurrentItem() == CONTENTS_DETAIL_INFO_TAB_POSITION) {
                 getScheduleDetailData();
             } else {
-                getChannelDetailData();
+                getChannelDetailData(mChannel);
             }
         }
     };
@@ -1701,6 +1707,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             ChannelInfo channel = channels.get(i);
                             if (mServiceId.equals(channel.getServiceId())) {
                                 mChannel = channel;
+                                //チャンネル情報取得完了前にタブ切替されていた場合はここでチャンネルタブ表示処理を開始する
+                                if (mViewPager.getCurrentItem() == CONTENTS_DETAIL_CHANNEL_TAB_POSITION) {
+                                    showChannelProgressBar(true);
+                                    getChannelDetailData(mChannel);
+                                }
                                 String channelName = channel.getTitle();
                                 OtherContentsDetailData detailData = detailFragment.getOtherContentsDetailData();
                                 if (detailData != null) {
@@ -1743,7 +1754,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     List<ChannelInfo> channels = channelsInfo.getChannels();
                     sort(channels);
                     if (channels.size() > 0) {
-                        if (mViewPager.getCurrentItem() == 1) {
+                        if (mViewPager.getCurrentItem() == CONTENTS_DETAIL_CHANNEL_TAB_POSITION) {
                             mChannelFragment = getChannelFragment();
                             ChannelInfo channelInfo = channels.get(0);
                             ArrayList<ScheduleInfo> scheduleInfos = channelInfo.getSchedules();
