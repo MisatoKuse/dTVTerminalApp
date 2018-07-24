@@ -1168,10 +1168,7 @@ public class BaseActivity extends FragmentActivity implements
     private void switchResultOkRequest(final RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES requestCommand) {
         switch (requestCommand) {
             case START_APPLICATION:
-                showRemoteControllerView(false);
-                break;
             case TITLE_DETAIL:
-                showRemoteControllerView(true);
                 break;
             case IS_USER_ACCOUNT_EXIST:
                 // 処理なし
