@@ -670,7 +670,8 @@ public class SearchTopActivity extends BaseActivity
         SearchBaseFragment baseFragment = mFragmentFactory.createFragment(mTabIndex, this);
         baseFragment.showProgressBar(false);
         baseFragment.displayLoadMore(false);
-
+        mSearchTotalCount = 0;
+        baseFragment.notifyDataSetChanged(getResultString(), mTabIndex);
         sendScreenViewForPosition(mTabIndex);
 
         setSearchStart(false);
