@@ -1258,65 +1258,69 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                         if (mIsHideOperate) {
                             hideCtrlView();
                         }
-                        PlayerControlType controlType = getPlayerControlType(motionEvent);
-                        if (controlType == PlayerControlType.PLAYER_CONTROL_PLAY_PAUSE) {
-                            // 再生・一時停止ボタン長押し時の再生・一時停止処理.
-                            if (!mPlayerController.isPlaying()) {
-                                playStart(false);
-                            } else {
-                                playPause();
+                        if (!mIsVideoBroadcast) {
+                            PlayerControlType controlType = getPlayerControlType(motionEvent);
+                            if (controlType == PlayerControlType.PLAYER_CONTROL_PLAY_PAUSE) {
+                                // 再生・一時停止ボタン長押し時の再生・一時停止処理.
+                                if (!mPlayerController.isPlaying()) {
+                                    playStart(false);
+                                } else {
+                                    playPause();
+                                }
+                                mVideoPlay.setImageResource(R.mipmap.mediacontrol_icon_white_play_arrow);
+                                mVideoPause.setImageResource(R.mipmap.mediacontrol_icon_white_stop);
+                                if (!mExternalDisplayFlg) {
+                                    hideCtrlViewAfterOperate();
+                                } else {
+                                    // 外部出力制御の場合.
+                                    initPlayerView();
+                                    setPlayerEvent();
+                                    mExternalDisplayFlg = false;
+                                }
+                                mIsHideOperate = false;
+                            } else if (controlType == PlayerControlType.PLAYER_CONTROL_10_SEC_BACK) {
+                                int pos = mPlayerController.getCurrentPosition();
+                                pos -= REWIND_SECOND;
+                                if (pos < 0) {
+                                    pos = 0;
+                                    setProgress0();
+                                }
+                                mPlayerController.seekTo(pos);
+                                mIsHideOperate = false;
+                            } else if (controlType == PlayerControlType.PLAYER_CONTROL_30_SEC_SKIP) {
+                                int pos = mPlayerController.getCurrentPosition();
+                                pos += FAST_SECOND;
+                                //pos = pos > mPlayerController.getDuration() ? mPlayerController.getDuration() : pos;
+                                int allDu = mPlayerController.getDuration();
+                                if (pos >= allDu) {
+                                    setProgress0();
+                                    pos = 0;
+                                }
+                                mPlayerController.seekTo(pos);
+                                mIsHideOperate = false;
                             }
+                            // タップアップ時点で操作処理は終わっているので各ボタン非タップアイコンに切り替える.
                             mVideoPlay.setImageResource(R.mipmap.mediacontrol_icon_white_play_arrow);
                             mVideoPause.setImageResource(R.mipmap.mediacontrol_icon_white_stop);
-                            if (!mExternalDisplayFlg) {
-                                hideCtrlViewAfterOperate();
-                            } else {
-                                // 外部出力制御の場合.
-                                initPlayerView();
-                                setPlayerEvent();
-                                mExternalDisplayFlg = false;
-                            }
-                            mIsHideOperate = false;
-                        } else if (controlType == PlayerControlType.PLAYER_CONTROL_10_SEC_BACK) {
-                            int pos = mPlayerController.getCurrentPosition();
-                            pos -= REWIND_SECOND;
-                            if (pos < 0) {
-                                pos = 0;
-                                setProgress0();
-                            }
-                            mPlayerController.seekTo(pos);
-                            mIsHideOperate = false;
-                        } else if (controlType == PlayerControlType.PLAYER_CONTROL_30_SEC_SKIP) {
-                            int pos = mPlayerController.getCurrentPosition();
-                            pos += FAST_SECOND;
-                            //pos = pos > mPlayerController.getDuration() ? mPlayerController.getDuration() : pos;
-                            int allDu = mPlayerController.getDuration();
-                            if (pos >= allDu) {
-                                setProgress0();
-                                pos = 0;
-                            }
-                            mPlayerController.seekTo(pos);
-                            mIsHideOperate = false;
+                            mVideoRewind10.setImageResource(R.mipmap.mediacontrol_icon_white_replay_10);
+                            mVideoFast30.setImageResource(R.mipmap.mediacontrol_icon_white_forward_30);
                         }
-                        // タップアップ時点で操作処理は終わっているので各ボタン非タップアイコンに切り替える.
-                        mVideoPlay.setImageResource(R.mipmap.mediacontrol_icon_white_play_arrow);
-                        mVideoPause.setImageResource(R.mipmap.mediacontrol_icon_white_stop);
-                        mVideoRewind10.setImageResource(R.mipmap.mediacontrol_icon_white_replay_10);
-                        mVideoFast30.setImageResource(R.mipmap.mediacontrol_icon_white_forward_30);
                     }
                     hideCtrlViewAfterOperate();
                 } else if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     mIsHideOperate = false;
                     if (mVideoCtrlBar.getVisibility() == View.VISIBLE && mIsOperateActivated) {
-                        // タップダウンした時に長押し処理を開始する.
-                        PlayerControlType controlType = getPlayerControlType(motionEvent);
-                        if (controlType == PlayerControlType.PLAYER_CONTROL_10_SEC_BACK) {
-                            mVideoRewind10.setImageResource(R.mipmap.mediacontrol_icon_tap_replay_10);
-                        } else if (controlType == PlayerControlType.PLAYER_CONTROL_30_SEC_SKIP) {
-                            mVideoFast30.setImageResource(R.mipmap.mediacontrol_icon_tap_forward_30);
-                        } else if (controlType == PlayerControlType.PLAYER_CONTROL_PLAY_PAUSE) {
-                            mVideoPlay.setImageResource(R.mipmap.mediacontrol_icon_tap_play_arrow);
-                            mVideoPause.setImageResource(R.mipmap.mediacontrol_icon_tap_stop);
+                        if (!mIsVideoBroadcast) {
+                            // タップダウンした時に長押し処理を開始する.
+                            PlayerControlType controlType = getPlayerControlType(motionEvent);
+                            if (controlType == PlayerControlType.PLAYER_CONTROL_10_SEC_BACK) {
+                                mVideoRewind10.setImageResource(R.mipmap.mediacontrol_icon_tap_replay_10);
+                            } else if (controlType == PlayerControlType.PLAYER_CONTROL_30_SEC_SKIP) {
+                                mVideoFast30.setImageResource(R.mipmap.mediacontrol_icon_tap_forward_30);
+                            } else if (controlType == PlayerControlType.PLAYER_CONTROL_PLAY_PAUSE) {
+                                mVideoPlay.setImageResource(R.mipmap.mediacontrol_icon_tap_play_arrow);
+                                mVideoPause.setImageResource(R.mipmap.mediacontrol_icon_tap_stop);
+                            }
                         }
                     } else {
                         if (!mIsVideoBroadcast) {
