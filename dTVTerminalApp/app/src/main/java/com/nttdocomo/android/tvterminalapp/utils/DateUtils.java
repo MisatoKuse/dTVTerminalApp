@@ -965,6 +965,7 @@ public class DateUtils {
         cal.set(Calendar.MILLISECOND, 0);
         //今の日付
         Date nowDate = cal.getTime();
+        cal.add(Calendar.DAY_OF_MONTH, -AVAILABLE_BASE_DAY);
         return (pre31Date.getTime() <= nowDate.getTime() && nowDate.getTime() <= endDate.getTime());
     }
 

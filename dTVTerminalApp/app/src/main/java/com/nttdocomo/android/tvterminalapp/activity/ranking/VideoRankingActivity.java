@@ -402,10 +402,9 @@ public class VideoRankingActivity extends BaseActivity implements
      * タブ毎にリクエストを行う.
      */
     private void getGenreData() {
-        if (mRankingDataProvider == null) {
-            mRankingDataProvider =
-                    new RankingTopDataProvider(this, ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
-        }
+        //DataProviderは再利用禁止のため必ず new すること
+        mRankingDataProvider =
+                new RankingTopDataProvider(this, ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
         if (mGenreMetaDataList != null && mGenreMetaDataList.size() > 0) {
             RankingBaseFragment fragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);
             mRankingDataProvider.enableConnect();

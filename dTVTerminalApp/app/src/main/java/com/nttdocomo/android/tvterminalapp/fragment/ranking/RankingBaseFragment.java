@@ -116,6 +116,7 @@ public class RankingBaseFragment extends Fragment implements AdapterView.OnItemC
             mNoDataMessage = mRankingFragmentView.findViewById(R.id.ranking_no_items);
 
             mRankingListView.setOnItemClickListener(this);
+            showProgressBar(true);
         }
         if (mContentsAdapter == null) {
             initRankingView();

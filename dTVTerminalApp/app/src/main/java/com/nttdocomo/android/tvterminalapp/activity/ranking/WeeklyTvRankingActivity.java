@@ -378,10 +378,9 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
      */
     private void getGenreData() {
         DTVTLogger.start();
-        if (mRankingDataProvider == null) {
-            mRankingDataProvider = new RankingTopDataProvider(
-                    this, ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK);
-        }
+        //DataProviderは再利用禁止のため必ず new すること
+        mRankingDataProvider = new RankingTopDataProvider(
+                this, ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK);
         if (mGenreMetaDataList != null
                 && mGenreMetaDataList.size() > 0) {
             RankingBaseFragment fragment = getCurrentFragment(mViewPager, mRankingFragmentFactory);

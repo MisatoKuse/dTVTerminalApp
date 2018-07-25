@@ -1035,7 +1035,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
      * @param contentsDataList 週間ランキングリスト
      */
     private void sendWeeklyGenreRankList(final List<ContentsData> contentsDataList) {
-        if (mWeeklyRankingApiCallback != null) {
+        if (mWeeklyRankingApiCallback != null && !mIsCancel) {
             mWeeklyRankingApiCallback.onWeeklyRankListCallback(contentsDataList);
         }
     }
@@ -1054,7 +1054,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
      * @param contentsDataList ビデオランキングリスト
      */
     private void sendVideoRankingApiCallback(final List<ContentsData> contentsDataList) {
-        if (mVideoRankingApiDataProviderCallback != null) {
+        if (mVideoRankingApiDataProviderCallback != null && !mIsCancel) {
             mVideoRankingApiDataProviderCallback.onVideoRankListCallback(contentsDataList);
         }
     }
