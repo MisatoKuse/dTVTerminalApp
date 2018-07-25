@@ -263,6 +263,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             public void run() {
                 setProgressBarGone();
                 showGetDataFailedToast();
+                setVideoBrows(null);
             }
         });
     }
@@ -498,6 +499,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                             }
                             showToast(message);
                             setProgressBarGone();
+                            setVideoBrows(null);
                         } else {
                             switch (StbConnectionManager.shared().getConnectionStatus()) {
                                 case HOME_OUT:
@@ -524,6 +526,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                                             message = getString(R.string.network_nw_error_message);
                                         }
                                         showToast(message);
+                                        setVideoBrows(null);
                                     }
                                     setProgressBarGone();
                                     break;
@@ -536,6 +539,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                                     } else {
                                         message = getString(R.string.network_nw_error_message);
                                     }
+                                    setVideoBrows(null);
                                     showToast(message);
                                     setProgressBarGone();
                                     break;
