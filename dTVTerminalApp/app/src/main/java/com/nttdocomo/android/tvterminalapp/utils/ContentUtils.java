@@ -293,7 +293,8 @@ public class ContentUtils {
      * @param dispType disp_type
      * @param tvService tv_service
      * @param contentsType contents_type
-     * @param availEndDate 配信日時(avail_end_date)
+     * @param availStartDate 配信開始日時(avail_start_date)
+     * @param availEndDate 配信終了日時(avail_end_date)
      * @param vodStartDate VOD配信日時(vod_start_date)
      * @param vodEndDate VOD配信日時(vod_end_date)
      * @param estflg ESTフラグ
@@ -302,14 +303,20 @@ public class ContentUtils {
      */
     @SuppressWarnings("OverlyComplexMethod")
     public static ContentsType getContentsTypeByPlala(final String dispType, final String tvService,
-                                                                final String contentsType, final long availEndDate,
+                                                           final String contentsType, final long availStartDate, final long availEndDate,
                                                                 final long vodStartDate, final long vodEndDate, final String estflg,
                                                                 final String chsvod) {
         ContentsType cType = ContentsType.OTHER;
+        //VODコンテンツかつ当日日付から配信開始日又は配信終了日が31日以内のものは〇〇から or 〇〇まで表示をする
+        //VODとして扱うもの→ひかりTV_VOD、ひかりTV内dTV、レンタル、プレミアムビデオ(2018/7/25現在)
+        //※現状は disp_type のみで判定できるため disp_type を使用
         if (VIDEO_PROGRAM.equals(dispType)
-                || VIDEO_SERIES.equals(dispType)) {
+                || VIDEO_SERIES.equals(dispType)
+                || VIDEO_PACKAGE.equals(dispType)
+                || SUBSCRIPTION_PACKAGE.equals(dispType)
+                || SERIES_SVOD.equals(dispType)) {
             //ひかりTV_VOD、ひかりTV内dTV
-            cType = DateUtils.getContentsTypeByAvailEndDate(availEndDate);
+            cType = DateUtils.getContentsTypeByAvailEndDate(availStartDate, availEndDate);
         } else if (TV_PROGRAM.equals(dispType)) {
             if (TV_SERVICE_FLAG_HIKARI.equals(tvService)) {
                 //ひかりTV_番組
@@ -317,7 +324,7 @@ public class ContentUtils {
             } else if (TV_SERVICE_FLAG_DCH_IN_HIKARI.equals(tvService)) {
                 if (CONTENT_TYPE_FLAG_THREE.equals(contentsType)) {
                     //ひかりTV内dTVチャンネル_関連VOD
-                    cType = DateUtils.getContentsTypeByAvailEndDate(availEndDate);
+                    cType = DateUtils.getContentsTypeByAvailEndDate(availStartDate, availEndDate);
                 } else if (CONTENT_TYPE_FLAG_ONE.equals(contentsType)
                         || CONTENT_TYPE_FLAG_TWO.equals(contentsType)) {
                     Calendar cal = Calendar.getInstance();
@@ -342,39 +349,10 @@ public class ContentUtils {
                     cType = ContentsType.TV;
                 }
             }
-        } else {
-            cType = getContentsTypeRental(dispType, estflg, chsvod);
-            if (cType == ContentsType.PREMIUM || cType == ContentsType.RENTAL) {
-                cType = DateUtils.getContentsTypeByAvailEndDate(availEndDate);
-            }
         }
         return cType;
     }
 
-    /**
-     * レンタル プレミアムビデオ判定.
-     * @param dispType disp_type
-     * @param estFlg estflg
-     * @param chSod chsod
-     * @return RENTAL、PREMIUM
-     */
-    private static ContentsType getContentsTypeRental(final String dispType, final String estFlg, final String chSod) {
-        ContentsType cType = ContentsType.OTHER;
-        final String ZERO_FLAG = "0";
-        if (VIDEO_PROGRAM.equals(dispType)
-                || VIDEO_PACKAGE.equals(dispType)) {
-            //レンタル
-            if (estFlg == null || estFlg.isEmpty() || estFlg.equals(ZERO_FLAG)) {
-                cType = ContentsType.RENTAL;
-            }
-        } else if (SUBSCRIPTION_PACKAGE.equals(dispType)
-                || SERIES_SVOD.equals(dispType)) {
-            if (chSod == null || chSod.isEmpty() || chSod.equals(ZERO_FLAG)) {
-                cType = ContentsType.PREMIUM;
-            }
-        }
-        return cType;
-    }
     /**
      * コンテンツ配信期限の表示 DREM-2011.
      * コンテンツ配信前表示(対向ぷららサーバ) DREM-2047
@@ -396,13 +374,14 @@ public class ContentUtils {
         final long vodStartDate = listContentInfo.getVodStartDate();
         final long vodEndDate = listContentInfo.getVodEndDate();
 
-        final ContentsType periodContentsType = getContentsTypeByPlala(dispType, tvService, contentsType, availEndDate, vodStartDate, vodEndDate,
+        final ContentsType periodContentsType = getContentsTypeByPlala(
+                dispType, tvService, contentsType, availStartDate, availEndDate, vodStartDate, vodEndDate,
                 estFlg, chsVod);
 
         String viewingPeriod = "";
         switch (periodContentsType) {
             case VOD:// VOD
-                if (DateUtils.isBefore(vodStartDate)) { //から
+                if (DateUtils.isBefore(availStartDate)) { //から
                     viewingPeriod = DateUtils.getContentsDetailVodDate(context, availStartDate);
                     viewingPeriod = StringUtils.getConnectStrings(
                             context.getString(R.string.common_date_format_start_str), viewingPeriod);
@@ -413,14 +392,9 @@ public class ContentUtils {
                 break;
             case DCHANNEL_VOD_OVER_31: // ひかりTV内dch_見逃し(３２日以上).
             case DCHANNEL_VOD_31: // ひかりTV内dch_見逃し(３1日以内).
-                if (DateUtils.isBefore(vodStartDate)) { //から
-                    viewingPeriod = DateUtils.getContentsDetailVodDate(context, vodStartDate);
-                    viewingPeriod = StringUtils.getConnectStrings(
-                            context.getString(R.string.common_date_format_start_str), viewingPeriod);
-                } else { //まで、見逃し
-                    //VOD(m/d（曜日）まで)
-                    viewingPeriod = DateUtils.getContentsDetailVodDate(context, vodEndDate);
-                }
+                //見逃しには 〇〇まで表示のみ
+                //見逃し(m/d（曜日）まで)
+                viewingPeriod = DateUtils.getContentsDetailVodDate(context, vodEndDate);
                 break;
             case TV:// TV
                 //番組(m/d（曜日）h:ii - h:ii)
@@ -470,6 +444,7 @@ public class ContentUtils {
         final String contentsType = listContentInfo.getContentsType();
         final String estFlg = listContentInfo.getEstFlg();
         final String chsVod = listContentInfo.getChsVod();
+        final long availStartDate = listContentInfo.getAvailStartDate();
         final long availEndDate = listContentInfo.getAvailEndDate();
         final long vodStartDate = listContentInfo.getVodStartDate();
         final long vodEndDate = listContentInfo.getVodEndDate();
@@ -478,7 +453,7 @@ public class ContentUtils {
         if (type == ContentsAdapter.ActivityTypeItem.TYPE_RECOMMEND_LIST || type == ContentsAdapter.ActivityTypeItem.TYPE_SEARCH_LIST) {
             periodContentsType = getContentsTypeByRecommend(Integer.parseInt(listContentInfo.getServiceId()), listContentInfo.getCategoryId());
         } else {
-            periodContentsType = getContentsTypeByPlala(dispType, tvService, contentsType, availEndDate, vodStartDate, vodEndDate,
+            periodContentsType = getContentsTypeByPlala(dispType, tvService, contentsType, availStartDate, availEndDate, vodStartDate, vodEndDate,
                 estFlg, chsVod);
         }
 

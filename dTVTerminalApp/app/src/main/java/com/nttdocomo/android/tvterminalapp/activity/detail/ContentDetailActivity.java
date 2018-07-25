@@ -1448,9 +1448,10 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     detailData.setContentCategory(mDetailFullData.getContentsType());
                     String date = "";
                     ContentUtils.ContentsType contentsType = ContentUtils.getContentsTypeByPlala(mDetailFullData.getDisp_type(),
-                            mDetailFullData.getmTv_service(), mDetailFullData.getmContent_type(), mDetailFullData.getAvail_end_date(),
-                            mDetailFullData.getmVod_start_date(), mDetailFullData.getmVod_end_date(), mDetailFullData.getEstFlag(),
-                            mDetailFullData.getmChsvod());
+                            mDetailFullData.getmTv_service(), mDetailFullData.getmContent_type(),
+                            mDetailFullData.getAvail_start_date(), mDetailFullData.getAvail_end_date(),
+                            mDetailFullData.getmVod_start_date(), mDetailFullData.getmVod_end_date(),
+                            mDetailFullData.getEstFlag(), mDetailFullData.getmChsvod());
                     if (contentsType == ContentUtils.ContentsType.TV) {
                         //番組(m/d（曜日）h:ii - h:ii)
                         date = DateUtils.getContentsDateString(mDetailFullData.getPublish_start_date(), mDetailFullData.getPublish_end_date());
