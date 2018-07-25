@@ -489,9 +489,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         String endTime = String.valueOf(DateUtils.getEpochTime(contentsData.getPublishEndDate()) / 1000);
         String channelName = contentsData.getChannelName();
         ContentUtils.ContentsType contentsType = ContentUtils.getContentsTypeByPlala(contentsData.getDispType(),
-                contentsData.getTvService(), contentsData.getContentsType(), contentsData.getAvailEndDate(),
-                contentsData.getVodStartDate(), contentsData.getVodEndDate(), contentsData.getEstFlg(),
-                contentsData.getChsVod());
+                contentsData.getTvService(), contentsData.getContentsType(),
+                contentsData.getAvailStartDate(), contentsData.getAvailEndDate(),
+                contentsData.getVodStartDate(), contentsData.getVodEndDate(),
+                contentsData.getEstFlg(), contentsData.getChsVod());
         String date;
         //channelNameが取得成功したときのみ区切り文字を追加する
         if (channelName != null && !channelName.isEmpty()) {
@@ -634,13 +635,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
                 String startViewing = contentsData.getStartViewing();
                 return !TextUtils.isEmpty(startViewing) && DateUtils.isInOneWeek(startViewing);
             default:
-                String startPublishDate = contentsData.getPublishStartDate();
-                if (!TextUtils.isEmpty(startPublishDate) && DataBaseUtils.isNumber(startPublishDate)) {
-                    long startDate = Long.parseLong(startPublishDate);
-                    return DateUtils.isInOneWeek(startDate);
-                } else {
-                    return false;
-                }
+                //VODの配信日付は avail_〇〇_date を使用すること
+                long startAvailDate = contentsData.getAvailStartDate();
+                return DateUtils.isInOneWeek(startAvailDate);
         }
     }
 
