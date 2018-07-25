@@ -85,7 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/home_contents_thumbnail_title_bottom_margin"
             android:ellipsize="end"
-            android:maxLines="1"
+            android:maxLines="2"
             android:textColor="@color/home_item_contents_text_color"
             android:textSize="@dimen/home_contents_thumbnail_title_text_size"
             android:textStyle="bold" />
