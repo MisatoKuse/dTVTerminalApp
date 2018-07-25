@@ -22,6 +22,7 @@ import android.widget.AbsListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -262,7 +263,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             public void run() {
                 setProgressBarGone();
                 showGetDataFailedToast();
-                setVideoBrows(null);
             }
         });
     }
@@ -485,7 +485,14 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(RecordedListActivity.this);
                         // 未ペアリング時
                         if (dlnaDmsItem.mControlUrl.isEmpty()) {
-                            mNoDataMessage.setVisibility(View.VISIBLE);
+                            clearFragment(0);
+                            String message;
+                            if (NetWorkUtils.isOnline(RecordedListActivity.this)) {
+                                message = getString(R.string.main_setting_connect_error_message);
+                            } else {
+                                message = getString(R.string.network_nw_error_message);
+                            }
+                            showToast(message);
                             setProgressBarGone();
                         } else {
                             switch (StbConnectionManager.shared().getConnectionStatus()) {
@@ -506,14 +513,26 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                                     } else {
                                         clearFragment(0);
                                         setRecordedTakeOutContents();
-                                        setVideoBrows(null);
+                                        String message;
+                                        if (NetWorkUtils.isOnline(RecordedListActivity.this)) {
+                                            message = getString(R.string.main_setting_connect_error_message);
+                                        } else {
+                                            message = getString(R.string.network_nw_error_message);
+                                        }
+                                        showToast(message);
                                     }
                                     setProgressBarGone();
                                     break;
                                 case NONE_PAIRING:
                                 default:
                                     clearFragment(0);
-                                    mNoDataMessage.setVisibility(View.VISIBLE);
+                                    String message;
+                                    if (NetWorkUtils.isOnline(RecordedListActivity.this)) {
+                                        message = getString(R.string.main_setting_connect_error_message);
+                                    } else {
+                                        message = getString(R.string.network_nw_error_message);
+                                    }
+                                    showToast(message);
                                     setProgressBarGone();
                                     break;
                             }
@@ -536,6 +555,19 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 }
             }
         });
+    }
+
+    /**
+     * トーストの表示.
+     * @param message トーストメッセージ
+     */
+    private void showToast(final String message) {
+        if (mToast != null) {
+            mToast.cancel();
+        }
+        // 成功
+        mToast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+        mToast.show();
     }
 
     /**
