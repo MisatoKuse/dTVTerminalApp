@@ -344,11 +344,11 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
 
     @Override
     public void onTvScheduleJsonParsed(final List<TvScheduleList> tvScheduleList, final int[] chNo) {
-        DTVTLogger.start("onTvScheduleJsonParsed tvScheduleList size:" + tvScheduleList.size());
         //WebClientキューが残っていたら実行する
         mIsTvScheduleRequest = false;
         pollTvScheduleWebClient();
         if (tvScheduleList != null) {
+            DTVTLogger.start("onTvScheduleJsonParsed tvScheduleList size:" + tvScheduleList.size());
             //チャンネルデータ
             mTvScheduleList = tvScheduleList.get(0);
 
@@ -382,6 +382,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 }
             }
         } else {
+            DTVTLogger.start("onTvScheduleJsonParsed tvScheduleList size: null");
             //データが取得できなかったので、エラーを取得する
             if (mTvScheduleWebClient != null) {
                 mTvScheduleError = mTvScheduleWebClient.getError();
