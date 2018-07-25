@@ -957,9 +957,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
 
         //ヌルチェック
         if (holder.tv_recorded_ch_name == null || holder.tv_recorded_hyphen == null) {
-            return;
+            if (!mType.equals(ActivityTypeItem.TYPE_WATCHING_VIDEO_LIST)) {
+                return;
+            }
         }
-
         if (!TextUtils.isEmpty(listContentInfo.getChannelName()) && mTabType != TabTypeItem.TAB_DEFAULT) { //ランク
             //↓を判定条件に使っているため、直前に初期化
             if (holder.tv_recorded_hyphen == null) {
@@ -971,6 +972,18 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             ContentUtils.setChannelNameOrMissedText(mContext, holder.tv_recorded_hyphen, holder.tv_recorded_ch_name, listContentInfo, mType);
             if (mType == ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST) {
                 holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.record_download_status_color));
+            }
+        } else if (mType.equals(ActivityTypeItem.TYPE_WATCHING_VIDEO_LIST)) {
+            if (holder.tv_recorded_hyphen == null) {
+                holder.tv_recorded_hyphen = contentView.findViewById(R.id.item_common_result_recorded_content_hyphen);
+            }
+            if (holder.tv_recorded_ch_name == null) {
+                holder.tv_recorded_ch_name = contentView.findViewById(R.id.item_common_result_recorded_content_channel_name);
+            }
+            ContentUtils.ContentsType contentsType = ContentUtils.setChannelNameOrMissedText(mContext, holder.tv_recorded_hyphen, holder.tv_recorded_ch_name, listContentInfo, mType);
+            if (contentsType != ContentUtils.ContentsType.DCHANNEL_VOD_31) {
+                holder.tv_recorded_hyphen.setVisibility(View.GONE);
+                holder.tv_recorded_ch_name.setVisibility(View.GONE);
             }
         } else {
             if (TextUtils.isEmpty(listContentInfo.getChannelName()) && holder.tv_recorded_ch_name != null
