@@ -103,6 +103,10 @@ public class SharedPreferencesUtils {
      */
     private static final String RESTART_FLAG = "RESTART_FLAG";
     /**
+     * ユーザ契約情報キー.
+     */
+    private static final String USER_CONTRACT_INFO_SHARED_KEY = "USER_CONTRACT_INFO_SHARED_KEY";
+    /**
      * ユーザ年齢情報キー.
      */
     private static final String USER_AGE_REQ_SHARED_KEY = "USER_AGE_REQ_SHARED_KEY";
@@ -227,6 +231,8 @@ public class SharedPreferencesUtils {
             LAST_ONE_TIME_PASSWORD,
             // アプリ再起動フラグは自動消去なので必要ないが、後日、指定漏れと誤認したのでコメントとして追記。
             //RESTART_FLAG,
+            //ユーザ契約情報キー
+            USER_CONTRACT_INFO_SHARED_KEY,
             //ユーザ年齢情報キー
             USER_AGE_REQ_SHARED_KEY,
             //ユーザー情報取得日時
@@ -694,6 +700,37 @@ public class SharedPreferencesUtils {
 
         //デフォルト値はfalseで取得して返す
         return data.getBoolean(RESTART_FLAG, false);
+    }
+
+    /**
+     * 取得したユーザ契約情報を保存.
+     *
+     * @param context コンテキスト
+     * @param contractInfo 保存するユーザ契約情報
+     */
+    public static void setSharedPreferencesContractInfo(final Context context, final String contractInfo) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                USER_CONTRACT_INFO_SHARED_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putString(USER_CONTRACT_INFO_SHARED_KEY, contractInfo);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * 最後に保存した契約情報を取得.
+     *
+     * @param context コンテキスト
+     * @return 契約情報
+     */
+    public static String getSharedPreferencesContractInfo(final Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                USER_CONTRACT_INFO_SHARED_KEY, Context.MODE_PRIVATE);
+
+        //保存した契約情報がない場合は「none」を返却
+        return data.getString(USER_CONTRACT_INFO_SHARED_KEY, UserInfoUtils.CONTRACT_INFO_NONE);
     }
 
     /**

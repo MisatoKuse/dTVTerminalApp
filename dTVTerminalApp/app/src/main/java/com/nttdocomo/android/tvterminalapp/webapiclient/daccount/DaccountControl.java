@@ -468,8 +468,7 @@ public class DaccountControl implements
         //プリファレンスユーティリティの配下のデータを、ユーザー切り替え後も残す一部を除き削除
         SharedPreferencesUtils.clearAlmostSharedPreferences(context);
         //ダウンロードしたコンテンツを削除
-        DownloadDataProvider.cancelAll();
-        DownloadDataProvider.deleteAllDownLoadContents(context);
+        DownloadDataProvider.clearAllDownloadContents(context, false);
         if (StbConnectionManager.shared().getConnectionStatus() != StbConnectionManager.ConnectionStatus.NONE_PAIRING) {
             DlnaManager.shared().StopDmp();
             StbConnectionManager.shared().setConnectionStatus(StbConnectionManager.ConnectionStatus.NONE_PAIRING);

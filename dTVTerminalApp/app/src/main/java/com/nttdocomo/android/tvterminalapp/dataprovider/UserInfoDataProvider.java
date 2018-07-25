@@ -13,6 +13,7 @@ import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist.AccountList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.userinfolist.SerializablePreferencesData;
+import com.nttdocomo.android.tvterminalapp.service.download.DownloadDataProvider;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
@@ -72,7 +73,8 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
 
             DTVTLogger.debug("UserInfoDataProvider::onUserInfoJsonParsed setUserInfo");
             SharedPreferencesUtils.setSharedPreferencesSerializableData(mContext, preferencesData);
-
+            //契約状態が「契約有り」→「無し」に変わった場合、ダウンロードしたコンテンツを削除
+            DownloadDataProvider.clearAllDownloadContents(mContext, true);
             //後処理を行う
             afterProcess(userInfoLists);
         } else {

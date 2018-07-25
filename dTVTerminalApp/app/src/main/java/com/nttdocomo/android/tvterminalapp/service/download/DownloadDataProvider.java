@@ -18,7 +18,9 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DataBaseConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DownLoadListDataManager;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -703,7 +705,7 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
     }
 
     /**
-     * 機能：海外になる時、すべてのDLをキャンセル.
+     * 機能：すべてのDLをキャンセル.
      */
     public static synchronized void cancelAll() {
         if (null == sDownloadDataProvider) {
@@ -736,5 +738,32 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
     public synchronized boolean isDownloading() {
         DownloadService ds = getDownloadService();
         return null != ds && ds.isDownloading();
+    }
+
+    /**
+     * 機能：すべてのDLをキャンセルし、ダウンロードしたコンテンツを削除する.
+     * @param context コンテキスト
+     * @param checkContractInfo 契約情報確認要否
+     */
+    public synchronized static void clearAllDownloadContents(final Context context, final boolean checkContractInfo) {
+        if (checkContractInfo) {
+            String oldContractInfo = SharedPreferencesUtils.getSharedPreferencesContractInfo(context);
+            String newContractInfo = UserInfoUtils.getUserContractInfo(SharedPreferencesUtils.getSharedPreferencesUserInfo(context));
+            if (!newContractInfo.equals(oldContractInfo)) {
+                SharedPreferencesUtils.setSharedPreferencesContractInfo(context, newContractInfo);
+                if (!UserInfoUtils.CONTRACT_INFO_NONE.equals(newContractInfo)) {
+                    return;
+                }
+            } else {
+                return;
+            }
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                cancelAll();
+                deleteAllDownLoadContents(context);
+            }
+        }).start();
     }
 }
