@@ -76,6 +76,9 @@ public class DaccountGetOtt {
                 //キャンセルか認証状態無効だった場合は、いち早くベースアクティビティ側に知らせて、
                 //ログアウト等のダイアログを海外判定のダイアログよりも優先表示する
                 OttGetAuthSwitch.getInstance().setSkipPermission(true);
+            } else {
+                //エラーではないので、ログアウトダイアログの優先表示は必要ない。falseを設定
+                OttGetAuthSwitch.getInstance().setSkipPermission(false);
             }
 
             //dアカウント設定アプリと切断する
