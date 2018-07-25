@@ -953,6 +953,9 @@ public class DateUtils {
         calendar.set(Calendar.MILLISECOND, 0);
         //放送終了日付
         Date endDate = calendar.getTime();
+        calendar.add(Calendar.DAY_OF_MONTH, -AVAILABLE_BASE_DAY);
+        //放送終了日付より31日前の日付
+        Date pre31Date = calendar.getTime();
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
@@ -960,10 +963,7 @@ public class DateUtils {
         cal.set(Calendar.MILLISECOND, 0);
         //今の日付
         Date nowDate = cal.getTime();
-        cal.add(Calendar.DAY_OF_MONTH, -AVAILABLE_BASE_DAY);
-        //今より31日前の日付
-        Date nowPre31Date = cal.getTime();
-        return (nowPre31Date.getTime() <= endDate.getTime() && endDate.getTime() <= nowDate.getTime());
+        return (pre31Date.getTime() <= nowDate.getTime() && nowDate.getTime() <= endDate.getTime());
     }
 
     /**
@@ -980,9 +980,6 @@ public class DateUtils {
         cal.set(Calendar.MILLISECOND, 0);
         //今の日付
         Date nowDate = cal.getTime();
-        cal.add(Calendar.DAY_OF_MONTH, -AVAILABLE_BASE_DAY);
-        //今より31日前の日付
-        Date nowPre31Date = cal.getTime();
         Date endDatetime;
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DD_HH_MM_SS, Locale.JAPAN);
         try {
@@ -995,7 +992,10 @@ public class DateUtils {
             calendar.setTime(endDate);
             //放送終了日付
             endDatetime = calendar.getTime();
-            return (nowPre31Date.getTime() <= endDatetime.getTime() && endDatetime.getTime() <= nowDate.getTime());
+            cal.add(Calendar.DAY_OF_MONTH, -AVAILABLE_BASE_DAY);
+            //放送終了日付より31日前
+            Date  pre31Date = calendar.getTime();
+            return (pre31Date.getTime() <= nowDate.getTime() && nowDate.getTime() <= endDatetime.getTime());
         } catch (ParseException e) {
             DTVTLogger.debug(e);
         }
