@@ -142,6 +142,8 @@ public class DlnaManager {
     private String mHomeOutControlUrl = null;
     /** ARIB外字変換クラス. */
     private AribUtils mAribUtils = null;
+    /** ダウンロードキャンセル処理. */
+    private boolean mIsCanceled = false;
 
     // region Listener declaration
 
@@ -572,6 +574,23 @@ public class DlnaManager {
      */
     public void DownloadCancel() {
         downloadCancel();
+        setCanceledStatus(true);
+    }
+
+    /**
+     * ダウンロードをキャンセル状態取得.
+     * @return RemoteDeviceExpireDate
+     */
+    public boolean getCanceled() {
+        return DlnaManager.shared().mIsCanceled;
+    }
+
+    /**
+     * ダウンロードをキャンセル状態設定.
+     * @param cancelStatus cancelStatus
+     */
+    public void setCanceledStatus(final boolean cancelStatus) {
+        DlnaManager.shared().mIsCanceled = cancelStatus;
     }
 
     /**
@@ -777,6 +796,7 @@ public class DlnaManager {
             default:
                 break;
         }
+        setCanceledStatus(false);
         DownloadStatusListener listener = DlnaManager.shared().mDownloadStatusListener;
         if (listener != null) {
             listener.onDownloadStatusCallBack(downLoadStatus);

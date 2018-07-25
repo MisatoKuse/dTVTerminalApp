@@ -65,9 +65,15 @@ public class DtcpDownloader extends DownloaderBase implements DlnaManager.Downlo
             int ret = NewEnvironmentUtil.copyDeviceKeyFromOtherCMWork(context, homeParent, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
             if (1 != ret && 3 != ret) {
                 onFail(DownloadListener.DownLoadError.DLError_CopyKeyFileFailed);
+                DlnaManager.shared().setCanceledStatus(false);
                 return;
             }
-            DlnaManager.shared().downloadStart(param);
+            if (!DlnaManager.shared().getCanceled()) {
+                DlnaManager.shared().downloadStart(param);
+            } else {
+                DlnaManager.shared().setCanceledStatus(false);
+                onDownloadStatusCallBack(DlnaManager.DownLoadStatus.DOWNLOADER_STATUS_CANCELLED);
+            }
         } else {
             onFail(DownloadListener.DownLoadError.DLError_Other);
         }
