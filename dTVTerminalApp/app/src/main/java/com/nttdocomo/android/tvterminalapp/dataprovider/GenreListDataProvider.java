@@ -428,7 +428,7 @@ public class GenreListDataProvider implements
      * @param genreMetaDataList ジャンルリスト
      */
     private void sendRankGenreList(final ArrayList<GenreListMetaData> genreMetaDataList) {
-        if (mRankGenreListCallback != null) {
+        if (mRankGenreListCallback != null && !mIsCancel) {
             mRankGenreListCallback.onRankGenreListCallback(genreMetaDataList);
         }
     }
