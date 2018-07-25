@@ -87,7 +87,10 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
         BufferedInputStream in = null;
         try {
             mImageUrl = params[0];
-            Bitmap bitmap = mThumbnailProvider.thumbnailCacheManager.getBitmapFromDisk(mImageUrl, mImageSizeType);
+            Bitmap bitmap = null;
+            if (mImageSizeType != ImageSizeType.CONTENT_DETAIL) {
+                bitmap = mThumbnailProvider.thumbnailCacheManager.getBitmapFromDisk(mImageUrl, mImageSizeType);
+            }
             if (bitmap != null) {
                 mThumbnailProvider.thumbnailCacheManager.putBitmapToMem(mImageUrl, bitmap);
                 return bitmap;
@@ -120,22 +123,28 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
                 if (mContext != null) {
                     if (mImageSizeType == ImageSizeType.TV_PROGRAM_LIST) {
                         bitmap = BitmapDecodeUtils.compressBitmap(mContext, in, ImageSizeType.TV_PROGRAM_LIST);
-                    } else {
+                    } else if (mImageSizeType == ImageSizeType.CONTENT_DETAIL) {
                         bitmap = BitmapDecodeUtils.compressBitmap(mContext, in, ImageSizeType.CONTENT_DETAIL);
+                    } else {
+                        bitmap = BitmapDecodeUtils.compressBitmap(mContext, in, ImageSizeType.HOME_LIST);
                     }
                 } else {
                     bitmap = BitmapFactory.decodeStream(in);
                 }
                 if (bitmap != null) {
-                    // ディスクに保存する
                     if (mImageSizeType != ImageSizeType.TV_PROGRAM_LIST) {
-                        mThumbnailProvider.thumbnailCacheManager.saveBitmapToDisk(mImageUrl, bitmap);
+                        // ディスクにプッシュする（詳細画面除外）
+                        if (mImageSizeType != ImageSizeType.CONTENT_DETAIL) {
+                            mThumbnailProvider.thumbnailCacheManager.saveBitmapToDisk(mImageUrl, bitmap);
+                        }
                         if (mContext != null) {
                             bitmap = BitmapDecodeUtils.createScaleBitmap(mContext, bitmap, mImageSizeType);
                         }
                     }
-                    // メモリにプッシュする
-                    mThumbnailProvider.thumbnailCacheManager.putBitmapToMem(mImageUrl, bitmap);
+                    // メモリにプッシュする（詳細画面除外）
+                    if (mImageSizeType != ImageSizeType.CONTENT_DETAIL) {
+                        mThumbnailProvider.thumbnailCacheManager.putBitmapToMem(mImageUrl, bitmap);
+                    }
                 }
             }
             return bitmap;

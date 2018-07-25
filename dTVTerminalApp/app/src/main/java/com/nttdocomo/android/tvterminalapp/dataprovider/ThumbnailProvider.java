@@ -94,8 +94,10 @@ public class ThumbnailProvider {
 		}
 
 		// メモリから取得
-		Bitmap bitmap = thumbnailCacheManager.getBitmapFromMem(imageUrl);
-
+		Bitmap bitmap = null;
+		if (mImageSizeType != ThumbnailDownloadTask.ImageSizeType.CONTENT_DETAIL) {
+			bitmap = thumbnailCacheManager.getBitmapFromMem(imageUrl);
+		}
 		if (bitmap != null) {
 			DTVTLogger.debug("image exists in memory");
 			return bitmap;
