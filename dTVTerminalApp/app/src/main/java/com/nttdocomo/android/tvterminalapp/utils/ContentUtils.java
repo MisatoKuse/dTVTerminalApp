@@ -434,7 +434,7 @@ public class ContentUtils {
      * @param listContentInfo 行データ
      * @param type 機能タイプ
      */
-    public static void setChannelNameOrMissedText(final Context context,
+    public static ContentsType setChannelNameOrMissedText(final Context context,
                                                   final TextView hyphenTextView,
                                                   final TextView channelTextView,
                                                   final ContentsData listContentInfo,
@@ -493,6 +493,7 @@ public class ContentUtils {
             channelTextView.setVisibility(View.VISIBLE);
             channelTextView.setText(listContentInfo.getChannelName());
         }
+        return periodContentsType;
     }
 
     /**
