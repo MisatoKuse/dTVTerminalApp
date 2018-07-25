@@ -1456,7 +1456,14 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         //番組(m/d（曜日）h:ii - h:ii)
                         date = DateUtils.getContentsDateString(mDetailFullData.getPublish_start_date(), mDetailFullData.getPublish_end_date());
                     } else {
-                        detailData.setmStartDate(String.valueOf(mDetailFullData.getmVod_start_date()));
+                        if (contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_OVER_31
+                                || contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
+                            //見逃しは vod_start_date を使用する
+                            detailData.setmStartDate(String.valueOf(mDetailFullData.getmVod_start_date()));
+                        } else {
+                            //VODは avail_start_date を使用する
+                            detailData.setmStartDate(String.valueOf(mDetailFullData.getAvail_start_date()));
+                        }
                         setViewPagerTab();
                         if (DateUtils.isBefore(mDetailFullData.getAvail_start_date())) {
                             //配信前 m/d（曜日）から

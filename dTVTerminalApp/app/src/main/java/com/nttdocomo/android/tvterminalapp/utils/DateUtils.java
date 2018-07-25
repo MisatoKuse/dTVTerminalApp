@@ -1008,29 +1008,34 @@ public class DateUtils {
     /**
      * 一週間以内判断.
      *
-     * @param startPublishDate 配信開始
+     * @param publishStartDate 配信開始
      * @return true 一週間以内、一週間超えた
      */
-    public static boolean isInOneWeek(final String startPublishDate) {
+    public static boolean isInOneWeek(final String publishStartDate) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
-        Date nowDate = cal.getTime();
-        Date startDate;
+        //当日日付
+        long nowDate = cal.getTime().getTime();
+        //配信開始日付
+        Date publishDate;
+        long startDate;
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DD_HH_MM_SS, Locale.JAPAN);
         try {
-            startDate = sdf.parse(startPublishDate);
-            cal.setTime(startDate);
+            publishDate = sdf.parse(publishStartDate);
+            cal.setTime(publishDate);
             cal.set(Calendar.HOUR_OF_DAY, 0);
             cal.set(Calendar.MINUTE, 0);
             cal.set(Calendar.SECOND, 0);
             cal.set(Calendar.MILLISECOND, 0);
-            startDate = cal.getTime();
+            startDate = cal.getTime().getTime();
             cal.add(Calendar.DAY_OF_MONTH, +PUBLISH_BASE_DAY);
-            Date endDate = cal.getTime();
-            return nowDate.compareTo(startDate) != -1 && nowDate.compareTo(endDate) == -1;
+            //配信7日後日付
+            long endDate = cal.getTime().getTime();
+            //一週間以内 = ((配信開始後であること) 当日日付 >= 配信開始 && (配信開始後7日超でないこと) 当日日付 <= 配信7日後日付)
+            return nowDate >= startDate && nowDate <= endDate;
         } catch (ParseException e) {
             DTVTLogger.debug(e);
         }
@@ -1049,16 +1054,20 @@ public class DateUtils {
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
-        Date nowDate = cal.getTime();
+        //当日日付
+        long nowDate = cal.getTime().getTime();
         cal.setTimeInMillis(startTime * 1000);
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
-        Date startDate = cal.getTime();
+        //配信開始日付
+        long startDate = cal.getTime().getTime();
         cal.add(Calendar.DAY_OF_MONTH, +PUBLISH_BASE_DAY);
-        Date endDate = cal.getTime();
-        return nowDate.compareTo(startDate) != -1 && nowDate.compareTo(endDate) == -1;
+        //配信7日後日付
+        long endDate = cal.getTime().getTime();
+        //一週間以内 = ((配信開始後であること) 当日日付 >= 配信開始 && (配信開始後7日超でないこと) 当日日付 <= 配信7日後日付)
+        return nowDate >= startDate && nowDate <= endDate;
     }
 
     /**
