@@ -469,7 +469,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         }
         if (DOWNLOAD_OVER == mViewPager.getCurrentItem()) {
             baseFragment.notifyDataSetChanged();
+            if (baseFragment.getContentsData().size() == 0) {
+                mNoDataMessage.setVisibility(View.VISIBLE);
+            }
             progressBar.setVisibility(View.GONE);
+
         }
     }
 
