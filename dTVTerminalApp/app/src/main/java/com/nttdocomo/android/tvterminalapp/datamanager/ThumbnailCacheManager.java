@@ -113,7 +113,7 @@ public class ThumbnailCacheManager {
      * @param mImageSizeType 画像タイプ
      * @return bitmap ディスクから取得画像
      */
-    public Bitmap getBitmapFromDisk(final String fileName, final ThumbnailDownloadTask.ImageSizeType mImageSizeType) {
+    public synchronized Bitmap getBitmapFromDisk(final String fileName, final ThumbnailDownloadTask.ImageSizeType mImageSizeType) {
         //コンテキストがヌルの場合は帰る
         if (mContext == null) {
             return null;
@@ -168,7 +168,7 @@ public class ThumbnailCacheManager {
      * @param bitmap 画像
      * @return result 保存成功、失敗の結果
      */
-    public boolean saveBitmapToDisk(final String fileName, final Bitmap bitmap) {
+    public synchronized boolean saveBitmapToDisk(final String fileName, final Bitmap bitmap) {
         //コンテキストがヌルの場合は取得失敗で帰る
         if (mContext == null) {
             return false;
