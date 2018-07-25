@@ -64,6 +64,7 @@ import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.OttGetAuthSwitch;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalChListWebClient;
 
 import java.util.ArrayList;
@@ -545,6 +546,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         if (mUserInfoDataProvider != null) {
             StopUserInfoDataConnect stopUserInfoDataConnect = new StopUserInfoDataConnect();
             stopUserInfoDataConnect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mUserInfoDataProvider);
+        }
+
+        //ホーム画面の終了を判定する
+        if (isFinishing()) {
+            //終了後はログアウトダイアログの優先表示は必要ないので、falseを設定
+            OttGetAuthSwitch.getInstance().setSkipPermission(false);
         }
     }
 
