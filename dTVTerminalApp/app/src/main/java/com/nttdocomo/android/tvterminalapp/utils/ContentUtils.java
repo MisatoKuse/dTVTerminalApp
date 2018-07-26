@@ -382,9 +382,7 @@ public class ContentUtils {
         switch (periodContentsType) {
             case VOD:// VOD
                 if (DateUtils.isBefore(availStartDate)) { //から
-                    viewingPeriod = DateUtils.getContentsDetailVodDate(context, availStartDate);
-                    viewingPeriod = StringUtils.getConnectStrings(
-                            context.getString(R.string.common_date_format_start_str), viewingPeriod);
+                    viewingPeriod = DateUtils.getContentsDateString(context, availStartDate, true);
                 } else { //まで、見逃し
                     //VOD(m/d（曜日）まで)
                     viewingPeriod = DateUtils.getContentsDetailVodDate(context, availEndDate);

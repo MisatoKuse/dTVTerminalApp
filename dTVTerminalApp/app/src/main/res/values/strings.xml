@@ -381,8 +381,8 @@
     <string name="main_setting_h4d_not_signed_message">ひかりTV for docomoの契約状態が確認できないため\nご利用になれません</string>
     <string name="main_setting_stb_not_connected_message">ドコモテレビターミナルが接続されているWi-Fiに接続した状態で再度実施してください</string>
     <string name="main_setting_menu_title_faq_list">FAQ</string>
-    <string name="main_setting_remote_confirm_message_setting">外出先でも視聴できるリモート視聴設定を有効にしますか？</string>
-    <string name="main_setting_remote_confirm_message_first_start">外出先でも視聴できるリモート視聴設定を有効にしますか？リモート設定は、「メニュー＞設定＞リモート視聴設定」であとからも設定できます</string>
+    <string name="main_setting_remote_confirm_message_setting">外出先でも視聴できるリモート視聴設定を有効にしますか？\n\n有効にする場合は、「OK」を押下する前に、テレビでひかりTV for docomoを起動し、「設定・お知らせ＞ホームサーバ設定＞ホームサーバ機能設定」で「自宅内/外出先で有効」を選択してください。</string>
+    <string name="main_setting_remote_confirm_message_first_start">外出先でも視聴できるリモート視聴設定を有効にしますか？\n\n有効にする場合は、「OK」を押下する前に、テレビでひかりTV for docomoを起動し、「設定・お知らせ＞ホームサーバ設定＞ホームサーバ機能設定」で「自宅内/外出先で有効」を選択してください。\n\nあとから設定する場合は、「設定＞FAQ」をご確認ください。</string>
     <string name="main_setting_menu_title_license">ライセンス情報</string>
     <string name="main_setting_menu_title_privacy_policy">プライバシーポリシー</string>
     <string name="main_setting_menu_title_app">アプリケーション・プライバシーポリシー</string>
