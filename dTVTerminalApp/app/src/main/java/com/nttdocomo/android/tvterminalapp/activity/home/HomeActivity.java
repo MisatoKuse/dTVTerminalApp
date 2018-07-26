@@ -562,7 +562,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private void requestHomeDataClearPrecedingData() {
         //先行して取得している、「今日の番組ランキング」と「ビデオランキング」の更新日付をリセットする
-        mHomeDataProvider.clearPrecedingData();
+        if (mHomeDataProvider != null) {
+            mHomeDataProvider.clearPrecedingData();
+        }
 
         //あとは通常の処理に移譲する
         requestHomeData();
