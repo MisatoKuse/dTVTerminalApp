@@ -491,13 +491,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                         // 未ペアリング時
                         if (dlnaDmsItem.mControlUrl.isEmpty()) {
                             clearFragment(0);
-                            String message;
-                            if (NetWorkUtils.isOnline(RecordedListActivity.this)) {
-                                message = getString(R.string.main_setting_connect_error_message);
-                            } else {
-                                message = getString(R.string.network_nw_error_message);
+                            if (!NetWorkUtils.isOnline(RecordedListActivity.this)) {
+                                String message = getString(R.string.network_nw_error_message);
+                                showToast(message);
                             }
-                            showToast(message);
                             setProgressBarGone();
                             setVideoBrows(null);
                         } else {
@@ -533,14 +530,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                                 case NONE_PAIRING:
                                 default:
                                     clearFragment(0);
-                                    String message;
-                                    if (NetWorkUtils.isOnline(RecordedListActivity.this)) {
-                                        message = getString(R.string.main_setting_connect_error_message);
-                                    } else {
-                                        message = getString(R.string.network_nw_error_message);
+                                    if (!NetWorkUtils.isOnline(RecordedListActivity.this)) {
+                                        String message = getString(R.string.network_nw_error_message);
+                                        showToast(message);
                                     }
                                     setVideoBrows(null);
-                                    showToast(message);
                                     setProgressBarGone();
                                     break;
                             }
