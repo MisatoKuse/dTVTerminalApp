@@ -868,18 +868,14 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         DTVTLogger.start();
 
         holder.iv_thumbnail.setImageResource(R.mipmap.loading_list);
-        if (!TextUtils.isEmpty(listContentInfo.getThumURL())) { //サムネイル
-            if (!isDownloadStop) {
-                holder.rl_thumbnail.setVisibility(View.VISIBLE);
-                holder.iv_thumbnail.setTag(listContentInfo.getThumURL());
-                mThumbnailProvider.setMaxQueueCount(mMaxItemCount);
-                Bitmap thumbnailImage = mThumbnailProvider.getThumbnailImage(holder.iv_thumbnail, listContentInfo.getThumURL());
-                if (thumbnailImage != null) {
-                    holder.iv_thumbnail.setImageBitmap(thumbnailImage);
-                }
+        if (!isDownloadStop) {
+            holder.rl_thumbnail.setVisibility(View.VISIBLE);
+            holder.iv_thumbnail.setTag(listContentInfo.getThumURL());
+            mThumbnailProvider.setMaxQueueCount(mMaxItemCount);
+            Bitmap thumbnailImage = mThumbnailProvider.getThumbnailImage(holder.iv_thumbnail, listContentInfo.getThumURL());
+            if (thumbnailImage != null) {
+                holder.iv_thumbnail.setImageBitmap(thumbnailImage);
             }
-        } else {
-            holder.iv_thumbnail.setImageResource(R.mipmap.error_list);
         }
     }
 

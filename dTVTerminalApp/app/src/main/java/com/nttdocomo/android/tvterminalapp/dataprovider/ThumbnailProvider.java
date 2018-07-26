@@ -88,14 +88,9 @@ public class ThumbnailProvider {
 	 */
 	public Bitmap getThumbnailImage(final ImageView imageView, final String imageUrl) {
 
-		if (TextUtils.isEmpty(imageUrl) || imageUrl.trim().length() == 0) {
-            DTVTLogger.debug("imageUrl is null");
-			return null;
-		}
-
 		// メモリから取得
 		Bitmap bitmap = null;
-		if (mImageSizeType != ThumbnailDownloadTask.ImageSizeType.CONTENT_DETAIL) {
+		if (!TextUtils.isEmpty(imageUrl) && mImageSizeType != ThumbnailDownloadTask.ImageSizeType.CONTENT_DETAIL) {
 			bitmap = thumbnailCacheManager.getBitmapFromMem(imageUrl);
 		}
 		if (bitmap != null) {

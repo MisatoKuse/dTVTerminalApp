@@ -408,18 +408,13 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         }
 
         //URLによって、サムネイル取得
-        if (!TextUtils.isEmpty(thumbnail)) {
-            if (!mIsDownloadStop) {
-                viewHolder.mImage.setTag(thumbnail);
-                mThumbnailProvider.setMaxQueueCount(mMaxItemCount);
-                Bitmap bitmap = mThumbnailProvider.getThumbnailImage(viewHolder.mImage, thumbnail);
-                if (bitmap != null) {
-                    viewHolder.mImage.setImageBitmap(bitmap);
-                }
+        if (!mIsDownloadStop) {
+            viewHolder.mImage.setTag(thumbnail);
+            mThumbnailProvider.setMaxQueueCount(mMaxItemCount);
+            Bitmap bitmap = mThumbnailProvider.getThumbnailImage(viewHolder.mImage, thumbnail);
+            if (bitmap != null) {
+                viewHolder.mImage.setImageBitmap(bitmap);
             }
-        } else {
-            //URLがない場合はサムネイル取得失敗の画像を表示
-            viewHolder.mImage.setImageResource(R.mipmap.error_scroll);
         }
         String recommendFlg;
         if (mIndex == HOME_CONTENTS_SORT_RECOMMEND_PROGRAM || mIndex == HOME_CONTENTS_SORT_RECOMMEND_PROGRAM + 1) {

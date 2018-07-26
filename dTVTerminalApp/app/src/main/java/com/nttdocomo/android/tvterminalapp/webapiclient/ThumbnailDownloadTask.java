@@ -8,6 +8,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.nttdocomo.android.ocsplib.OcspURLConnection;
@@ -87,6 +88,9 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
         BufferedInputStream in = null;
         try {
             mImageUrl = params[0];
+            if (TextUtils.isEmpty(mImageUrl)) {
+                return null;
+            }
             Bitmap bitmap = null;
             if (mImageSizeType != ImageSizeType.CONTENT_DETAIL) {
                 bitmap = mThumbnailProvider.thumbnailCacheManager.getBitmapFromDisk(mImageUrl, mImageSizeType);
@@ -181,14 +185,18 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
     protected void onPostExecute(final Bitmap result) {
         super.onPostExecute(result);
         if (mImageView != null) {
-            if (result != null) {
-                // 画像のpositionをズレないよう
-                if (mImageView.getTag() != null && mImageUrl.equals(mImageView.getTag())) {
-                    mImageView.setImageBitmap(result);
-                }
-            } else { // 画像取得失敗
-                if (mImageView.getTag() != null && mImageUrl.equals(mImageView.getTag())) {
-                    setErrorImageResource(mImageView);
+            if (TextUtils.isEmpty(mImageUrl)) {
+                setErrorImageResource(mImageView);
+            } else {
+                if (result != null) {
+                    // 画像のpositionをズレないよう
+                    if (mImageView.getTag() != null && mImageUrl.equals(mImageView.getTag())) {
+                        mImageView.setImageBitmap(result);
+                    }
+                } else { // 画像取得失敗
+                    if (mImageView.getTag() != null && mImageUrl.equals(mImageView.getTag())) {
+                        setErrorImageResource(mImageView);
+                    }
                 }
             }
         }

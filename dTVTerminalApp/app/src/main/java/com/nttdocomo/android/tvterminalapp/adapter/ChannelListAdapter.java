@@ -161,15 +161,13 @@ public class ChannelListAdapter extends BaseAdapter {
         if (holder.mThumbnail.getVisibility() == View.VISIBLE) {
             holder.mThumbnail.setImageResource(R.mipmap.loading_ch_mini);
         }
-        if (null != holder.mThumbnail && null != thumbnail) {
+        if (null != holder.mThumbnail) {
             holder.mThumbnail.setTag(thumbnail);
             mThumbnailProvider.setMaxQueueCount(mMaxItemCount);
             Bitmap bp = mThumbnailProvider.getThumbnailImage(holder.mThumbnail, thumbnail);
             if (null != bp) {
                 holder.mThumbnail.setImageBitmap(bp);
             }
-        } else if (null != holder.mThumbnail && thumbnail == null) {
-            holder.mThumbnail.setImageResource(R.mipmap.error_ch_mini);
         }
 
         return view;
