@@ -264,6 +264,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 setProgressBarGone();
                 showGetDataFailedToast();
                 setVideoBrows(null);
+                if (mNoDataMessage.getVisibility() == View.VISIBLE) {
+                    mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
+                }
             }
         });
     }
@@ -356,6 +359,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             public void run() {
                 showGetDataFailedToast();
                 setVideoBrows(null);
+                if (mNoDataMessage.getVisibility() == View.VISIBLE) {
+                    mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
+                }
             }
         });
     }
@@ -379,9 +385,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      */
     private void showProgressBar() {
         //オフライン時は表示しない
-        if (!NetWorkUtils.isOnline(this)) {
-            return;
-        }
         progressBar.setVisibility(View.VISIBLE);
     }
 
@@ -460,6 +463,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             } else {
                 if (DOWNLOAD_OVER == mViewPager.getCurrentItem()) {
                     mNoDataMessage.setVisibility(View.VISIBLE);
+                    mNoDataMessage.setText(getString(R.string.common_empty_data_message));
                 }
             }
             if (list.size() > 0) {
@@ -471,6 +475,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             baseFragment.notifyDataSetChanged();
             if (baseFragment.getContentsData().size() == 0) {
                 mNoDataMessage.setVisibility(View.VISIBLE);
+                mNoDataMessage.setText(getString(R.string.common_empty_data_message));
             }
             progressBar.setVisibility(View.GONE);
 
@@ -701,6 +706,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                     @Override
                     public void run() {
                         mNoDataMessage.setVisibility(View.VISIBLE);
+                        mNoDataMessage.setText(getString(R.string.common_empty_data_message));
                     }
                 });
                 return;
@@ -760,6 +766,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             public void run() {
                 if (baseFragment.getContentsData().size() == 0) {
                     mNoDataMessage.setVisibility(View.VISIBLE);
+                    mNoDataMessage.setText(getString(R.string.common_empty_data_message));
                     return;
                 }
                 baseFragment.notifyDataSetChanged();

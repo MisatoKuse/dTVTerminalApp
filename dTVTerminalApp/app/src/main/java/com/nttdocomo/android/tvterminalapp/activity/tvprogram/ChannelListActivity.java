@@ -446,6 +446,7 @@ public class ChannelListActivity extends BaseActivity implements
                 updateUi(fragment);
                 showGetDataFailedToast();
                 mNoDataMessage.setVisibility(View.VISIBLE);
+                mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
             }
         });
     }
@@ -460,6 +461,7 @@ public class ChannelListActivity extends BaseActivity implements
             public void run() {
                 showGetDataFailedToast();
                 mNoDataMessage.setVisibility(View.VISIBLE);
+                mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
             }
         });
     }
@@ -732,7 +734,7 @@ public class ChannelListActivity extends BaseActivity implements
 
         if (null == channels) {
             mNoDataMessage.setVisibility(View.VISIBLE);
-
+            mNoDataMessage.setText(getString(R.string.common_empty_data_message));
             //エラーメッセージを取得する
             String message = mHikariTvChannelDataProvider.getChannelError().getErrorMessage();
 
@@ -750,6 +752,7 @@ public class ChannelListActivity extends BaseActivity implements
 
         if (0 == size) {
             mNoDataMessage.setVisibility(View.VISIBLE);
+            mNoDataMessage.setText(getString(R.string.common_empty_data_message));
             return;
         }
         switch (chType) {
@@ -802,6 +805,7 @@ public class ChannelListActivity extends BaseActivity implements
                 noticeRefresh(fragment);
                 if (mPageIndex == 0 && list.size() == 0) {
                     mNoDataMessage.setVisibility(View.VISIBLE);
+                    mNoDataMessage.setText(getString(R.string.common_empty_data_message));
                 }
                 mPageIndex++;
                 fragment.showProgressBar(false);
