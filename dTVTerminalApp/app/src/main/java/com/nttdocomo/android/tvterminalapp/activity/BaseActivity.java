@@ -1032,9 +1032,13 @@ public class BaseActivity extends FragmentActivity implements
     private void switchOtherResultCode(final int resultCode) {
         switch (resultCode) {
             case RelayServiceResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
-                showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
-                //ペアリングアイコンをOFFにする
-                setStbStatus(false);
+                if (StbConnectionManager.shared().getConnectionStatus() == StbConnectionManager.ConnectionStatus.HOME_IN) {
+                    showErrorDialogOffer(getResources().getString(R.string.str_launch_stb_communication_failed_error));
+                    //ペアリングアイコンをOFFにする
+                    setStbStatus(false);
+                } else {
+                    showErrorDialogOffer(getResources().getString(R.string.main_setting_connect_error_message));
+                }
                 break;
             case RelayServiceResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY: // 他の端末の要求処理中
                 //中継アプリからの応答待ち中に新しい要求を行った場合
