@@ -2875,13 +2875,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
 
                     @Override
                     public void onConnectErrorCallback(final int errorCode) {
-                        final String errorMsg = getString(R.string.common_text_remote_fail_msg);
-                        final String format = getString(R.string.common_text_remote_fail_error_code_format);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 showRemotePlayingProgress(false);
-                                showErrorDialog(errorMsg.replace(format, String.valueOf(errorCode)));
+                                showGetDataFailedToast();
                                 setRemotePlayArrow(null);
                             }
                         });

@@ -384,7 +384,12 @@ public class DlnaManager {
                         @Override
                         public void run() {
                             StartDtcp();
-                            RestartDirag();
+                            if (!RestartDirag()) {
+                                BrowseListener listener = DlnaManager.shared().mBrowseListener;
+                                if (listener != null) {
+                                    listener.onContentBrowseErrorCallback(containerId);
+                                }
+                            }
                         }
                     }).start();
                 }
@@ -473,8 +478,8 @@ public class DlnaManager {
     /**
      * RestartDirag.
      */
-    public void RestartDirag() {
-        restartDirag();
+    public boolean RestartDirag() {
+        return restartDirag();
     }
 
     /**
@@ -987,7 +992,7 @@ public class DlnaManager {
     /** dtcpを停止.*/
     private native void stopDtcp();
     /** Diragを再起動.*/
-    private native void restartDirag();
+    private native boolean restartDirag();
     /** Diragを起動.*/
     private native void startDirag();
     /** Diragを停止.*/
