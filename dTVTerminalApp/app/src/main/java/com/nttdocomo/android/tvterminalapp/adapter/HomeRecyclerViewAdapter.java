@@ -373,7 +373,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             viewHolder.mContent.setVisibility(View.GONE);
         }
 
-        if (viewHolder.mTime.getVisibility() == View.VISIBLE && viewHolder.mTime.getText().length() > 0) {
+        if (viewHolder.mTime.getVisibility() != View.VISIBLE || viewHolder.mTime.getText().length() <= 0) {
+            viewHolder.mContent.setMaxLines(2);
+        } else if (viewHolder.mTime.getVisibility() == View.VISIBLE && viewHolder.mTime.getText().length() > 0) {
             viewHolder.mContent.setMaxLines(1);
         }
 
