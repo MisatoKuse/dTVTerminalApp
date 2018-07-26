@@ -396,6 +396,8 @@ public class RecommendActivity extends BaseActivity implements
             RecommendBaseFragment fragment = getCurrentFragment(mRecommendViewPager, mRecommendFragmentFactory);
             if (fragment != null) {
                 fragment.showNoDataMessage(true, getString(R.string.common_get_data_failed_message));
+                //プログレスは消す
+                fragment.showProgressBar(false);
             }
         }
         showErrorMessage(mRecommendViewPager.getCurrentItem());

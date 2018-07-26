@@ -420,6 +420,7 @@
     <string name="d_account_network_error">dアカウントの処理に失敗しました（A-8）</string>
     <string name="d_account_internal_error">dアカウントの処理に失敗しました（A-9）</string>
     <string name="d_account_change_message">dアカウントが変更されたため、ホーム画面に戻ります</string>
+    <string name="d_account_deleted_message">dアカウントが変更されました</string>
 
     <!-- お知らせ -->
     <string name="information_title">お知らせ</string>

@@ -92,7 +92,9 @@ import com.nttdocomo.android.tvterminalapp.struct.CalendarComparator;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.struct.OneTimeTokenData;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
+import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DeviceStateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
 import com.nttdocomo.android.tvterminalapp.utils.RuntimePermissionUtils;
@@ -2036,6 +2038,10 @@ public class BaseActivity extends FragmentActivity implements
                 case IDimDefines.RESULT_REMOTE_EXCEPTION:
                     errorDialog.setContent(getString((R.string.d_account_remote_exception_error)));
                     break;
+                case DaccountUtils.D_ACCOUNT_APP_NOT_FOUND_ERROR_CODE:
+                    //事前チェックでdアカウント設定アプリが未インストールである事が分かった場合のエラー
+                    errorDialog.setContent(getString(R.string.d_account_deleted_message));
+                    break;
                 default:
                     errorDialog.setContent(getString(R.string.d_account_regist_error));
                     break;
@@ -2047,6 +2053,37 @@ public class BaseActivity extends FragmentActivity implements
 
         //showDialogの代わり・重複ダイアログ実現用
         offerDialog(errorDialog);
+    }
+
+    /**
+     * dアカウント設定アプリ未インストールエラーダイアログ.
+     */
+    public void showDAccountApliNotFoundDialog() {
+        final CustomDialog notFoundDialog = new CustomDialog(
+                BaseActivity.this, CustomDialog.DialogType.ERROR);
+        notFoundDialog.setContent(this.getResources().getString(
+                R.string.d_account_deleted_message));
+
+        //バックボタンをキャンセルボタンとして扱うように指示
+        notFoundDialog.setBackKeyAsCancel(true);
+
+        //ダイアログ以外の部分を押した時に反応するのは禁止
+        notFoundDialog.setOnTouchOutside(false);
+
+        //OKボタンが押されたら、ログアウト処理を行い、終了する
+        notFoundDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @Override
+            public void onOKCallback(boolean isOK) {
+                DTVTLogger.debug("logout & restart");
+                SharedPreferencesUtils.setSharedPreferencesRestartFlag(getApplicationContext(),
+                        false);
+                //メッセージを出さないキャッシュクリア
+                DaccountControl.cacheClear(BaseActivity.this, null, false);
+                reStartApplication();
+            }
+        });
+
+        offerDialog(notFoundDialog);
     }
 
     /**

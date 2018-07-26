@@ -122,6 +122,21 @@ public enum OttGetAuthSwitch {
     }
 
     /**
+     * dアカウント設定アプリ未インストール時のダイアログを呼び出す
+     */
+    public void showDAccountApliNotFoundDialog() {
+        //ベースアクティビティを保持していれば、dアカウント設定アプリ未インストールダイアログを出す
+        if (mActivity != null) {
+            mActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mActivity.showDAccountApliNotFoundDialog();
+                }
+            });
+        }
+    }
+
+    /**
      * アクティビティのゲッター
      * @return 取得済みアクティビティ
      */
