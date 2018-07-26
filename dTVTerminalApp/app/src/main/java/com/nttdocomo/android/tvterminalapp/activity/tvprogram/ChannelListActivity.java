@@ -443,23 +443,23 @@ public class ChannelListActivity extends BaseActivity implements
                     return;
                 }
                 ChannelListFragment fragment = mFactory.createFragment(pos, ChannelListActivity.this, mCurrentType, null);
-                fragment.showProgressBar(false);
+                updateUi(fragment);
                 showGetDataFailedToast();
+                mNoDataMessage.setVisibility(View.VISIBLE);
             }
         });
     }
 
     @Override
     public void onConnectErrorCallback(final int errorCode) {
-        final String errorMsg = getString(R.string.common_text_remote_fail_msg);
-        final String format = getString(R.string.common_text_remote_fail_error_code_format);
         int pos = mViewPager.getCurrentItem();
         final ChannelListFragment fragment = mFactory.createFragment(pos, this, mCurrentType, null);
         updateUi(fragment);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                showErrorDialog(errorMsg.replace(format, String.valueOf(errorCode)));
+                showGetDataFailedToast();
+                mNoDataMessage.setVisibility(View.VISIBLE);
             }
         });
     }

@@ -59,8 +59,6 @@
     <string name="common_switch_user_account_network_error">ドコモテレビターミナルのアプリの起動に失敗しました（A-17）</string>
     <string name="common_switch_user_account_server_error">ドコモテレビターミナルのアプリの起動に失敗しました（A-18）</string>
     <string name="common_switch_user_account_internal_error">ドコモテレビターミナルのアプリの起動に失敗しました（A-19）</string>
-    <string name="common_text_remote_fail_msg">リモート接続に失敗しました（MP-XXXX）</string>
-    <string name="common_text_remote_fail_error_code_format">XXXX</string>
     <string name="common_my_channel">マイ番組表</string>
     <string name="common_hikari_tv_for_docomo">ひかりTV for docomo</string>
     <string name="common_dtv_channel">dTVチャンネル</string>

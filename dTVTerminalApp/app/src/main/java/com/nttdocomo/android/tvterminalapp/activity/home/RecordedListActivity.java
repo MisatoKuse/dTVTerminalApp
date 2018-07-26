@@ -351,12 +351,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onConnectErrorCallback(final int errorCode) {
         setProgressBarGone();
-        final String errorMsg = getString(R.string.common_text_remote_fail_msg);
-        final String format = getString(R.string.common_text_remote_fail_error_code_format);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                showErrorDialog(errorMsg.replace(format, String.valueOf(errorCode)));
+                showGetDataFailedToast();
+                setVideoBrows(null);
             }
         });
     }
@@ -491,10 +490,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                         // 未ペアリング時
                         if (dlnaDmsItem.mControlUrl.isEmpty()) {
                             clearFragment(0);
-                            if (!NetWorkUtils.isOnline(RecordedListActivity.this)) {
-                                String message = getString(R.string.network_nw_error_message);
-                                showToast(message);
-                            }
                             setProgressBarGone();
                             setVideoBrows(null);
                         } else {
@@ -516,13 +511,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                                     } else {
                                         clearFragment(0);
                                         setRecordedTakeOutContents();
-                                        String message;
-                                        if (NetWorkUtils.isOnline(RecordedListActivity.this)) {
-                                            message = getString(R.string.main_setting_connect_error_message);
-                                        } else {
-                                            message = getString(R.string.network_nw_error_message);
-                                        }
-                                        showToast(message);
                                         setVideoBrows(null);
                                     }
                                     setProgressBarGone();
@@ -530,10 +518,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                                 case NONE_PAIRING:
                                 default:
                                     clearFragment(0);
-                                    if (!NetWorkUtils.isOnline(RecordedListActivity.this)) {
-                                        String message = getString(R.string.network_nw_error_message);
-                                        showToast(message);
-                                    }
                                     setVideoBrows(null);
                                     setProgressBarGone();
                                     break;
