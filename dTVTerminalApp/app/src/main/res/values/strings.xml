@@ -315,8 +315,11 @@
     <string-array name="contents_detail_tab_vod">
         <item>@string/contents_detail_tab_contents_info</item>
     </string-array>
-    <string-array name="contents_detail_tab_other_service">
+    <string-array name="contents_detail_tab_other_service_vod">
         <item>@string/contents_detail_tab_contents_info</item>
+    </string-array>
+    <string-array name="contents_detail_tab_other_service_tv">
+        <item>@string/contents_detail_tab_program_detail</item>
     </string-array>
     <string-array name="contents_detail_tabs_tv_ch">
         <item>@string/contents_detail_tab_program_detail</item>
