@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
+import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -156,21 +158,55 @@ public class PremiumVideoActivity extends BaseActivity implements
     @Override
     public void rentalListNgCallback() {
         DTVTLogger.start();
-        mRelativeLayout.setVisibility(View.GONE);
-        mListView.setVisibility(View.VISIBLE);
-        showProgressBar(false);
-
-        ErrorState errorState = mRentalDataProvider.getError();
-        if (errorState != null) {
-            String message = errorState.getApiErrorMessage(getApplicationContext());
-            mNoDataMessage.setVisibility(View.VISIBLE);
-            mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
-            if (!TextUtils.isEmpty(message)) {
-                showDialogToClose(this, message);
-                return;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mRelativeLayout.setVisibility(View.GONE);
+                mListView.setVisibility(View.VISIBLE);
+                showProgressBar(false);
+                mNoDataMessage.setVisibility(View.VISIBLE);
+                mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
+                if (!NetWorkUtils.isOnline(PremiumVideoActivity.this)) {
+                    showDialogToClose(PremiumVideoActivity.this, getResources().getString(R.string.network_nw_error_message_dialog));
+                } else {
+                    ErrorState errorState = mRentalDataProvider.getError();
+                    if (errorState != null) {
+                        String message = errorState.getApiErrorMessage(getApplicationContext());
+                        if (!TextUtils.isEmpty(message)) {
+                            showDialogToClose(PremiumVideoActivity.this, message);
+                            return;
+                        }
+                    }
+                    showDialogToClose(PremiumVideoActivity.this);
+                }
             }
-        }
-        showDialogToClose(this);
+        });
+    }
+
+    @Override
+    protected void showDialogToClose(final Context context, final String message) {
+        CustomDialog closeDialog = new CustomDialog(context, CustomDialog.DialogType.ERROR);
+        closeDialog.setContent(message);
+        closeDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @Override
+            public void onOKCallback(final boolean isOK) {
+                contentsDetailBackKey(null);
+            }
+        });
+        //戻るボタン等でダイアログが閉じられた時もOKと同じ挙動
+        closeDialog.setDialogDismissCallback(new CustomDialog.DismissCallback() {
+            @Override
+            public void allDismissCallback() {
+                //NOP
+            }
+
+            @Override
+            public void otherDismissCallback() {
+                contentsDetailBackKey(null);
+            }
+        });
+        closeDialog.setCancelable(false);
+        offerDialog(closeDialog);
     }
 
     @Override
