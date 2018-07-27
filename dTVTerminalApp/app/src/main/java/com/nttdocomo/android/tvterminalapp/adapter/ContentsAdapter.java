@@ -953,11 +953,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
 
         //ヌルチェック
         if (holder.tv_recorded_ch_name == null || holder.tv_recorded_hyphen == null) {
-            if (!mType.equals(ActivityTypeItem.TYPE_WATCHING_VIDEO_LIST)) {
+            if (!mType.equals(ActivityTypeItem.TYPE_WATCHING_VIDEO_LIST) && !mType.equals(ActivityTypeItem.TYPE_CLIP_LIST_MODE_VIDEO)) {
                 return;
             }
         }
-        if (!TextUtils.isEmpty(listContentInfo.getChannelName()) && mTabType != TabTypeItem.TAB_DEFAULT) { //ランク
+        if (!TextUtils.isEmpty(listContentInfo.getChannelName()) && mTabType != TabTypeItem.TAB_DEFAULT && !mType .equals(ActivityTypeItem.TYPE_CLIP_LIST_MODE_VIDEO)) { //ランク
             //↓を判定条件に使っているため、直前に初期化
             if (holder.tv_recorded_hyphen == null) {
                 holder.tv_recorded_hyphen = contentView.findViewById(R.id.item_common_result_recorded_content_hyphen);
@@ -969,7 +969,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             if (mType == ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST) {
                 holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.record_download_status_color));
             }
-        } else if (mType.equals(ActivityTypeItem.TYPE_WATCHING_VIDEO_LIST)) {
+        } else if (mType.equals(ActivityTypeItem.TYPE_WATCHING_VIDEO_LIST) || mType .equals(ActivityTypeItem.TYPE_CLIP_LIST_MODE_VIDEO)) {
             if (holder.tv_recorded_hyphen == null) {
                 holder.tv_recorded_hyphen = contentView.findViewById(R.id.item_common_result_recorded_content_hyphen);
             }
