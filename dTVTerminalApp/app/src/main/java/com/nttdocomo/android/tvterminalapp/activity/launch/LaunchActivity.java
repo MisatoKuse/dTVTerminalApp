@@ -18,6 +18,7 @@ import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.commonmanager.StbConnectionManager;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaManager;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.OttGetAuthSwitch;
 
 /**
  * アプリ起動時に最初に呼び出されるActivity.
@@ -39,7 +40,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     /** 待ち時間タイマー用ハンドラー. */
     private Handler mTimerHandler;
     /** 待ち時間タイマー用ランナブル. */
-    private Runnable mTimerRunnable;
+    private Runnable mTimerRunnable = null;
     /**
      * タイムアウトタイマー用ハンドラー.
      * (dアカウントなどの処理終了時の即時次画面遷移の判定にも使うので、ヌルを明示)
@@ -85,14 +86,49 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     protected void onResume() {
+        //海外判定スキップ検知処理
+        if (SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext())) {
+            //海外判定がスキップされることが確定しているので、海外判定後に呼ぶ2秒待ち処理はここで呼ぶ
+            DTVTLogger.debug("before exec setFirstTimeOut");
+            setFirstTimeOut();
+        }
         super.onResume();
         super.sendScreenView(getString(R.string.google_analytics_screen_name_splash));
     }
 
     /**
+     * 最初に必ず2秒待つ処理
+     */
+    private void setFirstTimeOut() {
+        if (mTimerRunnable != null) {
+            //既に実行済みなので、帰る
+            return;
+        }
+
+        //2秒経過後の処理の定義
+        mTimerRunnable = new Runnable() {
+            @Override
+            public void run() {
+                //2秒経過したので、状況を確認する
+                startActivityWait();
+
+                if (!isFinishing()) {
+                    //終了していなければ、次の処理を行う
+                    setSrcondTimeOut();
+                    findViewById(R.id.launch_progress).setVisibility(View.VISIBLE);
+                }
+            }
+        };
+
+        //最初の待ち時間の2秒を設定してタイマーを発動する
+        mTimerHandler = new Handler();
+        mTimerHandler.postDelayed(mTimerRunnable, FIRST_WAIT_TIME);
+    }
+
+    /**
      * 最初の2秒経過後の処理.
      */
-    private void setTimeOut() {
+    private void setSrcondTimeOut() {
         //10秒経過後の処理
         mTimeoutRunnable = new Runnable() {
             @Override
@@ -129,24 +165,9 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     protected void onReStartCommunication() {
         super.onReStartCommunication();
 
-        //2秒経過後の処理
-        mTimerRunnable = new Runnable() {
-            @Override
-            public void run() {
-                //2秒経過したので、状況を確認する
-                startActivityWait();
-
-                if (!isFinishing()) {
-                    //終了していなければ、次の処理を行う
-                    setTimeOut();
-                    findViewById(R.id.launch_progress).setVisibility(View.VISIBLE);
-                }
-            }
-        };
-
-        //最初の待ち時間の2秒を設定してタイマーを発動する
-        mTimerHandler = new Handler();
-        mTimerHandler.postDelayed(mTimerRunnable, FIRST_WAIT_TIME);
+        DTVTLogger.debug("normal exec setFirstTimeOut");
+        //最初に2秒待つ処理
+        setFirstTimeOut();
     }
 
     @Override
