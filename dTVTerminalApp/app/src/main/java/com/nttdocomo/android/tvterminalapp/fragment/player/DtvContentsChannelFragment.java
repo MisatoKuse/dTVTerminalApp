@@ -43,50 +43,30 @@ import java.util.List;
  */
 public class DtvContentsChannelFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
 
-    /**
-     * チャンネルリスト親ビュー.
-     */
+    /** チャンネルリスト親ビュー.*/
     private View mView = null;
-    /**
-     * チャンネルリストビュー.
-     */
+    /** チャンネルリストビュー.*/
     private ListView mChannelListView = null;
-    /**
-     * チャンネルリストアダプター.
-     */
+    /** チャンネルリストアダプター.*/
     private ContentsAdapter mContentsAdapter = null;
-    /**
-     * チャンネルリストデータ.
-     */
+    /** チャンネルリストデータ.*/
     private List<ContentsData> mContentsData;
-    /**
-     * Activity.
-     */
+    /** Activity.*/
     private Activity mActivity;
-    /**
-     * チャンネルアイコン.
-     */
+    /** チャンネルアイコン.*/
     private ImageView mChannelImg;
-    /**
-     * チャンネル名.
-     */
+    /** チャンネル名.*/
     private TextView mChannelTxt;
-    /**
-     * 通信フラグ.
-     */
+    /** 通信フラグ.*/
     private boolean mIsLoading;
-    /**
-     * コールバックリスナー.
-     */
+    /** コールバックリスナー.*/
     private ChangedScrollLoadListener mChangedScrollLoadListener;
-    /**
-     * ヘッダービュー.
-     */
+    /** ヘッダービュー.*/
     private View mHeaderView;
-    /**
-     * フッタービュー.
-     */
+    /** フッタービュー.*/
     private View mFootView;
+    /** 番組データがない場合.*/
+    private TextView mNoMessageTxt;
 
 
     /**
@@ -140,6 +120,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
             mContentsData = new ArrayList<>();
         }
         mChannelListView = mView.findViewById(R.id.dtv_contents_channel_list);
+        mNoMessageTxt = mView.findViewById(R.id.dtv_contents_channel_list_no_data);
         mChannelListView.setOnScrollListener(this);
         mChannelListView.setOnItemClickListener(this);
         if (null == mFootView) {
@@ -155,6 +136,7 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
         mChannelImg = mHeaderView.findViewById(R.id.dtv_contents_channel_header_img);
         mChannelTxt = mHeaderView.findViewById(R.id.dtv_contents_channel_header_name);
         mChannelListView.addHeaderView(mHeaderView);
+        mChannelListView.setVisibility(View.INVISIBLE);
         DTVTLogger.end();
         return mView;
     }
@@ -193,9 +175,33 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
      * 一覧更新して、フッタービューの非表示.
      */
     public void loadComplete() {
-        mChannelListView.setVisibility(View.VISIBLE);
+        if (mContentsData != null && mContentsData.size() > 0) {
+            mChannelListView.setVisibility(View.VISIBLE);
+            mNoMessageTxt.setVisibility(View.GONE);
+        } else {
+            mNoMessageTxt.setVisibility(View.VISIBLE);
+            mNoMessageTxt.setText(mActivity.getResources().getString(R.string.common_empty_data_message));
+        }
         mChannelListView.removeFooterView(mFootView);
         mIsLoading = false;
+    }
+
+    /**
+     * ロード開始前の状態を設定.
+     */
+    public void setLoadInit() {
+        mChannelListView.removeFooterView(mFootView);
+        mIsLoading = false;
+    }
+
+    /**
+     * 取得失敗の場合.
+     */
+    public void loadFailed() {
+        if (mContentsData != null && mContentsData.size() == 0) {
+            mNoMessageTxt.setVisibility(View.VISIBLE);
+            mNoMessageTxt.setText(mActivity.getResources().getString(R.string.common_get_data_failed_message));
+        }
     }
 
     /**
