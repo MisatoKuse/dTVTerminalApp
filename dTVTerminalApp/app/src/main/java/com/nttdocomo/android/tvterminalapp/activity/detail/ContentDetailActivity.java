@@ -750,7 +750,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private void getChannelDetailData(final ChannelInfo channelInfo) {
         DTVTLogger.start();
         DtvContentsChannelFragment channelFragment = getChannelFragment();
-        channelFragment.loadComplete();
+        channelFragment.setLoadInit();
         if (channelInfo != null) {
             channelFragment.setChannelDataChanged(channelInfo);
             mDateIndex = 0;
@@ -1815,7 +1815,17 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     }
                     channelLoadCompleted();
                 } else {
-                    showErrorDialog(ErrorType.tvScheduleListGet);
+                    mChannelFragment = getChannelFragment();
+                    if (mChannelFragment.getContentsData() == null || mChannelFragment.getContentsData().size() == 0) {
+                        if (!NetWorkUtils.isOnline(ContentDetailActivity.this)) {
+                            mChannelFragment.loadFailed();
+                            showGetDataFailedToast();
+                        } else {
+                            mChannelFragment.loadComplete();
+                        }
+                    } else {
+                        mChannelFragment.loadComplete();
+                    }
                 }
                 showProgressBar(false);
                 DTVTLogger.end();
