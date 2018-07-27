@@ -103,9 +103,9 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
     }
 
     @Override
-    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse
+    public void onVodClipKeyResult(final ClipKeyListResponse clipKeyListResponse
             ,final ErrorState errorState) {
-        super.onVodClipKeyListJsonParsed(clipKeyListResponse, errorState);
+        super.onVodClipKeyResult(clipKeyListResponse, errorState);
         DTVTLogger.start();
         mClipKeyListResponse = clipKeyListResponse;
         getVodClipListData(mPagerOffset);

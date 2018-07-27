@@ -1416,6 +1416,12 @@ public class ContentUtils {
         }
     }
 
+    /**
+     * TVコンテンツ(チャンネル名表示)種別の場合 true.
+     *
+     * @param contentsType コンテンツ種別
+     * @return 判定結果
+     */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
     public static boolean isChanelNameDisplay(final ContentUtils.ContentsType contentsType) {
         if (contentsType == null) {

@@ -13,7 +13,6 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendListDataManager;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChannelList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
@@ -33,115 +32,90 @@ import java.util.Map;
  */
 public class RecommendDataProvider implements RecommendWebClient.RecommendCallback, DataBaseThread.DataBaseOperation {
 
-    /**
-     * コンテキスト.
-     */
+    /** コンテキスト. */
     private Context mContext = null;
-    /**
-     * カンマ区切り用.
-     */
+    /** カンマ区切り用. */
     private static final String COMMA = ",";
-    /**
-     * コロン区切り用.
-     */
+    /** コロン区切り用. */
     private static final String SEPARATOR = ":";
 
-    /**
-     * コールバック.
-     */
+    /** コールバック. */
     private RecommendApiDataProviderCallback mApiDataProviderCallback = null;
-    /**
-     * 通信禁止判定フラグ.
-     */
+    /** 通信禁止判定フラグ. */
     private boolean mIsStop = false;
 
-    /**
-     * CHレコメンドデータキャッシュ取得用.
-     */
+    /** CHレコメンドデータキャッシュ取得用. */
     private static final int SELECT_RECOMMEND_CHANNEL_LIST = 0;
-    /**
-     * Vodレコメンドデータキャッシュ取得用.
-     */
+    /** Vodレコメンドデータキャッシュ取得用. */
     private static final int SELECT_RECOMMEND_VOD_LIST = 1;
-    /**
-     * Dtvチャンネルレコメンドデータキャッシュ取得用.
-     */
+    /** Dtvチャンネルレコメンドデータキャッシュ取得用. */
     private static final int SELECT_RECOMMEND_DTV_CHANNEL_LIST = 2;
-    /**
-     * Dtvレコメンドデータキャッシュ取得用.
-     */
+    /** Dtvレコメンドデータキャッシュ取得用. */
     private static final int SELECT_RECOMMEND_DTV_LIST = 3;
-    /**
-     * Dアニメデータキャッシュ取得用.
-     */
+    /** Dアニメデータキャッシュ取得用. */
     private static final int SELECT_RECOMMEND_D_ANIMATION_LIST = 4;
-    /**
-     * ホームのおすすめ番組レコメンドデータキャッシュ取得用.
-     */
+    /** ホームのおすすめ番組レコメンドデータキャッシュ取得用. */
     private static final int SELECT_RECOMMEND_HOME_CHANNEL_LIST = 5;
-    /**
-     * ホームのおすすめビデオレコメンドデータキャッシュ取得用.
-     */
+    /** ホームのおすすめビデオレコメンドデータキャッシュ取得用. */
     private static final int SELECT_RECOMMEND_HOME_VOD_LIST = 6;
-    /**
-     * レコメンドコンテンツ最大件数（システム制約）.
-     */
+    /** ホームのおすすめ番組レコメンドデータキャッシュ保存用. */
+    private static final int INSERT_RECOMMEND_HOME_TV_LIST = 7;
+    /** ホームのおすすめビデオレコメンドデータキャッシュ保存用. */
+    private static final int INSERT_RECOMMEND_HOME_VOD_LIST = 8;
+    /** CHレコメンドデータキャッシュ保存用. */
+    private static final int INSERT_RECOMMEND_CHANNEL_LIST = 9;
+    /** Vodレコメンドデータキャッシュ保存用. */
+    private static final int INSERT_RECOMMEND_VOD_LIST = 10;
+    /** Dtvチャンネルレコメンドデータキャッシュ保存用. */
+    private static final int INSERT_RECOMMEND_DTV_CHANNEL_LIST = 11;
+    /** Dtvレコメンドデータキャッシュ保存用. */
+    private static final int INSERT_RECOMMEND_DTV_LIST = 12;
+    /** Dアニメデータキャッシュ保存用. */
+    private static final int INSERT_RECOMMEND_D_ANIMATION_LIST = 13;
+    /** レコメンドコンテンツ最大件数（システム制約）. */
     private static final int MAX_SHOW_LIST_SIZE = 100;
-    /**
-     * レコメンドコンテンツ取得位置（システム制約）.
-     */
+    /** レコメンドコンテンツ取得位置（システム制約）. */
     private static final int RECOMMEND_START_INDEX = 1;
+    /** ページID ホーム 番組. */
     private static final String RECOMMEND_PAGE_ID_HOME_PROGRAM = "107";
+    /** ページID ホーム VOD. */
     private static final String RECOMMEND_PAGE_ID_HOME_VOD = "108";
+    /** ページID ホーム ひかりTV番組. */
     private static final String RECOMMEND_PAGE_ID_HIKARI_PROGRAM = "109";
+    /** ページID ホーム ひかりVOD. */
     private static final String RECOMMEND_PAGE_ID_HIKARI_VOD = "110";
+    /** ページID ホーム DTV. */
     private static final String RECOMMEND_PAGE_ID_DTV = "111";
+    /** ページID ホーム DCH. */
     private static final String RECOMMEND_PAGE_ID_DTVCHANNEL = "112";
+    /** ページID ホーム Dアニメ. */
     private static final String RECOMMEND_PAGE_ID_DANIME = "113";
 
-    /**
-     * RecommendWebClient.
-     */
+    /** RecommendWebClient. */
     private RecommendWebClient mRecommendWebClient = null;
-    /**
-     * RecommendWebClient(番組).
-     */
+    /** RecommendWebClient(番組). */
     private RecommendWebClient mVodWebClient = null;
-    /**
-     * RecommendWebClient(テレビ).
-     */
+    /** RecommendWebClient(テレビ). */
     private RecommendWebClient mTvWebClient = null;
-    /**
-     * API_INDEX_TV(ホーム).
-     */
+    /** API_INDEX_TV(ホーム). */
     public static final int API_INDEX_TV_HOME = -1;
-    /**
-     * API_INDEX_TV.
-     */
+    /** API_INDEX_TV. */
     public static final int API_INDEX_TV = 1;
-    /**
-     * API_INDEX(その他).
-     */
+    /** API_INDEX(その他). */
     public static final int API_INDEX_OTHER = 2;
-    /**
-     * ホームおすすめ番組カテゴリー一覧.
-     */
+    /** ホームおすすめ番組カテゴリー一覧. */
     private final String[] RECOMMEND_CATEGORY_ID_HOME_TELEVI = {
             RecommendRequestId.HIKARITV_DOCOMO_IPTV.getRequestSCId(),
             RecommendRequestId.HIKARITV_DOCOMO_DTVCHANNEL_BLOADCAST.getRequestSCId(),
             RecommendRequestId.DTVCHANNEL_BLOADCAST.getRequestSCId(),
     };
-    /**
-     * テレビカテゴリー一覧（dTVチャンネル　VOD（見逃し）が無くなった等の新情報を反映）.
-     */
+    /** テレビカテゴリー一覧（dTVチャンネル　VOD（見逃し）が無くなった等の新情報を反映）. */
     private final String[] RECOMMEND_CATEGORY_ID_TELEVI = {
             RecommendRequestId.HIKARITV_DOCOMO_IPTV.getRequestSCId(),
             RecommendRequestId.HIKARITV_DOCOMO_DTVCHANNEL_BLOADCAST.getRequestSCId(),
     };
 
-    /**
-     * ホームおすすめビデオカテゴリー一覧.
-     */
+    /** ホームおすすめビデオカテゴリー一覧. */
     private final String[] RECOMMEND_CATEGORY_ID_HOME_VIDEO = {
             RecommendRequestId.HIKARITV_DOCOMO_DTVCHANNEL_MISS.getRequestSCId(),
             RecommendRequestId.HIKARITV_DOCOMO_DTVCHANNEL_RELATION.getRequestSCId(),
@@ -153,9 +127,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
             RecommendRequestId.DTVCHANNEL_RELATION.getRequestSCId(),
             RecommendRequestId.DANIME.getRequestSCId(),
     };
-    /**
-     * ビデオカテゴリー一覧（dTVチャンネル　VOD（見逃し）が追加された等の新情報を反映）.
-     */
+    /** ビデオカテゴリー一覧（dTVチャンネル　VOD（見逃し）が追加された等の新情報を反映）. */
     private final String[] RECOMMEND_CATEGORY_ID_VIDEO = {
             RecommendRequestId.HIKARITV_DOCOMO_DTVCHANNEL_MISS.getRequestSCId(),
             RecommendRequestId.HIKARITV_DOCOMO_DTVCHANNEL_RELATION.getRequestSCId(),
@@ -163,17 +135,13 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
             RecommendRequestId.HIKARITV_DOCOMO_DTV_SVOD.getRequestSCId(),
     };
 
-    /**
-     * dTVカテゴリー一覧.
-     */
+    /** dTVカテゴリー一覧. */
     private final String[] RECOMMEND_CATEGORY_ID_DTV = {
             RecommendRequestId.DTV_SVOD.getRequestSCId(),
             RecommendRequestId.DTV_TVOD.getRequestSCId(),
     };
 
-    /**
-     * dTVチャンネルカテゴリー一覧.
-     */
+    /** dTVチャンネルカテゴリー一覧. */
     private final String[] RECOMMEND_CATEGORY_ID_DTV_CHANNEL = {
             RecommendRequestId.DTVCHANNEL_BLOADCAST.getRequestSCId(),
             RecommendRequestId.DTVCHANNEL_MISS.getRequestSCId(),
@@ -256,38 +224,21 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * 検レコ取得パラメータ サービス分類.
      */
     private enum RESP_DATA_SERVICE_TYPE {
-        /**
-         * ホーム_おすすめ番組
-         */
+        /** ホーム_おすすめ番組. */
         HOME_TV,
-        /**
-         * ホームおすすめビデオ
-         */
+        /** ホームおすすめビデオ. */
         HOME_VOD,
-        /**
-         * ひかりTV_テレビ.
-         */
+        /** ひかりTV_テレビ. */
         HIKARI_TV,
-        /**
-         * ひかりTV_ビデオ.
-         */
+        /** ひかりTV_ビデオ. */
         HIKARI_VOD,
-        /**
-         * dTV.
-         */
+        /** dTV. */
         DTV,
-        /**
-         * dチャンネル.
-         */
+        /** dチャンネル. */
         DCHANNEL,
-        /**
-         * dアニメ.
-         */
+        /** dアニメ. */
         DANIME,
-        /**
-         * 判別不能.
-         * ひかりTV_テレビ と dチャンネル は一部同じリクエストを送信するため判定できない
-         */
+        /** 判別不能 ひかりTV_テレビ と dチャンネル は一部同じリクエストを送信するため判定できない. */
         UNKNOWN,
     }
 
@@ -668,7 +619,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      *
      * @param recChList おすすめ番組データ
      */
-    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
+    @SuppressWarnings({"EnumSwitchStatementWhichMissesCases", "OverlyLongMethod"})
     private void sendRecommendChListData(final RecommendChannelList recChList) {
         List<Map<String, String>> recList = recChList.getmRcList();
         List<ContentsData> recommendContentInfoList = new ArrayList<>();
@@ -684,48 +635,71 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
             }
         }
 
+        Handler handler;
+        DataBaseThread thread;
         switch (respDataServiceType) {
             case HOME_TV:
                 //ホームのおすすめ番組用データ
-                setStructDB(recChList, DateUtils.RECOMMEND_HOME_CH_LAST_INSERT,
-                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_HOME_TV);
-                mApiDataProviderCallback.recommendHomeChannelCallback(recommendContentInfoList);
+                //DBキャッシュ取得
+                handler = new Handler(Looper.getMainLooper());
+                thread = new DataBaseThread(handler, this, INSERT_RECOMMEND_HOME_TV_LIST);
+                thread.setRecommendChannelList(recChList);
+                thread.setContentsDataList(recommendContentInfoList);
+                thread.start();
                 break;
             case HOME_VOD:
                 //ホームのおすすめビデオ用データ
-                setStructDB(recChList, DateUtils.RECOMMEND_HOME_VD_LAST_INSERT,
-                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_HOME_VIDEO);
-                mApiDataProviderCallback.recommendHomeVideoCallback(recommendContentInfoList);
+                //DBキャッシュ取得
+                handler = new Handler(Looper.getMainLooper());
+                thread = new DataBaseThread(handler, this, INSERT_RECOMMEND_HOME_VOD_LIST);
+                thread.setRecommendChannelList(recChList);
+                thread.setContentsDataList(recommendContentInfoList);
+                thread.start();
                 break;
             case HIKARI_TV:
                 //テレビ用データ
-                setStructDB(recChList, DateUtils.RECOMMEND_CH_LAST_INSERT,
-                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV);
-                mApiDataProviderCallback.recommendChannelCallback(recommendContentInfoList);
+                //DBキャッシュ取得
+                handler = new Handler(Looper.getMainLooper());
+                thread = new DataBaseThread(handler, this, INSERT_RECOMMEND_CHANNEL_LIST);
+                thread.setRecommendChannelList(recChList);
+                thread.setContentsDataList(recommendContentInfoList);
+                thread.start();
                 break;
             case HIKARI_VOD:
                 //ビデオ用データ
-                setStructDB(recChList, DateUtils.RECOMMEND_VD_LAST_INSERT,
-                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO);
-                mApiDataProviderCallback.recommendVideoCallback(recommendContentInfoList);
+                //DBキャッシュ取得
+                handler = new Handler(Looper.getMainLooper());
+                thread = new DataBaseThread(handler, this, INSERT_RECOMMEND_VOD_LIST);
+                thread.setRecommendChannelList(recChList);
+                thread.setContentsDataList(recommendContentInfoList);
+                thread.start();
                 break;
             case DCHANNEL:
                 //Dチャンネル用データ
-                setStructDB(recChList, DateUtils.RECOMMEND_DCHANNEL_LAST_INSERT,
-                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL);
-                mApiDataProviderCallback.recommendDChannelCallback(recommendContentInfoList);
+                //DBキャッシュ取得
+                handler = new Handler(Looper.getMainLooper());
+                thread = new DataBaseThread(handler, this, INSERT_RECOMMEND_DTV_CHANNEL_LIST);
+                thread.setRecommendChannelList(recChList);
+                thread.setContentsDataList(recommendContentInfoList);
+                thread.start();
                 break;
             case DTV:
                 //dTV用データ
-                setStructDB(recChList, DateUtils.RECOMMEND_DTV_LAST_INSERT,
-                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV);
-                mApiDataProviderCallback.recommendDTVCallback(recommendContentInfoList);
+                //DBキャッシュ取得
+                handler = new Handler(Looper.getMainLooper());
+                thread = new DataBaseThread(handler, this, INSERT_RECOMMEND_DTV_LIST);
+                thread.setRecommendChannelList(recChList);
+                thread.setContentsDataList(recommendContentInfoList);
+                thread.start();
                 break;
             case DANIME:
                 //dアニメ用データ
-                setStructDB(recChList, DateUtils.RECOMMEND_DANIME_LAST_INSERT,
-                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME);
-                mApiDataProviderCallback.recommendDAnimeCallback(recommendContentInfoList);
+                //DBキャッシュ取得
+                handler = new Handler(Looper.getMainLooper());
+                thread = new DataBaseThread(handler, this, INSERT_RECOMMEND_D_ANIMATION_LIST);
+                thread.setRecommendChannelList(recChList);
+                thread.setContentsDataList(recommendContentInfoList);
+                thread.start();
                 break;
             default:
                 // 判定不能データ
@@ -990,7 +964,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         //強制オーバーライド
     }
 
-    @SuppressWarnings("OverlyLongMethod")
+    @SuppressWarnings({"OverlyLongMethod", "OverlyComplexMethod"})
     @Override
     public List<Map<String, String>> dbOperation(final DataBaseThread dataBaseThread, final int operationId) {
         RecommendListDataManager recommendDataManager;
@@ -1037,6 +1011,48 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 resultList = recommendDataManager.selectRecommendList(
                         SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME);
                 mApiDataProviderCallback.recommendDAnimeCallback(resultList);
+                break;
+            case INSERT_RECOMMEND_HOME_TV_LIST:
+                //ホームのおすすめ番組用データ
+                setStructDB(dataBaseThread.getRecommendChannelList(), DateUtils.RECOMMEND_HOME_CH_LAST_INSERT,
+                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_HOME_TV);
+                mApiDataProviderCallback.recommendHomeChannelCallback(dataBaseThread.getContentsDataList());
+                break;
+            case INSERT_RECOMMEND_HOME_VOD_LIST:
+                //ホームのおすすめビデオ用データ
+                setStructDB(dataBaseThread.getRecommendChannelList(), DateUtils.RECOMMEND_HOME_VD_LAST_INSERT,
+                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_HOME_VIDEO);
+                mApiDataProviderCallback.recommendHomeVideoCallback(dataBaseThread.getContentsDataList());
+                break;
+            case INSERT_RECOMMEND_CHANNEL_LIST:
+                //テレビ用データ
+                setStructDB(dataBaseThread.getRecommendChannelList(), DateUtils.RECOMMEND_CH_LAST_INSERT,
+                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV);
+                mApiDataProviderCallback.recommendChannelCallback(dataBaseThread.getContentsDataList());
+                break;
+            case INSERT_RECOMMEND_VOD_LIST:
+                //ビデオ用データ
+                setStructDB(dataBaseThread.getRecommendChannelList(), DateUtils.RECOMMEND_VD_LAST_INSERT,
+                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO);
+                mApiDataProviderCallback.recommendVideoCallback(dataBaseThread.getContentsDataList());
+                break;
+            case INSERT_RECOMMEND_DTV_CHANNEL_LIST:
+                //Dチャンネル用データ
+                setStructDB(dataBaseThread.getRecommendChannelList(), DateUtils.RECOMMEND_DCHANNEL_LAST_INSERT,
+                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL);
+                mApiDataProviderCallback.recommendDChannelCallback(dataBaseThread.getContentsDataList());
+                break;
+            case INSERT_RECOMMEND_DTV_LIST:
+                //dTV用データ
+                setStructDB(dataBaseThread.getRecommendChannelList(), DateUtils.RECOMMEND_DTV_LAST_INSERT,
+                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV);
+                mApiDataProviderCallback.recommendDTVCallback(dataBaseThread.getContentsDataList());
+                break;
+            case INSERT_RECOMMEND_D_ANIMATION_LIST:
+                //dアニメ用データ
+                setStructDB(dataBaseThread.getRecommendChannelList(), DateUtils.RECOMMEND_DANIME_LAST_INSERT,
+                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME);
+                mApiDataProviderCallback.recommendDAnimeCallback(dataBaseThread.getContentsDataList());
                 break;
             default:
                 break;

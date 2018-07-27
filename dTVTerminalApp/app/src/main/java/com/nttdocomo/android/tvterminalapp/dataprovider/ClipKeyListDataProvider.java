@@ -5,6 +5,8 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.activity.common.ChildContentListActivity;
@@ -47,97 +49,102 @@ import java.util.Map;
  */
 public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyListJsonParserCallback,
         ClipKeyListWebClient.VodClipKeyListJsonParserCallback, DataBaseThread.DataBaseOperation {
-    /**
-     * コンテキストファイル.
-     */
+    /** コンテキストファイル. */
     final Context mContext;
-    /**
-     * クリップキーリスト.
-     */
+    /** クリップキーリスト. */
     boolean mRequiredClipKeyList = false;
-    /**
-     * レスポンス終了フラグ.
-     */
+    /** レスポンス終了フラグ. */
     boolean mResponseEndFlag = false;
-    /**
-     * 通信禁止判定フラグ.
-     */
+    /** 通信禁止判定フラグ. */
     private boolean mIsCancel = false;
-    /**
-     * クリップ種別(ひかりTV).
-     */
+    /** クリップ種別(ひかりTV). */
     public static final String CLIP_KEY_LIST_TYPE_OTHER_CHANNEL = "h4d_iptv";
 
-    /**
-     * クリップリクエスト用データ.
-     */
+    /** クリップリクエスト用データ. */
     private ClipRequestData mClipRequestData = null;
-    /**
-     * クリップリクエスト用Webクライアント.
-     */
-    public ClipKeyListWebClient mClient = null;
+    /** クリップリクエスト用Webクライアント. */
+    private ClipKeyListWebClient mClient = null;
 
-    /**
-     * クリップ削除種別用定数.
-     */
+    /** クリップ削除種別用定数. */
     private static final int CLIP_ROW_DELETE = 0;
-    /**
-     * クリップ登録種別用定数.
-     */
+    /** クリップ登録種別用定数. */
     private static final int CLIP_ROW_INSERT = 1;
-    /**
-     * video_program.
-     */
+    /** video_program. */
     private static final String META_DISPLAY_TYPE_VIDEO_PROGRAM = "video_program";
-    /**
-     * video_series.
-     */
+    /** video_series. */
     private static final String META_DISPLAY_TYPE_VIDEO_SERIES = "video_series";
-    /**
-     * video_package.
-     */
+    /** video_package. */
     private static final String META_DISPLAY_TYPE_VIDEO_PACKAGE = "video_package";
-    /**
-     * subscription_package.
-     */
+    /** subscription_package. */
     private static final String META_DISPLAY_TYPE_SUBSCRIPTION_PACKAGE = "subscription_package";
-    /**
-     * series_svod.
-     */
+    /** series_svod. */
     private static final String META_DISPLAY_TYPE_SERIES_SVOD = "series_svod";
-    /**
-     * コンテンツ種別判定1.
-     */
+    /** コンテンツ種別判定1. */
     private static final String CONTENTS_TYPE_FLAG_ONE = "1";
-    /**
-     * コンテンツ種別判定2.
-     */
+    /** コンテンツ種別判定2. */
     private static final String CONTENTS_TYPE_FLAG_TWO = "2";
+    /** TVクリップINSERT用定数. */
+    private static final int TV_CLIP_KEY_ALL_INSERT = 101;
+    /** VODクリップINSERT用定数. */
+    private static final int VOD_CLIP_KEY_ALL_INSERT = 102;
 
     @Override
-    public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse
-        , final ErrorState errorState) {
+    public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse,
+                                          final ErrorState errorState) {
         DTVTLogger.start();
-        mResponseEndFlag = true;
         if (clipKeyListResponse != null && clipKeyListResponse.getIsUpdate()) {
             DTVTLogger.debug("ClipKeyListResponse Insert DB");
-            setStructDataBase(ClipKeyListDao.TableTypeEnum.TV, clipKeyListResponse);
+            //DBキャッシュ保存
+            Handler handler = new Handler(Looper.getMainLooper());
+            DataBaseThread thread = new DataBaseThread(handler, this, TV_CLIP_KEY_ALL_INSERT);
+            thread.setClipKeyListResponse(clipKeyListResponse);
+            thread.setErrorState(errorState);
+            thread.start();
+        } else {
+            onTvClipKeyResult(clipKeyListResponse, errorState);
         }
         DTVTLogger.end();
     }
 
-    @Override
-    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse
-            ,final ErrorState errorState) {
-        DTVTLogger.start();
+    /**
+     * Tvクリップキー保存後の処理.
+     *
+     * @param clipKeyListResponse クリップキーレスポンス
+     * @param errorState エラーStatus
+     */
+    protected void onTvClipKeyResult(final ClipKeyListResponse clipKeyListResponse,
+                                     final ErrorState errorState) {
         mResponseEndFlag = true;
+    }
+
+    @Override
+    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse,
+                                           final ErrorState errorState) {
+        DTVTLogger.start();
         if (clipKeyListResponse != null && clipKeyListResponse.getIsUpdate()) {
             DTVTLogger.debug("ClipKeyListResponse Insert DB");
-            setStructDataBase(ClipKeyListDao.TableTypeEnum.VOD, clipKeyListResponse);
+            //DBキャッシュ保存
+            Handler handler = new Handler(Looper.getMainLooper());
+            DataBaseThread thread = new DataBaseThread(handler, this, VOD_CLIP_KEY_ALL_INSERT);
+            thread.setClipKeyListResponse(clipKeyListResponse);
+            thread.setErrorState(errorState);
+            thread.start();
+        } else {
+            onVodClipKeyResult(clipKeyListResponse, errorState);
         }
         DTVTLogger.end();
     }
 
+    /**
+     * Vodクリップキー保存後の処理.
+     *
+     * @param clipKeyListResponse クリップキーレスポンス
+     * @param errorState エラーStatus
+     */
+    protected void onVodClipKeyResult(final ClipKeyListResponse clipKeyListResponse,
+                                      final ErrorState errorState) {
+        mResponseEndFlag = true;
+    }
 
     /**
      * コンストラクタ.
@@ -438,7 +445,21 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
 
     @Override
     public List<Map<String, String>> dbOperation(final DataBaseThread dataBaseThread, final int operationId) {
-        //子クラスで使用するために実装のみ
+        DTVTLogger.start();
+        switch (operationId) {
+            case TV_CLIP_KEY_ALL_INSERT:
+                mResponseEndFlag = true;
+                ClipKeyListResponse tvKeyResponse = dataBaseThread.getClipKeyListResponse();
+                setStructDataBase(ClipKeyListDao.TableTypeEnum.TV, tvKeyResponse);
+                onTvClipKeyResult(tvKeyResponse, dataBaseThread.getErrorState());
+                break;
+            case VOD_CLIP_KEY_ALL_INSERT:
+                ClipKeyListResponse vodKeyResponse = dataBaseThread.getClipKeyListResponse();
+                setStructDataBase(ClipKeyListDao.TableTypeEnum.VOD, vodKeyResponse);
+                onVodClipKeyResult(vodKeyResponse, dataBaseThread.getErrorState());
+                break;
+        }
+        DTVTLogger.end();
         return null;
     }
 

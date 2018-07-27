@@ -8,8 +8,12 @@ import android.content.Context;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 
+import com.nttdocomo.android.tvterminalapp.common.ErrorState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChannelList;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +41,14 @@ public class DataBaseThread extends Thread {
     private ChannelInfoList mChannelsInfoList = null;
     /** チャンネルデータ. */
     private ChannelList mChannelList = null;
+    /** RecommendChannelList. */
+    private RecommendChannelList mRecommendChannelList = null;
+    /** ContentsDataList. */
+    private List<ContentsData> mContentsDataList = null;
+    /** ClipKeyListResponse. */
+    private ClipKeyListResponse mClipKeyListResponse = null;
+    /** ErrorState. */
+    private ErrorState mErrorState = null;
 
     /**
      * callbackInterface.
@@ -145,5 +157,57 @@ public class DataBaseThread extends Thread {
      */
     public void setChannelList(final ChannelList mChannelList) {
         this.mChannelList = mChannelList;
+    }
+
+    /**
+     * RecommendChannelListを取得.
+     *
+     * @return RecommendChannelList
+     */
+    public RecommendChannelList getRecommendChannelList() {
+        return mRecommendChannelList;
+    }
+
+    /**
+     * RecommendChannelListを設定.
+     *
+     * @param mRecommendChannelList RecommendChannelList
+     */
+    public void setRecommendChannelList(final RecommendChannelList mRecommendChannelList) {
+        this.mRecommendChannelList = mRecommendChannelList;
+    }
+
+    /**
+     * List<ContentsData>を取得.
+     *
+     * @return List<ContentsData>
+     */
+    public List<ContentsData> getContentsDataList() {
+        return mContentsDataList;
+    }
+
+    /**
+     * List<ContentsData>を設定.
+     *
+     * @param mContentsDataList ContentsDataリスト
+     */
+    public void setContentsDataList(final List<ContentsData> mContentsDataList) {
+        this.mContentsDataList = mContentsDataList;
+    }
+
+    public ClipKeyListResponse getClipKeyListResponse() {
+        return mClipKeyListResponse;
+    }
+
+    public void setClipKeyListResponse(final ClipKeyListResponse mClipKeyListResponse) {
+        this.mClipKeyListResponse = mClipKeyListResponse;
+    }
+
+    public ErrorState getErrorState() {
+        return mErrorState;
+    }
+
+    public void setErrorState(final ErrorState mErrorState) {
+        this.mErrorState = mErrorState;
     }
 }

@@ -51,6 +51,7 @@ public class RecommendListDataManager {
      * @param tagPageNo ページ番号
      * @param cacheDateKey キャッシュ対象ごとのキー
      */
+    @SuppressWarnings("OverlyLongMethod")
     public synchronized void insertRecommendInsertList(
             final RecommendChannelList redChList, final boolean addFlag, final int tagPageNo,
             final String cacheDateKey) {

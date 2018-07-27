@@ -47,12 +47,12 @@ public class ClipKeyListWebClient
         //パース後のデータを返す
         if (null != mTvClipKeyListJsonParserCallback) {
             mTvClipKeyListJsonParserCallback.onTvClipKeyListJsonParsed(
-                    (ClipKeyListResponse) parsedData,getError());
+                    (ClipKeyListResponse) parsedData, getError());
         }
         //パース後のデータを返す
         if (null != mVodClipKeyListJsonParserCallback) {
             mVodClipKeyListJsonParserCallback.onVodClipKeyListJsonParsed(
-                    (ClipKeyListResponse) parsedData,getError());
+                    (ClipKeyListResponse) parsedData, getError());
         }
     }
 
@@ -76,8 +76,8 @@ public class ClipKeyListWebClient
          * @param clipKeyListResponse JSONパース後のデータ
          * @param errorState エラー情報
          */
-        void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse
-                ,final ErrorState errorState);
+        void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse,
+                                       final ErrorState errorState);
     }
 
     /**
