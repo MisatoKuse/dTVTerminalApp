@@ -2074,6 +2074,9 @@ public class BaseActivity extends FragmentActivity implements
         //ダイアログ以外の部分を押した時に反応するのは禁止
         notFoundDialog.setOnTouchOutside(false);
 
+        //メッセージを出さないキャッシュクリア
+        DaccountControl.cacheClear(BaseActivity.this, null, false);
+
         //OKボタンが押されたら、ログアウト処理を行い、終了する
         notFoundDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
@@ -2081,8 +2084,6 @@ public class BaseActivity extends FragmentActivity implements
                 DTVTLogger.debug("logout & restart");
                 SharedPreferencesUtils.setSharedPreferencesRestartFlag(getApplicationContext(),
                         false);
-                //メッセージを出さないキャッシュクリア
-                DaccountControl.cacheClear(BaseActivity.this, null, false);
                 reStartApplication();
             }
         });

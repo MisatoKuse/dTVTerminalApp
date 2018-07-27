@@ -40,18 +40,6 @@ public class DaccountUtils {
      * 必ず、IDimDefinesの値と重複しない物とする
      */
     public static final int D_ACCOUNT_APP_NOT_FOUND_ERROR_CODE = -999;
-    /**
-     * Dアカウント設定アプリがインストールされているか判定を行う.
-     *
-     * @return intent:インストールされている null:インストールされていない
-     */
-    public static Intent checkDAccountIsExist() {
-        Intent intent = new Intent();
-        intent.setClassName(
-                DaccountConstants.D_ACCOUNT_ID_MANAGER,
-                DaccountConstants.D_ACCOUNT_ID_MANAGER_CLASS_NAME);
-        return intent;
-    }
 
     /**
      * Dアカウント設定を連携起動する.

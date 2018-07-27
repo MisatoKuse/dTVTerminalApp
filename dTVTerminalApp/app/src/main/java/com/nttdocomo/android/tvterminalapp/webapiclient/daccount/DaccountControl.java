@@ -206,12 +206,13 @@ public class DaccountControl implements
         }
         mDaccountControlCallBack = daccountControlCallBackSource;
 
-        if (DaccountUtils.checkDAccountIsExist() == null) {
+        if (!DaccountUtils.checkInstalled(context,DaccountUtils.D_ACCOUNT_APP_PACKAGE_NAME)) {
             //dアカウント設定アプリが存在しないので帰る。ここで帰れば、単体実行フラグがセットされず、別のアクティビティの実行時に自動的に実行される。
             //後ほど、dアカウント設定アプリがダウンロードされた場合、その直後のアクティビティの起動時に呼び出されるので、意図的にダウンロード直後に処理を
             //挿入する必要はない。
             DTVTLogger.end("not install idmanager");
             mIsOTTCheckFinished = true;
+            mResult = DaccountUtils.D_ACCOUNT_APP_NOT_FOUND_ERROR_CODE;
             mDaccountControlCallBack.daccountControlCallBack(false);
             return;
         }
