@@ -350,7 +350,12 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             case HOME_CONTENTS_SORT_VIDEO:
                 //配信期限の設定
                 ContentUtils.setPeriodText(mContext, viewHolder.mTime, contentsData);
-                ContentUtils.setChannelNameOrMissedText(mContext, viewHolder.mHyphen, viewHolder.mChannel, contentsData, null);
+                ContentUtils.ContentsType contentsType =  ContentUtils.setChannelNameOrMissedText(mContext, viewHolder.mHyphen, viewHolder.mChannel, contentsData, null);
+                if (contentsType != ContentUtils.ContentsType.DCHANNEL_VOD_31 && (mIndex == HOME_CONTENTS_SORT_VOD_CLIP || mIndex == HOME_CONTENTS_SORT_WATCHING_VIDEO)) {
+                    if (viewHolder.mTime != null) {
+                        viewHolder.mTime.setVisibility(View.GONE);
+                    }
+                }
                 break;
             default:
                 if (viewHolder.mTime != null) {
@@ -639,6 +644,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             default:
                 //VODの配信日付は avail_〇〇_date を使用すること
                 long startAvailDate = contentsData.getAvailStartDate();
+                DTVTLogger.debug("================================>" + mIndex);
                 return DateUtils.isInOneWeek(startAvailDate);
         }
     }
