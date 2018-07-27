@@ -1434,14 +1434,26 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         String url = playerData.getResUrl();
         mTxtChannellogo = playerData.getUpnpIcon();
         //setPlayerLogoThumbnail(icon);
-        long size = Integer.parseInt(playerData.getSize());
+        long size = 0;
+        try {
+            size = Long.parseLong(playerData.getSize());
+        } catch (NumberFormatException e) {
+            DTVTLogger.debug("Content File Size Err! size:" + playerData.getSize());
+            DTVTLogger.debug(e);
+        }
         String durationStr = playerData.getDuration();
         long duration = ContentUtils.getDuration(durationStr);
         String type = playerData.getVideoType();
         if (TextUtils.isEmpty(playerData.getBitrate())) {
             playerData.setBitrate("0");
         }
-        int bitRate = Integer.parseInt(playerData.getBitrate());
+        int bitRate = 0;
+        try {
+            bitRate = Integer.parseInt(playerData.getBitrate());
+        } catch (NumberFormatException e) {
+            DTVTLogger.debug("Content Bitrate Err! size:" + playerData.getBitrate());
+            DTVTLogger.debug(e);
+        }
         mTxtChanneltitle = playerData.getTitle();
         //setTitleText(title);
         Uri uri = Uri.parse(url);
