@@ -173,7 +173,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     /** ビューページャアダプター.*/
     private ContentsDetailPagerAdapter mContentsDetailPagerAdapter;
     /**購入済みVODレスポンス.*/
-    private final PurchasedVodListResponse mResponse = null;
+    private PurchasedVodListResponse mPurchasedVodListResponse = null;
     /** タブー名.*/
     private String[] mTabNames = null;
     /**表示状態.*/
@@ -204,6 +204,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private boolean mNotRemoteRetry = false;
     /**サムネイルアイコン、メッセージレイアウト.*/
     private LinearLayout mContractLeadingView = null;
+    /**「契約する」ボタンのクリック状態.*/
+    private boolean mThumbnailContractButtonClicked = false;
     /**コンテンツ詳細予約済みID.*/
     public static final String CONTENTS_DETAIL_RESERVEDID = "1";
     /**モバイル視聴不可.*/
@@ -2243,7 +2245,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         return -1;
     }
     //region RemoteControllerView
-    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod", "EnumSwitchStatementWhichMissesCases"})
     @Override
     public void onStartRemoteControl(final boolean isFromHeader) {
         mIsFromHeader = isFromHeader;
@@ -2302,6 +2304,30 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     startHikariApplication();
                     break;
             }
+        } else if (mDetailData != null && !isFromHeader
+                //「契約する」ボタンの動線
+                //mIsSend に因らず毎回判定する
+                && mThumbnailContractButtonClicked ) {
+            DTVTLogger.debug("contract button clicked.");
+            mThumbnailContractButtonClicked = false;
+            //「契約する」ボタンの動線でのサービスアプリ連携判定
+            switch (mDetailData.getServiceId()) {
+                case ContentUtils.DTV_CONTENTS_SERVICE_ID: // dTV
+                case ContentUtils.D_ANIMATION_CONTENTS_SERVICE_ID: // dアニメ
+                case ContentUtils.DTV_CHANNEL_CONTENTS_SERVICE_ID: // dチャンネル
+                    //処理なし
+                    break;
+                case ContentUtils.DTV_HIKARI_CONTENTS_SERVICE_ID://ひかりTV
+                default:
+                    if (mDetailFullData == null) {
+                        break;
+                    }
+                    //「契約する」ボタンの動線でのひかりTVのサービスアプリ連携
+                    DTVTLogger.debug("contract button to start application HikariTv");
+                    setRelayClientHandler();
+                    startHikariApplication();
+                    break;
+            }
         }
         super.onStartRemoteControl(isFromHeader);
         DTVTLogger.end();
@@ -2326,44 +2352,56 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                             mDetailFullData.getCid(), mDetailFullData.getCrid());
                 } else if (BVFLG_FLAG_ZERO.equals(mDetailFullData.getBvflg()) || TextUtils.isEmpty(mDetailFullData.getBvflg())) {
                     //liinfを"|"区切りで分解する
-                    if (mResponse == null) {
+                    if (mPurchasedVodListResponse == null) {
                         if (!mIsFromHeader) {
                             setRemoteProgressVisible(View.GONE);
                         }
                         return;
                     }
-                    ArrayList<ActiveData> activeDatas = mResponse.getVodActiveData();
+                    // 購入済みVOD一覧
+                    ArrayList<ActiveData> activeDatas = mPurchasedVodListResponse.getVodActiveData();
+                    //最長のvalid_end_dateを格納する
+                    long vodLimitDate = 0;
+                    //「valid_end_date」が一番長い「license_id」
+                    String validLicenseId = "";
+                    //現在Epoch秒
+                    long nowDate = DateUtils.getNowTimeFormatEpoch();
                     //ひかりアプリ起動フラグ、くるくる処理ちゃんと消えるため
-                    boolean isStarted = false;
+                    boolean isLicensedRentalVod = false;
+                    DTVTLogger.debug(String.format("start application HikariTvCategoryHikaritvVod: bvflg=0, puid=%s", puid));
                     for (String liinf : liinfArray) {
                         String[] column = liinf.split(Pattern.quote("|"), 0);
+                        DTVTLogger.debug(String.format("liinf: column[0]:%s", column[0]));
                         for (ActiveData activeData : activeDatas) {
                             String licenseId = activeData.getLicenseId();
+                            DTVTLogger.debug(String.format("activeData: licenseId:%s validEndDate:%s", licenseId, activeData.getValidEndDate()));
                             //メタレスポンスのpuid、liinf_arrayのライセンスID（パイプ区切り）と
                             // 購入済みＶＯＤ一覧取得IF「active_list」の「license_id」と比較して一致した場合
                             if (licenseId.equals(column[0]) || licenseId.equals(puid)) {
-                                //一致した「active_list」の「valid_end_date」> 現在時刻の場合
-                                if (activeData.getValidEndDate() > DateUtils.getNowTimeFormatEpoch()) {
+                                DTVTLogger.debug(String.format("licenseId=%s match! column[0]=%s puid=%s", licenseId, column[0], puid));
+                                long validEndDate = activeData.getValidEndDate();
+                                //一致した「active_list」の「valid_end_date」> 現在時刻の場合（一件でも条件を満たせば視聴可能）
+                                if (validEndDate > nowDate) {
+                                    isLicensedRentalVod = true;
                                     // license_idが複数ある場合は「valid_end_date」が一番長い「license_id」を指定する
-                                    long longestDate = activeData.getValidEndDate();
-                                    for (ActiveData activeDataEndDate : activeDatas) {
-                                        if (longestDate < activeDataEndDate.getValidEndDate()) {
-                                            longestDate = activeDataEndDate.getValidEndDate();
-                                            licenseId = activeDataEndDate.getLicenseId();
-                                        }
+                                    if (vodLimitDate < validEndDate) {
+                                        DTVTLogger.debug(String.format("validEndDate=%s", validEndDate));
+                                        vodLimitDate = validEndDate;
+                                        validLicenseId = licenseId;
                                     }
-                                    isStarted = true;
-                                    requestStartApplicationHikariTvCategoryHikaritvVod(licenseId,
-                                            mDetailFullData.getCid(), mDetailFullData.getCrid());
                                 }
                             }
                         }
                     }
-                    if (!isStarted) {
-                        if (!mIsFromHeader) {
-                            setRemoteProgressVisible(View.GONE);
-                        }
+                    if (!isLicensedRentalVod) {
+                        DTVTLogger.debug("licenseId is not match!");
+                        // TODO: DREM-3097 （正式回答までiOS側に合わせる：有効なライセンスが見つからなかった場合はlicense_idは渡さない）
+                        validLicenseId = "";
                     }
+                    DTVTLogger.debug(String.format("requestStartApplicationHikariTvCategoryHikaritvVod(%s, %s, %s)",
+                            validLicenseId, mDetailFullData.getCid(), mDetailFullData.getCrid()));
+                    requestStartApplicationHikariTvCategoryHikaritvVod(validLicenseId,
+                            mDetailFullData.getCid(), mDetailFullData.getCrid());
                 } else {
                     if (!mIsFromHeader) {
                         setRemoteProgressVisible(View.GONE);
@@ -2707,7 +2745,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     showErrorDialog(ErrorType.rentalVoidListGet);
                     return;
                 }
-
+                mPurchasedVodListResponse = response;
                 ArrayList<ActiveData> vodActiveData = response.getVodActiveData();
                 mEndDate = ContentUtils.getRentalVodValidEndDate(mDetailFullData, vodActiveData);
                 displayLimitDate();
@@ -3184,6 +3222,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
      * サムネイル上の契約するボタン内の動作.
      */
     private void thumbnailContractButtonAction() {
+        mThumbnailContractButtonClicked = true;
         //STB接続がない場合(未ペアリング、宅外の場合)はブラウザ起動
         if (getStbStatus()) {
             contentDetailRemoteController();
