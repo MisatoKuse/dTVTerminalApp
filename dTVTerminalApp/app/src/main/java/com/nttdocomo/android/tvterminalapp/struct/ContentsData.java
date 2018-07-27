@@ -402,22 +402,6 @@ public class ContentsData {
     }
 
     /**
-     * 録画番組用 チャンネル名取得.
-     * @return 録画番組用 チャンネル名
-     */
-    public String getRecordedChannelName() {
-        return recordedChannelName;
-    }
-
-    /**
-     * 録画番組用 チャンネル名設定.
-     * @param channelName 録画番組用 チャンネル名
-     */
-    public void setRecordedChannelName(final String channelName) {
-        this.recordedChannelName = channelName;
-    }
-
-    /**
      * 録画番組用 コピー残り回数取得.
      * @return 録画番組用 コピー残り回数
      */
