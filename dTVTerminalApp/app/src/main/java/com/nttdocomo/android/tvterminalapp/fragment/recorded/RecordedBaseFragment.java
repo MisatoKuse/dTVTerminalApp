@@ -86,6 +86,8 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     private ScrollListenerCallBack mScrollListenerCallBack;
     /**UI更新あるか.*/
     private boolean mIsUiRunning = true;
+    /** Toast（連続して出さない為に保持）. */
+    public Toast mToast = null;
 
     /**
      * コールバックリスナー.
@@ -882,7 +884,18 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
             DTVTLogger.end();
             return;
         }
-        Toast.makeText(context, getResources().getString(R.string.record_download_error_message), Toast.LENGTH_SHORT).show();
+        if (mActivity != null) {
+            if (mToast != null) {
+                mToast.cancel();
+            }
+            if (!mActivity.isFinishing()) {
+                mToast = Toast.makeText(mActivity, getResources().getString(R.string.record_download_error_message), Toast.LENGTH_SHORT);
+                mToast.show();
+            } else {
+                mToast = null;
+            }
+
+        }
         DTVTLogger.end();
     }
 

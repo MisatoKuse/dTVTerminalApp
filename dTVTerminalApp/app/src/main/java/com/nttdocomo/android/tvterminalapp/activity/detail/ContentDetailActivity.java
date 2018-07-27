@@ -2526,9 +2526,13 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 if (mToast != null) {
                     mToast.cancel();
                 }
-                // 成功
-                mToast = Toast.makeText(this, getResources().getString(R.string.recording_reservation_complete_dialog_msg), Toast.LENGTH_SHORT);
-                mToast.show();
+                if (!this.isFinishing()) {
+                    // 成功
+                    mToast = Toast.makeText(this, getResources().getString(R.string.recording_reservation_complete_dialog_msg), Toast.LENGTH_SHORT);
+                    mToast.show();
+                } else {
+                    mToast = null;
+                }
             }
         } else {
             // コンテンツ詳細取得データに失敗があった場合

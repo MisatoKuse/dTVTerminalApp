@@ -556,9 +556,13 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         if (mToast != null) {
             mToast.cancel();
         }
-        // 成功
-        mToast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
-        mToast.show();
+        if (!this.isFinishing()) {
+            // 成功
+            mToast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+            mToast.show();
+        } else {
+            mToast = null;
+        }
     }
 
     /**
