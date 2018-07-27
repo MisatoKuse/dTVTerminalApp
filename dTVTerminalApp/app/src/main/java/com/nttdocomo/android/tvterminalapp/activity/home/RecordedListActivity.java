@@ -712,7 +712,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 return;
             }
             baseFragment.clearQueueIndex();
-            setDownLoadQue(baseFragment, dlnaRecVideoItems, resultList);
             final boolean hideDownloadBtn = getConnectionStatus();
             for (int i = 0; i < dlnaRecVideoItems.size(); i++) {
                 DlnaRecVideoItem itemData = dlnaRecVideoItems.get(i);
@@ -760,6 +759,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 baseFragment.addContentsList(detailData);
                 setNotifyData(baseFragment, itemData, detailData.getDlFileFullPath(), detailData.getDownLoadStatus(), hideDownloadBtn);
             }
+            setDownLoadQue(baseFragment, baseFragment.getContentsList(), resultList);
         }
         runOnUiThread(new Runnable() {
             @Override
@@ -790,7 +790,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * @param resultList コンテンツリスト
      */
     private void setDownLoadQue(final RecordedBaseFragment baseFragment,
-                                final ArrayList<DlnaRecVideoItem> dlnaRecVideoItems, final List<Map<String, String>> resultList) {
+                                final List<RecordedContentsDetailData> dlnaRecVideoItems, final List<Map<String, String>> resultList) {
         if (resultList == null) {
             return;
         }
@@ -798,9 +798,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         for (Map<String, String> hashMap : resultList) {
             String itemId = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
             for (int t = 0; t < dlnaRecVideoItems.size(); t++) {
-                String allItemId = dlnaRecVideoItems.get(t).mItemId;
+                String allItemId = dlnaRecVideoItems.get(t).getItemId();
                 if (!TextUtils.isEmpty(allItemId) && !allItemId.startsWith(DownloaderBase.sDlPrefix)) {
-                    allItemId = DownloaderBase.getFileNameById(dlnaRecVideoItems.get(t).mItemId);
+                    allItemId = DownloaderBase.getFileNameById(dlnaRecVideoItems.get(t).getItemId());
                 }
                 if (itemId.equals(allItemId)) {
                     String downloadStatus = hashMap.get(DataBaseConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
