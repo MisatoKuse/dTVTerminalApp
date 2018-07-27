@@ -1042,6 +1042,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
             if (contentsType == ContentUtils.ContentsType.TV) {
                 //番組(m/d（曜日）h:ii - h:ii)
                 date = DateUtils.getContentsDateString(mDetailData.getmStartDate(), mDetailData.getmEndDate());
+                // コンテンツ詳細(TVの場合、タブ一つに設定する)
+                mTabNames = getResources().getStringArray(R.array.contents_detail_tab_other_service_tv);
             } else {
                 if (contentsType == ContentUtils.ContentsType.VOD) {
                     if (DateUtils.isBefore(mDetailData.getmStartDate())) {
@@ -1054,9 +1056,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                         }
                     }
                 }
+                // コンテンツ詳細(VODの場合、タブ一つに設定する)
+                mTabNames = getResources().getStringArray(R.array.contents_detail_tab_other_service_vod);
             }
-            // コンテンツ詳細(他サービスの場合、タブ一つに設定する)
-            mTabNames = getResources().getStringArray(R.array.contents_detail_tab_other_service);
             mDetailData.setChannelDate(date);
         } else {
             // ディフォルトはチャンネルタブを付いて、コールバック来たら、再設定
