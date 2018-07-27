@@ -174,17 +174,9 @@ public class TvProgramListActivity extends BaseActivity implements
      */
     private ProgramChannelAdapter mProgramChannelAdapter = null;
     /**
-     * チャンネルインフォリスト.
-     */
-    private List<ChannelInfo> mChannelInfo = new ArrayList<>();
-    /**
-     * チャンネルインフォリスト.
-     */
-    private ArrayList<ChannelInfo> mChannels = new ArrayList<>();
-    /**
      * ひかりチャンネルリスト.
      */
-    private ArrayList<ChannelInfo> mHikariChannels;
+    private ArrayList<ChannelInfo> mHikariChannels = null;
     /**
      * マイ番組表データ.
      */
@@ -910,12 +902,7 @@ public class TvProgramListActivity extends BaseActivity implements
         mTimeLine.setVisibility(View.INVISIBLE);
         mTimeScrollView.setVisibility(View.INVISIBLE);
         mTagImageView.setVisibility(View.INVISIBLE);
-        if (mChannels != null) {
-            mChannels.clear();
-        }
-        if (mChannelInfo != null) {
-            mChannelInfo.clear();
-        }
+
         if (mProgramChannelAdapter != null) {
             mProgramChannelAdapter.notifyDataSetChanged();
             mProgramChannelAdapter.removeData();
@@ -929,10 +916,6 @@ public class TvProgramListActivity extends BaseActivity implements
 
         if (mHikariChannels != null) {
             mHikariChannels.clear();
-        }
-
-        if (mChannelInfo != null) {
-            mChannelInfo.clear();
         }
 
         if (mScaledDownProgramListDataProvider != null) {
@@ -1002,7 +985,6 @@ public class TvProgramListActivity extends BaseActivity implements
                 if (channelsInfo != null && channelsInfo.getChannels() != null) {
                     List<ChannelInfo> channels = channelsInfo.getChannels();
                     channelSort(channels);
-                    mChannelInfo = channels;
                     setProgramRecyclerView(channels);
                 } else {
                     //Nullの時のダミーデータ生成
@@ -1020,7 +1002,6 @@ public class TvProgramListActivity extends BaseActivity implements
                             channelsInfoList.addChannel(channel);
                         }
                         List<ChannelInfo> channels = channelsInfoList.getChannels();
-                        mChannelInfo = channels;
                         setProgramRecyclerView(channels);
                     }
                 }
@@ -1054,8 +1035,7 @@ public class TvProgramListActivity extends BaseActivity implements
             if (channels != null && channels.size() > 0) {
 //                sort(channels);
                 showMyChannelNoItem(false, false);
-                this.mChannels = channels;
-                setChannelContentsView(mChannels);
+                setChannelContentsView(channels);
                 if (mScaledDownProgramListDataProvider == null) {
                     mScaledDownProgramListDataProvider
                             = new ScaledDownProgramListDataProvider(this);
@@ -1376,12 +1356,19 @@ public class TvProgramListActivity extends BaseActivity implements
         if (mTvProgramListAdapter != null) {
             mTvProgramListAdapter.enableConnect();
         }
-        //チャンネル情報未取得なら取得を動作させる
-        if (mMyChannelDataList == null || mHikariChannels == null) {
-            getChannelData();
-        }
 
         DTVTLogger.end();
+    }
+
+    @Override
+    protected void onReStartCommunication() {
+        super.onReStartCommunication();
+        //チャンネル情報未取得なら取得を動作させる
+        if (mTabIndex == 0 && mMyChannelDataList == null) {
+            getChannelData();
+        } else if (mHikariChannels == null || mHikariChannels.size() == 0) {
+            getChannelData();
+        }
     }
 
     @Override
