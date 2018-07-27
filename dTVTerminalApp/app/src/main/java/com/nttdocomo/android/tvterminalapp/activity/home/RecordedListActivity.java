@@ -706,16 +706,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 mIsEndPage = true;
             }
             List<Map<String, String>> resultList = getDownloadListFromDb();
-            if (dlnaRecVideoItems.size() == 0 && mPageIndex == 0) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mNoDataMessage.setVisibility(View.VISIBLE);
-                        mNoDataMessage.setText(getString(R.string.common_empty_data_message));
-                    }
-                });
-                return;
-            }
             baseFragment.clearQueueIndex();
             final boolean hideDownloadBtn = getConnectionStatus();
             for (int i = 0; i < dlnaRecVideoItems.size(); i++) {
