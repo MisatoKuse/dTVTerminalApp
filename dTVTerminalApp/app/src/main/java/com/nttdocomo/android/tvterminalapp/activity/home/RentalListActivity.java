@@ -205,21 +205,30 @@ public class RentalListActivity extends BaseActivity implements
     @Override
     public void rentalListNgCallback() {
         DTVTLogger.start();
-        mRelativeLayout.setVisibility(View.GONE);
-        mListView.setVisibility(View.VISIBLE);
-        showProgressBar(false);
 
-        ErrorState errorState = mRentalDataProvider.getError();
-        if (errorState != null) {
-            String message = errorState.getApiErrorMessage(getApplicationContext());
-            mNoDataMessage.setVisibility(View.VISIBLE);
-            mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
-            if (!TextUtils.isEmpty(message)) {
-                showDialogToClose(this, message);
-                return;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mRelativeLayout.setVisibility(View.GONE);
+                mListView.setVisibility(View.VISIBLE);
+                showProgressBar(false);
+                mNoDataMessage.setVisibility(View.VISIBLE);
+                mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
+                if (!NetWorkUtils.isOnline(RentalListActivity.this)) {
+                  showDialogToClose(RentalListActivity.this, getResources().getString(R.string.network_nw_error_message_dialog));
+                } else {
+                    ErrorState errorState = mRentalDataProvider.getError();
+                    if (errorState != null) {
+                        String message = errorState.getApiErrorMessage(getApplicationContext());
+                        if (!TextUtils.isEmpty(message)) {
+                            showDialogToClose(RentalListActivity.this, message);
+                            return;
+                        }
+                    }
+                    showDialogToClose(RentalListActivity.this);
+                }
             }
-        }
-        showDialogToClose(this);
+        });
     }
     // region implement
 
