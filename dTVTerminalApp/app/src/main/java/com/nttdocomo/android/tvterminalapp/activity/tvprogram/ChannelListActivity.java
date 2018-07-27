@@ -398,6 +398,19 @@ public class ChannelListActivity extends BaseActivity implements
 
     /**
      * 送信containerIdと表示中のタブ一致のチェック.
+     * @param isSuccessMessage true　0件：false 取得失敗
+     */
+    private void showListMessage(final boolean isSuccessMessage) {
+        mNoDataMessage.setVisibility(View.VISIBLE);
+        if (isSuccessMessage) {
+            mNoDataMessage.setText(getString(R.string.common_empty_data_message));
+        } else {
+            mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
+        }
+    }
+
+    /**
+     * 送信containerIdと表示中のタブ一致のチェック.
      * @param pos タブポジション
      * @param containerId パス
      * @return  一致のチェック結果
@@ -446,8 +459,7 @@ public class ChannelListActivity extends BaseActivity implements
                 ChannelListFragment fragment = mFactory.createFragment(pos, ChannelListActivity.this, mCurrentType, null);
                 updateUi(fragment);
                 showGetDataFailedToast();
-                mNoDataMessage.setVisibility(View.VISIBLE);
-                mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
+                showListMessage(false);
             }
         });
     }
@@ -461,8 +473,7 @@ public class ChannelListActivity extends BaseActivity implements
             @Override
             public void run() {
                 showGetDataFailedToast();
-                mNoDataMessage.setVisibility(View.VISIBLE);
-                mNoDataMessage.setText(getString(R.string.common_get_data_failed_message));
+                showListMessage(false);
             }
         });
     }
@@ -742,8 +753,11 @@ public class ChannelListActivity extends BaseActivity implements
         fragment.showProgressBar(false);
 
         if (null == channels) {
-            mNoDataMessage.setVisibility(View.VISIBLE);
-            mNoDataMessage.setText(getString(R.string.common_empty_data_message));
+            if (NetWorkUtils.isOnline(this)) {
+                showListMessage(true);
+            } else {
+                showListMessage(false);
+            }
             //エラーメッセージを取得する
             String message = mHikariTvChannelDataProvider.getChannelError().getErrorMessage();
 
@@ -760,8 +774,12 @@ public class ChannelListActivity extends BaseActivity implements
         int size = channels.size();
 
         if (0 == size) {
-            mNoDataMessage.setVisibility(View.VISIBLE);
-            mNoDataMessage.setText(getString(R.string.common_empty_data_message));
+            if (NetWorkUtils.isOnline(this)) {
+                showListMessage(true);
+            } else {
+                showListMessage(false);
+                showGetDataFailedToast(getString(R.string.network_nw_error_message_dialog));
+            }
             return;
         }
         switch (chType) {
@@ -813,8 +831,12 @@ public class ChannelListActivity extends BaseActivity implements
                 }
                 noticeRefresh(fragment);
                 if (mPageIndex == 0 && list.size() == 0) {
-                    mNoDataMessage.setVisibility(View.VISIBLE);
-                    mNoDataMessage.setText(getString(R.string.common_empty_data_message));
+                    if (NetWorkUtils.isOnline(ChannelListActivity.this)) {
+                        showListMessage(true);
+                    } else {
+                        showListMessage(false);
+                        showGetDataFailedToast(getString(R.string.network_nw_error_message_dialog));
+                    }
                 }
                 mPageIndex++;
                 fragment.showProgressBar(false);
