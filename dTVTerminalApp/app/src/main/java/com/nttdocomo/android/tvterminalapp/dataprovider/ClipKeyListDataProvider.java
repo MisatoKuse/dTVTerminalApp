@@ -669,9 +669,9 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
             contentInfo.setRequestData(requestData);
             DTVTLogger.debug("RankingContentInfo " + contentInfo.getRank());
             contentInfo.setClipStatus(ClipUtils.setClipStatusContentsData(contentInfo, clipMapList));
-            if (isVodClipData && dispType == null) {
+            if (dispType == null) {
                 //DREM-1882 期限切れコンテンツのクリップ対応により dispType==nullなら一律クリップ可なのでフラグを立てる
-                //対象はクリップ一覧(ビデオ)のみ
+                //対象はクリップ一覧(テレビ/ビデオ)
                 contentInfo.setIsAfterLimitContents(true);
                 //期限切れコンテンツの評価値とサムネイルURLを再設定する
                 contentInfo.setThumURL("");
