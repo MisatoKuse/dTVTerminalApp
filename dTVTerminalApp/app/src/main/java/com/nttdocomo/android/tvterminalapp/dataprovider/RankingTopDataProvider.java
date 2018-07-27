@@ -20,6 +20,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DataBaseT
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.VideoRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.WeeklyRankInsertDataManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.select.ClipKeyListDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.HomeDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.RankingTopDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
@@ -298,10 +299,10 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse
+    public void onTvClipKeyResult(final ClipKeyListResponse clipKeyListResponse
         ,final ErrorState errorState) {
         DTVTLogger.start();
-        super.onTvClipKeyListJsonParsed(clipKeyListResponse,errorState);
+        super.onTvClipKeyResult(clipKeyListResponse,errorState);
         // コールバック判定
         // 今日のテレビランキング
         if (mContext instanceof DailyTvRankingActivity) {
@@ -424,10 +425,10 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse
+    public void onVodClipKeyResult(final ClipKeyListResponse clipKeyListResponse
             ,final ErrorState errorState) {
         DTVTLogger.start();
-        super.onVodClipKeyListJsonParsed(clipKeyListResponse, errorState);
+        super.onVodClipKeyResult(clipKeyListResponse, errorState);
         // コールバック判定
         // 今日のテレビランキング
         if (mContext instanceof DailyTvRankingActivity) {
@@ -649,6 +650,8 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         List<ContentsData> rankingContentsDataList = new ArrayList<>();
         ContentsData rankingContentInfo;
         if (dailyRankMapList != null) {
+            ClipKeyListDataManager keyListDataManager = new ClipKeyListDataManager(mContext);
+            List<Map<String, String>> clipKeyList = keyListDataManager.selectClipAllList();
             for (int i = 0; i < dailyRankMapList.size(); i++) {
                 rankingContentInfo = new ContentsData();
                 Map<String, String> map = dailyRankMapList.get(i);
@@ -701,11 +704,8 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 requestData.setContentType(contentsType);
                 requestData.setTableType(decisionTableType(contentsType, contentsType));
                 if (mRequiredClipKeyList) {
-                    boolean clipStatus;
                     // クリップ状態をコンテンツリストに格納
-                    clipStatus = getClipStatus(dispType, contentsType, dTv,
-                            requestData.getCrid(), requestData.getServiceId(),
-                            requestData.getEventId(), requestData.getTitleId(), tvService);
+                    boolean clipStatus = ClipUtils.setClipStatusContentsData(rankingContentInfo, clipKeyList);
                     rankingContentInfo.setClipStatus(clipStatus);
                     requestData.setClipStatus(clipStatus);
                 }

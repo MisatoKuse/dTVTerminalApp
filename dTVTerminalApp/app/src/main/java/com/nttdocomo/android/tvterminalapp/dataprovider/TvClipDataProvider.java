@@ -124,10 +124,10 @@ public class TvClipDataProvider extends ClipKeyListDataProvider
     }
 
     @Override
-    public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse
+    public void onTvClipKeyResult(final ClipKeyListResponse clipKeyListResponse
             ,final ErrorState errorState) {
         DTVTLogger.start();
-        super.onTvClipKeyListJsonParsed(clipKeyListResponse,errorState);
+        super.onTvClipKeyResult(clipKeyListResponse,errorState);
         mClipKeyListResponse = clipKeyListResponse;
 
         //レスポンスがヌルかどうかの判定

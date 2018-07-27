@@ -395,10 +395,10 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     }
 
     @Override
-    public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse
+    public void onTvClipKeyResult(final ClipKeyListResponse clipKeyListResponse
         ,final ErrorState errorState) {
         mTvScheduleError = errorState;
-        super.onTvClipKeyListJsonParsed(clipKeyListResponse,errorState);
+        super.onTvClipKeyResult(clipKeyListResponse,errorState);
         if (mVodClipKeyListResponse) {
             sendClipKeyResult();
             sendChannelInfoList(setProgramListContentData(mTvScheduleList), new int[0]);
@@ -408,9 +408,9 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     }
 
     @Override
-    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse
+    public void onVodClipKeyResult(final ClipKeyListResponse clipKeyListResponse
             ,final ErrorState errorState) {
-        super.onVodClipKeyListJsonParsed(clipKeyListResponse, errorState);
+        super.onVodClipKeyResult(clipKeyListResponse, errorState);
         if (mTvClipKeyListResponse) {
             sendClipKeyResult();
             sendChannelInfoList(setProgramListContentData(mTvScheduleList), new int[0]);
