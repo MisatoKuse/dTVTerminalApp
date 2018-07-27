@@ -268,9 +268,9 @@ public class DaccountGetOtt {
             String daccountId = SharedPreferencesUtils.getSharedPreferencesDaccountId(
                     mContext);
             if (daccountId != null && TextUtils.isEmpty(daccountId)) {
-                //dアカウントアプリは存在しないか無効だが、ワンタイムトークンが空なので、既に情報は削除済みなので、通常のエラーとする
+                //dアカウントアプリは存在しないか無効だが、ワンタイムトークンが空なので、既に情報は削除済みなので、dアカウント無しでレコメンドを動作させる為に、正常値を入れる
                 mDaccountGetOttCallBack.getOttCallBack(
-                        IDimDefines.RESULT_INTERNAL_ERROR, "", "");
+                        IDimDefines.RESULT_SERVICE_AVAILABLE, "", "");
                 return;
             } else {
                 //dアカウントアプリは存在せず、ワンタイムトークンが健在＝dアカウントアプリが削除されたか無効化されたので、エラーを返して終わる

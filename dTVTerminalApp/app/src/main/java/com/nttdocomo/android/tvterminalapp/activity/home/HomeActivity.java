@@ -64,6 +64,7 @@ import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.OttGetAuthSwitch;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalChListWebClient;
 
@@ -207,7 +208,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     /**
      * 準備が整うまでは、メニューボタンの表示要求を無効化するフラグ
      */
-    private boolean showProgessBarEnabled = false;
+    private boolean mShowProgessBarEnabled = false;
     /**
      * ユーザーのスクロールを検知する為の、以前のスクロール位置.
      */
@@ -298,7 +299,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         } else {
             mLinearLayout.setVisibility(View.VISIBLE);
             //本当に表示準備が整うまでは、プログレスは消さないようにする
-            if (showProgessBarEnabled) {
+            if (mShowProgessBarEnabled) {
                 relativeLayout.setVisibility(View.GONE);
             }
 
@@ -313,7 +314,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         //契約情報を読みこむか、読めない事が確定するまで、操作を封じる
-        if (showProgessBarEnabled) {
+        if (mShowProgessBarEnabled) {
             //操作抑止が解除になったので、受け付けるようにする
             return super.dispatchTouchEvent(event);
         }
@@ -342,7 +343,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             setMenuIconEnabled(true);
 
             //以後はshowProgessBarでの制御も有効となる
-            showProgessBarEnabled = true;
+            setShowProgessBarEnabled(true);
         } else {
             //その他の場合は、ユーザー情報データプロバイダーの結果待ちとする
             DTVTLogger.debug("CONTRACT or PARING NG GlobalMenu not enabled");
@@ -357,7 +358,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private void setGlobalMenuTimeOut() {
         //メニューが非表示の場合、タイムアウトを設定する
-        if (!showProgessBarEnabled) {
+        if (!mShowProgessBarEnabled) {
             //既にタイムアウトが存在すれば解除する・解除しないとタイムアウト側で活性化させてしまう
             if (mMenuTimeOutRunnable != null) {
                 mMenuTimeOutHandler.removeCallbacks(mMenuTimeOutRunnable);
@@ -374,7 +375,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     if (relativeLayout.getVisibility() == View.VISIBLE) {
                         DTVTLogger.debug("HOME ACTIVITY TIME OUT");
                         //最後のコールバックから指定時間が経過して、まだメニューが非活性の場合は、メニューを活性化する
-                        showProgessBarEnabled = true;
+                        setShowProgessBarEnabled(true);
                         setMenuIconEnabled(true);
 
                         //プログレスも消す
@@ -418,7 +419,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             //この段階で通信不能だった場合はdアカウントの処理を呼び出さない。事実上ホーム画面は動作しないので、問題は無い
             if(!NetWorkUtils.isOnline(this)) {
                 //通信不能なので、この時点で以後の操作を有効にする
-                showProgessBarEnabled = true;
+                setShowProgessBarEnabled(true);
 
                 //dアカウントの処理を行わないとグローバルメニューを活性化する機会が失われるので、この時点で活性化する
                 setMenuIconEnabled(true);
@@ -438,7 +439,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     /**
      * ホーム画面表示時のユーザー情報取得部.
      *
-     * (複数個所から呼ばれることになったので、をonResumeから分離)
+     * (複数個所から呼ばれることになったので、onResumeから分離)
      */
     private void getUserInfoStart() {
         DTVTLogger.start();
@@ -509,6 +510,20 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 public void run() {
                     DTVTLogger.debug("onDaccountOttGetComplete call showHomeBanner");
                     showHomeBanner();
+
+                    //dアカウントコントロールクラスを呼び出す
+                    DaccountControl daccountControl = getDAccountControl();
+
+                    //レイアウトの表示件数のチェックとエラーのチェックを行う
+                    if (checkMainLayout() && daccountControl != null &&
+                            daccountControl.getResult()
+                                    == DaccountUtils.D_ACCOUNT_APP_NOT_FOUND_ERROR_CODE) {
+                        //dアカウントアプリ実行不能時点でtrueにしたプログレス表示を
+                        setShowProgessBarEnabled(false);
+
+                        //この時点で表示が無いと言う事は、dアカウント設定アプリが無く、データが読めなかったので改めて呼び出す
+                        requestHomeData();
+                    }
                 }
             });
         }
@@ -518,6 +533,42 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
         DTVTLogger.end();
     }
+
+    /**
+     * mShowProgessBarEnabledの変更を集中して行う
+     * @param showProgessBarEnabled 変更したい値
+     */
+    private void setShowProgessBarEnabled(boolean showProgessBarEnabled) {
+        mShowProgessBarEnabled = showProgessBarEnabled;
+    }
+
+    /**
+     * メインのリニアレイアウトに表示状態の情報があるかどうかを見る.
+     *
+     * @return 表示状態のビューが無ければtrue
+     */
+    private boolean checkMainLayout() {
+        //表示状況がGONEでは無い物の数
+        int notVisibleCounter = 0;
+
+        //レイアウトに登録されているビューの個数だけ回る（先頭は数えないので1から始める）
+        for(int counter = 1; counter < mLinearLayout.getChildCount(); counter++) {
+            //子ビューの表示状態を見る
+            if (mLinearLayout.getChildAt(counter).getVisibility() == View.VISIBLE) {
+                //VISIBLEなので、カウントアップ
+                notVisibleCounter++;
+            }
+        }
+
+        if (notVisibleCounter == 0) {
+            //先頭以外のビューが全て非表示だった
+            return true;
+        }
+
+        //表示しているビューが存在したのでfalse
+        return false;
+    }
+
 
     @Override
     public void onStartCommunication() {
@@ -622,8 +673,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     //dアカウントが取得できない事が確定したので、PR画像のバナーを表示する
                     mAgreementRl.setVisibility(View.VISIBLE);
 
-                    //メニューも活性化する
-                    showProgessBar(false);
+                    //dアカウント設定アプリ未インストールの場合、ここに来るのが早すぎてメニュー活性化が早すぎるので、チェックを行う
+                    DaccountControl daccountControl = getDAccountControl();
+                    if (daccountControl != null && daccountControl.getResult()
+                            != DaccountUtils.D_ACCOUNT_APP_NOT_FOUND_ERROR_CODE) {
+                        //dアカウント設定アプリはインストールされていたので、アプリメニューを活性化する
+                        showProgessBar(false);
+                    }
                     break;
                 }
                 //確定前はバナーを表示しないので、ここでbreakは行わない
