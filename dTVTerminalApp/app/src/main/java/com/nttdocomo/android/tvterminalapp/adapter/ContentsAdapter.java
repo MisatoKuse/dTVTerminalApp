@@ -1294,12 +1294,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_recorded_ch_name.setText(listContentInfo.getDownloadStatus());
                 holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.record_download_status_color));
             } else {
-                holder.tv_recorded_ch_name.setText(listContentInfo.getRecordedChannelName());
-                holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.content_time_text));
-                if (TextUtils.isEmpty(listContentInfo.getRecordedChannelName())) {
-                    holder.tv_recorded_hyphen.setVisibility(View.GONE);
-                    holder.tv_recorded_ch_name.setVisibility(View.GONE);
-                }
+                holder.tv_recorded_hyphen.setVisibility(View.GONE);
+                holder.tv_recorded_ch_name.setVisibility(View.GONE);
             }
         }
     }

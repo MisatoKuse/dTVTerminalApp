@@ -40,6 +40,8 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
     private DownloadData mDownloadData;
     /**アイテムID.*/
     private String mItemId;
+    /**ダウンロード進捗.*/
+    private int mPercent;
     /**DlDataProvider機能有効か.*/
     private boolean mIsRegistered;
     /**ダウンロードデータプロバイダー.*/
@@ -162,7 +164,7 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
      * DownloadService取得.
      * @return DownloadService
      */
-    private DownloadService getDownloadService() {
+    public DownloadService getDownloadService() {
         if (null == mBinder) {
             return null;
         }
@@ -170,9 +172,18 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
     }
 
     /**
+     * ダウンロード進捗取得.
+     * @return ダウンロード進捗
+     */
+    public int getPercent() {
+        return mPercent;
+    }
+
+    /**
      * ダウンロード開始.
      */
     public void start() {
+        mPercent = 0;
         DownloadService ds = getDownloadService();
         if (null != ds) {
             ds.start();
@@ -235,6 +246,7 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
 
     @Override
     public void onProgress(final int percent) {
+        mPercent = percent;
         sendBroadcast(DownloadService.DOWNLOAD_ON_PROGRESS, DownloadService.DOWNLOAD_PARAM_INT, percent);
     }
 

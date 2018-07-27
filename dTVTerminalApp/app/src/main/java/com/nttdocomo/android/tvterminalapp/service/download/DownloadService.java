@@ -294,6 +294,8 @@ public class DownloadService extends Service implements DownloadListener {
             return;
         }
         mDownloaderBase.stop();
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.cancel(DownloadService.DOWNLOAD_SERVICE_ID);
     }
 
     /**

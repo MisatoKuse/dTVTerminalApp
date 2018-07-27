@@ -2443,8 +2443,8 @@ public class BaseActivity extends FragmentActivity implements
      */
     private void downloadStatusCheck() {
         if (this instanceof HomeActivity) {
-            DownloadDataProvider mDownloadDataProvider = DownloadDataProvider.getInstance(mActivity);
-            if (!mDownloadDataProvider.isDownloading() && mDownloadDataProvider.deleteDownloadContentNotCompleted() > 0) {
+            DownloadDataProvider downloadDataProvider = DownloadDataProvider.getInstance(mActivity);
+            if (downloadDataProvider.getDownloadService() == null && downloadDataProvider.deleteDownloadContentNotCompleted() > 0) {
                 showErrorDialogOffer(getResources().getString(R.string.record_download_not_completed_msg));
             }
         }

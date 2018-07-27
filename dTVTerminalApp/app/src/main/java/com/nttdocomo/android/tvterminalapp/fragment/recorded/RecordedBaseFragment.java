@@ -430,6 +430,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                     cd.setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
                     cd.setDlFileFullPath(fullPath);
                     cd.setDownloadStatus("");
+                    cd.setTime(getChannelTimeContent(cd.getTime()));
                     setContentListStatusContent(idx, ContentsAdapter.DOWNLOAD_STATUS_COMPLETED, fullPath);
                 }
             }
@@ -498,6 +499,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         restoreChannelAndTime();
         mContentsData.get(idx).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_ALLOW);
         mContentsData.get(idx).setDownloadStatus("");
+        mContentsData.get(idx).setTime(getChannelTimeContent(mContentsData.get(idx).getTime()));
         setContentListStatusContent(idx, ContentsAdapter.DOWNLOAD_STATUS_ALLOW, fullPath);
     }
 
@@ -608,6 +610,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                     textView.setTextColor(ContextCompat.getColor(mContext, R.color.record_download_status_color));
                     textView.setText(mProgress);
                 }
+                mContentsData.get(index).setTime(getCutChannelTimeContent(mContentsData.get(index).getTime()));
                 mContentsData.get(index).setDownloadStatus(mProgress);
                 break;
             default:
@@ -647,7 +650,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                 return timeChannel;
             }
         }
-        return null;
+        return onlyTime;
     }
 
     /**
@@ -819,6 +822,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
             }
             prepareDownLoad(mQueueIndex.get(0));
         }
+        onDownloadProgressByBg(mDownloadDataProvider.getPercent());
     }
 
     /**
@@ -1004,13 +1008,8 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
             return;
         }
         TextView textView = ((RelativeLayout) view.getParent().getParent()).findViewById(R.id.item_common_result_recorded_content_channel_name);
-        if (TextUtils.isEmpty(mContentsData.get((Integer) view.getTag()).getRecordedChannelName())) {
-            ((RelativeLayout) view.getParent().getParent()).findViewById(R.id.item_common_result_recorded_content_hyphen).setVisibility(View.GONE);
-            textView.setVisibility(View.GONE);
-        } else {
-            textView.setText(mContentsData.get((Integer) view.getTag()).getRecordedChannelName());
-            textView.setTextColor(ContextCompat.getColor(mContext, R.color.content_time_text));
-        }
+        ((RelativeLayout) view.getParent().getParent()).findViewById(R.id.item_common_result_recorded_content_hyphen).setVisibility(View.GONE);
+        textView.setVisibility(View.GONE);
     }
 
     /**
