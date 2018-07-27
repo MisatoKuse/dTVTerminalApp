@@ -723,7 +723,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         downloadData.setDuration(itemData.getDuration());
         downloadData.setVideoType(itemData.getVideoType());
         downloadData.setUpnpIcon(itemData.getUpnpIcon());
-        downloadData.setChannelName(itemData.getChannelName());
+        downloadData.setChannelName(itemData.getRecordedChannelName());
         downloadData.setDate(itemData.getDate());
         DlnaDmsItem dmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getContext());
         downloadData.setHost(dmsItem.mIPAddress);

@@ -632,7 +632,14 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
                 contentInfo.setThumDetailURL(map.get(JsonConstants.META_RESPONSE_THUMB_640));
             }
             contentInfo.setTitle(title);
-            contentInfo.setChannelName(title);
+            if (isVodClipData) {
+                //VODクリップ一覧ではチャンネル名不要かつ後の処理で異物混入の原因となるため blank を設定
+                //VODクリップ一覧での title = コンテンツタイトル
+                contentInfo.setChannelName("");
+            } else {
+                //TVクリップ一覧での title = チャンネル名
+                contentInfo.setChannelName(title);
+            }
             contentInfo.setSearchOk(searchOk);
             contentInfo.setRatStar(map.get(JsonConstants.META_RESPONSE_RATING));
             contentInfo.setTvService(tvService);

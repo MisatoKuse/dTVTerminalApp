@@ -640,7 +640,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         TextView mPlayerOnlyChannelName = findViewById(R.id.dtv_contents_detail_player_only_channel_name);
         TextView mPlayerOnlyDate = findViewById(R.id.dtv_contents_detail_player_only_date);
         mPlayerOnlyTitle.setText(playerData.getTitle());
-        mPlayerOnlyChannelName.setText(playerData.getChannelName());
+        mPlayerOnlyChannelName.setText(playerData.getRecordedChannelName());
         mPlayerOnlyDate.setText(DateUtils.getDownloadDateFormat(playerData.getDate(), this));
     }
 

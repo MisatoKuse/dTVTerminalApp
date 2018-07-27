@@ -48,7 +48,6 @@ import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.DownloadComparator;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
-import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
@@ -117,6 +116,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     /**前回のDLNAコンテンツリストキーワード.*/
     private static final String ITEMS_MEMORY = "itemsMemory";
 
+    @SuppressWarnings("OverlyLongMethod")
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -451,7 +451,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                             detailData.setResolution(resolution);
                             detailData.setBitrate(bitrate);
                             detailData.setDuration(duration);
-                            detailData.setChannelName(channelName);
+                            detailData.setRecordedChannelName(channelName);
                             detailData.setDate(date);
                             detailData.setTitle(title);
                             detailData.setVideoType(videoType);
@@ -487,6 +487,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      */
     private void getData() {
         mHandler.post(new Runnable() {
+            @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
             @Override
             public void run() {
                 switch (mViewPager.getCurrentItem()) {
@@ -738,7 +739,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 detailData.setVideoType(itemData.mVideoType);
                 detailData.setClearTextSize(itemData.mClearTextSize);
                 detailData.setXml(getXmlToDl(dlnaRecVideoItems.get(0).mXml, itemData.mItemId));
-                detailData.setChannelName(itemData.mChannelName);
+                detailData.setRecordedChannelName(itemData.mChannelName);
                 detailData.setDate(itemData.mDate);
                 if (hideDownloadBtn) {
                     detailData.setIsRemote(true);

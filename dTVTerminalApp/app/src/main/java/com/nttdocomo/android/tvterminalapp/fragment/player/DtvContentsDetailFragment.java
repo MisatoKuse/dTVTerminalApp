@@ -308,7 +308,8 @@ public class DtvContentsDetailFragment extends Fragment {
         //評価値設定
         setRatingBar();
         //チャンネル名
-        if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelName())) {
+        if (ContentUtils.isChanelNameDisplay(mOtherContentsDetailData.getContentCategory())
+                || (mOtherContentsDetailData.getChannelName() != null && !mOtherContentsDetailData.getChannelName().isEmpty())) {
             mTxtChannelName.setVisibility(View.VISIBLE);
             mTxtChannelName.setText(mOtherContentsDetailData.getChannelName());
         } else {
@@ -653,8 +654,6 @@ public class DtvContentsDetailFragment extends Fragment {
             //視聴可否判定結果 コンテンツ種別取得済みかつひかりTV番組のみ録画ボタンを表示
             if (viewIngType != null
                     && !viewIngType.equals(ContentUtils.ViewIngType.NONE_STATUS)
-                    && !viewIngType.equals(ContentUtils.ViewIngType.PREMIUM_CHECK_START)
-                    && !viewIngType.equals(ContentUtils.ViewIngType.SUBSCRIPTION_CHECK_START)
                     && contentsType != null
                     && ContentUtils.isHikariTvProgram(contentsType)) {
                 //未ログイン又は未契約時は録画ボタンを非活性
@@ -740,5 +739,15 @@ public class DtvContentsDetailFragment extends Fragment {
      */
     public void setOtherContentsDetailData(final OtherContentsDetailData otherContentsDetailData) {
         mOtherContentsDetailData = otherContentsDetailData;
+    }
+
+    public void setChannelNameVisibility() {
+        if (mTxtChannelName != null) {
+            if (!mOtherContentsDetailData.getChannelName().isEmpty()) {
+                mTxtChannelName.setVisibility(View.VISIBLE);
+            } else {
+                mTxtChannelName.setVisibility(View.GONE);
+            }
+        }
     }
 }

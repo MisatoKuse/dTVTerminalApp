@@ -1399,7 +1399,7 @@ public class ContentUtils {
      * @return 判定結果
      */
     @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
-    public static boolean isPureContents(final ContentUtils.ContentsType contentsType){
+    public static boolean isPureContents(final ContentUtils.ContentsType contentsType) {
         if (contentsType == null) {
             // コンテンツ取得に失敗していれば判定不可
             return false;
@@ -1410,6 +1410,32 @@ public class ContentUtils {
             case PURE_DTV_CHANNEL_MISS:
             case PURE_DTV_CHANNEL_RELATION:
             case D_ANIME_STORE:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @SuppressWarnings("EnumSwitchStatementWhichMissesCases")
+    public static boolean isChanelNameDisplay(final ContentUtils.ContentsType contentsType) {
+        if (contentsType == null) {
+            // コンテンツ取得に失敗していれば判定不可
+            return false;
+        }
+        switch (contentsType) {
+            case TV:
+            case HIKARI_TV:
+            case HIKARI_TV_WITHIN_TWO_HOUR:
+            case HIKARI_TV_NOW_ON_AIR:
+            case HIKARI_IN_DCH_TV:
+            case HIKARI_IN_DCH_TV_NOW_ON_AIR:
+            case HIKARI_IN_DCH_TV_WITHIN_TWO_HOUR:
+            case HIKARI_IN_DCH:
+            case HIKARI_IN_DCH_MISS:
+            case HIKARI_IN_DCH_RELATION:
+            case HIKARI_RECORDED:
+            case DCHANNEL_VOD_OVER_31:
+            case DCHANNEL_VOD_31:
                 return true;
             default:
                 return false;

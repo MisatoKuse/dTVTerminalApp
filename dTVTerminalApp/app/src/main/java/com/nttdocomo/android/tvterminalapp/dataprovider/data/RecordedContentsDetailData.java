@@ -79,7 +79,7 @@ public class RecordedContentsDetailData implements Parcelable {
      *チャンネル名取得.
      * @return チャンネル名
      */
-    public String getChannelName() {
+    public String getRecordedChannelName() {
         return mChannelName;
     }
 
@@ -87,7 +87,7 @@ public class RecordedContentsDetailData implements Parcelable {
      * チャンネル名設定.
      * @param mChannelName チャンネル名
      */
-    public void setChannelName(final String mChannelName) {
+    public void setRecordedChannelName(final String mChannelName) {
         this.mChannelName = mChannelName;
     }
 
