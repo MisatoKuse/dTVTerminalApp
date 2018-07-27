@@ -1029,7 +1029,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 mProgressLayout.addView(mVideoFullScreen, 2);
                 mProgressLayout.addView(mVideoTotalTime, 3);
             }
-            mVideoFullScreen.setImageResource(R.mipmap.icon_normal_zoom_out);
+            mVideoFullScreen.setBackgroundResource(R.mipmap.icon_normal_zoom_out);
         } else {
             //端末縦向き
             if (mProgressLayout.getChildCount() > 1) {
@@ -1040,7 +1040,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 mVideoCtrlBar.addView(mVideoFullScreen);
                 mVideoCtrlBar.addView(mVideoTotalTime);
             }
-            mVideoFullScreen.setImageResource(R.mipmap.icon_normal_zoom_in);
+            mVideoFullScreen.setBackgroundResource(R.mipmap.icon_normal_zoom_in);
         }
     }
 

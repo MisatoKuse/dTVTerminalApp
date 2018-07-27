@@ -2909,7 +2909,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         mDisplayState = PLAYER_AND_CONTENTS_DETAIL;
         RecordedContentsDetailData data = new RecordedContentsDetailData();
         data.setUpnpIcon(mChannel.getThumbnail());
-        data.setTitle(mChannel.getTitle());
+        if (mDetailFullData != null) {
+            data.setTitle(mDetailFullData.getTitle());
+        }
         data.setResUrl(mDlnaObject.mResUrl);
         data.setSize(mDlnaObject.mSize);
         data.setDuration(mDlnaObject.mDuration);
