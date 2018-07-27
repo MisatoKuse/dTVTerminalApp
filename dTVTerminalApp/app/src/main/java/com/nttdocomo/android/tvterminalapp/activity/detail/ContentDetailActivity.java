@@ -1819,7 +1819,16 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                     if (mChannelFragment.getContentsData() == null || mChannelFragment.getContentsData().size() == 0) {
                         if (!NetWorkUtils.isOnline(ContentDetailActivity.this)) {
                             mChannelFragment.loadFailed();
-                            showGetDataFailedToast();
+                            if (mToast != null) {
+                                mToast.cancel();
+                            }
+                            if (!ContentDetailActivity.this.isFinishing()) {
+                                // 成功
+                                mToast = Toast.makeText(ContentDetailActivity.this, getString(R.string.network_nw_error_message), Toast.LENGTH_SHORT);
+                                mToast.show();
+                            } else {
+                                mToast = null;
+                            }
                         } else {
                             mChannelFragment.loadComplete();
                         }
