@@ -42,6 +42,7 @@ import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DataConverter;
 import com.nttdocomo.android.tvterminalapp.utils.DlnaUtils;
+import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
@@ -589,16 +590,24 @@ public class ChannelListActivity extends BaseActivity implements
                         DTVTLogger.error("pos = " + pos + " is invalid mHikariTvChannelList.size() = " + mHikariTvChannelList.size());
                         return;
                     }
-                    channelInfo = mHikariTvChannelList.get(pos);
-                    mHikariTvChannelDataProvider.getNowOnAirProgram(channelInfo.getChannelNo());
+                    if (NetWorkUtils.isOnline(ChannelListActivity.this)) {
+                        channelInfo = mHikariTvChannelList.get(pos);
+                        mHikariTvChannelDataProvider.getNowOnAirProgram(channelInfo.getChannelNo());
+                    } else {
+                        showErrorDialog(getString(R.string.network_nw_error_message_dialog));
+                    }
                     break;
                 case CH_LIST_DATA_TYPE_DCH:
                     if (mdTvChannelList.size() < pos) {
                         DTVTLogger.error("pos = " + pos + " is invalid mdTvChannelList.size() = " + mdTvChannelList.size());
                         return;
                     }
-                    channelInfo = mdTvChannelList.get(pos);
-                    mHikariTvChannelDataProvider.getNowOnAirProgram(channelInfo.getChannelNo());
+                    if (NetWorkUtils.isOnline(ChannelListActivity.this)) {
+                        channelInfo = mdTvChannelList.get(pos);
+                        mHikariTvChannelDataProvider.getNowOnAirProgram(channelInfo.getChannelNo());
+                    } else {
+                        showErrorDialog(getString(R.string.network_nw_error_message_dialog));
+                    }
                     break;
             }
     }
