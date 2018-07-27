@@ -92,10 +92,14 @@ public class DownLoadListDataManager {
             DataBaseManager.clearDownloadInfo();
             DataBaseManager.initializeInstance(downLoadListDBHelper);
             SQLiteDatabase database = DataBaseManager.getDownloadInstance().openDownloadDatabase();
-            database.acquireReference();
-            DownLoadListDao downloadListDao = new DownLoadListDao(database);
 
-            downloadListDao.delete();
+            //タイミングによっては、既にクローズ済みと言う例外が返ってくるので回避
+            if (database.isOpen()) {
+                database.acquireReference();
+                DownLoadListDao downloadListDao = new DownLoadListDao(database);
+
+                downloadListDao.delete();
+            }
         } catch (SQLiteException e) {
             DTVTLogger.debug("DownLoadListDataManager::deleteDownloadAllContents, e.cause=" + e.getCause());
         } finally {

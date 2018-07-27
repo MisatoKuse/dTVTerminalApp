@@ -456,12 +456,27 @@ public class DaccountControl implements
     /**
      * dアカウントのユーザー切り替え時に行うキャッシュ等のクリア処理.
      * <p>
-     * (次回OTT取得許可付き)
+     * (次回OTT取得許可付き/メッセージを出力)
      *
      * @param context        コンテキスト
      * @param daccountGetOtt ワンタイムトークン取得クラス
      */
     private static void cacheClear(final Context context, final DaccountGetOtt daccountGetOtt) {
+        //処理は移譲する
+        cacheClear(context,daccountGetOtt,true);
+    }
+
+    /**
+     * dアカウントのユーザー切り替え時に行うキャッシュ等のクリア処理.
+     * <p>
+     * (次回OTT取得許可付き)
+     *
+     * @param context        コンテキスト
+     * @param daccountGetOtt ワンタイムトークン取得クラス
+     * @param messageOn 再起動メッセージを出すならばtrue
+     */
+    public static void cacheClear(final Context context, final DaccountGetOtt daccountGetOtt,
+                                   final boolean messageOn) {
         DTVTLogger.start();
         DaccountControlOnce onceControl = DaccountControlOnce.getInstance();
 
@@ -480,8 +495,8 @@ public class DaccountControl implements
         //サムネイルのキャッシュファイルを削除する
         ThumbnailCacheManager.clearThumbnailCache(context);
 
-        // 再起動フラグの設定
-        SharedPreferencesUtils.setSharedPreferencesRestartFlag(context, true);
+        // 再起動フラグの設定・ここでfalseを指定すると、再起動後のメッセージを抑止できる
+        SharedPreferencesUtils.setSharedPreferencesRestartFlag(context, messageOn);
 
         //次回実行する為にフラグをリセット
         onceControl.setExecOnce(false, daccountGetOtt, context);

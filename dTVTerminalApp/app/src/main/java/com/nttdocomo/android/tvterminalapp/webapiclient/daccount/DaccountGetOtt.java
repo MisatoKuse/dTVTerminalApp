@@ -10,12 +10,15 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.idmanager.IDimServiceAppCallbacks;
 import com.nttdocomo.android.idmanager.IDimServiceAppService;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DaccountConstants;
+import com.nttdocomo.android.tvterminalapp.struct.OneTimeTokenData;
+import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 /**
@@ -257,6 +260,26 @@ public class DaccountGetOtt {
      * dアカウントアプリをバインドする.
      */
     private void bindDimServiceAppService() {
+        DTVTLogger.start();
+
+        // /dアカウント連携アプリの有無をチェック
+        if (!DaccountUtils.checkInstalled(mContext,DaccountUtils.D_ACCOUNT_APP_PACKAGE_NAME)) {
+            //dアカウントアプリが存在しないので、ワンタイムトークンの有無を確認する
+            String daccountId = SharedPreferencesUtils.getSharedPreferencesDaccountId(
+                    mContext);
+            if (daccountId != null && TextUtils.isEmpty(daccountId)) {
+                //dアカウントアプリは存在しないか無効だが、ワンタイムトークンが空なので、既に情報は削除済みなので、通常のエラーとする
+                mDaccountGetOttCallBack.getOttCallBack(
+                        IDimDefines.RESULT_INTERNAL_ERROR, "", "");
+                return;
+            } else {
+                //dアカウントアプリは存在せず、ワンタイムトークンが健在＝dアカウントアプリが削除されたか無効化されたので、エラーを返して終わる
+                mDaccountGetOttCallBack.getOttCallBack(
+                        DaccountUtils.D_ACCOUNT_APP_NOT_FOUND_ERROR_CODE, "", "");
+                return;
+            }
+        }
+
         //dアカウント設定アプリを指定して、接続を試みる
         Intent intent = new Intent();
         intent.setClassName(
@@ -278,6 +301,8 @@ public class DaccountGetOtt {
             //正常以外の結果ならば、コールバックを呼んで終わらせる
             mDaccountGetOttCallBack.getOttCallBack(IDimDefines.RESULT_INTERNAL_ERROR, "", "");
         }
+
+        DTVTLogger.end();
     }
 
     /**

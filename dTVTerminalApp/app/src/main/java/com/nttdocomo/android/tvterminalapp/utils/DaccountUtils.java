@@ -7,11 +7,16 @@ package com.nttdocomo.android.tvterminalapp.utils;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DaccountConstants;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * DAccountに関する共通処理を記載する.
@@ -21,7 +26,7 @@ public class DaccountUtils {
     /**
      * Dアカウントアプリ Package名.
      */
-    private static final String D_ACCOUNT_APP_PACKAGE_NAME = "com.nttdocomo.android.idmanager";
+    public static final String D_ACCOUNT_APP_PACKAGE_NAME = "com.nttdocomo.android.idmanager";
     /**
      * Dアカウントアプリ Activity名.
      */
@@ -30,7 +35,11 @@ public class DaccountUtils {
      * DアカウントアプリURI.
      */
     private static final String D_ACCOUNT_APP_URI = "https://play.google.com/store/apps/details?id=com.nttdocomo.android.idmanager";
-
+    /**
+     * dアカウント設定アプリが見つからない場合のエラーコード.
+     * 必ず、IDimDefinesの値と重複しない物とする
+     */
+    public static final int D_ACCOUNT_APP_NOT_FOUND_ERROR_CODE = -999;
     /**
      * Dアカウント設定アプリがインストールされているか判定を行う.
      *
@@ -71,5 +80,35 @@ public class DaccountUtils {
             });
             dAccountUninstallDialog.showDialog();
         }
+    }
+
+    /**
+     * 指定されたアプリがインストール済みかどうかのチェック.
+     *
+     * @param context コンテキスト
+     * @param packageName アプリのパッケージ名
+     * @return インストールされているならばtrue
+     */
+    public static boolean checkInstalled(final Context context, final String packageName) {
+        //アプリ一覧の取得
+        final PackageManager packageManager = context.getPackageManager();
+        List<PackageInfo> packageInfos = packageManager.getInstalledPackages(0);
+
+        //情報数だけ回る
+        for (PackageInfo individualInfo : packageInfos) {
+            //パッケージ名が含まれるかどうかの確認
+            if (individualInfo.packageName.equals(packageName)) {
+                //該当パッケージが有効かどうかの確認
+                int applicationStatus = packageManager.getApplicationEnabledSetting(packageName);
+                if (applicationStatus == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT ||
+                    applicationStatus == PackageManager.COMPONENT_ENABLED_STATE_ENABLED) {
+                    //指定された名前が見つかり、かつ有効なので、trueで帰る
+                    return true;
+                }
+            }
+        }
+
+        //見つからなかったか、見つかっても無効化されていたのでfalseで帰る
+        return false;
     }
 }

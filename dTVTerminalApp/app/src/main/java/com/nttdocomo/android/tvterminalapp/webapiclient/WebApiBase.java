@@ -9,6 +9,7 @@ import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.ErrorState;
+import com.nttdocomo.android.tvterminalapp.utils.DaccountUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOtt;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.IDimDefines;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.OttGetAuthSwitch;
@@ -76,8 +77,14 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
         getOtt.execDaccountGetOTT(context, ottGetAuthSwitch.isNowAuth(), new DaccountGetOtt.DaccountGetOttCallBack() {
             @Override
             public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
-                if(result == IDimDefines.RESULT_USER_CANCEL) {
+                if (result == IDimDefines.RESULT_USER_CANCEL) {
+                    //認証画面でキャンセルされたので、ログアウトダイアログを呼ぶ
                     ottGetAuthSwitch.showLogoutDialog();
+                } else if (result == DaccountUtils.D_ACCOUNT_APP_NOT_FOUND_ERROR_CODE) {
+                    //dアカウント設定アプリが見つからなかったので、見つからないダイアログを出す
+                    ottGetAuthSwitch.showDAccountApliNotFoundDialog();
+                } else if (result == IDimDefines.RESULT_INTERNAL_ERROR) {
+                    callback.onFinish("");
                 } else {
                     //ワンタイムパスワードの取得後に呼び出す
                     mHttpThread = new HttpThread(url, webApiBase, context, oneTimePassword, getOtt);
