@@ -238,7 +238,7 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
         } else {
             switch (errorType) {
                 case OVER:
-                    resultDialog.setContent(getString(R.string.common_text_regist_over_error_launch));
+                    resultDialog.setContent(getString(R.string.common_text_regist_over_error_setting));
                     break;
                 case NONE:
                 case UNKNOWN:

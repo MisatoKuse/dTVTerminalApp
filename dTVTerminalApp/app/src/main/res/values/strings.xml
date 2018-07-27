@@ -42,7 +42,6 @@
     <string name="common_date_format_start_str">" から"</string>
     <string name="common_date_format_end_str">" まで"</string>
     <string name="common_text_regist_progress_done">設定を完了しました</string>
-    <string name="common_text_regist_over_error_launch">リモート視聴可能な台数が上限に達しました。\nドコモテレビターミナルでペアリングを解除してください。\n解除方法はヘルプをご覧ください。</string>
     <string name="common_text_regist_over_error_setting">リモート視聴可能な台数が上限に達しました。\nドコモテレビターミナルでペアリングを解除してください。\n解除方法はFAQをご覧ください。</string>
     <string name="common_text_regist_other_error">リモート視聴設定に失敗しました</string>
     <string name="common_start_dtv_application_uninstall_error">ドコモテレビターミナルにdTVアプリがインストールされていないため、起動に失敗しました</string>
