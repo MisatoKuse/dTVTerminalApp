@@ -1193,6 +1193,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_clip.setVisibility(View.GONE);
                 break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
+                holder.tv_rank.setVisibility(View.GONE);
                 holder.tv_clip.setVisibility(View.GONE);
                 holder.rl_thumbnail.setVisibility(View.GONE);
                 holder.iv_thumbnail.setVisibility(View.GONE);

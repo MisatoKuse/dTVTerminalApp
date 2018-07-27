@@ -152,6 +152,21 @@ public class DataBaseUtils {
     }
 
     /**
+     * String取得.
+     * @param data　String判定オブジェクト
+     * @return String
+     */
+    public static String getString(final Object data) {
+        String s = "";
+        if (data instanceof String) {
+            s = ((String) data);
+        } else if (data instanceof Integer) {
+            s = String.valueOf(data);
+        }
+        return s;
+    }
+
+    /**
      * long型数値取得.
      *
      * @param data 　数値判定オブジェクト

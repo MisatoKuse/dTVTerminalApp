@@ -69,7 +69,7 @@ public class RecordingReservationMetaData implements Serializable {
                     mDayOfTheWeek = (String) data;        //day_of_the_week
                     break;
                 case JsonConstants.META_RESPONSE_ADULT_ATTRIBUTE_OF_CHANNEL:
-                    mAdultAttributeOfChannel = (String) data; //adult_attribute_of_channel
+                    mAdultAttributeOfChannel = DataBaseUtils.getString(data); //adult_attribute_of_channel
                     break;
                 case JsonConstants.META_RESPONSE_SERVICE_ID:
                     mServiceId = (String) data;           //service_id
