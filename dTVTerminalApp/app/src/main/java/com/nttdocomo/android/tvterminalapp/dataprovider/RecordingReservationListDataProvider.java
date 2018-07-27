@@ -493,14 +493,25 @@ public class RecordingReservationListDataProvider implements
         List<RecordingReservationContentInfo> tmpBuffMatchArray = mBuffMatchList;
         DTVTLogger.debug("tmpBuffMatchArray.size() = " + tmpBuffMatchArray.size());
         boolean matchFlag;
-        // dリモート側データを格納(Stbリストに既に存在するものは格納しない)
+        // リモート側データとSTB側の重複を除外してリスト化.
+        // リモート側はServiceidは"00XX"のような値が来るが、STB側は"0xXX"のような値が来る
+        // ともに16進数のようだが単純文字列比較では重複とみなさなくなるので、先頭0xやその後の0を削除して比較する
         for (RecordingReservationMetaData dRemoteData : dRemoteList) {
             matchFlag = false;
-            for (RecordingReservationContentInfo info : tmpBuffMatchArray) {
-                if (dRemoteData.getServiceId().equals(info.getServiceId())
-                        && dRemoteData.getEventId().equals(info.getEventId())) {
-                    matchFlag = true;
-                    DTVTLogger.debug("Match Data");
+            String remote_seriviceId = shapeIdString(dRemoteData.getServiceId());
+            String remote_eventId = shapeIdString(dRemoteData.getEventId());
+            if (remote_seriviceId != null && !remote_seriviceId.isEmpty()
+                    && remote_eventId != null && !remote_eventId.isEmpty()) {
+                for (RecordingReservationContentInfo info : tmpBuffMatchArray) {
+                    String stb_serviceId = shapeIdString(info.getServiceId());
+                    String stb_eventId = shapeIdString(info.getEventId());
+                    if (stb_serviceId != null && !stb_serviceId.isEmpty()
+                            && stb_eventId != null && !stb_eventId.isEmpty()) {
+                        if (remote_seriviceId.equals(stb_serviceId) && remote_eventId.equals(stb_eventId)) {
+                            matchFlag = true;
+                            DTVTLogger.debug("Match Data");
+                        }
+                    }
                 }
             }
             if (!matchFlag) {
@@ -508,6 +519,19 @@ public class RecordingReservationListDataProvider implements
             }
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * ServiceId、EventId文字列の整形.
+     */
+    private String shapeIdString(final String id) {
+        String retStr = null;
+        if (id != null) {
+            //先頭0xとその後の0連続を削除する
+            retStr = id.replaceFirst("0x", "");
+            retStr = retStr.replaceFirst("^0+", "");
+        }
+        return retStr;
     }
 
     /**
