@@ -301,7 +301,7 @@ public class DlnaUtils {
             String expireDate = SharedPreferencesUtils.getRemoteDeviceExpireDate(context);
             DTVTLogger.debug("ローカルレジストレーションの有効期限：" + expireDate);
             if (!TextUtils.isEmpty(expireDate)) {
-                int remainingDays = DateUtils.getRemainingDays(expireDate);
+                int remainingDays = DateUtils.getRemainingDays(expireDate) +1;
                 String[] strings = {context.getString(R.string.remote_remaining_days_message_begin),
                         Integer.toString(remainingDays),
                         context.getString(R.string.remote_remaining_days_message_end)};
@@ -309,20 +309,20 @@ public class DlnaUtils {
                         && remainingDays <= REMAINING_FOURTEEN_DAYS
                         && dialogFlg != REGISTER_EXPIREDATE_DIALOG_FLG_ONE) {
                     msg = StringUtils.getConnectString(strings);
-                    SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_ONE);
-                } else if (REMAINING_ONE_DAYS < remainingDays
+//                    SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_ONE);
+                } else if (REMAINING_ZERO_DAYS < remainingDays
                         && remainingDays <= REMAINING_SEVEN_DAYS
                         && dialogFlg != REGISTER_EXPIREDATE_DIALOG_FLG_TWO) {
                     msg = StringUtils.getConnectString(strings);
-                    SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_TWO);
+//                    SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_TWO);
                 } else if (remainingDays == REMAINING_ONE_DAYS
                         && dialogFlg != REGISTER_EXPIREDATE_DIALOG_FLG_THREE) {
-                    msg = StringUtils.getConnectString(strings);
-                    SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_THREE);
-                } else if (remainingDays < REMAINING_ZERO_DAYS
+                    msg = context.getString(R.string.remote_remaining_zero_day_message);
+//                    SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_THREE);
+                } else if (remainingDays <= REMAINING_ZERO_DAYS
                         && dialogFlg != REGISTER_EXPIREDATE_DIALOG_FLG_FOUR) {
                     msg = context.getString(R.string.remote_expired_message);
-                    SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_FOUR);
+//                    SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_FOUR);
                 }
             }
         }
