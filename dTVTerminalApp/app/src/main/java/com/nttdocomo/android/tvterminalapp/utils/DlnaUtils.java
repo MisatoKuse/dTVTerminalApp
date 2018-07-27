@@ -79,14 +79,19 @@ public class DlnaUtils {
     private static final int REMAINING_SEVEN_DAYS = 7;
     /** 残日数14.*/
     private static final int REMAINING_FOURTEEN_DAYS = 14;
-    /** ダイアログ表示フラグ1.*/
+
+    /** ローカルレジストレーション期限ダイアログ表示進捗 初期値.*/
+    public static final int REGISTER_EXPIREDATE_DIALOG_FLG_INIT = 0;
+    /** ローカルレジストレーション期限ダイアログ表示進捗1(14日を切った).*/
     private static final int REGISTER_EXPIREDATE_DIALOG_FLG_ONE = 1;
-    /** ダイアログ表示フラグ2.*/
+    /** ローカルレジストレーション期限ダイアログ表示進捗2(7日を切った).*/
     private static final int REGISTER_EXPIREDATE_DIALOG_FLG_TWO = 2;
-    /** ダイアログ表示フラグ3.*/
+    /** ローカルレジストレーション期限ダイアログ表示進捗3(前日).*/
     private static final int REGISTER_EXPIREDATE_DIALOG_FLG_THREE = 3;
-    /** ダイアログ表示フラグ4.*/
+    /** ローカルレジストレーション期限ダイアログ表示進捗4(当日).*/
     private static final int REGISTER_EXPIREDATE_DIALOG_FLG_FOUR = 4;
+    /** ローカルレジストレーション期限ダイアログ表示進捗5(期限切れ).*/
+    private static final int REGISTER_EXPIREDATE_DIALOG_FLG_FIVE = 5;
     /*ローカルレジストレーション期限表示*/
     /**ダウンロード通知チャンネルID.*/
     private static final String DOWNLOAD_NOTIFICATION_ID = "downloadProgress";
@@ -299,30 +304,48 @@ public class DlnaUtils {
         int dialogFlg = SharedPreferencesUtils.getRegisterExpiredateDialogFlg(context);
         if (dlnaDmsItem != null) {
             String expireDate = SharedPreferencesUtils.getRemoteDeviceExpireDate(context);
-            DTVTLogger.debug("ローカルレジストレーションの有効期限：" + expireDate);
+            DTVTLogger.debug("Local Registration expireDate:" + expireDate);
             if (!TextUtils.isEmpty(expireDate)) {
-                int remainingDays = DateUtils.getRemainingDays(expireDate) +1;
+                int remainingDays = DateUtils.getRemainingDays(expireDate);
+                DTVTLogger.debug("Local Registration remainDays:" + remainingDays + "dialogFlg:" + dialogFlg);
                 String[] strings = {context.getString(R.string.remote_remaining_days_message_begin),
                         Integer.toString(remainingDays),
                         context.getString(R.string.remote_remaining_days_message_end)};
-                if (REMAINING_SEVEN_DAYS < remainingDays
-                        && remainingDays <= REMAINING_FOURTEEN_DAYS
-                        && dialogFlg != REGISTER_EXPIREDATE_DIALOG_FLG_ONE) {
-                    msg = StringUtils.getConnectString(strings);
-//                    SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_ONE);
-                } else if (REMAINING_ZERO_DAYS < remainingDays
-                        && remainingDays <= REMAINING_SEVEN_DAYS
-                        && dialogFlg != REGISTER_EXPIREDATE_DIALOG_FLG_TWO) {
-                    msg = StringUtils.getConnectString(strings);
-//                    SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_TWO);
-                } else if (remainingDays == REMAINING_ONE_DAYS
-                        && dialogFlg != REGISTER_EXPIREDATE_DIALOG_FLG_THREE) {
-                    msg = context.getString(R.string.remote_remaining_zero_day_message);
-//                    SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_THREE);
-                } else if (remainingDays <= REMAINING_ZERO_DAYS
-                        && dialogFlg != REGISTER_EXPIREDATE_DIALOG_FLG_FOUR) {
-                    msg = context.getString(R.string.remote_expired_message);
-//                    SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_FOUR);
+                if (REMAINING_FOURTEEN_DAYS < remainingDays) {
+                    //１５日以上前
+                    // 時刻を進めてしまってから戻した場合向けに15日以上ならフラグクリアしておく
+                    SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_INIT);
+                } else if (REMAINING_SEVEN_DAYS < remainingDays && remainingDays <= REMAINING_FOURTEEN_DAYS) {
+                    //１４～７日前（時刻変更した場合向けにダイアログ出さない場合もフラグは上書き）
+                    if (dialogFlg < REGISTER_EXPIREDATE_DIALOG_FLG_ONE) {
+                        msg = StringUtils.getConnectString(strings);
+                    }
+                    SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_ONE);
+                } else if (REMAINING_ONE_DAYS < remainingDays && remainingDays <= REMAINING_SEVEN_DAYS) {
+                    //７～２日前（時刻変更した場合向けにダイアログ出さない場合もフラグは上書き）
+                    if (dialogFlg < REGISTER_EXPIREDATE_DIALOG_FLG_TWO) {
+                        msg = StringUtils.getConnectString(strings);
+                    }
+                    SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_TWO);
+                } else if (remainingDays == REMAINING_ONE_DAYS) {
+                    //前日（時刻変更した場合向けにダイアログ出さない場合もフラグは上書き）
+                    if (dialogFlg < REGISTER_EXPIREDATE_DIALOG_FLG_THREE) {
+                        msg = StringUtils.getConnectString(strings);
+                    }
+                    SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_THREE);
+                } else if (remainingDays <= REMAINING_ZERO_DAYS) {
+                    // 残り0日を切った場合、期限切れ又は当日メッセージ.期限切れは接続できなくなるので厳密に判定しておく
+                    if (DateUtils.isExpired(expireDate)) {
+                        if (dialogFlg < REGISTER_EXPIREDATE_DIALOG_FLG_FOUR) {
+                            msg = context.getString(R.string.remote_expired_message);
+                        }
+                        SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_FOUR);
+                    } else {
+                        if (dialogFlg < REGISTER_EXPIREDATE_DIALOG_FLG_FIVE) {
+                            msg = context.getString(R.string.remote_remaining_zero_day_message);
+                        }
+                        SharedPreferencesUtils.setRegisterExpiredateDialogFlg(context, REGISTER_EXPIREDATE_DIALOG_FLG_FIVE);
+                    }
                 }
             }
         }

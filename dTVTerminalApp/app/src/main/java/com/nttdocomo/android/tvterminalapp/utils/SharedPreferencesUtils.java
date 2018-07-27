@@ -1215,15 +1215,15 @@ public class SharedPreferencesUtils {
      * ローカルレジストレーション期限表示ダイアログを取得.
      *
      * @param context コンテキスト
-     * @return ローカルレジストレーション期限表示ダイアログフラグ
+     * @return ローカルレジストレーション期限表示ダイアログ進捗
      */
     public static int getRegisterExpiredateDialogFlg(final Context context) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 REGISTER_EXPIREDATE_DIALOG_FLG, Context.MODE_PRIVATE);
 
-        //保存したローカルレジストレーション期限表示ダイアログを返却
-        return data.getInt(REGISTER_EXPIREDATE_DIALOG_FLG, 0);
+        //保存したローカルレジストレーション期限表示ダイアログ進捗を返却
+        return data.getInt(REGISTER_EXPIREDATE_DIALOG_FLG, DlnaUtils.REGISTER_EXPIREDATE_DIALOG_FLG_INIT);
     }
 
     /**

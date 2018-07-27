@@ -132,8 +132,7 @@ public class BaseActivity extends FragmentActivity implements
         HomeRecyclerViewAdapter.ItemClickCallback,
         StbConnectionManager.ConnectionListener,
         ScaledDownProgramListDataProvider.ApiDataProviderCallback,
-//TODO 1/19 1/5時点での実装後に仕様の再検討が発生したためコメントアウト
-//        UserInfoDataProvider.UserDataProviderCallback,
+
         DaccountReceiver.DaccountChangedCallBack {
     /**
      * ヘッダーBaseレイアウト.
@@ -1272,6 +1271,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param errorMessage dialog content
      */
     protected void showErrorDialog(final String errorMessage) {
+        DTVTLogger.debug("showErrorDialog:" + errorMessage);
         CustomDialog errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
         errorDialog.setContent(errorMessage);
         if (!isFinishing()) {
@@ -1285,6 +1285,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param errorMessage dialog content
      */
     private void showErrorDialogOffer(final String errorMessage) {
+        DTVTLogger.debug("showErrorDialogOffer:" + errorMessage);
         CustomDialog errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
         errorDialog.setContent(errorMessage);
 
@@ -1314,7 +1315,6 @@ public class BaseActivity extends FragmentActivity implements
      * @param message 省略した場合はdアカウント用メッセージを表示。指定した場合は、常に先頭文字列のみ使用される
      */
     protected void restartMessageDialog(final String... message) {
-
         //呼び出し用のアクティビティの退避
         final Activity activity = this;
 
@@ -1323,6 +1323,7 @@ public class BaseActivity extends FragmentActivity implements
 
         //引数がある場合はその先頭を使用する
         if (message != null && message.length > 0) {
+            DTVTLogger.debug("restartMessageDialog:" + message[0]);
             printMessage = message[0];
         }
 
@@ -2014,6 +2015,7 @@ public class BaseActivity extends FragmentActivity implements
         if (DaccountControl.CheckLastClassEnum.REGIST_SERVICE.equals(checkLastClassEnum)
                 || DaccountControl.CheckLastClassEnum.CHECK_SERVICE.equals(checkLastClassEnum)
                 || DaccountControl.CheckLastClassEnum.ONE_TIME_PASS_WORD.equals(checkLastClassEnum)) {
+            DTVTLogger.debug("showDAccountErrorDialog errCode:" + errorCode);
             switch (errorCode) {
                 case IDimDefines.RESULT_USER_INVALID_STATE:
                     errorDialog.setContent(getString(R.string.d_account_user_abnormality_error));
@@ -2063,6 +2065,7 @@ public class BaseActivity extends FragmentActivity implements
      * dアカウント設定アプリ未インストールエラーダイアログ.
      */
     public void showDAccountApliNotFoundDialog() {
+        DTVTLogger.debug("showDAccountApliNotFoundDialog");
         final CustomDialog notFoundDialog = new CustomDialog(
                 BaseActivity.this, CustomDialog.DialogType.ERROR);
         notFoundDialog.setContent(this.getResources().getString(
@@ -2108,6 +2111,7 @@ public class BaseActivity extends FragmentActivity implements
      */
     public void showLogoutDialog(CustomDialog.DismissCallback dissmissCallBack) {
 
+        DTVTLogger.debug("showLogoutDialog");
         final CustomDialog logoutDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.CONFIRM);
         logoutDialog.setContent(this.getResources().getString(R.string.logout_message));
 

@@ -1511,8 +1511,25 @@ public class DateUtils {
         expireCalendar.set(Calendar.SECOND, 0);
         expireCalendar.set(Calendar.MILLISECOND, 0);
         Calendar nowCal = Calendar.getInstance();
-
+        nowCal.set(Calendar.HOUR_OF_DAY, 0);
+        nowCal.set(Calendar.MINUTE, 0);
+        nowCal.set(Calendar.SECOND, 0);
+        nowCal.set(Calendar.MILLISECOND, 0);
         return (int) ((expireCalendar.getTimeInMillis() - nowCal.getTimeInMillis()) / (EPOCH_TIME_ONE_DAY * 1000));
+    }
+
+    /**
+     * 超過判定.
+     *
+     * @param expireDate 満期日(yyyy-MM-dd HH:mm:ss形式)
+     * @return 現在時刻が引数時刻を超えているか
+     */
+    public static boolean isExpired(final String expireDate) {
+        Calendar expireCalendar = Calendar.getInstance();
+        expireCalendar.setTimeInMillis(getHyphenEpochTime(expireDate) * 1000);
+        Calendar nowCal = Calendar.getInstance();
+        long diffMillis = expireCalendar.getTimeInMillis() - nowCal.getTimeInMillis();
+        return (diffMillis < 0);
     }
 
     /**
