@@ -301,10 +301,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         if (getItemViewType(i) == TYPE_FOOTER) {
             return;
         }
+        ContentUtils.ContentsType contentsType = null;
         final ContentsData contentsData = mContentList.get(i);
         String title = contentsData.getTitle();
         String rankNum = contentsData.getRank();
-        Boolean newFlag = newContentsCheck(contentsData);
         if (viewHolder.mTime != null) {
             viewHolder.mTime.setVisibility(View.GONE);
         }
@@ -350,7 +350,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             case HOME_CONTENTS_SORT_VIDEO:
                 //配信期限の設定
                 ContentUtils.setPeriodText(mContext, viewHolder.mTime, contentsData);
-                ContentUtils.ContentsType contentsType =  ContentUtils.setChannelNameOrMissedText(mContext, viewHolder.mHyphen, viewHolder.mChannel, contentsData, null);
+                contentsType =  ContentUtils.setChannelNameOrMissedText(mContext, viewHolder.mHyphen, viewHolder.mChannel, contentsData, null);
                 if (contentsType != ContentUtils.ContentsType.DCHANNEL_VOD_31 && (mIndex == HOME_CONTENTS_SORT_VOD_CLIP || mIndex == HOME_CONTENTS_SORT_WATCHING_VIDEO)) {
                     if (viewHolder.mTime != null) {
                         viewHolder.mTime.setVisibility(View.GONE);
@@ -369,6 +369,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
                 }
                 break;
         }
+            Boolean newFlag = newContentsCheck(contentsData, contentsType);
 
         //コンテンツのタイトルを表示
         if (!TextUtils.isEmpty(title)) {
@@ -625,9 +626,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      * 開始時間と現在時刻の比較.
      * 配信開始から1週間以内のコンテンツを判定する
      * @param contentsData 配信開始 "yyyy/MM/dd HH:mm:ss"
+     * @param contentsType コンテンツタイプ
      * @return 配信開始から1週間以内かどうか
      */
-    private boolean newContentsCheck(final ContentsData contentsData) {
+    private boolean newContentsCheck(final ContentsData contentsData, final  ContentUtils.ContentsType contentsType) {
         switch (mIndex) {
             case HOME_CONTENTS_SORT_CHANNEL:
             case HOME_CONTENTS_SORT_RECOMMEND_PROGRAM:
@@ -642,10 +644,15 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
                 String startViewing = contentsData.getStartViewing();
                 return !TextUtils.isEmpty(startViewing) && DateUtils.isInOneWeek(startViewing);
             default:
-                //VODの配信日付は avail_〇〇_date を使用すること
-                long startAvailDate = contentsData.getAvailStartDate();
-                DTVTLogger.debug("================================>" + mIndex);
-                return DateUtils.isInOneWeek(startAvailDate);
+                if (contentsType == ContentUtils.ContentsType.DCHANNEL_VOD_31) {
+                    //「見逃し」コンテンツはVodStartDateを使用する
+                    long vodStartDate = contentsData.getVodStartDate();
+                    return DateUtils.isInOneWeek(vodStartDate);
+                } else {
+                    //VODの配信日付は avail_〇〇_date を使用すること
+                    long startAvailDate = contentsData.getAvailStartDate();
+                    return DateUtils.isInOneWeek(startAvailDate);
+                }
         }
     }
 
