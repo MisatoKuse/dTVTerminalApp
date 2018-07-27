@@ -995,7 +995,7 @@ public class DateUtils {
             calendar.setTime(endDate);
             //放送終了日付
             endDatetime = calendar.getTime();
-            cal.add(Calendar.DAY_OF_MONTH, -AVAILABLE_BASE_DAY);
+            calendar.add(Calendar.DAY_OF_MONTH, -AVAILABLE_BASE_DAY);
             //放送終了日付より31日前
             Date  pre31Date = calendar.getTime();
             return (pre31Date.getTime() <= nowDate.getTime() && nowDate.getTime() <= endDatetime.getTime());
