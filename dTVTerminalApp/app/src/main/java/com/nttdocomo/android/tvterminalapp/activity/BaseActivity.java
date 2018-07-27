@@ -1877,8 +1877,12 @@ public class BaseActivity extends FragmentActivity implements
         if (mToast != null) {
             mToast.cancel();
         }
-        mToast = Toast.makeText(this, msgId, Toast.LENGTH_SHORT);
-        mToast.show();
+        if (!this.isFinishing()) {
+            mToast = Toast.makeText(this, msgId, Toast.LENGTH_SHORT);
+            mToast.show();
+        } else {
+            mToast = null;
+        }
 
         //クリップ処理終了メッセージ後にフラグを実行中から終了に変更
         mClipRunTime = false;
@@ -2757,8 +2761,13 @@ public class BaseActivity extends FragmentActivity implements
         if (mToast != null) {
             mToast.cancel();
         }
-        mToast = Toast.makeText(this, R.string.common_get_data_failed_message, Toast.LENGTH_SHORT);
-        mToast.show();
+
+        if (!this.isFinishing()) {
+            mToast = Toast.makeText(this, R.string.common_get_data_failed_message, Toast.LENGTH_SHORT);
+            mToast.show();
+        } else {
+            mToast = null;
+        }
     }
 
     /**
@@ -2774,9 +2783,14 @@ public class BaseActivity extends FragmentActivity implements
             if (mToast != null) {
                 mToast.cancel();
             }
-            //指定されたメッセージを表示する
-            mToast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
-            mToast.show();
+
+            if (!this.isFinishing()) {
+                //指定されたメッセージを表示する
+                mToast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+                mToast.show();
+            } else {
+                mToast = null;
+            }
         }
     }
 
