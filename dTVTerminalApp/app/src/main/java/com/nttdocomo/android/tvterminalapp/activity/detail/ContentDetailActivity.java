@@ -2847,6 +2847,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         }
         if (!isInit) {
             mPlayerViewLayout.showPlayingProgress(false);
+            mPlayerViewLayout.hideCtrlView();
             mPlayerViewLayout.removeSendMessage();
         }
     }

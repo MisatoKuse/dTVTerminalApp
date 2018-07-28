@@ -47,6 +47,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.struct.MediaVideoInfo;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
@@ -238,7 +239,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             DTVTLogger.start();
             //外部出力制御の場合実行しない
             if (!mExternalDisplayFlg) {
-                hideCtrlView();
+                hideCtrlViewIfVisible();
             }
             DTVTLogger.end();
         }
@@ -565,6 +566,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             mProgressBar.setLayoutParams(layoutParams);
         }
         if (isShow) {
+            goneCtrlView();
             this.removeView(mProgressBar);
             this.addView(mProgressBar);
             mProgressBar.setVisibility(View.VISIBLE);
@@ -638,6 +640,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
 
     @Override
     public void onError(final MediaPlayerController mediaPlayerController, final int what, final long arg) {
+        DTVTLogger.debug("Player Error what:" + what + " arg:" + arg);
         if (mPlayerController != null && isSeekable()) {
             if (!mIsCompleted && isSeekable() && mReconnectStartTime == 0) {
                 mPlayStartPosition = getCurrentPosition();
@@ -650,9 +653,11 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                         mPlayerStateListener.onPlayerErrorCallBack(what);
                     }
                 });
+                goneCtrlView();
                 return;
             }
         }
+        goneCtrlView();
         mPlayerStateListener.onPlayerErrorCallBack(what);
     }
 
@@ -713,7 +718,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 }
                 initPlayerView();
                 setPlayerEvent();
-                hideCtrlViewAfterOperate();
+//                hideCtrlViewAfterOperate();
                 break;
         }
         DTVTLogger.end();
@@ -849,7 +854,41 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     /**
      * hide video ctrl mView.
      */
-    private void hideCtrlView() {
+    private void hideCtrlViewIfVisible() {
+        DTVTLogger.start();
+        if (mSecureVideoPlayer == null) {
+            //設定ファイルによるアプリ動作停止の場合、下記の物がヌルになっている可能性がある。その場合は処理は行わない
+            DTVTLogger.end("mSecureVideoPlayer is null");
+            return;
+        }
+        if (mVideoPlayPause.getVisibility() != View.GONE) {
+            mVideoPlayPause.setVisibility(View.INVISIBLE);
+        }
+        if (mVideoRewind10.getVisibility() != View.GONE) {
+            mVideoRewind10.setVisibility(View.INVISIBLE);
+        }
+        if (mVideoFast30.getVisibility() != View.GONE) {
+            mVideoFast30.setVisibility(View.INVISIBLE);
+        }
+        if (mVideoCtrlBar.getVisibility() != View.GONE) {
+            mVideoCtrlBar.setVisibility(View.INVISIBLE);
+        }
+        if (mPortraitLayout.getVisibility() != View.GONE) {
+            mPortraitLayout.setVisibility(INVISIBLE);
+        }
+        if (mLandscapeLayout.getVisibility() != View.GONE) {
+            mLandscapeLayout.setVisibility(INVISIBLE);
+        }
+        if (mSecureVideoPlayer.getVisibility() != View.GONE) {
+            mSecureVideoPlayer.setBackgroundResource(0);
+        }
+        mIsOperateActivated = false;
+        DTVTLogger.end();
+    }
+    /**
+     * hide video ctrl mView.
+     */
+    public void hideCtrlView() {
         DTVTLogger.start();
         if (mSecureVideoPlayer == null) {
             //設定ファイルによるアプリ動作停止の場合、下記の物がヌルになっている可能性がある。その場合は処理は行わない
@@ -862,6 +901,27 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         mVideoCtrlBar.setVisibility(View.INVISIBLE);
         mPortraitLayout.setVisibility(INVISIBLE);
         mLandscapeLayout.setVisibility(INVISIBLE);
+        mSecureVideoPlayer.setBackgroundResource(0);
+        mIsOperateActivated = false;
+        DTVTLogger.end();
+    }
+
+    /**
+     * gone video ctrl mView.
+     */
+    private void goneCtrlView() {
+        DTVTLogger.start();
+        if (mSecureVideoPlayer == null) {
+            //設定ファイルによるアプリ動作停止の場合、下記の物がヌルになっている可能性がある。その場合は処理は行わない
+            DTVTLogger.end("mSecureVideoPlayer is null");
+            return;
+        }
+        mVideoPlayPause.setVisibility(View.GONE);
+        mVideoRewind10.setVisibility(View.GONE);
+        mVideoFast30.setVisibility(View.GONE);
+        mVideoCtrlBar.setVisibility(View.GONE);
+        mPortraitLayout.setVisibility(GONE);
+        mLandscapeLayout.setVisibility(GONE);
         mSecureVideoPlayer.setBackgroundResource(0);
         mIsOperateActivated = false;
         DTVTLogger.end();
@@ -1312,6 +1372,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                     hideCtrlViewAfterOperate();
                 } else if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     mIsHideOperate = false;
+                    sCtrlHandler.removeCallbacks(mHideCtrlViewThread);
                     if (mVideoCtrlBar.getVisibility() == View.VISIBLE && mIsOperateActivated) {
                         if (!mIsVideoBroadcast) {
                             // タップダウンした時に長押し処理を開始する.
