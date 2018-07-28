@@ -600,7 +600,10 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         for (int i = 0; i < contentsDataList.size(); i++) {
             ContentsData contentsData = contentsDataList.get(i);
             //クリップ状態の判定
-            contentsData.setClipStatus(ClipUtils.setClipStatusContentsData(contentsData, clipList));
+            //期限切れクリップコンテンツはクリップキー上存在せず、UI側の状態を維持するために飛ばす
+            if (!contentsData.isIsAfterLimitContents()) {
+                contentsData.setClipStatus(ClipUtils.setClipStatusContentsData(contentsData, clipList));
+            }
             list.add(contentsData);
         }
         DTVTLogger.end();
@@ -699,6 +702,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
                 contentInfo.setRatStar("");
                 contentInfo.setClipExec(true);
                 requestData.setIsAfterLimitContents(true);
+                contentInfo.setClipStatus(true);
             }
             //生成した contentInfo をリストに格納する
             contentsDataList.add(contentInfo);
