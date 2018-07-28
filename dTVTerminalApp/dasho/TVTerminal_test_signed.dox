@@ -24,6 +24,8 @@
         <classes name="com.nttdocomo.android.tvterminalapp.jni.activation.*"/>
         <classes name="com.nttdocomo.android.tvterminalapp.jni.download.*"/>
         <classes name="com.nttdocomo.android.tvterminalapp.jni.remote.*"/>
+        <classes name="com.nttdocomo.android.tvterminalapp.jni.hikari.*"/>
+        <classes name="com.nttdocomo.android.tvterminalapp.jni.rec.*"/>
     </globalProcessingExclude>
     <classpath appendrtjar="false">
         <pathelement location="${sdk.dir}\platforms\android-26\android.jar"/>

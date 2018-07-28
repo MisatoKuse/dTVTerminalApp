@@ -345,13 +345,15 @@ public class SearchTopActivity extends BaseActivity
                                 }
                                 mSearchView.setSubmitButtonEnabled(false);
                                 //検索文字が1文字以上から0文字になった場合、Tabを非表示にする
-                                mSearchViewPager = null;
+                                mSearchTotalCount = 0;
                                 //前回と同一文字を入力しても検索実行するために前回キーワードを消去
                                 beforeText = null;
                                 findViewById(R.id.fl_search_result).setVisibility(View.GONE);
                                 // tabViewの非表示
                                 findViewById(R.id.rl_search_tab).setVisibility(View.GONE);
                                 clearAllFragment();
+                                mSearchViewPager = null;
+
                                 SearchTopActivity.super.sendScreenView(getString(R.string.google_analytics_screen_name_search));
                             }
                             //setSearchData(s);
@@ -658,7 +660,6 @@ public class SearchTopActivity extends BaseActivity
     @Override
     public void onSearchDataProviderFinishNg(final ResultType<SearchResultError> resultType) {
         if (mIsScroll) {
-            //TODO ページング中のデータ取得に失敗した場合のエラー処理
             DTVTLogger.debug("error while paging");
         } else {
             clearAllFragment();
@@ -666,11 +667,11 @@ public class SearchTopActivity extends BaseActivity
         }
         mIsScroll = false;
 
-        //エラーの場合もプログレスバーを消して0件にする
+        //エラーの場合もプログレスバーを消す
         SearchBaseFragment baseFragment = mFragmentFactory.createFragment(mTabIndex, this);
         baseFragment.showProgressBar(false);
         baseFragment.displayLoadMore(false);
-        mSearchTotalCount = 0;
+        mSearchTotalCount = baseFragment.getContentDataSize();
         baseFragment.notifyDataSetChanged(getResultString(), mTabIndex);
         sendScreenViewForPosition(mTabIndex);
 
