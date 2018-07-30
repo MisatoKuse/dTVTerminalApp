@@ -8,7 +8,7 @@ android {
     defaultConfig {
         applicationId "com.nttdocomo.android.tvterminalapp"
         minSdkVersion 19
-        targetSd1kVersion 26
+        targetSdkVersion 26
         versionCode 11           //★バージョンコード. リリース毎に更新する事
         versionName "01.00."    //★メジャーバージョン.マイナーバージョン. リリース毎に更新する事
 
