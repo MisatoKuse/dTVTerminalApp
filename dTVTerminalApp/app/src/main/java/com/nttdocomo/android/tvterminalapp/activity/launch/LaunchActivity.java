@@ -86,14 +86,12 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     protected void onResume() {
-        //海外判定スキップ検知処理
-        if (SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext())) {
-            //海外判定がスキップされることが確定しているので、海外判定後に呼ぶ2秒待ち処理はここで呼ぶ
-            DTVTLogger.debug("before exec setFirstTimeOut");
-            setFirstTimeOut();
-        }
         super.onResume();
         super.sendScreenView(getString(R.string.google_analytics_screen_name_splash));
+
+        DTVTLogger.debug("normal exec setFirstTimeOut");
+        //スプラッシュ画面の2秒表示用タイマーをセット
+        setFirstTimeOut();
     }
 
     /**
@@ -156,18 +154,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     protected void dismissDialogOnPause() {
         //dissmissを行わない事を明示する為コメント化
         //dismissDialog();
-    }
-
-    /**
-     * 通信可能になってから呼ばれる.
-     */
-    @Override
-    protected void onReStartCommunication() {
-        super.onReStartCommunication();
-
-        DTVTLogger.debug("normal exec setFirstTimeOut");
-        //最初に2秒待つ処理
-        setFirstTimeOut();
     }
 
     @Override
