@@ -522,7 +522,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
 
         for (int i = 0; i < channelInfoList.size(); i++) {
             ArrayList<ScheduleInfo> scheduleInfoList = channelInfoList.get(i).getSchedules();
-            ArrayList<ScheduleInfo> scheduleInfoArrayList = new ArrayList<>();
+            ArrayList<ScheduleInfo> scheduleInfoArrayList = null;
             if (scheduleInfoList != null) {
                 scheduleInfoArrayList = new ArrayList<>();
                 for (int j = 0; j < scheduleInfoList.size(); j++) {
