@@ -584,15 +584,6 @@ public class RecordingReservationListDataProvider implements
      */
     private void putBuffMatchListMapSingle(final long startTime, final RecordingReservationContentInfo info) {
         DTVTLogger.start();
-
-        // 現在時刻
-        Long nowTime = DateUtils.getNowTimeFormatEpoch();
-
-        if (nowTime > startTime) {
-            // 時間比較：現在日時より値が小さい場合リストには表示しない
-            return;
-        }
-
         info.setStartTimeEpoch(startTime);
         mBuffMatchList.add(info);
         DTVTLogger.end();
