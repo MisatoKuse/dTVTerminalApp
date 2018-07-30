@@ -43,7 +43,7 @@ public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseLi
     /** コールバック. */
     private final OnMultiChCallbackListener mOnMultiChCallbackListener;
     /** ページインデックス. */
-    private int mPageIndex;
+    private int mRequestIndex;
 
     /**
      * 機能：DlnaProvHikariVideoを構造.
@@ -65,11 +65,12 @@ public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseLi
         DlnaManager.shared().mBrowseListener = this;
         DlnaManager.shared().mRemoteConnectStatusChangeListener = this;
         DlnaManager.shared().clearQue();
-        DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(mContext, DlnaUtils.DLNA_DMS_MULTI_CHANNEL), mPageIndex);
+        mRequestIndex = 0;
+        DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(mContext, DlnaUtils.DLNA_DMS_MULTI_CHANNEL), mRequestIndex);
     }
 
     @Override
-    public void onContentBrowseCallback(final DlnaObject[] objs, final String containerId) {
+    public void onContentBrowseCallback(final DlnaObject[] objs, final String containerId, final boolean isComplete) {
         for (DlnaObject obj: objs) {
             if (mChannelNr.equals(obj.mChannelNr)) {
                 mOnMultiChCallbackListener.multiChannelFindCallback(obj);
@@ -79,8 +80,13 @@ public class DlnaContentMultiChannelDataProvider implements DlnaManager.BrowseLi
         if (objs.length == 0) {
             mOnMultiChCallbackListener.multiChannelFindCallback(null);
         } else {
+            if (isComplete) {
+                mOnMultiChCallbackListener.multiChannelFindCallback(null);
+                return;
+            }
+            mRequestIndex += objs.length;
             DlnaManager.shared().clearQue();
-            DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(mContext, DlnaUtils.DLNA_DMS_MULTI_CHANNEL), mPageIndex++);
+            DlnaManager.shared().BrowseContentWithContainerId(DlnaUtils.getContainerIdByImageQuality(mContext, DlnaUtils.DLNA_DMS_MULTI_CHANNEL), mRequestIndex);
         }
     }
 

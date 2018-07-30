@@ -240,7 +240,7 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
     //endregion dlnaBase callback
 
     //region dlnaDmsBrowse callback
-    dlnaDmsBrowse->ContentBrowseCallback = [](std::vector<ContentInfo> contentList, const char* containerId) {
+    dlnaDmsBrowse->ContentBrowseCallback = [](std::vector<ContentInfo> contentList, const char* containerId, bool complete) {
         JNIEnv *_env = NULL;
         int status = g_ctx.javaVM->GetEnv((void **) &_env, JNI_VERSION_1_6);
         bool isAttached = false;
@@ -252,7 +252,7 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
             isAttached = true;
         }
 
-        jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "ContentBrowseCallback", "(Ljava/lang/String;[Lcom/nttdocomo/android/tvterminalapp/jni/DlnaObject;)V");
+        jmethodID methodID = _env->GetMethodID(g_ctx.jniHelperClz, "ContentBrowseCallback", "(Ljava/lang/String;[Lcom/nttdocomo/android/tvterminalapp/jni/DlnaObject;Z)V");
         jobjectArray returnArray = _env->NewObjectArray((jsize)contentList.size(), jniModelStruct.cls, nullptr);
         for (size_t i = 0 ; i < contentList.size() ; ++i) {
             auto *item = &contentList.at(i);
@@ -262,7 +262,7 @@ Java_com_nttdocomo_android_tvterminalapp_jni_DlnaManager_initDmp(JNIEnv *env, jo
             _env->DeleteLocalRef(jobj);
         }
         jstring containerIdString = _env->NewStringUTF(containerId);
-        _env->CallVoidMethod(g_ctx.jniHelperObj, methodID, containerIdString, returnArray);
+        _env->CallVoidMethod(g_ctx.jniHelperObj, methodID, containerIdString, returnArray, complete);
         _env->DeleteLocalRef(returnArray);
         _env->DeleteLocalRef(containerIdString);
 

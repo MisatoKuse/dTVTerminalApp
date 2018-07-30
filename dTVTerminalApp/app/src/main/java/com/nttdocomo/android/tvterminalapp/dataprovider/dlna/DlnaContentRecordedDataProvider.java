@@ -24,8 +24,9 @@ public class DlnaContentRecordedDataProvider implements DlnaManager.BrowseListen
         /**
          * コンテンツブラウズコールバック.
          * @param objs コンテンツリスト
+         * @param isComplete ページング終了フラグ
          */
-        void onBrowseCallback(DlnaObject[] objs);
+        void onBrowseCallback(DlnaObject[] objs, boolean isComplete);
         /**
          * コンテンツブラウズエラーコールバック.
          */
@@ -57,22 +58,22 @@ public class DlnaContentRecordedDataProvider implements DlnaManager.BrowseListen
     /**
      * ブラウズ処理.
      * @param context コンテキスト
-     * @param pageIndex ページングインデックス
+     * @param requestIndex ページングインデックス
      */
-    public boolean browse(final Context context, final int pageIndex) {
+    public boolean browse(final Context context, final int requestIndex) {
         String containerId = DlnaUtils.getContainerIdByImageQuality(context, DlnaUtils.DLNA_DMS_RECORD_LIST);
         DTVTLogger.warning(">>> containerId = " + containerId);
         DlnaManager.shared().mBrowseListener = this;
         DlnaManager.shared().mRemoteConnectStatusChangeListener = this;
         DlnaManager.shared().clearQue();
-        DlnaManager.shared().BrowseContentWithContainerId(containerId, pageIndex);
+        DlnaManager.shared().BrowseContentWithContainerId(containerId, requestIndex);
         return true;
     }
 
     @Override
-    public void onContentBrowseCallback(final DlnaObject[] objs, final String containerId) {
+    public void onContentBrowseCallback(final DlnaObject[] objs, final String containerId, final boolean isComplete) {
         if (mCallbackListener != null) {
-            mCallbackListener.onBrowseCallback(objs);
+            mCallbackListener.onBrowseCallback(objs, isComplete);
         }
     }
 
