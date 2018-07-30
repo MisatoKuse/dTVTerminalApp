@@ -1052,6 +1052,8 @@ public class TvProgramListActivity extends BaseActivity implements
                 String dateStr = mSelectDateStr.replace("-", "");
                 String[] dateList = {dateStr};
                 mScaledDownProgramListDataProvider.getProgram(channelNos, dateList, true);
+                //明示的にコンテンツ取得失敗メッセージを非表示にする
+                mNoDataMessage.setVisibility(View.GONE);
             } else {
                 //情報がヌルなので、ネットワークエラーメッセージを取得する
                 ErrorState errorState = mScaledDownProgramListDataProvider.getChannelError();
@@ -1062,7 +1064,18 @@ public class TvProgramListActivity extends BaseActivity implements
                         showGetDataFailedToast(message);
                     }
                 }
-                mNoDataMessage.setVisibility(View.VISIBLE);
+                if (mProgramChannelAdapter == null) {
+                    //この時点でチャンネル名表示Adapterが生成できていない場合はコンテンツ取得失敗メッセージを表示
+                    mNoDataMessage.setVisibility(View.VISIBLE);
+                } else {
+                    ArrayList<String> displayChannels = mProgramChannelAdapter.getChannelList();
+                    //既に表示されているチャンネルリストがない場合のみコンテンツ取得失敗メッセージを表示
+                    if (displayChannels != null || displayChannels.size() < 1) {
+                        mNoDataMessage.setVisibility(View.VISIBLE);
+                    } else {
+                        mNoDataMessage.setVisibility(View.GONE);
+                    }
+                }
             }
         }
         DTVTLogger.end();
