@@ -20,9 +20,8 @@
 		android:layout_width="match_parent"
 		android:layout_height="@dimen/search_result_list_border_height"
 		android:layout_below="@+id/tv_searched_result"
-		android:layout_marginLeft="16dp"
-		android:layout_marginRight="16dp"
-		android:background="@color/keyword_search_background_color"/>
+		android:layout_marginLeft="@dimen/watch_listen_thumbnail_margin_left"
+		android:background="@color/setting_list_divider_color"/>
 
 	<TextView
 		android:id="@+id/search_list_no_items"
