@@ -313,6 +313,8 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
     private static final String SAVEDVARIABLE_PLAY_START_POSITION = "playStartPosition";
     /** プレイヤー前回のポジション.*/
     private int mPlayStartPosition;
+    /** 再生停止フラグ.*/
+    private boolean mIsPlayerPaused = false;
 
     /**
      * 前回リモートコントローラービュー表示フラグ.
@@ -403,13 +405,11 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
                 sendScreenViewForPosition(CONTENTS_DETAIL_INFO_TAB_POSITION);
             }
         }
+        if (mIsPlayerPaused) {
+            initPlayerStart(true);
+            mIsPlayerPaused = false;
+        }
         DTVTLogger.end();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        initPlayerStart(true);
     }
 
     /**
@@ -476,6 +476,7 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         super.onPause();
         if (mPlayerViewLayout != null) {
             mPlayStartPosition = mPlayerViewLayout.onPause();
+            mIsPlayerPaused = true;
         }
         DtvContentsChannelFragment channelFragment = null;
         switch (mDisplayState) {
