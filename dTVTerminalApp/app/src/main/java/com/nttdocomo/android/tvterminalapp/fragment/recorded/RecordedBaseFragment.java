@@ -1164,6 +1164,10 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
      * ローディング開始.
      */
     public void loadStart() {
+        if (mFootView == null) {
+            mFootView = View.inflate(getContext(), R.layout.search_load_more, null);
+        }
+        mRecordedListView.removeFooterView(mFootView);
         mRecordedListView.addFooterView(mFootView);
         mRecordedListView.setSelection(mRecordedListView.getMaxScrollAmount());
         mRecordedListView.setVisibility(View.VISIBLE);
