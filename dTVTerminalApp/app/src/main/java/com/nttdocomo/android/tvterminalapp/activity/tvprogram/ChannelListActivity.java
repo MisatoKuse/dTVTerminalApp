@@ -149,7 +149,7 @@ public class ChannelListActivity extends BaseActivity implements
     /** メニュー表示フラグ.*/
     private Boolean mIsMenuLaunch = false;
     /** ページングインデックス.*/
-    private int mPageIndex = 0;
+    private int mRequestIndex = 0;
     /** ロード終了. */
     private boolean mIsEndPage = false;
     /** ひかりTV for docomoタブの連続更新防止用. */
@@ -310,7 +310,7 @@ public class ChannelListActivity extends BaseActivity implements
                     @Override
                     public void onPageSelected(final int position) {
                         super.onPageSelected(position);
-                        mPageIndex = 0;
+                        mRequestIndex = 0;
                         mIsEndPage = false;
                         mTabLayout.setTab(position);
                         sendScreenViewForPosition(position);
@@ -322,13 +322,13 @@ public class ChannelListActivity extends BaseActivity implements
     /** 地上波データ取得. */
     private void getTerData() {
         mDlnaContentTerChennelDataProvider.browseContentWithContainerId(
-                DlnaUtils.getContainerIdByImageQuality(getApplicationContext(), DlnaUtils.DLNA_DMS_TER_CHANNEL), mPageIndex);
+                DlnaUtils.getContainerIdByImageQuality(getApplicationContext(), DlnaUtils.DLNA_DMS_TER_CHANNEL), mRequestIndex);
     }
 
     /** Bsデータを取得. */
     private void getBsData() {
         mDlnaContentBsChannelDataProvider.browseContentWithContainerId(
-                DlnaUtils.getContainerIdByImageQuality(getApplicationContext(), DlnaUtils.DLNA_DMS_BS_CHANNEL), mPageIndex);
+                DlnaUtils.getContainerIdByImageQuality(getApplicationContext(), DlnaUtils.DLNA_DMS_BS_CHANNEL), mRequestIndex);
     }
 
     /**
@@ -430,7 +430,7 @@ public class ChannelListActivity extends BaseActivity implements
     }
 
     @Override
-    public void onContentBrowseCallback(final DlnaObject[] objs, final String containerId) {
+    public void onContentBrowseCallback(final DlnaObject[] objs, final String containerId, final boolean isComplete) {
         DTVTLogger.start();
         int pos = mViewPager.getCurrentItem();
         if (!checkRequestContainerId(pos, containerId)) {
@@ -441,6 +441,9 @@ public class ChannelListActivity extends BaseActivity implements
         for (int i = 0; i < objs.length; ++i) {
             Object item = objs[i];
             tmp.add(item);
+        }
+        if (isComplete) {
+            mIsEndPage = true;
         }
         paging(fragment, tmp, true);
         updateUi(fragment);
@@ -483,7 +486,7 @@ public class ChannelListActivity extends BaseActivity implements
         DTVTLogger.debug("position = " + position);
         if (null != mViewPager) {
             DTVTLogger.debug("viewpager not null");
-            mPageIndex = 0;
+            mRequestIndex = 0;
             mIsEndPage = false;
             mViewPager.setCurrentItem(position);
         }
@@ -560,7 +563,7 @@ public class ChannelListActivity extends BaseActivity implements
                                 if (fragment.getConnectionStatus() == fragment.isRemote()) {
                                     fragment.loadStart();
                                 } else {
-                                    mPageIndex = 0;
+                                    mRequestIndex = 0;
                                     fragment.showProgressBar(true);
                                     fragment.clearDatas();
                                 }
@@ -570,7 +573,7 @@ public class ChannelListActivity extends BaseActivity implements
                                 if (fragment.getConnectionStatus() == fragment.isRemote()) {
                                     fragment.loadStart();
                                 } else {
-                                    mPageIndex = 0;
+                                    mRequestIndex = 0;
                                     fragment.showProgressBar(true);
                                     fragment.clearDatas();
                                 }
@@ -819,10 +822,10 @@ public class ChannelListActivity extends BaseActivity implements
                 if (null == fragment || null == list) {
                     return;
                 }
-                if (!isFromDLNA || mPageIndex == 0) {
+                if (!isFromDLNA || mRequestIndex == 0) {
                     fragment.clearDatas();
                 } else {
-                    if (mPageIndex > 0) {
+                    if (mRequestIndex > 0) {
                         fragment.loadComplete();
                     }
                 }
@@ -830,7 +833,7 @@ public class ChannelListActivity extends BaseActivity implements
                     fragment.addData(item);
                 }
                 noticeRefresh(fragment);
-                if (mPageIndex == 0 && list.size() == 0) {
+                if (mRequestIndex == 0 && list.size() == 0) {
                     if (NetWorkUtils.isOnline(ChannelListActivity.this)) {
                         showListMessage(true);
                     } else {
@@ -838,11 +841,8 @@ public class ChannelListActivity extends BaseActivity implements
                         showGetDataFailedToast(getString(R.string.network_nw_error_message_dialog));
                     }
                 }
-                mPageIndex++;
+                mRequestIndex = fragment.getDataCount();
                 fragment.showProgressBar(false);
-                if (list.size() < DtvtConstants.REQUEST_DLNA_LIMIT_50) {
-                    mIsEndPage = true;
-                }
             }
         });
 

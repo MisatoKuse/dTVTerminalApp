@@ -24,8 +24,9 @@ public class DlnaContentBsChannelDataProvider implements DlnaManager.BrowseListe
          * コンテンツブラウズコールバック.
          * @param objs コンテンツリスト
          * @param containerId パス
+         * @param isComplete ページング終了フラグ
          */
-        void onContentBrowseCallback(final DlnaObject[] objs, final String containerId);
+        void onContentBrowseCallback(final DlnaObject[] objs, final String containerId, final boolean isComplete);
         /**
          * コンテンツブラウズエラーコールバック.
          * @param containerId パス
@@ -51,10 +52,10 @@ public class DlnaContentBsChannelDataProvider implements DlnaManager.BrowseListe
     }
 
     @Override
-    public void onContentBrowseCallback(final DlnaObject[] objs, final String containerId) {
+    public void onContentBrowseCallback(final DlnaObject[] objs, final String containerId, final boolean isComplete) {
         if (objs != null) {
             if (mCallback != null) {
-                mCallback.onContentBrowseCallback(objs, containerId);
+                mCallback.onContentBrowseCallback(objs, containerId, isComplete);
             }
         } else {
             DTVTLogger.error("no ContentBrowseCallback");
@@ -78,13 +79,13 @@ public class DlnaContentBsChannelDataProvider implements DlnaManager.BrowseListe
     /**
      * BrowseContentWithContainerId.
      * @param containerId パス
-     * @param pageIndex ページングインデックス
+     * @param requestIndex 請求ポジション
      */
-    public void browseContentWithContainerId(final String containerId, final int pageIndex) {
+    public void browseContentWithContainerId(final String containerId, final int requestIndex) {
         DlnaManager.shared().mBrowseListener = null;
         DlnaManager.shared().mBrowseListener = this;
         DlnaManager.shared().mRemoteConnectStatusChangeListener = this;
-        DlnaManager.shared().BrowseContentWithContainerId(containerId, pageIndex);
+        DlnaManager.shared().BrowseContentWithContainerId(containerId, requestIndex);
     }
 
 }

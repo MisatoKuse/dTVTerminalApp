@@ -29,7 +29,7 @@
 #endif
 
 
-std::function<void(std::vector<ContentInfo> contentList, const char* containerId)> DlnaDmsBrowse::ContentBrowseCallback = nullptr;
+std::function<void(std::vector<ContentInfo> contentList, const char* containerId, bool complete)> DlnaDmsBrowse::ContentBrowseCallback = nullptr;
 std::function<void(const char* containerId, eDlnaErrorType error)> DlnaDmsBrowse::ContentBrowseErrorCallback = nullptr;
 std::function<void(const char* containerUpdateIds)> DlnaDmsBrowse::EventHandlerCallback = nullptr;
 
@@ -218,7 +218,7 @@ void cancelIfInProgress(DMP* d) {
     }
 }
 
-du_bool checkSoapResponseError(dupnp_http_response* response) {
+du_bool checkSoapResponseError(dupnp_http_response* response, du_bool* completed) {
     du_str_array param_array;
     
     du_str_array_init(&param_array);
@@ -234,13 +234,19 @@ du_bool checkSoapResponseError(dupnp_http_response* response) {
         LOG_WITH("print_network_error");
         goto error;
     }
-    
+
     // check SOAP error.
     if (du_str_equal(response->status, du_http_status_internal_server_error())) {
         const du_uchar* soap_error_code;
         const du_uchar* soap_error_description;
         
         if (!dupnp_soap_parse_error_response(response->body, response->body_size, &param_array, &soap_error_code, &soap_error_description)) goto error;
+
+        if (du_str_equal(soap_error_code, dav_cds_error_code_cannot_process_the_request())) {
+            *completed = 1;
+            du_str_array_free(&param_array);
+            return 1;
+        }
         
         LOG_WITH("print_soap_error(soap_error_code = %s, soap_error_description) = %s", soap_error_code, soap_error_description);
         goto error;
@@ -471,9 +477,17 @@ void listObject(DMP* d, const du_uchar* result) {
     } else {
         LOG_WITH("no content");
     }
+    du_bool completed = 0;
+    if (d->browseInfo.totalMatches == 0 && number_returned == 0) {
+        completed = 1;
+    } else if (d->browseInfo.totalMatches >= 1) {
+        if (d->browseInfo.startingIndex + number_returned == d->browseInfo.totalMatches) {
+            completed = 1;
+        }
+    }
     auto containerId = d->browseInfo.containerId;
     if(DlnaDmsBrowse::ContentBrowseCallback) {
-        DlnaDmsBrowse::ContentBrowseCallback(contentList, (const char*)containerId);
+        DlnaDmsBrowse::ContentBrowseCallback(contentList, (const char*)containerId, completed);
     }
     return;
 }
@@ -494,8 +508,13 @@ void DlnaDmsBrowse::browseDirectChildrenResponseHandler(dupnp_http_response* res
     du_uint32 number_returned;
     BrowseInfo* b = &d->browseInfo;
     du_uint32 update_id;
+    du_bool completed = 0;
 
-    if (!checkSoapResponseError(response)) goto error;
+    if (!checkSoapResponseError(response, &completed)) goto error;
+
+    if (completed) {
+        goto error1;
+    }
 
     // parse browse response
     if (!dav_cds_parse_browse_response(soap_response, soap_response_len, &param_array, &result, &number_returned, &b->totalMatches, &update_id)) goto error1;
@@ -527,8 +546,15 @@ error:
     du_mutex_unlock(&d->soapInfo.mutex);
     //コンテンツブラウズエラー
     auto containerId = d->browseInfo.containerId;
-    if(DlnaDmsBrowse::ContentBrowseErrorCallback) {
-        DlnaDmsBrowse::ContentBrowseErrorCallback((const char*)containerId, responseError);
+    if (completed) {
+        if(DlnaDmsBrowse::ContentBrowseCallback) {
+            std::vector<ContentInfo> contentList;
+            DlnaDmsBrowse::ContentBrowseCallback(contentList, (const char*)containerId, completed);
+        }
+    } else {
+        if(DlnaDmsBrowse::ContentBrowseErrorCallback) {
+            DlnaDmsBrowse::ContentBrowseErrorCallback((const char*)containerId, responseError);
+        }
     }
 }
 

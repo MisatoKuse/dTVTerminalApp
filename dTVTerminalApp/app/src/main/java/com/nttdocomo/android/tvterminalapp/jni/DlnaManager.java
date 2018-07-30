@@ -216,8 +216,9 @@ public class DlnaManager {
          * コンテンツブラウズコールバック.
          * @param objs コンテンツリスト
          * @param containerId パス
+         * @param isComplete ブラウズ終了
          */
-        void onContentBrowseCallback(final DlnaObject[] objs, final String containerId);
+        void onContentBrowseCallback(final DlnaObject[] objs, final String containerId, final boolean isComplete);
         /**
          * コンテンツブラウズエラーコールバック.
          * @param containerId パス
@@ -360,9 +361,9 @@ public class DlnaManager {
     /**
      * BrowseContentWithContainerId.
      * @param containerId containerId
-     * @param pageIndex ページングインデックス
+     * @param requestIndex ページングインデックス
      */
-    public void BrowseContentWithContainerId(final String containerId, final int pageIndex) {
+    public void BrowseContentWithContainerId(final String containerId, final int requestIndex) {
         DTVTLogger.warning("StbConnectionManager.shared().getConnectionStatus() = " + StbConnectionManager.shared().getConnectionStatus());
         switch (StbConnectionManager.shared().getConnectionStatus()) {
             case HOME_OUT:
@@ -374,11 +375,11 @@ public class DlnaManager {
                 if (DlnaManager.shared().remoteConnectStatus == RemoteConnectStatus.READY) {
                     RequestRemoteConnect(DlnaManager.shared().mUdn);
                     DlnaManager.shared().requestContainerId = containerId;
-                    DlnaManager.shared().mPageIndex = pageIndex;
+                    DlnaManager.shared().mPageIndex = requestIndex;
                 } else {
                     DlnaManager.shared().waitForReady = true;
                     DlnaManager.shared().requestContainerId = containerId;
-                    DlnaManager.shared().mPageIndex = pageIndex;
+                    DlnaManager.shared().mPageIndex = requestIndex;
 
                     new Thread(new Runnable() {
                         @Override
@@ -398,14 +399,14 @@ public class DlnaManager {
             case HOME_IN:
                 if (!TextUtils.isEmpty(containerId)) {
                     DlnaDmsItem item = SharedPreferencesUtils.getSharedPreferencesStbInfo(DlnaManager.shared().mContext);
-                    requestBrowse(pageIndex, containerId, item.mControlUrl);
+                    requestBrowse(requestIndex, containerId, item.mControlUrl);
                 } else {
                     DTVTLogger.warning("BrowseContentWithContainerId HOME_IN containerId = " + containerId);
                 }
                 break;
             case HOME_OUT_CONNECT:
                 if (!TextUtils.isEmpty(containerId)) {
-                    requestBrowse(pageIndex, containerId, DlnaManager.shared().mHomeOutControlUrl);
+                    requestBrowse(requestIndex, containerId, DlnaManager.shared().mHomeOutControlUrl);
                 } else {
                     DTVTLogger.warning("BrowseContentWithContainerId HOME_OUT_CONNECT containerId = " + containerId);
                 }
@@ -425,18 +426,17 @@ public class DlnaManager {
 
     /**
      * BrowseContentWithContainerId.
-     * @param pageIndex ページングインデックス
+     * @param requestIndex requestポジション
      * @param containerId containerId
      * @param controlUrl controlUrl
      */
-    private void requestBrowse(final int pageIndex, final String containerId, final String controlUrl) {
+    private void requestBrowse(final int requestIndex, final String containerId, final String controlUrl) {
         DTVTLogger.debug("requestBrowse containerIds size =" + DlnaManager.shared().containerIds.size());
         if (DlnaManager.shared().containerIds.size() == 0) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    if (!browseContentWithContainerId(pageIndex * DtvtConstants.REQUEST_DLNA_LIMIT_50,
-                            DtvtConstants.REQUEST_DLNA_LIMIT_50, containerId, controlUrl)) {
+                    if (!browseContentWithContainerId(requestIndex, DtvtConstants.REQUEST_DLNA_LIMIT_50, containerId, controlUrl)) {
                         BrowseListener listener = DlnaManager.shared().mBrowseListener;
                         if (listener != null) {
                             listener.onContentBrowseErrorCallback(containerId);
@@ -675,9 +675,10 @@ public class DlnaManager {
      *  コンテンツブラウズコールバック.
      * @param containerId コンテンツリスト
      * @param objs コンテンツリスト
+     * @param isComplete ページング終了
      */
-    public void ContentBrowseCallback(@NonNull final String containerId, @NonNull final DlnaObject[] objs) {
-        DTVTLogger.warning("ContentBrowseCallback containerId = " + containerId + ", objs.length = " + objs.length);
+    public void ContentBrowseCallback(@NonNull final String containerId, @NonNull final DlnaObject[] objs, final boolean isComplete) {
+        DTVTLogger.warning("ContentBrowseCallback containerId = " + containerId + ", objs.length = " + objs.length + ", isComplete = " + isComplete);
         if (!checkContainerId(containerId)) {
             DTVTLogger.warning("ContentBrowseCallback checkContainerId containerId = " + containerId);
             return;
@@ -685,7 +686,7 @@ public class DlnaManager {
         BrowseListener listener = DlnaManager.shared().mBrowseListener;
         if (listener != null) {
             aribConvertBs(objs);
-            listener.onContentBrowseCallback(objs, containerId);
+            listener.onContentBrowseCallback(objs, containerId, isComplete);
         }
         DlnaManager.shared().clearQue();
     }

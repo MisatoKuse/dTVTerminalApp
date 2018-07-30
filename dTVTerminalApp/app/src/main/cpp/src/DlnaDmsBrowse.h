@@ -17,7 +17,7 @@ public:
     
     // callback
 public:
-    static std::function<void(std::vector<ContentInfo> contentList, const char* containerId)> ContentBrowseCallback;
+    static std::function<void(std::vector<ContentInfo> contentList, const char* containerId, bool complete)> ContentBrowseCallback;
     static std::function<void(const char* containerId, eDlnaErrorType error)> ContentBrowseErrorCallback;
     static std::function<void(const char* containerUpdateIds)> EventHandlerCallback;
 

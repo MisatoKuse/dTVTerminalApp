@@ -102,7 +102,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     /** ロード終了. */
     private boolean mIsEndPage = false;
     /** ページングインデックス.*/
-    private int mPageIndex;
+    private int mRequestIndex;
     /**ダウンロードXML取得フォーマット.*/
     private static final String TAG_ITEM_START = "<item id=\"";
     /**ダウンロードXML取得フォーマット.*/
@@ -226,14 +226,14 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void onClickTab(final int position) {
-        mPageIndex = 0;
+        mRequestIndex = 0;
         mDlnaRecVideoItems = null;
         mIsEndPage = false;
         mViewPager.setCurrentItem(position);
     }
 
     @Override
-    public void onBrowseCallback(final DlnaObject[] objs) {
+    public void onBrowseCallback(final DlnaObject[] objs, final boolean isComplete) {
         setProgressBarGone();
         ArrayList<DlnaRecVideoItem> dstList = new ArrayList<>();
         for (DlnaObject dlnaObject: objs) {
@@ -253,6 +253,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             dstList.add(item);
         }
         mDlnaRecVideoItems = dstList;
+        if (isComplete) {
+            mIsEndPage = true;
+        }
         setVideoBrows(dstList);
     }
 
@@ -311,7 +314,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void onPageSelected(final int position) {
                 super.onPageSelected(position);
-                mPageIndex = 0;
+                mRequestIndex = 0;
                 mDlnaRecVideoItems = null;
                 mIsEndPage = false;
                 setTab(position);
@@ -503,12 +506,12 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                                 case HOME_OUT:
                                 case HOME_IN:
                                 case HOME_OUT_CONNECT:
-                                    if (mPageIndex == 0 && !mIsLoading) {
+                                    if (mRequestIndex == 0 && !mIsLoading) {
                                         clearFragment(0);
                                         setRecordedTakeOutContents();
                                     }
                                     mDlnaContentRecordedDataProvider.listen(RecordedListActivity.this);
-                                    mDlnaContentRecordedDataProvider.browse(RecordedListActivity.this, mPageIndex);
+                                    mDlnaContentRecordedDataProvider.browse(RecordedListActivity.this, mRequestIndex);
                                     break;
                                 case NONE_LOCAL_REGISTRATION:
                                     if (mDlnaRecVideoItems != null) {
@@ -702,9 +705,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         final RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
         if (dlnaRecVideoItems != null) {
             baseFragment.setFragmentName(RLA_FragmentName_All);
-            if (dlnaRecVideoItems.size() < DtvtConstants.REQUEST_DLNA_LIMIT_50) {
-                mIsEndPage = true;
-            }
             List<Map<String, String>> resultList = getDownloadListFromDb();
             baseFragment.clearQueueIndex();
             final boolean hideDownloadBtn = getConnectionStatus();
@@ -765,11 +765,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                     return;
                 }
                 baseFragment.notifyDataSetChanged();
-                if (mPageIndex != 0) {
+                if (mRequestIndex != 0) {
                     baseFragment.loadComplete();
                     mIsLoading = false;
                 }
-                mPageIndex++;
+                mRequestIndex = baseFragment.getContentsData().size();
                 if (baseFragment.getQueueIndexSize() > 0) {
                     baseFragment.bindServiceFromBackground();
                 }
@@ -1003,7 +1003,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                         fragment.loadStart();
                         getData();
                     } else {
-                        mPageIndex = 0;
+                        mRequestIndex = 0;
                         setTab(0);
                     }
                 }
