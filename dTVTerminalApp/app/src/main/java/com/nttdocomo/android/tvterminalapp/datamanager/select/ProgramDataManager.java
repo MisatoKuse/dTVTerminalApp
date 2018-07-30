@@ -126,6 +126,7 @@ public class ProgramDataManager {
      * @param chInfoDate 取得要求日付
      * @return list 番組データ
      */
+    @SuppressWarnings("OverlyLongMethod")
     public synchronized List<List<Map<String, String>>> selectTvScheduleListProgramData(
             final List<String> chNos, final String chInfoDate) {
         DTVTLogger.start();
@@ -201,8 +202,6 @@ public class ProgramDataManager {
                     if (!databaseFile.delete()) {
                         DTVTLogger.error("Failed to delete copy DB file");
                     }
-
-                    DataBaseManager.getChInstance().closeChDatabase();
                 } catch (SQLiteException e) {
                     DTVTLogger.debug("ProgramDataManager::selectTvScheduleListProgramData, e.cause=" + e.getCause());
                 } finally {

@@ -62,13 +62,14 @@ public class ChannelInsertDataManager {
         DataBaseManager databaseManager = DataBaseManager.getInstance();
 
         synchronized (databaseManager) {
-            try {
                 //各種オブジェクト作成
                 SQLiteDatabase database = databaseManager.openDatabase();
                 database.acquireReference();
                 ChannelListDao channelListDao = new ChannelListDao(database);
                 List<HashMap<String, String>> hashMaps = channelList.getChannelList();
-
+            try {
+                DTVTLogger.debug("bulk insert start");
+                database.beginTransaction();
                 //DB保存前に前回取得したデータは全消去する
                 //日付とチャンネルを管理し、それらが一致するデータだけを消す事.またキャッシュ期限もその単位で管理する
                 channelListDao.delete();
@@ -92,11 +93,13 @@ public class ChannelInsertDataManager {
                 //データ保存日時を格納
                 DateUtils dateUtils = new DateUtils(mContext);
                 dateUtils.addLastDate(DateUtils.CHANNEL_LAST_UPDATE);
-
+                database.setTransactionSuccessful();
             } catch (SQLiteException e) {
                 DTVTLogger.debug("ChannelInsertDataManager::insertChannelInsertList, e.cause=" + e.getCause());
             } finally {
+                database.endTransaction();
                 DataBaseManager.getInstance().closeDatabase();
+                DTVTLogger.debug("bulk insert end");
             }
         }
         DTVTLogger.end();
