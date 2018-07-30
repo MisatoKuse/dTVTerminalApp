@@ -370,9 +370,9 @@ public class ContentDetailActivity extends BaseActivity implements View.OnClickL
         setContentView(R.layout.dtv_contents_detail_main_layout);
         DTVTLogger.start();
         setStatusBarColor(R.color.contents_header_background);
-        // プログレスバー表示中でもxボタンクリック可能にする
-        findViewById(R.id.base_progress_rl).setClickable(false);
         showProgressBar(true);
+        // プログレスバー表示中でもxボタンクリック可能にする。※プログレスバー表示後に禁止に設定する
+        findViewById(R.id.base_progress_rl).setClickable(false);
         initView();
     }
 
