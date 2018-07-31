@@ -99,12 +99,8 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     private ChannelWebClient mChannelWebClient = null;
     /** 番組リスト取得WebClient. */
     private TvScheduleWebClient mTvScheduleWebClient = null;
-    /** DBから取得するチャンネル番号を格納するリスト. */
-    private List<String> mFromDB = new ArrayList<>();
-    /** DBから取得した複数チャンネルの情報を格納するリスト. */
-    private List<List<Map<String, String>>> mResultSets = null;
     /** TvScheduleWebClientのキューリスト. */
-    private LinkedList<TvScheduleWebClient> mTvScheduleWebClientLinkedList =null;
+    private LinkedList<TvScheduleWebClient> mTvScheduleWebClientLinkedList = null;
 
     /** チャンネルリスト用エラー情報バッファ. */
     private ErrorState mChannelError = null;
@@ -221,39 +217,13 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                     }
                     sendChannelInfoArray(channels);
                     break;
-                case SCHEDULE_SELECT:
-                    //非同期なので、タブ切替時にこの処理に入ってしまわないようにNullチェックを追加
-                    if (mResultSets != null) {
-                        ChannelInfoList channelsInfo = new ChannelInfoList();
-                        ClipKeyListDataManager keyListDataManager = new ClipKeyListDataManager(mContext);
-                        List<Map<String, String>> clipKeyList = keyListDataManager.selectClipAllList();
-                        for (List<Map<String, String>> channelInfos : mResultSets) {
-                            if (channelInfos != null && channelInfos.size() > 0) {
-                                ArrayList<ScheduleInfo> scheduleInfoList = new ArrayList<>();
-                                for (int i = 0; i < channelInfos.size(); i++) { //番組データ取得して整形する
-                                    HashMap<String, String> hashMap = (HashMap<String, String>) channelInfos.get(i);
-                                    ScheduleInfo mSchedule = DataConverter.convertScheduleInfo(hashMap, clipKeyList);
-                                    scheduleInfoList.add(mSchedule);
-                                }
-                                //setScheduleInfoのやり方を踏襲.
-                                ChannelInfo channel = new ChannelInfo();
-                                channel.setChannelNo(Integer.parseInt(scheduleInfoList.get(0).getChNo()));
-                                channel.setTitle(scheduleInfoList.get(0).getTitle());
-                                channel.setSchedules(scheduleInfoList);
-                                channelsInfo.addChannel(channel);
-                            }
-                        }
-                        sendChannelInfoList(channelsInfo, new int[0]);
-                    } else {
-                        sendChannelInfoList(null, new int[0]);
-                    }
-                    break;
                 default:
                     break;
             }
         }
     }
 
+    @SuppressWarnings("OverlyLongMethod")
     @Override
     public List<Map<String, String>> dbOperation(final DataBaseThread dataBaseThread, final int operationId) {
         super.dbOperation(dataBaseThread, operationId);
@@ -276,11 +246,37 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 break;
             case SCHEDULE_SELECT://DBから番組データを取得して、画面に返却する
                 ProgramDataManager scheduleDataManager = new ProgramDataManager(mContext);
-                mResultSets = scheduleDataManager.selectTvScheduleListProgramData(dataBaseThread.getFromDB(), mProgramSelectDate);
+                //DBから取得した複数チャンネルの情報を格納するリスト
+                List<List<Map<String, String>>> resultSetList = scheduleDataManager.selectTvScheduleListProgramData(dataBaseThread.getFromDB(), mProgramSelectDate);
                 resultSet = new ArrayList<>();
                 // 番組データがある場合はダミーで1件の結果セットを返す
-                if (mResultSets != null && mResultSets.size() > 0) {
+                if (resultSetList != null && resultSetList.size() > 0) {
                     resultSet.add(new HashMap<String, String>() {{ put("", ""); }});
+                }
+                //非同期なので、タブ切替時にこの処理に入ってしまわないようにNullチェックを追加
+                if (resultSetList != null) {
+                    ChannelInfoList channelsInfo = new ChannelInfoList();
+                    ClipKeyListDataManager keyListDataManager = new ClipKeyListDataManager(mContext);
+                    List<Map<String, String>> clipKeyList = keyListDataManager.selectClipAllList();
+                    for (List<Map<String, String>> channelInfos : resultSetList) {
+                        if (channelInfos != null && channelInfos.size() > 0) {
+                            ArrayList<ScheduleInfo> scheduleInfoList = new ArrayList<>();
+                            for (int i = 0; i < channelInfos.size(); i++) { //番組データ取得して整形する
+                                HashMap<String, String> hashMap = (HashMap<String, String>) channelInfos.get(i);
+                                ScheduleInfo mSchedule = DataConverter.convertScheduleInfo(hashMap, clipKeyList);
+                                scheduleInfoList.add(mSchedule);
+                            }
+                            //setScheduleInfoのやり方を踏襲.
+                            ChannelInfo channel = new ChannelInfo();
+                            channel.setChannelNo(Integer.parseInt(scheduleInfoList.get(0).getChNo()));
+                            channel.setTitle(scheduleInfoList.get(0).getTitle());
+                            channel.setSchedules(scheduleInfoList);
+                            channelsInfo.addChannel(channel);
+                        }
+                    }
+                    sendChannelInfoList(channelsInfo, new int[0]);
+                } else {
+                    sendChannelInfoList(null, new int[0]);
                 }
                 break;
             default:
@@ -579,10 +575,6 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         }
         if (mTvScheduleWebClient != null) {
             mTvScheduleWebClient = null;
-        }
-        if (mResultSets != null) {
-            mResultSets.clear();
-            mResultSets = null;
         }
     }
 

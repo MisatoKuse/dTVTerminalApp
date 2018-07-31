@@ -195,18 +195,38 @@ public class DataBaseThread extends Thread {
         this.mContentsDataList = mContentsDataList;
     }
 
+    /**
+     * クリップリクエスト取得.
+     *
+     * @return ClipKeyListResponse
+     */
     public ClipKeyListResponse getClipKeyListResponse() {
         return mClipKeyListResponse;
     }
 
+    /**
+     * クリップリクエスト設定.
+     *
+     * @param mClipKeyListResponse ClipKeyListResponse
+     */
     public void setClipKeyListResponse(final ClipKeyListResponse mClipKeyListResponse) {
         this.mClipKeyListResponse = mClipKeyListResponse;
     }
 
+    /**
+     * エラーステータス取得.
+     *
+     * @return ErrorState
+     */
     public ErrorState getErrorState() {
         return mErrorState;
     }
 
+    /**
+     * エラーステータス設定.
+     *
+     * @param mErrorState ErrorState
+     */
     public void setErrorState(final ErrorState mErrorState) {
         this.mErrorState = mErrorState;
     }
