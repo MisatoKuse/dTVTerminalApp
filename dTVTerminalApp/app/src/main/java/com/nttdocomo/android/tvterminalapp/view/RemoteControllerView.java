@@ -306,7 +306,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
     /**
      * 子ビュ―が一番上まで移動した場合表示するコンテンツを設定する.
-     * @param isFromHeader へだーからUI表示
+     * @param isFromHeader ヘッダーからUI表示
      */
     private void setHeaderContent(final boolean isFromHeader) {
         DTVTLogger.start();
@@ -318,9 +318,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         mBottomLinearLayout.setVisibility(GONE);
         mFrameLayout = findViewById(R.id.header_watch_by_tv);
         mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_top_corner, null));
-        if (mIsTop) {
-            startRemoteControl(isFromHeader);
-        }
+        startRemoteControl(isFromHeader);
         DTVTLogger.end();
     }
 

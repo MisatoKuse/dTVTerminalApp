@@ -958,7 +958,7 @@ public class BaseActivity extends FragmentActivity implements
      * @param isFromDetail true コンテンツ詳細画面、false メニュー
      */
     private void showRemoteControllerView(final boolean isFromDetail) {
-        // グローバルメニューまたはコンテンツ詳細からのサービスアプリ連携の正常応答時にリモコンが表示されてない場合のみ表示する.
+        // グローバルメニューまたはコンテンツ詳細からのサービスアプリ連携の要求時にリモコンが表示されてない場合のみ表示する.
         if ((null != mRemoteControllerView && !mRemoteControllerView.isTopRemoteControllerUI())
                 || null == mRemoteControllerView) {
             if (isFromDetail) {
@@ -2281,6 +2281,8 @@ public class BaseActivity extends FragmentActivity implements
         View view = findViewById(R.id.base_progress_rl);
         if (view != null) {
             view.setVisibility(visible);
+            // コンテンツ詳細からのサービスアプリ連携時のクルクル表示中にクルクルのタップを有効にしてリモコンのボタンタップを禁止する
+            view.setClickable(true);
         }
     }
 
