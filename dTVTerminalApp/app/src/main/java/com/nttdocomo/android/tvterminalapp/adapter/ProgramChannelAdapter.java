@@ -88,6 +88,15 @@ public class ProgramChannelAdapter extends
     }
 
     /**
+     * チャンネル名リストを返却.
+     *
+     * @return チャンネル名リスト
+     */
+    public ArrayList<String> getChannelList() {
+        return mChannelList;
+    }
+
+    /**
      * コンストラクタ.
      */
     static class ViewHolder extends RecyclerView.ViewHolder {
