@@ -962,10 +962,17 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                     }
                     setDownloadStatusClear(view);
                     view.setBackgroundResource(R.drawable.icon_circle_normal_download_selector);
-                    mContentsData.get((Integer) view.getTag()).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_ALLOW);
-                    mContentsData.get((Integer) view.getTag()).setDownloadStatus("");
+                    ContentsData contentsData = mContentsData.get((int) view.getTag());
+                    boolean isDownload = ContentsAdapter.DOWNLOAD_STATUS_COMPLETED == contentsData.getDownloadFlg();
+                    contentsData.setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_ALLOW);
+                    contentsData.setDownloadStatus("");
                     if (((RecordedListActivity) mActivity).getCurrentPosition() == 1) {
                         ((RecordedListActivity) mActivity).setRecordedTakeOutContents();
+                    } else {
+                        if (isDownload) {
+                            ((RecordedListActivity) mActivity).requestInit();
+                            ((RecordedListActivity) mActivity).getData();
+                        }
                     }
                     int idx = (Integer) view.getTag();
                     setContentListStatusContent(idx, ContentsAdapter.DOWNLOAD_STATUS_ALLOW, "");

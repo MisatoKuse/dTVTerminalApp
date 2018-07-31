@@ -226,9 +226,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void onClickTab(final int position) {
-        mRequestIndex = 0;
-        mDlnaRecVideoItems = null;
-        mIsEndPage = false;
+        requestInit();
         mViewPager.setCurrentItem(position);
     }
 
@@ -314,9 +312,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void onPageSelected(final int position) {
                 super.onPageSelected(position);
-                mRequestIndex = 0;
-                mDlnaRecVideoItems = null;
-                mIsEndPage = false;
+                requestInit();
                 setTab(position);
                 sendScreenViewForPosition(position);
             }
@@ -491,9 +487,26 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     /**
+     * ページング処理を初期化する.
+     */
+    public void requestInit() {
+        mRequestIndex = 0;
+        mDlnaRecVideoItems = null;
+        mIsEndPage = false;
+    }
+
+    /**
      * DMSデバイスを取り始める.
      */
-    private void getData() {
+    public void getData() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (progressBar != null && progressBar.getVisibility() == View.GONE) {
+                    progressBar.setVisibility(View.VISIBLE);
+                }
+            }
+        });
         mHandler.post(new Runnable() {
             @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
             @Override
