@@ -397,7 +397,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @SuppressWarnings("OverlyLongMethod")
     public void setRecordedTakeOutContents() {
         DTVTLogger.start();
-        RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment();
+        final RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment();
         List<ContentsData> list = baseFragment.getContentsData();
 
         baseFragment.clearContentsList();
@@ -475,12 +475,17 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             }
         }
         if (DOWNLOAD_OVER == mViewPager.getCurrentItem()) {
-            baseFragment.notifyDataSetChanged();
-            if (baseFragment.getContentsData().size() == 0) {
-                mNoDataMessage.setVisibility(View.VISIBLE);
-                mNoDataMessage.setText(getString(R.string.common_empty_data_message));
-            }
-            progressBar.setVisibility(View.GONE);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    baseFragment.notifyDataSetChanged();
+                    if (baseFragment.getContentsData().size() == 0) {
+                        mNoDataMessage.setVisibility(View.VISIBLE);
+                        mNoDataMessage.setText(getString(R.string.common_empty_data_message));
+                    }
+                    progressBar.setVisibility(View.GONE);
+                }
+            });
 
         }
     }
@@ -614,9 +619,14 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private void clearFragment(final int tabNo) {
         DTVTLogger.start();
         if (null != mViewPager) {
-            RecordedBaseFragment baseFragment = mRecordedFragmentFactory.createFragment(tabNo);
-            baseFragment.clear();
-            baseFragment.notifyDataSetChanged();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    RecordedBaseFragment baseFragment = mRecordedFragmentFactory.createFragment(tabNo);
+                    baseFragment.clear();
+                    baseFragment.notifyDataSetChanged();
+                }
+            });
         }
     }
 
