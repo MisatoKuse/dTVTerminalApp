@@ -1179,6 +1179,7 @@ public class StbSelectActivity extends BaseActivity implements View.OnClickListe
                         if (mSelectDevice != SELECT_DEVICE_ITEM_DEFAULT) {
                             SharedPreferencesUtils.setSharedPreferencesStbInfo(this, mDlnaDmsItemList.get(mSelectDevice));
                             Intent intent = new Intent(this, StbConnectActivity.class);
+                            intent.putExtra(FROM_WHERE, mStartMode);
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
                         }
