@@ -108,8 +108,9 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
     /**
      * DlDataProvider機能を有効.
      * @param act Activity
+     * @param doStartService サービス起動要否
      */
-    public void beginProvider(final Activity act) {
+    public void beginProvider(final Activity act, final boolean doStartService) {
         if (null == act) {
             start();
             return;
@@ -117,7 +118,9 @@ public class DownloadDataProvider implements ServiceConnection, DownloadServiceL
         mActivity = act;
         Intent intent = new Intent(mActivity, DownloadService.class);
         mIsRegistered = mActivity.bindService(intent, this, Context.BIND_AUTO_CREATE);
-        startService();
+        if (doStartService) {
+            startService();
+        }
     }
 
     /**

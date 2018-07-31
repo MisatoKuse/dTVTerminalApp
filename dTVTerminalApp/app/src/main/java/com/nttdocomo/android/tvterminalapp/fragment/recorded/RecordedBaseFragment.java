@@ -287,23 +287,19 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
     public void onItemClick(final AdapterView<?> adapterView, final View view,
                             final int i, final long l) {
         if (null != mContext) {
-            if (mQueue.size() > 0) {
-                showMessage();
-            } else {
-                if (mActivity != null) {
-                    RecordedContentsDetailData detailData = mContentsList.get(i);
-                    if (detailData.getDownLoadStatus() == ContentsAdapter.DOWNLOAD_STATUS_COMPLETED) {
-                        if (!isFileExist(detailData)) {
-                            showErrorDialog(getString(R.string.common_empty_data_message), R.string.common_text_close);
-                            return;
-                        }
+            if (mActivity != null) {
+                RecordedContentsDetailData detailData = mContentsList.get(i);
+                if (detailData.getDownLoadStatus() == ContentsAdapter.DOWNLOAD_STATUS_COMPLETED) {
+                    if (!isFileExist(detailData)) {
+                        showErrorDialog(getString(R.string.common_empty_data_message), R.string.common_text_close);
+                        return;
                     }
-                    Intent intent = new Intent(mContext, ContentDetailActivity.class);
-                    intent.putExtra(DtvtConstants.SOURCE_SCREEN, mActivity.getComponentName().getClassName());
-                    intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, detailData);
-                    RecordedListActivity recordedListActivity = (RecordedListActivity) mActivity;
-                    recordedListActivity.startActivity(intent);
                 }
+                Intent intent = new Intent(mContext, ContentDetailActivity.class);
+                intent.putExtra(DtvtConstants.SOURCE_SCREEN, mActivity.getComponentName().getClassName());
+                intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, detailData);
+                RecordedListActivity recordedListActivity = (RecordedListActivity) mActivity;
+                recordedListActivity.startActivity(intent);
             }
         }
     }
@@ -683,7 +679,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
                     if (!isOk) {
                         return;
                     }
-                    mDownloadDataProvider.beginProvider(getActivity());
+                    mDownloadDataProvider.beginProvider(getActivity(), true);
                 }
                 DownloadData downloadData = setDlData(index);
                 if (downloadData != null) {
@@ -813,7 +809,7 @@ public class RecordedBaseFragment extends Fragment implements AdapterView.OnItem
         if (null == mActivity) {
             return;
         }
-        mDownloadDataProvider.beginProvider(mActivity);
+        mDownloadDataProvider.beginProvider(mActivity, false);
         if (mQueueIndex.size() > 0) {
             mQueue.clear();
             for (int i = 0; i < mQueueIndex.size(); i++) {
