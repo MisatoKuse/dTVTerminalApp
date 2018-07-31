@@ -232,6 +232,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void onBrowseCallback(final DlnaObject[] objs, final boolean isComplete) {
+        if (mViewPager.getCurrentItem() != ALL_RECORD_LIST) {
+            return;
+        }
         setProgressBarGone();
         ArrayList<DlnaRecVideoItem> dstList = new ArrayList<>();
         for (DlnaObject dlnaObject: objs) {
