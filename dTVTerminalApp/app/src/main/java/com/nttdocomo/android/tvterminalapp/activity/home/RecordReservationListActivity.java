@@ -202,19 +202,6 @@ public class RecordReservationListActivity extends BaseActivity
             }
         }
     }
-
-    /**
-     * ページング数取得.
-     *
-     * @return ページング数
-     */
-    private int getCurrentNumber() {
-        if (null == mContentsList) {
-            return 0;
-        }
-        return mContentsList.size() / NUM_PER_PAGE;
-    }
-
     @Override
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         // 録画予約一覧画面ではItemのタップで画面遷移しない
@@ -245,14 +232,8 @@ public class RecordReservationListActivity extends BaseActivity
             mNoDataMessage.setVisibility(View.VISIBLE);
             return;
         }
-
-        int pageNumber = getCurrentNumber();
-        // 表示中コンテンツ数よりもデータ取得件数が多い場合のみ更新する
-        if (mContentsList.size() < dataList.size()) {
-            for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE
-                    && i < dataList.size(); i++) { //mPageNumber
+        for (int i = 0; i < dataList.size(); i++) {
                 mContentsList.add(dataList.get(i));
-            }
         }
         DTVTLogger.debug("Callback, mData.size==" + mContentsList.size());
         mContentsAdapter.notifyDataSetChanged();
