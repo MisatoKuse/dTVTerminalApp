@@ -133,12 +133,6 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
 
         //設定画面に表示するデータを設定する
         initData();
-        //ペアリング完了から遷移する場合リモート視聴設定処理を呼び出す
-        if (getIntent().getBooleanExtra(getResources().getString(R.string.main_setting_remote_confirm_message_setting), false)) {
-            // TODO リモート視聴設定処理呼び出す;
-            setRemoteProgressVisible(View.VISIBLE);
-            getIntent().putExtra(getResources().getString(R.string.main_setting_remote_confirm_message_setting), false);
-        }
     }
 
     @Override

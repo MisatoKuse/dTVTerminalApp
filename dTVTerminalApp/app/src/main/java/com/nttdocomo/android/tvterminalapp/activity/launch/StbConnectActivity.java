@@ -37,10 +37,16 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
     private static final int DELAYED_TIME = 3000;
     /**ハンドラー.*/
     private final Handler mHandler = new Handler();
+    /**起動モード.*/
+    private int mStartMode = 0;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stb_connect_main_layout);
+        Intent intent = getIntent();
+        if (intent != null) {
+            mStartMode = intent.getIntExtra(StbSelectActivity.FROM_WHERE, -1);
+        }
         //SharedPreferenceにSTB接続完了をセット
         SharedPreferencesUtils.setSharedPreferencesStbConnect(this, true);
         StbConnectionManager.shared().setConnectionStatus(StbConnectionManager.ConnectionStatus.HOME_IN);
@@ -57,14 +63,10 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
     protected void onResume() {
         super.onResume();
         DlnaManager.shared().StartDmp();
-        Intent intent = getIntent();
-        if (intent != null) {
-            int startMode = intent.getIntExtra(StbSelectActivity.FROM_WHERE, -1);
-            if (startMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_paring_completed));
-            } else {
-                super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring_completed));
-            }
+        if (mStartMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_paring_completed));
+        } else {
+            super.sendScreenView(getString(R.string.google_analytics_screen_name_setting_paring_completed));
         }
     }
 
@@ -147,7 +149,11 @@ public class StbConnectActivity extends BaseActivity implements UserInfoDataProv
     private void showRemoteConfirmDialog() {
         //　アプリが無ければインストール画面に誘導
         CustomDialog remoteConfirmDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-        remoteConfirmDialog.setContent(getResources().getString(R.string.main_setting_remote_confirm_message_first_start));
+        if (mStartMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Launch.ordinal()) {
+            remoteConfirmDialog.setContent(getResources().getString(R.string.main_setting_remote_confirm_message_first_start));
+        } else if (mStartMode == StbSelectActivity.StbSelectFromMode.StbSelectFromMode_Setting.ordinal()) {
+            remoteConfirmDialog.setContent(getResources().getString(R.string.main_setting_remote_confirm_message_setting));
+        }
         remoteConfirmDialog.setConfirmText(R.string.custom_dialog_ok);
         remoteConfirmDialog.setCancelText(R.string.custom_dialog_cancel);
         remoteConfirmDialog.setOnTouchOutside(false);
