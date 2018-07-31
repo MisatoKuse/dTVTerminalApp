@@ -47,7 +47,6 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.jni.dms.DlnaDmsItem;
-import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.struct.MediaVideoInfo;
 import com.nttdocomo.android.tvterminalapp.utils.ContentUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
@@ -167,6 +166,8 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
     private boolean mAlreadyRendered = false;
     /**完了フラグ.*/
     private boolean mIsCompleted = false;
+    /**seek bar by user.*/
+    private boolean mIsSeekBarFromUser = false;
     /** 外部出力制御.*/
     private ExternalDisplayHelper mExternalDisplayHelper;
     /** 外部出力制御判定フラグ.*/
@@ -883,6 +884,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             mSecureVideoPlayer.setBackgroundResource(0);
         }
         mIsOperateActivated = false;
+        mIsSeekBarFromUser = false;
         DTVTLogger.end();
     }
     /**
@@ -890,7 +892,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
      */
     public void hideCtrlView() {
         DTVTLogger.start();
-        if (mSecureVideoPlayer == null) {
+        if (mSecureVideoPlayer == null || mIsSeekBarFromUser) {
             //設定ファイルによるアプリ動作停止の場合、下記の物がヌルになっている可能性がある。その場合は処理は行わない
             DTVTLogger.end("mSecureVideoPlayer is null");
             return;
@@ -1372,6 +1374,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                     hideCtrlViewAfterOperate();
                 } else if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     mIsHideOperate = false;
+                    mIsSeekBarFromUser = false;
                     sCtrlHandler.removeCallbacks(mHideCtrlViewThread);
                     if (mVideoCtrlBar.getVisibility() == View.VISIBLE && mIsOperateActivated) {
                         if (!mIsVideoBroadcast) {
@@ -1463,13 +1466,17 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
-                mIsCompleted = false;
-                mVideoCurTime.setText(DateUtils.time2TextViewFormat(progress));
+                if (!fromUser) {
+                    mIsCompleted = false;
+                    mVideoCurTime.setText(DateUtils.time2TextViewFormat(progress));
+                }
             }
 
             @Override
             public void onStartTrackingTouch(final SeekBar seekBar) {
                 DTVTLogger.start();
+                mIsSeekBarFromUser = true;
+                sCtrlHandler.removeCallbacks(mHideCtrlViewThread);
                 removeSendMessage();
                 DTVTLogger.end();
             }
@@ -1477,6 +1484,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
             @Override
             public void onStopTrackingTouch(final SeekBar seekBar) {
                 DTVTLogger.start();
+                hideCtrlViewAfterOperate();
                 int progress = seekBar.getProgress();
                 mPlayerController.seekTo(progress);
                 viewRefresher.sendEmptyMessage(REFRESH_VIDEO_VIEW);
@@ -1655,6 +1663,7 @@ public class PlayerViewLayout extends RelativeLayout implements View.OnClickList
                 release();
             }
         }
+        mIsSeekBarFromUser = false;
         removeSendMessage();
         showPlayingProgress(false);
         stopThumbnailConnect();
